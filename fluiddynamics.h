@@ -25,7 +25,7 @@ class EvolutionHistory{
     std::vector<BulkElement> data;
 
     EvolutionHistory();
-}
+};
 
 
 class FluidDynamics{
