@@ -2,6 +2,7 @@
 #include<vector>
 
 typedef std::tuple<float, float, float> float3;
+typedef std::tuple<float, float, float, float> float4;
 
 typedef struct {
     float energy_density;
