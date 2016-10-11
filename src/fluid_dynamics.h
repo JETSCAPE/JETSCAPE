@@ -35,6 +35,23 @@ typedef struct {
     real bulk_Pi;           // bulk viscous pressure [GeV/fm^3]
 } FluidCellInfo;
 
+typedef struct {
+    // data structure for outputing hyper-surface information
+    real d3sigma_mu[4];     // surface vector
+    real energy_density;    // local energy density [GeV/fm^3]
+    real entropy_density;   // local entropy density [1/fm^3]
+    real temperature;       // local temperature [GeV]
+    real pressure;          // thermal pressure [GeV/fm^3]
+    real qgp_fraction;
+    real mu_B;              // net baryon chemical potential [GeV]
+    real mu_C;              // net charge chemical potential [GeV]
+    real mu_S;              // net strangeness chemical potential [GeV]
+    real vx, vy, vz;        // flow velocity
+    real pi[4][4];          // shear stress tensor [GeV/fm^3]
+    real bulk_Pi;           // bulk viscous pressure [GeV/fm^3]
+} SurfaceCellInfo;
+
+
 class EvolutionHistory{
  public:
     real tmin, nt, dt;
@@ -96,10 +113,15 @@ class FluidDynamics{
         return(hydro_freeze_out_temperature);
     }
 
-    // main function to retrive hydro information
+    // this function retrives hydro information at a given space-tim point
     // the detailed implementation is left to the hydro developper
     virtual void get_hydro_info(real time, real x, real y, real z,
                                 FluidCellInfo* fluid_cell_info_ptr);
+
+    // this function returns hypersurface for Cooper-Frye or recombination
+    // the detailed implementation is left to the hydro developper
+    virtual void get_hypersurface(real T_cut,
+                                  SurfaceCellInfo* surface_list_ptr);
 
     // all the following functions will call function get_hydro_info()
     // to get thermaldynamic and dynamical information at a space-time point
