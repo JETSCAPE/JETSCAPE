@@ -1,13 +1,12 @@
-// Copyright JETSCAPE @ 2016
+// Copyright JETSCAPE Collaboration @ 2016
 
-#ifndef FLUIDDYNAMICS_H_
-#define FLUIDDYNAMICS_H_
+#ifndef SRC_FLUIDDYNAMICS_H_
+#define SRC_FLUIDDYNAMICS_H_
 
 #include <tuple>
 #include <vector>
 
 typedef float real
-
 typedef std::tuple<real, real, real> real3;
 typedef std::tuple<real, real, real, real> real4;
 
@@ -36,6 +35,7 @@ typedef struct {
     real bulk_Pi;           // bulk viscous pressure [GeV/fm^3]
 } FluidCellInfo;
 
+
 class EvolutionHistory{
  public:
     real tmin, nt, dt;
@@ -52,7 +52,22 @@ class EvolutionHistory{
 
 
 class FluidDynamics{
+ private:
+    // record hydro start and end proper time [fm/c]
+    real hydro_tau_0, hydro_tau_max;
+    // record hydro freeze out temperature [GeV]
+    real hydro_freeze_out_temperature;
+
+    // record hydro running status
+    int hydro_status;  // 0: nothing happened
+                       // 1: hydro has been initialized
+                       // 2: hydro is evolving
+                       // 3: all fluid cells have reached freeze-out
+                       // -1: An error occurred
  public:
+    FluidDynamics(Parameter parameter_list);
+    ~FluidDynamics();
+
     // How to store this data? In memory or hard disk?
     // 3D hydro may eat out the memory,
     // for large dataset, std::deque is better than std::vector.
@@ -64,6 +79,9 @@ class FluidDynamics{
     /* currently we have no standard for passing configurations */
     // pure virtual function; to be implemented by users
     // should make it easy to save evolution history to bulk_info
+    virtual void initialize_hydro(Parameter parameter_list);
+    virtual void evolve_hydro();
+
     virtual void evolution(const EnergyMomentumTensor & tmn,
                            real xmax, real ymax, real hmax,
                            real tau0, real dtau, real dx,
@@ -72,6 +90,12 @@ class FluidDynamics{
                            real dh_out) const = 0;
 
     // the following functions should be implemented in Jetscape
+    int get_hydro_status() {return(hydro_status);}
+    real get_hydro_start_time() {return(hydro_tau_0);}
+    real get_hydro_end_time() {return(hydro_tau_max);}
+    real get_hydro_freeze_out_temperature() {
+        return(hydro_freeze_out_temperature);
+    }
 
     // main function to retrive hydro information
     void get_hydro_info(real time, real x, real y, real z,
@@ -92,4 +116,4 @@ class FluidDynamics{
     // real get_net_charge_density(real time, real x, real y, real z);
 };
 
-#endif  // FLUIDDYNAMICS_H_
+#endif  // SRC_FLUIDDYNAMICS_H_
