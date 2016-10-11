@@ -1,7 +1,7 @@
 // Copyright JETSCAPE Collaboration @ 2016
 
-#ifndef SRC_FLUIDDYNAMICS_H_
-#define SRC_FLUIDDYNAMICS_H_
+#ifndef SRC_FLUID_DYNAMICS_H_
+#define SRC_FLUID_DYNAMICS_H_
 
 #include <tuple>
 #include <vector>
@@ -98,12 +98,13 @@ class FluidDynamics{
     }
 
     // main function to retrive hydro information
-    void get_hydro_info(real time, real x, real y, real z,
-                        FluidCellInfo* fluid_cell_info_ptr);
+    // the detailed implementation is left to the hydro developper
+    virtual void get_hydro_info(real time, real x, real y, real z,
+                                FluidCellInfo* fluid_cell_info_ptr);
+
     // all the following functions will call function get_hydro_info()
     // to get thermaldynamic and dynamical information at a space-time point
     // (time, x, y, z)
-
     real get_energy_density(real time, real x, real y, real z);
     real get_entropy_density(real time, real x, real y, real z);
     real get_temperature(real time, real x, real y, real z);
@@ -116,4 +117,4 @@ class FluidDynamics{
     // real get_net_charge_density(real time, real x, real y, real z);
 };
 
-#endif  // SRC_FLUIDDYNAMICS_H_
+#endif  // SRC_FLUID_DYNAMICS_H_
