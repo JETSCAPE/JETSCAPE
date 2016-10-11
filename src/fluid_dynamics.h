@@ -81,7 +81,7 @@ class FluidDynamics{
                        // 3: all fluid cells have reached freeze-out
                        // -1: An error occurred
  public:
-    FluidDynamics(Parameter parameter_list);
+    explicit FluidDynamics(Parameter parameter_list);
     ~FluidDynamics();
 
     // How to store this data? In memory or hard disk?
@@ -135,7 +135,7 @@ class FluidDynamics{
     real3 get_3fluid_velocity(real time, real x, real y, real z);
     // real4 return std::make_tuple(ut, ux, uy, uz)
     real4 get_4fluid_velocity(real time, real x, real y, real z);
-    
+
     real get_net_baryon_density(real time, real x, real y, real z);
     real get_net_charge_density(real time, real x, real y, real z);
 };
