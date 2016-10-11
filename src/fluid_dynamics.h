@@ -35,7 +35,6 @@ typedef struct {
     real bulk_Pi;           // bulk viscous pressure [GeV/fm^3]
 } FluidCellInfo;
 
-
 class EvolutionHistory{
  public:
     real tmin, nt, dt;
@@ -109,12 +108,14 @@ class FluidDynamics{
     real get_entropy_density(real time, real x, real y, real z);
     real get_temperature(real time, real x, real y, real z);
     real get_qgp_fraction(real time, real x, real y, real z);
+
     // real3 return std::make_tuple(vx, vy, vz)
     real3 get_3fluid_velocity(real time, real x, real y, real z);
     // real4 return std::make_tuple(ut, ux, uy, uz)
     real4 get_4fluid_velocity(real time, real x, real y, real z);
-    // real get_net_baryon_density(real time, real x, real y, real z);
-    // real get_net_charge_density(real time, real x, real y, real z);
+    
+    real get_net_baryon_density(real time, real x, real y, real z);
+    real get_net_charge_density(real time, real x, real y, real z);
 };
 
 #endif  // SRC_FLUID_DYNAMICS_H_
