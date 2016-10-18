@@ -5,8 +5,9 @@
 
 #include <tuple>
 #include <vector>
+#include <cstring>
 
-typedef float real
+typedef float real;
 typedef std::tuple<real, real, real> real3;
 typedef std::tuple<real, real, real, real> real4;
 
@@ -52,23 +53,32 @@ typedef struct {
 } SurfaceCellInfo;
 
 
+class Parameter{
+ public:
+    // hydro parameters
+    std::string hydro_input_filename;
+};
+
+
 class EvolutionHistory{
  public:
-    real tmin, nt, dt;
-    real xmin, nx, dx;
-    real ymin, ny, dy;
-    real zmin, nz, dz;
+    real tau_min, dtau;
+    real x_min, dx;
+    real y_min, dy;
+    real eta_min, deta;
+    int ntau, nx, ny, neta;
     // default: set using_tz_for_tau_eta=true
-    bool  using_tz_for_tau_eta;
+    bool using_tz_for_tau_eta;
     // the bulk information
     std::vector<BulkElement> data;
 
     EvolutionHistory();
+    ~EvolutionHistory() {data.clear();}
 };
 
 
 class FluidDynamics{
- private:
+ protected:
     // record hydro start and end proper time [fm/c]
     real hydro_tau_0, hydro_tau_max;
     // record hydro freeze out temperature [GeV]
