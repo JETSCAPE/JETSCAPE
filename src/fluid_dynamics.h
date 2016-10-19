@@ -1,4 +1,6 @@
 // Copyright JETSCAPE Collaboration @ 2016
+// This is a general basic class for hydrodynamics
+// This is written by Longgang Pang and Chun Shen
 
 #ifndef SRC_FLUID_DYNAMICS_H_
 #define SRC_FLUID_DYNAMICS_H_
@@ -56,7 +58,7 @@ typedef struct {
 class Parameter{
  public:
     // hydro parameters
-    std::string hydro_input_filename;
+    char* hydro_input_filename;
 };
 
 
@@ -91,13 +93,13 @@ class FluidDynamics{
                        // 3: all fluid cells have reached freeze-out
                        // -1: An error occurred
  public:
-    explicit FluidDynamics(Parameter parameter_list);
-    ~FluidDynamics();
+    FluidDynamics() {};
+    ~FluidDynamics() {};
 
     // How to store this data? In memory or hard disk?
     // 3D hydro may eat out the memory,
     // for large dataset, std::deque is better than std::vector.
-    EvolutionHistory bulk_info;
+    // EvolutionHistory bulk_info;
 
     /*Keep this interface open in the beginning.*/
     // FreezeOutHyperSf hyper_sf;
@@ -105,15 +107,15 @@ class FluidDynamics{
     /* currently we have no standard for passing configurations */
     // pure virtual function; to be implemented by users
     // should make it easy to save evolution history to bulk_info
-    virtual void initialize_hydro(Parameter parameter_list);
-    virtual void evolve_hydro();
+    virtual void initialize_hydro(Parameter parameter_list) {};
+    virtual void evolve_hydro() {};
 
-    virtual void evolution(const EnergyMomentumTensor & tmn,
-                           real xmax, real ymax, real hmax,
-                           real tau0, real dtau, real dx,
-                           real dy, real dh, real etaos,
-                           real dtau_out, real dx_out, real dy_out,
-                           real dh_out) const = 0;
+    // virtual void evolution(const EnergyMomentumTensor & tmn,
+    //                        real xmax, real ymax, real hmax,
+    //                        real tau0, real dtau, real dx,
+    //                        real dy, real dh, real etaos,
+    //                        real dtau_out, real dx_out, real dy_out,
+    //                        real dh_out) const = 0;
 
     // the following functions should be implemented in Jetscape
     int get_hydro_status() {return(hydro_status);}
@@ -125,13 +127,13 @@ class FluidDynamics{
 
     // this function retrives hydro information at a given space-tim point
     // the detailed implementation is left to the hydro developper
-    virtual void get_hydro_info(real time, real x, real y, real z,
-                                FluidCellInfo* fluid_cell_info_ptr);
+    virtual void get_hydro_info(real t, real x, real y, real z,
+                                FluidCellInfo* fluid_cell_info_ptr) {};
 
     // this function returns hypersurface for Cooper-Frye or recombination
     // the detailed implementation is left to the hydro developper
     virtual void get_hypersurface(real T_cut,
-                                  SurfaceCellInfo* surface_list_ptr);
+                                  SurfaceCellInfo* surface_list_ptr) {};
 
     // all the following functions will call function get_hydro_info()
     // to get thermaldynamic and dynamical information at a space-time point
