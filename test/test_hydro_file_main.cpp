@@ -8,7 +8,7 @@
 #include <cstring>
 
 #include "../src/fluid_dynamics.h"
-#include "./hydro_file_jetscape.h"
+#include "../wrappers/hydro_file_jetscape.h"
 
 using namespace std;
 
