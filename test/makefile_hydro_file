@@ -39,7 +39,7 @@ clean :
 	-for d in $(external_src); do (cd $$d; $(MAKE) -f Makefile_lib clean ); done
 
 distclean :
-	-$(RM) -f $(EXECUTABLE) $(OBJECTS) $(OBJLIBS)
+	-$(RM) -f $(EXECUTABLE) $(OBJECTS)
 	-for d in $(external_src); do (cd $$d; $(MAKE) -f Makefile_lib clean ); done
 
 force_look :

@@ -8,7 +8,7 @@
 #include <cstring>
 
 #include "../src/fluid_dynamics.h"
-#include "./music_jetscape.h"
+#include "../wrappers/music_jetscape.h"
 
 using namespace std;
 

@@ -2,12 +2,12 @@
 #ifndef TEST_MUSIC_JETSCAPE_H_
 #define TEST_MUSIC_JETSCAPE_H_
 
-#include "music/src/util.h"
-#include "music/src/grid.h"
-#include "music/src/data.h"
-#include "music/src/init.h"
-#include "music/src/eos.h"
-#include "music/src/evolve.h"
+#include "../external_packages/music/src/util.h"
+#include "../external_packages/music/src/grid.h"
+#include "../external_packages/music/src/data.h"
+#include "../external_packages/music/src/init.h"
+#include "../external_packages/music/src/eos.h"
+#include "../external_packages/music/src/evolve.h"
 #include "../src/fluid_dynamics.h"
 
 class MUSIC: public FluidDynamics {
