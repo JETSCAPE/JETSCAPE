@@ -29,7 +29,20 @@ void EvolutionHistory::check_in_range(real tau, real x, real y, real eta){
         }
 }
 
+/** For one given time step id_tau,
+ * get FluidCellInfo at spatial point*/
+FluidCellInfo EvolutionHistory::get_at_time_step(int id_tau,
+                                     real x, real y, real eta) {
+    int id_x = get_id_x(x);
+    int id_y = get_id_y(y);
+    int id_eta = get_id_eta(eta);
+}
+
 FluidCellInfo EvolutionHistory::get(real tau, real x, real y, real eta){
+    int id_tau = get_id_tau(tau);
+    int id_x = get_id_x(x);
+    int id_y = get_id_y(y);
+    int id_eta = get_id_eta(eta);
 
 }
 

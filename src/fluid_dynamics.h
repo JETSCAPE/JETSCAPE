@@ -172,11 +172,38 @@ class EvolutionHistory{
 
     void check_in_range(real tau, real x, real y, real etas);
 
-    // get the lower bound of the fluid cell
-    inline int get_id_tau(real tau);
-    inline int get_id_x(real x);
-    inline int get_id_y(real y);
-    inline int get_id_eta(real eta);
+    // get the lower bound of the fluid cell along tau
+    inline int get_id_tau(real tau){
+        return (int)(floor((tau - tau_min) / dtau))
+    }
+    // get the lower bound of the fluid cell along x
+    inline int get_id_x(real x) { 
+        return (int)(floor((x - x_min) / dx))
+    }
+    // get the lower bound of the fluid cell along y
+    inline int get_id_y(real y) {
+        return (int)(floor((y - y_min) / dy))
+    }
+    // get the lower bound of the fluid cell along y
+    inline int get_id_eta(real eta) {
+        return (int)(floor((eta - eta_min) / deta))
+    }
+
+    // get the coordinate of tau, x, y, eta on grid
+    inline real tau_coord(int id_tau) { return tau_min + id_tau * dtau; }
+    inline real x_coord(int id_x) { return x_min + id_x * dx; }
+    inline real y_coord(int id_y) { return y_min + id_y * dy; }
+    inline real eta_coord(int id_eta) { return eta_min + id_eta * deta; }
+
+    // get the FluidCellInfo index in data
+    inline int cell_index(int id_tau, int id_x, int id_y, int id_eta)
+    {
+        return  id_tau * nx * ny * neta + id_x * ny * neta
+                        + id_y * neta + id_eta;
+    }
+
+    // get the FluidCellInfo at space point given time step
+    FluidCellInfo get_at_time_step(int id_tau, real x, real y, real etas);
 
     // get the FluidCellInfo at given space time point
     FluidCellInfo get(real tau, real x, real y, real etas);
