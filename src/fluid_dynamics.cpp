@@ -4,6 +4,10 @@
 
 #include "./fluid_dynamics.h"
 
+// if EvolutionHistory is not empty, use JetScape get_hydro_info()
+void FluidDynamics::get_hydro_info(real t, real x, real y, real z) {
+    
+}
 
 real FluidDynamics::get_energy_density(real time, real x, real y, real z) {
     // this function returns the energy density [GeV] at a space time point

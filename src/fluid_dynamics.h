@@ -5,25 +5,14 @@
 #ifndef SRC_FLUID_DYNAMICS_H_
 #define SRC_FLUID_DYNAMICS_H_
 
-#include <tuple>
 #include <vector>
 #include <cstring>
 
-typedef float real;
-typedef std::tuple<real, real, real> real3;
-typedef std::tuple<real, real, real, real> real4;
+#include "realtype.h"
 
-typedef struct {
-    real energy_density;
-    real temperature;
-    real entropy_density;
-    real qgp_fraction;
-    real vx, vy, vz;
-    // do we need pi^{mu nu}, Pi, net_baryon, net_charge?
-    // for thermal photon or other kinds of studies
-} BulkElement;
-
-typedef struct {
+//overload +-*/ for easier linear interpolation
+class FluidCellInfo {
+ public:
     // data structure for outputing fluid cell information
     real energy_density;    // local energy density [GeV/fm^3]
     real entropy_density;   // local entropy density [1/fm^3]
@@ -36,7 +25,98 @@ typedef struct {
     real vx, vy, vz;        // flow velocity
     real pi[4][4];          // shear stress tensor [GeV/fm^3]
     real bulk_Pi;           // bulk viscous pressure [GeV/fm^3]
-} FluidCellInfo;
+
+    FluidCellInfo() = default;    
+
+    FluidCellInfo inline operator*=(real b);
+};
+
+/// adds \f$ c = a + b \f$
+inline FluidCellInfo operator+(FluidCellInfo a, const FluidCellInfo & b)
+{
+    a.energy_density += b.energy_density;
+    a.entropy_density += b.entropy_density;
+    a.temperature += b.temperature;
+    a.pressure += b.pressure;
+    a.qgp_fraction += b.qgp_fraction;
+    a.mu_B += b.mu_B;
+    a.mu_C += b.mu_C;
+    a.mu_S += b.mu_S;
+    a.vx += b.vx;
+    a.vy += b.vy;
+    a.vz += b.vz;
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            a.pi[i][j] += b.pi[i][j];
+        }
+    }
+    a.bulk_Pi += b.bulk_Pi;
+    return a;
+}
+
+/// multiply the fluid cell with a scalar factor
+FluidCellInfo inline FluidCellInfo::operator*=(real b){
+    this->energy_density *= b;
+    this->entropy_density *= b;
+    this->temperature *= b;
+    this->pressure *= b;
+    this->qgp_fraction *= b;
+    this->mu_B *= b;
+    this->mu_C *= b;
+    this->mu_S *= b;
+    this->vx *= b;
+    this->vy *= b;
+    this->vz *= b;
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            this->pi[i][j] *= b;
+        }
+    }
+    this->bulk_Pi *= b;
+    return *this;
+}
+
+/// multiply \f$ c = a * b \f$
+inline FluidCellInfo operator*(real a, FluidCellInfo b){
+    b *= a;
+    return b;
+}
+
+/// multiply \f$ c = a * b \f$
+inline FluidCellInfo operator*(FluidCellInfo a, real b){
+    a *= b;
+    return a;
+}
+
+/// division \f$ c = a / b \f$
+inline FluidCellInfo operator/(FluidCellInfo a, real b){
+    a *= 1.0/b;
+    return a;
+}
+
+// print the fluid cell information for debuging
+std::ostream &operator<<(std::ostream &os, const FluidCellInfo &cell) {
+    os << "energy_density=" << cell.energy_density << std::endl; 
+    os << "entropy_density=" << cell.entropy_density << std::endl; 
+    os << "temperature=" << cell.temperature << std::endl; 
+    os << "pressure=" << cell.pressure << std::endl;
+    os << "qgp_fraction=" << cell.qgp_fraction << std::endl;
+    os << "mu_B=" << cell.mu_B << std::endl;
+    os << "mu_C=" << cell.mu_C << std::endl;
+    os << "mu_S=" << cell.mu_S << std::endl;
+    os << "vx=" << cell.vx << std::endl;
+    os << "vy=" << cell.vy << std::endl;
+    os << "vz=" << cell.vz << std::endl;
+    os << "pi[mu][nu]=" << std::endl;
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            os << cell.pi[i][j] << ' ';
+        }
+        os << std::endl;
+    }
+    os << "bulk_Pi=" << cell.bulk_Pi;
+    return os << std::endl;
+}
 
 typedef struct {
     // data structure for outputing hyper-surface information
@@ -72,7 +152,7 @@ class EvolutionHistory{
     // default: set using_tz_for_tau_eta=true
     bool using_tz_for_tau_eta;
     // the bulk information
-    std::vector<BulkElement> data;
+    std::vector<FluidCellInfo> data;
 
     EvolutionHistory();
     ~EvolutionHistory() {data.clear();}
@@ -99,7 +179,7 @@ class FluidDynamics{
     // How to store this data? In memory or hard disk?
     // 3D hydro may eat out the memory,
     // for large dataset, std::deque is better than std::vector.
-    // EvolutionHistory bulk_info;
+    EvolutionHistory bulk_info;
 
     /*Keep this interface open in the beginning.*/
     // FreezeOutHyperSf hyper_sf;
@@ -108,6 +188,7 @@ class FluidDynamics{
     // pure virtual function; to be implemented by users
     // should make it easy to save evolution history to bulk_info
     virtual void initialize_hydro(Parameter parameter_list) {};
+
     virtual void evolve_hydro() {};
 
     // virtual void evolution(const EnergyMomentumTensor & tmn,
@@ -127,7 +208,7 @@ class FluidDynamics{
 
     // this function retrives hydro information at a given space-tim point
     // the detailed implementation is left to the hydro developper
-    virtual void get_hydro_info(real t, real x, real y, real z,
+    void get_hydro_info(real t, real x, real y, real z,
                                 FluidCellInfo* fluid_cell_info_ptr) {};
 
     // this function returns hypersurface for Cooper-Frye or recombination
