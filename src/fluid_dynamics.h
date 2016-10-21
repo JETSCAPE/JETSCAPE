@@ -130,6 +130,9 @@ class FluidDynamics{
     virtual void get_hydro_info(real t, real x, real y, real z,
                                 FluidCellInfo* fluid_cell_info_ptr) {};
 
+    // this function print out the information of the fluid cell to the screen
+    void print_fluid_cell_information(FluidCellInfo* fluid_cell_info_ptr);
+
     // this function returns hypersurface for Cooper-Frye or recombination
     // the detailed implementation is left to the hydro developper
     virtual void get_hypersurface(real T_cut,

@@ -8,12 +8,13 @@ RANLIB	= ranlib
 RM	= rm
 ECHO	= echo
 
+jetscape_src = ../src
 external_src = ../external_packages/hydro_from_external_file
 external_lib = ../external_packages/lib
 wrapper_src = ../wrappers/
 
 INCLUDES = -I./$(external_src)
-OBJECTS	= test_hydro_file_main.o hydro_file_jetscape.o
+OBJECTS	= test_hydro_file_main.o hydro_file_jetscape.o fluid_dynamics.o
 OBJLIBS	= $(external_lib)/libsrc_hydro_file.a
 LIBS	=  -L$(external_lib) -L$(wrapper_src)
 EXECUTABLE = test_hydro_file_main
@@ -21,13 +22,16 @@ EXECUTABLE = test_hydro_file_main
 all: $(OBJECTS) $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJECTS) $(OBJLIBS) 
-	$(CXX) $(CXXFLAGS) $@.o hydro_file_jetscape.o $(OBJLIBS) $(LIBS) -o $@
+	$(CXX) $(CXXFLAGS) $(OBJECTS) $(OBJLIBS) $(LIBS) -o $@
 
 test_hydro_file_main.o: $(OBJLIBS) test_hydro_file_main.cpp
 	$(CXX) $(CXXFLAGS) -c $(INCLUDES) test_hydro_file_main.cpp
 
 hydro_file_jetscape.o : $(OBJLIBS) $(wrapper_src)/hydro_file_jetscape.cpp
 	$(CXX) $(CXXFLAGS) -c $(INCLUDES) $(wrapper_src)/hydro_file_jetscape.cpp
+
+fluid_dynamics.o : $(jetscape_src)/fluid_dynamics.cpp
+	$(CXX) $(CXXFLAGS) -c $(INCLUDES) $(jetscape_src)/fluid_dynamics.cpp
 
 $(external_lib)/libsrc_hydro_file.a : force_look
 	cd $(external_src); make -f Makefile_lib

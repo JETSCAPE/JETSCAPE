@@ -14,7 +14,10 @@ class HydroFile: public FluidDynamics {
     ParameterReader *paraRdr;
     int load_viscous;
     int hydro_type;
-    void* hydroinfo_ptr_in;
+    
+    double T_c;
+    HydroinfoH5 *hydroinfo_h5_ptr;
+    Hydroinfo_MUSIC *hydroinfo_MUSIC_ptr; 
 
  public:
      HydroFile(Parameter parameter_list);
@@ -24,7 +27,7 @@ class HydroFile: public FluidDynamics {
 
      void evolve_hydro();
      void get_hydro_info(real t, real x, real y, real z,
-                         FluidCellInfo* fluid_cell_info_ptr) {};
+                         FluidCellInfo* fluid_cell_info_ptr);
      void get_hypersurface(real T_cut, SurfaceCellInfo* surface_list_ptr) {};
 
 };

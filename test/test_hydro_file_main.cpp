@@ -19,6 +19,9 @@ int main(int argc, char *argv[]) {
     HydroFile *hydro_from_file_ptr = new HydroFile(parameter_list);
     hydro_from_file_ptr->initialize_hydro(parameter_list);
     hydro_from_file_ptr->evolve_hydro();
-
+    FluidCellInfo* check_fluid_info_ptr = new FluidCellInfo;
+    hydro_from_file_ptr->get_hydro_info(1.0, 0.0, 0.0, 0.0,
+                                        check_fluid_info_ptr);
+    hydro_from_file_ptr->print_fluid_cell_information(check_fluid_info_ptr);
     return(1);
 }
