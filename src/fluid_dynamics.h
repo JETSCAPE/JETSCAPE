@@ -7,8 +7,11 @@
 
 #include <vector>
 #include <cstring>
+#include <stdexcept>
 
 #include "realtype.h"
+
+enum HydroStatus {NOT_START, INITIALIZED, EVOLVING, FINISHED;
 
 //overload +-*/ for easier linear interpolation
 class FluidCellInfo {
@@ -149,13 +152,34 @@ class EvolutionHistory{
     real y_min, dy;
     real eta_min, deta;
     int ntau, nx, ny, neta;
-    // default: set using_tz_for_tau_eta=true
-    bool using_tz_for_tau_eta;
+    // tau_eta_is_tz: default false;
+    // true if hydro is in (t,x,y,z) coordinates
+    bool tau_eta_is_tz;
     // the bulk information
     std::vector<FluidCellInfo> data;
 
     EvolutionHistory();
     ~EvolutionHistory() {data.clear();}
+
+    inline real tau_max(){return tau_min + ntau * dtau;}
+    inline real x_max(){return x_min + nx * dx;}
+    inline real y_max(){return y_min + ny * dy;}
+    inline real eta_max(){return eta_min + neta * deta;}
+
+    class InvalidSpaceTimeRange : public std::invalid_argument {
+        using std::invalid_argument::invalid_argument;
+    };
+
+    void check_in_range(real tau, real x, real y, real etas);
+
+    // get the lower bound of the fluid cell
+    inline int get_id_tau(real tau);
+    inline int get_id_x(real x);
+    inline int get_id_y(real y);
+    inline int get_id_eta(real eta);
+
+    // get the FluidCellInfo at given space time point
+    FluidCellInfo get(real tau, real x, real y, real etas);
 };
 
 
@@ -167,10 +191,10 @@ class FluidDynamics{
     real hydro_freeze_out_temperature;
 
     // record hydro running status
-    int hydro_status;  // 0: nothing happened
+    HydroStatus hydro_status;  // 0: nothing happened
                        // 1: hydro has been initialized
                        // 2: hydro is evolving
-                       // 3: all fluid cells have reached freeze-out
+                       // 3: all fluid cells have reached freeze-out, EvolutionHistory filled
                        // -1: An error occurred
  public:
     FluidDynamics() {};
@@ -191,13 +215,6 @@ class FluidDynamics{
 
     virtual void evolve_hydro() {};
 
-    // virtual void evolution(const EnergyMomentumTensor & tmn,
-    //                        real xmax, real ymax, real hmax,
-    //                        real tau0, real dtau, real dx,
-    //                        real dy, real dh, real etaos,
-    //                        real dtau_out, real dx_out, real dy_out,
-    //                        real dh_out) const = 0;
-
     // the following functions should be implemented in Jetscape
     int get_hydro_status() {return(hydro_status);}
     real get_hydro_start_time() {return(hydro_tau_0);}
@@ -206,10 +223,13 @@ class FluidDynamics{
         return(hydro_freeze_out_temperature);
     }
 
-    // this function retrives hydro information at a given space-tim point
-    // the detailed implementation is left to the hydro developper
+    /** retrive hydro information at a given space-tim point
+     * throw InvalidSpaceTimeRange exception when
+     * (t, x, y, z) is out of the EvolutionHistory range
+     */
     void get_hydro_info(real t, real x, real y, real z,
                                 FluidCellInfo* fluid_cell_info_ptr) {};
+
 
     // this function returns hypersurface for Cooper-Frye or recombination
     // the detailed implementation is left to the hydro developper
