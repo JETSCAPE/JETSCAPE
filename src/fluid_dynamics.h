@@ -9,6 +9,7 @@
 #include <cstring>
 #include <stdexcept>
 #include <cmath>
+#include <iostream>
 
 #include "realtype.h"
 

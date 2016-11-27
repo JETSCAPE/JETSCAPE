@@ -8,31 +8,6 @@
 
 using namespace std;
 
-/** make sure the space time point (tau, x, y, eta) is inside
- * evolution history */
-//void EvolutionHistory::check_in_range(real tau, real x, real y, real eta){
-//    if (tau < tau_min || tau > tau_max()) {
-//        throw InvalidSpaceTimeRange("tau=" + std::to_string(tau)
-//                + " is not in range [" + std::to_string(tau_min) + "," 
-//                + std::to_string(tau_max()) + "]");
-//    }
-//    if (x < x_min || x > x_max()) {
-//        throw InvalidSpaceTimeRange("x=" + std::to_string(x)
-//                + " is not in range [" + std::to_string(x_min) + "," 
-//                + std::to_string(x_max()) + "]");
-//    }
-//    if (y < y_min || y > y_max()) {
-//        throw InvalidSpaceTimeRange("y=" + std::to_string(y)
-//                + " is not in range [" + std::to_string(y_min) + "," 
-//                + std::to_string(y_max()) + "]");
-//    }
-//    if (eta < eta_min || eta > eta_max()) {
-//        throw InvalidSpaceTimeRange("eta=" + std::to_string(eta)
-//                + " is not in range [" + std::to_string(eta_min) + "," 
-//                + std::to_string(eta_max()) + "]");
-//    }
-//}
-
 /** For one given time step id_tau,
  * get FluidCellInfo at spatial point (x, y, eta)*/
 FluidCellInfo EvolutionHistory::get_at_time_step(int id_tau,
