@@ -20,7 +20,7 @@ class HydroFile: public FluidDynamics {
     Hydroinfo_MUSIC *hydroinfo_MUSIC_ptr; 
 
  public:
-     HydroFile(Parameter parameter_list);
+     HydroFile();
      ~HydroFile();
 
      void initialize_hydro(Parameter parameter_list);

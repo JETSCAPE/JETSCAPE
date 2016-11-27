@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
     Parameter parameter_list;
     parameter_list.hydro_input_filename = *(argv+1);
 
-    HydroFile *hydro_from_file_ptr = new HydroFile(parameter_list);
+    HydroFile *hydro_from_file_ptr = new HydroFile();
     hydro_from_file_ptr->initialize_hydro(parameter_list);
     hydro_from_file_ptr->evolve_hydro();
     FluidCellInfo* check_fluid_info_ptr = new FluidCellInfo;

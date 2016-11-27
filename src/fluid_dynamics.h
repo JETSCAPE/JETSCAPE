@@ -8,6 +8,7 @@
 #include <vector>
 #include <cstring>
 #include <stdexcept>
+#include <cmath>
 
 #include "realtype.h"
 
@@ -104,28 +105,29 @@ inline FluidCellInfo operator/(FluidCellInfo a, real b){
 }
 
 // print the fluid cell information for debuging
-std::ostream &operator<<(std::ostream &os, const FluidCellInfo &cell) {
-    os << "energy_density=" << cell.energy_density << std::endl; 
-    os << "entropy_density=" << cell.entropy_density << std::endl; 
-    os << "temperature=" << cell.temperature << std::endl; 
-    os << "pressure=" << cell.pressure << std::endl;
-    os << "qgp_fraction=" << cell.qgp_fraction << std::endl;
-    os << "mu_B=" << cell.mu_B << std::endl;
-    os << "mu_C=" << cell.mu_C << std::endl;
-    os << "mu_S=" << cell.mu_S << std::endl;
-    os << "vx=" << cell.vx << std::endl;
-    os << "vy=" << cell.vy << std::endl;
-    os << "vz=" << cell.vz << std::endl;
-    os << "pi[mu][nu]=" << std::endl;
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            os << cell.pi[i][j] << ' ';
-        }
-        os << std::endl;
-    }
-    os << "bulk_Pi=" << cell.bulk_Pi;
-    return os << std::endl;
-}
+// this function has bugs
+//std::ostream &operator<<(std::ostream &os, const FluidCellInfo &cell) {
+//    os << "energy_density=" << cell.energy_density << std::endl; 
+//    os << "entropy_density=" << cell.entropy_density << std::endl; 
+//    os << "temperature=" << cell.temperature << std::endl; 
+//    os << "pressure=" << cell.pressure << std::endl;
+//    os << "qgp_fraction=" << cell.qgp_fraction << std::endl;
+//    os << "mu_B=" << cell.mu_B << std::endl;
+//    os << "mu_C=" << cell.mu_C << std::endl;
+//    os << "mu_S=" << cell.mu_S << std::endl;
+//    os << "vx=" << cell.vx << std::endl;
+//    os << "vy=" << cell.vy << std::endl;
+//    os << "vz=" << cell.vz << std::endl;
+//    os << "pi[mu][nu]=" << std::endl;
+//    for (int i = 0; i < 4; i++) {
+//        for (int j = 0; j < 4; j++) {
+//            os << cell.pi[i][j] << ' ';
+//        }
+//        os << std::endl;
+//    }
+//    os << "bulk_Pi=" << cell.bulk_Pi;
+//    return os << std::endl;
+//}
 
 typedef struct {
     // data structure for outputing hyper-surface information
@@ -164,7 +166,7 @@ class EvolutionHistory{
     // the bulk information
     std::vector<FluidCellInfo> data;
 
-    EvolutionHistory();
+    EvolutionHistory() {};
     ~EvolutionHistory() {data.clear();}
 
     inline real tau_max(){return tau_min + ntau * dtau;}
@@ -176,23 +178,47 @@ class EvolutionHistory{
         using std::invalid_argument::invalid_argument;
     };
 
-    void check_in_range(real tau, real x, real y, real etas);
+    /** make sure the space time point (tau, x, y, eta) is inside
+     * evolution history */
+    void check_in_range(real tau, real x, real y, real eta) {
+        if (tau < tau_min || tau > tau_max()) {
+            throw InvalidSpaceTimeRange("tau=" + std::to_string(tau)
+                    + " is not in range [" + std::to_string(tau_min) + "," 
+                    + std::to_string(tau_max()) + "]");
+        }
+        if (x < x_min || x > x_max()) {
+            throw InvalidSpaceTimeRange("x=" + std::to_string(x)
+                    + " is not in range [" + std::to_string(x_min) + "," 
+                    + std::to_string(x_max()) + "]");
+        }
+        if (y < y_min || y > y_max()) {
+            throw InvalidSpaceTimeRange("y=" + std::to_string(y)
+                    + " is not in range [" + std::to_string(y_min) + "," 
+                    + std::to_string(y_max()) + "]");
+        }
+        if (eta < eta_min || eta > eta_max()) {
+            throw InvalidSpaceTimeRange("eta=" + std::to_string(eta)
+                    + " is not in range [" + std::to_string(eta_min) + "," 
+                    + std::to_string(eta_max()) + "]");
+        }
+    }
+
 
     // get the lower bound of the fluid cell along tau
     inline int get_id_tau(real tau){
-        return (int)(floor((tau - tau_min) / dtau))
+        return(static_cast<int>((tau - tau_min)/dtau));
     }
     // get the lower bound of the fluid cell along x
     inline int get_id_x(real x) { 
-        return (int)(floor((x - x_min) / dx))
+        return(static_cast<int>((x - x_min)/dx));
     }
     // get the lower bound of the fluid cell along y
     inline int get_id_y(real y) {
-        return (int)(floor((y - y_min) / dy))
+        return(static_cast<int>((y - y_min)/dy));
     }
     // get the lower bound of the fluid cell along y
     inline int get_id_eta(real eta) {
-        return (int)(floor((eta - eta_min) / deta))
+        return(static_cast<int>((eta - eta_min)/deta));
     }
 
     // get the coordinate of tau, x, y, eta on grid
@@ -202,8 +228,7 @@ class EvolutionHistory{
     inline real eta_coord(int id_eta) { return eta_min + id_eta * deta; }
 
     // get the FluidCellInfo index in data
-    inline int cell_index(int id_tau, int id_x, int id_y, int id_eta)
-    {
+    inline int cell_index(int id_tau, int id_x, int id_y, int id_eta) {
         return  id_tau * nx * ny * neta + id_x * ny * neta
                         + id_y * neta + id_eta;
     }
@@ -229,6 +254,7 @@ class FluidDynamics{
                        // 2: hydro is evolving
                        // 3: all fluid cells have reached freeze-out, EvolutionHistory filled
                        // -1: An error occurred
+
  public:
     FluidDynamics() {};
     ~FluidDynamics() {};
@@ -262,8 +288,23 @@ class FluidDynamics{
      * throw InvalidSpaceTimeRange exception when
      * (t, x, y, z) is out of the EvolutionHistory range
      */
-    void get_hydro_info(real t, real x, real y, real z,
-                                FluidCellInfo* fluid_cell_info_ptr) {};
+    virtual void get_hydro_info(real t, real x, real y, real z,
+                                FluidCellInfo* fluid_cell_info_ptr){
+        if (hydro_status != FINISHED || bulk_info.data.size() == 0) {
+            throw std::runtime_error("Hydro evolution is not finished "
+                                     "or EvolutionHistory is empty");
+        }
+        // judge whether to use 2D interpolation or 3D interpolation
+        if (!bulk_info.tau_eta_is_tz) {
+            real tau = std::sqrt(t * t - z * z);
+            real eta = 0.5 * (std::log(t + z) - std::log(t - z));
+            bulk_info.check_in_range(tau, x, y, eta);
+            //return bulk_info.get(tau, x, y, eta);
+        } else {
+            bulk_info.check_in_range(t, x, y, z);
+            //return bulk_info.get(t, x, y, z);
+        }
+    }
 
     // this function print out the information of the fluid cell to the screen
     void print_fluid_cell_information(FluidCellInfo* fluid_cell_info_ptr);

@@ -10,13 +10,13 @@
 using namespace std;
 
 
-MUSIC::MUSIC(Parameter parameter_list) {
-    hydro_status = 0;
+MUSIC::MUSIC() {
+    hydro_status = NOT_START;
 }
 
 
 MUSIC::~MUSIC() {
-    if (hydro_status > 0) {
+    if (hydro_status != NOT_START) {
         if (mode == 1) {
             delete init;
             delete evolve;
@@ -33,7 +33,7 @@ void MUSIC::initialize_hydro(Parameter parameter_list) {
     string input_file = parameter_list.hydro_input_filename;
     ReadInData3(input_file);
     eos = new EOS(DATA);
-    hydro_status = 1;
+    hydro_status = INITIALIZED;
 }
 
 
@@ -47,9 +47,9 @@ void MUSIC::evolve_hydro() {
     init->InitArena(DATA, &arena);
 
     evolve = new Evolve(eos, DATA);
-    hydro_status = 2;
+    hydro_status = EVOLVING;
     evolve->EvolveIt(DATA, arena);
-    hydro_status = 3;
+    hydro_status = FINISHED;
 }
 
 

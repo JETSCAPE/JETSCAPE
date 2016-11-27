@@ -15,7 +15,7 @@
 using namespace std;
 
 
-HydroFile::HydroFile(Parameter parameter_list) {
+HydroFile::HydroFile() {
     // initialize the parameter reader
     paraRdr = new ParameterReader();
     paraRdr->readFromFile("parameters.dat");
@@ -23,12 +23,12 @@ HydroFile::HydroFile(Parameter parameter_list) {
 
     T_c = 0.15;
 
-    hydro_status = 0;
+    hydro_status = NOT_START;
 }
 
 
 HydroFile::~HydroFile() {
-    if (hydro_status > 0) {
+    if (hydro_status != NOT_START) {
         delete paraRdr;
     }
 }
@@ -59,12 +59,12 @@ void HydroFile::initialize_hydro(Parameter parameter_list) {
         cout << "main: unrecognized hydro_type = " << hydro_type << endl;
         exit(1);
     }
-    hydro_status = 1;
+    hydro_status = INITIALIZED;
 }
 
 
 void HydroFile::evolve_hydro() {
-    hydro_status = 3;
+    hydro_status = FINISHED;
 }
 
 

@@ -26,7 +26,7 @@ class MUSIC: public FluidDynamics {
      Evolve *evolve;
 
 public:
-     MUSIC(Parameter parameter_list);
+     MUSIC();
      ~MUSIC();
 
      void ReadInData3(string file);
