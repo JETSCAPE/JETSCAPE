@@ -130,7 +130,8 @@ inline FluidCellInfo operator/(FluidCellInfo a, real b){
 //    return os << std::endl;
 //}
 
-typedef struct {
+class SurfaceCellInfo {
+ public:
     // data structure for outputing hyper-surface information
     real d3sigma_mu[4];     // surface vector
     real energy_density;    // local energy density [GeV/fm^3]
@@ -144,7 +145,10 @@ typedef struct {
     real vx, vy, vz;        // flow velocity
     real pi[4][4];          // shear stress tensor [GeV/fm^3]
     real bulk_Pi;           // bulk viscous pressure [GeV/fm^3]
-} SurfaceCellInfo;
+
+    SurfaceCellInfo() {};
+    ~SurfaceCellInfo() {};
+};
 
 
 class Parameter{
