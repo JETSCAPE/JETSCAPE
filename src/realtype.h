@@ -11,4 +11,4 @@ typedef float real;
 typedef std::tuple<real, real, real> real3;
 typedef std::tuple<real, real, real, real> real4;
 
-#endif
+#endif  // SRC_REALTYPE_H_

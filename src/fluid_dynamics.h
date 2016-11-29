@@ -13,7 +13,7 @@
 
 #include "realtype.h"
 
-enum HydroStatus {NOT_START, INITIALIZED, EVOLVING, FINISHED};
+enum HydroStatus {NOT_START, INITIALIZED, EVOLVING, FINISHED, ERROR};
 
 class JetSource {
     public:
@@ -208,7 +208,6 @@ class EvolutionHistory{
         }
     }
 
-
     // get the lower bound of the fluid cell along tau
     inline int get_id_tau(real tau){
         return(static_cast<int>((tau - tau_min)/dtau));
@@ -252,13 +251,8 @@ class FluidDynamics{
     real hydro_tau_0, hydro_tau_max;
     // record hydro freeze out temperature [GeV]
     real hydro_freeze_out_temperature;
-
     // record hydro running status
-    HydroStatus hydro_status;  // 0: nothing happened
-                       // 1: hydro has been initialized
-                       // 2: hydro is evolving
-                       // 3: all fluid cells have reached freeze-out, EvolutionHistory filled
-                       // -1: An error occurred
+    HydroStatus hydro_status;
 
  public:
     FluidDynamics() {};
