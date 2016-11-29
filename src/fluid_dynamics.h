@@ -174,10 +174,10 @@ class EvolutionHistory{
     EvolutionHistory() {};
     ~EvolutionHistory() {data.clear();}
 
-    inline real tau_max(){return tau_min + ntau * dtau;}
-    inline real x_max(){return x_min + nx * dx;}
-    inline real y_max(){return y_min + ny * dy;}
-    inline real eta_max(){return eta_min + neta * deta;}
+    inline real tau_max() {return tau_min + ntau * dtau;}
+    inline real x_max() {return x_min + nx * dx;}
+    inline real y_max() {return y_min + ny * dy;}
+    inline real eta_max() {return eta_min + neta * deta;}
 
     class InvalidSpaceTimeRange : public std::invalid_argument {
         using std::invalid_argument::invalid_argument;

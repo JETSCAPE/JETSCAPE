@@ -1,5 +1,4 @@
-// Original copyright 2011 @ Bjoern Schenke, Sangyong Jeon, and Charles Gale
-// Massively cleaned up and improved by Chun Shen 2015-2016
+// Copyright @ Chun Shen
 #include <stdio.h>
 #include <sys/stat.h>
 
