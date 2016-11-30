@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
     Parameter parameter_list;
     parameter_list.hydro_input_filename = *(argv+1);
 
-    MUSIC *MUSIC_ptr = new MUSIC();
+    MPI_MUSIC *MUSIC_ptr = new MPI_MUSIC();
     MUSIC_ptr->initialize_hydro(parameter_list);
     MUSIC_ptr->evolve_hydro();
 

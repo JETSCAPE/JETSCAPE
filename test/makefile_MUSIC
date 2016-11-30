@@ -1,6 +1,6 @@
 
-CXX	= g++-mp-5
-CXXFLAGS = -std=c++11 -O3 -Wall $(shell gsl-config --cflags) -fopenmp
+CXX	= mpicxx-openmpi-gcc5
+CXXFLAGS = -std=c++11 -O3 -Wall $(shell gsl-config --cflags)
 
 AR	= ar
 ARFLAGS	= rcv
