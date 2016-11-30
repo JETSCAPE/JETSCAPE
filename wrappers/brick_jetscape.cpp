@@ -6,12 +6,12 @@
 #include <cmath>
 #include <iostream>
 #include "../src/fluid_dynamics.h"
-#include "./hydro_brick_jetscape.h"
+#include "./brick_jetscape.h"
 
 using namespace std;
 
 
-HydroBrick::HydroBrick() {
+Brick::Brick() {
     // initialize the parameter reader
     T_brick = 0.3;  // GeV
 
@@ -19,21 +19,21 @@ HydroBrick::HydroBrick() {
 }
 
 
-HydroBrick::~HydroBrick() {}
+Brick::~Brick() {}
 
 
-void HydroBrick::initialize_hydro(Parameter parameter_list) {
+void Brick::initialize_hydro(Parameter parameter_list) {
     hydro_status = INITIALIZED;
 }
 
 
-void HydroBrick::evolve_hydro() {
+void Brick::evolve_hydro() {
     hydro_status = FINISHED;
 }
 
 
-void HydroBrick::get_hydro_info(real t, real x, real y, real z,
-                                FluidCellInfo* fluid_cell_info_ptr) {
+void Brick::get_hydro_info(real t, real x, real y, real z,
+                           FluidCellInfo* fluid_cell_info_ptr) {
     // assign all the quantites to JETSCAPE output
     // thermodyanmic quantities
     fluid_cell_info_ptr->energy_density = 0.0;

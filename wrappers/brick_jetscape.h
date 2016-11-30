@@ -1,18 +1,18 @@
 // Copyright @ Chun Shen
-#ifndef TEST_HYDRO_BRICK_JETSCAPE_H_
-#define TEST_HYDRO_BRICK_JETSCAPE_H_
+#ifndef TEST_BRICK_JETSCAPE_H_
+#define TEST_BRICK_JETSCAPE_H_
 
 #include "../src/fluid_dynamics.h"
 
-class HydroBrick: public FluidDynamics {
+class Brick: public FluidDynamics {
     // this is wrapper class for a simple brick
     // so that it can be used within the JETSCAPE framework
  private:
     double T_brick;
 
  public:
-     HydroBrick();
-     ~HydroBrick();
+     Brick();
+     ~Brick();
 
      void initialize_hydro(Parameter parameter_list);
 
@@ -23,4 +23,4 @@ class HydroBrick: public FluidDynamics {
 
 };
 
-#endif  // TEST_HYDRO_BRICK_JETSCAPE_H_
+#endif  // TEST_BRICK_JETSCAPE_H_
