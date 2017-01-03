@@ -28,9 +28,9 @@ int main()
     };
     
     //std::vector<parton> shower;
-    parton quark(1,1,1,passign,xloc);
+    Parton quark(1,1,1,passign,xloc);
     
-    jet parentjet(passign);
+    Jet parentjet(passign);
     
     virt = quark.generate_t();
     

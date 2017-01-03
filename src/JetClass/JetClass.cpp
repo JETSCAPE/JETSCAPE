@@ -14,17 +14,17 @@
 #include "JetClass.hpp"
 //#include "constants.h"
 
-jet::jet(double p_in[4])
+Jet::Jet(double p_in[4])
 {
-    set_jet_p(p_in);
+    Set_Jet_p(p_in);
 }
 
-parton::parton (int label, int id, int stat, double p_in[4], double x[4])
+Parton::Parton (int label, int id, int stat, double p_in[4], double x[4])
 {
     
-    set_label(label);
+    Set_label(label);
     
-    set_id(id);
+    Set_id(id);
     
     mass = -1.0;
     switch (id) {
@@ -55,13 +55,13 @@ parton::parton (int label, int id, int stat, double p_in[4], double x[4])
         }
     }
     
-    set_stat(stat);
+    Set_stat(stat);
     
-    set_p(p_in);
+    Set_p(p_in);
     
-    set_x(x);
+    Set_x(x);
     
-    set_pl();
+    Set_pl();
     
     p[0] = std::sqrt(pl*pl + mass*mass);
     
