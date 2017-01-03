@@ -1,8 +1,8 @@
 /*******************************************************************************
 
 This is the base data structure class of Jetscape, which will get passed to all
-modules to read and modify as needed. This base class should evolve as to new
-needs arsise. 
+modules to read and modify as needed. This base class should evolve as new needs
+arsise. 
 
 *******************************************************************************/
 

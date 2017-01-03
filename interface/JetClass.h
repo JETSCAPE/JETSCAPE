@@ -1,8 +1,7 @@
 /*******************************************************************************
 
-This is the class that holds the configuration information and parameters to run
-Jetscape. This class will be built up as different modules require different 
-parameters. Members set to public since modules will be reading these parameters
+This is the data structure class for Jets. This class should evolve as new
+needs arsise. 
 
 *******************************************************************************/
 
@@ -13,8 +12,8 @@ class Jet {
   ~Jet(){};
   float[] get_jet_p() { return jet_p; ;
   float get_jet_pt() { return jet_pt; };
-  float get_jet_eta() { return jet_eta; ;
-  float get_jet_phi() { return jet_phi; ;
+  float get_jet_eta() { return jet_eta; };
+  float get_jet_phi() { return jet_phi; };
  private :
   float jet_p[4]; // momenta of jet
   float jet_pt;   // pt of jet
