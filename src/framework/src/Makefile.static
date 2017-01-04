@@ -1,0 +1,59 @@
+#
+# Simple Makefile for test only !!!
+#
+######################
+
+CXX           = g++
+LD            = g++
+AR	      = ar
+
+#############################
+
+os = $(shell uname -s)
+
+ifeq ($(os),Linux)
+CXXFLAGS  = -O -std=c++11
+else
+CXXFLAGS  = -O -pipe -Wall -std=c++11 -stdlib=libc++ -pthread
+endif
+
+ifeq ($(os),Linux)
+LDFLAGS       = -g
+LDFLAGSS      = -g --shared
+else
+LDFLAGS       = -O -Xlinker -bind_at_load -flat_namespace
+LDFLAGSS      = -dynamiclib -flat_namespace -undefined suppress
+LDFLAGSSS     = -bundle
+endif
+
+ROOTLIBS      = -lpthread -stdlib=libc++ -lm -ldl #$(shell root-config --libs)
+
+LIBS          =  $(ROOTLIBS)
+
+
+HDRS          = JetScape.h JetScapeModuleBase.h JetScapeTask.h JetScapeLogger.h JetScapeXML.h JetEnergyLoss.h JetEnergyLossManager.h JetScapeSignalManager.h FluidDynamics.h ElossModulesTest.h tinyxml2.h
+SRCS          = JetScape.cc JetScapeModuleBase.cc JetScapeTask.cc JetScapeLogger.cc JetScapeXML.cc JetEnergyLoss.cc JetEnergyLossManager.cc JetScapeSignalManager.cc FluidDynamics.cc ElossModulesTest.cc tinyxml2.cc
+
+OBJS          = $(SRCS:.cc=.o)
+
+STATLIB	      = libJetscape.a
+
+all: $(STATLIB)
+
+$(STATLIB): $(OBJS)
+	@echo "Linking $(STATLIB) for "$(os)
+	$(AR) rcs ../lib/$(STATLIB) $(OBJS)
+
+##########################################################
+
+.cc.o:
+	$(CXX) $(CXXFLAGS) -I./src/ -c -o $@ $<
+
+.PHONY: clean cleanObj
+
+clean :
+	rm -f *.o ../lib/$(STATLIB)
+	@echo "All cleaned-up :-)"
+
+cleanObj:
+	rm -f *.o
