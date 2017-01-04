@@ -34,6 +34,8 @@ static double mu = 0.722;
 /*  the following is the maximum value from the standard C++ random number generator */
 static double maxN = double(pow(2.0,31.0) - 1.0) ;
 
+static double a_very_large_number = maxN ;
+
 /* the following 2 lines control the error in the analytical part of the calculation. */
 /* Note analytical approximation, cannot be rectified by more statistics             */
 /* However, more accurate analytical calculation will require less statistics to obtain smooth distributions */
@@ -58,6 +60,8 @@ static int qid=1;
 static int uid=2;
 
 static int did=1;
+
+static int sid=3;
 /*******************************************************************/
 
 

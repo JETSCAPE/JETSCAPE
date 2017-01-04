@@ -22,6 +22,12 @@ class FourVector
 
  public:
     
+    
+    FourVector() //default constructor
+    {
+        tv=xv=yv=zv=0.0;
+    };
+    
     FourVector(double a[4])  // constructor with array input
     {
         tv=a[0];
@@ -63,6 +69,28 @@ class FourVector
         return(tv);
     };
     
+    double comp(int i)
+    {
+        switch (i) {
+            case 0:
+                return(tv);
+                break;
+            case 1:
+                return(xv);
+                break;
+            case 2:
+                return(yv);
+                break;
+            case 3:
+                return(zv);
+                break;
+            default:
+                cout << " component index beyond 0-3! Returning garbage ..." << endl ;
+                return(a_very_large_number);
+                break;
+        }
+    }
+    
     double plus()
     {
         return ( (zv+tv)/sqrt(2.0) );
@@ -78,7 +106,7 @@ class FourVector
         if (this->minus()>0.0) return ( std::log(this->plus()/this->minus() )/2.0  );
         cout << endl << "ERROR: z component exceeds t component, cannot calculate rapidity" << endl;
         return (0);
-    }
+    };
     
     double operator*(FourVector &c)
     {
@@ -94,6 +122,16 @@ class FourVector
         zv+=c.z();
         
         return(*this);
+    };
+    
+    FourVector &operator=(FourVector &c)
+    {
+        tv = c.t();
+        xv = c.x();
+        yv = c.y();
+        zv = c.z();
+        return (*this);
+        
     };
     
     void rotate_around_z(double theta)
