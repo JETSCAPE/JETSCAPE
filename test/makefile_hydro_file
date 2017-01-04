@@ -1,19 +1,11 @@
+include Makefile.inc
 
 CXX	= h5c++
 CXXFLAGS = -std=c++11 -O3 -Wall
 
-AR	= ar
-ARFLAGS	= rcv
-RANLIB	= ranlib
-RM	= rm
-ECHO	= echo
-
-jetscape_src = ../src
 external_src = ../external_packages/hydro_from_external_file
-external_lib = ../external_packages/lib
-wrapper_src = ../wrappers/
 
-INCLUDES = -I./$(external_src)
+INCLUDES = -I./$(external_src) -I$(jetscape_src) -I$(wrapper_src)
 OBJECTS	= test_hydro_file_main.o hydro_file_jetscape.o fluid_dynamics.o
 OBJLIBS	= $(external_lib)/libsrc_hydro_file.a
 LIBS	=  -L$(external_lib) -L$(wrapper_src)

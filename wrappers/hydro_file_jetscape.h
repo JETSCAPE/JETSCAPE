@@ -2,10 +2,10 @@
 #ifndef TEST_HYDRO_FILE_JETSCAPE_H_
 #define TEST_HYDRO_FILE_JETSCAPE_H_
 
-#include "../src/fluid_dynamics.h"
-#include "../external_packages/hydro_from_external_file/Hydroinfo_h5.h"
-#include "../external_packages/hydro_from_external_file/Hydroinfo_MUSIC.h"
-#include "../external_packages/hydro_from_external_file/ParameterReader.h"
+#include "fluid_dynamics.h"
+#include "Hydroinfo_h5.h"
+#include "Hydroinfo_MUSIC.h"
+#include "ParameterReader.h"
 
 class HydroFile: public FluidDynamics {
     // this is wrapper class for MUSIC so that it can be used as a external

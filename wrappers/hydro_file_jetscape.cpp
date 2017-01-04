@@ -5,11 +5,11 @@
 #include <cstring>
 #include <cmath>
 #include <iostream>
-#include "../src/fluid_dynamics.h"
-#include "./hydro_file_jetscape.h"
-#include "../external_packages/hydro_from_external_file/Hydroinfo_h5.h"
-#include "../external_packages/hydro_from_external_file/Hydroinfo_MUSIC.h"
-#include "../external_packages/hydro_from_external_file/ParameterReader.h"
+#include "fluid_dynamics.h"
+#include "hydro_file_jetscape.h"
+#include "Hydroinfo_h5.h"
+#include "Hydroinfo_MUSIC.h"
+#include "ParameterReader.h"
 
 using namespace std;
 

@@ -6,8 +6,8 @@
 #include <iostream>
 #include <cstring>
 
-#include "../src/fluid_dynamics.h"
-#include "../wrappers/brick_jetscape.h"
+#include "fluid_dynamics.h"
+#include "brick_jetscape.h"
 
 using namespace std;
 

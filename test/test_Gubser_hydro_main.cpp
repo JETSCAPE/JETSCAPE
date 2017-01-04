@@ -6,8 +6,8 @@
 #include <iostream>
 #include <cstring>
 
-#include "../src/fluid_dynamics.h"
-#include "../wrappers/Gubser_hydro_jetscape.h"
+#include "fluid_dynamics.h"
+#include "Gubser_hydro_jetscape.h"
 
 using namespace std;
 

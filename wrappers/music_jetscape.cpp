@@ -3,8 +3,8 @@
 #include <sys/stat.h>
 
 #include <cstring>
-#include "../src/fluid_dynamics.h"
-#include "./music_jetscape.h"
+#include "fluid_dynamics.h"
+#include "music_jetscape.h"
 
 using namespace std;
 

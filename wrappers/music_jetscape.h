@@ -2,8 +2,8 @@
 #ifndef TEST_MUSIC_JETSCAPE_H_
 #define TEST_MUSIC_JETSCAPE_H_
 
-#include "../external_packages/music/src/music.h"
-#include "../src/fluid_dynamics.h"
+#include "music.h"
+#include "fluid_dynamics.h"
 
 class MPI_MUSIC: public FluidDynamics {
     // this is wrapper class for MUSIC so that it can be used as a external

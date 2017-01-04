@@ -2,7 +2,7 @@
 #ifndef TEST_BRICK_JETSCAPE_H_
 #define TEST_BRICK_JETSCAPE_H_
 
-#include "../src/fluid_dynamics.h"
+#include "fluid_dynamics.h"
 
 class Brick: public FluidDynamics {
     // this is wrapper class for a simple brick

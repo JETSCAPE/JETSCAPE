@@ -1,18 +1,9 @@
+include Makefile.inc
 
 CXX	= g++
 CXXFLAGS = -std=c++11 -O3 -Wall
 
-AR	= ar
-ARFLAGS	= rcv
-RANLIB	= ranlib
-RM	= rm
-ECHO	= echo
-
-jetscape_src = ../src
-external_lib = ../external_packages/lib
-wrapper_src = ../wrappers/
-
-INCLUDES =
+INCLUDES = -I$(jetscape_src) -I$(wrapper_src)
 OBJECTS	= test_Gubser_hydro_main.o Gubser_hydro_jetscape.o fluid_dynamics.o
 OBJLIBS	=
 LIBS	=  -L$(external_lib) -L$(wrapper_src)

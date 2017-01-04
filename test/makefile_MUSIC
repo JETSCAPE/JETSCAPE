@@ -1,19 +1,12 @@
+include Makefile.inc
 
 CXX	= mpicxx-openmpi-gcc5
 CXXFLAGS = -std=c++11 -O3 -Wall $(shell gsl-config --cflags)
 
-AR	= ar
-ARFLAGS	= rcv
-RANLIB	= ranlib
-RM	= rm
-ECHO	= echo
-
 external_src = ../external_packages/music/src
-external_lib = ../external_packages/lib
-wrapper_src = ../wrappers/
 
-INCLUDES = -I./$(external_src)
-OBJECTS	= test_MUSIC_main.o music_jetscape.o
+INCLUDES = -I./$(external_src) -I$(wrapper_src) -I$(jetscape_src)
+OBJECTS	= test_MUSIC_main.o music_jetscape.o fluid_dynamics.o
 OBJLIBS	= $(external_lib)/libsrc_music.a
 LIBS	=  -L$(external_lib) -L$(wrapper_src) $(shell gsl-config --libs)
 EXECUTABLE = test_MUSIC_main
@@ -28,6 +21,9 @@ test_MUSIC_main.o: $(OBJLIBS) test_MUSIC_main.cpp
 
 music_jetscape.o : $(OBJLIBS) $(wrapper_src)/music_jetscape.cpp
 	$(CXX) $(CXXFLAGS) -c $(INCLUDES) $(wrapper_src)/music_jetscape.cpp
+
+fluid_dynamics.o : $(jetscape_src)/fluid_dynamics.cpp
+	$(CXX) $(CXXFLAGS) -c $(INCLUDES) $(jetscape_src)/fluid_dynamics.cpp
 
 $(OBJLIBS) : force_look
 	cd $(external_src); make -f Makefile_lib

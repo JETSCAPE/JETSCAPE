@@ -5,8 +5,8 @@
 #include <cstring>
 #include <cmath>
 #include <iostream>
-#include "../src/fluid_dynamics.h"
-#include "./Gubser_hydro_jetscape.h"
+#include "fluid_dynamics.h"
+#include "Gubser_hydro_jetscape.h"
 
 #define hbarc 0.19733
 
