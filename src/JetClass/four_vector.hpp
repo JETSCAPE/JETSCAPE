@@ -45,7 +45,14 @@ class FourVector
         zv=z_in;
     };
     
+    void clear()
+    {
+        tv=xv=yv=zv=0.0;
+    }
+    
+    
     // constructors do all sets
+    
     
     
     // all gets are done with name calls e.g., vec.x()

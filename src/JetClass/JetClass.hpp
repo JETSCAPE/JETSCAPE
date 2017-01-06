@@ -13,6 +13,7 @@
 #include <math.h>
 #include "constants.h"
 #include "four_vector.hpp"
+#include <vector>
 
 
 class Jet
@@ -28,13 +29,13 @@ public:
         int i;
         for (i=0; i<=3; i++)
         {
-            jet_p[i] = p_in[i];
+            jet_p_[i] = p_in[i];
         };
     };
     
     double get_jet_p ()
     {
-        return ( sqrt( jet_p[1]*jet_p[1] + jet_p[2]*jet_p[2] + jet_p[3]*jet_p[3] ) );
+        return ( sqrt( jet_p_[1]*jet_p_[1] + jet_p_[2]*jet_p_[2] + jet_p_[3]*jet_p_[3] ) );
     }
     
     double get_jet_eta ()
@@ -43,37 +44,37 @@ public:
         
         p_mod = get_jet_p ();
         
-        jet_eta = log( ( p_mod + jet_p[3] )/( p_mod - jet_p[3] )  )/2.0;
+        jet_eta_ = log( ( p_mod + jet_p_[3] )/( p_mod - jet_p_[3] )  )/2.0;
         
-        return (jet_eta);
+        return (jet_eta_);
     }
     
     double get_jet_phi()
     {
         
-        if (jet_p[1]!=0.0)
+        if (jet_p_[1]!=0.0)
         {
-            jet_phi = atan(jet_p[2]/jet_p[1]);
+            jet_phi_ = atan(jet_p_[2]/jet_p_[1]);
         }
         else
         {
-            if (jet_p[2]>0.0)
+            if (jet_p_[2]>0.0)
             {
-                jet_phi = pi/2.0;
+                jet_phi_ = pi/2.0;
             }
             else
             {
-                jet_phi = 3.0*pi/2.0;
+                jet_phi_ = 3.0*pi/2.0;
             }
         }
-        return(jet_phi);
+        return(jet_phi_);
     }
     
 private:
     
-    double jet_p[4]; // momenta of jet
-    double jet_eta; //eta of jet
-    double jet_phi; //phi of jet
+    double jet_p_[4]; // momenta of jet
+    double jet_eta_; //eta of jet
+    double jet_phi_; //phi of jet
     
 };
 
@@ -82,8 +83,25 @@ class Parton
 {
 
 public:
-    
     Parton (int label, int id, int stat, double p[4], double x[4]);
+    
+    Parton ()
+    :plabel_(0)
+    ,pid_(0)
+    ,pstat_(0)
+    {
+        p_in_.clear();
+        x_in_.clear();
+    }
+    
+    void clear()
+    {
+        plabel_ = 0;
+        pid_ = 0;
+        pstat_ = 0;
+        p_in_.clear();
+        x_in_.clear();
+    }
     
     void set_label(int label)
     {
@@ -115,12 +133,46 @@ public:
         FourVector x_in_(x);
     };
     
+    void set_mean_form_time ()
+    {
+        mean_form_time_ = this->pl()/2/t_;
+    }
+
+    
+    int pid()
+    {
+        return(pid_);
+    }
+    
+    int pstat()
+    {
+        return(pstat_);
+    }
+    
+    int plabel()
+    {
+        return(plabel_);
+    }
+    
+    FourVector &p_in()
+    {
+        return(p_in_);
+    }
+    
+    FourVector &x_in()
+    {
+        return(x_in_);
+    }
     
     double mass()
     {
         return(mass_);
     }
 
+    double mean_form_time()
+    {
+        return(mean_form_time_);
+    }
     
     double get_p(int i)
     {
@@ -131,20 +183,13 @@ public:
     {
         return(std::sqrt( p_in_.x()*p_in_.x() + p_in_.y()*p_in_.y() + p_in_.z()*p_in_.z() ) );
     };
-
-    
-    void set_mean_form_time ()
-    {
-        mean_form_time_ = this->pl()/2/t_;
-    }
-
     
     double get_t ()
     {
         
         t_ = generate_t();
         
-        return (t_) ;
+        return (t_);
     }; // virtuality of particle
     
     virtual double generate_t()
@@ -152,22 +197,89 @@ public:
         return (1);
     };
     
+    Parton &operator=(Parton &c)
+    {
+        pid_ = c.pid() ;
+        pstat_ = c.pstat() ;
+        plabel_ = c.plabel() ;
+        p_in_ = c.p_in() ;
+        x_in_ = c.x_in() ;
+        mass_ = c.mass();
+        t_ = c.get_t();
+        
+        return(*this);
+    }
     
 private:
     
-    int pid_;  // particle id ()
-    int pstat_; // status of particle
-    int plabel_; // the line number in the event record
-    FourVector p_in_, x_in_; // internal momentum and position of particle
-    double Energy_, t_; // Energy, and t is the standard virtuality variable
-    double mean_form_time_ ;  // Mean formation time
-    double form_time_ ; //event by event formation time
-    double mass_; //mass of the parton
+    int pid_                ; // particle id ()
+    int pstat_              ; // status of particle
+    int plabel_             ; // the line number in the event record
+    FourVector p_in_, x_in_ ; // internal momentum and position of particle
+    double Energy_, t_      ; // Energy, and t is the standard virtuality variable
+    double mean_form_time_  ; // Mean formation time
+    double form_time_       ; //event by event formation time
+    double mass_            ; //mass of the parton
 
 };
 
 
 
+class Vertex
+{
+    
+    
+public:
+    Vertex(int num_parents, int num_siblings, FourVector &x, vector<Parton> &parent, vector<Parton> &sibling);
+    
+    Vertex()
+    :Nparents_(0)
+    ,Nsiblings_(0)
+    {
+        x_in_.clear();
+        for (int i=0; i<Nparents_; i++)
+        {
+            parent_[i].clear();
+        }
+        for (int j=0; j<Nsiblings_; j++)
+        {
+            sibling_[j].clear();
+        }
+    };
+    
+    void set_num_parents(int num_parents)
+    {
+        Nparents_ = num_parents;
+    }
+    
+    void set_num_siblings(int num_siblings)
+    {
+        Nsiblings_ = num_siblings ;
+    }
+    
+    void set_location(FourVector &x)
+    {
+        x_in_ = x;
+    }
+    
+    void set_parents(vector<Parton> &parent, vector<Parton> &sibling)
+    {
+        for (int i=0; i<Nparents_; i++)
+        {
+            parent_.push_back(parent[i]);
+        }
+        for (int j=0; j<Nsiblings_;j++)
+        {
+            sibling_.push_back(sibling[j]);
+        }
+    }
+    
+private:
+    int Nparents_, Nsiblings_ ; // number of parents and siblings.
+    FourVector x_in_        ; //location of the vertex
+    vector<Parton>  parent_, sibling_ ; // partons that connect to a vertex
+    
+};
 
 
 #endif /* JetClass_hpp */
