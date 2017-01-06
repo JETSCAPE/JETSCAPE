@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!-- Just for test purposes! -->
+<jetscape>
+
+  <debug> on </debug>
+  <remark> off </remark>
+  <vlevel> 0 </vlevel>
+  
+   <Tasks>
+     <task>Matter</task>
+     <task>Hydro1</task>
+   </Tasks>
+   
+   <IS>
+      <name>Some IS Model</name>
+   </IS>
+   
+   <Eloss>
+     
+     <Matter>
+       <name>Matter</name>
+       <param1> 2 </param1>
+       <qhat> 1.1 </qhat>
+     </Matter>
+     
+     <Martini>
+       <name > Martini </name>
+       <param1> 3 </param1>
+     </Martini>
+     
+   </Eloss>
+   
+   <Hydro>
+     
+     <Hydro1>
+       <name>Hydro1</name>
+       <eta> 0.2 </eta>
+     </Hydro1>
+     
+   </Hydro>
+   
+</jetscape>

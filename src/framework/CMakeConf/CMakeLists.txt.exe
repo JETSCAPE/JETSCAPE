@@ -1,0 +1,18 @@
+cmake_minimum_required(VERSION 2.8.9)
+project (testJetScape)
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "./bin/")
+
+add_definitions(-O -Wall -g -std=c++11 -stdlib=libc++ -pthread)
+
+include_directories(./lib)
+
+#set ( PROJECT_LINK_LIBS libJetScape.dylib)
+link_directories(./lib)
+
+add_executable(testJetScape ./src/testJetScape.cc)
+target_link_libraries(testJetScape JetScape)
+
+#However, the file(GLOB...) allows for wildcard additions:
+#file(GLOB SOURCES "src/*.cpp")
+ #add_executable(testStudent ${SOURCES})
