@@ -83,7 +83,7 @@ class Parton
 {
 
 public:
-    Parton (int label, int id, int stat, double p[4], double x[4]);
+    Parton (int label, int id, int stat, int parent_label, double p[4], double x[4]);
     
     Parton ()
     :plabel_(0)
@@ -99,6 +99,7 @@ public:
         plabel_ = 0;
         pid_ = 0;
         pstat_ = 0;
+        pparent_label_ = 0;
         p_in_.clear();
         x_in_.clear();
     }
@@ -118,10 +119,15 @@ public:
         pstat_ = stat;
     };
     
+    void set_parent_label(int parent_label)
+    {
+        pparent_label_ = parent_label;
+    };
+    
     void set_mass(double mass_input)
     {
         mass_ = mass_input;
-    }
+    };
     
     void set_p(double p[4])
     {
@@ -136,22 +142,27 @@ public:
     void set_mean_form_time ()
     {
         mean_form_time_ = this->pl()/2/t_;
-    }
+    };
 
     
     int pid()
     {
         return(pid_);
-    }
+    };
     
     int pstat()
     {
         return(pstat_);
-    }
+    };
     
     int plabel()
     {
         return(plabel_);
+    };
+    
+    int pparent_label()
+    {
+        return(pparent_label_);
     }
     
     FourVector &p_in()
@@ -202,6 +213,7 @@ public:
         pid_ = c.pid() ;
         pstat_ = c.pstat() ;
         plabel_ = c.plabel() ;
+        pparent_label_ = c.pparent_label();
         p_in_ = c.p_in() ;
         x_in_ = c.x_in() ;
         mass_ = c.mass();
@@ -215,6 +227,7 @@ private:
     int pid_                ; // particle id ()
     int pstat_              ; // status of particle
     int plabel_             ; // the line number in the event record
+    int pparent_label_      ; // line number of parent
     FourVector p_in_, x_in_ ; // internal momentum and position of particle
     double Energy_, t_      ; // Energy, and t is the standard virtuality variable
     double mean_form_time_  ; // Mean formation time

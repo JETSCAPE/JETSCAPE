@@ -20,7 +20,7 @@ Jet::Jet(double p_in[4])
 }
 
 
-Parton::Parton (int label, int id, int stat, double p[4], double x[4])
+Parton::Parton (int label, int id, int stat, int parent_label, double p[4], double x[4])
 {
     
     set_label(label);
@@ -57,6 +57,8 @@ Parton::Parton (int label, int id, int stat, double p[4], double x[4])
     }
     
     set_stat(stat);
+    
+    set_parent_label(parent_label);
     
     set_p(p);
     
