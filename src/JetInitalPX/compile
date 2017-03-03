@@ -1,0 +1,8 @@
+#!/bin/bash
+
+[ -d build ] && echo 'Directory already exsits' || mkdir build
+cd build
+cmake ..
+make
+mv src/initialPX ../
+
