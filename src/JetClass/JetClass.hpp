@@ -15,27 +15,39 @@
 #include "four_vector.hpp"
 #include <vector>
 
+class Parton;
+class Vertex;
+class FourVector;
+
+
+/**************************************************************************************************/
+
+//  JET CLASS
+
+/*************************************************************************************************/
+
 
 class Jet
 {
-    friend class Parton;
     
 public:
     
-    Jet (double p_in[4]);
-    
-    void set_jet_p(double p_in[4])
+    Jet (FourVector p);
+
+    Jet()
     {
-        int i;
-        for (i=0; i<=3; i++)
-        {
-            jet_p_[i] = p_in[i];
-        };
-    };
+        jet_p_.clear();
+    }
+    
+    void set_jet_p(FourVector p)
+    {
+            jet_p_ = p ;
+
+    }
     
     double get_jet_p ()
     {
-        return ( sqrt( jet_p_[1]*jet_p_[1] + jet_p_[2]*jet_p_[2] + jet_p_[3]*jet_p_[3] ) );
+        return ( sqrt( jet_p_.comp(1)*jet_p_.comp(2) + jet_p_.comp(2)*jet_p_.comp(2) + jet_p_.comp(3)*jet_p_.comp(3) ) );
     }
     
     double get_jet_eta ()
@@ -44,7 +56,7 @@ public:
         
         p_mod = get_jet_p ();
         
-        jet_eta_ = log( ( p_mod + jet_p_[3] )/( p_mod - jet_p_[3] )  )/2.0;
+        jet_eta_ = log( ( p_mod + jet_p_.comp(3) )/( p_mod - jet_p_.comp(3) )  )/2.0;
         
         return (jet_eta_);
     }
@@ -52,13 +64,13 @@ public:
     double get_jet_phi()
     {
         
-        if (jet_p_[1]!=0.0)
+        if (jet_p_.comp(1)!=0.0)
         {
-            jet_phi_ = atan(jet_p_[2]/jet_p_[1]);
+            jet_phi_ = atan(jet_p_.comp(2)/jet_p_.comp(1));
         }
         else
         {
-            if (jet_p_[2]>0.0)
+            if (jet_p_.comp(2)>0.0)
             {
                 jet_phi_ = pi/2.0;
             }
@@ -72,12 +84,22 @@ public:
     
 private:
     
-    double jet_p_[4]; // momenta of jet
+    FourVector jet_p_; // momenta of jet
     double jet_eta_; //eta of jet
     double jet_phi_; //phi of jet
-    
+    vector<Parton> shower_, final_, good_ ; // shower partons include both final and historical information
+    // final_ partons are a subset of shower partons that remain after the shower algorithm has terminated
+    // good_ partons are final_ partons with energy momentum corrections
+    vector<Vertex> shower_vertex_ ;
 };
 
+
+
+/**************************************************************************************************/
+
+//  PARTON CLASS
+
+/*************************************************************************************************/
 
 class Parton
 {
@@ -143,7 +165,6 @@ public:
     {
         mean_form_time_ = this->pl()/2/t_;
     };
-
     
     int pid()
     {
@@ -233,14 +254,22 @@ private:
     double mean_form_time_  ; // Mean formation time
     double form_time_       ; //event by event formation time
     double mass_            ; //mass of the parton
-
+    Vertex *start_, *end_    ; // the vertex from where it came and the vertex where it will end.
 };
 
 
 
+
+
+
+/**************************************************************************************************/
+
+//  VERTEX CLASS
+
+/*************************************************************************************************/
+
 class Vertex
 {
-    
     
 public:
     Vertex(int num_parents, int num_siblings, FourVector &x, vector<Parton> &parent, vector<Parton> &sibling);
