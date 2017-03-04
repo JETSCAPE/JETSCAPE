@@ -14,9 +14,9 @@
 #include "JetClass.hpp"
 #include "constants.h"
 
-Jet::Jet(double p_in[4])
+Jet::Jet(FourVector p)
 {
-    set_jet_p(p_in);
+    set_jet_p(p);
 }
 
 

@@ -3,8 +3,8 @@
 //  
 //
 //  Created by Abhijit Majumder on 11/25/16.
-//
-//
+//  A simple program to create a jet using a predetermined
+//  algorithm for parton propagation and splitting. 
 
 #include <iostream>
 #include <complex>
@@ -13,28 +13,42 @@
 #include <assert.h>
 #include "JetClass.hpp"
 
+
 using namespace std;
 
 int main()
 {
     double virt;
-    double passign[4], xloc[4];
+    double pAssign[4], xLoc[4];
     int i;
     
+    double deltaTimeStep;
+    
+    deltaTimeStep = 0.1;
     
     for (i=0;i<=3; i++) {
-        passign[i] = 1.0;
-        xloc[i] = 0.0;
+        xLoc[i] = 0.0;
     };
     
-    //std::vector<parton> shower;
-    Parton quark(1,1,1,passign,xloc);
+    pAssign[0] = 11.0;
     
-    Jet parentjet(passign);
+    pAssign[3] = 10.0;
     
-    virt = quark.generate_t();
+    pAssign[1] = pAssign[2] = 1.0;
     
-    cout << " virt = " << virt << endl ;
+    FourVector p_in(pAssign);
+    
+    
+    cout << " p_in = " << p_in.t() << "  " << p_in.x() << "  " << p_in.y() << "  " << p_in.z() << endl;
+ 
+     Jet jet(p_in);
+    
+ //   cout << " virt = " << virt << endl ;
+    
+    cout << " jet eta = " << jet.get_jet_eta() << endl;
+    
+    
+    
     
     
 }
