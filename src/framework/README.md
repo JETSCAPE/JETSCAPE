@@ -1,5 +1,15 @@
 Test Skeleton of (potential) JetScape Framework
 
+With cmake:
+- on shell type: cmake .
+- on shell type: make
+and the you should have to test binaries in ./bin so test:
+- ./bin/brickTest
+
+If cmake found other libraries HepMC, ROOT or Pythia8, you might have to add the librry path's in the setup.csh script.
+For sure works on Mac Os X 10.11.6.
+
+---> Obsolete
 To compile and use (Makefiles):
 Create a lib and bin directory first (the Makefiles and the setup.csh script for the shared library assume that structure)
 Create Library (statitc or shared):
