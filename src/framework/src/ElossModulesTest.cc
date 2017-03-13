@@ -8,6 +8,8 @@
 #include "tinyxml2.h"
 #include<iostream>
 
+#include "fluid_dynamics.h"
+
 #define MAGENTA "\033[35m"
 
 Matter::Matter()
@@ -54,12 +56,23 @@ void Matter::Init()
 void Matter::Exec()
 {
    INFO<<"Run Matter ...";
-   DEBUG<<"Qhat = "<<GetQhat();
+   //DEBUG<<"Qhat = "<<GetQhat();
+   
+   /*
    DEBUG<<"Emit Signal: jetSignal(10,20.3)";
    jetSignal(10,20.3);
    double edensity=-1;
    edensitySignal(1,edensity);
    DEBUG<< MAGENTA<<"Received edensity = "<<edensity<<" for t="<<1;
+   */
+   
+   FluidCellInfo* check_fluid_info_ptr = new FluidCellInfo;
+   GetHydroCellSignal(1, 1.0, 1.0, 0.0, check_fluid_info_ptr);  
+   DEBUG<< MAGENTA<<"Temperature from Brick (Signal) = "<<check_fluid_info_ptr->temperature;
+   
+   //check_fluid_info_ptr->Print();
+   
+   delete check_fluid_info_ptr;
 }
 
 // ----------------------

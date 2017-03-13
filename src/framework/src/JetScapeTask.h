@@ -12,6 +12,8 @@
 
 using namespace std;
 
+class JetScapeWriter;
+
 class JetScapeTask 
 {
   
@@ -26,12 +28,24 @@ class JetScapeTask
   virtual void Clear() {};
 
   // Extensions for clearly recursive handling ...
-  // Hmm, not really ad intended ...
+  // Hmm, not really as intended ...
   virtual void ExecuteTasks();
   virtual void ExecuteTask() {}; // To be seen if needed ...
+  virtual void InitTask() {};
   virtual void InitTasks();
-  //virtual void ClearTasks() {};
+
+  // really decide and think what is the best way
+  // prepared dummies in case (but workflow should be consistent; to be checked)
+  virtual void ClearTasks();
+  virtual void ClearTask() {};
+  virtual void FinishTask() {};
+  virtual void FinishTasks() {};
   
+  //add here a write task (depending on if JetScapeWriter is initiallized and active) ...
+  // Think about workflow ...
+  virtual void WriteTasks(weak_ptr<JetScapeWriter> w);
+  virtual void WriteTask(weak_ptr<JetScapeWriter> w) {};
+
   // Think harder and maybe in general/decide on shared vs. unique vs. raw pointer usage ...
   // Current: Just use make_shared always (propably not the most efficient solution ...)
   // Also usage here ditactes in main ...

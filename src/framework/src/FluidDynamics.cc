@@ -5,7 +5,6 @@
 #include "JetScapeSignalManager.h"
 #include <string>
 
-#include "tinyxml2.h"
 #include<iostream>
 
 using namespace std;
@@ -34,46 +33,53 @@ void FluidDynamics::Init()
 {
   JetScapeModuleBase::Init();
 
-  INFO<<"Intialize FluidDynamics ...";
+  INFO<<"Intialize FluidDynamics : "<<GetId()<< " ...";
+ 
+  fd= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Hydro" );
+
+  if (!fd)
+     {
+         WARN << "Not a valid JetScape XML Hydro section file or no XML file loaded!";
+          exit(-1);
+     }
   
-  tinyxml2::XMLElement *fd= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Hydro" );
-  tinyxml2::XMLElement *hyd1=fd->FirstChildElement("Hydro1");
+  VERBOSE(8);
+  
+  InitTask();
 
-  if (hyd1)
-    {
-      string s = hyd1->FirstChildElement( "name" )->GetText();
+  initialize_hydro(parameter_list);
 
-      DEBUG << s << " to be initilizied ...";
-      
-      hyd1->FirstChildElement("eta")->QueryDoubleText(&eta);
-
-      DEBUG << s << " with eta = "<<eta;      
-    }
-
-  //JetScapeSignalManager::Instance()->SetHydroPointer(shared_from_this());
+  //INFO<<GetId()<<" initialized.";
   
   JetScapeTask::InitTasks();
 }
 
 void FluidDynamics::Exec()
 {
-  INFO<<"Run Hydro ...";
+  INFO<<"Run Hydro : "<<GetId()<< " ...";
   //INFO<<"Found "<<GetNumberOfTasks()<<" Hydro Tasks/Modules Execute them ... ";
   VERBOSE(8)<<"Current Event #"<<GetCurrentEvent();
   // With current event number as static it is easy to define now for hydro event reading from file how often to be reused
   // can add aslo an other (static) variable for that in Fluiddynamics ...
+  //VERBOSE(8);
+
+  //ExecuteTask();
+  evolve_hydro();
+
+  //VERBOSE(8);
+  
   JetScapeTask::ExecuteTasks();
 }
 
 void FluidDynamics::UpdateEnergyDeposit(int t, double edop)
 {
-  sigslot::lock_block<multi_threaded_local> lock(this);
+  //sigslot::lock_block<multi_threaded_local> lock(this);
   DEBUG<<MAGENTA<<"Jet Signal received : "<<t<<" "<<edop;
 }
 
 void FluidDynamics::GetEnergyDensity(int t,double &edensity)
 {
-  sigslot::lock_block<multi_threaded_local> lock(this);
+  //sigslot::lock_block<multi_threaded_local> lock(this);
   edensity=0.5;
   DEBUG<<"Edensity to Jet = "<<edensity<<" at t="<<t;
 }

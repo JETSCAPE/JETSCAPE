@@ -4,9 +4,13 @@
 #define JETSCAPEMODULEBASE_H
 
 #include <string>
+#include <memory>
 
 #include "JetScapeTask.h"
+//#incldue "JetScapeWriter.h"
 #include "sigslot.h"
+
+class JetScapeWriter;
 
 using namespace std;
 
@@ -23,6 +27,10 @@ class JetScapeModuleBase : public JetScapeTask , public sigslot::has_slots<sigsl
   virtual void Exec() {};
   virtual void Clear() {};
 
+  // Think about workflow ... or in Task !!!????
+  //virtual void WriteTasks(weak_ptr<JetScapeWriter> w) {};
+  //virtual void WriteTask(weak_ptr<JetScapeWriter> w) {};
+  
   //void OpenXMLFile();
   void SetXMLFileName(string m_name) { xml_file_name = m_name; }
   string GetXMLFileName() {return xml_file_name;}

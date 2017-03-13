@@ -16,10 +16,27 @@
 #include "JetScapeLogger.h"
 #include "JetScapeXML.h"
 #include "ElossModulesTest.h"
+#include "JetScapeWriterAsciiGZ.h"
+#include "JetScapeWriterAscii.h"
+//#include "JetScapeWriterHepMC.h"
+
 #include "sigslot.h"
- 
+
+//#include "HepMC/GenEvent.h"
+//#include "HepMC/Print.h"
+
+//#include "TFile.h"
+//#include "TRandom.h"
+
+// for test case ...
+//#include "fluid_dynamics.h"
+#include "brick_jetscape.h"
+#include "Gubser_hydro_jetscape.h"
+
 using namespace std;
 using namespace sigslot;
+
+//using namespace HepMC;
 
 // -------------------------------------
 // as shortcut if desired ...
@@ -40,10 +57,31 @@ void Show();
 int main(int argc, char** argv)
 {
   cout<<endl;
+
+  //TFile *f=new TFile("test.root","RECREATE");  
+  //f->Close();
+  //cout<<gRandom->Uniform(1)<<endl;
+  
+  //GenEvent evt(Units::GEV,Units::MM);
+
+  /*
+  // px      py        pz       e     pdgid status
+  auto p1 = make_shared<HepMC::GenParticle>( FourVector( 0.0,    0.0,   7000.0,  7000.0  ),2212,  3 );
+  auto p2 = make_shared<HepMC::GenParticle>( FourVector( 0.750, -1.569,   32.191,  32.238),   1,  3 );
+  auto p3 = make_shared<HepMC::GenParticle>( FourVector( 0.0,    0.0,  -7000.0,  7000.0  ),2212,  3 );
+  auto p4 = make_shared<HepMC::GenParticle>( FourVector(-3.047,-19.0,    -54.629,  57.920),  -2,  3 );
+  
+  auto v1 = make_shared<HepMC::GenVertex>();
+  v1->add_particle_in (p1);
+  v1->add_particle_out(p2);
+  evt.add_vertex(v1);
+  */
+  
+  //Print::content(evt);
   
   // DEBUG=true by default and REMARK=false
   // can be also set via XML file
-  //JetScapeLogger::Instance()->SetDebug(false);
+  JetScapeLogger::Instance()->SetDebug(true);
   //JetScapeLogger::Instance()->SetRemark(true);  
   JetScapeLogger::Instance()->SetVerboseLevel(9);
    
@@ -73,17 +111,25 @@ int main(int argc, char** argv)
   // Think harder and maybe in general/decide on shared vs. unique vs. raw pointer usage ...
   // Current: Just use make_shared always (propably not the most efficient solution ...)
   
+  //auto jetscape = make_shared<JetScape>("/Users/putschke/JetScape/framework_xcode/jetscape_init.xml",3);
   auto jetscape = make_shared<JetScape>("./jetscape_init.xml",3);
   // if << overloaded for classes then for example (see commented out in JetScape.h)
   //cout<<*jetscape<<endl; 
   // try to automatically create in Add()!? and to handle things behind the scene ...
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
-  auto hydro = make_shared<FluidDynamics> ();
+  //auto hydro = make_shared<FluidDynamics> ();
+  //auto hydro = make_shared<Brick> ();
+  auto hydro = make_shared<GubserHydro> ();
   
   auto matter = make_shared<Matter> ();
   auto martini = make_shared<Martini> ();
 
+  //auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");
+  auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
+  //auto writer= make_shared<JetScapeWriterHepMC> ("test_out.dat");
+  writer->SetActive(false);
+  
   jetscape->Add(hydro);
 
   jloss->Add(matter);
@@ -93,7 +139,9 @@ int main(int argc, char** argv)
   
   jlossmanager->Add(jloss);
   jetscape->Add(jlossmanager);
-  
+
+  //jetscape->Add(writer);
+
   // can add before or after jetscape (order does not matter)
   
   //INFO<<"Number of JetScape Tasks = "<<jetscape->GetNumberOfTasks();
@@ -177,6 +225,8 @@ int main(int argc, char** argv)
   // ------------------
   
   jetscape->Exec();
+
+  //jetscape->Finish();
   
   //REMARK<<"Overload Exec for Hydro ...";
 
@@ -187,9 +237,29 @@ int main(int argc, char** argv)
   //hydro->Init();
   
   //this_thread::sleep_for(std::chrono::milliseconds(1000000));
+
   
   INFO_NICE<<"Finished!";
   cout<<endl;
+
+  /*
+  Parameter parameter_list;
+    parameter_list.hydro_input_filename = *(argv+1);
+
+    Brick *brick_ptr = new Brick();
+    brick_ptr->initialize_hydro(parameter_list);
+    brick_ptr->evolve_hydro();
+     for (int i=1;i<20;i++)
+      {
+	FluidCellInfo* check_fluid_info_ptr = new FluidCellInfo;
+	brick_ptr->get_hydro_info(i, 1.0, 1.0, 0.0, check_fluid_info_ptr);
+	//brick_ptr->print_fluid_cell_information(check_fluid_info_ptr);
+	cout<<i<<" "<<check_fluid_info_ptr->energy_density<<" "<<check_fluid_info_ptr->temperature<<endl;
+	cout<<i<<" "<<brick_ptr->get_temperature(i, 1.0, 1.0, 0.0)<<endl;
+	delete check_fluid_info_ptr;
+      }
+  */
+  
   return 0;
 }
 

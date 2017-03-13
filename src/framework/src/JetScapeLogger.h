@@ -12,7 +12,7 @@ using namespace std;
 #define BOLDBLACK   "\033[1m\033[30m"      /* Bold Black */
 
 // define nicer macros to be used for logging ...
-#define INFO  JetScapeLogger::Instance()->Info()<<" "//__PRETTY_FUNCTION__<<" : "
+#define INFO  JetScapeLogger::Instance()->Info()<<" " //<<__PRETTY_FUNCTION__<<" : "
 #define INFO_NICE  JetScapeLogger::Instance()->Info()
 #define DEBUG JetScapeLogger::Instance()->Debug()<<__PRETTY_FUNCTION__<<" : "
 #define REMARK JetScapeLogger::Instance()->Remark()<<__PRETTY_FUNCTION__<<" : "

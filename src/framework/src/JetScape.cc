@@ -39,7 +39,7 @@ void JetScape::Init()
 {
   //Show();
   
-  INFO<<"Intialize JetScape ...";
+  INFO<<BOLDBLACK<<"Intialize JetScape ...";
   
   JetScapeXML::Instance()->OpenXMLFile(GetXMLFileName());
   
@@ -81,7 +81,7 @@ void JetScape::SetPointers()
 {
   
    // to get hydro pointer for signals, use signal?
-  INFO<<"Set Hydro Pointer for SignalManager to create Signal/Slots";
+  INFO<<"Set Hydro,JetEnergylossManager and IS Pointers for SignalManager to create Signal/Slots";
   
   //shared_ptr<FluidDynamics> m_hydro;
   //shared_ptr<JetEnergyLossManager> m_jloss_manager;
@@ -104,6 +104,32 @@ void JetScape::SetPointers()
 	      JetScapeSignalManager::Instance()->SetJetEnergyLossManagerPointer(dynamic_pointer_cast<JetEnergyLossManager>(it));
 	    }
 	}
+
+  for (auto it : GetTaskList())
+	{
+	  if (dynamic_pointer_cast<HardProcess>(it))
+	    {
+	      //m_jloss_manager=dynamic_pointer_cast<JetEnergyLossManager>(it);	      
+	      //dynamic_pointer_cast<JetEnergyLossManager>(it)->SetHydroPointer(m_hydro);
+	      JetScapeSignalManager::Instance()->SetHardProcessPointer(dynamic_pointer_cast<HardProcess>(it));
+	    }
+	}
+
+   for (auto it : GetTaskList())
+     {
+       if (dynamic_pointer_cast<JetScapeWriter>(it))
+	 {
+	   if (it->GetActive())
+	     {
+	       //m_jloss_manager=dynamic_pointer_cast<JetEnergyLossManager>(it);	      
+	       //dynamic_pointer_cast<JetEnergyLossManager>(it)->SetHydroPointer(m_hydro);
+	       // JetScapeSignalManager::Instance()->SetHardProcessPointer(dynamic_pointer_cast<HardProcess>(it));
+	       JetScapeSignalManager::Instance()->SetWriterPointer(dynamic_pointer_cast<JetScapeWriter>(it)); 
+	     }
+	 }
+     }
+
+
   
   //JetScapeSignalManager::Instance()->SetHydroPointer(m_hydro);
   //JetScapeSignalManager::Instance()->SetJetEnergyLossManagerPointer(m_jloss_manager);
@@ -114,7 +140,7 @@ void JetScape::SetPointers()
 
 void JetScape::Exec()
 {
-  INFO<<"Run JetScape ...";
+  INFO<<BOLDBLACK<<"Run JetScape ...";
   INFO<<BOLDBLACK<<"Number of Events = "<<GetNumberOfEvents(); 
   //SetCurrentEvent(0);
   
@@ -123,6 +149,13 @@ void JetScape::Exec()
   // Hmm, this change still not doing what I wanted (see old Init way ...)
 
   //SetPointers();
+
+  weak_ptr<JetScapeWriter> w;
+  
+  for (auto it : GetTaskList())
+    if (dynamic_pointer_cast<JetScapeWriter>(it))
+      if (it->GetActive())
+	w=dynamic_pointer_cast<JetScapeWriter>(it);	           
   
   for (int i=0;i<GetNumberOfEvents();i++)
     {
@@ -130,10 +163,26 @@ void JetScape::Exec()
       INFO<<"Found "<<GetNumberOfTasks()<<" Modules Execute them ... ";
       
       JetScapeTask::ExecuteTasks();
-      IncrementCurrentEvent();
+
+      if (w.lock().get())
+	JetScapeTask::WriteTasks(w);            
       
       //cout<<JetScapeSignalManager::Instance()->GetNumberOfJetSignals()<<endl;
       //JetScapeSignalManager::Instance()->PrintJetSignalMap();
       //JetScapeSignalManager::Instance()->PrintEdensitySignalMap();
+
+      // Think about ... workflow like this !???
+      //JetScapeTask::WriteTasks();
+      JetScapeTask::ClearTasks();
+
+      IncrementCurrentEvent();
     }
+}
+
+void JetScape::Finish()
+{
+  INFO<<BOLDBLACK<<"JetScape finished after "<<GetNumberOfEvents()<<" events!";
+  DEBUG<<"More infos wrap up/saving to file/closing file ...";
+
+  //JetScapeTask::FinishTasks();
 }

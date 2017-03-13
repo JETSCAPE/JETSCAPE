@@ -4,8 +4,8 @@
 
 #include "JetScapeTask.h"
 #include "JetScapeLogger.h"
-#include "JetEnergyLoss.h"
-#include "JetEnergyLossManager.h"
+//#include "JetEnergyLoss.h"
+//#include "JetEnergyLossManager.h"
 
 #include <iostream>
 
@@ -65,6 +65,23 @@ void JetScapeTask::ExecuteTasks()
     {
       for (auto it : tasks)
 	it->Exec();
+    }
+}
+
+void JetScapeTask::ClearTasks()
+{
+  VERBOSE(7) << " : # Subtasks = "<<tasks.size();
+  for (auto it : tasks)
+    it->Clear();
+}
+
+void JetScapeTask::WriteTasks(weak_ptr<JetScapeWriter> w)
+{
+  //VERBOSE(7);
+  if (active_exec)
+    {
+      for (auto it : tasks)
+	it->WriteTask(w);
     }
 }
 

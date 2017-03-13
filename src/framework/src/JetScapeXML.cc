@@ -30,7 +30,7 @@ void JetScapeXML::OpenXMLFile()
 	  // Also: __FILE__ in gcc & clang
 	  //cout<< __PRETTY_FUNCTION__ <<":"<<__LINE__<< " Open XML file : "<< GetXMLFileName() << endl;
 	  
-	  INFO<<"Open XML file : "<< GetXMLFileName();
+	  INFO<<BOLDBLACK<<"Open XML file : "<< GetXMLFileName();
 	  xml_root = (tinyxml2::XMLElement*) xml_doc.FirstChildElement("jetscape" );
 	  
 	  if (!xml_root)

@@ -23,6 +23,7 @@ class JetScape : public JetScapeModuleBase
 
   void Init(); 
   void Exec();
+  void Finish();
 
   void SetNumberOfEvents(int m_n_events) {n_events=m_n_events;}
   int GetNumberOfEvents() {return n_events;}
