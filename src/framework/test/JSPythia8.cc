@@ -7,16 +7,6 @@ JSPythia8::JSPythia8() : HardProcess() , Pythia()
   VERBOSE(8);
 }
 
-/*
-JSPythia8::JSPythia8(string xmlDir, bool printBanner)
-{
-  Pythia(xmlDir,printBanner);
-  HardProcess();
-  SetId("JSPythia8");
-  VERBOSE(8);
-}
-*/
-
 JSPythia8::~JSPythia8()
 {
   VERBOSE(8);
@@ -24,16 +14,14 @@ JSPythia8::~JSPythia8()
 
 void JSPythia8::InitTask()
 {
-  // kind of stupid ... do pointer GetHydroXML() via XML instance ...
-  //FluidDynamics::Init();
   
   DEBUG<<"Initialize Pythia8 Brick (Test) ...";
   VERBOSE(8);
 
   /*
-  tinyxml2::XMLElement *pgun=GetHardXML()->FirstChildElement("PGun");
+  tinyxml2::XMLElement *py8=GetHardXML()->FirstChildElement("Pythia8");
 
-  if (pgun)
+  if (py8)
     {
       string s = pgun->FirstChildElement( "name" )->GetText();
       DEBUG << s << " to be initilizied ...";
@@ -46,20 +34,17 @@ void JSPythia8::InitTask()
     }
   else
     {
-      WARN << " : PGun not properly initialized in XML file ...";
+      WARN << " : Pythia8 not properly initialized in XML file ...";
       exit(-1);
     }
   */
 
   // Read in from our xml file ...
-  // to be implemented ...
+  // to be implemented (see above)...
   
   // Generator. Shorthand for event.
   //char* ptHatMin="100.0";
   //char* ptHatMax="200.0";
-
-  //Pythia pythia("/Users/putschke/pythia8100/xmldoc");
-  //Event& event = pythia.event;
 
   // Process selection.
   readString("HardQCD:all = on");
@@ -71,9 +56,6 @@ void JSPythia8::InitTask()
   string pmax="PhaseSpace:pTHatMax = ";
   pmin.append("100");
   pmax.append("200");
-
-  //cout<<pmin<<endl;
-  //cout<<pmax<<endl;
 
   readString(pmin);
   readString(pmax);
@@ -88,14 +70,12 @@ void JSPythia8::InitTask()
 
   //random seed
   //readString("Random:setSeed = on");
-  // readString("Random:seed = 0");
+  //readString("Random:seed = 0");
 
   //settings.listAll();
   
-  // initialization.
-  init(2212, 2212,5020.);
-
-  
+  //initialization ...
+  init(2212, 2212,5020.);  
 }
  
 void JSPythia8::Exec()
@@ -115,7 +95,6 @@ void JSPythia8::Exec()
     }
   */
   
-  //VERBOSE(8);
   // DEBUG: Test ...
   /*
   double p[4], xLoc[4];
@@ -134,7 +113,7 @@ void JSPythia8::Exec()
   */
   
   VERBOSE(8)<<GetNHardPartons();
+  
   if (GetNHardPartons()<1)
     {WARN<<"Pythia 8 initial hard partons has to be implemented accordingly ..."; exit(-1);}
-  //cout<<*GetPartonAt(0)<<endl;
 }

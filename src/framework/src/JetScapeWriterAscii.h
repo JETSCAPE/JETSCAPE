@@ -25,8 +25,9 @@ class JetScapeWriterAscii : public JetScapeWriter
 
   void Write(shared_ptr<Parton> p);
   void Write(string s) {output_file<<s<<endl;}
-  void WriteEvent(); // to be defined what data structure ...
-  // and more ...
+  // ...
+  
+  void WriteEvent(); 
   
  private:
 

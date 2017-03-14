@@ -9,8 +9,6 @@ int JetScapeModuleBase::current_event=0;
 
 JetScapeModuleBase::JetScapeModuleBase()
 {
-  //Simple Debug replace --> logger
-  //cout<<"JetScapeModuleBase : Default Constructor called."<<endl;
   xml_file_name = "";
 }
 
@@ -21,8 +19,6 @@ JetScapeModuleBase::JetScapeModuleBase(string m_name)
 
 JetScapeModuleBase::~JetScapeModuleBase()
 {
-  //Simple Debug replace --> logger
-  //cout<<"JetScapeModuleBase : Default Destructor called."<<endl;
   disconnect_all();
 }
 

@@ -8,14 +8,11 @@
 #include<iostream>
 
 using namespace std;
-
-//#define CYAN    "\033[36m" 
+ 
 #define MAGENTA "\033[35m"
 
 FluidDynamics::FluidDynamics()
 {
-  //Simple Debug replace --> logger
-  //cout<<"JetScape : Default Constructor called."<<endl;
   VERBOSE(8);
   eta=-99.99;
   SetId("FluidDynamics");
@@ -23,8 +20,6 @@ FluidDynamics::FluidDynamics()
 
 FluidDynamics::~FluidDynamics()
 {
-  //Simple Debug replace --> logger
-  //cout<<"JetScape : Default Destructor called."<<endl;
   VERBOSE(8);
   disconnect_all();
 }
@@ -40,7 +35,7 @@ void FluidDynamics::Init()
   if (!fd)
      {
          WARN << "Not a valid JetScape XML Hydro section file or no XML file loaded!";
-          exit(-1);
+	 exit(-1);
      }
   
   VERBOSE(8);
@@ -48,8 +43,6 @@ void FluidDynamics::Init()
   InitTask();
 
   initialize_hydro(parameter_list);
-
-  //INFO<<GetId()<<" initialized.";
   
   JetScapeTask::InitTasks();
 }
@@ -57,16 +50,9 @@ void FluidDynamics::Init()
 void FluidDynamics::Exec()
 {
   INFO<<"Run Hydro : "<<GetId()<< " ...";
-  //INFO<<"Found "<<GetNumberOfTasks()<<" Hydro Tasks/Modules Execute them ... ";
   VERBOSE(8)<<"Current Event #"<<GetCurrentEvent();
-  // With current event number as static it is easy to define now for hydro event reading from file how often to be reused
-  // can add aslo an other (static) variable for that in Fluiddynamics ...
-  //VERBOSE(8);
-
-  //ExecuteTask();
+  
   evolve_hydro();
-
-  //VERBOSE(8);
   
   JetScapeTask::ExecuteTasks();
 }

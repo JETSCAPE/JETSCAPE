@@ -30,8 +30,8 @@ class JetScapeWriterHepMC : public JetScapeWriter , public WriterAscii
   bool GetStatus() {return failed();}
   void Close() {close();}
 
-  void WriteEvent(); // to be defined what data structure ...
-  // and more ...
+  // overload write functions ...
+  void WriteEvent(); 
   
  private:
 

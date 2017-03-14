@@ -26,13 +26,9 @@ Brick::Brick() : FluidDynamics() {
 
 Brick::~Brick() {VERBOSE(8);}
 
-
-// not yet happy, get initialize_hydro(parameter_list); in parent class !???
-
 void Brick::InitTask()
 {
   // kind of stupid ... do pointer GetHydroXML() via XML instance ...
-  //FluidDynamics::Init();
   
   DEBUG<<"Initialize Brick (Test) ...";
   VERBOSE(8);
@@ -61,22 +57,6 @@ void Brick::InitTask()
   
 }
 
-/*
-void Brick::Exec()
-{
-  INFO<<"Run Brick Hydro ...";
-  //INFO<<"Found "<<GetNumberOfTasks()<<" Hydro Tasks/Modules Execute them ... ";
-  VERBOSE(8)<<"Current Event #"<<GetCurrentEvent();
-  // With current event number as static it is easy to define now for hydro event reading from file how often to be reused
-  // can add aslo an other (static) variable for that in Fluiddynamics ...
-
-  //evolve_hydro();
-
-  FluidDynamics::Exec();
-  //JetScapeTask::ExecuteTasks();
-}
-*/
-
 void Brick::initialize_hydro(Parameter parameter_list) {
   VERBOSE(8)<<parameter_list.hydro_input_filename;
     hydro_status = INITIALIZED;
@@ -85,21 +65,9 @@ void Brick::initialize_hydro(Parameter parameter_list) {
 
 void Brick::evolve_hydro() {
   VERBOSE(8);
-  //cout<<hydro_status<<endl;
 
   hydro_status = FINISHED;
-
-  /*
-  if (hydro_status == INITIALIZED)
-    {
-      
-    }
-  else
-    {
-     WARN<<"Hydro not properly initialized ...";
-      exit(-1);
-    }
-  */		    
+	    
 }
 
 

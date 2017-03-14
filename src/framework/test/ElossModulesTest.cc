@@ -32,10 +32,7 @@ void Matter::Init()
   tinyxml2::XMLElement *matter=eloss->FirstChildElement("Matter");
  
   if (matter)
-    {
-      //cout<<matter->FirstChildElement( "name" )->GetText() <<endl;
-      //DEBUG << __PRETTY_FUNCTION__ <<":"<<__LINE__ << " ";//<<matter->FirstChildElement( "name" )->GetText();
-      
+    {   
       string s = matter->FirstChildElement( "name" )->GetText();
     
       DEBUG << s << " to be initilizied ...";
@@ -76,22 +73,20 @@ void Matter::Exec()
 
    if (GetShowerInitiatingParton())
      {
-       //shared_ptr<Matter> p=shared_from_this();
        //cout<<shared_from_this().get()<<endl;
        cout<< *GetShowerInitiatingParton()<<endl;
        //PrintShowerInitiatingParton();
      }
    
    FluidCellInfo* check_fluid_info_ptr = new FluidCellInfo;
-   GetHydroCellSignal(1, 1.0, 1.0, 0.0, check_fluid_info_ptr);  
+   GetHydroCellSignal(1, 1.0, 1.0, 0.0, check_fluid_info_ptr);
+   
    DEBUG<< MAGENTA<<"Temperature from Brick (Signal) = "<<check_fluid_info_ptr->temperature;
    
    //check_fluid_info_ptr->Print();
    
    delete check_fluid_info_ptr;
 }
-
-//void Matter::WriteTask(weak_ptr<JetScapeWriter> w)
 
 // ----------------------
 
@@ -119,7 +114,6 @@ void Martini::Exec()
   //cout<<jetSignal.is_connected()<<endl;
   //jetSignal(100,200.3);
 
-  //cout<<(*this)<<endl;
   //cout<<shared_from_this().get()<<endl;
   // Logger not working with overloaded << from Parton class ...
   // check and resolve ...

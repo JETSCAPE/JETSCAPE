@@ -25,6 +25,7 @@ using namespace std;
 // In principle simple extension to
 // log into a file ... via m_dest
 // Think about thread safety ...
+// << overload in Parton class not working!? Check ...
 
 
 class LogStreamer
@@ -71,6 +72,7 @@ class JetScapeLogger
   LogStreamer Remark();
   //LogStreamer Error(); //to be implemented
   //LogStreamer Fatal(); //to be implemented
+  
   LogStreamer Verbose(unsigned short m_vlevel);
   
   void SetDebug(bool m_debug) {debug=m_debug;}
@@ -84,7 +86,6 @@ class JetScapeLogger
 
   JetScapeLogger() {debug=true;remark=false;vlevel=0;};
   JetScapeLogger(JetScapeLogger const&) {};
-  //JetScapeLogger& operator=(JetScapeLogger const&) {};
   static JetScapeLogger* m_pInstance;
 
   bool debug;

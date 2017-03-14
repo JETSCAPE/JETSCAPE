@@ -8,11 +8,9 @@
 #include "Pythia.h"
 
 class JSPythia8: public HardProcess , public Pythia8::Pythia {
-    // this is wrapper class for a simple brick
-    // so that it can be used within the JETSCAPE framework
+  
  private:
     
-
  public:
     
   JSPythia8();

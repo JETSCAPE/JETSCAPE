@@ -5,7 +5,7 @@
 
 #include "JetEnergyLossModule.h"
 
-class Matter : public JetEnergyLossModule<Matter> //, std::enable_shared_from_this<Matter>
+class Matter : public JetEnergyLossModule<Matter> //, public std::enable_shared_from_this<Matter>
 {  
  public:
   
@@ -16,17 +16,12 @@ class Matter : public JetEnergyLossModule<Matter> //, std::enable_shared_from_th
   void Exec();
   virtual void WriteTask(weak_ptr<JetScapeWriter> w);
   
-  //void SetQhat(double m_qhat) {qhat=m_qhat;}
-  //double GetQhat() {return qhat;}
-  
  private:
-
-//double qhat;
 
 };
 
 
-class Martini : public JetEnergyLossModule<Martini> //, std::enable_shared_from_this<Martini>
+class Martini : public JetEnergyLossModule<Martini> //, public std::enable_shared_from_this<Martini>
 {  
  public:
   
@@ -37,12 +32,7 @@ class Martini : public JetEnergyLossModule<Martini> //, std::enable_shared_from_
   void Exec();
   virtual void WriteTask(weak_ptr<JetScapeWriter> w) {};
   
-  //void SetQhat(double m_qhat) {qhat=m_qhat;}
-  //double GetQhat() {return qhat;}
-  
  private:
-
-//double qhat;
 
 };
 

@@ -18,14 +18,12 @@ JetScapeWriterAscii::~JetScapeWriterAscii()
 void JetScapeWriterAscii::WriteEvent()
 {
   DEBUG<< GetCurrentEvent() << " in Ascii ... ";
-  //output_file<< GetCurrentEvent() << " in Ascii ... \n";
   Write(to_string(GetCurrentEvent()) + " in Ascii ... ");
   
 }
 
 void JetScapeWriterAscii::Write(shared_ptr<Parton> p)
 {
-  //output_file<<"ID : "<<p->pid()<<endl;
   output_file<<*p<<endl;
 }
 

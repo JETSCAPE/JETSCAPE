@@ -15,9 +15,6 @@ PGun::~PGun()
 
 void PGun::InitTask()
 {
-  // kind of stupid ... do pointer GetHydroXML() via XML instance ...
-  //FluidDynamics::Init();
-  
   DEBUG<<"Initialize PGun Brick (Test) ...";
   VERBOSE(8);
   tinyxml2::XMLElement *pgun=GetHardXML()->FirstChildElement("PGun");
@@ -45,25 +42,11 @@ void PGun::Exec()
   INFO<<"Run Hard Process : "<<GetId()<< " ...";
   VERBOSE(8)<<"Current Event #"<<GetCurrentEvent();
 
-  //VERBOSE(8);
-  // DEBUG: Test ...
-  
   double p[4], xLoc[4];
   for (int i=0;i<=3; i++) {
      xLoc[i] = 0.0;
    };
 
-  /*
-   pAssign[0] = 11.0; 
-   pAssign[3] = 10.0;
-   pAssign[1] = pAssign[2] = 1.0;
-
-   for (int i=0;i<2;i++)
-     {
-       AddParton(make_shared<Parton>(1,21,0,0,pAssign,xLoc));
-     }
-  */
-  
   double pT, rapidity, phi;
   double eta_cut = 1.0;
   double tempRand;
@@ -94,13 +77,12 @@ void PGun::Exec()
        p[1] = pT*sin(phi);
        p[2] = sqrt(pT*pT+mass*mass)*sinh(rapidity);
        p[3] = sqrt(pT*pT+mass*mass)*cosh(rapidity);
-       
-       //cout<<p[0]<<" "<<p[1]<<endl;
   
        AddParton(make_shared<Parton>(0,parID,0,0,p,xLoc));
+
+       // DEBUG: (<< of Parton not working with Logger ... Check!)
        cout<<*GetPartonAt(i)<<endl;
      }
   
   VERBOSE(8)<<GetNHardPartons();
-  //cout<<*GetPartonAt(0)<<endl;
 }

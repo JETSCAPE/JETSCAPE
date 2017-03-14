@@ -7,8 +7,7 @@
 #include "JetScapeLogger.h"
 
 class PGun: public HardProcess {
-    // this is wrapper class for a simple brick
-    // so that it can be used within the JETSCAPE framework
+   
  private:
     double fixed_pT;
 

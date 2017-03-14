@@ -29,18 +29,18 @@ class HardProcess : public JetScapeModuleBase
   int GetNHardPartons() {return hp_list.size();}
   shared_ptr<Parton> GetPartonAt(int i) {return hp_list[i];}
   vector<shared_ptr<Parton>>& GetPartonList() {return hp_list;}
-  //void AddParton(shared_ptr<Parton> p) {hp_list.push_back(move(p));}
+  
   void AddParton(shared_ptr<Parton> p) {hp_list.push_back(p);}
   
-    // real slots ... or direct implementation in JetEnergyLossManager ... !???
-  //virtual void GetHydroCell(double t, double x, double y, double z, FluidCellInfo* fCell) {get_hydro_info(t,x,y,z,fCell);}
+  // Slots ...
   void GetHardPartonList(vector<shared_ptr<Parton>> &plist) {plist=hp_list;}
   
  private:
 
   tinyxml2::XMLElement *fd;
 
-  //Think of always using unique_ptr for any vector in jetscape framework !??? To be discussed ...
+  // Think of always using unique_ptr for any vector in jetscape framework !???
+  // To be discussed ...
   vector<shared_ptr<Parton>> hp_list;
   
 };

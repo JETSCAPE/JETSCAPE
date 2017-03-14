@@ -25,18 +25,17 @@ class JetScapeSignalManager //: public sigslot::has_slots<sigslot::multi_threade
   static JetScapeSignalManager* Instance();
 
   void SetHydroPointer(shared_ptr<FluidDynamics> m_hydro) {hydro=m_hydro;}
-  //shared_ptr<FluidDynamics> GetHydroPointer() {return hydro;}
   weak_ptr<FluidDynamics> GetHydroPointer() {return hydro;}
+  
   void SetJetEnergyLossManagerPointer(shared_ptr<JetEnergyLossManager> m_jloss) {jloss=m_jloss;}
-  //shared_ptr<JetEnergyLossManager> GetJetEnergyLossManagerPointer() {return jloss;}
   weak_ptr<JetEnergyLossManager> GetJetEnergyLossManagerPointer() {return jloss;}
+  
   void SetHardProcessPointer(shared_ptr<HardProcess> m_hardp) {hardp=m_hardp;}
-  //shared_ptr<FluidDynamics> GetHydroPointer() {return hydro;}
   weak_ptr<HardProcess> GetHardProcessPointer() {return hardp;}
+  
   void SetWriterPointer(shared_ptr<JetScapeWriter> m_writer) {writer=m_writer;}
   weak_ptr<JetScapeWriter> GetWriterPointer() {return writer;}
   
-  //void ConnectJetSignal(shared_ptr<JetScapeModuleBase> j);
   void ConnectJetSignal(shared_ptr<JetEnergyLoss> j);
   void ConnectEdensitySignal(shared_ptr<JetEnergyLoss> j);
   void ConnectAddJetSourceSignal(shared_ptr<JetEnergyLoss> j);
@@ -44,8 +43,7 @@ class JetScapeSignalManager //: public sigslot::has_slots<sigslot::multi_threade
   void ConnectGetHydroCellSignal(shared_ptr<JetEnergyLoss> j);
   void ConnectGetHardPartonListSignal(shared_ptr<JetEnergyLossManager> jm);
     
-  void DisconnectSignal() {};
-  //void Clear();
+  void DisconnectSignal() {}; // to be implememted if needed ...
 
   void CleanUp();
   
@@ -66,9 +64,6 @@ class JetScapeSignalManager //: public sigslot::has_slots<sigslot::multi_threade
   JetScapeSignalManager() {};
   JetScapeSignalManager(JetScapeSignalManager const&) {};
   static JetScapeSignalManager* m_pInstance;
-
-  //shared_ptr<FluidDynamics> hydro;
-  //shared_ptr<JetEnergyLossManager> jloss;
 
   weak_ptr<FluidDynamics> hydro;
   weak_ptr<JetEnergyLossManager> jloss;

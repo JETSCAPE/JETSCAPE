@@ -28,7 +28,11 @@ class JetScapeWriter : public JetScapeModuleBase
   virtual void Write(shared_ptr<Vertex> v) {};
   virtual void Write(string s) {};
   
-  virtual void WriteEvent() {}; // to be defined what data structure ...
+  virtual void WriteEvent() {};
+  // to be defined what data structure ...
+  // or via passing writer to all modules
+  // and handling data writing there ...
+  // current approach ... d
   
  private:
 

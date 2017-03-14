@@ -68,7 +68,6 @@ LogStreamer JetScapeLogger::Info()
 {
   string s="[Info] ";
   // s <<  __PRETTY_FUNCTION__ <<":"<<__LINE__<<" ";
-  //return LogStreamer(std::cout<<BOLDBLUE<<s);
   return LogStreamer(std::cout<<s);
 }
 
@@ -91,8 +90,6 @@ LogStreamer JetScapeLogger::Verbose(unsigned short m_vlevel)
 {
   if (m_vlevel<vlevel) // or if (m_vlevel==vlevel)
     {
-      //string s="[Verbose] [level = "; s+= std::to_string(vlevel); s+="] ";
-      // shorter:
       string s="[Verbose][";s+= std::to_string(m_vlevel); s+="] ";
       return LogStreamer(std::cout<<GREEN<<s);
     }

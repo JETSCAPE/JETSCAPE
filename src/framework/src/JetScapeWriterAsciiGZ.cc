@@ -22,7 +22,6 @@ void JetScapeWriterAsciiGZ::WriteEvent()
 
 void JetScapeWriterAsciiGZ::Write(shared_ptr<Parton> p)
 {
-  //output_file<<"ID : "<<p->pid()<<endl;
   output_file<<*p<<endl;
 }
 
