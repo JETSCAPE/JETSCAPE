@@ -6,9 +6,6 @@
 #include "JetScapeLogger.h"
 #include "JetScapeModuleBase.h"
 
-//#include<iostream>
-//#include<sstream>
-
 using namespace std;
 
 class JetScape : public JetScapeModuleBase
@@ -23,14 +20,10 @@ class JetScape : public JetScapeModuleBase
 
   void Init(); 
   void Exec();
+  void Finish();
 
   void SetNumberOfEvents(int m_n_events) {n_events=m_n_events;}
   int GetNumberOfEvents() {return n_events;}
-  
-  // dummy here, but might be helpful to implement in most classes
-  // in which output is required and being conistent with C++ cout
-  // vectors, fulidcells ...
-  //friend ostream &operator<<(ostream &out, const JetScape &js) {out<<"Test"; return out;} 
 
  private:
 

@@ -11,20 +11,15 @@ using namespace std;
 
 JetScape::JetScape()
 {
-  //Simple Debug replace --> logger
-  //cout<<"JetScape : Default Constructor called."<<endl;
   n_events=1;
   VERBOSE(8);
 }
 
 JetScape::~JetScape()
 {
-  //Simple Debug replace --> logger
-  //cout<<"JetScape : Default Destructor called."<<endl;
   VERBOSE(8);
-  //needed because of shared pointers and connection to instance
-  // In general explore: unique_pointers rewrite!!!
-  //JetScapeSignalManager::Instance()->Clear(); //not needed, use weak_ptr in JetScapeSignalManager class (=not owning)
+  //JetScapeSignalManager::Instance()->Clear();
+  //not needed, use weak_ptr in JetScapeSignalManager class (=not owning)
 }
 
 void JetScape::Show()
@@ -39,7 +34,7 @@ void JetScape::Init()
 {
   //Show();
   
-  INFO<<"Intialize JetScape ...";
+  INFO<<BOLDBLACK<<"Intialize JetScape ...";
   
   JetScapeXML::Instance()->OpenXMLFile(GetXMLFileName());
   
@@ -69,60 +64,51 @@ void JetScape::Init()
    SetPointers();
    
    // Has to be called explicitly since not really fully recursively (if ever needed)
-   // So JetScape is "Task Manager" of all modules
-   //JetScapeTask::Init();
+   // So --> JetScape is "Task Manager" of all modules ...
+   
    INFO<<"Found "<<GetNumberOfTasks()<<" Modules Initialize them ... ";
    JetScapeTask::InitTasks();
 }
 
-// kind of cluncky, maybe a better way ... !?
-// Handle signal/slots in JetScape !?? (avoid passing pointers to sub tasks ...)
+// kind of cluncky, maybe a better way ... ?
+// Handle signal/slots in JetScape hence avoid passing pointers to sub tasks ...
 void JetScape::SetPointers()
 {
   
    // to get hydro pointer for signals, use signal?
-  INFO<<"Set Hydro Pointer for SignalManager to create Signal/Slots";
-  
-  //shared_ptr<FluidDynamics> m_hydro;
-  //shared_ptr<JetEnergyLossManager> m_jloss_manager;
+  INFO<<"Set Hydro,JetEnergylossManager and IS Pointers for SignalManager to create Signal/Slots";
   
   for (auto it : GetTaskList())
     {
       if (dynamic_pointer_cast<FluidDynamics>(it))
-	{
-	  //m_hydro=dynamic_pointer_cast<FluidDynamics>(it);
-	  JetScapeSignalManager::Instance()->SetHydroPointer(dynamic_pointer_cast<FluidDynamics>(it));
-	}
+	JetScapeSignalManager::Instance()->SetHydroPointer(dynamic_pointer_cast<FluidDynamics>(it));
+  
+      if (dynamic_pointer_cast<JetEnergyLossManager>(it))
+	JetScapeSignalManager::Instance()->SetJetEnergyLossManagerPointer(dynamic_pointer_cast<JetEnergyLossManager>(it));
+      
+      if (dynamic_pointer_cast<HardProcess>(it))
+	JetScapeSignalManager::Instance()->SetHardProcessPointer(dynamic_pointer_cast<HardProcess>(it));
+      
+      if (dynamic_pointer_cast<JetScapeWriter>(it) && it->GetActive())
+	JetScapeSignalManager::Instance()->SetWriterPointer(dynamic_pointer_cast<JetScapeWriter>(it)); 
     }
-
-  for (auto it : GetTaskList())
-	{
-	  if (dynamic_pointer_cast<JetEnergyLossManager>(it))
-	    {
-	      //m_jloss_manager=dynamic_pointer_cast<JetEnergyLossManager>(it);	      
-	      //dynamic_pointer_cast<JetEnergyLossManager>(it)->SetHydroPointer(m_hydro);
-	      JetScapeSignalManager::Instance()->SetJetEnergyLossManagerPointer(dynamic_pointer_cast<JetEnergyLossManager>(it));
-	    }
-	}
-  
-  //JetScapeSignalManager::Instance()->SetHydroPointer(m_hydro);
-  //JetScapeSignalManager::Instance()->SetJetEnergyLossManagerPointer(m_jloss_manager);
-  // do it here and cluncky, but avoid issues with getting *this in shared pointers ...
-  // add more, like IS, Hadronization ...
-  
-  }
+}
 
 void JetScape::Exec()
 {
-  INFO<<"Run JetScape ...";
+  INFO<<BOLDBLACK<<"Run JetScape ...";
   INFO<<BOLDBLACK<<"Number of Events = "<<GetNumberOfEvents(); 
-  //SetCurrentEvent(0);
   
   // JetScapeTask::ExecuteTasks(); Has to be called explicitly since not really fully recursively (if ever needed)
-  // So JetScape is "Task Manager" of all modules
-  // Hmm, this change still not doing what I wanted (see old Init way ...)
+  // --> JetScape is "Task Manager" of all modules ...
 
-  //SetPointers();
+  // Simple way of passing the writer module pointer ...
+  weak_ptr<JetScapeWriter> w;
+  
+  for (auto it : GetTaskList())
+    if (dynamic_pointer_cast<JetScapeWriter>(it))
+      if (it->GetActive())
+	w=dynamic_pointer_cast<JetScapeWriter>(it);	           
   
   for (int i=0;i<GetNumberOfEvents();i++)
     {
@@ -130,10 +116,21 @@ void JetScape::Exec()
       INFO<<"Found "<<GetNumberOfTasks()<<" Modules Execute them ... ";
       
       JetScapeTask::ExecuteTasks();
+
+      if (w.lock().get())
+	JetScapeTask::WriteTasks(w);            
+     
+      JetScapeTask::ClearTasks();
+
       IncrementCurrentEvent();
-      
-      //cout<<JetScapeSignalManager::Instance()->GetNumberOfJetSignals()<<endl;
-      //JetScapeSignalManager::Instance()->PrintJetSignalMap();
-      //JetScapeSignalManager::Instance()->PrintEdensitySignalMap();
     }
+}
+
+void JetScape::Finish()
+{
+  INFO<<BOLDBLACK<<"JetScape finished after "<<GetNumberOfEvents()<<" events!";
+  DEBUG<<"More infos wrap up/saving to file/closing file ...";
+
+  // same as in Init() and Exec() ...
+  JetScapeTask::FinishTasks(); //dummy so far ...
 }

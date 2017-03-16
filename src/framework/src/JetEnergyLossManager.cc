@@ -12,15 +12,36 @@ using namespace std;
 JetEnergyLossManager::JetEnergyLossManager()
 {
   SetId("JLossManager");
+  GetHardPartonListConnected=false;
   VERBOSE(8);
 }
 
 JetEnergyLossManager::~JetEnergyLossManager()
 {
-  //Simple Debug replace --> logger
-  //cout<<"JetScape : Default Destructor called."<<endl;
-  VERBOSE(8);
+  // Check if this is all really needed with shared_ptr ...
+  DEBUG;
+  Clear();
+ 
+  if (GetNumberOfTasks()>0)
+    EraseTaskLast();
 }
+
+void JetEnergyLossManager::Clear()
+{
+  DEBUG<<"Hard Parton List ...";
+  
+  hp.clear();
+  
+  int n=GetNumberOfTasks();
+  for (int i=1;i<n;i++)
+    EraseTaskLast();
+
+  // Clean Up not really working with iterators (see also above!!!) Some logic not clear for me.
+  JetScapeSignalManager::Instance()->CleanUp();
+  
+  VERBOSE(8)<<hp.size();
+}
+  
 
 void JetEnergyLossManager::Init()
 {
@@ -34,6 +55,16 @@ void JetEnergyLossManager::Init()
   
   INFO<<"Found "<<GetNumberOfTasks()<<" Eloss Manager Tasks/Modules Initialize them ... ";
   JetScapeTask::InitTasks();
+
+  INFO<<"Connect JetEnergyLossManager Signal to Hard Process ...";
+  JetScapeSignalManager::Instance()->ConnectGetHardPartonListSignal(shared_from_this());
+}
+
+
+void JetEnergyLossManager::WriteTask(weak_ptr<JetScapeWriter> w)
+{
+  VERBOSE(8);
+  JetScapeTask::WriteTasks(w);
 }
 
 void JetEnergyLossManager::Exec()
@@ -46,77 +77,52 @@ void JetEnergyLossManager::Exec()
       exit(-1);
     }
 
-  // --------------------
-  // For test only ....
-  // mimick at most di-jets here ...
-  // add function call to pythia to determine how many partons/jets ...
-  if (GetNumberOfTasks()<2)
+  if (GetGetHardPartonListConnected())
     {
-      INFO<<"Assume Di-Jet : Copy original Eloss Module and add to Manager list ...";
+      GetHardPartonList(hp);
       
-      auto jloss=dynamic_pointer_cast<JetEnergyLoss>(GetTaskAt(0));
-      auto jloss2=make_shared<JetEnergyLoss> (*jloss);
+      INFO<<"Number of Hard Partons = "<<hp.size();
       
-      Add(jloss2);
+      for (int i=1;i<hp.size();i++)
+	{
+	  DEBUG<<"Create the "<<i<<" th copy because number of intital hard partons = "<<hp.size();
+	 
+	  Add(make_shared<JetEnergyLoss>(*dynamic_pointer_cast<JetEnergyLoss>(GetTaskAt(0))));
+	}
     }
-
-  //DEBUG<<"Found "<<GetNumberOfTasks()<<" Eloss Manager Tasks/Modules Execute them ... ";
-  //ClearTaskList();
-  //DEBUG<<"Found "<<GetNumberOfTasks()<<" Eloss Manager Tasks/Modules Execute them ... ";
-   
-  //cout<<GetTaskList().size()<<endl;
-   // --------------------
   
   INFO<<"Found "<<GetNumberOfTasks()<<" Eloss Manager Tasks/Modules Execute them ... ";
-  //cout<<GetNumSignals()<<endl;
   DEBUG<<"Check and Create Signal/Slots via JetScapeSignalManaher instance if needed ...";
+  
   CreateSignalSlots();
 
-  /*
-   if (GetNumberOfTasks()>2 && GetNumberOfTasks()<4)
+  if (GetGetHardPartonListConnected())
     {
-      DEBUG<<"Erase last Task ...";
-      EraseTaskLast();
+      int n=0;
+      for (auto it : GetTaskList())
+	{
+	  dynamic_pointer_cast<JetEnergyLoss>(it)->AddShowerInitiatingParton(hp[n]);
+	  n++;
+	}
     }
-
-   // Only needed for bookkeeping cleanly and if something gets deleted after connections
-   // so if we want to manage only 1 ++ (and delete everyting > 1 then this function is needed!!!)
-   JetScapeSignalManager::Instance()->CleanUp();
-  */
   
   JetScapeTask::ExecuteTasks();
 }
 
-/*
-int JetEnergyLossManager::GetNumSignals()
-{
-  int num_sig=0;
-  if (GetNumberOfTasks()>0)
-    num_sig=GetNumberOfTasks()*(GetTaskAt(0)->GetNumberOfTasks());
-  return num_sig;
-}
-*/
-
 void JetEnergyLossManager::CreateSignalSlots()
 {
-  //int i=0;
   for (auto it : GetTaskList())
-    {
-      for (auto it2 : it->GetTaskList())
-	{
-	  //cout<<i<<" "<<dynamic_pointer_cast<JetEnergyLoss>(it2)->GetJetSignalConnected()<<endl;
-	  //i++;
-	  if (!dynamic_pointer_cast<JetEnergyLoss>(it2)->GetJetSignalConnected())
-	    {
-	      //dynamic_pointer_cast<JetEnergyLoss>(it2)->jetSignal.connect(GetHydroPointer().get(),&FluidDynamics::UpdateEnergyDeposit);
-	      //dynamic_pointer_cast<JetEnergyLoss>(it2)->SetJetSignalConnected(true);
-	      JetScapeSignalManager::Instance()->ConnectJetSignal(dynamic_pointer_cast<JetEnergyLoss>(it2));
-	    }
+    for (auto it2 : it->GetTaskList())
+      {
+	if (!dynamic_pointer_cast<JetEnergyLoss>(it2)->GetJetSignalConnected())
+	  JetScapeSignalManager::Instance()->ConnectJetSignal(dynamic_pointer_cast<JetEnergyLoss>(it2));
+	
+	if (!dynamic_pointer_cast<JetEnergyLoss>(it2)->GetEdensitySignalConnected())	  
+	  JetScapeSignalManager::Instance()->ConnectEdensitySignal(dynamic_pointer_cast<JetEnergyLoss>(it2));
+	
+	if (!dynamic_pointer_cast<JetEnergyLoss>(it2)-> GetGetHydroCellSignalConnected())	  
+	  JetScapeSignalManager::Instance()->ConnectGetHydroCellSignal(dynamic_pointer_cast<JetEnergyLoss>(it2));
+      }
 
-	  if (!dynamic_pointer_cast<JetEnergyLoss>(it2)->GetEdensitySignalConnected())
-	    {
-	      JetScapeSignalManager::Instance()->ConnectEdensitySignal(dynamic_pointer_cast<JetEnergyLoss>(it2));
-	    }
-	}
-    }
+  JetScapeSignalManager::Instance()->PrintGetHydroCellSignalMap();
 }

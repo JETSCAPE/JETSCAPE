@@ -27,15 +27,12 @@ void JetScapeXML::OpenXMLFile()
       
       if (xml_doc.ErrorID()<1)
 	{
-	  // Also: __FILE__ in gcc & clang
-	  //cout<< __PRETTY_FUNCTION__ <<":"<<__LINE__<< " Open XML file : "<< GetXMLFileName() << endl;
-	  
-	  INFO<<"Open XML file : "<< GetXMLFileName();
+	  INFO<<BOLDBLACK<<"Open XML file : "<< GetXMLFileName();
 	  xml_root = (tinyxml2::XMLElement*) xml_doc.FirstChildElement("jetscape" );
 	  
 	  if (!xml_root)
 	    {
-	      WARN << "Not a valide JetScape XML file!";
+	      WARN << "Not a valid JetScape XML file!";
 	      exit(-1);
 	    }
 	}
