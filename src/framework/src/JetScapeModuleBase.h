@@ -1,4 +1,9 @@
-// JetScapeModuleBase class
+// -----------------------------------------
+// JetScape (modular/task) based framework
+// Intial Design: Joern Putschke (2017)
+//                (Wayne State University)
+// -----------------------------------------
+// License and Doxygen-like Documentation to be added ...
 
 #ifndef JETSCAPEMODULEBASE_H
 #define JETSCAPEMODULEBASE_H
@@ -21,6 +26,8 @@ class JetScapeModuleBase : public JetScapeTask , public sigslot::has_slots<sigsl
   JetScapeModuleBase();
   JetScapeModuleBase(string m_name);
   virtual ~JetScapeModuleBase();
+
+  //virtual shared_ptr<JetScapeModuleBase> Clone() const {return nullptr;}  
   
   virtual void Init();
   virtual void Exec() {};

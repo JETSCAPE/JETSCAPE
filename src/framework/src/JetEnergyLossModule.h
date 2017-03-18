@@ -1,4 +1,11 @@
-// Framework test (dummy) JetEnergyLoss class (to be changed with real implemenation)
+// -----------------------------------------
+// JetScape (modular/task) based framework
+// Intial Design: Joern Putschke (2017)
+//                (Wayne State University)
+// -----------------------------------------
+// License and Doxygen-like Documentation to be added ...
+
+// Use CRTP for cloning of derived class in base class ...
 
 #ifndef JETENERGYLOSSMODULE_H
 #define JETENERGYLOSSMODULE_H

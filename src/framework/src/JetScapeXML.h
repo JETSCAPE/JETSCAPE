@@ -1,6 +1,11 @@
+// -----------------------------------------
+// JetScape (modular/task) based framework
+// Intial Design: Joern Putschke (2017)
+//                (Wayne State University)
+// -----------------------------------------
+// License and Doxygen-like Documentation to be added ...
+
 // JetScape XML init reader class (meant as singelton)
-// to be rethought (maybe just a class which lives during the init phase ...)
-// or add an instance release ... (to be more flexible later if in later life time XML infos are needed)!?
 
 #ifndef JETSCAPEXML_H
 #define JETSCAPEXML_H

@@ -1,4 +1,9 @@
-// JetScape Logger class implementation (meant as singelton)
+// -----------------------------------------
+// JetScape (modular/task) based framework
+// Intial Design: Joern Putschke (2017)
+//                (Wayne State University)
+// -----------------------------------------
+// License and Doxygen-like Documentation to be added ...
 
 #include<stddef.h>
 #include<fstream>
@@ -93,6 +98,36 @@ LogStreamer JetScapeLogger::Verbose(unsigned short m_vlevel)
       string s="[Verbose][";s+= std::to_string(m_vlevel); s+="] ";
       return LogStreamer(std::cout<<GREEN<<s);
     }
+  else
+    {
+      null.setstate(std::ios_base::failbit);
+      return LogStreamer(null);  
+    }
+}
+
+
+LogStreamer JetScapeLogger::VerboseShower(unsigned short m_vlevel)
+{
+  if (m_vlevel<vlevel) // or if (m_vlevel==vlevel)
+    {
+      string s="[Verbose][";s+= std::to_string(m_vlevel); s+="] ";
+      return LogStreamer(std::cout<<BOLDCYAN<<s);
+    }
+  else
+    {
+      null.setstate(std::ios_base::failbit);
+      return LogStreamer(null);  
+    }
+}
+
+
+LogStreamer JetScapeLogger::VerboseParton(unsigned short m_vlevel,Parton &p)
+{
+  if (m_vlevel<vlevel) // or if (m_vlevel==vlevel)
+    {
+      string s="[Verbose][";s+= std::to_string(m_vlevel); s+="] ";
+      return LogStreamer(std::cout<<GREEN<<s<<" "<<p);
+    }    
   else
     {
       null.setstate(std::ios_base::failbit);

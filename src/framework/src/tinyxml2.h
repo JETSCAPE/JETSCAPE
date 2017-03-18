@@ -188,13 +188,13 @@ private:
 	Has a small initial memory pool, so that low or no usage will not
 	cause a call to new/delete
 */
-template <class T, int INITIAL_SIZE>
+template <class T, int INITIAL_SIZE_XML>
 class DynArray
 {
 public:
     DynArray() {
         _mem = _pool;
-        _allocated = INITIAL_SIZE;
+        _allocated = INITIAL_SIZE_XML;
         _size = 0;
     }
 
@@ -260,7 +260,7 @@ public:
     }
 
     int Capacity() const				{
-        TIXMLASSERT( _allocated >= INITIAL_SIZE );
+        TIXMLASSERT( _allocated >= INITIAL_SIZE_XML );
         return _allocated;
     }
 
@@ -294,7 +294,7 @@ private:
     }
 
     T*  _mem;
-    T   _pool[INITIAL_SIZE];
+    T   _pool[INITIAL_SIZE_XML];
     int _allocated;		// objects allocated
     int _size;			// number objects in use
 };

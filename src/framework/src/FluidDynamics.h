@@ -1,4 +1,9 @@
-// Framework test (dummy) FluidDynamics class (to be changed with real implemenation)
+// -----------------------------------------
+// JetScape (modular/task) based framework
+// Intial Design: Joern Putschke (2017)
+//                (Wayne State University)
+// -----------------------------------------
+// License and Doxygen-like Documentation to be added ...
 
 #ifndef FLUIDDYNAMICS_H
 #define FLUIDDYNAMICS_H

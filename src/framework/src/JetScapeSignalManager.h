@@ -1,3 +1,10 @@
+// -----------------------------------------
+// JetScape (modular/task) based framework
+// Intial Design: Joern Putschke (2017)
+//                (Wayne State University)
+// -----------------------------------------
+// License and Doxygen-like Documentation to be added ...
+
 //  SignalManager instance class (meant as singelton)
 
 #ifndef JETSCAPESIGNALMANAGER_H
@@ -42,8 +49,10 @@ class JetScapeSignalManager //: public sigslot::has_slots<sigslot::multi_threade
   void ConnectGetTemperatureSignal(shared_ptr<JetEnergyLoss> j);
   void ConnectGetHydroCellSignal(shared_ptr<JetEnergyLoss> j);
   void ConnectGetHardPartonListSignal(shared_ptr<JetEnergyLossManager> jm);
-    
-  void DisconnectSignal() {}; // to be implememted if needed ...
+  void ConnectSentInPartonsSignal(shared_ptr<JetEnergyLoss> j,shared_ptr<JetEnergyLoss> j2);
+  void ConnectGetOutPartons(shared_ptr<JetEnergyLoss> j,shared_ptr<JetEnergyLoss> j2) {};
+  
+  void DisconnectSignal() {}; // to be implememted if needed maybe for Eloss ...!???
 
   void CleanUp();
   
@@ -58,6 +67,7 @@ class JetScapeSignalManager //: public sigslot::has_slots<sigslot::multi_threade
   void PrintAddJetSourceSignalMap() {};
   void PrintGetTemperatureSignalMap() {};
   void PrintGetHydroCellSignalMap();
+  void PrintSentInPartonsSignalMap();
   
  private:
 
@@ -75,12 +85,17 @@ class JetScapeSignalManager //: public sigslot::has_slots<sigslot::multi_threade
   int num_AddJetSourceSignals=0;
   int num_GetTemperatureSignals=0;
   int num_GetHydroCellSignals=0;
-
+  int num_SentInPartons=0;
+  int num_GetOutPartons=0;
+  
   map<int,weak_ptr<JetEnergyLoss>> jet_signal_map;
   map<int,weak_ptr<JetEnergyLoss>> edensity_signal_map;
   map<int,weak_ptr<JetEnergyLoss>> AddJetSourceSignal_map;
   map<int,weak_ptr<JetEnergyLoss>> GetTemperatureSignal_map;
   map<int,weak_ptr<JetEnergyLoss>> GetHydroCellSignal_map;
+
+  map<int,weak_ptr<JetEnergyLoss>> SentInPartons_map;
+  map<int,weak_ptr<JetEnergyLoss>> GetOutPartons_map;
   
 };
 

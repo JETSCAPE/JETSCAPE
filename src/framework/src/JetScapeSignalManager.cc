@@ -1,4 +1,9 @@
-// JetScape SignalManager init reader class implementation (meant as singelton)
+// -----------------------------------------
+// JetScape (modular/task) based framework
+// Intial Design: Joern Putschke (2017)
+//                (Wayne State University)
+// -----------------------------------------
+// License and Doxygen-like Documentation to be added ...
 
 #include "JetScapeSignalManager.h"
 #include "JetScapeLogger.h"
@@ -75,6 +80,18 @@ void JetScapeSignalManager::ConnectGetHydroCellSignal(shared_ptr<JetEnergyLoss> 
     }
 }
 
+void JetScapeSignalManager::ConnectSentInPartonsSignal(shared_ptr<JetEnergyLoss> j,shared_ptr<JetEnergyLoss> j2)
+{
+  if (!j2->GetSentInPartonsConnected())
+    {
+      j->SentInPartons.connect(j2.get(), &JetEnergyLoss::DoEnergyLoss);
+      j2->SetSentInPartonsConnected(true);
+      SentInPartons_map.emplace(num_SentInPartons,(weak_ptr<JetEnergyLoss>) j2);
+
+      num_SentInPartons++;
+    }
+}
+			   
 void JetScapeSignalManager::CleanUp()
 {
   VERBOSE(8);
@@ -96,15 +113,19 @@ void JetScapeSignalManager::CleanUp()
 	  
 	  GetHydroCellSignal_map.erase(i);
 	  num_GetHydroCellSignals--;
+
+	  SentInPartons_map.erase(i);
+	  num_SentInPartons--;
 	}
     }
   else
     {
-      jet_signal_map.clear();edensity_signal_map.clear();GetHydroCellSignal_map.clear();
+      jet_signal_map.clear();edensity_signal_map.clear();GetHydroCellSignal_map.clear(),SentInPartons_map.clear();
       // think better here how to handle the clean of when the instance goes out of scope ...!???
     }
 
   PrintGetHydroCellSignalMap();
+  PrintSentInPartonsSignalMap();
   
   VERBOSE(8)<<"Done ...";
 }
@@ -128,6 +149,12 @@ void JetScapeSignalManager::PrintGetHydroCellSignalMap()
        VERBOSE(8) << "[" << x.first << ':' << x.second.lock().get() << ']'<<" "<<x.second.lock()->GetId();
 }
 
+void JetScapeSignalManager::PrintSentInPartonsSignalMap()
+{
+   for (auto& x: SentInPartons_map)
+     //if (x.second.lock().get())
+       VERBOSE(8) << "[" << x.first << ':' << x.second.lock().get() << ']'<<" "<<x.second.lock()->GetId();
+}
 
 /*
 void JetScapeSignalManager::Clear()

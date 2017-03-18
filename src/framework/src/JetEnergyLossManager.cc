@@ -1,4 +1,9 @@
-// Framework test JetEnergyLossManager class implementation
+// -----------------------------------------
+// JetScape (modular/task) based framework
+// Intial Design: Joern Putschke (2017)
+//                (Wayne State University)
+// -----------------------------------------
+// License and Doxygen-like Documentation to be added ...
 
 #include "JetEnergyLossManager.h"
 #include "JetScapeLogger.h"
@@ -38,6 +43,7 @@ void JetEnergyLossManager::Clear()
 
   // Clean Up not really working with iterators (see also above!!!) Some logic not clear for me.
   JetScapeSignalManager::Instance()->CleanUp();
+  JetScapeTask::ClearTasks();
   
   VERBOSE(8)<<hp.size();
 }
@@ -122,7 +128,14 @@ void JetEnergyLossManager::CreateSignalSlots()
 	
 	if (!dynamic_pointer_cast<JetEnergyLoss>(it2)-> GetGetHydroCellSignalConnected())	  
 	  JetScapeSignalManager::Instance()->ConnectGetHydroCellSignal(dynamic_pointer_cast<JetEnergyLoss>(it2));
+
+	// between eloss modules and eloss
+	// check the signals itself, probably best via manager in the long run ...
+	if(!dynamic_pointer_cast<JetEnergyLoss>(it2)->GetSentInPartonsConnected())
+	  JetScapeSignalManager::Instance()->ConnectSentInPartonsSignal(dynamic_pointer_cast<JetEnergyLoss>(it),dynamic_pointer_cast<JetEnergyLoss>(it2));
       }
 
   JetScapeSignalManager::Instance()->PrintGetHydroCellSignalMap();
+  VERBOSE(8);
+  JetScapeSignalManager::Instance()->PrintSentInPartonsSignalMap();
 }

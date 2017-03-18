@@ -1,3 +1,10 @@
+// -----------------------------------------
+// JetScape (modular/task) based framework
+// Intial Design: Joern Putschke (2017)
+//                (Wayne State University)
+// -----------------------------------------
+// License and Doxygen-like Documentation to be added ...
+
 // JetScapeTask class
 // Implement truly recursive (not yet done)
 // (see https://root.cern.ch/doc/v608/TTask_8cxx_source.html l248)

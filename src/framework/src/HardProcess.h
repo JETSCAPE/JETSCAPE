@@ -1,4 +1,9 @@
-// Framework test (dummy) HardProcesses class (to be changed with real implemenation)
+// -----------------------------------------
+// JetScape (modular/task) based framework
+// Intial Design: Joern Putschke (2017)
+//                (Wayne State University)
+// -----------------------------------------
+// License and Doxygen-like Documentation to be added ...
 
 #ifndef HARDPROCESS_H
 #define HARDPROCESS_H

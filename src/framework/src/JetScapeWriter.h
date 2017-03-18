@@ -1,3 +1,10 @@
+// -----------------------------------------
+// JetScape (modular/task) based framework
+// Intial Design: Joern Putschke (2017)
+//                (Wayne State University)
+// -----------------------------------------
+// License and Doxygen-like Documentation to be added ...
+
 // generic jetscape writer base clase
 
 #ifndef JETSCAPEWRITER_H
@@ -27,12 +34,15 @@ class JetScapeWriter : public JetScapeModuleBase
   virtual void Write(shared_ptr<Jet> j) {};
   virtual void Write(shared_ptr<Vertex> v) {};
   virtual void Write(string s) {};
+  virtual void Write(ostream *o) {};
   
   virtual void WriteEvent() {};
   // to be defined what data structure ...
   // or via passing writer to all modules
   // and handling data writing there ...
-  // current approach ... d
+  // current approach ... 
+
+  //virtual GetFileStream() {};
   
  private:
 

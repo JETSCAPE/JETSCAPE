@@ -1,3 +1,10 @@
+// -----------------------------------------
+// JetScape (modular/task) based framework
+// Intial Design: Joern Putschke (2017)
+//                (Wayne State University)
+// -----------------------------------------
+// License and Doxygen-like Documentation to be added ...
+
 // ------------------------------------------------------------
 // JetScape Framework Test Program
 // (use either shared library (need to add paths; see setup.csh)

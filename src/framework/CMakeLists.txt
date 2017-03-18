@@ -22,7 +22,7 @@ find_package(Pythia8)
 
 message ("Include Directories ...")
 
-include_directories(./src ./test ./hydro ./jet) #for test case ...
+include_directories(./src ./test ./hydro ./jet ./gtl/include) #for test case ...
 
 if (${HEPMC_FOUND})
       include_directories(${HEPMC_INCLUDE_DIR})
@@ -62,6 +62,7 @@ if (APPLE)
 endif()   
 
 # w/o not compiling library automatically
+add_subdirectory(./gtl)
 add_subdirectory(./src)
 add_subdirectory(./hydro) #for test case fluid_dynamics ...
 add_subdirectory(./jet)  #for test case jet classes …
@@ -73,7 +74,7 @@ add_executable(testJetScape ./src/testJetScape.cc)
 add_executable(brickTest ./src/brickTest.cc)
 
 target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest) #for test case ...
-target_link_libraries(brickTest JetScape JetScapeHydro JetScapeEloss JetScapeTest) #for test case ...
+target_link_libraries(brickTest JetScape JetScapeHydro  JetScapeTest) #for test case ...
 
 #Check how to set env variables ...
 if (${ROOT_FOUND})

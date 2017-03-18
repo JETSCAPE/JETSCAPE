@@ -1,9 +1,16 @@
-// JetScape class implementation
+// -----------------------------------------
+// JetScape (modular/task) based framework
+// Intial Design: Joern Putschke (2017)
+//                (Wayne State University)
+// -----------------------------------------
+// License and Doxygen-like Documentation to be added ...
+
 #include "JetScape.h"
 #include "JetScapeXML.h"
 #include "JetScapeSignalManager.h"
 #include "JetEnergyLossManager.h"
 #include "FluidDynamics.h"
+#include "JetScapeBanner.h"
 
 #include<iostream>
 
@@ -24,15 +31,12 @@ JetScape::~JetScape()
 
 void JetScape::Show()
 {
-  INFO_NICE;
-  INFO_NICE<<" JetScape Event Generator";
-  INFO_NICE<<" ------------------------";
-  INFO_NICE;
+  show_jetscape_banner();
 }
 
 void JetScape::Init()
 {
-  //Show();
+  Show();
   
   INFO<<BOLDBLACK<<"Intialize JetScape ...";
   

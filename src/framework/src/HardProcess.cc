@@ -1,4 +1,10 @@
-// Framework test (dummy) FluidDynamics class implementation (to be changed with real implemenation)
+// -----------------------------------------
+// JetScape (modular/task) based framework
+// Intial Design: Joern Putschke (2017)
+//                (Wayne State University)
+// -----------------------------------------
+// License and Doxygen-like Documentation to be added ...
+
 #include "HardProcess.h"
 #include "JetScapeLogger.h"
 #include "JetScapeXML.h"

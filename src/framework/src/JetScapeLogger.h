@@ -1,10 +1,18 @@
-// JetScape Logger class (meant as singelton)
+/// -----------------------------------------
+// JetScape (modular/task) based framework
+// Intial Design: Joern Putschke (2017)
+//                (Wayne State University)
+// -----------------------------------------
+// License and Doxygen-like Documentation to be added ...
 
 #ifndef JETSCAPELOGGER_H
 #define JETSCAPELOGGER_H
 
 #include<iostream>
 #include<sstream>
+
+#include "JetClass.hpp"
+//class Parton;
 
 using namespace std;
 
@@ -17,6 +25,8 @@ using namespace std;
 #define DEBUG JetScapeLogger::Instance()->Debug()<<__PRETTY_FUNCTION__<<" : "
 #define REMARK JetScapeLogger::Instance()->Remark()<<__PRETTY_FUNCTION__<<" : "
 #define VERBOSE(l) JetScapeLogger::Instance()->Verbose(l)<<__PRETTY_FUNCTION__<<" : "
+#define VERBOSESHOWER(l) JetScapeLogger::Instance()->VerboseShower(l)<<__PRETTY_FUNCTION__<<" : "
+#define VERBOSEPARTON(l,p) JetScapeLogger::Instance()->VerboseParton(l,p)<<__PRETTY_FUNCTION__<<" : "
 #define WARN JetScapeLogger::Instance()->Warn()<<__PRETTY_FUNCTION__<<" : "
 
 // --------------------------------
@@ -74,6 +84,9 @@ class JetScapeLogger
   //LogStreamer Fatal(); //to be implemented
   
   LogStreamer Verbose(unsigned short m_vlevel);
+  LogStreamer VerboseShower(unsigned short m_vlevel);
+  //Not happy with that fix, still normal << in VERBOSE not working ... follow up.
+  LogStreamer VerboseParton(unsigned short m_vlevel,Parton &p);
   
   void SetDebug(bool m_debug) {debug=m_debug;}
   void SetRemark(bool m_remark) {remark=m_remark;}

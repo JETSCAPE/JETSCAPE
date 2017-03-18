@@ -1,4 +1,11 @@
-// jetscape writer ascii + gzip class
+// -----------------------------------------
+// JetScape (modular/task) based framework
+// Intial Design: Joern Putschke (2017)
+//                (Wayne State University)
+// -----------------------------------------
+// License and Doxygen-like Documentation to be added ...
+
+// jetscape writer ascii class
 
 #ifndef JETSCAPEWRITERASCII_H
 #define JETSCAPEWRITERASCII_H
@@ -28,7 +35,8 @@ class JetScapeWriterAscii : public JetScapeWriter
   // ...
   
   void WriteEvent(); 
-  
+  std::ofstream* GetFileStream() {return &output_file;}
+      
  private:
 
   std::ofstream output_file; //!< Output file

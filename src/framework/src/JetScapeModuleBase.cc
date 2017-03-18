@@ -1,4 +1,10 @@
-// JetScapeModuleBase class implementation
+// -----------------------------------------
+// JetScape (modular/task) based framework
+// Intial Design: Joern Putschke (2017)
+//                (Wayne State University)
+// -----------------------------------------
+// License and Doxygen-like Documentation to be added ...
+
 #include "JetScapeModuleBase.h"
 #include "JetScapeXML.h"
 #include "JetScapeLogger.h"
