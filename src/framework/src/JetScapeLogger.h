@@ -27,6 +27,7 @@ using namespace std;
 #define VERBOSE(l) JetScapeLogger::Instance()->Verbose(l)<<__PRETTY_FUNCTION__<<" : "
 #define VERBOSESHOWER(l) JetScapeLogger::Instance()->VerboseShower(l)<<__PRETTY_FUNCTION__<<" : "
 #define VERBOSEPARTON(l,p) JetScapeLogger::Instance()->VerboseParton(l,p)<<__PRETTY_FUNCTION__<<" : "
+#define VERBOSEPVERTEX(l,v) JetScapeLogger::Instance()->VerboseVertex(l,v)<<__PRETTY_FUNCTION__<<" : "
 #define WARN JetScapeLogger::Instance()->Warn()<<__PRETTY_FUNCTION__<<" : "
 
 // --------------------------------
@@ -87,6 +88,7 @@ class JetScapeLogger
   LogStreamer VerboseShower(unsigned short m_vlevel);
   //Not happy with that fix, still normal << in VERBOSE not working ... follow up.
   LogStreamer VerboseParton(unsigned short m_vlevel,Parton &p);
+  LogStreamer VerboseVertex(unsigned short m_vlevel,VertexBase &v);
   
   void SetDebug(bool m_debug) {debug=m_debug;}
   void SetRemark(bool m_remark) {remark=m_remark;}

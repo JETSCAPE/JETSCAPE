@@ -154,6 +154,16 @@ class FourVector
         return (*this);
         
     };
+
+   FourVector &operator=(const FourVector &c)
+    {
+        tv = c.tv;
+        xv = c.xv;
+        yv = c.yv;
+        zv = c.zv;
+        return (*this);
+        
+    };
     
     void rotate_around_z(double theta)
     {

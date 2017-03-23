@@ -8,6 +8,8 @@
 //Test PartonShower with graphh from GTL
 #include "PartonShower.h"
 #include <sstream>
+#include <fstream>
+#include <iomanip>
 
 node PartonShower::new_vertex(shared_ptr<VertexBase> v)
  {
@@ -33,6 +35,10 @@ void PartonShower::save_node_info_handler (ostream *o, node n) const
 
 void PartonShower::save_edge_info_handler (ostream *o, edge e) const
 {
+
+  *o<<"label "<<pMap[e]->plabel()<<endl;
+  *o<<"pid "<<pMap[e]->pid()<<endl;
+  *o<<"pstat "<<pMap[e]->pstat()<<endl;
   *o<<"pT "<<pMap[e]->pt()<<endl;
   *o<<"eta "<<pMap[e]->eta()<<endl;
   *o<<"phi "<<pMap[e]->phi()<<endl;
@@ -86,6 +92,9 @@ void PartonShower::PrintEdges()
 // To be extended to store all infos like this in GML
 // or store vectore of partons and vertecies with relevant graph infos
 // to construct the graph later .... (TBD)
+// These handlers are needed if one wants to use load and GML files ...
+// Obsolete with new JetScape reader ...
+
 void PartonShower::load_edge_info_handler (edge e, GML_pair *read)
 {
   VERBOSESHOWER(8)<<"Load edge ... "<<e;
@@ -107,7 +116,7 @@ void PartonShower::load_edge_info_handler (edge e, GML_pair *read)
     tmp = tmp->next;
   }
 
-  pMap[e]=make_shared<Parton>(0,0,0,pT,eta,phi,E);
+  pMap[e]=make_shared<Parton>(0,21,0,pT,eta,phi,E);
 }
 
 void PartonShower::load_node_info_handler (node n, GML_pair *read)
@@ -118,7 +127,7 @@ void PartonShower::load_node_info_handler (node n, GML_pair *read)
   double x,y,z,t;
     
   while (tmp) {
-    //printf ("*KEY* : %s \n", tmp->key);
+    //printf ("*KEY* : %s %f \n", tmp->key, tmp->value.floating);
     if (((string) (tmp->key)).find("x")<1)
       x=tmp->value.floating;
     if (((string) (tmp->key)).find("y")<1)
@@ -132,4 +141,57 @@ void PartonShower::load_node_info_handler (node n, GML_pair *read)
   }
 
   vMap[n]=make_shared<VertexBase>(x,y,z,t);
+}
+
+// use with graphviz (on Mac: brew install graphviz --with-app)
+// dot GVfile.gv -Tpdf -o outputPDF.pdf
+
+void PartonShower::SaveAsGV(string fName)
+{
+  ofstream gv; gv.open(fName.c_str());
+
+  // Simple directed graph left->right in dot/gv format for usage with graphviz ...
+  // nodes show (time) and arrows (pT)
+  gv<<"digraph \"graph\" {"<<endl;
+  gv<<endl;
+  gv<<"rankdir=\"LR\";"<<endl;
+  gv<<"node [shape=plaintext, fontsize=11];"<<endl; //, shape=circle]; //plaintext];
+  gv<<"edge [fontsize=10];"<<endl;
+  gv<<endl;
+  //gv<<"0 -> 1"<<endl;
+  node_iterator nIt, nEnd;
+
+  int n=0;
+  string label;
+  string label2;
+  
+  for (nIt = nodes_begin(), nEnd = nodes_end(); nIt != nEnd; ++nIt)
+    {
+      label = ("[label=\""+to_string(n)+"(");
+      label2 = ")\"];";
+      stringstream stream;
+      
+      stream << fixed << setprecision(2) << (vMap[*nIt]->x_in().t());
+      gv<<n<<" "<<label<<stream.str()<<label2<<endl;
+      
+      n++;
+    }
+
+  gv<<endl;
+  
+  edge_iterator eIt, eEnd;
+  
+  for (eIt = edges_begin(), eEnd = edges_end(); eIt != eEnd; ++eIt)
+    {
+
+      label = ("[label=\"(");    
+      label2 = ")\"];";     
+      stringstream stream;
+      stream << fixed << setprecision(2) << (pMap[*eIt]->pt());
+      
+      gv<<to_string(eIt->source().id())+"->"+to_string(eIt->target().id())<<" "<<label<<stream.str()<<label2<<endl;
+    }
+  
+  gv<<endl;
+  gv<<"}"<<endl;
 }

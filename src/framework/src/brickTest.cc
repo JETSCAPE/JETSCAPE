@@ -28,7 +28,7 @@
 #include "brick_jetscape.h"
 #include "Gubser_hydro_jetscape.h"
 #include "PGun.h"
-#include "JSPythia8.h"
+//#include "JSPythia8.h"
 
 using namespace std;
 
@@ -44,7 +44,7 @@ int main(int argc, char** argv)
   // DEBUG=true by default and REMARK=false
   // can be also set also via XML file (at least partially)
   JetScapeLogger::Instance()->SetDebug(true);
-  //JetScapeLogger::Instance()->SetRemark(true);
+  JetScapeLogger::Instance()->SetRemark(true);
   //SetVerboseLevel (9 a lot of additional debug output ...)
   //If you want to suppress it: use SetVerboseLevle(0) 
   JetScapeLogger::Instance()->SetVerboseLevel(9);

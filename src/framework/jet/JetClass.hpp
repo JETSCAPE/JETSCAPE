@@ -132,7 +132,7 @@ public:
     }
   */
   
-    FourVector &x_in()
+   FourVector &x_in()
     {
         return(x_in_);
     }
@@ -173,20 +173,52 @@ public:
         return (1);
     };
     
-    Parton &operator=(Parton &c)
+    Parton& operator=(Parton &c)
     {
-        pid_ = c.pid() ;
-        pstat_ = c.pstat() ;
-        plabel_ = c.plabel() ;
-        //pparent_label_ = c.pparent_label();
-        //p_in_ = c.p_in() ;
-        x_in_ = c.x_in() ;
-        mass_ = c.mass();
-        t_ = c.get_t();
-        
-        return(*this);
+      //FourVector x_in_;
+      
+      pid_ = c.pid() ;
+      pstat_ = c.pstat() ;
+      plabel_ = c.plabel() ;
+      //pparent_label_ = c.pparent_label();
+      //p_in_ = c.p_in() ;
+      //Parton::set_x(c.x_in());
+
+      x_in_ = c.x_in() ;
+      
+      mass_ = c.mass();
+      t_ = c.get_t();
+      
+      return *this;
     }
- 
+
+   Parton& operator=(const Parton &c)
+    {
+      //FourVector x_in_;
+      
+      pid_ = c.pid_;
+      pstat_ = c.pstat_ ;
+      plabel_ = c.plabel_;
+      //pparent_label_ = c.pparent_label();
+      //p_in_ = c.p_in() ;
+      //Parton::set_x(c.x_in());
+
+      x_in_ = c.x_in_;
+      
+      mass_ = c.mass_;
+      t_ = c.t_;
+      
+      return *this;
+    }
+  /*
+  friend ostream Print()
+  {
+    ostream output;
+    return output;
+  }
+  */
+  
+  /*
   friend ostream &operator<<( ostream &output, 
          Parton & parton ) {
     output<<" Parton: ";
@@ -198,7 +230,21 @@ public:
     output << " vec(x,y,z,t)         = "<<parton.x_in().x()<<" "<<parton.x_in().y()<<" "<<parton.x_in().z()<<" "<<parton.x_in().t()<<endl;
     return output;            
       }
-  
+  */
+
+  friend ostream &operator<<( ostream &output, 
+         Parton & parton ) {
+    output<<parton.plabel()<<" "<<parton.pid()<<" "<<parton.pstat()<<" ";
+    output<<parton.pt()<<" "<<parton.rap()<<" "<<parton.phi()<<" "<<parton.e()<<" ";
+    output<<parton.x_in().x()<<" "<<parton.x_in().y()<<" "<<parton.x_in().z()<<" "<<parton.x_in().t();//<<endl;
+    
+    //output << "vec(p) = "<<parton.p_in().x()<<" "<<parton.p_in().y()<<" "<<parton.p_in().z()<<" "<<parton.x_in().t();
+    //output << " vec(p) = "<<parton.get_p(0)<<" "<<parton.get_p(1)<<" "<<parton.get_p(2)<<" "<<parton.get_p(3)<<endl;
+    //output << " vec(px,py,px,e)      = "<<parton(0)<<" "<<parton(1)<<" "<<parton(2)<<" "<<parton(3)<<endl;
+    //output << " vec(pT,eta,phi,e)    = "<<parton.pt()<<" "<<parton.rap()<<" "<<parton.phi()<<" "<<parton.e()<<endl;
+    //output << " vec(x,y,z,t)         = "<<parton.x_in().x()<<" "<<parton.x_in().y()<<" "<<parton.x_in().z()<<" "<<parton.x_in().t()<<endl;
+    return output;            
+      }
   
 private:
   
@@ -249,7 +295,14 @@ public:
   {
     return(x_in_);
   }
+
+  friend ostream &operator<<( ostream &output, 
+         VertexBase & vertex ) {
+
+    output<<vertex.x_in().x()<<" "<<vertex.x_in().y()<<" "<<vertex.x_in().z()<<" "<<vertex.x_in().t();//<<endl;
     
+    return output;
+  }
 private:
   
   FourVector x_in_        ; //location of the vertex

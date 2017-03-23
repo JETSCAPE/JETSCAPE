@@ -30,10 +30,13 @@ class JetScapeWriter : public JetScapeModuleBase
   virtual void Close() {};
   virtual void Open() {};
 
-  virtual void Write(shared_ptr<Parton> p) {};
-  virtual void Write(shared_ptr<Jet> j) {};
-  virtual void Write(shared_ptr<Vertex> v) {};
+  virtual void WriteInitFileXML() {};
+  virtual void Write(weak_ptr<Parton> p) {};
+  virtual void Write(weak_ptr<Jet> j) {};
+  virtual void Write(weak_ptr<VertexBase> v) {};
   virtual void Write(string s) {};
+  virtual void WriteComment(string s) {};
+  virtual void WriteWhiteSpace(string s) {};
   virtual void Write(ostream *o) {};
   
   virtual void WriteEvent() {};
