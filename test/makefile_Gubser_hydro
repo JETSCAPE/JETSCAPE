@@ -1,0 +1,40 @@
+include Makefile.inc
+
+CXX	= g++
+CXXFLAGS = -std=c++11 -O3 -Wall
+
+INCLUDES = -I$(jetscape_src) -I$(wrapper_src)
+OBJECTS	= test_Gubser_hydro_main.o Gubser_hydro_jetscape.o fluid_dynamics.o
+OBJLIBS	=
+LIBS	=  -L$(external_lib) -L$(wrapper_src)
+EXECUTABLE = test_Gubser_hydro_main
+
+all: $(OBJECTS) $(EXECUTABLE)
+
+$(EXECUTABLE): $(OBJECTS) $(OBJLIBS) 
+	$(CXX) $(CXXFLAGS) $(OBJECTS) $(OBJLIBS) $(LIBS) -o $@
+
+test_Gubser_hydro_main.o: $(OBJLIBS) test_Gubser_hydro_main.cpp
+	$(CXX) $(CXXFLAGS) -c $(INCLUDES) test_Gubser_hydro_main.cpp
+
+Gubser_hydro_jetscape.o : $(OBJLIBS) $(wrapper_src)/Gubser_hydro_jetscape.cpp
+	$(CXX) $(CXXFLAGS) -c $(INCLUDES) $(wrapper_src)/Gubser_hydro_jetscape.cpp
+
+fluid_dynamics.o : $(jetscape_src)/fluid_dynamics.cpp
+	$(CXX) $(CXXFLAGS) -c $(INCLUDES) $(jetscape_src)/fluid_dynamics.cpp
+
+$(external_lib)/libsrc_hydro_file.a : force_look
+	cd $(external_src); make -f Makefile_lib
+
+
+.PHONY: clean # explicitly declare 'clean' to be PHONY
+clean :
+	-$(RM) -f $(OBJECTS)
+	-for d in $(external_src); do (cd $$d; $(MAKE) -f Makefile_lib clean ); done
+
+distclean :
+	-$(RM) -f $(EXECUTABLE) $(OBJECTS)
+	-for d in $(external_src); do (cd $$d; $(MAKE) -f Makefile_lib clean ); done
+
+force_look :
+	true

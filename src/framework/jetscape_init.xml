@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<!-- Just for test purposes! -->
+<!-- More details and final format to be determined ... -->
+<jetscape>
+
+  <debug> on </debug>
+  <remark> off </remark>
+  <vlevel> 0 </vlevel>
+
+  <!--  If for example one wants to run JetScape purely via xml ... -->
+   <Tasks>
+     <task>Matter</task>
+     <task>Hydro1</task>
+   </Tasks>
+
+   <!-- Inital State Module ... -->
+   <IS>
+     
+     <Trento>
+     </Trento>
+     
+   </IS>
+
+   <!-- Hard Process/Pythia to be included -->
+
+   <Hard>
+
+     <!-- Parton Gun test with fixed pT and fixed IS pos = 0 ... -->
+     <PGun>
+       <name>PGun</name>
+       <pT>100</pT>
+     </PGun>
+     
+   </Hard>
+   
+   
+   <!--Eloss Module ... -->
+   <Eloss>
+
+     <deltaT>1</deltaT>
+     <maxT>10</maxT>
+
+     <!-- Individual Eloss Modules run Eloss and Eloss Manager ... -->
+     <!-- Just a test here (no physics implemented in Matter and Martini ... -->
+     <Matter>
+       <name>Matter</name>
+       <param1> 2 </param1>
+       <qhat> 1.1 </qhat>
+     </Matter>
+     
+     <Martini>
+       <name > Martini </name>
+       <param1> 3 </param1>
+     </Martini>
+     
+   </Eloss>
+
+   <!-- Hydro  Module ... -->
+   <Hydro>
+     
+     <Hydro1>
+       <name>Hydro1</name>
+       <eta> 0.2 </eta>
+     </Hydro1>
+
+     <!-- Test Brick ... -->
+     <Brick>
+       <name>Brick</name>
+       <T>0.3</T>
+     </Brick>
+
+     <!-- Test Gubser ... -->
+     <Gubser>
+     </Gubser>
+     
+   </Hydro>
+   
+</jetscape>
