@@ -67,7 +67,8 @@ endif()
 
 # check that C++11 code compiles
 include(CheckCXXSourceCompiles)
-CHECK_CXX_SOURCE_COMPILES("
+CHECK_CXX_SOURCE_COMPILES(
+"
 #include <initializer_list>
 struct A {};
 struct B : public A { using A::A; };
@@ -92,6 +93,8 @@ SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
 # Options. Turn on with 'cmake -Dmyvarname=ON'.
 option(test "Build all tests." OFF) # Makes boolean 'test' available.
 
+add_subdirectory("${CMAKE_SOURCE_DIR}/src/JetClass/")
+
 if (test)
   # add gtest for the unit test# 
   add_subdirectory(3rdparty/googletest/)
@@ -104,4 +107,5 @@ if (test)
 
   # add the first subdirectory that include unit tests
   add_subdirectory(src/fluid_dynamics/test/)
+
 endif()
