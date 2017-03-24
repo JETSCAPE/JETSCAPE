@@ -57,7 +57,6 @@ class JetEnergyLoss : public JetScapeModuleBase, public std::enable_shared_from_
   sigslot::signal4<double, double, const vector<Parton>&, vector<Parton>&, multi_threaded_local> SentInPartons;
   sigslot::signal1<vector<Parton>&, multi_threaded_local> GetOutPartons; // probably not needed ... do in SentInPartons with return ...
   
-  
   void SetQhat(double m_qhat) {qhat=m_qhat;}
   const double GetQhat() const {return qhat;}
   

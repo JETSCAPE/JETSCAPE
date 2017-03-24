@@ -30,8 +30,14 @@ class JetScapeWriterAscii : public JetScapeWriter
   bool GetStatus() {return output_file.good();}
   void Close() {output_file.close();}
 
-  void Write(shared_ptr<Parton> p);
+  void WriteInitFileXML();
+  
+  void Write(weak_ptr<Parton> p);
+  void Write(weak_ptr<VertexBase> v);
+
   void Write(string s) {output_file<<s<<endl;}
+  void WriteComment(string s) {output_file<<"# "<<s<<endl;}
+  void WriteWhiteSpace(string s) {output_file<<s<<" ";}
   // ...
   
   void WriteEvent(); 

@@ -18,7 +18,7 @@ void show_jetscape_banner()
   INFO_NICE<<"|              /   |    "<<(char) 92<<"          /"<<(char) 92<<"/ "<<" "<<(char) 92<<"                      |";
   INFO_NICE<<"|             / "<<(char) 92<<"  |  /  "<<(char) 92<<"      /"<<(char) 92<<"/"<<"   |  "<<(char) 92<<"/"<<(char) 92<<"                   |";
   INFO_NICE<<"|            /   "<<(char) 92<<" | /    "<<(char) 92<<"    /    % | %   "<<(char) 92<<"                  |";
-  INFO_NICE<<"|          _/     "<<(char) 92<<"|/      "<<(char) 92<<"__/"<<"      %|%     "<<(char) 92<<"/"<<(char) 92<<"__             |";
+  INFO_NICE<<"|         __/     "<<(char) 92<<"|/      "<<(char) 92<<"__/"<<"      %|%     "<<(char) 92<<"/"<<(char) 92<<"__             |";
   //INFO_NICE<<"|            /   "<<(char) 92<<" | /    "<<(char) 92<<"    / *  * | *   "<<(char) 92<<"                  |";
   //INFO_NICE<<"|          _/     "<<(char) 92<<"|/      "<<(char) 92<<"__/"<<"   *  *|*     "<<(char) 92<<"/"<<(char) 92<<"__             |";
   INFO_NICE<<"|                                                              |";
@@ -31,7 +31,7 @@ void show_jetscape_banner()
   INFO_NICE<<"| Please cite xxx if you use this package for scientific work. |";
   INFO_NICE<<"|                                                              |";
   INFO_NICE<<"| JETSCAPE is provided without warranty under the terms        |";
-  INFO_NICE<<"| of the GNU GPLv2. It uses xxx code(s).                       |";
+  INFO_NICE<<"| of the GNU GPLv3. It uses xxx code(s).                       |";
   INFO_NICE<<"| See COPYING file for details.                                |";
   INFO_NICE<<"|                                                              |";
   INFO_NICE<<"*--------------------------------------------------------------*";

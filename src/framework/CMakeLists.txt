@@ -22,7 +22,7 @@ find_package(Pythia8)
 
 message ("Include Directories ...")
 
-include_directories(./src ./test ./hydro ./jet ./gtl/include) #for test case ...
+include_directories(./src ./test ./hydro ./jet ./gtl/include ./reader) #for test case ...
 
 if (${HEPMC_FOUND})
       include_directories(${HEPMC_INCLUDE_DIR})
@@ -67,14 +67,17 @@ add_subdirectory(./src)
 add_subdirectory(./hydro) #for test case fluid_dynamics ...
 add_subdirectory(./jet)  #for test case jet classes …
 add_subdirectory(./test)  #for test case ...
+add_subdirectory(./reader)  #for test case ...
 
 link_directories(./lib)
 
 add_executable(testJetScape ./src/testJetScape.cc)
 add_executable(brickTest ./src/brickTest.cc)
+add_executable(readerTest ./reader/readerTest.cc)
 
 target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest) #for test case ...
 target_link_libraries(brickTest JetScape JetScapeHydro  JetScapeTest) #for test case ...
+target_link_libraries(readerTest JetScape JetScapeHydro  JetScapeReader) #for reader test case ...
 
 #Check how to set env variables ...
 if (${ROOT_FOUND})
@@ -85,6 +88,7 @@ endif()
 if (${PYTHIA8_FOUND})
    target_link_libraries(testJetScape ${PYTHIA8_LIBRARIES})
    target_link_libraries(brickTest ${PYTHIA8_LIBRARIES})
+   message( ${PYTHIA8_LIBRARIES} )
 endif()
 
 #add_executable(testJS ./src/testJetScape.cc)

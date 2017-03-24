@@ -66,8 +66,8 @@ void Matter::Init()
 void Matter::WriteTask(weak_ptr<JetScapeWriter> w)
 {
    VERBOSE(8);
-   w.lock()->Write("ElossModule Parton List: "+GetId());
-   w.lock()->Write("Energy loss to be implemented accordingly ...");
+   w.lock()->WriteComment("ElossModule Parton List: "+GetId());
+   w.lock()->WriteComment("Energy loss to be implemented accordingly ...");
 }
 
 // stupid toy branching ....

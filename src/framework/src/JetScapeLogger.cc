@@ -81,8 +81,8 @@ LogStreamer JetScapeLogger::Remark()
 {
   if (remark)
     {
-      string s="[Remark] ";
-      return LogStreamer(std::cout<<CYAN<<s);
+      string s="[REMARK] ";
+      return LogStreamer(std::cout<<BOLDMAGENTA<<s);
     }
   else
     {
@@ -125,8 +125,22 @@ LogStreamer JetScapeLogger::VerboseParton(unsigned short m_vlevel,Parton &p)
 {
   if (m_vlevel<vlevel) // or if (m_vlevel==vlevel)
     {
-      string s="[Verbose][";s+= std::to_string(m_vlevel); s+="] ";
-      return LogStreamer(std::cout<<GREEN<<s<<" "<<p);
+      string s="[Verbose][";s+= std::to_string(m_vlevel); s+="] Parton: ";
+      return LogStreamer(std::cout<<GREEN<<s<<" "<<p<<endl);
+    }    
+  else
+    {
+      null.setstate(std::ios_base::failbit);
+      return LogStreamer(null);  
+    }
+}
+
+LogStreamer JetScapeLogger::VerboseVertex(unsigned short m_vlevel,VertexBase &v)
+{
+  if (m_vlevel<vlevel) // or if (m_vlevel==vlevel)
+    {
+      string s="[Verbose][";s+= std::to_string(m_vlevel); s+="] Vertex: ";
+      return LogStreamer(std::cout<<GREEN<<s<<" "<<v<<endl);
     }    
   else
     {
