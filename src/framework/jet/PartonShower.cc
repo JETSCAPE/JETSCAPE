@@ -10,6 +10,7 @@
 #include <sstream>
 #include <fstream>
 #include <iomanip>
+#include "helper.h"
 
 node PartonShower::new_vertex(shared_ptr<VertexBase> v)
  {
@@ -24,8 +25,157 @@ void PartonShower::new_parton(node s, node t, shared_ptr<Parton> p)
   pMap[e]=p;
 }
 
+/*
+void PartonShower::FillPartonVec()
+{
+  VERBOSE(8);
+  
+  edge_iterator eIt, eEnd;
+  
+  for (eIt = edges_begin(), eEnd = edges_end(); eIt != eEnd; ++eIt)
+    pVec.push_back(pMap[*eIt]);     
+}
+
+void PartonShower::FillVertexVec()
+{
+  VERBOSE(8);
+  
+  node_iterator nIt, nEnd;
+  
+  for (nIt = nodes_begin(), nEnd = nodes_end(); nIt != nEnd; ++nIt)    
+    vVec.push_back(vMap[*nIt]);  
+}
+*/
+
+/*
+shared_ptr<Parton> PartonShower::GetPartonAt(int i)
+{
+  if (pVec.size()==0)
+    FillPartonVec();  
+  
+  return pVec[i].lock();
+}
+
+shared_ptr<VertexBase> PartonShower::GetVertexAt(int i)
+{
+  if (vVec.size()==0)
+    FillVertexVec();
+
+  return vVec[i].lock();
+}
+*/
+
+/*
+unique_ptr<Parton> PartonShower::GetPartonAt(int i)
+{
+  if (pVec.size()==0)
+    FillPartonVec();  
+  
+  return make_unique<Parton>(*(pVec[i].lock()));
+}
+
+unique_ptr<VertexBase> PartonShower::GetVertexAt(int i)
+{
+  if (vVec.size()==0)
+    FillVertexVec();
+
+  return make_unique<VertexBase>(*(vVec[i].lock()));
+}
+*/
+/*
+void PartonShower::CreateMaps()
+{
+  VERBOSESHOWER(8);
+  edge_iterator eIt, eEnd;
+  for (eIt = edges_begin(), eEnd = edges_end(); eIt != eEnd; ++eIt)
+    {
+      pToEdgeMap[pMap[*eIt]]=*eIt;
+    }
+  
+  node_iterator nIt, nEnd;
+  for (nIt = nodes_begin(), nEnd = nodes_end(); nIt != nEnd; ++nIt)
+    {
+      //vToNodeMap[vMap[*nIt]]=*nIt;
+    }
+}
+*/
+
+//Memory !? maybe better unique ...
+vector<shared_ptr<Parton>> PartonShower::GetFinalPartons()
+{
+  //VERBOSESHOWER(8)<<pFinal.size();
+  if (pFinal.size()==0)
+    {
+      edge_iterator eIt, eEnd;
+      for (eIt = edges_begin(), eEnd = edges_end(); eIt != eEnd; ++eIt)
+	{
+	  if (eIt->target().outdeg()<1)
+	    {
+	      pFinal.push_back(pMap[*eIt]);
+	      //DEBUG
+	      //cout<<eIt->target()<<endl;
+	    }
+	}
+      return pFinal;
+    }
+  else
+    return pFinal;
+}
+
+vector<Parton> PartonShower::GetFinalPartonsForFastJet()
+{
+  vector<shared_ptr<Parton>> mP=GetFinalPartons(); // to ensure that pFinal is filled
+    
+  vector<Parton> forFJ;
+  
+  for (int i=0;i<mP.size();i++)
+    forFJ.push_back(*mP[i]);
+
+  return forFJ;
+}
+
+int PartonShower::GetNumberOfParents(int n)
+{
+  return GetEdgeAt(n).source().indeg();
+}
+
+int PartonShower::GetNumberOfChilds(int n)
+{
+  return GetEdgeAt(n).target().outdeg();
+}
+
+edge PartonShower::GetEdgeAt(int n)
+{
+  edge_iterator eIt; eIt = edges_begin();advance(eIt,n);
+  return *eIt;
+}
+
+node PartonShower::GetNodeAt(int n)
+{
+  node_iterator nIt; nIt = nodes_begin();advance(nIt,n);
+  return *nIt;
+}
+
+shared_ptr<Parton> PartonShower::GetPartonAt(int n)
+{
+  edge_iterator eIt; eIt = edges_begin();advance(eIt,n);
+  return GetParton(*eIt);
+}
+
+shared_ptr<VertexBase> PartonShower::GetVertexAt(int n)
+{
+  node_iterator nIt; nIt = nodes_begin();advance(nIt,n);
+  return GetVertex(*nIt);
+}
+
+PartonShower::~PartonShower()
+{
+  VERBOSESHOWER(8);pFinal.clear();//pVec.clear();vVec.clear();
+}
+
 void PartonShower::save_node_info_handler (ostream *o, node n) const
 {
+  *o<<"label "<<"\""<<n.id()<<"("<< fixed << setprecision(2) <<vMap[n]->x_in().t()<<")\""<<endl;
   *o<<"x "<<vMap[n]->x_in().x()<<endl;
   *o<<"y "<<vMap[n]->x_in().y()<<endl;
   *o<<"z "<<vMap[n]->x_in().z()<<endl;
@@ -35,8 +185,8 @@ void PartonShower::save_node_info_handler (ostream *o, node n) const
 
 void PartonShower::save_edge_info_handler (ostream *o, edge e) const
 {
-
-  *o<<"label "<<pMap[e]->plabel()<<endl;
+  *o<<"label "<<"\"("<< fixed << setprecision(2) <<pMap[e]->pt()<<")\""<<endl;
+  *o<<"plabel "<<pMap[e]->plabel()<<endl;
   *o<<"pid "<<pMap[e]->pid()<<endl;
   *o<<"pstat "<<pMap[e]->pstat()<<endl;
   *o<<"pT "<<pMap[e]->pt()<<endl;
@@ -62,7 +212,7 @@ void PartonShower::pre_clear_handler()
     }
 }
 
-void PartonShower::PrintNodes()
+void PartonShower::PrintNodes(bool verbose)
 {
   node_iterator nIt, nEnd;
   ostringstream os;
@@ -73,10 +223,13 @@ void PartonShower::PrintNodes()
     }
 
   //cout<<os.str()<<endl;
-  VERBOSESHOWER(8)<<os.str();
+  if (verbose)
+    VERBOSESHOWER(8)<<os.str();
+  else
+    cout<<"Vertex list : "<<os.str()<<endl;
 }
 
-void PartonShower::PrintEdges()
+void PartonShower::PrintEdges(bool verbose)
 {
   edge_iterator eIt, eEnd;
   ostringstream os;
@@ -85,8 +238,11 @@ void PartonShower::PrintEdges()
     {
       os<<*eIt<<"="<<pMap[*eIt]->pt()<<" ";
     }
-  
-  VERBOSESHOWER(8)<<os.str();
+
+  if (verbose)
+    VERBOSESHOWER(8)<<os.str();
+  else
+    cout<<"Parton list : "<<os.str()<<endl;
 }
 
 // To be extended to store all infos like this in GML
@@ -101,6 +257,7 @@ void PartonShower::load_edge_info_handler (edge e, GML_pair *read)
   struct GML_pair* tmp = read;
 
   double pT,eta,phi,E;
+  int plabel,pid,pstat;
     
   while (tmp) {
     //printf ("*KEY* : %s \n", tmp->key);
@@ -112,11 +269,17 @@ void PartonShower::load_edge_info_handler (edge e, GML_pair *read)
       phi=tmp->value.floating;
     if (((string) (tmp->key)).find("E")<1)
       E=tmp->value.floating;
-
+    if (((string) (tmp->key)).find("plabel")<1)
+      plabel=tmp->value.integer;
+    if (((string) (tmp->key)).find("pid")<1)
+      pid=tmp->value.integer;   
+     if (((string) (tmp->key)).find("pstat")<1)
+      pstat=tmp->value.integer;
+     
     tmp = tmp->next;
   }
 
-  pMap[e]=make_shared<Parton>(0,21,0,pT,eta,phi,E);
+  pMap[e]=make_shared<Parton>(plabel,pid,pstat,pT,eta,phi,E);
 }
 
 void PartonShower::load_node_info_handler (node n, GML_pair *read)
@@ -194,4 +357,78 @@ void PartonShower::SaveAsGV(string fName)
   
   gv<<endl;
   gv<<"}"<<endl;
+  gv.close();
+}
+
+void PartonShower::SaveAsGraphML(string fName)
+{
+  // Think about using tinyxml2 in future (if needed ...)
+  
+  ofstream g; g.open(fName.c_str());
+  
+  g<<"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"<<endl;
+  g<<"<graphml xmlns=\"http://graphml.graphdrawing.org/xmlns\""<<endl;
+  g<<"xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""<<endl;
+  g<<"xsi:schemaLocation=\"http://graphml.graphdrawing.org/xmlns"<<endl;
+  g<<" http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd\">"<<endl;
+
+  g<<"<key id=\"nlabel\" for=\"node\" attr.name=\"label\" attr.type=\"string\"/>"<<endl;
+  g<<"<key id=\"nx\" for=\"node\" attr.name=\"x\" attr.type=\"double\"/>"<<endl;
+  g<<"<key id=\"ny\" for=\"node\" attr.name=\"y\" attr.type=\"double\"/>"<<endl;
+  g<<"<key id=\"nz\" for=\"node\" attr.name=\"z\" attr.type=\"double\"/>"<<endl;
+  g<<"<key id=\"nt\" for=\"node\" attr.name=\"t\" attr.type=\"double\"/>"<<endl;
+									   
+  g<<"<key id=\"elabel\" for=\"edge\" attr.name=\"label\" attr.type=\"string\"/>"<<endl;									   
+  g<<"<key id=\"epl\" for=\"edge\" attr.name=\"plabel\" attr.type=\"int\"/>"<<endl;
+  g<<"<key id=\"epid\" for=\"edge\" attr.name=\"pid\" attr.type=\"int\"/>"<<endl;
+  g<<"<key id=\"estat\" for=\"edge\" attr.name=\"pstat\" attr.type=\"int\"/>"<<endl;
+									   
+  g<<"<key id=\"ept\" for=\"edge\" attr.name=\"pT\" attr.type=\"double\"/>"<<endl;
+  g<<"<key id=\"eeta\" for=\"edge\" attr.name=\"eta\" attr.type=\"double\"/>"<<endl;
+  g<<"<key id=\"ephi\" for=\"edge\" attr.name=\"phi\" attr.type=\"double\"/>"<<endl;
+  g<<"<key id=\"ee\" for=\"edge\" attr.name=\"E\" attr.type=\"double\"/>"<<endl;									  
+
+  g<<"<graph id=\"G\" edgedefault=\"directed\">"<<endl;
+						  
+  node_iterator nIt, nEnd;
+  int n=0;
+									 
+  for (nIt = nodes_begin(), nEnd = nodes_end(); nIt != nEnd; ++nIt)
+    {
+      stringstream stream;
+      
+      stream << fixed << setprecision(2) << (vMap[*nIt]->x_in().t());
+      
+      g<<"<node id=\""<<n<<"\">"<<endl;
+      //g<<"<data key=\"nlabel\">"<<to_string(n)+"("+to_string(vMap[*nIt]->x_in().t())+")"<<"</data>"<<endl;
+      g<<"<data key=\"nlabel\">"<<to_string(n)+"("+stream.str()+")"<<"</data>"<<endl;
+      g<<"<data key=\"nx\">"<<vMap[*nIt]->x_in().x()<<"</data>"<<endl;
+      g<<"<data key=\"ny\">"<<vMap[*nIt]->x_in().y()<<"</data>"<<endl;
+      g<<"<data key=\"nz\">"<<vMap[*nIt]->x_in().z()<<"</data>"<<endl;
+      g<<"<data key=\"nt\">"<<vMap[*nIt]->x_in().t()<<"</data>"<<endl;
+      g<<"</node>"<<endl;
+      n++;
+    }
+
+  edge_iterator eIt, eEnd;
+  n=0;
+  for (eIt = edges_begin(), eEnd = edges_end(); eIt != eEnd; ++eIt)
+    {
+      g<<"<edge id=\""<<n<<"\" source=\""<<to_string(eIt->source().id())<<"\" target=\""<<to_string(eIt->target().id())<<"\">"<<endl;
+      g<<"<data key=\"elabel\">"<<to_string((pMap[*eIt]->pt()))<<"</data>"<<endl;
+      g<<"<data key=\"epl\">"<<pMap[*eIt]->plabel()<<"</data>"<<endl;
+      g<<"<data key=\"epid\">"<<pMap[*eIt]->pid()<<"</data>"<<endl;
+      g<<"<data key=\"estat\">"<<pMap[*eIt]->pstat()<<"</data>"<<endl;
+      g<<"<data key=\"ept\">"<<pMap[*eIt]->pt()<<"</data>"<<endl;
+      g<<"<data key=\"eeta\">"<<pMap[*eIt]->eta()<<"</data>"<<endl;
+      g<<"<data key=\"ephi\">"<<pMap[*eIt]->phi()<<"</data>"<<endl;
+      g<<"<data key=\"ee\">"<<pMap[*eIt]->e()<<"</data>"<<endl;
+      g<<"</edge>"<<endl;
+      n++;
+    }
+		    
+   g<<"</graph>"<<endl;
+   g<<"</graphml>"<<endl;
+		       
+  g.close();
 }

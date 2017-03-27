@@ -54,6 +54,8 @@ void JetScapeWriterAscii::Init()
 
 void JetScapeWriterAscii::Exec()
 {
+  INFO<<"Run JetScapeWriterAscii: Write event # "<<GetCurrentEvent()<<" ...";
+  
   if (GetActive())
     WriteEvent();
 }

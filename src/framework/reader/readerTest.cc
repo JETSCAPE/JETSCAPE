@@ -18,16 +18,19 @@
 #include "JetScapeLogger.h"
 #include "JetScapeReader.h"
 #include "JetScapeBanner.h"
+#include "fjcore.hh"
 
 #include <GTL/dfs.h>
 
 using namespace std;
+//using namespace fjcore;
 
 // -------------------------------------
 
 // Forward declaration
 void Show();
 void AnalyzeGraph(shared_ptr<PartonShower> mS);
+ostream & operator<<(ostream & ostr, const fjcore::PseudoJet & jet);
 
 // -------------------------------------
 
@@ -40,15 +43,18 @@ void AnalyzeGraph(shared_ptr<PartonShower> mS);
 
 int main(int argc, char** argv)
 {
-  JetScapeLogger::Instance()->SetDebug(true);
-  JetScapeLogger::Instance()->SetRemark(true);
+  JetScapeLogger::Instance()->SetDebug(false);
+  JetScapeLogger::Instance()->SetRemark(false);
   //SetVerboseLevel (9 a lot of additional debug output ...)
-  //If you want to suppress it: use SetVerboseLevle(0) 
-  JetScapeLogger::Instance()->SetVerboseLevel(9);
+  //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevle(9) or 10
+  JetScapeLogger::Instance()->SetVerboseLevel(0);
   
   cout<<endl;
   Show();
 
+  //Do some dummy jetfinding ...
+  fjcore::JetDefinition jet_def(fjcore::antikt_algorithm, 0.7);
+  
   vector<shared_ptr<PartonShower>> mShowers;
 
   //Directly with template: provide the relevant stream
@@ -72,18 +78,39 @@ int main(int argc, char** argv)
       for (int i=0;i<mShowers.size();i++)
 	{
 	  cout<<" Analyze parton shower = "<<i<<endl;
-	  mShowers[i]->PrintNodes();
-	  mShowers[i]->PrintEdges();	  
+	 
+	  mShowers[i]->PrintVertices();
+	  mShowers[i]->PrintPartons();	
+
+	  //Anti-kT jet finding ... (see: JetDefinition jet_def(antikt_algorithm, 0.7);)
+	  //Already easily avilable via inclusion of fjcore ...
+	  fjcore::ClusterSequence cs(mShowers[i]->GetFinalPartonsForFastJet(), jet_def);	 
+	  vector<fjcore::PseudoJet> jets = fjcore::sorted_by_pt(cs.inclusive_jets(2));
+	  cout<<endl;
+	  cout<<jet_def.description()<<endl;
+	  // Output of found jets ...
+	  //cout<<endl;	 
+	  for (int k=0;k<jets.size();k++)	    
+	    cout<<"Anti-kT jet "<<k<<" : "<<jets[k]<<endl;
+	  cout<<endl;
+	  cout<<"Shower initiating parton : "<<*(mShowers[i]->GetPartonAt(0))<<endl;
+	  cout<<endl;
+	  
 	  AnalyzeGraph(mShowers[i]);
 
-	  if (i==0)	 
-	    mShowers[i]->SaveAsGV("my_test.gv");	    
+	  if (i==0)
+	    {
+	      mShowers[i]->SaveAsGV("my_test.gv");
+	      mShowers[i]->SaveAsGML("my_test.gml");
+	      mShowers[i]->SaveAsGraphML("my_test.graphml");
+	    }
 
 	  // wait for 5s
 	  //std::this_thread::sleep_for(std::chrono::milliseconds(5000));  
 	}
     }
- 
+    
+    reader->Close(); 
 }
 
 // -------------------------------------
@@ -139,3 +166,20 @@ void Show()
   INFO_NICE<<"------------------------------------";
   INFO_NICE;
 }
+
+//----------------------------------------------------------------------
+/// overloaded jet info output
+
+ostream & operator<<(ostream & ostr, const fjcore::PseudoJet & jet) {
+  if (jet == 0) {
+    ostr << " 0 ";
+  } else {
+    ostr << " pt = " << jet.pt()
+         << " m = " << jet.m()
+         << " y = " << jet.rap()
+         << " phi = " << jet.phi();
+  }
+  return ostr;
+}
+
+//----------------------------------------------------------------------

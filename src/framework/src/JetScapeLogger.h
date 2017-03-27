@@ -21,7 +21,7 @@ using namespace std;
 
 // define nicer macros to be used for logging ...
 #define INFO  JetScapeLogger::Instance()->Info()<<" " //<<__PRETTY_FUNCTION__<<" : "
-#define INFO_NICE  JetScapeLogger::Instance()->Info()
+#define INFO_NICE  JetScapeLogger::Instance()->InfoNice()
 #define DEBUG JetScapeLogger::Instance()->Debug()<<__PRETTY_FUNCTION__<<" : "
 #define REMARK JetScapeLogger::Instance()->Remark()<<__PRETTY_FUNCTION__<<" : "
 #define VERBOSE(l) JetScapeLogger::Instance()->Verbose(l)<<__PRETTY_FUNCTION__<<" : "
@@ -78,6 +78,7 @@ class JetScapeLogger
   static JetScapeLogger* Instance();
 
   LogStreamer Info();
+  LogStreamer InfoNice();
   LogStreamer Warn();
   LogStreamer Debug();
   LogStreamer Remark();

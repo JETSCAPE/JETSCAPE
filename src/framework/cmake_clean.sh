@@ -28,3 +28,21 @@ cd ../jet
 rm -rf CMakeFiles
 rm cmake_install.cmake
 rm Makefile
+
+cd ../reader
+
+rm -rf CMakeFiles
+rm cmake_install.cmake
+rm Makefile
+
+cd ../gtl
+
+rm -rf CMakeFiles
+rm cmake_install.cmake
+rm Makefile
+
+cd ../gtl/src
+
+rm -rf CMakeFiles
+rm cmake_install.cmake
+rm Makefile

@@ -11,7 +11,8 @@ JetScape.cc JetScapeTask.cc
 tinyxml2.cc FluidDynamics.cc HardProcess.cc JetScapeLogger.cc JetScapeXML.cc
 JetEnergyLoss.cc  JetScapeModuleBase.cc JetEnergyLossManager.cc
 JetScapeSignalManager.cc JetScapeWriterAscii.cc
-../jet/JetClass.cpp ../jet/fjcore.cc ../jet/PartonShower.cc ) #ElossModulesTest.cc 
+../jet/JetClass.cpp ../jet/fjcore.cc ../jet/PartonShower.cc
+PartonShowerGenerator.cc) #ElossModulesTest.cc 
 
 if(${ZLIB_FOUND})
 set (SOURCES ${SOURCES}  gzstream.cc JetScapeWriterAsciiGZ.cc)

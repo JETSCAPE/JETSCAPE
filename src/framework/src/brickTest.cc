@@ -30,6 +30,9 @@
 #include "PGun.h"
 //#include "JSPythia8.h"
 
+#include <chrono>
+#include <thread>
+
 using namespace std;
 
 // Forward declaration
@@ -40,14 +43,14 @@ void Show();
 int main(int argc, char** argv)
 {
   cout<<endl;
-
+    
   // DEBUG=true by default and REMARK=false
   // can be also set also via XML file (at least partially)
-  JetScapeLogger::Instance()->SetDebug(true);
-  JetScapeLogger::Instance()->SetRemark(true);
+  JetScapeLogger::Instance()->SetDebug(false);
+  JetScapeLogger::Instance()->SetRemark(false);
   //SetVerboseLevel (9 a lot of additional debug output ...)
-  //If you want to suppress it: use SetVerboseLevle(0) 
-  JetScapeLogger::Instance()->SetVerboseLevel(9);
+  //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevle(9) or 10
+  JetScapeLogger::Instance()->SetVerboseLevel(0);
    
   Show();
 
@@ -107,7 +110,10 @@ int main(int argc, char** argv)
   
   INFO_NICE<<"Finished!";
   cout<<endl;
-   
+
+  // wait for 5s
+  //std::this_thread::sleep_for(std::chrono::milliseconds(500000));
+
   return 0;
 }
 
