@@ -87,7 +87,7 @@ void JetEnergyLossManager::Exec()
     {
       GetHardPartonList(hp);
       
-      INFO<<"Number of Hard Partons = "<<hp.size();
+      INFO<<" Number of Hard Partons = "<<hp.size();
       
       for (int i=1;i<hp.size();i++)
 	{
@@ -97,7 +97,7 @@ void JetEnergyLossManager::Exec()
 	}
     }
   
-  INFO<<"Found "<<GetNumberOfTasks()<<" Eloss Manager Tasks/Modules Execute them ... ";
+  INFO<<" Found "<<GetNumberOfTasks()<<" Eloss Manager Tasks/Modules Execute them ... ";
   DEBUG<<"Check and Create Signal/Slots via JetScapeSignalManaher instance if needed ...";
   
   CreateSignalSlots();
@@ -113,6 +113,8 @@ void JetEnergyLossManager::Exec()
     }
   
   JetScapeTask::ExecuteTasks();
+  
+  INFO<<" "<<GetNumberOfTasks()<<" Eloss Manager Tasks/Modules finished.";
 }
 
 void JetEnergyLossManager::CreateSignalSlots()

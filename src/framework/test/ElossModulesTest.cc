@@ -72,7 +72,8 @@ void Matter::WriteTask(weak_ptr<JetScapeWriter> w)
 
 // stupid toy branching ....
 // think about memory ... use pointers ...
-void Matter::DoEnergyLoss(double deltaT, double Q2, const vector<Parton>& pIn, vector<Parton>& pOut)
+//void Matter::DoEnergyLoss(double deltaT, double Q2, const vector<Parton>& pIn, vector<Parton>& pOut)
+void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<Parton>& pOut)
 {
   double z=0.5;
   
@@ -85,10 +86,14 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, const vector<Parton>& pIn, v
       VERBOSE(8)<< MAGENTA<<"Temperature from Brick (Signal) = "<<check_fluid_info_ptr->temperature;            
       delete check_fluid_info_ptr;
 
+      double rNum;
+
+      //DEBUG:
       //cout<<" ---> "<<pIn.size()<<endl;
       for (int i=0;i<pIn.size();i++)
 	{	  
-	  double rNum=distribution(generator);
+	  rNum=distribution(generator);
+	  //DEBUG:
 	  //cout<<i<<" "<<rNum<<endl;
 
 	  // simulate a "random" split 50/50 in pT
@@ -97,15 +102,31 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, const vector<Parton>& pIn, v
 	      //cout<<pIn[i];
 	      double newPt=pIn[i].pt()*z;
 	      double newPt2=pIn[i].pt()*(1-z);
-	      //cout<<newPt<<endl;
-	      pOut.push_back(Parton(0,21,0,newPt,pIn[i].eta(),pIn[i].phi()+0.1,newPt));
-	      pOut.push_back(Parton(0,21,0,newPt2,pIn[i].eta(),pIn[i].phi()-0.1,newPt));
-	      // dirty ...
+	    
+	      //pOut.push_back(Parton(0,21,0,newPt,pIn[i].eta(),pIn[i].phi()+0.1,newPt));
+	      //pOut.push_back(Parton(0,21,0,newPt2,pIn[i].eta(),pIn[i].phi()-0.1,newPt));
+
+	      //tes case, perfectly collinear ...
+	      pOut.push_back(Parton(0,21,0,newPt,pIn[i].eta(),pIn[i].phi(),newPt));
+	      pOut.push_back(Parton(0,21,0,newPt2,pIn[i].eta(),pIn[i].phi(),newPt));
+	      // DEBUG: dirty ...	      
 	      //cout<<pOut[pOut.size()-1];
 	      //cout<<pOut[pOut.size()-2];
 	    }
 	  
 	}
+      
+      // Add a new root node ... (dummy ...)
+      // Ahh stupid declared as const orginally (removed for test ...)
+      // Maybe better a seperate vector !? (TBD)
+      if (rNum>0.9)
+	{
+	  // quick and dirty ...
+	  pIn.push_back(Parton(0,21,0,1.5,0,pIn[0].phi(),1.5));
+	  //DEBUG:
+	  //cout<<pIn.size()<<endl;
+	}
+      
     }
 }
 // obsolete in the future ...
@@ -159,7 +180,8 @@ void Martini::Init()
   INFO<<"Intialize Martini ...";
 }
 
-void Martini::DoEnergyLoss(double deltaT, double Q2, const vector<Parton>& pIn, vector<Parton>& pOut)
+//void Martini::DoEnergyLoss(double deltaT, double Q2, const vector<Parton>& pIn, vector<Parton>& pOut)
+void Martini::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<Parton>& pOut)
 {
   if (Q2<5)
     VERBOSESHOWER(8)<< MAGENTA << "SentInPartons Signal received : "<<deltaT<<" "<<Q2<<" "<<&pIn;

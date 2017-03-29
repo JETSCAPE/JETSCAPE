@@ -117,7 +117,7 @@ void JetScape::Exec()
   for (int i=0;i<GetNumberOfEvents();i++)
     {
       INFO<<BOLDBLACK<<"Run Event # = "<<i;
-      INFO<<"Found "<<GetNumberOfTasks()<<" Modules Execute them ... ";
+      DEBUG<<"Found "<<GetNumberOfTasks()<<" Modules Execute them ... ";
       
       JetScapeTask::ExecuteTasks();
 

@@ -5,13 +5,16 @@
 // -----------------------------------------
 // License and Doxygen-like Documentation to be added ...
 
+#include<iostream>
+
 #include "JetEnergyLoss.h"
 #include "JetScapeLogger.h"
 #include "JetScapeXML.h"
 #include <string>
 #include "tinyxml2.h"
-#include<iostream>
 #include "JetScapeWriterAscii.h"
+
+//#include "PartonShowerGenerator.h"
 
 #define BOLDCYAN    "\033[1m\033[36m"      /* Bold Cyan */
 
@@ -117,7 +120,6 @@ void JetEnergyLoss::Init()
   JetScapeTask::InitTasks();
 }
 
-
 void::JetEnergyLoss::DoShower()
 {
   double tStart=0;
@@ -148,6 +150,8 @@ void::JetEnergyLoss::DoShower()
   // ISSUE: Probably not yet 100% wrt to time step evolution ...
   // Logic mistake to remove the original ones when no split occured !!??? Follow up!!!!
   REMARK<<"DoShower() Splitting including time evolution (allowing non-splits at later times) implemeted correctly (should be made nicer/pointers). To be checked!!!";
+
+  // --------------------------------------------
   
   do
     {
@@ -171,7 +175,7 @@ void::JetEnergyLoss::DoShower()
 
 	  //DEBUG:
 	  //cout<<vStart<<endl;
-	    
+	  // --------------------------------------------
 	  for (int k=0;k<pOutTemp.size();k++)
 	    {
 	      vEnd=pShower->new_vertex(make_shared<VertexBase>(0,0,0,currentTime));	    	      
@@ -181,17 +185,40 @@ void::JetEnergyLoss::DoShower()
 	      //cout<<vStart<<"-->"<<vEnd<<endl;
 	      //cout<<pOutTemp[k];
 	      //cout<<vStartVec.size()<<endl;
-
+	      //cout<<pInTempModule.size()<<endl;
+	      
 	      vStartVecOut.push_back(vEnd);
 	      pOut.push_back(pOutTemp[k]);
 
+	      // --------------------------------------------
+	      // Add new roots from ElossModules ...
+	      // (maybe add for clarity a new vector in the signal!???)
+	      // Otherwise keep track of input size (so far always 1
+	      // and check if size > 1 and create additional root nodes to that vertex ...
+	      // Simple Test here below:
+	      // DEBUG:
+	      //cout<<"In JetEnergyloss : "<<pInTempModule.size()<<endl;
+	      
+	      if (pInTempModule.size()>1)
+		{
+		  VERBOSESHOWER(7)<<pInTempModule.size()-1<<" new root node(s) to be added ...";
+		  //cout<<pInTempModule.size()-1<<" new root node(s) to be added ..."<<endl;
+		  
+		  for (int l=1;l<pInTempModule.size();l++)
+		    {
+		      node vNewRootNode=pShower->new_vertex(make_shared<VertexBase>(0,0,0,currentTime-deltaT));
+		      pShower->new_parton(vNewRootNode,vEnd,make_shared<Parton>(pInTempModule[l]));
+		    }
+		}
+	      // --------------------------------------------
+	      
 	      if (k==0)
 		{
 		  pInTemp.pop_back();       		  
 		  vStartVecTemp.pop_back();		 
-		}
-	  
+		}	  
 	    }
+	  // --------------------------------------------
 	 
 	  pOutTemp.clear();
 	  pInTempModule.clear();
@@ -217,23 +244,41 @@ void::JetEnergyLoss::DoShower()
     }
   while (currentTime<maxT); //other criteria (how to include; TBD)
 
-  pShower->PrintNodes();
-  pShower->PrintEdges();
-  // real ceck using mom. consveration at vertex ...!!!!
-  //pShower->save(&(cout<<BOLDCYAN));
+  // --------------------------------------------
   
   pIn.clear();pOut.clear();pInTemp.clear();pOutTemp.clear();
+  vStartVec.clear();
 }
 
 void JetEnergyLoss::Exec()
 {
-  INFO<<"Run JetEnergyLoss ...";
-  INFO<<"Found "<<GetNumberOfTasks()<<" Eloss Tasks/Modules Execute them ... ";
-
+  //INFO<<"Run JetEnergyLoss ...";
+  //INFO<<"Found "<<GetNumberOfTasks()<<" Eloss Tasks/Modules Execute them ... ";
+  DEBUG<<"Run JetEnergyLoss ...";
+  DEBUG<<"Found "<<GetNumberOfTasks()<<" Eloss Tasks/Modules Execute them ... ";
+  
   if (GetShowerInitiatingParton())
      {
        pShower=make_shared<PartonShower>();
+
+       /*
+       //Check Memory ...
+       VERBOSE(8)<<"Use PartonShowerGenerator to do Parton shower stored in PartonShower Graph class";
+       DEBUG<<"Use PartonShowerGenerator to do Parton shower stored in PartonShower Graph class";
+       
+       PartonShowerGenerator PSG;
+       PSG.DoShower(*shared_from_this()); //needed otherwise all signal slots have to be recreated for shower module ....
+       // Overall not the nicest logic though .... Just to make changing and expanding the shower code in the future ...
+       // (basically, just now to remove the code out of the jet energy loss class ...) TBD
+       // also not really nice, since now the energy loss part in the parton shower and not really visible in this class ...
+       // Keep both codes so far ...
+       */
+       
+       // Shower handled in this class ...
        DoShower();
+        
+       pShower->PrintNodes();
+       pShower->PrintEdges();
      }
   else
     {WARN<<"NO Initial Hard Parton for Parton shower received ...";}  
