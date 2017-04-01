@@ -7,6 +7,11 @@
 
 #include<iostream>
 
+#include <thread>        
+//#include <mutex>         
+//#include <condition_variable>
+//#include <future>
+
 #include "JetEnergyLoss.h"
 #include "JetScapeLogger.h"
 #include "JetScapeXML.h"
@@ -252,11 +257,11 @@ void::JetEnergyLoss::DoShower()
 
 void JetEnergyLoss::Exec()
 {
-  //INFO<<"Run JetEnergyLoss ...";
-  //INFO<<"Found "<<GetNumberOfTasks()<<" Eloss Tasks/Modules Execute them ... ";
   DEBUG<<"Run JetEnergyLoss ...";
   DEBUG<<"Found "<<GetNumberOfTasks()<<" Eloss Tasks/Modules Execute them ... ";
-  
+  //DEBUGTHREAD<<"Task Id = "<<this_thread::get_id()<<" | Run JetEnergyLoss ...";
+  //DEBUGTHREAD<<"Task Id = "<<this_thread::get_id()<<" | Found "<<GetNumberOfTasks()<<" Eloss Tasks/Modules Execute them ... ";
+    
   if (GetShowerInitiatingParton())
      {
        pShower=make_shared<PartonShower>();
@@ -282,7 +287,8 @@ void JetEnergyLoss::Exec()
      }
   else
     {WARN<<"NO Initial Hard Parton for Parton shower received ...";}  
-  
+
+  //DEBUGTHREAD<<"Task Id = "<<this_thread::get_id()<<" Finished!";
   //JetScapeTask::ExecuteTasks(); // prevent Further modules to be execute, everything done by JetEnergyLoss ... (also set the no active flag ...!?)
 }
 
@@ -311,25 +317,32 @@ void JetEnergyLoss::WriteTask(weak_ptr<JetScapeWriter> w)
     }
 
   //Own storage of graph structure, needs separate PartonShower reader ...
-  w.lock()->WriteComment("Parton Shower in JetScape format to be used later by GTL graph:");
-
-  // write vertices ...
-  PartonShower::node_iterator nIt,nEnd;
-
-  for (nIt = pShower->nodes_begin(), nEnd = pShower->nodes_end(); nIt != nEnd; ++nIt)
+  if (pShower)
     {
-      w.lock()->WriteWhiteSpace("["+to_string(nIt->id())+"]");
-      w.lock()->Write(pShower->GetVertex(*nIt));
+      w.lock()->WriteComment("Parton Shower in JetScape format to be used later by GTL graph:");
+      
+      // write vertices ...
+      PartonShower::node_iterator nIt,nEnd;
+      
+      for (nIt = pShower->nodes_begin(), nEnd = pShower->nodes_end(); nIt != nEnd; ++nIt)
+	{
+	  w.lock()->WriteWhiteSpace("["+to_string(nIt->id())+"]");
+	  w.lock()->Write(pShower->GetVertex(*nIt));
+	}
+      
+      PartonShower::edge_iterator eIt,eEnd;
+      
+      for (eIt = pShower->edges_begin(), eEnd = pShower->edges_end(); eIt != eEnd; ++eIt)
+	{
+	  w.lock()->WriteWhiteSpace("["+to_string(eIt->source().id())+"]-->["+to_string(eIt->target().id())+"]");
+	  w.lock()->Write(pShower->GetParton(*eIt));
+	}
+    }
+  else
+    {
+      w.lock()->WriteComment("No EnergyLoss Modules were run - No Parton Shower information stored");
     }
   
-  PartonShower::edge_iterator eIt,eEnd;
-
-  for (eIt = pShower->edges_begin(), eEnd = pShower->edges_end(); eIt != eEnd; ++eIt)
-    {
-      w.lock()->WriteWhiteSpace("["+to_string(eIt->source().id())+"]-->["+to_string(eIt->target().id())+"]");
-      w.lock()->Write(pShower->GetParton(*eIt));
-    }
-   
   JetScapeTask::WriteTasks(w);
 }
 

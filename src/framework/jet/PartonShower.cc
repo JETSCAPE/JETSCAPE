@@ -217,32 +217,39 @@ void PartonShower::PrintNodes(bool verbose)
   node_iterator nIt, nEnd;
   ostringstream os;
   
-  for (nIt = nodes_begin(), nEnd = nodes_end(); nIt != nEnd; ++nIt)
-    {      
-      os<<*nIt<<"="<<vMap[*nIt]->x_in().t()<<" ";
+  if (verbose && JetScapeLogger::Instance()->GetVerboseLevel()>8)
+    {
+      for (nIt = nodes_begin(), nEnd = nodes_end(); nIt != nEnd; ++nIt)      
+          os<<*nIt<<"="<<vMap[*nIt]->x_in().t()<<" ";
+      VERBOSESHOWER(8)<<os.str();
     }
 
-  //cout<<os.str()<<endl;
-  if (verbose)
-    VERBOSESHOWER(8)<<os.str();
-  else
-    cout<<"Vertex list : "<<os.str()<<endl;
+  if(!verbose)
+    {
+      for (nIt = nodes_begin(), nEnd = nodes_end(); nIt != nEnd; ++nIt)      
+          os<<*nIt<<"="<<vMap[*nIt]->x_in().t()<<" ";
+      cout<<"Vertex list : "<<os.str()<<endl;
+    }
 }
 
 void PartonShower::PrintEdges(bool verbose)
 {
   edge_iterator eIt, eEnd;
   ostringstream os;
-  
-  for (eIt = edges_begin(), eEnd = edges_end(); eIt != eEnd; ++eIt)
+ 
+  if (verbose && JetScapeLogger::Instance()->GetVerboseLevel()>8)
     {
-      os<<*eIt<<"="<<pMap[*eIt]->pt()<<" ";
+      for (eIt = edges_begin(), eEnd = edges_end(); eIt != eEnd; ++eIt)
+          os<<*eIt<<"="<<pMap[*eIt]->pt()<<" ";
+      VERBOSESHOWER(8)<<os.str();
     }
 
-  if (verbose)
-    VERBOSESHOWER(8)<<os.str();
-  else
-    cout<<"Parton list : "<<os.str()<<endl;
+  if(!verbose)
+    {
+      for (eIt = edges_begin(), eEnd = edges_end(); eIt != eEnd; ++eIt)
+	 os<<*eIt<<"="<<pMap[*eIt]->pt()<<" ";
+      cout<<"Parton list : "<<os.str()<<endl;
+    }
 }
 
 // To be extended to store all infos like this in GML
