@@ -75,7 +75,8 @@ void JSPythia8::InitTask()
   //settings.listAll();
   
   //initialization ...
-  init(2212, 2212,5020.);  
+  //init(2212, 2212,5020.);  // Pythia < 8.2
+  init(); // Pythia>8.1
 }
  
 void JSPythia8::Exec()

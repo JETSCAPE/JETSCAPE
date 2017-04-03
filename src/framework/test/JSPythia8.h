@@ -12,7 +12,7 @@
 
 #include "HardProcess.h"
 #include "JetScapeLogger.h"
-#include "Pythia.h"
+#include "Pythia8/Pythia.h"
 
 class JSPythia8: public HardProcess , public Pythia8::Pythia {
   

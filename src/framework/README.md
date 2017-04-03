@@ -53,11 +53,15 @@ brew install pythia8
 
 - Install graphViz:
 
-brew install graphviz --with-app
+brew install graphviz --with-app --with-bindings
 
 - Install root6
 
 brew install root6
+
+- Install graph-tool (python). If done you can create a colored and "fancy" graph with the provided python script.
+
+brew install graph-tool
 
 (and most of other packackes we need)
 

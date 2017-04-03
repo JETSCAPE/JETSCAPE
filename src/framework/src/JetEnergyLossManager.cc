@@ -10,7 +10,12 @@
 #include "JetScapeSignalManager.h"
 #include <string>
 #include "ELossModulesTest.h"
+
 #include <iostream>
+#include <vector>
+
+#include <thread>        
+//#include <future>
 
 using namespace std;
 
@@ -76,13 +81,17 @@ void JetEnergyLossManager::WriteTask(weak_ptr<JetScapeWriter> w)
 void JetEnergyLossManager::Exec()
 {
   INFO<<"Run JetEnergyLoss Manager ...";
-
+  DEBUG<<"Task Id = "<<this_thread::get_id();
+  
   if (GetNumberOfTasks()<1)
     {
       WARN << " : No valid Energy Loss Manager modules found ...";
       exit(-1);
     }
 
+  // ----------------------------------
+  // Create needed copies and connect signal/slots accordingly ...
+  
   if (GetGetHardPartonListConnected())
     {
       GetHardPartonList(hp);
@@ -102,6 +111,9 @@ void JetEnergyLossManager::Exec()
   
   CreateSignalSlots();
 
+  // ----------------------------------
+  // Copy Shower initiating partons to JetEnergyLoss tasks ...
+  
   if (GetGetHardPartonListConnected())
     {
       int n=0;
@@ -111,9 +123,63 @@ void JetEnergyLossManager::Exec()
 	  n++;
 	}
     }
+
+  // ----------------------------------
+  // quick and dirty here, only include after further testing (flag in init xml files ...)
+  bool multiTask=false;
+
+  // ----------------------------------
+  //Excute JetEnergyLoss tasks and their subtasks (done via signal/slot) by hand ...
+  //needed if only JetEnergyloss tasks in parallel (otherwise could be done via JetScapeTask, then every task a new thread for example)
+  // Of course now the number of threads if plainly given by the number of initial hard partons and can exceed the allowed # of threads >1000
+  // so to really do this properly one has to think about and limit to number of CPU's * N threads or something in that directions. See a quick attempt below.
+
+  //DEBUG:
+  //unsigned num_cpus = thread::hardware_concurrency();
+  //cout << "Num of CPU's = " << num_cpus << " threads\n";
   
-  JetScapeTask::ExecuteTasks();
+  if (multiTask)
+    {
+      int nTasks=GetNumberOfTasks();
+      int nCPUs=thread::hardware_concurrency();
+      
+      vector<thread> threads;
+      
+      int nMaxThreads=nCPUs*2;
+      int n=0;
+
+      INFO<<" Use multi-threading: (max) # of threads = # of CPU's "<<nCPUs<<" (found) * 2";
+      
+      for (auto it :  GetTaskList())
+	{
+	  if (it->GetActive())
+	    {
+	      threads.push_back(thread(&JetEnergyLoss::Exec,dynamic_pointer_cast<JetEnergyLoss>(it)));
+	      n++;
+	    }
+	  if (n==nMaxThreads)
+	    {
+	      //DEBUGTHREAD<<n;	      
+	      for (auto& th : threads) th.join();
+	      n=0; threads.clear();
+
+	      //DEBUG:
+	      //std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+	    }
+	}
+
+      if (nTasks<nMaxThreads)
+	{      
+	  for (auto& th : threads) th.join();      
+	  threads.clear();
+	}
+    }
+  // ----------------------------------
+  else
+    // Standard "serial" execution for the JetEnerguLoss (+submodules) task ...
+    JetScapeTask::ExecuteTasks();
   
+  //Add acheck if the parton shower was actually created for the Modules ....
   INFO<<" "<<GetNumberOfTasks()<<" Eloss Manager Tasks/Modules finished.";
 }
 

@@ -12,8 +12,10 @@
 
 using namespace std;
 
-/*
+
 // For Linux systems (also Mac)
+// only shows max usage throughtout the program
+
 #include <sys/time.h>
 #include <sys/resource.h>
 
@@ -21,13 +23,14 @@ long getMemoryUsage()
 {
   struct rusage usage;
   if(0 == getrusage(RUSAGE_SELF, &usage))
-    return usage.ru_maxrss; // bytes
+    return usage.ru_maxrss/1024./1024.; // bytes
   else
     return 0;
 }
-*/
 
+ /*
 //For mac os x only ...
+// shows current usage
 #include <mach/mach.h>
 #include <mach/task.h>
 
@@ -45,26 +48,8 @@ int getMemoryUsage()
     cout<<"Error with task_info(): "<<mach_error_string(kerr)<<endl;
     return -1;}
 }
-
-/*
-// old way, better with mach_ .... (see above) Identical results though ...
-int getMemoryUsage()
-{
-    task_t task = MACH_PORT_NULL;
-    struct task_basic_info t_info;
-    mach_msg_type_number_t t_info_count = TASK_BASIC_INFO_COUNT;
-
-    if (KERN_SUCCESS != task_info(mach_task_self(),
-       TASK_BASIC_INFO, (task_info_t)&t_info, &t_info_count))
-    {
-        return -1;
-    }
-    // *rss = t_info.resident_size;
-    // *vs  = t_info.virtual_size;
-    return t_info.resident_size/1024./1024.; //in MB
-}
-*/
-
+ */
+ 
 // Just some definition of colors for colored terminal log output
 // Resetting to default color in LogStreamer!
 
@@ -89,6 +74,10 @@ int getMemoryUsage()
 
 std::ostringstream null;     
 
+safe_ostream safe_cout(std::cout);
+safe_ostream safe_cerr(std::cerr);
+safe_ostream safe_null(null);
+
 JetScapeLogger* JetScapeLogger::m_pInstance = NULL;
 
 JetScapeLogger* JetScapeLogger::Instance()
@@ -107,12 +96,30 @@ LogStreamer JetScapeLogger::Warn()
   return LogStreamer(std::cout<<BOLDRED<<s);
 }
 
+LogStreamerThread JetScapeLogger::DebugThread()
+{
+  if (debug)
+    {
+      string s="[Debug Thread] ";
+      //s <<  __PRETTY_FUNCTION__ <<":"<<__LINE__<<" ";
+      s += to_string(getMemoryUsage()); s+="MB ";
+      return (LogStreamerThread(safe_cout) << BLUE << s);     
+    }
+  else
+    {
+      // check if it is not written in some system log files ...
+      //safe_null.setstate(std::ios_base::failbit);
+      return LogStreamerThread(safe_null);  
+    }
+}
+
 LogStreamer JetScapeLogger::Debug()
 {
   if (debug)
     {
       string s="[Debug] ";
       //s <<  __PRETTY_FUNCTION__ <<":"<<__LINE__<<" ";
+      s += to_string(getMemoryUsage()); s+="MB ";
       return LogStreamer(std::cout<<BLUE<<s);
     }
   else

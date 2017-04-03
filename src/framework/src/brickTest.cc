@@ -12,7 +12,7 @@
 // -------------------------------------------------------------
 
 #include <iostream>
-//#include <string>
+#include <time.h>
 
 // JetScape Framework includes ...
 #include "JetScape.h"
@@ -42,6 +42,9 @@ void Show();
 
 int main(int argc, char** argv)
 {
+  clock_t t; t = clock();
+  time_t start, end; time(&start);
+  
   cout<<endl;
     
   // DEBUG=true by default and REMARK=false
@@ -62,6 +65,12 @@ int main(int argc, char** argv)
   
   auto matter = make_shared<Matter> ();
   auto martini = make_shared<Martini> ();
+  //DBEUG: Remark:
+  //does not matter unfortunately since not called recursively, done by JetEnergyLoss class ...
+  //matter->SetActive(false);
+  //martini->SetActive(false);
+  // This works ... (check with above logic ...)
+  //jloss->SetActive(false);
 
   auto pGun= make_shared<PGun> ();
   //auto py8=make_shared<JSPythia8> ("/Users/putschke/pythia8100/xmldoc",false);
@@ -114,6 +123,11 @@ int main(int argc, char** argv)
   // wait for 5s
   //std::this_thread::sleep_for(std::chrono::milliseconds(500000));
 
+  t = clock() - t;
+  time(&end);
+  printf ("CPU time: %f seconds.\n",((float)t)/CLOCKS_PER_SEC);
+  printf ("Real time: %f seconds.\n",difftime(end,start));
+  //printf ("Real time: %f seconds.\n",(start-end));
   return 0;
 }
 
