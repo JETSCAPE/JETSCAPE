@@ -1,4 +1,9 @@
-// jetscape writer ascii + gzip class implementation
+// -----------------------------------------
+// JetScape (modular/task) based framework
+// Intial Design: Joern Putschke (2017)
+//                (Wayne State University)
+// -----------------------------------------
+// License and Doxygen-like Documentation to be added ...
 
 #include "JetScapeWriterHepMC.h"
 #include "JetScapeLogger.h"

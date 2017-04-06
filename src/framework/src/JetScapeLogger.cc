@@ -1,4 +1,9 @@
-// JetScape Logger class implementation (meant as singelton)
+// -----------------------------------------
+// JetScape (modular/task) based framework
+// Intial Design: Joern Putschke (2017)
+//                (Wayne State University)
+// -----------------------------------------
+// License and Doxygen-like Documentation to be added ...
 
 #include<stddef.h>
 #include<fstream>
@@ -7,6 +12,44 @@
 
 using namespace std;
 
+
+// For Linux systems (also Mac)
+// only shows max usage throughtout the program
+
+#include <sys/time.h>
+#include <sys/resource.h>
+
+long getMemoryUsage() 
+{
+  struct rusage usage;
+  if(0 == getrusage(RUSAGE_SELF, &usage))
+    return usage.ru_maxrss/1024./1024.; // bytes
+  else
+    return 0;
+}
+
+ /*
+//For mac os x only ...
+// shows current usage
+#include <mach/mach.h>
+#include <mach/task.h>
+
+int getMemoryUsage()
+{
+  struct mach_task_basic_info info;
+  mach_msg_type_number_t size = MACH_TASK_BASIC_INFO_COUNT;
+  kern_return_t kerr = task_info(mach_task_self(),
+				 MACH_TASK_BASIC_INFO,
+				 (task_info_t)&info,
+				 &size);
+  if( kerr == KERN_SUCCESS )
+    return info.resident_size/1024./1024.;
+  else {
+    cout<<"Error with task_info(): "<<mach_error_string(kerr)<<endl;
+    return -1;}
+}
+ */
+ 
 // Just some definition of colors for colored terminal log output
 // Resetting to default color in LogStreamer!
 
@@ -31,6 +74,10 @@ using namespace std;
 
 std::ostringstream null;     
 
+safe_ostream safe_cout(std::cout);
+safe_ostream safe_cerr(std::cerr);
+safe_ostream safe_null(null);
+
 JetScapeLogger* JetScapeLogger::m_pInstance = NULL;
 
 JetScapeLogger* JetScapeLogger::Instance()
@@ -49,12 +96,30 @@ LogStreamer JetScapeLogger::Warn()
   return LogStreamer(std::cout<<BOLDRED<<s);
 }
 
+LogStreamerThread JetScapeLogger::DebugThread()
+{
+  if (debug)
+    {
+      string s="[Debug Thread] ";
+      //s <<  __PRETTY_FUNCTION__ <<":"<<__LINE__<<" ";
+      s += to_string(getMemoryUsage()); s+="MB ";
+      return (LogStreamerThread(safe_cout) << BLUE << s);     
+    }
+  else
+    {
+      // check if it is not written in some system log files ...
+      //safe_null.setstate(std::ios_base::failbit);
+      return LogStreamerThread(safe_null);  
+    }
+}
+
 LogStreamer JetScapeLogger::Debug()
 {
   if (debug)
     {
       string s="[Debug] ";
       //s <<  __PRETTY_FUNCTION__ <<":"<<__LINE__<<" ";
+      s += to_string(getMemoryUsage()); s+="MB ";
       return LogStreamer(std::cout<<BLUE<<s);
     }
   else
@@ -68,6 +133,15 @@ LogStreamer JetScapeLogger::Info()
 {
   string s="[Info] ";
   // s <<  __PRETTY_FUNCTION__ <<":"<<__LINE__<<" ";
+  s += to_string(getMemoryUsage()); s+="MB ";
+  return LogStreamer(std::cout<<s);
+}
+
+LogStreamer JetScapeLogger::InfoNice()
+{
+  string s="[Info] ";
+  // s <<  __PRETTY_FUNCTION__ <<":"<<__LINE__<<" ";
+  //s += to_string(getMemoryUsage()); s+="MB ";
   return LogStreamer(std::cout<<s);
 }
 
@@ -76,8 +150,8 @@ LogStreamer JetScapeLogger::Remark()
 {
   if (remark)
     {
-      string s="[Remark] ";
-      return LogStreamer(std::cout<<CYAN<<s);
+      string s="[REMARK] ";
+      return LogStreamer(std::cout<<BOLDMAGENTA<<s);
     }
   else
     {
@@ -91,8 +165,54 @@ LogStreamer JetScapeLogger::Verbose(unsigned short m_vlevel)
   if (m_vlevel<vlevel) // or if (m_vlevel==vlevel)
     {
       string s="[Verbose][";s+= std::to_string(m_vlevel); s+="] ";
+      s += to_string(getMemoryUsage()); s+="MB ";
       return LogStreamer(std::cout<<GREEN<<s);
     }
+  else
+    {
+      null.setstate(std::ios_base::failbit);
+      return LogStreamer(null);  
+    }
+}
+
+
+LogStreamer JetScapeLogger::VerboseShower(unsigned short m_vlevel)
+{
+  if (m_vlevel<vlevel) // or if (m_vlevel==vlevel)
+    {
+      string s="[Verbose][";s+= std::to_string(m_vlevel); s+="] ";
+      s += to_string(getMemoryUsage()); s+="MB ";
+      return LogStreamer(std::cout<<BOLDCYAN<<s);
+    }
+  else
+    {
+      null.setstate(std::ios_base::failbit);
+      return LogStreamer(null);  
+    }
+}
+
+
+LogStreamer JetScapeLogger::VerboseParton(unsigned short m_vlevel,Parton &p)
+{
+  if (m_vlevel<vlevel) // or if (m_vlevel==vlevel)
+    {
+      string s="[Verbose][";s+= std::to_string(m_vlevel); s+="] Parton: ";
+      return LogStreamer(std::cout<<GREEN<<s<<" "<<p<<endl);
+    }    
+  else
+    {
+      null.setstate(std::ios_base::failbit);
+      return LogStreamer(null);  
+    }
+}
+
+LogStreamer JetScapeLogger::VerboseVertex(unsigned short m_vlevel,VertexBase &v)
+{
+  if (m_vlevel<vlevel) // or if (m_vlevel==vlevel)
+    {
+      string s="[Verbose][";s+= std::to_string(m_vlevel); s+="] Vertex: ";
+      return LogStreamer(std::cout<<GREEN<<s<<" "<<v<<endl);
+    }    
   else
     {
       null.setstate(std::ios_base::failbit);

@@ -1,3 +1,10 @@
+// -----------------------------------------
+// JetScape (modular/task) based framework
+// Intial Design: Joern Putschke (2017)
+//                (Wayne State University)
+// -----------------------------------------
+// License and Doxygen-like Documentation to be added ...
+
 //Pythia8 Test ...
 
 #ifndef JSPYTHIA8_H
@@ -5,7 +12,7 @@
 
 #include "HardProcess.h"
 #include "JetScapeLogger.h"
-#include "Pythia.h"
+#include "Pythia8/Pythia.h"
 
 class JSPythia8: public HardProcess , public Pythia8::Pythia {
   

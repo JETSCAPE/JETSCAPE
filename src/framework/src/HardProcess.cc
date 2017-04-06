@@ -1,4 +1,10 @@
-// Framework test (dummy) FluidDynamics class implementation (to be changed with real implemenation)
+// -----------------------------------------
+// JetScape (modular/task) based framework
+// Intial Design: Joern Putschke (2017)
+//                (Wayne State University)
+// -----------------------------------------
+// License and Doxygen-like Documentation to be added ...
+
 #include "HardProcess.h"
 #include "JetScapeLogger.h"
 #include "JetScapeXML.h"
@@ -66,7 +72,7 @@ void HardProcess::WriteTask(weak_ptr<JetScapeWriter> w)
   VERBOSE(8);
   VERBOSE(8)<<w.lock()->GetOutputFileName();
   
-  w.lock()->Write("HardProcess Parton List: "+GetId());
+  w.lock()->WriteComment("HardProcess Parton List: "+GetId());
   
   for (int i=0;i<hp_list.size();i++)
     w.lock()->Write(GetPartonAt(i));

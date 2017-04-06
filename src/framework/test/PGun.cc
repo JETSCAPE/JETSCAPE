@@ -1,3 +1,10 @@
+// -----------------------------------------
+// JetScape (modular/task) based framework
+// Intial Design: Joern Putschke (2017)
+//                (Wayne State University)
+// -----------------------------------------
+// License and Doxygen-like Documentation to be added ...
+
 //Parton Gun Test ...
 #include "PGun.h"
 
@@ -71,17 +78,20 @@ void PGun::Exec()
        pT = fixed_pT; //max_pT*(rand()/maxN);
        
        phi = 2.0*PI*(rand()/maxN);
-       rapidity=2.0*eta_cut*(rand()/maxN)-eta_cut;
-  
+       rapidity=0;//2.0*eta_cut*(rand()/maxN)-eta_cut;
+              
        p[0] = pT*cos(phi);
        p[1] = pT*sin(phi);
        p[2] = sqrt(pT*pT+mass*mass)*sinh(rapidity);
        p[3] = sqrt(pT*pT+mass*mass)*cosh(rapidity);
   
-       AddParton(make_shared<Parton>(0,parID,0,0,p,xLoc));
+       //AddParton(make_shared<Parton>(0,parID,0,p,xLoc));
+       AddParton(make_shared<Parton>(0,parID,0,pT,rapidity,phi,p[3],xLoc));
 
-       // DEBUG: (<< of Parton not working with Logger ... Check!)
-       cout<<*GetPartonAt(i)<<endl;
+       // DEBUG: (<< of Parton not working with Logger VERBOSE standard ... Check!
+       //JetScapeLogger::Instance()->VerboseParton(6,*GetPartonAt(i))<<__PRETTY_FUNCTION__<<" : ";
+       VERBOSEPARTON(6,*GetPartonAt(i));
+       //cout<<*GetPartonAt(i)<<endl;
      }
   
   VERBOSE(8)<<GetNHardPartons();

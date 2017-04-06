@@ -1,3 +1,10 @@
+// -----------------------------------------
+// JetScape (modular/task) based framework
+// Intial Design: Joern Putschke (2017)
+//                (Wayne State University)
+// -----------------------------------------
+// License and Doxygen-like Documentation to be added ...
+
 // jetscape writer ascii + gzip class implementation
 
 #include "JetScapeWriterAsciiGZ.h"
@@ -16,13 +23,13 @@ JetScapeWriterAsciiGZ::~JetScapeWriterAsciiGZ()
 
 void JetScapeWriterAsciiGZ::WriteEvent()
 {
-  DEBUG<< GetCurrentEvent() << " in Ascii gzip ... ";
-  output_file<< GetCurrentEvent() << " in Ascii gzip ... \n";
+  DEBUG<< GetCurrentEvent() << " Event ";
+  output_file<< GetCurrentEvent() << " Event \n";
 }
 
-void JetScapeWriterAsciiGZ::Write(shared_ptr<Parton> p)
+void JetScapeWriterAsciiGZ::Write(weak_ptr<Parton> p)
 {
-  output_file<<*p<<endl;
+  output_file<<*p.lock()<<endl;
 }
 
 void JetScapeWriterAsciiGZ::Init()

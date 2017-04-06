@@ -38,6 +38,7 @@
    <Eloss>
 
      <deltaT>1</deltaT>
+     <maxT>10</maxT>
 
      <!-- Individual Eloss Modules run Eloss and Eloss Manager ... -->
      <!-- Just a test here (no physics implemented in Matter and Martini ... -->

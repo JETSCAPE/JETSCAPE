@@ -1,3 +1,11 @@
+// -----------------------------------------
+// JetScape (modular/task) based framework
+// Intial Design: Joern Putschke (2017)
+//                (Wayne State University)
+// -----------------------------------------
+// License and Doxygen-like Documentation to be added ...
+
+
 // jetscape writer ascii + gzip class
 
 #ifndef JETSCAPEWRITERASCIIGZ_H
@@ -27,7 +35,7 @@ class JetScapeWriterAsciiGZ : public JetScapeWriter
   bool GetStatus() {return output_file.good();}
   void Close() {output_file.close();}
 
-  void Write(shared_ptr<Parton> p);
+  void Write(weak_ptr<Parton> p);
   void Write(string s) {output_file<<s<<endl;}
   // ...
   
@@ -39,4 +47,5 @@ class JetScapeWriterAsciiGZ : public JetScapeWriter
   //int m_precision; //!< Output precision
   
 };
+
 #endif

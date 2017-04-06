@@ -52,7 +52,15 @@ class FourVector
     
     
     // constructors do all sets
-    
+
+  void Set(double x_in, double y_in, double z_in, double t_in)
+  {
+    tv=t_in;
+    xv=x_in;
+    yv=y_in;
+    zv=z_in;
+  }
+  
   void Set(double a[4]) 
   {
      tv=a[0];
@@ -143,6 +151,16 @@ class FourVector
         xv = c.x();
         yv = c.y();
         zv = c.z();
+        return (*this);
+        
+    };
+
+   FourVector &operator=(const FourVector &c)
+    {
+        tv = c.tv;
+        xv = c.xv;
+        yv = c.yv;
+        zv = c.zv;
         return (*this);
         
     };

@@ -15,7 +15,7 @@ IF(TEST_PYTHIA8_ROOT_DIR STREQUAL "")
 IF(DEFINED ENV{PYTHIA8_ROOT_DIR})
 set(PYTHIA8_ROOT_DIR  $ENV{PYTHIA8_ROOT_DIR})
 else()
-set(PYTHIA8_ROOT_DIR  "/Users/putschke/pythia8100")
+set(PYTHIA8_ROOT_DIR  "/Users/putschke/") #pythia8100")
 endif()
 endif()
 
