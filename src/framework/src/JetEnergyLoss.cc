@@ -18,6 +18,7 @@
 #include <string>
 #include "tinyxml2.h"
 #include "JetScapeWriterAscii.h"
+#include "JetScapeWriterHepMC.h"
 
 //#include "PartonShowerGenerator.h"
 
@@ -141,7 +142,15 @@ void::JetEnergyLoss::DoShower()
   vector<node> vStartVec; vector<node> vStartVecOut;
   vector<node> vStartVecTemp;
   
-  pIn.push_back(*GetShowerInitiatingParton());
+  //DEBUG this guy isn't linked to anything - put in test particle for now
+  //pIn.push_back(*GetShowerInitiatingParton());
+
+  double pAssign[4] = {10,14,2,20};
+  double xLoc[4] = {2,3,4,5};
+  Parton pTemp(1,21,0,pAssign,xLoc);
+  INFO<<"id: "<<pTemp.pid()<<" x: "<< pTemp.x_in().x() << " " << pTemp.x_in().y() << " " << pTemp.x_in().z() << " " << pTemp.x_in().t();
+  INFO<< " p: "<< pTemp.p_in().x() << " " << pTemp.p_in().y() << " " << pTemp.p_in().z() << " " << pTemp.p_in().t();
+  pIn.push_back(pTemp);
 
   // Add here the Hard Shower emitting parton ...
   vStart=pShower->new_vertex(make_shared<VertexBase>());
@@ -257,8 +266,8 @@ void::JetEnergyLoss::DoShower()
 
 void JetEnergyLoss::Exec()
 {
-  DEBUG<<"Run JetEnergyLoss ...";
-  DEBUG<<"Found "<<GetNumberOfTasks()<<" Eloss Tasks/Modules Execute them ... ";
+  INFO<<"Run JetEnergyLoss ...";
+  INFO<<"Found "<<GetNumberOfTasks()<<" Eloss Tasks/Modules Execute them ... ";
   //DEBUGTHREAD<<"Task Id = "<<this_thread::get_id()<<" | Run JetEnergyLoss ...";
   //DEBUGTHREAD<<"Task Id = "<<this_thread::get_id()<<" | Found "<<GetNumberOfTasks()<<" Eloss Tasks/Modules Execute them ... ";
     
@@ -295,12 +304,18 @@ void JetEnergyLoss::Exec()
 void JetEnergyLoss::WriteTask(weak_ptr<JetScapeWriter> w)
 {
   VERBOSE(8);
+  INFO<<"In JetEnergyLoss::WriteTask";
   w.lock()->WriteComment("Energy loss Shower Initating Parton: "+GetId());
   w.lock()->Write(inP);
 
   // check with gzip version later ...
   // Also allow standard output/not using GTL graph structure ....
-  
+
+  //If you want HepMC output, pass the whole shower along...
+  //if (dynamic_pointer_cast<JetScapeWriterHepMC> (w.lock())){
+     dynamic_pointer_cast<JetScapeWriterHepMC>(w.lock())->JetScapeWriterHepMC::WriteEvent(pShower);
+  //}
+
   if (dynamic_pointer_cast<JetScapeWriterAscii> (w.lock()))
     {
       /*
@@ -348,5 +363,5 @@ void JetEnergyLoss::WriteTask(weak_ptr<JetScapeWriter> w)
 
 void JetEnergyLoss::PrintShowerInitiatingParton()
 {
-  DEBUG<<inP->pid();
+  //DEBUG<<inP->pid();
 }

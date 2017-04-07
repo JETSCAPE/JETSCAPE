@@ -151,7 +151,8 @@ Parton::Parton (int label, int id, int stat, double p[4], double x[4])  : Pseudo
             break;
         }
     }
-    
+    set_p(p);
+    set_x(x);
     set_stat(stat);
 }
 

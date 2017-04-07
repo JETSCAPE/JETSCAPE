@@ -125,12 +125,12 @@ public:
     {
         return(pparent_label_);
     }
-
+    */
     FourVector &p_in()
     {
         return(p_in_);
     }
-  */
+  
   
    FourVector &x_in()
     {
@@ -256,6 +256,7 @@ private:
   double form_time_       ; //event by event formation time
   double mass_            ; //mass of the parton
 
+  FourVector p_in_;
   FourVector x_in_; // position of particle
   
   // following will be in graph strucure

@@ -14,7 +14,7 @@ endif()
 
 if (APPLE)
      message( STATUS "Apple : " ${CMAKE_HOST_SYSTEM})
-     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-macro-redefined -std=c++11 -stdlib=libc++")
+     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-builtin-macro-redefined -std=c++11 -stdlib=libc++")
      message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS})	
      message(STATUS "LD_FLAGS = " ${CMAKE_EXE_LINKER_FLAGS})
 endif()   
