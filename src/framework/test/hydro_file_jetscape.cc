@@ -59,7 +59,8 @@ void HydroFile::initialize_hydro(Parameter parameter_list) {
         hydroinfo_MUSIC_ptr = new Hydroinfo_MUSIC();
         int hydro_mode = 8;
         int nskip_tau;
-        para->FirstChildElement("hydro_nskip_tau")->QueryIntText(&nskip_tau);
+        para->FirstChildElement("read_hydro_every_ntau")->QueryIntText(
+                                                                &nskip_tau);
         hydroinfo_MUSIC_ptr->readHydroData(hydro_mode, nskip_tau,
             input_file, hydro_ideal_file, hydro_shear_file, hydro_bulk_file);
     } else if (hydro_type == 3) {
@@ -72,7 +73,8 @@ void HydroFile::initialize_hydro(Parameter parameter_list) {
         hydroinfo_MUSIC_ptr = new Hydroinfo_MUSIC();
         int hydro_mode = 9;
         int nskip_tau;
-        para->FirstChildElement("hydro_nskip_tau")->QueryIntText(&nskip_tau);
+        para->FirstChildElement("read_hydro_every_ntau")->QueryIntText(
+                                                                &nskip_tau);
         hydroinfo_MUSIC_ptr->readHydroData(hydro_mode, nskip_tau,
             input_file, hydro_ideal_file, hydro_shear_file, hydro_bulk_file);
     } else if (hydro_type == 4) {
