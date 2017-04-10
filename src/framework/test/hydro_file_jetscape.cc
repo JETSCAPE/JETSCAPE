@@ -15,6 +15,7 @@ using namespace std;
 
 HydroFile::HydroFile() {
     hydro_status = NOT_START;
+    SetId("hydroFromFile");
 }
 
 

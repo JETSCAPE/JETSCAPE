@@ -76,7 +76,7 @@
      <!-- hydro from a file ... -->
      <hydro_from_file>
          <name> hydro from a file </name>
-         <hydro_type> 1 </hydro_type>
+         <hydro_type> 2 </hydro_type>
          <load_viscous_info> False </load_viscous_info>
          <T_c> 0.154 </T_c>
          <hydro_nskip_tau> 1 </hydro_nskip_tau>

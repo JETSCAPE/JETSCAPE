@@ -213,28 +213,43 @@ void Hydroinfo_MUSIC::readHydroData(int whichHydro, int nskip_tau_in) {
             exit(1);
         }
 
-        std::FILE *fin1;
-        fin1 = std::fopen(evolution_name_Wmunu.c_str(), "rb");
-        if (fin1 == NULL) {
-            cerr << "[Hydroinfo_MUSIC::readHydroData]: ERROR: "
-                 << "Unable to open file: " << evolution_name_Wmunu << endl;
-            exit(1);
+        std::FILE *fin1 = NULL;
+        if (turn_on_shear == 1) {
+            fin1 = std::fopen(evolution_name_Wmunu.c_str(), "rb");
+            if (fin1 == NULL) {
+                cerr << "[Hydroinfo_MUSIC::readHydroData]: ERROR: "
+                     << "Unable to open file: " << evolution_name_Wmunu << endl;
+                exit(1);
+            }
         }
 
-        std::FILE *fin2;
-        fin2 = std::fopen(evolution_name_Pi.c_str(), "rb");
-        if (fin2 == NULL) {
-            cerr << "[Hydroinfo_MUSIC::readHydroData]: ERROR: "
-                 << "Unable to open file: " << evolution_name_Pi << endl;
-            exit(1);
+        std::FILE *fin2 = NULL;
+        if (turn_on_bulk == 1) {
+            fin2 = std::fopen(evolution_name_Pi.c_str(), "rb");
+            if (fin2 == NULL) {
+                cerr << "[Hydroinfo_MUSIC::readHydroData]: ERROR: "
+                     << "Unable to open file: " << evolution_name_Pi << endl;
+                exit(1);
+            }
         }
 
         int ik = 0;
         fluidCell_2D newCell;
         float T, QGPfrac, vx, vy, vz;
         double ux, uy, ueta;
-        float pi00, pi01, pi02, pi03, pi11, pi12, pi13, pi22, pi23, pi33;
-        float bulkPi, e_plus_P, cs2;
+        float pi00 = 0.0;
+        float pi01 = 0.0;
+        float pi02 = 0.0;
+        float pi03 = 0.0;
+        float pi11 = 0.0;
+        float pi12 = 0.0;
+        float pi13 = 0.0;
+        float pi22 = 0.0;
+        float pi23 = 0.0;
+        float pi33 = 0.0;;
+        float bulkPi = 0.0;
+        float e_plus_P = 1e-15;
+        float cs2 = 0.0;
         int size = sizeof(float);
         while (true) {
             int status = 0;
@@ -249,34 +264,38 @@ void Hydroinfo_MUSIC::readHydroData(int whichHydro, int nskip_tau_in) {
             }
 
             int status_pi = 0;
-            status_pi = std::fread(&pi00, size, 1, fin1);
-            status_pi += std::fread(&pi01, size, 1, fin1);
-            status_pi += std::fread(&pi02, size, 1, fin1);
-            status_pi += std::fread(&pi03, size, 1, fin1);
-            status_pi += std::fread(&pi11, size, 1, fin1);
-            status_pi += std::fread(&pi12, size, 1, fin1);
-            status_pi += std::fread(&pi13, size, 1, fin1);
-            status_pi += std::fread(&pi22, size, 1, fin1);
-            status_pi += std::fread(&pi23, size, 1, fin1);
-            status_pi += std::fread(&pi33, size, 1, fin1);
+            if (turn_on_shear == 1) {
+                status_pi = std::fread(&pi00, size, 1, fin1);
+                status_pi += std::fread(&pi01, size, 1, fin1);
+                status_pi += std::fread(&pi02, size, 1, fin1);
+                status_pi += std::fread(&pi03, size, 1, fin1);
+                status_pi += std::fread(&pi11, size, 1, fin1);
+                status_pi += std::fread(&pi12, size, 1, fin1);
+                status_pi += std::fread(&pi13, size, 1, fin1);
+                status_pi += std::fread(&pi22, size, 1, fin1);
+                status_pi += std::fread(&pi23, size, 1, fin1);
+                status_pi += std::fread(&pi33, size, 1, fin1);
             
-            if (status_pi != 10) {
-                cout << "Error:Hydroinfo_MUSIC::readHydroData: "
-                     << "Wmunu file does not have the same number of "
-                     << "fluid cells as the ideal file!" << endl;
-                exit(1);
+                if (status_pi != 10) {
+                    cout << "Error:Hydroinfo_MUSIC::readHydroData: "
+                         << "Wmunu file does not have the same number of "
+                         << "fluid cells as the ideal file!" << endl;
+                    exit(1);
+                }
             }
 
             int status_bulkPi = 0;
-            status_bulkPi = std::fread(&bulkPi, size, 1, fin2);
-            status_bulkPi += std::fread(&e_plus_P, size, 1, fin2);
-            status_bulkPi += std::fread(&cs2, size, 1, fin2);
-            
-            if (status_bulkPi != 3) {
-                cout << "Error:Hydroinfo_MUSIC::readHydroData: "
-                     << "bulkPi file does not have the same number of "
-                     << "fluid cells as the ideal file!" << endl;
-                exit(1);
+            if (turn_on_bulk == 1) {
+                status_bulkPi = std::fread(&bulkPi, size, 1, fin2);
+                status_bulkPi += std::fread(&e_plus_P, size, 1, fin2);
+                status_bulkPi += std::fread(&cs2, size, 1, fin2);
+                
+                if (status_bulkPi != 3) {
+                    cout << "Error:Hydroinfo_MUSIC::readHydroData: "
+                         << "bulkPi file does not have the same number of "
+                         << "fluid cells as the ideal file!" << endl;
+                    exit(1);
+                }
             }
 
             int ieta_idx = static_cast<int>(ik/num_fluid_cell_trans) % n_eta;
@@ -337,8 +356,12 @@ void Hydroinfo_MUSIC::readHydroData(int whichHydro, int nskip_tau_in) {
             }
         }
         std::fclose(fin);
-        std::fclose(fin1);
-        std::fclose(fin2);
+        if (turn_on_shear == 1) {
+            std::fclose(fin1);
+        }
+        if (turn_on_bulk == 1) {
+            std::fclose(fin2);
+        }
         cout << endl;
         cout << "number of fluid cells: " << lattice_2D->size() << endl;
     } else if (whichHydro == 9) {
@@ -378,28 +401,43 @@ void Hydroinfo_MUSIC::readHydroData(int whichHydro, int nskip_tau_in) {
             exit(1);
         }
 
-        std::FILE *fin1;
-        fin1 = std::fopen(evolution_name_Wmunu.c_str(), "rb");
-        if (fin1 == NULL) {
-            cerr << "[Hydroinfo_MUSIC::readHydroData]: ERROR: "
-                 << "Unable to open file: " << evolution_name_Wmunu << endl;
-            exit(1);
+        std::FILE *fin1 = NULL;
+        if (turn_on_shear == 1) {
+            fin1 = std::fopen(evolution_name_Wmunu.c_str(), "rb");
+            if (fin1 == NULL) {
+                cerr << "[Hydroinfo_MUSIC::readHydroData]: ERROR: "
+                     << "Unable to open file: " << evolution_name_Wmunu << endl;
+                exit(1);
+            }
         }
 
-        std::FILE *fin2;
-        fin2 = std::fopen(evolution_name_Pi.c_str(), "rb");
-        if (fin2 == NULL) {
-            cerr << "[Hydroinfo_MUSIC::readHydroData]: ERROR: "
-                 << "Unable to open file: " << evolution_name_Pi << endl;
-            exit(1);
+        std::FILE *fin2 = NULL;
+        if (turn_on_bulk == 1) {
+            fin2 = std::fopen(evolution_name_Pi.c_str(), "rb");
+            if (fin2 == NULL) {
+                cerr << "[Hydroinfo_MUSIC::readHydroData]: ERROR: "
+                     << "Unable to open file: " << evolution_name_Pi << endl;
+                exit(1);
+            }
         }
 
         int ik = 0;
         fluidCell_2D newCell;
         double T, QGPfrac, ux, uy, ueta;
         double vx, vy, vz;
-        double pi00, pi01, pi02, pi03, pi11, pi12, pi13, pi22, pi23, pi33;
-        double bulkPi, e_plus_P, cs2;
+        float pi00 = 0.0;
+        float pi01 = 0.0;
+        float pi02 = 0.0;
+        float pi03 = 0.0;
+        float pi11 = 0.0;
+        float pi12 = 0.0;
+        float pi13 = 0.0;
+        float pi22 = 0.0;
+        float pi23 = 0.0;
+        float pi33 = 0.0;;
+        float bulkPi = 0.0;
+        float e_plus_P = 1e-15;
+        float cs2 = 0.0;
         int size = sizeof(double);
         while (true) {
             int status = 0;
@@ -425,34 +463,38 @@ void Hydroinfo_MUSIC::readHydroData(int whichHydro, int nskip_tau_in) {
             ueta = vz*gamma;  // assuming at the eta = 0
             
             int status_pi = 0;
-            status_pi = std::fread(&pi00, size, 1, fin1);
-            status_pi += std::fread(&pi01, size, 1, fin1);
-            status_pi += std::fread(&pi02, size, 1, fin1);
-            status_pi += std::fread(&pi03, size, 1, fin1);
-            status_pi += std::fread(&pi11, size, 1, fin1);
-            status_pi += std::fread(&pi12, size, 1, fin1);
-            status_pi += std::fread(&pi13, size, 1, fin1);
-            status_pi += std::fread(&pi22, size, 1, fin1);
-            status_pi += std::fread(&pi23, size, 1, fin1);
-            status_pi += std::fread(&pi33, size, 1, fin1);
-            
-            if (status_pi != 10) {
-                cout << "Error:Hydroinfo_MUSIC::readHydroData: "
-                     << "Wmunu file does not have the same number of "
-                     << "fluid cells as the ideal file!" << endl;
-                exit(1);
+            if (turn_on_shear == 1) {
+                status_pi = std::fread(&pi00, size, 1, fin1);
+                status_pi += std::fread(&pi01, size, 1, fin1);
+                status_pi += std::fread(&pi02, size, 1, fin1);
+                status_pi += std::fread(&pi03, size, 1, fin1);
+                status_pi += std::fread(&pi11, size, 1, fin1);
+                status_pi += std::fread(&pi12, size, 1, fin1);
+                status_pi += std::fread(&pi13, size, 1, fin1);
+                status_pi += std::fread(&pi22, size, 1, fin1);
+                status_pi += std::fread(&pi23, size, 1, fin1);
+                status_pi += std::fread(&pi33, size, 1, fin1);
+                
+                if (status_pi != 10) {
+                    cout << "Error:Hydroinfo_MUSIC::readHydroData: "
+                         << "Wmunu file does not have the same number of "
+                         << "fluid cells as the ideal file!" << endl;
+                    exit(1);
+                }
             }
 
             int status_bulkPi = 0;
-            status_bulkPi = std::fread(&bulkPi, size, 1, fin2);
-            status_bulkPi += std::fread(&e_plus_P, size, 1, fin2);
-            status_bulkPi += std::fread(&cs2, size, 1, fin2);
-            
-            if (status_bulkPi != 3) {
-                cout << "Error:Hydroinfo_MUSIC::readHydroData: "
-                     << "bulkPi file does not have the same number of "
-                     << "fluid cells as the ideal file!" << endl;
-                exit(1);
+            if (turn_on_bulk == 1) {
+                status_bulkPi = std::fread(&bulkPi, size, 1, fin2);
+                status_bulkPi += std::fread(&e_plus_P, size, 1, fin2);
+                status_bulkPi += std::fread(&cs2, size, 1, fin2);
+                
+                if (status_bulkPi != 3) {
+                    cout << "Error:Hydroinfo_MUSIC::readHydroData: "
+                         << "bulkPi file does not have the same number of "
+                         << "fluid cells as the ideal file!" << endl;
+                    exit(1);
+                }
             }
 
             int ieta_idx = static_cast<int>(ik/num_fluid_cell_trans) % n_eta;
@@ -495,8 +537,12 @@ void Hydroinfo_MUSIC::readHydroData(int whichHydro, int nskip_tau_in) {
             }
         }
         std::fclose(fin);
-        std::fclose(fin1);
-        std::fclose(fin2);
+        if (turn_on_shear == 1) {
+            std::fclose(fin1);
+        }
+        if (turn_on_bulk == 1) {
+            std::fclose(fin2);
+        }
         cout << endl;
         cout << "number of fluid cells: " << lattice_2D->size() << endl;
     } else if (whichHydro == 10) {
