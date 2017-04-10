@@ -22,6 +22,11 @@ find_package(Pythia8)
 
 message("Looking for HDF5 ...")
 find_package(HDF5)
+if(${HDF5_FOUND})
+    message(STATUS "HDF5 include:" ${HDF5_INCLUDE_DIRS})
+    include_directories(${HDF5_INCLUDE_DIRS})
+    set(_hdf5_libs ${HDF5_LIBRARIES} ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES})
+endif()
 
 message ("Include Directories ...")
 
@@ -84,7 +89,12 @@ add_executable(hydroFileTest ./src/hydroFileTest.cc)
 target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest hydroFromFile) #for test case ...
 target_link_libraries(brickTest JetScape JetScapeHydro  JetScapeTest) #for test case ...
 target_link_libraries(readerTest JetScape JetScapeHydro  JetScapeReader) #for reader test case ...
-target_link_libraries(hydroFileTest JetScape JetScapeHydro  JetScapeTest hydroFromFile) #for test case ...
+target_link_libraries(hydroFileTest JetScape JetScapeHydro JetScapeTest hydroFromFile) #for test case ...
+
+if (${HDF5_FOUND})
+    set_target_properties (hydroFileTest PROPERTIES COMPILE_FLAGS "-DUSE_HDF5")
+    target_link_libraries (hydroFileTest ${_hdf5_libs})
+endif()
 
 #Check how to set env variables ...
 if (${ROOT_FOUND})

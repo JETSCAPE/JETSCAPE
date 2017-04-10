@@ -3,8 +3,11 @@
 #define TEST_HYDRO_FILE_JETSCAPE_H_
 
 #include "FluidDynamics.h"
-//#include "Hydroinfo_h5.h"
 #include "Hydroinfo_MUSIC.h"
+
+#ifdef USE_HDF5
+#include "Hydroinfo_h5.h"
+#endif
 
 class HydroFile: public FluidDynamics {
     // this is wrapper class for MUSIC so that it can be used as a external
@@ -15,7 +18,9 @@ class HydroFile: public FluidDynamics {
     int hydro_type;
     
     double T_c;
-    //HydroinfoH5 *hydroinfo_h5_ptr;
+#ifdef USE_HDF5
+    HydroinfoH5 *hydroinfo_h5_ptr;
+#endif
     Hydroinfo_MUSIC *hydroinfo_MUSIC_ptr; 
 
  public:

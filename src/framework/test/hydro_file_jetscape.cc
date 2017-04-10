@@ -40,7 +40,9 @@ void HydroFile::initialize_hydro(Parameter parameter_list) {
     para->FirstChildElement("load_viscous_info")->QueryBoolText(&load_viscous);
     para->FirstChildElement("T_c")->QueryDoubleText(&T_c);
     if (hydro_type == 1) {
-        //hydroinfo_h5_ptr = new HydroinfoH5("JetData.h5", 500, load_viscous);
+#ifdef USE_HDF5
+        hydroinfo_h5_ptr = new HydroinfoH5("JetData.h5", 500, load_viscous);
+#endif
     } else if (hydro_type == 2) {
         hydroinfo_MUSIC_ptr = new Hydroinfo_MUSIC();
         int hydro_mode = 8;
@@ -96,8 +98,10 @@ void HydroFile::get_hydro_info(real t, real x, real y, real z,
             cout << "please check: t = " << t << ", z = " << z << endl;
             exit(1);
         }
-        //hydroinfo_h5_ptr->getHydroinfo(tau_local, x_local, y_local,
-        //                               temp_fluid_cell_ptr);
+#ifdef USE_HDF5
+        hydroinfo_h5_ptr->getHydroinfo(tau_local, x_local, y_local,
+                                       temp_fluid_cell_ptr);
+#endif
     } else if (hydro_type == 2 || hydro_type == 3 || hydro_type == 4) {
         hydroinfo_MUSIC_ptr->getHydroValues(x_local, y_local, z_local, t_local,
                                             temp_fluid_cell_ptr);

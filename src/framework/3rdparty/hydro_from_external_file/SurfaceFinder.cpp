@@ -17,7 +17,9 @@ SurfaceFinder::SurfaceFinder(void* hydroinfo_ptr_in,
     paraRdr = paraRdr_in;
     hydro_type = paraRdr->getVal("hydro_type");
     if (hydro_type == 0) {
-        //hydroinfo_ptr = (HydroinfoH5*) hydroinfo_ptr_in;
+#ifdef USE_HDF5
+        hydroinfo_ptr = (HydroinfoH5*) hydroinfo_ptr_in;
+#endif
     } else {
         hydroinfo_MUSIC_ptr = (Hydroinfo_MUSIC*) hydroinfo_ptr_in;
     }
@@ -29,7 +31,9 @@ SurfaceFinder::SurfaceFinder(void* hydroinfo_ptr_in,
     paraRdr = paraRdr_in;
     hydro_type = paraRdr->getVal("hydro_type");
     if (hydro_type == 0) {
-        //hydroinfo_ptr = (HydroinfoH5*) hydroinfo_ptr_in;
+#ifdef USE_HDF5
+        hydroinfo_ptr = (HydroinfoH5*) hydroinfo_ptr_in;
+#endif
     } else {
         hydroinfo_MUSIC_ptr = (Hydroinfo_MUSIC*) hydroinfo_ptr_in;
     }
@@ -52,56 +56,72 @@ bool SurfaceFinder::check_intersect(double T_cut, double tau, double x,
     double y_right = y + dy/2.;
 
     if (hydro_type == 0) {
-        //hydroinfo_ptr->getHydroinfo(tau_low, x_left, y_left, fluidCellptr);
+#ifdef USE_HDF5
+        hydroinfo_ptr->getHydroinfo(tau_low, x_left, y_left, fluidCellptr);
+#endif
     } else {
         hydroinfo_MUSIC_ptr->getHydroValues(x_left, y_left, 0.0, tau_low,
                                             fluidCellptr);
     }
     cube[0][0][0] = fluidCellptr->temperature;
     if (hydro_type == 0) {
-        //hydroinfo_ptr->getHydroinfo(tau_low, x_left, y_right, fluidCellptr);
+#ifdef USE_HDF5
+        hydroinfo_ptr->getHydroinfo(tau_low, x_left, y_right, fluidCellptr);
+#endif
     } else {
         hydroinfo_MUSIC_ptr->getHydroValues(x_left, y_right, 0.0, tau_low,
                                             fluidCellptr);
     }
     cube[0][0][1] = fluidCellptr->temperature;
     if (hydro_type == 0) {
-        //hydroinfo_ptr->getHydroinfo(tau_low, x_right, y_left, fluidCellptr);
+#ifdef USE_HDF5
+        hydroinfo_ptr->getHydroinfo(tau_low, x_right, y_left, fluidCellptr);
+#endif
     } else {
         hydroinfo_MUSIC_ptr->getHydroValues(x_right, y_left, 0.0, tau_low,
                                             fluidCellptr);
     }
     cube[0][1][0] = fluidCellptr->temperature;
     if (hydro_type == 0) {
-        //hydroinfo_ptr->getHydroinfo(tau_low, x_right, y_right, fluidCellptr);
+#ifdef USE_HDF5
+        hydroinfo_ptr->getHydroinfo(tau_low, x_right, y_right, fluidCellptr);
+#endif
     } else {
         hydroinfo_MUSIC_ptr->getHydroValues(x_right, y_right, 0.0, tau_low,
                                             fluidCellptr);
     }
     cube[0][1][1] = fluidCellptr->temperature;
     if (hydro_type == 0) {
-        //hydroinfo_ptr->getHydroinfo(tau_high, x_left, y_left, fluidCellptr);
+#ifdef USE_HDF5
+        hydroinfo_ptr->getHydroinfo(tau_high, x_left, y_left, fluidCellptr);
+#endif
     } else {
         hydroinfo_MUSIC_ptr->getHydroValues(x_left, y_left, 0.0, tau_high,
                                             fluidCellptr);
     }
     cube[1][0][0] = fluidCellptr->temperature;
     if (hydro_type == 0) {
-        //hydroinfo_ptr->getHydroinfo(tau_high, x_left, y_right, fluidCellptr);
+#ifdef USE_HDF5
+        hydroinfo_ptr->getHydroinfo(tau_high, x_left, y_right, fluidCellptr);
+#endif
     } else {
         hydroinfo_MUSIC_ptr->getHydroValues(x_left, y_right, 0.0, tau_high,
                                             fluidCellptr);
     }
     cube[1][0][1] = fluidCellptr->temperature;
     if (hydro_type == 0) {
-        //hydroinfo_ptr->getHydroinfo(tau_high, x_right, y_left, fluidCellptr);
+#ifdef USE_HDF5
+        hydroinfo_ptr->getHydroinfo(tau_high, x_right, y_left, fluidCellptr);
+#endif
     } else {
         hydroinfo_MUSIC_ptr->getHydroValues(x_right, y_left, 0.0, tau_high,
                                             fluidCellptr);
     }
     cube[1][1][0] = fluidCellptr->temperature;
     if (hydro_type == 0) {
-        //hydroinfo_ptr->getHydroinfo(tau_high, x_right, y_right, fluidCellptr);
+#ifdef USE_HDF5
+        hydroinfo_ptr->getHydroinfo(tau_high, x_right, y_right, fluidCellptr);
+#endif
     } else {
         hydroinfo_MUSIC_ptr->getHydroValues(x_right, y_right, 0.0, tau_high,
                                             fluidCellptr);
@@ -127,10 +147,12 @@ int SurfaceFinder::Find_full_hypersurface() {
     double grid_x0 = 0.0;
     double grid_y0 = 0.0;
     if (hydro_type == 1) {
-        //grid_tau0 = hydroinfo_ptr->getHydrogridTau0();
-        //grid_tauf = hydroinfo_ptr->getHydrogridTaumax();
-        //grid_x0 = hydroinfo_ptr->getHydrogridX0();
-        //grid_y0 = hydroinfo_ptr->getHydrogridY0();
+#ifdef USE_HDF5
+        grid_tau0 = hydroinfo_ptr->getHydrogridTau0();
+        grid_tauf = hydroinfo_ptr->getHydrogridTaumax();
+        grid_x0 = hydroinfo_ptr->getHydrogridX0();
+        grid_y0 = hydroinfo_ptr->getHydrogridY0();
+#endif
     } else {
         grid_tau0 = hydroinfo_MUSIC_ptr->get_hydro_tau0();
         grid_tauf = hydroinfo_MUSIC_ptr->get_hydro_tau_max();
@@ -199,8 +221,10 @@ int SurfaceFinder::Find_full_hypersurface() {
                         double da_y = cornelius_ptr->get_normal_elem(isurf, 2);
                        
                         if (hydro_type == 1) {
-                            //hydroinfo_ptr->getHydroinfo(
-                            //    tau_center, x_center, y_center, fluidCellptr);
+#ifdef USE_HDF5
+                            hydroinfo_ptr->getHydroinfo(
+                                tau_center, x_center, y_center, fluidCellptr);
+#endif
                         } else {
                             hydroinfo_MUSIC_ptr->getHydroValues(
                                 x_center, y_center, 0.0, tau_center,

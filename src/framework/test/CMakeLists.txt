@@ -6,13 +6,24 @@ cmake_policy(SET CMP0042 NEW)
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "../lib/")
 
-set (SOURCES Gubser_hydro_jetscape.cc brick_jetscape.cc hydro_file_jetscape.cc ElossModulesTest.cc PGun.cc) # JSPythia8.cc) 
+set (SOURCES
+     Gubser_hydro_jetscape.cc
+     brick_jetscape.cc
+     hydro_file_jetscape.cc
+     ElossModulesTest.cc
+     PGun.cc)
+     # JSPythia8.cc) 
 
 if(${PYTHIA8_FOUND})
 	set (SOURCES ${SOURCES}  JSPythia8.cc)
 endif()
 
 add_library(JetScapeTest SHARED ${SOURCES})
+
+if (${HDF5_FOUND})
+    set_target_properties (JetScapeTest PROPERTIES COMPILE_FLAGS "-DUSE_HDF5")
+    target_link_libraries (JetScapeTest ${_hdf5_libs})
+endif()
 
 if (${PYTHIA8_FOUND})
    target_link_libraries(JetScapeTest ${PYTHIA8_LIBRARIES})

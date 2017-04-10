@@ -16,16 +16,19 @@ FluidcellStatistic::FluidcellStatistic(void* hydroinfo_ptr_in,
                                        ParameterReader* paraRdr_in) {
     paraRdr = paraRdr_in;
     hydro_type = paraRdr->getVal("hydro_type");
+
+    grid_tau0 = 0.0;
+    grid_tauf = 0.0;
+    grid_x0 = 0.0;
+    grid_y0 = 0.0;
     if (hydro_type == 0) {
-        //hydroinfo_ptr = (HydroinfoH5*) hydroinfo_ptr_in;
-        //grid_tau0 = hydroinfo_ptr->getHydrogridTau0();
-        //grid_tauf = hydroinfo_ptr->getHydrogridTaumax();
-        //grid_x0 = - hydroinfo_ptr->getHydrogridXmax();
-        //grid_y0 = - hydroinfo_ptr->getHydrogridYmax();
-        grid_tau0 = 0.0;
-        grid_tauf = 0.0;
-        grid_x0 = 0.0;
-        grid_y0 = 0.0;
+#ifdef USE_HDF5
+        hydroinfo_ptr = (HydroinfoH5*) hydroinfo_ptr_in;
+        grid_tau0 = hydroinfo_ptr->getHydrogridTau0();
+        grid_tauf = hydroinfo_ptr->getHydrogridTaumax();
+        grid_x0 = - hydroinfo_ptr->getHydrogridXmax();
+        grid_y0 = - hydroinfo_ptr->getHydrogridYmax();
+#endif
     } else {
         hydroinfo_MUSIC_ptr = (Hydroinfo_MUSIC*) hydroinfo_ptr_in;
         grid_tau0 = hydroinfo_MUSIC_ptr->get_hydro_tau0();
@@ -105,8 +108,10 @@ void FluidcellStatistic::output_temperature_vs_tau() {
                 double y_local = grid_y0 + j*grid_dy;
                 // get hydro information
                 if (hydro_type == 0) {
-                    //hydroinfo_ptr->getHydroinfo(tau_local, x_local, y_local,
-                    //                            fluidCellptr);
+#ifdef USE_HDF5
+                    hydroinfo_ptr->getHydroinfo(tau_local, x_local, y_local,
+                                                fluidCellptr);
+#endif
                 } else {
                     hydroinfo_MUSIC_ptr->getHydroValues(
                             x_local, y_local, 0.0, tau_local, fluidCellptr);
@@ -161,8 +166,10 @@ void FluidcellStatistic::output_flowvelocity_vs_tau() {
             for (int j = 0; j < ny; j++) {
                 double y_local = grid_y0 + j*grid_dy;
                 if (hydro_type == 0) {
-                    //hydroinfo_ptr->getHydroinfo(tau_local, x_local, y_local,
-                    //                            fluidCellptr);
+#ifdef USE_HDF5
+                    hydroinfo_ptr->getHydroinfo(tau_local, x_local, y_local,
+                                                fluidCellptr);
+#endif
                 } else {
                     hydroinfo_MUSIC_ptr->getHydroValues(
                             x_local, y_local, 0.0, tau_local, fluidCellptr);
@@ -234,8 +241,10 @@ void FluidcellStatistic::output_temperature_vs_avg_utau() {
 
                 // get hydro information
                 if (hydro_type == 0) {
-                    //hydroinfo_ptr->getHydroinfo(tau_local, x_local, y_local,
-                    //                            fluidCellptr);
+#ifdef USE_HDF5
+                    hydroinfo_ptr->getHydroinfo(tau_local, x_local, y_local,
+                                                fluidCellptr);
+#endif
                 } else {
                     hydroinfo_MUSIC_ptr->getHydroValues(
                             x_local, y_local, 0.0, tau_local, fluidCellptr);
@@ -308,8 +317,10 @@ void FluidcellStatistic::output_momentum_anisotropy_vs_tau() {
                 double y_local = grid_y0 + j*grid_dy;
                 // get hydro information
                 if (hydro_type == 0) {
-                    //hydroinfo_ptr->getHydroinfo(tau_local, x_local, y_local,
-                    //                            fluidCellptr);
+#ifdef USE_HDF5
+                    hydroinfo_ptr->getHydroinfo(tau_local, x_local, y_local,
+                                                fluidCellptr);
+#endif
                 } else {
                     hydroinfo_MUSIC_ptr->getHydroValues(
                             x_local, y_local, 0.0, tau_local, fluidCellptr);
@@ -365,8 +376,10 @@ void FluidcellStatistic::outputTempasTauvsX() {
             double y_local = 0.0;
             // get hydro information
             if (hydro_type == 0) {
-                //hydroinfo_ptr->getHydroinfo(tau_local, x_local, y_local,
-                //                            fluidCellptr);
+#ifdef USE_HDF5
+                hydroinfo_ptr->getHydroinfo(tau_local, x_local, y_local,
+                                            fluidCellptr);
+#endif
             } else {
                 hydroinfo_MUSIC_ptr->getHydroValues(
                         x_local, y_local, 0.0, tau_local, fluidCellptr);
@@ -408,8 +421,10 @@ void FluidcellStatistic::outputKnudersonNumberasTauvsX() {
                                                         x_local, y_local);
 
             if (hydro_type == 0) {
-                //hydroinfo_ptr->getHydroinfo(tau_local, x_local, y_local,
-                //                            fluidCellptr);
+#ifdef USE_HDF5
+                hydroinfo_ptr->getHydroinfo(tau_local, x_local, y_local,
+                                            fluidCellptr);
+#endif
             } else {
                 hydroinfo_MUSIC_ptr->getHydroValues(
                         x_local, y_local, 0.0, tau_local, fluidCellptr);
@@ -445,20 +460,22 @@ double FluidcellStatistic::compute_local_expansion_rate(
     fluidCell* fluidCellptry2 = new fluidCell;
 
     if (hydro_type == 0) {
-        //hydroinfo_ptr->getHydroinfo(tau_local, x_local, y_local,
-        //                            fluidCellptr);
-        //hydroinfo_ptr->getHydroinfo(tau_local-grid_dt, x_local, y_local,
-        //                            fluidCellptrt1);
-        //hydroinfo_ptr->getHydroinfo(tau_local+grid_dt, x_local, y_local,
-        //                            fluidCellptrt2);
-        //hydroinfo_ptr->getHydroinfo(tau_local, x_local-grid_dx, y_local,
-        //                            fluidCellptrx1);
-        //hydroinfo_ptr->getHydroinfo(tau_local, x_local+grid_dx, y_local,
-        //                            fluidCellptrx2);
-        //hydroinfo_ptr->getHydroinfo(tau_local, x_local, y_local-grid_dy,
-        //                            fluidCellptry1);
-        //hydroinfo_ptr->getHydroinfo(tau_local, x_local, y_local+grid_dy,
-        //                            fluidCellptry2);
+#ifdef USE_HDF5
+        hydroinfo_ptr->getHydroinfo(tau_local, x_local, y_local,
+                                    fluidCellptr);
+        hydroinfo_ptr->getHydroinfo(tau_local-grid_dt, x_local, y_local,
+                                    fluidCellptrt1);
+        hydroinfo_ptr->getHydroinfo(tau_local+grid_dt, x_local, y_local,
+                                    fluidCellptrt2);
+        hydroinfo_ptr->getHydroinfo(tau_local, x_local-grid_dx, y_local,
+                                    fluidCellptrx1);
+        hydroinfo_ptr->getHydroinfo(tau_local, x_local+grid_dx, y_local,
+                                    fluidCellptrx2);
+        hydroinfo_ptr->getHydroinfo(tau_local, x_local, y_local-grid_dy,
+                                    fluidCellptry1);
+        hydroinfo_ptr->getHydroinfo(tau_local, x_local, y_local+grid_dy,
+                                    fluidCellptry2);
+#endif
     } else {
         hydroinfo_MUSIC_ptr->getHydroValues(
                             x_local, y_local, 0.0, tau_local, fluidCellptr);
@@ -532,8 +549,10 @@ void FluidcellStatistic::outputinverseReynoldsNumberasTauvsX() {
             double y_local = 0.0;
 
             if (hydro_type == 0) {
-                //hydroinfo_ptr->getHydroinfo(tau_local, x_local, y_local,
-                //                            fluidCellptr);
+#ifdef USE_HDF5
+                hydroinfo_ptr->getHydroinfo(tau_local, x_local, y_local,
+                                            fluidCellptr);
+#endif
             } else {
                 hydroinfo_MUSIC_ptr->getHydroValues(
                         x_local, y_local, 0.0, tau_local, fluidCellptr);
@@ -587,8 +606,10 @@ void FluidcellStatistic::outputBulkinverseReynoldsNumberasTauvsX() {
             double y_local = 0.0;
 
             if (hydro_type == 0) {
-                //hydroinfo_ptr->getHydroinfo(tau_local, x_local, y_local,
-                //                            fluidCellptr);
+#ifdef USE_HDF5
+                hydroinfo_ptr->getHydroinfo(tau_local, x_local, y_local,
+                                            fluidCellptr);
+#endif
             } else {
                 hydroinfo_MUSIC_ptr->getHydroValues(
                         x_local, y_local, 0.0, tau_local, fluidCellptr);
@@ -648,8 +669,10 @@ double FluidcellStatistic::calculate_spacetime_4volume(double T_cut) {
                 double y_local = grid_y0 + j*grid_dy;
                 // get hydro information
                 if (hydro_type == 0) {
-                    //hydroinfo_ptr->getHydroinfo(tau_local, x_local, y_local,
-                    //                            fluidCellptr);
+#ifdef USE_HDF5
+                    hydroinfo_ptr->getHydroinfo(tau_local, x_local, y_local,
+                                                fluidCellptr);
+#endif
                 } else {
                     hydroinfo_MUSIC_ptr->getHydroValues(
                             x_local, y_local, 0.0, tau_local, fluidCellptr);
@@ -691,8 +714,10 @@ double FluidcellStatistic::calculate_average_tau(double T_cut) {
                 double y_local = grid_y0 + j*grid_dy;
                 // get hydro information
                 if (hydro_type == 0) {
-                    //hydroinfo_ptr->getHydroinfo(tau_local, x_local, y_local,
-                    //                            fluidCellptr);
+#ifdef USE_HDF5
+                    hydroinfo_ptr->getHydroinfo(tau_local, x_local, y_local,
+                                                fluidCellptr);
+#endif
                 } else {
                     hydroinfo_MUSIC_ptr->getHydroValues(
                             x_local, y_local, 0.0, tau_local, fluidCellptr);
@@ -735,8 +760,10 @@ double FluidcellStatistic::calculate_average_temperature4(double T_cut) {
                 double y_local = grid_y0 + j*grid_dy;
                 // get hydro information
                 if (hydro_type == 0) {
-                    //hydroinfo_ptr->getHydroinfo(tau_local, x_local, y_local,
-                    //                            fluidCellptr);
+#ifdef USE_HDF5
+                    hydroinfo_ptr->getHydroinfo(tau_local, x_local, y_local,
+                                                fluidCellptr);
+#endif
                 } else {
                     hydroinfo_MUSIC_ptr->getHydroValues(
                             x_local, y_local, 0.0, tau_local, fluidCellptr);
@@ -784,8 +811,10 @@ double FluidcellStatistic::
                 double y_local = grid_y0 + j*grid_dy;
                 // get hydro information
                 if (hydro_type == 0) {
-                    //hydroinfo_ptr->getHydroinfo(tau_local, x_local, y_local,
-                    //                            fluidCellptr);
+#ifdef USE_HDF5
+                    hydroinfo_ptr->getHydroinfo(tau_local, x_local, y_local,
+                                                fluidCellptr);
+#endif
                 } else {
                     hydroinfo_MUSIC_ptr->getHydroValues(
                             x_local, y_local, 0.0, tau_local, fluidCellptr);
@@ -819,7 +848,9 @@ double FluidcellStatistic::calculate_hypersurface_3volume(double T_cut) {
     // first find the hyper-surface
     void* hydro_ptr = NULL;
     if (hydro_type == 1) {
-        //hydro_ptr = hydroinfo_ptr;
+#ifdef USE_HDF5
+        hydro_ptr = hydroinfo_ptr;
+#endif
     } else {
         hydro_ptr = hydroinfo_MUSIC_ptr;
     }

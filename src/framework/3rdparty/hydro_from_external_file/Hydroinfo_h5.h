@@ -6,15 +6,9 @@
 #include<string>
 
 #include "hdf5.h"
+#include "fluidCell.h"
 
 using namespace std;
-
-struct fluidCell {
-   double ed, sd, temperature, pressure;
-   double vx, vy, vz;
-   double pi[4][4];
-   double bulkPi;
-};
 
 class HydroinfoH5
 {

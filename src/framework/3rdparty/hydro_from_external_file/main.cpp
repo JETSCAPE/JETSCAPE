@@ -18,7 +18,10 @@
 #include <iomanip>
 #include <cstdlib>
 
-//#include "./Hydroinfo_h5.h"
+#ifdef USE_HDF5
+#include "./Hydroinfo_h5.h"
+#endif
+
 #include "./Hydroinfo_MUSIC.h"
 #include "./Stopwatch.h"
 #include "./FluidcellStatistic.h"
@@ -42,9 +45,12 @@ int main(int argc, char *argv[]) {
     sw.tic();
     // hydro data file pointer
     if (hydro_type == 1) {
-        //HydroinfoH5* hydroinfo_ptr = new HydroinfoH5("JetData.h5", 500,
-        //                                             load_viscous);
-        //hydroinfo_ptr_in = hydroinfo_ptr;
+#ifdef USE_HDF5
+        cout << "test" << endl;
+        HydroinfoH5* hydroinfo_ptr = new HydroinfoH5("JetData.h5", 500,
+                                                     load_viscous);
+        hydroinfo_ptr_in = hydroinfo_ptr;
+#endif
     } else if (hydro_type == 2) {
         Hydroinfo_MUSIC* hydroinfo_ptr = new Hydroinfo_MUSIC();
         int hydro_mode = 8;

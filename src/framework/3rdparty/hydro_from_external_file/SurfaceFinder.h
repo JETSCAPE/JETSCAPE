@@ -2,7 +2,10 @@
 #ifndef SRC_SurfaceFinder_H_
 #define SRC_SurfaceFinder_H_
 
-//#include "./Hydroinfo_h5.h"
+#ifdef USE_HDF5
+#include "./Hydroinfo_h5.h"
+#endif
+
 #include "./Hydroinfo_MUSIC.h"
 #include "./ParameterReader.h"
 
@@ -11,7 +14,9 @@ using namespace std;
 class SurfaceFinder {
  private:
     int hydro_type;
-    //HydroinfoH5 *hydroinfo_ptr;
+#ifdef USE_HDF5
+    HydroinfoH5 *hydroinfo_ptr;
+#endif
     Hydroinfo_MUSIC *hydroinfo_MUSIC_ptr;
     ParameterReader *paraRdr;
     double T_cut;
