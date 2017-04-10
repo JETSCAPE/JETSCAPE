@@ -20,9 +20,13 @@ find_package(ROOT)
 message("Looking for Pythia8 ...")
 find_package(Pythia8)
 
+message("Looking for HDF5 ...")
+find_package(HDF5)
+
 message ("Include Directories ...")
 
 include_directories(./src ./test ./hydro ./jet ./gtl/include ./reader) #for test case ...
+include_directories(./3rdparty/hydro_from_external_file)
 
 if (${HEPMC_FOUND})
       include_directories(${HEPMC_INCLUDE_DIR})
@@ -68,26 +72,31 @@ add_subdirectory(./hydro) #for test case fluid_dynamics ...
 add_subdirectory(./jet)  #for test case jet classes …
 add_subdirectory(./test)  #for test case ...
 add_subdirectory(./reader)  #for test case ...
+add_subdirectory(./3rdparty/hydro_from_external_file)  #for test case ...
 
 link_directories(./lib)
 
 add_executable(testJetScape ./src/testJetScape.cc)
 add_executable(brickTest ./src/brickTest.cc)
 add_executable(readerTest ./reader/readerTest.cc)
+add_executable(hydroFileTest ./src/hydroFileTest.cc)
 
-target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest) #for test case ...
+target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest hydroFromFile) #for test case ...
 target_link_libraries(brickTest JetScape JetScapeHydro  JetScapeTest) #for test case ...
 target_link_libraries(readerTest JetScape JetScapeHydro  JetScapeReader) #for reader test case ...
+target_link_libraries(hydroFileTest JetScape JetScapeHydro  JetScapeTest hydroFromFile) #for test case ...
 
 #Check how to set env variables ...
 if (${ROOT_FOUND})
    target_link_libraries(testJetScape ${ROOT_LIBRARIES})
    target_link_libraries(brickTest ${ROOT_LIBRARIES})
+   target_link_libraries(hydroFileTest ${ROOT_LIBRARIES})
 endif()
 
 if (${PYTHIA8_FOUND})
    target_link_libraries(testJetScape ${PYTHIA8_LIBRARIES})
    target_link_libraries(brickTest ${PYTHIA8_LIBRARIES})
+   target_link_libraries(hydroFileTest ${PYTHIA8_LIBRARIES})
    message( ${PYTHIA8_LIBRARIES} )
 endif()
 
