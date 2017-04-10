@@ -26,7 +26,7 @@ if(${HDF5_FOUND})
     message(STATUS "HDF5 include:" ${HDF5_INCLUDE_DIRS})
     include_directories(${HDF5_INCLUDE_DIRS})
     set(_hdf5_libs ${HDF5_LIBRARIES} ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES})
-endif()
+endif(${HDF5_FOUND})
 
 message ("Include Directories ...")
 

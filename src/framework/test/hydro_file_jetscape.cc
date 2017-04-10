@@ -44,6 +44,10 @@ void HydroFile::initialize_hydro(Parameter parameter_list) {
         string filename = para->FirstChildElement("VISH_file")->GetText();
 #ifdef USE_HDF5
         hydroinfo_h5_ptr = new HydroinfoH5(filename, 500, load_viscous);
+#else
+        WARN << " : hydro_type == 1 requires the hdf5 library~";
+        WARN << " : please check your inputs~";
+        exit(-1);
 #endif
     } else if (hydro_type == 2) {
         string input_file =
