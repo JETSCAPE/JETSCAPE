@@ -41,26 +41,48 @@ void HydroFile::initialize_hydro(Parameter parameter_list) {
     para->FirstChildElement("load_viscous_info")->QueryBoolText(&load_viscous);
     para->FirstChildElement("T_c")->QueryDoubleText(&T_c);
     if (hydro_type == 1) {
+        string filename = para->FirstChildElement("VISH_file")->GetText();
 #ifdef USE_HDF5
-        hydroinfo_h5_ptr = new HydroinfoH5("JetData.h5", 500, load_viscous);
+        hydroinfo_h5_ptr = new HydroinfoH5(filename, 500, load_viscous);
 #endif
     } else if (hydro_type == 2) {
+        string input_file =
+                para->FirstChildElement("MUSIC_input_file")->GetText();
+        string hydro_ideal_file =
+                para->FirstChildElement("MUSIC_file")->GetText();
+        string hydro_shear_file = "";
+        string hydro_bulk_file = "";
         hydroinfo_MUSIC_ptr = new Hydroinfo_MUSIC();
         int hydro_mode = 8;
         int nskip_tau;
         para->FirstChildElement("hydro_nskip_tau")->QueryIntText(&nskip_tau);
-        hydroinfo_MUSIC_ptr->readHydroData(hydro_mode, nskip_tau);
+        hydroinfo_MUSIC_ptr->readHydroData(hydro_mode, nskip_tau,
+            input_file, hydro_ideal_file, hydro_shear_file, hydro_bulk_file);
     } else if (hydro_type == 3) {
+        string input_file =
+                para->FirstChildElement("MUSIC_input_file")->GetText();
+        string hydro_ideal_file =
+                para->FirstChildElement("MUSIC_file")->GetText();
+        string hydro_shear_file = "";
+        string hydro_bulk_file = "";
         hydroinfo_MUSIC_ptr = new Hydroinfo_MUSIC();
         int hydro_mode = 9;
         int nskip_tau;
         para->FirstChildElement("hydro_nskip_tau")->QueryIntText(&nskip_tau);
-        hydroinfo_MUSIC_ptr->readHydroData(hydro_mode, nskip_tau);
+        hydroinfo_MUSIC_ptr->readHydroData(hydro_mode, nskip_tau,
+            input_file, hydro_ideal_file, hydro_shear_file, hydro_bulk_file);
     } else if (hydro_type == 4) {
+        string input_file =
+                para->FirstChildElement("MUSIC_input_file")->GetText();
+        string hydro_ideal_file =
+                para->FirstChildElement("MUSIC_file")->GetText();
+        string hydro_shear_file = "";
+        string hydro_bulk_file = "";
         hydroinfo_MUSIC_ptr = new Hydroinfo_MUSIC();
         int hydro_mode = 10;
         int nskip_tau = 1;
-        hydroinfo_MUSIC_ptr->readHydroData(hydro_mode, nskip_tau);
+        hydroinfo_MUSIC_ptr->readHydroData(hydro_mode, nskip_tau,
+            input_file, hydro_ideal_file, hydro_shear_file, hydro_bulk_file);
     } else {
         cout << "main: unrecognized hydro_type = " << hydro_type << endl;
         exit(1);

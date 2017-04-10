@@ -40,6 +40,11 @@ class Hydroinfo_MUSIC {
     int turn_on_rhob;
     int turn_on_diff;
 
+    std::string input_filename;
+    std::string hydro_ideal_filename;
+    std::string hydro_shear_filename;
+    std::string hydro_bulk_filename;
+
     std::vector<fluidCell_2D> *lattice_2D;  // array to store hydro information
     std::vector<fluidCell_3D> *lattice_3D;  // array to store hydro information
     std::vector<fluidCell_3D_new> *lattice_3D_new;
@@ -60,7 +65,9 @@ class Hydroinfo_MUSIC {
     int get_hydro_Nskip_eta() {return(nskip_eta);}
     int get_number_of_fluid_cells_3d() {return(lattice_3D_new->size());}
 
-    void readHydroData(int whichHydro, int nskip_tau_in);
+    void readHydroData(int whichHydro, int nskip_tau_in,
+            std::string input_filename_in, std::string hydro_ideal_filename,
+            std::string hydro_shear_filename, std::string hydro_bulk_filename);
 
     void getHydroValues(double x, double y, double z, double t,
                         fluidCell *info);

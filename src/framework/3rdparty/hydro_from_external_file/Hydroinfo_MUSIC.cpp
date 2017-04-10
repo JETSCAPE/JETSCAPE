@@ -38,16 +38,25 @@ Hydroinfo_MUSIC::~Hydroinfo_MUSIC() {
     delete lattice_3D_new;
 }
 
-void Hydroinfo_MUSIC::readHydroData(int whichHydro, int nskip_tau_in) {
+void Hydroinfo_MUSIC::readHydroData(int whichHydro, int nskip_tau_in,
+                                    string input_filename_in,
+                                    string hydro_ideal_filename_in,
+                                    string hydro_shear_filename_in,
+                                    string hydro_bulk_filename_in) {
     // all hydro data is stored in tau steps (not t)
     // evolution is converted to tau when accessing the hydro data
     lattice_2D->clear();
     lattice_3D->clear();
     lattice_3D_new->clear();
 
+    input_filename = input_filename_in;
+    hydro_ideal_filename = hydro_ideal_filename_in;
+    hydro_shear_filename = hydro_shear_filename_in;
+    hydro_bulk_filename = hydro_bulk_filename_in;
+
     // read in setups of the hydro simulation
     ostringstream config_file;
-    config_file << "results/music_input";
+    config_file << input_filename;
     ifstream configuration;
     configuration.open(config_file.str().c_str(), ios::in);
     if (!configuration) {
@@ -111,7 +120,8 @@ void Hydroinfo_MUSIC::readHydroData(int whichHydro, int nskip_tau_in) {
              << endl;
     }
 
-    if (whichHydro != 6 && whichHydro != 8 && whichHydro != 9 && whichHydro !=10) {
+    if (whichHydro != 6 && whichHydro != 8 && whichHydro != 9
+            && whichHydro !=10) {
         cout << "Hydroinfo_MUSIC:: This option is obsolete! whichHydro = "
              << whichHydro << endl;
         exit(1);
@@ -125,30 +135,13 @@ void Hydroinfo_MUSIC::readHydroData(int whichHydro, int nskip_tau_in) {
 
         // read in temperature, QGP fraction , flow velocity
         // The name of the evolution file: evolution_name
-        string evolution_name = "results/evolution_xyeta.dat";
-        string evolution_name_Wmunu =
-            "results/evolution_Wmunu_over_epsilon_plus_P_xyeta.dat";
-        string evolution_name_Pi = "results/evolution_bulk_pressure_xyeta.dat";
+        string evolution_name = hydro_ideal_filename;
         cout << "Evolution file name = " << evolution_name << endl;
         ifstream fin;
         fin.open(evolution_name.c_str(), ios::in);
         if (!fin) {
             cerr << "[Hydroinfo_MUSIC::readHydroData]: ERROR: "
                  << "Unable to open file: " << evolution_name << endl;
-            exit(1);
-        }
-        ifstream fin1;
-        fin1.open(evolution_name_Wmunu.c_str(), ios::in);
-        if (!fin) {
-            cerr << "[Hydroinfo_MUSIC::readHydroData]: ERROR: "
-                 << "Unable to open file: " << evolution_name_Wmunu << endl;
-            exit(1);
-        }
-        ifstream fin2;
-        fin2.open(evolution_name_Pi.c_str(), ios::in);
-        if (!fin) {
-            cerr << "[Hydroinfo_MUSIC::readHydroData]: ERROR: "
-                 << "Unable to open file: " << evolution_name_Pi << endl;
             exit(1);
         }
 
@@ -173,16 +166,14 @@ void Hydroinfo_MUSIC::readHydroData(int whichHydro, int nskip_tau_in) {
         }
         cout << ik << endl;
         fin.close();
-        fin1.close();
-        fin2.close();
     } else if (whichHydro == 8) {
         // event-by-event (2+1)-d MUSIC hydro from JF
         // there are two slices in medium in eta_s
         // one at eta_s = -15. and the other at eta_s = 0.0
         // only the medium at middle rapidity will be kept in the memory
         boost_invariant = true;
-        cout << "Reading event-by-event hydro evolution data from JF ..."
-             << endl;
+        cout << "Reading event-by-event hydro evolution data "
+             << "from standard MUSIC ..." << endl;
 
         ixmax = static_cast<int>(2.*hydroXmax/hydroDx + 0.001);
         ietamax = 1;
@@ -197,10 +188,9 @@ void Hydroinfo_MUSIC::readHydroData(int whichHydro, int nskip_tau_in) {
         int num_fluid_cell_trans = ixmax*ixmax;
 
         // read in hydro evolution
-        string evolution_name = "results/evolution_xyeta.dat";
-        string evolution_name_Wmunu =
-                "results/evolution_Wmunu_over_epsilon_plus_P_xyeta.dat";
-        string evolution_name_Pi = "results/evolution_bulk_pressure_xyeta.dat";
+        string evolution_name = hydro_ideal_filename;
+        string evolution_name_Wmunu = hydro_shear_filename;
+        string evolution_name_Pi = hydro_bulk_filename;
 
         std::FILE *fin;
         string evolution_file_name = evolution_name;
@@ -385,10 +375,9 @@ void Hydroinfo_MUSIC::readHydroData(int whichHydro, int nskip_tau_in) {
         int num_fluid_cell_trans = ixmax*ixmax;
 
         // read in hydro evolution
-        string evolution_name = "results/evolution_xyeta.dat";
-        string evolution_name_Wmunu =
-                "results/evolution_Wmunu_over_epsilon_plus_P_xyeta.dat";
-        string evolution_name_Pi = "results/evolution_bulk_pressure_xyeta.dat";
+        string evolution_name = hydro_ideal_filename;
+        string evolution_name_Wmunu = hydro_shear_filename;
+        string evolution_name_Pi = hydro_bulk_filename;
 
         std::FILE *fin;
         string evolution_file_name = evolution_name;
@@ -555,7 +544,7 @@ void Hydroinfo_MUSIC::readHydroData(int whichHydro, int nskip_tau_in) {
 
         // read in temperature, QGP fraction , flow velocity
         // The name of the evolution file: evolution_name
-        string evolution_name = "results/evolution_all_xyeta.dat";
+        string evolution_name = hydro_ideal_filename;
         cout << "Evolution file name = " << evolution_name << endl;
         std::FILE *fin;
         fin = std::fopen(evolution_name.c_str(), "rb");

@@ -41,6 +41,12 @@ int main(int argc, char *argv[]) {
 
     void* hydroinfo_ptr_in = NULL;
 
+    string input_file = "results/music_input";
+    string hydro_ideal_file = "results/evolution_xyeta.dat";
+    string hydro_shear_file =
+                    "results/evolution_Wmunu_over_epsilon_plus_P_xyeta.dat";
+    string hydro_bulk_file = "results/evolution_bulk_pressure_xyeta.dat";
+
     Stopwatch sw;
     sw.tic();
     // hydro data file pointer
@@ -55,19 +61,22 @@ int main(int argc, char *argv[]) {
         Hydroinfo_MUSIC* hydroinfo_ptr = new Hydroinfo_MUSIC();
         int hydro_mode = 8;
         int nskip_tau = paraRdr->getVal("hydro_nskip_tau");
-        hydroinfo_ptr->readHydroData(hydro_mode, nskip_tau);
+        hydroinfo_ptr->readHydroData(hydro_mode, nskip_tau,
+            input_file, hydro_ideal_file, hydro_shear_file, hydro_bulk_file);
         hydroinfo_ptr_in = hydroinfo_ptr;
     } else if (hydro_type == 3) {
         Hydroinfo_MUSIC* hydroinfo_ptr = new Hydroinfo_MUSIC();
         int hydro_mode = 9;
         int nskip_tau = paraRdr->getVal("hydro_nskip_tau");
-        hydroinfo_ptr->readHydroData(hydro_mode, nskip_tau);
+        hydroinfo_ptr->readHydroData(hydro_mode, nskip_tau,
+            input_file, hydro_ideal_file, hydro_shear_file, hydro_bulk_file);
         hydroinfo_ptr_in = hydroinfo_ptr;
     } else if (hydro_type == 4) {
         Hydroinfo_MUSIC* hydroinfo_ptr = new Hydroinfo_MUSIC();
         int hydro_mode = 10;
         int nskip_tau = 1;
-        hydroinfo_ptr->readHydroData(hydro_mode, nskip_tau);
+        hydroinfo_ptr->readHydroData(hydro_mode, nskip_tau,
+            input_file, hydro_ideal_file, hydro_shear_file, hydro_bulk_file);
         hydroinfo_ptr_in = hydroinfo_ptr;
     } else {
         cout << "main: unrecognized hydro_type = " << hydro_type << endl;
