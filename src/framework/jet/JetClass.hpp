@@ -88,8 +88,9 @@ public:
     
     void set_p(double p[4])
     {
-      //FourVector p_in_(p); // error: creates new vector and hence not accessible via class p_in_
-      reset_momentum(p[0],p[1],p[2],p[3]);
+      p_in_ = FourVector(p);
+        //FourVector p_in_(p); // error: creates new vector and hence not accessible via class p_in_
+      //reset_momentum(p[0],p[1],p[2],p[3]);
     };
 
   // not needed in graph structure

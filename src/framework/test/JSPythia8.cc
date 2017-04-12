@@ -109,7 +109,10 @@ void JSPythia8::Exec()
 
    for (int i=0;i<2;i++)
      {
-       AddParton(make_shared<Parton>(1,21,0,pAssign,xLoc));
+       Parton pp(1,21,0,pAssign,xLoc);
+       pp.reset_momentum(pAssign);
+       AddParton(make_shared<Parton>(pp));
+       //AddParton(make_shared<Parton>(1,21,0,pAssign,xLoc));
      }
   
   

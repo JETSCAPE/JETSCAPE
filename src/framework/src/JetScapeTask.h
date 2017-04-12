@@ -72,7 +72,7 @@ class JetScapeTask
  
   void SetId(string m_id) {id=m_id;}
   const string GetId() const {return id;}
-  
+
  private:
 
   // can be made sortabele to put in correct oder or via xml file ...

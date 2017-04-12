@@ -58,6 +58,7 @@ int main(int argc, char** argv)
   Show();
 
   auto jetscape = make_shared<JetScape>("./jetscape_init.xml",3);
+  jetscape->SetId("primary");
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
   auto hydro = make_shared<Brick> ();

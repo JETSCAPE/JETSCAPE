@@ -17,8 +17,10 @@
 #include "JetScapeXML.h"
 #include <string>
 #include "tinyxml2.h"
+#include "JetScapeSignalManager.h"
 #include "JetScapeWriterAscii.h"
 #include "JetScapeWriterHepMC.h"
+#include "HardProcess.h"
 
 //#include "PartonShowerGenerator.h"
 
@@ -143,14 +145,13 @@ void::JetEnergyLoss::DoShower()
   vector<node> vStartVecTemp;
   
   //DEBUG this guy isn't linked to anything - put in test particle for now
-  //pIn.push_back(*GetShowerInitiatingParton());
+  pIn.push_back(*GetShowerInitiatingParton());
 
-  double pAssign[4] = {10,14,2,20};
+  /*double pAssign[4] = {10,14,2,20};
   double xLoc[4] = {2,3,4,5};
   Parton pTemp(1,21,0,pAssign,xLoc);
-  INFO<<"id: "<<pTemp.pid()<<" x: "<< pTemp.x_in().x() << " " << pTemp.x_in().y() << " " << pTemp.x_in().z() << " " << pTemp.x_in().t();
-  INFO<< " p: "<< pTemp.p_in().x() << " " << pTemp.p_in().y() << " " << pTemp.p_in().z() << " " << pTemp.p_in().t();
-  pIn.push_back(pTemp);
+  pTemp.reset_momentum(pAssign);
+  pIn.push_back(pTemp);*/
 
   // Add here the Hard Shower emitting parton ...
   vStart=pShower->new_vertex(make_shared<VertexBase>());
@@ -293,6 +294,13 @@ void JetEnergyLoss::Exec()
         
        pShower->PrintNodes();
        pShower->PrintEdges();
+
+       weak_ptr<HardProcess> hproc = JetScapeSignalManager::Instance()->GetHardProcessPointer();
+       for(unsigned int ipart=0; ipart<pShower->GetNumberOfPartons(); ipart++){ 
+           //   Uncomment to dump the whole parton shower into the parton container
+           //           hproc.lock()->AddParton(pShower->GetPartonAt(ipart));
+       }
+
      }
   else
     {WARN<<"NO Initial Hard Parton for Parton shower received ...";}  
@@ -313,8 +321,8 @@ void JetEnergyLoss::WriteTask(weak_ptr<JetScapeWriter> w)
 
   //If you want HepMC output, pass the whole shower along...
   //if (dynamic_pointer_cast<JetScapeWriterHepMC> (w.lock())){
-     dynamic_pointer_cast<JetScapeWriterHepMC>(w.lock())->JetScapeWriterHepMC::WriteEvent(pShower);
-  //}
+     //dynamic_pointer_cast<JetScapeWriterHepMC>(w.lock())->JetScapeWriterHepMC::WriteEvent(pShower);
+     //}
 
   if (dynamic_pointer_cast<JetScapeWriterAscii> (w.lock()))
     {
