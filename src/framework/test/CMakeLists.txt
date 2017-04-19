@@ -11,6 +11,7 @@ set (SOURCES
      brick_jetscape.cc
      hydro_file_jetscape.cc
      ElossModulesTest.cc
+     music_jetscape.cc
      PGun.cc)
      # JSPythia8.cc) 
 
@@ -25,11 +26,15 @@ if (${HDF5_FOUND})
     target_link_libraries (JetScapeTest ${_hdf5_libs})
 endif()
 
+if(${MPI_FOUND} AND ${GSL_FOUND})
+    target_link_libraries (JetScapeTest ${MPI_LIBRARIES} ${GSL_LIBRARIES})
+endif()
+
 if (${PYTHIA8_FOUND})
    target_link_libraries(JetScapeTest ${PYTHIA8_LIBRARIES})
 endif()
 
-target_link_libraries(JetScapeTest JetScape JetScapeHydro hydroFromFile)
+target_link_libraries(JetScapeTest JetScape JetScapeHydro hydroFromFile MUSIC)
 
 #install(TARGETS JetScape DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 

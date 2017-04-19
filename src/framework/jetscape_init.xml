@@ -96,6 +96,11 @@
          <read_hydro_every_ntau>1</read_hydro_every_ntau>
      </hydro_from_file>
      
+     <!-- MUSIC ... -->
+     <MUSIC>
+       <name>MUSIC</name>
+     </MUSIC>
+     
    </Hydro>
    
 </jetscape>
