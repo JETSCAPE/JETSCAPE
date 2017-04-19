@@ -96,6 +96,8 @@ option(test "Build all tests." OFF) # Makes boolean 'test' available.
 add_subdirectory("${CMAKE_SOURCE_DIR}/src/JetClass/")
 add_subdirectory("${CMAKE_SOURCE_DIR}/src/fluid_dynamics/")
 
+add_subdirectory(3rdparty/trento/)
+
 if (test)
   # add gtest for the unit test# 
   add_subdirectory(3rdparty/googletest/)
