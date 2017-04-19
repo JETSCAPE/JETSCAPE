@@ -94,18 +94,13 @@ SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
 option(test "Build all tests." OFF) # Makes boolean 'test' available.
 
 add_subdirectory("${CMAKE_SOURCE_DIR}/src/JetClass/")
+add_subdirectory("${CMAKE_SOURCE_DIR}/src/fluid_dynamics/")
 
 if (test)
   # add gtest for the unit test# 
   add_subdirectory(3rdparty/googletest/)
-
   enable_testing()
-
   # Include the gtest library. gtest_SOURCE_DIR is available due to
   # 'project(gtest)' above.
   include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
-
-  # add the first subdirectory that include unit tests
-  add_subdirectory(src/fluid_dynamics/test/)
-
 endif()

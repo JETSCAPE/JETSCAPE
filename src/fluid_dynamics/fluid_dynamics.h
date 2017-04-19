@@ -157,6 +157,9 @@ class Parameter{
     char* hydro_input_filename;
 };
 
+class InvalidSpaceTimeRange : public std::invalid_argument {
+    using std::invalid_argument::invalid_argument;
+};
 
 class EvolutionHistory{
  public:
@@ -178,10 +181,6 @@ class EvolutionHistory{
     inline real x_max() {return x_min + nx * dx;}
     inline real y_max() {return y_min + ny * dy;}
     inline real eta_max() {return eta_min + neta * deta;}
-
-    class InvalidSpaceTimeRange : public std::invalid_argument {
-        using std::invalid_argument::invalid_argument;
-    };
 
     /** make sure the space time point (tau, x, y, eta) is inside
      * evolution history */
