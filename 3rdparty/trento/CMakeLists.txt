@@ -102,5 +102,5 @@ set(LIBRARY_NAME "lib${PROJECT_NAME}")
 set(LIB_TRENTO ${LIBRARY_NAME})
 
 add_subdirectory(src)
-add_subdirectory(test)
+# add_subdirectory(test)
 add_subdirectory(doc)

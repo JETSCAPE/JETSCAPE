@@ -15,12 +15,15 @@
 
 enum HydroStatus {NOT_START, INITIALIZED, EVOLVING, FINISHED, ERROR};
 
-class JetSource {
-    public:
-        JetSource():j0(0.), j1(0.), j2(0.), j3(0.) {}
-    private:
-        real j0, j1, j2, j3;
-};
+/** uncomment this class or reimplement it in jetclass 
+ * when we start to consider medium excitation caused by
+ * energy momentum deposition from jet energy loss */
+// class JetSource {
+//     public:
+//         JetSource():j0(0.), j1(0.), j2(0.), j3(0.) {}
+//     private:
+//         real j0, j1, j2, j3;
+// };
 
 //overload +-*/ for easier linear interpolation
 class FluidCellInfo {
@@ -272,7 +275,7 @@ class FluidDynamics{
 
     virtual void evolve_hydro() {};
 
-    virtual void evolve_hydro_one_step(JetSource jmu) {};
+    //virtual void evolve_hydro_one_step(JetSource jmu) {};
 
     // the following functions should be implemented in Jetscape
     int get_hydro_status() {return(hydro_status);}
