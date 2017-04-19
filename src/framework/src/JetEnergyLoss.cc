@@ -320,9 +320,10 @@ void JetEnergyLoss::WriteTask(weak_ptr<JetScapeWriter> w)
   // Also allow standard output/not using GTL graph structure ....
 
   //If you want HepMC output, pass the whole shower along...
-  //if (dynamic_pointer_cast<JetScapeWriterHepMC> (w.lock())){
-     //dynamic_pointer_cast<JetScapeWriterHepMC>(w.lock())->JetScapeWriterHepMC::WriteEvent(pShower);
-     //}
+  if (dynamic_pointer_cast<JetScapeWriterHepMC> (w.lock())){
+      INFO << " writing partons... found " << pShower->GetNumberOfPartons();
+      (w.lock())->Write(pShower);
+  }
 
   if (dynamic_pointer_cast<JetScapeWriterAscii> (w.lock()))
     {
@@ -340,7 +341,7 @@ void JetEnergyLoss::WriteTask(weak_ptr<JetScapeWriter> w)
     }
 
   //Own storage of graph structure, needs separate PartonShower reader ...
-  if (pShower)
+  else if (pShower)
     {
       w.lock()->WriteComment("Parton Shower in JetScape format to be used later by GTL graph:");
       

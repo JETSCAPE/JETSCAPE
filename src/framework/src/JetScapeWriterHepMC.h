@@ -32,15 +32,20 @@ class JetScapeWriterHepMC : public JetScapeWriter , public WriterAscii
 
   void Init();
   void Exec();
-  
+  void WriteTask(weak_ptr<JetScapeWriter> w);
+
   bool GetStatus() {return failed();}
   void Close() {close();}
 
   // overload write functions ...
   void WriteEvent(); 
-  void WriteEvent(weak_ptr<PartonShower> ps);
+  void Write(weak_ptr<VertexBase> v);
+  void Write(weak_ptr<PartonShower> ps);
 
  private:
+
+  bool vertexFlag;
+  vector<HepMC::GenVertex*> vertices;
 
   inline HepMC::GenVertex* castVtxToHepMC(shared_ptr<VertexBase> vtx){
       HepMC::FourVector vtxPosition(vtx->x_in().x(), vtx->x_in().y(), vtx->x_in().z(), vtx->x_in().t());
