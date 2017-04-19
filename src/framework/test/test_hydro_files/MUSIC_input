@@ -1,0 +1,12 @@
+Initial_time_tau_0 0.4
+Delta_Tau 0.1
+X_grid_size_in_fm 30.
+Grid_size_in_x 61
+Eta_grid_size 6.
+Grid_size_in_eta 2
+output_evolution_every_N_timesteps 1
+output_evolution_every_N_x 1
+output_evolution_every_N_eta 1
+Include_Rhob_Yes_1_No_0 0
+Include_Bulk_Visc_Yes_1_No_0 0
+Include_Shear_Visc_Yes_1_No_0 0
