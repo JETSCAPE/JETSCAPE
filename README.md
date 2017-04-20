@@ -60,6 +60,7 @@ New C++ code will be stored in this repository and used for version control.
    make test
 ```
 The results would be,
+```bash
     Running tests...
     Test project /Users/lgpang/Jetscape/JETSCAPE-COMP/build
     Start 1: test1
@@ -68,5 +69,5 @@ The results would be,
         2/2 Test #2: test2 ............................   Passed    0.01 sec
 
         100% tests passed, 0 tests failed out of 2
-
+```
         Total Test time (real) =   0.02 sec
