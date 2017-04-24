@@ -17,7 +17,10 @@
 #include "JetScapeXML.h"
 #include <string>
 #include "tinyxml2.h"
+#include "JetScapeSignalManager.h"
 #include "JetScapeWriterAscii.h"
+#include "JetScapeWriterHepMC.h"
+#include "HardProcess.h"
 
 //#include "PartonShowerGenerator.h"
 
@@ -141,7 +144,14 @@ void::JetEnergyLoss::DoShower()
   vector<node> vStartVec; vector<node> vStartVecOut;
   vector<node> vStartVecTemp;
   
+  //DEBUG this guy isn't linked to anything - put in test particle for now
   pIn.push_back(*GetShowerInitiatingParton());
+
+  /*double pAssign[4] = {10,14,2,20};
+  double xLoc[4] = {2,3,4,5};
+  Parton pTemp(1,21,0,pAssign,xLoc);
+  pTemp.reset_momentum(pAssign);
+  pIn.push_back(pTemp);*/
 
   // Add here the Hard Shower emitting parton ...
   vStart=pShower->new_vertex(make_shared<VertexBase>());
@@ -257,8 +267,8 @@ void::JetEnergyLoss::DoShower()
 
 void JetEnergyLoss::Exec()
 {
-  DEBUG<<"Run JetEnergyLoss ...";
-  DEBUG<<"Found "<<GetNumberOfTasks()<<" Eloss Tasks/Modules Execute them ... ";
+  INFO<<"Run JetEnergyLoss ...";
+  INFO<<"Found "<<GetNumberOfTasks()<<" Eloss Tasks/Modules Execute them ... ";
   //DEBUGTHREAD<<"Task Id = "<<this_thread::get_id()<<" | Run JetEnergyLoss ...";
   //DEBUGTHREAD<<"Task Id = "<<this_thread::get_id()<<" | Found "<<GetNumberOfTasks()<<" Eloss Tasks/Modules Execute them ... ";
     
@@ -284,6 +294,13 @@ void JetEnergyLoss::Exec()
         
        pShower->PrintNodes();
        pShower->PrintEdges();
+
+       weak_ptr<HardProcess> hproc = JetScapeSignalManager::Instance()->GetHardProcessPointer();
+       for(unsigned int ipart=0; ipart<pShower->GetNumberOfPartons(); ipart++){ 
+           //   Uncomment to dump the whole parton shower into the parton container
+           //           hproc.lock()->AddParton(pShower->GetPartonAt(ipart));
+       }
+
      }
   else
     {WARN<<"NO Initial Hard Parton for Parton shower received ...";}  
@@ -295,12 +312,19 @@ void JetEnergyLoss::Exec()
 void JetEnergyLoss::WriteTask(weak_ptr<JetScapeWriter> w)
 {
   VERBOSE(8);
+  INFO<<"In JetEnergyLoss::WriteTask";
   w.lock()->WriteComment("Energy loss Shower Initating Parton: "+GetId());
   w.lock()->Write(inP);
 
   // check with gzip version later ...
   // Also allow standard output/not using GTL graph structure ....
-  
+
+  //If you want HepMC output, pass the whole shower along...
+  if (dynamic_pointer_cast<JetScapeWriterHepMC> (w.lock())){
+      INFO << " writing partons... found " << pShower->GetNumberOfPartons();
+      (w.lock())->Write(pShower);
+  }
+
   if (dynamic_pointer_cast<JetScapeWriterAscii> (w.lock()))
     {
       /*
@@ -317,7 +341,7 @@ void JetEnergyLoss::WriteTask(weak_ptr<JetScapeWriter> w)
     }
 
   //Own storage of graph structure, needs separate PartonShower reader ...
-  if (pShower)
+  else if (pShower)
     {
       w.lock()->WriteComment("Parton Shower in JetScape format to be used later by GTL graph:");
       
@@ -348,5 +372,5 @@ void JetEnergyLoss::WriteTask(weak_ptr<JetScapeWriter> w)
 
 void JetEnergyLoss::PrintShowerInitiatingParton()
 {
-  DEBUG<<inP->pid();
+  //DEBUG<<inP->pid();
 }

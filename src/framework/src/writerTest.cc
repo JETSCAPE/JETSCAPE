@@ -6,9 +6,9 @@
 // License and Doxygen-like Documentation to be added ...
 
 // ------------------------------------------------------------
-// JetScape Framework Brick Test Program
-// (use either shared library (need to add paths; see setup.csh)
-// (or create static library and link in)
+// JetScape Framework Writer Test Program
+// Test by Kurt Jung (UIC)
+// Validate parton and vertex linkage through new initial-state module
 // -------------------------------------------------------------
 
 #include <iostream>
@@ -18,12 +18,13 @@
 #include "JetScape.h"
 #include "JetEnergyLoss.h"
 #include "JetEnergyLossManager.h"
-#include "JetScapeWriterAscii.h"
+//#include "JetScapeWriterAscii.h"
 //#include "JetScapeWriterAsciiGZ.h"
-//#include "JetScapeWriterHepMC.h"
+#include "JetScapeWriterHepMC.h"
 
 // User modules derived from jetscape framework clasess
 // to be used to run Jetscape ...
+#include "InitialState.h"
 #include "ElossModulesTest.h"
 #include "brick_jetscape.h"
 #include "Gubser_hydro_jetscape.h"
@@ -57,8 +58,9 @@ int main(int argc, char** argv)
    
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",3);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",10);
   jetscape->SetId("primary");
+  auto initState = make_shared<InitialState> ();
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
   auto hydro = make_shared<Brick> ();
@@ -66,39 +68,31 @@ int main(int argc, char** argv)
   
   auto matter = make_shared<Matter> ();
   auto martini = make_shared<Martini> ();
-  //DBEUG: Remark:
-  //does not matter unfortunately since not called recursively, done by JetEnergyLoss class ...
-  //matter->SetActive(false);
-  //martini->SetActive(false);
-  // This works ... (check with above logic ...)
-  //jloss->SetActive(false);
-
-  auto pGun= make_shared<PGun> ();
-  //auto py8=make_shared<JSPythia8> ("/Users/kjung/pythia8233/xmldoc",false);
+  
+  //auto pGun= make_shared<PGun> ();
+  string pyth8Loc = (string)"/Users/"+(string)std::getenv("USER")+(string)"/pythia8233/xmldoc";
+  auto py8=make_shared<JSPythia8> (pyth8Loc.c_str(),false);
 
   // only pure Ascii writer implemented and working with graph output ...
-  auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
+  //auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
   //auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");  
-  //auto writer= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
-  //writer->SetActive(false);
+  auto writer= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
+
+  jetscape->Add(initState);
 
   // Pythia 8 interface, what partons used
   // for intial hard to be implemented in JSPythia8 class ...
-  //jetscape->Add(py8);
+  jetscape->Add(py8);
 
   //Remark: For now modules have to be added
   //in proper "workflow" order (can be defined via xml and sorted if necessary)
   
-  jetscape->Add(pGun);
+  //jetscape->Add(pGun);
 
    //Some modifications will be needed for reusing hydro events, so far
   //simple test hydros always executed "on the fly" ...
   jetscape->Add(hydro);
 
-  // Matter with silly "toy shower (no physics)
-  // and Martini dummy ...
-  // Switching Q2 (or whatever variable used
-  // hardcoded at 5 to be changed to xml)
   jloss->Add(matter);
   jloss->Add(martini);
   
@@ -114,8 +108,6 @@ int main(int argc, char** argv)
   // Run JetScape with all task/modules as specified ...
   jetscape->Exec();
 
-  // "dummy" so far ...
-  // Most thinkgs done in write and clear ...
   jetscape->Finish();
   
   INFO_NICE<<"Finished!";
@@ -137,7 +129,7 @@ int main(int argc, char** argv)
 void Show()
 {
   INFO_NICE<<"------------------------------------";
-  INFO_NICE<<"| Brick Test JetScape Framework ... |";
+  INFO_NICE<<"| Writer Test JetScape Framework ... |";
   INFO_NICE<<"------------------------------------";
   INFO_NICE;
 }

@@ -89,16 +89,16 @@ void JSPythia8::Exec()
   DEBUG<<"Number of Pythia partons = "<<event.size();
 
   //DUMMY, to be added accordingly, later ...
-  /*
+  
   for (int i = 0; i < event.size(); ++i) if (event[i].isFinal()) {
       // Add the partons needed (5 and 6 or others !???)
       
     }
-  */
+  
   
   // DEBUG: Test ...
-  /*
-  double p[4], xLoc[4];
+  
+  double pAssign[4], xLoc[4];
   for (int i=0;i<=3; i++) {
      xLoc[i] = 0.0;
    };
@@ -109,9 +109,12 @@ void JSPythia8::Exec()
 
    for (int i=0;i<2;i++)
      {
-       AddParton(make_shared<Parton>(1,21,0,0,pAssign,xLoc));
+       Parton pp(1,21,0,pAssign,xLoc);
+       pp.reset_momentum(pAssign);
+       AddParton(make_shared<Parton>(pp));
+       //AddParton(make_shared<Parton>(1,21,0,pAssign,xLoc));
      }
-  */
+  
   
   VERBOSE(8)<<GetNHardPartons();
   

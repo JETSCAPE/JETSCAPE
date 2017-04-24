@@ -65,6 +65,7 @@ void JetScapeTask::ClearTasks()
 void JetScapeTask::WriteTasks(weak_ptr<JetScapeWriter> w)
 {
   //VERBOSE(10);
+  INFO<<" writer active? " << (w.lock()==NULL ? 0 : 1);
   if (active_exec)
     {
       for (auto it : tasks)
