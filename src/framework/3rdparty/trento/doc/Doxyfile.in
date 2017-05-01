@@ -1,0 +1,22 @@
+#
+# for use with sphinx+breathe
+#
+
+PROJECT_NAME     = trento
+INPUT            = @CMAKE_SOURCE_DIR@/src
+FILE_PATTERNS    = *.cxx *.h
+OUTPUT_DIRECTORY = @CMAKE_CURRENT_BINARY_DIR@
+
+# breathe parses doxygen xml output
+GENERATE_XML     = YES
+XML_OUTPUT       = doxyxml
+
+# disable other outputs that are enabled by default
+GENERATE_HTML    = NO
+GENERATE_LATEX   = NO
+
+# shortcut to embed rst
+ALIASES          = "rst=\verbatim embed:rst:leading-asterisk" \
+                   "endrst=\endverbatim"
+
+PREDEFINED       = TRENTO_HDF5
