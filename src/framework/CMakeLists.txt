@@ -1,8 +1,14 @@
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 project (testJetScape)
 
+# Fail if cmake is called in the source directory
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
+   message(FATAL_ERROR "You don't want to configure in the source directory!")
+endif()
+
 cmake_policy(SET CMP0042 NEW)
 
+# Tell cmake where to find modules
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/Modules")
 
 message("Looking for ZLIB ...")
@@ -43,7 +49,7 @@ if (${ROOT_FOUND})
     #set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -m64")    
 endif()
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "./bin/")
+#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "./bin/")
 
 message("Compiler and Linker flags ...")
 
@@ -61,6 +67,11 @@ if (APPLE)
      message(STATUS "LD_FLAGS = " ${CMAKE_EXE_LINKER_FLAGS})
 endif()   
 
+# have binary in the build directory, easier to access
+SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
+# Options. Turn on with 'cmake -Dtest=ON'.
+option(test "Build all tests." ON) # Makes boolean 'test' available.
+
 # w/o not compiling library automatically
 add_subdirectory(./gtl)
 add_subdirectory(./src)
@@ -68,31 +79,43 @@ add_subdirectory(./hydro) #for test case fluid_dynamics ...
 add_subdirectory(./jet)  #for test case jet classes …
 add_subdirectory(./test)  #for test case ...
 add_subdirectory(./reader)  #for test case ...
+add_subdirectory(3rdparty/trento/)
 
 link_directories(./lib)
 
-add_executable(testJetScape ./src/testJetScape.cc)
-add_executable(brickTest ./src/brickTest.cc)
-add_executable(readerTest ./reader/readerTest.cc)
+# Don't compile tests modules if test is not switched on
+if (test)
+  # add gtest for the unit test# 
+  add_subdirectory("${CMAKE_SOURCE_DIR}/3rdparty/googletest/")
+  enable_testing()
+  # Include the gtest library. gtest_SOURCE_DIR is available due to
+  # 'project(gtest)' above.
+  include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
-target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest) #for test case ...
-target_link_libraries(brickTest JetScape JetScapeHydro  JetScapeTest) #for test case ...
-target_link_libraries(readerTest JetScape JetScapeHydro  JetScapeReader) #for reader test case ...
+  add_executable(testJetScape ./src/testJetScape.cc)
+  add_executable(brickTest ./src/brickTest.cc)
+  add_executable(readerTest ./reader/readerTest.cc)
+  
+  target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest) #for test case ...
+  target_link_libraries(brickTest JetScape JetScapeHydro  JetScapeTest) #for test case ...
+  target_link_libraries(readerTest JetScape JetScapeHydro  JetScapeReader) #for reader test case ...
+  
+  #Check how to set env variables ...
+  if (${ROOT_FOUND})
+     target_link_libraries(testJetScape ${ROOT_LIBRARIES})
+     target_link_libraries(brickTest ${ROOT_LIBRARIES})
+  endif()
+  
+  if (${PYTHIA8_FOUND})
+     target_link_libraries(testJetScape ${PYTHIA8_LIBRARIES})
+     target_link_libraries(brickTest ${PYTHIA8_LIBRARIES})
+     message( ${PYTHIA8_LIBRARIES} )
+  endif()
 
-#Check how to set env variables ...
-if (${ROOT_FOUND})
-   target_link_libraries(testJetScape ${ROOT_LIBRARIES})
-   target_link_libraries(brickTest ${ROOT_LIBRARIES})
+  #add_executable(testJS ./src/testJetScape.cc)
+  #target_link_libraries(testJS JetScape)
 endif()
 
-if (${PYTHIA8_FOUND})
-   target_link_libraries(testJetScape ${PYTHIA8_LIBRARIES})
-   target_link_libraries(brickTest ${PYTHIA8_LIBRARIES})
-   message( ${PYTHIA8_LIBRARIES} )
-endif()
-
-#add_executable(testJS ./src/testJetScape.cc)
-#target_link_libraries(testJS JetScape)
 
 # -----------------------------------------------------------
     
