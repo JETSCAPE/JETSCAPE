@@ -8,7 +8,8 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "../lib/")
 
 set (SOURCES
 JetScape.cc JetScapeTask.cc
-tinyxml2.cc FluidDynamics.cc HardProcess.cc JetScapeLogger.cc JetScapeXML.cc
+tinyxml2.cc FluidDynamics.cc HardProcess.cc Collision.cc
+InitialCondition.cc JetScapeLogger.cc JetScapeXML.cc
 JetEnergyLoss.cc  JetScapeModuleBase.cc JetEnergyLossManager.cc
 JetScapeSignalManager.cc JetScapeWriterAscii.cc JetScapeEvent.cc
 ../jet/JetClass.cpp ../jet/fjcore.cc ../jet/PartonShower.cc
@@ -37,9 +38,13 @@ if (${ROOT_FOUND})
 target_link_libraries(JetScape ${ROOT_LIBRARIES})
 endif()
 
+add_subdirectory(test)
+
 #if (${PYTHIA8_FOUND})
 #target_link_libraries(JetScape ${PYTHIA8_LIBRARIES})
 #endif()
+
+target_link_libraries(JetScape libtrento ${Boost_LIBRARIES} ${HDF5_LIBRARIES})
 
 #target_link_libraries(JetScape JetScapeHydro GTL)
 target_link_libraries(JetScape JetScapeHydro GTL)

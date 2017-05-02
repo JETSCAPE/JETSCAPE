@@ -10,6 +10,7 @@ set (SOURCES fluid_dynamics.cc)
 
 add_library(JetScapeHydro SHARED ${SOURCES})
     
+add_subdirectory(test)
 #target_link_libraries(JetScapeTest JetScape JetScapeHydro)
 
 #install(TARGETS JetScape DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/lib)
