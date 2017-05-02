@@ -20,6 +20,7 @@ HydroFile::HydroFile() {
 
 
 HydroFile::~HydroFile() {
+    clean_hydro_event();
 }
 
 
@@ -40,6 +41,9 @@ void HydroFile::initialize_hydro(Parameter parameter_list) {
     para->FirstChildElement("hydro_type")->QueryIntText(&hydro_type);
     para->FirstChildElement("load_viscous_info")->QueryBoolText(&load_viscous);
     para->FirstChildElement("T_c")->QueryDoubleText(&T_c);
+    hydro_status = INITIALIZED;
+
+    int nskip_tau = 1;
     if (hydro_type == 1) {
         string filename = para->FirstChildElement("VISH_file")->GetText();
 #ifdef USE_HDF5
@@ -54,46 +58,80 @@ void HydroFile::initialize_hydro(Parameter parameter_list) {
                 para->FirstChildElement("MUSIC_input_file")->GetText();
         string hydro_ideal_file =
                 para->FirstChildElement("MUSIC_file")->GetText();
-        string hydro_shear_file = "";
-        string hydro_bulk_file = "";
         hydroinfo_MUSIC_ptr = new Hydroinfo_MUSIC();
-        int hydro_mode = 8;
-        int nskip_tau;
         para->FirstChildElement("read_hydro_every_ntau")->QueryIntText(
                                                                 &nskip_tau);
-        hydroinfo_MUSIC_ptr->readHydroData(hydro_mode, nskip_tau,
-            input_file, hydro_ideal_file, hydro_shear_file, hydro_bulk_file);
+        read_in_hydro_event(input_file, hydro_ideal_file, nskip_tau);
     } else if (hydro_type == 3) {
         string input_file =
                 para->FirstChildElement("MUSIC_input_file")->GetText();
         string hydro_ideal_file =
                 para->FirstChildElement("MUSIC_file")->GetText();
-        string hydro_shear_file = "";
-        string hydro_bulk_file = "";
         hydroinfo_MUSIC_ptr = new Hydroinfo_MUSIC();
-        int hydro_mode = 9;
-        int nskip_tau;
         para->FirstChildElement("read_hydro_every_ntau")->QueryIntText(
                                                                 &nskip_tau);
-        hydroinfo_MUSIC_ptr->readHydroData(hydro_mode, nskip_tau,
-            input_file, hydro_ideal_file, hydro_shear_file, hydro_bulk_file);
+        read_in_hydro_event(input_file, hydro_ideal_file, nskip_tau);
     } else if (hydro_type == 4) {
         string input_file =
                 para->FirstChildElement("MUSIC_input_file")->GetText();
         string hydro_ideal_file =
                 para->FirstChildElement("MUSIC_file")->GetText();
-        string hydro_shear_file = "";
-        string hydro_bulk_file = "";
         hydroinfo_MUSIC_ptr = new Hydroinfo_MUSIC();
-        int hydro_mode = 10;
-        int nskip_tau = 1;
-        hydroinfo_MUSIC_ptr->readHydroData(hydro_mode, nskip_tau,
-            input_file, hydro_ideal_file, hydro_shear_file, hydro_bulk_file);
+        nskip_tau = 1;
+        read_in_hydro_event(input_file, hydro_ideal_file, nskip_tau);
     } else {
-        cout << "main: unrecognized hydro_type = " << hydro_type << endl;
+        WARN << "main: unrecognized hydro_type = " << hydro_type;
         exit(1);
     }
-    hydro_status = INITIALIZED;
+}
+
+     
+//! This function load a VISHNew hydro event
+void HydroFile::read_in_hydro_event(string VISH_filename, int buffer_size,
+                                    int load_viscous) {
+    INFO << "read in a VISHNew hydro event from file " << VISH_filename;
+    if (hydro_type == 1) {
+#ifdef USE_HDF5
+        hydroinfo_h5_ptr->readHydroinfoH5(VISH_filename, buffer_size,
+                                          load_viscous);
+#else
+        WARN << " : hydro_type == 1 requires the hdf5 library~";
+        WARN << " : please check your inputs~";
+        exit(-1);
+#endif
+    }
+    hydro_status = FINISHED;
+}
+
+
+//! This function load a MUSIC hydro event
+void HydroFile::read_in_hydro_event(string MUSIC_input_file,
+                                    string MUSIC_hydro_ideal_file,
+                                    int nskip_tau) {
+    INFO << "read in a MUSIC hydro event from file " << MUSIC_hydro_ideal_file;
+    if (hydro_type == 2) {
+        int hydro_mode = 8;
+        string hydro_shear_file = "";
+        string hydro_bulk_file = "";
+        hydroinfo_MUSIC_ptr->readHydroData(hydro_mode, nskip_tau,
+            MUSIC_input_file, MUSIC_hydro_ideal_file,
+            hydro_shear_file, hydro_bulk_file);
+    } else if (hydro_type == 3) {
+        int hydro_mode = 9;
+        string hydro_shear_file = "";
+        string hydro_bulk_file = "";
+        hydroinfo_MUSIC_ptr->readHydroData(hydro_mode, nskip_tau,
+            MUSIC_input_file, MUSIC_hydro_ideal_file,
+            hydro_shear_file, hydro_bulk_file);
+    } else if (hydro_type == 4) {
+        int hydro_mode = 10;
+        string hydro_shear_file = "";
+        string hydro_bulk_file = "";
+        hydroinfo_MUSIC_ptr->readHydroData(hydro_mode, nskip_tau,
+            MUSIC_input_file, MUSIC_hydro_ideal_file,
+            hydro_shear_file, hydro_bulk_file);
+    }
+    hydro_status = FINISHED;
 }
 
 
@@ -103,12 +141,30 @@ void HydroFile::evolve_hydro() {
 }
 
 
+//! clean up hydro event
+void HydroFile::clean_hydro_event() {
+    INFO << " clean up the loaded hydro event ...";
+    if (hydro_type == 1) {
+#ifdef USE_HDF5
+        hydroinfo_h5_ptr->clean_hydro_event();
+#else
+        WARN << " : hydro_type == 1 requires the hdf5 library~";
+        WARN << " : please check your inputs~";
+        exit(-1);
+#endif
+    } else {
+        hydroinfo_MUSIC_ptr->clean_hydro_event();
+    }
+    hydro_status = NOT_START;
+}
+
+
 //! this function returns the thermodynamic and dynamical information at
 //! the given space-time point
 void HydroFile::get_hydro_info(real t, real x, real y, real z,
                                FluidCellInfo* fluid_cell_info_ptr) {
     if (hydro_status != FINISHED) {
-        WARN<<"Hydro not run yet ...";
+        WARN << "Hydro not run yet ...";
         exit(-1);
     }
 
@@ -122,9 +178,9 @@ void HydroFile::get_hydro_info(real t, real x, real y, real z,
     if (hydro_type == 1) {  // for OSU 2+1d hydro
         double tau_local = sqrt(t*t - z*z);
         if (isnan(tau_local)) {  // check
-            cout << "[Error]: HydroFile::get_hydro_info(): "
-                 << "tau is nan!" << endl;
-            cout << "please check: t = " << t << ", z = " << z << endl;
+            WARN << "[Error]: HydroFile::get_hydro_info(): "
+                 << "tau is nan!";
+            WARN << "please check: t = " << t << ", z = " << z;
             exit(1);
         }
 #ifdef USE_HDF5

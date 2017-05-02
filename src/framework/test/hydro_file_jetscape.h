@@ -27,11 +27,29 @@ class HydroFile: public FluidDynamics {
      HydroFile();
      ~HydroFile();
 
+     //! clean up hydro event
+     void clean_hydro_event();
+
+     //! This function initials hydro parameters and read in a hydro event
      void initialize_hydro(Parameter parameter_list);
 
+
+     //! This function load a VISHNew hydro event
+     void read_in_hydro_event(string VISH_filename, int buffer_size,
+                              int load_viscous);
+
+     //! This function load a MUSIC hydro event
+     void read_in_hydro_event(string input_file, string hydro_ideal_file,
+                              int nskip_tau);
+
+     //! This function is a dummy function
      void evolve_hydro();
+
+     //! This function provide fluid cell information at a given
+     //! space-time point
      void get_hydro_info(real t, real x, real y, real z,
                          FluidCellInfo* fluid_cell_info_ptr);
+
      void get_hypersurface(real T_cut, SurfaceCellInfo* surface_list_ptr) {};
 
 };
