@@ -12,6 +12,7 @@
 
 #include <string>
 #include "JetScapeModuleBase.h"
+#include "PartonShower.h"
 #include "JetClass.hpp"
 
 class JetScapeWriter : public JetScapeModuleBase
@@ -34,6 +35,7 @@ class JetScapeWriter : public JetScapeModuleBase
   virtual void Write(weak_ptr<Parton> p) {};
   virtual void Write(weak_ptr<Jet> j) {};
   virtual void Write(weak_ptr<VertexBase> v) {};
+  virtual void Write(weak_ptr<PartonShower> ps) {};
   virtual void Write(string s) {};
   virtual void WriteComment(string s) {};
   virtual void WriteWhiteSpace(string s) {};

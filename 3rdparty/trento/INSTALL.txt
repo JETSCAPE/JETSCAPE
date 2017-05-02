@@ -1,0 +1,12 @@
+(1) HDF5 dependence
+In MacOS, use 
+> brew tap homebrew/science
+> brew install hdf5@1.8
+> echo 'export PATH="/usr/local/opt/hdf5@1.8/bin:$PATH"' >> ~/.bash_profile
+> source ~/.bash_profile
+
+(2) Install Trento
+> mkdir build
+> cd build
+> cmake ..
+> make install

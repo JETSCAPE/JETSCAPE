@@ -80,11 +80,13 @@ endif()
 
 if (APPLE)
      message( STATUS "Apple : " ${CMAKE_HOST_SYSTEM})
+
      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-macro-redefined -std=c++11 -stdlib=libc++")
      if(${MPI_FOUND})
           set(CMAKE_CXX_COMPILE_FLAGS ${CMAKE_CXX_COMPILE_FLAGS} ${MPI_COMPILE_FLAGS})
           set(CMAKE_CXX_LINK_FLAGS ${CMAKE_CXX_LINK_FLAGS} ${MPI_LINK_FLAGS})
      endif(${MPI_FOUND})
+
      message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS})	
      message(STATUS "LD_FLAGS = " ${CMAKE_EXE_LINKER_FLAGS})
 endif()   
@@ -104,12 +106,17 @@ link_directories(./lib)
 add_executable(testJetScape ./src/testJetScape.cc)
 add_executable(brickTest ./src/brickTest.cc)
 add_executable(readerTest ./reader/readerTest.cc)
+
 add_executable(hydroFileTest ./src/hydroFileTest.cc)
 add_executable(MUSICTest ./src/MUSICTest.cc)
+
+add_executable(writerTest ./src/writerTest.cc)
+
 
 target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest hydroFromFile MUSIC) #for test case ...
 target_link_libraries(brickTest JetScape JetScapeHydro  JetScapeTest) #for test case ...
 target_link_libraries(readerTest JetScape JetScapeHydro  JetScapeReader) #for reader test case ...
+
 target_link_libraries(hydroFileTest JetScape JetScapeHydro JetScapeTest hydroFromFile) #for test case ...
 target_link_libraries(MUSICTest JetScape JetScapeHydro JetScapeTest MUSIC) #for test case ...
 
@@ -122,17 +129,22 @@ if (${MPI_FOUND} AND ${GSL_FOUND})
     target_link_libraries (MUSICTest ${MPI_LIBRARIES} ${GSL_LIBRARIES})
 endif()
 
+target_link_libraries(writerTest JetScape JetScapeHydro JetScapeTest) #for writer test case...
+
+
 #Check how to set env variables ...
 if (${ROOT_FOUND})
    target_link_libraries(testJetScape ${ROOT_LIBRARIES})
    target_link_libraries(brickTest ${ROOT_LIBRARIES})
    target_link_libraries(hydroFileTest ${ROOT_LIBRARIES})
+   target_link_libraries(writerTest ${ROOT_LIBRARIES})
 endif()
 
 if (${PYTHIA8_FOUND})
    target_link_libraries(testJetScape ${PYTHIA8_LIBRARIES})
    target_link_libraries(brickTest ${PYTHIA8_LIBRARIES})
    target_link_libraries(hydroFileTest ${PYTHIA8_LIBRARIES})
+   target_link_libraries(writerTest ${PYTHIA8_LIBRARIES})
    message( ${PYTHIA8_LIBRARIES} )
 endif()
 
