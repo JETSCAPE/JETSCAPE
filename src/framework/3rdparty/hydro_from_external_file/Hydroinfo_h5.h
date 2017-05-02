@@ -34,16 +34,23 @@ class HydroinfoH5
 
       int dimensionX, dimensionY;
       double ***ed, ***sd, ***vx, ***vy, ***Temperature, ***Pressure;
-      double ***pi00, ***pi01, ***pi02, ***pi03, ***pi11, ***pi12, ***pi13, ***pi22, ***pi23, ***pi33;
+      double ***pi00, ***pi01, ***pi02, ***pi03, ***pi11, ***pi12, ***pi13;
+      double ***pi22, ***pi23, ***pi33;
       double ***BulkPi;
 
    public:
       HydroinfoH5();
       HydroinfoH5(string filename_in, int bufferSize_in, int Visflag_in);
-      HydroinfoH5(int XL_in, int XH_in, double DX_in, int LSX_in, int YL_in, int YH_in, double DY_in, int LSY_in, double Tau0_in, double dTau_in, double LST_in, int Visflag_in, string filename_in);
+      HydroinfoH5(int XL_in, int XH_in, double DX_in, int LSX_in,
+                  int YL_in, int YH_in, double DY_in, int LSY_in,
+                  double Tau0_in, double dTau_in, double LST_in,
+                  int Visflag_in, string filename_in);
 
       ~HydroinfoH5();
      
+      //! clean the memory
+      void clean_hydro_event();
+
       // functions to write into hdf5 file
       void setHydroFiles(int XL_in, int XH_in, double DX_in, int LSX_in, int YL_in, int YH_in, double DY_in, int LSY_in, double Tau0_in, double dTau_in, double LST_in, int Visflag_in, string filename_in);
       void writeGroupattribute(hid_t H5groupEventid);
@@ -79,9 +86,11 @@ class HydroinfoH5
       void getHydroinfo(double tau, double x, double y, fluidCell* fluidCellptr);
       void setZero_fluidCell(fluidCell* fluidCellptr);
 
-      double cubeInterpShell(int idx_x, int idx_y, int idx_z, double x, double y, double z, double ***dataset);
-      double cubeInterp(double x, double y, double z, double A000, double A100, double A010, double A110, double A001, double A101, double A011, double A111);
-
+      double cubeInterpShell(int idx_x, int idx_y, int idx_z,
+                             double x, double y, double z, double ***dataset);
+      double cubeInterp(double x, double y, double z,
+                        double A000, double A100, double A010, double A110,
+                        double A001, double A101, double A011, double A111);
 };
 
 #endif

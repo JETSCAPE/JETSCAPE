@@ -52,7 +52,6 @@ int main(int argc, char *argv[]) {
     // hydro data file pointer
     if (hydro_type == 1) {
 #ifdef USE_HDF5
-        cout << "test" << endl;
         HydroinfoH5* hydroinfo_ptr = new HydroinfoH5("JetData.h5", 500,
                                                      load_viscous);
         hydroinfo_ptr_in = hydroinfo_ptr;

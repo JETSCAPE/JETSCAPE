@@ -11,84 +11,87 @@
 
 using namespace std;
 
-HydroinfoH5::HydroinfoH5()
-{
+HydroinfoH5::HydroinfoH5() {
    readinFlag = 0;
    outputFlag = 0;
 }
 
-HydroinfoH5::HydroinfoH5(string filename_in, int bufferSize_in, int Visflag_in)
-{
+HydroinfoH5::HydroinfoH5(string filename_in,
+                         int bufferSize_in, int Visflag_in) {
    readHydroinfoH5(filename_in, bufferSize_in, Visflag_in);
 }
 
-HydroinfoH5::HydroinfoH5(int XL_in, int XH_in, double DX_in, int LSX_in, int YL_in, int YH_in, double DY_in, int LSY_in, double Tau0_in, double dTau_in, double LST_in, int Visflag_in, string filename_in)
-{
-   setHydroFiles(XL_in, XH_in, DX_in, LSX_in, YL_in, YH_in, DY_in, LSY_in, Tau0_in, dTau_in, LST_in, Visflag_in, filename_in);
+HydroinfoH5::HydroinfoH5(int XL_in, int XH_in, double DX_in, int LSX_in,
+                         int YL_in, int YH_in, double DY_in, int LSY_in,
+                         double Tau0_in, double dTau_in, double LST_in,
+                         int Visflag_in, string filename_in) {
+   setHydroFiles(XL_in, XH_in, DX_in, LSX_in, YL_in, YH_in, DY_in, LSY_in,
+                 Tau0_in, dTau_in, LST_in, Visflag_in, filename_in);
 }
 
-HydroinfoH5::~HydroinfoH5()
-{
-   if(readinFlag == 1)
-   {
-      for(int i=0; i<Buffersize; i++)
-      {
-         for(int j=0; j<dimensionX; j++)
-         {
-            delete[] ed[i][j];
-            delete[] sd[i][j];
-            delete[] vx[i][j];
-            delete[] vy[i][j];
-            delete[] Temperature[i][j];
-            delete[] Pressure[i][j];
-            delete[] pi00[i][j];
-            delete[] pi01[i][j];
-            delete[] pi02[i][j];
-            delete[] pi03[i][j];
-            delete[] pi11[i][j];
-            delete[] pi12[i][j];
-            delete[] pi13[i][j];
-            delete[] pi22[i][j];
-            delete[] pi23[i][j];
-            delete[] pi33[i][j];
-            delete[] BulkPi[i][j];
-         }
-         delete[] ed[i];
-         delete[] sd[i];
-         delete[] vx[i];
-         delete[] vy[i];
-         delete[] Temperature[i];
-         delete[] Pressure[i];
-         delete[] pi00[i];
-         delete[] pi01[i];
-         delete[] pi02[i];
-         delete[] pi03[i];
-         delete[] pi11[i];
-         delete[] pi12[i];
-         delete[] pi13[i];
-         delete[] pi22[i];
-         delete[] pi23[i];
-         delete[] pi33[i];
-         delete[] BulkPi[i];
-      }
-      delete[] ed;
-      delete[] sd;
-      delete[] vx;
-      delete[] vy;
-      delete[] Temperature;
-      delete[] Pressure;
-      delete[] pi00;
-      delete[] pi01;
-      delete[] pi02;
-      delete[] pi03;
-      delete[] pi11;
-      delete[] pi12;
-      delete[] pi13;
-      delete[] pi22;
-      delete[] pi23;
-      delete[] pi33;
-      delete[] BulkPi;
+HydroinfoH5::~HydroinfoH5() {
+   if (readinFlag == 1) {
+       clean_hydro_event();
    }
+}
+
+void HydroinfoH5::clean_hydro_event() {
+    for (int i=0; i<Buffersize; i++) {
+        for (int j=0; j<dimensionX; j++) {
+           delete[] ed[i][j];
+           delete[] sd[i][j];
+           delete[] vx[i][j];
+           delete[] vy[i][j];
+           delete[] Temperature[i][j];
+           delete[] Pressure[i][j];
+           delete[] pi00[i][j];
+           delete[] pi01[i][j];
+           delete[] pi02[i][j];
+           delete[] pi03[i][j];
+           delete[] pi11[i][j];
+           delete[] pi12[i][j];
+           delete[] pi13[i][j];
+           delete[] pi22[i][j];
+           delete[] pi23[i][j];
+           delete[] pi33[i][j];
+           delete[] BulkPi[i][j];
+        }
+        delete[] ed[i];
+        delete[] sd[i];
+        delete[] vx[i];
+        delete[] vy[i];
+        delete[] Temperature[i];
+        delete[] Pressure[i];
+        delete[] pi00[i];
+        delete[] pi01[i];
+        delete[] pi02[i];
+        delete[] pi03[i];
+        delete[] pi11[i];
+        delete[] pi12[i];
+        delete[] pi13[i];
+        delete[] pi22[i];
+        delete[] pi23[i];
+        delete[] pi33[i];
+        delete[] BulkPi[i];
+    }
+    delete[] ed;
+    delete[] sd;
+    delete[] vx;
+    delete[] vy;
+    delete[] Temperature;
+    delete[] Pressure;
+    delete[] pi00;
+    delete[] pi01;
+    delete[] pi02;
+    delete[] pi03;
+    delete[] pi11;
+    delete[] pi12;
+    delete[] pi13;
+    delete[] pi22;
+    delete[] pi23;
+    delete[] pi33;
+    delete[] BulkPi;
+    readinFlag = 0;
 }
 
 void HydroinfoH5::setHydroFiles(int XL_in, int XH_in, double DX_in, int LSX_in, int YL_in, int YH_in, double DY_in, int LSY_in, double Tau0_in, double dTau_in, double LST_in, int Visflag_in, string filename_in)

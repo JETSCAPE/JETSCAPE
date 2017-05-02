@@ -27,15 +27,19 @@ Hydroinfo_MUSIC::Hydroinfo_MUSIC() {
 }
 
 Hydroinfo_MUSIC::~Hydroinfo_MUSIC() {
+    clean_hydro_event();
+    delete lattice_2D;
+    delete lattice_3D;
+    delete lattice_3D_new;
+}
+
+void Hydroinfo_MUSIC::clean_hydro_event() {
     if (boost_invariant) {
         lattice_2D->clear();
     } else {
         lattice_3D->clear();
         lattice_3D_new->clear();
     }
-    delete lattice_2D;
-    delete lattice_3D;
-    delete lattice_3D_new;
 }
 
 void Hydroinfo_MUSIC::readHydroData(int whichHydro, int nskip_tau_in,

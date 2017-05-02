@@ -53,6 +53,7 @@ class Hydroinfo_MUSIC {
     Hydroinfo_MUSIC();       // constructor
     ~Hydroinfo_MUSIC();      // destructor
 
+    void clean_hydro_event();
     double get_hydro_tau_max() {return(hydroTauMax);}
     double get_hydro_tau0() {return(hydroTau0);}
     double get_hydro_dtau() {return(hydroDtau);}
