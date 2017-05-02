@@ -88,8 +88,9 @@ public:
     
     void set_p(double p[4])
     {
-      //FourVector p_in_(p); // error: creates new vector and hence not accessible via class p_in_
-      reset_momentum(p[0],p[1],p[2],p[3]);
+      p_in_ = FourVector(p);
+        //FourVector p_in_(p); // error: creates new vector and hence not accessible via class p_in_
+      //reset_momentum(p[0],p[1],p[2],p[3]);
     };
 
   // not needed in graph structure
@@ -125,12 +126,12 @@ public:
     {
         return(pparent_label_);
     }
-
+    */
     FourVector &p_in()
     {
         return(p_in_);
     }
-  */
+  
   
    FourVector &x_in()
     {
@@ -256,6 +257,7 @@ private:
   double form_time_       ; //event by event formation time
   double mass_            ; //mass of the parton
 
+  FourVector p_in_;
   FourVector x_in_; // position of particle
   
   // following will be in graph strucure

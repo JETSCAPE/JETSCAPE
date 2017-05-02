@@ -28,7 +28,7 @@
 #include "brick_jetscape.h"
 #include "Gubser_hydro_jetscape.h"
 #include "PGun.h"
-//#include "JSPythia8.h"
+#include "JSPythia8.h"
 
 #include <chrono>
 #include <thread>
@@ -53,11 +53,12 @@ int main(int argc, char** argv)
   JetScapeLogger::Instance()->SetRemark(false);
   //SetVerboseLevel (9 a lot of additional debug output ...)
   //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevle(9) or 10
-  JetScapeLogger::Instance()->SetVerboseLevel(0);
+  JetScapeLogger::Instance()->SetVerboseLevel(8);
    
   Show();
 
   auto jetscape = make_shared<JetScape>("./jetscape_init.xml",3);
+  jetscape->SetId("primary");
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
   auto hydro = make_shared<Brick> ();
@@ -73,12 +74,12 @@ int main(int argc, char** argv)
   //jloss->SetActive(false);
 
   auto pGun= make_shared<PGun> ();
-  //auto py8=make_shared<JSPythia8> ("/Users/putschke/pythia8100/xmldoc",false);
+  //auto py8=make_shared<JSPythia8> ("/Users/kjung/pythia8233/xmldoc",false);
 
   // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
   //auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");  
-  //auto writer= make_shared<JetScapeWriterHepMC> ("test_out.dat");
+  //auto writer= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
   //writer->SetActive(false);
 
   // Pythia 8 interface, what partons used
