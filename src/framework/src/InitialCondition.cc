@@ -210,13 +210,13 @@ JetScapeInitial::JetScapeInitial(str stored_system,
     } else if (stored_system == "pbpb5020") {
         str projectile = "Pb";
         str target = "Pb";
-        double cross_section = 6.4;
+        double cross_section = 7.0;
         var_map = create_varmap(projectile, target, cross_section,
                 grid_max, grid_step);
     }
     JetScapeCollision collision_(var_map);
 
-    // smin, smax is stored as table
+    //todo: (smin, smax) is stored as a table of (cent_low, cent_high)
     collision_.sample_(100, 150);
 
     info_ = collision_.info_;
