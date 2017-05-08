@@ -6,14 +6,24 @@ cmake_policy(SET CMP0042 NEW)
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "../lib/")
 
-set (SOURCES
-     Gubser_hydro_jetscape.cc
-     brick_jetscape.cc
-     hydro_file_jetscape.cc
-     ElossModulesTest.cc
-     music_jetscape.cc
-     PGun.cc)
-     # JSPythia8.cc) 
+if (music)
+    set (SOURCES
+         Gubser_hydro_jetscape.cc
+         brick_jetscape.cc
+         hydro_file_jetscape.cc
+         ElossModulesTest.cc
+         music_jetscape.cc
+         PGun.cc)
+         # JSPythia8.cc) 
+else (music)
+    set (SOURCES
+         Gubser_hydro_jetscape.cc
+         brick_jetscape.cc
+         hydro_file_jetscape.cc
+         ElossModulesTest.cc
+         PGun.cc)
+         # JSPythia8.cc) 
+endif (music)
 
 if(${PYTHIA8_FOUND})
 	set (SOURCES ${SOURCES}  JSPythia8.cc)
