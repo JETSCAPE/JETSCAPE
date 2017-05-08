@@ -59,7 +59,7 @@ class JetScapeInitial{
   private:
 
     std::tuple<double, double> get_entropy_range_(str collision_system,
-        double centrality_low, double centrality_high) {
+        double centrality_low, double centrality_high);
 
     /// The output instance.
     // Output output_;
