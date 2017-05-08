@@ -185,6 +185,7 @@ if (${PYTHIA8_FOUND})
    target_link_libraries(hydroFileTest ${PYTHIA8_LIBRARIES})
    target_link_libraries(writerTest ${PYTHIA8_LIBRARIES})
    message( ${PYTHIA8_LIBRARIES} )
+endif (${PYTHIA8_FOUND})
 
 # Don't compile tests modules if test is not switched on
 if (test)
