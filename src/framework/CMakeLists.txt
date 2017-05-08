@@ -143,17 +143,13 @@ link_directories(./lib)
 
 
 add_executable(testJetScape ./src/testJetScape.cc)
-add_executable(brickTest ./src/brickTest.cc)
 add_executable(readerTest ./reader/readerTest.cc)
 
 add_executable(hydroFileTest ./src/hydroFileTest.cc)
 add_executable(MUSICTest ./src/MUSICTest.cc)
 
-add_executable(writerTest ./src/writerTest.cc)
-
 
 target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest hydroFromFile MUSIC) #for test case ...
-target_link_libraries(brickTest JetScape JetScapeHydro  JetScapeTest) #for test case ...
 target_link_libraries(readerTest JetScape JetScapeHydro  JetScapeReader) #for reader test case ...
 
 target_link_libraries(hydroFileTest JetScape JetScapeHydro JetScapeTest hydroFromFile) #for test case ...
@@ -168,7 +164,6 @@ if (${MPI_FOUND} AND ${GSL_FOUND})
     target_link_libraries (MUSICTest ${MPI_LIBRARIES} ${GSL_LIBRARIES})
 endif()
 
-target_link_libraries(writerTest JetScape JetScapeHydro JetScapeTest) #for writer test case...
 
 
 #Check how to set env variables ...
@@ -180,11 +175,15 @@ if (${ROOT_FOUND})
 endif()
 
 if (${PYTHIA8_FOUND})
-   target_link_libraries(testJetScape ${PYTHIA8_LIBRARIES})
-   target_link_libraries(brickTest ${PYTHIA8_LIBRARIES})
-   target_link_libraries(hydroFileTest ${PYTHIA8_LIBRARIES})
-   target_link_libraries(writerTest ${PYTHIA8_LIBRARIES})
-   message( ${PYTHIA8_LIBRARIES} )
+    add_executable(writerTest ./src/writerTest.cc)
+    add_executable(brickTest ./src/brickTest.cc)
+    target_link_libraries(writerTest JetScape JetScapeHydro JetScapeTest) #for writer test case...
+    target_link_libraries(brickTest JetScape JetScapeHydro  JetScapeTest) #for test case ...
+    target_link_libraries(testJetScape ${PYTHIA8_LIBRARIES})
+    target_link_libraries(brickTest ${PYTHIA8_LIBRARIES})
+    target_link_libraries(hydroFileTest ${PYTHIA8_LIBRARIES})
+    target_link_libraries(writerTest ${PYTHIA8_LIBRARIES})
+    message( ${PYTHIA8_LIBRARIES} )
 endif (${PYTHIA8_FOUND})
 
 # Don't compile tests modules if test is not switched on
