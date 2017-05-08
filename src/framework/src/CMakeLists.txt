@@ -31,8 +31,8 @@ if(${ZLIB_FOUND})
 target_link_libraries(JetScape ${ZLIB_LIBRARIES})
 endif()
 
-if(${HEPMC_FOUND})
-target_link_libraries(JetScape -L${HEPMC_LIB_DIR} -lHepMC)
+if (${HEPMC_FOUND})
+    target_link_libraries(JetScape -L${HEPMC_LIB_DIR} -lHepMC)
 endif()
 
 if (${ROOT_FOUND})
