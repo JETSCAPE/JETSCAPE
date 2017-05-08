@@ -19,8 +19,11 @@
 #include "tinyxml2.h"
 #include "JetScapeSignalManager.h"
 #include "JetScapeWriterAscii.h"
-#include "JetScapeWriterHepMC.h"
 #include "HardProcess.h"
+
+#ifdef USE_HEPMC
+#include "JetScapeWriterHepMC.h"
+#endif
 
 //#include "PartonShowerGenerator.h"
 
@@ -319,11 +322,13 @@ void JetEnergyLoss::WriteTask(weak_ptr<JetScapeWriter> w)
   // check with gzip version later ...
   // Also allow standard output/not using GTL graph structure ....
 
+#ifdef USE_HEPMC
   //If you want HepMC output, pass the whole shower along...
   if (dynamic_pointer_cast<JetScapeWriterHepMC> (w.lock())){
       INFO << " writing partons... found " << pShower->GetNumberOfPartons();
       (w.lock())->Write(pShower);
   }
+#endif
 
   if (dynamic_pointer_cast<JetScapeWriterAscii> (w.lock()))
     {

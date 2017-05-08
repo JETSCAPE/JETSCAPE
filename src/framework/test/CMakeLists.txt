@@ -11,12 +11,14 @@ set (SOURCES
      brick_jetscape.cc
      hydro_file_jetscape.cc
      ElossModulesTest.cc
-     music_jetscape.cc
      PGun.cc)
-     # JSPythia8.cc) 
+
+if (music)
+    set (SOURCES ${SOURCES} music_jetscape.cc)
+endif (music)
 
 if(${PYTHIA8_FOUND})
-	set (SOURCES ${SOURCES}  JSPythia8.cc)
+	set (SOURCES ${SOURCES} JSPythia8.cc)
 endif()
 
 add_library(JetScapeTest SHARED ${SOURCES})
@@ -34,7 +36,12 @@ if (${PYTHIA8_FOUND})
    target_link_libraries(JetScapeTest ${PYTHIA8_LIBRARIES})
 endif()
 
-target_link_libraries(JetScapeTest JetScape JetScapeHydro hydroFromFile MUSIC)
+target_link_libraries(JetScapeTest JetScape JetScapeHydro hydroFromFile)
+
+if (music)
+    include_directories(../3rdparty/music ../3rdparty/music/src)
+    target_link_libraries(JetScapeTest JetScape JetScapeHydro hydroFromFile MUSIC)
+endif (music)
 
 #install(TARGETS JetScape DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 
