@@ -3,7 +3,9 @@ project (testJetScape)
 
 # Fail if cmake is called in the source directory
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
-   message(FATAL_ERROR "You don't want to configure in the source directory!")
+    message("source directory:" ${CMAKE_SOURCE_DIR})
+    message("binary directory:" ${CMAKE_BINARY_DIR})
+    message(FATAL_ERROR "You don't want to configure in the source directory!")
 endif()
 
 cmake_policy(SET CMP0042 NEW)
@@ -33,35 +35,19 @@ if(${HDF5_FOUND})
     set(_hdf5_libs ${HDF5_LIBRARIES} ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES})
 endif(${HDF5_FOUND})
 
-message("Looking for MPI ...")
-find_package(MPI)
-if(${MPI_FOUND})
-    include_directories(${MPI_INCLUDE_PATH})
-endif(${MPI_FOUND})
-
-message("Looking for GSL ...")
-find_package(GSL)
-if(${GSL_FOUND})
-    include_directories(${GSL_INCLUDE_DIR})
-endif(${GSL_FOUND})
-
-
-include_directories(${GSL_INCLUDE_DIR})
-
 message ("Include Directories ...")
 
 include_directories(./src ./test ./hydro ./jet ./gtl/include ./reader) #for test case ...
 include_directories(./3rdparty/hydro_from_external_file)
-include_directories(./3rdparty/music ./3rdparty/music/src)
 
 if (${HEPMC_FOUND})
-      include_directories(${HEPMC_INCLUDE_DIR})
-      Message(STATUS "HepMC Include dir : " ${HEPMC_INCLUDE_DIR})
+    include_directories(${HEPMC_INCLUDE_DIR})
+    Message(STATUS "HepMC Include dir : " ${HEPMC_INCLUDE_DIR})
 endif()
 
 if (${PYTHIA8_FOUND})
-      include_directories(${PYTHIA8_INCLUDE_DIR})
-     Message(STATUS "Pythia8 Include dir : " ${PYTHIA8_INCLUDE_DIR})
+    include_directories(${PYTHIA8_INCLUDE_DIR})
+    Message(STATUS "Pythia8 Include dir : " ${PYTHIA8_INCLUDE_DIR})
 endif()
 
 if (${ROOT_FOUND})
@@ -129,6 +115,9 @@ include_directories("${CMAKE_SOURCE_DIR}/3rdparty/trento/src/")
 # Options. Turn on with 'cmake -Dtest=ON'.
 option(test "Build all tests." ON) # Makes boolean 'test' available.
 
+# Options. Turn on with 'cmake -Dmusic=ON'.
+option(music "Build tests for MUSIC" OFF) # Makes boolean 'test' available.
+
 # w/o not compiling library automatically
 add_subdirectory(./gtl)
 add_subdirectory(./src)
@@ -137,38 +126,24 @@ add_subdirectory(./jet)  #for test case jet classes …
 add_subdirectory(./test)  #for test case ...
 add_subdirectory(./reader)  #for test case ...
 add_subdirectory(./3rdparty/hydro_from_external_file)  #for test case ...
-add_subdirectory(./3rdparty/music)  #for test case ...
 
 link_directories(./lib)
 
 
 add_executable(testJetScape ./src/testJetScape.cc)
-add_executable(brickTest ./src/brickTest.cc)
 add_executable(readerTest ./reader/readerTest.cc)
 
 add_executable(hydroFileTest ./src/hydroFileTest.cc)
-add_executable(MUSICTest ./src/MUSICTest.cc)
-
-add_executable(writerTest ./src/writerTest.cc)
 
 
-target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest hydroFromFile MUSIC) #for test case ...
-target_link_libraries(brickTest JetScape JetScapeHydro  JetScapeTest) #for test case ...
+target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest hydroFromFile) #for test case ...
 target_link_libraries(readerTest JetScape JetScapeHydro  JetScapeReader) #for reader test case ...
-
 target_link_libraries(hydroFileTest JetScape JetScapeHydro JetScapeTest hydroFromFile) #for test case ...
-target_link_libraries(MUSICTest JetScape JetScapeHydro JetScapeTest MUSIC) #for test case ...
 
 if (${HDF5_FOUND})
     set_target_properties (hydroFileTest PROPERTIES COMPILE_FLAGS "-DUSE_HDF5")
     target_link_libraries (hydroFileTest ${_hdf5_libs})
 endif()
-
-if (${MPI_FOUND} AND ${GSL_FOUND})
-    target_link_libraries (MUSICTest ${MPI_LIBRARIES} ${GSL_LIBRARIES})
-endif()
-
-target_link_libraries(writerTest JetScape JetScapeHydro JetScapeTest) #for writer test case...
 
 
 #Check how to set env variables ...
@@ -180,11 +155,16 @@ if (${ROOT_FOUND})
 endif()
 
 if (${PYTHIA8_FOUND})
-   target_link_libraries(testJetScape ${PYTHIA8_LIBRARIES})
-   target_link_libraries(brickTest ${PYTHIA8_LIBRARIES})
-   target_link_libraries(hydroFileTest ${PYTHIA8_LIBRARIES})
-   target_link_libraries(writerTest ${PYTHIA8_LIBRARIES})
-   message( ${PYTHIA8_LIBRARIES} )
+    add_executable(writerTest ./src/writerTest.cc)
+    add_executable(brickTest ./src/brickTest.cc)
+    target_link_libraries(writerTest JetScape JetScapeHydro JetScapeTest) #for writer test case...
+    target_link_libraries(brickTest JetScape JetScapeHydro  JetScapeTest) #for test case ...
+    target_link_libraries(testJetScape ${PYTHIA8_LIBRARIES})
+    target_link_libraries(brickTest ${PYTHIA8_LIBRARIES})
+    target_link_libraries(hydroFileTest ${PYTHIA8_LIBRARIES})
+    target_link_libraries(writerTest ${PYTHIA8_LIBRARIES})
+    message( ${PYTHIA8_LIBRARIES} )
+endif (${PYTHIA8_FOUND})
 
 # Don't compile tests modules if test is not switched on
 if (test)
@@ -196,6 +176,27 @@ if (test)
   include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 endif()
 
+if (music)
+    message("Building MUSIC ...")
+    message("Looking for MPI ...")
+    find_package(MPI)
+    if(${MPI_FOUND})
+        include_directories(${MPI_INCLUDE_PATH})
+    endif(${MPI_FOUND})
+    message("Looking for GSL ...")
+    find_package(GSL)
+    if(${GSL_FOUND})
+        include_directories(${GSL_INCLUDE_DIR})
+    endif(${GSL_FOUND})
+    include_directories(./3rdparty/music ./3rdparty/music/src)
+    add_subdirectory(./3rdparty/music)
+    if (${MPI_FOUND} AND ${GSL_FOUND})
+        add_executable(MUSICTest ./src/MUSICTest.cc)
+        target_link_libraries (MUSICTest ${MPI_LIBRARIES} ${GSL_LIBRARIES})
+        target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest hydroFromFile MUSIC)
+        target_link_libraries(MUSICTest JetScape JetScapeHydro JetScapeTest MUSIC)
+    endif()
+endif (music)
 
 # -----------------------------------------------------------
     
