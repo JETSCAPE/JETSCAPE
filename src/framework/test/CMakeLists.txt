@@ -12,7 +12,6 @@ set (SOURCES
      hydro_file_jetscape.cc
      ElossModulesTest.cc
      PGun.cc)
-     # JSPythia8.cc) 
 
 if (music)
     set (SOURCES ${SOURCES} music_jetscape.cc)
@@ -40,7 +39,8 @@ endif()
 target_link_libraries(JetScapeTest JetScape JetScapeHydro hydroFromFile)
 
 if (music)
-    target_link_libraries(JetScapeTest MUSIC)
+    include_directories(../3rdparty/music ../3rdparty/music/src)
+    target_link_libraries(JetScapeTest JetScape JetScapeHydro hydroFromFile MUSIC)
 endif (music)
 
 #install(TARGETS JetScape DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/lib)
