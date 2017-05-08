@@ -3,7 +3,9 @@ project (testJetScape)
 
 # Fail if cmake is called in the source directory
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
-   message(FATAL_ERROR "You don't want to configure in the source directory!")
+    message("source directory:" ${CMAKE_SOURCE_DIR})
+    message("binary directory:" ${CMAKE_BINARY_DIR})
+    message(FATAL_ERROR "You don't want to configure in the source directory!")
 endif()
 
 cmake_policy(SET CMP0042 NEW)
