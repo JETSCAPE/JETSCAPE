@@ -21,7 +21,8 @@ set (SOURCES ${SOURCES}  gzstream.cc JetScapeWriterAsciiGZ.cc)
 endif()
 
 if(${HEPMC_FOUND})
-set (SOURCES ${SOURCES} JetScapeWriterHepMC.cc)
+    set (SOURCES ${SOURCES} JetScapeWriterHepMC.cc)
+    set_target_properties (JetScape PROPERTIES COMPILE_FLAGS "-DUSE_HEPMC")
 endif()
 
 add_library(JetScape SHARED ${SOURCES})
@@ -30,8 +31,8 @@ if(${ZLIB_FOUND})
 target_link_libraries(JetScape ${ZLIB_LIBRARIES})
 endif()
 
-if(${HEPMC_FOUND})
-target_link_libraries(JetScape -L${HEPMC_LIB_DIR} -lHepMC)
+if (${HEPMC_FOUND})
+    target_link_libraries(JetScape -L${HEPMC_LIB_DIR} -lHepMC)
 endif()
 
 if (${ROOT_FOUND})
