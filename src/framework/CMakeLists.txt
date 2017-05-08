@@ -134,7 +134,7 @@ add_executable(readerTest ./reader/readerTest.cc)
 add_executable(hydroFileTest ./src/hydroFileTest.cc)
 
 
-target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest hydroFromFile MUSIC) #for test case ...
+target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest hydroFromFile) #for test case ...
 target_link_libraries(readerTest JetScape JetScapeHydro  JetScapeReader) #for reader test case ...
 target_link_libraries(hydroFileTest JetScape JetScapeHydro JetScapeTest hydroFromFile) #for test case ...
 
@@ -185,13 +185,13 @@ if (music)
     if(${GSL_FOUND})
         include_directories(${GSL_INCLUDE_DIR})
     endif(${GSL_FOUND})
-    include_directories(${GSL_INCLUDE_DIR})
-    include_directories(./3rdparty/music ./3rdparty/music/src)
-    add_subdirectory(./3rdparty/music)  #for test case ...
-    add_executable(MUSICTest ./src/MUSICTest.cc)
-    target_link_libraries(MUSICTest JetScape JetScapeHydro JetScapeTest MUSIC) #for test case ...
     if (${MPI_FOUND} AND ${GSL_FOUND})
+        include_directories(./3rdparty/music ./3rdparty/music/src)
+        add_subdirectory(./3rdparty/music)
+        add_executable(MUSICTest ./src/MUSICTest.cc)
         target_link_libraries (MUSICTest ${MPI_LIBRARIES} ${GSL_LIBRARIES})
+        target_link_libraries(testJetScape MUSIC)
+        target_link_libraries(MUSICTest JetScape JetScapeHydro JetScapeTest MUSIC)
     endif()
 endif (music)
 
