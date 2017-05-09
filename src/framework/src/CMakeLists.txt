@@ -45,6 +45,10 @@ add_subdirectory(test)
 #target_link_libraries(JetScape ${PYTHIA8_LIBRARIES})
 #endif()
 
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/data_table)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data_table/
+            DESTINATION ${CMAKE_BINARY_DIR}/data_table)
+
 target_link_libraries(JetScape libtrento ${Boost_LIBRARIES} ${HDF5_LIBRARIES})
 
 #target_link_libraries(JetScape JetScapeHydro GTL)
