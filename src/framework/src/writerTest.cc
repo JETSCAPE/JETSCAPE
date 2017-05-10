@@ -18,8 +18,8 @@
 #include "JetScape.h"
 #include "JetEnergyLoss.h"
 #include "JetEnergyLossManager.h"
-//#include "JetScapeWriterAscii.h"
-//#include "JetScapeWriterAsciiGZ.h"
+#include "JetScapeWriterAscii.h"
+#include "JetScapeWriterAsciiGZ.h"
 #ifdef USE_HEPMC
 #include "JetScapeWriterHepMC.h"
 #endif
