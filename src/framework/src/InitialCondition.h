@@ -52,7 +52,15 @@ class JetScapeInitial{
 
     EventInfo info_;
 
-  //private:
+    struct RangeFailure : public std::runtime_error {
+        using std::runtime_error::runtime_error;
+    };
+
+  private:
+
+    std::tuple<double, double> get_entropy_range_(str collision_system,
+        double centrality_low, double centrality_high);
+
     /// The output instance.
     // Output output_;
 };

@@ -5,6 +5,8 @@
 // -----------------------------------------
 // License and Doxygen-like Documentation to be added ...
 
+#include <sstream>
+#include <fstream>
 #include <boost/bind.hpp>
 #include <boost/tokenizer.hpp>
 #include "InitialCondition.h"
@@ -184,6 +186,7 @@ void write_stream(std::ostream& os, int width,
 
 } // end unnamedspace
 
+
 // See header for explanation.
 JetScapeInitial::~JetScapeInitial() = default;
 
@@ -214,10 +217,13 @@ JetScapeInitial::JetScapeInitial(str stored_system,
         var_map = create_varmap(projectile, target, cross_section,
                 grid_max, grid_step);
     }
+
     JetScapeCollision collision_(var_map);
 
-    //todo: (smin, smax) is stored as a table of (cent_low, cent_high)
-    collision_.sample_(100, 150);
+    double smin, smax;
+    std::tie(smin, smax) = get_entropy_range_(stored_system,
+                                      centrality_low, centrality_high);
+    collision_.sample_(smin, smax);
 
     info_ = collision_.info_;
     for (const auto& row : collision_.event_.reduced_thickness_grid()) {
@@ -253,3 +259,61 @@ JetScapeInitial::JetScapeInitial(str projectile, str target,
       entropy_density_distribution_.push_back(*iter);
     }
 }
+
+
+/** Notice that this function assumes the total number of charged
+ * particles is propotional to initial total entropy, this is true
+ * for constant eta/s. this function returns the entropy range for
+ * one given centrality class from reading a stored collision
+ * system*/
+std::tuple<double, double> JetScapeInitial::get_entropy_range_(str collision_system,
+        double centrality_low, double centrality_high) {
+    std::stringstream centrality_class_path;
+    centrality_class_path << "data_table/trento_" << collision_system
+                          << "_cent.csv";
+
+    std::ifstream fin(centrality_class_path.str());
+    if (!fin.is_open()) {
+        throw std::runtime_error::runtime_error("open "
+                + centrality_class_path.str() + " failed");
+    }
+    char buf[256];
+    fin.getline(buf, 256);
+
+    double centrality_bound[101];
+    double entropy_bound[101];
+
+    for (int i = 0; i < 101; i++) {
+        fin >> centrality_bound[i] >> entropy_bound[i];
+    }
+
+    fin.close();
+
+    auto interp1d = [&](double cent) {
+        if (cent < 0.0 || cent > 100.0) {
+            throw RangeFailure(std::string("centrality ") + std::to_string(cent)
+                    + " is not in the range [0, 100]");
+        } else {
+            double x0, x1, y0, y1;
+            int j = int(cent);
+            if (j > cent) {
+                x0 = centrality_bound[j-1];
+                y0 = entropy_bound[j-1];
+                x1 = centrality_bound[j];
+                y1 = entropy_bound[j];
+            } else {
+                x0 = centrality_bound[j];
+                y0 = entropy_bound[j];
+                x1 = centrality_bound[j+1];
+                y1 = entropy_bound[j+1];
+            }
+            double r  = (cent - x0)/(x1 - x0);
+            return (1.0 - r) * y0 + r * y1;
+        }
+    };
+
+    return std::make_pair(interp1d(centrality_high),
+                          interp1d(centrality_low));
+}
+
+
