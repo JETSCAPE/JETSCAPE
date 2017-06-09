@@ -12,7 +12,7 @@ In order to install and compile the JETSCAPE framework on a Linux machine, one n
 -- Go to the extracted folder 
 --- cd hepmc3.0.0/cmake
 --  Run cmake command
---- cmake
+--- cmake ..
 -- Run make command (the user has to be sudoer)
 --- make all install
 -- The default path to install HepMC is /usr/local/lib/ 
@@ -24,7 +24,7 @@ In order to install and compile the JETSCAPE framework on a Linux machine, one n
 -- Make sure that cmake looks for the correct "include" and "lib" directories of HepMC
 --- By default is "/usr/local/lib/include/"
 --- By default is "/usr/local/lib/"
--- The library file that cmake must find is "libHepMC.so"
+-- Change the name of the library file that cmake must find from "libHepMC.dylib" to "libHepMC.so"
 
 
 4. Install Pythia8
@@ -42,6 +42,8 @@ In order to install and compile the JETSCAPE framework on a Linux machine, one n
 -- change "PYTHIAINSTALLDIR" to the installing folder of Pythia8
 -- Update the "PYTHIA8DIR" and "PYTHIA8_ROOT_DIR" address
 --- should be "${PYTHIAINSTALLDIR}/pythia8226" by default
+-- Update the "LD_LIBRARY_PATH" variable to the address of shared object (.so) files
+---  export LD_LIBRARY_PATH=<path to .so files>
 -- ./setup.sh
 -- Make sure the variable are set into the session
 -- Use source if they are not set
