@@ -15,14 +15,14 @@ MESSAGE(STATUS "Looking for HepMC ...")
 
 FIND_PATH(HEPMC_INCLUDE_DIR NAMES HepMC/HepMCDefs.h PATHS
   ${HEPMC_DIR}/include
-  /usr/local/include/
+  /usr/local/lib/include/
   ${SIMPATH}/include/
   NO_DEFAULT_PATH
 )
 
-FIND_PATH(HEPMC_LIB_DIR  NAMES libHepMC.dylib PATHS
-  ${HEPMC_DIR}/lib
-  /usr/local/lib
+FIND_PATH(HEPMC_LIB_DIR  NAMES libHepMC.so PATHS
+  ${HEPMC_DIR}/lib64
+  /usr/local/lib/lib64
   ${SIMPATH}/lib
   NO_DEFAULT_PATH
 )
