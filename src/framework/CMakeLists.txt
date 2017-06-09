@@ -13,6 +13,8 @@ cmake_policy(SET CMP0042 NEW)
 # Tell cmake where to find modules
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/Modules")
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/Modules)
+
 message("Looking for ZLIB ...")
 find_package(ZLIB)
 if(${ZLIB_FOUND})
@@ -21,6 +23,10 @@ endif()
 
 message("Looking for HepMC ...")
 find_package(HEPMC)
+if(${HEPMC_FOUND})
+   message(STATUS "HEPMC found")
+endif()
+
 
 message("Looking for ROOT ...")
 find_package(ROOT)
@@ -65,7 +71,7 @@ message("Compiler and Linker flags ...")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O -fPIC -pipe -Wall -g -Wno-unused-variable -Wno-unused-private-field -Wno-reorder")
 
-if(LINUX) 
+if(UNIX) 
     message( STATUS "Linux : " ${CMAKE_HOST_SYSTEM})
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 endif()
@@ -89,6 +95,7 @@ SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
 # Find and use Boost.
 find_package(Boost 1.50 REQUIRED COMPONENTS filesystem program_options system)
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
+
 # Search for the HDF5 C++ library.  The CMake FindHDF5 package does not work
 # correctly for C++, because it will report success if it finds only the C
 # library and not C++.  It also uses the rather unfortunate 'h5c++' compiler
@@ -128,7 +135,6 @@ add_subdirectory(./reader)  #for test case ...
 add_subdirectory(./3rdparty/hydro_from_external_file)  #for test case ...
 
 link_directories(./lib)
-
 
 add_executable(testJetScape ./src/testJetScape.cc)
 add_executable(readerTest ./reader/readerTest.cc)
