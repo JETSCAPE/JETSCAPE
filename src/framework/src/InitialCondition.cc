@@ -274,7 +274,7 @@ std::tuple<double, double> JetScapeInitial::get_entropy_range_(str collision_sys
 
     std::ifstream fin(centrality_class_path.str());
     if (!fin.is_open()) {
-        throw std::runtime_error::runtime_error("open "
+        throw runtime_error("open "
                 + centrality_class_path.str() + " failed");
     }
     char buf[256];
