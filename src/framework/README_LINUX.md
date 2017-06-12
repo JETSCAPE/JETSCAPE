@@ -74,6 +74,12 @@ In order to install and compile the JETSCAPE framework on a Linux machine, one n
      message( STATUS "Linux : " ${CMAKE_HOST_SYSTEM})
      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
     endif()
+-- Make sure $LD_LIBRARY_PATH is set to the address of dynamic library files
+--- echo $LD_LIBRARY_PATH
+--- If there is nothing to dispay
+---- LD_LIBRARY_PATH=<dynamic_lib_dir>
+--- If the address is not included in the variable
+---- LD_LIBRARY_PATH=$LD_LIBRARY_PATH:<dynamic_lib_dir>
 -- Run cmake
 --- cmake ..
 -- run make
