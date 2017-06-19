@@ -1,7 +1,7 @@
 In order to install and compile the JETSCAPE framework on a Linux machine, one need to follow the following steps:
 
 1. Clone the repository from Github:
-     - git clone https://github.com/rbertens/JETSCAPE-COMP.git
+     - git clone https://github.com/amajumder/JETSCAPE-COMP.git
      - Enter your Github credentials 
 
 2. Install and configure HepMC (Version 3.0.0 or higher)
@@ -80,6 +80,8 @@ In order to install and compile the JETSCAPE framework on a Linux machine, one n
                - LD_LIBRARY_PATH=$LD_LIBRARY_PATH:<dynamic_lib_dir>
      - Run cmake
           - cmake ..
+          - If cmake cannot find HDF5 library, set "-DCMAKE_LIBRARY_PATH" and "-DCMAKE_INCLUDE_PATH" flags when you run cmake
+               - cmake -DCMAKE_LIBRARY_PATH=<HDF5_Include_Path> -DCMAKE_INCLUDE_PATH=<HDF5_Lib_Path> ..
      - run make
           - make
 
