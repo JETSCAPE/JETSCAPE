@@ -18,12 +18,14 @@ In order to install and compile the JETSCAPE framework on a Linux machine, one n
      - The default path to install HepMC is /usr/local/lib/ 
 
 3. Change Cmake configuration for HepMC (If Cmake could not find HepMC)
+     - Set "HEPMC_DIR" as the root directory of HepMC
      - Go to ../framework/Modules
      - Open FindHEPMC.cmake
           - vim FindHEPMC.cmake
      - Make sure that cmake looks for the correct "include" and "lib" directories of HepMC
-          - By default is "/usr/local/lib/include/"
-          - By default is "/usr/local/lib/"
+          - By default is "${HEPMC_DIR}/include/"
+          - By default is "${HEPMC_DIR}/lib"
+          - Replace "${HEPMC_DIR}" with "ENV{HEPMC_DIR}" if you are not root
      - The library file that cmake must find is "libHepMC.so"
 
 
@@ -46,13 +48,13 @@ In order to install and compile the JETSCAPE framework on a Linux machine, one n
      - Make sure the variable are set into the session
      - Use source if they are not set
 
-6. Install Boost libraries
+6. Install Boost libraries (Version 1.5 or higher)
      - wget https://dl.bintray.com/boostorg/release/1.64.0/source/boost_1_64_0.tar.gz 
      - tar -xvzf boost_1_64_0.tar.gz
      - Go to the directory tools/build/.
      - Run bootstrap.sh 
           - ./bootstrap.sh 
-     - Run b2 --prefix=PREFIX where PREFIX is the directory where you want Boost.Build to be installed
+     - Run b2 --prefix=PREFIX where PREFIX is the directory where you want Boost. Build to be installed
           - ./b2 install --prefix=PREFIX
      - Set "BOOST_ROOT" variable to the root directory of boost
      - export BOOST_ROOT=<root_directory> 
