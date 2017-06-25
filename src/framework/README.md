@@ -115,19 +115,21 @@ brew install graph-tool
 
 Remark: So far on brew HepMC is only available in version 2, version 3 is required for the current code, nicer wirter interfaces to root for example. So one has to install it from: http://hepmc.web.cern.ch/hepmc/
 
-MUSIC support
+## MUSIC support
 
 MUSIC is a (3+1)D viscous hydrodynamical code developed at McGill university.
 (Official website: http://www.physics.mcgill.ca/MUSIC)
 MUSIC can be integrated into the JETSCAPE framework. To download the lastest
 version of MUSIC, one can run the shell script under the 3rdparty folder,
+
         ```bash
         ./get_music.sh
         ```
 The shell script will clone the latest version of MUSIC to 3rdparty folder.
 When compiling MUSIC with JETSCAPE, please turn on the MUSIC support option
 when generating the cmake configuration file,
-     ```
+
+     ```bash
      mkdir build
      cd build
      cmake -Dmusic=ON ..
