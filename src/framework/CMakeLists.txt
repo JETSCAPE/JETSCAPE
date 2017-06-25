@@ -129,12 +129,10 @@ add_subdirectory(./3rdparty/hydro_from_external_file)  #for test case ...
 
 link_directories(./lib)
 
-
 add_executable(testJetScape ./src/testJetScape.cc)
 add_executable(readerTest ./reader/readerTest.cc)
 
 add_executable(hydroFileTest ./src/hydroFileTest.cc)
-
 
 target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest hydroFromFile) #for test case ...
 target_link_libraries(readerTest JetScape JetScapeHydro  JetScapeReader) #for reader test case ...
@@ -195,8 +193,8 @@ if (music)
     if (${MPI_FOUND} AND ${GSL_FOUND})
         add_executable(MUSICTest ./src/MUSICTest.cc)
         target_link_libraries(MUSICTest ${MPI_LIBRARIES} ${GSL_LIBRARIES})
-        target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest hydroFromFile MUSIC)
-        target_link_libraries(MUSICTest JetScape JetScapeHydro JetScapeTest MUSIC)
+        target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest hydroFromFile music_lib)
+        target_link_libraries(MUSICTest JetScape JetScapeHydro JetScapeTest music_lib)
     endif()
 endif (music)
 
