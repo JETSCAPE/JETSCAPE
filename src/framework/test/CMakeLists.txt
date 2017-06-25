@@ -40,7 +40,7 @@ target_link_libraries(JetScapeTest JetScape JetScapeHydro hydroFromFile)
 
 if (music)
     include_directories(../3rdparty/music ../3rdparty/music/src)
-    target_link_libraries(JetScapeTest JetScape JetScapeHydro hydroFromFile MUSIC)
+    target_link_libraries(JetScapeTest JetScape JetScapeHydro hydroFromFile music_lib)
 endif (music)
 
 #install(TARGETS JetScape DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/lib)
