@@ -122,9 +122,9 @@ MUSIC is a (3+1)D viscous hydrodynamical code developed at McGill university.
 MUSIC can be integrated into the JETSCAPE framework. To download the lastest
 version of MUSIC, one can run the shell script under the 3rdparty folder,
 
-        ```bash
-        ./get_music.sh
-        ```
+```bash
+    ./get_music.sh
+```
 
 This shell script will clone the latest version of MUSIC to 3rdparty folder.
 It also setup the enviroment variables for MUSIC to run. Specifically, MUSIC
@@ -134,9 +134,15 @@ variable HYDROPROGRAMPATH to be set to the path for MUSIC code package.
 When compiling MUSIC with JETSCAPE, please turn on the MUSIC support option
 when generating the cmake configuration file,
 
-     ```bash
-     mkdir build
-     cd build
-     cmake -Dmusic=ON ..
-     make
-     ```
+```bash
+    mkdir build
+    cd build
+    cmake -Dmusic=ON ..
+    make
+```
+
+To run JETSCAPE with MUSIC, one needs to use MPI commands,
+
+```bash
+    mpirun -np 1 ./build/MUSICTest
+```
