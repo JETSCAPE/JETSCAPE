@@ -135,7 +135,7 @@ int main(int argc, char** argv)
 void Show()
 {
   INFO_NICE<<"-----------------------------------------------";
-  INFO_NICE<<"| MUSIC Test JetScape Framework ...           |";
+  INFO_NICE<<"| MUSIC Test JetScape Framework ... |";
   INFO_NICE<<"-----------------------------------------------";
   INFO_NICE;
 }

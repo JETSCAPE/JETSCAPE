@@ -32,11 +32,26 @@ void MPI_MUSIC::initialize_hydro(Parameter parameter_list) {
         WARN << " : MUSIC not properly initialized in XML file ...";
         exit(-1);
     }
+    string input_file = para->FirstChildElement("MUSIC_input_file")->GetText();
     int argc = 2;
-    char **argv = nullptr;
-    // music_hydro_ptr = new MUSIC(argc, argv);
-    // music_hydro_ptr->initialize_hydro();
+    char **argv = new char* [argc];
+    argv[0] = new char[8];
+    strcpy(argv[0], "mpihydro");
+    argv[1] = new char[input_file.length() + 1];
+    strcpy(argv[1], input_file.c_str());
+    cout << "check input for MUSIC: " << endl;
+    for (int i = 0; i < argc; i++) {
+        cout << argv[i] << "  ";
+    }
+    cout << endl;
+    music_hydro_ptr = new MUSIC(argc, argv);
+    music_hydro_ptr->initialize_hydro();
     hydro_status = INITIALIZED;
+
+    for (int i = 0; i < argc; i++) {
+        delete[] argv[i];
+    }
+    delete[] argv;
 }
 
 
