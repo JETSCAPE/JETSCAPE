@@ -65,11 +65,6 @@ message("Compiler and Linker flags ...")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O -fPIC -pipe -Wall -g -Wno-reorder -Wno-unused-variable ")
 
-if(UNIX) 
-    message( STATUS "Linux : " ${CMAKE_HOST_SYSTEM})
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-sign-compare -Wno-unused-but-set-variable -Wno-parentheses")
-endif()
-
 if (APPLE)
      message( STATUS "Apple : " ${CMAKE_HOST_SYSTEM})
 
@@ -81,7 +76,11 @@ if (APPLE)
 
      message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS})	
      message(STATUS "LD_FLAGS = " ${CMAKE_EXE_LINKER_FLAGS})
+elseif(UNIX) 
+    message( STATUS "Linux : " ${CMAKE_HOST_SYSTEM})
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-sign-compare -Wno-unused-but-set-variable -Wno-parentheses")
 endif()   
+
 
 # have binary in the build directory, easier to access
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
