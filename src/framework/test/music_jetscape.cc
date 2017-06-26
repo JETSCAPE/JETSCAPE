@@ -57,9 +57,17 @@ void MPI_MUSIC::initialize_hydro(Parameter parameter_list) {
 
 void MPI_MUSIC::evolve_hydro() {
     VERBOSE(8);
-    INFO << "running MUSIC ...";
-    music_hydro_ptr->run_hydro();
-    hydro_status = FINISHED;
+    if (hydro_status == INITIALIZED) {
+        INFO << "running MUSIC ...";
+        music_hydro_ptr->run_hydro();
+        hydro_status = FINISHED;
+    } else if (hydro_status == FINISHED) {
+        INFO << "Initialize MUSIC ...";
+        music_hydro_ptr->initialize_hydro();
+        INFO << "running MUSIC ...";
+        music_hydro_ptr->run_hydro();
+        hydro_status = FINISHED;
+    }
 }
 
 
