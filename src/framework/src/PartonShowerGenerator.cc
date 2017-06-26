@@ -37,8 +37,8 @@ void PartonShowerGenerator::DoShower(JetEnergyLoss &j)
   pIn.push_back(*j.GetShowerInitiatingParton());
 
   // Add here the Hard Shower emitting parton ...
-  vStart=j.GetShower()->new_vertex(make_shared<VertexBase>());
-  vEnd=j.GetShower()->new_vertex(make_shared<VertexBase>());
+  vStart=j.GetShower()->new_vertex(make_shared<Vertex>());
+  vEnd=j.GetShower()->new_vertex(make_shared<Vertex>());
   j.GetShower()->new_parton(vStart,vEnd,make_shared<Parton>(*j.GetShowerInitiatingParton()));
 
   // start then the recursive shower ...
@@ -76,7 +76,7 @@ void PartonShowerGenerator::DoShower(JetEnergyLoss &j)
 	  // --------------------------------------------
 	  for (int k=0;k<pOutTemp.size();k++)
 	    {
-	      vEnd=j.GetShower()->new_vertex(make_shared<VertexBase>(0,0,0,currentTime));	    	      
+	      vEnd=j.GetShower()->new_vertex(make_shared<Vertex>(0,0,0,currentTime));	    	      
 	      j.GetShower()->new_parton(vStart,vEnd,make_shared<Parton>(pOutTemp[k]));	     
 	      	     
 	      //DEBUG:
@@ -104,7 +104,7 @@ void PartonShowerGenerator::DoShower(JetEnergyLoss &j)
 		  
 		  for (int l=1;l<pInTempModule.size();l++)
 		    {
-		      node vNewRootNode=j.GetShower()->new_vertex(make_shared<VertexBase>(0,0,0,currentTime-j.GetDeltaT()));
+		      node vNewRootNode=j.GetShower()->new_vertex(make_shared<Vertex>(0,0,0,currentTime-j.GetDeltaT()));
 		      j.GetShower()->new_parton(vNewRootNode,vEnd,make_shared<Parton>(pInTempModule[l]));
 		    }
 		}

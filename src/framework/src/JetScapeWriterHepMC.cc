@@ -17,7 +17,7 @@ JetScapeWriterHepMC::~JetScapeWriterHepMC()
       Close();
 }
 
-void JetScapeWriterHepMC::Write(weak_ptr<VertexBase> v){ 
+void JetScapeWriterHepMC::Write(weak_ptr<Vertex> v){ 
     //Setting vertex from initial state...
     vertices.push_back(castVtxToHepMC(v.lock()));
     vertexFlag = true;

@@ -17,7 +17,7 @@ class InitialState : public JetScapeModuleBase
  public:
 
   InitialState();
-  InitialState(double collEnergy, VertexBase vtx);
+  InitialState(double collEnergy, Vertex vtx);
   InitialState(string m_name): JetScapeModuleBase(m_name){ SetId("InitialState"); }
   ~InitialState();
 
@@ -33,7 +33,7 @@ class InitialState : public JetScapeModuleBase
  private:
     double collEnergy;
     double temperature;
-    VertexBase initialVtx;
+    Vertex initialVtx;
 
 };
 
