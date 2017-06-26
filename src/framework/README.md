@@ -125,7 +125,12 @@ version of MUSIC, one can run the shell script under the 3rdparty folder,
         ```bash
         ./get_music.sh
         ```
-The shell script will clone the latest version of MUSIC to 3rdparty folder.
+
+This shell script will clone the latest version of MUSIC to 3rdparty folder.
+It also setup the enviroment variables for MUSIC to run. Specifically, MUSIC
+needs the folder path for the EOS tables. Please make sure the enviroment
+variable HYDROPROGRAMPATH to be set to the path for MUSIC code package.
+
 When compiling MUSIC with JETSCAPE, please turn on the MUSIC support option
 when generating the cmake configuration file,
 
