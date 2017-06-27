@@ -177,7 +177,7 @@ void HydroFile::get_hydro_info(real t, real x, real y, real z,
     fluidCell *temp_fluid_cell_ptr = new fluidCell;
     if (hydro_type == 1) {  // for OSU 2+1d hydro
         double tau_local = sqrt(t*t - z*z);
-        if (isnan(tau_local)) {  // check
+        if (std::isnan(tau_local)) {  // check
             WARN << "[Error]: HydroFile::get_hydro_info(): "
                  << "tau is nan!";
             WARN << "please check: t = " << t << ", z = " << z;

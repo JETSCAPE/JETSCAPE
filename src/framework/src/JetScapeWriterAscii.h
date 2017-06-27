@@ -33,7 +33,7 @@ class JetScapeWriterAscii : public JetScapeWriter
   void WriteInitFileXML();
   
   void Write(weak_ptr<Parton> p);
-  void Write(weak_ptr<VertexBase> v);
+  void Write(weak_ptr<Vertex> v);
 
   void Write(string s) {output_file<<s<<endl;}
   void WriteComment(string s) {output_file<<"# "<<s<<endl;}

@@ -206,7 +206,7 @@ LogStreamer JetScapeLogger::VerboseParton(unsigned short m_vlevel,Parton &p)
     }
 }
 
-LogStreamer JetScapeLogger::VerboseVertex(unsigned short m_vlevel,VertexBase &v)
+LogStreamer JetScapeLogger::VerboseVertex(unsigned short m_vlevel,Vertex &v)
 {
   if (m_vlevel<vlevel) // or if (m_vlevel==vlevel)
     {

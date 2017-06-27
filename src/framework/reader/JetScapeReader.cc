@@ -48,7 +48,7 @@ void JetScapeReader<T>::AddNode(string s)
 
   //cout<<endl;
   //cout<<vS.size()<<endl;
-  nodeVec.push_back(pShower->new_vertex(make_shared<VertexBase>(stod(vS[1]),stod(vS[2]),stod(vS[3]),stod(vS[4]))));
+  nodeVec.push_back(pShower->new_vertex(make_shared<Vertex>(stod(vS[1]),stod(vS[2]),stod(vS[3]),stod(vS[4]))));
   //cout<<nodeVec.size()<<endl;
 }
 
