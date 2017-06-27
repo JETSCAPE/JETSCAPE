@@ -9,7 +9,7 @@
 #include "JetScapeLogger.h"
 #include "JetScapeSignalManager.h"
 #include <string>
-#include "ELossModulesTest.h"
+// #include "ELossModulesTest.h"
 
 #include <iostream>
 #include <vector>

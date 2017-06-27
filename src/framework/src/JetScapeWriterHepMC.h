@@ -39,7 +39,7 @@ class JetScapeWriterHepMC : public JetScapeWriter , public WriterAscii
 
   // overload write functions ...
   void WriteEvent(); 
-  void Write(weak_ptr<VertexBase> v);
+  void Write(weak_ptr<Vertex> v);
   void Write(weak_ptr<PartonShower> ps);
 
  private:
@@ -47,7 +47,7 @@ class JetScapeWriterHepMC : public JetScapeWriter , public WriterAscii
   bool vertexFlag;
   vector<HepMC::GenVertex*> vertices;
 
-  inline HepMC::GenVertex* castVtxToHepMC(shared_ptr<VertexBase> vtx){
+  inline HepMC::GenVertex* castVtxToHepMC(shared_ptr<Vertex> vtx){
       HepMC::FourVector vtxPosition(vtx->x_in().x(), vtx->x_in().y(), vtx->x_in().z(), vtx->x_in().t());
       HepMC::GenVertex *hepVtx = new HepMC::GenVertex(vtxPosition);
       return hepVtx;
