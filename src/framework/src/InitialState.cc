@@ -16,7 +16,7 @@ InitialState::InitialState(){
     initialVtx.set_location(v);
 }
 
-InitialState::InitialState(double collE, VertexBase vtx)
+InitialState::InitialState(double collE, Vertex vtx)
 {
   collEnergy = collE;
   initialVtx = vtx;
@@ -44,5 +44,5 @@ void InitialState::Clear(){
 void InitialState::Write(weak_ptr<JetScapeWriter> w){
 
     //Write out the original vertex so the writer can keep track of it...
-    w.lock()->Write(make_shared<VertexBase>(initialVtx));
+    w.lock()->Write(make_shared<Vertex>(initialVtx));
 }

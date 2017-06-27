@@ -35,7 +35,7 @@ void JetScapeWriterAscii::Write(weak_ptr<Parton> p)
   output_file<<*p.lock()<<endl;
 }
 
-void JetScapeWriterAscii::Write(weak_ptr<VertexBase> v)
+void JetScapeWriterAscii::Write(weak_ptr<Vertex> v)
 {
   output_file<<*v.lock()<<endl;
 }

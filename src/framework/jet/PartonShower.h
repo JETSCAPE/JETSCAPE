@@ -28,14 +28,14 @@ public:
   PartonShower() : graph() {VERBOSESHOWER(8);}
   virtual ~PartonShower();
 
-  node new_vertex(shared_ptr<VertexBase> v);
+  node new_vertex(shared_ptr<Vertex> v);
   void new_parton(node s, node t, shared_ptr<Parton> p);
   
-  shared_ptr<VertexBase> GetVertex(node n) {return vMap[n];}
+  shared_ptr<Vertex> GetVertex(node n) {return vMap[n];}
   shared_ptr<Parton> GetParton(edge e) {return pMap[e];}
 
   shared_ptr<Parton> GetPartonAt(int n);
-  shared_ptr<VertexBase> GetVertexAt(int n);
+  shared_ptr<Vertex> GetVertexAt(int n);
 
   node GetNodeAt(int n);
   edge GetEdgeAt(int n);
@@ -47,7 +47,7 @@ public:
   vector<Parton> GetFinalPartonsForFastJet();
   
   //unique_ptr<Parton> GetPartonAt(int i);
-  //unique_ptr<VertexBase> GetVertexAt(int i);
+  //unique_ptr<Vertex> GetVertexAt(int i);
   //vector<unique_ptr<Parton>> GetPartons() {};
 
   int GetNumberOfPartons() const {return number_of_edges();}
@@ -71,14 +71,14 @@ public:
 		
 private:
   
-  node_map<shared_ptr<VertexBase>> vMap;
+  node_map<shared_ptr<Vertex>> vMap;
   edge_map<shared_ptr<Parton>> pMap;
 
   vector<shared_ptr<Parton>> pFinal;
   
   //Check map data format (pointer to edge/node !??)
   //map<weak_ptr<Parton>, edge> pToEdgeMap;
-  //map<weak_ptr<VertexBase>, node> vToNodeMap;
+  //map<weak_ptr<Vertex>, node> vToNodeMap;
 
   //void CreateMaps();
   //bool mapsFilled;
@@ -88,7 +88,7 @@ private:
   //Only fill when needed via Getters ...
   //Can also be done via lists, a bit slower (interface question ...) 
   //vector<weak_ptr<Parton>> pVec;
-  //vector<weak_ptr<VertexBase>> vVec;
+  //vector<weak_ptr<Vertex>> vVec;
 
   //void FillVertexVec();
   //void FillPartonVec();

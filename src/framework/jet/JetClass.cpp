@@ -22,7 +22,7 @@ Jet::Jet(FourVector p)
 }
 */
 
-VertexBase::~VertexBase()
+Vertex::~Vertex()
 {
   VERBOSESHOWER(9);
 }
