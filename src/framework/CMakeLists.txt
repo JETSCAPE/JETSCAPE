@@ -88,24 +88,6 @@ SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
 # Find and use Boost.
 find_package(Boost 1.50 REQUIRED COMPONENTS filesystem program_options system)
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
-# Search for the HDF5 C++ library.  The CMake FindHDF5 package does not work
-# correctly for C++, because it will report success if it finds only the C
-# library and not C++.  It also uses the rather unfortunate 'h5c++' compiler
-# wrapper which sets a lot of unnecessary crap.
-find_library(HDF5_CXX_LIB hdf5_cpp)
-if("${HDF5_CXX_LIB}" STREQUAL "HDF5_CXX_LIB-NOTFOUND")
-  message(STATUS "HDF5 C++ library not found")
-else()
-  message(STATUS "Found HDF5 C++ library: ${HDF5_CXX_LIB}")
-  # Having found the C++ lib, also locate the header and C lib.
-  find_path(HDF5_INCLUDE_DIRS H5Cpp.h)
-  include_directories(SYSTEM ${HDF5_INCLUDE_DIRS})
-  find_library(HDF5_C_LIB hdf5)
-  # Also link to zlib for HDF5 compression.
-  set(HDF5_LIBRARIES ${HDF5_CXX_LIB} ${HDF5_C_LIB} z)
-  # Set preprocessor definition so HDF5 output is compiled.
-  add_definitions(-DTRENTO_HDF5)
-endif()
 
 # add the library path and inclusion path of trento to jetscape
 add_subdirectory(3rdparty/trento/)
