@@ -15,20 +15,20 @@ include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 # correctly for C++, because it will report success if it finds only the C
 # library and not C++.  It also uses the rather unfortunate 'h5c++' compiler
 # wrapper which sets a lot of unnecessary crap.
-find_library(HDF5_CXX_LIB hdf5_cpp)
-if("${HDF5_CXX_LIB}" STREQUAL "HDF5_CXX_LIB-NOTFOUND")
-  message(STATUS "HDF5 C++ library not found")
-else()
-  message(STATUS "Found HDF5 C++ library: ${HDF5_CXX_LIB}")
-  # Having found the C++ lib, also locate the header and C lib.
-  find_path(HDF5_INCLUDE_DIRS H5Cpp.h)
-  include_directories(SYSTEM ${HDF5_INCLUDE_DIRS})
-  find_library(HDF5_C_LIB hdf5)
-  # Also link to zlib for HDF5 compression.
-  set(HDF5_LIBRARIES ${HDF5_CXX_LIB} ${HDF5_C_LIB} z)
-  # Set preprocessor definition so HDF5 output is compiled.
-  add_definitions(-DTRENTO_HDF5)
-endif()
+# find_library(HDF5_CXX_LIB hdf5_cpp)
+# if("${HDF5_CXX_LIB}" STREQUAL "HDF5_CXX_LIB-NOTFOUND")
+#   message(STATUS "HDF5 C++ library not found")
+# else()
+#   message(STATUS "Found HDF5 C++ library: ${HDF5_CXX_LIB}")
+#   # Having found the C++ lib, also locate the header and C lib.
+#   find_path(HDF5_INCLUDE_DIRS H5Cpp.h)
+#   include_directories(SYSTEM ${HDF5_INCLUDE_DIRS})
+#   find_library(HDF5_C_LIB hdf5)
+#   # Also link to zlib for HDF5 compression.
+#   set(HDF5_LIBRARIES ${HDF5_CXX_LIB} ${HDF5_C_LIB} z)
+#   # Set preprocessor definition so HDF5 output is compiled.
+#   add_definitions(-DTRENTO_HDF5)
+# endif()
 
 set(PROJECT_VERSION_MAJOR 1)
 set(PROJECT_VERSION_MINOR 3)
