@@ -86,7 +86,7 @@ Parton::Parton (int label, int id, int stat, double pt, double eta, double phi, 
     x[2]=0;
     x[3]=0;
 
-    set_x(0); // if no x specified in constructor, particle starts at origin
+    set_x(x); // if no x specified in constructor, particle starts at origin
   
   reset_PtYPhiM(pt,eta,phi,mass()); //check
 }
