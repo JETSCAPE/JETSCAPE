@@ -11,14 +11,17 @@ set (SOURCES
      brick_jetscape.cc
      hydro_file_jetscape.cc
      ElossModulesTest.cc
-     PGun.cc)
+     PGun.cc
+     PythiaGun.cpp
+     )
 
 if (music)
     set (SOURCES ${SOURCES} music_jetscape.cc)
 endif (music)
 
 if(${PYTHIA8_FOUND})
-	set (SOURCES ${SOURCES} JSPythia8.cc)
+  set (SOURCES ${SOURCES} JSPythia8.cc)
+  set (SOURCES ${SOURCES} PythiaGun.cpp)
 endif()
 
 add_library(JetScapeTest SHARED ${SOURCES})
