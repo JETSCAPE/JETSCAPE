@@ -97,8 +97,14 @@ public:
   
     void set_x(double x[4])
     {
+      if ( x==0 ){
+	x = new double[4]{0,0,0,0};
+	x_in_.Set( new double[4]{0,0,0,0} );
+	delete x; x=0;
+	return;
+      }
       //FourVector
-	  x_in_.Set(x);
+      x_in_.Set(x);
     };
  
     void set_mean_form_time ()
