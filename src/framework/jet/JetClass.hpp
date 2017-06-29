@@ -98,7 +98,7 @@ public:
     void set_x(double x[4])
     {
       //FourVector
-	  x_in_.Set(x);
+      x_in_.Set(x);
     };
  
     void set_mean_form_time ()
