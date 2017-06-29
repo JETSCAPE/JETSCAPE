@@ -71,4 +71,29 @@ void MPI_MUSIC::evolve_hydro() {
 }
 
 
+void MPI_MUSIC::get_hydro_info(real t, real x, real y, real z,
+                               FluidCellInfo* fluid_cell_info_ptr) {
+    fluidCell *fluidCell_ptr = new fluidCell;
+    music_hydro_ptr->get_hydro_info(x, y, z, t, fluidCell_ptr);
+    fluid_cell_info_ptr->energy_density = fluidCell_ptr->ed;
+    fluid_cell_info_ptr->entropy_density = fluidCell_ptr->sd;
+    fluid_cell_info_ptr->temperature = fluidCell_ptr->temperature;
+    fluid_cell_info_ptr->pressure = fluidCell_ptr->pressure;
+    fluid_cell_info_ptr->vx = fluidCell_ptr->vx;
+    fluid_cell_info_ptr->vy = fluidCell_ptr->vy;
+    fluid_cell_info_ptr->vz = fluidCell_ptr->vz;
+    fluid_cell_info_ptr->mu_B = 0.0;
+    fluid_cell_info_ptr->mu_C = 0.0;
+    fluid_cell_info_ptr->mu_S = 0.0;
+    fluid_cell_info_ptr->qgp_fraction = 0.0;
+
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            fluid_cell_info_ptr->pi[i][j] = fluidCell_ptr->pi[i][j];
+        }
+    }
+    fluid_cell_info_ptr->bulk_Pi = fluidCell_ptr->bulkPi;
+
+    delete fluidCell_ptr;
+}
 
