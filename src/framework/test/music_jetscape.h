@@ -5,6 +5,8 @@
 #include "FluidDynamics.h"
 #include "music.h"
 
+using namespace Jetscape;
+
 //! this is wrapper class for MUSIC so that it can be used as a external
 //! library for the JETSCAPE integrated framework
 class MPI_MUSIC: public FluidDynamics {

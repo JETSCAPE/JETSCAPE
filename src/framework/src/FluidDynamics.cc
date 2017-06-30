@@ -17,6 +17,8 @@ using namespace std;
  
 #define MAGENTA "\033[35m"
 
+namespace Jetscape {
+
 FluidDynamics::FluidDynamics()
 {
   VERBOSE(8);
@@ -75,3 +77,5 @@ void FluidDynamics::GetEnergyDensity(int t,double &edensity)
   edensity=0.5;
   DEBUG<<"Edensity to Jet = "<<edensity<<" at t="<<t;
 }
+
+} // end namespace Jetscape

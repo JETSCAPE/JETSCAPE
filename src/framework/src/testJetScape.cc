@@ -57,6 +57,8 @@ using namespace sigslot;
 
 // Forward declaration
 
+using namespace Jetscape;
+
 void Show();
 
 // -------------------------------------

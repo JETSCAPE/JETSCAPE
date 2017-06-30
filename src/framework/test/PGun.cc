@@ -8,6 +8,8 @@
 //Parton Gun Test ...
 #include "PGun.h"
 
+using namespace Jetscape;
+
 PGun::PGun() : HardProcess()
 {
   fixed_pT=0;

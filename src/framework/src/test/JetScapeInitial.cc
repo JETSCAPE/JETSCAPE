@@ -7,6 +7,8 @@
 #include "../InitialCondition.h"
 #include "gtest/gtest.h"
 
+using namespace Jetscape;
+
 TEST(JetscapeInitialTest, TEST_SAMPLE){
     double cent_low = 30.0;
     double cent_high = 40.0;

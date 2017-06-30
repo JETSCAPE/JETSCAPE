@@ -9,6 +9,8 @@
 #include "JetScapeWriter.h"
 #include <iostream>
 
+namespace Jetscape {
+
 InitialState::InitialState(){
     collEnergy = 13000;
     temperature = 175; //MeV? Get the units from HepMC?
@@ -46,3 +48,5 @@ void InitialState::Write(weak_ptr<JetScapeWriter> w){
     //Write out the original vertex so the writer can keep track of it...
     w.lock()->Write(make_shared<Vertex>(initialVtx));
 }
+
+} // end namespace Jetscape

@@ -11,6 +11,8 @@
 
 using namespace std;
 
+namespace Jetscape {
+
 JetScapeSignalManager* JetScapeSignalManager::m_pInstance = NULL;
 
 JetScapeSignalManager* JetScapeSignalManager::Instance()
@@ -165,3 +167,5 @@ void JetScapeSignalManager::Clear()
   // ...
 }
 */
+
+} // end namespace Jetscape

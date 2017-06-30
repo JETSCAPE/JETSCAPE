@@ -17,6 +17,8 @@
 
 using namespace std;
 
+namespace Jetscape {
+
 class JetScapeXML
 {
   
@@ -47,6 +49,8 @@ class JetScapeXML
   bool xml_file_open;
   
 };
+
+} // end namespace Jetscape
 
 #endif
 

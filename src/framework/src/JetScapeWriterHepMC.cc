@@ -11,6 +11,8 @@
 #include "JetScapeSignalManager.h"
 #include "GTL/node.h"
 
+namespace Jetscape {
+
 JetScapeWriterHepMC::~JetScapeWriterHepMC()
 {
   if (GetActive())
@@ -98,3 +100,5 @@ void JetScapeWriterHepMC::WriteTask(weak_ptr<JetScapeWriter> w){
     WriteEvent();
 }
 
+
+} // end namespace Jetscape

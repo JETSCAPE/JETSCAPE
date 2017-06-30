@@ -17,6 +17,8 @@ using namespace std;
 
 #define MAGENTA "\033[35m"
 
+namespace Jetscape {
+
 HardProcess::HardProcess()
 {
   VERBOSE(8);
@@ -77,3 +79,5 @@ void HardProcess::WriteTask(weak_ptr<JetScapeWriter> w)
   for (int i=0;i<hp_list.size();i++)
     w.lock()->Write(GetPartonAt(i));
 }
+
+} // end namespace Jetscape

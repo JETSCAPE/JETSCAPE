@@ -11,6 +11,8 @@
 #include <boost/tokenizer.hpp>
 #include "InitialCondition.h"
 
+namespace Jetscape {
+
 // Helper functions for Collider ctor.
 namespace {
 /// @brief Tokenize a string.  The tokens will be separated by each non-quoted
@@ -317,3 +319,5 @@ std::tuple<double, double> JetScapeInitial::get_entropy_range_(str collision_sys
 }
 
 
+
+} // end namespace Jetscape

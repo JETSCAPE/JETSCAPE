@@ -27,6 +27,8 @@ using OptDesc = po::options_description;
 
 using namespace trento;
 
+namespace Jetscape {
+
 ////////////////////////// Trento Initial Condition Wrapper //////////////////////
 class JetScapeInitial{
   public:
@@ -64,5 +66,7 @@ class JetScapeInitial{
     /// The output instance.
     // Output output_;
 };
+
+} // end namespace Jetscape
 
 #endif

@@ -20,6 +20,8 @@
 
 using namespace std;
 
+namespace Jetscape {
+
 class JetScapeWriter;
 
 class JetScapeTask 
@@ -85,5 +87,7 @@ class JetScapeTask
   // if for example a search rather position ... (or always sort with predefined order!?)
   
 };
+
+} // end namespace Jetscape
 
 #endif

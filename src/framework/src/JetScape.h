@@ -13,6 +13,8 @@
 
 using namespace std;
 
+namespace Jetscape {
+
 class JetScape : public JetScapeModuleBase
 {
   
@@ -38,5 +40,7 @@ class JetScape : public JetScapeModuleBase
   int n_events;
   
 };
+
+} // end namespace Jetscape
 
 #endif

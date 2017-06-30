@@ -16,6 +16,8 @@
 
 using namespace std;
 
+namespace Jetscape {
+
 JetScape::JetScape()
 {
   n_events=1;
@@ -138,3 +140,5 @@ void JetScape::Finish()
   // same as in Init() and Exec() ...
   JetScapeTask::FinishTasks(); //dummy so far ...
 }
+
+} // end namespace Jetscape

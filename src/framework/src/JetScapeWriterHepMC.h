@@ -21,6 +21,8 @@
 
 using namespace HepMC;
 
+namespace Jetscape {
+
 class JetScapeWriterHepMC : public JetScapeWriter , public WriterAscii
 {
 
@@ -67,4 +69,8 @@ class JetScapeWriterHepMC : public JetScapeWriter , public WriterAscii
   //int m_precision; //!< Output precision
   
 };
+
+
+} // end namespace Jetscape
+
 #endif

@@ -11,6 +11,8 @@
 #include "JetScapeModuleBase.h"
 #include "JetClass.hpp"
 
+namespace Jetscape {
+
 class InitialState : public JetScapeModuleBase
 {
   
@@ -36,5 +38,7 @@ class InitialState : public JetScapeModuleBase
     Vertex initialVtx;
 
 };
+
+} // end namespace Jetscape
 
 #endif

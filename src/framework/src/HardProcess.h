@@ -13,6 +13,8 @@
 #include "JetClass.hpp"
 #include <vector>
 
+namespace Jetscape {
+
 class HardProcess : public JetScapeModuleBase 
 {
   
@@ -49,5 +51,7 @@ class HardProcess : public JetScapeModuleBase
   vector<shared_ptr<Parton>> hp_list;
   
 };
+
+} // end namespace Jetscape
 
 #endif

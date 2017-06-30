@@ -15,6 +15,8 @@
 #include "constants.h"
 #include "JetScapeLogger.h"
 
+namespace Jetscape {
+
 /*
 Jet::Jet(FourVector p)
 {
@@ -183,4 +185,6 @@ Parton::Parton (int label, int id, int stat, double p[4], double x[4])  : Pseudo
     set_x(x);
     set_stat(stat);
 }
+
+} // end namespace Jetscape
 
