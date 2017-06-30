@@ -133,20 +133,14 @@ endif()
 
 if (${PYTHIA8_FOUND})
     add_executable(writerTest ./src/writerTest.cc)
-    add_executable(brickTest ./src/brickTest.cc) 
-    add_executable(PythiaBrickTest ./src/PythiaBrickTest.cc)
-    
+    add_executable(brickTest ./src/brickTest.cc)
     target_link_libraries(writerTest JetScape JetScapeHydro JetScapeTest) #for writer test case...
     target_link_libraries(brickTest JetScape JetScapeHydro  JetScapeTest) #for test case ...
-    target_link_libraries(PythiaBrickTest JetScape JetScapeHydro  JetScapeTest) #for test case ...
-	
     target_link_libraries(testJetScape ${PYTHIA8_LIBRARIES})
     target_link_libraries(brickTest ${PYTHIA8_LIBRARIES})
-    target_link_libraries(PythiaBrickTest ${PYTHIA8_LIBRARIES})
     if (${ROOT_FOUND})
-      target_link_libraries(brickTest ${ROOT_LIBRARIES})
-      target_link_libraries(PythiaBrickTest ${ROOT_LIBRARIES})
-      target_link_libraries(writerTest ${ROOT_LIBRARIES})
+        target_link_libraries(brickTest ${ROOT_LIBRARIES})
+        target_link_libraries(writerTest ${ROOT_LIBRARIES})
     endif(${ROOT_FOUND})
     target_link_libraries(hydroFileTest ${PYTHIA8_LIBRARIES})
     target_link_libraries(writerTest ${PYTHIA8_LIBRARIES})
