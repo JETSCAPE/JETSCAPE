@@ -180,7 +180,10 @@ if (music)
 endif (music)
 
 # -----------------------------------------------------------
-    
+#### copy jetscape_init.xml to build/, such that one can test xml reading in build/ directory
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/jetscape_init.xml DESTINATION ${CMAKE_BINARY_DIR}/)
+
+
 #set(LIBS ${LIBS} ${ROOT_LIBRARIES})
 #However, the file(GLOB...) allows for wildcard additions:
 #file(GLOB SOURCES "src/*.cpp")
