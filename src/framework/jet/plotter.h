@@ -14,6 +14,8 @@
 #include <math.h>
 #include <stdlib.h>
 
+namespace Jetscape {
+
 class sudakov
 {
 public:
@@ -21,4 +23,6 @@ public:
     double value_ex (double cg0, double cg);
 };
 
+
+} // end namespace Jetscape
 #endif

@@ -13,6 +13,8 @@
 
 using namespace std;
 
+namespace Jetscape {
+
 JetScapeXML* JetScapeXML::m_pInstance = NULL;
 
 JetScapeXML* JetScapeXML::Instance()
@@ -57,3 +59,5 @@ void JetScapeXML::OpenXMLFile(string m_name)
   SetXMLFileName(m_name);
   OpenXMLFile();
 }
+
+} // end namespace Jetscape

@@ -15,6 +15,8 @@
 #include "PartonShower.h"
 #include "JetClass.hpp"
 
+namespace Jetscape {
+
 class JetScapeWriter : public JetScapeModuleBase
 {
 
@@ -54,4 +56,8 @@ class JetScapeWriter : public JetScapeModuleBase
   string file_name_out;
   
 };
+
+
+} // end namespace Jetscape
+
 #endif

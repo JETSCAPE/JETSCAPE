@@ -20,6 +20,8 @@
 #include <sstream>
 #include <iomanip>
 
+namespace Jetscape {
+
 class Parton;
 class Vertex;
 class FourVector;
@@ -312,4 +314,6 @@ private:
   
 };
 
+
+} // end namespace Jetscape
 #endif /* JetClass_hpp */

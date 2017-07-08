@@ -8,6 +8,8 @@
 
 #include "JetScapeReader.h"
 
+namespace Jetscape {
+
 template<class T>
 JetScapeReader<T>::JetScapeReader()
 {
@@ -167,4 +169,7 @@ void JetScapeReader<T>::Init()
 }
 
 template class JetScapeReader<ifstream>;
+
 template class JetScapeReader<igzstream>;
+
+} // end namespace Jetscape

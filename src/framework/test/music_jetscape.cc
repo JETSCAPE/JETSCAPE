@@ -9,7 +9,6 @@
 
 using namespace std;
 
-
 MPI_MUSIC::MPI_MUSIC() {
     hydro_status = NOT_START;
     SetId("MUSIC");

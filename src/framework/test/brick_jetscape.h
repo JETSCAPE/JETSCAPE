@@ -4,6 +4,8 @@
 
 #include "FluidDynamics.h"
 
+using namespace Jetscape;
+
 class Brick: public FluidDynamics {
     // this is wrapper class for a simple brick
     // so that it can be used within the JETSCAPE framework

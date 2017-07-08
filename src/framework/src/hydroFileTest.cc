@@ -36,6 +36,8 @@
 
 using namespace std;
 
+using namespace Jetscape;
+
 // Forward declaration
 void Show();
 

@@ -31,6 +31,8 @@
 
 using namespace std;
 
+namespace Jetscape {
+
 JetEnergyLoss::JetEnergyLoss()
 {
   qhat=-99.99;
@@ -131,7 +133,7 @@ void JetEnergyLoss::Init()
   JetScapeTask::InitTasks();
 }
 
-void::JetEnergyLoss::DoShower()
+void JetEnergyLoss::DoShower()
 {
   double tStart=0;
   double currentTime=0;
@@ -379,3 +381,5 @@ void JetEnergyLoss::PrintShowerInitiatingParton()
 {
   //DEBUG<<inP->pid();
 }
+
+} // end namespace Jetscape

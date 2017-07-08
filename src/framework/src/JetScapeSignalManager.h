@@ -24,6 +24,8 @@
 using namespace sigslot;
 using namespace std;
 
+namespace Jetscape {
+
 class JetScapeSignalManager //: public sigslot::has_slots<sigslot::multi_threaded_local>
 {
   
@@ -98,6 +100,8 @@ class JetScapeSignalManager //: public sigslot::has_slots<sigslot::multi_threade
   map<int,weak_ptr<JetEnergyLoss>> GetOutPartons_map;
   
 };
+
+} // end namespace Jetscape
 
 #endif
 

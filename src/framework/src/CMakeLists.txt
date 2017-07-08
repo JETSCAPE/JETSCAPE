@@ -9,7 +9,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "../lib/")
 set (SOURCES
 JetScape.cc JetScapeTask.cc
 tinyxml2.cc FluidDynamics.cc HardProcess.cc Collision.cc
-InitialCondition.cc JetScapeLogger.cc JetScapeXML.cc
+TrentoInitial.cc JetScapeLogger.cc JetScapeXML.cc
 JetEnergyLoss.cc  JetScapeModuleBase.cc JetEnergyLossManager.cc
 JetScapeSignalManager.cc JetScapeWriterAscii.cc JetScapeEvent.cc
 ../jet/JetClass.cpp ../jet/fjcore.cc ../jet/PartonShower.cc

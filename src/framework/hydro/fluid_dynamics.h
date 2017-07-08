@@ -13,6 +13,8 @@
 
 #include "realtype.h"
 
+namespace Jetscape {
+
 enum HydroStatus {NOT_START, INITIALIZED, EVOLVING, FINISHED, ERROR};
 
 class JetSource {
@@ -329,6 +331,8 @@ class FluidDynamicsBase{
 
     real get_net_baryon_density(real time, real x, real y, real z);
     real get_net_charge_density(real time, real x, real y, real z);
-};
+}; // end class FluidDynamicsBase
+
+} // end namespace Jetscape
 
 #endif  // SRC_FLUID_DYNAMICS_H_

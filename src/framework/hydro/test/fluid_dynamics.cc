@@ -1,6 +1,8 @@
 #include "../fluid_dynamics.h"
 #include "gtest/gtest.h"
 
+using namespace Jetscape;
+
 void test_not_in_range(EvolutionHistory hist, real tau, real x, real y, real eta) {
     try {
         hist.check_in_range(tau, x, y, eta);

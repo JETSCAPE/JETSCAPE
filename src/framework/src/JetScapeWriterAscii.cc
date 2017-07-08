@@ -11,6 +11,8 @@
 #include "JetScapeLogger.h"
 #include "JetScapeXML.h"
 
+namespace Jetscape {
+
 JetScapeWriterAscii::JetScapeWriterAscii(string m_file_name_out)
 {
   SetOutputFileName(m_file_name_out);
@@ -69,3 +71,5 @@ void JetScapeWriterAscii::WriteInitFileXML()
   WriteComment("Init XML file used : "+JetScapeXML::Instance()->GetXMLFileName());
   output_file<<printer.CStr();
 }
+
+} // end namespace Jetscape

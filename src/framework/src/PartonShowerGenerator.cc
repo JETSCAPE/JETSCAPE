@@ -15,6 +15,8 @@
 
 using namespace std;
 
+namespace Jetscape {
+
 void PartonShowerGenerator::DoShower(JetEnergyLoss &j)
 {
   double tStart=0;
@@ -151,3 +153,5 @@ void PartonShowerGenerator::DoShower(JetEnergyLoss &j)
   vStartVec.clear();
   
 }
+
+} // end namespace Jetscape

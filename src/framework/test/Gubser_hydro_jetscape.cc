@@ -12,7 +12,6 @@
 
 using namespace std;
 
-
 GubserHydro::GubserHydro() : FluidDynamics(){
     // initialize the parameter reader
     q = 1.0;

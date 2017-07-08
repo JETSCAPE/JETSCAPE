@@ -9,6 +9,8 @@
 #ifndef constants_h
 #define constants_h
 
+namespace Jetscape {
+
 
 
 // define the usual constants
@@ -65,4 +67,6 @@ static int sid=3;
 /*******************************************************************/
 
 
+
+} // end namespace Jetscape
 #endif /* constants_h */
