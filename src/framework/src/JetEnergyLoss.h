@@ -90,8 +90,6 @@ class JetEnergyLoss : public JetScapeModuleBase, public std::enable_shared_from_
   double GetMaxT() {return maxT;}
   shared_ptr<PartonShower> GetShower() {return pShower;}
 
-  double GetT(){return t;}
-  
  private:
 
   double deltaT;
@@ -116,8 +114,6 @@ class JetEnergyLoss : public JetScapeModuleBase, public std::enable_shared_from_
   node vEnd;
 
   void DoShower();
-  // Current time
-  double t;  
 
 };
 
