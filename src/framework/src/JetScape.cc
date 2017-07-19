@@ -11,6 +11,7 @@
 #include "JetEnergyLossManager.h"
 #include "FluidDynamics.h"
 #include "JetScapeBanner.h"
+#include "InitialState.h"
 
 #include<iostream>
 
@@ -86,6 +87,9 @@ void JetScape::SetPointers()
   
   for (auto it : GetTaskList())
     {
+      if (dynamic_pointer_cast<InitialState>(it))
+	JetScapeSignalManager::Instance()->SetInitialStatePointer(dynamic_pointer_cast<InitialState>(it));
+ 
       if (dynamic_pointer_cast<FluidDynamics>(it))
 	JetScapeSignalManager::Instance()->SetHydroPointer(dynamic_pointer_cast<FluidDynamics>(it));
   

@@ -17,7 +17,8 @@ TEST(JetscapeInitialTest, TEST_SAMPLE){
     double grid_max = 10.0;
     double grid_step = 0.2;
     for (int k = 0; k < 100; k++ ) {
-        auto ini = TrentoInitial("auau200", cent_low, cent_high,
+        auto ini = TrentoInitial();
+        ini.pre_defined("auau200", cent_low, cent_high,
                                grid_max, grid_step);
         EXPECT_EQ(ini.entropy_density_distribution_.size(), 10000);
         double mul = ini.info_.total_entropy;

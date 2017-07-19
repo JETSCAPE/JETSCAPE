@@ -40,17 +40,23 @@ void FluidDynamics::Init()
  
   fd= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Hydro" );
 
-  if (!fd)
-     {
-         WARN << "Not a valid JetScape XML Hydro section file or no XML file loaded!";
+  if (!fd) {
+     WARN << "Not a valid JetScape XML Hydro section file or no XML file loaded!";
 	 exit(-1);
-     }
+  }
   
   VERBOSE(8);
   
   InitTask();
 
   initialize_hydro(parameter_list);
+
+  ini = JetScapeSignalManager::Instance()->GetInitialStatePointer().lock();
+  if (!ini) {
+      WARN << "No initialization module!";
+  } else {
+      INFO << "length of entropy density vector=" << ini->entropy_density_distribution_.size();
+  }
   
   JetScapeTask::InitTasks();
 }
@@ -59,7 +65,7 @@ void FluidDynamics::Exec()
 {
   INFO<<"Run Hydro : "<<GetId()<< " ...";
   VERBOSE(8)<<"Current Event #"<<GetCurrentEvent();
-  
+
   evolve_hydro();
   
   JetScapeTask::ExecuteTasks();

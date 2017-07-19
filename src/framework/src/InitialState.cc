@@ -42,9 +42,9 @@ void InitialState::Init(){
     INFO<<"x range for bulk evolution = ["<< -grid_max_x_ <<", "<<grid_max_x_ << "]";
   }
 
+  InitTask();
+
   JetScapeTask::InitTasks();
- 
-  //Set Pythia (or PGun) collision Energy?
 }
 
 void InitialState::Exec(){
