@@ -50,9 +50,10 @@ class TrentoInitial : public InitialState {
 
     ~TrentoInitial();
 
-    void Init();
+    //void Init();
     void Exec();
     void Clear();
+    void InitTask();
 
     EventInfo info_;
 
@@ -67,6 +68,8 @@ class TrentoInitial : public InitialState {
 
     // compute number of binary collisions
     void compute_nbc();
+
+    tinyxml2::XMLElement * trento_xml_;
 
     /// The output instance.
     // Output output_;

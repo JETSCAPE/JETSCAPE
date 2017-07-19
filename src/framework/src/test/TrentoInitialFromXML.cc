@@ -15,14 +15,13 @@ using namespace Jetscape;
 TEST(InitialFromXMLTest, TEST_XML){
   auto jetscape = make_shared<JetScape>("./jetscape_init.xml",3);
   jetscape->SetId("primary");
+  auto ini = make_shared<TrentoInitial>();
+
+  jetscape->Add(ini);
 
   // jetscape->Init() must come before make_shred<JetScapeInitial>() 
   // such that jetscape_init.xml file is read in to memory in prior
   jetscape->Init();
-
-  auto ini = make_shared<TrentoInitial>();
-
-  jetscape->Add(ini);
 
   // Run JetScape with all task/modules as specified ...
   jetscape->Exec();

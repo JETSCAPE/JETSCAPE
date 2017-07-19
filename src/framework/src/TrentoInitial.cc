@@ -268,21 +268,21 @@ TrentoInitial::TrentoInitial(std::string projectile, std::string target,
 }
 
 
-void TrentoInitial::Init() {
-    InitialState::Init();
+void TrentoInitial::InitTask() {
+    INFO << " : Create initial condition ";
+    trento_xml_ = xml_->FirstChildElement("Trento");
 }
 
 
 void TrentoInitial::Exec() {
-    WARN << " : Create initial condition ";
-    auto trento = xml_->FirstChildElement("Trento");
-    if (!trento) {
-        WARN << " : Not a valid JetScape IS::Trento XML section in file!";
+    INFO << " : Excute initial condition ";
+    if (!trento_xml_) {
+        INFO << " : Not a valid JetScape IS::Trento XML section in file!";
         exit(-1);
     } else {
-        // trento->Attribute("A", "B") checks whether the attribute "A" has value "B"
-        if ( trento->Attribute("use_module", "pre_defined") ) {
-            auto predef = trento->FirstChildElement("pre_defined");
+        // trento_xml_->Attribute("A", "B") checks whether the attribute "A" has value "B"
+        if ( trento_xml_->Attribute("use_module", "pre_defined") ) {
+            auto predef = trento_xml_->FirstChildElement("pre_defined");
             std::string collision_system(predef->Attribute("collision_system"));
             INFO << "collision_system=" << collision_system;
             double centrality_min = std::atof(predef->Attribute("centrality_min"));
@@ -290,8 +290,8 @@ void TrentoInitial::Exec() {
             TrentoInitial(collision_system,
                             centrality_min, centrality_max,
                             get_x_max(), get_x_step());
-        } else if (trento->Attribute("use_module", "user_defined") ) {
-            auto usrdef = trento->FirstChildElement("user_defined");
+        } else if (trento_xml_->Attribute("use_module", "user_defined") ) {
+            auto usrdef = trento_xml_->FirstChildElement("user_defined");
             std::string projectile(usrdef->Attribute("projectile"));
             std::string target(usrdef->Attribute("target"));
             // center of mass collision energy per pair of nucleon
@@ -303,13 +303,14 @@ void TrentoInitial::Exec() {
 }
 
 void TrentoInitial::Clear() {
-    WARN << " : Finish creating initial condition ";
+    INFO << " : Finish creating initial condition ";
     entropy_density_distribution_.clear();
     num_of_binary_collisions_.clear();
 }
 
-TrentoInitial::TrentoInitial() {
-    Init();
+
+TrentoInitial::TrentoInitial() : InitialState() {
+    SetId("Trento");
 }
 
 /** Notice that this function assumes the total number of charged
