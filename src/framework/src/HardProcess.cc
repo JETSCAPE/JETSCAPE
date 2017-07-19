@@ -49,7 +49,14 @@ void HardProcess::Init()
   VERBOSE(8);
   
   InitTask();
-  
+
+  ini = JetScapeSignalManager::Instance()->GetInitialStatePointer().lock();
+  if (!ini) {
+      WARN << "No initial state module, try: auto trento = make_shared<TrentoInitial>(); jetscape->add(trento);";
+  } else {
+      INFO << "length of nbc vector=" << ini->num_of_binary_collisions_.size();
+  }
+ 
   JetScapeTask::InitTasks();
 }
 

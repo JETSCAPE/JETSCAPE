@@ -196,7 +196,7 @@ TrentoInitial::~TrentoInitial() = default;
 // get one random collision in centrality for the given system
 // stored_system = "AuAu200", "PbPb2760" or "PbPb5020"
 // centrality = "0-5", "5-10", "30-40" or any range "a-b" for 0<=a<b<=100
-TrentoInitial::TrentoInitial(std::string stored_system,
+void TrentoInitial::pre_defined(std::string stored_system,
                     double centrality_low, double centrality_high,
                     double grid_max, double grid_step)
 {
@@ -238,12 +238,11 @@ TrentoInitial::TrentoInitial(std::string stored_system,
       // Write the last element and a linebreak.
       entropy_density_distribution_.push_back(*iter);
     }
-
     compute_nbc();
 }
 
 
-TrentoInitial::TrentoInitial(std::string projectile, std::string target,
+void TrentoInitial::user_defined(std::string projectile, std::string target,
                 double cross_section, double grid_max, double grid_step)
 {
     VarMap var_map = create_varmap(projectile, target, cross_section,
@@ -263,7 +262,6 @@ TrentoInitial::TrentoInitial(std::string projectile, std::string target,
       // Write the last element and a linebreak.
       entropy_density_distribution_.push_back(*iter);
     }
-
     compute_nbc();
 }
 
@@ -287,9 +285,8 @@ void TrentoInitial::Exec() {
             INFO << "collision_system=" << collision_system;
             double centrality_min = std::atof(predef->Attribute("centrality_min"));
             double centrality_max = std::atof(predef->Attribute("centrality_max"));
-            TrentoInitial(collision_system,
-                            centrality_min, centrality_max,
-                            get_x_max(), get_x_step());
+            pre_defined(collision_system, centrality_min, centrality_max,
+                    get_x_max(), get_x_step());
         } else if (trento_xml_->Attribute("use_module", "user_defined") ) {
             auto usrdef = trento_xml_->FirstChildElement("user_defined");
             std::string projectile(usrdef->Attribute("projectile"));
@@ -297,7 +294,7 @@ void TrentoInitial::Exec() {
             // center of mass collision energy per pair of nucleon
             double sqrts_NN = std::atof(usrdef->Attribute("sqrts"));
             double cross_section = std::atof(usrdef->Attribute("cross_section"));
-            TrentoInitial(projectile, target, cross_section, get_x_max(), get_x_step());
+            user_defined(projectile, target, cross_section, get_x_max(), get_x_step());
         }
     }
 }
@@ -369,7 +366,7 @@ std::tuple<double, double> TrentoInitial::get_entropy_range_(std::string collisi
 }
 
 void TrentoInitial::compute_nbc() {
-    for ( auto si : entropy_density_distribution_ ) {
+    for ( const auto si : entropy_density_distribution_ ) {
         auto si_squre = si * si;
         // this works for IP-Glasma like initial condition
         num_of_binary_collisions_.push_back(si_squre);

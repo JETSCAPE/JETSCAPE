@@ -37,14 +37,14 @@ class TrentoInitial : public InitialState {
     TrentoInitial();
 
     // get one random collision in centrality range 0-100%
-    TrentoInitial(std::string projectile, std::string target,
+    void user_defined(std::string projectile, std::string target,
                     double cross_section, double grid_max,
                     double grid_step);
 
     // get one random collision in centrality for the given system
     // stored_system = "auau200", "pbpb2760" or "pbpb5020"
     // centrality_range = [centrality_min, centrality_max]
-    TrentoInitial(std::string stored_system,
+    void pre_defined(std::string stored_system,
                     double centrality_min, double centrality_max,
                     double grid_max, double grid_step);
 
