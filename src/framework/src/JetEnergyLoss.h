@@ -38,7 +38,7 @@ class JetEnergyLoss : public JetScapeModuleBase, public std::enable_shared_from_
   virtual void WriteTask(weak_ptr<JetScapeWriter> w); 
   virtual void Clear();
   //virtual void DoEnergyLoss(double deltaT, double Q2, const vector<Parton>& pIn, vector<Parton>& pOut) {};
-  virtual void DoEnergyLoss(double deltaT, double t, double Q2, vector<Parton>& pIn, vector<Parton>& pOut) {};
+  virtual void DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pIn, vector<Parton>& pOut) {};
   
   // test only ...
   sigslot::signal2<int, double,multi_threaded_local> jetSignal;
