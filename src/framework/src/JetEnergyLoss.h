@@ -17,6 +17,8 @@
 #include <vector>
 #include <random>
 
+namespace Jetscape {
+
 
 class JetEnergyLoss : public JetScapeModuleBase, public std::enable_shared_from_this<JetEnergyLoss> 
 {
@@ -116,5 +118,7 @@ class JetEnergyLoss : public JetScapeModuleBase, public std::enable_shared_from_
   void DoShower();
 
 };
+
+} // end namespace Jetscape
 
 #endif

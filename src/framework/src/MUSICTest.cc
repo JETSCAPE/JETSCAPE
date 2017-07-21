@@ -34,6 +34,8 @@
 
 using namespace std;
 
+using namespace Jetscape;
+
 // Forward declaration
 void Show();
 
@@ -97,7 +99,7 @@ int main(int argc, char** argv)
   // and Martini dummy ...
   // Switching Q2 (or whatever variable used
   // hardcoded at 5 to be changed to xml)
-  jloss->Add(matter);
+  //jloss->Add(matter);
   jloss->Add(martini);
   
   jlossmanager->Add(jloss);
@@ -135,7 +137,7 @@ int main(int argc, char** argv)
 void Show()
 {
   INFO_NICE<<"-----------------------------------------------";
-  INFO_NICE<<"| MUSIC Test JetScape Framework ...           |";
+  INFO_NICE<<"| MUSIC Test JetScape Framework ... |";
   INFO_NICE<<"-----------------------------------------------";
   INFO_NICE;
 }

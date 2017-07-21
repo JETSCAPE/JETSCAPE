@@ -17,6 +17,8 @@ using namespace std;
 
 #define MAGENTA "\033[35m"
 
+namespace Jetscape {
+
 HardProcess::HardProcess()
 {
   VERBOSE(8);
@@ -47,7 +49,14 @@ void HardProcess::Init()
   VERBOSE(8);
   
   InitTask();
-  
+
+  ini = JetScapeSignalManager::Instance()->GetInitialStatePointer().lock();
+  if (!ini) {
+      WARN << "No initial state module, try: auto trento = make_shared<TrentoInitial>(); jetscape->add(trento);";
+  } else {
+      INFO << "length of nbc vector=" << ini->num_of_binary_collisions_.size();
+  }
+ 
   JetScapeTask::InitTasks();
 }
 
@@ -77,3 +86,5 @@ void HardProcess::WriteTask(weak_ptr<JetScapeWriter> w)
   for (int i=0;i<hp_list.size();i++)
     w.lock()->Write(GetPartonAt(i));
 }
+
+} // end namespace Jetscape

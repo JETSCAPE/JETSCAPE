@@ -15,23 +15,10 @@
 
    <!-- Inital State Module ... -->
    <IS>
-     <!-- x range [-grid_max_x, grid_max_x] -->
-     <!-- y range [-grid_max_y, grid_max_y]-->
-     <!-- longitudinal range [-grid_max_z, grid_max_z]-->
-     <!-- in units of [fm] -->
-     <grid_max_x> 10 </grid_max_x>
-     <grid_max_y> 10 </grid_max_y>
-     <grid_max_z> 0 </grid_max_z>
-     <grid_step_x> 0.2 </grid_step_x>
-     <grid_step_y> 0.2 </grid_step_y>
-     <grid_step_z> 0.2 </grid_step_z>
      
-     <Trento use_module="pre_defined">
-         <!-- pre-defined system: default collisions have auau200, pbpb2760, pbpb5020, more in the future -->
-         <pre_defined collision_system="auau200" centrality_min="30" centrality_max="40" />
-         <!-- user-defined system: to get one event in 0-100% centrality range -->
-         <user_defined projectile="Au" target="Au" sqrts="200" cross_section="4.2" />
+     <Trento>
      </Trento>
+     
    </IS>
 
    <!-- Hard Process/Pythia to be included -->
@@ -111,8 +98,7 @@
      
      <!-- MUSIC ... -->
      <MUSIC>
-         <name>MUSIC</name>
-         <MUSIC_input_file>test/test_music_files/music_input_mode_2</MUSIC_input_file>
+       <name>MUSIC</name>
      </MUSIC>
      
    </Hydro>

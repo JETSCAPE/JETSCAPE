@@ -8,6 +8,8 @@
 //Parton Gun Test ...
 #include "PGun.h"
 
+using namespace Jetscape;
+
 PGun::PGun() : HardProcess()
 {
   fixed_pT=0;
@@ -80,13 +82,13 @@ void PGun::Exec()
        phi = 2.0*PI*(rand()/maxN);
        rapidity=0;//2.0*eta_cut*(rand()/maxN)-eta_cut;
               
-       p[0] = pT*cos(phi);
-       p[1] = pT*sin(phi);
-       p[2] = sqrt(pT*pT+mass*mass)*sinh(rapidity);
-       p[3] = sqrt(pT*pT+mass*mass)*cosh(rapidity);
+       p[1] = pT*cos(phi);
+       p[2] = pT*sin(phi);
+       p[3] = sqrt(pT*pT+mass*mass)*sinh(rapidity);
+       p[0] = sqrt(pT*pT+mass*mass)*cosh(rapidity);
   
        //AddParton(make_shared<Parton>(0,parID,0,p,xLoc));
-       AddParton(make_shared<Parton>(0,parID,0,pT,rapidity,phi,p[3],xLoc));
+       AddParton(make_shared<Parton>(0,parID,0,pT,rapidity,phi,p[0],xLoc));
 
        // DEBUG: (<< of Parton not working with Logger VERBOSE standard ... Check!
        //JetScapeLogger::Instance()->VerboseParton(6,*GetPartonAt(i))<<__PRETTY_FUNCTION__<<" : ";

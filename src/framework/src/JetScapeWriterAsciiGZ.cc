@@ -10,6 +10,8 @@
 #include "JetScapeWriterAsciiGZ.h"
 #include "JetScapeLogger.h"
 
+namespace Jetscape {
+
 JetScapeWriterAsciiGZ::JetScapeWriterAsciiGZ(string m_file_name_out)
 {
   SetOutputFileName(m_file_name_out);
@@ -46,3 +48,5 @@ void JetScapeWriterAsciiGZ::Exec()
   if (GetActive())
     WriteEvent();
 }
+
+} // end namespace Jetscape

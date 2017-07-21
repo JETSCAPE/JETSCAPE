@@ -11,13 +11,15 @@
 #include "JetScapeSignalManager.h"
 #include "GTL/node.h"
 
+namespace Jetscape {
+
 JetScapeWriterHepMC::~JetScapeWriterHepMC()
 {
   if (GetActive())
       Close();
 }
 
-void JetScapeWriterHepMC::Write(weak_ptr<VertexBase> v){ 
+void JetScapeWriterHepMC::Write(weak_ptr<Vertex> v){ 
     //Setting vertex from initial state...
     vertices.push_back(castVtxToHepMC(v.lock()));
     vertexFlag = true;
@@ -98,3 +100,5 @@ void JetScapeWriterHepMC::WriteTask(weak_ptr<JetScapeWriter> w){
     WriteEvent();
 }
 
+
+} // end namespace Jetscape

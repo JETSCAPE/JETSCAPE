@@ -13,6 +13,7 @@
 
 using namespace std;
 
+using namespace Jetscape;
 
 Brick::Brick() : FluidDynamics() {
     // initialize the parameter reader

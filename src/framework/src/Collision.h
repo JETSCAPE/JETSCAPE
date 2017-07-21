@@ -36,6 +36,8 @@ using OptDesc = po::options_description;
 
 using namespace trento;
 
+namespace Jetscape {
+
 typedef struct {
     double impact_parameter;
     double num_participant;
@@ -121,5 +123,7 @@ class JetScapeCollision{
     /// The output instance.
     Output output_;
 };
+
+} // end namespace Jetscape
 
 #endif

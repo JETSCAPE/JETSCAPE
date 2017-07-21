@@ -15,6 +15,8 @@
 #include "PartonShower.h"
 #include "JetClass.hpp"
 
+namespace Jetscape {
+
 class JetScapeWriter : public JetScapeModuleBase
 {
 
@@ -34,7 +36,7 @@ class JetScapeWriter : public JetScapeModuleBase
   virtual void WriteInitFileXML() {};
   virtual void Write(weak_ptr<Parton> p) {};
   virtual void Write(weak_ptr<Jet> j) {};
-  virtual void Write(weak_ptr<VertexBase> v) {};
+  virtual void Write(weak_ptr<Vertex> v) {};
   virtual void Write(weak_ptr<PartonShower> ps) {};
   virtual void Write(string s) {};
   virtual void WriteComment(string s) {};
@@ -54,4 +56,8 @@ class JetScapeWriter : public JetScapeModuleBase
   string file_name_out;
   
 };
+
+
+} // end namespace Jetscape
+
 #endif

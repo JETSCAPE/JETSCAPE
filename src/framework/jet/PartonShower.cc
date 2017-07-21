@@ -12,7 +12,9 @@
 #include <iomanip>
 #include "helper.h"
 
-node PartonShower::new_vertex(shared_ptr<VertexBase> v)
+namespace Jetscape {
+
+node PartonShower::new_vertex(shared_ptr<Vertex> v)
  {
    node n=graph::new_node();
    vMap[n]=v;
@@ -56,7 +58,7 @@ shared_ptr<Parton> PartonShower::GetPartonAt(int i)
   return pVec[i].lock();
 }
 
-shared_ptr<VertexBase> PartonShower::GetVertexAt(int i)
+shared_ptr<Vertex> PartonShower::GetVertexAt(int i)
 {
   if (vVec.size()==0)
     FillVertexVec();
@@ -74,12 +76,12 @@ unique_ptr<Parton> PartonShower::GetPartonAt(int i)
   return make_unique<Parton>(*(pVec[i].lock()));
 }
 
-unique_ptr<VertexBase> PartonShower::GetVertexAt(int i)
+unique_ptr<Vertex> PartonShower::GetVertexAt(int i)
 {
   if (vVec.size()==0)
     FillVertexVec();
 
-  return make_unique<VertexBase>(*(vVec[i].lock()));
+  return make_unique<Vertex>(*(vVec[i].lock()));
 }
 */
 /*
@@ -162,7 +164,7 @@ shared_ptr<Parton> PartonShower::GetPartonAt(int n)
   return GetParton(*eIt);
 }
 
-shared_ptr<VertexBase> PartonShower::GetVertexAt(int n)
+shared_ptr<Vertex> PartonShower::GetVertexAt(int n)
 {
   node_iterator nIt; nIt = nodes_begin();advance(nIt,n);
   return GetVertex(*nIt);
@@ -310,7 +312,7 @@ void PartonShower::load_node_info_handler (node n, GML_pair *read)
     tmp = tmp->next;
   }
 
-  vMap[n]=make_shared<VertexBase>(x,y,z,t);
+  vMap[n]=make_shared<Vertex>(x,y,z,t);
 }
 
 // use with graphviz (on Mac: brew install graphviz --with-app)
@@ -438,4 +440,6 @@ void PartonShower::SaveAsGraphML(string fName)
    g<<"</graphml>"<<endl;
 		       
   g.close();
+
+} // end namespace Jetscape
 }

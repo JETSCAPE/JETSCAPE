@@ -14,6 +14,8 @@
 
 #include <vector>
 
+namespace Jetscape {
+
 class JetEnergyLossManager : public JetScapeTask, public std::enable_shared_from_this<JetEnergyLossManager>
 {
   
@@ -42,5 +44,7 @@ class JetEnergyLossManager : public JetScapeTask, public std::enable_shared_from
   vector<shared_ptr<Parton>> hp;
   
 };
+
+} // end namespace Jetscape
 
 #endif

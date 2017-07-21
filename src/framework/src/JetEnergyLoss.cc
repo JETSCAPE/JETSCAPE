@@ -31,6 +31,8 @@
 
 using namespace std;
 
+namespace Jetscape {
+
 JetEnergyLoss::JetEnergyLoss()
 {
   qhat=-99.99;
@@ -131,7 +133,7 @@ void JetEnergyLoss::Init()
   JetScapeTask::InitTasks();
 }
 
-void::JetEnergyLoss::DoShower()
+void JetEnergyLoss::DoShower()
 {
   double tStart=0;
   double currentTime=0;
@@ -157,8 +159,8 @@ void::JetEnergyLoss::DoShower()
   pIn.push_back(pTemp);*/
 
   // Add here the Hard Shower emitting parton ...
-  vStart=pShower->new_vertex(make_shared<VertexBase>());
-  vEnd=pShower->new_vertex(make_shared<VertexBase>());
+  vStart=pShower->new_vertex(make_shared<Vertex>());
+  vEnd=pShower->new_vertex(make_shared<Vertex>());
   pShower->new_parton(vStart,vEnd,make_shared<Parton>(*GetShowerInitiatingParton()));
 
   // start then the recursive shower ...
@@ -196,7 +198,7 @@ void::JetEnergyLoss::DoShower()
 	  // --------------------------------------------
 	  for (int k=0;k<pOutTemp.size();k++)
 	    {
-	      vEnd=pShower->new_vertex(make_shared<VertexBase>(0,0,0,currentTime));	    	      
+	      vEnd=pShower->new_vertex(make_shared<Vertex>(0,0,0,currentTime));	    	      
 	      pShower->new_parton(vStart,vEnd,make_shared<Parton>(pOutTemp[k]));	     
 	      	     
 	      //DEBUG:
@@ -224,7 +226,7 @@ void::JetEnergyLoss::DoShower()
 		  
 		  for (int l=1;l<pInTempModule.size();l++)
 		    {
-		      node vNewRootNode=pShower->new_vertex(make_shared<VertexBase>(0,0,0,currentTime-deltaT));
+		      node vNewRootNode=pShower->new_vertex(make_shared<Vertex>(0,0,0,currentTime-deltaT));
 		      pShower->new_parton(vNewRootNode,vEnd,make_shared<Parton>(pInTempModule[l]));
 		    }
 		}
@@ -379,3 +381,5 @@ void JetEnergyLoss::PrintShowerInitiatingParton()
 {
   //DEBUG<<inP->pid();
 }
+
+} // end namespace Jetscape

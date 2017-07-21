@@ -72,6 +72,8 @@ int getMemoryUsage()
  
 #define CLEAR "\033[2J"  // clear screen escape code 
 
+namespace Jetscape {
+
 std::ostringstream null;     
 
 safe_ostream safe_cout(std::cout);
@@ -206,7 +208,7 @@ LogStreamer JetScapeLogger::VerboseParton(unsigned short m_vlevel,Parton &p)
     }
 }
 
-LogStreamer JetScapeLogger::VerboseVertex(unsigned short m_vlevel,VertexBase &v)
+LogStreamer JetScapeLogger::VerboseVertex(unsigned short m_vlevel,Vertex &v)
 {
   if (m_vlevel<vlevel) // or if (m_vlevel==vlevel)
     {
@@ -219,3 +221,5 @@ LogStreamer JetScapeLogger::VerboseVertex(unsigned short m_vlevel,VertexBase &v)
       return LogStreamer(null);  
     }
 }
+
+} // end namespace Jetscape

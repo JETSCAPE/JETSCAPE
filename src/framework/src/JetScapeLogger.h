@@ -52,6 +52,8 @@ using namespace std;
 #define VERBOSEPVERTEX(l,v) if (l<JetScapeLogger::Instance()->GetVerboseLevel()) JetScapeLogger::Instance()->VerboseVertex(l,v)<<__PRETTY_FUNCTION__<<" : "
 #define WARN JetScapeLogger::Instance()->Warn()<<__PRETTY_FUNCTION__<<" : "
 
+namespace Jetscape {
+
 
 // -------------------------------------------
 struct safe_ostream {
@@ -187,7 +189,7 @@ class JetScapeLogger
   LogStreamer VerboseShower(unsigned short m_vlevel);
   //Not happy with that fix, still normal << in VERBOSE not working ... follow up.
   LogStreamer VerboseParton(unsigned short m_vlevel,Parton &p);
-  LogStreamer VerboseVertex(unsigned short m_vlevel,VertexBase &v);
+  LogStreamer VerboseVertex(unsigned short m_vlevel,Vertex &v);
   
   void SetDebug(bool m_debug) {debug=m_debug;}
   void SetRemark(bool m_remark) {remark=m_remark;}
@@ -211,5 +213,7 @@ class JetScapeLogger
   
 };
 
-#endif
 
+} // end namespace Jetscape
+
+#endif

@@ -12,6 +12,8 @@
 
 #include "JetEnergyLoss.h"
 
+namespace Jetscape {
+
 template <typename Derived>
 class JetEnergyLossModule : public JetEnergyLoss
 {
@@ -28,5 +30,7 @@ class JetEnergyLossModule : public JetEnergyLoss
      
 
 };
+
+} // end namespace Jetscape
 
 #endif

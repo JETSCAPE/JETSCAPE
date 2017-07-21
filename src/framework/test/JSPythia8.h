@@ -14,6 +14,8 @@
 #include "JetScapeLogger.h"
 #include "Pythia8/Pythia.h"
 
+using namespace Jetscape;
+
 class JSPythia8: public HardProcess , public Pythia8::Pythia {
   
  private:

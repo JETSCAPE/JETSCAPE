@@ -12,6 +12,8 @@
 
 using namespace std;
 
+using namespace Jetscape;
+
 
 HydroFile::HydroFile() {
     hydro_status = NOT_START;

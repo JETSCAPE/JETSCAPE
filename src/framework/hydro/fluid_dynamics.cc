@@ -8,6 +8,7 @@
 
 using namespace std;
 
+namespace Jetscape {
 /** For one given time step id_tau,
  * get FluidCellInfo at spatial point (x, y, eta)*/
 FluidCellInfo EvolutionHistory::get_at_time_step(int id_tau,
@@ -157,3 +158,5 @@ void FluidCellInfo::Print()
          << endl;
     cout << "=======================================================" << endl;
 }
+
+} // end namespace Jetscape

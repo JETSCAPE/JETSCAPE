@@ -20,8 +20,10 @@
 #include <sstream>
 #include <iomanip>
 
+namespace Jetscape {
+
 class Parton;
-class VertexBase;
+class Vertex;
 class FourVector;
 
 
@@ -133,7 +135,7 @@ public:
     }
   
   
-   FourVector &x_in()
+    FourVector &x_in()
     {
         return(x_in_);
     }
@@ -278,15 +280,15 @@ private:
 
 /*************************************************************************************************/
 
-class VertexBase
+class Vertex
 {
     
 public:
 
-  VertexBase() {x_in_.Set(0,0,0,0);}
-  VertexBase(double x, double y, double z, double t) {x_in_.Set(x,y,z,t);}
-  VertexBase(FourVector &x) {set_location(x);}  
-  virtual ~VertexBase();
+  Vertex() {x_in_.Set(0,0,0,0);}
+  Vertex(double x, double y, double z, double t) {x_in_.Set(x,y,z,t);}
+  Vertex(FourVector &x) {set_location(x);}  
+  virtual ~Vertex();
   
   void set_location(FourVector &x)
     {
@@ -299,7 +301,7 @@ public:
   }
 
   friend ostream &operator<<( ostream &output, 
-         VertexBase & vertex ) {
+         Vertex & vertex ) {
 
     output<<vertex.x_in().x()<<" "<<vertex.x_in().y()<<" "<<vertex.x_in().z()<<" "<<vertex.x_in().t();//<<endl;
     
@@ -312,16 +314,6 @@ private:
   
 };
 
-// include graph edges/node propbably no need to inherit from VertexBase ...
-class Vertex : public VertexBase
-{
-  
-public:
-  
-  Vertex() : VertexBase() {};
-  Vertex(FourVector &x) : VertexBase(x) {};
-  virtual ~Vertex();
-  
-};
 
+} // end namespace Jetscape
 #endif /* JetClass_hpp */

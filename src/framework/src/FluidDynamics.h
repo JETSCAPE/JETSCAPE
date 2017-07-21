@@ -8,9 +8,12 @@
 #ifndef FLUIDDYNAMICS_H
 #define FLUIDDYNAMICS_H
 
+#include "InitialState.h"
 #include "JetScapeModuleBase.h"
 #include "tinyxml2.h"
 #include "fluid_dynamics.h"
+
+namespace Jetscape {
 // in principle one class level too much ... think about and compress ...
 
 class FluidDynamics : public JetScapeModuleBase , public FluidDynamicsBase
@@ -27,7 +30,10 @@ class FluidDynamics : public JetScapeModuleBase , public FluidDynamicsBase
   virtual void Exec();
 
   tinyxml2::XMLElement* GetHydroXML() {return fd;}
- 
+
+  // add initial state shared pointer
+  std::shared_ptr<InitialState> ini;
+
   // slots for "jet" signals (will be obsolete ...)
   void UpdateEnergyDeposit(int t, double edop);
   void GetEnergyDensity(int t,double& edensity);
@@ -44,7 +50,9 @@ class FluidDynamics : public JetScapeModuleBase , public FluidDynamicsBase
   double eta;
   tinyxml2::XMLElement *fd;
   Parameter parameter_list;
-  
+
 };
+
+} // end namespace Jetscape
 
 #endif

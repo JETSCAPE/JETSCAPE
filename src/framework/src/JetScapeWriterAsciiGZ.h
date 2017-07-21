@@ -18,6 +18,8 @@
 
 #include "JetScapeWriter.h"
 
+namespace Jetscape {
+
 // Maybe a templeate for Ascii and AsciiGZ !? Or in general !???
 
 class JetScapeWriterAsciiGZ : public JetScapeWriter
@@ -47,5 +49,7 @@ class JetScapeWriterAsciiGZ : public JetScapeWriter
   //int m_precision; //!< Output precision
   
 };
+
+} // end namespace Jetscape
 
 #endif

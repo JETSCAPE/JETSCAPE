@@ -14,6 +14,8 @@
 
 using namespace std;
 
+namespace Jetscape {
+
 class FourVector
 {
 // the class of four vectors
@@ -188,4 +190,6 @@ class FourVector
 
 
 
+
+} // end namespace Jetscape
 #endif // end of FOUR_VECTOR class

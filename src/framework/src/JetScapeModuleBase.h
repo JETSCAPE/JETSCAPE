@@ -14,9 +14,11 @@
 #include "JetScapeTask.h"
 #include "sigslot.h"
 
-class JetScapeWriter;
-
 using namespace std;
+
+namespace Jetscape {
+
+class JetScapeWriter;
 
 class JetScapeModuleBase : public JetScapeTask , public sigslot::has_slots<sigslot::multi_threaded_local>
 {
@@ -45,5 +47,7 @@ class JetScapeModuleBase : public JetScapeTask , public sigslot::has_slots<sigsl
   static int current_event; 
   
 };
+
+} // end namespace Jetscape
 
 #endif
