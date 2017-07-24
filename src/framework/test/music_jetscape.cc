@@ -24,6 +24,8 @@ MPI_MUSIC::~MPI_MUSIC() {
 
 void MPI_MUSIC::initialize_hydro(Parameter parameter_list) {
     INFO << "Initialize MUSIC ...";
+    INFO << "initial trento dimension: "
+         << (ini->entropy_density_distribution_).size();
     VERBOSE(8);
     tinyxml2::XMLElement *para =
                     GetHydroXML()->FirstChildElement("MUSIC");
