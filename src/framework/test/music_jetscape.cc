@@ -56,7 +56,8 @@ void MPI_MUSIC::evolve_hydro() {
     VERBOSE(8);
     INFO << "Initialize MUSIC ...";
     std::vector<double> entropy_density = ini->entropy_density_distribution_;
-    music_hydro_ptr->initialize_hydro_from_vector(entropy_density);
+    double dx = ini->get_x_step();
+    music_hydro_ptr->initialize_hydro_from_vector(entropy_density, dx);
     hydro_status = INITIALIZED;
     if (hydro_status == INITIALIZED) {
         INFO << "running MUSIC ...";
