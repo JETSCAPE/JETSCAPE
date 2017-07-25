@@ -30,6 +30,9 @@
 #include "PGun.h"
 #include "JSPythia8.h"
 
+// Add initial state module for test
+#include "TrentoInitial.h"
+
 #include <chrono>
 #include <thread>
 
@@ -63,6 +66,9 @@ int main(int argc, char** argv)
   jetscape->SetId("primary");
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
+
+  auto trento = make_shared<TrentoInitial>();
+
   auto hydro = make_shared<Brick> ();
   //auto hydro = make_shared<GubserHydro> ();
   
@@ -92,6 +98,8 @@ int main(int argc, char** argv)
   //in proper "workflow" order (can be defined via xml and sorted if necessary)
   
   jetscape->Add(pGun);
+
+  jetscape->Add(trento);
 
    //Some modifications will be needed for reusing hydro events, so far
   //simple test hydros always executed "on the fly" ...

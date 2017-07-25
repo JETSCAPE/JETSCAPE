@@ -40,23 +40,20 @@ void HardProcess::Init()
  
   fd= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Hard" );
 
-  if (!fd)
-     {
-         WARN << "Not a valid JetScape XML Hard section file or no XML file loaded!";
-          exit(-1);
-     }
+  if (!fd) {
+      WARN << "Not a valid JetScape XML Hard section file or no XML file loaded!";
+      exit(-1);
+  }
   
   VERBOSE(8);
-  
-  InitTask();
 
   ini = JetScapeSignalManager::Instance()->GetInitialStatePointer().lock();
   if (!ini) {
-      WARN << "No initial state module, try: auto trento = make_shared<TrentoInitial>(); jetscape->add(trento);";
-  } else {
-      INFO << "length of nbc vector=" << ini->num_of_binary_collisions_.size();
+      WARN << "No initial state module, try: auto trento = make_shared<TrentoInitial>(); jetscape->Add(trento);";
   }
- 
+  
+  InitTask();
+
   JetScapeTask::InitTasks();
 }
 
