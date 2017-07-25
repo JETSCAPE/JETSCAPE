@@ -24,8 +24,6 @@ MPI_MUSIC::~MPI_MUSIC() {
 
 void MPI_MUSIC::initialize_hydro(Parameter parameter_list) {
     INFO << "Initialize MUSIC ...";
-    INFO << "initial trento dimension: "
-         << (ini->entropy_density_distribution_).size();
     VERBOSE(8);
     tinyxml2::XMLElement *para =
                     GetHydroXML()->FirstChildElement("MUSIC");
@@ -46,8 +44,8 @@ void MPI_MUSIC::initialize_hydro(Parameter parameter_list) {
     }
     cout << endl;
     music_hydro_ptr = new MUSIC(argc, argv);
-    music_hydro_ptr->initialize_hydro();
-    hydro_status = INITIALIZED;
+    //music_hydro_ptr->initialize_hydro();
+    //hydro_status = INITIALIZED;
 
     for (int i = 0; i < argc; i++) {
         delete[] argv[i];
@@ -58,6 +56,9 @@ void MPI_MUSIC::initialize_hydro(Parameter parameter_list) {
 
 void MPI_MUSIC::evolve_hydro() {
     VERBOSE(8);
+    std::vector<double> entropy_density = ini->entropy_density_distribution_;
+    music_hydro_ptr->initialize_hydro_from_vector(entropy_density);
+    hydro_status = INITIALIZED;
     if (hydro_status == INITIALIZED) {
         INFO << "running MUSIC ...";
         music_hydro_ptr->run_hydro();

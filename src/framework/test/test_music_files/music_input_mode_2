@@ -17,12 +17,13 @@ mode 2   # MUSIC running mode
 ###################################
 # parameters for initial conditions
 ###################################
-Initial_profile 3               # type of initial condition 
+Initial_profile 41              # type of initial condition 
                                 # 0: for Gubser flow test (future)
                                 # 1: Optical Glauber model
                                 # 3: MC-Glauber model
                                 # 8: Read in initial profile from a file 
                                 #    (e.g., IP-Glasma)
+                                # 41: Initial condition from the JETSCAPE
 initialize_with_entropy 0       # 0: with energy density 
                                 # 1: with entropy density
 
