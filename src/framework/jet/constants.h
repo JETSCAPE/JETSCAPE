@@ -12,7 +12,6 @@
 namespace Jetscape {
 
 
-
 // define the usual constants
 static double pi = 3.141592653589793 ;
 
@@ -66,7 +65,5 @@ static int did=1;
 static int sid=3;
 /*******************************************************************/
 
-
-
-} // end namespace Jetscape
+};
 #endif /* constants_h */
