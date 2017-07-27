@@ -348,7 +348,7 @@ void JetEnergyLoss::WriteTask(weak_ptr<JetScapeWriter> w)
     }
 
   //Own storage of graph structure, needs separate PartonShower reader ...
-  else if (pShower)
+  if (pShower)
     {
       w.lock()->WriteComment("Parton Shower in JetScape format to be used later by GTL graph:");
       
