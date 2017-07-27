@@ -13,6 +13,7 @@ set(_pythia8dirs
     $ENV{PYTHIA8}
     ${PYTHIA8_DIR}
     $ENV{PYTHIA8_DIR}
+    $ENV{PYTHIA8DIR}
     /usr
     /opt/pythia8)
 
