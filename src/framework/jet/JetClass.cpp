@@ -39,7 +39,7 @@ Parton::~Parton()
 //Make smarter later ...
 
 
-Parton::Parton (const Parton& srp)
+  Parton::Parton (const Parton& srp) : PseudoJet (srp)
 {
     pid_ = srp.pid_;
     pstat_ = srp.pstat_;
