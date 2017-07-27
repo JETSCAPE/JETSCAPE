@@ -238,6 +238,11 @@ void TrentoInitial::pre_defined(std::string stored_system,
       // Write the last element and a linebreak.
       entropy_density_distribution_.push_back(*iter);
     }
+
+    int nx = int(std::sqrt(entropy_density_distribution_.size()));
+    double xmax = nx * grid_step / 2;
+    set_ranges(xmax, xmax, 0.0);
+    set_steps(grid_step, grid_step, 0.0);
     compute_nbc();
 }
 
@@ -262,6 +267,12 @@ void TrentoInitial::user_defined(std::string projectile, std::string target,
       // Write the last element and a linebreak.
       entropy_density_distribution_.push_back(*iter);
     }
+
+    int nx = int(std::sqrt(entropy_density_distribution_.size()));
+    INFO << "nx = " << nx;
+    double xmax = nx * grid_step / 2;
+    set_ranges(xmax, xmax, 0.0);
+    set_steps(grid_step, grid_step, 0.0);
     compute_nbc();
 }
 

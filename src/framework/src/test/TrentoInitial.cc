@@ -23,6 +23,15 @@ TEST(JetscapeInitialTest, TEST_SAMPLE){
         EXPECT_EQ(ini.entropy_density_distribution_.size(), 10000);
         double mul = ini.info_.total_entropy;
         ASSERT_TRUE(mul >= stored_slow && mul <= stored_shigh);
+
+        EXPECT_EQ(ini.get_x_size(), 100);
+        EXPECT_EQ(ini.get_y_size(), 100);
+        EXPECT_EQ(ini.get_z_size(), 1);
+
+        auto idx = ini.coord_from_idx(150);
+        EXPECT_EQ(std::get<0>(idx), -10 + 50 * ini.get_x_step());
+        EXPECT_EQ(std::get<1>(idx), -10 + 1 * ini.get_y_step());
+        EXPECT_EQ(std::get<2>(idx), 0 * ini.get_z_step());
     }
 }
 
