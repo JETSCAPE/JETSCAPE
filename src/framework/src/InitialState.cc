@@ -60,4 +60,19 @@ void InitialState::Write(weak_ptr<JetScapeWriter> w){
     //w.lock()->Write(make_shared<Vertex>(initialVtx));
 }
 
+
+std::tuple<double, double, double> InitialState::coord_from_idx(int idx) {
+    int nx = get_x_size();
+    int ny = get_y_size();
+    int nz = get_z_size();
+
+    int page = idx / (nx * ny);
+    int row = (idx - page * nx * ny) / nx;
+    int col = idx - page * nx * ny - row * nx;
+
+    return std::make_tuple(-grid_max_x_ + col * grid_step_x_,
+                           -grid_max_y_ + row * grid_step_y_,
+                           -grid_max_z_ + page * grid_step_z_);
+}
+
 } // end namespace Jetscape
