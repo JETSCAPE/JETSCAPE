@@ -11,6 +11,7 @@ set (SOURCES
      brick_jetscape.cc
      hydro_file_jetscape.cc
      ElossModulesTest.cc
+     PythiaGun.cpp
      PGun.cc)
 
 if (music)

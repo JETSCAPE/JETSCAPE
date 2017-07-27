@@ -83,6 +83,14 @@ class InitialState : public JetScapeModuleBase {
   // stored order: for z { for y {for x } }
   std::vector<double> num_of_binary_collisions_;
 
+  // the above should be private. Only Adding getters for now to not break other people's code
+  /// initial state entropy density distribution for the given grids
+  inline std::vector<double> get_entropy_density_distribution() {return entropy_density_distribution_;};
+
+  /// one can sample jet production position from Ta * Tb
+  /// where Ta * Tb is the distribution of num_of_binary_collisions
+  inline std::vector<double> get_num_of_binary_collisions() {return num_of_binary_collisions_;};
+    
   // compute 3d coordinates (x, y, z) given the 1D index in vector
   std::tuple<double, double, double> coord_from_idx(int idx);
 
