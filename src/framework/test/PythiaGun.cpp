@@ -157,8 +157,8 @@ void PythiaGun::Exec()
       // Now generate values
       auto idx = dist(engine);
       auto coord = ini->coord_from_idx( idx );
-      xLoc[0] = get<0>( coord);
-      xLoc[1] = get<1>( coord);
+      xLoc[1] = get<0>( coord );
+      xLoc[2] = get<1>( coord );
     }
   }
     
@@ -170,9 +170,9 @@ void PythiaGun::Exec()
     if ( particle.status()==-23 ){
       // cout << "particle.id()=" << particle.id() << endl;
       VERBOSE(7)<<"Adding particle with pid = " << particle.id()
-		<<" at x=" << xLoc[0]
-		<<", y=" << xLoc[1]
-		<<", z=" << xLoc[2];
+		<<" at x=" << xLoc[1]
+		<<", y=" << xLoc[2]
+		<<", z=" << xLoc[3];
 
       AddParton(make_shared<Parton>(0, particle.id(),0,particle.pT(),particle.y(),particle.phi(),particle.e(),xLoc) );
     }
