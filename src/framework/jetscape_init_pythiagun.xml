@@ -56,7 +56,8 @@
    <!--Eloss Module ... -->
    <Eloss>
 
-     <deltaT>1</deltaT>
+     <deltaT>0.1</deltaT>
+     <formTime> -0.1</formTime>
      <maxT>10</maxT>
 
      <!-- Individual Eloss Modules run Eloss and Eloss Manager ... -->
