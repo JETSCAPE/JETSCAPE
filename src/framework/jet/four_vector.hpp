@@ -1,5 +1,8 @@
-// Four vector class
-// 
+/// Four vector class
+///
+/// Designed by Abhijit Majumder
+///
+
 
 
 #ifndef FOUR_VECTOR
@@ -14,6 +17,8 @@
 
 using namespace std;
 
+namespace Jetscape {
+
 class FourVector
 {
 // the class of four vectors
@@ -27,6 +32,9 @@ class FourVector
     {
         tv=xv=yv=zv=0.0;
     };
+    
+    FourVector(const FourVector& srv): xv(srv.xv) , yv(srv.yv), zv(srv.zv), tv(srv.tv)
+    {};  // copy constructor
     
     FourVector(double a[4])  // constructor with array input
     {
@@ -186,6 +194,6 @@ class FourVector
 };
 
 
-
+}; /// end of namespace Jetscape
 
 #endif // end of FOUR_VECTOR class

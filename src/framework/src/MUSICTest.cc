@@ -26,6 +26,7 @@
 // to be used to run Jetscape ...
 #include "ElossModulesTest.h"
 #include "music_jetscape.h"
+#include "TrentoInitial.h"
 #include "PGun.h"
 //#include "JSPythia8.h"
 
@@ -33,6 +34,8 @@
 #include <thread>
 
 using namespace std;
+
+using namespace Jetscape;
 
 // Forward declaration
 void Show();
@@ -59,6 +62,7 @@ int main(int argc, char** argv)
   auto jetscape = make_shared<JetScape>("./jetscape_init.xml",3);
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
+  auto trento = make_shared<TrentoInitial> ();
   auto hydro = make_shared<MPI_MUSIC> ();
   //auto hydro = make_shared<GubserHydro> ();
   
@@ -86,6 +90,8 @@ int main(int argc, char** argv)
 
   //Remark: For now modules have to be added
   //in proper "workflow" order (can be defined via xml and sorted if necessary)
+  
+  jetscape->Add(trento);
   
   jetscape->Add(pGun);
 

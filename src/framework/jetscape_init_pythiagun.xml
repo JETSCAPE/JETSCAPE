@@ -38,19 +38,26 @@
 
    <Hard>
 
-     <!-- Parton Gun test with fixed pT and fixed IS pos = 0 ... -->
-     <PGun>
-       <name>PGun</name>
-       <pT>100</pT>
-     </PGun>
-     
+     <!-- Pythia Gun test, currently with fixed IS pos = 0 -->
+     <!-- Sensible defaults are set in the class. ptHat etc. get their own field -->
+     <!-- Will try to provide a functionality to read in any command lines as well -->
+     <PythiaGun>
+       <name>PythiaGun</name>
+       <pTHatMin>20</pTHatMin>
+       <pTHatMax>25</pTHatMax>
+       <eCM>200</eCM>
+       <LinesToRead>
+	 HardQCD:all = on	 
+       </LinesToRead>
+     </PythiaGun>     
    </Hard>
    
    
    <!--Eloss Module ... -->
    <Eloss>
 
-     <deltaT>1</deltaT>
+     <deltaT>0.1</deltaT>
+     <formTime> -0.1</formTime>
      <maxT>10</maxT>
 
      <!-- Individual Eloss Modules run Eloss and Eloss Manager ... -->

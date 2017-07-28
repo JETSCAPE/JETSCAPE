@@ -16,6 +16,8 @@
 
 using namespace std;
 
+namespace Jetscape {
+
 JetScapeTask::JetScapeTask()
 {
   active_exec=true;
@@ -77,3 +79,5 @@ void JetScapeTask::Add(shared_ptr<JetScapeTask> m_tasks)
 {
   tasks.push_back(m_tasks);
 }
+
+} // end namespace Jetscape

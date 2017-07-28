@@ -25,6 +25,8 @@
 using namespace std;
 //using namespace fjcore;
 
+using namespace Jetscape;
+
 // -------------------------------------
 
 // Forward declaration
@@ -181,5 +183,6 @@ ostream & operator<<(ostream & ostr, const fjcore::PseudoJet & jet) {
   }
   return ostr;
 }
+
 
 //----------------------------------------------------------------------

@@ -11,10 +11,13 @@
 #include "JetEnergyLossManager.h"
 #include "FluidDynamics.h"
 #include "JetScapeBanner.h"
+#include "InitialState.h"
 
 #include<iostream>
 
 using namespace std;
+
+namespace Jetscape {
 
 JetScape::JetScape()
 {
@@ -84,6 +87,9 @@ void JetScape::SetPointers()
   
   for (auto it : GetTaskList())
     {
+      if (dynamic_pointer_cast<InitialState>(it))
+	JetScapeSignalManager::Instance()->SetInitialStatePointer(dynamic_pointer_cast<InitialState>(it));
+ 
       if (dynamic_pointer_cast<FluidDynamics>(it))
 	JetScapeSignalManager::Instance()->SetHydroPointer(dynamic_pointer_cast<FluidDynamics>(it));
   
@@ -138,3 +144,5 @@ void JetScape::Finish()
   // same as in Init() and Exec() ...
   JetScapeTask::FinishTasks(); //dummy so far ...
 }
+
+} // end namespace Jetscape

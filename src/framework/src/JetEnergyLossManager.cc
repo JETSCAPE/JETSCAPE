@@ -19,6 +19,8 @@
 
 using namespace std;
 
+namespace Jetscape {
+
 JetEnergyLossManager::JetEnergyLossManager()
 {
   SetId("JLossManager");
@@ -207,3 +209,5 @@ void JetEnergyLossManager::CreateSignalSlots()
   VERBOSE(8);
   JetScapeSignalManager::Instance()->PrintSentInPartonsSignalMap();
 }
+
+} // end namespace Jetscape

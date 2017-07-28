@@ -15,6 +15,8 @@
 
 #include "JetScapeWriter.h"
 
+namespace Jetscape {
+
 class JetScapeWriterAscii : public JetScapeWriter
 {
 
@@ -49,4 +51,8 @@ class JetScapeWriterAscii : public JetScapeWriter
   //int m_precision; //!< Output precision
   
 };
+
+
+} // end namespace Jetscape
+
 #endif

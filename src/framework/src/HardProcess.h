@@ -8,10 +8,13 @@
 #ifndef HARDPROCESS_H
 #define HARDPROCESS_H
 
+#include "InitialState.h"
 #include "JetScapeModuleBase.h"
 #include "tinyxml2.h"
 #include "JetClass.hpp"
 #include <vector>
+
+namespace Jetscape {
 
 class HardProcess : public JetScapeModuleBase 
 {
@@ -31,6 +34,9 @@ class HardProcess : public JetScapeModuleBase
   
   tinyxml2::XMLElement* GetHardXML() {return fd;}
 
+  // connect the InitialState module with hard process
+  std::shared_ptr<InitialState> ini;
+ 
   int GetNHardPartons() {return hp_list.size();}
   shared_ptr<Parton> GetPartonAt(int i) {return hp_list[i];}
   vector<shared_ptr<Parton>>& GetPartonList() {return hp_list;}
@@ -47,7 +53,10 @@ class HardProcess : public JetScapeModuleBase
   // Think of always using unique_ptr for any vector in jetscape framework !???
   // To be discussed ...
   vector<shared_ptr<Parton>> hp_list;
-  
+
+ 
 };
+
+} // end namespace Jetscape
 
 #endif

@@ -6,8 +6,8 @@
 // -----------------------------------------
 // License and Doxygen-like Documentation to be added ...
 
-#ifndef INITIAL_CONDITION_H
-#define INITIAL_CONDITION_H
+#ifndef TRENTO_INITIAL_H
+#define TRENTO_INITIAL_H
 
 #include <tuple>
 #include <memory>
@@ -20,35 +20,48 @@
 #include "JetScapeModuleBase.h"
 #include "tinyxml2.h"
 #include "Collision.h"
-
-using str = std::string;
+#include "InitialState.h"
+#include "JetScapeLogger.h"
+#include "JetScapeXML.h"
 
 using OptDesc = po::options_description;
 
 using namespace trento;
 
+namespace Jetscape {
+
+/**The output data format (from http://qcd.phy.duke.edu/trento/usage.html#output-options):
+ * The grid will always be a square N × N array, with N = ceil(2*max/step).
+ * So e.g. the default settings (max = 10 fm, step = 0.2 fm) imply a 100 × 100 grid.
+ * The ceiling function ensures that the number of steps is always rounded up,
+ * so e.g. given max = 10 fm and step 0.3 fm, the grid will be 67 × 67.
+ * In this case, the actual grid max will be marginally increased (max = nsteps*step/2).
+**/
+
 ////////////////////////// Trento Initial Condition Wrapper //////////////////////
-class JetScapeInitial{
+class TrentoInitial : public InitialState {
   public:
+    // Initialize from XML configuration
+    TrentoInitial();
+
     // get one random collision in centrality range 0-100%
-    JetScapeInitial(str projectile, str target,
+    void user_defined(std::string projectile, std::string target,
                     double cross_section, double grid_max,
                     double grid_step);
 
     // get one random collision in centrality for the given system
     // stored_system = "auau200", "pbpb2760" or "pbpb5020"
-    // centrality = "0-5", "5-10", "30-40" or any range "a-b"
-    JetScapeInitial(str stored_system, double centrality_low, double centrality_high,
+    // centrality_range = [centrality_min, centrality_max]
+    void pre_defined(std::string stored_system,
+                    double centrality_min, double centrality_max,
                     double grid_max, double grid_step);
 
-    ~JetScapeInitial();
+    ~TrentoInitial();
 
-    // sample jet production position from Ta * Tb
-    // where Ta * Tb is the distribution of num_of_binary collisions
-    // return (x, y) tuple
-    std::tuple<double, double> jet_production_position_();
-
-    std::vector<double> entropy_density_distribution_;
+    //void Init();
+    void Exec();
+    void Clear();
+    void InitTask();
 
     EventInfo info_;
 
@@ -58,11 +71,18 @@ class JetScapeInitial{
 
   private:
 
-    std::tuple<double, double> get_entropy_range_(str collision_system,
+    std::tuple<double, double> get_entropy_range_(std::string collision_system,
         double centrality_low, double centrality_high);
+
+    // compute number of binary collisions
+    void compute_nbc();
+
+    tinyxml2::XMLElement * trento_xml_;
 
     /// The output instance.
     // Output output_;
 };
+
+} // end namespace Jetscape
 
 #endif

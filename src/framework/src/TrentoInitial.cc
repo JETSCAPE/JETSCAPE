@@ -5,11 +5,14 @@
 // -----------------------------------------
 // License and Doxygen-like Documentation to be added ...
 
+#include <cstdlib>
 #include <sstream>
 #include <fstream>
 #include <boost/bind.hpp>
 #include <boost/tokenizer.hpp>
-#include "InitialCondition.h"
+#include "TrentoInitial.h"
+
+namespace Jetscape {
 
 // Helper functions for Collider ctor.
 namespace {
@@ -37,7 +40,7 @@ std::vector<std::string> tokenize(const std::string& input)
 }
 
 /// Auxiliary functions to create varmap from collision system
-VarMap create_varmap(str projectile, str target,
+VarMap create_varmap(std::string projectile, std::string target,
                 double cross_section, double grid_max, double grid_step)
 {
   std::string cmd;
@@ -156,63 +159,63 @@ VarMap create_varmap(str projectile, str target,
   return var_map;
 }
 
-void write_stream(std::ostream& os, int width,
-    int num, double impact_param, const Event& event) {
-  using std::fixed;
-  using std::setprecision;
-  using std::setw;
-  using std::scientific;
-
-  // Write a nicely-formatted line of event properties.
-  os << setprecision(10)
-     << setw(width)            << num
-     << setw(15) << fixed      << impact_param
-     << setw(5)                << event.npart()
-     << setw(18) << scientific << event.multiplicity()
-     << fixed;
-
-  for (const auto& ecc : event.eccentricity())
-    os << setw(14)             << ecc.second;
-
-  for (const auto& phi_n : event.participant_plane())
-    os << setw(14)             << phi_n.second;
-
-  // Write the mass center (x, y)
-  os << setw(14) << event.mass_center_index().first;
-  os << setw(14) << event.mass_center_index().second;
-
-  os << '\n';
-}
+//void write_stream(std::ostream& os, int width,
+//    int num, double impact_param, const Event& event) {
+//  using std::fixed;
+//  using std::setprecision;
+//  using std::setw;
+//  using std::scientific;
+//
+//  // Write a nicely-formatted line of event properties.
+//  os << setprecision(10)
+//     << setw(width)            << num
+//     << setw(15) << fixed      << impact_param
+//     << setw(5)                << event.npart()
+//     << setw(18) << scientific << event.multiplicity()
+//     << fixed;
+//
+//  for (const auto& ecc : event.eccentricity())
+//    os << setw(14)             << ecc.second;
+//
+//  for (const auto& phi_n : event.participant_plane())
+//    os << setw(14)             << phi_n.second;
+//
+//  // Write the mass center (x, y)
+//  os << setw(14) << event.mass_center_index().first;
+//  os << setw(14) << event.mass_center_index().second;
+//
+//  os << '\n';
+//}
 
 } // end unnamedspace
 
 
 // See header for explanation.
-JetScapeInitial::~JetScapeInitial() = default;
+TrentoInitial::~TrentoInitial() = default;
 
 // get one random collision in centrality for the given system
-// stored_system = "auau200", "pbpb2760" or "pbpb5020"
+// stored_system = "AuAu200", "PbPb2760" or "PbPb5020"
 // centrality = "0-5", "5-10", "30-40" or any range "a-b" for 0<=a<b<=100
-JetScapeInitial::JetScapeInitial(str stored_system,
+void TrentoInitial::pre_defined(std::string stored_system,
                     double centrality_low, double centrality_high,
                     double grid_max, double grid_step)
 {
     VarMap var_map{};
     if (stored_system == "auau200") {
-        str projectile = "Au";
-        str target = "Au";
+        std::string projectile = "Au";
+        std::string target = "Au";
         double cross_section = 4.23;
         var_map = create_varmap(projectile, target, cross_section,
                 grid_max, grid_step);
     } else if (stored_system == "pbpb2760") {
-        str projectile = "Pb";
-        str target = "Pb";
+        std::string projectile = "Pb";
+        std::string target = "Pb";
         double cross_section = 6.4;
         var_map = create_varmap(projectile, target, cross_section,
                 grid_max, grid_step);
     } else if (stored_system == "pbpb5020") {
-        str projectile = "Pb";
-        str target = "Pb";
+        std::string projectile = "Pb";
+        std::string target = "Pb";
         double cross_section = 7.0;
         var_map = create_varmap(projectile, target, cross_section,
                 grid_max, grid_step);
@@ -235,10 +238,16 @@ JetScapeInitial::JetScapeInitial(str stored_system,
       // Write the last element and a linebreak.
       entropy_density_distribution_.push_back(*iter);
     }
+
+    int nx = int(std::sqrt(entropy_density_distribution_.size()));
+    double xmax = nx * grid_step / 2;
+    set_ranges(xmax, xmax, 0.0);
+    set_steps(grid_step, grid_step, 0.0);
+    compute_nbc();
 }
 
 
-JetScapeInitial::JetScapeInitial(str projectile, str target,
+void TrentoInitial::user_defined(std::string projectile, std::string target,
                 double cross_section, double grid_max, double grid_step)
 {
     VarMap var_map = create_varmap(projectile, target, cross_section,
@@ -258,15 +267,66 @@ JetScapeInitial::JetScapeInitial(str projectile, str target,
       // Write the last element and a linebreak.
       entropy_density_distribution_.push_back(*iter);
     }
+
+    int nx = int(std::sqrt(entropy_density_distribution_.size()));
+    INFO << "nx = " << nx;
+    double xmax = nx * grid_step / 2;
+    set_ranges(xmax, xmax, 0.0);
+    set_steps(grid_step, grid_step, 0.0);
+    compute_nbc();
 }
 
+
+void TrentoInitial::InitTask() {
+    INFO << " : Create initial condition ";
+    trento_xml_ = xml_->FirstChildElement("Trento");
+}
+
+
+void TrentoInitial::Exec() {
+    INFO << " : Excute initial condition ";
+    if (!trento_xml_) {
+        INFO << " : Not a valid JetScape IS::Trento XML section in file!";
+        exit(-1);
+    } else {
+        // trento_xml_->Attribute("A", "B") checks whether the attribute "A" has value "B"
+        if ( trento_xml_->Attribute("use_module", "pre_defined") ) {
+            auto predef = trento_xml_->FirstChildElement("pre_defined");
+            std::string collision_system(predef->Attribute("collision_system"));
+            INFO << "collision_system=" << collision_system;
+            double centrality_min = std::atof(predef->Attribute("centrality_min"));
+            double centrality_max = std::atof(predef->Attribute("centrality_max"));
+            pre_defined(collision_system, centrality_min, centrality_max,
+                    get_x_max(), get_x_step());
+        } else if (trento_xml_->Attribute("use_module", "user_defined") ) {
+            auto usrdef = trento_xml_->FirstChildElement("user_defined");
+            std::string projectile(usrdef->Attribute("projectile"));
+            std::string target(usrdef->Attribute("target"));
+            // center of mass collision energy per pair of nucleon
+            double sqrts_NN = std::atof(usrdef->Attribute("sqrts"));
+            double cross_section = std::atof(usrdef->Attribute("cross_section"));
+            user_defined(projectile, target, cross_section, get_x_max(), get_x_step());
+        }
+    }
+}
+
+void TrentoInitial::Clear() {
+    INFO << " : Finish creating initial condition ";
+    entropy_density_distribution_.clear();
+    num_of_binary_collisions_.clear();
+}
+
+
+TrentoInitial::TrentoInitial() : InitialState() {
+    SetId("Trento");
+}
 
 /** Notice that this function assumes the total number of charged
  * particles is propotional to initial total entropy, this is true
  * for constant eta/s. this function returns the entropy range for
  * one given centrality class from reading a stored collision
  * system*/
-std::tuple<double, double> JetScapeInitial::get_entropy_range_(str collision_system,
+std::tuple<double, double> TrentoInitial::get_entropy_range_(std::string collision_system,
         double centrality_low, double centrality_high) {
     std::stringstream centrality_class_path;
     centrality_class_path << "data_table/trento_" << collision_system
@@ -316,4 +376,14 @@ std::tuple<double, double> JetScapeInitial::get_entropy_range_(str collision_sys
                           interp1d(centrality_low));
 }
 
+void TrentoInitial::compute_nbc() {
+    for ( const auto si : entropy_density_distribution_ ) {
+        auto si_squre = si * si;
+        // this works for IP-Glasma like initial condition
+        num_of_binary_collisions_.push_back(si_squre);
+    }
+}
 
+
+
+} // end namespace Jetscape

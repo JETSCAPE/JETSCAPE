@@ -10,6 +10,7 @@
 #ifndef JETSCAPESIGNALMANAGER_H
 #define JETSCAPESIGNALMANAGER_H
 
+#include "InitialState.h"
 #include "JetEnergyLoss.h"
 #include "JetEnergyLossManager.h"
 #include "FluidDynamics.h"
@@ -24,6 +25,8 @@
 using namespace sigslot;
 using namespace std;
 
+namespace Jetscape {
+
 class JetScapeSignalManager //: public sigslot::has_slots<sigslot::multi_threaded_local>
 {
   
@@ -31,6 +34,9 @@ class JetScapeSignalManager //: public sigslot::has_slots<sigslot::multi_threade
 
   static JetScapeSignalManager* Instance();
 
+  void SetInitialStatePointer(shared_ptr<InitialState> m_initial) {initial_state=m_initial;}
+  weak_ptr<InitialState> GetInitialStatePointer() {return initial_state;}
+ 
   void SetHydroPointer(shared_ptr<FluidDynamics> m_hydro) {hydro=m_hydro;}
   weak_ptr<FluidDynamics> GetHydroPointer() {return hydro;}
   
@@ -75,6 +81,7 @@ class JetScapeSignalManager //: public sigslot::has_slots<sigslot::multi_threade
   JetScapeSignalManager(JetScapeSignalManager const&) {};
   static JetScapeSignalManager* m_pInstance;
 
+  weak_ptr<InitialState> initial_state;
   weak_ptr<FluidDynamics> hydro;
   weak_ptr<JetEnergyLossManager> jloss;
   weak_ptr<HardProcess> hardp;
@@ -98,6 +105,8 @@ class JetScapeSignalManager //: public sigslot::has_slots<sigslot::multi_threade
   map<int,weak_ptr<JetEnergyLoss>> GetOutPartons_map;
   
 };
+
+} // end namespace Jetscape
 
 #endif
 

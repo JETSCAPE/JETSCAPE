@@ -17,6 +17,8 @@ using namespace std;
 
 #define MAGENTA "\033[35m"
 
+namespace Jetscape {
+
 HardProcess::HardProcess()
 {
   VERBOSE(8);
@@ -38,16 +40,20 @@ void HardProcess::Init()
  
   fd= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Hard" );
 
-  if (!fd)
-     {
-         WARN << "Not a valid JetScape XML Hard section file or no XML file loaded!";
-          exit(-1);
-     }
+  if (!fd) {
+      WARN << "Not a valid JetScape XML Hard section file or no XML file loaded!";
+      exit(-1);
+  }
   
   VERBOSE(8);
+
+  ini = JetScapeSignalManager::Instance()->GetInitialStatePointer().lock();
+  if (!ini) {
+      WARN << "No initial state module, try: auto trento = make_shared<TrentoInitial>(); jetscape->Add(trento);";
+  }
   
   InitTask();
-  
+
   JetScapeTask::InitTasks();
 }
 
@@ -77,3 +83,5 @@ void HardProcess::WriteTask(weak_ptr<JetScapeWriter> w)
   for (int i=0;i<hp_list.size();i++)
     w.lock()->Write(GetPartonAt(i));
 }
+
+} // end namespace Jetscape

@@ -12,6 +12,8 @@
 #include <iomanip>
 #include "helper.h"
 
+namespace Jetscape {
+
 node PartonShower::new_vertex(shared_ptr<Vertex> v)
  {
    node n=graph::new_node();
@@ -438,4 +440,6 @@ void PartonShower::SaveAsGraphML(string fName)
    g<<"</graphml>"<<endl;
 		       
   g.close();
+
+} // end namespace Jetscape
 }

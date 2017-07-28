@@ -8,6 +8,8 @@
 
 #include "./realtype.h"
 
+namespace Jetscape{
+
 /// any type with + and scale * overloaded can use this function
 template <class type>
 type linear_int(real x0, real x1, type y0, type y1, real x) {
@@ -71,5 +73,7 @@ type trilinear_int(real x0, real x1, real y0, real y1, real z0, real z1,
     }
     return temp;
 }
+
+} //end namespace Jetscape
 
 #endif  // SRC_LINEAR_INTERPOLATION_H_

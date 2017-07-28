@@ -13,6 +13,7 @@
 
 using namespace std;
 
+using namespace Jetscape;
 
 Brick::Brick() : FluidDynamics() {
     // initialize the parameter reader
@@ -34,8 +35,7 @@ void Brick::InitTask()
   VERBOSE(8);
   tinyxml2::XMLElement *brick=GetHydroXML()->FirstChildElement("Brick");
 
-  if (brick)
-    {
+  if (brick) {
       string s = brick->FirstChildElement( "name" )->GetText();
 
       DEBUG << s << " to be initilizied ...";
@@ -48,26 +48,23 @@ void Brick::InitTask()
       //Parameter parameter_list;
       GetParameterList().hydro_input_filename = (char*) "dummy"; //*(argv+1);
 
-    }
-  else
-    {
+    } else {
       WARN << " : Brick not properly initialized in XML file ...";
       exit(-1);
     }
-  
 }
 
 void Brick::initialize_hydro(Parameter parameter_list) {
   VERBOSE(8)<<parameter_list.hydro_input_filename;
-    hydro_status = INITIALIZED;
+
+  hydro_status = INITIALIZED;
 }
 
 
 void Brick::evolve_hydro() {
   VERBOSE(8);
-
+  INFO << "size of sd = " << ini->entropy_density_distribution_.size();
   hydro_status = FINISHED;
-	    
 }
 
 

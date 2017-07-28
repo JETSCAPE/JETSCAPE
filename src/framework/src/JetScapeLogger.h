@@ -52,6 +52,8 @@ using namespace std;
 #define VERBOSEPVERTEX(l,v) if (l<JetScapeLogger::Instance()->GetVerboseLevel()) JetScapeLogger::Instance()->VerboseVertex(l,v)<<__PRETTY_FUNCTION__<<" : "
 #define WARN JetScapeLogger::Instance()->Warn()<<__PRETTY_FUNCTION__<<" : "
 
+namespace Jetscape {
+
 
 // -------------------------------------------
 struct safe_ostream {
@@ -211,5 +213,7 @@ class JetScapeLogger
   
 };
 
-#endif
 
+} // end namespace Jetscape
+
+#endif

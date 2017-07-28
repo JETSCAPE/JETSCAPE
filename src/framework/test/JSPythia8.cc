@@ -1,6 +1,8 @@
 //Pythia8 Test ...
 #include "JSPythia8.h"
 
+using namespace Jetscape;
+
 JSPythia8::JSPythia8() : HardProcess() , Pythia()
 {
   SetId("JSPythia8");

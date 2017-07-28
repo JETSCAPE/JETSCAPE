@@ -11,6 +11,8 @@
 
 #include<iostream>
 
+namespace Jetscape {
+
 int JetScapeModuleBase::current_event=0;
 
 JetScapeModuleBase::JetScapeModuleBase()
@@ -36,3 +38,5 @@ void JetScapeModuleBase::Init()
       exit(-1);
     }
 }
+
+} // end namespace Jetscape

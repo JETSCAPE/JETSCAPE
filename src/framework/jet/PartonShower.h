@@ -16,6 +16,8 @@
 #include "JetClass.hpp"
 #include "JetScapeLogger.h"
 
+namespace Jetscape {
+
 // Think about best interface and what is truly needed, maybe even better
 // if no graph at all write a converter function/class and split parton in base
 // and after transformer class. TBD ...
@@ -94,4 +96,6 @@ private:
   //void FillPartonVec();
   
 };
+
+} // end namespace Jetscape
 #endif

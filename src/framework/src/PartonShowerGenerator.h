@@ -9,6 +9,8 @@
 #ifndef PARTONSHOWERGENERATOR_H
 #define PARTONSHOWERGENERATOR_H
 
+namespace Jetscape {
+
 class JetEnergyLoss;
 
 class PartonShowerGenerator
@@ -20,5 +22,9 @@ class PartonShowerGenerator
 
   virtual void DoShower(JetEnergyLoss &j);
 
+
 };
+
+} // end namespace Jetscape
+
 #endif

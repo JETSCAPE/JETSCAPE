@@ -9,6 +9,7 @@
 #ifndef constants_h
 #define constants_h
 
+namespace Jetscape {
 
 
 // define the usual constants
@@ -26,6 +27,9 @@ static double Nc = 3.0;
 
 static double Lambda_QCD = 0.5;
 // 0.4 is the value chosen in JETSET
+    
+static double fmToGeVinv = 5.0;
+/// < should be 1/0.197, but 5 helps in debugging. 
 
 static double mu = 0.722;
 
@@ -64,5 +68,5 @@ static int did=1;
 static int sid=3;
 /*******************************************************************/
 
-
+};
 #endif /* constants_h */

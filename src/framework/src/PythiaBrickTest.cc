@@ -27,8 +27,8 @@
 #include "ElossModulesTest.h"
 #include "brick_jetscape.h"
 #include "Gubser_hydro_jetscape.h"
-#include "PGun.h"
-#include "JSPythia8.h"
+#include "PythiaGun.hpp"
+// #include "JSPythia8.h"
 
 // Add initial state module for test
 #include "TrentoInitial.h"
@@ -62,13 +62,11 @@ int main(int argc, char** argv)
    
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",3);
+  auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",10);
   jetscape->SetId("primary");
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
-
   auto trento = make_shared<TrentoInitial>();
-
   auto hydro = make_shared<Brick> ();
   //auto hydro = make_shared<GubserHydro> ();
   
@@ -81,8 +79,7 @@ int main(int argc, char** argv)
   // This works ... (check with above logic ...)
   //jloss->SetActive(false);
 
-  auto pGun= make_shared<PGun> ();
-  //auto py8=make_shared<JSPythia8> ("/Users/kjung/pythia8233/xmldoc",false);
+  auto pythiaGun= make_shared<PythiaGun> ();
 
   // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
@@ -95,13 +92,11 @@ int main(int argc, char** argv)
   //jetscape->Add(py8);
 
   //Remark: For now modules have to be added
-  //in proper "workflow" order (can be defined via xml and sorted if necessary)
-  
-  jetscape->Add(pGun);
-
+  //in proper "workflow" order (can be defined via xml and sorted if necessary)  
   jetscape->Add(trento);
+  jetscape->Add(pythiaGun);
 
-   //Some modifications will be needed for reusing hydro events, so far
+  //Some modifications will be needed for reusing hydro events, so far
   //simple test hydros always executed "on the fly" ...
   jetscape->Add(hydro);
 
@@ -120,7 +115,7 @@ int main(int argc, char** argv)
 
   // Intialize all modules tasks
   jetscape->Init();
-
+  
   // Run JetScape with all task/modules as specified ...
   jetscape->Exec();
 
@@ -131,14 +126,24 @@ int main(int argc, char** argv)
   INFO_NICE<<"Finished!";
   cout<<endl;
 
-  // wait for 5s
-  //std::this_thread::sleep_for(std::chrono::milliseconds(500000));
-
   t = clock() - t;
   time(&end);
   printf ("CPU time: %f seconds.\n",((float)t)/CLOCKS_PER_SEC);
   printf ("Real time: %f seconds.\n",difftime(end,start));
   //printf ("Real time: %f seconds.\n",(start-end));
+
+  // Print pythia statistics
+  pythiaGun->stat();
+
+  // Demonstrate how to work with pythia statistics
+  Pythia8::Info& info = pythiaGun->info;
+  cout << " nTried    = " << info.nTried() << endl;
+  cout << " nSelected = " << info.nSelected()  << endl;
+  cout << " nAccepted = " << info.nAccepted()  << endl;
+  cout << " sigmaGen  = " <<   info.sigmaGen()  << endl;  
+  cout << " sigmaErr  = " <<   info.sigmaErr()  << endl;
+ 
+  
   return 0;
 }
 

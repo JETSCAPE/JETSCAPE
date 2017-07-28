@@ -11,6 +11,8 @@
 #include <boost/tokenizer.hpp>
 #include "nucleus.h"
 
+namespace Jetscape {
+
 // Helper functions for Collider ctor.
 namespace {
 // Create one nucleus from the configuration.
@@ -148,3 +150,5 @@ double JetScapeCollision::sample_impact_param() {
 
   return b;
 }
+
+} // end namespace Jetscape
