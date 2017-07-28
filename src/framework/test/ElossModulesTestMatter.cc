@@ -132,7 +132,6 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
           cout << " parton id = " << pIn[i].pid() << "  Energy = " << pIn[i].e() << " p * jet_v = " << pIn[i].pl() << endl;
           cout<< " the formation time of parton in fm = " << pIn[i].form_time()/fmToGeVinv ;
           cout<< " mean formation time and virtuality = " << pIn[i].mean_form_time()/fmToGeVinv << " , " << pIn[i].t() << endl;
-          pIn[i].x_in().Set(0,0,0,0);
           cout<< " location of parton formation = "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z() << endl;
           
       //    tQ2 = pIn[i].generate_t(mu, pIn[i].e()*pIn[i].e());
@@ -161,8 +160,8 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
           
           if (pIn[i].form_time()<0.0) /// A parton without a virtuality or formation time, must set...
           {
+              //pIn[i].x_in().Set(0,0,0,0);
               iSplit = 0;
-              
               if (pIn[i].pid()==gid)
               {
                   cout << " parton is a gluon " << endl ;
@@ -215,7 +214,7 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
               cout << " * Maximum allowed virtualty = " << pIn[i].e()*pIn[i].e() << "   Minimum Virtuality = " << QS << endl ;
               cout << endl;
               cout << " * Jet velocity = " << pIn[i].jet_v().comp(0) << " " << pIn[i].jet_v().comp(1) << "  " << pIn[i].jet_v().comp(2) << "  " << pIn[i].jet_v().comp(3) << endl ;
-            
+              cout<< " * reset location of parton formation = "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z() << endl;
               cout << " ***************************************************************************** " << endl;
               cout << endl;
               // end DEBUG:
@@ -351,13 +350,6 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
                   
                   double l_perp = std::sqrt(l_perp2); ///< the momentum transverse to the parent parton direction
                   
-                  double energy = ( z*pIn[i].nu() + (tQd1 + l_perp2)/(2.0*z*pIn[i].nu() ) )/std::sqrt(2.0) ;
-                  
-                  double plong =  ( z*pIn[i].nu() - (tQd1 + l_perp2)/(2.0*z*pIn[i].nu() ) )/std::sqrt(2.0) ;
-                  
-                  cout << " E, plong of d1 = " << energy << " " << plong << endl;
-
-                  
                   double parent_perp = std::sqrt( pow(pIn[i].p(1),2) + pow(pIn[i].p(2),2) + pow(pIn[i].p(3),2) - pow(pIn[i].pl(),2) );
                   
                   double mod_jet_v = std::sqrt( pow(pIn[i].jet_v().x(),2) +  pow(pIn[i].jet_v().y(),2) + pow(pIn[i].jet_v().z(),2) ) ;
@@ -370,17 +362,36 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
                   
                   double c_p = pIn[i].jet_v().x()/std::sqrt( pow( pIn[i].jet_v().x() , 2 ) + pow( pIn[i].jet_v().y(), 2 ) ) ;
                   
+                  double k_perp1[4];
+ 
+                  k_perp1[0] = 0.0;
+                  
+                  k_perp1[1] = z*(pIn[i].p(1) - pIn[i].pl()*s_t*c_p) + l_perp*std::cos(angle)*c_t*c_p - l_perp*std::sin(angle)*s_p ;
+                  
+                  k_perp1[2] = z*(pIn[i].p(2) - pIn[i].pl()*s_t*s_p) + l_perp*std::cos(angle)*c_t*s_p + l_perp*std::sin(angle)*c_p ;
+                  
+                  k_perp1[3] = z*(pIn[i].p(3) - pIn[i].pl()*c_t) - l_perp*std::cos(angle)*s_t ;
+                  
+                  double k_perp1_2 = pow(k_perp1[1],2)+pow(k_perp1[2],2)+pow(k_perp1[3],2);
+                  
+                  double energy = ( z*pIn[i].nu() + (tQd1 + k_perp1_2)/(2.0*z*pIn[i].nu() ) )/std::sqrt(2.0) ;
+                  double plong =  ( z*pIn[i].nu() - (tQd1 + k_perp1_2)/(2.0*z*pIn[i].nu() ) )/std::sqrt(2.0) ;
+                  
+                  cout << " E, plong of d1 , E^2 - plong^2 - k_perp1^2 = " << energy << " " << plong << "  " << energy*energy - plong*plong - k_perp1_2 << endl;
+                  
 
+                  
                   
                   double newp[4];
                   
                   newp[0] = energy;
-                  newp[1] = z*(pIn[i].p(1) - pIn[i].pl()*s_t*c_p) + plong*s_t*c_p + l_perp*std::cos(angle)*c_t*c_p - l_perp*std::sin(angle)*s_p ;
-                  newp[2] = z*(pIn[i].p(2) - pIn[i].pl()*s_t*s_p) + plong*s_t*s_p + l_perp*std::cos(angle)*c_t*s_p + l_perp*std::sin(angle)*c_p ;
-                  newp[3] = z*(pIn[i].p(3) - pIn[i].pl()*c_t) + plong*c_t - l_perp*std::cos(angle)*s_t ;
+                  newp[1] = plong*s_t*c_p + k_perp1[1];
+                  newp[2] = plong*s_t*s_p + k_perp1[2];
+                  newp[3] = plong*c_t + k_perp1[3];
                   
                   cout << " d1 momentum " << newp[0] << "  " << newp[1] << "  " << newp[2] << "  " << newp[3] << endl ;
-
+                  
+                  cout << " d1 mass^2 = " << pow(newp[0],2) - pow(newp[1],2) - pow(newp[2],2) - pow(newp[3],2) << endl;
 
                   double newx[4];
                   
@@ -399,33 +410,39 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
                   
                   pOut[iout].set_t(tQd1);
                   pOut[iout].set_mean_form_time();
-                  
                   double ft = generate_L (pOut[iout].mean_form_time());
-                  
                   pOut[iout].set_form_time(ft);
                   pOut[iout].set_jet_v(velocity);
-
-        
                   
-                  energy = ( (1.0-z)*pIn[i].nu() + (tQd2 + l_perp2)/( 2.0*(1.0-z)*pIn[i].nu() ) )/std::sqrt(2.0) ;
+                  double k_perp2[4];
                   
-                  plong =  ( (1.0-z)*pIn[i].nu() - (tQd2 + l_perp2)/( 2.0*(1.0-z)*pIn[i].nu() ) )/std::sqrt(2.0) ;
+                  k_perp2[0] = 0.0;
+                  
+                  k_perp2[1] = (1.0-z)*(pIn[i].p(1) - pIn[i].pl()*s_t*c_p) - l_perp*std::cos(angle)*c_t*c_p + l_perp*std::sin(angle)*s_p ;
+                  
+                  k_perp2[2] = (1.0-z)*(pIn[i].p(2) - pIn[i].pl()*s_t*s_p) - l_perp*std::cos(angle)*c_t*s_p - l_perp*std::sin(angle)*c_p ;
+                  
+                  k_perp2[3] = (1.0-z)*(pIn[i].p(3) - pIn[i].pl()*c_t) + l_perp*std::cos(angle)*s_t ;
+                  
+                  double k_perp2_2 = pow(k_perp2[1],2)+pow(k_perp2[2],2)+pow(k_perp2[3],2);
 
-                  cout << " E, plong of d2 = " << energy << " " << plong << endl;
+                  energy = ( (1.0-z)*pIn[i].nu() + (tQd2 + k_perp2_2)/( 2.0*(1.0-z)*pIn[i].nu() ) )/std::sqrt(2.0) ;
+                  plong =  ( (1.0-z)*pIn[i].nu() - (tQd2 + k_perp2_2)/( 2.0*(1.0-z)*pIn[i].nu() ) )/std::sqrt(2.0) ;
 
+                  cout << " E, plong of d2 , E^2 - plong^2 - k_perp^2 = " << energy << " " << plong << "  " << energy*energy - plong*plong - k_perp2_2 << endl;
                   
                   parent_perp = std::sqrt( pow(pIn[i].p(1),2) + pow(pIn[i].p(2),2) + pow(pIn[i].p(3),2) - pow(pIn[i].pl(),2) );
                   
                   mod_jet_v = std::sqrt( pow(pIn[i].jet_v().x(),2) +  pow(pIn[i].jet_v().y(),2) + pow(pIn[i].jet_v().z(),2) ) ;
                   
-                  
-    
                   newp[0] = energy;
-                  newp[1] = (1.0-z)*(pIn[i].p(1) - pIn[i].pl()*s_t*c_p) + plong*s_t*c_p - l_perp*std::cos(angle)*c_t*c_p + l_perp*std::sin(angle)*s_p ;
-                  newp[2] = (1.0-z)*(pIn[i].p(2) - pIn[i].pl()*s_t*s_p) + plong*s_t*s_p - l_perp*std::cos(angle)*c_t*s_p - l_perp*std::sin(angle)*c_p ;
-                  newp[3] = (1.0-z)*(pIn[i].p(3) - pIn[i].pl()*c_t) + plong*c_t + l_perp*std::cos(angle)*s_t ;
+                  newp[1] = plong*s_t*c_p + k_perp2[1] ;
+                  newp[2] = plong*s_t*s_p + k_perp2[2] ;
+                  newp[3] = plong*c_t + k_perp2[3] ;
                   
                   cout << " d2 momentum " << newp[0] << "  " << newp[1] << "  " << newp[2] << "  " << newp[3] << endl ;
+
+                  cout << " d2 mass^2 = " << pow(newp[0],2) - pow(newp[1],2) - pow(newp[2],2) - pow(newp[3],2) << endl;
 
                   
                   newx[0] = Time + deltaTime ;
@@ -440,6 +457,7 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
                   iout = pOut.size()-1 ;
                   
                   cout << "  created a new parton from split with iout = " << iout << endl;
+                  cout << endl;
 
                   pOut[iout].set_t(tQd2);
                   pOut[iout].set_mean_form_time();
