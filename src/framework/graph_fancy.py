@@ -5,7 +5,7 @@ from pylab import *
 
 print 'Graph-tool test program'
 
-g = load_graph("~/JetScape/framework.cmake/my_test.graphml")
+g = load_graph("./my_test.graphml")
 
 print 'Graph is directed = %s '%(g.is_directed())
 print 'my_test.graphml loaded!'
