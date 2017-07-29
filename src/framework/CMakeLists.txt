@@ -180,6 +180,10 @@ if (music)
         target_link_libraries(MUSICTest ${MPI_LIBRARIES} ${GSL_LIBRARIES})
         target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest hydroFromFile music_lib)
         target_link_libraries(MUSICTest JetScape JetScapeHydro JetScapeTest music_lib)
+        file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/EOS)
+        file(COPY ./3rdparty/music/EOS/ DESTINATION ${CMAKE_BINARY_DIR}/EOS)
+        file(COPY ./test/test_music_files/music_input_mode_2
+             DESTINATION ${CMAKE_BINARY_DIR}/)
     endif()
 endif (music)
 
