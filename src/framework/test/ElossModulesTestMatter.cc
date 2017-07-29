@@ -155,6 +155,8 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
 
           length = 5.0*fmToGeVinv; /// length in GeV-1 will have to changed for hydro
           
+          cout << " Length = " << length << endl;
+          
           zeta = ( xStart[0] + std::sqrt( xStart[1]*xStart[1] + xStart[2]*xStart[2] + xStart[3]*xStart[3] )  )/std::sqrt(2);
           int pid = pIn[i].pid();
           
