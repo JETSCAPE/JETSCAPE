@@ -89,7 +89,7 @@ void Matter::WriteTask(weak_ptr<JetScapeWriter> w)
 //void Matter::DoEnergyLoss(double deltaT, double Q2, const vector<Parton>& pIn, vector<Parton>& pOut)
 void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<Parton>& pOut)
 {
-  
+  // length=0; return;
     //DEBUG:
     //cout<<" -----> "<<*GetShowerInitiatingParton()<<endl;
     double z=0.5;
@@ -471,12 +471,12 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
               }
               else
               {
-                  pOut.push_back(pIn[i]);
+		// pOut.push_back(pIn[i]);
               }
           }
           else
           {
-              pOut.push_back(pIn[i]);
+	    // pOut.push_back(pIn[i]);
           }
           
           
