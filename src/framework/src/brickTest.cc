@@ -24,7 +24,7 @@
 
 // User modules derived from jetscape framework clasess
 // to be used to run Jetscape ...
-#include "ElossModulesTest.h"
+#include "ElossModulesTestMatter.h"
 #include "brick_jetscape.h"
 #include "Gubser_hydro_jetscape.h"
 #include "PGun.h"

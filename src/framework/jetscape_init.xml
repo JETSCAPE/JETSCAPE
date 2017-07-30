@@ -112,7 +112,7 @@
      <!-- MUSIC ... -->
      <MUSIC>
          <name>MUSIC</name>
-         <MUSIC_input_file>test/test_music_files/music_input_mode_2</MUSIC_input_file>
+         <MUSIC_input_file>music_input_mode_2</MUSIC_input_file>
      </MUSIC>
      
    </Hydro>

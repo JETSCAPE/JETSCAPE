@@ -64,7 +64,7 @@ void Matter::Init()
       double m_qhat=-99.99;
       matter->FirstChildElement("qhat")->QueryDoubleText(&m_qhat);
       SetQhat(m_qhat);
-        qhat = GetQhat() ;
+        qhat = GetQhat()/fmToGeVinv ;
       DEBUG  << s << " with qhat = "<<GetQhat();
         
       
@@ -89,7 +89,7 @@ void Matter::WriteTask(weak_ptr<JetScapeWriter> w)
 //void Matter::DoEnergyLoss(double deltaT, double Q2, const vector<Parton>& pIn, vector<Parton>& pOut)
 void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<Parton>& pOut)
 {
-  
+  // length=0; return;
     //DEBUG:
     //cout<<" -----> "<<*GetShowerInitiatingParton()<<endl;
     double z=0.5;
@@ -130,8 +130,9 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
           
    //       cout << " pIn size = " << pIn.size() << endl;
           cout << " parton id = " << pIn[i].pid() << "  Energy = " << pIn[i].e() << " p * jet_v = " << pIn[i].pl() << endl;
+          cout << " qhat = " << qhat << endl;
           cout<< " the formation time of parton in fm = " << pIn[i].form_time()/fmToGeVinv ;
-          cout<< " mean formation time and virtuality = " << pIn[i].mean_form_time()/fmToGeVinv << " , " << pIn[i].t() << endl;
+  //      cout<< " mean formation time and virtuality = " << pIn[i].mean_form_time()/fmToGeVinv << " , " << pIn[i].t() << endl;
           cout<< " location of parton formation = "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z() << endl;
           
       //    tQ2 = pIn[i].generate_t(mu, pIn[i].e()*pIn[i].e());
@@ -154,6 +155,8 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
           }
 
           length = 5.0*fmToGeVinv; /// length in GeV-1 will have to changed for hydro
+          
+          cout << " Length = " << length << endl;
           
           zeta = ( xStart[0] + std::sqrt( xStart[1]*xStart[1] + xStart[2]*xStart[2] + xStart[3]*xStart[3] )  )/std::sqrt(2);
           int pid = pIn[i].pid();
@@ -471,12 +474,12 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
               }
               else
               {
-                  pOut.push_back(pIn[i]);
+		// pOut.push_back(pIn[i]);
               }
           }
           else
           {
-              pOut.push_back(pIn[i]);
+	    // pOut.push_back(pIn[i]);
           }
           
           
