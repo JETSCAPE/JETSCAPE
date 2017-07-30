@@ -64,7 +64,7 @@ void Matter::Init()
       double m_qhat=-99.99;
       matter->FirstChildElement("qhat")->QueryDoubleText(&m_qhat);
       SetQhat(m_qhat);
-        qhat = GetQhat() ;
+        qhat = GetQhat()/fmToGeVinv ;
       DEBUG  << s << " with qhat = "<<GetQhat();
         
       
@@ -130,8 +130,9 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
           
    //       cout << " pIn size = " << pIn.size() << endl;
           cout << " parton id = " << pIn[i].pid() << "  Energy = " << pIn[i].e() << " p * jet_v = " << pIn[i].pl() << endl;
+          cout << " qhat = " << qhat << endl;
           cout<< " the formation time of parton in fm = " << pIn[i].form_time()/fmToGeVinv ;
-          cout<< " mean formation time and virtuality = " << pIn[i].mean_form_time()/fmToGeVinv << " , " << pIn[i].t() << endl;
+  //      cout<< " mean formation time and virtuality = " << pIn[i].mean_form_time()/fmToGeVinv << " , " << pIn[i].t() << endl;
           cout<< " location of parton formation = "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z() << endl;
           
       //    tQ2 = pIn[i].generate_t(mu, pIn[i].e()*pIn[i].e());
