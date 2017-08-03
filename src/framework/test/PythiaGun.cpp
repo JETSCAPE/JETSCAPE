@@ -70,7 +70,7 @@ void PythiaGun::InitTask()
   readString ( numbf.str() );
   
   // random seed
-  // xml limits us to unsigned int :-/
+  // xml limits us to unsigned int :-/ -- but so does 32 bits Mersenne Twist
   tinyxml2::XMLElement *RandomXmlDescription=JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Random" );
   readString("Random:setSeed = on");
   numbi.str("Random:seed = ");
