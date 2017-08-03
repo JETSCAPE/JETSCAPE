@@ -33,9 +33,11 @@
 
 #include<iostream>
 #include<atomic>
+#include<memory>
 #include<random>
+#include<thread>
 
- using namespace std;
+using namespace std;
 
 namespace Jetscape {
 
@@ -53,20 +55,30 @@ namespace Jetscape {
     /// But for now keep it simple
     int RegisterTask();
 
+    /// Initialize random engine functionality from the XML file
+    static void ReadSeedFromXML();
+
     /// Return a handle to a mersenne twister
     /// Usually this should be just one shared by everybody
-    /// (todo: what about threads?)
     /// but if reproducible seeds are requested,
     /// every task gets their own
+    shared_ptr<std::mt19937> get_mt19937_generator( int TaskId );
   
+  protected:
+    static bool one_generator_per_task_;
+    
   private:
 
-  JetScapeTaskSupport(): CurrentTaskNumber(0) {};
-    // JetScapeTaskSupport(JetScapeTaskSupport const&) {};
-    static JetScapeTaskSupport* m_pInstance;
+    JetScapeTaskSupport() : current_task_number_(0) {};
 
-    atomic_int CurrentTaskNumber;
-  
+    static JetScapeTaskSupport* m_pInstance;
+    
+    atomic_int current_task_number_;
+    static unsigned int random_seed_;
+    static bool initialized_;
+    
+    thread_local static shared_ptr<std::mt19937> one_for_all_;
+    
   };
 
 } // end namespace Jetscape
