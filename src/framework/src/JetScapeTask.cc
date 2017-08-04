@@ -30,7 +30,7 @@ JetScapeTask::JetScapeTask()
 JetScapeTask::~JetScapeTask()
 {
   VERBOSE(9);
-  DEBUG << "Deleting task with id=" << id << " and TaskNumber= " << get_my_task_number();
+  DEBUG << "Deleting task with id=" << GetId() << " and TaskNumber= " << get_my_task_number();
 }
 
 void JetScapeTask::Init()

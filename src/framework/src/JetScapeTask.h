@@ -57,7 +57,7 @@ class JetScapeTask
 
   virtual void Add(shared_ptr<JetScapeTask> m_tasks);
   
-  virtual inline int get_my_task_number() final {return my_task_number_;} ;
+  virtual const inline int get_my_task_number() const {return my_task_number_;} ;
 
   const vector<shared_ptr<JetScapeTask>> GetTaskList() const {return tasks;}
   shared_ptr<JetScapeTask> GetTaskAt(int i) {return tasks.at(i);}
