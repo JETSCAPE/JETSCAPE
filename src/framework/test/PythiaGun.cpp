@@ -146,11 +146,12 @@ void PythiaGun::Exec()
     xLoc[i] = 0.0;
   };
 
-  // Roll for a starting point
-  // See: https://stackoverflow.com/questions/15039688/random-generator-from-vector-with-probability-distribution-in-c
-  std::random_device device;
-  std::mt19937 engine(device()); // Seed the random number engine
+  // // Roll for a starting point
+  // // See: https://stackoverflow.com/questions/15039688/random-generator-from-vector-with-probability-distribution-in-c
+  // std::random_device device;
+  // std::mt19937 engine(device()); // Seed the random number engine
 
+  
   if (!ini) {
       WARN << "No initial state module, setting the starting location to 0. Make sure to add e.g. trento before PythiaGun.";
   } else {
@@ -161,7 +162,7 @@ void PythiaGun::Exec()
       std::discrete_distribution<> dist( begin(num_bin_coll),end(num_bin_coll) ); // Create the distribution
     
       // Now generate values
-      auto idx = dist(engine);
+      auto idx = dist( *get_mt19937_generator() );
       auto coord = ini->coord_from_idx( idx );
       xLoc[1] = get<0>( coord );
       xLoc[2] = get<1>( coord );
