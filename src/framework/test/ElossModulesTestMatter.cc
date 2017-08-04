@@ -30,13 +30,7 @@ using namespace Jetscape;
 
 const double QS = 1.0 ;
 
-
-
-// quick and dirty fix ...
-default_random_engine generator;
-uniform_real_distribution<double> distribution(0.0,1.0);
-
-Matter::Matter() 
+Matter::Matter()
 {
   SetId("Matter");
   VERBOSE(8);
@@ -45,6 +39,12 @@ Matter::Matter()
 Matter::~Matter()
 {
   VERBOSE(8);
+  // // DEBUG ONLY
+  // if ( my_file_ ){
+  //   my_file_->close();
+  //   delete my_file_; my_file_=0;
+  // }
+
 }
 
 void Matter::Init()
@@ -55,25 +55,28 @@ void Matter::Init()
   tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );  
   tinyxml2::XMLElement *matter=eloss->FirstChildElement("Matter");
  
-  if (matter)
-    {   
+  if (matter) {   
       string s = matter->FirstChildElement( "name" )->GetText();
-    
-      DEBUG << s << " to be initilizied ...";
+      DEBUG << s << " to be initializied ...";
 
       double m_qhat=-99.99;
       matter->FirstChildElement("qhat")->QueryDoubleText(&m_qhat);
       SetQhat(m_qhat);
-        qhat = GetQhat()/fmToGeVinv ;
+      qhat = GetQhat()/fmToGeVinv ;
       DEBUG  << s << " with qhat = "<<GetQhat();
-        
       
     }
-  else
-    {
-      WARN << " : Matter not properly initialized in XML file ...";
-      exit(-1);
-    }
+  else {
+    WARN << " : Matter not properly initialized in XML file ...";
+    throw std::runtime_error("Matter not properly initialized in XML file ...");
+  }
+
+  // Initialize random number distribution
+  ZeroOneDistribution = uniform_real_distribution<double> { 0.0, 1.0 };
+  // DEBUG ONLY
+  stringstream fname;
+  fname<<"matter_" << get_my_task_number()<<".txt";
+  my_file_ = new ofstream(fname.str());
 }
 
 
@@ -89,6 +92,10 @@ void Matter::WriteTask(weak_ptr<JetScapeWriter> w)
 //void Matter::DoEnergyLoss(double deltaT, double Q2, const vector<Parton>& pIn, vector<Parton>& pOut)
 void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<Parton>& pOut)
 {
+  //cout << "I'm Matter! " << "  " << ZeroOneDistribution( *get_mt19937_generator()) << endl;
+  *my_file_ << "I'm Matter! my id= " << get_my_task_number() << "  " << ZeroOneDistribution(  *get_mt19937_generator() ) << endl;
+  return;
+							      
   // length=0; return;
     //DEBUG:
     //cout<<" -----> "<<*GetShowerInitiatingParton()<<endl;
@@ -119,7 +126,7 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
       //cout<<" ---> "<<pIn.size()<<endl;
       for (int i=0;i<pIn.size();i++)
       {
-       //rNum=distribution(generator);
+       //rNum=ZeroOneDistribution(*get_mt19937_generator());
 	  //DEBUG:
 	  //cout<<i<<" "<<rNum<<endl;
 
@@ -273,13 +280,15 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
                   
                       double ratio = val1/(val1+val2);
                   
-                      double r = double(random())/ (maxN );
+                      // double r = double(random())/ (maxN );
+		      double r = ZeroOneDistribution(*get_mt19937_generator());
                   //            r = mtrand1();
                   
                       if (r>ratio)
                       {
                       
-                          double r2 = double(random())/maxN;
+			// double r2 = double(random())/maxN;
+			double r2 = ZeroOneDistribution(*get_mt19937_generator());
                       //                r2 = mtrand1();
                       
                           if (r2>0.6666)
@@ -529,7 +538,8 @@ double Matter::generate_angle()
 {
     double ang, r, blurb;
     
-    r = double(random())/ (maxN );
+    // r = double(random())/ (maxN );
+    r = ZeroOneDistribution(*get_mt19937_generator());
     //    r = mtrand1();
     
 //    cout << " r = " << r << endl;
@@ -547,14 +557,15 @@ double Matter::generate_vac_t(int p_id, double nu, double t0, double t, double l
     double r,z,ratio,diff,scale,t_low, t_hi, t_mid, numer, denom, test ;
     
     
-    r = double(random())/ (maxN );
+    // r = double(random())/ (maxN );
+    r = ZeroOneDistribution(*get_mt19937_generator());
     //        r = mtrand1();
     
     
     if ((r>=1.0)||(r<=0.0))
     {
-        cout << " error in random number in t generator = " << r << endl;
-        cin >> r ;
+      cout << " error in random number in t *get_mt19937_generator() = " << r << endl;
+      cin >> r ;
     }
     
     ratio = 1.0 ;
@@ -682,12 +693,13 @@ double  Matter::generate_vac_z(int p_id, double t0, double t, double loc_b, doub
     
     //	while (r<approx)
     //	{
-    r = double(random())/ (maxN );
+    // r = double(random())/ (maxN );
+    r = ZeroOneDistribution(*get_mt19937_generator());
     //		r = mtrand1();
     
     if ((r>1)||(r<0))
     {
-        cout << " error in random number in z generator = " << r << endl;
+        cout << " error in random number in z *get_mt19937_generator() = " << r << endl;
         cin >> r ;
     }
     //	}
@@ -780,12 +792,13 @@ double Matter::generate_L(double form_time)
 {
     double r, x_low, x_high , x , diff , span, val, arg, norm ;
     
-    r = double(random())/ (maxN );
+    // r = double(random())/ (maxN );
+    r = ZeroOneDistribution(*get_mt19937_generator());
     //    r = mtrand1();
     
     if ((r>1)||(r<0))
     {
-        cout << " error in random number in z generator = " << r << endl;
+        cout << " error in random number in z *get_mt19937_generator() = " << r << endl;
         cin >> r ;
     }
     
@@ -1492,16 +1505,33 @@ Martini::Martini()
 Martini::~Martini()
 {
   VERBOSE(8);
+  // // DEBUG ONLY
+  // if ( my_file_ ){
+  //   my_file_->close();
+  //   delete my_file_; my_file_=0;
+  // }
+
 }
 
 void Martini::Init()
 {
   INFO<<"Intialize Martini ...";
+
+  ZeroOneDistribution = uniform_real_distribution<double> { 0.0, 1.0 };
+
+  // DEBUG ONLY
+  stringstream fname;
+  fname<<"martini_" << get_my_task_number()<<".txt";
+  my_file_ = new ofstream(fname.str());
+
 }
 
 //void Martini::DoEnergyLoss(double deltaT, double Q2, const vector<Parton>& pIn, vector<Parton>& pOut)
 void Martini::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<Parton>& pOut)
 {
+  *my_file_ << "I'm Martini! my id= " << get_my_task_number() << "  " << ZeroOneDistribution( *get_mt19937_generator()) << endl;
+  return;
+
   if (Q2<=QS)
     VERBOSESHOWER(8)<< MAGENTA << "SentInPartons Signal received : "<<deltaT<<" "<<Q2<<" "<<&pIn;
 }
