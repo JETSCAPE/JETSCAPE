@@ -39,12 +39,6 @@ Matter::Matter()
 Matter::~Matter()
 {
   VERBOSE(8);
-  // // DEBUG ONLY
-  // if ( my_file_ ){
-  //   my_file_->close();
-  //   delete my_file_; my_file_=0;
-  // }
-
 }
 
 void Matter::Init()
@@ -73,10 +67,6 @@ void Matter::Init()
 
   // Initialize random number distribution
   ZeroOneDistribution = uniform_real_distribution<double> { 0.0, 1.0 };
-  // DEBUG ONLY
-  stringstream fname;
-  fname<<"matter_" << get_my_task_number()<<".txt";
-  my_file_ = new ofstream(fname.str());
 }
 
 
@@ -92,12 +82,8 @@ void Matter::WriteTask(weak_ptr<JetScapeWriter> w)
 //void Matter::DoEnergyLoss(double deltaT, double Q2, const vector<Parton>& pIn, vector<Parton>& pOut)
 void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<Parton>& pOut)
 {
-  //cout << "I'm Matter! " << "  " << ZeroOneDistribution( *get_mt19937_generator()) << endl;
-  *my_file_ << "I'm Matter! my id= " << get_my_task_number() << "  " << ZeroOneDistribution(  *get_mt19937_generator() ) << endl;
-  return;
-							      
-  // length=0; return;
-    //DEBUG:
+
+  //DEBUG:
     //cout<<" -----> "<<*GetShowerInitiatingParton()<<endl;
     double z=0.5;
     double blurb,zeta,tQ2 ;
@@ -1505,11 +1491,6 @@ Martini::Martini()
 Martini::~Martini()
 {
   VERBOSE(8);
-  // // DEBUG ONLY
-  // if ( my_file_ ){
-  //   my_file_->close();
-  //   delete my_file_; my_file_=0;
-  // }
 
 }
 
@@ -1518,19 +1499,13 @@ void Martini::Init()
   INFO<<"Intialize Martini ...";
 
   ZeroOneDistribution = uniform_real_distribution<double> { 0.0, 1.0 };
-
-  // DEBUG ONLY
-  stringstream fname;
-  fname<<"martini_" << get_my_task_number()<<".txt";
-  my_file_ = new ofstream(fname.str());
-
 }
 
 //void Martini::DoEnergyLoss(double deltaT, double Q2, const vector<Parton>& pIn, vector<Parton>& pOut)
 void Martini::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<Parton>& pOut)
 {
-  *my_file_ << "I'm Martini! my id= " << get_my_task_number() << "  " << ZeroOneDistribution( *get_mt19937_generator()) << endl;
-  return;
+  // *my_file_ << "I'm Martini! my id= " << get_my_task_number() << "  " << ZeroOneDistribution( *get_mt19937_generator()) << endl;
+  // return;
 
   if (Q2<=QS)
     VERBOSESHOWER(8)<< MAGENTA << "SentInPartons Signal received : "<<deltaT<<" "<<Q2<<" "<<&pIn;

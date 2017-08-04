@@ -13,10 +13,6 @@
 
 #include "JetEnergyLossModule.h"
 
-// DEBUG ONLY
-#include <fstream>
-#include <sstream>
-
 using namespace Jetscape;
 
 class Matter : public JetEnergyLossModule<Matter> //, public std::enable_shared_from_this<Matter>
@@ -58,10 +54,6 @@ class Matter : public JetEnergyLossModule<Matter> //, public std::enable_shared_
   
  protected:
   uniform_real_distribution<double> ZeroOneDistribution;
-
-  // DEBUG ONLY  
-  ofstream* my_file_;
-
   
 };
 
@@ -81,9 +73,6 @@ class Martini : public JetEnergyLossModule<Martini> //, public std::enable_share
   
  protected:
   uniform_real_distribution<double> ZeroOneDistribution;
-
-  // DEBUG ONLY  
-  ofstream* my_file_;
 
 };
 
