@@ -77,7 +77,7 @@ namespace Jetscape {
     static unsigned int random_seed_;
     static bool initialized_;
     
-    thread_local static shared_ptr<std::mt19937> one_for_all_;
+    static shared_ptr<std::mt19937> one_for_all_;
     
   };
 
