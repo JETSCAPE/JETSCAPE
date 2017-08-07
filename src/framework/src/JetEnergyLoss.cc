@@ -182,31 +182,19 @@ void JetEnergyLoss::DoShower()
       
       for (int i=0;i<pIn.size();i++)
 	{
-	  //DEBUG:
-	  //cout<<currentTime<<" pIn size = "<<pIn.size()<<" "<<i<<" "<<pIn[i].pt()<<endl;
 
-	  pInTemp.push_back(pIn[i]);
 	  pInTempModule.push_back(pIn[i]);
-	  
 	  SentInPartons(currentTime,pIn[i].pt(),pInTempModule,pOutTemp);
+	  pInTemp.push_back(pInTempModule[0]);
 
 	  vStart=vStartVec[i];
 	  vStartVecTemp.push_back(vStart);
 
-	  //DEBUG:
-	  //cout<<vStart<<endl;
-	  // --------------------------------------------
 	  for (int k=0;k<pOutTemp.size();k++)
 	    {
 	      vEnd=pShower->new_vertex(make_shared<Vertex>(0,0,0,currentTime));	    	      
 	      pShower->new_parton(vStart,vEnd,make_shared<Parton>(pOutTemp[k]));	     
-	      	     
-	      //DEBUG:
-	      //cout<<vStart<<"-->"<<vEnd<<endl;
-	      //cout<<pOutTemp[k];
-	      //cout<<vStartVec.size()<<endl;
-	      //cout<<pInTempModule.size()<<endl;
-	      
+
 	      vStartVecOut.push_back(vEnd);
 	      pOut.push_back(pOutTemp[k]);
 
@@ -301,9 +289,9 @@ void JetEnergyLoss::Exec()
        pShower->PrintEdges();
 
        weak_ptr<HardProcess> hproc = JetScapeSignalManager::Instance()->GetHardProcessPointer();
-       for(unsigned int ipart=0; ipart<pShower->GetNumberOfPartons(); ipart++){ 
-           //   Uncomment to dump the whole parton shower into the parton container
-           //           hproc.lock()->AddParton(pShower->GetPartonAt(ipart));
+       for(unsigned int ipart=0; ipart<pShower->GetNumberOfPartons(); ipart++){
+	 //   Uncomment to dump the whole parton shower into the parton container
+	 //           hproc.lock()->AddParton(pShower->GetPartonAt(ipart));
        }
 
      }
@@ -348,7 +336,7 @@ void JetEnergyLoss::WriteTask(weak_ptr<JetScapeWriter> w)
     }
 
   //Own storage of graph structure, needs separate PartonShower reader ...
-  else if (pShower)
+  if (pShower)
     {
       w.lock()->WriteComment("Parton Shower in JetScape format to be used later by GTL graph:");
       

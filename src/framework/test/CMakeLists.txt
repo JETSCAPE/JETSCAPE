@@ -10,7 +10,8 @@ set (SOURCES
      Gubser_hydro_jetscape.cc
      brick_jetscape.cc
      hydro_file_jetscape.cc
-     ElossModulesTest.cc
+     ElossModulesTestMatter.cc
+     PythiaGun.cpp
      PGun.cc)
 
 if (music)
