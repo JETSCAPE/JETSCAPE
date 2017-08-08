@@ -12,6 +12,7 @@ set (SOURCES
      hydro_file_jetscape.cc
      ElossModulesTestMatter.cc
      PythiaGun.cpp
+     AdSCFT.cc
      PGun.cc)
 
 if (music)
