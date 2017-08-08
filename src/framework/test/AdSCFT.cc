@@ -99,13 +99,16 @@ void AdSCFT::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
         
 	//Extract fluid properties
 	FluidCellInfo* check_fluid_info_ptr = new FluidCellInfo;
-    	GetHydroCellSignal(x[3], x[0], x[1], x[2], check_fluid_info_ptr);
-    	VERBOSE(8)<< MAGENTA<<"Temperature from Brick (Signal) = "<<check_fluid_info_ptr->temperature;
+    	GetHydroCellSignal(x[3], x[0], x[1], x[2], check_fluid_info_ptr);	//Hydro From File
+    	//GetHydroCellSignal(x[0], x[1], x[2], x[3], check_fluid_info_ptr);	//MUSIC
+	VERBOSE(8)<< MAGENTA<<"Temperature from Brick (Signal) = "<<check_fluid_info_ptr->temperature;
 
 	double temp = check_fluid_info_ptr->temperature;
     	double vx = check_fluid_info_ptr->vx;
     	double vy = check_fluid_info_ptr->vy;
     	double vz = check_fluid_info_ptr->vz;
+
+	cout << " temp= " << temp << " vx= " << vx << " vy= " << vy << " vz= " << vz << endl;
 
     	vector<double> v;
     	v.push_back(vx), v.push_back(vy), v.push_back(vz), v.push_back(1.);
@@ -169,7 +172,8 @@ void AdSCFT::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
         //Initial energy of the parton in the FRF
         double Efs=ei*lore*(1.-vscalw);	  
 
-        double newEn=p[3]-AdSCFT::Drag(f_dist, mdeltaT, Efs, temp, CF);
+	double newEn=p[3];
+        if (temp>=0.) newEn=p[3]-AdSCFT::Drag(f_dist, mdeltaT, Efs, temp, CF);
         if (newEn<0.) newEn=0.;
         double lambda=newEn/p[3];
 	cout << " lambda = " << lambda << endl;

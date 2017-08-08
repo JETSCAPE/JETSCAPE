@@ -24,6 +24,7 @@
 
 // User modules derived from jetscape framework clasess
 // to be used to run Jetscape ...
+#include "AdSCFT.h"
 #include "ElossModulesTestMatter.h"
 #include "music_jetscape.h"
 #include "TrentoInitial.h"
@@ -68,6 +69,7 @@ int main(int argc, char** argv)
   
   auto matter = make_shared<Matter> ();
   auto martini = make_shared<Martini> ();
+  auto adscft = make_shared<AdSCFT> ();
   //DBEUG: Remark:
   //does not matter unfortunately since not called recursively, done by JetEnergyLoss class ...
   //matter->SetActive(false);
@@ -104,8 +106,9 @@ int main(int argc, char** argv)
   // Switching Q2 (or whatever variable used
   // hardcoded at 5 to be changed to xml)
   //jloss->Add(matter);
-  jloss->Add(martini);
-  
+  //jloss->Add(martini);
+  jloss->Add(adscft);  
+
   jlossmanager->Add(jloss);
   
   jetscape->Add(jlossmanager);

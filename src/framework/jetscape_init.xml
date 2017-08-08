@@ -65,6 +65,11 @@
        <name > Martini </name>
        <param1> 3 </param1>
      </Martini>
+
+     <AdSCFT>
+       <name> AdSCFT </name>
+       <kappa> 0.36 </kappa>
+     </AdSCFT>
      
    </Eloss>
 
