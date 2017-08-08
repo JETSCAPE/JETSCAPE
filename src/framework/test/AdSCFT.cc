@@ -120,7 +120,7 @@ void AdSCFT::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
 	
         //Color Factor (wrt quark)
         double CF;
-        if (pIn[i].pid()==21) CF=pow(9./4.,1./3.);	//Gluon
+        if (pIn[i].pid()==21) CF=std::pow(9./4.,1./3.);	//Gluon
         else CF=1.; 					//Quark
 
         //Parton 4-momentum
@@ -150,9 +150,9 @@ void AdSCFT::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
 	//Parton 4-velocity
         vector<double> w;
         for (unsigned int j =0; j<4; j++) w.push_back(p[j]/p[3]);
-        double w2=pow(w[0],2.)+pow(w[1],2.)+pow(w[2],2.);        
+        double w2=std::pow(w[0],2.)+std::pow(w[1],2.)+std::pow(w[2],2.);        
         cout << " w2= " << w2 << endl;
-	double virt=sqrt(p[3]*p[3]-w2*p[3]*p[3]-pow(pIn[i].mass(),2.));
+	double virt=std::sqrt(p[3]*p[3]-w2*p[3]*p[3]-std::pow(pIn[i].mass(),2.));
 	//cout << " virt= " << virt << endl;
   	
         //Needed for boosts (v.w)
@@ -162,7 +162,7 @@ void AdSCFT::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
         l_dist+=mdeltaT;
 
         //Distance travelled in FRF - accumulating steps from previous, different fluid cells
-        f_dist+=mdeltaT*sqrt(w2+lore*lore*(v2-2.*vscalw+vscalw*vscalw));
+        f_dist+=mdeltaT*std::sqrt(w2+lore*lore*(v2-2.*vscalw+vscalw*vscalw));
 	 
         cout << " l_dist= " << l_dist << " f_dist= " << f_dist << endl; 
         //Initial energy of the parton in the FRF
@@ -201,11 +201,11 @@ double AdSCFT::Drag(double f_dist, double deltaT, double Efs, double temp, doubl
 {
   if (kappa!=0.)
   {
-    double tstop=0.2*pow(Efs,1./3.)/(2.*pow(temp,4./3.)*kappa)/CF;	//Stopping distance in fm
+    double tstop=0.2*std::pow(Efs,1./3.)/(2.*std::pow(temp,4./3.)*kappa)/CF;	//Stopping distance in fm
     double beta=tstop/f_dist;						//Ratio of stopping distance to distance travelled
     if (beta>1.)		//If did not get to stopping distance
     {
-      double intpiece=Efs*deltaT*4./(3.141592)*(1./(beta*tstop*sqrt(beta*beta-1.)));
+      double intpiece=Efs*deltaT*4./(3.141592)*(1./(beta*tstop*std::sqrt(beta*beta-1.)));
       return intpiece;
     }
     else			//If reached stopping distance, subtract all energy
