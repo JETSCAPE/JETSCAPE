@@ -47,64 +47,70 @@ void PythiaGun::InitTask()
   numbf.setf(ios::fixed, ios::floatfield);       numbf.setf(ios::showpoint);       numbf.precision(1);
   stringstream numbi(stringstream::app|stringstream::in|stringstream::out);
     
-  if ( PythiaXmlDescription ) {
-    xmle = PythiaXmlDescription->FirstChildElement( "name" ); if ( !xmle ) throw std::runtime_error("Cannot parse xml");
-    s = xmle->GetText();
-    SetId(s);
-    cout << s << endl;
-       
-    xmle = PythiaXmlDescription->FirstChildElement( "pTHatMin" ); if ( !xmle ) throw std::runtime_error("Cannot parse xml");
-    xmle->QueryDoubleText(&pTHatMin);
-    xmle = PythiaXmlDescription->FirstChildElement( "pTHatMax" ); if ( !xmle ) throw std::runtime_error("Cannot parse xml");
-    xmle->QueryDoubleText(&pTHatMax);
-       
-    VERBOSE(7) <<"Pythia Gun with "<< pTHatMin << " < pTHat < " << pTHatMax ;
-
-    numbf.str("PhaseSpace:pTHatMin = "); numbf << pTHatMin;
-    readString ( numbf.str() );
-    numbf.str("PhaseSpace:pTHatMax = "); numbf << pTHatMax;
-    readString ( numbf.str() );
-
-    //random seed
-    readString("Random:setSeed = on");
-    numbi.str("Random:seed = ");
-    numbi << 0;
-    readString( numbi.str() );
-
-    // Species
-    readString("Beams:idA = 2212");
-    readString("Beams:idB = 2212");
-
-    // Energy
-    xmle = PythiaXmlDescription->FirstChildElement( "eCM" ); if ( !xmle ) throw std::runtime_error("Cannot parse xml");
-    xmle->QueryDoubleText(&eCM);   
-    numbf.str("Beams:eCM = "); numbf << eCM;
-    readString ( numbf.str() );
-    
-    xmle = PythiaXmlDescription->FirstChildElement( "LinesToRead" );
-    if ( xmle ){
-      std::stringstream lines; lines << xmle->GetText();
-      int i=0;
-      while(std::getline(lines,s,'\n')){
-	if( s.find_first_not_of (" \t\v\f\r") == s.npos ) continue; // skip empty lines
-	VERBOSE(7) <<  "Also reading in: " << s;
-	readString (s);
-      }
-    }
-    
-    // And initialize
-    init(); // Pythia>8.1
-    
-    // // DEBUG
-    // next();
-    // cout << event.size() << endl;
-
-  } else {
+  if ( !PythiaXmlDescription ) {
     WARN << "Cannot initialize Pythia Gun";
     throw std::runtime_error("Cannot initialize Pythia Gun");
   }
+
+  xmle = PythiaXmlDescription->FirstChildElement( "name" ); if ( !xmle ) throw std::runtime_error("Cannot parse xml");
+  s = xmle->GetText();
+  SetId(s);
+  cout << s << endl;
+  
+  xmle = PythiaXmlDescription->FirstChildElement( "pTHatMin" ); if ( !xmle ) throw std::runtime_error("Cannot parse xml");
+  xmle->QueryDoubleText(&pTHatMin);
+  xmle = PythiaXmlDescription->FirstChildElement( "pTHatMax" ); if ( !xmle ) throw std::runtime_error("Cannot parse xml");
+  xmle->QueryDoubleText(&pTHatMax);
+  
+  VERBOSE(7) <<"Pythia Gun with "<< pTHatMin << " < pTHat < " << pTHatMax ;
+  
+  numbf.str("PhaseSpace:pTHatMin = "); numbf << pTHatMin;
+  readString ( numbf.str() );
+  numbf.str("PhaseSpace:pTHatMax = "); numbf << pTHatMax;
+  readString ( numbf.str() );
+  
+  // random seed
+  // xml limits us to unsigned int :-/ -- but so does 32 bits Mersenne Twist
+  tinyxml2::XMLElement *RandomXmlDescription=JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Random" );
+  readString("Random:setSeed = on");
+  numbi.str("Random:seed = ");
+  unsigned int seed = 0;
+  if ( RandomXmlDescription ){
+    xmle = RandomXmlDescription->FirstChildElement( "seed" ); if ( !xmle ) throw std::runtime_error("Cannot parse xml");
+    xmle->QueryUnsignedText(&seed);
+  } else {
+    WARN << "No <Random> element found in xml, seeding to 0";
+  }
+  VERBOSE(7) <<"Seeding pythia to "<< seed ;
+  numbi << seed;
+  readString( numbi.str() );
+  
+  // Species
+  readString("Beams:idA = 2212");
+  readString("Beams:idB = 2212");
+  
+  // Energy
+  xmle = PythiaXmlDescription->FirstChildElement( "eCM" ); if ( !xmle ) throw std::runtime_error("Cannot parse xml");
+  xmle->QueryDoubleText(&eCM);   
+  numbf.str("Beams:eCM = "); numbf << eCM;
+  readString ( numbf.str() );
+  
+  xmle = PythiaXmlDescription->FirstChildElement( "LinesToRead" );
+  if ( xmle ){
+    std::stringstream lines; lines << xmle->GetText();
+    int i=0;
+    while(std::getline(lines,s,'\n')){
+      if( s.find_first_not_of (" \t\v\f\r") == s.npos ) continue; // skip empty lines
+      VERBOSE(7) <<  "Also reading in: " << s;
+      readString (s);
+    }
+  }
+  
+  // And initialize
+  init(); // Pythia>8.1
+  
 }
- 
+
 void PythiaGun::Exec()
 {
   INFO<<"Run Hard Process : "<<GetId()<< " ...";
@@ -140,11 +146,12 @@ void PythiaGun::Exec()
     xLoc[i] = 0.0;
   };
 
-  // Roll for a starting point
-  // See: https://stackoverflow.com/questions/15039688/random-generator-from-vector-with-probability-distribution-in-c
-  std::random_device device;
-  std::mt19937 engine(device()); // Seed the random number engine
+  // // Roll for a starting point
+  // // See: https://stackoverflow.com/questions/15039688/random-generator-from-vector-with-probability-distribution-in-c
+  // std::random_device device;
+  // std::mt19937 engine(device()); // Seed the random number engine
 
+  
   if (!ini) {
       WARN << "No initial state module, setting the starting location to 0. Make sure to add e.g. trento before PythiaGun.";
   } else {
@@ -155,7 +162,7 @@ void PythiaGun::Exec()
       std::discrete_distribution<> dist( begin(num_bin_coll),end(num_bin_coll) ); // Create the distribution
     
       // Now generate values
-      auto idx = dist(engine);
+      auto idx = dist( *get_mt19937_generator() );
       auto coord = ini->coord_from_idx( idx );
       xLoc[1] = get<0>( coord );
       xLoc[2] = get<1>( coord );

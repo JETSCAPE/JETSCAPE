@@ -18,6 +18,8 @@ using namespace Jetscape;
 Brick::Brick() : FluidDynamics() {
     // initialize the parameter reader
     T_brick = 0.0;  // GeV
+    start_time = 0.0;
+    bjorken_expansion_on = false;
 
     hydro_status = NOT_START;
     SetId("Brick");
@@ -44,6 +46,11 @@ void Brick::InitTask()
 
       DEBUG << s << " with T = "<<T_brick;
       INFO<<"Brick Temperature T = "<<T_brick;
+
+      if ( brick->Attribute("bjorken_expansion_on", "true") ) {
+          bjorken_expansion_on = true;
+          start_time = std::atof(brick->Attribute("start_time"));
+      }
 
       //Parameter parameter_list;
       GetParameterList().hydro_input_filename = (char*) "dummy"; //*(argv+1);
@@ -77,7 +84,11 @@ void Brick::get_hydro_info(real t, real x, real y, real z,
     {
       fluid_cell_info_ptr->energy_density = 0.0;
       fluid_cell_info_ptr->entropy_density = 0.0;
-      fluid_cell_info_ptr->temperature = T_brick;
+      if ( bjorken_expansion_on ) {
+          fluid_cell_info_ptr->temperature = T_brick * std::pow(start_time/t, 1.0/3.0);
+      } else {
+          fluid_cell_info_ptr->temperature = T_brick;
+      }
       fluid_cell_info_ptr->pressure = 0.0;
       // QGP fraction
       fluid_cell_info_ptr->qgp_fraction = 1.0;

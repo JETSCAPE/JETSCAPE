@@ -289,9 +289,9 @@ void JetEnergyLoss::Exec()
        pShower->PrintEdges();
 
        weak_ptr<HardProcess> hproc = JetScapeSignalManager::Instance()->GetHardProcessPointer();
-       for(unsigned int ipart=0; ipart<pShower->GetNumberOfPartons(); ipart++){ 
-           //   Uncomment to dump the whole parton shower into the parton container
-           //           hproc.lock()->AddParton(pShower->GetPartonAt(ipart));
+       for(unsigned int ipart=0; ipart<pShower->GetNumberOfPartons(); ipart++){
+	 //   Uncomment to dump the whole parton shower into the parton container
+	 //           hproc.lock()->AddParton(pShower->GetPartonAt(ipart));
        }
 
      }

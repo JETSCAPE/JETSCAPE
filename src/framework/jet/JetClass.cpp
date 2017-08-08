@@ -42,6 +42,7 @@ Parton::~Parton()
   Parton::Parton (const Parton& srp) : PseudoJet (srp)
 {
     pid_ = srp.pid_;
+    plabel_ = srp.plabel_;
     pstat_ = srp.pstat_;
     form_time_ = srp.form_time_;
     mass_ = srp.mass_;
@@ -127,7 +128,7 @@ Parton::Parton (int label, int id, int stat, double pt, double eta, double phi, 
 
 Parton::Parton (int label, int id, int stat, double pt, double eta, double phi, double e, double x[4]) 
 {
-   set_label(label);
+  set_label(label);
     
    set_id(id);
     
