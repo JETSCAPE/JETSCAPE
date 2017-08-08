@@ -24,7 +24,7 @@
 
 // User modules derived from jetscape framework clasess
 // to be used to run Jetscape ...
-#include "ElossModulesTest.h"
+#include "ElossModulesTestMatter.h"
 #include "music_jetscape.h"
 #include "TrentoInitial.h"
 #include "PGun.h"
@@ -59,7 +59,7 @@ int main(int argc, char** argv)
    
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",3);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",1);
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
   auto trento = make_shared<TrentoInitial> ();

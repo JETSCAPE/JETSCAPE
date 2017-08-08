@@ -62,7 +62,7 @@ int main(int argc, char** argv)
    
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",3);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",1);
   jetscape->SetId("primary");
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
@@ -110,7 +110,7 @@ int main(int argc, char** argv)
   // Switching Q2 (or whatever variable used
   // hardcoded at 5 to be changed to xml)
   jloss->Add(matter);
-  jloss->Add(martini);
+  //jloss->Add(martini);
   
   jlossmanager->Add(jloss);
   
