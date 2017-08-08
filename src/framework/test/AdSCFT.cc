@@ -111,7 +111,7 @@ void AdSCFT::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
 
     	vector<double> v;
     	v.push_back(vx), v.push_back(vy), v.push_back(vz), v.push_back(1.);
-    	double v2=pow(v[0],2.)+pow(v[1],2.)+pow(v[2],2.);
+    	double v2=std::pow(v[0],2.)+std::pow(v[1],2.)+std::pow(v[2],2.);
     	double lore = 1./sqrt(1.-v2);     //Gamma Factor
 
 	cout << " ************ \n \n";
