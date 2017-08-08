@@ -99,8 +99,7 @@ void AdSCFT::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
         
 	//Extract fluid properties
 	FluidCellInfo* check_fluid_info_ptr = new FluidCellInfo;
-    	GetHydroCellSignal(x[3], x[0], x[1], x[2], check_fluid_info_ptr);	//Hydro From File
-    	//GetHydroCellSignal(x[0], x[1], x[2], x[3], check_fluid_info_ptr);	//MUSIC
+    	GetHydroCellSignal(x[3], x[0], x[1], x[2], check_fluid_info_ptr);
 	VERBOSE(8)<< MAGENTA<<"Temperature from Brick (Signal) = "<<check_fluid_info_ptr->temperature;
 
 	double temp = check_fluid_info_ptr->temperature;
@@ -147,23 +146,20 @@ void AdSCFT::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
 	cout << " ei= " << ei << endl;
 	cout << " px= " << p[0] << " py= " << p[1] << " pz= " << p[2] << " en= " << p[3] << endl;
    	cout << " x= " << x[0] << " y= " << x[1] << " z= " << x[2] << " t= " << x[3] << endl;
-	//Safety check for issue of pz>e in MATTER
-	for (unsigned a=0; a<3; a++) {
-	  if (abs(p[a])>p[3]) p[a]=0.;
-	}
+	
 	//Parton 4-velocity
         vector<double> w;
         for (unsigned int j =0; j<4; j++) w.push_back(p[j]/p[3]);
         double w2=pow(w[0],2.)+pow(w[1],2.)+pow(w[2],2.);        
         cout << " w2= " << w2 << endl;
 	double virt=sqrt(p[3]*p[3]-w2*p[3]*p[3]-pow(pIn[i].mass(),2.));
-	cout << " virt= " << virt << endl;
+	//cout << " virt= " << virt << endl;
   	
         //Needed for boosts (v.w)
         double vscalw=v[0]*w[0]+v[1]*w[1]+v[2]*w[2];
 
         //Distance travelled in LAB frame
-        l_dist+=mdeltaT; 	//equal to currentTime in this test situation (no splittings)
+        l_dist+=mdeltaT;
 
         //Distance travelled in FRF - accumulating steps from previous, different fluid cells
         f_dist+=mdeltaT*sqrt(w2+lore*lore*(v2-2.*vscalw+vscalw*vscalw));
