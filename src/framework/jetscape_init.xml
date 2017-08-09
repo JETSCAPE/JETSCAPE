@@ -50,8 +50,8 @@
    <!--Eloss Module ... -->
    <Eloss>
 
-     <deltaT>1</deltaT>
-     <maxT>10</maxT>
+     <deltaT>0.1</deltaT>
+     <maxT>5</maxT>
 
      <!-- Individual Eloss Modules run Eloss and Eloss Manager ... -->
      <!-- Just a test here (no physics implemented in Matter and Martini ... -->
@@ -65,6 +65,11 @@
        <name > Martini </name>
        <param1> 3 </param1>
      </Martini>
+
+     <AdSCFT>
+       <name> AdSCFT </name>
+       <kappa> 0.36 </kappa>
+     </AdSCFT>
      
    </Eloss>
 
