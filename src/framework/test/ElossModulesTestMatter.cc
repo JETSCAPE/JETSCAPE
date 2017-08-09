@@ -129,9 +129,7 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
           cout<< " location of parton formation = "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z() << endl;
           
       //    tQ2 = pIn[i].generate_t(mu, pIn[i].e()*pIn[i].e());
-          
-          
-          
+                   		  
           velocity[0] = 1.0;
           
           for(int j=1;j<=3;j++)
@@ -451,6 +449,8 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
                   }
                   
                   pOut.push_back(Parton(0,pid_a,0,newp,newx ));
+		  
+
                   
                   iout = pOut.size()-1 ;
                   

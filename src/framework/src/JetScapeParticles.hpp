@@ -57,10 +57,9 @@ namespace Jetscape {
     void set_mass(double mass_input);    
     void set_p(double p[4]);
     void set_x(double x[4]); 
+    
     void set_mean_form_time();
     void set_form_time(double form_time);    
-    void initialize_form_time();
-    
     void set_t_max(double t_max);
     void set_t(double t); ///< virtuality of particle
     
@@ -106,6 +105,9 @@ namespace Jetscape {
     FourVector p_in_; ///< Internal version of p. Clashes with PseudoJet! REPLACE
     FourVector x_in_; ///< position of particle
     FourVector jet_v_; ///< jet four vector, without gamma factor (so not really a four vector)
+
+    // helpers
+    void initialize_form_time();
   };
   // END BASE CLASS
 

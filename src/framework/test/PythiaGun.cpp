@@ -8,7 +8,6 @@
     @date Jun 29, 2017
 */
 
-
 #include "PythiaGun.hpp"
 #include <sstream>
 #include <iostream>
@@ -175,7 +174,6 @@ void PythiaGun::Exec()
     if ( nP<3 )continue;      // 0, 1, 2: total event and beams      
     Pythia8::Particle& particle = event[nP];
     if ( particle.status()==-23 ){
-      // cout << "particle.id()=" << particle.id() << endl;
       VERBOSE(7)<<"Adding particle with pid = " << particle.id()
 		<<" at x=" << xLoc[1]
 		<<", y=" << xLoc[2]
