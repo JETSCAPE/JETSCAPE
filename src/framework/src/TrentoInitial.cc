@@ -41,13 +41,16 @@ std::vector<std::string> tokenize(const std::string& input)
 
 /// Auxiliary functions to create varmap from collision system
 VarMap create_varmap(std::string projectile, std::string target,
-                double cross_section, double grid_max, double grid_step)
+                double cross_section, double grid_max, double grid_step,
+                unsigned seed)
 {
+  INFO << "seed in create_varmap=" << seed;
   std::string cmd;
   cmd = projectile + " " + target
         + " -x " + std::to_string(cross_section)
         + " --grid-max " + std::to_string(grid_max)
-        + " --grid-step " + std::to_string(grid_step);
+        + " --grid-step " + std::to_string(grid_step)
+        + " --random-seed " + std::to_string(seed);
 
   // Parse options with boost::program_options.
   // There are quite a few options, so let's separate them into logical groups.
@@ -198,7 +201,7 @@ TrentoInitial::~TrentoInitial() = default;
 // centrality = "0-5", "5-10", "30-40" or any range "a-b" for 0<=a<b<=100
 void TrentoInitial::pre_defined(std::string stored_system,
                     double centrality_low, double centrality_high,
-                    double grid_max, double grid_step)
+                    double grid_max, double grid_step, unsigned random_seed)
 {
     VarMap var_map{};
     if (stored_system == "auau200") {
@@ -206,19 +209,19 @@ void TrentoInitial::pre_defined(std::string stored_system,
         std::string target = "Au";
         double cross_section = 4.23;
         var_map = create_varmap(projectile, target, cross_section,
-                grid_max, grid_step);
+                grid_max, grid_step, random_seed);
     } else if (stored_system == "pbpb2760") {
         std::string projectile = "Pb";
         std::string target = "Pb";
         double cross_section = 6.4;
         var_map = create_varmap(projectile, target, cross_section,
-                grid_max, grid_step);
+                grid_max, grid_step, random_seed);
     } else if (stored_system == "pbpb5020") {
         std::string projectile = "Pb";
         std::string target = "Pb";
         double cross_section = 7.0;
         var_map = create_varmap(projectile, target, cross_section,
-                grid_max, grid_step);
+                grid_max, grid_step, random_seed);
     }
 
     JetScapeCollision collision_(var_map);
@@ -248,10 +251,11 @@ void TrentoInitial::pre_defined(std::string stored_system,
 
 
 void TrentoInitial::user_defined(std::string projectile, std::string target,
-                double cross_section, double grid_max, double grid_step)
+                double cross_section, double grid_max, double grid_step,
+                unsigned random_seed)
 {
     VarMap var_map = create_varmap(projectile, target, cross_section,
-                grid_max, grid_step);
+                grid_max, grid_step, random_seed);
     JetScapeCollision collision_(var_map);
     double smin = 0; 
     double smax = std::numeric_limits<double>::max();
@@ -290,6 +294,8 @@ void TrentoInitial::Exec() {
         exit(-1);
     } else {
         // trento_xml_->Attribute("A", "B") checks whether the attribute "A" has value "B"
+        auto random_seed = (*get_mt19937_generator())();
+        INFO << "Random seed used for TrentoInitial class" << random_seed;
         if ( trento_xml_->Attribute("use_module", "pre_defined") ) {
             auto predef = trento_xml_->FirstChildElement("pre_defined");
             std::string collision_system(predef->Attribute("collision_system"));
@@ -297,7 +303,7 @@ void TrentoInitial::Exec() {
             double centrality_min = std::atof(predef->Attribute("centrality_min"));
             double centrality_max = std::atof(predef->Attribute("centrality_max"));
             pre_defined(collision_system, centrality_min, centrality_max,
-                    get_x_max(), get_x_step());
+                    get_x_max(), get_x_step(), random_seed);
         } else if (trento_xml_->Attribute("use_module", "user_defined") ) {
             auto usrdef = trento_xml_->FirstChildElement("user_defined");
             std::string projectile(usrdef->Attribute("projectile"));
@@ -305,7 +311,8 @@ void TrentoInitial::Exec() {
             // center of mass collision energy per pair of nucleon
             double sqrts_NN = std::atof(usrdef->Attribute("sqrts"));
             double cross_section = std::atof(usrdef->Attribute("cross_section"));
-            user_defined(projectile, target, cross_section, get_x_max(), get_x_step());
+            user_defined(projectile, target, cross_section,
+                         get_x_max(), get_x_step(), random_seed);
         }
     }
 }
