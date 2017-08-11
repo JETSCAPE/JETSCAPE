@@ -184,7 +184,8 @@ void JetEnergyLoss::DoShower()
 	{
 
 	  pInTempModule.push_back(pIn[i]);
-	  SentInPartons(currentTime,pIn[i].pt(),pInTempModule,pOutTemp);
+	  //SentInPartons(currentTime,pIn[i].pt(),pInTempModule,pOutTemp);
+	  SentInPartons(deltaT,pIn[i].pt(),pInTempModule,pOutTemp);
 	  pInTemp.push_back(pInTempModule[0]);
 
 	  vStart=vStartVec[i];
