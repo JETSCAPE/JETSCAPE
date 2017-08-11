@@ -71,7 +71,7 @@ class Martini : public JetEnergyLossModule<Martini> //, public std::enable_share
 {  
  private:
 
-  // AMY rates are calculated above AMYpCut
+  // AMY rates are calculated in p/T > AMYpCut
   static constexpr double AMYpCut = 4.01;
 
   double alpha_s;

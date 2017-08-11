@@ -117,18 +117,6 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
 	    }
 	  
 	}
-      
-      // Add a new root node ... (dummy ...)
-      // Ahh stupid declared as const orginally (removed for test ...)
-      // Maybe better a seperate vector !? (TBD)
-      if (rNum>0.9)
-	{
-	  // quick and dirty ...
-	  pIn.push_back(Parton(0,21,0,1.5,0,pIn[0].phi(),1.5));
-	  //DEBUG:
-	  //cout<<pIn.size()<<endl;
-	}
-      
     }
 }
 // obsolete in the future ...
@@ -2223,10 +2211,6 @@ double Martini::use_elastic_table_omega(double omega, int which_kind)
   double rate, rateAlphaUp, rateOmegaUp, rateAlphaUpOmegaUp;
   double rateOmegaAv, rateAlphaUpOmegaAv;
 
-  //double omegaStep = 0.2;
-  //double alphaMin = 0.15;
-  //double alphaStep = 0.03;
-
   if (omega > 0.) iOmega = Nomega/2+floor((log(omega)+5)/omegaStep);
   else iOmega = Nomega/2-ceil((log(-omega)+5)/omegaStep)-1;
   iAlphas = floor((alpha_s-0.15)/alphaStep);
@@ -2323,19 +2307,28 @@ double Martini::use_elastic_table_q(double omega, double q, int which_kind)
 {
   double result;
   double alphaFrac, omegaFrac, qFrac;
-  int iOmega;
-  int iAlphas;
-  int iQ;
+  int iOmega, iAlphas, iQ;
   int position, positionAlphaUp, positionOmegaUp, positionAlphaUpOmegaUp;
-  int positionQUp, position2QUp, positionAlphaUpQUp, positionOmegaUpQUp, positionAlphaUpOmegaUpQUp;
-  double rate, rateAlphaUp, rateOmegaUp, rateQUp, rate2QUp;
-  double rateAlphaUpOmegaUp, rateAlphaUpQUp, rateAlphaUp2QUp, rateOmegaUpQUp, rateOmegaUp2QUp;
-  double rateAlphaUpOmegaUpQUp, rateAlphaUpOmegaUp2QUp;
-  double rateOmegaAv, rateAlphaUpOmegaAv, rateQUpOmegaAv, rate2QUpOmegaAv, rateAlphaUpQUpOmegaAv;
-  double rateAlphaUp2QUpOmegaAv;
+  int positionQUp, positionAlphaUpQUp, positionOmegaUpQUp, positionAlphaUpOmegaUpQUp;
+  int position2QUp;
+  double rate, rateAlphaUp, rateOmegaUp, rateAlphaUpOmegaUp;
+  double rateQUp, rateAlphaUpQUp, rateOmegaUpQUp, rateAlphaUpOmegaUpQUp;
+  double rate2QUp, rateAlphaUp2QUp, rateOmegaUp2QUp, rateAlphaUpOmegaUp2QUp;
+  double rateOmegaAv, rateAlphaUpOmegaAv, rateQUpOmegaAv, rateAlphaUpQUpOmegaAv;
+  double rate2QUpOmegaAv, rateAlphaUp2QUpOmegaAv;
   double rateQAv, rateAlphaUpQAv;
-  double slope;
-  double slopeAlphaUp;
+  double slope, slopeAlphaUp;
+
+  rate2QUp = 0.;
+  rateAlphaUp2QUp = 0.;
+  rateOmegaUp2QUp = 0.;
+  rateAlphaUpOmegaUp2QUp = 0.;
+  rateOmegaAv = 0.;
+  rateAlphaUpOmegaAv = 0.;
+  rateQUpOmegaAv = 0.;
+  rateAlphaUpQUpOmegaAv = 0.;
+  rate2QUpOmegaAv = 0.;
+  rateAlphaUp2QUpOmegaAv = 0.;
 
   if (omega > 0.) iOmega = Nomega/2+floor((log(omega)+5)/omegaStep);
   else iOmega = Nomega/2-ceil((log(-omega)+5)/omegaStep)-1;
