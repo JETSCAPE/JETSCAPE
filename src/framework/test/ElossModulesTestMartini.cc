@@ -159,11 +159,11 @@ Martini::Martini()
   SetId("Martini");
   VERBOSE(8);
 
-  //arrays for elastic rates:
-  dGamma_qq = new double[Nalphas*Nomega];
-  dGamma_qg = new double[Nalphas*Nomega];
-  dGamma_qq_q = new double[Nalphas*Nomega*Nq];
-  dGamma_qg_q = new double[Nalphas*Nomega*Nq];
+  //vectors for elastic rates:
+  dGamma_qq = new vector<double>;
+  dGamma_qg = new vector<double>;
+  dGamma_qq_q = new vector<double>;
+  dGamma_qg_q = new vector<double>;
 }
 
 Martini::~Martini()
@@ -1964,6 +1964,7 @@ void Martini::readElasticRateOmega()
   string path = "../test/Martini/";
 
   double as, omega;
+  double dGamma;
       
   // open files with data to read in:
   filename[0] = path + "logEnDtrqq";
@@ -1985,7 +1986,8 @@ void Martini::readElasticRateOmega()
   {
     fin >> as;
     fin >> omega;
-    fin >> dGamma_qq[ik];
+    fin >> dGamma;
+    dGamma_qq->push_back(dGamma);
 
     ik++;
   }
@@ -2003,7 +2005,8 @@ void Martini::readElasticRateOmega()
   {
     fin >> as;
     fin >> omega;
-    fin >> dGamma_qg[ik];
+    fin >> dGamma;
+    dGamma_qg->push_back(dGamma);
 
     ik++;
   }
@@ -2019,6 +2022,7 @@ void Martini::readElasticRateQ()
   string path = "../test/Martini/";
 
   double as, omega, q;
+  double dGamma;
       
   // open files with data to read in:
   filename[0] = path + "logEnDqtrqq";
@@ -2041,7 +2045,8 @@ void Martini::readElasticRateQ()
     fin >> as;
     fin >> omega;
     fin >> q;
-    fin >> dGamma_qq_q[ik];
+    fin >> dGamma;
+    dGamma_qq_q->push_back(dGamma);
 
     ik++;
   }
@@ -2060,7 +2065,9 @@ void Martini::readElasticRateQ()
     fin >> as;
     fin >> omega;
     fin >> q;
-    fin >> dGamma_qg_q[ik];
+    fin >> dGamma;
+    dGamma_qg_q->push_back(dGamma);
+
     ik++;
   }
   fin.close();
@@ -2243,44 +2250,44 @@ double Martini::use_elastic_table_omega(double omega, int which_kind)
   if (which_kind == 5 || which_kind == 7)
   {
      if (position > 0 && iAlphas < Nalphas && iOmega < Nomega) 
-       rate = dGamma_qq[position];
+       rate = dGamma_qq->at(position);
      else 
        rate = 0.;
 
      if (iAlphas+1 < Nalphas) 
-       rateAlphaUp = dGamma_qq[positionAlphaUp];
+       rateAlphaUp = dGamma_qq->at(positionAlphaUp);
      else 
        rateAlphaUp = rate;
 
      if (iOmega+1 < Nomega)
-       rateOmegaUp = dGamma_qq[positionOmegaUp];
+       rateOmegaUp = dGamma_qq->at(positionOmegaUp);
      else 
        rateOmegaUp = rate;
 
      if (iAlphas < Nalphas && iOmega < Nomega)
-       rateAlphaUpOmegaUp = dGamma_qq[positionAlphaUpOmegaUp];
+       rateAlphaUpOmegaUp = dGamma_qq->at(positionAlphaUpOmegaUp);
      else
        rateAlphaUpOmegaUp = rate;
   }
   else 
   {
     if (position > 0 && iAlphas<Nalphas && iOmega<Nomega)
-      rate = dGamma_qg[position];
+      rate = dGamma_qg->at(position);
     else
       rate = 0.;
 
     if (iAlphas+1 < Nalphas)
-      rateAlphaUp = dGamma_qg[positionAlphaUp];
+      rateAlphaUp = dGamma_qg->at(positionAlphaUp);
     else
       rateAlphaUp = rate;
 
     if (iOmega+1 < Nomega)
-      rateOmegaUp = dGamma_qg[positionOmegaUp];
+      rateOmegaUp = dGamma_qg->at(positionOmegaUp);
     else
      rateOmegaUp = rate;
 
     if (iAlphas < Nalphas && iOmega < Nomega)
-      rateAlphaUpOmegaUp = dGamma_qg[positionAlphaUpOmegaUp];
+      rateAlphaUpOmegaUp = dGamma_qg->at(positionAlphaUpOmegaUp);
     else
       rateAlphaUpOmegaUp = rate;
   }
@@ -2385,42 +2392,42 @@ double Martini::use_elastic_table_q(double omega, double q, int which_kind)
   if (which_kind == 5 || which_kind == 7)
   {
     if (position >= 0 && iAlphas<Nalphas && iOmega<Nomega && iQ < Nq )
-      rate = dGamma_qq_q[position];
+      rate = dGamma_qq_q->at(position);
     else
       rate = 0.;
 
     if (iAlphas+1 < Nalphas)
-      rateAlphaUp = dGamma_qq_q[positionAlphaUp];
+      rateAlphaUp = dGamma_qq_q->at(positionAlphaUp);
     else
       rateAlphaUp = rate;
 
     if (iOmega+1 < Nomega)
-      rateOmegaUp = dGamma_qq_q[positionOmegaUp];
+      rateOmegaUp = dGamma_qq_q->at(positionOmegaUp);
     else
       rateOmegaUp = rate;
 
     if (iQ+1 < Nq)
-      rateQUp = dGamma_qq_q[positionQUp];
+      rateQUp = dGamma_qq_q->at(positionQUp);
     else
        rateQUp = rate;
 
     if (iAlphas < Nalphas && iOmega < Nomega)
-      rateAlphaUpOmegaUp = dGamma_qq_q[positionAlphaUpOmegaUp];
+      rateAlphaUpOmegaUp = dGamma_qq_q->at(positionAlphaUpOmegaUp);
     else
       rateAlphaUpOmegaUp = rate;
 
     if (iAlphas < Nalphas && iQ < Nq)
-      rateAlphaUpQUp = dGamma_qq_q[positionAlphaUpQUp];
+      rateAlphaUpQUp = dGamma_qq_q->at(positionAlphaUpQUp);
     else
       rateAlphaUpQUp = rate;
 
     if (iOmega+1 < Nomega && iQ+1 < Nq)
-      rateOmegaUpQUp = dGamma_qq_q[positionOmegaUpQUp];
+      rateOmegaUpQUp = dGamma_qq_q->at(positionOmegaUpQUp);
     else
       rateOmegaUpQUp = rate;
 
     if (iAlphas < Nalphas && iOmega < Nomega && iQ < Nq)
-      rateAlphaUpOmegaUpQUp = dGamma_qq_q[positionAlphaUpOmegaUpQUp];
+      rateAlphaUpOmegaUpQUp = dGamma_qq_q->at(positionAlphaUpOmegaUpQUp);
     else
       rateAlphaUpOmegaUpQUp = rate;
 
@@ -2428,22 +2435,22 @@ double Martini::use_elastic_table_q(double omega, double q, int which_kind)
     if (omega > 20.)
     { 
       if (iQ+2 < Nq )
-        rate2QUp = dGamma_qq_q[position2QUp];
+        rate2QUp = dGamma_qq_q->at(position2QUp);
       else
         rate2QUp = rateQUp;
 
       if (iAlphas < Nalphas && iQ+2 < Nq )
-        rateAlphaUp2QUp = dGamma_qq_q[positionAlphaUpQUp+1];
+        rateAlphaUp2QUp = dGamma_qq_q->at(positionAlphaUpQUp+1);
       else
         rateAlphaUp2QUp = rateAlphaUpQUp;
 
       if (iOmega < Nomega && iQ+2 < Nq )
-        rateOmegaUp2QUp = dGamma_qq_q[positionOmegaUpQUp+1];
+        rateOmegaUp2QUp = dGamma_qq_q->at(positionOmegaUpQUp+1);
       else
         rateOmegaUp2QUp = rateOmegaUpQUp;
 
       if (iAlphas < Nalphas && iOmega < Nomega && iQ+2 < Nq )
-        rateAlphaUpOmegaUp2QUp = dGamma_qq_q[positionAlphaUpOmegaUpQUp+1];
+        rateAlphaUpOmegaUp2QUp = dGamma_qq_q->at(positionAlphaUpOmegaUpQUp+1);
       else
         rateAlphaUpOmegaUp2QUp = rateAlphaUpOmegaUpQUp;
     }
@@ -2451,42 +2458,42 @@ double Martini::use_elastic_table_q(double omega, double q, int which_kind)
   else
   {
     if (position > 0 && iAlphas < Nalphas && iOmega < Nomega && iQ < Nq )
-      rate = dGamma_qg_q[position];
+      rate = dGamma_qg_q->at(position);
     else
       rate = 0.;
 
     if (iAlphas+1 < Nalphas)
-      rateAlphaUp = dGamma_qg_q[positionAlphaUp];
+      rateAlphaUp = dGamma_qg_q->at(positionAlphaUp);
     else
       rateAlphaUp = rate;
 
     if (iOmega+1 < Nomega)
-      rateOmegaUp = dGamma_qg_q[positionOmegaUp];
+      rateOmegaUp = dGamma_qg_q->at(positionOmegaUp);
     else
       rateOmegaUp = rate;
 
     if (iQ+1 < Nq)
-      rateQUp = dGamma_qg_q[positionQUp];
+      rateQUp = dGamma_qg_q->at(positionQUp);
     else
       rateQUp = rate;
 
     if (iAlphas < Nalphas && iOmega < Nomega)
-      rateAlphaUpOmegaUp = dGamma_qg_q[positionAlphaUpOmegaUp];
+      rateAlphaUpOmegaUp = dGamma_qg_q->at(positionAlphaUpOmegaUp);
     else
       rateAlphaUpOmegaUp = rate;
 
     if (iAlphas < Nalphas && iQ < Nq)
-      rateAlphaUpQUp = dGamma_qg_q[positionAlphaUpQUp];
+      rateAlphaUpQUp = dGamma_qg_q->at(positionAlphaUpQUp);
     else
       rateAlphaUpQUp = rate;
 
     if (iOmega+1 < Nomega && iQ+1 < Nq)
-       rateOmegaUpQUp = dGamma_qg_q[positionOmegaUpQUp];
+       rateOmegaUpQUp = dGamma_qg_q->at(positionOmegaUpQUp);
     else
       rateOmegaUpQUp = rate;
 
     if (iAlphas < Nalphas && iOmega < Nomega && iQ < Nq)
-      rateAlphaUpOmegaUpQUp = dGamma_qg_q[positionAlphaUpOmegaUpQUp];
+      rateAlphaUpOmegaUpQUp = dGamma_qg_q->at(positionAlphaUpOmegaUpQUp);
     else
       rateAlphaUpOmegaUpQUp = rate;
 
@@ -2494,22 +2501,22 @@ double Martini::use_elastic_table_q(double omega, double q, int which_kind)
     if (omega > 20.)
     { 
       if (iQ+2 < Nq )
-        rate2QUp = dGamma_qg_q[position2QUp];
+        rate2QUp = dGamma_qg_q->at(position2QUp);
       else
         rate2QUp = rateQUp;
 
       if (iAlphas < Nalphas && iQ+2 < Nq )
-        rateAlphaUp2QUp = dGamma_qg_q[positionAlphaUpQUp+1];
+        rateAlphaUp2QUp = dGamma_qg_q->at(positionAlphaUpQUp+1);
       else
         rateAlphaUp2QUp = rateAlphaUpQUp;
 
       if (iOmega < Nomega && iQ+2 < Nq )
-        rateOmegaUp2QUp = dGamma_qg_q[positionOmegaUpQUp+1];
+        rateOmegaUp2QUp = dGamma_qg_q->at(positionOmegaUpQUp+1);
       else
         rateOmegaUp2QUp = rateOmegaUpQUp;
 
       if (iAlphas < Nalphas && iOmega < Nomega && iQ+2 < Nq )
-        rateAlphaUpOmegaUp2QUp = dGamma_qg_q[positionAlphaUpOmegaUpQUp+1];
+        rateAlphaUpOmegaUp2QUp = dGamma_qg_q->at(positionAlphaUpOmegaUpQUp+1);
       else
         rateAlphaUpOmegaUp2QUp = rateAlphaUpOmegaUpQUp;
     }

@@ -134,10 +134,10 @@ class Martini : public JetEnergyLossModule<Martini> //, public std::enable_share
   Gamma_info dat;
   dGammas    Gam;
 
-  double *dGamma_qq;
-  double *dGamma_qg;
-  double *dGamma_qq_q;
-  double *dGamma_qg_q;
+  vector<double> *dGamma_qq;
+  vector<double> *dGamma_qg;
+  vector<double> *dGamma_qq_q;
+  vector<double> *dGamma_qg_q;
 
   //Random.h//
   /* The array for the state vector */
