@@ -60,7 +60,6 @@ namespace Jetscape {
     
     void set_mean_form_time();
     void set_form_time(double form_time);    
-    void set_t_max(double t_max);
     void set_t(double t); ///< virtuality of particle
     
     void init_jet_v();
@@ -96,9 +95,8 @@ namespace Jetscape {
     int pid_                ; ///< particle id ()
     int pstat_              ; ///< status of particle
     int plabel_             ; ///< the line number in the event record
-    double mass_            ; ///< mass of the particle
+    double mass_            ; ///< rest mass of the particle \todo: only maintain PID, look up mass from PDG
     double t_               ; ///< The virtuality, and not the time!
-    double t_max_           ; ///< Upper limit of virtuality
     double mean_form_time_  ; ///< Mean formation time
     double form_time_       ; ///< event by event formation time
     
