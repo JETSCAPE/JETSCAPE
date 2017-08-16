@@ -122,11 +122,11 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
 	      //cout<<pIn[i];
           
    //       cout << " pIn size = " << pIn.size() << endl;
-          cout << " parton id = " << pIn[i].pid() << "  Energy = " << pIn[i].e() << " p * jet_v = " << pIn[i].pl() << endl;
-          cout << " qhat = " << qhat << endl;
-          cout<< " the formation time of parton in fm = " << pIn[i].form_time()/fmToGeVinv ;
+          //cout << " parton id = " << pIn[i].pid() << "  Energy = " << pIn[i].e() << " p * jet_v = " << pIn[i].pl() << endl;
+          //cout << " qhat = " << qhat << endl;
+          //cout<< " the formation time of parton in fm = " << pIn[i].form_time()/fmToGeVinv ;
   //      cout<< " mean formation time and virtuality = " << pIn[i].mean_form_time()/fmToGeVinv << " , " << pIn[i].t() << endl;
-          cout<< " location of parton formation = "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z() << endl;
+          //cout<< " location of parton formation = "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z() << endl;
           
       //    tQ2 = pIn[i].generate_t(mu, pIn[i].e()*pIn[i].e());
                    		  
@@ -147,7 +147,7 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
 
           length = 5.0*fmToGeVinv; /// length in GeV-1 will have to changed for hydro
           
-          cout << " Length = " << length << endl;
+          //cout << " Length = " << length << endl;
           
           zeta = ( xStart[0] + std::sqrt( xStart[1]*xStart[1] + xStart[2]*xStart[2] + xStart[3]*xStart[3] )  )/std::sqrt(2);
           int pid = pIn[i].pid();
@@ -221,9 +221,9 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
           {
               double decayTime = pIn[i].mean_form_time()  ;
               
-              cout << "  deltaT = " << deltaT <<endl;
+              //cout << "  deltaT = " << deltaT <<endl;
               
-              cout << " parton origin time = " << pIn[i].x_in().t()/fmToGeVinv << " parton formation time = " << pIn[i].form_time()/fmToGeVinv << endl ;
+              //cout << " parton origin time = " << pIn[i].x_in().t()/fmToGeVinv << " parton formation time = " << pIn[i].form_time()/fmToGeVinv << endl ;
           
   //            cout << " parton id " << pIn[i].pid() << " parton virtuality = " << pIn[i].t() << endl;
           
@@ -231,13 +231,13 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
               
               double splitTime = pIn[i].form_time() + pIn[i].x_in().t() ;
           
-              cout << " splitTime = " << splitTime/fmToGeVinv << endl ;
+              //cout << " splitTime = " << splitTime/fmToGeVinv << endl ;
           
               if (splitTime<Time)
               {
               // do split
               
-                  cout << " doing the split " << endl ;
+                  //cout << " doing the split " << endl ;
               
                   double t_used = pIn[i].t();
               
@@ -311,7 +311,7 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
             
                   z = generate_vac_z(pid,QS/2.0,pIn[i].t(),zeta,pIn[i].nu(),iSplit) ;
                   
-                  cout << " generated z = " << z << endl;
+                  //cout << " generated z = " << z << endl;
                   
                   int iSplit_a = 0;
                   
@@ -340,7 +340,7 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
                   
                   double l_perp2 =  pIn[i].t()*z*(1.0 - z) - tQd2*z - tQd1*(1.0-z) ; ///< the transverse momentum squared
                   
-                  cout << " l_perp2 = " << l_perp2 << endl ;
+                  //cout << " l_perp2 = " << l_perp2 << endl ;
                   
                   if (l_perp2<0.0) l_perp2 = 0.0; ///< test if negative
                   
@@ -373,7 +373,7 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
                   double energy = ( z*pIn[i].nu() + (tQd1 + k_perp1_2)/(2.0*z*pIn[i].nu() ) )/std::sqrt(2.0) ;
                   double plong =  ( z*pIn[i].nu() - (tQd1 + k_perp1_2)/(2.0*z*pIn[i].nu() ) )/std::sqrt(2.0) ;
                   
-                  cout << " E, plong of d1 , E^2 - plong^2 - k_perp1^2 = " << energy << " " << plong << "  " << energy*energy - plong*plong - k_perp1_2 << endl;
+                  //cout << " E, plong of d1 , E^2 - plong^2 - k_perp1^2 = " << energy << " " << plong << "  " << energy*energy - plong*plong - k_perp1_2 << endl;
                   
 
                   
@@ -385,9 +385,9 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
                   newp[2] = plong*s_t*s_p + k_perp1[2];
                   newp[3] = plong*c_t + k_perp1[3];
                   
-                  cout << " d1 momentum " << newp[0] << "  " << newp[1] << "  " << newp[2] << "  " << newp[3] << endl ;
+                  //cout << " d1 momentum " << newp[0] << "  " << newp[1] << "  " << newp[2] << "  " << newp[3] << endl ;
                   
-                  cout << " d1 mass^2 = " << pow(newp[0],2) - pow(newp[1],2) - pow(newp[2],2) - pow(newp[3],2) << endl;
+                  //cout << " d1 mass^2 = " << pow(newp[0],2) - pow(newp[1],2) - pow(newp[2],2) - pow(newp[3],2) << endl;
 
                   double newx[4];
                   
@@ -402,7 +402,7 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
                   
                   int iout = pOut.size()-1 ;
                   
-                  cout << "  created a new parton from split with iout = " << iout << endl;
+                  //cout << "  created a new parton from split with iout = " << iout << endl;
                   
                   pOut[iout].set_t(tQd1);
                   pOut[iout].set_mean_form_time();
@@ -425,7 +425,7 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
                   energy = ( (1.0-z)*pIn[i].nu() + (tQd2 + k_perp2_2)/( 2.0*(1.0-z)*pIn[i].nu() ) )/std::sqrt(2.0) ;
                   plong =  ( (1.0-z)*pIn[i].nu() - (tQd2 + k_perp2_2)/( 2.0*(1.0-z)*pIn[i].nu() ) )/std::sqrt(2.0) ;
 
-                  cout << " E, plong of d2 , E^2 - plong^2 - k_perp^2 = " << energy << " " << plong << "  " << energy*energy - plong*plong - k_perp2_2 << endl;
+                  //cout << " E, plong of d2 , E^2 - plong^2 - k_perp^2 = " << energy << " " << plong << "  " << energy*energy - plong*plong - k_perp2_2 << endl;
                   
                   parent_perp = std::sqrt( pow(pIn[i].p(1),2) + pow(pIn[i].p(2),2) + pow(pIn[i].p(3),2) - pow(pIn[i].pl(),2) );
                   
@@ -436,9 +436,9 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
                   newp[2] = plong*s_t*s_p + k_perp2[2] ;
                   newp[3] = plong*c_t + k_perp2[3] ;
                   
-                  cout << " d2 momentum " << newp[0] << "  " << newp[1] << "  " << newp[2] << "  " << newp[3] << endl ;
+                  //cout << " d2 momentum " << newp[0] << "  " << newp[1] << "  " << newp[2] << "  " << newp[3] << endl ;
 
-                  cout << " d2 mass^2 = " << pow(newp[0],2) - pow(newp[1],2) - pow(newp[2],2) - pow(newp[3],2) << endl;
+                  //cout << " d2 mass^2 = " << pow(newp[0],2) - pow(newp[1],2) - pow(newp[2],2) - pow(newp[3],2) << endl;
 
                   
                   newx[0] = Time + deltaTime ;
@@ -454,7 +454,7 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
                   
                   iout = pOut.size()-1 ;
                   
-                  cout << "  created a new parton from split with iout = " << iout << endl;
+                  //cout << "  created a new parton from split with iout = " << iout << endl;
                   cout << endl;
 
                   pOut[iout].set_t(tQd2);
