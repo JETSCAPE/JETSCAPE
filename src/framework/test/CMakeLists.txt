@@ -41,7 +41,7 @@ endif()
 target_link_libraries(JetScapeTest JetScape JetScapeHydro hydroFromFile)
 
 if (music)
-    include_directories(../3rdparty/music ../3rdparty/music/src)
+    #include_directories(../3rdparty/music ../3rdparty/music/src)
     target_link_libraries(JetScapeTest JetScape JetScapeHydro hydroFromFile music_lib)
 endif (music)
 
