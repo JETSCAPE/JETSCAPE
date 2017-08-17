@@ -17,209 +17,130 @@
 
 namespace Jetscape {
 
-  JetScapeParticleBase::~JetScapeParticleBase()
-  {
+  JetScapeParticleBase::~JetScapeParticleBase(){
     VERBOSESHOWER(9);
   }
 
-  //Make smarter later ...
-
-
-  JetScapeParticleBase::JetScapeParticleBase (const JetScapeParticleBase& srp) : PseudoJet (srp)
+  JetScapeParticleBase::JetScapeParticleBase (const JetScapeParticleBase& srp)
+    : PseudoJet (srp)
   {
     pid_ = srp.pid_;
     plabel_ = srp.plabel_;
     pstat_ = srp.pstat_;
     form_time_ = srp.form_time_;
     mass_ = srp.mass_;
-    t_ = srp.t_;
+    // t_ = srp.t_;
     jet_v_ = srp.jet_v_;
-    // p_in_ = srp.p_in_;
     x_in_ = srp.x_in_;
-    //    cout << " form time in cpC = " << form_time_ << endl ;
   }
 
-  JetScapeParticleBase::JetScapeParticleBase (int label, int id, int stat, double pt, double eta, double phi, double e)
+  JetScapeParticleBase::JetScapeParticleBase (int label, int id, int stat, double pt, double eta, double phi, double e, double* x)
   {
     set_label(label);
-    
     set_id(id);
-
     initialize_form_time();
-    
     init_jet_v();
   
-    set_mass(-1.0);
+    set_restmass(-1.0);
     switch (id) {
     case 1:  //down quark
     case -1: // anti-down quark
-      set_mass(0.01);
+      set_restmass(0.01);
       break;
     
     case 2:  // up quark
     case -2:  // anti-up quark
-      set_mass(0.005);
+      set_restmass(0.005);
       break;
     
     case 3:   // strange quark
     case -3:  // anti-strange quark
-      set_mass(0.15);
+      set_restmass(0.15);
       break;
     
     case 4:   // charm quark
     case -4:  // anti-charm quark
-      set_mass(1.29); // make more accurate later
+      set_restmass(1.29); // make more accurate later
       break;
 
     case 5:   // bottom quark
     case -5:  // anti-bottom quark
-      set_mass(4.2); // make more accurate later
+      set_restmass(4.2); // make more accurate later
       break;
       
     case 21: // gluon
-      set_mass(0.0);
+      set_restmass(0.0);
       break;
-    
+      
     default:
-      {
-	std::cout << " error in id = " << id << std::endl;
-	assert(mass_>=0.0);
-	break;
-      }
+      std::cout << " error in id = " << id << std::endl;
+      assert(mass_>=0.0);
+      break;
+    }
+    
+    double p[4];
+    p[0] = e;
+    p[1] = pt*cos(phi);
+    p[2] = pt*sin(phi);
+    p[3] = pt*sinh(eta);
+    
+    set_p(p);
+    set_stat(stat);
+
+    if ( x ){
+      set_x(x);
+    } else {
+      // if no x specified in constructor, particle starts at origin
+      double x0[4];
+      x0[0]=0;
+      x0[1]=0;
+      x0[2]=0;
+      x0[3]=0;
+      set_x(x0); 
     }
   
-    double p[4];
-    p[0] = e;
-    p[1] = pt*cos(phi);
-    p[2] = pt*sin(phi);
-    p[3] = pt*sinh(eta);
-    
-    
-    set_p(p);
-
-    set_stat(stat);
-    
-    double x[4];
-    x[0]=0;
-    x[1]=0;
-    x[2]=0;
-    x[3]=0;
-
-    set_x(x); // if no x specified in constructor, particle starts at origin
-    
-  
-    reset_PtYPhiM(pt,eta,phi,mass_); //check
+    // reset_PtYPhiM(pt,eta,phi,mass_); //check
   }
 
-  JetScapeParticleBase::JetScapeParticleBase (int label, int id, int stat, double pt, double eta, double phi, double e, double x[4]) 
-  {
-    set_label(label);
     
-    set_id(id);
-    
-    initialize_form_time();
-
-    init_jet_v();
-
-    set_mass(-1.0);
-    switch (id)
-      {
-
-      case 1:  //down quark
-      case -1: // anti-down quark
-        set_mass(0.01);
-        break;
-     
-
-      case 2:  // up quark
-      case -2:  // anti-up quark
-        set_mass(0.005);
-        break;
-    
-      case 3:   // strange quark
-      case -3:  // anti-strange quark
-        set_mass(0.15);
-        break;
-     
-      case 4:   // charm quark
-      case -4:  // anti-charm quark
-	set_mass(1.29); // make more accurate later
-	break;
-            
-      case 5:   // bottom quark
-      case -5:  // anti-bottom quark
-	set_mass(4.2); // make more accurate later
-	break;
-            
-
-      case 21: // gluon
-        set_mass(0.0);
-        break;
-     
-      default:
-        {
-	  std::cout << " error in id = " << id << std::endl;
-	  assert(mass_>=0.0);
-	  break;
-        }
-      }
-   
-    double p[4];
-    p[0] = e;
-    p[1] = pt*cos(phi);
-    p[2] = pt*sin(phi);
-    p[3] = pt*sinh(eta);
-    
-    
-    set_p(p);
-    set_stat(stat);
-    set_x(x);
-
-    reset_PtYPhiM(pt,eta,phi,mass_); //check
-  }
-
   JetScapeParticleBase::JetScapeParticleBase (int label, int id, int stat, double p[4], double x[4])  : PseudoJet(p[0],p[1],p[2],p[3])
   {
     
     set_label(label);
-    
-    set_id(id);
-    
-    initialize_form_time();
-    
+    set_id(id);    
+    initialize_form_time();    
     init_jet_v();
-
     
-    set_mass(-1.0);
+    set_restmass(-1.0);
     switch (id) {
     case 1:  //down quark
     case -1: // anti-down quark
-      set_mass(0.01);
+      set_restmass(0.01);
       break;
             
     case 2:  // up quark
     case -2:  // anti-up quark
-      set_mass(0.005);
+      set_restmass(0.005);
       break;
         
     case 3:   // strange quark
     case -3:  // anti-strange quark
-      set_mass(0.15);
+      set_restmass(0.15);
       break;
 
     case 4:   // charm quark
     case -4:  // anti-charm quark
-      set_mass(1.29); // make more accurate later
+      set_restmass(1.29); // make more accurate later
       break;
             
     case 5:   // bottom quark
     case -5:  // anti-bottom quark
-      set_mass(4.2); // make more accurate later
+      set_restmass(4.2); // make more accurate later
       break;
             
 
     case 21: // gluon
-      set_mass(0.0);
+      set_restmass(0.0);
       break;
             
     default:
@@ -257,8 +178,7 @@ namespace Jetscape {
     pstat_ = stat;
   }
 
-  // from PseudoJet ... (well keep for now);
-  void JetScapeParticleBase::set_mass(double mass_input)
+  void JetScapeParticleBase::set_restmass(double mass_input)
   {
     mass_ = mass_input;
   }
@@ -282,7 +202,8 @@ namespace Jetscape {
   void JetScapeParticleBase::set_mean_form_time ()
   {
     //mean_form_time_ = (this->e()+this->pl())*std::sqrt(2.0)/t_;
-    mean_form_time_ = 2.0*this->e()/t_;
+    // mean_form_time_ = 2.0*this->e()/t_;
+    mean_form_time_ = 2.0*e()/t();
   }
     
 
@@ -298,8 +219,22 @@ namespace Jetscape {
     
   void JetScapeParticleBase::set_t(double t)
   {
-    t_ = t;
-  } ///< virtuality of particle
+    //  Reset the momentum due to virtuality              
+    double newP[4];              
+    newP[0] = e();
+    double newPl = std::sqrt( e()*e() - t ) ;              
+    double velocityMod = std::sqrt(std::pow(jet_v_.comp(1),2) + std::pow(jet_v_.comp(2),2) + std::pow(jet_v_.comp(3),2));
+
+    newPl = newPl/velocityMod;
+    for(int j=1;j<=3;j++) {
+      newP[j] = newPl*jet_v_.comp(j);
+    }
+    
+    set_p(newP);
+
+	      
+    // t_ = t;
+  } 
 
     
   void JetScapeParticleBase::init_jet_v()
@@ -395,6 +330,7 @@ namespace Jetscape {
   double JetScapeParticleBase::pl() {
     if (jet_v_.comp(0)<0.99) {
       // this should never happen
+      cerr << "jet_v_ = " << jet_v_.comp(0) << "  "  << jet_v_.comp(1) << "  "  << jet_v_.comp(2) << "  "  << jet_v_.comp(3) << endl;
       throw std::runtime_error("JetScapeParticleBase::pl() : jet_v should never be space-like.");
       // return(std::sqrt( p_in_.x()*p_in_.x() + p_in_.y()*p_in_.y() + p_in_.z()*p_in_.z() ) );
       return(-1);
@@ -415,7 +351,9 @@ namespace Jetscape {
     
   const double JetScapeParticleBase::t()
   {
-    return (t_) ;
+    /// \Todo: Fix 
+    return ( PseudoJet::m2() ) ;
+    // return (t_) ;
   }        
     
   /*   double generate_t(double, double);
@@ -440,7 +378,7 @@ namespace Jetscape {
     x_in_ = c.x_in() ;
     form_time_ = c.form_time_;
     mass_ = c.mass_;
-    t_ = c.t();
+    // t_ = c.t();
       
     return *this;
   }
@@ -462,7 +400,7 @@ namespace Jetscape {
     x_in_ = c.x_in_;
       
     mass_ = c.mass_;
-    t_ = c.t_;
+    // t_ = c.t_;
     form_time_ = c.form_time_ ;
         
     return *this;

@@ -70,8 +70,7 @@ namespace Jetscape {
 
     JetScapeParticleBase() : PseudoJet() {};
     JetScapeParticleBase (int label, int id, int stat, double p[4], double x[4]);
-    JetScapeParticleBase (int label, int id, int stat, double pt, double eta, double phi, double e);
-    JetScapeParticleBase (int label, int id, int stat, double pt, double eta, double phi, double e, double x[4]);
+    JetScapeParticleBase (int label, int id, int stat, double pt, double eta, double phi, double e, double* x=0);
     JetScapeParticleBase (const JetScapeParticleBase& srp);
 	  
     virtual ~JetScapeParticleBase();
@@ -83,8 +82,6 @@ namespace Jetscape {
     void set_id(int id);  
     void set_stat(int stat);
 
-    // from PseudoJet ... (well keep for now);
-    void set_mass(double mass_input);    
     void set_p(double p[4]);
     void set_x(double x[4]); 
     
@@ -122,11 +119,13 @@ namespace Jetscape {
 
   protected:
   
+    void set_restmass(double mass_input); ///< shouldn't be called from the outside, needs to be consistent with PID
+
     int pid_                ; ///< particle id ()
     int pstat_              ; ///< status of particle
     int plabel_             ; ///< the line number in the event record
     double mass_            ; ///< rest mass of the particle \todo Only maintain PID, look up mass from PDG
-    double t_               ; ///< The virtuality, and not the time!
+    // double t_               ; ///< The virtuality, and not the time!
     double mean_form_time_  ; ///< Mean formation time
     double form_time_       ; ///< event by event formation time
     

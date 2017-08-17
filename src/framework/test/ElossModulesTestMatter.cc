@@ -165,35 +165,37 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
               
               tQ2 = generate_vac_t(pIn[i].pid(), pIn[i].nu(), QS/2.0, pIn[i].e()*pIn[i].e() ,zeta , iSplit);
               
-              pIn[i].set_t(tQ2);
+              // pIn[i].set_t(tQ2);
           
-              pIn[i].set_mean_form_time();
+              // pIn[i].set_mean_form_time();
               
-              double ft = generate_L (pIn[i].mean_form_time() ) ;
+              // double ft = generate_L (pIn[i].mean_form_time() ) ;
               
+              // pIn[i].set_form_time(ft);
+              
+              
+              // //  Reset the momentum due to virtuality
+              
+              // double newP[4];
+              
+              // newP[0] = pIn[i].e();
+              
+              // double newPl = std::sqrt( pIn[i].e()*pIn[i].e() - pIn[i].t() ) ;
+              
+              // newPl = newPl/velocityMod;
+              
+              // for(int j=1;j<=3;j++)
+              // {
+              //     newP[j] = newPl*velocity[j];
+              // }
+
+	      // KK:
+              pIn[i].set_t(tQ2); // Also resets momentum!
+	      pIn[i].set_mean_form_time();
+              double ft = generate_L (pIn[i].mean_form_time() ) ;              
               pIn[i].set_form_time(ft);
               
-              
-              //  Reset the momentum due to virtuality
-              
-              double newP[4];
-              
-              newP[0] = pIn[i].e();
-              
-              double newPl = std::sqrt( pIn[i].e()*pIn[i].e() - pIn[i].t() ) ;
-              
-              newPl = newPl/velocityMod;
-              
-              for(int j=1;j<=3;j++)
-              {
-                  newP[j] = newPl*velocity[j];
-              }
-              
-              pIn[i].set_p(newP);
-              
-              pIn[i].set_jet_v(velocity);
-              
-
+	      pIn[i].set_jet_v(velocity);              
               
               
               //DEBUG:
