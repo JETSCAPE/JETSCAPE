@@ -120,7 +120,13 @@ class FourVector
         }
     }
     
-    double plus()
+  double phi(){
+    double ret=atan2( yv,xv);
+    while (ret < 0.0) {ret += 2.0*pi;}
+    return ret;
+  };
+
+  double plus()
     {
         return ( (zv+tv)/sqrt(2.0) );
     };

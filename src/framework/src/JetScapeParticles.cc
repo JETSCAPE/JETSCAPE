@@ -33,7 +33,6 @@ namespace Jetscape {
     form_time_ = srp.form_time_;
     mass_ = srp.mass_;
     t_ = srp.t_;
-    t_max_ = srp.t_max_;
     jet_v_ = srp.jet_v_;
     p_in_ = srp.p_in_;
     x_in_ = srp.x_in_;
@@ -324,11 +323,6 @@ namespace Jetscape {
     form_time_ = -0.1;
   }
     
-  void JetScapeParticleBase::set_t_max(double t_max)
-  {
-    t_max_ = t_max;
-  }
-    
   void JetScapeParticleBase::set_t(double t)
   {
     t_ = t;
@@ -447,13 +441,7 @@ namespace Jetscape {
   const double JetScapeParticleBase::t()
   {
     return (t_) ;
-  }
-    
-  const double JetScapeParticleBase::t_max()
-  {
-    return(t_max_);
-  }
-    
+  }        
     
   /*   double generate_t(double, double);
        {

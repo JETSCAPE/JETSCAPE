@@ -24,6 +24,7 @@
 
 // User modules derived from jetscape framework clasess
 // to be used to run Jetscape ...
+#include "AdSCFT.h"
 #include "ElossModulesTestMatter.h"
 #include "brick_jetscape.h"
 #include "Gubser_hydro_jetscape.h"
@@ -64,7 +65,7 @@ int main(int argc, char** argv)
   Show();
 
   // auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",10);
-  auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",2);
+  auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",1);
   jetscape->SetId("primary");
 
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
@@ -75,6 +76,7 @@ int main(int argc, char** argv)
   
   auto matter = make_shared<Matter> ();
   auto martini = make_shared<Martini> ();
+  auto adscft = make_shared<AdSCFT> ();
 
   auto pythiaGun= make_shared<PythiaGun> ();
 
@@ -94,8 +96,9 @@ int main(int argc, char** argv)
   jetscape->Add(hydro);
 
   jloss->Add(matter);
-  jloss->Add(martini);
-  
+  //jloss->Add(martini);
+  // jloss->Add(adscft);
+
   jlossmanager->Add(jloss);
   
   jetscape->Add(jlossmanager);

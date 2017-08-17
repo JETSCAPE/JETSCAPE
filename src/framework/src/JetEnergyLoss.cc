@@ -16,6 +16,7 @@
 #include "JetScapeLogger.h"
 #include "JetScapeXML.h"
 #include <string>
+#include <iostream>
 #include "tinyxml2.h"
 #include "JetScapeSignalManager.h"
 #include "JetScapeWriterAscii.h"
@@ -31,7 +32,24 @@
 
 using namespace std;
 
+/**
+   DELETE ME convenient output
+*/
+
 namespace Jetscape {
+ostream &operator<<(ostream &ostr, const fjcore::PseudoJet & jet) {
+  if (jet == 0) {
+    ostr << " 0 ";
+  } else {
+    ostr << " pt = " << jet.pt()
+	 << " m = " << jet.m()
+	 << " y = " << jet.rap()
+	 << " phi = " << jet.phi()
+         << " ClusSeq = " << (jet.has_associated_cs() ? "yes" : "no");
+  }                                                      
+  return ostr;
+}
+
 
 JetEnergyLoss::JetEnergyLoss()
 {
@@ -192,8 +210,8 @@ void JetEnergyLoss::DoShower()
 
 	  for (int k=0;k<pOutTemp.size();k++)
 	    {
-	      vEnd=pShower->new_vertex(make_shared<Vertex>(0,0,0,currentTime));	    	      
-	      pShower->new_parton(vStart,vEnd,make_shared<Parton>(pOutTemp[k]));	     
+	      vEnd=pShower->new_vertex(make_shared<Vertex>(0,0,0,currentTime));	
+	      pShower->new_parton(vStart,vEnd,make_shared<Parton>(pOutTemp[k]));
 
 	      vStartVecOut.push_back(vEnd);
 	      pOut.push_back(pOutTemp[k]);
@@ -208,7 +226,10 @@ void JetEnergyLoss::DoShower()
 	      // fjcore::PseudoJet pj ( Parton.px(), Parton.py(), Parton.pz(), Parton.e() );
 	      fjcore::PseudoJet pj ( particle.p_in().x(), particle.p_in().y(), particle.p_in().z(), particle.p_in().t() );
 	      fjcore::PseudoJet pj2;
-	      pj2.reset_momentum_PtYPhiM ( particle.pt(), particle.phi(), particle.p_in().rapidity(), particle.mass() );
+	      // pj2.reset_momentum_PtYPhiM ( particle.pt(), particle.p_in().rapidity(), particle.p_in().phi(), particle.mass() );
+	      // The following is probably correct, but Abhijit's code neglects m0
+	      // pj2.reset_momentum_PtYPhiM ( particle.pt(), particle.p_in().rapidity(), particle.p_in().phi() , sqrt( particle.mass()*particle.mass() + particle.t() )  );
+	      pj2.reset_momentum_PtYPhiM ( particle.pt(), particle.p_in().rapidity(), particle.p_in().phi() , sqrt( particle.t() )  );
 
 	      cerr << "particle.id()=" << particle.pid() << endl;
 
@@ -219,6 +240,15 @@ void JetEnergyLoss::DoShower()
 	      cerr << "particle.e()=" <<particle.e() << endl;
 	      cerr << "pj.e()=" <<pj.e() << endl;
 	      cerr << "pj2.e()=" <<pj2.e() << endl;
+
+	      cerr << "par: " 
+		   << " pt = " << particle.pt()
+		   << " t = " << particle.t()
+		   << " y = " << particle.p_in().rapidity()
+		   << " phi = " << particle.p_in().phi()
+		   << endl;
+
+	      cerr << "pj:  " << pj<< endl << "pj2: " << pj2 << endl;
 
 	      cerr << "particle.t()=" <<particle.t() << endl;
 	      // cerr << "particle.p()=" << particle.p() << endl;
