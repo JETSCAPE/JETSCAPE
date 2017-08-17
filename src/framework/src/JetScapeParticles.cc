@@ -34,7 +34,7 @@ namespace Jetscape {
     mass_ = srp.mass_;
     t_ = srp.t_;
     jet_v_ = srp.jet_v_;
-    p_in_ = srp.p_in_;
+    // p_in_ = srp.p_in_;
     x_in_ = srp.x_in_;
     //    cout << " form time in cpC = " << form_time_ << endl ;
   }
@@ -83,7 +83,7 @@ namespace Jetscape {
     default:
       {
 	std::cout << " error in id = " << id << std::endl;
-	assert(mass()>=0.0);
+	assert(mass_>=0.0);
 	break;
       }
     }
@@ -108,7 +108,7 @@ namespace Jetscape {
     set_x(x); // if no x specified in constructor, particle starts at origin
     
   
-    reset_PtYPhiM(pt,eta,phi,mass()); //check
+    reset_PtYPhiM(pt,eta,phi,mass_); //check
   }
 
   JetScapeParticleBase::JetScapeParticleBase (int label, int id, int stat, double pt, double eta, double phi, double e, double x[4]) 
@@ -159,7 +159,7 @@ namespace Jetscape {
       default:
         {
 	  std::cout << " error in id = " << id << std::endl;
-	  assert(mass()>=0.0);
+	  assert(mass_>=0.0);
 	  break;
         }
       }
@@ -175,7 +175,7 @@ namespace Jetscape {
     set_stat(stat);
     set_x(x);
 
-    reset_PtYPhiM(pt,eta,phi,mass()); //check
+    reset_PtYPhiM(pt,eta,phi,mass_); //check
   }
 
   JetScapeParticleBase::JetScapeParticleBase (int label, int id, int stat, double p[4], double x[4])  : PseudoJet(p[0],p[1],p[2],p[3])
@@ -225,7 +225,7 @@ namespace Jetscape {
     default:
       {
 	std::cout << " error in id = " << id << std::endl;
-	assert(mass()>=0.0);
+	assert(mass_>=0.0);
 	break;
       }
     }
@@ -235,34 +235,6 @@ namespace Jetscape {
   }
 
 
-  /*double JetScapeParticleBase::generate_t(double t_min, double t_max)
-    {
-    
-    // cout << " inside generate parton momentum " << this->p_in_.t() << "  " << this->p_in_.x() << "  " << this->p_in_.y() << "  " << this->p_in_.z() << endl ;
-    // cout << std::pow(this->p_in_.t(),2) << "  "  << std::pow(this->p_in_.x(),2) << "  " << std::pow(this->p_in_.y(),2) << "  " << std::pow(this->p_in_.z(),2) << endl ;
-    
-    double tPrior = std::pow(this->p_in_.t(),2) - std::pow(this->p_in_.x(),2) - std::pow(this->p_in_.y(),2) - std::pow(this->p_in_.z(),2) ;
-    
-    tPrior = 1.0;
-    
-    double loc = (this->x_in_*this->p_in_)/this->p(0);
-    
-    // cout << " tPrior = " << tPrior << endl;
-    if (t_<-99.0)
-    {
-        
-    double nu = (this->e() + this->pl())/std::sqrt(2);
-    t_ = generate_vac_t(this->pid_,nu,t_min, t_max,loc)
-        
-    }
-    
-    return (tPrior);
-    
-    }
-
-  */
-
-  
   void JetScapeParticleBase::clear()
   {
     plabel_ = 0;
@@ -293,9 +265,10 @@ namespace Jetscape {
     
   void JetScapeParticleBase::set_p(double p[4])
   {
-    p_in_ = FourVector(p);
-    //FourVector p_in_(p); // error: creates new vector and hence not accessible via class p_in_
-    //reset_momentum(p[0],p[1],p[2],p[3]);
+    reset_momentum(p[0],p[1],p[2],p[3]);
+    // p_in_ = FourVector(p);
+    // //FourVector p_in_(p); // error: creates new vector and hence not accessible via class p_in_
+    // //reset_momentum(p[0],p[1],p[2],p[3]);
   }
 
   // not needed in graph structure
@@ -363,16 +336,15 @@ namespace Jetscape {
     return(plabel_);
   }
 
-  const double JetScapeParticleBase::e()
-  {
-    return(p_in_.t());
-  }
+  // const double JetScapeParticleBase::e()
+  // {
+  //   return(p_in_.t());
+  // }
     
-  const double JetScapeParticleBase::pt()
-  {
-    return(sqrt(p_in_.x()*p_in_.x() + p_in_.y()*p_in_.y())) ;
-    
-  }
+  // const double JetScapeParticleBase::pt()
+  // {
+  //   return(sqrt(p_in_.x()*p_in_.x() + p_in_.y()*p_in_.y())) ;    
+  // }
     
     
   const double JetScapeParticleBase::time()
@@ -386,10 +358,10 @@ namespace Jetscape {
     return(pparent_label_);
     }
   */
-  FourVector &JetScapeParticleBase::p_in()
-  {
-    return(p_in_);
-  }
+  // FourVector &JetScapeParticleBase::p_in()
+  // {
+  //   return(p_in_);
+  // }
   
   
   FourVector &JetScapeParticleBase::x_in()
@@ -402,7 +374,7 @@ namespace Jetscape {
     return(jet_v_);
   }
   
-  const double JetScapeParticleBase::mass()
+  const double JetScapeParticleBase::restmass()
   {
     return(mass_);
   }
@@ -414,22 +386,25 @@ namespace Jetscape {
 
   // just operator of PseudoJet ...
   
-  const double JetScapeParticleBase::p(int i)
-  {
-    return (p_in_.comp(i));
+  const double JetScapeParticleBase::p(int i) {
+    // return (p_in_.comp(i));
+    return operator()(i);
   }
   
   
-  double JetScapeParticleBase::pl()
-  {
-    if (jet_v_.comp(0)<0.99)
-      {
-	return(std::sqrt( p_in_.x()*p_in_.x() + p_in_.y()*p_in_.y() + p_in_.z()*p_in_.z() ) );
-      }
+  double JetScapeParticleBase::pl() {
+    if (jet_v_.comp(0)<0.99) {
+      // this should never happen
+      throw std::runtime_error("JetScapeParticleBase::pl() : jet_v should never be space-like.");
+      // return(std::sqrt( p_in_.x()*p_in_.x() + p_in_.y()*p_in_.y() + p_in_.z()*p_in_.z() ) );
+      return(-1);
+    }
     else
       {
 	// cout << " returing pl using jet_v " << ( p_in_.x()*jet_v_.x()+ p_in_.y()*jet_v_.y() + p_in_.z()*jet_v_.z() )/std::sqrt( pow(jet_v_.x(),2) + pow(jet_v_.y(),2) + pow(jet_v_.z(),2) ) << endl ;
-	return( (p_in_.x()*jet_v_.x()+ p_in_.y()*jet_v_.y() + p_in_.z()*jet_v_.z() )/std::sqrt( pow(jet_v_.x(),2) + pow(jet_v_.y(),2) + pow(jet_v_.z(),2) ) );
+	// return( (p_in_.x()*jet_v_.x()+ p_in_.y()*jet_v_.y() + p_in_.z()*jet_v_.z() )/std::sqrt( pow(jet_v_.x(),2) + pow(jet_v_.y(),2) + pow(jet_v_.z(),2) ) );
+	// projection onto (unit) jet velocity
+	return ( px()*jet_v_.x()+ py()*jet_v_.y() + pz()*jet_v_.z() )/std::sqrt( pow(jet_v_.x(),2) + pow(jet_v_.y(),2) + pow(jet_v_.z(),2) );
       }
   }
     
@@ -452,18 +427,19 @@ namespace Jetscape {
  
   JetScapeParticleBase& JetScapeParticleBase::operator=(JetScapeParticleBase &c)
   {
+    fjcore::PseudoJet::operator=(c);
     //FourVector x_in_;
       
     pid_ = c.pid() ;
     pstat_ = c.pstat() ;
     plabel_ = c.plabel() ;
     //pparent_label_ = c.pparent_label();
-    p_in_ = c.p_in() ;
+    // p_in_ = c.p_in() ;
     //JetScapeParticleBase::set_x(c.x_in());
 
     x_in_ = c.x_in() ;
     form_time_ = c.form_time_;
-    mass_ = c.mass();
+    mass_ = c.mass_;
     t_ = c.t();
       
     return *this;
@@ -471,13 +447,14 @@ namespace Jetscape {
   
   JetScapeParticleBase& JetScapeParticleBase::operator=(const JetScapeParticleBase &c)
   {
+    fjcore::PseudoJet::operator=(c);
     //FourVector x_in_;
       
     pid_ = c.pid_;
     pstat_ = c.pstat_ ;
     plabel_ = c.plabel_;
     //pparent_label_ = c.pparent_label();
-    p_in_ = c.p_in_;
+    // p_in_ = c.p_in_;
     //  x_in_ = c.x_in() ;
         
     //JetScapeParticleBase::set_x(c.x_in());

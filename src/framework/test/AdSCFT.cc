@@ -87,7 +87,7 @@ void AdSCFT::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
     for (int i=0;i<pIn.size();i++)
     {
       cout << " Parton Q2= " << pIn[i].t() << endl;
-      cout << " Parton Id= " << pIn[i].pid() << " and mass= " << pIn[i].mass() << endl;
+      cout << " Parton Id= " << pIn[i].pid() << " and mass= " << pIn[i].restmass() << endl;
       if (pIn[i].t()<=QS && pIn[i].e()>0.)
       {
 	//Parton 4-position
@@ -152,7 +152,7 @@ void AdSCFT::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
         for (unsigned int j =0; j<4; j++) w.push_back(p[j]/p[3]);
         double w2=std::pow(w[0],2.)+std::pow(w[1],2.)+std::pow(w[2],2.);        
         cout << " w2= " << w2 << endl;
-	double virt=std::sqrt(p[3]*p[3]-w2*p[3]*p[3]-std::pow(pIn[i].mass(),2.));
+	double virt=std::sqrt(p[3]*p[3]-w2*p[3]*p[3]-std::pow(pIn[i].restmass(),2.));
 	//cout << " virt= " << virt << endl;
   	
         //Needed for boosts (v.w)

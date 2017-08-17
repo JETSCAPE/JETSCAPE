@@ -101,15 +101,15 @@ namespace Jetscape {
     const int pid();    
     const int pstat();    
     const int plabel();
-    const double e();
-    const double pt();
+    // const double e();
+    // const double pt();
     const double time();
     
-    FourVector &p_in();  
+    // FourVector &p_in();  
     FourVector &x_in();
     FourVector &jet_v();
   
-    const double mass();
+    const double restmass();
     const double mean_form_time();
     const double p(int i); 
     double pl();    
@@ -130,7 +130,7 @@ namespace Jetscape {
     double mean_form_time_  ; ///< Mean formation time
     double form_time_       ; ///< event by event formation time
     
-    FourVector p_in_; ///< Internal version of p. Clashes with PseudoJet! REPLACE
+    // FourVector p_in_; ///< Internal version of p. Clashes with PseudoJet! REPLACE
     FourVector x_in_; ///< position of particle
     FourVector jet_v_; ///< jet four vector, without gamma factor (so not really a four vector)
 
