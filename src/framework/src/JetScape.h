@@ -9,6 +9,7 @@
 #define JETSCAPE_H
 
 #include "JetScapeLogger.h"
+#include "JetScapeTaskSupport.h"
 #include "JetScapeModuleBase.h"
 
 using namespace std;

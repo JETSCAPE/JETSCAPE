@@ -70,7 +70,12 @@ void JetScape::Init()
 
    SetPointers();
    
-   // Has to be called explicitly since not really fully recursively (if ever needed)
+   // Set up helper. Mostly used for random numbers
+   // Needs the XML reader singleton set up
+   DEBUG<<"Seeding JetScapeTaskSupport from XML";
+   JetScapeTaskSupport::ReadSeedFromXML( );
+
+  // Has to be called explicitly since not really fully recursively (if ever needed)
    // So --> JetScape is "Task Manager" of all modules ...
    
    INFO<<"Found "<<GetNumberOfTasks()<<" Modules Initialize them ... ";

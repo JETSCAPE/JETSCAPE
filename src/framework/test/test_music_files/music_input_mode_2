@@ -17,12 +17,13 @@ mode 2   # MUSIC running mode
 ###################################
 # parameters for initial conditions
 ###################################
-Initial_profile 3               # type of initial condition 
+Initial_profile 41              # type of initial condition 
                                 # 0: for Gubser flow test (future)
                                 # 1: Optical Glauber model
                                 # 3: MC-Glauber model
                                 # 8: Read in initial profile from a file 
                                 #    (e.g., IP-Glasma)
+                                # 41: Initial condition from the JETSCAPE
 initialize_with_entropy 0       # 0: with energy density 
                                 # 1: with entropy density
 
@@ -30,7 +31,7 @@ initialize_with_entropy 0       # 0: with energy density
 Initial_Distribution_input_filename example_inputs/filename    
                                # the filename of initial profile 
                                # (for Initial_profile == 8)
-s_factor 1.0                   # normalization factor read in 
+s_factor 100.0                 # normalization factor read in 
                                # initial data file
 Eta_plateau_size 20.           # size of the plateau in eta_s
 Eta_fall_off 0.7               # the scale of the fall off of the 
@@ -84,7 +85,7 @@ Grid_size_in_y 200            # number of the grid points in y direction
 Grid_size_in_x 200            # number of the grid points in x direction
 #
 #
-EOS_to_use 7                  # type of the equation of state
+EOS_to_use 2                  # type of the equation of state
                               # 0: ideal gas
                               # 1: EOS-Q from azhydro
                               # 2: lattice EOS s95p-v1 

@@ -64,6 +64,7 @@ endif()
 message("Compiler and Linker flags ...")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O -fPIC -pipe -Wall -g -Wno-reorder -Wno-unused-variable ")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0 -fprofile-arcs -ftest-coverage -fPIC -pipe -Wall -g -Wno-reorder -Wno-unused-variable")
 
 if (APPLE)
      message( STATUS "Apple : " ${CMAKE_HOST_SYSTEM})
@@ -84,6 +85,7 @@ endif()
 
 # have binary in the build directory, easier to access
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
+set(CMAKE_BUILD_TYPE Debug)
 
 # Find and use Boost.
 find_package(Boost 1.50 REQUIRED COMPONENTS filesystem program_options system)
@@ -187,3 +189,4 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/jetscape_init.xml DESTINATION ${CMAKE_BINA
 #set(LIBS ${LIBS} ${ROOT_LIBRARIES})
 #However, the file(GLOB...) allows for wildcard additions:
 #file(GLOB SOURCES "src/*.cpp")
+

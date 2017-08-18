@@ -114,8 +114,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 	      //cout<<pOut[pOut.size()-2];
 	    }
 	
-	//cout << "**********HERE is Delta T******** " << deltaT << "\n";
-	//cout << "**********HERE is Time******** " << time << "\n";
+	cout << "**********HERE is Delta T******** " << deltaT << "\n";
+	cout << "**********HERE is Time******** " << time << "\n";
 	  
 	}
       

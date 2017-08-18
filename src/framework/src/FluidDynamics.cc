@@ -47,24 +47,26 @@ void FluidDynamics::Init()
   
   VERBOSE(8);
   
-  InitTask();
-
-  initialize_hydro(parameter_list);
-
   ini = JetScapeSignalManager::Instance()->GetInitialStatePointer().lock();
   if (!ini) {
-      WARN << "No initialization module!";
-  } else {
-      INFO << "length of entropy density vector=" << ini->entropy_density_distribution_.size();
+      WARN << "No initialization module, try: auto trento = make_shared<TrentoInitial>(); jetscape->Add(trento);";
   }
   
+  initialize_hydro(parameter_list);
+
+  InitTask();
+
   JetScapeTask::InitTasks();
 }
 
 void FluidDynamics::Exec()
 {
-  INFO<<"Run Hydro : "<<GetId()<< " ...";
+  INFO <<"Run Hydro : "<<GetId()<< " ...";
   VERBOSE(8)<<"Current Event #"<<GetCurrentEvent();
+
+  if (ini) {
+      INFO << "length of entropy density vector=" << ini->entropy_density_distribution_.size();
+  }
 
   evolve_hydro();
   
