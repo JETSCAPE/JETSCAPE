@@ -450,7 +450,7 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
                       newx[j] = pIn[i].x_in().comp(j) + (Time + deltaTime - pIn[i].x_in().comp(0) )*velocity[j]/velocityMod;
                   }
                   
-                  pOut.push_back(Parton(0,pid_a,0,newp,newx ));
+                  pOut.push_back(Parton(0,pid_b,0,newp,newx ));
                   
                   iout = pOut.size()-1 ;
                   
