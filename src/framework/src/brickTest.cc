@@ -29,6 +29,7 @@
 #include "Gubser_hydro_jetscape.h"
 #include "PGun.h"
 #include "JSPythia8.h"
+#include "PartonPrinter.h"
 
 #include <chrono>
 #include <thread>
@@ -78,9 +79,11 @@ int main(int argc, char** argv)
   auto pGun= make_shared<PGun> ();
   //auto py8=make_shared<JSPythia8> ("/Users/kjung/pythia8233/xmldoc",false);
 
+  auto printer = make_shared<PartonPrinter> ();
+
   // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
-  //auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");  
+  //autowriter= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");  
   //auto writer= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
   //writer->SetActive(false);
 
@@ -107,7 +110,9 @@ int main(int argc, char** argv)
   jlossmanager->Add(jloss);
   
   jetscape->Add(jlossmanager);
-  
+
+  jetscape->Add(printer);
+
   jetscape->Add(writer);
 
   // Intialize all modules tasks

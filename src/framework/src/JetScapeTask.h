@@ -24,6 +24,8 @@ namespace Jetscape {
 
 class JetScapeWriter;
 
+class PartonPrinter;
+
 class JetScapeTask 
 {
   
@@ -53,6 +55,11 @@ class JetScapeTask
   // Think about workflow ...
   virtual void WriteTasks(weak_ptr<JetScapeWriter> w);
   virtual void WriteTask(weak_ptr<JetScapeWriter> w) {};
+
+  // Printer method that prints the partons of the shower
+  // Is it only for EnergyLoss?
+  virtual void PrintPartons(weak_ptr<PartonPrinter> p);
+  virtual void PrintFinalPartons(weak_ptr<PartonPrinter> p){};
 
   virtual void Add(shared_ptr<JetScapeTask> m_tasks);
   

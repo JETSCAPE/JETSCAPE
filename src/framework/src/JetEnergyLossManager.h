@@ -28,6 +28,7 @@ class JetEnergyLossManager : public JetScapeTask, public std::enable_shared_from
   virtual void Exec();
   virtual void Clear();
   virtual void WriteTask(weak_ptr<JetScapeWriter> w);
+  virtual void PrintFinalPartons(weak_ptr<PartonPrinter> p);
   
   int GetNumSignals();
   

@@ -13,6 +13,7 @@
 #include "JetClass.hpp"
 #include "JetScapeWriter.h"
 #include "PartonShower.h"
+#include "PartonPrinter.h"
 #include "helper.h"
 #include <vector>
 #include <random>
@@ -92,6 +93,8 @@ class JetEnergyLoss : public JetScapeModuleBase, public std::enable_shared_from_
   double GetMaxT() {return maxT;}
   shared_ptr<PartonShower> GetShower() {return pShower;}
 
+  virtual void PrintFinalPartons(weak_ptr<PartonPrinter> p);
+
  private:
 
   double deltaT;
@@ -110,8 +113,8 @@ class JetEnergyLoss : public JetScapeModuleBase, public std::enable_shared_from_
   
   shared_ptr<Parton> inP;
   //unique_ptr<PartonShower> pShower;
-  shared_ptr<PartonShower> pShower;
-  
+  shared_ptr<PartonShower> pShower;	  
+
   node vStart;
   node vEnd;
 
