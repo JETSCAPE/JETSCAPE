@@ -26,6 +26,7 @@ namespace Jetscape {
 class JetScapeWriter;
 
 class PartonPrinter;
+class Parton;
 
 class JetScapeTask 
 {
@@ -59,8 +60,8 @@ class JetScapeTask
 
   // Printer method that prints the partons of the shower
   // Is it only for EnergyLoss?
-  virtual void PrintPartons(weak_ptr<PartonPrinter> p);
-  virtual void PrintFinalPartons(weak_ptr<PartonPrinter> p){};
+  virtual void GetPartons(weak_ptr<PartonPrinter> p);
+  virtual void GetFinalPartons(weak_ptr<PartonPrinter> p){};
 
   virtual void Add(shared_ptr<JetScapeTask> m_tasks);
   
@@ -86,12 +87,17 @@ class JetScapeTask
   void SetId(string m_id) {id=m_id;}
   const string GetId() const {return id;}
 
+  vector<shared_ptr<Parton>>&  GetRecomPartons(){return fPartons;}
+
  private:
 
   // can be made sortabele to put in correct oder or via xml file ...
   vector<shared_ptr<JetScapeTask>> tasks;
   //list<shared_ptr<JetScapeTask>> tasks; // list vs vector any advantage of list?
-  
+
+  // final partons ready for recombination
+  vector<shared_ptr<Parton>> fPartons;  
+
   bool active_exec;
   string id;
   // if for example a search rather position ... (or always sort with predefined order!?)

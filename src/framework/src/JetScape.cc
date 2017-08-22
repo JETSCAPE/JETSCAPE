@@ -141,7 +141,7 @@ void JetScape::Exec()
       
       JetScapeTask::ExecuteTasks();
 
-      JetScapeTask::PrintPartons(p);
+      JetScapeTask::GetPartons(p);
 
       if (w.lock().get())
 	JetScapeTask::WriteTasks(w);            

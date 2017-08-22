@@ -373,23 +373,19 @@ void JetEnergyLoss::PrintShowerInitiatingParton()
 }
 
 
-void JetEnergyLoss::PrintFinalPartons(weak_ptr<PartonPrinter> p)
+void JetEnergyLoss::GetFinalPartons(weak_ptr<PartonPrinter> p)
 {
    cout << "############### INSIDE PrintFinalPartons \n";
   if(pShower)
   {
-    cout << "###############Number of FINAL Partons: " << p.lock()->GetFinalPartons(pShower).size() << "###################\n";
-    for(unsigned int ipart=0; ipart < p.lock()->GetFinalPartons(pShower).size(); ++ipart)
-    {
-      cout << "############### FINAL PARTON NUMBER : " << ipart << " is " << p.lock()->GetFinalPartons(pShower).at(ipart) << "###################\n";
-    }
+    p.lock()->GetFinalPartons(pShower, GetRecomPartons());
   }
   else
   {
      cout << "###############THERE IS NO SHOWER NOW \n";
   }
 
-  JetScapeTask::PrintPartons(p);
+  JetScapeTask::GetPartons(p);
 }
 
 

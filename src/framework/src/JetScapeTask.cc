@@ -80,12 +80,12 @@ void JetScapeTask::WriteTasks(weak_ptr<JetScapeWriter> w)
     }
 }
 
-void JetScapeTask::PrintPartons(weak_ptr<PartonPrinter> p)
+void JetScapeTask::GetPartons(weak_ptr<PartonPrinter> p)
 {
   //cout<<"############### Printing partons in shower " << "\n";
   for (auto it : GetTaskList())
   {
-    it->PrintFinalPartons(p);
+    it->GetFinalPartons(p);
   }
 }
 
