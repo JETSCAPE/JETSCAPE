@@ -179,6 +179,15 @@ void PythiaGun::Exec()
 		<<", y=" << xLoc[2]
 		<<", z=" << xLoc[3];
 
+      VERBOSE(7) <<"Adding particle with pid = " << particle.id()
+		 << ", pT = " << particle.pT()
+		 << ", y = " << particle.y()
+		 << ", phi = " << particle.phi()
+		 << ", e = " << particle.e();
+      VERBOSE(7) <<" at x=" << xLoc[1]
+		 <<", y=" << xLoc[2]
+		 <<", z=" << xLoc[3];
+
       AddParton(make_shared<Parton>(0, particle.id(),0,particle.pT(),particle.y(),particle.phi(),particle.e(),xLoc) );
     }
   }
