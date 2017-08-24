@@ -146,7 +146,19 @@ namespace Jetscape {
   //  PARTON CLASS
   /*************************************************************************************************/
   class Parton : public JetScapeParticleBase{
-    using JetScapeParticleBase::JetScapeParticleBase;
+    // using JetScapeParticleBase::JetScapeParticleBase;
+
+  public : 
+    Parton (int label, int id, int stat, double p[4], double x[4])  :
+      JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  p, x) {
+      cout << "========================== std Ctor called, returning : " << *this << endl;
+    }
+
+    Parton (int label, int id, int stat, double pt, double eta, double phi, double e, double* x=0)  :
+      JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  pt, eta, phi, e, x){
+      cout << "========================== phieta Ctor called, returning : " << *this << endl;
+    }
+         
   };
 
 

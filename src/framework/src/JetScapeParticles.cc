@@ -79,10 +79,14 @@ namespace Jetscape {
     }
     
     double p[4];
-    p[0] = e;
-    p[1] = pt*cos(phi);
-    p[2] = pt*sin(phi);
-    p[3] = pt*sinh(eta);
+    // p[0] = e;
+    // p[1] = pt*cos(phi);
+    // p[2] = pt*sin(phi);
+    // p[3] = pt*sinh(eta);
+    p[3] = e;
+    p[0] = pt*cos(phi);
+    p[1] = pt*sin(phi);
+    p[2] = pt*sinh(eta);
     
     set_p(p);
     set_stat(stat);
@@ -150,9 +154,10 @@ namespace Jetscape {
 	break;
       }
     }
-    set_p(p);
+    // set_p(p);
     set_x(x);
     set_stat(stat);
+
   }
 
 
@@ -204,6 +209,9 @@ namespace Jetscape {
     //mean_form_time_ = (this->e()+this->pl())*std::sqrt(2.0)/t_;
     // mean_form_time_ = 2.0*this->e()/t_;
     mean_form_time_ = 2.0*e()/t();
+    cout << " ================ Setting mean form time ============== " << endl
+	 << " e = " << e() << " px " << px()<< " py " << py()<< " pz " << pz()  << endl;
+    cout << " e = " << e() << " t = " << t() << " mft = " << mean_form_time_ << endl;
   }
     
 
@@ -219,17 +227,32 @@ namespace Jetscape {
     
   void JetScapeParticleBase::set_t(double t)
   {
+    cout << " ================ Setting t ============== " << endl
+	 << " e = " << e() << " px " << px()<< " py " << py()<< " pz " << pz()  << endl;
+
+    // //  Reset the momentum due to virtuality              
+    // double newP[4];              
+    // newP[0] = e();
+    // double newPl = std::sqrt( e()*e() - t ) ;
+    // double velocityMod = std::sqrt(std::pow(jet_v_.comp(1),2) + std::pow(jet_v_.comp(2),2) + std::pow(jet_v_.comp(3),2));
+    // cout << velocityMod << endl;
+    
+    // newPl = newPl/velocityMod;
+    // for(int j=1;j<=3;j++) {
+    //   newP[j] = newPl*jet_v_.comp(j);
+    // }
+    
     //  Reset the momentum due to virtuality              
     double newP[4];              
-    newP[0] = e();
-    double newPl = std::sqrt( e()*e() - t ) ;              
+    newP[3] = e();
+    double newPl = std::sqrt( e()*e() - t ) ;
     double velocityMod = std::sqrt(std::pow(jet_v_.comp(1),2) + std::pow(jet_v_.comp(2),2) + std::pow(jet_v_.comp(3),2));
-
+    
     newPl = newPl/velocityMod;
     for(int j=1;j<=3;j++) {
-      newP[j] = newPl*jet_v_.comp(j);
+      newP[j-1] = newPl*jet_v_.comp(j);
     }
-    
+
     set_p(newP);
 
 	      
@@ -328,22 +351,25 @@ namespace Jetscape {
   
   
   double JetScapeParticleBase::pl() {
+    // Have to catch the ones initialized to 0
+    if (jet_v_.comp(0)<1e-6) {
+      return(std::sqrt( px()*px() + py()*py() + pz()*pz() ) );
+    }
+    
     if (jet_v_.comp(0)<0.99) {
       // this should never happen
       cerr << "jet_v_ = " << jet_v_.comp(0) << "  "  << jet_v_.comp(1) << "  "  << jet_v_.comp(2) << "  "  << jet_v_.comp(3) << endl;
       throw std::runtime_error("JetScapeParticleBase::pl() : jet_v should never be space-like.");
       // return(std::sqrt( p_in_.x()*p_in_.x() + p_in_.y()*p_in_.y() + p_in_.z()*p_in_.z() ) );
       return(-1);
+    } else {
+      // cout << " returing pl using jet_v " << ( p_in_.x()*jet_v_.x()+ p_in_.y()*jet_v_.y() + p_in_.z()*jet_v_.z() )/std::sqrt( pow(jet_v_.x(),2) + pow(jet_v_.y(),2) + pow(jet_v_.z(),2) ) << endl ;
+      // return( (p_in_.x()*jet_v_.x()+ p_in_.y()*jet_v_.y() + p_in_.z()*jet_v_.z() )/std::sqrt( pow(jet_v_.x(),2) + pow(jet_v_.y(),2) + pow(jet_v_.z(),2) ) );
+      // projection onto (unit) jet velocity
+      return ( px()*jet_v_.x()+ py()*jet_v_.y() + pz()*jet_v_.z() )/std::sqrt( pow(jet_v_.x(),2) + pow(jet_v_.y(),2) + pow(jet_v_.z(),2) );
     }
-    else
-      {
-	// cout << " returing pl using jet_v " << ( p_in_.x()*jet_v_.x()+ p_in_.y()*jet_v_.y() + p_in_.z()*jet_v_.z() )/std::sqrt( pow(jet_v_.x(),2) + pow(jet_v_.y(),2) + pow(jet_v_.z(),2) ) << endl ;
-	// return( (p_in_.x()*jet_v_.x()+ p_in_.y()*jet_v_.y() + p_in_.z()*jet_v_.z() )/std::sqrt( pow(jet_v_.x(),2) + pow(jet_v_.y(),2) + pow(jet_v_.z(),2) ) );
-	// projection onto (unit) jet velocity
-	return ( px()*jet_v_.x()+ py()*jet_v_.y() + pz()*jet_v_.z() )/std::sqrt( pow(jet_v_.x(),2) + pow(jet_v_.y(),2) + pow(jet_v_.z(),2) );
-      }
   }
-    
+  
   const double JetScapeParticleBase::nu()
   {
     return( ( this->e()+std::abs(this->pl()) )/std::sqrt(2) );
@@ -414,9 +440,11 @@ namespace Jetscape {
   */
   
   ostream &operator<<( ostream &output, JetScapeParticleBase & p ) {
-    output<<p.plabel()<<" "<<p.pid()<<" "<<p.pstat()<<" ";
-    output<<p.pt()<<" "<<p.rap()<<" "<<p.phi()<<" "<<p.e()<<" ";
-    output<<p.x_in().x()<<" "<<p.x_in().y()<<" "<<p.x_in().z()<<" "<<p.x_in().t();//<<endl;
+    output<<p.plabel()<<" pid="<<p.pid()<<" stat="<<p.pstat()<<" pt=";
+    output<<p.pt()<<" rap="<<p.rap()<<" phi="<<p.phi()<<endl;
+    output<<" e="<<p.e()<<" px=" << p.px()<<" py=" << p.py()<<" pz=" << p.pz()<<endl;
+    output<<" x="<<p.x_in().x()<<" y="<<p.x_in().y()<<" z="<<p.x_in().z()<<" t="<<p.x_in().t();
+
     
     return output;            
   }

@@ -102,49 +102,27 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
 
       double rNum;
         
-        double delT = 0.1;
-        double Time = deltaT*fmToGeVinv;
-        double deltaTime = delT*fmToGeVinv;
+      double delT = 0.1;
+      double Time = deltaT*fmToGeVinv;
+      double deltaTime = delT*fmToGeVinv;
     
      //   cout << " QS = " << QS << " Q2 = " << Q2 << endl;
 
-      //DEBUG:
-      //cout<<" ---> "<<pIn.size()<<endl;
-      for (int i=0;i<pIn.size();i++)
-      {
-       //rNum=ZeroOneDistribution(*get_mt19937_generator());
-	  //DEBUG:
-	  //cout<<i<<" "<<rNum<<endl;
-
-	  // simulate a "random" split 50/50 in pT
-	  //if (rNum>0.7)
-	  //  {
-	      //cout<<pIn[i];
-          
-   //       cout << " pIn size = " << pIn.size() << endl;
-          //cout << " parton id = " << pIn[i].pid() << "  Energy = " << pIn[i].e() << " p * jet_v = " << pIn[i].pl() << endl;
-          //cout << " qhat = " << qhat << endl;
-          //cout<< " the formation time of parton in fm = " << pIn[i].form_time()/fmToGeVinv ;
-  //      cout<< " mean formation time and virtuality = " << pIn[i].mean_form_time()/fmToGeVinv << " , " << pIn[i].t() << endl;
-          //cout<< " location of parton formation = "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z() << endl;
-          
-      //    tQ2 = pIn[i].generate_t(mu, pIn[i].e()*pIn[i].e());
+      for (int i=0;i<pIn.size();i++) {
                    		  
           velocity[0] = 1.0;
-          
-          for(int j=1;j<=3;j++)
-          {
-              velocity[j] = pIn[i].p(j)/pIn[i].e();
+	  for(int j=1;j<=3;j++){
+	    // velocity[j] = pIn[i].p(j)/pIn[i].e();
+	    velocity[j] = pIn[i].p(j-1)/pIn[i].e();
           }
           
           double velocityMod = std::sqrt(std::pow(velocity[1],2) + std::pow(velocity[2],2) + std::pow(velocity[3],2));
           
-          for(int j=0;j<=3;j++)
-          {
-              xStart[j] = pIn[i].x_in().comp(j) ;
-              //+ velocity[j]*delT;
+          for(int j=0;j<=3;j++) {
+	    xStart[j] = pIn[i].x_in().comp(j) ;
+	    //+ velocity[j]*delT;
           }
-
+	  
           length = 5.0*fmToGeVinv; /// length in GeV-1 will have to changed for hydro
           
           //cout << " Length = " << length << endl;
@@ -154,372 +132,262 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
           
           if (pIn[i].form_time()<0.0) /// A parton without a virtuality or formation time, must set...
           {
-              //pIn[i].x_in().Set(0,0,0,0);
-              iSplit = 0;
-              if (pIn[i].pid()==gid)
+	    //pIn[i].x_in().Set(0,0,0,0);
+	    iSplit = 0;
+	    if (pIn[i].pid()==gid)
               {
-                  cout << " parton is a gluon " << endl ;
-                  iSplit = 1;
+		cout << " parton is a gluon " << endl ;
+		iSplit = 1;
               }
-              else cout << " parton is a quark " <<endl;
-              
-              tQ2 = generate_vac_t(pIn[i].pid(), pIn[i].nu(), QS/2.0, pIn[i].e()*pIn[i].e() ,zeta , iSplit);
-              
-              // pIn[i].set_t(tQ2);
-          
-              // pIn[i].set_mean_form_time();
-              
-              // double ft = generate_L (pIn[i].mean_form_time() ) ;
-              
-              // pIn[i].set_form_time(ft);
-              
-              
-              // //  Reset the momentum due to virtuality
-              
-              // double newP[4];
-              
-              // newP[0] = pIn[i].e();
-              
-              // double newPl = std::sqrt( pIn[i].e()*pIn[i].e() - pIn[i].t() ) ;
-              
-              // newPl = newPl/velocityMod;
-              
-              // for(int j=1;j<=3;j++)
-              // {
-              //     newP[j] = newPl*velocity[j];
-              // }
+	    else cout << " parton is a quark " <<endl;
+	    
+	    tQ2 = generate_vac_t(pIn[i].pid(), pIn[i].nu(), QS/2.0, pIn[i].e()*pIn[i].e() ,zeta , iSplit);
+            
+	    // pIn[i].set_t(tQ2);
+	    // pIn[i].set_mean_form_time();            
+	    // double ft = generate_L (pIn[i].mean_form_time() ) ;            
+	    // pIn[i].set_form_time(ft);                        
 
-	      // KK:
-              pIn[i].set_t(tQ2); // Also resets momentum!
-	      pIn[i].set_mean_form_time();
-              double ft = generate_L (pIn[i].mean_form_time() ) ;              
-              pIn[i].set_form_time(ft);
-              
-	      pIn[i].set_jet_v(velocity);              
-              
-              
-              //DEBUG:
-              cout << endl ;
-              
-              cout << " ***************************************************************************** " << endl;
-              
-              cout << " *  New generated virtuatlity = " << tQ2 << " Mean formation time = " << pIn[i].mean_form_time()/fmToGeVinv << endl ;
-              
+	    // //  Reset the momentum due to virtuality
+	    // double newP[4];
+	    // newP[0] = pIn[i].e();            
+	    // double newPl = std::sqrt( pIn[i].e()*pIn[i].e() - pIn[i].t() ) ;              
+	    // newPl = newPl/velocityMod;
+	    
+	    // for(int j=1;j<=3;j++)
+	    // {
+	    //     newP[j] = newPl*velocity[j];
+	    // }
+	    
+	    // KK:
+	    pIn[i].set_jet_v(velocity);              
+	    pIn[i].set_t(tQ2); // Also resets momentum!
+	    pIn[i].set_mean_form_time();
+	    double ft = generate_L (pIn[i].mean_form_time() ) ;              
+	    pIn[i].set_form_time(ft);
+            
+	    //DEBUG:
+	    cout << endl ;            
+	    cout << " ***************************************************************************** " << endl;              
+              cout << " *  New generated virtuatlity = " << tQ2 << " Mean formation time = " << pIn[i].mean_form_time()/fmToGeVinv << endl ;              
               cout << " *  set new formation time to " << pIn[i].form_time()/fmToGeVinv << endl;
-
               cout << " * Maximum allowed virtualty = " << pIn[i].e()*pIn[i].e() << "   Minimum Virtuality = " << QS << endl ;
               cout << endl;
               cout << " * Jet velocity = " << pIn[i].jet_v().comp(0) << " " << pIn[i].jet_v().comp(1) << "  " << pIn[i].jet_v().comp(2) << "  " << pIn[i].jet_v().comp(3) << endl ;
               cout<< " * reset location of parton formation = "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z() << endl;
               cout << " ***************************************************************************** " << endl;
               cout << endl;
-              // end DEBUG:
-              
+              // end DEBUG:              
           }
           
           
           
-          if (pIn[i].t() > QS)
-          {
-              double decayTime = pIn[i].mean_form_time()  ;
-              
-              //cout << "  deltaT = " << deltaT <<endl;
-              
-              //cout << " parton origin time = " << pIn[i].x_in().t()/fmToGeVinv << " parton formation time = " << pIn[i].form_time()/fmToGeVinv << endl ;
-          
-  //            cout << " parton id " << pIn[i].pid() << " parton virtuality = " << pIn[i].t() << endl;
-          
-  //            cout << " parton momentum " << pIn[i].p_in().t() << "  " << pIn[i].p_in().x() << "  " << pIn[i].p_in().y() << "  " << pIn[i].p_in().z() << endl ;
-              
-              double splitTime = pIn[i].form_time() + pIn[i].x_in().t() ;
-          
-              //cout << " splitTime = " << splitTime/fmToGeVinv << endl ;
-          
-              if (splitTime<Time)
-              {
+          if (pIn[i].t() > QS + rounding_error) { // 
+	    cout <<setprecision(15) << " ---------------------------------------------------------------> " << pIn[i].t() << endl; 
+	    double decayTime = pIn[i].mean_form_time()  ;
+	    
+	    //cout << "  deltaT = " << deltaT <<endl;
+	    //cout << " parton origin time = " << pIn[i].x_in().t()/fmToGeVinv << " parton formation time = " << pIn[i].form_time()/fmToGeVinv << endl ;          
+	    // cout << " parton id " << pIn[i].pid() << " parton virtuality = " << pIn[i].t() << endl;          
+	    // cout << " parton momentum " << pIn[i].p_in().t() << "  " << pIn[i].p_in().x() << "  " << pIn[i].p_in().y() << "  " << pIn[i].p_in().z() << endl ;
+	    
+	    double splitTime = pIn[i].form_time() + pIn[i].x_in().t() ;          
+	    //cout << " splitTime = " << splitTime/fmToGeVinv << endl ;
+	    
+	    if (splitTime<Time)  {
               // do split
+	      //cout << " doing the split " << endl ;
+
+	      double t_used = pIn[i].t();
+	      if (t_used<QS)  t_used = QS;
               
-                  //cout << " doing the split " << endl ;
+	      double tau_form = 2.0*pIn[i].nu()/t_used;              
+	      double z_low = QS/t_used/2.0 ;                  
+	      double z_hi = 1.0 - z_low;
               
-                  double t_used = pIn[i].t();
-              
-                  if (t_used<QS)  t_used = QS;
-              
-                  double tau_form = 2.0*pIn[i].nu()/t_used;
-              
-                  double z_low = QS/t_used/2.0 ;
-                  
-                  double z_hi = 1.0 - z_low;
-              
-                  if (pid==gid)
-                  {
-                  
-                      double val1 = P_z_gg_int(z_low, z_hi, zeta, t_used, tau_form,pIn[i].nu() );
-                  
-                      double val2 = nf*P_z_qq_int(z_low, z_hi, zeta, t_used, tau_form,pIn[i].nu() );
+	      if (pid==gid) { // gluon
+		
+		double val1 = P_z_gg_int(z_low, z_hi, zeta, t_used, tau_form,pIn[i].nu() );                
+		double val2 = nf*P_z_qq_int(z_low, z_hi, zeta, t_used, tau_form,pIn[i].nu() );
                     
-                      if ((val1<0.0)||(val2<0.0))
-                      {
-                          cout << " minus log of sudakov negative val1 , val2 = " << val1 << "  " << val2 << endl;
-                          cin >> blurb ;
-                      }
+		if ( val1<0.0 || val2<0.0 ) {
+		  cout << " minus log of sudakov negative val1 , val2 = " << val1 << "  " << val2 << endl;
+		  throw std::runtime_error("minus log of sudakov negative");
+		  // cin >> blurb ;
+		}
                   
-                      double ratio = val1/(val1+val2);
-                  
-                      // double r = double(random())/ (maxN );
-		      double r = ZeroOneDistribution(*get_mt19937_generator());
-                  //            r = mtrand1();
-                  
-                      if (r>ratio)
-                      {
-                      
-			// double r2 = double(random())/maxN;
-			double r2 = ZeroOneDistribution(*get_mt19937_generator());
-                      //                r2 = mtrand1();
-                      
-                          if (r2>0.6666)
-                          {
-                              pid_a = uid ;
-                              pid_b = -1*uid ;
-                          }
-                          else if ((r2 > 0.3333)&&(r2< 0.6666))
-                          {
-                              pid_a = did ;
-                              pid_b = -1*did ;
-                          }
-                          else
-                          {
-                              pid_a = sid;
-                              pid_b = -1*sid;
-                          }
-                      
-                          iSplit = 2;
-                      }
-                      else
-                      {
-                          pid_a = gid ;
-                          pid_b = gid ;
-                          iSplit = 1;
-                      } ;
-                  }
-                  else
-                  {
-                      pid_a = pid ;
-                  
-                      pid_b = gid ;
-                  
-                      iSplit = 0;
-                  }
-            
-                  z = generate_vac_z(pid,QS/2.0,pIn[i].t(),zeta,pIn[i].nu(),iSplit) ;
-                  
-                  //cout << " generated z = " << z << endl;
-                  
-                  int iSplit_a = 0;
-                  
-                  if (pid_a==gid) iSplit_a = 1;
-                  
-
-                  double tQd1 = QS;
-                  
-                  if (z*z*pIn[i].t()>QS)
-                  {
-                      tQd1 = generate_vac_t(pid_a, z*pIn[i].nu(), QS/2.0, z*z*pIn[i].t() ,zeta+std::sqrt(2)*pIn[i].form_time() , iSplit_a);
-                  }
-                  
-                  int iSplit_b = 0;
-                  
-                  if (pid_b==gid) iSplit_b = 1;
-                  
-                  double tQd2 = QS;
-                  
-                  if ((1.0-z)*(1.0-z)*pIn[i].t()>QS)
-                  {
-                      tQd2 = generate_vac_t(pid_b, (1.0-z)*pIn[i].nu(), QS/2.0, (1.0-z)*(1.0-z)*pIn[i].t() ,zeta+std::sqrt(2)*pIn[i].form_time() , iSplit_b);
-                  }
-                  
-                  double angle = generate_angle();
-                  
-                  double l_perp2 =  pIn[i].t()*z*(1.0 - z) - tQd2*z - tQd1*(1.0-z) ; ///< the transverse momentum squared
-                  
-                  //cout << " l_perp2 = " << l_perp2 << endl ;
-                  
-                  if (l_perp2<0.0) l_perp2 = 0.0; ///< test if negative
-                  
-                  double l_perp = std::sqrt(l_perp2); ///< the momentum transverse to the parent parton direction
-                  
-                  double parent_perp = std::sqrt( pow(pIn[i].p(1),2) + pow(pIn[i].p(2),2) + pow(pIn[i].p(3),2) - pow(pIn[i].pl(),2) );
-                  
-                  double mod_jet_v = std::sqrt( pow(pIn[i].jet_v().x(),2) +  pow(pIn[i].jet_v().y(),2) + pow(pIn[i].jet_v().z(),2) ) ;
-                  
-                  double c_t = pIn[i].jet_v().z()/mod_jet_v;
-                  
-                  double s_t = std::sqrt( 1.0 - c_t*c_t) ;
-                  
-                  double s_p = pIn[i].jet_v().y()/std::sqrt( pow( pIn[i].jet_v().x() , 2 ) + pow( pIn[i].jet_v().y(), 2 ) ) ;
-                  
-                  double c_p = pIn[i].jet_v().x()/std::sqrt( pow( pIn[i].jet_v().x() , 2 ) + pow( pIn[i].jet_v().y(), 2 ) ) ;
-                  
-                  double k_perp1[4];
- 
-                  k_perp1[0] = 0.0;
-                  
-                  k_perp1[1] = z*(pIn[i].p(1) - pIn[i].pl()*s_t*c_p) + l_perp*std::cos(angle)*c_t*c_p - l_perp*std::sin(angle)*s_p ;
-                  
-                  k_perp1[2] = z*(pIn[i].p(2) - pIn[i].pl()*s_t*s_p) + l_perp*std::cos(angle)*c_t*s_p + l_perp*std::sin(angle)*c_p ;
-                  
-                  k_perp1[3] = z*(pIn[i].p(3) - pIn[i].pl()*c_t) - l_perp*std::cos(angle)*s_t ;
-                  
-                  double k_perp1_2 = pow(k_perp1[1],2)+pow(k_perp1[2],2)+pow(k_perp1[3],2);
-                  
-                  double energy = ( z*pIn[i].nu() + (tQd1 + k_perp1_2)/(2.0*z*pIn[i].nu() ) )/std::sqrt(2.0) ;
-                  double plong =  ( z*pIn[i].nu() - (tQd1 + k_perp1_2)/(2.0*z*pIn[i].nu() ) )/std::sqrt(2.0) ;
-                  
-                  //cout << " E, plong of d1 , E^2 - plong^2 - k_perp1^2 = " << energy << " " << plong << "  " << energy*energy - plong*plong - k_perp1_2 << endl;
-                  
-
-                  
-                  
-                  double newp[4];
-                  
-                  newp[0] = energy;
-                  newp[1] = plong*s_t*c_p + k_perp1[1];
-                  newp[2] = plong*s_t*s_p + k_perp1[2];
-                  newp[3] = plong*c_t + k_perp1[3];
-                  
-                  //cout << " d1 momentum " << newp[0] << "  " << newp[1] << "  " << newp[2] << "  " << newp[3] << endl ;
-                  
-                  //cout << " d1 mass^2 = " << pow(newp[0],2) - pow(newp[1],2) - pow(newp[2],2) - pow(newp[3],2) << endl;
-
-                  double newx[4];
-                  
-                  newx[0] = Time + deltaTime ;
-                  
-                  for (int j=1;j<=3;j++)
-                  {
-                      newx[j] = pIn[i].x_in().comp(j) + (Time + deltaTime - pIn[i].x_in().comp(0) )*velocity[j]/velocityMod;
-                  }
-                  
-                  pOut.push_back(Parton(0,pid_a,0,newp,newx ));
-                  
-                  int iout = pOut.size()-1 ;
-                  
-                  //cout << "  created a new parton from split with iout = " << iout << endl;
-                  
-                  pOut[iout].set_t(tQd1);
-                  pOut[iout].set_mean_form_time();
-                  double ft = generate_L (pOut[iout].mean_form_time());
-                  pOut[iout].set_form_time(ft);
-                  pOut[iout].set_jet_v(velocity);
-                  
-                  double k_perp2[4];
-                  
-                  k_perp2[0] = 0.0;
-                  
-                  k_perp2[1] = (1.0-z)*(pIn[i].p(1) - pIn[i].pl()*s_t*c_p) - l_perp*std::cos(angle)*c_t*c_p + l_perp*std::sin(angle)*s_p ;
-                  
-                  k_perp2[2] = (1.0-z)*(pIn[i].p(2) - pIn[i].pl()*s_t*s_p) - l_perp*std::cos(angle)*c_t*s_p - l_perp*std::sin(angle)*c_p ;
-                  
-                  k_perp2[3] = (1.0-z)*(pIn[i].p(3) - pIn[i].pl()*c_t) + l_perp*std::cos(angle)*s_t ;
-                  
-                  double k_perp2_2 = pow(k_perp2[1],2)+pow(k_perp2[2],2)+pow(k_perp2[3],2);
-
-                  energy = ( (1.0-z)*pIn[i].nu() + (tQd2 + k_perp2_2)/( 2.0*(1.0-z)*pIn[i].nu() ) )/std::sqrt(2.0) ;
-                  plong =  ( (1.0-z)*pIn[i].nu() - (tQd2 + k_perp2_2)/( 2.0*(1.0-z)*pIn[i].nu() ) )/std::sqrt(2.0) ;
-
-                  //cout << " E, plong of d2 , E^2 - plong^2 - k_perp^2 = " << energy << " " << plong << "  " << energy*energy - plong*plong - k_perp2_2 << endl;
-                  
-                  parent_perp = std::sqrt( pow(pIn[i].p(1),2) + pow(pIn[i].p(2),2) + pow(pIn[i].p(3),2) - pow(pIn[i].pl(),2) );
-                  
-                  mod_jet_v = std::sqrt( pow(pIn[i].jet_v().x(),2) +  pow(pIn[i].jet_v().y(),2) + pow(pIn[i].jet_v().z(),2) ) ;
-                  
-                  newp[0] = energy;
-                  newp[1] = plong*s_t*c_p + k_perp2[1] ;
-                  newp[2] = plong*s_t*s_p + k_perp2[2] ;
-                  newp[3] = plong*c_t + k_perp2[3] ;
-                  
-                  //cout << " d2 momentum " << newp[0] << "  " << newp[1] << "  " << newp[2] << "  " << newp[3] << endl ;
-
-                  //cout << " d2 mass^2 = " << pow(newp[0],2) - pow(newp[1],2) - pow(newp[2],2) - pow(newp[3],2) << endl;
-
-                  
-                  newx[0] = Time + deltaTime ;
-
-                  for (int j=1;j<=3;j++)
-                  {
-                      newx[j] = pIn[i].x_in().comp(j) + (Time + deltaTime - pIn[i].x_in().comp(0) )*velocity[j]/velocityMod;
-                  }
-                  
-                  pOut.push_back(Parton(0,pid_a,0,newp,newx ));
+		double ratio = val1/(val1+val2);                  
+		double r = ZeroOneDistribution(*get_mt19937_generator());
+		if (r>ratio) { // qqbar
 		  
+		  double r2 = ZeroOneDistribution(*get_mt19937_generator());
+		  
+		  // assign flavors
+		  if (r2>0.6666){
+		    pid_a = uid ;
+		    pid_b = -1*uid ;
+		  } else if ( r2 > 0.3333 && r2< 0.6666) {
+		    pid_a = did ;
+		    pid_b = -1*did ;
+		  } else {
+		    pid_a = sid;
+		    pid_b = -1*sid;
+		  }
+                      
+		  iSplit = 2;
+		} else { // gg
+		  pid_a = gid ;
+		  pid_b = gid ;
+		  iSplit = 1;
+		}
+	      } else { // we had a quark
+		pid_a = pid ;		
+		pid_b = gid ;                  
+		iSplit = 0;
+	      }
+
+	      cout << " ---------------------------------------------------------------> " << pIn[i].t() << endl; 
+	      z = generate_vac_z(pid,QS/2.0,pIn[i].t(),zeta,pIn[i].nu(),iSplit) ;
+	      //cout << " generated z = " << z << endl;
+                  
+	      int iSplit_a = 0;                  
+	      if (pid_a==gid) iSplit_a = 1;                  
+
+	      // daughter virtualities
+	      double tQd1 = QS;                  
+	      if (z*z*pIn[i].t()>QS) {
+		tQd1 = generate_vac_t(pid_a, z*pIn[i].nu(), QS/2.0, z*z*pIn[i].t() ,zeta+std::sqrt(2)*pIn[i].form_time() , iSplit_a);
+	      }
+                  
+	      int iSplit_b = 0;                  
+	      if (pid_b==gid) iSplit_b = 1;
+                  
+	      double tQd2 = QS;                  
+	      if ((1.0-z)*(1.0-z)*pIn[i].t()>QS) {
+		tQd2 = generate_vac_t(pid_b, (1.0-z)*pIn[i].nu(), QS/2.0, (1.0-z)*(1.0-z)*pIn[i].t() ,zeta+std::sqrt(2)*pIn[i].form_time() , iSplit_b);
+	      }
+	      
+	      // opening angle
+	      double angle = generate_angle();                  
+
+	      double l_perp2 =  pIn[i].t()*z*(1.0 - z) - tQd2*z - tQd1*(1.0-z) ; ///< the transverse momentum squared
+	      // cout << " l_perp2 = " << l_perp2 << endl ;                   
+	      if (l_perp2<0.0) l_perp2 = 0.0; ///< test if negative
+                  
+	      double l_perp = std::sqrt(l_perp2); ///< the momentum transverse to the parent parton direction
+                  
+	      // double parent_perp = std::sqrt( pow(pIn[i].p(1),2) + pow(pIn[i].p(2),2) + pow(pIn[i].p(3),2) - pow(pIn[i].pl(),2) );
+	      // KK: changed to x,y,z
+	      double parent_perp = std::sqrt( pow(pIn[i].px(),2) + pow(pIn[i].py(),2) + pow(pIn[i].pz(),2) - pow(pIn[i].pl(),2) );
+	      double mod_jet_v = std::sqrt( pow(pIn[i].jet_v().x(),2) +  pow(pIn[i].jet_v().y(),2) + pow(pIn[i].jet_v().z(),2) ) ;
+                  
+	      double c_t = pIn[i].jet_v().z()/mod_jet_v;
+	      double s_t = std::sqrt( 1.0 - c_t*c_t) ;
+                  
+	      double s_p = pIn[i].jet_v().y()/std::sqrt( pow( pIn[i].jet_v().x() , 2 ) + pow( pIn[i].jet_v().y(), 2 ) ) ;                  
+	      double c_p = pIn[i].jet_v().x()/std::sqrt( pow( pIn[i].jet_v().x() , 2 ) + pow( pIn[i].jet_v().y(), 2 ) ) ;
+                  
+	      // First daughter
+	      double k_perp1[4];
+	      k_perp1[0] = 0.0;	      
+	      k_perp1[1] = z*(pIn[i].px() - pIn[i].pl()*s_t*c_p) + l_perp*std::cos(angle)*c_t*c_p - l_perp*std::sin(angle)*s_p ;	      
+	      k_perp1[2] = z*(pIn[i].py() - pIn[i].pl()*s_t*s_p) + l_perp*std::cos(angle)*c_t*s_p + l_perp*std::sin(angle)*c_p ;                  
+	      k_perp1[3] = z*(pIn[i].pz() - pIn[i].pl()*c_t) - l_perp*std::cos(angle)*s_t ;                  
+	      double k_perp1_2 = pow(k_perp1[1],2)+pow(k_perp1[2],2)+pow(k_perp1[3],2);
+                  
+	      double energy = ( z*pIn[i].nu() + (tQd1 + k_perp1_2)/(2.0*z*pIn[i].nu() ) )/std::sqrt(2.0) ;
+	      double plong =  ( z*pIn[i].nu() - (tQd1 + k_perp1_2)/(2.0*z*pIn[i].nu() ) )/std::sqrt(2.0) ;
+                  
+	      // cout << " E, plong of d1 , E^2 - plong^2 - k_perp1^2 = " << energy << " " << plong << "  " << energy*energy - plong*plong - k_perp1_2 << endl;
+
+
+	      double newp[4];
+	      // newp[0] = energy;
+	      // newp[1] = plong*s_t*c_p + k_perp1[1];
+	      // newp[2] = plong*s_t*s_p + k_perp1[2];
+	      // newp[3] = plong*c_t + k_perp1[3];
+	      // KK: changed
+	      newp[3] = energy;
+	      newp[0] = plong*s_t*c_p + k_perp1[1];
+	      newp[1] = plong*s_t*s_p + k_perp1[2];
+	      newp[2] = plong*c_t + k_perp1[3];
+                  
+	      cout << " d1 momentum " << newp[3] << "  " << newp[0] << "  " << newp[1] << "  " << newp[2] << endl ;
+	      // //cout << " d1 mass^2 = " << pow(newp[0],2) - pow(newp[1],2) - pow(newp[2],2) - pow(newp[3],2) << endl;
+	      cout << " d1 mass^2 = " << pow(newp[3],2) - pow(newp[0],2) - pow(newp[1],2) - pow(newp[2],2) << endl;
+
+	      double newx[4];                  
+	      newx[0] = Time + deltaTime ;                  
+	      for (int j=1;j<=3;j++) {
+		newx[j] = pIn[i].x_in().comp(j) + (Time + deltaTime - pIn[i].x_in().comp(0) )*velocity[j]/velocityMod;
+	      }
+                  
+	      pOut.push_back(Parton(0,pid_a,0,newp,newx ));
+	      int iout = pOut.size()-1 ;
+                  
+	      //cout << "  created a new parton from split with iout = " << iout << endl;
+	      pOut[iout].set_jet_v(velocity);
+	      pOut[iout].set_t(tQd1);
+	      pOut[iout].set_mean_form_time();
+	      double ft = generate_L (pOut[iout].mean_form_time());
+	      pOut[iout].set_form_time(ft);
+		  
+	      // Second daughter
+	      double k_perp2[4];
+	      k_perp2[0] = 0.0;                  
+	      k_perp2[1] = (1.0-z)*(pIn[i].px() - pIn[i].pl()*s_t*c_p) - l_perp*std::cos(angle)*c_t*c_p + l_perp*std::sin(angle)*s_p ;                  
+	      k_perp2[2] = (1.0-z)*(pIn[i].py() - pIn[i].pl()*s_t*s_p) - l_perp*std::cos(angle)*c_t*s_p - l_perp*std::sin(angle)*c_p ;                  
+	      k_perp2[3] = (1.0-z)*(pIn[i].pz() - pIn[i].pl()*c_t) + l_perp*std::cos(angle)*s_t ;
+	      double k_perp2_2 = pow(k_perp2[1],2)+pow(k_perp2[2],2)+pow(k_perp2[3],2);
+
+	      energy = ( (1.0-z)*pIn[i].nu() + (tQd2 + k_perp2_2)/( 2.0*(1.0-z)*pIn[i].nu() ) )/std::sqrt(2.0) ;
+	      plong =  ( (1.0-z)*pIn[i].nu() - (tQd2 + k_perp2_2)/( 2.0*(1.0-z)*pIn[i].nu() ) )/std::sqrt(2.0) ;
+
+	      // cout << " E, plong of d2 , E^2 - plong^2 - k_perp^2 = " << energy << " " << plong << "  " << energy*energy - plong*plong - k_perp2_2 << endl;	  
+	      parent_perp = std::sqrt( pow(pIn[i].p(1),2) + pow(pIn[i].p(2),2) + pow(pIn[i].p(3),2) - pow(pIn[i].pl(),2) );                  
+	      mod_jet_v = std::sqrt( pow(pIn[i].jet_v().x(),2) +  pow(pIn[i].jet_v().y(),2) + pow(pIn[i].jet_v().z(),2) ) ;
+                  
+	      // newp[0] = energy;
+	      // newp[1] = plong*s_t*c_p + k_perp2[1] ;
+	      // newp[2] = plong*s_t*s_p + k_perp2[2] ;
+	      // newp[3] = plong*c_t + k_perp2[3] ;
+	      newp[3] = energy;
+	      newp[0] = plong*s_t*c_p + k_perp2[1] ;
+	      newp[1] = plong*s_t*s_p + k_perp2[2] ;
+	      newp[2] = plong*c_t + k_perp2[3] ;
+              
+	      cout << " d2 momentum " << newp[3] << "  " << newp[0] << "  " << newp[1] << "  " << newp[2] << endl ;	      
+	      // // cout << " d2 mass^2 = " << pow(newp[0],2) - pow(newp[1],2) - pow(newp[2],2) - pow(newp[3],2) << endl;
+	      cout << " d2 mass^2 = " << pow(newp[3],2) - pow(newp[0],2) - pow(newp[1],2) - pow(newp[2],2) << endl;
+
+	      newx[0] = Time + deltaTime;
+	      for (int j=1;j<=3;j++){
+		newx[j] = pIn[i].x_in().comp(j) + (Time + deltaTime - pIn[i].x_in().comp(0) )*velocity[j]/velocityMod;
+	      }
+	      
+	      pOut.push_back(Parton(0,pid_a,0,newp,newx ));
+              
+	      iout = pOut.size()-1 ;                  
+	      //cout << "  created a new parton from split with iout = " << iout << endl;
+	      // cout << endl;
+	      pOut[iout].set_jet_v(velocity);
+	      pOut[iout].set_t(tQd2);
+	      pOut[iout].set_mean_form_time();                  
+	      ft = generate_L (pOut[iout].mean_form_time());	      
+	      pOut[iout].set_form_time(ft);
 
                   
-                  iout = pOut.size()-1 ;
-                  
-                  //cout << "  created a new parton from split with iout = " << iout << endl;
-                  cout << endl;
-
-                  pOut[iout].set_t(tQd2);
-                  pOut[iout].set_mean_form_time();
-                  
-                  ft = generate_L (pOut[iout].mean_form_time());
-                  
-                  pOut[iout].set_form_time(ft);
-                  pOut[iout].set_jet_v(velocity);
-
-                  
-              }
-              else
-              {
-		// pOut.push_back(pIn[i]);
-              }
-          }
-          else
-          {
+	    }  else  { // not time to split yet
+	      // pOut.push_back(pIn[i]);
+	    }
+          } else { // virtuality too low
 	    // pOut.push_back(pIn[i]);
           }
           
-          
-          
-          //double newPt=pIn[i].pt();
-          //=pIn[i].pt()*z;
-	      //double newPt2=pIn[i].pt()*(1-z);
-	    
-	      //pOut.push_back(Parton(0,21,0,newPt,pIn[i].eta(),pIn[i].phi()+0.1,pIn[i].e(),xStart));
-	      //pOut.push_back(Parton(0,21,0,newPt2,pIn[i].eta(),pIn[i].phi()-0.1,newPt));
-
-	      //tes case, perfectly collinear ...
-	      //pOut.push_back(Parton(0,21,0,newPt,pIn[i].eta(),pIn[i].phi(),newPt));
-	      //pOut.push_back(Parton(0,21,0,newPt2,pIn[i].eta(),pIn[i].phi(),newPt));
-          //cout << " my test " << pIn[i].e() << endl ;
-	      // DEBUG: dirty ...
-	      //cout<<pOut[pOut.size()-1];
-	      //cout<<pOut[pOut.size()-2];
-	   // }
-          
-          
-//          cout << " exit formation time = " << pIn[0].form_time() << endl;
+	  //          cout << " exit formation time = " << pIn[0].form_time() << endl;
 	  
-	}
+      } // particle loop
       
-        
- //    cin >> blurb;
-
-        
-        
-        
-      // Add a new root node ... (dummy ...)
-      // Ahh stupid declared as const orginally (removed for test ...)
-      // Maybe better a seperate vector !? (TBD)
- //   if (rNum>0.9)
-//	{
-    
-//        pIn.push_back(Parton(0,21,0,1.5,0,pIn[0].phi(),1.5));
-	  //DEBUG:
-	  //cout<<pIn.size()<<endl;
-//	}
-      
-//    }
 }
 
 double Matter::generate_angle()
@@ -607,7 +475,6 @@ double Matter::generate_vac_t(int p_id, double nu, double t0, double t, double l
     
     while ((abs(diff)>s_approx)&&(abs(t_hi-t_low)/t_hi>s_error))
     {
-        
         if (p_id==gid)
         {
             denom = sudakov_Pgg(t0, t_mid, loc_a, nu)*std::pow(sudakov_Pqq(t0, t_mid, loc_a, nu),nf);
@@ -727,38 +594,30 @@ double  Matter::generate_vac_z(int p_id, double t0, double t, double loc_b, doub
     
     
     z_mid = (z_low + z_hi)/2.0 ;
-    
-    while (abs(diff)>approx)
-    {
+
+    int itcounter=0;
+    cout << " p_id = " << p_id << " t0 = " << t0 << " t = " << t << " loc_b=" << loc_b<< " nu = " <<  nu << " is = " << is << endl;
+    while (abs(diff)>approx) { // Getting stuck in here for some reason
+      if ( itcounter++ > 20 ) throw std::runtime_error("Stuck in endless loop") ;
+      cout << " in here" << " abs(diff) = " << abs(diff) << "  approx = " << approx << endl;
+      if (p_id==gid) {
+	if (is==1) {
+	  numer = P_z_gg_int(e, z_mid, loc_b, t, 2.0*nu/t , nu );
+	} else {
+	  numer = P_z_qq_int(e, z_mid, loc_b, t, 2.0*nu/t , nu);
+	}
+      } else {
+	numer = P_z_qg_int(e, z_mid, loc_b, t, 2.0*nu/t , nu );
+      }
         
-        if (p_id==gid)
-        {
-            if (is==1)
-            {
-                numer = P_z_gg_int(e, z_mid, loc_b, t, 2.0*nu/t , nu );
-            }
-            else
-            {
-                numer = P_z_qq_int(e, z_mid, loc_b, t, 2.0*nu/t , nu);
-            }
-        }
-        else
-        {
-            numer = P_z_qg_int(e, z_mid, loc_b, t, 2.0*nu/t , nu );
-        }
+      ratio = numer/denom ;      
+      diff = (ratio - r)/r ;     
+      cout << "num, den, r, diff = " << numer << " "<< denom << " " << r << " " << endl;	
+      cout << " diff, z_mid = " << diff << " " << z_mid << endl ;		
+      //		cin >> test ;
+      
         
-        ratio = numer/denom ;
-        
-        diff = (ratio - r)/r ;
-        
-        //cout << "num, den, r, diff = " << numer << " "<< denom << " " << r << " " << endl;	
-        
-        //cout << " diff, z_mid = " << diff << " " << z_mid << endl ;		
-        //		cin >> test ;
-        
-        
-        if (diff>0.0) 
-        {
+      if (diff>0.0) {
             z_hi = z_mid;
             z_mid = (z_low + z_hi)/2.0;
         }
