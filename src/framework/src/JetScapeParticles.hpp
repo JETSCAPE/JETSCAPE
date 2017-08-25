@@ -6,11 +6,21 @@
     @date Aug 8, 2017
 
     \class Jetscape::JetScapeParticleBase
-    * A JetScapeParticleBase is a FastJet PseudoJet with additional information
+    * A JetScapeParticleBase derives PRIVARTELY from FastJet PseudoJet and has additional information:
     *  - PID (from PDG) and rest mass (these should eventually be coupled and only PID kept track of internally)
     *  - A location (creation point) 4-vector
     *  - a label and a status 
     *  - currently additional information that should be moved to derived classes or only used as UserInfo
+    * 
+    * The design choice of private inheritance is due to a disconnect between available packages.
+    * The overwhelming majority of the theory community expects the 0 component to be time/energy, 
+    * whereas FastJet (and others, like ROOT) prefer t,e to be the fourth component.
+    * Private inheritance means we can inherit and make accessible safe methods (with C++11 using),
+    * while protecting users from unsafe (explicit component access) ones.
+    * Note that this is only necessary because otherwise it's impossible to disallow 
+    * constructors and getters that explicitly assume indices!
+    * IF we could get rid of those or change to the fastjet convention,
+    * we could derive publicly and get a true Is_A relationship. Alas.
     * 
     * You can in principle use the base class directly, but it's recommended to use the derived classes
     * Parton and/or (todo) Hadron, Lepton, ...
@@ -24,21 +34,13 @@
     * be used by unwitting users and display unexpected behavior. 
     * For protection against this possibility, "mass"-related functions in PseudoJet are
     * overwritten to throw an error.
-    * This CAN be circumvented, like
-    \code{.cpp}
-    JetScapeParticleBase j(...);
-    PseudoJet* pj = (PseudoJet*) &j;
-    cout << j->mass() << endl;
-    \endcode
-    * Since PseudoJet methods are not virtual there is no way to prohibit this, 
-    * but it can be considered a good thing for experienced users who know what they're doing.
     * 
     * Future considerations: 
     *   - We should consider
     *     making a Pythia8 installation mandatory; with pythia guaranteed to be present,
     *     the rest mass lookup could be automatically done using PDG data.
     *   - If ROOT were a mandatory part, TLorentzVector would be a good replacement for the homebrewed FourVector
-*/
+    */
 
 #ifndef JetScapeParticles_hpp
 #define JetScapeParticles_hpp
@@ -55,7 +57,7 @@
 #include <iomanip>
 
 /** 
-*/
+ */
 
 namespace Jetscape {
 
@@ -63,9 +65,117 @@ namespace Jetscape {
   //  BASE CLASS
   /*************************************************************************************************/
 
-  class JetScapeParticleBase : public fjcore::PseudoJet
+  class JetScapeParticleBase : protected fjcore::PseudoJet
   {
+    friend class fjcore::PseudoJet;
 
+    // unsafe
+    // using fjcore::PseudoJet::PseudoJet;
+    // using fjcore::PseudoJet::operator() (int i) const ; 
+    // inline double operator [] (int i) const { return (*this)(i); }; // this too
+
+  public:
+    // Disallow reset, it assumes different logic
+    // using fjcore::PseudoJet::reset(double px, double py, double pz, double E);
+    // using fjcore::PseudoJet::reset(const PseudoJet & psjet) {
+    //   inline void reset_momentum(double px, double py, double pz, double E);
+    //   inline void reset_momentum(const PseudoJet & pj);
+
+    // Disallow the valarray return.
+    // Can replace/and or provide a double[4] version with the right assumptions
+    // std::valarray<double> four_mom() const;
+    // enum { X=0, Y=1, Z=2, T=3, NUM_COORDINATES=4, SIZE=NUM_COORDINATES };
+
+    // This _should_ work, but not taking chances for now
+    // PseudoJet & boost(const PseudoJet & prest);
+    // PseudoJet & unboost(const PseudoJet & prest);
+
+    // Replace with appropriate functions. m is a tricky one. 
+    // inline double  m2() const {return (_E+_pz)*(_E-_pz)-_kt2;}    
+    // inline double  m() const;    
+    // inline double mperp2() const {return (_E+_pz)*(_E-_pz);}
+    // inline double mperp() const {return sqrt(std::abs(mperp2()));}
+    // inline double mt2() const {return (_E+_pz)*(_E-_pz);}
+    // inline double mt() const {return sqrt(std::abs(mperp2()));}
+
+    // Disallow functions containing M
+    // inline void reset_PtYPhiM(...);
+    // void reset_momentum_PtYPhiM(double pt, double y, double phi, double m=0.0);
+
+    // // void set_cached_rap_phi(double rap, double phi);
+
+    /// No implicit cast to PseudoJet is allowed, provide a clunky conversion
+    fjcore::PseudoJet GetPseudoJet() const{
+      return PseudoJet ( *this );
+    }
+    
+    // import safe functions
+    using fjcore::PseudoJet::px;
+    using fjcore::PseudoJet::py;
+    using fjcore::PseudoJet::pz;
+    using fjcore::PseudoJet::e;
+    using fjcore::PseudoJet::E;
+
+    using fjcore::PseudoJet::phi;
+    using fjcore::PseudoJet::phi_std;
+    using fjcore::PseudoJet::phi_02pi;
+    using fjcore::PseudoJet::rap;
+    using fjcore::PseudoJet::rapidity;
+    using fjcore::PseudoJet::pseudorapidity;
+    using fjcore::PseudoJet::eta;
+    using fjcore::PseudoJet::pt2;
+    using fjcore::PseudoJet::pt;
+    using fjcore::PseudoJet::perp2;
+    using fjcore::PseudoJet::perp;
+    using fjcore::PseudoJet::kt2;
+
+    using fjcore::PseudoJet::modp2;
+    using fjcore::PseudoJet::modp;
+    using fjcore::PseudoJet::Et;
+    using fjcore::PseudoJet::Et2;
+
+    using fjcore::PseudoJet::kt_distance;
+    using fjcore::PseudoJet::plain_distance;
+    using fjcore::PseudoJet::squared_distance;
+    using fjcore::PseudoJet::delta_R;
+    using fjcore::PseudoJet::delta_phi_to;
+    using fjcore::PseudoJet::beam_distance;
+
+    using fjcore::PseudoJet::operator*=;
+    using fjcore::PseudoJet::operator/=;
+    using fjcore::PseudoJet::operator+=;
+    using fjcore::PseudoJet::operator-=;
+
+    using fjcore::PseudoJet::user_index;
+    using fjcore::PseudoJet::set_user_index;
+    using fjcore::PseudoJet::UserInfoBase;
+    using fjcore::PseudoJet::InexistentUserInfo;
+
+    using fjcore::PseudoJet::user_info;
+    using fjcore::PseudoJet::set_user_info;
+    using fjcore::PseudoJet::has_user_info;
+    using fjcore::PseudoJet::user_info_ptr;
+    using fjcore::PseudoJet::user_info_shared_ptr;
+
+    using fjcore::PseudoJet::description;
+    // In principle, these might be okay, but ClusterSequences should
+    // be made after explicitly transforming to a proper PseudoJet
+    // using fjcore::PseudoJet::has_associated_cluster_sequence;
+    // using fjcore::PseudoJet::has_associated_cs;
+    // using fjcore::PseudoJet::has_valid_cluster_sequence;
+    // using fjcore::PseudoJet::has_valid_cs;
+    // using fjcore::PseudoJet::associated_cluster_sequence;
+    // using fjcore::PseudoJet::associated_cs;
+    // using fjcore::PseudoJet::validated_cluster_sequence;
+    // using fjcore::PseudoJet::validated_cs;
+    // using fjcore::PseudoJet::set_structure_shared_ptr;
+    // using fjcore::PseudoJet::has_structure;
+    // using fjcore::PseudoJet::structure_ptr;
+    // using fjcore::PseudoJet::structure_non_const_ptr;
+    // using fjcore::PseudoJet::validated_structure_ptr;
+    // using fjcore::PseudoJet::structure_shared_ptr;
+    // ... more
+    
   public:
 
     JetScapeParticleBase() : PseudoJet() {};
@@ -151,12 +261,12 @@ namespace Jetscape {
   public : 
     Parton (int label, int id, int stat, double p[4], double x[4])  :
       JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  p, x) {
-      cout << "========================== std Ctor called, returning : " << *this << endl;
+      cout << "========================== std Ctor called, returning : " << endl << *this << endl;
     }
 
     Parton (int label, int id, int stat, double pt, double eta, double phi, double e, double* x=0)  :
       JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  pt, eta, phi, e, x){
-      cout << "========================== phieta Ctor called, returning : " << *this << endl;
+      cout << "========================== phieta Ctor called, returning : " << endl << *this << endl;
     }
          
   };

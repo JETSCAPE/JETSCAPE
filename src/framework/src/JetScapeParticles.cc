@@ -79,14 +79,10 @@ namespace Jetscape {
     }
     
     double p[4];
-    // p[0] = e;
-    // p[1] = pt*cos(phi);
-    // p[2] = pt*sin(phi);
-    // p[3] = pt*sinh(eta);
-    p[3] = e;
-    p[0] = pt*cos(phi);
-    p[1] = pt*sin(phi);
-    p[2] = pt*sinh(eta);
+    p[0] = e;
+    p[1] = pt*cos(phi);
+    p[2] = pt*sin(phi);
+    p[3] = pt*sinh(eta);
     
     set_p(p);
     set_stat(stat);
@@ -107,7 +103,7 @@ namespace Jetscape {
   }
 
     
-  JetScapeParticleBase::JetScapeParticleBase (int label, int id, int stat, double p[4], double x[4])  : PseudoJet(p[0],p[1],p[2],p[3])
+  JetScapeParticleBase::JetScapeParticleBase (int label, int id, int stat, double p[4], double x[4])
   {
     
     set_label(label);
@@ -154,7 +150,7 @@ namespace Jetscape {
 	break;
       }
     }
-    // set_p(p);
+    set_p(p);
     set_x(x);
     set_stat(stat);
 
@@ -190,10 +186,10 @@ namespace Jetscape {
     
   void JetScapeParticleBase::set_p(double p[4])
   {
-    reset_momentum(p[0],p[1],p[2],p[3]);
-    // p_in_ = FourVector(p);
-    // //FourVector p_in_(p); // error: creates new vector and hence not accessible via class p_in_
-    // //reset_momentum(p[0],p[1],p[2],p[3]);
+    // reset_momentum(p[0],p[1],p[2],p[3]);
+
+    // NOTE THE reshuffling! 
+    reset_momentum(p[1],p[2],p[3],p[0]);
   }
 
   // not needed in graph structure
@@ -211,7 +207,7 @@ namespace Jetscape {
     mean_form_time_ = 2.0*e()/t();
     cout << " ================ Setting mean form time ============== " << endl
 	 << " e = " << e() << " px " << px()<< " py " << py()<< " pz " << pz()  << endl;
-    cout << " e = " << e() << " t = " << t() << " mft = " << mean_form_time_ << endl;
+    cout << " e^2 - p^2 = " << e()*e() - pow ( px(),2) - pow ( py(),2) - pow ( pz(),2)  << " t = " << t() << " mft = " << mean_form_time_ << endl;
   }
     
 
@@ -243,20 +239,17 @@ namespace Jetscape {
     // }
     
     //  Reset the momentum due to virtuality              
-    double newP[4];              
-    newP[3] = e();
     double newPl = std::sqrt( e()*e() - t ) ;
     double velocityMod = std::sqrt(std::pow(jet_v_.comp(1),2) + std::pow(jet_v_.comp(2),2) + std::pow(jet_v_.comp(3),2));
     
     newPl = newPl/velocityMod;
+    double newP[4];
+    newP[0] = e();
     for(int j=1;j<=3;j++) {
-      newP[j-1] = newPl*jet_v_.comp(j);
+      newP[j] = newPl*jet_v_.comp(j);
     }
 
     set_p(newP);
-
-	      
-    // t_ = t;
   } 
 
     
@@ -345,8 +338,16 @@ namespace Jetscape {
   // just operator of PseudoJet ...
   
   const double JetScapeParticleBase::p(int i) {
-    // return (p_in_.comp(i));
-    return operator()(i);
+    // return (p_in_.comp(i));    
+    // return operator()(i);
+    // cerr << " DON'T USE ME VERY OFTEN!!" << endl;
+    switch ( i ){
+    case 0 :      return e();
+    case 1 :      return px();
+    case 2 :      return py();
+    case 3 :      return pz();
+    default :     throw std::runtime_error("JetScapeParticleBase::p(int i) : i is out of bounds.");
+    }
   }
   
   
