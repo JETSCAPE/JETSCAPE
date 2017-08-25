@@ -332,7 +332,7 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
 	  newx[j] = pIn[i].x_in().comp(j) + (Time + deltaTime - pIn[i].x_in().comp(0) )*velocity[j]/velocityMod;
 	}
 	      
-	pOut.push_back(Parton(0,pid_a,0,newp,newx ));
+	pOut.push_back(Parton(0,pid_b,0,newp,newx ));
               
 	iout = pOut.size()-1 ;                  
 	//cout << "  created a new parton from split with iout = " << iout << endl;
@@ -561,9 +561,9 @@ double  Matter::generate_vac_z(int p_id, double t0, double t, double loc_b, doub
     
     
   z_mid = (z_low + z_hi)/2.0 ;
-
+  
   int itcounter=0;
-  cout << " p_id = " << p_id << " t0 = " << t0 << " t = " << t << " loc_b=" << loc_b<< " nu = " <<  nu << " is = " << is << endl;
+  cout << " generate_vac_z called with p_id = " << p_id << " t0 = " << t0 << " t = " << t << " loc_b=" << loc_b<< " nu = " <<  nu << " is = " << is << endl;
   while (abs(diff)>approx) { // Getting stuck in here for some reason
     if ( itcounter++ > 20 ) throw std::runtime_error("Stuck in endless loop") ;
     // cout << " in here" << " abs(diff) = " << abs(diff) << "  approx = " << approx << endl;
