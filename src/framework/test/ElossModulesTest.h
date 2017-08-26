@@ -25,7 +25,7 @@ class Matter : public JetEnergyLossModule<Matter> //, public std::enable_shared_
   void Init();
   //void Exec();
   //void DoEnergyLoss(double deltaT, double Q2, const vector<Parton>& pIn, vector<Parton>& pOut);
-  void DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<Parton>& pOut);
+  void DoEnergyLoss(double deltaT,double time, double Q2, vector<Parton>& pIn, vector<Parton>& pOut);
   void WriteTask(weak_ptr<JetScapeWriter> w);
   
  private:
