@@ -41,7 +41,7 @@ class AdSCFT : public JetEnergyLossModule<AdSCFT>
   void Init();
   void Clear();
   
-  void DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<Parton>& pOut);
+  void DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pIn, vector<Parton>& pOut);
   double Drag(double f_dist, double deltaT, double Efs, double temp, double CF);
   void WriteTask(weak_ptr<JetScapeWriter> w);
  
