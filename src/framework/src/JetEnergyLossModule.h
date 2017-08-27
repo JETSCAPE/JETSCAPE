@@ -24,8 +24,13 @@ class JetEnergyLossModule : public JetEnergyLoss
   
   virtual shared_ptr<JetEnergyLoss> Clone() const override
    {
+     DEBUG << "Cloning task with id=" << GetId() << " and TaskNumber= " << get_my_task_number();
+     // DEBUG/TODO: KK: Joern's plan was to not have to call Init again, but I'm not sure that can work/is desirable.
+     auto ret=make_shared<Derived>(static_cast<const Derived&>(*this));
+     //ret->Init();
+     return ret;
      //compiles and seems to work (use of *this bad with shared !????)
-     return make_shared<Derived>(static_cast<const Derived&>(*this));
+     // return make_shared<Derived>(static_cast<const Derived&>(*this));
    }
      
 

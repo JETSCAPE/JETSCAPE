@@ -22,6 +22,7 @@
 
 namespace Jetscape {
 
+
 class Parton;
 class Vertex;
 class FourVector;
@@ -57,6 +58,7 @@ public:
   Parton (int label, int id, int stat, double p[4], double x[4]);
   Parton (int label, int id, int stat, double pt, double eta, double phi, double e);
   Parton (int label, int id, int stat, double pt, double eta, double phi, double e, double x[4]);
+  Parton (const Parton& srp);
 	  
   virtual ~Parton();
   
@@ -105,24 +107,83 @@ public:
  
     void set_mean_form_time ()
     {
-        mean_form_time_ = this->pl()/2/t_;
+        //mean_form_time_ = (this->e()+this->pl())*std::sqrt(2.0)/t_;
+        mean_form_time_ = 2.0*this->e()/t_;
     };
     
-    int pid()
+
+    void set_form_time(double form_time)
+    {
+        form_time_ = form_time;
+    };
+    
+    void initialize_form_time()
+    {
+        form_time_ = -0.1;
+    }
+    
+    void set_t_max(double t_max)
+    {
+        t_max_ = t_max;
+    }
+    
+    void set_t(double t)
+    {
+        t_ = t;
+    }; ///< virtuality of particle
+
+    
+    void init_jet_v()
+    {
+        jet_v_ = FourVector();
+    }
+    
+    void set_jet_v(double v[4])
+    {
+        jet_v_ =FourVector(v);
+    }
+    
+ //  end setters
+    
+ //  start getters
+    
+    double form_time()
+    {
+        return(form_time_);
+    };
+    
+    const int pid()
     {
         return(pid_);
     };
     
-    int pstat()
+    const int pstat()
     {
         return(pstat_);
     };
     
-    int plabel()
+    const int plabel()
     {
         return(plabel_);
     };
 
+    const double e()
+    {
+        return(p_in_.t());
+    };
+    
+    const double pt()
+    {
+        return(sqrt(p_in_.x()*p_in_.x() + p_in_.y()*p_in_.y())) ;
+    
+    };
+    
+    
+    const double time()
+    {
+        return(x_in_.t());
+    }
+    
   /*
     int pparent_label()
     {
@@ -139,43 +200,66 @@ public:
     {
         return(x_in_);
     }
+    
+    FourVector &jet_v()
+    {
+        return(jet_v_);
+    }
   
-    double mass()
+    const double mass()
     {
         return(mass_);
     }
 
-    double mean_form_time()
+    const double mean_form_time()
     {
         return(mean_form_time_);
     }
 
   // just operator of PseudoJet ...
-  /*
-    double get_p(int i)
+  
+    const double p(int i)
     {
         return (p_in_.comp(i));
     };
-  */
+  
   
     double pl()
     {
-      return 0;//(std::sqrt( p_in_.x()*p_in_.x() + p_in_.y()*p_in_.y() + p_in_.z()*p_in_.z() ) );
+        if (jet_v_.comp(0)<0.99)
+        {
+            return(std::sqrt( p_in_.x()*p_in_.x() + p_in_.y()*p_in_.y() + p_in_.z()*p_in_.z() ) );
+        }
+        else
+        {
+           // cout << " returing pl using jet_v " << ( p_in_.x()*jet_v_.x()+ p_in_.y()*jet_v_.y() + p_in_.z()*jet_v_.z() )/std::sqrt( pow(jet_v_.x(),2) + pow(jet_v_.y(),2) + pow(jet_v_.z(),2) ) << endl ;
+            return( (p_in_.x()*jet_v_.x()+ p_in_.y()*jet_v_.y() + p_in_.z()*jet_v_.z() )/std::sqrt( pow(jet_v_.x(),2) + pow(jet_v_.y(),2) + pow(jet_v_.z(),2) ) );
+        }
     }
     
-    double get_t ()
+    const double nu()
     {
-        
-        t_ = generate_t();
-        
-        return (t_);
-    }; // virtuality of particle
+        return( ( this->e()+std::abs(this->pl()) )/std::sqrt(2) );
+    }
     
-    virtual double generate_t()
+    const double t()
     {
+        return (t_) ;
+    }
+    
+    const double t_max()
+    {
+        return(t_max_);
+    }
+    
+    
+ /*   double generate_t(double, double);
+ {
+    
         return (1);
-    };
-    
+ };
+ */
+ 
     Parton& operator=(Parton &c)
     {
       //FourVector x_in_;
@@ -184,13 +268,13 @@ public:
       pstat_ = c.pstat() ;
       plabel_ = c.plabel() ;
       //pparent_label_ = c.pparent_label();
-      //p_in_ = c.p_in() ;
+      p_in_ = c.p_in() ;
       //Parton::set_x(c.x_in());
 
       x_in_ = c.x_in() ;
-      
+      form_time_ = c.form_time_;
       mass_ = c.mass();
-      t_ = c.get_t();
+      t_ = c.t();
       
       return *this;
     }
@@ -203,14 +287,17 @@ public:
       pstat_ = c.pstat_ ;
       plabel_ = c.plabel_;
       //pparent_label_ = c.pparent_label();
-      //p_in_ = c.p_in() ;
+       p_in_ = c.p_in_;
+      //  x_in_ = c.x_in() ;
+        
       //Parton::set_x(c.x_in());
 
       x_in_ = c.x_in_;
       
       mass_ = c.mass_;
       t_ = c.t_;
-      
+      form_time_ = c.form_time_ ;
+        
       return *this;
     }
   /*
@@ -249,19 +336,22 @@ public:
     return output;            
       }
   
-private:
+protected:
   
-  int pid_                ; // particle id ()
-  int pstat_              ; // status of particle
-  int plabel_             ; // the line number in the event record
-  double t_;
-  double mean_form_time_  ; // Mean formation time
-  double form_time_       ; //event by event formation time
-  double mass_            ; //mass of the parton
 
-  FourVector p_in_;
-  FourVector x_in_; // position of particle
-  
+    int pid_                ; // particle id ()
+    int pstat_              ; // status of particle
+    int plabel_             ; // the line number in the event record
+    double mass_            ; //mass of the parton
+    double t_               ; // The virtuality, and not the time!
+    double t_max_           ; // Upper limit of virtuality
+    double mean_form_time_  ; // Mean formation time
+    double form_time_       ; //event by event formation time
+    
+    FourVector p_in_;
+    FourVector x_in_; // position of particle
+    FourVector jet_v_; ///< jet four vector, without gamma factor (so not really a four vector)
+    
   // following will be in graph strucure
   //int pparent_label_      ; // line number of parent
   //FourVector p_in_, x_in_ ; // internal momentum and position of particle
@@ -307,13 +397,13 @@ public:
     
     return output;
   }
-private:
+protected:
   
   FourVector x_in_        ; //location of the vertex
   // parents and siblings from Graph structure later ...
   
 };
 
+};  /// end of namespace Jetscape
 
-} // end namespace Jetscape
 #endif /* JetClass_hpp */

@@ -22,7 +22,11 @@ using namespace std;
 
 namespace Jetscape {
 
+// need forward declaration
 class JetScapeWriter;
+
+class PartonPrinter;
+class Parton;
 
 class JetScapeTask 
 {
@@ -54,8 +58,15 @@ class JetScapeTask
   virtual void WriteTasks(weak_ptr<JetScapeWriter> w);
   virtual void WriteTask(weak_ptr<JetScapeWriter> w) {};
 
+  // Printer method that prints the partons of the shower
+  // Is it only for EnergyLoss?
+  virtual void GetPartons(weak_ptr<PartonPrinter> p);
+  virtual void GetFinalPartons(weak_ptr<PartonPrinter> p){};
+
   virtual void Add(shared_ptr<JetScapeTask> m_tasks);
   
+  virtual const inline int get_my_task_number() const {return my_task_number_;} ;
+
   const vector<shared_ptr<JetScapeTask>> GetTaskList() const {return tasks;}
   shared_ptr<JetScapeTask> GetTaskAt(int i) {return tasks.at(i);}
   
@@ -76,15 +87,22 @@ class JetScapeTask
   void SetId(string m_id) {id=m_id;}
   const string GetId() const {return id;}
 
+  vector<shared_ptr<Parton>>&  GetRecomPartons(){return fPartons;}
+
  private:
 
   // can be made sortabele to put in correct oder or via xml file ...
   vector<shared_ptr<JetScapeTask>> tasks;
   //list<shared_ptr<JetScapeTask>> tasks; // list vs vector any advantage of list?
-  
+
+  // final partons ready for recombination
+  vector<shared_ptr<Parton>> fPartons;  
+
   bool active_exec;
   string id;
   // if for example a search rather position ... (or always sort with predefined order!?)
+
+  int my_task_number_;
   
 };
 

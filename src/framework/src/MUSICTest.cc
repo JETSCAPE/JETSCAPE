@@ -24,8 +24,10 @@
 
 // User modules derived from jetscape framework clasess
 // to be used to run Jetscape ...
-#include "ElossModulesTest.h"
+#include "AdSCFT.h"
+#include "ElossModulesTestMatter.h"
 #include "music_jetscape.h"
+#include "TrentoInitial.h"
 #include "PGun.h"
 //#include "JSPythia8.h"
 
@@ -58,14 +60,16 @@ int main(int argc, char** argv)
    
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",3);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",1);
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
+  auto trento = make_shared<TrentoInitial> ();
   auto hydro = make_shared<MPI_MUSIC> ();
   //auto hydro = make_shared<GubserHydro> ();
   
   auto matter = make_shared<Matter> ();
   auto martini = make_shared<Martini> ();
+  auto adscft = make_shared<AdSCFT> ();
   //DBEUG: Remark:
   //does not matter unfortunately since not called recursively, done by JetEnergyLoss class ...
   //matter->SetActive(false);
@@ -89,6 +93,8 @@ int main(int argc, char** argv)
   //Remark: For now modules have to be added
   //in proper "workflow" order (can be defined via xml and sorted if necessary)
   
+  jetscape->Add(trento);
+  
   jetscape->Add(pGun);
 
    //Some modifications will be needed for reusing hydro events, so far
@@ -99,9 +105,10 @@ int main(int argc, char** argv)
   // and Martini dummy ...
   // Switching Q2 (or whatever variable used
   // hardcoded at 5 to be changed to xml)
-  //jloss->Add(matter);
-  jloss->Add(martini);
-  
+  jloss->Add(matter);
+  //jloss->Add(martini);
+  //jloss->Add(adscft);
+
   jlossmanager->Add(jloss);
   
   jetscape->Add(jlossmanager);

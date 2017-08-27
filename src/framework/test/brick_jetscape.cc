@@ -18,6 +18,8 @@ using namespace Jetscape;
 Brick::Brick() : FluidDynamics() {
     // initialize the parameter reader
     T_brick = 0.0;  // GeV
+    start_time = 0.0;
+    bjorken_expansion_on = false;
 
     hydro_status = NOT_START;
     SetId("Brick");
@@ -35,8 +37,7 @@ void Brick::InitTask()
   VERBOSE(8);
   tinyxml2::XMLElement *brick=GetHydroXML()->FirstChildElement("Brick");
 
-  if (brick)
-    {
+  if (brick) {
       string s = brick->FirstChildElement( "name" )->GetText();
 
       DEBUG << s << " to be initilizied ...";
@@ -46,29 +47,31 @@ void Brick::InitTask()
       DEBUG << s << " with T = "<<T_brick;
       INFO<<"Brick Temperature T = "<<T_brick;
 
+      if ( brick->Attribute("bjorken_expansion_on", "true") ) {
+          bjorken_expansion_on = true;
+          start_time = std::atof(brick->Attribute("start_time"));
+      }
+
       //Parameter parameter_list;
       GetParameterList().hydro_input_filename = (char*) "dummy"; //*(argv+1);
 
-    }
-  else
-    {
+    } else {
       WARN << " : Brick not properly initialized in XML file ...";
       exit(-1);
     }
-  
 }
 
 void Brick::initialize_hydro(Parameter parameter_list) {
   VERBOSE(8)<<parameter_list.hydro_input_filename;
-    hydro_status = INITIALIZED;
+
+  hydro_status = INITIALIZED;
 }
 
 
 void Brick::evolve_hydro() {
   VERBOSE(8);
-
+  INFO << "size of sd = " << ini->entropy_density_distribution_.size();
   hydro_status = FINISHED;
-	    
 }
 
 
@@ -81,7 +84,11 @@ void Brick::get_hydro_info(real t, real x, real y, real z,
     {
       fluid_cell_info_ptr->energy_density = 0.0;
       fluid_cell_info_ptr->entropy_density = 0.0;
-      fluid_cell_info_ptr->temperature = T_brick;
+      if ( bjorken_expansion_on ) {
+          fluid_cell_info_ptr->temperature = T_brick * std::pow(start_time/t, 1.0/3.0);
+      } else {
+          fluid_cell_info_ptr->temperature = T_brick;
+      }
       fluid_cell_info_ptr->pressure = 0.0;
       // QGP fraction
       fluid_cell_info_ptr->qgp_fraction = 1.0;

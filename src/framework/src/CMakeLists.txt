@@ -12,9 +12,12 @@ tinyxml2.cc FluidDynamics.cc HardProcess.cc Collision.cc
 TrentoInitial.cc JetScapeLogger.cc JetScapeXML.cc
 JetEnergyLoss.cc  JetScapeModuleBase.cc JetEnergyLossManager.cc
 JetScapeSignalManager.cc JetScapeWriterAscii.cc JetScapeEvent.cc
+JetScapeTaskSupport.cc
 ../jet/JetClass.cpp ../jet/fjcore.cc ../jet/PartonShower.cc
 InitialState.cc
-PartonShowerGenerator.cc) #ElossModulesTest.cc 
+PartonShowerGenerator.cc
+PartonPrinter.cc
+) #ElossModulesTest.cc 
 
 if(${ZLIB_FOUND})
     set (SOURCES ${SOURCES}  gzstream.cc JetScapeWriterAsciiGZ.cc)

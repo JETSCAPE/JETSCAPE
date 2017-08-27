@@ -10,7 +10,10 @@
 // (see https://root.cern.ch/doc/v608/TTask_8cxx_source.html l248)
 
 #include "JetScapeTask.h"
+#include "JetScapeTaskSupport.h"
 #include "JetScapeLogger.h"
+
+#include "JetEnergyLoss.h"
 
 #include <iostream>
 
@@ -22,12 +25,14 @@ JetScapeTask::JetScapeTask()
 {
   active_exec=true;
   id="";
+  my_task_number_ = JetScapeTaskSupport::Instance()->RegisterTask();
   VERBOSE(9);
 }
 
 JetScapeTask::~JetScapeTask()
 {
   VERBOSE(9);
+  DEBUG << "Deleting task with id=" << GetId() << " and TaskNumber= " << get_my_task_number();
 }
 
 void JetScapeTask::Init()
@@ -73,6 +78,15 @@ void JetScapeTask::WriteTasks(weak_ptr<JetScapeWriter> w)
       for (auto it : tasks)
 	it->WriteTask(w);
     }
+}
+
+void JetScapeTask::GetPartons(weak_ptr<PartonPrinter> p)
+{
+  //cout<<"############### Printing partons in shower " << "\n";
+  for (auto it : GetTaskList())
+  {
+    it->GetFinalPartons(p);
+  }
 }
 
 void JetScapeTask::Add(shared_ptr<JetScapeTask> m_tasks)

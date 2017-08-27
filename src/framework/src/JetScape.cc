@@ -70,7 +70,12 @@ void JetScape::Init()
 
    SetPointers();
    
-   // Has to be called explicitly since not really fully recursively (if ever needed)
+   // Set up helper. Mostly used for random numbers
+   // Needs the XML reader singleton set up
+   DEBUG<<"Seeding JetScapeTaskSupport from XML";
+   JetScapeTaskSupport::ReadSeedFromXML( );
+
+  // Has to be called explicitly since not really fully recursively (if ever needed)
    // So --> JetScape is "Task Manager" of all modules ...
    
    INFO<<"Found "<<GetNumberOfTasks()<<" Modules Initialize them ... ";
@@ -114,12 +119,21 @@ void JetScape::Exec()
 
   // Simple way of passing the writer module pointer ...
   weak_ptr<JetScapeWriter> w;
-  
+  weak_ptr<PartonPrinter> p;  
+
   for (auto it : GetTaskList())
+  {
     if (dynamic_pointer_cast<JetScapeWriter>(it))
+    {  
       if (it->GetActive())
-	w=dynamic_pointer_cast<JetScapeWriter>(it);	           
-  
+        w=dynamic_pointer_cast<JetScapeWriter>(it);	           
+    }
+    else if(dynamic_pointer_cast<PartonPrinter>(it))
+    {
+        p=dynamic_pointer_cast<PartonPrinter>(it);
+    }
+  } 
+ 
   for (int i=0;i<GetNumberOfEvents();i++)
     {
       INFO<<BOLDBLACK<<"Run Event # = "<<i;
@@ -127,9 +141,11 @@ void JetScape::Exec()
       
       JetScapeTask::ExecuteTasks();
 
+      JetScapeTask::GetPartons(p);
+
       if (w.lock().get())
 	JetScapeTask::WriteTasks(w);            
-     
+
       JetScapeTask::ClearTasks();
 
       IncrementCurrentEvent();

@@ -10,6 +10,7 @@
 
 #include <string>
 #include <memory>
+#include <random>
 
 #include "JetScapeTask.h"
 #include "sigslot.h"
@@ -40,11 +41,15 @@ class JetScapeModuleBase : public JetScapeTask , public sigslot::has_slots<sigsl
   
   static int GetCurrentEvent() {return current_event;}
   static void IncrementCurrentEvent() {current_event++;}
+
+  shared_ptr<std::mt19937> get_mt19937_generator();
   
  private:
 
   string xml_file_name;
   static int current_event; 
+  shared_ptr<std::mt19937> mt19937_generator_;
+
   
 };
 

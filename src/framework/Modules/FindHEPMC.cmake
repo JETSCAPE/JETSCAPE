@@ -26,7 +26,7 @@ FIND_PATH(HEPMC_LIB_DIR  NAMES libHepMC.dylib libHepMC.so PATHS
   $ENV{HEPMC_DIR}/lib
   $ENV{HEPMC_DIR}/lib64
   /usr/local/lib
-  /usr/local/lib64
+  /usr/local/lib/lib64
   ${SIMPATH}/lib
   NO_DEFAULT_PATH
 )
