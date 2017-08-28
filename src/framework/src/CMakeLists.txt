@@ -15,7 +15,9 @@ JetScapeSignalManager.cc JetScapeWriterAscii.cc JetScapeEvent.cc
 JetScapeTaskSupport.cc
 ../jet/JetClass.cpp ../jet/fjcore.cc ../jet/PartonShower.cc
 InitialState.cc
-PartonShowerGenerator.cc) #ElossModulesTest.cc 
+PartonShowerGenerator.cc
+PartonPrinter.cc
+) #ElossModulesTest.cc 
 
 if(${ZLIB_FOUND})
     set (SOURCES ${SOURCES}  gzstream.cc JetScapeWriterAsciiGZ.cc)

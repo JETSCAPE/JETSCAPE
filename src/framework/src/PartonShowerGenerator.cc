@@ -68,7 +68,7 @@ void PartonShowerGenerator::DoShower(JetEnergyLoss &j)
 	  pInTemp.push_back(pIn[i]);
 	  pInTempModule.push_back(pIn[i]);
 	  
-	  j.SentInPartons(currentTime,pIn[i].pt(),pInTempModule,pOutTemp);
+	  j.SentInPartons(j.GetDeltaT(), currentTime,pIn[i].pt(),pInTempModule,pOutTemp);
 
 	  vStart=vStartVec[i];
 	  vStartVecTemp.push_back(vStart);

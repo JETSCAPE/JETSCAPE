@@ -13,6 +13,7 @@
 #include "JetClass.hpp"
 #include "JetScapeWriter.h"
 #include "PartonShower.h"
+#include "PartonPrinter.h"
 #include "helper.h"
 #include <vector>
 #include <random>
@@ -40,7 +41,7 @@ class JetEnergyLoss : public JetScapeModuleBase, public std::enable_shared_from_
   virtual void WriteTask(weak_ptr<JetScapeWriter> w); 
   virtual void Clear();
   //virtual void DoEnergyLoss(double deltaT, double Q2, const vector<Parton>& pIn, vector<Parton>& pOut) {};
-  virtual void DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<Parton>& pOut) {};
+  virtual void DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pIn, vector<Parton>& pOut) {};
   
   // test only ...
   sigslot::signal2<int, double,multi_threaded_local> jetSignal;
@@ -55,7 +56,7 @@ class JetEnergyLoss : public JetScapeModuleBase, public std::enable_shared_from_
   // test first ...
   // deltaT , criteria , list
   //sigslot::signal4<double, double, const vector<Parton>&, vector<Parton>&, multi_threaded_local> SentInPartons;
-  sigslot::signal4<double, double, vector<Parton>&, vector<Parton>&, multi_threaded_local> SentInPartons;
+  sigslot::signal5<double, double, double, vector<Parton>&, vector<Parton>&, multi_threaded_local> SentInPartons;
   sigslot::signal1<vector<Parton>&, multi_threaded_local> GetOutPartons; // probably not needed ... do in SentInPartons with return ...
   
   void SetQhat(double m_qhat) {qhat=m_qhat;}
@@ -91,7 +92,9 @@ class JetEnergyLoss : public JetScapeModuleBase, public std::enable_shared_from_
   double GetDeltaT() {return deltaT;}
   double GetMaxT() {return maxT;}
   shared_ptr<PartonShower> GetShower() {return pShower;}
-  
+
+  virtual void GetFinalPartons(weak_ptr<PartonPrinter> p);
+
  private:
 
   double deltaT;
@@ -110,13 +113,13 @@ class JetEnergyLoss : public JetScapeModuleBase, public std::enable_shared_from_
   
   shared_ptr<Parton> inP;
   //unique_ptr<PartonShower> pShower;
-  shared_ptr<PartonShower> pShower;
-  
+  shared_ptr<PartonShower> pShower;	  
+
   node vStart;
   node vEnd;
 
   void DoShower();
-  
+
 };
 
 } // end namespace Jetscape

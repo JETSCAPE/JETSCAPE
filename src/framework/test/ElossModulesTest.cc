@@ -73,7 +73,7 @@ void Matter::WriteTask(weak_ptr<JetScapeWriter> w)
 // stupid toy branching ....
 // think about memory ... use pointers ...
 //void Matter::DoEnergyLoss(double deltaT, double Q2, const vector<Parton>& pIn, vector<Parton>& pOut)
-void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<Parton>& pOut)
+void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pIn, vector<Parton>& pOut)
 {
   double z=0.5;
   
@@ -113,6 +113,9 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
 	      //cout<<pOut[pOut.size()-1];
 	      //cout<<pOut[pOut.size()-2];
 	    }
+	
+	cout << "**********HERE is Delta T******** " << deltaT << "\n";
+	cout << "**********HERE is Time******** " << time << "\n";
 	  
 	}
       
