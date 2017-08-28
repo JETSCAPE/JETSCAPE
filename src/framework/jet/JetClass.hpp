@@ -325,14 +325,8 @@ public:
   friend ostream &operator<<( ostream &output, 
          Parton & parton ) {
     output<<parton.plabel()<<" "<<parton.pid()<<" "<<parton.pstat()<<" ";
-    output<<parton.pt()<<" "<<parton.rap()<<" "<<parton.phi()<<" "<<parton.e()<<" ";
+    output<<parton.pt()<<" "<<parton.p_in().rapidity()<<" "<<parton.p_in().phi()<<" "<<parton.e()<<" ";
     output<<parton.x_in().x()<<" "<<parton.x_in().y()<<" "<<parton.x_in().z()<<" "<<parton.x_in().t();//<<endl;
-    
-    //output << "vec(p) = "<<parton.p_in().x()<<" "<<parton.p_in().y()<<" "<<parton.p_in().z()<<" "<<parton.x_in().t();
-    //output << " vec(p) = "<<parton.get_p(0)<<" "<<parton.get_p(1)<<" "<<parton.get_p(2)<<" "<<parton.get_p(3)<<endl;
-    //output << " vec(px,py,px,e)      = "<<parton(0)<<" "<<parton(1)<<" "<<parton(2)<<" "<<parton(3)<<endl;
-    //output << " vec(pT,eta,phi,e)    = "<<parton.pt()<<" "<<parton.rap()<<" "<<parton.phi()<<" "<<parton.e()<<endl;
-    //output << " vec(x,y,z,t)         = "<<parton.x_in().x()<<" "<<parton.x_in().y()<<" "<<parton.x_in().z()<<" "<<parton.x_in().t()<<endl;
     return output;            
       }
   
