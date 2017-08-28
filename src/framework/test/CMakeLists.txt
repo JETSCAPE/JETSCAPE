@@ -11,6 +11,7 @@ set (SOURCES
      brick_jetscape.cc
      hydro_file_jetscape.cc
      ElossModulesTestMatter.cc
+     ElossModulesTestMartini.cc
      AdSCFT.cc
      PGun.cc)
 

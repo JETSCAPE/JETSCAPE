@@ -15,7 +15,8 @@ set(_pythia8dirs
     $ENV{PYTHIA8_DIR}
     $ENV{PYTHIA8DIR}
     /usr
-    /opt/pythia8)
+    /opt/pythia8
+    /home/chanwook/pythia8226)
 
 find_path(PYTHIA8_INCLUDE_DIR
           NAMES Pythia8/Pythia.h
