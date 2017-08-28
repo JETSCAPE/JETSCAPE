@@ -132,10 +132,12 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
 	iSplit = 0;
 	if (pIn[i].pid()==gid)
 	  {
-	    cout << " parton is a gluon " << endl ;
+	    DEBUG << " parton is a gluon ";
 	    iSplit = 1;
 	  }
-	else cout << " parton is a quark " <<endl;
+	else {
+	  DEBUG << " parton is a quark ";
+	}
 	    
 	tQ2 = generate_vac_t(pIn[i].pid(), pIn[i].nu(), QS/2.0, pIn[i].e()*pIn[i].e() ,zeta , iSplit);
             	    
@@ -147,16 +149,16 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
 	pIn[i].set_form_time(ft);
             
 	//DEBUG:
-	cout << endl ;            
-	cout << " ***************************************************************************** " << endl;              
-	cout << " *  New generated virtuatlity = " << tQ2 << " Mean formation time = " << pIn[i].mean_form_time()/fmToGeVinv << endl ;              
-	cout << " *  set new formation time to " << pIn[i].form_time()/fmToGeVinv << endl;
-	cout << " * Maximum allowed virtualty = " << pIn[i].e()*pIn[i].e() << "   Minimum Virtuality = " << QS << endl ;
-	cout << endl;
-	cout << " * Jet velocity = " << pIn[i].jet_v().comp(0) << " " << pIn[i].jet_v().comp(1) << "  " << pIn[i].jet_v().comp(2) << "  " << pIn[i].jet_v().comp(3) << endl ;
-	cout<< " * reset location of parton formation = "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z() << endl;
-	cout << " ***************************************************************************** " << endl;
-	cout << endl;
+	DEBUG ;
+	DEBUG << " ***************************************************************************** " ;              
+	DEBUG << " *  New generated virtuality = " << tQ2 << " Mean formation time = " << pIn[i].mean_form_time()/fmToGeVinv;              
+	DEBUG << " *  set new formation time to " << pIn[i].form_time()/fmToGeVinv ;
+	DEBUG << " * Maximum allowed virtuality = " << pIn[i].e()*pIn[i].e() << "   Minimum Virtuality = " << QS;
+	DEBUG ;
+	DEBUG << " * Jet velocity = " << pIn[i].jet_v().comp(0) << " " << pIn[i].jet_v().comp(1) << "  " << pIn[i].jet_v().comp(2) << "  " << pIn[i].jet_v().comp(3);
+	DEBUG << " * reset location of parton formation = "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z() ;
+	DEBUG << " ***************************************************************************** " ;
+	DEBUG ;
 	// end DEBUG:              
       }
           
@@ -190,7 +192,7 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
 	  double val2 = nf*P_z_qq_int(z_low, z_hi, zeta, t_used, tau_form,pIn[i].nu() );
                     
 	  if ( val1<0.0 || val2<0.0 ) {
-	    cout << " minus log of sudakov negative val1 , val2 = " << val1 << "  " << val2 << endl;
+	    cerr << " minus log of sudakov negative val1 , val2 = " << val1 << "  " << val2 << endl;
 	    throw std::runtime_error("minus log of sudakov negative");
 	    // cin >> blurb ;
 	  }
@@ -285,8 +287,8 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
 	newp[2] = plong*s_t*s_p + k_perp1[2];
 	newp[3] = plong*c_t + k_perp1[3];
                   
-	cout << " d1 momentum " << newp[0] << "  " << newp[1] << "  " << newp[2] << "  " << newp[3] << endl ;
-	cout << " d1 mass^2 = " << pow(newp[0],2) - pow(newp[1],2) - pow(newp[2],2) - pow(newp[3],2) << endl;
+	// cout << " d1 momentum " << newp[0] << "  " << newp[1] << "  " << newp[2] << "  " << newp[3] << endl ;
+	// cout << " d1 mass^2 = " << pow(newp[0],2) - pow(newp[1],2) - pow(newp[2],2) - pow(newp[3],2) << endl;
 
 	double newx[4];                  
 	newx[0] = Time + deltaTime ;                  
@@ -324,8 +326,8 @@ void Matter::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
 	newp[2] = plong*s_t*s_p + k_perp2[2] ;
 	newp[3] = plong*c_t + k_perp2[3] ;
               
-	cout << " d2 momentum " << newp[0] << "  " << newp[1] << "  " << newp[2] << "  " << newp[3] << endl ;	      
-	cout << " d2 mass^2 = " << pow(newp[0],2) - pow(newp[1],2) - pow(newp[2],2) - pow(newp[3],2) << endl;
+	// cout << " d2 momentum " << newp[0] << "  " << newp[1] << "  " << newp[2] << "  " << newp[3] << endl ;	      
+	// cout << " d2 mass^2 = " << pow(newp[0],2) - pow(newp[1],2) - pow(newp[2],2) - pow(newp[3],2) << endl;
 
 	newx[0] = Time + deltaTime;
 	for (int j=1;j<=3;j++){
@@ -387,8 +389,7 @@ double Matter::generate_vac_t(int p_id, double nu, double t0, double t, double l
     
   if ((r>=1.0)||(r<=0.0))
     {
-      cout << " error in random number in t *get_mt19937_generator() = " << r << endl;
-      cin >> r ;
+      throw std::runtime_error("error in random number in t *get_mt19937_generator()");
     }
     
   ratio = 1.0 ;
@@ -408,18 +409,14 @@ double Matter::generate_vac_t(int p_id, double nu, double t0, double t, double l
         
       if ((is!=1)&&(is!=2))
         {
-	  cout << " error in isp = " << is << endl;
-	  cin >> is ;
-            
+	  throw std::runtime_error(" error in isp ");
         }
     }
   else
     {
       if (is!=0)
         {
-	  cout << " error in isp in quark split = " << is << endl;
-	  cin >> is;
-            
+	  throw std::runtime_error("error in isp in quark split");            
         }
       numer = sudakov_Pqg(t0,t,loc_a,nu);
     }
@@ -428,8 +425,7 @@ double Matter::generate_vac_t(int p_id, double nu, double t0, double t, double l
     
   if (numer>r)
     {
-      cout << " numer > r, i.e. ; " << numer << " > " << r << endl ;
-        
+      // cout << " numer > r, i.e. ; " << numer << " > " << r << endl ;        
       return(t_mid) ;
     }
     
@@ -448,20 +444,15 @@ double Matter::generate_vac_t(int p_id, double nu, double t0, double t, double l
             
 	  if ((is!=1)&&(is!=2))
             {
-	      cout << " error in isp numerator = " << is << endl;
-	      cin >> is ;
-                
+	      throw std::runtime_error(" error in isp numerator");             
             }
         }
       else
         {
 	  if (is!=0)
             {
-	      cout << " error in isp in quark split numerator  = " << is << endl;
-	      cin >> is;
-                
-            }
-            
+	      throw std::runtime_error(" error in isp in quark split numerator  ");
+            }            
 	  denom = sudakov_Pqg(t0, t_mid, loc_a, nu);
         }
         
@@ -473,12 +464,7 @@ double Matter::generate_vac_t(int p_id, double nu, double t0, double t, double l
       //       cout << "diff, t_mid = " << diff << " " << t_mid << endl;
       //       cout << " t_low, t_hi = " << t_low << "  " << t_hi << endl;
       //       cin >> test ;
-        
-      /*        if (i_line==1) {
-		cout << " t_guess = " << t_mid << "     ;    " ;
-		} ;
-      */
-        
+                
       if (diff<0.0)
         {
 	  t_low = t_mid ;
@@ -510,21 +496,13 @@ double Matter::generate_vac_t(int p_id, double nu, double t0, double t, double l
 double  Matter::generate_vac_z(int p_id, double t0, double t, double loc_b, double nu, int is )
 {
   double r,z, ratio,diff,e,numer1, numer2, numer, denom, z_low, z_hi, z_mid, test;
-    
-  //    r = 0.0;
-    
-  //	while (r<approx)
-  //	{
-  // r = double(random())/ (maxN );
+
   r = ZeroOneDistribution(*get_mt19937_generator());
-  //		r = mtrand1();
     
   if ((r>1)||(r<0))
     {
-      cout << " error in random number in z *get_mt19937_generator() = " << r << endl;
-      cin >> r ;
+      throw std::runtime_error(" error in random number in z *get_mt19937_generator()");
     }
-  //	}
     
   ratio = 1.0 ;
     
@@ -534,8 +512,7 @@ double  Matter::generate_vac_z(int p_id, double t0, double t, double loc_b, doub
     
   if (e>0.5)
     {
-      cout << " error in 	epsilon = " << e << endl ;
-      cin >> e ;
+      throw std::runtime_error(" error in 	epsilon");
     }
     
   z_low = e ;
@@ -563,7 +540,7 @@ double  Matter::generate_vac_z(int p_id, double t0, double t, double loc_b, doub
   z_mid = (z_low + z_hi)/2.0 ;
   
   int itcounter=0;
-  cout << " generate_vac_z called with p_id = " << p_id << " t0 = " << t0 << " t = " << t << " loc_b=" << loc_b<< " nu = " <<  nu << " is = " << is << endl;
+  // cout << " generate_vac_z called with p_id = " << p_id << " t0 = " << t0 << " t = " << t << " loc_b=" << loc_b<< " nu = " <<  nu << " is = " << is << endl;
   while (abs(diff)>approx) { // Getting stuck in here for some reason
     if ( itcounter++ > 20 ) throw std::runtime_error("Stuck in endless loop") ;
     // cout << " in here" << " abs(diff) = " << abs(diff) << "  approx = " << approx << endl;
@@ -612,8 +589,7 @@ double Matter::generate_L(double form_time)
     
   if ((r>1)||(r<0))
     {
-      cout << " error in random number in z *get_mt19937_generator() = " << r << endl;
-      cin >> r ;
+      throw std::runtime_error(" error in random number in z *get_mt19937_generator()");
     }
     
   x_low = 0;
@@ -675,9 +651,9 @@ double Matter::sudakov_Pgg(double g0, double g1, double loc_c, double E)
     
   if (g1<2.0*g0)
     {
-      cout << " warning: the lower limit of the sudakov > 1/2 upper limit, returning 1 " << endl;
-      cout << " in sudakov_P glue glue, g0, g1 = " << g0 << "  " << g1 << endl;
-      cin >> blurb ;
+      cerr << " warning: the lower limit of the sudakov > 1/2 upper limit, returning 1 " << endl;
+      cerr << " in sudakov_P glue glue, g0, g1 = " << g0 << "  " << g1 << endl;
+      throw std::runtime_error(" warning: the lower limit of the sudakov > 1/2 upper limit, returning 1");
         
       return(sud) ;
         
@@ -769,9 +745,8 @@ double Matter::sud_z_GG(double cg, double cg1, double loc_e , double l_fac, doub
   limit_factor = 2.0*std::sqrt(2.0)*cg1/E2/0.1 ;
     
   if (limit_factor<0.0) {
-    cout << " error in z limit factor for medium calculation in sud-z-gg = " << limit_factor << endl ;
-        
-    cin >> res ;
+    cerr << " error in z limit factor for medium calculation in sud-z-gg = " << limit_factor << endl ;
+    throw std::runtime_error("error in z limit factor for medium calculation in sud-z-gg");
   }
     
   q2 = 1.0 / cg1;
@@ -781,10 +756,10 @@ double Matter::sud_z_GG(double cg, double cg1, double loc_e , double l_fac, doub
     
   if (q12<0.0)
     {
-      cout << "ERROR: medium contribution negative in sud_z_GG: q12 = " << q12 << endl;
-      cout << "cg, cg1 = " << cg << "  " << cg1 << endl;
-      cout << " t25 = " << t25 << endl;
-      cin >> res ;
+      cerr << "ERROR: medium contribution negative in sud_z_GG: q12 = " << q12 << endl;
+      cerr << "cg, cg1 = " << cg << "  " << cg1 << endl;
+      cerr << " t25 = " << t25 << endl;
+      throw std::runtime_error("ERROR: medium contribution negative in sud_z_GG");
     }
     
   tau = l_fac ;
@@ -829,9 +804,8 @@ double Matter::P_z_gg_int(double cg, double cg1, double loc_e, double cg3, doubl
     
     
   if (limit_factor<0.0) {
-    cout << " error in z limit factor for medium calculation = " << limit_factor << endl ;
-        
-    cin >> res ;
+    cerr << " error in z limit factor for medium calculation = " << limit_factor << endl ;
+    throw std::runtime_error(" error in z limit factor for medium calculation");
   }
     
     
@@ -853,21 +827,14 @@ double Matter::P_z_gg_int(double cg, double cg1, double loc_e, double cg3, doubl
     
   if (t9<0.0)
     {
-      cout << "ERROR: medium contribution negative in P_z_gg_int : t9 = " << t9 << endl;
+      cerr << "ERROR: medium contribution negative in P_z_gg_int : t9 = " << t9 << endl;
         
-      cout << " cg, cg1 = " << cg << "  " << cg1 << endl;
-        
-      cin >> res ;
+      cerr << " cg, cg1 = " << cg << "  " << cg1 << endl;
+      throw std::runtime_error("ERROR: medium contribution negative in P_z_gg_int");
     }
     
   res = t15 + 2.0*t9*qL/cg3 ;
-    
-  //       }
-  //        else{
-  //            cout << " z trap for medium enabled " << endl ;
-  //        }
-  //   }
-    
+        
   return(res);
     
 }
@@ -886,8 +853,8 @@ double Matter::sudakov_Pqq(double q0, double q1, double loc_c, double E)
   if (q1<2.0*q0)
     //	if (g1<g0)
     {
-      cout << " warning: the lower limit of the sudakov > 1/2 upper limit, returning 1 " << endl;
-      cout << " in sudakov_Pquark quark, q0, q1 = " << q0 << "  " << q1 << endl;
+      WARN << " warning: the lower limit of the sudakov > 1/2 upper limit, returning 1 ";
+      WARN << " in sudakov_Pquark quark, q0, q1 = " << q0 << "  " << q1;
       return(sud) ;
     }
   q = 2.0*q0;
@@ -990,10 +957,10 @@ double Matter::sud_z_QQ(double cg, double cg1, double loc_e , double l_fac, doub
     
   if (q15<0.0)
     {
-      cout << "ERROR: medium contribution negative in sud_z_QQ: q15 = " << q15 << endl;
-      cout << "cg, cg1 = " << cg << "  " << cg1 << endl;
-      cout << " t14 = " << t14 << endl;
-      cin >> res ;
+      cerr << "ERROR: medium contribution negative in sud_z_QQ: q15 = " << q15 << endl;
+      cerr << "cg, cg1 = " << cg << "  " << cg1 << endl;
+      cerr << " t14 = " << t14 << endl;
+      throw std::runtime_error("ERROR: medium contribution negative in sud_z_QQ");
     }
     
   tau = l_fac ;
@@ -1043,14 +1010,11 @@ double Matter::P_z_qq_int(double cg, double cg1, double loc_e, double cg3, doubl
     
   if (q_q11<0.0)
     {
-      cout << "ERROR: medium contribution negative in P_z_gg_int : q_q11 = " << q_q11 << endl;
-        
-      cin >> res ;
+      cerr << "ERROR: medium contribution negative in P_z_gg_int : q_q11 = " << q_q11 << endl;
+      throw std::runtime_error("ERROR: medium contribution negative in P_z_gg_int");
     }
     
   res = t_q12*Tf/Ca + 2.0*qL*q_q11/cg3*(Tf*Cf/Ca/Ca);
-    
-  //	res = t15 + 2.0*t9*qL/cg3 ;
     
   return(res);
     
@@ -1066,8 +1030,8 @@ double Matter::sudakov_Pqg(double g0, double g1, double loc_c, double E)
     
   if (g1<2.0*g0)
     {
-      cout << " warning: the lower limit of the sudakov > 1/2 upper limit, returning 1 " << endl;
-      cout << " in sudakov_Pquark gluon, g0, g1 = " << g0 << "  " << g1 << endl;
+      WARN << " warning: the lower limit of the sudakov > 1/2 upper limit, returning 1 ";
+      WARN << " in sudakov_Pquark gluon, g0, g1 = " << g0 << "  " << g1;
       return(sud) ;
     }
   g = 2.0*g0;
@@ -1174,9 +1138,8 @@ double Matter::sud_z_QG(double cg, double cg1, double loc_e, double l_fac,double
     
   if (q14<0.0)
     {
-      cout << "ERROR: medium contribution negative in sud_z_QG : q14 = " << q14 << endl;
-        
-      cin >> res ;
+      cerr << "ERROR: medium contribution negative in sud_z_QG : q14 = " << q14 << endl;
+      throw std::runtime_error("ERROR: medium contribution negative in sud_z_QG");
     }
     
   return(res);
@@ -1247,18 +1210,12 @@ double Matter::alpha_s(double q2)
       a = 12.0*pi/(11.0*Nc-2.0*c_nf)/std::log(q24/L2) ;
     }
   else
-    {
-        
-      cout << " alpha too large " << endl;
-      a=0.6;
-        
+    {        
+      WARN << " alpha too large ";
+      a=0.6;        
     }
-    
-    
-    
+
   return(a);
-    
-    
 }
 
 double Matter::profile(double zeta)
@@ -1276,38 +1233,6 @@ double Matter::profile(double zeta)
 
 
 // obsolete in the future ...
-/*
-  void Matter::Exec()
-  {
-  INFO<<"Run Matter ...";
-  DEBUG<<"Qhat = "<<GetQhat();
- 
-  DEBUG<<"Emit Signal: jetSignal(10,20.3)";
-  jetSignal(10,20.3);
-  double edensity=-1;
-  edensitySignal(1,edensity);
-  DEBUG<< MAGENTA<<"Received edensity = "<<edensity<<" for t="<<1;
- 
-  if (GetShowerInitiatingParton())
-  {
-  //cout<<shared_from_this().get()<<endl;
-  //cout<< *GetShowerInitiatingParton()<<endl;
-  VERBOSEPARTON(6,*GetShowerInitiatingParton());
-  //PrintShowerInitiatingParton();
-  }
-   
-  FluidCellInfo* check_fluid_info_ptr = new FluidCellInfo;
-  GetHydroCellSignal(1, 1.0, 1.0, 0.0, check_fluid_info_ptr);
-   
-  DEBUG<< MAGENTA<<"Temperature from Brick (Signal) = "<<check_fluid_info_ptr->temperature;
-   
-  //check_fluid_info_ptr->Print();
-   
-  delete check_fluid_info_ptr;
-   
-  }
-*/
-
 // ----------------------
 
 Martini::Martini()
@@ -1339,30 +1264,3 @@ void Martini::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector
     VERBOSESHOWER(8)<< MAGENTA << "SentInPartons Signal received : "<<deltaT<<" "<<Q2<<" "<<&pIn;
 }
 
-/*
-  void Martini::Exec()
-  {
-  INFO<<"Run Martini ...";
-  DEBUG<<"Qhat = "<<GetQhat();
-  //DEBUG<<"Emit Signal: jetSignal(100,200.3)";
-  //cout<<jetSignal.is_connected()<<endl;
-  //jetSignal(100,200.3);
-
-  //cout<<shared_from_this().get()<<endl;
-  // logger not working with overloaded << from Parton class ...
-  // check and resolve ...
-  if (GetShowerInitiatingParton())
-  {
-  cout<< *GetShowerInitiatingParton()<<endl;
-  //PrintShowerInitiatingParton();
-  }
-   
-  FluidCellInfo* check_fluid_info_ptr = new FluidCellInfo;
-  GetHydroCellSignal(1, 1.0, 1.0, 0.0, check_fluid_info_ptr);  
-  DEBUG<< MAGENTA<<"Temperature from Brick (Signal) = "<<check_fluid_info_ptr->temperature;
-   
-  //check_fluid_info_ptr->Print();
-   
-  delete check_fluid_info_ptr;
-  }
-*/
