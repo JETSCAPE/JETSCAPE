@@ -43,6 +43,18 @@ class Matter : public JetEnergyLossModule<Matter> //, public std::enable_shared_
 
 };
 
+class MARTINIUserInfo: public Parton::PseudoJet::UserInfoBase
+{
+  public :
+
+    MARTINIUserInfo(double aa, double tt) : _aa(aa), _tt(tt){};
+
+    double aa() const { return _aa; }  
+    double tt() const { return _tt; }
+    double _aa;
+    double _tt;	
+
+};
 //Basic.h//
 struct RateRadiative
 {

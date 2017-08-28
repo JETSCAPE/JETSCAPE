@@ -184,6 +184,8 @@ void JetEnergyLoss::DoShower()
 	{
 
 	  pInTempModule.push_back(pIn[i]);
+cout << "size of pInTempModule = " << pInTempModule.size() << endl;
+cout << "size of pOutTemp = " << pOutTemp.size() << endl;
 	  //SentInPartons(currentTime,pIn[i].pt(),pInTempModule,pOutTemp);
 	  SentInPartons(deltaT,pIn[i].pt(),pInTempModule,pOutTemp);
 	  pInTemp.push_back(pInTempModule[0]);
