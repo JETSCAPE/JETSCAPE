@@ -12,7 +12,7 @@
     *  - a label and a status 
     *  - currently additional information that should be moved to derived classes or only used as UserInfo
     * 
-    * The design choice of private inheritance is due to a disconnect between available packages.
+    * The design choice of protected inheritance is due to a disconnect between available packages.
     * The overwhelming majority of the theory community expects the 0 component to be time/energy, 
     * whereas FastJet (and others, like ROOT) prefer t,e to be the fourth component.
     * Private inheritance means we can inherit and make accessible safe methods (with C++11 using),
@@ -30,16 +30,17 @@
     * \f$M^2 = E^2 - p*p.\f$
     * Especially in the case of off-shell partons, the correct interpretation is 
     * \f$"M^2" = E^2 - p^2 == M0^2 + Q^2 == M0^2 + t\f$
-    * Therefore, there is the dangerous possibility functions like mass(), reset_PtYPhiM(...) can
+    * Therefore, there is the dangerous possibility that functions like mass(), reset_PtYPhiM(...) can
     * be used by unwitting users and display unexpected behavior. 
     * For protection against this possibility, "mass"-related functions in PseudoJet are
-    * overwritten to throw an error.
+    * not made available
     * 
     * Future considerations: 
     *   - We should consider
     *     making a Pythia8 installation mandatory; with pythia guaranteed to be present,
     *     the rest mass lookup could be automatically done using PDG data.
     *   - If ROOT were a mandatory part, TLorentzVector would be a good replacement for the homebrewed FourVector
+    *   - If HepMc were a mandatory part, HepMc::FourVector would be a good replacement for the homebrewed FourVector
     */
 
 #ifndef JetScapeParticles_hpp
@@ -104,7 +105,7 @@ namespace Jetscape {
 
     // // void set_cached_rap_phi(double rap, double phi);
 
-    /// No implicit cast to PseudoJet is allowed, provide a clunky conversion
+    /// No implicit cast to PseudoJet is allowed, provide a conversion
     fjcore::PseudoJet GetPseudoJet() const{
       return PseudoJet ( *this );
     }
@@ -197,7 +198,7 @@ namespace Jetscape {
     
     void set_mean_form_time();
     void set_form_time(double form_time);    
-    void set_t(double t); ///< virtuality of particle
+    void set_t(double t); ///< virtuality of particle, \WARNING: rescales the spatial component
     
     void init_jet_v();
     void set_jet_v(double v[4]);
@@ -231,7 +232,7 @@ namespace Jetscape {
   
     void set_restmass(double mass_input); ///< shouldn't be called from the outside, needs to be consistent with PID
 
-    int pid_                ; ///< particle id ()
+    int pid_                ; ///< particle id
     int pstat_              ; ///< status of particle
     int plabel_             ; ///< the line number in the event record
     double mass_            ; ///< rest mass of the particle \todo Only maintain PID, look up mass from PDG
@@ -256,18 +257,18 @@ namespace Jetscape {
   //  PARTON CLASS
   /*************************************************************************************************/
   class Parton : public JetScapeParticleBase{
-    // using JetScapeParticleBase::JetScapeParticleBase;
+    using JetScapeParticleBase::JetScapeParticleBase;
 
   public : 
-    Parton (int label, int id, int stat, double p[4], double x[4])  :
-      JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  p, x) {
-      cout << "========================== std Ctor called, returning : " << endl << *this << endl;
-    }
+    // Parton (int label, int id, int stat, double p[4], double x[4])  :
+    //   JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  p, x) {
+    //   cout << "========================== std Ctor called, returning : " << endl << *this << endl;
+    // }
 
-    Parton (int label, int id, int stat, double pt, double eta, double phi, double e, double* x=0)  :
-      JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  pt, eta, phi, e, x){
-      cout << "========================== phieta Ctor called, returning : " << endl << *this << endl;
-    }
+    // Parton (int label, int id, int stat, double pt, double eta, double phi, double e, double* x=0)  :
+    //   JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  pt, eta, phi, e, x){
+    //   cout << "========================== phieta Ctor called, returning : " << endl << *this << endl;
+    // }
          
   };
 
