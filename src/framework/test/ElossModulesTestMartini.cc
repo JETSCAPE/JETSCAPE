@@ -22,6 +22,7 @@
 
 using namespace Jetscape;
 
+const double QS = 1.0;
 
 Martini::Martini()
 {
@@ -79,8 +80,8 @@ void Martini::Init()
 //void Martini::DoEnergyLoss(double deltaT, double Q2, const vector<Parton>& pIn, vector<Parton>& pOut)
 void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& pIn, vector<Parton>& pOut)
 {
-  //if (Q2<5)
-  if (Q2 > -100.)
+  cout << pIn[0].t() << endl;
+  if (pIn[0].t() <= QS)
   {
     VERBOSESHOWER(8)<< MAGENTA << "SentInPartons Signal received : "<<deltaT<<" "<<Q2<<" "<<&pIn;
 
@@ -131,16 +132,16 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
           {
             ptNew = pNew/cosh(eta);
             pOut.push_back(Parton(0, Id, 0, ptNew, eta, phi, pNew));
-
-            pOut.back().set_user_info(new MARTINIUserInfo(aa, tt));
+            pOut[pOut.size()-1].set_form_time(0.);
+            pOut[pOut.size()-1].set_t(1.);
           }
 
-          if (k > pcut )
+          if (k > pcut)
           {
             kt = k/cosh(eta);
             pOut.push_back(Parton(0, 21, 0, kt, eta, phi, k));
-
-            pOut.back().set_user_info(new MARTINIUserInfo(aa, tt));
+            pOut[pOut.size()-1].set_form_time(0.);
+            pOut[pOut.size()-1].set_t(1.);
           }
 
           return;
@@ -158,8 +159,8 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
           {
             ptNew = pNew/cosh(eta);
             pOut.push_back(Parton(0, Id, 0, ptNew, eta, phi, pNew));
-
-            pOut.back().set_user_info(new MARTINIUserInfo(aa, tt));
+            pOut[pOut.size()-1].set_form_time(0.);
+            pOut[pOut.size()-1].set_t(1.);
           }
 
           // photon doesn't have energy threshold; No absorption into medium
@@ -168,8 +169,8 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
           {
             kt = k/cosh(eta);
             pOut.push_back(Parton(0, 22, 0, kt, eta, phi, k));
-
-            pOut.back().set_user_info(new MARTINIUserInfo(aa, tt));
+            pOut[pOut.size()-1].set_form_time(0.);
+            pOut[pOut.size()-1].set_t(1.);
           }
 
           return;
@@ -189,8 +190,8 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
             ptNew = sqrt(pVecNew.x()*pVecNew.x()+pVecNew.y()*pVecNew.y());
             phi = atan2(pVecNew.y(), pVecNew.x());
             pOut.push_back(Parton(0, Id, 0, ptNew, eta, phi, pNew));
-
-            pOut.back().set_user_info(new MARTINIUserInfo(aa, tt));
+            pOut[pOut.size()-1].set_form_time(0.);
+            pOut[pOut.size()-1].set_t(1.);
           }
           
           return;
@@ -210,8 +211,8 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
             ptNew = sqrt(pVecNew.x()*pVecNew.x()+pVecNew.y()*pVecNew.y());
             phi = atan2(pVecNew.y(), pVecNew.x());
             pOut.push_back(Parton(0, Id, 0, ptNew, eta, phi, pNew));
-
-            pOut.back().set_user_info(new MARTINIUserInfo(aa, tt));
+            pOut[pOut.size()-1].set_form_time(0.);
+            pOut[pOut.size()-1].set_t(1.);
           }
           
           return;
@@ -220,8 +221,8 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
         else if (process == 9)
         {
           pOut.push_back(Parton(0, 21, 0, pt, eta, phi, p));
-
-            pOut.back().set_user_info(new MARTINIUserInfo(aa, tt));
+          pOut[pOut.size()-1].set_form_time(0.);
+          pOut[pOut.size()-1].set_t(1.);
 
           return;
         }
@@ -229,8 +230,8 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
         else if (process == 10)
         {
           pOut.push_back(Parton(0, 22, 0, pt, eta, phi, p));
-
-            pOut.back().set_user_info(new MARTINIUserInfo(aa, tt));
+          pOut[pOut.size()-1].set_form_time(0.);
+          pOut[pOut.size()-1].set_t(1.);
 
           return;
         }
@@ -250,16 +251,16 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
           {
             ptNew = pNew/cosh(eta);
             pOut.push_back(Parton(0, Id, 0, ptNew, eta, phi, pNew));
-
-            pOut.back().set_user_info(new MARTINIUserInfo(aa, tt));
+            pOut[pOut.size()-1].set_form_time(0.);
+            pOut[pOut.size()-1].set_t(1.);
           }
 
           if (k > pcut)
           {
             kt = k/cosh(eta);
             pOut.push_back(Parton(0, 21, 0, kt, eta, phi, k));
-
-            pOut.back().set_user_info(new MARTINIUserInfo(aa, tt));
+            pOut[pOut.size()-1].set_form_time(0.);
+            pOut[pOut.size()-1].set_t(1.);
           }
 
           return;
@@ -284,16 +285,16 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
             // !momentum of quark is usually larger than that of anti-quark
             ptNew = pNew/cosh(eta);
             pOut.push_back(Parton(0, newId, 0, ptNew, eta, phi, pNew));
-
-            pOut.back().set_user_info(new MARTINIUserInfo(aa, tt));
+            pOut[pOut.size()-1].set_form_time(0.);
+            pOut[pOut.size()-1].set_t(1.);
           }
 
           if (k > pcut)
           {
             kt = k/cosh(eta);
             pOut.push_back(Parton(0, -newId, 0, kt, eta, phi, k));
-
-            pOut.back().set_user_info(new MARTINIUserInfo(aa, tt));
+            pOut[pOut.size()-1].set_form_time(0.);
+            pOut[pOut.size()-1].set_t(1.);
           }
 
           return;
@@ -313,8 +314,8 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
             ptNew = sqrt(pVecNew.x()*pVecNew.x()+pVecNew.y()*pVecNew.y());
             phi = atan2(pVecNew.y(), pVecNew.x());
             pOut.push_back(Parton(0, Id, 0, ptNew, eta, phi, pNew));
-
-            pOut.back().set_user_info(new MARTINIUserInfo(aa, tt));
+            pOut[pOut.size()-1].set_form_time(0.);
+            pOut[pOut.size()-1].set_t(1.);
           }
           
           return;
@@ -334,8 +335,8 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
             ptNew = sqrt(pVecNew.x()*pVecNew.x()+pVecNew.y()*pVecNew.y());
             phi = atan2(pVecNew.y(), pVecNew.x());
             pOut.push_back(Parton(0, Id, 0, ptNew, eta, phi, pNew));
-
-            pOut.back().set_user_info(new MARTINIUserInfo(aa,tt));
+            pOut[pOut.size()-1].set_form_time(0.);
+            pOut[pOut.size()-1].set_t(1.);
           }
           
           return;
@@ -349,8 +350,8 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
           else newId = 3;
 
           pOut.push_back(Parton(0, newId, 0, pt, eta, phi, p));
-
-            pOut.back().set_user_info(new MARTINIUserInfo(aa, tt));
+          pOut[pOut.size()-1].set_form_time(0.);
+          pOut[pOut.size()-1].set_t(1.);
 
           return;
         }
@@ -450,7 +451,7 @@ int Martini::DetermineProcess(double p, double T, double deltaT, int Id)
     }
   }
   // evolution for gluon
-  else if (Id = 21)
+  else if (Id == 21)
   {
     double totalGluonProb = 0.;
 
