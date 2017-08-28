@@ -59,6 +59,20 @@ if (${ROOT_FOUND})
     #set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -m64")    
 endif()
 
+if (music)
+    message("Includes for music ...")
+    find_package(MPI)
+    if(${MPI_FOUND})
+        include_directories(${MPI_INCLUDE_PATH})
+    endif(${MPI_FOUND})
+    message("Looking for GSL ...")
+    find_package(GSL)
+    if(${GSL_FOUND})
+        include_directories(${GSL_INCLUDE_DIR})
+    endif(${GSL_FOUND})
+    include_directories(./3rdparty/music ./3rdparty/music/src)
+endif (music)
+
 #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "./bin/")
 
 message("Compiler and Linker flags ...")
@@ -78,7 +92,9 @@ if (APPLE)
      message(STATUS "LD_FLAGS = " ${CMAKE_EXE_LINKER_FLAGS})
 elseif(UNIX) 
     message( STATUS "Linux : " ${CMAKE_HOST_SYSTEM})
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0 -fprofile-arcs -ftest-coverage -fPIC -pipe -Wall -g -Wno-reorder -Wno-unused-variable") 
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-sign-compare -Wno-unused-but-set-variable -Wno-parentheses")
+    set(CMAKE_BUILD_TYPE Debug)
 endif()   
 
 
@@ -134,17 +150,13 @@ endif()
 if (${PYTHIA8_FOUND})
     add_executable(writerTest ./src/writerTest.cc)
     add_executable(brickTest ./src/brickTest.cc)
-    add_executable(PythiaBrickTest ./src/PythiaBrickTest.cc)
     target_link_libraries(writerTest JetScape JetScapeHydro JetScapeTest) #for writer test case...
     target_link_libraries(brickTest JetScape JetScapeHydro  JetScapeTest) #for test case ...
-    target_link_libraries(PythiaBrickTest JetScape JetScapeHydro  JetScapeTest) #for test case ...
     target_link_libraries(testJetScape ${PYTHIA8_LIBRARIES})
     target_link_libraries(brickTest ${PYTHIA8_LIBRARIES})
-    target_link_libraries(PythiaBrickTest ${PYTHIA8_LIBRARIES})
     if (${ROOT_FOUND})
-      target_link_libraries(brickTest ${ROOT_LIBRARIES})
-      target_link_libraries(PythiaBrickTest ${ROOT_LIBRARIES})
-      target_link_libraries(writerTest ${ROOT_LIBRARIES})
+        target_link_libraries(brickTest ${ROOT_LIBRARIES})
+        target_link_libraries(writerTest ${ROOT_LIBRARIES})
     endif(${ROOT_FOUND})
     target_link_libraries(hydroFileTest ${PYTHIA8_LIBRARIES})
     target_link_libraries(writerTest ${PYTHIA8_LIBRARIES})
@@ -180,10 +192,6 @@ if (music)
         target_link_libraries(MUSICTest ${MPI_LIBRARIES} ${GSL_LIBRARIES})
         target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest hydroFromFile music_lib)
         target_link_libraries(MUSICTest JetScape JetScapeHydro JetScapeTest music_lib)
-        file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/EOS)
-        file(COPY ./3rdparty/music/EOS/ DESTINATION ${CMAKE_BINARY_DIR}/EOS)
-        file(COPY ./test/test_music_files/music_input_mode_2
-             DESTINATION ${CMAKE_BINARY_DIR}/)
     endif()
 endif (music)
 
@@ -191,9 +199,8 @@ endif (music)
 #### copy jetscape_init.xml to build/, such that one can test xml reading in build/ directory
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/jetscape_init.xml DESTINATION ${CMAKE_BINARY_DIR}/)
 
-#### same for pythi gun
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/jetscape_init_pythiagun.xml DESTINATION ${CMAKE_BINARY_DIR}/)
 
 #set(LIBS ${LIBS} ${ROOT_LIBRARIES})
 #However, the file(GLOB...) allows for wildcard additions:
 #file(GLOB SOURCES "src/*.cpp")
+

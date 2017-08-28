@@ -13,6 +13,8 @@
 #include "JetScapeTaskSupport.h"
 #include "JetScapeLogger.h"
 
+#include "JetEnergyLoss.h"
+
 #include <iostream>
 
 using namespace std;
@@ -76,6 +78,15 @@ void JetScapeTask::WriteTasks(weak_ptr<JetScapeWriter> w)
       for (auto it : tasks)
 	it->WriteTask(w);
     }
+}
+
+void JetScapeTask::GetPartons(weak_ptr<PartonPrinter> p)
+{
+  //cout<<"############### Printing partons in shower " << "\n";
+  for (auto it : GetTaskList())
+  {
+    it->GetFinalPartons(p);
+  }
 }
 
 void JetScapeTask::Add(shared_ptr<JetScapeTask> m_tasks)
