@@ -195,9 +195,6 @@ namespace Jetscape {
 
     void set_p(double p[4]);
     void set_x(double x[4]); 
-    
-    void set_mean_form_time();
-    void set_form_time(double form_time);    
     void set_t(double t); ///< virtuality of particle, \WARNING: rescales the spatial component
     
     void init_jet_v();
@@ -205,7 +202,6 @@ namespace Jetscape {
     
     //  Getters
     
-    double form_time();
     const int pid();    
     const int pstat();    
     const int plabel();
@@ -218,15 +214,14 @@ namespace Jetscape {
     FourVector &jet_v();
   
     const double restmass();
-    const double mean_form_time();
     const double p(int i); 
     double pl();    
     const double nu();    
     const double t();    
     const double t_max();
 
-    JetScapeParticleBase& operator=(JetScapeParticleBase &c);
-    JetScapeParticleBase& operator=(const JetScapeParticleBase &c);
+    virtual JetScapeParticleBase& operator=(JetScapeParticleBase &c);
+    virtual JetScapeParticleBase& operator=(const JetScapeParticleBase &c);
 
   protected:
   
@@ -237,15 +232,11 @@ namespace Jetscape {
     int plabel_             ; ///< the line number in the event record
     double mass_            ; ///< rest mass of the particle \todo Only maintain PID, look up mass from PDG
     // double t_               ; ///< The virtuality, and not the time!
-    double mean_form_time_  ; ///< Mean formation time
-    double form_time_       ; ///< event by event formation time
     
     // FourVector p_in_; ///< Internal version of p. Clashes with PseudoJet! REPLACE
     FourVector x_in_; ///< position of particle
     FourVector jet_v_; ///< jet four vector, without gamma factor (so not really a four vector)
 
-    // helpers
-    void initialize_form_time();
   };
   // END BASE CLASS
 
@@ -257,19 +248,29 @@ namespace Jetscape {
   //  PARTON CLASS
   /*************************************************************************************************/
   class Parton : public JetScapeParticleBase{
-    using JetScapeParticleBase::JetScapeParticleBase;
+    // using JetScapeParticleBase::JetScapeParticleBase;
 
   public : 
-    // Parton (int label, int id, int stat, double p[4], double x[4])  :
-    //   JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  p, x) {
-    //   cout << "========================== std Ctor called, returning : " << endl << *this << endl;
-    // }
+    virtual void set_mean_form_time();
+    virtual void set_form_time(double form_time);    
 
-    // Parton (int label, int id, int stat, double pt, double eta, double phi, double e, double* x=0)  :
-    //   JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  pt, eta, phi, e, x){
-    //   cout << "========================== phieta Ctor called, returning : " << endl << *this << endl;
-    // }
-         
+    virtual double form_time();
+    virtual const double mean_form_time();
+
+    Parton (int label, int id, int stat, double p[4], double x[4]);
+    Parton (int label, int id, int stat, double pt, double eta, double phi, double e, double* x=0);
+    Parton (const Parton& srp);
+    
+    Parton& operator=( Parton &c);
+    Parton& operator=( const Parton &c);
+    
+  protected :
+    double mean_form_time_  ; ///< Mean formation time
+    double form_time_       ; ///< event by event formation time
+
+    // helpers
+    void initialize_form_time();
+    
   };
 
 

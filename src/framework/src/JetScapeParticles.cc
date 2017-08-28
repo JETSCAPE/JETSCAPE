@@ -27,7 +27,6 @@ namespace Jetscape {
     pid_ = srp.pid_;
     plabel_ = srp.plabel_;
     pstat_ = srp.pstat_;
-    form_time_ = srp.form_time_;
     mass_ = srp.mass_;
     // t_ = srp.t_;
     jet_v_ = srp.jet_v_;
@@ -38,7 +37,6 @@ namespace Jetscape {
   {
     set_label(label);
     set_id(id);
-    initialize_form_time();
     init_jet_v();
   
     set_restmass(-1.0);
@@ -108,7 +106,6 @@ namespace Jetscape {
     
     set_label(label);
     set_id(id);    
-    initialize_form_time();    
     init_jet_v();
     
     set_restmass(-1.0);
@@ -199,23 +196,7 @@ namespace Jetscape {
     //FourVector
     x_in_.Set(x);
   }
- 
-  void JetScapeParticleBase::set_mean_form_time ()
-  {
-    mean_form_time_ = 2.0*e()/t();
-  }
-    
-
-  void JetScapeParticleBase::set_form_time(double form_time)
-  {
-    form_time_ = form_time;
-  }
-    
-  void JetScapeParticleBase::initialize_form_time()
-  {
-    form_time_ = -0.1;
-  }
-    
+     
   void JetScapeParticleBase::set_t(double t)
   {
     //  Reset the momentum due to virtuality              
@@ -245,13 +226,7 @@ namespace Jetscape {
     
   //  end setters
     
-  //  start getters
-    
-  double JetScapeParticleBase::form_time()
-  {
-    return(form_time_);
-  }
-    
+  //  start getters        
   const int JetScapeParticleBase::pid()
   {
     return(pid_);
@@ -310,11 +285,6 @@ namespace Jetscape {
     return(mass_);
   }
 
-  const double JetScapeParticleBase::mean_form_time()
-  {
-    return(mean_form_time_);
-  }
-
   // just operator of PseudoJet ...
   
   const double JetScapeParticleBase::p(int i) {
@@ -370,7 +340,6 @@ namespace Jetscape {
     plabel_ = c.plabel() ;
 
     x_in_ = c.x_in() ;
-    form_time_ = c.form_time_;
     mass_ = c.mass_;
       
     return *this;
@@ -386,21 +355,83 @@ namespace Jetscape {
 
     x_in_ = c.x_in_;
       
-    mass_ = c.mass_;
-    // t_ = c.t_;
-    form_time_ = c.form_time_ ;
-        
+    mass_ = c.mass_;        
     return *this;
   }
   
   ostream &operator<<( ostream &output, JetScapeParticleBase & p ) {
-    output<<p.plabel()<<" pid="<<p.pid()<<" stat="<<p.pstat()<<" pt=";
-    output<<p.pt()<<" rap="<<p.rap()<<" phi="<<p.phi()<<endl;
-    output<<" e="<<p.e()<<" px=" << p.px()<<" py=" << p.py()<<" pz=" << p.pz()<<endl;
-    output<<" x="<<p.x_in().x()<<" y="<<p.x_in().y()<<" z="<<p.x_in().z()<<" t="<<p.x_in().t();
+    // output<<p.plabel()<<" pid="<<p.pid()<<" stat="<<p.pstat()<<" pt=";
+    // output<<p.pt()<<" rap="<<p.rap()<<" phi="<<p.phi()<<endl;
+    // output<<" e="<<p.e()<<" px=" << p.px()<<" py=" << p.py()<<" pz=" << p.pz()<<endl;
+    // output<<" x="<<p.x_in().x()<<" y="<<p.x_in().y()<<" z="<<p.x_in().z()<<" t="<<p.x_in().t();
 
+    output<<p.plabel()<<" "<<p.pid()<<" "<<p.pstat()<<" ";
+    output<<p.pt()<<" "<<p.rap()<<" "<<p.phi()<<" "<<p.e()<<" ";
+    output<<p.x_in().x()<<" "<<p.x_in().y()<<" "<<p.x_in().z()<<" "<<p.x_in().t();//<<endl;
     
     return output;            
+  }
+
+  // ---------------
+  // Parton specific
+  // ---------------
+  
+  Parton::Parton (const Parton& srp) :
+    JetScapeParticleBase::JetScapeParticleBase (srp)
+  {
+    form_time_ = srp.form_time_;
+  }
+
+  Parton::Parton (int label, int id, int stat, double p[4], double x[4])  :
+    JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  p, x)
+  {
+    initialize_form_time();
+    //   cout << "========================== std Ctor called, returning : " << endl << *this << endl;
+  }
+
+  Parton::Parton (int label, int id, int stat, double pt, double eta, double phi, double e, double* x)  :
+    JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  pt, eta, phi, e, x){
+    initialize_form_time();
+    // cout << "========================== phieta Ctor called, returning : " << endl << *this << endl;
+  }
+  
+  Parton& Parton::operator=( Parton &c)
+  {
+    JetScapeParticleBase::operator=(c);
+    form_time_ = c.form_time_;
+    return *this;
+  }
+  
+  Parton& Parton::operator=( const Parton &c)
+  {
+    JetScapeParticleBase::operator=(c);
+    form_time_ = c.form_time_;
+    return *this;
+  }
+
+  void Parton::set_mean_form_time ()
+  {
+    mean_form_time_ = 2.0*e()/t();
+  }
+  
+  void Parton::set_form_time(double form_time)
+  {
+    form_time_ = form_time;
+  }
+    
+  void Parton::initialize_form_time()
+  {
+    form_time_ = -0.1;
+  }
+
+  double Parton::form_time()
+  {
+    return(form_time_);
+  }
+  
+  const double Parton::mean_form_time()
+  {
+    return(mean_form_time_);
   }
 
 } /// end of namespace Jetscape
