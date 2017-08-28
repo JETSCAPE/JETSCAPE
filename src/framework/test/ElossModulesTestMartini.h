@@ -26,18 +26,6 @@
 
 using namespace Jetscape;
 
-class MARTINIUserInfo: public Parton::PseudoJet::UserInfoBase
-{
-  public :
-
-    MARTINIUserInfo(double aa, double tt) : _aa(aa), _tt(tt){};
-
-    double aa() const { return _aa; }  
-    double tt() const { return _tt; }
-    double _aa;
-    double _tt;	
-
-};
 //Basic.h//
 struct RateRadiative
 {
@@ -204,6 +192,8 @@ class Martini : public JetEnergyLossModule<Martini> //, public std::enable_share
   double genrand64_real2(void);
   double genrand64_real3(void);
 
+ protected:
+  uniform_real_distribution<double> ZeroOneDistribution;
 };
 
 #endif
