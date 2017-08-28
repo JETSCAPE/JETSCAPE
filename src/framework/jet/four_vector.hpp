@@ -137,7 +137,16 @@ class FourVector
         return (0);
     };
     
-    double operator*(FourVector &c)
+    double phi() {
+      if ( fabs(x())<rounding_error && fabs(y())<rounding_error ) {
+	return 0;
+      }
+      double phi=atan2( y(), x() );
+      while (phi<0) phi+=2.0*pi;
+      return phi;
+    };
+
+  double operator*(FourVector &c)
     {
         return(tv*c.t() - xv*c.x() - yv*c.y() - zv*c.z() );
     };
