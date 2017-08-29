@@ -29,7 +29,8 @@ set (SOURCES
   ../jet/PartonShower.cc
   InitialState.cc
   PartonShowerGenerator.cc
-  )
+  PartonPrinter.cc
+) 
 
 if(${ZLIB_FOUND})
     set (SOURCES ${SOURCES}  gzstream.cc JetScapeWriterAsciiGZ.cc)

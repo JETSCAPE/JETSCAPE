@@ -202,7 +202,9 @@ void JetEnergyLoss::DoShower()
 	{
 
 	  pInTempModule.push_back(pIn[i]);
-	  SentInPartons(currentTime,pIn[i].pt(),pInTempModule,pOutTemp);
+	  
+	  SentInPartons(deltaT,currentTime,pIn[i].pt(),pInTempModule,pOutTemp);
+	  //SentInPartons(currentTime,pIn[i].pt(),pInTempModule,pOutTemp);
 	  pInTemp.push_back(pInTempModule[0]);
 
 	  vStart=vStartVec[i];
@@ -359,12 +361,12 @@ void JetEnergyLoss::Exec()
        pShower->PrintEdges();
 
        weak_ptr<HardProcess> hproc = JetScapeSignalManager::Instance()->GetHardProcessPointer();
+
        for(unsigned int ipart=0; ipart<pShower->GetNumberOfPartons(); ipart++){
 	 //   Uncomment to dump the whole parton shower into the parton container
 	 //           hproc.lock()->AddParton(pShower->GetPartonAt(ipart));
        }
-
-     }
+    }
   else
     {WARN<<"NO Initial Hard Parton for Parton shower received ...";}  
 
@@ -439,5 +441,22 @@ void JetEnergyLoss::PrintShowerInitiatingParton()
 {
   //DEBUG<<inP->pid();
 }
+
+
+void JetEnergyLoss::GetFinalPartons(weak_ptr<PartonPrinter> p)
+{
+   cout << "############### INSIDE PrintFinalPartons \n";
+  if(pShower)
+  {
+    p.lock()->GetFinalPartons(pShower, GetRecomPartons());
+  }
+  else
+  {
+     cout << "###############THERE IS NO SHOWER NOW \n";
+  }
+
+  JetScapeTask::GetPartons(p);
+}
+
 
 } // end namespace Jetscape

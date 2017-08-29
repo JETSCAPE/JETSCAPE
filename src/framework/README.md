@@ -144,5 +144,5 @@ when generating the cmake configuration file,
 To run JETSCAPE with MUSIC, one needs to use MPI commands,
 
 ```bash
-    mpirun -np 1 ./build/MUSICTest
+    mpirun -np 1 ./MUSICTest
 ```

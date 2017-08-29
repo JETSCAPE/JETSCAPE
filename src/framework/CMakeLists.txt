@@ -59,6 +59,20 @@ if (${ROOT_FOUND})
     #set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -m64")    
 endif()
 
+if (music)
+    message("Includes for music ...")
+    find_package(MPI)
+    if(${MPI_FOUND})
+        include_directories(${MPI_INCLUDE_PATH})
+    endif(${MPI_FOUND})
+    message("Looking for GSL ...")
+    find_package(GSL)
+    if(${GSL_FOUND})
+        include_directories(${GSL_INCLUDE_DIR})
+    endif(${GSL_FOUND})
+    include_directories(./3rdparty/music ./3rdparty/music/src)
+endif (music)
+
 #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "./bin/")
 
 message("Compiler and Linker flags ...")
@@ -180,10 +194,6 @@ if (music)
         target_link_libraries(MUSICTest ${MPI_LIBRARIES} ${GSL_LIBRARIES})
         target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest hydroFromFile music_lib)
         target_link_libraries(MUSICTest JetScape JetScapeHydro JetScapeTest music_lib)
-        file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/EOS)
-        file(COPY ./3rdparty/music/EOS/ DESTINATION ${CMAKE_BINARY_DIR}/EOS)
-        file(COPY ./test/test_music_files/music_input_mode_2
-             DESTINATION ${CMAKE_BINARY_DIR}/)
     endif()
 endif (music)
 
@@ -197,3 +207,4 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/jetscape_init_pythiagun.xml DESTINATION ${
 #set(LIBS ${LIBS} ${ROOT_LIBRARIES})
 #However, the file(GLOB...) allows for wildcard additions:
 #file(GLOB SOURCES "src/*.cpp")
+

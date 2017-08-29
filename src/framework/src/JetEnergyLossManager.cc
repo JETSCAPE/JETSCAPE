@@ -9,7 +9,7 @@
 #include "JetScapeLogger.h"
 #include "JetScapeSignalManager.h"
 #include <string>
-// #include "ELossModulesTest.h"
+//#include "ELossModulesTest.h"
 
 #include <iostream>
 #include <vector>
@@ -208,6 +208,11 @@ void JetEnergyLossManager::CreateSignalSlots()
   JetScapeSignalManager::Instance()->PrintGetHydroCellSignalMap();
   VERBOSE(8);
   JetScapeSignalManager::Instance()->PrintSentInPartonsSignalMap();
+}
+
+void JetEnergyLossManager::GetFinalPartons(weak_ptr<PartonPrinter> p)
+{
+  JetScapeTask::GetPartons(p);
 }
 
 } // end namespace Jetscape
