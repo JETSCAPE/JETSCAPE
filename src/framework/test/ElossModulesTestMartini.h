@@ -14,7 +14,6 @@
 
 #include <fstream>
 #include <math.h>
-#include <gsl/gsl_sf_lambert.h>
 #include "JetEnergyLossModule.h"
 #include "constants.h"
 
@@ -196,6 +195,8 @@ class Martini : public JetEnergyLossModule<Martini> //, public std::enable_share
  protected:
   uniform_real_distribution<double> ZeroOneDistribution;
 };
+
+double LambertW(double z);
 
 #endif
 

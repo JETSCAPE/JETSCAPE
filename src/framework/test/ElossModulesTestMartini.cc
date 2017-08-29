@@ -55,7 +55,7 @@ void Martini::Init()
     
     DEBUG << s << " to be initilizied ...";
 
-    alpha_s = -99.99;
+    alpha_s = 0.3;
     martini->FirstChildElement("alpha_s")->QueryDoubleText(&alpha_s);
     pcut = 2.0;
     martini->FirstChildElement("pcut")->QueryDoubleText(&pcut);
@@ -77,10 +77,8 @@ void Martini::Init()
   }
 }
 
-//void Martini::DoEnergyLoss(double deltaT, double Q2, const vector<Parton>& pIn, vector<Parton>& pOut)
 void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& pIn, vector<Parton>& pOut)
 {
-  cout << pIn[0].t() << endl;
   if (pIn[0].t() <= QS)
   {
     VERBOSESHOWER(8)<< MAGENTA << "SentInPartons Signal received : "<<deltaT<<" "<<Q2<<" "<<&pIn;
@@ -604,7 +602,7 @@ double Martini::getNewMomentumRad(double p, double T, int process)
       {
         //randA is a uniform random number on [0, Area under the envelop function]
         randA = ZeroOneDistribution(*get_mt19937_generator())*area(u+12., u, posNegSwitch, 1);
-        y = 2.5/(gsl_sf_lambert_W0(2.59235*pow(10.,23.)*exp(-100.*randA)));
+        y = 2.5/(LambertW(2.59235*pow(10.,23.)*exp(-100.*randA)));
 
         fy = 0.025/(y*y)+0.01/y;             // total area under the envelop function
         fyAct = function(u, y, process);     // actual rate
@@ -662,7 +660,7 @@ double Martini::getNewMomentumRad(double p, double T, int process)
       {
         //randA is a uniform random number on [0, Area under the envelop function]
         randA = ZeroOneDistribution(*get_mt19937_generator())*area(u/2., u, posNegSwitch, 3);
-        y = 5./(gsl_sf_lambert_W0(2.68812*pow(10., 45.)*exp(-50.*randA)));
+        y = 5./(LambertW(2.68812*pow(10., 45.)*exp(-50.*randA)));
 
         fy = 0.1/(y*y)+0.02/y;               // total area under the envelop function
         fyAct = function(u, y, process);     // actual rate
@@ -2617,3 +2615,48 @@ double Martini::genrand64_real3(void)
 {
     return ((genrand64_int64() >> 12) + 0.5) * (1.0/4503599627370496.0);
 }
+
+double LambertW(double z)
+{
+ double w_new, w_old, ratio, e_old, tol;
+ int n;
+
+ tol = 1.0e-14;
+
+ if(z <= -exp(-1.0))
+  {
+   fprintf(stderr, "LambertW is not defined for z = %e\n", z);
+   fprintf(stderr, "z needs to be bigger than %e\n", -exp(-1.0));
+   exit(0);
+  }
+
+ if(z > 3.0)
+  {
+   w_old = log(z) - log(log(z));
+  }
+ else {w_old = 1.0;}
+ 
+ w_new = 0.0;
+ ratio = 1.0;
+ n = 0;
+ while(fabs(ratio) > tol) 
+  {
+   e_old = exp(w_old);
+   ratio = w_old*e_old - z;
+   ratio /= ( e_old*(w_old + 1.0) - (w_old+2.0)*(w_old*e_old-z)/(2.0*w_old + 2.0) );
+   w_new = w_old - ratio;
+   w_old = w_new;
+   n++;
+   if(n > 99) 
+    {
+     fprintf(stderr, "LambertW is not converging after 100 iterations.\n");
+     fprintf(stderr, "LambertW: z = %e\n", z);
+     fprintf(stderr, "LambertW: w_old = %e\n", w_old);
+     fprintf(stderr, "LambertW: w_new = %e\n", w_new);
+     fprintf(stderr, "LambertW: ratio = %e\n", ratio);
+     exit(0);
+    }
+  }
+
+ return w_new;
+}// LambertW by Sangyong Jeon
