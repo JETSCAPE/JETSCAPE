@@ -92,9 +92,9 @@ if (APPLE)
      message(STATUS "LD_FLAGS = " ${CMAKE_EXE_LINKER_FLAGS})
 elseif(UNIX) 
     message( STATUS "Linux : " ${CMAKE_HOST_SYSTEM})
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0 -fprofile-arcs -ftest-coverage -fPIC -pipe -Wall -g -Wno-reorder -Wno-unused-variable") 
+    #set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0 -fprofile-arcs -ftest-coverage -fPIC -pipe -Wall -g -Wno-reorder -Wno-unused-variable") 
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-sign-compare -Wno-unused-but-set-variable -Wno-parentheses")
-    set(CMAKE_BUILD_TYPE Debug)
+    #set(CMAKE_BUILD_TYPE Debug)
 endif()   
 
 
