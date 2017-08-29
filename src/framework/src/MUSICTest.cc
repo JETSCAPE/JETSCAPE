@@ -26,6 +26,7 @@
 // to be used to run Jetscape ...
 #include "AdSCFT.h"
 #include "ElossModulesTestMatter.h"
+#include "ElossModulesTestMartini.h"
 #include "music_jetscape.h"
 #include "TrentoInitial.h"
 #include "PGun.h"
@@ -105,9 +106,9 @@ int main(int argc, char** argv)
   // and Martini dummy ...
   // Switching Q2 (or whatever variable used
   // hardcoded at 5 to be changed to xml)
-  //jloss->Add(matter);
+  jloss->Add(matter);
   //jloss->Add(martini);
-  jloss->Add(adscft);  
+  //jloss->Add(adscft);
 
   jlossmanager->Add(jloss);
   

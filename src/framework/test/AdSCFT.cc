@@ -77,11 +77,9 @@ void AdSCFT::WriteTask(weak_ptr<JetScapeWriter> w)
    w.lock()->WriteComment("Energy loss to be implemented accordingly ...");
 }
 
-void AdSCFT::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<Parton>& pOut)
+void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pIn, vector<Parton>& pOut)
 {
   
-    double mdeltaT=0.1;
-
     VERBOSESHOWER(8)<< MAGENTA << "SentInPartons Signal received : "<<deltaT<<" "<<Q2<<" "<<&pIn;
 
     for (int i=0;i<pIn.size();i++)
@@ -159,17 +157,17 @@ void AdSCFT::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
         double vscalw=v[0]*w[0]+v[1]*w[1]+v[2]*w[2];
 
         //Distance travelled in LAB frame
-        l_dist+=mdeltaT;
+        l_dist+=deltaT;
 
         //Distance travelled in FRF - accumulating steps from previous, different fluid cells
-        f_dist+=mdeltaT*std::sqrt(w2+lore*lore*(v2-2.*vscalw+vscalw*vscalw));
+        f_dist+=deltaT*std::sqrt(w2+lore*lore*(v2-2.*vscalw+vscalw*vscalw));
 	 
         cout << " l_dist= " << l_dist << " f_dist= " << f_dist << endl; 
         //Initial energy of the parton in the FRF
         double Efs=ei*lore*(1.-vscalw);	  
 
 	double newEn=p[3];
-        if (temp>=0.) newEn=p[3]-AdSCFT::Drag(f_dist, mdeltaT, Efs, temp, CF);
+        if (temp>=0.) newEn=p[3]-AdSCFT::Drag(f_dist, deltaT, Efs, temp, CF);
         if (newEn<0.) newEn=0.;
         double lambda=newEn/p[3];
 	cout << " lambda = " << lambda << endl;
@@ -181,7 +179,7 @@ void AdSCFT::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<
 	fp[0]=p[3], fp[1]=p[0], fp[2]=p[1], fp[3]=p[2];
 	pIn[i].set_p(fp);
 	//Update 4-position
-	for (unsigned a=0; a<4; a++) x[a]+=w[a]*mdeltaT;
+	for (unsigned a=0; a<4; a++) x[a]+=w[a]*deltaT;
 	double fx[4];
 	fx[0]=x[3], fx[1]=x[0], fx[2]=x[1], fx[3]=x[2];
 	pIn[i].set_x(fx);

@@ -8,8 +8,9 @@
 // quick and dirty test class for Eloss modules ...
 // can be used as a user template ...
 
-#ifndef ELOSSMODULESTEST_H
-#define ELOSSMODULESTEST_H
+
+#ifndef ELOSSMODULESTESTMARTINI_H
+#define ELOSSMODULESTESTMARTINI_H
 
 #include <fstream>
 #include <math.h>
@@ -26,35 +27,6 @@
 
 using namespace Jetscape;
 
-class Matter : public JetEnergyLossModule<Matter> //, public std::enable_shared_from_this<Matter>
-{  
- public:
-  
-  Matter();
-  virtual ~Matter();
-
-  void Init();
-  //void Exec();
-  //void DoEnergyLoss(double deltaT, double Q2, const vector<Parton>& pIn, vector<Parton>& pOut);
-  void DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<Parton>& pOut);
-  void WriteTask(weak_ptr<JetScapeWriter> w);
-  
- private:
-
-};
-
-class MARTINIUserInfo: public Parton::PseudoJet::UserInfoBase
-{
-  public :
-
-    MARTINIUserInfo(double aa, double tt) : _aa(aa), _tt(tt){};
-
-    double aa() const { return _aa; }  
-    double tt() const { return _tt; }
-    double _aa;
-    double _tt;	
-
-};
 //Basic.h//
 struct RateRadiative
 {
@@ -164,7 +136,7 @@ class Martini : public JetEnergyLossModule<Martini> //, public std::enable_share
 
   //main//
   void Init();
-  void DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<Parton>& pOut);
+  void DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& pIn, vector<Parton>& pOut);
   int DetermineProcess(double p, double T, double deltaT, int id);
   void WriteTask(weak_ptr<JetScapeWriter> w) {};
   
@@ -221,6 +193,8 @@ class Martini : public JetEnergyLossModule<Martini> //, public std::enable_share
   double genrand64_real2(void);
   double genrand64_real3(void);
 
+ protected:
+  uniform_real_distribution<double> ZeroOneDistribution;
 };
 
 #endif

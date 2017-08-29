@@ -10,8 +10,8 @@ set (SOURCES
      Gubser_hydro_jetscape.cc
      brick_jetscape.cc
      hydro_file_jetscape.cc
+     ElossModulesTestMatter.cc
      ElossModulesTestMartini.cc
-     PythiaGun.cpp
      AdSCFT.cc
      PGun.cc)
 
@@ -21,6 +21,7 @@ endif (music)
 
 if(${PYTHIA8_FOUND})
 	set (SOURCES ${SOURCES} JSPythia8.cc)
+	set (SOURCES ${SOURCES} PythiaGun.cpp)
 endif()
 
 add_library(JetScapeTest SHARED ${SOURCES})
@@ -41,7 +42,7 @@ endif()
 target_link_libraries(JetScapeTest JetScape JetScapeHydro hydroFromFile)
 
 if (music)
-    include_directories(../3rdparty/music ../3rdparty/music/src)
+    #include_directories(../3rdparty/music ../3rdparty/music/src)
     target_link_libraries(JetScapeTest JetScape JetScapeHydro hydroFromFile music_lib)
 endif (music)
 
