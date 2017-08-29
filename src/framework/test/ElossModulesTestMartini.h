@@ -8,12 +8,12 @@
 // quick and dirty test class for Eloss modules ...
 // can be used as a user template ...
 
+
 #ifndef ELOSSMODULESTESTMARTINI_H
 #define ELOSSMODULESTESTMARTINI_H
 
 #include <fstream>
 #include <math.h>
-#include <gsl/gsl_sf_lambert.h>
 #include "JetEnergyLossModule.h"
 #include "constants.h"
 
@@ -122,12 +122,6 @@ class Martini : public JetEnergyLossModule<Martini> //, public std::enable_share
   vector<double> *dGamma_qq_q;
   vector<double> *dGamma_qg_q;
 
-  //Random.h//
-  /* The array for the state vector */
-  unsigned long long mt[NNM]; 
-  /* mti==NNM+1 means mt[NNM] is not initialized */
-  int mti;
-
  public:
   
   Martini();
@@ -182,19 +176,11 @@ class Martini : public JetEnergyLossModule<Martini> //, public std::enable_share
   double use_elastic_table_omega(double omega, int which_kind);
   double use_elastic_table_q(double u, double omega, int which_kind);
 
-  //Random.h//
-  void init_genrand64(unsigned long long seed);
-  void init_by_array64(unsigned long long init_key[],
-        	       unsigned long long key_length);
-  unsigned long long genrand64_int64(void);
-  long long genrand64_int63(void);
-  double genrand64_real1(void);
-  double genrand64_real2(void);
-  double genrand64_real3(void);
-
  protected:
   uniform_real_distribution<double> ZeroOneDistribution;
 };
+
+double LambertW(double z);
 
 #endif
 
