@@ -26,6 +26,7 @@
 // to be used to run Jetscape ...
 #include "AdSCFT.h"
 #include "ElossModulesTestMatter.h"
+#include "ElossModulesTestMartini.h"
 #include "brick_jetscape.h"
 #include "Gubser_hydro_jetscape.h"
 #include "PGun.h"
@@ -115,8 +116,8 @@ int main(int argc, char** argv)
   // Switching Q2 (or whatever variable used
   // hardcoded at 5 to be changed to xml)
   //jloss->Add(matter);
-  //jloss->Add(martini);
-  jloss->Add(adscft);  
+  jloss->Add(martini);
+  //jloss->Add(adscft);  
 
   jlossmanager->Add(jloss);
   
