@@ -55,7 +55,7 @@ void Martini::Init()
     
     DEBUG << s << " to be initilizied ...";
 
-    alpha_s = -99.99;
+    alpha_s = 0.3;
     martini->FirstChildElement("alpha_s")->QueryDoubleText(&alpha_s);
     pcut = 2.0;
     martini->FirstChildElement("pcut")->QueryDoubleText(&pcut);
@@ -77,10 +77,8 @@ void Martini::Init()
   }
 }
 
-//void Martini::DoEnergyLoss(double deltaT, double Q2, const vector<Parton>& pIn, vector<Parton>& pOut)
 void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& pIn, vector<Parton>& pOut)
 {
-  cout << pIn[0].t() << endl;
   if (pIn[0].t() <= QS)
   {
     VERBOSESHOWER(8)<< MAGENTA << "SentInPartons Signal received : "<<deltaT<<" "<<Q2<<" "<<&pIn;
@@ -402,6 +400,7 @@ int Martini::DetermineProcess(double p, double T, double deltaT, int Id)
     double accumProb = 0.;
     double nextProb = 0.;
     double Prob = 0.;
+
     if (ZeroOneDistribution(*get_mt19937_generator()) < totalQuarkProb)
     {
       /* label for process
@@ -466,6 +465,7 @@ int Martini::DetermineProcess(double p, double T, double deltaT, int Id)
     double accumProb = 0.;
     double nextProb = 0.;
     double Prob = 0.;
+
     if (ZeroOneDistribution(*get_mt19937_generator()) < totalGluonProb)
     {
       /* label for process
@@ -602,7 +602,7 @@ double Martini::getNewMomentumRad(double p, double T, int process)
       {
         //randA is a uniform random number on [0, Area under the envelop function]
         randA = ZeroOneDistribution(*get_mt19937_generator())*area(u+12., u, posNegSwitch, 1);
-        y = 2.5/(gsl_sf_lambert_W0(2.59235*pow(10.,23.)*exp(-100.*randA)));
+        y = 2.5/(LambertW(2.59235*pow(10.,23.)*exp(-100.*randA)));
 
         fy = 0.025/(y*y)+0.01/y;             // total area under the envelop function
         fyAct = function(u, y, process);     // actual rate
@@ -660,7 +660,7 @@ double Martini::getNewMomentumRad(double p, double T, int process)
       {
         //randA is a uniform random number on [0, Area under the envelop function]
         randA = ZeroOneDistribution(*get_mt19937_generator())*area(u/2., u, posNegSwitch, 3);
-        y = 5./(gsl_sf_lambert_W0(2.68812*pow(10., 45.)*exp(-50.*randA)));
+        y = 5./(LambertW(2.68812*pow(10., 45.)*exp(-50.*randA)));
 
         fy = 0.1/(y*y)+0.02/y;               // total area under the envelop function
         fyAct = function(u, y, process);     // actual rate
@@ -1782,6 +1782,7 @@ FourVector Martini::getNewMomentumElas(FourVector pVec, double omega, double q)
   pVecNewTemp -= qtVec;  // change transverse momentum
   pVecNewTemp -= qlVec;  // change longitudinal momentum
 
+
   phi = 2.*M_PI*ZeroOneDistribution(*get_mt19937_generator());
   r.Set(pVec.x()/pVec.t(), pVec.y()/pVec.t(), pVec.z()/pVec.t(), 1.);
   u = 1.-cos(phi);
@@ -2518,99 +2519,47 @@ double Martini::use_elastic_table_q(double omega, double q, int which_kind)
   return result;
 }
 
-/* initializes mt[NNM] with a seed */
-void Martini::init_genrand64(unsigned long long seed)
+double LambertW(double z)
 {
-    mt[0] = seed;
-    for (mti=1; mti<NNM; mti++) 
-        mt[mti] =  (6364136223846793005ULL * (mt[mti-1] ^ (mt[mti-1] >> 62)) + mti);
-}
+ double w_new, w_old, ratio, e_old, tol;
+ int n;
 
-/* initialize by an array with array-length */
-/* init_key is the array for initializing keys */
-/* key_length is its length */
-void Martini::init_by_array64(unsigned long long init_key[],
-		     unsigned long long key_length)
-{
-    unsigned long long i, j, k;
-    init_genrand64(19650218ULL);
-    i=1; j=0;
-    k = (NNM>key_length ? NNM : key_length);
-    for (; k; k--) {
-        mt[i] = (mt[i] ^ ((mt[i-1] ^ (mt[i-1] >> 62)) * 3935559000370003845ULL))
-          + init_key[j] + j; /* non linear */
-        i++; j++;
-        if (i>=NNM) { mt[0] = mt[NNM-1]; i=1; }
-        if (j>=key_length) j=0;
+ tol = 1.0e-14;
+
+ if(z <= -exp(-1.0))
+  {
+   fprintf(stderr, "LambertW is not defined for z = %e\n", z);
+   fprintf(stderr, "z needs to be bigger than %e\n", -exp(-1.0));
+   exit(0);
+  }
+
+ if(z > 3.0)
+  {
+   w_old = log(z) - log(log(z));
+  }
+ else {w_old = 1.0;}
+ 
+ w_new = 0.0;
+ ratio = 1.0;
+ n = 0;
+ while(fabs(ratio) > tol) 
+  {
+   e_old = exp(w_old);
+   ratio = w_old*e_old - z;
+   ratio /= ( e_old*(w_old + 1.0) - (w_old+2.0)*(w_old*e_old-z)/(2.0*w_old + 2.0) );
+   w_new = w_old - ratio;
+   w_old = w_new;
+   n++;
+   if(n > 99) 
+    {
+     fprintf(stderr, "LambertW is not converging after 100 iterations.\n");
+     fprintf(stderr, "LambertW: z = %e\n", z);
+     fprintf(stderr, "LambertW: w_old = %e\n", w_old);
+     fprintf(stderr, "LambertW: w_new = %e\n", w_new);
+     fprintf(stderr, "LambertW: ratio = %e\n", ratio);
+     exit(0);
     }
-    for (k=NNM-1; k; k--) {
-        mt[i] = (mt[i] ^ ((mt[i-1] ^ (mt[i-1] >> 62)) * 2862933555777941757ULL))
-          - i; /* non linear */
-        i++;
-        if (i>=NNM) { mt[0] = mt[NNM-1]; i=1; }
-    }
+  }
 
-    mt[0] = 1ULL << 63; /* MSB is 1; assuring non-zero initial array */ 
-}
-
-/* generates a random number on [0, 2^64-1]-interval */
-unsigned long long Martini::genrand64_int64(void)
-{
-    int i;
-    unsigned long long x;
-    static unsigned long long mag01[2]={0ULL, MATRIX_A};
-
-    if (mti >= NNM) { /* generate NN words at one time */
-
-        /* if init_genrand64() has not been called, */
-        /* a default initial seed is used     */
-        if (mti == NNM+1) 
-            init_genrand64(5489ULL); 
-
-        for (i=0;i<NNM-MM;i++) {
-            x = (mt[i]&UM)|(mt[i+1]&LM);
-            mt[i] = mt[i+MM] ^ (x>>1) ^ mag01[(int)(x&1ULL)];
-        }
-        for (;i<NNM-1;i++) {
-            x = (mt[i]&UM)|(mt[i+1]&LM);
-            mt[i] = mt[i+(MM-NNM)] ^ (x>>1) ^ mag01[(int)(x&1ULL)];
-        }
-        x = (mt[NNM-1]&UM)|(mt[0]&LM);
-        mt[NNM-1] = mt[MM-1] ^ (x>>1) ^ mag01[(int)(x&1ULL)];
-
-        mti = 0;
-    }
-  
-    x = mt[mti++];
-
-    x ^= (x >> 29) & 0x5555555555555555ULL;
-    x ^= (x << 17) & 0x71D67FFFEDA60000ULL;
-    x ^= (x << 37) & 0xFFF7EEE000000000ULL;
-    x ^= (x >> 43);
-
-    return x;
-}
-
-/* generates a random number on [0, 2^63-1]-interval */
-long long Martini::genrand64_int63(void)
-{
-    return (long long)(genrand64_int64() >> 1);
-}
-
-/* generates a random number on [0,1]-real-interval */
-double Martini::genrand64_real1(void)
-{
-    return (genrand64_int64() >> 11) * (1.0/9007199254740991.0);
-}
-
-/* generates a random number on [0,1)-real-interval */
-double Martini::genrand64_real2(void)
-{
-    return (genrand64_int64() >> 11) * (1.0/9007199254740992.0);
-}
-
-/* generates a random number on (0,1)-real-interval */
-double Martini::genrand64_real3(void)
-{
-    return ((genrand64_int64() >> 12) + 0.5) * (1.0/4503599627370496.0);
-}
+ return w_new;
+}// LambertW by Sangyong Jeon

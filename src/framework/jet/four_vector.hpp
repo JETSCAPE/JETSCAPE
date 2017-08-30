@@ -171,7 +171,7 @@ class FourVector
         
         return(*this);
     };
-    
+
     FourVector &operator=(FourVector &c)
     {
         tv = c.t();

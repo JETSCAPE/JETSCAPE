@@ -75,9 +75,9 @@ int main(int argc, char** argv)
   auto hydro = make_shared<Brick> ();
   //auto hydro = make_shared<GubserHydro> ();
   
-  auto matter = make_shared<Matter> ();
+  //auto matter = make_shared<Matter> ();
   auto martini = make_shared<Martini> ();
-  auto adscft = make_shared<AdSCFT> ();
+  //auto adscft = make_shared<AdSCFT> ();
   //DBEUG: Remark:
   //does not matter unfortunately since not called recursively, done by JetEnergyLoss class ...
   //matter->SetActive(false);
