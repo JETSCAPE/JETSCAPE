@@ -123,9 +123,9 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 
         //Parton 4-momentum
         double p[4];
-        p[0]=pIn[i].p(1);
-	p[1]=pIn[i].p(2); 
-	p[2]=pIn[i].p(3);
+        p[0]=pIn[i].px();
+	p[1]=pIn[i].py(); 
+	p[2]=pIn[i].pz();
 	p[3]=pIn[i].e();
         
 	//Energy of parton as it entered this module for the first time
