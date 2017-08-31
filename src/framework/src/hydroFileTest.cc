@@ -24,13 +24,11 @@
 
 // User modules derived from jetscape framework clasess
 // to be used to run Jetscape ...
-#include "AdSCFT.h"
 #include "ElossModulesTestMatter.h"
 #include "brick_jetscape.h"
 #include "Gubser_hydro_jetscape.h"
 #include "hydro_file_jetscape.h"
 #include "PGun.h"
-//#include "JSPythia8.h"
 
 #include <chrono>
 #include <thread>
@@ -78,17 +76,12 @@ int main(int argc, char** argv)
   //jloss->SetActive(false);
 
   auto pGun= make_shared<PGun> ();
-  //auto py8=make_shared<JSPythia8> ("/Users/putschke/pythia8100/xmldoc",false);
 
   // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
   //auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");  
   //auto writer= make_shared<JetScapeWriterHepMC> ("test_out.dat");
   //writer->SetActive(false);
-
-  // Pythia 8 interface, what partons used
-  // for intial hard to be implemented in JSPythia8 class ...
-  //jetscape->Add(py8);
 
   //Remark: For now modules have to be added
   //in proper "workflow" order (can be defined via xml and sorted if necessary)
