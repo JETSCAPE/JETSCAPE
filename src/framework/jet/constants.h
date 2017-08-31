@@ -54,6 +54,8 @@ static double s_approx = 0.001;
 
 static double E_minimum = 1.0 ;
 
+static double rounding_error = 1e-6; // slightly more than float precision
+
 /**************************************************************************************/
 
 /* the standard PDG particle id codes for the gluon and the d quark */
