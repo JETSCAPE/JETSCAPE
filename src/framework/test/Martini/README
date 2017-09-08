@@ -1,0 +1,16 @@
+the files logEnDtrqq and logEnDtrqg contain the transition rates
+dGamma/domega for qq->qq and qg->qg as functions of alpha_s and omega.
+Temperature scales out (so when using omega/T, this will give you the transition rate at temperature T)
+Also, in the approximation used (method B in my paper with Charles and Guangyou), the energy dependence (E of the jet) is only in the cutoff (omega<q<E). So no E dependence here - just cut off the data at omega=E when using it.
+
+To get the rate for gq->gq and gg->gg just multiply the rates for 
+qq->qq or qg->qg respectively by 9/4. In the used approximation this is exact.
+
+
+alpha_s runs from 0.15 to 0.45 in 0.03 steps. linearly.
+
+omega runs from -Exp(6.8) to +Exp(6.8) 
+where the exponent changes in 0.2 steps from -5 to 6.8 
+both on the positive and on the negative side.
+
+omega is given explicitly in the file, and so is alpha_s

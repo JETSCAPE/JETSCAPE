@@ -92,7 +92,9 @@ if (APPLE)
      message(STATUS "LD_FLAGS = " ${CMAKE_EXE_LINKER_FLAGS})
 elseif(UNIX) 
     message( STATUS "Linux : " ${CMAKE_HOST_SYSTEM})
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-sign-compare -Wno-unused-but-set-variable -Wno-parentheses")
+    #set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0 -fprofile-arcs -ftest-coverage -fPIC -pipe -Wall -g -Wno-reorder -Wno-unused-variable") 
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-sign-compare -Wno-unused-but-set-variable -Wno-parentheses -fprofile-arcs -ftest-coverage")
+    #set(CMAKE_BUILD_TYPE Debug)
 endif()   
 
 
@@ -102,6 +104,7 @@ SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
 # Find and use Boost.
 find_package(Boost 1.50 REQUIRED COMPONENTS filesystem program_options system)
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
+
 
 # add the library path and inclusion path of trento to jetscape
 add_subdirectory(3rdparty/trento/)
