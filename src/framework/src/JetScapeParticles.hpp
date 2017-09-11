@@ -195,7 +195,6 @@ namespace Jetscape {
 
     void set_p(double p[4]);
     void set_x(double x[4]); 
-    void set_t(double t); ///< virtuality of particle, \WARNING: rescales the spatial component
     
     void init_jet_v();
     void set_jet_v(double v[4]);
@@ -216,10 +215,9 @@ namespace Jetscape {
     FourVector get_p() const;
   
     const double restmass();
-    const double p(int i); 
-    double pl();    
-    const double nu();    
-    const double t();    
+    const double p(int i);
+    double pl();
+    const double nu();
     const double t_max();
 
     virtual JetScapeParticleBase& operator=(JetScapeParticleBase &c);
@@ -266,6 +264,9 @@ namespace Jetscape {
     Parton& operator=( Parton &c);
     Parton& operator=( const Parton &c);
     
+    const double t();
+    void set_t(double t); ///< virtuality of particle, \WARNING: rescales the spatial component
+
   protected :
     double mean_form_time_  ; ///< Mean formation time
     double form_time_       ; ///< event by event formation time
