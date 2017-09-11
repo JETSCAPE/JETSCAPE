@@ -1233,35 +1233,3 @@ double Matter::profile(double zeta)
 
 
 
-// obsolete in the future ...
-// ----------------------
-
-Martini::Martini()
-{
-  SetId("Martini");
-  VERBOSE(8);
-}
-
-Martini::~Martini()
-{
-  VERBOSE(8);
-
-}
-
-void Martini::Init()
-{
-  INFO<<"Intialize Martini ...";
-
-  ZeroOneDistribution = uniform_real_distribution<double> { 0.0, 1.0 };
-}
-
-//void Martini::DoEnergyLoss(double deltaT, double Q2, const vector<Parton>& pIn, vector<Parton>& pOut)
-void Martini::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<Parton>& pOut)
-{
-  // *my_file_ << "I'm Martini! my id= " << get_my_task_number() << "  " << ZeroOneDistribution( *get_mt19937_generator()) << endl;
-  // return;
-
-  if (Q2<=QS)
-    VERBOSESHOWER(8)<< MAGENTA << "SentInPartons Signal received : "<<deltaT<<" "<<Q2<<" "<<&pIn;
-}
-

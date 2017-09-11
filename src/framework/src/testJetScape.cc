@@ -23,6 +23,7 @@
 #include "JetScapeLogger.h"
 #include "JetScapeXML.h"
 #include "ElossModulesTestMatter.h"
+#include "ElossModulesTestMartini.h"
 #include "JetScapeWriterAsciiGZ.h"
 #include "JetScapeWriterAscii.h"
 //#include "JetScapeWriterHepMC.h"
