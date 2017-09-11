@@ -212,6 +212,8 @@ namespace Jetscape {
     // FourVector &p_in();  
     FourVector &x_in();
     FourVector &jet_v();
+
+    FourVector get_p() const;
   
     const double restmass();
     const double p(int i); 
