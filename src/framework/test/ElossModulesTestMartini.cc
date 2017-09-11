@@ -132,8 +132,6 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
             ptNew = pNew/cosh(eta);
             pOut.push_back(Parton(0, Id, 0, ptNew, eta, phi, pNew));
             pOut[pOut.size()-1].set_form_time(0.);
-	    cerr << pOut[pOut.size()-1].t() << endl;
-            // pOut[pOut.size()-1].set_t(1.);
           }
 
           if (k > pcut)
@@ -141,8 +139,6 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
             kt = k/cosh(eta);
             pOut.push_back(Parton(0, 21, 0, kt, eta, phi, k));
             pOut[pOut.size()-1].set_form_time(0.);
-	    cerr << pOut[pOut.size()-1].t() << endl;
-            // pOut[pOut.size()-1].set_t(1.);
           }
 
           return;
@@ -161,8 +157,6 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
             ptNew = pNew/cosh(eta);
             pOut.push_back(Parton(0, Id, 0, ptNew, eta, phi, pNew));
             pOut[pOut.size()-1].set_form_time(0.);
-	    cerr << pOut[pOut.size()-1].t() << endl;
-            // pOut[pOut.size()-1].set_t(1.);
           }
 
           // photon doesn't have energy threshold; No absorption into medium
@@ -172,8 +166,6 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
             kt = k/cosh(eta);
             pOut.push_back(Parton(0, 22, 0, kt, eta, phi, k));
             pOut[pOut.size()-1].set_form_time(0.);
-	    cerr << pOut[pOut.size()-1].t() << endl;
-            // pOut[pOut.size()-1].set_t(1.);
           }
 
           return;
@@ -194,8 +186,6 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
             phi = atan2(pVecNew.y(), pVecNew.x());
             pOut.push_back(Parton(0, Id, 0, ptNew, eta, phi, pNew));
             pOut[pOut.size()-1].set_form_time(0.);
-	    cerr << pOut[pOut.size()-1].t() << endl;
-            // pOut[pOut.size()-1].set_t(1.);
           }
           
           return;
@@ -216,8 +206,6 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
             phi = atan2(pVecNew.y(), pVecNew.x());
             pOut.push_back(Parton(0, Id, 0, ptNew, eta, phi, pNew));
             pOut[pOut.size()-1].set_form_time(0.);
-	    cerr << pOut[pOut.size()-1].t() << endl;
-            // pOut[pOut.size()-1].set_t(1.);
           }
           
           return;
@@ -227,8 +215,6 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
         {
           pOut.push_back(Parton(0, 21, 0, pt, eta, phi, p));
           pOut[pOut.size()-1].set_form_time(0.);
-	  cerr << pOut[pOut.size()-1].t() << endl;
-          // pOut[pOut.size()-1].set_t(1.);
 
           return;
         }
@@ -237,8 +223,6 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
         {
           pOut.push_back(Parton(0, 22, 0, pt, eta, phi, p));
           pOut[pOut.size()-1].set_form_time(0.);
-	  cerr << pOut[pOut.size()-1].t() << endl;
-          // pOut[pOut.size()-1].set_t(1.);
 
           return;
         }
@@ -259,8 +243,6 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
             ptNew = pNew/cosh(eta);
             pOut.push_back(Parton(0, Id, 0, ptNew, eta, phi, pNew));
             pOut[pOut.size()-1].set_form_time(0.);
-	    cerr << pOut[pOut.size()-1].t() << endl;
-            // pOut[pOut.size()-1].set_t(1.);
           }
 
           if (k > pcut)
@@ -268,8 +250,6 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
             kt = k/cosh(eta);
             pOut.push_back(Parton(0, 21, 0, kt, eta, phi, k));
             pOut[pOut.size()-1].set_form_time(0.);
-	    cerr << pOut[pOut.size()-1].t() << endl;
-            // pOut[pOut.size()-1].set_t(1.);
           }
 
           return;
@@ -295,8 +275,6 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
             ptNew = pNew/cosh(eta);
             pOut.push_back(Parton(0, newId, 0, ptNew, eta, phi, pNew));
             pOut[pOut.size()-1].set_form_time(0.);
-	    cerr << pOut[pOut.size()-1].t() << endl;
-            // pOut[pOut.size()-1].set_t(1.);
           }
 
           if (k > pcut)
@@ -304,8 +282,6 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
             kt = k/cosh(eta);
             pOut.push_back(Parton(0, -newId, 0, kt, eta, phi, k));
             pOut[pOut.size()-1].set_form_time(0.);
-	    cerr << pOut[pOut.size()-1].t() << endl;
-            // pOut[pOut.size()-1].set_t(1.);
           }
 
           return;
@@ -326,8 +302,6 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
             phi = atan2(pVecNew.y(), pVecNew.x());
             pOut.push_back(Parton(0, Id, 0, ptNew, eta, phi, pNew));
             pOut[pOut.size()-1].set_form_time(0.);
-	    cerr << pOut[pOut.size()-1].t() << endl;
-            // pOut[pOut.size()-1].set_t(1.);
           }
           
           return;
@@ -348,8 +322,6 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
             phi = atan2(pVecNew.y(), pVecNew.x());
             pOut.push_back(Parton(0, Id, 0, ptNew, eta, phi, pNew));
             pOut[pOut.size()-1].set_form_time(0.);
-	    cerr << pOut[pOut.size()-1].t() << endl;
-            // pOut[pOut.size()-1].set_t(1.);
           }
           
           return;
@@ -364,8 +336,6 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 
           pOut.push_back(Parton(0, newId, 0, pt, eta, phi, p));
           pOut[pOut.size()-1].set_form_time(0.);
-	  cerr << pOut[pOut.size()-1].t() << endl;
-          // pOut[pOut.size()-1].set_t(1.);
 
           return;
         }
