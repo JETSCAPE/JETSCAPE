@@ -295,6 +295,9 @@ void JetEnergyLoss::Exec()
 	 //   Uncomment to dump the whole parton shower into the parton container
 	 //           hproc.lock()->AddParton(pShower->GetPartonAt(ipart));
        }
+	
+       weak_ptr<PartonPrinter> pPrinter = JetScapeSignalManager::Instance()->GetPartonPrinterPointer();
+       pPrinter.lock()->GetFinalPartons2(pShower);
     }
   else
     {WARN<<"NO Initial Hard Parton for Parton shower received ...";}  

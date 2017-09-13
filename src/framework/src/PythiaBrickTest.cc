@@ -31,6 +31,10 @@
 #include "Gubser_hydro_jetscape.h"
 #include "PythiaGun.hpp"
 // #include "JSPythia8.h"
+#include "PartonPrinter.h"
+#include "HadronizationManager.h"
+#include "Hadronization.h"
+#include "HadronizationModuleTest.h"
 
 // Add initial state module for test
 #include "TrentoInitial.h"
@@ -81,6 +85,11 @@ int main(int argc, char** argv)
 
   auto pythiaGun= make_shared<PythiaGun> ();
 
+  auto printer = make_shared<PartonPrinter>();
+  auto hadroMgr = make_shared<HadronizationManager> ();
+  auto hadro = make_shared<Hadronization> ();
+  auto hadroModule = make_shared<HadronizationModuleTest> ();
+  
   // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
   //auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");  
@@ -103,6 +112,11 @@ int main(int argc, char** argv)
   jlossmanager->Add(jloss);
   
   jetscape->Add(jlossmanager);
+
+  jetscape->Add(printer);
+  hadro->Add(hadroModule);
+  hadroMgr->Add(hadro);
+  jetscape->Add(hadroMgr);
 
   jetscape->Add(writer);
 

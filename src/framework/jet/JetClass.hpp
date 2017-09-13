@@ -27,7 +27,6 @@ class Parton;
 class Vertex;
 class FourVector;
 
-
 /**************************************************************************************************/
 
 //  JET CLASS
@@ -355,6 +354,7 @@ protected:
 
 
 
+class Hadron : public Jetscape::Parton {};
 
 
 

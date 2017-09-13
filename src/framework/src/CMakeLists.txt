@@ -17,6 +17,8 @@ JetScapeTaskSupport.cc
 InitialState.cc
 PartonShowerGenerator.cc
 PartonPrinter.cc
+HadronizationManager.cc
+Hadronization.cc
 ) #ElossModulesTest.cc 
 
 if(${ZLIB_FOUND})

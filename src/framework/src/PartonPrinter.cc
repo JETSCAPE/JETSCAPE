@@ -36,7 +36,21 @@ void PartonPrinter::GetFinalPartons(shared_ptr<PartonShower> pShower, vector<sha
     for(unsigned int ipart=0; ipart <  pShower.get()->GetFinalPartons().size(); ++ipart)
     {
       fPartons.push_back( pShower.get()->GetFinalPartons().at(ipart));
-      cout << "############### FINAL PARTON IN THE VECTOR NUMBER : " << ipart << " is " << fPartons.at(ipart) << "###################\n";
+      this->pFinals.push_back( pShower.get()->GetFinalPartons().at(ipart));
+      cout << "############### FINAL PARTON IN THE VECTOR NUMBER : " << ipart << " is " << this->pFinals.at(ipart) << "###################\n";
+    }
+
+  }
+}
+
+void PartonPrinter::GetFinalPartons2(shared_ptr<PartonShower> pShower)
+{
+  if(pShower)
+  {
+    for(unsigned int ipart=0; ipart <  pShower.get()->GetFinalPartons().size(); ++ipart)
+    {
+      this->pFinals.push_back( pShower.get()->GetFinalPartons().at(ipart));
+      cout << "############### FINAL PARTON IN THE VECTOR NUMBER : " << ipart << " is " << this->pFinals.at(ipart) << "###################\n";
     }
 
   }
@@ -49,23 +63,6 @@ void PartonPrinter::Clear()
 
 void PartonPrinter::GetPartonsAtTime(shared_ptr<PartonShower> pShower,  vector<shared_ptr<Parton>>& fPartons, double time)
 {
-}
-
-void PartonPrinter::PrintFinalPartons(shared_ptr<PartonShower> pShower)
-{
- if(pShower)
-  {
-    cout << "@@@@@@@@@@@@@@@@ Number of FINAL Partons: " << pShower.get()->GetFinalPartons().size() << "@@@@@@@@@@@@@@@@@@@@@@@\n";
-    for(unsigned int ipart=0; ipart <  pShower.get()->GetFinalPartons().size(); ++ipart)
-    {
-      cout << "@@@@@@@@@@@@@@@@ FINAL PARTON NUMBER : " << ipart << " is " <<  pShower.get()->GetFinalPartons().at(ipart) << "@@@@@@@@@@@\n";
-    }
-  }
-  else
-  {
-     cout << "@@@@@@@@@@@@@@@@@ THERE IS NO SHOWER NOW \n";
-  }
- 
 }
 
 } // end namespace Jetscape
