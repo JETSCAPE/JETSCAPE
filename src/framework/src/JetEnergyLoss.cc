@@ -375,20 +375,5 @@ void JetEnergyLoss::PrintShowerInitiatingParton()
 }
 
 
-void JetEnergyLoss::GetFinalPartons(weak_ptr<PartonPrinter> p)
-{
-   cout << "############### INSIDE PrintFinalPartons \n";
-  if(pShower)
-  {
-    p.lock()->GetFinalPartons(pShower, GetRecomPartons());
-  }
-  else
-  {
-     cout << "###############THERE IS NO SHOWER NOW \n";
-  }
-
-  JetScapeTask::GetPartons(p);
-}
-
 
 } // end namespace Jetscape
