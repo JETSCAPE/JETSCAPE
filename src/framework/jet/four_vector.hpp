@@ -15,7 +15,9 @@
 #include <cstdlib>
 #include <climits>
 
-using namespace std;
+using std::cout;
+using std::cerr;
+using std::endl;
 
 namespace Jetscape {
 

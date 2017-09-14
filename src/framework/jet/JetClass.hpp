@@ -21,6 +21,8 @@
 #include <sstream>
 #include <iomanip>
 
+using std::ostream;
+
 namespace Jetscape {
 
 

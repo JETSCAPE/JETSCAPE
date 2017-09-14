@@ -37,8 +37,6 @@
 #include<random>
 #include<thread>
 
-using namespace std;
-
 namespace Jetscape {
 
   class JetScapeTaskSupport //: public sigslot::has_slots<sigslot::multi_threaded_local>
