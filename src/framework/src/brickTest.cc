@@ -38,8 +38,6 @@
 #include <chrono>
 #include <thread>
 
-using namespace std;
-
 using namespace Jetscape;
 
 // Forward declaration

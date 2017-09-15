@@ -37,6 +37,8 @@
 #include<random>
 #include<thread>
 
+using std::atomic_int;
+
 namespace Jetscape {
 
   class JetScapeTaskSupport //: public sigslot::has_slots<sigslot::multi_threaded_local>

@@ -22,6 +22,12 @@
 
 using namespace Jetscape;
 
+using std::ofstream;
+using std::ifstream;
+using std::ostream;
+using std::ios;
+
+
 const double QS = 1.0;
 
 Martini::Martini()
@@ -115,7 +121,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 	  // Do nothing for this parton at this timestep
 	  if (process == 0) return;
       
-	  if (fabs(Id) == 1 || fabs(Id) == 2 || fabs(Id) == 3)
+	  if (std::abs(Id) == 1 || std::abs(Id) == 2 || std::abs(Id) == 3)
 	    {
 	      // quark radiating gluon (q->qg)
 	      if (process == 1)
@@ -358,7 +364,7 @@ int Martini::DetermineProcess(double p, double T, double deltaT, int Id)
   rateConv = getRateConv(p, T);
 
   // evolution for quark (u, d, s)
-  if (fabs(Id) == 1 || fabs(Id) == 2 || fabs(Id) == 3)
+  if (std::abs(Id) == 1 || std::abs(Id) == 2 || std::abs(Id) == 3)
     {
       // multiplying by (ef/e)^2
       if (abs(Id) == 1)
@@ -2040,7 +2046,7 @@ double Martini::use_table(double p, double k, double dGamma[NP][NK], int which_k
   result = (1.-a)*((1.-b)*dGamma[n_p][n_k]+b*dGamma[n_p][n_k+1])
     +a*((1.-b)*dGamma[n_p+1][n_k]+b*dGamma[n_p+1][n_k+1]);
 
-  if (fabs(k) > 0.001) // Avoid division by 0, should never get asked for
+  if (std::abs(k) > 0.001) // Avoid division by 0, should never get asked for
     {
       switch (which_kind)
 	{
@@ -2087,7 +2093,7 @@ double Martini::getElasticRateOmega(double u, double omega, int process)
 
 double Martini::getElasticRateQ(double u, double omega, double q, int process)
 {
-  if (q > fabs(omega) && ((omega > 0 && omega < u) || (omega < 0 && omega > -u)))
+  if (q > std::abs(omega) && ((omega > 0 && omega < u) || (omega < 0 && omega > -u)))
     return use_elastic_table_q(omega, q, process);
 
   return 0.;
@@ -2527,7 +2533,7 @@ double LambertW(double z)
   w_new = 0.0;
   ratio = 1.0;
   n = 0;
-  while(fabs(ratio) > tol) 
+  while(std::abs(ratio) > tol) 
     {
       e_old = exp(w_old);
       ratio = w_old*e_old - z;
