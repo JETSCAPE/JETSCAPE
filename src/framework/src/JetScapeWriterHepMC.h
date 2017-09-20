@@ -56,13 +56,13 @@ class JetScapeWriterHepMC : public JetScapeWriter , public WriterAscii
   }
 
   inline HepMC::GenParticle* castParticleToHepMC(Parton &particle){
-      HepMC::FourVector pmom(particle.p_in().x(), particle.p_in().y(), particle.p_in().z(), particle.p_in().t());
+      HepMC::FourVector pmom(particle.px(), particle.py(), particle.pz(), particle.e());
       HepMC::GenParticle *p1 = new HepMC::GenParticle(pmom, particle.pid(), particle.pstat());
       return p1;
   }
 
   inline HepMC::GenParticle* castParticleToHepMC(shared_ptr<Parton> particle){
-      HepMC::FourVector pmom(particle->p_in().x(), particle->p_in().y(), particle->p_in().z(), particle->p_in().t());
+      HepMC::FourVector pmom(particle->px(), particle->py(), particle->pz(), particle->e());
       HepMC::GenParticle *p1 = new HepMC::GenParticle(pmom, particle->pid(), particle->pstat());
       return p1;
   }

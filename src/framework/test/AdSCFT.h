@@ -17,7 +17,7 @@
 #include "JetEnergyLossModule.h"
 using namespace Jetscape;
 
-class AdSCFTUserInfo: public Parton::PseudoJet::UserInfoBase
+class AdSCFTUserInfo: public fjcore::PseudoJet::UserInfoBase
 {
   public :
 

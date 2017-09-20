@@ -12,10 +12,12 @@
 
 #include<iostream>
 #include<string>
+#include<stdexcept>
 
 #include "tinyxml2.h"
 
-using namespace std;
+using std::string;
+using std::runtime_error;
 
 namespace Jetscape {
 

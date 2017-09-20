@@ -12,6 +12,13 @@
 #include <iomanip>
 #include "helper.h"
 
+using std::setprecision;
+using std::fixed;
+using std::to_string;
+using std::ostringstream;
+using std::stringstream;
+
+
 namespace Jetscape {
 
 node PartonShower::new_vertex(shared_ptr<Vertex> v)

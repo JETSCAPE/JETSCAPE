@@ -79,7 +79,8 @@
      
      <Martini>
        <name > Martini </name>
-       <param1> 3 </param1>
+       <alpha_s> 0.3 </alpha_s>
+       <pcut> 2.0 </pcut>
      </Martini>
      
      <AdSCFT>

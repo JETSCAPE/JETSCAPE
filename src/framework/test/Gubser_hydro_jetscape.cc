@@ -10,7 +10,8 @@
 
 #define hbarc 0.19733
 
-using namespace std;
+// using namespace std;
+using namespace Jetscape;
 
 GubserHydro::GubserHydro() : FluidDynamics(){
     // initialize the parameter reader

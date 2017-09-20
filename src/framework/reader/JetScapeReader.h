@@ -18,6 +18,11 @@
 #include <fstream>
 #include "gzstream.h"
 
+using std::ostream;
+using std::istream;
+using std::ofstream;
+using std::ifstream;
+
 namespace Jetscape {
 
 template<class T>

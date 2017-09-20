@@ -10,10 +10,7 @@
 
 #include "hydro_file_jetscape.h"
 
-using namespace std;
-
 using namespace Jetscape;
-
 
 HydroFile::HydroFile() {
     hydro_status = NOT_START;

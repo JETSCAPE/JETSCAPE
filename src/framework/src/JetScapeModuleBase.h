@@ -15,8 +15,6 @@
 #include "JetScapeTask.h"
 #include "sigslot.h"
 
-using namespace std;
-
 namespace Jetscape {
 
 class JetScapeWriter;

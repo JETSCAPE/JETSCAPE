@@ -14,7 +14,7 @@ class GubserHydro: public FluidDynamics {
  private:
     double q;
     double e_0;
-
+    
  public:
      GubserHydro();
      ~GubserHydro();

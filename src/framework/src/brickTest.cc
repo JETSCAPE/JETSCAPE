@@ -30,7 +30,6 @@
 #include "brick_jetscape.h"
 #include "Gubser_hydro_jetscape.h"
 #include "PGun.h"
-#include "JSPythia8.h"
 #include "PartonPrinter.h"
 
 // Add initial state module for test
@@ -38,8 +37,6 @@
 
 #include <chrono>
 #include <thread>
-
-using namespace std;
 
 using namespace Jetscape;
 
@@ -57,7 +54,7 @@ int main(int argc, char** argv)
     
   // DEBUG=true by default and REMARK=false
   // can be also set also via XML file (at least partially)
-  JetScapeLogger::Instance()->SetDebug(false);
+  JetScapeLogger::Instance()->SetDebug(true);
   JetScapeLogger::Instance()->SetRemark(false);
   //SetVerboseLevel (9 a lot of additional debug output ...)
   //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevle(9) or 10
@@ -86,7 +83,6 @@ int main(int argc, char** argv)
   //jloss->SetActive(false);
 
   auto pGun= make_shared<PGun> ();
-  //auto py8=make_shared<JSPythia8> ("/Users/kjung/pythia8233/xmldoc",false);
 
   auto printer = make_shared<PartonPrinter> ();
 
@@ -95,10 +91,6 @@ int main(int argc, char** argv)
   //autowriter= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");  
   //auto writer= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
   //writer->SetActive(false);
-
-  // Pythia 8 interface, what partons used
-  // for intial hard to be implemented in JSPythia8 class ...
-  //jetscape->Add(py8);
 
   //Remark: For now modules have to be added
   //in proper "workflow" order (can be defined via xml and sorted if necessary)

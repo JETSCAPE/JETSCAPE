@@ -11,8 +11,6 @@
 //#include "fluid_dynamics.h"
 #include "brick_jetscape.h"
 
-using namespace std;
-
 using namespace Jetscape;
 
 Brick::Brick() : FluidDynamics() {
