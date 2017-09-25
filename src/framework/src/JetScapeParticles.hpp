@@ -192,7 +192,7 @@ namespace Jetscape {
     void set_id(int id);  
     void set_stat(int stat);
 
-    // void set_p(double p[4]);
+    void set_p(double p[4]);
     void set_x(double x[4]); 
     
     void init_jet_v();
