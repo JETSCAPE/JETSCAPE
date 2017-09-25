@@ -24,18 +24,18 @@
 
 // User modules derived from jetscape framework clasess
 // to be used to run Jetscape ...
+#include "AdSCFT.h"
 #include "ElossModulesTestMatter.h"
 #include "ElossModulesTestMartini.h"
 #include "brick_jetscape.h"
 #include "Gubser_hydro_jetscape.h"
 #include "hydro_file_jetscape.h"
 #include "PGun.h"
-//#include "JSPythia8.h"
 
 #include <chrono>
 #include <thread>
 
-using namespace std;
+// using namespace std;
 
 using namespace Jetscape;
 
@@ -61,7 +61,7 @@ int main(int argc, char** argv)
    
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",3);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",1);
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
   auto hydro = make_shared<HydroFile> ();
@@ -69,6 +69,7 @@ int main(int argc, char** argv)
   
   auto matter = make_shared<Matter> ();
   auto martini = make_shared<Martini> ();
+  auto adscft = make_shared<AdSCFT> ();
   //DBEUG: Remark:
   //does not matter unfortunately since not called recursively, done by JetEnergyLoss class ...
   //matter->SetActive(false);
@@ -77,17 +78,12 @@ int main(int argc, char** argv)
   //jloss->SetActive(false);
 
   auto pGun= make_shared<PGun> ();
-  //auto py8=make_shared<JSPythia8> ("/Users/putschke/pythia8100/xmldoc",false);
 
   // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
   //auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");  
   //auto writer= make_shared<JetScapeWriterHepMC> ("test_out.dat");
   //writer->SetActive(false);
-
-  // Pythia 8 interface, what partons used
-  // for intial hard to be implemented in JSPythia8 class ...
-  //jetscape->Add(py8);
 
   //Remark: For now modules have to be added
   //in proper "workflow" order (can be defined via xml and sorted if necessary)
@@ -102,8 +98,9 @@ int main(int argc, char** argv)
   // and Martini dummy ...
   // Switching Q2 (or whatever variable used
   // hardcoded at 5 to be changed to xml)
-  jloss->Add(matter);
-  jloss->Add(martini);
+  //jloss->Add(matter);
+  //jloss->Add(martini);
+  jloss->Add(adscft);
   
   jlossmanager->Add(jloss);
   

@@ -30,7 +30,6 @@
 #include "brick_jetscape.h"
 #include "Gubser_hydro_jetscape.h"
 #include "PythiaGun.hpp"
-// #include "JSPythia8.h"
 #include "PartonPrinter.h"
 #include "HadronizationManager.h"
 #include "Hadronization.h"

@@ -12,8 +12,6 @@
 #include "JetScapeTaskSupport.h"
 #include "JetScapeModuleBase.h"
 
-using namespace std;
-
 namespace Jetscape {
 
 class JetScape : public JetScapeModuleBase

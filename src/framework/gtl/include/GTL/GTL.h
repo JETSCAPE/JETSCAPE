@@ -142,8 +142,36 @@ for (iter_t GTL_FORALL_VAR(__LINE__) = (cont).iter##begin();    \
 namespace GTL {};
 using namespace GTL;
 
-namespace std {};
-using namespace std;
+// namespace std {};
+//using namespace std;
+#include<list>
+#include<map>
+#include<set>
+#include<queue>
+#include<deque>
+#include<stack>
+#include<vector>
+#include<iostream>
+#include<string>
+using std::vector;
+using std::list;
+using std::queue;
+using std::priority_queue;
+using std::deque;
+using std::pair;
+using std::stack;
+using std::map;
+using std::set;
+using std::allocator;
+using std::binary_function;
+using std::ostream;
+using std::ofstream;
+using std::cout;
+using std::cerr;
+using std::endl;
+using std::string;
+
+
 
 #endif // __GTL_USE_NAMESPACES
 

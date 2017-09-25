@@ -9,7 +9,14 @@
 #include "./Hydroinfo_MUSIC.h"
 #include "./ParameterReader.h"
 
-using namespace std;
+#include <fstream>
+
+// using namespace std;
+using std::string;
+using std::vector;
+using std::ofstream;
+using std::ifstream;
+using std::abs;
 
 class SurfaceFinder {
  private:

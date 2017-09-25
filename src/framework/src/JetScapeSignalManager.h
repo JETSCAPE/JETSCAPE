@@ -25,7 +25,6 @@
 #include "sigslot.h"
 
 using namespace sigslot;
-using namespace std;
 
 namespace Jetscape {
 

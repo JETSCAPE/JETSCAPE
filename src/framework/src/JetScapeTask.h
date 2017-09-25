@@ -18,7 +18,10 @@
 #include <string>
 #include <memory>
 
-using namespace std;
+using std::vector;
+using std::string;
+using std::weak_ptr;
+using std::shared_ptr;
 
 namespace Jetscape {
 

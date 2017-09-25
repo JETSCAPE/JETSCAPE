@@ -12,6 +12,11 @@
 
 #include "JetEnergyLoss.h"
 
+using std::abs;
+using std::uniform_real_distribution;
+
+
+
 namespace Jetscape {
 
 template <typename Derived>
