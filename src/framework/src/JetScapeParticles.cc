@@ -235,10 +235,9 @@ namespace Jetscape {
   //   return(sqrt(p_in_.x()*p_in_.x() + p_in_.y()*p_in_.y())) ;    
   // }
 
-  FourVector JetScapeParticleBase::get_p() const{
-    return FourVector ( px(), py(), pz(), e() );
-  }
-  
+  // FourVector JetScapeParticleBase::get_p() const{
+  //   return FourVector ( px(), py(), pz(), e() );
+  // }
     
   const double JetScapeParticleBase::time()
   {

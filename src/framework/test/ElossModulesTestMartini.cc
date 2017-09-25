@@ -111,7 +111,8 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 	  phi = pIn[i].phi();
 	  p = pIn[i].e();        // massless
 	  // pVec = pIn[i].p_in();
-	  pVec = pIn[i].get_p();
+	  // pVec = pIn[i].get_p();
+	  pVec = FourVector ( pIn[i].px(), pIn[i].py(), pIn[i].pz(), pIn[i].e() );
 
 	  if (p < pcut) continue;
 
