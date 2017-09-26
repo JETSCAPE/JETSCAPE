@@ -80,22 +80,22 @@ namespace Jetscape {
     };
     
     // all gets are done with name calls e.g., vec.x()
-    double x()
+    double x() const
     {
       return(xv);
     };
     
-    double y()
+    double y() const
     {
       return(yv);
     };
     
-    double z()
+    double z() const
     {
       return(zv);
     };
     
-    double t()
+    double t() const
     {
       return(tv);
     };
