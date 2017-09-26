@@ -20,7 +20,7 @@
 using namespace std;
 
 namespace Jetscape {
-
+  /** Default Constructor for JetScapeTask is defined. It sets the  flag "active_exec" to true. String variable "id" is not defined yet. It prints VERBOSE(9).               */
 JetScapeTask::JetScapeTask()
 {
   active_exec=true;
@@ -29,17 +29,23 @@ JetScapeTask::JetScapeTask()
   VERBOSE(9);
 }
 
+  /** Default Destructor for JetScapeTask is defined. It prints VERBOSE(9).
+  */
 JetScapeTask::~JetScapeTask()
 {
   VERBOSE(9);
   DEBUG << "Deleting task with id=" << GetId() << " and TaskNumber= " << get_my_task_number();
 }
 
+
+  /** This function prints a DEBUG statement. It can be override by different modules' initialization function.
+   */
 void JetScapeTask::Init()
 {
   DEBUG;
 }
 
+  /** Recursive initialization of all JetScapeTask-type tasks like PGun, Matter, Martini etc. It can be override by other modules to initialize their subtasks in JetScape framework. It also prints the number of subtasks in the current task.                  */
 void JetScapeTask::InitTasks()
 {
   VERBOSE(7) << " : # Subtasks = "<<tasks.size();
@@ -49,11 +55,15 @@ void JetScapeTask::InitTasks()
     it->Init();
 }
 
+  /** It only prints VERBOSE(7). It can be override by different modules' Execution function.                                                                  
+  */
 void JetScapeTask::Exec()
 {
   VERBOSE(7);
 }
 
+  /** Recursive Execution of all JetScapeTask-type tasks like PGun, Matter, Martini etc. It can be override by other modules to execute their subtasks in JetScape framework. It also prints the number of subtasks in the current task.
+ */
 void JetScapeTask::ExecuteTasks()
 {
   VERBOSE(7) << " : # Subtasks = "<<tasks.size();
@@ -62,12 +72,15 @@ void JetScapeTask::ExecuteTasks()
       it->Exec();
 }
 
+  /** Recursively erase  the memory and pointers allocated for the JetScapeTask-type subtasks like PGun, Matter, Martini etc. It can be override by other modules to erase their memory and the pointers allocated to the subtasks in JetScape framework. It also prints the number of subtasks in the current task.               
+  */
 void JetScapeTask::ClearTasks()
 {
   VERBOSE(7) << " : # Subtasks = "<<tasks.size();
   for (auto it : tasks)
     it->Clear();
 }
+
 
 void JetScapeTask::WriteTasks(weak_ptr<JetScapeWriter> w)
 {
@@ -80,6 +93,8 @@ void JetScapeTask::WriteTasks(weak_ptr<JetScapeWriter> w)
     }
 }
 
+  /** This function prints the final state partons for each of the tasks. To print the final state partons, it calls GetFinalPartons().
+  */
 void JetScapeTask::GetPartons(weak_ptr<PartonPrinter> p)
 {
   //cout<<"############### Printing partons in shower " << "\n";
@@ -89,6 +104,8 @@ void JetScapeTask::GetPartons(weak_ptr<PartonPrinter> p)
   }
 }
 
+  /** This function adds different modules into the vector array of JetScapeTasks. These modules should  inherit the JetScapeTask class, and override Init(), Exec(), Clear(), and WriteTask() functions.  
+  */
 void JetScapeTask::Add(shared_ptr<JetScapeTask> m_tasks)
 {
   tasks.push_back(m_tasks);
