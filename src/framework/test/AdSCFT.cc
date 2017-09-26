@@ -175,9 +175,8 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 
 	//Update 4-momentum
 	for (unsigned a=0; a<4; a++) p[a]*=lambda;
-	double fp[4];
-	fp[0]=p[3], fp[1]=p[0], fp[2]=p[1], fp[3]=p[2];
-	pIn[i].set_p(fp);
+	pIn[i].reset_momentum(p[0],p[1],p[2],p[3]);
+
 	//Update 4-position
 	for (unsigned a=0; a<4; a++) x[a]+=w[a]*deltaT;
 	double fx[4];
