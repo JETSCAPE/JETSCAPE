@@ -15,7 +15,9 @@
 #include <cstdlib>
 #include <climits>
 
-using namespace std;
+using std::cout;
+using std::cerr;
+using std::endl;
 
 namespace Jetscape {
 
@@ -161,7 +163,17 @@ namespace Jetscape {
         
       return(*this);
     };
-    
+
+    FourVector &operator-=(FourVector &c)
+    {
+        tv-=c.t();
+        xv-=c.x();
+        yv-=c.y();
+        zv-=c.z();
+        
+        return(*this);
+    };
+
     FourVector &operator=(FourVector &c)
     {
       tv = c.t();

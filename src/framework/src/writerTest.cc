@@ -28,6 +28,7 @@
 // to be used to run Jetscape ...
 #include "InitialState.h"
 #include "ElossModulesTestMatter.h"
+#include "ElossModulesTestMartini.h"
 #include "brick_jetscape.h"
 #include "Gubser_hydro_jetscape.h"
 #include "PGun.h"

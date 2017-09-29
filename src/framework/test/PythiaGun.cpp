@@ -12,7 +12,11 @@
 #include <sstream>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <random>
+
+using namespace std;
+
 
 PythiaGun::~PythiaGun()
 {

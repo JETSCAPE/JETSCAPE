@@ -26,10 +26,10 @@
 // to be used to run Jetscape ...
 #include "AdSCFT.h"
 #include "ElossModulesTestMatter.h"
+#include "ElossModulesTestMartini.h"
 #include "brick_jetscape.h"
 #include "Gubser_hydro_jetscape.h"
 #include "PythiaGun.hpp"
-// #include "JSPythia8.h"
 
 // Add initial state module for test
 #include "TrentoInitial.h"

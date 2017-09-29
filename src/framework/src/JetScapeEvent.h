@@ -11,8 +11,6 @@
 #include "../jet/JetClass.hpp"
 #include "PartonShower.h"
 
-using namespace std;
-
 namespace Jetscape {
 
 class JetScapeEvent

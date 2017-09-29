@@ -150,16 +150,16 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 	pIn[i].set_form_time(ft);
             
 	//DEBUG:
-	DEBUG ;
-	DEBUG << " ***************************************************************************** " ;              
-	DEBUG << " *  New generated virtuality = " << tQ2 << " Mean formation time = " << pIn[i].mean_form_time()/fmToGeVinv;              
-	DEBUG << " *  set new formation time to " << pIn[i].form_time()/fmToGeVinv ;
-	DEBUG << " * Maximum allowed virtuality = " << pIn[i].e()*pIn[i].e() << "   Minimum Virtuality = " << QS;
-	DEBUG ;
-	DEBUG << " * Jet velocity = " << pIn[i].jet_v().comp(0) << " " << pIn[i].jet_v().comp(1) << "  " << pIn[i].jet_v().comp(2) << "  " << pIn[i].jet_v().comp(3);
-	DEBUG << " * reset location of parton formation = "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z() ;
-	DEBUG << " ***************************************************************************** " ;
-	DEBUG ;
+	INFO ;
+	INFO << " ***************************************************************************** " ;              
+	INFO << " *  New generated virtuality = " << tQ2 << " Mean formation time = " << pIn[i].mean_form_time()/fmToGeVinv;              
+	INFO << " *  set new formation time to " << pIn[i].form_time()/fmToGeVinv ;
+	INFO << " * Maximum allowed virtuality = " << pIn[i].e()*pIn[i].e() << "   Minimum Virtuality = " << QS;
+	INFO ;
+	INFO << " * Jet velocity = " << pIn[i].jet_v().comp(0) << " " << pIn[i].jet_v().comp(1) << "  " << pIn[i].jet_v().comp(2) << "  " << pIn[i].jet_v().comp(3);
+	INFO << " * reset location of parton formation = "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z() ;
+	INFO << " ***************************************************************************** " ;
+	INFO ;
 	// end DEBUG:              
       }
           
@@ -208,7 +208,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 	    if (r2>0.6666){
 	      pid_a = uid ;
 	      pid_b = -1*uid ;
-	    } else if ( r2 > 0.3333 && r2< 0.6666) {
+	    } else if ( r2 > 0.3333 ) {
 	      pid_a = did ;
 	      pid_b = -1*did ;
 	    } else {
@@ -1232,36 +1232,4 @@ double Matter::profile(double zeta)
 }
 
 
-
-// obsolete in the future ...
-// ----------------------
-
-Martini::Martini()
-{
-  SetId("Martini");
-  VERBOSE(8);
-}
-
-Martini::~Martini()
-{
-  VERBOSE(8);
-
-}
-
-void Martini::Init()
-{
-  INFO<<"Intialize Martini ...";
-
-  ZeroOneDistribution = uniform_real_distribution<double> { 0.0, 1.0 };
-}
-
-//void Martini::DoEnergyLoss(double deltaT, double Q2, const vector<Parton>& pIn, vector<Parton>& pOut)
-void Martini::DoEnergyLoss(double deltaT, double Q2, vector<Parton>& pIn, vector<Parton>& pOut)
-{
-  // *my_file_ << "I'm Martini! my id= " << get_my_task_number() << "  " << ZeroOneDistribution( *get_mt19937_generator()) << endl;
-  // return;
-
-  if (Q2<=QS)
-    VERBOSESHOWER(8)<< MAGENTA << "SentInPartons Signal received : "<<deltaT<<" "<<Q2<<" "<<&pIn;
-}
 

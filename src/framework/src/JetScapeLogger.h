@@ -18,7 +18,8 @@
 #include "JetClass.hpp"
 //class Parton;
 
-using namespace std;
+using std::shared_ptr;
+using std::make_shared;
 
 // --------------------------------
 

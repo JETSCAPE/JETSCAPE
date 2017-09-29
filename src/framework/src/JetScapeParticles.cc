@@ -196,23 +196,6 @@ namespace Jetscape {
     //FourVector
     x_in_.Set(x);
   }
-     
-  void JetScapeParticleBase::set_t(double t)
-  {
-    //  Reset the momentum due to virtuality              
-    double newPl = std::sqrt( e()*e() - t ) ;
-    double velocityMod = std::sqrt(std::pow(jet_v_.comp(1),2) + std::pow(jet_v_.comp(2),2) + std::pow(jet_v_.comp(3),2));
-    
-    newPl = newPl/velocityMod;
-    double newP[4];
-    newP[0] = e();
-    for(int j=1;j<=3;j++) {
-      newP[j] = newPl*jet_v_.comp(j);
-    }
-
-    set_p(newP);
-  } 
-
     
   void JetScapeParticleBase::init_jet_v()
   {
@@ -251,7 +234,11 @@ namespace Jetscape {
   // {
   //   return(sqrt(p_in_.x()*p_in_.x() + p_in_.y()*p_in_.y())) ;    
   // }
-    
+
+  FourVector JetScapeParticleBase::get_p() const{
+    return FourVector ( px(), py(), pz(), e() );
+  }
+  
     
   const double JetScapeParticleBase::time()
   {
@@ -323,14 +310,7 @@ namespace Jetscape {
   {
     return( ( this->e()+std::abs(this->pl()) )/std::sqrt(2) );
   }
-    
-  const double JetScapeParticleBase::t()
-  {
-    /// \Todo: Fix 
-    return ( PseudoJet::m2() ) ;
-    // return (t_) ;
-  }        
-    
+        
   JetScapeParticleBase& JetScapeParticleBase::operator=(JetScapeParticleBase &c)
   {
     fjcore::PseudoJet::operator=(c);
@@ -366,7 +346,7 @@ namespace Jetscape {
     // output<<" x="<<p.x_in().x()<<" y="<<p.x_in().y()<<" z="<<p.x_in().z()<<" t="<<p.x_in().t();
 
     output<<p.plabel()<<" "<<p.pid()<<" "<<p.pstat()<<" ";
-    output<<p.pt()<<" "<<p.rap()<<" "<<p.phi()<<" "<<p.e()<<" ";
+    output<<p.pt()<<" "<< (fabs (p.rap())>1e-15?p.rap():0)<<" "<< p.phi() <<" "<<p.e()<<" ";
     output<<p.x_in().x()<<" "<<p.x_in().y()<<" "<<p.x_in().z()<<" "<<p.x_in().t();//<<endl;
     
     return output;            
@@ -433,5 +413,35 @@ namespace Jetscape {
   {
     return(mean_form_time_);
   }
+
+  const double Parton::t()
+  {
+    /// \Todo: Fix 
+    return ( PseudoJet::m2() ) ;
+    // return (t_) ;
+  }        
+
+  void Parton::set_t(double t)
+  {
+    // This function has a very specific purpose and shouldn't normally be used
+    // It scales down p! So catch people trying.
+    if ( form_time()>= 0.0 ){
+      throw std::runtime_error("Trying to set virtuality on a normal parton. You almost certainly don't want to do that. Please contact the developers if you do.");
+    }
+    
+    //  Reset the momentum due to virtuality              
+    double newPl = std::sqrt( e()*e() - t ) ;
+    double velocityMod = std::sqrt(std::pow(jet_v_.comp(1),2) + std::pow(jet_v_.comp(2),2) + std::pow(jet_v_.comp(3),2));
+    
+    newPl = newPl/velocityMod;
+    double newP[4];
+    newP[0] = e();
+    for(int j=1;j<=3;j++) {
+      newP[j] = newPl*jet_v_.comp(j);
+    }
+
+    set_p(newP);
+  } 
+
 
 } /// end of namespace Jetscape
