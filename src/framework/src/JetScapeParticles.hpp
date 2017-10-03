@@ -275,6 +275,9 @@ namespace Jetscape {
     
   };
 
+  // Dummy Hadron class to test Hadronization module
+  // Will be replaced with the actual Hadron class
+  class Hadron : public Jetscape::Parton {};
 
 };  /// end of namespace Jetscape
 

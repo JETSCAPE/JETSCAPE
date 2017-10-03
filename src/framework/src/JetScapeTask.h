@@ -61,11 +61,6 @@ class JetScapeTask
   virtual void WriteTasks(weak_ptr<JetScapeWriter> w);
   virtual void WriteTask(weak_ptr<JetScapeWriter> w) {};
 
-  // Printer method that prints the partons of the shower
-  // Is it only for EnergyLoss?
-  virtual void GetPartons(weak_ptr<PartonPrinter> p);
-  virtual void GetFinalPartons(weak_ptr<PartonPrinter> p){};
-
   virtual void Add(shared_ptr<JetScapeTask> m_tasks);
   
   virtual const inline int get_my_task_number() const {return my_task_number_;} ;
