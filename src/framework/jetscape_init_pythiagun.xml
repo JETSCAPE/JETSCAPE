@@ -90,6 +90,15 @@
 
    </Eloss>
 
+   <!-- Hadro  Module ... -->
+   <Hadro>
+   
+     <PythiaHad>
+       <name> PythiaHad </name>
+     </PythiaHad>
+
+   </Hadro>
+
    <!-- Hydro  Module ... -->
    <Hydro>
      
