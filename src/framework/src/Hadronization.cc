@@ -2,6 +2,7 @@
 #include "Hadronization.h"
 #include "JetScapeLogger.h"
 #include <string>
+#include "JetScapeXML.h"
 #include "JetScapeSignalManager.h"
 #include "JetScapeWriterAscii.h"
 
@@ -38,6 +39,14 @@ void Hadronization::Init()
   }
  
   INFO<<"Found "<<GetNumberOfTasks()<<" Hadronization Tasks/Modules Initialize them ... ";
+  
+  fd= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Hadro" );
+
+  if (!fd) {
+      WARN << "Not a valid JetScape XML Hadro section file or no XML file loaded!";
+      exit(-1);
+  }
+
   JetScapeTask::InitTasks();
 
 }
