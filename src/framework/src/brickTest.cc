@@ -34,6 +34,7 @@
 #include "HadronizationManager.h"
 #include "Hadronization.h"
 #include "HadronizationModuleTest.h"
+//#include "PythiaHad.h"
 
 // Add initial state module for test
 #include "TrentoInitial.h"
@@ -65,7 +66,7 @@ int main(int argc, char** argv)
    
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",1);
+  auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",1);
   jetscape->SetId("primary");
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
@@ -75,9 +76,9 @@ int main(int argc, char** argv)
   auto hydro = make_shared<Brick> ();
   //auto hydro = make_shared<GubserHydro> ();
   
-  auto matter = make_shared<Matter> ();
+  //auto matter = make_shared<Matter> ();
   //auto martini = make_shared<Martini> ();
-  //auto adscft = make_shared<AdSCFT> ();
+  auto adscft = make_shared<AdSCFT> ();
   //DBEUG: Remark:
   //does not matter unfortunately since not called recursively, done by JetEnergyLoss class ...
   //matter->SetActive(false);
@@ -91,6 +92,7 @@ int main(int argc, char** argv)
 
   auto hadroMgr = make_shared<HadronizationManager> ();
   auto hadro = make_shared<Hadronization> ();
+  //auto hadroModule = make_shared<PythiaHad> ();
   auto hadroModule = make_shared<HadronizationModuleTest> ();
 
   // only pure Ascii writer implemented and working with graph output ...
@@ -114,9 +116,9 @@ int main(int argc, char** argv)
   // and Martini dummy ...
   // Switching Q2 (or whatever variable used
   // hardcoded at 5 to be changed to xml)
-  jloss->Add(matter);
+  //jloss->Add(matter);
   //jloss->Add(martini);
-  //jloss->Add(adscft);  
+  jloss->Add(adscft);  
 
   jlossmanager->Add(jloss);
   
