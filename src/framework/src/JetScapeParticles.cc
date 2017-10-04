@@ -76,13 +76,14 @@ namespace Jetscape {
       break;
     }
     
-    double p[4];
-    p[0] = e;
-    p[1] = pt*cos(phi);
-    p[2] = pt*sin(phi);
-    p[3] = pt*sinh(eta);
+    // double p[4];
+    // p[0] = e;
+    // p[1] = pt*cos(phi);
+    // p[2] = pt*sin(phi);
+    // p[3] = pt*sinh(eta);
+    // reset_momentum( FourVector ( p ) ); // kk: also works
+    reset_momentum( pt*cos(phi),pt*sin(phi), pt*sinh(eta), e );
     
-    set_p(p);
     set_stat(stat);
 
     if ( x ){
@@ -101,7 +102,7 @@ namespace Jetscape {
   }
 
     
-  JetScapeParticleBase::JetScapeParticleBase (int label, int id, int stat, double p[4], double x[4])
+  JetScapeParticleBase::JetScapeParticleBase (int label, int id, int stat, const FourVector& p, const FourVector& x)
   {
     
     set_label(label);
@@ -147,8 +148,9 @@ namespace Jetscape {
 	break;
       }
     }
-    set_p(p);
-    set_x(x);
+
+    reset_momentum(p);
+    x_in_=x;
     set_stat(stat);
 
   }
@@ -181,14 +183,6 @@ namespace Jetscape {
     mass_ = mass_input;
   }
     
-  void JetScapeParticleBase::set_p(double p[4])
-  {
-    // reset_momentum(p[0],p[1],p[2],p[3]);
-
-    // NOTE THE reshuffling! 
-    reset_momentum(p[1],p[2],p[3],p[0]);
-  }
-
   // not needed in graph structure
   
   void JetScapeParticleBase::set_x(double x[4])
@@ -235,10 +229,9 @@ namespace Jetscape {
   //   return(sqrt(p_in_.x()*p_in_.x() + p_in_.y()*p_in_.y())) ;    
   // }
 
-  FourVector JetScapeParticleBase::get_p() const{
-    return FourVector ( px(), py(), pz(), e() );
-  }
-  
+  // FourVector JetScapeParticleBase::get_p() const{
+  //   return FourVector ( px(), py(), pz(), e() );
+  // }
     
   const double JetScapeParticleBase::time()
   {
@@ -362,12 +355,13 @@ namespace Jetscape {
     form_time_ = srp.form_time_;
   }
 
-  Parton::Parton (int label, int id, int stat, double p[4], double x[4])  :
+  Parton::Parton (int label, int id, int stat, const FourVector& p, const FourVector& x)  :
     JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  p, x)
   {
     initialize_form_time();
     //   cout << "========================== std Ctor called, returning : " << endl << *this << endl;
   }
+  
 
   Parton::Parton (int label, int id, int stat, double pt, double eta, double phi, double e, double* x)  :
     JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  pt, eta, phi, e, x){
@@ -434,13 +428,12 @@ namespace Jetscape {
     double velocityMod = std::sqrt(std::pow(jet_v_.comp(1),2) + std::pow(jet_v_.comp(2),2) + std::pow(jet_v_.comp(3),2));
     
     newPl = newPl/velocityMod;
-    double newP[4];
-    newP[0] = e();
-    for(int j=1;j<=3;j++) {
-      newP[j] = newPl*jet_v_.comp(j);
-    }
-
-    set_p(newP);
+    // double newP[4];
+    // newP[0] = e();
+    // for(int j=1;j<=3;j++) {
+    //   newP[j] = newPl*jet_v_.comp(j);
+    // }
+    reset_momentum( newPl*jet_v_.comp(1), newPl*jet_v_.comp(2), newPl*jet_v_.comp(3), e() );
   } 
 
 
