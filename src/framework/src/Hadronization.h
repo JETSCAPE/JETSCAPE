@@ -8,10 +8,12 @@
 //#include "helper.h"
 #include <vector>
 #include <random>
+#include "tinyxml2.h"
+#include "JetScapeXML.h"
 
 namespace Jetscape {
 
-class Hadronization : public JetScapeModuleBase, public std::enable_shared_from_this<Hadronization> 
+class Hadronization : public JetScapeModuleBase, public std::enable_shared_from_this<Hadronization>
 {
 public:
 
@@ -24,6 +26,7 @@ public:
   virtual void WriteTask(weak_ptr<JetScapeWriter> w); 
   virtual void Clear();
 
+  tinyxml2::XMLElement* GetHadronXML() {return fd;}
 
   sigslot::signal3<vector<shared_ptr<Parton>>&, vector<shared_ptr<Hadron>>&, vector<shared_ptr<Parton>>&, multi_threaded_local> TransformPartons;
 
@@ -43,6 +46,8 @@ private:
   void DoHadronize();
 
   bool TransformPartonsConnected;
+
+  tinyxml2::XMLElement *fd;
 
 };
 
