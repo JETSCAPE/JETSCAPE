@@ -34,7 +34,7 @@
 #include "HadronizationManager.h"
 #include "Hadronization.h"
 #include "HadronizationModuleTest.h"
-//#include "PythiaHad.h"
+#include "PythiaHad.h"
 
 // Add initial state module for test
 #include "TrentoInitial.h"
@@ -92,8 +92,8 @@ int main(int argc, char** argv)
 
   auto hadroMgr = make_shared<HadronizationManager> ();
   auto hadro = make_shared<Hadronization> ();
-  //auto hadroModule = make_shared<PythiaHad> ();
-  auto hadroModule = make_shared<HadronizationModuleTest> ();
+  auto hadroModule = make_shared<PythiaHad> ();
+  //auto hadroModule = make_shared<HadronizationModuleTest> ();
 
   // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");

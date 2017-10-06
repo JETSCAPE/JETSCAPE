@@ -6,7 +6,17 @@
 #include <random>
 
 using namespace Jetscape;
-using namespace std;
+using namespace Pythia8;
+
+Pythia pythia;
+Event& event      = pythia.event;
+ParticleData& pdt = pythia.particleData;
+
+PythiaHad::PythiaHad()
+{
+  SetId("PythiaHad");
+  VERBOSE(8);
+}
 
 PythiaHad::~PythiaHad()
 {
@@ -19,15 +29,22 @@ void PythiaHad::Init()
   VERBOSE(8);
 
   // No event record printout.
-  readString("Next:numberShowInfo = 0");
-  readString("Next:numberShowProcess = 0");
-  readString("Next:numberShowEvent = 0");
+  pythia.readString("Next:numberShowInfo = 0");
+  pythia.readString("Next:numberShowProcess = 0");
+  pythia.readString("Next:numberShowEvent = 0");
 
   // Standard settings
-  readString("ProcessLevel:all = off");
+  pythia.readString("ProcessLevel:all = off");
+  
 
+  // ************
+  // CANNOT MAKE THE XML WORK, GIVES SEG FAULT WHEN EXECUTING...
+  // ************
+  /*
+
+  // XML settings
   tinyxml2::XMLElement *PythiaXmlDescription=GetHadronXML()->FirstChildElement("PythiaHad");
-  tinyxml2::XMLElement *xmle;
+  tinyxml2::XMLElement *xmle;  
 
   string s;
   // For parsing text
@@ -46,24 +63,22 @@ void PythiaHad::Init()
   cout << s << endl;
 
   //To use in future when choosing lund string parameters
-  /*
-  xmle = PythiaXmlDescription->FirstChildElement( "pTHatMin" ); if ( !xmle ) throw std::runtime_error("Cannot parse xml");
-  xmle->QueryDoubleText(&pTHatMin);
-  xmle = PythiaXmlDescription->FirstChildElement( "pTHatMax" ); if ( !xmle ) throw std::runtime_error("Cannot parse xml");
-  xmle->QueryDoubleText(&pTHatMax);
+  //xmle = PythiaXmlDescription->FirstChildElement( "pTHatMin" ); if ( !xmle ) throw std::runtime_error("Cannot parse xml");
+  //xmle->QueryDoubleText(&pTHatMin);
+  //xmle = PythiaXmlDescription->FirstChildElement( "pTHatMax" ); if ( !xmle ) throw std::runtime_error("Cannot parse xml");
+  //xmle->QueryDoubleText(&pTHatMax);
   
-  VERBOSE(7) <<"Pythia Gun with "<< pTHatMin << " < pTHat < " << pTHatMax ;
+  //VERBOSE(7) <<"Pythia Gun with "<< pTHatMin << " < pTHat < " << pTHatMax ;
   
-  numbf.str("PhaseSpace:pTHatMin = "); numbf << pTHatMin;
-  readString ( numbf.str() );
-  numbf.str("PhaseSpace:pTHatMax = "); numbf << pTHatMax;
-  readString ( numbf.str() );
-  */
+  //numbf.str("PhaseSpace:pTHatMin = "); numbf << pTHatMin;
+  //readString ( numbf.str() );
+  //numbf.str("PhaseSpace:pTHatMax = "); numbf << pTHatMax;
+  //readString ( numbf.str() );
 
   // random seed
   // xml limits us to unsigned int :-/ -- but so does 32 bits Mersenne Twist
   tinyxml2::XMLElement *RandomXmlDescription=JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Random" );
-  readString("Random:setSeed = on");
+  pythia.readString("Random:setSeed = on");
   numbi.str("Random:seed = ");
   unsigned int seed = 0;
   if ( RandomXmlDescription ){
@@ -74,9 +89,8 @@ void PythiaHad::Init()
   }
   VERBOSE(7) <<"Seeding pythia to "<< seed ;
   numbi << seed;
-  readString( numbi.str() );
+  pythia.readString( numbi.str() );
 
-  //What does this do?
   xmle = PythiaXmlDescription->FirstChildElement( "LinesToRead" );
   if ( xmle ){
     std::stringstream lines; lines << xmle->GetText();
@@ -84,12 +98,14 @@ void PythiaHad::Init()
     while(std::getline(lines,s,'\n')){
       if( s.find_first_not_of (" \t\v\f\r") == s.npos ) continue; // skip empty lines
       VERBOSE(7) <<  "Also reading in: " << s;
-      readString (s);
+      pythia.readString (s);
     }
   }
+  
+  */
 
   // And initialize
-  init(); // Pythia>8.1
+  pythia.init();
 
 }
 
@@ -102,37 +118,39 @@ void PythiaHad::WriteTask(weak_ptr<JetScapeWriter> w)
 
 void PythiaHad::DoHadronization(vector<shared_ptr<Parton>>& pIn, vector<shared_ptr<Hadron>>& hOut, vector<shared_ptr<Parton>>& pOut)
 {
-  INFO<<"Start Hadronizing using Pythia Lund string model ...";
+  INFO<<"Start Hadronizing using Lund string model...";
+  event.reset();
   for(unsigned int ipart=0; ipart <  pIn.size(); ++ipart)
-  {
+  {  
     int ide=pIn[ipart]->pid();
-    cout << " ide= " << ide << endl;
     double px=pIn[ipart]->px();
     double py=pIn[ipart]->py();
     double pz=pIn[ipart]->pz();
     double ee=pIn[ipart]->e();
-    double mm=particleData.m0(int(ide));
+    double mm=pdt.m0(int(ide));
     ee=std::sqrt(px*px+py*py+pz*pz+mm*mm);
-    int col=0;
-    int acol=0;
+    //Need to provide color singlet object
+    //Dummy setup that provides an antiquark for every quark
+    int col, acol;
+    if (ide>0) col=102, acol=0;
+    else col=0; acol=102;
+    if (ide==22) col=0, acol=0;
+    if (ide==21) ide=22, col=0, acol=0; 
     event.append(int(ide),23,int(col),int(acol),px,py,pz,ee,mm);
+    event.append(-int(ide),23,int(acol),int(col),-px,-py,-pz,ee,mm); 
   }
-
-  next();
-  DEBUG<<"Number of Pythia hadrons = "<<event.size();
- 
+  pythia.next();
+  for (unsigned int ipart=0; ipart < event.size(); ++ipart)
   {
-    //if(ipart%2==0)
+    if (event[ipart].isFinal())
     {
-      //INFO<<"Fill Hadron";
-      //hOut.push_back(std::dynamic_pointer_cast<Hadron> (pIn.at(ipart)));
+      int ide=pythia.event[ipart].id();
+      FourVector p(pythia.event[ipart].px(),pythia.event[ipart].py(),pythia.event[ipart].pz(),pythia.event[ipart].e());
+      FourVector x;
+      hOut.push_back(std::make_shared<Hadron> (Hadron (0,ide,0,p,x)));
+      INFO << "Produced Hadron has id = " << pythia.event[ipart].id();
     }
-    //else
-    {
-      //INFO<<"Fill Parton";
-      //pOut.push_back(pIn.at(ipart));
-    }
-  }
+  } 
   INFO<<"There are " << hOut.size() << " Hadrons and " << pOut.size() << " partons after Hadronization";
 
 }

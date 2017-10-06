@@ -60,9 +60,9 @@ endif()
 
 add_subdirectory(test)
 
-#if (${PYTHIA8_FOUND})
-#target_link_libraries(JetScape ${PYTHIA8_LIBRARIES})
-#endif()
+if (${PYTHIA8_FOUND})
+    target_link_libraries(JetScape ${PYTHIA8_LIBRARIES})
+endif()
 
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/data_table)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data_table/

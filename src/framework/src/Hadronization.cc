@@ -2,7 +2,6 @@
 #include "Hadronization.h"
 #include "JetScapeLogger.h"
 #include <string>
-#include "JetScapeXML.h"
 #include "JetScapeSignalManager.h"
 #include "JetScapeWriterAscii.h"
 

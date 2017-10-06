@@ -59,6 +59,12 @@
 	 HardQCD:all = on	 
        </LinesToRead>
      </PythiaGun>     
+
+     <PGun>
+       <name>PGun</name>
+       <pT>100</pT>
+     </PGun>
+
    </Hard>
    
    

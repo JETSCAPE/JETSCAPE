@@ -20,22 +20,3 @@ class HadronizationModuleTest : public HadronizationModule<HadronizationModuleTe
 
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
