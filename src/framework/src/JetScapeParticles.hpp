@@ -81,6 +81,14 @@ namespace Jetscape {
     //   inline void reset_momentum(double px, double py, double pz, double E);
     //   inline void reset_momentum(const PseudoJet & pj);
 
+    inline void reset_momentum( const double px, const double py, const double pz, const double e ){
+      fjcore::PseudoJet::reset_momentum ( px, py, pz, e );
+    }
+
+    inline void reset_momentum( const FourVector& p ){
+      fjcore::PseudoJet::reset_momentum ( p.x(), p.y(), p.z(), p.t() );
+    }
+    
     // Disallow the valarray return.
     // Can replace/and or provide a double[4] version with the right assumptions
     // std::valarray<double> four_mom() const;
@@ -179,7 +187,7 @@ namespace Jetscape {
   public:
 
     JetScapeParticleBase() : PseudoJet() {};
-    JetScapeParticleBase (int label, int id, int stat, double p[4], double x[4]);
+    JetScapeParticleBase (int label, int id, int stat, const FourVector& p, const FourVector& x);
     JetScapeParticleBase (int label, int id, int stat, double pt, double eta, double phi, double e, double* x=0);
     JetScapeParticleBase (const JetScapeParticleBase& srp);
 	  
@@ -192,7 +200,6 @@ namespace Jetscape {
     void set_id(int id);  
     void set_stat(int stat);
 
-    void set_p(double p[4]);
     void set_x(double x[4]); 
     
     void init_jet_v();
@@ -211,8 +218,6 @@ namespace Jetscape {
     FourVector &x_in();
     FourVector &jet_v();
 
-    FourVector get_p() const;
-  
     const double restmass();
     const double p(int i);
     double pl();
@@ -256,7 +261,7 @@ namespace Jetscape {
     virtual double form_time();
     virtual const double mean_form_time();
 
-    Parton (int label, int id, int stat, double p[4], double x[4]);
+    Parton (int label, int id, int stat, const FourVector& p, const FourVector& x);
     Parton (int label, int id, int stat, double pt, double eta, double phi, double e, double* x=0);
     Parton (const Parton& srp);
     
@@ -277,7 +282,9 @@ namespace Jetscape {
 
   // Dummy Hadron class to test Hadronization module
   // Will be replaced with the actual Hadron class
-  class Hadron : public Jetscape::Parton {};
+  // class Hadron : public Jetscape::Parton {};
+	
+  typedef Jetscape::Parton Hadron;
 
 };  /// end of namespace Jetscape
 

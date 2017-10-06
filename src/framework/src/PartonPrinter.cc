@@ -26,18 +26,19 @@ void PartonPrinter::Init()
 
 void PartonPrinter::Exec()
 {
-  INFO<<"$$$$$Run PartonPrinter: print shower from event # "<<GetCurrentEvent()<<" ...";
+  INFO<<"Run PartonPrinter: print shower from event # "<<GetCurrentEvent()<<" ...";
 }
 
 void PartonPrinter::GetFinalPartons(shared_ptr<PartonShower> pShower, vector<shared_ptr<Parton>>& fPartons)
 {
   if(pShower)
   {
+    if(fPartons.size()>0) fPartons.clear();
     for(unsigned int ipart=0; ipart <  pShower.get()->GetFinalPartons().size(); ++ipart)
     {
       fPartons.push_back( pShower.get()->GetFinalPartons().at(ipart));
       this->pFinals.push_back( pShower.get()->GetFinalPartons().at(ipart));
-      cout << "############### FINAL PARTON IN THE VECTOR NUMBER : " << ipart << " is " << this->pFinals.at(ipart) << "###################\n";
+      //cout << "############### FINAL PARTON IN THE VECTOR NUMBER : " << ipart << " is " << this->pFinals.at(ipart) << "###################\n";
     }
 
   }
@@ -47,10 +48,11 @@ void PartonPrinter::GetFinalPartons2(shared_ptr<PartonShower> pShower)
 {
   if(pShower)
   {
+    if(this->pFinals.size()>0) this->pFinals.clear();
     for(unsigned int ipart=0; ipart <  pShower.get()->GetFinalPartons().size(); ++ipart)
     {
       this->pFinals.push_back( pShower.get()->GetFinalPartons().at(ipart));
-      cout << "############### FINAL PARTON IN THE VECTOR NUMBER : " << ipart << " is " << this->pFinals.at(ipart) << "###################\n";
+      //cout << "############### FINAL PARTON IN THE VECTOR NUMBER : " << ipart << " is " << this->pFinals.at(ipart) << "###################\n";
     }
 
   }
