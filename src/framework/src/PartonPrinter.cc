@@ -33,7 +33,6 @@ void PartonPrinter::GetFinalPartons(shared_ptr<PartonShower> pShower, vector<sha
 {
   if(pShower)
   {
-    if(fPartons.size()>0) fPartons.clear();
     for(unsigned int ipart=0; ipart <  pShower.get()->GetFinalPartons().size(); ++ipart)
     {
       fPartons.push_back( pShower.get()->GetFinalPartons().at(ipart));
@@ -48,7 +47,6 @@ void PartonPrinter::GetFinalPartons2(shared_ptr<PartonShower> pShower)
 {
   if(pShower)
   {
-    if(this->pFinals.size()>0) this->pFinals.clear();
     for(unsigned int ipart=0; ipart <  pShower.get()->GetFinalPartons().size(); ++ipart)
     {
       this->pFinals.push_back( pShower.get()->GetFinalPartons().at(ipart));
