@@ -20,7 +20,9 @@
 using namespace std;
 
 namespace Jetscape {
-  /** Default Constructor for JetScapeTask is defined. It sets the  flag "active_exec" to true. String variable "id" is not defined yet. It prints VERBOSE(9).               */
+
+  /** Default constructor to create a JetScapeTask. It sets the flag "active_exec" to true and  "id" to default string value.          
+   */
 JetScapeTask::JetScapeTask()
 {
   active_exec=true;
@@ -29,23 +31,23 @@ JetScapeTask::JetScapeTask()
   VERBOSE(9);
 }
 
-  /** Default Destructor for JetScapeTask is defined. It prints VERBOSE(9).
-  */
+  /** Default destructor for a JetScapeTask.     
+   */
 JetScapeTask::~JetScapeTask()
 {
   VERBOSE(9);
   DEBUG << "Deleting task with id=" << GetId() << " and TaskNumber= " << get_my_task_number();
 }
 
-
-  /** This function prints a DEBUG statement. It can be override by different modules' initialization function.
+  /**  A virtual function to define a default initialization function for a JetScapeTask. It can  be overridden by different modules/tasks.
    */
 void JetScapeTask::Init()
 {
   DEBUG;
 }
 
-  /** Recursive initialization of all JetScapeTask-type tasks like PGun, Matter, Martini etc. It can be override by other modules to initialize their subtasks in JetScape framework. It also prints the number of subtasks in the current task.                  */
+  /** Recursive initialization of all the subtasks of the JetScapeTask. Subtasks are also of type JetScapeTask such as Pythia Gun, Trento, Energy Loss Matter and Martini etc.
+   */ 
 void JetScapeTask::InitTasks()
 {
   VERBOSE(7) << " : # Subtasks = "<<tasks.size();
@@ -55,15 +57,15 @@ void JetScapeTask::InitTasks()
     it->Init();
 }
 
-  /** It only prints VERBOSE(7). It can be override by different modules' Execution function.                                                                  
-  */
+  /** A virtual function to define a default Exec() function for a JetScapeTask. It can be overridden by different modules/tasks.
+   */
 void JetScapeTask::Exec()
 {
   VERBOSE(7);
 }
 
-  /** Recursive Execution of all JetScapeTask-type tasks like PGun, Matter, Martini etc. It can be override by other modules to execute their subtasks in JetScape framework. It also prints the number of subtasks in the current task.
- */
+  /** Recursive Execution of all the subtasks of the JetScapeTask.
+   */
 void JetScapeTask::ExecuteTasks()
 {
   VERBOSE(7) << " : # Subtasks = "<<tasks.size();
@@ -72,8 +74,8 @@ void JetScapeTask::ExecuteTasks()
       it->Exec();
 }
 
-  /** Recursively erase  the memory and pointers allocated for the JetScapeTask-type subtasks like PGun, Matter, Martini etc. It can be override by other modules to erase their memory and the pointers allocated to the subtasks in JetScape framework. It also prints the number of subtasks in the current task.               
-  */
+  /** Recursively calls Clear() function of the subtasks of a JetScapeTask.
+   */
 void JetScapeTask::ClearTasks()
 {
   VERBOSE(7) << " : # Subtasks = "<<tasks.size();
@@ -81,7 +83,8 @@ void JetScapeTask::ClearTasks()
     it->Clear();
 }
 
-
+  /** Recursively write the output information of different tasks/subtasks of a JetScapeTask into a file. We use "active_exec" flag  to decide whether to write the output in the file or not.
+   */
 void JetScapeTask::WriteTasks(weak_ptr<JetScapeWriter> w)
 {
   //VERBOSE(10);
@@ -93,8 +96,8 @@ void JetScapeTask::WriteTasks(weak_ptr<JetScapeWriter> w)
     }
 }
 
-  /** This function prints the final state partons for each of the tasks. To print the final state partons, it calls GetFinalPartons().
-  */
+  /** This function prints the partons shower.
+   */
 void JetScapeTask::GetPartons(weak_ptr<PartonPrinter> p)
 {
   //cout<<"############### Printing partons in shower " << "\n";
@@ -104,8 +107,8 @@ void JetScapeTask::GetPartons(weak_ptr<PartonPrinter> p)
   }
 }
 
-  /** This function adds different modules into the vector array of JetScapeTasks. These modules should  inherit the JetScapeTask class, and override Init(), Exec(), Clear(), and WriteTask() functions.  
-  */
+  /** This function adds the module "m_tasks" into the vector of subtask of a JetScapeTask. 
+   */
 void JetScapeTask::Add(shared_ptr<JetScapeTask> m_tasks)
 {
   tasks.push_back(m_tasks);

@@ -42,93 +42,104 @@ class JetScapeTask
   virtual void Init();
   virtual void Exec();
 
-  /** It does nothing. This function can be override by the different modules Finish() function.               
-  */
+  /** A virtual function to define a default Finish() function for a JetScapeTask. It can  be overridden by different modules/tasks.
+   */
   virtual void Finish() {};
 
-  /** It does nothing. This function can be override by the different modules Clear() function.                                  
-  */
+  /** A virtual function to define a default Clear() function for a JetScapeTask. It can be overridden by different modules/tasks.
+   */
   virtual void Clear() {};
 
   // Extensions for "recursive" handling ...
   virtual void ExecuteTasks();
 
-  /** It does nothing. This function can be override by the different modules ExecuteTask() function.                            
-  */
+  /** A virtual function to define a default ExecuteTask() function for a JetScapeTask. It can be overridden by different modules/tasks. 
+   */
   virtual void ExecuteTask() {};
-  /** It does nothing. This function can be override by the different modules InitTask() function.
-  */
+  /** A virtual function to define a default InitTask() function for a JetScapeTask. It can be overridden by different modules/tasks.                                 
+   */
   virtual void InitTask() {};
   virtual void InitTasks();
 
   // really decide and think what is the best way (workflow ...)
   virtual void ClearTasks();
-  /** It does nothing. This function can be override by the different modules ClearTask() function.
-  */
+  /** A virtual function to define a default ClearTask() function for a JetScapeTask. It can be overridden by different modules/tasks.
+   */
   virtual void ClearTask() {};
-  /** It does nothing. This function can be override by the different modules FinishTask() function.                             
-  */
+  /** A virtual function to define a default FinishTask() function for a JetScapeTask. It can be overridden by different modules/tasks.                           
+   */
   virtual void FinishTask() {};
-  /** It does nothing. This function can be override by the different modules FinishTasks() function.                             
-  */
+  /** A virtual function to define a default FinishTasks() function for a JetScapeTask. It can be overridden by different modules/tasks.
+   */
   virtual void FinishTasks() {};
   
   //add here a write task (depending on if JetScapeWriter is initiallized and active) ...
   // Think about workflow ...
   virtual void WriteTasks(weak_ptr<JetScapeWriter> w);
+
+  /** A virtual function to define a default WriteTask() function for a JetScapeTask. It can be overridden by different modules/tasks.
+   */
   virtual void WriteTask(weak_ptr<JetScapeWriter> w) {};
 
   // Printer method that prints the partons of the shower
   // Is it only for EnergyLoss?
   virtual void GetPartons(weak_ptr<PartonPrinter> p);
-  /** This function does nothing. This function can be override by the different modules GetFinalPartons() function.
-   */
+
   virtual void GetFinalPartons(weak_ptr<PartonPrinter> p){};
 
   virtual void Add(shared_ptr<JetScapeTask> m_tasks);
-  
+  /** This function returns the current task number. 
+   */
   virtual const inline int get_my_task_number() const {return my_task_number_;} ;
-  /** This function returns the vector array of tasks.
+
+  /** This function returns the vector of tasks of a JetScapeTask.
    */
   const vector<shared_ptr<JetScapeTask>> GetTaskList() const {return tasks;}
-  /** This function returns the task at index i from vector array of tasks.
-   */
+
+  /** This function returns the task at  ith location in the vector of tasks of a JetScapeTask.*/
   shared_ptr<JetScapeTask> GetTaskAt(int i) {return tasks.at(i);}
-  /** This function deletes the last task in the vector array of the tasks. 
-   */
+
+  /** This function deletes the last task in the vector  of tasks of a JetScapeTask. */
   void EraseTaskLast() {tasks.erase(tasks.begin()+(tasks.size()-1));}
   //funny syntax (why last() not working here!?)
 
-  /** This function deletes the task at index i in the vector array of the tasks. 
-   */  
+  /** This function deletes the task at ith location in the vector of tasks of a JetScapeTask.
+   */
   void EraseTaskAt(int i) {tasks.erase((tasks.begin()+i));}
 
-  /** This function resizes the length of the vector array of tasks to i. If i is less than the current size, it will keep the first i elements of the vector array of the tasks.
-  */
+
+  /** This function resizes the length of the vector of tasks to "i". If "i" is less than the current size, it will keep the first i elements of the vector of the tasks of a JetScapeTask. 
+   */
   void ResizeTaskList(int i) {tasks.resize(i);}
-  /** This function removes all the tasks in the vector array of tasks and changes the size to 0. 
-  */
+
+  /** This function removes all the tasks in the vector of tasks of a JetScapeTask and changes the size to 0.
+   */
   void ClearTaskList() {tasks.clear();}
-  /** This function returns the number of tasks stored in the vector array of tasks.  */
+
+  /** This function returns the number of tasks of a JetScapeTask stored in the vector array of tasks.
+   */
   int GetNumberOfTasks() {return (int) tasks.size();}
 
-  /** This function returns the status of the "active_exec" flag. 
-  */  
+  /** This function tells whether the task is active or not.
+   */
   const bool GetActive() const {return active_exec;}
 
-  /** This functions sets the flag "active_exec" to true or false value. This flag controls both the execution of the tasks and writing tasks results into a file.
-  */
+  /** This functions sets the flag "active_exec" to true (active) or false(deactive).
+   */
   void SetActive(bool m_active_exec) {active_exec=m_active_exec;}
   // needed to access tasks not recursively by default but individually ...
   // also usefull to prevent hydro if multiple read ins of the same event ...
  
-  /** This function sets the ID. Not yet defined in the framework.
-  */
+  /** This function sets the string "id" of the task of a JetScapeTask.
+   */
   void SetId(string m_id) {id=m_id;}
-  /** This function returns the ID. Not yet defined.             
+
+  /** This function returns the id of the task of a JetScapeTask.
    */
   const string GetId() const {return id;}
 
+  /** This function returns the vector of final state partons to be used as input for the recommbination/hadronization module.
+   */
   vector<shared_ptr<Parton>>&  GetRecomPartons(){return fPartons;}
 
  private:
