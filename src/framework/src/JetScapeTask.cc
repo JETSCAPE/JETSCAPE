@@ -21,6 +21,8 @@ using namespace std;
 
 namespace Jetscape {
 
+  /** Default constructor to create a JetScapeTask. It sets the flag "active_exec" to true and  "id" to default string value.          
+   */
 JetScapeTask::JetScapeTask()
 {
   active_exec=true;
@@ -29,17 +31,23 @@ JetScapeTask::JetScapeTask()
   VERBOSE(9);
 }
 
+  /** Default destructor for a JetScapeTask.     
+   */
 JetScapeTask::~JetScapeTask()
 {
   VERBOSE(9);
   DEBUG << "Deleting task with id=" << GetId() << " and TaskNumber= " << get_my_task_number();
 }
 
+  /**  A virtual function to define a default initialization function for a JetScapeTask. It can  be overridden by different modules/tasks.
+   */
 void JetScapeTask::Init()
 {
   DEBUG;
 }
 
+  /** Recursive initialization of all the subtasks of the JetScapeTask. Subtasks are also of type JetScapeTask such as Pythia Gun, Trento, Energy Loss Matter and Martini etc.
+   */ 
 void JetScapeTask::InitTasks()
 {
   VERBOSE(7) << " : # Subtasks = "<<tasks.size();
@@ -49,11 +57,15 @@ void JetScapeTask::InitTasks()
     it->Init();
 }
 
+  /** A virtual function to define a default Exec() function for a JetScapeTask. It can be overridden by different modules/tasks.
+   */
 void JetScapeTask::Exec()
 {
   VERBOSE(7);
 }
 
+  /** Recursive Execution of all the subtasks of the JetScapeTask.
+   */
 void JetScapeTask::ExecuteTasks()
 {
   VERBOSE(7) << " : # Subtasks = "<<tasks.size();
@@ -62,6 +74,8 @@ void JetScapeTask::ExecuteTasks()
       it->Exec();
 }
 
+  /** Recursively calls Clear() function of the subtasks of a JetScapeTask.
+   */
 void JetScapeTask::ClearTasks()
 {
   VERBOSE(7) << " : # Subtasks = "<<tasks.size();
@@ -69,6 +83,8 @@ void JetScapeTask::ClearTasks()
     it->Clear();
 }
 
+  /** Recursively write the output information of different tasks/subtasks of a JetScapeTask into a file. We use "active_exec" flag  to decide whether to write the output in the file or not.
+   */
 void JetScapeTask::WriteTasks(weak_ptr<JetScapeWriter> w)
 {
   //VERBOSE(10);
@@ -80,6 +96,8 @@ void JetScapeTask::WriteTasks(weak_ptr<JetScapeWriter> w)
     }
 }
 
+  /** This function prints the partons shower.
+   */
 void JetScapeTask::GetPartons(weak_ptr<PartonPrinter> p)
 {
   //cout<<"############### Printing partons in shower " << "\n";
@@ -89,6 +107,8 @@ void JetScapeTask::GetPartons(weak_ptr<PartonPrinter> p)
   }
 }
 
+  /** This function adds the module "m_tasks" into the vector of subtask of a JetScapeTask. 
+   */
 void JetScapeTask::Add(shared_ptr<JetScapeTask> m_tasks)
 {
   tasks.push_back(m_tasks);
