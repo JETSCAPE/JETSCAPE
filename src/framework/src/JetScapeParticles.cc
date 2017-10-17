@@ -11,9 +11,9 @@
 #include <fstream>
 #include <cmath>
 #include <assert.h>
+#include "JetScapeLogger.h"
 #include "JetScapeParticles.hpp"
 #include "constants.h"
-#include "JetScapeLogger.h"
 
 namespace Jetscape {
 
@@ -38,7 +38,7 @@ namespace Jetscape {
     set_label(label);
     set_id(id);
     init_jet_v();
-  
+    
     set_restmass(-1.0);
     switch (id) {
     case 1:  //down quark
@@ -219,6 +219,7 @@ namespace Jetscape {
     return(plabel_);
   }
 
+  
   // const double JetScapeParticleBase::e()
   // {
   //   return(p_in_.t());
@@ -353,12 +354,18 @@ namespace Jetscape {
     JetScapeParticleBase::JetScapeParticleBase (srp)
   {
     form_time_ = srp.form_time_;
+    set_edgeid ( srp.edgeid() );
+    pShower_ = srp.shower();
+    // set_edgeid( -1 ); // by default do NOT copy the shower or my position in it
+    // pShower_ = nullptr;
   }
 
   Parton::Parton (int label, int id, int stat, const FourVector& p, const FourVector& x)  :
     JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  p, x)
   {
     initialize_form_time();
+    set_edgeid( -1 );
+    pShower_ = nullptr;
     //   cout << "========================== std Ctor called, returning : " << endl << *this << endl;
   }
   
@@ -366,6 +373,8 @@ namespace Jetscape {
   Parton::Parton (int label, int id, int stat, double pt, double eta, double phi, double e, double* x)  :
     JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  pt, eta, phi, e, x){
     initialize_form_time();
+    set_edgeid( -1 );
+    pShower_ = nullptr;
     // cout << "========================== phieta Ctor called, returning : " << endl << *this << endl;
   }
   
@@ -373,6 +382,10 @@ namespace Jetscape {
   {
     JetScapeParticleBase::operator=(c);
     form_time_ = c.form_time_;
+    set_edgeid ( c.edgeid() );
+    pShower_ = c.shower();
+    // set_edgeid( -1 ); // by default do NOT copy the shower or my position in it
+    // pShower_ = nullptr;
     return *this;
   }
   
@@ -380,6 +393,10 @@ namespace Jetscape {
   {
     JetScapeParticleBase::operator=(c);
     form_time_ = c.form_time_;
+    set_edgeid ( c.edgeid() );
+    pShower_ = c.shower();
+    // set_edgeid( -1 ); // by default do NOT copy the shower or my position in it
+    // pShower_ = nullptr;
     return *this;
   }
 
@@ -436,5 +453,32 @@ namespace Jetscape {
     reset_momentum( newPl*jet_v_.comp(1), newPl*jet_v_.comp(2), newPl*jet_v_.comp(3), e() );
   } 
 
+  const int Parton::edgeid() const
+  {
+    return(edgeid_);
+  }
+
+  void Parton::set_edgeid( const int id )
+  {
+    edgeid_ = id;
+  }
+
+  void Parton::set_shower(const shared_ptr<PartonShower> pShower) {
+    pShower_ = pShower;
+  }
+  
+  const shared_ptr<PartonShower> Parton::shower() const{
+    return pShower_;
+  }
+
+  std::vector<Parton> Parton::parents(){
+    std::vector<Parton> ret;
+    if ( !pShower_ ) return ret;
+    node root = pShower_->GetEdgeAt(edgeid_).source();
+    for ( node::in_edges_iterator parent = root.in_edges_begin(); parent != root.in_edges_end(); ++parent ){
+      ret.push_back ( *pShower_->GetParton(*parent) );
+    }
+    return ret;
+  }
 
 } /// end of namespace Jetscape
