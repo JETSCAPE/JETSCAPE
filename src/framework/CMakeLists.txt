@@ -59,19 +59,6 @@ if (${ROOT_FOUND})
     #set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -m64")    
 endif()
 
-if (music)
-    message("Includes for music ...")
-    find_package(MPI)
-    if(${MPI_FOUND})
-        include_directories(${MPI_INCLUDE_PATH})
-    endif(${MPI_FOUND})
-    message("Looking for GSL ...")
-    find_package(GSL)
-    if(${GSL_FOUND})
-        include_directories(${GSL_INCLUDE_DIR})
-    endif(${GSL_FOUND})
-    include_directories(./3rdparty/music ./3rdparty/music/src)
-endif (music)
 
 #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "./bin/")
 
@@ -115,6 +102,20 @@ option(test "Build all tests." ON) # Makes boolean 'test' available.
 
 # Options. Turn on with 'cmake -Dmusic=ON'.
 option(music "Build tests for MUSIC" OFF) # Makes boolean 'test' available.
+
+if (music)
+    message("Includes for music ...")
+    find_package(MPI)
+    if(${MPI_FOUND})
+        include_directories(${MPI_INCLUDE_PATH})
+    endif(${MPI_FOUND})
+    message("Looking for GSL ...")
+    find_package(GSL)
+    if(${GSL_FOUND})
+        include_directories(${GSL_INCLUDE_DIR})
+    endif(${GSL_FOUND})
+    include_directories(./3rdparty/music ./3rdparty/music/src)
+endif (music)
 
 # w/o not compiling library automatically
 add_subdirectory(./gtl)
