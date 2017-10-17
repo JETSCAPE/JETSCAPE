@@ -54,10 +54,11 @@ void MPI_MUSIC::initialize_hydro(Parameter parameter_list) {
 
 void MPI_MUSIC::evolve_hydro() {
     VERBOSE(8);
-    INFO << "Initialize MUSIC ...";
+    INFO << "Initialize density profiles in MUSIC ...";
     std::vector<double> entropy_density = ini->entropy_density_distribution_;
     double dx = ini->get_x_step();
     music_hydro_ptr->initialize_hydro_from_vector(entropy_density, dx);
+    INFO << "initial density profile dx = " << dx << " fm";
     hydro_status = INITIALIZED;
     if (hydro_status == INITIALIZED) {
         INFO << "running MUSIC ...";
