@@ -14,6 +14,12 @@
 #include "JetScapeParticles.hpp"
 #include "constants.h"
 #include "JetScapeLogger.h"
+#include "Pythia8/Pythia.h"
+
+using namespace Pythia8;
+
+Pythia pythia;
+ParticleData& pdt = pythia.particleData;
 
 namespace Jetscape {
 
@@ -38,7 +44,8 @@ namespace Jetscape {
     set_label(label);
     set_id(id);
     init_jet_v();
-  
+
+    /*  
     set_restmass(-1.0);
     switch (id) {
     case 1:  //down quark
@@ -75,7 +82,10 @@ namespace Jetscape {
       assert(mass_>=0.0);
       break;
     }
-    
+    */
+   
+    set_restmass(pdt.m0(id));
+ 
     // double p[4];
     // p[0] = e;
     // p[1] = pt*cos(phi);
@@ -109,6 +119,7 @@ namespace Jetscape {
     set_id(id);    
     init_jet_v();
     
+    /*
     set_restmass(-1.0);
     switch (id) {
     case 1:  //down quark
@@ -148,6 +159,9 @@ namespace Jetscape {
 	break;
       }
     }
+    */
+
+    set_restmass(pdt.m0(id));
 
     reset_momentum(p);
     x_in_=x;

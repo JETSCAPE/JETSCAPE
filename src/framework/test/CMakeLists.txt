@@ -21,7 +21,7 @@ if (music)
 endif (music)
 
 if(${PYTHIA8_FOUND})
-	set (SOURCES ${SOURCES} PythiaGun.cpp)
+	set (SOURCES ${SOURCES} PythiaHad.cc PythiaGun.cpp)
 endif()
 
 add_library(JetScapeTest SHARED ${SOURCES})
