@@ -13,14 +13,15 @@ set (SOURCES
      ElossModulesTestMatter.cc
      ElossModulesTestMartini.cc
      AdSCFT.cc
-     PGun.cc)
+     PGun.cc
+     HadronizationModuleTest.cc)
 
 if (music)
     set (SOURCES ${SOURCES} music_jetscape.cc)
 endif (music)
 
 if(${PYTHIA8_FOUND})
-	set (SOURCES ${SOURCES} PythiaGun.cpp)
+	set (SOURCES ${SOURCES} PythiaHad.cc PythiaGun.cpp)
 endif()
 
 add_library(JetScapeTest SHARED ${SOURCES})

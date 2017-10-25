@@ -96,6 +96,7 @@ void JetScapeTask::WriteTasks(weak_ptr<JetScapeWriter> w)
     }
 }
 
+
   /** This function prints the partons shower.
    */
 void JetScapeTask::GetPartons(weak_ptr<PartonPrinter> p)
@@ -109,6 +110,7 @@ void JetScapeTask::GetPartons(weak_ptr<PartonPrinter> p)
 
   /** This function adds the module "m_tasks" into the vector of subtask of a JetScapeTask. 
    */
+
 void JetScapeTask::Add(shared_ptr<JetScapeTask> m_tasks)
 {
   tasks.push_back(m_tasks);

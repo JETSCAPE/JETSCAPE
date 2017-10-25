@@ -59,6 +59,12 @@
 	 HardQCD:all = on	 
        </LinesToRead>
      </PythiaGun>     
+
+     <PGun>
+       <name>PGun</name>
+       <pT>100</pT>
+     </PGun>
+
    </Hard>
    
    
@@ -89,6 +95,15 @@
      </AdSCFT>
 
    </Eloss>
+
+   <!-- Hadro  Module ... -->
+   <Hadro>
+   
+     <PythiaHad>
+       <name> PythiaHad </name>
+     </PythiaHad>
+
+   </Hadro>
 
    <!-- Hydro  Module ... -->
    <Hydro>
