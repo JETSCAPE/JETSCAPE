@@ -13,8 +13,6 @@
 #include "InitialState.h"
 #include "JetEnergyLoss.h"
 #include "JetEnergyLossManager.h"
-#include "HadronizationManager.h"
-#include "Hadronization.h"
 #include "FluidDynamics.h"
 #include "HardProcess.h"
 #include "JetScapeWriter.h"
@@ -49,12 +47,6 @@ class JetScapeSignalManager //: public sigslot::has_slots<sigslot::multi_threade
   
   void SetWriterPointer(shared_ptr<JetScapeWriter> m_writer) {writer=m_writer;}
   weak_ptr<JetScapeWriter> GetWriterPointer() {return writer;}
-
-  void SetHadronizationManagerPointer(shared_ptr<HadronizationManager> m_hadro) {hadro=m_hadro;}
-  weak_ptr<HadronizationManager> GetHadronizationManagerPointer() {return hadro;}
-
-  void SetPartonPrinterPointer(shared_ptr<PartonPrinter> m_pprinter) {pprinter=m_pprinter;}
-  weak_ptr<PartonPrinter> GetPartonPrinterPointer() {return pprinter;}
   
   void ConnectJetSignal(shared_ptr<JetEnergyLoss> j);
   void ConnectEdensitySignal(shared_ptr<JetEnergyLoss> j);
@@ -64,9 +56,7 @@ class JetScapeSignalManager //: public sigslot::has_slots<sigslot::multi_threade
   void ConnectGetHardPartonListSignal(shared_ptr<JetEnergyLossManager> jm);
   void ConnectSentInPartonsSignal(shared_ptr<JetEnergyLoss> j,shared_ptr<JetEnergyLoss> j2);
   void ConnectGetOutPartons(shared_ptr<JetEnergyLoss> j,shared_ptr<JetEnergyLoss> j2) {};
-  void ConnectGetFinalPartonListSignal(shared_ptr<HadronizationManager> hm);
-  void ConnectTransformPartonsSignal(shared_ptr<Hadronization> h,shared_ptr<Hadronization> h2); 
- 
+  
   void DisconnectSignal() {}; // to be implememted if needed maybe for Eloss ...!???
 
   void CleanUp();
@@ -83,7 +73,6 @@ class JetScapeSignalManager //: public sigslot::has_slots<sigslot::multi_threade
   void PrintGetTemperatureSignalMap() {};
   void PrintGetHydroCellSignalMap();
   void PrintSentInPartonsSignalMap();
-  void PrintTransformPartonsSignalMap();
   
  private:
 
@@ -96,8 +85,6 @@ class JetScapeSignalManager //: public sigslot::has_slots<sigslot::multi_threade
   weak_ptr<JetEnergyLossManager> jloss;
   weak_ptr<HardProcess> hardp;
   weak_ptr<JetScapeWriter> writer;
-  weak_ptr<HadronizationManager> hadro;
-  weak_ptr<PartonPrinter> pprinter;
   
   int num_jet_signals=0;
   int num_edensity_signals=0;
@@ -106,7 +93,6 @@ class JetScapeSignalManager //: public sigslot::has_slots<sigslot::multi_threade
   int num_GetHydroCellSignals=0;
   int num_SentInPartons=0;
   int num_GetOutPartons=0;
-  int num_TransformPartons=0;
   
   map<int,weak_ptr<JetEnergyLoss>> jet_signal_map;
   map<int,weak_ptr<JetEnergyLoss>> edensity_signal_map;
@@ -116,7 +102,6 @@ class JetScapeSignalManager //: public sigslot::has_slots<sigslot::multi_threade
 
   map<int,weak_ptr<JetEnergyLoss>> SentInPartons_map;
   map<int,weak_ptr<JetEnergyLoss>> GetOutPartons_map;
-  map<int,weak_ptr<Hadronization>> TransformPartons_map;
   
 };
 
