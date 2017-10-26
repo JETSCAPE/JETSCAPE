@@ -35,15 +35,6 @@ void JetScapeSignalManager::ConnectGetHardPartonListSignal(shared_ptr<JetEnergyL
     }
 }
 
-void JetScapeSignalManager::ConnectGetFinalPartonListSignal(shared_ptr<HadronizationManager> hm)
-{
-  if (!hm->GetGetFinalPartonListConnected() && GetPartonPrinterPointer().lock().get())
-    {
-      hm->GetFinalPartonList.connect(GetPartonPrinterPointer().lock().get(),&PartonPrinter::PrintFinalPartons);
-      hm->SetGetFinalPartonListConnected(true);
-    }
-}
-
 void JetScapeSignalManager::ConnectJetSignal(shared_ptr<JetEnergyLoss> j) 
 {  
   if (!j->GetJetSignalConnected())
@@ -102,18 +93,6 @@ void JetScapeSignalManager::ConnectSentInPartonsSignal(shared_ptr<JetEnergyLoss>
       num_SentInPartons++;
     }
 }
-
-void JetScapeSignalManager::ConnectTransformPartonsSignal(shared_ptr<Hadronization> h,shared_ptr<Hadronization> h2)
-{
-  if (!h2->GetTransformPartonsConnected())
-    {
-      h->TransformPartons.connect(h2.get(), &Hadronization::DoHadronization);
-      h2->SetTransformPartonsConnected(true);
-      TransformPartons_map.emplace(num_TransformPartons,(weak_ptr<Hadronization>) h2);
-
-      num_TransformPartons++;
-    }
-}
 			   
 void JetScapeSignalManager::CleanUp()
 {
@@ -138,23 +117,18 @@ void JetScapeSignalManager::CleanUp()
 	  num_GetHydroCellSignals--;
 
 	  SentInPartons_map.erase(i);
-	  num_SentInPartons--;  
-
-          TransformPartons_map.erase(i);
-	  num_TransformPartons--;
+	  num_SentInPartons--;
 	}
     }
   else
     {
       jet_signal_map.clear();edensity_signal_map.clear();GetHydroCellSignal_map.clear(),SentInPartons_map.clear();
-      TransformPartons_map.clear();
       // think better here how to handle the clean of when the instance goes out of scope ...!???
     }
 
   PrintGetHydroCellSignalMap();
   PrintSentInPartonsSignalMap();
-  PrintTransformPartonsSignalMap();  
-
+  
   VERBOSE(8)<<"Done ...";
 }
 
@@ -182,12 +156,6 @@ void JetScapeSignalManager::PrintSentInPartonsSignalMap()
    for (auto& x: SentInPartons_map)
      //if (x.second.lock().get())
        VERBOSE(8) << "[" << x.first << ':' << x.second.lock().get() << ']'<<" "<<x.second.lock()->GetId();
-}
-
-void JetScapeSignalManager::PrintTransformPartonsSignalMap()
-{
-   for (auto& x: TransformPartons_map)
-     VERBOSE(8) << "[" << x.first << ':' << x.second.lock().get() << ']'<<" "<<x.second.lock()->GetId();
 }
 
 /*
