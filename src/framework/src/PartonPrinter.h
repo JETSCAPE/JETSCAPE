@@ -23,9 +23,15 @@ virtual void Clear();
 
 void GetFinalPartons(shared_ptr<PartonShower> pShower, vector<shared_ptr<Parton>>& fPartons);
 
+void GetFinalPartons2(shared_ptr<PartonShower> pShower);
+
 void GetPartonsAtTime(shared_ptr<PartonShower> pShower, vector<shared_ptr<Parton>>& fPartons, double time);
 
-void PrintFinalPartons(shared_ptr<PartonShower> pShower);
+void PrintFinalPartons(vector<shared_ptr<Parton>>& fPartons) {fPartons = pFinals;};
+
+private:
+
+vector<shared_ptr<Parton>> pFinals;
 
 };
 

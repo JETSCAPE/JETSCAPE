@@ -210,9 +210,4 @@ void JetEnergyLossManager::CreateSignalSlots()
   JetScapeSignalManager::Instance()->PrintSentInPartonsSignalMap();
 }
 
-void JetEnergyLossManager::GetFinalPartons(weak_ptr<PartonPrinter> p)
-{
-  JetScapeTask::GetPartons(p);
-}
-
 } // end namespace Jetscape

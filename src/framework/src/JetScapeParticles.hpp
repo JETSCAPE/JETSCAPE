@@ -280,6 +280,8 @@ namespace Jetscape {
     
   };
 
+  //Dummy Hadron type definition  
+  typedef Jetscape::Parton Hadron;
 
 };  /// end of namespace Jetscape
 

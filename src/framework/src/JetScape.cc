@@ -112,6 +112,9 @@ void JetScape::SetPointers()
       
       if (dynamic_pointer_cast<JetScapeWriter>(it) && it->GetActive())
 	JetScapeSignalManager::Instance()->SetWriterPointer(dynamic_pointer_cast<JetScapeWriter>(it)); 
+
+      if (dynamic_pointer_cast<PartonPrinter>(it))
+        JetScapeSignalManager::Instance()->SetPartonPrinterPointer(dynamic_pointer_cast<PartonPrinter>(it));
     }
 }
 
@@ -127,7 +130,7 @@ void JetScape::Exec()
 
   // Simple way of passing the writer module pointer ...
   weak_ptr<JetScapeWriter> w;
-  weak_ptr<PartonPrinter> p;  
+  //weak_ptr<PartonPrinter> p;  
 
   for (auto it : GetTaskList())
   {
@@ -136,10 +139,10 @@ void JetScape::Exec()
       if (it->GetActive())
         w=dynamic_pointer_cast<JetScapeWriter>(it);	           
     }
-    else if(dynamic_pointer_cast<PartonPrinter>(it))
-    {
-        p=dynamic_pointer_cast<PartonPrinter>(it);
-    }
+    //else if(dynamic_pointer_cast<PartonPrinter>(it))
+    //{
+        //p=dynamic_pointer_cast<PartonPrinter>(it);
+    //}
   } 
  
   for (int i=0;i<GetNumberOfEvents();i++)
@@ -149,7 +152,7 @@ void JetScape::Exec()
       
       JetScapeTask::ExecuteTasks();
 
-      JetScapeTask::GetPartons(p);
+      //JetScapeTask::GetPartons(p);
 
       if (w.lock().get())
 	JetScapeTask::WriteTasks(w);            

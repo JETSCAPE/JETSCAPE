@@ -31,6 +31,9 @@
 #include "Gubser_hydro_jetscape.h"
 #include "PGun.h"
 #include "PartonPrinter.h"
+#include "HadronizationManager.h"
+#include "Hadronization.h"
+#include "HadronizationModuleTest.h"
 
 // Add initial state module for test
 #include "TrentoInitial.h"
@@ -72,8 +75,8 @@ int main(int argc, char** argv)
   auto hydro = make_shared<Brick> ();
   //auto hydro = make_shared<GubserHydro> ();
   
-  //auto matter = make_shared<Matter> ();
-  auto martini = make_shared<Martini> ();
+  auto matter = make_shared<Matter> ();
+  //auto martini = make_shared<Martini> ();
   //auto adscft = make_shared<AdSCFT> ();
   //DBEUG: Remark:
   //does not matter unfortunately since not called recursively, done by JetEnergyLoss class ...
@@ -85,6 +88,10 @@ int main(int argc, char** argv)
   auto pGun= make_shared<PGun> ();
 
   auto printer = make_shared<PartonPrinter> ();
+
+  auto hadroMgr = make_shared<HadronizationManager> ();
+  auto hadro = make_shared<Hadronization> ();
+  auto hadroModule = make_shared<HadronizationModuleTest> ();
 
   // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
@@ -107,8 +114,8 @@ int main(int argc, char** argv)
   // and Martini dummy ...
   // Switching Q2 (or whatever variable used
   // hardcoded at 5 to be changed to xml)
-  //jloss->Add(matter);
-  jloss->Add(martini);
+  jloss->Add(matter);
+  //jloss->Add(martini);
   //jloss->Add(adscft);  
 
   jlossmanager->Add(jloss);
@@ -116,6 +123,10 @@ int main(int argc, char** argv)
   jetscape->Add(jlossmanager);
 
   jetscape->Add(printer);
+
+  hadro->Add(hadroModule);
+  hadroMgr->Add(hadro);
+  jetscape->Add(hadroMgr);
 
   jetscape->Add(writer);
 
