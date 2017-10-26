@@ -93,8 +93,6 @@ class JetEnergyLoss : public JetScapeModuleBase, public std::enable_shared_from_
   double GetMaxT() {return maxT;}
   shared_ptr<PartonShower> GetShower() {return pShower;}
 
-  virtual void GetFinalPartons(weak_ptr<PartonPrinter> p);
-
  private:
 
   double deltaT;

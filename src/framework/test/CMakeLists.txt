@@ -13,7 +13,8 @@ set (SOURCES
      ElossModulesTestMatter.cc
      ElossModulesTestMartini.cc
      AdSCFT.cc
-     PGun.cc)
+     PGun.cc
+     HadronizationModuleTest.cc)
 
 if (music)
     set (SOURCES ${SOURCES} music_jetscape.cc)
