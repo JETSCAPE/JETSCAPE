@@ -47,18 +47,12 @@
 
    <Hard>
 
-     <!-- Pythia Gun test, currently with fixed IS pos = 0 -->
-     <!-- Sensible defaults are set in the class. ptHat etc. get their own field -->
-     <!-- Will try to provide a functionality to read in any command lines as well -->
-     <PythiaGun>
-       <name>PythiaGun</name>
-       <pTHatMin>90</pTHatMin>
-       <pTHatMax>110</pTHatMax>
-       <eCM>2960</eCM>
-       <LinesToRead>
-	 HardQCD:all = on	 
-       </LinesToRead>
-     </PythiaGun>     
+     <!-- Parton Gun test with fixed pT and fixed IS pos = 0 ... -->
+     <PGun>
+       <name>PGun</name>
+       <pT>100</pT>
+     </PGun>
+     
    </Hard>
    
    
@@ -66,8 +60,7 @@
    <Eloss>
 
      <deltaT>0.1</deltaT>
-     <formTime> -0.1</formTime>
-     <maxT>3</maxT>
+     <maxT>5</maxT>
 
      <!-- Individual Eloss Modules run Eloss and Eloss Manager ... -->
      <!-- Just a test here (no physics implemented in Matter and Martini ... -->
@@ -82,12 +75,12 @@
        <alpha_s> 0.3 </alpha_s>
        <pcut> 2.0 </pcut>
      </Martini>
-     
+
      <AdSCFT>
        <name> AdSCFT </name>
        <kappa> 0.36 </kappa>
      </AdSCFT>
-
+     
    </Eloss>
 
    <!-- Hydro  Module ... -->
@@ -98,8 +91,8 @@
        <eta> 0.2 </eta>
      </Hydro1>
 
-     <!-- Test Brick ... -->
-     <Brick>
+     <!-- Test Brick if bjorken_expansion_on="true", T(t) = T * (start_time[fm]/t)^{1/3} -->
+     <Brick bjorken_expansion_on="false" start_time="0.6">
        <name>Brick</name>
        <T>0.3</T>
      </Brick>
@@ -134,7 +127,7 @@
      <!-- MUSIC ... -->
      <MUSIC>
          <name>MUSIC</name>
-         <MUSIC_input_file>test/test_music_files/music_input_mode_2</MUSIC_input_file>
+         <MUSIC_input_file>music_input_mode_2</MUSIC_input_file>
      </MUSIC>
      
    </Hydro>
