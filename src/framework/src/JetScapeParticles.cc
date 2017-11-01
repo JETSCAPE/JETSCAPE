@@ -353,6 +353,9 @@ namespace Jetscape {
     JetScapeParticleBase::JetScapeParticleBase (srp)
   {
     form_time_ = srp.form_time_;
+      Color_ = srp.Color_;
+      antiColor_ = srp.antiColor_;
+      
   }
 
   Parton::Parton (int label, int id, int stat, const FourVector& p, const FourVector& x)  :
@@ -373,6 +376,8 @@ namespace Jetscape {
   {
     JetScapeParticleBase::operator=(c);
     form_time_ = c.form_time_;
+      Color_ = c.Color_;
+      antiColor_ = c.antiColor_;
     return *this;
   }
   
@@ -380,6 +385,8 @@ namespace Jetscape {
   {
     JetScapeParticleBase::operator=(c);
     form_time_ = c.form_time_;
+      Color_ = c.Color_;
+      antiColor_ = c.antiColor_;
     return *this;
   }
 
@@ -436,5 +443,23 @@ namespace Jetscape {
     reset_momentum( newPl*jet_v_.comp(1), newPl*jet_v_.comp(2), newPl*jet_v_.comp(3), e() );
   } 
 
-
+    void Parton::set_color(unsigned int col)
+    {
+        Color_ = col;
+    }
+    
+    void Parton::set_anti_color(unsigned int acol)
+    {
+        antiColor_ = acol;
+    }
+    
+    unsigned int Parton::color()
+    {
+        return (Color_);
+    }
+    
+    unsigned int Parton::anti_color()
+    {
+        return (antiColor_);
+    }
 } /// end of namespace Jetscape

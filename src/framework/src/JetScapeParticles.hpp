@@ -260,7 +260,11 @@ namespace Jetscape {
 
     virtual double form_time();
     virtual const double mean_form_time();
-
+      virtual void set_color(unsigned int col); ///< sets the color of the parton
+      virtual void set_anti_color(unsigned int acol); ///< sets anti-color of the parton
+      
+      
+      
     Parton (int label, int id, int stat, const FourVector& p, const FourVector& x);
     Parton (int label, int id, int stat, double pt, double eta, double phi, double e, double* x=0);
     Parton (const Parton& srp);
@@ -270,10 +274,14 @@ namespace Jetscape {
     
     const double t();
     void set_t(double t); ///< virtuality of particle, \WARNING: rescales the spatial component
+      unsigned int color(); ///< returns the color of the parton
+      unsigned int anti_color(); ///< returns the anti-color of the parton
 
   protected :
     double mean_form_time_  ; ///< Mean formation time
     double form_time_       ; ///< event by event formation time
+      unsigned int Color_      ; ///< Large Nc color of parton
+      unsigned int antiColor_  ;///< Large Nc anti-color of parton
 
     // helpers
     void initialize_form_time();
