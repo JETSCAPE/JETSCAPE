@@ -355,6 +355,9 @@ namespace Jetscape {
     form_time_ = srp.form_time_;
       Color_ = srp.Color_;
       antiColor_ = srp.antiColor_;
+      MaxColor_ = srp.MaxColor_;
+      MinColor_ = srp.MinColor_;
+      MinAntiColor_ = srp.MinAntiColor_;
       
   }
 
@@ -362,6 +365,11 @@ namespace Jetscape {
     JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  p, x)
   {
     initialize_form_time();
+      set_color(0);
+      set_anti_color(0);
+      set_min_color(0);
+      set_min_anti_color(0);
+      set_max_color(0);
     //   cout << "========================== std Ctor called, returning : " << endl << *this << endl;
   }
   
@@ -369,6 +377,11 @@ namespace Jetscape {
   Parton::Parton (int label, int id, int stat, double pt, double eta, double phi, double e, double* x)  :
     JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  pt, eta, phi, e, x){
     initialize_form_time();
+        set_color(0);
+        set_anti_color(0);
+        set_min_color(0);
+        set_min_anti_color(0);
+        set_max_color(0);
     // cout << "========================== phieta Ctor called, returning : " << endl << *this << endl;
   }
   
@@ -453,6 +466,21 @@ namespace Jetscape {
         antiColor_ = acol;
     }
     
+    void Parton::set_max_color(unsigned int col)
+    {
+        MaxColor_ = col;
+    }
+    
+    void Parton::set_min_color(unsigned int col)
+    {
+        MinColor_ = col;
+    }
+    
+    void Parton::set_min_anti_color(unsigned int acol)
+    {
+        MinAntiColor_ = acol;
+    }
+
     unsigned int Parton::color()
     {
         return (Color_);
@@ -462,4 +490,22 @@ namespace Jetscape {
     {
         return (antiColor_);
     }
+    
+    unsigned int Parton::min_color()
+    {
+        return (MinColor_);
+    }
+    
+    unsigned int Parton::min_anti_color()
+    {
+        return (MinAntiColor_);
+    }
+
+    unsigned int Parton::max_color()
+    {
+        return (MaxColor_);
+    }
+    
+
+    
 } /// end of namespace Jetscape

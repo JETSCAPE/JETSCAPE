@@ -155,6 +155,7 @@ void JetEnergyLoss::DoShower()
 {
   double tStart=0;
   double currentTime=0;
+ 
 
   VERBOSESHOWER(8)<<"Hard Parton from Initial Hard Process ...";
   VERBOSEPARTON(6,*GetShowerInitiatingParton());

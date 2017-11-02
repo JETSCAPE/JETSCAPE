@@ -87,6 +87,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   double z=0.5;
   double blurb,zeta,tQ2 ;
   int iSplit,pid_a,pid_b;
+    unsigned int max_color, min_color, min_anti_color;
   double velocity[4],xStart[4];
   //    cout << " pIn size = " << pIn.size() << endl;
 
@@ -157,7 +158,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           double ft = generate_L (pIn[i].mean_form_time() ) ;
           pIn[i].set_form_time(ft);
           
-          short int color=0, anti_color=0;
+          unsigned int color=0, anti_color=0;
           std::uniform_int_distribution<short> uni(101,103);
           
           if ( pIn[i].pid()>0 )
@@ -172,6 +173,17 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           }
           pIn[i].set_anti_color(anti_color);
           
+          max_color = color;
+          
+          if (anti_color > color) max_color = anti_color ;
+          
+          min_color = color;
+          
+          min_anti_color = anti_color;
+          
+          pIn[i].set_max_color(max_color);
+          pIn[i].set_min_color(min_color);
+          pIn[i].set_min_anti_color(min_anti_color);
           
             
           //DEBUG:
@@ -273,23 +285,26 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               
               
               //set color of daughters here
-              short unsigned int d1_col, d1_acol, d2_col, d2_acol, color, anti_color;
+              unsigned int d1_col, d1_acol, d2_col, d2_acol, color, anti_color;
               //std::uniform_int_distribution<short> uni(101,103);
-              color = pIn[i].color();
-              if (pIn[i].anti_color()>color) color = pIn[i].anti_color();
-              cout << " old color = " << color << endl;
-              color++;
-              anti_color = color;
+              //color = pIn[i].color();
+              max_color = pIn[i].max_color();
+              //if (pIn[i].anti_color()>maxcolor) color = pIn[i].anti_color();
+              cout << " old max color = " << max_color << endl;
+              max_color++;
+              color = max_color;
+              anti_color = max_color;
+              pIn[i].set_max_color(max_color);
               cout << " new color = " << color << endl;
               
-              if (iSplit==1)/// gluon splits into two gluons
+              if (iSplit==1)///< gluon splits into two gluons
               {
                   d1_col = pIn[i].color();
                   d2_col = color;
                   d1_acol = anti_color;
                   d2_acol = pIn[i].anti_color();
               }
-              else if (iSplit==0) /// (anti-)quark splits into (anti-)quark + gluon
+              else if (iSplit==0) ///< (anti-)quark splits into (anti-)quark + gluon
               {
                   if (pIn[i].pid()>0)
                   {
@@ -300,7 +315,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   }
                   else
                   {
-                      d1_col = 0;
+                      d1_col = 0; /// < gluon splits into quark anti-quark
                       d1_acol = anti_color;
                       d2_col = color;
                       d2_acol = pIn[i].anti_color();
@@ -407,6 +422,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               pOut[iout].set_form_time(ft);
               pOut[iout].set_color(d1_col);
               pOut[iout].set_anti_color(d1_acol);
+              pOut[iout].set_max_color(max_color);
+              pOut[iout].set_min_color(pIn[i].min_color());
+              pOut[iout].set_min_anti_color(pIn[i].min_anti_color());
               
               
               
@@ -451,6 +469,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               pOut[iout].set_form_time(ft);
               pOut[iout].set_color(d2_col);
               pOut[iout].set_anti_color(d2_acol);
+              pOut[iout].set_max_color(max_color);
+              pOut[iout].set_min_color(pIn[i].min_color());
+              pOut[iout].set_min_anti_color(pIn[i].min_anti_color());
 
               
 
