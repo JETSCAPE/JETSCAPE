@@ -2,6 +2,7 @@
 #define HADRONIZATIONMODULESTEST_H
 
 #include "HadronizationModule.h"
+#include "Pythia8/Pythia.h"
 
 using namespace Jetscape;
 

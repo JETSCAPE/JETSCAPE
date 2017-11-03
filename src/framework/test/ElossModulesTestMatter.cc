@@ -159,7 +159,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           pIn[i].set_form_time(ft);
           
           unsigned int color=0, anti_color=0;
-          std::uniform_int_distribution<short> uni(101,103);
+          std::uniform_int_distribution<short> uni(102,103);
           
           if ( pIn[i].pid()>0 )
           {

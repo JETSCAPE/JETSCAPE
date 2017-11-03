@@ -506,6 +506,43 @@ namespace Jetscape {
         return (MaxColor_);
     }
     
+    // ---------------
+    // Hadron specific
+    // ---------------
+    
+    Hadron::Hadron (const Hadron& srh) :
+    JetScapeParticleBase::JetScapeParticleBase (srh)
+    {
+        width_ = srh.width_ ;
+    }
+    
+    Hadron::Hadron (int label, int id, int stat, const FourVector& p, const FourVector& x)  :
+    JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  p, x)
+    {
+        set_decay_width(0.1);
+    }
+    
+    
+    Hadron::Hadron (int label, int id, int stat, double pt, double eta, double phi, double e, double* x)  :
+    JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  pt, eta, phi, e, x)
+    {
+        set_decay_width(0.1);
+        // cout << "========================== phieta Ctor called, returning : " << endl << *this << endl;
+    }
+
+    Hadron& Hadron::operator=( Hadron &c)
+    {
+        JetScapeParticleBase::operator=(c);
+        width_ = c.width_;
+        return *this;
+    }
+    
+    Hadron& Hadron::operator=( const Hadron &c)
+    {
+        JetScapeParticleBase::operator=(c);
+        width_ = c.width_;
+        return *this;
+    }
 
     
 } /// end of namespace Jetscape

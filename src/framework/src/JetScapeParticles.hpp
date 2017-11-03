@@ -298,8 +298,35 @@ namespace Jetscape {
   };
 
   //Dummy Hadron type definition  
-  typedef Jetscape::Parton Hadron;
+  //typedef Jetscape::Parton Hadron;
 
+    class Hadron : public JetScapeParticleBase
+    {
+        public:
+        
+        Hadron (int label, int id, int stat, const FourVector& p, const FourVector& x);
+        Hadron (int label, int id, int stat, double pt, double eta, double phi, double e, double* x=0);
+        Hadron (const Hadron& srh);
+        
+        Hadron& operator=( Hadron &c);
+        Hadron& operator=( const Hadron &c);
+
+
+        void set_decay_width(double width)
+        {
+            width_ = width;
+        }
+        
+        double decay_width()
+        {
+            return(width_);
+        }
+    protected:
+        double width_;
+        
+    };
+    
+    
 };  /// end of namespace Jetscape
 
 #endif /* JetScapeParticles */
