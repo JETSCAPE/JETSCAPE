@@ -83,7 +83,7 @@ void HadronizationModuleTest::DoHadronization(vector<shared_ptr<Parton>>& pIn, v
     pythia.next();
    // event.list();
 
-    for (unsigned int i=0; i <  event.size(); ++i)
+/*    for (unsigned int i=0; i <  event.size(); ++i)
     {
         if (event[i].status()==91)
         {
@@ -98,7 +98,7 @@ void HadronizationModuleTest::DoHadronization(vector<shared_ptr<Parton>>& pIn, v
         }
         
     }
-
+*/
     
     
   INFO<<"There are " << hOut.size() << " Hadrons and " << pOut.size() << " partons after Hadronization";
