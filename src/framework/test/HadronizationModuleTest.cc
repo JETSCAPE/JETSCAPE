@@ -59,11 +59,11 @@ void HadronizationModuleTest::DoHadronization(vector<shared_ptr<Parton>>& pIn, v
     }
     else if ((color>100)&&(anti_color<100))
     {
-        pid = 1;
+        pid = -1;
     }
     else
     {
-        pid = -1;
+        pid = 1;
     }
     
    event.append(pid, 23, anti_color, color, 0.2, 0.2, 100.0, 100.0004);
