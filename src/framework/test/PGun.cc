@@ -64,7 +64,7 @@ void PGun::Exec()
   
   double parID,ppx,ppy,ppz,pp0,mass; 
 
-  for (int i=0;i<1;i++)
+  for (int i=0;i<2;i++)
      {
        tempRand = rand()/maxN;
        if(tempRand < 0.25) parID = 21;

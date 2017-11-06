@@ -29,7 +29,7 @@ void HadronizationModuleTest::WriteTask(weak_ptr<JetScapeWriter> w)
    w.lock()->WriteComment("Hadronization to be implemented accordingly ...");
 }
 
-void HadronizationModuleTest::DoHadronization(vector<shared_ptr<Parton>>& pIn, vector<shared_ptr<Hadron>>& hOut, vector<shared_ptr<Parton>>& pOut)
+void HadronizationModuleTest::DoHadronization(vector<vector<shared_ptr<Parton>>>& shower, vector<shared_ptr<Hadron>>& hOut, vector<shared_ptr<Parton>>& pOut)
 {
   INFO<<"Start Hadronizing using the PYTHIA module...";
     Pythia pythia;
@@ -41,18 +41,21 @@ void HadronizationModuleTest::DoHadronization(vector<shared_ptr<Parton>>& pIn, v
 //    event.append( 21, 23, 101, 103, 0., 0., 100.0, 100 );
 //    event.append( 21, 23, 103, 101, 0., 0., -100.0, 100);
     
-    
-  for(unsigned int ipart=0; ipart <  pIn.size(); ++ipart)
+  cout << "&&&&&&&&&&&&&&&&&&& the number of showers are: " << shower.size() << endl;
+  for(unsigned int ishower=0; ishower <  shower.size(); ++ishower)  
+{
+  cout << "&&&&&&&&&&&&&&&&&&& there are " << shower.at(ishower).size() << " partons in the shower number " << ishower << endl;
+  for(unsigned int ipart=0; ipart <  shower.at(ishower).size(); ++ipart)
   {
-      double onshellE = pow(pow(pIn.at(ipart)->px(),2) + pow(pIn.at(ipart)->py(),2) + pow(pIn.at(ipart)->pz(),2) ,0.5 ) ;
-      event.append(pIn.at(ipart)->pid(),23,pIn.at(ipart)->color(),pIn.at(ipart)->anti_color(),
-                   pIn.at(ipart)->px(),pIn.at(ipart)->py(),pIn.at(ipart)->pz(),onshellE);
+      double onshellE = pow(pow(shower.at(ishower).at(ipart)->px(),2) + pow(shower.at(ishower).at(ipart)->py(),2) + pow(shower.at(ishower).at(ipart)->pz(),2) ,0.5 ) ;
+      event.append(shower.at(ishower).at(ipart)->pid(),23,shower.at(ishower).at(ipart)->color(),shower.at(ishower).at(ipart)->anti_color(),
+                   shower.at(ishower).at(ipart)->px(),shower.at(ishower).at(ipart)->py(),shower.at(ishower).at(ipart)->pz(),onshellE);
   }
     unsigned int color, anti_color;
     int pid;
     
-    anti_color = pIn.at(0)->min_anti_color();
-    color = pIn.at(0)->min_color();
+    anti_color = shower.at(ishower).at(0)->min_anti_color();
+    color = shower.at(ishower).at(0)->min_color();
     
     if ((color>100)&&(anti_color>100)){
         pid = 21;
@@ -102,5 +105,5 @@ void HadronizationModuleTest::DoHadronization(vector<shared_ptr<Parton>>& pIn, v
     
     
   INFO<<"There are " << hOut.size() << " Hadrons and " << pOut.size() << " partons after Hadronization";
-
+}
 }
