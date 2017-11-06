@@ -38,12 +38,16 @@ void HadronizationModuleTest::DoHadronization(vector<vector<shared_ptr<Parton>>>
     pythia.readString("PartonLevel:FSR=on");
     pythia.init();
     event.reset();
+    double pz = 100.0;
 //    event.append( 21, 23, 101, 103, 0., 0., 100.0, 100 );
 //    event.append( 21, 23, 103, 101, 0., 0., -100.0, 100);
     
   cout << "&&&&&&&&&&&&&&&&&&& the number of showers are: " << shower.size() << endl;
   for(unsigned int ishower=0; ishower <  shower.size(); ++ishower)  
 {
+    
+
+
   cout << "&&&&&&&&&&&&&&&&&&& there are " << shower.at(ishower).size() << " partons in the shower number " << ishower << endl;
   for(unsigned int ipart=0; ipart <  shower.at(ishower).size(); ++ipart)
   {
@@ -69,7 +73,8 @@ void HadronizationModuleTest::DoHadronization(vector<vector<shared_ptr<Parton>>>
         pid = 1;
     }
     
-   event.append(pid, 23, anti_color, color, 0.2, 0.2, 100.0, 100.0004);
+    pz = -1*pz;
+   event.append(pid, 23, anti_color, color, 0.2, 0.2, pz, 100.0004);
     
     
       
@@ -83,7 +88,7 @@ void HadronizationModuleTest::DoHadronization(vector<vector<shared_ptr<Parton>>>
     }
   }
  */
-    pythia.next();
+
    // event.list();
 
 /*    for (unsigned int i=0; i <  event.size(); ++i)
@@ -106,4 +111,6 @@ void HadronizationModuleTest::DoHadronization(vector<vector<shared_ptr<Parton>>>
     
   INFO<<"There are " << hOut.size() << " Hadrons and " << pOut.size() << " partons after Hadronization";
 }
+        pythia.next();
+    
 }
