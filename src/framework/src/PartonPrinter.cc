@@ -56,13 +56,14 @@ void PartonPrinter::GetFinalPartons2(shared_ptr<PartonShower> pShower)
       //cout << "############### FINAL PARTON IN THE VECTOR NUMBER : " << ipart << " is " << this->pFinals.at(ipart) << "###################\n";
     }
 */
+    //this->pFinals.clear();
     this->pFinals.push_back( pShower.get()->GetFinalPartons());
   }
 }
 
 void PartonPrinter::Clear()
 {
- // Clear();
+    this->pFinals.clear();
 }
 
 void PartonPrinter::GetPartonsAtTime(shared_ptr<PartonShower> pShower,  vector<shared_ptr<Parton>>& fPartons, double time)
