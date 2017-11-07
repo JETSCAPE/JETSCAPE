@@ -18,7 +18,7 @@ using namespace std;
 #define MAGENTA "\033[35m"
 
 namespace Jetscape {
-  /** This is a default constructor to create a fluid dynamics module for the JetScape framework.
+  /** This is a default constructor to create a fluid dynamics module for the JetScape framework. It initializes eta to -99.99.
   */
 
 FluidDynamics::FluidDynamics()
