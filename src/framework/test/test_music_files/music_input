@@ -136,7 +136,7 @@ use_eps_for_freeze_out 1        # flag to use energy density as criteria to
                                 # find freeze-out surface 
                                 # 0: use temperature, 1: use energy density
 T_freeze 0.135                  # freeze-out temperature (GeV)
-number_of_particles_to_include 21  # number of thermal particles to compute 
+number_of_particles_to_include 320  # number of thermal particles to compute 
                                     # for particle spectra and vn
                                     # current maximum = 320
 particle_spectrum_to_compute 0      # 0: Do all up to 

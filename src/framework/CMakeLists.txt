@@ -105,15 +105,6 @@ option(music "Build tests for MUSIC" OFF) # Makes boolean 'test' available.
 
 if (music)
     message("Includes for music ...")
-    find_package(MPI)
-    if(${MPI_FOUND})
-        include_directories(${MPI_INCLUDE_PATH})
-    endif(${MPI_FOUND})
-    message("Looking for GSL ...")
-    find_package(GSL)
-    if(${GSL_FOUND})
-        include_directories(${GSL_INCLUDE_DIR})
-    endif(${GSL_FOUND})
     include_directories(./3rdparty/music ./3rdparty/music/src)
 endif (music)
 
