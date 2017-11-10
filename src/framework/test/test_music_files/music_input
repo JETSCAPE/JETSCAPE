@@ -3,7 +3,7 @@
 ###################################
 #
 echo_level  1   # control the mount of message output to screen
-mode 2   # MUSIC running mode
+mode 3   # MUSIC running mode
          # 1: Does everything. Evolution. Computation of thermal spectra. 
          #    Resonance decays. Observables.  
          #    Only compatible with freeze_out_method=3 and pseudofreeze=1
@@ -136,6 +136,30 @@ use_eps_for_freeze_out 1        # flag to use energy density as criteria to
                                 # find freeze-out surface 
                                 # 0: use temperature, 1: use energy density
 T_freeze 0.135                  # freeze-out temperature (GeV)
+number_of_particles_to_include 21  # number of thermal particles to compute 
+                                    # for particle spectra and vn
+                                    # current maximum = 320
+particle_spectrum_to_compute 0      # 0: Do all up to 
+                                    #    number_of_particles_to_include
+                                    # any natural number: 
+                                    # Do the particle with this (internal) ID
+pseudo_steps  51                    # number of rapdity slices to compute 
+                                    # particle spectra
+pseudofreeze 1                      # 0: calculated particle spectra in
+                                    #    equally-spaced rapidity
+                                    # 1: calculated particle spectra in
+                                    #    equally-spaced pseudorapidity
+max_pseudorapidity  5.0             # the range of pseudo-rapidity
+                                    # (-maximal_rapidity, maximal_rapidity)
+pt_steps  15                        # number of points in pT 
+min_pt  0.01                        # the minimum pT value for particle spectra
+max_pt  3.0                         # the maximum pT value for particle spectra
+phi_steps  40                       # number of points in phi (0, 2pi)
+Include_deltaf 1                    # flag to include shear delta f correction 
+                                    # in Cooper-Frye formula
+Inlucde_deltaf_bulk  0              # flag to include bulk delta f correction
+                                    # in Cooper-Frye formula
+
 #
 #
 EndOfData

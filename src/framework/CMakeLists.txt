@@ -201,7 +201,7 @@ if (music)
         file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/EOS)
         file(COPY ./3rdparty/music/EOS/
                 DESTINATION ${CMAKE_BINARY_DIR}/EOS)
-        file(COPY ./test/test_music_files/music_input_mode_2
+        file(COPY ./test/test_music_files/music_input
                 DESTINATION ${CMAKE_BINARY_DIR})
     endif()
 endif (music)

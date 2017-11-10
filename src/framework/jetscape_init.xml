@@ -127,7 +127,8 @@
      <!-- MUSIC ... -->
      <MUSIC>
          <name>MUSIC</name>
-         <MUSIC_input_file>music_input_mode_2</MUSIC_input_file>
+         <MUSIC_input_file>music_input</MUSIC_input_file>
+         <Perform_CooperFrye_Feezeout>1</Perform_CooperFrye_Feezeout>
      </MUSIC>
      
    </Hydro>
