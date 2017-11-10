@@ -37,7 +37,7 @@ void MPI_MUSIC::initialize_hydro(Parameter parameter_list) {
                                                                 &doCooperFrye);
     int argc = 2;
     char **argv = new char* [argc];
-    argv[0] = new char[8];
+    argv[0] = new char[9];
     strcpy(argv[0], "mpihydro");
     argv[1] = new char[input_file.length() + 1];
     strcpy(argv[1], input_file.c_str());
