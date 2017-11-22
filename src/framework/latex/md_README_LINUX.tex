@@ -1,0 +1,132 @@
+In order to install and compile the J\+E\+T\+S\+C\+A\+PE framework on a Linux machine, one need to follow the following steps\+:
+
+
+\begin{DoxyEnumerate}
+\item Clone the repository from Github\+:
+\begin{DoxyItemize}
+\item git clone \href{https://github.com/amajumder/JETSCAPE-COMP.git}{\tt https\+://github.\+com/amajumder/\+J\+E\+T\+S\+C\+A\+P\+E-\/\+C\+O\+M\+P.\+git}
+\item Enter your Github credentials
+\end{DoxyItemize}
+\item Install and configure Hep\+MC (Version 3.\+0.\+0 or higher)
+\begin{DoxyItemize}
+\item Create a folder for installing Hep\+MC
+\item Go to the created folder
+\item wget \href{http://hepmc.web.cern.ch/hepmc/releases/hepmc3.0.0.tgz}{\tt http\+://hepmc.\+web.\+cern.\+ch/hepmc/releases/hepmc3.\+0.\+0.\+tgz}
+\item tar -\/xvzf hepmc3.\+0.\+0.\+tgz
+\item Go to the extracted folder
+\begin{DoxyItemize}
+\item cd hepmc3.\+0.\+0/cmake
+\end{DoxyItemize}
+\item Run cmake command
+\begin{DoxyItemize}
+\item cmake ..
+\end{DoxyItemize}
+\item Run make command (the user has to be sudoer)
+\begin{DoxyItemize}
+\item make all install
+\end{DoxyItemize}
+\item The default path to install Hep\+MC is /usr/local/lib/
+\end{DoxyItemize}
+\item Change Cmake configuration for Hep\+MC (If Cmake could not find Hep\+MC)
+\begin{DoxyItemize}
+\item Set \char`\"{}\+H\+E\+P\+M\+C\+\_\+\+D\+I\+R\char`\"{} as the root directory of Hep\+MC
+\item Go to ../framework/\+Modules
+\item Open Find\+H\+E\+P\+M\+C.\+cmake
+\begin{DoxyItemize}
+\item vim Find\+H\+E\+P\+M\+C.\+cmake
+\end{DoxyItemize}
+\item Make sure that cmake looks for the correct \char`\"{}include\char`\"{} and \char`\"{}lib\char`\"{} directories of Hep\+MC
+\begin{DoxyItemize}
+\item By default is \char`\"{}\$\{\+H\+E\+P\+M\+C\+\_\+\+D\+I\+R\}/include/\char`\"{}
+\item By default is \char`\"{}\$\{\+H\+E\+P\+M\+C\+\_\+\+D\+I\+R\}/lib\char`\"{}
+\item Replace \char`\"{}\$\{\+H\+E\+P\+M\+C\+\_\+\+D\+I\+R\}\char`\"{} with \char`\"{}\+E\+N\+V\{\+H\+E\+P\+M\+C\+\_\+\+D\+I\+R\}\char`\"{} if you are not root
+\end{DoxyItemize}
+\item The library file that cmake must find is \char`\"{}lib\+Hep\+M\+C.\+so\char`\"{}
+\end{DoxyItemize}
+\item Install Pythia8
+\begin{DoxyItemize}
+\item Create a folder for installing Pythia8
+\item Got to the created folder
+\item wget \href{http://home.thep.lu.se/~torbjorn/pythia8/pythia8226.tgz}{\tt http\+://home.\+thep.\+lu.\+se/$\sim$torbjorn/pythia8/pythia8226.\+tgz}
+\item tar -\/xvzf pythia8226.\+tgz
+\item Go to the extracted folder
+\begin{DoxyItemize}
+\item cd pythia8226
+\end{DoxyItemize}
+\item Run make command
+\begin{DoxyItemize}
+\item make
+\end{DoxyItemize}
+\end{DoxyItemize}
+\item Configure the address of Pythia8 in the ../framework/setup.sh (If cmake could not find Pythia)
+\begin{DoxyItemize}
+\item vim setup.\+sh
+\item Change \char`\"{}\+P\+Y\+T\+H\+I\+A\+I\+N\+S\+T\+A\+L\+L\+D\+I\+R\char`\"{} to the installing folder of Pythia8
+\item Update the \char`\"{}\+P\+Y\+T\+H\+I\+A8\+D\+I\+R\char`\"{} and \char`\"{}\+P\+Y\+T\+H\+I\+A8\+\_\+\+R\+O\+O\+T\+\_\+\+D\+I\+R\char`\"{} address
+\begin{DoxyItemize}
+\item should be \char`\"{}\$\{\+P\+Y\+T\+H\+I\+A\+I\+N\+S\+T\+A\+L\+L\+D\+I\+R\}/pythia8226\char`\"{} by default
+\end{DoxyItemize}
+\item ./setup.sh
+\item Make sure the variable are set into the session
+\item Use source if they are not set
+\end{DoxyItemize}
+\item Install Boost libraries (Version 1.\+5 or higher)
+\begin{DoxyItemize}
+\item wget \href{https://dl.bintray.com/boostorg/release/1.64.0/source/boost_1_64_0.tar.gz}{\tt https\+://dl.\+bintray.\+com/boostorg/release/1.\+64.\+0/source/boost\+\_\+1\+\_\+64\+\_\+0.\+tar.\+gz}
+\item tar -\/xvzf boost\+\_\+1\+\_\+64\+\_\+0.\+tar.\+gz
+\item Go to the directory tools/build/.
+\item Run bootstrap.\+sh
+\begin{DoxyItemize}
+\item ./bootstrap.sh
+\end{DoxyItemize}
+\item Run b2 --prefix=P\+R\+E\+F\+IX where P\+R\+E\+F\+IX is the directory where you want Boost. Build to be installed
+\begin{DoxyItemize}
+\item ./b2 install --prefix=P\+R\+E\+F\+IX
+\end{DoxyItemize}
+\item Set \char`\"{}\+B\+O\+O\+S\+T\+\_\+\+R\+O\+O\+T\char`\"{} variable to the root directory of boost
+\item export B\+O\+O\+S\+T\+\_\+\+R\+O\+OT=$<$root\+\_\+directory$>$
+\end{DoxyItemize}
+\item Install H\+D\+F5 C++ library
+\begin{DoxyItemize}
+\item wget \href{https://support.hdfgroup.org/ftp/HDF5/current18/src/hdf5-1.8.18.tar}{\tt https\+://support.\+hdfgroup.\+org/ftp/\+H\+D\+F5/current18/src/hdf5-\/1.\+8.\+18.\+tar}
+\item tar -\/xvvf hdf5-\/1.\+8.\+18.\+tar
+\item ./configure
+\item make
+\end{DoxyItemize}
+\item Create a build folder in ../src/framework
+\begin{DoxyItemize}
+\item mkdir build
+\item Got to the build folder
+\begin{DoxyItemize}
+\item cd build
+\end{DoxyItemize}
+\item Make sure that in C\+Make\+Lists.\+text there is a condition on U\+N\+IX not L\+I\+N\+UX
+\begin{DoxyItemize}
+\item if(\+U\+N\+I\+X) message( S\+T\+A\+T\+US \char`\"{}\+Linux \+: \char`\"{} \$\{C\+M\+A\+K\+E\+\_\+\+H\+O\+S\+T\+\_\+\+S\+Y\+S\+T\+EM\}) set(C\+M\+A\+K\+E\+\_\+\+C\+X\+X\+\_\+\+F\+L\+A\+GS \char`\"{}\$\{\+C\+M\+A\+K\+E\+\_\+\+C\+X\+X\+\_\+\+F\+L\+A\+G\+S\} -\/std=c++11\char`\"{}) endif()
+\end{DoxyItemize}
+\item Make sure \$\+L\+D\+\_\+\+L\+I\+B\+R\+A\+R\+Y\+\_\+\+P\+A\+TH is set to the address of dynamic library files
+\begin{DoxyItemize}
+\item echo \$\+L\+D\+\_\+\+L\+I\+B\+R\+A\+R\+Y\+\_\+\+P\+A\+TH
+\item If there is nothing to dispay
+\begin{DoxyItemize}
+\item export L\+D\+\_\+\+L\+I\+B\+R\+A\+R\+Y\+\_\+\+P\+A\+TH=$<$dynamic\+\_\+lib\+\_\+dir$>$
+\end{DoxyItemize}
+\item If the address is not included in the variable
+\begin{DoxyItemize}
+\item L\+D\+\_\+\+L\+I\+B\+R\+A\+R\+Y\+\_\+\+P\+A\+TH=\$\+L\+D\+\_\+\+L\+I\+B\+R\+A\+R\+Y\+\_\+\+P\+A\+TH\+:$<$dynamic\+\_\+lib\+\_\+dir$>$
+\end{DoxyItemize}
+\end{DoxyItemize}
+\item Run cmake
+\begin{DoxyItemize}
+\item cmake ..
+\item If cmake cannot find H\+D\+F5 library, set \char`\"{}-\/\+D\+C\+M\+A\+K\+E\+\_\+\+L\+I\+B\+R\+A\+R\+Y\+\_\+\+P\+A\+T\+H\char`\"{} and \char`\"{}-\/\+D\+C\+M\+A\+K\+E\+\_\+\+I\+N\+C\+L\+U\+D\+E\+\_\+\+P\+A\+T\+H\char`\"{} flags when you run cmake
+\begin{DoxyItemize}
+\item cmake -\/\+D\+C\+M\+A\+K\+E\+\_\+\+L\+I\+B\+R\+A\+R\+Y\+\_\+\+P\+A\+TH=$<$\+H\+D\+F5\+\_\+\+Include\+\_\+\+Path$>$ -\/\+D\+C\+M\+A\+K\+E\+\_\+\+I\+N\+C\+L\+U\+D\+E\+\_\+\+P\+A\+TH=$<$\+H\+D\+F5\+\_\+\+Lib\+\_\+\+Path$>$ ..
+\end{DoxyItemize}
+\end{DoxyItemize}
+\item run make
+\begin{DoxyItemize}
+\item make 
+\end{DoxyItemize}
+\end{DoxyItemize}
+\end{DoxyEnumerate}

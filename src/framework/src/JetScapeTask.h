@@ -35,11 +35,20 @@ class JetScapeTask
 {
   
  public:
-
+  /** Default constructor to create a JetScapeTask. It sets the flag "active_exec" to true and  "id" to default string value.
+  */
   JetScapeTask();
+
+  /** Default destructor for a JetScapeTask.                     
+   */
   virtual ~JetScapeTask();
-  
+
+  /**  A virtual function to define a default initialization function for a JetScapeTask. It can  be overridden by different modules tasks.                                
+  */
   virtual void Init();
+
+  /** A virtual function to define a default Exec() function for a JetScapeTask. It can be overridden by different modules/tasks.
+  */
   virtual void Exec();
 
   /** A virtual function to define a default Finish() function for a JetScapeTask. It can  be overridden by different modules/tasks.
@@ -51,37 +60,53 @@ class JetScapeTask
   virtual void Clear() {};
 
   // Extensions for "recursive" handling ...
+  /** Recursive Execution of all the subtasks of the JetScapeTask.
+   */
   virtual void ExecuteTasks();
 
   /** A virtual function to define a default ExecuteTask() function for a JetScapeTask. It can be overridden by different modules/tasks. 
    */
   virtual void ExecuteTask() {};
+
   /** A virtual function to define a default InitTask() function for a JetScapeTask. It can be overridden by different modules/tasks.                                 
    */
   virtual void InitTask() {};
+
+  /** Recursive initialization of all the subtasks of the JetScapeTask. Subtasks are also of type JetScapeTask such as Pythia Gun, Trento, Energy Loss Matter and Martini etc.
+  */
   virtual void InitTasks();
 
   // really decide and think what is the best way (workflow ...)
+  /** Recursively calls Clear() function of the subtasks of a JetScapeTask.
+   */
   virtual void ClearTasks();
+
   /** A virtual function to define a default ClearTask() function for a JetScapeTask. It can be overridden by different modules/tasks.
    */
   virtual void ClearTask() {};
+
   /** A virtual function to define a default FinishTask() function for a JetScapeTask. It can be overridden by different modules/tasks.                           
    */
   virtual void FinishTask() {};
+
   /** A virtual function to define a default FinishTasks() function for a JetScapeTask. It can be overridden by different modules/tasks.
    */
   virtual void FinishTasks() {};
   
   //add here a write task (depending on if JetScapeWriter is initiallized and active) ...
   // Think about workflow ...
+  /** Recursively write the output information of different tasks/subtasks of a JetScapeTask into a file. We use "active_exec" flag to decide whether to write the output in the file or not.
+  */
   virtual void WriteTasks(weak_ptr<JetScapeWriter> w);
 
   /** A virtual function to define a default WriteTask() function for a JetScapeTask. It can be overridden by different modules/tasks.
    */
   virtual void WriteTask(weak_ptr<JetScapeWriter> w) {};
 
+  /** This function adds the module "m_tasks" into the vector of subtask of a JetScapeTask.
+  */
   virtual void Add(shared_ptr<JetScapeTask> m_tasks);
+
   /** This function returns the current task number. 
    */
   virtual const inline int get_my_task_number() const {return my_task_number_;} ;
@@ -132,7 +157,7 @@ class JetScapeTask
    */
   const string GetId() const {return id;}
 
-  /** This function returns the vector of final state partons to be used as input for the recommbination/hadronization module.
+  /** This function returns the vector of final state partons to be used as input for the recombination/hadronization module.
    */
   vector<shared_ptr<Parton>>&  GetRecomPartons(){return fPartons;}
 

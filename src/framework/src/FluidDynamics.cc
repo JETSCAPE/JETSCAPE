@@ -18,8 +18,6 @@ using namespace std;
 #define MAGENTA "\033[35m"
 
 namespace Jetscape {
-  /** This is a default constructor to create a fluid dynamics module for the JetScape framework. It initializes rapidity eta to -99.99.
-  */
 
 FluidDynamics::FluidDynamics()
 {
@@ -74,6 +72,7 @@ void FluidDynamics::Exec()
   
   JetScapeTask::ExecuteTasks();
 }
+
 
 void FluidDynamics::UpdateEnergyDeposit(int t, double edop)
 {
