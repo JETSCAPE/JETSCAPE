@@ -24,15 +24,16 @@ Initial_profile 41              # type of initial condition
                                 # 8: Read in initial profile from a file 
                                 #    (e.g., IP-Glasma)
                                 # 41: Initial condition from the JETSCAPE
-initialize_with_entropy 0       # 0: with energy density 
+initialize_with_entropy 1       # 0: with energy density 
                                 # 1: with entropy density
 
 # read in initial conditions from external file
 Initial_Distribution_input_filename example_inputs/filename    
                                # the filename of initial profile 
                                # (for Initial_profile == 8)
-s_factor 100.0                 # normalization factor read in 
+s_factor 57.00                 # normalization factor read in 
                                # initial data file
+                               # 57.0 for AuAu@200 GeV
 Eta_plateau_size 20.           # size of the plateau in eta_s
 Eta_fall_off 0.7               # the scale of the fall off of the 
                                # plateau in eta_s direction
@@ -60,7 +61,7 @@ bmax 2.0                                  # maximum value of impact parameter
 #######################################
 boost_invariant  1            # whether the simulation is boost-invariant 
 # grid information
-Initial_time_tau_0 0.4        # starting time of the hydrodynamic 
+Initial_time_tau_0 0.6        # starting time of the hydrodynamic 
                               # evolution (fm/c)
 Total_evolution_time_tau 30.  # the maximum allowed running 
                               # evolution time (fm/c)
@@ -85,7 +86,7 @@ Grid_size_in_y 200            # number of the grid points in y direction
 Grid_size_in_x 200            # number of the grid points in x direction
 #
 #
-EOS_to_use 2                  # type of the equation of state
+EOS_to_use 3                  # type of the equation of state
                               # 0: ideal gas
                               # 1: EOS-Q from azhydro
                               # 2: lattice EOS s95p-v1 
@@ -107,10 +108,10 @@ Runge_Kutta_order 2           # order of Runge_Kutta for temporal evolution
 # transport coefficients
 Viscosity_Flag_Yes_1_No_0 1        # turn on viscosity in the evolution
 Include_Shear_Visc_Yes_1_No_0 1    # include shear viscous effect
-Shear_to_S_ratio 0.08              # value of \eta/s
+Shear_to_S_ratio 0.15              # value of \eta/s
 T_dependent_Shear_to_S_ratio  0    # flag to use temperature dep. \eta/s(T)
 Include_Bulk_Visc_Yes_1_No_0 0     # include bulk viscous effect
-Include_second_order_terms 1       # include second order non-linear coupling terms
+Include_second_order_terms 0       # include second order non-linear coupling terms
 #
 #
 # switches to output evolution information
@@ -132,10 +133,10 @@ freeze_out_method 2             # method for hyper-surface finder
                                 # 2: Schenke's more complex method
 average_surface_over_this_many_time_steps 5   # the step skipped in the tau
 epsilon_freeze 0.18             # the freeze out energy density (GeV/fm^3)
-use_eps_for_freeze_out 1        # flag to use energy density as criteria to 
+use_eps_for_freeze_out 0        # flag to use energy density as criteria to 
                                 # find freeze-out surface 
                                 # 0: use temperature, 1: use energy density
-T_freeze 0.135                  # freeze-out temperature (GeV)
+T_freeze 0.137                  # freeze-out temperature (GeV)
 number_of_particles_to_include 320  # number of thermal particles to compute 
                                     # for particle spectra and vn
                                     # current maximum = 320
