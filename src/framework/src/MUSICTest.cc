@@ -78,7 +78,7 @@ int main(int argc, char** argv)
   //jloss->SetActive(false);
 
   auto pGun= make_shared<PGun> ();
-
+    auto printer = make_shared<PartonPrinter> ();
   // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
   //auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");  
@@ -107,7 +107,7 @@ int main(int argc, char** argv)
   jlossmanager->Add(jloss);
   
   jetscape->Add(jlossmanager);
-  
+  jetscape->Add(printer);
   jetscape->Add(writer);
 
   // Intialize all modules tasks

@@ -104,10 +104,10 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   double Time = time*fmToGeVinv;
   double deltaTime = delT*fmToGeVinv;
     
-  //cout << " the time in fm is " << time << " The time in GeV-1 is " << Time << endl ;
+ // cout << " the time in fm is " << time << " The time in GeV-1 is " << Time << endl ;
   // cout << "pid = " << pIn[0].pid() << " E = " << pIn[0].e() << " px = " << pIn[0].p(1) << " py = " << pIn[0].p(2) << "  pz = " << pIn[0].p(3) << " virtuality = " << pIn[0].p_in()*pIn[0].p_in() << " form_time in fm = " << pIn[0].form_time()/fmToGeVinv << endl;
     
-    //INFO << " For MATTER, the qhat in GeV^-3 = " << qhat ;
+  //  INFO << " For MATTER, the qhat in GeV^-3 = " << qhat ;
     
   for (int i=0;i<pIn.size();i++)
   {
