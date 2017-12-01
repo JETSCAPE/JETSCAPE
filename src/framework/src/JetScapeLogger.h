@@ -16,7 +16,6 @@
 #include <memory>
 
 #include "JetClass.hpp"
-//class Parton;
 
 using std::shared_ptr;
 using std::make_shared;
@@ -55,7 +54,10 @@ using std::make_shared;
 
 namespace Jetscape {
 
-
+  // Forward declarations. Macro implementation is rather cumbersome and hiccups over include guards
+  class Vertex;
+  class Parton;
+  
 // -------------------------------------------
 struct safe_ostream {
   struct guarded_impl {
