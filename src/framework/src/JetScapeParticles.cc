@@ -354,6 +354,12 @@ namespace Jetscape {
     JetScapeParticleBase::JetScapeParticleBase (srp)
   {
     form_time_ = srp.form_time_;
+      Color_ = srp.Color_;
+      antiColor_ = srp.antiColor_;
+      MaxColor_ = srp.MaxColor_;
+      MinColor_ = srp.MinColor_;
+      MinAntiColor_ = srp.MinAntiColor_;
+      
     set_edgeid ( srp.edgeid() );
     pShower_ = srp.shower();
     // set_edgeid( -1 ); // by default do NOT copy the shower or my position in it
@@ -364,6 +370,11 @@ namespace Jetscape {
     JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  p, x)
   {
     initialize_form_time();
+      set_color(0);
+      set_anti_color(0);
+      set_min_color(0);
+      set_min_anti_color(0);
+      set_max_color(0);
     set_edgeid( -1 );
     pShower_ = nullptr;
     //   cout << "========================== std Ctor called, returning : " << endl << *this << endl;
@@ -373,6 +384,11 @@ namespace Jetscape {
   Parton::Parton (int label, int id, int stat, double pt, double eta, double phi, double e, double* x)  :
     JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  pt, eta, phi, e, x){
     initialize_form_time();
+        set_color(0);
+        set_anti_color(0);
+        set_min_color(0);
+        set_min_anti_color(0);
+        set_max_color(0);
     set_edgeid( -1 );
     pShower_ = nullptr;
     // cout << "========================== phieta Ctor called, returning : " << endl << *this << endl;
@@ -382,6 +398,8 @@ namespace Jetscape {
   {
     JetScapeParticleBase::operator=(c);
     form_time_ = c.form_time_;
+      Color_ = c.Color_;
+      antiColor_ = c.antiColor_;
     set_edgeid ( c.edgeid() );
     pShower_ = c.shower();
     // set_edgeid( -1 ); // by default do NOT copy the shower or my position in it
@@ -393,6 +411,8 @@ namespace Jetscape {
   {
     JetScapeParticleBase::operator=(c);
     form_time_ = c.form_time_;
+      Color_ = c.Color_;
+      antiColor_ = c.antiColor_;
     set_edgeid ( c.edgeid() );
     pShower_ = c.shower();
     // set_edgeid( -1 ); // by default do NOT copy the shower or my position in it
@@ -453,6 +473,31 @@ namespace Jetscape {
     reset_momentum( newPl*jet_v_.comp(1), newPl*jet_v_.comp(2), newPl*jet_v_.comp(3), e() );
   } 
 
+    void Parton::set_color(unsigned int col)
+    {
+        Color_ = col;
+    }
+    
+    void Parton::set_anti_color(unsigned int acol)
+    {
+        antiColor_ = acol;
+    }
+    
+    void Parton::set_max_color(unsigned int col)
+    {
+        MaxColor_ = col;
+    }
+    
+    void Parton::set_min_color(unsigned int col)
+    {
+        MinColor_ = col;
+    }
+    
+    void Parton::set_min_anti_color(unsigned int acol)
+    {
+        MinAntiColor_ = acol;
+    }
+
   const int Parton::edgeid() const
   {
     return(edgeid_);
@@ -481,4 +526,68 @@ namespace Jetscape {
     return ret;
   }
 
+    unsigned int Parton::color()
+    {
+        return (Color_);
+    }
+    
+    unsigned int Parton::anti_color()
+    {
+        return (antiColor_);
+    }
+    
+    unsigned int Parton::min_color()
+    {
+        return (MinColor_);
+    }
+    
+    unsigned int Parton::min_anti_color()
+    {
+        return (MinAntiColor_);
+    }
+
+    unsigned int Parton::max_color()
+    {
+        return (MaxColor_);
+    }
+    
+    // ---------------
+    // Hadron specific
+    // ---------------
+    
+    Hadron::Hadron (const Hadron& srh) :
+    JetScapeParticleBase::JetScapeParticleBase (srh)
+    {
+        width_ = srh.width_ ;
+    }
+    
+    Hadron::Hadron (int label, int id, int stat, const FourVector& p, const FourVector& x)  :
+    JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  p, x)
+    {
+        set_decay_width(0.1);
+    }
+    
+    
+    Hadron::Hadron (int label, int id, int stat, double pt, double eta, double phi, double e, double* x)  :
+    JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  pt, eta, phi, e, x)
+    {
+        set_decay_width(0.1);
+        // cout << "========================== phieta Ctor called, returning : " << endl << *this << endl;
+    }
+
+    Hadron& Hadron::operator=( Hadron &c)
+    {
+        JetScapeParticleBase::operator=(c);
+        width_ = c.width_;
+        return *this;
+    }
+    
+    Hadron& Hadron::operator=( const Hadron &c)
+    {
+        JetScapeParticleBase::operator=(c);
+        width_ = c.width_;
+        return *this;
+    }
+
+    
 } /// end of namespace Jetscape
