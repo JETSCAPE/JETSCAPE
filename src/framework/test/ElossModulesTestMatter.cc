@@ -114,6 +114,13 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
     
   for (int i=0;i<pIn.size();i++)
   {
+    for ( auto parent : pIn.at(i).parents() ){
+      // should use logging, e.g. VERBOSE(7), but it doesn't play nice with partons
+      cout << " ++++++ I am parton (edge) number " << pIn.at(i).edgeid()
+	   << " -- " << pIn.at(i) << endl;
+      cout << " ++++++ and my parent is " << parent << endl;
+    }
+	
       velocity[0] = 1.0;
       for(int j=1;j<=3;j++)
       {

@@ -21,6 +21,10 @@ using std::stringstream;
 
 namespace Jetscape {
 
+PartonShower::PartonShower() : graph() {
+  VERBOSESHOWER(8);
+}
+
 node PartonShower::new_vertex(shared_ptr<Vertex> v)
  {
    node n=graph::new_node();
@@ -28,10 +32,11 @@ node PartonShower::new_vertex(shared_ptr<Vertex> v)
    return n;
  }
 
-void PartonShower::new_parton(node s, node t, shared_ptr<Parton> p)
+int PartonShower::new_parton(node s, node t, shared_ptr<Parton> p)
 {
   edge e=graph::new_edge(s,t);
   pMap[e]=p;
+  return e.id();
 }
 
 /*
