@@ -157,18 +157,11 @@ class JetScapeTask
    */
   const string GetId() const {return id;}
 
-  /** This function returns the vector of final state partons to be used as input for the recombination/hadronization module.
-   */
-  vector<shared_ptr<Parton>>&  GetRecomPartons(){return fPartons;}
-
  private:
 
   // can be made sortabele to put in correct oder or via xml file ...
   vector<shared_ptr<JetScapeTask>> tasks;
   //list<shared_ptr<JetScapeTask>> tasks; // list vs vector any advantage of list?
-
-  // final partons ready for recombination
-  vector<shared_ptr<Parton>> fPartons;  
 
   bool active_exec;
   string id;

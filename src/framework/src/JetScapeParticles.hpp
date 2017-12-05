@@ -48,19 +48,26 @@
 
 #include <stdio.h>
 #include <math.h>
+#include "GTL/graph.h"
 #include "constants.h"
 #include "four_vector.hpp"
 #include "fjcore.hh"
+#include "JetScapeLogger.h"
+#include "PartonShower.h"
 
 #include <vector>
+#include <memory>
 #include <iostream>
 #include <sstream>
 #include <iomanip>
 
 using std::ostream;
 
+
 namespace Jetscape {
 
+  class PartonShower;
+  
   /**************************************************************************************************/
   //  BASE CLASS
   /*************************************************************************************************/
@@ -199,7 +206,6 @@ namespace Jetscape {
     void set_label(int label);
     void set_id(int id);  
     void set_stat(int stat);
-
     void set_x(double x[4]); 
     
     void init_jet_v();
@@ -214,6 +220,8 @@ namespace Jetscape {
     // const double pt();
     const double time();
     
+    std::vector<JetScapeParticleBase> parents();
+
     // FourVector &p_in();  
     FourVector &x_in();
     FourVector &jet_v();
@@ -223,7 +231,7 @@ namespace Jetscape {
     double pl();
     const double nu();
     const double t_max();
-
+    
     virtual JetScapeParticleBase& operator=(JetScapeParticleBase &c);
     virtual JetScapeParticleBase& operator=(const JetScapeParticleBase &c);
 
@@ -235,9 +243,7 @@ namespace Jetscape {
     int pstat_              ; ///< status of particle
     int plabel_             ; ///< the line number in the event record
     double mass_            ; ///< rest mass of the particle \todo Only maintain PID, look up mass from PDG
-    // double t_               ; ///< The virtuality, and not the time!
-    
-    // FourVector p_in_; ///< Internal version of p. Clashes with PseudoJet! REPLACE
+
     FourVector x_in_; ///< position of particle
     FourVector jet_v_; ///< jet four vector, without gamma factor (so not really a four vector)
 
@@ -260,7 +266,14 @@ namespace Jetscape {
 
     virtual double form_time();
     virtual const double mean_form_time();
+      virtual void set_color(unsigned int col); ///< sets the color of the parton
+      virtual void set_anti_color(unsigned int acol); ///< sets anti-color of the parton
+      virtual void set_max_color(unsigned int col); ///< sets the color of the parton
+      virtual void set_min_color(unsigned int col); ///< sets the color of the parton
+      virtual void set_min_anti_color(unsigned int acol); ///< sets anti-color of the parton
 
+      
+      
     Parton (int label, int id, int stat, const FourVector& p, const FourVector& x);
     Parton (int label, int id, int stat, double pt, double eta, double phi, double e, double* x=0);
     Parton (const Parton& srp);
@@ -270,19 +283,69 @@ namespace Jetscape {
     
     const double t();
     void set_t(double t); ///< virtuality of particle, \WARNING: rescales the spatial component
+      unsigned int color(); ///< returns the color of the parton
+      unsigned int anti_color(); ///< returns the anti-color of the parton
+      unsigned int max_color();
+      unsigned int min_color();
+      unsigned int min_anti_color();
 
+    
+    const int edgeid() const;
+    void set_edgeid( const int id);
+
+    void set_shower(const shared_ptr<PartonShower> pShower);
+    const shared_ptr<PartonShower> shower() const;
+
+    std::vector<Parton> parents();
+    
   protected :
     double mean_form_time_  ; ///< Mean formation time
     double form_time_       ; ///< event by event formation time
+      unsigned int Color_      ; ///< Large Nc color of parton
+      unsigned int antiColor_  ;///< Large Nc anti-color of parton
+      unsigned int MaxColor_    ; ///< the running maximum color
+      unsigned int MinColor_    ; ///< color of the parent
+      unsigned int MinAntiColor_; ///< anti-color of the parent
 
+    shared_ptr<PartonShower> pShower_; ///< shower that this parton belongs to
+    int edgeid_             ; ///< Position in the shower graph    
+    
+    
     // helpers
     void initialize_form_time();
     
   };
 
   //Dummy Hadron type definition  
-  typedef Jetscape::Parton Hadron;
+  //typedef Jetscape::Parton Hadron;
 
+    class Hadron : public JetScapeParticleBase
+    {
+        public:
+        
+        Hadron (int label, int id, int stat, const FourVector& p, const FourVector& x);
+        Hadron (int label, int id, int stat, double pt, double eta, double phi, double e, double* x=0);
+        Hadron (const Hadron& srh);
+        
+        Hadron& operator=( Hadron &c);
+        Hadron& operator=( const Hadron &c);
+
+
+        void set_decay_width(double width)
+        {
+            width_ = width;
+        }
+        
+        double decay_width()
+        {
+            return(width_);
+        }
+    protected:
+        double width_;
+        
+    };
+    
+    
 };  /// end of namespace Jetscape
 
 #endif /* JetScapeParticles */
