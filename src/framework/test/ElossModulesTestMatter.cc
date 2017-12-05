@@ -2,6 +2,8 @@
 // JetScape (modular/task) based framework
 // Intial Design: Joern Putschke (2017)
 //                (Wayne State University)
+// Overwritten: Abhijit Majumder (2017)
+//                (Wayne State University)
 // -----------------------------------------
 // License and Doxygen-like Documentation to be added ...
 
@@ -77,9 +79,6 @@ void Matter::WriteTask(weak_ptr<JetScapeWriter> w)
   w.lock()->WriteComment("Energy loss to be implemented accordingly ...");
 }
 
-// stupid toy branching ....
-// think about memory ... use pointers ...
-//void Matter::DoEnergyLoss(double deltaT, double Q2, const vector<Parton>& pIn, vector<Parton>& pOut)
 void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pIn, vector<Parton>& pOut)
 {
 
@@ -88,6 +87,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   double z=0.5;
   double blurb,zeta,tQ2 ;
   int iSplit,pid_a,pid_b;
+    unsigned int max_color, min_color, min_anti_color;
   double velocity[4],xStart[4];
   //    cout << " pIn size = " << pIn.size() << endl;
 
@@ -95,7 +95,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       
   FluidCellInfo* check_fluid_info_ptr = new FluidCellInfo;
   GetHydroCellSignal(1, 1.0, 1.0, 0.0, check_fluid_info_ptr);      
-  VERBOSE(8)<< MAGENTA<<"Temperature from Brick (Signal) = "<<check_fluid_info_ptr->temperature;            
+  VERBOSE(8)<< MAGENTA<<"Temperature from Brick (Signal) = "<<check_fluid_info_ptr->temperature;
+   // std::cin >> blurb;
   delete check_fluid_info_ptr;
 
   double rNum;
@@ -104,13 +105,23 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   double Time = time*fmToGeVinv;
   double deltaTime = delT*fmToGeVinv;
     
- // cout << " the time in fm is " << time << " The time in GeV-1 is " << Time << endl ;
-  // cout << "pid = " << pIn[0].pid() << " E = " << pIn[0].e() << " px = " << pIn[0].p(1) << " py = " << pIn[0].p(2) << "  pz = " << pIn[0].p(3) << " virtuality = " << pIn[0].p_in()*pIn[0].p_in() << " form_time in fm = " << pIn[0].form_time()/fmToGeVinv << endl;
+
+  INFO << " the time in fm is " << time << " The time in GeV-1 is " << Time ;
+  INFO << "pid = " << pIn[0].pid() << " E = " << pIn[0].e() << " px = " << pIn[0].p(1) << " py = " << pIn[0].p(2) << "  pz = " << pIn[0].p(3) << " virtuality = " << pIn[0].t() << " form_time in fm = " << pIn[0].form_time()/fmToGeVinv ;
+  INFO << " color = " << pIn[0].color() << " anti-color = " << pIn[0].anti_color();
+   
     
   //  INFO << " For MATTER, the qhat in GeV^-3 = " << qhat ;
     
   for (int i=0;i<pIn.size();i++)
   {
+    for ( auto parent : pIn.at(i).parents() ){
+      // should use logging, e.g. VERBOSE(7), but it doesn't play nice with partons
+      cout << " ++++++ I am parton (edge) number " << pIn.at(i).edgeid()
+	   << " -- " << pIn.at(i) << endl;
+      cout << " ++++++ and my parent is " << parent << endl;
+    }
+	
       velocity[0] = 1.0;
       for(int j=1;j<=3;j++)
       {
@@ -154,20 +165,50 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           pIn[i].set_mean_form_time();
           double ft = generate_L (pIn[i].mean_form_time() ) ;
           pIn[i].set_form_time(ft);
+          
+          unsigned int color=0, anti_color=0;
+          std::uniform_int_distribution<short> uni(102,103);
+          
+          if ( pIn[i].pid()>0 )
+          {
+             // color = uni(*get_mt19937_generator());
+              color = 101;
+          }
+          pIn[i].set_color(color);
+          if ( (pIn[i].pid()<0)||(pIn[i].pid()==21) )
+          {
+              anti_color = uni(*get_mt19937_generator());
+          }
+          pIn[i].set_anti_color(anti_color);
+          
+          max_color = color;
+          
+          if (anti_color > color) max_color = anti_color ;
+          
+          min_color = color;
+          
+          min_anti_color = anti_color;
+          
+          pIn[i].set_max_color(max_color);
+          pIn[i].set_min_color(min_color);
+          pIn[i].set_min_anti_color(min_anti_color);
+          
             
-/*	//DEBUG:
-	INFO ;
-	INFO << " ***************************************************************************** " ;              
-	INFO << " *  New generated virtuality = " << tQ2 << " Mean formation time = " << pIn[i].mean_form_time()/fmToGeVinv;              
-	INFO << " *  set new formation time to " << pIn[i].form_time()/fmToGeVinv ;
-	INFO << " * Maximum allowed virtuality = " << pIn[i].e()*pIn[i].e() << "   Minimum Virtuality = " << QS;
-	INFO ;
-	INFO << " * Jet velocity = " << pIn[i].jet_v().comp(0) << " " << pIn[i].jet_v().comp(1) << "  " << pIn[i].jet_v().comp(2) << "  " << pIn[i].jet_v().comp(3);
-	INFO << " * reset location of parton formation = "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z();
-	INFO << " ***************************************************************************** " ;
-	INFO ;
-	// end DEBUG:
- */
+          //DEBUG:
+          INFO ;
+          INFO << " ***************************************************************************** " ;
+          INFO<< " ID = " << pIn[i].pid() << " Color = " << pIn[i].color() << " Anti-Color = " << pIn[i].anti_color() ;
+          INFO << " E = " << pIn[i].e() << " px = " << pIn[i].px() << " py = " << pIn[i].py() << " pz = " << pIn[i].pz() ;
+          INFO << " *  New generated virtuality = " << tQ2 << " Mean formation time = " << pIn[i].mean_form_time()/fmToGeVinv;
+          INFO << " *  set new formation time to " << pIn[i].form_time()/fmToGeVinv ;
+          INFO << " * Maximum allowed virtuality = " << pIn[i].e()*pIn[i].e() << "   Minimum Virtuality = " << QS;
+          INFO << " * Qhat = " << qhat << "  Length = "  << length ;
+          INFO << " * Jet velocity = " << pIn[i].jet_v().comp(0) << " " << pIn[i].jet_v().comp(1) << "  " << pIn[i].jet_v().comp(2) << "  " << pIn[i].jet_v().comp(3);
+          INFO << " * reset location of parton formation = "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z();
+          INFO << " ***************************************************************************** " ;
+          INFO ;
+          // end DEBUG:
+ 
           
       }
           
@@ -178,10 +219,10 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           //cout << "  deltaT = " << deltaT <<endl;
           //cout << " parton origin time = " << pIn[i].x_in().t()/fmToGeVinv << " parton formation time = " << pIn[i].form_time()/fmToGeVinv << endl ;
           // cout << " parton id " << pIn[i].pid() << " parton virtuality = " << pIn[i].t() << endl;
-          // cout << " parton momentum " << pIn[i].p_in().t() << "  " << pIn[i].p_in().x() << "  " << pIn[i].p_in().y() << "  " << pIn[i].p_in().z() << endl ;
+          //cout << " parton momentum " << pIn[i].e() << "  " << pIn[i].px() << "  " << pIn[i].py() << "  " << pIn[i].pz() << endl ;
 	    
           double splitTime = pIn[i].form_time() + pIn[i].x_in().t() ;
-          //cout << " splitTime = " << splitTime/fmToGeVinv << endl ;
+          cout << " splitTime = " << splitTime/fmToGeVinv << endl ;
 	    
           if (splitTime<Time)
           {
@@ -222,6 +263,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       {
                           pid_a = did ;
                           pid_b = -1*did ;
+
                       }
                       else
                       {
@@ -243,37 +285,98 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   pid_b = gid ;
                   iSplit = 0;
               }
-
-              z = generate_vac_z(pid,QS/2.0,pIn[i].t(),zeta,pIn[i].nu(),iSplit) ;
-              //cout << " generated z = " << z << endl;
-        
-              int iSplit_a = 0;
-              if (pid_a==gid) iSplit_a = 1;
-	
+              int ifcounter = 0;
+              double l_perp2 = 0.0;
               // daughter virtualities
               double tQd1 = QS;
-              if (z*z*pIn[i].t()>QS)
-              {
-                  tQd1 = generate_vac_t(pid_a, z*pIn[i].nu(), QS/2.0, z*z*pIn[i].t() ,zeta+std::sqrt(2)*pIn[i].form_time() , iSplit_a);
-              }
-        
-              int iSplit_b = 0;
-              if (pid_b==gid) iSplit_b = 1;
-        
               double tQd2 = QS;
-              if ((1.0-z)*(1.0-z)*pIn[i].t()>QS)
+              
+              
+              //set color of daughters here
+              unsigned int d1_col, d1_acol, d2_col, d2_acol, color, anti_color;
+              //std::uniform_int_distribution<short> uni(101,103);
+              //color = pIn[i].color();
+              max_color = pIn[i].max_color();
+              //if (pIn[i].anti_color()>maxcolor) color = pIn[i].anti_color();
+              cout << " old max color = " << max_color << endl;
+              max_color++;
+              color = max_color;
+              anti_color = max_color;
+              pIn[i].set_max_color(max_color);
+              cout << " new color = " << color << endl;
+              
+              if (iSplit==1)///< gluon splits into two gluons
               {
-                  tQd2 = generate_vac_t(pid_b, (1.0-z)*pIn[i].nu(), QS/2.0, (1.0-z)*(1.0-z)*pIn[i].t() ,zeta+std::sqrt(2)*pIn[i].form_time(),iSplit_b);
+                  d1_col = pIn[i].color();
+                  d2_col = color;
+                  d1_acol = anti_color;
+                  d2_acol = pIn[i].anti_color();
               }
+              else if (iSplit==0) ///< (anti-)quark splits into (anti-)quark + gluon
+              {
+                  if (pIn[i].pid()>0)
+                  {
+                      d1_col = color;
+                      d1_acol = 0;
+                      d2_col = pIn[i].color();
+                      d2_acol = anti_color;
+                  }
+                  else
+                  {
+                      d1_col = 0; /// < gluon splits into quark anti-quark
+                      d1_acol = anti_color;
+                      d2_col = color;
+                      d2_acol = pIn[i].anti_color();
+                  }
+              }
+              else if (iSplit==2)
+              {
+                  d1_col = pIn[i].color();
+                  d1_acol = 0;
+                  d2_acol = pIn[i].anti_color();
+                  d2_col = 0;
+              }
+              else
+              {
+                 throw std::runtime_error("error in iSplit");
+              }
+
+              
+              cout << " d1_col = " << d1_col << " d1_acol = " << d1_acol << " d2_col = " << d2_col << " d2_acol = " << d2_acol << endl;
+              
+
+              while ((l_perp2<=0.0)&&(ifcounter<100))
+              {
+                  z = generate_vac_z(pid,QS/2.0,pIn[i].t(),zeta,pIn[i].nu(),iSplit) ;
+                  //cout << " generated z = " << z << endl;
+        
+                  int iSplit_a = 0;
+                  if (pid_a==gid) iSplit_a = 1;
 	
+                  if (z*z*pIn[i].t()>QS)
+                  {
+                      tQd1 = generate_vac_t(pid_a, z*pIn[i].nu(), QS/2.0, z*z*pIn[i].t() ,zeta+std::sqrt(2)*pIn[i].form_time() , iSplit_a);
+                  }
+        
+                  int iSplit_b = 0;
+                  if (pid_b==gid) iSplit_b = 1;
+        
+                  if ((1.0-z)*(1.0-z)*pIn[i].t()>QS)
+                  {
+                      tQd2 = generate_vac_t(pid_b, (1.0-z)*pIn[i].nu(), QS/2.0, (1.0-z)*(1.0-z)*pIn[i].t() ,zeta+std::sqrt(2)*pIn[i].form_time(),iSplit_b);
+                  }
+		
+                  l_perp2 =  pIn[i].t()*z*(1.0 - z) - tQd2*z - tQd1*(1.0-z) ; ///< the transverse momentum squared
+                  ifcounter++;
+                  //cout << " l_perp2 = " << l_perp2 << endl ;
+              }
+              
+              if (l_perp2<=0.0) l_perp2 = 0.0; ///< test if negative
+              double l_perp = std::sqrt(l_perp2); ///< the momentum transverse to the parent parton direction
+              
               // axis of split
               double angle = generate_angle();
-	
-              double l_perp2 =  pIn[i].t()*z*(1.0 - z) - tQd2*z - tQd1*(1.0-z) ; ///< the transverse momentum squared
-              // cout << " l_perp2 = " << l_perp2 << endl ;
-              if (l_perp2<0.0) l_perp2 = 0.0; ///< test if negative
-                  
-              double l_perp = std::sqrt(l_perp2); ///< the momentum transverse to the parent parton direction
+
                   
               // double parent_perp = std::sqrt( pow(pIn[i].p(1),2) + pow(pIn[i].p(2),2) + pow(pIn[i].p(3),2) - pow(pIn[i].pl(),2) );
               // KK: changed to x,y,z
@@ -325,6 +428,14 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               pOut[iout].set_mean_form_time();
               double ft = generate_L (pOut[iout].mean_form_time());
               pOut[iout].set_form_time(ft);
+              pOut[iout].set_color(d1_col);
+              pOut[iout].set_anti_color(d1_acol);
+              pOut[iout].set_max_color(max_color);
+              pOut[iout].set_min_color(pIn[i].min_color());
+              pOut[iout].set_min_anti_color(pIn[i].min_anti_color());
+              
+              
+              
 		  
               // Second daughter
               double k_perp2[4];
@@ -364,6 +475,13 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               pOut[iout].set_mean_form_time();
               ft = generate_L (pOut[iout].mean_form_time());
               pOut[iout].set_form_time(ft);
+              pOut[iout].set_color(d2_col);
+              pOut[iout].set_anti_color(d2_acol);
+              pOut[iout].set_max_color(max_color);
+              pOut[iout].set_min_color(pIn[i].min_color());
+              pOut[iout].set_min_anti_color(pIn[i].min_anti_color());
+
+              
 
                   
           }
@@ -585,15 +703,16 @@ double  Matter::generate_vac_z(int p_id, double t0, double t, double loc_b, doub
     //		cin >> test ;
       
         
-    if (diff>0.0) {
-      z_hi = z_mid;
-      z_mid = (z_low + z_hi)/2.0;
+    if (diff>0.0)
+    {
+        z_hi = z_mid;
+        z_mid = (z_low + z_hi)/2.0;
     }
     else
-      {
-	z_low = z_mid;
-	z_mid = (z_low + z_hi)/2.0 ;
-      }
+    {
+        z_low = z_mid;
+        z_mid = (z_low + z_hi)/2.0 ;
+    }
         
   }
     
@@ -636,13 +755,11 @@ double Matter::generate_L(double form_time)
     {
       if ((val-r)>0.0)
         {
-	  x_high = x ;
-            
+            x_high = x ;
         }
       else
         {
-	  x_low = x ;
-            
+            x_low = x ;
         }
         
       x = (x_low + x_high)/2.0;

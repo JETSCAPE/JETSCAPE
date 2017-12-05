@@ -69,7 +69,7 @@ int main(int argc, char** argv)
   Show();
 
   // auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",10);
-  auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",1);
+  auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",10);
   jetscape->SetId("primary");
 
   auto jlossmanager = make_shared<JetEnergyLossManager> ();

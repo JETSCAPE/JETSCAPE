@@ -52,9 +52,9 @@
      <!-- Will try to provide a functionality to read in any command lines as well -->
      <PythiaGun>
        <name>PythiaGun</name>
-       <pTHatMin>20</pTHatMin>
-       <pTHatMax>25</pTHatMax>
-       <eCM>200</eCM>
+       <pTHatMin>90</pTHatMin>
+       <pTHatMax>110</pTHatMax>
+       <eCM>2960</eCM>
        <LinesToRead>
 	 HardQCD:all = on	 
        </LinesToRead>
@@ -67,7 +67,7 @@
 
      <deltaT>0.1</deltaT>
      <formTime> -0.1</formTime>
-     <maxT>3</maxT>
+     <maxT>2</maxT>
 
      <!-- Individual Eloss Modules run Eloss and Eloss Manager ... -->
      <!-- Just a test here (no physics implemented in Matter and Martini ... -->

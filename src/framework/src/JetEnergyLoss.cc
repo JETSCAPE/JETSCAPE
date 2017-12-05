@@ -50,7 +50,6 @@ ostream &operator<<(ostream &ostr, const fjcore::PseudoJet & jet) {
   return ostr;
 }
 
-
 JetEnergyLoss::JetEnergyLoss()
 {
   qhat=-99.99;
@@ -155,6 +154,7 @@ void JetEnergyLoss::DoShower()
 {
   double tStart=0;
   double currentTime=0;
+ 
 
   VERBOSESHOWER(8)<<"Hard Parton from Initial Hard Process ...";
   VERBOSEPARTON(6,*GetShowerInitiatingParton());
@@ -200,7 +200,7 @@ void JetEnergyLoss::DoShower()
       
       for (int i=0;i<pIn.size();i++)
 	{
-
+	  // INFO << pIn.at(i).edgeid();
 	  pInTempModule.push_back(pIn[i]);
 	  
 	  SentInPartons(deltaT,currentTime,pIn[i].pt(),pInTempModule,pOutTemp);
@@ -212,10 +212,17 @@ void JetEnergyLoss::DoShower()
 	  for (int k=0;k<pOutTemp.size();k++)
 	    {
 	      vEnd=pShower->new_vertex(make_shared<Vertex>(0,0,0,currentTime));	
-	      pShower->new_parton(vStart,vEnd,make_shared<Parton>(pOutTemp[k]));
+	      int edgeid = pShower->new_parton(vStart,vEnd,make_shared<Parton>(pOutTemp[k]));
+	      // INFO << edgeid;
+	      pOutTemp[k].set_shower( pShower );
+	      pOutTemp[k].set_edgeid( edgeid );
+	      INFO << pOutTemp[k].edgeid();
 
+		      
 	      vStartVecOut.push_back(vEnd);
 	      pOut.push_back(pOutTemp[k]);
+	      // INFO << pOut.back().edgeid();
+		      
 
 	      Parton& particle = pOut.back();
 	      // Parton& particle = pOut[iout];
