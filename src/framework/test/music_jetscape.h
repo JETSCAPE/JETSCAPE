@@ -13,6 +13,8 @@ class MPI_MUSIC: public FluidDynamics {
  private:
     int mode;            //!< records running mode
     MUSIC *music_hydro_ptr;
+    int doCooperFrye;    //!< flag to run Cooper-Frye freeze-out
+                         //!< for soft particles
 
  public:
      MPI_MUSIC();

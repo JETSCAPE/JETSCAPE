@@ -11,6 +11,7 @@ using namespace std;
 
 MPI_MUSIC::MPI_MUSIC() {
     hydro_status = NOT_START;
+    doCooperFrye = 0;
     SetId("MUSIC");
 }
 
@@ -32,9 +33,11 @@ void MPI_MUSIC::initialize_hydro(Parameter parameter_list) {
         exit(-1);
     }
     string input_file = para->FirstChildElement("MUSIC_input_file")->GetText();
+    para->FirstChildElement("Perform_CooperFrye_Feezeout")->QueryIntText(
+                                                                &doCooperFrye);
     int argc = 2;
     char **argv = new char* [argc];
-    argv[0] = new char[8];
+    argv[0] = new char[9];
     strcpy(argv[0], "mpihydro");
     argv[1] = new char[input_file.length() + 1];
     strcpy(argv[1], input_file.c_str());
@@ -64,6 +67,9 @@ void MPI_MUSIC::evolve_hydro() {
         INFO << "running MUSIC ...";
         music_hydro_ptr->run_hydro();
         hydro_status = FINISHED;
+    }
+    if (hydro_status == FINISHED && doCooperFrye == 1) {
+        music_hydro_ptr->run_Cooper_Frye(1);
     }
 }
 
