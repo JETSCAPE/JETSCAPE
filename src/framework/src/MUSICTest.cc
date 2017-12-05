@@ -120,7 +120,7 @@ int main(int argc, char** argv)
   jlossmanager->Add(jloss);
   
   jetscape->Add(jlossmanager);
-<<<<<<< HEAD
+
 
     jetscape->Add(printer);
     
@@ -128,9 +128,8 @@ int main(int argc, char** argv)
  //   hadroMgr->Add(hadro);
  //   jetscape->Add(hadroMgr);
 
-=======
-  jetscape->Add(printer);
->>>>>>> origin/master
+
+
   jetscape->Add(writer);
 
   // Intialize all modules tasks
