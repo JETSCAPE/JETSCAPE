@@ -69,9 +69,8 @@ void JetScapeTask::Exec()
 void JetScapeTask::ExecuteTasks()
 {
   VERBOSE(7) << " : # Subtasks = "<<tasks.size();
-  if (active_exec)
-    for (auto it : tasks)
-      it->Exec();
+  for (auto it : tasks)
+    if (it->active_exec) it->Exec();
 }
 
   /** Recursively calls Clear() function of the subtasks of a JetScapeTask.
