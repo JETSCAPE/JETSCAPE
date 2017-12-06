@@ -374,8 +374,10 @@ void JetEnergyLoss::Exec()
 	 //           hproc.lock()->AddParton(pShower->GetPartonAt(ipart));
        }
 	
-       weak_ptr<PartonPrinter> pPrinter = JetScapeSignalManager::Instance()->GetPartonPrinterPointer();
-       pPrinter.lock()->GetFinalPartons2(pShower);
+       shared_ptr<PartonPrinter> pPrinter = JetScapeSignalManager::Instance()->GetPartonPrinterPointer().lock();
+       if ( pPrinter ){
+	 pPrinter->GetFinalPartons2(pShower);
+       }
     }
   else
     {WARN<<"NO Initial Hard Parton for Parton shower received ...";}  
