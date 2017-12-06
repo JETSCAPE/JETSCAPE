@@ -135,8 +135,16 @@ LogStreamer JetScapeLogger::Info()
 {
   string s="[Info] ";
   // s <<  __PRETTY_FUNCTION__ <<":"<<__LINE__<<" ";
-  s += to_string(getMemoryUsage()); s+="MB ";
-  return LogStreamer(std::cout<<s);
+  if (info){
+    string s="[Info] ";
+    // s <<  __PRETTY_FUNCTION__ <<":"<<__LINE__<<" ";
+    s += to_string(getMemoryUsage()); s+="MB ";
+    return LogStreamer(std::cout<<s);
+  }  else {
+    null.setstate(std::ios_base::failbit);
+    return LogStreamer(null);
+  }
+
 }
 
 LogStreamer JetScapeLogger::InfoNice()
@@ -144,7 +152,12 @@ LogStreamer JetScapeLogger::InfoNice()
   string s="[Info] ";
   // s <<  __PRETTY_FUNCTION__ <<":"<<__LINE__<<" ";
   //s += to_string(getMemoryUsage()); s+="MB ";
-  return LogStreamer(std::cout<<s);
+ if (info){
+   return LogStreamer(std::cout<<s);
+ }  else {
+   null.setstate(std::ios_base::failbit);
+   return LogStreamer(null);
+ }
 }
 
 
