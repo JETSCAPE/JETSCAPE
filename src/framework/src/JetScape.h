@@ -39,12 +39,36 @@ class JetScape : public JetScapeModuleBase
    */
   int GetNumberOfEvents() {return n_events;}
 
- private:
+  /** Controls whether to reuse a hydro event (for speedup).
+      The number of times is controled by set_n_reuse_hydro
+   */
+  inline void set_reuse_hydro( const bool reuse_hydro ){ reuse_hydro_ = reuse_hydro;}
+  /** Returns whether hydro events are reused.
+   */
+  inline bool get_reuse_hydro() const { return reuse_hydro_; }
+  
+  /** Controls number of times a hydro event gets reused.
+      Reusal has to be explicitly turned on by set_reuse_hydro.
+      Turn it on first to avoid a warning.
+   */
+  inline void set_n_reuse_hydro( const unsigned int n_reuse_hydro ){
+    if ( !get_reuse_hydro() ){
+      WARN << "Number of hydro reusals set, but reusal not turned on.";
+      WARN << "Try jetscape->set_reuse_hydro (true);";
+    }
+    n_reuse_hydro_ = n_reuse_hydro;
+  }
+  inline unsigned int get_n_reuse_hydro() const { return n_reuse_hydro_; }
+
+ protected:
 
   void SetPointers();
   
   void Show();
   int n_events;
+
+  bool reuse_hydro_;
+  unsigned int n_reuse_hydro_;
   
 };
 

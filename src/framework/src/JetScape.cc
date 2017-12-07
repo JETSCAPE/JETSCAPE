@@ -20,10 +20,13 @@ using namespace std;
 namespace Jetscape {
 
   /** Default constructor to create the main task of the JetScape framework. It sets the total number of events to 1.
+   * By default, hydro events are used only once
    */
-JetScape::JetScape()
+JetScape::JetScape() 
+  : n_events(1)
+  , reuse_hydro_ (false)
+  , n_reuse_hydro_ (0)
 {
-  n_events=1;
   VERBOSE(8);
 }
 
@@ -139,10 +142,6 @@ void JetScape::Exec()
       if (it->GetActive())
         w=dynamic_pointer_cast<JetScapeWriter>(it);	           
     }
-    //else if(dynamic_pointer_cast<PartonPrinter>(it))
-    //{
-        //p=dynamic_pointer_cast<PartonPrinter>(it);
-    //}
   } 
  
   for (int i=0;i<GetNumberOfEvents();i++)
@@ -157,6 +156,25 @@ void JetScape::Exec()
       if (w.lock().get())
 	JetScapeTask::WriteTasks(w);            
 
+      // For reusal, deactivate task after it has finished but before it gets cleaned up.
+      if ( reuse_hydro_ ){
+	if ( n_reuse_hydro_<=0 ){
+	  WARN << " reuse_hydro is set, but n_reuse_hydro=" << n_reuse_hydro_;
+	  throw std::runtime_error ("Incompatible reusal settings.");
+	}
+	for (auto it : GetTaskList()){
+	  if ( ! dynamic_pointer_cast<FluidDynamics>(it)) continue;
+	  if ( i%n_reuse_hydro_ == n_reuse_hydro_-1 ){
+	    DEBUG << " i was " << i << " i%n_reuse_hydro_ = " << i%n_reuse_hydro_ << " --> ACTIVATING";
+	    it->SetActive(true);
+	  } else{
+	    DEBUG << " i was " << i << " i%n_reuse_hydro_ = " << i%n_reuse_hydro_ << " --> DE-ACTIVATING";
+	    it->SetActive(false);
+	  }
+	}
+      }
+	
+      // Now clean up, only affects active taskjs
       JetScapeTask::ClearTasks();
 
       IncrementCurrentEvent();
