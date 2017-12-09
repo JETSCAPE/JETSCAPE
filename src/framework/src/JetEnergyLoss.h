@@ -50,7 +50,8 @@ class JetEnergyLoss : public JetScapeModuleBase, public std::enable_shared_from_
   // for brick/gubser test ...
   sigslot::signal5<double, double, double, double, JetSource,multi_threaded_local> AddJetSourceSignal;
   sigslot::signal5<double, double, double, double, double&,multi_threaded_local> GetTemperatureSignal;
-  sigslot::signal5<double, double, double, double, FluidCellInfo*,multi_threaded_local> GetHydroCellSignal;
+  // sigslot::signal5<double, double, double, double, FluidCellInfo*,multi_threaded_local> GetHydroCellSignal;
+  sigslot::signal5<double, double, double, double, std::unique_ptr<FluidCellInfo>&,multi_threaded_local> GetHydroCellSignal;
 
   // signal to all energy loss modules ... get intial list and delta T ... (think more !???)
   // test first ...

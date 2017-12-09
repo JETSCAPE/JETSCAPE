@@ -290,8 +290,26 @@ class FluidDynamicsBase{
      * throw InvalidSpaceTimeRange exception when
      * (t, x, y, z) is out of the EvolutionHistory range
      */
+    /* virtual void get_hydro_info(real t, real x, real y, real z, */
+    /*                             FluidCellInfo* fluid_cell_info_ptr){ */
+    /*     if (hydro_status != FINISHED || bulk_info.data.size() == 0) { */
+    /*         throw std::runtime_error("Hydro evolution is not finished " */
+    /*                                  "or EvolutionHistory is empty"); */
+    /*     } */
+    /*     // judge whether to use 2D interpolation or 3D interpolation */
+    /*     if (!bulk_info.tau_eta_is_tz) { */
+    /*         real tau = std::sqrt(t * t - z * z); */
+    /*         real eta = 0.5 * (std::log(t + z) - std::log(t - z)); */
+    /*         bulk_info.check_in_range(tau, x, y, eta); */
+    /*         //return bulk_info.get(tau, x, y, eta); */
+    /*     } else { */
+    /*         bulk_info.check_in_range(t, x, y, z); */
+    /*         //return bulk_info.get(t, x, y, z); */
+    /*     } */
+    /* } */
+
     virtual void get_hydro_info(real t, real x, real y, real z,
-                                FluidCellInfo* fluid_cell_info_ptr){
+                                std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr){
         if (hydro_status != FINISHED || bulk_info.data.size() == 0) {
             throw std::runtime_error("Hydro evolution is not finished "
                                      "or EvolutionHistory is empty");

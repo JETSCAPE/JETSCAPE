@@ -43,7 +43,8 @@ class FluidDynamics : public JetScapeModuleBase , public FluidDynamicsBase
   // real slots based on FluidDymanics(Test) class
   virtual void AddJetSource(double t, double x, double y, double z, JetSource jS) {}; // to be implemented ...
   virtual void GetTemperature(double t, double x, double y, double z, double &mT) {mT=get_temperature(t,x,y,z);}
-  virtual void GetHydroCell(double t, double x, double y, double z, FluidCellInfo* fCell) {get_hydro_info(t,x,y,z,fCell);} 
+  // virtual void GetHydroCell(double t, double x, double y, double z, FluidCellInfo* fCell) {get_hydro_info(t,x,y,z,fCell);}
+  virtual void GetHydroCell(double t, double x, double y, double z, std::unique_ptr<FluidCellInfo>& fCell) {get_hydro_info(t,x,y,z,fCell);} 
   
  private:
 

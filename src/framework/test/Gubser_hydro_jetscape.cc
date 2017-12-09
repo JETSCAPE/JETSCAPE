@@ -6,6 +6,7 @@
 #include <cmath>
 #include <iostream>
 //#include "fluid_dynamics.h"
+#include <helper.h>
 #include "Gubser_hydro_jetscape.h"
 
 #define hbarc 0.19733
@@ -50,7 +51,11 @@ double GubserHydro::get_temperature(double e_local) {
 
 
 void GubserHydro::get_hydro_info(real t, real x, real y, real z,
-                                 FluidCellInfo* fluid_cell_info_ptr) {
+//                                  FluidCellInfo* fluid_cell_info_ptr) {
+				 std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr){
+    // create the unique FluidCellInfo here
+    fluid_cell_info_ptr=std::make_unique<FluidCellInfo>();
+    
     double t_local = static_cast<double>(t);
     double x_local = static_cast<double>(x);
     double y_local = static_cast<double>(y);
