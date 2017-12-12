@@ -114,7 +114,6 @@ void PartonShower::CreateMaps()
 }
 */
 
-//Memory !? maybe better unique ...
 vector<shared_ptr<Parton>> PartonShower::GetFinalPartons()
 {
   //VERBOSESHOWER(8)<<pFinal.size();
@@ -136,17 +135,17 @@ vector<shared_ptr<Parton>> PartonShower::GetFinalPartons()
     return pFinal;
 }
 
-vector<Parton> PartonShower::GetFinalPartonsForFastJet()
+vector<fjcore::PseudoJet> PartonShower::GetFinalPartonsForFastJet()
 {
   vector<shared_ptr<Parton>> mP=GetFinalPartons(); // to ensure that pFinal is filled
     
-  vector<Parton> forFJ;
+  vector<fjcore::PseudoJet> forFJ;
   
   for (int i=0;i<mP.size();i++)
-    forFJ.push_back(*mP[i]);
+    forFJ.push_back((*mP[i]).GetPseudoJet());
 
   return forFJ;
-}
+} 
 
 int PartonShower::GetNumberOfParents(int n)
 {
