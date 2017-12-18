@@ -39,6 +39,10 @@ class JetEnergyLossModule : public JetEnergyLoss
      // return make_shared<Derived>(static_cast<const Derived&>(*this));
    }
      
+  // override deactivation
+  void SetActive(bool m_active_exec) {
+    throw std::runtime_error("SetActive not supported for energy loss modules. Please remove the module from the manager.");
+  };
 
 };
 
