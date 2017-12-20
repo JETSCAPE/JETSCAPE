@@ -50,6 +50,7 @@ ostream &operator<<(ostream &ostr, const fjcore::PseudoJet & jet) {
   return ostr;
 }
 
+
 JetEnergyLoss::JetEnergyLoss()
 {
   qhat=-99.99;

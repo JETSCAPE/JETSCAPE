@@ -14,7 +14,7 @@
 #include "realtype.h"
 
 namespace Jetscape {
-  ///Flags for hydrodynamics status.  
+
 enum HydroStatus {NOT_START, INITIALIZED, EVOLVING, FINISHED, ERROR};
 
 class JetSource {
@@ -28,24 +28,22 @@ class JetSource {
 class FluidCellInfo {
  public:
     // data structure for outputing fluid cell information
-    real energy_density;    //!< Local energy density [GeV/fm^3].
-    real entropy_density;   //!< Local entropy density [1/fm^3].
-    real temperature;       //!< Local temperature [GeV].
-    real pressure;          //!< Thermal pressure [GeV/fm^3].
-    real qgp_fraction;      //!< Fraction of quark gluon plasma assuming medium is in QGP+HRG phase.
-    real mu_B;              //!< Net baryon chemical potential [GeV].
-    real mu_C;              //!< Net charge chemical potential [GeV]
-    real mu_S;              //!< Net strangeness chemical potential [GeV].
-    real vx, vy, vz;        //!< Flow velocity.
-    real pi[4][4];          //!< Shear stress tensor [GeV/fm^3].
-    real bulk_Pi;           //!< Bulk viscous pressure [GeV/fm^3].
-    /** Default constructor.*/
+    real energy_density;    // local energy density [GeV/fm^3]
+    real entropy_density;   // local entropy density [1/fm^3]
+    real temperature;       // local temperature [GeV]
+    real pressure;          // thermal pressure [GeV/fm^3]
+    real qgp_fraction;
+    real mu_B;              // net baryon chemical potential [GeV]
+    real mu_C;              // net charge chemical potential [GeV]
+    real mu_S;              // net strangeness chemical potential [GeV]
+    real vx, vy, vz;        // flow velocity
+    real pi[4][4];          // shear stress tensor [GeV/fm^3]
+    real bulk_Pi;           // bulk viscous pressure [GeV/fm^3]
+
     FluidCellInfo() = default;    
 
-    /** @param b Multiply the fluid cell by scalar factor b. */ 
     FluidCellInfo inline operator*=(real b);
 
-    /** Prints fluid cell properties to the screen. */
     void Print();
 };
 
@@ -71,7 +69,7 @@ inline FluidCellInfo operator+(FluidCellInfo a, const FluidCellInfo & b) {
     return a;
 }
 
-// Multiply the fluid cell with a scalar factor
+/// multiply the fluid cell with a scalar factor
 FluidCellInfo inline FluidCellInfo::operator*=(real b){
     this->energy_density *= b;
     this->entropy_density *= b;
@@ -139,30 +137,27 @@ inline FluidCellInfo operator/(FluidCellInfo a, real b){
 class SurfaceCellInfo {
  public:
     // data structure for outputing hyper-surface information
-    real d3sigma_mu[4];     //!< Surface vector.
-    real energy_density;    //!< Local energy density [GeV/fm^3].
-    real entropy_density;   //!< Local entropy density [1/fm^3].
-    real temperature;       //!< Local temperature [GeV].
-    real pressure;          //!< Thermal pressure [GeV/fm^3].
-    real qgp_fraction;      //!< Fraction of quark gluon plasma assuming medium is in QGP+HRG phase.
-    real mu_B;              //!< Net baryon chemical potential [GeV].
-    real mu_C;              //!< Net charge chemical potential [GeV].
-    real mu_S;              //!< Net strangeness chemical potential [GeV].
-    real vx, vy, vz;        //!< Flow velocity.
-    real pi[4][4];          //!< Shear stress tensor [GeV/fm^3].
-    real bulk_Pi;           //!< Bulk viscous pressure [GeV/fm^3].
+    real d3sigma_mu[4];     // surface vector
+    real energy_density;    // local energy density [GeV/fm^3]
+    real entropy_density;   // local entropy density [1/fm^3]
+    real temperature;       // local temperature [GeV]
+    real pressure;          // thermal pressure [GeV/fm^3]
+    real qgp_fraction;
+    real mu_B;              // net baryon chemical potential [GeV]
+    real mu_C;              // net charge chemical potential [GeV]
+    real mu_S;              // net strangeness chemical potential [GeV]
+    real vx, vy, vz;        // flow velocity
+    real pi[4][4];          // shear stress tensor [GeV/fm^3]
+    real bulk_Pi;           // bulk viscous pressure [GeV/fm^3]
 
-    /** Default constructor. */
     SurfaceCellInfo() {};
-
-    /** Destructor. */
     ~SurfaceCellInfo() {};
 };
 
 
 class Parameter{
  public:
-  /** Hydro dynamics parameters file name.*/
+    // hydro parameters
     char* hydro_input_filename;
 };
 
@@ -172,49 +167,27 @@ class InvalidSpaceTimeRange : public std::invalid_argument {
 
 class EvolutionHistory{
  public:
-    /** @param tau_min Minimum value of tau.*/
-    real tau_min, dtau; //!< @param dtau Step-size for tau.
-    /** @param x_min Minimum value of x. */
-    real x_min, dx;     //!< @param dx Step-size for x. 
-    /** @param y_min Minimum value of y. */
-    real y_min, dy;     //!< @param dy Step-size for y.
-    /** @param eta_min Minimum value of eta. */
-    real eta_min, deta; //!< @param deta Step-size for eta. 
-    int ntau;   //!< @param ntau Number of grid points in tau-axis.
-    int nx;    //!< @param nx Number of grid points in x-axis. 
-    int ny;   //!< @param ny Number of grid points in y-axis.
-    int neta;  //!< @param neta Number of grid points in eta-axis.   
-
-    /** Default is set to false. Set flag tau_eta_is_tz to true if hydro dynamics is setup in (t,x,y,z) coordinate. */
-    bool tau_eta_is_tz;   
-
-    /** The bulk information of hydro dynamics.*/
+    real tau_min, dtau;
+    real x_min, dx;
+    real y_min, dy;
+    real eta_min, deta;
+    int ntau, nx, ny, neta;
+    // tau_eta_is_tz: default false;
+    // true if hydro is in (t,x,y,z) coordinates
+    bool tau_eta_is_tz;
+    // the bulk information
     std::vector<FluidCellInfo> data;
 
-    /** Default constructor. */
     EvolutionHistory() {};
-
-    /** Default destructor. */
     ~EvolutionHistory() {data.clear();}
 
-    /** Maximum value of tau. */
     inline real tau_max() {return tau_min + (ntau - 1) * dtau;}
-
-    /** Maximum value of x. */
     inline real x_max() {return x_min + (nx - 1) * dx;}
-
-    /** Maximum value of y. */
     inline real y_max() {return y_min + (ny - 1) * dy;}
-
-    /** Maximum value of eta. */
     inline real eta_max() {return eta_min + (neta - 1) * deta;}
 
-    /** It checks whether a space-time point (tau, x, y, eta) is inside evolution history or outside.
-	@param tau Light-cone coordinate.
-	@param x  Space coordinate.   
-	@param y  Space coordinate.
-	@param eta Light-cone coordinate.
-     */
+    /** make sure the space time point (tau, x, y, eta) is inside
+     * evolution history */
     void check_in_range(real tau, real x, real y, real eta) {
         if (tau < tau_min || tau > tau_max()) {
             throw InvalidSpaceTimeRange("tau=" + std::to_string(tau)
@@ -239,86 +212,38 @@ class EvolutionHistory{
     }
 
     // get the lower bound of the fluid cell along tau
-    /** @return Fluid cell number along the tau-grid.
-	@param tau Light-cone coordinate.
-     */
     inline int get_id_tau(real tau){
         return(static_cast<int>((tau - tau_min)/dtau));
     }
-
     // get the lower bound of the fluid cell along x
-    /** @return Fluid cell number along the x-grid.           
-        @param x Space coordinate.                          
-    */
     inline int get_id_x(real x) { 
         return(static_cast<int>((x - x_min)/dx));
     }
-
     // get the lower bound of the fluid cell along y
-    /** @return Fluid cell number along the y-grid.                
-        @param y Space coordinate. 
-    */
     inline int get_id_y(real y) {
         return(static_cast<int>((y - y_min)/dy));
     }
-
-    // get the lower bound of the fluid cell along eta
-    /** @return Fluid cell number along the eta-grid.
-        @param eta Light-cone coordinate.
-    */
+    // get the lower bound of the fluid cell along y
     inline int get_id_eta(real eta) {
         return(static_cast<int>((eta - eta_min)/deta));
     }
 
     // get the coordinate of tau, x, y, eta on grid
-    /** @param id_tau Fluid cell number along tau-grid.
-	@return The tau coordinate for fluid cell number.
-     */
     inline real tau_coord(int id_tau) { return tau_min + id_tau * dtau; }
-
-    /** @param id_x Fluid cell number along x-grid.
-        @return The x coordinate for fluid cell number.
-    */
     inline real x_coord(int id_x) { return x_min + id_x * dx; }
-
-    /** @param id_y Fluid cell number along y-grid.
-        @return The y coordinate for fluid cell number.
-    */
     inline real y_coord(int id_y) { return y_min + id_y * dy; }
-
-    /** @param id_eta Fluid cell number along eta-grid.
-        @return The eta coordinate for fluid cell number.
-    */
     inline real eta_coord(int id_eta) { return eta_min + id_eta * deta; }
 
     // get the FluidCellInfo index in data
-    /** @return FluidCellInfo index in the data.
-	@param id_tau Fluid cell number along tau-grid.
-	@param id_x Fluid cell number along x-grid.
-	@param id_y Fluid cell number along y-grid.
-	@param id_eta Fluid cell number along eta-grid.
-     */
     inline int cell_index(int id_tau, int id_x, int id_y, int id_eta) {
         return  id_tau * nx * ny * neta + id_x * ny * neta
                         + id_y * neta + id_eta;
     }
 
     // get the FluidCellInfo at space point given time step
-    /** @return FluidCellInfo at a point (x,y,eta) and time-step id_tau.
-	@param id_tau tau-step number.
-	@param x Space coordinate.
-	@param y Space coordinate.
-	@param eta Light-cone coordinate.
-     */
     FluidCellInfo get_at_time_step(int id_tau, real x, real y, real etas);
 
     // get the FluidCellInfo at given space time point
-    /** @return FluidCellInfo at a point (tau, x, y, eta).
-        @param tau Light-cone coordinate.
-        @param x Space coordinate.
-        @param y Space coordinate.
-        @param eta Light-cone coordinate. 
-    */
     FluidCellInfo get(real tau, real x, real y, real etas);
 };
 
@@ -333,61 +258,37 @@ class FluidDynamicsBase{
     HydroStatus hydro_status;
 
  public:
-    /** Default constructor.*/
     FluidDynamicsBase() {};
-
-    /** Default destructor. */
     ~FluidDynamicsBase() {};
 
     // How to store this data? In memory or hard disk?
     // 3D hydro may eat out the memory,
     // for large dataset, std::deque is better than std::vector.
-    /** Stores the evolution history. */
     EvolutionHistory bulk_info;
 
-    //Keep this interface open in the beginning.
+    /*Keep this interface open in the beginning.*/
     // FreezeOutHyperSf hyper_sf;
 
-    // currently we have no standard for passing configurations 
+    /* currently we have no standard for passing configurations */
     // pure virtual function; to be implemented by users
     // should make it easy to save evolution history to bulk_info
-    /** Default function to initialize the hydrodynamics. It can be overridden by different modules. 
-     @param parameter_list An object of the class Parameter. */
     virtual void initialize_hydro(Parameter parameter_list) {};
 
-    /** Default function to evolve the hydrodynamics. It can be overridden by different modules. */
     virtual void evolve_hydro() {};
 
-    /** Default function to evolve the hydrodynamics by one-time (or tau) step. It can be overridden by different modules.
-	@param jmu An object to a JetSource class.
-     */
     virtual void evolve_hydro_one_step(JetSource jmu) {};
 
     // the following functions should be implemented in Jetscape
-    /** @return Status of the hydrodynamics (NOT_START, INITIALIZED, EVOLVING, FINISHED, ERROR). */
     int get_hydro_status() {return(hydro_status);}
-
-    /** @return Start time (or tau) for hydrodynamic evolution.
-     */
     real get_hydro_start_time() {return(hydro_tau_0);}
-
-    /** @return End time (or tau) for hydrodynamic evolution.
-     */
     real get_hydro_end_time() {return(hydro_tau_max);}
-    /** @return Freeze-out temperature.
-     */
     real get_hydro_freeze_out_temperature() {
         return(hydro_freeze_out_temperature);
     }
 
-    /** Retrieves the hydro information at a given space-time point.
-     * It throws a InvalidSpaceTimeRange message when
-     * (t or tau, x, y, z or eta) is out of the evolution history range. 
-     @param time Time or tau coordinate. 
-     @param x Space coordinate.
-     @param y Space coordinate.
-     @param z Space or eta coordinate.
-     @param fluid_cell_info_ptr A pointer to the FluidCellInfo class.
+    /** retrive hydro information at a given space-tim point
+     * throw InvalidSpaceTimeRange exception when
+     * (t, x, y, z) is out of the EvolutionHistory range
      */
     virtual void get_hydro_info(real t, real x, real y, real z,
                                 FluidCellInfo* fluid_cell_info_ptr){
@@ -408,85 +309,27 @@ class FluidDynamicsBase{
     }
 
     // this function print out the information of the fluid cell to the screen
-    /** It prints out the information of the fluid cell.
-	@param fluid_cell_info_ptr A pointer to FluidCellInfor class.
-    */
     void print_fluid_cell_information(FluidCellInfo* fluid_cell_info_ptr);
 
     // this function returns hypersurface for Cooper-Frye or recombination
     // the detailed implementation is left to the hydro developper
-    /** @return Default function to get the hypersurface for Cooper-Frye or recombination model. It can overridden by different modules.
-     */
     virtual void get_hypersurface(real T_cut,
                                   SurfaceCellInfo* surface_list_ptr) {};
 
     // all the following functions will call function get_hydro_info()
     // to get thermaldynamic and dynamical information at a space-time point
     // (time, x, y, z)
-    /** @return Energy density at point (t or tau, x, y, z or eta)
-        @param time Time or tau coordinate.
-        @param x Space coordinate.
-        @param y Space coordinate. 
-        @param z Space or eta coordinate.
-    */
     real get_energy_density(real time, real x, real y, real z);
-
-    /** @return Entropy density at point (t or tau, x, y, z or eta)
-        @param time Time or tau coordinate.
-        @param x Space coordinate.
-        @param y Space coordinate. 
-        @param z Space or eta coordinate.
-    */
     real get_entropy_density(real time, real x, real y, real z);
-
-    /** @return Temperature at point (t or tau, x, y, z or eta)
-	@param time Time or tau coordinate.
-        @param x Space coordinate.
-        @param y Space coordinate.
-        @param z Space or eta coordinate.
-      */
     real get_temperature(real time, real x, real y, real z);
-
-    /** @return Fraction of quark gluon plasma assuming medium is in QGP+HRG phase at point (t or tau, x, y, z or eta).
-	@param time Time or tau coordinate.
-        @param x Space coordinate.
-        @param y Space coordinate.
-        @param z Space or eta coordinate.
-     */
     real get_qgp_fraction(real time, real x, real y, real z);
 
     // real3 return std::make_tuple(vx, vy, vz)
-    /** @return 3-component (vx,vy,vz) fluid velocity at point (t or tau, x, y, z or eta).
-        @param time Time or tau coordinate.
-        @param x Space coordinate.
-        @param y Space coordinate.
-        @param z Space or eta coordinate.
-    */
     real3 get_3fluid_velocity(real time, real x, real y, real z);
-
     // real4 return std::make_tuple(ut, ux, uy, uz)
-    /** @return 4-component fluid velocity at point (t or tau, x, y, zor eta).
-        @param time Time or tau coordinate.
-        @param x Space coordinate.
-        @param y Space coordinate.
-        @param z Space or eta coordinate. 
-    */
     real4 get_4fluid_velocity(real time, real x, real y, real z);
 
-    /** @return Net baryon density at point (t or tau, x, y, z or eta).
-        @param time Time or tau coordinate.
-        @param x Space coordinate.
-        @param y Space coordinate.
-        @param z Space or eta coordinate. 
-    */
     real get_net_baryon_density(real time, real x, real y, real z);
-
-    /** @return Net charge density at point (t or tau, x, y, z or eta).
-	@param time Time or tau coordinate.
-	@param x Space coordinate.
-	@param y Space coordinate.
-	@param z Space or eta coordinate.
-     */
     real get_net_charge_density(real time, real x, real y, real z);
 }; // end class FluidDynamicsBase
 

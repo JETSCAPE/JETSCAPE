@@ -55,6 +55,7 @@ void JetEnergyLossManager::Clear()
   VERBOSE(8)<<hp.size();
 }
   
+
 void JetEnergyLossManager::Init()
 {
   INFO<<"Intialize JetEnergyLoss Manager ...";
@@ -71,6 +72,7 @@ void JetEnergyLossManager::Init()
   INFO<<"Connect JetEnergyLossManager Signal to Hard Process ...";
   JetScapeSignalManager::Instance()->ConnectGetHardPartonListSignal(shared_from_this());
 }
+
 
 void JetEnergyLossManager::WriteTask(weak_ptr<JetScapeWriter> w)
 {

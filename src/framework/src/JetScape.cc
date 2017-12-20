@@ -19,12 +19,16 @@ using namespace std;
 
 namespace Jetscape {
 
+  /** Default constructor to create the main task of the JetScape framework. It sets the total number of events to 1.
+   */
 JetScape::JetScape()
 {
   n_events=1;
   VERBOSE(8);
 }
 
+  /** This is a destructor for a JetScape.
+   */
 JetScape::~JetScape()
 {
   VERBOSE(8);
@@ -37,6 +41,8 @@ void JetScape::Show()
   show_jetscape_banner();
 }
 
+  /** This function initializes the main task of the JetScape framework. It calls JetScapeTask::InitTaks() function to initialize the modules/tasks of a JetScapeTask.
+   */
 void JetScape::Init()
 {
   Show();
@@ -112,6 +118,8 @@ void JetScape::SetPointers()
     }
 }
 
+  /** This function execute the modules/tasks of a JetScapeTask for all the events. It also calls "GetPartons()" function to print parton shower, and  "WriteTasks()" function to store the data in the XML file.
+   */
 void JetScape::Exec()
 {
   INFO<<BOLDBLACK<<"Run JetScape ...";
@@ -155,6 +163,8 @@ void JetScape::Exec()
     }
 }
 
+  /**
+   */
 void JetScape::Finish()
 {
   INFO<<BOLDBLACK<<"JetScape finished after "<<GetNumberOfEvents()<<" events!";

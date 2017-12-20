@@ -26,8 +26,7 @@ class JetEnergyLossModule : public JetEnergyLoss
  public:
 
   using JetEnergyLoss::JetEnergyLoss;
-  /** 
-   */
+  
   virtual shared_ptr<JetEnergyLoss> Clone() const override
    {
      DEBUG << "Cloning task with id=" << GetId() << " and TaskNumber= " << get_my_task_number();

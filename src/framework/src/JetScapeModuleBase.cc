@@ -25,7 +25,7 @@ namespace Jetscape {
   }
 
   // ---------------------------------------------------------------------------
-  /** This is a constructor to create a JetScapeModuleBase. It sets the XML file name to "m_name" to be used to read input parameters.
+  /** This is a constructor to create a JetScapeModuleBase. It sets the XML file name   to "m_name".
    */
   JetScapeModuleBase::JetScapeModuleBase(string m_name)
   {
