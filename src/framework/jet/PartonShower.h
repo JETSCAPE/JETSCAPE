@@ -50,7 +50,7 @@ public:
   int GetNumberOfChilds(int n);
 
   vector<shared_ptr<Parton>> GetFinalPartons();
-  vector<Parton> GetFinalPartonsForFastJet();
+  vector<fjcore::PseudoJet> GetFinalPartonsForFastJet();
   
   //unique_ptr<Parton> GetPartonAt(int i);
   //unique_ptr<Vertex> GetVertexAt(int i);

@@ -84,18 +84,8 @@ int main(int argc, char** argv)
 	  mShowers[i]->PrintVertices();
 	  mShowers[i]->PrintPartons();	
 
-	  //Anti-kT jet finding ... (see: JetDefinition jet_def(antikt_algorithm, 0.7);)
-	  //Already easily avilable via inclusion of fjcore ...
+	  fjcore::ClusterSequence cs(mShowers[i]->GetFinalPartonsForFastJet(), jet_def);
 
-	  fjcore::PseudoJet j;
-	  vector<fjcore::PseudoJet> Partons;
-	  for ( auto& jspb : mShowers[i]->GetFinalPartonsForFastJet() ){
-	    j+=jspb.GetPseudoJet();
-	    Partons.push_back ( jspb.GetPseudoJet() );
-	  }
-	  fjcore::ClusterSequence cs( Partons, jet_def);
-
-	  // fjcore::ClusterSequence cs( SliceToPseudoJet ( mShowers[i]->GetFinalPartonsForFastJet() ), jet_def);
 	  vector<fjcore::PseudoJet> jets = fjcore::sorted_by_pt(cs.inclusive_jets(2));
 	  cout<<endl;
 	  cout<<jet_def.description()<<endl;
