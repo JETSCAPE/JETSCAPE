@@ -82,14 +82,11 @@ void Matter::WriteTask(weak_ptr<JetScapeWriter> w)
 void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pIn, vector<Parton>& pOut)
 {
 
-  //DEBUG:
-  //cout<<" -----> "<<*GetShowerInitiatingParton()<<endl;
   double z=0.5;
   double blurb,zeta,tQ2 ;
   int iSplit,pid_a,pid_b;
     unsigned int max_color, min_color, min_anti_color;
   double velocity[4],xStart[4];
-  //    cout << " pIn size = " << pIn.size() << endl;
 
   VERBOSESHOWER(8)<< MAGENTA << "SentInPartons Signal received : "<<deltaT<<" "<<Q2<<" "<<&pIn;
       
@@ -105,22 +102,15 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   double Time = time*fmToGeVinv;
   double deltaTime = delT*fmToGeVinv;
     
-  INFO << " the time in fm is " << time << " The time in GeV-1 is " << Time ;
-  INFO << "pid = " << pIn[0].pid() << " E = " << pIn[0].e() << " px = " << pIn[0].p(1) << " py = " << pIn[0].p(2) << "  pz = " << pIn[0].p(3) << " virtuality = " << pIn[0].t() << " form_time in fm = " << pIn[0].form_time()/fmToGeVinv ;
-  INFO << " color = " << pIn[0].color() << " anti-color = " << pIn[0].anti_color();
+  DEBUG << " the time in fm is " << time << " The time in GeV-1 is " << Time ;
+  DEBUG << "pid = " << pIn[0].pid() << " E = " << pIn[0].e() << " px = " << pIn[0].p(1) << " py = " << pIn[0].p(2) << "  pz = " << pIn[0].p(3) << " virtuality = " << pIn[0].t() << " form_time in fm = " << pIn[0].form_time()/fmToGeVinv ;
+  DEBUG << " color = " << pIn[0].color() << " anti-color = " << pIn[0].anti_color();
     
     
-    //INFO << " For MATTER, the qhat in GeV^-3 = " << qhat ;
+    //DEBUG << " For MATTER, the qhat in GeV^-3 = " << qhat ;
     
   for (int i=0;i<pIn.size();i++)
   {
-    /*for ( auto parent : pIn.at(i).parents() )
-    {
-      // should use logging, e.g. VERBOSE(7), but it doesn't play nice with partons
-      cout << " ++++++ I am parton (edge) number " << pIn.at(i).edgeid()
-	   << " -- " << pIn.at(i) << endl;
-      cout << " ++++++ and my parent is " << parent << endl;
-    }*/
       velocity[0] = 1.0;
       for(int j=1;j<=3;j++)
       {
@@ -136,9 +126,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       }
 	  
       length = 5.0*fmToGeVinv; /// length in GeV-1 will have to changed for hydro
-          
-    //cout << " Length = " << length << endl;
-          
+                    
       zeta = ( xStart[0] + std::sqrt( xStart[1]*xStart[1] + xStart[2]*xStart[2] + xStart[3]*xStart[3] )  )/std::sqrt(2);
     
       int pid = pIn[i].pid();
@@ -194,18 +182,18 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           
             
           //DEBUG:
-          INFO ;
-          INFO << " ***************************************************************************** " ;
-          INFO<< " ID = " << pIn[i].pid() << " Color = " << pIn[i].color() << " Anti-Color = " << pIn[i].anti_color() ;
-          INFO << " E = " << pIn[i].e() << " px = " << pIn[i].px() << " py = " << pIn[i].py() << " pz = " << pIn[i].pz() ;
-          INFO << " *  New generated virtuality = " << tQ2 << " Mean formation time = " << pIn[i].mean_form_time()/fmToGeVinv;
-          INFO << " *  set new formation time to " << pIn[i].form_time()/fmToGeVinv ;
-          INFO << " * Maximum allowed virtuality = " << pIn[i].e()*pIn[i].e() << "   Minimum Virtuality = " << QS;
-          INFO << " * Qhat = " << qhat << "  Length = "  << length ;
-          INFO << " * Jet velocity = " << pIn[i].jet_v().comp(0) << " " << pIn[i].jet_v().comp(1) << "  " << pIn[i].jet_v().comp(2) << "  " << pIn[i].jet_v().comp(3);
-          INFO << " * reset location of parton formation = "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z();
-          INFO << " ***************************************************************************** " ;
-          INFO ;
+          DEBUG ;
+          DEBUG << " ***************************************************************************** " ;
+          DEBUG<< " ID = " << pIn[i].pid() << " Color = " << pIn[i].color() << " Anti-Color = " << pIn[i].anti_color() ;
+          DEBUG << " E = " << pIn[i].e() << " px = " << pIn[i].px() << " py = " << pIn[i].py() << " pz = " << pIn[i].pz() ;
+          DEBUG << " *  New generated virtuality = " << tQ2 << " Mean formation time = " << pIn[i].mean_form_time()/fmToGeVinv;
+          DEBUG << " *  set new formation time to " << pIn[i].form_time()/fmToGeVinv ;
+          DEBUG << " * Maximum allowed virtuality = " << pIn[i].e()*pIn[i].e() << "   Minimum Virtuality = " << QS;
+          DEBUG << " * Qhat = " << qhat << "  Length = "  << length ;
+          DEBUG << " * Jet velocity = " << pIn[i].jet_v().comp(0) << " " << pIn[i].jet_v().comp(1) << "  " << pIn[i].jet_v().comp(2) << "  " << pIn[i].jet_v().comp(3);
+          DEBUG << " * reset location of parton formation = "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z();
+          DEBUG << " ***************************************************************************** " ;
+          DEBUG ;
           // end DEBUG:
  
           
@@ -215,18 +203,17 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       { //
           double decayTime = pIn[i].mean_form_time()  ;
 	    
-          //cout << "  deltaT = " << deltaT <<endl;
-          //cout << " parton origin time = " << pIn[i].x_in().t()/fmToGeVinv << " parton formation time = " << pIn[i].form_time()/fmToGeVinv << endl ;
-          // cout << " parton id " << pIn[i].pid() << " parton virtuality = " << pIn[i].t() << endl;
-          //cout << " parton momentum " << pIn[i].e() << "  " << pIn[i].px() << "  " << pIn[i].py() << "  " << pIn[i].pz() << endl ;
+          //DEBUG << "  deltaT = " << deltaT;
+          //DEBUG << " parton origin time = " << pIn[i].x_in().t()/fmToGeVinv << " parton formation time = " << pIn[i].form_time()/fmToGeVinv;
+          // DEBUG << " parton id " << pIn[i].pid() << " parton virtuality = " << pIn[i].t();
+          //DEBUG << " parton momentum " << pIn[i].e() << "  " << pIn[i].px() << "  " << pIn[i].py() << "  " << pIn[i].pz();
 	    
           double splitTime = pIn[i].form_time() + pIn[i].x_in().t() ;
-          cout << " splitTime = " << splitTime/fmToGeVinv << endl ;
-	    
+          DEBUG << " splitTime = " << splitTime/fmToGeVinv;
+	  
           if (splitTime<Time)
           {
               // do split
-              //cout << " doing the split " << endl ;
               double t_used = pIn[i].t();
               if (t_used<QS)  t_used = QS;
               double tau_form = 2.0*pIn[i].nu()/t_used;
@@ -297,12 +284,12 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               //color = pIn[i].color();
               max_color = pIn[i].max_color();
               //if (pIn[i].anti_color()>maxcolor) color = pIn[i].anti_color();
-              cout << " old max color = " << max_color << endl;
+              DEBUG << " old max color = " << max_color;
               max_color++;
               color = max_color;
               anti_color = max_color;
               pIn[i].set_max_color(max_color);
-              cout << " new color = " << color << endl;
+              DEBUG << " new color = " << color;
               
               if (iSplit==1)///< gluon splits into two gluons
               {
@@ -341,13 +328,13 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               }
 
               
-              cout << " d1_col = " << d1_col << " d1_acol = " << d1_acol << " d2_col = " << d2_col << " d2_acol = " << d2_acol << endl;
+              DEBUG << " d1_col = " << d1_col << " d1_acol = " << d1_acol << " d2_col = " << d2_col << " d2_acol = " << d2_acol;
               
 
               while ((l_perp2<=0.0)&&(ifcounter<100))
               {
                   z = generate_vac_z(pid,QS/2.0,pIn[i].t(),zeta,pIn[i].nu(),iSplit) ;
-                  //cout << " generated z = " << z << endl;
+                  //DEBUG << " generated z = " << z;
         
                   int iSplit_a = 0;
                   if (pid_a==gid) iSplit_a = 1;
@@ -367,7 +354,6 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 		
                   l_perp2 =  pIn[i].t()*z*(1.0 - z) - tQd2*z - tQd1*(1.0-z) ; ///< the transverse momentum squared
                   ifcounter++;
-                  //cout << " l_perp2 = " << l_perp2 << endl ;
               }
               
               if (l_perp2<=0.0) l_perp2 = 0.0; ///< test if negative
@@ -399,18 +385,12 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               double energy = ( z*pIn[i].nu() + (tQd1 + k_perp1_2)/(2.0*z*pIn[i].nu() ) )/std::sqrt(2.0) ;
               double plong =  ( z*pIn[i].nu() - (tQd1 + k_perp1_2)/(2.0*z*pIn[i].nu() ) )/std::sqrt(2.0) ;
                   
-              // cout << " E, plong of d1 , E^2 - plong^2 - k_perp1^2 = " << energy << " " << plong << "  " << energy*energy - plong*plong - k_perp1_2 << endl;
-
-
               double newp[4];
               newp[0] = energy;
               newp[1] = plong*s_t*c_p + k_perp1[1];
               newp[2] = plong*s_t*s_p + k_perp1[2];
               newp[3] = plong*c_t + k_perp1[3];
                   
-              // cout << " d1 momentum " << newp[0] << "  " << newp[1] << "  " << newp[2] << "  " << newp[3] << endl ;
-              // cout << " d1 mass^2 = " << pow(newp[0],2) - pow(newp[1],2) - pow(newp[2],2) - pow(newp[3],2) << endl;
-
               double newx[4];
               newx[0] = Time + deltaTime ;
               for (int j=1;j<=3;j++)
@@ -421,9 +401,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               pOut.push_back(Parton(0,pid_a,0,newp,newx ));
               int iout = pOut.size()-1 ;
                   
-              //cout << "  created a new parton from split with iout = " << iout << endl;
               pOut[iout].set_jet_v(velocity);
-              // pOut[iout].set_t(tQd1); // KK: Not necessary, and in fact wrong
               pOut[iout].set_mean_form_time();
               double ft = generate_L (pOut[iout].mean_form_time());
               pOut[iout].set_form_time(ft);
@@ -447,7 +425,6 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               energy = ( (1.0-z)*pIn[i].nu() + (tQd2 + k_perp2_2)/( 2.0*(1.0-z)*pIn[i].nu() ) )/std::sqrt(2.0) ;
               plong =  ( (1.0-z)*pIn[i].nu() - (tQd2 + k_perp2_2)/( 2.0*(1.0-z)*pIn[i].nu() ) )/std::sqrt(2.0) ;
 
-              // cout << " E, plong of d2 , E^2 - plong^2 - k_perp^2 = " << energy << " " << plong << "  " << energy*energy - plong*plong - k_perp2_2 << endl;
               parent_perp = std::sqrt( pow(pIn[i].p(1),2) + pow(pIn[i].p(2),2) + pow(pIn[i].p(3),2) - pow(pIn[i].pl(),2) );
               mod_jet_v = std::sqrt( pow(pIn[i].jet_v().x(),2) +  pow(pIn[i].jet_v().y(),2) + pow(pIn[i].jet_v().z(),2) ) ;
                   
@@ -456,9 +433,6 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               newp[2] = plong*s_t*s_p + k_perp2[2] ;
               newp[3] = plong*c_t + k_perp2[3] ;
               
-              // cout << " d2 momentum " << newp[0] << "  " << newp[1] << "  " << newp[2] << "  " << newp[3] << endl ;
-              // cout << " d2 mass^2 = " << pow(newp[0],2) - pow(newp[1],2) - pow(newp[2],2) - pow(newp[3],2) << endl;
-
               newx[0] = Time + deltaTime;
               for (int j=1;j<=3;j++)
               {
@@ -467,10 +441,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 	      
               pOut.push_back(Parton(0,pid_b,0,newp,newx ));
               iout = pOut.size()-1 ;
-              //cout << "  created a new parton from split with iout = " << iout << endl;
-              // cout << endl;
               pOut[iout].set_jet_v(velocity);
-              // pOut[iout].set_t(tQd2);	// KK: Not necessary, and in fact wrong
               pOut[iout].set_mean_form_time();
               ft = generate_L (pOut[iout].mean_form_time());
               pOut[iout].set_form_time(ft);
@@ -493,9 +464,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       { // virtuality too low
           // pOut.push_back(pIn[i]);
       }
-          
-    //          cout << " exit formation time = " << pIn[0].form_time() << endl;
-	  
+          	  
   } // particle loop
       
 }

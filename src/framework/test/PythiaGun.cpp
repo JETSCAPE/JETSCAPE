@@ -58,7 +58,7 @@ void PythiaGun::InitTask()
   xmle = PythiaXmlDescription->FirstChildElement( "name" ); if ( !xmle ) throw std::runtime_error("Cannot parse xml");
   s = xmle->GetText();
   SetId(s);
-  cout << s << endl;
+  // cout << s << endl;
   
   xmle = PythiaXmlDescription->FirstChildElement( "pTHatMin" ); if ( !xmle ) throw std::runtime_error("Cannot parse xml");
   xmle->QueryDoubleText(&pTHatMin);

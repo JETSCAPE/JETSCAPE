@@ -31,24 +31,24 @@ void HadronizationModuleTest::WriteTask(weak_ptr<JetScapeWriter> w)
 
 void HadronizationModuleTest::DoHadronization(vector<vector<shared_ptr<Parton>>>& shower, vector<shared_ptr<Hadron>>& hOut, vector<shared_ptr<Parton>>& pOut)
 {
-  INFO<<"Start Hadronizing using the PYTHIA module...";
-    Pythia pythia;
-    Event& event      = pythia.event;
-    pythia.readString("ProcessLevel:all = off");
-    pythia.readString("PartonLevel:FSR=on");
-    pythia.init();
-    event.reset();
-    double pz = 100.0;
+  VERBOSE(2)<<"Start Hadronizing using the PYTHIA module...";
+  Pythia pythia;
+  Event& event      = pythia.event;
+  pythia.readString("ProcessLevel:all = off");
+  pythia.readString("PartonLevel:FSR=on");
+  pythia.init();
+  event.reset();
+  double pz = 100.0;
 //    event.append( 21, 23, 101, 103, 0., 0., 100.0, 100 );
 //    event.append( 21, 23, 103, 101, 0., 0., -100.0, 100);
     
-  cout << "&&&&&&&&&&&&&&&&&&& the number of showers are: " << shower.size() << endl;
+  DEBUG << "&&&&&&&&&&&&&&&&&&& the number of showers are: " << shower.size();
   for(unsigned int ishower=0; ishower <  shower.size(); ++ishower)  
 {
     
 
 
-  cout << "&&&&&&&&&&&&&&&&&&& there are " << shower.at(ishower).size() << " partons in the shower number " << ishower << endl;
+  DEBUG << "&&&&&&&&&&&&&&&&&&& there are " << shower.at(ishower).size() << " partons in the shower number " << ishower;
   for(unsigned int ipart=0; ipart <  shower.at(ishower).size(); ++ipart)
   {
       double onshellE = pow(pow(shower.at(ishower).at(ipart)->px(),2) + pow(shower.at(ishower).at(ipart)->py(),2) + pow(shower.at(ishower).at(ipart)->pz(),2) ,0.5 ) ;
@@ -109,7 +109,7 @@ void HadronizationModuleTest::DoHadronization(vector<vector<shared_ptr<Parton>>>
 */
     
     
-  INFO<<"There are " << hOut.size() << " Hadrons and " << pOut.size() << " partons after Hadronization";
+   VERBOSE(2) <<"There are " << hOut.size() << " Hadrons and " << pOut.size() << " partons after Hadronization";
 }
         pythia.next();
     

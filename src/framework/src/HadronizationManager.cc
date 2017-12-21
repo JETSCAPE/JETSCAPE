@@ -73,7 +73,7 @@ void HadronizationManager::WriteTask(weak_ptr<JetScapeWriter> w)
 void HadronizationManager::Exec()
 {
 
-  INFO<<"Run Hadronization Manager ...";
+  VERBOSE(2)<<"Run Hadronization Manager ...";
   DEBUG<<"Task Id = "<<this_thread::get_id();
   
   if (GetNumberOfTasks()<1)
@@ -87,7 +87,7 @@ void HadronizationManager::Exec()
   if (GetGetFinalPartonListConnected())
   {
     GetFinalPartonList(hd);
-    INFO<<" There are "<<hd.size() << " partons ready for recombination";
+    VERBOSE(2)<<" There are "<<hd.size() << " partons ready for recombination";
     for (auto it : GetTaskList())
     {
       dynamic_pointer_cast<Hadronization>(it)->AddInPartons(hd);
@@ -96,7 +96,7 @@ void HadronizationManager::Exec()
   }
   else
   {
-    INFO<<" There are no partons ready for recombination" ;
+    VERBOSE(2)<<" There are no partons ready for recombination" ;
   }
 
 }

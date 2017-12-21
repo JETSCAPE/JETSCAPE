@@ -43,7 +43,7 @@ void Brick::InitTask()
       brick->FirstChildElement("T")->QueryDoubleText(&T_brick);
 
       DEBUG << s << " with T = "<<T_brick;
-      INFO<<"Brick Temperature T = "<<T_brick;
+      VERBOSE(2)<<"Brick Temperature T = "<<T_brick;
 
       if ( brick->Attribute("bjorken_expansion_on", "true") ) {
           bjorken_expansion_on = true;
@@ -66,7 +66,7 @@ void Brick::initialize_hydro(Parameter parameter_list) {
 
 void Brick::evolve_hydro() {
   VERBOSE(8);
-  INFO << "size of sd = " << ini->entropy_density_distribution_.size();
+  VERBOSE(2) << "size of sd = " << ini->entropy_density_distribution_.size();
   hydro_status = FINISHED;
 }
 

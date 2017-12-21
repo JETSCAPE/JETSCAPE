@@ -44,16 +44,16 @@ void Hadronization::Init()
 
 void Hadronization::DoHadronize()
 {
-  INFO<<"Get Recombination Partons...";
+  VERBOSE(2)<<"Get Recombination Partons...";
 
   if(inPartons.size()>0)
   {
-    INFO<<"There are Partons ready for Recombination...";
+    VERBOSE(2)<<"There are Partons ready for Recombination...";
     TransformPartons(inPartons, outHadrons, outPartons);    
   }
   else
   {
-    INFO<<"There is no Parton ready for Recombination...";
+    VERBOSE(2)<<"There is no Parton ready for Recombination...";
   }
 
 }
@@ -61,8 +61,8 @@ void Hadronization::DoHadronize()
 
 void Hadronization::Exec()
 {
-  INFO<<"Run Hadronization Exec...";
-  INFO<<"Found "<<GetNumberOfTasks()<<" Hadronization Tasks/Modules Execute them ... ";
+  VERBOSE(2)<<"Run Hadronization Exec...";
+  VERBOSE(2)<<"Found "<<GetNumberOfTasks()<<" Hadronization Tasks/Modules Execute them ... ";
 
   //this->outHadrons = make_shared<vector<shared_ptr<Hadron>>>();
   //this->outPartons = make_shared<vector<shared_ptr<Parton>>>();

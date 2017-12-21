@@ -141,9 +141,9 @@ void JetScape::Exec()
     {
       INFO<<BOLDBLACK<<"Run Event # = "<<i;
       DEBUG<<"Found "<<GetNumberOfTasks()<<" Modules Execute them ... ";
-      
-      JetScapeTask::ExecuteTasks();
 
+      JetScapeTask::ExecuteTasks();
+      
       //JetScapeTask::GetPartons(p);
 
       if (w.lock().get())

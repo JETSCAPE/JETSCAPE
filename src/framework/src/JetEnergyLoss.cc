@@ -214,16 +214,11 @@ void JetEnergyLoss::DoShower()
 	    {
 	      vEnd=pShower->new_vertex(make_shared<Vertex>(0,0,0,currentTime));	
 	      int edgeid = pShower->new_parton(vStart,vEnd,make_shared<Parton>(pOutTemp[k]));
-	      // INFO << edgeid;
 	      pOutTemp[k].set_shower( pShower );
 	      pOutTemp[k].set_edgeid( edgeid );
-	      INFO << pOutTemp[k].edgeid();
-
 		      
 	      vStartVecOut.push_back(vEnd);
-	      pOut.push_back(pOutTemp[k]);
-	      // INFO << pOut.back().edgeid();
-		      
+	      pOut.push_back(pOutTemp[k]);		      
 
 	      Parton& particle = pOut.back();
 	      // Parton& particle = pOut[iout];
@@ -389,7 +384,7 @@ void JetEnergyLoss::Exec()
 void JetEnergyLoss::WriteTask(weak_ptr<JetScapeWriter> w)
 {
   VERBOSE(8);
-  INFO<<"In JetEnergyLoss::WriteTask";
+  VERBOSE(4)<<"In JetEnergyLoss::WriteTask";
   w.lock()->WriteComment("Energy loss Shower Initating Parton: "+GetId());
   w.lock()->Write(inP);
 
@@ -399,7 +394,7 @@ void JetEnergyLoss::WriteTask(weak_ptr<JetScapeWriter> w)
 #ifdef USE_HEPMC
   //If you want HepMC output, pass the whole shower along...
   if (dynamic_pointer_cast<JetScapeWriterHepMC> (w.lock())){
-      INFO << " writing partons... found " << pShower->GetNumberOfPartons();
+      VERBOSE(4) << " writing partons... found " << pShower->GetNumberOfPartons();
       (w.lock())->Write(pShower);
   }
 #endif
