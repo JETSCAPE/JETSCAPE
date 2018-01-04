@@ -307,7 +307,10 @@ void PartonShower::load_node_info_handler (node n, GML_pair *read)
   VERBOSESHOWER(8)<<"Load node ... "<<n;
   struct GML_pair* tmp = read;
 
-  double x,y,z,t;
+  double x=0;
+  double y=0;
+  double z=0;
+  double t=0;
     
   while (tmp) {
     //printf ("*KEY* : %s %f \n", tmp->key, tmp->value.floating);
