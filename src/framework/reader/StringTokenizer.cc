@@ -56,7 +56,7 @@ bool StringTokenizer::isEdgeEntry() const
 {
   if (buffer.length()>0)
     if (isGraphEntry())
-      if (buffer.find("-->")<100)
+      if (buffer.find("=>")<100)
 	return true;
       else
 	return false;
