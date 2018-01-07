@@ -59,11 +59,12 @@ int main(int argc, char** argv)
     
   // DEBUG=true by default and REMARK=false
   // can be also set also via XML file (at least partially)
+  JetScapeLogger::Instance()->SetInfo(true);
   JetScapeLogger::Instance()->SetDebug(true);
   JetScapeLogger::Instance()->SetRemark(false);
   //SetVerboseLevel (9 a lot of additional debug output ...)
-  //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevle(9) or 10
-  JetScapeLogger::Instance()->SetVerboseLevel(8);
+  //If you want to suppress it: use SetVerboseLevel(0) or max  SetVerboseLevel(9) or 10
+  JetScapeLogger::Instance()->SetVerboseLevel(0);
 
   
   Show();
@@ -71,6 +72,8 @@ int main(int argc, char** argv)
   // auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",10);
   auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",10);
   jetscape->SetId("primary");
+  // jetscape->set_reuse_hydro (true);
+  // jetscape->set_n_reuse_hydro (10);
 
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();

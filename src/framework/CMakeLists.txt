@@ -35,10 +35,20 @@ if(${HDF5_FOUND})
     set(_hdf5_libs ${HDF5_LIBRARIES} ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES})
 endif(${HDF5_FOUND})
 
-message ("Include Directories ...")
 
-include_directories(./src ./test ./hydro ./jet ./gtl/include ./reader) #for test case ...
-include_directories(./3rdparty/hydro_from_external_file)
+message("Looking for MPI ...")
+find_package(MPI)
+if(${MPI_FOUND})
+  include_directories(${MPI_INCLUDE_PATH})
+endif(${MPI_FOUND})
+message("Looking for GSL ...")
+find_package(GSL)
+if(${GSL_FOUND})
+  include_directories(${GSL_INCLUDE_DIR})
+endif(${GSL_FOUND})
+#include_directories(./3rdparty/music ./3rdparty/music/src )
+
+message ("Include Directories ...")
 
 if (${HEPMC_FOUND})
     include_directories(${HEPMC_INCLUDE_DIR})
@@ -59,8 +69,8 @@ if (${ROOT_FOUND})
     #set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -m64")    
 endif()
 
-
-#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "./bin/")
+include_directories(./src ./test ./hydro ./jet ./gtl/include ./reader) #for test case ...
+include_directories(./3rdparty/hydro_from_external_file)
 
 message("Compiler and Linker flags ...")
 
@@ -91,7 +101,6 @@ SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
 # Find and use Boost.
 find_package(Boost 1.50 REQUIRED COMPONENTS filesystem program_options system)
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
-
 
 # add the library path and inclusion path of trento to jetscape
 add_subdirectory(3rdparty/trento/)
@@ -172,17 +181,6 @@ endif()
 
 if (music)
     message("Building MUSIC ...")
-    message("Looking for MPI ...")
-    find_package(MPI)
-    if(${MPI_FOUND})
-        include_directories(${MPI_INCLUDE_PATH})
-    endif(${MPI_FOUND})
-    message("Looking for GSL ...")
-    find_package(GSL)
-    if(${GSL_FOUND})
-        include_directories(${GSL_INCLUDE_DIR})
-    endif(${GSL_FOUND})
-    include_directories(./3rdparty/music ./3rdparty/music/src)
     add_subdirectory(./3rdparty/music)
     if (${MPI_FOUND} AND ${GSL_FOUND})
         add_executable(MUSICTest ./src/MUSICTest.cc)
