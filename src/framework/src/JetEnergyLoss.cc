@@ -437,7 +437,7 @@ void JetEnergyLoss::WriteTask(weak_ptr<JetScapeWriter> w)
       
       for (eIt = pShower->edges_begin(), eEnd = pShower->edges_end(); eIt != eEnd; ++eIt)
 	{
-	  w.lock()->WriteWhiteSpace("["+to_string(eIt->source().id())+"]-->["+to_string(eIt->target().id())+"]");
+	  w.lock()->WriteWhiteSpace("["+to_string(eIt->source().id())+"]=>["+to_string(eIt->target().id())+"]");
 	  w.lock()->Write(pShower->GetParton(*eIt));
 	}
     }
