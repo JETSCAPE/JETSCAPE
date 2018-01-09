@@ -27,11 +27,11 @@
 // User modules derived from jetscape framework clasess
 // to be used to run Jetscape ...
 #include "InitialState.h"
-#include "ElossModulesTest.h"
+#include "ElossModulesTestMatter.h"
+#include "ElossModulesTestMartini.h"
 #include "brick_jetscape.h"
 #include "Gubser_hydro_jetscape.h"
 #include "PGun.h"
-#include "JSPythia8.h"
 
 #include <chrono>
 #include <thread>
@@ -73,9 +73,7 @@ int main(int argc, char** argv)
   auto matter = make_shared<Matter> ();
   auto martini = make_shared<Martini> ();
   
-  //auto pGun= make_shared<PGun> ();
-  string pyth8Loc = (string)"/Users/"+(string)std::getenv("USER")+(string)"/pythia8233/xmldoc";
-  auto py8=make_shared<JSPythia8> (pyth8Loc.c_str(),false);
+  auto pGun= make_shared<PGun> ();
 
   // only pure Ascii writer implemented and working with graph output ...
   //auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
@@ -86,14 +84,10 @@ int main(int argc, char** argv)
 
   jetscape->Add(initState);
 
-  // Pythia 8 interface, what partons used
-  // for intial hard to be implemented in JSPythia8 class ...
-  jetscape->Add(py8);
-
   //Remark: For now modules have to be added
   //in proper "workflow" order (can be defined via xml and sorted if necessary)
   
-  //jetscape->Add(pGun);
+  jetscape->Add(pGun);
 
    //Some modifications will be needed for reusing hydro events, so far
   //simple test hydros always executed "on the fly" ...

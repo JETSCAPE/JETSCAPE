@@ -11,8 +11,6 @@
 //#include "fluid_dynamics.h"
 #include "brick_jetscape.h"
 
-using namespace std;
-
 using namespace Jetscape;
 
 Brick::Brick() : FluidDynamics() {
@@ -62,8 +60,6 @@ void Brick::InitTask()
 }
 
 void Brick::initialize_hydro(Parameter parameter_list) {
-  VERBOSE(8)<<parameter_list.hydro_input_filename;
-
   hydro_status = INITIALIZED;
 }
 

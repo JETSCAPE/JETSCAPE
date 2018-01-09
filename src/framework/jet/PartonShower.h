@@ -16,22 +16,26 @@
 #include "JetClass.hpp"
 #include "JetScapeLogger.h"
 
+using std::shared_ptr;
+
 namespace Jetscape {
 
 // Think about best interface and what is truly needed, maybe even better
 // if no graph at all write a converter function/class and split parton in base
 // and after transformer class. TBD ...
-
+  class Vertex;
+  class Parton;
+  
 class PartonShower : public graph
 {
 
 public:
 
-  PartonShower() : graph() {VERBOSESHOWER(8);}
+  PartonShower();
   virtual ~PartonShower();
 
   node new_vertex(shared_ptr<Vertex> v);
-  void new_parton(node s, node t, shared_ptr<Parton> p);
+  int new_parton(node s, node t, shared_ptr<Parton> p);
   
   shared_ptr<Vertex> GetVertex(node n) {return vMap[n];}
   shared_ptr<Parton> GetParton(edge e) {return pMap[e];}
@@ -46,7 +50,7 @@ public:
   int GetNumberOfChilds(int n);
 
   vector<shared_ptr<Parton>> GetFinalPartons();
-  vector<Parton> GetFinalPartonsForFastJet();
+  vector<fjcore::PseudoJet> GetFinalPartonsForFastJet();
   
   //unique_ptr<Parton> GetPartonAt(int i);
   //unique_ptr<Vertex> GetVertexAt(int i);

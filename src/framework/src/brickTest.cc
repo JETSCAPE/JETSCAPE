@@ -30,16 +30,16 @@
 #include "brick_jetscape.h"
 #include "Gubser_hydro_jetscape.h"
 #include "PGun.h"
-#include "JSPythia8.h"
 #include "PartonPrinter.h"
+#include "HadronizationManager.h"
+#include "Hadronization.h"
+#include "HadronizationModuleTest.h"
 
 // Add initial state module for test
 #include "TrentoInitial.h"
 
 #include <chrono>
 #include <thread>
-
-using namespace std;
 
 using namespace Jetscape;
 
@@ -57,16 +57,20 @@ int main(int argc, char** argv)
     
   // DEBUG=true by default and REMARK=false
   // can be also set also via XML file (at least partially)
-  JetScapeLogger::Instance()->SetDebug(false);
+  JetScapeLogger::Instance()->SetInfo(true);
+  JetScapeLogger::Instance()->SetDebug(true);
   JetScapeLogger::Instance()->SetRemark(false);
   //SetVerboseLevel (9 a lot of additional debug output ...)
-  //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevle(9) or 10
-  JetScapeLogger::Instance()->SetVerboseLevel(8);
+  //If you want to suppress it: use SetVerboseLevel(0) or max  SetVerboseLevel(9) or 10
+  JetScapeLogger::Instance()->SetVerboseLevel(0);
    
   Show();
 
   auto jetscape = make_shared<JetScape>("./jetscape_init.xml",1);
   jetscape->SetId("primary");
+  // jetscape->set_reuse_hydro (true);
+  // jetscape->set_n_reuse_hydro (10);
+  
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
 
@@ -75,8 +79,8 @@ int main(int argc, char** argv)
   auto hydro = make_shared<Brick> ();
   //auto hydro = make_shared<GubserHydro> ();
   
-  //auto matter = make_shared<Matter> ();
-  auto martini = make_shared<Martini> ();
+  auto matter = make_shared<Matter> ();
+  //auto martini = make_shared<Martini> ();
   //auto adscft = make_shared<AdSCFT> ();
   //DBEUG: Remark:
   //does not matter unfortunately since not called recursively, done by JetEnergyLoss class ...
@@ -86,9 +90,12 @@ int main(int argc, char** argv)
   //jloss->SetActive(false);
 
   auto pGun= make_shared<PGun> ();
-  //auto py8=make_shared<JSPythia8> ("/Users/kjung/pythia8233/xmldoc",false);
 
   auto printer = make_shared<PartonPrinter> ();
+
+  auto hadroMgr = make_shared<HadronizationManager> ();
+  auto hadro = make_shared<Hadronization> ();
+  auto hadroModule = make_shared<HadronizationModuleTest> ();
 
   // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
@@ -96,27 +103,19 @@ int main(int argc, char** argv)
   //auto writer= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
   //writer->SetActive(false);
 
-  // Pythia 8 interface, what partons used
-  // for intial hard to be implemented in JSPythia8 class ...
-  //jetscape->Add(py8);
-
   //Remark: For now modules have to be added
   //in proper "workflow" order (can be defined via xml and sorted if necessary)
   
   jetscape->Add(pGun);
-
   jetscape->Add(trento);
-
-   //Some modifications will be needed for reusing hydro events, so far
-  //simple test hydros always executed "on the fly" ...
   jetscape->Add(hydro);
 
   // Matter with silly "toy shower (no physics)
   // and Martini dummy ...
   // Switching Q2 (or whatever variable used
   // hardcoded at 5 to be changed to xml)
-  //jloss->Add(matter);
-  jloss->Add(martini);
+  jloss->Add(matter);
+  //jloss->Add(martini);
   //jloss->Add(adscft);  
 
   jlossmanager->Add(jloss);
@@ -124,6 +123,10 @@ int main(int argc, char** argv)
   jetscape->Add(jlossmanager);
 
   jetscape->Add(printer);
+
+  hadro->Add(hadroModule);
+  hadroMgr->Add(hadro);
+  jetscape->Add(hadroMgr);
 
   jetscape->Add(writer);
 

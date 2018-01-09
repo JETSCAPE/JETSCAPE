@@ -13,6 +13,15 @@
      <task>Hydro1</task>
    </Tasks>
 
+   <!--  Random Settings. For now, just a global  seed. -->
+   <!--  Note: It's each modules responsibility to adopt it -->
+   <!--  Note: Most if not all modules should understand 0 to mean a random value -->
+   <!--  Note: Both 0 and non-zero values require careful treatment in case of multi-threading -->
+   <!--           An example implementation is (will be) in JetEnergyLossManager.cc -->
+   <Random>
+     <seed>1</seed>
+   </Random>
+
    <!-- Inital State Module ... -->
    <IS>
      <!-- x range [-grid_max_x, grid_max_x] -->
@@ -118,7 +127,8 @@
      <!-- MUSIC ... -->
      <MUSIC>
          <name>MUSIC</name>
-         <MUSIC_input_file>music_input_mode_2</MUSIC_input_file>
+         <MUSIC_input_file>music_input</MUSIC_input_file>
+         <Perform_CooperFrye_Feezeout>1</Perform_CooperFrye_Feezeout>
      </MUSIC>
      
    </Hydro>

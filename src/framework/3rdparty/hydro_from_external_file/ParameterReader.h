@@ -9,7 +9,14 @@ Version 1.01 (09-20-2011) Zhi Qiu
 #include <vector>
 #include <string>
 
-using namespace std;
+// using namespace std;
+using std::string;
+using std::vector;
+using std::ofstream;
+using std::ifstream;
+using std::ostream;
+using std::istream;
+using std::abs;
 
 class ParameterReader
 {

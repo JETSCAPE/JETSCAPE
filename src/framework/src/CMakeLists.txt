@@ -7,17 +7,32 @@ cmake_policy(SET CMP0042 NEW)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "../lib/")
 
 set (SOURCES
-JetScape.cc JetScapeTask.cc
-tinyxml2.cc FluidDynamics.cc HardProcess.cc Collision.cc
-TrentoInitial.cc JetScapeLogger.cc JetScapeXML.cc
-JetEnergyLoss.cc  JetScapeModuleBase.cc JetEnergyLossManager.cc
-JetScapeSignalManager.cc JetScapeWriterAscii.cc JetScapeEvent.cc
-JetScapeTaskSupport.cc
-../jet/JetClass.cpp ../jet/fjcore.cc ../jet/PartonShower.cc
-InitialState.cc
-PartonShowerGenerator.cc
-PartonPrinter.cc
-) #ElossModulesTest.cc 
+  JetScape.cc
+  JetScapeTask.cc
+  tinyxml2.cc
+  FluidDynamics.cc
+  HardProcess.cc
+  Collision.cc
+  TrentoInitial.cc
+  JetScapeLogger.cc
+  JetScapeXML.cc
+  JetEnergyLoss.cc
+  JetScapeModuleBase.cc
+  JetEnergyLossManager.cc
+  JetScapeSignalManager.cc
+  JetScapeWriterAscii.cc
+  JetScapeEvent.cc
+  JetScapeTaskSupport.cc
+  JetScapeParticles.cc
+  ../jet/JetClass.cpp
+  ../jet/fjcore.cc
+  ../jet/PartonShower.cc
+  InitialState.cc
+  PartonShowerGenerator.cc
+  PartonPrinter.cc
+  HadronizationManager.cc
+  Hadronization.cc
+) 
 
 if(${ZLIB_FOUND})
     set (SOURCES ${SOURCES}  gzstream.cc JetScapeWriterAsciiGZ.cc)

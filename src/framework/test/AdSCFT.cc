@@ -85,7 +85,7 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
     for (int i=0;i<pIn.size();i++)
     {
       cout << " Parton Q2= " << pIn[i].t() << endl;
-      cout << " Parton Id= " << pIn[i].pid() << " and mass= " << pIn[i].mass() << endl;
+      cout << " Parton Id= " << pIn[i].pid() << " and mass= " << pIn[i].restmass() << endl;
       if (pIn[i].t()<=QS && pIn[i].e()>0.)
       {
 	//Parton 4-position
@@ -123,9 +123,9 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 
         //Parton 4-momentum
         double p[4];
-        p[0]=pIn[i].p(1);
-	p[1]=pIn[i].p(2); 
-	p[2]=pIn[i].p(3);
+        p[0]=pIn[i].px();
+	p[1]=pIn[i].py(); 
+	p[2]=pIn[i].pz();
 	p[3]=pIn[i].e();
         
 	//Energy of parton as it entered this module for the first time
@@ -150,7 +150,7 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
         for (unsigned int j =0; j<4; j++) w.push_back(p[j]/p[3]);
         double w2=std::pow(w[0],2.)+std::pow(w[1],2.)+std::pow(w[2],2.);        
         cout << " w2= " << w2 << endl;
-	double virt=std::sqrt(p[3]*p[3]-w2*p[3]*p[3]-std::pow(pIn[i].mass(),2.));
+	double virt=std::sqrt(p[3]*p[3]-w2*p[3]*p[3]-std::pow(pIn[i].restmass(),2.));
 	//cout << " virt= " << virt << endl;
   	
         //Needed for boosts (v.w)
@@ -175,9 +175,8 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 
 	//Update 4-momentum
 	for (unsigned a=0; a<4; a++) p[a]*=lambda;
-	double fp[4];
-	fp[0]=p[3], fp[1]=p[0], fp[2]=p[1], fp[3]=p[2];
-	pIn[i].set_p(fp);
+	pIn[i].reset_momentum(p[0],p[1],p[2],p[3]);
+
 	//Update 4-position
 	for (unsigned a=0; a<4; a++) x[a]+=w[a]*deltaT;
 	double fx[4];
