@@ -186,10 +186,6 @@ void JetEnergyLoss::DoShower()
   vStartVec.push_back(vEnd);
   //vStartVecTemp.push_back(vEnd);
   
-  // ISSUE: Probably not yet 100% wrt to time step evolution ...
-  // Logic mistake to remove the original ones when no split occured !!??? Follow up!!!!
-  REMARK<<"DoShower() Splitting including time evolution (allowing non-splits at later times) implemeted correctly (should be made nicer/pointers). To be checked!!!";
-
   // --------------------------------------------
   
   do

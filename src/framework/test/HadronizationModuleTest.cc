@@ -32,8 +32,32 @@ void HadronizationModuleTest::WriteTask(weak_ptr<JetScapeWriter> w)
 void HadronizationModuleTest::DoHadronization(vector<vector<shared_ptr<Parton>>>& shower, vector<shared_ptr<Hadron>>& hOut, vector<shared_ptr<Parton>>& pOut)
 {
   VERBOSE(2)<<"Start Hadronizing using the PYTHIA module...";
-  Pythia pythia;
+  // cmldir will be detected automatically and override this setting anyway.
+  // Only set because it's needed to suppress the banner
+  string xmlDir = "DONTUSETHIS";
+  bool printBanner = false;
+  if ( JetScapeLogger::Instance()->GetVerboseLevel()>7 ) printBanner = true;
+  Pythia pythia (xmlDir,printBanner);
+    
   Event& event      = pythia.event;
+
+  // Show initialization at DEBUG or high verbose level
+  pythia.readString("Init:showProcesses = off");
+  pythia.readString("Init:showChangedSettings = off");
+  pythia.readString("Init:showMultipartonInteractions = off");
+  pythia.readString("Init:showChangedParticleData = off");
+  if ( JetScapeLogger::Instance()->GetDebug() || JetScapeLogger::Instance()->GetVerboseLevel()>7 ) {
+    pythia.readString("Init:showProcesses = on");
+    pythia.readString("Init:showChangedSettings = on");
+    pythia.readString("Init:showMultipartonInteractions = on");
+    pythia.readString("Init:showChangedParticleData = on");
+  }
+
+  // No event record printout.
+  pythia.readString("Next:numberShowInfo = 0"); 
+  pythia.readString("Next:numberShowProcess = 0"); 
+  pythia.readString("Next:numberShowEvent = 0"); 
+
   pythia.readString("ProcessLevel:all = off");
   pythia.readString("PartonLevel:FSR=on");
   pythia.init();
@@ -74,7 +98,7 @@ void HadronizationModuleTest::DoHadronization(vector<vector<shared_ptr<Parton>>>
     }
     
     pz = -1*pz;
-   event.append(pid, 23, anti_color, color, 0.2, 0.2, pz, 100.0004);
+    event.append(pid, 23, anti_color, color, 0.2, 0.2, pz, 100.0004);
     
     
       

@@ -28,6 +28,18 @@ void PythiaGun::InitTask()
 
   DEBUG<<"Initialize PythiaGun"; 
   VERBOSE(8);
+
+  // Show initialization at INFO level
+  readString("Init:showProcesses = off");
+  readString("Init:showChangedSettings = off");
+  readString("Init:showMultipartonInteractions = off");
+   readString("Init:showChangedParticleData = off");
+  if ( JetScapeLogger::Instance()->GetInfo() ) {
+    readString("Init:showProcesses = on");
+    readString("Init:showChangedSettings = on");
+    readString("Init:showMultipartonInteractions = on");
+    readString("Init:showChangedParticleData = on");
+  }
   
   // No event record printout.
   readString("Next:numberShowInfo = 0"); 
