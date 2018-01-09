@@ -61,7 +61,6 @@ int main(int argc, char** argv)
   JetScapeLogger::Instance()->SetDebug(true);
   JetScapeLogger::Instance()->SetRemark(false);
   //SetVerboseLevel (9 a lot of additional debug output ...)
-  //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevle(9) or 10
   JetScapeLogger::Instance()->SetVerboseLevel(0);
    
   Show();
