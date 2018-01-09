@@ -68,6 +68,9 @@ int main(int argc, char** argv)
 
   auto jetscape = make_shared<JetScape>("./jetscape_init.xml",2);
   jetscape->SetId("primary");
+  // jetscape->set_reuse_hydro (true);
+  // jetscape->set_n_reuse_hydro (10);
+  
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
 
@@ -104,11 +107,7 @@ int main(int argc, char** argv)
   //in proper "workflow" order (can be defined via xml and sorted if necessary)
   
   jetscape->Add(pGun);
-
   jetscape->Add(trento);
-
-   //Some modifications will be needed for reusing hydro events, so far
-  //simple test hydros always executed "on the fly" ...
   jetscape->Add(hydro);
 
   // Matter with silly "toy shower (no physics)
