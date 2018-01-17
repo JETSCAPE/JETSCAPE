@@ -1853,8 +1853,7 @@ void Martini::readRadiativeRate(Gamma_info *dat, dGammas *Gam)
   FILE *rfile;
   string path = "../test/Martini/";
   string filename;
-  // Sangyong's addition for Bethe-Heitler rates
-  filename = path+"radgamma_bh";
+  filename = path+"radgamma";
 
   cout << "Reading rates of inelastic collisions from file " << endl;
   cout << filename.c_str() << " ... " << endl;
