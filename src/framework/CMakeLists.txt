@@ -24,7 +24,7 @@ find_package(HEPMC)
 
 message("Looking for ROOT ...")
 find_package(ROOT)
-    
+
 message("Looking for Pythia8 ...")
 find_package(Pythia8)
 
@@ -64,9 +64,9 @@ if (${ROOT_FOUND})
     include_directories(${ROOT_INCLUDES})
     Message(STATUS "ROOT Include dir : " ${ROOT_INCLUDES})
     #Message(STATUS ${ROOT_LIBRARIES})
-    
+
     #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m64")
-    #set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -m64")    
+    #set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -m64")
 endif()
 
 include_directories(./src ./test ./hydro ./jet ./gtl/include ./reader) #for test case ...
@@ -85,14 +85,14 @@ if (APPLE)
           set(CMAKE_CXX_LINK_FLAGS ${CMAKE_CXX_LINK_FLAGS} ${MPI_LINK_FLAGS})
      endif(${MPI_FOUND})
 
-     message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS})	
+     message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS})
      message(STATUS "LD_FLAGS = " ${CMAKE_EXE_LINKER_FLAGS})
-elseif(UNIX) 
+elseif(UNIX)
     message( STATUS "Linux : " ${CMAKE_HOST_SYSTEM})
-    #set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0 -fprofile-arcs -ftest-coverage -fPIC -pipe -Wall -g -Wno-reorder -Wno-unused-variable") 
+    #set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0 -fprofile-arcs -ftest-coverage -fPIC -pipe -Wall -g -Wno-reorder -Wno-unused-variable")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-sign-compare -Wno-unused-but-set-variable -Wno-parentheses -fprofile-arcs -ftest-coverage")
     #set(CMAKE_BUILD_TYPE Debug)
-endif()   
+endif()
 
 
 # have binary in the build directory, easier to access
@@ -111,6 +111,9 @@ option(test "Build all tests." ON) # Makes boolean 'test' available.
 
 # Options. Turn on with 'cmake -Dmusic=ON'.
 option(music "Build tests for MUSIC" OFF) # Makes boolean 'test' available.
+
+# Options. Turn on with 'cmake -Dfreestream=ON'.
+option(freestream "Build tests for freestream-milne" OFF) # Makes boolean 'test' available.
 
 if (music)
     message("Includes for music ...")
@@ -171,7 +174,7 @@ endif (${PYTHIA8_FOUND})
 
 # Don't compile tests modules if test is not switched on
 if (test)
-  # add gtest for the unit test# 
+  # add gtest for the unit test#
   add_subdirectory("${CMAKE_SOURCE_DIR}/3rdparty/googletest/")
   enable_testing()
   # Include the gtest library. gtest_SOURCE_DIR is available due to
@@ -195,6 +198,17 @@ if (music)
     endif()
 endif (music)
 
+if (freestream)
+    message("Building freestream-milne ...")
+    add_subdirectory(./3rdparty/freestream-milne)
+    if (${GSL_FOUND})
+        add_executable(freestream-milne ./src/Run.cpp)
+        target_link_libraries(freestream-milne ${GSL_LIBRARIES})
+        target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest hydroFromFile)
+        target_link_libraries(freestream-milne JetScape JetScapeHydro JetScapeTest)
+    endif()
+endif (freestream)
+
 # -----------------------------------------------------------
 #### copy jetscape_init.xml to build/, such that one can test xml reading in build/ directory
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/jetscape_init.xml DESTINATION ${CMAKE_BINARY_DIR}/)
@@ -205,4 +219,3 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/jetscape_init_pythiagun.xml DESTINATION ${
 #set(LIBS ${LIBS} ${ROOT_LIBRARIES})
 #However, the file(GLOB...) allows for wildcard additions:
 #file(GLOB SOURCES "src/*.cpp")
-
