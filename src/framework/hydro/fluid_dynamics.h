@@ -5,6 +5,7 @@
 #ifndef SRC_FLUID_DYNAMICS_H_
 #define SRC_FLUID_DYNAMICS_H_
 
+#include <memory>
 #include <vector>
 #include <cstring>
 #include <stdexcept>
