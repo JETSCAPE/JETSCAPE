@@ -46,7 +46,7 @@ void JetScape::Init()
 {
   Show();
   
-  INFO<<BOLDBLACK<<"Intialize JetScape ...";
+  INFO<<BOLDRED<<"Intialize JetScape ...";
   
   JetScapeXML::Instance()->OpenXMLFile(GetXMLFileName());
   
@@ -119,8 +119,8 @@ void JetScape::SetPointers()
 
 void JetScape::Exec()
 {
-  INFO<<BOLDBLACK<<"Run JetScape ...";
-  INFO<<BOLDBLACK<<"Number of Events = "<<GetNumberOfEvents(); 
+  INFO<<BOLDRED<<"Run JetScape ...";
+  INFO<<BOLDRED<<"Number of Events = "<<GetNumberOfEvents();
   
   // JetScapeTask::ExecuteTasks(); Has to be called explicitly since not really fully recursively (if ever needed)
   // --> JetScape is "Task Manager" of all modules ...
@@ -140,11 +140,11 @@ void JetScape::Exec()
  
   for (int i=0;i<GetNumberOfEvents();i++)
     {
-      INFO<<BOLDBLACK<<"Run Event # = "<<i;
+      INFO<<BOLDRED<<"Run Event # = "<<i;
       DEBUG<<"Found "<<GetNumberOfTasks()<<" Modules Execute them ... ";
-
-      JetScapeTask::ExecuteTasks();
       
+      JetScapeTask::ExecuteTasks();
+
       //JetScapeTask::GetPartons(p);
 
       if (w.lock().get())
@@ -177,7 +177,7 @@ void JetScape::Exec()
 
 void JetScape::Finish()
 {
-  INFO<<BOLDBLACK<<"JetScape finished after "<<GetNumberOfEvents()<<" events!";
+  INFO<<BOLDCYAN<<"JetScape finished after "<<GetNumberOfEvents()<<" events!";
   DEBUG<<"More infos wrap up/saving to file/closing file ...";
 
   // same as in Init() and Exec() ...
