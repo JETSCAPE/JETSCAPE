@@ -57,6 +57,11 @@ void HadronizationModuleTest::DoHadronization(vector<vector<shared_ptr<Parton>>>
   pythia.readString("Next:numberShowInfo = 0"); 
   pythia.readString("Next:numberShowProcess = 0"); 
   pythia.readString("Next:numberShowEvent = 0"); 
+  if ( JetScapeLogger::Instance()->GetDebug() || JetScapeLogger::Instance()->GetVerboseLevel()>2 ) {
+    pythia.readString("Next:numberShowInfo = 1"); 
+    pythia.readString("Next:numberShowProcess = 1"); 
+    pythia.readString("Next:numberShowEvent = 1"); 
+  }
 
   pythia.readString("ProcessLevel:all = off");
   pythia.readString("PartonLevel:FSR=on");
@@ -79,27 +84,27 @@ void HadronizationModuleTest::DoHadronization(vector<vector<shared_ptr<Parton>>>
       event.append(shower.at(ishower).at(ipart)->pid(),23,shower.at(ishower).at(ipart)->color(),shower.at(ishower).at(ipart)->anti_color(),
                    shower.at(ishower).at(ipart)->px(),shower.at(ishower).at(ipart)->py(),shower.at(ishower).at(ipart)->pz(),onshellE);
   }
-    unsigned int color, anti_color;
-    int pid;
-    
-    anti_color = shower.at(ishower).at(0)->min_anti_color();
-    color = shower.at(ishower).at(0)->min_color();
-    
-    if ((color>100)&&(anti_color>100)){
-        pid = 21;
-    }
-    else if ((color>100)&&(anti_color<100))
+  unsigned int color, anti_color;
+  int pid;
+  
+  anti_color = shower.at(ishower).at(0)->min_anti_color();
+  color = shower.at(ishower).at(0)->min_color();
+  
+  if ((color>100)&&(anti_color>100)){
+    pid = 21;
+  }
+  else if ((color>100)&&(anti_color<100))
     {
-        pid = -1;
+      pid = -1;
     }
-    else
+  else
     {
-        pid = 1;
+      pid = 1;
     }
-    
-    pz = -1*pz;
-    event.append(pid, 23, anti_color, color, 0.2, 0.2, pz, 100.0004);
-    
+  
+  pz = -1*pz;
+  event.append(pid, 23, anti_color, color, 0.2, 0.2, pz, 100.0004);
+  
     
       
 /*    if(ipart%2==0)
