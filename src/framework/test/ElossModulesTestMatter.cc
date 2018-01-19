@@ -93,11 +93,11 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 
   VERBOSESHOWER(8)<< MAGENTA << "SentInPartons Signal received : "<<deltaT<<" "<<Q2<<" "<<&pIn;
       
-  FluidCellInfo* check_fluid_info_ptr = new FluidCellInfo;
+  // FluidCellInfo* check_fluid_info_ptr = new FluidCellInfo;
+  // VERBOSE(8)<< MAGENTA<<"Temperature from Brick (Signal) = "<<check_fluid_info_ptr->temperature;
+  // delete check_fluid_info_ptr;
+  std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
   GetHydroCellSignal(1, 1.0, 1.0, 0.0, check_fluid_info_ptr);      
-  VERBOSE(8)<< MAGENTA<<"Temperature from Brick (Signal) = "<<check_fluid_info_ptr->temperature;
-   // std::cin >> blurb;
-  delete check_fluid_info_ptr;
 
   double rNum;
         

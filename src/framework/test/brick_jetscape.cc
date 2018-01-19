@@ -5,6 +5,7 @@
 #include <cstring>
 #include <cmath>
 #include <iostream>
+#include <helper.h>
 
 #include "JetScapeLogger.h"
 
@@ -72,7 +73,11 @@ void Brick::evolve_hydro() {
 
 
 void Brick::get_hydro_info(real t, real x, real y, real z,
-                           FluidCellInfo* fluid_cell_info_ptr) {
+			   //                           FluidCellInfo* fluid_cell_info_ptr) {
+			   std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr){
+    // create the unique FluidCellInfo here
+    fluid_cell_info_ptr=std::make_unique<FluidCellInfo>();
+
     // assign all the quantites to JETSCAPE output
     // thermodyanmic quantities
 

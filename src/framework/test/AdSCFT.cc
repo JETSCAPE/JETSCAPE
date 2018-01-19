@@ -96,8 +96,9 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 	x[3]=pIn[i].x_in().t();
         
 	//Extract fluid properties
-	FluidCellInfo* check_fluid_info_ptr = new FluidCellInfo;
-    	GetHydroCellSignal(x[3], x[0], x[1], x[2], check_fluid_info_ptr);
+	// FluidCellInfo* check_fluid_info_ptr = new FluidCellInfo;
+	std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
+	GetHydroCellSignal(x[3], x[0], x[1], x[2], check_fluid_info_ptr);
 	VERBOSE(8)<< MAGENTA<<"Temperature from Brick (Signal) = "<<check_fluid_info_ptr->temperature;
 
 	double temp = check_fluid_info_ptr->temperature;
@@ -186,7 +187,7 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 	pIn.back().set_user_info(new AdSCFTUserInfo(ei,f_dist,l_dist));
 	pOut.push_back(pIn[i]);
 
-	delete check_fluid_info_ptr;	 
+	// delete check_fluid_info_ptr;	 
 
       } //End if do-eloss
 
