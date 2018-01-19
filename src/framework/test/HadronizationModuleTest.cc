@@ -31,51 +31,80 @@ void HadronizationModuleTest::WriteTask(weak_ptr<JetScapeWriter> w)
 
 void HadronizationModuleTest::DoHadronization(vector<vector<shared_ptr<Parton>>>& shower, vector<shared_ptr<Hadron>>& hOut, vector<shared_ptr<Parton>>& pOut)
 {
-  INFO<<"Start Hadronizing using the PYTHIA module...";
-    Pythia pythia;
-    Event& event      = pythia.event;
-    pythia.readString("ProcessLevel:all = off");
-    pythia.readString("PartonLevel:FSR=on");
-    pythia.init();
-    event.reset();
-    double pz = 100.0;
+  VERBOSE(2)<<"Start Hadronizing using the PYTHIA module...";
+  // cmldir will be detected automatically and override this setting anyway.
+  // Only set because it's needed to suppress the banner
+  string xmlDir = "DONTUSETHIS";
+  bool printBanner = false;
+  if ( JetScapeLogger::Instance()->GetVerboseLevel()>7 ) printBanner = true;
+  Pythia pythia (xmlDir,printBanner);
+    
+  Event& event      = pythia.event;
+
+  // Show initialization at DEBUG or high verbose level
+  pythia.readString("Init:showProcesses = off");
+  pythia.readString("Init:showChangedSettings = off");
+  pythia.readString("Init:showMultipartonInteractions = off");
+  pythia.readString("Init:showChangedParticleData = off");
+  if ( JetScapeLogger::Instance()->GetDebug() || JetScapeLogger::Instance()->GetVerboseLevel()>7 ) {
+    pythia.readString("Init:showProcesses = on");
+    pythia.readString("Init:showChangedSettings = on");
+    pythia.readString("Init:showMultipartonInteractions = on");
+    pythia.readString("Init:showChangedParticleData = on");
+  }
+
+  // No event record printout.
+  pythia.readString("Next:numberShowInfo = 0"); 
+  pythia.readString("Next:numberShowProcess = 0"); 
+  pythia.readString("Next:numberShowEvent = 0"); 
+  if ( JetScapeLogger::Instance()->GetDebug() || JetScapeLogger::Instance()->GetVerboseLevel()>2 ) {
+    pythia.readString("Next:numberShowInfo = 1"); 
+    pythia.readString("Next:numberShowProcess = 1"); 
+    pythia.readString("Next:numberShowEvent = 1"); 
+  }
+
+  pythia.readString("ProcessLevel:all = off");
+  pythia.readString("PartonLevel:FSR=on");
+  pythia.init();
+  event.reset();
+  double pz = 100.0;
 //    event.append( 21, 23, 101, 103, 0., 0., 100.0, 100 );
 //    event.append( 21, 23, 103, 101, 0., 0., -100.0, 100);
     
-  cout << "&&&&&&&&&&&&&&&&&&& the number of showers are: " << shower.size() << endl;
+  DEBUG << "&&&&&&&&&&&&&&&&&&& the number of showers are: " << shower.size();
   for(unsigned int ishower=0; ishower <  shower.size(); ++ishower)  
 {
     
 
 
-  cout << "&&&&&&&&&&&&&&&&&&& there are " << shower.at(ishower).size() << " partons in the shower number " << ishower << endl;
+  DEBUG << "&&&&&&&&&&&&&&&&&&& there are " << shower.at(ishower).size() << " partons in the shower number " << ishower;
   for(unsigned int ipart=0; ipart <  shower.at(ishower).size(); ++ipart)
   {
       double onshellE = pow(pow(shower.at(ishower).at(ipart)->px(),2) + pow(shower.at(ishower).at(ipart)->py(),2) + pow(shower.at(ishower).at(ipart)->pz(),2) ,0.5 ) ;
       event.append(shower.at(ishower).at(ipart)->pid(),23,shower.at(ishower).at(ipart)->color(),shower.at(ishower).at(ipart)->anti_color(),
                    shower.at(ishower).at(ipart)->px(),shower.at(ishower).at(ipart)->py(),shower.at(ishower).at(ipart)->pz(),onshellE);
   }
-    unsigned int color, anti_color;
-    int pid;
-    
-    anti_color = shower.at(ishower).at(0)->min_anti_color();
-    color = shower.at(ishower).at(0)->min_color();
-    
-    if ((color>100)&&(anti_color>100)){
-        pid = 21;
-    }
-    else if ((color>100)&&(anti_color<100))
+  unsigned int color, anti_color;
+  int pid;
+  
+  anti_color = shower.at(ishower).at(0)->min_anti_color();
+  color = shower.at(ishower).at(0)->min_color();
+  
+  if ((color>100)&&(anti_color>100)){
+    pid = 21;
+  }
+  else if ((color>100)&&(anti_color<100))
     {
-        pid = -1;
+      pid = -1;
     }
-    else
+  else
     {
-        pid = 1;
+      pid = 1;
     }
-    
-    pz = -1*pz;
-   event.append(pid, 23, anti_color, color, 0.2, 0.2, pz, 100.0004);
-    
+  
+  pz = -1*pz;
+  event.append(pid, 23, anti_color, color, 0.2, 0.2, pz, 100.0004);
+  
     
       
 /*    if(ipart%2==0)
@@ -109,7 +138,7 @@ void HadronizationModuleTest::DoHadronization(vector<vector<shared_ptr<Parton>>>
 */
     
     
-  INFO<<"There are " << hOut.size() << " Hadrons and " << pOut.size() << " partons after Hadronization";
+   VERBOSE(2) <<"There are " << hOut.size() << " Hadrons and " << pOut.size() << " partons after Hadronization";
 }
         pythia.next();
     

@@ -24,21 +24,21 @@ namespace Jetscape {
   JetScapeTaskSupport* JetScapeTaskSupport::Instance()  {
     if (!m_pInstance) {
       m_pInstance = new JetScapeTaskSupport;
-      INFO<<"Created JetScapeTaskSupport Instance";
+      VERBOSE(1)<<"Created JetScapeTaskSupport Instance";
     }    
     return m_pInstance;
   }
   
   // ---------------------------------------------------------------------------
   int JetScapeTaskSupport::RegisterTask(){
-    INFO << "JetScapeTaskSupport::RegisterTask called, answering " << current_task_number_;
+    VERBOSE(1) << "JetScapeTaskSupport::RegisterTask called, answering " << current_task_number_;
     current_task_number_++;
     return current_task_number_-1;
   }
   
   // ---------------------------------------------------------------------------
   void JetScapeTaskSupport::ReadSeedFromXML(){
-    INFO << "JetScapeTaskSupport::ReadSeedFromXML called. ";
+    VERBOSE(1) << "JetScapeTaskSupport::ReadSeedFromXML called. ";
 
     // xml limits us to unsigned int :-/ -- but so does 32 bits Mersenne Twist
     tinyxml2::XMLElement *RandomXmlDescription=JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Random" );

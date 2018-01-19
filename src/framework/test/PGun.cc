@@ -48,8 +48,7 @@ void PGun::InitTask()
  
 void PGun::Exec()
 {
-  INFO<<"Run Hard Process : "<<GetId()<< " ...";
-  VERBOSE(8)<<"Current Event #"<<GetCurrentEvent();
+  VERBOSE(2)<<"Run Hard Process : "<<GetId()<< " ...";
 
   double p[4], xLoc[4];
   for (int i=0;i<=3; i++) {
