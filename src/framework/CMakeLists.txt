@@ -46,6 +46,14 @@ find_package(GSL)
 if(${GSL_FOUND})
   include_directories(${GSL_INCLUDE_DIR})
 endif(${GSL_FOUND})
+
+#Derek
+message("Looking for OpenMP ...")
+find_package(OPENMP)
+if(${OPENMP_FOUND})
+  include_directories(${OPENMP_INCLUDE_DIR})
+endif(${OPENMP_FOUND})
+
 #include_directories(./3rdparty/music ./3rdparty/music/src )
 
 message ("Include Directories ...")
@@ -119,6 +127,11 @@ if (music)
     message("Includes for music ...")
     include_directories(./3rdparty/music ./3rdparty/music/src)
 endif (music)
+
+if (freestream)
+    message("Includes for freestream-milne ...")
+    include_directories(./3rdparty/freestream-milne/src)
+endif (freestream)
 
 # w/o not compiling library automatically
 add_subdirectory(./gtl)
@@ -200,12 +213,12 @@ endif (music)
 
 if (freestream)
     message("Building freestream-milne ...")
-    add_subdirectory(./3rdparty/freestream-milne)
+    add_subdirectory(./3rdparty/freestream-milne/src)
     if (${GSL_FOUND})
-        add_executable(freestream-milne ./src/Run.cpp)
-        target_link_libraries(freestream-milne ${GSL_LIBRARIES})
-        target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest hydroFromFile)
-        target_link_libraries(freestream-milne JetScape JetScapeHydro JetScapeTest)
+        add_executable(freestream-milne ./3rdparty/freestream-milne/src/Run.cpp)
+         target_link_libraries(freestream-milne ${GSL_LIBRARIES})
+      #  target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest hydroFromFile)
+      #  target_link_libraries(freestream-milne JetScape JetScapeHydro JetScapeTest)
     endif()
 endif (freestream)
 

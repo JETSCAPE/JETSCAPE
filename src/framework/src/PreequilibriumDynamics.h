@@ -11,7 +11,7 @@
 #include "InitialState.h"
 #include "JetScapeModuleBase.h"
 #include "tinyxml2.h"
-#include "fluid_dynamics.h"
+#include "preequilibrium_dynamics.h"
 
 namespace Jetscape {
 // in principle one class level too much ... think about and compress ...

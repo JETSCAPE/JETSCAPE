@@ -1,0 +1,2270 @@
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_fb56b/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_fb56b.dir/build.make CMakeFiles/cmTC_fb56b.dir/build
+Building C object CMakeFiles/cmTC_fb56b.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED   -o CMakeFiles/cmTC_fb56b.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+/Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c:2:10: fatal error: 'omp.h' file not found
+#include <omp.h>
+         ^~~~~~~
+1 error generated.
+make[1]: *** [CMakeFiles/cmTC_fb56b.dir/src.c.o] Error 1
+make: *** [cmTC_fb56b/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_cfa0a/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_cfa0a.dir/build.make CMakeFiles/cmTC_cfa0a.dir/build
+Building C object CMakeFiles/cmTC_cfa0a.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED -fopenmp   -o CMakeFiles/cmTC_cfa0a.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: unsupported option '-fopenmp'
+make[1]: *** [CMakeFiles/cmTC_cfa0a.dir/src.c.o] Error 1
+make: *** [cmTC_cfa0a/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_833e0/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_833e0.dir/build.make CMakeFiles/cmTC_833e0.dir/build
+Building C object CMakeFiles/cmTC_833e0.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED -fopenmp=libomp   -o CMakeFiles/cmTC_833e0.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: unsupported argument 'libomp' to option 'fopenmp='
+make[1]: *** [CMakeFiles/cmTC_833e0.dir/src.c.o] Error 1
+make: *** [cmTC_833e0/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_b0327/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_b0327.dir/build.make CMakeFiles/cmTC_b0327.dir/build
+Building C object CMakeFiles/cmTC_b0327.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED /openmp   -o CMakeFiles/cmTC_b0327.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: no such file or directory: '/openmp'
+make[1]: *** [CMakeFiles/cmTC_b0327.dir/src.c.o] Error 1
+make: *** [cmTC_b0327/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_cd8ff/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_cd8ff.dir/build.make CMakeFiles/cmTC_cd8ff.dir/build
+Building C object CMakeFiles/cmTC_cd8ff.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED -Qopenmp   -o CMakeFiles/cmTC_cd8ff.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: unknown argument: '-Qopenmp'
+make[1]: *** [CMakeFiles/cmTC_cd8ff.dir/src.c.o] Error 1
+make: *** [cmTC_cd8ff/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_c920f/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_c920f.dir/build.make CMakeFiles/cmTC_c920f.dir/build
+Building C object CMakeFiles/cmTC_c920f.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED -openmp   -o CMakeFiles/cmTC_c920f.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+/Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c:2:10: fatal error: 'omp.h' file not found
+#include <omp.h>
+         ^~~~~~~
+1 error generated.
+make[1]: *** [CMakeFiles/cmTC_c920f.dir/src.c.o] Error 1
+make: *** [cmTC_c920f/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_5d341/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_5d341.dir/build.make CMakeFiles/cmTC_5d341.dir/build
+Building C object CMakeFiles/cmTC_5d341.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED -xopenmp   -o CMakeFiles/cmTC_5d341.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: language not recognized: 'openmp'
+clang: warning: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c: 'linker' input unused [-Wunused-command-line-argument]
+make[1]: *** [CMakeFiles/cmTC_5d341.dir/src.c.o] Error 1
+make: *** [cmTC_5d341/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_ca59e/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_ca59e.dir/build.make CMakeFiles/cmTC_ca59e.dir/build
+Building C object CMakeFiles/cmTC_ca59e.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED +Oopenmp   -o CMakeFiles/cmTC_ca59e.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: no such file or directory: '+Oopenmp'
+make[1]: *** [CMakeFiles/cmTC_ca59e.dir/src.c.o] Error 1
+make: *** [cmTC_ca59e/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_d709f/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_d709f.dir/build.make CMakeFiles/cmTC_d709f.dir/build
+Building C object CMakeFiles/cmTC_d709f.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED -qsmp   -o CMakeFiles/cmTC_d709f.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: unknown argument: '-qsmp'
+make[1]: *** [CMakeFiles/cmTC_d709f.dir/src.c.o] Error 1
+make: *** [cmTC_d709f/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_9a17e/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_9a17e.dir/build.make CMakeFiles/cmTC_9a17e.dir/build
+Building C object CMakeFiles/cmTC_9a17e.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED -mp   -o CMakeFiles/cmTC_9a17e.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: unknown argument: '-mp'
+make[1]: *** [CMakeFiles/cmTC_9a17e.dir/src.c.o] Error 1
+make: *** [cmTC_9a17e/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_46bc9/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_46bc9.dir/build.make CMakeFiles/cmTC_46bc9.dir/build
+Building CXX object CMakeFiles/cmTC_46bc9.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED   -o CMakeFiles/cmTC_46bc9.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+/Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx:2:10: fatal error: 'omp.h' file not found
+#include <omp.h>
+         ^~~~~~~
+1 error generated.
+make[1]: *** [CMakeFiles/cmTC_46bc9.dir/src.cxx.o] Error 1
+make: *** [cmTC_46bc9/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_9196f/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_9196f.dir/build.make CMakeFiles/cmTC_9196f.dir/build
+Building CXX object CMakeFiles/cmTC_9196f.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED -fopenmp   -o CMakeFiles/cmTC_9196f.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: unsupported option '-fopenmp'
+make[1]: *** [CMakeFiles/cmTC_9196f.dir/src.cxx.o] Error 1
+make: *** [cmTC_9196f/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_f31a7/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_f31a7.dir/build.make CMakeFiles/cmTC_f31a7.dir/build
+Building CXX object CMakeFiles/cmTC_f31a7.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED -fopenmp=libomp   -o CMakeFiles/cmTC_f31a7.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: unsupported argument 'libomp' to option 'fopenmp='
+make[1]: *** [CMakeFiles/cmTC_f31a7.dir/src.cxx.o] Error 1
+make: *** [cmTC_f31a7/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_7823e/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_7823e.dir/build.make CMakeFiles/cmTC_7823e.dir/build
+Building CXX object CMakeFiles/cmTC_7823e.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED /openmp   -o CMakeFiles/cmTC_7823e.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: no such file or directory: '/openmp'
+make[1]: *** [CMakeFiles/cmTC_7823e.dir/src.cxx.o] Error 1
+make: *** [cmTC_7823e/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_cb490/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_cb490.dir/build.make CMakeFiles/cmTC_cb490.dir/build
+Building CXX object CMakeFiles/cmTC_cb490.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED -Qopenmp   -o CMakeFiles/cmTC_cb490.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: unknown argument: '-Qopenmp'
+make[1]: *** [CMakeFiles/cmTC_cb490.dir/src.cxx.o] Error 1
+make: *** [cmTC_cb490/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_87f02/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_87f02.dir/build.make CMakeFiles/cmTC_87f02.dir/build
+Building CXX object CMakeFiles/cmTC_87f02.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED -openmp   -o CMakeFiles/cmTC_87f02.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+/Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx:2:10: fatal error: 'omp.h' file not found
+#include <omp.h>
+         ^~~~~~~
+1 error generated.
+make[1]: *** [CMakeFiles/cmTC_87f02.dir/src.cxx.o] Error 1
+make: *** [cmTC_87f02/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_696d1/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_696d1.dir/build.make CMakeFiles/cmTC_696d1.dir/build
+Building CXX object CMakeFiles/cmTC_696d1.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED -xopenmp   -o CMakeFiles/cmTC_696d1.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: language not recognized: 'openmp'
+clang: warning: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx: 'linker' input unused [-Wunused-command-line-argument]
+make[1]: *** [CMakeFiles/cmTC_696d1.dir/src.cxx.o] Error 1
+make: *** [cmTC_696d1/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_84030/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_84030.dir/build.make CMakeFiles/cmTC_84030.dir/build
+Building CXX object CMakeFiles/cmTC_84030.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED +Oopenmp   -o CMakeFiles/cmTC_84030.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: no such file or directory: '+Oopenmp'
+make[1]: *** [CMakeFiles/cmTC_84030.dir/src.cxx.o] Error 1
+make: *** [cmTC_84030/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_9dacb/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_9dacb.dir/build.make CMakeFiles/cmTC_9dacb.dir/build
+Building CXX object CMakeFiles/cmTC_9dacb.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED -qsmp   -o CMakeFiles/cmTC_9dacb.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: unknown argument: '-qsmp'
+make[1]: *** [CMakeFiles/cmTC_9dacb.dir/src.cxx.o] Error 1
+make: *** [cmTC_9dacb/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_94ecb/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_94ecb.dir/build.make CMakeFiles/cmTC_94ecb.dir/build
+Building CXX object CMakeFiles/cmTC_94ecb.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED -mp   -o CMakeFiles/cmTC_94ecb.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: unknown argument: '-mp'
+make[1]: *** [CMakeFiles/cmTC_94ecb.dir/src.cxx.o] Error 1
+make: *** [cmTC_94ecb/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_7fa56/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_7fa56.dir/build.make CMakeFiles/cmTC_7fa56.dir/build
+Building C object CMakeFiles/cmTC_7fa56.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED   -o CMakeFiles/cmTC_7fa56.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+/Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c:2:10: fatal error: 'omp.h' file not found
+#include <omp.h>
+         ^~~~~~~
+1 error generated.
+make[1]: *** [CMakeFiles/cmTC_7fa56.dir/src.c.o] Error 1
+make: *** [cmTC_7fa56/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_b2a15/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_b2a15.dir/build.make CMakeFiles/cmTC_b2a15.dir/build
+Building C object CMakeFiles/cmTC_b2a15.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED -fopenmp   -o CMakeFiles/cmTC_b2a15.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: unsupported option '-fopenmp'
+make[1]: *** [CMakeFiles/cmTC_b2a15.dir/src.c.o] Error 1
+make: *** [cmTC_b2a15/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_3e1e0/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_3e1e0.dir/build.make CMakeFiles/cmTC_3e1e0.dir/build
+Building C object CMakeFiles/cmTC_3e1e0.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED -fopenmp=libomp   -o CMakeFiles/cmTC_3e1e0.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: unsupported argument 'libomp' to option 'fopenmp='
+make[1]: *** [CMakeFiles/cmTC_3e1e0.dir/src.c.o] Error 1
+make: *** [cmTC_3e1e0/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_e9ed5/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_e9ed5.dir/build.make CMakeFiles/cmTC_e9ed5.dir/build
+Building C object CMakeFiles/cmTC_e9ed5.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED /openmp   -o CMakeFiles/cmTC_e9ed5.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: no such file or directory: '/openmp'
+make[1]: *** [CMakeFiles/cmTC_e9ed5.dir/src.c.o] Error 1
+make: *** [cmTC_e9ed5/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_415bc/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_415bc.dir/build.make CMakeFiles/cmTC_415bc.dir/build
+Building C object CMakeFiles/cmTC_415bc.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED -Qopenmp   -o CMakeFiles/cmTC_415bc.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: unknown argument: '-Qopenmp'
+make[1]: *** [CMakeFiles/cmTC_415bc.dir/src.c.o] Error 1
+make: *** [cmTC_415bc/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_99200/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_99200.dir/build.make CMakeFiles/cmTC_99200.dir/build
+Building C object CMakeFiles/cmTC_99200.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED -openmp   -o CMakeFiles/cmTC_99200.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+/Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c:2:10: fatal error: 'omp.h' file not found
+#include <omp.h>
+         ^~~~~~~
+1 error generated.
+make[1]: *** [CMakeFiles/cmTC_99200.dir/src.c.o] Error 1
+make: *** [cmTC_99200/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_b4577/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_b4577.dir/build.make CMakeFiles/cmTC_b4577.dir/build
+Building C object CMakeFiles/cmTC_b4577.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED -xopenmp   -o CMakeFiles/cmTC_b4577.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: language not recognized: 'openmp'
+clang: warning: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c: 'linker' input unused [-Wunused-command-line-argument]
+make[1]: *** [CMakeFiles/cmTC_b4577.dir/src.c.o] Error 1
+make: *** [cmTC_b4577/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_e97a5/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_e97a5.dir/build.make CMakeFiles/cmTC_e97a5.dir/build
+Building C object CMakeFiles/cmTC_e97a5.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED +Oopenmp   -o CMakeFiles/cmTC_e97a5.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: no such file or directory: '+Oopenmp'
+make[1]: *** [CMakeFiles/cmTC_e97a5.dir/src.c.o] Error 1
+make: *** [cmTC_e97a5/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_3a501/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_3a501.dir/build.make CMakeFiles/cmTC_3a501.dir/build
+Building C object CMakeFiles/cmTC_3a501.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED -qsmp   -o CMakeFiles/cmTC_3a501.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: unknown argument: '-qsmp'
+make[1]: *** [CMakeFiles/cmTC_3a501.dir/src.c.o] Error 1
+make: *** [cmTC_3a501/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_6365a/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_6365a.dir/build.make CMakeFiles/cmTC_6365a.dir/build
+Building C object CMakeFiles/cmTC_6365a.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED -mp   -o CMakeFiles/cmTC_6365a.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: unknown argument: '-mp'
+make[1]: *** [CMakeFiles/cmTC_6365a.dir/src.c.o] Error 1
+make: *** [cmTC_6365a/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_1b751/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_1b751.dir/build.make CMakeFiles/cmTC_1b751.dir/build
+Building CXX object CMakeFiles/cmTC_1b751.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED   -o CMakeFiles/cmTC_1b751.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+/Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx:2:10: fatal error: 'omp.h' file not found
+#include <omp.h>
+         ^~~~~~~
+1 error generated.
+make[1]: *** [CMakeFiles/cmTC_1b751.dir/src.cxx.o] Error 1
+make: *** [cmTC_1b751/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_34835/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_34835.dir/build.make CMakeFiles/cmTC_34835.dir/build
+Building CXX object CMakeFiles/cmTC_34835.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED -fopenmp   -o CMakeFiles/cmTC_34835.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: unsupported option '-fopenmp'
+make[1]: *** [CMakeFiles/cmTC_34835.dir/src.cxx.o] Error 1
+make: *** [cmTC_34835/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_33c9c/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_33c9c.dir/build.make CMakeFiles/cmTC_33c9c.dir/build
+Building CXX object CMakeFiles/cmTC_33c9c.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED -fopenmp=libomp   -o CMakeFiles/cmTC_33c9c.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: unsupported argument 'libomp' to option 'fopenmp='
+make[1]: *** [CMakeFiles/cmTC_33c9c.dir/src.cxx.o] Error 1
+make: *** [cmTC_33c9c/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_72698/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_72698.dir/build.make CMakeFiles/cmTC_72698.dir/build
+Building CXX object CMakeFiles/cmTC_72698.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED /openmp   -o CMakeFiles/cmTC_72698.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: no such file or directory: '/openmp'
+make[1]: *** [CMakeFiles/cmTC_72698.dir/src.cxx.o] Error 1
+make: *** [cmTC_72698/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_5f804/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_5f804.dir/build.make CMakeFiles/cmTC_5f804.dir/build
+Building CXX object CMakeFiles/cmTC_5f804.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED -Qopenmp   -o CMakeFiles/cmTC_5f804.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: unknown argument: '-Qopenmp'
+make[1]: *** [CMakeFiles/cmTC_5f804.dir/src.cxx.o] Error 1
+make: *** [cmTC_5f804/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_b8877/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_b8877.dir/build.make CMakeFiles/cmTC_b8877.dir/build
+Building CXX object CMakeFiles/cmTC_b8877.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED -openmp   -o CMakeFiles/cmTC_b8877.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+/Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx:2:10: fatal error: 'omp.h' file not found
+#include <omp.h>
+         ^~~~~~~
+1 error generated.
+make[1]: *** [CMakeFiles/cmTC_b8877.dir/src.cxx.o] Error 1
+make: *** [cmTC_b8877/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_7c9f5/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_7c9f5.dir/build.make CMakeFiles/cmTC_7c9f5.dir/build
+Building CXX object CMakeFiles/cmTC_7c9f5.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED -xopenmp   -o CMakeFiles/cmTC_7c9f5.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: language not recognized: 'openmp'
+clang: warning: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx: 'linker' input unused [-Wunused-command-line-argument]
+make[1]: *** [CMakeFiles/cmTC_7c9f5.dir/src.cxx.o] Error 1
+make: *** [cmTC_7c9f5/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_ea40a/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_ea40a.dir/build.make CMakeFiles/cmTC_ea40a.dir/build
+Building CXX object CMakeFiles/cmTC_ea40a.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED +Oopenmp   -o CMakeFiles/cmTC_ea40a.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: no such file or directory: '+Oopenmp'
+make[1]: *** [CMakeFiles/cmTC_ea40a.dir/src.cxx.o] Error 1
+make: *** [cmTC_ea40a/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_25b99/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_25b99.dir/build.make CMakeFiles/cmTC_25b99.dir/build
+Building CXX object CMakeFiles/cmTC_25b99.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED -qsmp   -o CMakeFiles/cmTC_25b99.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: unknown argument: '-qsmp'
+make[1]: *** [CMakeFiles/cmTC_25b99.dir/src.cxx.o] Error 1
+make: *** [cmTC_25b99/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_fa3a6/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_fa3a6.dir/build.make CMakeFiles/cmTC_fa3a6.dir/build
+Building CXX object CMakeFiles/cmTC_fa3a6.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED -mp   -o CMakeFiles/cmTC_fa3a6.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: unknown argument: '-mp'
+make[1]: *** [CMakeFiles/cmTC_fa3a6.dir/src.cxx.o] Error 1
+make: *** [cmTC_fa3a6/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_c183b/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_c183b.dir/build.make CMakeFiles/cmTC_c183b.dir/build
+Building C object CMakeFiles/cmTC_c183b.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED   -o CMakeFiles/cmTC_c183b.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+/Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c:2:10: fatal error: 'omp.h' file not found
+#include <omp.h>
+         ^~~~~~~
+1 error generated.
+make[1]: *** [CMakeFiles/cmTC_c183b.dir/src.c.o] Error 1
+make: *** [cmTC_c183b/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_64c64/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_64c64.dir/build.make CMakeFiles/cmTC_64c64.dir/build
+Building C object CMakeFiles/cmTC_64c64.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED -fopenmp   -o CMakeFiles/cmTC_64c64.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: unsupported option '-fopenmp'
+make[1]: *** [CMakeFiles/cmTC_64c64.dir/src.c.o] Error 1
+make: *** [cmTC_64c64/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_dc52c/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_dc52c.dir/build.make CMakeFiles/cmTC_dc52c.dir/build
+Building C object CMakeFiles/cmTC_dc52c.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED -fopenmp=libomp   -o CMakeFiles/cmTC_dc52c.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: unsupported argument 'libomp' to option 'fopenmp='
+make[1]: *** [CMakeFiles/cmTC_dc52c.dir/src.c.o] Error 1
+make: *** [cmTC_dc52c/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_dd6ea/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_dd6ea.dir/build.make CMakeFiles/cmTC_dd6ea.dir/build
+Building C object CMakeFiles/cmTC_dd6ea.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED /openmp   -o CMakeFiles/cmTC_dd6ea.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: no such file or directory: '/openmp'
+make[1]: *** [CMakeFiles/cmTC_dd6ea.dir/src.c.o] Error 1
+make: *** [cmTC_dd6ea/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_9259d/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_9259d.dir/build.make CMakeFiles/cmTC_9259d.dir/build
+Building C object CMakeFiles/cmTC_9259d.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED -Qopenmp   -o CMakeFiles/cmTC_9259d.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: unknown argument: '-Qopenmp'
+make[1]: *** [CMakeFiles/cmTC_9259d.dir/src.c.o] Error 1
+make: *** [cmTC_9259d/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_414db/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_414db.dir/build.make CMakeFiles/cmTC_414db.dir/build
+Building C object CMakeFiles/cmTC_414db.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED -openmp   -o CMakeFiles/cmTC_414db.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+/Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c:2:10: fatal error: 'omp.h' file not found
+#include <omp.h>
+         ^~~~~~~
+1 error generated.
+make[1]: *** [CMakeFiles/cmTC_414db.dir/src.c.o] Error 1
+make: *** [cmTC_414db/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_c5c9c/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_c5c9c.dir/build.make CMakeFiles/cmTC_c5c9c.dir/build
+Building C object CMakeFiles/cmTC_c5c9c.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED -xopenmp   -o CMakeFiles/cmTC_c5c9c.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: language not recognized: 'openmp'
+clang: warning: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c: 'linker' input unused [-Wunused-command-line-argument]
+make[1]: *** [CMakeFiles/cmTC_c5c9c.dir/src.c.o] Error 1
+make: *** [cmTC_c5c9c/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_08599/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_08599.dir/build.make CMakeFiles/cmTC_08599.dir/build
+Building C object CMakeFiles/cmTC_08599.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED +Oopenmp   -o CMakeFiles/cmTC_08599.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: no such file or directory: '+Oopenmp'
+make[1]: *** [CMakeFiles/cmTC_08599.dir/src.c.o] Error 1
+make: *** [cmTC_08599/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_44944/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_44944.dir/build.make CMakeFiles/cmTC_44944.dir/build
+Building C object CMakeFiles/cmTC_44944.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED -qsmp   -o CMakeFiles/cmTC_44944.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: unknown argument: '-qsmp'
+make[1]: *** [CMakeFiles/cmTC_44944.dir/src.c.o] Error 1
+make: *** [cmTC_44944/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_ba152/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_ba152.dir/build.make CMakeFiles/cmTC_ba152.dir/build
+Building C object CMakeFiles/cmTC_ba152.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED -mp   -o CMakeFiles/cmTC_ba152.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: unknown argument: '-mp'
+make[1]: *** [CMakeFiles/cmTC_ba152.dir/src.c.o] Error 1
+make: *** [cmTC_ba152/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_dba45/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_dba45.dir/build.make CMakeFiles/cmTC_dba45.dir/build
+Building CXX object CMakeFiles/cmTC_dba45.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED   -o CMakeFiles/cmTC_dba45.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+/Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx:2:10: fatal error: 'omp.h' file not found
+#include <omp.h>
+         ^~~~~~~
+1 error generated.
+make[1]: *** [CMakeFiles/cmTC_dba45.dir/src.cxx.o] Error 1
+make: *** [cmTC_dba45/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_c7f8c/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_c7f8c.dir/build.make CMakeFiles/cmTC_c7f8c.dir/build
+Building CXX object CMakeFiles/cmTC_c7f8c.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED -fopenmp   -o CMakeFiles/cmTC_c7f8c.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: unsupported option '-fopenmp'
+make[1]: *** [CMakeFiles/cmTC_c7f8c.dir/src.cxx.o] Error 1
+make: *** [cmTC_c7f8c/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_bb42a/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_bb42a.dir/build.make CMakeFiles/cmTC_bb42a.dir/build
+Building CXX object CMakeFiles/cmTC_bb42a.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED -fopenmp=libomp   -o CMakeFiles/cmTC_bb42a.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: unsupported argument 'libomp' to option 'fopenmp='
+make[1]: *** [CMakeFiles/cmTC_bb42a.dir/src.cxx.o] Error 1
+make: *** [cmTC_bb42a/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_f3fd9/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_f3fd9.dir/build.make CMakeFiles/cmTC_f3fd9.dir/build
+Building CXX object CMakeFiles/cmTC_f3fd9.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED /openmp   -o CMakeFiles/cmTC_f3fd9.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: no such file or directory: '/openmp'
+make[1]: *** [CMakeFiles/cmTC_f3fd9.dir/src.cxx.o] Error 1
+make: *** [cmTC_f3fd9/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_3c4e5/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_3c4e5.dir/build.make CMakeFiles/cmTC_3c4e5.dir/build
+Building CXX object CMakeFiles/cmTC_3c4e5.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED -Qopenmp   -o CMakeFiles/cmTC_3c4e5.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: unknown argument: '-Qopenmp'
+make[1]: *** [CMakeFiles/cmTC_3c4e5.dir/src.cxx.o] Error 1
+make: *** [cmTC_3c4e5/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_70467/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_70467.dir/build.make CMakeFiles/cmTC_70467.dir/build
+Building CXX object CMakeFiles/cmTC_70467.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED -openmp   -o CMakeFiles/cmTC_70467.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+/Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx:2:10: fatal error: 'omp.h' file not found
+#include <omp.h>
+         ^~~~~~~
+1 error generated.
+make[1]: *** [CMakeFiles/cmTC_70467.dir/src.cxx.o] Error 1
+make: *** [cmTC_70467/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_782c3/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_782c3.dir/build.make CMakeFiles/cmTC_782c3.dir/build
+Building CXX object CMakeFiles/cmTC_782c3.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED -xopenmp   -o CMakeFiles/cmTC_782c3.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: language not recognized: 'openmp'
+clang: warning: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx: 'linker' input unused [-Wunused-command-line-argument]
+make[1]: *** [CMakeFiles/cmTC_782c3.dir/src.cxx.o] Error 1
+make: *** [cmTC_782c3/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_f3232/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_f3232.dir/build.make CMakeFiles/cmTC_f3232.dir/build
+Building CXX object CMakeFiles/cmTC_f3232.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED +Oopenmp   -o CMakeFiles/cmTC_f3232.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: no such file or directory: '+Oopenmp'
+make[1]: *** [CMakeFiles/cmTC_f3232.dir/src.cxx.o] Error 1
+make: *** [cmTC_f3232/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_e16ca/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_e16ca.dir/build.make CMakeFiles/cmTC_e16ca.dir/build
+Building CXX object CMakeFiles/cmTC_e16ca.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED -qsmp   -o CMakeFiles/cmTC_e16ca.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: unknown argument: '-qsmp'
+make[1]: *** [CMakeFiles/cmTC_e16ca.dir/src.cxx.o] Error 1
+make: *** [cmTC_e16ca/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_20a64/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_20a64.dir/build.make CMakeFiles/cmTC_20a64.dir/build
+Building CXX object CMakeFiles/cmTC_20a64.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED -mp   -o CMakeFiles/cmTC_20a64.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: unknown argument: '-mp'
+make[1]: *** [CMakeFiles/cmTC_20a64.dir/src.cxx.o] Error 1
+make: *** [cmTC_20a64/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_dbcd6/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_dbcd6.dir/build.make CMakeFiles/cmTC_dbcd6.dir/build
+Building C object CMakeFiles/cmTC_dbcd6.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED   -o CMakeFiles/cmTC_dbcd6.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+/Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c:2:10: fatal error: 'omp.h' file not found
+#include <omp.h>
+         ^~~~~~~
+1 error generated.
+make[1]: *** [CMakeFiles/cmTC_dbcd6.dir/src.c.o] Error 1
+make: *** [cmTC_dbcd6/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_823a2/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_823a2.dir/build.make CMakeFiles/cmTC_823a2.dir/build
+Building C object CMakeFiles/cmTC_823a2.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED -fopenmp   -o CMakeFiles/cmTC_823a2.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: unsupported option '-fopenmp'
+make[1]: *** [CMakeFiles/cmTC_823a2.dir/src.c.o] Error 1
+make: *** [cmTC_823a2/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_4d158/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_4d158.dir/build.make CMakeFiles/cmTC_4d158.dir/build
+Building C object CMakeFiles/cmTC_4d158.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED -fopenmp=libomp   -o CMakeFiles/cmTC_4d158.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: unsupported argument 'libomp' to option 'fopenmp='
+make[1]: *** [CMakeFiles/cmTC_4d158.dir/src.c.o] Error 1
+make: *** [cmTC_4d158/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_9e1fd/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_9e1fd.dir/build.make CMakeFiles/cmTC_9e1fd.dir/build
+Building C object CMakeFiles/cmTC_9e1fd.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED /openmp   -o CMakeFiles/cmTC_9e1fd.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: no such file or directory: '/openmp'
+make[1]: *** [CMakeFiles/cmTC_9e1fd.dir/src.c.o] Error 1
+make: *** [cmTC_9e1fd/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_e20a2/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_e20a2.dir/build.make CMakeFiles/cmTC_e20a2.dir/build
+Building C object CMakeFiles/cmTC_e20a2.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED -Qopenmp   -o CMakeFiles/cmTC_e20a2.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: unknown argument: '-Qopenmp'
+make[1]: *** [CMakeFiles/cmTC_e20a2.dir/src.c.o] Error 1
+make: *** [cmTC_e20a2/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_46352/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_46352.dir/build.make CMakeFiles/cmTC_46352.dir/build
+Building C object CMakeFiles/cmTC_46352.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED -openmp   -o CMakeFiles/cmTC_46352.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+/Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c:2:10: fatal error: 'omp.h' file not found
+#include <omp.h>
+         ^~~~~~~
+1 error generated.
+make[1]: *** [CMakeFiles/cmTC_46352.dir/src.c.o] Error 1
+make: *** [cmTC_46352/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_056eb/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_056eb.dir/build.make CMakeFiles/cmTC_056eb.dir/build
+Building C object CMakeFiles/cmTC_056eb.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED -xopenmp   -o CMakeFiles/cmTC_056eb.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: language not recognized: 'openmp'
+clang: warning: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c: 'linker' input unused [-Wunused-command-line-argument]
+make[1]: *** [CMakeFiles/cmTC_056eb.dir/src.c.o] Error 1
+make: *** [cmTC_056eb/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_86902/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_86902.dir/build.make CMakeFiles/cmTC_86902.dir/build
+Building C object CMakeFiles/cmTC_86902.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED +Oopenmp   -o CMakeFiles/cmTC_86902.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: no such file or directory: '+Oopenmp'
+make[1]: *** [CMakeFiles/cmTC_86902.dir/src.c.o] Error 1
+make: *** [cmTC_86902/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_28a92/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_28a92.dir/build.make CMakeFiles/cmTC_28a92.dir/build
+Building C object CMakeFiles/cmTC_28a92.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED -qsmp   -o CMakeFiles/cmTC_28a92.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: unknown argument: '-qsmp'
+make[1]: *** [CMakeFiles/cmTC_28a92.dir/src.c.o] Error 1
+make: *** [cmTC_28a92/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_01b03/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_01b03.dir/build.make CMakeFiles/cmTC_01b03.dir/build
+Building C object CMakeFiles/cmTC_01b03.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED -mp   -o CMakeFiles/cmTC_01b03.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: unknown argument: '-mp'
+make[1]: *** [CMakeFiles/cmTC_01b03.dir/src.c.o] Error 1
+make: *** [cmTC_01b03/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_6ac03/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_6ac03.dir/build.make CMakeFiles/cmTC_6ac03.dir/build
+Building CXX object CMakeFiles/cmTC_6ac03.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED   -o CMakeFiles/cmTC_6ac03.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+/Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx:2:10: fatal error: 'omp.h' file not found
+#include <omp.h>
+         ^~~~~~~
+1 error generated.
+make[1]: *** [CMakeFiles/cmTC_6ac03.dir/src.cxx.o] Error 1
+make: *** [cmTC_6ac03/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_c7581/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_c7581.dir/build.make CMakeFiles/cmTC_c7581.dir/build
+Building CXX object CMakeFiles/cmTC_c7581.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED -fopenmp   -o CMakeFiles/cmTC_c7581.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: unsupported option '-fopenmp'
+make[1]: *** [CMakeFiles/cmTC_c7581.dir/src.cxx.o] Error 1
+make: *** [cmTC_c7581/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_2ecde/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_2ecde.dir/build.make CMakeFiles/cmTC_2ecde.dir/build
+Building CXX object CMakeFiles/cmTC_2ecde.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED -fopenmp=libomp   -o CMakeFiles/cmTC_2ecde.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: unsupported argument 'libomp' to option 'fopenmp='
+make[1]: *** [CMakeFiles/cmTC_2ecde.dir/src.cxx.o] Error 1
+make: *** [cmTC_2ecde/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_0bdb1/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_0bdb1.dir/build.make CMakeFiles/cmTC_0bdb1.dir/build
+Building CXX object CMakeFiles/cmTC_0bdb1.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED /openmp   -o CMakeFiles/cmTC_0bdb1.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: no such file or directory: '/openmp'
+make[1]: *** [CMakeFiles/cmTC_0bdb1.dir/src.cxx.o] Error 1
+make: *** [cmTC_0bdb1/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_616e2/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_616e2.dir/build.make CMakeFiles/cmTC_616e2.dir/build
+Building CXX object CMakeFiles/cmTC_616e2.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED -Qopenmp   -o CMakeFiles/cmTC_616e2.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: unknown argument: '-Qopenmp'
+make[1]: *** [CMakeFiles/cmTC_616e2.dir/src.cxx.o] Error 1
+make: *** [cmTC_616e2/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_f4ae9/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_f4ae9.dir/build.make CMakeFiles/cmTC_f4ae9.dir/build
+Building CXX object CMakeFiles/cmTC_f4ae9.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED -openmp   -o CMakeFiles/cmTC_f4ae9.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+/Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx:2:10: fatal error: 'omp.h' file not found
+#include <omp.h>
+         ^~~~~~~
+1 error generated.
+make[1]: *** [CMakeFiles/cmTC_f4ae9.dir/src.cxx.o] Error 1
+make: *** [cmTC_f4ae9/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_aaec7/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_aaec7.dir/build.make CMakeFiles/cmTC_aaec7.dir/build
+Building CXX object CMakeFiles/cmTC_aaec7.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED -xopenmp   -o CMakeFiles/cmTC_aaec7.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: language not recognized: 'openmp'
+clang: warning: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx: 'linker' input unused [-Wunused-command-line-argument]
+make[1]: *** [CMakeFiles/cmTC_aaec7.dir/src.cxx.o] Error 1
+make: *** [cmTC_aaec7/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_ce00c/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_ce00c.dir/build.make CMakeFiles/cmTC_ce00c.dir/build
+Building CXX object CMakeFiles/cmTC_ce00c.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED +Oopenmp   -o CMakeFiles/cmTC_ce00c.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: no such file or directory: '+Oopenmp'
+make[1]: *** [CMakeFiles/cmTC_ce00c.dir/src.cxx.o] Error 1
+make: *** [cmTC_ce00c/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_ab143/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_ab143.dir/build.make CMakeFiles/cmTC_ab143.dir/build
+Building CXX object CMakeFiles/cmTC_ab143.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED -qsmp   -o CMakeFiles/cmTC_ab143.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: unknown argument: '-qsmp'
+make[1]: *** [CMakeFiles/cmTC_ab143.dir/src.cxx.o] Error 1
+make: *** [cmTC_ab143/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_cbf5b/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_cbf5b.dir/build.make CMakeFiles/cmTC_cbf5b.dir/build
+Building CXX object CMakeFiles/cmTC_cbf5b.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED -mp   -o CMakeFiles/cmTC_cbf5b.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: unknown argument: '-mp'
+make[1]: *** [CMakeFiles/cmTC_cbf5b.dir/src.cxx.o] Error 1
+make: *** [cmTC_cbf5b/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_64468/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_64468.dir/build.make CMakeFiles/cmTC_64468.dir/build
+Building C object CMakeFiles/cmTC_64468.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED   -o CMakeFiles/cmTC_64468.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+/Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c:2:10: fatal error: 'omp.h' file not found
+#include <omp.h>
+         ^~~~~~~
+1 error generated.
+make[1]: *** [CMakeFiles/cmTC_64468.dir/src.c.o] Error 1
+make: *** [cmTC_64468/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_b1bd3/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_b1bd3.dir/build.make CMakeFiles/cmTC_b1bd3.dir/build
+Building C object CMakeFiles/cmTC_b1bd3.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED -fopenmp   -o CMakeFiles/cmTC_b1bd3.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: unsupported option '-fopenmp'
+make[1]: *** [CMakeFiles/cmTC_b1bd3.dir/src.c.o] Error 1
+make: *** [cmTC_b1bd3/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_b0256/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_b0256.dir/build.make CMakeFiles/cmTC_b0256.dir/build
+Building C object CMakeFiles/cmTC_b0256.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED -fopenmp=libomp   -o CMakeFiles/cmTC_b0256.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: unsupported argument 'libomp' to option 'fopenmp='
+make[1]: *** [CMakeFiles/cmTC_b0256.dir/src.c.o] Error 1
+make: *** [cmTC_b0256/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_1e360/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_1e360.dir/build.make CMakeFiles/cmTC_1e360.dir/build
+Building C object CMakeFiles/cmTC_1e360.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED /openmp   -o CMakeFiles/cmTC_1e360.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: no such file or directory: '/openmp'
+make[1]: *** [CMakeFiles/cmTC_1e360.dir/src.c.o] Error 1
+make: *** [cmTC_1e360/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_3d2ed/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_3d2ed.dir/build.make CMakeFiles/cmTC_3d2ed.dir/build
+Building C object CMakeFiles/cmTC_3d2ed.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED -Qopenmp   -o CMakeFiles/cmTC_3d2ed.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: unknown argument: '-Qopenmp'
+make[1]: *** [CMakeFiles/cmTC_3d2ed.dir/src.c.o] Error 1
+make: *** [cmTC_3d2ed/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_9bc83/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_9bc83.dir/build.make CMakeFiles/cmTC_9bc83.dir/build
+Building C object CMakeFiles/cmTC_9bc83.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED -openmp   -o CMakeFiles/cmTC_9bc83.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+/Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c:2:10: fatal error: 'omp.h' file not found
+#include <omp.h>
+         ^~~~~~~
+1 error generated.
+make[1]: *** [CMakeFiles/cmTC_9bc83.dir/src.c.o] Error 1
+make: *** [cmTC_9bc83/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_7bb7d/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_7bb7d.dir/build.make CMakeFiles/cmTC_7bb7d.dir/build
+Building C object CMakeFiles/cmTC_7bb7d.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED -xopenmp   -o CMakeFiles/cmTC_7bb7d.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: language not recognized: 'openmp'
+clang: warning: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c: 'linker' input unused [-Wunused-command-line-argument]
+make[1]: *** [CMakeFiles/cmTC_7bb7d.dir/src.c.o] Error 1
+make: *** [cmTC_7bb7d/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_eada8/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_eada8.dir/build.make CMakeFiles/cmTC_eada8.dir/build
+Building C object CMakeFiles/cmTC_eada8.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED +Oopenmp   -o CMakeFiles/cmTC_eada8.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: no such file or directory: '+Oopenmp'
+make[1]: *** [CMakeFiles/cmTC_eada8.dir/src.c.o] Error 1
+make: *** [cmTC_eada8/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_db32c/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_db32c.dir/build.make CMakeFiles/cmTC_db32c.dir/build
+Building C object CMakeFiles/cmTC_db32c.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED -qsmp   -o CMakeFiles/cmTC_db32c.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: unknown argument: '-qsmp'
+make[1]: *** [CMakeFiles/cmTC_db32c.dir/src.c.o] Error 1
+make: *** [cmTC_db32c/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_ec6dc/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_ec6dc.dir/build.make CMakeFiles/cmTC_ec6dc.dir/build
+Building C object CMakeFiles/cmTC_ec6dc.dir/src.c.o
+/Library/Developer/CommandLineTools/usr/bin/cc    -DOpenMP_FLAG_DETECTED -mp   -o CMakeFiles/cmTC_ec6dc.dir/src.c.o   -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.c
+clang: error: unknown argument: '-mp'
+make[1]: *** [CMakeFiles/cmTC_ec6dc.dir/src.c.o] Error 1
+make: *** [cmTC_ec6dc/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_55907/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_55907.dir/build.make CMakeFiles/cmTC_55907.dir/build
+Building CXX object CMakeFiles/cmTC_55907.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED   -o CMakeFiles/cmTC_55907.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+/Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx:2:10: fatal error: 'omp.h' file not found
+#include <omp.h>
+         ^~~~~~~
+1 error generated.
+make[1]: *** [CMakeFiles/cmTC_55907.dir/src.cxx.o] Error 1
+make: *** [cmTC_55907/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_84487/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_84487.dir/build.make CMakeFiles/cmTC_84487.dir/build
+Building CXX object CMakeFiles/cmTC_84487.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED -fopenmp   -o CMakeFiles/cmTC_84487.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: unsupported option '-fopenmp'
+make[1]: *** [CMakeFiles/cmTC_84487.dir/src.cxx.o] Error 1
+make: *** [cmTC_84487/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_53df0/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_53df0.dir/build.make CMakeFiles/cmTC_53df0.dir/build
+Building CXX object CMakeFiles/cmTC_53df0.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED -fopenmp=libomp   -o CMakeFiles/cmTC_53df0.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: unsupported argument 'libomp' to option 'fopenmp='
+make[1]: *** [CMakeFiles/cmTC_53df0.dir/src.cxx.o] Error 1
+make: *** [cmTC_53df0/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_1bddb/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_1bddb.dir/build.make CMakeFiles/cmTC_1bddb.dir/build
+Building CXX object CMakeFiles/cmTC_1bddb.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED /openmp   -o CMakeFiles/cmTC_1bddb.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: no such file or directory: '/openmp'
+make[1]: *** [CMakeFiles/cmTC_1bddb.dir/src.cxx.o] Error 1
+make: *** [cmTC_1bddb/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_c5a3d/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_c5a3d.dir/build.make CMakeFiles/cmTC_c5a3d.dir/build
+Building CXX object CMakeFiles/cmTC_c5a3d.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED -Qopenmp   -o CMakeFiles/cmTC_c5a3d.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: unknown argument: '-Qopenmp'
+make[1]: *** [CMakeFiles/cmTC_c5a3d.dir/src.cxx.o] Error 1
+make: *** [cmTC_c5a3d/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_4bd51/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_4bd51.dir/build.make CMakeFiles/cmTC_4bd51.dir/build
+Building CXX object CMakeFiles/cmTC_4bd51.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED -openmp   -o CMakeFiles/cmTC_4bd51.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+/Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx:2:10: fatal error: 'omp.h' file not found
+#include <omp.h>
+         ^~~~~~~
+1 error generated.
+make[1]: *** [CMakeFiles/cmTC_4bd51.dir/src.cxx.o] Error 1
+make: *** [cmTC_4bd51/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_96e97/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_96e97.dir/build.make CMakeFiles/cmTC_96e97.dir/build
+Building CXX object CMakeFiles/cmTC_96e97.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED -xopenmp   -o CMakeFiles/cmTC_96e97.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: language not recognized: 'openmp'
+clang: warning: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx: 'linker' input unused [-Wunused-command-line-argument]
+make[1]: *** [CMakeFiles/cmTC_96e97.dir/src.cxx.o] Error 1
+make: *** [cmTC_96e97/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_e4779/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_e4779.dir/build.make CMakeFiles/cmTC_e4779.dir/build
+Building CXX object CMakeFiles/cmTC_e4779.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED +Oopenmp   -o CMakeFiles/cmTC_e4779.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: no such file or directory: '+Oopenmp'
+make[1]: *** [CMakeFiles/cmTC_e4779.dir/src.cxx.o] Error 1
+make: *** [cmTC_e4779/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_c7895/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_c7895.dir/build.make CMakeFiles/cmTC_c7895.dir/build
+Building CXX object CMakeFiles/cmTC_c7895.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED -qsmp   -o CMakeFiles/cmTC_c7895.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: unknown argument: '-qsmp'
+make[1]: *** [CMakeFiles/cmTC_c7895.dir/src.cxx.o] Error 1
+make: *** [cmTC_c7895/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
+Performing C++ SOURCE FILE Test OpenMP_FLAG_DETECTED failed with the following output:
+Change Dir: /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_8ce2d/fast"
+/Library/Developer/CommandLineTools/usr/bin/make -f CMakeFiles/cmTC_8ce2d.dir/build.make CMakeFiles/cmTC_8ce2d.dir/build
+Building CXX object CMakeFiles/cmTC_8ce2d.dir/src.cxx.o
+/Library/Developer/CommandLineTools/usr/bin/c++     -DOpenMP_FLAG_DETECTED -mp   -o CMakeFiles/cmTC_8ce2d.dir/src.cxx.o -c /Users/derek/github/JETSCAPE-COMP/src/framework/build/CMakeFiles/CMakeTmp/src.cxx
+clang: error: unknown argument: '-mp'
+make[1]: *** [CMakeFiles/cmTC_8ce2d.dir/src.cxx.o] Error 1
+make: *** [cmTC_8ce2d/fast] Error 2
+
+Source file was:
+
+#include <omp.h>
+int main() {
+#ifdef _OPENMP
+  return 0;
+#else
+  breaks_on_purpose
+#endif
+}
+
