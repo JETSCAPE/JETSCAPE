@@ -14,7 +14,7 @@
 #include "realtype.h"
 
 namespace Jetscape {
-  ///Flags for hydrodynamics status.
+  ///Flags for preequilibrium dynamics status.
 enum PreequilibriumStatus {NOT_START, INITIALIZED, EVOLVING, FINISHED, ERROR};
 
 class JetSource {
