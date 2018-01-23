@@ -60,7 +60,7 @@
    <Eloss>
 
      <deltaT>0.1</deltaT>
-     <maxT>5</maxT>
+     <maxT>3</maxT>
 
      <!-- Individual Eloss Modules run Eloss and Eloss Manager ... -->
      <!-- Just a test here (no physics implemented in Matter and Martini ... -->
@@ -69,6 +69,12 @@
        <param1> 2 </param1>
        <qhat> 1.0 </qhat>
      </Matter>
+
+     <Lbt>
+       <name> Lbt </name>
+       <param1> 4 </param1>
+       <qhat> 1.0 </qhat>
+     </Lbt>
      
      <Martini>
        <name > Martini </name>

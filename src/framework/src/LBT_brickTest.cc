@@ -26,6 +26,7 @@
 // to be used to run Jetscape ...
 #include "AdSCFT.h"
 #include "ElossModulesTestMatter.h"
+#include "ElossModuleLBT.h"
 #include "ElossModulesTestMartini.h"
 #include "brick_jetscape.h"
 #include "Gubser_hydro_jetscape.h"
@@ -34,13 +35,14 @@
 #include "HadronizationManager.h"
 #include "Hadronization.h"
 #include "HadronizationModuleTest.h"
-#include "ColorlessHad.h"
 
 // Add initial state module for test
 #include "TrentoInitial.h"
 
 #include <chrono>
 #include <thread>
+
+using namespace std;
 
 using namespace Jetscape;
 
@@ -58,20 +60,16 @@ int main(int argc, char** argv)
     
   // DEBUG=true by default and REMARK=false
   // can be also set also via XML file (at least partially)
-  JetScapeLogger::Instance()->SetInfo(true);
-  JetScapeLogger::Instance()->SetDebug(false);
+  JetScapeLogger::Instance()->SetDebug(true);
   JetScapeLogger::Instance()->SetRemark(false);
   //SetVerboseLevel (9 a lot of additional debug output ...)
   //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevle(9) or 10
-  JetScapeLogger::Instance()->SetVerboseLevel(0);
+  JetScapeLogger::Instance()->SetVerboseLevel(8);
    
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",2);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",3);
   jetscape->SetId("primary");
-  // jetscape->set_reuse_hydro (true);
-  // jetscape->set_n_reuse_hydro (10);
-  
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
 
@@ -80,9 +78,10 @@ int main(int argc, char** argv)
   auto hydro = make_shared<Brick> ();
   //auto hydro = make_shared<GubserHydro> ();
   
-  auto matter = make_shared<Matter> ();
+  //auto matter = make_shared<Matter> ();
+  auto lbt = make_shared<LBT> ();
   //auto martini = make_shared<Martini> ();
-  auto adscft = make_shared<AdSCFT> ();
+  //auto adscft = make_shared<AdSCFT> ();
   //DBEUG: Remark:
   //does not matter unfortunately since not called recursively, done by JetEnergyLoss class ...
   //matter->SetActive(false);
@@ -97,7 +96,6 @@ int main(int argc, char** argv)
   auto hadroMgr = make_shared<HadronizationManager> ();
   auto hadro = make_shared<Hadronization> ();
   auto hadroModule = make_shared<HadronizationModuleTest> ();
-  auto colorless = make_shared<ColorlessHad> ();
 
   // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
@@ -109,16 +107,21 @@ int main(int argc, char** argv)
   //in proper "workflow" order (can be defined via xml and sorted if necessary)
   
   jetscape->Add(pGun);
+
   jetscape->Add(trento);
+
+   //Some modifications will be needed for reusing hydro events, so far
+  //simple test hydros always executed "on the fly" ...
   jetscape->Add(hydro);
 
   // Matter with silly "toy shower (no physics)
   // and Martini dummy ...
   // Switching Q2 (or whatever variable used
   // hardcoded at 5 to be changed to xml)
-  // jloss->Add(matter);
+  //jloss->Add(matter);
+  jloss->Add(lbt);
   //jloss->Add(martini);
-  jloss->Add(adscft);  
+  //jloss->Add(adscft);  
 
   jlossmanager->Add(jloss);
   
@@ -126,8 +129,7 @@ int main(int argc, char** argv)
 
   jetscape->Add(printer);
 
-  //hadro->Add(hadroModule);
-  hadro->Add(colorless);
+  hadro->Add(hadroModule);
   hadroMgr->Add(hadro);
   jetscape->Add(hadroMgr);
 
