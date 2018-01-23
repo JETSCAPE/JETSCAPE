@@ -33,7 +33,7 @@ HadronizationManager::~HadronizationManager()
 
 void HadronizationManager::Clear()
 {
-  DEBUG<<"Hadronization task List ...";
+  JSDEBUG<<"Hadronization task List ...";
   
   hd.clear();
 
@@ -74,7 +74,7 @@ void HadronizationManager::Exec()
 {
 
   VERBOSE(2)<<"Run Hadronization Manager ...";
-  DEBUG<<"Task Id = "<<this_thread::get_id();
+  JSDEBUG<<"Task Id = "<<this_thread::get_id();
   
   if (GetNumberOfTasks()<1)
   {

@@ -26,7 +26,7 @@ PythiaGun::~PythiaGun()
 void PythiaGun::InitTask()
 {
 
-  DEBUG<<"Initialize PythiaGun"; 
+  JSDEBUG<<"Initialize PythiaGun"; 
   VERBOSE(8);
 
   // Show initialization at INFO level
@@ -132,7 +132,7 @@ void PythiaGun::Exec()
   VERBOSE(8)<<"Current Event #"<<GetCurrentEvent();
 
   next();
-  DEBUG<<"Number of Pythia partons = "<<event.size();
+  JSDEBUG<<"Number of Pythia partons = "<<event.size();
 
 
   // stringstream numbi(stringstream::app|stringstream::in|stringstream::out);

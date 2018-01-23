@@ -18,9 +18,9 @@
 #include "JetScape.h"
 #include "JetEnergyLoss.h"
 #include "JetEnergyLossManager.h"
-#include "JetScapeWriterAscii.h"
+//#include "JetScapeWriterAscii.h"
 //#include "JetScapeWriterAsciiGZ.h"
-//#include "JetScapeWriterHepMC.h"
+#include "JetScapeWriterHepMC.h"
 
 // User modules derived from jetscape framework clasess
 // to be used to run Jetscape ...
@@ -98,9 +98,9 @@ int main(int argc, char** argv)
   auto hadroModule = make_shared<HadronizationModuleTest> ();
 
   // only pure Ascii writer implemented and working with graph output ...
-  auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
+  // auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
   //autowriter= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");  
-  //auto writer= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
+  auto writer= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
   //writer->SetActive(false);
 
   //Remark: For now modules have to be added

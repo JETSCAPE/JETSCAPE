@@ -71,13 +71,13 @@ void HadronizationModuleTest::DoHadronization(vector<vector<shared_ptr<Parton>>>
 //    event.append( 21, 23, 101, 103, 0., 0., 100.0, 100 );
 //    event.append( 21, 23, 103, 101, 0., 0., -100.0, 100);
     
-  DEBUG << "&&&&&&&&&&&&&&&&&&& the number of showers are: " << shower.size();
+  JSDEBUG << "&&&&&&&&&&&&&&&&&&& the number of showers are: " << shower.size();
   for(unsigned int ishower=0; ishower <  shower.size(); ++ishower)  
 {
     
 
 
-  DEBUG << "&&&&&&&&&&&&&&&&&&& there are " << shower.at(ishower).size() << " partons in the shower number " << ishower;
+  JSDEBUG << "&&&&&&&&&&&&&&&&&&& there are " << shower.at(ishower).size() << " partons in the shower number " << ishower;
   for(unsigned int ipart=0; ipart <  shower.at(ishower).size(); ++ipart)
   {
       double onshellE = pow(pow(shower.at(ishower).at(ipart)->px(),2) + pow(shower.at(ishower).at(ipart)->py(),2) + pow(shower.at(ishower).at(ipart)->pz(),2) ,0.5 ) ;

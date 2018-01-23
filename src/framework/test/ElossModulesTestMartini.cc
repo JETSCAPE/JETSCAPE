@@ -63,7 +63,7 @@ void Martini::Init()
   if ( !martini->FirstChildElement( "pcut" ) )     throw std::runtime_error("Martini not properly initialized in XML file ...");
 
   string s = martini->FirstChildElement( "name" )->GetText();
-  DEBUG << s << " to be initilizied ...";
+  JSDEBUG << s << " to be initilizied ...";
 
   alpha_s = 0.3;
   martini->FirstChildElement("alpha_s")->QueryDoubleText(&alpha_s);

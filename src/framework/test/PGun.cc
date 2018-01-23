@@ -24,18 +24,18 @@ PGun::~PGun()
 
 void PGun::InitTask()
 {
-  DEBUG<<"Initialize PGun Brick (Test) ...";
+  JSDEBUG<<"Initialize PGun Brick (Test) ...";
   VERBOSE(8);
   tinyxml2::XMLElement *pgun=GetHardXML()->FirstChildElement("PGun");
 
   if (pgun)
     {
       string s = pgun->FirstChildElement( "name" )->GetText();
-      DEBUG << s << " to be initilizied ...";
+      JSDEBUG << s << " to be initilizied ...";
       
       pgun->FirstChildElement("pT")->QueryDoubleText(&fixed_pT);
 
-      DEBUG << s << " with fixed pT = "<<fixed_pT;
+      JSDEBUG << s << " with fixed pT = "<<fixed_pT;
       INFO<<"Parton Gun with fixed pT = "<<fixed_pT;
       
     }

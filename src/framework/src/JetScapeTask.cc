@@ -32,12 +32,12 @@ JetScapeTask::JetScapeTask()
 JetScapeTask::~JetScapeTask()
 {
   VERBOSE(9);
-  DEBUG << "Deleting task with id=" << GetId() << " and TaskNumber= " << get_my_task_number();
+  JSDEBUG << "Deleting task with id=" << GetId() << " and TaskNumber= " << get_my_task_number();
 }
 
 void JetScapeTask::Init()
 {
-  DEBUG;
+  JSDEBUG;
 }
 
   /** Recursive initialization of all the subtasks of the JetScapeTask. Subtasks are also of type JetScapeTask such as Pythia Gun, Trento, Energy Loss Matter and Martini etc.
@@ -60,7 +60,7 @@ void JetScapeTask::ExecuteTasks()
 {
   VERBOSE(7) << " : # Subtasks = "<<tasks.size();
   for (auto it : tasks){
-    DEBUG << "Executing " << it->GetId();
+    JSDEBUG << "Executing " << it->GetId();
     if (it->active_exec) it->Exec();
   }
 }

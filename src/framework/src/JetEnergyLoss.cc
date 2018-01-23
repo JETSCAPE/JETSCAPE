@@ -342,7 +342,7 @@ void JetEnergyLoss::Exec()
        /*
        //Check Memory ...
        VERBOSE(8)<<"Use PartonShowerGenerator to do Parton shower stored in PartonShower Graph class";
-       DEBUG<<"Use PartonShowerGenerator to do Parton shower stored in PartonShower Graph class";
+       JSDEBUG<<"Use PartonShowerGenerator to do Parton shower stored in PartonShower Graph class";
        
        PartonShowerGenerator PSG;
        PSG.DoShower(*shared_from_this()); //needed otherwise all signal slots have to be recreated for shower module ....
@@ -442,7 +442,7 @@ void JetEnergyLoss::WriteTask(weak_ptr<JetScapeWriter> w)
 
 void JetEnergyLoss::PrintShowerInitiatingParton()
 {
-  //DEBUG<<inP->pid();
+  //JSDEBUG<<inP->pid();
 }
 
 

@@ -32,18 +32,18 @@ void Brick::InitTask()
 {
   // kind of stupid ... do pointer GetHydroXML() via XML instance ...
   
-  DEBUG<<"Initialize Brick (Test) ...";
+  JSDEBUG<<"Initialize Brick (Test) ...";
   VERBOSE(8);
   tinyxml2::XMLElement *brick=GetHydroXML()->FirstChildElement("Brick");
 
   if (brick) {
       string s = brick->FirstChildElement( "name" )->GetText();
 
-      DEBUG << s << " to be initilizied ...";
+      JSDEBUG << s << " to be initilizied ...";
       
       brick->FirstChildElement("T")->QueryDoubleText(&T_brick);
 
-      DEBUG << s << " with T = "<<T_brick;
+      JSDEBUG << s << " with T = "<<T_brick;
       VERBOSE(2)<<"Brick Temperature T = "<<T_brick;
 
       if ( brick->Attribute("bjorken_expansion_on", "true") ) {

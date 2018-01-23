@@ -25,7 +25,7 @@ JetScapeWriterAsciiGZ::~JetScapeWriterAsciiGZ()
 
 void JetScapeWriterAsciiGZ::WriteEvent()
 {
-  DEBUG<< GetCurrentEvent() << " Event ";
+  JSDEBUG<< GetCurrentEvent() << " Event ";
   output_file<< GetCurrentEvent() << " Event \n";
 }
 
