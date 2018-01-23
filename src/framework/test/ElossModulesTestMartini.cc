@@ -100,7 +100,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
       double k, kt;             // momenta for radiated parton (pOut)
       double pNew, ptNew;       // momenta for final parton (pOut)
       double omega, q;          // transferred energy/momentum for scattering
-      FourVector pVec, pVecNew; // 4 vectors for momenta
+      Jetscape::FourVector pVec, pVecNew; // 4 vectors for momenta
       // before & after scattering
       double eta, phi;
 
@@ -113,7 +113,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 	  p = pIn[i].e();        // massless
 	  // pVec = pIn[i].p_in();
 	  // pVec = pIn[i].get_p();
-	  pVec = FourVector ( pIn[i].px(), pIn[i].py(), pIn[i].pz(), pIn[i].e() );
+	  pVec = Jetscape::FourVector ( pIn[i].px(), pIn[i].py(), pIn[i].pz(), pIn[i].e() );
 
 	  if (p < pcut) continue;
 
@@ -1718,11 +1718,11 @@ double Martini::areaQ(double u, double omega, int process)
   return areaQ;
 }
 
-FourVector Martini::getNewMomentumElas(FourVector pVec, double omega, double q)
+Jetscape::FourVector Martini::getNewMomentumElas(Jetscape::FourVector pVec, double omega, double q)
 {
-  FourVector pVecNew, pVecNewTemp;
-  FourVector etVec, qtVec, qlVec;
-  FourVector r;
+  Jetscape::FourVector pVecNew, pVecNewTemp;
+  Jetscape::FourVector etVec, qtVec, qlVec;
+  Jetscape::FourVector r;
   double qt, ql;
   double cosTheta_pq;
   double pAbs=pVec.t();
