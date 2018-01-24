@@ -36,7 +36,7 @@ using std::make_shared;
 /*
 #define INFO  JetScapeLogger::Instance()->Info()<<" " //<<__PRETTY_FUNCTION__<<" : "
 #define INFO_NICE  JetScapeLogger::Instance()->InfoNice()
-#define DEBUG JetScapeLogger::Instance()->Debug()<<__PRETTY_FUNCTION__<<" : "
+#define JSDEBUG JetScapeLogger::Instance()->Debug()<<__PRETTY_FUNCTION__<<" : "
 #define DEBUGTHREAD JetScapeLogger::Instance()->DebugThread()<<__PRETTY_FUNCTION__<<" : "
 #define REMARK JetScapeLogger::Instance()->Remark()<<__PRETTY_FUNCTION__<<" : "
 #define VERBOSE(l) JetScapeLogger::Instance()->Verbose(l)<<__PRETTY_FUNCTION__<<" : "
@@ -50,7 +50,7 @@ using std::make_shared;
 // otherwise quite a performance hit ...
 #define INFO  JetScapeLogger::Instance()->Info()<<" " //<<__PRETTY_FUNCTION__<<" : "
 #define INFO_NICE  JetScapeLogger::Instance()->InfoNice()
-#define DEBUG if (JetScapeLogger::Instance()->GetDebug()) JetScapeLogger::Instance()->Debug()<<__PRETTY_FUNCTION__<<" : "
+#define JSDEBUG if (JetScapeLogger::Instance()->GetDebug()) JetScapeLogger::Instance()->Debug()<<__PRETTY_FUNCTION__<<" : "
 #define DEBUGTHREAD if (JetScapeLogger::Instance()->GetDebug()) JetScapeLogger::Instance()->DebugThread()<<__PRETTY_FUNCTION__<<" : "
 #define REMARK if (JetScapeLogger::Instance()->GetRemark()) JetScapeLogger::Instance()->Remark()<<__PRETTY_FUNCTION__<<" : "
 #define VERBOSE(l) if (l<JetScapeLogger::Instance()->GetVerboseLevel()) JetScapeLogger::Instance()->Verbose(l)<<__PRETTY_FUNCTION__<<" : "

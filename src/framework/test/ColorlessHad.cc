@@ -25,7 +25,7 @@ ColorlessHad::~ColorlessHad()
 
 void ColorlessHad::Init()
 {
-  DEBUG<<"Initialize ColorlessHad";
+  JSDEBUG<<"Initialize ColorlessHad";
   VERBOSE(8);
 
   // No event record printout.
@@ -58,7 +58,7 @@ void ColorlessHad::DoHadronization(vector<vector<shared_ptr<Parton>>>& shower, v
   for(unsigned int ishower=0; ishower <  shower.size(); ++ishower)
   {
     vector<shared_ptr<Parton>>& pIn = shower.at(ishower);
-    DEBUG<<"Shower#"<<ishower+1 << ". Number of partons to hadronize: " << pIn.size();
+    JSDEBUG<<"Shower#"<<ishower+1 << ". Number of partons to hadronize: " << pIn.size();
 
     int col[pIn.size()+1], acol[pIn.size()+1], isdone[pIn.size()+1];
     memset( col, 0, (pIn.size()+1)*sizeof(int) ), memset( acol, 0, (pIn.size()+1)*sizeof(int) ), memset( isdone, 0, (pIn.size()+1)*sizeof(int) );
@@ -74,11 +74,11 @@ void ColorlessHad::DoHadronization(vector<vector<shared_ptr<Parton>>>& shower, v
         nquarks+=1;  
       }
     }
-    DEBUG << "#Quarks = " << nquarks;
+    JSDEBUG << "#Quarks = " << nquarks;
   
     //Find number of strings
     int nstrings=int(double(nquarks)/2.+0.6);
-    DEBUG << "#Strings = " << nstrings;
+    JSDEBUG << "#Strings = " << nstrings;
 
     //Assign ends of strings (order matters in this algo)
     int istring=0;

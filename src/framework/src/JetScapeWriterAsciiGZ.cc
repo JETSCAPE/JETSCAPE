@@ -25,8 +25,8 @@ JetScapeWriterAsciiGZ::~JetScapeWriterAsciiGZ()
 
 void JetScapeWriterAsciiGZ::WriteEvent()
 {
-  DEBUG<< GetCurrentEvent() << " Event";
-  output_file<< GetCurrentEvent() << " Event\n";
+  JSDEBUG<< GetCurrentEvent() << " Event ";
+  output_file<< GetCurrentEvent() << " Event \n";
 }
 
 void JetScapeWriterAsciiGZ::Write(weak_ptr<Parton> p)

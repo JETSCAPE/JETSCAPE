@@ -152,7 +152,7 @@ class Martini : public JetEnergyLossModule<Martini> //, public std::enable_share
     return getElasticRateOmega(u, y, process);}
   double functionQ(double u, double omega, double q, int process) {
     return getElasticRateQ(u, omega, q, process);}
-  FourVector getNewMomentumElas(FourVector pVec, double omega, double q);
+  Jetscape::FourVector getNewMomentumElas(Jetscape::FourVector pVec, double omega, double q);
 
   //Import.h//
   void readRadiativeRate(Gamma_info *dat, dGammas *Gam);

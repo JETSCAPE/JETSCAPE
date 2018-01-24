@@ -52,7 +52,7 @@ void AdSCFT::Init()
     {   
       string s = adscft->FirstChildElement( "name" )->GetText();
     
-      DEBUG << s << " to be initilizied ...";
+      JSDEBUG << s << " to be initilizied ...";
 
       //double m_qhat=-99.99;
       adscft->FirstChildElement("kappa")->QueryDoubleText(&kappa);
@@ -60,7 +60,7 @@ void AdSCFT::Init()
 
       INFO<<"AdSCFT kappa = "<<kappa;
      
-      //DEBUG  << s << " with qhat = "<<GetQhat();      	
+      //JSDEBUG  << s << " with qhat = "<<GetQhat();      	
     }
   else
     {

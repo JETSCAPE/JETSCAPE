@@ -53,13 +53,13 @@ void Matter::Init()
  
   if (matter) {   
     string s = matter->FirstChildElement( "name" )->GetText();
-    DEBUG << s << " to be initializied ...";
+    JSDEBUG << s << " to be initializied ...";
 
     double m_qhat=-99.99;
     matter->FirstChildElement("qhat")->QueryDoubleText(&m_qhat);
     SetQhat(m_qhat);
     qhat = GetQhat()/fmToGeVinv ;
-    DEBUG  << s << " with qhat = "<<GetQhat();
+    JSDEBUG  << s << " with qhat = "<<GetQhat();
       
   }
   else {
@@ -102,11 +102,11 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   double Time = time*fmToGeVinv;
   double deltaTime = delT*fmToGeVinv;
     
-  DEBUG << " the time in fm is " << time << " The time in GeV-1 is " << Time ;
-  DEBUG << "pid = " << pIn[0].pid() << " E = " << pIn[0].e() << " px = " << pIn[0].p(1) << " py = " << pIn[0].p(2) << "  pz = " << pIn[0].p(3) << " virtuality = " << pIn[0].t() << " form_time in fm = " << pIn[0].form_time()/fmToGeVinv ;
-  DEBUG << " color = " << pIn[0].color() << " anti-color = " << pIn[0].anti_color();
+  JSDEBUG << " the time in fm is " << time << " The time in GeV-1 is " << Time ;
+  JSDEBUG << "pid = " << pIn[0].pid() << " E = " << pIn[0].e() << " px = " << pIn[0].p(1) << " py = " << pIn[0].p(2) << "  pz = " << pIn[0].p(3) << " virtuality = " << pIn[0].t() << " form_time in fm = " << pIn[0].form_time()/fmToGeVinv ;
+  JSDEBUG << " color = " << pIn[0].color() << " anti-color = " << pIn[0].anti_color();
     
-    //DEBUG << " For MATTER, the qhat in GeV^-3 = " << qhat ;
+  //JSDEBUG << " For MATTER, the qhat in GeV^-3 = " << qhat ;
     
   for (int i=0;i<pIn.size();i++)
   {
@@ -135,12 +135,12 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           iSplit = 0;
           if (pIn[i].pid()==gid)
           {
-              DEBUG << " parton is a gluon ";
+              JSDEBUG << " parton is a gluon ";
               iSplit = 1;
           }
           else
           {
-              DEBUG << " parton is a quark ";
+              JSDEBUG << " parton is a quark ";
           }
 	    
           tQ2 = generate_vac_t(pIn[i].pid(), pIn[i].nu(), QS/2.0, pIn[i].e()*pIn[i].e() ,zeta , iSplit);
@@ -180,19 +180,19 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           pIn[i].set_min_anti_color(min_anti_color);
           
             
-          //DEBUG:
-          DEBUG ;
-          DEBUG << " ***************************************************************************** " ;
-          DEBUG<< " ID = " << pIn[i].pid() << " Color = " << pIn[i].color() << " Anti-Color = " << pIn[i].anti_color() ;
-          DEBUG << " E = " << pIn[i].e() << " px = " << pIn[i].px() << " py = " << pIn[i].py() << " pz = " << pIn[i].pz() ;
-          DEBUG << " *  New generated virtuality = " << tQ2 << " Mean formation time = " << pIn[i].mean_form_time()/fmToGeVinv;
-          DEBUG << " *  set new formation time to " << pIn[i].form_time()/fmToGeVinv ;
-          DEBUG << " * Maximum allowed virtuality = " << pIn[i].e()*pIn[i].e() << "   Minimum Virtuality = " << QS;
-          DEBUG << " * Qhat = " << qhat << "  Length = "  << length ;
-          DEBUG << " * Jet velocity = " << pIn[i].jet_v().comp(0) << " " << pIn[i].jet_v().comp(1) << "  " << pIn[i].jet_v().comp(2) << "  " << pIn[i].jet_v().comp(3);
-          DEBUG << " * reset location of parton formation = "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z();
-          DEBUG << " ***************************************************************************** " ;
-          DEBUG ;
+          //JSDEBUG:
+          JSDEBUG ;
+          JSDEBUG << " ***************************************************************************** " ;
+          JSDEBUG<< " ID = " << pIn[i].pid() << " Color = " << pIn[i].color() << " Anti-Color = " << pIn[i].anti_color() ;
+          JSDEBUG << " E = " << pIn[i].e() << " px = " << pIn[i].px() << " py = " << pIn[i].py() << " pz = " << pIn[i].pz() ;
+          JSDEBUG << " *  New generated virtuality = " << tQ2 << " Mean formation time = " << pIn[i].mean_form_time()/fmToGeVinv;
+          JSDEBUG << " *  set new formation time to " << pIn[i].form_time()/fmToGeVinv ;
+          JSDEBUG << " * Maximum allowed virtuality = " << pIn[i].e()*pIn[i].e() << "   Minimum Virtuality = " << QS;
+          JSDEBUG << " * Qhat = " << qhat << "  Length = "  << length ;
+          JSDEBUG << " * Jet velocity = " << pIn[i].jet_v().comp(0) << " " << pIn[i].jet_v().comp(1) << "  " << pIn[i].jet_v().comp(2) << "  " << pIn[i].jet_v().comp(3);
+          JSDEBUG << " * reset location of parton formation = "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z();
+          JSDEBUG << " ***************************************************************************** " ;
+          JSDEBUG ;
           // end DEBUG:
  
           
@@ -202,15 +202,15 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       { //
           double decayTime = pIn[i].mean_form_time()  ;
 	    
-          //DEBUG << "  deltaT = " << deltaT;
-          //DEBUG << " parton origin time = " << pIn[i].x_in().t()/fmToGeVinv << " parton formation time = " << pIn[i].form_time()/fmToGeVinv;
-          // DEBUG << " parton id " << pIn[i].pid() << " parton virtuality = " << pIn[i].t();
-          //DEBUG << " parton momentum " << pIn[i].e() << "  " << pIn[i].px() << "  " << pIn[i].py() << "  " << pIn[i].pz();
+          //JSDEBUG << "  deltaT = " << deltaT;
+          //JSDEBUG << " parton origin time = " << pIn[i].x_in().t()/fmToGeVinv << " parton formation time = " << pIn[i].form_time()/fmToGeVinv;
+          // JSDEBUG << " parton id " << pIn[i].pid() << " parton virtuality = " << pIn[i].t();
+          //JSDEBUG << " parton momentum " << pIn[i].e() << "  " << pIn[i].px() << "  " << pIn[i].py() << "  " << pIn[i].pz();
 	    
           double splitTime = pIn[i].form_time() + pIn[i].x_in().t() ;
-          // DEBUG << " splitTime = " << splitTime/fmToGeVinv;
-          
-	  if (splitTime<Time)
+          // JSDEBUG << " splitTime = " << splitTime/fmToGeVinv;
+	  
+          if (splitTime<Time)
           {
               // do split
               double t_used = pIn[i].t();
@@ -283,12 +283,12 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               //color = pIn[i].color();
               max_color = pIn[i].max_color();
               //if (pIn[i].anti_color()>maxcolor) color = pIn[i].anti_color();
-              DEBUG << " old max color = " << max_color;
+              JSDEBUG << " old max color = " << max_color;
               max_color++;
               color = max_color;
               anti_color = max_color;
               pIn[i].set_max_color(max_color);
-              DEBUG << " new color = " << color;
+              JSDEBUG << " new color = " << color;
               
               if (iSplit==1)///< gluon splits into two gluons
               {
@@ -327,12 +327,12 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               }
 
               
-              DEBUG << " d1_col = " << d1_col << " d1_acol = " << d1_acol << " d2_col = " << d2_col << " d2_acol = " << d2_acol;
+              JSDEBUG << " d1_col = " << d1_col << " d1_acol = " << d1_acol << " d2_col = " << d2_col << " d2_acol = " << d2_acol;
 
               while ((l_perp2<=0.0)&&(ifcounter<100))
               {
                   z = generate_vac_z(pid,QS/2.0,pIn[i].t(),zeta,pIn[i].nu(),iSplit) ;
-                  //DEBUG << " generated z = " << z;
+                  //JSDEBUG << " generated z = " << z;
         
                   int iSplit_a = 0;
                   if (pid_a==gid) iSplit_a = 1;
