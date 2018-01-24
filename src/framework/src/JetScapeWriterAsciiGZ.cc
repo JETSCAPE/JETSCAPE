@@ -34,6 +34,11 @@ void JetScapeWriterAsciiGZ::Write(weak_ptr<Parton> p)
   output_file<<*p.lock()<<endl;
 }
 
+void JetScapeWriterAsciiGZ::Write(weak_ptr<Vertex> v)
+{
+  output_file<<*v.lock()<<endl;
+}
+
 void JetScapeWriterAsciiGZ::Init()
 {
    if (GetActive())

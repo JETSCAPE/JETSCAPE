@@ -11,10 +11,12 @@ set (SOURCES
      brick_jetscape.cc
      hydro_file_jetscape.cc
      ElossModulesTestMatter.cc
+     ElossModuleLBT.cc
      ElossModulesTestMartini.cc
      AdSCFT.cc
      PGun.cc
-     HadronizationModuleTest.cc)
+     HadronizationModuleTest.cc
+     ColorlessHad.cc)
 
 if (music)
     set (SOURCES ${SOURCES} music_jetscape.cc)

@@ -154,15 +154,19 @@ endif()
 if (${PYTHIA8_FOUND})
     add_executable(writerTest ./src/writerTest.cc)
     add_executable(brickTest ./src/brickTest.cc)
+    add_executable(LBT_brickTest ./src/LBT_brickTest.cc)
     add_executable(PythiaBrickTest ./src/PythiaBrickTest.cc)
     target_link_libraries(writerTest JetScape JetScapeHydro JetScapeTest) #for writer test case...
     target_link_libraries(brickTest JetScape JetScapeHydro  JetScapeTest) #for test case ...
+    target_link_libraries(LBT_brickTest JetScape JetScapeHydro  JetScapeTest) #for test case ...
     target_link_libraries(PythiaBrickTest JetScape JetScapeHydro  JetScapeTest) #for test case ...
     target_link_libraries(testJetScape ${PYTHIA8_LIBRARIES})
     target_link_libraries(brickTest ${PYTHIA8_LIBRARIES})
+    target_link_libraries(LBT_brickTest ${PYTHIA8_LIBRARIES})
     target_link_libraries(PythiaBrickTest ${PYTHIA8_LIBRARIES})
     if (${ROOT_FOUND})
       target_link_libraries(brickTest ${ROOT_LIBRARIES})
+      target_link_libraries(LBT_brickTest ${ROOT_LIBRARIES})
       target_link_libraries(PythiaBrickTest ${ROOT_LIBRARIES})
       target_link_libraries(writerTest ${ROOT_LIBRARIES})
     endif(${ROOT_FOUND})
@@ -203,6 +207,13 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/jetscape_init.xml DESTINATION ${CMAKE_BINA
 
 #### same for pythi gun
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/jetscape_init_pythiagun.xml DESTINATION ${CMAKE_BINARY_DIR}/)
+
+if(EXISTS "${CMAKE_SOURCE_DIR}/3rdparty/LBT-tables")
+    execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/3rdparty/LBT-tables ${CMAKE_BINARY_DIR}/LBT-tables)
+else()
+    message("Warning: LBT-tables have not been downloaded in 3rdparty by ./get_lbtTab.sh; LBT-brickTest will NOT run properly.")
+endif()
+
 
 #set(LIBS ${LIBS} ${ROOT_LIBRARIES})
 #However, the file(GLOB...) allows for wildcard additions:
