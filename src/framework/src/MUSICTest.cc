@@ -52,9 +52,9 @@ int main(int argc, char** argv)
 {
   clock_t t; t = clock();
   time_t start, end; time(&start);
-  
+
   cout<<endl;
-    
+
   // DEBUG=true by default and REMARK=false
   // can be also set also via XML file (at least partially)
   JetScapeLogger::Instance()->SetInfo(true);
@@ -63,7 +63,7 @@ int main(int argc, char** argv)
   //SetVerboseLevel (9 a lot of additional debug output ...)
   //If you want to suppress it: use SetVerboseLevel(0) or max  SetVerboseLevel(9) or 10
   JetScapeLogger::Instance()->SetVerboseLevel(0);
-   
+
   Show();
 
   // auto jetscape = make_shared<JetScape>("./jetscape_init.xml",10);
@@ -79,7 +79,7 @@ int main(int argc, char** argv)
   auto trento = make_shared<TrentoInitial> ();
   auto hydro = make_shared<MPI_MUSIC> ();
   //auto hydro = make_shared<GubserHydro> ();
-  
+
   auto matter = make_shared<Matter> ();
   auto martini = make_shared<Martini> ();
   auto adscft = make_shared<AdSCFT> ();
@@ -94,23 +94,23 @@ int main(int argc, char** argv)
 
 
     auto printer = make_shared<PartonPrinter> ();
-    
+
  //   auto hadroMgr = make_shared<HadronizationManager> ();
  //   auto hadro = make_shared<Hadronization> ();
  //   auto hadroModule = make_shared<HadronizationModuleTest> ();
-    
+
 
   // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
-  //auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");  
+  //auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");
   //auto writer= make_shared<JetScapeWriterHepMC> ("test_out.dat");
   //writer->SetActive(false);
 
   //Remark: For now modules have to be added
   //in proper "workflow" order (can be defined via xml and sorted if necessary)
-  
+
   jetscape->Add(trento);
-  
+
   jetscape->Add(pGun);
 
    //Some modifications will be needed for reusing hydro events, so far
@@ -126,12 +126,12 @@ int main(int argc, char** argv)
   //jloss->Add(adscft);
 
   jlossmanager->Add(jloss);
-  
+
   jetscape->Add(jlossmanager);
 
 
     jetscape->Add(printer);
-    
+
  //   hadro->Add(hadroModule);
  //   hadroMgr->Add(hadro);
  //   jetscape->Add(hadroMgr);
@@ -149,7 +149,7 @@ int main(int argc, char** argv)
   // "dummy" so far ...
   // Most thinkgs done in write and clear ...
   jetscape->Finish();
-  
+
   INFO_NICE<<"Finished!";
   cout<<endl;
 

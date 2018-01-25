@@ -21,7 +21,6 @@ namespace Jetscape {
 PreequilibriumDynamics::PreequilibriumDynamics()
 {
   VERBOSE(8);
-  //eta=-99.99;
   SetId("PreequilibriumDynamics");
 }
 

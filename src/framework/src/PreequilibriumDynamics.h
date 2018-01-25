@@ -17,7 +17,7 @@ namespace Jetscape {
 // in principle one class level too much ... think about and compress ...
    /**
        @class
-       Interface for the Fluid Dynamics of the medium
+       Interface for the Preequilibrium Dynamics of the medium
    */
 class PreequilibriumDynamics : public JetScapeModuleBase , public PreequilibriumDynamicsBase
 {
@@ -32,7 +32,7 @@ class PreequilibriumDynamics : public JetScapeModuleBase , public Preequilibrium
       @param m_name is a name of the control XML file which contains the input parameters under the tag <Preequilibrium>.
    */
   PreequilibriumDynamics(string m_name) : JetScapeModuleBase (m_name), PreequilibriumDynamicsBase()
-    {SetId("FluidDynamics");}
+    {SetId("PreequilibriumDynamics");}
 
   /** Destructor for the Preequilibrium Dynamics task.
   */

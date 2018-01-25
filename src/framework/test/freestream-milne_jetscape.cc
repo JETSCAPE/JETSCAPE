@@ -5,75 +5,71 @@
 #include <cstring>
 
 #include "JetScapeLogger.h"
-#include "music_jetscape.h"
+#include "freestream-milne_jetscape.h"
 
 using namespace std;
 
-MPI_MUSIC::MPI_MUSIC() {
-    hydro_status = NOT_START;
-    doCooperFrye = 0;
-    SetId("MUSIC");
+FREESTREAM::FREESTREAM() {
+    preequilibrium_status = NOT_START;
+    //doCooperFrye = 0;
+    SetId("Freestream-Milne");
 }
 
 
-MPI_MUSIC::~MPI_MUSIC() {
-    if (hydro_status != NOT_START) {
-        delete music_hydro_ptr;
+FREESTREAM::~FREESTREAM() {
+    //if (hydro_status != NOT_START) {delete music_hydro_ptr;
     }
 }
 
 
-void MPI_MUSIC::initialize_hydro(Parameter parameter_list) {
-    INFO << "Initialize MUSIC ...";
+void FREESTREAM::initialize_preequilibrium(Parameter parameter_list) {
+    INFO << "Initialize freestream-milne ...";
     VERBOSE(8);
     tinyxml2::XMLElement *para =
-                    GetHydroXML()->FirstChildElement("MUSIC");
+                    GetPreequilibriumXML()->FirstChildElement("Preequilibrium");
     if (!para) {
-        WARN << " : MUSIC not properly initialized in XML file ...";
+        WARN << " : freestream-milne not properly initialized in XML file ...";
         exit(-1);
     }
-    string input_file = para->FirstChildElement("MUSIC_input_file")->GetText();
-    para->FirstChildElement("Perform_CooperFrye_Feezeout")->QueryIntText(
+    string input_file = para->FirstChildElement("freestream_milne_input_file")->GetText();
+    //para->FirstChildElement("Perform_CooperFrye_Feezeout")->QueryIntText(
                                                                 &doCooperFrye);
-    int argc = 2;
-    char **argv = new char* [argc];
-    argv[0] = new char[9];
-    strcpy(argv[0], "mpihydro");
-    argv[1] = new char[input_file.length() + 1];
-    strcpy(argv[1], input_file.c_str());
-    cout << "check input for MUSIC: " << endl;
-    for (int i = 0; i < argc; i++) {
-        cout << argv[i] << "  ";
-    }
-    cout << endl;
-    music_hydro_ptr = new MUSIC(argc, argv);
+    //int argc = 2;
+    //char **argv = new char* [argc];
+    //argv[0] = new char[9];
+    //strcpy(argv[0], "mpihydro");
+    //argv[1] = new char[input_file.length() + 1];
+    //strcpy(argv[1], input_file.c_str());
+    //cout << "check input for MUSIC: " << endl;
+    //for (int i = 0; i < argc; i++) {
+    //    cout << argv[i] << "  ";
+    //}
+    //cout << endl;
+    //music_hydro_ptr = new MUSIC(argc, argv);
 
-    for (int i = 0; i < argc; i++) {
-        delete[] argv[i];
-    }
-    delete[] argv;
+    //for (int i = 0; i < argc; i++) {delete[] argv[i];}
+    //delete[] argv;
 }
 
 
-void MPI_MUSIC::evolve_hydro() {
+void FREESTREAM::evolve_preequilibrium() {
     VERBOSE(8);
-    INFO << "Initialize density profiles in MUSIC ...";
+    INFO << "Initialize density profiles in freestream-milne ...";
     std::vector<double> entropy_density = ini->entropy_density_distribution_;
     double dx = ini->get_x_step();
-    music_hydro_ptr->initialize_hydro_from_vector(entropy_density, dx);
+    //music_hydro_ptr->initialize_hydro_from_vector(entropy_density, dx);
     INFO << "initial density profile dx = " << dx << " fm";
-    hydro_status = INITIALIZED;
-    if (hydro_status == INITIALIZED) {
-        INFO << "running MUSIC ...";
-        music_hydro_ptr->run_hydro();
-        hydro_status = FINISHED;
+    preequilibrium_status = INITIALIZED;
+    if (pressure_status == INITIALIZED) {
+        INFO << "running freestream-milne ...";
+        //music_hydro_ptr->run_hydro();
+        preequilibrium_status = FINISHED;
     }
-    if (hydro_status == FINISHED && doCooperFrye == 1) {
-        music_hydro_ptr->run_Cooper_Frye(1);
+    //if (preequilibrium_status == FINISHED) {music_hydro_ptr->run_Cooper_Frye(1);
     }
 }
 
-
+/*
 void MPI_MUSIC::get_hydro_info(real t, real x, real y, real z,
                                FluidCellInfo* fluid_cell_info_ptr) {
     fluidCell *fluidCell_ptr = new fluidCell;
@@ -99,4 +95,4 @@ void MPI_MUSIC::get_hydro_info(real t, real x, real y, real z,
 
     delete fluidCell_ptr;
 }
-
+*/
