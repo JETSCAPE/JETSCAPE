@@ -299,15 +299,15 @@ void LBT::LBT0(int &n, double &ti){
   double Vy;		
   double Veta;
 
-  double tcar;                   //....................t x y z in Cartesian coordinate this is for the radiation process
-  double xcar;		
-  double ycar;
-  double zcar;					
+  double tcar=0.0;                   //....................t x y z in Cartesian coordinate this is for the radiation process
+  double xcar=0.0;		
+  double ycar=0.0;
+  double zcar=0.0;					
 
-  double tcar0;                   //....................t x y z in Cartesian coordinate this is for the radiation process
-  double xcar0;		
-  double ycar0;
-  double zcar0;
+  double tcar0=0.0;                   //....................t x y z in Cartesian coordinate this is for the radiation process
+  double xcar0=0.0;		
+  double ycar0=0.0;
+  double zcar0=0.0;
 
   
   double rans;
@@ -355,6 +355,12 @@ void LBT::LBT0(int &n, double &ti){
   // for heavy quark
   double dt_lrf,maxFncHQ,Tdiff,lim_low,lim_high,lim_int;
   double probCol,probRad,probTot;
+
+  probCol=0.0;
+  probRad=0.0;
+  probTot=0.0;
+  flowFactor=0.0;
+
 
   //...........................................................................................................NCUT
   ncut=0;
@@ -1921,11 +1927,11 @@ void LBT::colljet22(int CT,double temp,double qhat0ud,double v0[4],double p0[4],
   double tt;
 	  
   double uu;	  
-  double ff;
+  double ff=0.0;
   double rank;
 	  
   double mmax;
-  double msq;
+  double msq=0.0;
 	  
   double f1;
   double f2;
@@ -2201,10 +2207,10 @@ void LBT::collHQ22(int CT,double temp,double qhat0ud,double v0[4],double p0[4],d
   double tt;
 	  
   double uu;	  
-  double ff;
+  double ff=0.0;
   double rank;
 	  
-  double msq;
+  double msq=0.0;
 	  
   double e2,theta2,theta4,phi24;   // the four independent variables      
   double e1,e4,p1,cosTheta24,downFactor,sigFactor; // other useful variables
@@ -2436,7 +2442,7 @@ void LBT::twcoll(int CT,double qhat0ud,double v0[4],double p0[4],double p2[4]){
   double tt;
   double uu;
   double mmax;
-  double msq;
+  double msq=0.0;
   double rank;	
 
   /////////////////////////////////////////////
