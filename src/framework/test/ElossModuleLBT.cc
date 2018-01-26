@@ -111,12 +111,13 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
       
   // hydro information should be moved into the particle list loop
 
-  //FluidCellInfo* check_fluid_info_ptr = new FluidCellInfo;
-  std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
-  GetHydroCellSignal(1, 1.0, 1.0, 0.0, check_fluid_info_ptr);      
-  VERBOSE(8)<< MAGENTA<<"Temperature from Brick (Signal) = "<<check_fluid_info_ptr->temperature;            
+  ////FluidCellInfo* check_fluid_info_ptr = new FluidCellInfo;
+  //std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
+  //GetHydroCellSignal(1, 1.0, 1.0, 0.0, check_fluid_info_ptr);      
+  //VERBOSE(8)<< MAGENTA<<"Temperature from Brick (Signal) = "<<check_fluid_info_ptr->temperature;            
 
   double rNum;
+  int par_status;
 
   //DEBUG:
   //cout<<" ---> "<<pIn.size()<<endl;
@@ -137,39 +138,83 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
 
       //          cout << "check read in: " << pIn[i].pid() << "  " << pIn[i].p_in().x() << "  " << pIn[i].p_in().y() << "  " << pIn[i].p_in().z() << "  " << pIn[i].p_in().t() << "  " << pIn[i].pt() << endl;
 
-      KATT1[j] = pIn[i].pid();
-      P[1][j] = pIn[i].p(1); 
-      P[2][j] = pIn[i].p(2);
-      P[3][j] = pIn[i].p(3);
-      P[4][j] = amss;
-      P[0][j] = sqrt(P[1][j]*P[1][j]+P[2][j]*P[2][j]+P[3][j]*P[3][j]+P[4][j]*P[4][j]);
-      P[5][j] = sqrt(P[1][j]*P[1][j]+P[2][j]*P[2][j]);
-      WT[j] = 1.0;
+      par_status = pIn[i].pstat();
 
-      Vfrozen[1][j] = pIn[i].x_in().x();
-      Vfrozen[2][j] = pIn[i].x_in().y();
-      Vfrozen[3][j] = pIn[i].x_in().z();
-      Vfrozen[0][j] = pIn[i].x_in().t();
-      V[1][j]=Vfrozen[1][j];
-      V[2][j]=Vfrozen[2][j];
-      V[3][j]=Vfrozen[3][j];
-      V[0][j]=-log(1.0-ran0(&NUM1));
-  
-      for(int k=0;k<=3;k++) Prad[k][j] = P[k][j];
-  
-      Tfrozen[j] = 0.0;
-      vcfrozen[1][j] = 0.0;
-      vcfrozen[2][j] = 0.0;
-      vcfrozen[3][j] = 0.0;
+      if(par_status != -1) { // a positive (active) particle
 
-      Tint_lrf[j] = 0.0; // time since last splitting, reset below if there is information from JETSCAPE
-      if (pIn[i].has_user_info<LBTUserInfo>()) { 
-	Tint_lrf[j]=pIn[i].user_info<LBTUserInfo>().lrf_T_tot();
+          KATT1[j] = pIn[i].pid();
+          P[1][j] = pIn[i].p(1); 
+          P[2][j] = pIn[i].p(2);
+          P[3][j] = pIn[i].p(3);
+          P[4][j] = amss;
+          P[0][j] = sqrt(P[1][j]*P[1][j]+P[2][j]*P[2][j]+P[3][j]*P[3][j]+P[4][j]*P[4][j]);
+          P[5][j] = sqrt(P[1][j]*P[1][j]+P[2][j]*P[2][j]);
+          WT[j] = 1.0;
+    
+          Vfrozen[1][j] = pIn[i].x_in().x();
+          Vfrozen[2][j] = pIn[i].x_in().y();
+          Vfrozen[3][j] = pIn[i].x_in().z();
+          Vfrozen[0][j] = pIn[i].x_in().t();
+          V[1][j]=Vfrozen[1][j];
+          V[2][j]=Vfrozen[2][j];
+          V[3][j]=Vfrozen[3][j];
+          V[0][j]=-log(1.0-ran0(&NUM1));
+      
+          for(int k=0;k<=3;k++) Prad[k][j] = P[k][j];
+      
+          Tfrozen[j] = 0.0;
+          vcfrozen[1][j] = 0.0;
+          vcfrozen[2][j] = 0.0;
+          vcfrozen[3][j] = 0.0;
+    
+          Tint_lrf[j] = 0.0; // time since last splitting, reset below if there is information from JETSCAPE
+          if (pIn[i].has_user_info<LBTUserInfo>()) { 
+    	      Tint_lrf[j]=pIn[i].user_info<LBTUserInfo>().lrf_T_tot();
+          } else {
+    	      pIn[i].set_user_info(new LBTUserInfo(0.0));
+          }
+
+      } else { // negative particle, or particle no longer active, will streamly freely in LBT
+
+          KATT10[j] = pIn[i].pid();
+          P0[1][j] = pIn[i].p(1); 
+          P0[2][j] = pIn[i].p(2);
+          P0[3][j] = pIn[i].p(3);
+          P0[4][j] = amss;
+          P0[0][j] = sqrt(P0[1][j]*P0[1][j]+P0[2][j]*P0[2][j]+P0[3][j]*P0[3][j]+P0[4][j]*P0[4][j]);
+          P0[5][j] = sqrt(P0[1][j]*P0[1][j]+P0[2][j]*P0[2][j]);
+          WT0[j] = 1.0;
+    
+          Vfrozen0[1][j] = pIn[i].x_in().x();
+          Vfrozen0[2][j] = pIn[i].x_in().y();
+          Vfrozen0[3][j] = pIn[i].x_in().z();
+          Vfrozen0[0][j] = pIn[i].x_in().t();
+          V0[1][j]=Vfrozen[1][j];
+          V0[2][j]=Vfrozen[2][j];
+          V0[3][j]=Vfrozen[3][j];
+          V0[0][j]=-log(1.0-ran0(&NUM1));
+      
+          // for(int k=0;k<=3;k++) Prad[k][j] = P[k][j];
+      
+          Tfrozen0[j] = 0.0;
+          vcfrozen0[1][j] = 0.0;
+          vcfrozen0[2][j] = 0.0;
+          vcfrozen0[3][j] = 0.0;
+    
+          Tint_lrf[j] = 0.0; // time since last splitting, reset below if there is information from JETSCAPE
+          if (pIn[i].has_user_info<LBTUserInfo>()) { 
+    	      Tint_lrf[j]=pIn[i].user_info<LBTUserInfo>().lrf_T_tot();
+          } else {
+    	      pIn[i].set_user_info(new LBTUserInfo(0.0));
+          }
+
+      } // end par_status check
+
+      if(par_status != -1) {
+          cout << "Before -- status: " << par_status << " current time: " << Vfrozen[0][j] << "  accumulated time: " << Tint_lrf[j] << "  energy: " << P[0][1] << endl;
       } else {
-	pIn[i].set_user_info(new LBTUserInfo(0.0));
+          cout << "Before -- status: " << par_status << " current time: " << Vfrozen0[0][j] << "  accumulated time: " << Tint_lrf[j] << "  energy: " << P0[0][1] << endl;
       }
-
-      //          cout << "before: current time: " << Vfrozen[0][j] << "    " << "accumulated time: " << Tint_lrf[j] << endl;
 
       nj = 1;
       np = 1;
@@ -198,7 +243,7 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
 	LBT0(nnn,systemTime); // most important function of LBT: update particle list for one time step
       }
 
-      cout << "After: current time: " << Vfrozen[0][j] << "  accumulated time: " << Tint_lrf[j] << "  energy: " << P[0][1] << " flag: " << flagScatter << endl;
+      cout << "After -- flag: " << flagScatter << endl;
 
       //// LBT unit test
       //          dEel=dEel+(ener-P[0][1]);
@@ -217,46 +262,71 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
       //              dat_de.close();
       //          }
 
-      // pass particle list back to JETSCAPE
-      // how to handle negative particle in the framework?
-      // only pass positive at this moment
+      if(par_status != -1) { // for particle list initiating with positive particles
 
-      // may only need to push back particle if flagScatter=1 later
-      // positive particle stat = 0
-      for(int j=1; j<=np; j++) { 
-	// definition Parton (int label, int id, int stat, double p[4], double x[4]);
-	if(P[0][j]<cutOut) continue;
-	double tempP[4],tempX[4];
-	tempP[0]=P[0][j];
-	tempP[1]=P[1][j];
-	tempP[2]=P[2][j];
-	tempP[3]=P[3][j];
-	tempX[0]=Vfrozen[0][j];
-	tempX[1]=Vfrozen[1][j];
-	tempX[2]=Vfrozen[2][j];
-	tempX[3]=Vfrozen[3][j];
-	//	      pOut.push_back(Parton(0,21,0,newPt,pIn[i].eta(),pIn[i].phi(),newPt));
-	pOut.push_back(Parton(0,KATT1[j],0,tempP,tempX));
-	// remember to put Tint_lrf infomation back to JETSCAPE
-	pOut.back().set_user_info(new LBTUserInfo(Tint_lrf[j]));
-      }
+          // pass particle list back to JETSCAPE
+          // how to handle negative particle in the framework?
+          // only pass positive at this moment
 
-      // negative particle stat = -1
-      for(int j=2; j<=np; j++) { 
-	if(P0[0][j]<cutOut) continue;
-	double tempP[4],tempX[4];
-	tempP[0]=P0[0][j];
-	tempP[1]=P0[1][j];
-	tempP[2]=P0[2][j];
-	tempP[3]=P0[3][j];
-	tempX[0]=Vfrozen0[0][j];
-	tempX[1]=Vfrozen0[1][j];
-	tempX[2]=Vfrozen0[2][j];
-	tempX[3]=Vfrozen0[3][j];
-	//	      pOut.push_back(Parton(0,21,0,newPt,pIn[i].eta(),pIn[i].phi(),newPt));
-	pOut.push_back(Parton(0,KATT10[j],-1,tempP,tempX));
-	pOut.back().set_user_info(new LBTUserInfo(0.0));
-      }	  
+          // may only need to push back particle if flagScatter=1 later
+          // positive particle stat = 0
+          for(int j=1; j<=np; j++) { 
+            // definition Parton (int label, int id, int stat, double p[4], double x[4]);
+            if(P[0][j]<cutOut) continue;
+            double tempP[4],tempX[4];
+            tempP[0]=P[0][j];
+            tempP[1]=P[1][j];
+            tempP[2]=P[2][j];
+            tempP[3]=P[3][j];
+            tempX[0]=Vfrozen[0][j];
+            tempX[1]=Vfrozen[1][j];
+            tempX[2]=Vfrozen[2][j];
+            tempX[3]=Vfrozen[3][j];
+            //	      pOut.push_back(Parton(0,21,0,newPt,pIn[i].eta(),pIn[i].phi(),newPt));
+            pOut.push_back(Parton(0,KATT1[j],0,tempP,tempX));
+            // remember to put Tint_lrf infomation back to JETSCAPE
+            pOut.back().set_user_info(new LBTUserInfo(Tint_lrf[j]));
+          }
+
+          // negative particle stat = -1
+          for(int j=2; j<=np; j++) { 
+            if(P0[0][j]<cutOut) continue;
+            double tempP[4],tempX[4];
+            tempP[0]=P0[0][j];
+            tempP[1]=P0[1][j];
+            tempP[2]=P0[2][j];
+            tempP[3]=P0[3][j];
+            tempX[0]=Vfrozen0[0][j];
+            tempX[1]=Vfrozen0[1][j];
+            tempX[2]=Vfrozen0[2][j];
+            tempX[3]=Vfrozen0[3][j];
+            //	      pOut.push_back(Parton(0,21,0,newPt,pIn[i].eta(),pIn[i].phi(),newPt));
+            pOut.push_back(Parton(0,KATT10[j],-1,tempP,tempX));
+            pOut.back().set_user_info(new LBTUserInfo(0.0));
+          }	  
+
+      } else { // free-streaming daughter particles from negative particles
+
+          if(np != 1) JSDEBUG << "Wrong number of negative partons!";
+
+          for(int j=1; j<=np; j++) { 
+            if(P0[0][j]<cutOut) continue;
+            double tempP[4],tempX[4];
+            tempP[0]=P0[0][j];
+            tempP[1]=P0[1][j];
+            tempP[2]=P0[2][j];
+            tempP[3]=P0[3][j];
+            tempX[0]=Vfrozen0[0][j];
+            tempX[1]=Vfrozen0[1][j];
+            tempX[2]=Vfrozen0[2][j];
+            tempX[3]=Vfrozen0[3][j];
+            //	      pOut.push_back(Parton(0,21,0,newPt,pIn[i].eta(),pIn[i].phi(),newPt));
+            pOut.push_back(Parton(0,KATT10[j],-1,tempP,tempX));
+            pOut.back().set_user_info(new LBTUserInfo(0.0));
+          }	  
+
+      } // end par_status check
+
     } 
       
 }
@@ -421,9 +491,25 @@ void LBT::LBT0(int &n, double &ti){
 	//              } else if(bulkFlag==2) { // read CCNU hydro
 	//                  hydroinfoccnu_(&tcar0, &xcar0, &ycar0, &zcar0, &temp00, &VX00, &VY00, &VZ00, &hydro_ctl0);
 	//              } else if(bulkFlag==0) { // static medium
-	VX00=0.0;
-	VY00=0.0;
-	VZ00=0.0;
+
+        //Extract fluid properties
+        std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
+
+    	GetHydroCellSignal(tcar0, xcar0, ycar0, zcar0, check_fluid_info_ptr);
+	//VERBOSE(7)<< MAGENTA<<"Temperature from Brick (Signal) = "<<check_fluid_info_ptr->temperature;
+
+	temp00 = check_fluid_info_ptr->temperature;
+        sd00 = check_fluid_info_ptr->entropy_density;
+    	VX00 = check_fluid_info_ptr->vx;
+    	VY00 = check_fluid_info_ptr->vy;
+    	VZ00 = check_fluid_info_ptr->vz;
+
+        //JSDEBUG << "check temperature: " << temp00;
+
+	//VX00=0.0;
+	//VY00=0.0;
+	//VZ00=0.0;
+
 	hydro_ctl0=0;
 	//              }
 
@@ -477,9 +563,22 @@ void LBT::LBT0(int &n, double &ti){
 	  //                  } else if(bulkFlag==2) { // read CCNU hydro
 	  //                      hydroinfoccnu_(&tcar, &xcar, &ycar, &zcar, &temp0, &VX, &VY, &VZ, &hydro_ctl);
 	  //                  } else if(bulkFlag==0) { // static medium
-	  VX=0.0;
-	  VY=0.0;
-	  VZ=0.0;
+	  //VX=0.0;
+	  //VY=0.0;
+	  //VZ=0.0;
+
+          std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
+
+    	  GetHydroCellSignal(tcar, xcar, ycar, zcar, check_fluid_info_ptr);
+	  //VERBOSE(7)<< MAGENTA<<"Temperature from Brick (Signal) = "<<check_fluid_info_ptr->temperature;
+
+	  temp0 = check_fluid_info_ptr->temperature;
+          sd = check_fluid_info_ptr->entropy_density;
+    	  VX = check_fluid_info_ptr->vx;
+    	  VY = check_fluid_info_ptr->vy;
+    	  VZ = check_fluid_info_ptr->vz;
+
+          //JSDEBUG << "check temperature: " << temp0;
 	  hydro_ctl=0;
 	  //                  }
 
@@ -787,8 +886,8 @@ void LBT::LBT0(int &n, double &ti){
 	      P0[j][np0]=pc3[j];
 	      V0[j][np0]=V[j][i];
 
-	      Vfrozen[j][np0]=V[j][i];
-	      Vfrozen0[j][np0]=V[j][i];
+	      Vfrozen[j][np0]=Vfrozen[j][i];
+	      Vfrozen0[j][np0]=Vfrozen[j][i];
 	      Tfrozen[np0]=temp0;
 	      Tfrozen0[np0]=temp0;
 
@@ -880,7 +979,7 @@ void LBT::LBT0(int &n, double &ti){
 		    P0[j][np0]=0.0;
 		    V0[j][np0]=0.0;
         
-		    Vfrozen[j][np0]=V[j][i];
+		    Vfrozen[j][np0]=Vfrozen[j][i];
 		    Vfrozen0[j][np0]=0.0;
 		    if(j!=0) {                                 
 		      vcfrozen[j][np0]=vc0b[j];
@@ -932,7 +1031,7 @@ void LBT::LBT0(int &n, double &ti){
 			P0[j][np0]=0.0;
 			V0[j][np0]=0.0;
         
-			Vfrozen[j][np0]=V[j][i];
+			Vfrozen[j][np0]=Vfrozen[j][i];
 			Vfrozen0[j][np0]=0.0;
 			if(j!=0) {                                 
 			  vcfrozen[j][np0]=vc0b[j];
