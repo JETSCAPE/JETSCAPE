@@ -41,6 +41,9 @@
          <!-- user-defined system: to get one event in 0-100% centrality range -->
          <user_defined projectile="Au" target="Au" sqrts="200" cross_section="4.2" />
      </Trento>
+
+     <!-- Options to read initial conditions from saved file ... -->
+     <initial_profile_path>../test/test_hydro_files/ic.hdf5</initial_profile_path>
    </IS>
 
    <!-- Hard Process/Pythia to be included -->
