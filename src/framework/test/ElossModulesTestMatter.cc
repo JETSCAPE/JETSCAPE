@@ -1576,8 +1576,8 @@ double Matter::fillQhatTab() {
                 qhatLoc = qhatLoc*flowFactor;
                 if(qhatLoc<0.0) qhatLoc=0.0;
             } else { // use input qhat
-                // use entropy density to rescale, only for test, not available for CCNU hydro yet!!!
-                qhatLoc = qhat0/96.0*sdLoc*0.1973*flowFactor;  // qhat_over_T3 here is actually qhat0 at s = 96fm^-3
+                if(brick_med) qhatLoc = qhat0*0.1973*flowFactor;  
+		else qhatLoc = qhat0/96.0*sdLoc*0.1973*flowFactor;  // qhat_over_T3 here is actually qhat0 at s = 96fm^-3
             }
         //    cout << "check qhat --  ener, T, qhat: " << initEner << "  " << tempLoc << "  " << qhatLoc << endl;
 
