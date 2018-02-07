@@ -49,98 +49,103 @@ void Matter::Init()
   INFO<<"Intialize Matter ...";
 
   // Redundant (get this from Base) quick fix here for now
-  tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );  
+  tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );
+  if ( !eloss ) {
+    WARN << "Couldn't find tag Eloss";
+    throw std::runtime_error ("Couldn't find tag Eloss");    
+  }
   tinyxml2::XMLElement *matter=eloss->FirstChildElement("Matter");
- 
-  if (matter) {   
-    string s = matter->FirstChildElement( "name" )->GetText();
-    JSDEBUG << s << " to be initializied ...";
- 
-    in_vac = false;
-    brick_med = true;
-
-    qhat = 0.0;
-    Q00 = 1.0; // virtuality separation scale
-    qhat0 = 2.0; // GeV^2/fm for gluon at s = 96 fm^-3
-    alphas = 0.3; // only useful when qhat0 is a negative number
-    hydro_Tc = 0.16;
-    brick_length = 4.0;
-    vir_factor = 1.0;
-
-    double m_qhat=-99.99;
-    matter->FirstChildElement("qhat0")->QueryDoubleText(&m_qhat);
-    SetQhat(m_qhat);
-    //qhat = GetQhat()/fmToGeVinv ;
-    qhat0 = GetQhat()/fmToGeVinv ;
-    JSDEBUG  << s << " with qhat0 = "<<GetQhat();
- 
-    int flagInt=-100;
-    double inputDouble=-99.99;
-
-    if ( !matter->FirstChildElement("in_vac") ) {
-	WARN << "Couldn't find sub-tag Eloss -> Matter -> in_vac";
-        throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> in_vac");
-    }
-    matter->FirstChildElement("in_vac")->QueryIntText(&flagInt);
-    in_vac = flagInt;
-
-    if ( !matter->FirstChildElement("brick_med") ) {
-	WARN << "Couldn't find sub-tag Eloss -> Matter -> brick_med";
-        throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> brick_med");
-    }
-    matter->FirstChildElement("brick_med")->QueryIntText(&flagInt);
-    brick_med = flagInt;
-
-    if ( !matter->FirstChildElement("Q0") ) {
-	WARN << "Couldn't find sub-tag Eloss -> Matter -> Q0";
-        throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> Q0");
-    }
-    matter->FirstChildElement("Q0")->QueryDoubleText(&inputDouble);
-    Q00 = inputDouble;
-
-    if ( !matter->FirstChildElement("alphas") ) {
-	WARN << "Couldn't find sub-tag Eloss -> Matter -> alphas";
-        throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> alphas");
-    }
-    matter->FirstChildElement("alphas")->QueryDoubleText(&inputDouble);
-    alphas = inputDouble;
-
-    if ( !matter->FirstChildElement("hydro_Tc") ) {
-	WARN << "Couldn't find sub-tag Eloss -> Matter -> hydro_Tc";
-        throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> hydro_Tc");
-    }
-    matter->FirstChildElement("hydro_Tc")->QueryDoubleText(&inputDouble);
-    hydro_Tc = inputDouble;
-
-    if ( !matter->FirstChildElement("brick_length") ) {
-	WARN << "Couldn't find sub-tag Eloss -> Matter -> brick_length";
-        throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> brick_length");
-    }
-    matter->FirstChildElement("brick_length")->QueryDoubleText(&inputDouble);
-    brick_length = inputDouble;
-
-    if ( !matter->FirstChildElement("vir_factor") ) {
-	WARN << "Couldn't find sub-tag Eloss -> Matter -> vir_factor";
-        throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> vir_factor");
-    }
-    matter->FirstChildElement("vir_factor")->QueryDoubleText(&inputDouble);
-    vir_factor = inputDouble;
-
-    if(vir_factor<0.0) {
-        cout << "Error: vir_factor < 0, reset to 1.0" << endl;
-	vir_factor=1.0;
-    }
-
-    VERBOSE(7)<< MAGENTA << "MATTER input parameter";
-    VERBOSE(7)<< MAGENTA << "Q00:" << Q00;
-    INFO << "in_vac: " << in_vac << "  brick_med: " << brick_med;
-    INFO << "Q00: " << Q00 << " vir_factor: " << vir_factor << "  qhat0: " << qhat0*fmToGeVinv << " alphas: " << alphas << " hydro_Tc: " << hydro_Tc << " brick_length: " << brick_length;
-
+  if ( !matter ) {
+    WARN << "Couldn't find tag Eloss -> Matter";
+    throw std::runtime_error ("Couldn't find tag Eloss -> Matter");    
   }
-  else {
-    WARN << " : Matter not properly initialized in XML file ...";
-    throw std::runtime_error("Matter not properly initialized in XML file ...");
+ 
+  string s = matter->FirstChildElement( "name" )->GetText();
+  JSDEBUG << s << " to be initializied ...";
+  
+  in_vac = false;
+  brick_med = true;
+  
+  qhat = 0.0;
+  Q00 = 1.0; // virtuality separation scale
+  qhat0 = 2.0; // GeV^2/fm for gluon at s = 96 fm^-3
+  alphas = 0.3; // only useful when qhat0 is a negative number
+  hydro_Tc = 0.16;
+  brick_length = 4.0;
+  vir_factor = 1.0;
+  
+  double m_qhat=-99.99;
+  if ( !matter->FirstChildElement("qhat0")) {
+    WARN << "Couldn't find sub-tag Eloss -> Matter -> qhat0";
+    throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> qhat0");
   }
+  matter->FirstChildElement("qhat0")->QueryDoubleText(&m_qhat);
+  SetQhat(m_qhat);
+  //qhat = GetQhat()/fmToGeVinv ;
+  qhat0 = GetQhat()/fmToGeVinv ;
+  JSDEBUG  << s << " with qhat0 = "<<GetQhat();
+  
+  int flagInt=-100;
+  double inputDouble=-99.99;
+  
+  if ( !matter->FirstChildElement("in_vac") ) {
+    WARN << "Couldn't find sub-tag Eloss -> Matter -> in_vac";
+    throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> in_vac");
+  }
+  matter->FirstChildElement("in_vac")->QueryIntText(&flagInt);
+  in_vac = flagInt;
+  
+  if ( !matter->FirstChildElement("brick_med") ) {
+    WARN << "Couldn't find sub-tag Eloss -> Matter -> brick_med";
+    throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> brick_med");
+  }
+  matter->FirstChildElement("brick_med")->QueryIntText(&flagInt);
+  brick_med = flagInt;
+  
+  if ( !matter->FirstChildElement("Q0") ) {
+    WARN << "Couldn't find sub-tag Eloss -> Matter -> Q0";
+    throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> Q0");
+  }
+  matter->FirstChildElement("Q0")->QueryDoubleText(&inputDouble);
+  Q00 = inputDouble;
+  
+  if ( !matter->FirstChildElement("alphas") ) {
+    WARN << "Couldn't find sub-tag Eloss -> Matter -> alphas";
+    throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> alphas");
+  }
+  matter->FirstChildElement("alphas")->QueryDoubleText(&inputDouble);
+  alphas = inputDouble;
+  
+  if ( !matter->FirstChildElement("hydro_Tc") ) {
+    WARN << "Couldn't find sub-tag Eloss -> Matter -> hydro_Tc";
+    throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> hydro_Tc");
+  }
+  matter->FirstChildElement("hydro_Tc")->QueryDoubleText(&inputDouble);
+  hydro_Tc = inputDouble;
+  
+  if ( !matter->FirstChildElement("brick_length") ) {
+    WARN << "Couldn't find sub-tag Eloss -> Matter -> brick_length";
+    throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> brick_length");
+  }
+  matter->FirstChildElement("brick_length")->QueryDoubleText(&inputDouble);
+  brick_length = inputDouble;
+  
+  if ( !matter->FirstChildElement("vir_factor") ) {
+    WARN << "Couldn't find sub-tag Eloss -> Matter -> vir_factor";
+    throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> vir_factor");
+  }
+  matter->FirstChildElement("vir_factor")->QueryDoubleText(&inputDouble);
+  vir_factor = inputDouble;
+  
+  if(vir_factor<0.0) {
+    cout << "Error: vir_factor < 0, reset to 1.0" << endl;
+    vir_factor=1.0;
+  }
+  
+  VERBOSE(7)<< MAGENTA << "MATTER input parameter";
+  VERBOSE(7)<< MAGENTA << "Q00:" << Q00;
+  INFO << "in_vac: " << in_vac << "  brick_med: " << brick_med;
+  INFO << "Q00: " << Q00 << " vir_factor: " << vir_factor << "  qhat0: " << qhat0*fmToGeVinv << " alphas: " << alphas << " hydro_Tc: " << hydro_Tc << " brick_length: " << brick_length;
 
   // Initialize random number distribution
   ZeroOneDistribution = uniform_real_distribution<double> { 0.0, 1.0 };
