@@ -86,7 +86,7 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
     {
       VERBOSE(8) << " Parton Q2= " << pIn[i].t();
       VERBOSE(8) << " Parton Id= " << pIn[i].pid() << " and mass= " << pIn[i].restmass();
-      if (pIn[i].t()<=QS && pIn[i].e()>0.)
+      if (pIn[i].t()<=QS && pIn[i].e()>0.00001)
       {
 	VERBOSE(7) << " ************ \n \n";
         VERBOSE(7) << " DOING ADSCFT \n \n";
@@ -175,7 +175,7 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 
 	double newEn=p[3];
         if (temp>=0.) newEn=p[3]-AdSCFT::Drag(f_dist, deltaT, Efs, temp, CF);
-        if (newEn<0.) newEn=0.;
+        if (newEn<0.) newEn=p[3]/10000000.;
         double lambda=newEn/p[3];
 	// cout << " lambda = " << lambda << endl;
         // cout << " Elost= " << p[3]-newEn << endl;
