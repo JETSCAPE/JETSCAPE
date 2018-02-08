@@ -67,7 +67,7 @@ int main(int argc, char** argv)
    
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",2);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",200);
   jetscape->SetId("primary");
   // jetscape->set_reuse_hydro (true);
   // jetscape->set_n_reuse_hydro (10);
@@ -81,7 +81,7 @@ int main(int argc, char** argv)
   //auto hydro = make_shared<GubserHydro> ();
   
   auto matter = make_shared<Matter> ();
-  //auto martini = make_shared<Martini> ();
+  auto martini = make_shared<Martini> ();
   auto adscft = make_shared<AdSCFT> ();
   //DBEUG: Remark:
   //does not matter unfortunately since not called recursively, done by JetEnergyLoss class ...
@@ -119,7 +119,7 @@ int main(int argc, char** argv)
   jloss->Add(matter);
   // jloss->Add(martini);
   // jloss->Add(adscft);  
-  
+
   jlossmanager->Add(jloss);
   
   jetscape->Add(jlossmanager);
