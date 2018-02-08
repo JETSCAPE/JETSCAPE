@@ -334,13 +334,9 @@ namespace Jetscape {
   }
   
   ostream &operator<<( ostream &output, JetScapeParticleBase & p ) {
-    // output<<p.plabel()<<" pid="<<p.pid()<<" stat="<<p.pstat()<<" pt=";
-    // output<<p.pt()<<" rap="<<p.rap()<<" phi="<<p.phi()<<endl;
-    // output<<" e="<<p.e()<<" px=" << p.px()<<" py=" << p.py()<<" pz=" << p.pz()<<endl;
-    // output<<" x="<<p.x_in().x()<<" y="<<p.x_in().y()<<" z="<<p.x_in().z()<<" t="<<p.x_in().t();
-
     output<<p.plabel()<<" "<<p.pid()<<" "<<p.pstat()<<" ";
-    output<<p.pt()<<" "<< (fabs (p.rap())>1e-15?p.rap():0)<<" "<< p.phi() <<" "<<p.e()<<" ";
+    // output<<p.pt()<<" "<< (fabs (p.rap())>1e-15?p.rap():0)<<" "<< p.phi() <<" "<<p.e()<<" ";
+    output<<p.pt()<<" "<< (fabs (p.eta())>1e-15?p.eta():0)<<" "<< p.phi() <<" "<<p.e()<<" ";
     output<<p.x_in().x()<<" "<<p.x_in().y()<<" "<<p.x_in().z()<<" "<<p.x_in().t();//<<endl;
     
     return output;            
