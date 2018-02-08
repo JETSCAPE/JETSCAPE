@@ -143,7 +143,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               JSDEBUG << " parton is a quark ";
           }
 	    
-          tQ2 = generate_vac_t(pIn[i].pid(), pIn[i].nu(), QS/2.0, pIn[i].e()*pIn[i].e() ,zeta , iSplit);
+          tQ2 = generate_vac_t(pIn[i].pid(), pIn[i].nu(), QS/2.0, pIn[i].pt()*pIn[i].pt()/2.0 ,zeta , iSplit);
             	    
           // KK:
           pIn[i].set_jet_v(velocity);

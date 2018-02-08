@@ -171,23 +171,21 @@ void JetEnergyLoss::DoShower()
   //DEBUG this guy isn't linked to anything - put in test particle for now
   pIn.push_back(*GetShowerInitiatingParton());
 
-  /*double pAssign[4] = {10,14,2,20};
-  double xLoc[4] = {2,3,4,5};
-  Parton pTemp(1,21,0,pAssign,xLoc);
-  pTemp.reset_momentum(pAssign);
-  pIn.push_back(pTemp);*/
-
   // Add here the Hard Shower emitting parton ...
   vStart=pShower->new_vertex(make_shared<Vertex>());
   vEnd=pShower->new_vertex(make_shared<Vertex>());
-  pShower->new_parton(vStart,vEnd,make_shared<Parton>(*GetShowerInitiatingParton()));
+  // Add original parton later, after it had a chance to acquire virtuality
+  // pShower->new_parton(vStart,vEnd,make_shared<Parton>(*GetShowerInitiatingParton()));
 
   // start then the recursive shower ...
   vStartVec.push_back(vEnd);
   //vStartVecTemp.push_back(vEnd);
   
   // --------------------------------------------
-  
+
+  // cerr << " ---------------------------------------------- " << endl;
+  // cerr << "Start with " << *GetShowerInitiatingParton() << "  -> " << GetShowerInitiatingParton()->t() << endl;
+  bool foundchangedorig=false;
   do
     {
       VERBOSESHOWER(7)<<"Current time = "<<currentTime<<" with #Input "<<pIn.size();     
@@ -201,6 +199,13 @@ void JetEnergyLoss::DoShower()
 	  pInTempModule.push_back(pIn[i]);
 	  
 	  SentInPartons(deltaT,currentTime,pIn[i].pt(),pInTempModule,pOutTemp);
+	  if ( !foundchangedorig ) {
+	    // cerr  << " End with "<< pInTempModule.at(0) << "  -> " << pInTempModule.at(0).t() << endl;
+	    // cerr << " ---------------------------------------------- " << endl;
+	    pShower->new_parton(vStart,vEnd,make_shared<Parton>(pInTempModule.at(0)));
+	    foundchangedorig=true;
+	  }
+	  
 	  pInTemp.push_back(pInTempModule[0]);
 
 	  vStart=vStartVec[i];
@@ -219,53 +224,6 @@ void JetEnergyLoss::DoShower()
 	      Parton& particle = pOut.back();
 	      // Parton& particle = pOut[iout];
 	      // Parton& particle = pIn.at(i);
-
-	      // // cerr << "particle virtuality is " <<particle.p()*particle.p() - particle.m2() << endl;
-	      // // fjcore::PseudoJet pj=pOut.back() ; this would work with #include "FastJet3.h"
-	      // cerr << endl;
-	      // // fjcore::PseudoJet pj ( Parton.px(), Parton.py(), Parton.pz(), Parton.e() );
-	      // fjcore::PseudoJet pj ( particle.p_in().x(), particle.p_in().y(), particle.p_in().z(), particle.p_in().t() );
-	      // fjcore::PseudoJet pj2;
-	      // // pj2.reset_momentum_PtYPhiM ( particle.pt(), particle.p_in().rapidity(), particle.p_in().phi(), particle.mass() );
-	      // // The following is probably correct, but Abhijit's code neglects m0
-	      // // pj2.reset_momentum_PtYPhiM ( particle.pt(), particle.p_in().rapidity(), particle.p_in().phi() , sqrt( particle.mass()*particle.mass() + particle.t() )  );
-	      // pj2.reset_momentum_PtYPhiM ( particle.pt(), particle.p_in().rapidity(), particle.p_in().phi() , sqrt( particle.t() )  );
-
-	      // cerr << "particle.id()=" << particle.pid() << endl;
-
-	      // cerr << "particle.mass()=" <<particle.mass() << endl;
-	      // cerr << "pj.mass()=" <<pj.m() << endl;
-	      // cerr << "pj2.mass()=" <<pj2.m() << endl;
-
-	      // cerr << "particle.e()=" <<particle.e() << endl;
-	      // cerr << "pj.e()=" <<pj.e() << endl;
-	      // cerr << "pj2.e()=" <<pj2.e() << endl;
-
-	      // cerr << "par: " 
-	      // 	   << " pt = " << particle.pt()
-	      // 	   << " t = " << particle.t()
-	      // 	   << " y = " << particle.p_in().rapidity()
-	      // 	   << " phi = " << particle.p_in().phi()
-	      // 	   << endl;
-
-	      // cerr << "pj:  " << pj<< endl << "pj2: " << pj2 << endl;
-
-	      // cerr << "particle.t()=" <<particle.t() << endl;
-	      // // cerr << "particle.p()=" << particle.p() << endl;
-	      // // cerr << "|particle.p()|=" << particle.p().pAbs() << endl;
-	      // //double particlepp = particle.p(3)*particle.p(3) - particle.p(0)*particle.p(0) - particle.p(1)*particle.p(1) - particle.p(2)*particle.p(2);
-	      // double particlepp = particle.p_in().t()*particle.p_in().t() - particle.p_in().x()*particle.p_in().x() - particle.p_in().y()*particle.p_in().y() - particle.p_in().z()*particle.p_in().z();
-	      // cerr << "particle p*p is " << particlepp << endl;
-	      // cerr << "pj p*p is " <<  - (pj.px()*pj.px() + pj.py()*pj.py() + pj.pz()*pj.pz() -pj.e()*pj.e() )<< endl;
-	      // cerr << "pj2 p*p is " <<  - (pj2.px()*pj2.px() + pj2.py()*pj2.py() + pj2.pz()*pj2.pz() -pj2.e()*pj2.e() )<< endl;
-	      // cerr << "particle p*p - m*m is " << particlepp - particle.mass()*particle.mass() << endl;
-	      // cerr << "pj p*p - m*m is " <<  - (pj.px()*pj.px() + pj.py()*pj.py() + pj.pz()*pj.pz() -pj.e()*pj.e() )  - pj.m2() << endl;
-	      // cerr << "pj2 p*p - m*m is " <<  - (pj2.px()*pj2.px() + pj2.py()*pj2.py() + pj2.pz()*pj2.pz() -pj2.e()*pj2.e() )  - pj2.m2() << endl;
-	      
-	      // // cerr << "pj virtuality is " <<pj.perp2() + pj.pz()*pj.pz() + pj.e()*pj.e()  - pj.m2() << endl;
-	      // // cerr << "pj p is " <<sqrt ( pj.px()*pj.px() + pj.py()*pj.py() + pj.pz()*pj.pz()  ) << endl;
-	      // //cerr << "pj virtuality is " << pj.e()*pj.e() - pj.px()*pj.px() - pj.py()*pj.py() - pj.pz()*pj.pz()  - pj.m2() << endl;
-	      // cerr << endl;
 
 
 	      // --------------------------------------------
@@ -289,7 +247,7 @@ void JetEnergyLoss::DoShower()
 		    }
 		}
 	      // --------------------------------------------
-	      
+	      // 
 	      if (k==0)
 		{
 		  pInTemp.pop_back();       		  
@@ -297,7 +255,6 @@ void JetEnergyLoss::DoShower()
 		}	  
 	    }
 	  // --------------------------------------------
-	 
 	  pOutTemp.clear();
 	  pInTempModule.clear();
 	}

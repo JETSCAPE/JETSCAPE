@@ -18,8 +18,8 @@
 #include "JetScape.h"
 #include "JetEnergyLoss.h"
 #include "JetEnergyLossManager.h"
-//#include "JetScapeWriterAscii.h"
-//#include "JetScapeWriterAsciiGZ.h"
+#include "JetScapeWriterAscii.h"
+#include "JetScapeWriterAsciiGZ.h"
 #include "JetScapeWriterHepMC.h"
 
 // User modules derived from jetscape framework clasess
@@ -100,9 +100,9 @@ int main(int argc, char** argv)
   auto colorless = make_shared<ColorlessHad> ();
 
   // only pure Ascii writer implemented and working with graph output ...
-  // auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
-  //autowriter= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");  
-  auto writer= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
+  auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
+  // autowriter= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");  
+  // auto writer= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
   //writer->SetActive(false);
 
   //Remark: For now modules have to be added
@@ -117,8 +117,8 @@ int main(int argc, char** argv)
   // Switching Q2 (or whatever variable used
   // hardcoded at 5 to be changed to xml)
   jloss->Add(matter);
-  //jloss->Add(martini);
-  jloss->Add(adscft);  
+  // jloss->Add(martini);
+  // jloss->Add(adscft);  
 
   jlossmanager->Add(jloss);
   
