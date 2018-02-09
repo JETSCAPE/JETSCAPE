@@ -24,21 +24,21 @@ namespace Jetscape {
   JetScapeTaskSupport* JetScapeTaskSupport::Instance()  {
     if (!m_pInstance) {
       m_pInstance = new JetScapeTaskSupport;
-      INFO<<"Created JetScapeTaskSupport Instance";
+      VERBOSE(1)<<"Created JetScapeTaskSupport Instance";
     }    
     return m_pInstance;
   }
   
   // ---------------------------------------------------------------------------
   int JetScapeTaskSupport::RegisterTask(){
-    INFO << "JetScapeTaskSupport::RegisterTask called, answering " << current_task_number_;
+    VERBOSE(1) << "JetScapeTaskSupport::RegisterTask called, answering " << current_task_number_;
     current_task_number_++;
     return current_task_number_-1;
   }
   
   // ---------------------------------------------------------------------------
   void JetScapeTaskSupport::ReadSeedFromXML(){
-    INFO << "JetScapeTaskSupport::ReadSeedFromXML called. ";
+    VERBOSE(1) << "JetScapeTaskSupport::ReadSeedFromXML called. ";
 
     // xml limits us to unsigned int :-/ -- but so does 32 bits Mersenne Twist
     tinyxml2::XMLElement *RandomXmlDescription=JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Random" );
@@ -93,12 +93,12 @@ namespace Jetscape {
       one_for_all_->discard(TaskId);
       // And get the unique seed for this task
       unsigned int localseed = (*one_for_all_)();
-      DEBUG << "Asked by " << TaskId << " for an individual generator, returning one seeded with " << localseed;
+      JSDEBUG << "Asked by " << TaskId << " for an individual generator, returning one seeded with " << localseed;
       return make_shared<std::mt19937>( localseed );
     }
 
     // this singleton owns the generator(s) and keeps them until deletion
-    DEBUG << "Asked by " << TaskId << " for the static generator, returning one originally seeded with " << random_seed_;
+    JSDEBUG << "Asked by " << TaskId << " for the static generator, returning one originally seeded with " << random_seed_;
     return one_for_all_;
   }
   

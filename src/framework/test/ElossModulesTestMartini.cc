@@ -64,7 +64,7 @@ void Martini::Init()
   if ( !martini->FirstChildElement( "pcut" ) )     throw std::runtime_error("Martini not properly initialized in XML file ...");
 
   string s = martini->FirstChildElement( "name" )->GetText();
-  DEBUG << s << " to be initilizied ...";
+  JSDEBUG << s << " to be initilizied ...";
 
   alpha_s = 0.3;
   martini->FirstChildElement("alpha_s")->QueryDoubleText(&alpha_s);
@@ -87,46 +87,59 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 {
   if (pIn[0].t() <= QS)
     {
-      VERBOSESHOWER(8)<< MAGENTA << "SentInPartons Signal received : "<<deltaT<<" "<<Q2<<" "<<&pIn;
+      VERBOSESHOWER(8)<< MAGENTA << "SentInPartons Signal received : "
+				 <<deltaT<<" "<<Q2<<" "<<&pIn;
 
       // particle info
       int Id, newId;
-      double pAbs, px, py, pz;   // momenta for initial parton (pIn)
-      double xx, yy, zz;         // position of initial parton (pIn)
-      double k, kt;              // momenta for radiated parton (pOut)
-      double pNew, ptNew;        // momenta for final parton (pOut)
+      double pAbs, px, py, pz;   // momentum for initial parton (pIn)
+      double pRest, pxRest;      // momentum in the rest frame of fluid cell (pIn)
+      double pyRest, pzRest;
+      double k, kRest;           // momentum for radiated parton (pOut)
+      double pNew, pxNew;        // momentum for final parton (pOut)
+      double pyNew, pzNew;
+      double pNewRest;           // momentum in the rest frame of fluid cell (pOut)
       double omega, q;           // transferred energy/momentum for scattering
-      FourVector pVec, pVecNew;  // 4 vectors for momenta before & after scattering
+      double xx, yy, zz;         // position of initial parton (pIn)
+      FourVector pVec, pVecNew;  // 4 vectors for momenta before & after process
+      FourVector pVecRest;       // 4 vector in the rest frame of fluid cell
+      FourVector pVecNewRest;
       FourVector kVec;           // 4 vector for momentum of radiated particle
       FourVector xVec;           // 4 vector for position (for next time step!)
-      double eta, phi;           // pseudo-rapidity, azimuthal angle
-      double pRest;              // momentum in the rest frame of fluid cell
+      double eta;                // pseudo-rapidity
 
       // flow info
       double vx, vy, vz;         // 3 components of flow velocity
       double T;                  // Temperature of fluid cell
       double beta, gamma;        // flow velocity & gamma factor
       double cosPhi;             // angle between flow and particle
+      double cosPhiRest;         // angle between flow and particle in rest frame
+      double boostBack;          // factor for boosting back to lab frame
+      double cosPhiRestEl;       // angle between flow and scat. particle in rest frame
+      double boostBackEl;
+      
 
       for (int i=0;i<pIn.size();i++)
 	{
 	  Id = pIn[i].pid();
-	  pAbs = pIn[i].e();        // In AMY, particles are all massless.
+
           px = pIn[i].px();
           py = pIn[i].py();
           pz = pIn[i].pz();
+          // In MARTINI, particles are all massless and on-shell
+	  pAbs = sqrt(px*px+py*py+pz*pz);
 	  pVec = FourVector ( px, py, pz, pAbs );
-
-	  eta = pIn[i].eta();
-	  phi = pIn[i].phi();
 
           xx = pIn[i].x_in().x();
           yy = pIn[i].x_in().y();
           zz = pIn[i].x_in().z();
 
-          FluidCellInfo* check_fluid_info_ptr = new FluidCellInfo;
+	  eta = pIn[i].eta();
+
+          std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
           GetHydroCellSignal(Time, xx, yy, zz, check_fluid_info_ptr);
-          VERBOSE(8)<< MAGENTA<<"Temperature from Brick (Signal) = "<<check_fluid_info_ptr->temperature;
+          VERBOSE(8)<< MAGENTA<<"Temperature from Brick (Signal) = "
+                    <<check_fluid_info_ptr->temperature;
 
           vx = check_fluid_info_ptr->vx;
           vy = check_fluid_info_ptr->vy;
@@ -134,10 +147,46 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
           T = check_fluid_info_ptr->temperature;
 
           beta = sqrt( vx*vx + vy*vy + vz*vz );
-          gamma = 1./sqrt( 1. - beta*beta );
-          cosPhi = ( px*vx + py*vy + pz*vz )/( pAbs*beta );
-          if (beta < 1e-10) cosPhi = 0.;   // just for brick
-          pRest = pAbs*gamma*( 1. - beta*cosPhi );
+
+          // Set momentum in fluid cell's frame
+          // 1: for brick
+          if (beta < 1e-10)
+            {
+              gamma = 1.;
+              cosPhi = 1.;
+              pRest = pAbs;
+              pVecRest = pVec;
+
+              cosPhiRest = 1.;
+              boostBack = 1.;
+            }
+          // 2: for evolving medium
+          else
+            {
+              gamma  = 1./sqrt( 1. - beta*beta );
+              cosPhi = ( px*vx + py*vy + pz*vz )/( pAbs*beta );
+
+              // boost particle to the local rest frame of fluid cell
+              pRest  = pAbs*gamma*( 1. - beta*cosPhi );
+
+              pxRest = -vx*gamma*pAbs
+                      + (1.+(gamma-1.)*vx*vx/(beta*beta))*px
+                      + (gamma-1.)*vx*vy/(beta*beta)*py
+                      + (gamma-1.)*vx*vz/(beta*beta)*pz;
+              pyRest = -vy*gamma*pAbs
+                      + (1.+(gamma-1.)*vy*vy/(beta*beta))*py
+                      + (gamma-1.)*vx*vy/(beta*beta)*px
+                      + (gamma-1.)*vy*vz/(beta*beta)*pz;
+              pzRest = -vz*gamma*pAbs
+                      + (1.+(gamma-1.)*vz*vz/(beta*beta))*pz
+                      + (gamma-1.)*vx*vz/(beta*beta)*px
+                      + (gamma-1.)*vy*vz/(beta*beta)*py;
+
+	      pVecRest = FourVector ( pxRest, pyRest, pzRest, pRest );
+
+              cosPhiRest = ( pxRest*vx + pyRest*vy + pzRest*vz )/( pRest*beta );
+              boostBack = gamma*( 1. + beta*cosPhiRest );
+            }
 
 	  if (pRest < pcut) continue;
 
@@ -145,9 +194,11 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
                              Time+deltaT );
 
 	  int process = DetermineProcess(pRest, T, deltaT, Id);
-	  VERBOSE(8)<< MAGENTA<< "Time = " << Time << " Id = " << Id << " process = " << process << " T = " << T
-               <<" pAbs = " << pAbs << " " << px << " " << py << " " << pz 
-               << " | "  << " position = " << xx << " " << yy << " " << zz;
+	  VERBOSE(8)<< MAGENTA
+               << "Time = " << Time << " Id = " << Id
+               << " process = " << process << " T = " << T
+               << " pAbs = " << pAbs << " " << px << " " << py << " " << pz 
+               << " | position = " << xx << " " << yy << " " << zz;
 
 
 	  // Do nothing for this parton at this timestep
@@ -165,22 +216,24 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 		  if (pRest/T < AMYpCut) return;
 
 		  // sample radiated parton's momentum
-		  k = getNewMomentumRad(pRest, T, process);
+		  kRest = getNewMomentumRad(pRest, T, process);
 		  // final state parton's momentum
-		  pNew = pRest - k;
+		  pNewRest = pRest - kRest;
 
 		  // if pNew is smaller than pcut, final state parton is
 		  // absorbed into medium
-		  if (pNew > pcut)
+		  if (pNewRest > pcut)
 		    {
-                      pVecNew.Set( px*pNew/pAbs, py*pNew/pAbs, pz*pNew/pAbs, pNew );
+                      pNew = pNewRest*boostBack;
+                      pVecNew.Set( (px/pAbs)*pNew, (py/pAbs)*pNew, (pz/pAbs)*pNew, pNew );
 		      pOut.push_back(Parton(0, Id, 0, pVecNew, xVec));
 		      pOut[pOut.size()-1].set_form_time(0.);
 		    }
 
-		  if (k > pcut)
+		  if (kRest > pcut)
 		    {
-                      kVec.Set( px*k/pAbs, py*k/pAbs, pz*k/pAbs, k );
+                      k = kRest*boostBack;
+                      kVec.Set( (px/pAbs)*k, (py/pAbs)*k, (pz/pAbs)*k, k );
 		      pOut.push_back(Parton(0, Id, 0, kVec, xVec));
 		      pOut[pOut.size()-1].set_form_time(0.);
 		    }
@@ -193,66 +246,75 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 		  if (pRest/T < AMYpCut) return;
 
 		  // sample radiated parton's momentum
-		  k = getNewMomentumRad(pRest, T, process);
+		  kRest = getNewMomentumRad(pRest, T, process);
 		  // final state parton's momentum
-		  pNew = pRest - k;
+		  pNewRest = pRest - kRest;
 
 		  // if pNew is smaller than pcut, final state parton is
 		  // absorbed into medium
-		  if (pNew > pcut)
+		  if (pNewRest > pcut)
 		    {
-                      pVecNew.Set( px*pNew/pAbs, py*pNew/pAbs, pz*pNew/pAbs, pNew );
+                      pNew = pNewRest*boostBack;
+                      pVecNew.Set( (px/pAbs)*pNew, (py/pAbs)*pNew, (pz/pAbs)*pNew, pNew );
 		      pOut.push_back(Parton(0, Id, 0, pVecNew, xVec));
 		      pOut[pOut.size()-1].set_form_time(0.);
 		    }
 
 		  // photon doesn't have energy threshold; No absorption into medium
 		  // However, we only keep positive energy photons
-		  if (k > 0.)
+		  if (kRest > 0.)
 		    {
-                      kVec.Set( px*k/pAbs, py*k/pAbs, pz*k/pAbs, k );
+                      k = kRest*boostBack;
+                      kVec.Set( (px/pAbs)*k, (py/pAbs)*k, (pz/pAbs)*k, k );
 		      pOut.push_back(Parton(0, Id, 0, kVec, xVec));
 		      pOut[pOut.size()-1].set_form_time(0.);
 		    }
 
 		  return;
 		}
-	      // quark scattering with quark (qq->qq)
-	      else if (process == 5)
+	      // quark scattering with either quark (qq->qq) or gluon (qg->qg)
+	      else if (process == 5 || process == 6)
 		{
 		  omega = getEnergyTransfer(pRest, T, process);
 		  q = getMomentumTransfer(pRest, omega, T, process);
-		  pVecNew = getNewMomentumElas(pVec, omega, q);
+		  pVecNewRest = getNewMomentumElas(pVecRest, omega, q);
 
-		  pNew = pVecNew.t();
-
-		  // if pNew is smaller than pcut, final state parton is
-		  // absorbed into medium
-		  if (pNew > pcut)
-		    {
-		      pOut.push_back(Parton(0, Id, 0, pVecNew, xVec));
-		      pOut[pOut.size()-1].set_form_time(0.);
-		    }
-          
-		  return;
-		}
-	      // quark scattering with gluon (qg->qg)
-	      else if (process == 6)
-		{
-		  omega = getEnergyTransfer(pRest, T, process);
-		  q = getMomentumTransfer(pRest, omega, T, process);
-		  pVecNew = getNewMomentumElas(pVec, omega, q);
-
-		  pNew = pVecNew.t();
+		  pNewRest = pVecNewRest.t();
 
 		  // if pNew is smaller than pcut, final state parton is
 		  // absorbed into medium
-		  if (pNew > pcut)
+		  if (pNewRest > pcut)
 		    {
+                      // Boost scattered particle to lab frame
+		      // 1: for brick
+		      if (beta < 1e-10)
+			{
+			  pVecNew = pVecNewRest;
+			}
+                      // 2: for evolving medium
+		      else
+			{
+			  pxNew = vx*gamma*pVecNewRest.t() 
+				 + (1.+(gamma-1.)*vx*vx/(beta*beta))*pVecNewRest.x() 
+				 + (gamma-1.)*vx*vy/(beta*beta)*pVecNewRest.y()
+				 + (gamma-1.)*vx*vz/(beta*beta)*pVecNewRest.z();
+			  pyNew = vy*gamma*pVecNewRest.t() 
+				 + (1.+(gamma-1.)*vy*vy/(beta*beta))*pVecNewRest.y()
+				 + (gamma-1.)*vx*vy/(beta*beta)*pVecNewRest.x()
+				 + (gamma-1.)*vy*vz/(beta*beta)*pVecNewRest.z();
+			  pzNew = vz*gamma*pVecNewRest.t() 
+				 + (1.+(gamma-1.)*vz*vz/(beta*beta))*pVecNewRest.z()
+				 + (gamma-1.)*vx*vz/(beta*beta)*pVecNewRest.x()
+				 + (gamma-1.)*vy*vz/(beta*beta)*pVecNewRest.y();
+			  
+			  pNew = sqrt( pxNew*pxNew + pyNew*pyNew + pzNew*pzNew );
+			  pVecNew.Set( pxNew, pyNew, pzNew, pNew );
+			}
+
 		      pOut.push_back(Parton(0, Id, 0, pVecNew, xVec));
 		      pOut[pOut.size()-1].set_form_time(0.);
 		    }
-          
+
 		  return;
 		}
 	      // quark converting to gluon
@@ -280,22 +342,24 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 		  if (pRest/T < AMYpCut) return;
 
 		  // sample radiated parton's momentum
-		  k = getNewMomentumRad(pRest, T, process);
+		  kRest = getNewMomentumRad(pRest, T, process);
 		  // final state parton's momentum
-		  pNew = pRest - k;
+		  pNewRest = pRest - kRest;
 
 		  // if pNew is smaller than pcut, final state parton is
 		  // absorbed into medium
-		  if (pNew > pcut)
+		  if (pNewRest > pcut)
 		    {
-                      pVecNew.Set( px*pNew/pAbs, py*pNew/pAbs, pz*pNew/pAbs, pNew );
+                      pNew = pNewRest*boostBack;
+                      pVecNew.Set( (px/pAbs)*pNew, (py/pAbs)*pNew, (pz/pAbs)*pNew, pNew );
 		      pOut.push_back(Parton(0, Id, 0, pVecNew, xVec));
 		      pOut[pOut.size()-1].set_form_time(0.);
 		    }
 
-		  if (k > pcut)
+		  if (kRest > pcut)
 		    {
-                      kVec.Set( px*k/pAbs, py*k/pAbs, pz*k/pAbs, k );
+                      k = kRest*boostBack;
+                      kVec.Set( (px/pAbs)*k, (py/pAbs)*k, (pz/pAbs)*k, k );
 		      pOut.push_back(Parton(0, Id, 0, kVec, xVec));
 		      pOut[pOut.size()-1].set_form_time(0.);
 		    }
@@ -308,9 +372,9 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 		  if (pRest/T < AMYpCut) return;
 
 		  // sample radiated parton's momentum
-		  k = getNewMomentumRad(pRest, T, process);
+		  kRest = getNewMomentumRad(pRest, T, process);
 		  // final state parton's momentum
-		  pNew = pRest - k;
+		  pNewRest = pRest - kRest;
 
 		  // choose the Id of new qqbar pair. Note that we only deal with nf = 3
 		  double r = ZeroOneDistribution(*get_mt19937_generator());
@@ -320,59 +384,68 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 
 		  // if pNew is smaller than pcut, final state parton is
 		  // absorbed into medium
-		  if (pNew > pcut)
+		  if (pNewRest > pcut)
 		    {
 		      // *momentum of quark is usually larger than that of anti-quark
-                      pVecNew.Set( px*pNew/pAbs, py*pNew/pAbs, pz*pNew/pAbs, pNew );
+                      pNew = pNewRest*boostBack;
+                      pVecNew.Set( (px/pAbs)*pNew, (py/pAbs)*pNew, (pz/pAbs)*pNew, pNew );
 		      pOut.push_back(Parton(0, Id, 0, pVecNew, xVec));
 		      pOut[pOut.size()-1].set_form_time(0.);
 		    }
 
-		  if (k > pcut)
+		  if (kRest > pcut)
 		    {
-                      kVec.Set( px*k/pAbs, py*k/pAbs, pz*k/pAbs, k );
+                      k = kRest*boostBack;
+                      kVec.Set( (px/pAbs)*k, (py/pAbs)*k, (pz/pAbs)*k, k );
 		      pOut.push_back(Parton(0, Id, 0, kVec, xVec));
 		      pOut[pOut.size()-1].set_form_time(0.);
 		    }
 
 		  return;
 		}
-	      // gluon scattering with quark (gq->gq)
-	      else if (process == 7)
+	      // gluon scattering with either quark (gq->gq) or gluon (gg->gg)
+	      else if (process == 7 || process == 8)
 		{
 		  omega = getEnergyTransfer(pRest, T, process);
 		  q = getMomentumTransfer(pRest, omega, T, process);
-		  pVecNew = getNewMomentumElas(pVec, omega, q);
+		  pVecNewRest = getNewMomentumElas(pVecRest, omega, q);
 
-		  pNew = pVecNew.t();
-
-		  // if pNew is smaller than pcut, final state parton is
-		  // absorbed into medium
-		  if (pNew > pcut)
-		    {
-		      pOut.push_back(Parton(0, Id, 0, pVecNew, xVec));
-		      pOut[pOut.size()-1].set_form_time(0.);
-		    }
-          
-		  return;
-		}
-	      // gluon scattering with gluon (gg->gg)
-	      else if (process == 8)
-		{
-		  omega = getEnergyTransfer(pRest, T, process);
-		  q = getMomentumTransfer(pRest, omega, T, process);
-		  pVecNew = getNewMomentumElas(pVec, omega, q);
-
-		  pNew = pVecNew.t();
+		  pNewRest = pVecNewRest.t();
 
 		  // if pNew is smaller than pcut, final state parton is
 		  // absorbed into medium
-		  if (pNew > pcut)
+		  if (pNewRest > pcut)
 		    {
+                      // Boost scattered particle to lab frame
+		      // 1: for brick
+		      if (beta < 1e-10)
+			{
+			  pVecNew = pVecNewRest;
+			}
+                      // 2: for evolving medium
+		      else
+			{
+			  pxNew = vx*gamma*pVecNewRest.t() 
+				 + (1.+(gamma-1.)*vx*vx/(beta*beta))*pVecNewRest.x() 
+				 + (gamma-1.)*vx*vy/(beta*beta)*pVecNewRest.y()
+				 + (gamma-1.)*vx*vz/(beta*beta)*pVecNewRest.z();
+			  pyNew = vy*gamma*pVecNewRest.t() 
+				 + (1.+(gamma-1.)*vy*vy/(beta*beta))*pVecNewRest.y()
+				 + (gamma-1.)*vx*vy/(beta*beta)*pVecNewRest.x()
+				 + (gamma-1.)*vy*vz/(beta*beta)*pVecNewRest.z();
+			  pzNew = vz*gamma*pVecNewRest.t() 
+				 + (1.+(gamma-1.)*vz*vz/(beta*beta))*pVecNewRest.z()
+				 + (gamma-1.)*vx*vz/(beta*beta)*pVecNewRest.x()
+				 + (gamma-1.)*vy*vz/(beta*beta)*pVecNewRest.y();
+			  
+			  pNew = sqrt( pxNew*pxNew + pyNew*pyNew + pzNew*pzNew );
+			  pVecNew.Set( pxNew, pyNew, pzNew, pNew );
+			}
+
 		      pOut.push_back(Parton(0, Id, 0, pVecNew, xVec));
 		      pOut[pOut.size()-1].set_form_time(0.);
 		    }
-          
+
 		  return;
 		}
 	      // gluon converting to quark
@@ -390,8 +463,6 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 		  return;
 		}
 	    }
-
-        delete check_fluid_info_ptr;
 	}
     }
 }

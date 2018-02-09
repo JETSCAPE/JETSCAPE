@@ -26,7 +26,7 @@ void PartonPrinter::Init()
 
 void PartonPrinter::Exec()
 {
-  INFO<<"Run PartonPrinter: print shower from event # "<<GetCurrentEvent()<<" ...";
+  VERBOSE(2) <<"Run PartonPrinter: print shower from event # "<<GetCurrentEvent()<<" ...";
 }
 
 void PartonPrinter::GetFinalPartons(shared_ptr<PartonShower> pShower, vector<shared_ptr<Parton>>& fPartons)
@@ -39,7 +39,6 @@ void PartonPrinter::GetFinalPartons(shared_ptr<PartonShower> pShower, vector<sha
       fPartons.push_back( pShower.get()->GetFinalPartons().at(ipart));
         dist_output << ipart << " " << fPartons.at(ipart)->pid() << " " << fPartons.at(ipart)->e() << " " << fPartons.at(ipart)->px() << " " << fPartons.at(ipart)->py() << " " << fPartons.at(ipart)->pz() << endl;
       vPin.push_back( pShower.get()->GetFinalPartons().at(ipart));	
-      //cout << "############### FINAL PARTON IN THE VECTOR NUMBER : " << ipart << " is " << this->pFinals.at(ipart) << "###################\n";
     }
     this->pFinals.push_back(vPin);
   }

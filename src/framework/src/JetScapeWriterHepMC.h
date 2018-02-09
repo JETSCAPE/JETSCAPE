@@ -14,12 +14,10 @@
 #include "JetScapeWriter.h"
 #include "PartonShower.h"
 
-#undef DEBUG
 #include "HepMC/GenEvent.h"
 #include "HepMC/ReaderAscii.h"
 #include "HepMC/WriterAscii.h"
 #include "HepMC/Print.h"
-#undef DEBUG
 
 using namespace HepMC;
 

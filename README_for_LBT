@@ -1,0 +1,41 @@
+###################################################################################################
+
+This version includes the LBT (linear Boltzmann Transport) model for jet evolution
+
+At this moment, the LBT part can be used for the purpose of testing and code development within the JETSCAPE collaboration only. Releasing the LBT part to the public is NOT permitted.
+ 
+Copyright is reserved to the LBL-CCNU nuclear theory group.
+
+###################################################################################################
+
+
+Compared to the master branch, following modification is implemented. 
+
+(1) In "src/framework/test/", "ElossModuleLBT.h" and "ElossModuleLBT.cc" are added, and "ElossModuleLBT.cc" is included into "CMakeLists.txt". These two new files include all functions of LBT and are written in the same way as the original "ElossModulesTest.cc" and "ElossModulesTest.h" designed by Joern.
+
+(2) In "src/framework/src/", "LBT_brickTest.cc" is added as a main function to test LBT. It is written in the same way as the original "brickTest.cc" as designed by Joern. It is added into "src/framework/CMakeLists.txt".
+
+(3) In "src/framework/", "jetscape_init.xml" is changed. It is exactly the same as the original "jetscape_init.xml" file except that LBT information is included.
+
+(4) To run the LBT code, some numerical tables (including physics information) should be downloaded from 
+    "https://bitbucket.org/sscao/lbt-tables/downloads/LBT-tables.tar.gz".
+    This can be automatically done by going to "src/framework/3rdparty" and executing "./get_lbtTab.sh"
+
+(5) Some other changes are made to "src/framework/CMakeLists.txt" to make sure "LBT_brickTest" is linked to necessary libraries, "jetscape_init.xml" is copied to "build", and "LBT-tables" [see (4) above] is linked to "build" if it is downloaded.
+
+###################################################################################################
+
+To run the test of LBT, do the following. (Make sure you can compile and run the code in the master branch first before using this version including LBT.)
+
+(1) cd src/framework/
+(2) cd 3rdparty  (download and unzip tables for running LBT)
+(3) ./get_lbtTab.sh
+(4) cd ..
+(5) source setup.sh
+(6) mkdir build
+(7) cd build
+(8) cmake .. 
+(9) make
+(10) ./LBT_brickTest
+
+

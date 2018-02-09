@@ -27,7 +27,7 @@ JetScapeWriterAscii::~JetScapeWriterAscii()
 
 void JetScapeWriterAscii::WriteEvent()
 {
-  DEBUG<< GetCurrentEvent() << " Event";
+  JSDEBUG<< GetCurrentEvent() << " Event";
   Write(to_string(GetCurrentEvent()) + " Event");
   
 }
@@ -64,10 +64,9 @@ void JetScapeWriterAscii::Exec()
 
 void JetScapeWriterAscii::WriteInitFileXML()
 {
-  DEBUG<<"Write XML to output file. XML file = "<<JetScapeXML::Instance()->GetXMLFileName();
+  JSDEBUG<<"Write XML to output file. XML file = "<<JetScapeXML::Instance()->GetXMLFileName();
   tinyxml2::XMLPrinter printer;
   JetScapeXML::Instance()->GetXMLDocument().Print(&printer);
-  //cout<<printer.CStr()<<endl;
   WriteComment("Init XML file used : "+JetScapeXML::Instance()->GetXMLFileName());
   output_file<<printer.CStr();
 }

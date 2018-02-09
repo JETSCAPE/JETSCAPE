@@ -25,13 +25,18 @@ JetScapeWriterAsciiGZ::~JetScapeWriterAsciiGZ()
 
 void JetScapeWriterAsciiGZ::WriteEvent()
 {
-  DEBUG<< GetCurrentEvent() << " Event ";
+  JSDEBUG<< GetCurrentEvent() << " Event ";
   output_file<< GetCurrentEvent() << " Event \n";
 }
 
 void JetScapeWriterAsciiGZ::Write(weak_ptr<Parton> p)
 {
   output_file<<*p.lock()<<endl;
+}
+
+void JetScapeWriterAsciiGZ::Write(weak_ptr<Vertex> v)
+{
+  output_file<<*v.lock()<<endl;
 }
 
 void JetScapeWriterAsciiGZ::Init()

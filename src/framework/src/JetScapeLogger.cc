@@ -22,8 +22,15 @@ using namespace std;
 long getMemoryUsage() 
 {
   struct rusage usage;
+  // NOTE: Reported in kB on BSD/Linux, bytes in Mac/Darwin
+  // Could try to explicitly catch __linux__ as well
+  float mbsize = 1024;
+#ifdef __MACH__
+  mbsize = 1024 * 1024;
+#endif
+    
   if(0 == getrusage(RUSAGE_SELF, &usage))
-    return usage.ru_maxrss/1024./1024.; // bytes
+    return usage.ru_maxrss/mbsize;
   else
     return 0;
 }

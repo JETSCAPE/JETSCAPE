@@ -52,43 +52,47 @@ FluidCellInfo EvolutionHistory::get(real tau, real x, real y, real eta){
 
 
 real FluidDynamicsBase::get_energy_density(real time, real x, real y, real z) {
-    // this function returns the energy density [GeV] at a space time point
-    // (time, x, y, z)
-    FluidCellInfo *fluid_cell_ptr = new FluidCellInfo;
-    get_hydro_info(time, x, y, z, fluid_cell_ptr);
-    real energy_density = fluid_cell_ptr->energy_density;
-    delete fluid_cell_ptr;
-    return(energy_density);
+  // this function returns the energy density [GeV] at a space time point
+  // (time, x, y, z)
+  // FluidCellInfo *fluid_cell_ptr = new FluidCellInfo;
+  std::unique_ptr<FluidCellInfo> fluid_cell_ptr;
+  get_hydro_info(time, x, y, z, fluid_cell_ptr);
+  real energy_density = fluid_cell_ptr->energy_density;
+  // delete fluid_cell_ptr;
+  return(energy_density);
 }
 
 real FluidDynamicsBase::get_entropy_density(real time, real x, real y, real z) {
-    // this function returns the entropy density [GeV] at a space time point
-    // (time, x, y, z)
-    FluidCellInfo *fluid_cell_ptr = new FluidCellInfo;
-    get_hydro_info(time, x, y, z, fluid_cell_ptr);
-    real entropy_density = fluid_cell_ptr->entropy_density;
-    delete fluid_cell_ptr;
-    return(entropy_density);
+  // this function returns the entropy density [GeV] at a space time point
+  // (time, x, y, z)
+  // FluidCellInfo *fluid_cell_ptr = new FluidCellInfo;
+  std::unique_ptr<FluidCellInfo> fluid_cell_ptr;
+  get_hydro_info(time, x, y, z, fluid_cell_ptr);
+  real entropy_density = fluid_cell_ptr->entropy_density;
+  //delete fluid_cell_ptr;
+  return(entropy_density);
 }
 
 real FluidDynamicsBase::get_temperature(real time, real x, real y, real z) {
-    // this function returns the temperature [GeV] at a space time point
-    // (time, x, y, z)
-    FluidCellInfo *fluid_cell_ptr = new FluidCellInfo;
-    get_hydro_info(time, x, y, z, fluid_cell_ptr);
-    real temperature = fluid_cell_ptr->temperature;
-    delete fluid_cell_ptr;
-    return(temperature);
+  // this function returns the temperature [GeV] at a space time point
+  // (time, x, y, z)
+  // FluidCellInfo *fluid_cell_ptr = new FluidCellInfo;
+  std::unique_ptr<FluidCellInfo> fluid_cell_ptr;
+  get_hydro_info(time, x, y, z, fluid_cell_ptr);
+  real temperature = fluid_cell_ptr->temperature;
+  // delete fluid_cell_ptr;
+  return(temperature);
 }
 
 real FluidDynamicsBase::get_qgp_fraction(real time, real x, real y, real z) {
-    // this function returns the QGP fraction at a space time point
-    // (time, x, y, z)
-    FluidCellInfo *fluid_cell_ptr = new FluidCellInfo;
-    get_hydro_info(time, x, y, z, fluid_cell_ptr);
-    real qgp_fraction = fluid_cell_ptr->qgp_fraction;
-    delete fluid_cell_ptr;
-    return(qgp_fraction);
+  // this function returns the QGP fraction at a space time point
+  // (time, x, y, z)
+  // FluidCellInfo *fluid_cell_ptr = new FluidCellInfo;
+  std::unique_ptr<FluidCellInfo> fluid_cell_ptr;
+  get_hydro_info(time, x, y, z, fluid_cell_ptr);
+  real qgp_fraction = fluid_cell_ptr->qgp_fraction;
+  // delete fluid_cell_ptr;
+  return(qgp_fraction);
 }
 
 void FluidDynamicsBase::print_fluid_cell_information(
