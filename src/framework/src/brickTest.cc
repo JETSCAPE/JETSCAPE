@@ -20,7 +20,7 @@
 #include "JetEnergyLossManager.h"
 #include "JetScapeWriterAscii.h"
 #include "JetScapeWriterAsciiGZ.h"
-#include "JetScapeWriterHepMC.h"
+//#include "JetScapeWriterHepMC.h"
 
 // User modules derived from jetscape framework clasess
 // to be used to run Jetscape ...
@@ -67,7 +67,7 @@ int main(int argc, char** argv)
    
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",200);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",10);
   jetscape->SetId("primary");
   // jetscape->set_reuse_hydro (true);
   // jetscape->set_n_reuse_hydro (10);
@@ -117,7 +117,7 @@ int main(int argc, char** argv)
   // Switching Q2 (or whatever variable used
   // hardcoded at 5 to be changed to xml)
   jloss->Add(matter);
-  // jloss->Add(martini);
+  jloss->Add(martini);
   // jloss->Add(adscft);  
 
   jlossmanager->Add(jloss);
