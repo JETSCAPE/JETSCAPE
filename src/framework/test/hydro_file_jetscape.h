@@ -50,7 +50,7 @@ class HydroFile: public FluidDynamics {
      //! This function provide fluid cell information at a given
      //! space-time point
      void get_hydro_info(real t, real x, real y, real z,
-                         FluidCellInfo* fluid_cell_info_ptr);
+                         std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr);
 
      void get_hypersurface(real T_cut, SurfaceCellInfo* surface_list_ptr) {};
 
