@@ -46,7 +46,7 @@ void JetScape::Init()
 {
   Show();
   
-  INFO<<BOLDBLACK<<"Intialize JetScape ...";
+  INFO<<BOLDRED<<"Intialize JetScape ...";
   
   JetScapeXML::Instance()->OpenXMLFile(GetXMLFileName());
   
@@ -64,20 +64,20 @@ void JetScape::Init()
   if ((int) log_remark.find("on")>=0)
     JetScapeLogger::Instance()->SetRemark(true);
 
-  DEBUG<<"JetScape Debug from XML = "<< log_debug;
-  DEBUG<<"JetScape Remark from XML = "<< log_remark;
+  JSDEBUG<<"JetScape Debug from XML = "<< log_debug;
+  JSDEBUG<<"JetScape Remark from XML = "<< log_remark;
 
    if ((int) m_vlevel>0)
      {
        JetScapeLogger::Instance()->SetVerboseLevel(m_vlevel);
-       DEBUG<<"JetScape Verbose Level from XML = "<<m_vlevel;
+       JSDEBUG<<"JetScape Verbose Level from XML = "<<m_vlevel;
      }
 
    SetPointers();
    
    // Set up helper. Mostly used for random numbers
    // Needs the XML reader singleton set up
-   DEBUG<<"Seeding JetScapeTaskSupport from XML";
+   JSDEBUG<<"Seeding JetScapeTaskSupport from XML";
    JetScapeTaskSupport::ReadSeedFromXML( );
 
   // Has to be called explicitly since not really fully recursively (if ever needed)
@@ -119,8 +119,8 @@ void JetScape::SetPointers()
 
 void JetScape::Exec()
 {
-  INFO<<BOLDBLACK<<"Run JetScape ...";
-  INFO<<BOLDBLACK<<"Number of Events = "<<GetNumberOfEvents(); 
+  INFO<<BOLDRED<<"Run JetScape ...";
+  INFO<<BOLDRED<<"Number of Events = "<<GetNumberOfEvents();
   
   // JetScapeTask::ExecuteTasks(); Has to be called explicitly since not really fully recursively (if ever needed)
   // --> JetScape is "Task Manager" of all modules ...
@@ -140,8 +140,8 @@ void JetScape::Exec()
  
   for (int i=0;i<GetNumberOfEvents();i++)
     {
-      INFO<<BOLDBLACK<<"Run Event # = "<<i;
-      DEBUG<<"Found "<<GetNumberOfTasks()<<" Modules Execute them ... ";
+      INFO<<BOLDRED<<"Run Event # = "<<i;
+      JSDEBUG<<"Found "<<GetNumberOfTasks()<<" Modules Execute them ... ";
       
       JetScapeTask::ExecuteTasks();
 
@@ -159,10 +159,10 @@ void JetScape::Exec()
 	for (auto it : GetTaskList()){
 	  if ( ! dynamic_pointer_cast<FluidDynamics>(it)) continue;
 	  if ( i%n_reuse_hydro_ == n_reuse_hydro_-1 ){
-	    DEBUG << " i was " << i << " i%n_reuse_hydro_ = " << i%n_reuse_hydro_ << " --> ACTIVATING";
+	    JSDEBUG << " i was " << i << " i%n_reuse_hydro_ = " << i%n_reuse_hydro_ << " --> ACTIVATING";
 	    it->SetActive(true);
 	  } else{
-	    DEBUG << " i was " << i << " i%n_reuse_hydro_ = " << i%n_reuse_hydro_ << " --> DE-ACTIVATING";
+	    JSDEBUG << " i was " << i << " i%n_reuse_hydro_ = " << i%n_reuse_hydro_ << " --> DE-ACTIVATING";
 	    it->SetActive(false);
 	  }
 	}
@@ -178,7 +178,7 @@ void JetScape::Exec()
 void JetScape::Finish()
 {
   INFO<<BOLDBLACK<<"JetScape finished after "<<GetNumberOfEvents()<<" events!";
-  DEBUG<<"More infos wrap up/saving to file/closing file ...";
+  JSDEBUG<<"More infos wrap up/saving to file/closing file ...";
 
   // same as in Init() and Exec() ...
   JetScapeTask::FinishTasks(); //dummy so far ...

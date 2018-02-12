@@ -65,7 +65,7 @@ void FluidDynamics::Exec()
   VERBOSE(8)<<"Current Event #"<<GetCurrentEvent();
 
   if (ini) {
-      INFO << "length of entropy density vector=" << ini->entropy_density_distribution_.size();
+    VERBOSE(3) << "length of entropy density vector=" << ini->entropy_density_distribution_.size();
   }
 
   evolve_hydro();
@@ -76,14 +76,14 @@ void FluidDynamics::Exec()
 void FluidDynamics::UpdateEnergyDeposit(int t, double edop)
 {
   //sigslot::lock_block<multi_threaded_local> lock(this);
-  DEBUG<<MAGENTA<<"Jet Signal received : "<<t<<" "<<edop;
+  JSDEBUG<<MAGENTA<<"Jet Signal received : "<<t<<" "<<edop;
 }
 
 void FluidDynamics::GetEnergyDensity(int t,double &edensity)
 {
   //sigslot::lock_block<multi_threaded_local> lock(this);
   edensity=0.5;
-  DEBUG<<"Edensity to Jet = "<<edensity<<" at t="<<t;
+  JSDEBUG<<"Edensity to Jet = "<<edensity<<" at t="<<t;
 }
 
 } // end namespace Jetscape

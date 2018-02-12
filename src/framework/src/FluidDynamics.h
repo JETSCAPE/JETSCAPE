@@ -76,6 +76,7 @@ class FluidDynamics : public JetScapeModuleBase , public FluidDynamicsBase
       @param mT temperature.
    */
   virtual void GetTemperature(double t, double x, double y, double z, double &mT) {mT=get_temperature(t,x,y,z);}
+
   /** It calls get_hydro_info(t,x,y,z,fCell) to retrieve the properties of the fluid cell at location (t or tau,x,y,z or eta). It can be overridden by modules attached to the FluidDynamics class. 
       @param t  tau or t coordinate.
       @param x  space x coordinate.      
@@ -83,7 +84,7 @@ class FluidDynamics : public JetScapeModuleBase , public FluidDynamicsBase
       @param z  rapidity eta or space z coordinate.
       @param fCell A pointer of type FluidCellInfo class.  
    */
-  virtual void GetHydroCell(double t, double x, double y, double z, FluidCellInfo* fCell) {get_hydro_info(t,x,y,z,fCell);} 
+  virtual void GetHydroCell(double t, double x, double y, double z, std::unique_ptr<FluidCellInfo>& fCell) {get_hydro_info(t,x,y,z,fCell);} 
   
  private:
 

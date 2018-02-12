@@ -44,7 +44,7 @@ VarMap create_varmap(std::string projectile, std::string target,
                 double cross_section, double grid_max, double grid_step,
                 unsigned seed)
 {
-  INFO << "seed in create_varmap=" << seed;
+  VERBOSE(2) << "seed in create_varmap=" << seed;
   std::string cmd;
   cmd = projectile + " " + target
         + " -x " + std::to_string(cross_section)
@@ -230,7 +230,6 @@ void TrentoInitial::pre_defined(std::string stored_system,
     std::tie(smin, smax) = get_entropy_range_(stored_system,
                                       centrality_low, centrality_high);
     collision_.sample_(smin, smax);
-
     info_ = collision_.info_;
     for (const auto& row : collision_.event_.reduced_thickness_grid()) {
       auto&& iter = row.begin();
@@ -273,7 +272,7 @@ void TrentoInitial::user_defined(std::string projectile, std::string target,
     }
 
     int nx = int(std::sqrt(entropy_density_distribution_.size()));
-    INFO << "nx = " << nx;
+    VERBOSE(2) << "nx = " << nx;
     double xmax = nx * grid_step / 2;
     set_ranges(xmax, xmax, 0.0);
     set_steps(grid_step, grid_step, 0.0);
@@ -287,19 +286,19 @@ void TrentoInitial::InitTask() {
 }
 
 
-void TrentoInitial::Exec() {
-    INFO << " : Excute initial condition ";
+void TrentoInitial::Exec() {  
+    VERBOSE(2) << " : Excute initial condition ";
     if (!trento_xml_) {
-        INFO << " : Not a valid JetScape IS::Trento XML section in file!";
+        WARN << " : Not a valid JetScape IS::Trento XML section in file!";
         exit(-1);
     } else {
         // trento_xml_->Attribute("A", "B") checks whether the attribute "A" has value "B"
         auto random_seed = (*get_mt19937_generator())();
-        INFO << "Random seed used for TrentoInitial class" << random_seed;
+        VERBOSE(2) << "Random seed used for TrentoInitial class" << random_seed;
         if ( trento_xml_->Attribute("use_module", "pre_defined") ) {
             auto predef = trento_xml_->FirstChildElement("pre_defined");
             std::string collision_system(predef->Attribute("collision_system"));
-            INFO << "collision_system=" << collision_system;
+            VERBOSE(2) << "collision_system=" << collision_system;
             double centrality_min = std::atof(predef->Attribute("centrality_min"));
             double centrality_max = std::atof(predef->Attribute("centrality_max"));
             pre_defined(collision_system, centrality_min, centrality_max,
@@ -318,7 +317,7 @@ void TrentoInitial::Exec() {
 }
 
 void TrentoInitial::Clear() {
-    INFO << " : Finish creating initial condition ";
+    VERBOSE(2) << " : Finish creating initial condition ";
     entropy_density_distribution_.clear();
     num_of_binary_collisions_.clear();
 }

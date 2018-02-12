@@ -5,6 +5,7 @@
 #include <cstring>
 #include <cmath>
 #include <iostream>
+#include <helper.h>
 
 #include "JetScapeLogger.h"
 
@@ -31,19 +32,19 @@ void Brick::InitTask()
 {
   // kind of stupid ... do pointer GetHydroXML() via XML instance ...
   
-  DEBUG<<"Initialize Brick (Test) ...";
+  JSDEBUG<<"Initialize Brick (Test) ...";
   VERBOSE(8);
   tinyxml2::XMLElement *brick=GetHydroXML()->FirstChildElement("Brick");
 
   if (brick) {
       string s = brick->FirstChildElement( "name" )->GetText();
 
-      DEBUG << s << " to be initilizied ...";
+      JSDEBUG << s << " to be initilizied ...";
       
       brick->FirstChildElement("T")->QueryDoubleText(&T_brick);
 
-      DEBUG << s << " with T = "<<T_brick;
-      INFO<<"Brick Temperature T = "<<T_brick;
+      JSDEBUG << s << " with T = "<<T_brick;
+      VERBOSE(2)<<"Brick Temperature T = "<<T_brick;
 
       if ( brick->Attribute("bjorken_expansion_on", "true") ) {
           bjorken_expansion_on = true;
@@ -66,13 +67,17 @@ void Brick::initialize_hydro(Parameter parameter_list) {
 
 void Brick::evolve_hydro() {
   VERBOSE(8);
-  INFO << "size of sd = " << ini->entropy_density_distribution_.size();
+  VERBOSE(2) << "size of sd = " << ini->entropy_density_distribution_.size();
   hydro_status = FINISHED;
 }
 
 
 void Brick::get_hydro_info(real t, real x, real y, real z,
-                           FluidCellInfo* fluid_cell_info_ptr) {
+			   //                           FluidCellInfo* fluid_cell_info_ptr) {
+			   std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr){
+    // create the unique FluidCellInfo here
+    fluid_cell_info_ptr=std::make_unique<FluidCellInfo>();
+
     // assign all the quantites to JETSCAPE output
     // thermodyanmic quantities
 

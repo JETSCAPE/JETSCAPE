@@ -10,6 +10,34 @@ endif()
 
 cmake_policy(SET CMP0042 NEW)
 
+message("Compiler and Linker flags ...")
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O -fPIC -pipe -Wall -g -Wno-reorder -Wno-unused-variable ")
+
+if (APPLE)
+     message( STATUS "Apple : " ${CMAKE_HOST_SYSTEM})
+
+     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-private-field -Wno-macro-redefined -std=c++11 -stdlib=libc++")
+     if(${MPI_FOUND})
+          set(CMAKE_CXX_COMPILE_FLAGS ${CMAKE_CXX_COMPILE_FLAGS} ${MPI_COMPILE_FLAGS})
+          set(CMAKE_CXX_LINK_FLAGS ${CMAKE_CXX_LINK_FLAGS} ${MPI_LINK_FLAGS})
+     endif(${MPI_FOUND})
+
+     message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS})	
+     message(STATUS "LD_FLAGS = " ${CMAKE_EXE_LINKER_FLAGS})
+elseif(UNIX) 
+    message( STATUS "Linux : " ${CMAKE_HOST_SYSTEM})
+    #set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0 -fprofile-arcs -ftest-coverage -fPIC -pipe -Wall -g -Wno-reorder -Wno-unused-variable") 
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-sign-compare -Wno-unused-but-set-variable -Wno-parentheses -fprofile-arcs -ftest-coverage")
+    #set(CMAKE_BUILD_TYPE Debug)
+endif()   
+
+
+# add the library path and inclusion path of trento to jetscape
+# needs to come early for some compilers
+add_subdirectory(3rdparty/trento/)
+include_directories("${CMAKE_SOURCE_DIR}/3rdparty/trento/src/")
+
 # Tell cmake where to find modules
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/Modules")
 
@@ -72,28 +100,6 @@ endif()
 include_directories(./src ./test ./hydro ./jet ./gtl/include ./reader) #for test case ...
 include_directories(./3rdparty/hydro_from_external_file)
 
-message("Compiler and Linker flags ...")
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O -fPIC -pipe -Wall -g -Wno-reorder -Wno-unused-variable ")
-
-if (APPLE)
-     message( STATUS "Apple : " ${CMAKE_HOST_SYSTEM})
-
-     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-private-field -Wno-macro-redefined -std=c++11 -stdlib=libc++")
-     if(${MPI_FOUND})
-          set(CMAKE_CXX_COMPILE_FLAGS ${CMAKE_CXX_COMPILE_FLAGS} ${MPI_COMPILE_FLAGS})
-          set(CMAKE_CXX_LINK_FLAGS ${CMAKE_CXX_LINK_FLAGS} ${MPI_LINK_FLAGS})
-     endif(${MPI_FOUND})
-
-     message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS})	
-     message(STATUS "LD_FLAGS = " ${CMAKE_EXE_LINKER_FLAGS})
-elseif(UNIX) 
-    message( STATUS "Linux : " ${CMAKE_HOST_SYSTEM})
-    #set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0 -fprofile-arcs -ftest-coverage -fPIC -pipe -Wall -g -Wno-reorder -Wno-unused-variable") 
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-sign-compare -Wno-unused-but-set-variable -Wno-parentheses -fprofile-arcs -ftest-coverage")
-    #set(CMAKE_BUILD_TYPE Debug)
-endif()   
-
 
 # have binary in the build directory, easier to access
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
@@ -101,10 +107,6 @@ SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
 # Find and use Boost.
 find_package(Boost 1.50 REQUIRED COMPONENTS filesystem program_options system)
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
-
-# add the library path and inclusion path of trento to jetscape
-add_subdirectory(3rdparty/trento/)
-include_directories("${CMAKE_SOURCE_DIR}/3rdparty/trento/src/")
 
 # Options. Turn on with 'cmake -Dtest=ON'.
 option(test "Build all tests." ON) # Makes boolean 'test' available.
@@ -152,15 +154,19 @@ endif()
 if (${PYTHIA8_FOUND})
     add_executable(writerTest ./src/writerTest.cc)
     add_executable(brickTest ./src/brickTest.cc)
+    add_executable(LBT_brickTest ./src/LBT_brickTest.cc)
     add_executable(PythiaBrickTest ./src/PythiaBrickTest.cc)
     target_link_libraries(writerTest JetScape JetScapeHydro JetScapeTest) #for writer test case...
     target_link_libraries(brickTest JetScape JetScapeHydro  JetScapeTest) #for test case ...
+    target_link_libraries(LBT_brickTest JetScape JetScapeHydro  JetScapeTest) #for test case ...
     target_link_libraries(PythiaBrickTest JetScape JetScapeHydro  JetScapeTest) #for test case ...
     target_link_libraries(testJetScape ${PYTHIA8_LIBRARIES})
     target_link_libraries(brickTest ${PYTHIA8_LIBRARIES})
+    target_link_libraries(LBT_brickTest ${PYTHIA8_LIBRARIES})
     target_link_libraries(PythiaBrickTest ${PYTHIA8_LIBRARIES})
     if (${ROOT_FOUND})
       target_link_libraries(brickTest ${ROOT_LIBRARIES})
+      target_link_libraries(LBT_brickTest ${ROOT_LIBRARIES})
       target_link_libraries(PythiaBrickTest ${ROOT_LIBRARIES})
       target_link_libraries(writerTest ${ROOT_LIBRARIES})
     endif(${ROOT_FOUND})
@@ -201,6 +207,13 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/jetscape_init.xml DESTINATION ${CMAKE_BINA
 
 #### same for pythi gun
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/jetscape_init_pythiagun.xml DESTINATION ${CMAKE_BINARY_DIR}/)
+
+if(EXISTS "${CMAKE_SOURCE_DIR}/3rdparty/LBT-tables")
+    execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/3rdparty/LBT-tables ${CMAKE_BINARY_DIR}/LBT-tables)
+else()
+    message("Warning: LBT-tables have not been downloaded in 3rdparty by ./get_lbtTab.sh; LBT-brickTest will NOT run properly.")
+endif()
+
 
 #set(LIBS ${LIBS} ${ROOT_LIBRARIES})
 #However, the file(GLOB...) allows for wildcard additions:
