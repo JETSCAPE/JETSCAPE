@@ -139,7 +139,7 @@
     <SoftParticlization>
         <!-- iSpectraSampler -->
         <iSS>
-            <iSS_input_file>parameters.dat</iSS_input_file>
+            <iSS_input_file>iSS_parameters.dat</iSS_input_file>
         </iSS>
     </SoftParticlization>
 </jetscape>
