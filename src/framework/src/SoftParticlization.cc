@@ -25,6 +25,8 @@ void SoftParticlization::Init() {
         WARN << " : Missing XML SoftParticlization section in file!";
         exit(-1);
     }
+
+    InitTask();
 }
 
 void SoftParticlization::Exec() {

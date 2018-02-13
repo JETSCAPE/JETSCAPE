@@ -13,12 +13,13 @@ using namespace Jetscape;
 
 class iSS_CF: public SoftParticlization {
  private:
+    tinyxml2::XMLElement *iSS_xml_;
 
  public:
     iSS_CF();
     ~iSS_CF();
 
-    void Init();
+    void InitTask();
     void Exec();
     void Clear();
 };
