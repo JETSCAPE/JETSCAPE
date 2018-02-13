@@ -99,7 +99,7 @@ endif()
 
 include_directories(./src ./test ./hydro ./jet ./gtl/include ./reader) #for test case ...
 include_directories(./3rdparty/hydro_from_external_file)
-
+include_directories(./3rdparty/iSS ./3rdparty/iSS/src)
 
 # have binary in the build directory, easier to access
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
@@ -126,6 +126,7 @@ add_subdirectory(./hydro) #for test case fluid_dynamics ...
 add_subdirectory(./jet)  #for test case jet classes …
 add_subdirectory(./test)  #for test case ...
 add_subdirectory(./reader)  #for test case ...
+add_subdirectory(./3rdparty/iSS)
 add_subdirectory(./3rdparty/hydro_from_external_file)  #for test case ...
 
 link_directories(./lib)
