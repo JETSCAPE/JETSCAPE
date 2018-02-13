@@ -85,7 +85,6 @@ void HydroFile::initialize_hydro(Parameter parameter_list) {
     }
 }
 
-     
 //! This function load a VISHNew hydro event
 void HydroFile::read_in_hydro_event(string VISH_filename, int buffer_size,
                                     int load_viscous) {
@@ -195,7 +194,7 @@ void HydroFile::get_hydro_info(
 
     // assign all the quantites to JETSCAPE output
     // thermodyanmic quantities
-    fluid_cell_info_ptr=std::make_unique<FluidCellInfo>();
+    fluid_cell_info_ptr = std::make_unique<FluidCellInfo>();
     fluid_cell_info_ptr->energy_density = (
                                 static_cast<real>(temp_fluid_cell_ptr->ed));
     fluid_cell_info_ptr->entropy_density = (

@@ -3,7 +3,8 @@
 #include <sys/stat.h>
 #include <helper.h>
 
-#include <cstring>
+#include <string>
+#include <vector>
 
 #include "JetScapeLogger.h"
 #include "music_jetscape.h"
@@ -78,7 +79,7 @@ void MPI_MUSIC::evolve_hydro() {
 void MPI_MUSIC::get_hydro_info(
         real t, real x, real y, real z,
         std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr) {
-    fluid_cell_info_ptr=std::make_unique<FluidCellInfo>();
+    fluid_cell_info_ptr = std::make_unique<FluidCellInfo>();
     fluidCell *fluidCell_ptr = new fluidCell;
     music_hydro_ptr->get_hydro_info(x, y, z, t, fluidCell_ptr);
     fluid_cell_info_ptr->energy_density = fluidCell_ptr->ed;

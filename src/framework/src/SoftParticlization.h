@@ -1,7 +1,7 @@
 // -----------------------------------------
 // JETSCPAE module for soft particlization
 // This module will generate Monte-Carlo samples for soft hadrons
-// written by Chun Shen
+// Copyright [2018] <Chun Shen>
 // -----------------------------------------
 
 
