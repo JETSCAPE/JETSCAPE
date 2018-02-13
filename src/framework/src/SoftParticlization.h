@@ -5,8 +5,8 @@
 // -----------------------------------------
 
 
-#ifndef SOFTPARTICLIZATION_H
-#define SOFTPARTICLIZATION_H
+#ifndef SOFTPARTICLIZATION_H_
+#define SOFTPARTICLIZATION_H_
 
 #include "JetScapeModuleBase.h"
 #include "JetClass.hpp"
@@ -34,4 +34,4 @@ class SoftParticlization: public JetScapeModuleBase {
 } // end namespace Jetscape
 
 
-#endif  // SOFTPARTICLIZATION_H
+#endif  // SOFTPARTICLIZATION_H_
