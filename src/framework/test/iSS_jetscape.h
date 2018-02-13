@@ -15,6 +15,8 @@ class iSS_CF: public SoftParticlization {
  private:
     tinyxml2::XMLElement *iSS_xml_;
 
+    iSS *iSpectraSampler_ptr_;
+
  public:
     iSS_CF();
     ~iSS_CF();
