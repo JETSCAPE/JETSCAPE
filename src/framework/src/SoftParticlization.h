@@ -8,6 +8,8 @@
 #ifndef SOFTPARTICLIZATION_H_
 #define SOFTPARTICLIZATION_H_
 
+#include <vector>
+
 #include "JetScapeModuleBase.h"
 #include "JetClass.hpp"
 #include "tinyxml2.h"
@@ -23,12 +25,13 @@ class SoftParticlization: public JetScapeModuleBase {
  public:
     SoftParticlization();
     ~SoftParticlization();
-    
+
     virtual void Init();
     virtual void Exec();
     virtual void Clear();
 
     tinyxml2::XMLElement *xml_;
+    vector< vector<Hadron>* >* Hadron_list_;
 };
 
 } // end namespace Jetscape

@@ -48,11 +48,26 @@ void iSS_CF::Exec() {
         WARN << "Some errors happened in generating particle samples";
         exit(-1);
     }
+    pass_hadron_list_to_JETSCAPE();
 }
 
 void iSS_CF::Clear() {
     VERBOSE(2) << "Finish the particle sampling";
     if (iSpectraSampler_ptr_ != nullptr) {
         delete iSpectraSampler_ptr_;
+    }
+}
+
+void iSS_CF::pass_hadron_list_to_JETSCAPE() {
+    unsigned int nev = iSpectraSampler_ptr_->get_number_of_sampled_events();
+    cout << "nev = " << nev << endl;
+    for (unsigned int iev = 0; iev < nev; iev++) {
+        //Hadron_list_->push_back(new vector<Hadron>);
+        unsigned int nparticles = (
+                        iSpectraSampler_ptr_->get_number_of_particles(iev));
+        cout << "iev = " << iev << " Npart = " << nparticles << endl;
+        for (unsigned int ipart = 0; ipart < nparticles; ipart++) {
+            cout << iSpectraSampler_ptr_->get_hadron(iev, ipart).pid << endl;
+        }
     }
 }
