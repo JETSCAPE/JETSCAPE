@@ -19,7 +19,7 @@
 #include "JetEnergyLoss.h"
 #include "JetEnergyLossManager.h"
 #include "JetScapeWriterAscii.h"
-//#include "JetScapeWriterAsciiGZ.h"
+#include "JetScapeWriterAsciiGZ.h"
 //#include "JetScapeWriterHepMC.h"
 
 // User modules derived from jetscape framework clasess
@@ -35,6 +35,7 @@
 #include "HadronizationManager.h"
 #include "Hadronization.h"
 #include "HadronizationModuleTest.h"
+#include "ColorlessHad.h"
 
 // Add initial state module for test
 #include "TrentoInitial.h"
@@ -60,7 +61,7 @@ int main(int argc, char** argv)
     
   // DEBUG=true by default and REMARK=false
   // can be also set also via XML file (at least partially)
-  JetScapeLogger::Instance()->SetDebug(true);
+  JetScapeLogger::Instance()->SetDebug(false);
   JetScapeLogger::Instance()->SetRemark(false);
   //SetVerboseLevel (9 a lot of additional debug output ...)
   //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevle(9) or 10
@@ -96,6 +97,7 @@ int main(int argc, char** argv)
   auto hadroMgr = make_shared<HadronizationManager> ();
   auto hadro = make_shared<Hadronization> ();
   auto hadroModule = make_shared<HadronizationModuleTest> ();
+  auto colorless = make_shared<ColorlessHad> ();
 
   // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
@@ -129,7 +131,8 @@ int main(int argc, char** argv)
 
   jetscape->Add(printer);
 
-  hadro->Add(hadroModule);
+  //hadro->Add(hadroModule);
+  hadro->Add(colorless);
   hadroMgr->Add(hadro);
   jetscape->Add(hadroMgr);
 
