@@ -4,11 +4,17 @@
 #include<fstream>
 #include<sstream>
 #include<string>
+#include<vector>
 
 #include "hdf5.h"
 #include "fluidCell.h"
 
-using namespace std;
+// using namespace std;
+using std::string;
+using std::vector;
+using std::ofstream;
+using std::ifstream;
+using std::abs;
 
 class HydroinfoH5
 {

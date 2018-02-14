@@ -24,7 +24,7 @@ InitialState::~InitialState()
 void InitialState::Init(){
   JetScapeModuleBase::Init();
 
-  INFO<<"Intialize InitialState ..." << GetId() << "...";
+  INFO<<"Intialize InitialState ... " << GetId() << " ...";
 
   // JetScapeXML::Instance() returns a singleton if jetscape_init.xml is read in.
   xml_ = JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("IS" );  

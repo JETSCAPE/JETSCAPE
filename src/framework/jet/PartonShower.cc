@@ -12,7 +12,18 @@
 #include <iomanip>
 #include "helper.h"
 
+using std::setprecision;
+using std::fixed;
+using std::to_string;
+using std::ostringstream;
+using std::stringstream;
+
+
 namespace Jetscape {
+
+PartonShower::PartonShower() : graph() {
+  VERBOSESHOWER(8);
+}
 
 node PartonShower::new_vertex(shared_ptr<Vertex> v)
  {
@@ -21,10 +32,11 @@ node PartonShower::new_vertex(shared_ptr<Vertex> v)
    return n;
  }
 
-void PartonShower::new_parton(node s, node t, shared_ptr<Parton> p)
+int PartonShower::new_parton(node s, node t, shared_ptr<Parton> p)
 {
   edge e=graph::new_edge(s,t);
   pMap[e]=p;
+  return e.id();
 }
 
 /*
@@ -102,7 +114,6 @@ void PartonShower::CreateMaps()
 }
 */
 
-//Memory !? maybe better unique ...
 vector<shared_ptr<Parton>> PartonShower::GetFinalPartons()
 {
   //VERBOSESHOWER(8)<<pFinal.size();
@@ -124,17 +135,17 @@ vector<shared_ptr<Parton>> PartonShower::GetFinalPartons()
     return pFinal;
 }
 
-vector<Parton> PartonShower::GetFinalPartonsForFastJet()
+vector<fjcore::PseudoJet> PartonShower::GetFinalPartonsForFastJet()
 {
   vector<shared_ptr<Parton>> mP=GetFinalPartons(); // to ensure that pFinal is filled
     
-  vector<Parton> forFJ;
+  vector<fjcore::PseudoJet> forFJ;
   
   for (int i=0;i<mP.size();i++)
-    forFJ.push_back(*mP[i]);
+    forFJ.push_back((*mP[i]).GetPseudoJet());
 
   return forFJ;
-}
+} 
 
 int PartonShower::GetNumberOfParents(int n)
 {
@@ -296,7 +307,10 @@ void PartonShower::load_node_info_handler (node n, GML_pair *read)
   VERBOSESHOWER(8)<<"Load node ... "<<n;
   struct GML_pair* tmp = read;
 
-  double x,y,z,t;
+  double x=0;
+  double y=0;
+  double z=0;
+  double t=0;
     
   while (tmp) {
     //printf ("*KEY* : %s %f \n", tmp->key, tmp->value.floating);

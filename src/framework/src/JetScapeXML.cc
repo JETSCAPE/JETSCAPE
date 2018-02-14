@@ -33,7 +33,7 @@ void JetScapeXML::OpenXMLFile()
   if (!xml_file_open)
     {
       xml_doc.LoadFile((char*) GetXMLFileName().c_str());
-      
+      INFO<<BOLDBLACK<<"Trying XML file : "<< GetXMLFileName();
       if (xml_doc.ErrorID()<1)
 	{
 	  INFO<<BOLDBLACK<<"Open XML file : "<< GetXMLFileName();

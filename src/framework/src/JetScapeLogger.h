@@ -16,20 +16,27 @@
 #include <memory>
 
 #include "JetClass.hpp"
-//class Parton;
 
-using namespace std;
+using std::shared_ptr;
+using std::make_shared;
 
 // --------------------------------
 
 #define RESET   "\033[0m"
 #define BOLDBLACK   "\033[1m\033[30m"      /* Bold Black */
+#define BOLDRED     "\033[1m\033[31m"      /* Bold Red */
+#define BOLDGREEN   "\033[1m\033[32m"      /* Bold Green */
+#define BOLDYELLOW  "\033[1m\033[33m"      /* Bold Yellow */
+#define BOLDBLUE    "\033[1m\033[34m"      /* Bold Blue */
+#define BOLDMAGENTA "\033[1m\033[35m"      /* Bold Magenta */
+#define BOLDCYAN    "\033[1m\033[36m"      /* Bold Cyan */
+#define BOLDWHITE   "\033[1m\033[37m" /* Bold White */
 
 // define nicer macros to be used for logging ...
 /*
 #define INFO  JetScapeLogger::Instance()->Info()<<" " //<<__PRETTY_FUNCTION__<<" : "
 #define INFO_NICE  JetScapeLogger::Instance()->InfoNice()
-#define DEBUG JetScapeLogger::Instance()->Debug()<<__PRETTY_FUNCTION__<<" : "
+#define JSDEBUG JetScapeLogger::Instance()->Debug()<<__PRETTY_FUNCTION__<<" : "
 #define DEBUGTHREAD JetScapeLogger::Instance()->DebugThread()<<__PRETTY_FUNCTION__<<" : "
 #define REMARK JetScapeLogger::Instance()->Remark()<<__PRETTY_FUNCTION__<<" : "
 #define VERBOSE(l) JetScapeLogger::Instance()->Verbose(l)<<__PRETTY_FUNCTION__<<" : "
@@ -43,7 +50,7 @@ using namespace std;
 // otherwise quite a performance hit ...
 #define INFO  JetScapeLogger::Instance()->Info()<<" " //<<__PRETTY_FUNCTION__<<" : "
 #define INFO_NICE  JetScapeLogger::Instance()->InfoNice()
-#define DEBUG if (JetScapeLogger::Instance()->GetDebug()) JetScapeLogger::Instance()->Debug()<<__PRETTY_FUNCTION__<<" : "
+#define JSDEBUG if (JetScapeLogger::Instance()->GetDebug()) JetScapeLogger::Instance()->Debug()<<__PRETTY_FUNCTION__<<" : "
 #define DEBUGTHREAD if (JetScapeLogger::Instance()->GetDebug()) JetScapeLogger::Instance()->DebugThread()<<__PRETTY_FUNCTION__<<" : "
 #define REMARK if (JetScapeLogger::Instance()->GetRemark()) JetScapeLogger::Instance()->Remark()<<__PRETTY_FUNCTION__<<" : "
 #define VERBOSE(l) if (l<JetScapeLogger::Instance()->GetVerboseLevel()) JetScapeLogger::Instance()->Verbose(l)<<__PRETTY_FUNCTION__<<" : "
@@ -54,7 +61,10 @@ using namespace std;
 
 namespace Jetscape {
 
-
+  // Forward declarations. Macro implementation is rather cumbersome and hiccups over include guards
+  class Vertex;
+  class Parton;
+  
 // -------------------------------------------
 struct safe_ostream {
   struct guarded_impl {

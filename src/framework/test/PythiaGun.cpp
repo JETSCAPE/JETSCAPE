@@ -8,12 +8,15 @@
     @date Jun 29, 2017
 */
 
-
 #include "PythiaGun.hpp"
 #include <sstream>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <random>
+
+using namespace std;
+
 
 PythiaGun::~PythiaGun()
 {
@@ -23,8 +26,20 @@ PythiaGun::~PythiaGun()
 void PythiaGun::InitTask()
 {
 
-  DEBUG<<"Initialize PythiaGun"; 
+  JSDEBUG<<"Initialize PythiaGun"; 
   VERBOSE(8);
+
+  // Show initialization at INFO level
+  readString("Init:showProcesses = off");
+  readString("Init:showChangedSettings = off");
+  readString("Init:showMultipartonInteractions = off");
+   readString("Init:showChangedParticleData = off");
+  if ( JetScapeLogger::Instance()->GetInfo() ) {
+    readString("Init:showProcesses = on");
+    readString("Init:showChangedSettings = on");
+    readString("Init:showMultipartonInteractions = on");
+    readString("Init:showChangedParticleData = on");
+  }
   
   // No event record printout.
   readString("Next:numberShowInfo = 0"); 
@@ -55,7 +70,7 @@ void PythiaGun::InitTask()
   xmle = PythiaXmlDescription->FirstChildElement( "name" ); if ( !xmle ) throw std::runtime_error("Cannot parse xml");
   s = xmle->GetText();
   SetId(s);
-  cout << s << endl;
+  // cout << s << endl;
   
   xmle = PythiaXmlDescription->FirstChildElement( "pTHatMin" ); if ( !xmle ) throw std::runtime_error("Cannot parse xml");
   xmle->QueryDoubleText(&pTHatMin);
@@ -117,7 +132,7 @@ void PythiaGun::Exec()
   VERBOSE(8)<<"Current Event #"<<GetCurrentEvent();
 
   next();
-  DEBUG<<"Number of Pythia partons = "<<event.size();
+  JSDEBUG<<"Number of Pythia partons = "<<event.size();
 
 
   // stringstream numbi(stringstream::app|stringstream::in|stringstream::out);
@@ -175,11 +190,19 @@ void PythiaGun::Exec()
     if ( nP<3 )continue;      // 0, 1, 2: total event and beams      
     Pythia8::Particle& particle = event[nP];
     if ( particle.status()==-23 ){
-      // cout << "particle.id()=" << particle.id() << endl;
       VERBOSE(7)<<"Adding particle with pid = " << particle.id()
 		<<" at x=" << xLoc[1]
 		<<", y=" << xLoc[2]
 		<<", z=" << xLoc[3];
+
+      VERBOSE(7) <<"Adding particle with pid = " << particle.id()
+		 << ", pT = " << particle.pT()
+		 << ", y = " << particle.y()
+		 << ", phi = " << particle.phi()
+		 << ", e = " << particle.e();
+      VERBOSE(7) <<" at x=" << xLoc[1]
+		 <<", y=" << xLoc[2]
+		 <<", z=" << xLoc[3];
 
       AddParton(make_shared<Parton>(0, particle.id(),0,particle.pT(),particle.y(),particle.phi(),particle.e(),xLoc) );
     }

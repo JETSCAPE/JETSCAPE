@@ -26,10 +26,15 @@
 // to be used to run Jetscape ...
 #include "AdSCFT.h"
 #include "ElossModulesTestMatter.h"
+#include "ElossModulesTestMartini.h"
 #include "music_jetscape.h"
 #include "TrentoInitial.h"
 #include "PGun.h"
-//#include "JSPythia8.h"
+#include "PartonPrinter.h"
+//#include "HadronizationManager.h"
+//#include "Hadronization.h"
+//#include "HadronizationModuleTest.h"
+
 
 #include <chrono>
 #include <thread>
@@ -52,15 +57,23 @@ int main(int argc, char** argv)
     
   // DEBUG=true by default and REMARK=false
   // can be also set also via XML file (at least partially)
-  JetScapeLogger::Instance()->SetDebug(false);
+  JetScapeLogger::Instance()->SetInfo(true);
+  JetScapeLogger::Instance()->SetDebug(true);
   JetScapeLogger::Instance()->SetRemark(false);
   //SetVerboseLevel (9 a lot of additional debug output ...)
-  //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevle(9) or 10
+  //If you want to suppress it: use SetVerboseLevel(0) or max  SetVerboseLevel(9) or 10
   JetScapeLogger::Instance()->SetVerboseLevel(0);
    
   Show();
 
+  // auto jetscape = make_shared<JetScape>("./jetscape_init.xml",10);
+  // jetscape->set_reuse_hydro (true);
+  // jetscape->set_n_reuse_hydro (5);
+
   auto jetscape = make_shared<JetScape>("./jetscape_init.xml",1);
+  jetscape->set_reuse_hydro (false);
+  jetscape->set_n_reuse_hydro (0);
+
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
   auto trento = make_shared<TrentoInitial> ();
@@ -78,17 +91,20 @@ int main(int argc, char** argv)
   //jloss->SetActive(false);
 
   auto pGun= make_shared<PGun> ();
-  //auto py8=make_shared<JSPythia8> ("/Users/putschke/pythia8100/xmldoc",false);
+
+
+    auto printer = make_shared<PartonPrinter> ();
+    
+ //   auto hadroMgr = make_shared<HadronizationManager> ();
+ //   auto hadro = make_shared<Hadronization> ();
+ //   auto hadroModule = make_shared<HadronizationModuleTest> ();
+    
 
   // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
   //auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");  
   //auto writer= make_shared<JetScapeWriterHepMC> ("test_out.dat");
   //writer->SetActive(false);
-
-  // Pythia 8 interface, what partons used
-  // for intial hard to be implemented in JSPythia8 class ...
-  //jetscape->Add(py8);
 
   //Remark: For now modules have to be added
   //in proper "workflow" order (can be defined via xml and sorted if necessary)
@@ -112,7 +128,16 @@ int main(int argc, char** argv)
   jlossmanager->Add(jloss);
   
   jetscape->Add(jlossmanager);
-  
+
+
+    jetscape->Add(printer);
+    
+ //   hadro->Add(hadroModule);
+ //   hadroMgr->Add(hadro);
+ //   jetscape->Add(hadroMgr);
+
+
+
   jetscape->Add(writer);
 
   // Intialize all modules tasks

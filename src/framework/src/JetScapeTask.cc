@@ -32,14 +32,16 @@ JetScapeTask::JetScapeTask()
 JetScapeTask::~JetScapeTask()
 {
   VERBOSE(9);
-  DEBUG << "Deleting task with id=" << GetId() << " and TaskNumber= " << get_my_task_number();
+  JSDEBUG << "Deleting task with id=" << GetId() << " and TaskNumber= " << get_my_task_number();
 }
 
 void JetScapeTask::Init()
 {
-  DEBUG;
+  JSDEBUG;
 }
 
+  /** Recursive initialization of all the subtasks of the JetScapeTask. Subtasks are also of type JetScapeTask such as Pythia Gun, Trento, Energy Loss Matter and Martini etc.
+   */ 
 void JetScapeTask::InitTasks()
 {
   VERBOSE(7) << " : # Subtasks = "<<tasks.size();
@@ -57,9 +59,10 @@ void JetScapeTask::Exec()
 void JetScapeTask::ExecuteTasks()
 {
   VERBOSE(7) << " : # Subtasks = "<<tasks.size();
-  if (active_exec)
-    for (auto it : tasks)
-      it->Exec();
+  for (auto it : tasks){
+    JSDEBUG << "Executing " << it->GetId();
+    if (it->active_exec) it->Exec();
+  }
 }
 
 void JetScapeTask::ClearTasks()
@@ -72,21 +75,11 @@ void JetScapeTask::ClearTasks()
 void JetScapeTask::WriteTasks(weak_ptr<JetScapeWriter> w)
 {
   //VERBOSE(10);
-  INFO<<" writer active? " << (w.lock()==NULL ? 0 : 1);
   if (active_exec)
     {
       for (auto it : tasks)
 	it->WriteTask(w);
     }
-}
-
-void JetScapeTask::GetPartons(weak_ptr<PartonPrinter> p)
-{
-  //cout<<"############### Printing partons in shower " << "\n";
-  for (auto it : GetTaskList())
-  {
-    it->GetFinalPartons(p);
-  }
 }
 
 void JetScapeTask::Add(shared_ptr<JetScapeTask> m_tasks)

@@ -37,7 +37,7 @@
 #include<random>
 #include<thread>
 
-using namespace std;
+using std::atomic_int;
 
 namespace Jetscape {
 

@@ -15,6 +15,8 @@
 #include "PartonShower.h"
 #include "JetClass.hpp"
 
+using std::to_string;
+
 namespace Jetscape {
 
 class JetScapeWriter : public JetScapeModuleBase

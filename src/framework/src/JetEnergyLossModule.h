@@ -12,6 +12,11 @@
 
 #include "JetEnergyLoss.h"
 
+using std::abs;
+using std::uniform_real_distribution;
+
+
+
 namespace Jetscape {
 
 template <typename Derived>
@@ -24,7 +29,7 @@ class JetEnergyLossModule : public JetEnergyLoss
   
   virtual shared_ptr<JetEnergyLoss> Clone() const override
    {
-     DEBUG << "Cloning task with id=" << GetId() << " and TaskNumber= " << get_my_task_number();
+     JSDEBUG << "Cloning task with id=" << GetId() << " and TaskNumber= " << get_my_task_number();
      // DEBUG/TODO: KK: Joern's plan was to not have to call Init again, but I'm not sure that can work/is desirable.
      auto ret=make_shared<Derived>(static_cast<const Derived&>(*this));
      //ret->Init();
@@ -33,6 +38,10 @@ class JetEnergyLossModule : public JetEnergyLoss
      // return make_shared<Derived>(static_cast<const Derived&>(*this));
    }
      
+  // override deactivation
+  void SetActive(bool m_active_exec) {
+    throw std::runtime_error("SetActive not supported for energy loss modules. Please remove the module from the manager.");
+  };
 
 };
 

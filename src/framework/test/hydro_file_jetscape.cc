@@ -10,10 +10,7 @@
 
 #include "hydro_file_jetscape.h"
 
-using namespace std;
-
 using namespace Jetscape;
-
 
 HydroFile::HydroFile() {
     hydro_status = NOT_START;
@@ -28,7 +25,7 @@ HydroFile::~HydroFile() {
 
 //! this function loads the hydro files
 void HydroFile::initialize_hydro(Parameter parameter_list) {
-    DEBUG << "Initialize hydro from file (Test) ...";
+    JSDEBUG << "Initialize hydro from file (Test) ...";
     VERBOSE(8);
     tinyxml2::XMLElement *para =
                     GetHydroXML()->FirstChildElement("hydro_from_file");
@@ -38,7 +35,7 @@ void HydroFile::initialize_hydro(Parameter parameter_list) {
     }
 
     string s = para->FirstChildElement("name")->GetText();
-    DEBUG << s << " to be initilizied ...";
+    JSDEBUG << s << " to be initilizied ...";
 
     para->FirstChildElement("hydro_type")->QueryIntText(&hydro_type);
     para->FirstChildElement("load_viscous_info")->QueryBoolText(&load_viscous);

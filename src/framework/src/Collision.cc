@@ -122,7 +122,7 @@ void JetScapeCollision::sample_(double smin, double smax){
     info_.xmid = event_.mass_center_index().first;
     info_.ymid = event_.mass_center_index().second;
 
-    write_stream(std::cout, 2, 1, b, event_);
+    // write_stream(std::cout, 2, 1, b, event_);
 }
 
 double JetScapeCollision::sample_impact_param() {

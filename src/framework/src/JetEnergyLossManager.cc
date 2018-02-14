@@ -31,7 +31,7 @@ JetEnergyLossManager::JetEnergyLossManager()
 JetEnergyLossManager::~JetEnergyLossManager()
 {
   // Check if this is all really needed with shared_ptr ...
-  DEBUG;
+  JSDEBUG;
   Clear();
  
   if (GetNumberOfTasks()>0)
@@ -40,7 +40,7 @@ JetEnergyLossManager::~JetEnergyLossManager()
 
 void JetEnergyLossManager::Clear()
 {
-  DEBUG<<"Hard Parton List ...";
+  JSDEBUG<<"Hard Parton List ...";
   
   hp.clear();
   
@@ -83,7 +83,7 @@ void JetEnergyLossManager::WriteTask(weak_ptr<JetScapeWriter> w)
 void JetEnergyLossManager::Exec()
 {
   INFO<<"Run JetEnergyLoss Manager ...";
-  DEBUG<<"Task Id = "<<this_thread::get_id();
+  JSDEBUG<<"Task Id = "<<this_thread::get_id();
   
   if (GetNumberOfTasks()<1)
     {
@@ -102,14 +102,14 @@ void JetEnergyLossManager::Exec()
       
       for (int i=1;i<hp.size();i++)
 	{
-	  DEBUG<<"Create the "<<i<<" th copy because number of intital hard partons = "<<hp.size();
+	  JSDEBUG<<"Create the "<<i<<" th copy because number of intital hard partons = "<<hp.size();
 	 
 	  Add(make_shared<JetEnergyLoss>(*dynamic_pointer_cast<JetEnergyLoss>(GetTaskAt(0))));
 	}
     }
   
   INFO<<" Found "<<GetNumberOfTasks()<<" Eloss Manager Tasks/Modules Execute them ... ";
-  DEBUG<<"Check and Create Signal/Slots via JetScapeSignalManaher instance if needed ...";
+  JSDEBUG<<"Check and Create Signal/Slots via JetScapeSignalManaher instance if needed ...";
   
   CreateSignalSlots();
 
@@ -208,11 +208,6 @@ void JetEnergyLossManager::CreateSignalSlots()
   JetScapeSignalManager::Instance()->PrintGetHydroCellSignalMap();
   VERBOSE(8);
   JetScapeSignalManager::Instance()->PrintSentInPartonsSignalMap();
-}
-
-void JetEnergyLossManager::GetFinalPartons(weak_ptr<PartonPrinter> p)
-{
-  JetScapeTask::GetPartons(p);
 }
 
 } // end namespace Jetscape

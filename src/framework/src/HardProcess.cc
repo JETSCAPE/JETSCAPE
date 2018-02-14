@@ -67,7 +67,7 @@ void HardProcess::Exec()
 
 void HardProcess::Clear()
 {
-  DEBUG<<"Clear Hard Process : "<<GetId()<< " ...";
+  JSDEBUG<<"Clear Hard Process : "<<GetId()<< " ...";
 
   hp_list.clear();
   VERBOSE(8)<<hp_list.size();

@@ -26,10 +26,14 @@
 // to be used to run Jetscape ...
 #include "AdSCFT.h"
 #include "ElossModulesTestMatter.h"
+#include "ElossModulesTestMartini.h"
 #include "brick_jetscape.h"
 #include "Gubser_hydro_jetscape.h"
 #include "PythiaGun.hpp"
-// #include "JSPythia8.h"
+#include "PartonPrinter.h"
+#include "HadronizationManager.h"
+#include "Hadronization.h"
+#include "HadronizationModuleTest.h"
 
 // Add initial state module for test
 #include "TrentoInitial.h"
@@ -55,18 +59,21 @@ int main(int argc, char** argv)
     
   // DEBUG=true by default and REMARK=false
   // can be also set also via XML file (at least partially)
-  JetScapeLogger::Instance()->SetDebug(true);
+  JetScapeLogger::Instance()->SetInfo(true);
+  JetScapeLogger::Instance()->SetDebug(false);
   JetScapeLogger::Instance()->SetRemark(false);
   //SetVerboseLevel (9 a lot of additional debug output ...)
   //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevle(9) or 10
-  JetScapeLogger::Instance()->SetVerboseLevel(8);
+  JetScapeLogger::Instance()->SetVerboseLevel(0);
 
   
   Show();
 
   // auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",10);
-  auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",1);
+  auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",3);
   jetscape->SetId("primary");
+  // jetscape->set_reuse_hydro (true);
+  // jetscape->set_n_reuse_hydro (10);
 
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
@@ -80,6 +87,11 @@ int main(int argc, char** argv)
 
   auto pythiaGun= make_shared<PythiaGun> ();
 
+  auto printer = make_shared<PartonPrinter>();
+  auto hadroMgr = make_shared<HadronizationManager> ();
+  auto hadro = make_shared<Hadronization> ();
+  auto hadroModule = make_shared<HadronizationModuleTest> ();
+  
   // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
   //auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");  
@@ -102,6 +114,12 @@ int main(int argc, char** argv)
   jlossmanager->Add(jloss);
   
   jetscape->Add(jlossmanager);
+
+  jetscape->Add(printer);
+  hadro->Add(hadroModule);
+  hadroMgr->Add(hadro);
+  jetscape->Add(hadroMgr);
+
 
   jetscape->Add(writer);
 

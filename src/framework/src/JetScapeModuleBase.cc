@@ -17,24 +17,32 @@ namespace Jetscape {
   int JetScapeModuleBase::current_event=0;
 
   // ---------------------------------------------------------------------------
+  /** Default constructor to create a JetScapeModuleBase. It sets the XML file name to a default string value.                                 
+   */
   JetScapeModuleBase::JetScapeModuleBase()
   {
     xml_file_name = "";
   }
 
   // ---------------------------------------------------------------------------
+  /** This is a constructor to create a JetScapeModuleBase. It sets the XML file name to "m_name" to be used to read input parameters.
+   */
   JetScapeModuleBase::JetScapeModuleBase(string m_name)
   {
     xml_file_name = m_name;
   }
 
   // ---------------------------------------------------------------------------
+  /** This is a destructor for the JetScapeModuleBase.                       
+   */
   JetScapeModuleBase::~JetScapeModuleBase()
   {
     disconnect_all();
   }
 
   // ---------------------------------------------------------------------------
+  /** A virtual function for a default initialization of a JetScapeModuleBase. It also checks whether a XML file is loaded or not.
+   */
   void JetScapeModuleBase::Init()
   {
     if (!JetScapeXML::Instance()->GetXMLRoot())
@@ -45,6 +53,8 @@ namespace Jetscape {
   }
 
   // ---------------------------------------------------------------------------
+  /** This function returns a random number based on Mersenne-Twister algorithm.
+   */
   shared_ptr<std::mt19937> JetScapeModuleBase::get_mt19937_generator(){
     // Instantiate if it isn't there yet
     if ( !mt19937_generator_ ){

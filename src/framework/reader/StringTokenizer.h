@@ -19,8 +19,8 @@
 
 namespace Jetscape {
 
-// default delimiter string (space, tab, newline, carriage return, form feed and ->[] potential JetScape ascii format
-const std::string DEFAULT_DELIMITER = " \t\v\n\r\f->[]";
+// default delimiter string (space, tab, newline, carriage return, form feed and =,>,[,].
+const std::string DEFAULT_DELIMITER = " \t\v\n\r\f=>[]";
 
 class StringTokenizer
 {
