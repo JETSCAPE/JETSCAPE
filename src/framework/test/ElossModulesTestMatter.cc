@@ -193,7 +193,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   for (int i=0;i<pIn.size();i++)
   {
 
-      cout << "Before -- status: " << pIn[i].pstat() << "  energy: " << pIn[i].e() << endl;
+      //cout << "Before -- status: " << pIn[i].pstat() << "  energy: " << pIn[i].e() << " color: " << pIn[i].color() << "  " << pIn[i].anti_color() << endl;
 
 
       velocity[0] = 1.0;
@@ -365,7 +365,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           if (splitTime<Time)
           {
 
-              cout << "SPLIT" << endl;
+              //cout << "SPLIT" << endl;
     
               // SC: add elastic scattering that generates recoiled and back-reaction partons
               double el_dt=0.1;
@@ -478,7 +478,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       //flavor(CT,pid0,pid2,pid3);
                       flavor(CT,pid0,pid2,pid3,el_max_color,el_color0,el_anti_color0,el_color2,el_anti_color2,el_color3,el_anti_color3);
 
-                      cout << "color: " << el_color0 << "  " << el_anti_color0 << "  " << el_color2 << "  " << el_anti_color2 << "  " << el_color3 << "  " << el_anti_color3 << endl;
+                      //cout << "color: " << el_color0 << "  " << el_anti_color0 << "  " << el_color2 << "  " << el_anti_color2 << "  " << el_color3 << "  " << el_anti_color3 << "  max: " << el_max_color << endl;
 
 		      // do scattering
 		      colljet22(CT,tempLoc,muD2,vc0,pc0,pc2,pc3,pc4,qt);
@@ -530,7 +530,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 
                       pIn[i].set_color(el_color0);
                       pIn[i].set_anti_color(el_anti_color0);
-                      pIn[i].set_max_color(max_color);
+                      pIn[i].set_max_color(el_max_color);
  
 		  } // end if scattering	
 
