@@ -71,7 +71,8 @@ void Matter::Init()
     matter->FirstChildElement("qhat0")->QueryDoubleText(&m_qhat);
     SetQhat(m_qhat);
     //qhat = GetQhat()/fmToGeVinv ;
-    qhat0 = GetQhat()/fmToGeVinv ;
+    //qhat0 = GetQhat()/fmToGeVinv ;
+    qhat0 = GetQhat();
     JSDEBUG  << s << " with qhat0 = "<<GetQhat();
  
     int flagInt=-100;
@@ -139,7 +140,7 @@ void Matter::Init()
 
     VERBOSE(7)<< MAGENTA << "MATTER input parameter";
     INFO << "in_vac: " << in_vac << "  brick_med: " << brick_med;
-    INFO << "Q00: " << Q00 << " vir_factor: " << vir_factor << "  qhat0: " << qhat0*fmToGeVinv << " alphas: " << alphas << " hydro_Tc: " << hydro_Tc << " brick_length: " << brick_length;
+    INFO << "Q00: " << Q00 << " vir_factor: " << vir_factor << "  qhat0: " << qhat0 << " alphas: " << alphas << " hydro_Tc: " << hydro_Tc << " brick_length: " << brick_length;
 
   }
   else {
@@ -193,7 +194,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   for (int i=0;i<pIn.size();i++)
   {
 
-      //cout << "Before -- status: " << pIn[i].pstat() << "  energy: " << pIn[i].e() << " color: " << pIn[i].color() << "  " << pIn[i].anti_color() << endl;
+      //cout << "MATTER -- status: " << pIn[i].pstat() << "  energy: " << pIn[i].e() << " color: " << pIn[i].color() << "  " << pIn[i].anti_color() << "  clock: " << time << endl;
 
 
       velocity[0] = 1.0;
@@ -234,10 +235,10 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       // SC
       zeta = ( xStart[0] + initRdotV )/std::sqrt(2)*fmToGeVinv;
 
-      double now_R0 = Time;
-      double now_Rx = initRx+(Time-initR0)*initVx;
-      double now_Ry = initRy+(Time-initR0)*initVy; 
-      double now_Rz = initRz+(Time-initR0)*initVz;
+      double now_R0 = time;
+      double now_Rx = initRx+(time-initR0)*initVx;
+      double now_Ry = initRy+(time-initR0)*initVy; 
+      double now_Rz = initRz+(time-initR0)*initVz;
       double now_temp; 
 
       GetHydroCellSignal(now_R0, now_Rx, now_Ry, now_Rz, check_fluid_info_ptr);
@@ -326,7 +327,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           
       }
 
-      if(pIn[i].color()==0 && pIn[i].anti_color()==0) cout << "complain 0 0 color." << endl;
+      //if(pIn[i].color()==0 && pIn[i].anti_color()==0) cout << "complain 0 0 color." << endl;
 
       // SC: Q0 can be changed based on different setups
       if(in_vac) { // for vaccuum
@@ -365,7 +366,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           if (splitTime<Time)
           {
 
-              //cout << "SPLIT" << endl;
+              //cout << "SPLIT in MATTER" << endl;
     
               // SC: add elastic scattering that generates recoiled and back-reaction partons
               double el_dt=0.1;
@@ -380,7 +381,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 	      el_p0[0]=pIn[i].e();
 	      el_p0[4]=pIn[i].t();
 
-              for(double el_time=initR0; el_time<Time; el_time=el_time+el_dt) {
+              for(double el_time=initR0; el_time<time+rounding_error; el_time=el_time+el_dt) {
 
                   if(in_vac) continue;
 
@@ -445,19 +446,24 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       continue;
 		  }
 
-                  if(el_time+el_dt<=Time) dt_lrf=el_dt*flowFactor;
-		  else dt_lrf=(Time-el_time)*flowFactor;
+                  if(el_time+el_dt<=time) dt_lrf=el_dt*flowFactor;
+		  else dt_lrf=(time-el_time)*flowFactor;
 
 		  // solve alphas
 		  if(qhat0 < 0.0) soln_alphas=alphas;
 		  else soln_alphas=solve_alphas(qhatLoc,enerLoc,tempLoc);
 
 		  muD2=6.0*pi*soln_alphas*tempLoc*tempLoc;
-                  prob_el=42.0*zeta3*el_CR*soln_alphas*tempLoc/6.0/pi/pi*dt_lrf;
+                  prob_el=42.0*zeta3*el_CR*soln_alphas*tempLoc/6.0/pi/pi*dt_lrf/0.1973;
 
                   el_rand = ZeroOneDistribution(*get_mt19937_generator());
+
+		  //cout << "  qhat: " << qhatLoc << "  alphas: " << soln_alphas << "  ener: " << enerLoc << "  prob_el: " << prob_el << "  " << el_rand << endl;
+
 		  if(el_rand<prob_el) { // elastic scattering happens
  
+                      //cout << "elastic scattering happens" << endl;
+
 	              int CT=-1;
 		      int pid0=-999;
 		      int pid2=-999;
@@ -671,8 +677,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                  throw std::runtime_error("error in iSplit");
               }
 
-              if (d1_col==0 && d1_acol==0) cout << "complain color" << endl;
-              if (d2_col==0 && d2_acol==0) cout << "complain color" << endl;
+              //if (d1_col==0 && d1_acol==0) cout << "complain color" << endl;
+              //if (d2_col==0 && d2_acol==0) cout << "complain color" << endl;
 
               
               JSDEBUG << " d1_col = " << d1_col << " d1_acol = " << d1_acol << " d2_col = " << d2_col << " d2_acol = " << d2_acol;
@@ -747,10 +753,12 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               newp[3] = plong*c_t + k_perp1[3];
                   
               double newx[4];
-              newx[0] = Time + deltaTime ;
+              //newx[0] = time + deltaT;
+              newx[0] = time;
               for (int j=1;j<=3;j++)
               {
-                  newx[j] = pIn[i].x_in().comp(j) + (Time + deltaTime - pIn[i].x_in().comp(0))*velocity[j]/velocityMod;
+                  //newx[j] = pIn[i].x_in().comp(j) + (time + deltaT - pIn[i].x_in().comp(0))*velocity[j]/velocityMod;
+                  newx[j] = pIn[i].x_in().comp(j) + (time - pIn[i].x_in().comp(0))*velocity[j]/velocityMod;
               }
                   
               pOut.push_back(Parton(0,pid_a,0,newp,newx));
@@ -788,10 +796,12 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               newp[2] = plong*s_t*s_p + k_perp2[2];
               newp[3] = plong*c_t + k_perp2[3];
               
-              newx[0] = Time + deltaTime;
+              //newx[0] = time + deltaT;
+              newx[0] = time;
               for (int j=1;j<=3;j++)
               {
-                  newx[j] = pIn[i].x_in().comp(j) + (Time + deltaTime - pIn[i].x_in().comp(0))*velocity[j]/velocityMod;
+                  //newx[j] = pIn[i].x_in().comp(j) + (time + deltaT - pIn[i].x_in().comp(0))*velocity[j]/velocityMod;
+                  newx[j] = pIn[i].x_in().comp(j) + (time - pIn[i].x_in().comp(0))*velocity[j]/velocityMod;
               }
 	      
               pOut.push_back(Parton(0,pid_b,0,newp,newx));
