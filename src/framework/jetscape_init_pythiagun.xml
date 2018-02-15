@@ -80,7 +80,7 @@
        <brick_med> 1 </brick_med>
        <brick_length> 5.0 </brick_length>
        <hydro_Tc> 0.15 </hydro_Tc>
-       <qhat0> 1.0 </qhat0>
+       <qhat0> 0.5 </qhat0>
        <alphas> 0.25 </alphas>
      </Matter>
 
@@ -117,7 +117,7 @@
      <!-- Test Brick ... -->
      <Brick>
        <name>Brick</name>
-       <T>0.3</T>
+       <T>0.2</T>
      </Brick>
 
      <!-- Test Gubser ... -->
