@@ -44,26 +44,10 @@ void LBT::Init()
   // Redundant (get this from Base) quick fix here for now
   tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );  
   tinyxml2::XMLElement *lbt=eloss->FirstChildElement("Lbt");
- 
-  if (lbt)
-    {   
-      string s = lbt->FirstChildElement( "name" )->GetText();
-    
-      JSDEBUG << s << " to be initilizied ...";
-
-      double m_qhat=-99.99;
-      lbt->FirstChildElement("qhat")->QueryDoubleText(&m_qhat);
-      SetQhat(m_qhat);
-      
-      JSDEBUG  << s << " with qhat = "<<GetQhat();      	
-    }
-  else
-    {
-      WARN << " : LBT not properly initialized in XML file ...";
-      exit(-1);
-    }
 
   //...Below is added by Shanshan
+  //...read parameters from LBT.input first, but can be changed in JETSCAPE xml file if any conflict exists
+
   setParameter("LBT-tables/LBT.input"); // re-set parameters from input parameter file	
 
   //    if(checkParameter(argc)==0) { // check whether the input parameters are all correct
@@ -73,6 +57,74 @@ void LBT::Init()
   //        exit(EXIT_FAILURE);
   //    }
 	
+  if (lbt) {   
+
+      int flagInt=-100;
+      double inputDouble=-99.99;
+      int in_vac=1;
+
+      Q00=1.0;
+      Q0=1.0;
+
+      string s = lbt->FirstChildElement( "name" )->GetText();
+    
+      JSDEBUG << s << " to be initilizied ...";
+
+      //double m_qhat=-99.99;
+      //lbt->FirstChildElement("qhat")->QueryDoubleText(&m_qhat);
+      //SetQhat(m_qhat);
+      //
+      //JSDEBUG  << s << " with qhat = "<<GetQhat();      	
+
+      if ( !lbt->FirstChildElement("in_vac") ) {
+  	WARN << "Couldn't find sub-tag Eloss -> LBT -> in_vac";
+          throw std::runtime_error ("Couldn't find sub-tag Eloss -> LBT -> in_vac");
+      }
+      lbt->FirstChildElement("in_vac")->QueryIntText(&flagInt);
+      in_vac = flagInt;
+      if (in_vac == 1) {
+          vacORmed = 0;
+	  fixPosition = 1;
+      } else {
+	  vacORmed = 1;
+      }
+
+      if ( !lbt->FirstChildElement("only_leading") ) {
+  	WARN << "Couldn't find sub-tag Eloss -> LBT -> only_leading";
+          throw std::runtime_error ("Couldn't find sub-tag Eloss -> LBT -> only_leading");
+      }
+      lbt->FirstChildElement("only_leading")->QueryIntText(&flagInt);
+      Kprimary = flagInt;
+  
+      if ( !lbt->FirstChildElement("Q0") ) {
+        WARN << "Couldn't find sub-tag Eloss -> LBT -> Q0";
+          throw std::runtime_error ("Couldn't find sub-tag Eloss -> LBT -> Q0");
+      }
+      lbt->FirstChildElement("Q0")->QueryDoubleText(&inputDouble);
+      Q00 = inputDouble;
+  
+      if ( !lbt->FirstChildElement("alphas") ) {
+  	WARN << "Couldn't find sub-tag Eloss -> LBT -> alphas";
+          throw std::runtime_error ("Couldn't find sub-tag Eloss -> LBT -> alphas");
+      }
+      lbt->FirstChildElement("alphas")->QueryDoubleText(&inputDouble);
+      fixAlphas = inputDouble;
+ 
+      if ( !lbt->FirstChildElement("hydro_Tc") ) {
+  	WARN << "Couldn't find sub-tag Eloss -> LBT -> hydro_Tc";
+          throw std::runtime_error ("Couldn't find sub-tag Eloss -> LBT -> hydro_Tc");
+      }
+      lbt->FirstChildElement("hydro_Tc")->QueryDoubleText(&inputDouble);
+      hydro_Tc = inputDouble;
+
+  } else {
+      WARN << " : LBT not properly initialized in XML file ...";
+      exit(-1);
+  }
+
+
+  VERBOSE(7)<< MAGENTA << "LBT parameters -- in_med: " << vacORmed << " Q0: " << Q00 << "  only_leading: " << Kprimary << "  alpha_s: " << fixAlphas << "  hydro_Tc: " << hydro_Tc;
+
   read_tables(); // initialize various tables
 
   //...define derived quantities
@@ -149,8 +201,10 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
           P[4][j] = amss;
           P[0][j] = sqrt(P[1][j]*P[1][j]+P[2][j]*P[2][j]+P[3][j]*P[3][j]+P[4][j]*P[4][j]);
           P[5][j] = sqrt(P[1][j]*P[1][j]+P[2][j]*P[2][j]);
+          P[6][j] = pIn[i].e()*pIn[i].e()-P[0][j]*P[0][j]; // virtuality^2
+	  if(P[6][j]<0.0) P[6][j]=0.0;
           WT[j] = 1.0;
-    
+
           Vfrozen[1][j] = pIn[i].x_in().x();
           Vfrozen[2][j] = pIn[i].x_in().y();
           Vfrozen[3][j] = pIn[i].x_in().z();
@@ -160,7 +214,7 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
           V[3][j]=Vfrozen[3][j];
           V[0][j]=-log(1.0-ran0(&NUM1));
       
-          for(int k=0;k<=3;k++) Prad[k][j] = P[k][j];
+	  for(int k=0;k<=3;k++) Prad[k][j] = P[k][j];
       
           Tfrozen[j] = 0.0;
           vcfrozen[1][j] = 0.0;
@@ -183,9 +237,11 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
           P0[4][j] = amss;
           P0[0][j] = sqrt(P0[1][j]*P0[1][j]+P0[2][j]*P0[2][j]+P0[3][j]*P0[3][j]+P0[4][j]*P0[4][j]);
           P0[5][j] = sqrt(P0[1][j]*P0[1][j]+P0[2][j]*P0[2][j]);
+          P0[6][j] = pIn[i].e()*pIn[i].e()-P0[0][j]*P0[0][j]; // virtuality^2
+	  if(P0[6][j]<0.0) P0[6][j]=0.0;
           WT0[j] = 1.0;
     
-          Vfrozen0[1][j] = pIn[i].x_in().x();
+	  Vfrozen0[1][j] = pIn[i].x_in().x();
           Vfrozen0[2][j] = pIn[i].x_in().y();
           Vfrozen0[3][j] = pIn[i].x_in().z();
           Vfrozen0[0][j] = pIn[i].x_in().t();
@@ -210,19 +266,20 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
 
       } // end par_status check
 
-      if(par_status != -1) {
-          cout << "Before -- status: " << par_status << " current time: " << Vfrozen[0][j] << "  accumulated time: " << Tint_lrf[j] << "  energy: " << P[0][1] << endl;
-      } else {
-          cout << "Before -- status: " << par_status << " current time: " << Vfrozen0[0][j] << "  accumulated time: " << Tint_lrf[j] << "  energy: " << P0[0][1] << endl;
-      }
+      ////if(par_status != -1) {
+      ////    cout << "LBT -- status: " << par_status << " current time: " << Vfrozen[0][j] << "  accumulated time: " << Tint_lrf[j] << "  energy: " << P[0][1] << "  clock: " << time <<endl;
+      ////} else {
+      ////    cout << "LBT -- status: " << par_status << " current time: " << Vfrozen0[0][j] << "  accumulated time: " << Tint_lrf[j] << "  energy: " << P0[0][1] << "  clock: " << time << endl;
+      ////}
 
       nj = 1;
       np = 1;
 
-      //          cout << "evt info: " << KATT1[j] << "  " << P[1][j] << "  " << P[2][j] << "  " << P[3][j] << "  " << P[0][j] << endl; 
-
       dtau = deltaT;
       dt = dtau;
+
+      flag_update = 0;
+      flag_update0 = 0;
 
       // do LBT evolution for this particle
       int nnn=1; // dummy variable, not important
@@ -238,12 +295,12 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
       //              ctEvt++;
       //          }
 
-      if(alphas>epsilon && vacORmed!=0) {
+      //if(alphas>epsilon && vacORmed!=0) {
+      if(vacORmed!=0) { // for JETSCAPE, won't change parton if it's in vacuum
 	flagScatter=0;
 	LBT0(nnn,systemTime); // most important function of LBT: update particle list for one time step
       }
 
-      cout << "After -- flag: " << flagScatter << endl;
 
       //// LBT unit test
       //          dEel=dEel+(ener-P[0][1]);
@@ -262,7 +319,17 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
       //              dat_de.close();
       //          }
 
+      double velocity_jet[4];
+      velocity_jet[0]=1.0;
+      velocity_jet[1]=pIn[i].jet_v().x();
+      velocity_jet[2]=pIn[i].jet_v().y();
+      velocity_jet[3]=pIn[i].jet_v().z();
+
       if(par_status != -1) { // for particle list initiating with positive particles
+
+          if(flag_update == 0) continue; // no update on this particle from LBT0 function
+
+          ////cout << "Evolve in LBT -- flag: " << flagScatter << endl;
 
           // pass particle list back to JETSCAPE
           // how to handle negative particle in the framework?
@@ -274,7 +341,7 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
             // definition Parton (int label, int id, int stat, double p[4], double x[4]);
             if(P[0][j]<cutOut) continue;
             double tempP[4],tempX[4];
-            tempP[0]=P[0][j];
+            tempP[0]=sqrt(P[0][j]*P[0][j]+P[6][j]);
             tempP[1]=P[1][j];
             tempP[2]=P[2][j];
             tempP[3]=P[3][j];
@@ -286,13 +353,19 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
             pOut.push_back(Parton(0,KATT1[j],0,tempP,tempX));
             // remember to put Tint_lrf infomation back to JETSCAPE
             pOut.back().set_user_info(new LBTUserInfo(Tint_lrf[j]));
-          }
+
+	    int iout = pOut.size()-1;
+            pOut[iout].set_jet_v(velocity_jet); // use initial jet velocity
+            pOut[iout].set_mean_form_time();
+            double ft = pOut[iout].mean_form_time();
+            pOut[iout].set_form_time(ft);
+	  }
 
           // negative particle stat = -1
           for(int j=2; j<=np; j++) { 
             if(P0[0][j]<cutOut) continue;
             double tempP[4],tempX[4];
-            tempP[0]=P0[0][j];
+            tempP[0]=sqrt(P0[0][j]*P0[0][j]+P0[6][j]);
             tempP[1]=P0[1][j];
             tempP[2]=P0[2][j];
             tempP[3]=P0[3][j];
@@ -303,11 +376,20 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
             //	      pOut.push_back(Parton(0,21,0,newPt,pIn[i].eta(),pIn[i].phi(),newPt));
             pOut.push_back(Parton(0,KATT10[j],-1,tempP,tempX));
             pOut.back().set_user_info(new LBTUserInfo(0.0));
-          }	  
 
-      } else { // free-streaming daughter particles from negative particles
+	    int iout = pOut.size()-1;
+            pOut[iout].set_jet_v(velocity_jet); // use initial jet velocity
+            pOut[iout].set_mean_form_time();
+            double ft = pOut[iout].mean_form_time();
+            pOut[iout].set_form_time(ft);
+	  }	  
+
+      } else { // free-streaming daughter particles from negative particles if they are inside a medium
+
+    	  if(flag_update0 == 0) continue; // no update on this particle from LBT0 function
 
           if(np != 1) JSDEBUG << "Wrong number of negative partons!";
+          ////cout << "Evolve in LBT -- flag: " << flagScatter << endl;
 
           for(int j=1; j<=np; j++) { 
             if(P0[0][j]<cutOut) continue;
@@ -323,7 +405,13 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
             //	      pOut.push_back(Parton(0,21,0,newPt,pIn[i].eta(),pIn[i].phi(),newPt));
             pOut.push_back(Parton(0,KATT10[j],-1,tempP,tempX));
             pOut.back().set_user_info(new LBTUserInfo(0.0));
-          }	  
+
+	    int iout = pOut.size()-1;
+            pOut[iout].set_jet_v(velocity_jet); // use initial jet velocity
+            pOut[iout].set_mean_form_time();
+            double ft = pOut[iout].mean_form_time();
+            pOut[iout].set_form_time(ft);
+	  }	  
 
       } // end par_status check
 
@@ -387,6 +475,7 @@ void LBT::LBT0(int &n, double &ti){
 
   double Ejp;
   double Elab;
+  double Qinit;
 		
   double qt;
 		
@@ -425,6 +514,8 @@ void LBT::LBT0(int &n, double &ti){
   // for heavy quark
   double dt_lrf,maxFncHQ,Tdiff,lim_low,lim_high,lim_int;
   double probCol,probRad,probTot;
+
+  double lrf_rStart[4]={0.0};
 
   probCol=0.0;
   probRad=0.0;
@@ -472,9 +563,13 @@ void LBT::LBT0(int &n, double &ti){
       //...........................................t-z coordinates	
       if(tauswitch==0) {
 
-	V0[1][i]=V0[1][i]+dt*P0[1][i]/P0[0][i];
-	V0[2][i]=V0[2][i]+dt*P0[2][i]/P0[0][i];
-	V0[3][i]=V0[3][i]+dt*P0[3][i]/P0[0][i];
+	//V0[1][i]=V0[1][i]+dt*P0[1][i]/P0[0][i];
+	//V0[2][i]=V0[2][i]+dt*P0[2][i]/P0[0][i];
+	//V0[3][i]=V0[3][i]+dt*P0[3][i]/P0[0][i];
+
+        V0[1][i]=V0[1][i]+(ti-Vfrozen0[0][i])*P0[1][i]/P0[0][i];
+	V0[2][i]=V0[2][i]+(ti-Vfrozen0[0][i])*P0[2][i]/P0[0][i];
+	V0[3][i]=V0[3][i]+(ti-Vfrozen0[0][i])*P0[3][i]/P0[0][i];
 
 	tcar0=ti;
 	zcar0=V0[3][i];
@@ -526,6 +621,7 @@ void LBT::LBT0(int &n, double &ti){
 	  vcfrozen0[1][i]=VX00;
 	  vcfrozen0[2][i]=VY00;
 	  vcfrozen0[3][i]=VZ00;
+          flag_update0=1; // do free-streaming for negative particle if in medium, no check on virtuality (assume 0)
 
 	} else {
 	  free0=1;
@@ -540,14 +636,20 @@ void LBT::LBT0(int &n, double &ti){
       //...........................................t-z coordinates	
       if(tauswitch==0) {
 
-	V[1][i]=V[1][i]+dt*P[1][i]/P[0][i];
-	V[2][i]=V[2][i]+dt*P[2][i]/P[0][i];
-	V[3][i]=V[3][i]+dt*P[3][i]/P[0][i];
+	//V[1][i]=V[1][i]+dt*P[1][i]/P[0][i];
+	//V[2][i]=V[2][i]+dt*P[2][i]/P[0][i];
+	//V[3][i]=V[3][i]+dt*P[3][i]/P[0][i];
+
+        V[1][i]=V[1][i]+(ti-Vfrozen[0][i])*P[1][i]/P[0][i];
+	V[2][i]=V[2][i]+(ti-Vfrozen[0][i])*P[2][i]/P[0][i];
+	V[3][i]=V[3][i]+(ti-Vfrozen[0][i])*P[3][i]/P[0][i];
 
 	tcar=ti;
 	zcar=V[3][i];
 	xcar=V[1][i];
 	ycar=V[2][i];
+
+        for(int lrf_i=0; lrf_i<=3; lrf_i++) lrf_rStart[lrf_i]=Vfrozen[lrf_i][i];
 
 	//...........................................Hydro part		
 
@@ -584,7 +686,7 @@ void LBT::LBT0(int &n, double &ti){
 
 	  if(hydro_ctl==0 && temp0>=hydro_Tc) {
 
-	    vc0[1]=VX;
+       	    vc0[1]=VX;
 	    vc0[2]=VY;
 	    vc0[3]=VZ;
 
@@ -625,97 +727,13 @@ void LBT::LBT0(int &n, double &ti){
 	  vMag=sqrt(vc0b[1]*vc0b[1]+vc0b[2]*vc0b[2]+vc0b[3]*vc0b[3]);
 	  flowFactor=(1.0-(pc0[1]*vc0b[1]+pc0[2]*vc0b[2]+pc0[3]*vc0b[3])/pc0[0])/sqrt(1.0-vMag*vMag);
  
-	  trans(vc0,pc0);
-			  
-	  if(pc0[0]<sqrt(qhat0)) {
-	    free=1;
-	  }
-	  
-	  if(i>nj && pc0[0]<Ecmcut) {
-	    free=1;
-	  }   
-		  
-	  transback(vc0,pc0);
-
 	}//if(free==0)
       } //if(tauswitch==0)
 				
 
       //...........................................tau-eta coordinates		
-      if(tauswitch==1) {
-		
-	//????????????? why I need to get the medium information before propagation
-		
-	//...........................................Hydro part		
-
-	/////////////////////////////////////////////////////////////
-	//           GetInfo( CD & tau, CD & x, CD &y, CD &etas, double & Ed, double & T, double & Vx, double & Vy, double & Veta, double & phase_ratio )        
-	/////////////////////////////////////////////////////////////
-
-	//...........................................Hydro part end
-		  
-	vp[0]=0.0;
-	vp[1]=V[1][i];
-	vp[2]=V[2][i];
-	vp[3]=V[3][i];
-
-	pc0[1]=P[1][i];
-	pc0[2]=P[2][i];
-	pc0[3]=P[3][i];
-	pc0[0]=P[0][i];
-		  
-	titau(ti,vc0,vp,pc0,Vx,Vy,Veta,Xtau);
-
-	V[1][i]=V[1][i]+dt*Vx;
-	V[2][i]=V[2][i]+dt*Vy;
-	V[3][i]=V[3][i]+dt*Veta;
-
-	///////////////////////////////////////time and position in Cartesian coordinate			 
-	tcar=ti*cosh(V[3][i]);
-	zcar=ti*sinh(V[3][i]);
-	xcar=V[1][i];
-	ycar=V[2][i];
-
-	alphas=alphas0(Kalphas,temp0);
-	qhat0=DebyeMass2(Kqhat0,alphas,temp0);
-
-
-	if(i>nj)
-	  {
-	    //......................................negative particle propagation
-		  
-	    /////////////////////////////////////////////////////////////
-	    //           GetInfo( CD & tau, CD & x, CD &y, CD &etas, double & Ed, double & T, double & Vx, double & Vy, double & Veta, double & phase_ratio )        
-	    /////////////////////////////////////////////////////////////
-		  
-	    vp0[0]=0.0;
-	    vp0[1]=V0[1][i];
-	    vp0[2]=V0[2][i];
-	    vp0[3]=V0[3][i];
-
-	    pc00[1]=P0[1][i];
-	    pc00[2]=P0[2][i];
-	    pc00[3]=P0[3][i];
-	    pc00[0]=P0[0][i];
-		  
-	    titau(ti,vc0,vp,pc00,Vx,Vy,Veta,Xtau);
-
-	    V0[1][i]=V0[1][i]+dt*Vx;
-	    V0[2][i]=V0[2][i]+dt*Vy;
-	    V0[3][i]=V0[3][i]+dt*Veta;
-
-	    ///////////////////////////////////////time system in Cartesian coordinate			 
-	    tcar=ti*cosh(V0[3][i]);
-	    zcar=ti*sinh(V0[3][i]);
-	    xcar=V0[1][i];
-	    ycar=V0[2][i];
-			
-	    //                temp00= temp0;
-			
-	    //		  qhat00=DebyeMass2(Kqhat0,alphas,temp00);
-		  
-	  } // if(i>nj)
-      } // if(tauswitch==1)			
+      //if(tauswitch==1) { // not ready for JETSCAPE
+      //} // if(tauswitch==1)			
 
       //......propagation of each positive particle and its negative counterpart in the current time step	end	
 
@@ -725,7 +743,7 @@ void LBT::LBT0(int &n, double &ti){
       //......free streaming when energy0 < Ecut0......in the next step
 
       if(free==0) {
-
+	      
 	double qhatTP,RTE1,RTE2;
 
 	// modification: interplotate rate in l.r.f. 
@@ -785,10 +803,52 @@ void LBT::LBT0(int &n, double &ti){
 
 	qhat=qhatTP*pow(T,3); // for light quark and gluon, need additional table to make it correct
 
+	if(Q00<0.0) { 
+	    Q0 = sqrt(sqrt(2.0*E*qhat));
+        } else {
+	    Q0 = Q00;
+	}
+
+	if(P[6][i] > Q0*Q0 + rounding_error) {
+	    continue;  // virtuality outside the LBT range, go to the next particle
+        }
+
+	flag_update=1; // satisfy T>Tc and Q<Q0, LBT will process this positice particle
+
+
+	if(E<sqrt(qhat0)) continue; // just do free-streaming
+	if(i>nj && E<Ecmcut) continue;
+	        
+
 	// update interaction time and average gluon number for heavy quark radiation 
 	// (as long as it's in medium, even though no collision)
-	dt_lrf=dt*flowFactor;
-	Tint_lrf[i]=Tint_lrf[i]+dt_lrf;
+	dt_lrf=dt*flowFactor;  // must be put here, flowFactor will be changed below
+
+        // increae time accumulation from the production point of the parton
+	for (double tLoc=lrf_rStart[0]; tLoc<ti+rounding_error; tLoc=tLoc+dt) {
+
+    	    double xLoc=lrf_rStart[1]+(tLoc-lrf_rStart[0])*P[1][i]/P[0][i];
+            double yLoc=lrf_rStart[2]+(tLoc-lrf_rStart[0])*P[2][i]/P[0][i];
+            double zLoc=lrf_rStart[3]+(tLoc-lrf_rStart[0])*P[3][i]/P[0][i];
+            double dtLoc,tempLoc,vxLoc,vyLoc,vzLoc;
+
+	    if (tLoc+dt<ti) dtLoc=dt;
+	    else dtLoc=ti-tLoc;
+
+	    std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
+    	    GetHydroCellSignal(tLoc, xLoc, yLoc, zLoc, check_fluid_info_ptr);
+	    tempLoc = check_fluid_info_ptr->temperature;
+    	    vxLoc = check_fluid_info_ptr->vx;
+    	    vyLoc = check_fluid_info_ptr->vy;
+    	    vzLoc = check_fluid_info_ptr->vz;
+
+            if(tempLoc >= hydro_Tc) {
+	        vMag=sqrt(vxLoc*vxLoc+vyLoc*vyLoc+vzLoc*vzLoc);
+	        flowFactor=(1.0-(pc0[1]*vxLoc+pc0[2]*vyLoc+pc0[3]*vzLoc)/pc0[0])/sqrt(1.0-vMag*vMag);
+                Tint_lrf[i]=Tint_lrf[i]+dtLoc*flowFactor;
+	    }
+        }
+
 	Tdiff=Tint_lrf[i];
 
 	// get radiation probablity by reading tables -- same for heavy and light partons
@@ -817,13 +877,13 @@ void LBT::LBT0(int &n, double &ti){
 	  V[0][i]=V[0][i]-fraction*dt*RTE/0.1970*sqrt(pow(P[1][i],2)+pow(P[2][i],2)+pow(P[3][i],2))/P[0][i];
 	  probCol=fraction*dt_lrf*RTE/0.1970;
 	}
-	//...........................................tau-eta coordinates
-	if(tauswitch==1) {
+	////...........................................tau-eta coordinates
+	//if(tauswitch==1) { // not ready for JETSCAPE
 
-	  V[0][i]=V[0][i]-dt*RTE*Xtau/0.1970*sqrt(pow(P[1][i],2)+pow(P[2][i],2)+pow(P[3][i],2))/P[0][i];
-	  probCol=dt_lrf*RTE*Xtau/0.1970;  // ?? fraction
-	  //		  Ncoll22=dt*RTE/0.197*Xtau*((pc0[0]*1-pc0[1]*vc0[1]-pc0[2]*vc0[2]-pc0[3]*vc0[3])/E);  		  
-	}
+	//  V[0][i]=V[0][i]-dt*RTE*Xtau/0.1970*sqrt(pow(P[1][i],2)+pow(P[2][i],2)+pow(P[3][i],2))/P[0][i];
+	//  probCol=dt_lrf*RTE*Xtau/0.1970;  // ?? fraction
+	//  //		  Ncoll22=dt*RTE/0.197*Xtau*((pc0[0]*1-pc0[1]*vc0[1]-pc0[2]*vc0[2]-pc0[3]*vc0[3])/E);  		  
+	//}
 
 
 	////////////////////////////////////////		  
@@ -903,7 +963,9 @@ void LBT::LBT0(int &n, double &ti){
 	    WT[np0]=WT[i];
 	    WT0[np0]=WT[i];
 	    P[4][np0]=0.0;  // recoiled parton is always massless
+	    P[6][np0]=0.0;  // recoiled parton has 0 virtuality
 	    P0[4][np0]=0.0;
+	    P0[6][np0]=0.0;
 
 	    CAT[np0]=2;
 										
@@ -997,7 +1059,12 @@ void LBT::LBT0(int &n, double &ti){
 		  WT0[np0]=0.0;   // doesn't exist
 		  P[4][np0]=0.0;  // radiated gluons are massless
 		  P0[4][np0]=0.0;
-        
+                  // assign virtuality for daughter partons
+                  Qinit=P[6][i];
+                  P[6][i]=pow(P[0][i]/Elab,2)*Qinit;
+                  P[6][np0]=pow(P[0][np0]/Elab,2)*Qinit;
+                  P0[6][np0]=0.0; 
+
 		  // comment out for unit test
 		  Tint_lrf[i]=0.0;  //reset radiation infomation for heavy quark
         
@@ -1049,7 +1116,12 @@ void LBT::LBT0(int &n, double &ti){
 		      WT0[np0]=0.0;   // doesn't exist
 		      P[4][np0]=0.0;  // radiated gluons are massless
 		      P0[4][np0]=0.0;
-        
+                      // assign virtuality for daughter partons
+                      P[6][i]=pow(P[0][i]/Elab,2)*Qinit;
+                      P[6][np0-1]=pow(P[0][np0-1]/Elab,2)*Qinit;
+                      P[6][np0]=pow(P[0][np0]/Elab,2)*Qinit;
+                      P0[6][np0]=0.0;
+
 		      eGluon=eGluon+pc4[0];
 		      nGluon=nGluon+1.0;
         
@@ -3595,11 +3667,17 @@ void LBT::jetClean(){
     P[2][i]=0.0;
     P[3][i]=0.0;
     P[0][i]=0.0;
+    P[4][i]=0.0;
+    P[5][i]=0.0;
+    P[6][i]=0.0;
     //
     P0[1][i]=0.0;
     P0[2][i]=0.0;
     P0[3][i]=0.0;
     P0[0][i]=0.0;
+    P0[4][i]=0.0;
+    P0[5][i]=0.0;
+    P0[6][i]=0.0;
     //
     PP[1][i]=0.0;
     PP[2][i]=0.0;
@@ -3873,38 +3951,38 @@ void LBT::setParameter(string fileName) {
   KTsig=KTsig*hydro_Tc;
   preKT=fixAlphas/0.3;
 
-  // write out parameters
-  cout << endl;
-  cout << "############################################################" << endl;
-  cout << "Parameters for this LBT run" << endl;
-  //       cout << "flag:initHardFlag: " << initHardFlag << endl;
-  //       cout << "flag:flagJetX: " << flagJetX << endl;
-  //       cout << "flag:fixMomentum: " << fixMomentum << endl;
-  //       cout << "flag:fixPosition: " << fixPosition << endl;
-  //       cout << "flag:vacORmed: " << vacORmed << endl;
-  cout << "flag:bulkType: " << bulkFlag << endl;
-  cout << "flag:Kprimary: " << Kprimary << endl;
-  cout << "flag:KINT0: " << KINT0 << endl;
-  cout << "para:nEvent: " << ncall << endl;
-  //       cout << "para:nParton: " << nj << endl;
-  //       cout << "para:parID: " << Kjet << endl;
-  //       cout << "para:tau0: " << tau0 << endl;
-  //       cout << "para:tauend: " << tauend << endl;
-  cout << "para:dtau: " << dtau << endl;
-  cout << "para:temperature: " << temp0 << endl;
-  cout << "para:alpha_s: " << fixAlphas << endl;
-  cout << "para:hydro_Tc: " << hydro_Tc << endl;
-  //       cout << "para:pT_min: " << ipTmin << endl;
-  //       cout << "para:pT_max: " << ipTmax << endl;
-  //       cout << "para:eta_cut: " << eta_cut << endl;
-  //       cout << "para:ener: " << ener << endl;
-  //       cout << "para:mass: " << amss << endl;
-  cout << "para:KPamp: " << KPamp << endl;
-  cout << "para:KPsig: " << KPsig << endl;
-  cout << "para:KTamp: " << KTamp << endl;
-  cout << "para:KTsig: " << KTsig << endl;
-  cout << "############################################################" << endl;
-  cout << endl;
+  //// write out parameters
+  //cout << endl;
+  //cout << "############################################################" << endl;
+  //cout << "Parameters for this LBT run" << endl;
+  ////       cout << "flag:initHardFlag: " << initHardFlag << endl;
+  ////       cout << "flag:flagJetX: " << flagJetX << endl;
+  ////       cout << "flag:fixMomentum: " << fixMomentum << endl;
+  ////       cout << "flag:fixPosition: " << fixPosition << endl;
+  ////       cout << "flag:vacORmed: " << vacORmed << endl;
+  //cout << "flag:bulkType: " << bulkFlag << endl;
+  //cout << "flag:Kprimary: " << Kprimary << endl;
+  //cout << "flag:KINT0: " << KINT0 << endl;
+  //cout << "para:nEvent: " << ncall << endl;
+  ////       cout << "para:nParton: " << nj << endl;
+  ////       cout << "para:parID: " << Kjet << endl;
+  ////       cout << "para:tau0: " << tau0 << endl;
+  ////       cout << "para:tauend: " << tauend << endl;
+  //cout << "para:dtau: " << dtau << endl;
+  //cout << "para:temperature: " << temp0 << endl;
+  //cout << "para:alpha_s: " << fixAlphas << endl;
+  //cout << "para:hydro_Tc: " << hydro_Tc << endl;
+  ////       cout << "para:pT_min: " << ipTmin << endl;
+  ////       cout << "para:pT_max: " << ipTmax << endl;
+  ////       cout << "para:eta_cut: " << eta_cut << endl;
+  ////       cout << "para:ener: " << ener << endl;
+  ////       cout << "para:mass: " << amss << endl;
+  //cout << "para:KPamp: " << KPamp << endl;
+  //cout << "para:KPsig: " << KPsig << endl;
+  //cout << "para:KTamp: " << KTamp << endl;
+  //cout << "para:KTsig: " << KTsig << endl;
+  //cout << "############################################################" << endl;
+  //cout << endl;
 
   //       exit(EXIT_SUCCESS);
 

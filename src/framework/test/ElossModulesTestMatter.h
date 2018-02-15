@@ -78,6 +78,7 @@ class Matter : public JetEnergyLossModule<Matter> //, public std::enable_shared_
   double fnc0_alphas(double var_alphas, double var_qhat, double var_ener, double var_temp);
   double fnc0_derivative_alphas(double var_alphas, double var_qhat, double var_ener, double var_temp);
 
+  
  protected:
   uniform_real_distribution<double> ZeroOneDistribution;
   

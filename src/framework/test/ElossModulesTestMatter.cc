@@ -49,8 +49,16 @@ void Matter::Init()
   INFO<<"Intialize Matter ...";
 
   // Redundant (get this from Base) quick fix here for now
-  tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );  
+  tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );
+  if ( !eloss ) {
+    WARN << "Couldn't find tag Eloss";
+    throw std::runtime_error ("Couldn't find tag Eloss");    
+  }
   tinyxml2::XMLElement *matter=eloss->FirstChildElement("Matter");
+  if ( !matter ) {
+    WARN << "Couldn't find tag Eloss -> Matter";
+    throw std::runtime_error ("Couldn't find tag Eloss -> Matter");    
+  }
  
   if (matter) {   
     string s = matter->FirstChildElement( "name" )->GetText();
@@ -142,12 +150,7 @@ void Matter::Init()
     INFO << "in_vac: " << in_vac << "  brick_med: " << brick_med;
     INFO << "Q00: " << Q00 << " vir_factor: " << vir_factor << "  qhat0: " << qhat0 << " alphas: " << alphas << " hydro_Tc: " << hydro_Tc << " brick_length: " << brick_length;
 
-  }
-  else {
-    WARN << " : Matter not properly initialized in XML file ...";
-    throw std::runtime_error("Matter not properly initialized in XML file ...");
-  }
-
+    
   // Initialize random number distribution
   ZeroOneDistribution = uniform_real_distribution<double> { 0.0, 1.0 };
 
@@ -245,6 +248,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       VERBOSE(8)<<MAGENTA<<"Temperature from medium = "<<check_fluid_info_ptr->temperature;
       now_temp = check_fluid_info_ptr->temperature;
                	 	
+
       int pid = pIn[i].pid();
           
       if (pIn[i].form_time()<0.0) /// A parton without a virtuality or formation time, must set...
@@ -264,16 +268,17 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 
 	  // SC:  
           double pT2 = pIn[i].p(1)*pIn[i].p(1)+pIn[i].p(2)*pIn[i].p(2);
-	  double max_vir;
-	  if(vir_factor<0.0) max_vir = pIn[i].e()*pIn[i].e();
-	  else max_vir = pT2 * vir_factor;
+	        double max_vir;
+	        if(vir_factor<0.0) max_vir = pIn[i].e()*pIn[i].e();
+	        else max_vir = pT2 * vir_factor;
 
           if(max_vir<=QS) {
-	      tQ2 = 0.0;
+	            tQ2 = 0.0;
           } else {
-    	      tQ2 = generate_vac_t(pIn[i].pid(), pIn[i].nu(), QS/2.0, max_vir, zeta, iSplit);
-    	  }
+    	        tQ2 = generate_vac_t(pIn[i].pid(), pIn[i].nu(), QS/2.0, max_vir, zeta, iSplit);
+    	    }
 
+        
           // KK:
           //pIn[i].set_jet_v(velocity); // SC: take out to the front
           pIn[i].set_t(tQ2); // Also resets momentum!
@@ -327,23 +332,25 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           
       }
 
+
       //if(pIn[i].color()==0 && pIn[i].anti_color()==0) cout << "complain 0 0 color." << endl;
+
 
       // SC: Q0 can be changed based on different setups
       if(in_vac) { // for vaccuum
-	  qhat = 0.0;
-	  if(Q00 < 0.0) Q0 = 1.0; // set Q0 = 1 if Q00 < 0
-	  else Q0 = Q00;
+	        qhat = 0.0;
+	        if(Q00 < 0.0) Q0 = 1.0; // set Q0 = 1 if Q00 < 0
+	        else Q0 = Q00;
       } else { // for medium    
-	  double tempEner = initEner;
+	        double tempEner = initEner;
           qhat = fncQhat(zeta);
 
-	  if(Q00 < 0.0) { // use dynamical Q0 if Q00 < 0
-	      if(pid==gid) Q0 = sqrt(sqrt(2.0*tempEner*qhat*sqrt(2.0)));
-	      else Q0 = sqrt(sqrt(2.0*tempEner*qhat*sqrt(2.0)/Ca*Cf));
-	      if(Q0 < 1.0) Q0 = 1.0;
-	      if(zeta > length) Q0 = 1.0;
-	  } else {
+	        if(Q00 < 0.0) { // use dynamical Q0 if Q00 < 0
+	            if(pid==gid) Q0 = sqrt(sqrt(2.0*tempEner*qhat*sqrt(2.0)));
+	            else Q0 = sqrt(sqrt(2.0*tempEner*qhat*sqrt(2.0)/Ca*Cf));
+	            if(Q0 < 1.0) Q0 = 1.0;
+	        if(zeta > length) Q0 = 1.0;
+	    } else {
               Q0 = Q00;
           }
       }
@@ -351,7 +358,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       if(Q0<1.0) Q0=1.0;
 
       //if (pIn[i].t() > QS + rounding_error)
+
       if (pIn[i].t() > Q0*Q0 + rounding_error || (now_temp<=T0 && pIn[i].t()>QS*QS))
+
       { //
           double decayTime = pIn[i].mean_form_time()  ;
 	    
@@ -707,9 +716,11 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   // use pIn information to sample z above, but use new_parent to calculate daughter partons below            
                   if (z*z*new_parent_t>QS)
                   {
+
                       tQd1 = generate_vac_t(pid_a, z*new_parent_nu, QS/2.0, z*z*new_parent_t, zeta+std::sqrt(2)*pIn[i].form_time(), iSplit_a);
                   } else { // SC
                       tQd1 = z*z*new_parent_t;
+
                   }
         
 
@@ -721,6 +732,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       tQd2 = generate_vac_t(pid_b, (1.0-z)*new_parent_nu, QS/2.0, (1.0-z)*(1.0-z)*new_parent_t, zeta+std::sqrt(2)*pIn[i].form_time(),iSplit_b);
                   } else { // SC
                       tQd2 = (1.0-z)*(1.0-z)*new_parent_t;
+
                   }
 		
                   l_perp2 = new_parent_t*z*(1.0 - z) - tQd2*z - tQd1*(1.0-z) ; ///< the transverse momentum squared
@@ -1805,7 +1817,7 @@ double Matter::fillQhatTab() {
 //        }
 
 	GetHydroCellSignal(tLoc, xLoc, yLoc, zLoc, check_fluid_info_ptr);
-	VERBOSE(8)<< MAGENTA<<"Temperature from medium = "<<check_fluid_info_ptr->temperature;
+	VERBOSE(7)<< MAGENTA<<"Temperature from Brick (Signal) = "<<check_fluid_info_ptr->temperature;
 	
 	tempLoc = check_fluid_info_ptr->temperature;
 	sdLoc = check_fluid_info_ptr->entropy_density;
@@ -1831,8 +1843,8 @@ double Matter::fillQhatTab() {
                 qhatLoc = qhatLoc*flowFactor;
                 if(qhatLoc<0.0) qhatLoc=0.0;
             } else { // use input qhat
-                if(brick_med) qhatLoc = qhat0*0.1973*flowFactor; 
-		else qhatLoc = qhat0/96.0*sdLoc*0.1973*flowFactor;  // qhat0 at s = 96fm^-3
+                if(brick_med) qhatLoc = qhat0*0.1973*flowFactor;  
+		else qhatLoc = qhat0/96.0*sdLoc*0.1973*flowFactor;  // qhat_over_T3 here is actually qhat0 at s = 96fm^-3
             }
         //    cout << "check qhat --  ener, T, qhat: " << initEner << "  " << tempLoc << "  " << qhatLoc << endl;
 
@@ -1897,6 +1909,7 @@ double Matter::fncAvrQhat(double zeta, double tau) {
     return(avrQhat);
 
 }
+
 
 //////////////////////////////////////////////////////////////////////////////////////
 
