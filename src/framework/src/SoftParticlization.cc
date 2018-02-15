@@ -9,11 +9,15 @@
 namespace Jetscape {
 
 SoftParticlization::SoftParticlization() {
-
+    Hadron_list_ = new std::vector< std::vector<Hadron>* >;
 }
 
 SoftParticlization::~SoftParticlization() {
-
+    for (unsigned i = 0; i < Hadron_list_->size(); i++) {
+        (*Hadron_list_)[i]->clear();
+    }
+    Hadron_list_->clear();
+    delete Hadron_list_;
 }
 
 void SoftParticlization::Init() {

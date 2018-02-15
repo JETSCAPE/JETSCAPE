@@ -31,7 +31,7 @@ class SoftParticlization: public JetScapeModuleBase {
     virtual void Clear();
 
     tinyxml2::XMLElement *xml_;
-    vector< vector<Hadron>* >* Hadron_list_;
+    std::vector< std::vector<Hadron>* >* Hadron_list_;
 };
 
 } // end namespace Jetscape

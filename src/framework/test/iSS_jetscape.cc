@@ -62,12 +62,13 @@ void iSS_CF::pass_hadron_list_to_JETSCAPE() {
     unsigned int nev = iSpectraSampler_ptr_->get_number_of_sampled_events();
     cout << "nev = " << nev << endl;
     for (unsigned int iev = 0; iev < nev; iev++) {
-        //Hadron_list_->push_back(new vector<Hadron>);
+        std::vector<Hadron>* test = new std::vector<Hadron>;
+        //Hadron_list_->push_back(test);
         unsigned int nparticles = (
                         iSpectraSampler_ptr_->get_number_of_particles(iev));
         cout << "iev = " << iev << " Npart = " << nparticles << endl;
-        for (unsigned int ipart = 0; ipart < nparticles; ipart++) {
-            cout << iSpectraSampler_ptr_->get_hadron(iev, ipart).pid << endl;
-        }
+        //for (unsigned int ipart = 0; ipart < nparticles; ipart++) {
+        //    cout << iSpectraSampler_ptr_->get_hadron(iev, ipart).pid << endl;
+        //}
     }
 }
