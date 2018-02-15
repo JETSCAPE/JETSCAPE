@@ -60,15 +60,26 @@ void iSS_CF::Clear() {
 
 void iSS_CF::pass_hadron_list_to_JETSCAPE() {
     unsigned int nev = iSpectraSampler_ptr_->get_number_of_sampled_events();
-    cout << "nev = " << nev << endl;
     for (unsigned int iev = 0; iev < nev; iev++) {
-        std::vector<Hadron>* test = new std::vector<Hadron>;
-        //Hadron_list_->push_back(test);
+        Hadron_list_->push_back(new std::vector<Hadron>);
         unsigned int nparticles = (
                         iSpectraSampler_ptr_->get_number_of_particles(iev));
-        cout << "iev = " << iev << " Npart = " << nparticles << endl;
-        //for (unsigned int ipart = 0; ipart < nparticles; ipart++) {
-        //    cout << iSpectraSampler_ptr_->get_hadron(iev, ipart).pid << endl;
-        //}
+        for (unsigned int ipart = 0; ipart < nparticles; ipart++) {
+            iSS_Hadron current_hadron = (
+                            iSpectraSampler_ptr_->get_hadron(iev, ipart));
+            int hadron_label = 0;
+            int hadron_status = -1;
+            int hadron_id = current_hadron.pid;
+            double hadron_mass = current_hadron.mass;
+            FourVector hadron_p(current_hadron.px, current_hadron.py,
+                                current_hadron.pz, current_hadron.E);
+            FourVector hadron_x(current_hadron.x, current_hadron.y,
+                                current_hadron.z, current_hadron.t);
+
+            // create a JETSCAPE Hadron
+            Hadron* jetscape_hadron = new Hadron(
+                hadron_label, hadron_id, hadron_status, hadron_p, hadron_x);
+            (*Hadron_list_)[iev]->push_back(*jetscape_hadron);
+        }
     }
 }
