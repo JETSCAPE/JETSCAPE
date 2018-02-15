@@ -78,8 +78,11 @@
 
      <Lbt>
        <name> Lbt </name>
-       <param1> 4 </param1>
-       <qhat> 1.0 </qhat>
+       <Q0> 1.0 </Q0>
+       <in_vac> 0 </in_vac>
+       <only_leading> 0 </only_leading>
+       <hydro_Tc> 0.15 </hydro_Tc>
+       <alphas> 0.2 </alphas>
      </Lbt>
      
      <Martini>
