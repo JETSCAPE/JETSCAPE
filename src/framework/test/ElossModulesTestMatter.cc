@@ -516,9 +516,16 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       pOut[iout].set_mean_form_time();
                       ft = 10000.0;
                       pOut[iout].set_form_time(ft);
-                      pOut[iout].set_color(el_color2);
-                      pOut[iout].set_anti_color(el_anti_color2);
-                      pOut[iout].set_max_color(max_color);
+                      ////pOut[iout].set_color(el_color2);
+                      ////pOut[iout].set_anti_color(el_anti_color2);
+                      ////pOut[iout].set_max_color(max_color);
+                      ////pOut[iout].set_min_color(pIn[i].min_color());
+                      ////pOut[iout].set_min_anti_color(pIn[i].min_anti_color());
+                      ////// comment out realistic color above, assume colorless for recoiled and back-reaction parton
+                      ////// for the convenience of color string fragmentation in Pythia
+		      pOut[iout].set_color(0); 
+                      pOut[iout].set_anti_color(0);
+                      pOut[iout].set_max_color(pIn[i].max_color());
                       pOut[iout].set_min_color(pIn[i].min_color());
                       pOut[iout].set_min_anti_color(pIn[i].min_anti_color());
               
@@ -528,15 +535,21 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       pOut[iout].set_mean_form_time();
                       ft = 10000.0;
                       pOut[iout].set_form_time(ft);
-                      pOut[iout].set_color(el_color3);
-                      pOut[iout].set_anti_color(el_anti_color3);
-                      pOut[iout].set_max_color(max_color);
+                      ////pOut[iout].set_color(el_color3);
+                      ////pOut[iout].set_anti_color(el_anti_color3);
+                      ////pOut[iout].set_max_color(max_color);
+                      ////pOut[iout].set_min_color(pIn[i].min_color());
+                      ////pOut[iout].set_min_anti_color(pIn[i].min_anti_color());
+                      pOut[iout].set_color(0);
+                      pOut[iout].set_anti_color(0);
+                      pOut[iout].set_max_color(pIn[i].max_color());
                       pOut[iout].set_min_color(pIn[i].min_color());
                       pOut[iout].set_min_anti_color(pIn[i].min_anti_color());
 
-                      pIn[i].set_color(el_color0);
-                      pIn[i].set_anti_color(el_anti_color0);
-                      pIn[i].set_max_color(el_max_color);
+                      ////// assumption: pIn doesn't change color in elastic scattering
+		      ////pIn[i].set_color(el_color0);
+                      ////pIn[i].set_anti_color(el_anti_color0);
+                      ////pIn[i].set_max_color(el_max_color);
  
 		  } // end if scattering	
 
