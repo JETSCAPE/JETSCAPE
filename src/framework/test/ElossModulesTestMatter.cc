@@ -29,6 +29,7 @@
 #define MAGENTA "\033[35m"
 
 using namespace Jetscape;
+using namespace std;
 
 const double QS = 1.0 ;
 
@@ -48,24 +49,103 @@ void Matter::Init()
   INFO<<"Intialize Matter ...";
 
   // Redundant (get this from Base) quick fix here for now
-  tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );  
+  tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );
+  if ( !eloss ) {
+    WARN << "Couldn't find tag Eloss";
+    throw std::runtime_error ("Couldn't find tag Eloss");    
+  }
   tinyxml2::XMLElement *matter=eloss->FirstChildElement("Matter");
+  if ( !matter ) {
+    WARN << "Couldn't find tag Eloss -> Matter";
+    throw std::runtime_error ("Couldn't find tag Eloss -> Matter");    
+  }
  
-  if (matter) {   
-    string s = matter->FirstChildElement( "name" )->GetText();
-    JSDEBUG << s << " to be initializied ...";
-
-    double m_qhat=-99.99;
-    matter->FirstChildElement("qhat")->QueryDoubleText(&m_qhat);
-    SetQhat(m_qhat);
-    qhat = GetQhat()/fmToGeVinv ;
-    JSDEBUG  << s << " with qhat = "<<GetQhat();
-      
+  string s = matter->FirstChildElement( "name" )->GetText();
+  JSDEBUG << s << " to be initializied ...";
+  
+  in_vac = false;
+  brick_med = true;
+  
+  qhat = 0.0;
+  Q00 = 1.0; // virtuality separation scale
+  qhat0 = 2.0; // GeV^2/fm for gluon at s = 96 fm^-3
+  alphas = 0.3; // only useful when qhat0 is a negative number
+  hydro_Tc = 0.16;
+  brick_length = 4.0;
+  vir_factor = 1.0;
+  
+  double m_qhat=-99.99;
+  if ( !matter->FirstChildElement("qhat0")) {
+    WARN << "Couldn't find sub-tag Eloss -> Matter -> qhat0";
+    throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> qhat0");
   }
-  else {
-    WARN << " : Matter not properly initialized in XML file ...";
-    throw std::runtime_error("Matter not properly initialized in XML file ...");
+  matter->FirstChildElement("qhat0")->QueryDoubleText(&m_qhat);
+  SetQhat(m_qhat);
+  //qhat = GetQhat()/fmToGeVinv ;
+  qhat0 = GetQhat()/fmToGeVinv ;
+  JSDEBUG  << s << " with qhat0 = "<<GetQhat();
+  
+  int flagInt=-100;
+  double inputDouble=-99.99;
+  
+  if ( !matter->FirstChildElement("in_vac") ) {
+    WARN << "Couldn't find sub-tag Eloss -> Matter -> in_vac";
+    throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> in_vac");
   }
+  matter->FirstChildElement("in_vac")->QueryIntText(&flagInt);
+  in_vac = flagInt;
+  
+  if ( !matter->FirstChildElement("brick_med") ) {
+    WARN << "Couldn't find sub-tag Eloss -> Matter -> brick_med";
+    throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> brick_med");
+  }
+  matter->FirstChildElement("brick_med")->QueryIntText(&flagInt);
+  brick_med = flagInt;
+  
+  if ( !matter->FirstChildElement("Q0") ) {
+    WARN << "Couldn't find sub-tag Eloss -> Matter -> Q0";
+    throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> Q0");
+  }
+  matter->FirstChildElement("Q0")->QueryDoubleText(&inputDouble);
+  Q00 = inputDouble;
+  
+  if ( !matter->FirstChildElement("alphas") ) {
+    WARN << "Couldn't find sub-tag Eloss -> Matter -> alphas";
+    throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> alphas");
+  }
+  matter->FirstChildElement("alphas")->QueryDoubleText(&inputDouble);
+  alphas = inputDouble;
+  
+  if ( !matter->FirstChildElement("hydro_Tc") ) {
+    WARN << "Couldn't find sub-tag Eloss -> Matter -> hydro_Tc";
+    throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> hydro_Tc");
+  }
+  matter->FirstChildElement("hydro_Tc")->QueryDoubleText(&inputDouble);
+  hydro_Tc = inputDouble;
+  
+  if ( !matter->FirstChildElement("brick_length") ) {
+    WARN << "Couldn't find sub-tag Eloss -> Matter -> brick_length";
+    throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> brick_length");
+  }
+  matter->FirstChildElement("brick_length")->QueryDoubleText(&inputDouble);
+  brick_length = inputDouble;
+  
+  if ( !matter->FirstChildElement("vir_factor") ) {
+    WARN << "Couldn't find sub-tag Eloss -> Matter -> vir_factor";
+    throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> vir_factor");
+  }
+  matter->FirstChildElement("vir_factor")->QueryDoubleText(&inputDouble);
+  vir_factor = inputDouble;
+  
+  if(vir_factor<0.0) {
+    cout << "Error: vir_factor < 0, reset to 1.0" << endl;
+    vir_factor=1.0;
+  }
+  
+  VERBOSE(7)<< MAGENTA << "MATTER input parameter";
+  VERBOSE(7)<< MAGENTA << "Q00:" << Q00;
+  INFO << "in_vac: " << in_vac << "  brick_med: " << brick_med;
+  INFO << "Q00: " << Q00 << " vir_factor: " << vir_factor << "  qhat0: " << qhat0*fmToGeVinv << " alphas: " << alphas << " hydro_Tc: " << hydro_Tc << " brick_length: " << brick_length;
 
   // Initialize random number distribution
   ZeroOneDistribution = uniform_real_distribution<double> { 0.0, 1.0 };
@@ -123,11 +203,27 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           xStart[j] = pIn[i].x_in().comp(j) ;
           //+ velocity[j]*delT;
       }
-	  
-      length = 5.0*fmToGeVinv; /// length in GeV-1 will have to changed for hydro
-                    
-      zeta = ( xStart[0] + std::sqrt( xStart[1]*xStart[1] + xStart[2]*xStart[2] + xStart[3]*xStart[3] )  )/std::sqrt(2);
-    
+
+      // SC: read in hydro
+      initR0 = xStart[0];
+      initRx = xStart[1];
+      initRy = xStart[2];
+      initRz = xStart[3];
+      initVx = velocity[1]/velocityMod;
+      initVy = velocity[2]/velocityMod;
+      initVz = velocity[3]/velocityMod;
+      initRdotV = initRx*initVx + initRy*initVy + initRz*initVz;
+      initEner = pIn[i].e();
+      if(!in_vac) length = fillQhatTab();
+      if(brick_med) length = brick_length*fmToGeVinv; /// length in GeV-1 will have to changed for hydro
+      //if(brick_med) length = 5.0*fmToGeVinv; /// length in GeV-1 will have to changed for hydro
+
+
+      //zeta = ( xStart[0] + std::sqrt( xStart[1]*xStart[1] + xStart[2]*xStart[2] + xStart[3]*xStart[3] )  )/std::sqrt(2);
+      // SC
+      zeta = ( xStart[0] + initRdotV )/std::sqrt(2)*fmToGeVinv;
+
+
       int pid = pIn[i].pid();
           
       if (pIn[i].form_time()<0.0) /// A parton without a virtuality or formation time, must set...
@@ -142,14 +238,19 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           {
               JSDEBUG << " parton is a quark ";
           }
-	    
-          tQ2 = generate_vac_t(pIn[i].pid(), pIn[i].nu(), QS/2.0, pIn[i].pt()*pIn[i].pt()/2.0 ,zeta , iSplit);
+
+	  
+	  // SC:  
+          double pT2 = pIn[i].p(1)*pIn[i].p(1)+pIn[i].p(2)*pIn[i].p(2);
+          //tQ2 = generate_vac_t(pIn[i].pid(), pIn[i].nu(), QS/2.0, pIn[i].e()*pIn[i].e() ,zeta , iSplit);
+          tQ2 = generate_vac_t(pIn[i].pid(), pIn[i].nu(), QS/2.0, pT2*vir_factor ,zeta , iSplit);
+
             	    
           // KK:
           pIn[i].set_jet_v(velocity);
           pIn[i].set_t(tQ2); // Also resets momentum!
           pIn[i].set_mean_form_time();
-          double ft = generate_L (pIn[i].mean_form_time() ) ;
+          double ft = generate_L(pIn[i].mean_form_time()) ;
           pIn[i].set_form_time(ft);
           
           unsigned int color=0, anti_color=0;
@@ -197,8 +298,30 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
  
           
       }
-          
-      if (pIn[i].t() > QS + rounding_error)
+
+      // SC: Q0 can be changed based on different setups
+      if(in_vac) { // for vaccuum
+	  qhat = 0.0;
+	  if(Q00 < 0.0) Q0 = 1.0; // set Q0 = 1 if Q00 < 0
+	  else Q0 = Q00;
+      } else { // for medium    
+	  double tempEner = initEner;
+          qhat = fncQhat(zeta);
+
+	  if(Q00 < 0.0) { // use dynamical Q0 if Q00 < 0
+	      if(pid==gid) Q0 = sqrt(sqrt(2.0*tempEner*qhat*sqrt(2.0)));
+	      else Q0 = sqrt(sqrt(2.0*tempEner*qhat*sqrt(2.0)/Ca*Cf));
+	      if(Q0 < 1.0) Q0 = 1.0;
+	      if(zeta > length) Q0 = 1.0;
+	  } else {
+              Q0 = Q00;
+          }
+      }
+
+      if(Q0<1.0) Q0=1.0;
+
+      //if (pIn[i].t() > QS + rounding_error)
+      if (pIn[i].t() > Q0*Q0 + rounding_error)
       { //
           double decayTime = pIn[i].mean_form_time()  ;
 	    
@@ -214,7 +337,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           {
               // do split
               double t_used = pIn[i].t();
-              if (t_used<QS)  t_used = QS;
+              //if (t_used<QS)  t_used = QS; // SC: not necessary
               double tau_form = 2.0*pIn[i].nu()/t_used;
               double z_low = QS/t_used/2.0 ;
               double z_hi = 1.0 - z_low;
@@ -271,7 +394,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   iSplit = 0;
               }
               int ifcounter = 0;
-              double l_perp2 = 0.0;
+              double l_perp2 = -1.0; // SC: initialization
               // daughter virtualities
               double tQd1 = QS;
               double tQd2 = QS;
@@ -340,6 +463,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   if (z*z*pIn[i].t()>QS)
                   {
                       tQd1 = generate_vac_t(pid_a, z*pIn[i].nu(), QS/2.0, z*z*pIn[i].t() ,zeta+std::sqrt(2)*pIn[i].form_time() , iSplit_a);
+                  } else { // SC
+                      tQd1 = z*z*pIn[i].t();
                   }
         
                   int iSplit_b = 0;
@@ -348,6 +473,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   if ((1.0-z)*(1.0-z)*pIn[i].t()>QS)
                   {
                       tQd2 = generate_vac_t(pid_b, (1.0-z)*pIn[i].nu(), QS/2.0, (1.0-z)*(1.0-z)*pIn[i].t() ,zeta+std::sqrt(2)*pIn[i].form_time(),iSplit_b);
+                  } else { // SC
+                      tQd2 = (1.0-z)*(1.0-z)*pIn[i].t();
                   }
 		
                   l_perp2 =  pIn[i].t()*z*(1.0 - z) - tQd2*z - tQd1*(1.0-z) ; ///< the transverse momentum squared
@@ -877,8 +1004,15 @@ double Matter::sud_z_GG(double cg, double cg1, double loc_e , double l_fac, doub
     
   m_fac = 1.0;
     
-  qL = m_fac*qhat*0.6*tau*profile(loc_e+tau) ;
-    
+  // SC
+  //qL = m_fac*qhat*0.6*tau*profile(loc_e+tau) ;
+  if(tau<rounding_error) {
+      qL = 0.0;
+  } else {
+      qhat = fncAvrQhat(loc_e,tau);
+      qL = qhat*0.6*tau;
+  }
+
   res = t25 + 2.0*qL*q12/cg1 ;
   //        }
   //        else{
@@ -928,8 +1062,15 @@ double Matter::P_z_gg_int(double cg, double cg1, double loc_e, double cg3, doubl
     
   //            if ((qhat*tau<1.0)&&(in_vac==false)) m_fac = 1.0/qhat/tau;
     
-  qL = m_fac*qhat*0.6*tau*profile(loc_e + tau) ;
-    
+  // SC
+  //qL = m_fac*qhat*0.6*tau*profile(loc_e + tau) ;
+  if(tau<rounding_error) {
+      qL = 0.0;
+  } else {
+      qhat = fncAvrQhat(loc_e,tau);
+      qL = qhat*0.6*tau;
+  }
+
   t9 = 2.0*cg1 - 1.0 / (-1.0 + cg1) - 1.0 / cg1 - 2.0 * cg + 1.0 / (-1.0 + cg) + 1.0 / cg;
     
   if (t9<0.0)
@@ -1075,9 +1216,16 @@ double Matter::sud_z_QQ(double cg, double cg1, double loc_e , double l_fac, doub
   if ((length - loc_e) < tau) tau = (length - loc_e);
     
   if (loc_e > length) tau = 0.0 ;
-    
-  qL = qhat*0.6*tau*profile(loc_e + tau) ;
-    
+
+  // SC  
+  //qL = qhat*0.6*tau*profile(loc_e + tau) ;
+  if(tau<rounding_error) {
+      qL = 0.0;
+  } else {
+      qhat = fncAvrQhat(loc_e,tau);
+      qL = qhat*0.6*tau;
+  }
+
   res = t14 + 2.0*qL*q15/cg1 ;
     
   return(res);
@@ -1106,9 +1254,17 @@ double Matter::P_z_qq_int(double cg, double cg1, double loc_e, double cg3, doubl
   if ((length - loc_e) < tau) tau = (length - loc_e);
     
   if (loc_e > length) tau = 0.0 ;
-    
-  qL = qhat*0.6*tau*profile(loc_e + tau) ;
-    
+ 
+  // SC  
+  //qL = qhat*0.6*tau*profile(loc_e + tau) ;
+  if(tau<rounding_error) {
+      qL = 0.0;
+  } else {
+      qhat = fncAvrQhat(loc_e,tau);
+      qL = qhat*0.6*tau;
+  }
+
+   
   q_q1 = std::log(cg1);
   q_q4 = std::log(1.0 - cg1);
   q_q6 = std::log(cg);
@@ -1234,9 +1390,17 @@ double Matter::sud_z_QG(double cg, double cg1, double loc_e, double l_fac,double
   if ((length - loc_e) < tau) tau = (length - loc_e);
     
   if (loc_e > length) tau = 0.0 ;
-    
-  qL = qhat*0.6*tau*profile(loc_e + tau) ;
-    
+
+  // SC  
+  //qL = qhat*0.6*tau*profile(loc_e + tau) ;
+  if(tau<rounding_error) {
+      qL = 0.0;
+  } else {
+      qhat = fncAvrQhat(loc_e,tau);
+      qL = qhat*0.6*tau;
+  }
+
+
     
   res = t17 + 2.0*qL*q14/cg1 ;
     
@@ -1280,9 +1444,17 @@ double Matter::P_z_qg_int(double cg, double cg1, double loc_e, double cg3, doubl
   if ((length - loc_e) < tau) tau = (length - loc_e);
     
   if (loc_e > length) tau = 0.0 ;
-    
-  qL = qhat*0.6*tau*profile(loc_e + tau) ;
-    
+
+  // SC
+  //qL = qhat*0.6*tau*profile(loc_e + tau) ;
+  if(tau<rounding_error) {
+      qL = 0.0;
+  } else {
+      qhat = fncAvrQhat(loc_e,tau);
+      qL = qhat*0.6*tau;
+  }
+
+   
   res = t12 + 2.0*qL*q10/cg3 ;
     
   return(res);
@@ -1337,5 +1509,142 @@ double Matter::profile(double zeta)
     
 }
 
+
+////////////////////////////////////////////////////////////////////////////////////////
+
+double Matter::fillQhatTab() {
+
+
+    double xLoc,yLoc,zLoc,tLoc;
+    double vxLoc,vyLoc,vzLoc,gammaLoc,betaLoc;
+    double edLoc,sdLoc;
+    double tempLoc;
+    double flowFactor,qhatLoc;
+    int hydro_ctl;
+    double lastLength=0.0;
+
+    double tStep = 0.1;
+
+    std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
+
+    for(int i = 0; i < dimQhatTab; i++) {
+        tLoc = tStep*i;
+
+	if(tLoc<initR0-tStep) {
+            qhatTab1D[i] = 0.0; 
+            continue;	    
+        }
+
+	xLoc = initRx+(tLoc-initR0)*initVx; 
+        yLoc = initRy+(tLoc-initR0)*initVy;
+        zLoc = initRz+(tLoc-initR0)*initVz;
+
+//        if(bulkFlag == 1) { // read OSU hydro
+//            readhydroinfoshanshan_(&tLoc,&xLoc,&yLoc,&zLoc,&edLoc,&sdLoc,&tempLoc,&vxLoc,&vyLoc,&vzLoc,&hydro_ctl);
+//        } else if(bulkFlag == 2) { // read CCNU hydro
+//            hydroinfoccnu_(&tLoc, &xLoc, &yLoc, &zLoc, &tempLoc, &vxLoc, &vyLoc, &vzLoc, &hydro_ctl);
+//        } else if(bulkFlag == 0) { // static medium
+//            vxLoc = 0.0;
+//            vyLoc = 0.0;
+//            vzLoc = 0.0;
+//            hydro_ctl = 0;
+//            tempLoc = T;
+//        }
+
+	GetHydroCellSignal(tLoc, xLoc, yLoc, zLoc, check_fluid_info_ptr);
+	VERBOSE(7)<< MAGENTA<<"Temperature from Brick (Signal) = "<<check_fluid_info_ptr->temperature;
+	
+	tempLoc = check_fluid_info_ptr->temperature;
+	sdLoc = check_fluid_info_ptr->entropy_density;
+	vxLoc = check_fluid_info_ptr->vx;
+	vyLoc = check_fluid_info_ptr->vy;
+	vzLoc = check_fluid_info_ptr->vz;
+
+	hydro_ctl=0;
+
+        if(hydro_ctl == 0 && tempLoc >= hydro_Tc) { 
+            lastLength = tLoc;
+            betaLoc = sqrt(vxLoc*vxLoc+vyLoc*vyLoc+vzLoc*vzLoc);
+            gammaLoc = 1.0/sqrt(1.0-betaLoc*betaLoc);
+            flowFactor = gammaLoc*(1.0-(initVx*vxLoc+initVy*vyLoc+initVz*vzLoc));
+
+            if(qhat0 < 0.0) { // calculate qhat with alphas
+                double muD2 = 6.0*pi*alphas*tempLoc*tempLoc;
+                // if(initEner > pi*tempLoc) qhatLoc = Ca*alphas*muD2*tempLoc*log(6.0*initEner*tempLoc/muD2);
+                // else qhatLoc = Ca*alphas*muD2*tempLoc*log(6.0*pi*tempLoc*tempLoc/muD2);
+                // fitted formula from https://arxiv.org/pdf/1503.03313.pdf
+                if(initEner > pi*tempLoc) qhatLoc = Ca*50.4864/pi*pow(alphas,2)*pow(tempLoc,3)*log(5.7*initEner*tempLoc/4.0/muD2);
+                else qhatLoc = Ca*50.4864/pi*pow(alphas,2)*pow(tempLoc,3)*log(5.7*pi*tempLoc*tempLoc/4.0/muD2);
+                qhatLoc = qhatLoc*flowFactor;
+                if(qhatLoc<0.0) qhatLoc=0.0;
+            } else { // use input qhat
+                if(brick_med) qhatLoc = qhat0*0.1973*flowFactor;  
+		else qhatLoc = qhat0/96.0*sdLoc*0.1973*flowFactor;  // qhat_over_T3 here is actually qhat0 at s = 96fm^-3
+            }
+        //    cout << "check qhat --  ener, T, qhat: " << initEner << "  " << tempLoc << "  " << qhatLoc << endl;
+
+        } else { // outside the QGP medium
+            qhatLoc = 0.0;
+        }
+
+        qhatTab1D[i] = qhatLoc/sqrt(2.0); // store qhat value in light cone coordinate         
+
+    }
+
+    for(int i = 0; i < dimQhatTab; i++) { // dim of loc
+
+        double totValue = 0.0;
+
+        for(int j = 0; i+j < dimQhatTab; j++) { // dim of tau_f
+
+            totValue = totValue+qhatTab1D[i+j];             
+            qhatTab2D[i][j] = totValue/(j+1);
+
+        }
+    }
+
+    //return(lastLength*sqrt(2.0)*5.0); // light cone + GeV unit
+    return( (lastLength+initRdotV)/sqrt(2.0)*5.0 ); // light cone + GeV unit
+  
+}
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+double Matter::fncQhat(double zeta) {
+
+    if(in_vac) return(0.0);
+
+    double tStep = 0.1;
+    //int indexZeta = (int)(zeta/sqrt(2.0)/5.0/tStep+0.5); // zeta was in 1/GeV and light cone coordinate
+    int indexZeta = (int)((sqrt(2.0)*zeta-initRdotV)/5.0/tStep+0.5); // zeta was in 1/GeV and light cone coordinate
+
+    if(indexZeta >= dimQhatTab) indexZeta = dimQhatTab-1;      
+    
+    double avrQhat = qhatTab1D[indexZeta]; 
+    return(avrQhat);
+
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+double Matter::fncAvrQhat(double zeta, double tau) {
+
+    if(in_vac) return(0.0);
+
+    double tStep = 0.1;
+    //int indexZeta = (int)(zeta/sqrt(2.0)/5.0/tStep+0.5); // zeta was in 1/GeV and light cone coordinate
+    int indexZeta = (int)((sqrt(2.0)*zeta-initRdotV)/5.0/tStep+0.5); // zeta was in 1/GeV and light cone coordinate
+    int indexTau = (int)(tau/sqrt(2.0)/5.0/tStep+0.5); // tau was in 1/GeV and light cone coordinate
+
+    if(indexZeta >= dimQhatTab) indexZeta = dimQhatTab-1;      
+    if(indexTau >= dimQhatTab) indexTau = dimQhatTab-1;      
+    
+    double avrQhat = qhatTab2D[indexZeta][indexTau]; 
+    return(avrQhat);
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////
 
 

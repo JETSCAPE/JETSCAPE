@@ -237,9 +237,9 @@ class LBT : public JetEnergyLossModule<LBT> //, public std::enable_shared_from_t
   double Pj0[4]={0.0};
   		
   double V[4][dimParList]={{0.0}};     //parton position 
-  double P[6][dimParList]={{0.0}};     //parton 4-momentum
+  double P[7][dimParList]={{0.0}};     //parton 4-momentum
   double V0[4][dimParList]={{0.0}};    //negative parton position
-  double P0[6][dimParList]={{0.0}};    //negative parton 4-momentum
+  double P0[7][dimParList]={{0.0}};    //negative parton 4-momentum
   
   double Prad[4][dimParList]={{0.0}};		
   
@@ -300,8 +300,9 @@ class LBT : public JetEnergyLossModule<LBT> //, public std::enable_shared_from_t
   int loopN=1000;
   
   int numInitXY=0; 
-  int flagScatter;
-   
+  int flagScatter,flag_update,flag_update0;
+  double Q00,Q0;
+
   //...functions	  
   
   void LBT0(int &n, double &ti);
