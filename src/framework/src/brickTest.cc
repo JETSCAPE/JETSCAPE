@@ -67,7 +67,7 @@ int main(int argc, char** argv)
    
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",10);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",2);
   jetscape->SetId("primary");
   // jetscape->set_reuse_hydro (true);
   // jetscape->set_n_reuse_hydro (10);
@@ -118,7 +118,7 @@ int main(int argc, char** argv)
   // hardcoded at 5 to be changed to xml)
   jloss->Add(matter);
 
-  jloss->Add(martini);
+  //jloss->Add(martini);
   // jloss->Add(adscft);  
 
 
@@ -128,8 +128,8 @@ int main(int argc, char** argv)
 
   jetscape->Add(printer);
 
-  //hadro->Add(hadroModule);
-  hadro->Add(colorless);
+  hadro->Add(hadroModule);
+  //hadro->Add(colorless);
   hadroMgr->Add(hadro);
   jetscape->Add(hadroMgr);
 

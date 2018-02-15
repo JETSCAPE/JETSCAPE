@@ -37,6 +37,8 @@ class JetScapeWriterAscii : public JetScapeWriter
   void Write(weak_ptr<Parton> p);
   void Write(weak_ptr<Vertex> v);
 
+  void Write(weak_ptr<Hadron> h);
+
   void Write(string s) {output_file<<s<<endl;}
   void WriteComment(string s) {output_file<<"# "<<s<<endl;}
   void WriteWhiteSpace(string s) {output_file<<s<<" ";}
