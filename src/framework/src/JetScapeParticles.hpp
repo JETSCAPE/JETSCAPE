@@ -55,6 +55,8 @@
 #include "JetScapeLogger.h"
 #include "PartonShower.h"
 
+#include "Pythia8/Pythia.h"
+
 #include <vector>
 #include <memory>
 #include <iostream>
@@ -62,7 +64,6 @@
 #include <iomanip>
 
 using std::ostream;
-
 
 namespace Jetscape {
 
@@ -266,11 +267,11 @@ namespace Jetscape {
 
     virtual double form_time();
     virtual const double mean_form_time();
-      virtual void set_color(unsigned int col); ///< sets the color of the parton
-      virtual void set_anti_color(unsigned int acol); ///< sets anti-color of the parton
-      virtual void set_max_color(unsigned int col); ///< sets the color of the parton
-      virtual void set_min_color(unsigned int col); ///< sets the color of the parton
-      virtual void set_min_anti_color(unsigned int acol); ///< sets anti-color of the parton
+    virtual void set_color(unsigned int col); ///< sets the color of the parton
+    virtual void set_anti_color(unsigned int acol); ///< sets anti-color of the parton
+    virtual void set_max_color(unsigned int col); ///< sets the color of the parton
+    virtual void set_min_color(unsigned int col); ///< sets the color of the parton
+    virtual void set_min_anti_color(unsigned int acol); ///< sets anti-color of the parton
 
       
       
@@ -283,11 +284,11 @@ namespace Jetscape {
     
     const double t();
     void set_t(double t); ///< virtuality of particle, \WARNING: rescales the spatial component
-      unsigned int color(); ///< returns the color of the parton
-      unsigned int anti_color(); ///< returns the anti-color of the parton
-      unsigned int max_color();
-      unsigned int min_color();
-      unsigned int min_anti_color();
+    unsigned int color(); ///< returns the color of the parton
+    unsigned int anti_color(); ///< returns the anti-color of the parton
+    unsigned int max_color();
+    unsigned int min_color();
+    unsigned int min_anti_color();
 
     
     const int edgeid() const;
@@ -301,49 +302,51 @@ namespace Jetscape {
   protected :
     double mean_form_time_  ; ///< Mean formation time
     double form_time_       ; ///< event by event formation time
-      unsigned int Color_      ; ///< Large Nc color of parton
-      unsigned int antiColor_  ;///< Large Nc anti-color of parton
-      unsigned int MaxColor_    ; ///< the running maximum color
-      unsigned int MinColor_    ; ///< color of the parent
-      unsigned int MinAntiColor_; ///< anti-color of the parent
+    unsigned int Color_      ; ///< Large Nc color of parton
+    unsigned int antiColor_  ;///< Large Nc anti-color of parton
+    unsigned int MaxColor_    ; ///< the running maximum color
+    unsigned int MinColor_    ; ///< color of the parent
+    unsigned int MinAntiColor_; ///< anti-color of the parent
 
     shared_ptr<PartonShower> pShower_; ///< shower that this parton belongs to
     int edgeid_             ; ///< Position in the shower graph    
-    
+
+    // give it a static pythia to look up particle properties
+    // Be a bit careful with it!
+    // Init is never called, and this object is not configured. All it can do is look up
+    // in its original Data table
+    static Pythia8::Pythia InternalHelperPythia;
     
     // helpers
     void initialize_form_time();
+    void CheckAcceptability ( int id ); ///< restrict to a few pids only.
     
   };
 
-  //Dummy Hadron type definition  
-  //typedef Jetscape::Parton Hadron;
+  class Hadron : public JetScapeParticleBase
+  {
+  public:
+        
+    Hadron (int label, int id, int stat, const FourVector& p, const FourVector& x);
+    Hadron (int label, int id, int stat, double pt, double eta, double phi, double e, double* x=0);
+    Hadron (const Hadron& srh);
+        
+    Hadron& operator=( Hadron &c);
+    Hadron& operator=( const Hadron &c);
 
-    class Hadron : public JetScapeParticleBase
+    void set_decay_width(double width)
     {
-        public:
+      width_ = width;
+    }
         
-        Hadron (int label, int id, int stat, const FourVector& p, const FourVector& x);
-        Hadron (int label, int id, int stat, double pt, double eta, double phi, double e, double* x=0);
-        Hadron (const Hadron& srh);
+    double decay_width()
+    {
+      return(width_);
+    }
+  protected:
+    double width_;
         
-        Hadron& operator=( Hadron &c);
-        Hadron& operator=( const Hadron &c);
-
-
-        void set_decay_width(double width)
-        {
-            width_ = width;
-        }
-        
-        double decay_width()
-        {
-            return(width_);
-        }
-    protected:
-        double width_;
-        
-    };
+  };
     
     
 };  /// end of namespace Jetscape
