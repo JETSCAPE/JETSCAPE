@@ -377,7 +377,7 @@ void JetEnergyLoss::WriteTask(weak_ptr<JetScapeWriter> w)
       
       for (nIt = pShower->nodes_begin(), nEnd = pShower->nodes_end(); nIt != nEnd; ++nIt)
 	{
-	  w.lock()->WriteWhiteSpace("V ["+to_string(nIt->id())+"]");
+	  w.lock()->WriteWhiteSpace("["+to_string(nIt->id())+"]");
 	  w.lock()->Write(pShower->GetVertex(*nIt));
 	}
       
@@ -385,7 +385,7 @@ void JetEnergyLoss::WriteTask(weak_ptr<JetScapeWriter> w)
       
       for (eIt = pShower->edges_begin(), eEnd = pShower->edges_end(); eIt != eEnd; ++eIt)
 	{
-	  w.lock()->WriteWhiteSpace("P ["+to_string(eIt->source().id())+"]=>["+to_string(eIt->target().id())+"]");
+	  w.lock()->WriteWhiteSpace("["+to_string(eIt->source().id())+"]=>["+to_string(eIt->target().id())+"]");
 	  w.lock()->Write(pShower->GetParton(*eIt));
 	}
     }

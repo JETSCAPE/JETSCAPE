@@ -12,6 +12,7 @@
 #include <GTL/edge_map.h>
 #include <GTL/node_map.h>
 #include "JetClass.hpp"
+#include "JetScapeParticles.hpp"
 #include "JetScapeLogger.h"
 #include "StringTokenizer.h"
 #include "PartonShower.h"
@@ -46,6 +47,8 @@ class JetScapeReader
   
   //shared_ptr<PartonShower> GetPartonShower() {return pShower;}
   vector<shared_ptr<PartonShower>> GetPartonShowers() {return pShowers;}
+
+  vector<shared_ptr<Hadron>> GetFinalStateHadrons(){return hadrons;}
   
  private:
 
@@ -55,7 +58,7 @@ class JetScapeReader
   void AddNode(string s);
   void AddEdge(string s);
   //void MakeGraph();
-  
+  void AddHadron(string s); 
   string file_name_in;
   T inFile;
   
@@ -66,7 +69,9 @@ class JetScapeReader
   vector<shared_ptr<PartonShower>> pShowers;
   
   vector<node> nodeVec;
-  vector<edge> edgeVec; 
+  vector<edge> edgeVec;
+
+  vector<shared_ptr<Hadron>> hadrons; 
   
  };
 

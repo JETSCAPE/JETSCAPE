@@ -88,6 +88,18 @@ bool StringTokenizer::isEventEntry() const
     return false;
 }
 
+bool StringTokenizer::isHadronEntry() const
+{
+  if (buffer.length()>0)
+    if (buffer.find("H")<1)
+      return true;
+    else
+      return false;
+  else
+    return false;
+
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // reset string buffer, delimiter and the currsor position
 ///////////////////////////////////////////////////////////////////////////////

@@ -59,6 +59,8 @@ int main(int argc, char** argv)
   
   vector<shared_ptr<PartonShower>> mShowers;
 
+  vector<shared_ptr<Hadron>> hadrons;
+
   //Directly with template: provide the relevant stream
   //auto reader=make_shared<JetScapeReader<ifstream>>("test_out.dat");
   //auto reader=make_shared<JetScapeReader<igzstream>>("test_out.dat.gz");
@@ -108,6 +110,13 @@ int main(int argc, char** argv)
 
 	  // wait for 5s
 	  //std::this_thread::sleep_for(std::chrono::milliseconds(5000));  
+	}
+
+	hadrons = reader->GetFinalStateHadrons();
+        cout<<"Number of hadrons is: " << hadrons.size() << endl;
+	for(unsigned int i=0; i<hadrons.size(); i++)
+	{
+		cout<<"For Hadron Number "<<i<<" "<< hadrons[i].get()->e() << " "<< hadrons[i].get()->px()<< " "<< hadrons[i].get()->py() << " "<< hadrons[i].get()->pz()<< " "<< hadrons[i].get()->pt()<<  endl;
 	}
     }
     
