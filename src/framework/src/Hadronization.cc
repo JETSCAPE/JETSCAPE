@@ -82,8 +82,9 @@ void Hadronization::WriteTask(weak_ptr<JetScapeWriter> w)
     w.lock()->WriteComment("Final State Hadrons");
     for(unsigned int i=0; i<GetHadrons().size(); i++)
     {
-      w.lock()->WriteWhiteSpace("["+to_string(i)+"]");
+      w.lock()->WriteWhiteSpace("H ["+to_string(i)+"]");
       w.lock()->Write(GetHadrons().at(i));
+
     }
   }
   else
