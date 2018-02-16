@@ -75,7 +75,7 @@ void MPI_MUSIC::evolve_hydro() {
 }
 
 
-void MPI_MUSIC::get_hydro_info(real t, real x, real y, real z,
+void MPI_MUSIC::get_hydro_info(Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
 			   std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr){
   
   fluidCell *fluidCell_ptr = new fluidCell;
