@@ -66,14 +66,23 @@
      <!-- Just a test here (no physics implemented in Matter and Martini ... -->
      <Matter>
        <name>Matter</name>
-       <param1> 2 </param1>
-       <qhat> 1.0 </qhat>
+       <Q0> 1.0 </Q0>
+       <vir_factor> 1.0 </vir_factor>
+       <in_vac> 1 </in_vac>
+       <brick_med> 1 </brick_med>
+       <brick_length> 5.0 </brick_length>
+       <hydro_Tc> 0.15 </hydro_Tc>
+       <qhat0> 1.0 </qhat0>
+       <alphas> 0.25 </alphas>
      </Matter>
 
      <Lbt>
        <name> Lbt </name>
-       <param1> 4 </param1>
-       <qhat> 1.0 </qhat>
+       <Q0> 1.0 </Q0>
+       <in_vac> 0 </in_vac>
+       <only_leading> 0 </only_leading>
+       <hydro_Tc> 0.15 </hydro_Tc>
+       <alphas> 0.2 </alphas>
      </Lbt>
      
      <Martini>
@@ -89,22 +98,46 @@
      
    </Eloss>
 
-    <!-- Hydro  Module ... -->
-    <Hydro>
-        <Hydro1>
-            <name>Hydro1</name>
-            <eta> 0.2 </eta>
-        </Hydro1>
+   <!-- Hydro  Module ... -->
+   <Hydro>
+     
+     <Hydro1>
+       <name>Hydro1</name>
+       <eta> 0.2 </eta>
+     </Hydro1>
 
-        <!-- Test Brick if bjorken_expansion_on="true", T(t) = T * (start_time[fm]/t)^{1/3} -->
-        <Brick bjorken_expansion_on="false" start_time="0.6">
-            <name>Brick</name>
-            <T>0.3</T>  <!-- GeV -->
-        </Brick>
+     <!-- Test Brick if bjorken_expansion_on="true", T(t) = T * (start_time[fm]/t)^{1/3} -->
+     <Brick bjorken_expansion_on="false" start_time="0.6">
+       <name>Brick</name>
+       <T>0.2</T>
+     </Brick>
 
-        <!-- Test Gubser ... -->
-        <Gubser>
-        </Gubser>
+     <!-- Test Gubser ... -->
+     <Gubser>
+     </Gubser>
+     
+     <!-- hydro from a file ... -->
+     <hydro_from_file>
+         <name> hydro from a file </name>
+         <!-- read in file type ... -->
+         <!-- hydro_type == 1 read in evo file from VISHNew... -->
+         <!-- hydro_type == 2 read in evo file from MUSIC... -->
+         <hydro_type>2</hydro_type>
+         <!-- VISHNew hydro evolution filename (hdf5 format)... -->
+         <VISH_file>test/test_hydro_files/VISH_evo.h5</VISH_file>
+         <!-- flag whether read in viscous information -->
+         <!-- (only works for VISHNew evo files)... -->
+         <load_viscous_info>False</load_viscous_info>
+         <!-- MUSIC hydro evolution filename (plain binary format)... -->
+         <!-- the associated input file specifies the grid information -->
+         <MUSIC_input_file>test/test_hydro_files/MUSIC_input</MUSIC_input_file>
+         <MUSIC_file>test/test_hydro_files/MUSIC_evo.dat</MUSIC_file>
+         <!-- transition temperature between QGP and Hadron Resonance Gas -->
+         <T_c>0.154</T_c>
+         <!-- read in hydro evo file every Ntau step -->
+         <!-- (only works for MUSIC evo files)... -->
+         <read_hydro_every_ntau>1</read_hydro_every_ntau>
+     </hydro_from_file>
      
         <!-- hydro from a file ... -->
         <hydro_from_file>

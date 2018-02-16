@@ -100,7 +100,7 @@ void MPI_MUSIC::get_hydro_info(
         }
     }
     fluid_cell_info_ptr->bulk_Pi = fluidCell_ptr->bulkPi;
-
+  
     delete fluidCell_ptr;
 }
 
