@@ -27,8 +27,44 @@ void iSS_CF::InitTask() {
     }
     string input_file = (
                 iSS_xml_->FirstChildElement("iSS_input_file")->GetText());
-    iSpectraSampler_ptr_ = new iSS;
+    string working_path = (
+                iSS_xml_->FirstChildElement("iSS_working_path")->GetText());
+    int hydro_mode;
+    iSS_xml_->FirstChildElement("hydro_mode")->QueryIntText(&hydro_mode);
+
+    int number_of_repeated_sampling;
+    iSS_xml_->FirstChildElement("number_of_repeated_sampling")->QueryIntText(
+                                            &number_of_repeated_sampling);
+
+    iSpectraSampler_ptr_ = new iSS(working_path);
     iSpectraSampler_ptr_->paraRdr_ptr->readFromFile(input_file);
+
+    // overwrite some parameters
+    iSpectraSampler_ptr_->paraRdr_ptr->setVal("hydro_mode", hydro_mode);
+    iSpectraSampler_ptr_->paraRdr_ptr->setVal("output_samples_into_files", 0);
+    iSpectraSampler_ptr_->paraRdr_ptr->setVal("use_OSCAR_format", 1);
+    iSpectraSampler_ptr_->paraRdr_ptr->setVal("store_samples_in_memory", 1);
+    iSpectraSampler_ptr_->paraRdr_ptr->setVal("number_of_repeated_sampling",
+                                              number_of_repeated_sampling);
+
+    // set default parameters
+    iSpectraSampler_ptr_->paraRdr_ptr->setVal("turn_on_shear", 1);
+    iSpectraSampler_ptr_->paraRdr_ptr->setVal("turn_on_bulk", 0);
+    iSpectraSampler_ptr_->paraRdr_ptr->setVal("turn_on_rhob", 0);
+    iSpectraSampler_ptr_->paraRdr_ptr->setVal("turn_on_diff", 0);
+    
+    iSpectraSampler_ptr_->paraRdr_ptr->setVal("include_deltaf_shear", 1);
+    iSpectraSampler_ptr_->paraRdr_ptr->setVal("include_deltaf_bulk", 0);
+    iSpectraSampler_ptr_->paraRdr_ptr->setVal("bulk_deltaf_kind", 1);
+    iSpectraSampler_ptr_->paraRdr_ptr->setVal("include_deltaf_diffusion", 0);
+    
+    iSpectraSampler_ptr_->paraRdr_ptr->setVal("restrict_deltaf", 0);
+    iSpectraSampler_ptr_->paraRdr_ptr->setVal("deltaf_max_ratio", 1.0);
+    iSpectraSampler_ptr_->paraRdr_ptr->setVal("f0_is_not_small", 1);
+
+    iSpectraSampler_ptr_->paraRdr_ptr->setVal("calculate_vn", 0);
+    iSpectraSampler_ptr_->paraRdr_ptr->setVal("MC_sampling", 2);
+
     iSpectraSampler_ptr_->paraRdr_ptr->echo();
 }
 

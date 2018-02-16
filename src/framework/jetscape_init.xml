@@ -139,7 +139,19 @@
     <SoftParticlization>
         <!-- iSpectraSampler -->
         <iSS>
+            <!-- read in file type ... -->
+            <!-- hydro_mode == 0 read in surface file from VISHNew... -->
+            <!-- hydro_mode == 1 read in surface file from MUSIC (2+1)D... -->
+            <!-- hydro_mode == 2 read in surface file from MUSIC (3+1)D... -->
+            <hydro_mode>1</hydro_mode>
+
+            <!-- file path for the default input file ... -->
             <iSS_input_file>iSS_parameters.dat</iSS_input_file>
+            <!-- directory path where the hydro surface is stored ... -->
+            <iSS_working_path>.</iSS_working_path>
+            
+            <number_of_repeated_sampling>10</number_of_repeated_sampling>
+
         </iSS>
     </SoftParticlization>
 </jetscape>
