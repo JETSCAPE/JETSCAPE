@@ -118,7 +118,7 @@ int main(int argc, char** argv)
   // hardcoded at 5 to be changed to xml)
   jloss->Add(matter);
 
-  jloss->Add(martini);
+  //jloss->Add(martini);
   // jloss->Add(adscft);  
 
 
@@ -128,8 +128,8 @@ int main(int argc, char** argv)
 
   jetscape->Add(printer);
 
-  //hadro->Add(hadroModule);
-  hadro->Add(colorless);
+  hadro->Add(hadroModule);
+  //hadro->Add(colorless);
   hadroMgr->Add(hadro);
   jetscape->Add(hadroMgr);
 

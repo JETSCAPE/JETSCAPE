@@ -126,6 +126,11 @@ namespace Jetscape {
     jet_v_ =FourVector(v);
   }
     
+    void JetScapeParticleBase::set_jet_v(FourVector j)
+    {
+        jet_v_ = j;
+    }
+    
   //  end setters
     
   //  start getters        
@@ -347,7 +352,7 @@ namespace Jetscape {
 
   void Parton::set_mean_form_time ()
   {
-    mean_form_time_ = 2.0*e()/t();
+    mean_form_time_ = 2.0*e()/(t()+0.001);
   }
   
   void Parton::set_form_time(double form_time)
