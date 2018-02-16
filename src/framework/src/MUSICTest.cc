@@ -93,7 +93,7 @@ int main(int argc, char** argv)
   auto pGun= make_shared<PGun> ();
 
 
-    auto printer = make_shared<PartonPrinter> ();
+  auto printer = make_shared<PartonPrinter> ();
 
  //   auto hadroMgr = make_shared<HadronizationManager> ();
  //   auto hadro = make_shared<Hadronization> ();

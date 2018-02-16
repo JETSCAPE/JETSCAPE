@@ -1,4 +1,4 @@
-// Copyright @ Bjoern Schenke, Sangyong Jeon, Charles Gale, and Chun Shen
+
 #include <stdio.h>
 #include <sys/stat.h>
 
@@ -10,89 +10,47 @@
 using namespace std;
 
 FREESTREAM::FREESTREAM() {
-    preequilibrium_status = NOT_START;
-    //doCooperFrye = 0;
-    SetId("Freestream-Milne");
+  preequilibrium_status = NOT_START;
+  SetId("Freestream-Milne");
 }
 
 
 FREESTREAM::~FREESTREAM() {
-    //if (hydro_status != NOT_START) {delete music_hydro_ptr;
-    }
+  if (preequilibrium_status != NOT_START) delete fsmilne_ptr;
 }
 
 
 void FREESTREAM::initialize_preequilibrium(Parameter parameter_list) {
-    INFO << "Initialize freestream-milne ...";
-    VERBOSE(8);
-    tinyxml2::XMLElement *para =
-                    GetPreequilibriumXML()->FirstChildElement("Preequilibrium");
-    if (!para) {
-        WARN << " : freestream-milne not properly initialized in XML file ...";
-        exit(-1);
-    }
-    string input_file = para->FirstChildElement("freestream_milne_input_file")->GetText();
-    //para->FirstChildElement("Perform_CooperFrye_Feezeout")->QueryIntText(
-                                                                &doCooperFrye);
-    //int argc = 2;
-    //char **argv = new char* [argc];
-    //argv[0] = new char[9];
-    //strcpy(argv[0], "mpihydro");
-    //argv[1] = new char[input_file.length() + 1];
-    //strcpy(argv[1], input_file.c_str());
-    //cout << "check input for MUSIC: " << endl;
-    //for (int i = 0; i < argc; i++) {
-    //    cout << argv[i] << "  ";
-    //}
-    //cout << endl;
-    //music_hydro_ptr = new MUSIC(argc, argv);
+  INFO << "Initialize freestream-milne ...";
+  VERBOSE(8);
+  tinyxml2::XMLElement *para = GetPreequilibriumXML()->FirstChildElement("Preequilibrium");
+  if (!para) {
+    WARN << " : freestream-milne not properly initialized in XML file ...";
+    exit(-1);
+  }
+  string input_file = para->FirstChildElement("freestream_milne_input_file")->GetText(); //is this necessary? if we just force the user to have the 'freestream_input' file in the correct directory
 
-    //for (int i = 0; i < argc; i++) {delete[] argv[i];}
-    //delete[] argv;
+  fsmilne_ptr = new FREESTREAMMILNE();
+
 }
 
 
 void FREESTREAM::evolve_preequilibrium() {
-    VERBOSE(8);
-    INFO << "Initialize density profiles in freestream-milne ...";
-    std::vector<double> entropy_density = ini->entropy_density_distribution_;
-    double dx = ini->get_x_step();
-    //music_hydro_ptr->initialize_hydro_from_vector(entropy_density, dx);
-    INFO << "initial density profile dx = " << dx << " fm";
-    preequilibrium_status = INITIALIZED;
-    if (pressure_status == INITIALIZED) {
-        INFO << "running freestream-milne ...";
-        //music_hydro_ptr->run_hydro();
-        preequilibrium_status = FINISHED;
-    }
-    //if (preequilibrium_status == FINISHED) {music_hydro_ptr->run_Cooper_Frye(1);
-    }
+  VERBOSE(8);
+  INFO << "Initialize energy density profile in freestream-milne ...";
+  //grab initial energy density from vector from initial state module
+  std::vector<double> entropy_density = ini->entropy_density_distribution_; //change this to the energy density!!!
+  fsmilne_ptr->initialize_from_vector(entropy_density); //this needs to to be the energy density!!!
+  preequilibrium_status = INITIALIZED;
+  if (preequilibrium_status == INITIALIZED) {
+    INFO << "running freestream-milne ...";
+    //evolve the medium via freestreaming
+    fsmilne_ptr->run_freestream_milne();
+    preequilibrium_status = FINISHED;
+  }
+
+  //now send the resulting hydro variables to the hydro module
+
 }
 
-/*
-void MPI_MUSIC::get_hydro_info(real t, real x, real y, real z,
-                               FluidCellInfo* fluid_cell_info_ptr) {
-    fluidCell *fluidCell_ptr = new fluidCell;
-    music_hydro_ptr->get_hydro_info(x, y, z, t, fluidCell_ptr);
-    fluid_cell_info_ptr->energy_density = fluidCell_ptr->ed;
-    fluid_cell_info_ptr->entropy_density = fluidCell_ptr->sd;
-    fluid_cell_info_ptr->temperature = fluidCell_ptr->temperature;
-    fluid_cell_info_ptr->pressure = fluidCell_ptr->pressure;
-    fluid_cell_info_ptr->vx = fluidCell_ptr->vx;
-    fluid_cell_info_ptr->vy = fluidCell_ptr->vy;
-    fluid_cell_info_ptr->vz = fluidCell_ptr->vz;
-    fluid_cell_info_ptr->mu_B = 0.0;
-    fluid_cell_info_ptr->mu_C = 0.0;
-    fluid_cell_info_ptr->mu_S = 0.0;
-    fluid_cell_info_ptr->qgp_fraction = 0.0;
-
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            fluid_cell_info_ptr->pi[i][j] = fluidCell_ptr->pi[i][j];
-        }
-    }
-    fluid_cell_info_ptr->bulk_Pi = fluidCell_ptr->bulkPi;
-
-    delete fluidCell_ptr;
 }
-*/

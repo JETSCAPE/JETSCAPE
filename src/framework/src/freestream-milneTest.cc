@@ -17,19 +17,19 @@
 //#include "JetScapeWriterAsciiGZ.h"
 //#include "JetScapeWriterHepMC.h"
 
-// User modules derived from jetscape framework clasess
-// to be used to run Jetscape ...
+//User modules derived from jetscape framework clasess
+//to be used to run Jetscape ...
 #include "AdSCFT.h"
 #include "ElossModulesTestMatter.h"
 #include "ElossModulesTestMartini.h"
 #include "freestream-milne_jetscape.h"
+#include "music_jetscape.h"
 #include "TrentoInitial.h"
 #include "PGun.h"
 #include "PartonPrinter.h"
 //#include "HadronizationManager.h"
 //#include "Hadronization.h"
 //#include "HadronizationModuleTest.h"
-
 
 #include <chrono>
 #include <thread>
@@ -50,8 +50,8 @@ int main(int argc, char** argv)
 
   cout<<endl;
 
-  // DEBUG=true by default and REMARK=false
-  // can be also set also via XML file (at least partially)
+  //DEBUG=true by default and REMARK=false
+  //can be also set also via XML file (at least partially)
   JetScapeLogger::Instance()->SetInfo(true);
   JetScapeLogger::Instance()->SetDebug(true);
   JetScapeLogger::Instance()->SetRemark(false);
@@ -61,9 +61,9 @@ int main(int argc, char** argv)
 
   Show();
 
-  // auto jetscape = make_shared<JetScape>("./jetscape_init.xml",10);
-  // jetscape->set_reuse_hydro (true);
-  // jetscape->set_n_reuse_hydro (5);
+  //auto jetscape = make_shared<JetScape>("./jetscape_init.xml",10);
+  //jetscape->set_reuse_hydro (true);
+  //jetscape->set_n_reuse_hydro (5);
 
   auto jetscape = make_shared<JetScape>("./jetscape_init.xml",1);
   jetscape->set_reuse_hydro (false);
@@ -72,7 +72,7 @@ int main(int argc, char** argv)
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
   auto trento = make_shared<TrentoInitial> ();
-  auto freestream = make_shared<Freestream> ();
+  auto freestream = make_shared<FREESTREAM> ();
   auto hydro = make_shared<MPI_MUSIC> ();
   //auto hydro = make_shared<GubserHydro> ();
 
@@ -88,13 +88,11 @@ int main(int argc, char** argv)
 
   auto pGun= make_shared<PGun> ();
 
+  auto printer = make_shared<PartonPrinter> ();
 
-    auto printer = make_shared<PartonPrinter> ();
-
- //   auto hadroMgr = make_shared<HadronizationManager> ();
- //   auto hadro = make_shared<Hadronization> ();
- //   auto hadroModule = make_shared<HadronizationModuleTest> ();
-
+  //auto hadroMgr = make_shared<HadronizationManager> ();
+  //auto hadro = make_shared<Hadronization> ();
+  //auto hadroModule = make_shared<HadronizationModuleTest> ();
 
   // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
@@ -110,7 +108,7 @@ int main(int argc, char** argv)
   jetscape->Add(pGun);
 
   jetscape->Add(freestream);
-   //Some modifications will be needed for reusing hydro events, so far
+  //Some modifications will be needed for reusing hydro events, so far
   //simple test hydros always executed "on the fly" ...
   jetscape->Add(hydro);
 
@@ -127,11 +125,11 @@ int main(int argc, char** argv)
   jetscape->Add(jlossmanager);
 
 
-    jetscape->Add(printer);
+  jetscape->Add(printer);
 
- //   hadro->Add(hadroModule);
- //   hadroMgr->Add(hadro);
- //   jetscape->Add(hadroMgr);
+  //hadro->Add(hadroModule);
+  //hadroMgr->Add(hadro);
+  //jetscape->Add(hadroMgr);
 
 
 
