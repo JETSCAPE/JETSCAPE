@@ -211,6 +211,7 @@ namespace Jetscape {
     
     void init_jet_v();
     void set_jet_v(double v[4]);
+      void set_jet_v(FourVector j);
     
     //  Getters
     

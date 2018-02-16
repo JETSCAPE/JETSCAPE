@@ -126,6 +126,11 @@ namespace Jetscape {
     jet_v_ =FourVector(v);
   }
     
+    void JetScapeParticleBase::set_jet_v(FourVector j)
+    {
+        jet_v_ = j;
+    }
+    
   //  end setters
     
   //  start getters        

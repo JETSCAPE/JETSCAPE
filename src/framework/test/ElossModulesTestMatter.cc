@@ -166,7 +166,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   double blurb,zeta,tQ2 ;
   int iSplit,pid_a,pid_b;
     unsigned int max_color, min_color, min_anti_color;
-  double velocity[4],xStart[4];
+  double velocity[4],xStart[4],jet_velocity[4];
 
   VERBOSESHOWER(8)<< MAGENTA << "SentInPartons Signal received : "<<deltaT<<" "<<Q2<<" "<<&pIn;
       
@@ -526,7 +526,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               pOut.push_back(Parton(0,pid_a,0,newp,newx ));
               int iout = pOut.size()-1 ;
                   
-              pOut[iout].set_jet_v(velocity);
+              pOut[iout].set_jet_v(pIn[i].jet_v());
               pOut[iout].set_mean_form_time();
               double ft = generate_L (pOut[iout].mean_form_time());
               pOut[iout].set_form_time(ft);
@@ -563,10 +563,13 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               {
                   newx[j] = pIn[i].x_in().comp(j) + (Time + deltaTime - pIn[i].x_in().comp(0) )*velocity[j]/velocityMod;
               }
-	      
+    
+              INFO << "velocity = " << velocity[0] << " " << velocity[1] << "  " << velocity[2] << " " << velocity[3] ;
+              INFO << "jet_v = " << pIn[i].jet_v().t() << " " << pIn[i].jet_v().x() << " " << pIn[i].jet_v().y() << " " << pIn[i].jet_v().z();
+              
               pOut.push_back(Parton(0,pid_b,0,newp,newx ));
               iout = pOut.size()-1 ;
-              pOut[iout].set_jet_v(velocity);
+              pOut[iout].set_jet_v(pIn[i].jet_v());
               pOut[iout].set_mean_form_time();
               ft = generate_L (pOut[iout].mean_form_time());
               pOut[iout].set_form_time(ft);
