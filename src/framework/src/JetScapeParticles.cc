@@ -17,6 +17,9 @@
 
 namespace Jetscape {
 
+  // Initialize static helper here
+  Pythia8::Pythia JetScapeParticleBase::InternalHelperPythia ("IntentionallyEmpty",false);
+
   JetScapeParticleBase::~JetScapeParticleBase(){
     VERBOSESHOWER(9);
   }
@@ -39,51 +42,10 @@ namespace Jetscape {
     set_id(id);
     init_jet_v();
     
-    set_restmass(-1.0);
-    switch (id) {
-    case 1:  //down quark
-    case -1: // anti-down quark
-      set_restmass(0.01);
-      break;
+    assert ( InternalHelperPythia.particleData.isParticle(id) );
+    set_restmass( InternalHelperPythia.particleData.m0( id ) );
     
-    case 2:  // up quark
-    case -2:  // anti-up quark
-      set_restmass(0.005);
-      break;
-    
-    case 3:   // strange quark
-    case -3:  // anti-strange quark
-      set_restmass(0.15);
-      break;
-    
-    case 4:   // charm quark
-    case -4:  // anti-charm quark
-      set_restmass(1.29); // make more accurate later
-      break;
-
-    case 5:   // bottom quark
-    case -5:  // anti-bottom quark
-      set_restmass(4.2); // make more accurate later
-      break;
-      
-    case 21: // gluon
-      set_restmass(0.0);
-      break;
-      
-    default:
-      std::cerr << " error in id = " << id << std::endl;
-      assert(mass_>=0.0);
-      break;
-    }
-    
-    // double p[4];
-    // p[0] = e;
-    // p[1] = pt*cos(phi);
-    // p[2] = pt*sin(phi);
-    // p[3] = pt*sinh(eta);
-    // reset_momentum( FourVector ( p ) ); // kk: also works
     reset_momentum( pt*cos(phi),pt*sin(phi), pt*sinh(eta), e );
-    
     set_stat(stat);
 
     if ( x ){
@@ -97,8 +59,7 @@ namespace Jetscape {
       x0[3]=0;
       set_x(x0); 
     }
-  
-    // reset_PtYPhiM(pt,eta,phi,mass_); //check
+    
   }
 
     
@@ -109,45 +70,8 @@ namespace Jetscape {
     set_id(id);    
     init_jet_v();
     
-    set_restmass(-1.0);
-    switch (id) {
-    case 1:  //down quark
-    case -1: // anti-down quark
-      set_restmass(0.01);
-      break;
-            
-    case 2:  // up quark
-    case -2:  // anti-up quark
-      set_restmass(0.005);
-      break;
-        
-    case 3:   // strange quark
-    case -3:  // anti-strange quark
-      set_restmass(0.15);
-      break;
-
-    case 4:   // charm quark
-    case -4:  // anti-charm quark
-      set_restmass(1.29); // make more accurate later
-      break;
-            
-    case 5:   // bottom quark
-    case -5:  // anti-bottom quark
-      set_restmass(4.2); // make more accurate later
-      break;
-            
-
-    case 21: // gluon
-      set_restmass(0.0);
-      break;
-            
-    default:
-      {
-	std::cout << " error in id = " << id << std::endl;
-	assert(mass_>=0.0);
-	break;
-      }
-    }
+    assert ( InternalHelperPythia.particleData.isParticle(id) );
+    set_restmass( InternalHelperPythia.particleData.m0( id ) );
 
     reset_momentum(p);
     x_in_=x;
@@ -160,7 +84,8 @@ namespace Jetscape {
   {
     plabel_ = 0;
     pid_ = 0;
-    pstat_ = 0;        
+    pstat_ = 0;
+    mass_=-1;
   }
     
   void JetScapeParticleBase::set_label(int label)
@@ -224,38 +149,12 @@ namespace Jetscape {
     return(plabel_);
   }
 
-  
-  // const double JetScapeParticleBase::e()
-  // {
-  //   return(p_in_.t());
-  // }
-    
-  // const double JetScapeParticleBase::pt()
-  // {
-  //   return(sqrt(p_in_.x()*p_in_.x() + p_in_.y()*p_in_.y())) ;    
-  // }
-
-  // FourVector JetScapeParticleBase::get_p() const{
-  //   return FourVector ( px(), py(), pz(), e() );
-  // }
-    
+      
   const double JetScapeParticleBase::time()
   {
     return(x_in_.t());
   }
-    
-  /*
-    int pparent_label()
-    {
-    return(pparent_label_);
-    }
-  */
-  // FourVector &JetScapeParticleBase::p_in()
-  // {
-  //   return(p_in_);
-  // }
-  
-  
+      
   FourVector &JetScapeParticleBase::x_in()
   {
     return(x_in_);
@@ -271,11 +170,8 @@ namespace Jetscape {
     return(mass_);
   }
 
-  // just operator of PseudoJet ...
-  
   const double JetScapeParticleBase::p(int i) {
-    // return (p_in_.comp(i));    
-    // return operator()(i);
+    /// Deprecated. Prefer explicit component access
     // cerr << " DON'T USE ME VERY OFTEN!!" << endl;
     switch ( i ){
     case 0 :      return e();
@@ -355,12 +251,12 @@ namespace Jetscape {
     JetScapeParticleBase::JetScapeParticleBase (srp)
   {
     form_time_ = srp.form_time_;
-      Color_ = srp.Color_;
-      antiColor_ = srp.antiColor_;
-      MaxColor_ = srp.MaxColor_;
-      MinColor_ = srp.MinColor_;
-      MinAntiColor_ = srp.MinAntiColor_;
-      
+    Color_ = srp.Color_;
+    antiColor_ = srp.antiColor_;
+    MaxColor_ = srp.MaxColor_;
+    MinColor_ = srp.MinColor_;
+    MinAntiColor_ = srp.MinAntiColor_;
+    
     set_edgeid ( srp.edgeid() );
     pShower_ = srp.shower();
     // set_edgeid( -1 ); // by default do NOT copy the shower or my position in it
@@ -370,37 +266,70 @@ namespace Jetscape {
   Parton::Parton (int label, int id, int stat, const FourVector& p, const FourVector& x)  :
     JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  p, x)
   {
+    CheckAcceptability( id );
+    assert ( InternalHelperPythia.particleData.isParton(id) );
     initialize_form_time();
-      set_color(0);
-      set_anti_color(0);
-      set_min_color(0);
-      set_min_anti_color(0);
-      set_max_color(0);
+    set_color(0);
+    set_anti_color(0);
+    set_min_color(0);
+    set_min_anti_color(0);
+    set_max_color(0);
     set_edgeid( -1 );
     pShower_ = nullptr;
+    
+
     //   cout << "========================== std Ctor called, returning : " << endl << *this << endl;
   }
   
 
   Parton::Parton (int label, int id, int stat, double pt, double eta, double phi, double e, double* x)  :
     JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  pt, eta, phi, e, x){
+    CheckAcceptability ( id );
+    assert ( InternalHelperPythia.particleData.isParton(id) );
     initialize_form_time();
-        set_color(0);
-        set_anti_color(0);
-        set_min_color(0);
-        set_min_anti_color(0);
-        set_max_color(0);
+    set_color(0);
+    set_anti_color(0);
+    set_min_color(0);
+    set_min_anti_color(0);
+    set_max_color(0);
     set_edgeid( -1 );
     pShower_ = nullptr;
     // cout << "========================== phieta Ctor called, returning : " << endl << *this << endl;
   }
   
+  void Parton::CheckAcceptability ( int id ){
+    switch (id) {
+    case 1:  //down quark
+    case -1: // anti-down quark
+      break;            
+    case 2:  // up quark
+    case -2:  // anti-up quark
+      break;
+    case 3:   // strange quark
+    case -3:  // anti-strange quark
+      break;
+    case 4:   // charm quark
+    case -4:  // anti-charm quark
+      break;            
+    case 5:   // bottom quark
+    case -5:  // anti-bottom quark
+      break;            
+    case 21: // gluon
+      break;      
+    default:
+      WARN << " error in id = " << id;
+      throw std::runtime_error ( "pid not accepted for Parton");
+      break;
+    }
+  }
+
+
   Parton& Parton::operator=( Parton &c)
   {
     JetScapeParticleBase::operator=(c);
     form_time_ = c.form_time_;
-      Color_ = c.Color_;
-      antiColor_ = c.antiColor_;
+    Color_ = c.Color_;
+    antiColor_ = c.antiColor_;
     set_edgeid ( c.edgeid() );
     pShower_ = c.shower();
     // set_edgeid( -1 ); // by default do NOT copy the shower or my position in it
@@ -412,8 +341,8 @@ namespace Jetscape {
   {
     JetScapeParticleBase::operator=(c);
     form_time_ = c.form_time_;
-      Color_ = c.Color_;
-      antiColor_ = c.antiColor_;
+    Color_ = c.Color_;
+    antiColor_ = c.antiColor_;
     set_edgeid ( c.edgeid() );
     pShower_ = c.shower();
     // set_edgeid( -1 ); // by default do NOT copy the shower or my position in it
@@ -474,30 +403,30 @@ namespace Jetscape {
     reset_momentum( newPl*jet_v_.comp(1), newPl*jet_v_.comp(2), newPl*jet_v_.comp(3), e() );
   } 
 
-    void Parton::set_color(unsigned int col)
-    {
-        Color_ = col;
-    }
+  void Parton::set_color(unsigned int col)
+  {
+    Color_ = col;
+  }
     
-    void Parton::set_anti_color(unsigned int acol)
-    {
-        antiColor_ = acol;
-    }
+  void Parton::set_anti_color(unsigned int acol)
+  {
+    antiColor_ = acol;
+  }
     
-    void Parton::set_max_color(unsigned int col)
-    {
-        MaxColor_ = col;
-    }
+  void Parton::set_max_color(unsigned int col)
+  {
+    MaxColor_ = col;
+  }
     
-    void Parton::set_min_color(unsigned int col)
-    {
-        MinColor_ = col;
-    }
+  void Parton::set_min_color(unsigned int col)
+  {
+    MinColor_ = col;
+  }
     
-    void Parton::set_min_anti_color(unsigned int acol)
-    {
-        MinAntiColor_ = acol;
-    }
+  void Parton::set_min_anti_color(unsigned int acol)
+  {
+    MinAntiColor_ = acol;
+  }
 
   const int Parton::edgeid() const
   {
@@ -527,68 +456,70 @@ namespace Jetscape {
     return ret;
   }
 
-    unsigned int Parton::color()
-    {
-        return (Color_);
-    }
+  unsigned int Parton::color()
+  {
+    return (Color_);
+  }
     
-    unsigned int Parton::anti_color()
-    {
-        return (antiColor_);
-    }
+  unsigned int Parton::anti_color()
+  {
+    return (antiColor_);
+  }
     
-    unsigned int Parton::min_color()
-    {
-        return (MinColor_);
-    }
+  unsigned int Parton::min_color()
+  {
+    return (MinColor_);
+  }
     
-    unsigned int Parton::min_anti_color()
-    {
-        return (MinAntiColor_);
-    }
+  unsigned int Parton::min_anti_color()
+  {
+    return (MinAntiColor_);
+  }
 
-    unsigned int Parton::max_color()
-    {
-        return (MaxColor_);
-    }
-    
-    // ---------------
-    // Hadron specific
-    // ---------------
-    
-    Hadron::Hadron (const Hadron& srh) :
+  unsigned int Parton::max_color()
+  {
+    return (MaxColor_);
+  }
+  
+  // ---------------
+  // Hadron specific
+  // ---------------
+  
+  Hadron::Hadron (const Hadron& srh) :
     JetScapeParticleBase::JetScapeParticleBase (srh)
-    {
-        width_ = srh.width_ ;
-    }
-    
-    Hadron::Hadron (int label, int id, int stat, const FourVector& p, const FourVector& x)  :
+  {
+    width_ = srh.width_ ;
+  }
+  
+  Hadron::Hadron (int label, int id, int stat, const FourVector& p, const FourVector& x)  :
     JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  p, x)
-    {
-        set_decay_width(0.1);
-    }
+  {
+    assert ( InternalHelperPythia.particleData.isHadron(id) );
+    set_decay_width(0.1);
+  }
     
     
-    Hadron::Hadron (int label, int id, int stat, double pt, double eta, double phi, double e, double* x)  :
+  Hadron::Hadron (int label, int id, int stat, double pt, double eta, double phi, double e, double* x)  :
     JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  pt, eta, phi, e, x)
-    {
-        set_decay_width(0.1);
-        // cout << "========================== phieta Ctor called, returning : " << endl << *this << endl;
-    }
+  {
+    assert ( InternalHelperPythia.particleData.isHadron(id) );
+    set_decay_width(0.1);
+    // cout << "========================== phieta Ctor called, returning : " << endl << *this << endl;
+  }
 
-    Hadron& Hadron::operator=( Hadron &c)
-    {
-        JetScapeParticleBase::operator=(c);
-        width_ = c.width_;
-        return *this;
-    }
+  Hadron& Hadron::operator=( Hadron &c)
+  {
+    JetScapeParticleBase::operator=(c);
+    width_ = c.width_;
+    return *this;
+  }
     
-    Hadron& Hadron::operator=( const Hadron &c)
-    {
-        JetScapeParticleBase::operator=(c);
-        width_ = c.width_;
-        return *this;
-    }
+  Hadron& Hadron::operator=( const Hadron &c)
+  {
+    JetScapeParticleBase::operator=(c);
+    width_ = c.width_;
+    return *this;
+  }
 
     
 } /// end of namespace Jetscape
