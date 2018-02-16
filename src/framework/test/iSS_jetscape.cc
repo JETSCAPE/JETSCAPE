@@ -109,8 +109,8 @@ void iSS_CF::pass_hadron_list_to_JETSCAPE() {
                             iSpectraSampler_ptr_->get_hadron(iev, ipart));
             int hadron_label = 0;
             int hadron_status = -1;
-            //int hadron_id = current_hadron.pid;
-            int hadron_id = 1;   // just for testing need to be changed to the line above
+            int hadron_id = current_hadron.pid;
+            //int hadron_id = 1;   // just for testing need to be changed to the line above
             double hadron_mass = current_hadron.mass;
             FourVector hadron_p(current_hadron.px, current_hadron.py,
                                 current_hadron.pz, current_hadron.E);
