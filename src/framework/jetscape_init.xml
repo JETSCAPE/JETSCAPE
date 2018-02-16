@@ -133,7 +133,7 @@
         <MUSIC>
             <name>MUSIC</name>
             <MUSIC_input_file>music_input</MUSIC_input_file>
-            <Perform_CooperFrye_Feezeout>1</Perform_CooperFrye_Feezeout>
+            <Perform_CooperFrye_Feezeout>0</Perform_CooperFrye_Feezeout>
         </MUSIC>
     </Hydro>
     <SoftParticlization>
