@@ -248,6 +248,12 @@ namespace Jetscape {
     FourVector x_in_; ///< position of particle
     FourVector jet_v_; ///< jet four vector, without gamma factor (so not really a four vector)
 
+    // give it a static pythia to look up particle properties
+    // Be a bit careful with it!
+    // Init is never called, and this object is not configured. All it can do is look up
+    // in its original Data table
+    static Pythia8::Pythia InternalHelperPythia;  
+
   };
   // END BASE CLASS
 
@@ -259,8 +265,7 @@ namespace Jetscape {
   //  PARTON CLASS
   /*************************************************************************************************/
   class Parton : public JetScapeParticleBase{
-    // using JetScapeParticleBase::JetScapeParticleBase;
-
+    
   public : 
     virtual void set_mean_form_time();
     virtual void set_form_time(double form_time);    
@@ -311,12 +316,6 @@ namespace Jetscape {
     shared_ptr<PartonShower> pShower_; ///< shower that this parton belongs to
     int edgeid_             ; ///< Position in the shower graph    
 
-    // give it a static pythia to look up particle properties
-    // Be a bit careful with it!
-    // Init is never called, and this object is not configured. All it can do is look up
-    // in its original Data table
-    static Pythia8::Pythia InternalHelperPythia;
-    
     // helpers
     void initialize_form_time();
     void CheckAcceptability ( int id ); ///< restrict to a few pids only.
@@ -325,7 +324,8 @@ namespace Jetscape {
 
   class Hadron : public JetScapeParticleBase
   {
-  public:
+    // using JetScapeParticleBase::InternalHelperPythia;
+    public:
         
     Hadron (int label, int id, int stat, const FourVector& p, const FourVector& x);
     Hadron (int label, int id, int stat, double pt, double eta, double phi, double e, double* x=0);
