@@ -70,6 +70,7 @@ namespace Jetscape {
     set_id(id);    
     init_jet_v();
     
+    INFO << "pid = " << id;
     assert ( InternalHelperPythia.particleData.isParticle(id) );
     set_restmass( InternalHelperPythia.particleData.m0( id ) );
 
