@@ -144,11 +144,11 @@ void HadronizationModuleTest::DoHadronization(vector<vector<shared_ptr<Parton>>>
 
     for (unsigned int i=0; i <  event.size(); ++i)
     {
-        if (event[i].status()==91)
+      if ( event[i].isFinal() && event[i].isHadron())
         {
             double x[4];
             x[0]=x[1]=x[2]=x[3]=0.0;
-            hOut.push_back(make_shared<Hadron>(i,event[i].id(),91,event[i].pT(),event[i].eta(), event[i].phi(), event[i].e(), x));
+            hOut.push_back(make_shared<Hadron>(i,event[i].id(),event[i].status(),event[i].pT(),event[i].eta(), event[i].phi(), event[i].e(), x));
         }
     }
     
