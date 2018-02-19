@@ -29,6 +29,7 @@ void JetScapeReader<T>::Clear()
   nodeVec.clear();edgeVec.clear();
   //pShower->clear();//pShower=nullptr; //check ...
   pShowers.clear();
+  hadrons.clear();
 }
 
 template<class T>
