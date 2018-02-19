@@ -12,7 +12,8 @@ cmake_policy(SET CMP0042 NEW)
 
 message("Compiler and Linker flags ...")
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O -fPIC -pipe -Wall -g -Wno-reorder -Wno-unused-variable ")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O -fPIC -pipe -Wall -g -Wno-reorder -Wno-unused-variable ")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O -fPIC -pipe -Wall -Wno-reorder -Wno-unused-variable ")
 
 if (APPLE)
      message( STATUS "Apple : " ${CMAKE_HOST_SYSTEM})
@@ -56,6 +57,12 @@ find_package(ROOT)
 message("Looking for Pythia8 ...")
 find_package(Pythia8)
 
+if (NOT ${PYTHIA8_FOUND} )
+    message(FATAL_ERROR "Pythia8 not found - required dependency")
+endif()
+
+
+
 message("Looking for HDF5 ...")
 find_package(HDF5)
 if(${HDF5_FOUND})
@@ -83,10 +90,8 @@ if (${HEPMC_FOUND})
     Message(STATUS "HepMC Include dir : " ${HEPMC_INCLUDE_DIR})
 endif()
 
-if (${PYTHIA8_FOUND})
-    include_directories(${PYTHIA8_INCLUDE_DIR})
-    Message(STATUS "Pythia8 Include dir : " ${PYTHIA8_INCLUDE_DIR})
-endif()
+include_directories(${PYTHIA8_INCLUDE_DIR})
+Message(STATUS "Pythia8 Include dir : " ${PYTHIA8_INCLUDE_DIR})
 
 if (${ROOT_FOUND})
     include_directories(${ROOT_INCLUDES})
@@ -151,29 +156,27 @@ if (${ROOT_FOUND})
    target_link_libraries(hydroFileTest ${ROOT_LIBRARIES})
 endif()
 
-if (${PYTHIA8_FOUND})
-    add_executable(writerTest ./src/writerTest.cc)
-    add_executable(brickTest ./src/brickTest.cc)
-    add_executable(LBT_brickTest ./src/LBT_brickTest.cc)
-    add_executable(PythiaBrickTest ./src/PythiaBrickTest.cc)
-    target_link_libraries(writerTest JetScape JetScapeHydro JetScapeTest) #for writer test case...
-    target_link_libraries(brickTest JetScape JetScapeHydro  JetScapeTest) #for test case ...
-    target_link_libraries(LBT_brickTest JetScape JetScapeHydro  JetScapeTest) #for test case ...
-    target_link_libraries(PythiaBrickTest JetScape JetScapeHydro  JetScapeTest) #for test case ...
-    target_link_libraries(testJetScape ${PYTHIA8_LIBRARIES})
-    target_link_libraries(brickTest ${PYTHIA8_LIBRARIES})
-    target_link_libraries(LBT_brickTest ${PYTHIA8_LIBRARIES})
-    target_link_libraries(PythiaBrickTest ${PYTHIA8_LIBRARIES})
-    if (${ROOT_FOUND})
-      target_link_libraries(brickTest ${ROOT_LIBRARIES})
-      target_link_libraries(LBT_brickTest ${ROOT_LIBRARIES})
-      target_link_libraries(PythiaBrickTest ${ROOT_LIBRARIES})
-      target_link_libraries(writerTest ${ROOT_LIBRARIES})
-    endif(${ROOT_FOUND})
-    target_link_libraries(hydroFileTest ${PYTHIA8_LIBRARIES})
-    target_link_libraries(writerTest ${PYTHIA8_LIBRARIES})
-    message( ${PYTHIA8_LIBRARIES} )
-endif (${PYTHIA8_FOUND})
+add_executable(writerTest ./src/writerTest.cc)
+add_executable(brickTest ./src/brickTest.cc)
+add_executable(LBT_brickTest ./src/LBT_brickTest.cc)
+add_executable(PythiaBrickTest ./src/PythiaBrickTest.cc)
+
+target_link_libraries(writerTest JetScape JetScapeHydro JetScapeTest)
+target_link_libraries(brickTest JetScape JetScapeHydro  JetScapeTest)
+target_link_libraries(LBT_brickTest JetScape JetScapeHydro  JetScapeTest)
+target_link_libraries(PythiaBrickTest JetScape JetScapeHydro  JetScapeTest )
+target_link_libraries(testJetScape )
+target_link_libraries(brickTest)
+target_link_libraries(LBT_brickTest)
+target_link_libraries(PythiaBrickTest)
+if (${ROOT_FOUND})
+  target_link_libraries(brickTest ${ROOT_LIBRARIES})
+  target_link_libraries(LBT_brickTest ${ROOT_LIBRARIES})
+  target_link_libraries(PythiaBrickTest ${ROOT_LIBRARIES})
+  target_link_libraries(writerTest ${ROOT_LIBRARIES})
+endif(${ROOT_FOUND})
+target_link_libraries(hydroFileTest)
+target_link_libraries(writerTest)
 
 # Don't compile tests modules if test is not switched on
 if (test)
