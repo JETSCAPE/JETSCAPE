@@ -35,12 +35,20 @@ bool StringTokenizer::isGraphEntry() const
 
 bool StringTokenizer::isNodeEntry() const
 {
-  return isGraphEntry();
+  //return isGraphEntry();
+  if (buffer.length()>0)
+    if (buffer.find("V")<5)
+      return true;
+    else
+      return false;
+  else
+    return false;
+
 }
 
 bool StringTokenizer::isNodeZero() const
 {
-  if (isGraphEntry() && !isEdgeEntry())
+  if (isGraphEntry() && !isEdgeEntry() && !isHadronEntry())
     {
       if (buffer.find("[0]")<3)
 	return true;
@@ -91,7 +99,7 @@ bool StringTokenizer::isEventEntry() const
 bool StringTokenizer::isHadronEntry() const
 {
   if (buffer.length()>0)
-    if (buffer.find("H")<1)
+    if (buffer.find("H")<5)
       return true;
     else
       return false;

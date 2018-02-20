@@ -44,7 +44,8 @@ void JetScapeReader<T>::AddNode(string s)
   while (!strT.done())
     {
       token = strT.next();
-      vS.push_back(token);
+      if(token.compare("V") != 0)
+      	vS.push_back(token);
       //++counter;
       //cout << token  << " ";
     }
@@ -69,7 +70,8 @@ void JetScapeReader<T>::AddEdge(string s)
       while (!strT.done())
 	{
 	  token = strT.next();
-	  vS.push_back(token);
+	  if(token.compare("P") != 0)
+	    vS.push_back(token);
 	  //++counter;
 	  //cout << token  << " ";
 	}      
@@ -86,19 +88,19 @@ void JetScapeReader<T>::AddHadron(string s)
 {
 	string token;
         strT.set(s);
-	token = strT.next();
-	if(!token.compare("H"))
-	{
-		vector<string> vS;
-		double x[4];
-        	x[0]=x[1]=x[2]=x[3]=0.0;
-		while (!strT.done())
-        	{
-			token = strT.next();
-			vS.push_back(token);
-		}
-		hadrons.push_back(make_shared<Hadron>(stoi(vS[1]),stoi(vS[2]),stoi(vS[3]),stod(vS[4]),stod(vS[5]),stod(vS[6]),stod(vS[7]),x));
-	}
+        //string id = strT.next();
+	//token = strT.next();
+	vector<string> vS;
+        double x[4];
+        x[0]=x[1]=x[2]=x[3]=0.0;
+        while (!strT.done())
+        {
+          token = strT.next();
+	  if(token.compare("H") != 0)
+            vS.push_back(token);
+        }
+        hadrons.push_back(make_shared<Hadron>(stoi(vS[1]),stoi(vS[2]),stoi(vS[3]),stod(vS[4]),stod(vS[5]),stod(vS[6]),stod(vS[7]),x));
+
 }
 
 template<class T>
@@ -144,7 +146,7 @@ void JetScapeReader<T>::Next()
 		      //cout<<line<<endl;
 		      AddEdge(line);
 		    }
-		  else		    
+		  else if(strT.isNodeEntry())		    
 		    {
 		      if (strT.isNodeZero())
 			{
@@ -163,15 +165,15 @@ void JetScapeReader<T>::Next()
 			}
 		      AddNode(line);		     
 		    }
-		}
-		else
-		{
-		 AddHadron(line);
+		  else //Hadron Entry
+                    {
+                      AddHadron(line);
+                    }
+
 		}
 	    }
 	}
     }
-  //cout<<"There are "<<hadrons.size()<<" hadrons"<<endl; 
   if (Finished())
     currentEvent++;  
   
