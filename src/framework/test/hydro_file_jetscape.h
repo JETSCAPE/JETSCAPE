@@ -18,12 +18,14 @@ class HydroFile: public FluidDynamics {
     // library for the JETSCAPE integrated framework
  private:
     // ParameterReader *paraRdr;
-    tinyxml2::XMLElement *para;
+    tinyxml2::XMLElement *para_;
 
-    bool load_viscous;
-    int hydro_type;
+    int hydro_event_idx_;
 
-    double T_c;
+    int load_viscous_;
+    int hydro_type_;
+
+    double T_c_;
 #ifdef USE_HDF5
     HydroinfoH5 *hydroinfo_h5_ptr;
 #endif
@@ -58,6 +60,9 @@ class HydroFile: public FluidDynamics {
                          std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr);
 
      void get_hypersurface(real T_cut, SurfaceCellInfo* surface_list_ptr) {};
+
+     void set_hydro_event_idx(int idx_in) {hydro_event_idx_ = idx_in;};
+     int get_hydro_event_idx() {return(hydro_event_idx_);};
 };
 
 #endif  // TEST_HYDRO_FILE_JETSCAPE_H_

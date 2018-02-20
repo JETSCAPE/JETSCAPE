@@ -130,7 +130,7 @@
             <VISH_file>../test/test_hydro_files/VISH_evo.h5</VISH_file>
             <!-- flag whether read in viscous information -->
             <!-- (only works for VISHNew evo files)... -->
-            <load_viscous_info>False</load_viscous_info>
+            <load_viscous_info>0</load_viscous_info>
             <!-- MUSIC hydro evolution filename (plain binary format)... -->
             <!-- the associated input file specifies the grid information -->
             <MUSIC_input_file>../test/test_hydro_files/MUSIC_input</MUSIC_input_file>
