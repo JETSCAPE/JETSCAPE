@@ -119,7 +119,8 @@ void iSS_CF::pass_hadron_list_to_JETSCAPE() {
 
             // create a JETSCAPE Hadron
             Hadron* jetscape_hadron = new Hadron(
-                hadron_label, hadron_id, hadron_status, hadron_p, hadron_x);
+                hadron_label, hadron_id, hadron_status, hadron_p, hadron_x,
+                hadron_mass);
             (*Hadron_list_)[iev]->push_back(*jetscape_hadron);
         }
     }
