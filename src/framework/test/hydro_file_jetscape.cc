@@ -110,6 +110,7 @@ void HydroFile::read_in_hydro_event(string MUSIC_input_file,
 void HydroFile::evolve_hydro() {
     if (hydro_status == FINISHED) {
         clean_hydro_event();
+        hydro_event_idx_++;   // need to change to be consistent with initial condition
     }
 
     if (hydro_type_ == 1) {
