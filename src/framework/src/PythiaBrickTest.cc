@@ -70,7 +70,7 @@ int main(int argc, char** argv)
   Show();
 
   // auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",10);
-  auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",20);
+  auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",2);
   jetscape->SetId("primary");
   // jetscape->set_reuse_hydro (true);
   // jetscape->set_n_reuse_hydro (10);
@@ -136,6 +136,32 @@ int main(int argc, char** argv)
   INFO_NICE<<"Finished!";
   cout<<endl;
 
+// Some information is only known after the full run,
+  // Therefore store information at the end of the file, in a footer
+  writer->WriteComment ( "EVENT GENERATION INFORMATION" );
+  Pythia8::Info& info = pythiaGun->info;
+  std::ostringstream oss;
+  oss.str(""); oss << "nTried    = " << info.nTried();
+  writer->WriteComment ( oss.str() );
+  oss.str(""); oss << "nSelected = " << info.nSelected();
+  writer->WriteComment ( oss.str() );
+  oss.str(""); oss << "nAccepted = " << info.nAccepted();
+  writer->WriteComment ( oss.str() );
+  oss.str(""); oss << "sigmaGen  = " << info.sigmaGen();  
+  writer->WriteComment ( oss.str() );
+  oss.str(""); oss << "sigmaErr  = " << info.sigmaErr();
+  writer->WriteComment ( oss.str() );
+
+  oss.str(""); oss << "eCM  = " << info.eCM();
+  writer->WriteComment ( oss.str() );
+  oss.str(""); oss << "pTHatMin  = " << pythiaGun->GetpTHatMin();
+  writer->WriteComment ( oss.str() );
+  oss.str(""); oss << "pTHatMax  = " << pythiaGun->GetpTHatMax();
+  //writer->WriteComment ( oss.str() );
+  //oss.str(""); oss << "JETSCAPE Random Seed  = " << JetScapeTaskSupport::Instance()->GetRandomSeed();
+  writer->WriteComment ( oss.str() );
+  writer->WriteComment ( "/EVENT GENERATION INFORMATION" );
+
   t = clock() - t;
   time(&end);
   printf ("CPU time: %f seconds.\n",((float)t)/CLOCKS_PER_SEC);
@@ -145,7 +171,7 @@ int main(int argc, char** argv)
   // pythiaGun->stat();
 
   // Demonstrate how to work with pythia statistics
-  Pythia8::Info& info = pythiaGun->info;
+  //Pythia8::Info& info = pythiaGun->info;
   cout << " nTried    = " << info.nTried() << endl;
   cout << " nSelected = " << info.nSelected()  << endl;
   cout << " nAccepted = " << info.nAccepted()  << endl;
