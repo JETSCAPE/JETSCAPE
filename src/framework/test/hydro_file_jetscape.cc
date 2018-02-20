@@ -163,7 +163,7 @@ void HydroFile::clean_hydro_event() {
 //! this function returns the thermodynamic and dynamical information at
 //! the given space-time point
 void HydroFile::get_hydro_info(
-        real t, real x, real y, real z,
+        Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
         std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr) {
     if (hydro_status != FINISHED) {
         WARN << "Hydro not run yet ...";
