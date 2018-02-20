@@ -40,6 +40,11 @@ void HydroFile::initialize_hydro(Parameter parameter_list) {
     para->FirstChildElement("hydro_type")->QueryIntText(&hydro_type);
     para->FirstChildElement("load_viscous_info")->QueryBoolText(&load_viscous);
     para->FirstChildElement("T_c")->QueryDoubleText(&T_c);
+
+    if (hydro_type == 1) {
+        hydroinfo_h5_ptr = new HydroinfoH5();
+    }
+
     hydro_status = INITIALIZED;
 }
 
@@ -95,14 +100,13 @@ void HydroFile::read_in_hydro_event(string MUSIC_input_file,
 void HydroFile::evolve_hydro() {
     if (hydro_status == FINISHED) {
         clean_hydro_event();
-        hydro_status = INITIALIZED;
     }
 
     int nskip_tau = 1;
     if (hydro_type == 1) {
         string filename = para->FirstChildElement("VISH_file")->GetText();
 #ifdef USE_HDF5
-        hydroinfo_h5_ptr = new HydroinfoH5(filename, 500, load_viscous);
+        read_in_hydro_event(filename, 500, load_viscous);
 #else
         WARN << " : hydro_type == 1 requires the hdf5 library~";
         WARN << " : please check your inputs~";
