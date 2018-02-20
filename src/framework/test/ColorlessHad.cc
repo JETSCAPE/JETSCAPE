@@ -12,6 +12,9 @@ Pythia pythia;
 Event& event      = pythia.event;
 ParticleData& pdt = pythia.particleData;
 
+//Hadrons output file
+ofstream hadfile;
+
 ColorlessHad::ColorlessHad()
 {
   SetId("ColorlessHad");
@@ -25,6 +28,9 @@ ColorlessHad::~ColorlessHad()
 
 void ColorlessHad::Init()
 {
+  //Open output file
+  hadfile.open("CH_myhad.dat");
+
   JSDEBUG<<"Initialize ColorlessHad";
   VERBOSE(8);
 
@@ -36,6 +42,9 @@ void ColorlessHad::Init()
   // Standard settings
   pythia.readString("ProcessLevel:all = off");
   
+  // Don't let pi0 decay
+  pythia.readString("111:mayDecay = off");
+
   // XML settings to be incorporated
 
   // And initialize
@@ -239,8 +248,11 @@ void ColorlessHad::DoHadronization(vector<vector<shared_ptr<Parton>>>& shower, v
         FourVector x;
         //hOut.push_back(std::make_shared<Hadron> (Hadron (0,ide,0,p,x)));
         //INFO << "Produced Hadron has id = " << pythia.event[ipart].id();
+        //Print on output file
+        hadfile << pythia.event[ipart].px() << " " << pythia.event[ipart].py() << " " << pythia.event[ipart].pz() << " " << pythia.event[ipart].e() << " " << pythia.event[ipart].id() << " " << pythia.event[ipart].charge() << endl;
       }
     } 
     INFO<<"#Showers done: " << ishower+1 << ". There are " << hOut.size() << " hadrons and " << pOut.size() << " partons after PYTHIA Hadronization";
+    hadfile << "NEXT" << endl;
   } // End shower loop
 }
