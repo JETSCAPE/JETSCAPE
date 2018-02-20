@@ -73,6 +73,8 @@ class InitialFromFile: public Jetscape::InitialState {
 
    //! want to use auxiliary hdf5 file readers 
     HydroinfoH5 * h5_helper_;
+
+    int dim_x_, dim_y_;
 };
 
 #endif  // INITIAL_FROM_FILE_H_
