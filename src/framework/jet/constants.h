@@ -9,6 +9,7 @@
 #ifndef constants_h
 #define constants_h
 
+namespace Jetscape {
 
 
 // define the usual constants
@@ -24,8 +25,11 @@ static double Ca = 3.0 ;
 
 static double Nc = 3.0;
 
-static double Lambda_QCD = 0.5;
+static double Lambda_QCD = 0.2;
 // 0.4 is the value chosen in JETSET
+    
+static double fmToGeVinv = 5.0;
+/// < should be 1/0.197, but 5 helps in debugging. 
 
 static double mu = 0.722;
 
@@ -50,6 +54,8 @@ static double s_approx = 0.001;
 
 static double E_minimum = 1.0 ;
 
+static double rounding_error = 1e-6; // slightly more than float precision
+
 /**************************************************************************************/
 
 /* the standard PDG particle id codes for the gluon and the d quark */
@@ -64,5 +70,5 @@ static int did=1;
 static int sid=3;
 /*******************************************************************/
 
-
+};
 #endif /* constants_h */

@@ -1,16 +1,31 @@
 ##############
 # Unit Tests
 ##############
-add_executable(test_jetscape_ini JetScapeInitial.cc)
 
-# Standard linking to gtest stuff.
-target_link_libraries(test_jetscape_ini gtest gtest_main)
-# trento asks for Boost and HDF5 libraries
-target_link_libraries(test_jetscape_ini JetScape)
+###### Begin: Helper macro to add unittests
+macro(js_add_test name depends)
+   add_test(NAME ${name} COMMAND ${ARGN})
+   add_custom_target(run_${name}
+      COMMAND ${ARGN} ${UNITTEST_ARGS}
+      DEPENDS ${depends}
+      COMMENT "Executing test ${name}"
+      VERBATIM
+      )
+endmacro()
+
+macro(js_add_exe name)
+  add_executable(${name} ${name}.cc)
+  target_link_libraries(${name} gtest gtest_main)
+  target_link_libraries(${name} JetScape)
+endmacro()
+
+macro(js_add_unittest name)
+   js_add_exe(${name})
+   js_add_test(${name} ${name} ${name})
+endmacro()
+###### End: Helper macro to add unittests
 
 
-# trento asks for Boost and HDF5 libraries
-#target_link_libraries(test_jetscape_ini libtrento ${Boost_LIBRARIES} ${HDF5_LIBRARIES})
-# This is so you can do 'make test' to see all your tests run, instead of
-# manually running the executable runUnitTests to see those specific tests.
-add_test(NAME test1 COMMAND test_jetscape_ini)
+###### Now it is easy to add unittest for test_name.cc by js_add_unittest(test_name)
+js_add_unittest(TrentoInitial)
+js_add_unittest(TrentoInitialFromXML)

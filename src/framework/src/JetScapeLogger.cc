@@ -22,8 +22,15 @@ using namespace std;
 long getMemoryUsage() 
 {
   struct rusage usage;
+  // NOTE: Reported in kB on BSD/Linux, bytes in Mac/Darwin
+  // Could try to explicitly catch __linux__ as well
+  float mbsize = 1024;
+#ifdef __MACH__
+  mbsize = 1024 * 1024;
+#endif
+    
   if(0 == getrusage(RUSAGE_SELF, &usage))
-    return usage.ru_maxrss/1024./1024.; // bytes
+    return usage.ru_maxrss/mbsize;
   else
     return 0;
 }
@@ -71,6 +78,8 @@ int getMemoryUsage()
 #define BOLDWHITE   "\033[1m\033[37m"      /* Bold White */
  
 #define CLEAR "\033[2J"  // clear screen escape code 
+
+namespace Jetscape {
 
 std::ostringstream null;     
 
@@ -133,8 +142,16 @@ LogStreamer JetScapeLogger::Info()
 {
   string s="[Info] ";
   // s <<  __PRETTY_FUNCTION__ <<":"<<__LINE__<<" ";
-  s += to_string(getMemoryUsage()); s+="MB ";
-  return LogStreamer(std::cout<<s);
+  if (info){
+    string s="[Info] ";
+    // s <<  __PRETTY_FUNCTION__ <<":"<<__LINE__<<" ";
+    s += to_string(getMemoryUsage()); s+="MB ";
+    return LogStreamer(std::cout<<s);
+  }  else {
+    null.setstate(std::ios_base::failbit);
+    return LogStreamer(null);
+  }
+
 }
 
 LogStreamer JetScapeLogger::InfoNice()
@@ -142,7 +159,12 @@ LogStreamer JetScapeLogger::InfoNice()
   string s="[Info] ";
   // s <<  __PRETTY_FUNCTION__ <<":"<<__LINE__<<" ";
   //s += to_string(getMemoryUsage()); s+="MB ";
-  return LogStreamer(std::cout<<s);
+ if (info){
+   return LogStreamer(std::cout<<s);
+ }  else {
+   null.setstate(std::ios_base::failbit);
+   return LogStreamer(null);
+ }
 }
 
 
@@ -206,7 +228,7 @@ LogStreamer JetScapeLogger::VerboseParton(unsigned short m_vlevel,Parton &p)
     }
 }
 
-LogStreamer JetScapeLogger::VerboseVertex(unsigned short m_vlevel,VertexBase &v)
+LogStreamer JetScapeLogger::VerboseVertex(unsigned short m_vlevel,Vertex &v)
 {
   if (m_vlevel<vlevel) // or if (m_vlevel==vlevel)
     {
@@ -219,3 +241,5 @@ LogStreamer JetScapeLogger::VerboseVertex(unsigned short m_vlevel,VertexBase &v)
       return LogStreamer(null);  
     }
 }
+
+} // end namespace Jetscape

@@ -17,8 +17,10 @@
 #include <string>
 #include <vector>
 
-// default delimiter string (space, tab, newline, carriage return, form feed and ->[] potential JetScape ascii format
-const std::string DEFAULT_DELIMITER = " \t\v\n\r\f->[]";
+namespace Jetscape {
+
+// default delimiter string (space, tab, newline, carriage return, form feed and =,>,[,].
+const std::string DEFAULT_DELIMITER = " \t\v\n\r\f=>[]";
 
 class StringTokenizer
 {
@@ -59,7 +61,10 @@ private:
 
 };
 
+} // end namespace Jetscape
+
 #endif // STRINGTOKENIZER_H
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // Usage of Tokenizer Class: Example program
@@ -71,6 +76,7 @@ private:
 #include "StringTokenizer.h"
 #include <string>
 #include <iostream>
+
 
 using std::string;
 using std::cout;

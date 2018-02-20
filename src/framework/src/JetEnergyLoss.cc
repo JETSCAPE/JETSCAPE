@@ -16,6 +16,7 @@
 #include "JetScapeLogger.h"
 #include "JetScapeXML.h"
 #include <string>
+#include <iostream>
 #include "tinyxml2.h"
 #include "JetScapeSignalManager.h"
 #include "JetScapeWriterAscii.h"
@@ -30,6 +31,25 @@
 #define BOLDCYAN    "\033[1m\033[36m"      /* Bold Cyan */
 
 using namespace std;
+
+/**
+   DELETE ME convenient output
+*/
+
+namespace Jetscape {
+ostream &operator<<(ostream &ostr, const fjcore::PseudoJet & jet) {
+  if (jet == 0) {
+    ostr << " 0 ";
+  } else {
+    ostr << " pt = " << jet.pt()
+	 << " m = " << jet.m()
+	 << " y = " << jet.rap()
+	 << " phi = " << jet.phi()
+         << " ClusSeq = " << (jet.has_associated_cs() ? "yes" : "no");
+  }                                                      
+  return ostr;
+}
+
 
 JetEnergyLoss::JetEnergyLoss()
 {
@@ -131,10 +151,11 @@ void JetEnergyLoss::Init()
   JetScapeTask::InitTasks();
 }
 
-void::JetEnergyLoss::DoShower()
+void JetEnergyLoss::DoShower()
 {
   double tStart=0;
   double currentTime=0;
+ 
 
   VERBOSESHOWER(8)<<"Hard Parton from Initial Hard Process ...";
   VERBOSEPARTON(6,*GetShowerInitiatingParton());
@@ -150,27 +171,21 @@ void::JetEnergyLoss::DoShower()
   //DEBUG this guy isn't linked to anything - put in test particle for now
   pIn.push_back(*GetShowerInitiatingParton());
 
-  /*double pAssign[4] = {10,14,2,20};
-  double xLoc[4] = {2,3,4,5};
-  Parton pTemp(1,21,0,pAssign,xLoc);
-  pTemp.reset_momentum(pAssign);
-  pIn.push_back(pTemp);*/
-
   // Add here the Hard Shower emitting parton ...
-  vStart=pShower->new_vertex(make_shared<VertexBase>());
-  vEnd=pShower->new_vertex(make_shared<VertexBase>());
-  pShower->new_parton(vStart,vEnd,make_shared<Parton>(*GetShowerInitiatingParton()));
+  vStart=pShower->new_vertex(make_shared<Vertex>());
+  vEnd=pShower->new_vertex(make_shared<Vertex>());
+  // Add original parton later, after it had a chance to acquire virtuality
+  // pShower->new_parton(vStart,vEnd,make_shared<Parton>(*GetShowerInitiatingParton()));
 
   // start then the recursive shower ...
   vStartVec.push_back(vEnd);
   //vStartVecTemp.push_back(vEnd);
   
-  // ISSUE: Probably not yet 100% wrt to time step evolution ...
-  // Logic mistake to remove the original ones when no split occured !!??? Follow up!!!!
-  REMARK<<"DoShower() Splitting including time evolution (allowing non-splits at later times) implemeted correctly (should be made nicer/pointers). To be checked!!!";
-
   // --------------------------------------------
-  
+
+  // cerr << " ---------------------------------------------- " << endl;
+  // cerr << "Start with " << *GetShowerInitiatingParton() << "  -> " << GetShowerInitiatingParton()->t() << endl;
+  bool foundchangedorig=false;
   do
     {
       VERBOSESHOWER(7)<<"Current time = "<<currentTime<<" with #Input "<<pIn.size();     
@@ -180,33 +195,36 @@ void::JetEnergyLoss::DoShower()
       
       for (int i=0;i<pIn.size();i++)
 	{
-	  //DEBUG:
-	  //cout<<currentTime<<" pIn size = "<<pIn.size()<<" "<<i<<" "<<pIn[i].pt()<<endl;
-
-	  pInTemp.push_back(pIn[i]);
+	  // INFO << pIn.at(i).edgeid();
 	  pInTempModule.push_back(pIn[i]);
 	  
-	  SentInPartons(currentTime,pIn[i].pt(),pInTempModule,pOutTemp);
+	  SentInPartons(deltaT,currentTime,pIn[i].pt(),pInTempModule,pOutTemp);
+	  if ( !foundchangedorig ) {
+	    // cerr  << " End with "<< pInTempModule.at(0) << "  -> " << pInTempModule.at(0).t() << endl;
+	    // cerr << " ---------------------------------------------- " << endl;
+	    pShower->new_parton(vStart,vEnd,make_shared<Parton>(pInTempModule.at(0)));
+	    foundchangedorig=true;
+	  }
+	  
+	  pInTemp.push_back(pInTempModule[0]);
 
 	  vStart=vStartVec[i];
 	  vStartVecTemp.push_back(vStart);
 
-	  //DEBUG:
-	  //cout<<vStart<<endl;
-	  // --------------------------------------------
 	  for (int k=0;k<pOutTemp.size();k++)
 	    {
-	      vEnd=pShower->new_vertex(make_shared<VertexBase>(0,0,0,currentTime));	    	      
-	      pShower->new_parton(vStart,vEnd,make_shared<Parton>(pOutTemp[k]));	     
-	      	     
-	      //DEBUG:
-	      //cout<<vStart<<"-->"<<vEnd<<endl;
-	      //cout<<pOutTemp[k];
-	      //cout<<vStartVec.size()<<endl;
-	      //cout<<pInTempModule.size()<<endl;
-	      
+	      vEnd=pShower->new_vertex(make_shared<Vertex>(0,0,0,currentTime));	
+	      int edgeid = pShower->new_parton(vStart,vEnd,make_shared<Parton>(pOutTemp[k]));
+	      pOutTemp[k].set_shower( pShower );
+	      pOutTemp[k].set_edgeid( edgeid );
+		      
 	      vStartVecOut.push_back(vEnd);
-	      pOut.push_back(pOutTemp[k]);
+	      pOut.push_back(pOutTemp[k]);		      
+
+	      Parton& particle = pOut.back();
+	      // Parton& particle = pOut[iout];
+	      // Parton& particle = pIn.at(i);
+
 
 	      // --------------------------------------------
 	      // Add new roots from ElossModules ...
@@ -224,12 +242,12 @@ void::JetEnergyLoss::DoShower()
 		  
 		  for (int l=1;l<pInTempModule.size();l++)
 		    {
-		      node vNewRootNode=pShower->new_vertex(make_shared<VertexBase>(0,0,0,currentTime-deltaT));
+		      node vNewRootNode=pShower->new_vertex(make_shared<Vertex>(0,0,0,currentTime-deltaT));
 		      pShower->new_parton(vNewRootNode,vEnd,make_shared<Parton>(pInTempModule[l]));
 		    }
 		}
 	      // --------------------------------------------
-	      
+	      // 
 	      if (k==0)
 		{
 		  pInTemp.pop_back();       		  
@@ -237,7 +255,6 @@ void::JetEnergyLoss::DoShower()
 		}	  
 	    }
 	  // --------------------------------------------
-	 
 	  pOutTemp.clear();
 	  pInTempModule.clear();
 	}
@@ -282,7 +299,7 @@ void JetEnergyLoss::Exec()
        /*
        //Check Memory ...
        VERBOSE(8)<<"Use PartonShowerGenerator to do Parton shower stored in PartonShower Graph class";
-       DEBUG<<"Use PartonShowerGenerator to do Parton shower stored in PartonShower Graph class";
+       JSDEBUG<<"Use PartonShowerGenerator to do Parton shower stored in PartonShower Graph class";
        
        PartonShowerGenerator PSG;
        PSG.DoShower(*shared_from_this()); //needed otherwise all signal slots have to be recreated for shower module ....
@@ -299,12 +316,17 @@ void JetEnergyLoss::Exec()
        pShower->PrintEdges();
 
        weak_ptr<HardProcess> hproc = JetScapeSignalManager::Instance()->GetHardProcessPointer();
-       for(unsigned int ipart=0; ipart<pShower->GetNumberOfPartons(); ipart++){ 
-           //   Uncomment to dump the whole parton shower into the parton container
-           //           hproc.lock()->AddParton(pShower->GetPartonAt(ipart));
-       }
 
-     }
+       for(unsigned int ipart=0; ipart<pShower->GetNumberOfPartons(); ipart++){
+	 //   Uncomment to dump the whole parton shower into the parton container
+	 //           hproc.lock()->AddParton(pShower->GetPartonAt(ipart));
+       }
+	
+       shared_ptr<PartonPrinter> pPrinter = JetScapeSignalManager::Instance()->GetPartonPrinterPointer().lock();
+       if ( pPrinter ){
+	 pPrinter->GetFinalPartons2(pShower);
+       }
+    }
   else
     {WARN<<"NO Initial Hard Parton for Parton shower received ...";}  
 
@@ -315,7 +337,7 @@ void JetEnergyLoss::Exec()
 void JetEnergyLoss::WriteTask(weak_ptr<JetScapeWriter> w)
 {
   VERBOSE(8);
-  INFO<<"In JetEnergyLoss::WriteTask";
+  VERBOSE(4)<<"In JetEnergyLoss::WriteTask";
   w.lock()->WriteComment("Energy loss Shower Initating Parton: "+GetId());
   w.lock()->Write(inP);
 
@@ -325,7 +347,7 @@ void JetEnergyLoss::WriteTask(weak_ptr<JetScapeWriter> w)
 #ifdef USE_HEPMC
   //If you want HepMC output, pass the whole shower along...
   if (dynamic_pointer_cast<JetScapeWriterHepMC> (w.lock())){
-      INFO << " writing partons... found " << pShower->GetNumberOfPartons();
+      VERBOSE(4) << " writing partons... found " << pShower->GetNumberOfPartons();
       (w.lock())->Write(pShower);
   }
 #endif
@@ -346,7 +368,7 @@ void JetEnergyLoss::WriteTask(weak_ptr<JetScapeWriter> w)
     }
 
   //Own storage of graph structure, needs separate PartonShower reader ...
-  else if (pShower)
+  if (pShower)
     {
       w.lock()->WriteComment("Parton Shower in JetScape format to be used later by GTL graph:");
       
@@ -363,7 +385,7 @@ void JetEnergyLoss::WriteTask(weak_ptr<JetScapeWriter> w)
       
       for (eIt = pShower->edges_begin(), eEnd = pShower->edges_end(); eIt != eEnd; ++eIt)
 	{
-	  w.lock()->WriteWhiteSpace("["+to_string(eIt->source().id())+"]-->["+to_string(eIt->target().id())+"]");
+	  w.lock()->WriteWhiteSpace("["+to_string(eIt->source().id())+"]=>["+to_string(eIt->target().id())+"]");
 	  w.lock()->Write(pShower->GetParton(*eIt));
 	}
     }
@@ -377,5 +399,9 @@ void JetEnergyLoss::WriteTask(weak_ptr<JetScapeWriter> w)
 
 void JetEnergyLoss::PrintShowerInitiatingParton()
 {
-  //DEBUG<<inP->pid();
+  //JSDEBUG<<inP->pid();
 }
+
+
+
+} // end namespace Jetscape

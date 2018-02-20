@@ -5,7 +5,12 @@
 // -----------------------------------------
 // License and Doxygen-like Documentation to be added ...
 
+#ifndef JETSCAPE_BANNER_H
+#define JETSCAPE_BANNER_H
+
 #include "JetScapeLogger.h"
+
+namespace Jetscape {
 
 void show_jetscape_banner()
 {
@@ -36,3 +41,7 @@ void show_jetscape_banner()
   INFO_NICE<<"|                                                              |";
   INFO_NICE<<"*--------------------------------------------------------------*";
 }
+
+} // end namespace Jetscape
+
+#endif

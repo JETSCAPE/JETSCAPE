@@ -25,6 +25,8 @@
 using namespace std;
 //using namespace fjcore;
 
+using namespace Jetscape;
+
 // -------------------------------------
 
 // Forward declaration
@@ -82,9 +84,8 @@ int main(int argc, char** argv)
 	  mShowers[i]->PrintVertices();
 	  mShowers[i]->PrintPartons();	
 
-	  //Anti-kT jet finding ... (see: JetDefinition jet_def(antikt_algorithm, 0.7);)
-	  //Already easily avilable via inclusion of fjcore ...
-	  fjcore::ClusterSequence cs(mShowers[i]->GetFinalPartonsForFastJet(), jet_def);	 
+	  fjcore::ClusterSequence cs(mShowers[i]->GetFinalPartonsForFastJet(), jet_def);
+
 	  vector<fjcore::PseudoJet> jets = fjcore::sorted_by_pt(cs.inclusive_jets(2));
 	  cout<<endl;
 	  cout<<jet_def.description()<<endl;
@@ -181,5 +182,6 @@ ostream & operator<<(ostream & ostr, const fjcore::PseudoJet & jet) {
   }
   return ostr;
 }
+
 
 //----------------------------------------------------------------------

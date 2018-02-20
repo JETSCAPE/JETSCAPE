@@ -9,6 +9,8 @@
 #include "Hydroinfo_h5.h"
 #endif
 
+using namespace Jetscape;
+
 class HydroFile: public FluidDynamics {
     // this is wrapper class for MUSIC so that it can be used as a external
     // library for the JETSCAPE integrated framework

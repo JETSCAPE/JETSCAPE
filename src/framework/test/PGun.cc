@@ -8,6 +8,8 @@
 //Parton Gun Test ...
 #include "PGun.h"
 
+using namespace Jetscape;
+
 PGun::PGun() : HardProcess()
 {
   fixed_pT=0;
@@ -22,18 +24,18 @@ PGun::~PGun()
 
 void PGun::InitTask()
 {
-  DEBUG<<"Initialize PGun Brick (Test) ...";
+  JSDEBUG<<"Initialize PGun Brick (Test) ...";
   VERBOSE(8);
   tinyxml2::XMLElement *pgun=GetHardXML()->FirstChildElement("PGun");
 
   if (pgun)
     {
       string s = pgun->FirstChildElement( "name" )->GetText();
-      DEBUG << s << " to be initilizied ...";
+      JSDEBUG << s << " to be initilizied ...";
       
       pgun->FirstChildElement("pT")->QueryDoubleText(&fixed_pT);
 
-      DEBUG << s << " with fixed pT = "<<fixed_pT;
+      JSDEBUG << s << " with fixed pT = "<<fixed_pT;
       INFO<<"Parton Gun with fixed pT = "<<fixed_pT;
       
     }
@@ -46,8 +48,7 @@ void PGun::InitTask()
  
 void PGun::Exec()
 {
-  INFO<<"Run Hard Process : "<<GetId()<< " ...";
-  VERBOSE(8)<<"Current Event #"<<GetCurrentEvent();
+  VERBOSE(2)<<"Run Hard Process : "<<GetId()<< " ...";
 
   double p[4], xLoc[4];
   for (int i=0;i<=3; i++) {
@@ -80,13 +81,13 @@ void PGun::Exec()
        phi = 2.0*PI*(rand()/maxN);
        rapidity=0;//2.0*eta_cut*(rand()/maxN)-eta_cut;
               
-       p[0] = pT*cos(phi);
-       p[1] = pT*sin(phi);
-       p[2] = sqrt(pT*pT+mass*mass)*sinh(rapidity);
-       p[3] = sqrt(pT*pT+mass*mass)*cosh(rapidity);
+       p[1] = pT*cos(phi);
+       p[2] = pT*sin(phi);
+       p[3] = sqrt(pT*pT+mass*mass)*sinh(rapidity);
+       p[0] = sqrt(pT*pT+mass*mass)*cosh(rapidity);
   
        //AddParton(make_shared<Parton>(0,parID,0,p,xLoc));
-       AddParton(make_shared<Parton>(0,parID,0,pT,rapidity,phi,p[3],xLoc));
+       AddParton(make_shared<Parton>(0,parID,0,pT,rapidity,phi,p[0],xLoc));
 
        // DEBUG: (<< of Parton not working with Logger VERBOSE standard ... Check!
        //JetScapeLogger::Instance()->VerboseParton(6,*GetPartonAt(i))<<__PRETTY_FUNCTION__<<" : ";

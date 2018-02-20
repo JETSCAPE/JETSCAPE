@@ -18,6 +18,8 @@
 
 #include "JetScapeWriter.h"
 
+namespace Jetscape {
+
 // Maybe a templeate for Ascii and AsciiGZ !? Or in general !???
 
 class JetScapeWriterAsciiGZ : public JetScapeWriter
@@ -36,7 +38,10 @@ class JetScapeWriterAsciiGZ : public JetScapeWriter
   void Close() {output_file.close();}
 
   void Write(weak_ptr<Parton> p);
+  void Write(weak_ptr<Vertex> v);
   void Write(string s) {output_file<<s<<endl;}
+  void WriteComment(string s) {output_file<<"# "<<s<<endl;}
+  void WriteWhiteSpace(string s) {output_file<<s<<" ";}
   // ...
   
   void WriteEvent();
@@ -47,5 +52,7 @@ class JetScapeWriterAsciiGZ : public JetScapeWriter
   //int m_precision; //!< Output precision
   
 };
+
+} // end namespace Jetscape
 
 #endif

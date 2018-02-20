@@ -18,6 +18,13 @@
 #include <fstream>
 #include "gzstream.h"
 
+using std::ostream;
+using std::istream;
+using std::ofstream;
+using std::ifstream;
+
+namespace Jetscape {
+
 template<class T>
 class JetScapeReader
 {
@@ -62,9 +69,15 @@ class JetScapeReader
   vector<edge> edgeVec; 
   
  };
+
+} // end namespace Jetscape
 #endif
 
 // ---------------------
+
+using namespace Jetscape;
+// comment: Don't know why the following code is not embraced in #ifdef and #endif?
+// The "using namespace Jetscape;" can be removed if the following are moved up
 
 class JetScapeReaderAscii : public JetScapeReader<ifstream>
 {

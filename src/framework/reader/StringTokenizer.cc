@@ -13,6 +13,8 @@
 
 #include "StringTokenizer.h"
 
+namespace Jetscape {
+
 ///////////////////////////////////////////////////////////////////////////////
 // destructor
 ///////////////////////////////////////////////////////////////////////////////
@@ -54,7 +56,7 @@ bool StringTokenizer::isEdgeEntry() const
 {
   if (buffer.length()>0)
     if (isGraphEntry())
-      if (buffer.find("-->")<5)
+      if (buffer.find("=>")<100)
 	return true;
       else
 	return false;
@@ -170,4 +172,7 @@ std::vector<std::string> StringTokenizer::split()
     }
 
     return tokens;
+
 }
+
+} // end namespace Jetscape

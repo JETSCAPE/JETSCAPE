@@ -10,6 +10,8 @@
 
 using namespace std;
 
+namespace Jetscape {
+
 JetScapeEvent::JetScapeEvent()
 {
 }
@@ -48,3 +50,5 @@ void JetScapeEvent::addPartonShower(shared_ptr<PartonShower> ps){
 void JetScapeEvent::deleteParton(int idx){
     partonCollection.erase(partonCollection.begin()+idx); //inefficient delete!!
 }
+
+} // end namespace Jetscape

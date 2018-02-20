@@ -13,6 +13,8 @@
 #include "HardProcess.h"
 #include "JetScapeLogger.h"
 
+using namespace Jetscape;
+
 class PGun: public HardProcess {
    
  private:

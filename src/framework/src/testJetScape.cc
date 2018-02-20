@@ -22,7 +22,8 @@
 #include "FluidDynamics.h"
 #include "JetScapeLogger.h"
 #include "JetScapeXML.h"
-#include "ElossModulesTest.h"
+#include "ElossModulesTestMatter.h"
+#include "ElossModulesTestMartini.h"
 #include "JetScapeWriterAsciiGZ.h"
 #include "JetScapeWriterAscii.h"
 //#include "JetScapeWriterHepMC.h"
@@ -56,6 +57,8 @@ using namespace sigslot;
 // -------------------------------------
 
 // Forward declaration
+
+using namespace Jetscape;
 
 void Show();
 
@@ -102,7 +105,7 @@ int main(int argc, char** argv)
   //VERBOSE(4)<<" Test Verbose ...";
   
   //With definitions above/in logger class  as a shortcut
-  //DEBUG<<" Test";
+  //JSDEBUG<<" Test";
   
   //JetScapeXML::Instance()->SetXMLFileName("./jetscape_init.xml");
   //JetScapeXML::Instance()->OpenXMLFile();
@@ -208,7 +211,7 @@ int main(int argc, char** argv)
   //matter2->jetSignal.connect(hydro.get(), &FluidDynamics::UpdateEnergyDeposit);
   //martini->jetSignal.connect(hydro.get(), &FluidDynamics::UpdateEnergyDeposit);
 
-  //DEBUG<<"Connect Signal/Slot : jetSignal.connect(hydro.get(), &FluidDynamics::UpdateEnergyDeposit);";
+  //JSDEBUG<<"Connect Signal/Slot : jetSignal.connect(hydro.get(), &FluidDynamics::UpdateEnergyDeposit);";
   //REMARK<<"Can be handelded in own connection class ...";
 
   //matter2->jetSignal(1,2);

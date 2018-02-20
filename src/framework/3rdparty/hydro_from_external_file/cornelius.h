@@ -6,7 +6,13 @@
 #include <math.h>
 #include <stdlib.h>
 
-using namespace std;
+#include <fstream>
+// using namespace std;
+using std::string;
+using std::vector;
+using std::ofstream;
+using std::ifstream;
+using std::abs;
 
 /**
  *

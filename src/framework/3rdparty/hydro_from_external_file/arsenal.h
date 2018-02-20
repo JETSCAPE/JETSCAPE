@@ -9,7 +9,14 @@
 #include <vector>
 #include <string>
 
-using namespace std;
+// using namespace std;
+using std::string;
+using std::vector;
+using std::ofstream;
+using std::ifstream;
+using std::ostream;
+using std::istream;
+using std::abs;
 
 double sixPoint2dInterp(double x, double y,
     double v00, double v01, double v02, double v10, double v11, double v20);

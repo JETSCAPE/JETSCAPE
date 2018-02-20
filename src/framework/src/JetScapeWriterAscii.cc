@@ -11,6 +11,8 @@
 #include "JetScapeLogger.h"
 #include "JetScapeXML.h"
 
+namespace Jetscape {
+
 JetScapeWriterAscii::JetScapeWriterAscii(string m_file_name_out)
 {
   SetOutputFileName(m_file_name_out);
@@ -25,7 +27,7 @@ JetScapeWriterAscii::~JetScapeWriterAscii()
 
 void JetScapeWriterAscii::WriteEvent()
 {
-  DEBUG<< GetCurrentEvent() << " Event";
+  JSDEBUG<< GetCurrentEvent() << " Event";
   Write(to_string(GetCurrentEvent()) + " Event");
   
 }
@@ -35,7 +37,7 @@ void JetScapeWriterAscii::Write(weak_ptr<Parton> p)
   output_file<<*p.lock()<<endl;
 }
 
-void JetScapeWriterAscii::Write(weak_ptr<VertexBase> v)
+void JetScapeWriterAscii::Write(weak_ptr<Vertex> v)
 {
   output_file<<*v.lock()<<endl;
 }
@@ -62,10 +64,11 @@ void JetScapeWriterAscii::Exec()
 
 void JetScapeWriterAscii::WriteInitFileXML()
 {
-  DEBUG<<"Write XML to output file. XML file = "<<JetScapeXML::Instance()->GetXMLFileName();
+  JSDEBUG<<"Write XML to output file. XML file = "<<JetScapeXML::Instance()->GetXMLFileName();
   tinyxml2::XMLPrinter printer;
   JetScapeXML::Instance()->GetXMLDocument().Print(&printer);
-  //cout<<printer.CStr()<<endl;
   WriteComment("Init XML file used : "+JetScapeXML::Instance()->GetXMLFileName());
   output_file<<printer.CStr();
 }
+
+} // end namespace Jetscape

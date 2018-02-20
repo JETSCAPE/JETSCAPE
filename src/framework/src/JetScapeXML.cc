@@ -13,6 +13,8 @@
 
 using namespace std;
 
+namespace Jetscape {
+
 JetScapeXML* JetScapeXML::m_pInstance = NULL;
 
 JetScapeXML* JetScapeXML::Instance()
@@ -31,7 +33,7 @@ void JetScapeXML::OpenXMLFile()
   if (!xml_file_open)
     {
       xml_doc.LoadFile((char*) GetXMLFileName().c_str());
-      
+      INFO<<BOLDBLACK<<"Trying XML file : "<< GetXMLFileName();
       if (xml_doc.ErrorID()<1)
 	{
 	  INFO<<BOLDBLACK<<"Open XML file : "<< GetXMLFileName();
@@ -57,3 +59,5 @@ void JetScapeXML::OpenXMLFile(string m_name)
   SetXMLFileName(m_name);
   OpenXMLFile();
 }
+
+} // end namespace Jetscape
