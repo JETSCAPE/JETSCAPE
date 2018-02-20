@@ -18,6 +18,8 @@ class HydroFile: public FluidDynamics {
     // library for the JETSCAPE integrated framework
  private:
     // ParameterReader *paraRdr;
+    tinyxml2::XMLElement *para;
+
     bool load_viscous;
     int hydro_type;
 

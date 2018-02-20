@@ -28,8 +28,7 @@ HydroFile::~HydroFile() {
 void HydroFile::initialize_hydro(Parameter parameter_list) {
     JSDEBUG << "Initialize hydro from file (Test) ...";
     VERBOSE(8);
-    tinyxml2::XMLElement *para =
-                    GetHydroXML()->FirstChildElement("hydro_from_file");
+    para = GetHydroXML()->FirstChildElement("hydro_from_file");
     if (!para) {
         WARN << " : hydro_from_file not properly initialized in XML file ...";
         exit(-1);
@@ -42,47 +41,6 @@ void HydroFile::initialize_hydro(Parameter parameter_list) {
     para->FirstChildElement("load_viscous_info")->QueryBoolText(&load_viscous);
     para->FirstChildElement("T_c")->QueryDoubleText(&T_c);
     hydro_status = INITIALIZED;
-
-    int nskip_tau = 1;
-    if (hydro_type == 1) {
-        string filename = para->FirstChildElement("VISH_file")->GetText();
-#ifdef USE_HDF5
-        hydroinfo_h5_ptr = new HydroinfoH5(filename, 500, load_viscous);
-#else
-        WARN << " : hydro_type == 1 requires the hdf5 library~";
-        WARN << " : please check your inputs~";
-        exit(-1);
-#endif
-    } else if (hydro_type == 2) {
-        string input_file =
-                para->FirstChildElement("MUSIC_input_file")->GetText();
-        string hydro_ideal_file =
-                para->FirstChildElement("MUSIC_file")->GetText();
-        hydroinfo_MUSIC_ptr = new Hydroinfo_MUSIC();
-        para->FirstChildElement("read_hydro_every_ntau")->QueryIntText(
-                                                                &nskip_tau);
-        read_in_hydro_event(input_file, hydro_ideal_file, nskip_tau);
-    } else if (hydro_type == 3) {
-        string input_file =
-                para->FirstChildElement("MUSIC_input_file")->GetText();
-        string hydro_ideal_file =
-                para->FirstChildElement("MUSIC_file")->GetText();
-        hydroinfo_MUSIC_ptr = new Hydroinfo_MUSIC();
-        para->FirstChildElement("read_hydro_every_ntau")->QueryIntText(
-                                                                &nskip_tau);
-        read_in_hydro_event(input_file, hydro_ideal_file, nskip_tau);
-    } else if (hydro_type == 4) {
-        string input_file =
-                para->FirstChildElement("MUSIC_input_file")->GetText();
-        string hydro_ideal_file =
-                para->FirstChildElement("MUSIC_file")->GetText();
-        hydroinfo_MUSIC_ptr = new Hydroinfo_MUSIC();
-        nskip_tau = 1;
-        read_in_hydro_event(input_file, hydro_ideal_file, nskip_tau);
-    } else {
-        WARN << "main: unrecognized hydro_type = " << hydro_type;
-        exit(1);
-    }
 }
 
 //! This function load a VISHNew hydro event
@@ -135,8 +93,52 @@ void HydroFile::read_in_hydro_event(string MUSIC_input_file,
 
 
 void HydroFile::evolve_hydro() {
-    VERBOSE(8);
-    hydro_status = FINISHED;
+    if (hydro_status == FINISHED) {
+        clean_hydro_event();
+        hydro_status = INITIALIZED;
+    }
+
+    int nskip_tau = 1;
+    if (hydro_type == 1) {
+        string filename = para->FirstChildElement("VISH_file")->GetText();
+#ifdef USE_HDF5
+        hydroinfo_h5_ptr = new HydroinfoH5(filename, 500, load_viscous);
+#else
+        WARN << " : hydro_type == 1 requires the hdf5 library~";
+        WARN << " : please check your inputs~";
+        exit(-1);
+#endif
+        hydro_status = FINISHED;
+    } else if (hydro_type == 2) {
+        string input_file =
+                para->FirstChildElement("MUSIC_input_file")->GetText();
+        string hydro_ideal_file =
+                para->FirstChildElement("MUSIC_file")->GetText();
+        hydroinfo_MUSIC_ptr = new Hydroinfo_MUSIC();
+        para->FirstChildElement("read_hydro_every_ntau")->QueryIntText(
+                                                                &nskip_tau);
+        read_in_hydro_event(input_file, hydro_ideal_file, nskip_tau);
+    } else if (hydro_type == 3) {
+        string input_file =
+                para->FirstChildElement("MUSIC_input_file")->GetText();
+        string hydro_ideal_file =
+                para->FirstChildElement("MUSIC_file")->GetText();
+        hydroinfo_MUSIC_ptr = new Hydroinfo_MUSIC();
+        para->FirstChildElement("read_hydro_every_ntau")->QueryIntText(
+                                                                &nskip_tau);
+        read_in_hydro_event(input_file, hydro_ideal_file, nskip_tau);
+    } else if (hydro_type == 4) {
+        string input_file =
+                para->FirstChildElement("MUSIC_input_file")->GetText();
+        string hydro_ideal_file =
+                para->FirstChildElement("MUSIC_file")->GetText();
+        hydroinfo_MUSIC_ptr = new Hydroinfo_MUSIC();
+        nskip_tau = 1;
+        read_in_hydro_event(input_file, hydro_ideal_file, nskip_tau);
+    } else {
+        WARN << "main: unrecognized hydro_type = " << hydro_type;
+        exit(1);
+    }
 }
 
 
