@@ -21,7 +21,7 @@ Hadronization::~Hadronization()
 void Hadronization::Clear()
 {
   VERBOSESHOWER(8);
-  
+  outHadrons.clear(); 
 }
 
 void Hadronization::Init()
