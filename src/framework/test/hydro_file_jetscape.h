@@ -17,15 +17,17 @@ class HydroFile: public FluidDynamics {
     // this is wrapper class for MUSIC so that it can be used as a external
     // library for the JETSCAPE integrated framework
  private:
-    // ParameterReader *paraRdr;
     tinyxml2::XMLElement *para_;
 
+    int flag_read_in_multiple_hydro_;
     int hydro_event_idx_;
 
     int load_viscous_;
     int hydro_type_;
 
+    int nskip_tau_;
     double T_c_;
+
 #ifdef USE_HDF5
     HydroinfoH5 *hydroinfo_h5_ptr;
 #endif

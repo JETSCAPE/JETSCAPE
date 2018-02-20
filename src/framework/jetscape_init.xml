@@ -122,6 +122,8 @@
         <!-- hydro from a file ... -->
         <hydro_from_file>
             <name> hydro from a file </name>
+            <read_in_multiple_hydro>1</read_in_multiple_hydro>
+            <hydro_files_folder>../test/test_hydro_files</hydro_files_folder>
             <!-- read in file type ... -->
             <!-- hydro_type == 1 read in evo file from VISHNew... -->
             <!-- hydro_type == 2 read in evo file from MUSIC... -->
