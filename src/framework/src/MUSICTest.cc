@@ -28,6 +28,7 @@
 #include "ElossModulesTestMatter.h"
 #include "ElossModulesTestMartini.h"
 #include "music_jetscape.h"
+#include "iSS_jetscape.h"
 #include "TrentoInitial.h"
 #include "PGun.h"
 #include "PartonPrinter.h"
@@ -78,6 +79,7 @@ int main(int argc, char** argv)
   auto jloss = make_shared<JetEnergyLoss> ();
   auto trento = make_shared<TrentoInitial> ();
   auto hydro = make_shared<MPI_MUSIC> ();
+  auto iSS = make_shared<iSS_CF> ();
   //auto hydro = make_shared<GubserHydro> ();
   
   auto matter = make_shared<Matter> ();
@@ -128,6 +130,8 @@ int main(int argc, char** argv)
   jlossmanager->Add(jloss);
   
   jetscape->Add(jlossmanager);
+  
+  jetscape->Add(iSS);
 
 
     jetscape->Add(printer);
