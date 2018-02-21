@@ -46,14 +46,9 @@ void JetScapeReader<T>::AddNode(string s)
       token = strT.next();
       if(token.compare("V") != 0)
       	vS.push_back(token);
-      //++counter;
-      //cout << token  << " ";
     }
 
-  //cout<<endl;
-  //cout<<vS.size()<<endl;
   nodeVec.push_back(pShower->new_vertex(make_shared<Vertex>(stod(vS[1]),stod(vS[2]),stod(vS[3]),stod(vS[4]))));
-  //cout<<nodeVec.size()<<endl;
 }
 
 template<class T>
@@ -72,10 +67,7 @@ void JetScapeReader<T>::AddEdge(string s)
 	  token = strT.next();
 	  if(token.compare("P") != 0)
 	    vS.push_back(token);
-	  //++counter;
-	  //cout << token  << " ";
 	}      
-      //cout<<endl;
       
       pShower->new_parton(nodeVec[stoi(vS[0])],nodeVec[stoi(vS[1])],make_shared<Parton>(stoi(vS[2]),stoi(vS[3]),stoi(vS[4]),stod(vS[5]),stod(vS[6]),stod(vS[7]),stod(vS[8]))); // use different constructor wit true spatial posiiton ...
     }
@@ -88,8 +80,7 @@ void JetScapeReader<T>::AddHadron(string s)
 {
 	string token;
         strT.set(s);
-        //string id = strT.next();
-	//token = strT.next();
+
 	vector<string> vS;
         double x[4];
         x[0]=x[1]=x[2]=x[3]=0.0;
@@ -110,7 +101,6 @@ void JetScapeReader<T>::Next()
     Clear();
   
   //ReadEvent(currentPos);
-  //INFO<<"Read Events ...";
   string line;
   string token; 
 
@@ -124,60 +114,67 @@ void JetScapeReader<T>::Next()
   
   while (getline(inFile,line))
     {
-      
       strT.set(line);
-      
-      if (!strT.isCommentEntry())
-	{
-	  if (strT.isEventEntry())
-	    {
-	      int newEvent=stoi(strT.next());		      
-	      if (currentEvent!=newEvent && currentEvent>-1)
-		{currentEvent++;break;}
-	      
-	      currentEvent=newEvent;	      	
-	    }
-	  else
-	    {
-	      if (strT.isGraphEntry())
-		{
-		  if (strT.isEdgeEntry())
-		    {
-		      //cout<<line<<endl;
-		      AddEdge(line);
-		    }
-		  else if(strT.isNodeEntry())		    
-		    {
-		      if (strT.isNodeZero())
-			{
-			  nodeZeroCounter++;
-			  //cout<<nodeZeroCounter<<endl;
-			  //cout<<line<<endl;
-			  if (nodeZeroCounter>currentShower)
-			    {
-			      //pShower->clear();
-			      //pShower=nullptr;
-			      nodeVec.clear();edgeVec.clear();
-			      pShowers.push_back(make_shared<PartonShower>());
-			      pShower=pShowers.back();
-			      currentShower++;
-			    }
-			}
-		      AddNode(line);		     
-		    }
-		  else //Hadron Entry
-                    {
-                      AddHadron(line);
-                    }
 
-		}
-	    }
+      if ( strT.isCommentEntry()) continue;
+      
+      if (strT.isEventEntry()) {
+	int newEvent=stoi(strT.next());		      
+	if (currentEvent!=newEvent && currentEvent>-1) {
+	  currentEvent++;
+	  break;
+	}	
+	currentEvent=newEvent;
+	continue;
+      }
+
+      // not an event header -- done?
+      if ( !strT.isGraphEntry()) continue;
+      
+      // node?
+      if(strT.isNodeEntry()){
+	// catch starting node
+	if (strT.isNodeZero()) {
+	  nodeZeroCounter++;
+	  if (nodeZeroCounter>currentShower) {
+	    nodeVec.clear();edgeVec.clear();
+	    pShowers.push_back(make_shared<PartonShower>());
+	    pShower=pShowers.back();
+	    currentShower++;
+	  }
 	}
+	AddNode(line);
+	continue;
+      }
+
+      // edge?
+      if (strT.isEdgeEntry()) {
+	AddEdge(line);
+	continue;
+      }
+      
+      // rest is list entry == hadron entry
+      // Some questionable nomenclature here - identifying all that begins with "[" as "GraphEntry"
+      // oh well
+      AddHadron(line);
     }
+  
   if (Finished())
     currentEvent++;  
   
 }
+
+template<class T>
+vector<fjcore::PseudoJet>  JetScapeReader<T>::GetHadronsForFastJet(){
+  vector<fjcore::PseudoJet> forFJ;  
+
+  for ( auto& h : hadrons) {
+    forFJ.push_back( h->GetPseudoJet());
+  }
+
+  return forFJ;
+} 
+
 
 template<class T>
 void JetScapeReader<T>::Init()

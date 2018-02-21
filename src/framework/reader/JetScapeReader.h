@@ -48,7 +48,9 @@ class JetScapeReader
   //shared_ptr<PartonShower> GetPartonShower() {return pShower;}
   vector<shared_ptr<PartonShower>> GetPartonShowers() {return pShowers;}
 
-  vector<shared_ptr<Hadron>> GetFinalStateHadrons(){return hadrons;}
+  vector<shared_ptr<Hadron>> GetHadrons(){ return hadrons;}
+
+  vector<fjcore::PseudoJet>  GetHadronsForFastJet();
   
  private:
 
