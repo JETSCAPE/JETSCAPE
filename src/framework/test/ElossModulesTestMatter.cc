@@ -46,7 +46,7 @@ Matter::~Matter()
 
 void Matter::Init()
 {
-  INFO<<"Intialize Matter ...";
+  //INFO<<"Intialize Matter ...";
 
   // Redundant (get this from Base) quick fix here for now
   tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );
@@ -144,8 +144,8 @@ void Matter::Init()
   
   VERBOSE(7)<< MAGENTA << "MATTER input parameter";
   VERBOSE(7)<< MAGENTA << "Q00:" << Q00;
-  INFO << "in_vac: " << in_vac << "  brick_med: " << brick_med;
-  INFO << "Q00: " << Q00 << " vir_factor: " << vir_factor << "  qhat0: " << qhat0*fmToGeVinv << " alphas: " << alphas << " hydro_Tc: " << hydro_Tc << " brick_length: " << brick_length;
+  //INFO << "in_vac: " << in_vac << "  brick_med: " << brick_med;
+  //INFO << "Q00: " << Q00 << " vir_factor: " << vir_factor << "  qhat0: " << qhat0*fmToGeVinv << " alphas: " << alphas << " hydro_Tc: " << hydro_Tc << " brick_length: " << brick_length;
 
   // Initialize random number distribution
   ZeroOneDistribution = uniform_real_distribution<double> { 0.0, 1.0 };
@@ -564,8 +564,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   newx[j] = pIn[i].x_in().comp(j) + (Time + deltaTime - pIn[i].x_in().comp(0) )*velocity[j]/velocityMod;
               }
     
-              INFO << "velocity = " << velocity[0] << " " << velocity[1] << "  " << velocity[2] << " " << velocity[3] ;
-              INFO << "jet_v = " << pIn[i].jet_v().t() << " " << pIn[i].jet_v().x() << " " << pIn[i].jet_v().y() << " " << pIn[i].jet_v().z();
+              //INFO << "velocity = " << velocity[0] << " " << velocity[1] << "  " << velocity[2] << " " << velocity[3] ;
+              //INFO << "jet_v = " << pIn[i].jet_v().t() << " " << pIn[i].jet_v().x() << " " << pIn[i].jet_v().y() << " " << pIn[i].jet_v().z();
               
               pOut.push_back(Parton(0,pid_b,0,newp,newx ));
               iout = pOut.size()-1 ;
