@@ -73,7 +73,7 @@ int main(int argc, char** argv)
   //while (!reader->Finished())
     {
       reader->Next();
-      
+
       cout<<"Analyze current event = "<<reader->GetCurrentEvent()<<endl;
       mShowers=reader->GetPartonShowers();     
       
@@ -109,15 +109,19 @@ int main(int argc, char** argv)
 	  // wait for 5s
 	  //std::this_thread::sleep_for(std::chrono::milliseconds(5000));  
 	}
-	
-/*	hadrons = reader->GetFinalStateHadrons();
-        cout<<"Number of hadrons is: " << hadrons.size() << endl;
-        for(unsigned int i=0; i<hadrons.size(); i++)
-        {
-                cout<<"For Hadron Number "<<i<<" "<< hadrons[i].get()->e() << " "<< hadrons[i].get()->px()<< " "<< hadrons[i].get()->py() << " "<< hadrons[i].get()->pz()<< " "<< hadrons[i].get()->pt()<<  endl;
-	}
-	hadrons.clear();
-*/
+      
+      auto hadrons = reader->GetHadrons();
+      cout<<"Number of hadrons is: " << hadrons.size() << endl;
+      
+      fjcore::ClusterSequence hcs(reader->GetHadronsForFastJet(), jet_def);
+      vector<fjcore::PseudoJet> hjets = fjcore::sorted_by_pt(hcs.inclusive_jets(2));
+      cout<<"AT HADRONIC LEVEL " << endl;
+      for (int k=0;k<hjets.size();k++)	    
+	cout<<"Anti-kT jet "<<k<<" : "<<hjets[k]<<endl;
+
+      // for(unsigned int i=0; i<hadrons.size(); i++) {
+      // 	cout<<"For Hadron Number "<<i<<" "<< hadrons[i].get()->e() << " "<< hadrons[i].get()->px()<< " "<< hadrons[i].get()->py() << " "<< hadrons[i].get()->pz()<< " "<< hadrons[i].get()->pt()<<  endl;
+      // }
     }
     
     reader->Close(); 
