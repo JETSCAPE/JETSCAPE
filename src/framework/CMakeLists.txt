@@ -138,12 +138,14 @@ link_directories(./lib)
 add_executable(testJetScape ./src/testJetScape.cc)
 add_executable(readerTest ./reader/readerTest.cc)
 add_executable(FinalStateHadrons ./reader/FinalStateHadrons.cc)
+add_executable(FinalStatePartons ./reader/FinalStatePartons.cc)
 add_executable(hydroFileTest ./src/hydroFileTest.cc)
 
-target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest hydroFromFile) #for test case ...
-target_link_libraries(readerTest JetScape JetScapeHydro  JetScapeReader) #for reader test case ...
+target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest hydroFromFile)
+target_link_libraries(readerTest JetScape JetScapeHydro  JetScapeReader)
+target_link_libraries(FinalStatePartons JetScape JetScapeHydro  JetScapeReader)
 target_link_libraries(FinalStateHadrons JetScape JetScapeHydro  JetScapeReader)
-target_link_libraries(hydroFileTest JetScape JetScapeHydro JetScapeTest hydroFromFile) #for test case ...
+target_link_libraries(hydroFileTest JetScape JetScapeHydro JetScapeTest hydroFromFile)
 
 if (${HDF5_FOUND})
     set_target_properties (hydroFileTest PROPERTIES COMPILE_FLAGS "-DUSE_HDF5")

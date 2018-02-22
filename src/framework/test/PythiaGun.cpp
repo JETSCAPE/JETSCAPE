@@ -50,9 +50,13 @@ void PythiaGun::InitTask()
   readString("HardQCD:all = on"); // will repeat this line in the xml for demonstration  
   readString("HadronLevel:Decay = off");
   readString("HadronLevel:all = off");
-  readString("PartonLevel:ISR = off");
+  readString("PartonLevel:ISR = on");
+  readString("PartonLevel:MPI = on");
   readString("PartonLevel:FSR = off");
-  
+  readString("PromptPhoton:all=off");
+  readString("WeakSingleBoson:all=off");
+  readString("WeakDoubleBoson:all=off");
+
   tinyxml2::XMLElement *PythiaXmlDescription=GetHardXML()->FirstChildElement("PythiaGun");
   tinyxml2::XMLElement *xmle; 
 
@@ -130,9 +134,75 @@ void PythiaGun::Exec()
 {
   INFO<<"Run Hard Process : "<<GetId()<< " ...";
   VERBOSE(8)<<"Current Event #"<<GetCurrentEvent();
+  //Reading vir_factor from xml for MATTER
+   tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );
+  if ( !eloss ) {
+    WARN << "Couldn't find tag Eloss";
+    throw std::runtime_error ("Couldn't find tag Eloss");    
+  }
+  tinyxml2::XMLElement *matter=eloss->FirstChildElement("Matter");
+  if ( !matter ) {
+    WARN << "Couldn't find tag Eloss -> Matter";
+    throw std::runtime_error ("Couldn't find tag Eloss -> Matter");
+  }
+  double vir_factor;
+  matter->FirstChildElement("vir_factor")->QueryDoubleText(&vir_factor);
 
-  next();
-  JSDEBUG<<"Number of Pythia partons = "<<event.size();
+  bool flag62=false;
+  vector<Pythia8::Particle> p62;
+  
+
+  // sort by pt
+  struct greater_than_pt {
+    inline bool operator() (const Pythia8::Particle& p1, const Pythia8::Particle& p2) {
+      return ( p1.pT() > p2.pT());
+    }
+  };
+
+  do{
+    next();
+    p62.clear();
+    
+    // pTarr[0]=0.0; pTarr[1]=0.0;
+    // pindexarr[0]=0; pindexarr[1]=0;
+
+    for(int parid=0; parid<event.size(); parid++){
+      if ( parid<3 )continue;      // 0, 1, 2: total event and beams      
+      Pythia8::Particle& particle = event[parid];
+
+      // only accept particles after MPI
+      if ( particle.status()!=62 ) continue;
+       
+      // only accept gluons and quarks
+      if ( fabs( particle.id() ) > 3 && particle.id() !=21 ) continue;
+
+      // reject rare cases of very soft particles that don't have enough e to get
+      // reasonable virtuality
+      if ( particle.pT() < 1.0/sqrt(vir_factor) ) continue;
+  
+      // accept
+      p62.push_back( particle );
+
+    }
+
+    // if you want at least 2
+    if ( p62.size() < 2 ) continue;
+    //if ( p62.size() < 1 ) continue;
+    
+    // Now have all candidates, sort them
+    // sort by pt
+    std::sort( p62.begin(), p62.end(), greater_than_pt() );
+    // // check...
+    // for (auto& p : p62 ) cout << p.pT() << endl;
+    
+    flag62=true;
+
+  }while(!flag62);
+
+
+
+  //next();
+  //JSDEBUG<<"Number of Pythia partons = "<<event.size();
 
 
   // stringstream numbi(stringstream::app|stringstream::in|stringstream::out);
@@ -186,27 +256,32 @@ void PythiaGun::Exec()
     
 
   // Loop through particles
-  for ( int nP = 0; nP<event.size() ; ++nP ){
-    if ( nP<3 )continue;      // 0, 1, 2: total event and beams      
-    Pythia8::Particle& particle = event[nP];
-    if ( particle.status()==-23 ){
-      VERBOSE(7)<<"Adding particle with pid = " << particle.id()
-		<<" at x=" << xLoc[1]
-		<<", y=" << xLoc[2]
-		<<", z=" << xLoc[3];
 
-      VERBOSE(7) <<"Adding particle with pid = " << particle.id()
-		 << ", pT = " << particle.pT()
-		 << ", y = " << particle.y()
-		 << ", phi = " << particle.phi()
-		 << ", e = " << particle.e();
-      VERBOSE(7) <<" at x=" << xLoc[1]
-		 <<", y=" << xLoc[2]
-		 <<", z=" << xLoc[3];
+  // Only top two
+  //for(int np = 0; np<2; ++np){
 
-      AddParton(make_shared<Parton>(0, particle.id(),0,particle.pT(),particle.y(),particle.phi(),particle.e(),xLoc) );
-    }
+  // Accept them all
+  for(int np = 0; np<p62.size(); ++np){
+    Pythia8::Particle& particle = p62.at( np );
+
+    VERBOSE(7)<<"Adding particle with pid = " << particle.id()
+	      <<" at x=" << xLoc[1]
+	      <<", y=" << xLoc[2]
+	      <<", z=" << xLoc[3];
+    
+    VERBOSE(7) <<"Adding particle with pid = " << particle.id()
+	       << ", pT = " << particle.pT()
+	       << ", y = " << particle.y()
+	       << ", phi = " << particle.phi()
+	       << ", e = " << particle.e();
+    VERBOSE(7) <<" at x=" << xLoc[1]
+	       <<", y=" << xLoc[2]
+	       <<", z=" << xLoc[3];
+    
+    AddParton(make_shared<Parton>(0, particle.id(),0,particle.pT(),particle.y(),particle.phi(),particle.e(),xLoc) );
+
   }
+  
 
  
   VERBOSE(8)<<GetNHardPartons();
