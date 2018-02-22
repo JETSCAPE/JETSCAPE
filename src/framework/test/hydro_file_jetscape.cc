@@ -1,6 +1,7 @@
 // Copyright @ Chun Shen
 #include <stdio.h>
 #include <sys/stat.h>
+#include <helper.h>
 
 #include <cstring>
 #include <cmath>
@@ -84,7 +85,6 @@ void HydroFile::initialize_hydro(Parameter parameter_list) {
     }
 }
 
-     
 //! This function load a VISHNew hydro event
 void HydroFile::read_in_hydro_event(string VISH_filename, int buffer_size,
                                     int load_viscous) {
@@ -160,8 +160,9 @@ void HydroFile::clean_hydro_event() {
 
 //! this function returns the thermodynamic and dynamical information at
 //! the given space-time point
-void HydroFile::get_hydro_info(real t, real x, real y, real z,
-                               FluidCellInfo* fluid_cell_info_ptr) {
+void HydroFile::get_hydro_info(
+        real t, real x, real y, real z,
+        std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr) {
     if (hydro_status != FINISHED) {
         WARN << "Hydro not run yet ...";
         exit(-1);
@@ -193,6 +194,7 @@ void HydroFile::get_hydro_info(real t, real x, real y, real z,
 
     // assign all the quantites to JETSCAPE output
     // thermodyanmic quantities
+    fluid_cell_info_ptr = std::make_unique<FluidCellInfo>();
     fluid_cell_info_ptr->energy_density = (
                                 static_cast<real>(temp_fluid_cell_ptr->ed));
     fluid_cell_info_ptr->entropy_density = (

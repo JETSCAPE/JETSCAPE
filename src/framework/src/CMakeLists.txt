@@ -32,6 +32,7 @@ set (SOURCES
   PartonPrinter.cc
   HadronizationManager.cc
   Hadronization.cc
+  SoftParticlization.cc
 ) 
 
 if(${ZLIB_FOUND})

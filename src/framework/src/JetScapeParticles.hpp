@@ -197,6 +197,9 @@ namespace Jetscape {
     JetScapeParticleBase() : PseudoJet() {};
     JetScapeParticleBase (int label, int id, int stat, const FourVector& p, const FourVector& x);
     JetScapeParticleBase (int label, int id, int stat, double pt, double eta, double phi, double e, double* x=0);
+    JetScapeParticleBase(int label, int id, int stat,
+                         const FourVector& p, const FourVector& x,
+                         double mass);
     JetScapeParticleBase (const JetScapeParticleBase& srp);
 	  
     virtual ~JetScapeParticleBase();
@@ -330,6 +333,8 @@ namespace Jetscape {
         
     Hadron (int label, int id, int stat, const FourVector& p, const FourVector& x);
     Hadron (int label, int id, int stat, double pt, double eta, double phi, double e, double* x=0);
+    Hadron(int label, int id, int stat,
+           const FourVector& p, const FourVector& x, double mass);
     Hadron (const Hadron& srh);
         
     Hadron& operator=( Hadron &c);

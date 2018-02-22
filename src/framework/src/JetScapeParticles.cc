@@ -78,6 +78,19 @@ namespace Jetscape {
     set_stat(stat);
 
   }
+  
+  JetScapeParticleBase::JetScapeParticleBase(
+                    int label, int id, int stat,
+                    const FourVector& p, const FourVector& x, double mass) {
+    set_label(label);
+    set_id(id);    
+    init_jet_v();
+    
+    reset_momentum(p);
+    x_in_=x;
+    set_stat(stat);
+
+  }
 
 
   void JetScapeParticleBase::clear()
@@ -505,6 +518,20 @@ namespace Jetscape {
     assert ( InternalHelperPythia.particleData.isHadron(id) );
     set_decay_width(0.1);
     // cout << "========================== phieta Ctor called, returning : " << endl << *this << endl;
+  }
+  
+  Hadron::Hadron(int label, int id, int stat,
+                 const FourVector& p, const FourVector& x, double mass):
+    JetScapeParticleBase::JetScapeParticleBase(label, id, stat, p, x, mass) {
+    int status = InternalHelperPythia.particleData.isHadron(id);
+    if (status == 1) {
+        set_restmass(mass);
+    } else {
+        WARN << "id = " << id << " is not recognized! "
+             << "Add it as a new type of particle.";
+        InternalHelperPythia.particleData.addParticle(
+                                            id, " ", 0, 0, 0, mass, 0.1);
+    }
   }
 
   Hadron& Hadron::operator=( Hadron &c)

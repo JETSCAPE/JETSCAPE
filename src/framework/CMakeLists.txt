@@ -66,6 +66,7 @@ endif()
 message("Looking for HDF5 ...")
 find_package(HDF5)
 if(${HDF5_FOUND})
+    message(STATUS "HDF5 Include dir : " ${HDF5_INCLUDE_DIRS})
     include_directories(${HDF5_INCLUDE_DIRS})
     set(_hdf5_libs ${HDF5_LIBRARIES} ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES})
 endif(${HDF5_FOUND})
@@ -105,7 +106,6 @@ endif()
 include_directories(./src ./test ./hydro ./jet ./gtl/include ./reader) #for test case ...
 include_directories(./3rdparty/hydro_from_external_file)
 
-
 # have binary in the build directory, easier to access
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
 
@@ -118,6 +118,12 @@ option(test "Build all tests." ON) # Makes boolean 'test' available.
 
 # Options. Turn on with 'cmake -Dmusic=ON'.
 option(music "Build tests for MUSIC" OFF) # Makes boolean 'test' available.
+
+option(iSS "Build tests for iSS" OFF) # Makes boolean 'test' available.
+
+if (iSS)
+    include_directories(./3rdparty/iSS ./3rdparty/iSS/src)
+endif (iSS)
 
 if (music)
     message("Includes for music ...")
@@ -191,6 +197,10 @@ if (test)
   include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 endif()
 
+if (iSS)
+    add_subdirectory(./3rdparty/iSS)
+endif (iSS)
+
 if (music)
     message("Building MUSIC ...")
     add_subdirectory(./3rdparty/music)
@@ -198,7 +208,7 @@ if (music)
         add_executable(MUSICTest ./src/MUSICTest.cc)
         target_link_libraries(MUSICTest ${MPI_LIBRARIES} ${GSL_LIBRARIES})
         target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest hydroFromFile music_lib)
-        target_link_libraries(MUSICTest JetScape JetScapeHydro JetScapeTest music_lib)
+        target_link_libraries(MUSICTest JetScape JetScapeHydro JetScapeTest music_lib iSS_lib)
         file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/EOS)
         file(COPY ./3rdparty/music/EOS/
                 DESTINATION ${CMAKE_BINARY_DIR}/EOS)
@@ -207,9 +217,16 @@ if (music)
     endif()
 endif (music)
 
+
 # -----------------------------------------------------------
 #### copy jetscape_init.xml to build/, such that one can test xml reading in build/ directory
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/jetscape_init.xml DESTINATION ${CMAKE_BINARY_DIR}/)
+
+#### copy essential files for iSS to build/
+if (iSS)
+    file(COPY ./3rdparty/iSS/iSS_tables DESTINATION ${CMAKE_BINARY_DIR}/)
+    file(COPY ./3rdparty/iSS/iSS_parameters.dat DESTINATION ${CMAKE_BINARY_DIR}/)
+endif (iSS)
 
 #### same for pythi gun
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/jetscape_init_pythiagun.xml DESTINATION ${CMAKE_BINARY_DIR}/)
