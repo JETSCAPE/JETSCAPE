@@ -119,7 +119,7 @@ option(test "Build all tests." ON) # Makes boolean 'test' available.
 # Options. Turn on with 'cmake -Dmusic=ON'.
 option(music "Build tests for MUSIC" OFF) # Makes boolean 'test' available.
 
-option(iSS "Build tests for iSS" ON) # Makes boolean 'test' available.
+option(iSS "Build tests for iSS" OFF) # Makes boolean 'test' available.
 
 if (iSS)
     include_directories(./3rdparty/iSS ./3rdparty/iSS/src)
