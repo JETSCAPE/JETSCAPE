@@ -36,16 +36,23 @@ void iSS_CF::InitTask() {
     iSS_xml_->FirstChildElement("number_of_repeated_sampling")->QueryIntText(
                                             &number_of_repeated_sampling);
 
+    int flag_perform_decays;
+    iSS_xml_->FirstChildElement("Perform_resonance_decays")->QueryIntText(
+                                            &flag_perform_decays);
+
     iSpectraSampler_ptr_ = new iSS(working_path);
     iSpectraSampler_ptr_->paraRdr_ptr->readFromFile(input_file);
 
     // overwrite some parameters
     iSpectraSampler_ptr_->paraRdr_ptr->setVal("hydro_mode", hydro_mode);
     iSpectraSampler_ptr_->paraRdr_ptr->setVal("output_samples_into_files", 0);
-    iSpectraSampler_ptr_->paraRdr_ptr->setVal("use_OSCAR_format", 1);
+    iSpectraSampler_ptr_->paraRdr_ptr->setVal("use_OSCAR_format", 0);
+    iSpectraSampler_ptr_->paraRdr_ptr->setVal("use_gzip_format", 1);
     iSpectraSampler_ptr_->paraRdr_ptr->setVal("store_samples_in_memory", 1);
     iSpectraSampler_ptr_->paraRdr_ptr->setVal("number_of_repeated_sampling",
                                               number_of_repeated_sampling);
+    iSpectraSampler_ptr_->paraRdr_ptr->setVal("perform_decays",
+                                              flag_perform_decays);
 
     // set default parameters
     iSpectraSampler_ptr_->paraRdr_ptr->setVal("turn_on_shear", 1);

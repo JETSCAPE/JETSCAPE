@@ -164,7 +164,7 @@
             <iSS_working_path>.</iSS_working_path>
             
             <number_of_repeated_sampling>10</number_of_repeated_sampling>
-
+            <Perform_resonance_decays>1</Perform_resonance_decays>
         </iSS>
     </SoftParticlization>
 </jetscape>
