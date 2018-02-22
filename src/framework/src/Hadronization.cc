@@ -2,6 +2,8 @@
 #include "Hadronization.h"
 #include "JetScapeLogger.h"
 #include <string>
+#include <vector>
+#include <iostream>
 #include "JetScapeSignalManager.h"
 #include "JetScapeWriterAscii.h"
 
@@ -21,7 +23,7 @@ Hadronization::~Hadronization()
 void Hadronization::Clear()
 {
   VERBOSESHOWER(8);
-  outHadrons.clear(); 
+  outHadrons.clear();  
 }
 
 void Hadronization::Init()
@@ -55,7 +57,6 @@ void Hadronization::DoHadronize()
   {
     VERBOSE(2)<<"There is no Parton ready for Recombination...";
   }
-
 }
 
 
@@ -73,8 +74,23 @@ void Hadronization::Exec()
 
 void Hadronization::WriteTask(weak_ptr<JetScapeWriter> w)
 {
-  VERBOSE(8);
-  INFO<<"In Hadronization::WriteTask";
+  VERBOSE(4)<<"In Hadronization::WriteTask";
+  w.lock()->WriteComment("Hadronization module: "+GetId());
+
+  if(GetHadrons().size()>0)
+  {
+    w.lock()->WriteComment("Final State Hadrons");
+    for(unsigned int i=0; i<GetHadrons().size(); i++)
+    {
+      w.lock()->WriteWhiteSpace("["+to_string(i)+"] H");
+      w.lock()->Write(GetHadrons().at(i));
+
+    }
+  }
+  else
+  {
+    w.lock()->WriteComment("There is no Hadrons");
+  }
 
 }
 

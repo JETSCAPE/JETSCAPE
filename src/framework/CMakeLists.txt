@@ -137,11 +137,12 @@ link_directories(./lib)
 
 add_executable(testJetScape ./src/testJetScape.cc)
 add_executable(readerTest ./reader/readerTest.cc)
-
+add_executable(FinalStateHadrons ./reader/FinalStateHadrons.cc)
 add_executable(hydroFileTest ./src/hydroFileTest.cc)
 
 target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest hydroFromFile) #for test case ...
 target_link_libraries(readerTest JetScape JetScapeHydro  JetScapeReader) #for reader test case ...
+target_link_libraries(FinalStateHadrons JetScape JetScapeHydro  JetScapeReader)
 target_link_libraries(hydroFileTest JetScape JetScapeHydro JetScapeTest hydroFromFile) #for test case ...
 
 if (${HDF5_FOUND})

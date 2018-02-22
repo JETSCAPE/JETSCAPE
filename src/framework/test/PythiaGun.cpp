@@ -50,7 +50,7 @@ void PythiaGun::InitTask()
   readString("HardQCD:all = on"); // will repeat this line in the xml for demonstration  
   readString("HadronLevel:Decay = off");
   readString("HadronLevel:all = off");
-  readString("PartonLevel:ISR = on");
+  readString("PartonLevel:ISR = off");
   readString("PartonLevel:FSR = off");
   
   tinyxml2::XMLElement *PythiaXmlDescription=GetHardXML()->FirstChildElement("PythiaGun");
