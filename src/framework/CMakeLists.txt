@@ -105,7 +105,6 @@ endif()
 
 include_directories(./src ./test ./hydro ./jet ./gtl/include ./reader) #for test case ...
 include_directories(./3rdparty/hydro_from_external_file)
-include_directories(./3rdparty/iSS ./3rdparty/iSS/src)
 
 # have binary in the build directory, easier to access
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
@@ -120,6 +119,12 @@ option(test "Build all tests." ON) # Makes boolean 'test' available.
 # Options. Turn on with 'cmake -Dmusic=ON'.
 option(music "Build tests for MUSIC" OFF) # Makes boolean 'test' available.
 
+option(iSS "Build tests for iSS" OFF) # Makes boolean 'test' available.
+
+if (iSS)
+    include_directories(./3rdparty/iSS ./3rdparty/iSS/src)
+endif (iSS)
+
 if (music)
     message("Includes for music ...")
     include_directories(./3rdparty/music ./3rdparty/music/src)
@@ -132,21 +137,21 @@ add_subdirectory(./hydro) #for test case fluid_dynamics ...
 add_subdirectory(./jet)  #for test case jet classes …
 add_subdirectory(./test)  #for test case ...
 add_subdirectory(./reader)  #for test case ...
-add_subdirectory(./3rdparty/iSS)
 add_subdirectory(./3rdparty/hydro_from_external_file)  #for test case ...
 
 link_directories(./lib)
 
 add_executable(testJetScape ./src/testJetScape.cc)
 add_executable(readerTest ./reader/readerTest.cc)
-
+add_executable(FinalStateHadrons ./reader/FinalStateHadrons.cc)
+add_executable(FinalStatePartons ./reader/FinalStatePartons.cc)
 add_executable(hydroFileTest ./src/hydroFileTest.cc)
-add_executable(iSSTest ./src/iSSTest.cc)
 
-target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest hydroFromFile) #for test case ...
-target_link_libraries(readerTest JetScape JetScapeHydro  JetScapeReader) #for reader test case ...
-target_link_libraries(hydroFileTest JetScape JetScapeHydro JetScapeTest hydroFromFile) #for test case ...
-target_link_libraries(iSSTest JetScape JetScapeHydro  JetScapeTest iSS_lib) #for test case ...
+target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest hydroFromFile)
+target_link_libraries(readerTest JetScape JetScapeHydro  JetScapeReader)
+target_link_libraries(FinalStatePartons JetScape JetScapeHydro  JetScapeReader)
+target_link_libraries(FinalStateHadrons JetScape JetScapeHydro  JetScapeReader)
+target_link_libraries(hydroFileTest JetScape JetScapeHydro JetScapeTest hydroFromFile)
 
 if (${HDF5_FOUND})
     set_target_properties (hydroFileTest PROPERTIES COMPILE_FLAGS "-DUSE_HDF5")
@@ -192,6 +197,10 @@ if (test)
   include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 endif()
 
+if (iSS)
+    add_subdirectory(./3rdparty/iSS)
+endif (iSS)
+
 if (music)
     message("Building MUSIC ...")
     add_subdirectory(./3rdparty/music)
@@ -199,7 +208,7 @@ if (music)
         add_executable(MUSICTest ./src/MUSICTest.cc)
         target_link_libraries(MUSICTest ${MPI_LIBRARIES} ${GSL_LIBRARIES})
         target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest hydroFromFile music_lib)
-        target_link_libraries(MUSICTest JetScape JetScapeHydro JetScapeTest music_lib)
+        target_link_libraries(MUSICTest JetScape JetScapeHydro JetScapeTest music_lib iSS_lib)
         file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/EOS)
         file(COPY ./3rdparty/music/EOS/
                 DESTINATION ${CMAKE_BINARY_DIR}/EOS)
@@ -208,13 +217,16 @@ if (music)
     endif()
 endif (music)
 
+
 # -----------------------------------------------------------
 #### copy jetscape_init.xml to build/, such that one can test xml reading in build/ directory
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/jetscape_init.xml DESTINATION ${CMAKE_BINARY_DIR}/)
 
 #### copy essential files for iSS to build/
-file(COPY ./3rdparty/iSS/iSS_tables DESTINATION ${CMAKE_BINARY_DIR}/)
-file(COPY ./3rdparty/iSS/iSS_parameters.dat DESTINATION ${CMAKE_BINARY_DIR}/)
+if (iSS)
+    file(COPY ./3rdparty/iSS/iSS_tables DESTINATION ${CMAKE_BINARY_DIR}/)
+    file(COPY ./3rdparty/iSS/iSS_parameters.dat DESTINATION ${CMAKE_BINARY_DIR}/)
+endif (iSS)
 
 #### same for pythi gun
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/jetscape_init_pythiagun.xml DESTINATION ${CMAKE_BINARY_DIR}/)

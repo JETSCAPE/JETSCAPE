@@ -71,4 +71,9 @@ void JetScapeWriterAscii::WriteInitFileXML()
   output_file<<printer.CStr();
 }
 
+void JetScapeWriterAscii::Write(weak_ptr<Hadron> h)
+{
+  output_file<<*h.lock()<<endl;
+}
+
 } // end namespace Jetscape

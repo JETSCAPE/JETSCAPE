@@ -18,12 +18,15 @@ set (SOURCES
      PGun.cc
      HadronizationModuleTest.cc
      ColorlessHad.cc
-     iSS_jetscape.cc
     )
 
 if (music)
     set (SOURCES ${SOURCES} music_jetscape.cc)
 endif (music)
+
+if (iSS)
+    set (SOURCES ${SOURCES} iSS_jetscape.cc)
+endif (iSS)
 
 if(${PYTHIA8_FOUND})
 	set (SOURCES ${SOURCES} PythiaGun.cpp)
@@ -48,8 +51,12 @@ if (${PYTHIA8_FOUND})
    target_link_libraries(JetScapeTest ${PYTHIA8_LIBRARIES})
 endif()
 
-target_link_libraries(JetScapeTest JetScape JetScapeHydro hydroFromFile iSS_lib)
+target_link_libraries(JetScapeTest JetScape JetScapeHydro hydroFromFile)
 
 if (music)
     target_link_libraries(JetScapeTest JetScape JetScapeHydro hydroFromFile iSS_lib music_lib)
 endif (music)
+
+if (iSS)
+    target_link_libraries(JetScapeTest JetScape JetScapeHydro hydroFromFile iSS_lib)
+endif (iSS)

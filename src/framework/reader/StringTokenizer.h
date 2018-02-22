@@ -48,6 +48,7 @@ public:
     bool isEdgeEntry() const;
     bool isCommentEntry() const;
     bool isEventEntry() const;
+    bool isHadronEntry() const;
     
 private:
     

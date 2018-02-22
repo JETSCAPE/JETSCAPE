@@ -44,6 +44,7 @@ class JetScapeWriter : public JetScapeModuleBase
   virtual void WriteComment(string s) {};
   virtual void WriteWhiteSpace(string s) {};
   virtual void Write(ostream *o) {};
+  virtual void Write(weak_ptr<Hadron> h) {};
   
   virtual void WriteEvent() {};
   // to be defined what data structure ...
