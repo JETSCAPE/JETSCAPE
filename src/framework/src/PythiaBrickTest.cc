@@ -34,6 +34,7 @@
 #include "HadronizationManager.h"
 #include "Hadronization.h"
 #include "HadronizationModuleTest.h"
+#include "ColorlessHad.h"
 
 // Add initial state module for test
 #include "TrentoInitial.h"
@@ -70,7 +71,7 @@ int main(int argc, char** argv)
   Show();
 
   // auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",10);
-  auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",20);
+  auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",200);
   jetscape->SetId("primary");
   // jetscape->set_reuse_hydro (true);
   // jetscape->set_n_reuse_hydro (10);
@@ -91,6 +92,7 @@ int main(int argc, char** argv)
   auto hadroMgr = make_shared<HadronizationManager> ();
   auto hadro = make_shared<Hadronization> ();
   auto hadroModule = make_shared<HadronizationModuleTest> ();
+  auto colorless = make_shared<ColorlessHad> ();
   
   // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
@@ -109,14 +111,15 @@ int main(int argc, char** argv)
 
   jloss->Add(matter);
   //jloss->Add(martini);
-  //jloss->Add(adscft);
+  jloss->Add(adscft);
 
   jlossmanager->Add(jloss);
   
   jetscape->Add(jlossmanager);
 
   jetscape->Add(printer);
-  hadro->Add(hadroModule);
+  //hadro->Add(hadroModule);
+  hadro->Add(colorless);
   hadroMgr->Add(hadro);
   jetscape->Add(hadroMgr);
 
