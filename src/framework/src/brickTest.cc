@@ -20,7 +20,7 @@
 #include "JetEnergyLossManager.h"
 #include "JetScapeWriterAscii.h"
 #include "JetScapeWriterAsciiGZ.h"
-//#include "JetScapeWriterHepMC.h"
+#include "JetScapeWriterHepMC.h"
 
 // User modules derived from jetscape framework clasess
 // to be used to run Jetscape ...
