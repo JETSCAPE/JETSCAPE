@@ -61,10 +61,9 @@ class HydroFile: public FluidDynamics {
                          Jetscape::real y, Jetscape::real z,
                          std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr);
 
-     void get_hypersurface(real T_cut, SurfaceCellInfo* surface_list_ptr) {};
-
      void set_hydro_event_idx(int idx_in) {hydro_event_idx_ = idx_in;};
      int get_hydro_event_idx() {return(hydro_event_idx_);};
+     void get_hypersurface(Jetscape::real T_cut, SurfaceCellInfo* surface_list_ptr) {};
 };
 
 #endif  // TEST_HYDRO_FILE_JETSCAPE_H_
