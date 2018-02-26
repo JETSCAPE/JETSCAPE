@@ -121,17 +121,17 @@ option(test "Build all tests." ON) # Makes boolean 'test' available.
 option(music "Build tests for MUSIC" OFF) # Makes boolean 'test' available.
 
 # Options. Turn on with 'cmake -Dfreestream=ON'.
-option(freestream "Build tests for freestream-milne" OFF) # Makes boolean 'test' available.
+option(freestream "Build tests for freestream-milne" OFF)
 
 if (music)
     message("Includes for music ...")
     include_directories(./3rdparty/music ./3rdparty/music/src)
 endif (music)
 
-if (freestream)
+#if (freestream)
     message("Includes for freestream-milne ...")
     include_directories(./3rdparty/freestream-milne/src)
-endif (freestream)
+#endif (freestream)
 
 # w/o not compiling library automatically
 add_subdirectory(./gtl)
@@ -215,10 +215,10 @@ if (freestream)
     message("Building freestream-milne ...")
     add_subdirectory(./3rdparty/freestream-milne/src)
     if (${GSL_FOUND})
-        add_executable(freestream-milne ./3rdparty/freestream-milne/src/Run.cpp)
-         target_link_libraries(freestream-milne ${GSL_LIBRARIES})
-      #  target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest hydroFromFile)
-      #  target_link_libraries(freestream-milne JetScape JetScapeHydro JetScapeTest)
+         add_executable(freestream-milneTest ./src/freestream-milneTest.cc)
+         target_link_libraries(freestream-milneTest ${GSL_LIBRARIES})
+         target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest hydroFromFile freestream_lib)
+         target_link_libraries(freestream-milneTest JetScape JetScapeHydro JetScapeTest freestream_lib)
     endif()
 endif (freestream)
 

@@ -13,6 +13,14 @@
 #include "tinyxml2.h"
 #include "preequilibrium_dynamics.h"
 
+//JUST FOR TESTING! REMOVE THIS BLOCK ONCE CMAKE LINKING WORKS !
+/*
+#include "JetScapeLogger.h"
+#include "JetScapeXML.h"
+#include "JetScapeSignalManager.h"
+*/
+//JUST FOR TESTING! REMOVE THIS BLOCK ONCE CMAKE LINKING FILES WORKS !
+
 namespace Jetscape {
   /**
   @class
@@ -56,10 +64,7 @@ namespace Jetscape {
     */
     std::shared_ptr<InitialState> ini;
 
-
     Parameter& GetParameterList() {return parameter_list;}
-
-
 
   private:
 
@@ -68,6 +73,63 @@ namespace Jetscape {
     Parameter parameter_list;
 
   };
+
+  //JUST FOR TESTING! REMOVE THIS BLOCK ONCE CMAKE LINKING FILES WORKS !
+  /*
+  PreequilibriumDynamics::PreequilibriumDynamics()
+  {
+    VERBOSE(8);
+    SetId("PreequilibriumDynamics");
+  }
+
+  PreequilibriumDynamics::~PreequilibriumDynamics()
+  {
+    VERBOSE(8);
+    disconnect_all();
+  }
+
+  void PreequilibriumDynamics::Init()
+  {
+    JetScapeModuleBase::Init();
+
+    INFO<<"Intialize PreequilibriumDynamics : "<<GetId()<< " ...";
+
+    fd= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Preequilibrium" );
+
+    if (!fd) {
+      WARN << "Not a valid JetScape XML Preequilibrium Dynamics section file or no XML file loaded!";
+      exit(-1);
+    }
+
+    VERBOSE(8);
+
+    ini = JetScapeSignalManager::Instance()->GetInitialStatePointer().lock();
+    if (!ini) {
+      WARN << "No initialization module, try: auto trento = make_shared<TrentoInitial>(); jetscape->Add(trento);";
+    }
+
+    initialize_preequilibrium(parameter_list);
+
+    InitTask();
+
+    JetScapeTask::InitTasks();
+  }
+
+  void PreequilibriumDynamics::Exec()
+  {
+    INFO <<"Run Preequilibrium : "<<GetId()<< " ...";
+    VERBOSE(8)<<"Current Event #"<<GetCurrentEvent();
+
+    if (ini) {
+      INFO << "length of energy density vector=" << ini->entropy_density_distribution_.size();
+    }
+
+    evolve_preequilibrium();
+
+    JetScapeTask::ExecuteTasks();
+  }
+  */
+  //JUST FOR TESTING! REMOVE THIS BLOCK ONCE CMAKE LINKING FILES WORKS !
 
 } // end namespace Jetscape
 

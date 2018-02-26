@@ -10,13 +10,13 @@
 using namespace std;
 
 FREESTREAM::FREESTREAM() {
-  preequilibrium_status = NOT_START;
+  preequilibrium_status = NOT_STARTED;
   SetId("Freestream-Milne");
 }
 
 
 FREESTREAM::~FREESTREAM() {
-  if (preequilibrium_status != NOT_START) delete fsmilne_ptr;
+  if (preequilibrium_status != NOT_STARTED) delete fsmilne_ptr;
 }
 
 
@@ -39,18 +39,15 @@ void FREESTREAM::evolve_preequilibrium() {
   VERBOSE(8);
   INFO << "Initialize energy density profile in freestream-milne ...";
   //grab initial energy density from vector from initial state module
-  std::vector<double> entropy_density = ini->entropy_density_distribution_; //change this to the energy density!!!
-  fsmilne_ptr->initialize_from_vector(entropy_density); //this needs to to be the energy density!!!
-  preequilibrium_status = INITIALIZED;
-  if (preequilibrium_status == INITIALIZED) {
+  std::vector<double> entropy_density = ini->entropy_density_distribution_; //note that this is the energy density when read by freestream-milne
+  std::vector<double> entropy_density_float(entropy_density.begin(), entropy_density.end()); //converting to a float for now
+  fsmilne_ptr->initialize_from_vector(entropy_density_float);
+  preequilibrium_status = INIT;
+  if (preequilibrium_status == INIT) {
     INFO << "running freestream-milne ...";
     //evolve the medium via freestreaming
     fsmilne_ptr->run_freestream_milne();
-    preequilibrium_status = FINISHED;
+    preequilibrium_status = DONE;
   }
-
   //now send the resulting hydro variables to the hydro module
-
-}
-
 }

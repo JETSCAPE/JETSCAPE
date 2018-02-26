@@ -64,7 +64,7 @@ namespace Jetscape {
     VERBOSE(8)<<"Current Event #"<<GetCurrentEvent();
 
     if (ini) {
-      INFO << "length of energy density vector=" << ini->energy_density_distribution_.size();
+      INFO << "length of energy density vector=" << ini->entropy_density_distribution_.size();
     }
 
     evolve_preequilibrium();
