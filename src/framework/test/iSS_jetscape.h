@@ -24,6 +24,7 @@ class iSS_CF: public SoftParticlization {
     void InitTask();
     void Exec();
     void Clear();
+    void WriteTask(weak_ptr<JetScapeWriter> w);
 
     void pass_hadron_list_to_JETSCAPE();
 };
