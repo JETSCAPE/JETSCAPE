@@ -6,10 +6,10 @@ cmake_policy(SET CMP0042 NEW)
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "../lib/")
 
-set (SOURCES fluid_dynamics.cc)
+set (SOURCES fluid_dynamics.cc preequilibrium_dynamics.cc)
 
 add_library(JetScapeHydro SHARED ${SOURCES})
-    
+
 add_subdirectory(test)
 #target_link_libraries(JetScapeTest JetScape JetScapeHydro)
 
@@ -37,7 +37,7 @@ add_subdirectory(test)
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O -fPIC -pipe -Wall -g")
 #endif()
 
-#if(LINUX) 
+#if(LINUX)
     #message( ">>> Linux : " ${CMAKE_HOST_SYSTEM})
         # linux stuff here
 #endif()
@@ -46,7 +46,7 @@ add_subdirectory(test)
      #message( ">>> Apple : " ${CMAKE_HOST_SYSTEM})
      #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
      #message(">>> CXX_FLAGS = " ${CMAKE_CXX_FLAGS})
-#endif()   
+#endif()
 
 #set_property(TARGET gtest APPEND_STRING PROPERTY COMPILE_FLAGS " -w")
 #https://www.johnlamp.net/cmake-tutorial-6-realistically-getting-a-boost.html

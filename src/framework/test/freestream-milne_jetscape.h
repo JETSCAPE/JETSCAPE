@@ -16,7 +16,7 @@ public:
   FREESTREAM();
   ~FREESTREAM();
 
-  void initialize_preequilibrium(Parameter parameter_list);
+  void initialize_preequilibrium(ParameterFile parameter_list);
 
   void evolve_preequilibrium();
 };

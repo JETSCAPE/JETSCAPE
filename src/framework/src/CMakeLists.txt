@@ -11,6 +11,7 @@ set (SOURCES
   JetScapeTask.cc
   tinyxml2.cc
   FluidDynamics.cc
+  PreequilibriumDynamics.cc
   HardProcess.cc
   Collision.cc
   TrentoInitial.cc
@@ -32,7 +33,7 @@ set (SOURCES
   PartonPrinter.cc
   HadronizationManager.cc
   Hadronization.cc
-) 
+)
 
 if(${ZLIB_FOUND})
     set (SOURCES ${SOURCES}  gzstream.cc JetScapeWriterAsciiGZ.cc)

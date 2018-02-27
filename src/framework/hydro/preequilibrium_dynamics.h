@@ -16,13 +16,13 @@
 namespace Jetscape {
   ///Flags for preequilibrium dynamics status.
 enum PreequilibriumStatus {NOT_STARTED, INIT, DONE, ERR};
-/*
-class Parameter{
+
+class ParameterFile{
  public:
-  //preequilibrium dynamics parameters file name. 
+  //preequilibrium dynamics parameters file name.
     char* preequilibrium_input_filename;
 };
-*/
+
 class PreequilibriumDynamicsBase{
  protected:
     // record preequilibrium start and end proper time [fm/c]
@@ -51,7 +51,7 @@ class PreequilibriumDynamicsBase{
     // should make it easy to save evolution history to bulk_info
     // Default function to initialize the hydrodynamics. It can be overridden by different modules.
     // @param parameter_list An object of the class Parameter.
-    virtual void initialize_preequilibrium(Parameter parameter_list) {};
+    virtual void initialize_preequilibrium(ParameterFile parameter_list) {};
 
     /** Default function to evolve the hydrodynamics. It can be overridden by different modules. */
     virtual void evolve_preequilibrium() {};

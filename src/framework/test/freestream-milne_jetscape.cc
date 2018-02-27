@@ -20,7 +20,7 @@ FREESTREAM::~FREESTREAM() {
 }
 
 
-void FREESTREAM::initialize_preequilibrium(Parameter parameter_list) {
+void FREESTREAM::initialize_preequilibrium(ParameterFile parameter_list) {
   INFO << "Initialize freestream-milne ...";
   VERBOSE(8);
   tinyxml2::XMLElement *para = GetPreequilibriumXML()->FirstChildElement("Preequilibrium");
@@ -40,7 +40,7 @@ void FREESTREAM::evolve_preequilibrium() {
   INFO << "Initialize energy density profile in freestream-milne ...";
   //grab initial energy density from vector from initial state module
   std::vector<double> entropy_density = ini->entropy_density_distribution_; //note that this is the energy density when read by freestream-milne
-  std::vector<double> entropy_density_float(entropy_density.begin(), entropy_density.end()); //converting to a float for now
+  std::vector<float> entropy_density_float(entropy_density.begin(), entropy_density.end()); //converting to a float for now
   fsmilne_ptr->initialize_from_vector(entropy_density_float);
   preequilibrium_status = INIT;
   if (preequilibrium_status == INIT) {

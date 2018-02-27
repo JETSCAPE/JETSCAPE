@@ -64,13 +64,13 @@ namespace Jetscape {
     */
     std::shared_ptr<InitialState> ini;
 
-    Parameter& GetParameterList() {return parameter_list;}
+    ParameterFile& GetParameterList() {return parameter_list;}
 
   private:
 
     //double eta;
     tinyxml2::XMLElement *fd;
-    Parameter parameter_list;
+    ParameterFile parameter_list;
 
   };
 
