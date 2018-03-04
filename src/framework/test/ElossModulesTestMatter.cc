@@ -564,8 +564,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   newx[j] = pIn[i].x_in().comp(j) + (Time + deltaTime - pIn[i].x_in().comp(0) )*velocity[j]/velocityMod;
               }
     
-              INFO << "velocity = " << velocity[0] << " " << velocity[1] << "  " << velocity[2] << " " << velocity[3] ;
-              INFO << "jet_v = " << pIn[i].jet_v().t() << " " << pIn[i].jet_v().x() << " " << pIn[i].jet_v().y() << " " << pIn[i].jet_v().z();
+//              INFO << "velocity = " << velocity[0] << " " << velocity[1] << "  " << velocity[2] << " " << velocity[3] ;
+ //             INFO << "jet_v = " << pIn[i].jet_v().t() << " " << pIn[i].jet_v().x() << " " << pIn[i].jet_v().y() << " " << pIn[i].jet_v().z();
               
               pOut.push_back(Parton(0,pid_b,0,newp,newx ));
               iout = pOut.size()-1 ;
