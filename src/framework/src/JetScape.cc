@@ -125,16 +125,15 @@ void JetScape::Exec()
   // JetScapeTask::ExecuteTasks(); Has to be called explicitly since not really fully recursively (if ever needed)
   // --> JetScape is "Task Manager" of all modules ...
 
-  // Simple way of passing the writer module pointer ...
-  weak_ptr<JetScapeWriter> w;
-  //weak_ptr<PartonPrinter> p;  
+  // Simple way of passing the writer module pointer
+  vector<weak_ptr<JetScapeWriter>> vWriter;
 
   for (auto it : GetTaskList())
   {
     if (dynamic_pointer_cast<JetScapeWriter>(it))
     {  
       if (it->GetActive())
-        w=dynamic_pointer_cast<JetScapeWriter>(it);	           
+	vWriter.push_back(dynamic_pointer_cast<JetScapeWriter>(it));
     }
   } 
  
@@ -145,11 +144,11 @@ void JetScape::Exec()
       
       JetScapeTask::ExecuteTasks();
 
-      //JetScapeTask::GetPartons(p);
-
-      if (w.lock().get())
-	JetScapeTask::WriteTasks(w);            
-
+      for (auto w : vWriter) {
+	if (w.lock().get())
+	  JetScapeTask::WriteTasks(w);
+      }
+ 
       // For reusal, deactivate task after it has finished but before it gets cleaned up.
       if ( reuse_hydro_ ){
 	if ( n_reuse_hydro_<=0 ){

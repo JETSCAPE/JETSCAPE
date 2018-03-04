@@ -39,7 +39,10 @@ public:
  
   void InitTask();
   void Exec();
- 
+
+ // Getters
+  double GetpTHatMin() const {return pTHatMin;}
+  double GetpTHatMax() const {return pTHatMax;}
 };
 
 #endif  // PYTHIAGUN_HPP

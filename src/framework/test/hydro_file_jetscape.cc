@@ -1,8 +1,10 @@
 // Copyright @ Chun Shen
 #include <stdio.h>
 #include <sys/stat.h>
+#include <helper.h>
 
 #include <cstring>
+#include <sstream>
 #include <cmath>
 #include <iostream>
 
@@ -27,76 +29,47 @@ HydroFile::~HydroFile() {
 void HydroFile::initialize_hydro(Parameter parameter_list) {
     JSDEBUG << "Initialize hydro from file (Test) ...";
     VERBOSE(8);
-    tinyxml2::XMLElement *para =
-                    GetHydroXML()->FirstChildElement("hydro_from_file");
-    if (!para) {
+    para_ = GetHydroXML()->FirstChildElement("hydro_from_file");
+    if (!para_) {
         WARN << " : hydro_from_file not properly initialized in XML file ...";
         exit(-1);
     }
 
-    string s = para->FirstChildElement("name")->GetText();
+    string s = para_->FirstChildElement("name")->GetText();
     JSDEBUG << s << " to be initilizied ...";
 
-    para->FirstChildElement("hydro_type")->QueryIntText(&hydro_type);
-    para->FirstChildElement("load_viscous_info")->QueryBoolText(&load_viscous);
-    para->FirstChildElement("T_c")->QueryDoubleText(&T_c);
-    hydro_status = INITIALIZED;
+    para_->FirstChildElement("hydro_type")->QueryIntText(&hydro_type_);
+    para_->FirstChildElement("load_viscous_info")->QueryIntText(&load_viscous_);
+    para_->FirstChildElement("read_hydro_every_ntau")->QueryIntText(
+                                                                &nskip_tau_);
+    para_->FirstChildElement("T_c")->QueryDoubleText(&T_c_);
+    para_->FirstChildElement("read_in_multiple_hydro")->QueryIntText(
+                                            &flag_read_in_multiple_hydro_);
+    hydro_event_idx_ = 0;
 
-    int nskip_tau = 1;
-    if (hydro_type == 1) {
-        string filename = para->FirstChildElement("VISH_file")->GetText();
+    if (hydro_type_ == 1) {
 #ifdef USE_HDF5
-        hydroinfo_h5_ptr = new HydroinfoH5(filename, 500, load_viscous);
+        hydroinfo_h5_ptr = new HydroinfoH5();
 #else
         WARN << " : hydro_type == 1 requires the hdf5 library~";
         WARN << " : please check your inputs~";
         exit(-1);
 #endif
-    } else if (hydro_type == 2) {
-        string input_file =
-                para->FirstChildElement("MUSIC_input_file")->GetText();
-        string hydro_ideal_file =
-                para->FirstChildElement("MUSIC_file")->GetText();
+    } else if (hydro_type_ == 2 || hydro_type_ == 3 || hydro_type_ == 4) {
         hydroinfo_MUSIC_ptr = new Hydroinfo_MUSIC();
-        para->FirstChildElement("read_hydro_every_ntau")->QueryIntText(
-                                                                &nskip_tau);
-        read_in_hydro_event(input_file, hydro_ideal_file, nskip_tau);
-    } else if (hydro_type == 3) {
-        string input_file =
-                para->FirstChildElement("MUSIC_input_file")->GetText();
-        string hydro_ideal_file =
-                para->FirstChildElement("MUSIC_file")->GetText();
-        hydroinfo_MUSIC_ptr = new Hydroinfo_MUSIC();
-        para->FirstChildElement("read_hydro_every_ntau")->QueryIntText(
-                                                                &nskip_tau);
-        read_in_hydro_event(input_file, hydro_ideal_file, nskip_tau);
-    } else if (hydro_type == 4) {
-        string input_file =
-                para->FirstChildElement("MUSIC_input_file")->GetText();
-        string hydro_ideal_file =
-                para->FirstChildElement("MUSIC_file")->GetText();
-        hydroinfo_MUSIC_ptr = new Hydroinfo_MUSIC();
-        nskip_tau = 1;
-        read_in_hydro_event(input_file, hydro_ideal_file, nskip_tau);
-    } else {
-        WARN << "main: unrecognized hydro_type = " << hydro_type;
-        exit(1);
     }
+
+    hydro_status = INITIALIZED;
 }
 
-     
 //! This function load a VISHNew hydro event
 void HydroFile::read_in_hydro_event(string VISH_filename, int buffer_size,
                                     int load_viscous) {
     INFO << "read in a VISHNew hydro event from file " << VISH_filename;
-    if (hydro_type == 1) {
+    if (hydro_type_ == 1) {
 #ifdef USE_HDF5
         hydroinfo_h5_ptr->readHydroinfoH5(VISH_filename, buffer_size,
                                           load_viscous);
-#else
-        WARN << " : hydro_type == 1 requires the hdf5 library~";
-        WARN << " : please check your inputs~";
-        exit(-1);
 #endif
     }
     hydro_status = FINISHED;
@@ -108,21 +81,21 @@ void HydroFile::read_in_hydro_event(string MUSIC_input_file,
                                     string MUSIC_hydro_ideal_file,
                                     int nskip_tau) {
     INFO << "read in a MUSIC hydro event from file " << MUSIC_hydro_ideal_file;
-    if (hydro_type == 2) {
+    if (hydro_type_ == 2) {
         int hydro_mode = 8;
         string hydro_shear_file = "";
         string hydro_bulk_file = "";
         hydroinfo_MUSIC_ptr->readHydroData(hydro_mode, nskip_tau,
             MUSIC_input_file, MUSIC_hydro_ideal_file,
             hydro_shear_file, hydro_bulk_file);
-    } else if (hydro_type == 3) {
+    } else if (hydro_type_ == 3) {
         int hydro_mode = 9;
         string hydro_shear_file = "";
         string hydro_bulk_file = "";
         hydroinfo_MUSIC_ptr->readHydroData(hydro_mode, nskip_tau,
             MUSIC_input_file, MUSIC_hydro_ideal_file,
             hydro_shear_file, hydro_bulk_file);
-    } else if (hydro_type == 4) {
+    } else if (hydro_type_ == 4) {
         int hydro_mode = 10;
         string hydro_shear_file = "";
         string hydro_bulk_file = "";
@@ -135,21 +108,103 @@ void HydroFile::read_in_hydro_event(string MUSIC_input_file,
 
 
 void HydroFile::evolve_hydro() {
-    VERBOSE(8);
-    hydro_status = FINISHED;
+    if (hydro_status == FINISHED) {
+        clean_hydro_event();
+        hydro_event_idx_++;   // need to change to be consistent with initial condition
+    }
+
+    if (hydro_type_ == 1) {
+        string filename;
+        if (flag_read_in_multiple_hydro_ == 0) {
+            filename = para_->FirstChildElement("VISH_file")->GetText();
+        } else {
+            string folder = (
+                    para_->FirstChildElement("hydro_files_folder")->GetText());
+            std::ostringstream hydro_filename;
+            hydro_filename << folder << "/event-" << hydro_event_idx_
+                           << "/JetData.h5";
+            filename = hydro_filename.str();
+        }
+#ifdef USE_HDF5
+        read_in_hydro_event(filename, 500, load_viscous_);
+#endif
+        hydro_status = FINISHED;
+    } else if (hydro_type_ == 2) {
+        string input_file;
+        string hydro_ideal_file;
+        if (flag_read_in_multiple_hydro_ == 0) {
+            input_file = (
+                    para_->FirstChildElement("MUSIC_input_file")->GetText());
+            hydro_ideal_file = (
+                    para_->FirstChildElement("MUSIC_file")->GetText());
+        } else {
+            string folder = (
+                    para_->FirstChildElement("hydro_files_folder")->GetText());
+            std::ostringstream input_filename;
+            std::ostringstream hydro_filename;
+            input_filename << folder << "/event-" << hydro_event_idx_
+                           << "/MUSIC_input";
+            hydro_filename << folder << "/event-" << hydro_event_idx_
+                           << "/MUSIC_evo.dat";
+            input_file = input_filename.str();
+            hydro_ideal_file = hydro_filename.str();
+        }
+        read_in_hydro_event(input_file, hydro_ideal_file, nskip_tau_);
+    } else if (hydro_type_ == 3) {
+        string input_file;
+        string hydro_ideal_file;
+        if (flag_read_in_multiple_hydro_ == 0) {
+            input_file = (
+                    para_->FirstChildElement("MUSIC_input_file")->GetText());
+            hydro_ideal_file = (
+                    para_->FirstChildElement("MUSIC_file")->GetText());
+        } else {
+            string folder = (
+                    para_->FirstChildElement("hydro_files_folder")->GetText());
+            std::ostringstream input_filename;
+            std::ostringstream hydro_filename;
+            input_filename << folder << "/event-" << hydro_event_idx_
+                           << "/MUSIC_input";
+            hydro_filename << folder << "/event-" << hydro_event_idx_
+                           << "/MUSIC_evo.dat";
+            input_file = input_filename.str();
+            hydro_ideal_file = hydro_filename.str();
+        }
+        read_in_hydro_event(input_file, hydro_ideal_file, nskip_tau_);
+    } else if (hydro_type_ == 4) {
+        string input_file;
+        string hydro_ideal_file;
+        if (flag_read_in_multiple_hydro_ == 0) {
+            input_file = (
+                    para_->FirstChildElement("MUSIC_input_file")->GetText());
+            hydro_ideal_file = (
+                    para_->FirstChildElement("MUSIC_file")->GetText());
+        } else {
+            string folder = (
+                    para_->FirstChildElement("hydro_files_folder")->GetText());
+            std::ostringstream input_filename;
+            std::ostringstream hydro_filename;
+            input_filename << folder << "/event-" << hydro_event_idx_
+                           << "/MUSIC_input";
+            hydro_filename << folder << "/event-" << hydro_event_idx_
+                           << "/MUSIC_evo.dat";
+            input_file = input_filename.str();
+            hydro_ideal_file = hydro_filename.str();
+        }
+        read_in_hydro_event(input_file, hydro_ideal_file, 1);
+    } else {
+        WARN << "main: unrecognized hydro_type = " << hydro_type_;
+        exit(1);
+    }
 }
 
 
 //! clean up hydro event
 void HydroFile::clean_hydro_event() {
     INFO << " clean up the loaded hydro event ...";
-    if (hydro_type == 1) {
+    if (hydro_type_ == 1) {
 #ifdef USE_HDF5
         hydroinfo_h5_ptr->clean_hydro_event();
-#else
-        WARN << " : hydro_type == 1 requires the hdf5 library~";
-        WARN << " : please check your inputs~";
-        exit(-1);
 #endif
     } else {
         hydroinfo_MUSIC_ptr->clean_hydro_event();
@@ -160,8 +215,9 @@ void HydroFile::clean_hydro_event() {
 
 //! this function returns the thermodynamic and dynamical information at
 //! the given space-time point
-void HydroFile::get_hydro_info(real t, real x, real y, real z,
-                               FluidCellInfo* fluid_cell_info_ptr) {
+void HydroFile::get_hydro_info(
+        Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
+        std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr) {
     if (hydro_status != FINISHED) {
         WARN << "Hydro not run yet ...";
         exit(-1);
@@ -174,7 +230,7 @@ void HydroFile::get_hydro_info(real t, real x, real y, real z,
 
     // initialize the fluid cell pointer
     fluidCell *temp_fluid_cell_ptr = new fluidCell;
-    if (hydro_type == 1) {  // for OSU 2+1d hydro
+    if (hydro_type_ == 1) {  // for OSU 2+1d hydro
         double tau_local = sqrt(t*t - z*z);
         if (std::isnan(tau_local)) {  // check
             WARN << "[Error]: HydroFile::get_hydro_info(): "
@@ -186,13 +242,14 @@ void HydroFile::get_hydro_info(real t, real x, real y, real z,
         hydroinfo_h5_ptr->getHydroinfo(tau_local, x_local, y_local,
                                        temp_fluid_cell_ptr);
 #endif
-    } else if (hydro_type == 2 || hydro_type == 3 || hydro_type == 4) {
+    } else if (hydro_type_ == 2 || hydro_type_ == 3 || hydro_type_ == 4) {
         hydroinfo_MUSIC_ptr->getHydroValues(x_local, y_local, z_local, t_local,
                                             temp_fluid_cell_ptr);
     }
 
     // assign all the quantites to JETSCAPE output
     // thermodyanmic quantities
+    fluid_cell_info_ptr = std::make_unique<FluidCellInfo>();
     fluid_cell_info_ptr->energy_density = (
                                 static_cast<real>(temp_fluid_cell_ptr->ed));
     fluid_cell_info_ptr->entropy_density = (
@@ -203,8 +260,9 @@ void HydroFile::get_hydro_info(real t, real x, real y, real z,
                         static_cast<real>(temp_fluid_cell_ptr->pressure));
     // QGP fraction
     double qgp_fraction_local = 1.0;
-    if (temp_fluid_cell_ptr->temperature < T_c)
+    if (temp_fluid_cell_ptr->temperature < T_c_) {
         qgp_fraction_local = 0.0;
+    }
     fluid_cell_info_ptr->qgp_fraction = static_cast<real>(qgp_fraction_local);
     // chemical potentials
     fluid_cell_info_ptr->mu_B = 0.0;

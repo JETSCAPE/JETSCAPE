@@ -12,7 +12,8 @@ cmake_policy(SET CMP0042 NEW)
 
 message("Compiler and Linker flags ...")
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O -fPIC -pipe -Wall -g -Wno-reorder -Wno-unused-variable ")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O -fPIC -pipe -Wall -g -Wno-reorder -Wno-unused-variable ")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O -fPIC -pipe -Wall -Wno-reorder -Wno-unused-variable ")
 
 if (APPLE)
      message( STATUS "Apple : " ${CMAKE_HOST_SYSTEM})
@@ -56,9 +57,16 @@ find_package(ROOT)
 message("Looking for Pythia8 ...")
 find_package(Pythia8)
 
+if (NOT ${PYTHIA8_FOUND} )
+    message(FATAL_ERROR "Pythia8 not found - required dependency")
+endif()
+
+
+
 message("Looking for HDF5 ...")
 find_package(HDF5)
 if(${HDF5_FOUND})
+    message(STATUS "HDF5 Include dir : " ${HDF5_INCLUDE_DIRS})
     include_directories(${HDF5_INCLUDE_DIRS})
     set(_hdf5_libs ${HDF5_LIBRARIES} ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES})
 endif(${HDF5_FOUND})
@@ -83,10 +91,8 @@ if (${HEPMC_FOUND})
     Message(STATUS "HepMC Include dir : " ${HEPMC_INCLUDE_DIR})
 endif()
 
-if (${PYTHIA8_FOUND})
-    include_directories(${PYTHIA8_INCLUDE_DIR})
-    Message(STATUS "Pythia8 Include dir : " ${PYTHIA8_INCLUDE_DIR})
-endif()
+include_directories(${PYTHIA8_INCLUDE_DIR})
+Message(STATUS "Pythia8 Include dir : " ${PYTHIA8_INCLUDE_DIR})
 
 if (${ROOT_FOUND})
     include_directories(${ROOT_INCLUDES})
@@ -100,7 +106,6 @@ endif()
 include_directories(./src ./test ./hydro ./jet ./gtl/include ./reader) #for test case ...
 include_directories(./3rdparty/hydro_from_external_file)
 
-
 # have binary in the build directory, easier to access
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
 
@@ -113,6 +118,12 @@ option(test "Build all tests." ON) # Makes boolean 'test' available.
 
 # Options. Turn on with 'cmake -Dmusic=ON'.
 option(music "Build tests for MUSIC" OFF) # Makes boolean 'test' available.
+
+option(iSS "Build tests for iSS" OFF) # Makes boolean 'test' available.
+
+if (iSS)
+    include_directories(./3rdparty/iSS ./3rdparty/iSS/src)
+endif (iSS)
 
 if (music)
     message("Includes for music ...")
@@ -132,12 +143,15 @@ link_directories(./lib)
 
 add_executable(testJetScape ./src/testJetScape.cc)
 add_executable(readerTest ./reader/readerTest.cc)
-
+add_executable(FinalStateHadrons ./reader/FinalStateHadrons.cc)
+add_executable(FinalStatePartons ./reader/FinalStatePartons.cc)
 add_executable(hydroFileTest ./src/hydroFileTest.cc)
 
-target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest hydroFromFile) #for test case ...
-target_link_libraries(readerTest JetScape JetScapeHydro  JetScapeReader) #for reader test case ...
-target_link_libraries(hydroFileTest JetScape JetScapeHydro JetScapeTest hydroFromFile) #for test case ...
+target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest hydroFromFile)
+target_link_libraries(readerTest JetScape JetScapeHydro  JetScapeReader)
+target_link_libraries(FinalStatePartons JetScape JetScapeHydro  JetScapeReader)
+target_link_libraries(FinalStateHadrons JetScape JetScapeHydro  JetScapeReader)
+target_link_libraries(hydroFileTest JetScape JetScapeHydro JetScapeTest hydroFromFile)
 
 if (${HDF5_FOUND})
     set_target_properties (hydroFileTest PROPERTIES COMPILE_FLAGS "-DUSE_HDF5")
@@ -151,29 +165,27 @@ if (${ROOT_FOUND})
    target_link_libraries(hydroFileTest ${ROOT_LIBRARIES})
 endif()
 
-if (${PYTHIA8_FOUND})
-    add_executable(writerTest ./src/writerTest.cc)
-    add_executable(brickTest ./src/brickTest.cc)
-    add_executable(LBT_brickTest ./src/LBT_brickTest.cc)
-    add_executable(PythiaBrickTest ./src/PythiaBrickTest.cc)
-    target_link_libraries(writerTest JetScape JetScapeHydro JetScapeTest) #for writer test case...
-    target_link_libraries(brickTest JetScape JetScapeHydro  JetScapeTest) #for test case ...
-    target_link_libraries(LBT_brickTest JetScape JetScapeHydro  JetScapeTest) #for test case ...
-    target_link_libraries(PythiaBrickTest JetScape JetScapeHydro  JetScapeTest) #for test case ...
-    target_link_libraries(testJetScape ${PYTHIA8_LIBRARIES})
-    target_link_libraries(brickTest ${PYTHIA8_LIBRARIES})
-    target_link_libraries(LBT_brickTest ${PYTHIA8_LIBRARIES})
-    target_link_libraries(PythiaBrickTest ${PYTHIA8_LIBRARIES})
-    if (${ROOT_FOUND})
-      target_link_libraries(brickTest ${ROOT_LIBRARIES})
-      target_link_libraries(LBT_brickTest ${ROOT_LIBRARIES})
-      target_link_libraries(PythiaBrickTest ${ROOT_LIBRARIES})
-      target_link_libraries(writerTest ${ROOT_LIBRARIES})
-    endif(${ROOT_FOUND})
-    target_link_libraries(hydroFileTest ${PYTHIA8_LIBRARIES})
-    target_link_libraries(writerTest ${PYTHIA8_LIBRARIES})
-    message( ${PYTHIA8_LIBRARIES} )
-endif (${PYTHIA8_FOUND})
+add_executable(writerTest ./src/writerTest.cc)
+add_executable(brickTest ./src/brickTest.cc)
+add_executable(LBT_brickTest ./src/LBT_brickTest.cc)
+add_executable(PythiaBrickTest ./src/PythiaBrickTest.cc)
+
+target_link_libraries(writerTest JetScape JetScapeHydro JetScapeTest)
+target_link_libraries(brickTest JetScape JetScapeHydro  JetScapeTest)
+target_link_libraries(LBT_brickTest JetScape JetScapeHydro  JetScapeTest)
+target_link_libraries(PythiaBrickTest JetScape JetScapeHydro  JetScapeTest )
+target_link_libraries(testJetScape )
+target_link_libraries(brickTest)
+target_link_libraries(LBT_brickTest)
+target_link_libraries(PythiaBrickTest)
+if (${ROOT_FOUND})
+  target_link_libraries(brickTest ${ROOT_LIBRARIES})
+  target_link_libraries(LBT_brickTest ${ROOT_LIBRARIES})
+  target_link_libraries(PythiaBrickTest ${ROOT_LIBRARIES})
+  target_link_libraries(writerTest ${ROOT_LIBRARIES})
+endif(${ROOT_FOUND})
+target_link_libraries(hydroFileTest)
+target_link_libraries(writerTest)
 
 # Don't compile tests modules if test is not switched on
 if (test)
@@ -185,6 +197,10 @@ if (test)
   include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 endif()
 
+if (iSS)
+    add_subdirectory(./3rdparty/iSS)
+endif (iSS)
+
 if (music)
     message("Building MUSIC ...")
     add_subdirectory(./3rdparty/music)
@@ -192,7 +208,7 @@ if (music)
         add_executable(MUSICTest ./src/MUSICTest.cc)
         target_link_libraries(MUSICTest ${MPI_LIBRARIES} ${GSL_LIBRARIES})
         target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest hydroFromFile music_lib)
-        target_link_libraries(MUSICTest JetScape JetScapeHydro JetScapeTest music_lib)
+        target_link_libraries(MUSICTest JetScape JetScapeHydro JetScapeTest music_lib iSS_lib)
         file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/EOS)
         file(COPY ./3rdparty/music/EOS/
                 DESTINATION ${CMAKE_BINARY_DIR}/EOS)
@@ -201,9 +217,16 @@ if (music)
     endif()
 endif (music)
 
+
 # -----------------------------------------------------------
 #### copy jetscape_init.xml to build/, such that one can test xml reading in build/ directory
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/jetscape_init.xml DESTINATION ${CMAKE_BINARY_DIR}/)
+
+#### copy essential files for iSS to build/
+if (iSS)
+    file(COPY ./3rdparty/iSS/iSS_tables DESTINATION ${CMAKE_BINARY_DIR}/)
+    file(COPY ./3rdparty/iSS/iSS_parameters.dat DESTINATION ${CMAKE_BINARY_DIR}/)
+endif (iSS)
 
 #### same for pythi gun
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/jetscape_init_pythiagun.xml DESTINATION ${CMAKE_BINARY_DIR}/)

@@ -9,6 +9,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "../lib/")
 set (SOURCES
      Gubser_hydro_jetscape.cc
      brick_jetscape.cc
+     InitialFromFile.cc
      hydro_file_jetscape.cc
      ElossModulesTestMatter.cc
      ElossModuleLBT.cc
@@ -16,14 +17,23 @@ set (SOURCES
      AdSCFT.cc
      PGun.cc
      HadronizationModuleTest.cc
-     ColorlessHad.cc)
+     ColorlessHad.cc
+    )
 
 if (music)
     set (SOURCES ${SOURCES} music_jetscape.cc)
 endif (music)
 
+if (iSS)
+    set (SOURCES ${SOURCES} iSS_jetscape.cc)
+endif (iSS)
+
 if(${PYTHIA8_FOUND})
 	set (SOURCES ${SOURCES} PythiaGun.cpp)
+endif()
+
+if(${HDF5_FOUND})
+    set (SOURCES ${SOURCES} InitialFromFile.cc)
 endif()
 
 add_library(JetScapeTest SHARED ${SOURCES})
@@ -44,6 +54,9 @@ endif()
 target_link_libraries(JetScapeTest JetScape JetScapeHydro hydroFromFile)
 
 if (music)
-    target_link_libraries(JetScapeTest JetScape JetScapeHydro hydroFromFile music_lib)
+    target_link_libraries(JetScapeTest JetScape JetScapeHydro hydroFromFile iSS_lib music_lib)
 endif (music)
 
+if (iSS)
+    target_link_libraries(JetScapeTest JetScape JetScapeHydro hydroFromFile iSS_lib)
+endif (iSS)
