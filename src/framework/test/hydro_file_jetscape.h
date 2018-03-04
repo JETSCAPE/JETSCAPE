@@ -17,11 +17,17 @@ class HydroFile: public FluidDynamics {
     // this is wrapper class for MUSIC so that it can be used as a external
     // library for the JETSCAPE integrated framework
  private:
-    // ParameterReader *paraRdr;
-    bool load_viscous;
-    int hydro_type;
+    tinyxml2::XMLElement *para_;
 
-    double T_c;
+    int flag_read_in_multiple_hydro_;
+    int hydro_event_idx_;
+
+    int load_viscous_;
+    int hydro_type_;
+
+    int nskip_tau_;
+    double T_c_;
+
 #ifdef USE_HDF5
     HydroinfoH5 *hydroinfo_h5_ptr;
 #endif
@@ -51,9 +57,12 @@ class HydroFile: public FluidDynamics {
 
      //! This function provide fluid cell information at a given
      //! space-time point
-     void get_hydro_info(Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
+     void get_hydro_info(Jetscape::real t, Jetscape::real x,
+                         Jetscape::real y, Jetscape::real z,
                          std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr);
 
+     void set_hydro_event_idx(int idx_in) {hydro_event_idx_ = idx_in;};
+     int get_hydro_event_idx() {return(hydro_event_idx_);};
      void get_hypersurface(Jetscape::real T_cut, SurfaceCellInfo* surface_list_ptr) {};
 };
 
