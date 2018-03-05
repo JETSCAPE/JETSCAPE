@@ -46,7 +46,7 @@ Matter::~Matter()
 
 void Matter::Init()
 {
-  //INFO<<"Intialize Matter ...";
+  INFO<<"Intialize Matter ...";
 
   // Redundant (get this from Base) quick fix here for now
   tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );
@@ -60,95 +60,110 @@ void Matter::Init()
     throw std::runtime_error ("Couldn't find tag Eloss -> Matter");    
   }
  
-  string s = matter->FirstChildElement( "name" )->GetText();
-  JSDEBUG << s << " to be initializied ...";
-  
-  in_vac = false;
-  brick_med = true;
-  
-  qhat = 0.0;
-  Q00 = 1.0; // virtuality separation scale
-  qhat0 = 2.0; // GeV^2/fm for gluon at s = 96 fm^-3
-  alphas = 0.3; // only useful when qhat0 is a negative number
-  hydro_Tc = 0.16;
-  brick_length = 4.0;
-  vir_factor = 1.0;
-  
-  double m_qhat=-99.99;
-  if ( !matter->FirstChildElement("qhat0")) {
-    WARN << "Couldn't find sub-tag Eloss -> Matter -> qhat0";
-    throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> qhat0");
+  if (matter) {   
+    string s = matter->FirstChildElement( "name" )->GetText();
+    JSDEBUG << s << " to be initializied ...";
+ 
+    in_vac = false;
+    brick_med = true;
+
+    qhat = 0.0;
+    Q00 = 1.0; // virtuality separation scale
+    qhat0 = 2.0; // GeV^2/fm for gluon at s = 96 fm^-3
+    alphas = 0.3; // only useful when qhat0 is a negative number
+    hydro_Tc = 0.16;
+    brick_length = 4.0;
+    vir_factor = 1.0;
+
+    double m_qhat=-99.99;
+    matter->FirstChildElement("qhat0")->QueryDoubleText(&m_qhat);
+    SetQhat(m_qhat);
+    //qhat = GetQhat()/fmToGeVinv ;
+    //qhat0 = GetQhat()/fmToGeVinv ;
+    qhat0 = GetQhat();
+    JSDEBUG  << s << " with qhat0 = "<<GetQhat();
+ 
+    int flagInt=-100;
+    double inputDouble=-99.99;
+
+    if ( !matter->FirstChildElement("in_vac") ) {
+	WARN << "Couldn't find sub-tag Eloss -> Matter -> in_vac";
+        throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> in_vac");
+    }
+    matter->FirstChildElement("in_vac")->QueryIntText(&flagInt);
+    in_vac = flagInt;
+
+    if ( !matter->FirstChildElement("brick_med") ) {
+	WARN << "Couldn't find sub-tag Eloss -> Matter -> brick_med";
+        throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> brick_med");
+    }
+    matter->FirstChildElement("brick_med")->QueryIntText(&flagInt);
+    brick_med = flagInt;
+
+    if ( !matter->FirstChildElement("Q0") ) {
+	WARN << "Couldn't find sub-tag Eloss -> Matter -> Q0";
+        throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> Q0");
+    }
+    matter->FirstChildElement("Q0")->QueryDoubleText(&inputDouble);
+    Q00 = inputDouble;
+
+    if ( !matter->FirstChildElement("T0") ) {
+	WARN << "Couldn't find sub-tag Eloss -> Matter -> T0";
+        throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> T0");
+    }
+    matter->FirstChildElement("T0")->QueryDoubleText(&inputDouble);
+    T0 = inputDouble;
+
+    if ( !matter->FirstChildElement("alphas") ) {
+	WARN << "Couldn't find sub-tag Eloss -> Matter -> alphas";
+        throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> alphas");
+    }
+    matter->FirstChildElement("alphas")->QueryDoubleText(&inputDouble);
+    alphas = inputDouble;
+
+    if ( !matter->FirstChildElement("hydro_Tc") ) {
+	WARN << "Couldn't find sub-tag Eloss -> Matter -> hydro_Tc";
+        throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> hydro_Tc");
+    }
+    matter->FirstChildElement("hydro_Tc")->QueryDoubleText(&inputDouble);
+    hydro_Tc = inputDouble;
+
+    if ( !matter->FirstChildElement("brick_length") ) {
+	WARN << "Couldn't find sub-tag Eloss -> Matter -> brick_length";
+        throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> brick_length");
+    }
+    matter->FirstChildElement("brick_length")->QueryDoubleText(&inputDouble);
+    brick_length = inputDouble;
+
+    if ( !matter->FirstChildElement("vir_factor") ) {
+	WARN << "Couldn't find sub-tag Eloss -> Matter -> vir_factor";
+        throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> vir_factor");
+    }
+    matter->FirstChildElement("vir_factor")->QueryDoubleText(&inputDouble);
+    vir_factor = inputDouble;
+
+    if(vir_factor<0.0) {
+        cout << "Reminder: negative vir_factor is set, initial energy will be used as initial t_max" << endl;
+    }
+
+    VERBOSE(7)<< MAGENTA << "MATTER input parameter";
+    INFO << "in_vac: " << in_vac << "  brick_med: " << brick_med;
+    INFO << "Q00: " << Q00 << " vir_factor: " << vir_factor << "  qhat0: " << qhat0 << " alphas: " << alphas << " hydro_Tc: " << hydro_Tc << " brick_length: " << brick_length;
+
   }
-  matter->FirstChildElement("qhat0")->QueryDoubleText(&m_qhat);
-  SetQhat(m_qhat);
-  //qhat = GetQhat()/fmToGeVinv ;
-  qhat0 = GetQhat()/fmToGeVinv ;
-  JSDEBUG  << s << " with qhat0 = "<<GetQhat();
-  
-  int flagInt=-100;
-  double inputDouble=-99.99;
-  
-  if ( !matter->FirstChildElement("in_vac") ) {
-    WARN << "Couldn't find sub-tag Eloss -> Matter -> in_vac";
-    throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> in_vac");
+  else {
+    WARN << " : Matter not properly initialized in XML file ...";
+    throw std::runtime_error("Matter not properly initialized in XML file ...");
   }
-  matter->FirstChildElement("in_vac")->QueryIntText(&flagInt);
-  in_vac = flagInt;
-  
-  if ( !matter->FirstChildElement("brick_med") ) {
-    WARN << "Couldn't find sub-tag Eloss -> Matter -> brick_med";
-    throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> brick_med");
-  }
-  matter->FirstChildElement("brick_med")->QueryIntText(&flagInt);
-  brick_med = flagInt;
-  
-  if ( !matter->FirstChildElement("Q0") ) {
-    WARN << "Couldn't find sub-tag Eloss -> Matter -> Q0";
-    throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> Q0");
-  }
-  matter->FirstChildElement("Q0")->QueryDoubleText(&inputDouble);
-  Q00 = inputDouble;
-  
-  if ( !matter->FirstChildElement("alphas") ) {
-    WARN << "Couldn't find sub-tag Eloss -> Matter -> alphas";
-    throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> alphas");
-  }
-  matter->FirstChildElement("alphas")->QueryDoubleText(&inputDouble);
-  alphas = inputDouble;
-  
-  if ( !matter->FirstChildElement("hydro_Tc") ) {
-    WARN << "Couldn't find sub-tag Eloss -> Matter -> hydro_Tc";
-    throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> hydro_Tc");
-  }
-  matter->FirstChildElement("hydro_Tc")->QueryDoubleText(&inputDouble);
-  hydro_Tc = inputDouble;
-  
-  if ( !matter->FirstChildElement("brick_length") ) {
-    WARN << "Couldn't find sub-tag Eloss -> Matter -> brick_length";
-    throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> brick_length");
-  }
-  matter->FirstChildElement("brick_length")->QueryDoubleText(&inputDouble);
-  brick_length = inputDouble;
-  
-  if ( !matter->FirstChildElement("vir_factor") ) {
-    WARN << "Couldn't find sub-tag Eloss -> Matter -> vir_factor";
-    throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> vir_factor");
-  }
-  matter->FirstChildElement("vir_factor")->QueryDoubleText(&inputDouble);
-  vir_factor = inputDouble;
-  
-  if(vir_factor<0.0) {
-    cout << "Error: vir_factor < 0, reset to 1.0" << endl;
-    vir_factor=1.0;
-  }
-  
-  VERBOSE(7)<< MAGENTA << "MATTER input parameter";
-  VERBOSE(7)<< MAGENTA << "Q00:" << Q00;
-  //INFO << "in_vac: " << in_vac << "  brick_med: " << brick_med;
-  //INFO << "Q00: " << Q00 << " vir_factor: " << vir_factor << "  qhat0: " << qhat0*fmToGeVinv << " alphas: " << alphas << " hydro_Tc: " << hydro_Tc << " brick_length: " << brick_length;
 
   // Initialize random number distribution
   ZeroOneDistribution = uniform_real_distribution<double> { 0.0, 1.0 };
+
+  //...initialize the random number generator
+  srand((unsigned)time(NULL));
+  NUM1=-1*rand();
+  //    NUM1=-33;
+
 }
 
 
@@ -165,23 +180,19 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   double z=0.5;
   double blurb,zeta,tQ2 ;
   int iSplit,pid_a,pid_b;
-    unsigned int max_color, min_color, min_anti_color;
-  double velocity[4],xStart[4],jet_velocity[4];
+  unsigned int max_color, min_color, min_anti_color;
+  double velocity[4],xStart[4],velocity_jet[4];
 
   VERBOSESHOWER(8)<< MAGENTA << "SentInPartons Signal received : "<<deltaT<<" "<<Q2<<" "<<&pIn;
       
-  // FluidCellInfo* check_fluid_info_ptr = new FluidCellInfo;
-  // VERBOSE(8)<< MAGENTA<<"Temperature from Brick (Signal) = "<<check_fluid_info_ptr->temperature;
-  // delete check_fluid_info_ptr;
-  std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
-  GetHydroCellSignal(1, 1.0, 1.0, 0.0, check_fluid_info_ptr);      
-
   double rNum;
         
   double delT = deltaT;
   double Time = time*fmToGeVinv;
   double deltaTime = delT*fmToGeVinv;
-    
+
+  std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
+
   JSDEBUG << " the time in fm is " << time << " The time in GeV-1 is " << Time ;
   JSDEBUG << "pid = " << pIn[0].pid() << " E = " << pIn[0].e() << " px = " << pIn[0].p(1) << " py = " << pIn[0].p(2) << "  pz = " << pIn[0].p(3) << " virtuality = " << pIn[0].t() << " form_time in fm = " << pIn[0].form_time()/fmToGeVinv ;
   JSDEBUG << " color = " << pIn[0].color() << " anti-color = " << pIn[0].anti_color();
@@ -190,18 +201,29 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
     
   for (int i=0;i<pIn.size();i++)
   {
+
+      cout << "MATTER -- status: " << pIn[i].pstat() << "  energy: " << pIn[i].e() << "  r: " << pIn[i].x_in().comp(0) << "  "  << pIn[i].x_in().comp(1) << "  " << pIn[i].x_in().comp(2) << "  " << pIn[i].x_in().comp(3) << "  " << " color: " << pIn[i].color() << "  " << pIn[i].anti_color() << "  clock: " << time << endl;
+
+
       velocity[0] = 1.0;
       for(int j=1;j<=3;j++)
       {
           velocity[j] = pIn[i].p(j)/pIn[i].e();
       }
-          
       double velocityMod = std::sqrt(std::pow(velocity[1],2) + std::pow(velocity[2],2) + std::pow(velocity[3],2));
+
+      if(pIn[i].form_time()<0.0) pIn[i].set_jet_v(velocity); // jet velocity is set only once
+
+      velocity_jet[0]=1.0;
+      velocity_jet[1]=pIn[i].jet_v().x();
+      velocity_jet[2]=pIn[i].jet_v().y();
+      velocity_jet[3]=pIn[i].jet_v().z();
+
+      double mod_jet_v = std::sqrt( pow(pIn[i].jet_v().x(),2) +  pow(pIn[i].jet_v().y(),2) + pow(pIn[i].jet_v().z(),2) );
           
       for(int j=0;j<=3;j++)
       {
           xStart[j] = pIn[i].x_in().comp(j) ;
-          //+ velocity[j]*delT;
       }
 
       // SC: read in hydro
@@ -212,20 +234,32 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       initVx = velocity[1]/velocityMod;
       initVy = velocity[2]/velocityMod;
       initVz = velocity[3]/velocityMod;
-      initRdotV = initRx*initVx + initRy*initVy + initRz*initVz;
+      initRdotV = ( initRx*pIn[i].jet_v().x() + initRy*pIn[i].jet_v().y() + initRz*pIn[i].jet_v().z() )/mod_jet_v;
       initEner = pIn[i].e();
       if(!in_vac) length = fillQhatTab();
       if(brick_med) length = brick_length*fmToGeVinv; /// length in GeV-1 will have to changed for hydro
       //if(brick_med) length = 5.0*fmToGeVinv; /// length in GeV-1 will have to changed for hydro
 
-
-      //zeta = ( xStart[0] + std::sqrt( xStart[1]*xStart[1] + xStart[2]*xStart[2] + xStart[3]*xStart[3] )  )/std::sqrt(2);
       // SC
       zeta = ( xStart[0] + initRdotV )/std::sqrt(2)*fmToGeVinv;
 
+      double now_R0 = time;
+      double now_Rx = initRx+(time-initR0)*initVx;
+      double now_Ry = initRy+(time-initR0)*initVy; 
+      double now_Rz = initRz+(time-initR0)*initVz;
+      double now_temp; 
+
+      if(!in_vac) {
+         if(now_R0*now_R0<now_Rz*now_Rz) cout << "Warning 1: " << now_R0 << "  " << now_Rz << endl;
+         GetHydroCellSignal(now_R0, now_Rx, now_Ry, now_Rz, check_fluid_info_ptr);
+         //VERBOSE(8)<<MAGENTA<<"Temperature from medium = "<<check_fluid_info_ptr->temperature;
+         now_temp = check_fluid_info_ptr->temperature;
+      } else {
+         now_temp = 0.0;
+      }
 
       int pid = pIn[i].pid();
-          
+
       if (pIn[i].form_time()<0.0) /// A parton without a virtuality or formation time, must set...
       {
           iSplit = 0;
@@ -238,19 +272,28 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           {
               JSDEBUG << " parton is a quark ";
           }
-
 	  
+          //tQ2 = generate_vac_t(pIn[i].pid(), pIn[i].nu(), QS/2.0, pIn[i].e()*pIn[i].e() ,zeta , iSplit);
+
 	  // SC:  
           double pT2 = pIn[i].p(1)*pIn[i].p(1)+pIn[i].p(2)*pIn[i].p(2);
-          //tQ2 = generate_vac_t(pIn[i].pid(), pIn[i].nu(), QS/2.0, pIn[i].e()*pIn[i].e() ,zeta , iSplit);
-          tQ2 = generate_vac_t(pIn[i].pid(), pIn[i].nu(), QS/2.0, pT2*vir_factor ,zeta , iSplit);
+	  double max_vir;
+	  if(vir_factor<0.0) max_vir = pIn[i].e()*pIn[i].e();
+	  else max_vir = pT2 * vir_factor;
 
-            	    
+          cout << "check03   " << max_vir << "  " << QS << "  " << zeta << "  " << pIn[i].nu() << endl;
+          if(max_vir<=QS) {
+	      tQ2 = 0.0;
+          } else {
+    	      tQ2 = generate_vac_t(pIn[i].pid(), pIn[i].nu(), QS/2.0, max_vir, zeta, iSplit);
+    	  }
+
+          cout << "check01" << endl;
           // KK:
-          pIn[i].set_jet_v(velocity);
+          //pIn[i].set_jet_v(velocity); // SC: take out to the front
           pIn[i].set_t(tQ2); // Also resets momentum!
           pIn[i].set_mean_form_time();
-          double ft = generate_L(pIn[i].mean_form_time()) ;
+          double ft = generate_L(pIn[i].mean_form_time());
           pIn[i].set_form_time(ft);
           
           unsigned int color=0, anti_color=0;
@@ -299,6 +342,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           
       }
 
+      //if(pIn[i].color()==0 && pIn[i].anti_color()==0) cout << "complain 0 0 color." << endl;
+
       // SC: Q0 can be changed based on different setups
       if(in_vac) { // for vaccuum
 	  qhat = 0.0;
@@ -321,7 +366,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       if(Q0<1.0) Q0=1.0;
 
       //if (pIn[i].t() > QS + rounding_error)
-      if (pIn[i].t() > Q0*Q0 + rounding_error)
+      if (pIn[i].t() > Q0*Q0 + rounding_error || ((!in_vac) && now_temp<=T0 && pIn[i].t()>QS*QS))
       { //
           double decayTime = pIn[i].mean_form_time()  ;
 	    
@@ -335,7 +380,211 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 	  
           if (splitTime<Time)
           {
-              // do split
+
+              cout << "SPLIT in MATTER" << endl;
+    
+              // SC: add elastic scattering that generates recoiled and back-reaction partons
+              double el_dt=0.1;
+	      double el_p0[5];
+	      double el_CR;
+	      double el_rand;
+
+	      if(pid==gid) el_CR=Ca;
+	      else el_CR=Cf;
+
+              for(int j=1; j<=3; j++) el_p0[j] = pIn[i].p(j);
+	      el_p0[0]=pIn[i].e();
+	      el_p0[4]=pIn[i].t();
+
+              for(double el_time=initR0; el_time<time+rounding_error; el_time=el_time+el_dt) {
+
+                  if(in_vac) continue;
+
+                  double el_rx=initRx+(el_time-initR0)*initVx;
+                  double el_ry=initRy+(el_time-initR0)*initVy;
+                  double el_rz=initRz+(el_time-initR0)*initVz;
+
+                  double tempLoc,sdLoc,vxLoc,vyLoc,vzLoc,qhatLoc,enerLoc;
+		  double betaLoc,gammaLoc,flowFactor;
+		  int hydro_ctl;
+		  double dt_lrf;
+
+		  double pc0[4]={0.0};
+		  double vc0[4]={0.0};
+		  double soln_alphas,prob_el;
+		  double muD2;
+		  double recordE0;
+
+                  pc0[1]=el_p0[1];
+                  pc0[2]=el_p0[2];
+                  pc0[3]=el_p0[3];
+		  pc0[0]=sqrt(pc0[1]*pc0[1]+pc0[2]*pc0[2]+pc0[3]*pc0[3]);
+
+                  recordE0=pc0[0];
+
+		  
+                  if(el_time*el_time<el_rz*el_rz) cout << "Warning 2: " << el_time << "  " << el_rz << endl;
+	  	  //GetHydroCellSignal(el_time, el_rx, el_ry, el_rz, check_fluid_info_ptr);
+               	  VERBOSE(8)<<MAGENTA<<"Temperature from medium = "<<check_fluid_info_ptr->temperature;
+               	 	
+               	  tempLoc = check_fluid_info_ptr->temperature;
+               	  sdLoc = check_fluid_info_ptr->entropy_density;
+               	  vxLoc = check_fluid_info_ptr->vx;
+               	  vyLoc = check_fluid_info_ptr->vy;
+               	  vzLoc = check_fluid_info_ptr->vz;
+
+		  vc0[1]=vxLoc;
+		  vc0[2]=vyLoc;
+		  vc0[3]=vzLoc;
+
+		  hydro_ctl=0;
+               	 
+               	  if(hydro_ctl == 0 && tempLoc >= hydro_Tc) { 
+ 
+		      trans(vc0,pc0);
+                      enerLoc=pc0[0];
+		      transback(vc0,pc0);
+
+              	      betaLoc = sqrt(vxLoc*vxLoc+vyLoc*vyLoc+vzLoc*vzLoc);
+               	      gammaLoc = 1.0/sqrt(1.0-betaLoc*betaLoc);
+               	      flowFactor = gammaLoc*(1.0-(initVx*vxLoc+initVy*vyLoc+initVz*vzLoc));
+               	 
+               	      if(qhat0 < 0.0) { // calculate qhat with alphas
+               	          muD2 = 6.0*pi*alphas*tempLoc*tempLoc;
+               	          if(enerLoc > 2.0*pi*tempLoc) qhatLoc = Ca*50.4864/pi*pow(alphas,2)*pow(tempLoc,3)*log(5.7*enerLoc*tempLoc/4.0/muD2);
+               	          else qhatLoc = Ca*50.4864/pi*pow(alphas,2)*pow(tempLoc,3)*log(5.7*2.0*pi*tempLoc*tempLoc/4.0/muD2);
+               	          if(qhatLoc<0.0) qhatLoc=0.0;
+               	      } else { // use input qhat
+               	          if(brick_med) qhatLoc = qhat0*0.1973;
+		          else qhatLoc = qhat0/96.0*sdLoc*0.1973; 
+               	      }
+               	  } else { // outside the QGP medium
+                      continue;
+		  }
+
+                  if(el_time+el_dt<=time) dt_lrf=el_dt*flowFactor;
+		  else dt_lrf=(time-el_time)*flowFactor;
+
+		  // solve alphas
+		  if(qhat0 < 0.0) soln_alphas=alphas;
+		  else soln_alphas=solve_alphas(qhatLoc,enerLoc,tempLoc);
+
+		  muD2=6.0*pi*soln_alphas*tempLoc*tempLoc;
+                  prob_el=42.0*zeta3*el_CR*soln_alphas*tempLoc/6.0/pi/pi*dt_lrf/0.1973;
+
+                  el_rand = ZeroOneDistribution(*get_mt19937_generator());
+
+		  //cout << "  qhat: " << qhatLoc << "  alphas: " << soln_alphas << "  ener: " << enerLoc << "  prob_el: " << prob_el << "  " << el_rand << endl;
+
+		  if(el_rand<prob_el) { // elastic scattering happens
+ 
+                      //cout << "elastic scattering happens" << endl;
+
+	              int CT=-1;
+		      int pid0=-999;
+		      int pid2=-999;
+		      int pid3=-999;
+		      double pc2[4]={0.0}; // final recoid thermal parton
+		      double pc3[4]={0.0}; // initial thermal parton 
+		      double pc4[4]={0.0}; // not used
+		      double qt=0.0; // not used
+                      unsigned int el_max_color,el_color0,el_anti_color0,el_color2,el_anti_color2,el_color3,el_anti_color3;
+
+		      el_max_color=pIn[i].max_color();
+                      el_color0 = pIn[i].color();
+                      el_anti_color0 = pIn[i].anti_color();
+
+		      pid0=pid;
+
+	              // deterimine channel
+                      //flavor(CT,pid0,pid2,pid3);
+                      flavor(CT,pid0,pid2,pid3,el_max_color,el_color0,el_anti_color0,el_color2,el_anti_color2,el_color3,el_anti_color3);
+
+                      //cout << "color: " << el_color0 << "  " << el_anti_color0 << "  " << el_color2 << "  " << el_anti_color2 << "  " << el_color3 << "  " << el_anti_color3 << "  max: " << el_max_color << endl;
+
+		      // do scattering
+		      colljet22(CT,tempLoc,muD2,vc0,pc0,pc2,pc3,pc4,qt);
+
+	              if(pc0[0]<pc2[0] && abs(pid0)!=4 && pid0==pid2) { //disable switch for heavy quark, only allow switch for identical particles
+                          double p0temp[4]={0.0};
+    			  for(int k=0;k<=3;k++) {
+	                      p0temp[k]=pc2[k];
+	                      pc2[k]=pc0[k];
+	                      pc0[k]=p0temp[k];
+	                  }
+	              }
+
+                      // push out recoied and back-reaction (negative) partons
+                      // need to add color information later!!!
+
+		      double el_vertex[4];
+                      el_vertex[0] = el_time;
+                      el_vertex[1] = el_rx;
+                      el_vertex[2] = el_ry;
+                      el_vertex[3] = el_rz;
+                 
+                      int iout;
+		      double ft;
+
+		      cout << "recoil: " << pc2[0] << endl;
+		      cout << "back-reaction: " << pc3[0] << endl;
+
+                      pOut.push_back(Parton(0,pid2,0,pc2,el_vertex)); // recoiled
+                      iout = pOut.size()-1;
+                      pOut[iout].set_jet_v(velocity_jet); // use initial jet velocity
+                      pOut[iout].set_mean_form_time();
+                      ft = 10000.0;
+                      pOut[iout].set_form_time(ft);
+                      ////pOut[iout].set_color(el_color2);
+                      ////pOut[iout].set_anti_color(el_anti_color2);
+                      ////pOut[iout].set_max_color(max_color);
+                      ////pOut[iout].set_min_color(pIn[i].min_color());
+                      ////pOut[iout].set_min_anti_color(pIn[i].min_anti_color());
+                      ////// comment out realistic color above, assume colorless for recoiled and back-reaction parton
+                      ////// for the convenience of color string fragmentation in Pythia
+		      pOut[iout].set_color(0); 
+                      pOut[iout].set_anti_color(0);
+                      pOut[iout].set_max_color(pIn[i].max_color());
+                      pOut[iout].set_min_color(pIn[i].min_color());
+                      pOut[iout].set_min_anti_color(pIn[i].min_anti_color());
+              
+                      pOut.push_back(Parton(0,pid3,-1,pc3,el_vertex)); // back reaction
+                      iout = pOut.size()-1;
+                      pOut[iout].set_jet_v(velocity_jet);
+                      pOut[iout].set_mean_form_time();
+                      ft = 10000.0;
+                      pOut[iout].set_form_time(ft);
+                      ////pOut[iout].set_color(el_color3);
+                      ////pOut[iout].set_anti_color(el_anti_color3);
+                      ////pOut[iout].set_max_color(max_color);
+                      ////pOut[iout].set_min_color(pIn[i].min_color());
+                      ////pOut[iout].set_min_anti_color(pIn[i].min_anti_color());
+                      pOut[iout].set_color(0);
+                      pOut[iout].set_anti_color(0);
+                      pOut[iout].set_max_color(pIn[i].max_color());
+                      pOut[iout].set_min_color(pIn[i].min_color());
+                      pOut[iout].set_min_anti_color(pIn[i].min_anti_color());
+
+                      ////// assumption: pIn doesn't change color in elastic scattering
+		      ////pIn[i].set_color(el_color0);
+                      ////pIn[i].set_anti_color(el_anti_color0);
+                      ////pIn[i].set_max_color(el_max_color);
+ 
+		  } // end if scattering	
+
+                  // E1'+E2 = E3'+E4 (all massless in scattering)
+		  // Now I want E1+E2 = E3+E4 where 1 and 3 have mass
+		  // -> E1-E1' = E3-E3' -> E3 = E1-E1'+E3'
+		  // m3^2 = E3^2-E3'^2
+		  for(int j=1; j<=3; j++) el_p0[j] = pc0[j];
+		  el_p0[0]=el_p0[0]-recordE0+pc0[0];
+	          el_p0[4]=el_p0[0]*el_p0[0]-pc0[0]*pc0[0];
+                  if(el_p0[4]<0) cout << "complain negative virt" << endl;
+
+	      } // end time loop for elastic scattering
+
+
+       	      // do split
               double t_used = pIn[i].t();
               //if (t_used<QS)  t_used = QS; // SC: not necessary
               double tau_form = 2.0*pIn[i].nu()/t_used;
@@ -398,7 +647,18 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               // daughter virtualities
               double tQd1 = QS;
               double tQd2 = QS;
-              
+
+	      double new_parent_p0 = el_p0[0];
+	      double new_parent_px = el_p0[1];
+	      double new_parent_py = el_p0[2];
+	      double new_parent_pz = el_p0[3];
+	      double new_parent_t = el_p0[4];
+              double new_parent_pl = ( new_parent_px*pIn[i].jet_v().x() + new_parent_py*pIn[i].jet_v().y() + new_parent_pz*pIn[i].jet_v().z() )/mod_jet_v;
+              //double new_parent_pl = sqrt(pow(new_parent_px,2)+pow(new_parent_py,2)+pow(new_parent_pz,2));
+	      //double new_parent_vx = new_parent_px/new_parent_pl;
+	      //double new_parent_vy = new_parent_py/new_parent_pl;
+	      //double new_parent_vz = new_parent_pz/new_parent_pl;
+	      double new_parent_nu = (new_parent_p0+new_parent_pl)/sqrt(2.0);
               
               //set color of daughters here
               unsigned int d1_col, d1_acol, d2_col, d2_acol, color, anti_color;
@@ -449,35 +709,40 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                  throw std::runtime_error("error in iSplit");
               }
 
+              //if (d1_col==0 && d1_acol==0) cout << "complain color" << endl;
+              //if (d2_col==0 && d2_acol==0) cout << "complain color" << endl;
+
               
               JSDEBUG << " d1_col = " << d1_col << " d1_acol = " << d1_acol << " d2_col = " << d2_col << " d2_acol = " << d2_acol;
 
               while ((l_perp2<=0.0)&&(ifcounter<100))
               {
-                  z = generate_vac_z(pid,QS/2.0,pIn[i].t(),zeta,pIn[i].nu(),iSplit) ;
+                  z = generate_vac_z(pid,QS/2.0,pIn[i].t(),zeta,pIn[i].nu(),iSplit);
                   //JSDEBUG << " generated z = " << z;
         
                   int iSplit_a = 0;
                   if (pid_a==gid) iSplit_a = 1;
-	
-                  if (z*z*pIn[i].t()>QS)
+
+                  // use pIn information to sample z above, but use new_parent to calculate daughter partons below            
+                  if (z*z*new_parent_t>QS)
                   {
-                      tQd1 = generate_vac_t(pid_a, z*pIn[i].nu(), QS/2.0, z*z*pIn[i].t() ,zeta+std::sqrt(2)*pIn[i].form_time() , iSplit_a);
+                      tQd1 = generate_vac_t(pid_a, z*new_parent_nu, QS/2.0, z*z*new_parent_t, zeta+std::sqrt(2)*pIn[i].form_time(), iSplit_a);
                   } else { // SC
-                      tQd1 = z*z*pIn[i].t();
+                      tQd1 = z*z*new_parent_t;
                   }
         
+
                   int iSplit_b = 0;
                   if (pid_b==gid) iSplit_b = 1;
         
-                  if ((1.0-z)*(1.0-z)*pIn[i].t()>QS)
+                  if ((1.0-z)*(1.0-z)*new_parent_t>QS)
                   {
-                      tQd2 = generate_vac_t(pid_b, (1.0-z)*pIn[i].nu(), QS/2.0, (1.0-z)*(1.0-z)*pIn[i].t() ,zeta+std::sqrt(2)*pIn[i].form_time(),iSplit_b);
+                      tQd2 = generate_vac_t(pid_b, (1.0-z)*new_parent_nu, QS/2.0, (1.0-z)*(1.0-z)*new_parent_t, zeta+std::sqrt(2)*pIn[i].form_time(),iSplit_b);
                   } else { // SC
-                      tQd2 = (1.0-z)*(1.0-z)*pIn[i].t();
+                      tQd2 = (1.0-z)*(1.0-z)*new_parent_t;
                   }
 		
-                  l_perp2 =  pIn[i].t()*z*(1.0 - z) - tQd2*z - tQd1*(1.0-z) ; ///< the transverse momentum squared
+                  l_perp2 = new_parent_t*z*(1.0 - z) - tQd2*z - tQd1*(1.0-z) ; ///< the transverse momentum squared
                   ifcounter++;
               }
               
@@ -487,28 +752,31 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               // axis of split
               double angle = generate_angle();
 
-                  
-              // double parent_perp = std::sqrt( pow(pIn[i].p(1),2) + pow(pIn[i].p(2),2) + pow(pIn[i].p(3),2) - pow(pIn[i].pl(),2) );
               // KK: changed to x,y,z
-              double parent_perp = std::sqrt( pow(pIn[i].px(),2) + pow(pIn[i].py(),2) + pow(pIn[i].pz(),2) - pow(pIn[i].pl(),2) );
-              double mod_jet_v = std::sqrt( pow(pIn[i].jet_v().x(),2) +  pow(pIn[i].jet_v().y(),2) + pow(pIn[i].jet_v().z(),2) ) ;
-                  
+              //double parent_perp = std::sqrt( pow(pIn[i].px(),2) + pow(pIn[i].py(),2) + pow(pIn[i].pz(),2) - pow(pIn[i].pl(),2) );
+              //double mod_jet_v = std::sqrt( pow(pIn[i].jet_v().x(),2) +  pow(pIn[i].jet_v().y(),2) + pow(pIn[i].jet_v().z(),2) ) ;
               double c_t = pIn[i].jet_v().z()/mod_jet_v;
               double s_t = std::sqrt( 1.0 - c_t*c_t) ;
                   
               double s_p = pIn[i].jet_v().y()/std::sqrt( pow( pIn[i].jet_v().x() , 2 ) + pow( pIn[i].jet_v().y(), 2 ) ) ;
               double c_p = pIn[i].jet_v().x()/std::sqrt( pow( pIn[i].jet_v().x() , 2 ) + pow( pIn[i].jet_v().y(), 2 ) ) ;
+
+              //double c_t = new_parent_vz;
+              //double s_t = std::sqrt( 1.0 - c_t*c_t) ;
+              //    
+              //double s_p = new_parent_vy/std::sqrt( pow(new_parent_vx,2) + pow(new_parent_vy,2) ) ;
+              //double c_p = new_parent_vx/std::sqrt( pow(new_parent_vx,2) + pow(new_parent_vy,2) ) ;
                   
               // First daughter
               double k_perp1[4];
               k_perp1[0] = 0.0;
-              k_perp1[1] = z*(pIn[i].px() - pIn[i].pl()*s_t*c_p) + l_perp*std::cos(angle)*c_t*c_p - l_perp*std::sin(angle)*s_p ;
-              k_perp1[2] = z*(pIn[i].py() - pIn[i].pl()*s_t*s_p) + l_perp*std::cos(angle)*c_t*s_p + l_perp*std::sin(angle)*c_p ;
-              k_perp1[3] = z*(pIn[i].pz() - pIn[i].pl()*c_t) - l_perp*std::cos(angle)*s_t ;
+              k_perp1[1] = z*(new_parent_px-new_parent_pl*s_t*c_p) + l_perp*std::cos(angle)*c_t*c_p - l_perp*std::sin(angle)*s_p ;
+              k_perp1[2] = z*(new_parent_py-new_parent_pl*s_t*s_p) + l_perp*std::cos(angle)*c_t*s_p + l_perp*std::sin(angle)*c_p ;
+              k_perp1[3] = z*(new_parent_pz-new_parent_pl*c_t) - l_perp*std::cos(angle)*s_t ;
               double k_perp1_2 = pow(k_perp1[1],2)+pow(k_perp1[2],2)+pow(k_perp1[3],2);
                   
-              double energy = ( z*pIn[i].nu() + (tQd1 + k_perp1_2)/(2.0*z*pIn[i].nu() ) )/std::sqrt(2.0) ;
-              double plong =  ( z*pIn[i].nu() - (tQd1 + k_perp1_2)/(2.0*z*pIn[i].nu() ) )/std::sqrt(2.0) ;
+              double energy = ( z*new_parent_nu + (tQd1 + k_perp1_2)/(2.0*z*new_parent_nu) )/std::sqrt(2.0) ;
+              double plong =  ( z*new_parent_nu - (tQd1 + k_perp1_2)/(2.0*z*new_parent_nu) )/std::sqrt(2.0) ;
                   
               double newp[4];
               newp[0] = energy;
@@ -517,20 +785,24 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               newp[3] = plong*c_t + k_perp1[3];
                   
               double newx[4];
-              newx[0] = Time + deltaTime ;
+              //newx[0] = time + deltaT;
+              newx[0] = time;
               for (int j=1;j<=3;j++)
               {
-                  newx[j] = pIn[i].x_in().comp(j) + (Time + deltaTime - pIn[i].x_in().comp(0) )*velocity[j]/velocityMod;
+                  //newx[j] = pIn[i].x_in().comp(j) + (time + deltaT - pIn[i].x_in().comp(0))*velocity[j]/velocityMod;
+                  newx[j] = pIn[i].x_in().comp(j) + (time - pIn[i].x_in().comp(0))*velocity[j]/velocityMod;
               }
+
+              cout << "check daugther 1: " << newp[0] << endl;
+
+              pOut.push_back(Parton(0,pid_a,0,newp,newx));
+              int iout = pOut.size()-1;
                   
-              pOut.push_back(Parton(0,pid_a,0,newp,newx ));
-              int iout = pOut.size()-1 ;
-                  
-              pOut[iout].set_jet_v(pIn[i].jet_v());
+              pOut[iout].set_jet_v(velocity_jet); // use initial jet velocity
               pOut[iout].set_mean_form_time();
               double ft = generate_L (pOut[iout].mean_form_time());
               pOut[iout].set_form_time(ft);
-              pOut[iout].set_color(d1_col);
+	      pOut[iout].set_color(d1_col);
               pOut[iout].set_anti_color(d1_acol);
               pOut[iout].set_max_color(max_color);
               pOut[iout].set_min_color(pIn[i].min_color());
@@ -542,36 +814,35 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               // Second daughter
               double k_perp2[4];
               k_perp2[0] = 0.0;
-              k_perp2[1] = (1.0-z)*(pIn[i].px() - pIn[i].pl()*s_t*c_p) - l_perp*std::cos(angle)*c_t*c_p + l_perp*std::sin(angle)*s_p ;
-              k_perp2[2] = (1.0-z)*(pIn[i].py() - pIn[i].pl()*s_t*s_p) - l_perp*std::cos(angle)*c_t*s_p - l_perp*std::sin(angle)*c_p ;
-              k_perp2[3] = (1.0-z)*(pIn[i].pz() - pIn[i].pl()*c_t) + l_perp*std::cos(angle)*s_t ;
+              k_perp2[1] = (1.0-z)*(new_parent_px-new_parent_pl*s_t*c_p) - l_perp*std::cos(angle)*c_t*c_p + l_perp*std::sin(angle)*s_p ;
+              k_perp2[2] = (1.0-z)*(new_parent_py-new_parent_pl*s_t*s_p) - l_perp*std::cos(angle)*c_t*s_p - l_perp*std::sin(angle)*c_p ;
+              k_perp2[3] = (1.0-z)*(new_parent_pz-new_parent_pl*c_t) + l_perp*std::cos(angle)*s_t ;
               double k_perp2_2 = pow(k_perp2[1],2)+pow(k_perp2[2],2)+pow(k_perp2[3],2);
 
-              energy = ( (1.0-z)*pIn[i].nu() + (tQd2 + k_perp2_2)/( 2.0*(1.0-z)*pIn[i].nu() ) )/std::sqrt(2.0) ;
-              plong =  ( (1.0-z)*pIn[i].nu() - (tQd2 + k_perp2_2)/( 2.0*(1.0-z)*pIn[i].nu() ) )/std::sqrt(2.0) ;
+              energy = ( (1.0-z)*new_parent_nu + (tQd2 + k_perp2_2)/( 2.0*(1.0-z)*new_parent_nu ) )/std::sqrt(2.0) ;
+              plong =  ( (1.0-z)*new_parent_nu - (tQd2 + k_perp2_2)/( 2.0*(1.0-z)*new_parent_nu ) )/std::sqrt(2.0) ;
 
-              parent_perp = std::sqrt( pow(pIn[i].p(1),2) + pow(pIn[i].p(2),2) + pow(pIn[i].p(3),2) - pow(pIn[i].pl(),2) );
-              mod_jet_v = std::sqrt( pow(pIn[i].jet_v().x(),2) +  pow(pIn[i].jet_v().y(),2) + pow(pIn[i].jet_v().z(),2) ) ;
-                  
+              //parent_perp = std::sqrt( pow(pIn[i].p(1),2) + pow(pIn[i].p(2),2) + pow(pIn[i].p(3),2) - pow(pIn[i].pl(),2) );
+              //mod_jet_v = std::sqrt( pow(pIn[i].jet_v().x(),2) +  pow(pIn[i].jet_v().y(),2) + pow(pIn[i].jet_v().z(),2) ) ;
+    
               newp[0] = energy;
-              newp[1] = plong*s_t*c_p + k_perp2[1] ;
-              newp[2] = plong*s_t*s_p + k_perp2[2] ;
-              newp[3] = plong*c_t + k_perp2[3] ;
+              newp[1] = plong*s_t*c_p + k_perp2[1];
+              newp[2] = plong*s_t*s_p + k_perp2[2];
+              newp[3] = plong*c_t + k_perp2[3];
               
-              newx[0] = Time + deltaTime;
+              //newx[0] = time + deltaT;
+              newx[0] = time;
               for (int j=1;j<=3;j++)
               {
-                  newx[j] = pIn[i].x_in().comp(j) + (Time + deltaTime - pIn[i].x_in().comp(0) )*velocity[j]/velocityMod;
+                  //newx[j] = pIn[i].x_in().comp(j) + (time + deltaT - pIn[i].x_in().comp(0))*velocity[j]/velocityMod;
+                  newx[j] = pIn[i].x_in().comp(j) + (time - pIn[i].x_in().comp(0))*velocity[j]/velocityMod;
               }
-    
+	      
+              cout << "check daugther 2: " << newp[0] << endl;
 
-//              INFO << "velocity = " << velocity[0] << " " << velocity[1] << "  " << velocity[2] << " " << velocity[3] ;
- //             INFO << "jet_v = " << pIn[i].jet_v().t() << " " << pIn[i].jet_v().x() << " " << pIn[i].jet_v().y() << " " << pIn[i].jet_v().z();
-
-              
-              pOut.push_back(Parton(0,pid_b,0,newp,newx ));
-              iout = pOut.size()-1 ;
-              pOut[iout].set_jet_v(pIn[i].jet_v());
+	      pOut.push_back(Parton(0,pid_b,0,newp,newx));
+              iout = pOut.size()-1;
+              pOut[iout].set_jet_v(velocity_jet); // use initial jet velocity
               pOut[iout].set_mean_form_time();
               ft = generate_L (pOut[iout].mean_form_time());
               pOut[iout].set_form_time(ft);
@@ -1535,7 +1806,8 @@ double Matter::fillQhatTab() {
     for(int i = 0; i < dimQhatTab; i++) {
         tLoc = tStep*i;
 
-	if(tLoc<initR0-tStep) {
+	//if(tLoc<initR0-tStep) { // potential problem of making t^2<z^2
+	if(tLoc<initR0) {
             qhatTab1D[i] = 0.0; 
             continue;	    
         }
@@ -1556,14 +1828,22 @@ double Matter::fillQhatTab() {
 //            tempLoc = T;
 //        }
 
+	
+        if(tLoc*tLoc<zLoc*zLoc) {
+	    cout << "Warning 3: " << tLoc << "  " << zLoc << endl;
+            cout << "initial: " << initR0 << "  " << initRx << "  " << initRy << "  " << initRz << endl;
+            cout << "velocity: " << initVx << "  " << initVy << "  " << initVz << endl;
+	}
+
 	GetHydroCellSignal(tLoc, xLoc, yLoc, zLoc, check_fluid_info_ptr);
-	VERBOSE(7)<< MAGENTA<<"Temperature from Brick (Signal) = "<<check_fluid_info_ptr->temperature;
+	VERBOSE(8)<< MAGENTA<<"Temperature from medium = "<<check_fluid_info_ptr->temperature;
 	
 	tempLoc = check_fluid_info_ptr->temperature;
 	sdLoc = check_fluid_info_ptr->entropy_density;
 	vxLoc = check_fluid_info_ptr->vx;
 	vyLoc = check_fluid_info_ptr->vy;
 	vzLoc = check_fluid_info_ptr->vz;
+        if(vxLoc*vxLoc+vyLoc*vyLoc+vzLoc*vzLoc>1.0) cout << "wrong flow: " << tLoc << "  " << xLoc << "  " << yLoc << "  " << zLoc << "  " << tempLoc << "  " << vxLoc << "  " << vyLoc << "  " << vzLoc << endl;
 
 	hydro_ctl=0;
 
@@ -1572,6 +1852,7 @@ double Matter::fillQhatTab() {
             betaLoc = sqrt(vxLoc*vxLoc+vyLoc*vyLoc+vzLoc*vzLoc);
             gammaLoc = 1.0/sqrt(1.0-betaLoc*betaLoc);
             flowFactor = gammaLoc*(1.0-(initVx*vxLoc+initVy*vyLoc+initVz*vzLoc));
+            cout << "check flow: " << flowFactor << endl;
 
             if(qhat0 < 0.0) { // calculate qhat with alphas
                 double muD2 = 6.0*pi*alphas*tempLoc*tempLoc;
@@ -1583,8 +1864,8 @@ double Matter::fillQhatTab() {
                 qhatLoc = qhatLoc*flowFactor;
                 if(qhatLoc<0.0) qhatLoc=0.0;
             } else { // use input qhat
-                if(brick_med) qhatLoc = qhat0*0.1973*flowFactor;  
-		else qhatLoc = qhat0/96.0*sdLoc*0.1973*flowFactor;  // qhat_over_T3 here is actually qhat0 at s = 96fm^-3
+                if(brick_med) qhatLoc = qhat0*0.1973*flowFactor; 
+		else qhatLoc = qhat0/96.0*sdLoc*0.1973*flowFactor;  // qhat0 at s = 96fm^-3
             }
         //    cout << "check qhat --  ener, T, qhat: " << initEner << "  " << tempLoc << "  " << qhatLoc << endl;
 
@@ -1646,10 +1927,662 @@ double Matter::fncAvrQhat(double zeta, double tau) {
     if(indexTau >= dimQhatTab) indexTau = dimQhatTab-1;      
     
     double avrQhat = qhatTab2D[indexZeta][indexTau]; 
+    cout << "check qhat: " << indexZeta << "  " << indexTau << "  " << avrQhat << endl;
     return(avrQhat);
 
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
 
+void Matter::flavor(int &CT,int &KATT0,int &KATT2,int &KATT3, unsigned int &max_color, unsigned int &color0, unsigned int &anti_color0, unsigned int &color2, unsigned int &anti_color2, unsigned int &color3, unsigned int &anti_color3){  
 
+  int vb[7]={0};
+  int b=0;
+  int KATT00=KATT0;
+  unsigned int backup_color0=color0;
+  unsigned int backup_anti_color0=anti_color0;
+
+  vb[1]=1; 
+  vb[2]=2; 
+  vb[3]=3; 
+  vb[4]=-1; 
+  vb[5]=-2; 
+  vb[6]=-3;
+	  
+  if(KATT00==21) {   //.....for gluon
+    double R1=16.0; // gg->gg DOF_g
+    double R2=0.0;  // gg->qqbar don't consider this channel in MATTER
+    double R3=6.0*6*4/9; // gq->gq or gqbar->gqbar flavor*DOF_q*factor 
+    double R0=R1+R3;
+	   	
+    double a=ran0(&NUM1);
+	   
+    if(a<=R1/R0) { // gg->gg
+      CT=1;
+      KATT3=21;
+      KATT2=21;
+      //KATT0=KATT0;
+      max_color++;
+      color0=backup_color0;
+      anti_color0=max_color;
+      max_color++;
+      color2=anti_color0;
+      anti_color2=max_color;
+      color3=backup_anti_color0;
+      anti_color3=max_color;
+    } else { // gq->gq
+      CT=3;
+      b=floor(ran0(&NUM1)*6+1);
+      if(b==7) b=6;
+      KATT3=vb[b];
+      KATT2=KATT3;
+      //KATT0=KATT0;
+      if(KATT3>0) { // gq->gq
+          max_color++;
+          color0=backup_color0;
+	  anti_color0=max_color;
+	  color2=max_color;
+	  anti_color2=0;
+          color3=backup_anti_color0;
+	  anti_color3=0;
+      } else { // gqbar->gqbar	 
+          max_color++;
+	  color0=max_color;
+          anti_color0=backup_anti_color0;
+	  color2=0;
+	  anti_color2=max_color;
+	  color3=0;
+          anti_color3=backup_color0;
+      }     
+    }
+  } else { //.....for quark and antiquark (light)
+    double R3=16.0; // qg->qg DOF_g
+    double R4=4.0*6*4/9; // qq'->qq' scatter with other species
+    double R5=1.0*6*4/9; // qq->qq scatter with itself
+    double R6=0.0; // qqbar->q'qbar' to other final state species, don't consider in MATTER
+    double R7=1.0*6*4/9; // qqbar->qqbar scatter with its anti-particle
+    double R8=0.0; // qqbar->gg don't consider in MATTER
+    double R00=R3+R4+R5+R7;
+
+    double a=ran0(&NUM1);
+    if(a<=R3/R00) { // qg->qg
+	CT=13;
+	KATT3=21;
+	KATT2=21; 
+	//KATT0=KATT0;
+        if(KATT00>0) { // qg->qg
+            max_color++;
+            color0=max_color;
+            anti_color0=0;
+	    max_color++;
+            color2=max_color;
+            anti_color2=color0;
+            color3=max_color;
+            anti_color3=backup_color0;
+        } else { // qbarg->qbarg	 
+            max_color++;
+            color0=0;
+            anti_color0=max_color;
+	    max_color++;
+            color2=anti_color0;
+            anti_color2=max_color;
+            color3=backup_anti_color0;
+            anti_color3=max_color;
+        }     
+    } else if(a<=(R3+R4)/R00) { // qq'->qq'
+	CT=4;
+	do {
+      	    b=floor(ran0(&NUM1)*6+1);
+	    if(b==7) b=6;
+	    KATT3=vb[b];
+	} while (KATT3==KATT0 || KATT3==-KATT0); 
+	KATT2=KATT3;
+	//KATT0=KATT0;
+	if(KATT00>0 && KATT2>0) { // qq->qq
+            max_color++;
+	    color0=max_color;
+	    anti_color0=0;
+	    color2=backup_color0;
+	    anti_color2=0;
+	    color3=max_color;
+	    anti_color3=0;
+	} else if(KATT00>0 && KATT2<0) { //qqbar->qqbar
+	    max_color++;
+            color0=max_color;
+            anti_color0=0;
+            color2=0;
+            anti_color2=max_color;
+            color3=0;
+            anti_color3=backup_color0;
+        } else if(KATT00<0 && KATT2>0) { //qbarq->qbarq
+            max_color++;
+            color0=0;
+	    anti_color0=max_color;
+	    color2=max_color;
+	    anti_color2=0;
+	    color3=backup_anti_color0;
+	    anti_color3=0;
+        } else { //qbarqbar->qbarqbar
+            max_color++;
+	    color0=0;
+	    anti_color0=max_color;
+	    color2=0;
+	    anti_color2=backup_anti_color0;
+	    color3=0;
+	    anti_color3=max_color;
+        }
+    } else if(a<=(R3+R4+R5)/R00) { // scatter with itself
+	CT=5;
+	KATT3=KATT0;
+	KATT2=KATT0;
+	//KATT0=KATT0;
+	if(KATT00>0) { // qq->qq
+            max_color++;
+	    color0=max_color;
+	    anti_color0=0;
+	    color2=backup_color0;
+	    anti_color2=0;
+	    color3=max_color;
+	    anti_color3=0;
+         } else { //qbarqbar->qbarqbar
+            max_color++;
+	    color0=0;
+	    anti_color0=max_color;
+	    color2=0;
+	    anti_color2=backup_anti_color0;
+	    color3=0;
+	    anti_color3=max_color;
+         }
+    } else { // scatter with its anti-particle
+	CT=7;
+	KATT3=-KATT0; 
+	KATT2=KATT3;
+	//KATT0=KATT0;
+	if(KATT00>0) { //qqbar->qqbar
+	    max_color++;
+            color0=max_color;
+            anti_color0=0;
+            color2=0;
+            anti_color2=max_color;
+            color3=0;
+            anti_color3=backup_color0;
+        } else { //qbarq->qbarq
+            max_color++;
+            color0=0;
+	    anti_color0=max_color;
+	    color2=max_color;
+	    anti_color2=0;
+	    color3=backup_anti_color0;
+	    anti_color3=0;
+        }
+    }	   
+  }	
+}
+
+void Matter::colljet22(int CT,double temp,double qhat0ud,double v0[4],double p0[4],double p2[4],double p3[4],double p4[4],double &qt){
+  //
+  //    p0 initial jet momentum, output to final momentum
+  //    p2 final thermal momentum,p3 initial termal energy
+  //
+  //    amss=sqrt(abs(p0(4)**2-p0(1)**2-p0(2)**2-p0(3)**2))
+  //
+  //************************************************************
+  p4[1]=p0[1];
+  p4[2]=p0[2];
+  p4[3]=p0[3];
+  p4[0]=p0[0];	  	  
+  //************************************************************	
+
+  //    transform to local comoving frame of the fluid
+  //  cout << endl;
+  //  cout << "flow  "<< v0[1] << " " << v0[2] << " " << v0[3] << " "<<" Elab " << p0[0] << endl;
+  
+  trans(v0,p0);
+  //  cout << p0[0] << " " << sqrt(qhat0ud) << endl;
+  
+  //  cout << sqrt(pow(p0[1],2)+pow(p0[2],2)+pow(p0[3],2)) << " " << p0[1] << " " << p0[2] << " " << p0[3] << endl;
+
+  //************************************************************
+  trans(v0,p4);
+  //************************************************************
+
+
+  //    sample the medium parton thermal momentum in the comoving frame
+
+
+  double xw;
+  double razim;
+  double rcos;
+  double rsin;
+	  
+  double ss;  
+  double tmin;
+  double tmid;
+  double tmax;
+	  
+  double rant;
+  double tt;
+	  
+  double uu;	  
+  double ff=0.0;
+  double rank;
+	  
+  double mmax;
+  double msq=0.0;
+	  
+  double f1;
+  double f2;
+  
+  double p0ex[4]={0.0};
+  double vc[4]={0.0};
+
+  //  Initial 4-momentum of jet
+  //
+  //************************************************************
+  p4[1]=p0[1];
+  p4[2]=p0[2];
+  p4[3]=p0[3];
+  p4[0]=p0[0];	  	  
+  //************************************************************	  
+
+  int ic=0;
+
+  do
+    {
+      do{	  
+	xw=15.0*ran0(&NUM1);
+	razim=2.0*pi*ran0(&NUM1);
+	rcos=1.0-2.0*ran0(&NUM1);
+	rsin=sqrt(1.0-rcos*rcos);
+	//
+	p2[0]=xw*temp;
+	p2[3]=p2[0]*rcos;
+	p2[1]=p2[0]*rsin*cos(razim);
+	p2[2]=p2[0]*rsin*sin(razim);
+	  
+	f1=pow(xw,3 )/(exp(xw)-1)/1.4215;
+	f2=pow(xw,3)/(exp(xw)+1)/1.2845;
+	//
+	//    cms energy
+	//
+	ss=2.0*(p0[0]*p2[0]-p0[1]*p2[1]-p0[2]*p2[2]-p0[3]*p2[3]);
+	  
+	//	if(ss.lt.2.d0*qhat0ud) goto 14
+
+	tmin=qhat0ud;
+	tmid=ss/2.0;
+	tmax=ss-qhat0ud;
+	  
+	//    use (s^2+u^2)/(t+qhat0ud)^2 as scattering cross section in the
+	//
+	rant=ran0(&NUM1);
+	tt=rant*ss;	  
+
+	//		ic+=1;
+	//		cout << p0[0] << "  " << p2[0] <<  endl;
+	//		cout << tt << "  " << ss <<  "" << qhat0ud <<endl;
+	//		cout << ic << endl;
+
+      }while((tt<qhat0ud) || (tt>(ss-qhat0ud))); 
+
+      uu=ss-tt;	  
+	  
+      if(CT==1)
+	{	
+	  ff=f1;	  
+	  mmax=4.0/pow(ss,2)*(3.0-tmin*(ss-tmin)/pow(ss,2)+(ss-tmin)*ss/pow(tmin,2)+tmin*ss/pow((ss-tmin),2));
+	  msq=pow((1.0/p0[0]/p2[0]/2.0),2)*(3.0-tt*uu/pow(ss,2)+uu*ss/pow(tt,2)+tt*ss/pow(uu,2))/mmax;
+	}
+
+	
+      if(CT==2)
+	{
+	  ff=f1;	  
+	  mmax=4.0/pow(ss,2)*(4.0/9.0*(pow(tmin,2)+pow((ss-tmin),2))/tmin/(ss-tmin)-(pow(tmin,2)+pow((ss-tmin),2))/pow(ss,2));
+	  msq=pow((1.0/p0[0]/p2[0]/2.0),2)*(4.0/9.0*(pow(tt,2)+pow(uu,2))/tt/uu-(pow(tt,2)+pow(uu,2))/pow(ss,2))/(mmax+4.0);
+	}
+
+	
+      if(CT==3)
+	{
+	  ff=f2;	  
+	  if(((pow(ss,2)+pow((ss-tmin),2))/pow(tmin,2)+4.0/9.0*(pow(ss,2)+pow((ss-tmin),2))/ss/(ss-tmin))>((pow(ss,2)+pow((ss-tmax),2)/pow(tmax,2)+4.0/9.0*(pow(ss,2)+pow((ss-tmax),2))/ss/(ss-tmax))))
+	    {
+	      mmax=4.0/pow(ss,2)*((pow(ss,2)+pow((ss-tmin),2))/pow(tmin,2)+4.0/9.0*(pow(ss,2)+pow((ss-tmin),2))/ss/(ss-tmin));
+	    }
+	  else
+	    {	  
+	      mmax=4.0/pow(ss,2)*((pow(ss,2)+pow((ss-tmax),2))/pow(tmax,2)+4.0/9.0*(pow(ss,2)+pow((ss-tmax),2))/ss/(ss-tmax));
+	    }
+	  //
+	  msq=pow((1.0/p0[0]/p2[0]/2.0),2)*((pow(ss,2)+pow(uu,2))/pow(tt,2)+4.0/9.0*(pow(ss,2)+pow(uu,2))/ss/uu)/mmax;
+	}
+
+	
+      if(CT==13)
+	{
+	  ff=f1;
+	  
+	  if(((pow(ss,2)+pow((ss-tmin),2))/pow(tmin,2)+4.0/9.0*(pow(ss,2)+pow((ss-tmin),2))/ss/(ss-tmin))>((pow(ss,2)+pow((ss-tmax),2)/pow(tmax,2)+4.0/9.0*(pow(ss,2)+pow((ss-tmax),2))/ss/(ss-tmax))))
+	    {
+	      mmax=4.0/pow(ss,2)*((pow(ss,2)+pow((ss-tmin),2))/pow(tmin,2)+4.0/9.0*(pow(ss,2)+pow((ss-tmin),2))/ss/(ss-tmin));
+	    }
+	  else 
+	    {
+	      mmax=4.0/pow(ss,2)*((pow(ss,2)+pow((ss-tmax),2))/pow(tmax,2)+4.0/9.0*(pow(ss,2)+pow((ss-tmax),2))/ss/(ss-tmax));
+	    }
+	  //
+	  msq=pow((1.0/p0[0]/p2[0]/2.0),2)*((pow(ss,2)+pow(uu,2))/pow(tt,2)+4.0/9.0*(pow(ss,2)+pow(uu,2))/ss/uu)/mmax;
+	}
+
+	
+      if(CT==4)
+	{
+	  ff=f2;	  
+	  mmax=4.0/pow(ss,2)*(4.0/9.0*(pow(ss,2)+pow((ss-tmin),2))/pow(tmin,2));
+	  msq=pow((1.0/p0[0]/p2[0]/2.0),2)*(4.0/9.0*(pow(ss,2)+pow(uu,2))/pow(tt,2))/mmax;
+	}
+
+	
+      if(CT==5)
+	{
+	  ff=f2;	  
+	  mmax=4.0/pow(ss,2)*(4.0/9.0*(pow(ss,2)+pow((ss-tmin),2))/pow(tmin,2)+(pow(ss,2)+pow(tmin,2))/pow((ss-tmin),2)-2.0/3.0*pow(ss,2)/tmin/(ss-tmin));
+	  msq=pow((1.0/p0[0]/p2[0]/2.0),2)*(4.0/9.0*((pow(ss,2)+pow(uu,2))/pow(tt,2)+(pow(ss,2)+pow(tt,2))/pow(uu,2)-2.0/3.0*pow(ss,2)/tt/uu))/mmax;	  
+	}
+
+	
+      if(CT==6)
+	{
+	  ff=f2;	  
+	  mmax=4.0/pow(ss,2)*(4.0/9.0*(pow(tmin,2)+pow((ss-tmin),2))/pow(ss,2));
+	  msq=pow((1.0/p0[0]/p2[0]/2.0),2)*(4.0/9.0*(pow(tt,2)+pow(uu,2))/pow(ss,2))/(mmax+0.5);
+	}
+
+	
+      if(CT==7)
+	{
+	  ff=f2;	  
+	  mmax=4.0/pow(ss,2)*(4.0/9.0*(pow(ss,2)+pow((ss-tmin),2))/pow(tmin,2)+(pow(tmin,2)+pow((ss-tmin),2))/pow(ss,2)+2.0/3.0*pow((ss-tmin),2)/ss/tmin);
+	  msq=(pow((1.0/p0[0]/p2[0]/2.0),2)*(4.0/9.0*(((pow(ss,2)+pow(uu,2))/pow(tt,2))+(pow(tt,2)+pow(uu,2))/pow(ss,2)+2.0/3.0*pow(uu,2)/ss/tt)))/mmax;	  
+	}
+
+	
+      if(CT==8)
+	{
+	  ff=f2;	 
+	  mmax=4.0/pow(ss,2)*(4.0/9.0*(pow(tmin,2)+pow((ss-tmin),2))/tmin/(ss-tmin)-(pow(tmin,2)+pow((ss-tmin),2))/pow(ss,2));
+	  msq=pow((1.0/p0[0]/p2[0]/2.0),2)*(4.0/9.0*(pow(tt,2)+pow(uu,2))/tt/uu-(pow(tt,2)+pow(uu,2))/pow(ss,2))/(mmax+4.0);	  
+	}
+	
+      rank=ran0(&NUM1);
+    }while(rank>(msq*ff));
+	
+  //
+  p3[1]=p2[1]; 
+  p3[2]=p2[2];
+  p3[3]=p2[3];
+  p3[0]=p2[0];
+
+  //    velocity of the center-of-mass
+  //
+  vc[1]=(p0[1]+p2[1])/(p0[0]+p2[0]);
+  vc[2]=(p0[2]+p2[2])/(p0[0]+p2[0]);
+  vc[3]=(p0[3]+p2[3])/(p0[0]+p2[0]);
+  //
+  //    transform into the cms frame
+  //
+  trans(vc,p0);
+  trans(vc,p2);
+  //
+  //    cm momentum
+  //
+  double pcm=p2[0];
+  //
+  //    sample transverse momentum transfer with respect to jet momentum
+  //    in cm frame
+  //
+  double ranp=2.0*pi*ran0(&NUM1);
+  //
+  //    transverse momentum transfer
+  //
+  qt=sqrt(pow(pcm,2)-pow((tt/2.0/pcm-pcm),2));
+  double qx=qt*cos(ranp);
+  double qy=qt*sin(ranp);
+
+  //
+  //    longitudinal momentum transfer
+  //
+  double qpar=tt/2.0/pcm;
+  //
+  //    qt is perpendicular to pcm, need to rotate back to the cm frame
+  //
+  double upt=sqrt(p2[1]*p2[1]+p2[2]*p2[2])/p2[0];
+  double upx=p2[1]/p2[0];
+  double upy=p2[2]/p2[0];
+  double upz=p2[3]/p2[0];
+  //
+  //    momentum after collision in cm frame
+  //
+  p2[1]=p2[1]-qpar*upx;
+  p2[2]=p2[2]-qpar*upy;
+  if(upt!=0.0) 
+    {
+      p2[1]=p2[1]+(upz*upx*qy+upy*qx)/upt;
+      p2[2]=p2[2]+(upz*upy*qy-upx*qx)/upt;
+    }
+  p2[3]=p2[3]-qpar*upz-upt*qy;
+
+  p0[1]=-p2[1];
+  p0[2]=-p2[2];
+  p0[3]=-p2[3];
+  //
+  //    transform from cm back to the comoving frame
+  //
+  transback(vc,p2);
+  transback(vc,p0);
+
+  //************************************************************
+  //
+  //     calculate qt in the rest frame of medium
+  //
+  //  if(p0[4]>p2[4])
+  //	{
+  rotate(p4[1],p4[2],p4[3],p0,1);
+  qt=sqrt(pow(p0[1],2)+pow(p0[2],2));
+  rotate(p4[1],p4[2],p4[3],p0,-1);
+  //	}
+  //  else
+  //	{
+  //	  rotate(p4[1],p4[2],p4[3],p2,1);
+  //	  qt=sqrt(pow(p2[1],2)+pow(p2[2],2));
+  //	  rotate(p4[1],p4[2],p4[3],p2,-1);
+  //	}
+  //************************************************************	  
+	  
+	  
+	  
+  //
+  //    transform from comoving frame to the lab frame
+  //
+  transback(v0,p2);
+  transback(v0,p0);
+  transback(v0,p3);
+	  
+  //************************************************************
+  transback(v0,p4);
+  //************************************************************	  
+	  
+}
+
+void Matter::trans(double v[4],double p[4]){	
+  double vv=sqrt(v[1]*v[1]+v[2]*v[2]+v[3]*v[3]);	
+  double ga=1.0/sqrt(1.0-vv*vv);
+  double ppar=p[1]*v[1]+p[2]*v[2]+p[3]*v[3];
+  double gavv=(ppar*ga/(1.0+ga)-p[0])*ga;
+  p[0]=ga*(p[0]-ppar);
+  p[1]=p[1]+v[1]*gavv;
+  p[2]=p[2]+v[2]*gavv;
+  p[3]=p[3]+v[3]*gavv;
+}
+
+void Matter::transback(double v[4],double p[4]){
+  double vv=sqrt(v[1]*v[1]+v[2]*v[2]+v[3]*v[3]);
+  double ga=1.0/sqrt(1.0-vv*vv); 
+  double ppar=p[1]*v[1]+p[2]*v[2]+p[3]*v[3];
+  double gavv=(-ppar*ga/(1.0+ga)-p[0])*ga;
+  p[0]=ga*(p[0]+ppar);
+  p[1]=p[1]-v[1]*gavv;
+  p[2]=p[2]-v[2]*gavv;
+  p[3]=p[3]-v[3]*gavv;
+}
+
+void Matter::rotate(double px,double py,double pz,double pr[4],int icc){
+  //     input:  (px,py,pz), (wx,wy,wz), argument (i)
+  //     output: new (wx,wy,wz)
+  //     if i=1, turn (wx,wy,wz) in the direction (px,py,pz)=>(0,0,E)
+  //     if i=-1, turn (wx,wy,wz) in the direction (0,0,E)=>(px,py,pz)
+
+	   
+  double wx,wy,wz,E,pt,w,cosa,sina,cosb,sinb;
+  double wx1,wy1,wz1;	   	   
+
+  wx=pr[1];
+  wy=pr[2];
+  wz=pr[3];
+
+  E=sqrt(px*px+py*py+pz*pz);
+  pt=sqrt(px*px+py*py);
+
+  w=sqrt(wx*wx+wy*wy+wz*wz);
+
+  if(pt==0)
+    {
+      cosa=1;
+      sina=0;
+    } 
+  else
+    {
+      cosa=px/pt;
+      sina=py/pt;
+    }
+
+  cosb=pz/E;
+  sinb=pt/E;
+
+  if(icc==1)
+    { 
+      wx1=wx*cosb*cosa+wy*cosb*sina-wz*sinb;
+      wy1=-wx*sina+wy*cosa;
+      wz1=wx*sinb*cosa+wy*sinb*sina+wz*cosb;
+    }  
+
+  else
+    {
+      wx1=wx*cosa*cosb-wy*sina+wz*cosa*sinb;
+      wy1=wx*sina*cosb+wy*cosa+wz*sina*sinb;
+      wz1=-wx*sinb+wz*cosb;
+    }
+
+  wx=wx1;
+  wy=wy1;
+  wz=wz1;
+
+  pr[1]=wx;
+  pr[2]=wy;
+  pr[3]=wz;      
+
+  //  pr[0]=sqrt(pr[1]*pr[1]+pr[2]*pr[2]+pr[3]*pr[3]);
+
+}
+
+
+float Matter::ran0(long *idum)
+
+{
+  const int    IM1=2147483563;
+  const int    IM2=2147483399;
+  const double AM=(1.0/IM1);
+  const int    IMM1=(IM1-1);
+  const int    IA1=40014;
+  const int    IA2=40692;
+  const int    IQ1=53668;
+  const int    IQ2=52774;
+  const int    IR1=12211;
+  const int    IR2=3791;
+  const int    NTAB=32;
+  const int    NDIV=(1+IMM1/NTAB);
+  const double EPS=1.2e-7;
+  const double RNMX=(1.0-EPS);
+
+  int j;
+  long k;
+  static long idum2=123456789;
+  static long iy=0;
+  static long iv[NTAB];
+  float temp;
+
+  if (*idum <= 0) { 
+    if (-(*idum) < 1) *idum=1; 
+    else *idum = -(*idum);
+    for (j=NTAB+7;j>=0;j--) { 
+      k=(*idum)/IQ1;
+      *idum=IA1*(*idum-k*IQ1)-k*IR1;
+      if (*idum < 0) *idum += IM1;
+      if (j < NTAB) iv[j] = *idum;
+    }
+    iy=iv[0];
+  }
+  k=(*idum)/IQ1; 
+  *idum=IA1*(*idum-k*IQ1)-k*IR1; 
+  if (*idum < 0) *idum += IM1; 
+  k=idum2/IQ2;
+  idum2=IA2*(idum2-k*IQ2)-k*IR2; 
+  if (idum2 < 0) idum2 += IM2;
+  j=iy/NDIV; 
+  iy=iv[j]-idum2; 
+  iv[j] = *idum; 
+  if (iy < 1) iy += IMM1;
+  if ((temp=AM*iy) > RNMX) return RNMX; 
+  else return temp;
+}
+	
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+double Matter::solve_alphas(double var_qhat, double var_ener, double var_temp) {
+
+    double preFactor=42.0*Ca*zeta3/pi;
+    double solution=sqrt(var_qhat/preFactor/pow(var_temp,3)/log(5.7*max(var_ener,2.0*pi*var_temp)/24/pi/0.2/var_temp));
+    double fnc_value,fnc_derivative;
+    fnc_value=fnc0_alphas(solution,var_qhat,var_ener,var_temp);
+    fnc_derivative=fnc0_derivative_alphas(solution,var_qhat,var_ener,var_temp);
+
+    //cout << "initial guess: " << solution << "  " << fnc_value << endl;
+
+    while(fabs(fnc_value/var_qhat)>0.001) {
+    
+	solution=solution-fnc_value/fnc_derivative;
+        fnc_value=fnc0_alphas(solution,var_qhat,var_ener,var_temp);
+        fnc_derivative=fnc0_derivative_alphas(solution,var_qhat,var_ener,var_temp);
+
+        //cout << "loop: " << solution << "  " << fnc_value << endl;
+    }
+
+    return(solution);
+    
+}
+
+double Matter::fnc0_alphas(double var_alphas, double var_qhat, double var_ener, double var_temp) {
+   
+    double preFactor=42.0*Ca*zeta3/pi;
+    return(preFactor*var_alphas*var_alphas*pow(var_temp,3)*log(5.7*max(var_ener,2.0*pi*var_temp)/24/pi/var_alphas/var_temp)-var_qhat);
+
+}
+
+double Matter::fnc0_derivative_alphas(double var_alphas, double var_qhat, double var_ener, double var_temp) {
+   
+    double preFactor=42.0*Ca*zeta3/pi;
+    return(preFactor*pow(var_temp,3)*(2.0*var_alphas*log(5.7*max(var_ener,2.0*pi*var_temp)/24/pi/var_alphas/var_temp)-var_alphas));
+
+}
