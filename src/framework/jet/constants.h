@@ -31,6 +31,8 @@ static double Lambda_QCD = 0.2;
 static double fmToGeVinv = 5.0;
 /// < should be 1/0.197, but 5 helps in debugging. 
 
+static double zeta3 = 1.20206;
+
 static double mu = 0.722;
 
 /* When the code becomes really accurate, a more accurate value for this can be used  */
