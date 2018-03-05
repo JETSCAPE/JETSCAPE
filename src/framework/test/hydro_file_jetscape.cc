@@ -247,8 +247,8 @@ void HydroFile::get_hydro_info(
             1./sqrt(1. - temp_fluid_cell_ptr->vx*temp_fluid_cell_ptr->vx
                        - temp_fluid_cell_ptr->vy*temp_fluid_cell_ptr->vy));
         double u0 = u0_perp*cosh(eta_local);
-        temp_fluid_cell_ptr->vx = vx*u0_perp/u0;
-        temp_fluid_cell_ptr->vy = vy*u0_perp/u0;
+        temp_fluid_cell_ptr->vx *= u0_perp/u0;
+        temp_fluid_cell_ptr->vy *= u0_perp/u0;
         temp_fluid_cell_ptr->vz = z/(t + 1e-15);
 #endif
     } else if (hydro_type_ == 2 || hydro_type_ == 3 || hydro_type_ == 4) {
