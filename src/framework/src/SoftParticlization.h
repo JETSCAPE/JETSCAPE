@@ -14,13 +14,13 @@
 #include "JetClass.hpp"
 #include "tinyxml2.h"
 #include "JetScapeXML.h"
+#include "JetScapeWriter.h"
 
 namespace Jetscape {
 
 
 class SoftParticlization: public JetScapeModuleBase {
  private:
-
 
  public:
     SoftParticlization();
@@ -29,9 +29,10 @@ class SoftParticlization: public JetScapeModuleBase {
     virtual void Init();
     virtual void Exec();
     virtual void Clear();
+    
+    std::vector<std::vector<shared_ptr<Hadron>>> Hadron_list_;
 
     tinyxml2::XMLElement *xml_;
-    std::vector< std::vector<Hadron>* >* Hadron_list_;
 };
 
 } // end namespace Jetscape
