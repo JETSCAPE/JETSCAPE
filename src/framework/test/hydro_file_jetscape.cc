@@ -232,6 +232,7 @@ void HydroFile::get_hydro_info(
     fluidCell *temp_fluid_cell_ptr = new fluidCell;
     if (hydro_type_ == 1) {  // for OSU 2+1d hydro
         double tau_local = sqrt(t*t - z*z);
+        double eta_local = 0.5*log((t + z)/(t - z + 1e-15));
         if (std::isnan(tau_local)) {  // check
             WARN << "[Error]: HydroFile::get_hydro_info(): "
                  << "tau is nan!";
@@ -241,6 +242,14 @@ void HydroFile::get_hydro_info(
 #ifdef USE_HDF5
         hydroinfo_h5_ptr->getHydroinfo(tau_local, x_local, y_local,
                                        temp_fluid_cell_ptr);
+        // compute the flow velocity in the lab frame
+        double u0_perp = (
+            1./sqrt(1. - temp_fluid_cell_ptr->vx*temp_fluid_cell_ptr->vx
+                       - temp_fluid_cell_ptr->vy*temp_fluid_cell_ptr->vy));
+        double u0 = u0_perp*cosh(eta_local);
+        temp_fluid_cell_ptr->vx *= u0_perp/u0;
+        temp_fluid_cell_ptr->vy *= u0_perp/u0;
+        temp_fluid_cell_ptr->vz = z/(t + 1e-15);
 #endif
     } else if (hydro_type_ == 2 || hydro_type_ == 3 || hydro_type_ == 4) {
         hydroinfo_MUSIC_ptr->getHydroValues(x_local, y_local, z_local, t_local,
