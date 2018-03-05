@@ -1877,7 +1877,7 @@ double Matter::fncQhat(double zeta) {
 
     double tStep = 0.1;
     //int indexZeta = (int)(zeta/sqrt(2.0)/5.0/tStep+0.5); // zeta was in 1/GeV and light cone coordinate
-    int indexZeta = (int)((sqrt(2.0)*zeta-initRdotV)/5.0/tStep+0.5); // zeta was in 1/GeV and light cone coordinate
+    int indexZeta = (int)((sqrt(2.0)*zeta/5.0-initRdotV)/tStep+0.5); // zeta was in 1/GeV and light cone coordinate
 
     if(indexZeta >= dimQhatTab) indexZeta = dimQhatTab-1;      
     
@@ -1895,7 +1895,7 @@ double Matter::fncAvrQhat(double zeta, double tau) {
 
     double tStep = 0.1;
     //int indexZeta = (int)(zeta/sqrt(2.0)/5.0/tStep+0.5); // zeta was in 1/GeV and light cone coordinate
-    int indexZeta = (int)((sqrt(2.0)*zeta-initRdotV)/5.0/tStep+0.5); // zeta was in 1/GeV and light cone coordinate
+    int indexZeta = (int)((sqrt(2.0)*zeta/5.0-initRdotV)/tStep+0.5); // zeta was in 1/GeV and light cone coordinate
     int indexTau = (int)(tau/sqrt(2.0)/5.0/tStep+0.5); // tau was in 1/GeV and light cone coordinate
 
     if(indexZeta >= dimQhatTab) indexZeta = dimQhatTab-1;      
