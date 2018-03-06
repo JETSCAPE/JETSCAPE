@@ -28,6 +28,7 @@
 // to be used to run Jetscape ...
 #include "AdSCFT.h"
 #include "ElossModulesTestMatter.h"
+#include "ElossModuleLBT.h"
 #include "ElossModulesTestMartini.h"
 #include "brick_jetscape.h"
 #include "Gubser_hydro_jetscape.h"
@@ -75,7 +76,7 @@ int main(int argc, char** argv)
   Show();
 
   //auto jetscape = make_shared<JetScape>("./jetscape_init.xml", 1);
-  auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",1);
+  auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",5);
   jetscape->SetId("primary");
   jetscape->set_reuse_hydro (true);
   jetscape->set_n_reuse_hydro (5);
@@ -86,6 +87,7 @@ int main(int argc, char** argv)
   //auto hydro = make_shared<GubserHydro> ();
   
   auto matter = make_shared<Matter> ();
+  auto lbt = make_shared<LBT> ();
   auto martini = make_shared<Martini> ();
   auto adscft = make_shared<AdSCFT> ();
   //DBEUG: Remark:
