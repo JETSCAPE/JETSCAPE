@@ -141,8 +141,8 @@ int main(int argc, char** argv)
 
   jetscape->Add(printer);
 
-  hadro->Add(hadroModule);
-  //hadro->Add(colorless);
+  //hadro->Add(hadroModule);
+  hadro->Add(colorless);
   hadroMgr->Add(hadro);
   jetscape->Add(hadroMgr);
 
