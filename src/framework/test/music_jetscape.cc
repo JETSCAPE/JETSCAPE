@@ -1,14 +1,15 @@
 // Copyright @ Bjoern Schenke, Sangyong Jeon, Charles Gale, and Chun Shen
 #include <stdio.h>
 #include <sys/stat.h>
-
-#include <cstring>
 #include <helper.h>
+
+#include <string>
+#include <vector>
 
 #include "JetScapeLogger.h"
 #include "music_jetscape.h"
 
-using namespace std;
+using namespace Jetscape;
 
 MPI_MUSIC::MPI_MUSIC() {
     hydro_status = NOT_START;
@@ -42,11 +43,11 @@ void MPI_MUSIC::initialize_hydro(Parameter parameter_list) {
     strcpy(argv[0], "mpihydro");
     argv[1] = new char[input_file.length() + 1];
     strcpy(argv[1], input_file.c_str());
-    cout << "check input for MUSIC: " << endl;
+    std::cout << "check input for MUSIC: " << std::endl;
     for (int i = 0; i < argc; i++) {
-        cout << argv[i] << "  ";
+        std::cout << argv[i] << "  ";
     }
-    cout << endl;
+    std::cout << endl;
     music_hydro_ptr = new MUSIC(argc, argv);
 
     for (int i = 0; i < argc; i++) {
@@ -75,34 +76,31 @@ void MPI_MUSIC::evolve_hydro() {
 }
 
 
-void MPI_MUSIC::get_hydro_info(real t, real x, real y, real z,
-			   std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr){
-  
-  fluidCell *fluidCell_ptr = new fluidCell;
-  
-  // create the unique FluidCellInfo here
-  fluid_cell_info_ptr=std::make_unique<FluidCellInfo>();
-  
-  music_hydro_ptr->get_hydro_info(x, y, z, t, fluidCell_ptr);
-  fluid_cell_info_ptr->energy_density = fluidCell_ptr->ed;
-  fluid_cell_info_ptr->entropy_density = fluidCell_ptr->sd;
-  fluid_cell_info_ptr->temperature = fluidCell_ptr->temperature;
-  fluid_cell_info_ptr->pressure = fluidCell_ptr->pressure;
-  fluid_cell_info_ptr->vx = fluidCell_ptr->vx;
-  fluid_cell_info_ptr->vy = fluidCell_ptr->vy;
-  fluid_cell_info_ptr->vz = fluidCell_ptr->vz;
-  fluid_cell_info_ptr->mu_B = 0.0;
-  fluid_cell_info_ptr->mu_C = 0.0;
-  fluid_cell_info_ptr->mu_S = 0.0;
-  fluid_cell_info_ptr->qgp_fraction = 0.0;
-  
-  for (int i = 0; i < 4; i++) {
-    for (int j = 0; j < 4; j++) {
-      fluid_cell_info_ptr->pi[i][j] = fluidCell_ptr->pi[i][j];
+void MPI_MUSIC::get_hydro_info(
+        Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
+        std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr) {
+    fluid_cell_info_ptr = std::make_unique<FluidCellInfo>();
+    fluidCell *fluidCell_ptr = new fluidCell;
+    music_hydro_ptr->get_hydro_info(x, y, z, t, fluidCell_ptr);
+    fluid_cell_info_ptr->energy_density = fluidCell_ptr->ed;
+    fluid_cell_info_ptr->entropy_density = fluidCell_ptr->sd;
+    fluid_cell_info_ptr->temperature = fluidCell_ptr->temperature;
+    fluid_cell_info_ptr->pressure = fluidCell_ptr->pressure;
+    fluid_cell_info_ptr->vx = fluidCell_ptr->vx;
+    fluid_cell_info_ptr->vy = fluidCell_ptr->vy;
+    fluid_cell_info_ptr->vz = fluidCell_ptr->vz;
+    fluid_cell_info_ptr->mu_B = 0.0;
+    fluid_cell_info_ptr->mu_C = 0.0;
+    fluid_cell_info_ptr->mu_S = 0.0;
+    fluid_cell_info_ptr->qgp_fraction = 0.0;
+
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            fluid_cell_info_ptr->pi[i][j] = fluidCell_ptr->pi[i][j];
+        }
     }
-  }
-  fluid_cell_info_ptr->bulk_Pi = fluidCell_ptr->bulkPi;
+    fluid_cell_info_ptr->bulk_Pi = fluidCell_ptr->bulkPi;
   
-  delete fluidCell_ptr;
+    delete fluidCell_ptr;
 }
 

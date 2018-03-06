@@ -22,29 +22,29 @@ class JetSource {
     public:
         JetSource():j0(0.), j1(0.), j2(0.), j3(0.) {}
     private:
-        real j0, j1, j2, j3;
+        Jetscape::real j0, j1, j2, j3;
 };
 
 //overload +-*/ for easier linear interpolation
 class FluidCellInfo {
  public:
     // data structure for outputing fluid cell information
-    real energy_density;    //!< Local energy density [GeV/fm^3].
-    real entropy_density;   //!< Local entropy density [1/fm^3].
-    real temperature;       //!< Local temperature [GeV].
-    real pressure;          //!< Thermal pressure [GeV/fm^3].
-    real qgp_fraction;      //!< Fraction of quark gluon plasma assuming medium is in QGP+HRG phase.
-    real mu_B;              //!< Net baryon chemical potential [GeV].
-    real mu_C;              //!< Net charge chemical potential [GeV]
-    real mu_S;              //!< Net strangeness chemical potential [GeV].
-    real vx, vy, vz;        //!< Flow velocity.
-    real pi[4][4];          //!< Shear stress tensor [GeV/fm^3].
-    real bulk_Pi;           //!< Bulk viscous pressure [GeV/fm^3].
+    Jetscape::real energy_density;    //!< Local energy density [GeV/fm^3].
+    Jetscape::real entropy_density;   //!< Local entropy density [1/fm^3].
+    Jetscape::real temperature;       //!< Local temperature [GeV].
+    Jetscape::real pressure;          //!< Thermal pressure [GeV/fm^3].
+    Jetscape::real qgp_fraction;      //!< Fraction of quark gluon plasma assuming medium is in QGP+HRG phase.
+    Jetscape::real mu_B;              //!< Net baryon chemical potential [GeV].
+    Jetscape::real mu_C;              //!< Net charge chemical potential [GeV]
+    Jetscape::real mu_S;              //!< Net strangeness chemical potential [GeV].
+    Jetscape::real vx, vy, vz;        //!< Flow velocity.
+    Jetscape::real pi[4][4];          //!< Shear stress tensor [GeV/fm^3].
+    Jetscape::real bulk_Pi;           //!< Bulk viscous pressure [GeV/fm^3].
     /** Default constructor.*/
     FluidCellInfo() = default;    
 
     /** @param b Multiply the fluid cell by scalar factor b. */ 
-    FluidCellInfo inline operator*=(real b);
+    FluidCellInfo inline operator*=(Jetscape::real b);
 
     /** Prints fluid cell properties to the screen. */
     void Print();
@@ -73,7 +73,7 @@ inline FluidCellInfo operator+(FluidCellInfo a, const FluidCellInfo & b) {
 }
 
 // Multiply the fluid cell with a scalar factor
-FluidCellInfo inline FluidCellInfo::operator*=(real b){
+FluidCellInfo inline FluidCellInfo::operator*=(Jetscape::real b){
     this->energy_density *= b;
     this->entropy_density *= b;
     this->temperature *= b;
@@ -95,19 +95,19 @@ FluidCellInfo inline FluidCellInfo::operator*=(real b){
 }
 
 /// multiply \f$ c = a * b \f$
-inline FluidCellInfo operator*(real a, FluidCellInfo b){
+inline FluidCellInfo operator*(Jetscape::real a, FluidCellInfo b){
     b *= a;
     return b;
 }
 
 /// multiply \f$ c = a * b \f$
-inline FluidCellInfo operator*(FluidCellInfo a, real b){
+inline FluidCellInfo operator*(FluidCellInfo a, Jetscape::real b){
     a *= b;
     return a;
 }
 
 /// division \f$ c = a / b \f$
-inline FluidCellInfo operator/(FluidCellInfo a, real b){
+inline FluidCellInfo operator/(FluidCellInfo a, Jetscape::real b){
     a *= 1.0/b;
     return a;
 }
@@ -140,18 +140,18 @@ inline FluidCellInfo operator/(FluidCellInfo a, real b){
 class SurfaceCellInfo {
  public:
     // data structure for outputing hyper-surface information
-    real d3sigma_mu[4];     //!< Surface vector.
-    real energy_density;    //!< Local energy density [GeV/fm^3].
-    real entropy_density;   //!< Local entropy density [1/fm^3].
-    real temperature;       //!< Local temperature [GeV].
-    real pressure;          //!< Thermal pressure [GeV/fm^3].
-    real qgp_fraction;      //!< Fraction of quark gluon plasma assuming medium is in QGP+HRG phase.
-    real mu_B;              //!< Net baryon chemical potential [GeV].
-    real mu_C;              //!< Net charge chemical potential [GeV].
-    real mu_S;              //!< Net strangeness chemical potential [GeV].
-    real vx, vy, vz;        //!< Flow velocity.
-    real pi[4][4];          //!< Shear stress tensor [GeV/fm^3].
-    real bulk_Pi;           //!< Bulk viscous pressure [GeV/fm^3].
+    Jetscape::real d3sigma_mu[4];     //!< Surface vector.
+    Jetscape::real energy_density;    //!< Local energy density [GeV/fm^3].
+    Jetscape::real entropy_density;   //!< Local entropy density [1/fm^3].
+    Jetscape::real temperature;       //!< Local temperature [GeV].
+    Jetscape::real pressure;          //!< Thermal pressure [GeV/fm^3].
+    Jetscape::real qgp_fraction;      //!< Fraction of quark gluon plasma assuming medium is in QGP+HRG phase.
+    Jetscape::real mu_B;              //!< Net baryon chemical potential [GeV].
+    Jetscape::real mu_C;              //!< Net charge chemical potential [GeV].
+    Jetscape::real mu_S;              //!< Net strangeness chemical potential [GeV].
+    Jetscape::real vx, vy, vz;        //!< Flow velocity.
+    Jetscape::real pi[4][4];          //!< Shear stress tensor [GeV/fm^3].
+    Jetscape::real bulk_Pi;           //!< Bulk viscous pressure [GeV/fm^3].
 
     /** Default constructor. */
     SurfaceCellInfo() {};
@@ -174,13 +174,13 @@ class InvalidSpaceTimeRange : public std::invalid_argument {
 class EvolutionHistory{
  public:
     /** @param tau_min Minimum value of tau.*/
-    real tau_min, dtau; //!< @param dtau Step-size for tau.
+    Jetscape::real tau_min, dtau; //!< @param dtau Step-size for tau.
     /** @param x_min Minimum value of x. */
-    real x_min, dx;     //!< @param dx Step-size for x. 
+    Jetscape::real x_min, dx;     //!< @param dx Step-size for x. 
     /** @param y_min Minimum value of y. */
-    real y_min, dy;     //!< @param dy Step-size for y.
+    Jetscape::real y_min, dy;     //!< @param dy Step-size for y.
     /** @param eta_min Minimum value of eta. */
-    real eta_min, deta; //!< @param deta Step-size for eta. 
+    Jetscape::real eta_min, deta; //!< @param deta Step-size for eta. 
     int ntau;   //!< @param ntau Number of grid points in tau-axis.
     int nx;    //!< @param nx Number of grid points in x-axis. 
     int ny;   //!< @param ny Number of grid points in y-axis.
@@ -199,16 +199,16 @@ class EvolutionHistory{
     ~EvolutionHistory() {data.clear();}
 
     /** Maximum value of tau. */
-    inline real tau_max() {return tau_min + (ntau - 1) * dtau;}
+    inline Jetscape::real tau_max() {return tau_min + (ntau - 1) * dtau;}
 
     /** Maximum value of x. */
-    inline real x_max() {return x_min + (nx - 1) * dx;}
+    inline Jetscape::real x_max() {return x_min + (nx - 1) * dx;}
 
     /** Maximum value of y. */
-    inline real y_max() {return y_min + (ny - 1) * dy;}
+    inline Jetscape::real y_max() {return y_min + (ny - 1) * dy;}
 
     /** Maximum value of eta. */
-    inline real eta_max() {return eta_min + (neta - 1) * deta;}
+    inline Jetscape::real eta_max() {return eta_min + (neta - 1) * deta;}
 
     /** It checks whether a space-time point (tau, x, y, eta) is inside evolution history or outside.
 	@param tau Light-cone coordinate.
@@ -216,7 +216,7 @@ class EvolutionHistory{
 	@param y  Space coordinate.
 	@param eta Light-cone coordinate.
      */
-    void check_in_range(real tau, real x, real y, real eta) {
+    void check_in_range(Jetscape::real tau, Jetscape::real x, Jetscape::real y, Jetscape::real eta) {
         if (tau < tau_min || tau > tau_max()) {
             throw InvalidSpaceTimeRange("tau=" + std::to_string(tau)
                     + " is not in range [" + std::to_string(tau_min) + "," 
@@ -243,7 +243,7 @@ class EvolutionHistory{
     /** @return Fluid cell number along the tau-grid.
 	@param tau Light-cone coordinate.
      */
-    inline int get_id_tau(real tau){
+    inline int get_id_tau(Jetscape::real tau){
         return(static_cast<int>((tau - tau_min)/dtau));
     }
 
@@ -251,7 +251,7 @@ class EvolutionHistory{
     /** @return Fluid cell number along the x-grid.           
         @param x Space coordinate.                          
     */
-    inline int get_id_x(real x) { 
+    inline int get_id_x(Jetscape::real x) { 
         return(static_cast<int>((x - x_min)/dx));
     }
 
@@ -259,7 +259,7 @@ class EvolutionHistory{
     /** @return Fluid cell number along the y-grid.                
         @param y Space coordinate. 
     */
-    inline int get_id_y(real y) {
+    inline int get_id_y(Jetscape::real y) {
         return(static_cast<int>((y - y_min)/dy));
     }
 
@@ -267,7 +267,7 @@ class EvolutionHistory{
     /** @return Fluid cell number along the eta-grid.
         @param eta Light-cone coordinate.
     */
-    inline int get_id_eta(real eta) {
+    inline int get_id_eta(Jetscape::real eta) {
         return(static_cast<int>((eta - eta_min)/deta));
     }
 
@@ -275,22 +275,22 @@ class EvolutionHistory{
     /** @param id_tau Fluid cell number along tau-grid.
 	@return The tau coordinate for fluid cell number.
      */
-    inline real tau_coord(int id_tau) { return tau_min + id_tau * dtau; }
+    inline Jetscape::real tau_coord(int id_tau) { return tau_min + id_tau * dtau; }
 
     /** @param id_x Fluid cell number along x-grid.
         @return The x coordinate for fluid cell number.
     */
-    inline real x_coord(int id_x) { return x_min + id_x * dx; }
+    inline Jetscape::real x_coord(int id_x) { return x_min + id_x * dx; }
 
     /** @param id_y Fluid cell number along y-grid.
         @return The y coordinate for fluid cell number.
     */
-    inline real y_coord(int id_y) { return y_min + id_y * dy; }
+    inline Jetscape::real y_coord(int id_y) { return y_min + id_y * dy; }
 
     /** @param id_eta Fluid cell number along eta-grid.
         @return The eta coordinate for fluid cell number.
     */
-    inline real eta_coord(int id_eta) { return eta_min + id_eta * deta; }
+    inline Jetscape::real eta_coord(int id_eta) { return eta_min + id_eta * deta; }
 
     // get the FluidCellInfo index in data
     /** @return FluidCellInfo index in the data.
@@ -311,7 +311,7 @@ class EvolutionHistory{
 	@param y Space coordinate.
 	@param eta Light-cone coordinate.
      */
-    FluidCellInfo get_at_time_step(int id_tau, real x, real y, real etas);
+    FluidCellInfo get_at_time_step(int id_tau, Jetscape::real x, Jetscape::real y, Jetscape::real etas);
 
     // get the FluidCellInfo at given space time point
     /** @return FluidCellInfo at a point (tau, x, y, eta).
@@ -320,16 +320,16 @@ class EvolutionHistory{
         @param y Space coordinate.
         @param eta Light-cone coordinate. 
     */
-    FluidCellInfo get(real tau, real x, real y, real etas);
+    FluidCellInfo get(Jetscape::real tau, Jetscape::real x, Jetscape::real y, Jetscape::real etas);
 };
 
 
 class FluidDynamicsBase{
  protected:
     // record hydro start and end proper time [fm/c]
-    real hydro_tau_0, hydro_tau_max;
+    Jetscape::real hydro_tau_0, hydro_tau_max;
     // record hydro freeze out temperature [GeV]
-    real hydro_freeze_out_temperature;
+    Jetscape::real hydro_freeze_out_temperature;
     // record hydro running status
     HydroStatus hydro_status;
 
@@ -370,14 +370,14 @@ class FluidDynamicsBase{
 
     /** @return Start time (or tau) for hydrodynamic evolution.
      */
-    real get_hydro_start_time() {return(hydro_tau_0);}
+    Jetscape::real get_hydro_start_time() {return(hydro_tau_0);}
 
     /** @return End time (or tau) for hydrodynamic evolution.
      */
-    real get_hydro_end_time() {return(hydro_tau_max);}
+    Jetscape::real get_hydro_end_time() {return(hydro_tau_max);}
     /** @return Freeze-out temperature.
      */
-    real get_hydro_freeze_out_temperature() {
+    Jetscape::real get_hydro_freeze_out_temperature() {
         return(hydro_freeze_out_temperature);
     }
 
@@ -390,7 +390,7 @@ class FluidDynamicsBase{
      @param z Space or eta coordinate.
      @param fluid_cell_info_ptr A pointer to the FluidCellInfo class.
      */
-    /* virtual void get_hydro_info(real t, real x, real y, real z, */
+    /* virtual void get_hydro_info(Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z, */
     /*                             FluidCellInfo* fluid_cell_info_ptr){ */
     /*     if (hydro_status != FINISHED || bulk_info.data.size() == 0) { */
     /*         throw std::runtime_error("Hydro evolution is not finished " */
@@ -398,8 +398,8 @@ class FluidDynamicsBase{
     /*     } */
     /*     // judge whether to use 2D interpolation or 3D interpolation */
     /*     if (!bulk_info.tau_eta_is_tz) { */
-    /*         real tau = std::sqrt(t * t - z * z); */
-    /*         real eta = 0.5 * (std::log(t + z) - std::log(t - z)); */
+    /*         Jetscape::real tau = std::sqrt(t * t - z * z); */
+    /*         Jetscape::real eta = 0.5 * (std::log(t + z) - std::log(t - z)); */
     /*         bulk_info.check_in_range(tau, x, y, eta); */
     /*         //return bulk_info.get(tau, x, y, eta); */
     /*     } else { */
@@ -408,7 +408,7 @@ class FluidDynamicsBase{
     /*     } */
     /* } */
 
-    virtual void get_hydro_info(real t, real x, real y, real z,
+    virtual void get_hydro_info(Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
                                 std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr){
         if (hydro_status != FINISHED || bulk_info.data.size() == 0) {
             throw std::runtime_error("Hydro evolution is not finished "
@@ -416,8 +416,8 @@ class FluidDynamicsBase{
         }
         // judge whether to use 2D interpolation or 3D interpolation
         if (!bulk_info.tau_eta_is_tz) {
-            real tau = std::sqrt(t * t - z * z);
-            real eta = 0.5 * (std::log(t + z) - std::log(t - z));
+            Jetscape::real tau = std::sqrt(t * t - z * z);
+            Jetscape::real eta = 0.5 * (std::log(t + z) - std::log(t - z));
             bulk_info.check_in_range(tau, x, y, eta);
             //return bulk_info.get(tau, x, y, eta);
         } else {
@@ -436,7 +436,7 @@ class FluidDynamicsBase{
     // the detailed implementation is left to the hydro developper
     /** @return Default function to get the hypersurface for Cooper-Frye or recombination model. It can overridden by different modules.
      */
-    virtual void get_hypersurface(real T_cut,
+    virtual void get_hypersurface(Jetscape::real T_cut,
                                   SurfaceCellInfo* surface_list_ptr) {};
 
     // all the following functions will call function get_hydro_info()
@@ -448,7 +448,7 @@ class FluidDynamicsBase{
         @param y Space coordinate. 
         @param z Space or eta coordinate.
     */
-    real get_energy_density(real time, real x, real y, real z);
+    Jetscape::real get_energy_density(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
 
     /** @return Entropy density at point (t or tau, x, y, z or eta)
         @param time Time or tau coordinate.
@@ -456,7 +456,7 @@ class FluidDynamicsBase{
         @param y Space coordinate. 
         @param z Space or eta coordinate.
     */
-    real get_entropy_density(real time, real x, real y, real z);
+    Jetscape::real get_entropy_density(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
 
     /** @return Temperature at point (t or tau, x, y, z or eta)
 	@param time Time or tau coordinate.
@@ -464,7 +464,7 @@ class FluidDynamicsBase{
         @param y Space coordinate.
         @param z Space or eta coordinate.
       */
-    real get_temperature(real time, real x, real y, real z);
+    Jetscape::real get_temperature(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
 
     /** @return Fraction of quark gluon plasma assuming medium is in QGP+HRG phase at point (t or tau, x, y, z or eta).
 	@param time Time or tau coordinate.
@@ -472,7 +472,7 @@ class FluidDynamicsBase{
         @param y Space coordinate.
         @param z Space or eta coordinate.
      */
-    real get_qgp_fraction(real time, real x, real y, real z);
+    Jetscape::real get_qgp_fraction(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
 
     // real3 return std::make_tuple(vx, vy, vz)
     /** @return 3-component (vx,vy,vz) fluid velocity at point (t or tau, x, y, z or eta).
@@ -481,7 +481,7 @@ class FluidDynamicsBase{
         @param y Space coordinate.
         @param z Space or eta coordinate.
     */
-    real3 get_3fluid_velocity(real time, real x, real y, real z);
+    real3 get_3fluid_velocity(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
 
     // real4 return std::make_tuple(ut, ux, uy, uz)
     /** @return 4-component fluid velocity at point (t or tau, x, y, zor eta).
@@ -490,7 +490,7 @@ class FluidDynamicsBase{
         @param y Space coordinate.
         @param z Space or eta coordinate. 
     */
-    real4 get_4fluid_velocity(real time, real x, real y, real z);
+    real4 get_4fluid_velocity(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
 
     /** @return Net baryon density at point (t or tau, x, y, z or eta).
         @param time Time or tau coordinate.
@@ -498,7 +498,7 @@ class FluidDynamicsBase{
         @param y Space coordinate.
         @param z Space or eta coordinate. 
     */
-    real get_net_baryon_density(real time, real x, real y, real z);
+    Jetscape::real get_net_baryon_density(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
 
     /** @return Net charge density at point (t or tau, x, y, z or eta).
 	@param time Time or tau coordinate.
@@ -506,7 +506,7 @@ class FluidDynamicsBase{
 	@param y Space coordinate.
 	@param z Space or eta coordinate.
      */
-    real get_net_charge_density(real time, real x, real y, real z);
+    Jetscape::real get_net_charge_density(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
 }; // end class FluidDynamicsBase
 
 } // end namespace Jetscape

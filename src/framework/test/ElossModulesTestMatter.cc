@@ -46,7 +46,7 @@ Matter::~Matter()
 
 void Matter::Init()
 {
-  INFO<<"Intialize Matter ...";
+  //INFO<<"Intialize Matter ...";
 
   // Redundant (get this from Base) quick fix here for now
   tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );

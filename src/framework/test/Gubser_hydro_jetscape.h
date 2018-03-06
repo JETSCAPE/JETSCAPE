@@ -23,11 +23,11 @@ class GubserHydro: public FluidDynamics {
 
      void evolve_hydro();
      double get_temperature(double e_local);
-     /* void get_hydro_info(real t, real x, real y, real z, */
-     /* 			 FluidCellInfo* fluid_cell_info_ptr); */
-     void get_hydro_info(real t, real x, real y, real z,
+
+     void get_hydro_info(Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
 			 std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr);
-     void get_hypersurface(real T_cut, SurfaceCellInfo* surface_list_ptr) {};
+
+     void get_hypersurface(Jetscape::real T_cut, SurfaceCellInfo* surface_list_ptr) {};
 
 };
 
