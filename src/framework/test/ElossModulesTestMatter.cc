@@ -46,7 +46,7 @@ Matter::~Matter()
 
 void Matter::Init()
 {
-  //INFO<<"Intialize Matter ...";
+  INFO<<"Intialize Matter ...";
 
   // Redundant (get this from Base) quick fix here for now
   tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );
@@ -259,7 +259,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       }
 
       int pid = pIn[i].pid();
-          
+
       if (pIn[i].form_time()<0.0) /// A parton without a virtuality or formation time, must set...
       {
           iSplit = 0;
@@ -286,6 +286,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           } else {
     	      tQ2 = generate_vac_t(pIn[i].pid(), pIn[i].nu(), QS/2.0, max_vir, zeta, iSplit);
     	  }
+
 
           // KK:
           //pIn[i].set_jet_v(velocity); // SC: take out to the front
@@ -364,6 +365,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       if(Q0<1.0) Q0=1.0;
 
       //if (pIn[i].t() > QS + rounding_error)
+
       if (pIn[i].t() > Q0*Q0 + rounding_error || ((!in_vac) && now_temp<=T0 && pIn[i].t() > QS*QS + rounding_error))
       { //
           double decayTime = pIn[i].mean_form_time()  ;
@@ -421,7 +423,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   recordE0=pc0[0];
 
 		  
+
 	  	  GetHydroCellSignal(el_time, el_rx, el_ry, el_rz, check_fluid_info_ptr);
+
                	  VERBOSE(8)<<MAGENTA<<"Temperature from medium = "<<check_fluid_info_ptr->temperature;
                	 	
                	  tempLoc = check_fluid_info_ptr->temperature;
@@ -522,6 +526,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                  
                       int iout;
 		      double ft;
+
 
                       pOut.push_back(Parton(0,pid2,0,pc2,el_vertex)); // recoiled
                       iout = pOut.size()-1;
@@ -786,10 +791,11 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   //newx[j] = pIn[i].x_in().comp(j) + (time + deltaT - pIn[i].x_in().comp(0))*velocity[j]/velocityMod;
                   newx[j] = pIn[i].x_in().comp(j) + (time - pIn[i].x_in().comp(0))*velocity[j]/velocityMod;
               }
-                  
+
+              cout << "check daugther 1: " << newp[0] << endl;
+
               pOut.push_back(Parton(0,pid_a,0,newp,newx));
               int iout = pOut.size()-1;
-                  
               pOut[iout].set_jet_v(velocity_jet); // use initial jet velocity
               pOut[iout].set_mean_form_time();
               double ft = generate_L (pOut[iout].mean_form_time());
@@ -1826,6 +1832,13 @@ double Matter::fillQhatTab() {
 //            tempLoc = T;
 //        }
 
+	
+        if(tLoc*tLoc<zLoc*zLoc) {
+	    cout << "Warning 3: " << tLoc << "  " << zLoc << endl;
+            cout << "initial: " << initR0 << "  " << initRx << "  " << initRy << "  " << initRz << endl;
+            cout << "velocity: " << initVx << "  " << initVy << "  " << initVz << endl;
+	}
+
 	GetHydroCellSignal(tLoc, xLoc, yLoc, zLoc, check_fluid_info_ptr);
 	VERBOSE(8)<< MAGENTA<<"Temperature from medium = "<<check_fluid_info_ptr->temperature;
 	
@@ -1834,6 +1847,7 @@ double Matter::fillQhatTab() {
 	vxLoc = check_fluid_info_ptr->vx;
 	vyLoc = check_fluid_info_ptr->vy;
 	vzLoc = check_fluid_info_ptr->vz;
+        if(vxLoc*vxLoc+vyLoc*vyLoc+vzLoc*vzLoc>1.0) cout << "wrong flow: " << tLoc << "  " << xLoc << "  " << yLoc << "  " << zLoc << "  " << tempLoc << "  " << vxLoc << "  " << vyLoc << "  " << vzLoc << endl;
 
 	hydro_ctl=0;
 
@@ -1842,6 +1856,7 @@ double Matter::fillQhatTab() {
             betaLoc = sqrt(vxLoc*vxLoc+vyLoc*vyLoc+vzLoc*vzLoc);
             gammaLoc = 1.0/sqrt(1.0-betaLoc*betaLoc);
             flowFactor = gammaLoc*(1.0-(initVx*vxLoc+initVy*vyLoc+initVz*vzLoc));
+            cout << "check flow: " << flowFactor << endl;
 
             if(qhat0 < 0.0) { // calculate qhat with alphas
                 double muD2 = 6.0*pi*alphas*tempLoc*tempLoc;
@@ -1916,6 +1931,7 @@ double Matter::fncAvrQhat(double zeta, double tau) {
     if(indexTau >= dimQhatTab) indexTau = dimQhatTab-1;      
     
     double avrQhat = qhatTab2D[indexZeta][indexTau]; 
+    cout << "check qhat: " << indexZeta << "  " << indexTau << "  " << avrQhat << endl;
     return(avrQhat);
 
 }
