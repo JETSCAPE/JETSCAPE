@@ -73,7 +73,7 @@
        <T0> 0.16 </T0>
        <vir_factor> 1.0 </vir_factor>
        <in_vac> 0 </in_vac>
-       <brick_med> 1 </brick_med>
+       <brick_med> 0 </brick_med>
        <brick_length> 5.0 </brick_length>
        <hydro_Tc> 0.15 </hydro_Tc>
        <qhat0> 0.5 </qhat0>
