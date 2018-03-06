@@ -63,7 +63,7 @@ int main(int argc, char** argv)
    
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml", 1);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml", 5);
   jetscape->set_reuse_hydro (true);
   jetscape->set_n_reuse_hydro (5);
 

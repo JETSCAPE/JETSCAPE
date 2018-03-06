@@ -106,14 +106,11 @@ void iSS_CF::pass_hadron_list_to_JETSCAPE() {
     VERBOSE(2) << "Passing all sampled hadrons to the JETSCAPE framework";
     VERBOSE(4) << "number of events to pass : " << nev;
     for (unsigned int iev = 0; iev < nev; iev++) {
-        Hadron_list_->push_back(new std::vector<Hadron>);
-        unsigned int nparticles = (
-                        iSpectraSampler_ptr_->get_number_of_particles(iev));
-        VERBOSE(4) << "event " << iev << ": number of particles = "
-                   << nparticles;
+        std::vector<shared_ptr<Hadron>> hadrons;
+        unsigned int nparticles = (iSpectraSampler_ptr_->get_number_of_particles(iev));
+        VERBOSE(4) << "event " << iev << ": number of particles = "<< nparticles;
         for (unsigned int ipart = 0; ipart < nparticles; ipart++) {
-            iSS_Hadron current_hadron = (
-                            iSpectraSampler_ptr_->get_hadron(iev, ipart));
+            iSS_Hadron current_hadron = (iSpectraSampler_ptr_->get_hadron(iev, ipart));
             int hadron_label = 0;
             int hadron_status = -1;
             int hadron_id = current_hadron.pid;
@@ -125,15 +122,41 @@ void iSS_CF::pass_hadron_list_to_JETSCAPE() {
                                 current_hadron.z, current_hadron.t);
 
             // create a JETSCAPE Hadron
-            Hadron* jetscape_hadron = new Hadron(
-                hadron_label, hadron_id, hadron_status, hadron_p, hadron_x,
-                hadron_mass);
-            (*Hadron_list_)[iev]->push_back(*jetscape_hadron);
+            hadrons.push_back(make_shared<Hadron>(hadron_label,hadron_id,hadron_status,hadron_p,hadron_x, hadron_mass));
+            //Hadron* jetscape_hadron = new Hadron(hadron_label, hadron_id, hadron_status, hadron_p, hadron_x, hadron_mass);
+            //(*Hadron_list_)[iev]->push_back(*jetscape_hadron);
         }
+        Hadron_list_.push_back(hadrons);
     }
-    VERBOSE(4) << "JETSCAPE received " << Hadron_list_->size() << " events.";
-    for (unsigned int iev = 0; iev < Hadron_list_->size(); iev++) {
-        VERBOSE(4) << "In event " << iev << " JETSCAPE received "
-                   << (*Hadron_list_)[iev]->size() << " particles.";
+    VERBOSE(4) << "JETSCAPE received " << Hadron_list_.size() << " events.";
+    for (unsigned int iev = 0; iev < Hadron_list_.size(); iev++) {
+        VERBOSE(4) << "In event " << iev << " JETSCAPE received " << Hadron_list_.at(iev).size() << " particles.";
     }
+
 }
+
+void iSS_CF::WriteTask(weak_ptr<JetScapeWriter> w)
+{
+  VERBOSE(4)<<"In iSS_CF::WriteTask";
+  w.lock()->WriteComment("JetScape module: "+GetId());
+
+  if(Hadron_list_.size()>0)
+  {
+    w.lock()->WriteComment("Final State Bulk Hadrons");
+    for(unsigned int j=0; j<Hadron_list_.size(); j++)
+    {
+      vector<shared_ptr<Hadron>> hadVec = Hadron_list_.at(j);
+      for(unsigned int i=0; i<hadVec.size(); i++)
+      {
+        w.lock()->WriteWhiteSpace("["+to_string(i)+"] H");
+        w.lock()->Write(hadVec.at(i));
+      }
+    }
+  }
+  else
+  {
+    w.lock()->WriteComment("There is no bulk Hadrons");
+  }
+
+}
+

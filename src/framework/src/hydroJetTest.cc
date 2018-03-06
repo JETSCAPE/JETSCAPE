@@ -28,6 +28,7 @@
 // to be used to run Jetscape ...
 #include "AdSCFT.h"
 #include "ElossModulesTestMatter.h"
+#include "ElossModuleLBT.h"
 #include "ElossModulesTestMartini.h"
 #include "brick_jetscape.h"
 #include "Gubser_hydro_jetscape.h"
@@ -70,12 +71,12 @@ int main(int argc, char** argv)
   JetScapeLogger::Instance()->SetRemark(false);
   //SetVerboseLevel (9 a lot of additional debug output ...)
   //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevle(9) or 10
-  JetScapeLogger::Instance()->SetVerboseLevel(9);
+  JetScapeLogger::Instance()->SetVerboseLevel(8);
    
   Show();
 
   //auto jetscape = make_shared<JetScape>("./jetscape_init.xml", 1);
-  auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",1);
+  auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",5);
   jetscape->SetId("primary");
   jetscape->set_reuse_hydro (true);
   jetscape->set_n_reuse_hydro (5);
@@ -86,6 +87,7 @@ int main(int argc, char** argv)
   //auto hydro = make_shared<GubserHydro> ();
   
   auto matter = make_shared<Matter> ();
+  auto lbt = make_shared<LBT> ();
   auto martini = make_shared<Martini> ();
   auto adscft = make_shared<AdSCFT> ();
   //DBEUG: Remark:
@@ -129,6 +131,7 @@ int main(int argc, char** argv)
   // Switching Q2 (or whatever variable used
   // hardcoded at 5 to be changed to xml)
   jloss->Add(matter);
+  //jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
   //jloss->Add(martini);
   //jloss->Add(adscft);
   
@@ -138,8 +141,8 @@ int main(int argc, char** argv)
 
   jetscape->Add(printer);
 
-  hadro->Add(hadroModule);
-  //hadro->Add(colorless);
+  //hadro->Add(hadroModule);
+  hadro->Add(colorless);
   hadroMgr->Add(hadro);
   jetscape->Add(hadroMgr);
 

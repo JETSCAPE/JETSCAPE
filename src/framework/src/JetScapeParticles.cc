@@ -527,10 +527,13 @@ namespace Jetscape {
     if (status == 1) {
         set_restmass(mass);
     } else {
+	if  ( !InternalHelperPythia.particleData.isParticle(id) )
+        {
         WARN << "id = " << id << " is not recognized! "
              << "Add it as a new type of particle.";
         InternalHelperPythia.particleData.addParticle(
                                             id, " ", 0, 0, 0, mass, 0.1);
+        }
     }
   }
 

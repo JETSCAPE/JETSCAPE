@@ -202,7 +202,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   for (int i=0;i<pIn.size();i++)
   {
 
-      cout << "MATTER -- status: " << pIn[i].pstat() << "  energy: " << pIn[i].e() << "  r: " << pIn[i].x_in().comp(0) << "  "  << pIn[i].x_in().comp(1) << "  " << pIn[i].x_in().comp(2) << "  " << pIn[i].x_in().comp(3) << "  " << " color: " << pIn[i].color() << "  " << pIn[i].anti_color() << "  clock: " << time << endl;
+      //cout << "MATTER -- status: " << pIn[i].pstat() << "  energy: " << pIn[i].e() << " color: " << pIn[i].color() << "  " << pIn[i].anti_color() << "  clock: " << time << endl;
 
 
       velocity[0] = 1.0;
@@ -281,14 +281,13 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 	  if(vir_factor<0.0) max_vir = pIn[i].e()*pIn[i].e();
 	  else max_vir = pT2 * vir_factor;
 
-          cout << "check03   " << max_vir << "  " << QS << "  " << zeta << "  " << pIn[i].nu() << endl;
           if(max_vir<=QS) {
 	      tQ2 = 0.0;
           } else {
     	      tQ2 = generate_vac_t(pIn[i].pid(), pIn[i].nu(), QS/2.0, max_vir, zeta, iSplit);
     	  }
 
-          cout << "check01" << endl;
+
           // KK:
           //pIn[i].set_jet_v(velocity); // SC: take out to the front
           pIn[i].set_t(tQ2); // Also resets momentum!
@@ -366,7 +365,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       if(Q0<1.0) Q0=1.0;
 
       //if (pIn[i].t() > QS + rounding_error)
-      if (pIn[i].t() > Q0*Q0 + rounding_error || ((!in_vac) && now_temp<=T0 && pIn[i].t()>QS*QS))
+
+      if (pIn[i].t() > Q0*Q0 + rounding_error || ((!in_vac) && now_temp<=T0 && pIn[i].t() > QS*QS + rounding_error))
       { //
           double decayTime = pIn[i].mean_form_time()  ;
 	    
@@ -381,7 +381,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           if (splitTime<Time)
           {
 
-              cout << "SPLIT in MATTER" << endl;
+              //cout << "SPLIT in MATTER" << endl;
     
               // SC: add elastic scattering that generates recoiled and back-reaction partons
               double el_dt=0.1;
@@ -423,8 +423,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   recordE0=pc0[0];
 
 		  
-                  if(el_time*el_time<el_rz*el_rz) cout << "Warning 2: " << el_time << "  " << el_rz << endl;
-	  	  //GetHydroCellSignal(el_time, el_rx, el_ry, el_rz, check_fluid_info_ptr);
+
+	  	  GetHydroCellSignal(el_time, el_rx, el_ry, el_rz, check_fluid_info_ptr);
+
                	  VERBOSE(8)<<MAGENTA<<"Temperature from medium = "<<check_fluid_info_ptr->temperature;
                	 	
                	  tempLoc = check_fluid_info_ptr->temperature;
@@ -526,8 +527,6 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       int iout;
 		      double ft;
 
-		      cout << "recoil: " << pc2[0] << endl;
-		      cout << "back-reaction: " << pc3[0] << endl;
 
                       pOut.push_back(Parton(0,pid2,0,pc2,el_vertex)); // recoiled
                       iout = pOut.size()-1;
@@ -797,7 +796,6 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 
               pOut.push_back(Parton(0,pid_a,0,newp,newx));
               int iout = pOut.size()-1;
-                  
               pOut[iout].set_jet_v(velocity_jet); // use initial jet velocity
               pOut[iout].set_mean_form_time();
               double ft = generate_L (pOut[iout].mean_form_time());
@@ -838,9 +836,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   newx[j] = pIn[i].x_in().comp(j) + (time - pIn[i].x_in().comp(0))*velocity[j]/velocityMod;
               }
 	      
-              cout << "check daugther 2: " << newp[0] << endl;
-
-	      pOut.push_back(Parton(0,pid_b,0,newp,newx));
+              pOut.push_back(Parton(0,pid_b,0,newp,newx));
               iout = pOut.size()-1;
               pOut[iout].set_jet_v(velocity_jet); // use initial jet velocity
               pOut[iout].set_mean_form_time();
@@ -940,15 +936,17 @@ double Matter::generate_vac_t(int p_id, double nu, double t0, double t, double l
       return(t_mid) ;
     }
     
-  t_mid = (t_low+t_hi)/2.0 ;
+  //t_mid = (t_low+t_hi)/2.0 ;
     
     
   scale = t0;
     
   //   cout << " s_approx, s_error = " << s_approx << "  " << s_error << endl;
     
-  while ((abs(diff)>s_approx)&&(abs(t_hi-t_low)/t_hi>s_error))
-    {
+  do {
+
+      t_mid = (t_low + t_hi)/2.0;
+
       if (p_id==gid)
         {
 	  denom = sudakov_Pgg(t0, t_mid, loc_a, nu)*std::pow(sudakov_Pqq(t0, t_mid, loc_a, nu),nf);
@@ -979,15 +977,15 @@ double Matter::generate_vac_t(int p_id, double nu, double t0, double t, double l
       if (diff<0.0)
         {
 	  t_low = t_mid ;
-	  t_mid = (t_low + t_hi)/2.0;
+	  //t_mid = (t_low + t_hi)/2.0;
         }
       else
         {
 	  t_hi = t_mid ;
-	  t_mid = (t_low + t_hi)/2.0;
+	  //t_mid = (t_low + t_hi)/2.0;
         }
         
-    }
+  } while ((abs(diff)>s_approx)&&(abs(t_hi-t_low)/t_hi>s_error));
     
   return(t_mid);
 }
@@ -1048,13 +1046,19 @@ double  Matter::generate_vac_z(int p_id, double t0, double t, double loc_b, doub
     }
     
     
-  z_mid = (z_low + z_hi)/2.0 ;
+  //z_mid = (z_low + z_hi)/2.0 ;
   
   int itcounter=0;
   // cout << " generate_vac_z called with p_id = " << p_id << " t0 = " << t0 << " t = " << t << " loc_b=" << loc_b<< " nu = " <<  nu << " is = " << is << endl;
-  while (abs(diff)>approx) { // Getting stuck in here for some reason
-    if ( itcounter++ > 1000 ) throw std::runtime_error("Stuck in endless loop") ;
-    // cout << " in here" << " abs(diff) = " << abs(diff) << "  approx = " << approx << endl;
+
+  do { // Getting stuck in here for some reason
+    if ( itcounter++ > 10000 ) {
+    	cout << " in here" << " abs(diff) = " << abs(diff) << "  approx = " << approx << "  r = " << r << "  zmid = " << z_mid << "  denom = " << denom << "  numer = " << numer << "  e = " << e << "   " << numer/denom << endl;
+        throw std::runtime_error("Stuck in endless loop") ;
+    }
+
+    z_mid = (z_low + z_hi)/2.0 ;
+
     if (p_id==gid) {
       if (is==1) {
 	numer = P_z_gg_int(e, z_mid, loc_b, t, 2.0*nu/t , nu );
@@ -1075,15 +1079,15 @@ double  Matter::generate_vac_z(int p_id, double t0, double t, double loc_b, doub
     if (diff>0.0)
     {
         z_hi = z_mid;
-        z_mid = (z_low + z_hi)/2.0;
+        //z_mid = (z_low + z_hi)/2.0;
     }
     else
     {
         z_low = z_mid;
-        z_mid = (z_low + z_hi)/2.0 ;
+        //z_mid = (z_low + z_hi)/2.0 ;
     }
         
-  }
+  } while (abs(diff)>approx); 
     
   return(z_mid);
 }	
@@ -1902,7 +1906,7 @@ double Matter::fncQhat(double zeta) {
 
     double tStep = 0.1;
     //int indexZeta = (int)(zeta/sqrt(2.0)/5.0/tStep+0.5); // zeta was in 1/GeV and light cone coordinate
-    int indexZeta = (int)((sqrt(2.0)*zeta-initRdotV)/5.0/tStep+0.5); // zeta was in 1/GeV and light cone coordinate
+    int indexZeta = (int)((sqrt(2.0)*zeta/5.0-initRdotV)/tStep+0.5); // zeta was in 1/GeV and light cone coordinate
 
     if(indexZeta >= dimQhatTab) indexZeta = dimQhatTab-1;      
     
@@ -1920,7 +1924,7 @@ double Matter::fncAvrQhat(double zeta, double tau) {
 
     double tStep = 0.1;
     //int indexZeta = (int)(zeta/sqrt(2.0)/5.0/tStep+0.5); // zeta was in 1/GeV and light cone coordinate
-    int indexZeta = (int)((sqrt(2.0)*zeta-initRdotV)/5.0/tStep+0.5); // zeta was in 1/GeV and light cone coordinate
+    int indexZeta = (int)((sqrt(2.0)*zeta/5.0-initRdotV)/tStep+0.5); // zeta was in 1/GeV and light cone coordinate
     int indexTau = (int)(tau/sqrt(2.0)/5.0/tStep+0.5); // tau was in 1/GeV and light cone coordinate
 
     if(indexZeta >= dimQhatTab) indexZeta = dimQhatTab-1;      
