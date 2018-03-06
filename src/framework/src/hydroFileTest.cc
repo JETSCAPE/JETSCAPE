@@ -13,6 +13,8 @@
 
 #include <iostream>
 #include <time.h>
+#include <chrono>
+#include <thread>
 
 // JetScape Framework includes ...
 #include "JetScape.h"
@@ -32,9 +34,9 @@
 #include "hydro_file_jetscape.h"
 #include "PGun.h"
 
-#include <chrono>
-#include <thread>
-
+#ifdef USE_HDF5
+#include "InitialFromFile.h"
+#endif
 // using namespace std;
 
 using namespace Jetscape;
@@ -61,7 +63,10 @@ int main(int argc, char** argv)
    
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",1);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml", 5);
+  jetscape->set_reuse_hydro (true);
+  jetscape->set_n_reuse_hydro (5);
+
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
   auto hydro = make_shared<HydroFile> ();
@@ -76,6 +81,7 @@ int main(int argc, char** argv)
   //martini->SetActive(false);
   // This works ... (check with above logic ...)
   //jloss->SetActive(false);
+  //
 
   auto pGun= make_shared<PGun> ();
 
@@ -88,6 +94,11 @@ int main(int argc, char** argv)
   //Remark: For now modules have to be added
   //in proper "workflow" order (can be defined via xml and sorted if necessary)
   
+#ifdef USE_HDF5
+  auto initial = make_shared<InitialFromFile>();
+  jetscape->Add(initial);
+#endif
+
   jetscape->Add(pGun);
 
    //Some modifications will be needed for reusing hydro events, so far

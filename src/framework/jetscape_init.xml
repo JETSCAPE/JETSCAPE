@@ -41,6 +41,9 @@
          <!-- user-defined system: to get one event in 0-100% centrality range -->
          <user_defined projectile="Au" target="Au" sqrts="200" cross_section="4.2" />
      </Trento>
+
+     <!-- Options to read initial conditions from saved file ... -->
+     <initial_profile_path>../test/test_hydro_files/ic.hdf5</initial_profile_path>
    </IS>
 
    <!-- Hard Process/Pythia to be included -->
@@ -70,7 +73,7 @@
        <T0> 0.16 </T0>
        <vir_factor> 1.0 </vir_factor>
        <in_vac> 0 </in_vac>
-       <brick_med> 1 </brick_med>
+       <brick_med> 0 </brick_med>
        <brick_length> 5.0 </brick_length>
        <hydro_Tc> 0.15 </hydro_Tc>
        <qhat0> 0.5 </qhat0>
@@ -117,36 +120,54 @@
      <Gubser>
      </Gubser>
      
-     <!-- hydro from a file ... -->
-     <hydro_from_file>
-         <name> hydro from a file </name>
-         <!-- read in file type ... -->
-         <!-- hydro_type == 1 read in evo file from VISHNew... -->
-         <!-- hydro_type == 2 read in evo file from MUSIC... -->
-         <hydro_type>2</hydro_type>
-         <!-- VISHNew hydro evolution filename (hdf5 format)... -->
-         <VISH_file>test/test_hydro_files/VISH_evo.h5</VISH_file>
-         <!-- flag whether read in viscous information -->
-         <!-- (only works for VISHNew evo files)... -->
-         <load_viscous_info>False</load_viscous_info>
-         <!-- MUSIC hydro evolution filename (plain binary format)... -->
-         <!-- the associated input file specifies the grid information -->
-         <MUSIC_input_file>test/test_hydro_files/MUSIC_input</MUSIC_input_file>
-         <MUSIC_file>test/test_hydro_files/MUSIC_evo.dat</MUSIC_file>
-         <!-- transition temperature between QGP and Hadron Resonance Gas -->
-         <T_c>0.154</T_c>
-         <!-- read in hydro evo file every Ntau step -->
-         <!-- (only works for MUSIC evo files)... -->
-         <read_hydro_every_ntau>1</read_hydro_every_ntau>
-     </hydro_from_file>
+        <!-- hydro from a file ... -->
+        <hydro_from_file>
+            <name> hydro from a file </name>
+            <read_in_multiple_hydro>1</read_in_multiple_hydro>
+            <hydro_files_folder>../test/test_hydro_files</hydro_files_folder>
+            <!-- read in file type ... -->
+            <!-- hydro_type == 1 read in evo file from VISHNew... -->
+            <!-- hydro_type == 2 read in evo file from MUSIC... -->
+            <hydro_type>1</hydro_type>
+            <!-- VISHNew hydro evolution filename (hdf5 format)... -->
+            <VISH_file>../test/test_hydro_files/VISH_evo.h5</VISH_file>
+            <!-- flag whether read in viscous information -->
+            <!-- (only works for VISHNew evo files)... -->
+            <load_viscous_info>0</load_viscous_info>
+            <!-- MUSIC hydro evolution filename (plain binary format)... -->
+            <!-- the associated input file specifies the grid information -->
+            <MUSIC_input_file>../test/test_hydro_files/MUSIC_input</MUSIC_input_file>
+            <MUSIC_file>../test/test_hydro_files/MUSIC_evo.dat</MUSIC_file>
+            <!-- transition temperature between QGP and Hadron Resonance Gas -->
+            <T_c>0.154</T_c>
+            <!-- read in hydro evo file every Ntau step -->
+            <!-- (only works for MUSIC evo files)... -->
+            <read_hydro_every_ntau>1</read_hydro_every_ntau>
+        </hydro_from_file>
      
-     <!-- MUSIC ... -->
-     <MUSIC>
-         <name>MUSIC</name>
-         <MUSIC_input_file>music_input</MUSIC_input_file>
-         <Perform_CooperFrye_Feezeout>1</Perform_CooperFrye_Feezeout>
-     </MUSIC>
-     
-   </Hydro>
-   
+        <!-- MUSIC ... -->
+        <MUSIC>
+            <name>MUSIC</name>
+            <MUSIC_input_file>music_input</MUSIC_input_file>
+            <Perform_CooperFrye_Feezeout>0</Perform_CooperFrye_Feezeout>
+        </MUSIC>
+    </Hydro>
+    <SoftParticlization>
+        <!-- iSpectraSampler -->
+        <iSS>
+            <!-- read in file type ... -->
+            <!-- hydro_mode == 0 read in surface file from VISHNew... -->
+            <!-- hydro_mode == 1 read in surface file from MUSIC (2+1)D... -->
+            <!-- hydro_mode == 2 read in surface file from MUSIC (3+1)D... -->
+            <hydro_mode>1</hydro_mode>
+
+            <!-- file path for the default input file ... -->
+            <iSS_input_file>iSS_parameters.dat</iSS_input_file>
+            <!-- directory path where the hydro surface is stored ... -->
+            <iSS_working_path>.</iSS_working_path>
+            
+            <number_of_repeated_sampling>10</number_of_repeated_sampling>
+            <Perform_resonance_decays>1</Perform_resonance_decays>
+        </iSS>
+    </SoftParticlization>
 </jetscape>

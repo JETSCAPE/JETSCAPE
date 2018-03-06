@@ -12,6 +12,9 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "StringTokenizer.h"
+#include <iostream>
+using std::cout;
+using std::endl;
 
 namespace Jetscape {
 
@@ -24,68 +27,59 @@ StringTokenizer::~StringTokenizer()
 
 bool StringTokenizer::isGraphEntry() const
 {
-  if (buffer.length()>0)
-    if (buffer.find("[")<1)
-      return true;
-    else
-      return false;
-  else
-    return false;
+  if (buffer.length()==0)      return false;
+  if (buffer.find("[")<1)      return true;
+  return false;
 }
 
 bool StringTokenizer::isNodeEntry() const
 {
-  return isGraphEntry();
+  if (buffer.length()==0)      return false;
+  if (buffer.find("] V") <100 )  return true;
+  return false;
 }
 
 bool StringTokenizer::isNodeZero() const
 {
-  if (isGraphEntry() && !isEdgeEntry())
-    {
-      if (buffer.find("[0]")<3)
-	return true;
-      else
-	return false;
-    }
-  else
-    return 0;
-      
+  if ( !isGraphEntry() )     return false;
+  if ( !isNodeEntry() )      return false;
+  if ( isHadronEntry() )     return false;
+
+  if (buffer.find("[0]")<3)	return true;
+  
+  return false;
 }
 
 bool StringTokenizer::isEdgeEntry() const
 {
-  if (buffer.length()>0)
-    if (isGraphEntry())
-      if (buffer.find("=>")<100)
-	return true;
-      else
-	return false;
-    else
-      return false;
-  else
-    return false;
+  if (buffer.length()==0)      return false;
+  if ( !isGraphEntry() )       return false;
+  if (buffer.find("]=>[")<100)   return true;
+
+  return false;
 }
 
 bool StringTokenizer::isCommentEntry() const
 {
-  if (buffer.length()>0)
-    if (buffer.find("#")<1)
-      return true;
-    else
-      return false;
-  else
-    return false;
+  if (buffer.length()==0)      return false;
+  if (buffer.find("#")<1)      return true;
+  return false;
 }
 
 bool StringTokenizer::isEventEntry() const
 {
-  if (buffer.length()>0)
-    if (buffer.find("Event")<100)// && !isCommentEntry())
-      return true;
-    else
-      return false;
-  else
-    return false;
+  if (buffer.length()==0)      return false;
+  if (buffer.find("Event")<100)// && !isCommentEntry())
+    return true;
+
+  return false;
+}
+
+bool StringTokenizer::isHadronEntry() const
+{
+  if (buffer.length()==0)      return false;
+  if (buffer.find("] H") <100)  return true;
+  return false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

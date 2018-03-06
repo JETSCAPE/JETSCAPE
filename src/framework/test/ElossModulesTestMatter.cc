@@ -46,7 +46,7 @@ Matter::~Matter()
 
 void Matter::Init()
 {
-  INFO<<"Intialize Matter ...";
+  //INFO<<"Intialize Matter ...";
 
   // Redundant (get this from Base) quick fix here for now
   tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );
@@ -249,10 +249,15 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       double now_Rz = initRz+(time-initR0)*initVz;
       double now_temp; 
 
-      GetHydroCellSignal(now_R0, now_Rx, now_Ry, now_Rz, check_fluid_info_ptr);
-      VERBOSE(8)<<MAGENTA<<"Temperature from medium = "<<check_fluid_info_ptr->temperature;
-      now_temp = check_fluid_info_ptr->temperature;
-               	 	
+      if(!in_vac) {
+         if(now_R0*now_R0<now_Rz*now_Rz) cout << "Warning 1: " << now_R0 << "  " << now_Rz << endl;
+         GetHydroCellSignal(now_R0, now_Rx, now_Ry, now_Rz, check_fluid_info_ptr);
+         //VERBOSE(8)<<MAGENTA<<"Temperature from medium = "<<check_fluid_info_ptr->temperature;
+         now_temp = check_fluid_info_ptr->temperature;
+      } else {
+         now_temp = 0.0;
+      }
+
       int pid = pIn[i].pid();
           
       if (pIn[i].form_time()<0.0) /// A parton without a virtuality or formation time, must set...
@@ -359,7 +364,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       if(Q0<1.0) Q0=1.0;
 
       //if (pIn[i].t() > QS + rounding_error)
-      if (pIn[i].t() > Q0*Q0 + rounding_error || (now_temp<=T0 && pIn[i].t()>QS*QS))
+      if (pIn[i].t() > Q0*Q0 + rounding_error || ((!in_vac) && now_temp<=T0 && pIn[i].t() > QS*QS + rounding_error))
       { //
           double decayTime = pIn[i].mean_form_time()  ;
 	    
@@ -925,15 +930,17 @@ double Matter::generate_vac_t(int p_id, double nu, double t0, double t, double l
       return(t_mid) ;
     }
     
-  t_mid = (t_low+t_hi)/2.0 ;
+  //t_mid = (t_low+t_hi)/2.0 ;
     
     
   scale = t0;
     
   //   cout << " s_approx, s_error = " << s_approx << "  " << s_error << endl;
     
-  while ((abs(diff)>s_approx)&&(abs(t_hi-t_low)/t_hi>s_error))
-    {
+  do {
+
+      t_mid = (t_low + t_hi)/2.0;
+
       if (p_id==gid)
         {
 	  denom = sudakov_Pgg(t0, t_mid, loc_a, nu)*std::pow(sudakov_Pqq(t0, t_mid, loc_a, nu),nf);
@@ -964,15 +971,15 @@ double Matter::generate_vac_t(int p_id, double nu, double t0, double t, double l
       if (diff<0.0)
         {
 	  t_low = t_mid ;
-	  t_mid = (t_low + t_hi)/2.0;
+	  //t_mid = (t_low + t_hi)/2.0;
         }
       else
         {
 	  t_hi = t_mid ;
-	  t_mid = (t_low + t_hi)/2.0;
+	  //t_mid = (t_low + t_hi)/2.0;
         }
         
-    }
+  } while ((abs(diff)>s_approx)&&(abs(t_hi-t_low)/t_hi>s_error));
     
   return(t_mid);
 }
@@ -1033,13 +1040,19 @@ double  Matter::generate_vac_z(int p_id, double t0, double t, double loc_b, doub
     }
     
     
-  z_mid = (z_low + z_hi)/2.0 ;
+  //z_mid = (z_low + z_hi)/2.0 ;
   
   int itcounter=0;
   // cout << " generate_vac_z called with p_id = " << p_id << " t0 = " << t0 << " t = " << t << " loc_b=" << loc_b<< " nu = " <<  nu << " is = " << is << endl;
-  while (abs(diff)>approx) { // Getting stuck in here for some reason
-    if ( itcounter++ > 1000 ) throw std::runtime_error("Stuck in endless loop") ;
-    // cout << " in here" << " abs(diff) = " << abs(diff) << "  approx = " << approx << endl;
+
+  do { // Getting stuck in here for some reason
+    if ( itcounter++ > 10000 ) {
+    	cout << " in here" << " abs(diff) = " << abs(diff) << "  approx = " << approx << "  r = " << r << "  zmid = " << z_mid << "  denom = " << denom << "  numer = " << numer << "  e = " << e << "   " << numer/denom << endl;
+        throw std::runtime_error("Stuck in endless loop") ;
+    }
+
+    z_mid = (z_low + z_hi)/2.0 ;
+
     if (p_id==gid) {
       if (is==1) {
 	numer = P_z_gg_int(e, z_mid, loc_b, t, 2.0*nu/t , nu );
@@ -1060,15 +1073,15 @@ double  Matter::generate_vac_z(int p_id, double t0, double t, double loc_b, doub
     if (diff>0.0)
     {
         z_hi = z_mid;
-        z_mid = (z_low + z_hi)/2.0;
+        //z_mid = (z_low + z_hi)/2.0;
     }
     else
     {
         z_low = z_mid;
-        z_mid = (z_low + z_hi)/2.0 ;
+        //z_mid = (z_low + z_hi)/2.0 ;
     }
         
-  }
+  } while (abs(diff)>approx); 
     
   return(z_mid);
 }	
@@ -1791,7 +1804,8 @@ double Matter::fillQhatTab() {
     for(int i = 0; i < dimQhatTab; i++) {
         tLoc = tStep*i;
 
-	if(tLoc<initR0-tStep) {
+	//if(tLoc<initR0-tStep) { // potential problem of making t^2<z^2
+	if(tLoc<initR0) {
             qhatTab1D[i] = 0.0; 
             continue;	    
         }
