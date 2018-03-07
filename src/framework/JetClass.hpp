@@ -37,7 +37,7 @@ class FourVector;
 
 /*************************************************************************************************/
 
-//dummy for now figure out after graph strcuture ...
+//dummy for now figure out after graph structure ...
 
 class Jet
 {
@@ -60,7 +60,7 @@ public:
   Vertex() {x_in_.Set(0,0,0,0);}
   Vertex(double x, double y, double z, double t) {x_in_.Set(x,y,z,t);}
   Vertex(FourVector &x) {set_location(x);}  
-  virtual ~Vertex();
+  virtual ~Vertex() {};
   
   void set_location(FourVector &x)
     {
