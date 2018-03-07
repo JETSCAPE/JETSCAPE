@@ -20,9 +20,10 @@ enum HydroStatus {NOT_START, INITIALIZED, EVOLVING, FINISHED, ERROR};
 
 class JetSource {
     public:
-        JetSource():j0(0.), j1(0.), j2(0.), j3(0.) {}
+        JetSource() {}
+	// JetSource():j0(0.), j1(0.), j2(0.), j3(0.) {}
     private:
-        Jetscape::real j0, j1, j2, j3;
+        // Jetscape::real j0, j1, j2, j3;
 };
 
 //overload +-*/ for easier linear interpolation
