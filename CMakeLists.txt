@@ -66,7 +66,7 @@ if (APPLE)
 elseif(UNIX) 
   message( STATUS "Linux : " ${CMAKE_HOST_SYSTEM})
   ## can turn off some warnings
-  # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare -Wno-unused-but-set-variable -Wno-parentheses")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare -Wno-unused-but-set-variable -Wno-parentheses")
 
   ## Additional options
   # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
@@ -79,15 +79,20 @@ message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS})
 ###########################
 ### Required packages   ###
 ###########################
+
+###########################
 # add the library path and inclusion path of trento to jetscape
 # needs to come early for some compilers
 add_subdirectory(3rdparty/trento/)
 include_directories("${CMAKE_SOURCE_DIR}/3rdparty/trento/src/")
+###########################
 
 # Find and use Boost.
 message("Looking for Boost ...")
 find_package(Boost 1.50 REQUIRED COMPONENTS filesystem program_options system)
 Message(STATUS "Boost Include dirs : " ${Boost_INCLUDE_DIRS})
+## boost needs special treatment. For reasons.
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
 message("Looking for ZLIB ...")
 find_package(ZLIB)
