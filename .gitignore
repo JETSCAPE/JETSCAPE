@@ -9,11 +9,4 @@
 *.internal
 *.hepmc
 build/*
-HepMC/*
-src/framework/my_test*
-src/framework/CMakeFiles/*
-src/framework/bin/*
-src/framework/html/*
-src/framework/Makefile
-src/framework/*/Makefile
-src/framework/*/*/Makefile
+3rdparty/*

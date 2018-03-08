@@ -27,9 +27,18 @@ option(test "Build all tests." OFF)
 
 # MUSIC. Turn on with 'cmake -Dmusic=ON'.
 option(music "Build tests for MUSIC" OFF)
+if (music)
+  message("Includes for music ...")
+  include_directories(./3rdparty/music ./3rdparty/music/src)
+endif (music)
 
 # Soft Particlization. Turn on with 'cmake -Dmusic=ON -DiSS=ON'.
 option(iSS "Build tests for iSS" OFF)
+if (iSS)
+  message("Includes for iSS ...")
+  include_directories(./3rdparty/iSS ./3rdparty/iSS/src)
+endif (iSS)
+
 
 ###############################
 ### Compiler & Linker Flags ###
@@ -153,15 +162,34 @@ include_directories(./3rdparty/hydro_from_external_file )
 
 ### include_directories will be expanded as packages are found
 
-
-
-
 ###################################################
 ### Some additional settings for subdirectories ###
 ###################################################
 add_subdirectory(./3rdparty)
 add_subdirectory(./3rdparty/gtl)
 add_subdirectory(./src)
+
+if (music)
+  if(NOT EXISTS "${CMAKE_SOURCE_DIR}/3rdparty/music")
+    message(FATAL_ERROR "Error: MUSIC source has not been downloaded in 3rdparty by ./get_music.sh")
+  endif()  
+  if (${MPI_FOUND} AND ${GSL_FOUND})
+    message("Building MUSIC ...")
+    add_subdirectory(./3rdparty/music)
+  else()
+    message (FATAL_ERROR "MPI and GSL are necessary for MUSIC" )
+  endif()
+endif()
+
+if (iSS)
+  if(EXISTS "${CMAKE_SOURCE_DIR}/3rdparty/iSS")
+    add_subdirectory( ${CMAKE_SOURCE_DIR}/3rdparty/iSS )
+  else()
+    message(FATAL_ERROR "Error: iSS source has not been downloaded in 3rdparty by ./get_iSS.sh")
+  endif()      
+endif (iSS)
+
+
 
 ###########################
 ### Binary location     ###
@@ -199,7 +227,13 @@ add_executable(FinalStatePartons ./test/FinalStatePartons.cc)
 target_link_libraries(FinalStatePartons JetScape )
 
 
-# # executables with external dependencies
+# executables with additional dependencies
+if ( music AND iSS )
+  add_executable(MUSICTest ./test/MUSICTest.cc)
+  target_link_libraries(MUSICTest JetScape ${MPI_LIBRARIES} ${GSL_LIBRARIES})
+endif (music AND iSS )
+
+
 # if (${ROOT_FOUND})
 #   target_link_libraries(brickTest ${ROOT_LIBRARIES})
 #   target_link_libraries(LBT_brickTest ${ROOT_LIBRARIES})
@@ -212,4 +246,33 @@ target_link_libraries(FinalStatePartons JetScape )
 #### copy jetscape_init.xml to build/, such that one can test xml reading in build/ directory
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/test/jetscape_init.xml DESTINATION ${CMAKE_BINARY_DIR}/)
 
+#### copy essential files for MUSIC to build/
+if (music)
+  if(EXISTS "${CMAKE_SOURCE_DIR}/3rdparty/music/EOS/")
+    file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/EOS)
+    file(COPY ${CMAKE_SOURCE_DIR}/3rdparty/music/EOS/
+      DESTINATION ${CMAKE_BINARY_DIR}/EOS)
+    file(COPY ${CMAKE_SOURCE_DIR}/test/test_music_files/music_input
+      DESTINATION ${CMAKE_BINARY_DIR})
+  else()
+    message(FATAL_ERROR "Error: Cannot find files for MUSIC.")
+  endif()
+endif()
+
+#### copy essential files for iSS to build/
+if (iSS)
+  if(EXISTS "${CMAKE_SOURCE_DIR}/3rdparty/iSS/iSS_tables")
+    file(COPY ${CMAKE_SOURCE_DIR}/3rdparty/iSS/iSS_tables DESTINATION ${CMAKE_BINARY_DIR}/)
+    file(COPY ${CMAKE_SOURCE_DIR}/3rdparty/iSS/iSS_parameters.dat DESTINATION ${CMAKE_BINARY_DIR}/)
+  else()
+    message(FATAL_ERROR "Error: iSS tables have not been downloaded in 3rdparty by ./get_iSS.sh")
+  endif()
+endif (iSS)
+
+#### copy essential files for LBT to build/
+if(EXISTS "${CMAKE_SOURCE_DIR}/3rdparty/LBT-tables")
+    execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/3rdparty/LBT-tables ${CMAKE_BINARY_DIR}/LBT-tables)
+else()
+    message("Warning: LBT-tables have not been downloaded in 3rdparty by ./get_lbtTab.sh; LBT-brickTest will NOT run properly.")
+endif()
 
