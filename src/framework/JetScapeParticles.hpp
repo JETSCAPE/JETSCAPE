@@ -349,6 +349,12 @@ namespace Jetscape {
     {
       return(width_);
     }
+
+    /// Hadron may be used to handle electrons, gammas, ... as well
+    /// In addition, not all generated ids may be in the database
+    /// Currently, we add these manually. Could also reject outright.
+    bool CheckOrForceHadron( const int id, const double mass=0 );
+      
   protected:
     double width_;
         

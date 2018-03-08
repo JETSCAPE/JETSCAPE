@@ -507,7 +507,8 @@ namespace Jetscape {
   Hadron::Hadron (int label, int id, int stat, const FourVector& p, const FourVector& x)  :
     JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  p, x)
   {
-    assert ( InternalHelperPythia.particleData.isHadron(id) );
+    assert ( CheckOrForceHadron( id ) );
+    // assert ( InternalHelperPythia.particleData.isHadron(id) );
     set_decay_width(0.1);
   }
     
@@ -515,7 +516,8 @@ namespace Jetscape {
   Hadron::Hadron (int label, int id, int stat, double pt, double eta, double phi, double e, double* x)  :
     JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  pt, eta, phi, e, x)
   {
-    assert ( InternalHelperPythia.particleData.isHadron(id) );
+    assert ( CheckOrForceHadron( id ) );
+    // assert ( InternalHelperPythia.particleData.isHadron(id) );
     set_decay_width(0.1);
     // cout << "========================== phieta Ctor called, returning : " << endl << *this << endl;
   }
@@ -523,20 +525,29 @@ namespace Jetscape {
   Hadron::Hadron(int label, int id, int stat,
                  const FourVector& p, const FourVector& x, double mass):
     JetScapeParticleBase::JetScapeParticleBase(label, id, stat, p, x, mass) {
-    int status = InternalHelperPythia.particleData.isHadron(id);
-    if (status == 1) {
-        set_restmass(mass);
-    } else {
-	if  ( !InternalHelperPythia.particleData.isParticle(id) )
-        {
-        WARN << "id = " << id << " is not recognized! "
-             << "Add it as a new type of particle.";
-        InternalHelperPythia.particleData.addParticle(
-                                            id, " ", 0, 0, 0, mass, 0.1);
-        }
-    }
+    assert ( CheckOrForceHadron( id, mass ) );
+    set_restmass(mass);
   }
 
+  bool Hadron::CheckOrForceHadron( const int id, const double mass ){
+    bool status = InternalHelperPythia.particleData.isHadron(id);
+    if (status ) return true;
+    
+    // If it's not recognized as a hadron, still allow some (or all)
+    // particles. Particularly leptons and gammas are the point here.
+    // TODO: Handle non-partonic non-hadrons more gracefully
+
+    // -- Add unknown particles
+    if  ( !InternalHelperPythia.particleData.isParticle(id) ) { // avoid doing it over and over
+      WARN << "id = " << id << " is not recognized as a hadron! "
+	   << "Add it as a new type of particle.";
+      InternalHelperPythia.particleData.addParticle( id, " ", 0, 0, 0, mass, 0.1);
+    }
+
+    // -- now all that's left is known non-hadrons. We'll just accept those.
+    return true;      
+  }
+  
   Hadron& Hadron::operator=( Hadron &c)
   {
     JetScapeParticleBase::operator=(c);
