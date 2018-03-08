@@ -11,7 +11,7 @@
 #include <fstream>
 #include <cmath>
 #include <assert.h>
-#include "JetClass.hpp"
+#include "JetClass.h"
 #include "constants.h"
 #include "JetScapeLogger.h"
 

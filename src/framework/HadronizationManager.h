@@ -2,7 +2,7 @@
 #define HADRONIZATIONMANAGER_H
 
 #include "JetScapeTask.h"
-#include "JetClass.hpp"
+#include "JetClass.h"
 #include "sigslot.h"
 
 #include <vector>

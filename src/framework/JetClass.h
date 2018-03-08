@@ -1,13 +1,13 @@
 //
-//  JetClass.hpp
+//  JetClass.h
 //  
 //
 //  Created by Abhijit Majumder on 10/6/16.
 //
 //
 
-#ifndef JetClass_hpp
-#define JetClass_hpp
+#ifndef JetClass.h
+#define JetClass.h
 
 #include <stdio.h>
 #include <math.h>
@@ -60,7 +60,7 @@ public:
   Vertex() {x_in_.Set(0,0,0,0);}
   Vertex(double x, double y, double z, double t) {x_in_.Set(x,y,z,t);}
   Vertex(FourVector &x) {set_location(x);}  
-  virtual ~Vertex() {};
+  virtual ~Vertex();
   
   void set_location(FourVector &x)
     {
@@ -88,4 +88,4 @@ protected:
 
 };  /// end of namespace Jetscape
 
-#endif /* JetClass_hpp */
+#endif /* JetClass.h */

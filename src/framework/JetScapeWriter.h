@@ -13,7 +13,7 @@
 #include <string>
 #include "JetScapeModuleBase.h"
 #include "PartonShower.h"
-#include "JetClass.hpp"
+#include "JetClass.h"
 
 using std::to_string;
 

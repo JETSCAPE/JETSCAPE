@@ -11,7 +11,7 @@
 #include "GTL/graph.h"
 #include <GTL/edge_map.h>
 #include <GTL/node_map.h>
-#include "JetClass.hpp"
+#include "JetClass.h"
 #include "JetScapeParticles.hpp"
 #include "JetScapeLogger.h"
 #include "StringTokenizer.h"

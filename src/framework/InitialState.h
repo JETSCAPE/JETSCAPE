@@ -11,7 +11,7 @@
 #include <tuple>
 #include <memory>
 #include "JetScapeModuleBase.h"
-#include "JetClass.hpp"
+#include "JetClass.h"
 #include "tinyxml2.h"
 #include "JetScapeXML.h"
 

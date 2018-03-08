@@ -13,7 +13,7 @@
 #include "GTL/graph.h"
 #include <GTL/edge_map.h>
 #include <GTL/node_map.h>
-#include "JetClass.hpp"
+#include "JetClass.h"
 #include "JetScapeLogger.h"
 
 using std::shared_ptr;

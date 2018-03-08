@@ -11,7 +11,7 @@
 #include "InitialState.h"
 #include "JetScapeModuleBase.h"
 #include "tinyxml2.h"
-#include "JetClass.hpp"
+#include "JetClass.h"
 #include <vector>
 
 namespace Jetscape {

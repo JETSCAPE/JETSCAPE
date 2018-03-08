@@ -2,7 +2,7 @@
 #define HADRONIZATION_H
 
 #include "JetScapeModuleBase.h"
-#include "JetClass.hpp"
+#include "JetClass.h"
 #include "JetScapeWriter.h"
 #include "PartonShower.h"
 //#include "helper.h"

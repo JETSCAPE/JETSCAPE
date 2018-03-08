@@ -8,7 +8,7 @@
 #ifndef JETSCAPEEVENT_H
 #define JETSCAPEEVENT_H
 
-#include "JetClass.hpp"
+#include "JetClass.h"
 #include "PartonShower.h"
 
 namespace Jetscape {

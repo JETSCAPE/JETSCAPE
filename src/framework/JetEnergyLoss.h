@@ -10,7 +10,7 @@
 
 #include "JetScapeModuleBase.h"
 #include "fluid_dynamics.h"
-#include "JetClass.hpp"
+#include "JetClass.h"
 #include "JetScapeWriter.h"
 #include "PartonShower.h"
 #include "PartonPrinter.h"
