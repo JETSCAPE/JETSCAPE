@@ -20,21 +20,17 @@ using namespace Jetscape;
 
 class AdSCFTUserInfo: public fjcore::PseudoJet::UserInfoBase
 {
-  public :
-  static int alive;
- AdSCFTUserInfo(double ei, double f_dist, double l_dist) : _part_ei(ei), _f_dist(f_dist), _l_dist(l_dist){
-    cout << "Created. " << ++alive << " are alive" << endl;
-  };
-    double part_ei() const { return _part_ei; }  
-    double f_dist() const { return _f_dist; }  
-    double l_dist() const { return _l_dist; }
-    double _part_ei;
-    double _f_dist;
-    double _l_dist;
-    ~AdSCFTUserInfo(){cout << "Destroyed. " << --alive << " are alive" << endl;};
+ public :
+ AdSCFTUserInfo(double ei, double f_dist, double l_dist) : _part_ei(ei), _f_dist(f_dist), _l_dist(l_dist){};
+  double part_ei() const { return _part_ei; }  
+  double f_dist() const { return _f_dist; }  
+  double l_dist() const { return _l_dist; }
+  double _part_ei;
+  double _f_dist;
+  double _l_dist;
+  ~AdSCFTUserInfo(){};
 
 };
-int AdSCFTUserInfo::alive=0;
 
 class AdSCFT : public JetEnergyLossModule<AdSCFT> 
 {  
