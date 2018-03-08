@@ -8,5 +8,6 @@
 *.dat
 *.internal
 *.hepmc
+html/*
 build/*
 3rdparty/*
