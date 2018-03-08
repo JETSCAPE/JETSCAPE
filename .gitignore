@@ -4,10 +4,11 @@
 *.dylib
 *.marks
 *cache
-*.txt
 *.dat
 *.internal
 *.hepmc
 html/*
 build/*
-3rdparty/*
+3rdparty/LBT*
+3rdparty/iSS*
+3rdparty/music*
