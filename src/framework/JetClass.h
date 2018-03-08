@@ -6,8 +6,8 @@
 //
 //
 
-#ifndef JetClass.h
-#define JetClass.h
+#ifndef JetClass_h
+#define JetClass_h
 
 #include <stdio.h>
 #include <math.h>
@@ -88,4 +88,4 @@ protected:
 
 };  /// end of namespace Jetscape
 
-#endif /* JetClass.h */
+#endif /* JetClass_h */

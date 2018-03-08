@@ -8,7 +8,7 @@
     @date Jun 29, 2017
 */
 
-#include "PythiaGun.hpp"
+#include "PythiaGun.h"
 #include <sstream>
 #include <iostream>
 #include <fstream>

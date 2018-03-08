@@ -29,7 +29,7 @@
 #include "ElossModulesTestMartini.h"
 #include "brick_jetscape.h"
 #include "Gubser_hydro_jetscape.h"
-#include "PythiaGun.hpp"
+#include "PythiaGun.h"
 #include "PartonPrinter.h"
 #include "HadronizationManager.h"
 #include "Hadronization.h"
@@ -71,7 +71,7 @@ int main(int argc, char** argv)
   Show();
 
   // auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",10);
-  auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",200);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",200);
   jetscape->SetId("primary");
   // jetscape->set_reuse_hydro (true);
   // jetscape->set_n_reuse_hydro (10);
@@ -111,7 +111,7 @@ int main(int argc, char** argv)
 
   jloss->Add(matter);
   //jloss->Add(martini);
-  jloss->Add(adscft);
+  // jloss->Add(adscft);
 
   jlossmanager->Add(jloss);
   

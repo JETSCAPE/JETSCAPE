@@ -55,7 +55,20 @@
        <name>PGun</name>
        <pT>100</pT>
      </PGun>
-     
+
+     <!-- Pythia Gun test, currently with fixed IS pos = 0 -->
+     <!-- Sensible defaults are set in the class. ptHat etc. get their own field -->
+     <!-- Will try to provide a functionality to read in any command lines as well -->
+     <PythiaGun>
+       <name>PythiaGun</name>
+       <pTHatMin>110</pTHatMin>
+       <pTHatMax>120</pTHatMax>
+       <eCM>2760</eCM>
+       <LinesToRead>
+	 HardQCD:all = on	 
+       </LinesToRead>
+     </PythiaGun>     
+
    </Hard>
    
    
@@ -63,14 +76,15 @@
    <Eloss>
 
      <deltaT>0.1</deltaT>
-     <maxT>3</maxT>
+     <formTime> -0.1</formTime>
+     <maxT>10</maxT>
 
      <!-- Individual Eloss Modules run Eloss and Eloss Manager ... -->
      <!-- Just a test here (no physics implemented in Matter and Martini ... -->
      <Matter>
        <name>Matter</name>
        <Q0> 1.0 </Q0>
-       <vir_factor> 1.0 </vir_factor>
+       <vir_factor> 0.25 </vir_factor>
        <in_vac> 1 </in_vac>
        <brick_med> 1 </brick_med>
        <brick_length> 5.0 </brick_length>

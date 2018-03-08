@@ -180,7 +180,7 @@ add_executable(PythiaBrickTest ./test/PythiaBrickTest.cc)
 target_link_libraries(PythiaBrickTest JetScape )
 
 add_executable(LBT_brickTest ./test/LBT_brickTest.cc)
-target_link_libraries(LBT_brickTest JetScape JetScapeHydro  JetScapeTest)
+target_link_libraries(LBT_brickTest JetScape )
 
 add_executable(hydroFileTest ./test/hydroFileTest.cc)
 target_link_libraries(hydroFileTest JetScape)
