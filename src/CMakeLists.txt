@@ -33,10 +33,6 @@ endif()
 #initialstate
 FILE(GLOB initialstatesources initialstate/*.cc)
 set (SOURCES  ${SOURCES}  ${initialstatesources} )
-## Take care of options
-if(NOT ${iSS})
-  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/initialstate/iSS_jetscape.cc)
-endif()
 
 #trento needs data tables
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/data_table)
@@ -59,6 +55,11 @@ set (SOURCES  ${SOURCES}  ${jetsources} )
 #hadro
 FILE(GLOB hadrosources hadro/*.cc)
 set (SOURCES  ${SOURCES}  ${hadrosources} )
+
+## Take care of options
+if(NOT ${iSS})
+  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/hadro/iSS_jetscape.cc)
+endif()
 
 #reader
 FILE(GLOB readersources reader/*.cc)
