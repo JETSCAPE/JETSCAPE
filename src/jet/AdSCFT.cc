@@ -145,7 +145,9 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 	}
 	else
 	{
-	  pIn[i].set_user_info(new AdSCFTUserInfo(ei,f_dist,l_dist));
+	  // pIn[i].set_user_info( new AdSCFTUserInfo (ei,f_dist,l_dist));
+	  fjcore::SharedPtr<fjcore::PseudoJet::UserInfoBase> info_shared(new AdSCFTUserInfo (ei,f_dist,l_dist));
+	  pIn[i].user_info_shared_ptr() = info_shared;
 	}
 
 	// cout << " ei= " << ei << endl;
@@ -190,7 +192,9 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 	fx[0]=x[3], fx[1]=x[0], fx[2]=x[1], fx[3]=x[2];
 	pIn[i].set_x(fx);
 	//Feed into parton list
-	pIn.back().set_user_info(new AdSCFTUserInfo(ei,f_dist,l_dist));
+	// pIn.back().set_user_info(new AdSCFTUserInfo(ei,f_dist,l_dist));
+	fjcore::SharedPtr<fjcore::PseudoJet::UserInfoBase> info_shared(new AdSCFTUserInfo (ei,f_dist,l_dist));
+	pIn.back().user_info_shared_ptr() = info_shared;
 	pOut.push_back(pIn[i]);
 
       } //End if do-eloss
