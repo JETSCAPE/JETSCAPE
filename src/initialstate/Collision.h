@@ -12,6 +12,7 @@
 #include <tuple>
 #include <memory>
 #include <iostream>
+#include <iomanip>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/program_options.hpp>
