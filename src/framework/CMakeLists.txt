@@ -53,7 +53,7 @@ find_package(HEPMC)
 
 message("Looking for ROOT ...")
 find_package(ROOT)
-    
+
 message("Looking for Pythia8 ...")
 find_package(Pythia8)
 
@@ -82,6 +82,14 @@ find_package(GSL)
 if(${GSL_FOUND})
   include_directories(${GSL_INCLUDE_DIR})
 endif(${GSL_FOUND})
+
+#Derek
+message("Looking for OpenMP ...")
+find_package(OPENMP)
+if(${OPENMP_FOUND})
+  include_directories(${OPENMP_INCLUDE_DIR})
+endif(${OPENMP_FOUND})
+
 #include_directories(./3rdparty/music ./3rdparty/music/src )
 
 message ("Include Directories ...")
@@ -98,13 +106,35 @@ if (${ROOT_FOUND})
     include_directories(${ROOT_INCLUDES})
     Message(STATUS "ROOT Include dir : " ${ROOT_INCLUDES})
     #Message(STATUS ${ROOT_LIBRARIES})
-    
+
     #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m64")
-    #set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -m64")    
+    #set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -m64")
 endif()
 
 include_directories(./src ./test ./hydro ./jet ./gtl/include ./reader) #for test case ...
 include_directories(./3rdparty/hydro_from_external_file)
+
+message("Compiler and Linker flags ...")
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O -fPIC -pipe -Wall -g -Wno-reorder -Wno-unused-variable ")
+
+if (APPLE)
+     message( STATUS "Apple : " ${CMAKE_HOST_SYSTEM})
+
+     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-private-field -Wno-macro-redefined -std=c++11 -stdlib=libc++")
+     if(${MPI_FOUND})
+          set(CMAKE_CXX_COMPILE_FLAGS ${CMAKE_CXX_COMPILE_FLAGS} ${MPI_COMPILE_FLAGS})
+          set(CMAKE_CXX_LINK_FLAGS ${CMAKE_CXX_LINK_FLAGS} ${MPI_LINK_FLAGS})
+     endif(${MPI_FOUND})
+
+     message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS})
+     message(STATUS "LD_FLAGS = " ${CMAKE_EXE_LINKER_FLAGS})
+elseif(UNIX)
+    message( STATUS "Linux : " ${CMAKE_HOST_SYSTEM})
+    #set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0 -fprofile-arcs -ftest-coverage -fPIC -pipe -Wall -g -Wno-reorder -Wno-unused-variable")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-sign-compare -Wno-unused-but-set-variable -Wno-parentheses -fprofile-arcs -ftest-coverage")
+    #set(CMAKE_BUILD_TYPE Debug)
+endif()
 
 # have binary in the build directory, easier to access
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
@@ -124,11 +154,18 @@ option(iSS "Build tests for iSS" OFF) # Makes boolean 'test' available.
 if (iSS)
     include_directories(./3rdparty/iSS ./3rdparty/iSS/src)
 endif (iSS)
+# Options. Turn on with 'cmake -Dfreestream=ON'.
+option(freestream "Build tests for freestream-milne" OFF)
 
 if (music)
     message("Includes for music ...")
     include_directories(./3rdparty/music ./3rdparty/music/src)
 endif (music)
+
+if (freestream)
+    message("Includes for freestream-milne ...")
+    include_directories(./3rdparty/freestream-milne/src)
+endif (freestream)
 
 # w/o not compiling library automatically
 add_subdirectory(./gtl)
@@ -189,7 +226,7 @@ target_link_libraries(writerTest)
 
 # Don't compile tests modules if test is not switched on
 if (test)
-  # add gtest for the unit test# 
+  # add gtest for the unit test#
   add_subdirectory("${CMAKE_SOURCE_DIR}/3rdparty/googletest/")
   enable_testing()
   # Include the gtest library. gtest_SOURCE_DIR is available due to
@@ -217,6 +254,16 @@ if (music)
     endif()
 endif (music)
 
+if (freestream)
+    message("Building freestream-milne ...")
+    add_subdirectory(./3rdparty/freestream-milne/src)
+    if (${GSL_FOUND})
+         add_executable(freestream-milneTest ./src/freestream-milneTest.cc)
+         target_link_libraries(freestream-milneTest ${GSL_LIBRARIES})
+         #target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest hydroFromFile freestream_lib)
+         target_link_libraries(freestream-milneTest JetScape JetScapeHydro JetScapeTest freestream_lib)
+    endif()
+endif (freestream)
 
 # -----------------------------------------------------------
 #### copy jetscape_init.xml to build/, such that one can test xml reading in build/ directory
@@ -241,4 +288,3 @@ endif()
 #set(LIBS ${LIBS} ${ROOT_LIBRARIES})
 #However, the file(GLOB...) allows for wildcard additions:
 #file(GLOB SOURCES "src/*.cpp")
-

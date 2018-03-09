@@ -11,6 +11,7 @@ set (SOURCES
   JetScapeTask.cc
   tinyxml2.cc
   FluidDynamics.cc
+  PreequilibriumDynamics.cc
   HardProcess.cc
   Collision.cc
   TrentoInitial.cc
