@@ -6,7 +6,8 @@ cmake_policy(SET CMP0042 NEW)
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "../lib/")
 
-set (SOURCES fluid_dynamics.cc preequilibrium_dynamics.cc)
+#set (SOURCES fluid_dynamics.cc preequilibrium_dynamics.cc)
+set (SOURCES fluid_dynamics.cc)
 
 add_library(JetScapeHydro SHARED ${SOURCES})
 

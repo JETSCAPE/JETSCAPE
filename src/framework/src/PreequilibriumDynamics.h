@@ -11,41 +11,46 @@
 #include "InitialState.h"
 #include "JetScapeModuleBase.h"
 #include "tinyxml2.h"
-#include "preequilibrium_dynamics.h"
+#include "realtype.h"
 
 namespace Jetscape {
-  /**
-  @class
-  Interface for the Preequilibrium Dynamics of the medium
-  */
-  class PreequilibriumDynamics : public JetScapeModuleBase , public PreequilibriumDynamicsBase
-  {
+    // Flags for preequilibrium dynamics status.
+    enum PreequilibriumStatus {NOT_STARTED, INIT, DONE, ERR};
 
-  public:
+class PreEquilibriumParameterFile {
+ public:
+    // preequilibrium dynamics parameters file name.
+    char* preequilibrium_input_filename;
+};
 
-    /** Default constructor.
-    */
+// Interface for the Preequilibrium Dynamics of the medium
+class PreequilibriumDynamics : public JetScapeModuleBase {
+ private:
+    tinyxml2::XMLElement *fd;
+    PreEquilibriumParameterFile parameter_list_;
+    // record preequilibrium start and end proper time [fm/c]
+    real preequilibrium_tau_0_, preequilibrium_tau_max_;
+    
+
+ public:
     PreequilibriumDynamics();
-
-    /** Standard constructor to create a Preequilibrium Dynamics task. Sets the task ID as "PreequilibriumDynamics".
-    @param m_name is a name of the control XML file which contains the input parameters under the tag <Preequilibrium>.
-    */
-    PreequilibriumDynamics(string m_name) : JetScapeModuleBase (m_name), PreequilibriumDynamicsBase()
+    PreequilibriumDynamics(string m_name) : JetScapeModuleBase(m_name)
     {SetId("PreequilibriumDynamics");}
 
-    /** Destructor for the Preequilibrium Dynamics task.
-    */
     virtual ~PreequilibriumDynamics();
 
     /** Reads the input parameters from the XML file under the tag <Preequilibrium>. Uses JetScapeSingnalManager Instance to retrive the Initial State Physics information. Calls initialize_hydro(parameter_list) and InitTask(); This explicit call can be used for actual initialization of modules such as @a Brick, @a MPI_MUSIC, or @a OSU-HYDRO if attached as a @a polymorphic class. It also initializes the tasks within the current module.
     @sa Read about @a polymorphism in C++.
     */
-    virtual void Init();
+    void Init();
 
     /** Calls evolve_preequilibrium(); This explicit call can be used for actual execution of Preequilibrium evolution defined in the modules such as @a Brick, @a MPI_MUSIC, or @a OSU-HYDRO if attached as a @a polymorphic class. It also execute the tasks within the current module.
     @sa Read about @a polymorphism in C++.
     */
-    virtual void Exec();
+    void Exec();
+
+    virtual void initialize_preequilibrium(PreEquilibriumParameterFile parameter_list) {}
+    virtual void evolve_preequilibrium() {}
 
     /** @return A pointer to the XML elements. Such XML elements are the input parameters stored in an XML file under the tag <Hydro>.
     */
@@ -56,16 +61,20 @@ namespace Jetscape {
     */
     std::shared_ptr<InitialState> ini;
 
-    ParameterFile& GetParameterList() {return parameter_list;}
+    PreEquilibriumParameterFile& GetParameterList() {return parameter_list_;}
 
-  private:
+    int get_preequilibrium_status() {return(preequilibrium_status_);}
 
-    //double eta;
-    tinyxml2::XMLElement *fd;
-    ParameterFile parameter_list;
+    // @return Start time (or tau) for hydrodynamic evolution
+    real get_preequilibrium_start_time() {return(preequilibrium_tau_0_);}
 
-  };
+    // @return End time (or tau) for hydrodynamic evolution.
+    real get_preequilibrium_end_time() {return(preequilibrium_tau_max_);}
 
-} // end namespace Jetscape
+    // record preequilibrium running status
+    PreequilibriumStatus preequilibrium_status_;
+};
 
-#endif
+}  // end namespace Jetscape
+
+#endif  

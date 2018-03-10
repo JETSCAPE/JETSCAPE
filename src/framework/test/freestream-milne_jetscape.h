@@ -8,17 +8,17 @@
 using namespace Jetscape;
 
 class FREESTREAM: public PreequilibriumDynamics {
-private:
-  int mode; //!< records running mode
-  FREESTREAMMILNE *fsmilne_ptr;
+ private:
+    int mode; //!< records running mode
+    FREESTREAMMILNE *fsmilne_ptr;
 
-public:
-  FREESTREAM();
-  ~FREESTREAM();
+ public:
+    FREESTREAM();
+    ~FREESTREAM();
 
-  void initialize_preequilibrium(ParameterFile parameter_list);
+    void initialize_preequilibrium(PreEquilibriumParameterFile parameter_list);
 
-  void evolve_preequilibrium();
+    void evolve_preequilibrium();
 };
 
 //JUST FOR TESTING! REMOVE THIS BLOCK ONCE CMAKE LINKING FILES WORKS !

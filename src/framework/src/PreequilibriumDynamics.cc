@@ -18,58 +18,59 @@ using namespace std;
 
 namespace Jetscape {
 
-  PreequilibriumDynamics::PreequilibriumDynamics()
-  {
+PreequilibriumDynamics::PreequilibriumDynamics() {
     VERBOSE(8);
     SetId("PreequilibriumDynamics");
-  }
+}
 
-  PreequilibriumDynamics::~PreequilibriumDynamics()
-  {
+PreequilibriumDynamics::~PreequilibriumDynamics() {
     VERBOSE(8);
     disconnect_all();
-  }
+}
 
-  void PreequilibriumDynamics::Init()
-  {
+void PreequilibriumDynamics::Init() {
     JetScapeModuleBase::Init();
 
-    INFO<<"Intialize PreequilibriumDynamics : "<<GetId()<< " ...";
+    INFO <<"Intialize PreequilibriumDynamics : " << GetId() << " ...";
 
-    fd= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Preequilibrium" );
+    fd = JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement(
+                                                        "Preequilibrium");
 
     if (!fd) {
-      WARN << "Not a valid JetScape XML Preequilibrium Dynamics section file or no XML file loaded!";
-      exit(-1);
+        WARN << "Not a valid JetScape XML Preequilibrium Dynamics section file "
+           << "or no XML file loaded!";
+        exit(-1);
     }
 
     VERBOSE(8);
 
-    //this is grabbing the initial entropy density ?
+    // this is grabbing the initial entropy density ?
     ini = JetScapeSignalManager::Instance()->GetInitialStatePointer().lock();
     if (!ini) {
-      WARN << "No initialization module, try: auto trento = make_shared<TrentoInitial>(); jetscape->Add(trento);";
+        WARN << "No initialization module, try: "
+             << "auto trento = make_shared<TrentoInitial>(); "
+             << "jetscape->Add(trento);";
     }
 
-    initialize_preequilibrium(parameter_list);
+    initialize_preequilibrium(parameter_list_);
 
     InitTask();
 
     JetScapeTask::InitTasks();
-  }
+}
 
-  void PreequilibriumDynamics::Exec()
-  {
-    INFO <<"Run Preequilibrium : "<<GetId()<< " ...";
-    VERBOSE(8)<<"Current Event #"<<GetCurrentEvent();
+void PreequilibriumDynamics::Exec() {
+    INFO << "Run Preequilibrium : " << GetId() << " ...";
+    VERBOSE(8) << "Current Event #" << GetCurrentEvent();
 
     if (ini) {
-      INFO << "length of energy density vector=" << ini->entropy_density_distribution_.size();
+      INFO << "length of energy density vector="
+           << ini->entropy_density_distribution_.size();
     }
 
     evolve_preequilibrium();
 
     JetScapeTask::ExecuteTasks();
-  }
+}
 
-} // end namespace Jetscape
+}  // end namespace Jetscape
