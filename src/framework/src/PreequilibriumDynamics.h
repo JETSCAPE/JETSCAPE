@@ -8,6 +8,7 @@
 #ifndef PREEQUILDYNAMICS_H
 #define PREEQUILDYNAMICS_H
 
+#include<vector>
 #include "InitialState.h"
 #include "JetScapeModuleBase.h"
 #include "tinyxml2.h"
@@ -16,6 +17,26 @@
 namespace Jetscape {
     // Flags for preequilibrium dynamics status.
     enum PreequilibriumStatus {NOT_STARTED, INIT, DONE, ERR};
+
+class PreEquilibriumCell {
+ public:
+    double e;
+    double P;
+    double utau;
+    double ux;
+    double uy;
+    double ueta;
+    double pi00;
+    double pi01;
+    double pi02;
+    double pi03;
+    double pi11;
+    double pi12;
+    double pi13;
+    double pi23;
+    double pi33;
+    double bulk_Pi;
+};
 
 class PreEquilibriumParameterFile {
  public:
@@ -30,7 +51,6 @@ class PreequilibriumDynamics : public JetScapeModuleBase {
     PreEquilibriumParameterFile parameter_list_;
     // record preequilibrium start and end proper time [fm/c]
     real preequilibrium_tau_0_, preequilibrium_tau_max_;
-    
 
  public:
     PreequilibriumDynamics();
@@ -73,6 +93,8 @@ class PreequilibriumDynamics : public JetScapeModuleBase {
 
     // record preequilibrium running status
     PreequilibriumStatus preequilibrium_status_;
+
+    std::vector<PreEquilibriumCell> preequilibrium_array_;
 };
 
 }  // end namespace Jetscape
