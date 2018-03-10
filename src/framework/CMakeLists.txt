@@ -262,6 +262,8 @@ if (freestream)
          target_link_libraries(freestream-milneTest ${GSL_LIBRARIES})
          #target_link_libraries(testJetScape JetScape JetScapeHydro JetScapeTest hydroFromFile freestream_lib)
          target_link_libraries(freestream-milneTest JetScape JetScapeHydro JetScapeTest freestream_lib)
+         file(COPY ./test/test_freestream_files/freestream_input
+                 DESTINATION ${CMAKE_BINARY_DIR})
     endif()
 endif (freestream)
 
