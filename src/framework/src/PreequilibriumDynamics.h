@@ -18,26 +18,6 @@ namespace Jetscape {
     // Flags for preequilibrium dynamics status.
     enum PreequilibriumStatus {NOT_STARTED, INIT, DONE, ERR};
 
-//class PreEquilibriumCell {
-// public:
-//    double e;
-//    double P;
-//    double utau;
-//    double ux;
-//    double uy;
-//    double ueta;
-//    double pi00;
-//    double pi01;
-//    double pi02;
-//    double pi03;
-//    double pi11;
-//    double pi12;
-//    double pi13;
-//    double pi23;
-//    double pi33;
-//    double bulk_Pi;
-//};
-
 class PreEquilibriumParameterFile {
  public:
     // preequilibrium dynamics parameters file name.
@@ -94,7 +74,6 @@ class PreequilibriumDynamics : public JetScapeModuleBase {
     // record preequilibrium running status
     PreequilibriumStatus preequilibrium_status_;
 
-    //std::vector<PreEquilibriumCell> preequilibrium_array_;
     std::vector<double> e_;
     std::vector<double> P_;
     std::vector<double> utau_;
@@ -111,7 +90,6 @@ class PreequilibriumDynamics : public JetScapeModuleBase {
     std::vector<double> pi23_;
     std::vector<double> pi33_;
     std::vector<double> bulk_Pi_;
-};
 };
 
 }  // end namespace Jetscape
