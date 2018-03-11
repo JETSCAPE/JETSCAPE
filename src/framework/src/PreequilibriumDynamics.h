@@ -87,6 +87,7 @@ class PreequilibriumDynamics : public JetScapeModuleBase {
     std::vector<double> pi11_;
     std::vector<double> pi12_;
     std::vector<double> pi13_;
+    std::vector<double> pi22_;
     std::vector<double> pi23_;
     std::vector<double> pi33_;
     std::vector<double> bulk_Pi_;
