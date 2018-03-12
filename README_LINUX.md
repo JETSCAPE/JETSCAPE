@@ -60,7 +60,7 @@ In order to install and compile the JETSCAPE framework on a Linux machine, one n
      - export BOOST_ROOT=<root_directory> 
 
 7. Install HDF5 C++ library
-     - wget https://support.hdfgroup.org/ftp/HDF5/current18/src/hdf5-1.8.18.tar
+     - wget https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-1.8.18/src/hdf5-1.8.18.tar
      - tar -xvvf hdf5-1.8.18.tar
      - ./configure
      - make
