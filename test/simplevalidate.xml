@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<!-- Just for test purposes! -->
+<!-- More details and final format to be determined ... -->
+<jetscape>
+
+  <debug> on </debug>
+  <remark> off </remark>
+  <vlevel> 0 </vlevel>
+
+   <!--  Random Settings. For now, just a global  seed. -->
+   <!--  Note: It's each modules responsibility to adopt it -->
+   <!--  Note: Most if not all modules should understand 0 to mean a random value -->
+   <!--  Note: Both 0 and non-zero values require careful treatment in case of multi-threading -->
+   <!--           An example implementation is (will be) in JetEnergyLossManager.cc -->
+   <Random>
+     <seed>1</seed>
+   </Random>
+
+   <!-- Inital State Module ... -->
+   <IS>
+     <!-- x range [-grid_max_x, grid_max_x] -->
+     <!-- y range [-grid_max_y, grid_max_y]-->
+     <!-- longitudinal range [-grid_max_z, grid_max_z]-->
+     <!-- in units of [fm] -->
+     <grid_max_x> 10 </grid_max_x>
+     <grid_max_y> 10 </grid_max_y>
+     <grid_max_z> 0 </grid_max_z>
+     <grid_step_x> 0.2 </grid_step_x>
+     <grid_step_y> 0.2 </grid_step_y>
+     <grid_step_z> 0.2 </grid_step_z>
+     
+   </IS>
+
+   <!-- Hard Process -->
+   <Hard>
+     <!-- Parton Gun test with fixed pT and fixed IS pos = 0 -->
+     <PGun>
+       <name>PGun</name>
+       <pT>100</pT>
+       <!-- for validation purposes ony -->
+       <fixed_eta1>0.5</fixed_eta1>
+       <fixed_eta2>-0.4</fixed_eta2>       
+       <fixed_phi1>1</fixed_phi1>
+       <fixed_phi2>-1</fixed_phi2>       
+       <fixed_pid1>21</fixed_pid1>
+       <fixed_pid2>-1</fixed_pid2>       
+     </PGun>
+   </Hard>
+   
+   
+   <!--Eloss Module ... -->
+   <Eloss>
+     <deltaT>0.1</deltaT>
+     <maxT>0.5</maxT>
+
+     <!-- Individual Eloss Modules run Eloss and Eloss Manager ... -->
+     <ElossValidate>
+       <name>ElossValidate</name>
+     </ElossValidate>
+     
+   </Eloss>
+
+   <!-- Hydro  Module ... -->
+   <Hydro>
+     <!-- Test Brick if bjorken_expansion_on="true", T(t) = T * (start_time[fm]/t)^{1/3} -->
+     <Brick bjorken_expansion_on="false" start_time="0.6">
+       <name>Brick</name>
+       <T>0.2</T>
+     </Brick>
+
+   </Hydro>
+   
+</jetscape>
