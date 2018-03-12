@@ -71,7 +71,7 @@ int main(int argc, char** argv)
   Show();
 
   // auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",10);
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",2);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",100);
   jetscape->SetId("primary");
   // jetscape->set_reuse_hydro (true);
   // jetscape->set_n_reuse_hydro (10);
@@ -109,9 +109,9 @@ int main(int argc, char** argv)
   //simple test hydros always executed "on the fly" ...
   jetscape->Add(hydro);
 
-  jloss->Add(matter);
+  // jloss->Add(matter);
   // jloss->Add(martini);
-  // jloss->Add(adscft);
+  jloss->Add(adscft);
 
   jlossmanager->Add(jloss);
   
@@ -121,7 +121,7 @@ int main(int argc, char** argv)
   //hadro->Add(hadroModule);
   hadro->Add(colorless);
   hadroMgr->Add(hadro);
-  jetscape->Add(hadroMgr);
+  // jetscape->Add(hadroMgr);
 
 
   jetscape->Add(writer);
