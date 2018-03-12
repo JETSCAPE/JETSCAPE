@@ -64,6 +64,7 @@
 #include <iomanip>
 
 using std::ostream;
+using std::weak_ptr;
 
 namespace Jetscape {
 
@@ -214,7 +215,7 @@ namespace Jetscape {
     
     void init_jet_v();
     void set_jet_v(double v[4]);
-      void set_jet_v(FourVector j);
+    void set_jet_v(FourVector j);
     
     //  Getters
     
@@ -227,9 +228,9 @@ namespace Jetscape {
     
     std::vector<JetScapeParticleBase> parents();
 
-    // FourVector &p_in();  
-    FourVector &x_in();
-    FourVector &jet_v();
+    const FourVector p_in() const;
+    const FourVector &x_in() const;
+    const FourVector &jet_v() const;
 
     const double restmass();
     const double p(int i);
@@ -270,7 +271,7 @@ namespace Jetscape {
   /*************************************************************************************************/
   class Parton : public JetScapeParticleBase{
     
-  public : 
+  public :
     virtual void set_mean_form_time();
     virtual void set_form_time(double form_time);    
 
@@ -282,8 +283,6 @@ namespace Jetscape {
     virtual void set_min_color(unsigned int col); ///< sets the color of the parton
     virtual void set_min_anti_color(unsigned int acol); ///< sets anti-color of the parton
 
-      
-      
     Parton (int label, int id, int stat, const FourVector& p, const FourVector& x);
     Parton (int label, int id, int stat, double pt, double eta, double phi, double e, double* x=0);
     Parton (const Parton& srp);
@@ -304,7 +303,8 @@ namespace Jetscape {
     void set_edgeid( const int id);
 
     void set_shower(const shared_ptr<PartonShower> pShower);
-    const shared_ptr<PartonShower> shower() const;
+    void set_shower(const weak_ptr<PartonShower> pShower);
+    const weak_ptr<PartonShower> shower() const;
 
     std::vector<Parton> parents();
     
@@ -317,7 +317,7 @@ namespace Jetscape {
     unsigned int MinColor_    ; ///< color of the parent
     unsigned int MinAntiColor_; ///< anti-color of the parent
 
-    shared_ptr<PartonShower> pShower_; ///< shower that this parton belongs to
+    weak_ptr<PartonShower> pShower_; ///< shower that this parton belongs to
     int edgeid_             ; ///< Position in the shower graph    
 
     // helpers
@@ -328,7 +328,6 @@ namespace Jetscape {
 
   class Hadron : public JetScapeParticleBase
   {
-    // using JetScapeParticleBase::InternalHelperPythia;
     public:
         
     Hadron (int label, int id, int stat, const FourVector& p, const FourVector& x);
