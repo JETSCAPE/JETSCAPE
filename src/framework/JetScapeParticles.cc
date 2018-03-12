@@ -31,7 +31,6 @@ namespace Jetscape {
     plabel_ = srp.plabel_;
     pstat_ = srp.pstat_;
     mass_ = srp.mass_;
-    // t_ = srp.t_;
     jet_v_ = srp.jet_v_;
     x_in_ = srp.x_in_;
   }
@@ -168,12 +167,17 @@ namespace Jetscape {
     return(x_in_.t());
   }
       
-  FourVector &JetScapeParticleBase::x_in()
+  const FourVector JetScapeParticleBase::p_in() const
+  {
+    return( FourVector(px(), py(), pz(), e() ));
+  }
+
+  const FourVector &JetScapeParticleBase::x_in() const
   {
     return(x_in_);
   }
     
-  FourVector &JetScapeParticleBase::jet_v()
+  const FourVector &JetScapeParticleBase::jet_v() const 
   {
     return(jet_v_);
   }
@@ -206,7 +210,6 @@ namespace Jetscape {
       // this should never happen
       cerr << "jet_v_ = " << jet_v_.comp(0) << "  "  << jet_v_.comp(1) << "  "  << jet_v_.comp(2) << "  "  << jet_v_.comp(3) << endl;
       throw std::runtime_error("JetScapeParticleBase::pl() : jet_v should never be space-like.");
-      // return(std::sqrt( p_in_.x()*p_in_.x() + p_in_.y()*p_in_.y() + p_in_.z()*p_in_.z() ) );
       return(-1);
     } else {
       // projection onto (unit) jet velocity
@@ -259,7 +262,6 @@ namespace Jetscape {
   // ---------------
   // Parton specific
   // ---------------
-  
   Parton::Parton (const Parton& srp) :
     JetScapeParticleBase::JetScapeParticleBase (srp)
   {
@@ -271,7 +273,8 @@ namespace Jetscape {
     MinAntiColor_ = srp.MinAntiColor_;
     
     set_edgeid ( srp.edgeid() );
-    pShower_ = srp.shower();
+    set_shower ( srp.shower() );
+
     // set_edgeid( -1 ); // by default do NOT copy the shower or my position in it
     // pShower_ = nullptr;
   }
@@ -288,10 +291,9 @@ namespace Jetscape {
     set_min_anti_color(0);
     set_max_color(0);
     set_edgeid( -1 );
-    pShower_ = nullptr;
+    set_shower ( 0 );
     
-
-    //   cout << "========================== std Ctor called, returning : " << endl << *this << endl;
+    // cout << "========================== std Ctor called, returning : " << endl << *this << endl;
   }
   
 
@@ -306,7 +308,8 @@ namespace Jetscape {
     set_min_anti_color(0);
     set_max_color(0);
     set_edgeid( -1 );
-    pShower_ = nullptr;
+    set_shower ( 0 );
+
     // cout << "========================== phieta Ctor called, returning : " << endl << *this << endl;
   }
   
@@ -344,9 +347,8 @@ namespace Jetscape {
     Color_ = c.Color_;
     antiColor_ = c.antiColor_;
     set_edgeid ( c.edgeid() );
-    pShower_ = c.shower();
-    // set_edgeid( -1 ); // by default do NOT copy the shower or my position in it
-    // pShower_ = nullptr;
+    set_shower ( c.shower() );
+
     return *this;
   }
   
@@ -357,9 +359,8 @@ namespace Jetscape {
     Color_ = c.Color_;
     antiColor_ = c.antiColor_;
     set_edgeid ( c.edgeid() );
-    pShower_ = c.shower();
-    // set_edgeid( -1 ); // by default do NOT copy the shower or my position in it
-    // pShower_ = nullptr;
+    set_shower ( c.shower() );
+
     return *this;
   }
 
@@ -452,19 +453,25 @@ namespace Jetscape {
   }
 
   void Parton::set_shower(const shared_ptr<PartonShower> pShower) {
-    pShower_ = pShower;
+    if ( pShower!= nullptr )
+      pShower_ = pShower;
+  }
+
+  void Parton::set_shower(const weak_ptr<PartonShower> pShower) {
+      pShower_ = pShower;
   }
   
-  const shared_ptr<PartonShower> Parton::shower() const{
+  const weak_ptr<PartonShower> Parton::shower() const{
     return pShower_;
   }
 
   std::vector<Parton> Parton::parents(){
     std::vector<Parton> ret;
-    if ( !pShower_ ) return ret;
-    node root = pShower_->GetEdgeAt(edgeid_).source();
+    auto shower = pShower_.lock();
+    if ( !shower ) return ret;
+    node root = shower->GetEdgeAt(edgeid_).source();
     for ( node::in_edges_iterator parent = root.in_edges_begin(); parent != root.in_edges_end(); ++parent ){
-      ret.push_back ( *pShower_->GetParton(*parent) );
+      ret.push_back ( *shower->GetParton(*parent) );
     }
     return ret;
   }
