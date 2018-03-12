@@ -47,7 +47,7 @@ void iSS_CF::InitTask() {
     iSpectraSampler_ptr_->paraRdr_ptr->setVal("hydro_mode", hydro_mode);
     iSpectraSampler_ptr_->paraRdr_ptr->setVal("output_samples_into_files", 0);
     iSpectraSampler_ptr_->paraRdr_ptr->setVal("use_OSCAR_format", 0);
-    iSpectraSampler_ptr_->paraRdr_ptr->setVal("use_gzip_format", 1);
+    iSpectraSampler_ptr_->paraRdr_ptr->setVal("use_gzip_format", 0);
     iSpectraSampler_ptr_->paraRdr_ptr->setVal("store_samples_in_memory", 1);
     iSpectraSampler_ptr_->paraRdr_ptr->setVal("number_of_repeated_sampling",
                                               number_of_repeated_sampling);
@@ -72,6 +72,8 @@ void iSS_CF::InitTask() {
     iSpectraSampler_ptr_->paraRdr_ptr->setVal("calculate_vn", 0);
     iSpectraSampler_ptr_->paraRdr_ptr->setVal("MC_sampling", 2);
 
+    iSpectraSampler_ptr_->paraRdr_ptr->setVal(
+                                    "sample_upto_desired_particle_number", 0);
     iSpectraSampler_ptr_->paraRdr_ptr->echo();
 }
 
