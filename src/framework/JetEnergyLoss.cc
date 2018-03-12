@@ -167,7 +167,7 @@ void JetEnergyLoss::DoShower()
   
   vector<node> vStartVec; vector<node> vStartVecOut;
   vector<node> vStartVecTemp;
-  
+
   //DEBUG this guy isn't linked to anything - put in test particle for now
   pIn.push_back(*GetShowerInitiatingParton());
 
@@ -219,12 +219,13 @@ void JetEnergyLoss::DoShower()
 	      pOutTemp[k].set_edgeid( edgeid );
 		      
 	      vStartVecOut.push_back(vEnd);
-	      pOut.push_back(pOutTemp[k]);		      
+	      pOut.push_back(pOutTemp[k]);
 
 	      Parton& particle = pOut.back();
 	      // Parton& particle = pOut[iout];
 	      // Parton& particle = pIn.at(i);
-
+	      // if ( particle.parents().size() )
+	      // 	cout << particle << "  " << particle.parents().at(0)<< endl;
 
 	      // --------------------------------------------
 	      // Add new roots from ElossModules ...
@@ -281,7 +282,7 @@ void JetEnergyLoss::DoShower()
 
   // --------------------------------------------
   
-  pIn.clear();pOut.clear();pInTemp.clear();pOutTemp.clear();
+  pIn.clear();pOut.clear();pInTemp.clear();pInTempModule.clear();pOutTemp.clear();
   vStartVec.clear();
 }
 
