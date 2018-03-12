@@ -59,11 +59,24 @@ class Matter : public JetEnergyLossModule<Matter> //, public std::enable_shared_
   bool in_vac,brick_med;
   double hydro_Tc,qhat0,alphas,brick_length,vir_factor;
   double initR0,initRx,initRy,initRz,initVx,initVy,initVz,initRdotV,initEner;
-  double Q00,Q0;
+  double Q00,Q0,T0;
 
   static const int dimQhatTab=151;
   double qhatTab1D[dimQhatTab]={0.0};
   double qhatTab2D[dimQhatTab][dimQhatTab]={{0.0}};
+
+  long  NUM1;                  
+
+  //SC: for elastic scattering
+  void flavor(int &CT,int &KATT0,int &KATT2,int &KATT3, unsigned int &max_color, unsigned int &color0, unsigned int &anti_color0, unsigned int &color2, unsigned int &anti_color2, unsigned int &color3, unsigned int &anti_color3);
+  void colljet22(int CT,double temp,double qhat0ud,double v0[4],double p0[4],double p2[4],double p3[4],double p4[4],double &qt);
+  void trans(double v[4],double p[4]);
+  void transback(double v[4],double p[4]);
+  void rotate(double px,double py,double pz,double pr[4],int icc);
+  float ran0(long *idum);
+  double solve_alphas(double var_qhat, double var_ener, double var_temp);
+  double fnc0_alphas(double var_alphas, double var_qhat, double var_ener, double var_temp);
+  double fnc0_derivative_alphas(double var_alphas, double var_qhat, double var_ener, double var_temp);
 
  protected:
   uniform_real_distribution<double> ZeroOneDistribution;

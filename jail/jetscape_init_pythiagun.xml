@@ -70,21 +70,31 @@
 
      <deltaT>0.1</deltaT>
      <formTime> -0.1</formTime>
-     <maxT>10</maxT>
+     <maxT>3</maxT>
 
      <!-- Individual Eloss Modules run Eloss and Eloss Manager ... -->
      <!-- Just a test here (no physics implemented in Matter and Martini ... -->
      <Matter>
        <name>Matter</name>
        <Q0> 1.0 </Q0>
+       <T0> 0.16 </T0>
        <vir_factor> 0.25 </vir_factor>
-       <in_vac> 1 </in_vac>
-       <brick_med> 1 </brick_med>
+       <in_vac> 0 </in_vac>
+       <brick_med> 0 </brick_med>
        <brick_length> 5.0 </brick_length>
        <hydro_Tc> 0.15 </hydro_Tc>
-       <qhat0> 0.0 </qhat0>
+       <qhat0> 0.5 </qhat0>
        <alphas> 0.25 </alphas>
      </Matter>
+
+     <Lbt>
+       <name> Lbt </name>
+       <Q0> 1.0 </Q0>
+       <in_vac> 0 </in_vac>
+       <only_leading> 0 </only_leading>
+       <hydro_Tc> 0.15 </hydro_Tc>
+       <alphas> 0.2 </alphas>
+     </Lbt>
      
      <Martini>
        <name > Martini </name>
