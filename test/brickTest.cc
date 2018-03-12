@@ -26,6 +26,7 @@
 // to be used to run Jetscape ...
 #include "AdSCFT.h"
 #include "ElossModulesTestMatter.h"
+#include "ElossModuleLBT.h"
 #include "ElossModulesTestMartini.h"
 #include "brick_jetscape.h"
 #include "Gubser_hydro_jetscape.h"
@@ -63,7 +64,7 @@ int main(int argc, char** argv)
   JetScapeLogger::Instance()->SetRemark(false);
   //SetVerboseLevel (9 a lot of additional debug output ...)
   //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevle(9) or 10
-  JetScapeLogger::Instance()->SetVerboseLevel(0);
+  JetScapeLogger::Instance()->SetVerboseLevel(8);
    
   Show();
 
@@ -81,6 +82,7 @@ int main(int argc, char** argv)
   //auto hydro = make_shared<GubserHydro> ();
   
   auto matter = make_shared<Matter> ();
+  auto lbt = make_shared<LBT> ();
   auto martini = make_shared<Martini> ();
   auto adscft = make_shared<AdSCFT> ();
   //DBEUG: Remark:
@@ -117,10 +119,9 @@ int main(int argc, char** argv)
   // Switching Q2 (or whatever variable used
   // hardcoded at 5 to be changed to xml)
   jloss->Add(matter);
-
+  //jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
   //jloss->Add(martini);
-  // jloss->Add(adscft);  
-
+  //jloss->Add(adscft);  
 
   jlossmanager->Add(jloss);
   

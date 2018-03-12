@@ -218,6 +218,9 @@ target_link_libraries(LBT_brickTest JetScape )
 add_executable(hydroFileTest ./test/hydroFileTest.cc)
 target_link_libraries(hydroFileTest JetScape)
 
+add_executable(hydroJetTest  ./test/hydroJetTest.cc)
+target_link_libraries(hydroJetTest JetScape)
+
 add_executable(writerTest ./test/writerTest.cc)
 target_link_libraries(writerTest JetScape)
 
