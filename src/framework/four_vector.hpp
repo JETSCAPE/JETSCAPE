@@ -100,7 +100,7 @@ namespace Jetscape {
       return(tv);
     };
     
-    double comp(int i)
+    const double comp(int i) const
     {
       switch (i) {
       case 0:
