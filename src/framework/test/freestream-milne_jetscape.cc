@@ -29,7 +29,7 @@ void FREESTREAM::initialize_preequilibrium(PreEquilibriumParameterFile parameter
       exit(-1);
     }
     string input_file = para->FirstChildElement("freestream_input_file")->GetText();//is this necessary? if we just force the user to have the 'freestream_input' file in the correct directory
-  
+
     fsmilne_ptr = new FREESTREAMMILNE();
 }
 
@@ -39,7 +39,7 @@ void FREESTREAM::evolve_preequilibrium() {
     INFO << "Initialize energy density profile in freestream-milne ...";
     // grab initial energy density from vector from initial state module
     std::vector<double> entropy_density = ini->entropy_density_distribution_; //note that this is the energy density when read by freestream-milne
-    std::vector<float> entropy_density_float(entropy_density.begin(), entropy_density.end()); //converting to a float for now
+    std::vector<float> entropy_density_float(entropy_density.begin(), entropy_density.end());
     fsmilne_ptr->initialize_from_vector(entropy_density_float);
     preequilibrium_status_ = INIT;
     if (preequilibrium_status_ == INIT) {
@@ -48,5 +48,7 @@ void FREESTREAM::evolve_preequilibrium() {
         fsmilne_ptr->run_freestream_milne();
         preequilibrium_status_ = DONE;
     }
-    // now send the resulting hydro variables to the hydro module
+    // now prepare to send the resulting hydro variables to the hydro module by coping hydro vectors to Preequilibrium base class members
+    fsmilne_ptr->output_to_vectors(e_, P_, utau_, ux_, uy_, ueta_, pi00_, pi01_, pi02_, pi03_, pi11_, pi12_, pi13_, pi22_, pi23_, pi33_, bulk_Pi_);
+
 }
