@@ -38,7 +38,7 @@ void FREESTREAM::evolve_preequilibrium() {
     VERBOSE(8);
     INFO << "Initialize energy density profile in freestream-milne ...";
     // grab initial energy density from vector from initial state module
-    std::vector<double> entropy_density = ini->entropy_density_distribution_; //note that this is the energy density when read by freestream-milne
+    std::vector<double> entropy_density = ini->entropy_density_distribution_; //note that this is the energy density when read by freestream-milne, not actually the entropy density!
     std::vector<float> entropy_density_float(entropy_density.begin(), entropy_density.end());
     fsmilne_ptr->initialize_from_vector(entropy_density_float);
     preequilibrium_status_ = INIT;
