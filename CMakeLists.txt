@@ -221,6 +221,9 @@ target_link_libraries(hydroFileTest JetScape)
 add_executable(writerTest ./test/writerTest.cc)
 target_link_libraries(writerTest JetScape)
 
+add_executable(SimpleValidate ./test/SimpleValidate.cc)
+target_link_libraries(SimpleValidate JetScape )
+
 ### Read Jetscape output
 add_executable(readerTest ./test/readerTest.cc)
 target_link_libraries(readerTest JetScape )
