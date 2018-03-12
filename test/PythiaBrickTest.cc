@@ -109,9 +109,9 @@ int main(int argc, char** argv)
   //simple test hydros always executed "on the fly" ...
   jetscape->Add(hydro);
 
-  // jloss->Add(matter);
+  jloss->Add(matter);
   // jloss->Add(martini);
-  jloss->Add(adscft);
+  // jloss->Add(adscft);
 
   jlossmanager->Add(jloss);
   
@@ -121,7 +121,7 @@ int main(int argc, char** argv)
   //hadro->Add(hadroModule);
   hadro->Add(colorless);
   hadroMgr->Add(hadro);
-  // jetscape->Add(hadroMgr);
+  jetscape->Add(hadroMgr);
 
 
   jetscape->Add(writer);
