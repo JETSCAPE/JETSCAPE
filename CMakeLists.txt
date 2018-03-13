@@ -206,45 +206,45 @@ SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
 ###########################
 
 ### Run Jetscape
-add_executable(brickTest ./test/brickTest.cc)
+add_executable(brickTest ./examples/brickTest.cc)
 target_link_libraries(brickTest JetScape )
 
-add_executable(PythiaBrickTest ./test/PythiaBrickTest.cc)
+add_executable(PythiaBrickTest ./examples/PythiaBrickTest.cc)
 target_link_libraries(PythiaBrickTest JetScape )
 
-add_executable(LBT_brickTest ./test/LBT_brickTest.cc)
+add_executable(LBT_brickTest ./examples/LBT_brickTest.cc)
 target_link_libraries(LBT_brickTest JetScape )
 
 if(${HDF5_FOUND})
-  add_executable(hydroFileTest ./test/hydroFileTest.cc)
+  add_executable(hydroFileTest ./examples/hydroFileTest.cc)
   set_target_properties (hydroFileTest PROPERTIES COMPILE_FLAGS "-DUSE_HDF5")
   target_link_libraries(hydroFileTest JetScape ${_hdf5_libs})
   
-  add_executable(hydroJetTest  ./test/hydroJetTest.cc)
+  add_executable(hydroJetTest  ./examples/hydroJetTest.cc)
   set_target_properties (hydroJetTest PROPERTIES COMPILE_FLAGS "-DUSE_HDF5")   
   target_link_libraries(hydroJetTest JetScape ${_hdf5_libs})
 endif()
 
-add_executable(writerTest ./test/writerTest.cc)
+add_executable(writerTest ./examples/writerTest.cc)
 target_link_libraries(writerTest JetScape)
 
-add_executable(SimpleValidate ./test/SimpleValidate.cc)
+add_executable(SimpleValidate ./examples/SimpleValidate.cc)
 target_link_libraries(SimpleValidate JetScape )
 
 ### Read Jetscape output
-add_executable(readerTest ./test/readerTest.cc)
+add_executable(readerTest ./examples/readerTest.cc)
 target_link_libraries(readerTest JetScape )
 
-add_executable(FinalStateHadrons ./test/FinalStateHadrons.cc)
+add_executable(FinalStateHadrons ./examples/FinalStateHadrons.cc)
 target_link_libraries(FinalStateHadrons JetScape )
 
-add_executable(FinalStatePartons ./test/FinalStatePartons.cc)
+add_executable(FinalStatePartons ./examples/FinalStatePartons.cc)
 target_link_libraries(FinalStatePartons JetScape )
 
 
 # executables with additional dependencies
 if ( music AND iSS )
-  add_executable(MUSICTest ./test/MUSICTest.cc)
+  add_executable(MUSICTest ./examples/MUSICTest.cc)
   target_link_libraries(MUSICTest JetScape ${MPI_LIBRARIES} ${GSL_LIBRARIES})
 endif (music AND iSS )
 
@@ -259,7 +259,7 @@ endif (music AND iSS )
 
 # -----------------------------------------------------------
 #### copy jetscape_init.xml to build/, such that one can test xml reading in build/ directory
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/test/jetscape_init.xml DESTINATION ${CMAKE_BINARY_DIR}/)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/examples/jetscape_init.xml DESTINATION ${CMAKE_BINARY_DIR}/)
 
 #### copy essential files for MUSIC to build/
 if (music)
@@ -267,7 +267,7 @@ if (music)
     file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/EOS)
     file(COPY ${CMAKE_SOURCE_DIR}/3rdparty/music/EOS/
       DESTINATION ${CMAKE_BINARY_DIR}/EOS)
-    file(COPY ${CMAKE_SOURCE_DIR}/test/test_music_files/music_input
+    file(COPY ${CMAKE_SOURCE_DIR}/examples/test_music_files/music_input
       DESTINATION ${CMAKE_BINARY_DIR})
   else()
     message(FATAL_ERROR "Error: Cannot find files for MUSIC.")

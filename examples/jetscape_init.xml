@@ -43,7 +43,7 @@
      </Trento>
 
      <!-- Options to read initial conditions from saved file ... -->
-     <initial_profile_path>../test/test_hydro_files/ic.hdf5</initial_profile_path>
+     <initial_profile_path>../examples/test_hydro_files/ic.hdf5</initial_profile_path>
    </IS>
 
    <!-- Hard Process/Pythia to be included -->
@@ -137,20 +137,20 @@
         <hydro_from_file>
             <name> hydro from a file </name>
             <read_in_multiple_hydro>1</read_in_multiple_hydro>
-            <hydro_files_folder>../test/test_hydro_files</hydro_files_folder>
+            <hydro_files_folder>../examples/test_hydro_files</hydro_files_folder>
             <!-- read in file type ... -->
             <!-- hydro_type == 1 read in evo file from VISHNew... -->
             <!-- hydro_type == 2 read in evo file from MUSIC... -->
             <hydro_type>1</hydro_type>
             <!-- VISHNew hydro evolution filename (hdf5 format)... -->
-            <VISH_file>../test/test_hydro_files/VISH_evo.h5</VISH_file>
+            <VISH_file>../examples/test_hydro_files/VISH_evo.h5</VISH_file>
             <!-- flag whether read in viscous information -->
             <!-- (only works for VISHNew evo files)... -->
             <load_viscous_info>0</load_viscous_info>
             <!-- MUSIC hydro evolution filename (plain binary format)... -->
             <!-- the associated input file specifies the grid information -->
-            <MUSIC_input_file>../test/test_hydro_files/MUSIC_input</MUSIC_input_file>
-            <MUSIC_file>../test/test_hydro_files/MUSIC_evo.dat</MUSIC_file>
+            <MUSIC_input_file>../examples/test_hydro_files/MUSIC_input</MUSIC_input_file>
+            <MUSIC_file>../examples/test_hydro_files/MUSIC_evo.dat</MUSIC_file>
             <!-- transition temperature between QGP and Hadron Resonance Gas -->
             <T_c>0.154</T_c>
             <!-- read in hydro evo file every Ntau step -->
