@@ -9,8 +9,8 @@
 *.hepmc
 html/*
 build/*
-3rdparty/LBT*
-3rdparty/iSS*
-3rdparty/music*
+external_packages/LBT*
+external_packages/iSS*
+external_packages/music*
 examples/test_hydro_files/
 
