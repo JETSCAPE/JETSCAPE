@@ -120,13 +120,13 @@ Remark: So far on brew HepMC is only available in version 2, version 3 is requir
 MUSIC is a (3+1)D viscous hydrodynamical code developed at McGill university.
 (Official website: http://www.physics.mcgill.ca/MUSIC)
 MUSIC can be integrated into the JETSCAPE framework. To download the lastest
-version of MUSIC, one can run the shell script under the 3rdparty folder,
+version of MUSIC, one can run the shell script under the external_packages folder,
 
 ```bash
     ./get_music.sh
 ```
 
-This shell script will clone the latest version of MUSIC to 3rdparty folder.
+This shell script will clone the latest version of MUSIC to external_packages folder.
 It also setup the enviroment variables for MUSIC to run. Specifically, MUSIC
 needs the folder path for the EOS tables. Please make sure the enviroment
 variable HYDROPROGRAMPATH to be set to the path for MUSIC code package.

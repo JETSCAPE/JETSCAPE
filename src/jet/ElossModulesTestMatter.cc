@@ -15,12 +15,6 @@
 #include "JetScapeXML.h"
 #include <string>
 
-//#include "../3rdparty/MATTER/sudakovs.cpp"
-//#include "../3rdparty/MATTER/generators.cpp"
-//#include "../3rdparty/MATTER/matter_profile.cpp"
-//#include "../3rdparty/MATTER/corrector.cpp"
-
-
 #include "tinyxml2.h"
 #include<iostream>
 

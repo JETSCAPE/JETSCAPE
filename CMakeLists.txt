@@ -29,14 +29,14 @@ option(test "Build all tests." OFF)
 option(music "Build tests for MUSIC" OFF)
 if (music)
   message("Includes for music ...")
-  include_directories(./3rdparty/music ./3rdparty/music/src)
+  include_directories(./external_packages/music ./external_packages/music/src)
 endif (music)
 
 # Soft Particlization. Turn on with 'cmake -Dmusic=ON -DiSS=ON'.
 option(iSS "Build tests for iSS" OFF)
 if (iSS)
   message("Includes for iSS ...")
-  include_directories(./3rdparty/iSS ./3rdparty/iSS/src)
+  include_directories(./external_packages/iSS ./external_packages/iSS/src)
 endif (iSS)
 
 
@@ -83,8 +83,8 @@ message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS})
 ###########################
 # add the library path and inclusion path of trento to jetscape
 # needs to come early for some compilers
-add_subdirectory(3rdparty/trento/)
-include_directories("${CMAKE_SOURCE_DIR}/3rdparty/trento/src/")
+add_subdirectory(external_packages/trento/)
+include_directories("${CMAKE_SOURCE_DIR}/external_packages/trento/src/")
 ###########################
 
 # Find and use Boost.
@@ -159,9 +159,9 @@ include_directories(./src/hydro )
 include_directories(./src/hadro )
 include_directories(./src/jet )
 include_directories(./src/reader )
-include_directories(./3rdparty/)
-include_directories(./3rdparty/gtl/include )
-include_directories(./3rdparty/hydro_from_external_file )
+include_directories(./external_packages/)
+include_directories(./external_packages/gtl/include )
+include_directories(./external_packages/hydro_from_external_file )
 include_directories(./examples/ )
 
 
@@ -170,27 +170,27 @@ include_directories(./examples/ )
 ###################################################
 ### Some additional settings for subdirectories ###
 ###################################################
-add_subdirectory(./3rdparty)
-add_subdirectory(./3rdparty/gtl)
+add_subdirectory(./external_packages)
+add_subdirectory(./external_packages/gtl)
 add_subdirectory(./src)
 
 if (music)
-  if(NOT EXISTS "${CMAKE_SOURCE_DIR}/3rdparty/music")
-    message(FATAL_ERROR "Error: MUSIC source has not been downloaded in 3rdparty by ./get_music.sh")
+  if(NOT EXISTS "${CMAKE_SOURCE_DIR}/external_packages/music")
+    message(FATAL_ERROR "Error: MUSIC source has not been downloaded in external_packages by ./get_music.sh")
   endif()  
   if (${MPI_FOUND} AND ${GSL_FOUND})
     message("Building MUSIC ...")
-    add_subdirectory(./3rdparty/music)
+    add_subdirectory(./external_packages/music)
   else()
     message (FATAL_ERROR "MPI and GSL are necessary for MUSIC" )
   endif()
 endif()
 
 if (iSS)
-  if(EXISTS "${CMAKE_SOURCE_DIR}/3rdparty/iSS")
-    add_subdirectory( ${CMAKE_SOURCE_DIR}/3rdparty/iSS )
+  if(EXISTS "${CMAKE_SOURCE_DIR}/external_packages/iSS")
+    add_subdirectory( ${CMAKE_SOURCE_DIR}/external_packages/iSS )
   else()
-    message(FATAL_ERROR "Error: iSS source has not been downloaded in 3rdparty by ./get_iSS.sh")
+    message(FATAL_ERROR "Error: iSS source has not been downloaded in external_packages by ./get_iSS.sh")
   endif()      
 endif (iSS)
 
@@ -263,9 +263,9 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/examples/jetscape_init.xml DESTINATION ${C
 
 #### copy essential files for MUSIC to build/
 if (music)
-  if(EXISTS "${CMAKE_SOURCE_DIR}/3rdparty/music/EOS/")
+  if(EXISTS "${CMAKE_SOURCE_DIR}/external_packages/music/EOS/")
     file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/EOS)
-    file(COPY ${CMAKE_SOURCE_DIR}/3rdparty/music/EOS/
+    file(COPY ${CMAKE_SOURCE_DIR}/external_packages/music/EOS/
       DESTINATION ${CMAKE_BINARY_DIR}/EOS)
     file(COPY ${CMAKE_SOURCE_DIR}/examples/test_music_files/music_input
       DESTINATION ${CMAKE_BINARY_DIR})
@@ -276,18 +276,18 @@ endif()
 
 #### copy essential files for iSS to build/
 if (iSS)
-  if(EXISTS "${CMAKE_SOURCE_DIR}/3rdparty/iSS/iSS_tables")
-    file(COPY ${CMAKE_SOURCE_DIR}/3rdparty/iSS/iSS_tables DESTINATION ${CMAKE_BINARY_DIR}/)
-    file(COPY ${CMAKE_SOURCE_DIR}/3rdparty/iSS/iSS_parameters.dat DESTINATION ${CMAKE_BINARY_DIR}/)
+  if(EXISTS "${CMAKE_SOURCE_DIR}/external_packages/iSS/iSS_tables")
+    file(COPY ${CMAKE_SOURCE_DIR}/external_packages/iSS/iSS_tables DESTINATION ${CMAKE_BINARY_DIR}/)
+    file(COPY ${CMAKE_SOURCE_DIR}/external_packages/iSS/iSS_parameters.dat DESTINATION ${CMAKE_BINARY_DIR}/)
   else()
-    message(FATAL_ERROR "Error: iSS tables have not been downloaded in 3rdparty by ./get_iSS.sh")
+    message(FATAL_ERROR "Error: iSS tables have not been downloaded in external_packages by ./get_iSS.sh")
   endif()
 endif (iSS)
 
 #### copy essential files for LBT to build/
-if(EXISTS "${CMAKE_SOURCE_DIR}/3rdparty/LBT-tables")
-    execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/3rdparty/LBT-tables ${CMAKE_BINARY_DIR}/LBT-tables)
+if(EXISTS "${CMAKE_SOURCE_DIR}/external_packages/LBT-tables")
+    execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/external_packages/LBT-tables ${CMAKE_BINARY_DIR}/LBT-tables)
 else()
-    message("Warning: LBT-tables have not been downloaded in 3rdparty by ./get_lbtTab.sh; LBT-brickTest will NOT run properly.")
+    message("Warning: LBT-tables have not been downloaded in external_packages by ./get_lbtTab.sh; LBT-brickTest will NOT run properly.")
 endif()
 
