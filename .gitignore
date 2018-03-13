@@ -12,5 +12,5 @@ build/*
 3rdparty/LBT*
 3rdparty/iSS*
 3rdparty/music*
-bin/test_hydro_files/
+examples/test_hydro_files/
 

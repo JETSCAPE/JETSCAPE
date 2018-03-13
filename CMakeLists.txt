@@ -158,11 +158,11 @@ include_directories(./src/initialstate )
 include_directories(./src/hydro )
 include_directories(./src/hadro )
 include_directories(./src/jet )
-include_directories(./src/test )
 include_directories(./src/reader )
 include_directories(./3rdparty/)
 include_directories(./3rdparty/gtl/include )
 include_directories(./3rdparty/hydro_from_external_file )
+include_directories(./examples/ )
 
 
 ### include_directories will be expanded as packages are found
