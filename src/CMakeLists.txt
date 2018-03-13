@@ -9,21 +9,6 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "./lib")
 # framework
 FILE(GLOB frameworksources framework/*.cc)
 set (SOURCES  ${SOURCES}  ${frameworksources} )
-# set (SOURCES
-#   ${SOURCES}
-#   framework/JetScape.cc
-#   framework/JetScapeModuleBase.cc
-#   framework/JetScapeReader.cc
-#   framework/JetScapeSignalManager.cc
-#   framework/JetScapeTask.cc
-#   framework/JetScapeTaskSupport.cc
-#   framework/JetScapeLogger.cc
-#   framework/JetScapeParticles.cc
-#   framework/JetClass.cpp
-#   framework/JetScapeWriterAscii.cc
-#   framework/JetScapeXML.cc
-#   framework/StringTokenizer.cc
-# )
 
 ## Take care of options
 if(NOT ${ZLIB_FOUND})
@@ -52,13 +37,13 @@ endif()
 FILE(GLOB jetsources jet/*.cc)
 set (SOURCES  ${SOURCES}  ${jetsources} )
 
-#hadro
-FILE(GLOB hadrosources hadro/*.cc)
+#hadronization
+FILE(GLOB hadrosources hadronization/*.cc)
 set (SOURCES  ${SOURCES}  ${hadrosources} )
 
 ## Take care of options
 if(NOT ${iSS})
-  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/hadro/iSS_jetscape.cc)
+  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/hadronization/iSS_jetscape.cc)
 endif()
 
 #reader
