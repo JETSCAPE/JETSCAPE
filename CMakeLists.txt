@@ -215,11 +215,15 @@ target_link_libraries(PythiaBrickTest JetScape )
 add_executable(LBT_brickTest ./test/LBT_brickTest.cc)
 target_link_libraries(LBT_brickTest JetScape )
 
-add_executable(hydroFileTest ./test/hydroFileTest.cc)
-target_link_libraries(hydroFileTest JetScape)
-
-add_executable(hydroJetTest  ./test/hydroJetTest.cc)
-target_link_libraries(hydroJetTest JetScape)
+if(${HDF5_FOUND})
+  add_executable(hydroFileTest ./test/hydroFileTest.cc)
+  set_target_properties (hydroFileTest PROPERTIES COMPILE_FLAGS "-DUSE_HDF5")
+  target_link_libraries(hydroFileTest JetScape ${_hdf5_libs})
+  
+  add_executable(hydroJetTest  ./test/hydroJetTest.cc)
+  set_target_properties (hydroJetTest PROPERTIES COMPILE_FLAGS "-DUSE_HDF5")   
+  target_link_libraries(hydroJetTest JetScape ${_hdf5_libs})
+endif()
 
 add_executable(writerTest ./test/writerTest.cc)
 target_link_libraries(writerTest JetScape)
