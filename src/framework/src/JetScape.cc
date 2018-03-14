@@ -158,7 +158,7 @@ void JetScape::Exec()
 	        }
 	        for (auto it : GetTaskList()) {
 	            if (!dynamic_pointer_cast<FluidDynamics>(it)
-                        || !dynamic_pointer_cast<InitialState>(it)) {
+                        && !dynamic_pointer_cast<InitialState>(it)) {
                     continue;
                 }
 	            if (i%n_reuse_hydro_ == n_reuse_hydro_ - 1) {
