@@ -64,7 +64,7 @@ void HadronizationModuleTest::DoHadronization(vector<vector<shared_ptr<Parton>>>
   }
 
   pythia.readString("ProcessLevel:all = off");
-  pythia.readString("PartonLevel:FSR=on");
+  pythia.readString("PartonLevel:FSR=off");
   pythia.init();
   event.reset();
   double pz = 100.0;
