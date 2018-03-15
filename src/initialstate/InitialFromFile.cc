@@ -3,6 +3,7 @@
 
 InitialFromFile::InitialFromFile() {
     SetId("InitialFromFile");
+    event_id_ = -1;
 }
 
 
@@ -13,21 +14,28 @@ void InitialFromFile::InitTask() {
 }
 
 void InitialFromFile::Exec() {  
+    Clear();
     Jetscape::INFO << "Read initial condition from file";
     try {
         auto * xml_path = GetIniStateXML()->FirstChildElement("initial_profile_path");
         if (!xml_path) {
             throw("Not a valid JetScape IS::initial_profile_path XML section in file!");
         } else {
-            std::string path = xml_path->GetText();
-            Jetscape::INFO << "External initial profile path is" << path;
-            int event_id = 0;
+            event_id_++;
+            std::ostringstream path_with_filename;
+            path_with_filename << xml_path->GetText() << "/event-" << event_id_
+                               << "/initial.hdf5";
+            Jetscape::INFO << "External initial profile path is"
+                           << path_with_filename.str();
 
             herr_t status;
             std::ostringstream event_group;
-            event_group << "/event_" << event_id;
+
+
+            //event_group << "/event_0";
+            event_group << "/avg_event"; // this is only temporary before initial.hdf5 is renamed
             Jetscape::INFO << "event_group=" << event_group.str().c_str();
-            H5file_ptr_ = H5Fopen(path.c_str(), H5F_ACC_RDWR, H5P_DEFAULT);
+            H5file_ptr_ = H5Fopen(path_with_filename.str().c_str(), H5F_ACC_RDWR, H5P_DEFAULT);
             H5group_ptr_ = H5Gopen(H5file_ptr_, event_group.str().c_str(), H5P_DEFAULT);
 
             read_configs_();

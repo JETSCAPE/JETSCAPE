@@ -164,6 +164,11 @@ class InitialState : public JetScapeModuleBase {
   /** It is used to access the input parameters from the XML file relevant to the initial state physics.
    */
   tinyxml2::XMLElement * xml_;
+    
+  int event_id_;
+  int get_event_id() const {return(event_id_);}
+  void set_event_id(int event_id_in) {event_id_ = event_id_in;}
+
  private:
   // default assumption: x range = [-grid_max_x_, grid_max_x_]
   // default assumption: y range = [-grid_max_y_, grid_max_y_]
