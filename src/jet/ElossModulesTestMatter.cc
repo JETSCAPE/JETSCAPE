@@ -251,7 +251,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       double now_Rz = initRz+(time-initR0)*initVz;
       double now_temp; 
 
-      if(!in_vac) {
+      if(!in_vac && now_R0>=tStart) {
          if(now_R0*now_R0<now_Rz*now_Rz) cout << "Warning 1: " << now_R0 << "  " << now_Rz << endl;
          GetHydroCellSignal(now_R0, now_Rx, now_Ry, now_Rz, check_fluid_info_ptr);
          //VERBOSE(8)<<MAGENTA<<"Temperature from medium = "<<check_fluid_info_ptr->temperature;
@@ -400,6 +400,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 
                   if(in_vac) continue;
                   if(!recoil_on) continue;
+                  if(el_time<tStart) continue;
 
                   double el_rx=initRx+(el_time-initR0)*initVx;
                   double el_ry=initRy+(el_time-initR0)*initVy;
@@ -1808,7 +1809,7 @@ double Matter::fillQhatTab() {
         tLoc = tStep*i;
 
 	//if(tLoc<initR0-tStep) { // potential problem of making t^2<z^2
-	if(tLoc<initR0) {
+	if(tLoc<initR0 || tLoc<tStart) {
             qhatTab1D[i] = 0.0; 
             continue;	    
         }

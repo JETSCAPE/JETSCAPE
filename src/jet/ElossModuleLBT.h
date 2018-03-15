@@ -303,6 +303,8 @@ class LBT : public JetEnergyLossModule<LBT> //, public std::enable_shared_from_t
   int flagScatter,flag_update,flag_update0;
   double Q00,Q0;
 
+  double tStart=0.6;
+
   //...functions	  
   
   void LBT0(int &n, double &ti);

@@ -65,6 +65,8 @@ class Matter : public JetEnergyLossModule<Matter> //, public std::enable_shared_
   double qhatTab1D[dimQhatTab]={0.0};
   double qhatTab2D[dimQhatTab][dimQhatTab]={{0.0}};
 
+  double tStart=0.6;
+
   long  NUM1;                  
 
   //SC: for elastic scattering
