@@ -34,7 +34,7 @@
      <grid_step_x> 0.2 </grid_step_x>
      <grid_step_y> 0.2 </grid_step_y>
      <grid_step_z> 0.2 </grid_step_z>
-
+     
      <Trento use_module="pre_defined">
          <!-- pre-defined system: default collisions have auau200, pbpb2760, pbpb5020, more in the future -->
          <pre_defined collision_system="auau200" centrality_min="30" centrality_max="40" />
@@ -63,8 +63,8 @@
        </LinesToRead>
      </PythiaGun>     
    </Hard>
-
-
+   
+   
    <!--Eloss Module ... -->
    <Eloss>
 
@@ -109,25 +109,9 @@
 
    </Eloss>
 
-   <!--Preequilibrium Dynamics Module ... -->
-   <Preequilibrium>
-
-     <!-- starting long. proper time for Preequilibrium dynamics ... -->
-     <tau0>0.1</tau0>
-     <!-- switching long. proper time from Preequilibrium dynamics to Hydrodynamics (Landau Matching)... -->
-     <taus>0.2</taus>
-
-     <!-- Individual Preequilibrium Dynamics models  ... -->
-     <FreestreamMilne>
-         <name>FreestreamMilne</name>
-         <freestream_input_file>freestream_input</freestream_input_file>
-     </FreestreamMilne>
-
-   </Preequilibrium>
-
    <!-- Hydro  Module ... -->
    <Hydro>
-
+     
      <Hydro1>
        <name>Hydro1</name>
        <eta> 0.2 </eta>

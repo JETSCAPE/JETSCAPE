@@ -53,9 +53,9 @@ int main(int argc, char** argv)
 {
   clock_t t; t = clock();
   time_t start, end; time(&start);
-
+  
   cout<<endl;
-
+    
   // DEBUG=true by default and REMARK=false
   // can be also set also via XML file (at least partially)
   JetScapeLogger::Instance()->SetInfo(true);
@@ -81,7 +81,7 @@ int main(int argc, char** argv)
   auto hydro = make_shared<MPI_MUSIC> ();
   auto iSS = make_shared<iSS_CF> ();
   //auto hydro = make_shared<GubserHydro> ();
-
+  
   auto matter = make_shared<Matter> ();
   auto martini = make_shared<Martini> ();
   auto adscft = make_shared<AdSCFT> ();
@@ -95,24 +95,24 @@ int main(int argc, char** argv)
   auto pGun= make_shared<PGun> ();
 
 
-  auto printer = make_shared<PartonPrinter> ();
-
+    auto printer = make_shared<PartonPrinter> ();
+    
  //   auto hadroMgr = make_shared<HadronizationManager> ();
  //   auto hadro = make_shared<Hadronization> ();
  //   auto hadroModule = make_shared<HadronizationModuleTest> ();
-
+    
 
   // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
-  //auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");
+  //auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");  
   //auto writer= make_shared<JetScapeWriterHepMC> ("test_out.dat");
   //writer->SetActive(false);
 
   //Remark: For now modules have to be added
   //in proper "workflow" order (can be defined via xml and sorted if necessary)
-
+  
   jetscape->Add(trento);
-
+  
   jetscape->Add(pGun);
 
    //Some modifications will be needed for reusing hydro events, so far
@@ -128,14 +128,14 @@ int main(int argc, char** argv)
   //jloss->Add(adscft);
 
   jlossmanager->Add(jloss);
-
+  
   jetscape->Add(jlossmanager);
   
   jetscape->Add(iSS);
 
 
     jetscape->Add(printer);
-
+    
  //   hadro->Add(hadroModule);
  //   hadroMgr->Add(hadro);
  //   jetscape->Add(hadroMgr);
@@ -153,7 +153,7 @@ int main(int argc, char** argv)
   // "dummy" so far ...
   // Most thinkgs done in write and clear ...
   jetscape->Finish();
-
+  
   INFO_NICE<<"Finished!";
   cout<<endl;
 

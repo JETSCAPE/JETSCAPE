@@ -114,24 +114,7 @@
        <kappa> 0.36 </kappa>
      </AdSCFT>
      
-     </Eloss>
-
-    <!--Preequilibrium Dynamics Module ... -->
-   <Preequilibrium>
-
-     <!-- starting long. proper time for Preequilibrium dynamics ... -->
-     <tau0>0.1</tau0>
-     <!-- switching long. proper time from Preequilibrium dynamics to Hydrodynamics (Landau Matching)... -->
-     <taus>0.2</taus>
-
-     <!-- Individual Preequilibrium Dynamics models  ... -->
-     <FreestreamMilne>
-         <name>FreestreamMilne</name>
-         <freestream_input_file>freestream_input</freestream_input_file>
-     </FreestreamMilne>
-
-   </Preequilibrium>
-
+   </Eloss>
 
    <!-- Hydro  Module ... -->
    <Hydro>

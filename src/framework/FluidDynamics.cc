@@ -51,11 +51,6 @@ void FluidDynamics::Init()
   if (!ini) {
       WARN << "No initialization module, try: auto trento = make_shared<TrentoInitial>(); jetscape->Add(trento);";
   }
-
-  pre_eq_ptr = JetScapeSignalManager::Instance()->GetPreEquilibriumPointer().lock();
-  if (!pre_eq_ptr) {
-      WARN << "No Pre-equilibrium module";
-  }
   
   initialize_hydro(parameter_list);
 
