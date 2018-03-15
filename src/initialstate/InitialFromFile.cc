@@ -14,6 +14,7 @@ void InitialFromFile::InitTask() {
 }
 
 void InitialFromFile::Exec() {  
+    Clear();
     Jetscape::INFO << "Read initial condition from file";
     try {
         auto * xml_path = GetIniStateXML()->FirstChildElement("initial_profile_path");
