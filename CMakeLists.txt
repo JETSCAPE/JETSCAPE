@@ -25,6 +25,14 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmakemodules")
 # Unit Tests. Turn on with 'cmake -Dtest=ON'.
 option(test "Build all tests." OFF)
 
+# freestream. Turn on with 'cmake -Dfreestream=ON'.
+option(freestream "Build tests for freestream-milne" OFF)
+if (freestream)
+  message("Includes for freestream ...")
+  include_directories(./external_packages/freestream-milne
+                      ./external_packages/freestream-milne/src)
+endif (freestream)
+
 # MUSIC. Turn on with 'cmake -Dmusic=ON'.
 option(music "Build tests for MUSIC" OFF)
 if (music)
@@ -174,6 +182,18 @@ add_subdirectory(./external_packages)
 add_subdirectory(./external_packages/gtl)
 add_subdirectory(./src)
 
+if (freestream)
+    if(NOT EXISTS "${CMAKE_SOURCE_DIR}/external_packages/freestream-milne")
+        message(FATAL_ERROR "Error: freestream-milne source has not been downloaded in external_packages by ./get_freestream-milne.sh")
+    endif()
+    message("Building freestream-milne ...")
+    if (${GSL_FOUND})
+        add_subdirectory(./external_packages/freestream-milne)
+    else()
+        message (FATAL_ERROR "MPI and GSL are necessary for MUSIC" )
+    endif()
+endif (freestream)
+
 if (music)
   if(NOT EXISTS "${CMAKE_SOURCE_DIR}/external_packages/music")
     message(FATAL_ERROR "Error: MUSIC source has not been downloaded in external_packages by ./get_music.sh")
@@ -241,8 +261,11 @@ target_link_libraries(FinalStateHadrons JetScape )
 add_executable(FinalStatePartons ./examples/FinalStatePartons.cc)
 target_link_libraries(FinalStatePartons JetScape )
 
-
 # executables with additional dependencies
+if (freestream)
+    add_executable(freestream-milneTest ./src/freestream-milneTest.cc)
+    target_link_libraries(freestream-milneTest JetScape ${GSL_LIBRARIES})
+endif (freestream)
 if ( music AND iSS )
   add_executable(MUSICTest ./examples/MUSICTest.cc)
   target_link_libraries(MUSICTest JetScape ${MPI_LIBRARIES} ${GSL_LIBRARIES})
@@ -262,6 +285,14 @@ endif (music AND iSS )
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/examples/jetscape_init.xml DESTINATION ${CMAKE_BINARY_DIR}/)
 
 #### copy essential files for MUSIC to build/
+if (freestream)
+    if(EXISTS "${CMAKE_SOURCE_DIR}/examples/test_freestream_files/")
+        file(COPY ./examples/test_freestream_files/freestream_input
+             DESTINATION ${CMAKE_BINARY_DIR})
+    else()
+        message(FATAL_ERROR "Error: Cannot find files for freestream-milne.")
+    endif()
+endif (freestream)
 if (music)
   if(EXISTS "${CMAKE_SOURCE_DIR}/external_packages/music/EOS/")
     file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/EOS)
