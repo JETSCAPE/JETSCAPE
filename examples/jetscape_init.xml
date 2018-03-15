@@ -90,7 +90,7 @@
        <brick_med> 0 </brick_med>
        <brick_length> 5.0 </brick_length>
        <hydro_Tc> 0.15 </hydro_Tc>
-       <qhat0> 0.5 </qhat0>
+       <qhat0> 3.0 </qhat0>
        <alphas> 0.25 </alphas>
      </Matter>
 
