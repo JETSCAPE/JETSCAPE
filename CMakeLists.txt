@@ -231,6 +231,9 @@ target_link_libraries(writerTest JetScape)
 add_executable(SimpleValidate ./examples/SimpleValidate.cc)
 target_link_libraries(SimpleValidate JetScape )
 
+add_executable(PWG2Wrapper ./examples/PWG2Wrapper.cc)
+target_link_libraries(PWG2Wrapper JetScape )
+
 ### Read Jetscape output
 add_executable(readerTest ./examples/readerTest.cc)
 target_link_libraries(readerTest JetScape )
@@ -241,13 +244,16 @@ target_link_libraries(FinalStateHadrons JetScape )
 add_executable(FinalStatePartons ./examples/FinalStatePartons.cc)
 target_link_libraries(FinalStatePartons JetScape )
 
-
 # executables with additional dependencies
 if ( music AND iSS )
   add_executable(MUSICTest ./examples/MUSICTest.cc)
   target_link_libraries(MUSICTest JetScape ${MPI_LIBRARIES} ${GSL_LIBRARIES})
 endif (music AND iSS )
 
+if (${ROOT_FOUND})
+  add_executable(pwg2_reader ./examples/pwg2_reader.cxx)
+  target_link_libraries(pwg2_reader JetScape )
+endif(${ROOT_FOUND})
 
 # if (${ROOT_FOUND})
 #   target_link_libraries(brickTest ${ROOT_LIBRARIES})
