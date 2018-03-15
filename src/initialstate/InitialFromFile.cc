@@ -14,6 +14,7 @@ void InitialFromFile::InitTask() {
 }
 
 void InitialFromFile::Exec() {  
+    Clear();
     Jetscape::INFO << "Read initial condition from file";
     try {
         auto * xml_path = GetIniStateXML()->FirstChildElement("initial_profile_path");
@@ -29,6 +30,8 @@ void InitialFromFile::Exec() {
 
             herr_t status;
             std::ostringstream event_group;
+
+
             //event_group << "/event_0";
             event_group << "/avg_event"; // this is only temporary before initial.hdf5 is renamed
             Jetscape::INFO << "event_group=" << event_group.str().c_str();
