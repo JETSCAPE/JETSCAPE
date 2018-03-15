@@ -25,9 +25,9 @@ class MPI_MUSIC: public FluidDynamics {
      void evolve_hydro();
      void get_hydro_info(
         Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
-		std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr);
+        std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr);
      void get_hypersurface(Jetscape::real T_cut,
-                           SurfaceCellInfo* surface_list_ptr) {};
+                           SurfaceCellInfo* surface_list_ptr) {}
 };
 
 #endif  // TEST_MUSIC_JETSCAPE_H_
