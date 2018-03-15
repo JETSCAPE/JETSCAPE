@@ -69,7 +69,7 @@ void JetScapeTask::ClearTasks()
 {
   VERBOSE(7) << " : # Subtasks = "<<tasks.size();
   for (auto it : tasks)
-    it->Clear();
+    if (it->active_exec) it->Clear();
 }
 
 void JetScapeTask::WriteTasks(weak_ptr<JetScapeWriter> w)

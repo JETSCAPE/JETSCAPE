@@ -599,6 +599,14 @@ void LBT::LBT0(int &n, double &ti){
     	VY00 = check_fluid_info_ptr->vy;
     	VZ00 = check_fluid_info_ptr->vz;
 
+        if(tcar0<tStart) {
+	    temp00 = 0.0;
+            sd00 = 0.0;
+    	    VX00 = 0.0;
+    	    VY00 = 0.0;
+    	    VZ00 = 0.0;
+        }
+
         //JSDEBUG << "check temperature: " << temp00;
 
 	//VX00=0.0;
@@ -679,6 +687,15 @@ void LBT::LBT0(int &n, double &ti){
     	  VX = check_fluid_info_ptr->vx;
     	  VY = check_fluid_info_ptr->vy;
     	  VZ = check_fluid_info_ptr->vz;
+
+  	  if(tcar<tStart) {
+	      temp0 = 0.0;
+              sd = 0.0;
+    	      VX = 0.0;
+    	      VY = 0.0;
+    	      VZ = 0.0;
+          }
+
 
           //JSDEBUG << "check temperature: " << temp0;
 	  hydro_ctl=0;
@@ -841,6 +858,13 @@ void LBT::LBT0(int &n, double &ti){
     	    vxLoc = check_fluid_info_ptr->vx;
     	    vyLoc = check_fluid_info_ptr->vy;
     	    vzLoc = check_fluid_info_ptr->vz;
+
+    	    if(tLoc<tStart) {
+	        tempLoc = 0.0;
+    	        vxLoc = 0.0;
+    	        vyLoc = 0.0;
+    	        vzLoc = 0.0;
+            }
 
             if(tempLoc >= hydro_Tc) {
 	        vMag=sqrt(vxLoc*vxLoc+vyLoc*vyLoc+vzLoc*vzLoc);
