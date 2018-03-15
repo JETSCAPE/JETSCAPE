@@ -12,7 +12,6 @@
 #include "JetScapeModuleBase.h"
 #include "tinyxml2.h"
 #include "fluid_dynamics.h"
-#include "PreequilibriumDynamics.h"
 
 namespace Jetscape {
 // in principle one class level too much ... think about and compress ...
@@ -58,7 +57,6 @@ class FluidDynamics : public JetScapeModuleBase , public FluidDynamicsBase
   /** A pointer of type InitialState class.
    */
   std::shared_ptr<InitialState> ini;
-  std::shared_ptr<PreequilibriumDynamics> pre_eq_ptr;
 
   // slots for "jet" signals (will be obsolete ...)
   void UpdateEnergyDeposit(int t, double edop);
