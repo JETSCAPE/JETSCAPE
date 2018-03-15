@@ -30,12 +30,13 @@ void InitialFromFile::Exec() {
 
             herr_t status;
             std::ostringstream event_group;
-            event_group << "/event_0";
+
+
+            //event_group << "/event_0";
+            event_group << "/avg_event"; // this is only temporary before initial.hdf5 is renamed
             Jetscape::INFO << "event_group=" << event_group.str().c_str();
-            H5file_ptr_ = H5Fopen(path_with_filename.str().c_str(),
-                                  H5F_ACC_RDWR, H5P_DEFAULT);
-            H5group_ptr_ = H5Gopen(H5file_ptr_, event_group.str().c_str(),
-                                   H5P_DEFAULT);
+            H5file_ptr_ = H5Fopen(path_with_filename.str().c_str(), H5F_ACC_RDWR, H5P_DEFAULT);
+            H5group_ptr_ = H5Gopen(H5file_ptr_, event_group.str().c_str(), H5P_DEFAULT);
 
             read_configs_();
             read_nbc_dist_();
