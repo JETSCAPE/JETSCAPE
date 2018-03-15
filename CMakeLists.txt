@@ -39,6 +39,22 @@ if (iSS)
   include_directories(./external_packages/iSS ./external_packages/iSS/src)
 endif (iSS)
 
+### Installing Header and Library Files ###
+# Install header files
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/src/framework/" "${CMAKE_SOURCE_DIR}/src/hadronization/" "${CMAKE_SOURCE_DIR}/src/initialstate/" "${CMAKE_SOURCE_DIR}/src/hydro/" "${CMAKE_SOURCE_DIR}/src/jet/" # source directory
+        DESTINATION "${CMAKE_SOURCE_DIR}/include" # target directory
+        FILES_MATCHING # install only matched files
+        PATTERN "*.h*" # select header files
+        PATTERN "data_table" EXCLUDE
+	PATTERN "Martini" EXCLUDE
+)
+
+# Install lib files
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/build/src/lib/" "${CMAKE_SOURCE_DIR}/build/lib/" "${CMAKE_SOURCE_DIR}/build/external_packages/gtl/lib/" "${CMAKE_SOURCE_DIR}/external_packages/trento/src/CMakeFiles/" # source directory
+        DESTINATION "${CMAKE_SOURCE_DIR}/lib" # target directory
+        FILES_MATCHING # install only matched files
+        PATTERN "*.*" # select header files
+)
 
 ###############################
 ### Compiler & Linker Flags ###
