@@ -56,7 +56,7 @@ class Matter : public JetEnergyLossModule<Matter> //, public std::enable_shared_
   double fncQhat(double zeta);
   double fncAvrQhat(double zeta, double tau);
 
-  bool in_vac,brick_med;
+  bool in_vac,brick_med,recoil_on;
   double hydro_Tc,qhat0,alphas,brick_length,vir_factor;
   double initR0,initRx,initRy,initRz,initVx,initVy,initVz,initRdotV,initEner;
   double Q00,Q0,T0;

@@ -60,6 +60,7 @@ void Matter::Init()
  
     in_vac = false;
     brick_med = true;
+    recoil_on = false;
 
     qhat = 0.0;
     Q00 = 1.0; // virtuality separation scale
@@ -86,6 +87,13 @@ void Matter::Init()
     }
     matter->FirstChildElement("in_vac")->QueryIntText(&flagInt);
     in_vac = flagInt;
+
+    if ( !matter->FirstChildElement("recoil_on") ) {
+	WARN << "Couldn't find sub-tag Eloss -> Matter -> recoil_on";
+        throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> recoil_on");
+    }
+    matter->FirstChildElement("recoil_on")->QueryIntText(&flagInt);
+    recoil_on = flagInt;
 
     if ( !matter->FirstChildElement("brick_med") ) {
 	WARN << "Couldn't find sub-tag Eloss -> Matter -> brick_med";
@@ -141,7 +149,7 @@ void Matter::Init()
     }
 
     VERBOSE(7)<< MAGENTA << "MATTER input parameter";
-    INFO << "in_vac: " << in_vac << "  brick_med: " << brick_med;
+    INFO << "in_vac: " << in_vac << "  brick_med: " << brick_med << "  recoil_on: " << recoil_on;
     INFO << "Q00: " << Q00 << " vir_factor: " << vir_factor << "  qhat0: " << qhat0 << " alphas: " << alphas << " hydro_Tc: " << hydro_Tc << " brick_length: " << brick_length;
 
   }
@@ -391,6 +399,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               for(double el_time=initR0; el_time<time+rounding_error; el_time=el_time+el_dt) {
 
                   if(in_vac) continue;
+                  if(!recoil_on) continue;
 
                   double el_rx=initRx+(el_time-initR0)*initVx;
                   double el_ry=initRy+(el_time-initR0)*initVy;
