@@ -1,23 +1,16 @@
 <?xml version="1.0"?>
-<!-- Just for test purposes! -->
-<!-- More details and final format to be determined ... -->
+
 <jetscape>
 
   <debug> on </debug>
   <remark> off </remark>
   <vlevel> 0 </vlevel>
 
-  <!--  If for example one wants to run JetScape purely via xml ... -->
-   <Tasks>
-     <task>Matter</task>
-     <task>Hydro1</task>
-   </Tasks>
-
    <!--  Random Settings. For now, just a global  seed. -->
    <!--  Note: It's each modules responsibility to adopt it -->
    <!--  Note: Most if not all modules should understand 0 to mean a random value -->
    <!--  Note: Both 0 and non-zero values require careful treatment in case of multi-threading -->
-   <!--           An example implementation is (will be) in JetEnergyLossManager.cc -->
+   <!--           An example implementation is in JetEnergyLossManager.cc -->
    <Random>
      <seed>1</seed>
    </Random>
@@ -56,9 +49,8 @@
        <pT>100</pT>
      </PGun>
 
-     <!-- Pythia Gun test, currently with fixed IS pos = 0 -->
+     <!-- Pythia Gun -->
      <!-- Sensible defaults are set in the class. ptHat etc. get their own field -->
-     <!-- Will try to provide a functionality to read in any command lines as well -->
      <PythiaGun>
        <name>PythiaGun</name>
        <pTHatMin>110</pTHatMin>
@@ -68,8 +60,7 @@
 	 HardQCD:all = on	 
        </LinesToRead>
      </PythiaGun>     
-   </Hard>
-   
+   </Hard>   
    
    <!--Eloss Module ... -->
    <Eloss>
