@@ -43,7 +43,7 @@
      </Trento>
 
      <!-- Options to read initial conditions from saved file ... -->
-     <initial_profile_path>../examples/test_hydro_files/ic.hdf5</initial_profile_path>
+     <initial_profile_path>../examples/test_hydro_files</initial_profile_path>
    </IS>
 
    <!-- Hard Process/Pythia to be included -->
