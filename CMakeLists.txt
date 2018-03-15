@@ -7,9 +7,9 @@ project (JetScape)
 
 # Fail if cmake is called in the source directory
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
-    message("source directory:" ${CMAKE_SOURCE_DIR})
-    message("binary directory:" ${CMAKE_BINARY_DIR})
-    message(FATAL_ERROR "You don't want to configure in the source directory!")
+  message("source directory:" ${CMAKE_SOURCE_DIR})
+  message("binary directory:" ${CMAKE_BINARY_DIR})
+  message(FATAL_ERROR "You don't want to configure in the source directory!")
 endif()
 
 # for mac compliance
@@ -39,22 +39,78 @@ if (iSS)
   include_directories(./external_packages/iSS ./external_packages/iSS/src)
 endif (iSS)
 
-### Installing Header and Library Files ###
+###########################
+# add the library path and inclusion path of trento to jetscape
+# needs to come early for some compilers
+add_subdirectory(external_packages/trento/)
+include_directories("${CMAKE_SOURCE_DIR}/external_packages/trento/src/")
+###########################
+
+#############################################
+### Installing Header and Library Files   ###
+#############################################
+## Run with, e.g., cmake -DCMAKE_INSTALL_PREFIX=~/tmp .. 
+## default directory is the build directory
+## Note that trento also automatically populates a bin directory
+## and we cannot disable this behavior
+###
 # Install header files
-install(DIRECTORY "${CMAKE_SOURCE_DIR}/src/framework/" "${CMAKE_SOURCE_DIR}/src/hadronization/" "${CMAKE_SOURCE_DIR}/src/initialstate/" "${CMAKE_SOURCE_DIR}/src/hydro/" "${CMAKE_SOURCE_DIR}/src/jet/" # source directory
-        DESTINATION "${CMAKE_SOURCE_DIR}/include" # target directory
-        FILES_MATCHING # install only matched files
-        PATTERN "*.h*" # select header files
-        PATTERN "data_table" EXCLUDE
-	PATTERN "Martini" EXCLUDE
-)
+# default install prefix: build directory
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  set(CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}"
+    CACHE PATH "Install path prefix, prepended onto install directories."
+    FORCE)
+endif()
+message(STATUS "Now: install prefix is ${CMAKE_INSTALL_PREFIX}")
+
+install(
+  # source directory
+  DIRECTORY
+  # our source
+  "${CMAKE_SOURCE_DIR}/src/framework/"
+  "${CMAKE_SOURCE_DIR}/src/hadronization/"
+  "${CMAKE_SOURCE_DIR}/src/initialstate/"
+  "${CMAKE_SOURCE_DIR}/src/hydro/"
+  "${CMAKE_SOURCE_DIR}/src/jet/"
+  # external packages
+  "${CMAKE_SOURCE_DIR}/external_packages/"
+  "${CMAKE_SOURCE_DIR}/external_packages/gtl/include/"
+  "${CMAKE_SOURCE_DIR}/external_packages/iSS/src/"
+  "${CMAKE_SOURCE_DIR}/external_packages/hydro_from_external_file/src/"
+  "${CMAKE_SOURCE_DIR}/external_packages/music/src/"
+  "${CMAKE_SOURCE_DIR}/external_packages/trento/src/"
+  DESTINATION "include" # target directory
+  FILES_MATCHING # install only matched files
+  PATTERN "*.h*" # select header files
+  ## Necessary to exclude directories to prevent a whole (mostly empty) hierarchy
+  PATTERN "gtl" EXCLUDE
+  PATTERN "iSS" EXCLUDE
+  PATTERN "hydro_from_external_file" EXCLUDE
+  PATTERN "music" EXCLUDE
+  PATTERN "trento" EXCLUDE
+  PATTERN "tests" EXCLUDE
+  PATTERN "data_table" EXCLUDE
+  PATTERN "LBT-tables" EXCLUDE
+  PATTERN "Martini" EXCLUDE
+  PATTERN "googletest" EXCLUDE
+  )
 
 # Install lib files
-install(DIRECTORY "${CMAKE_SOURCE_DIR}/build/src/lib/" "${CMAKE_SOURCE_DIR}/build/lib/" "${CMAKE_SOURCE_DIR}/build/external_packages/gtl/lib/" "${CMAKE_SOURCE_DIR}/external_packages/trento/src/CMakeFiles/" # source directory
-        DESTINATION "${CMAKE_SOURCE_DIR}/lib" # target directory
-        FILES_MATCHING # install only matched files
-        PATTERN "*.*" # select header files
-)
+install(
+  # our libraries
+  DIRECTORY
+  "${PROJECT_BINARY_DIR}/src/lib/"
+  "${PROJECT_BINARY_DIR}/lib/"
+  # external packages
+  "${PROJECT_BINARY_DIR}/external_packages/gtl/lib/"
+  "${PROJECT_BINARY_DIR}/external_packages/iSS/src/"
+  "${PROJECT_BINARY_DIR}/external_packages/music/src/"
+  "${PROJECT_BINARY_DIR}/external_packages/trento/src/"
+  DESTINATION "lib" # target directory
+  FILES_MATCHING # install only matched files
+  PATTERN "lib*.*" # selects .so, .a, .dylib, ...
+  PATTERN "CMakeFiles" EXCLUDE
+  )
 
 ###############################
 ### Compiler & Linker Flags ###
@@ -96,12 +152,6 @@ message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS})
 ### Required packages   ###
 ###########################
 
-###########################
-# add the library path and inclusion path of trento to jetscape
-# needs to come early for some compilers
-add_subdirectory(external_packages/trento/)
-include_directories("${CMAKE_SOURCE_DIR}/external_packages/trento/src/")
-###########################
 
 # Find and use Boost.
 message("Looking for Boost ...")
@@ -113,7 +163,7 @@ include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 message("Looking for ZLIB ...")
 find_package(ZLIB)
 if(${ZLIB_FOUND})
-   message(STATUS "ZLib found")
+  message(STATUS "ZLib found")
 endif()
 
 ###########################
@@ -122,31 +172,31 @@ endif()
 message("Looking for HepMC ...")
 find_package(HEPMC)
 if (${HEPMC_FOUND})
-    include_directories(${HEPMC_INCLUDE_DIR})
-    Message(STATUS "HepMC Include dir : " ${HEPMC_INCLUDE_DIR})
+  include_directories(${HEPMC_INCLUDE_DIR})
+  Message(STATUS "HepMC Include dir : " ${HEPMC_INCLUDE_DIR})
 endif()
 
 message("Looking for ROOT ...")
 find_package(ROOT)
 if (${ROOT_FOUND})
-    include_directories(${ROOT_INCLUDES})
-    Message(STATUS "ROOT Include dir : " ${ROOT_INCLUDES})
-    Message(STATUS "ROOT Libraries : " ${ROOT_LIBRARIES})
+  include_directories(${ROOT_INCLUDES})
+  Message(STATUS "ROOT Include dir : " ${ROOT_INCLUDES})
+  Message(STATUS "ROOT Libraries : " ${ROOT_LIBRARIES})
 endif()
-    
+
 message("Looking for Pythia8 ...")
 find_package(Pythia8)
 if (${PYTHIA8_FOUND})
-    include_directories(${PYTHIA8_INCLUDE_DIR})
-    Message(STATUS "Pythia8 Include dir : " ${PYTHIA8_INCLUDE_DIR})
+  include_directories(${PYTHIA8_INCLUDE_DIR})
+  Message(STATUS "Pythia8 Include dir : " ${PYTHIA8_INCLUDE_DIR})
 endif()
 
 message("Looking for HDF5 ...")
 find_package(HDF5)
 if(${HDF5_FOUND})
-    include_directories(${HDF5_INCLUDE_DIRS})
-    message(STATUS "HDF5 Include dir : " ${HDF5_INCLUDE_DIRS})
-    set(_hdf5_libs ${HDF5_LIBRARIES} ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES})
+  include_directories(${HDF5_INCLUDE_DIRS})
+  message(STATUS "HDF5 Include dir : " ${HDF5_INCLUDE_DIRS})
+  set(_hdf5_libs ${HDF5_LIBRARIES} ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES})
 endif(${HDF5_FOUND})
 
 message("Looking for MPI ...")
@@ -302,8 +352,8 @@ endif (iSS)
 
 #### copy essential files for LBT to build/
 if(EXISTS "${CMAKE_SOURCE_DIR}/external_packages/LBT-tables")
-    execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/external_packages/LBT-tables ${CMAKE_BINARY_DIR}/LBT-tables)
+  execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/external_packages/LBT-tables ${CMAKE_BINARY_DIR}/LBT-tables)
 else()
-    message("Warning: LBT-tables have not been downloaded in external_packages by ./get_lbtTab.sh; LBT-brickTest will NOT run properly.")
+  message("Warning: LBT-tables have not been downloaded in external_packages by ./get_lbtTab.sh; LBT-brickTest will NOT run properly.")
 endif()
 
