@@ -64,6 +64,9 @@ namespace Jetscape {
     /// every task gets their own
     shared_ptr<std::mt19937> get_mt19937_generator( int TaskId );
   
+    // Getters
+    static unsigned int GetRandomSeed() { return random_seed_;};
+
   protected:
     static bool one_generator_per_task_;
     
