@@ -28,6 +28,10 @@ if (iSS)
     set (SOURCES ${SOURCES} iSS_jetscape.cc)
 endif (iSS)
 
+if (freestream)
+    set (SOURCES ${SOURCES} freestream-milne_jetscape.cc)
+endif (freestream)
+
 if(${PYTHIA8_FOUND})
 	set (SOURCES ${SOURCES} PythiaGun.cpp)
 endif()
@@ -60,3 +64,7 @@ endif (music)
 if (iSS)
     target_link_libraries(JetScapeTest JetScape JetScapeHydro hydroFromFile iSS_lib)
 endif (iSS)
+
+if (freestream)
+    target_link_libraries(JetScapeTest JetScape JetScapeHydro hydroFromFile freestream_lib)
+endif (freestream)

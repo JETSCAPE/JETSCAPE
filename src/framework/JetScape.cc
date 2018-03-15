@@ -12,6 +12,7 @@
 #include "FluidDynamics.h"
 #include "JetScapeBanner.h"
 #include "InitialState.h"
+#include "PreequilibriumDynamics.h"
 
 #include<iostream>
 
@@ -99,6 +100,9 @@ void JetScape::SetPointers()
     {
       if (dynamic_pointer_cast<InitialState>(it))
 	JetScapeSignalManager::Instance()->SetInitialStatePointer(dynamic_pointer_cast<InitialState>(it));
+
+      if (dynamic_pointer_cast<PreequilibriumDynamics>(it))
+  JetScapeSignalManager::Instance()->SetPreEquilibriumPointer(dynamic_pointer_cast<PreequilibriumDynamics>(it));
  
       if (dynamic_pointer_cast<FluidDynamics>(it))
 	JetScapeSignalManager::Instance()->SetHydroPointer(dynamic_pointer_cast<FluidDynamics>(it));
