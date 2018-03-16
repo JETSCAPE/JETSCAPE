@@ -39,9 +39,46 @@ if (iSS)
   include_directories(./external_packages/iSS ./external_packages/iSS/src)
 endif (iSS)
 
+###############################
+### Compiler & Linker Flags ###
+###############################
+message("Compiler and Linker flags ...")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O -fPIC -pipe -Wall -std=c++11")
+## can turn off some warnings
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-reorder -Wno-unused-variable ")
+## can turn on debugging information
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+
+### system dependence.
+### note that APPLE also defines UNIX, hence the elseif to differentiate
+if (APPLE)
+  message( STATUS "Apple : " ${CMAKE_HOST_SYSTEM})
+  
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+  ## can turn off some warnings
+  # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-private-field")
+  
+  if(${MPI_FOUND})
+    set(CMAKE_CXX_COMPILE_FLAGS ${CMAKE_CXX_COMPILE_FLAGS} ${MPI_COMPILE_FLAGS})
+    set(CMAKE_CXX_LINK_FLAGS ${CMAKE_CXX_LINK_FLAGS} ${MPI_LINK_FLAGS})
+  endif(${MPI_FOUND})
+elseif(UNIX) 
+  message( STATUS "Linux : " ${CMAKE_HOST_SYSTEM})
+  ## can turn off some warnings
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare -Wno-unused-but-set-variable -Wno-parentheses")
+
+  ## Additional options
+  # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
+endif()   
+
+message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS})	
+#message(STATUS "LD_FLAGS = " ${CMAKE_EXE_LINKER_FLAGS})
+
 ###########################
 # add the library path and inclusion path of trento to jetscape
-# needs to come early for some compilers
+# Placement of this package is important.
+# Needs to come after CXX flags (cause it needs to pickup fPIC)
+# and before install options (cause it overwrites the default location)
 add_subdirectory(external_packages/trento/)
 include_directories("${CMAKE_SOURCE_DIR}/external_packages/trento/src/")
 ###########################
@@ -111,42 +148,6 @@ install(
   PATTERN "lib*.*" # selects .so, .a, .dylib, ...
   PATTERN "CMakeFiles" EXCLUDE
   )
-
-###############################
-### Compiler & Linker Flags ###
-###############################
-message("Compiler and Linker flags ...")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O -fPIC -pipe -Wall -std=c++11")
-## can turn off some warnings
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-reorder -Wno-unused-variable ")
-## can turn on debugging information
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
-
-### system dependence.
-### note that APPLE also defines UNIX, hence the elseif to differentiate
-if (APPLE)
-  message( STATUS "Apple : " ${CMAKE_HOST_SYSTEM})
-  
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
-  ## can turn off some warnings
-  # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-private-field")
-  
-  if(${MPI_FOUND})
-    set(CMAKE_CXX_COMPILE_FLAGS ${CMAKE_CXX_COMPILE_FLAGS} ${MPI_COMPILE_FLAGS})
-    set(CMAKE_CXX_LINK_FLAGS ${CMAKE_CXX_LINK_FLAGS} ${MPI_LINK_FLAGS})
-  endif(${MPI_FOUND})
-elseif(UNIX) 
-  message( STATUS "Linux : " ${CMAKE_HOST_SYSTEM})
-  ## can turn off some warnings
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare -Wno-unused-but-set-variable -Wno-parentheses")
-
-  ## Additional options
-  # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
-endif()   
-
-message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS})	
-#message(STATUS "LD_FLAGS = " ${CMAKE_EXE_LINKER_FLAGS})
-
 
 ###########################
 ### Required packages   ###
