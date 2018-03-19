@@ -111,7 +111,7 @@ install(
   "${CMAKE_SOURCE_DIR}/src/jet/"
   # external packages
   "${CMAKE_SOURCE_DIR}/external_packages/"
-  "${CMAKE_SOURCE_DIR}/external_packages/gtl/include/"
+  "${CMAKE_SOURCE_DIR}/external_packages/gtl/include/GTL/"
   "${CMAKE_SOURCE_DIR}/external_packages/iSS/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/hydro_from_external_file/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/music/src/"
@@ -120,7 +120,7 @@ install(
   FILES_MATCHING # install only matched files
   PATTERN "*.h*" # select header files
   ## Necessary to exclude directories to prevent a whole (mostly empty) hierarchy
-  PATTERN "gtl" EXCLUDE
+  PATTERN "gtl/include" EXCLUDE
   PATTERN "iSS" EXCLUDE
   PATTERN "hydro_from_external_file" EXCLUDE
   PATTERN "music" EXCLUDE
