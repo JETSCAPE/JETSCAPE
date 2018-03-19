@@ -12,6 +12,7 @@
 #include "FluidDynamics.h"
 #include "JetScapeBanner.h"
 #include "InitialState.h"
+#include "PreequilibriumDynamics.h"
 
 #include<iostream>
 
@@ -99,6 +100,9 @@ void JetScape::SetPointers()
     {
       if (dynamic_pointer_cast<InitialState>(it))
 	JetScapeSignalManager::Instance()->SetInitialStatePointer(dynamic_pointer_cast<InitialState>(it));
+
+      if (dynamic_pointer_cast<PreequilibriumDynamics>(it))
+  JetScapeSignalManager::Instance()->SetPreEquilibriumPointer(dynamic_pointer_cast<PreequilibriumDynamics>(it));
  
       if (dynamic_pointer_cast<FluidDynamics>(it))
 	JetScapeSignalManager::Instance()->SetHydroPointer(dynamic_pointer_cast<FluidDynamics>(it));
@@ -150,28 +154,22 @@ void JetScape::Exec()
       }
  
       // For reusal, deactivate task after it has finished but before it gets cleaned up.
-        if (reuse_hydro_) {
-            if (n_reuse_hydro_ <= 0) {
-	            WARN << " reuse_hydro is set, but n_reuse_hydro="
-                     << n_reuse_hydro_;
-	            throw std::runtime_error ("Incompatible reusal settings.");
-	        }
-	        for (auto it : GetTaskList()) {
-	            if (!dynamic_pointer_cast<FluidDynamics>(it)
-                        && !dynamic_pointer_cast<InitialState>(it)) {
-                    continue;
-                }
-	            if (i%n_reuse_hydro_ == n_reuse_hydro_ - 1) {
-	                JSDEBUG << " i was " << i << " i%n_reuse_hydro_ = "
-                            << i%n_reuse_hydro_ << " --> ACTIVATING";
-	                it->SetActive(true);
-	            } else {
-	                JSDEBUG << " i was " << i << " i%n_reuse_hydro_ = "
-                            << i%n_reuse_hydro_ << " --> DE-ACTIVATING";
-	                it->SetActive(false);
-	            }
-	        }
-        }
+      if ( reuse_hydro_ ){
+	if ( n_reuse_hydro_<=0 ){
+	  WARN << " reuse_hydro is set, but n_reuse_hydro=" << n_reuse_hydro_;
+	  throw std::runtime_error ("Incompatible reusal settings.");
+	}
+	for (auto it : GetTaskList()){
+	  if ( ! dynamic_pointer_cast<FluidDynamics>(it)) continue;
+	  if ( i%n_reuse_hydro_ == n_reuse_hydro_-1 ){
+	    JSDEBUG << " i was " << i << " i%n_reuse_hydro_ = " << i%n_reuse_hydro_ << " --> ACTIVATING";
+	    it->SetActive(true);
+	  } else {
+	    JSDEBUG << " i was " << i << " i%n_reuse_hydro_ = " << i%n_reuse_hydro_ << " --> DE-ACTIVATING";
+	    it->SetActive(false);
+	  }
+	}
+      }
 	
       // Now clean up, only affects active taskjs
       JetScapeTask::ClearTasks();

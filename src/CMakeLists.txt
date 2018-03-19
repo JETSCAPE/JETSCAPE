@@ -25,6 +25,14 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/initialstate/data_table/
   DESTINATION ${CMAKE_BINARY_DIR}/data_table
   )
 
+#pre-equilibrium
+FILE(GLOB preeqsources preequilibrium/*.cc)
+set (SOURCES  ${SOURCES}  ${preeqsources} )
+## Take care of options
+if(NOT ${freestream})
+  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/preequilibrium/freestream-milne_jetscape.cc)
+endif()
+
 #hydro
 FILE(GLOB hydrosources hydro/*.cc)
 set (SOURCES  ${SOURCES}  ${hydrosources} )
