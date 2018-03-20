@@ -26,6 +26,7 @@
 #include "music_jetscape.h"
 #include "TrentoInitial.h"
 #include "PGun.h"
+#include "PythiaGun.h"
 #include "PartonPrinter.h"
 //#include "HadronizationManager.h"
 //#include "Hadronization.h"
@@ -86,7 +87,8 @@ int main(int argc, char** argv)
   // This works ... (check with above logic ...)
   //jloss->SetActive(false);
 
-  auto pGun= make_shared<PGun> ();
+  // auto pGun= make_shared<PGun> ();
+  auto pythiaGun= make_shared<PythiaGun> ();
 
   auto printer = make_shared<PartonPrinter> ();
 
@@ -105,7 +107,8 @@ int main(int argc, char** argv)
 
   jetscape->Add(trento);
 
-  jetscape->Add(pGun);
+  // jetscape->Add(pGun);
+  jetscape->Add(pythiaGun);
 
   jetscape->Add(freestream);
 
