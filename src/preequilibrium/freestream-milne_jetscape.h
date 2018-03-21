@@ -3,7 +3,7 @@
 #define TEST_FREESTREAM_JETSCAPE_H_
 
 #include "PreequilibriumDynamics.h"
-#include "FreestreamMilne.cpp" //this file is in 3rdparty/freestream-milne/src/wrapper - how do we include it besides a hard link?
+#include "FreestreamMilne.cpp" 
 
 using namespace Jetscape;
 
