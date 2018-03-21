@@ -18,6 +18,8 @@
 #include "FluidDynamics.h"
 #include "HardProcess.h"
 #include "JetScapeWriter.h"
+#include "PreequilibriumDynamics.h"
+
 
 #include<iostream>
 #include<string>
@@ -37,6 +39,9 @@ class JetScapeSignalManager //: public sigslot::has_slots<sigslot::multi_threade
 
   void SetInitialStatePointer(shared_ptr<InitialState> m_initial) {initial_state=m_initial;}
   weak_ptr<InitialState> GetInitialStatePointer() {return initial_state;}
+
+  void SetPreEquilibriumPointer(shared_ptr<PreequilibriumDynamics> m_pre_eq) {pre_equilibrium=m_pre_eq;}
+  weak_ptr<PreequilibriumDynamics> GetPreEquilibriumPointer() {return pre_equilibrium;}
  
   void SetHydroPointer(shared_ptr<FluidDynamics> m_hydro) {hydro=m_hydro;}
   weak_ptr<FluidDynamics> GetHydroPointer() {return hydro;}
@@ -92,6 +97,7 @@ class JetScapeSignalManager //: public sigslot::has_slots<sigslot::multi_threade
   static JetScapeSignalManager* m_pInstance;
 
   weak_ptr<InitialState> initial_state;
+  weak_ptr<PreequilibriumDynamics> pre_equilibrium;
   weak_ptr<FluidDynamics> hydro;
   weak_ptr<JetEnergyLossManager> jloss;
   weak_ptr<HardProcess> hardp;

@@ -33,14 +33,14 @@ void PythiaGun::InitTask()
   readString("Init:showProcesses = off");
   readString("Init:showChangedSettings = off");
   readString("Init:showMultipartonInteractions = off");
-   readString("Init:showChangedParticleData = off");
+  readString("Init:showChangedParticleData = off");
   if ( JetScapeLogger::Instance()->GetInfo() ) {
     readString("Init:showProcesses = on");
     readString("Init:showChangedSettings = on");
     readString("Init:showMultipartonInteractions = on");
     readString("Init:showChangedParticleData = on");
   }
-  
+
   // No event record printout.
   readString("Next:numberShowInfo = 0"); 
   readString("Next:numberShowProcess = 0"); 
@@ -116,7 +116,8 @@ void PythiaGun::InitTask()
   
   xmle = PythiaXmlDescription->FirstChildElement( "LinesToRead" );
   if ( xmle ){
-    std::stringstream lines; lines << xmle->GetText();
+    std::stringstream lines;
+    lines << xmle->GetText();
     int i=0;
     while(std::getline(lines,s,'\n')){
       if( s.find_first_not_of (" \t\v\f\r") == s.npos ) continue; // skip empty lines
