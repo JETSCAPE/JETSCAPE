@@ -378,7 +378,7 @@ void JetEnergyLoss::WriteTask(weak_ptr<JetScapeWriter> w)
     f->WriteComment("No EnergyLoss Modules were run - No Parton Shower information stored");
   }
   
-  JetScapeTask::WriteTasks(w);
+  // JetScapeTask::WriteTasks(w);
 }
 
 void JetEnergyLoss::PrintShowerInitiatingParton()
