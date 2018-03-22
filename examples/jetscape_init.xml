@@ -178,7 +178,7 @@
   <!-- Jet Hadronization Module -->
    <JetHadronization>
        <name>colored</name>
-       <eCMforHadronization>2760</eCMforHadronization>
+       <eCMforHadronization>1380</eCMforHadronization>
    </JetHadronization>
 
   <!-- Particlization Module  -->
