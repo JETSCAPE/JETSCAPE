@@ -96,8 +96,8 @@ int main(int argc, char** argv)
   
   // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
-  auto writer2= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");  
-  // auto hepmcwriter= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
+  // auto writergz= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");
+  auto hepmcwriter= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
   //writer->SetActive(false);
 
   //Remark: For now modules have to be added
@@ -125,8 +125,8 @@ int main(int argc, char** argv)
 
 
   jetscape->Add(writer);
-  jetscape->Add(writer2);
-  //jetscape->Add(hepmcwriter);
+  jetscape->Add(hepmcwriter);
+  // jetscape->Add(hepmcwriter);
 
   // Intialize all modules tasks
   jetscape->Init();
@@ -141,7 +141,7 @@ int main(int argc, char** argv)
   INFO_NICE<<"Finished!";
   cout<<endl;
 
-// Some information is only known after the full run,
+  // Some information is only known after the full run,
   // Therefore store information at the end of the file, in a footer
   writer->WriteComment ( "EVENT GENERATION INFORMATION" );
   Pythia8::Info& info = pythiaGun->info;
