@@ -1,5 +1,7 @@
 #include "HadronizationModuleTest.h"
+#include "JetScapeXML.h"
 #include "JetScapeLogger.h"
+#include "tinyxml2.h"
 
 
 using namespace Jetscape;
@@ -19,7 +21,22 @@ HadronizationModuleTest::~HadronizationModuleTest()
 
 void HadronizationModuleTest::Init()
 {
-
+    tinyxml2::XMLElement *hadronization= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("JetHadronization" );
+    
+    if ( !hadronization ) {
+        WARN << "Couldn't find tag Jet Hadronization";
+        throw std::runtime_error ("Couldn't find tag Jet Hadronization");
+    }
+    if (hadronization) {
+        string s = hadronization->FirstChildElement( "name" )->GetText();
+        JSDEBUG << s << " to be initializied ...";
+        
+        double p_read_xml = 10000 ;
+        
+        hadronization->FirstChildElement("eCMforHadronization")->QueryDoubleText(&p_read_xml);
+        p_fake = p_read_xml;
+    }
+    
 }
 
 void HadronizationModuleTest::WriteTask(weak_ptr<JetScapeWriter> w)
@@ -46,7 +63,7 @@ void HadronizationModuleTest::DoHadronization(vector<vector<shared_ptr<Parton>>>
   pythia.readString("Init:showChangedSettings = off");
   pythia.readString("Init:showMultipartonInteractions = off");
   pythia.readString("Init:showChangedParticleData = off");
-  if ( JetScapeLogger::Instance()->GetDebug() || JetScapeLogger::Instance()->GetVerboseLevel()>7 ) {
+  if ( JetScapeLogger::Instance()->GetDebug() || JetScapeLogger::Instance()->GetVerboseLevel()>2 ) {
     pythia.readString("Init:showProcesses = on");
     pythia.readString("Init:showChangedSettings = on");
     pythia.readString("Init:showMultipartonInteractions = on");
@@ -65,9 +82,10 @@ void HadronizationModuleTest::DoHadronization(vector<vector<shared_ptr<Parton>>>
 
   pythia.readString("ProcessLevel:all = off");
   pythia.readString("PartonLevel:FSR=off");
+    pythia.readString("HadronLevel:Decay = off");
   pythia.init();
   event.reset();
-  double pz = 100.0;
+  double pz = p_fake;
 //    event.append( 21, 23, 101, 103, 0., 0., 100.0, 100 );
 //    event.append( 21, 23, 103, 101, 0., 0., -100.0, 100);
     
@@ -103,7 +121,7 @@ void HadronizationModuleTest::DoHadronization(vector<vector<shared_ptr<Parton>>>
     }
   
   pz = -1*pz;
-  event.append(pid, 23, anti_color, color, 0.2, 0.2, pz, 100.0004);
+  event.append(pid, 23, anti_color, color, 0.2, 0.2, pz, sqrt(pz*pz + 0.08));
   
     
       
