@@ -40,15 +40,12 @@ namespace Jetscape {
     evt.weights().push_back( GetHeader().GetEventWeight() );
   }
 
-  void JetScapeWriterHepMC::WriteEvent() {
-    
-    INFO<< GetCurrentEvent() << " in HepMC ... ";
-    
-    // Now write the shower
-    INFO << " found " << vertices.size() << " vertices in the list...";
-    
+  void JetScapeWriterHepMC::WriteEvent() {    
+    INFO<<"Run JetScapeWriterHepMC: Write event # "<<GetCurrentEvent();
+
     // Have collected all vertices now, add them to the event
     for( auto v : vertices )      evt.add_vertex( v );
+    INFO << " found " << vertices.size() << " vertices in the list";
     
     write_event(evt);
     vertices.clear();
@@ -59,59 +56,6 @@ namespace Jetscape {
     shared_ptr<PartonShower> pShower = ps.lock();
     if ( !pShower ) return;
     
-    // The following works after a fashion
-    // I.e. it gives a healthy event as read by HepMC3_fileIO_example.exe
-    // However, it also doubles and triples partons, so try a different approach
-#if FALSE
-    // Collect all vertices, remember their origin
-    map <int, HepMC::GenVertex*> IdVertexMap;
-    PartonShower::node_iterator nIt,nEnd;
-    for ( nIt = pShower->nodes_begin(), nEnd = pShower->nodes_end(); nIt != nEnd; ++nIt){
-      IdVertexMap [ nIt->id() ] = castVtxToHepMC( pShower->GetVertex( *nIt ) ) ;
-      IdVertexMap [ nIt->id() ]->set_status( nIt->id() ); // Also remember it in the output
-    }
-
-    // Connect them via partons
-    PartonShower::edge_iterator eIt,eEnd;
-    for ( eIt = pShower->edges_begin(), eEnd = pShower->edges_end(); eIt != eEnd; ++eIt){
-      // cast edge
-      HepMC::GenParticle* p = castParticleToHepMC( pShower->GetParton(*eIt));
-
-      // where it's from
-      IdVertexMap [eIt->source().id()]->add_particle_out( p );
-      // where it points to
-      IdVertexMap [eIt->target().id()]->add_particle_in( p );
-    }
-
-    // Every vertex needs an incoming and an outgoing particle, let's attach those
-    for ( auto& indval : IdVertexMap ){
-      auto& vp = indval.second;
-      // no incoming, copy outgoing
-      if ( vp->particles_in_size() == 0 ){
-	// this should make a copy
-	// Normally, only shallow copies are made which messes everything up...
-	auto pp = *vp->particles_out_const_begin();
-	auto p = make_shared<HepMC::GenParticle>( pp->momentum(), pp->pdg_id(), pp->status() );
-	vp->add_particle_in( p );
-      }
-      // // no outgoing, copy incoming
-      if ( vp->particles_out_size() == 0 ){
-	// this should make a copy
-	// Normally, only shallow copies are made which messes everything up...
-	auto pp = *vp->particles_in_const_begin();
-	auto p = make_shared<HepMC::GenParticle>( pp->momentum(), pp->pdg_id(), pp->status() );
-      	vp->add_particle_out( p );
-      }
-    }
-
-    // copy to list of vertices
-    // there's room for optimization - but note that id is not unique across showers
-    // vertices.clear();    // DEBUG ONLY -- keep only one shower
-    for ( auto& indval : IdVertexMap ){
-      vertices.push_back ( indval.second );
-    }
-#endif
-
     // Need topological order, see
     // https://hepmc.web.cern.ch/hepmc/differences.html
     // That means if parton p1 comes into vertex v, and p2 goes out of v,
@@ -120,31 +64,16 @@ namespace Jetscape {
     // But pythia showers are different from our existing graph structure,
     // So instead try to modify the first attempt to respect top. order
     // and don't create vertices and particles more than once
-    // What we have:
-    // - every node knows it's parent(s) and daughter(s)
-    // - HepMC vertices don't need to be created in order
-    // However:
-    // - even though our graph is directed, we don't know for certain
-    //   that the gtl node iterator delivers nodes in a topological order
-    // But we can at least catch problems and throw errors
-    // --> Strategy
-    // For every node:
-    // 1. check whether it has a mother. Every vertex needs an incoming and an outgoing particle.
-    //    a. if not create a dummy one (clone of an outgoer?)
-    //    b. for all mothers:    
-    //         i) has it already
 
-    // Let's try GTL's topsort
+    // Using GTL's topsort
     // 1. Check that our graph is sane
     if ( !pShower->is_acyclic() ) throw std::runtime_error("PROBLEM in JetScapeWriterHepMC: Graph is not acyclic.");
 
     // 2.
     topsort topsortsearch;
     topsortsearch.scan_whole_graph(true);
-    topsortsearch.start_node();// defaulted to first node
+    topsortsearch.start_node(); // defaults to first node
     topsortsearch.run(*pShower);
-
-    // topsort::topsort_iterator nEnd = topsortsearch.top_order_end();
     auto nEnd = topsortsearch.top_order_end(); // this is a topsort::topsort_iterator
 
     // Need to keep track of already created ones
@@ -160,8 +89,6 @@ namespace Jetscape {
       if ( vused.find ( nIt->id() ) != vused.end() ) throw std::runtime_error("PROBLEM in JetScapeWriterHepMC: Reusing a vertex.");
       vused[ nIt->id() ]=true;
 
-      cout << pShower->GetVertex( *nIt )->x_in().t() << endl;
-
       // 1. Create a new vertex.
       // --------------------------------------------
       auto v = castVtxToHepMC( pShower->GetVertex( *nIt ) );
@@ -176,7 +103,7 @@ namespace Jetscape {
 	  throw std::runtime_error("PROBLEM in JetScapeWriterHepMC: Found a second root.");
 	}
 	foundRoot=true;
-
+	
 	// Some choices here. In general, could just attach to a dummy.
 	// Maybe better: The root should only have exactly one daughter, let's check and clone
 	if ( nIt->outdeg() != 1 ){
@@ -199,14 +126,13 @@ namespace Jetscape {
 	auto inIt  = nIt->in_edges_begin();
 	auto inEnd = nIt->in_edges_end();
 	for ( /* nop */; inIt != inEnd; ++inIt ){
-
 	  auto phepin = CreatedPartons.find ( inIt->id() );
 	  if ( phepin != CreatedPartons.end() ){
 	    // We should already have one!
 	    v->add_particle_in( phepin->second );
 	  } else {
 	    WARN << "Incoming particle out of nowhere. This could maybe happen if we pick up medium particles "
-		 << " but is probably a topsort problem. Try using the code after this throw but be very careful.";
+		 << " but is probably a topsort problem. Try using the code after this throw() but be very careful.";
 	    throw std::runtime_error("PROBLEM in JetScapeWriterHepMC: Incoming particle out of nowhere.");
 
 	    auto in   = pShower->GetParton( *inIt );
@@ -214,9 +140,6 @@ namespace Jetscape {
 	    CreatedPartons [ inIt->id() ] = hepin;
 	    v->add_particle_in( hepin );	    
 	  }
-	  // auto out   = pShower->GetParton( *(nIt->out_edges_begin()) );
-	  // auto hepin = castParticleToHepMC( out );
-	  // v->add_particle_in( hepin );
 	}
       }	      
 
@@ -251,73 +174,9 @@ namespace Jetscape {
 	  v->add_particle_out( hepout );
 	}
       }	      
-
-
-      // if ( nIt->indeg() == 0 )
-      vertices.push_back ( v );
-      cout.precision(3);
-      cout << v->position().t() << endl;
       
+      vertices.push_back ( v );      
     }
-    // for ( auto v : vused ) cout << v.first << "  " << v.second << endl;
-    // throw std::runtime_error("Done");
-	
-    // // 1. Collect all vertices, remember their id
-    // // Creation order of vertices is irrelevant to HepMC
-    // map <int, HepMC::GenVertexPtr> IdVertexMap;
-    // map <int, HepMC::GenParticlePtr> IdParticleMap;
-    // PartonShower::node_iterator nIt,nEnd;
-    // for ( nIt = pShower->nodes_begin(), nEnd = pShower->nodes_end(); nIt != nEnd; ++nIt){
-    //   IdVertexMap [ nIt->id() ] = castVtxToHepMC( pShower->GetVertex( *nIt ) ) ;
-    //   IdVertexMap [ nIt->id() ]->set_status( nIt->id() ); // Also remember id in the output
-
-    //   // Now every particle
-    // }
-
-
-    // // 1. Fill particle information 
-    // std::vector<GenParticlePtr> hepevt_particles;
-    // PartonShower::edge_iterator eIt,eEnd;
-    // for ( eIt = pShower->edges_begin(), eEnd = pShower->edges_end(); eIt != eEnd; ++eIt){
-    //   hepevt_particles.push_back( castParticleToHepMC( pShower->GetParton(*eIt) ) );
-
-    //   // not sure how to deal with mass
-    //   // hepevt_particles.back()->set_generated_mass( pyev[i].m() );
-    // }
-
-
-    // // 2. Fill vertex information
-    // std::vector<GenVertexPtr> vertex_cache;
-    
-
-    // // Create a particle instance for each entry and fill a map, and 
-    // // a vector which maps from the particle index to the GenParticle address.
-    // std::vector<GenParticle*> hepevt_particles;
-    // PartonShower::edge_iterator eIt,eEnd;
-    // for ( eIt = pShower->edges_begin(), eEnd = pShower->edges_end(); eIt != eEnd; ++eIt){      
-    //   // Fill the particle.
-    //   HepMC::GenParticle* p = castParticleToHepMC( pShower->GetParton(*eIt) );
-    //   hepevt_particles.push_back( p );
-    //   // hepevt_particles[i]->suggest_barcode(i);
-    //   // hepevt_particles[i]->set_generated_mass( momFac * pyev[i].m() );
-
-    //   // // Colour flow uses index 1 and 2.
-    //   // int colType = pyev[i].colType();
-    //   // if (colType ==  1 || colType == 2)
-    //   // 	hepevt_particles[i]->set_flow(1, pyev[i].col());
-    //   // if (colType == -1 || colType == 2)
-    //   // 	hepevt_particles[i]->set_flow(2, pyev[i].acol());
-    // }
-
-    // // Could set beam particles here - not trivial in AA?
-    // // evt->set_beam_particles( hepevt_particles[1], hepevt_particles[2] );
-
-    // // 3. Loop over particles AGAIN, this time creating vertices from our own vertices.
-    // // The HEPEVT pointers are bi-directional, so gives decay vertices as well.
-    
-    
-    
-    //Print::content(evt);
   }
 
   void JetScapeWriterHepMC::Init()
