@@ -159,21 +159,26 @@ void JetScape::Exec()
       
       // collect module header data
       for (auto w : vWriter) {
-	auto f = w.lock(); 
+	auto f = w.lock();
 	if ( f ) JetScapeTask::CollectHeaders(w);
       }
       // official header
       for (auto w : vWriter) {
-	auto f = w.lock(); 
+	auto f = w.lock();
 	if ( f ) f->WriteHeaderToFile();
       }
-      
       // event data
       for (auto w : vWriter) {
-	if (w.lock().get())
-	  JetScapeTask::WriteTasks(w);
+	auto f = w.lock();
+	if ( f ) JetScapeTask::WriteTasks(w);
       }
- 
+
+      // Finalize
+      for (auto w : vWriter) {
+	auto f = w.lock();
+	if ( f ) f->WriteEvent();
+      }
+
       // For reusal, deactivate task after it has finished but before it gets cleaned up.
       if ( reuse_hydro_ ){
 	if ( n_reuse_hydro_<=0 ){

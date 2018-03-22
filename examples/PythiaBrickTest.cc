@@ -71,7 +71,7 @@ int main(int argc, char** argv)
   Show();
 
   // auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",10);
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",10);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",1);
   jetscape->SetId("primary");
   // jetscape->set_reuse_hydro (true);
   // jetscape->set_n_reuse_hydro (10);
@@ -96,7 +96,7 @@ int main(int argc, char** argv)
   
   // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
-  // auto writergz= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");
+  auto writergz= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");
   auto hepmcwriter= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
   //writer->SetActive(false);
 
@@ -125,8 +125,8 @@ int main(int argc, char** argv)
 
 
   jetscape->Add(writer);
+  jetscape->Add(writergz);
   jetscape->Add(hepmcwriter);
-  // jetscape->Add(hepmcwriter);
 
   // Intialize all modules tasks
   jetscape->Init();

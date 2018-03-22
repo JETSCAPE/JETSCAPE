@@ -351,8 +351,9 @@ void JetEnergyLoss::WriteTask(weak_ptr<JetScapeWriter> w)
 #ifdef USE_HEPMC
   //If you want HepMC output, pass the whole shower along...
   if (dynamic_pointer_cast<JetScapeWriterHepMC> (f)){
-      VERBOSE(4) << " writing partons... found " << pShower->GetNumberOfPartons();
-      (f)->Write(pShower);
+    VERBOSE(4) << " writing partons... found " << pShower->GetNumberOfPartons();
+    (f)->Write(pShower);
+    return;
   }
 #endif
 

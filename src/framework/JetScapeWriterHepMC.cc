@@ -187,15 +187,16 @@ namespace Jetscape {
   }
   
   void JetScapeWriterHepMC::Exec(){
-    // Too early for HepMC, do the writing in Write, WriteTask
-    // Create basic event structure
-    // WriteEvent();    
+    // Nothing to do
   }
-  
-  void JetScapeWriterHepMC::WriteTask(weak_ptr<JetScapeWriter> w){
-    //redirect - do the writing in WriteEvent, not in exec...
-    WriteEvent();
-  }
+
+  // // NEVER use this!
+  // // Can work with only one writer, but with a second one it gets called twice
+  // void JetScapeWriterHepMC::WriteTask(weak_ptr<JetScapeWriter> w){
+  //   //redirect - do the writing in WriteEvent, not in exec...
+  //   cerr << "GETTING CALLED"<<endl;
+  //   // WriteEvent();
+  // }
 
 
 } // end namespace Jetscape

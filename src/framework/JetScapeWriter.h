@@ -46,13 +46,14 @@ class JetScapeWriter : public JetScapeModuleBase
   virtual void WriteWhiteSpace(string s) {};
   virtual void Write(ostream *o) {};
   virtual void Write(weak_ptr<Hadron> h) {};
-  
-  virtual void WriteEvent() {};
-  // to be defined what data structure ...
-  // or via passing writer to all modules
-  // and handling data writing there ...
 
+
+  /// Gets called first, before all tasks write themselves
   virtual void WriteHeaderToFile(){};
+  
+  /// Gets called last, after all tasks have written themselves
+  virtual void WriteEvent(){};
+
   virtual JetScapeEventHeader& GetHeader() {return header;};
 
  protected:

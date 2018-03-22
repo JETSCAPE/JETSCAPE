@@ -43,10 +43,13 @@ namespace Jetscape {
   bool GetStatus() {return failed();}
   void Close() {close();}
 
-  void WriteTask(weak_ptr<JetScapeWriter> w);
+  // // NEVER use this!
+  // // Can work with only one writer, but with a second one it gets called twice
+  // void WriteTask(weak_ptr<JetScapeWriter> w);
 
   // overload write functions
   void WriteEvent();
+  
   // We should never accept anything other than a full shower
   // void Write(weak_ptr<Vertex> v);
   void Write(weak_ptr<PartonShower> ps);
