@@ -219,12 +219,12 @@ namespace Jetscape {
     
     //  Getters
     
-    const int pid();    
-    const int pstat();    
-    const int plabel();
+    const int pid() const;
+    const int pstat() const;
+    const int plabel() const;
     // const double e();
     // const double pt();
-    const double time();
+    const double time() const;
     
     std::vector<JetScapeParticleBase> parents();
 
