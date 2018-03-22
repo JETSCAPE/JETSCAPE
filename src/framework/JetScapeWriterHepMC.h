@@ -34,28 +34,33 @@ class JetScapeWriterHepMC : public JetScapeWriter , public WriterAscii
 
   void Init();
   void Exec();
-  void WriteTask(weak_ptr<JetScapeWriter> w);
-
+  
   bool GetStatus() {return failed();}
   void Close() {close();}
 
-  // overload write functions ...
-  void WriteEvent(); 
-  void Write(weak_ptr<Vertex> v);
-  void Write(weak_ptr<PartonShower> ps);
+  void WriteTask(weak_ptr<JetScapeWriter> w);
 
+  // overload write functions
+  void WriteEvent();
+  // We should never accept anything other than a full shower
+  // void Write(weak_ptr<Vertex> v);
+  void Write(weak_ptr<PartonShower> ps);
   void WriteHeaderToFile();
 
  private:
 
   HepMC::GenEvent evt;
-  bool vertexFlag;
   vector<HepMC::GenVertex*> vertices;
 
   inline HepMC::GenVertex* castVtxToHepMC(shared_ptr<Vertex> vtx){
-      HepMC::FourVector vtxPosition(vtx->x_in().x(), vtx->x_in().y(), vtx->x_in().z(), vtx->x_in().t());
-      HepMC::GenVertex *hepVtx = new HepMC::GenVertex(vtxPosition);
-      return hepVtx;
+    double x = vtx->x_in().x();
+    double y = vtx->x_in().y();
+    double z = vtx->x_in().z();
+    double t = vtx->x_in().t();
+    HepMC::FourVector vtxPosition( x, y, z, t );
+    //HepMC::FourVector vtxPosition(vtx->x_in().x(), vtx->x_in().y(), vtx->x_in().z(), vtx->x_in().t());
+    HepMC::GenVertex *hepVtx = new HepMC::GenVertex(vtxPosition);
+    return hepVtx;
   }
 
   inline HepMC::GenParticle* castParticleToHepMC(Parton &particle){
