@@ -76,7 +76,8 @@ int main(int argc, char** argv)
 
       cout<<"Analyze current event = "<<reader->GetCurrentEvent()<<endl;
       mShowers=reader->GetPartonShowers();     
-      
+
+      int finals = 0;
       for (int i=0;i<mShowers.size();i++)
 	{
 	  cout<<" Analyze parton shower = "<<i<<endl;
@@ -84,6 +85,8 @@ int main(int argc, char** argv)
 	  mShowers[i]->PrintVertices();
 	  mShowers[i]->PrintPartons();	
 
+	  finals += mShowers[i]->GetFinalPartonsForFastJet().size();
+	   
 	  fjcore::ClusterSequence cs(mShowers[i]->GetFinalPartonsForFastJet(), jet_def);
 
 	  vector<fjcore::PseudoJet> jets = fjcore::sorted_by_pt(cs.inclusive_jets(2));
@@ -109,7 +112,7 @@ int main(int argc, char** argv)
 	  // wait for 5s
 	  //std::this_thread::sleep_for(std::chrono::milliseconds(5000));  
 	}
-      
+      cout << " Found " << finals << " final state partons." << endl;
       auto hadrons = reader->GetHadrons();
       cout<<"Number of hadrons is: " << hadrons.size() << endl;
       
