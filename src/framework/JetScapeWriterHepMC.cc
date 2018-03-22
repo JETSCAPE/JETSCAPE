@@ -20,18 +20,35 @@ JetScapeWriterHepMC::~JetScapeWriterHepMC()
 }
 
 void JetScapeWriterHepMC::Write(weak_ptr<Vertex> v){ 
-    //Setting vertex from initial state...
-    vertices.push_back(castVtxToHepMC(v.lock()));
-    vertexFlag = true;
+  //Setting vertex from initial state...
+  vertices.push_back(castVtxToHepMC(v.lock()));
+  vertexFlag = true;
 }
+  
+void JetScapeWriterHepMC::WriteHeaderToFile()
+{
+  // Expects pb, pythia delivers mb
+  HepMC::GenCrossSection xsec;
+  xsec.set_cross_section( GetHeader().GetSigmaGen() * 1e9, 0);
+  // xsec.set_cross_section( GetSigmaGen() * 1e9, GetSigmaErr() * 1e9);
+  // evt.set_cross_section(xsec);
+  // evt.weights().push_back( GetEventWeight() );
 
+  std::ostringstream oss;
+  oss.str(""); oss << GetId() << " sigmaGen  = " << GetHeader().GetSigmaGen();
+  WriteComment ( oss.str() );
+}
 
 void JetScapeWriterHepMC::WriteEvent()
 {
   INFO<< GetCurrentEvent() << " in HepMC ... ";
 
-  //This function dumps the particles in the JetScapeEvent container (that everyone has access to)
-  GenEvent evt(Units::GEV,Units::MM);
+  // Create event
+  evt = GenEvent(Units::GEV,Units::MM);
+
+  // Fill header information;
+  WriteHeaderToFile();
+  
   
   INFO << " found " << vertices.size() << " vertices in the list...";
   

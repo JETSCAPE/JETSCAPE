@@ -19,8 +19,8 @@
 #include "JetEnergyLoss.h"
 #include "JetEnergyLossManager.h"
 #include "JetScapeWriterAscii.h"
-//#include "JetScapeWriterAsciiGZ.h"
-//#include "JetScapeWriterHepMC.h"
+#include "JetScapeWriterAsciiGZ.h"
+#include "JetScapeWriterHepMC.h"
 
 // User modules derived from jetscape framework clasess
 // to be used to run Jetscape ...
@@ -71,7 +71,7 @@ int main(int argc, char** argv)
   Show();
 
   // auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",10);
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",200);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",10);
   jetscape->SetId("primary");
   // jetscape->set_reuse_hydro (true);
   // jetscape->set_n_reuse_hydro (10);
@@ -96,8 +96,8 @@ int main(int argc, char** argv)
   
   // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
-  //auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");  
-  //auto writer= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
+  auto writer2= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");  
+  // auto hepmcwriter= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
   //writer->SetActive(false);
 
   //Remark: For now modules have to be added
@@ -125,6 +125,8 @@ int main(int argc, char** argv)
 
 
   jetscape->Add(writer);
+  jetscape->Add(writer2);
+  //jetscape->Add(hepmcwriter);
 
   // Intialize all modules tasks
   jetscape->Init();
@@ -144,15 +146,15 @@ int main(int argc, char** argv)
   writer->WriteComment ( "EVENT GENERATION INFORMATION" );
   Pythia8::Info& info = pythiaGun->info;
   std::ostringstream oss;
-  oss.str(""); oss << "nTried    = " << info.nTried();
+  oss.str(""); oss << "Total nTried    = " << info.nTried();
   writer->WriteComment ( oss.str() );
-  oss.str(""); oss << "nSelected = " << info.nSelected();
+  oss.str(""); oss << "Total nSelected = " << info.nSelected();
   writer->WriteComment ( oss.str() );
-  oss.str(""); oss << "nAccepted = " << info.nAccepted();
+  oss.str(""); oss << "Total nAccepted = " << info.nAccepted();
   writer->WriteComment ( oss.str() );
-  oss.str(""); oss << "sigmaGen  = " << info.sigmaGen();  
+  oss.str(""); oss << "Total sigmaGen  = " << info.sigmaGen();  
   writer->WriteComment ( oss.str() );
-  oss.str(""); oss << "sigmaErr  = " << info.sigmaErr();
+  oss.str(""); oss << "Total sigmaErr  = " << info.sigmaErr();
   writer->WriteComment ( oss.str() );
 
   oss.str(""); oss << "eCM  = " << info.eCM();

@@ -75,14 +75,22 @@ void JetScapeTask::ClearTasks()
 void JetScapeTask::WriteTasks(weak_ptr<JetScapeWriter> w)
 {
   //VERBOSE(10);
-  if (active_exec)
-    {
-      for (auto it : tasks)
-	it->WriteTask(w);
-    }
+  if (active_exec) {
+    for (auto it : tasks)
+      it->WriteTask(w);
+  }
 }
 
-void JetScapeTask::Add(shared_ptr<JetScapeTask> m_tasks)
+void JetScapeTask::CollectHeaders(weak_ptr<JetScapeWriter> w)
+{
+  //VERBOSE(10);
+  if (active_exec) {
+    for (auto it : tasks)
+      it->CollectHeader(w);
+  }
+}
+
+  void JetScapeTask::Add(shared_ptr<JetScapeTask> m_tasks)
 {
   tasks.push_back(m_tasks);
 }

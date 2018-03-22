@@ -9,6 +9,7 @@
 
 #include "JetScapeWriterAsciiGZ.h"
 #include "JetScapeLogger.h"
+#include "JetScapeXML.h"
 
 namespace Jetscape {
 
@@ -23,10 +24,21 @@ JetScapeWriterAsciiGZ::~JetScapeWriterAsciiGZ()
       Close();
 }
 
-void JetScapeWriterAsciiGZ::WriteEvent()
+void JetScapeWriterAsciiGZ::WriteHeaderToFile()
 {
-  JSDEBUG<< GetCurrentEvent() << " Event ";
-  output_file<< GetCurrentEvent() << " Event \n";
+  std::ostringstream oss;
+  oss.str(""); oss << GetId() << "sigmaGen " << GetHeader().GetSigmaGen();
+  WriteComment ( oss.str() );
+  oss.str(""); oss << GetId() << "sigmaErr " << GetHeader().GetSigmaErr();
+  WriteComment ( oss.str() );
+  oss.str(""); oss << GetId() << "weight " << GetHeader().GetEventWeight();
+  WriteComment ( oss.str() );
+}
+
+  void JetScapeWriterAsciiGZ::WriteEvent()
+{
+  JSDEBUG<< GetCurrentEvent() << " Event";
+  output_file<< GetCurrentEvent() << " Event\n";
 }
 
 void JetScapeWriterAsciiGZ::Write(weak_ptr<Parton> p)

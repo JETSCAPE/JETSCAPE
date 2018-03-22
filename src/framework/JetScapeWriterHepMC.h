@@ -44,8 +44,11 @@ class JetScapeWriterHepMC : public JetScapeWriter , public WriterAscii
   void Write(weak_ptr<Vertex> v);
   void Write(weak_ptr<PartonShower> ps);
 
+  void WriteHeaderToFile();
+
  private:
 
+  HepMC::GenEvent evt;
   bool vertexFlag;
   vector<HepMC::GenVertex*> vertices;
 

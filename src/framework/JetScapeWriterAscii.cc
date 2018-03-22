@@ -25,11 +25,21 @@ JetScapeWriterAscii::~JetScapeWriterAscii()
       Close();
 }
 
+void JetScapeWriterAscii::WriteHeaderToFile()
+{
+  std::ostringstream oss;
+  oss.str(""); oss << GetId() << "sigmaGen " << GetHeader().GetSigmaGen();
+  WriteComment ( oss.str() );
+  oss.str(""); oss << GetId() << "sigmaErr " << GetHeader().GetSigmaErr();
+  WriteComment ( oss.str() );
+  oss.str(""); oss << GetId() << "weight " << GetHeader().GetEventWeight();
+  WriteComment ( oss.str() );
+}
+  
 void JetScapeWriterAscii::WriteEvent()
 {
   JSDEBUG<< GetCurrentEvent() << " Event";
   Write(to_string(GetCurrentEvent()) + " Event");
-  
 }
 
 void JetScapeWriterAscii::Write(weak_ptr<Parton> p)
