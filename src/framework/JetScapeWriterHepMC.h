@@ -19,17 +19,22 @@
 #include "HepMC/WriterAscii.h"
 #include "HepMC/Print.h"
 
-using namespace HepMC;
+// using namespace HepMC;
+using HepMC::GenEvent;
+using HepMC::GenVertex;
+using HepMC::GenParticle;
+using HepMC::GenVertexPtr;
+using HepMC::GenParticlePtr;
 
 namespace Jetscape {
 
-class JetScapeWriterHepMC : public JetScapeWriter , public WriterAscii
+  class JetScapeWriterHepMC : public JetScapeWriter , public HepMC::WriterAscii
 {
 
  public:
 
- JetScapeWriterHepMC() : WriterAscii("") { SetId("HepMC writer"); };
- JetScapeWriterHepMC(string m_file_name_out) : JetScapeWriter(m_file_name_out), WriterAscii(m_file_name_out) { SetId("HepMC writer"); };
+ JetScapeWriterHepMC() : HepMC::WriterAscii("") { SetId("HepMC writer"); };
+ JetScapeWriterHepMC(string m_file_name_out) : JetScapeWriter(m_file_name_out), HepMC::WriterAscii(m_file_name_out) { SetId("HepMC writer"); };
   virtual ~JetScapeWriterHepMC();
 
   void Init();
@@ -50,30 +55,27 @@ class JetScapeWriterHepMC : public JetScapeWriter , public WriterAscii
  private:
 
   HepMC::GenEvent evt;
-  vector<HepMC::GenVertex*> vertices;
+  vector< HepMC::GenVertexPtr> vertices;
 
-  inline HepMC::GenVertex* castVtxToHepMC(shared_ptr<Vertex> vtx){
+  inline HepMC::GenVertexPtr castVtxToHepMC(const shared_ptr<Vertex> vtx) const {
     double x = vtx->x_in().x();
     double y = vtx->x_in().y();
     double z = vtx->x_in().z();
     double t = vtx->x_in().t();
     HepMC::FourVector vtxPosition( x, y, z, t );
-    //HepMC::FourVector vtxPosition(vtx->x_in().x(), vtx->x_in().y(), vtx->x_in().z(), vtx->x_in().t());
-    HepMC::GenVertex *hepVtx = new HepMC::GenVertex(vtxPosition);
-    return hepVtx;
+    // if ( t< 1e-6 ) t = 1e-6; // could do this. Exact 0 is bit quirky but works for hepmc
+    return make_shared<GenVertex>(vtxPosition);
   }
 
-  inline HepMC::GenParticle* castParticleToHepMC(Parton &particle){
-      HepMC::FourVector pmom(particle.px(), particle.py(), particle.pz(), particle.e());
-      HepMC::GenParticle *p1 = new HepMC::GenParticle(pmom, particle.pid(), particle.pstat());
-      return p1;
+  inline HepMC::GenParticlePtr castParticleToHepMC( const shared_ptr<Parton> pparticle) const {
+    return castParticleToHepMC ( *pparticle );
   }
 
-  inline HepMC::GenParticle* castParticleToHepMC(shared_ptr<Parton> particle){
-      HepMC::FourVector pmom(particle->px(), particle->py(), particle->pz(), particle->e());
-      HepMC::GenParticle *p1 = new HepMC::GenParticle(pmom, particle->pid(), particle->pstat());
-      return p1;
+  inline HepMC::GenParticlePtr castParticleToHepMC(const Parton &particle) const {
+    HepMC::FourVector pmom(particle.px(), particle.py(), particle.pz(), particle.e());
+    return make_shared<GenParticle> (pmom, particle.pid(), particle.pstat());
   }
+
   //int m_precision; //!< Output precision
   
 };
