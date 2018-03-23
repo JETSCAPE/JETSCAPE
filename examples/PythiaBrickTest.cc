@@ -122,10 +122,9 @@ int main(int argc, char** argv)
   hadroMgr->Add(hadro);
   jetscape->Add(hadroMgr);
 
-
-  // jetscape->Add(writer);
-  // jetscape->Add(writergz);
-  // jetscape->Add(hepmcwriter);
+  jetscape->Add(writer);
+  jetscape->Add(writergz);
+  jetscape->Add(hepmcwriter);
 
   // Intialize all modules tasks
   jetscape->Init();
