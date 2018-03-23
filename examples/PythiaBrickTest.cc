@@ -70,8 +70,7 @@ int main(int argc, char** argv)
   
   Show();
 
-  // auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",10);
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",1);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",200);
   jetscape->SetId("primary");
   // jetscape->set_reuse_hydro (true);
   // jetscape->set_n_reuse_hydro (10);
@@ -118,15 +117,15 @@ int main(int argc, char** argv)
   jetscape->Add(jlossmanager);
 
   jetscape->Add(printer);
-  //hadro->Add(hadroModule);
-  hadro->Add(colorless);
+  hadro->Add(hadroModule);
+  // hadro->Add(colorless);
   hadroMgr->Add(hadro);
   jetscape->Add(hadroMgr);
 
 
-  jetscape->Add(writer);
-  jetscape->Add(writergz);
-  jetscape->Add(hepmcwriter);
+  // jetscape->Add(writer);
+  // jetscape->Add(writergz);
+  // jetscape->Add(hepmcwriter);
 
   // Intialize all modules tasks
   jetscape->Init();

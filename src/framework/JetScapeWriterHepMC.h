@@ -50,15 +50,17 @@ namespace Jetscape {
   // overload write functions
   void WriteEvent();
   
-  // We should never accept anything other than a full shower
+  // At parton level, we should never accept anything other than a full shower
   // void Write(weak_ptr<Vertex> v);
   void Write(weak_ptr<PartonShower> ps);
+  void Write(weak_ptr<Hadron> h);
   void WriteHeaderToFile();
 
  private:
 
   HepMC::GenEvent evt;
-  vector< HepMC::GenVertexPtr> vertices;
+  vector< HepMC::GenVertexPtr > vertices;
+  HepMC::GenVertexPtr hadronizationvertex;
 
   inline HepMC::GenVertexPtr castVtxToHepMC(const shared_ptr<Vertex> vtx) const {
     double x = vtx->x_in().x();
@@ -70,11 +72,20 @@ namespace Jetscape {
     return make_shared<GenVertex>(vtxPosition);
   }
 
-  inline HepMC::GenParticlePtr castParticleToHepMC( const shared_ptr<Parton> pparticle) const {
-    return castParticleToHepMC ( *pparticle );
+  inline HepMC::GenParticlePtr castPartonToHepMC( const shared_ptr<Parton> pparticle) const {
+    return castPartonToHepMC ( *pparticle );
   }
 
-  inline HepMC::GenParticlePtr castParticleToHepMC(const Parton &particle) const {
+  inline HepMC::GenParticlePtr castPartonToHepMC(const Parton &particle) const {
+    HepMC::FourVector pmom(particle.px(), particle.py(), particle.pz(), particle.e());
+    return make_shared<GenParticle> (pmom, particle.pid(), particle.pstat());
+  }
+
+  inline HepMC::GenParticlePtr castHadronToHepMC( const shared_ptr<Hadron> pparticle) const {
+    return castHadronToHepMC ( *pparticle );
+  }
+
+  inline HepMC::GenParticlePtr castHadronToHepMC(const Hadron &particle) const {
     HepMC::FourVector pmom(particle.px(), particle.py(), particle.pz(), particle.e());
     return make_shared<GenParticle> (pmom, particle.pid(), particle.pstat());
   }

@@ -49,6 +49,7 @@ namespace Jetscape {
     
     write_event(evt);
     vertices.clear();
+    hadronizationvertex=0;
   }
   
   //This function dumps the particles in a specific parton shower to the event
@@ -110,7 +111,7 @@ namespace Jetscape {
 	  throw std::runtime_error("PROBLEM in JetScapeWriterHepMC: Root has illegal number of daughters");
 	}
 	auto out   = pShower->GetParton( *(nIt->out_edges_begin()) );
-	auto hepin = castParticleToHepMC( out );
+	auto hepin = castPartonToHepMC( out );
 	v->add_particle_in( hepin );
       }	      
 
@@ -136,7 +137,7 @@ namespace Jetscape {
 	    throw std::runtime_error("PROBLEM in JetScapeWriterHepMC: Incoming particle out of nowhere.");
 
 	    auto in   = pShower->GetParton( *inIt );
-	    auto hepin = castParticleToHepMC( in );
+	    auto hepin = castPartonToHepMC( in );
 	    CreatedPartons [ inIt->id() ] = hepin;
 	    v->add_particle_in( hepin );	    
 	  }
@@ -155,7 +156,7 @@ namespace Jetscape {
       	  throw std::runtime_error("PROBLEM in JetScapeWriterHepMC: Need exactly one parent to clone final state partons.");
       	}
       	auto in     = pShower->GetParton( *(nIt->in_edges_begin()) );
-      	auto hepout = castParticleToHepMC( in );
+      	auto hepout = castPartonToHepMC( in );
       	v->add_particle_out( hepout );
 	// Note that we do not register this particle. Since it's pointing nowhere it can never be reused.
       }	      
@@ -169,7 +170,7 @@ namespace Jetscape {
 	    throw std::runtime_error("PROBLEM in JetScapeWriterHepMC: Trying to recreate a preexisting GenParticle.");
 	  }
 	  auto out = pShower->GetParton( *outIt );
-	  auto hepout = castParticleToHepMC( out );		  
+	  auto hepout = castPartonToHepMC( out );
 	  CreatedPartons [ outIt->id() ] = hepout;
 	  v->add_particle_out( hepout );
 	}
@@ -177,6 +178,36 @@ namespace Jetscape {
       
       vertices.push_back ( v );      
     }
+  }
+
+  void JetScapeWriterHepMC::Write(weak_ptr<Hadron> h)
+  {
+    auto hadron = h.lock();
+    if ( !hadron ) return;
+
+    // No clear source for most hadrons
+    // Also, a graph with e.g. recombination hadrons would have loops,
+    // (though the direction should still make it acyclic?)
+    // Not sure how this is supposed to be done in HepMC3
+    // Our solution: Attach all hadrons to one dedicated hadronization vertex.
+    // Future option: Have separate shower and bulk vertices?
+
+    // Create if it doesn't exist yet
+    if ( !hadronizationvertex ) {
+      // dummy position
+      HepMC::FourVector vtxPosition( 0,0,0, 100 ); // set it to a late time...
+      hadronizationvertex =  make_shared<GenVertex>(vtxPosition);
+
+      // dummy mother -- could also maybe use the first/hardest shower initiator
+      HepMC::FourVector pmom(0, 0, 0, 0);
+      make_shared<GenParticle> (pmom, 0, 0);
+      hadronizationvertex->add_particle_in( make_shared<GenParticle> (pmom, 0, 0) );
+
+      vertices.push_back ( hadronizationvertex );
+    }
+
+    // now attach
+    hadronizationvertex->add_particle_out( castHadronToHepMC( hadron ) );
   }
 
   void JetScapeWriterHepMC::Init()
