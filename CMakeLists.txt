@@ -291,6 +291,21 @@ endif (iSS)
 ###########################
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
 
+
+##############################
+### Standalone Reader lib  ###
+##############################
+FILE(GLOB LIBREADERSOURCES src/reader/*.cc)
+set (LIBREADERSOURCES ${LIBREADERSOURCES} )
+set (LIBREADERSOURCES ${LIBREADERSOURCES} src/framework/JetScapeParticles.cc )
+set (LIBREADERSOURCES ${LIBREADERSOURCES} src/framework/StringTokenizer.cc )
+set (LIBREADERSOURCES ${LIBREADERSOURCES} src/framework/JetClass.cc )
+set (LIBREADERSOURCES ${LIBREADERSOURCES} src/framework/JetScapeLogger.cc )
+set (LIBREADERSOURCES ${LIBREADERSOURCES} src/framework/PartonShower.cc )
+
+add_library(JetScapeReader SHARED ${LIBREADERSOURCES})
+target_link_libraries(JetScapeReader JetScapeThird GTL ${PYTHIA8_LIBRARIES})
+
 ###########################
 ### Executables         ###
 ###########################
