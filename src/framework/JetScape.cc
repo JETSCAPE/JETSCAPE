@@ -180,14 +180,17 @@ void JetScape::Exec()
       }
 
       // For reusal, deactivate task after it has finished but before it gets cleaned up.
-      if ( reuse_hydro_ ){
-	if ( n_reuse_hydro_<=0 ){
+      if (reuse_hydro_) {
+	if (n_reuse_hydro_ <= 0) {
 	  WARN << " reuse_hydro is set, but n_reuse_hydro=" << n_reuse_hydro_;
 	  throw std::runtime_error ("Incompatible reusal settings.");
 	}
-	for (auto it : GetTaskList()){
-	  if ( ! dynamic_pointer_cast<FluidDynamics>(it)) continue;
-	  if ( i%n_reuse_hydro_ == n_reuse_hydro_-1 ){
+	for (auto it : GetTaskList()) {
+	  if (!dynamic_pointer_cast<FluidDynamics>(it)
+	      && !dynamic_pointer_cast<InitialState>(it)) {
+	    continue;
+	  }
+	  if (i%n_reuse_hydro_ == n_reuse_hydro_ - 1) {
 	    JSDEBUG << " i was " << i << " i%n_reuse_hydro_ = " << i%n_reuse_hydro_ << " --> ACTIVATING";
 	    it->SetActive(true);
 	  } else {
@@ -196,8 +199,7 @@ void JetScape::Exec()
 	  }
 	}
       }
-	
-      // Now clean up, only affects active tasks
+      // Now clean up, only affects active taskjs
       JetScapeTask::ClearTasks();
 
       IncrementCurrentEvent();
