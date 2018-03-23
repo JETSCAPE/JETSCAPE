@@ -355,6 +355,10 @@ void JetEnergyLoss::WriteTask(weak_ptr<JetScapeWriter> w)
     (f)->Write(pShower);
     return;
   }
+#else
+  WARN << " : HEPMC writer requires the HEPMC library";
+  WARN << " : Please check your cmake setup";
+  throw std::runtime_error("Inconsistent HEPMC configuration");
 #endif
 
   //Own storage of graph structure, needs separate PartonShower reader ...
