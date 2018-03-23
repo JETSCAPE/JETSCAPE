@@ -304,6 +304,7 @@ set (LIBREADERSOURCES ${LIBREADERSOURCES} src/framework/JetScapeLogger.cc )
 set (LIBREADERSOURCES ${LIBREADERSOURCES} src/framework/PartonShower.cc )
 
 add_library(JetScapeReader SHARED ${LIBREADERSOURCES})
+set_target_properties(JetScapeReader PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib )
 target_link_libraries(JetScapeReader JetScapeThird GTL ${PYTHIA8_LIBRARIES})
 
 ###########################
