@@ -79,7 +79,7 @@ int main(int argc, char** argv)
   // auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",5);
   jetscape->SetId("primary");
   jetscape->set_reuse_hydro (true);
-  jetscape->set_n_reuse_hydro (5);
+  jetscape->set_n_reuse_hydro (3);
 
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
