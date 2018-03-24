@@ -62,8 +62,10 @@ void MPI_MUSIC::evolve_hydro() {
     INFO << "Initialize density profiles in MUSIC ...";
     std::vector<double> entropy_density = ini->entropy_density_distribution_;
     double dx = ini->get_x_step();
-    //music_hydro_ptr->initialize_hydro_from_vector(entropy_density, dx);
-    music_hydro_ptr->initialize_hydro_from_pre_equilibrium_vectors(dx,
+    if (pre_eq_ptr == nullptr) {
+        music_hydro_ptr->initialize_hydro_from_vector(entropy_density, dx);
+    } else {
+        music_hydro_ptr->initialize_hydro_from_pre_equilibrium_vectors(dx,
                                                         pre_eq_ptr->e_,
                                                         pre_eq_ptr->utau_,
                                                         pre_eq_ptr->ux_,
@@ -80,6 +82,7 @@ void MPI_MUSIC::evolve_hydro() {
                                                         pre_eq_ptr->pi23_,
                                                         pre_eq_ptr->pi33_,
                                                         pre_eq_ptr->bulk_Pi_);
+    }
 
     INFO << "initial density profile dx = " << dx << " fm";
     hydro_status = INITIALIZED;
