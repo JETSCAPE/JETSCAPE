@@ -184,6 +184,7 @@ message("Looking for HepMC ...")
 find_package(HEPMC)
 if (${HEPMC_FOUND})
   include_directories(${HEPMC_INCLUDE_DIR})
+  set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -DUSE_HEPMC" )
   Message(STATUS "HepMC Include dir : " ${HEPMC_INCLUDE_DIR})
 endif()
 
@@ -207,6 +208,7 @@ find_package(HDF5)
 if(${HDF5_FOUND})
   include_directories(${HDF5_INCLUDE_DIRS})
   message(STATUS "HDF5 Include dir : " ${HDF5_INCLUDE_DIRS})
+  set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -DUSE_HDF5" )
   set(_hdf5_libs ${HDF5_LIBRARIES} ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES})
 endif(${HDF5_FOUND})
 
@@ -307,11 +309,9 @@ target_link_libraries(LBT_brickTest JetScape )
 
 if(${HDF5_FOUND})
   add_executable(hydroFileTest ./examples/hydroFileTest.cc)
-  set_target_properties (hydroFileTest PROPERTIES COMPILE_FLAGS "-DUSE_HDF5")
   target_link_libraries(hydroFileTest JetScape ${_hdf5_libs})
   
   add_executable(hydroJetTest  ./examples/hydroJetTest.cc)
-  set_target_properties (hydroJetTest PROPERTIES COMPILE_FLAGS "-DUSE_HDF5")   
   target_link_libraries(hydroJetTest JetScape ${_hdf5_libs})
 endif()
 
