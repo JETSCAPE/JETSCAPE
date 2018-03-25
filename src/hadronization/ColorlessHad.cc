@@ -8,12 +8,16 @@
 using namespace Jetscape;
 using namespace Pythia8;
 
-Pythia pythia;
-Event& event      = pythia.event;
-ParticleData& pdt = pythia.particleData;
+// Pythia pythia;
+// Event& event      = pythia.event;
+// ParticleData& pdt = pythia.particleData;
 
 //Hadrons output file
 //ofstream hadfile;
+
+// Initialize static helper here
+Pythia8::Pythia ColorlessHad::pythia ("IntentionallyEmpty",false);
+
 
 ColorlessHad::ColorlessHad()
 {
@@ -61,6 +65,8 @@ void ColorlessHad::WriteTask(weak_ptr<JetScapeWriter> w)
 void ColorlessHad::DoHadronization(vector<vector<shared_ptr<Parton>>>& shower, vector<shared_ptr<Hadron>>& hOut, vector<shared_ptr<Parton>>& pOut)
 {
   INFO<<"Start Hadronizing using PYTHIA Lund string model (does NOT use color flow, needs to be tested)...";
+  Event& event      = pythia.event;
+  ParticleData& pdt = pythia.particleData;
   event.reset();
 
   //Hadronize all showers together
