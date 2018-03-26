@@ -119,6 +119,7 @@ install(
   "${CMAKE_SOURCE_DIR}/src/initialstate/"
   "${CMAKE_SOURCE_DIR}/src/hydro/"
   "${CMAKE_SOURCE_DIR}/src/jet/"
+  "${CMAKE_SOURCE_DIR}/src/reader/"
   # external packages
   "${CMAKE_SOURCE_DIR}/external_packages/"
   "${CMAKE_SOURCE_DIR}/external_packages/gtl/include/GTL/"
