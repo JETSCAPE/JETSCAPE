@@ -20,7 +20,7 @@
 //User modules derived from jetscape framework clasess
 //to be used to run Jetscape ...
 #include "AdSCFT.h"
-#include "ElossModulesTestMatter.h"
+#include "Matter.h"
 #include "ElossModulesTestMartini.h"
 #include "freestream-milne_jetscape.h"
 #include "music_jetscape.h"
