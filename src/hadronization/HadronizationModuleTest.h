@@ -18,7 +18,8 @@ class HadronizationModuleTest : public HadronizationModule<HadronizationModuleTe
     
 private:
     double p_fake;
-
+protected:
+    static Pythia8::Pythia pythia;
 };
 
 

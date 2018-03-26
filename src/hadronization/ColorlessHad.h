@@ -18,6 +18,9 @@ class ColorlessHad : public HadronizationModule<ColorlessHad>
   void DoHadronization(vector<vector<shared_ptr<Parton>>>& shower, vector<shared_ptr<Hadron>>& hOut, vector<shared_ptr<Parton>>& pOut);
   void WriteTask(weak_ptr<JetScapeWriter> w);
 
+ protected:
+  static Pythia8::Pythia pythia;  
+  
 };
 
 
