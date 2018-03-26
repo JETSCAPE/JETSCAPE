@@ -21,7 +21,7 @@
 //to be used to run Jetscape ...
 #include "AdSCFT.h"
 #include "Matter.h"
-#include "ElossModulesTestMartini.h"
+#include "Martini.h"
 #include "freestream-milne_jetscape.h"
 #include "music_jetscape.h"
 #include "TrentoInitial.h"

@@ -28,8 +28,8 @@
 // to be used to run Jetscape ...
 #include "AdSCFT.h"
 #include "Matter.h"
-#include "ElossModuleLBT.h"
-#include "ElossModulesTestMartini.h"
+#include "LBT.h"
+#include "Martini.h"
 #include "brick_jetscape.h"
 #include "Gubser_hydro_jetscape.h"
 #include "hydro_file_jetscape.h"

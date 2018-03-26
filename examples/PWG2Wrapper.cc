@@ -20,7 +20,7 @@
 // to be used to run Jetscape ...
 // #include "AdSCFT.h"
 #include "Matter.h"
-// #include "ElossModulesTestMartini.h"
+// #include "Martini.h"
 #include "brick_jetscape.h"
 #include "PythiaGun.h"
 #include "HadronizationManager.h"

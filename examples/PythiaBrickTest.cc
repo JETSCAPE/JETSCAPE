@@ -26,7 +26,7 @@
 // to be used to run Jetscape ...
 #include "AdSCFT.h"
 #include "Matter.h"
-#include "ElossModulesTestMartini.h"
+#include "Martini.h"
 #include "brick_jetscape.h"
 #include "Gubser_hydro_jetscape.h"
 #include "PythiaGun.h"
@@ -109,8 +109,8 @@ int main(int argc, char** argv)
   //simple test hydros always executed "on the fly" ...
   jetscape->Add(hydro);
 
-  jloss->Add(matter);
-  // jloss->Add(martini);
+  // jloss->Add(matter);
+  jloss->Add(martini);
   // jloss->Add(adscft);
 
   jlossmanager->Add(jloss);

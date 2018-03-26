@@ -8,7 +8,7 @@
 //
 // -----------------------------------------
 
-#include "ElossModuleLBT.h"
+#include "LBT.h"
 #include "JetScapeLogger.h"
 #include "JetScapeXML.h"
 

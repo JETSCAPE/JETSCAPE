@@ -10,7 +10,7 @@
 // quick and dirty test class implementation for Eloss modules ...
 // can be used as a user template ...
 
-#include "ElossModulesValidate.h"
+#include "ElossValidation.h"
 #include "JetScapeLogger.h"
 #include "JetScapeXML.h"
 #include <string>
