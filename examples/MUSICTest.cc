@@ -19,8 +19,8 @@
 #include "JetEnergyLoss.h"
 #include "JetEnergyLossManager.h"
 #include "JetScapeWriterAscii.h"
-//#include "JetScapeWriterAsciiGZ.h"
-//#include "JetScapeWriterHepMC.h"
+#include "JetScapeWriterAsciiGZ.h"
+#include "JetScapeWriterHepMC.h"
 
 // User modules derived from jetscape framework clasess
 // to be used to run Jetscape ...
@@ -32,10 +32,9 @@
 #include "TrentoInitial.h"
 #include "PGun.h"
 #include "PartonPrinter.h"
-//#include "HadronizationManager.h"
-//#include "Hadronization.h"
-//#include "HadronizationModuleTest.h"
-
+#include "HadronizationManager.h"
+#include "Hadronization.h"
+#include "HadronizationModuleTest.h"
 
 #include <chrono>
 #include <thread>
@@ -92,27 +91,23 @@ int main(int argc, char** argv)
   // This works ... (check with above logic ...)
   //jloss->SetActive(false);
 
-  auto pGun= make_shared<PGun> ();
-
-
-    auto printer = make_shared<PartonPrinter> ();
+  auto pGun= make_shared<PGun>();
+  auto printer = make_shared<PartonPrinter> ();  
+  auto hadroMgr = make_shared<HadronizationManager> ();
+  auto hadro = make_shared<Hadronization> ();
+  auto hadroModule = make_shared<HadronizationModuleTest> ();
     
- //   auto hadroMgr = make_shared<HadronizationManager> ();
- //   auto hadro = make_shared<Hadronization> ();
- //   auto hadroModule = make_shared<HadronizationModuleTest> ();
-    
-
+  
   // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
-  //auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");  
-  //auto writer= make_shared<JetScapeWriterHepMC> ("test_out.dat");
+  // auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");  
+  auto writerhepmc= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
   //writer->SetActive(false);
 
   //Remark: For now modules have to be added
   //in proper "workflow" order (can be defined via xml and sorted if necessary)
   
-  jetscape->Add(trento);
-  
+  jetscape->Add(trento);  
   jetscape->Add(pGun);
 
    //Some modifications will be needed for reusing hydro events, so far
@@ -126,23 +121,18 @@ int main(int argc, char** argv)
   jloss->Add(matter);
   //jloss->Add(martini);
   //jloss->Add(adscft);
-
   jlossmanager->Add(jloss);
-  
   jetscape->Add(jlossmanager);
-  
+
   jetscape->Add(iSS);
 
-
-    jetscape->Add(printer);
+  jetscape->Add(printer);  
+  hadro->Add(hadroModule);
+  hadroMgr->Add(hadro);
+  jetscape->Add(hadroMgr);
     
- //   hadro->Add(hadroModule);
- //   hadroMgr->Add(hadro);
- //   jetscape->Add(hadroMgr);
-
-
-
   jetscape->Add(writer);
+  jetscape->Add(writerhepmc);
 
   // Intialize all modules tasks
   jetscape->Init();
