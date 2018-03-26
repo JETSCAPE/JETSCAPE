@@ -122,7 +122,6 @@ install(
   "${CMAKE_SOURCE_DIR}/src/reader/"
   # external packages
   "${CMAKE_SOURCE_DIR}/external_packages/"
-  "${CMAKE_SOURCE_DIR}/external_packages/gtl/include/GTL/"
   "${CMAKE_SOURCE_DIR}/external_packages/iSS/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/hydro_from_external_file/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/music/src/"
@@ -131,7 +130,7 @@ install(
   FILES_MATCHING # install only matched files
   PATTERN "*.h*" # select header files
   ## Necessary to exclude directories to prevent a whole (mostly empty) hierarchy
-  PATTERN "gtl/include" EXCLUDE
+  PATTERN "gtl" EXCLUDE
   PATTERN "iSS" EXCLUDE
   PATTERN "hydro_from_external_file" EXCLUDE
   PATTERN "music" EXCLUDE
@@ -141,6 +140,19 @@ install(
   PATTERN "LBT-tables" EXCLUDE
   PATTERN "Martini" EXCLUDE
   PATTERN "googletest" EXCLUDE
+  )
+
+## We have includes of the form #include "GTL/dijkstra.h"
+## which needs to be handled separately
+install(
+  # source directory
+  DIRECTORY
+  "${CMAKE_SOURCE_DIR}/external_packages/gtl/include/"
+  DESTINATION "include" # target directory
+  FILES_MATCHING # install only matched files
+  PATTERN "GTL/*.h*" # select header files
+  ## Necessary to exclude directories to prevent a whole (mostly empty) hierarchy
+  # PATTERN "gtl/src" EXCLUDE
   )
 
 # Install lib files
