@@ -39,7 +39,7 @@
 // for test case ...
 //#include "fluid_dynamics.h"
 #include "brick_jetscape.h"
-#include "Gubser_hydro_jetscape.h"
+#include "GubserHydro.h"
 
 using namespace std;
 using namespace sigslot;

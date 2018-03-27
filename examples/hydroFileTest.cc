@@ -30,7 +30,7 @@
 #include "Matter.h"
 #include "Martini.h"
 #include "brick_jetscape.h"
-#include "Gubser_hydro_jetscape.h"
+#include "GubserHydro.h"
 #include "hydro_file_jetscape.h"
 #include "PGun.h"
 

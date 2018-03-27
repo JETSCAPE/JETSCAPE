@@ -7,7 +7,7 @@
 #include <iostream>
 //#include "fluid_dynamics.h"
 #include <helper.h>
-#include "Gubser_hydro_jetscape.h"
+#include "GubserHydro.h"
 
 #define hbarc 0.19733
 

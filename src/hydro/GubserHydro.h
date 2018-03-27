@@ -1,6 +1,6 @@
 // Copyright @ Chun Shen
-#ifndef TEST_GUBSER_HYDRO_JETSCAPE_H_
-#define TEST_GUBSER_HYDRO_JETSCAPE_H_
+#ifndef GUBSERHYDRO_H
+#define GUBSERHYDRO_H
 
 #include "JetScapeLogger.h"
 
@@ -31,4 +31,4 @@ class GubserHydro: public FluidDynamics {
 
 };
 
-#endif  // TEST_GUBSER_HYDRO_JETSCAPE_H_
+#endif  // GUBSERHYDRO

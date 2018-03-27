@@ -28,7 +28,7 @@
 #include "Matter.h"
 #include "Martini.h"
 #include "brick_jetscape.h"
-#include "Gubser_hydro_jetscape.h"
+#include "GubserHydro.h"
 #include "PythiaGun.h"
 #include "PartonPrinter.h"
 #include "HadronizationManager.h"
