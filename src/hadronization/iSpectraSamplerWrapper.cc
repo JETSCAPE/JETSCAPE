@@ -4,21 +4,21 @@
 // -----------------------------------------
 
 #include "JetScapeLogger.h"
-#include "iSS_jetscape.h"
+#include "iSpectraSamplerWrapper.h"
 
 #include <string>
 
 using namespace Jetscape;
 
-iSS_CF::iSS_CF() {
+iSpectraSamplerWrapper::iSpectraSamplerWrapper() {
     SetId("iSS");
     iSpectraSampler_ptr_ = nullptr;
 }
 
-iSS_CF::~iSS_CF() {
+iSpectraSamplerWrapper::~iSpectraSamplerWrapper() {
 }
 
-void iSS_CF::InitTask() {
+void iSpectraSamplerWrapper::InitTask() {
     INFO << "Initialize a particle sampler (iSS)";
     iSS_xml_ = xml_->FirstChildElement("iSS");
     if (!iSS_xml_) {
@@ -77,7 +77,7 @@ void iSS_CF::InitTask() {
     iSpectraSampler_ptr_->paraRdr_ptr->echo();
 }
 
-void iSS_CF::Exec() {
+void iSpectraSamplerWrapper::Exec() {
     int status = iSpectraSampler_ptr_->read_in_FO_surface();
     if (status != 0) {
         WARN << "Some errors happened in reading in the hyper-surface";
@@ -96,14 +96,14 @@ void iSS_CF::Exec() {
     pass_hadron_list_to_JETSCAPE();
 }
 
-void iSS_CF::Clear() {
+void iSpectraSamplerWrapper::Clear() {
     VERBOSE(2) << "Finish the particle sampling";
     if (iSpectraSampler_ptr_ != nullptr) {
         delete iSpectraSampler_ptr_;
     }
 }
 
-void iSS_CF::pass_hadron_list_to_JETSCAPE() {
+void iSpectraSamplerWrapper::pass_hadron_list_to_JETSCAPE() {
     unsigned int nev = iSpectraSampler_ptr_->get_number_of_sampled_events();
     VERBOSE(2) << "Passing all sampled hadrons to the JETSCAPE framework";
     VERBOSE(4) << "number of events to pass : " << nev;
@@ -137,9 +137,9 @@ void iSS_CF::pass_hadron_list_to_JETSCAPE() {
 
 }
 
-void iSS_CF::WriteTask(weak_ptr<JetScapeWriter> w)
+void iSpectraSamplerWrapper::WriteTask(weak_ptr<JetScapeWriter> w)
 {
-  VERBOSE(4)<<"In iSS_CF::WriteTask";
+  VERBOSE(4)<<"In iSpectraSamplerWrapper::WriteTask";
   w.lock()->WriteComment("JetScape module: "+GetId());
 
   if(Hadron_list_.size()>0)

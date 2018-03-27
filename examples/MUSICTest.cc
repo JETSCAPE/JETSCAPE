@@ -28,7 +28,7 @@
 #include "Matter.h"
 #include "Martini.h"
 #include "music_jetscape.h"
-#include "iSS_jetscape.h"
+#include "iSpectraSamplerWrapper.h"
 #include "TrentoInitial.h"
 #include "PGun.h"
 #include "PartonPrinter.h"
@@ -79,7 +79,7 @@ int main(int argc, char** argv)
   auto jloss = make_shared<JetEnergyLoss> ();
   auto trento = make_shared<TrentoInitial> ();
   auto hydro = make_shared<MPI_MUSIC> ();
-  auto iSS = make_shared<iSS_CF> ();
+  auto iSS = make_shared<iSpectraSamplerWrapper> ();
   //auto hydro = make_shared<GubserHydro> ();
   
   auto matter = make_shared<Matter> ();

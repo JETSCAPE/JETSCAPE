@@ -51,7 +51,7 @@ set (SOURCES  ${SOURCES}  ${hadrosources} )
 
 ## Take care of options
 if(NOT ${iSS})
-  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/hadronization/iSS_jetscape.cc)
+  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/hadronization/iSpectraSamplerWrapper.cc)
 endif()
 
 #reader
