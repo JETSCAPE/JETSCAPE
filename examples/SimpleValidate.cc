@@ -19,7 +19,7 @@
 #include "JetScapeWriterAsciiGZ.h"
 // #include "JetScapeWriterHepMC.h"
 
-#include "brick_jetscape.h"
+#include "Brick.h"
 #include "PGun.h"
 #include "ElossValidation.h"
 #include "PartonPrinter.h"

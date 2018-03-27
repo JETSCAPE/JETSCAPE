@@ -28,7 +28,7 @@
 #include "Matter.h"
 #include "LBT.h"
 #include "Martini.h"
-#include "brick_jetscape.h"
+#include "Brick.h"
 #include "GubserHydro.h"
 #include "PGun.h"
 #include "PartonPrinter.h"

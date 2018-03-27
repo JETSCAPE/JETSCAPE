@@ -8,9 +8,7 @@
 #include <helper.h>
 
 #include "JetScapeLogger.h"
-
-//#include "fluid_dynamics.h"
-#include "brick_jetscape.h"
+#include "Brick.h"
 
 using namespace Jetscape;
 

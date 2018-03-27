@@ -27,7 +27,7 @@
 #include "AdSCFT.h"
 #include "Matter.h"
 #include "Martini.h"
-#include "brick_jetscape.h"
+#include "Brick.h"
 #include "GubserHydro.h"
 #include "PythiaGun.h"
 #include "PartonPrinter.h"

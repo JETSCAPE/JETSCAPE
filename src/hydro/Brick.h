@@ -1,6 +1,6 @@
 // Copyright @ Chun Shen
-#ifndef TEST_BRICK_JETSCAPE_H_
-#define TEST_BRICK_JETSCAPE_H_
+#ifndef BRICK_H
+#define BRICK_H
 
 #include "FluidDynamics.h"
 
@@ -32,4 +32,4 @@ class Brick: public FluidDynamics {
      
 };
 
-#endif  // TEST_BRICK_JETSCAPE_H_
+#endif  // BRICK_H

@@ -38,7 +38,7 @@
 
 // for test case ...
 //#include "fluid_dynamics.h"
-#include "brick_jetscape.h"
+#include "Brick.h"
 #include "GubserHydro.h"
 
 using namespace std;

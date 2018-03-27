@@ -21,7 +21,7 @@
 // #include "AdSCFT.h"
 #include "Matter.h"
 // #include "Martini.h"
-#include "brick_jetscape.h"
+#include "Brick.h"
 #include "PythiaGun.h"
 #include "HadronizationManager.h"
 #include "Hadronization.h"
