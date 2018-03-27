@@ -43,7 +43,7 @@ int main(int argc, char** argv)
       
       // cout<<"Analyze current event: "<<reader->GetCurrentEvent()<<endl;
 
-      dist_output<<"Event "<< reader->GetCurrentEvent()+1<<endl;
+      //dist_output<<"Event "<< reader->GetCurrentEvent()+1<<endl;
       hadrons = reader->GetHadrons();
       cout<<"Number of hadrons is: " << hadrons.size() << endl;
       for(unsigned int i=0; i<hadrons.size(); i++)

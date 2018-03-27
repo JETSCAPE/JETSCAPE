@@ -197,7 +197,7 @@
       <!-- directory path where the hydro surface is stored  -->
       <iSS_working_path>.</iSS_working_path>
       
-      <number_of_repeated_sampling>10</number_of_repeated_sampling>
+      <number_of_repeated_sampling>1</number_of_repeated_sampling>
       <Perform_resonance_decays>1</Perform_resonance_decays>
     </iSS>
   </SoftParticlization>
