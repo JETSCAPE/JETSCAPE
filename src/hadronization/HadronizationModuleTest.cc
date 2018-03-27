@@ -173,8 +173,11 @@ void HadronizationModuleTest::DoHadronization(vector<vector<shared_ptr<Parton>>>
         {
             double x[4];
             x[0]=x[1]=x[2]=x[3]=0.0;
-            hOut.push_back(make_shared<Hadron>(i,event[i].id(),event[i].status(),event[i].pT(),event[i].eta(), event[i].phi(), event[i].e(), x));
-        }
+	    if(-20 < event[i].eta() && event[i].eta() < 20) //To prevent "nan" from propagating, very rare though
+	      {
+		hOut.push_back(make_shared<Hadron>(i,event[i].id(),event[i].status(),event[i].pT(),event[i].eta(), event[i].phi(), event[i].e(), x));
+	      }
+	}
     }
     
     shower.clear();
