@@ -27,7 +27,7 @@
 #include "AdSCFT.h"
 #include "Matter.h"
 #include "Martini.h"
-#include "music_jetscape.h"
+#include "MusicWrapper.h"
 #include "iSpectraSamplerWrapper.h"
 #include "TrentoInitial.h"
 #include "PGun.h"

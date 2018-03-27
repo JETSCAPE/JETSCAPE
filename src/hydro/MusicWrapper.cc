@@ -7,7 +7,7 @@
 #include <vector>
 
 #include "JetScapeLogger.h"
-#include "music_jetscape.h"
+#include "MusicWrapper.h"
 
 using namespace Jetscape;
 

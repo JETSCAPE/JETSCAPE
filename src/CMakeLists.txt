@@ -38,7 +38,7 @@ FILE(GLOB hydrosources hydro/*.cc)
 set (SOURCES  ${SOURCES}  ${hydrosources} )
 ## Take care of options
 if(NOT ${music})
-  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/hydro/music_jetscape.cc)
+  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/hydro/MusicWrapper.cc)
 endif()
 
 #jet

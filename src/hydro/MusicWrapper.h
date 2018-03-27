@@ -1,6 +1,6 @@
 // Copyright @ Bjoern Schenke, Sangyong Jeon, Charles Gale, and Chun Shen
-#ifndef TEST_MUSIC_JETSCAPE_H_
-#define TEST_MUSIC_JETSCAPE_H_
+#ifndef MUSICWRAPPER_H
+#define MUSICWRAPPER_H
 
 #include "FluidDynamics.h"
 #include "music.h"
@@ -11,7 +11,7 @@ using namespace Jetscape;
 //! library for the JETSCAPE integrated framework
 class MPI_MUSIC: public FluidDynamics {
  private:
-    int mode;            //!< records running mode
+    // int mode;            //!< records running mode
     MUSIC *music_hydro_ptr;
     int doCooperFrye;    //!< flag to run Cooper-Frye freeze-out
                          //!< for soft particles
@@ -30,4 +30,4 @@ class MPI_MUSIC: public FluidDynamics {
                            SurfaceCellInfo* surface_list_ptr) {};
 };
 
-#endif  // TEST_MUSIC_JETSCAPE_H_
+#endif // MUSICWRAPPER_H

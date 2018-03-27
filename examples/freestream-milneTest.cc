@@ -23,7 +23,7 @@
 #include "Matter.h"
 #include "Martini.h"
 #include "FreestreamMilneWrapper.h"
-#include "music_jetscape.h"
+#include "MusicWrapper.h"
 #include "TrentoInitial.h"
 #include "PGun.h"
 #include "PythiaGun.h"
