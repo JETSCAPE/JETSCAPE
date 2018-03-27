@@ -15,7 +15,7 @@
 #include <fstream>
 #include <math.h>
 #include "JetEnergyLossModule.h"
-#include "constants.h"
+#include "JetScapeConstants.h"
 
 using namespace Jetscape;
 

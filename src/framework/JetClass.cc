@@ -12,7 +12,7 @@
 #include <cmath>
 #include <assert.h>
 #include "JetClass.h"
-#include "constants.h"
+#include "JetScapeConstants.h"
 #include "JetScapeLogger.h"
 
 namespace Jetscape {

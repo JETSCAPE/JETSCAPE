@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "JetScapeParticles.hpp"
-#include "constants.h"
+#include "JetScapeConstants.h"
 #include "four_vector.hpp"
 #include "fjcore.hh"
 

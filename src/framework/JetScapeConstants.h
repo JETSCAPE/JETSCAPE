@@ -1,13 +1,13 @@
 //
-//  constants.h
+//  JetScapeConstants.h
 //  
 //
 //  Created by Abhijit Majumder on 11/26/16.
 //
 //
 
-#ifndef constants_h
-#define constants_h
+#ifndef JETSCAPECONSTANTS_H
+#define JETSCAPECONSTANTS_H
 
 namespace Jetscape {
 
@@ -73,4 +73,4 @@ static int sid=3;
 /*******************************************************************/
 
 };
-#endif /* constants_h */
+#endif // JETSCAPECONSTANTS_H

@@ -13,7 +13,7 @@
 #include <assert.h>
 #include "JetScapeLogger.h"
 #include "JetScapeParticles.hpp"
-#include "constants.h"
+#include "JetScapeConstants.h"
 
 namespace Jetscape {
 
