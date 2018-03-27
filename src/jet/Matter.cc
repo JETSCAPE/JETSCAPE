@@ -279,9 +279,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 
 	  // SC:  
           double pT2 = pIn[i].p(1)*pIn[i].p(1)+pIn[i].p(2)*pIn[i].p(2);
-	  double max_vir;
-	  if(vir_factor<0.0) max_vir = pIn[i].e()*pIn[i].e();
-	  else max_vir = pT2 * vir_factor;
+          double max_vir;
+          if(vir_factor<0.0) max_vir = pIn[i].e()*pIn[i].e();
+          else max_vir = pT2 * vir_factor;
 
           if(max_vir<=QS) {
 	      tQ2 = 0.0;
@@ -345,20 +345,26 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       //if(pIn[i].color()==0 && pIn[i].anti_color()==0) cout << "complain 0 0 color." << endl;
 
       // SC: Q0 can be changed based on different setups
-      if(in_vac) { // for vaccuum
-	  qhat = 0.0;
-	  if(Q00 < 0.0) Q0 = 1.0; // set Q0 = 1 if Q00 < 0
-	  else Q0 = Q00;
-      } else { // for medium    
-	  double tempEner = initEner;
+      if(in_vac)
+      { // for vaccuum
+          qhat = 0.0;
+          if(Q00 < 0.0) Q0 = 1.0; // set Q0 = 1 if Q00 < 0
+          else Q0 = Q00;
+      }
+      else
+      { // for medium
+          double tempEner = initEner;
           qhat = fncQhat(zeta);
 
-	  if(Q00 < 0.0) { // use dynamical Q0 if Q00 < 0
-	      if(pid==gid) Q0 = sqrt(sqrt(2.0*tempEner*qhat*sqrt(2.0)));
-	      else Q0 = sqrt(sqrt(2.0*tempEner*qhat*sqrt(2.0)/Ca*Cf));
-	      if(Q0 < 1.0) Q0 = 1.0;
-	      if(zeta > length) Q0 = 1.0;
-	  } else {
+          if(Q00 < 0.0)
+          { // use dynamical Q0 if Q00 < 0
+              if(pid==gid) Q0 = sqrt(sqrt(2.0*tempEner*qhat*sqrt(2.0)));
+              else Q0 = sqrt(sqrt(2.0*tempEner*qhat*sqrt(2.0)/Ca*Cf));
+              if(Q0 < 1.0) Q0 = 1.0;
+              if(zeta > length) Q0 = 1.0;
+          }
+          else
+          {
               Q0 = Q00;
           }
       }
@@ -385,18 +391,19 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
     
               // SC: add elastic scattering that generates recoiled and back-reaction partons
               double el_dt=0.1;
-	      double el_p0[5];
-	      double el_CR;
-	      double el_rand;
+              double el_p0[5];
+              double el_CR;
+              double el_rand;
 
-	      if(pid==gid) el_CR=Ca;
-	      else el_CR=Cf;
+              if(pid==gid) el_CR=Ca;
+              else el_CR=Cf;
 
               for(int j=1; j<=3; j++) el_p0[j] = pIn[i].p(j);
-	      el_p0[0]=pIn[i].e();
-	      el_p0[4]=pIn[i].t();
+              el_p0[0]=pIn[i].e();
+              el_p0[4]=pIn[i].t();
 
-              for(double el_time=initR0; el_time<time+rounding_error; el_time=el_time+el_dt) {
+              for(double el_time=initR0; el_time<time+rounding_error; el_time=el_time+el_dt)
+              {
 
                   if(in_vac) continue;
                   if(!recoil_on) continue;
@@ -407,25 +414,24 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   double el_rz=initRz+(el_time-initR0)*initVz;
 
                   double tempLoc,sdLoc,vxLoc,vyLoc,vzLoc,qhatLoc,enerLoc;
-		  double betaLoc,gammaLoc,flowFactor;
-		  int hydro_ctl;
-		  double dt_lrf;
+                  double betaLoc,gammaLoc,flowFactor;
+                  int hydro_ctl;
+                  double dt_lrf;
 
-		  double pc0[4]={0.0};
-		  double vc0[4]={0.0};
-		  double soln_alphas,prob_el;
-		  double muD2;
-		  double recordE0;
+                  double pc0[4]={0.0};
+                  double vc0[4]={0.0};
+                  double soln_alphas,prob_el;
+                  double muD2;
+                  double recordE0;
 
                   pc0[1]=el_p0[1];
                   pc0[2]=el_p0[2];
                   pc0[3]=el_p0[3];
-		  pc0[0]=sqrt(pc0[1]*pc0[1]+pc0[2]*pc0[2]+pc0[3]*pc0[3]);
+                  pc0[0]=sqrt(pc0[1]*pc0[1]+pc0[2]*pc0[2]+pc0[3]*pc0[3]);
 
                   recordE0=pc0[0];
 
-		  
-	  	  GetHydroCellSignal(el_time, el_rx, el_ry, el_rz, check_fluid_info_ptr);
+                  GetHydroCellSignal(el_time, el_rx, el_ry, el_rz, check_fluid_info_ptr);
                	  VERBOSE(8)<<MAGENTA<<"Temperature from medium = "<<check_fluid_info_ptr->temperature;
                	 	
                	  tempLoc = check_fluid_info_ptr->temperature;
@@ -434,104 +440,111 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                	  vyLoc = check_fluid_info_ptr->vy;
                	  vzLoc = check_fluid_info_ptr->vz;
 
-		  vc0[1]=vxLoc;
-		  vc0[2]=vyLoc;
-		  vc0[3]=vzLoc;
+                  vc0[1]=vxLoc;
+                  vc0[2]=vyLoc;
+                  vc0[3]=vzLoc;
 
-		  hydro_ctl=0;
+                  hydro_ctl=0;
                	 
-               	  if(hydro_ctl == 0 && tempLoc >= hydro_Tc) { 
+               	  if(hydro_ctl == 0 && tempLoc >= hydro_Tc)
+                  {
  
-		      trans(vc0,pc0);
+                      trans(vc0,pc0);
                       enerLoc=pc0[0];
-		      transback(vc0,pc0);
+                      transback(vc0,pc0);
 
               	      betaLoc = sqrt(vxLoc*vxLoc+vyLoc*vyLoc+vzLoc*vzLoc);
                	      gammaLoc = 1.0/sqrt(1.0-betaLoc*betaLoc);
                	      flowFactor = gammaLoc*(1.0-(initVx*vxLoc+initVy*vyLoc+initVz*vzLoc));
                	 
-               	      if(qhat0 < 0.0) { // calculate qhat with alphas
+               	      if(qhat0 < 0.0)
+                      { // calculate qhat with alphas
                	          muD2 = 6.0*pi*alphas*tempLoc*tempLoc;
                	          if(enerLoc > 2.0*pi*tempLoc) qhatLoc = Ca*50.4864/pi*pow(alphas,2)*pow(tempLoc,3)*log(5.7*enerLoc*tempLoc/4.0/muD2);
                	          else qhatLoc = Ca*50.4864/pi*pow(alphas,2)*pow(tempLoc,3)*log(5.7*2.0*pi*tempLoc*tempLoc/4.0/muD2);
                	          if(qhatLoc<0.0) qhatLoc=0.0;
-               	      } else { // use input qhat
-               	          if(brick_med) qhatLoc = qhat0*0.1973;
-		          else qhatLoc = qhat0/96.0*sdLoc*0.1973; 
                	      }
-               	  } else { // outside the QGP medium
+                      else
+                      { // use input qhat
+               	          if(brick_med) qhatLoc = qhat0*0.1973;
+                          else qhatLoc = qhat0/96.0*sdLoc*0.1973;
+               	      }
+               	  }
+                  else
+                  { // outside the QGP medium
                       continue;
-		  }
+                  }
 
                   if(el_time+el_dt<=time) dt_lrf=el_dt*flowFactor;
-		  else dt_lrf=(time-el_time)*flowFactor;
+                  else dt_lrf=(time-el_time)*flowFactor;
 
 		  // solve alphas
-		  if(qhat0 < 0.0) soln_alphas=alphas;
-		  else soln_alphas=solve_alphas(qhatLoc,enerLoc,tempLoc);
+                  if(qhat0 < 0.0) soln_alphas=alphas;
+                  else soln_alphas=solve_alphas(qhatLoc,enerLoc,tempLoc);
 
-		  muD2=6.0*pi*soln_alphas*tempLoc*tempLoc;
+                  muD2=6.0*pi*soln_alphas*tempLoc*tempLoc;
                   prob_el=42.0*zeta3*el_CR*soln_alphas*tempLoc/6.0/pi/pi*dt_lrf/0.1973;
 
                   el_rand = ZeroOneDistribution(*get_mt19937_generator());
 
 		  //cout << "  qhat: " << qhatLoc << "  alphas: " << soln_alphas << "  ener: " << enerLoc << "  prob_el: " << prob_el << "  " << el_rand << endl;
 
-		  if(el_rand<prob_el) { // elastic scattering happens
+                  if(el_rand<prob_el)
+                  { // elastic scattering happens
  
                       //cout << "elastic scattering happens" << endl;
-
-	              int CT=-1;
-		      int pid0=-999;
-		      int pid2=-999;
-		      int pid3=-999;
-		      double pc2[4]={0.0}; // final recoid thermal parton
-		      double pc3[4]={0.0}; // initial thermal parton 
-		      double pc4[4]={0.0}; // not used
-		      double qt=0.0; // not used
+                      int CT=-1;
+                      int pid0=-999;
+                      int pid2=-999;
+                      int pid3=-999;
+                      double pc2[4]={0.0}; // final recoid thermal parton
+                      double pc3[4]={0.0}; // initial thermal parton
+                      double pc4[4]={0.0}; // not used
+                      double qt=0.0; // not used
                       unsigned int el_max_color,el_color0,el_anti_color0,el_color2,el_anti_color2,el_color3,el_anti_color3;
 
-		      el_max_color=pIn[i].max_color();
+                      el_max_color=pIn[i].max_color();
                       el_color0 = pIn[i].color();
                       el_anti_color0 = pIn[i].anti_color();
 
-		      pid0=pid;
+                      pid0=pid;
 
-	              // deterimine channel
+                      // deterimine channel
                       //flavor(CT,pid0,pid2,pid3);
                       flavor(CT,pid0,pid2,pid3,el_max_color,el_color0,el_anti_color0,el_color2,el_anti_color2,el_color3,el_anti_color3);
 
                       //cout << "color: " << el_color0 << "  " << el_anti_color0 << "  " << el_color2 << "  " << el_anti_color2 << "  " << el_color3 << "  " << el_anti_color3 << "  max: " << el_max_color << endl;
 
-		      // do scattering
-		      colljet22(CT,tempLoc,muD2,vc0,pc0,pc2,pc3,pc4,qt);
+                      // do scattering
+                      colljet22(CT,tempLoc,muD2,vc0,pc0,pc2,pc3,pc4,qt);
 
-	              if(pc0[0]<pc2[0] && abs(pid0)!=4 && pid0==pid2) { //disable switch for heavy quark, only allow switch for identical particles
+                      if(pc0[0]<pc2[0] && abs(pid0)!=4 && pid0==pid2)
+                      { //disable switch for heavy quark, only allow switch for identical particles
                           double p0temp[4]={0.0};
-    			  for(int k=0;k<=3;k++) {
-	                      p0temp[k]=pc2[k];
-	                      pc2[k]=pc0[k];
-	                      pc0[k]=p0temp[k];
-	                  }
-	              }
+                          for(int k=0;k<=3;k++)
+                          {
+                              p0temp[k]=pc2[k];
+                              pc2[k]=pc0[k];
+                              pc0[k]=p0temp[k];
+                          }
+                      }
 
                       // push out recoied and back-reaction (negative) partons
                       // need to add color information later!!!
-
-		      double el_vertex[4];
+                      double el_vertex[4];
                       el_vertex[0] = el_time;
                       el_vertex[1] = el_rx;
                       el_vertex[2] = el_ry;
                       el_vertex[3] = el_rz;
                  
                       int iout;
-		      double ft;
+                      double ft;
 
                       pOut.push_back(Parton(0,pid2,0,pc2,el_vertex)); // recoiled
                       iout = pOut.size()-1;
                       pOut[iout].set_jet_v(velocity_jet); // use initial jet velocity
                       pOut[iout].set_mean_form_time();
-                      ft = 10000.0;
+                      ft = 10000.0; /// a really large formation time.
                       pOut[iout].set_form_time(ft);
                       ////pOut[iout].set_color(el_color2);
                       ////pOut[iout].set_anti_color(el_anti_color2);
@@ -540,7 +553,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       ////pOut[iout].set_min_anti_color(pIn[i].min_anti_color());
                       ////// comment out realistic color above, assume colorless for recoiled and back-reaction parton
                       ////// for the convenience of color string fragmentation in Pythia
-		      pOut[iout].set_color(0); 
+                      pOut[iout].set_color(0);
                       pOut[iout].set_anti_color(0);
                       pOut[iout].set_max_color(pIn[i].max_color());
                       pOut[iout].set_min_color(pIn[i].min_color());
@@ -564,22 +577,23 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       pOut[iout].set_min_anti_color(pIn[i].min_anti_color());
 
                       ////// assumption: pIn doesn't change color in elastic scattering
-		      ////pIn[i].set_color(el_color0);
+                      ////pIn[i].set_color(el_color0);
                       ////pIn[i].set_anti_color(el_anti_color0);
                       ////pIn[i].set_max_color(el_max_color);
  
-		  } // end if scattering	
+                  } // end if scattering
 
                   // E1'+E2 = E3'+E4 (all massless in scattering)
 		  // Now I want E1+E2 = E3+E4 where 1 and 3 have mass
 		  // -> E1-E1' = E3-E3' -> E3 = E1-E1'+E3'
 		  // m3^2 = E3^2-E3'^2
-		  for(int j=1; j<=3; j++) el_p0[j] = pc0[j];
-		  el_p0[0]=el_p0[0]-recordE0+pc0[0];
-	          el_p0[4]=el_p0[0]*el_p0[0]-pc0[0]*pc0[0];
+                  for(int j=1; j<=3; j++) el_p0[j] = pc0[j];
+		  
+                  el_p0[0]=el_p0[0]-recordE0+pc0[0];
+                  el_p0[4]=el_p0[0]*el_p0[0]-pc0[0]*pc0[0];
                   if(el_p0[4]<0) cout << "complain negative virt" << endl;
 
-	      } // end time loop for elastic scattering
+              } // end time loop for elastic scattering
 
 
        	      // do split
@@ -798,15 +812,13 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               pOut[iout].set_mean_form_time();
               double ft = generate_L (pOut[iout].mean_form_time());
               pOut[iout].set_form_time(ft);
-	      pOut[iout].set_color(d1_col);
+              pOut[iout].set_color(d1_col);
               pOut[iout].set_anti_color(d1_acol);
               pOut[iout].set_max_color(max_color);
               pOut[iout].set_min_color(pIn[i].min_color());
               pOut[iout].set_min_anti_color(pIn[i].min_anti_color());
               
               
-              
-		  
               // Second daughter
               double k_perp2[4];
               k_perp2[0] = 0.0;
@@ -846,9 +858,6 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               pOut[iout].set_min_color(pIn[i].min_color());
               pOut[iout].set_min_anti_color(pIn[i].min_anti_color());
 
-              
-
-                  
           }
           else
           { // not time to split yet
