@@ -1,6 +1,6 @@
 // Copyright @ Chun Shen
-#ifndef TEST_HYDRO_FILE_JETSCAPE_H_
-#define TEST_HYDRO_FILE_JETSCAPE_H_
+#ifndef HYDROFROMFILE_H
+#define HYDROFROMFILE_H
 
 #include "FluidDynamics.h"
 #include "Hydroinfo_MUSIC.h"
@@ -13,7 +13,7 @@
 
 using namespace Jetscape;
 
-class HydroFile: public FluidDynamics {
+class HydroFromFile: public FluidDynamics {
     // this is wrapper class for MUSIC so that it can be used as a external
     // library for the JETSCAPE integrated framework
  private:
@@ -34,8 +34,8 @@ class HydroFile: public FluidDynamics {
     Hydroinfo_MUSIC *hydroinfo_MUSIC_ptr;
 
  public:
-     HydroFile();
-     ~HydroFile();
+     HydroFromFile();
+     ~HydroFromFile();
 
      //! clean up hydro event
      void clean_hydro_event();
@@ -66,4 +66,4 @@ class HydroFile: public FluidDynamics {
      void get_hypersurface(Jetscape::real T_cut, SurfaceCellInfo* surface_list_ptr) {};
 };
 
-#endif  // TEST_HYDRO_FILE_JETSCAPE_H_
+#endif  // HYDROFROMFILE_H

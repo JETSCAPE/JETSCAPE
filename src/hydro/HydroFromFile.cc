@@ -10,23 +10,23 @@
 
 #include "JetScapeLogger.h"
 
-#include "hydro_file_jetscape.h"
+#include "HydroFromFile.h"
 
 using namespace Jetscape;
 
-HydroFile::HydroFile() {
+HydroFromFile::HydroFromFile() {
     hydro_status = NOT_START;
     SetId("hydroFromFile");
 }
 
 
-HydroFile::~HydroFile() {
+HydroFromFile::~HydroFromFile() {
     clean_hydro_event();
 }
 
 
 //! this function loads the hydro files
-void HydroFile::initialize_hydro(Parameter parameter_list) {
+void HydroFromFile::initialize_hydro(Parameter parameter_list) {
     JSDEBUG << "Initialize hydro from file (Test) ...";
     VERBOSE(8);
     para_ = GetHydroXML()->FirstChildElement("hydro_from_file");
@@ -63,7 +63,7 @@ void HydroFile::initialize_hydro(Parameter parameter_list) {
 }
 
 //! This function load a VISHNew hydro event
-void HydroFile::read_in_hydro_event(string VISH_filename, int buffer_size,
+void HydroFromFile::read_in_hydro_event(string VISH_filename, int buffer_size,
                                     int load_viscous) {
     INFO << "read in a VISHNew hydro event from file " << VISH_filename;
     if (hydro_type_ == 1) {
@@ -77,7 +77,7 @@ void HydroFile::read_in_hydro_event(string VISH_filename, int buffer_size,
 
 
 //! This function load a MUSIC hydro event
-void HydroFile::read_in_hydro_event(string MUSIC_input_file,
+void HydroFromFile::read_in_hydro_event(string MUSIC_input_file,
                                     string MUSIC_hydro_ideal_file,
                                     int nskip_tau) {
     INFO << "read in a MUSIC hydro event from file " << MUSIC_hydro_ideal_file;
@@ -107,7 +107,7 @@ void HydroFile::read_in_hydro_event(string MUSIC_input_file,
 }
 
 
-void HydroFile::evolve_hydro() {
+void HydroFromFile::evolve_hydro() {
     if (hydro_status == FINISHED) {
         clean_hydro_event();
         hydro_event_idx_ = ini->get_event_id();
@@ -200,7 +200,7 @@ void HydroFile::evolve_hydro() {
 
 
 //! clean up hydro event
-void HydroFile::clean_hydro_event() {
+void HydroFromFile::clean_hydro_event() {
     INFO << " clean up the loaded hydro event ...";
     if (hydro_type_ == 1) {
 #ifdef USE_HDF5
@@ -215,7 +215,7 @@ void HydroFile::clean_hydro_event() {
 
 //! this function returns the thermodynamic and dynamical information at
 //! the given space-time point
-void HydroFile::get_hydro_info(
+void HydroFromFile::get_hydro_info(
         Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
         std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr) {
     if (hydro_status != FINISHED) {
@@ -234,7 +234,7 @@ void HydroFile::get_hydro_info(
         double tau_local = sqrt(t*t - z*z);
         double eta_local = 0.5*log((t + z)/(t - z + 1e-15));
         if (std::isnan(tau_local)) {  // check
-            WARN << "[Error]: HydroFile::get_hydro_info(): "
+            WARN << "[Error]: HydroFromFile::get_hydro_info(): "
                  << "tau is nan!";
             WARN << "please check: t = " << t << ", z = " << z;
             exit(1);
