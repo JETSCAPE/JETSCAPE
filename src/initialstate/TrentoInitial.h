@@ -6,8 +6,8 @@
 // -----------------------------------------
 // License and Doxygen-like Documentation to be added ...
 
-#ifndef TRENTO_INITIAL_H
-#define TRENTO_INITIAL_H
+#ifndef TRENTOINITIAL_H
+#define TRENTOINITIAL_H
 
 #include <tuple>
 #include <memory>
@@ -85,4 +85,4 @@ class TrentoInitial : public InitialState {
 
 } // end namespace Jetscape
 
-#endif
+#endif // TRENTOINITIAL_H

@@ -31,4 +31,4 @@ class GubserHydro: public FluidDynamics {
 
 };
 
-#endif  // GUBSERHYDRO
+#endif  // GUBSERHYDRO_H
