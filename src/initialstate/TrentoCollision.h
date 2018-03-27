@@ -6,8 +6,8 @@
 // -----------------------------------------
 // License and Doxygen-like Documentation to be added ...
 
-#ifndef JETSCAPECOLLISION_H
-#define JETSCAPECOLLISION_H
+#ifndef TRENTOCOLLISION_H
+#define TRENTOCOLLISION_H
 
 #include <tuple>
 #include <memory>
@@ -127,4 +127,4 @@ class TrentoCollision{
 
 } // end namespace Jetscape
 
-#endif // JETSCAPECOLLISION_H
+#endif // TRENTOCOLLISION_H

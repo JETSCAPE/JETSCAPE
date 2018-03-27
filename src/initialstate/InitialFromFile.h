@@ -1,6 +1,6 @@
 // Copyright @ LONGGANG PANG
-#ifndef INITIAL_FROM_FILE_H_
-#define INITIAL_FROM_FILE_H_
+#ifndef INITIAL_FROM_FILE_H
+#define INITIAL_FROM_FILE_H
 
 #include <iostream>
 #include <string>
@@ -77,4 +77,4 @@ class InitialFromFile: public Jetscape::InitialState {
     int dim_x_, dim_y_;
 };
 
-#endif  // INITIAL_FROM_FILE_H_
+#endif  // INITIAL_FROM_FILE_H
