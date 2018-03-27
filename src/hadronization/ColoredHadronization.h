@@ -1,16 +1,16 @@
-#ifndef HADRONIZATIONMODULESTEST_H
-#define HADRONIZATIONMODULESTEST_H
+#ifndef COLOREDHADRONIZATION_H
+#define COLOREDHADRONIZATION_H
 
 #include "HadronizationModule.h"
 #include "Pythia8/Pythia.h"
 
 using namespace Jetscape;
 
-class HadronizationModuleTest : public HadronizationModule<HadronizationModuleTest>
+class ColoredHadronization : public HadronizationModule<ColoredHadronization>
 {  
  public:
-  HadronizationModuleTest();
-  virtual ~HadronizationModuleTest();
+  ColoredHadronization();
+  virtual ~ColoredHadronization();
   
   void Init();
   void DoHadronization(vector<vector<shared_ptr<Parton>>>& shower, vector<shared_ptr<Hadron>>& hOut, vector<shared_ptr<Parton>>& pOut);
@@ -23,23 +23,5 @@ protected:
 };
 
 
-#endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#endif // COLOREDHADRONIZATION_H
 

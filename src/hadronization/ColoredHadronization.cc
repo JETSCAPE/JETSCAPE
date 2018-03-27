@@ -1,4 +1,4 @@
-#include "HadronizationModuleTest.h"
+#include "ColoredHadronization.h"
 #include "JetScapeXML.h"
 #include "JetScapeLogger.h"
 #include "tinyxml2.h"
@@ -7,21 +7,21 @@
 using namespace Jetscape;
 using namespace Pythia8;
 
-Pythia8::Pythia HadronizationModuleTest::pythia ("IntentionallyEmpty",false);
+Pythia8::Pythia ColoredHadronization::pythia ("IntentionallyEmpty",false);
 
 
-HadronizationModuleTest::HadronizationModuleTest()
+ColoredHadronization::ColoredHadronization()
 {
   SetId("MyHadroTest");
   VERBOSE(8);
 }
 
-HadronizationModuleTest::~HadronizationModuleTest()
+ColoredHadronization::~ColoredHadronization()
 {
   VERBOSE(8);
 }
 
-void HadronizationModuleTest::Init()
+void ColoredHadronization::Init()
 {
   tinyxml2::XMLElement *hadronization= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("JetHadronization" );
     
@@ -71,14 +71,14 @@ void HadronizationModuleTest::Init()
     
 }
 
-void HadronizationModuleTest::WriteTask(weak_ptr<JetScapeWriter> w)
+void ColoredHadronization::WriteTask(weak_ptr<JetScapeWriter> w)
 {
   VERBOSE(8);
   w.lock()->WriteComment("Hadronization Module : "+GetId());
   w.lock()->WriteComment("Hadronization to be implemented accordingly ...");
 }
 
-void HadronizationModuleTest::DoHadronization(vector<vector<shared_ptr<Parton>>>& shower, vector<shared_ptr<Hadron>>& hOut, vector<shared_ptr<Parton>>& pOut)
+void ColoredHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& shower, vector<shared_ptr<Hadron>>& hOut, vector<shared_ptr<Parton>>& pOut)
 {
 
   Event& event = pythia.event;

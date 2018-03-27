@@ -25,7 +25,7 @@
 #include "PartonPrinter.h"
 #include "HadronizationManager.h"
 #include "Hadronization.h"
-#include "HadronizationModuleTest.h"
+#include "ColoredHadronization.h"
 
 #include <chrono>
 

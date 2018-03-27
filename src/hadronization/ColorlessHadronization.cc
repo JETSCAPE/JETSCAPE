@@ -1,4 +1,4 @@
-#include "ColorlessHad.h"
+#include "ColorlessHadronization.h"
 #include <sstream>
 #include <iostream>
 #include <fstream>
@@ -16,26 +16,26 @@ using namespace Pythia8;
 //ofstream hadfile;
 
 // Initialize static helper here
-Pythia8::Pythia ColorlessHad::pythia ("IntentionallyEmpty",false);
+Pythia8::Pythia ColorlessHadronization::pythia ("IntentionallyEmpty",false);
 
 
-ColorlessHad::ColorlessHad()
+ColorlessHadronization::ColorlessHadronization()
 {
-  SetId("ColorlessHad");
+  SetId("ColorlessHadronization");
   VERBOSE(8);
 }
 
-ColorlessHad::~ColorlessHad()
+ColorlessHadronization::~ColorlessHadronization()
 {
   VERBOSE(8);
 }
 
-void ColorlessHad::Init()
+void ColorlessHadronization::Init()
 {
   //Open output file
   //hadfile.open("CH_myhad.dat");
 
-  JSDEBUG<<"Initialize ColorlessHad";
+  JSDEBUG<<"Initialize ColorlessHadronization";
   VERBOSE(8);
 
   // No event record printout.
@@ -56,13 +56,13 @@ void ColorlessHad::Init()
 
 }
 
-void ColorlessHad::WriteTask(weak_ptr<JetScapeWriter> w)
+void ColorlessHadronization::WriteTask(weak_ptr<JetScapeWriter> w)
 {
    VERBOSE(8);
    w.lock()->WriteComment("Hadronization Module : "+GetId());
 }
 
-void ColorlessHad::DoHadronization(vector<vector<shared_ptr<Parton>>>& shower, vector<shared_ptr<Hadron>>& hOut, vector<shared_ptr<Parton>>& pOut)
+void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& shower, vector<shared_ptr<Hadron>>& hOut, vector<shared_ptr<Parton>>& pOut)
 {
   INFO<<"Start Hadronizing using PYTHIA Lund string model (does NOT use color flow, needs to be tested)...";
   Event& event      = pythia.event;

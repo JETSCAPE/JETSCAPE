@@ -1,5 +1,5 @@
-#ifndef COLORLESSHAD_H
-#define COLORLESSHAD_H
+#ifndef COLORLESSHADRONIZATION_H
+#define COLORLESSHADRONIZATION_H
 
 #include "HadronizationModule.h"
 #include "JetScapeLogger.h"
@@ -7,12 +7,12 @@
 
 using namespace Jetscape;
 
-class ColorlessHad : public HadronizationModule<ColorlessHad>
+class ColorlessHadronization : public HadronizationModule<ColorlessHadronization>
 {  
  public:
 
-  ColorlessHad();
-  virtual ~ColorlessHad();
+  ColorlessHadronization();
+  virtual ~ColorlessHadronization();
   
   void Init();
   void DoHadronization(vector<vector<shared_ptr<Parton>>>& shower, vector<shared_ptr<Hadron>>& hOut, vector<shared_ptr<Parton>>& pOut);
@@ -24,23 +24,5 @@ class ColorlessHad : public HadronizationModule<ColorlessHad>
 };
 
 
-#endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#endif // COLORLESSHADRONIZATION_H
 

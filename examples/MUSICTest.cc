@@ -34,7 +34,7 @@
 #include "PartonPrinter.h"
 //#include "HadronizationManager.h"
 //#include "Hadronization.h"
-//#include "HadronizationModuleTest.h"
+//#include "ColoredHadronization.h"
 
 
 #include <chrono>
@@ -99,7 +99,7 @@ int main(int argc, char** argv)
     
  //   auto hadroMgr = make_shared<HadronizationManager> ();
  //   auto hadro = make_shared<Hadronization> ();
- //   auto hadroModule = make_shared<HadronizationModuleTest> ();
+ //   auto hadroModule = make_shared<ColoredHadronization> ();
     
 
   // only pure Ascii writer implemented and working with graph output ...
