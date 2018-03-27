@@ -10,8 +10,8 @@
 //
 // -----------------------------------------
 
-#ifndef ELOSSMODULELBT_H
-#define ELOSSMODULELBT_H
+#ifndef LBT_H
+#define LBT_H
 
 #include "JetEnergyLossModule.h"
 #include <iostream>
@@ -365,5 +365,5 @@ class LBT : public JetEnergyLossModule<LBT> //, public std::enable_shared_from_t
 
 };
 
-#endif
+#endif // LBT_H
 

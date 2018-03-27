@@ -8,8 +8,8 @@
 // quick and dirty test class for Eloss modules ...
 // can be used as a user template ...
 
-#ifndef ELOSSMODULESTEST_H
-#define ELOSSMODULESTEST_H
+#ifndef MATTER_H
+#define MATTER_H
 
 #include "JetEnergyLossModule.h"
 
@@ -85,6 +85,5 @@ class Matter : public JetEnergyLossModule<Matter> //, public std::enable_shared_
   
 };
 
-
-#endif
+#endif // MATTER_H
 

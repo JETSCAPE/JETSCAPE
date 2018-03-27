@@ -8,8 +8,8 @@
 // quick and dirty test class for Eloss modules ...
 // can be used as a user template ...
 
-#ifndef ELOSSMODULESVALIDATE_H
-#define ELOSSMODULESVALIDATE_H
+#ifndef ELOSSVALIDATION_H
+#define ELOSSVALIDATION_H
 
 #include "JetEnergyLossModule.h"
 
@@ -32,5 +32,5 @@ class ElossValidate : public JetEnergyLossModule<ElossValidate>
 };
 
 
-#endif
+#endif // ELOSSVALIDATION_H
 

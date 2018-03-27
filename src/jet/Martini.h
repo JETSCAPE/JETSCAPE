@@ -9,14 +9,13 @@
 // can be used as a user template ...
 
 
-#ifndef ELOSSMODULESTESTMARTINI_H
-#define ELOSSMODULESTESTMARTINI_H
+#ifndef MARTINI_H
+#define MARTINI_H
 
 #include <fstream>
 #include <math.h>
 #include "JetEnergyLossModule.h"
 #include "constants.h"
-
 
 using namespace Jetscape;
 
@@ -178,5 +177,5 @@ class Martini : public JetEnergyLossModule<Martini> //, public std::enable_share
 
 double LambertW(double z);
 
-#endif
+#endif // MARTINI_H
 
