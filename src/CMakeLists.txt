@@ -30,7 +30,7 @@ FILE(GLOB preeqsources preequilibrium/*.cc)
 set (SOURCES  ${SOURCES}  ${preeqsources} )
 ## Take care of options
 if(NOT ${freestream})
-  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/preequilibrium/freestream-milne_jetscape.cc)
+  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/preequilibrium/FreestreamMilneWrapper.cc)
 endif()
 
 #hydro
