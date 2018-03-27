@@ -1,24 +1,24 @@
 
-#ifndef TEST_FREESTREAM_JETSCAPE_H_
-#define TEST_FREESTREAM_JETSCAPE_H_
+#ifndef FREESTREAMMILNEWRAPPER_H
+#define FREESTREAMMILNEWRAPPER_H
 
 #include "PreequilibriumDynamics.h"
 #include "FreestreamMilne.cpp" 
 
 using namespace Jetscape;
 
-class FREESTREAM: public PreequilibriumDynamics {
+class FreestreamMilneWrapper: public PreequilibriumDynamics {
  private:
     int mode; //!< records running mode
     FREESTREAMMILNE *fsmilne_ptr;
 
  public:
-    FREESTREAM();
-    ~FREESTREAM();
+    FreestreamMilneWrapper();
+    ~FreestreamMilneWrapper();
 
     void initialize_preequilibrium(PreEquilibriumParameterFile parameter_list);
 
     void evolve_preequilibrium();
 };
 
-#endif  // TEST_FREESTREAM_JETSCAPE_H_
+#endif  // FREESTREAMMILNEWRAPPER_H

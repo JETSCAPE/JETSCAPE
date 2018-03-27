@@ -5,22 +5,22 @@
 #include <cstring>
 
 #include "JetScapeLogger.h"
-#include "freestream-milne_jetscape.h"
+#include "FreestreamMilneWrapper.h"
 
 using namespace std;
 
-FREESTREAM::FREESTREAM() {
+FreestreamMilneWrapper::FreestreamMilneWrapper() {
     preequilibrium_status_ = NOT_STARTED;
     SetId("Freestream-Milne");
 }
 
 
-FREESTREAM::~FREESTREAM() {
+FreestreamMilneWrapper::~FreestreamMilneWrapper() {
     if (preequilibrium_status_ != NOT_STARTED) delete fsmilne_ptr;
 }
 
 
-void FREESTREAM::initialize_preequilibrium(PreEquilibriumParameterFile parameter_list) {
+void FreestreamMilneWrapper::initialize_preequilibrium(PreEquilibriumParameterFile parameter_list) {
     INFO << "Initialize freestream-milne ...";
     VERBOSE(8);
     tinyxml2::XMLElement *para = GetPreequilibriumXML()->FirstChildElement("FreestreamMilne");
@@ -34,7 +34,7 @@ void FREESTREAM::initialize_preequilibrium(PreEquilibriumParameterFile parameter
 }
 
 
-void FREESTREAM::evolve_preequilibrium() {
+void FreestreamMilneWrapper::evolve_preequilibrium() {
     VERBOSE(8);
     INFO << "Initialize energy density profile in freestream-milne ...";
     // grab initial energy density from vector from initial state module

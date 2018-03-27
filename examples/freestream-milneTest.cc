@@ -22,7 +22,7 @@
 #include "AdSCFT.h"
 #include "Matter.h"
 #include "Martini.h"
-#include "freestream-milne_jetscape.h"
+#include "FreestreamMilneWrapper.h"
 #include "music_jetscape.h"
 #include "TrentoInitial.h"
 #include "PGun.h"
@@ -73,7 +73,7 @@ int main(int argc, char** argv)
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
   auto trento = make_shared<TrentoInitial> ();
-  auto freestream = make_shared<FREESTREAM> ();
+  auto freestream = make_shared<FreestreamMilneWrapper> ();
   auto hydro = make_shared<MPI_MUSIC> ();
   //auto hydro = make_shared<GubserHydro> ();
 
