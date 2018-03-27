@@ -49,23 +49,23 @@ typedef struct {
 } EventInfo;
 
 ////////////////////////// Trento Initial Condition Wrapper //////////////////////
-class JetScapeCollision{
+class TrentoCollision{
   public:
     //// get one random collision in centrality range 0-100%
-    //JetScapeCollision(str projectile, str target,
+    //TrentoCollision(str projectile, str target,
     //                double cross_section, double grid_max,
     //                double grid_step);
 
     //// get one random collision in centrality for the given system
     //// stored_system = "auau200", "pbpb2760" or "pbpb5020"
     //// centrality = "0-5", "5-10", "30-40" or any range "a-b"
-    //JetScapeCollision(str stored_system, str centrality,
+    //TrentoCollision(str stored_system, str centrality,
     //                double grid_max, double grid_step);
 
-    explicit JetScapeCollision(const VarMap & var_map);
+    explicit TrentoCollision(const VarMap & var_map);
 
     /// Declare a destructor to properly handle the std::unique_ptr<Nucleus>
-    ~JetScapeCollision();
+    ~TrentoCollision();
 
     // sample jet production position from Ta * Tb
     // where Ta * Tb is the distribution of num_of_binary collisions
@@ -127,4 +127,4 @@ class JetScapeCollision{
 
 } // end namespace Jetscape
 
-#endif
+#endif // JETSCAPECOLLISION_H

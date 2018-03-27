@@ -224,7 +224,7 @@ void TrentoInitial::pre_defined(std::string stored_system,
                 grid_max, grid_step, random_seed);
     }
 
-    JetScapeCollision collision_(var_map);
+    TrentoCollision collision_(var_map);
 
     double smin, smax;
     std::tie(smin, smax) = get_entropy_range_(stored_system,
@@ -255,7 +255,7 @@ void TrentoInitial::user_defined(std::string projectile, std::string target,
 {
     VarMap var_map = create_varmap(projectile, target, cross_section,
                 grid_max, grid_step, random_seed);
-    JetScapeCollision collision_(var_map);
+    TrentoCollision collision_(var_map);
     double smin = 0; 
     double smax = std::numeric_limits<double>::max();
     collision_.sample_(smin, smax);

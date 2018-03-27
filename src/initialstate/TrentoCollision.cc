@@ -5,7 +5,7 @@
 // -----------------------------------------
 // License and Doxygen-like Documentation to be added ...
 
-#include "Collision.h"
+#include "TrentoCollision.h"
 
 #include <boost/bind.hpp>
 #include <boost/tokenizer.hpp>
@@ -47,39 +47,39 @@ double determine_asym(const Nucleus& A, const Nucleus& B) {
     return rA/sum;
 }
 
-void write_stream(std::ostream& os, int width,
-    int num, double impact_param, const Event& event) {
-  using std::fixed;
-  using std::setprecision;
-  using std::setw;
-  using std::scientific;
+// void write_stream(std::ostream& os, int width,
+//     int num, double impact_param, const Event& event) {
+//   using std::fixed;
+//   using std::setprecision;
+//   using std::setw;
+//   using std::scientific;
 
-  // Write a nicely-formatted line of event properties.
-  os << setprecision(10)
-     << setw(width)            << num
-     << setw(15) << fixed      << impact_param
-     << setw(5)                << event.npart()
-     << setw(18) << scientific << event.multiplicity()
-     << fixed;
+//   // Write a nicely-formatted line of event properties.
+//   os << setprecision(10)
+//      << setw(width)            << num
+//      << setw(15) << fixed      << impact_param
+//      << setw(5)                << event.npart()
+//      << setw(18) << scientific << event.multiplicity()
+//      << fixed;
 
-  for (const auto& ecc : event.eccentricity())
-    os << setw(14)             << ecc.second;
+//   for (const auto& ecc : event.eccentricity())
+//     os << setw(14)             << ecc.second;
 
-  for (const auto& phi_n : event.participant_plane())
-    os << setw(14)             << phi_n.second;
+//   for (const auto& phi_n : event.participant_plane())
+//     os << setw(14)             << phi_n.second;
 
-  // Write the mass center (x, y)
-  os << setw(14) << event.mass_center_index().first;
-  os << setw(14) << event.mass_center_index().second;
+//   // Write the mass center (x, y)
+//   os << setw(14) << event.mass_center_index().first;
+//   os << setw(14) << event.mass_center_index().second;
 
-  os << '\n';
-}
+//   os << '\n';
+// }
 
 
 } // end unnamedspace
 
 
-JetScapeCollision::JetScapeCollision(const VarMap& var_map)
+TrentoCollision::TrentoCollision(const VarMap& var_map)
     : nucleusA_(create_nucleus(var_map, 0)),
       nucleusB_(create_nucleus(var_map, 1)),
       nucleon_profile_(var_map),
@@ -97,10 +97,10 @@ JetScapeCollision::JetScapeCollision(const VarMap& var_map)
 }
 
 // See header for explanation.
-JetScapeCollision::~JetScapeCollision() = default;
+TrentoCollision::~TrentoCollision() = default;
 
 
-void JetScapeCollision::sample_(double smin, double smax){
+void TrentoCollision::sample_(double smin, double smax){
     double b;
     while (true) {
         b = sample_impact_param();
@@ -125,7 +125,7 @@ void JetScapeCollision::sample_(double smin, double smax){
     // write_stream(std::cout, 2, 1, b, event_);
 }
 
-double JetScapeCollision::sample_impact_param() {
+double TrentoCollision::sample_impact_param() {
   // Sample impact parameters until at least one nucleon-nucleon pair
   // participates.  The bool 'collision' keeps track -- it is effectively a
   // logical OR over all possible participant pairs.

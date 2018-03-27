@@ -19,7 +19,7 @@
 #include "fwd_decl.h"
 #include "JetScapeModuleBase.h"
 #include "tinyxml2.h"
-#include "Collision.h"
+#include "TrentoCollision.h"
 #include "InitialState.h"
 #include "JetScapeLogger.h"
 #include "JetScapeXML.h"
