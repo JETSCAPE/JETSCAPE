@@ -6,7 +6,7 @@
 
 #include <cmath>
 
-#include "./realtype.h"
+#include "RealType.h"
 
 namespace Jetscape{
 

@@ -5,7 +5,7 @@
 #include <cstring>
 #include <cmath>
 #include <iostream>
-#include <helper.h>
+#include <MakeUniqueHelper.h>
 #include "GubserHydro.h"
 
 #define hbarc 0.19733

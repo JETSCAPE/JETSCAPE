@@ -1,7 +1,7 @@
 // Copyright @ Chun Shen
 #include <stdio.h>
 #include <sys/stat.h>
-#include <helper.h>
+#include <MakeUniqueHelper.h>
 
 #include <cstring>
 #include <sstream>

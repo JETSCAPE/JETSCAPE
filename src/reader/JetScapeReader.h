@@ -12,7 +12,7 @@
 #include <GTL/edge_map.h>
 #include <GTL/node_map.h>
 #include "JetClass.h"
-#include "JetScapeParticles.hpp"
+#include "JetScapeParticles.h"
 #include "JetScapeLogger.h"
 #include "StringTokenizer.h"
 #include "PartonShower.h"

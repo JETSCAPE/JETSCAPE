@@ -10,7 +10,7 @@
 #include <sstream>
 #include <fstream>
 #include <iomanip>
-#include "helper.h"
+#include "MakeUniqueHelper.h"
 
 using std::setprecision;
 using std::fixed;

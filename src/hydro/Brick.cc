@@ -5,7 +5,7 @@
 #include <cstring>
 #include <cmath>
 #include <iostream>
-#include <helper.h>
+#include <MakeUniqueHelper.h>
 
 #include "JetScapeLogger.h"
 #include "Brick.h"

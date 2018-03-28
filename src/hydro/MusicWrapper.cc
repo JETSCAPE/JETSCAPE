@@ -1,7 +1,7 @@
 // Copyright @ Bjoern Schenke, Sangyong Jeon, Charles Gale, and Chun Shen
 #include <stdio.h>
 #include <sys/stat.h>
-#include <helper.h>
+#include <MakeUniqueHelper.h>
 
 #include <string>
 #include <vector>

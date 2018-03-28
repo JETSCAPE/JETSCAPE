@@ -16,7 +16,7 @@
 #include "JetScapeModuleBase.h"
 #include "tinyxml2.h"
 #include "PreequilibriumDynamics.h"
-#include "realtype.h"
+#include "RealType.h"
 
 namespace Jetscape {
 

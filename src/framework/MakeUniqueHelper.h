@@ -7,6 +7,9 @@
 
 // Allow C++14 style make_unique for C++11
 
+#ifndef MAKEUNIQUEHELPER_H
+#define MAKEUNIQUEHELPER_H
+
 #include <cstddef>
 #include <memory>
 #include <type_traits>
@@ -42,3 +45,5 @@ namespace std {
     typename _Unique_if<T>::_Known_bound
     make_unique(Args&&...) = delete;
 }
+
+#endif // MAKEUNIQUEHELPER_H

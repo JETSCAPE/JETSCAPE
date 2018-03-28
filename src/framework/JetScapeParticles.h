@@ -43,8 +43,8 @@
     *   - If HepMc were a mandatory part, HepMc::FourVector would be a good replacement for the homebrewed FourVector
     */
 
-#ifndef JetScapeParticles_hpp
-#define JetScapeParticles_hpp
+#ifndef JETSCAPEPARTICLES_H
+#define JETSCAPEPARTICLES_H
 
 #include <stdio.h>
 #include <math.h>
@@ -362,4 +362,4 @@ namespace Jetscape {
     
 };  /// end of namespace Jetscape
 
-#endif /* JetScapeParticles */
+#endif // JETSCAPEPARTICLES_H

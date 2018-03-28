@@ -14,7 +14,7 @@
 #include "JetScapeWriter.h"
 #include "PartonShower.h"
 #include "PartonPrinter.h"
-#include "helper.h"
+#include "MakeUniqueHelper.h"
 #include <vector>
 #include <random>
 
