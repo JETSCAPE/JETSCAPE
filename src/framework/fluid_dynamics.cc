@@ -5,14 +5,17 @@
 #include <iostream>
 #include "./fluid_dynamics.h"
 #include "./linear_interpolation.h"
+#include "JetScapeSignalManager.h"
+
+#define MAGENTA "\033[35m"
 
 using namespace std;
 
 namespace Jetscape {
-/** For one given time step id_tau,
- * get FluidCellInfo at spatial point (x, y, eta)*/
-FluidCellInfo EvolutionHistory::get_at_time_step(int id_tau,
-                                     real x, real y, real eta) {
+  /** For one given time step id_tau,
+   * get FluidCellInfo at spatial point (x, y, eta)*/
+  FluidCellInfo EvolutionHistory::get_at_time_step(int id_tau,
+						   real x, real y, real eta) {
     int id_x = get_id_x(x);
     int id_y = get_id_y(y);
     int id_eta = get_id_eta(eta);
@@ -33,14 +36,14 @@ FluidCellInfo EvolutionHistory::get_at_time_step(int id_tau,
     real eta1 = eta_coord(id_eta + 1);
 
     return trilinear_int(x0, x1, y0, y1, eta0, eta1,
-            data.at(c000), data.at(c001), data.at(c010), data.at(c011),
-            data.at(c100), data.at(c101), data.at(c110), data.at(c111),
-            x, y, eta);
-}
+			 data.at(c000), data.at(c001), data.at(c010), data.at(c011),
+			 data.at(c100), data.at(c101), data.at(c110), data.at(c111),
+			 x, y, eta);
+  }
 
-// do interpolation along time direction; we may also need high order
-// interpolation functions 
-FluidCellInfo EvolutionHistory::get(real tau, real x, real y, real eta){
+  // do interpolation along time direction; we may also need high order
+  // interpolation functions 
+  FluidCellInfo EvolutionHistory::get(real tau, real x, real y, real eta){
     check_in_range(tau, x, y, eta);
     int id_tau = get_id_tau(tau);
     real tau0 = tau_coord(id_tau);
@@ -48,55 +51,126 @@ FluidCellInfo EvolutionHistory::get(real tau, real x, real y, real eta){
     FluidCellInfo bulk0 = get_at_time_step(id_tau, x, y, eta);
     FluidCellInfo bulk1 = get_at_time_step(id_tau+1, x, y, eta);
     return linear_int(tau0, tau1, bulk0, bulk1, tau);
-}
+  }
+
+  FluidDynamics::FluidDynamics(){
+    VERBOSE(8);
+    eta=-99.99;
+    SetId("FluidDynamics");
+  }
+
+  FluidDynamics::FluidDynamics(string m_name) : JetScapeModuleBase (m_name) {
+    VERBOSE(8);
+    eta=-99.99;
+    SetId("FluidDynamics");
+  }
 
 
-real FluidDynamicsBase::get_energy_density(real time, real x, real y, real z) {
-  // this function returns the energy density [GeV] at a space time point
-  // (time, x, y, z)
-  // FluidCellInfo *fluid_cell_ptr = new FluidCellInfo;
-  std::unique_ptr<FluidCellInfo> fluid_cell_ptr;
-  get_hydro_info(time, x, y, z, fluid_cell_ptr);
-  real energy_density = fluid_cell_ptr->energy_density;
-  // delete fluid_cell_ptr;
-  return(energy_density);
-}
+  FluidDynamics::~FluidDynamics()
+  {
+    VERBOSE(8);
+    disconnect_all();
+  }
 
-real FluidDynamicsBase::get_entropy_density(real time, real x, real y, real z) {
-  // this function returns the entropy density [GeV] at a space time point
-  // (time, x, y, z)
-  // FluidCellInfo *fluid_cell_ptr = new FluidCellInfo;
-  std::unique_ptr<FluidCellInfo> fluid_cell_ptr;
-  get_hydro_info(time, x, y, z, fluid_cell_ptr);
-  real entropy_density = fluid_cell_ptr->entropy_density;
-  //delete fluid_cell_ptr;
-  return(entropy_density);
-}
+  void FluidDynamics::Init()
+  {
+    JetScapeModuleBase::Init();
+    INFO<<"Intialize FluidDynamics : "<<GetId()<< " ...";
+    fd= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Hydro" );
+  
+    if (!fd) {
+      WARN << "Not a valid JetScape XML Hydro section file or no XML file loaded!";
+      exit(-1);
+    }
+  
+    VERBOSE(8);  
+    ini = JetScapeSignalManager::Instance()->GetInitialStatePointer().lock();
+    if (!ini) {
+      WARN << "No initialization module, try: auto trento = make_shared<TrentoInitial>(); jetscape->Add(trento);";
+    }
 
-real FluidDynamicsBase::get_temperature(real time, real x, real y, real z) {
-  // this function returns the temperature [GeV] at a space time point
-  // (time, x, y, z)
-  // FluidCellInfo *fluid_cell_ptr = new FluidCellInfo;
-  std::unique_ptr<FluidCellInfo> fluid_cell_ptr;
-  get_hydro_info(time, x, y, z, fluid_cell_ptr);
-  real temperature = fluid_cell_ptr->temperature;
-  // delete fluid_cell_ptr;
-  return(temperature);
-}
+    pre_eq_ptr = JetScapeSignalManager::Instance()->GetPreEquilibriumPointer().lock();
+    if (!pre_eq_ptr) {
+      WARN << "No Pre-equilibrium module";
+    }
+  
+    initialize_hydro(parameter_list);
+    InitTask();
 
-real FluidDynamicsBase::get_qgp_fraction(real time, real x, real y, real z) {
-  // this function returns the QGP fraction at a space time point
-  // (time, x, y, z)
-  // FluidCellInfo *fluid_cell_ptr = new FluidCellInfo;
-  std::unique_ptr<FluidCellInfo> fluid_cell_ptr;
-  get_hydro_info(time, x, y, z, fluid_cell_ptr);
-  real qgp_fraction = fluid_cell_ptr->qgp_fraction;
-  // delete fluid_cell_ptr;
-  return(qgp_fraction);
-}
+    JetScapeTask::InitTasks();
+  }
 
-void FluidDynamicsBase::print_fluid_cell_information(
-                                        FluidCellInfo* fluid_cell_info_ptr) {
+  void FluidDynamics::Exec()
+  {
+    INFO <<"Run Hydro : "<<GetId()<< " ...";
+    VERBOSE(8)<<"Current Event #"<<GetCurrentEvent();
+
+    if (ini) {
+      VERBOSE(3) << "length of entropy density vector=" << ini->entropy_density_distribution_.size();
+    }
+
+    evolve_hydro();  
+    JetScapeTask::ExecuteTasks();
+  }
+
+  void FluidDynamics::UpdateEnergyDeposit(int t, double edop) {
+    //sigslot::lock_block<multi_threaded_local> lock(this);
+    JSDEBUG<<MAGENTA<<"Jet Signal received : "<<t<<" "<<edop;
+  }
+  
+  void FluidDynamics::GetEnergyDensity(int t,double &edensity) {
+    //sigslot::lock_block<multi_threaded_local> lock(this);
+    edensity=0.5;
+    JSDEBUG<<"Edensity to Jet = "<<edensity<<" at t="<<t;
+  }
+
+  
+  real FluidDynamics::get_energy_density(real time, real x, real y, real z) {
+    // this function returns the energy density [GeV] at a space time point
+    // (time, x, y, z)
+    // FluidCellInfo *fluid_cell_ptr = new FluidCellInfo;
+    std::unique_ptr<FluidCellInfo> fluid_cell_ptr;
+    get_hydro_info(time, x, y, z, fluid_cell_ptr);
+    real energy_density = fluid_cell_ptr->energy_density;
+    // delete fluid_cell_ptr;
+    return(energy_density);
+  }
+
+  real FluidDynamics::get_entropy_density(real time, real x, real y, real z) {
+    // this function returns the entropy density [GeV] at a space time point
+    // (time, x, y, z)
+    // FluidCellInfo *fluid_cell_ptr = new FluidCellInfo;
+    std::unique_ptr<FluidCellInfo> fluid_cell_ptr;
+    get_hydro_info(time, x, y, z, fluid_cell_ptr);
+    real entropy_density = fluid_cell_ptr->entropy_density;
+    //delete fluid_cell_ptr;
+    return(entropy_density);
+  }
+
+  real FluidDynamics::get_temperature(real time, real x, real y, real z) {
+    // this function returns the temperature [GeV] at a space time point
+    // (time, x, y, z)
+    // FluidCellInfo *fluid_cell_ptr = new FluidCellInfo;
+    std::unique_ptr<FluidCellInfo> fluid_cell_ptr;
+    get_hydro_info(time, x, y, z, fluid_cell_ptr);
+    real temperature = fluid_cell_ptr->temperature;
+    // delete fluid_cell_ptr;
+    return(temperature);
+  }
+
+  real FluidDynamics::get_qgp_fraction(real time, real x, real y, real z) {
+    // this function returns the QGP fraction at a space time point
+    // (time, x, y, z)
+    // FluidCellInfo *fluid_cell_ptr = new FluidCellInfo;
+    std::unique_ptr<FluidCellInfo> fluid_cell_ptr;
+    get_hydro_info(time, x, y, z, fluid_cell_ptr);
+    real qgp_fraction = fluid_cell_ptr->qgp_fraction;
+    // delete fluid_cell_ptr;
+    return(qgp_fraction);
+  }
+
+  void FluidDynamics::print_fluid_cell_information(
+						   FluidCellInfo* fluid_cell_info_ptr) {
     // this function print out the information of the fluid cell to the screen
     cout << "=======================================================" << endl;
     cout << "print out cell information:" << endl;
@@ -119,18 +193,18 @@ void FluidDynamicsBase::print_fluid_cell_information(
     cout << "vz = " << fluid_cell_info_ptr->vz << endl;
     cout << "shear viscous pi^{munu} (GeV/fm^3): " << endl;
     for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            cout << fluid_cell_info_ptr->pi[i][j] << "   ";
-        }
-        cout << endl;
+      for (int j = 0; j < 4; j++) {
+	cout << fluid_cell_info_ptr->pi[i][j] << "   ";
+      }
+      cout << endl;
     }
     cout << "bulk_Pi = " << fluid_cell_info_ptr->bulk_Pi << " GeV/fm^3"
          << endl;
     cout << "=======================================================" << endl;
-}
+  }
 
-void FluidCellInfo::Print()
-{
+  void FluidCellInfo::Print()
+  {
     // this function print out the information of the fluid cell to the screen
     cout << "=======================================================" << endl;
     cout << "print out cell information:" << endl;
@@ -153,14 +227,14 @@ void FluidCellInfo::Print()
     cout << "vz = " << vz << endl;
     cout << "shear viscous pi^{munu} (GeV/fm^3): " << endl;
     for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            cout << pi[i][j] << "   ";
-        }
-        cout << endl;
+      for (int j = 0; j < 4; j++) {
+	cout << pi[i][j] << "   ";
+      }
+      cout << endl;
     }
     cout << "bulk_Pi = " << bulk_Pi << " GeV/fm^3"
          << endl;
     cout << "=======================================================" << endl;
-}
+  }
 
 } // end namespace Jetscape

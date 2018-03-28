@@ -14,7 +14,9 @@ class GubserHydro: public FluidDynamics {
  private:
     double q;
     double e_0;
-    
+    double temperature(double e_local);
+
+     
  public:
      GubserHydro();
      ~GubserHydro();
@@ -22,7 +24,6 @@ class GubserHydro: public FluidDynamics {
      void initialize_hydro(Parameter parameter_list);
 
      void evolve_hydro();
-     double get_temperature(double e_local);
 
      void get_hydro_info(Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
 			 std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr);

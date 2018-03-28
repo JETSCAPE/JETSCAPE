@@ -40,7 +40,7 @@ void GubserHydro::evolve_hydro() {
 }
 
 
-double GubserHydro::get_temperature(double e_local) {
+double GubserHydro::temperature(double e_local) {
     double N_c = 3.;
     double N_f = 2.5;
     double T_local = pow(
@@ -69,7 +69,7 @@ void GubserHydro::get_hydro_info(real t, real x, real y, real z,
 
     double e_local = (
         (e_0/pow(tau_local, 4./3.))*(pow(2.*q, 8./3.))/(pow(temp, 4./3.)));
-    double T_local = get_temperature(e_local);       // GeV
+    double T_local = temperature(e_local);           // GeV
     e_local *= hbarc;                                // GeV/fm^3
     double p_local = e_local/3.;                     // GeV/fm^3
     double s_local = (e_local + p_local)/T_local;    // 1/fm^3
