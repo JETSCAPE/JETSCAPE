@@ -1,8 +1,8 @@
 // Copyright JETSCAPE Collaboration @ 2016
 // This is written by Longgang Pang and Chun Shen
 //
-#ifndef SRC_LINEAR_INTERPOLATION_H_
-#define SRC_LINEAR_INTERPOLATION_H_
+#ifndef LINEARINTERPOLATION_H
+#define LINEARINTERPOLATION_H
 
 #include <cmath>
 
@@ -76,4 +76,4 @@ type trilinear_int(real x0, real x1, real y0, real y1, real z0, real z1,
 
 } //end namespace Jetscape
 
-#endif  // SRC_LINEAR_INTERPOLATION_H_
+#endif  // LINEARINTERPOLATION_H

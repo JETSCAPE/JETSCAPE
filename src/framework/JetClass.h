@@ -13,7 +13,7 @@
 #include <math.h>
 #include "JetScapeParticles.hpp"
 #include "JetScapeConstants.h"
-#include "four_vector.hpp"
+#include "FourVector.h"
 #include "fjcore.hh"
 
 #include <vector>

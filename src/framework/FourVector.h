@@ -5,9 +5,8 @@
 
 
 
-#ifndef FOUR_VECTOR
-#define FOUR_VECTOR
-
+#ifndef FOURVECTOR_H
+#define FOURVECTOR_H
 
 #include <iostream>
 #include <cmath>
@@ -210,11 +209,11 @@ namespace Jetscape {
     // the v is for vector, we call the private variables, xv, tv etc., so that get function
     // calls will be called x, t etc.
     double xv,yv,zv,tv;
-    
+   
 
   };
 
 
 }; /// end of namespace Jetscape
 
-#endif // end of FOUR_VECTOR class
+#endif // FOURVECTOR_H

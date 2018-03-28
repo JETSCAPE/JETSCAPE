@@ -50,7 +50,7 @@
 #include <math.h>
 #include "GTL/graph.h"
 #include "JetScapeConstants.h"
-#include "four_vector.hpp"
+#include "FourVector.h"
 #include "fjcore.hh"
 #include "JetScapeLogger.h"
 #include "PartonShower.h"

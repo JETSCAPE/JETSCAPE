@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include "./FluidDynamics.h"
-#include "./linear_interpolation.h"
+#include "./LinearInterpolation.h"
 #include "JetScapeSignalManager.h"
 
 #define MAGENTA "\033[35m"
