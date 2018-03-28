@@ -16,7 +16,7 @@
 #include "tinyxml2.h"
 #include<iostream>
 
-#include "fluid_dynamics.h"
+#include "FluidDynamics.h"
 #define hbarc 0.197327053
 
 #define MAGENTA "\033[35m"

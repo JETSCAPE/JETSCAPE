@@ -18,7 +18,7 @@
 #include "tinyxml2.h"
 #include<iostream>
 
-#include "fluid_dynamics.h"
+#include "FluidDynamics.h"
 
 #define MAGENTA "\033[35m"
 

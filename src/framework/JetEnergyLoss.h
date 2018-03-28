@@ -9,7 +9,7 @@
 #define JETENERGYLOSS_H
 
 #include "JetScapeModuleBase.h"
-#include "fluid_dynamics.h"
+#include "FluidDynamics.h"
 #include "JetClass.h"
 #include "JetScapeWriter.h"
 #include "PartonShower.h"

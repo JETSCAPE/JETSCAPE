@@ -3,7 +3,7 @@
 // This is written by Longgang Pang and Chun Shen
 
 #include <iostream>
-#include "./fluid_dynamics.h"
+#include "./FluidDynamics.h"
 #include "./linear_interpolation.h"
 #include "JetScapeSignalManager.h"
 

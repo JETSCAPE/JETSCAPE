@@ -5,7 +5,6 @@
 #include <cstring>
 #include <cmath>
 #include <iostream>
-//#include "fluid_dynamics.h"
 #include <helper.h>
 #include "GubserHydro.h"
 
