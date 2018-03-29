@@ -19,53 +19,77 @@
 #include "HepMC/WriterAscii.h"
 #include "HepMC/Print.h"
 
-using namespace HepMC;
+// using namespace HepMC;
+using HepMC::GenEvent;
+using HepMC::GenVertex;
+using HepMC::GenParticle;
+using HepMC::GenVertexPtr;
+using HepMC::GenParticlePtr;
 
 namespace Jetscape {
 
-class JetScapeWriterHepMC : public JetScapeWriter , public WriterAscii
+  class JetScapeWriterHepMC : public JetScapeWriter , public HepMC::WriterAscii
 {
 
  public:
 
- JetScapeWriterHepMC() : WriterAscii("") { SetId("HepMC writer"); };
- JetScapeWriterHepMC(string m_file_name_out) : JetScapeWriter(m_file_name_out), WriterAscii(m_file_name_out) { SetId("HepMC writer"); };
+ JetScapeWriterHepMC() : HepMC::WriterAscii("") { SetId("HepMC writer"); };
+ JetScapeWriterHepMC(string m_file_name_out) : JetScapeWriter(m_file_name_out), HepMC::WriterAscii(m_file_name_out) { SetId("HepMC writer"); };
   virtual ~JetScapeWriterHepMC();
 
   void Init();
   void Exec();
-  void WriteTask(weak_ptr<JetScapeWriter> w);
-
+  
   bool GetStatus() {return failed();}
   void Close() {close();}
 
-  // overload write functions ...
-  void WriteEvent(); 
-  void Write(weak_ptr<Vertex> v);
+  // // NEVER use this!
+  // // Can work with only one writer, but with a second one it gets called twice
+  // void WriteTask(weak_ptr<JetScapeWriter> w);
+
+  // overload write functions
+  void WriteEvent();
+  
+  // At parton level, we should never accept anything other than a full shower
+  // void Write(weak_ptr<Vertex> v);
   void Write(weak_ptr<PartonShower> ps);
+  void Write(weak_ptr<Hadron> h);
+  void WriteHeaderToFile();
 
  private:
 
-  bool vertexFlag;
-  vector<HepMC::GenVertex*> vertices;
+  HepMC::GenEvent evt;
+  vector< HepMC::GenVertexPtr > vertices;
+  HepMC::GenVertexPtr hadronizationvertex;
 
-  inline HepMC::GenVertex* castVtxToHepMC(shared_ptr<Vertex> vtx){
-      HepMC::FourVector vtxPosition(vtx->x_in().x(), vtx->x_in().y(), vtx->x_in().z(), vtx->x_in().t());
-      HepMC::GenVertex *hepVtx = new HepMC::GenVertex(vtxPosition);
-      return hepVtx;
+  inline HepMC::GenVertexPtr castVtxToHepMC(const shared_ptr<Vertex> vtx) const {
+    double x = vtx->x_in().x();
+    double y = vtx->x_in().y();
+    double z = vtx->x_in().z();
+    double t = vtx->x_in().t();
+    HepMC::FourVector vtxPosition( x, y, z, t );
+    // if ( t< 1e-6 ) t = 1e-6; // could do this. Exact 0 is bit quirky but works for hepmc
+    return make_shared<GenVertex>(vtxPosition);
   }
 
-  inline HepMC::GenParticle* castParticleToHepMC(Parton &particle){
-      HepMC::FourVector pmom(particle.px(), particle.py(), particle.pz(), particle.e());
-      HepMC::GenParticle *p1 = new HepMC::GenParticle(pmom, particle.pid(), particle.pstat());
-      return p1;
+  inline HepMC::GenParticlePtr castPartonToHepMC( const shared_ptr<Parton> pparticle) const {
+    return castPartonToHepMC ( *pparticle );
   }
 
-  inline HepMC::GenParticle* castParticleToHepMC(shared_ptr<Parton> particle){
-      HepMC::FourVector pmom(particle->px(), particle->py(), particle->pz(), particle->e());
-      HepMC::GenParticle *p1 = new HepMC::GenParticle(pmom, particle->pid(), particle->pstat());
-      return p1;
+  inline HepMC::GenParticlePtr castPartonToHepMC(const Parton &particle) const {
+    HepMC::FourVector pmom(particle.px(), particle.py(), particle.pz(), particle.e());
+    return make_shared<GenParticle> (pmom, particle.pid(), particle.pstat());
   }
+
+  inline HepMC::GenParticlePtr castHadronToHepMC( const shared_ptr<Hadron> pparticle) const {
+    return castHadronToHepMC ( *pparticle );
+  }
+
+  inline HepMC::GenParticlePtr castHadronToHepMC(const Hadron &particle) const {
+    HepMC::FourVector pmom(particle.px(), particle.py(), particle.pz(), particle.e());
+    return make_shared<GenParticle> (pmom, particle.pid(), particle.pstat());
+  }
+
   //int m_precision; //!< Output precision
   
 };

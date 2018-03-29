@@ -40,13 +40,13 @@ class JetScapeWriterAsciiGZ : public JetScapeWriter
   void Write(weak_ptr<Parton> p);
   void Write(weak_ptr<Vertex> v);
   void Write(weak_ptr<Hadron> h);
+  void WriteHeaderToFile();
+
   void Write(string s) {output_file<<s<<endl;}
   void WriteComment(string s) {output_file<<"# "<<s<<endl;}
   void WriteWhiteSpace(string s) {output_file<<s<<" ";}
-  // ...
-  
   void WriteEvent();
-  
+ 
  private:
 
   ogzstream output_file; //!< Output file

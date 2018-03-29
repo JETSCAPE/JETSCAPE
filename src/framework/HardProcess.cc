@@ -76,12 +76,37 @@ void HardProcess::Clear()
 void HardProcess::WriteTask(weak_ptr<JetScapeWriter> w)
 {
   VERBOSE(8);
-  VERBOSE(8)<<w.lock()->GetOutputFileName();
-  
-  w.lock()->WriteComment("HardProcess Parton List: "+GetId());
-  
-  for (int i=0;i<hp_list.size();i++)
-    w.lock()->Write(GetPartonAt(i));
+
+  auto f = w.lock();
+  if ( f ){
+    VERBOSE(8)<<f->GetOutputFileName();
+    
+    // Weight, xsec, etc
+ 
+    // // Can explicitly write our own header information, though the writer should handle this.
+    // std::ostringstream oss;
+    // oss.str(""); oss << GetId() << " sigmaGen  = " << GetSigmaGen();  
+    // f->WriteComment ( oss.str() );
+    // oss.str(""); oss << GetId() << " sigmaErr  = " << GetSigmaErr();
+    // f->WriteComment ( oss.str() );
+    // oss.str(""); oss << GetId() << " weight  = " << GetEventWeight();
+    // f->WriteComment ( oss.str() );
+    
+    // Hard partons
+    f->WriteComment("HardProcess Parton List: "+GetId());  
+    for ( auto hp : hp_list )    f->Write( hp );
+  }
 }
 
+void HardProcess::CollectHeader( weak_ptr<JetScapeWriter> w ){
+  auto f = w.lock();
+  if ( f ){
+    auto& header = f->GetHeader();
+    header.SetSigmaGen( GetSigmaGen() );
+    header.SetSigmaErr( GetSigmaErr() );
+    header.SetEventWeight( GetEventWeight() );
+  }
+}
+
+    
 } // end namespace Jetscape

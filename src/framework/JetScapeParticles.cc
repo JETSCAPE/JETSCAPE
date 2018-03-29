@@ -146,23 +146,23 @@ namespace Jetscape {
   //  end setters
     
   //  start getters        
-  const int JetScapeParticleBase::pid()
+  const int JetScapeParticleBase::pid() const
   {
     return(pid_);
   }
     
-  const int JetScapeParticleBase::pstat()
+  const int JetScapeParticleBase::pstat() const
   {
     return(pstat_);
   }
     
-  const int JetScapeParticleBase::plabel()
+  const int JetScapeParticleBase::plabel() const
   {
     return(plabel_);
   }
 
       
-  const double JetScapeParticleBase::time()
+  const double JetScapeParticleBase::time() const
   {
     return(x_in_.t());
   }

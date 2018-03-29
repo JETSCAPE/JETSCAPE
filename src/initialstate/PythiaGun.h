@@ -40,9 +40,15 @@ public:
   void InitTask();
   void Exec();
 
- // Getters
+  // Getters
   double GetpTHatMin() const {return pTHatMin;}
   double GetpTHatMax() const {return pTHatMax;}
+
+  // Cross-section information in mb and event weight.
+  double GetSigmaGen(){ return info.sigmaGen();};
+  double GetSigmaErr(){ return info.sigmaErr();};  
+  double GetEventWeight(){ return info.weight(); };
+  
 };
 
 #endif  // PYTHIAGUN_H

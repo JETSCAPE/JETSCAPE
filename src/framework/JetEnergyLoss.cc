@@ -339,63 +339,51 @@ void JetEnergyLoss::WriteTask(weak_ptr<JetScapeWriter> w)
 {
   VERBOSE(8);
   VERBOSE(4)<<"In JetEnergyLoss::WriteTask";
-  w.lock()->WriteComment("Energy loss Shower Initating Parton: "+GetId());
-  w.lock()->Write(inP);
+  auto f = w.lock();
+  if ( !f ) return;
+
+  f->WriteComment("Energy loss Shower Initating Parton: "+GetId());
+  f->Write(inP);
 
   // check with gzip version later ...
   // Also allow standard output/not using GTL graph structure ....
 
 #ifdef USE_HEPMC
   //If you want HepMC output, pass the whole shower along...
-  if (dynamic_pointer_cast<JetScapeWriterHepMC> (w.lock())){
-      VERBOSE(4) << " writing partons... found " << pShower->GetNumberOfPartons();
-      (w.lock())->Write(pShower);
+  if (dynamic_pointer_cast<JetScapeWriterHepMC> (f)){
+    VERBOSE(4) << " writing partons... found " << pShower->GetNumberOfPartons();
+    (f)->Write(pShower);
+    return;
   }
+#else
+  WARN << " : HEPMC writer requires the HEPMC library";
+  WARN << " : Please check your cmake setup";
+  throw std::runtime_error("Inconsistent HEPMC configuration");
 #endif
 
-  if (dynamic_pointer_cast<JetScapeWriterAscii> (w.lock()))
-    {
-      /*
-      w.lock()->Write("Parton Shower in gml format from GTL:");
-      pShower->save(dynamic_pointer_cast<JetScapeWriterAscii> (w.lock())->GetFileStream());
-      w.lock()->Write("");
-      */
-      /*
-      // Test: Each shower in seperate gml file for testing of JetScape format ...
-      string fGMLname="shower_"; fGMLname += to_string(GetCurrentEvent()); fGMLname+=".gml";
-      //cout<<fGMLname<<" "<<GetCurrentEvent()<<endl;
-      pShower->save((char*) fGMLname.c_str());
-      */
-    }
-
   //Own storage of graph structure, needs separate PartonShower reader ...
-  if (pShower)
-    {
-      w.lock()->WriteComment("Parton Shower in JetScape format to be used later by GTL graph:");
-      
-      // write vertices ...
-      PartonShower::node_iterator nIt,nEnd;
-      
-      for (nIt = pShower->nodes_begin(), nEnd = pShower->nodes_end(); nIt != nEnd; ++nIt)
-	{
-	  w.lock()->WriteWhiteSpace("["+to_string(nIt->id())+"] V");
-	  w.lock()->Write(pShower->GetVertex(*nIt));
-	}
-      
-      PartonShower::edge_iterator eIt,eEnd;
-      
-      for (eIt = pShower->edges_begin(), eEnd = pShower->edges_end(); eIt != eEnd; ++eIt)
-	{
-	  w.lock()->WriteWhiteSpace("["+to_string(eIt->source().id())+"]=>["+to_string(eIt->target().id())+"] P");
-	  w.lock()->Write(pShower->GetParton(*eIt));
-	}
+  if (pShower) {
+    f->WriteComment("Parton Shower in JetScape format to be used later by GTL graph:");
+    
+    // write vertices
+    PartonShower::node_iterator nIt,nEnd;
+    
+    for (nIt = pShower->nodes_begin(), nEnd = pShower->nodes_end(); nIt != nEnd; ++nIt){ 
+      f->WriteWhiteSpace("["+to_string(nIt->id())+"] V");
+      f->Write(pShower->GetVertex(*nIt));
     }
-  else
-    {
-      w.lock()->WriteComment("No EnergyLoss Modules were run - No Parton Shower information stored");
+    
+    PartonShower::edge_iterator eIt,eEnd;      
+    for (eIt = pShower->edges_begin(), eEnd = pShower->edges_end(); eIt != eEnd; ++eIt) {
+      f->WriteWhiteSpace("["+to_string(eIt->source().id())+"]=>["+to_string(eIt->target().id())+"] P");
+      f->Write(pShower->GetParton(*eIt));
     }
+  }
+  else  {
+    f->WriteComment("No EnergyLoss Modules were run - No Parton Shower information stored");
+  }
   
-  JetScapeTask::WriteTasks(w);
+  // JetScapeTask::WriteTasks(w);
 }
 
 void JetEnergyLoss::PrintShowerInitiatingParton()

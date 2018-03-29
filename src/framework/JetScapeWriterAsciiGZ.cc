@@ -9,6 +9,7 @@
 
 #include "JetScapeWriterAsciiGZ.h"
 #include "JetScapeLogger.h"
+#include "JetScapeXML.h"
 
 namespace Jetscape {
 
@@ -23,10 +24,24 @@ JetScapeWriterAsciiGZ::~JetScapeWriterAsciiGZ()
       Close();
 }
 
+void JetScapeWriterAsciiGZ::WriteHeaderToFile()
+{
+  INFO<<"Run JetScapeWriterAsciiGZ: Write header of event # "<<GetCurrentEvent()<<" ...";
+  Write(to_string(GetCurrentEvent()) + " Event");
+  
+  std::ostringstream oss;
+  oss.str(""); oss << GetId() << "sigmaGen " << GetHeader().GetSigmaGen();
+  WriteComment ( oss.str() );
+  oss.str(""); oss << GetId() << "sigmaErr " << GetHeader().GetSigmaErr();
+  WriteComment ( oss.str() );
+  oss.str(""); oss << GetId() << "weight " << GetHeader().GetEventWeight();
+  WriteComment ( oss.str() );
+}
+
 void JetScapeWriterAsciiGZ::WriteEvent()
 {
-  JSDEBUG<< GetCurrentEvent() << " Event ";
-  output_file<< GetCurrentEvent() << " Event \n";
+  // INFO<<"Run JetScapeWriterAsciiGZ: Write event # "<<GetCurrentEvent()<<" ...";
+  // do nothing, the modules handle this
 }
 
 void JetScapeWriterAsciiGZ::Write(weak_ptr<Parton> p)
@@ -55,8 +70,8 @@ void JetScapeWriterAsciiGZ::Init()
 
 void JetScapeWriterAsciiGZ::Exec()
 {
-  if (GetActive())
-    WriteEvent();
+  // if (GetActive())
+  //   WriteEvent();
 }
 
 } // end namespace Jetscape
