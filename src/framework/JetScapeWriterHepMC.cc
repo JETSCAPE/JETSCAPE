@@ -19,13 +19,7 @@ namespace Jetscape {
   JetScapeWriterHepMC::~JetScapeWriterHepMC(){
     if (GetActive())      Close();
   }
-  
-  // // We should never accept anything other than a full shower
-  // void JetScapeWriterHepMC::Write(weak_ptr<Vertex> v){
-  //   //Setting vertex from initial state
-  //   vertices.push_back(castVtxToHepMC(v.lock()));
-  // }
-  
+    
   void JetScapeWriterHepMC::WriteHeaderToFile() {
     // Create event here - not actually writing
     // TODO: GeV seems right, but I don't think we actually measure in mm

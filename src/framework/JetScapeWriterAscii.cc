@@ -47,12 +47,18 @@ void JetScapeWriterAscii::WriteEvent()
 
 void JetScapeWriterAscii::Write(weak_ptr<Parton> p)
 {
-  output_file<<*p.lock()<<endl;
+  auto pp = p.lock();
+  if ( pp ) {
+    output_file << *pp << endl;
+  }  
 }
 
 void JetScapeWriterAscii::Write(weak_ptr<Vertex> v)
 {
-  output_file<<*v.lock()<<endl;
+  auto vv = v.lock();
+  if ( vv ){
+    output_file << *vv << endl;
+  }
 }
 
 void JetScapeWriterAscii::Init()
@@ -86,7 +92,10 @@ void JetScapeWriterAscii::WriteInitFileXML()
 
 void JetScapeWriterAscii::Write(weak_ptr<Hadron> h)
 {
-  output_file<<*h.lock()<<endl;
+  auto hh = h.lock();
+  if ( hh ){
+    output_file << *hh << endl;
+  }
 }
 
 } // end namespace Jetscape

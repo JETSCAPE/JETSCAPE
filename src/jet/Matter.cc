@@ -171,9 +171,10 @@ void Matter::Init()
 
 void Matter::WriteTask(weak_ptr<JetScapeWriter> w)
 {
-  VERBOSE(8);
-  w.lock()->WriteComment("ElossModule Parton List: "+GetId());
-  w.lock()->WriteComment("Energy loss to be implemented accordingly ...");
+  VERBOSE(8);  auto f = w.lock();
+  if ( !f ) return;
+  f->WriteComment("ElossModule Parton List: "+GetId());
+  f->WriteComment("Energy loss to be implemented accordingly ...");
 }
 
 void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pIn, vector<Parton>& pOut)

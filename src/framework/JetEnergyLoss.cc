@@ -320,7 +320,8 @@ void JetEnergyLoss::Exec()
 
        for(unsigned int ipart=0; ipart<pShower->GetNumberOfPartons(); ipart++){
 	 //   Uncomment to dump the whole parton shower into the parton container
-	 //           hproc.lock()->AddParton(pShower->GetPartonAt(ipart));
+	 // auto hp = hproc.lock();
+	 // if ( hp ) hp->AddParton(pShower->GetPartonAt(ipart));
        }
 	
        shared_ptr<PartonPrinter> pPrinter = JetScapeSignalManager::Instance()->GetPartonPrinterPointer().lock();

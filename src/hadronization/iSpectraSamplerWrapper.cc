@@ -140,25 +140,22 @@ void iSpectraSamplerWrapper::pass_hadron_list_to_JETSCAPE() {
 void iSpectraSamplerWrapper::WriteTask(weak_ptr<JetScapeWriter> w)
 {
   VERBOSE(4)<<"In iSpectraSamplerWrapper::WriteTask";
-  w.lock()->WriteComment("JetScape module: "+GetId());
+  auto f = w.lock();
+  if ( !f ) return;
 
-  if(Hadron_list_.size()>0)
-  {
-    w.lock()->WriteComment("Final State Bulk Hadrons");
-    for(unsigned int j=0; j<Hadron_list_.size(); j++)
-    {
+  f->WriteComment("JetScape module: "+GetId());
+  if(Hadron_list_.size()>0) {
+    f->WriteComment("Final State Bulk Hadrons");
+    for(unsigned int j=0; j<Hadron_list_.size(); j++){
       vector<shared_ptr<Hadron>> hadVec = Hadron_list_.at(j);
-      for(unsigned int i=0; i<hadVec.size(); i++)
-      {
-        w.lock()->WriteWhiteSpace("["+to_string(i)+"] H");
-        w.lock()->Write(hadVec.at(i));
+      for(unsigned int i=0; i<hadVec.size(); i++) {
+	f->WriteWhiteSpace("["+to_string(i)+"] H");
+	f->Write(hadVec.at(i));
       }
     }
+  } else {
+    f->WriteComment("There are no bulk Hadrons");
   }
-  else
-  {
-    w.lock()->WriteComment("There is no bulk Hadrons");
-  }
-
+  
 }
 

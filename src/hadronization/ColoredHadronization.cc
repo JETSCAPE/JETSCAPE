@@ -74,8 +74,10 @@ void ColoredHadronization::Init()
 void ColoredHadronization::WriteTask(weak_ptr<JetScapeWriter> w)
 {
   VERBOSE(8);
-  w.lock()->WriteComment("Hadronization Module : "+GetId());
-  w.lock()->WriteComment("Hadronization to be implemented accordingly ...");
+  auto f = w.lock();
+  if ( !f ) return;
+  f->WriteComment("Hadronization Module : "+GetId());
+  f->WriteComment("Hadronization to be implemented accordingly ...");
 }
 
 void ColoredHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& shower, vector<shared_ptr<Hadron>>& hOut, vector<shared_ptr<Parton>>& pOut)
