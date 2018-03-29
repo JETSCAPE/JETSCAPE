@@ -79,28 +79,10 @@ namespace Jetscape {
   
     };
 
-  class JetScapeReaderAscii : public JetScapeReader<ifstream>
-  {
-
-  public :
-  
-  JetScapeReaderAscii() : JetScapeReader() {};
-  JetScapeReaderAscii(string m_file_name_in) : JetScapeReader(m_file_name_in) {};
-    ~JetScapeReaderAscii() {};
-  
-  };
-
+typedef JetScapeReader<ifstream> JetScapeReaderAscii;
 #ifdef USE_GZIP
-  class JetScapeReaderAsciiGZ : public JetScapeReader<igzstream>
-  {
-  public :
-  
-  JetScapeReaderAsciiGZ() : JetScapeReader() {};
-  JetScapeReaderAsciiGZ(string m_file_name_in) : JetScapeReader(m_file_name_in) {};
-    ~JetScapeReaderAsciiGZ() {};
-  
-  };
-#endif USE_GZIP
+typedef JetScapeReader<igzstream> JetScapeReaderAsciiGZ;
+#endif
   
 } // end namespace Jetscape
 

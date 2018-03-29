@@ -24,8 +24,7 @@
 #include "JetScapeXML.h"
 #include "Matter.h"
 #include "Martini.h"
-#include "JetScapeWriterAsciiGZ.h"
-#include "JetScapeWriterAscii.h"
+#include "JetScapeWriterStream.h"
 #ifdef USE_HEPMC
 #include "JetScapeWriterHepMC.h"
 #endif

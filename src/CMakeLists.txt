@@ -12,9 +12,9 @@ set (SOURCES  ${SOURCES}  ${frameworksources} )
 
 ## Take care of options
 ## Note that cmake NOT needs the "" to deal with empty variables
-if(NOT "${ZLIB_FOUND}")
-  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/framework/JetScapeWriterAsciiGZ.cc)
-endif()
+# if(NOT "${ZLIB_FOUND}")
+#   list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/framework/JetScapeWriterAsciiGZ.cc)
+# endif()
 
 if(NOT "${HEPMC_FOUND}")
   list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/framework/JetScapeWriterHepMC.cc)
@@ -78,12 +78,7 @@ if (${HDF5_FOUND})
 endif()
 
 if ( ${HEPMC_FOUND} )
-  set_target_properties(JetScape PROPERTIES COMPILE_FLAGS "-DUSE_HEPMC" )
   target_link_libraries (JetScape -L${HEPMC_LIB_DIR} -lHepMC )
-endif()
-
-if("${ZLIB_FOUND}")
-  set_target_properties(JetScape PROPERTIES COMPILE_FLAGS "-DUSE_GZIP" )
 endif()
 
 if ( music )

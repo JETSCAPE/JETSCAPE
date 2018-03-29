@@ -7,27 +7,30 @@
 
 // jetscape writer ascii class
 
-#include "JetScapeWriterAscii.h"
+#include "JetScapeWriterStream.h"
 #include "JetScapeLogger.h"
 #include "JetScapeXML.h"
 
 namespace Jetscape {
 
-JetScapeWriterAscii::JetScapeWriterAscii(string m_file_name_out)
+template<class T>
+JetScapeWriterStream<T>::JetScapeWriterStream(string m_file_name_out)
 {
   SetOutputFileName(m_file_name_out);
 }
 
-JetScapeWriterAscii::~JetScapeWriterAscii()
+template<class T>
+JetScapeWriterStream<T>::~JetScapeWriterStream()
 {
   VERBOSE(8);
   if (GetActive())
       Close();
 }
 
-void JetScapeWriterAscii::WriteHeaderToFile()
+template<class T>
+void JetScapeWriterStream<T>::WriteHeaderToFile()
 {
-  INFO<<"Run JetScapeWriterAscii: Write header of event # "<<GetCurrentEvent()<<" ...";
+  INFO<<"Run JetScapeWriterStream<T>: Write header of event # "<<GetCurrentEvent()<<" ...";
   Write(to_string(GetCurrentEvent()) + " Event");
 
   std::ostringstream oss;
@@ -39,13 +42,15 @@ void JetScapeWriterAscii::WriteHeaderToFile()
   WriteComment ( oss.str() );
 }
   
-void JetScapeWriterAscii::WriteEvent()
+template<class T>
+void JetScapeWriterStream<T>::WriteEvent()
 {
-  // INFO<<"Run JetScapeWriterAscii: Write event # "<<GetCurrentEvent()<<" ...";
+  // INFO<<"Run JetScapeWriterStream<T>: Write event # "<<GetCurrentEvent()<<" ...";
   // do nothing, the modules handle this
 }
 
-void JetScapeWriterAscii::Write(weak_ptr<Parton> p)
+template<class T>
+void JetScapeWriterStream<T>::Write(weak_ptr<Parton> p)
 {
   auto pp = p.lock();
   if ( pp ) {
@@ -53,7 +58,8 @@ void JetScapeWriterAscii::Write(weak_ptr<Parton> p)
   }  
 }
 
-void JetScapeWriterAscii::Write(weak_ptr<Vertex> v)
+template<class T>
+void JetScapeWriterStream<T>::Write(weak_ptr<Vertex> v)
 {
   auto vv = v.lock();
   if ( vv ){
@@ -61,11 +67,12 @@ void JetScapeWriterAscii::Write(weak_ptr<Vertex> v)
   }
 }
 
-void JetScapeWriterAscii::Init()
+template<class T>
+void JetScapeWriterStream<T>::Init()
 {
    if (GetActive())
      {
-       INFO<<"JetScape Ascii Writer initialized with output file = "<<GetOutputFileName();
+       INFO<<"JetScape Stream Writer initialized with output file = "<<GetOutputFileName();
        output_file.open(GetOutputFileName().c_str());
        
        //Write Init Informations, like XML and ... to file ...
@@ -73,15 +80,17 @@ void JetScapeWriterAscii::Init()
      }
 }
 
-void JetScapeWriterAscii::Exec()
+template<class T>
+void JetScapeWriterStream<T>::Exec()
 {
-  // INFO<<"Run JetScapeWriterAscii: Write event # "<<GetCurrentEvent()<<" ...";
+  // INFO<<"Run JetScapeWriterStream<T>: Write event # "<<GetCurrentEvent()<<" ...";
   
   // if (GetActive())
   //   WriteEvent();
 }
 
-void JetScapeWriterAscii::WriteInitFileXML()
+template<class T>
+void JetScapeWriterStream<T>::WriteInitFileXML()
 {
   JSDEBUG<<"Write XML to output file. XML file = "<<JetScapeXML::Instance()->GetXMLFileName();
   tinyxml2::XMLPrinter printer;
@@ -90,7 +99,8 @@ void JetScapeWriterAscii::WriteInitFileXML()
   output_file<<printer.CStr();
 }
 
-void JetScapeWriterAscii::Write(weak_ptr<PartonShower> ps){
+template<class T>
+void JetScapeWriterStream<T>::Write(weak_ptr<PartonShower> ps){
   auto pShower = ps.lock();
   if ( !pShower) return;
 
@@ -112,7 +122,8 @@ void JetScapeWriterAscii::Write(weak_ptr<PartonShower> ps){
   
 }
 
-void JetScapeWriterAscii::Write(weak_ptr<Hadron> h)
+template<class T>
+void JetScapeWriterStream<T>::Write(weak_ptr<Hadron> h)
 {
   auto hh = h.lock();
   if ( hh ){
@@ -120,4 +131,11 @@ void JetScapeWriterAscii::Write(weak_ptr<Hadron> h)
   }
 }
 
+template class JetScapeWriterStream<ofstream>;
+  
+#ifdef USE_GZIP
+template class JetScapeWriterStream<ogzstream>;
+#endif
+
+  
 } // end namespace Jetscape

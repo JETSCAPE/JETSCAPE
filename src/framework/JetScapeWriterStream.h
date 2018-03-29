@@ -7,24 +7,31 @@
 
 // jetscape writer ascii class
 
-#ifndef JETSCAPEWRITERASCII_H
-#define JETSCAPEWRITERASCII_H
+#ifndef JETSCAPEWRITERSTREAM_H
+#define JETSCAPEWRITERSTREAM_H
 
 #include <fstream>
 #include <string>
 
+#ifdef USE_GZIP
+#include "gzstream.h"
+#endif
+
 #include "JetScapeWriter.h"
+
+using std::ofstream;
 
 namespace Jetscape {
 
-class JetScapeWriterAscii : public JetScapeWriter
+template<class T>  
+class JetScapeWriterStream : public JetScapeWriter
 {
 
  public:
 
-  JetScapeWriterAscii() {};
-  JetScapeWriterAscii(string m_file_name_out);
-  virtual ~JetScapeWriterAscii();
+  JetScapeWriterStream<T>() {};
+  JetScapeWriterStream<T>(string m_file_name_out);
+  virtual ~JetScapeWriterStream<T>();
 
   void Init();
   void Exec();
@@ -45,14 +52,18 @@ class JetScapeWriterAscii : public JetScapeWriter
   void WriteWhiteSpace(string s) {output_file<<s<<" ";}
   void WriteEvent(); 
   
- private:
+ protected:
 
-  std::ofstream output_file; //!< Output file
+  T output_file; //!< Output file
   //int m_precision; //!< Output precision
   
 };
 
+typedef JetScapeWriterStream<ofstream> JetScapeWriterAscii;
+#ifdef USE_GZIP
+typedef JetScapeWriterStream<ogzstream> JetScapeWriterAsciiGZ;
+#endif
 
 } // end namespace Jetscape
 
-#endif
+#endif // JETSCAPEWRITERSTREAM_H

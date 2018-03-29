@@ -189,6 +189,7 @@ message("Looking for ZLIB ...")
 find_package(ZLIB)
 if(${ZLIB_FOUND})
   message(STATUS "ZLib found")
+  set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -DUSE_GZIP" )
 endif()
 
 ###########################

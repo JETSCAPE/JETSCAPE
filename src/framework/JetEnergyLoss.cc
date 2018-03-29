@@ -19,7 +19,7 @@
 #include <iostream>
 #include "tinyxml2.h"
 #include "JetScapeSignalManager.h"
-#include "JetScapeWriterAscii.h"
+#include "JetScapeWriterStream.h"
 #include "HardProcess.h"
 
 #ifdef USE_HEPMC

@@ -5,7 +5,7 @@
 #include <vector>
 #include <iostream>
 #include "JetScapeSignalManager.h"
-#include "JetScapeWriterAscii.h"
+#include "JetScapeWriterStream.h"
 
 using namespace std;
 
