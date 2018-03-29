@@ -82,6 +82,10 @@ if ( ${HEPMC_FOUND} )
   target_link_libraries (JetScape -L${HEPMC_LIB_DIR} -lHepMC )
 endif()
 
+if("${ZLIB_FOUND}")
+  set_target_properties(JetScape PROPERTIES COMPILE_FLAGS "-DUSE_GZIP" )
+endif()
+
 if ( music )
   target_link_libraries (JetScape music_lib )
 endif()

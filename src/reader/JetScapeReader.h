@@ -17,7 +17,9 @@
 #include "StringTokenizer.h"
 #include "PartonShower.h"
 #include <fstream>
+#ifdef USE_GZIP
 #include "gzstream.h"
+#endif
 
 using std::ostream;
 using std::istream;
@@ -88,9 +90,9 @@ namespace Jetscape {
   
   };
 
+#ifdef USE_GZIP
   class JetScapeReaderAsciiGZ : public JetScapeReader<igzstream>
   {
-
   public :
   
   JetScapeReaderAsciiGZ() : JetScapeReader() {};
@@ -98,7 +100,8 @@ namespace Jetscape {
     ~JetScapeReaderAsciiGZ() {};
   
   };
-
+#endif USE_GZIP
+  
 } // end namespace Jetscape
 
 // ---------------------
