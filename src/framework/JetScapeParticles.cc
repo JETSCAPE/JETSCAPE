@@ -12,12 +12,12 @@
 #include <cmath>
 #include <assert.h>
 #include "JetScapeLogger.h"
-#include "JetScapeParticles.hpp"
-#include "constants.h"
+#include "JetScapeParticles.h"
+#include "JetScapeConstants.h"
 
 namespace Jetscape {
 
-  // Initialize static helper here
+  // Initialize static MakeUniqueHelper.here
   Pythia8::Pythia JetScapeParticleBase::InternalHelperPythia ("IntentionallyEmpty",false);
 
   JetScapeParticleBase::~JetScapeParticleBase(){

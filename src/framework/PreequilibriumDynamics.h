@@ -12,7 +12,7 @@
 #include "InitialState.h"
 #include "JetScapeModuleBase.h"
 #include "tinyxml2.h"
-#include "realtype.h"
+#include "RealType.h"
 
 namespace Jetscape {
     // Flags for preequilibrium dynamics status.

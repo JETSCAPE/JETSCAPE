@@ -6,8 +6,8 @@
 // -----------------------------------------
 // License and Doxygen-like Documentation to be added ...
 
-#ifndef TRENTO_INITIAL_H
-#define TRENTO_INITIAL_H
+#ifndef TRENTOINITIAL_H
+#define TRENTOINITIAL_H
 
 #include <tuple>
 #include <memory>
@@ -19,7 +19,7 @@
 #include "fwd_decl.h"
 #include "JetScapeModuleBase.h"
 #include "tinyxml2.h"
-#include "Collision.h"
+#include "TrentoCollision.h"
 #include "InitialState.h"
 #include "JetScapeLogger.h"
 #include "JetScapeXML.h"
@@ -85,4 +85,4 @@ class TrentoInitial : public InitialState {
 
 } // end namespace Jetscape
 
-#endif
+#endif // TRENTOINITIAL_H

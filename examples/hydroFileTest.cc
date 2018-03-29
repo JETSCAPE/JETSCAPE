@@ -27,11 +27,11 @@
 // User modules derived from jetscape framework clasess
 // to be used to run Jetscape ...
 #include "AdSCFT.h"
-#include "ElossModulesTestMatter.h"
-#include "ElossModulesTestMartini.h"
-#include "brick_jetscape.h"
-#include "Gubser_hydro_jetscape.h"
-#include "hydro_file_jetscape.h"
+#include "Matter.h"
+#include "Martini.h"
+#include "Brick.h"
+#include "GubserHydro.h"
+#include "HydroFromFile.h"
 #include "PGun.h"
 
 #ifdef USE_HDF5
@@ -69,7 +69,7 @@ int main(int argc, char** argv)
 
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
-  auto hydro = make_shared<HydroFile> ();
+  auto hydro = make_shared<HydroFromFile> ();
   //auto hydro = make_shared<GubserHydro> ();
   
   auto matter = make_shared<Matter> ();

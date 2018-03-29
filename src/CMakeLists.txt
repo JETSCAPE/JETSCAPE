@@ -30,7 +30,7 @@ FILE(GLOB preeqsources preequilibrium/*.cc)
 set (SOURCES  ${SOURCES}  ${preeqsources} )
 ## Take care of options
 if(NOT ${freestream})
-  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/preequilibrium/freestream-milne_jetscape.cc)
+  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/preequilibrium/FreestreamMilneWrapper.cc)
 endif()
 
 #hydro
@@ -38,7 +38,7 @@ FILE(GLOB hydrosources hydro/*.cc)
 set (SOURCES  ${SOURCES}  ${hydrosources} )
 ## Take care of options
 if(NOT ${music})
-  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/hydro/music_jetscape.cc)
+  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/hydro/MusicWrapper.cc)
 endif()
 
 #jet
@@ -51,7 +51,7 @@ set (SOURCES  ${SOURCES}  ${hadrosources} )
 
 ## Take care of options
 if(NOT ${iSS})
-  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/hadronization/iSS_jetscape.cc)
+  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/hadronization/iSpectraSamplerWrapper.cc)
 endif()
 
 #reader

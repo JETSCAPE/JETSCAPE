@@ -8,8 +8,8 @@
     @date Jun 29, 2017
 */
 
-#ifndef PYTHIAGUN_HPP
-#define PYTHIAGUN_HPP
+#ifndef PYTHIAGUN_H
+#define PYTHIAGUN_H
 
 #include "HardProcess.h"
 #include "JetScapeLogger.h"
@@ -51,4 +51,4 @@ public:
   
 };
 
-#endif  // PYTHIAGUN_HPP
+#endif  // PYTHIAGUN_H

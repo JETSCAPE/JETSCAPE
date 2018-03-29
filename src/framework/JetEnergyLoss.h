@@ -9,12 +9,12 @@
 #define JETENERGYLOSS_H
 
 #include "JetScapeModuleBase.h"
-#include "fluid_dynamics.h"
+#include "FluidDynamics.h"
 #include "JetClass.h"
 #include "JetScapeWriter.h"
 #include "PartonShower.h"
 #include "PartonPrinter.h"
-#include "helper.h"
+#include "MakeUniqueHelper.h"
 #include <vector>
 #include <random>
 

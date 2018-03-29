@@ -100,6 +100,7 @@ include_directories("${CMAKE_SOURCE_DIR}/external_packages/trento/src/")
 ## default directory is the build directory
 ## Note that trento also automatically populates a bin directory
 ## and we cannot disable this behavior
+## Also, iSS and mpihydro install binaries in CMAKE_HOME_DIR. Sigh.
 ###
 # Install header files
 # default install prefix: build directory

@@ -22,8 +22,8 @@
 #include "FluidDynamics.h"
 #include "JetScapeLogger.h"
 #include "JetScapeXML.h"
-#include "ElossModulesTestMatter.h"
-#include "ElossModulesTestMartini.h"
+#include "Matter.h"
+#include "Martini.h"
 #include "JetScapeWriterAsciiGZ.h"
 #include "JetScapeWriterAscii.h"
 //#include "JetScapeWriterHepMC.h"
@@ -37,9 +37,8 @@
 //#include "TRandom.h"
 
 // for test case ...
-//#include "fluid_dynamics.h"
-#include "brick_jetscape.h"
-#include "Gubser_hydro_jetscape.h"
+#include "Brick.h"
+#include "GubserHydro.h"
 
 using namespace std;
 using namespace sigslot;

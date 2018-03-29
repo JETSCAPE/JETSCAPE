@@ -19,13 +19,13 @@
 #include "JetScapeWriterAsciiGZ.h"
 // #include "JetScapeWriterHepMC.h"
 
-#include "brick_jetscape.h"
+#include "Brick.h"
 #include "PGun.h"
-#include "ElossModulesValidate.h"
+#include "ElossValidation.h"
 #include "PartonPrinter.h"
 #include "HadronizationManager.h"
 #include "Hadronization.h"
-#include "HadronizationModuleTest.h"
+#include "ColoredHadronization.h"
 
 #include <chrono>
 
@@ -49,8 +49,7 @@ int main(int argc, char** argv)
   Show();
 
   // Main framework task
-  // auto jetscape = make_shared<JetScape>("simplevalidate.xml",1);
-  auto jetscape = make_shared<JetScape>("../test/simplevalidate.xml",1);
+  auto jetscape = make_shared<JetScape>("../examples/simplevalidate.xml",1);
   jetscape->SetId("primary");
 
   // Empty initial state

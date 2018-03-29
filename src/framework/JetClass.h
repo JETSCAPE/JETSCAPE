@@ -11,9 +11,9 @@
 
 #include <stdio.h>
 #include <math.h>
-#include "JetScapeParticles.hpp"
-#include "constants.h"
-#include "four_vector.hpp"
+#include "JetScapeParticles.h"
+#include "JetScapeConstants.h"
+#include "FourVector.h"
 #include "fjcore.hh"
 
 #include <vector>

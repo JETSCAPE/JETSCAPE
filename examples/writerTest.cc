@@ -27,10 +27,10 @@
 // User modules derived from jetscape framework clasess
 // to be used to run Jetscape ...
 #include "InitialState.h"
-#include "ElossModulesTestMatter.h"
-#include "ElossModulesTestMartini.h"
-#include "brick_jetscape.h"
-#include "Gubser_hydro_jetscape.h"
+#include "Matter.h"
+#include "Martini.h"
+#include "Brick.h"
+#include "GubserHydro.h"
 #include "PGun.h"
 
 #include <chrono>

@@ -25,16 +25,16 @@
 // User modules derived from jetscape framework clasess
 // to be used to run Jetscape ...
 #include "AdSCFT.h"
-#include "ElossModulesTestMatter.h"
-#include "ElossModulesTestMartini.h"
-#include "brick_jetscape.h"
-#include "Gubser_hydro_jetscape.h"
+#include "Matter.h"
+#include "Martini.h"
+#include "Brick.h"
+#include "GubserHydro.h"
 #include "PythiaGun.h"
 #include "PartonPrinter.h"
 #include "HadronizationManager.h"
 #include "Hadronization.h"
-#include "HadronizationModuleTest.h"
-#include "ColorlessHad.h"
+#include "ColoredHadronization.h"
+#include "ColorlessHadronization.h"
 
 // Add initial state module for test
 #include "TrentoInitial.h"
@@ -90,8 +90,8 @@ int main(int argc, char** argv)
   auto printer = make_shared<PartonPrinter>();
   auto hadroMgr = make_shared<HadronizationManager> ();
   auto hadro = make_shared<Hadronization> ();
-  auto hadroModule = make_shared<HadronizationModuleTest> ();
-  auto colorless = make_shared<ColorlessHad> ();
+  auto hadroModule = make_shared<ColoredHadronization> ();
+  auto colorless = make_shared<ColorlessHadronization> ();
   
   // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");

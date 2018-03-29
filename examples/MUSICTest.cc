@@ -25,16 +25,16 @@
 // User modules derived from jetscape framework clasess
 // to be used to run Jetscape ...
 #include "AdSCFT.h"
-#include "ElossModulesTestMatter.h"
-#include "ElossModulesTestMartini.h"
-#include "music_jetscape.h"
-#include "iSS_jetscape.h"
+#include "Matter.h"
+#include "Martini.h"
+#include "MusicWrapper.h"
+#include "iSpectraSamplerWrapper.h"
 #include "TrentoInitial.h"
 #include "PGun.h"
 #include "PartonPrinter.h"
 #include "HadronizationManager.h"
 #include "Hadronization.h"
-#include "HadronizationModuleTest.h"
+#include "ColoredHadronization.h"
 
 #include <chrono>
 #include <thread>
@@ -78,7 +78,7 @@ int main(int argc, char** argv)
   auto jloss = make_shared<JetEnergyLoss> ();
   auto trento = make_shared<TrentoInitial> ();
   auto hydro = make_shared<MPI_MUSIC> ();
-  auto iSS = make_shared<iSS_CF> ();
+  auto iSS = make_shared<iSpectraSamplerWrapper> ();
   //auto hydro = make_shared<GubserHydro> ();
   
   auto matter = make_shared<Matter> ();
@@ -95,7 +95,7 @@ int main(int argc, char** argv)
   auto printer = make_shared<PartonPrinter> ();  
   auto hadroMgr = make_shared<HadronizationManager> ();
   auto hadro = make_shared<Hadronization> ();
-  auto hadroModule = make_shared<HadronizationModuleTest> ();
+  auto hadroModule = make_shared<ColoredHadronization> ();
     
   
   // only pure Ascii writer implemented and working with graph output ...
