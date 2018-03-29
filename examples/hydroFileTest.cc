@@ -61,11 +61,11 @@ int main(int argc, char** argv)
   JetScapeLogger::Instance()->SetRemark(false);
   //SetVerboseLevel (9 a lot of additional debug output ...)
   //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevle(9) or 10
-  JetScapeLogger::Instance()->SetVerboseLevel(0);
+  JetScapeLogger::Instance()->SetVerboseLevel(8);
    
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml", 10);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml", 5);
   jetscape->set_reuse_hydro (true);
   jetscape->set_n_reuse_hydro (5);
 
@@ -91,7 +91,7 @@ int main(int argc, char** argv)
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
   //auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");  
 #ifdef USE_HEPMC
-  //auto writer= make_shared<JetScapeWriterHepMC> ("test_out.dat");
+  //auto writer= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
 #endif
   //writer->SetActive(false);
 
@@ -113,9 +113,9 @@ int main(int argc, char** argv)
   // and Martini dummy ...
   // Switching Q2 (or whatever variable used
   // hardcoded at 5 to be changed to xml)
-  //jloss->Add(matter);
+  jloss->Add(matter);
   //jloss->Add(martini);
-  jloss->Add(adscft);
+  // jloss->Add(adscft);
   
   jlossmanager->Add(jloss);
   
