@@ -37,6 +37,7 @@ class JetScapeWriterAsciiGZ : public JetScapeWriter
   bool GetStatus() {return output_file.good();}
   void Close() {output_file.close();}
 
+  void Write(weak_ptr<PartonShower> ps);
   void Write(weak_ptr<Parton> p);
   void Write(weak_ptr<Vertex> v);
   void Write(weak_ptr<Hadron> h);

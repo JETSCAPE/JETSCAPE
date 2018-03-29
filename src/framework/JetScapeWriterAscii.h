@@ -33,7 +33,8 @@ class JetScapeWriterAscii : public JetScapeWriter
   void Close() {output_file.close();}
 
   void WriteInitFileXML();
-  
+
+  void Write(weak_ptr<PartonShower> ps);
   void Write(weak_ptr<Parton> p);
   void Write(weak_ptr<Vertex> v);
   void Write(weak_ptr<Hadron> h);
