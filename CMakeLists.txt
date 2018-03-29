@@ -345,9 +345,6 @@ if(${HDF5_FOUND})
   target_link_libraries(hydroJetTest JetScape ${_hdf5_libs})
 endif()
 
-add_executable(writerTest ./examples/writerTest.cc)
-target_link_libraries(writerTest JetScape)
-
 add_executable(SimpleValidate ./examples/SimpleValidate.cc)
 target_link_libraries(SimpleValidate JetScape )
 
