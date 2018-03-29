@@ -14,7 +14,9 @@
 #include "JetEnergyLossManager.h"
 #include "JetScapeWriterAscii.h"
 #include "JetScapeWriterAsciiGZ.h"
+#ifdef USE_HEPMC
 #include "JetScapeWriterHepMC.h"
+#endif
 
 // User modules derived from jetscape framework clasess
 // to be used to run Jetscape ...
@@ -114,7 +116,9 @@ int main(int argc, char** argv)
   
   // auto writer= make_shared<JetScapeWriterAscii> (outname);
   auto writer= make_shared<JetScapeWriterAsciiGZ> (outname);  
+#ifdef USE_HEPMC
   // auto writer= make_shared<JetScapeWriterHepMC> (outname);
+#endif
 
   //Remark: For now modules have to be added
   //in proper "workflow" order (can be defined via xml and sorted if necessary)  

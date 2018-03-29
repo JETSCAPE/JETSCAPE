@@ -26,15 +26,12 @@
 #include "Martini.h"
 #include "JetScapeWriterAsciiGZ.h"
 #include "JetScapeWriterAscii.h"
-//#include "JetScapeWriterHepMC.h"
+#ifdef USE_HEPMC
+#include "JetScapeWriterHepMC.h"
+#endif
+
 
 #include "sigslot.h"
-
-//#include "HepMC/GenEvent.h"
-//#include "HepMC/Print.h"
-
-//#include "TFile.h"
-//#include "TRandom.h"
 
 // for test case ...
 #include "Brick.h"
@@ -42,20 +39,6 @@
 
 using namespace std;
 using namespace sigslot;
-
-//using namespace HepMC;
-
-// -------------------------------------
-// as shortcut if desired ...
-// (can/should also be done in Classes if needed ...)
-
-//#define Logger JetScapeLogger::Instance()
-//#define INFO Logger->Info()<<__PRETTY_FUNCTION__
-//#define VERBOSE(l) JetScapeLogger::Instance()->Verbose(l)<<__PRETTY_FUNCTION__
-// Done and defined in JetScapeLogger.h ... 
-// -------------------------------------
-
-// Forward declaration
 
 using namespace Jetscape;
 
@@ -66,27 +49,6 @@ void Show();
 int main(int argc, char** argv)
 {
   cout<<endl;
-
-  //TFile *f=new TFile("test.root","RECREATE");  
-  //f->Close();
-  //cout<<gRandom->Uniform(1)<<endl;
-  
-  //GenEvent evt(Units::GEV,Units::MM);
-
-  /*
-  // px      py        pz       e     pdgid status
-  auto p1 = make_shared<HepMC::GenParticle>( FourVector( 0.0,    0.0,   7000.0,  7000.0  ),2212,  3 );
-  auto p2 = make_shared<HepMC::GenParticle>( FourVector( 0.750, -1.569,   32.191,  32.238),   1,  3 );
-  auto p3 = make_shared<HepMC::GenParticle>( FourVector( 0.0,    0.0,  -7000.0,  7000.0  ),2212,  3 );
-  auto p4 = make_shared<HepMC::GenParticle>( FourVector(-3.047,-19.0,    -54.629,  57.920),  -2,  3 );
-  
-  auto v1 = make_shared<HepMC::GenVertex>();
-  v1->add_particle_in (p1);
-  v1->add_particle_out(p2);
-  evt.add_vertex(v1);
-  */
-  
-  //Print::content(evt);
   
   // DEBUG=true by default and REMARK=false
   // can be also set via XML file
@@ -136,7 +98,9 @@ int main(int argc, char** argv)
 
   //auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
+#ifdef USE_HEPMC
   //auto writer= make_shared<JetScapeWriterHepMC> ("test_out.dat");
+#endif
   writer->SetActive(false);
   
   jetscape->Add(hydro);
