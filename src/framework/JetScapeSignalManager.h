@@ -111,7 +111,7 @@ class JetScapeSignalManager //: public sigslot::has_slots<sigslot::multi_threade
   int num_GetTemperatureSignals=0;
   int num_GetHydroCellSignals=0;
   int num_SentInPartons=0;
-  int num_GetOutPartons=0;
+  // int num_GetOutPartons=0;
   int num_TransformPartons=0;
   
   map<int,weak_ptr<JetEnergyLoss>> jet_signal_map;

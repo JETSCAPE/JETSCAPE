@@ -25,11 +25,24 @@ JetScapeWriterAscii::~JetScapeWriterAscii()
       Close();
 }
 
+void JetScapeWriterAscii::WriteHeaderToFile()
+{
+  INFO<<"Run JetScapeWriterAscii: Write header of event # "<<GetCurrentEvent()<<" ...";
+  Write(to_string(GetCurrentEvent()) + " Event");
+
+  std::ostringstream oss;
+  oss.str(""); oss << GetId() << "sigmaGen " << GetHeader().GetSigmaGen();
+  WriteComment ( oss.str() );
+  oss.str(""); oss << GetId() << "sigmaErr " << GetHeader().GetSigmaErr();
+  WriteComment ( oss.str() );
+  oss.str(""); oss << GetId() << "weight " << GetHeader().GetEventWeight();
+  WriteComment ( oss.str() );
+}
+  
 void JetScapeWriterAscii::WriteEvent()
 {
-  JSDEBUG<< GetCurrentEvent() << " Event";
-  Write(to_string(GetCurrentEvent()) + " Event");
-  
+  // INFO<<"Run JetScapeWriterAscii: Write event # "<<GetCurrentEvent()<<" ...";
+  // do nothing, the modules handle this
 }
 
 void JetScapeWriterAscii::Write(weak_ptr<Parton> p)
@@ -56,10 +69,10 @@ void JetScapeWriterAscii::Init()
 
 void JetScapeWriterAscii::Exec()
 {
-  INFO<<"Run JetScapeWriterAscii: Write event # "<<GetCurrentEvent()<<" ...";
+  // INFO<<"Run JetScapeWriterAscii: Write event # "<<GetCurrentEvent()<<" ...";
   
-  if (GetActive())
-    WriteEvent();
+  // if (GetActive())
+  //   WriteEvent();
 }
 
 void JetScapeWriterAscii::WriteInitFileXML()

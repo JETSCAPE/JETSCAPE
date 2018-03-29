@@ -75,21 +75,21 @@ void Hadronization::Exec()
 void Hadronization::WriteTask(weak_ptr<JetScapeWriter> w)
 {
   VERBOSE(4)<<"In Hadronization::WriteTask";
-  w.lock()->WriteComment("Hadronization module: "+GetId());
+  auto f = w.lock();
+  if ( !f ) return;
+  
+  f->WriteComment("Hadronization module: "+GetId());
 
-  if(GetHadrons().size()>0)
-  {
-    w.lock()->WriteComment("Final State Hadrons");
-    for(unsigned int i=0; i<GetHadrons().size(); i++)
-    {
-      w.lock()->WriteWhiteSpace("["+to_string(i)+"] H");
-      w.lock()->Write(GetHadrons().at(i));
-
+  if(GetHadrons().size()>0) {
+    f->WriteComment("Final State Hadrons");
+    int i=0;
+    for ( auto& h : GetHadrons() ){
+      f->WriteWhiteSpace("["+to_string(i)+"] H");
+      f->Write( h );
+      ++i;
     }
-  }
-  else
-  {
-    w.lock()->WriteComment("There is no Hadrons");
+  }  else   {
+    f->WriteComment("There are no Hadrons");
   }
 
 }

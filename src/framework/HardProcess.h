@@ -57,6 +57,11 @@ class HardProcess : public JetScapeModuleBase
   */
   virtual void WriteTask(weak_ptr<JetScapeWriter> w);
 
+  /** Collect header information for writer modules
+      @param w is a pointer of type JetScapeWrite class.
+  */
+  virtual void CollectHeader( weak_ptr<JetScapeWriter> w );
+    
   /** @return A pointer to the XML elements. Such XML elements are the input parameters stored in the XML file under the tag <Hard>.
    */
   tinyxml2::XMLElement* GetHardXML() {return fd;}
@@ -90,7 +95,22 @@ class HardProcess : public JetScapeModuleBase
       @param plist A output vector of Parton class.
    */
   void GetHardPartonList(vector<shared_ptr<Parton>> &plist) {plist=hp_list;}
-  
+
+  /** Generated cross section.
+      To be overwritten by implementations that have such information.
+  */
+  virtual double GetSigmaGen(){ return 1; };
+  /** Generated cross section error.
+      To be overwritten by implementations that have such information.
+  */
+  virtual double GetSigmaErr(){ return 0; };
+
+  /** Generated weight.
+      This is in addition to sigmaGen, e.g. coming from dynamic oversampling.
+      To be overwritten by implementations that have such information.
+  */
+  virtual double GetEventWeight(){ return 1; };
+    
  private:
 
   tinyxml2::XMLElement *fd;

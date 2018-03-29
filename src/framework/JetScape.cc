@@ -102,7 +102,7 @@ void JetScape::SetPointers()
 	JetScapeSignalManager::Instance()->SetInitialStatePointer(dynamic_pointer_cast<InitialState>(it));
 
       if (dynamic_pointer_cast<PreequilibriumDynamics>(it))
-  JetScapeSignalManager::Instance()->SetPreEquilibriumPointer(dynamic_pointer_cast<PreequilibriumDynamics>(it));
+	JetScapeSignalManager::Instance()->SetPreEquilibriumPointer(dynamic_pointer_cast<PreequilibriumDynamics>(it));
  
       if (dynamic_pointer_cast<FluidDynamics>(it))
 	JetScapeSignalManager::Instance()->SetHydroPointer(dynamic_pointer_cast<FluidDynamics>(it));
@@ -131,51 +131,74 @@ void JetScape::Exec()
 
   // Simple way of passing the writer module pointer
   vector<weak_ptr<JetScapeWriter>> vWriter;
-
-  for (auto it : GetTaskList())
-  {
-    if (dynamic_pointer_cast<JetScapeWriter>(it))
-    {  
+  
+  for (auto it : GetTaskList()) {
+    if (dynamic_pointer_cast<JetScapeWriter>(it)){  
       if (it->GetActive())
 	vWriter.push_back(dynamic_pointer_cast<JetScapeWriter>(it));
     }
   } 
- 
+  
   for (int i=0;i<GetNumberOfEvents();i++)
     {
       INFO<<BOLDRED<<"Run Event # = "<<i;
       JSDEBUG<<"Found "<<GetNumberOfTasks()<<" Modules Execute them ... ";
-      
+
+      // First run all tasks
       JetScapeTask::ExecuteTasks();
 
+      // Then hand around the collection of writers and ask
+      // modules to write what they like
+      // Sequence of events:
+      // -- writer->Exec is called and redirects to WriteEvent, which starts a new event line
+      // -- any remaining exec's finish
+      // -- all modules write their headers
+      // -- Now all header info is known to the writers, so write out the header
+      // -- all other Write()'s are being called
+      // the result still confuses me. It's in the best possible order but it shouldn't be.
+      
+      // collect module header data
       for (auto w : vWriter) {
-	if (w.lock().get())
-	  JetScapeTask::WriteTasks(w);
+	auto f = w.lock();
+	if ( f ) JetScapeTask::CollectHeaders(w);
       }
- 
+      // official header
+      for (auto w : vWriter) {
+	auto f = w.lock();
+	if ( f ) f->WriteHeaderToFile();
+      }
+      // event data
+      for (auto w : vWriter) {
+	auto f = w.lock();
+	if ( f ) JetScapeTask::WriteTasks(w);
+      }
+
+      // Finalize
+      for (auto w : vWriter) {
+	auto f = w.lock();
+	if ( f ) f->WriteEvent();
+      }
+
       // For reusal, deactivate task after it has finished but before it gets cleaned up.
-        if (reuse_hydro_) {
-            if (n_reuse_hydro_ <= 0) {
-	            WARN << " reuse_hydro is set, but n_reuse_hydro="
-                     << n_reuse_hydro_;
-	            throw std::runtime_error ("Incompatible reusal settings.");
-	        }
-	        for (auto it : GetTaskList()) {
-	            if (!dynamic_pointer_cast<FluidDynamics>(it)
-                        && !dynamic_pointer_cast<InitialState>(it)) {
-                    continue;
-                }
-	            if (i%n_reuse_hydro_ == n_reuse_hydro_ - 1) {
-	                JSDEBUG << " i was " << i << " i%n_reuse_hydro_ = "
-                            << i%n_reuse_hydro_ << " --> ACTIVATING";
-	                it->SetActive(true);
-	            } else {
-	                JSDEBUG << " i was " << i << " i%n_reuse_hydro_ = "
-                            << i%n_reuse_hydro_ << " --> DE-ACTIVATING";
-	                it->SetActive(false);
-	            }
-	        }
-        }
+      if (reuse_hydro_) {
+	if (n_reuse_hydro_ <= 0) {
+	  WARN << " reuse_hydro is set, but n_reuse_hydro=" << n_reuse_hydro_;
+	  throw std::runtime_error ("Incompatible reusal settings.");
+	}
+	for (auto it : GetTaskList()) {
+	  if (!dynamic_pointer_cast<FluidDynamics>(it)
+	      && !dynamic_pointer_cast<InitialState>(it)) {
+	    continue;
+	  }
+	  if (i%n_reuse_hydro_ == n_reuse_hydro_ - 1) {
+	    JSDEBUG << " i was " << i << " i%n_reuse_hydro_ = " << i%n_reuse_hydro_ << " --> ACTIVATING";
+	    it->SetActive(true);
+	  } else {
+	    JSDEBUG << " i was " << i << " i%n_reuse_hydro_ = " << i%n_reuse_hydro_ << " --> DE-ACTIVATING";
+	    it->SetActive(false);
+	  }
+	}
+      }
       // Now clean up, only affects active taskjs
       JetScapeTask::ClearTasks();
 
