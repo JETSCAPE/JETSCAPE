@@ -121,7 +121,7 @@ void ColoredHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& s
     }
   
   pythia.next();
-  event.list();
+  // event.list();
   
   unsigned int ip=0;
   for (unsigned int i=0; i<event.size(); ++i){
