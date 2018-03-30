@@ -15,9 +15,10 @@
 #include "JetScape.h"
 #include "JetEnergyLoss.h"
 #include "JetEnergyLossManager.h"
-#include "JetScapeWriterAscii.h"
-#include "JetScapeWriterAsciiGZ.h"
-// #include "JetScapeWriterHepMC.h"
+#include "JetScapeWriterStream.h"
+#ifdef USE_HEPMC
+#include "JetScapeWriterHepMC.h"
+#endif
 
 #include "Brick.h"
 #include "PGun.h"

@@ -56,8 +56,9 @@ void InitialState::Clear(){
 }
 
 void InitialState::Write(weak_ptr<JetScapeWriter> w){
-    //Write out the original vertex so the writer can keep track of it...
-    //w.lock()->Write(make_shared<Vertex>(initialVtx));
+  //Write out the original vertex so the writer can keep track of it...
+  // auto f = w.lock();
+  // if ( f ) f->Write(make_shared<Vertex>(initialVtx));
 }
 
 

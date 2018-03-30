@@ -19,7 +19,7 @@
 #include <iostream>
 #include "tinyxml2.h"
 #include "JetScapeSignalManager.h"
-#include "JetScapeWriterAscii.h"
+#include "JetScapeWriterStream.h"
 #include "HardProcess.h"
 
 #ifdef USE_HEPMC
@@ -320,7 +320,8 @@ void JetEnergyLoss::Exec()
 
        for(unsigned int ipart=0; ipart<pShower->GetNumberOfPartons(); ipart++){
 	 //   Uncomment to dump the whole parton shower into the parton container
-	 //           hproc.lock()->AddParton(pShower->GetPartonAt(ipart));
+	 // auto hp = hproc.lock();
+	 // if ( hp ) hp->AddParton(pShower->GetPartonAt(ipart));
        }
 	
        shared_ptr<PartonPrinter> pPrinter = JetScapeSignalManager::Instance()->GetPartonPrinterPointer().lock();
@@ -345,45 +346,10 @@ void JetEnergyLoss::WriteTask(weak_ptr<JetScapeWriter> w)
   f->WriteComment("Energy loss Shower Initating Parton: "+GetId());
   f->Write(inP);
 
-  // check with gzip version later ...
-  // Also allow standard output/not using GTL graph structure ....
 
-#ifdef USE_HEPMC
-  //If you want HepMC output, pass the whole shower along...
-  if (dynamic_pointer_cast<JetScapeWriterHepMC> (f)){
-    VERBOSE(4) << " writing partons... found " << pShower->GetNumberOfPartons();
-    (f)->Write(pShower);
-    return;
-  }
-#else
-  WARN << " : HEPMC writer requires the HEPMC library";
-  WARN << " : Please check your cmake setup";
-  throw std::runtime_error("Inconsistent HEPMC configuration");
-#endif
-
-  //Own storage of graph structure, needs separate PartonShower reader ...
-  if (pShower) {
-    f->WriteComment("Parton Shower in JetScape format to be used later by GTL graph:");
-    
-    // write vertices
-    PartonShower::node_iterator nIt,nEnd;
-    
-    for (nIt = pShower->nodes_begin(), nEnd = pShower->nodes_end(); nIt != nEnd; ++nIt){ 
-      f->WriteWhiteSpace("["+to_string(nIt->id())+"] V");
-      f->Write(pShower->GetVertex(*nIt));
-    }
-    
-    PartonShower::edge_iterator eIt,eEnd;      
-    for (eIt = pShower->edges_begin(), eEnd = pShower->edges_end(); eIt != eEnd; ++eIt) {
-      f->WriteWhiteSpace("["+to_string(eIt->source().id())+"]=>["+to_string(eIt->target().id())+"] P");
-      f->Write(pShower->GetParton(*eIt));
-    }
-  }
-  else  {
-    f->WriteComment("No EnergyLoss Modules were run - No Parton Shower information stored");
-  }
+  VERBOSE(4) << " writing partons... found " << pShower->GetNumberOfPartons();
+  f->Write(pShower);
   
-  // JetScapeTask::WriteTasks(w);
 }
 
 void JetEnergyLoss::PrintShowerInitiatingParton()

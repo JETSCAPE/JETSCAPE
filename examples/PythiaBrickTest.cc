@@ -18,9 +18,10 @@
 #include "JetScape.h"
 #include "JetEnergyLoss.h"
 #include "JetEnergyLossManager.h"
-#include "JetScapeWriterAscii.h"
-#include "JetScapeWriterAsciiGZ.h"
+#include "JetScapeWriterStream.h"
+#ifdef USE_HEPMC
 #include "JetScapeWriterHepMC.h"
+#endif
 
 // User modules derived from jetscape framework clasess
 // to be used to run Jetscape ...
@@ -96,7 +97,6 @@ int main(int argc, char** argv)
   // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
   auto writergz= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");
-  auto hepmcwriter= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
   //writer->SetActive(false);
 
   //Remark: For now modules have to be added
@@ -124,7 +124,10 @@ int main(int argc, char** argv)
 
   jetscape->Add(writer);
   jetscape->Add(writergz);
+#ifdef USE_HEPMC
+  auto hepmcwriter= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
   jetscape->Add(hepmcwriter);
+#endif
 
   // Intialize all modules tasks
   jetscape->Init();

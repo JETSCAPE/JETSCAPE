@@ -67,7 +67,9 @@ void ElossValidate::Init()
 void ElossValidate::WriteTask(weak_ptr<JetScapeWriter> w)
 {
   VERBOSE(8);
-  w.lock()->WriteComment("ElossModule Parton List: "+GetId());
+  auto f = w.lock();
+  if ( !f ) return;
+  f->WriteComment("ElossModule Parton List: "+GetId());
 }
 
 void ElossValidate::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pIn, vector<Parton>& pOut)

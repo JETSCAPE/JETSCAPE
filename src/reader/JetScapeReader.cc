@@ -194,6 +194,8 @@ void JetScapeReader<T>::Init()
 
 template class JetScapeReader<ifstream>;
 
+#ifdef USE_GZIP
 template class JetScapeReader<igzstream>;
+#endif
 
 } // end namespace Jetscape

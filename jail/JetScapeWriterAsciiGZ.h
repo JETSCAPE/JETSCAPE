@@ -5,10 +5,13 @@
 // -----------------------------------------
 // License and Doxygen-like Documentation to be added ...
 
-// jetscape writer ascii class
 
-#ifndef JETSCAPEWRITERASCII_H
-#define JETSCAPEWRITERASCII_H
+// jetscape writer ascii + gzip class
+
+#ifndef JETSCAPEWRITERASCIIGZ_H
+#define JETSCAPEWRITERASCIIGZ_H
+
+#include "gzstream.h"
 
 #include <fstream>
 #include <string>
@@ -17,14 +20,16 @@
 
 namespace Jetscape {
 
-class JetScapeWriterAscii : public JetScapeWriter
+// Maybe a templeate for Ascii and AsciiGZ !? Or in general !???
+
+class JetScapeWriterAsciiGZ : public JetScapeWriter
 {
 
  public:
 
-  JetScapeWriterAscii() {};
-  JetScapeWriterAscii(string m_file_name_out);
-  virtual ~JetScapeWriterAscii();
+  JetScapeWriterAsciiGZ() {};
+  JetScapeWriterAsciiGZ(string m_file_name_out);
+  virtual ~JetScapeWriterAsciiGZ();
 
   void Init();
   void Exec();
@@ -32,25 +37,23 @@ class JetScapeWriterAscii : public JetScapeWriter
   bool GetStatus() {return output_file.good();}
   void Close() {output_file.close();}
 
-  void WriteInitFileXML();
-  
+  void Write(weak_ptr<PartonShower> ps);
   void Write(weak_ptr<Parton> p);
   void Write(weak_ptr<Vertex> v);
   void Write(weak_ptr<Hadron> h);
   void WriteHeaderToFile();
-  
+
   void Write(string s) {output_file<<s<<endl;}
   void WriteComment(string s) {output_file<<"# "<<s<<endl;}
   void WriteWhiteSpace(string s) {output_file<<s<<" ";}
-  void WriteEvent(); 
-  
+  void WriteEvent();
+ 
  private:
 
-  std::ofstream output_file; //!< Output file
+  ogzstream output_file; //!< Output file
   //int m_precision; //!< Output precision
   
 };
-
 
 } // end namespace Jetscape
 

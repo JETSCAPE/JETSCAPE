@@ -148,8 +148,10 @@ void LBT::Init()
 void LBT::WriteTask(weak_ptr<JetScapeWriter> w)
 {
   VERBOSE(8);
-  w.lock()->WriteComment("ElossModule Parton List: "+GetId());
-  w.lock()->WriteComment("Energy loss to be implemented accordingly ...");
+  auto f = w.lock();
+  if ( !f ) return;
+  f->WriteComment("ElossModule Parton List: "+GetId());
+  f->WriteComment("Energy loss to be implemented accordingly ...");
 }
 
 void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pIn, vector<Parton>& pOut)

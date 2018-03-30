@@ -5,31 +5,33 @@
 // -----------------------------------------
 // License and Doxygen-like Documentation to be added ...
 
+// jetscape writer ascii class
 
-// jetscape writer ascii + gzip class
-
-#ifndef JETSCAPEWRITERASCIIGZ_H
-#define JETSCAPEWRITERASCIIGZ_H
-
-#include "gzstream.h"
+#ifndef JETSCAPEWRITERSTREAM_H
+#define JETSCAPEWRITERSTREAM_H
 
 #include <fstream>
 #include <string>
 
+#ifdef USE_GZIP
+#include "gzstream.h"
+#endif
+
 #include "JetScapeWriter.h"
+
+using std::ofstream;
 
 namespace Jetscape {
 
-// Maybe a templeate for Ascii and AsciiGZ !? Or in general !???
-
-class JetScapeWriterAsciiGZ : public JetScapeWriter
+template<class T>  
+class JetScapeWriterStream : public JetScapeWriter
 {
 
  public:
 
-  JetScapeWriterAsciiGZ() {};
-  JetScapeWriterAsciiGZ(string m_file_name_out);
-  virtual ~JetScapeWriterAsciiGZ();
+  JetScapeWriterStream<T>() {};
+  JetScapeWriterStream<T>(string m_file_name_out);
+  virtual ~JetScapeWriterStream<T>();
 
   void Init();
   void Exec();
@@ -37,23 +39,31 @@ class JetScapeWriterAsciiGZ : public JetScapeWriter
   bool GetStatus() {return output_file.good();}
   void Close() {output_file.close();}
 
+  void WriteInitFileXML();
+
+  void Write(weak_ptr<PartonShower> ps);
   void Write(weak_ptr<Parton> p);
   void Write(weak_ptr<Vertex> v);
   void Write(weak_ptr<Hadron> h);
   void WriteHeaderToFile();
-
+  
   void Write(string s) {output_file<<s<<endl;}
   void WriteComment(string s) {output_file<<"# "<<s<<endl;}
   void WriteWhiteSpace(string s) {output_file<<s<<" ";}
-  void WriteEvent();
- 
- private:
+  void WriteEvent(); 
+  
+ protected:
 
-  ogzstream output_file; //!< Output file
+  T output_file; //!< Output file
   //int m_precision; //!< Output precision
   
 };
 
+typedef JetScapeWriterStream<ofstream> JetScapeWriterAscii;
+#ifdef USE_GZIP
+typedef JetScapeWriterStream<ogzstream> JetScapeWriterAsciiGZ;
+#endif
+
 } // end namespace Jetscape
 
-#endif
+#endif // JETSCAPEWRITERSTREAM_H
