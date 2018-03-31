@@ -48,6 +48,7 @@ class Matter : public JetEnergyLossModule<Matter> //, public std::enable_shared_
   double profile(double zeta);
 
   double generate_angle();
+  double generate_kt(double local_qhat,double dzeta);
     
   double qhat,length;
 

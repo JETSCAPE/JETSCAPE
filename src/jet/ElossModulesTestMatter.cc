@@ -192,11 +192,13 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   double delT = deltaT;
   double Time = time*fmToGeVinv;
   double deltaTime = delT*fmToGeVinv;
+    
+    double ehat_over_T2 = 10.0;
 
   std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
 
-  JSDEBUG << " the time in fm is " << time << " The time in GeV-1 is " << Time ;
-  JSDEBUG << "pid = " << pIn[0].pid() << " E = " << pIn[0].e() << " px = " << pIn[0].p(1) << " py = " << pIn[0].p(2) << "  pz = " << pIn[0].p(3) << " virtuality = " << pIn[0].t() << " form_time in fm = " << pIn[0].form_time()/fmToGeVinv ;
+  INFO << " the time in fm is " << time << " The time in GeV-1 is " << Time ;
+  INFO << "pid = " << pIn[0].pid() << " E = " << pIn[0].e() << " px = " << pIn[0].p(1) << " py = " << pIn[0].p(2) << "  pz = " << pIn[0].p(3) << " virtuality = " << pIn[0].t() << " form_time in fm = " << pIn[0].form_time() ;
   JSDEBUG << " color = " << pIn[0].color() << " anti-color = " << pIn[0].anti_color();
     
   //JSDEBUG << " For MATTER, the qhat in GeV^-3 = " << qhat ;
@@ -243,7 +245,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       //if(brick_med) length = 5.0*fmToGeVinv; /// length in GeV-1 will have to changed for hydro
 
       // SC
-      zeta = ( xStart[0] + initRdotV )/std::sqrt(2)*fmToGeVinv;
+      zeta = ( ( xStart[0] + initRdotV )/std::sqrt(2) )*fmToGeVinv;
 
       double now_R0 = time;
       double now_Rx = initRx+(time-initR0)*initVx;
@@ -251,12 +253,15 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       double now_Rz = initRz+(time-initR0)*initVz;
       double now_temp; 
 
-      if(!in_vac && now_R0>=tStart) {
+      if(!in_vac && now_R0>=tStart)
+      {
          if(now_R0*now_R0<now_Rz*now_Rz) cout << "Warning 1: " << now_R0 << "  " << now_Rz << endl;
          GetHydroCellSignal(now_R0, now_Rx, now_Ry, now_Rz, check_fluid_info_ptr);
          //VERBOSE(8)<<MAGENTA<<"Temperature from medium = "<<check_fluid_info_ptr->temperature;
          now_temp = check_fluid_info_ptr->temperature;
-      } else {
+      }
+      else
+      {
          now_temp = 0.0;
       }
 
@@ -283,9 +288,12 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           if(vir_factor<0.0) max_vir = pIn[i].e()*pIn[i].e();
           else max_vir = pT2 * vir_factor;
 
-          if(max_vir<=QS) {
-	      tQ2 = 0.0;
-          } else {
+          if(max_vir<=QS)
+          {
+              tQ2 = 0.0;
+          }
+          else
+          {
     	      tQ2 = generate_vac_t(pIn[i].pid(), pIn[i].nu(), QS/2.0, max_vir, zeta, iSplit);
     	  }
 
@@ -328,9 +336,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           JSDEBUG ;
           JSDEBUG << " ***************************************************************************** " ;
           JSDEBUG<< " ID = " << pIn[i].pid() << " Color = " << pIn[i].color() << " Anti-Color = " << pIn[i].anti_color() ;
-          JSDEBUG << " E = " << pIn[i].e() << " px = " << pIn[i].px() << " py = " << pIn[i].py() << " pz = " << pIn[i].pz() ;
-          JSDEBUG << " *  New generated virtuality = " << tQ2 << " Mean formation time = " << pIn[i].mean_form_time()/fmToGeVinv;
-          JSDEBUG << " *  set new formation time to " << pIn[i].form_time()/fmToGeVinv ;
+          INFO << " E = " << pIn[i].e() << " px = " << pIn[i].px() << " py = " << pIn[i].py() << " pz = " << pIn[i].pz() ;
+          INFO << " *  New generated virtuality = " << tQ2 << " Mean formation time = " << pIn[i].mean_form_time();
+          INFO << " *  set new formation time to " << pIn[i].form_time() ;
           JSDEBUG << " * Maximum allowed virtuality = " << pIn[i].e()*pIn[i].e() << "   Minimum Virtuality = " << QS;
           JSDEBUG << " * Qhat = " << qhat << "  Length = "  << length ;
           JSDEBUG << " * Jet velocity = " << pIn[i].jet_v().comp(0) << " " << pIn[i].jet_v().comp(1) << "  " << pIn[i].jet_v().comp(2) << "  " << pIn[i].jet_v().comp(3);
@@ -377,17 +385,17 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           double decayTime = pIn[i].mean_form_time()  ;
 	    
           //JSDEBUG << "  deltaT = " << deltaT;
-          //JSDEBUG << " parton origin time = " << pIn[i].x_in().t()/fmToGeVinv << " parton formation time = " << pIn[i].form_time()/fmToGeVinv;
-          // JSDEBUG << " parton id " << pIn[i].pid() << " parton virtuality = " << pIn[i].t();
+          INFO << " parton origin time = " << pIn[i].x_in().t() << " parton formation time = " << pIn[i].form_time();
+          INFO << " parton id " << pIn[i].pid() << " parton virtuality = " << pIn[i].t();
           //JSDEBUG << " parton momentum " << pIn[i].e() << "  " << pIn[i].px() << "  " << pIn[i].py() << "  " << pIn[i].pz();
 	    
           double splitTime = pIn[i].form_time() + pIn[i].x_in().t() ;
-          // JSDEBUG << " splitTime = " << splitTime/fmToGeVinv;
+          INFO << " splitTime = " << splitTime;
 	  
-          if (splitTime<Time)
+          if (splitTime<time)
           {
 
-              //cout << "SPLIT in MATTER" << endl;
+              INFO << "SPLIT in MATTER" ;
     
               // SC: add elastic scattering that generates recoiled and back-reaction partons
               double el_dt=0.1;
@@ -563,7 +571,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       iout = pOut.size()-1;
                       pOut[iout].set_jet_v(velocity_jet);
                       pOut[iout].set_mean_form_time();
-                      ft = 10000.0;
+                      ft = 10000.0; /// STILL a really large formation time.
                       pOut[iout].set_form_time(ft);
                       ////pOut[iout].set_color(el_color3);
                       ////pOut[iout].set_anti_color(el_anti_color3);
@@ -602,6 +610,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               double tau_form = 2.0*pIn[i].nu()/t_used;
               double z_low = QS/t_used/2.0 ;
               double z_hi = 1.0 - z_low;
+              
+              INFO << " zeta = " << zeta ;
               
               if (pid==gid)
               { // gluon
@@ -738,7 +748,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   // use pIn information to sample z above, but use new_parent to calculate daughter partons below            
                   if (z*z*new_parent_t>QS)
                   {
-                      tQd1 = generate_vac_t(pid_a, z*new_parent_nu, QS/2.0, z*z*new_parent_t, zeta+std::sqrt(2)*pIn[i].form_time(), iSplit_a);
+                      tQd1 = generate_vac_t(pid_a, z*new_parent_nu, QS/2.0, z*z*new_parent_t, zeta+std::sqrt(2)*pIn[i].form_time()*fmToGeVinv, iSplit_a);
                   } else { // SC
                       tQd1 = z*z*new_parent_t;
                   }
@@ -749,7 +759,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
         
                   if ((1.0-z)*(1.0-z)*new_parent_t>QS)
                   {
-                      tQd2 = generate_vac_t(pid_b, (1.0-z)*new_parent_nu, QS/2.0, (1.0-z)*(1.0-z)*new_parent_t, zeta+std::sqrt(2)*pIn[i].form_time(),iSplit_b);
+                      tQd2 = generate_vac_t(pid_b, (1.0-z)*new_parent_nu, QS/2.0, (1.0-z)*(1.0-z)*new_parent_t, zeta+std::sqrt(2)*pIn[i].form_time()*fmToGeVinv,iSplit_b);
                   } else { // SC
                       tQd2 = (1.0-z)*(1.0-z)*new_parent_t;
                   }
@@ -860,17 +870,43 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 
           }
           else
-          { // not time to split yet
-              // pOut.push_back(pIn[i]);
+          { // not time to split yet broadening it
+              
+              
+              
+              //pOut.push_back(pIn[i]);
           }
       }
       else
       { // virtuality too low
+          
+          
           // pOut.push_back(pIn[i]);
       }
           	  
   } // particle loop
       
+}
+
+double Matter::generate_kt(double local_qhat, double dzeta)
+{
+    double width = local_qhat*dzeta;
+    
+    double x,r;
+    
+    r = ZeroOneDistribution(*get_mt19937_generator());
+    x = -log(1.0-r);
+    if (x<0.0)  throw std::runtime_error(" k_t^2 < 0.0 ");
+    double kt = sqrt(x * local_qhat * dzeta  );
+    
+    return(kt);
+    
+}
+    
+    
+    
+    
+    
 }
 
 double Matter::generate_angle()
