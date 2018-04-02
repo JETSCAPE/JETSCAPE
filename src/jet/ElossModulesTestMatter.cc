@@ -214,6 +214,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   for (int i=0;i<pIn.size();i++)
   {
 
+      INFO << " *  parton formation = "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z();
+
+      
       //cout << "MATTER -- status: " << pIn[i].pstat() << "  energy: " << pIn[i].e() << " color: " << pIn[i].color() << "  " << pIn[i].anti_color() << "  clock: " << time << endl;
 
       velocity[0] = 1.0;
@@ -885,9 +888,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               
               if ((!recoil_on)&&(qhat>0.0))
               {
-                  double kt = generate_kt(qhat, delT);
+                  double kt = generate_kt(qhat*1.414/0.197, delT);
                   
-                  INFO << " kt generated = "  << kt << " for qhat = " << qhat << " and delT = " << delT ;
+                  INFO << " kt generated = "  << kt << " for qhat = " << qhat*1.414/0.197 << " and delT = " << delT ;
                   
                   double ktx, kty, ktz;
                   double vx = initVx;
@@ -975,9 +978,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           
           if ((!recoil_on)&&(qhat>0.0))
           {
-              double kt = generate_kt(qhat, delT);
+              double kt = generate_kt(qhat*1.414/0.197, delT);
               
-              INFO << " kt generated = "  << kt << " for qhat = " << qhat << " and delT = " << delT ;
+              INFO << " kt generated = "  << kt << " for qhat = " << qhat*1.414/0.197 << " and delT = " << delT ;
               
               double ktx, kty, ktz;
               double vx = initVx;
@@ -2022,11 +2025,11 @@ double Matter::fillQhatTab() {
         tLoc = tStep*i;
 
 	//if(tLoc<initR0-tStep) { // potential problem of making t^2<z^2
-	if(tLoc<initR0 || tLoc<tStart) {
+	/*if(tLoc<initR0 || tLoc<tStart) {
             qhatTab1D[i] = 0.0; 
             continue;	    
         }
-
+*/
 	xLoc = initRx+(tLoc-initR0)*initVx; 
         yLoc = initRy+(tLoc-initR0)*initVy;
         zLoc = initRz+(tLoc-initR0)*initVz;
