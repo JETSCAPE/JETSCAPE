@@ -1,14 +1,18 @@
-// -----------------------------------------
-// JetScape (modular/task) based framework
-// Intial Design: Joern Putschke (2017)
-//                (Wayne State University)
-// -----------------------------------------
-// License and Doxygen-like Documentation to be added ...
+/*******************************************************************************
+ * Copyright (c) The JETSCAPE Collaboration, 2017
+ *
+ * For the full list of contributors see AUTHORS.
+ * Report issues at https://github.com/amajumder/JETSCAPE-COMP/issues
+ * or via email to bugs.jetscape.org@gmail.com
+ *
+ * Distributed under the GNU General Public License 3.0 (GPLv3 or later).
+ * See COPYING for details.
+ ******************************************************************************/
 
 // JetScapeTask class
-// Implement truly recursive (not yet done)
+// \TODO: Implement truly recursively (not yet done)
 // (see https://root.cern.ch/doc/v608/TTask_8cxx_source.html l248)
-// (not really thogh ...)
+// (not really though ...)
 
 #ifndef JETSCAPETASK_H
 #define JETSCAPETASK_H
