@@ -79,7 +79,7 @@
       <vir_factor> 0.25 </vir_factor>
       <in_vac> 0 </in_vac>
       <recoil_on> 0 </recoil_on>
-      <brick_med> 0 </brick_med>
+      <brick_med> 1 </brick_med>
       <brick_length> 5.0 </brick_length>
       <hydro_Tc> 0.15 </hydro_Tc>
       <qhat0> 3.0 </qhat0>

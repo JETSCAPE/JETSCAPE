@@ -184,6 +184,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   int iSplit,pid_a,pid_b;
   unsigned int max_color, min_color, min_anti_color;
   double velocity[4],xStart[4],velocity_jet[4];
+    
 
   VERBOSESHOWER(8)<< MAGENTA << "SentInPartons Signal received : "<<deltaT<<" "<<Q2<<" "<<&pIn;
       
@@ -202,12 +203,18 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   JSDEBUG << " color = " << pIn[0].color() << " anti-color = " << pIn[0].anti_color();
     
   //JSDEBUG << " For MATTER, the qhat in GeV^-3 = " << qhat ;
+ 
+    double qhatbrick;
+    if(brick_med) qhatbrick=qhat0/3.0;
+    qhat = qhat0;
+
+    INFO << " qhat0 = " << qhat0 << " qhat = " << qhat;
+    
     
   for (int i=0;i<pIn.size();i++)
   {
 
       //cout << "MATTER -- status: " << pIn[i].pstat() << "  energy: " << pIn[i].e() << " color: " << pIn[i].color() << "  " << pIn[i].anti_color() << "  clock: " << time << endl;
-
 
       velocity[0] = 1.0;
       for(int j=1;j<=3;j++)
@@ -266,7 +273,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       }
 
       int pid = pIn[i].pid();
-          
+      
+      
       if (pIn[i].form_time()<0.0) /// A parton without a virtuality or formation time, must set...
       {
           iSplit = 0;
@@ -331,7 +339,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           pIn[i].set_min_color(min_color);
           pIn[i].set_min_anti_color(min_anti_color);
           
-            
+            qhat = qhat0;
           //JSDEBUG:
           JSDEBUG ;
           JSDEBUG << " ***************************************************************************** " ;
@@ -340,7 +348,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           INFO << " *  New generated virtuality = " << tQ2 << " Mean formation time = " << pIn[i].mean_form_time();
           INFO << " *  set new formation time to " << pIn[i].form_time() ;
           JSDEBUG << " * Maximum allowed virtuality = " << pIn[i].e()*pIn[i].e() << "   Minimum Virtuality = " << QS;
-          JSDEBUG << " * Qhat = " << qhat << "  Length = "  << length ;
+          INFO << " * Qhat = " << qhat << "  Length = "  << length ;
           JSDEBUG << " * Jet velocity = " << pIn[i].jet_v().comp(0) << " " << pIn[i].jet_v().comp(1) << "  " << pIn[i].jet_v().comp(2) << "  " << pIn[i].jet_v().comp(3);
           JSDEBUG << " * reset location of parton formation = "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z();
           JSDEBUG << " ***************************************************************************** " ;
@@ -378,6 +386,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       }
 
       if(Q0<1.0) Q0=1.0;
+      INFO << " qhat before Q0Q0 loop = " << qhat ;
 
       //if (pIn[i].t() > QS + rounding_error)
       if (pIn[i].t() > Q0*Q0 + rounding_error || ((!in_vac) && now_temp<=T0 && pIn[i].t() > QS*QS + rounding_error))
@@ -391,7 +400,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 	    
           double splitTime = pIn[i].form_time() + pIn[i].x_in().t() ;
           INFO << " splitTime = " << splitTime;
-	  
+          INFO << " qhat before splitime loop = " << qhat ;
           if (splitTime<time)
           {
 
@@ -871,16 +880,178 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           }
           else
           { // not time to split yet broadening it
+             
+              INFO << " broadening qhat = " << qhat << " and delT = " << delT ;
               
+              if ((!recoil_on)&&(qhat>0.0))
+              {
+                  double kt = generate_kt(qhat, delT);
+                  
+                  INFO << " kt generated = "  << kt << " for qhat = " << qhat << " and delT = " << delT ;
+                  
+                  double ktx, kty, ktz;
+                  double vx = initVx;
+                  double vy = initVy;
+                  double vz = initVz;
+
+                  
+                  bool solved = false;
+                  
+                  while (!solved)
+                  {
+                      ktx = kt*(1 - 2*ZeroOneDistribution(*get_mt19937_generator()) );
+                  
+                      JSDEBUG << " vx = " << vx << " vy = " << vy << " vz = " << vz ;
+                  
+                      double rad = sqrt( 4*ktx*ktx*vx*vx*vy*vy - 4*(vy*vy + vz*vz)*(ktx*ktx*(vx*vx+vz*vz) - kt*kt*vz*vz)  );
+                      
+                      double sol1 = (-2*ktx*vx*vy + rad)/2/(vy*vy + vz*vz);
+                      double sol2 = (-2*ktx*vx*vy - rad)/2/(vy*vy + vz*vz);
+                      
+                      kty = sol1;
+                      
+                      if ((ktx*ktx + sol1*sol1) > kt*kt  )  kty = sol2;
+                  
+                      if ((ktx*ktx + kty*kty) < kt*kt  )
+                      {
+                          ktz = sqrt( kt*kt - ktx*ktx - kty*kty ) ;
+                          
+                          double sign = ZeroOneDistribution(*get_mt19937_generator());
+                          if (sign>0.5) ktz = -1*ktz;
+                          
+                          
+                          if (vz!=0) ktz = (-1*ktx*vx - kty*vy )/vz ;
+                          
+                          solved = true;
+                      }
+                  }
+                  
+                  JSDEBUG << " ktx = " << ktx << " kty = " << kty << " ktz = " << ktz ;
+                  double px = pIn[i].px();
+                  double py = pIn[i].py();
+                  double pz = pIn[i].pz();
+                  
+                  double p = sqrt(px*px + py*py + pz*pz);
+                  
+                  px += ktx;
+                  py += kty;
+                  pz += ktz;
+                  
+                  double np = sqrt(px*px + py*py + pz*pz);
+                  JSDEBUG << " p = " << p << " np = " << np;
+                  
+                  px -= (np-p)*vx;
+                  py -= (np-p)*vy;
+                  pz -= (np-p)*vz;
+                  
+                  double nnp = sqrt(px*px + py*py + pz*pz);
+                  
+                  if (abs(nnp-p)>abs(np-p))
+                  {
+                      px += 2*(np-p)*vx;
+                      py += 2*(np-p)*vy;
+                      pz += 2*(np-p)*vz;
+                  }
+                  
+                  np = sqrt(px*px + py*py + pz*pz);
+                  JSDEBUG << "FINAL p = " << p << " np = " << np;
+                  
+                  pOut.push_back(pIn[i]);
+                  int iout = pOut.size()-1;
+                  
+                  pOut[iout].reset_p(px,py,pz);
+                  
+                  
+              }
               
               
               //pOut.push_back(pIn[i]);
           }
       }
       else
-      { // virtuality too low
+      { // virtuality too low lets broaden it
           
+          INFO << " broadening qhat = " << qhat << " and delT = " << delT ;
           
+          if ((!recoil_on)&&(qhat>0.0))
+          {
+              double kt = generate_kt(qhat, delT);
+              
+              INFO << " kt generated = "  << kt << " for qhat = " << qhat << " and delT = " << delT ;
+              
+              double ktx, kty, ktz;
+              double vx = initVx;
+              double vy = initVy;
+              double vz = initVz;
+
+              bool solved = false;
+              
+              while (!solved)
+              {
+                  ktx = kt*(1 - 2*ZeroOneDistribution(*get_mt19937_generator()) );
+                  
+                  JSDEBUG << " vx = " << vx << " vy = " << vy << " vz = " << vz ;
+                  
+                  double rad = sqrt( 4*ktx*ktx*vx*vx*vy*vy - 4*(vy*vy + vz*vz)*(ktx*ktx*(vx*vx+vz*vz) - kt*kt*vz*vz)  );
+                  
+                  double sol1 = (-2*ktx*vx*vy + rad)/2/(vy*vy + vz*vz);
+                  double sol2 = (-2*ktx*vx*vy - rad)/2/(vy*vy + vz*vz);
+                  
+                  kty = sol1;
+                  
+                  if ((ktx*ktx + sol1*sol1) > kt*kt  )  kty = sol2;
+                  
+                  if ((ktx*ktx + kty*kty) < kt*kt  )
+                  {
+                      ktz = sqrt( kt*kt - ktx*ktx - kty*kty ) ;
+                      
+                      double sign = ZeroOneDistribution(*get_mt19937_generator());
+                      if (sign>0.5) ktz = -1*ktz;
+                      
+                      
+                      if (vz!=0) ktz = (-1*ktx*vx - kty*vy )/vz ;
+                      
+                      solved = true;
+                  }
+              }
+              
+              JSDEBUG << " ktx = " << ktx << " kty = " << kty << " ktz = " << ktz ;
+              double px = pIn[i].px();
+              double py = pIn[i].py();
+              double pz = pIn[i].pz();
+              
+              double p = sqrt(px*px + py*py + pz*pz);
+              
+              px += ktx;
+              py += kty;
+              pz += ktz;
+              
+              double np = sqrt(px*px + py*py + pz*pz);
+              JSDEBUG << " p = " << p << " np = " << np;
+
+              px -= (np-p)*vx;
+              py -= (np-p)*vy;
+              pz -= (np-p)*vz;
+              
+              double nnp = sqrt(px*px + py*py + pz*pz);
+              
+              if (abs(nnp-p)>abs(np-p))
+              {
+                  px += 2*(np-p)*vx;
+                  py += 2*(np-p)*vy;
+                  pz += 2*(np-p)*vz;
+              }
+              
+              np = sqrt(px*px + py*py + pz*pz);
+              JSDEBUG << "FINAL p = " << p << " nnnp = " << np;
+
+              pOut.push_back(pIn[i]);
+              int iout = pOut.size()-1;
+              
+              pOut[iout].reset_p(px,py,pz);
+              
+              
+          }
           // pOut.push_back(pIn[i]);
       }
           	  
@@ -904,10 +1075,7 @@ double Matter::generate_kt(double local_qhat, double dzeta)
 }
     
     
-    
-    
-    
-}
+
 
 double Matter::generate_angle()
 {

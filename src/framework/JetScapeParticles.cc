@@ -417,6 +417,11 @@ namespace Jetscape {
     reset_momentum( newPl*jet_v_.comp(1), newPl*jet_v_.comp(2), newPl*jet_v_.comp(3), e() );
   } 
 
+    void Parton::reset_p(double px, double py, double pz )
+    {
+        reset_momentum(px,py,pz,e());
+    }
+    
   void Parton::set_color(unsigned int col)
   {
     Color_ = col;
