@@ -7,13 +7,12 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-JETSCAPE includes a significant body of third-party code,
-for example for graph structures and algorithms.
+JETSCAPE includes a significant body of third-party code in the
+external_packages folder, for example for graph structures and algorithms.
 These too are usually released under the GPL or
 permissive licenses. Details are given below on a case-by-case basis.
 
 A copy of the GPLv3 is to be found at the end of this file.
-[TODO: Check Completeness]
 
 sigslot by Sarah Thompson
 -- http://sigslot.sourceforge.net/
@@ -37,7 +36,27 @@ gzstream by Deepak Bandyopadhyay, Lutz Kettner
 -- Licensed under gplv2.1 or greater
 
 
-[TODO: Finalize formulation or remove)]
+Optional downloads:
+
+MUSIC by Gabriel Denicol, Charles Gale, Sangyong Jeon, Matthew Luzum, Jean-François Paquet, Björn Schenke, Chun Shen
+-- B. Schenke, S. Jeon, C. Gale. Phys.Rev.C 82, 014903 (2010) [arXiv:1004.1408]
+-- B. Schenke, S. Jeon, C. Gale. Phys.Rev.Lett. 106, 042301 (2011) [arXiv:1009.3244]
+-- J.-F. Paquet, C. Shen, G. S. Denicol, M. Luzum, B. Schenke, S. Jeon and C. Gale. Phys. Rev. C 93, 044906 (2016) [arXiv:1509.06738]
+-- Licensed under gplv2
+
+TRENTO by Jonah E. Bernhard, J. Scott Moreland, Steffen A. Bass
+-- http://qcd.phy.duke.edu/trento/
+-- Licensed under the MIT license
+
+iSurfaceSampler (iSS) by Chun Shen
+-- https://github.com/chunshen1987/iSS
+-- Licensed under the MIT license
+
+
+hydro_from_file by Chun Shen
+
+Freestream Milne by Derek Everett
+-- https://github.com/derekeverett/freestream-milne
 
 While the GPL license grants you considerable freedom, please bear in
 mind that JETSCAPE's use falls under guidelines similar to those that
@@ -49,7 +68,6 @@ Rivet, RHIC or LHC collaboration software frameworks, etc.), you should
 include a citation to
 
   arXiv:aaaa.bbbb (JETSCAPE User Manual)
-  and, optionally, [JETSCAPE Physics Paper]
 
 A number of other citations may also be relevant. Modules generally
 indicate the appropriate reference in a banner. References for other
