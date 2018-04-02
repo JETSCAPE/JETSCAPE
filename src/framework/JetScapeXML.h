@@ -8,8 +8,7 @@
  * Distributed under the GNU General Public License 3.0 (GPLv3 or later).
  * See COPYING for details.
  ******************************************************************************/
-
-// JetScape XML init reader class (meant as singelton)
+// JetScape XML init reader class (meant as singleton)
 
 #ifndef JETSCAPEXML_H
 #define JETSCAPEXML_H

@@ -11,7 +11,6 @@
 
 /** Create a pythia collision at a specified point and return the two inital hard partons
     @group JetScape (modular/task) based framework
-    @author Kolja Kauder
     @version Revision 0.1
     @date Jun 29, 2017
 */

@@ -10,7 +10,6 @@
  ******************************************************************************/
 
 // This is a general configuration for all files
-// This is written by Longgang Pang and Chun Shen
 
 #ifndef REALTYPE_H
 #define REALTYPE_H

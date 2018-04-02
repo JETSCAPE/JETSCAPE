@@ -8,7 +8,7 @@
  * Distributed under the GNU General Public License 3.0 (GPLv3 or later).
  * See COPYING for details.
  ******************************************************************************/
-// Copyright @ Bjoern Schenke, Sangyong Jeon, Charles Gale, and Chun Shen
+
 #ifndef MUSICWRAPPER_H
 #define MUSICWRAPPER_H
 

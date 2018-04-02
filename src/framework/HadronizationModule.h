@@ -9,7 +9,6 @@
  * See COPYING for details.
  ******************************************************************************/
 
-
 #ifndef HADRONIZATIONMODULE_H
 #define HADRONIZATIONMODULE_H
 

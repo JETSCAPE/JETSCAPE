@@ -8,7 +8,7 @@
  * Distributed under the GNU General Public License 3.0 (GPLv3 or later).
  * See COPYING for details.
  ******************************************************************************/
-// Copyright @ Chun Shen
+
 #include <stdio.h>
 #include <sys/stat.h>
 

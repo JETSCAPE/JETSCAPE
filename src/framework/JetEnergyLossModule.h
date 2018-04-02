@@ -9,7 +9,7 @@
  * See COPYING for details.
  ******************************************************************************/
 
-// Use CRTP for cloning of derived class in base class ...
+// Use CRTP for cloning of derived class in base class
 
 #ifndef JETENERGYLOSSMODULE_H
 #define JETENERGYLOSSMODULE_H

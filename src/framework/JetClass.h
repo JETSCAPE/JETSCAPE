@@ -9,10 +9,6 @@
  * See COPYING for details.
  ******************************************************************************/
 
-//  Created by Abhijit Majumder on 10/6/16.
-//
-//
-
 #ifndef JetClass_h
 #define JetClass_h
 

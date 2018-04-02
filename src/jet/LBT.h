@@ -9,9 +9,7 @@
  * See COPYING for details.
  ******************************************************************************/
 
-// The LBT module: added by Shanshan Cao
-// This file includes variable and function
-// declaration for LBT
+// This file includes variable and function declaration for LBT
 // Copyright reserved to the LBL-CCNU group
 
 #ifndef LBT_H

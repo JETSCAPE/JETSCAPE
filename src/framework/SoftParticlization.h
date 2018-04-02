@@ -9,9 +9,8 @@
  * See COPYING for details.
  ******************************************************************************/
 // -----------------------------------------
-// JETSCPAE module for soft particlization
+// JETSCAPE module for soft particlization
 // This module will generate Monte-Carlo samples for soft hadrons
-// Copyright [2018] <Chun Shen>
 // -----------------------------------------
 
 

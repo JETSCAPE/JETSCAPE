@@ -11,7 +11,6 @@
 
 /** Provides JetScapeParticleBase and derived classes Parton, Hadron
     @group JetScape (modular/task) based framework
-    @author Kolja Kauder
     @version Revision 0.1
     @date Aug 8, 2017
 */

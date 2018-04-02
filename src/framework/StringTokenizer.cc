@@ -8,12 +8,9 @@
  * Distributed under the GNU General Public License 3.0 (GPLv3 or later).
  * See COPYING for details.
  ******************************************************************************/
-
-///////////////////////////////////////////////////////////////////////////////
 // StringTokenizer
-// =========
 // General purpose string tokenizer (C++ string version)
-///////////////////////////////////////////////////////////////////////////////
+// based on https://github.com/ViDA-NYU/birdvis/blob/master/Tokenizer.cpp
 
 #include "StringTokenizer.h"
 #include <iostream>

@@ -8,8 +8,7 @@
  * Distributed under the GNU General Public License 3.0 (GPLv3 or later).
  * See COPYING for details.
  ******************************************************************************/
-// This is written by Longgang Pang and Chun Shen
-//
+
 #ifndef LINEARINTERPOLATION_H
 #define LINEARINTERPOLATION_H
 

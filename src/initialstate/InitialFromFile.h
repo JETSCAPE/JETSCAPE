@@ -9,7 +9,6 @@
  * See COPYING for details.
  ******************************************************************************/
 
-// Copyright @ LONGGANG PANG
 #ifndef INITIALFROMFILE_H
 #define INITIALFROMFILE_H
 

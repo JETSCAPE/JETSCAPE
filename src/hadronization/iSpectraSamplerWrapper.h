@@ -10,7 +10,6 @@
  ******************************************************************************/
 // -----------------------------------------
 // This is a wrapper for iSpectraSampler (iSS) with the JETSCAPE framework
-// Copyright [2018] <Chun Shen>
 // -----------------------------------------
 
 #ifndef ISPECTRASAMPLERWRAPPER_H

@@ -8,7 +8,7 @@
  * Distributed under the GNU General Public License 3.0 (GPLv3 or later).
  * See COPYING for details.
  ******************************************************************************/
-// The LBT module: added by Shanshan Cao
+// This file includes variable and function declaration for LBT
 // Copyright reserved to the LBL-CCNU group
 
 #include "LBT.h"

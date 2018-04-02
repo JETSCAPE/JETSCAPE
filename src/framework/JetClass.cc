@@ -8,8 +8,6 @@
  * Distributed under the GNU General Public License 3.0 (GPLv3 or later).
  * See COPYING for details.
  ******************************************************************************/
-//  JetClass.cpp
-//  Created by Abhijit Majumder on 10/6/16.
 
 #include <iostream>
 #include <complex>

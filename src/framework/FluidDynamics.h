@@ -9,7 +9,6 @@
  * See COPYING for details.
  ******************************************************************************/
 // This is a general basic class for hydrodynamics
-// This is written by Longgang Pang and Chun Shen
 
 #ifndef FLUIDDYNAMICS_H
 #define FLUIDDYNAMICS_H

@@ -8,8 +8,8 @@
  * Distributed under the GNU General Public License 3.0 (GPLv3 or later).
  * See COPYING for details.
  ******************************************************************************/
+//Parton Gun Test
 
-//Parton Gun Test ...
 #include "PGun.h"
 
 using namespace Jetscape;
