@@ -366,7 +366,7 @@ namespace Jetscape {
 
   void Parton::set_mean_form_time ()
   {
-    mean_form_time_ = 2.0*e()/(t()+0.001);
+    mean_form_time_ = 2.0*e()/(t()+0.001)/fmToGeVinv;
   }
   
   void Parton::set_form_time(double form_time)

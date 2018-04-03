@@ -385,7 +385,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           double splitTime = pIn[i].form_time() + pIn[i].x_in().t() ;
           // JSDEBUG << " splitTime = " << splitTime/fmToGeVinv;
 	  
-          if (splitTime<Time)
+          if (splitTime<time)
           {
 
               //cout << "SPLIT in MATTER" << endl;
@@ -739,7 +739,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   // use pIn information to sample z above, but use new_parent to calculate daughter partons below            
                   if (z*z*new_parent_t>QS)
                   {
-                      tQd1 = generate_vac_t(pid_a, z*new_parent_nu, QS/2.0, z*z*new_parent_t, zeta+std::sqrt(2)*pIn[i].form_time(), iSplit_a);
+                      tQd1 = generate_vac_t(pid_a, z*new_parent_nu, QS/2.0, z*z*new_parent_t, zeta+std::sqrt(2)*pIn[i].form_time()*fmToGeVinv, iSplit_a);
                   } else { // SC
                       tQd1 = z*z*new_parent_t;
                   }
@@ -750,7 +750,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
         
                   if ((1.0-z)*(1.0-z)*new_parent_t>QS)
                   {
-                      tQd2 = generate_vac_t(pid_b, (1.0-z)*new_parent_nu, QS/2.0, (1.0-z)*(1.0-z)*new_parent_t, zeta+std::sqrt(2)*pIn[i].form_time(),iSplit_b);
+                      tQd2 = generate_vac_t(pid_b, (1.0-z)*new_parent_nu, QS/2.0, (1.0-z)*(1.0-z)*new_parent_t, zeta+std::sqrt(2)*pIn[i].form_time()*fmToGeVinv,iSplit_b);
                   } else { // SC
                       tQd2 = (1.0-z)*(1.0-z)*new_parent_t;
                   }
