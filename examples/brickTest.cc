@@ -117,13 +117,10 @@ int main(int argc, char** argv)
   jetscape->Add(trento);
   jetscape->Add(hydro);
 
-  // Matter with silly "toy shower (no physics)
-  // and Martini dummy ...
-  // Switching Q2 (or whatever variable used
-  // hardcoded at 5 to be changed to xml)
-  jloss->Add(matter);
+  // Note: if you use Matter, it MUST come first (to set virtuality)
+  // jloss->Add(matter);
   //jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
-  //jloss->Add(martini);
+  jloss->Add(martini);
   //jloss->Add(adscft);  
 
   jlossmanager->Add(jloss);
