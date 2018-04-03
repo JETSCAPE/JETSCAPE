@@ -43,6 +43,23 @@ class JetEnergyLossModule : public JetEnergyLoss
     throw std::runtime_error("SetActive not supported for energy loss modules. Please remove the module from the manager.");
   };
 
+ protected:
+  /** Only one Eloss module at a time should be manipulating a parton
+   * In the current setup, that's all but impossible to impose and relies
+   * on cooperation between modules. 
+   * This is a crude way (relying on self-reporting) to check that this is always the case.
+   */ 
+  bool TakeResponsibilityFor ( Parton& p ) {
+    if ( p.GetControlled( ) ){
+      WARN << " Parton was controlled by " << p.GetController()
+	   << ". Now " << GetId() << " is trying to take responsibility as well.";
+	throw std::runtime_error ("Two Eloss modules were fighting for one parton!");
+    };
+    // cout << " &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& Was controlled by " << p.GetController() << endl;
+    bool wascontrolled = p.SetController( GetId() );
+    // cout << " &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& Now controlled by " << p.GetController() << endl;
+    return wascontrolled;
+  };
 };
 
 } // end namespace Jetscape

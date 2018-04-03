@@ -176,9 +176,7 @@ void JetEnergyLoss::DoShower()
 	  // INFO << pIn.at(i).edgeid();
 	  pInTempModule.push_back(pIn[i]);
 	  
-	  cout << " hello " << endl;
 	  SentInPartons(deltaT,currentTime,pIn[i].pt(),pInTempModule,pOutTemp);
-	  cout << " world. " << endl;
 	  if ( !foundchangedorig ) {
 	    // cerr  << " End with "<< pInTempModule.at(0) << "  -> " << pInTempModule.at(0).t() << endl;
 	    // cerr << " ---------------------------------------------- " << endl;
