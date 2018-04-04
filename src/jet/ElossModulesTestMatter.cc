@@ -883,7 +883,10 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           }
           else
           { // not time to split yet broadening it
-             
+
+              double now_zeta = ( ( time + initRdotV )/std::sqrt(2) )*fmToGeVinv;
+              qhat = fncQhat(now_zeta);
+
               INFO << " broadening qhat = " << qhat << " and delT = " << delT ;
               
               if ((!recoil_on)&&(qhat>0.0))
@@ -2025,11 +2028,11 @@ double Matter::fillQhatTab() {
         tLoc = tStep*i;
 
 	//if(tLoc<initR0-tStep) { // potential problem of making t^2<z^2
-	/*if(tLoc<initR0 || tLoc<tStart) {
+	if(tLoc<initR0 || tLoc<tStart) {
             qhatTab1D[i] = 0.0; 
             continue;	    
         }
-*/
+
 	xLoc = initRx+(tLoc-initR0)*initVx; 
         yLoc = initRy+(tLoc-initR0)*initVy;
         zLoc = initRz+(tLoc-initR0)*initVz;
