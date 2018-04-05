@@ -99,6 +99,7 @@
       <name > Martini </name>
       <alpha_s> 0.3 </alpha_s>
       <pcut> 2.0 </pcut>
+      <path>../src/jet/Martini/</path>
     </Martini>
 
     <AdSCFT>

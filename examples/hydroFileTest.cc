@@ -20,18 +20,19 @@
 #include "JetScape.h"
 #include "JetEnergyLoss.h"
 #include "JetEnergyLossManager.h"
-#include "JetScapeWriterAscii.h"
-//#include "JetScapeWriterAsciiGZ.h"
-//#include "JetScapeWriterHepMC.h"
+#include "JetScapeWriterStream.h"
+#ifdef USE_HEPMC
+#include "JetScapeWriterHepMC.h"
+#endif
 
 // User modules derived from jetscape framework clasess
 // to be used to run Jetscape ...
 #include "AdSCFT.h"
-#include "ElossModulesTestMatter.h"
-#include "ElossModulesTestMartini.h"
-#include "brick_jetscape.h"
-#include "Gubser_hydro_jetscape.h"
-#include "hydro_file_jetscape.h"
+#include "Matter.h"
+#include "Martini.h"
+#include "Brick.h"
+#include "GubserHydro.h"
+#include "HydroFromFile.h"
 #include "PGun.h"
 
 #ifdef USE_HDF5
@@ -59,17 +60,17 @@ int main(int argc, char** argv)
   JetScapeLogger::Instance()->SetRemark(false);
   //SetVerboseLevel (9 a lot of additional debug output ...)
   //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevle(9) or 10
-  JetScapeLogger::Instance()->SetVerboseLevel(0);
+  JetScapeLogger::Instance()->SetVerboseLevel(8);
    
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml", 10);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml", 5);
   jetscape->set_reuse_hydro (true);
   jetscape->set_n_reuse_hydro (5);
 
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
-  auto hydro = make_shared<HydroFile> ();
+  auto hydro = make_shared<HydroFromFile> ();
   //auto hydro = make_shared<GubserHydro> ();
   
   auto matter = make_shared<Matter> ();
@@ -88,7 +89,9 @@ int main(int argc, char** argv)
   // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
   //auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");  
-  //auto writer= make_shared<JetScapeWriterHepMC> ("test_out.dat");
+#ifdef USE_HEPMC
+  //auto writer= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
+#endif
   //writer->SetActive(false);
 
   //Remark: For now modules have to be added
@@ -109,9 +112,9 @@ int main(int argc, char** argv)
   // and Martini dummy ...
   // Switching Q2 (or whatever variable used
   // hardcoded at 5 to be changed to xml)
-  //jloss->Add(matter);
+  jloss->Add(matter);
   //jloss->Add(martini);
-  jloss->Add(adscft);
+  // jloss->Add(adscft);
   
   jlossmanager->Add(jloss);
   

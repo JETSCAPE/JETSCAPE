@@ -8,8 +8,8 @@
     @date Jun 29, 2017
 */
 
-#ifndef PYTHIAGUN_HPP
-#define PYTHIAGUN_HPP
+#ifndef PYTHIAGUN_H
+#define PYTHIAGUN_H
 
 #include "HardProcess.h"
 #include "JetScapeLogger.h"
@@ -40,9 +40,15 @@ public:
   void InitTask();
   void Exec();
 
- // Getters
+  // Getters
   double GetpTHatMin() const {return pTHatMin;}
   double GetpTHatMax() const {return pTHatMax;}
+
+  // Cross-section information in mb and event weight.
+  double GetSigmaGen(){ return info.sigmaGen();};
+  double GetSigmaErr(){ return info.sigmaErr();};  
+  double GetEventWeight(){ return info.weight(); };
+  
 };
 
-#endif  // PYTHIAGUN_HPP
+#endif  // PYTHIAGUN_H

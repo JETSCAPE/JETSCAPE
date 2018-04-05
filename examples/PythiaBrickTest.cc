@@ -18,23 +18,24 @@
 #include "JetScape.h"
 #include "JetEnergyLoss.h"
 #include "JetEnergyLossManager.h"
-#include "JetScapeWriterAscii.h"
-//#include "JetScapeWriterAsciiGZ.h"
-//#include "JetScapeWriterHepMC.h"
+#include "JetScapeWriterStream.h"
+#ifdef USE_HEPMC
+#include "JetScapeWriterHepMC.h"
+#endif
 
 // User modules derived from jetscape framework clasess
 // to be used to run Jetscape ...
 #include "AdSCFT.h"
-#include "ElossModulesTestMatter.h"
-#include "ElossModulesTestMartini.h"
-#include "brick_jetscape.h"
-#include "Gubser_hydro_jetscape.h"
+#include "Matter.h"
+#include "Martini.h"
+#include "Brick.h"
+#include "GubserHydro.h"
 #include "PythiaGun.h"
 #include "PartonPrinter.h"
 #include "HadronizationManager.h"
 #include "Hadronization.h"
-#include "HadronizationModuleTest.h"
-#include "ColorlessHad.h"
+#include "ColoredHadronization.h"
+#include "ColorlessHadronization.h"
 
 // Add initial state module for test
 #include "TrentoInitial.h"
@@ -70,7 +71,6 @@ int main(int argc, char** argv)
   
   Show();
 
-  // auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",10);
   auto jetscape = make_shared<JetScape>("./jetscape_init.xml",200);
   jetscape->SetId("primary");
   // jetscape->set_reuse_hydro (true);
@@ -91,13 +91,12 @@ int main(int argc, char** argv)
   auto printer = make_shared<PartonPrinter>();
   auto hadroMgr = make_shared<HadronizationManager> ();
   auto hadro = make_shared<Hadronization> ();
-  auto hadroModule = make_shared<HadronizationModuleTest> ();
-  auto colorless = make_shared<ColorlessHad> ();
+  auto hadroModule = make_shared<ColoredHadronization> ();
+  auto colorless = make_shared<ColorlessHadronization> ();
   
   // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
-  //auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");  
-  //auto writer= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
+  auto writergz= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");
   //writer->SetActive(false);
 
   //Remark: For now modules have to be added
@@ -123,8 +122,12 @@ int main(int argc, char** argv)
   hadroMgr->Add(hadro);
   jetscape->Add(hadroMgr);
 
-
   jetscape->Add(writer);
+  jetscape->Add(writergz);
+#ifdef USE_HEPMC
+  auto hepmcwriter= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
+  jetscape->Add(hepmcwriter);
+#endif
 
   // Intialize all modules tasks
   jetscape->Init();
@@ -139,20 +142,20 @@ int main(int argc, char** argv)
   INFO_NICE<<"Finished!";
   cout<<endl;
 
-// Some information is only known after the full run,
+  // Some information is only known after the full run,
   // Therefore store information at the end of the file, in a footer
   writer->WriteComment ( "EVENT GENERATION INFORMATION" );
   Pythia8::Info& info = pythiaGun->info;
   std::ostringstream oss;
-  oss.str(""); oss << "nTried    = " << info.nTried();
+  oss.str(""); oss << "Total nTried    = " << info.nTried();
   writer->WriteComment ( oss.str() );
-  oss.str(""); oss << "nSelected = " << info.nSelected();
+  oss.str(""); oss << "Total nSelected = " << info.nSelected();
   writer->WriteComment ( oss.str() );
-  oss.str(""); oss << "nAccepted = " << info.nAccepted();
+  oss.str(""); oss << "Total nAccepted = " << info.nAccepted();
   writer->WriteComment ( oss.str() );
-  oss.str(""); oss << "sigmaGen  = " << info.sigmaGen();  
+  oss.str(""); oss << "Total sigmaGen  = " << info.sigmaGen();  
   writer->WriteComment ( oss.str() );
-  oss.str(""); oss << "sigmaErr  = " << info.sigmaErr();
+  oss.str(""); oss << "Total sigmaErr  = " << info.sigmaErr();
   writer->WriteComment ( oss.str() );
 
   oss.str(""); oss << "eCM  = " << info.eCM();

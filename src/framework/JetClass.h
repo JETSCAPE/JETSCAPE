@@ -11,9 +11,9 @@
 
 #include <stdio.h>
 #include <math.h>
-#include "JetScapeParticles.hpp"
-#include "constants.h"
-#include "four_vector.hpp"
+#include "JetScapeParticles.h"
+#include "JetScapeConstants.h"
+#include "FourVector.h"
 #include "fjcore.hh"
 
 #include <vector>
@@ -72,13 +72,11 @@ public:
     return(x_in_);
   }
 
-  friend ostream &operator<<( ostream &output, 
-         Vertex & vertex ) {
-
-    output<<vertex.x_in().x()<<" "<<vertex.x_in().y()<<" "<<vertex.x_in().z()<<" "<<vertex.x_in().t();//<<endl;
-    
+  friend ostream &operator<<( ostream &output, Vertex & vertex ) {
+    output<<vertex.x_in().x()<<" "<<vertex.x_in().y()<<" "<<vertex.x_in().z()<<" "<<vertex.x_in().t();
     return output;
   }
+
 protected:
   
   FourVector x_in_        ; //location of the vertex

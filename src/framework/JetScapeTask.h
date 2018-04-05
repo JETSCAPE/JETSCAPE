@@ -93,15 +93,38 @@ class JetScapeTask
    */
   virtual void FinishTasks() {};
   
-  //add here a write task (depending on if JetScapeWriter is initiallized and active) ...
-  // Think about workflow ...
-  /** Recursively write the output information of different tasks/subtasks of a JetScapeTask into a file. We use "active_exec" flag to decide whether to write the output in the file or not.
+  /** Recursively write the output information of different tasks/subtasks of a JetScapeTask into a file.
+      We use "active_exec" flag to decide whether to write the output in the file or not.
   */
   virtual void WriteTasks(weak_ptr<JetScapeWriter> w);
 
-  /** A virtual function to define a default WriteTask() function for a JetScapeTask. It can be overridden by different modules/tasks.
+  //add here a write task (depending on if JetScapeWriter is initiallized and active) ...
+  // Think about workflow ...
+  /** A virtual function to define a default WriteTask() function for a JetScapeTask.
+      It can be overridden by different modules/tasks.
+      Current setup: Every task gets handed a pointer to the writer
+      and can add any information it likes to it
+      (using predefined functions like WriteComment())
+      This is maximally flexible but makes it difficult to 
+      properly store information for a variety of outputs.
+      E.g., sigmaGen: A HardProcess can easily write the xsec to any stream-type output
+      using WriteComment. But to set it in a HepMC file, either HardProcess needs to 
+      make a case-by-case selection, meaning a new file format would need to percolate
+      through multiple base classes, or the writer needs to know this information 
+      and implement WriteEvent appropriately. The latter is obviously better, but
+      it's non-trivial to collect this information.
    */
   virtual void WriteTask(weak_ptr<JetScapeWriter> w) {};
+
+  /** Should get called only by CollectHeaders. Maybe make protected?
+      @param w is a pointer of type JetScapeWrite class.
+  */
+  virtual void CollectHeader( weak_ptr<JetScapeWriter> w ){};
+
+  /** Recursively collect the header information of different tasks/subtasks of a JetScapeTask into a writer.
+      We use "active_exec" flag to decide whether to write the output in the file or not.
+  */
+  virtual void CollectHeaders(weak_ptr<JetScapeWriter> w);
 
   /** This function adds the module "m_tasks" into the vector of subtask of a JetScapeTask.
   */

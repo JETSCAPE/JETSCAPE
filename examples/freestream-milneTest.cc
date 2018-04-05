@@ -13,24 +13,25 @@
 #include "JetScape.h"
 #include "JetEnergyLoss.h"
 #include "JetEnergyLossManager.h"
-#include "JetScapeWriterAscii.h"
-//#include "JetScapeWriterAsciiGZ.h"
-//#include "JetScapeWriterHepMC.h"
+#include "JetScapeWriterStream.h"
+#ifdef USE_HEPMC
+#include "JetScapeWriterHepMC.h"
+#endif
 
 //User modules derived from jetscape framework clasess
 //to be used to run Jetscape ...
 #include "AdSCFT.h"
-#include "ElossModulesTestMatter.h"
-#include "ElossModulesTestMartini.h"
-#include "freestream-milne_jetscape.h"
-#include "music_jetscape.h"
+#include "Matter.h"
+#include "Martini.h"
+#include "FreestreamMilneWrapper.h"
+#include "MusicWrapper.h"
 #include "TrentoInitial.h"
 #include "PGun.h"
 #include "PythiaGun.h"
 #include "PartonPrinter.h"
 //#include "HadronizationManager.h"
 //#include "Hadronization.h"
-//#include "HadronizationModuleTest.h"
+//#include "ColoredHadronization.h"
 
 #include <chrono>
 #include <thread>
@@ -73,7 +74,7 @@ int main(int argc, char** argv)
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
   auto trento = make_shared<TrentoInitial> ();
-  auto freestream = make_shared<FREESTREAM> ();
+  auto freestream = make_shared<FreestreamMilneWrapper> ();
   auto hydro = make_shared<MPI_MUSIC> ();
   //auto hydro = make_shared<GubserHydro> ();
 
@@ -94,12 +95,14 @@ int main(int argc, char** argv)
 
   //auto hadroMgr = make_shared<HadronizationManager> ();
   //auto hadro = make_shared<Hadronization> ();
-  //auto hadroModule = make_shared<HadronizationModuleTest> ();
+  //auto hadroModule = make_shared<ColoredHadronization> ();
 
   // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
   //auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");
+#ifdef USE_HEPMC
   //auto writer= make_shared<JetScapeWriterHepMC> ("test_out.dat");
+#endif
   //writer->SetActive(false);
 
   //Remark: For now modules have to be added

@@ -18,24 +18,25 @@
 #include "JetScape.h"
 #include "JetEnergyLoss.h"
 #include "JetEnergyLossManager.h"
-#include "JetScapeWriterAscii.h"
-#include "JetScapeWriterAsciiGZ.h"
-//#include "JetScapeWriterHepMC.h"
+#include "JetScapeWriterStream.h"
+#ifdef USE_HEPMC
+#include "JetScapeWriterHepMC.h"
+#endif
 
 // User modules derived from jetscape framework clasess
 // to be used to run Jetscape ...
 #include "AdSCFT.h"
-#include "ElossModulesTestMatter.h"
-#include "ElossModuleLBT.h"
-#include "ElossModulesTestMartini.h"
-#include "brick_jetscape.h"
-#include "Gubser_hydro_jetscape.h"
+#include "Matter.h"
+#include "LBT.h"
+#include "Martini.h"
+#include "Brick.h"
+#include "GubserHydro.h"
 #include "PGun.h"
 #include "PartonPrinter.h"
 #include "HadronizationManager.h"
 #include "Hadronization.h"
-#include "HadronizationModuleTest.h"
-#include "ColorlessHad.h"
+#include "ColoredHadronization.h"
+#include "ColorlessHadronization.h"
 
 // Add initial state module for test
 #include "TrentoInitial.h"
@@ -96,13 +97,15 @@ int main(int argc, char** argv)
 
   auto hadroMgr = make_shared<HadronizationManager> ();
   auto hadro = make_shared<Hadronization> ();
-  auto hadroModule = make_shared<HadronizationModuleTest> ();
-  auto colorless = make_shared<ColorlessHad> ();
+  auto hadroModule = make_shared<ColoredHadronization> ();
+  auto colorless = make_shared<ColorlessHadronization> ();
 
   // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
   //autowriter= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");  
+#ifdef USE_HEPMC
   //auto writer= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
+#endif
   //writer->SetActive(false);
 
   //Remark: For now modules have to be added

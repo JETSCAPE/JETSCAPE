@@ -11,8 +11,13 @@ FILE(GLOB frameworksources framework/*.cc)
 set (SOURCES  ${SOURCES}  ${frameworksources} )
 
 ## Take care of options
-if(NOT ${ZLIB_FOUND})
-  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/framework/JetScapeWriterAsciiGZ.cc)
+## Note that cmake NOT needs the "" to deal with empty variables
+# if(NOT "${ZLIB_FOUND}")
+#   list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/framework/JetScapeWriterAsciiGZ.cc)
+# endif()
+
+if(NOT "${HEPMC_FOUND}")
+  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/framework/JetScapeWriterHepMC.cc)
 endif()
 
 #initialstate
@@ -29,16 +34,16 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/initialstate/data_table/
 FILE(GLOB preeqsources preequilibrium/*.cc)
 set (SOURCES  ${SOURCES}  ${preeqsources} )
 ## Take care of options
-if(NOT ${freestream})
-  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/preequilibrium/freestream-milne_jetscape.cc)
+if(NOT "${freestream}")
+  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/preequilibrium/FreestreamMilneWrapper.cc)
 endif()
 
 #hydro
 FILE(GLOB hydrosources hydro/*.cc)
 set (SOURCES  ${SOURCES}  ${hydrosources} )
 ## Take care of options
-if(NOT ${music})
-  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/hydro/music_jetscape.cc)
+if(NOT "${music}")
+  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/hydro/MusicWrapper.cc)
 endif()
 
 #jet
@@ -50,8 +55,8 @@ FILE(GLOB hadrosources hadronization/*.cc)
 set (SOURCES  ${SOURCES}  ${hadrosources} )
 
 ## Take care of options
-if(NOT ${iSS})
-  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/hadronization/iSS_jetscape.cc)
+if(NOT "${iSS}")
+  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/hadronization/iSpectraSamplerWrapper.cc)
 endif()
 
 #reader
@@ -72,7 +77,7 @@ if (${HDF5_FOUND})
   target_link_libraries (JetScape hydroFromFile ${_hdf5_libs})
 endif()
 
-if (${HEPMC_FOUND})
+if ( ${HEPMC_FOUND} )
   target_link_libraries (JetScape -L${HEPMC_LIB_DIR} -lHepMC )
 endif()
 

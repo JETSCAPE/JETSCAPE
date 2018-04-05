@@ -20,25 +20,26 @@
 #include "JetScape.h"
 #include "JetEnergyLoss.h"
 #include "JetEnergyLossManager.h"
-#include "JetScapeWriterAscii.h"
-#include "JetScapeWriterAsciiGZ.h"
+#include "JetScapeWriterStream.h"
+#ifdef USE_HEPMC
 #include "JetScapeWriterHepMC.h"
+#endif
 
 // User modules derived from jetscape framework clasess
 // to be used to run Jetscape ...
 #include "AdSCFT.h"
-#include "ElossModulesTestMatter.h"
-#include "ElossModuleLBT.h"
-#include "ElossModulesTestMartini.h"
-#include "brick_jetscape.h"
-#include "Gubser_hydro_jetscape.h"
-#include "hydro_file_jetscape.h"
+#include "Matter.h"
+#include "LBT.h"
+#include "Martini.h"
+#include "Brick.h"
+#include "GubserHydro.h"
+#include "HydroFromFile.h"
 #include "PythiaGun.h"
 #include "PartonPrinter.h"
 #include "HadronizationManager.h"
 #include "Hadronization.h"
-#include "HadronizationModuleTest.h"
-#include "ColorlessHad.h"
+#include "ColoredHadronization.h"
+#include "ColorlessHadronization.h"
 
 #ifdef USE_HDF5
 #include "InitialFromFile.h"
@@ -83,7 +84,7 @@ int main(int argc, char** argv)
 
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
-  auto hydro = make_shared<HydroFile> ();
+  auto hydro = make_shared<HydroFromFile> ();
   //auto hydro = make_shared<GubserHydro> ();
   
   auto matter = make_shared<Matter> ();
@@ -103,13 +104,15 @@ int main(int argc, char** argv)
 
   auto hadroMgr = make_shared<HadronizationManager> ();
   auto hadro = make_shared<Hadronization> ();
-  auto hadroModule = make_shared<HadronizationModuleTest> ();
-  auto colorless = make_shared<ColorlessHad> ();
+  auto hadroModule = make_shared<ColoredHadronization> ();
+  auto colorless = make_shared<ColorlessHadronization> ();
 
   // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
   //auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");  
-  //auto writer= make_shared<JetScapeWriterHepMC> ("test_out.dat");
+#ifdef USE_HEPMC
+  //auto writer= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
+#endif
   //writer->SetActive(false);
 
   //Remark: For now modules have to be added

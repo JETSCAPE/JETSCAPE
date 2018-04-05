@@ -100,6 +100,7 @@ include_directories("${CMAKE_SOURCE_DIR}/external_packages/trento/src/")
 ## default directory is the build directory
 ## Note that trento also automatically populates a bin directory
 ## and we cannot disable this behavior
+## Also, iSS and mpihydro install binaries in CMAKE_HOME_DIR. Sigh.
 ###
 # Install header files
 # default install prefix: build directory
@@ -119,9 +120,9 @@ install(
   "${CMAKE_SOURCE_DIR}/src/initialstate/"
   "${CMAKE_SOURCE_DIR}/src/hydro/"
   "${CMAKE_SOURCE_DIR}/src/jet/"
+  "${CMAKE_SOURCE_DIR}/src/reader/"
   # external packages
   "${CMAKE_SOURCE_DIR}/external_packages/"
-  "${CMAKE_SOURCE_DIR}/external_packages/gtl/include/GTL/"
   "${CMAKE_SOURCE_DIR}/external_packages/iSS/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/hydro_from_external_file/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/music/src/"
@@ -130,7 +131,7 @@ install(
   FILES_MATCHING # install only matched files
   PATTERN "*.h*" # select header files
   ## Necessary to exclude directories to prevent a whole (mostly empty) hierarchy
-  PATTERN "gtl/include" EXCLUDE
+  PATTERN "gtl" EXCLUDE
   PATTERN "iSS" EXCLUDE
   PATTERN "hydro_from_external_file" EXCLUDE
   PATTERN "music" EXCLUDE
@@ -140,6 +141,19 @@ install(
   PATTERN "LBT-tables" EXCLUDE
   PATTERN "Martini" EXCLUDE
   PATTERN "googletest" EXCLUDE
+  )
+
+## We have includes of the form #include "GTL/dijkstra.h"
+## which needs to be handled separately
+install(
+  # source directory
+  DIRECTORY
+  "${CMAKE_SOURCE_DIR}/external_packages/gtl/include/"
+  DESTINATION "include" # target directory
+  FILES_MATCHING # install only matched files
+  PATTERN "GTL/*.h*" # select header files
+  ## Necessary to exclude directories to prevent a whole (mostly empty) hierarchy
+  # PATTERN "gtl/src" EXCLUDE
   )
 
 # Install lib files
@@ -175,6 +189,7 @@ message("Looking for ZLIB ...")
 find_package(ZLIB)
 if(${ZLIB_FOUND})
   message(STATUS "ZLib found")
+  set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -DUSE_GZIP" )
 endif()
 
 ###########################
@@ -293,6 +308,22 @@ endif (iSS)
 ###########################
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
 
+
+##############################
+### Standalone Reader lib  ###
+##############################
+FILE(GLOB LIBREADERSOURCES src/reader/*.cc)
+set (LIBREADERSOURCES ${LIBREADERSOURCES} )
+set (LIBREADERSOURCES ${LIBREADERSOURCES} src/framework/JetScapeParticles.cc )
+set (LIBREADERSOURCES ${LIBREADERSOURCES} src/framework/StringTokenizer.cc )
+set (LIBREADERSOURCES ${LIBREADERSOURCES} src/framework/JetClass.cc )
+set (LIBREADERSOURCES ${LIBREADERSOURCES} src/framework/JetScapeLogger.cc )
+set (LIBREADERSOURCES ${LIBREADERSOURCES} src/framework/PartonShower.cc )
+
+add_library(JetScapeReader SHARED ${LIBREADERSOURCES})
+set_target_properties(JetScapeReader PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib )
+target_link_libraries(JetScapeReader JetScapeThird GTL ${PYTHIA8_LIBRARIES})
+
 ###########################
 ### Executables         ###
 ###########################
@@ -314,9 +345,6 @@ if(${HDF5_FOUND})
   add_executable(hydroJetTest  ./examples/hydroJetTest.cc)
   target_link_libraries(hydroJetTest JetScape ${_hdf5_libs})
 endif()
-
-add_executable(writerTest ./examples/writerTest.cc)
-target_link_libraries(writerTest JetScape)
 
 add_executable(SimpleValidate ./examples/SimpleValidate.cc)
 target_link_libraries(SimpleValidate JetScape )

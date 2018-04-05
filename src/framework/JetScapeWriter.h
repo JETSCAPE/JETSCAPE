@@ -14,6 +14,7 @@
 #include "JetScapeModuleBase.h"
 #include "PartonShower.h"
 #include "JetClass.h"
+#include "JetScapeEventHeader.h"
 
 using std::to_string;
 
@@ -45,18 +46,20 @@ class JetScapeWriter : public JetScapeModuleBase
   virtual void WriteWhiteSpace(string s) {};
   virtual void Write(ostream *o) {};
   virtual void Write(weak_ptr<Hadron> h) {};
-  
-  virtual void WriteEvent() {};
-  // to be defined what data structure ...
-  // or via passing writer to all modules
-  // and handling data writing there ...
-  // current approach ... 
 
-  //virtual GetFileStream() {};
+
+  /// Gets called first, before all tasks write themselves
+  virtual void WriteHeaderToFile(){};
   
- private:
+  /// Gets called last, after all tasks have written themselves
+  virtual void WriteEvent(){};
+
+  virtual JetScapeEventHeader& GetHeader() {return header;};
+
+ protected:
 
   string file_name_out;
+  JetScapeEventHeader header;
   
 };
 

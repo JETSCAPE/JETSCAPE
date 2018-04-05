@@ -12,12 +12,14 @@
 #include <GTL/edge_map.h>
 #include <GTL/node_map.h>
 #include "JetClass.h"
-#include "JetScapeParticles.hpp"
+#include "JetScapeParticles.h"
 #include "JetScapeLogger.h"
 #include "StringTokenizer.h"
 #include "PartonShower.h"
 #include <fstream>
+#ifdef USE_GZIP
 #include "gzstream.h"
+#endif
 
 using std::ostream;
 using std::istream;
@@ -26,86 +28,66 @@ using std::ifstream;
 
 namespace Jetscape {
 
-template<class T>
-class JetScapeReader
-{
+  template<class T>
+    class JetScapeReader
+    {
 
- public:
+    public:
 
-  JetScapeReader();
-  JetScapeReader(string m_file_name_in) {file_name_in =  m_file_name_in; Init();}
-  virtual ~JetScapeReader();
+      JetScapeReader();
+      JetScapeReader(string m_file_name_in) {file_name_in =  m_file_name_in; Init();}
+      virtual ~JetScapeReader();
 
-  void Close() {inFile.close();}
-  void Clear();
+      void Close() {inFile.close();}
+      void Clear();
   
-  void Next();
-  bool Finished() {return inFile.eof();}
+      void Next();
+      bool Finished() {return inFile.eof();}
   
-  int GetCurrentEvent() {return currentEvent-1;}
-  int GetCurrentNumberOfPartonShowers() {return pShowers.size();}
+      int GetCurrentEvent() {return currentEvent-1;}
+      int GetCurrentNumberOfPartonShowers() {return pShowers.size();}
   
-  //shared_ptr<PartonShower> GetPartonShower() {return pShower;}
-  vector<shared_ptr<PartonShower>> GetPartonShowers() {return pShowers;}
+      //shared_ptr<PartonShower> GetPartonShower() {return pShower;}
+      vector<shared_ptr<PartonShower>> GetPartonShowers() {return pShowers;}
 
-  vector<shared_ptr<Hadron>> GetHadrons(){ return hadrons;}
+      vector<shared_ptr<Hadron>> GetHadrons(){ return hadrons;}
 
-  vector<fjcore::PseudoJet>  GetHadronsForFastJet();
+      vector<fjcore::PseudoJet>  GetHadronsForFastJet();
   
- private:
+    private:
 
-  StringTokenizer strT;
+      StringTokenizer strT;
    
-  void Init();
-  void AddNode(string s);
-  void AddEdge(string s);
-  //void MakeGraph();
-  void AddHadron(string s); 
-  string file_name_in;
-  T inFile;
+      void Init();
+      void AddNode(string s);
+      void AddEdge(string s);
+      //void MakeGraph();
+      void AddHadron(string s); 
+      string file_name_in;
+      T inFile;
   
-  int currentEvent;
-  int currentShower;
+      int currentEvent;
+      int currentShower;
   
-  shared_ptr<PartonShower> pShower;
-  vector<shared_ptr<PartonShower>> pShowers;
+      shared_ptr<PartonShower> pShower;
+      vector<shared_ptr<PartonShower>> pShowers;
   
-  vector<node> nodeVec;
-  vector<edge> edgeVec;
+      vector<node> nodeVec;
+      vector<edge> edgeVec;
 
-  vector<shared_ptr<Hadron>> hadrons; 
+      vector<shared_ptr<Hadron>> hadrons; 
   
- };
+    };
 
-} // end namespace Jetscape
+typedef JetScapeReader<ifstream> JetScapeReaderAscii;
+#ifdef USE_GZIP
+typedef JetScapeReader<igzstream> JetScapeReaderAsciiGZ;
 #endif
+  
+} // end namespace Jetscape
 
 // ---------------------
 
-using namespace Jetscape;
-// comment: Don't know why the following code is not embraced in #ifdef and #endif?
-// The "using namespace Jetscape;" can be removed if the following are moved up
-
-class JetScapeReaderAscii : public JetScapeReader<ifstream>
-{
-
- public :
-  
- JetScapeReaderAscii() : JetScapeReader() {};
- JetScapeReaderAscii(string m_file_name_in) : JetScapeReader(m_file_name_in) {};
-  ~JetScapeReaderAscii() {};
-  
-};
-
-class JetScapeReaderAsciiGZ : public JetScapeReader<igzstream>
-{
-
- public :
-  
- JetScapeReaderAsciiGZ() : JetScapeReader() {};
- JetScapeReaderAsciiGZ(string m_file_name_in) : JetScapeReader(m_file_name_in) {};
-  ~JetScapeReaderAsciiGZ() {};
-  
-};
+#endif
 
 // ---------------------

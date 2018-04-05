@@ -52,5 +52,5 @@ class AdSCFT : public JetEnergyLossModule<AdSCFT>
 
 };
 
-#endif
+#endif // ADSCFT_H
 
