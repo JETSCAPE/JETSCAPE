@@ -884,6 +884,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           else
           { // not time to split yet broadening it
 
+
               double now_zeta = ( ( time + initRdotV )/std::sqrt(2) )*fmToGeVinv;
               qhat = fncQhat(now_zeta);
 
@@ -976,6 +977,10 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       }
       else
       { // virtuality too low lets broaden it
+          
+          double now_zeta = ( ( time + initRdotV )/std::sqrt(2) )*fmToGeVinv;
+          qhat = fncQhat(now_zeta);
+
           
           INFO << " broadening qhat = " << qhat << " and delT = " << delT ;
           
