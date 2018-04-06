@@ -48,12 +48,13 @@ TRENTO by Jonah E. Bernhard, J. Scott Moreland, Steffen A. Bass
 -- http://qcd.phy.duke.edu/trento/
 -- Licensed under the MIT license
 
-iSurfaceSampler (iSS) by Chun Shen
+iSurfaceSampler (iSS) by Chun Shen and Zhi Qiu
 -- https://github.com/chunshen1987/iSS
 -- Licensed under the MIT license
 
-
 hydro_from_file by Chun Shen
+-- https://github.com/chunshen1987/hydro_analysis
+-- Licensed under the MIT license
 
 Freestream Milne by Derek Everett
 -- https://github.com/derekeverett/freestream-milne
