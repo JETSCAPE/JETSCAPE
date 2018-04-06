@@ -896,7 +896,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               {
                   double kt = generate_kt(qhat*1.414/0.197, delT);
                   
-                  INFO << " kt generated = "  << kt << " for qhat = " << qhat*1.414/0.197 << " and delT = " << delT ;
+                  JSDEBUG << " kt generated = "  << kt << " for qhat = " << qhat*1.414/0.197 << " and delT = " << delT ;
                   
                   double ktx, kty, ktz;
                   double vx = initVx;
@@ -908,31 +908,48 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   
                   while (!solved)
                   {
-                      ktx = kt*(1 - 2*ZeroOneDistribution(*get_mt19937_generator()) );
-                  
-                      JSDEBUG << " vx = " << vx << " vy = " << vy << " vz = " << vz ;
-                  
-                      double rad = sqrt( 4*ktx*ktx*vx*vx*vy*vy - 4*(vy*vy + vz*vz)*(ktx*ktx*(vx*vx+vz*vz) - kt*kt*vz*vz)  );
                       
-                      double sol1 = (-2*ktx*vx*vy + rad)/2/(vy*vy + vz*vz);
-                      double sol2 = (-2*ktx*vx*vy - rad)/2/(vy*vy + vz*vz);
-                      
-                      kty = sol1;
-                      
-                      if ((ktx*ktx + sol1*sol1) > kt*kt  )  kty = sol2;
-                  
-                      if ((ktx*ktx + kty*kty) < kt*kt  )
+                      if ((abs(vy)>approx)||(abs(vz)>approx))
                       {
-                          ktz = sqrt( kt*kt - ktx*ktx - kty*kty ) ;
+                          ktx = kt*(1 - 2*ZeroOneDistribution(*get_mt19937_generator()) );
+                  
+                          JSDEBUG << " vx = " << vx << " vy = " << vy << " vz = " << vz ;
+                  
+                          double rad = sqrt( 4*ktx*ktx*vx*vx*vy*vy - 4*(vy*vy + vz*vz)*(ktx*ktx*(vx*vx+vz*vz) - kt*kt*vz*vz)  );
+                      
+                          double sol1 = (-2*ktx*vx*vy + rad)/2/(vy*vy + vz*vz);
+                          double sol2 = (-2*ktx*vx*vy - rad)/2/(vy*vy + vz*vz);
+                      
+                          kty = sol1;
+                      
+                          if ((ktx*ktx + sol1*sol1) > kt*kt  )  kty = sol2;
+                  
+                          if ((ktx*ktx + kty*kty) < kt*kt  )
+                          {
+                              ktz = sqrt( kt*kt - ktx*ktx - kty*kty ) ;
                           
-                          double sign = ZeroOneDistribution(*get_mt19937_generator());
-                          if (sign>0.5) ktz = -1*ktz;
+                              double sign = ZeroOneDistribution(*get_mt19937_generator());
+                              
+                              if (sign>0.5) ktz = -1*ktz;
                           
+                              if (vz!=0) ktz = (-1*ktx*vx - kty*vy )/vz ;
                           
-                          if (vz!=0) ktz = (-1*ktx*vx - kty*vy )/vz ;
+                              solved = true;
+                          }
                           
-                          solved = true;
                       }
+                      else
+                      {
+                          ktx = 0;
+                          kty = kt*(1 - 2*ZeroOneDistribution(*get_mt19937_generator()) );
+                          double sign = ZeroOneDistribution(*get_mt19937_generator());
+                          if (sign>0.5) kty = -1*kty;
+                          ktz = sqrt(1-kty*kty);
+                          sign = ZeroOneDistribution(*get_mt19937_generator());
+                          if (sign>0.5) ktz = -1*ktz;
+                    
+                      }
+                      
                   }
                   
                   JSDEBUG << " ktx = " << ktx << " kty = " << kty << " ktz = " << ktz ;
@@ -990,7 +1007,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           {
               double kt = generate_kt(qhat*1.414/0.197, delT);
               
-              INFO << " kt generated = "  << kt << " for qhat = " << qhat*1.414/0.197 << " and delT = " << delT ;
+              JSDEBUG << " kt generated = "  << kt << " for qhat = " << qhat*1.414/0.197 << " and delT = " << delT ;
               
               double ktx, kty, ktz;
               double vx = initVx;
@@ -1001,31 +1018,47 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               
               while (!solved)
               {
-                  ktx = kt*(1 - 2*ZeroOneDistribution(*get_mt19937_generator()) );
-                  
-                  JSDEBUG << " vx = " << vx << " vy = " << vy << " vz = " << vz ;
-                  
-                  double rad = sqrt( 4*ktx*ktx*vx*vx*vy*vy - 4*(vy*vy + vz*vz)*(ktx*ktx*(vx*vx+vz*vz) - kt*kt*vz*vz)  );
-                  
-                  double sol1 = (-2*ktx*vx*vy + rad)/2/(vy*vy + vz*vz);
-                  double sol2 = (-2*ktx*vx*vy - rad)/2/(vy*vy + vz*vz);
-                  
-                  kty = sol1;
-                  
-                  if ((ktx*ktx + sol1*sol1) > kt*kt  )  kty = sol2;
-                  
-                  if ((ktx*ktx + kty*kty) < kt*kt  )
+                  if ((abs(vy)>approx)||(abs(vz)>approx))
                   {
-                      ktz = sqrt( kt*kt - ktx*ktx - kty*kty ) ;
+                  
+                      ktx = kt*(1 - 2*ZeroOneDistribution(*get_mt19937_generator()) );
+                  
+                      JSDEBUG << " vx = " << vx << " vy = " << vy << " vz = " << vz ;
                       
+                      double rad = sqrt( 4*ktx*ktx*vx*vx*vy*vy - 4*(vy*vy + vz*vz)*(ktx*ktx*(vx*vx+vz*vz) - kt*kt*vz*vz)  );
+                  
+                      double sol1 = (-2*ktx*vx*vy + rad)/2/(vy*vy + vz*vz);
+                      double sol2 = (-2*ktx*vx*vy - rad)/2/(vy*vy + vz*vz);
+                  
+                      kty = sol1;
+                  
+                      if ((ktx*ktx + sol1*sol1) > kt*kt  )  kty = sol2;
+                  
+                      if ((ktx*ktx + kty*kty) < kt*kt  )
+                      {
+                          ktz = sqrt( kt*kt - ktx*ktx - kty*kty ) ;
+                      
+                          double sign = ZeroOneDistribution(*get_mt19937_generator());
+                          if (sign>0.5) ktz = -1*ktz;
+                      
+                      
+                          if (vz!=0) ktz = (-1*ktx*vx - kty*vy )/vz ;
+                      
+                          solved = true;
+                      }
+                  }
+                  else
+                  {
+                      ktx = 0;
+                      kty = kt*(1 - 2*ZeroOneDistribution(*get_mt19937_generator()) );
                       double sign = ZeroOneDistribution(*get_mt19937_generator());
+                      if (sign>0.5) kty = -1*kty;
+                      ktz = sqrt(1-kty*kty);
+                      sign = ZeroOneDistribution(*get_mt19937_generator());
                       if (sign>0.5) ktz = -1*ktz;
                       
-                      
-                      if (vz!=0) ktz = (-1*ktx*vx - kty*vy )/vz ;
-                      
-                      solved = true;
                   }
+                  
               }
               
               JSDEBUG << " ktx = " << ktx << " kty = " << kty << " ktz = " << ktz ;

@@ -118,9 +118,9 @@ int main(int argc, char** argv)
   jetscape->Add(hydro);
 
   // Note: if you use Matter, it MUST come first (to set virtuality)
-  // jloss->Add(matter);
+   jloss->Add(matter);
   //jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
-  jloss->Add(martini);
+  //jloss->Add(martini);
   //jloss->Add(adscft);  
 
   jlossmanager->Add(jloss);
