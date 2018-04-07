@@ -499,8 +499,10 @@ int Martini::DetermineProcess(double pRest, double T, double deltaT, int Id)
 
       double totalQuarkProb = 0.;
 
-      if (pRest > pcut) totalQuarkProb += (rateRad.qqg + rateRad.qqgamma)*dT;
-      totalQuarkProb += (rateElas.qq + rateElas.qg + rateConv.qg + rateConv.qgamma)*dT;
+      //if (pRest > pcut) totalQuarkProb += (rateRad.qqg + rateRad.qqgamma)*dT;
+      //totalQuarkProb += (rateElas.qq + rateElas.qg + rateConv.qg + rateConv.qgamma)*dT;
+      if (pRest > pcut) totalQuarkProb += rateRad.qqg*dT;
+      totalQuarkProb += (rateElas.qq + rateElas.qg + rateConv.qg)*dT;
 
       // warn if total probability exceeds 1
       if (totalQuarkProb > 1.)
@@ -526,12 +528,12 @@ int Martini::DetermineProcess(double pRest, double T, double deltaT, int Id)
 	      Prob = rateRad.qqg*dT/totalQuarkProb;
 	      if (accumProb <= randProb && randProb < (accumProb + Prob))
 		return 1;
-	    }
 
-	  accumProb += Prob;
-	  Prob = rateRad.qqgamma*dT/totalQuarkProb;
-	  if (accumProb <= randProb && randProb < (accumProb + Prob))
-	    return 2;
+	      //accumProb += Prob;
+	      //Prob = rateRad.qqgamma*dT/totalQuarkProb;
+	      //if (accumProb <= randProb && randProb < (accumProb + Prob))
+	      //  return 2;
+	    }
 
 	  accumProb += Prob;
 	  Prob = rateElas.qq*dT/totalQuarkProb;
@@ -548,10 +550,10 @@ int Martini::DetermineProcess(double pRest, double T, double deltaT, int Id)
 	  if (accumProb <= randProb && randProb < (accumProb + Prob))
 	    return 9;
 
-	  accumProb += Prob;
-	  Prob = rateConv.qgamma*dT/totalQuarkProb;
-	  if (accumProb <= randProb && randProb < (accumProb + Prob))
-	    return 10;
+	  //accumProb += Prob;
+	  //Prob = rateConv.qgamma*dT/totalQuarkProb;
+	  //if (accumProb <= randProb && randProb < (accumProb + Prob))
+	  //  return 10;
 	}
       else
 	{
