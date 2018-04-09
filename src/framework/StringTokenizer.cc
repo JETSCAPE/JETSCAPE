@@ -1,15 +1,19 @@
-// -----------------------------------------
-// JetScape (modular/task) based framework
-// Intial Design: Joern Putschke (2017)
-//                (Wayne State University)
-// -----------------------------------------
-// License and Doxygen-like Documentation to be added ...
+/*******************************************************************************
+ * Copyright (c) The JETSCAPE Collaboration, 2017
+ *
+ * Modular, task-based framework
+ * Intial Design: Joern Putschke, Kolja Kauder (Wayne State University)
+ * For the full list of contributors see AUTHORS.
 
-///////////////////////////////////////////////////////////////////////////////
+ * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
+ * or via email to bugs.jetscape.org@gmail.com
+ *
+ * Distributed under the GNU General Public License 3.0 (GPLv3 or later).
+ * See COPYING for details.
+ ******************************************************************************/
 // StringTokenizer
-// =========
 // General purpose string tokenizer (C++ string version)
-///////////////////////////////////////////////////////////////////////////////
+// based on https://github.com/ViDA-NYU/birdvis/blob/master/Tokenizer.cpp
 
 #include "StringTokenizer.h"
 #include <iostream>
@@ -18,9 +22,6 @@ using std::endl;
 
 namespace Jetscape {
 
-///////////////////////////////////////////////////////////////////////////////
-// destructor
-///////////////////////////////////////////////////////////////////////////////
 StringTokenizer::~StringTokenizer()
 {
 }
