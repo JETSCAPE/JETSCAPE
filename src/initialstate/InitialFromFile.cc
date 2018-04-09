@@ -73,12 +73,9 @@ void InitialFromFile::read_configs_(){
     set_steps(grid_step, grid_step, 0.0);
     Jetscape::INFO << "xmax = " << xmax;
 
-    cout << h5_helper_->readH5Attribute_double(H5group_ptr_, "b") << endl;
-    cout << h5_helper_->readH5Attribute_double(H5group_ptr_, "npart") << endl;
-    cout << h5_helper_->readH5Attribute_double(H5group_ptr_, "ncoll") << endl;
-    cout << h5_helper_->readH5Attribute_double(H5group_ptr_, "bbbb") << endl;
-    cout << "Moving on" << endl;
-    throw (-1);
+    npart = h5_helper_->readH5Attribute_double(H5group_ptr_, "npart");
+    ncoll = h5_helper_->readH5Attribute_double(H5group_ptr_, "ncoll");
+    totalentropy = h5_helper_->readH5Attribute_double(H5group_ptr_, "mult");
 }
 
 void InitialFromFile::read_nbc_dist_(){

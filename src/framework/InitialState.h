@@ -59,6 +59,26 @@ class InitialState : public JetScapeModuleBase {
    */
   virtual void Write(weak_ptr<JetScapeWriter> w);
 
+  /** Collect header information for writer modules
+      @param w is a pointer of type JetScapeWrite class.
+  */
+  virtual void CollectHeader( weak_ptr<JetScapeWriter> w );
+
+  /** Generated number of collision participants.
+      To be overwritten by implementations that have such information.
+  */
+  virtual double GetNpart(){ return -1; };
+
+  /** Generated number of binary collisions.
+      To be overwritten by implementations that have such information.
+  */
+  virtual double GetNcoll(){ return -1; };
+
+  /** Generated total entropy
+      To be overwritten by implementations that have such information.
+  */
+  virtual double GetTotalEntropy(){ return -1; };
+
   /** @return A pointer to the XML elements. Such XML elements are the input parameters stored in the XML file under the tag <IS>.
    */
   tinyxml2::XMLElement * GetIniStateXML() { return xml_; }
