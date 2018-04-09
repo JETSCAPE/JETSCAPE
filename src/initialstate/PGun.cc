@@ -58,9 +58,6 @@ void PGun::Exec()
   VERBOSE(2)<<"Run Hard Process : "<<GetId()<< " ...";
 
   double p[4], xLoc[4];
-  for (int i=0;i<=3; i++) {
-     xLoc[i] = 0.0;
-   };
 
   double pT, rapidity, phi;
   double eta_cut = 1.0;
@@ -93,13 +90,36 @@ void PGun::Exec()
        p[3] = sqrt(pT*pT+mass*mass)*sinh(rapidity);
        p[0] = sqrt(pT*pT+mass*mass)*cosh(rapidity);
   
-       //AddParton(make_shared<Parton>(0,parID,0,p,xLoc));
-       AddParton(make_shared<Parton>(0,parID,0,pT,rapidity,phi,p[0],xLoc));
+       // Roll for a starting point
+       // See: https://stackoverflow.com/questions/15039688/random-generator-from-vector-with-probability-distribution-in-c
+       for (int i=0;i<=3; i++) {
+	 xLoc[i] = 0.0;
+       };
+       
+       if (!ini) {
+	 INFO << "No initial state module, setting the starting location to 0. ";
+       } else {
+	 auto num_bin_coll = ini->get_num_of_binary_collisions();
+	 if ( num_bin_coll.size()==0 ){
+	   WARN << "num_of_binary_collisions is empty, setting the starting location to 0. Make sure to add e.g. trento before PythiaGun.";
+	 } else {	 
+	   std::discrete_distribution<> dist( begin(num_bin_coll),end(num_bin_coll) ); // Create the distribution
+	   
+	   // Now generate values
+	   auto idx = dist( *get_mt19937_generator() );
+	   auto coord = ini->coord_from_idx( idx );
+	   xLoc[1] = std::get<0>( coord );
+	   xLoc[2] = std::get<1>( coord );
+	 }
+       }
 
-       // DEBUG: (<< of Parton not working with Logger VERBOSE standard ... Check!
-       //JetScapeLogger::Instance()->VerboseParton(6,*GetPartonAt(i))<<__PRETTY_FUNCTION__<<" : ";
-       VERBOSEPARTON(6,*GetPartonAt(i));
-       //cout<<*GetPartonAt(i)<<endl;
+       AddParton(make_shared<Parton>(0,parID,0,pT,rapidity,phi,p[0],xLoc));
+  
+       VERBOSEPARTON(7,*GetPartonAt(i))
+	 <<" added "
+	 <<" at x=" << xLoc[1]
+	 <<", y=" << xLoc[2]
+	 <<", z=" << xLoc[3];
      }
   
   VERBOSE(8)<<GetNHardPartons();
