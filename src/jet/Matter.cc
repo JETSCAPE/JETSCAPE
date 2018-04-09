@@ -899,14 +899,15 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   JSDEBUG << " kt generated = "  << kt << " for qhat = " << qhat*1.414/0.197 << " and delT = " << delT ;
                   
                   double ktx, kty, ktz;
+                  ktx=kty=ktz=0.0;
                   double vx = initVx;
                   double vy = initVy;
                   double vz = initVz;
 
                   
                   bool solved = false;
-                  
-                  while (!solved)
+                  int trials = 0;
+                  while ((!solved)&&(trials<1000))
                   {
                       
                       if ((abs(vy)>approx)||(abs(vz)>approx))
@@ -949,10 +950,10 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                           if (sign>0.5) ktz = -1*ktz;
                     
                       }
-                      
+                      trials++;
                   }
                   
-                  JSDEBUG << " ktx = " << ktx << " kty = " << kty << " ktz = " << ktz ;
+                  INFO << " ktx = " << ktx << " kty = " << kty << " ktz = " << ktz ;
                   double px = pIn[i].px();
                   double py = pIn[i].py();
                   double pz = pIn[i].pz();
@@ -1010,13 +1011,15 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               JSDEBUG << " kt generated = "  << kt << " for qhat = " << qhat*1.414/0.197 << " and delT = " << delT ;
               
               double ktx, kty, ktz;
+              ktx=kty=ktz=0;
               double vx = initVx;
               double vy = initVy;
               double vz = initVz;
 
               bool solved = false;
               
-              while (!solved)
+              int trials = 0;
+              while ((!solved)&&(trials<1000))
               {
                   if ((abs(vy)>approx)||(abs(vz)>approx))
                   {
@@ -1058,10 +1061,10 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       if (sign>0.5) ktz = -1*ktz;
                       
                   }
-                  
+                  trials++;
               }
               
-              JSDEBUG << " ktx = " << ktx << " kty = " << kty << " ktz = " << ktz ;
+              INFO << " ktx = " << ktx << " kty = " << kty << " ktz = " << ktz ;
               double px = pIn[i].px();
               double py = pIn[i].py();
               double pz = pIn[i].pz();
