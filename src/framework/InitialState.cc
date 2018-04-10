@@ -69,7 +69,7 @@ void InitialState::Write(weak_ptr<JetScapeWriter> w){
 }
 
 
-std::tuple<double, double, double> InitialState::coord_from_idx(int idx) {
+std::tuple<double, double, double> InitialState::CoordFromIdx(int idx) {
     int nx = get_x_size();
     int ny = get_y_size();
     int nz = get_z_size();

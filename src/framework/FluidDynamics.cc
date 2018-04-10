@@ -117,7 +117,7 @@ namespace Jetscape {
     VERBOSE(8)<<"Current Event #"<<GetCurrentEvent();
 
     if (ini) {
-      VERBOSE(3) << "length of entropy density vector=" << ini->get_entropy_density_distribution().size();
+      VERBOSE(3) << "length of entropy density vector=" << ini->GetEntropyDensityDistribution().size();
     }
 
     evolve_hydro();  

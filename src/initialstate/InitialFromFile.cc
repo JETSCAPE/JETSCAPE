@@ -69,8 +69,8 @@ void InitialFromFile::read_configs_(){
     dim_x_ = h5_helper_->readH5Attribute_int(H5group_ptr_, "Nx");
     dim_y_ = h5_helper_->readH5Attribute_int(H5group_ptr_, "Ny");
     double xmax = dim_x_ * grid_step / 2;
-    set_ranges(xmax, xmax, 0.0);
-    set_steps(grid_step, grid_step, 0.0);
+    SetRanges(xmax, xmax, 0.0);
+    SetSteps(grid_step, grid_step, 0.0);
     Jetscape::INFO << "xmax = " << xmax;
 }
 

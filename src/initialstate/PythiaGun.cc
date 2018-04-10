@@ -223,7 +223,7 @@ void PythiaGun::Exec()
   // ofstream delme (numbi.str());
   // for (int i=0;i<100000;++i){
   //   auto idx = dist(engine);
-  //   auto coord = ini->coord_from_idx( idx );
+  //   auto coord = ini->CoordFromIdx( idx );
   //   // cout << " =================================> " <<  idx
   //   // 	 << " x = " << get<0>(coord) 
   //   // 	 << " y = " << get<1>(coord) 
@@ -250,7 +250,7 @@ void PythiaGun::Exec()
   if (!ini) {
       WARN << "No initial state module, setting the starting location to 0. Make sure to add e.g. trento before PythiaGun.";
   } else {
-    auto num_bin_coll = ini->get_num_of_binary_collisions();
+    auto num_bin_coll = ini->GetNumBinaryCollisions();
     if ( num_bin_coll.size()==0 ){
       WARN << "num_of_binary_collisions is empty, setting the starting location to 0. Make sure to add e.g. trento before PythiaGun.";
     } else {	 
@@ -258,7 +258,7 @@ void PythiaGun::Exec()
     
       // Now generate values
       auto idx = dist( *get_mt19937_generator() );
-      auto coord = ini->coord_from_idx( idx );
+      auto coord = ini->CoordFromIdx( idx );
       xLoc[1] = get<0>( coord );
       xLoc[2] = get<1>( coord );
     }

@@ -123,7 +123,7 @@ void HydroFromFile::read_in_hydro_event(string MUSIC_input_file,
 void HydroFromFile::evolve_hydro() {
     if (hydro_status == FINISHED) {
         clean_hydro_event();
-        hydro_event_idx_ = ini->get_event_id();
+        hydro_event_idx_ = ini->GetEventId();
     }
 
     if (hydro_type_ == 1) {

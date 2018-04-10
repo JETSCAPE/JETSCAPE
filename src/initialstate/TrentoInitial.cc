@@ -250,8 +250,8 @@ void TrentoInitial::pre_defined(std::string stored_system,
 
     int nx = int(std::sqrt(entropy_density_distribution_.size()));
     double xmax = nx * grid_step / 2;
-    set_ranges(xmax, xmax, 0.0);
-    set_steps(grid_step, grid_step, 0.0);
+    SetRanges(xmax, xmax, 0.0);
+    SetSteps(grid_step, grid_step, 0.0);
     compute_nbc();
 }
 
@@ -281,8 +281,8 @@ void TrentoInitial::user_defined(std::string projectile, std::string target,
     int nx = int(std::sqrt(entropy_density_distribution_.size()));
     VERBOSE(2) << "nx = " << nx;
     double xmax = nx * grid_step / 2;
-    set_ranges(xmax, xmax, 0.0);
-    set_steps(grid_step, grid_step, 0.0);
+    SetRanges(xmax, xmax, 0.0);
+    SetSteps(grid_step, grid_step, 0.0);
     compute_nbc();
 }
 
