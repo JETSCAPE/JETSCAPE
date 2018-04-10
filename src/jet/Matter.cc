@@ -891,7 +891,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           { // not time to split yet broadening it
 
 
-              double now_zeta = ( ( time + initRdotV + (time - initR0)*initVdotV )/std::sqrt(2) )*fmToGeVinv;
+              double now_zeta = ( ( time + initRdotV + (time - initR0) )/std::sqrt(2) )*fmToGeVinv;
               qhat = fncQhat(now_zeta);
               if (now_temp>0.1)
               {
@@ -1007,7 +1007,11 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   double drag = ehat*delT;
                   if (np > drag )
                   {
-                      pOut[iout].reset_momentum(px - drag*vx, py - drag*vy , pz - drag*vz , energy - drag);
+                      px -= drag*vx;
+                      py -= drag*vy;
+                      pz -= drag*vz;
+                      energy -= drag;
+                      pOut[iout].reset_momentum( px , py , pz , energy );
                   }
                   else
                   {
@@ -1025,7 +1029,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       else
       { // virtuality too low lets broaden it
           
-          double now_zeta = ( ( time + initRdotV + (time - initR0)*initVdotV )/std::sqrt(2) )*fmToGeVinv;
+          double now_zeta = ( ( time + initRdotV + (time - initR0) )/std::sqrt(2) )*fmToGeVinv;
           //double now_zeta = ( ( time + initRdotV )/std::sqrt(2) )*fmToGeVinv;
           qhat = fncQhat(now_zeta);
           if (now_temp>0.1)
@@ -1165,7 +1169,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           	  
   } // particle loop
     
-    cin >> blurb ;
+    //cin >> blurb ;
       
 }
 
@@ -2122,7 +2126,7 @@ double Matter::fillQhatTab() {
     double tempLoc;
     double flowFactor,qhatLoc;
     int hydro_ctl;
-    double lastLength=0.0;
+    double lastLength=initR0;
 
     double tStep = 0.1;
 
@@ -2132,14 +2136,15 @@ double Matter::fillQhatTab() {
         tLoc = tStep*i;
 
 	//if(tLoc<initR0-tStep) { // potential problem of making t^2<z^2
-	if(tLoc<initR0 || tLoc<tStart) {
+	if(tLoc<initR0 || tLoc<tStart)
+    {
             qhatTab1D[i] = 0.0; 
             continue;	    
-        }
+    }
 
 	xLoc = initRx+(tLoc-initR0)*initVx; 
-        yLoc = initRy+(tLoc-initR0)*initVy;
-        zLoc = initRz+(tLoc-initR0)*initVz;
+    yLoc = initRy+(tLoc-initR0)*initVy;
+    zLoc = initRz+(tLoc-initR0)*initVz;
 
 //        if(bulkFlag == 1) { // read OSU hydro
 //            readhydroinfoshanshan_(&tLoc,&xLoc,&yLoc,&zLoc,&edLoc,&sdLoc,&tempLoc,&vxLoc,&vyLoc,&vzLoc,&hydro_ctl);
@@ -2206,7 +2211,7 @@ double Matter::fillQhatTab() {
     }
 
     //return(lastLength*sqrt(2.0)*5.0); // light cone + GeV unit
-    return( (lastLength+initRdotV)/sqrt(2.0)*5.0 ); // light cone + GeV unit
+    return( (2.0*lastLength+initRdotV-initR0)/sqrt(2.0)*5.0 ); // light cone + GeV unit
   
 }
 
@@ -2218,9 +2223,10 @@ double Matter::fncQhat(double zeta) {
 
     double tStep = 0.1;
     //int indexZeta = (int)(zeta/sqrt(2.0)/5.0/tStep+0.5); // zeta was in 1/GeV and light cone coordinate
-    int indexZeta = (int)((sqrt(2.0)*zeta/5.0-initRdotV)/tStep+0.5); // zeta was in 1/GeV and light cone coordinate
+    int indexZeta = (int)((sqrt(2.0)*zeta/5.0-initRdotV+initR0)/2.0/tStep+0.5); // zeta was in 1/GeV and light cone coordinate
 
-    if(indexZeta >= dimQhatTab) indexZeta = dimQhatTab-1;      
+    //if(indexZeta >= dimQhatTab) indexZeta = dimQhatTab-1;
+    if(indexZeta >= dimQhatTab) return(0);
     
     double avrQhat = qhatTab1D[indexZeta]; 
     return(avrQhat);
@@ -2236,11 +2242,12 @@ double Matter::fncAvrQhat(double zeta, double tau) {
 
     double tStep = 0.1;
     //int indexZeta = (int)(zeta/sqrt(2.0)/5.0/tStep+0.5); // zeta was in 1/GeV and light cone coordinate
-    int indexZeta = (int)((sqrt(2.0)*zeta/5.0-initRdotV)/tStep+0.5); // zeta was in 1/GeV and light cone coordinate
+    int indexZeta = (int)((sqrt(2.0)*zeta/5.0-initRdotV+initR0)/2.0/tStep+0.5); // zeta was in 1/GeV and light cone coordinate
     int indexTau = (int)(tau/sqrt(2.0)/5.0/tStep+0.5); // tau was in 1/GeV and light cone coordinate
 
-    if(indexZeta >= dimQhatTab) indexZeta = dimQhatTab-1;      
-    if(indexTau >= dimQhatTab) indexTau = dimQhatTab-1;      
+   // if(indexZeta >= dimQhatTab) indexZeta = dimQhatTab-1;
+    if(indexZeta >= dimQhatTab) return(0);
+    if(indexTau >= dimQhatTab) indexTau = dimQhatTab-1;
     
     double avrQhat = qhatTab2D[indexZeta][indexTau]; 
     return(avrQhat);

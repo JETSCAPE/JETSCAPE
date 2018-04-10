@@ -69,7 +69,7 @@
 
     <deltaT>0.1</deltaT>
     <formTime> -0.1</formTime>
-    <maxT>10</maxT>
+    <maxT>20</maxT>
 
 
     <Matter>
