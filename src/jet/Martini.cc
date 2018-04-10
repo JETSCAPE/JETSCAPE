@@ -93,7 +93,7 @@ void Martini::Init()
 
 void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& pIn, vector<Parton>& pOut)
 {
-  VERBOSESHOWER(8)<< MAGENTA << "SentInPartons Signal received : " <<deltaT<<" "<<Q2<<" "<<&pIn;
+  VERBOSESHOWER(5)<< MAGENTA << "SentInPartons Signal received : "<<deltaT<<" "<<Q2<<" "<< pIn.size();
 
   // particle info
   int Id, newId;
@@ -112,7 +112,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
   FourVector kVec;           // 4 vector for momentum of radiated particle
   FourVector xVec;           // 4 vector for position (for next time step!)
   double eta;                // pseudo-rapidity
-
+  
   // flow info
   double vx, vy, vz;         // 3 components of flow velocity
   double T;                  // Temperature of fluid cell
@@ -122,10 +122,12 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
   double boostBack;          // factor for boosting back to lab frame
   double cosPhiRestEl;       // angle between flow and scat. particle in rest frame
   double boostBackEl;
-      
-
+  
+  
   for (int i=0;i<pIn.size();i++) {
+    // Only accept low t particles
     if (pIn[i].t() > QS) continue;
+    TakeResponsibilityFor ( pIn[i] ); // Generate error if another module already has responsibility.
     
     Id = pIn[i].pid();
 

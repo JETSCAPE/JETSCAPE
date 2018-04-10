@@ -94,6 +94,7 @@ void ElossValidate::DoEnergyLoss(double deltaT, double time, double Q2, vector<P
   
   for (int i=0;i<pIn.size();i++)
     {
+      TakeResponsibilityFor ( pIn[i] ); // Generate error if another module already has responsibility.
       INFO << " Parton Q2= " << pIn[i].t();
       INFO << " Parton Id= " << pIn[i].pid() << " and mass= " << pIn[i].restmass();
       
