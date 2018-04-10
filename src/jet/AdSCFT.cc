@@ -90,7 +90,7 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 
       // Only accept low t, positive e particles
       if (pIn[i].t() > QS || pIn[i].e()<0.00001) continue;
-      TakeResponsibilityFor ( pIn[i] );
+      TakeResponsibilityFor ( pIn[i] ); // Generate error if another module already has responsibility.
 
       VERBOSE(7) << " ************ \n \n";
       VERBOSE(7) << " DOING ADSCFT \n \n";
