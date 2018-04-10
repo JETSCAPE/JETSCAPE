@@ -135,6 +135,14 @@ namespace Jetscape {
     JSDEBUG<<"Edensity to Jet = "<<edensity<<" at t="<<t;
   }
 
+  void FluidDynamics::CollectHeader( weak_ptr<JetScapeWriter> w ){
+    auto f = w.lock();
+    if ( f ){
+      auto& header = f->GetHeader();
+      header.SetEventPlaneAngle( GetEventPlaneAngle() );
+    }
+  }
+
   
   real FluidDynamics::get_energy_density(real time, real x, real y, real z) {
     // this function returns the energy density [GeV] at a space time point

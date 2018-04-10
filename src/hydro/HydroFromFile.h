@@ -67,7 +67,7 @@ class HydroFromFile: public FluidDynamics {
 
      //! This function is a dummy function
      void evolve_hydro();
-
+     
      //! This function provide fluid cell information at a given
      //! space-time point
      void get_hydro_info(Jetscape::real t, Jetscape::real x,

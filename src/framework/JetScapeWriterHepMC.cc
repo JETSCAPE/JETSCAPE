@@ -56,6 +56,11 @@ namespace Jetscape {
     if ( GetHeader().GetTotalEntropy() > -1 ){
       // nothing good in the HepMC standard. Something related to mulitplicity would work
     }
+
+    if ( GetHeader().GetEventPlaneAngle() > -999 ){
+      heavyion->event_plane_angle = GetHeader().GetEventPlaneAngle();
+    }
+
     evt.set_heavy_ion( heavyion );  
   }
   

@@ -59,6 +59,12 @@ void JetScapeWriterStream<T>::WriteHeaderToFile()
     oss.str(""); oss << GetId() << "TotalEntropy " << GetHeader().GetTotalEntropy();
     WriteComment ( oss.str() );
   }
+
+  if ( GetHeader().GetEventPlaneAngle() > -999 ){
+    oss.str(""); oss << GetId() << "EventPlaneAngle " << GetHeader().GetEventPlaneAngle();
+    WriteComment ( oss.str() );
+  }
+
 }
   
 template<class T>
