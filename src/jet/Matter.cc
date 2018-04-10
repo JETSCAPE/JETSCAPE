@@ -194,7 +194,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   double delT = deltaT;
   double Time = time*fmToGeVinv;
   double deltaTime = delT*fmToGeVinv;
-    
+    double ehat=0;
     double ehat_over_T2 = 10.0;
 
   std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
@@ -215,7 +215,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   for (int i=0;i<pIn.size();i++)
   {
 
-      INFO << " *  parton formation = "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z();
+      INFO << " *  parton formation spacetime point= "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z();
 
       
       //cout << "MATTER -- status: " << pIn[i].pstat() << "  energy: " << pIn[i].e() << " color: " << pIn[i].color() << "  " << pIn[i].anti_color() << "  clock: " << time << endl;
@@ -250,6 +250,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       initVy = velocity[2]/velocityMod;
       initVz = velocity[3]/velocityMod;
       initRdotV = ( initRx*pIn[i].jet_v().x() + initRy*pIn[i].jet_v().y() + initRz*pIn[i].jet_v().z() )/mod_jet_v;
+      initVdotV = ( initVx*pIn[i].jet_v().x() + initVy*pIn[i].jet_v().y() + initVz*pIn[i].jet_v().z() )/mod_jet_v;
+
       initEner = pIn[i].e();
       if(!in_vac) length = fillQhatTab();
       if(brick_med) length = brick_length*fmToGeVinv; /// length in GeV-1 will have to changed for hydro
@@ -375,6 +377,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       { // for medium
           double tempEner = initEner;
           qhat = fncQhat(zeta);
+          ehat = qhat/4.0/now_temp ;
+          INFO << BOLDYELLOW << "qhat = " << qhat << " ehat = " << ehat;
 
           if(Q00 < 0.0)
           { // use dynamical Q0 if Q00 < 0
@@ -887,10 +891,18 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           { // not time to split yet broadening it
 
 
-              double now_zeta = ( ( time + initRdotV )/std::sqrt(2) )*fmToGeVinv;
+              double now_zeta = ( ( time + initRdotV + (time - initR0)*initVdotV )/std::sqrt(2) )*fmToGeVinv;
               qhat = fncQhat(now_zeta);
+              if (now_temp>0.1)
+              {
+                  ehat = qhat/4.0/now_temp;
+              }
+              else
+              {
+                  ehat = qhat/4.0/0.3;
+              }
 
-              INFO << " broadening qhat = " << qhat << " and delT = " << delT ;
+              INFO <<BOLDRED<< " between splits broadening qhat = " << qhat << " ehat = " << ehat << " and delT = " << delT ;
               
               if ((!recoil_on)&&(qhat>0.0))
               {
@@ -953,12 +965,15 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       trials++;
                   }
                   
-                  INFO << " ktx = " << ktx << " kty = " << kty << " ktz = " << ktz ;
+                  INFO << MAGENTA << " ktx = " << ktx << " kty = " << kty << " ktz = " << ktz ;
                   double px = pIn[i].px();
                   double py = pIn[i].py();
                   double pz = pIn[i].pz();
+                  double energy = pIn[i].e();
                   
                   double p = sqrt(px*px + py*py + pz*pz);
+                  INFO << BOLDBLUE << " p before b & d, E = " << energy << " pz = " << pz << " px = " << px << " py = " << py ;
+
                   
                   px += ktx;
                   py += kty;
@@ -975,6 +990,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   
                   if (abs(nnp-p)>abs(np-p))
                   {
+                      INFO << MAGENTA << " negative condition invoked ! " ;
                       px += 2*(np-p)*vx;
                       py += 2*(np-p)*vy;
                       pz += 2*(np-p)*vz;
@@ -988,7 +1004,18 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   
                   pOut[iout].reset_p(px,py,pz);
                   
+                  double drag = ehat*delT;
+                  if (np > drag )
+                  {
+                      pOut[iout].reset_momentum(px - drag*vx, py - drag*vy , pz - drag*vz , energy - drag);
+                  }
+                  else
+                  {
+                      pOut[iout].reset_momentum(0,0,0,1);
+                  }
                   
+                  INFO << BOLDYELLOW << " p after b & d, E = " << energy << " pz = " << pz << " px = " << px << " py = " << py ;
+
               }
               
               
@@ -998,11 +1025,20 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       else
       { // virtuality too low lets broaden it
           
-          double now_zeta = ( ( time + initRdotV )/std::sqrt(2) )*fmToGeVinv;
+          double now_zeta = ( ( time + initRdotV + (time - initR0)*initVdotV )/std::sqrt(2) )*fmToGeVinv;
+          //double now_zeta = ( ( time + initRdotV )/std::sqrt(2) )*fmToGeVinv;
           qhat = fncQhat(now_zeta);
-
+          if (now_temp>0.1)
+          {
+              ehat = qhat/4.0/now_temp;
+          }
+          else
+          {
+              ehat = qhat/4.0/0.3;
+          }
+          INFO <<BOLDRED<< " after splits broadening qhat = " << qhat << " ehat = " << ehat << " and delT = " << delT ;
           
-          INFO << " broadening qhat = " << qhat << " and delT = " << delT ;
+          //INFO << " broadening qhat = " << qhat << " and delT = " << delT ;
           
           if ((!recoil_on)&&(qhat>0.0))
           {
@@ -1064,13 +1100,17 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   trials++;
               }
               
-              INFO << " ktx = " << ktx << " kty = " << kty << " ktz = " << ktz ;
+              INFO << MAGENTA << " ktx = " << ktx << " kty = " << kty << " ktz = " << ktz ;
               double px = pIn[i].px();
               double py = pIn[i].py();
               double pz = pIn[i].pz();
+              double energy = pIn[i].e();
+
               
               double p = sqrt(px*px + py*py + pz*pz);
               
+              INFO << BOLDBLUE << " p before b & d, E = " << energy << " pz = " << pz << " px = " << px << " py = " << py ;
+ 
               px += ktx;
               py += kty;
               pz += ktz;
@@ -1099,12 +1139,33 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               
               pOut[iout].reset_p(px,py,pz);
               
+              double drag = ehat*delT;
+              INFO << MAGENTA << " drag = " << drag << " temperature = " <<  now_temp ;
+              if (np > drag )
+              {
+                  px -= drag*vx;
+                  py -= drag*vy;
+                  pz -= drag*vz;
+                  energy -= drag;
+                  pOut[iout].reset_momentum( px, py , pz , energy );
+              }
+              else
+              {
+                  pOut[iout].reset_momentum(0,0,0,1);
+              }
+              
+              
+              INFO << BOLDYELLOW << " p after b & d, E = " << energy << " pz = " << pz << " px = " << px << " py = " << py ;
+
+              
               
           }
           // pOut.push_back(pIn[i]);
       }
           	  
   } // particle loop
+    
+    cin >> blurb ;
       
 }
 

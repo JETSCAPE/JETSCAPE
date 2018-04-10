@@ -59,7 +59,7 @@ class Matter : public JetEnergyLossModule<Matter> //, public std::enable_shared_
 
   bool in_vac,brick_med,recoil_on;
   double hydro_Tc,qhat0,alphas,brick_length,vir_factor;
-  double initR0,initRx,initRy,initRz,initVx,initVy,initVz,initRdotV,initEner;
+  double initR0,initRx,initRy,initRz,initVx,initVy,initVz,initRdotV,initVdotV,initEner;
   double Q00,Q0,T0;
 
   static const int dimQhatTab=151;
