@@ -184,7 +184,8 @@ void PythiaGun::Exec()
       if ( particle.status()!=62 ) continue;
        
       // only accept gluons and quarks
-      if ( fabs( particle.id() ) > 3 && particle.id() !=21 ) continue;
+      // Also accept Gammas to put into the hadron's list
+      if ( fabs( particle.id() ) > 3 && (particle.id() !=21 || particle.id() !=22) ) continue;
 
       // reject rare cases of very soft particles that don't have enough e to get
       // reasonable virtuality
@@ -271,6 +272,8 @@ void PythiaGun::Exec()
   //for(int np = 0; np<2; ++np){
 
   // Accept them all
+
+  int hCounter = 0 ;
   for(int np = 0; np<p62.size(); ++np){
     Pythia8::Particle& particle = p62.at( np );
 
@@ -287,9 +290,16 @@ void PythiaGun::Exec()
     VERBOSE(7) <<" at x=" << xLoc[1]
 	       <<", y=" << xLoc[2]
 	       <<", z=" << xLoc[3];
-    
-    AddParton(make_shared<Parton>(0, particle.id(),0,particle.pT(),particle.y(),particle.phi(),particle.e(),xLoc) );
-
+    if(particle.id() !=22)
+    {
+        AddParton(make_shared<Parton>(0, particle.id(),0,particle.pT(),particle.y(),particle.phi(),particle.e(),xLoc) );
+    }
+    else
+    {
+	AddHadron(make_shared<Hadron>(hCounter,particle.id(),particle.status(),particle.pT(),particle.eta(),particle.phi(),particle.e(),xLoc));
+	hCounter++;
+    }
+    cout<<"**** number of gammas are: "<<hCounter<<" ****"<<endl;
   }
   
 
