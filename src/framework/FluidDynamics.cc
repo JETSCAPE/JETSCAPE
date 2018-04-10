@@ -117,7 +117,7 @@ namespace Jetscape {
     VERBOSE(8)<<"Current Event #"<<GetCurrentEvent();
 
     if (ini) {
-      VERBOSE(3) << "length of entropy density vector=" << ini->entropy_density_distribution_.size();
+      VERBOSE(3) << "length of entropy density vector=" << ini->get_entropy_density_distribution().size();
     }
 
     evolve_hydro();  
@@ -139,7 +139,6 @@ namespace Jetscape {
   real FluidDynamics::get_energy_density(real time, real x, real y, real z) {
     // this function returns the energy density [GeV] at a space time point
     // (time, x, y, z)
-    // FluidCellInfo *fluid_cell_ptr = new FluidCellInfo;
     std::unique_ptr<FluidCellInfo> fluid_cell_ptr;
     get_hydro_info(time, x, y, z, fluid_cell_ptr);
     real energy_density = fluid_cell_ptr->energy_density;

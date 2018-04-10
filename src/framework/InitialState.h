@@ -132,6 +132,33 @@ class InitialState : public JetScapeModuleBase {
       return nz;
   }
 
+  /**  @return The initial state entropy density distribution.
+       @sa Function coord_from_idx(int idx) for mapping of the index of the vector entropy_density_distribution_ to the fluid cell at location (x, y, z or eta).
+  */
+  inline std::vector<double> get_entropy_density_distribution() {return entropy_density_distribution_;};
+  
+  /** one can sample jet production position from Ta * Tb
+      where Ta * Tb is the distribution of num_of_binary_collisions
+      @return The un-normalized probability density of binary collisions.
+      @sa Function coord_from_idx(int idx) for mapping of the index of the vector num_of_binary_collisions_ to the fluid cell at location (x, y, z or eta).
+   */
+  inline std::vector<double> get_num_of_binary_collisions() {return num_of_binary_collisions_;};
+
+  //! @return the event id 
+  int get_event_id() const {return(event_id_);}
+
+  //! set the event id 
+  void set_event_id(int event_id_in) {event_id_ = event_id_in;}
+ 
+  /** compute 3d coordinates (x, y, z) given the 1D index in vector
+      @return Grid point (x,y,z or eta). 
+      @param idx is an integer which maps to an unique unit cell in the coordinate space (x,y,z or eta). 
+   */
+  std::tuple<double, double, double> coord_from_idx(int idx);
+
+
+ protected:
+
   // initial state entropy density distribution for the given grids
   // stored order: for z { for y {for x } }
   /** It stores the initial state entropy density distribution. The index of the vector is associated to a cell with coordinate (x, y, z or eta).
@@ -146,37 +173,14 @@ class InitialState : public JetScapeModuleBase {
       @sa Function coord_from_idx(int idx) for the mapping.
    */
   std::vector<double> num_of_binary_collisions_;
-
-  // the above should be private. Only Adding getters for now to not break other people's code
-
-  /**  @return The initial state entropy density distribution.
-       @sa Function coord_from_idx(int idx) for mapping of the index of the vector entropy_density_distribution_ to the fluid cell at location (x, y, z or eta).
-   */
-  inline std::vector<double> get_entropy_density_distribution() {return entropy_density_distribution_;};
-
-  // one can sample jet production position from Ta * Tb
-  // where Ta * Tb is the distribution of num_of_binary_collisions
-  /** @return The un-normalized probability density of binary collisions.
-      @sa Function coord_from_idx(int idx) for mapping of the index of the vector num_of_binary_collisions_ to the fluid cell at location (x, y, z or eta).
-   */
-  inline std::vector<double> get_num_of_binary_collisions() {return num_of_binary_collisions_;};
     
-  // compute 3d coordinates (x, y, z) given the 1D index in vector
-  /** @return Grid point (x,y,z or eta). 
-      @param idx is an integer which maps to an unique unit cell in the coordinate space (x,y,z or eta). 
-   */
-  std::tuple<double, double, double> coord_from_idx(int idx);
-
   // xml_ reads the xml configurations for initial states
   /** It is used to access the input parameters from the XML file relevant to the initial state physics.
    */
   tinyxml2::XMLElement * xml_;
     
   int event_id_;
-  int get_event_id() const {return(event_id_);}
-  void set_event_id(int event_id_in) {event_id_ = event_id_in;}
 
- private:
   // default assumption: x range = [-grid_max_x_, grid_max_x_]
   // default assumption: y range = [-grid_max_y_, grid_max_y_]
   // default assumption: z range = [-grid_max_z_, grid_max_z_]

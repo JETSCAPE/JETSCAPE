@@ -78,7 +78,7 @@ void Brick::initialize_hydro(Parameter parameter_list) {
 
 void Brick::evolve_hydro() {
   VERBOSE(8);
-  VERBOSE(2) << "size of sd = " << ini->entropy_density_distribution_.size();
+  VERBOSE(2) << "size of sd = " << ini->get_entropy_density_distribution().size();
   hydro_status = FINISHED;
 }
 
