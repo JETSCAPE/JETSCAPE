@@ -47,6 +47,7 @@ class InitialState : public JetScapeModuleBase {
   virtual void Init();
 
   /** Default Exec() function. It can be overridden by other tasks.
+      After this is run, GetNumBinaryCollisions and GetEntropyDensityDistribution should return sensible values.
    */
   virtual void Exec();
   
