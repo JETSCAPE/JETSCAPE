@@ -1,12 +1,18 @@
-// -----------------------------------------
-// JetScape (modular/task) based framework
-// Intial Design: Joern Putschke (2017)
-//                (Wayne State University)
-//
-// The LBT module: added by Shanshan Cao
+/*******************************************************************************
+ * Copyright (c) The JETSCAPE Collaboration, 2017
+ *
+ * Modular, task-based framework
+ * Intial Design: Joern Putschke, Kolja Kauder (Wayne State University)
+ * For the full list of contributors see AUTHORS.
+
+ * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
+ * or via email to bugs.jetscape.org@gmail.com
+ *
+ * Distributed under the GNU General Public License 3.0 (GPLv3 or later).
+ * See COPYING for details.
+ ******************************************************************************/
+// This file includes variable and function declaration for LBT
 // Copyright reserved to the LBL-CCNU group
-//
-// -----------------------------------------
 
 #include "LBT.h"
 #include "JetScapeLogger.h"

@@ -1,19 +1,24 @@
+/*******************************************************************************
+ * Copyright (c) The JETSCAPE Collaboration, 2017
+ *
+ * Modular, task-based framework
+ * Intial Design: Joern Putschke, Kolja Kauder (Wayne State University)
+ * For the full list of contributors see AUTHORS.
+
+ * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
+ * or via email to bugs.jetscape.org@gmail.com
+ *
+ * Distributed under the GNU General Public License 3.0 (GPLv3 or later).
+ * See COPYING for details.
+ ******************************************************************************/
 /** Create a pythia collision at a specified point and return the two inital hard partons
-
-    Based on PGun and JSPythia
-
     @group JetScape (modular/task) based framework
-    @author Kolja Kauder
     @version Revision 0.1
     @date Jun 29, 2017
 */
 
 #include "PythiaGun.h"
 #include <sstream>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <random>
 
 using namespace std;
 
@@ -201,30 +206,6 @@ void PythiaGun::Exec()
   }while(!flag62);
 
 
-
-  //next();
-  //JSDEBUG<<"Number of Pythia partons = "<<event.size();
-
-
-  // stringstream numbi(stringstream::app|stringstream::in|stringstream::out);
-  // numbi.str("delme");
-  // numbi << GetCurrentEvent();
-  // numbi << ".csv";
-  
-  // ofstream delme (numbi.str());
-  // for (int i=0;i<100000;++i){
-  //   auto idx = dist(engine);
-  //   auto coord = ini->coord_from_idx( idx );
-  //   // cout << " =================================> " <<  idx
-  //   // 	 << " x = " << get<0>(coord) 
-  //   // 	 << " y = " << get<1>(coord) 
-  //   // 	 << " z = " << get<2>(coord)
-  //   // 	 << std::endl;
-
-  //   delme << get<0>(coord) <<","<<get<1>(coord) << endl;
-  // }
-  // delme.close();
-
   double p[4], xLoc[4];
 
   // This location should come from an initial state
@@ -275,9 +256,6 @@ void PythiaGun::Exec()
 	       << ", y = " << particle.y()
 	       << ", phi = " << particle.phi()
 	       << ", e = " << particle.e();
-    VERBOSE(7) <<" at x=" << xLoc[1]
-	       <<", y=" << xLoc[2]
-	       <<", z=" << xLoc[3];
     
     AddParton(make_shared<Parton>(0, particle.id(),0,particle.pT(),particle.y(),particle.phi(),particle.e(),xLoc) );
 

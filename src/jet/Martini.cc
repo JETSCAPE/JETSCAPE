@@ -1,12 +1,16 @@
-// -----------------------------------------
-// JetScape (modular/task) based framework
-// Intial Design: Joern Putschke (2017)
-//                (Wayne State University)
-// -----------------------------------------
-// License and Doxygen-like Documentation to be added ...
+/*******************************************************************************
+ * Copyright (c) The JETSCAPE Collaboration, 2017
+ *
+ * Modular, task-based framework
+ * Intial Design: Joern Putschke, Kolja Kauder (Wayne State University)
+ * For the full list of contributors see AUTHORS.
 
-// quick and dirty test class implementation for Eloss modules ...
-// can be used as a user template ...
+ * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
+ * or via email to bugs.jetscape.org@gmail.com
+ *
+ * Distributed under the GNU General Public License 3.0 (GPLv3 or later).
+ * See COPYING for details.
+ ******************************************************************************/
 
 #include "Martini.h"
 #include "JetScapeLogger.h"
@@ -499,8 +503,10 @@ int Martini::DetermineProcess(double pRest, double T, double deltaT, int Id)
 
       double totalQuarkProb = 0.;
 
-      if (pRest > pcut) totalQuarkProb += (rateRad.qqg + rateRad.qqgamma)*dT;
-      totalQuarkProb += (rateElas.qq + rateElas.qg + rateConv.qg + rateConv.qgamma)*dT;
+      //if (pRest > pcut) totalQuarkProb += (rateRad.qqg + rateRad.qqgamma)*dT;
+      //totalQuarkProb += (rateElas.qq + rateElas.qg + rateConv.qg + rateConv.qgamma)*dT;
+      if (pRest > pcut) totalQuarkProb += rateRad.qqg*dT;
+      totalQuarkProb += (rateElas.qq + rateElas.qg + rateConv.qg)*dT;
 
       // warn if total probability exceeds 1
       if (totalQuarkProb > 1.)
@@ -526,12 +532,12 @@ int Martini::DetermineProcess(double pRest, double T, double deltaT, int Id)
 	      Prob = rateRad.qqg*dT/totalQuarkProb;
 	      if (accumProb <= randProb && randProb < (accumProb + Prob))
 		return 1;
-	    }
 
-	  accumProb += Prob;
-	  Prob = rateRad.qqgamma*dT/totalQuarkProb;
-	  if (accumProb <= randProb && randProb < (accumProb + Prob))
-	    return 2;
+	      //accumProb += Prob;
+	      //Prob = rateRad.qqgamma*dT/totalQuarkProb;
+	      //if (accumProb <= randProb && randProb < (accumProb + Prob))
+	      //  return 2;
+	    }
 
 	  accumProb += Prob;
 	  Prob = rateElas.qq*dT/totalQuarkProb;
@@ -548,10 +554,10 @@ int Martini::DetermineProcess(double pRest, double T, double deltaT, int Id)
 	  if (accumProb <= randProb && randProb < (accumProb + Prob))
 	    return 9;
 
-	  accumProb += Prob;
-	  Prob = rateConv.qgamma*dT/totalQuarkProb;
-	  if (accumProb <= randProb && randProb < (accumProb + Prob))
-	    return 10;
+	  //accumProb += Prob;
+	  //Prob = rateConv.qgamma*dT/totalQuarkProb;
+	  //if (accumProb <= randProb && randProb < (accumProb + Prob))
+	  //  return 10;
 	}
       else
 	{
