@@ -75,7 +75,7 @@ int main(int argc, char** argv)
    
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",2);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",2000);
   jetscape->SetId("primary");
   // jetscape->set_reuse_hydro (true);
   // jetscape->set_n_reuse_hydro (10);
@@ -124,7 +124,8 @@ int main(int argc, char** argv)
   jetscape->Add(hydro);
 
   // Note: if you use Matter, it MUST come first (to set virtuality)
-  jloss->Add(matter);
+   jloss->Add(matter);
+
   //jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
   //jloss->Add(martini);
   //jloss->Add(adscft);  

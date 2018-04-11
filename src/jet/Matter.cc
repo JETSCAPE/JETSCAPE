@@ -187,6 +187,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   int iSplit,pid_a,pid_b;
   unsigned int max_color, min_color, min_anti_color;
   double velocity[4],xStart[4],velocity_jet[4];
+    
 
   VERBOSESHOWER(8)<< MAGENTA << "SentInPartons Signal received : "<<deltaT<<" "<<Q2<<" "<<&pIn;
       
@@ -195,20 +196,31 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   double delT = deltaT;
   double Time = time*fmToGeVinv;
   double deltaTime = delT*fmToGeVinv;
+    double ehat=0;
+    double ehat_over_T2 = 10.0;
 
   std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
 
-  JSDEBUG << " the time in fm is " << time << " The time in GeV-1 is " << Time ;
-  JSDEBUG << "pid = " << pIn[0].pid() << " E = " << pIn[0].e() << " px = " << pIn[0].p(1) << " py = " << pIn[0].p(2) << "  pz = " << pIn[0].p(3) << " virtuality = " << pIn[0].t() << " form_time in fm = " << pIn[0].form_time()/fmToGeVinv ;
+  INFO << " the time in fm is " << time << " The time in GeV-1 is " << Time ;
+  INFO << "pid = " << pIn[0].pid() << " E = " << pIn[0].e() << " px = " << pIn[0].p(1) << " py = " << pIn[0].p(2) << "  pz = " << pIn[0].p(3) << " virtuality = " << pIn[0].t() << " form_time in fm = " << pIn[0].form_time() ;
   JSDEBUG << " color = " << pIn[0].color() << " anti-color = " << pIn[0].anti_color();
     
   //JSDEBUG << " For MATTER, the qhat in GeV^-3 = " << qhat ;
+ 
+    double qhatbrick;
+    if(brick_med) qhatbrick=qhat0/3.0;
+    qhat = qhat0;
+
+    INFO << " qhat0 = " << qhat0 << " qhat = " << qhat;
+    
     
   for (int i=0;i<pIn.size();i++)
   {
 
-      //cout << "MATTER -- status: " << pIn[i].pstat() << "  energy: " << pIn[i].e() << " color: " << pIn[i].color() << "  " << pIn[i].anti_color() << "  clock: " << time << endl;
+      INFO << " *  parton formation spacetime point= "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z();
 
+      
+      //cout << "MATTER -- status: " << pIn[i].pstat() << "  energy: " << pIn[i].e() << " color: " << pIn[i].color() << "  " << pIn[i].anti_color() << "  clock: " << time << endl;
 
       velocity[0] = 1.0;
       for(int j=1;j<=3;j++)
@@ -240,13 +252,15 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       initVy = velocity[2]/velocityMod;
       initVz = velocity[3]/velocityMod;
       initRdotV = ( initRx*pIn[i].jet_v().x() + initRy*pIn[i].jet_v().y() + initRz*pIn[i].jet_v().z() )/mod_jet_v;
+      initVdotV = ( initVx*pIn[i].jet_v().x() + initVy*pIn[i].jet_v().y() + initVz*pIn[i].jet_v().z() )/mod_jet_v;
+
       initEner = pIn[i].e();
       if(!in_vac) length = fillQhatTab();
       if(brick_med) length = brick_length*fmToGeVinv; /// length in GeV-1 will have to changed for hydro
       //if(brick_med) length = 5.0*fmToGeVinv; /// length in GeV-1 will have to changed for hydro
 
       // SC
-      zeta = ( xStart[0] + initRdotV )/std::sqrt(2)*fmToGeVinv;
+      zeta = ( ( xStart[0] + initRdotV )/std::sqrt(2) )*fmToGeVinv;
 
       double now_R0 = time;
       double now_Rx = initRx+(time-initR0)*initVx;
@@ -254,17 +268,21 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       double now_Rz = initRz+(time-initR0)*initVz;
       double now_temp; 
 
-      if(!in_vac && now_R0>=tStart) {
+      if(!in_vac && now_R0>=tStart)
+      {
          if(now_R0*now_R0<now_Rz*now_Rz) cout << "Warning 1: " << now_R0 << "  " << now_Rz << endl;
          GetHydroCellSignal(now_R0, now_Rx, now_Ry, now_Rz, check_fluid_info_ptr);
          //VERBOSE(8)<<MAGENTA<<"Temperature from medium = "<<check_fluid_info_ptr->temperature;
          now_temp = check_fluid_info_ptr->temperature;
-      } else {
+      }
+      else
+      {
          now_temp = 0.0;
       }
 
       int pid = pIn[i].pid();
-          
+      
+      
       if (pIn[i].form_time()<0.0) /// A parton without a virtuality or formation time, must set...
       {
           iSplit = 0;
@@ -286,9 +304,12 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           if(vir_factor<0.0) max_vir = pIn[i].e()*pIn[i].e();
           else max_vir = pT2 * vir_factor;
 
-          if(max_vir<=QS) {
-	      tQ2 = 0.0;
-          } else {
+          if(max_vir<=QS)
+          {
+              tQ2 = 0.0;
+          }
+          else
+          {
     	      tQ2 = generate_vac_t(pIn[i].pid(), pIn[i].nu(), QS/2.0, max_vir, zeta, iSplit);
     	  }
 
@@ -326,16 +347,16 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           pIn[i].set_min_color(min_color);
           pIn[i].set_min_anti_color(min_anti_color);
           
-            
+            qhat = qhat0;
           //JSDEBUG:
           JSDEBUG ;
           JSDEBUG << " ***************************************************************************** " ;
           JSDEBUG<< " ID = " << pIn[i].pid() << " Color = " << pIn[i].color() << " Anti-Color = " << pIn[i].anti_color() ;
-          JSDEBUG << " E = " << pIn[i].e() << " px = " << pIn[i].px() << " py = " << pIn[i].py() << " pz = " << pIn[i].pz() ;
-          JSDEBUG << " *  New generated virtuality = " << tQ2 << " Mean formation time = " << pIn[i].mean_form_time()/fmToGeVinv;
-          JSDEBUG << " *  set new formation time to " << pIn[i].form_time()/fmToGeVinv ;
+          INFO << " E = " << pIn[i].e() << " px = " << pIn[i].px() << " py = " << pIn[i].py() << " pz = " << pIn[i].pz() ;
+          INFO << " *  New generated virtuality = " << tQ2 << " Mean formation time = " << pIn[i].mean_form_time();
+          INFO << " *  set new formation time to " << pIn[i].form_time() ;
           JSDEBUG << " * Maximum allowed virtuality = " << pIn[i].e()*pIn[i].e() << "   Minimum Virtuality = " << QS;
-          JSDEBUG << " * Qhat = " << qhat << "  Length = "  << length ;
+          INFO << " * Qhat = " << qhat << "  Length = "  << length ;
           JSDEBUG << " * Jet velocity = " << pIn[i].jet_v().comp(0) << " " << pIn[i].jet_v().comp(1) << "  " << pIn[i].jet_v().comp(2) << "  " << pIn[i].jet_v().comp(3);
           JSDEBUG << " * reset location of parton formation = "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z();
           JSDEBUG << " ***************************************************************************** " ;
@@ -358,6 +379,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       { // for medium
           double tempEner = initEner;
           qhat = fncQhat(zeta);
+          ehat = qhat/4.0/now_temp ;
+          INFO << BOLDYELLOW << "qhat = " << qhat << " ehat = " << ehat;
 
           if(Q00 < 0.0)
           { // use dynamical Q0 if Q00 < 0
@@ -373,6 +396,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       }
 
       if(Q0<1.0) Q0=1.0;
+      INFO << " qhat before Q0Q0 loop = " << qhat ;
 
       //if (pIn[i].t() > QS + rounding_error)
       if (pIn[i].t() > Q0*Q0 + rounding_error || ((!in_vac) && now_temp<=T0 && pIn[i].t() > QS*QS + rounding_error))
@@ -380,17 +404,18 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           double decayTime = pIn[i].mean_form_time()  ;
 	    
           //JSDEBUG << "  deltaT = " << deltaT;
-          //JSDEBUG << " parton origin time = " << pIn[i].x_in().t()/fmToGeVinv << " parton formation time = " << pIn[i].form_time()/fmToGeVinv;
-          // JSDEBUG << " parton id " << pIn[i].pid() << " parton virtuality = " << pIn[i].t();
+          INFO << " parton origin time = " << pIn[i].x_in().t() << " parton formation time = " << pIn[i].form_time();
+          INFO << " parton id " << pIn[i].pid() << " parton virtuality = " << pIn[i].t();
           //JSDEBUG << " parton momentum " << pIn[i].e() << "  " << pIn[i].px() << "  " << pIn[i].py() << "  " << pIn[i].pz();
 	    
           double splitTime = pIn[i].form_time() + pIn[i].x_in().t() ;
-          // JSDEBUG << " splitTime = " << splitTime/fmToGeVinv;
-	  
+          INFO << " splitTime = " << splitTime;
+          INFO << " qhat before splitime loop = " << qhat ;
+          
           if (splitTime<time)
           {
 
-              //cout << "SPLIT in MATTER" << endl;
+              INFO << "SPLIT in MATTER" ;
     
               // SC: add elastic scattering that generates recoiled and back-reaction partons
               double el_dt=0.1;
@@ -566,7 +591,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       iout = pOut.size()-1;
                       pOut[iout].set_jet_v(velocity_jet);
                       pOut[iout].set_mean_form_time();
-                      ft = 10000.0;
+                      ft = 10000.0; /// STILL a really large formation time.
                       pOut[iout].set_form_time(ft);
                       ////pOut[iout].set_color(el_color3);
                       ////pOut[iout].set_anti_color(el_anti_color3);
@@ -605,6 +630,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               double tau_form = 2.0*pIn[i].nu()/t_used;
               double z_low = QS/t_used/2.0 ;
               double z_hi = 1.0 - z_low;
+              
+              INFO << " zeta = " << zeta ;
               
               if (pid==gid)
               { // gluon
@@ -863,18 +890,308 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 
           }
           else
-          { // not time to split yet
-              // pOut.push_back(pIn[i]);
+          { // not time to split yet broadening it
+
+
+              double now_zeta = ( ( time + initRdotV + (time - initR0) )/std::sqrt(2) )*fmToGeVinv;
+              qhat = fncQhat(now_zeta);
+              if (now_temp>0.1)
+              {
+                  ehat = qhat/4.0/now_temp;
+              }
+              else
+              {
+                  ehat = qhat/4.0/0.3;
+              }
+
+              INFO <<BOLDRED<< " between splits broadening qhat = " << qhat << " ehat = " << ehat << " and delT = " << delT ;
+              
+              if ((!recoil_on)&&(qhat>0.0))
+              {
+                  double kt = generate_kt(qhat*1.414/0.197, delT);
+                  
+                  JSDEBUG << " kt generated = "  << kt << " for qhat = " << qhat*1.414/0.197 << " and delT = " << delT ;
+                  
+                  double ktx, kty, ktz;
+                  ktx=kty=ktz=0.0;
+                  double vx = initVx;
+                  double vy = initVy;
+                  double vz = initVz;
+
+                  
+                  bool solved = false;
+                  int trials = 0;
+                  while ((!solved)&&(trials<1000))
+                  {
+                      
+                      if ((abs(vy)>approx)||(abs(vz)>approx))
+                      {
+                          ktx = kt*(1 - 2*ZeroOneDistribution(*get_mt19937_generator()) );
+                  
+                          JSDEBUG << " vx = " << vx << " vy = " << vy << " vz = " << vz ;
+                  
+                          double rad = sqrt( 4*ktx*ktx*vx*vx*vy*vy - 4*(vy*vy + vz*vz)*(ktx*ktx*(vx*vx+vz*vz) - kt*kt*vz*vz)  );
+                      
+                          double sol1 = (-2*ktx*vx*vy + rad)/2/(vy*vy + vz*vz);
+                          double sol2 = (-2*ktx*vx*vy - rad)/2/(vy*vy + vz*vz);
+                      
+                          kty = sol1;
+                      
+                          if ((ktx*ktx + sol1*sol1) > kt*kt  )  kty = sol2;
+                  
+                          if ((ktx*ktx + kty*kty) < kt*kt  )
+                          {
+                              ktz = sqrt( kt*kt - ktx*ktx - kty*kty ) ;
+                          
+                              double sign = ZeroOneDistribution(*get_mt19937_generator());
+                              
+                              if (sign>0.5) ktz = -1*ktz;
+                          
+                              if (vz!=0) ktz = (-1*ktx*vx - kty*vy )/vz ;
+                          
+                              solved = true;
+                          }
+                          
+                      }
+                      else
+                      {
+                          ktx = 0;
+                          kty = kt*(1 - 2*ZeroOneDistribution(*get_mt19937_generator()) );
+                          double sign = ZeroOneDistribution(*get_mt19937_generator());
+                          if (sign>0.5) kty = -1*kty;
+                          ktz = sqrt(1-kty*kty);
+                          sign = ZeroOneDistribution(*get_mt19937_generator());
+                          if (sign>0.5) ktz = -1*ktz;
+                    
+                      }
+                      trials++;
+                  }
+                  
+                  INFO << MAGENTA << " ktx = " << ktx << " kty = " << kty << " ktz = " << ktz ;
+                  double px = pIn[i].px();
+                  double py = pIn[i].py();
+                  double pz = pIn[i].pz();
+                  double energy = pIn[i].e();
+                  
+                  double p = sqrt(px*px + py*py + pz*pz);
+                  INFO << BOLDBLUE << " p before b & d, E = " << energy << " pz = " << pz << " px = " << px << " py = " << py ;
+
+                  
+                  px += ktx;
+                  py += kty;
+                  pz += ktz;
+                  
+                  double np = sqrt(px*px + py*py + pz*pz);
+                  JSDEBUG << " p = " << p << " np = " << np;
+                  
+                  px -= (np-p)*vx;
+                  py -= (np-p)*vy;
+                  pz -= (np-p)*vz;
+                  
+                  double nnp = sqrt(px*px + py*py + pz*pz);
+                  
+                  if (abs(nnp-p)>abs(np-p))
+                  {
+                      INFO << MAGENTA << " negative condition invoked ! " ;
+                      px += 2*(np-p)*vx;
+                      py += 2*(np-p)*vy;
+                      pz += 2*(np-p)*vz;
+                  }
+                  
+                  np = sqrt(px*px + py*py + pz*pz);
+                  JSDEBUG << "FINAL p = " << p << " np = " << np;
+                  
+                  pOut.push_back(pIn[i]);
+                  int iout = pOut.size()-1;
+                  
+                  pOut[iout].reset_p(px,py,pz);
+                  
+                  double drag = ehat*delT;
+                  if (np > drag )
+                  {
+                      px -= drag*vx;
+                      py -= drag*vy;
+                      pz -= drag*vz;
+                      energy -= drag;
+                      pOut[iout].reset_momentum( px , py , pz , energy );
+                  }
+                  else
+                  {
+                      pOut[iout].reset_momentum(0,0,0,1);
+                  }
+                  
+                  INFO << BOLDYELLOW << " p after b & d, E = " << energy << " pz = " << pz << " px = " << px << " py = " << py ;
+
+              }
+              
+              
+              //pOut.push_back(pIn[i]);
           }
       }
       else
-      { // virtuality too low
+      { // virtuality too low lets broaden it
+          
+          double now_zeta = ( ( time + initRdotV + (time - initR0) )/std::sqrt(2) )*fmToGeVinv;
+          //double now_zeta = ( ( time + initRdotV )/std::sqrt(2) )*fmToGeVinv;
+          qhat = fncQhat(now_zeta);
+          if (now_temp>0.1)
+          {
+              ehat = qhat/4.0/now_temp;
+          }
+          else
+          {
+              ehat = qhat/4.0/0.3;
+          }
+          INFO <<BOLDRED<< " after splits broadening qhat = " << qhat << " ehat = " << ehat << " and delT = " << delT ;
+          
+          //INFO << " broadening qhat = " << qhat << " and delT = " << delT ;
+          
+          if ((!recoil_on)&&(qhat>0.0))
+          {
+              double kt = generate_kt(qhat*1.414/0.197, delT);
+              
+              JSDEBUG << " kt generated = "  << kt << " for qhat = " << qhat*1.414/0.197 << " and delT = " << delT ;
+              
+              double ktx, kty, ktz;
+              ktx=kty=ktz=0;
+              double vx = initVx;
+              double vy = initVy;
+              double vz = initVz;
+
+              bool solved = false;
+              
+              int trials = 0;
+              while ((!solved)&&(trials<1000))
+              {
+                  if ((abs(vy)>approx)||(abs(vz)>approx))
+                  {
+                  
+                      ktx = kt*(1 - 2*ZeroOneDistribution(*get_mt19937_generator()) );
+                  
+                      JSDEBUG << " vx = " << vx << " vy = " << vy << " vz = " << vz ;
+                      
+                      double rad = sqrt( 4*ktx*ktx*vx*vx*vy*vy - 4*(vy*vy + vz*vz)*(ktx*ktx*(vx*vx+vz*vz) - kt*kt*vz*vz)  );
+                  
+                      double sol1 = (-2*ktx*vx*vy + rad)/2/(vy*vy + vz*vz);
+                      double sol2 = (-2*ktx*vx*vy - rad)/2/(vy*vy + vz*vz);
+                  
+                      kty = sol1;
+                  
+                      if ((ktx*ktx + sol1*sol1) > kt*kt  )  kty = sol2;
+                  
+                      if ((ktx*ktx + kty*kty) < kt*kt  )
+                      {
+                          ktz = sqrt( kt*kt - ktx*ktx - kty*kty ) ;
+                      
+                          double sign = ZeroOneDistribution(*get_mt19937_generator());
+                          if (sign>0.5) ktz = -1*ktz;
+                      
+                      
+                          if (vz!=0) ktz = (-1*ktx*vx - kty*vy )/vz ;
+                      
+                          solved = true;
+                      }
+                  }
+                  else
+                  {
+                      ktx = 0;
+                      kty = kt*(1 - 2*ZeroOneDistribution(*get_mt19937_generator()) );
+                      double sign = ZeroOneDistribution(*get_mt19937_generator());
+                      if (sign>0.5) kty = -1*kty;
+                      ktz = sqrt(1-kty*kty);
+                      sign = ZeroOneDistribution(*get_mt19937_generator());
+                      if (sign>0.5) ktz = -1*ktz;
+                      
+                  }
+                  trials++;
+              }
+              
+              INFO << MAGENTA << " ktx = " << ktx << " kty = " << kty << " ktz = " << ktz ;
+              double px = pIn[i].px();
+              double py = pIn[i].py();
+              double pz = pIn[i].pz();
+              double energy = pIn[i].e();
+
+              
+              double p = sqrt(px*px + py*py + pz*pz);
+              
+              INFO << BOLDBLUE << " p before b & d, E = " << energy << " pz = " << pz << " px = " << px << " py = " << py ;
+ 
+              px += ktx;
+              py += kty;
+              pz += ktz;
+              
+              double np = sqrt(px*px + py*py + pz*pz);
+              JSDEBUG << " p = " << p << " np = " << np;
+
+              px -= (np-p)*vx;
+              py -= (np-p)*vy;
+              pz -= (np-p)*vz;
+              
+              double nnp = sqrt(px*px + py*py + pz*pz);
+              
+              if (abs(nnp-p)>abs(np-p))
+              {
+                  px += 2*(np-p)*vx;
+                  py += 2*(np-p)*vy;
+                  pz += 2*(np-p)*vz;
+              }
+              
+              np = sqrt(px*px + py*py + pz*pz);
+              JSDEBUG << "FINAL p = " << p << " nnnp = " << np;
+
+              pOut.push_back(pIn[i]);
+              int iout = pOut.size()-1;
+              
+              pOut[iout].reset_p(px,py,pz);
+              
+              double drag = ehat*delT;
+              INFO << MAGENTA << " drag = " << drag << " temperature = " <<  now_temp ;
+              if (np > drag )
+              {
+                  px -= drag*vx;
+                  py -= drag*vy;
+                  pz -= drag*vz;
+                  energy -= drag;
+                  pOut[iout].reset_momentum( px, py , pz , energy );
+              }
+              else
+              {
+                  pOut[iout].reset_momentum(0,0,0,1);
+              }
+              
+              
+              INFO << BOLDYELLOW << " p after b & d, E = " << energy << " pz = " << pz << " px = " << px << " py = " << py ;
+
+              
+              
+          }
           // pOut.push_back(pIn[i]);
       }
           	  
   } // particle loop
+    
+    //cin >> blurb ;
       
 }
+
+double Matter::generate_kt(double local_qhat, double dzeta)
+{
+    double width = local_qhat*dzeta;
+    
+    double x,r;
+    
+    r = ZeroOneDistribution(*get_mt19937_generator());
+    x = -log(1.0-r);
+    if (x<0.0)  throw std::runtime_error(" k_t^2 < 0.0 ");
+    double kt = sqrt(x * local_qhat * dzeta  );
+    
+    return(kt);
+    
+}
+    
+    
+
 
 double Matter::generate_angle()
 {
@@ -1811,7 +2128,7 @@ double Matter::fillQhatTab() {
     double tempLoc;
     double flowFactor,qhatLoc;
     int hydro_ctl;
-    double lastLength=0.0;
+    double lastLength=initR0;
 
     double tStep = 0.1;
 
@@ -1821,14 +2138,15 @@ double Matter::fillQhatTab() {
         tLoc = tStep*i;
 
 	//if(tLoc<initR0-tStep) { // potential problem of making t^2<z^2
-	if(tLoc<initR0 || tLoc<tStart) {
+	if(tLoc<initR0 || tLoc<tStart)
+    {
             qhatTab1D[i] = 0.0; 
             continue;	    
-        }
+    }
 
 	xLoc = initRx+(tLoc-initR0)*initVx; 
-        yLoc = initRy+(tLoc-initR0)*initVy;
-        zLoc = initRz+(tLoc-initR0)*initVz;
+    yLoc = initRy+(tLoc-initR0)*initVy;
+    zLoc = initRz+(tLoc-initR0)*initVz;
 
 //        if(bulkFlag == 1) { // read OSU hydro
 //            readhydroinfoshanshan_(&tLoc,&xLoc,&yLoc,&zLoc,&edLoc,&sdLoc,&tempLoc,&vxLoc,&vyLoc,&vzLoc,&hydro_ctl);
@@ -1895,7 +2213,7 @@ double Matter::fillQhatTab() {
     }
 
     //return(lastLength*sqrt(2.0)*5.0); // light cone + GeV unit
-    return( (lastLength+initRdotV)/sqrt(2.0)*5.0 ); // light cone + GeV unit
+    return( (2.0*lastLength+initRdotV-initR0)/sqrt(2.0)*5.0 ); // light cone + GeV unit
   
 }
 
@@ -1907,9 +2225,10 @@ double Matter::fncQhat(double zeta) {
 
     double tStep = 0.1;
     //int indexZeta = (int)(zeta/sqrt(2.0)/5.0/tStep+0.5); // zeta was in 1/GeV and light cone coordinate
-    int indexZeta = (int)((sqrt(2.0)*zeta/5.0-initRdotV)/tStep+0.5); // zeta was in 1/GeV and light cone coordinate
+    int indexZeta = (int)((sqrt(2.0)*zeta/5.0-initRdotV+initR0)/2.0/tStep+0.5); // zeta was in 1/GeV and light cone coordinate
 
-    if(indexZeta >= dimQhatTab) indexZeta = dimQhatTab-1;      
+    //if(indexZeta >= dimQhatTab) indexZeta = dimQhatTab-1;
+    if(indexZeta >= dimQhatTab) return(0);
     
     double avrQhat = qhatTab1D[indexZeta]; 
     return(avrQhat);
@@ -1925,11 +2244,12 @@ double Matter::fncAvrQhat(double zeta, double tau) {
 
     double tStep = 0.1;
     //int indexZeta = (int)(zeta/sqrt(2.0)/5.0/tStep+0.5); // zeta was in 1/GeV and light cone coordinate
-    int indexZeta = (int)((sqrt(2.0)*zeta/5.0-initRdotV)/tStep+0.5); // zeta was in 1/GeV and light cone coordinate
+    int indexZeta = (int)((sqrt(2.0)*zeta/5.0-initRdotV+initR0)/2.0/tStep+0.5); // zeta was in 1/GeV and light cone coordinate
     int indexTau = (int)(tau/sqrt(2.0)/5.0/tStep+0.5); // tau was in 1/GeV and light cone coordinate
 
-    if(indexZeta >= dimQhatTab) indexZeta = dimQhatTab-1;      
-    if(indexTau >= dimQhatTab) indexTau = dimQhatTab-1;      
+   // if(indexZeta >= dimQhatTab) indexZeta = dimQhatTab-1;
+    if(indexZeta >= dimQhatTab) return(0);
+    if(indexTau >= dimQhatTab) indexTau = dimQhatTab-1;
     
     double avrQhat = qhatTab2D[indexZeta][indexTau]; 
     return(avrQhat);

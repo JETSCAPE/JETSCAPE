@@ -83,7 +83,7 @@
     <Matter>
       <name>Matter</name>
       <Q0> 1.0 </Q0>
-      <T0> 0.16 </T0>
+      <T0> 0.15 </T0>
       <vir_factor> 0.25 </vir_factor>
       <in_vac> 0 </in_vac>
       <recoil_on> 0 </recoil_on>
