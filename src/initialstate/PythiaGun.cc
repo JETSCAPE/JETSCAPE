@@ -39,8 +39,8 @@ void PythiaGun::InitTask()
   VERBOSE(8);
 
   // Show initialization at INFO level
-  readString("Init:showProcesses = off");
-  readString("Init:showChangedSettings = off");
+  readString("Init:showProcesses = on");
+  readString("Init:showChangedSettings = on");
   readString("Init:showMultipartonInteractions = off");
   readString("Init:showChangedParticleData = off");
   if ( JetScapeLogger::Instance()->GetInfo() ) {
@@ -53,16 +53,17 @@ void PythiaGun::InitTask()
   // No event record printout.
   readString("Next:numberShowInfo = 0"); 
   readString("Next:numberShowProcess = 0"); 
-  readString("Next:numberShowEvent = 0"); 
+  readString("Next:numberShowEvent = 1"); 
 
   // Standard settings
-  readString("HardQCD:all = on"); // will repeat this line in the xml for demonstration  
+  readString("HardQCD:all = off"); // will repeat this line in the xml for demonstration  
   readString("HadronLevel:Decay = off");
   readString("HadronLevel:all = off");
   readString("PartonLevel:ISR = on");
   readString("PartonLevel:MPI = on");
   readString("PartonLevel:FSR = off");
-  readString("PromptPhoton:all=off");
+  readString("PromptPhoton:all=on");
+  //readString("PromptPhoton:nQuarkLoop = 4");
   readString("WeakSingleBoson:all=off");
   readString("WeakDoubleBoson:all=off");
 
@@ -182,15 +183,15 @@ void PythiaGun::Exec()
 
       // only accept particles after MPI
       if ( particle.status()!=62 ) continue;
-       
       // only accept gluons and quarks
       // Also accept Gammas to put into the hadron's list
-      if ( fabs( particle.id() ) > 3 && (particle.id() !=21 || particle.id() !=22) ) continue;
-
+      if ( fabs( particle.id() ) > 3 && (particle.id() !=21 && particle.id() !=22) ) continue;
+      
       // reject rare cases of very soft particles that don't have enough e to get
       // reasonable virtuality
       if ( particle.pT() < 1.0/sqrt(vir_factor) ) continue;
-  
+ 	
+	//if(particle.id()==22) cout<<"########this is a photon!######" <<endl;
       // accept
       p62.push_back( particle );
 
@@ -299,10 +300,11 @@ void PythiaGun::Exec()
 	AddHadron(make_shared<Hadron>(hCounter,particle.id(),particle.status(),particle.pT(),particle.eta(),particle.phi(),particle.e(),xLoc));
 	hCounter++;
     }
-    cout<<"**** number of gammas are: "<<hCounter<<" ****"<<endl;
+    cout<<"**** number of gammas are: "<<GetNHardons()<<" ****"<<endl;
   }
   
 
  
   VERBOSE(8)<<GetNHardPartons();
 }
+
