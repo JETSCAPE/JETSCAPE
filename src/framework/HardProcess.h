@@ -134,9 +134,9 @@ class HardProcess : public JetScapeModuleBase
   vector<shared_ptr<Hadron>>& GetHadronList() {return hd_list;}    
 
   /**
-      @return The number of hardons.
+      @return The number of hadrons.
   */
-  int GetNHardons() {return hd_list.size();}
+  int GetNHadrons() {return hd_list.size();}
  private:
 
   tinyxml2::XMLElement *fd;
