@@ -100,7 +100,7 @@ void ColoredHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& s
   Event& event = pythia.event;
   event.reset();
   double pz = p_fake;
-    
+   
   JSDEBUG << "&&&&&&&&&&&&&&&&&&& the number of showers are: " << shower.size();
   for(unsigned int ishower=0; ishower <  shower.size(); ++ishower)  
     {
@@ -139,7 +139,7 @@ void ColoredHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& s
   pythia.next();
   // event.list();
   
-  unsigned int ip=0;
+  unsigned int ip=hOut.size();
   for (unsigned int i=0; i<event.size(); ++i){
     if ( !event[i].isFinal() )   continue;
     if ( !event[i].isHadron() )  continue;
@@ -148,8 +148,9 @@ void ColoredHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& s
     double x[4] = {0,0,0,0};
     hOut.push_back(make_shared<Hadron>(ip,event[i].id(),event[i].status(),event[i].pT(),event[i].eta(), event[i].phi(), event[i].e(), x));
     ++ip;
+
   }
-    
+  
   shower.clear();
     
 }

@@ -63,7 +63,6 @@ void PythiaGun::InitTask()
   readString("PartonLevel:MPI = on");
   readString("PartonLevel:FSR = off");
   readString("PromptPhoton:all=on");
-  //readString("PromptPhoton:nQuarkLoop = 4");
   readString("WeakSingleBoson:all=off");
   readString("WeakDoubleBoson:all=off");
 
@@ -300,7 +299,6 @@ void PythiaGun::Exec()
 	AddHadron(make_shared<Hadron>(hCounter,particle.id(),particle.status(),particle.pT(),particle.eta(),particle.phi(),particle.e(),xLoc));
 	hCounter++;
     }
-    cout<<"**** number of gammas are: "<<GetNHardons()<<" ****"<<endl;
   }
   
 

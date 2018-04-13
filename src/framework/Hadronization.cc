@@ -80,7 +80,7 @@ void Hadronization::Exec()
 
   //this->outHadrons = make_shared<vector<shared_ptr<Hadron>>>();
   //this->outPartons = make_shared<vector<shared_ptr<Parton>>>();
-  cout<<"$$$This is the number of Photons$$$"<<GetHadrons().size()<<endl;
+  
   DoHadronize();
  
 }
