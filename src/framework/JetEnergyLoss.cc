@@ -44,11 +44,8 @@ JetEnergyLoss::JetEnergyLoss()
   SetId("JetEnergyLoss");
   jetSignalConnected=false;
   edensitySignalConnected=false;
-  AddJetSourceSignalConnected=false;
-  GetTemperatureSignalConnected=false;
   GetHydroCellSignalConnected=false;
   SentInPartonsConnected=false;
-  GetOutPartonsConnected=false;
   
   deltaT=0;
   maxT=0;
@@ -73,11 +70,8 @@ JetEnergyLoss::JetEnergyLoss(const JetEnergyLoss &j)
   SetId(j.GetId());
   SetJetSignalConnected(false);
   SetEdensitySignalConnected(false);
-  SetAddJetSourceSignalConnected(false);
-  SetGetTemperatureSignalConnected(false);
   SetGetHydroCellSignalConnected(false);
   SetSentInPartonsConnected(false);
-  SetGetOutPartonsConnected(false);
   
   deltaT=j.deltaT;
   maxT=j.maxT;

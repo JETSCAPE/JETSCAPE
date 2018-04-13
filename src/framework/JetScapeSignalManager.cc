@@ -79,17 +79,6 @@ void JetScapeSignalManager::ConnectEdensitySignal(shared_ptr<JetEnergyLoss> j)
   }
 }
 
-void JetScapeSignalManager::ConnectAddJetSourceSignal(shared_ptr<JetEnergyLoss> j)
-{
-  // to be done ...
-}
-
-void JetScapeSignalManager::ConnectGetTemperatureSignal(shared_ptr<JetEnergyLoss> j)
-{
-  // to be done ... (obsolete with HydroCell) ...
-}
-
-
 void JetScapeSignalManager::ConnectGetHydroCellSignal(shared_ptr<JetEnergyLoss> j)
 {
   if (!j->GetGetHydroCellSignalConnected()) {
