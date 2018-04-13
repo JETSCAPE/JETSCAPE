@@ -229,7 +229,18 @@ namespace Jetscape {
     void init_jet_v();
     void set_jet_v(double v[4]);
     void set_jet_v(FourVector j);
-    
+
+    /** Set a new responsible (Eloss) module
+     * @return false if we already had one */
+    bool SetController( string controller="" ){
+      bool wascontrolled=controlled_;
+      controlled_=true;
+      controller_=controller;
+      return wascontrolled;
+    };
+    /** Relinquish responsibility of an (Eloss) module */
+    void UnsetController( ){controller_="";controlled_=false;};
+
     //  Getters
     
     const int pid() const;
@@ -254,6 +265,12 @@ namespace Jetscape {
     virtual JetScapeParticleBase& operator=(JetScapeParticleBase &c);
     virtual JetScapeParticleBase& operator=(const JetScapeParticleBase &c);
 
+    /** Check id of responsible (Eloss) module */
+    string GetController() const {return controller_;};
+    /** Check whether we have a responsible (Eloss) module */
+    bool GetControlled() const {return controlled_;};
+
+    
   protected:
   
     void set_restmass(double mass_input); ///< shouldn't be called from the outside, needs to be consistent with PID
@@ -270,8 +287,12 @@ namespace Jetscape {
     // Be a bit careful with it!
     // Init is never called, and this object is not configured. All it can do is look up
     // in its original Data table
-    static Pythia8::Pythia InternalHelperPythia;  
+    static Pythia8::Pythia InternalHelperPythia;
 
+    /// check whether a module claimed responsibility of this particle
+    bool controlled_=false;    
+    string controller_="";
+    
   };
   // END BASE CLASS
 

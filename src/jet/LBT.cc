@@ -183,6 +183,7 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
   //cout<<" ---> "<<pIn.size()<<endl;
   for (int i=0;i<pIn.size();i++)
     {	  
+      TakeResponsibilityFor ( pIn[i] ); // Generate error if another module already has responsibility.
 
       // pass particle infomation to LBT array (only pass one particle each time)
 
