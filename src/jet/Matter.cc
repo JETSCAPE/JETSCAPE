@@ -97,6 +97,14 @@ void Matter::Init()
     matter->FirstChildElement("recoil_on")->QueryIntText(&flagInt);
     recoil_on = flagInt;
 
+    if ( !matter->FirstChildElement("broadening_on") ) {
+	WARN << "Couldn't find sub-tag Eloss -> Matter -> broadening_on";
+        throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> broadening_on");
+    }
+    matter->FirstChildElement("broadening_on")->QueryIntText(&flagInt);
+    broadening_on = flagInt;
+
+
     if ( !matter->FirstChildElement("brick_med") ) {
 	WARN << "Couldn't find sub-tag Eloss -> Matter -> brick_med";
         throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> brick_med");
@@ -892,8 +900,152 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           else
           { // not time to split yet broadening it
 
+              if(broadening_on) 
+              {
+
+                  double now_zeta = ( ( time + initRdotV + (time - initR0) )/std::sqrt(2) )*fmToGeVinv;
+                  qhat = fncQhat(now_zeta);
+                  if (now_temp>0.1)
+                  {
+                      ehat = qhat/4.0/now_temp;
+                  }
+                  else
+                  {
+                      ehat = qhat/4.0/0.3;
+                  }
+
+                  INFO <<BOLDRED<< " between splits broadening qhat = " << qhat << " ehat = " << ehat << " and delT = " << delT ;
+                  
+                  if ((!recoil_on)&&(qhat>0.0))
+                  {
+                      double kt = generate_kt(qhat*1.414/0.197, delT);
+                      
+                      JSDEBUG << " kt generated = "  << kt << " for qhat = " << qhat*1.414/0.197 << " and delT = " << delT ;
+                      
+                      double ktx, kty, ktz;
+                      ktx=kty=ktz=0.0;
+                      double vx = initVx;
+                      double vy = initVy;
+                      double vz = initVz;
+
+                      
+                      bool solved = false;
+                      int trials = 0;
+                      while ((!solved)&&(trials<1000))
+                      {
+                          
+                          if ((abs(vy)>approx)||(abs(vz)>approx))
+                          {
+                              ktx = kt*(1 - 2*ZeroOneDistribution(*get_mt19937_generator()) );
+                      
+                              JSDEBUG << " vx = " << vx << " vy = " << vy << " vz = " << vz ;
+                      
+                              double rad = sqrt( 4*ktx*ktx*vx*vx*vy*vy - 4*(vy*vy + vz*vz)*(ktx*ktx*(vx*vx+vz*vz) - kt*kt*vz*vz)  );
+                          
+                              double sol1 = (-2*ktx*vx*vy + rad)/2/(vy*vy + vz*vz);
+                              double sol2 = (-2*ktx*vx*vy - rad)/2/(vy*vy + vz*vz);
+                          
+                              kty = sol1;
+                          
+                              if ((ktx*ktx + sol1*sol1) > kt*kt  )  kty = sol2;
+                      
+                              if ((ktx*ktx + kty*kty) < kt*kt  )
+                              {
+                                  ktz = sqrt( kt*kt - ktx*ktx - kty*kty ) ;
+                              
+                                  double sign = ZeroOneDistribution(*get_mt19937_generator());
+                                  
+                                  if (sign>0.5) ktz = -1*ktz;
+                              
+                                  if (vz!=0) ktz = (-1*ktx*vx - kty*vy )/vz ;
+                              
+                                  solved = true;
+                              }
+                              
+                          }
+                          else
+                          {
+                              ktx = 0;
+                              kty = kt*(1 - 2*ZeroOneDistribution(*get_mt19937_generator()) );
+                              double sign = ZeroOneDistribution(*get_mt19937_generator());
+                              if (sign>0.5) kty = -1*kty;
+                              ktz = sqrt(1-kty*kty);
+                              sign = ZeroOneDistribution(*get_mt19937_generator());
+                              if (sign>0.5) ktz = -1*ktz;
+                        
+                          }
+                          trials++;
+                      }
+                      
+                      INFO << MAGENTA << " ktx = " << ktx << " kty = " << kty << " ktz = " << ktz ;
+                      double px = pIn[i].px();
+                      double py = pIn[i].py();
+                      double pz = pIn[i].pz();
+                      double energy = pIn[i].e();
+                      
+                      double p = sqrt(px*px + py*py + pz*pz);
+                      INFO << BOLDBLUE << " p before b & d, E = " << energy << " pz = " << pz << " px = " << px << " py = " << py ;
+
+                      
+                      px += ktx;
+                      py += kty;
+                      pz += ktz;
+                      
+                      double np = sqrt(px*px + py*py + pz*pz);
+                      JSDEBUG << " p = " << p << " np = " << np;
+                      
+                      px -= (np-p)*vx;
+                      py -= (np-p)*vy;
+                      pz -= (np-p)*vz;
+                      
+                      double nnp = sqrt(px*px + py*py + pz*pz);
+                      
+                      if (abs(nnp-p)>abs(np-p))
+                      {
+                          INFO << MAGENTA << " negative condition invoked ! " ;
+                          px += 2*(np-p)*vx;
+                          py += 2*(np-p)*vy;
+                          pz += 2*(np-p)*vz;
+                      }
+                      
+                      np = sqrt(px*px + py*py + pz*pz);
+                      JSDEBUG << "FINAL p = " << p << " np = " << np;
+                      
+                      pOut.push_back(pIn[i]);
+                      int iout = pOut.size()-1;
+                      
+                      pOut[iout].reset_p(px,py,pz);
+                      
+                      double drag = ehat*delT;
+                      if (np > drag )
+                      {
+                          px -= drag*vx;
+                          py -= drag*vy;
+                          pz -= drag*vz;
+                          energy -= drag;
+                          pOut[iout].reset_momentum( px , py , pz , energy );
+                      }
+                      else
+                      {
+                          pOut[iout].reset_momentum(0,0,0,1);
+                      }
+                      
+                      INFO << BOLDYELLOW << " p after b & d, E = " << energy << " pz = " << pz << " px = " << px << " py = " << py ;
+
+                  }
+              
+	      } // end if(broadening_on) 
+              //pOut.push_back(pIn[i]);
+          }
+      }
+      else
+      { // virtuality too low lets broaden it
+
+          if(broadening_on)
+          {
 
               double now_zeta = ( ( time + initRdotV + (time - initR0) )/std::sqrt(2) )*fmToGeVinv;
+              //double now_zeta = ( ( time + initRdotV )/std::sqrt(2) )*fmToGeVinv;
               qhat = fncQhat(now_zeta);
               if (now_temp>0.1)
               {
@@ -903,8 +1055,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               {
                   ehat = qhat/4.0/0.3;
               }
-
-              INFO <<BOLDRED<< " between splits broadening qhat = " << qhat << " ehat = " << ehat << " and delT = " << delT ;
+              INFO <<BOLDRED<< " after splits broadening qhat = " << qhat << " ehat = " << ehat << " and delT = " << delT ;
+              
+              //INFO << " broadening qhat = " << qhat << " and delT = " << delT ;
               
               if ((!recoil_on)&&(qhat>0.0))
               {
@@ -913,23 +1066,23 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   JSDEBUG << " kt generated = "  << kt << " for qhat = " << qhat*1.414/0.197 << " and delT = " << delT ;
                   
                   double ktx, kty, ktz;
-                  ktx=kty=ktz=0.0;
+                  ktx=kty=ktz=0;
                   double vx = initVx;
                   double vy = initVy;
                   double vz = initVz;
 
-                  
                   bool solved = false;
+                  
                   int trials = 0;
                   while ((!solved)&&(trials<1000))
                   {
-                      
                       if ((abs(vy)>approx)||(abs(vz)>approx))
                       {
+                      
                           ktx = kt*(1 - 2*ZeroOneDistribution(*get_mt19937_generator()) );
-                  
+                      
                           JSDEBUG << " vx = " << vx << " vy = " << vy << " vz = " << vz ;
-                  
+                          
                           double rad = sqrt( 4*ktx*ktx*vx*vx*vy*vy - 4*(vy*vy + vz*vz)*(ktx*ktx*(vx*vx+vz*vz) - kt*kt*vz*vz)  );
                       
                           double sol1 = (-2*ktx*vx*vy + rad)/2/(vy*vy + vz*vz);
@@ -938,20 +1091,19 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                           kty = sol1;
                       
                           if ((ktx*ktx + sol1*sol1) > kt*kt  )  kty = sol2;
-                  
+                      
                           if ((ktx*ktx + kty*kty) < kt*kt  )
                           {
                               ktz = sqrt( kt*kt - ktx*ktx - kty*kty ) ;
                           
                               double sign = ZeroOneDistribution(*get_mt19937_generator());
-                              
                               if (sign>0.5) ktz = -1*ktz;
+                          
                           
                               if (vz!=0) ktz = (-1*ktx*vx - kty*vy )/vz ;
                           
                               solved = true;
                           }
-                          
                       }
                       else
                       {
@@ -962,7 +1114,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                           ktz = sqrt(1-kty*kty);
                           sign = ZeroOneDistribution(*get_mt19937_generator());
                           if (sign>0.5) ktz = -1*ktz;
-                    
+                          
                       }
                       trials++;
                   }
@@ -972,18 +1124,19 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   double py = pIn[i].py();
                   double pz = pIn[i].pz();
                   double energy = pIn[i].e();
-                  
-                  double p = sqrt(px*px + py*py + pz*pz);
-                  INFO << BOLDBLUE << " p before b & d, E = " << energy << " pz = " << pz << " px = " << px << " py = " << py ;
 
                   
+                  double p = sqrt(px*px + py*py + pz*pz);
+                  
+                  INFO << BOLDBLUE << " p before b & d, E = " << energy << " pz = " << pz << " px = " << px << " py = " << py ;
+ 
                   px += ktx;
                   py += kty;
                   pz += ktz;
                   
                   double np = sqrt(px*px + py*py + pz*pz);
                   JSDEBUG << " p = " << p << " np = " << np;
-                  
+
                   px -= (np-p)*vx;
                   py -= (np-p)*vy;
                   pz -= (np-p)*vz;
@@ -992,180 +1145,41 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   
                   if (abs(nnp-p)>abs(np-p))
                   {
-                      INFO << MAGENTA << " negative condition invoked ! " ;
                       px += 2*(np-p)*vx;
                       py += 2*(np-p)*vy;
                       pz += 2*(np-p)*vz;
                   }
                   
                   np = sqrt(px*px + py*py + pz*pz);
-                  JSDEBUG << "FINAL p = " << p << " np = " << np;
-                  
+                  JSDEBUG << "FINAL p = " << p << " nnnp = " << np;
+
                   pOut.push_back(pIn[i]);
                   int iout = pOut.size()-1;
                   
                   pOut[iout].reset_p(px,py,pz);
                   
                   double drag = ehat*delT;
+                  INFO << MAGENTA << " drag = " << drag << " temperature = " <<  now_temp ;
                   if (np > drag )
                   {
                       px -= drag*vx;
                       py -= drag*vy;
                       pz -= drag*vz;
                       energy -= drag;
-                      pOut[iout].reset_momentum( px , py , pz , energy );
+                      pOut[iout].reset_momentum( px, py , pz , energy );
                   }
                   else
                   {
                       pOut[iout].reset_momentum(0,0,0,1);
                   }
                   
+                  
                   INFO << BOLDYELLOW << " p after b & d, E = " << energy << " pz = " << pz << " px = " << px << " py = " << py ;
 
+                  
+                  
               }
-              
-              
-              //pOut.push_back(pIn[i]);
-          }
-      }
-      else
-      { // virtuality too low lets broaden it
-          
-          double now_zeta = ( ( time + initRdotV + (time - initR0) )/std::sqrt(2) )*fmToGeVinv;
-          //double now_zeta = ( ( time + initRdotV )/std::sqrt(2) )*fmToGeVinv;
-          qhat = fncQhat(now_zeta);
-          if (now_temp>0.1)
-          {
-              ehat = qhat/4.0/now_temp;
-          }
-          else
-          {
-              ehat = qhat/4.0/0.3;
-          }
-          INFO <<BOLDRED<< " after splits broadening qhat = " << qhat << " ehat = " << ehat << " and delT = " << delT ;
-          
-          //INFO << " broadening qhat = " << qhat << " and delT = " << delT ;
-          
-          if ((!recoil_on)&&(qhat>0.0))
-          {
-              double kt = generate_kt(qhat*1.414/0.197, delT);
-              
-              JSDEBUG << " kt generated = "  << kt << " for qhat = " << qhat*1.414/0.197 << " and delT = " << delT ;
-              
-              double ktx, kty, ktz;
-              ktx=kty=ktz=0;
-              double vx = initVx;
-              double vy = initVy;
-              double vz = initVz;
-
-              bool solved = false;
-              
-              int trials = 0;
-              while ((!solved)&&(trials<1000))
-              {
-                  if ((abs(vy)>approx)||(abs(vz)>approx))
-                  {
-                  
-                      ktx = kt*(1 - 2*ZeroOneDistribution(*get_mt19937_generator()) );
-                  
-                      JSDEBUG << " vx = " << vx << " vy = " << vy << " vz = " << vz ;
-                      
-                      double rad = sqrt( 4*ktx*ktx*vx*vx*vy*vy - 4*(vy*vy + vz*vz)*(ktx*ktx*(vx*vx+vz*vz) - kt*kt*vz*vz)  );
-                  
-                      double sol1 = (-2*ktx*vx*vy + rad)/2/(vy*vy + vz*vz);
-                      double sol2 = (-2*ktx*vx*vy - rad)/2/(vy*vy + vz*vz);
-                  
-                      kty = sol1;
-                  
-                      if ((ktx*ktx + sol1*sol1) > kt*kt  )  kty = sol2;
-                  
-                      if ((ktx*ktx + kty*kty) < kt*kt  )
-                      {
-                          ktz = sqrt( kt*kt - ktx*ktx - kty*kty ) ;
-                      
-                          double sign = ZeroOneDistribution(*get_mt19937_generator());
-                          if (sign>0.5) ktz = -1*ktz;
-                      
-                      
-                          if (vz!=0) ktz = (-1*ktx*vx - kty*vy )/vz ;
-                      
-                          solved = true;
-                      }
-                  }
-                  else
-                  {
-                      ktx = 0;
-                      kty = kt*(1 - 2*ZeroOneDistribution(*get_mt19937_generator()) );
-                      double sign = ZeroOneDistribution(*get_mt19937_generator());
-                      if (sign>0.5) kty = -1*kty;
-                      ktz = sqrt(1-kty*kty);
-                      sign = ZeroOneDistribution(*get_mt19937_generator());
-                      if (sign>0.5) ktz = -1*ktz;
-                      
-                  }
-                  trials++;
-              }
-              
-              INFO << MAGENTA << " ktx = " << ktx << " kty = " << kty << " ktz = " << ktz ;
-              double px = pIn[i].px();
-              double py = pIn[i].py();
-              double pz = pIn[i].pz();
-              double energy = pIn[i].e();
-
-              
-              double p = sqrt(px*px + py*py + pz*pz);
-              
-              INFO << BOLDBLUE << " p before b & d, E = " << energy << " pz = " << pz << " px = " << px << " py = " << py ;
- 
-              px += ktx;
-              py += kty;
-              pz += ktz;
-              
-              double np = sqrt(px*px + py*py + pz*pz);
-              JSDEBUG << " p = " << p << " np = " << np;
-
-              px -= (np-p)*vx;
-              py -= (np-p)*vy;
-              pz -= (np-p)*vz;
-              
-              double nnp = sqrt(px*px + py*py + pz*pz);
-              
-              if (abs(nnp-p)>abs(np-p))
-              {
-                  px += 2*(np-p)*vx;
-                  py += 2*(np-p)*vy;
-                  pz += 2*(np-p)*vz;
-              }
-              
-              np = sqrt(px*px + py*py + pz*pz);
-              JSDEBUG << "FINAL p = " << p << " nnnp = " << np;
-
-              pOut.push_back(pIn[i]);
-              int iout = pOut.size()-1;
-              
-              pOut[iout].reset_p(px,py,pz);
-              
-              double drag = ehat*delT;
-              INFO << MAGENTA << " drag = " << drag << " temperature = " <<  now_temp ;
-              if (np > drag )
-              {
-                  px -= drag*vx;
-                  py -= drag*vy;
-                  pz -= drag*vz;
-                  energy -= drag;
-                  pOut[iout].reset_momentum( px, py , pz , energy );
-              }
-              else
-              {
-                  pOut[iout].reset_momentum(0,0,0,1);
-              }
-              
-              
-              INFO << BOLDYELLOW << " p after b & d, E = " << energy << " pz = " << pz << " px = " << px << " py = " << py ;
-
-              
-              
-          }
+          } //end if(broadening_on)
           // pOut.push_back(pIn[i]);
       }
           	  
