@@ -189,7 +189,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   double velocity[4],xStart[4],velocity_jet[4];
     
 
-  VERBOSESHOWER(8)<< MAGENTA << "SentInPartons Signal received : "<<deltaT<<" "<<Q2<<" "<<&pIn;
+  VERBOSESHOWER(5)<< MAGENTA << "SentInPartons Signal received : "<<deltaT<<" "<<Q2<<" "<< pIn.size();
       
   double rNum;
         
@@ -400,7 +400,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 
       //if (pIn[i].t() > QS + rounding_error)
       if (pIn[i].t() > Q0*Q0 + rounding_error || ((!in_vac) && now_temp<=T0 && pIn[i].t() > QS*QS + rounding_error))
-      { //
+      {
+          TakeResponsibilityFor ( pIn[i] ); // Generate error if another module already has responsibility.
           double decayTime = pIn[i].mean_form_time()  ;
 	    
           //JSDEBUG << "  deltaT = " << deltaT;

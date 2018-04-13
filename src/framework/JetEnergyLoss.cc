@@ -32,30 +32,11 @@
 #include "JetScapeWriterHepMC.h"
 #endif
 
-//#include "PartonShowerGenerator.h"
-
 #define BOLDCYAN    "\033[1m\033[36m"      /* Bold Cyan */
 
 using namespace std;
 
-/**
-   DELETE ME convenient output
-*/
-
 namespace Jetscape {
-ostream &operator<<(ostream &ostr, const fjcore::PseudoJet & jet) {
-  if (jet == 0) {
-    ostr << " 0 ";
-  } else {
-    ostr << " pt = " << jet.pt()
-	 << " m = " << jet.m()
-	 << " y = " << jet.rap()
-	 << " phi = " << jet.phi()
-         << " ClusSeq = " << (jet.has_associated_cs() ? "yes" : "no");
-  }                                                      
-  return ostr;
-}
-
 
 JetEnergyLoss::JetEnergyLoss()
 {
@@ -98,9 +79,6 @@ JetEnergyLoss::JetEnergyLoss(const JetEnergyLoss &j)
   SetSentInPartonsConnected(false);
   SetGetOutPartonsConnected(false);
   
-  //inP=j.inP;
-  //pShower=j.pShower; // to be checked ...
-
   deltaT=j.deltaT;
   maxT=j.maxT;
   
