@@ -98,7 +98,7 @@ class InitialState : public JetScapeModuleBase {
       @return The un-normalized probability density of binary collisions.
       @sa Function CoordFromIdx(int idx) for mapping of the index of the vector num_of_binary_collisions_ to the fluid cell at location (x, y, z or eta).
    */
-  inline std::vector<double> GetNumBinaryCollisions() {return num_of_binary_collisions_;};
+  inline std::vector<double> GetNumOfBinaryCollisions() {return num_of_binary_collisions_;};
 
   //! @return the event id 
   int GetEventId() const {return(event_id_);}
@@ -114,13 +114,13 @@ class InitialState : public JetScapeModuleBase {
 
   /**  @return The maximum value of coordinate "x" in the nuclear profile of a nucleus.
    */
-  inline double getXMax(){ return grid_max_x_; }
+  inline double GetXMax(){ return grid_max_x_; }
   /** @return The step-size "dx" used to discretize the nuclear profile of a nucleus in x-direction.
    */
   inline double GetXStep(){ return grid_step_x_; }
   /** @return The maximum value of coordinate "y" in the nuclear profile of a nucleus.                       
   */
-  inline double getYMax(){ return grid_max_y_; }
+  inline double GetYMax(){ return grid_max_y_; }
   /** @return The step-size "dy" used to discretize the nuclear profile of a nucleus in y-direction. 
   */
   inline double GetYStep(){ return grid_step_y_; }
@@ -179,20 +179,20 @@ class InitialState : public JetScapeModuleBase {
   /**  @return The initial state entropy density distribution.
        @sa Function CoordFromIdx(int idx) for mapping of the index of the vector entropy_density_distribution_ to the fluid cell at location (x, y, z or eta).
    */
-  inline std::vector<double> GetEntropyDensityDistribution() {return entropy_density_distribution_;};
+  //inline std::vector<double> GetEntropyDensityDistribution() {return entropy_density_distribution_;};
 
   // one can sample jet production position from Ta * Tb
   // where Ta * Tb is the distribution of num_of_binary_collisions
   /** @return The un-normalized probability density of binary collisions.
       @sa Function CoordFromIdx(int idx) for mapping of the index of the vector num_of_binary_collisions_ to the fluid cell at location (x, y, z or eta).
    */
-  inline std::vector<double> GetNumOfBinaryCollisions() {return num_of_binary_collisions_;};
+  //inline std::vector<double> GetNumOfBinaryCollisions() {return num_of_binary_collisions_;};
     
   // compute 3d coordinates (x, y, z) given the 1D index in vector
   /** @return Grid point (x,y,z or eta). 
       @param idx is an integer which maps to an unique unit cell in the coordinate space (x,y,z or eta). 
    */
-  std::tuple<double, double, double> CoordFromIdx(int idx);
+  //std::tuple<double, double, double> CoordFromIdx(int idx);
 
   // xml_ reads the xml configurations for initial states
   /** It is used to access the input parameters from the XML file relevant to the initial state physics.
@@ -200,8 +200,8 @@ class InitialState : public JetScapeModuleBase {
   tinyxml2::XMLElement * xml_;
     
   int event_id_;
-  int GetEventId() const {return(event_id_);}
-  void SetEventId(int event_id_in) {event_id_ = event_id_in;}
+  //int GetEventId() const {return(event_id_);}
+  //void SetEventId(int event_id_in) {event_id_ = event_id_in;}
 
   // default assumption: x range = [-grid_max_x_, grid_max_x_]
   // default assumption: y range = [-grid_max_y_, grid_max_y_]

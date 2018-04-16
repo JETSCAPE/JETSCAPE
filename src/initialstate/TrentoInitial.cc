@@ -309,7 +309,7 @@ void TrentoInitial::Exec() {
             double centrality_min = std::atof(predef->Attribute("centrality_min"));
             double centralitYMax = std::atof(predef->Attribute("centralitYMax"));
             PreDefined(collision_system, centrality_min, centralitYMax,
-                    get_XMax(), GetXStep(), random_seed);
+                    GetXMax(), GetXStep(), random_seed);
         } else if (trento_xml_->Attribute("use_module", "UserDefined") ) {
             auto usrdef = trento_xml_->FirstChildElement("UserDefined");
             std::string projectile(usrdef->Attribute("projectile"));
@@ -318,7 +318,7 @@ void TrentoInitial::Exec() {
             double sqrts_NN = std::atof(usrdef->Attribute("sqrts"));
             double cross_section = std::atof(usrdef->Attribute("cross_section"));
             UserDefined(projectile, target, cross_section,
-                         get_XMax(), GetXStep(), random_seed);
+                         GetXMax(), GetXStep(), random_seed);
         }
     }
 }
