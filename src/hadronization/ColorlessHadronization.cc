@@ -13,6 +13,9 @@
  ******************************************************************************/
 
 #include "ColorlessHadronization.h"
+#include "JetScapeXML.h"
+#include "JetScapeLogger.h"
+#include "tinyxml2.h"
 #include <sstream>
 #include <iostream>
 #include <fstream>
@@ -22,11 +25,7 @@
 using namespace Jetscape;
 using namespace Pythia8;
 
-// Pythia pythia;
-// Event& event      = pythia.event;
-// ParticleData& pdt = pythia.particleData;
-
-//Hadrons output file
+// Hadrons output file
 //ofstream hadfile;
 
 // Initialize static helper here
@@ -46,28 +45,43 @@ ColorlessHadronization::~ColorlessHadronization()
 
 void ColorlessHadronization::Init()
 {
-  //Open output file
+  // Open output file
   //hadfile.open("CH_myhad.dat");
 
-  JSDEBUG<<"Initialize ColorlessHadronization";
-  VERBOSE(8);
+  tinyxml2::XMLElement *hadronization= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("JetHadronization" );
 
-  // No event record printout.
-  pythia.readString("Next:numberShowInfo = 0");
-  pythia.readString("Next:numberShowProcess = 0");
-  pythia.readString("Next:numberShowEvent = 0");
+  if ( !hadronization ) {
+    WARN << "Couldn't find tag Jet Hadronization";
+    throw std::runtime_error ("Couldn't find tag Jet Hadronization");
+  }
+  if (hadronization) {
+    string s = hadronization->FirstChildElement( "name" )->GetText();
+    JSDEBUG << s << " to be initializied ...";
 
-  // Standard settings
-  pythia.readString("ProcessLevel:all = off");
+    // Read sqrts to know remnants energies
+    double p_read_xml = 10000 ;
+    hadronization->FirstChildElement("eCMforHadronization")->QueryDoubleText(&p_read_xml);
+    p_fake = p_read_xml;
+
+    JSDEBUG<<"Initialize ColorlessHadronization";
+    VERBOSE(8);
+
+    // No event record printout.
+    pythia.readString("Next:numberShowInfo = 0");
+    pythia.readString("Next:numberShowProcess = 0");
+    pythia.readString("Next:numberShowEvent = 0");
+
+    // Standard settings
+    pythia.readString("ProcessLevel:all = off");
   
-  // Don't let pi0 decay
-  pythia.readString("111:mayDecay = off");
+    // Don't let pi0 decay
+    pythia.readString("111:mayDecay = off");
 
-  // XML settings to be incorporated
+    // Don't let any hadron decay
+    //pythia.readString("HadronLevel:Decay = off");
 
-  // And initialize
-  pythia.init();
-
+    // And initialize
+    pythia.init();
 }
 
 void ColorlessHadronization::WriteTask(weak_ptr<JetScapeWriter> w)
@@ -83,9 +97,16 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
   INFO<<"Start Hadronizing using PYTHIA Lund string model (does NOT use color flow, needs to be tested)...";
   Event& event      = pythia.event;
   ParticleData& pdt = pythia.particleData;
+  
   event.reset();
 
-  //Hadronize all showers together
+  // Set remnants momentum
+  double rempx=0.2;
+  double rempy=0.2;
+  double rempz=p_fake;
+  double reme=std::sqrt(std::pow(rempx,2.)+std::pow(rempy,2.)+std::pow(rempz,2.));
+
+  // Hadronize all showers together
   vector<shared_ptr<Parton>>& pIn = shower.at(0);
   for(unsigned int ishower=1; ishower <  shower.size(); ++ishower)
   {
@@ -100,7 +121,7 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
   int col[pIn.size()+2], acol[pIn.size()+2], isdone[pIn.size()+2];
   memset( col, 0, (pIn.size()+2)*sizeof(int) ), memset( acol, 0, (pIn.size()+2)*sizeof(int) ), memset( isdone, 0, (pIn.size()+2)*sizeof(int) );
   
-  //Find number of quarks
+  // Find number of quarks
   int nquarks=0;
   int isquark[pIn.size()+2];
   memset( isquark, 0, (pIn.size()+2)*sizeof(int) );
@@ -113,15 +134,15 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
   }
   JSDEBUG << "#Quarks = " << nquarks;
   
-  //Find number of strings
+  // Find number of strings
   int nstrings=max(int(double(nquarks)/2.+0.6),1);
   JSDEBUG << "#Strings = " << nstrings;
-  //If there are no quarks, need to attach two of them
+  // If there are no quarks, need to attach two of them
   int istring=0;
   int one_end[nstrings], two_end[nstrings];
   if (nquarks==0) {
-    //First quark
-    FourVector p1(0.,0.,1000.,1001.);
+    // First quark
+    FourVector p1(rempx,rempy,rempz,reme);
     FourVector x1;
     pIn.push_back(std::make_shared<Parton> (0,1,0,p1,x1));
     isquark[nquarks]=pIn.size()-1;
@@ -129,8 +150,8 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
     isdone[pIn.size()-1]=1;
     one_end[0]=pIn.size()-1;
     INFO << "Attached quark remnant flying down +Pz beam";
-    //Second quark
-    FourVector p2(0.,0.,-1000.,1001.);
+    // Second quark
+    FourVector p2(rempx,rempy,-rempz,reme);
     FourVector x2;
     pIn.push_back(std::make_shared<Parton> (0,1,0,p2,x2));
     isquark[nquarks]=pIn.size()-1;
@@ -140,7 +161,7 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
     INFO << "Attached quark remnant flying down -Pz beam";
   }
 
-  //Assign ends of strings (order matters in this algo)
+  // Assign ends of strings (order matters in this algo)
   for(unsigned int iquark=0; iquark<nquarks; iquark++) {
     if (isdone[isquark[iquark]]==0) {
       isdone[isquark[iquark]]=1;
@@ -162,7 +183,7 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
         istring+=1;
       }
       else {
-        FourVector p(0.,0.,1000.,1001.);
+        FourVector p(rempx,rempy,rempz,reme);
         FourVector x;
         pIn.push_back(std::make_shared<Parton> (0,1,0,p,x));
         isquark[nquarks]=pIn.size()-1;
@@ -174,7 +195,7 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
     }
   }
 
-  //Assign gluons to a certain string
+  // Assign gluons to a certain string
   int my_string[pIn.size()];
   memset( my_string, 0, pIn.size()*sizeof(int) );
   for(unsigned int ipart=0; ipart <  pIn.size(); ++ipart)
@@ -195,7 +216,7 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
     }
   }
 
-  //Build up chain using gluons assigned to each string, in a closest pair order
+  // Build up chain using gluons assigned to each string, in a closest pair order
   int lab_col=102;
   for (int ns=0; ns<nstrings; ns++)
   {
@@ -229,11 +250,11 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
         link=next_link;
       }
     } while (changes==1);
-    //Attach second end
+    // Attach second end
     if (col[link]==lab_col-1) col[two_end[ns]]=0, acol[two_end[ns]]=lab_col-1;
     else col[two_end[ns]]=lab_col-1, acol[two_end[ns]]=0;
   }
-  //Changing identity of quarks to be consistent with color charge
+  // Changing identity of quarks to be consistent with color charge
   for( int iq=0; iq <  nquarks; ++iq)
   {
     if (col[isquark[iq]]!=0) { 
@@ -244,7 +265,7 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
     }
   }
 
-  //Introduce partons into PYTHIA
+  // Introduce partons into PYTHIA
   /*
   for (unsigned int ipart=0; ipart <  pIn.size(); ++ipart)
   {
@@ -276,10 +297,10 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
       FourVector x;
       hOut.push_back(std::make_shared<Hadron> (Hadron (0,ide,0,p,x)));
       //INFO << "Produced Hadron has id = " << pythia.event[ipart].id();
-      //Print on output file
+      // Print on output file
       //hadfile << pythia.event[ipart].px() << " " << pythia.event[ipart].py() << " " << pythia.event[ipart].pz() << " " << pythia.event[ipart].e() << " " << pythia.event[ipart].id() << " " << pythia.event[ipart].charge() << endl;
     }
   } 
   INFO<<"#Showers hadronized together: " << shower.size() << ". There are " << hOut.size() << " hadrons and " << pOut.size() << " partons after PYTHIA Hadronization";
- // hadfile << "NEXT" << endl;
+  //hadfile << "NEXT" << endl;
 }
