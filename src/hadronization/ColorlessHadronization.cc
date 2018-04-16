@@ -82,6 +82,7 @@ void ColorlessHadronization::Init()
 
     // And initialize
     pythia.init();
+  }
 }
 
 void ColorlessHadronization::WriteTask(weak_ptr<JetScapeWriter> w)
@@ -97,7 +98,11 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
   INFO<<"Start Hadronizing using PYTHIA Lund string model (does NOT use color flow, needs to be tested)...";
   Event& event      = pythia.event;
   ParticleData& pdt = pythia.particleData;
-  
+
+  // Hadronize positive (status = 0) and negative (status = -1) partons in a different space 
+  bool want_pos=1;  
+  had_begin:
+
   event.reset();
 
   // Set remnants momentum
@@ -107,17 +112,23 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
   double reme=std::sqrt(std::pow(rempx,2.)+std::pow(rempy,2.)+std::pow(rempz,2.));
 
   // Hadronize all showers together
-  vector<shared_ptr<Parton>>& pIn = shower.at(0);
-  for(unsigned int ishower=1; ishower <  shower.size(); ++ishower)
+  vector<shared_ptr<Parton>> pIn;
+  for(unsigned int ishower=0; ishower <  shower.size(); ++ishower)
   {
     for(unsigned int ipart=0; ipart <  shower.at(ishower).size(); ++ipart)
     {
-      pIn.push_back(shower.at(ishower).at(ipart));
+      if (shower.at(ishower).at(ipart)->pstat()==0 && want_pos) pIn.push_back(shower.at(ishower).at(ipart));  // Positive
+      if (shower.at(ishower).at(ipart)->pstat()==-1 && !want_pos) pIn.push_back(shower.at(ishower).at(ipart));  // Negative
     }
     JSDEBUG<<"Shower#"<<ishower+1 << ". Number of partons to hadronize so far: " << pIn.size();
   }
-  INFO<<"#Partons to hadronize: " << pIn.size();
-  
+  if (want_pos) INFO<<"# Positive Partons to hadronize: " << pIn.size();
+  else INFO<<"# Negative Partons to hadronize: " << pIn.size(); 
+
+  // Check whether event is empty (specially important for negative partons case)
+  bool do_nothing=0;
+  if (pIn.size()==0) do_nothing=1;
+
   int col[pIn.size()+2], acol[pIn.size()+2], isdone[pIn.size()+2];
   memset( col, 0, (pIn.size()+2)*sizeof(int) ), memset( acol, 0, (pIn.size()+2)*sizeof(int) ), memset( isdone, 0, (pIn.size()+2)*sizeof(int) );
   
@@ -136,11 +147,13 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
   
   // Find number of strings
   int nstrings=max(int(double(nquarks)/2.+0.6),1);
+  if (do_nothing==1) nstrings=0; // No strings if event is empty
+  
   JSDEBUG << "#Strings = " << nstrings;
   // If there are no quarks, need to attach two of them
   int istring=0;
   int one_end[nstrings], two_end[nstrings];
-  if (nquarks==0) {
+  if (nquarks==0 && do_nothing==0) { // Only attach remnants if event is not empty
     // First quark
     FourVector p1(rempx,rempy,rempz,reme);
     FourVector x1;
@@ -290,12 +303,13 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
   pythia.next();
   for (unsigned int ipart=0; ipart < event.size(); ++ipart)
   {
-    if (event[ipart].isFinal() && event[ipart].isHadron())
+    if (event[ipart].isFinal())
     {
       int ide=pythia.event[ipart].id();
       FourVector p(pythia.event[ipart].px(),pythia.event[ipart].py(),pythia.event[ipart].pz(),pythia.event[ipart].e());
       FourVector x;
-      hOut.push_back(std::make_shared<Hadron> (Hadron (0,ide,0,p,x)));
+      if (want_pos) hOut.push_back(std::make_shared<Hadron> (Hadron (0,ide,0,p,x)));  // Positive
+      else hOut.push_back(std::make_shared<Hadron> (Hadron (0,ide,-1,p,x)));  // Negative
       //INFO << "Produced Hadron has id = " << pythia.event[ipart].id();
       // Print on output file
       //hadfile << pythia.event[ipart].px() << " " << pythia.event[ipart].py() << " " << pythia.event[ipart].pz() << " " << pythia.event[ipart].e() << " " << pythia.event[ipart].id() << " " << pythia.event[ipart].charge() << endl;
@@ -303,4 +317,11 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
   } 
   INFO<<"#Showers hadronized together: " << shower.size() << ". There are " << hOut.size() << " hadrons and " << pOut.size() << " partons after PYTHIA Hadronization";
   //hadfile << "NEXT" << endl;
+
+  // GoTo beginning to do negative partons hadronization
+  if (want_pos)
+  {
+    want_pos=0;
+    goto had_begin;
+  }
 }
