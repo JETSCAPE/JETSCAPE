@@ -69,7 +69,7 @@ namespace Jetscape {
     /// Usually this should be just one shared by everybody
     /// but if reproducible seeds are requested,
     /// every task gets their own
-    shared_ptr<std::mt19937> get_mt19937_generator( int TaskId );
+    shared_ptr<std::mt19937> GetMt19937Generator( int TaskId );
   
     // Getters
     static unsigned int GetRandomSeed() { return random_seed_;};
@@ -79,11 +79,11 @@ namespace Jetscape {
     
   private:
 
-    JetScapeTaskSupport() : current_task_number_(0) {};
+    JetScapeTaskSupport() : CurrentTaskNumber(0) {};
 
     static JetScapeTaskSupport* m_pInstance;
     
-    atomic_int current_task_number_;
+    atomic_int CurrentTaskNumber;
     static unsigned int random_seed_;
     static bool initialized_;
     

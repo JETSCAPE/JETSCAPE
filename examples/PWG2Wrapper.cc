@@ -101,8 +101,8 @@ int main(int argc, char** argv)
 
   auto jetscape = make_shared<JetScape>(XMLname,Nevents);
   jetscape->SetId("primary");
-  // jetscape->set_reuse_hydro (true);
-  // jetscape->set_n_reuse_hydro (10);
+  // jetscape->SetReuseHydro (true);
+  // jetscape->SetNReuseHydro (10);
 
   // auto trento = make_shared<TrentoInitial>();
   auto init = make_shared<InitialState>();

@@ -62,10 +62,10 @@ namespace Jetscape {
   // ---------------------------------------------------------------------------
   /** This function returns a random number based on Mersenne-Twister algorithm.
    */
-  shared_ptr<std::mt19937> JetScapeModuleBase::get_mt19937_generator(){
+  shared_ptr<std::mt19937> JetScapeModuleBase::GetMt19937Generator(){
     // Instantiate if it isn't there yet
     if ( !mt19937_generator_ ){
-      mt19937_generator_ = JetScapeTaskSupport::Instance()->get_mt19937_generator( get_my_task_number() );
+      mt19937_generator_ = JetScapeTaskSupport::Instance()->GetMt19937Generator( GetMyTaskNumber() );
     }
     return mt19937_generator_;
   }

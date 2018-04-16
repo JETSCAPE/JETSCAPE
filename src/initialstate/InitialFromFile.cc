@@ -50,9 +50,9 @@ void InitialFromFile::Exec() {
             H5file_ptr_ = H5Fopen(path_with_filename.str().c_str(), H5F_ACC_RDWR, H5P_DEFAULT);
             H5group_ptr_ = H5Gopen(H5file_ptr_, event_group.str().c_str(), H5P_DEFAULT);
 
-            read_configs_();
-            read_nbc_dist_();
-            read_entropy_dist_();
+            ReadConfigs();
+            ReadNbcDist();
+            ReadEntropyDist();
 
             status = H5Gclose(H5group_ptr_);
             status = H5Fclose(H5file_ptr_);
@@ -63,18 +63,18 @@ void InitialFromFile::Exec() {
     }
 }
 
-void InitialFromFile::read_configs_(){
+void InitialFromFile::ReadConfigs(){
     Jetscape::INFO << "Read initial state configurations from file";
     double grid_step = h5_helper_->readH5Attribute_double(H5group_ptr_, "dxy");
     dim_x_ = h5_helper_->readH5Attribute_int(H5group_ptr_, "Nx");
     dim_y_ = h5_helper_->readH5Attribute_int(H5group_ptr_, "Ny");
     double xmax = dim_x_ * grid_step / 2;
-    set_ranges(xmax, xmax, 0.0);
-    set_steps(grid_step, grid_step, 0.0);
+    SetRanges(xmax, xmax, 0.0);
+    SetSteps(grid_step, grid_step, 0.0);
     Jetscape::INFO << "xmax = " << xmax;
 }
 
-void InitialFromFile::read_nbc_dist_(){
+void InitialFromFile::ReadNbcDist(){
     Jetscape::INFO << "Read number of binary collisions from file";
     auto dataset = H5Dopen(H5group_ptr_, "Ncoll_density", H5P_DEFAULT);
     int dimx = dim_x_;
@@ -90,7 +90,7 @@ void InitialFromFile::read_nbc_dist_(){
     status = H5Dclose(dataset);
 }
 
-void InitialFromFile::read_entropy_dist_(){
+void InitialFromFile::ReadEntropyDist(){
     Jetscape::INFO << "Read initial entropy density distribution from file";
     auto dataset = H5Dopen(H5group_ptr_, "matter_density", H5P_DEFAULT);
     int dimx = dim_x_;

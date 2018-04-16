@@ -304,13 +304,13 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           
           if ( pIn[i].pid()>0 )
           {
-             // color = uni(*get_mt19937_generator());
+             // color = uni(*GetMt19937Generator());
               color = 101;
           }
           pIn[i].set_color(color);
           if ( (pIn[i].pid()<0)||(pIn[i].pid()==21) )
           {
-              anti_color = uni(*get_mt19937_generator());
+              anti_color = uni(*GetMt19937Generator());
           }
           pIn[i].set_anti_color(anti_color);
           
@@ -489,7 +489,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   muD2=6.0*pi*soln_alphas*tempLoc*tempLoc;
                   prob_el=42.0*zeta3*el_CR*soln_alphas*tempLoc/6.0/pi/pi*dt_lrf/0.1973;
 
-                  el_rand = ZeroOneDistribution(*get_mt19937_generator());
+                  el_rand = ZeroOneDistribution(*GetMt19937Generator());
 
 		  //cout << "  qhat: " << qhatLoc << "  alphas: " << soln_alphas << "  ener: " << enerLoc << "  prob_el: " << prob_el << "  " << el_rand << endl;
 
@@ -620,11 +620,11 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   }
                   
                   double ratio = val1/(val1+val2);
-                  double r = ZeroOneDistribution(*get_mt19937_generator());
+                  double r = ZeroOneDistribution(*GetMt19937Generator());
                   if (r>ratio)
                   { // qqbar
 		  
-                      double r2 = ZeroOneDistribution(*get_mt19937_generator());
+                      double r2 = ZeroOneDistribution(*GetMt19937Generator());
 		  
                       // assign flavors
                       if (r2>0.6666)
@@ -882,7 +882,7 @@ double Matter::generate_angle()
   double ang, r, blurb;
     
   // r = double(random())/ (maxN );
-  r = ZeroOneDistribution(*get_mt19937_generator());
+  r = ZeroOneDistribution(*GetMt19937Generator());
   //    r = mtrand1();
     
   //    cout << " r = " << r << endl;
@@ -901,13 +901,13 @@ double Matter::generate_vac_t(int p_id, double nu, double t0, double t, double l
     
     
   // r = double(random())/ (maxN );
-  r = ZeroOneDistribution(*get_mt19937_generator());
+  r = ZeroOneDistribution(*GetMt19937Generator());
   //        r = mtrand1();
     
     
   if ((r>=1.0)||(r<=0.0))
     {
-      throw std::runtime_error("error in random number in t *get_mt19937_generator()");
+      throw std::runtime_error("error in random number in t *GetMt19937Generator()");
     }
     
   ratio = 1.0 ;
@@ -1017,11 +1017,11 @@ double  Matter::generate_vac_z(int p_id, double t0, double t, double loc_b, doub
 {
   double r,z, ratio,diff,e,numer1, numer2, numer, denom, z_low, z_hi, z_mid, test;
 
-  r = ZeroOneDistribution(*get_mt19937_generator());
+  r = ZeroOneDistribution(*GetMt19937Generator());
     
   if ((r>1)||(r<0))
     {
-      throw std::runtime_error(" error in random number in z *get_mt19937_generator()");
+      throw std::runtime_error(" error in random number in z *GetMt19937Generator()");
     }
     
   ratio = 1.0 ;
@@ -1111,12 +1111,12 @@ double Matter::generate_L(double form_time)
   double r, x_low, x_high , x , diff , span, val, arg, norm ;
     
   // r = double(random())/ (maxN );
-  r = ZeroOneDistribution(*get_mt19937_generator());
+  r = ZeroOneDistribution(*GetMt19937Generator());
   //    r = mtrand1();
     
   if ((r>1)||(r<0))
     {
-      throw std::runtime_error(" error in random number in z *get_mt19937_generator()");
+      throw std::runtime_error(" error in random number in z *GetMt19937Generator()");
     }
     
   x_low = 0;

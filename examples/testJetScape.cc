@@ -225,15 +225,15 @@ int main(int argc, char** argv)
     parameter_list.hydro_input_filename = *(argv+1);
 
     Brick *brick_ptr = new Brick();
-    brick_ptr->initialize_hydro(parameter_list);
-    brick_ptr->evolve_hydro();
+    brick_ptr->InitializeHydro(parameter_list);
+    brick_ptr->EvolveHydro();
      for (int i=1;i<20;i++)
       {
 	FluidCellInfo* check_fluid_info_ptr = new FluidCellInfo;
-	brick_ptr->get_hydro_info(i, 1.0, 1.0, 0.0, check_fluid_info_ptr);
-	//brick_ptr->print_fluid_cell_information(check_fluid_info_ptr);
+	brick_ptr->GetHydroInfo(i, 1.0, 1.0, 0.0, check_fluid_info_ptr);
+	//brick_ptr->PrintFluidCellInformation(check_fluid_info_ptr);
 	cout<<i<<" "<<check_fluid_info_ptr->energy_density<<" "<<check_fluid_info_ptr->temperature<<endl;
-	cout<<i<<" "<<brick_ptr->get_temperature(i, 1.0, 1.0, 0.0)<<endl;
+	cout<<i<<" "<<brick_ptr->GetTemperature(i, 1.0, 1.0, 0.0)<<endl;
 	delete check_fluid_info_ptr;
       }
   */

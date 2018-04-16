@@ -39,7 +39,7 @@ HydroFromFile::~HydroFromFile() {
 
 
 //! this function loads the hydro files
-void HydroFromFile::initialize_hydro(Parameter parameter_list) {
+void HydroFromFile::InitializeHydro(Parameter parameter_list) {
     JSDEBUG << "Initialize hydro from file (Test) ...";
     VERBOSE(8);
     para_ = GetHydroXML()->FirstChildElement("hydro_from_file");
@@ -120,10 +120,10 @@ void HydroFromFile::read_in_hydro_event(string MUSIC_input_file,
 }
 
 
-void HydroFromFile::evolve_hydro() {
+void HydroFromFile::EvolveHydro() {
     if (hydro_status == FINISHED) {
         clean_hydro_event();
-        hydro_event_idx_ = ini->get_event_id();
+        hydro_event_idx_ = ini->GetEventId();
     }
 
     if (hydro_type_ == 1) {
@@ -228,7 +228,7 @@ void HydroFromFile::clean_hydro_event() {
 
 //! this function returns the thermodynamic and dynamical information at
 //! the given space-time point
-void HydroFromFile::get_hydro_info(
+void HydroFromFile::GetHydroInfo(
         Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
         std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr) {
     if (hydro_status != FINISHED) {
@@ -247,7 +247,7 @@ void HydroFromFile::get_hydro_info(
         double tau_local = sqrt(t*t - z*z);
         double eta_local = 0.5*log((t + z)/(t - z + 1e-15));
         if (std::isnan(tau_local)) {  // check
-            WARN << "[Error]: HydroFromFile::get_hydro_info(): "
+            WARN << "[Error]: HydroFromFile::GetHydroInfo(): "
                  << "tau is nan!";
             WARN << "please check: t = " << t << ", z = " << z;
             exit(1);

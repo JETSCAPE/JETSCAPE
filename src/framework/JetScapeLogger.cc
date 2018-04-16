@@ -90,9 +90,9 @@ namespace Jetscape {
 
 std::ostringstream null;     
 
-safe_ostream safe_cout(std::cout);
-safe_ostream safe_cerr(std::cerr);
-safe_ostream safe_null(null);
+SafeOstream safe_cout(std::cout);
+SafeOstream safe_cerr(std::cerr);
+SafeOstream safe_null(null);
 
 JetScapeLogger* JetScapeLogger::m_pInstance = NULL;
 

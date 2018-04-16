@@ -24,21 +24,21 @@
 
 using namespace Jetscape;
 
-MPI_MUSIC::MPI_MUSIC() {
+MpiMusic::MpiMusic() {
     hydro_status = NOT_START;
     doCooperFrye = 0;
     SetId("MUSIC");
 }
 
 
-MPI_MUSIC::~MPI_MUSIC() {
+MpiMusic::~MpiMusic() {
     if (hydro_status != NOT_START) {
         delete music_hydro_ptr;
     }
 }
 
 
-void MPI_MUSIC::initialize_hydro(Parameter parameter_list) {
+void MpiMusic::InitializeHydro(Parameter parameter_list) {
     INFO << "Initialize MUSIC ...";
     VERBOSE(8);
     tinyxml2::XMLElement *para =
@@ -70,15 +70,15 @@ void MPI_MUSIC::initialize_hydro(Parameter parameter_list) {
 }
 
 
-void MPI_MUSIC::evolve_hydro() {
+void MpiMusic::EvolveHydro() {
     VERBOSE(8);
     INFO << "Initialize density profiles in MUSIC ...";
     std::vector<double> entropy_density = ini->entropy_density_distribution_;
-    double dx = ini->get_x_step();
+    double dx = ini->GetXStep();
     if (pre_eq_ptr == nullptr) {
-        music_hydro_ptr->initialize_hydro_from_vector(entropy_density, dx);
+        music_hydro_ptr->InitializeHydro_from_vector(entropy_density, dx);
     } else {
-        music_hydro_ptr->initialize_hydro_from_pre_equilibrium_vectors(dx,
+        music_hydro_ptr->InitializeHydro_from_pre_equilibrium_vectors(dx,
                                                         pre_eq_ptr->e_,
                                                         pre_eq_ptr->utau_,
                                                         pre_eq_ptr->ux_,
@@ -110,12 +110,12 @@ void MPI_MUSIC::evolve_hydro() {
 }
 
 
-void MPI_MUSIC::get_hydro_info(
+void MpiMusic::GetHydroInfo(
         Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
         std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr) {
     fluid_cell_info_ptr = std::make_unique<FluidCellInfo>();
     fluidCell *fluidCell_ptr = new fluidCell;
-    music_hydro_ptr->get_hydro_info(x, y, z, t, fluidCell_ptr);
+    music_hydro_ptr->GetHydroInfo(x, y, z, t, fluidCell_ptr);
     fluid_cell_info_ptr->energy_density = fluidCell_ptr->ed;
     fluid_cell_info_ptr->entropy_density = fluidCell_ptr->sd;
     fluid_cell_info_ptr->temperature = fluidCell_ptr->temperature;
