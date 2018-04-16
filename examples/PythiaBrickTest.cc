@@ -79,8 +79,8 @@ int main(int argc, char** argv)
 
   auto jetscape = make_shared<JetScape>("./jetscape_init.xml",200);
   jetscape->SetId("primary");
-  // jetscape->set_reuse_hydro (true);
-  // jetscape->set_n_reuse_hydro (10);
+  // jetscape->SetReuseHydro (true);
+  // jetscape->SetNReuseHydro (10);
 
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();

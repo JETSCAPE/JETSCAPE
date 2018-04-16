@@ -54,7 +54,7 @@ class HydroFromFile: public FluidDynamics {
      void clean_hydro_event();
 
      //! This function initials hydro parameters and read in a hydro event
-     void initialize_hydro(Parameter parameter_list);
+     void InitializeHydro(Parameter parameter_list);
 
 
      //! This function load a VISHNew hydro event
@@ -66,17 +66,17 @@ class HydroFromFile: public FluidDynamics {
                               int nskip_tau);
 
      //! This function is a dummy function
-     void evolve_hydro();
+     void EvolveHydro();
 
      //! This function provide fluid cell information at a given
      //! space-time point
-     void get_hydro_info(Jetscape::real t, Jetscape::real x,
+     void GetHydroInfo(Jetscape::real t, Jetscape::real x,
                          Jetscape::real y, Jetscape::real z,
                          std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr);
 
      void set_hydro_event_idx(int idx_in) {hydro_event_idx_ = idx_in;};
      int get_hydro_event_idx() {return(hydro_event_idx_);};
-     void get_hypersurface(Jetscape::real T_cut, SurfaceCellInfo* surface_list_ptr) {};
+     void GetHypersurface(Jetscape::real T_cut, SurfaceCellInfo* surface_list_ptr) {};
 };
 
 #endif  // HYDROFROMFILE_H

@@ -33,7 +33,7 @@ FreestreamMilneWrapper::~FreestreamMilneWrapper() {
 }
 
 
-void FreestreamMilneWrapper::initialize_preequilibrium(PreEquilibriumParameterFile parameter_list) {
+void FreestreamMilneWrapper::InitializePreequilibrium(PreEquilibriumParameterFile parameter_list) {
     INFO << "Initialize freestream-milne ...";
     VERBOSE(8);
     tinyxml2::XMLElement *para = GetPreequilibriumXML()->FirstChildElement("FreestreamMilne");
@@ -47,7 +47,7 @@ void FreestreamMilneWrapper::initialize_preequilibrium(PreEquilibriumParameterFi
 }
 
 
-void FreestreamMilneWrapper::evolve_preequilibrium() {
+void FreestreamMilneWrapper::EvolvePreequilibrium() {
     VERBOSE(8);
     INFO << "Initialize energy density profile in freestream-milne ...";
     // grab initial energy density from vector from initial state module

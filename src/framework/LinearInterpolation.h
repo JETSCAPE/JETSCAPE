@@ -23,7 +23,7 @@ namespace Jetscape{
 
 /// any type with + and scale * overloaded can use this function
 template <class type>
-type linear_int(real x0, real x1, type y0, type y1, real x) {
+type LinearInt(real x0, real x1, type y0, type y1, real x) {
     type temp = ((x - x0) * y1 + (x1 - x) * y0) / (x1 - x0);
     return temp;
 }
@@ -38,7 +38,7 @@ type linear_int(real x0, real x1, type y0, type y1, real x) {
 // f2=f(x1,y1)
 // f3=f(x0,y1)
 template <class type>
-type bilinear_int(real x0, real x1, real y0, real y1,
+type BilinearInt(real x0, real x1, real y0, real y1,
                   type f0, type f1, type f2, type f3,
                   real x, real y) {
     type temp;
@@ -47,8 +47,8 @@ type bilinear_int(real x0, real x1, real y0, real y1,
     if ((std::isfinite(u) == 1) && (std::isfinite(t) == 1)) {
         temp = (1 - t)*(1 - u)*f0+t*(1 - u)*f1 + t*u*f2 + (1 - t)*u*f3;
     } else {
-        if (std::isfinite(u) == 0) temp = linear_int(x0, x1, f0, f2, x);
-        if (std::isfinite(t) == 0) temp = linear_int(y0, y1, f0, f2, y);
+        if (std::isfinite(u) == 0) temp = LinearInt(x0, x1, f0, f2, x);
+        if (std::isfinite(t) == 0) temp = LinearInt(y0, y1, f0, f2, y);
     }
     return temp;
 }
@@ -56,7 +56,7 @@ type bilinear_int(real x0, real x1, real y0, real y1,
 
 // 3D linear interpolation
 template <class type>
-type trilinear_int(real x0, real x1, real y0, real y1, real z0, real z1,
+type TrilinearInt(real x0, real x1, real y0, real y1, real z0, real z1,
                    type f000, type f001, type f010, type f011,
                    type f100, type f101, type f110, type f111,
                    real x, real y, real z) {
@@ -76,11 +76,11 @@ type trilinear_int(real x0, real x1, real y0, real y1, real z0, real z1,
         temp = temp + t*u*v*f111;
     } else {
         if (std::isfinite(t)==0)
-            temp=bilinear_int(y0,y1,z0,z1,f000,f010,f011,f001,y,z);
+            temp=BilinearInt(y0,y1,z0,z1,f000,f010,f011,f001,y,z);
         if (std::isfinite(v)==0)
-            temp=bilinear_int(x0,x1,y0,y1,f000,f100,f110,f010,x,y);
+            temp=BilinearInt(x0,x1,y0,y1,f000,f100,f110,f010,x,y);
         if (std::isfinite(u)==0)
-            temp=bilinear_int(x0,x1,z0,z1,f000,f100,f101,f001,x,z);
+            temp=BilinearInt(x0,x1,z0,z1,f000,f100,f101,f001,x,z);
     }
     return temp;
 }

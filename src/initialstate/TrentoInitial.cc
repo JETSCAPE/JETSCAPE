@@ -206,7 +206,7 @@ TrentoInitial::~TrentoInitial() = default;
 // get one random collision in centrality for the given system
 // stored_system = "AuAu200", "PbPb2760" or "PbPb5020"
 // centrality = "0-5", "5-10", "30-40" or any range "a-b" for 0<=a<b<=100
-void TrentoInitial::pre_defined(std::string stored_system,
+void TrentoInitial::PreDefined(std::string stored_system,
                     double centrality_low, double centrality_high,
                     double grid_max, double grid_step, unsigned random_seed)
 {
@@ -234,9 +234,9 @@ void TrentoInitial::pre_defined(std::string stored_system,
     TrentoCollision collision_(var_map);
 
     double smin, smax;
-    std::tie(smin, smax) = get_entropy_range_(stored_system,
+    std::tie(smin, smax) = GetEntropyRange(stored_system,
                                       centrality_low, centrality_high);
-    collision_.sample_(smin, smax);
+    collision_.Sample(smin, smax);
     info_ = collision_.info_;
     for (const auto& row : collision_.event_.reduced_thickness_grid()) {
       auto&& iter = row.begin();
@@ -252,11 +252,11 @@ void TrentoInitial::pre_defined(std::string stored_system,
     double xmax = nx * grid_step / 2;
     SetRanges(xmax, xmax, 0.0);
     SetSteps(grid_step, grid_step, 0.0);
-    compute_nbc();
+    ComputeNbc();
 }
 
 
-void TrentoInitial::user_defined(std::string projectile, std::string target,
+void TrentoInitial::UserDefined(std::string projectile, std::string target,
                 double cross_section, double grid_max, double grid_step,
                 unsigned random_seed)
 {
@@ -265,7 +265,7 @@ void TrentoInitial::user_defined(std::string projectile, std::string target,
     TrentoCollision collision_(var_map);
     double smin = 0; 
     double smax = std::numeric_limits<double>::max();
-    collision_.sample_(smin, smax);
+    collision_.Sample(smin, smax);
     info_ = collision_.info_;
 
     for (const auto& row : collision_.event_.reduced_thickness_grid()) {
@@ -283,7 +283,7 @@ void TrentoInitial::user_defined(std::string projectile, std::string target,
     double xmax = nx * grid_step / 2;
     SetRanges(xmax, xmax, 0.0);
     SetSteps(grid_step, grid_step, 0.0);
-    compute_nbc();
+    ComputeNbc();
 }
 
 
@@ -300,25 +300,25 @@ void TrentoInitial::Exec() {
         exit(-1);
     } else {
         // trento_xml_->Attribute("A", "B") checks whether the attribute "A" has value "B"
-        auto random_seed = (*get_mt19937_generator())();
+        auto random_seed = (*GetMt19937Generator())();
         VERBOSE(2) << "Random seed used for TrentoInitial class" << random_seed;
-        if ( trento_xml_->Attribute("use_module", "pre_defined") ) {
-            auto predef = trento_xml_->FirstChildElement("pre_defined");
+        if ( trento_xml_->Attribute("use_module", "PreDefined") ) {
+            auto predef = trento_xml_->FirstChildElement("PreDefined");
             std::string collision_system(predef->Attribute("collision_system"));
             VERBOSE(2) << "collision_system=" << collision_system;
             double centrality_min = std::atof(predef->Attribute("centrality_min"));
-            double centrality_max = std::atof(predef->Attribute("centrality_max"));
-            pre_defined(collision_system, centrality_min, centrality_max,
-                    get_x_max(), get_x_step(), random_seed);
-        } else if (trento_xml_->Attribute("use_module", "user_defined") ) {
-            auto usrdef = trento_xml_->FirstChildElement("user_defined");
+            double centralitYMax = std::atof(predef->Attribute("centralitYMax"));
+            PreDefined(collision_system, centrality_min, centralitYMax,
+                    get_XMax(), GetXStep(), random_seed);
+        } else if (trento_xml_->Attribute("use_module", "UserDefined") ) {
+            auto usrdef = trento_xml_->FirstChildElement("UserDefined");
             std::string projectile(usrdef->Attribute("projectile"));
             std::string target(usrdef->Attribute("target"));
             // center of mass collision energy per pair of nucleon
             double sqrts_NN = std::atof(usrdef->Attribute("sqrts"));
             double cross_section = std::atof(usrdef->Attribute("cross_section"));
-            user_defined(projectile, target, cross_section,
-                         get_x_max(), get_x_step(), random_seed);
+            UserDefined(projectile, target, cross_section,
+                         get_XMax(), GetXStep(), random_seed);
         }
     }
 }
@@ -339,7 +339,7 @@ TrentoInitial::TrentoInitial() : InitialState() {
  * for constant eta/s. this function returns the entropy range for
  * one given centrality class from reading a stored collision
  * system*/
-std::tuple<double, double> TrentoInitial::get_entropy_range_(std::string collision_system,
+std::tuple<double, double> TrentoInitial::GetEntropyRange(std::string collision_system,
         double centrality_low, double centrality_high) {
     std::stringstream centrality_class_path;
     centrality_class_path << "data_table/trento_" << collision_system
@@ -389,7 +389,7 @@ std::tuple<double, double> TrentoInitial::get_entropy_range_(std::string collisi
                           interp1d(centrality_low));
 }
 
-void TrentoInitial::compute_nbc() {
+void TrentoInitial::ComputeNbc() {
     for ( const auto si : entropy_density_distribution_ ) {
         auto si_squre = si * si;
         // this works for IP-Glasma like initial condition

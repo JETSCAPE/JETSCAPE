@@ -19,7 +19,7 @@
 
 namespace Jetscape {
 
-void show_jetscape_banner()
+void ShowJetscapeBanner()
 {
   INFO_NICE<<"*--------------------------------------------------------------*";
   INFO_NICE<<"|                                                              |";

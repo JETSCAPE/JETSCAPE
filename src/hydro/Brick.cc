@@ -71,19 +71,19 @@ void Brick::InitTask()
     }
 }
 
-void Brick::initialize_hydro(Parameter parameter_list) {
+void Brick::InitializeHydro(Parameter parameter_list) {
   hydro_status = INITIALIZED;
 }
 
 
-void Brick::evolve_hydro() {
+void Brick::EvolveHydro() {
   VERBOSE(8);
   VERBOSE(2) << "size of sd = " << ini->GetEntropyDensityDistribution().size();
   hydro_status = FINISHED;
 }
 
 
-void Brick::get_hydro_info(real t, real x, real y, real z,
+void Brick::GetHydroInfo(real t, real x, real y, real z,
 			   //                           FluidCellInfo* fluid_cell_info_ptr) {
 			   std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr){
     // create the unique FluidCellInfo here

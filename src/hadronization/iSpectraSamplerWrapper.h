@@ -38,7 +38,7 @@ class iSpectraSamplerWrapper: public SoftParticlization {
     void Clear();
     void WriteTask(weak_ptr<JetScapeWriter> w);
 
-    void pass_hadron_list_to_JETSCAPE();
+    void PassHadronListToJetscape();
 };
 
 #endif  // ISPECTRASAMPLERWRAPPER_H

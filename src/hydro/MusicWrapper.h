@@ -22,7 +22,7 @@ using namespace Jetscape;
 
 //! this is wrapper class for MUSIC so that it can be used as a external
 //! library for the JETSCAPE integrated framework
-class MPI_MUSIC: public FluidDynamics {
+class MpiMusic: public FluidDynamics {
  private:
     // int mode;            //!< records running mode
     MUSIC *music_hydro_ptr;
@@ -30,16 +30,16 @@ class MPI_MUSIC: public FluidDynamics {
                          //!< for soft particles
 
  public:
-     MPI_MUSIC();
-     ~MPI_MUSIC();
+     MpiMusic();
+     ~MpiMusic();
 
-     void initialize_hydro(Parameter parameter_list);
+     void InitializeHydro(Parameter parameter_list);
 
-     void evolve_hydro();
-     void get_hydro_info(
+     void EvolveHydro();
+     void GetHydroInfo(
         Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
 		std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr);
-     void get_hypersurface(Jetscape::real T_cut,
+     void GetHypersurface(Jetscape::real T_cut,
                            SurfaceCellInfo* surface_list_ptr) {};
 };
 

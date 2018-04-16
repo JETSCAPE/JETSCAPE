@@ -25,28 +25,28 @@ using namespace std;
 namespace Jetscape {
   /** For one given time step id_tau,
    * get FluidCellInfo at spatial point (x, y, eta)*/
-  FluidCellInfo EvolutionHistory::get_at_time_step(int id_tau,
+  FluidCellInfo EvolutionHistory::GetAtTimeStep(int id_tau,
 						   real x, real y, real eta) {
-    int id_x = get_id_x(x);
-    int id_y = get_id_y(y);
-    int id_eta = get_id_eta(eta);
+    int id_x = GetIdX(x);
+    int id_y = GetIdY(y);
+    int id_eta = GetIdEta(eta);
     // cijk for idx=i, idy=j and id_eta=k
-    int c000 = cell_index(id_tau, id_x, id_y, id_eta);
-    int c001 = cell_index(id_tau, id_x, id_y, id_eta+1);
-    int c010 = cell_index(id_tau, id_x, id_y+1, id_eta);
-    int c011 = cell_index(id_tau, id_x, id_y+1, id_eta+1);
-    int c100 = cell_index(id_tau, id_x+1, id_y, id_eta);
-    int c101 = cell_index(id_tau, id_x+1, id_y, id_eta+1);
-    int c110 = cell_index(id_tau, id_x+1, id_y+1, id_eta);
-    int c111 = cell_index(id_tau, id_x+1, id_y+1, id_eta+1);
-    real x0 = x_coord(id_x);
-    real x1 = x_coord(id_x + 1);
-    real y0 = y_coord(id_y);
-    real y1 = y_coord(id_y + 1);
-    real eta0 = eta_coord(id_eta);
-    real eta1 = eta_coord(id_eta + 1);
+    int c000 = CellIndex(id_tau, id_x, id_y, id_eta);
+    int c001 = CellIndex(id_tau, id_x, id_y, id_eta+1);
+    int c010 = CellIndex(id_tau, id_x, id_y+1, id_eta);
+    int c011 = CellIndex(id_tau, id_x, id_y+1, id_eta+1);
+    int c100 = CellIndex(id_tau, id_x+1, id_y, id_eta);
+    int c101 = CellIndex(id_tau, id_x+1, id_y, id_eta+1);
+    int c110 = CellIndex(id_tau, id_x+1, id_y+1, id_eta);
+    int c111 = CellIndex(id_tau, id_x+1, id_y+1, id_eta+1);
+    real x0 = XCoord(id_x);
+    real x1 = XCoord(id_x + 1);
+    real y0 = YCoord(id_y);
+    real y1 = YCoord(id_y + 1);
+    real eta0 = EtaCoord(id_eta);
+    real eta1 = EtaCoord(id_eta + 1);
 
-    return trilinear_int(x0, x1, y0, y1, eta0, eta1,
+    return TrilinearInt(x0, x1, y0, y1, eta0, eta1,
 			 data.at(c000), data.at(c001), data.at(c010), data.at(c011),
 			 data.at(c100), data.at(c101), data.at(c110), data.at(c111),
 			 x, y, eta);
@@ -55,13 +55,13 @@ namespace Jetscape {
   // do interpolation along time direction; we may also need high order
   // interpolation functions 
   FluidCellInfo EvolutionHistory::get(real tau, real x, real y, real eta){
-    check_in_range(tau, x, y, eta);
-    int id_tau = get_id_tau(tau);
-    real tau0 = tau_coord(id_tau);
-    real tau1 = tau_coord(id_tau + 1);
-    FluidCellInfo bulk0 = get_at_time_step(id_tau, x, y, eta);
-    FluidCellInfo bulk1 = get_at_time_step(id_tau+1, x, y, eta);
-    return linear_int(tau0, tau1, bulk0, bulk1, tau);
+    CheckInRange(tau, x, y, eta);
+    int id_tau = GetIdTau(tau);
+    real tau0 = TauCoord(id_tau);
+    real tau1 = TauCoord(id_tau + 1);
+    FluidCellInfo bulk0 = GetAtTimeStep(id_tau, x, y, eta);
+    FluidCellInfo bulk1 = GetAtTimeStep(id_tau+1, x, y, eta);
+    return LinearInt(tau0, tau1, bulk0, bulk1, tau);
   }
 
   FluidDynamics::FluidDynamics(){
@@ -105,7 +105,7 @@ namespace Jetscape {
       WARN << "No Pre-equilibrium module";
     }
   
-    initialize_hydro(parameter_list);
+    InitializeHydro(parameter_list);
     InitTask();
 
     JetScapeTask::InitTasks();
@@ -120,7 +120,7 @@ namespace Jetscape {
       VERBOSE(3) << "length of entropy density vector=" << ini->GetEntropyDensityDistribution().size();
     }
 
-    evolve_hydro();  
+    EvolveHydro();  
     JetScapeTask::ExecuteTasks();
   }
 
@@ -136,50 +136,50 @@ namespace Jetscape {
   }
 
   
-  real FluidDynamics::get_energy_density(real time, real x, real y, real z) {
+  real FluidDynamics::GetEnergyDensity(real time, real x, real y, real z) {
     // this function returns the energy density [GeV] at a space time point
     // (time, x, y, z)
     std::unique_ptr<FluidCellInfo> fluid_cell_ptr;
-    get_hydro_info(time, x, y, z, fluid_cell_ptr);
+    GetHydroInfo(time, x, y, z, fluid_cell_ptr);
     real energy_density = fluid_cell_ptr->energy_density;
     // delete fluid_cell_ptr;
     return(energy_density);
   }
 
-  real FluidDynamics::get_entropy_density(real time, real x, real y, real z) {
+  real FluidDynamics::GetEntropyDensity(real time, real x, real y, real z) {
     // this function returns the entropy density [GeV] at a space time point
     // (time, x, y, z)
     // FluidCellInfo *fluid_cell_ptr = new FluidCellInfo;
     std::unique_ptr<FluidCellInfo> fluid_cell_ptr;
-    get_hydro_info(time, x, y, z, fluid_cell_ptr);
+    GetHydroInfo(time, x, y, z, fluid_cell_ptr);
     real entropy_density = fluid_cell_ptr->entropy_density;
     //delete fluid_cell_ptr;
     return(entropy_density);
   }
 
-  real FluidDynamics::get_temperature(real time, real x, real y, real z) {
+  real FluidDynamics::GetTemperature(real time, real x, real y, real z) {
     // this function returns the temperature [GeV] at a space time point
     // (time, x, y, z)
     // FluidCellInfo *fluid_cell_ptr = new FluidCellInfo;
     std::unique_ptr<FluidCellInfo> fluid_cell_ptr;
-    get_hydro_info(time, x, y, z, fluid_cell_ptr);
+    GetHydroInfo(time, x, y, z, fluid_cell_ptr);
     real temperature = fluid_cell_ptr->temperature;
     // delete fluid_cell_ptr;
     return(temperature);
   }
 
-  real FluidDynamics::get_qgp_fraction(real time, real x, real y, real z) {
+  real FluidDynamics::GetQgpFraction(real time, real x, real y, real z) {
     // this function returns the QGP fraction at a space time point
     // (time, x, y, z)
     // FluidCellInfo *fluid_cell_ptr = new FluidCellInfo;
     std::unique_ptr<FluidCellInfo> fluid_cell_ptr;
-    get_hydro_info(time, x, y, z, fluid_cell_ptr);
+    GetHydroInfo(time, x, y, z, fluid_cell_ptr);
     real qgp_fraction = fluid_cell_ptr->qgp_fraction;
     // delete fluid_cell_ptr;
     return(qgp_fraction);
   }
 
-  void FluidDynamics::print_fluid_cell_information(
+  void FluidDynamics::PrintFluidCellInformation(
 						   FluidCellInfo* fluid_cell_info_ptr) {
     // this function print out the information of the fluid cell to the screen
     cout << "=======================================================" << endl;
