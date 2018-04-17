@@ -310,8 +310,8 @@ void TrentoInitial::Exec() {
             double centrality_max = std::atof(predef->Attribute("centrality_max"));
             PreDefined(collision_system, centrality_min, centrality_max,
                     GetXMax(), GetXStep(), random_seed);
-        } else if (trento_xml_->Attribute("use_module", "UserDefined") ) {
-            auto usrdef = trento_xml_->FirstChildElement("UserDefined");
+        } else if (trento_xml_->Attribute("use_module", "user_defined") ) {
+            auto usrdef = trento_xml_->FirstChildElement("user_defined");
             std::string projectile(usrdef->Attribute("projectile"));
             std::string target(usrdef->Attribute("target"));
             // center of mass collision energy per pair of nucleon
