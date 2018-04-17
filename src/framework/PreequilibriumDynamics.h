@@ -37,7 +37,7 @@ class PreequilibriumDynamics : public JetScapeModuleBase {
     tinyxml2::XMLElement *fd;
     PreEquilibriumParameterFile parameter_list_;
     // record preequilibrium start and end proper time [fm/c]
-    real preequilibrium_tau_0_, preequilibrium_TauMax_;
+    real preequilibrium_tau_0_, preequilibrium_tau_max_;
 
  public:
     PreequilibriumDynamics();
@@ -76,7 +76,7 @@ class PreequilibriumDynamics : public JetScapeModuleBase {
     real GetPreequilibriumStartTime() {return(preequilibrium_tau_0_);}
 
     // @return End time (or tau) for hydrodynamic evolution.
-    real GetPreequilibriumEndTime() {return(preequilibrium_TauMax_);}
+    real GetPreequilibriumEndTime() {return(preequilibrium_tau_max_);}
 
     // record preequilibrium running status
     PreequilibriumStatus preequilibrium_status_;
