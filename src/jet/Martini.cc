@@ -1750,12 +1750,12 @@ double Martini::getMomentumTransfer(double pRest, double omega, double T, int pr
     
       // the ranges in which the variables u and phi need to be sampled
       const double y_min = sqrt(omega*omega);
-      const double YMax = u;
+      const double y_max = u;
 
       // randomly select initial values of q=y, such that
       do
 	{
-	  y = y_min+ZeroOneDistribution(*GetMt19937Generator())*(YMax-y_min);
+	  y = y_min+ZeroOneDistribution(*GetMt19937Generator())*(y_max-y_min);
 	  g = functionQ(u, omega, y, process);
 
 	} while (g == 0.);
@@ -1767,9 +1767,9 @@ double Martini::getMomentumTransfer(double pRest, double omega, double T, int pr
 	{        
 	  do
 	    {
-	      y_new = y_min+ZeroOneDistribution(*GetMt19937Generator())*(YMax-y_min); 
+	      y_new = y_min+ZeroOneDistribution(*GetMt19937Generator())*(y_max-y_min); 
 	    }
-	  while (y_new < y_min || y_new > YMax);                      
+	  while (y_new < y_min || y_new > y_max);                      
 	  // check that the new value is in range
 
 	  g_new = functionQ(u, omega, y_new, process); // calculate the function at the proposed point
