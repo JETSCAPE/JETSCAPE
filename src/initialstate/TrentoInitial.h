@@ -57,7 +57,7 @@ class TrentoInitial : public InitialState {
 
     // get one random collision in centrality for the given system
     // stored_system = "auau200", "pbpb2760" or "pbpb5020"
-    // centrality_range = [centrality_min, centrality_ax]
+    // centrality_range = [centrality_min, centrality_max]
     void PreDefined(std::string stored_system,
                     double centrality_min, double centrality_max,
                     double grid_max, double grid_step, unsigned random_seed);
