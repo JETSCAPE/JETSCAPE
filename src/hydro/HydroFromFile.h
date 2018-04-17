@@ -76,7 +76,7 @@ class HydroFromFile: public FluidDynamics {
 
      void set_hydro_event_idx(int idx_in) {hydro_event_idx_ = idx_in;};
      int get_hydro_event_idx() {return(hydro_event_idx_);};
-     void GetHypersurface(Jetscape::real T_cut, SurfaceCellInfo* surface_list_ptr) {};
+     void GetHyperSurface(Jetscape::real T_cut, SurfaceCellInfo* surface_list_ptr) {};
 };
 
 #endif  // HYDROFROMFILE_H

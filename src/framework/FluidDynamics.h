@@ -472,7 +472,7 @@ namespace Jetscape {
     // the detailed implementation is left to the hydro developper
     /** @return Default function to get the hypersurface for Cooper-Frye or recombination model. It can overridden by different modules.
      */
-    virtual void GetHypersurface(Jetscape::real T_cut,
+    virtual void GetHyperSurface(Jetscape::real T_cut,
                                   SurfaceCellInfo* surface_list_ptr) {};
 
     // all the following functions will call function GetHydroInfo()

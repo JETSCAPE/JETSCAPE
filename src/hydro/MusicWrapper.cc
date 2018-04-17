@@ -115,7 +115,7 @@ void MpiMusic::GetHydroInfo(
         std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr) {
     fluid_cell_info_ptr = std::make_unique<FluidCellInfo>();
     fluidCell *fluidCell_ptr = new fluidCell;
-    music_hydro_ptr->GetHydroInfo(x, y, z, t, fluidCell_ptr);
+    music_hydro_ptr->get_hydro_info(x, y, z, t, fluidCell_ptr);
     fluid_cell_info_ptr->energy_density = fluidCell_ptr->ed;
     fluid_cell_info_ptr->entropy_density = fluidCell_ptr->sd;
     fluid_cell_info_ptr->temperature = fluidCell_ptr->temperature;
