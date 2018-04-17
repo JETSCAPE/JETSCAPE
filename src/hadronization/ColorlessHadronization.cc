@@ -116,8 +116,8 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
     {
       for(unsigned int ipart=0; ipart <  shower.at(ishower).size(); ++ipart)
       {
-        if (shower.at(ishower).at(ipart)->pstat()==0 && want_pos) pIn.push_back(shower.at(ishower).at(ipart));  // Positive
-        if (shower.at(ishower).at(ipart)->pstat()==-1 && !want_pos) pIn.push_back(shower.at(ishower).at(ipart));  // Negative
+        if (shower.at(ishower).at(ipart)->pstat()==0 && want_pos==1) pIn.push_back(shower.at(ishower).at(ipart));  // Positive
+        if (shower.at(ishower).at(ipart)->pstat()==-1 && want_pos==0) pIn.push_back(shower.at(ishower).at(ipart));  // Negative
       }
       JSDEBUG<<"Shower#"<<ishower+1 << ". Number of partons to hadronize so far: " << pIn.size();
     }
@@ -305,7 +305,7 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
         int ide=pythia.event[ipart].id();
         FourVector p(pythia.event[ipart].px(),pythia.event[ipart].py(),pythia.event[ipart].pz(),pythia.event[ipart].e());
         FourVector x;
-        if (want_pos) hOut.push_back(std::make_shared<Hadron> (Hadron (0,ide,0,p,x)));  // Positive
+        if (want_pos==1) hOut.push_back(std::make_shared<Hadron> (Hadron (0,ide,0,p,x)));  // Positive
         else hOut.push_back(std::make_shared<Hadron> (Hadron (0,ide,-1,p,x)));  // Negative
         //INFO << "Produced Hadron has id = " << pythia.event[ipart].id();
         // Print on output file
