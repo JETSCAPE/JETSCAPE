@@ -84,7 +84,7 @@ class Martini : public JetEnergyLossModule<Martini> //, public std::enable_share
     int BDMPS;
     double alpha;
     double delta_x;
-    double dXMax;
+    double dx_max;
     double dp;
     double p_min;
     double p_max;
