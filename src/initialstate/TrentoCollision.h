@@ -95,7 +95,7 @@ class TrentoCollision{
     // std::vector<float> entropy_density_;
 
     /// Sample a min-bias impact parameter within the set range.
-    double Sampleimpact_param();
+    double SampleImpactParam();
 
     /// Pair of nucleus projectiles.
     std::unique_ptr<Nucleus> nucleusA_, nucleusB_;
