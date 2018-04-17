@@ -302,13 +302,13 @@ void TrentoInitial::Exec() {
         // trento_xml_->Attribute("A", "B") checks whether the attribute "A" has value "B"
         auto random_seed = (*GetMt19937Generator())();
         VERBOSE(2) << "Random seed used for TrentoInitial class" << random_seed;
-        if ( trento_xml_->Attribute("use_module", "PreDefined") ) {
-            auto predef = trento_xml_->FirstChildElement("PreDefined");
+        if ( trento_xml_->Attribute("use_module", "pre_defined") ) {
+            auto predef = trento_xml_->FirstChildElement("pre_defined");
             std::string collision_system(predef->Attribute("collision_system"));
             VERBOSE(2) << "collision_system=" << collision_system;
             double centrality_min = std::atof(predef->Attribute("centrality_min"));
-            double centralitYMax = std::atof(predef->Attribute("centralitYMax"));
-            PreDefined(collision_system, centrality_min, centralitYMax,
+            double centrality_max = std::atof(predef->Attribute("centrality_max"));
+            PreDefined(collision_system, centrality_min, centrality_max,
                     GetXMax(), GetXStep(), random_seed);
         } else if (trento_xml_->Attribute("use_module", "UserDefined") ) {
             auto usrdef = trento_xml_->FirstChildElement("UserDefined");
