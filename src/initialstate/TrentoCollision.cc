@@ -110,7 +110,7 @@ TrentoCollision::~TrentoCollision() = default;
 void TrentoCollision::Sample(double smin, double smax){
     double b;
     while (true) {
-        b = Sampleimpact_param();
+        b = SampleImpactParam();
         // Pass the prepared nuclei to the Event.  It computes the entropy profile
         // (thickness grid) and other event observables.
         event_.compute(*nucleusA_, *nucleusB_, nucleon_profile_);
@@ -132,7 +132,7 @@ void TrentoCollision::Sample(double smin, double smax){
     // write_stream(std::cout, 2, 1, b, event_);
 }
 
-double TrentoCollision::Sampleimpact_param() {
+double TrentoCollision::SampleImpactParam() {
   // Sample impact parameters until at least one nucleon-nucleon pair
   // participates.  The bool 'collision' keeps track -- it is effectively a
   // logical OR over all possible participant pairs.
