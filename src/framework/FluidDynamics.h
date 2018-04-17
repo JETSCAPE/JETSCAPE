@@ -428,7 +428,7 @@ namespace Jetscape {
 
     /** @return End time (or tau) for hydrodynamic evolution.
      */
-    Jetscape::real GetHydroEndTime() {return(hydro_TauMax);}
+    Jetscape::real GetHydroEndTime() {return(hydro_tau_max);}
     /** @return Freeze-out temperature.
      */
     Jetscape::real GetHydroFreezeOutTemperature() {
@@ -546,7 +546,7 @@ namespace Jetscape {
     
   protected:
     // record hydro start and end proper time [fm/c]
-    Jetscape::real hydro_tau_0, hydro_TauMax;
+    Jetscape::real hydro_tau_0, hydro_tau_max;
     // record hydro freeze out temperature [GeV]
     Jetscape::real hydro_freeze_out_temperature;
     // record hydro running status
