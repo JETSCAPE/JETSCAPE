@@ -85,7 +85,7 @@ void iSpectraSamplerWrapper::InitTask() {
     iSpectraSampler_ptr_->paraRdr_ptr->setVal("MC_sampling", 2);
 
     iSpectraSampler_ptr_->paraRdr_ptr->setVal(
-                                    "Sampleupto_desired_particle_number", 0);
+                                    "sample_upto_desired_particle_number", 0);
     iSpectraSampler_ptr_->paraRdr_ptr->echo();
 }
 
