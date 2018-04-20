@@ -66,7 +66,7 @@ class Matter : public JetEnergyLossModule<Matter> //, public std::enable_shared_
   double initR0,initRx,initRy,initRz,initVx,initVy,initVz,initRdotV,initVdotV,initEner;
   double Q00,Q0,T0;
 
-  static const int dimQhatTab=151;
+  static const int dimQhatTab=201;
   double qhatTab1D[dimQhatTab]={0.0};
   double qhatTab2D[dimQhatTab][dimQhatTab]={{0.0}};
 
