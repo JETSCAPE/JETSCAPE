@@ -2927,11 +2927,6 @@ double Matter::solve_alphas(double var_qhat, double var_ener, double var_temp) {
 	solution=0.5;
     }
 
-    if(solution<0.0 || solution>0.5) {
-        INFO << "unreasonable alpha_s: " << solution << " use alpha_s = 0.5";
-	solution=0.5;
-    }
-
     return(solution);
     
 }
