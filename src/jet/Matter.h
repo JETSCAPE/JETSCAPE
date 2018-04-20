@@ -52,6 +52,7 @@ class Matter : public JetEnergyLossModule<Matter> //, public std::enable_shared_
   double profile(double zeta);
 
   double generate_angle();
+  double generate_kt(double local_qhat,double dzeta);
     
   double qhat,length;
 
@@ -60,12 +61,12 @@ class Matter : public JetEnergyLossModule<Matter> //, public std::enable_shared_
   double fncQhat(double zeta);
   double fncAvrQhat(double zeta, double tau);
 
-  bool in_vac,brick_med,recoil_on;
+  bool in_vac,brick_med,recoil_on,broadening_on;
   double hydro_Tc,qhat0,alphas,brick_length,vir_factor;
-  double initR0,initRx,initRy,initRz,initVx,initVy,initVz,initRdotV,initEner;
+  double initR0,initRx,initRy,initRz,initVx,initVy,initVz,initRdotV,initVdotV,initEner;
   double Q00,Q0,T0;
 
-  static const int dimQhatTab=151;
+  static const int dimQhatTab=201;
   double qhatTab1D[dimQhatTab]={0.0};
   double qhatTab2D[dimQhatTab][dimQhatTab]={{0.0}};
 

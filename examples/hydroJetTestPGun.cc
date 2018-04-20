@@ -12,13 +12,15 @@
  * See COPYING for details.
  ******************************************************************************/
 // ------------------------------------------------------------
-// JetScape Framework Brick Test Program
+// JetScape Framework jet in hydro from file Test Program
 // (use either shared library (need to add paths; see setup.csh)
 // (or create static library and link in)
 // -------------------------------------------------------------
 
 #include <iostream>
 #include <time.h>
+#include <chrono>
+#include <thread>
 
 // JetScape Framework includes ...
 #include "JetScape.h"
@@ -37,13 +39,19 @@
 #include "Martini.h"
 #include "Brick.h"
 #include "GubserHydro.h"
+#include "HydroFromFile.h"
 #include "PGun.h"
+#include "PythiaGun.h"
 #include "PartonPrinter.h"
 #include "HadronizationManager.h"
 #include "Hadronization.h"
 #include "ColoredHadronization.h"
 #include "ColorlessHadronization.h"
 
+#ifdef USE_HDF5
+#include "InitialFromFile.h"
+#endif
+// using namespace std;
 // Add initial state module for test
 #include "TrentoInitial.h"
 
@@ -71,21 +79,21 @@ int main(int argc, char** argv)
   JetScapeLogger::Instance()->SetRemark(false);
   //SetVerboseLevel (9 a lot of additional debug output ...)
   //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevle(9) or 10
-  JetScapeLogger::Instance()->SetVerboseLevel(6);
+  JetScapeLogger::Instance()->SetVerboseLevel(8);
    
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",2000);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml", 1000);
+  // auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",5);
   jetscape->SetId("primary");
-  // jetscape->set_reuse_hydro (true);
-  // jetscape->set_n_reuse_hydro (10);
-  
+  jetscape->set_reuse_hydro (true);
+  jetscape->set_n_reuse_hydro (2000);
+    
+    auto pGun= make_shared<PGun> ();
+
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
-
-  auto trento = make_shared<TrentoInitial>();
-
-  auto hydro = make_shared<Brick> ();
+  auto hydro = make_shared<HydroFromFile> ();
   //auto hydro = make_shared<GubserHydro> ();
   
   auto matter = make_shared<Matter> ();
@@ -99,7 +107,7 @@ int main(int argc, char** argv)
   // This works ... (check with above logic ...)
   //jloss->SetActive(false);
 
-  auto pGun= make_shared<PGun> ();
+  //auto pythiaGun= make_shared<PythiaGun> ();
 
   auto printer = make_shared<PartonPrinter> ();
 
@@ -110,33 +118,44 @@ int main(int argc, char** argv)
 
   // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
-  // autowriter= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");  
+  //auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");  
 #ifdef USE_HEPMC
-  // auto writer= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
+  //auto writer= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
 #endif
   //writer->SetActive(false);
 
   //Remark: For now modules have to be added
   //in proper "workflow" order (can be defined via xml and sorted if necessary)
-  jetscape->Add(trento);
-  jetscape->Add(pGun);
   
+#ifdef USE_HDF5
+  auto initial = make_shared<InitialFromFile>();
+  jetscape->Add(initial);
+#endif
+
+//  jetscape->Add(pythiaGun);
+    jetscape->Add(pGun);
+
+   //Some modifications will be needed for reusing hydro events, so far
+  //simple test hydros always executed "on the fly" ...
   jetscape->Add(hydro);
 
-  // Note: if you use Matter, it MUST come first (to set virtuality)
+  // Matter with silly "toy shower (no physics)
+  // and Martini dummy ...
+  // Switching Q2 (or whatever variable used
+  // hardcoded at 5 to be changed to xml)
   jloss->Add(matter);
-  // jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
-  // jloss->Add(martini);
-  // jloss->Add(adscft);  
-
+  //jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
+  //jloss->Add(martini);
+  //jloss->Add(adscft);
+  
   jlossmanager->Add(jloss);
   
   jetscape->Add(jlossmanager);
 
   jetscape->Add(printer);
 
-  //hadro->Add(hadroModule);
-  hadro->Add(colorless);
+  hadro->Add(hadroModule);
+  //hadro->Add(colorless);
   hadroMgr->Add(hadro);
   jetscape->Add(hadroMgr);
 
@@ -155,14 +174,49 @@ int main(int argc, char** argv)
   INFO_NICE<<"Finished!";
   cout<<endl;
 
-  // wait for 5s
-  //std::this_thread::sleep_for(std::chrono::milliseconds(500000));
+// Some information is only known after the full run,
+  // Therefore store information at the end of the file, in a footer
+/*  writer->WriteComment ( "EVENT GENERATION INFORMATION" );
+  Pythia8::Info& info = pythiaGun->info;
+  std::ostringstream oss;
+  oss.str(""); oss << "nTried    = " << info.nTried();
+  writer->WriteComment ( oss.str() );
+  oss.str(""); oss << "nSelected = " << info.nSelected();
+  writer->WriteComment ( oss.str() );
+  oss.str(""); oss << "nAccepted = " << info.nAccepted();
+  writer->WriteComment ( oss.str() );
+  oss.str(""); oss << "sigmaGen  = " << info.sigmaGen();  
+  writer->WriteComment ( oss.str() );
+  oss.str(""); oss << "sigmaErr  = " << info.sigmaErr();
+  writer->WriteComment ( oss.str() );
 
+  oss.str(""); oss << "eCM  = " << info.eCM();
+  writer->WriteComment ( oss.str() );
+  oss.str(""); oss << "pTHatMin  = " << pythiaGun->GetpTHatMin();
+  writer->WriteComment ( oss.str() );
+  oss.str(""); oss << "pTHatMax  = " << pythiaGun->GetpTHatMax();
+  //writer->WriteComment ( oss.str() );
+  //oss.str(""); oss << "JETSCAPE Random Seed  = " << JetScapeTaskSupport::Instance()->GetRandomSeed();
+  writer->WriteComment ( oss.str() );
+  writer->WriteComment ( "/EVENT GENERATION INFORMATION" );
+*/
   t = clock() - t;
   time(&end);
   printf ("CPU time: %f seconds.\n",((float)t)/CLOCKS_PER_SEC);
   printf ("Real time: %f seconds.\n",difftime(end,start));
-  //printf ("Real time: %f seconds.\n",(start-end));
+
+  // Print pythia statistics
+  // pythiaGun->stat();
+
+  // Demonstrate how to work with pythia statistics
+  //Pythia8::Info& info = pythiaGun->info;
+/*  cout << " nTried    = " << info.nTried() << endl;
+  cout << " nSelected = " << info.nSelected()  << endl;
+  cout << " nAccepted = " << info.nAccepted()  << endl;
+  cout << " sigmaGen  = " <<   info.sigmaGen()  << endl;  
+  cout << " sigmaErr  = " <<   info.sigmaErr()  << endl;
+*/
+  
   return 0;
 }
 
@@ -170,8 +224,8 @@ int main(int argc, char** argv)
 
 void Show()
 {
-  INFO_NICE<<"------------------------------------";
-  INFO_NICE<<"| Brick Test JetScape Framework ... |";
-  INFO_NICE<<"------------------------------------";
+  INFO_NICE<<"------------------------------------------------------";
+  INFO_NICE<<"| Jet in hydro from file Test JetScape Framework ... |";
+  INFO_NICE<<"------------------------------------------------------";
   INFO_NICE;
 }

@@ -311,6 +311,7 @@ namespace Jetscape {
 
     virtual double form_time();
     virtual const double mean_form_time();
+    virtual void reset_p(double px, double py, double pz);
     virtual void set_color(unsigned int col); ///< sets the color of the parton
     virtual void set_anti_color(unsigned int acol); ///< sets anti-color of the parton
     virtual void set_max_color(unsigned int col); ///< sets the color of the parton
