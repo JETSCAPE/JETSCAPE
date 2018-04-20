@@ -187,7 +187,6 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   int iSplit,pid_a,pid_b;
   unsigned int max_color, min_color, min_anti_color;
   double velocity[4],xStart[4],velocity_jet[4];
-    
 
   VERBOSESHOWER(8)<< MAGENTA << "SentInPartons Signal received : "<<deltaT<<" "<<Q2<<" "<<&pIn;
       
@@ -196,8 +195,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   double delT = deltaT;
   double Time = time*fmToGeVinv;
   double deltaTime = delT*fmToGeVinv;
-    double ehat=0;
-    double ehat_over_T2 = 10.0;
+  double ehat=0;
+  double ehat_over_T2 = 10.0;
 
   std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
 
@@ -206,14 +205,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   JSDEBUG << " color = " << pIn[0].color() << " anti-color = " << pIn[0].anti_color();
     
   //JSDEBUG << " For MATTER, the qhat in GeV^-3 = " << qhat ;
- 
-    double qhatbrick;
-    if(brick_med) qhatbrick=qhat0/3.0;
-    qhat = qhat0;
-
-    INFO << " qhat0 = " << qhat0 << " qhat = " << qhat;
-    
-    
+   
   for (int i=0;i<pIn.size();i++)
   {
 
@@ -282,7 +274,6 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 
       int pid = pIn[i].pid();
       
-      
       if (pIn[i].form_time()<0.0) /// A parton without a virtuality or formation time, must set...
       {
           iSplit = 0;
@@ -347,7 +338,6 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           pIn[i].set_min_color(min_color);
           pIn[i].set_min_anti_color(min_anti_color);
           
-            qhat = qhat0;
           //JSDEBUG:
           JSDEBUG ;
           JSDEBUG << " ***************************************************************************** " ;
@@ -396,11 +386,11 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       }
 
       if(Q0<1.0) Q0=1.0;
-      INFO << " qhat before Q0Q0 loop = " << qhat ;
 
       //if (pIn[i].t() > QS + rounding_error)
       if (pIn[i].t() > Q0*Q0 + rounding_error || ((!in_vac) && now_temp<=T0 && pIn[i].t() > QS*QS + rounding_error))
-      { //
+      {
+          TakeResponsibilityFor ( pIn[i] ); // Generate error if another module already has responsibility.
           double decayTime = pIn[i].mean_form_time()  ;
 	    
           //JSDEBUG << "  deltaT = " << deltaT;
@@ -630,8 +620,6 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               double tau_form = 2.0*pIn[i].nu()/t_used;
               double z_low = QS/t_used/2.0 ;
               double z_hi = 1.0 - z_low;
-              
-              INFO << " zeta = " << zeta ;
               
               if (pid==gid)
               { // gluon
@@ -1170,8 +1158,6 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       }
           	  
   } // particle loop
-    
-    //cin >> blurb ;
       
 }
 
@@ -2139,14 +2125,14 @@ double Matter::fillQhatTab() {
 
 	//if(tLoc<initR0-tStep) { // potential problem of making t^2<z^2
 	if(tLoc<initR0 || tLoc<tStart)
-    {
+        {
             qhatTab1D[i] = 0.0; 
             continue;	    
-    }
+        }
 
 	xLoc = initRx+(tLoc-initR0)*initVx; 
-    yLoc = initRy+(tLoc-initR0)*initVy;
-    zLoc = initRz+(tLoc-initR0)*initVz;
+        yLoc = initRy+(tLoc-initR0)*initVy;
+        zLoc = initRz+(tLoc-initR0)*initVz;
 
 //        if(bulkFlag == 1) { // read OSU hydro
 //            readhydroinfoshanshan_(&tLoc,&xLoc,&yLoc,&zLoc,&edLoc,&sdLoc,&tempLoc,&vxLoc,&vyLoc,&vzLoc,&hydro_ctl);
@@ -2877,6 +2863,15 @@ float Matter::ran0(long *idum)
 double Matter::solve_alphas(double var_qhat, double var_ener, double var_temp) {
 
     double preFactor=42.0*Ca*zeta3/pi;
+
+    // reference: qhatLoc = Ca*50.4864/pi*pow(alphas,2)*pow(tempLoc,3)*log(5.7*2.0*pi*tempLoc*tempLoc/4.0/muD2);
+    double max_qhat=preFactor*pow(0.5,2)*pow(var_temp,3)*log(5.7*max(var_ener,2.0*pi*var_temp)/24/pi/0.5/var_temp);
+
+    if(max_qhat<var_qhat) {
+        INFO << "qhat exceeds HTL calculation, use alpha_s = 0.5";
+	return(0.5);
+    }
+
     double solution=sqrt(var_qhat/preFactor/pow(var_temp,3)/log(5.7*max(var_ener,2.0*pi*var_temp)/24/pi/0.2/var_temp));
     double fnc_value,fnc_derivative;
     fnc_value=fnc0_alphas(solution,var_qhat,var_ener,var_temp);
@@ -2890,7 +2885,11 @@ double Matter::solve_alphas(double var_qhat, double var_ener, double var_temp) {
         fnc_value=fnc0_alphas(solution,var_qhat,var_ener,var_temp);
         fnc_derivative=fnc0_derivative_alphas(solution,var_qhat,var_ener,var_temp);
 
-        //cout << "loop: " << solution << "  " << fnc_value << endl;
+    }
+
+    if(solution<0.0 || solution>0.5) {
+        INFO << "unreasonable alpha_s: " << solution << " use alpha_s = 0.5";
+	solution=0.5;
     }
 
     return(solution);
