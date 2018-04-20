@@ -183,7 +183,6 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
   //cout<<" ---> "<<pIn.size()<<endl;
   for (int i=0;i<pIn.size();i++)
     {	  
-      TakeResponsibilityFor ( pIn[i] ); // Generate error if another module already has responsibility.
 
       // pass particle infomation to LBT array (only pass one particle each time)
 
@@ -338,6 +337,8 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
 
           if(flag_update == 0) continue; // no update on this particle from LBT0 function
 
+          TakeResponsibilityFor ( pIn[i] ); // Generate error if another module already has responsibility.
+
           ////cout << "Evolve in LBT -- flag: " << flagScatter << endl;
 
           // pass particle list back to JETSCAPE
@@ -396,6 +397,8 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
       } else { // free-streaming daughter particles from negative particles if they are inside a medium
 
     	  if(flag_update0 == 0) continue; // no update on this particle from LBT0 function
+
+          TakeResponsibilityFor ( pIn[i] ); // Generate error if another module already has responsibility.
 
           if(np != 1) JSDEBUG << "Wrong number of negative partons!";
           ////cout << "Evolve in LBT -- flag: " << flagScatter << endl;
