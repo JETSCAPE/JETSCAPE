@@ -42,7 +42,7 @@ Matter::~Matter()
 
 void Matter::Init()
 {
-  //INFO<<"Intialize Matter ...";
+  INFO<<"Intialize Matter ...";
 
   // Redundant (get this from Base) quick fix here for now
   tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );
@@ -159,8 +159,8 @@ void Matter::Init()
     }
 
     VERBOSE(7)<< MAGENTA << "MATTER input parameter";
-    INFO << "in_vac: " << in_vac << "  brick_med: " << brick_med << "  recoil_on: " << recoil_on;
-    INFO << "Q00: " << Q00 << " vir_factor: " << vir_factor << "  qhat0: " << qhat0 << " alphas: " << alphas << " hydro_Tc: " << hydro_Tc << " brick_length: " << brick_length;
+    INFO << MAGENTA << "in_vac: " << in_vac << "  brick_med: " << brick_med << "  recoil_on: " << recoil_on;
+    INFO << MAGENTA << "Q0: " << Q00 << " vir_factor: " << vir_factor << "  qhat0: " << qhat0 << " alphas: " << alphas << " hydro_Tc: " << hydro_Tc << " brick_length: " << brick_length;
 
   }
   else {
@@ -196,9 +196,10 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   unsigned int max_color, min_color, min_anti_color;
   double velocity[4],xStart[4],velocity_jet[4];
 
+
   VERBOSESHOWER(9)<< MAGENTA << "SentInPartons Signal received : "<<deltaT<<" "<<Q2<<" "<< pIn.size();
     
-   INFO << BOLDYELLOW << " ********************************************************** " ;
+  if(debug_flag) INFO << BOLDYELLOW << " ********************************************************** " ;
       
   double rNum;
         
@@ -210,8 +211,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 
   std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
 
-  INFO << " the time in fm is " << time << " The time in GeV-1 is " << Time ;
-  INFO << "pid = " << pIn[0].pid() << " E = " << pIn[0].e() << " px = " << pIn[0].p(1) << " py = " << pIn[0].p(2) << "  pz = " << pIn[0].p(3) << " virtuality = " << pIn[0].t() << " form_time in fm = " << pIn[0].form_time() ;
+  if(debug_flag) INFO << " the time in fm is " << time << " The time in GeV-1 is " << Time ;
+  if(debug_flag) INFO << "pid = " << pIn[0].pid() << " E = " << pIn[0].e() << " px = " << pIn[0].p(1) << " py = " << pIn[0].p(2) << "  pz = " << pIn[0].p(3) << " virtuality = " << pIn[0].t() << " form_time in fm = " << pIn[0].form_time() ;
   JSDEBUG << " color = " << pIn[0].color() << " anti-color = " << pIn[0].anti_color();
     
   //JSDEBUG << " For MATTER, the qhat in GeV^-3 = " << qhat ;
@@ -219,7 +220,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   for (int i=0;i<pIn.size();i++)
   {
 
-      INFO << " *  parton formation spacetime point= "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z();
+      if(debug_flag) INFO << " *  parton formation spacetime point= "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z();
 
       
       //cout << "MATTER -- status: " << pIn[i].pstat() << "  energy: " << pIn[i].e() << " color: " << pIn[i].color() << "  " << pIn[i].anti_color() << "  clock: " << time << endl;
@@ -264,7 +265,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       // SC
       zeta = ( ( xStart[0] + initRdotV )/std::sqrt(2) )*fmToGeVinv;
       
-      INFO<< BOLDYELLOW << " zeta = " << zeta;
+      if(debug_flag) INFO<< BOLDYELLOW << " zeta = " << zeta;
 
       double now_R0 = time;
       double now_Rx = initRx+(time-initR0)*initVx;
@@ -354,13 +355,13 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           JSDEBUG ;
           JSDEBUG << " ***************************************************************************** " ;
           JSDEBUG<< " ID = " << pIn[i].pid() << " Color = " << pIn[i].color() << " Anti-Color = " << pIn[i].anti_color() ;
-          INFO << " E = " << pIn[i].e() << " px = " << pIn[i].px() << " py = " << pIn[i].py() << " pz = " << pIn[i].pz() ;
-          INFO << " *  New generated virtuality = " << tQ2 << " Mean formation time = " << pIn[i].mean_form_time();
-          INFO << " *  set new formation time to " << pIn[i].form_time() ;
+          if(debug_flag) INFO << " E = " << pIn[i].e() << " px = " << pIn[i].px() << " py = " << pIn[i].py() << " pz = " << pIn[i].pz() ;
+          if(debug_flag) INFO << " *  New generated virtuality = " << tQ2 << " Mean formation time = " << pIn[i].mean_form_time();
+          if(debug_flag) INFO << " *  set new formation time to " << pIn[i].form_time() ;
           JSDEBUG << " * Maximum allowed virtuality = " << pIn[i].e()*pIn[i].e() << "   Minimum Virtuality = " << QS;
-          INFO << " * Qhat = " << qhat << "  Length in fm = "  << length/5.0 ;
-          INFO << " * Jet velocity = " << pIn[i].jet_v().comp(0) << " " << pIn[i].jet_v().comp(1) << "  " << pIn[i].jet_v().comp(2) << "  " << pIn[i].jet_v().comp(3);
-          INFO << " * reset location of parton formation = "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z();
+          if(debug_flag) INFO << " * Qhat = " << qhat << "  Length in fm = "  << length/5.0 ;
+          if(debug_flag) INFO << " * Jet velocity = " << pIn[i].jet_v().comp(0) << " " << pIn[i].jet_v().comp(1) << "  " << pIn[i].jet_v().comp(2) << "  " << pIn[i].jet_v().comp(3);
+          if(debug_flag) INFO << " * reset location of parton formation = "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z();
           JSDEBUG << " ***************************************************************************** " ;
           JSDEBUG ;
           // end DEBUG:
@@ -383,7 +384,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           qhat = fncQhat(zeta);
           ehat = 0.0;
           if (now_temp>0.0) ehat = 4.0*qhat/4.0/now_temp ;
-          INFO << BOLDYELLOW << "at Origin of parton, qhat = " << qhat << " ehat = " << ehat;
+          if(debug_flag) INFO << BOLDYELLOW << "at Origin of parton, qhat = " << qhat << " ehat = " << ehat;
 
           if(Q00 < 0.0)
           { // use dynamical Q0 if Q00 < 0
@@ -412,13 +413,13 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           //JSDEBUG << " parton momentum " << pIn[i].e() << "  " << pIn[i].px() << "  " << pIn[i].py() << "  " << pIn[i].pz();
 	    
           double splitTime = pIn[i].form_time() + pIn[i].x_in().t() ;
-          INFO << " splitTime = " << splitTime;
-          INFO << " qhat before splitime loop = " << qhat ;
+          if(debug_flag) INFO << " splitTime = " << splitTime;
+          if(debug_flag) INFO << " qhat before splitime loop = " << qhat ;
           
           if (splitTime<time)
           {
 
-              INFO << "SPLIT in MATTER" ;
+              if(debug_flag) INFO << "SPLIT in MATTER" ;
     
               // SC: add elastic scattering that generates recoiled and back-reaction partons
               double el_dt=0.1;
@@ -907,8 +908,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       ehat = 10.0*qhat/4.0/0.3;
                   }
 
-                  INFO <<BOLDRED<< " between splits broadening qhat = " << qhat << " ehat = " << ehat << " and delT = " << delT ;
-                  INFO <<BOLDBLUE<< " zeta at formation = " << zeta << " zeta now = " << now_zeta ;
+                  if(debug_flag) INFO <<BOLDRED<< " between splits broadening qhat = " << qhat << " ehat = " << ehat << " and delT = " << delT ;
+                  if(debug_flag) INFO <<BOLDBLUE<< " zeta at formation = " << zeta << " zeta now = " << now_zeta ;
                   
                   if ((!recoil_on)&&(qhat>0.0))
                   {
@@ -971,14 +972,14 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                           trials++;
                       }
                       
-                      INFO << MAGENTA << " ktx = " << ktx << " kty = " << kty << " ktz = " << ktz ;
+                      if(debug_flag) INFO << MAGENTA << " ktx = " << ktx << " kty = " << kty << " ktz = " << ktz ;
                       double px = pIn[i].px();
                       double py = pIn[i].py();
                       double pz = pIn[i].pz();
                       double energy = pIn[i].e();
                       
                       double p = sqrt(px*px + py*py + pz*pz);
-                      INFO << BOLDBLUE << " p before b & d, E = " << energy << " pz = " << pz << " px = " << px << " py = " << py ;
+                      if(debug_flag) INFO << BOLDBLUE << " p before b & d, E = " << energy << " pz = " << pz << " px = " << px << " py = " << py ;
 
                       
                       px += ktx;
@@ -996,7 +997,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       
                       if (abs(nnp-p)>abs(np-p))
                       {
-                          INFO << MAGENTA << " negative condition invoked ! " ;
+                          if(debug_flag) INFO << MAGENTA << " negative condition invoked ! " ;
                           px += 2*(np-p)*vx;
                           py += 2*(np-p)*vy;
                           pz += 2*(np-p)*vz;
@@ -1011,7 +1012,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       pOut[iout].reset_p(px,py,pz);
                       
                       double drag = ehat*delT;
-                      INFO << MAGENTA << " drag = " << drag << " temperature = " <<  now_temp ;
+                      if(debug_flag) INFO << MAGENTA << " drag = " << drag << " temperature = " <<  now_temp ;
                       
                       if ((np > drag)&&(energy >drag)&&( energy>sqrt(px*px + py*py + pz*pz) ) )
                       {
@@ -1023,7 +1024,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       }
                       
                       
-                      INFO << BOLDYELLOW << " p after b & d, E = " << energy << " pz = " << pz << " px = " << px << " py = " << py ;
+                      if(debug_flag) INFO << BOLDYELLOW << " p after b & d, E = " << energy << " pz = " << pz << " px = " << px << " py = " << py ;
 
                   }
               
@@ -1048,8 +1049,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               {
                   ehat = 10.0*qhat/4.0/0.3;
               }
-              INFO <<BOLDRED<< " after splits broadening qhat = " << qhat << " ehat = " << ehat << " and delT = " << delT ;
-              INFO <<BOLDBLUE<< " zeta at formation = " << zeta << " zeta now = " << now_zeta ;
+              if(debug_flag) INFO <<BOLDRED<< " after splits broadening qhat = " << qhat << " ehat = " << ehat << " and delT = " << delT ;
+              if(debug_flag) INFO <<BOLDBLUE<< " zeta at formation = " << zeta << " zeta now = " << now_zeta ;
               
               //INFO << " broadening qhat = " << qhat << " and delT = " << delT ;
               
@@ -1113,7 +1114,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       trials++;
                   }
                   
-                  INFO << MAGENTA << " ktx = " << ktx << " kty = " << kty << " ktz = " << ktz ;
+                  if(debug_flag) INFO << MAGENTA << " ktx = " << ktx << " kty = " << kty << " ktz = " << ktz ;
                   double px = pIn[i].px();
                   double py = pIn[i].py();
                   double pz = pIn[i].pz();
@@ -1122,7 +1123,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   
                   double p = sqrt(px*px + py*py + pz*pz);
                   
-                  INFO << BOLDBLUE << " p before b & d, E = " << energy << " pz = " << pz << " px = " << px << " py = " << py ;
+                  if(debug_flag) INFO << BOLDBLUE << " p before b & d, E = " << energy << " pz = " << pz << " px = " << px << " py = " << py ;
  
                   px += ktx;
                   py += kty;
@@ -1155,7 +1156,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   double drag = ehat*delT;
            
 
-                  INFO << MAGENTA << " drag = " << drag << " temperature = " <<  now_temp ;
+                  if(debug_flag) INFO << MAGENTA << " drag = " << drag << " temperature = " <<  now_temp ;
                   if ((np > drag)&&(energy >drag)&&( energy>sqrt(px*px + py*py + pz*pz) ) )
                   {
                       px -= drag*vx;
@@ -1167,7 +1168,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   
                   
                 
-                  INFO << BOLDYELLOW << " p after b & d, E = " << energy << " pz = " << pz << " px = " << px << " py = " << py ;
+                  if(debug_flag) INFO << BOLDYELLOW << " p after b & d, E = " << energy << " pz = " << pz << " px = " << px << " py = " << py ;
 
               }
               

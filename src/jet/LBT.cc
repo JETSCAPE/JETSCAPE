@@ -129,7 +129,7 @@ void LBT::Init()
   }
 
 
-  VERBOSE(7)<< MAGENTA << "LBT parameters -- in_med: " << vacORmed << " Q0: " << Q00 << "  only_leading: " << Kprimary << "  alpha_s: " << fixAlphas << "  hydro_Tc: " << hydro_Tc;
+  INFO<< MAGENTA << "LBT parameters -- in_med: " << vacORmed << " Q0: " << Q00 << "  only_leading: " << Kprimary << "  alpha_s: " << fixAlphas << "  hydro_Tc: " << hydro_Tc;
 
   read_tables(); // initialize various tables
 
@@ -3462,17 +3462,17 @@ double LBT::nHQgluon(int parID,double dtLRF,double &time_gluon,double &temp_med,
     time_gluon=t_max;
   }
 
-  if(temp_med>temp_max) {
-    cout << "temperature exceeds temp_max -- extrapolation is used" << endl;
-    cout << time_gluon << "    " << temp_med << "    " << HQenergy << endl;
-    //     temp_med=temp_max;
-  }
+  //if(temp_med>temp_max) {
+  //  cout << "temperature exceeds temp_max -- extrapolation is used" << endl;
+  //  cout << time_gluon << "    " << temp_med << "    " << HQenergy << endl;
+  //  //     temp_med=temp_max;
+  //}
 
-  if(HQenergy>HQener_max) {
-    cout << "HQenergy exceeds HQener_max -- extrapolation is used" << endl;
-    cout << time_gluon << "    " << temp_med << "    " << HQenergy << endl;
-    //     HQenergy=HQener_max;
-  }
+  //if(HQenergy>HQener_max) {
+  //  cout << "HQenergy exceeds HQener_max -- extrapolation is used" << endl;
+  //  cout << time_gluon << "    " << temp_med << "    " << HQenergy << endl;
+  //  //     HQenergy=HQener_max;
+  //}
 
   if(temp_med<temp_min) {
     cout << "temperature drops below temp_min" << endl;
