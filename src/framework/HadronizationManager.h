@@ -40,18 +40,22 @@ class HadronizationManager : public JetScapeTask, public std::enable_shared_from
   
   void CreateSignalSlots();
 
-  //sigslot::signal1<vector<shared_ptr<Hadron>>& > GetHadronList;
+  sigslot::signal1<vector<shared_ptr<Hadron>>& > GetHadronList;
 
   sigslot::signal1<vector<vector<shared_ptr<Parton>>>& > GetFinalPartonList;
 
   void SetGetFinalPartonListConnected(bool m_GetFinalPartonListConnected) {GetFinalPartonListConnected=m_GetFinalPartonListConnected;}
   const bool GetGetFinalPartonListConnected() {return GetFinalPartonListConnected;}
 
+  void SetGetHadronListConnected(bool m_GetHadronListConnected) {GetHadronListConnected=m_GetHadronListConnected;}
+  const bool GetGetHadronListConnected() {return GetHadronListConnected;}
+
  private:
 
   bool GetFinalPartonListConnected;
+  bool GetHadronListConnected;
   vector<vector<shared_ptr<Parton>>> hd;
-  
+  vector<shared_ptr<Hadron>> hadrons;  
 };
 
 } // end namespace Jetscape

@@ -51,6 +51,14 @@ void JetScapeSignalManager::ConnectGetFinalPartonListSignal(shared_ptr<Hadroniza
       hm->SetGetFinalPartonListConnected(true);
     }
   }
+
+  if ( !hm->GetGetHadronListConnected() ){
+    auto hpp = GetHardProcessPointer().lock();
+    if ( hpp ) {
+      hm->GetHadronList.connect(hpp.get(),&HardProcess::GetHadronList);
+      hm->SetGetHadronListConnected(true);
+    }
+  }
 }
 
 void JetScapeSignalManager::ConnectJetSignal(shared_ptr<JetEnergyLoss> j) 
