@@ -197,7 +197,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   double velocity[4],xStart[4],velocity_jet[4];
     
 
-  VERBOSESHOWER(5)<< MAGENTA << "SentInPartons Signal received : "<<deltaT<<" "<<Q2<<" "<< pIn.size();
+  VERBOSESHOWER(9)<< MAGENTA << "SentInPartons Signal received : "<<deltaT<<" "<<Q2<<" "<< pIn.size();
+    
+   INFO << BOLDYELLOW << " ********************************************************** " ;
       
   double rNum;
         
@@ -269,6 +271,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 
       // SC
       zeta = ( ( xStart[0] + initRdotV )/std::sqrt(2) )*fmToGeVinv;
+      
+      INFO<< BOLDYELLOW << " zeta = " << zeta;
 
       double now_R0 = time;
       double now_Rx = initRx+(time-initR0)*initVx;
@@ -364,9 +368,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           INFO << " *  New generated virtuality = " << tQ2 << " Mean formation time = " << pIn[i].mean_form_time();
           INFO << " *  set new formation time to " << pIn[i].form_time() ;
           JSDEBUG << " * Maximum allowed virtuality = " << pIn[i].e()*pIn[i].e() << "   Minimum Virtuality = " << QS;
-          INFO << " * Qhat = " << qhat << "  Length = "  << length ;
-          JSDEBUG << " * Jet velocity = " << pIn[i].jet_v().comp(0) << " " << pIn[i].jet_v().comp(1) << "  " << pIn[i].jet_v().comp(2) << "  " << pIn[i].jet_v().comp(3);
-          JSDEBUG << " * reset location of parton formation = "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z();
+          INFO << " * Qhat = " << qhat << "  Length in fm = "  << length/5.0 ;
+          INFO << " * Jet velocity = " << pIn[i].jet_v().comp(0) << " " << pIn[i].jet_v().comp(1) << "  " << pIn[i].jet_v().comp(2) << "  " << pIn[i].jet_v().comp(3);
+          INFO << " * reset location of parton formation = "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z();
           JSDEBUG << " ***************************************************************************** " ;
           JSDEBUG ;
           // end DEBUG:
@@ -387,8 +391,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       { // for medium
           double tempEner = initEner;
           qhat = fncQhat(zeta);
-          ehat = qhat/4.0/now_temp ;
-          INFO << BOLDYELLOW << "qhat = " << qhat << " ehat = " << ehat;
+          ehat = 0.0;
+          if (now_temp>0.0) ehat = 4.0*qhat/4.0/now_temp ;
+          INFO << BOLDYELLOW << "at Origin of parton, qhat = " << qhat << " ehat = " << ehat;
 
           if(Q00 < 0.0)
           { // use dynamical Q0 if Q00 < 0
@@ -404,7 +409,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       }
 
       if(Q0<1.0) Q0=1.0;
-      INFO << " qhat before Q0Q0 loop = " << qhat ;
+      VERBOSE(8) << " qhat before Q0Q0 loop = " << qhat ;
 
       //if (pIn[i].t() > QS + rounding_error)
       if (pIn[i].t() > Q0*Q0 + rounding_error || ((!in_vac) && now_temp<=T0 && pIn[i].t() > QS*QS + rounding_error))
@@ -413,8 +418,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           double decayTime = pIn[i].mean_form_time()  ;
 	    
           //JSDEBUG << "  deltaT = " << deltaT;
-          INFO << " parton origin time = " << pIn[i].x_in().t() << " parton formation time = " << pIn[i].form_time();
-          INFO << " parton id " << pIn[i].pid() << " parton virtuality = " << pIn[i].t();
+          VERBOSE(8) << " parton origin time = " << pIn[i].x_in().t() << " parton formation time = " << pIn[i].form_time();
+          VERBOSE(8) << " parton id " << pIn[i].pid() << " parton virtuality = " << pIn[i].t();
           //JSDEBUG << " parton momentum " << pIn[i].e() << "  " << pIn[i].px() << "  " << pIn[i].py() << "  " << pIn[i].pz();
 	    
           double splitTime = pIn[i].form_time() + pIn[i].x_in().t() ;
@@ -908,14 +913,15 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   qhat = fncQhat(now_zeta);
                   if (now_temp>0.1)
                   {
-                      ehat = qhat/4.0/now_temp;
+                      ehat = 10.0*qhat/4.0/now_temp;
                   }
                   else
                   {
-                      ehat = qhat/4.0/0.3;
+                      ehat = 10.0*qhat/4.0/0.3;
                   }
 
                   INFO <<BOLDRED<< " between splits broadening qhat = " << qhat << " ehat = " << ehat << " and delT = " << delT ;
+                  INFO <<BOLDBLUE<< " zeta at formation = " << zeta << " zeta now = " << now_zeta ;
                   
                   if ((!recoil_on)&&(qhat>0.0))
                   {
@@ -970,7 +976,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                               kty = kt*(1 - 2*ZeroOneDistribution(*get_mt19937_generator()) );
                               double sign = ZeroOneDistribution(*get_mt19937_generator());
                               if (sign>0.5) kty = -1*kty;
-                              ktz = sqrt(1-kty*kty);
+                              ktz = sqrt(kt*kt-kty*kty);
                               sign = ZeroOneDistribution(*get_mt19937_generator());
                               if (sign>0.5) ktz = -1*ktz;
                         
@@ -1018,7 +1024,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       pOut[iout].reset_p(px,py,pz);
                       
                       double drag = ehat*delT;
-                      if (np > drag )
+                      INFO << MAGENTA << " drag = " << drag << " temperature = " <<  now_temp ;
+                      
+                      if ((np > drag)&&(energy >drag)&&( energy>sqrt(px*px + py*py + pz*pz) ) )
                       {
                           px -= drag*vx;
                           py -= drag*vy;
@@ -1026,10 +1034,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                           energy -= drag;
                           pOut[iout].reset_momentum( px , py , pz , energy );
                       }
-                      else
-                      {
-                          pOut[iout].reset_momentum(0,0,0,1);
-                      }
+                      
                       
                       INFO << BOLDYELLOW << " p after b & d, E = " << energy << " pz = " << pz << " px = " << px << " py = " << py ;
 
@@ -1050,13 +1055,14 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               qhat = fncQhat(now_zeta);
               if (now_temp>0.1)
               {
-                  ehat = qhat/4.0/now_temp;
+                  ehat = 10.0*qhat/4.0/now_temp;
               }
               else
               {
-                  ehat = qhat/4.0/0.3;
+                  ehat = 10.0*qhat/4.0/0.3;
               }
               INFO <<BOLDRED<< " after splits broadening qhat = " << qhat << " ehat = " << ehat << " and delT = " << delT ;
+              INFO <<BOLDBLUE<< " zeta at formation = " << zeta << " zeta now = " << now_zeta ;
               
               //INFO << " broadening qhat = " << qhat << " and delT = " << delT ;
               
@@ -1112,7 +1118,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                           kty = kt*(1 - 2*ZeroOneDistribution(*get_mt19937_generator()) );
                           double sign = ZeroOneDistribution(*get_mt19937_generator());
                           if (sign>0.5) kty = -1*kty;
-                          ktz = sqrt(1-kty*kty);
+                          ktz = sqrt(kt*kt-kty*kty);
                           sign = ZeroOneDistribution(*get_mt19937_generator());
                           if (sign>0.5) ktz = -1*ktz;
                           
@@ -1158,10 +1164,12 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   int iout = pOut.size()-1;
                   
                   pOut[iout].reset_p(px,py,pz);
-                  
+                  np = sqrt(px*px + py*py + pz*pz );
                   double drag = ehat*delT;
+           
+
                   INFO << MAGENTA << " drag = " << drag << " temperature = " <<  now_temp ;
-                  if (np > drag )
+                  if ((np > drag)&&(energy >drag)&&( energy>sqrt(px*px + py*py + pz*pz) ) )
                   {
                       px -= drag*vx;
                       py -= drag*vy;
@@ -1169,21 +1177,18 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       energy -= drag;
                       pOut[iout].reset_momentum( px, py , pz , energy );
                   }
-                  else
-                  {
-                      pOut[iout].reset_momentum(0,0,0,1);
-                  }
                   
                   
+                
                   INFO << BOLDYELLOW << " p after b & d, E = " << energy << " pz = " << pz << " px = " << px << " py = " << py ;
 
-                  
-                  
               }
-          } //end if(broadening_on)
-          // pOut.push_back(pIn[i]);
+              
+              
+              //pOut.push_back(pIn[i]);
+          }
       }
-          	  
+      
   } // particle loop
     
     //cin >> blurb ;
@@ -1635,6 +1640,8 @@ double Matter::sud_z_GG(double cg, double cg1, double loc_e , double l_fac, doub
       qL = qhat*0.6*tau;
   }
 
+    
+    
   res = t25 + 2.0*qL*q12/cg1 ;
   //        }
   //        else{
@@ -2022,7 +2029,7 @@ double Matter::sud_z_QG(double cg, double cg1, double loc_e, double l_fac,double
       qL = qhat*0.6*tau;
   }
 
-
+    //INFO << BOLDRED << " qhat L = " << qL << " location = " << loc_e << " tau = " << tau << " length = " << length;
     
   res = t17 + 2.0*qL*q14/cg1 ;
     
@@ -2149,19 +2156,20 @@ double Matter::fillQhatTab() {
 
     std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
 
-    for(int i = 0; i < dimQhatTab; i++) {
+    for(int i = 0; i < dimQhatTab; i++)
+    {
         tLoc = tStep*i;
 
-	//if(tLoc<initR0-tStep) { // potential problem of making t^2<z^2
-	if(tLoc<initR0 || tLoc<tStart)
-    {
+        //if(tLoc<initR0-tStep) { // potential problem of making t^2<z^2
+        if(tLoc<initR0 || tLoc<tStart)
+        {
             qhatTab1D[i] = 0.0; 
             continue;	    
-    }
+        }
 
-	xLoc = initRx+(tLoc-initR0)*initVx; 
-    yLoc = initRy+(tLoc-initR0)*initVy;
-    zLoc = initRz+(tLoc-initR0)*initVz;
+        xLoc = initRx+(tLoc-initR0)*initVx;
+        yLoc = initRy+(tLoc-initR0)*initVy;
+        zLoc = initRz+(tLoc-initR0)*initVz;
 
 //        if(bulkFlag == 1) { // read OSU hydro
 //            readhydroinfoshanshan_(&tLoc,&xLoc,&yLoc,&zLoc,&edLoc,&sdLoc,&tempLoc,&vxLoc,&vyLoc,&vzLoc,&hydro_ctl);
@@ -2175,24 +2183,27 @@ double Matter::fillQhatTab() {
 //            tempLoc = T;
 //        }
 
-	GetHydroCellSignal(tLoc, xLoc, yLoc, zLoc, check_fluid_info_ptr);
-	VERBOSE(8)<< MAGENTA<<"Temperature from medium = "<<check_fluid_info_ptr->temperature;
+        GetHydroCellSignal(tLoc, xLoc, yLoc, zLoc, check_fluid_info_ptr);
+        VERBOSE(8)<< MAGENTA<<"Temperature from medium = "<<check_fluid_info_ptr->temperature;
 	
-	tempLoc = check_fluid_info_ptr->temperature;
-	sdLoc = check_fluid_info_ptr->entropy_density;
-	vxLoc = check_fluid_info_ptr->vx;
-	vyLoc = check_fluid_info_ptr->vy;
-	vzLoc = check_fluid_info_ptr->vz;
+        tempLoc = check_fluid_info_ptr->temperature;
+        sdLoc = check_fluid_info_ptr->entropy_density;
+        vxLoc = check_fluid_info_ptr->vx;
+        vyLoc = check_fluid_info_ptr->vy;
+        vzLoc = check_fluid_info_ptr->vz;
 
-	hydro_ctl=0;
+        hydro_ctl=0;
 
-        if(hydro_ctl == 0 && tempLoc >= hydro_Tc) { 
+        if(hydro_ctl == 0 && tempLoc >= hydro_Tc)
+        {
             lastLength = tLoc;
             betaLoc = sqrt(vxLoc*vxLoc+vyLoc*vyLoc+vzLoc*vzLoc);
             gammaLoc = 1.0/sqrt(1.0-betaLoc*betaLoc);
             flowFactor = gammaLoc*(1.0-(initVx*vxLoc+initVy*vyLoc+initVz*vzLoc));
 
-            if(qhat0 < 0.0) { // calculate qhat with alphas
+            if(qhat0 < 0.0)
+            {
+                // calculate qhat with alphas
                 double muD2 = 6.0*pi*alphas*tempLoc*tempLoc;
                 // if(initEner > pi*tempLoc) qhatLoc = Ca*alphas*muD2*tempLoc*log(6.0*initEner*tempLoc/muD2);
                 // else qhatLoc = Ca*alphas*muD2*tempLoc*log(6.0*pi*tempLoc*tempLoc/muD2);
@@ -2201,13 +2212,22 @@ double Matter::fillQhatTab() {
                 else qhatLoc = Ca*50.4864/pi*pow(alphas,2)*pow(tempLoc,3)*log(5.7*pi*tempLoc*tempLoc/4.0/muD2);
                 qhatLoc = qhatLoc*flowFactor;
                 if(qhatLoc<0.0) qhatLoc=0.0;
-            } else { // use input qhat
-                if(brick_med) qhatLoc = qhat0*0.1973*flowFactor; 
-		else qhatLoc = qhat0/96.0*sdLoc*0.1973*flowFactor;  // qhat0 at s = 96fm^-3
+            }
+            else
+            { // use input qhat
+                if(brick_med)
+                {
+                    qhatLoc = qhat0*0.1973*flowFactor;
+                }
+                else
+                {
+                    qhatLoc = qhat0/96.0*sdLoc*0.1973*flowFactor;  // qhat0 at s = 96fm^-3
+                }
             }
         //    cout << "check qhat --  ener, T, qhat: " << initEner << "  " << tempLoc << "  " << qhatLoc << endl;
-
-        } else { // outside the QGP medium
+        }
+        else
+        { // outside the QGP medium
             qhatLoc = 0.0;
         }
 
@@ -2215,11 +2235,13 @@ double Matter::fillQhatTab() {
 
     }
 
-    for(int i = 0; i < dimQhatTab; i++) { // dim of loc
+    for(int i = 0; i < dimQhatTab; i++)
+    { // dim of loc
 
         double totValue = 0.0;
 
-        for(int j = 0; i+j < dimQhatTab; j++) { // dim of tau_f
+        for(int j = 0; i+j < dimQhatTab; j++)
+        { // dim of tau_f
 
             totValue = totValue+qhatTab1D[i+j];             
             qhatTab2D[i][j] = totValue/(j+1);
@@ -2234,8 +2256,8 @@ double Matter::fillQhatTab() {
 
 //////////////////////////////////////////////////////////////////////////////////////
 
-double Matter::fncQhat(double zeta) {
-
+double Matter::fncQhat(double zeta)
+{
     if(in_vac) return(0.0);
 
     double tStep = 0.1;
@@ -2247,7 +2269,6 @@ double Matter::fncQhat(double zeta) {
     
     double avrQhat = qhatTab1D[indexZeta]; 
     return(avrQhat);
-
 }
 
 
