@@ -35,8 +35,8 @@ void PythiaGun::InitTask()
   VERBOSE(8);
 
   // Show initialization at INFO level
-  readString("Init:showProcesses = on");
-  readString("Init:showChangedSettings = on");
+  readString("Init:showProcesses = off");
+  readString("Init:showChangedSettings = off");
   readString("Init:showMultipartonInteractions = off");
   readString("Init:showChangedParticleData = off");
   if ( JetScapeLogger::Instance()->GetInfo() ) {
@@ -49,10 +49,10 @@ void PythiaGun::InitTask()
   // No event record printout.
   readString("Next:numberShowInfo = 0"); 
   readString("Next:numberShowProcess = 0"); 
-  readString("Next:numberShowEvent = 1"); 
+  readString("Next:numberShowEvent = 0"); 
 
   // Standard settings
-  readString("HardQCD:all = off"); // will repeat this line in the xml for demonstration  
+  readString("HardQCD:all = on"); // will repeat this line in the xml for demonstration  
   readString("HadronLevel:Decay = off");
   readString("HadronLevel:all = off");
   readString("PartonLevel:ISR = on");
