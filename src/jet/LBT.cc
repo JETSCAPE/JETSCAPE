@@ -129,7 +129,7 @@ void LBT::Init()
   }
 
 
-  VERBOSE(7)<< MAGENTA << "LBT parameters -- in_med: " << vacORmed << " Q0: " << Q00 << "  only_leading: " << Kprimary << "  alpha_s: " << fixAlphas << "  hydro_Tc: " << hydro_Tc;
+  INFO<< MAGENTA << "LBT parameters -- in_med: " << vacORmed << " Q0: " << Q00 << "  only_leading: " << Kprimary << "  alpha_s: " << fixAlphas << "  hydro_Tc: " << hydro_Tc;
 
   read_tables(); // initialize various tables
 
@@ -253,9 +253,9 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
           Vfrozen0[2][j] = pIn[i].x_in().y();
           Vfrozen0[3][j] = pIn[i].x_in().z();
           Vfrozen0[0][j] = pIn[i].x_in().t();
-          V0[1][j]=Vfrozen[1][j];
-          V0[2][j]=Vfrozen[2][j];
-          V0[3][j]=Vfrozen[3][j];
+          V0[1][j]=Vfrozen0[1][j];
+          V0[2][j]=Vfrozen0[2][j];
+          V0[3][j]=Vfrozen0[3][j];
           V0[0][j]=-log(1.0-ran0(&NUM1));
       
           // for(int k=0;k<=3;k++) Prad[k][j] = P[k][j];
@@ -843,7 +843,6 @@ void LBT::LBT0(int &n, double &ti){
         }
 
 	flag_update=1; // satisfy T>Tc and Q<Q0, LBT will process this positice particle
-
 
 	if(E<sqrt(qhat0)) continue; // just do free-streaming
 	if(i>nj && E<Ecmcut) continue;
@@ -2863,6 +2862,12 @@ void LBT::collHQ23(int parID, double temp_med, double qhat0ud, double v0[4], dou
   double zDirection[4];
   double HQmass=sqrt(p0[0]*p0[0]-p0[1]*p0[1]-p0[2]*p0[2]-p0[3]*p0[3]);
 
+  double p00[4];
+  p00[0]=p0[0];
+  p00[1]=p0[1];
+  p00[2]=p0[2];
+  p00[3]=p0[3];
+
   if(abs(parID)!=4) {
     HQmass = 0.0;
     p0[0] = sqrt(p0[1]*p0[1]+p0[2]*p0[2]+p0[3]*p0[3]+HQmass*HQmass);
@@ -2893,6 +2898,7 @@ void LBT::collHQ23(int parID, double temp_med, double qhat0ud, double v0[4], dou
   zDirection[3]=p0[3];
   zDirection[0]=p0[0];
 
+  rotate(zDirection[1],zDirection[2],zDirection[3],p2,1); // rotate p2 into p1 system
 
   // comment do { for unit test
   do {
@@ -2906,7 +2912,7 @@ void LBT::collHQ23(int parID, double temp_med, double qhat0ud, double v0[4], dou
     while(max_Ng*ran0(&NUM1)>dNg_over_dxdydt(parID,randomX,randomY,HQenergy,HQmass,temp_med,Tdiff)) {
       count_sample=count_sample+1;
       if(count_sample>1e+5) {
-	cout << "give up loop at point 1 ..." << endl;
+	//cout << "give up loop at point 1 ..." << endl;
 	kpGluon[1]=0.0;
 	kpGluon[2]=0.0;
 	kpGluon[3]=0.0;
@@ -2946,8 +2952,6 @@ void LBT::collHQ23(int parID, double temp_med, double qhat0ud, double v0[4], dou
     p4[2]=kpGluon[2];
     p4[3]=kpGluon[3];
     p4[0]=kpGluon[0];
-    
-    rotate(zDirection[1],zDirection[2],zDirection[3],p2,1); // rotate p2 into p1 system
 
     //comment for unit test begin
     // solve energy-momentum conservation
@@ -3059,10 +3063,14 @@ void LBT::collHQ23(int parID, double temp_med, double qhat0ud, double v0[4], dou
       transback(v0,p0);
       transback(v0,p2);
       transback(v0,p4);
-        
+
+      if(p00[0]+p3[0]-p0[0]-p2[0]-p4[0]>0.01) {
+          INFO<<MAGENTA<<"Violation of energy-momentum conservation: "<<p00[0]+p3[0]-p0[0]-p2[0]-p4[0]<<"  "<<p00[1]+p3[1]-p0[1]-p2[1]-p4[1]<<"  "<<p00[2]+p3[2]-p0[2]-p2[2]-p4[2]<<"  " <<p00[3]+p3[3]-p0[3]-p2[3]-p4[3];
+      }
+
       // comment for unit test begin
       // debug: check on-shell condition
-      if(abs(p0[0]*p0[0]-p0[1]*p0[1]-p0[2]*p0[2]-p0[3]*p0[3]-HQmass*HQmass)>0.000001 || abs(p2[0]*p2[0]-p2[1]*p2[1]-p2[2]*p2[2]-p2[3]*p2[3])>0.000001) {
+      if(abs(p0[0]*p0[0]-p0[1]*p0[1]-p0[2]*p0[2]-p0[3]*p0[3]-HQmass*HQmass)>0.01 || abs(p2[0]*p2[0]-p2[1]*p2[1]-p2[2]*p2[2]-p2[3]*p2[3])>0.01) {
 	cout << "Wrong solution -- not on shell" << "  " << sE1 << "  " << sp1x << "  " << sp1y << "  " << sp1z << "  " << sE2 << "  " << sp2x << "  " << sp2y << "  " << sp2z << "  " << sk0 << "  " << skx << "  " << sky << "  " << skz << "  " << sq0 << "  " << sqx << "  " << sqy << "  " << sqz << endl;
 	cout << abs(p0[0]*p0[0]-p0[1]*p0[1]-p0[2]*p0[2]-p0[3]*p0[3]-HQmass*HQmass) << "  " << abs(p2[0]*p2[0]-p2[1]*p2[1]-p2[2]*p2[2]-p2[3]*p2[3]) << "  " << HQmass << endl;
       }
@@ -3153,7 +3161,7 @@ void LBT::radiationHQ(int parID, double qhat0ud, double v0[4], double P2[4], dou
     while(max_Ng*ran0(&NUM1)>dNg_over_dxdydt(parID,randomX,randomY,HQenergy,HQmass,temp_med,Tdiff)) {
       count_sample=count_sample+1;
       if(count_sample>1e+5) {
-	cout << "give up loop at point 1 ..." << endl;
+	//cout << "give up loop at point 1 ..." << endl;
 	kpGluon[1]=0.0;
 	kpGluon[2]=0.0;
 	kpGluon[3]=0.0;
@@ -3335,7 +3343,7 @@ void LBT::radiationHQ(int parID, double qhat0ud, double v0[4], double P2[4], dou
         
       // comment for unit test begin
       // debug: check on-shell condition of P2, P3 and P4
-      if(abs(P2[0]*P2[0]-P2[1]*P2[1]-P2[2]*P2[2]-P2[3]*P2[3])>0.000001 || abs(P3[0]*P3[0]-P3[1]*P3[1]-P3[2]*P3[2]-P3[3]*P3[3]-HQmass*HQmass)>0.000001 || abs(P4[0]*P4[0]-P4[1]*P4[1]-P4[2]*P4[2]-P4[3]*P4[3])>0.000001) {
+      if(abs(P2[0]*P2[0]-P2[1]*P2[1]-P2[2]*P2[2]-P2[3]*P2[3])>0.01 || abs(P3[0]*P3[0]-P3[1]*P3[1]-P3[2]*P3[2]-P3[3]*P3[3]-HQmass*HQmass)>0.01 || abs(P4[0]*P4[0]-P4[1]*P4[1]-P4[2]*P4[2]-P4[3]*P4[3])>0.01) {
 	cout << "Wrong solution -- not on shell" << "  " << sk10 << "  " << sk1x << "  " << sk1y << "  " << sk1z << "  " << sk20 << "  " << sk2x << "  " << sk2y << "  " << sk2z << "  " << stheta12 << "  " << sp10 << "  " << sp10-sk20 << "  " << -sk1x-sk2x << "  " << -sk1y-sk2y << "  " << sp0z << "  " << sp0z-sk1z-sk2z << "  " <<HQmass<< "  "<<pow(sp10-sk20,2)-pow(sk1x+sk2x,2)-pow(sk1y+sk2y,2)-pow(sp0z-sk1z-sk2z,2)-pow(HQmass,2)<<endl;
 	cout << abs(P2[0]*P2[0]-P2[1]*P2[1]-P2[2]*P2[2]-P2[3]*P2[3]) <<"  "<< abs(P3[0]*P3[0]-P3[1]*P3[1]-P3[2]*P3[2]-P3[3]*P3[3]-HQmass*HQmass) <<"  "<< abs(P4[0]*P4[0]-P4[1]*P4[1]-P4[2]*P4[2]-P4[3]*P4[3]) <<endl;
       }
@@ -3346,7 +3354,7 @@ void LBT::radiationHQ(int parID, double qhat0ud, double v0[4], double P2[4], dou
 
       // SC: check energy-momentum conservation
       for(int i=0; i<=3; i++) {
-	if(ic==0 && abs(P2i[i]+P3i[i]-P2[i]-P3[i]-P4[i])>0.000001) {
+	if(ic==0 && abs(P2i[i]+P3i[i]-P2[i]-P3[i]-P4[i])>0.01) {
 	  cout << "Warning: Violation of E.M. conservation!  " << i << " " << abs(P2i[i]+P3i[i]-P2[i]-P3[i]-P4[i]) << endl;
 	}
       }
@@ -3355,7 +3363,7 @@ void LBT::radiationHQ(int parID, double qhat0ud, double v0[4], double P2[4], dou
       double shell2=abs(P2[0]*P2[0]-P2[1]*P2[1]-P2[2]*P2[2]-P2[3]*P2[3]);
       double shell3=abs(P3[0]*P3[0]-P3[1]*P3[1]-P3[2]*P3[2]-P3[3]*P3[3]-HQmass*HQmass);
       double shell4=abs(P4[0]*P4[0]-P4[1]*P4[1]-P4[2]*P4[2]-P4[3]*P4[3]);
-      if(ic==0 && (shell2>0.000001 || shell3>0.000001 || shell4>0.000001)) {
+      if(ic==0 && (shell2>0.01 || shell3>0.01 || shell4>0.01)) {
 	cout << "Warning: Violation of on-shell: " << shell2 << "  " << shell3 << "  " << shell4 << endl;
       }
 
@@ -3462,17 +3470,17 @@ double LBT::nHQgluon(int parID,double dtLRF,double &time_gluon,double &temp_med,
     time_gluon=t_max;
   }
 
-  if(temp_med>temp_max) {
-    cout << "temperature exceeds temp_max -- extrapolation is used" << endl;
-    cout << time_gluon << "    " << temp_med << "    " << HQenergy << endl;
-    //     temp_med=temp_max;
-  }
+  //if(temp_med>temp_max) {
+  //  cout << "temperature exceeds temp_max -- extrapolation is used" << endl;
+  //  cout << time_gluon << "    " << temp_med << "    " << HQenergy << endl;
+  //  //     temp_med=temp_max;
+  //}
 
-  if(HQenergy>HQener_max) {
-    cout << "HQenergy exceeds HQener_max -- extrapolation is used" << endl;
-    cout << time_gluon << "    " << temp_med << "    " << HQenergy << endl;
-    //     HQenergy=HQener_max;
-  }
+  //if(HQenergy>HQener_max) {
+  //  cout << "HQenergy exceeds HQener_max -- extrapolation is used" << endl;
+  //  cout << time_gluon << "    " << temp_med << "    " << HQenergy << endl;
+  //  //     HQenergy=HQener_max;
+  //}
 
   if(temp_med<temp_min) {
     cout << "temperature drops below temp_min" << endl;
