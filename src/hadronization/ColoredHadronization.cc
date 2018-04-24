@@ -143,12 +143,11 @@ void ColoredHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& s
   for (unsigned int i=0; i<event.size(); ++i){
     if ( !event[i].isFinal() )   continue;
     if ( !event[i].isHadron() )  continue;
-    if(fabs(event[i].eta())>20)  continue; //To prevent "nan" from propagating, very rare though
+    if( fabs(event[i].eta()) > 20 || isnan(event[i].eta()) ) continue; //To prevent "nan" from propagating, very rare though
     
     double x[4] = {0,0,0,0};
     hOut.push_back(make_shared<Hadron>(ip,event[i].id(),event[i].status(),event[i].pT(),event[i].eta(), event[i].phi(), event[i].e(), x));
-    ++ip;
-
+    ++ip;    
   }
   
   shower.clear();
