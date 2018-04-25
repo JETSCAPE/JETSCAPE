@@ -139,7 +139,7 @@ class LBT : public JetEnergyLossModule<LBT> //, public std::enable_shared_from_t
   long  NUM1;                  
 
   // flag to make sure initialize only once
-  int flag_init=0;
+  static bool flag_init;
 
   //    scattering rate
   static double Rg[60][20];         //total gluon scattering rate as functions of initial energy and temperature 

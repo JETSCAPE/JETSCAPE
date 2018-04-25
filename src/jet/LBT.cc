@@ -32,6 +32,45 @@
 using namespace Jetscape;
 using namespace std;
 
+// initialize static members
+bool LBT::flag_init=0;
+double LBT::Rg[60][20];         //total gluon scattering rate as functions of initial energy and temperature 
+double LBT::Rg1[60][20];        //gg-gg              CT1
+double LBT::Rg2[60][20];        //gg-qqbar           CT2
+double LBT::Rg3[60][20];        //gq-qg              CT3
+double LBT::Rq[60][20];         //total gluon scattering rate as functions of initial energy and temperature
+double LBT::Rq3[60][20];        //qg-qg              CT13
+double LBT::Rq4[60][20];        //qiqj-qiqj          CT4
+double LBT::Rq5[60][20];        //qiqi-qiqi          CT5
+double LBT::Rq6[60][20];        //qiqibar-qjqjbar    CT6
+double LBT::Rq7[60][20];        //qiqibar-qiqibar    CT7
+double LBT::Rq8[60][20];        //qqbar-gg           CT8	  
+double LBT::qhatLQ[60][20];
+double LBT::qhatG[60][20];
+   
+double LBT::RHQ[60][20];        //total scattering rate for heavy quark
+double LBT::RHQ11[60][20];      //Qq->Qq
+double LBT::RHQ12[60][20];      //Qg->Qg
+double LBT::qhatHQ[60][20];     //qhat of heavy quark
+
+double LBT::dNg_over_dt_c[t_gn+2][temp_gn+1][HQener_gn+1];
+double LBT::dNg_over_dt_q[t_gn+2][temp_gn+1][HQener_gn+1];
+double LBT::dNg_over_dt_g[t_gn+2][temp_gn+1][HQener_gn+1];
+double LBT::max_dNgfnc_c[t_gn+2][temp_gn+1][HQener_gn+1];
+double LBT::max_dNgfnc_q[t_gn+2][temp_gn+1][HQener_gn+1];
+double LBT::max_dNgfnc_g[t_gn+2][temp_gn+1][HQener_gn+1];
+
+double LBT::initMCX[maxMC];
+double LBT::initMCY[maxMC];
+double LBT::distFncB[N_T][N_p1][N_e2];
+double LBT::distFncF[N_T][N_p1][N_e2];
+double LBT::distMaxB[N_T][N_p1][N_e2];
+double LBT::distMaxF[N_T][N_p1][N_e2];
+double LBT::distFncBM[N_T][N_p1];
+double LBT::distFncFM[N_T][N_p1];
+
+
+
 LBT::LBT() 
 {
   SetId("LBT");
@@ -131,9 +170,9 @@ void LBT::Init()
 
   INFO<< MAGENTA << "LBT parameters -- in_med: " << vacORmed << " Q0: " << Q00 << "  only_leading: " << Kprimary << "  alpha_s: " << fixAlphas << "  hydro_Tc: " << hydro_Tc;
 
-  if(flag_init==0) {
+  if( !flag_init ) {
       read_tables(); // initialize various tables
-      flag_init=1;
+      flag_init=true;
   }
 
   //...define derived quantities
