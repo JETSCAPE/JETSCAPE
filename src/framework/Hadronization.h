@@ -49,6 +49,8 @@ public:
   void SetTransformPartonsConnected(bool m_TransformPartonsConnected) {TransformPartonsConnected=m_TransformPartonsConnected;}
   const bool GetTransformPartonsConnected() {return TransformPartonsConnected;}
 
+  void AddInHadrons(vector<shared_ptr<Hadron>> ih) {outHadrons = ih;}
+
 private:
 
   vector<vector<shared_ptr<Parton>>> inPartons;

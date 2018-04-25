@@ -67,6 +67,7 @@ int main(int argc, char** argv)
 	    Parton p = *mShowers[i]->GetFinalPartons().at(ipart);
 	    dist_output << ipart   << "\t"
 			<< p.pid() << "\t"
+			<< p.pstat() << "\t"
 			<< p.e()   << "\t"
 			<< p.px()  << "\t" 
 			<< p.py()  << "\t" 

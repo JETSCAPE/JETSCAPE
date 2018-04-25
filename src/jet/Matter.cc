@@ -43,7 +43,7 @@ Matter::~Matter()
 
 void Matter::Init()
 {
-  //INFO<<"Intialize Matter ...";
+  INFO<<"Intialize Matter ...";
 
   // Redundant (get this from Base) quick fix here for now
   tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );
@@ -161,8 +161,8 @@ void Matter::Init()
     }
 
     VERBOSE(7)<< MAGENTA << "MATTER input parameter";
-    INFO << "in_vac: " << in_vac << "  brick_med: " << brick_med << "  recoil_on: " << recoil_on;
-    INFO << "Q00: " << Q00 << " vir_factor: " << vir_factor << "  qhat0: " << qhat0 << " alphas: " << alphas << " hydro_Tc: " << hydro_Tc << " brick_length: " << brick_length;
+    INFO << MAGENTA << "in_vac: " << in_vac << "  brick_med: " << brick_med << "  recoil_on: " << recoil_on;
+    INFO << MAGENTA << "Q0: " << Q00 << " vir_factor: " << vir_factor << "  qhat0: " << qhat0 << " alphas: " << alphas << " hydro_Tc: " << hydro_Tc << " brick_length: " << brick_length;
 
   }
   else {
@@ -205,16 +205,18 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   VERBOSESHOWER(9)<< MAGENTA << "SentInPartons Signal received : "<<deltaT<<" "<<Q2<<" "<< pIn.size();
     
   VERBOSE(8) << BOLDYELLOW << " ********************************************************** " ;
-      
+
+    
   double rNum;
         
   double delT = deltaT;
   double Time = time*fmToGeVinv;
   double deltaTime = delT*fmToGeVinv;
-    double ehat=0;
-    double ehat_over_T2 = 10.0;
+  double ehat=0;
+  double ehat_over_T2 = 10.0;
 
   std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
+
 
  VERBOSE(8) << " the time in fm is " << time << " The time in GeV-1 is " << Time ;
  VERBOSE(8) << "pid = " << pIn[0].pid() << " E = " << pIn[0].e() << " px = " << pIn[0].p(1) << " py = " << pIn[0].p(2) << "  pz = " << pIn[0].p(3) << " virtuality = " << pIn[0].t() << " form_time in fm = " << pIn[0].form_time() ;
@@ -272,6 +274,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   {
 
      VERBOSE(8) << " *  parton formation spacetime point= "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z();
+
 
       
       //cout << "MATTER -- status: " << pIn[i].pstat() << "  energy: " << pIn[i].e() << " color: " << pIn[i].color() << "  " << pIn[i].anti_color() << "  clock: " << time << endl;
@@ -337,7 +340,6 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       }
 
       int pid = pIn[i].pid();
-      
       
       if (pIn[i].form_time()<0.0) /// A parton without a virtuality or formation time, must set...
       {
@@ -405,7 +407,6 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           pIn[i].set_min_anti_color(min_anti_color);
           MaxColor = max_color;
           
-            qhat = qhat0;
           //JSDEBUG:
           JSDEBUG ;
           JSDEBUG << " ***************************************************************************** " ;
@@ -438,8 +439,10 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           double tempEner = initEner;
           qhat = fncQhat(zeta);
           ehat = 0.0;
+
           if (now_temp>0.0) ehat = qhat/4.0/now_temp ;
          VERBOSE(8) << BOLDYELLOW << "at Origin of parton, qhat = " << qhat << " ehat = " << ehat;
+
 
           if(Q00 < 0.0)
           { // use dynamical Q0 if Q00 < 0
@@ -455,7 +458,6 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       }
 
       if(Q0<1.0) Q0=1.0;
-      VERBOSE(8) << " qhat before Q0Q0 loop = " << qhat ;
 
       //if (pIn[i].t() > QS + rounding_error)
       if (pIn[i].t() > Q0*Q0 + rounding_error || ((!in_vac) && now_temp<=T0 && pIn[i].t() > QS*QS + rounding_error))
@@ -469,14 +471,15 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           //JSDEBUG << " parton momentum " << pIn[i].e() << "  " << pIn[i].px() << "  " << pIn[i].py() << "  " << pIn[i].pz();
 	    
           double splitTime = pIn[i].form_time() + pIn[i].x_in().t() ;
+          
          VERBOSE(8) << " splitTime = " << splitTime;
          VERBOSE(8) << " qhat before splitime loop = " << qhat ;
-          
+
           if (splitTime<time)
           {
 
              VERBOSE(8) << "SPLIT in MATTER" ;
-    
+
               // SC: add elastic scattering that generates recoiled and back-reaction partons
               double el_dt=0.1;
               double el_p0[5];
@@ -692,7 +695,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               double z_hi = 1.0 - z_low;
               
              VERBOSE(8) << " zeta = " << zeta ;
-              
+
               if (pid==gid)
               { // gluon
                   double val1 = P_z_gg_int(z_low, z_hi, zeta, t_used, tau_form,pIn[i].nu() );
@@ -1031,13 +1034,16 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       }
                       
                      VERBOSE(8) << MAGENTA << " ktx = " << ktx << " kty = " << kty << " ktz = " << ktz ;
+
                       double px = pIn[i].px();
                       double py = pIn[i].py();
                       double pz = pIn[i].pz();
                       double energy = pIn[i].e();
                       
                       double p = sqrt(px*px + py*py + pz*pz);
+
                      VERBOSE(8) << BOLDBLUE << " p before b & d, E = " << energy << " pz = " << pz << " px = " << px << " py = " << py ;
+
 
                       
                       px += ktx;
@@ -1059,7 +1065,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       
 /*                      if (abs(nnp-p)>abs(np-p))
                       {
+
                          VERBOSE(8) << MAGENTA << " negative condition invoked ! " ;
+
                           px += 2*(np-p)*vx;
                           py += 2*(np-p)*vy;
                           pz += 2*(np-p)*vz;
@@ -1074,6 +1082,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       pOut[iout].reset_p(px,py,pz);
                       
                       double drag = ehat*delT;
+                      
                      VERBOSE(8) << MAGENTA << " drag = " << drag << " temperature = " <<  now_temp ;
                       
                       if ((np > drag)&&(energy >drag)&&( energy>sqrt(px*px + py*py + pz*pz) ) )
@@ -1085,8 +1094,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                           pOut[iout].reset_momentum( px , py , pz , energy );
                       }
                       
-                      
                      VERBOSE(8) << BOLDYELLOW << " p after b & d, E = " << energy << " pz = " << pz << " px = " << px << " py = " << py ;
+
 
                   }
               
@@ -1111,6 +1120,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               {
                   ehat = 20.0*qhat/4.0/0.3;
               }
+
              VERBOSE(8) <<BOLDRED<< " after splits broadening qhat = " << qhat << " ehat = " << ehat << " and delT = " << delT ;
              VERBOSE(8) <<BOLDBLUE<< " zeta at formation = " << zeta << " zeta now = " << now_zeta ;
               
@@ -1177,6 +1187,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   }
                   
                  VERBOSE(8) << MAGENTA << " ktx = " << ktx << " kty = " << kty << " ktz = " << ktz ;
+
                   double px = pIn[i].px();
                   double py = pIn[i].py();
                   double pz = pIn[i].pz();
@@ -1219,8 +1230,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   np = sqrt(px*px + py*py + pz*pz );
                   double drag = ehat*delT;
            
-
                  VERBOSE(8) << MAGENTA << " drag = " << drag << " temperature = " <<  now_temp ;
+
                   if ((np > drag)&&(energy >drag)&&( energy>sqrt(px*px + py*py + pz*pz) ) )
                   {
                       px -= drag*vx;
@@ -1229,8 +1240,6 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       energy -= drag;
                       pOut[iout].reset_momentum( px, py , pz , energy );
                   }
-                  
-                  
                 
                  VERBOSE(8) << BOLDYELLOW << " p after b & d, E = " << energy << " pz = " << pz << " px = " << px << " py = " << py ;
 
@@ -1242,8 +1251,6 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       }
       
   } // particle loop
-    
-    //cin >> blurb ;
       
 }
 
@@ -2225,7 +2232,7 @@ double Matter::fillQhatTab() {
             continue;	    
         }
 
-        xLoc = initRx+(tLoc-initR0)*initVx;
+	xLoc = initRx+(tLoc-initR0)*initVx; 
         yLoc = initRy+(tLoc-initR0)*initVy;
         zLoc = initRz+(tLoc-initR0)*initVz;
 
@@ -2971,6 +2978,15 @@ float Matter::ran0(long *idum)
 double Matter::solve_alphas(double var_qhat, double var_ener, double var_temp) {
 
     double preFactor=42.0*Ca*zeta3/pi;
+
+    // reference: qhatLoc = Ca*50.4864/pi*pow(alphas,2)*pow(tempLoc,3)*log(5.7*2.0*pi*tempLoc*tempLoc/4.0/muD2);
+    double max_qhat=preFactor*pow(0.5,2)*pow(var_temp,3)*log(5.7*max(var_ener,2.0*pi*var_temp)/24/pi/0.5/var_temp);
+
+    if(max_qhat<var_qhat) {
+        INFO << "qhat exceeds HTL calculation, use alpha_s = 0.5";
+	return(0.5);
+    }
+
     double solution=sqrt(var_qhat/preFactor/pow(var_temp,3)/log(5.7*max(var_ener,2.0*pi*var_temp)/24/pi/0.2/var_temp));
     double fnc_value,fnc_derivative;
     fnc_value=fnc0_alphas(solution,var_qhat,var_ener,var_temp);
@@ -2984,7 +3000,11 @@ double Matter::solve_alphas(double var_qhat, double var_ener, double var_temp) {
         fnc_value=fnc0_alphas(solution,var_qhat,var_ener,var_temp);
         fnc_derivative=fnc0_derivative_alphas(solution,var_qhat,var_ener,var_temp);
 
-        //cout << "loop: " << solution << "  " << fnc_value << endl;
+    }
+
+    if(solution<0.0 || solution>0.5) {
+        INFO << "unreasonable alpha_s: " << solution << " use alpha_s = 0.5";
+	solution=0.5;
     }
 
     return(solution);

@@ -36,6 +36,7 @@ HardProcess::~HardProcess()
 {
   VERBOSE(8);
   hp_list.clear();
+  hd_list.clear();
   disconnect_all();
 }
 
@@ -77,6 +78,7 @@ void HardProcess::Clear()
   JSDEBUG<<"Clear Hard Process : "<<GetId()<< " ...";
 
   hp_list.clear();
+  hd_list.clear();
   VERBOSE(8)<<hp_list.size();
 }
 
