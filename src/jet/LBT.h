@@ -137,26 +137,29 @@ class LBT : public JetEnergyLossModule<LBT> //, public std::enable_shared_from_t
   //...random number seed (any negative integer)	  
   //  long  NUM1=-33;                  
   long  NUM1;                  
-  
+
+  // flag to make sure initialize only once
+  static int flag_init=0;
+
   //    scattering rate
-  double Rg[60][20];         //total gluon scattering rate as functions of initial energy and temperature 
-  double Rg1[60][20];        //gg-gg              CT1
-  double Rg2[60][20];        //gg-qqbar           CT2
-  double Rg3[60][20];        //gq-qg              CT3
-  double Rq[60][20];         //total gluon scattering rate as functions of initial energy and temperature
-  double Rq3[60][20];        //qg-qg              CT13
-  double Rq4[60][20];        //qiqj-qiqj          CT4
-  double Rq5[60][20];        //qiqi-qiqi          CT5
-  double Rq6[60][20];        //qiqibar-qjqjbar    CT6
-  double Rq7[60][20];        //qiqibar-qiqibar    CT7
-  double Rq8[60][20];        //qqbar-gg           CT8	  
-  double qhatLQ[60][20];
-  double qhatG[60][20];
-  
-  double RHQ[60][20];        //total scattering rate for heavy quark
-  double RHQ11[60][20];      //Qq->Qq
-  double RHQ12[60][20];      //Qg->Qg
-  double qhatHQ[60][20];     //qhat of heavy quark
+  static double Rg[60][20];         //total gluon scattering rate as functions of initial energy and temperature 
+  static double Rg1[60][20];        //gg-gg              CT1
+  static double Rg2[60][20];        //gg-qqbar           CT2
+  static double Rg3[60][20];        //gq-qg              CT3
+  static double Rq[60][20];         //total gluon scattering rate as functions of initial energy and temperature
+  static double Rq3[60][20];        //qg-qg              CT13
+  static double Rq4[60][20];        //qiqj-qiqj          CT4
+  static double Rq5[60][20];        //qiqi-qiqi          CT5
+  static double Rq6[60][20];        //qiqibar-qjqjbar    CT6
+  static double Rq7[60][20];        //qiqibar-qiqibar    CT7
+  static double Rq8[60][20];        //qqbar-gg           CT8	  
+  static double qhatLQ[60][20];
+  static double qhatG[60][20];
+   
+  static double RHQ[60][20];        //total scattering rate for heavy quark
+  static double RHQ11[60][20];      //Qq->Qq
+  static double RHQ12[60][20];      //Qg->Qg
+  static double qhatHQ[60][20];     //qhat of heavy quark
   double qhat_over_T3;        //qhat/T^3 for heavy quark as fnc of (T,p)
   double D2piT;
   
@@ -165,12 +168,12 @@ class LBT : public JetEnergyLossModule<LBT> //, public std::enable_shared_from_t
   static const int t_gn=75;
   static const int temp_gn=100;
   
-  double dNg_over_dt_c[t_gn+2][temp_gn+1][HQener_gn+1]={{{0.0}}};
-  double dNg_over_dt_q[t_gn+2][temp_gn+1][HQener_gn+1]={{{0.0}}};
-  double dNg_over_dt_g[t_gn+2][temp_gn+1][HQener_gn+1]={{{0.0}}};
-  double max_dNgfnc_c[t_gn+2][temp_gn+1][HQener_gn+1]={{{0.0}}};
-  double max_dNgfnc_q[t_gn+2][temp_gn+1][HQener_gn+1]={{{0.0}}};
-  double max_dNgfnc_g[t_gn+2][temp_gn+1][HQener_gn+1]={{{0.0}}};
+  static double dNg_over_dt_c[t_gn+2][temp_gn+1][HQener_gn+1]={{{0.0}}};
+  static double dNg_over_dt_q[t_gn+2][temp_gn+1][HQener_gn+1]={{{0.0}}};
+  static double dNg_over_dt_g[t_gn+2][temp_gn+1][HQener_gn+1]={{{0.0}}};
+  static double max_dNgfnc_c[t_gn+2][temp_gn+1][HQener_gn+1]={{{0.0}}};
+  static double max_dNgfnc_q[t_gn+2][temp_gn+1][HQener_gn+1]={{{0.0}}};
+  static double max_dNgfnc_g[t_gn+2][temp_gn+1][HQener_gn+1]={{{0.0}}};
   
   const double HQener_max=1000.0;
   const double t_max=15.0;
@@ -182,7 +185,7 @@ class LBT : public JetEnergyLossModule<LBT> //, public std::enable_shared_from_t
   
   // for MC initialization of jet partons
   static const int maxMC=2000000;
-  double initMCX[maxMC],initMCY[maxMC];
+  static double initMCX[maxMC],initMCY[maxMC];
   		
   //...radiation block		
   int    icl22;                   
@@ -289,8 +292,8 @@ class LBT : public JetEnergyLossModule<LBT> //, public std::enable_shared_from_t
   static const int N_p1=500;
   static const int N_T=60;
   static const int N_e2=75;
-  double distFncB[N_T][N_p1][N_e2],distFncF[N_T][N_p1][N_e2],distMaxB[N_T][N_p1][N_e2],distMaxF[N_T][N_p1][N_e2];
-  double distFncBM[N_T][N_p1],distFncFM[N_T][N_p1];
+  static double distFncB[N_T][N_p1][N_e2],distFncF[N_T][N_p1][N_e2],distMaxB[N_T][N_p1][N_e2],distMaxF[N_T][N_p1][N_e2];
+  static double distFncBM[N_T][N_p1],distFncFM[N_T][N_p1];
   double min_p1=0.0;
   double max_p1=1000.0;
   double bin_p1=(max_p1-min_p1)/N_p1;
