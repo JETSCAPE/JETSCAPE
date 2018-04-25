@@ -139,7 +139,7 @@ class LBT : public JetEnergyLossModule<LBT> //, public std::enable_shared_from_t
   long  NUM1;                  
 
   // flag to make sure initialize only once
-  static int flag_init=0;
+  int flag_init=0;
 
   //    scattering rate
   static double Rg[60][20];         //total gluon scattering rate as functions of initial energy and temperature 
@@ -168,12 +168,12 @@ class LBT : public JetEnergyLossModule<LBT> //, public std::enable_shared_from_t
   static const int t_gn=75;
   static const int temp_gn=100;
   
-  static double dNg_over_dt_c[t_gn+2][temp_gn+1][HQener_gn+1]={{{0.0}}};
-  static double dNg_over_dt_q[t_gn+2][temp_gn+1][HQener_gn+1]={{{0.0}}};
-  static double dNg_over_dt_g[t_gn+2][temp_gn+1][HQener_gn+1]={{{0.0}}};
-  static double max_dNgfnc_c[t_gn+2][temp_gn+1][HQener_gn+1]={{{0.0}}};
-  static double max_dNgfnc_q[t_gn+2][temp_gn+1][HQener_gn+1]={{{0.0}}};
-  static double max_dNgfnc_g[t_gn+2][temp_gn+1][HQener_gn+1]={{{0.0}}};
+  static double dNg_over_dt_c[t_gn+2][temp_gn+1][HQener_gn+1];
+  static double dNg_over_dt_q[t_gn+2][temp_gn+1][HQener_gn+1];
+  static double dNg_over_dt_g[t_gn+2][temp_gn+1][HQener_gn+1];
+  static double max_dNgfnc_c[t_gn+2][temp_gn+1][HQener_gn+1];
+  static double max_dNgfnc_q[t_gn+2][temp_gn+1][HQener_gn+1];
+  static double max_dNgfnc_g[t_gn+2][temp_gn+1][HQener_gn+1];
   
   const double HQener_max=1000.0;
   const double t_max=15.0;

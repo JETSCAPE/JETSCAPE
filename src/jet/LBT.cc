@@ -131,7 +131,7 @@ void LBT::Init()
 
   INFO<< MAGENTA << "LBT parameters -- in_med: " << vacORmed << " Q0: " << Q00 << "  only_leading: " << Kprimary << "  alpha_s: " << fixAlphas << "  hydro_Tc: " << hydro_Tc;
 
-  if(flag_init.eq.0) {
+  if(flag_init==0) {
       read_tables(); // initialize various tables
       flag_init=1;
   }
