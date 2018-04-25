@@ -68,7 +68,17 @@ void InitialState::Write(weak_ptr<JetScapeWriter> w){
   // if ( f ) f->Write(make_shared<Vertex>(initialVtx));
 }
 
+void InitialState::CollectHeader( weak_ptr<JetScapeWriter> w ){
+  auto f = w.lock();
+  if ( f ){
+    auto& header = f->GetHeader();
+    header.SetNpart( GetNpart() );
+    header.SetNcoll( GetNcoll() );
+    header.SetTotalEntropy( GetTotalEntropy() );
+  }
+}
 
+  
 std::tuple<double, double, double> InitialState::coord_from_idx(int idx) {
     int nx = get_x_size();
     int ny = get_y_size();

@@ -61,14 +61,22 @@ class InitialFromFile: public Jetscape::InitialState {
    */
   tinyxml2::XMLElement * GetIniStateXML() { return xml_; }
 
-  // one can set range by hand if not read from xml file 
-  /** Sets the range of the coordinates (xmax, ymax, zmax). 
-      @param xmax Maximum value of the coordinate x in the nuclear density profile.
-      @param ymax Maximum value of the coordinate y in the nuclear density profile.
-      @param zmax Maxium value of the spatial rapidity ( if (tau,x,y,eta) system), or maximum value of the coordinate z (if in (t,x,y,z) system) in the nuclear density profile.  
-   */
+
+  /** Generated number of collision participants.
+  */
+  double GetNpart(){ return npart; };
+
+  /** Generated number of binary collisions.
+  */
+  double GetNcoll(){ return ncoll; };
+
+  /** Generated total entropy
+  */
+  double GetTotalEntropy(){ return totalentropy; };
+  
 
    private:
+
    // the hdf5 file pointer, e.g. *.hdf5
    hid_t H5file_ptr_;
 
@@ -88,6 +96,10 @@ class InitialFromFile: public Jetscape::InitialState {
     HydroinfoH5 * h5_helper_;
 
     int dim_x_, dim_y_;
+
+    double npart=-1;
+    double ncoll=-1;
+    double totalentropy=-1;
 };
 
 #endif  // INITIALFROMFILE_H

@@ -72,6 +72,10 @@ void InitialFromFile::read_configs_(){
     set_ranges(xmax, xmax, 0.0);
     set_steps(grid_step, grid_step, 0.0);
     Jetscape::INFO << "xmax = " << xmax;
+
+    npart = h5_helper_->readH5Attribute_double(H5group_ptr_, "npart");
+    ncoll = h5_helper_->readH5Attribute_double(H5group_ptr_, "ncoll");
+    totalentropy = h5_helper_->readH5Attribute_double(H5group_ptr_, "mult");
 }
 
 void InitialFromFile::read_nbc_dist_(){
