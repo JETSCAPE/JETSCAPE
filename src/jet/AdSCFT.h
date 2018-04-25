@@ -1,18 +1,21 @@
-/*******************************************************************************
- * Copyright (c) The JETSCAPE Collaboration, 2017
- *
- * Modular, task-based framework
- * Intial Design: Joern Putschke, Kolja Kauder (Wayne State University)
- * For the full list of contributors see AUTHORS.
+/*************************************************************************************
+* Copyright (c) The JETSCAPE Collaboration, 2017
+*
+* Modular, task-based framework
+* Intial Design: Joern Putschke, Kolja Kauder (Wayne State University)
+* For the full list of contributors see AUTHORS.
+* Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
+* or via email to bugs.jetscape.org@gmail.com
+*
+* Distributed under the GNU General Public License 3.0 (GPLv3 or later).
+* See COPYING for details.
+*
+* AdSCFT Module: Daniel Pablos (May 2017)
+* Implementation of energy loss rate derived in JHEP1605(2016)098 [arXiv:1511.07567], 
+* see also Phys.Rev.D90(2014)no.2,025033 [arXiv:1402.6756] 
+*************************************************************************************/
 
- * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
- * or via email to bugs.jetscape.org@gmail.com
- *
- * Distributed under the GNU General Public License 3.0 (GPLv3 or later).
- * See COPYING for details.
- ******************************************************************************/
 
-// First test to include AdSCFT drag in JetScape
 
 #ifndef ADSCFT_H
 #define ADSCFT_H
@@ -48,6 +51,10 @@ class AdSCFT : public JetEnergyLossModule<AdSCFT>
   void DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pIn, vector<Parton>& pOut);
   double Drag(double f_dist, double deltaT, double Efs, double temp, double CF);
   void WriteTask(weak_ptr<JetScapeWriter> w);
+
+  double tStart=0.6;		//Hydro starting time
+  double T0;            	//End of quenching temperature
+  bool in_vac;
  
  private:
 
