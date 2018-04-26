@@ -4,16 +4,19 @@
  * Modular, task-based framework
  * Intial Design: Joern Putschke, Kolja Kauder (Wayne State University)
  * For the full list of contributors see AUTHORS.
-
+ *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
  * or via email to bugs.jetscape.org@gmail.com
+ *
+ *
+ * LBT energy loss module: developed by
+ * Shanshan Cao, Wei Chen, Yayun He, Tan Luo and Xin-Nian Wang
+ * Copyright reserved to the LBL-CCNU group
+ *
  *
  * Distributed under the GNU General Public License 3.0 (GPLv3 or later).
  * See COPYING for details.
  ******************************************************************************/
-
-// This file includes variable and function declaration for LBT
-// Copyright reserved to the LBL-CCNU group
 
 #ifndef LBT_H
 #define LBT_H
