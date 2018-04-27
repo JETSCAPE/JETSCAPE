@@ -62,7 +62,7 @@ int main(int argc, char** argv)
       cout<<"Number of hadrons is: " << hadrons.size() << endl;
       for(unsigned int i=0; i<hadrons.size(); i++)
 	{
-	  dist_output<<i<<" "<<hadrons[i].get()->pid()<<" "<< hadrons[i].get()->e() << " "<< hadrons[i].get()->px()<< " "<< hadrons[i].get()->py() << " "<< hadrons[i].get()->pz()<<  endl;
+	  dist_output<<i<<" "<<hadrons[i].get()->pid()<<" "<<hadrons[i].get()->pstat()<<" "<< hadrons[i].get()->e() << " "<< hadrons[i].get()->px()<< " "<< hadrons[i].get()->py() << " "<< hadrons[i].get()->pz()<<  endl;
         }
     }
   

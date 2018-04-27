@@ -58,7 +58,7 @@ void PythiaGun::InitTask()
   readString("PartonLevel:ISR = on");
   readString("PartonLevel:MPI = on");
   readString("PartonLevel:FSR = off");
-  readString("PromptPhoton:all=off");
+  readString("PromptPhoton:all=on");
   readString("WeakSingleBoson:all=off");
   readString("WeakDoubleBoson:all=off");
 
@@ -178,14 +178,15 @@ void PythiaGun::Exec()
 
       // only accept particles after MPI
       if ( particle.status()!=62 ) continue;
-       
       // only accept gluons and quarks
-      if ( fabs( particle.id() ) > 3 && particle.id() !=21 ) continue;
-
+      // Also accept Gammas to put into the hadron's list
+      if ( fabs( particle.id() ) > 3 && (particle.id() !=21 && particle.id() !=22) ) continue;
+      
       // reject rare cases of very soft particles that don't have enough e to get
       // reasonable virtuality
       if ( particle.pT() < 1.0/sqrt(vir_factor) ) continue;
-  
+ 	
+	//if(particle.id()==22) cout<<"########this is a photon!######" <<endl;
       // accept
       p62.push_back( particle );
 
@@ -243,6 +244,8 @@ void PythiaGun::Exec()
   //for(int np = 0; np<2; ++np){
 
   // Accept them all
+
+  int hCounter = 0 ;
   for(int np = 0; np<p62.size(); ++np){
     Pythia8::Particle& particle = p62.at( np );
 
@@ -256,12 +259,23 @@ void PythiaGun::Exec()
 	       << ", y = " << particle.y()
 	       << ", phi = " << particle.phi()
 	       << ", e = " << particle.e();
-    
-    AddParton(make_shared<Parton>(0, particle.id(),0,particle.pT(),particle.y(),particle.phi(),particle.e(),xLoc) );
 
+    VERBOSE(7) <<" at x=" << xLoc[1]
+	       <<", y=" << xLoc[2]
+	       <<", z=" << xLoc[3];
+    if(particle.id() !=22)
+    {
+        AddParton(make_shared<Parton>(0, particle.id(),0,particle.pT(),particle.y(),particle.phi(),particle.e(),xLoc) );
+    }
+    else
+    {
+	      AddHadron(make_shared<Hadron>(hCounter,particle.id(),particle.status(),particle.pT(),particle.eta(),particle.phi(),particle.e(),xLoc));
+	      hCounter++;
+    }
   }
   
 
  
   VERBOSE(8)<<GetNHardPartons();
 }
+
