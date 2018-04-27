@@ -67,7 +67,7 @@ void PGun::Exec()
   
   double parID,ppx,ppy,ppz,pp0,mass; 
 
-  for (int i=0;i<2;i++)
+  for (int i=0;i<1;i++)
      {
        tempRand = rand()/maxN;
        if(tempRand < 0.25) parID = 21;
@@ -78,13 +78,15 @@ void PGun::Exec()
 	 tempRand = rand()/maxN;
 	 if(tempRand < 0.50) parID = -parID;
        }            
-       
+         parID = 1;
        mass = 0.0;
        pT = fixed_pT; //max_pT*(rand()/maxN);
        
        phi = 2.0*PI*(rand()/maxN);
        rapidity=0;//2.0*eta_cut*(rand()/maxN)-eta_cut;
-              
+         phi = 0.0;
+         
+         
        p[1] = pT*cos(phi);
        p[2] = pT*sin(phi);
        p[3] = sqrt(pT*pT+mass*mass)*sinh(rapidity);

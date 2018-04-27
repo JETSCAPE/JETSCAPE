@@ -79,15 +79,15 @@ int main(int argc, char** argv)
   JetScapeLogger::Instance()->SetRemark(false);
   //SetVerboseLevel (9 a lot of additional debug output ...)
   //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevle(9) or 10
-  JetScapeLogger::Instance()->SetVerboseLevel(8);
+  JetScapeLogger::Instance()->SetVerboseLevel(6);
    
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml", 1000);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml", 2000);
   // auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",5);
   jetscape->SetId("primary");
   jetscape->set_reuse_hydro (true);
-  jetscape->set_n_reuse_hydro (2000);
+  jetscape->set_n_reuse_hydro (10001);
     
     auto pGun= make_shared<PGun> ();
 

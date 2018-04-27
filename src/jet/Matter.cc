@@ -848,7 +848,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   ifcounter++;
               }
               
-              if (l_perp2<=0.0) l_perp2 = Lambda_QCD*Lambda_QCD; ///< test if negative
+              if (l_perp2<=Lambda_QCD*Lambda_QCD) l_perp2 = Lambda_QCD*Lambda_QCD; ///< test if negative
               double l_perp = std::sqrt(l_perp2); ///< the momentum transverse to the parent parton direction
               
               // axis of split
