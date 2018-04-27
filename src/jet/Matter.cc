@@ -817,7 +817,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               
               JSDEBUG << " d1_col = " << d1_col << " d1_acol = " << d1_acol << " d2_col = " << d2_col << " d2_acol = " << d2_acol;
 
-              while ((l_perp2<=0.0)&&(ifcounter<100))
+              while ((l_perp2<=Lambda_QCD*Lambda_QCD)&&(ifcounter<100))
               {
                   z = generate_vac_z(pid,QS/2.0,pIn[i].t(),zeta,pIn[i].nu(),iSplit);
                   //JSDEBUG << " generated z = " << z;
@@ -848,7 +848,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   ifcounter++;
               }
               
-              if (l_perp2<=0.0) l_perp2 = 0.0; ///< test if negative
+              if (l_perp2<=0.0) l_perp2 = Lambda_QCD*Lambda_QCD; ///< test if negative
               double l_perp = std::sqrt(l_perp2); ///< the momentum transverse to the parent parton direction
               
               // axis of split
@@ -1105,11 +1105,11 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               qhat = fncQhat(now_zeta);
               if (now_temp>0.1)
               {
-                  ehat = 20.0*qhat/4.0/now_temp;
+                  ehat = 10.0*qhat/4.0/now_temp;
               }
               else
               {
-                  ehat = 20.0*qhat/4.0/0.3;
+                  ehat = 10.0*qhat/4.0/0.3;
               }
              VERBOSE(8) <<BOLDRED<< " after splits broadening qhat = " << qhat << " ehat = " << ehat << " and delT = " << delT ;
              VERBOSE(8) <<BOLDBLUE<< " zeta at formation = " << zeta << " zeta now = " << now_zeta ;
@@ -2210,7 +2210,7 @@ double Matter::fillQhatTab() {
     int hydro_ctl;
     double lastLength=initR0;
 
-    double tStep = 0.05;
+    double tStep = 0.1;
 
     std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
 
@@ -2318,7 +2318,7 @@ double Matter::fncQhat(double zeta)
 {
     if(in_vac) return(0.0);
 
-    double tStep = 0.05;
+    double tStep = 0.1;
     //int indexZeta = (int)(zeta/sqrt(2.0)/5.0/tStep+0.5); // zeta was in 1/GeV and light cone coordinate
     int indexZeta = (int)((sqrt(2.0)*zeta/5.0-initRdotV+initR0)/2.0/tStep+0.5); // zeta was in 1/GeV and light cone coordinate
 
@@ -2336,7 +2336,7 @@ double Matter::fncAvrQhat(double zeta, double tau) {
 
     if(in_vac) return(0.0);
 
-    double tStep = 0.05;
+    double tStep = 0.1;
     //int indexZeta = (int)(zeta/sqrt(2.0)/5.0/tStep+0.5); // zeta was in 1/GeV and light cone coordinate
     int indexZeta = (int)((sqrt(2.0)*zeta/5.0-initRdotV+initR0)/2.0/tStep+0.5); // zeta was in 1/GeV and light cone coordinate
     int indexTau = (int)(tau/sqrt(2.0)/5.0/tStep+0.5); // tau was in 1/GeV and light cone coordinate
