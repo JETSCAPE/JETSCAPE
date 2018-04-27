@@ -100,10 +100,15 @@ void HadronizationManager::Exec()
   if (GetGetFinalPartonListConnected())
   {
     GetFinalPartonList(hd);
-    VERBOSE(2)<<" There are "<<hd.size() << " partons ready for recombination";
+    hadrons.clear();
+    GetHadronList(hadrons);
+    VERBOSE(2)<<" There are "<<hd.size() << " partons ready for hadronization";
+    VERBOSE(2)<<" There are alreay "<<hadrons.size() << " hadrons";
+
     for (auto it : GetTaskList())
     {
       dynamic_pointer_cast<Hadronization>(it)->AddInPartons(hd);
+      dynamic_pointer_cast<Hadronization>(it)->AddInHadrons(hadrons);
     }
     JetScapeTask::ExecuteTasks();
   }
