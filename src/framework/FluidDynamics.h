@@ -379,6 +379,16 @@ namespace Jetscape {
     */
     Parameter& GetParameterList() {return parameter_list;}
   
+    /** Collect header information for writer modules
+	@param w is a pointer of type JetScapeWrite class.
+    */
+    virtual void CollectHeader( weak_ptr<JetScapeWriter> w );
+    
+    /** Generated event plane angle
+	To be overwritten by implementations that have such information.
+    */
+    virtual double GetEventPlaneAngle(){ return -999; };
+    
     /// Jet signals (future)
     virtual void AddJetSource(double t, double x, double y, double z, JetSource jS) {}; // to be implemented ...
 

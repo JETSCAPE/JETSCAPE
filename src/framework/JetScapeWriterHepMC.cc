@@ -39,8 +39,31 @@ namespace Jetscape {
     xsec->set_cross_section( GetHeader().GetSigmaGen() * 1e9, GetHeader().GetSigmaErr() * 1e9);
     evt.set_cross_section( xsec );
     evt.weights().push_back( GetHeader().GetEventWeight() );
-  }
 
+    auto heavyion = make_shared<HepMC::GenHeavyIon>();
+    // see https://gitlab.cern.ch/hepmc/HepMC3/blob/master/include/HepMC/GenHeavyIon.h
+    if ( GetHeader().GetNpart() > -1 ){
+      // Not clear what the difference is...
+      heavyion->Ncoll_hard = GetHeader().GetNcoll();
+      heavyion->Ncoll = GetHeader().GetNcoll();
+    }
+    if ( GetHeader().GetNcoll() > -1 ){
+      // Hepmc separates into target and projectile.
+      // Set one? Which? Both? half to each? setting projectile for now.
+      // setting both might lead to weird problems when they get added up
+      heavyion->Npart_proj = GetHeader().GetNpart();
+    }
+    if ( GetHeader().GetTotalEntropy() > -1 ){
+      // nothing good in the HepMC standard. Something related to mulitplicity would work
+    }
+
+    if ( GetHeader().GetEventPlaneAngle() > -999 ){
+      heavyion->event_plane_angle = GetHeader().GetEventPlaneAngle();
+    }
+
+    evt.set_heavy_ion( heavyion );  
+  }
+  
   void JetScapeWriterHepMC::WriteEvent() {    
     INFO<<"Run JetScapeWriterHepMC: Write event # "<<GetCurrentEvent();
 

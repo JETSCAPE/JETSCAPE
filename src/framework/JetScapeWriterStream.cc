@@ -46,6 +46,25 @@ void JetScapeWriterStream<T>::WriteHeaderToFile()
   WriteComment ( oss.str() );
   oss.str(""); oss << GetId() << "weight " << GetHeader().GetEventWeight();
   WriteComment ( oss.str() );
+
+  if ( GetHeader().GetNpart() > -1 ){
+    oss.str(""); oss << GetId() << "Npart " << GetHeader().GetNpart();
+    WriteComment ( oss.str() );
+  }
+  if ( GetHeader().GetNcoll() > -1 ){
+    oss.str(""); oss << GetId() << "Ncoll " << GetHeader().GetNcoll();
+    WriteComment ( oss.str() );
+  }
+  if ( GetHeader().GetTotalEntropy() > -1 ){
+    oss.str(""); oss << GetId() << "TotalEntropy " << GetHeader().GetTotalEntropy();
+    WriteComment ( oss.str() );
+  }
+
+  if ( GetHeader().GetEventPlaneAngle() > -999 ){
+    oss.str(""); oss << GetId() << "EventPlaneAngle " << GetHeader().GetEventPlaneAngle();
+    WriteComment ( oss.str() );
+  }
+
 }
   
 template<class T>

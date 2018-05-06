@@ -85,8 +85,8 @@
       <Q0> 1.0 </Q0>
       <T0> 0.15 </T0>
       <vir_factor> 0.25 </vir_factor>
-      <in_vac> 0 </in_vac>
-      <recoil_on> 0 </recoil_on>
+      <in_vac> 1 </in_vac>
+      <recoil_on> 1 </recoil_on>
       <broadening_on> 0 </broadening_on>
       <brick_med> 0 </brick_med>
       <brick_length> 5.0 </brick_length>
@@ -114,6 +114,8 @@
     <AdSCFT>
       <name> AdSCFT </name>
       <kappa> 0.36 </kappa>
+      <T0> 0.16 </T0>
+      <in_vac> 1 </in_vac>
     </AdSCFT>
     
   </Eloss>

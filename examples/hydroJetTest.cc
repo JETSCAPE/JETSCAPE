@@ -117,7 +117,8 @@ int main(int argc, char** argv)
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
   //auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");  
 #ifdef USE_HEPMC
-  //auto writer= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
+  auto writerhepmc= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
+  jetscape->Add(writerhepmc);
 #endif
   //writer->SetActive(false);
 
