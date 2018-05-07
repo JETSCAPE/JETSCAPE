@@ -4,15 +4,17 @@
  * Modular, task-based framework
  * Intial Design: Joern Putschke, Kolja Kauder (Wayne State University)
  * For the full list of contributors see AUTHORS.
-
+ *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
  * or via email to bugs.jetscape.org@gmail.com
+ *
+ * LBT energy loss module: developed by
+ * Shanshan Cao, Wei Chen, Yayun He, Tan Luo and Xin-Nian Wang
+ * Copyright reserved to the LBL-CCNU group
  *
  * Distributed under the GNU General Public License 3.0 (GPLv3 or later).
  * See COPYING for details.
  ******************************************************************************/
-// This file includes variable and function declaration for LBT
-// Copyright reserved to the LBL-CCNU group
 
 #include "LBT.h"
 #include "JetScapeLogger.h"
@@ -31,6 +33,45 @@
 
 using namespace Jetscape;
 using namespace std;
+
+// initialize static members
+bool LBT::flag_init=0;
+double LBT::Rg[60][20]={{0.0}};         //total gluon scattering rate as functions of initial energy and temperature 
+double LBT::Rg1[60][20]={{0.0}};        //gg-gg              CT1
+double LBT::Rg2[60][20]={{0.0}};        //gg-qqbar           CT2
+double LBT::Rg3[60][20]={{0.0}};        //gq-qg              CT3
+double LBT::Rq[60][20]={{0.0}};         //total gluon scattering rate as functions of initial energy and temperature
+double LBT::Rq3[60][20]={{0.0}};        //qg-qg              CT13
+double LBT::Rq4[60][20]={{0.0}};        //qiqj-qiqj          CT4
+double LBT::Rq5[60][20]={{0.0}};        //qiqi-qiqi          CT5
+double LBT::Rq6[60][20]={{0.0}};        //qiqibar-qjqjbar    CT6
+double LBT::Rq7[60][20]={{0.0}};        //qiqibar-qiqibar    CT7
+double LBT::Rq8[60][20]={{0.0}};        //qqbar-gg           CT8	  
+double LBT::qhatLQ[60][20]={{0.0}};
+double LBT::qhatG[60][20]={{0.0}};
+   
+double LBT::RHQ[60][20]={{0.0}};        //total scattering rate for heavy quark
+double LBT::RHQ11[60][20]={{0.0}};      //Qq->Qq
+double LBT::RHQ12[60][20]={{0.0}};      //Qg->Qg
+double LBT::qhatHQ[60][20]={{0.0}};     //qhat of heavy quark
+
+double LBT::dNg_over_dt_c[t_gn+2][temp_gn+1][HQener_gn+1]={{{0.0}}};
+double LBT::dNg_over_dt_q[t_gn+2][temp_gn+1][HQener_gn+1]={{{0.0}}};
+double LBT::dNg_over_dt_g[t_gn+2][temp_gn+1][HQener_gn+1]={{{0.0}}};
+double LBT::max_dNgfnc_c[t_gn+2][temp_gn+1][HQener_gn+1]={{{0.0}}};
+double LBT::max_dNgfnc_q[t_gn+2][temp_gn+1][HQener_gn+1]={{{0.0}}};
+double LBT::max_dNgfnc_g[t_gn+2][temp_gn+1][HQener_gn+1]={{{0.0}}};
+
+double LBT::initMCX[maxMC]={0.0};
+double LBT::initMCY[maxMC]={0.0};
+double LBT::distFncB[N_T][N_p1][N_e2]={{{0.0}}};
+double LBT::distFncF[N_T][N_p1][N_e2]={{{0.0}}};
+double LBT::distMaxB[N_T][N_p1][N_e2]={{{0.0}}};
+double LBT::distMaxF[N_T][N_p1][N_e2]={{{0.0}}};
+double LBT::distFncBM[N_T][N_p1]={{0.0}};
+double LBT::distFncFM[N_T][N_p1]={{0.0}};
+
+
 
 LBT::LBT() 
 {
@@ -131,7 +172,10 @@ void LBT::Init()
 
   INFO<< MAGENTA << "LBT parameters -- in_med: " << vacORmed << " Q0: " << Q00 << "  only_leading: " << Kprimary << "  alpha_s: " << fixAlphas << "  hydro_Tc: " << hydro_Tc;
 
-  read_tables(); // initialize various tables
+  if( !flag_init ) {
+      read_tables(); // initialize various tables
+      flag_init=true;
+  }
 
   //...define derived quantities
   temp00=temp0;		
