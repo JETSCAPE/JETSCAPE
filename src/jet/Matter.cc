@@ -440,7 +440,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           qhat = fncQhat(zeta);
           ehat = 0.0;
 
-          if (now_temp>0.0) ehat = qhat/4.0/now_temp ;
+          if (now_temp>0.0) ehat = 0.0*qhat/4.0/now_temp ;
          VERBOSE(8) << BOLDYELLOW << "at Origin of parton, qhat = " << qhat << " ehat = " << ehat;
 
 
@@ -851,7 +851,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   ifcounter++;
               }
               
-              if (l_perp2<=0.0) l_perp2 = Lambda_QCD*Lambda_QCD; ///< test if negative
+              if (l_perp2<=Lambda_QCD*Lambda_QCD) l_perp2 = Lambda_QCD*Lambda_QCD; ///< test if negative
               double l_perp = std::sqrt(l_perp2); ///< the momentum transverse to the parent parton direction
               
               // axis of split
@@ -962,11 +962,11 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   qhat = fncQhat(now_zeta);
                   if (now_temp>0.1)
                   {
-                      ehat = qhat/4.0/now_temp;
+                      ehat = 0.0*qhat/4.0/now_temp;
                   }
                   else
                   {
-                      ehat = qhat/4.0/0.3;
+                      ehat = 0.0*qhat/4.0/0.3;
                   }
 
                  VERBOSE(8) <<BOLDRED<< " between splits broadening qhat = " << qhat << " ehat = " << ehat << " and delT = " << delT ;
@@ -974,7 +974,15 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   
                   if ((!recoil_on)&&(qhat>0.0))
                   {
-                      double kt = generate_kt(qhat*1.414/0.197, delT);
+                      double kt = 0;
+                      if (pIn[i].pid() == 21)
+                      {
+                          kt = generate_kt(qhat*1.414/0.197, delT);
+                      }
+                      else
+                      {
+                          kt = generate_kt(qhat*1.414/0.197*Cf/Ca, delT);
+                      }
                       
                       JSDEBUG << " kt generated = "  << kt << " for qhat = " << qhat*1.414/0.197 << " and delT = " << delT ;
                       
@@ -1114,11 +1122,11 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               qhat = fncQhat(now_zeta);
               if (now_temp>0.1)
               {
-                  ehat = 10.0*qhat/4.0/now_temp;
+                  ehat = 0.0*qhat/4.0/now_temp;
               }
               else
               {
-                  ehat = 10.0*qhat/4.0/0.3;
+                  ehat = 0.0*qhat/4.0/0.3;
               }
 
              VERBOSE(8) <<BOLDRED<< " after splits broadening qhat = " << qhat << " ehat = " << ehat << " and delT = " << delT ;
@@ -1128,7 +1136,17 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               
               if ((!recoil_on)&&(qhat>0.0))
               {
-                  double kt = generate_kt(qhat*1.414/0.197, delT);
+                  double kt = 0.0 ;
+                  
+                  //double kt = 0;
+                  if (pIn[i].pid() == 21)
+                  {
+                      kt = generate_kt(qhat*1.414/0.197, delT);
+                  }
+                  else
+                  {
+                      kt = generate_kt(qhat*1.414/0.197*Cf/Ca, delT);
+                  }
                   
                   JSDEBUG << " kt generated = "  << kt << " for qhat = " << qhat*1.414/0.197 << " and delT = " << delT ;
                   
