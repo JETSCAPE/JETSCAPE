@@ -407,20 +407,20 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           pIn[i].set_min_anti_color(min_anti_color);
           MaxColor = max_color;
           
-          //JSDEBUG:
-          JSDEBUG ;
-          JSDEBUG << " ***************************************************************************** " ;
-          JSDEBUG<< " ID = " << pIn[i].pid() << " Color = " << pIn[i].color() << " Anti-Color = " << pIn[i].anti_color() ;
+          // VERBOSE OUTPUT ON INITIAL STATUS OF PARTICLE:
+         VERBOSE(8) ;
+         VERBOSE(8) << " ***************************************************************************** " ;
+         VERBOSE(8) << " ID = " << pIn[i].pid() << " Color = " << pIn[i].color() << " Anti-Color = " << pIn[i].anti_color() ;
          VERBOSE(8) << " E = " << pIn[i].e() << " px = " << pIn[i].px() << " py = " << pIn[i].py() << " pz = " << pIn[i].pz() ;
          VERBOSE(8) << " *  New generated virtuality = " << tQ2 << " Mean formation time = " << pIn[i].mean_form_time();
          VERBOSE(8) << " *  set new formation time to " << pIn[i].form_time() ;
-          JSDEBUG << " * Maximum allowed virtuality = " << pIn[i].e()*pIn[i].e() << "   Minimum Virtuality = " << QS;
+         VERBOSE(8) << " * Maximum allowed virtuality = " << pIn[i].e()*pIn[i].e() << "   Minimum Virtuality = " << QS;
          VERBOSE(8) << " * Qhat = " << qhat << "  Length in fm = "  << length/5.0 ;
          VERBOSE(8) << " * Jet velocity = " << pIn[i].jet_v().comp(0) << " " << pIn[i].jet_v().comp(1) << "  " << pIn[i].jet_v().comp(2) << "  " << pIn[i].jet_v().comp(3);
          VERBOSE(8) << " * reset location of parton formation = "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z();
-          JSDEBUG << " ***************************************************************************** " ;
-          JSDEBUG ;
-          // end DEBUG:
+         VERBOSE(8) << " ***************************************************************************** " ;
+         VERBOSE(8) ;
+          // end VERBOSE OUTPUT:
  
           
       }
@@ -440,7 +440,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           qhat = fncQhat(zeta);
           ehat = 0.0;
 
-          if (now_temp>0.0) ehat = qhat/4.0/now_temp ;
+          if (now_temp>0.0) ehat = 0.0*qhat/4.0/now_temp ;
          VERBOSE(8) << BOLDYELLOW << "at Origin of parton, qhat = " << qhat << " ehat = " << ehat;
 
 
@@ -694,7 +694,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               double z_low = QS/t_used/2.0 ;
               double z_hi = 1.0 - z_low;
               
-             VERBOSE(8) << " zeta = " << zeta ;
+              VERBOSE(8) << " zeta = " << zeta ;
 
               if (pid==gid)
               { // gluon
@@ -753,17 +753,17 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               double tQd1 = QS;
               double tQd2 = QS;
 
-	      double new_parent_p0 = el_p0[0];
-	      double new_parent_px = el_p0[1];
-	      double new_parent_py = el_p0[2];
-	      double new_parent_pz = el_p0[3];
-	      double new_parent_t = el_p0[4];
+              double new_parent_p0 = el_p0[0];
+              double new_parent_px = el_p0[1];
+              double new_parent_py = el_p0[2];
+              double new_parent_pz = el_p0[3];
+              double new_parent_t = el_p0[4];
               double new_parent_pl = ( new_parent_px*pIn[i].jet_v().x() + new_parent_py*pIn[i].jet_v().y() + new_parent_pz*pIn[i].jet_v().z() )/mod_jet_v;
               //double new_parent_pl = sqrt(pow(new_parent_px,2)+pow(new_parent_py,2)+pow(new_parent_pz,2));
 	      //double new_parent_vx = new_parent_px/new_parent_pl;
 	      //double new_parent_vy = new_parent_py/new_parent_pl;
 	      //double new_parent_vz = new_parent_pz/new_parent_pl;
-	      double new_parent_nu = (new_parent_p0+new_parent_pl)/sqrt(2.0);
+              double new_parent_nu = (new_parent_p0+new_parent_pl)/sqrt(2.0);
               
               //set color of daughters here
               unsigned int d1_col, d1_acol, d2_col, d2_acol, color, anti_color;
@@ -962,11 +962,11 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   qhat = fncQhat(now_zeta);
                   if (now_temp>0.1)
                   {
-                      ehat = qhat/4.0/now_temp;
+                      ehat = 0.0*qhat/4.0/now_temp;
                   }
                   else
                   {
-                      ehat = qhat/4.0/0.3;
+                      ehat = 0.0*qhat/4.0/0.3;
                   }
 
                  VERBOSE(8) <<BOLDRED<< " between splits broadening qhat = " << qhat << " ehat = " << ehat << " and delT = " << delT ;
@@ -974,7 +974,15 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   
                   if ((!recoil_on)&&(qhat>0.0))
                   {
-                      double kt = generate_kt(qhat*1.414/0.197, delT);
+                      double kt = 0;
+                      if (pIn[i].pid() == 21)
+                      {
+                          kt = generate_kt(qhat*1.414/0.197, delT);
+                      }
+                      else
+                      {
+                          kt = generate_kt(qhat*1.414/0.197*Cf/Ca, delT);
+                      }
                       
                       JSDEBUG << " kt generated = "  << kt << " for qhat = " << qhat*1.414/0.197 << " and delT = " << delT ;
                       
@@ -1114,11 +1122,11 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               qhat = fncQhat(now_zeta);
               if (now_temp>0.1)
               {
-                  ehat = 10.0*qhat/4.0/now_temp;
+                  ehat = 0.0*qhat/4.0/now_temp;
               }
               else
               {
-                  ehat = 10.0*qhat/4.0/0.3;
+                  ehat = 0.0*qhat/4.0/0.3;
               }
 
              VERBOSE(8) <<BOLDRED<< " after splits broadening qhat = " << qhat << " ehat = " << ehat << " and delT = " << delT ;
@@ -1128,7 +1136,17 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               
               if ((!recoil_on)&&(qhat>0.0))
               {
-                  double kt = generate_kt(qhat*1.414/0.197, delT);
+                  double kt = 0.0 ;
+                  
+                  double kt = 0;
+                  if (pIn[i].pid() == 21)
+                  {
+                      kt = generate_kt(qhat*1.414/0.197, delT);
+                  }
+                  else
+                  {
+                      kt = generate_kt(qhat*1.414/0.197*Cf/Ca, delT);
+                  }
                   
                   JSDEBUG << " kt generated = "  << kt << " for qhat = " << qhat*1.414/0.197 << " and delT = " << delT ;
                   
