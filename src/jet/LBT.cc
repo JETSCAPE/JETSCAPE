@@ -9,10 +9,6 @@
  *
  * or via email to bugs.jetscape@gmail.com
  *
- * LBT energy loss module: developed by
- * Shanshan Cao, Wei Chen, Yayun He, Tan Luo and Xin-Nian Wang
- * Copyright reserved to the LBL-CCNU group
- *
  * Distributed under the GNU General Public License 3.0 (GPLv3 or later).
  * See COPYING for details.
  ******************************************************************************/

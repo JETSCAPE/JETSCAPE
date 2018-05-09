@@ -10,9 +10,6 @@
 * Distributed under the GNU General Public License 3.0 (GPLv3 or later).
 * See COPYING for details.
 *
-* AdSCFT Module: Daniel Pablos (May 2017)
-* Implementation of energy loss rate derived in JHEP1605(2016)098 [arXiv:1511.07567], 
-* see also Phys.Rev.D90(2014)no.2,025033 [arXiv:1402.6756] 
 *************************************************************************************/
 
 #include "AdSCFT.h"
