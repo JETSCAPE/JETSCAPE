@@ -1138,7 +1138,6 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               {
                   double kt = 0.0 ;
                   
-                  double kt = 0;
                   if (pIn[i].pid() == 21)
                   {
                       kt = generate_kt(qhat*1.414/0.197, delT);
