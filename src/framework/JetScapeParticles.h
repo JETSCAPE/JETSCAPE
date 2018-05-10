@@ -15,10 +15,6 @@
 
 /** Provides JetScapeParticleBase and derived classes Parton, Hadron
 
-    @group JetScape (modular/task) based framework
-    @version Revision 0.1
-    @date Aug 8, 2017
-
     \class Jetscape::JetScapeParticleBase
     * A JetScapeParticleBase derives PRIVARTELY from FastJet PseudoJet and has additional information:
     *  - PID (from PDG) and rest mass (these should eventually be coupled and only PID kept track of internally)

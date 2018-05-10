@@ -13,11 +13,7 @@
  * See COPYING for details.
  ******************************************************************************/
 
-/** Create a pythia collision at a specified point and return the two inital hard partons
-    @group JetScape (modular/task) based framework
-    @version Revision 0.1
-    @date Jun 29, 2017
-*/
+// Create a pythia collision at a specified point and return the two inital hard partons
 
 #ifndef PYTHIAGUN_H
 #define PYTHIAGUN_H
