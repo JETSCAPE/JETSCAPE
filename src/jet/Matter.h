@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) The JETSCAPE Collaboration, 2017
+ * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework
- * Intial Design: Joern Putschke, Kolja Kauder (Wayne State University)
- * For the full list of contributors see AUTHORS.
-
+ * Modular, task-based framework for simulating all aspects of heavy-ion collisions
+ * 
+ * For the list of contributors see AUTHORS.
+ *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
- * or via email to bugs.jetscape.org@gmail.com
+ *
+ * or via email to bugs.jetscape@gmail.com
  *
  * Distributed under the GNU General Public License 3.0 (GPLv3 or later).
  * See COPYING for details.
@@ -55,6 +56,7 @@ class Matter : public JetEnergyLossModule<Matter> //, public std::enable_shared_
   double generate_kt(double local_qhat,double dzeta);
     
   double qhat,length;
+    unsigned int MaxColor;
 
   //SC: for interface with hydro
   double fillQhatTab();
@@ -66,13 +68,14 @@ class Matter : public JetEnergyLossModule<Matter> //, public std::enable_shared_
   double initR0,initRx,initRy,initRz,initVx,initVy,initVz,initRdotV,initVdotV,initEner;
   double Q00,Q0,T0;
 
-  static const int dimQhatTab=201;
+
+  static const int dimQhatTab=151;
   double qhatTab1D[dimQhatTab]={0.0};
   double qhatTab2D[dimQhatTab][dimQhatTab]={{0.0}};
 
   double tStart=0.6;
+    int iEvent;
   bool debug_flag=0;
-
   long  NUM1;                  
 
   //SC: for elastic scattering

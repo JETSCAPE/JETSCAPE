@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) The JETSCAPE Collaboration, 2017
+ * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework
- * Intial Design: Joern Putschke, Kolja Kauder (Wayne State University)
- * For the full list of contributors see AUTHORS.
-
+ * Modular, task-based framework for simulating all aspects of heavy-ion collisions
+ * 
+ * For the list of contributors see AUTHORS.
+ *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
- * or via email to bugs.jetscape.org@gmail.com
+ *
+ * or via email to bugs.jetscape@gmail.com
  *
  * Distributed under the GNU General Public License 3.0 (GPLv3 or later).
  * See COPYING for details.
@@ -71,11 +72,11 @@ int main(int argc, char** argv)
   JetScapeLogger::Instance()->SetRemark(false);
   //SetVerboseLevel (9 a lot of additional debug output ...)
   //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevle(9) or 10
-  JetScapeLogger::Instance()->SetVerboseLevel(6);
+  JetScapeLogger::Instance()->SetVerboseLevel(0);
    
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",2000);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",1000);
   jetscape->SetId("primary");
   // jetscape->set_reuse_hydro (true);
   // jetscape->set_n_reuse_hydro (10);
@@ -124,10 +125,11 @@ int main(int argc, char** argv)
   jetscape->Add(hydro);
 
   // Note: if you use Matter, it MUST come first (to set virtuality)
-  jloss->Add(matter);
-  // jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
-  // jloss->Add(martini);
-  // jloss->Add(adscft);  
+  //jloss->Add(matter);
+
+  //jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
+  jloss->Add(martini);
+  //jloss->Add(adscft);  
 
   jlossmanager->Add(jloss);
   

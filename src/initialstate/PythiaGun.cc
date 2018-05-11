@@ -1,21 +1,19 @@
 /*******************************************************************************
- * Copyright (c) The JETSCAPE Collaboration, 2017
+ * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework
- * Intial Design: Joern Putschke, Kolja Kauder (Wayne State University)
- * For the full list of contributors see AUTHORS.
-
+ * Modular, task-based framework for simulating all aspects of heavy-ion collisions
+ * 
+ * For the list of contributors see AUTHORS.
+ *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
- * or via email to bugs.jetscape.org@gmail.com
+ *
+ * or via email to bugs.jetscape@gmail.com
  *
  * Distributed under the GNU General Public License 3.0 (GPLv3 or later).
  * See COPYING for details.
  ******************************************************************************/
-/** Create a pythia collision at a specified point and return the two inital hard partons
-    @group JetScape (modular/task) based framework
-    @version Revision 0.1
-    @date Jun 29, 2017
-*/
+
+// Create a pythia collision at a specified point and return the two inital hard partons
 
 #include "PythiaGun.h"
 #include <sstream>
