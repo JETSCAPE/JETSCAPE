@@ -82,16 +82,16 @@
 
     <Matter>
       <name>Matter</name>
-      <Q0> 1.0 </Q0>
-      <T0> 0.15 </T0>
+      <Q0> 2.0 </Q0>
+      <T0> 0.16 </T0>
       <vir_factor> 0.25 </vir_factor>
-      <in_vac> 1 </in_vac>
+      <in_vac> 0 </in_vac>
       <recoil_on> 0 </recoil_on>
-      <broadening_on> 1 </broadening_on>
+      <broadening_on> 0 </broadening_on>
       <brick_med> 0 </brick_med>
       <brick_length> 0.0 </brick_length>
-      <hydro_Tc> 0.15 </hydro_Tc>
-      <qhat0> 0.0 </qhat0>
+      <hydro_Tc> 0.16 </hydro_Tc>
+      <qhat0> 3.0 </qhat0>
       <alphas> 0.25 </alphas>
     </Matter>
 
@@ -115,7 +115,8 @@
       <name> AdSCFT </name>
       <kappa> 0.36 </kappa>
       <T0> 0.16 </T0>
-      <in_vac> 1 </in_vac>
+      <Q0> 2.0 </Q0>
+      <in_vac> 0 </in_vac>
     </AdSCFT>
     
   </Eloss>
