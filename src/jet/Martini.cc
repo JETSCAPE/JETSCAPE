@@ -226,6 +226,8 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 
 	    // sample radiated parton's momentum
 	    kRest = getNewMomentumRad(pRest, T, process);
+            if(kRest > pRest) return;
+
 	    // final state parton's momentum
 	    pNewRest = pRest - kRest;
 
@@ -256,6 +258,8 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 
 	    // sample radiated parton's momentum
 	    kRest = getNewMomentumRad(pRest, T, process);
+            if(kRest > pRest) return;
+
 	    // final state parton's momentum
 	    pNewRest = pRest - kRest;
 
@@ -352,6 +356,8 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 
 	    // sample radiated parton's momentum
 	    kRest = getNewMomentumRad(pRest, T, process);
+            if(kRest > pRest) return;
+
 	    // final state parton's momentum
 	    pNewRest = pRest - kRest;
 
@@ -382,6 +388,8 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 
 	    // sample radiated parton's momentum
 	    kRest = getNewMomentumRad(pRest, T, process);
+            if(kRest > pRest) return;
+
 	    // final state parton's momentum
 	    pNewRest = pRest - kRest;
 

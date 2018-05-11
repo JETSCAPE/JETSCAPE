@@ -72,11 +72,11 @@ int main(int argc, char** argv)
   JetScapeLogger::Instance()->SetRemark(false);
   //SetVerboseLevel (9 a lot of additional debug output ...)
   //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevle(9) or 10
-  JetScapeLogger::Instance()->SetVerboseLevel(6);
+  JetScapeLogger::Instance()->SetVerboseLevel(0);
    
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",2000);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",1000);
   jetscape->SetId("primary");
   // jetscape->set_reuse_hydro (true);
   // jetscape->set_n_reuse_hydro (10);
@@ -125,10 +125,10 @@ int main(int argc, char** argv)
   jetscape->Add(hydro);
 
   // Note: if you use Matter, it MUST come first (to set virtuality)
-   jloss->Add(matter);
+  //jloss->Add(matter);
 
   //jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
-  //jloss->Add(martini);
+  jloss->Add(martini);
   //jloss->Add(adscft);  
 
   jlossmanager->Add(jloss);
