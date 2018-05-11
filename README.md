@@ -1,5 +1,5 @@
 # JETSCAPE1.0-RC1
-JETSCAPE, a modular, task-based framework for simulating all aspects of heavy-ion collisions.
+The Jet Energy-loss Tomography with a Statistically and Computationally Advanced Program Envelope (JETSCAPE) collaboration
 
 Test Skeleton of (potential) JetScape Framework
 
