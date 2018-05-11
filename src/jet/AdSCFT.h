@@ -1,18 +1,17 @@
 /*************************************************************************************
-* Copyright (c) The JETSCAPE Collaboration, 2017
+* Copyright (c) The JETSCAPE Collaboration, 2018
 *
-* Modular, task-based framework
-* Intial Design: Joern Putschke, Kolja Kauder (Wayne State University)
-* For the full list of contributors see AUTHORS.
+* Modular, task-based framework for simulating all aspects of heavy-ion collisions
+* 
+* For the list of contributors see AUTHORS.
+*
 * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
-* or via email to bugs.jetscape.org@gmail.com
+*
+* or via email to bugs.jetscape@gmail.com
 *
 * Distributed under the GNU General Public License 3.0 (GPLv3 or later).
 * See COPYING for details.
 *
-* AdSCFT Module: Daniel Pablos (May 2017)
-* Implementation of energy loss rate derived in JHEP1605(2016)098 [arXiv:1511.07567], 
-* see also Phys.Rev.D90(2014)no.2,025033 [arXiv:1402.6756] 
 *************************************************************************************/
 
 
