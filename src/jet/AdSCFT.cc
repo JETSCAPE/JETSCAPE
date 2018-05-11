@@ -148,8 +148,8 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       double QS=Q0*Q0;
       if (pIn[i].t()<=QS+rounding_error && temp>=T0 && pIn[i].e()>0.00001)
       {
-        cout << " ADS Q= " << pIn[i].t() << " Q0= " << Q0 << " temp= " << temp << " T0= " << T0 << endl;
-	cout << " ADS tau= " << tau << " x= " << x[0] << " y= " << x[1] << " z= " << x[2] << " t= " << x[3] << endl;
+        //cout << " ADS Q= " << pIn[i].t() << " Q0= " << Q0 << " temp= " << temp << " T0= " << T0 << endl;
+	//cout << " ADS tau= " << tau << " x= " << x[0] << " y= " << x[1] << " z= " << x[2] << " t= " << x[3] << endl;
 	TakeResponsibilityFor ( pIn[i] ); // Generate error if another module already has responsibility.
 
 	VERBOSE(8) << " ************ \n \n";
