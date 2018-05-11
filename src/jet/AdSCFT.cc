@@ -126,8 +126,8 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       double tau=std::sqrt(x[3]*x[3]-x[2]*x[2]);
       double temp, vx, vy, vz;
       //Only get a temp!=0 if in_vac=0
-      if (x[3]>=tStart && !in_vac)
-      //if (tau>=tStart && !in_vac)  //Should use tau, not t, in absence of preequilibrium eloss
+      //if (x[3]>=tStart && !in_vac) //Can use time if there is preequilibrium eloss
+      if (tau>=tStart && !in_vac)  //Should use tau, not t, in absence of preequilibrium eloss
       {
         GetHydroCellSignal(x[3], x[0], x[1], x[2], check_fluid_info_ptr);
         VERBOSE(8)<< MAGENTA<<"Temperature from Brick (Signal) = "<<check_fluid_info_ptr->temperature;
