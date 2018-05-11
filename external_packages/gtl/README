@@ -1,0 +1,162 @@
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+                    The Graph Template Library - GTL
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+  PLEASE READ THE FILE 'COPYING' BEFORE APPLYING AND USING THIS SOFTWARE
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+
+ABOUT GTL
+
+   GTL, the "Graph Template Library", can be seen as an
+   extension of the Standard Template Library STL to graphs and
+   fundamental graph algorithms.
+
+   Graphs are a common model for discrete relational structures,
+   such as diagrams, nets and networks, hierarchies, plans,
+   charts, or maps. And there are many important algorithms for
+   graphs, such us exhaustive search, shortest path, minimum
+   spanning tree, matching or network flow, with a wide range of
+   applications in areas such as Computer Science, Discrete
+   Mathematics, Chemistry, Molecular Biology, Operations
+   Research, Engineering, Computer Aided Design, Project
+   Management, Production Planning, Surveillance, and Maintenance
+   Control, Cartography, and other application areas. The wide
+   use of graphs is also due to the fact that they have a natural
+   graphical representation and Graphlet is a tool for this.
+
+   GTL is a platform independent and extendible C++ library. It
+   is a useful aid to any software designer. GTL contains the
+   classes needed to work with graphs, nodes and edges and some
+   fundamental algorithms as building blocks for more complex
+   graph algorithms.  Further algorithms are under development.
+
+   Customized algorithms can be developed by experienced
+   programmers. A major step shall be support for models of
+   hierachically structured graph and the efficient manipulation
+   of really large graphs.
+
+   GTL has been designed and programmed following the guide lines
+   of STL.
+
+
+WHAT IS GTL?
+
+   There are some basic data structures and algorithms which are frequently
+   used in many programs.  This includes container classes such as vectors,
+   sets and lists.
+
+   Many commercial but some free libraries have implemented these data
+   structures and algorithms in a general way. This makes them usable for
+   many puposes.
+
+   One of these libraries is the Standard Template Library (STL), an
+   extremely flexible implementation of many container classes and standard
+   algorithms. STL is supposed to become a part of the C++ standard library
+   and therefore is an ideal basis when writing portable programs.
+
+   Unfortunately, STL has no support for graphs and graph algorithms.
+   However, graphs are widely used to model complex relational structures.
+
+   Since we are intensively working with graph algorithms especially
+   in Graphlet (http://www.fmi.uni-passau.de/Graphlet/), we decided to
+   implement GTL, a graph library based on STL. For the design of
+   GTL's API bases on the API of LEDA. GTL contains the classes
+   needed to work with graphs, nodes and edges and some basic
+   algorithms as building blocks for more complex graph
+   algorithms. Further algorithms are under work.	  
+
+
+VERSION:
+
+   The most recent version is 1.2.2. 
+
+   For the changes since the last release 1.2.1 please see the
+   ChangeLog and NEWS files.
+
+
+PLATFORMS:
+
+  We are currently using GTL in Graphlet on the following platforms:
+	
+	* Solaris with gcc-3.x
+	* Linux with gcc-3.x
+	* MS Windows XP and Visual Studio .NET 2003
+	* Mac OS X 10.2, 10.3 
+
+HOMEPAGE:
+
+   Please refer to our homepage 
+  
+	http://www.infosun.fmi.uni-passau.de/GTL
+	
+   for updates and latest news.
+
+
+AUTHORS:
+
+   GTL was designed and implemented by
+
+	Michael Forster	<forster@fmi.uni-passau.de>
+	Andreas Pick	<pick@fmi.uni-passau.de>
+	Marcus Raitner	<raitner@fmi.uni-passau.de>
+
+   Acknowledgements to
+
+        Christian Bachmaier  <chris@infosun.fmi.uni-passau.de>
+
+
+BUGS AND FEATURES:
+
+   If you want to report any bugs in GTL or you have suggestions
+   concerning desirable feature. Please let us know !
+
+   We maintain mailing-lists for all these purposes. The
+   following lists are available:
+
+   gtl@infosun.fmi.uni-passau.de
+   =============================
+	Comments an questions about GTL to the GTL Team
+
+   gtl-bugs@infosun.fmi.uni-passau.de
+   ==================================
+        Bug Reports
+
+   gtl-users@infosun.fmi.uni-passau.de
+   ===================================
+        General Discussion about GTL
+
+   gtl-announce@infosun.fmi.uni-passau.de
+   ======================================
+        Low traffic, read only list for announcements of new GTL
+	versions.
+
+
+   You can subscribe to the the gtl-announce or gtl-users list by
+   sending mail to 
+
+   gtl-announce-request@infosun.fmi.uni-passau.de or
+   gtl-users-request@infosun.fmi.uni-passau.de 
+   
+   with the single word "subscribe" in the body of the message. 
+
+   All announcements on the gtl-announce list are forwarded to
+   the gtl-users list, so there is no need to subscribe to both.  
+
+   Please send bugreports and/or suggestions to the appropriate list
+
+   Always include the following informations in your bugreports:
+
+	* Operating System / Version (+ Service Pack)
+	* Compiler / Version (+ Service Pack)
+	* GTL version
+	* A detailed description of the bug
+	* Any warnings or errors you get.
+	* output of make
+	* the file config.log
+	* $20 :-)
+
+
