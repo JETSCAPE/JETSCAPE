@@ -394,7 +394,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 	    pNewRest = pRest - kRest;
 
 	    // choose the Id of new qqbar pair. Note that we only deal with nf = 3
-	    double r = ZeroOneDistribution(*get_mt19937_generator());
+	    double r = ZeroOneDistribution(*GetMt19937Generator());
 	    if (r < 1./3.) newId = 1;
 	    else if (r < 2./3.) newId = 2;
 	    else newId = 3;
@@ -469,7 +469,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 	else if (process == 11)
 	  {
 	    // choose the Id of new qqbar pair. Note that we only deal with nf = 3
-	    double r = ZeroOneDistribution(*get_mt19937_generator());
+	    double r = ZeroOneDistribution(*GetMt19937Generator());
 	    if (r < 1./3.) newId = 1;
 	    else if (r < 2./3.) newId = 2;
 	    else newId = 3;
@@ -528,13 +528,13 @@ int Martini::DetermineProcess(double pRest, double T, double deltaT, int Id)
       double nextProb = 0.;
       double Prob = 0.;
 
-      if (ZeroOneDistribution(*get_mt19937_generator()) < totalQuarkProb)
+      if (ZeroOneDistribution(*GetMt19937Generator()) < totalQuarkProb)
 	{
 	  /* label for process
 	     [1-4  : Radiation ] 1: q->qg , 2 : q->qgamma, 3 : g->gg , 4: g->qqbar
 	     [5-8  : Elastic   ] 5: qq->qq, 6 : qg->qg   , 7 : gq->gq, 8: gg->gg
 	     [9-11 : Conversion] 9: q->g  , 10: q->gamma , 11: g->q                */
-	  double randProb = ZeroOneDistribution(*get_mt19937_generator());
+	  double randProb = ZeroOneDistribution(*GetMt19937Generator());
 
 	  // AMY radiation only happens if energy scale is above certain threshold.
 	  // but elastic/conversion processes doesn't have threshold.
@@ -593,13 +593,13 @@ int Martini::DetermineProcess(double pRest, double T, double deltaT, int Id)
       double nextProb = 0.;
       double Prob = 0.;
 
-      if (ZeroOneDistribution(*get_mt19937_generator()) < totalGluonProb)
+      if (ZeroOneDistribution(*GetMt19937Generator()) < totalGluonProb)
 	{
 	  /* label for process
 	     [1-4  : Radiation ] 1: q->qg, 2 : q->qgamma, 3 : g->gg, 4: g->qq
 	     [5-8  : Elastic   ] 5: q->q , 6 : q->g     , 7 : g->q , 8: g->g
 	     [9-11 : Conversion] 9: q->g , 10: q->gamma , 11: g->q            */
-	  double randProb = ZeroOneDistribution(*get_mt19937_generator());
+	  double randProb = ZeroOneDistribution(*GetMt19937Generator());
 
 	  // AMY radiation only happens if energy scale is above certain threshold.
 	  // but elastic/conversion processes doesn't have threshold.
@@ -720,7 +720,7 @@ double Martini::getNewMomentumRad(double pRest, double T, int process)
     {
       // decide whether k shall be positive or negative 
       // if x (uniform on [0,1]) < area(k<0)/area(all k) then k < 0
-      if (ZeroOneDistribution(*get_mt19937_generator()) < Neg.qqg/(Neg.qqg+Pos.qqg))
+      if (ZeroOneDistribution(*GetMt19937Generator()) < Neg.qqg/(Neg.qqg+Pos.qqg))
 	posNegSwitch = 0;
 
       if (posNegSwitch == 1) // if k > 0
@@ -728,13 +728,13 @@ double Martini::getNewMomentumRad(double pRest, double T, int process)
 	  do
 	    {
 	      //randA is a uniform random number on [0, Area under the envelop function]
-	      randA = ZeroOneDistribution(*get_mt19937_generator())*area(u+12., u, posNegSwitch, 1);
+	      randA = ZeroOneDistribution(*GetMt19937Generator())*area(u+12., u, posNegSwitch, 1);
 	      y = 2.5/(LambertW(2.59235*pow(10.,23.)*exp(-100.*randA)));
 
 	      fy = 0.025/(y*y)+0.01/y;             // total area under the envelop function
 	      fyAct = function(u, y, process);     // actual rate
 
-	      x = ZeroOneDistribution(*get_mt19937_generator());       // random number, uniform on [0,1]
+	      x = ZeroOneDistribution(*GetMt19937Generator());       // random number, uniform on [0,1]
 
 	    } while (x > fyAct/fy); 
 	  // reject if x is larger than the ratio fyAct/fy
@@ -745,13 +745,13 @@ double Martini::getNewMomentumRad(double pRest, double T, int process)
 	  do
 	    {
 	      //randA is a uniform random number on [0, Area under the envelop function]
-	      randA = ZeroOneDistribution(*get_mt19937_generator())*area(-0.05, u, posNegSwitch, 1);
+	      randA = ZeroOneDistribution(*GetMt19937Generator())*area(-0.05, u, posNegSwitch, 1);
 	      y = -12./(1.+480.*randA);
 
 	      fy = 0.025/(y*y);                    // total area under the envelop function
 	      fyAct = function(u, y, process);     // actual rate
 
-	      x = ZeroOneDistribution(*get_mt19937_generator());       // random number, uniform on [0,1]
+	      x = ZeroOneDistribution(*GetMt19937Generator());       // random number, uniform on [0,1]
 
 	    } while (x > fyAct/fy); 
 	  // reject if x is larger than the ratio fyAct/fy
@@ -762,13 +762,13 @@ double Martini::getNewMomentumRad(double pRest, double T, int process)
     {
       do
 	{
-	  randA = ZeroOneDistribution(*get_mt19937_generator())*area(1.15*u, u, posNegSwitch, 2);
+	  randA = ZeroOneDistribution(*GetMt19937Generator())*area(1.15*u, u, posNegSwitch, 2);
 	  y = 83895.3*pow(pow(u, 0.5)*randA, 10./3.);
 
 	  fy = (0.01/(pow(y, 0.7)))/pow(u, 0.5); // total area under the envelop function
 	  fyAct = function(u, y, process);       // actual rate
 
-	  x = ZeroOneDistribution(*get_mt19937_generator());         // random number, uniform on [0,1]
+	  x = ZeroOneDistribution(*GetMt19937Generator());         // random number, uniform on [0,1]
 
 	} while (x > fyAct/fy); 
       // reject if x is larger than the ratio fyAct/fy
@@ -778,7 +778,7 @@ double Martini::getNewMomentumRad(double pRest, double T, int process)
     {
       // decide whether k shall be positive or negative 
       // if x (uniform on [0,1]) < area(k<0)/area(all k) then k < 0
-      if (ZeroOneDistribution(*get_mt19937_generator()) < Neg.ggg/(Neg.ggg+Pos.ggg))
+      if (ZeroOneDistribution(*GetMt19937Generator()) < Neg.ggg/(Neg.ggg+Pos.ggg))
 	posNegSwitch = 0;
 
       if( posNegSwitch == 1 ) // if k > 0
@@ -786,13 +786,13 @@ double Martini::getNewMomentumRad(double pRest, double T, int process)
 	  do
 	    {
 	      //randA is a uniform random number on [0, Area under the envelop function]
-	      randA = ZeroOneDistribution(*get_mt19937_generator())*area(u/2., u, posNegSwitch, 3);
+	      randA = ZeroOneDistribution(*GetMt19937Generator())*area(u/2., u, posNegSwitch, 3);
 	      y = 5./(LambertW(2.68812*pow(10., 45.)*exp(-50.*randA)));
 
 	      fy = 0.1/(y*y)+0.02/y;               // total area under the envelop function
 	      fyAct = function(u, y, process);     // actual rate
 
-	      x = ZeroOneDistribution(*get_mt19937_generator());       // random number, uniform on [0,1]
+	      x = ZeroOneDistribution(*GetMt19937Generator());       // random number, uniform on [0,1]
 
 	    } while (x > fyAct/fy); 
 	  // reject if x is larger than the ratio fyAct/fy
@@ -803,13 +803,13 @@ double Martini::getNewMomentumRad(double pRest, double T, int process)
 	  do
 	    {
 	      //randA is a uniform random number on [0, Area under the envelop function]
-	      randA = ZeroOneDistribution(*get_mt19937_generator())*area(-0.05, u, posNegSwitch, 3);
+	      randA = ZeroOneDistribution(*GetMt19937Generator())*area(-0.05, u, posNegSwitch, 3);
 	      y = -12./(1. + 120.*randA);
 
 	      fy = 0.1/(y*y);                      // total area under the envelop function
 	      fyAct = function(u, y, process);     // actual rate
 
-	      x = ZeroOneDistribution(*get_mt19937_generator());       // random number, uniform on [0,1]
+	      x = ZeroOneDistribution(*GetMt19937Generator());       // random number, uniform on [0,1]
 
 	    } while(x > fyAct/fy); 
 	  // reject if x is larger than the ratio fyAct/fy
@@ -820,7 +820,7 @@ double Martini::getNewMomentumRad(double pRest, double T, int process)
     {
       // decide whether k shall be positive or negative 
       // if x (uniform on [0,1]) < area(k<0)/area(all k) then k < 0
-      if (ZeroOneDistribution(*get_mt19937_generator()) < Neg.gqq/(Neg.gqq+Pos.gqq))
+      if (ZeroOneDistribution(*GetMt19937Generator()) < Neg.gqq/(Neg.gqq+Pos.gqq))
 	posNegSwitch = 0;
 
       if( posNegSwitch == 1 ) // if k > 0
@@ -828,13 +828,13 @@ double Martini::getNewMomentumRad(double pRest, double T, int process)
 	  do
 	    {
 	      //randA is a uniform random number on [0, Area under the envelop function]
-	      randA = ZeroOneDistribution(*get_mt19937_generator())*area(u/2., u, posNegSwitch, 4);
+	      randA = ZeroOneDistribution(*GetMt19937Generator())*area(u/2., u, posNegSwitch, 4);
 	      y = 0.83333*(0.06*function(u, 0.05, process)+randA)/function(u, 0.05, process);
 
 	      fy = 1.2*function(u, 0.05, process); // total area under the envelop function
 	      fyAct = function(u, y, process);     // actual rate
 
-	      x = ZeroOneDistribution(*get_mt19937_generator());       // random number, uniform on [0,1]
+	      x = ZeroOneDistribution(*GetMt19937Generator());       // random number, uniform on [0,1]
 
 	    } while (x > fyAct/fy); 
 	  // reject if x is larger than the ratio fyAct/fy
@@ -845,13 +845,13 @@ double Martini::getNewMomentumRad(double pRest, double T, int process)
 	  do
 	    {
 	      //randA is a uniform random number on [0, Area under the envelop function]
-	      randA = ZeroOneDistribution(*get_mt19937_generator())*area(-0.05, u, posNegSwitch, 4);
+	      randA = ZeroOneDistribution(*GetMt19937Generator())*area(-0.05, u, posNegSwitch, 4);
 	      y = (2.5-u*log(7.81082*pow(10., -6.)*exp(14.5/u)+(-115.883+113.566*u)*randA))/(1.-0.98*u);
 
 	      fy = 0.98*exp((1.-1./u)*(-2.5+y))/u; // total area under the envelop function
 	      fyAct = function(u, y, process);     // actual rate
 
-	      x = ZeroOneDistribution(*get_mt19937_generator());       // random number, uniform on [0,1]
+	      x = ZeroOneDistribution(*GetMt19937Generator());       // random number, uniform on [0,1]
 
 	    } while (x > fyAct/fy); 
 	  // reject if x is larger than the ratio fyAct/fy
@@ -1589,12 +1589,12 @@ double Martini::getEnergyTransfer(double pRest, double T, int process)
       // if x (uniform on [0,1]) < area(k<0)/area(all k) then k < 0
       if (process == 5)
 	{
-	  if (ZeroOneDistribution(*get_mt19937_generator()) < Neg.qq/(Neg.qq+Pos.qq))
+	  if (ZeroOneDistribution(*GetMt19937Generator()) < Neg.qq/(Neg.qq+Pos.qq))
 	    posNegSwitch = 0;
 	}
       else
 	{
-	  if (ZeroOneDistribution(*get_mt19937_generator()) < Neg.gq/(Neg.gq+Pos.gq))
+	  if (ZeroOneDistribution(*GetMt19937Generator()) < Neg.gq/(Neg.gq+Pos.gq))
 	    posNegSwitch = 0;
 	}
 
@@ -1603,7 +1603,7 @@ double Martini::getEnergyTransfer(double pRest, double T, int process)
 	  do
 	    {
 	      //randA is a uniform random number on [0, Area under the envelop function]
-	      randA = ZeroOneDistribution(*get_mt19937_generator())*areaOmega(u, posNegSwitch, process);
+	      randA = ZeroOneDistribution(*GetMt19937Generator())*areaOmega(u, posNegSwitch, process);
 	      y = exp((-1.41428*pow(10., 9.)*alpha_s - 8.08158*pow(10., 8.)*alpha_s*alpha_s
 		       + 2.02327*pow(10., 9.)*randA)
 		      /(alpha_s*(4.72097*pow(10., 8.) + 2.6977*pow(10., 8.)*alpha_s)));
@@ -1611,7 +1611,7 @@ double Martini::getEnergyTransfer(double pRest, double T, int process)
 	      fy = alpha_s/0.15*(0.035 + alpha_s*0.02)/sqrt(y*y); // total area under the envelop function
 	      fyAct = functionOmega(u, y, process);               // actual rate
 
-	      x = ZeroOneDistribution(*get_mt19937_generator());                      // random number, uniform on [0,1]
+	      x = ZeroOneDistribution(*GetMt19937Generator());                      // random number, uniform on [0,1]
 
 	    } while (x > fyAct/fy); 
 	  // reject if x is larger than the ratio fyAct/fy
@@ -1622,13 +1622,13 @@ double Martini::getEnergyTransfer(double pRest, double T, int process)
 	  do
 	    {
 	      //randA is a uniform random number on [0, Area under the envelop function]
-	      randA = ZeroOneDistribution(*get_mt19937_generator())*areaOmega(-0.05, posNegSwitch, process);
+	      randA = ZeroOneDistribution(*GetMt19937Generator())*areaOmega(-0.05, posNegSwitch, process);
 	      y = -12.*exp(-30.*randA/(alpha_s*(7.+ 4.*alpha_s)));
 
 	      fy = alpha_s/0.15*(0.035 + alpha_s*0.02)/sqrt(y*y); // total area under the envelop function
 	      fyAct = functionOmega(u, y, process);               // actual rate
 
-	      x = ZeroOneDistribution(*get_mt19937_generator());                      // random number, uniform on [0,1]
+	      x = ZeroOneDistribution(*GetMt19937Generator());                      // random number, uniform on [0,1]
 
 	    } while (x > fyAct/fy); 
 	  // reject if x is larger than the ratio fyAct/fy
@@ -1641,12 +1641,12 @@ double Martini::getEnergyTransfer(double pRest, double T, int process)
       // if x (uniform on [0,1]) < area(k<0)/area(all k) then k < 0
       if (process == 6)
 	{
-	  if (ZeroOneDistribution(*get_mt19937_generator()) < Neg.qg/(Neg.qg+Pos.qg))
+	  if (ZeroOneDistribution(*GetMt19937Generator()) < Neg.qg/(Neg.qg+Pos.qg))
 	    posNegSwitch = 0;
 	}
       else
 	{
-	  if (ZeroOneDistribution(*get_mt19937_generator()) < Neg.gg/(Neg.gg+Pos.gg))
+	  if (ZeroOneDistribution(*GetMt19937Generator()) < Neg.gg/(Neg.gg+Pos.gg))
 	    posNegSwitch = 0;
 	}
 
@@ -1655,7 +1655,7 @@ double Martini::getEnergyTransfer(double pRest, double T, int process)
 	  do
 	    {
 	      //randA is a uniform random number on [0, Area under the envelop function]
-	      randA = ZeroOneDistribution(*get_mt19937_generator())*areaOmega(u, posNegSwitch, process);
+	      randA = ZeroOneDistribution(*GetMt19937Generator())*areaOmega(u, posNegSwitch, process);
 	      y = exp((-2.32591*pow(10.,17.)*alpha_s - 1.32909*pow(10.,17.)*alpha_s*alpha_s
 		       + 2.2183*pow(10.,17.)*randA)
 		      /(alpha_s*(7.76406*pow(10.,16.) + 4.43661*pow(10.,16.)*alpha_s)));
@@ -1663,7 +1663,7 @@ double Martini::getEnergyTransfer(double pRest, double T, int process)
 	      fy = 1.5*alpha_s/0.15*(0.035 + alpha_s*0.02)/sqrt(y*y); // total area under the envelop function
 	      fyAct = functionOmega(u, y, process);                   // actual rate
 
-	      x = ZeroOneDistribution(*get_mt19937_generator());                          // random number, uniform on [0,1]
+	      x = ZeroOneDistribution(*GetMt19937Generator());                          // random number, uniform on [0,1]
 
 	    } while (x > fyAct/fy); 
 	  // reject if x is larger than the ratio fyAct/fy
@@ -1674,14 +1674,14 @@ double Martini::getEnergyTransfer(double pRest, double T, int process)
 	  do
 	    {
 	      //randA is a uniform random number on [0, Area under the envelop function]
-	      randA = ZeroOneDistribution(*get_mt19937_generator())*areaOmega(-0.05, posNegSwitch, process);
+	      randA = ZeroOneDistribution(*GetMt19937Generator())*areaOmega(-0.05, posNegSwitch, process);
 	      y = -12.*exp(-2.81475*pow(10.,15.)*randA
 			   /(alpha_s*(9.85162*pow(10.,14.) + 5.6295*pow(10.,14.)*alpha_s)));
 
 	      fy = 1.5*alpha_s/0.15*(0.035 + alpha_s*0.02)/sqrt(y*y); // total area under the envelop function
 	      fyAct = functionOmega(u, y, process);                   // actual rate
 
-	      x = ZeroOneDistribution(*get_mt19937_generator());                          // random number, uniform on [0,1]
+	      x = ZeroOneDistribution(*GetMt19937Generator());                          // random number, uniform on [0,1]
 
 	    } while (x > fyAct/fy); 
 	  // reject if x is larger than the ratio fyAct/fy
@@ -1738,13 +1738,13 @@ double Martini::getMomentumTransfer(double pRest, double omega, double T, int pr
       do
 	{
 	  //randA is a uniform random number on [0, Area under the envelop function]
-	  randA = ZeroOneDistribution(*get_mt19937_generator())*areaQ(u, omega, process);
+	  randA = ZeroOneDistribution(*GetMt19937Generator())*areaQ(u, omega, process);
 	  y = pow(B, 0.25)*sqrt(tan((2.*sqrt(B)*randA+A*atan(omega*omega/sqrt(B)))/A));
 
 	  fy = A*y/(pow(y, 4.)+B);                       // total area under the envelop function
 	  fyAct = functionQ(u, omega, y, process);  // actual rate
 
-	  x = ZeroOneDistribution(*get_mt19937_generator());                 // random number, uniform on [0,1]
+	  x = ZeroOneDistribution(*GetMt19937Generator());                 // random number, uniform on [0,1]
 
 	} while (x > fyAct/fy); 
       // reject if x is larger than the ratio fyAct/fy
@@ -1764,7 +1764,7 @@ double Martini::getMomentumTransfer(double pRest, double omega, double T, int pr
       // randomly select initial values of q=y, such that
       do
 	{
-	  y = y_min+ZeroOneDistribution(*get_mt19937_generator())*(y_max-y_min);
+	  y = y_min+ZeroOneDistribution(*GetMt19937Generator())*(y_max-y_min);
 	  g = functionQ(u, omega, y, process);
 
 	} while (g == 0.);
@@ -1776,7 +1776,7 @@ double Martini::getMomentumTransfer(double pRest, double omega, double T, int pr
 	{        
 	  do
 	    {
-	      y_new = y_min+ZeroOneDistribution(*get_mt19937_generator())*(y_max-y_min); 
+	      y_new = y_min+ZeroOneDistribution(*GetMt19937Generator())*(y_max-y_min); 
 	    }
 	  while (y_new < y_min || y_new > y_max);                      
 	  // check that the new value is in range
@@ -1785,7 +1785,7 @@ double Martini::getMomentumTransfer(double pRest, double omega, double T, int pr
 	  ratio = g_new/g;                             // ratio of g(y_new)/g(y)
 
 	  // accept if probability g(y_new)/g(y) is larger than randon number
-	  if (ZeroOneDistribution(*get_mt19937_generator()) < ratio)
+	  if (ZeroOneDistribution(*GetMt19937Generator()) < ratio)
 	    {
 	      y = y_new;
 	      g = g_new;
@@ -1910,7 +1910,7 @@ FourVector Martini::getNewMomentumElas(FourVector pVec, double omega, double q)
   pVecNewTemp -= qlVec;  // change longitudinal momentum
 
 
-  phi = 2.*M_PI*ZeroOneDistribution(*get_mt19937_generator());
+  phi = 2.*M_PI*ZeroOneDistribution(*GetMt19937Generator());
   r.Set(pVec.x()/pVec.t(), pVec.y()/pVec.t(), pVec.z()/pVec.t(), 1.);
   u = 1.-cos(phi);
  

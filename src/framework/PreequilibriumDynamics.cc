@@ -61,7 +61,7 @@ void PreequilibriumDynamics::Init() {
              << "jetscape->Add(trento);";
     }
 
-    initialize_preequilibrium(parameter_list_);
+    InitializePreequilibrium(parameter_list_);
 
     InitTask();
 
@@ -73,11 +73,10 @@ void PreequilibriumDynamics::Exec() {
     VERBOSE(8) << "Current Event #" << GetCurrentEvent();
 
     if (ini) {
-      INFO << "length of energy density vector="
-           << ini->entropy_density_distribution_.size();
+      VERBOSE(3) << "length of entropy density vector=" << ini->GetEntropyDensityDistribution().size();
     }
 
-    evolve_preequilibrium();
+    EvolvePreequilibrium();
 
     JetScapeTask::ExecuteTasks();
 }

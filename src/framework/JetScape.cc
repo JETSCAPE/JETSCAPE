@@ -48,7 +48,7 @@ JetScape::~JetScape()
 
 void JetScape::Show()
 {
-  show_jetscape_banner();
+  ShowJetscapeBanner();
 }
 
 void JetScape::Init()

@@ -110,7 +110,7 @@ void PGun::Exec()
 	   
 	   // Now generate values
 	   auto idx = dist( *get_mt19937_generator() );
-	   auto coord = ini->coord_from_idx( idx );
+	   auto coord = ini->CoordFromIdx( idx );
 	   xLoc[1] = std::get<0>( coord );
 	   xLoc[2] = std::get<1>( coord );
 	 }

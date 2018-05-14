@@ -47,18 +47,18 @@ class PreequilibriumDynamics : public JetScapeModuleBase {
 
     virtual ~PreequilibriumDynamics();
 
-    /** Reads the input parameters from the XML file under the tag <Preequilibrium>. Uses JetScapeSingnalManager Instance to retrive the Initial State Physics information. Calls initialize_hydro(parameter_list) and InitTask(); This explicit call can be used for actual initialization of modules such as @a Brick, @a MPI_MUSIC, or @a OSU-HYDRO if attached as a @a polymorphic class. It also initializes the tasks within the current module.
+    /** Reads the input parameters from the XML file under the tag <Preequilibrium>. Uses JetScapeSingnalManager Instance to retrive the Initial State Physics information. Calls InitializeHydro(parameter_list) and InitTask(); This explicit call can be used for actual initialization of modules such as @a Brick, @a MpiMusic, or @a OSU-HYDRO if attached as a @a polymorphic class. It also initializes the tasks within the current module.
     @sa Read about @a polymorphism in C++.
     */
     void Init();
 
-    /** Calls evolve_preequilibrium(); This explicit call can be used for actual execution of Preequilibrium evolution defined in the modules such as @a Brick, @a MPI_MUSIC, or @a OSU-HYDRO if attached as a @a polymorphic class. It also execute the tasks within the current module.
+    /** Calls EvolvePreequilibrium(); This explicit call can be used for actual execution of Preequilibrium evolution defined in the modules such as @a Brick, @a MpiMusic, or @a OSU-HYDRO if attached as a @a polymorphic class. It also execute the tasks within the current module.
     @sa Read about @a polymorphism in C++.
     */
     void Exec();
 
-    virtual void initialize_preequilibrium(PreEquilibriumParameterFile parameter_list) {}
-    virtual void evolve_preequilibrium() {}
+    virtual void InitializePreequilibrium(PreEquilibriumParameterFile parameter_list) {}
+    virtual void EvolvePreequilibrium() {}
 
     /** @return A pointer to the XML elements. Such XML elements are the input parameters stored in an XML file under the tag <Hydro>.
     */
@@ -71,13 +71,13 @@ class PreequilibriumDynamics : public JetScapeModuleBase {
 
     PreEquilibriumParameterFile& GetParameterList() {return parameter_list_;}
 
-    int get_preequilibrium_status() {return(preequilibrium_status_);}
+    int GetPreequilibriumStatus() {return(preequilibrium_status_);}
 
     // @return Start time (or tau) for hydrodynamic evolution
-    real get_preequilibrium_start_time() {return(preequilibrium_tau_0_);}
+    real GetPreequilibriumStartTime() {return(preequilibrium_tau_0_);}
 
     // @return End time (or tau) for hydrodynamic evolution.
-    real get_preequilibrium_end_time() {return(preequilibrium_tau_max_);}
+    real GetPreequilibriumEndTime() {return(preequilibrium_tau_max_);}
 
     // record preequilibrium running status
     PreequilibriumStatus preequilibrium_status_;

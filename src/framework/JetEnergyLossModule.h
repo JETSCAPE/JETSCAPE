@@ -34,19 +34,18 @@ class JetEnergyLossModule : public JetEnergyLoss
  public:
 
   using JetEnergyLoss::JetEnergyLoss;
-  
+
+  //! Deep copy constructor. The goal is to not have to initialize Modules multiple times
   virtual shared_ptr<JetEnergyLoss> Clone() const override
    {
-     JSDEBUG << "Cloning task with id=" << GetId() << " and TaskNumber= " << get_my_task_number();
+     JSDEBUG << "Cloning task with id=" << GetId() << " and TaskNumber= " << GetMyTaskNumber();
      // DEBUG/TODO: KK: Joern's plan was to not have to call Init again, but I'm not sure that can work/is desirable.
      auto ret=make_shared<Derived>(static_cast<const Derived&>(*this));
      //ret->Init();
      return ret;
-     //compiles and seems to work (use of *this bad with shared !????)
-     // return make_shared<Derived>(static_cast<const Derived&>(*this));
    }
      
-  // override deactivation
+  //! Override deactivation
   void SetActive(bool m_active_exec) {
     throw std::runtime_error("SetActive not supported for energy loss modules. Please remove the module from the manager.");
   };

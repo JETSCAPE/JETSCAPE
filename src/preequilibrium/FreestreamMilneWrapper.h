@@ -30,8 +30,8 @@ class FreestreamMilneWrapper: public PreequilibriumDynamics {
   FreestreamMilneWrapper();
   ~FreestreamMilneWrapper();
   
-  void initialize_preequilibrium(PreEquilibriumParameterFile parameter_list);  
-  void evolve_preequilibrium();
+  void InitializePreequilibrium(PreEquilibriumParameterFile parameter_list);  
+  void EvolvePreequilibrium();
 };
 
 #endif  // FREESTREAMMILNEWRAPPER_H

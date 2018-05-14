@@ -74,45 +74,45 @@ namespace Jetscape {
   class Parton;
   
 // -------------------------------------------
-struct safe_ostream {
-  struct guarded_impl {
-    guarded_impl() = delete;
-    guarded_impl(const guarded_impl&) = delete;
-    void operator=(const guarded_impl&) = delete;
-    guarded_impl(std::ostream& ostream, std::mutex& mutex) : ostream_(ostream), guard_(mutex) {
+struct SafeOstream {
+  struct GuardedImpl {
+    GuardedImpl() = delete;
+    GuardedImpl(const GuardedImpl&) = delete;
+    void operator=(const GuardedImpl&) = delete;
+    GuardedImpl(std::ostream& ostream, std::mutex& mutex) : Ostream(ostream), Guard(mutex) {
     }
-    ~guarded_impl() {
-      ostream_.flush();
+    ~GuardedImpl() {
+      Ostream.flush();
     }
     template<typename T> void write(const T& x) {
-      ostream_ << x;
+      Ostream << x;
     }
-    std::ostream& ostream_;
-    std::lock_guard<std::mutex> guard_;
+    std::ostream& Ostream;
+    std::lock_guard<std::mutex> Guard;
   };
   struct impl {
     impl() = delete;
     void operator=(const impl&) = delete;
-    impl(std::ostream& ostream, std::mutex& mutex) : unique_impl_(new guarded_impl(ostream, mutex)) {
+    impl(std::ostream& ostream, std::mutex& mutex) : UniqueImpl(new GuardedImpl(ostream, mutex)) {
     }
     impl(const impl& rhs) {
-      assert(rhs.unique_impl_.get());
-      unique_impl_.swap(rhs.unique_impl_);
+      assert(rhs.UniqueImpl.get());
+      UniqueImpl.swap(rhs.UniqueImpl);
     }
     template<typename T> impl& operator<<(const T& x) {
-      guarded_impl* p = unique_impl_.get();
+      GuardedImpl* p = UniqueImpl.get();
       assert(p);
       p->write(x);
       return *this;
     }
-    mutable std::unique_ptr<guarded_impl> unique_impl_;
+    mutable std::unique_ptr<GuardedImpl> UniqueImpl;
   };
-  explicit safe_ostream(std::ostream& ostream) : ostream_(ostream) {
+  explicit SafeOstream(std::ostream& ostream) : Ostream(ostream) {
   }
   template<typename T> impl operator<<(const T& x) {
-    return impl(ostream_, mutex_) << x;
+    return impl(Ostream, mutex_) << x;
   }
-  std::ostream& ostream_;
+  std::ostream& Ostream;
   std::mutex mutex_;
 };
 
@@ -160,11 +160,11 @@ class LogStreamerThread
 {
   
   shared_ptr< std::ostringstream > m_collector;
-  safe_ostream* m_dest;
+  SafeOstream* m_dest;
 
  public:
 
-    LogStreamerThread( safe_ostream& dest )
+    LogStreamerThread( SafeOstream& dest )
     {
       m_collector=make_shared<std::ostringstream>();
       m_dest = &dest;

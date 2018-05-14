@@ -33,13 +33,13 @@ class Brick: public FluidDynamics {
     Brick();
      ~Brick();
 
-     void initialize_hydro(Parameter parameter_list);
+     void InitializeHydro(Parameter parameter_list);
 
-     void evolve_hydro();
-     void get_hydro_info(Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
+     void EvolveHydro();
+     void GetHydroInfo(Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
 			 std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr);
 
-     void get_hypersurface(Jetscape::real T_cut, SurfaceCellInfo* surface_list_ptr) {};
+     void GetHyperSurface(Jetscape::real T_cut, SurfaceCellInfo* surface_list_ptr) {};
 
      void InitTask();
      //virtual void Exec();

@@ -183,7 +183,7 @@ void AnalyzeGraph(shared_ptr<PartonShower> mS)
 
 void Show()
 {
-  show_jetscape_banner();
+  ShowJetscapeBanner();
   INFO_NICE;
   INFO_NICE<<"------------------------------------";
   INFO_NICE<<"| Reader Test JetScape Framework ... |";

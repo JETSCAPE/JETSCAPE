@@ -140,7 +140,7 @@ class JetScapeTask
 
   /** This function returns the current task number. 
    */
-  virtual const inline int get_my_task_number() const {return my_task_number_;} ;
+  virtual const inline int GetMyTaskNumber() const {return my_task_number_;} ;
 
   /** This function returns the vector of tasks of a JetScapeTask.
    */
