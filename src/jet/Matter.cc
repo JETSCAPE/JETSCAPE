@@ -1001,7 +1001,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                           
                           if ((abs(vy)>approx)||(abs(vz)>approx))
                           {
-                              ktx = kt*(1 - 2*ZeroOneDistribution(*get_mt19937_generator()) );
+                              ktx = kt*(1 - 2*ZeroOneDistribution(*GetMt19937Generator()) );
                       
                               JSDEBUG << " vx = " << vx << " vy = " << vy << " vz = " << vz ;
                       
@@ -1018,7 +1018,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                               {
                                   ktz = sqrt( kt*kt - ktx*ktx - kty*kty ) ;
                               
-                                  double sign = ZeroOneDistribution(*get_mt19937_generator());
+                                  double sign = ZeroOneDistribution(*GetMt19937Generator());
                                   
                                   if (sign>0.5) ktz = -1*ktz;
                               
@@ -1031,11 +1031,11 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                           else
                           {
                               ktx = 0;
-                              kty = kt*(1 - 2*ZeroOneDistribution(*get_mt19937_generator()) );
-                              double sign = ZeroOneDistribution(*get_mt19937_generator());
+                              kty = kt*(1 - 2*ZeroOneDistribution(*GetMt19937Generator()) );
+                              double sign = ZeroOneDistribution(*GetMt19937Generator());
                               if (sign>0.5) kty = -1*kty;
                               ktz = sqrt(kt*kt-kty*kty);
-                              sign = ZeroOneDistribution(*get_mt19937_generator());
+                              sign = ZeroOneDistribution(*GetMt19937Generator());
                               if (sign>0.5) ktz = -1*ktz;
                         
                           }
@@ -1164,7 +1164,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       if ((abs(vy)>approx)||(abs(vz)>approx))
                       {
                       
-                          ktx = kt*(1 - 2*ZeroOneDistribution(*get_mt19937_generator()) );
+                          ktx = kt*(1 - 2*ZeroOneDistribution(*GetMt19937Generator()) );
                       
                           JSDEBUG << " vx = " << vx << " vy = " << vy << " vz = " << vz ;
                           
@@ -1181,7 +1181,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                           {
                               ktz = sqrt( kt*kt - ktx*ktx - kty*kty ) ;
                           
-                              double sign = ZeroOneDistribution(*get_mt19937_generator());
+                              double sign = ZeroOneDistribution(*GetMt19937Generator());
                               if (sign>0.5) ktz = -1*ktz;
                           
                           
@@ -1193,11 +1193,11 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       else
                       {
                           ktx = 0;
-                          kty = kt*(1 - 2*ZeroOneDistribution(*get_mt19937_generator()) );
-                          double sign = ZeroOneDistribution(*get_mt19937_generator());
+                          kty = kt*(1 - 2*ZeroOneDistribution(*GetMt19937Generator()) );
+                          double sign = ZeroOneDistribution(*GetMt19937Generator());
                           if (sign>0.5) kty = -1*kty;
                           ktz = sqrt(kt*kt-kty*kty);
-                          sign = ZeroOneDistribution(*get_mt19937_generator());
+                          sign = ZeroOneDistribution(*GetMt19937Generator());
                           if (sign>0.5) ktz = -1*ktz;
                           
                       }
@@ -1278,7 +1278,7 @@ double Matter::generate_kt(double local_qhat, double dzeta)
     
     double x,r;
     
-    r = ZeroOneDistribution(*get_mt19937_generator());
+    r = ZeroOneDistribution(*GetMt19937Generator());
     x = -log(1.0-r);
     if (x<0.0)  throw std::runtime_error(" k_t^2 < 0.0 ");
     double kt = sqrt(x * local_qhat * dzeta  );

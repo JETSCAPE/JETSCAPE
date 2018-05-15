@@ -28,7 +28,7 @@ PythiaGun::~PythiaGun()
 
 void PythiaGun::InitTask()
 {
-ad
+
   JSDEBUG<<"Initialize PythiaGun"; 
   VERBOSE(8);
 

@@ -87,8 +87,8 @@ int main(int argc, char** argv)
   auto jetscape = make_shared<JetScape>("./jetscape_init.xml", 2000);
   // auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",5);
   jetscape->SetId("primary");
-  jetscape->set_reuse_hydro (true);
-  jetscape->set_n_reuse_hydro (10001);
+  jetscape->SetReuseHydro (true);
+  jetscape->SetNReuseHydro (10001);
     
     auto pGun= make_shared<PGun> ();
 
