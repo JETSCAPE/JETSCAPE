@@ -31,7 +31,6 @@
 #endif
 
 // User modules derived from jetscape framework clasess
-// to be used to run Jetscape ...
 #include "AdSCFT.h"
 #include "Matter.h"
 #include "Martini.h"
@@ -75,74 +74,64 @@ int main(int argc, char** argv)
   Show();
 
   // auto jetscape = make_shared<JetScape>("./jetscape_init.xml",10);
-  // jetscape->set_reuse_hydro (true);
-  // jetscape->set_n_reuse_hydro (5);
+  // jetscape->SetReuseHydro (true);
+  // jetscape->SetNReuseHydro (5);
 
   auto jetscape = make_shared<JetScape>("./jetscape_init.xml",1);
-  jetscape->set_reuse_hydro (false);
-  jetscape->set_n_reuse_hydro (0);
+  jetscape->SetReuseHydro (false);
+  jetscape->SetNReuseHydro (0);
 
+  // Initial conditions and hydro
+  auto trento = make_shared<TrentoInitial>();
+  auto pGun= make_shared<PGun> ();
+  auto hydro = make_shared<MpiMusic> ();
+  jetscape->Add(trento);
+  jetscape->Add(pGun);
+  jetscape->Add(hydro);
+
+  // surface sampler
+  auto iSS = make_shared<iSpectraSamplerWrapper> ();
+  jetscape->Add(iSS);
+
+  // Energy loss
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
-  auto trento = make_shared<TrentoInitial> ();
-  auto hydro = make_shared<MPI_MUSIC> ();
-  auto iSS = make_shared<iSpectraSamplerWrapper> ();
-  //auto hydro = make_shared<GubserHydro> ();
-  
-  auto matter = make_shared<Matter> ();
-  auto martini = make_shared<Martini> ();
-  auto adscft = make_shared<AdSCFT> ();
-  //DBEUG: Remark:
-  //does not matter unfortunately since not called recursively, done by JetEnergyLoss class ...
-  //matter->SetActive(false);
-  //martini->SetActive(false);
-  // This works ... (check with above logic ...)
-  //jloss->SetActive(false);
 
-  auto pGun= make_shared<PGun>();
-  auto printer = make_shared<PartonPrinter> ();  
+  auto matter = make_shared<Matter> ();
+  // auto lbt = make_shared<LBT> ();
+  // auto martini = make_shared<Martini> ();
+  // auto adscft = make_shared<AdSCFT> ();
+
+  // Note: if you use Matter, it MUST come first (to set virtuality)
+  jloss->Add(matter);
+  // jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
+  // jloss->Add(martini);
+  // jloss->Add(adscft);  
+  jlossmanager->Add(jloss);  
+  jetscape->Add(jlossmanager);
+  
+  // Hadronization
+  // This helper module currently needs to be added for hadronization.
+  auto printer = make_shared<PartonPrinter> ();
+  jetscape->Add(printer);
   auto hadroMgr = make_shared<HadronizationManager> ();
   auto hadro = make_shared<Hadronization> ();
   auto hadroModule = make_shared<ColoredHadronization> ();
-    
-  
-  // only pure Ascii writer implemented and working with graph output ...
-  auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
-  // auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");  
-  //writer->SetActive(false);
-
-  //Remark: For now modules have to be added
-  //in proper "workflow" order (can be defined via xml and sorted if necessary)
-  
-  jetscape->Add(trento);  
-  jetscape->Add(pGun);
-
-   //Some modifications will be needed for reusing hydro events, so far
-  //simple test hydros always executed "on the fly" ...
-  jetscape->Add(hydro);
-
-  // Matter with silly "toy shower (no physics)
-  // and Martini dummy ...
-  // Switching Q2 (or whatever variable used
-  // hardcoded at 5 to be changed to xml)
-  jloss->Add(matter);
-  //jloss->Add(martini);
-  //jloss->Add(adscft);
-  jlossmanager->Add(jloss);
-  jetscape->Add(jlossmanager);
-
-  jetscape->Add(iSS);
-
-  jetscape->Add(printer);  
   hadro->Add(hadroModule);
+  // auto colorless = make_shared<ColorlessHadronization> ();
+  // hadro->Add(colorless);
   hadroMgr->Add(hadro);
   jetscape->Add(hadroMgr);
-    
-  jetscape->Add(writer);
+
+  // Output
+  auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
+  // same as JetScapeWriterAscii but gzipped
+  // auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");
+  // HEPMC3
 #ifdef USE_HEPMC
-  auto writerhepmc= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
-  jetscape->Add(writerhepmc);
+  // auto writer= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
 #endif
+  jetscape->Add(writer);
 
   // Intialize all modules tasks
   jetscape->Init();

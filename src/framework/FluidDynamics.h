@@ -218,16 +218,16 @@ namespace Jetscape {
     ~EvolutionHistory() {data.clear();}
 
     /** Maximum value of tau. */
-    inline Jetscape::real tau_max() {return tau_min + (ntau - 1) * dtau;}
+    inline Jetscape::real TauMax() {return tau_min + (ntau - 1) * dtau;}
 
     /** Maximum value of x. */
-    inline Jetscape::real x_max() {return x_min + (nx - 1) * dx;}
+    inline Jetscape::real XMax() {return x_min + (nx - 1) * dx;}
 
     /** Maximum value of y. */
-    inline Jetscape::real y_max() {return y_min + (ny - 1) * dy;}
+    inline Jetscape::real YMax() {return y_min + (ny - 1) * dy;}
 
     /** Maximum value of eta. */
-    inline Jetscape::real eta_max() {return eta_min + (neta - 1) * deta;}
+    inline Jetscape::real EtaMax() {return eta_min + (neta - 1) * deta;}
 
     /** It checks whether a space-time point (tau, x, y, eta) is inside evolution history or outside.
 	@param tau Light-cone coordinate.
@@ -235,26 +235,26 @@ namespace Jetscape {
 	@param y  Space coordinate.
 	@param eta Light-cone coordinate.
     */
-    void check_in_range(Jetscape::real tau, Jetscape::real x, Jetscape::real y, Jetscape::real eta) {
-      if (tau < tau_min || tau > tau_max()) {
+    void CheckInRange(Jetscape::real tau, Jetscape::real x, Jetscape::real y, Jetscape::real eta) {
+      if (tau < tau_min || tau > TauMax()) {
 	throw InvalidSpaceTimeRange("tau=" + std::to_string(tau)
 				    + " is not in range [" + std::to_string(tau_min) + "," 
-				    + std::to_string(tau_max()) + "]");
+				    + std::to_string(TauMax()) + "]");
       }
-      if (x < x_min || x > x_max()) {
+      if (x < x_min || x > XMax()) {
 	throw InvalidSpaceTimeRange("x=" + std::to_string(x)
 				    + " is not in range [" + std::to_string(x_min) + "," 
-				    + std::to_string(x_max()) + "]");
+				    + std::to_string(XMax()) + "]");
       }
-      if (y < y_min || y > y_max()) {
+      if (y < y_min || y > YMax()) {
 	throw InvalidSpaceTimeRange("y=" + std::to_string(y)
 				    + " is not in range [" + std::to_string(y_min) + "," 
-				    + std::to_string(y_max()) + "]");
+				    + std::to_string(YMax()) + "]");
       }
-      if (eta < eta_min || eta > eta_max()) {
+      if (eta < eta_min || eta > EtaMax()) {
 	throw InvalidSpaceTimeRange("eta=" + std::to_string(eta)
 				    + " is not in range [" + std::to_string(eta_min) + "," 
-				    + std::to_string(eta_max()) + "]");
+				    + std::to_string(EtaMax()) + "]");
       }
     }
 
@@ -262,7 +262,7 @@ namespace Jetscape {
     /** @return Fluid cell number along the tau-grid.
 	@param tau Light-cone coordinate.
     */
-    inline int get_id_tau(Jetscape::real tau){
+    inline int GetIdTau(Jetscape::real tau){
       return(static_cast<int>((tau - tau_min)/dtau));
     }
 
@@ -270,7 +270,7 @@ namespace Jetscape {
     /** @return Fluid cell number along the x-grid.           
         @param x Space coordinate.                          
     */
-    inline int get_id_x(Jetscape::real x) { 
+    inline int GetIdX(Jetscape::real x) { 
       return(static_cast<int>((x - x_min)/dx));
     }
 
@@ -278,7 +278,7 @@ namespace Jetscape {
     /** @return Fluid cell number along the y-grid.                
         @param y Space coordinate. 
     */
-    inline int get_id_y(Jetscape::real y) {
+    inline int GetIdY(Jetscape::real y) {
       return(static_cast<int>((y - y_min)/dy));
     }
 
@@ -286,7 +286,7 @@ namespace Jetscape {
     /** @return Fluid cell number along the eta-grid.
         @param eta Light-cone coordinate.
     */
-    inline int get_id_eta(Jetscape::real eta) {
+    inline int GetIdEta(Jetscape::real eta) {
       return(static_cast<int>((eta - eta_min)/deta));
     }
 
@@ -294,22 +294,22 @@ namespace Jetscape {
     /** @param id_tau Fluid cell number along tau-grid.
 	@return The tau coordinate for fluid cell number.
     */
-    inline Jetscape::real tau_coord(int id_tau) { return tau_min + id_tau * dtau; }
+    inline Jetscape::real TauCoord(int id_tau) { return tau_min + id_tau * dtau; }
 
     /** @param id_x Fluid cell number along x-grid.
         @return The x coordinate for fluid cell number.
     */
-    inline Jetscape::real x_coord(int id_x) { return x_min + id_x * dx; }
+    inline Jetscape::real XCoord(int id_x) { return x_min + id_x * dx; }
 
     /** @param id_y Fluid cell number along y-grid.
         @return The y coordinate for fluid cell number.
     */
-    inline Jetscape::real y_coord(int id_y) { return y_min + id_y * dy; }
+    inline Jetscape::real YCoord(int id_y) { return y_min + id_y * dy; }
 
     /** @param id_eta Fluid cell number along eta-grid.
         @return The eta coordinate for fluid cell number.
     */
-    inline Jetscape::real eta_coord(int id_eta) { return eta_min + id_eta * deta; }
+    inline Jetscape::real EtaCoord(int id_eta) { return eta_min + id_eta * deta; }
 
     // get the FluidCellInfo index in data
     /** @return FluidCellInfo index in the data.
@@ -318,7 +318,7 @@ namespace Jetscape {
 	@param id_y Fluid cell number along y-grid.
 	@param id_eta Fluid cell number along eta-grid.
     */
-    inline int cell_index(int id_tau, int id_x, int id_y, int id_eta) {
+    inline int CellIndex(int id_tau, int id_x, int id_y, int id_eta) {
       return  id_tau * nx * ny * neta + id_x * ny * neta
 	+ id_y * neta + id_eta;
     }
@@ -330,7 +330,7 @@ namespace Jetscape {
 	@param y Space coordinate.
 	@param eta Light-cone coordinate.
     */
-    FluidCellInfo get_at_time_step(int id_tau, Jetscape::real x, Jetscape::real y, Jetscape::real etas);
+    FluidCellInfo GetAtTimeStep(int id_tau, Jetscape::real x, Jetscape::real y, Jetscape::real etas);
 
     // get the FluidCellInfo at given space time point
     /** @return FluidCellInfo at a point (tau, x, y, eta).
@@ -360,12 +360,12 @@ namespace Jetscape {
     /** Default destructor. */
     virtual ~FluidDynamics();
     
-    /** Reads the input parameters from the XML file under the tag <Hydro>. Uses JetScapeSingnalManager Instance to retrive the Initial State Physics information. Calls initialize_hydro(parameter_list) and InitTask(); This explicit call can be used for actual initialization of modules such as @a Brick, @a MPI_MUSIC, or @a OSU-HYDRO if attached as a @a polymorphic class. It also initializes the tasks within the current module.   
+    /** Reads the input parameters from the XML file under the tag <Hydro>. Uses JetScapeSingnalManager Instance to retrive the Initial State Physics information. Calls InitializeHydro(parameter_list) and InitTask(); This explicit call can be used for actual initialization of modules such as @a Brick, @a MpiMusic, or @a OSU-HYDRO if attached as a @a polymorphic class. It also initializes the tasks within the current module.   
 	@sa Read about @a polymorphism in C++.
     */
     virtual void Init();
     
-    /** Calls evolve_hydro(); This explicit call can be used for actual execution of hydrodynamic evolution defined in the modules such as @a Brick, @a MPI_MUSIC, or @a OSU-HYDRO if attached as a @a polymorphic class. It also execute the tasks within the current module.
+    /** Calls EvolveHydro(); This explicit call can be used for actual execution of hydrodynamic evolution defined in the modules such as @a Brick, @a MpiMusic, or @a OSU-HYDRO if attached as a @a polymorphic class. It also execute the tasks within the current module.
 	@sa Read about @a polymorphism in C++.
     */
     virtual void Exec();
@@ -400,16 +400,16 @@ namespace Jetscape {
 	@param z  rapidity eta or space z coordinate.
 	@param mT temperature.
     */
-    virtual void GetTemperature(double t, double x, double y, double z, double &mT) {mT=get_temperature(t,x,y,z);}
+    virtual void GetTemperature(double t, double x, double y, double z, double &mT) {mT=GetTemperature(t,x,y,z);}
 
-    /** It calls get_hydro_info(t,x,y,z,fCell) to retrieve the properties of the fluid cell at location (t or tau,x,y,z or eta). It can be overridden by modules attached to the FluidDynamics class. 
+    /** It calls GetHydroInfo(t,x,y,z,fCell) to retrieve the properties of the fluid cell at location (t or tau,x,y,z or eta). It can be overridden by modules attached to the FluidDynamics class. 
 	@param t  tau or t coordinate.
 	@param x  space x coordinate.      
 	@param y  space y coordinate.       
 	@param z  rapidity eta or space z coordinate.
 	@param fCell A pointer of type FluidCellInfo class.  
     */
-    virtual void GetHydroCell(double t, double x, double y, double z, std::unique_ptr<FluidCellInfo>& fCell) {get_hydro_info(t,x,y,z,fCell);} 
+    virtual void GetHydroCell(double t, double x, double y, double z, std::unique_ptr<FluidCellInfo>& fCell) {GetHydroInfo(t,x,y,z,fCell);} 
 
     /** @return A pointer to the XML elements. Such XML elements are the input parameters stored in an XML file under the tag <Hydro>.
      */
@@ -420,29 +420,29 @@ namespace Jetscape {
     // should make it easy to save evolution history to bulk_info
     /** Default function to initialize the hydrodynamics. It can be overridden by different modules. 
 	@param parameter_list An object of the class Parameter. */
-    virtual void initialize_hydro(Parameter parameter_list) {};
+    virtual void InitializeHydro(Parameter parameter_list) {};
     
     /** Default function to evolve the hydrodynamics. It can be overridden by different modules. */
-    virtual void evolve_hydro() {};
+    virtual void EvolveHydro() {};
     
     /** Default function to evolve the hydrodynamics by one-time (or tau) step. It can be overridden by different modules.
 	@param jmu An object to a JetSource class.
     */
-    virtual void evolve_hydro_one_step(JetSource jmu) {};
+    virtual void EvolveHydroOneStep(JetSource jmu) {};
 
     /** @return Status of the hydrodynamics (NOT_START, INITIALIZED, EVOLVING, FINISHED, ERROR). */
-    int get_hydro_status() {return(hydro_status);}
+    int GetHydroStatus() {return(hydro_status);}
 
     /** @return Start time (or tau) for hydrodynamic evolution.
      */
-    Jetscape::real get_hydro_start_time() {return(hydro_tau_0);}
+    Jetscape::real GetHydroStartTime() {return(hydro_tau_0);}
 
     /** @return End time (or tau) for hydrodynamic evolution.
      */
-    Jetscape::real get_hydro_end_time() {return(hydro_tau_max);}
+    Jetscape::real GetHydroEndTime() {return(hydro_tau_max);}
     /** @return Freeze-out temperature.
      */
-    Jetscape::real get_hydro_freeze_out_temperature() {
+    Jetscape::real GetHydroFreezeOutTemperature() {
       return(hydro_freeze_out_temperature);
     }
 
@@ -455,7 +455,7 @@ namespace Jetscape {
      @param z Space or eta coordinate.
      @param fluid_cell_info_ptr A pointer to the FluidCellInfo class.
     */
-    virtual void get_hydro_info(Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
+    virtual void GetHydroInfo(Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
                                 std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr){
       if (hydro_status != FINISHED || bulk_info.data.size() == 0) {
 	throw std::runtime_error("Hydro evolution is not finished "
@@ -465,10 +465,10 @@ namespace Jetscape {
       if (!bulk_info.tau_eta_is_tz) {
 	Jetscape::real tau = std::sqrt(t * t - z * z);
 	Jetscape::real eta = 0.5 * (std::log(t + z) - std::log(t - z));
-	bulk_info.check_in_range(tau, x, y, eta);
+	bulk_info.CheckInRange(tau, x, y, eta);
 	//return bulk_info.get(tau, x, y, eta);
       } else {
-	bulk_info.check_in_range(t, x, y, z);
+	bulk_info.CheckInRange(t, x, y, z);
 	//return bulk_info.get(t, x, y, z);
       }
     }
@@ -477,16 +477,16 @@ namespace Jetscape {
     /** It prints out the information of the fluid cell.
 	@param fluid_cell_info_ptr A pointer to FluidCellInfor class.
     */
-    void print_fluid_cell_information(FluidCellInfo* fluid_cell_info_ptr);
+    void PrintFluidCellInformation(FluidCellInfo* fluid_cell_info_ptr);
 
     // this function returns hypersurface for Cooper-Frye or recombination
     // the detailed implementation is left to the hydro developper
     /** @return Default function to get the hypersurface for Cooper-Frye or recombination model. It can overridden by different modules.
      */
-    virtual void get_hypersurface(Jetscape::real T_cut,
+    virtual void GetHyperSurface(Jetscape::real T_cut,
                                   SurfaceCellInfo* surface_list_ptr) {};
 
-    // all the following functions will call function get_hydro_info()
+    // all the following functions will call function GetHydroInfo()
     // to get thermaldynamic and dynamical information at a space-time point
     // (time, x, y, z)
 
@@ -496,7 +496,7 @@ namespace Jetscape {
         @param y Space coordinate. 
         @param z Space or eta coordinate.
     */
-    virtual Jetscape::real get_energy_density(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
+    virtual Jetscape::real GetEnergyDensity(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
 
     /** @return Entropy density at point (t or tau, x, y, z or eta)
         @param time Time or tau coordinate.
@@ -504,7 +504,7 @@ namespace Jetscape {
         @param y Space coordinate. 
         @param z Space or eta coordinate.
     */
-    virtual Jetscape::real get_entropy_density(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
+    virtual Jetscape::real GetEntropyDensity(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
 
     /** @return Temperature at point (t or tau, x, y, z or eta)
 	@param time Time or tau coordinate.
@@ -512,7 +512,7 @@ namespace Jetscape {
         @param y Space coordinate.
         @param z Space or eta coordinate.
     */
-    virtual Jetscape::real get_temperature(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
+    virtual Jetscape::real GetTemperature(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
 
     /** @return Fraction of quark gluon plasma assuming medium is in QGP+HRG phase at point (t or tau, x, y, z or eta).
 	@param time Time or tau coordinate.
@@ -520,7 +520,7 @@ namespace Jetscape {
         @param y Space coordinate.
         @param z Space or eta coordinate.
     */
-    virtual Jetscape::real get_qgp_fraction(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
+    virtual Jetscape::real GetQgpFraction(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
 
     // These have no default implementation
     // /** @return 3-component (vx,vy,vz) fluid velocity at point (t or tau, x, y, z or eta).
@@ -529,7 +529,7 @@ namespace Jetscape {
     //     @param y Space coordinate.
     //     @param z Space or eta coordinate.
     // */
-    // virtual real3 get_3fluid_velocity(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z)=0;
+    // virtual real3 Get3FluidVelocity(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z)=0;
 
     // /** @return 4-component fluid velocity at point (t or tau, x, y, zor eta).
     //     @param time Time or tau coordinate.
@@ -537,7 +537,7 @@ namespace Jetscape {
     //     @param y Space coordinate.
     //     @param z Space or eta coordinate. 
     // */
-    // virtual real4 get_4fluid_velocity(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
+    // virtual real4 Get4FluidVelocity(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
 
     // /** @return Net baryon density at point (t or tau, x, y, z or eta).
     //     @param time Time or tau coordinate.
@@ -545,7 +545,7 @@ namespace Jetscape {
     //     @param y Space coordinate.
     //     @param z Space or eta coordinate. 
     // */
-    // virtual Jetscape::real get_net_baryon_density(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
+    // virtual Jetscape::real GetNetBaryonDensity(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
 
     // /** @return Net charge density at point (t or tau, x, y, z or eta).
     // 	@param time Time or tau coordinate.
@@ -553,7 +553,7 @@ namespace Jetscape {
     // 	@param y Space coordinate.
     // 	@param z Space or eta coordinate.
     // */
-    // virtual Jetscape::real get_net_charge_density(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
+    // virtual Jetscape::real GetNetChargeDensity(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
     
   protected:
     // record hydro start and end proper time [fm/c]

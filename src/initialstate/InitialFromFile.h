@@ -85,13 +85,13 @@ class InitialFromFile: public Jetscape::InitialState {
    hid_t H5group_ptr_;
 
     //! Load saved configurations for each event
-   void read_configs_();
+   void ReadConfigs();
  
    //! Load saved number of binary collisions
-   void read_nbc_dist_();
+   void ReadNbcDist();
 
    //! Load saved initial entropy density distribution
-   void read_entropy_dist_();
+   void ReadEntropyDist();
 
    //! want to use auxiliary hdf5 file readers 
     HydroinfoH5 * h5_helper_;

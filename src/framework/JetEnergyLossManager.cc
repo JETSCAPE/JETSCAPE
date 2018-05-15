@@ -87,7 +87,7 @@ void JetEnergyLossManager::WriteTask(weak_ptr<JetScapeWriter> w)
 
 void JetEnergyLossManager::Exec()
 {
-  INFO<<"Run JetEnergyLoss Manager ...";
+  VERBOSE(1)<<"Run JetEnergyLoss Manager ...";
   JSDEBUG<<"Task Id = "<<this_thread::get_id();
   
   if (GetNumberOfTasks()<1)
@@ -103,7 +103,7 @@ void JetEnergyLossManager::Exec()
     {
       GetHardPartonList(hp);
       
-      INFO<<" Number of Hard Partons = "<<hp.size();
+      VERBOSE(3)<<" Number of Hard Partons = "<<hp.size();
       
       for (int i=1;i<hp.size();i++)
 	{
@@ -113,7 +113,7 @@ void JetEnergyLossManager::Exec()
 	}
     }
   
-  INFO<<" Found "<<GetNumberOfTasks()<<" Eloss Manager Tasks/Modules Execute them ... ";
+  VERBOSE(3)<<" Found "<<GetNumberOfTasks()<<" Eloss Manager Tasks/Modules Execute them ... ";
   JSDEBUG<<"Check and Create Signal/Slots via JetScapeSignalManaher instance if needed ...";
   
   CreateSignalSlots();
@@ -155,7 +155,7 @@ void JetEnergyLossManager::Exec()
       int nMaxThreads=nCPUs*2;
       int n=0;
 
-      INFO<<" Use multi-threading: (max) # of threads = # of CPU's "<<nCPUs<<" (found) * 2";
+      VERBOSE(3)<<" Use multi-threading: (max) # of threads = # of CPU's "<<nCPUs<<" (found) * 2";
       
       for (auto it :  GetTaskList())
 	{
@@ -187,7 +187,7 @@ void JetEnergyLossManager::Exec()
     JetScapeTask::ExecuteTasks();
   
   //Add acheck if the parton shower was actually created for the Modules ....
-  INFO<<" "<<GetNumberOfTasks()<<" Eloss Manager Tasks/Modules finished.";
+  VERBOSE(3)<<" "<<GetNumberOfTasks()<<" Eloss Manager Tasks/Modules finished.";
 }
 
 void JetEnergyLossManager::CreateSignalSlots()

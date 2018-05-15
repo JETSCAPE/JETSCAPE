@@ -39,9 +39,9 @@ namespace Jetscape {
   
   // ---------------------------------------------------------------------------
   int JetScapeTaskSupport::RegisterTask(){
-    VERBOSE(1) << "JetScapeTaskSupport::RegisterTask called, answering " << current_task_number_;
-    current_task_number_++;
-    return current_task_number_-1;
+    VERBOSE(1) << "JetScapeTaskSupport::RegisterTask called, answering " << CurrentTaskNumber;
+    CurrentTaskNumber++;
+    return CurrentTaskNumber-1;
   }
   
   // ---------------------------------------------------------------------------
@@ -79,10 +79,10 @@ namespace Jetscape {
   }
 
   // ---------------------------------------------------------------------------
-  shared_ptr<std::mt19937> JetScapeTaskSupport::get_mt19937_generator( int TaskId ) {
+  shared_ptr<std::mt19937> JetScapeTaskSupport::GetMt19937Generator( int TaskId ) {
     if (!initialized_){
-      WARN << "Trying to use JetScapeTaskSupport::get_mt19937_generator before initialization";
-      throw std::runtime_error("Trying to use JetScapeTaskSupport::get_mt19937_generator before initialization");
+      WARN << "Trying to use JetScapeTaskSupport::GetMt19937Generator before initialization";
+      throw std::runtime_error("Trying to use JetScapeTaskSupport::GetMt19937Generator before initialization");
     }
 
     if ( !one_for_all_ ){

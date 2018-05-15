@@ -97,7 +97,7 @@ void iSpectraSamplerWrapper::Exec() {
         exit(-1);
     }
 
-    auto random_seed = (*get_mt19937_generator())();  // get random seed
+    auto random_seed = (*GetMt19937Generator())();  // get random seed
     iSpectraSampler_ptr_->set_random_seed(random_seed);
     VERBOSE(2) << "Random seed used for the iSS module" << random_seed;
     
@@ -106,7 +106,7 @@ void iSpectraSamplerWrapper::Exec() {
         WARN << "Some errors happened in generating particle samples";
         exit(-1);
     }
-    pass_hadron_list_to_JETSCAPE();
+    PassHadronListToJetscape();
 }
 
 void iSpectraSamplerWrapper::Clear() {
@@ -116,7 +116,7 @@ void iSpectraSamplerWrapper::Clear() {
     }
 }
 
-void iSpectraSamplerWrapper::pass_hadron_list_to_JETSCAPE() {
+void iSpectraSamplerWrapper::PassHadronListToJetscape() {
     unsigned int nev = iSpectraSampler_ptr_->get_number_of_sampled_events();
     VERBOSE(2) << "Passing all sampled hadrons to the JETSCAPE framework";
     VERBOSE(4) << "number of events to pass : " << nev;

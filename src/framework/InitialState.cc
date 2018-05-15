@@ -79,11 +79,10 @@ void InitialState::CollectHeader( weak_ptr<JetScapeWriter> w ){
   }
 }
 
-  
-std::tuple<double, double, double> InitialState::coord_from_idx(int idx) {
-    int nx = get_x_size();
-    int ny = get_y_size();
-    int nz = get_z_size();
+std::tuple<double, double, double> InitialState::CoordFromIdx(int idx) {
+    int nx = GetXSize();
+    int ny = GetYSize();
+    int nz = GetZSize();
 
     int page = idx / (nx * ny);
     int row = (idx - page * nx * ny) / nx;

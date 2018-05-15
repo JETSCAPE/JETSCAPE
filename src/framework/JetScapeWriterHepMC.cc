@@ -66,7 +66,7 @@ namespace Jetscape {
   }
   
   void JetScapeWriterHepMC::WriteEvent() {    
-    INFO<<"Run JetScapeWriterHepMC: Write event # "<<GetCurrentEvent();
+    VERBOSE(1)<<"Run JetScapeWriterHepMC: Write event # "<<GetCurrentEvent();
 
     // Have collected all vertices now, add them to the event
     for( auto v : vertices )      evt.add_vertex( v );
