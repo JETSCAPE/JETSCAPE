@@ -520,9 +520,12 @@ int Martini::DetermineProcess(double pRest, double T, double deltaT, int Id)
       totalQuarkProb += (rateElas.qq + rateElas.qg + rateConv.qg)*dT;
 
       // warn if total probability exceeds 1
-      if (totalQuarkProb > 1.)
+      if (totalQuarkProb > 1.){
 	WARN << " : Total Probability for quark processes exceeds 1 ("
-	     << totalQuarkProb << ")";
+	     << totalQuarkProb << "). "
+	     << " : Most likely this means you should choose a smaller deltaT in the xml (e.g. 0.01).";
+	throw std::runtime_error ("Martini probability problem.");
+      }
 
       double accumProb = 0.;
       double nextProb = 0.;
