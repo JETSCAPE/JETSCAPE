@@ -1,8 +1,6 @@
 # JETSCAPE1.0-RC1
 The Jet Energy-loss Tomography with a Statistically and Computationally Advanced Program Envelope (JETSCAPE) collaboration
 
-Test Skeleton of (potential) JetScape Framework
-
 With cmake:
 
 ```bash
