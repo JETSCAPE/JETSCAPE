@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="generator" content="CoffeeCup HTML Editor (www.coffeecup.com)">
+    <meta name="dcterms.created" content="Mon, 14 May 2018 17:57:50 GMT">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <title></title>
+    
+    <style type="text/css">
+    <!--
+    body {
+      color:#000000;
+      background-color:#FFFFFF;
+      background-image:url('Background Image');
+      background-repeat:no-repeat;
+    }
+    a  { color:#0000FF; }
+    a:visited { color:#800080; }
+    a:hover { color:#008000; }
+    a:active { color:#FF0000; }
+    -->
+
+.navbar {
+    overflow: hidden;
+    background-color: #333;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.navbar a {
+    float: left;
+    font-size: 16px;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+.dropdown {
+    float: left;
+    overflow: hidden;
+}
+
+.dropdown .dropbtn {
+    font-size: 16px;    
+    border: none;
+    outline: none;
+    color: white;
+    padding: 14px 16px;
+    background-color: inherit;
+    font-family: inherit;
+    margin: 0;
+}
+
+.navbar a:hover, .dropdown:hover .dropbtn {
+    background-color: red;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    float: none;
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+
+.dropdown-content a:hover {
+    background-color: #ddd;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}	
+	
+	h2 {
+        color: #FF0000;
+}
+
+	h3 {
+        color: #0000FF;
+}
+
+.missiontext {
+    font-size: 28px;    
+    border: none;
+    outline: none;
+    padding: 14px 16px;
+    background-color: inherit;
+    font-family: inherit;
+    margin: 0;
+}
+
+    </style>
+  </head>
+  
+    <body>
+    
+      <div class="navbar">
+        <a href="index.html">Home</a>
+        <a href="overview.html">Overview</a>
+        <a href="jobs.html">Jobs</a>
+        <a href="collab.html">Collaborating</a>
+        <a href="organiz.html">Organization</a>
+		<div class="dropdown">
+        <button class="dropbtn">Publications and Talks</button>
+            <div class="dropdown-content">
+              <a href="publication.html">Publications</a>
+              <a href="talks.html">Talks</a>
+            </div>
+      	</div>
+        <a href="meetings.html">Meetings</a>
+        <a href="cpackages.html">Code Packages</a>
+		<div class="dropdown">
+        <button class="dropbtn">Working Groups</button>
+            <div class="dropdown-content">
+              <a href="softwarewg.html">Software Design</a>
+              <a href="physicswg.html">Physics Modeling</a>
+			  <a href="dswg.html">Data and Statistics</a>
+			  <a href="simswg.html">Simulations and Distributed Computing</a>
+            </div>
+      	</div>
+        <a href="contact.html">Contact Us</a>
+  	</div>
+  
+  	<div style=" text-align: left; text-indent: 0px; padding: 0px 0px 0px 0px; margin: 0px 0px 0px 0px;"><table width="100%" border="0" cellpadding="2" cellspacing="2" style="background-color: #FFFFFF;">
+      <tr valign="top">
+        <td style="border-width : 0px;"><br />
+        <img src="http://jetscape.wayne.edu/Multimedia/jetscape/Images/Joern_logo.png"/>
+        </td>
+        <td style="border-width : 0px;"><br />
+        <div align="right"><img src="http://jetscape.wayne.edu/Multimedia/jetscape/Images/nsf_logo_0.jpg"/></div>
+        </td>
+      </tr>
+      	   <td><div align="center"><h1>Data and Statistical Analysis Working Group Mission Statement</h1></div></td>
+      </tr>
+	        <tr>
+        <td>
+			<p class="missiontext">
+        	   The Data and Statistics Working Group supports the mission of the JETSCAPE collaboration by:
+			</p>
+			</br>
+			</br>
+        </td>
+      </tr>
+	  <tr>
+        <td>
+			<ul style="list-style-type:disc">
+  				<li>Selecting and curating experimental data for comparison with the  JET-patch and Jetscape codes and their use in the statistical analysis </li>
+				<li>determining which observables to perform the model-to-data comparison on </li>
+				<ul>
+					<li>Developing the workflow/procedure  how to calculate the observables from the JET-patch and Jetscape codes in such a way that they can be compared to experimental data</li>
+    				<li>Developing a framework for training Gaussian Process Emulators on selected observables for the output of the JET-patch and Jetscape codes</li>
+    				<li>Performing Gaussian Process Emulator training for each version of these codes that is being compared to data</li>
+    				<li>Developing a package for distribution of trained emulators to go along with the respective releases of the Jetscape code</li>
+    				<li>Developing the framework for the model-to-data analysis, including emulators, PCA, and MCMC and develop/provide a respective code package</li>
+    				<li>Performing the model to data analysis to test physics models and interpret the resulting posterior distributions for each version/implementation of the Jetscape code</li>
+    				<li>Developing a set of tools for the evaluation of the performance of different physics models (i.e. tunes of the Jetscape code) regarding experimental data</li>
+    				<li>Assisting the collaboration with gaining physics insights from the outcome of the statistical analysis</li>
+				</ul>
+			</ul>
+        </td>
+      </tr>
+  
+  </body>
+  
+</html>
