@@ -6,7 +6,7 @@
 #include <functional>
 #include <memory>
 #include <utility>
-#include "Srandom.h"
+#include "random.h"
 #include "simpleLogger.h"
 #include "stat.h"
 
@@ -28,7 +28,7 @@ double sample_1d(F f, std::pair<double,double> const& range, double fmax){
 }
 
 template < typename F >
-std::vector<double> sample_nd(F f, int dim, std::vector<std::pair<double,double>> const& range, double fmax){
+std::vector<double> sample_nd(F f, int dim, std::vector<std::pair<double,double>> const& range, double fmax, bool & status){
 	int limit = 50000;
 	double * x = new double[dim];
   	double y;
@@ -40,14 +40,20 @@ std::vector<double> sample_nd(F f, int dim, std::vector<std::pair<double,double>
 		for(int i=0; i<dim; i++) 
 			x[i] = range[i].first+Srandom::init_dis(Srandom::gen)*interval[i];
 		y = f(x)/fmax;
-		if (y > 1.0) LOG_WARNING << "nd rejection, f/fmax = " << y << " > 1";
+		if (y > 1.0) {
+			LOG_WARNING << "nd rejection, f/fmax = " << y << " > 1";
+			status = false;
+		}
 		counter ++;
 	}while(Srandom::rejection(Srandom::gen)>y && counter < limit);
 	std::vector<double> res(dim);
 	for(int i=0; i<dim; i++) res[i] = x[i];
 	delete[] x;
 	delete[] interval;
-	if(counter==limit) LOG_WARNING <<  "nd rejection, too many tries = " << limit;
+	if(counter==limit) {
+		LOG_WARNING <<  "nd rejection, too many tries = " << limit;
+		status = false;
+	}
 	SamplerStat::count_nd ++; SamplerStat::total_nd += counter;
 	return res;
 }

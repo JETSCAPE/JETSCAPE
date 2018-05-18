@@ -13,7 +13,7 @@
 #include <gsl/gsl_monte_vegas.h>
 #include "cubature.h"
 
-/* Modified from here 
+/* Modified from here
 @MISC {27248,
     TITLE = {C++ library for numerical intergration (quadrature)},
     AUTHOR = {Henri Menke (https://scicomp.stackexchange.com/users/24680/henri-menke)},
@@ -40,8 +40,8 @@ class gsl_quad_1d{
   }
 
 public:
-  gsl_quad_1d(F f, int limit): 
-  f(f), limit(limit), 
+  gsl_quad_1d(F f, int limit):
+  f(f), limit(limit),
   workspace(gsl_integration_workspace_alloc(limit), gsl_integration_workspace_free)
   {}
 
@@ -96,7 +96,7 @@ class gsl_vegas{
   }
 
 public:
-  gsl_vegas(F f, int limit): 
+  gsl_vegas(F f, int limit):
   f(f), limit(limit)
   {}
 
@@ -138,12 +138,12 @@ class cubeture_nd{
   {
     cubeture_nd * t = reinterpret_cast<cubeture_nd*>(fdata);
 	std::vector<double> res = t->f(x);
-	for (int i=0; i<fdim; ++i) fval[i] = res[i]; 
+	for (int i=0; i<fdim; ++i) fval[i] = res[i];
 	return 0;
   }
 
 public:
-  cubeture_nd(F f, int limit): 
+  cubeture_nd(F f, int limit):
   f(f), limit(limit) {}
 
   std::vector<double> integrate(unsigned ndimx, unsigned ndimf, const double * min, const double * max, double epsabs, double epsrel, double &error){
@@ -154,7 +154,7 @@ public:
 			ndimx, // dim-x
 			min, // xmin pointer
 			max, // xmax pointer
-			limit,	// max evl? 
+			limit,	// max evl?
 			epsabs, // AbsErr
 			epsrel, // relErr
 			ERROR_INDIVIDUAL, // Error norm
@@ -168,8 +168,8 @@ public:
 
 template < typename F >
 std::vector<double> quad_nd(F func,
-		unsigned ndim, unsigned ndimf, const double * min, const double * max, 
-		double&error, double epsabs=1e-5, double epsrel=1e-5, int limit=0){
+		unsigned ndim, unsigned ndimf, const double * min, const double * max,
+		double&error, double epsabs=0., double epsrel=1e-2, int limit=10000){
 	return cubeture_nd<F>(func, limit).integrate(ndim, ndimf, min, max, epsabs, epsrel, error);
 }
 

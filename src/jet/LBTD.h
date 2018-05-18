@@ -21,7 +21,8 @@
 
 typedef Rate<2, 2, double(*)(const double, void*)> Rate22;
 typedef Rate<3, 3, double(*)(const double*, void*)> Rate23;
-typedef boost::variant<Rate22, Rate23> Process;
+typedef Rate<3, 4, double(*)(const double*, void*)> Rate32;
+typedef boost::variant<Rate22, Rate23, Rate32> Process;
 
 using namespace Jetscape;
 
@@ -30,7 +31,7 @@ class LBTD : public JetEnergyLossModule<LBTD>
 {
  private:
 
-  std::vector<Process> MyProcesses;
+ std::map<int, std::vector<Process> > AllProcesses;  
 
  public:
 
@@ -41,8 +42,9 @@ class LBTD : public JetEnergyLossModule<LBTD>
   void Init();
   void DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& pIn, vector<Parton>& pOut);
   void WriteTask(weak_ptr<JetScapeWriter> w) {};
-  int update_particle_momentum(double dt, double temp, std::vector<double> v3cell, 
-				   double D_formation_t, fourvec incoming_p, std::vector<fourvec> & FS);
+  int update_particle_momentum(double dt, double temp, std::vector<double> v3cell,
+			int pid, double D_formation_t23, double D_formation_t32, fourvec incoming_p, std::vector<fourvec> & FS);
+  void init_process(Process& r, std::string mode);
   int random_choose_Id();
 };
 

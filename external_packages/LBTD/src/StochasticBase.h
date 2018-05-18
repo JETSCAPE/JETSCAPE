@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <vector>
 #include <string>
+#include <random>
 #include <map>
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -36,17 +37,22 @@ protected:
     virtual scalar calculate_scalar(std::vector<double> parameters) = 0;
     virtual fourvec calculate_fourvec(std::vector<double> parameters) = 0;
     virtual tensor calculate_tensor(std::vector<double> parameters) = 0;
+	bool _with_moments;
 public:
 	StochasticBase(std::string Name, std::string configfile);
 	scalar GetFmax(std::vector<double> arg) {
-			return _FunctionMax->InterpolateTable(arg);}; 
+			return _FunctionMax->InterpolateTable(arg);};
 	scalar GetZeroM(std::vector<double> arg) {
-			return _ZeroMoment->InterpolateTable(arg);}; 
+			return _ZeroMoment->InterpolateTable(arg);};
 	fourvec GetFirstM(std::vector<double> arg) {
-			return _FirstMoment->InterpolateTable(arg);}; 
+			if (_with_moments) return _FirstMoment->InterpolateTable(arg);
+			else return fourvec{0,0,0,0};
+		};
 	tensor GetSecondM(std::vector<double> arg) {
-			return _SecondMoment->InterpolateTable(arg);}; 
-	virtual void sample(std::vector<double> arg, 
+			if (_with_moments) return _SecondMoment->InterpolateTable(arg);
+			else return tensor{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+		};
+	virtual void sample(std::vector<double> arg,
 						std::vector< fourvec > & FS) = 0;
 	void init(std::string);
 	void load(std::string);

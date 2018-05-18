@@ -17,17 +17,34 @@ scalar approx_X23(std::vector<double> params){
 	double sqrts = params[0];
 	double T = params[1];
 	double delta_t = params[2];
-	return scalar{1./(1.+1./std::pow(3*delta_t*T,2))
-					/std::pow(T, 2)*sqrts*sqrts};
+	double a = std::pow(delta_t*T,2);
+	return scalar{a/(1.+a)/std::pow(T,3)};
 }
 
 scalar approx_dX23_max(std::vector<double> params){
 	double sqrts = params[0];
 	double T = params[1];
 	double delta_t = params[2];
-	return scalar{1./(1.+1./std::pow(3*delta_t*T,2))
-					/std::pow(T, 4)*sqrts*sqrts};
+	double a = std::pow(delta_t*T,2);
+	return scalar{a/(2.+a)/std::pow(T,4)};
 }
+
+scalar approx_X32(std::vector<double> params){
+	double sqrts = params[0];
+	double T = params[1];
+	double delta_t = params[4];
+	double a = std::pow(delta_t*T,2);
+	return scalar{a/(1+a)/std::pow(T, 2)/sqrts};
+}
+
+scalar approx_dX32_max(std::vector<double> params){
+	double sqrts = params[0];
+	double T = params[1];
+	double delta_t = params[4];
+	double a = delta_t*T;
+	return scalar{a/(.2+a)/std::pow(T, 2)};
+}
+
 // Rate
 scalar approx_R22(std::vector<double> params){
 	double E = params[0];
@@ -45,13 +62,29 @@ scalar approx_R23(std::vector<double> params){
 	double E = params[0];
 	double T = params[1];
 	double delta_t = params[2];
-	return scalar{T};
+	double a = std::pow(delta_t*T, 2);
+	return scalar{a/(a+5.)*T};
 }
 
 scalar approx_dR23_max(std::vector<double> params){
 	double E = params[0];
 	double T = params[1];
 	double delta_t = params[2];
-	return scalar{1./(1.+1./std::pow(delta_t*T,2))};
+	double a = std::pow(delta_t*T, 2);
+	return scalar{a/(a+3.)*T};
 }
 
+scalar approx_R32(std::vector<double> params){
+	double E = params[0];
+	double T = params[1];
+	double delta_t = params[2];
+	return scalar{delta_t*std::pow(T,3)/E};
+}
+
+scalar approx_dR32_max(std::vector<double> params){
+	double E = params[0];
+	double T = params[1];
+	double delta_t = params[2];
+	double a = std::pow(delta_t*T, 2);
+	return scalar{a/(.25*a+1)/E};
+}

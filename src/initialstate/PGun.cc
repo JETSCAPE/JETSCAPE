@@ -21,6 +21,7 @@ using namespace Jetscape;
 PGun::PGun() : HardProcess()
 {
   fixed_pT=0;
+  parId=1;
   SetId("PGun");
   VERBOSE(8);
 }
@@ -42,9 +43,10 @@ void PGun::InitTask()
       JSDEBUG << s << " to be initilizied ...";
       
       pgun->FirstChildElement("pT")->QueryDoubleText(&fixed_pT);
+      pgun->FirstChildElement("parId")->QueryIntText(&parId);
 
       JSDEBUG << s << " with fixed pT = "<<fixed_pT;
-      INFO<<"Parton Gun with fixed pT = "<<fixed_pT;
+      INFO<<"Parton Gun with fixed pT = "<<fixed_pT<< " and Id = "<< parId;
       
     }
   else
@@ -66,26 +68,33 @@ void PGun::Exec()
   const double maxN = 1.0*RAND_MAX;
   const double PI = 3.1415926;
   
-  double parID,ppx,ppy,ppz,pp0,mass; 
+  double ppx,ppy,ppz,pp0,mass; 
 
   for (int i=0;i<1;i++)
      {
-       tempRand = rand()/maxN;
-       if(tempRand < 0.25) parID = 21;
-       else if(tempRand < 0.50) parID = 1;
-       else if(tempRand < 0.75) parID = 2;
-       else parID = 3;
-       if (parID != 21) {
+       if (parId != 21) {
 	 tempRand = rand()/maxN;
-	 if(tempRand < 0.50) parID = -parID;
-       }            
-         parID = 1;
-       mass = 0.0;
+	 if(tempRand < 0.50) parId = -parId;
+       }  
+
+  if(std::abs(parId)==4)
+  {
+    mass=1.3;
+  }        
+  else if(std::abs(parId)==5)
+  {
+    mass=4.2;
+  }  
+  else
+  {
+    mass = 0.0;
+  }
+
        pT = fixed_pT; //max_pT*(rand()/maxN);
        
-       phi = 2.0*PI*(rand()/maxN);
+       //phi = 2.0*PI*(rand()/maxN);
        rapidity=0;//2.0*eta_cut*(rand()/maxN)-eta_cut;
-         phi = 0.0;
+       phi = 0.0;
          
          
        p[1] = pT*cos(phi);
@@ -116,7 +125,7 @@ void PGun::Exec()
 	 }
        }
 
-       AddParton(make_shared<Parton>(0,parID,0,pT,rapidity,phi,p[0],xLoc));
+       AddParton(make_shared<Parton>(0,parId,0,pT,rapidity,phi,p[0],xLoc));
   
        VERBOSEPARTON(7,*GetPartonAt(i))
 	 <<" added "

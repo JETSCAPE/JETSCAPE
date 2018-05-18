@@ -26,6 +26,7 @@ class PGun: public HardProcess {
    
  private:
     double fixed_pT;
+    int parId;
 
  public:
     
