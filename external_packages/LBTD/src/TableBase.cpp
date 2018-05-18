@@ -15,7 +15,7 @@ T default_approximate_function(Dvec values){
 
 template <typename T, size_t N>
 TableBase<T, N>::TableBase(std::string Name, Svec shape, Dvec low, Dvec high):
-_Name(Name), _rank(N), _power_rank(std::pow(2, _rank)), 
+_Name(Name), _rank(N), _power_rank(std::pow(2, _rank)),
 _shape(shape), _low(low), _high(high),_table(_shape)
 {
 	LOG_INFO<<_Name << " dim=" << _rank;
@@ -65,10 +65,8 @@ bool TableBase<T, N>::Save(std::string fname){
 	H5::Exception::dontPrint(); // suppress error messages
 	// the is a dumb implementation
 	H5::H5File file;
-LOG_INFO << "save start";
 	if( boost::filesystem::exists(fname)) file = H5::H5File(fname, H5F_ACC_RDWR);
 	else file = H5::H5File(fname, H5F_ACC_TRUNC);
-LOG_INFO << "file opened";
 	std::vector<std::string> levels;
 	boost::split(levels, _Name, boost::is_any_of("/"));
 	std::string prefix = "";
@@ -87,14 +85,14 @@ LOG_INFO << "file opened";
     		group = file.createGroup(prefix.c_str());
  		}
 	}
-LOG_INFO << "Create group";
+
 	hdf5_add_scalar_attr(group, "rank", _rank);
 	for (auto i=0; i<_rank; ++i){
 		hdf5_add_scalar_attr(group, "shape-"+std::to_string(i), _shape[i]);
 		hdf5_add_scalar_attr(group, "low-"+std::to_string(i), _low[i]);
 		hdf5_add_scalar_attr(group, "high-"+std::to_string(i), _high[i]);
 	}
-	
+
 	boost::multi_array<double, N> buffer(_shape);
 	hsize_t dims[_rank];
 	for (auto i=0; i<_rank; ++i) dims[i]=_shape[i];
@@ -103,7 +101,7 @@ LOG_INFO << "Create group";
 
 	H5::DataSpace dataspace(_rank, dims);
 	auto datatype(H5::PredType::NATIVE_DOUBLE);
-	
+
 	for(auto comp=0; comp<T::size(); ++comp) {
 		for(auto i=0; i<_table.num_elements(); ++i) {
 			T item = _table.data()[i];
@@ -164,6 +162,3 @@ template class TableBase<fourvec, 4>;
 template class TableBase<tensor, 2>;
 template class TableBase<tensor, 3>;
 template class TableBase<tensor, 4>;
-
-
-

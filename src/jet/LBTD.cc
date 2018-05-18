@@ -61,50 +61,30 @@ LBTD::~LBTD()
 void LBTD::Init()
 {
   INFO<<"Initialize LBTD ...";
-  //set mode to old??
   std::string mode="old";
+  std::string path="./settings.xml";
   boost::property_tree::ptree config;
-  std::ifstream input("settings.xml");
-  read_xml(input, config);
-  double mu = config.get_child("Boltzmann.QCD").get<double>("mu");
-  initialize_mD_and_scale(0, mu);
+  double mu=1.0;
+  initialize_mD_and_scale(1, mu);
 
-  MyProcesses.clear();
-  MyProcesses.push_back( Rate22("Boltzmann/Qq2Qq", "settings.xml", dX_Qq2Qq_dt) );
-  MyProcesses.push_back( Rate22("Boltzmann/Qg2Qg", "settings.xml", dX_Qg2Qg_dt) );
-	
-	MyProcesses.push_back( Rate23("Boltzmann/Qq2Qqg", "settings.xml", M2_Qq2Qqg) );
-	MyProcesses.push_back( Rate23("Boltzmann/Qg2Qgg", "settings.xml", M2_Qg2Qgg) );
+  AllProcesses[4] = std::vector<Process>();
+  AllProcesses[4].push_back( Rate22("Boltzmann/cq2cq", path, dX_Qq2Qq_dt) );
+  AllProcesses[4].push_back( Rate22("Boltzmann/cg2cg", path, dX_Qg2Qg_dt) );
+  AllProcesses[4].push_back( Rate23("Boltzmann/cq2cqg", path, M2_Qq2Qqg) );
+  AllProcesses[4].push_back( Rate23("Boltzmann/cg2cgg", path, M2_Qg2Qgg) );
+  AllProcesses[4].push_back( Rate32("Boltzmann/cqg2cq", path, Ker_Qqg2Qq) );
+  AllProcesses[4].push_back( Rate32("Boltzmann/cgg2cg", path, Ker_Qgg2Qg) );
 
-	BOOST_FOREACH(Process& r, MyProcesses){
-		switch(r.which()){
-			case 0:
-				if (boost::get<Rate22>(r).IsActive())
-					if(mode == "new"){
-						boost::get<Rate22>(r).initX("table.h5");
-						boost::get<Rate22>(r).init("table.h5");
-					} else{
-						boost::get<Rate22>(r).loadX("table.h5");
-						boost::get<Rate22>(r).load("table.h5");
-					}
-				else continue;
-				break;
-			case 1:
-				if (boost::get<Rate23>(r).IsActive())
-					if(mode == "new"){
-						boost::get<Rate23>(r).initX("table.h5");
-						boost::get<Rate23>(r).init("table.h5");
-					} else{
-						boost::get<Rate23>(r).loadX("table.h5");
-						boost::get<Rate23>(r).load("table.h5");
-					}
-				else continue;
-				break;
-			default:
-				exit(-1);
-				break;
-		}
-	} 
+  AllProcesses[5] = std::vector<Process>();
+  AllProcesses[5].push_back( Rate22("Boltzmann/bq2bq", path, dX_Qq2Qq_dt) );
+  AllProcesses[5].push_back( Rate22("Boltzmann/bg2bg", path, dX_Qg2Qg_dt) );
+  AllProcesses[5].push_back( Rate23("Boltzmann/bq2bqg", path, M2_Qq2Qqg) );
+  AllProcesses[5].push_back( Rate23("Boltzmann/bg2bgg", path, M2_Qg2Qgg) );
+  AllProcesses[5].push_back( Rate32("Boltzmann/bqg2bq", path, Ker_Qqg2Qq) );
+  AllProcesses[5].push_back( Rate32("Boltzmann/bgg2bg", path, Ker_Qgg2Qg) );
+
+  BOOST_FOREACH(Process& r, AllProcesses[4]) init_process(r, mode);
+  BOOST_FOREACH(Process& r, AllProcesses[5]) init_process(r, mode);
  
 }
 
@@ -132,7 +112,7 @@ void LBTD::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& p
    {
      Id = pIn[i].pid();
      INFO << "--------------------------------particle id: "<<Id;
-     if (abs(Id) == 4)
+     if (abs(Id) == 4||abs(Id) == 5)
        {
 	  //INFO << "--------------------------------particle id: "<<Id;
 
@@ -152,7 +132,7 @@ void LBTD::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& p
           std::vector<fourvec> FS;
 	  INFO << pin.t() << " " << pin.x() << " " << pin.y() << " " << pin.z();
 	  int channel = update_particle_momentum(deltaT*fmc_to_GeV_m1, T, 
-				{vx, vy, vz}, (Time-pIn[i].form_time())*fmc_to_GeV_m1, fourvec{pin.t(),pin.x(),pin.y(),pin.z()}, FS);     //needs to be modified?
+				{vx, vy, vz}, Id, (Time-pIn[i].form_time())*fmc_to_GeV_m1, (Time-pIn[i].form_time())*fmc_to_GeV_m1, fourvec{pin.t(),pin.x(),pin.y(),pin.z()}, FS);     //needs to be modified!
 
           FourVector p1out;
           FourVector p2out;
@@ -216,6 +196,22 @@ void LBTD::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& p
                       }
                       break;
                     }
+            case 4: {
+                      pOut[pOut.size()-1].set_form_time(Time);//needs modify!
+                      if(p1out.t()>T)
+                      {
+                        pOut.push_back(Parton(0,qId,0,xout,p1out));
+                      }
+                      break;
+                    }
+            case 5: {
+                      pOut[pOut.size()-1].set_form_time(Time);//needs modify!
+                      if(p1out.t()>T)
+                      {
+                        pOut.push_back(Parton(0,21,0,xout,p1out));
+                      }
+                      break;
+                    }
             default: 
                       //INFO<<"No valid channel!";
                       break;
@@ -226,30 +222,39 @@ void LBTD::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& p
    }
 }
 
-int LBTD::update_particle_momentum(double dt, double temp, std::vector<double> v3cell, 
-				   double D_formation_t, fourvec incoming_p, std::vector<fourvec> & FS)
+int LBTD::update_particle_momentum(double dt, double temp, std::vector<double> v3cell,
+			int pid, double D_formation_t23, double D_formation_t32, fourvec incoming_p, std::vector<fourvec> & FS)
 {
+	int absid = std::abs(pid);
 	auto p_cell = incoming_p.boost_to(v3cell[0], v3cell[1], v3cell[2]);
-	double D_formation_t_cell = D_formation_t / incoming_p.t() * p_cell.t();
+	double D_formation_t23_cell = D_formation_t23 / incoming_p.t() * p_cell.t();
+	double D_formation_t32_cell = D_formation_t32 / incoming_p.t() * p_cell.t();
 	double dt_cell = dt / incoming_p.t() * p_cell.t();
 	double E_cell = p_cell.t();
-    std::vector<double> P_channels(MyProcesses.size());
+        std::vector<double> P_channels(AllProcesses[absid].size());
 	double P_total = 0.;
 	int channel = 0;
 	double dR;
-	BOOST_FOREACH(Process& r, MyProcesses){
+	BOOST_FOREACH(Process& r, AllProcesses[absid]){
 		switch(r.which()){
 			case 0:
 				if (boost::get<Rate22>(r).IsActive())
 					dR = boost::get<Rate22>(r).GetZeroM(
 												{E_cell, temp}).s * dt_cell;
 				else dR = 0.0;
-				P_channels[channel] = P_total + dR;	
+				P_channels[channel] = P_total + dR;
 				break;
 			case 1:
 				if (boost::get<Rate23>(r).IsActive())
 					dR = boost::get<Rate23>(r).GetZeroM(
-									{E_cell, temp, D_formation_t_cell}).s * dt_cell;
+									{E_cell, temp, D_formation_t23_cell}).s * dt_cell;
+				else dR = 0.0;
+				P_channels[channel] = P_total + dR;
+				break;
+			case 2:
+				if (boost::get<Rate32>(r).IsActive())
+					dR = boost::get<Rate32>(r).GetZeroM(
+									{E_cell, temp, D_formation_t32_cell}).s * dt_cell;
 				else dR = 0.0;
 				P_channels[channel] = P_total + dR;
 				break;
@@ -258,7 +263,6 @@ int LBTD::update_particle_momentum(double dt, double temp, std::vector<double> v
 				break;
 		}
 		P_total += dR;
-		//LOG_INFO << dR;
 		channel ++;
 	}
 	for(auto& item : P_channels) {item /= P_total;}
@@ -268,19 +272,23 @@ int LBTD::update_particle_momentum(double dt, double temp, std::vector<double> v
 		double p = Srandom::init_dis(Srandom::gen);
 		for(int i=0; i<P_channels.size(); ++i){
 			if (P_channels[i] > p) {
-				channel = i; 
+				channel = i;
 				break;
 			}
 		}
 	}
 	// Do scattering
-	switch(MyProcesses[channel].which()){ 
+	switch(AllProcesses[absid][channel].which()){
 		case 0:
-			boost::get<Rate22>(MyProcesses[channel]).sample({E_cell, temp}, FS);
+			boost::get<Rate22>(AllProcesses[absid][channel]).sample({E_cell, temp}, FS);
 			break;
 		case 1:
-			boost::get<Rate23>(MyProcesses[channel]).sample(
-											{E_cell, temp, D_formation_t_cell}, FS);
+			boost::get<Rate23>(AllProcesses[absid][channel]).sample(
+											{E_cell, temp, D_formation_t23_cell}, FS);
+			break;
+		case 2:
+			boost::get<Rate32>(AllProcesses[absid][channel]).sample(
+											{E_cell, temp, D_formation_t32_cell}, FS);
 			break;
 		default:
 			LOG_FATAL << "Channel = " << channel << " not exists";
@@ -293,6 +301,47 @@ int LBTD::update_particle_momentum(double dt, double temp, std::vector<double> v
 		pmu = pmu.boost_back(v3cell[0], v3cell[1], v3cell[2]);
 	}
 	return channel;
+}
+
+void LBTD::init_process(Process& r, std::string mode){
+     switch(r.which()){
+                        case 0:
+                                if (boost::get<Rate22>(r).IsActive())
+                                        if(mode == "new"){
+                                                boost::get<Rate22>(r).initX("table.h5");
+                                                boost::get<Rate22>(r).init("table.h5");
+                                        } else{
+                                                boost::get<Rate22>(r).loadX("table.h5");
+                                                boost::get<Rate22>(r).load("table.h5");
+                                        }
+                                else return;
+                                break;
+                        case 1:
+                                if (boost::get<Rate23>(r).IsActive())
+                                        if(mode == "new"){
+                                                boost::get<Rate23>(r).initX("table.h5");
+                                                boost::get<Rate23>(r).init("table.h5");
+                                        } else{
+                                                boost::get<Rate23>(r).loadX("table.h5");
+                                                boost::get<Rate23>(r).load("table.h5");
+                                        }
+                                else return;
+                                break;
+						case 2:
+								if (boost::get<Rate32>(r).IsActive())
+										if(mode == "new"){
+												boost::get<Rate32>(r).initX("table.h5");
+												boost::get<Rate32>(r).init("table.h5");
+										} else{
+												boost::get<Rate32>(r).loadX("table.h5");
+												boost::get<Rate32>(r).load("table.h5");
+										}
+								else return;
+								break;
+                        default:
+                                exit(-1);
+                                break;
+                }
 }
 
 int LBTD::random_choose_Id()
