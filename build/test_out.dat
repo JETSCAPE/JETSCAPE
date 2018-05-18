@@ -1,0 +1,1400 @@
+0 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 0.2 1 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 0.2 1 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 0.2 1 0 0
+# Hadronization module: 
+# There are no Hadrons
+1 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -1.6 -1 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -1.6 -1 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -1.6 -1 0 0
+# Hadronization module: 
+# There are no Hadrons
+2 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 1 1 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 1 1 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 1 1 0 0
+# Hadronization module: 
+# There are no Hadrons
+3 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -0.6 -1.8 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -0.6 -1.8 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -0.6 -1.8 0 0
+# Hadronization module: 
+# There are no Hadrons
+4 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 1.8 -0.6 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 1.8 -0.6 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 1.8 -0.6 0 0
+# Hadronization module: 
+# There are no Hadrons
+5 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -0.6 0.8 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -0.6 0.8 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -0.6 0.8 0 0
+# Hadronization module: 
+# There are no Hadrons
+6 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -1.8 1.4 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -1.8 1.4 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -1.8 1.4 0 0
+# Hadronization module: 
+# There are no Hadrons
+7 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -0.2 -2 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -0.2 -2 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -0.2 -2 0 0
+# Hadronization module: 
+# There are no Hadrons
+8 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -0.6 3.6 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -0.6 3.6 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -0.6 3.6 0 0
+# Hadronization module: 
+# There are no Hadrons
+9 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -2 0.8 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -2 0.8 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -2 0.8 0 0
+# Hadronization module: 
+# There are no Hadrons
+10 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -1.4 -4.4 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -1.4 -4.4 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -1.4 -4.4 0 0
+# Hadronization module: 
+# There are no Hadrons
+11 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 0.2 -1.6 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 0.2 -1.6 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 0.2 -1.6 0 0
+# Hadronization module: 
+# There are no Hadrons
+12 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -1.6 -0.8 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -1.6 -0.8 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -1.6 -0.8 0 0
+# Hadronization module: 
+# There are no Hadrons
+13 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -0.8 -1.2 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -0.8 -1.2 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -0.8 -1.2 0 0
+# Hadronization module: 
+# There are no Hadrons
+14 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 0.6 -0.2 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 0.6 -0.2 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 0.6 -0.2 0 0
+# Hadronization module: 
+# There are no Hadrons
+15 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -2 2.4 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -2 2.4 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -2 2.4 0 0
+# Hadronization module: 
+# There are no Hadrons
+16 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 2.6 0.8 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 2.6 0.8 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 2.6 0.8 0 0
+# Hadronization module: 
+# There are no Hadrons
+17 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -4.2 1.2 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -4.2 1.2 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -4.2 1.2 0 0
+# Hadronization module: 
+# There are no Hadrons
+18 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -0.2 -1.6 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -0.2 -1.6 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -0.2 -1.6 0 0
+# Hadronization module: 
+# There are no Hadrons
+19 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 0 -1.4 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 0 -1.4 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 0 -1.4 0 0
+# Hadronization module: 
+# There are no Hadrons
+20 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -0.2 2.8 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -0.2 2.8 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -0.2 2.8 0 0
+# Hadronization module: 
+# There are no Hadrons
+21 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -1 1.2 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -1 1.2 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -1 1.2 0 0
+# Hadronization module: 
+# There are no Hadrons
+22 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 0 0.4 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 0 0.4 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 0 0.4 0 0
+# Hadronization module: 
+# There are no Hadrons
+23 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -1 -1.6 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -1 -1.6 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -1 -1.6 0 0
+# Hadronization module: 
+# There are no Hadrons
+24 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -1.4 1.6 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -1.4 1.6 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -1.4 1.6 0 0
+# Hadronization module: 
+# There are no Hadrons
+25 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 0.4 3.6 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 0.4 3.6 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 0.4 3.6 0 0
+# Hadronization module: 
+# There are no Hadrons
+26 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 0.6 1.8 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 0.6 1.8 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 0.6 1.8 0 0
+# Hadronization module: 
+# There are no Hadrons
+27 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -2.6 -0.8 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -2.6 -0.8 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -2.6 -0.8 0 0
+# Hadronization module: 
+# There are no Hadrons
+28 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 1.4 -0.2 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 1.4 -0.2 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 1.4 -0.2 0 0
+# Hadronization module: 
+# There are no Hadrons
+29 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -0.2 2 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -0.2 2 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -0.2 2 0 0
+# Hadronization module: 
+# There are no Hadrons
+30 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -0.8 -0.2 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -0.8 -0.2 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -0.8 -0.2 0 0
+# Hadronization module: 
+# There are no Hadrons
+31 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 0.4 -1.2 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 0.4 -1.2 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 0.4 -1.2 0 0
+# Hadronization module: 
+# There are no Hadrons
+32 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 0.6 -1.4 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 0.6 -1.4 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 0.6 -1.4 0 0
+# Hadronization module: 
+# There are no Hadrons
+33 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 0.2 -1.8 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 0.2 -1.8 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 0.2 -1.8 0 0
+# Hadronization module: 
+# There are no Hadrons
+34 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -1 -0.2 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -1 -0.2 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -1 -0.2 0 0
+# Hadronization module: 
+# There are no Hadrons
+35 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -2 -1.6 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -2 -1.6 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -2 -1.6 0 0
+# Hadronization module: 
+# There are no Hadrons
+36 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -0.8 -2.6 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -0.8 -2.6 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -0.8 -2.6 0 0
+# Hadronization module: 
+# There are no Hadrons
+37 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -1.6 0.6 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -1.6 0.6 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -1.6 0.6 0 0
+# Hadronization module: 
+# There are no Hadrons
+38 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 2.8 -2 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 2.8 -2 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 2.8 -2 0 0
+# Hadronization module: 
+# There are no Hadrons
+39 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -2 2 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -2 2 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -2 2 0 0
+# Hadronization module: 
+# There are no Hadrons
+40 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 0.4 2.4 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 0.4 2.4 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 0.4 2.4 0 0
+# Hadronization module: 
+# There are no Hadrons
+41 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 3 0.2 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 3 0.2 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 3 0.2 0 0
+# Hadronization module: 
+# There are no Hadrons
+42 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 1.2 0 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 1.2 0 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 1.2 0 0 0
+# Hadronization module: 
+# There are no Hadrons
+43 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 2.6 4.2 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 2.6 4.2 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 2.6 4.2 0 0
+# Hadronization module: 
+# There are no Hadrons
+44 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 0 3.6 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 0 3.6 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 0 3.6 0 0
+# Hadronization module: 
+# There are no Hadrons
+45 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -0.4 -0.6 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -0.4 -0.6 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -0.4 -0.6 0 0
+# Hadronization module: 
+# There are no Hadrons
+46 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 1.2 2.2 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 1.2 2.2 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 1.2 2.2 0 0
+# Hadronization module: 
+# There are no Hadrons
+47 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 1.8 0.4 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 1.8 0.4 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 1.8 0.4 0 0
+# Hadronization module: 
+# There are no Hadrons
+48 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 0.2 -4.2 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 0.2 -4.2 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 0.2 -4.2 0 0
+# Hadronization module: 
+# There are no Hadrons
+49 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 0 -1 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 0 -1 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 0 -1 0 0
+# Hadronization module: 
+# There are no Hadrons
+50 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -0.4 -2 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -0.4 -2 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -0.4 -2 0 0
+# Hadronization module: 
+# There are no Hadrons
+51 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 0 -0.8 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 0 -0.8 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 0 -0.8 0 0
+# Hadronization module: 
+# There are no Hadrons
+52 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 1.4 -0.4 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 1.4 -0.4 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 1.4 -0.4 0 0
+# Hadronization module: 
+# There are no Hadrons
+53 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 1 -1.4 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 1 -1.4 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 1 -1.4 0 0
+# Hadronization module: 
+# There are no Hadrons
+54 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 1.2 -2.4 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 1.2 -2.4 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 1.2 -2.4 0 0
+# Hadronization module: 
+# There are no Hadrons
+55 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -2.6 -1.2 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -2.6 -1.2 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -2.6 -1.2 0 0
+# Hadronization module: 
+# There are no Hadrons
+56 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 0.4 -1.2 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 0.4 -1.2 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 0.4 -1.2 0 0
+# Hadronization module: 
+# There are no Hadrons
+57 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -0.2 -1.4 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -0.2 -1.4 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -0.2 -1.4 0 0
+# Hadronization module: 
+# There are no Hadrons
+58 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -0.2 -0.8 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -0.2 -0.8 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -0.2 -0.8 0 0
+# Hadronization module: 
+# There are no Hadrons
+59 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -0.6 0.4 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -0.6 0.4 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -0.6 0.4 0 0
+# Hadronization module: 
+# There are no Hadrons
+60 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 1.4 -2 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 1.4 -2 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 1.4 -2 0 0
+# Hadronization module: 
+# There are no Hadrons
+61 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -2.4 1.2 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -2.4 1.2 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -2.4 1.2 0 0
+# Hadronization module: 
+# There are no Hadrons
+62 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -1.2 -0.8 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -1.2 -0.8 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -1.2 -0.8 0 0
+# Hadronization module: 
+# There are no Hadrons
+63 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -0.8 3.4 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -0.8 3.4 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -0.8 3.4 0 0
+# Hadronization module: 
+# There are no Hadrons
+64 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -1.4 0.8 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -1.4 0.8 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -1.4 0.8 0 0
+# Hadronization module: 
+# There are no Hadrons
+65 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 0.8 -1.6 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 0.8 -1.6 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 0.8 -1.6 0 0
+# Hadronization module: 
+# There are no Hadrons
+66 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -1.2 1 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -1.2 1 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -1.2 1 0 0
+# Hadronization module: 
+# There are no Hadrons
+67 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -0.2 3.2 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -0.2 3.2 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -0.2 3.2 0 0
+# Hadronization module: 
+# There are no Hadrons
+68 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 1.8 3.2 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 1.8 3.2 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 1.8 3.2 0 0
+# Hadronization module: 
+# There are no Hadrons
+69 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 0.4 -4.8 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 0.4 -4.8 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 0.4 -4.8 0 0
+# Hadronization module: 
+# There are no Hadrons
+70 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 0.8 2.2 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 0.8 2.2 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 0.8 2.2 0 0
+# Hadronization module: 
+# There are no Hadrons
+71 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 2 2 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 2 2 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 2 2 0 0
+# Hadronization module: 
+# There are no Hadrons
+72 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 1.2 -0.4 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 1.2 -0.4 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 1.2 -0.4 0 0
+# Hadronization module: 
+# There are no Hadrons
+73 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -1.6 2 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -1.6 2 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -1.6 2 0 0
+# Hadronization module: 
+# There are no Hadrons
+74 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 1.8 -1.6 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 1.8 -1.6 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 1.8 -1.6 0 0
+# Hadronization module: 
+# There are no Hadrons
+75 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -0.4 0.4 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -0.4 0.4 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -0.4 0.4 0 0
+# Hadronization module: 
+# There are no Hadrons
+76 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -1.4 0.2 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -1.4 0.2 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -1.4 0.2 0 0
+# Hadronization module: 
+# There are no Hadrons
+77 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -0.6 0.8 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -0.6 0.8 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -0.6 0.8 0 0
+# Hadronization module: 
+# There are no Hadrons
+78 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 2.4 -0.2 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 2.4 -0.2 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 2.4 -0.2 0 0
+# Hadronization module: 
+# There are no Hadrons
+79 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 1.8 -0.4 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 1.8 -0.4 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 1.8 -0.4 0 0
+# Hadronization module: 
+# There are no Hadrons
+80 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 3.2 -1.2 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 3.2 -1.2 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 3.2 -1.2 0 0
+# Hadronization module: 
+# There are no Hadrons
+81 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -1.4 0.8 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -1.4 0.8 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -1.4 0.8 0 0
+# Hadronization module: 
+# There are no Hadrons
+82 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -1 0.8 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -1 0.8 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -1 0.8 0 0
+# Hadronization module: 
+# There are no Hadrons
+83 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -3.2 1 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -3.2 1 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -3.2 1 0 0
+# Hadronization module: 
+# There are no Hadrons
+84 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 0.6 -0.8 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 0.6 -0.8 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 0.6 -0.8 0 0
+# Hadronization module: 
+# There are no Hadrons
+85 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 0.2 1.6 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 0.2 1.6 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 0.2 1.6 0 0
+# Hadronization module: 
+# There are no Hadrons
+86 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -1 -2 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -1 -2 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -1 -2 0 0
+# Hadronization module: 
+# There are no Hadrons
+87 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -0.2 -2.2 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -0.2 -2.2 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -0.2 -2.2 0 0
+# Hadronization module: 
+# There are no Hadrons
+88 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -0.8 -3.4 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -0.8 -3.4 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -0.8 -3.4 0 0
+# Hadronization module: 
+# There are no Hadrons
+89 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 0.6 0.2 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 0.6 0.2 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 0.6 0.2 0 0
+# Hadronization module: 
+# There are no Hadrons
+90 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -1 -1.4 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -1 -1.4 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -1 -1.4 0 0
+# Hadronization module: 
+# There are no Hadrons
+91 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 0.4 -1 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 0.4 -1 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 0.4 -1 0 0
+# Hadronization module: 
+# There are no Hadrons
+92 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -2.4 -0.6 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -2.4 -0.6 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -2.4 -0.6 0 0
+# Hadronization module: 
+# There are no Hadrons
+93 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -1.4 2 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -1.4 2 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -1.4 2 0 0
+# Hadronization module: 
+# There are no Hadrons
+94 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 0.6 -1.6 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 0.6 -1.6 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 0.6 -1.6 0 0
+# Hadronization module: 
+# There are no Hadrons
+95 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 0.6 0.2 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 0.6 0.2 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 0.6 0.2 0 0
+# Hadronization module: 
+# There are no Hadrons
+96 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -0.6 0.4 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -0.6 0.4 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -0.6 0.4 0 0
+# Hadronization module: 
+# There are no Hadrons
+97 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 -0.6 -3.4 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 -0.6 -3.4 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 -0.6 -3.4 0 0
+# Hadronization module: 
+# There are no Hadrons
+98 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 0 1.2 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 0 1.2 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 0 1.2 0 0
+# Hadronization module: 
+# There are no Hadrons
+99 Event
+# sigmaGen 1
+# sigmaErr 0
+# weight 1
+# HardProcess Parton List: PGun
+0 1 0 100 0 0 100 0 3.4 0 0
+# Energy loss Shower Initating Parton: JetEnergyLoss
+0 1 0 100 0 0 100 0 3.4 0 0
+# Parton Shower in JetScape format to be used later by GTL graph:
+[0] V 0 0 0 0
+[1] V 0 0 0 0
+[0]=>[1] P 0 1 0 100 0 0 100 0 3.4 0 0
+# Hadronization module: 
+# There are no Hadrons
