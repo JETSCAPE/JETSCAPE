@@ -1,2 +1,0 @@
-/usr/bin/ar qc libtrento.a  CMakeFiles/libtrento.dir/collider.cxx.o CMakeFiles/libtrento.dir/event.cxx.o CMakeFiles/libtrento.dir/hdf5_utils.cxx.o CMakeFiles/libtrento.dir/nucleon.cxx.o CMakeFiles/libtrento.dir/nucleus.cxx.o CMakeFiles/libtrento.dir/output.cxx.o CMakeFiles/libtrento.dir/random.cxx.o
-/usr/bin/ranlib libtrento.a
