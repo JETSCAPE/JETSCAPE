@@ -93,6 +93,13 @@ add_subdirectory(external_packages/trento/)
 include_directories("${CMAKE_SOURCE_DIR}/external_packages/trento/src/")
 ###########################
 
+###########################
+#### Duke Heavy Quark #####
+###########################
+add_subdirectory(external_packages/LBTD/)
+include_directories("${CMAKE_SOURCE_DIR}/external_packages/LBTD/src/")
+###########################
+
 #############################################
 ### Installing Header and Library Files   ###
 #############################################
@@ -177,11 +184,11 @@ install(
 ### Required packages   ###
 ###########################
 
-
 # Find and use Boost.
 message("Looking for Boost ...")
-find_package(Boost 1.50 REQUIRED COMPONENTS filesystem program_options system)
+find_package(Boost 1.50 REQUIRED COMPONENTS filesystem program_options system log log_setup thread)
 Message(STATUS "Boost Include dirs : " ${Boost_INCLUDE_DIRS})
+#Message(STATUS "Boost libs : " ${Boost_LIBRARIES})
 ## boost needs special treatment. For reasons.
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
@@ -337,6 +344,9 @@ target_link_libraries(PythiaBrickTest JetScape )
 
 add_executable(LBT_brickTest ./examples/LBT_brickTest.cc)
 target_link_libraries(LBT_brickTest JetScape )
+
+add_executable(LBTD_brickTest ./examples/LBTD_brickTest.cc)
+target_link_libraries(LBTD_brickTest JetScape )
 
 if(${HDF5_FOUND})
   add_executable(hydroFileTest ./examples/hydroFileTest.cc)
