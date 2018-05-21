@@ -1,0 +1,34 @@
+file(REMOVE_RECURSE
+  "CMakeFiles/GTL.dir/biconnectivity.cpp.o"
+  "CMakeFiles/GTL.dir/bellman_ford.cpp.o"
+  "CMakeFiles/GTL.dir/maxflow_sap.cpp.o"
+  "CMakeFiles/GTL.dir/edge.cpp.o"
+  "CMakeFiles/GTL.dir/components.cpp.o"
+  "CMakeFiles/GTL.dir/topsort.cpp.o"
+  "CMakeFiles/GTL.dir/min_tree.cpp.o"
+  "CMakeFiles/GTL.dir/maxflow_pp.cpp.o"
+  "CMakeFiles/GTL.dir/planarity.cpp.o"
+  "CMakeFiles/GTL.dir/graph.cpp.o"
+  "CMakeFiles/GTL.dir/gml_parser.cpp.o"
+  "CMakeFiles/GTL.dir/embedding.cpp.o"
+  "CMakeFiles/GTL.dir/st_number.cpp.o"
+  "CMakeFiles/GTL.dir/bfs.cpp.o"
+  "CMakeFiles/GTL.dir/dfs.cpp.o"
+  "CMakeFiles/GTL.dir/fm_partition.cpp.o"
+  "CMakeFiles/GTL.dir/maxflow_ff.cpp.o"
+  "CMakeFiles/GTL.dir/pq_node.cpp.o"
+  "CMakeFiles/GTL.dir/pq_tree.cpp.o"
+  "CMakeFiles/GTL.dir/bid_dijkstra.cpp.o"
+  "CMakeFiles/GTL.dir/debug.cpp.o"
+  "CMakeFiles/GTL.dir/node.cpp.o"
+  "CMakeFiles/GTL.dir/ratio_cut_partition.cpp.o"
+  "CMakeFiles/GTL.dir/dijkstra.cpp.o"
+  "CMakeFiles/GTL.dir/gml_scanner.cpp.o"
+  "../lib/libGTL.pdb"
+  "../lib/libGTL.so"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang CXX)
+  include(CMakeFiles/GTL.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

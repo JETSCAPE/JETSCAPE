@@ -304,9 +304,11 @@ namespace Jetscape {
     
   public :
     virtual void set_mean_form_time();
-    virtual void set_form_time(double form_time);    
+    virtual void set_form_time(double form_time);   
+    virtual void set_absorp_time(double absorp_time);   
 
     virtual double form_time();
+    virtual double absorp_time();
     virtual const double mean_form_time();
     virtual void reset_p(double px, double py, double pz);
     virtual void set_color(unsigned int col); ///< sets the color of the parton
@@ -343,6 +345,7 @@ namespace Jetscape {
   protected :
     double mean_form_time_  ; ///< Mean formation time
     double form_time_       ; ///< event by event formation time
+    double absorp_time_     ; ///< event by event absorption time
     unsigned int Color_      ; ///< Large Nc color of parton
     unsigned int antiColor_  ;///< Large Nc anti-color of parton
     unsigned int MaxColor_    ; ///< the running maximum color

@@ -382,15 +382,25 @@ namespace Jetscape {
   {
     form_time_ = form_time;
   }
+  void Parton::set_absorp_time(double absorp_time)
+  {
+    absorp_time_ = absorp_time;
+  }
     
   void Parton::initialize_form_time()
   {
     form_time_ = -0.1;
+    absorp_time_ = -0.1;
   }
 
   double Parton::form_time()
   {
     return(form_time_);
+  }
+
+  double Parton::absorp_time()
+  {
+    return(absorp_time_);
   }
   
   const double Parton::mean_form_time()

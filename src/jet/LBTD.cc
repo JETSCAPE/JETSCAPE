@@ -111,18 +111,18 @@ void LBTD::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& p
   for (int i=0;i<pIn.size();i++)
    {
      Id = pIn[i].pid();
-     INFO << "--------------------------------particle id: "<<Id;
+     //INFO << "--------------------------------particle id: "<<Id;
      if (abs(Id) == 4||abs(Id) == 5)
        {
-	  //INFO << "--------------------------------particle id: "<<Id;
+	  INFO << "--------------------------------particle id: "<<Id;
 
 	  pin = FourVector ( pIn[i].px(), pIn[i].py(), pIn[i].pz(), pIn[i].e());
 	  xin = FourVector (pIn[i].x_in().x(),pIn[i].x_in().y(),pIn[i].x_in().z(), Time);
 
 	  std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
 	  GetHydroCellSignal(Time, xin.x(), xin.y(), xin.z(), check_fluid_info_ptr);
-	  VERBOSE(0)<<"Temperature from Brick (Signal) = "
-		    <<check_fluid_info_ptr->temperature;
+	  //VERBOSE(0)<<"Temperature from Brick (Signal) = "
+	  //	    <<check_fluid_info_ptr->temperature;
 
 	  vx = check_fluid_info_ptr->vx;
 	  vy = check_fluid_info_ptr->vy;
@@ -130,9 +130,9 @@ void LBTD::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& p
            T = check_fluid_info_ptr->temperature;
 
           std::vector<fourvec> FS;
-	  INFO << pin.t() << " " << pin.x() << " " << pin.y() << " " << pin.z();
+	  //INFO << pin.t() << " " << pin.x() << " " << pin.y() << " " << pin.z();
 	  int channel = update_particle_momentum(deltaT*fmc_to_GeV_m1, T, 
-				{vx, vy, vz}, Id, (Time-pIn[i].form_time())*fmc_to_GeV_m1, (Time-pIn[i].form_time())*fmc_to_GeV_m1, fourvec{pin.t(),pin.x(),pin.y(),pin.z()}, FS);     //needs to be modified!
+				{vx, vy, vz}, Id, (Time-pIn[i].form_time())*fmc_to_GeV_m1, (Time-pIn[i].absorp_time())*fmc_to_GeV_m1, fourvec{pin.t(),pin.x(),pin.y(),pin.z()}, FS);
 
           FourVector p1out;
           FourVector p2out;
@@ -154,6 +154,8 @@ void LBTD::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& p
           pOut.push_back(Parton(0, Id, 0, pout, xout));
 
           //add high energy light partons
+          //currently disabled since we only have one eloss module!
+          /*
 	  switch(channel)
 	    {
 	    case 0: {
@@ -197,7 +199,7 @@ void LBTD::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& p
                       break;
                     }
             case 4: {
-                      pOut[pOut.size()-1].set_form_time(Time);//needs modify!
+                      pOut[pOut.size()-1].set_absorp_time(Time);
                       if(p1out.t()>T)
                       {
                         pOut.push_back(Parton(0,qId,0,xout,p1out));
@@ -205,7 +207,7 @@ void LBTD::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& p
                       break;
                     }
             case 5: {
-                      pOut[pOut.size()-1].set_form_time(Time);//needs modify!
+                      pOut[pOut.size()-1].set_absorp_time(Time);
                       if(p1out.t()>T)
                       {
                         pOut.push_back(Parton(0,21,0,xout,p1out));
@@ -217,6 +219,7 @@ void LBTD::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& p
                       break;
 	            
 	    }
+           */
 
        }
    }
@@ -327,20 +330,20 @@ void LBTD::init_process(Process& r, std::string mode){
                                         }
                                 else return;
                                 break;
-						case 2:
-								if (boost::get<Rate32>(r).IsActive())
-										if(mode == "new"){
-												boost::get<Rate32>(r).initX("table.h5");
-												boost::get<Rate32>(r).init("table.h5");
-										} else{
-												boost::get<Rate32>(r).loadX("table.h5");
-												boost::get<Rate32>(r).load("table.h5");
-										}
-								else return;
-								break;
+			case 2:
+				if (boost::get<Rate32>(r).IsActive())
+				        if(mode == "new"){
+					        boost::get<Rate32>(r).initX("table.h5");
+						boost::get<Rate32>(r).init("table.h5");
+					} else{
+						boost::get<Rate32>(r).loadX("table.h5");
+						boost::get<Rate32>(r).load("table.h5");
+					}
+			       else return;
+			       break;
                         default:
-                                exit(-1);
-                                break;
+                               exit(-1);
+                               break;
                 }
 }
 
