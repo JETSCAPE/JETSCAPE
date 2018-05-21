@@ -1,7 +1,7 @@
 In order to install and compile the JETSCAPE framework on a Linux machine, one need to follow the following steps:
 
 1. Clone the repository from Github:
-     - git clone https://github.com/amajumder/JETSCAPE-COMP.git
+     - git clone https://github.com/JETSCAPE/JETSCAPE.git
      - Enter your Github credentials 
 
 2. Install and configure HepMC (Version 3.0.0 or higher)
@@ -39,12 +39,12 @@ In order to install and compile the JETSCAPE framework on a Linux machine, one n
      - Run make command
           - make
 
-5. Configure the address of Pythia8 in the ../framework/setup.sh (If cmake could not find Pythia)
-     - vim setup.sh
+5. Configure the address of Pythia8 in the ../framework/activate_jetscape.sh (If cmake could not find Pythia)
+     - vim activate_jetscape.sh
      - Change "PYTHIAINSTALLDIR" to the installing folder of Pythia8
      - Update the "PYTHIA8DIR" and "PYTHIA8_ROOT_DIR" address
           - should be "${PYTHIAINSTALLDIR}/pythia8226" by default
-     - ./setup.sh
+     - ./activate_jetscape.sh
      - Make sure the variable are set into the session
      - Use source if they are not set
 
@@ -57,13 +57,15 @@ In order to install and compile the JETSCAPE framework on a Linux machine, one n
      - Run b2 --prefix=PREFIX where PREFIX is the directory where you want Boost. Build to be installed
           - ./b2 install --prefix=PREFIX
      - Set "BOOST_ROOT" variable to the root directory of boost
-     - export BOOST_ROOT=<root_directory> 
+          - export BOOST_ROOT=<root_directory> 
 
 7. Install HDF5 C++ library
      - wget https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-1.8.18/src/hdf5-1.8.18.tar
      - tar -xvvf hdf5-1.8.18.tar
      - ./configure
      - make
+     - To provide a hint for CMake about where to find your HDF5 installation, you can set the environment variable HDF5_ROOT
+          - export HDF5_ROOT=<HDF5_installation_directory>
 
 8. Create a build folder in ../src/framework
      - mkdir build
