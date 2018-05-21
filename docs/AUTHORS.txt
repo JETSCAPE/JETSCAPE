@@ -1,0 +1,119 @@
+
+Author List of the JETSCAPE Collaboration: 
+
+by section:
+
+
+Framework original design: K. Kauder, J. Putschke.
+
+Framework extensions: E. Khalaj.
+
+Initial state module design: L-G. Pang.
+
+PreEquilibrium module design: D. Everett, C. Shen, G. Vujanovic.
+
+Fluid dynamics module design: L-G. Pang, C. Shen.
+
+MATTER Module: S. Cao, A. Kumar, A. Majumder, C. Sirimanna. 
+
+MARTINI Module:  C. Gale, S. Jeon, C. Park, B. Schenke.
+
+LBT Module: S. Cao, Y. He, T. Luo, X-N. Wang. 
+
+AdS/CFT Module: D. Pablos.
+
+Jet Hadronization module design: E. Khalaj.
+
+Jet Hadronization modules: A. Majumder, D. Pablos.
+
+Soft Hadronization: C. Shen. 
+
+p-p Tuning Team: R. Fries (coordinator), S. Cao, Y. He, P. Jacobs, A. Kumar, T. Luo, D. Pablos, C. Park, C. Sirimanna,  Y. Tachibana.
+
+Simulations Team: L. Du, D. Everett, W. Ke, J.-F. Paquet, G. Vujanovic.
+
+
+
+
+Alphabetical list with institution:
+
+
+S. A. Bass, Department of Physics, Duke University, Durham, NC 27708
+
+D. Bazow, Department of Physics, The Ohio State University, Columbus OH 43210
+
+J. Bernhard, Department of Physics, Duke University, Durham, NC 27708
+
+S. Cao, Department of Physics and Astronomy, Wayne State University, Detroit MI 48201
+
+J. Coleman, Department of Statistics, Duke University, Durham, NC 27708
+
+L. Du, Department of Physics, The Ohio State University, Columbus OH 43210.
+
+R. Fries, Department of Physics and Astronomy, Texas A&M University, College Station TX 77843, Cyclotron Institute, Texas A&M University, College Station TX 77843
+
+C. Gale, Department of Physics and Astronomy, McGill University, Montreal QC H3A-2T8
+
+Y. He, Key Laboratory of Quark and Lepton Physics (MOE) and Institute of Particle Physics, Central China Normal University, Wuhan 430079, China, 
+and Nuclear Science Division, Lawrence Berkeley National Laboratory, Berkeley CA 94270
+
+U. Heinz, Department of Physics, The Ohio State University, Columbus OH 43210
+
+B. V. Jacak, Department of Physics, University of California, Berkeley CA 94270, 
+and Nuclear Science Division, Lawrence Berkeley National Laboratory, Berkeley CA 94270
+
+P. M. Jacobs, Nuclear Science Division, Lawrence Berkeley National Laboratory, Berkeley CA 94270
+
+S. Jeon, Department of Physics and Astronomy, McGill University, Montreal QC H3A-2T8
+
+K. Kauder, Department of Physics and Astronomy, Wayne State University, Detroit MI 48201
+
+E. Khalaj, Department of Computer Science, Wayne State University, Detroit MI 48202
+
+M. Kordell II, Department of Physics and Astronomy, Wayne State University, Detroit MI 48201, 
+and Cyclotron Institute, Texas A&M University, College Station TX 77843
+
+A. Kumar, Department of Physics and Astronomy, Wayne State University, Detroit MI 48201
+
+Weiyao Ke, Department of Physics, Duke University, Durham, NC 27708
+
+T. Luo, Key Laboratory of Quark and Lepton Physics (MOE) and Institute of Particle Physics, Central China Normal University, Wuhan 430079, China
+
+A. Majumder, Department of Physics and Astronomy, Wayne State University, Detroit MI 48201
+
+D. Pablos, Department of Physics and Astronomy, McGill University, Montreal QC H3A-2T8
+
+L.-G. Pang, Department of Physics, University of California, Berkeley CA 94270, Nuclear Science Division, Lawrence Berkeley National Laboratory, Berkeley CA 94270
+
+Jean-Francois Paquet, Department of Physics, Duke University, Durham, NC 27708
+
+C. Park, Department of Physics and Astronomy, McGill University, Montreal QC H3A-2T8
+
+J. H. Putschke, Department of Physics and Astronomy, Wayne State University, Detroit MI 48201
+
+G. Roland, Department of Physics, MIT, Cambridge MA 02139
+
+S. Rose, Department of Physics and Astronomy, Texas A&M University, College Station TX 77843, 
+and Cyclotron Institute, Texas A&M University, College Station TX 77843
+
+B. Schenke, Department of Physics, Brookhaven National Laboratory, Upton NY 11973
+
+L. Schwiebert, Department of Computer Science, Wayne State University, Detroit MI 48202
+
+C. Shen, Department of Physics, Brookhaven National Laboratory, Upton NY 11973
+
+C. Sirimanna, Department of Physics and Astronomy, Wayne State University, Detroit MI 48201
+
+R. A. Soltz, Lawrence Livermore National Laboratory, Livermore, CA 94550, Department of Physics and Astronomy, Wayne State University, Detroit MI 48201
+
+Y. Tachibana, Department of Physics and Astronomy, Wayne State University, Detroit MI 48201
+
+D. Velicanu, Department of Physics, MIT, Cambridge MA 02139
+
+G. Vujanovic, Department of Physics, The Ohio State University, Columbus OH 43210
+
+X.-N. Wang, Department of Physics, University of California, Berkeley CA 94270, 
+and Nuclear Science Division, Lawrence Berkeley National Laboratory, Berkeley CA 94270, 
+and Key Laboratory of Quark and Lepton Physics (MOE) and Institute of Particle Physics, Central China Normal University, Wuhan 430079, China
+
+R. L. Wolpert, Department of Statistics, Duke University, Durham, NC 27708

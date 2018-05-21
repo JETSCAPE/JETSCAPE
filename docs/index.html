@@ -121,9 +121,35 @@
 
 
 
+
         Packages</a>
       <div class="dropdown"> <button class="dropbtn">Working Groups</button>
         <div class="dropdown-content"> <a href="softwarewg.html">Software
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -151,9 +177,11 @@
             href="simswg.html">Simulations and Distributed Computing</a>
         </div>
       </div>
-      <a href="contact.html">Contact Us</a> </div>
+      <a href="contact.html">Contact Us</a> <a href="AUTHORS.txt">Authors</a>
+    </div>
     <div style=" text-align: left; text-indent: 0px; padding: 0px 0px
       0px 0px; margin: 0px 0px 0px 0px;">
+      <h1> </h1>
       <table style="background-color: rgb(255, 255, 255);"
         cellspacing="2" cellpadding="2" width="100%" border="0"
         height="1968">
@@ -177,9 +205,43 @@
             </td>
           </tr>
           <tr valign="top">
-            <td style="border-width : 0px;"><img
-src="http://jetscape.wayne.edu/Multimedia/jetscape/Images/CMS_EpsilonInLeadLeadCollision_cms_web_cern_ch_1.png"
-                width="100%"> </td>
+            <td style="border-width : 0px;"> <img
+                src="images/CMS_EpsilonInLeadLeadCollision_cms_web_cern_ch_1.png"
+                id="slide" width="100%">
+              <script type="text/javascript"> 
+
+
+	      var image1=new Image();
+              image1.src="images/CMS_EpsilonInLeadLeadCollision_cms_web_cern_ch_1.png";
+              var image2=new Image();
+              image2.src="images/AliceCollisionLeadIons.png" ;
+	      var image3=new Image() ;
+	      image3.src="images/STAR_bnl_gov1.png";
+              var image4=new Image();
+              image4.src="images/Phenix_JpsiMutrHybrid_p25ext_lanl_gov_1.png";
+              var image5=new Image() ;
+	      image5.src="images/IMG_2229.jpg";
+              var image6=new Image();
+              image6.src="images/KoljaQM2018a.jpg";
+	      var image7=new Image(); 
+	      image7.src="images/Slide1.png" ;
+
+</script>
+              <script type="text/javascript"> 
+
+var step=1 ;
+
+function slideit() {
+              document.getElementById('slide').src=eval("image"+step+".src") ;
+              if(step<7) 
+		step++ ;
+		else 
+		step=1 ;
+              setTimeout("slideit()",6000);
+	 } 
+
+	slideit();
+ </script> </td>
           </tr>
           <tr valign="top">
             <td style="border-width : 0px;"><br>
