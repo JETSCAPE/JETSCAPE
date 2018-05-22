@@ -27,13 +27,12 @@
 
 #define MAGENTA "\033[35m"
 
-const double QS = 1.0 ;
-
 AdSCFT::AdSCFT() 
 {
   SetId("AdSCFT");
   kappa=-99;
-  T0=-99; 
+  T0=-99;
+  Q0=-99; 
  
   VERBOSE(8);
 }
@@ -60,9 +59,13 @@ void AdSCFT::Init()
       adscft->FirstChildElement("kappa")->QueryDoubleText(&kappa);
       INFO<<"AdSCFT kappa = "<<kappa;
      
-      //T0
+      //T0 [GeV]
       adscft->FirstChildElement("T0")->QueryDoubleText(&T0); 
       INFO << "AdSCFT T0 = " << T0;
+
+      //Q0 [GeV]
+      adscft->FirstChildElement("Q0")->QueryDoubleText(&Q0);
+      INFO << "AdSCFT Q0 = " << Q0;
 
       //Vac or Med
       in_vac = false;
@@ -121,8 +124,9 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
       double tau=std::sqrt(x[3]*x[3]-x[2]*x[2]);
       double temp, vx, vy, vz;
-      //Only get a temp!=0 if in_vac=1
-      if (x[3]>=tStart && !in_vac)
+      //Only get a temp!=0 if in_vac=0
+      //if (x[3]>=tStart && !in_vac) //Can use time if there is preequilibrium eloss
+      if (tau>=tStart && !in_vac)  //Should use tau, not t, in absence of preequilibrium eloss
       {
         GetHydroCellSignal(x[3], x[0], x[1], x[2], check_fluid_info_ptr);
         VERBOSE(8)<< MAGENTA<<"Temperature from Brick (Signal) = "<<check_fluid_info_ptr->temperature;
@@ -140,9 +144,12 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       // *Virtuality below Qcut ( QS[GeV^2] , NOT taken from XML yet )
       // *Fluid temperature above Tcut ( T0 from XML )
       // *Parton is not completely quenched ( Ecut = 0.00001 )
+      double QS=Q0*Q0;
       if (pIn[i].t()<=QS+rounding_error && temp>=T0 && pIn[i].e()>0.00001)
       {
-        TakeResponsibilityFor ( pIn[i] ); // Generate error if another module already has responsibility.
+        //cout << " ADS Q= " << pIn[i].t() << " Q0= " << Q0 << " temp= " << temp << " T0= " << T0 << endl;
+	//cout << " ADS tau= " << tau << " x= " << x[0] << " y= " << x[1] << " z= " << x[2] << " t= " << x[3] << endl;
+	TakeResponsibilityFor ( pIn[i] ); // Generate error if another module already has responsibility.
 
 	VERBOSE(8) << " ************ \n \n";
         VERBOSE(8) << " DOING ADSCFT \n \n";
@@ -214,6 +221,17 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 	//Feed into parton list
 	pOut.push_back( pIn[i] );
 	pOut.back().set_user_info(new AdSCFTUserInfo(ei,f_dist,l_dist));
+
+	//Copy variables needed in case parton returns to MATTER in future steps
+	double velocity_jet[4];
+        velocity_jet[0]=1.0;
+        velocity_jet[1]=pIn[i].jet_v().x();
+        velocity_jet[2]=pIn[i].jet_v().y();
+        velocity_jet[3]=pIn[i].jet_v().z();
+        pOut[pOut.size()-1].set_jet_v(velocity_jet);
+        pOut[pOut.size()-1].set_mean_form_time();
+        double ft = pOut[pOut.size()-1].mean_form_time();
+        pOut[pOut.size()-1].set_form_time(ft);
 
       } //End if do-eloss
 

@@ -37,7 +37,7 @@ JetScapeWriterStream<T>::~JetScapeWriterStream()
 template<class T>
 void JetScapeWriterStream<T>::WriteHeaderToFile()
 {
-  INFO<<"Run JetScapeWriterStream<T>: Write header of event # "<<GetCurrentEvent()<<" ...";
+  VERBOSE(3)<<"Run JetScapeWriterStream<T>: Write header of event # "<<GetCurrentEvent()<<" ...";
   Write(to_string(GetCurrentEvent()) + " Event");
 
   std::ostringstream oss;

@@ -13,11 +13,7 @@
  * See COPYING for details.
  ******************************************************************************/
 
-/** Provides JetScapeParticleBase and derived classes Parton, Hadron
-    @group JetScape (modular/task) based framework
-    @version Revision 0.1
-    @date Aug 8, 2017
-*/
+// Provides JetScapeParticleBase and derived classes Parton, Hadron
 
 #include <iostream>
 #include <complex>

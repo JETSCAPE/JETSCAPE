@@ -78,10 +78,10 @@ class TrentoCollision{
     // sample jet production position from Ta * Tb
     // where Ta * Tb is the distribution of num_of_binary collisions
     // return (x, y) tuple
-    std::tuple<double, double> jet_production_position_();
+    std::tuple<double, double> JetProductionPosition();
 
     // return (bimp, Event) tuple whose entropy in (smin, smax)
-    void sample_(double smin, double smax);
+    void Sample(double smin, double smax);
 
     /// The event instance.
     Event event_;
@@ -90,13 +90,13 @@ class TrentoCollision{
 
   private:
     // return var_map which holds options to run trento
-    VarMap trento_options_(str cmd);
+    VarMap TrentoOptions(str cmd);
 
     // 2D entropy density distribution from sqrt(Ta * Tb)
     // std::vector<float> entropy_density_;
 
     /// Sample a min-bias impact parameter within the set range.
-    double sample_impact_param();
+    double SampleImpactParam();
 
     /// Pair of nucleus projectiles.
     std::unique_ptr<Nucleus> nucleusA_, nucleusB_;

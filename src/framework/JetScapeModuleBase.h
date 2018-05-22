@@ -74,7 +74,7 @@ class JetScapeModuleBase : public JetScapeTask , public sigslot::has_slots<sigsl
 
   /** This function returns a random number based on Mersenne-Twister algorithm.
    */
-  shared_ptr<std::mt19937> get_mt19937_generator();
+  shared_ptr<std::mt19937> GetMt19937Generator();
   
  private:
 

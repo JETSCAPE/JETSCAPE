@@ -52,14 +52,14 @@ class TrentoInitial : public InitialState {
     TrentoInitial();
 
     // get one random collision in centrality range 0-100%
-    void user_defined(std::string projectile, std::string target,
+    void UserDefined(std::string projectile, std::string target,
                     double cross_section, double grid_max,
                     double grid_step, unsigned random_seed);
 
     // get one random collision in centrality for the given system
     // stored_system = "auau200", "pbpb2760" or "pbpb5020"
     // centrality_range = [centrality_min, centrality_max]
-    void pre_defined(std::string stored_system,
+    void PreDefined(std::string stored_system,
                     double centrality_min, double centrality_max,
                     double grid_max, double grid_step, unsigned random_seed);
 
@@ -78,11 +78,11 @@ class TrentoInitial : public InitialState {
 
   private:
 
-    std::tuple<double, double> get_entropy_range_(std::string collision_system,
+    std::tuple<double, double> GetEntropyRange(std::string collision_system,
         double centrality_low, double centrality_high);
 
     // compute number of binary collisions
-    void compute_nbc();
+    void ComputeNbc();
 
     tinyxml2::XMLElement * trento_xml_;
 

@@ -51,13 +51,13 @@ class AdSCFT : public JetEnergyLossModule<AdSCFT>
   double Drag(double f_dist, double deltaT, double Efs, double temp, double CF);
   void WriteTask(weak_ptr<JetScapeWriter> w);
 
-  double tStart=0.6;		//Hydro starting time
-  double T0;            	//End of quenching temperature
-  bool in_vac;
- 
  private:
 
-  double kappa;
+  double tStart=0.6;            //Hydro starting time
+  double T0;                    //End of quenching temperature
+  double Q0;			//Switching virtuality
+  bool in_vac;			//In vacuum or not switch
+  double kappa;			//Drag strength parameter
 
 };
 

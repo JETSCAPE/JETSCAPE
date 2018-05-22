@@ -71,12 +71,9 @@ class JetScapeSignalManager //: public sigslot::has_slots<sigslot::multi_threade
   
   void ConnectJetSignal(shared_ptr<JetEnergyLoss> j);
   void ConnectEdensitySignal(shared_ptr<JetEnergyLoss> j);
-  void ConnectAddJetSourceSignal(shared_ptr<JetEnergyLoss> j);
-  void ConnectGetTemperatureSignal(shared_ptr<JetEnergyLoss> j);
   void ConnectGetHydroCellSignal(shared_ptr<JetEnergyLoss> j);
   void ConnectGetHardPartonListSignal(shared_ptr<JetEnergyLossManager> jm);
   void ConnectSentInPartonsSignal(shared_ptr<JetEnergyLoss> j,shared_ptr<JetEnergyLoss> j2);
-  void ConnectGetOutPartons(shared_ptr<JetEnergyLoss> j,shared_ptr<JetEnergyLoss> j2) {};
   void ConnectGetFinalPartonListSignal(shared_ptr<HadronizationManager> hm);
   void ConnectTransformPartonsSignal(shared_ptr<Hadronization> h,shared_ptr<Hadronization> h2); 
  
@@ -86,14 +83,10 @@ class JetScapeSignalManager //: public sigslot::has_slots<sigslot::multi_threade
   
   int GetNumberOfJetSignals() {return num_jet_signals;}
   int GetNumberOfEdensitySignals() {return num_edensity_signals;}
-  int GetNumberOfAddJetSourceSignals() {return num_AddJetSourceSignals;}
-  int GetNumberOfGetTemperatureSignals() {return num_GetTemperatureSignals;}
   int GetNumberOfGetHydroCellSignals() {return num_GetHydroCellSignals;}
   
   void PrintJetSignalMap();
   void PrintEdensitySignalMap();
-  void PrintAddJetSourceSignalMap() {};
-  void PrintGetTemperatureSignalMap() {};
   void PrintGetHydroCellSignalMap();
   void PrintSentInPartonsSignalMap();
   void PrintTransformPartonsSignalMap();
@@ -115,21 +108,15 @@ class JetScapeSignalManager //: public sigslot::has_slots<sigslot::multi_threade
   
   int num_jet_signals=0;
   int num_edensity_signals=0;
-  int num_AddJetSourceSignals=0;
-  int num_GetTemperatureSignals=0;
   int num_GetHydroCellSignals=0;
   int num_SentInPartons=0;
-  // int num_GetOutPartons=0;
   int num_TransformPartons=0;
   
   map<int,weak_ptr<JetEnergyLoss>> jet_signal_map;
   map<int,weak_ptr<JetEnergyLoss>> edensity_signal_map;
-  map<int,weak_ptr<JetEnergyLoss>> AddJetSourceSignal_map;
-  map<int,weak_ptr<JetEnergyLoss>> GetTemperatureSignal_map;
   map<int,weak_ptr<JetEnergyLoss>> GetHydroCellSignal_map;
 
   map<int,weak_ptr<JetEnergyLoss>> SentInPartons_map;
-  map<int,weak_ptr<JetEnergyLoss>> GetOutPartons_map;
   map<int,weak_ptr<Hadronization>> TransformPartons_map;
   
 };

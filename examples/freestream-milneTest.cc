@@ -71,18 +71,18 @@ int main(int argc, char** argv)
   Show();
 
   //auto jetscape = make_shared<JetScape>("./jetscape_init.xml",10);
-  //jetscape->set_reuse_hydro (true);
-  //jetscape->set_n_reuse_hydro (5);
+  //jetscape->SetReuseHydro (true);
+  //jetscape->SetNReuseHydro (5);
 
   auto jetscape = make_shared<JetScape>("./jetscape_init.xml",1);
-  jetscape->set_reuse_hydro (false);
-  jetscape->set_n_reuse_hydro (0);
+  jetscape->SetReuseHydro (false);
+  jetscape->SetNReuseHydro (0);
 
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
   auto trento = make_shared<TrentoInitial> ();
   auto freestream = make_shared<FreestreamMilneWrapper> ();
-  auto hydro = make_shared<MPI_MUSIC> ();
+  auto hydro = make_shared<MpiMusic> ();
   //auto hydro = make_shared<GubserHydro> ();
 
   auto matter = make_shared<Matter> ();
