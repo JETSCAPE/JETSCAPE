@@ -20,7 +20,7 @@ using namespace Jetscape;
 
 PGun::PGun() : HardProcess()
 {
-  fixed_pT=0;
+  fixed_E0=0;
   parId=1;
   SetId("PGun");
   VERBOSE(8);
@@ -42,11 +42,11 @@ void PGun::InitTask()
       string s = pgun->FirstChildElement( "name" )->GetText();
       JSDEBUG << s << " to be initilizied ...";
       
-      pgun->FirstChildElement("pT")->QueryDoubleText(&fixed_pT);
+      pgun->FirstChildElement("E0")->QueryDoubleText(&fixed_E0);
       pgun->FirstChildElement("parId")->QueryIntText(&parId);
 
-      JSDEBUG << s << " with fixed pT = "<<fixed_pT;
-      INFO<<"Parton Gun with fixed pT = "<<fixed_pT<< " and Id = "<< parId;
+      JSDEBUG << s << " with fixed E0 = "<<fixed_E0;
+      INFO<<"Parton Gun with fixed E0 = "<<fixed_E0<< " and Id = "<< parId;
       
     }
   else
@@ -62,7 +62,7 @@ void PGun::Exec()
 
   double p[4], xLoc[4];
 
-  double pT, rapidity, phi;
+  double E0, pT, rapidity, phi;
   double eta_cut = 1.0;
   double tempRand;
   const double maxN = 1.0*RAND_MAX;
@@ -90,7 +90,8 @@ void PGun::Exec()
     mass = 0.0;
   }
 
-       pT = fixed_pT; //max_pT*(rand()/maxN);
+       E0=fixed_E0;
+       pT = E0*E0-mass*mass; //max_pT*(rand()/maxN);
        
        //phi = 2.0*PI*(rand()/maxN);
        rapidity=0;//2.0*eta_cut*(rand()/maxN)-eta_cut;
@@ -99,8 +100,8 @@ void PGun::Exec()
          
        p[1] = pT*cos(phi);
        p[2] = pT*sin(phi);
-       p[3] = sqrt(pT*pT+mass*mass)*sinh(rapidity);
-       p[0] = sqrt(pT*pT+mass*mass)*cosh(rapidity);
+       p[3] = E0*sinh(rapidity);
+       p[0] = E0*cosh(rapidity);
   
        // Roll for a starting point
        // See: https://stackoverflow.com/questions/15039688/random-generator-from-vector-with-probability-distribution-in-c

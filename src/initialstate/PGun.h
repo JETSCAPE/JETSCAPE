@@ -25,7 +25,7 @@ using namespace Jetscape;
 class PGun: public HardProcess {
    
  private:
-    double fixed_pT;
+    double fixed_E0;
     int parId;
 
  public:

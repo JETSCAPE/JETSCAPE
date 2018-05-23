@@ -853,6 +853,8 @@ ColoredHadronization.h
 /home/kevin/DukeQCD/JETSCAPE/examples/ColoredHadronization.h
 ColorlessHadronization.h
 /home/kevin/DukeQCD/JETSCAPE/examples/ColorlessHadronization.h
+tinyxml2.h
+/home/kevin/DukeQCD/JETSCAPE/examples/tinyxml2.h
 chrono
 -
 thread

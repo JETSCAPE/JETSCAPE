@@ -45,6 +45,7 @@
 #include "ColoredHadronization.h"
 #include "ColorlessHadronization.h"
 
+#include "tinyxml2.h"
 #include <chrono>
 #include <thread>
 
@@ -54,10 +55,18 @@ using namespace Jetscape;
 
 // Forward declaration
 void Show();
+template <typename T>
+std::string to_string_with_precision(const T a_value, const int n = 6)
+{
+  std::ostringstream out;
+  out << std::setprecision(n) << a_value;
+  return out.str();
+}
+
 
 // -------------------------------------
 
-int main(int argc, char** argv)
+void run_brick_test(double E0, double T, int events=1000)
 {
   clock_t t; t = clock();
   time_t start, end; time(&start);
@@ -74,9 +83,29 @@ int main(int argc, char** argv)
    
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",1000);
-  jetscape->SetId("primary");
+  //modify the init.xml file
+  JetScapeXML::Instance()->OpenXMLFile("./jetscape_init.xml");
+  tinyxml2::XMLElement *pgunxml=JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Hard" )->FirstChildElement("PGun" )->FirstChildElement("E0"); 
+  pgunxml->SetText(E0);
+  tinyxml2::XMLElement *brickxml= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Hydro" )->FirstChildElement("Brick" )->FirstChildElement("T");
+  brickxml->SetText(T);
+  JetScapeXML::Instance()->CloseXMLFile();
 
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml", events);
+  jetscape->SetId("primary");
+  jetscape->SetReuseHydro(false);
+
+/*
+  JetScapeXML::Instance()->OpenXMLFile("./jetscape_init.xml");
+  tinyxml2::XMLElement *pgunxml=JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Hard" )->FirstChildElement("PGun" );
+  double pT=0.;
+  pgunxml->FirstChildElement("pT")->QueryDoubleText(&pT);
+
+  tinyxml2::XMLElement *brickxml= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Hydro" )->FirstChildElement("Brick" );
+  double T=0.;
+  brickxml->FirstChildElement("T")->QueryDoubleText(&T);
+*/
+  
   // Initial conditions and hydro
   auto trento = make_shared<TrentoInitial>();
   auto pGun= make_shared<PGun> ();
@@ -106,14 +135,16 @@ int main(int argc, char** argv)
   hadroMgr->Add(hadro);
   jetscape->Add(hadroMgr);
 
+
   // Output
-  auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
+  std::string file_name="("+to_string_with_precision(E0,3)+", "+to_string_with_precision(T,3)+")test_out.dat";
+  auto writer= make_shared<JetScapeWriterAscii> (file_name);
   // same as JetScapeWriterAscii but gzipped
   // auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");
   // HEPMC3
-#ifdef USE_HEPMC
+  #ifdef USE_HEPMC
   // auto writer= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
-#endif
+  #endif
   jetscape->Add(writer);
 
   
@@ -127,7 +158,7 @@ int main(int argc, char** argv)
   // Most thinkgs done in write and clear ...
   jetscape->Finish();
   
-  INFO_NICE<<"Finished!";
+  INFO_NICE << file_name << "Finished!";
   cout<<endl;
 
   // wait for 5s
@@ -138,6 +169,23 @@ int main(int argc, char** argv)
   printf ("CPU time: %f seconds.\n",((float)t)/CLOCKS_PER_SEC);
   printf ("Real time: %f seconds.\n",difftime(end,start));
   //printf ("Real time: %f seconds.\n",(start-end));
+}
+
+int main(int argc, char** argv)
+{
+
+  double E0 = 20.;
+  double T = 0.2;
+  for(int i=0; i<9;i++)
+  {
+    for(int j=0;j<7;j++)
+    {
+      E0 = 20.+10.*i;
+      T = 0.2+0.05*j;
+      run_brick_test(E0,T);
+    }
+  }
+
   return 0;
 }
 
