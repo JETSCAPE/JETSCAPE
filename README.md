@@ -52,7 +52,9 @@ For sure works on Mac Os X 10.11.6.
 
 To make a class documentation using doxygen:
 
+```bash
 doxygen JetScapeDoxy.conf
+```
 
 Getting started on a Mac:
 
@@ -62,27 +64,39 @@ For further packages needed (like CMake, Pythia, ROOT, GraphViz) I recommend hom
 
 - Install homebrew (after you install Xcode)
 
+```bash
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+```
 
 - Install CMake via homebrew type: 
 
+```bash
 brew install cmake
+```
 
 - Install doxygen:
 
+```bash
 brew install doxygen
+```
 
 - Install graphViz:
 
+```bash
 brew install graphviz --with-app --with-bindings
+```
 
 - Install root6
 
+```bash
 brew install root6
+```
 
 - Install graph-tool (python). If done you can create a colored and "fancy" graph with the provided python script.
 
+```bash
 brew install graph-tool
+```
 
 - Install hdf5
 
@@ -103,12 +117,15 @@ brew install graph-tool
     ```
 - Tap some repos for further sceintific packages: 
 
+```bash
 brew tap davidchall/hep
+```
 
 - Install Pythia8 for example:
 
+```bash
 brew install pythia
-
+```
 
 (and most of other packackes we need)
 
