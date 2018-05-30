@@ -25,4 +25,6 @@ CMakeFiles/FinalStatePartons.dir/examples/FinalStatePartons.cc.o: .././src/frame
 CMakeFiles/FinalStatePartons.dir/examples/FinalStatePartons.cc.o: .././src/framework/StringTokenizer.h
 CMakeFiles/FinalStatePartons.dir/examples/FinalStatePartons.cc.o: .././src/reader/JetScapeReader.h
 CMakeFiles/FinalStatePartons.dir/examples/FinalStatePartons.cc.o: ../examples/FinalStatePartons.cc
+CMakeFiles/FinalStatePartons.dir/examples/FinalStatePartons.cc.o: /home/kevin/anaconda3/include/zconf.h
+CMakeFiles/FinalStatePartons.dir/examples/FinalStatePartons.cc.o: /home/kevin/anaconda3/include/zlib.h
 

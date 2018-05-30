@@ -103,3 +103,5 @@ CMakeFiles/JetScapeReader.dir/src/reader/JetScapeReader.cc.o
  .././src/framework/StringTokenizer.h
  /home/kevin/DukeQCD/JETSCAPE/src/reader/JetScapeReader.cc
  /home/kevin/DukeQCD/JETSCAPE/src/reader/JetScapeReader.h
+ /home/kevin/anaconda3/include/zconf.h
+ /home/kevin/anaconda3/include/zlib.h

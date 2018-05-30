@@ -6,6 +6,8 @@ external_packages/CMakeFiles/JetScapeThird.dir/fjcore.cc.o: ../external_packages
 
 external_packages/CMakeFiles/JetScapeThird.dir/gzstream.cc.o: .././external_packages/gzstream.h
 external_packages/CMakeFiles/JetScapeThird.dir/gzstream.cc.o: ../external_packages/gzstream.cc
+external_packages/CMakeFiles/JetScapeThird.dir/gzstream.cc.o: /home/kevin/anaconda3/include/zconf.h
+external_packages/CMakeFiles/JetScapeThird.dir/gzstream.cc.o: /home/kevin/anaconda3/include/zlib.h
 
 external_packages/CMakeFiles/JetScapeThird.dir/tinyxml2.cc.o: ../external_packages/tinyxml2.cc
 external_packages/CMakeFiles/JetScapeThird.dir/tinyxml2.cc.o: ../external_packages/tinyxml2.h

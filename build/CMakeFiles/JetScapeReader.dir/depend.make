@@ -102,4 +102,6 @@ CMakeFiles/JetScapeReader.dir/src/reader/JetScapeReader.cc.o: .././src/framework
 CMakeFiles/JetScapeReader.dir/src/reader/JetScapeReader.cc.o: .././src/framework/StringTokenizer.h
 CMakeFiles/JetScapeReader.dir/src/reader/JetScapeReader.cc.o: ../src/reader/JetScapeReader.cc
 CMakeFiles/JetScapeReader.dir/src/reader/JetScapeReader.cc.o: ../src/reader/JetScapeReader.h
+CMakeFiles/JetScapeReader.dir/src/reader/JetScapeReader.cc.o: /home/kevin/anaconda3/include/zconf.h
+CMakeFiles/JetScapeReader.dir/src/reader/JetScapeReader.cc.o: /home/kevin/anaconda3/include/zlib.h
 

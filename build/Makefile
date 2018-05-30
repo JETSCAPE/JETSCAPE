@@ -181,6 +181,19 @@ FinalStateHadrons/fast:
 .PHONY : FinalStateHadrons/fast
 
 #=============================================================================
+# Target rules for targets named readerTest
+
+# Build rule for target.
+readerTest: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 readerTest
+.PHONY : readerTest
+
+# fast build rule for target.
+readerTest/fast:
+	$(MAKE) -f CMakeFiles/readerTest.dir/build.make CMakeFiles/readerTest.dir/build
+.PHONY : readerTest/fast
+
+#=============================================================================
 # Target rules for targets named LBT_brickTest
 
 # Build rule for target.
@@ -233,19 +246,6 @@ SimpleValidate/fast:
 .PHONY : SimpleValidate/fast
 
 #=============================================================================
-# Target rules for targets named readerTest
-
-# Build rule for target.
-readerTest: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 readerTest
-.PHONY : readerTest
-
-# fast build rule for target.
-readerTest/fast:
-	$(MAKE) -f CMakeFiles/readerTest.dir/build.make CMakeFiles/readerTest.dir/build
-.PHONY : readerTest/fast
-
-#=============================================================================
 # Target rules for targets named LBTD_brickTest
 
 # Build rule for target.
@@ -283,6 +283,19 @@ hydroJetTest: cmake_check_build_system
 hydroJetTest/fast:
 	$(MAKE) -f CMakeFiles/hydroJetTest.dir/build.make CMakeFiles/hydroJetTest.dir/build
 .PHONY : hydroJetTest/fast
+
+#=============================================================================
+# Target rules for targets named LBTDhydroJetTest
+
+# Build rule for target.
+LBTDhydroJetTest: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 LBTDhydroJetTest
+.PHONY : LBTDhydroJetTest
+
+# fast build rule for target.
+LBTDhydroJetTest/fast:
+	$(MAKE) -f CMakeFiles/LBTDhydroJetTest.dir/build.make CMakeFiles/LBTDhydroJetTest.dir/build
+.PHONY : LBTDhydroJetTest/fast
 
 #=============================================================================
 # Target rules for targets named PythiaBrickTest
@@ -481,6 +494,33 @@ examples/LBTD_brickTest.s: examples/LBTD_brickTest.cc.s
 examples/LBTD_brickTest.cc.s:
 	$(MAKE) -f CMakeFiles/LBTD_brickTest.dir/build.make CMakeFiles/LBTD_brickTest.dir/examples/LBTD_brickTest.cc.s
 .PHONY : examples/LBTD_brickTest.cc.s
+
+examples/LBTDhydroJetTest.o: examples/LBTDhydroJetTest.cc.o
+
+.PHONY : examples/LBTDhydroJetTest.o
+
+# target to build an object file
+examples/LBTDhydroJetTest.cc.o:
+	$(MAKE) -f CMakeFiles/LBTDhydroJetTest.dir/build.make CMakeFiles/LBTDhydroJetTest.dir/examples/LBTDhydroJetTest.cc.o
+.PHONY : examples/LBTDhydroJetTest.cc.o
+
+examples/LBTDhydroJetTest.i: examples/LBTDhydroJetTest.cc.i
+
+.PHONY : examples/LBTDhydroJetTest.i
+
+# target to preprocess a source file
+examples/LBTDhydroJetTest.cc.i:
+	$(MAKE) -f CMakeFiles/LBTDhydroJetTest.dir/build.make CMakeFiles/LBTDhydroJetTest.dir/examples/LBTDhydroJetTest.cc.i
+.PHONY : examples/LBTDhydroJetTest.cc.i
+
+examples/LBTDhydroJetTest.s: examples/LBTDhydroJetTest.cc.s
+
+.PHONY : examples/LBTDhydroJetTest.s
+
+# target to generate assembly for a file
+examples/LBTDhydroJetTest.cc.s:
+	$(MAKE) -f CMakeFiles/LBTDhydroJetTest.dir/build.make CMakeFiles/LBTDhydroJetTest.dir/examples/LBTDhydroJetTest.cc.s
+.PHONY : examples/LBTDhydroJetTest.cc.s
 
 examples/LBT_brickTest.o: examples/LBT_brickTest.cc.o
 
@@ -871,16 +911,17 @@ help:
 	@echo "... install/strip"
 	@echo "... FinalStatePartons"
 	@echo "... FinalStateHadrons"
+	@echo "... readerTest"
 	@echo "... LBT_brickTest"
 	@echo "... brickTest"
 	@echo "... install/local"
 	@echo "... JetScapeReader"
 	@echo "... SimpleValidate"
-	@echo "... readerTest"
 	@echo "... LBTD_brickTest"
 	@echo "... hydroFileTest"
 	@echo "... install"
 	@echo "... hydroJetTest"
+	@echo "... LBTDhydroJetTest"
 	@echo "... rebuild_cache"
 	@echo "... PythiaBrickTest"
 	@echo "... hydroJetTestPGun"
@@ -900,6 +941,9 @@ help:
 	@echo "... examples/LBTD_brickTest.o"
 	@echo "... examples/LBTD_brickTest.i"
 	@echo "... examples/LBTD_brickTest.s"
+	@echo "... examples/LBTDhydroJetTest.o"
+	@echo "... examples/LBTDhydroJetTest.i"
+	@echo "... examples/LBTDhydroJetTest.s"
 	@echo "... examples/LBT_brickTest.o"
 	@echo "... examples/LBT_brickTest.i"
 	@echo "... examples/LBT_brickTest.s"

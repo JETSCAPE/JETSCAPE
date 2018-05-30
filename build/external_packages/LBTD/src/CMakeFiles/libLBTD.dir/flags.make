@@ -6,5 +6,5 @@ CXX_FLAGS =  -O -fPIC -pipe -Wall -std=c++11 -Wno-reorder -Wno-unused-variable  
 
 CXX_DEFINES = -DTRENTO_HDF5
 
-CXX_INCLUDES = -I/home/kevin/DukeQCD/JETSCAPE/external_packages/trento/src -I/usr/local/include 
+CXX_INCLUDES = -I/home/kevin/DukeQCD/JETSCAPE/external_packages/trento/src -isystem /home/kevin/anaconda3/include -I/usr/local/include 
 

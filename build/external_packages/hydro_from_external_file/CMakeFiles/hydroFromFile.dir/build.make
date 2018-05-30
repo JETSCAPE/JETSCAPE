@@ -272,7 +272,10 @@ lib/libhydroFromFile.so: external_packages/hydro_from_external_file/CMakeFiles/h
 lib/libhydroFromFile.so: external_packages/hydro_from_external_file/CMakeFiles/hydroFromFile.dir/Hydroinfo_MUSIC.cpp.o
 lib/libhydroFromFile.so: external_packages/hydro_from_external_file/CMakeFiles/hydroFromFile.dir/Hydroinfo_h5.cpp.o
 lib/libhydroFromFile.so: external_packages/hydro_from_external_file/CMakeFiles/hydroFromFile.dir/build.make
-lib/libhydroFromFile.so: /usr/lib/libhdf5.so
+lib/libhydroFromFile.so: /home/kevin/anaconda3/lib/libhdf5.so
+lib/libhydroFromFile.so: /usr/lib/x86_64-linux-gnu/librt.so
+lib/libhydroFromFile.so: /usr/lib/x86_64-linux-gnu/libpthread.so
+lib/libhydroFromFile.so: /home/kevin/anaconda3/lib/libz.so
 lib/libhydroFromFile.so: /usr/lib/x86_64-linux-gnu/libdl.so
 lib/libhydroFromFile.so: /usr/lib/x86_64-linux-gnu/libm.so
 lib/libhydroFromFile.so: external_packages/hydro_from_external_file/CMakeFiles/hydroFromFile.dir/link.txt

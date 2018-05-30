@@ -286,32 +286,32 @@ GTL_SOURCE_DIR:STATIC=/home/kevin/DukeQCD/JETSCAPE/external_packages/gtl
 
 //HDF5 C++ Wrapper compiler.  Used only to detect HDF5 compile
 // flags.
-HDF5_CXX_COMPILER_EXECUTABLE:FILEPATH=/usr/bin/h5c++
+HDF5_CXX_COMPILER_EXECUTABLE:FILEPATH=/home/kevin/anaconda3/bin/h5c++
 
 //Path to a library.
-HDF5_CXX_LIB:FILEPATH=/usr/lib/libhdf5_cpp.so
+HDF5_CXX_LIB:FILEPATH=/home/kevin/anaconda3/lib/libhdf5_cpp.so
 
 //HDF5 Wrapper compiler.  Used only to detect HDF5 compile flags.
-HDF5_C_COMPILER_EXECUTABLE:FILEPATH=/usr/bin/h5cc
+HDF5_C_COMPILER_EXECUTABLE:FILEPATH=/home/kevin/anaconda3/bin/h5cc
 
 //Path to a file.
-HDF5_C_INCLUDE_DIR:PATH=/usr/include
+HDF5_C_INCLUDE_DIR:PATH=/home/kevin/anaconda3/include
 
 //Path to a library.
-HDF5_C_LIB:FILEPATH=/usr/lib/libhdf5.so
+HDF5_C_LIB:FILEPATH=/home/kevin/anaconda3/lib/libhdf5.so
 
 //HDF5 file differencing tool.
-HDF5_DIFF_EXECUTABLE:FILEPATH=/usr/bin/h5diff
+HDF5_DIFF_EXECUTABLE:FILEPATH=/home/kevin/anaconda3/bin/h5diff
 
 //The directory containing a CMake configuration file for HDF5.
 HDF5_DIR:PATH=HDF5_DIR-NOTFOUND
 
 //HDF5 Fortran Wrapper compiler.  Used only to detect HDF5 compile
 // flags.
-HDF5_Fortran_COMPILER_EXECUTABLE:FILEPATH=HDF5_Fortran_COMPILER_EXECUTABLE-NOTFOUND
+HDF5_Fortran_COMPILER_EXECUTABLE:FILEPATH=/home/kevin/anaconda3/bin/h5fc
 
 //Path to a file.
-HDF5_INCLUDE_DIRS:PATH=/usr/include
+HDF5_INCLUDE_DIRS:PATH=/home/kevin/anaconda3/include
 
 //HDF5 library compiled with parallel IO support
 HDF5_IS_PARALLEL:BOOL=FALSE
@@ -326,13 +326,31 @@ HDF5_dl_LIBRARY_RELEASE:FILEPATH=/usr/lib/x86_64-linux-gnu/libdl.so
 HDF5_hdf5_LIBRARY_DEBUG:FILEPATH=HDF5_hdf5_LIBRARY_DEBUG-NOTFOUND
 
 //Path to a library.
-HDF5_hdf5_LIBRARY_RELEASE:FILEPATH=/usr/lib/libhdf5.so
+HDF5_hdf5_LIBRARY_RELEASE:FILEPATH=/home/kevin/anaconda3/lib/libhdf5.so
 
 //Path to a library.
 HDF5_m_LIBRARY_DEBUG:FILEPATH=HDF5_m_LIBRARY_DEBUG-NOTFOUND
 
 //Path to a library.
 HDF5_m_LIBRARY_RELEASE:FILEPATH=/usr/lib/x86_64-linux-gnu/libm.so
+
+//Path to a library.
+HDF5_pthread_LIBRARY_DEBUG:FILEPATH=HDF5_pthread_LIBRARY_DEBUG-NOTFOUND
+
+//Path to a library.
+HDF5_pthread_LIBRARY_RELEASE:FILEPATH=/usr/lib/x86_64-linux-gnu/libpthread.so
+
+//Path to a library.
+HDF5_rt_LIBRARY_DEBUG:FILEPATH=HDF5_rt_LIBRARY_DEBUG-NOTFOUND
+
+//Path to a library.
+HDF5_rt_LIBRARY_RELEASE:FILEPATH=/usr/lib/x86_64-linux-gnu/librt.so
+
+//Path to a library.
+HDF5_z_LIBRARY_DEBUG:FILEPATH=HDF5_z_LIBRARY_DEBUG-NOTFOUND
+
+//Path to a library.
+HDF5_z_LIBRARY_RELEASE:FILEPATH=/home/kevin/anaconda3/lib/libz.so
 
 //Path to a file.
 HEPMC_INCLUDE_DIR:PATH=/usr/local/include
@@ -344,13 +362,13 @@ HEPMC_LIB_DIR:PATH=/usr/local/lib
 JetScapeReader_LIB_DEPENDS:STATIC=general;JetScapeThird;general;GTL;general;/usr/lib/libpythia8.a;
 
 //Dependencies for the target
-JetScapeThird_LIB_DEPENDS:STATIC=general;/usr/lib/x86_64-linux-gnu/libz.so;
+JetScapeThird_LIB_DEPENDS:STATIC=general;/home/kevin/anaconda3/lib/libz.so;
 
 //Value Computed by CMake
 JetScape_BINARY_DIR:STATIC=/home/kevin/DukeQCD/JETSCAPE/build
 
 //Dependencies for the target
-JetScape_LIB_DEPENDS:STATIC=general;JetScapeThird;general;GTL;general;/usr/lib/libpythia8.a;general;libtrento;general;libLBTD;general;/usr/lib/libhdf5_cpp.so;general;/usr/lib/libhdf5.so;general;z;general;-L/usr/local/lib -lgsl -lgslcblas -lm;general;/usr/lib/x86_64-linux-gnu/libboost_filesystem.so;general;/usr/lib/x86_64-linux-gnu/libboost_program_options.so;general;/usr/lib/x86_64-linux-gnu/libboost_system.so;general;/usr/lib/x86_64-linux-gnu/libboost_log.so;general;/usr/lib/x86_64-linux-gnu/libboost_log_setup.so;general;/usr/lib/x86_64-linux-gnu/libboost_thread.so;general;/usr/lib/x86_64-linux-gnu/libboost_date_time.so;general;/usr/lib/x86_64-linux-gnu/libboost_regex.so;general;/usr/lib/x86_64-linux-gnu/libboost_chrono.so;general;/usr/lib/x86_64-linux-gnu/libboost_atomic.so;general;/usr/lib/x86_64-linux-gnu/libpthread.so;general;/usr/lib/libhdf5.so;general;/usr/lib/x86_64-linux-gnu/libdl.so;general;/usr/lib/x86_64-linux-gnu/libm.so;general;-pthread;general;-lpthread;general;hydroFromFile;general;/usr/lib/libhdf5.so;general;/usr/lib/x86_64-linux-gnu/libdl.so;general;/usr/lib/x86_64-linux-gnu/libm.so;general;-L/usr/local/lib;general;-lHepMC;
+JetScape_LIB_DEPENDS:STATIC=general;JetScapeThird;general;GTL;general;/usr/lib/libpythia8.a;general;libtrento;general;libLBTD;general;/home/kevin/anaconda3/lib/libhdf5_cpp.so;general;/home/kevin/anaconda3/lib/libhdf5.so;general;z;general;-L/usr/local/lib -lgsl -lgslcblas -lm;general;/usr/lib/x86_64-linux-gnu/libboost_filesystem.so;general;/usr/lib/x86_64-linux-gnu/libboost_program_options.so;general;/usr/lib/x86_64-linux-gnu/libboost_system.so;general;/usr/lib/x86_64-linux-gnu/libboost_log.so;general;/usr/lib/x86_64-linux-gnu/libboost_log_setup.so;general;/usr/lib/x86_64-linux-gnu/libboost_thread.so;general;/usr/lib/x86_64-linux-gnu/libboost_date_time.so;general;/usr/lib/x86_64-linux-gnu/libboost_regex.so;general;/usr/lib/x86_64-linux-gnu/libboost_chrono.so;general;/usr/lib/x86_64-linux-gnu/libboost_atomic.so;general;/usr/lib/x86_64-linux-gnu/libpthread.so;general;/home/kevin/anaconda3/lib/libhdf5.so;general;/usr/lib/x86_64-linux-gnu/librt.so;general;/usr/lib/x86_64-linux-gnu/libpthread.so;general;/home/kevin/anaconda3/lib/libz.so;general;/usr/lib/x86_64-linux-gnu/libdl.so;general;/usr/lib/x86_64-linux-gnu/libm.so;general;-pthread;general;-lpthread;general;hydroFromFile;general;/home/kevin/anaconda3/lib/libhdf5.so;general;/usr/lib/x86_64-linux-gnu/librt.so;general;/usr/lib/x86_64-linux-gnu/libpthread.so;general;/home/kevin/anaconda3/lib/libz.so;general;/usr/lib/x86_64-linux-gnu/libdl.so;general;/usr/lib/x86_64-linux-gnu/libm.so;general;-L/usr/local/lib;general;-lHepMC;
 
 //Value Computed by CMake
 JetScape_SOURCE_DIR:STATIC=/home/kevin/DukeQCD/JETSCAPE
@@ -433,22 +451,22 @@ PYTHIA8_lhapdfdummy_LIBRARY:FILEPATH=PYTHIA8_lhapdfdummy_LIBRARY-NOTFOUND
 ROOT_CONFIG_EXECUTABLE:FILEPATH=ROOT_CONFIG_EXECUTABLE-NOTFOUND
 
 //Path to a program.
-SPHINX:FILEPATH=SPHINX-NOTFOUND
+SPHINX:FILEPATH=/home/kevin/anaconda3/bin/sphinx-build
 
 //Path to a file.
-ZLIB_INCLUDE_DIR:PATH=/usr/include
+ZLIB_INCLUDE_DIR:PATH=/home/kevin/anaconda3/include
 
 //Path to a library.
 ZLIB_LIBRARY_DEBUG:FILEPATH=ZLIB_LIBRARY_DEBUG-NOTFOUND
 
 //Path to a library.
-ZLIB_LIBRARY_RELEASE:FILEPATH=/usr/lib/x86_64-linux-gnu/libz.so
+ZLIB_LIBRARY_RELEASE:FILEPATH=/home/kevin/anaconda3/lib/libz.so
 
 //Build tests for freestream-milne
 freestream:BOOL=OFF
 
 //Dependencies for the target
-hydroFromFile_LIB_DEPENDS:STATIC=general;/usr/lib/libhdf5.so;general;/usr/lib/x86_64-linux-gnu/libdl.so;general;/usr/lib/x86_64-linux-gnu/libm.so;
+hydroFromFile_LIB_DEPENDS:STATIC=general;/home/kevin/anaconda3/lib/libhdf5.so;general;/usr/lib/x86_64-linux-gnu/librt.so;general;/usr/lib/x86_64-linux-gnu/libpthread.so;general;/home/kevin/anaconda3/lib/libz.so;general;/usr/lib/x86_64-linux-gnu/libdl.so;general;/usr/lib/x86_64-linux-gnu/libm.so;
 
 //Build tests for iSS
 iSS:BOOL=OFF
@@ -680,7 +698,7 @@ CXX11:INTERNAL=1
 //Details about finding GSL
 FIND_PACKAGE_MESSAGE_DETAILS_GSL:INTERNAL=[/usr/local/include][/usr/local/lib/libgsl.so][/usr/local/lib/libgslcblas.so][v2.4()]
 //Details about finding HDF5
-FIND_PACKAGE_MESSAGE_DETAILS_HDF5:INTERNAL=[/usr/lib/libhdf5.so;/usr/lib/x86_64-linux-gnu/libdl.so;/usr/lib/x86_64-linux-gnu/libm.so][/usr/include][v1.8.18()]
+FIND_PACKAGE_MESSAGE_DETAILS_HDF5:INTERNAL=[/home/kevin/anaconda3/lib/libhdf5.so;/usr/lib/x86_64-linux-gnu/librt.so;/usr/lib/x86_64-linux-gnu/libpthread.so;/home/kevin/anaconda3/lib/libz.so;/usr/lib/x86_64-linux-gnu/libdl.so;/usr/lib/x86_64-linux-gnu/libm.so][/home/kevin/anaconda3/include][v1.10.1()]
 //Details about finding MPI_C
 FIND_PACKAGE_MESSAGE_DETAILS_MPI_C:INTERNAL=[/usr/lib/openmpi/lib/libmpi.so][/usr/lib/openmpi/include/openmpi/opal/mca/event/libevent2021/libevent;/usr/lib/openmpi/include/openmpi/opal/mca/event/libevent2021/libevent/include;/usr/lib/openmpi/include;/usr/lib/openmpi/include/openmpi][v()]
 //Details about finding MPI_CXX
@@ -692,7 +710,7 @@ FIND_PACKAGE_MESSAGE_DETAILS_Pythia8:INTERNAL=[/usr/include][/usr/lib/libpythia8
 //Details about finding Threads
 FIND_PACKAGE_MESSAGE_DETAILS_Threads:INTERNAL=[TRUE][v()]
 //Details about finding ZLIB
-FIND_PACKAGE_MESSAGE_DETAILS_ZLIB:INTERNAL=[/usr/lib/x86_64-linux-gnu/libz.so][/usr/include][v1.2.8()]
+FIND_PACKAGE_MESSAGE_DETAILS_ZLIB:INTERNAL=[/home/kevin/anaconda3/lib/libz.so][/home/kevin/anaconda3/include][v1.2.11()]
 //ADVANCED property for variable: GSL_CBLAS_LIBRARY
 GSL_CBLAS_LIBRARY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: GSL_CBLAS_LIBRARY_DEBUG
@@ -769,6 +787,18 @@ HDF5_hdf5_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
 HDF5_m_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: HDF5_m_LIBRARY_RELEASE
 HDF5_m_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: HDF5_pthread_LIBRARY_DEBUG
+HDF5_pthread_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: HDF5_pthread_LIBRARY_RELEASE
+HDF5_pthread_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: HDF5_rt_LIBRARY_DEBUG
+HDF5_rt_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: HDF5_rt_LIBRARY_RELEASE
+HDF5_rt_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: HDF5_z_LIBRARY_DEBUG
+HDF5_z_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: HDF5_z_LIBRARY_RELEASE
+HDF5_z_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: MPIEXEC
 MPIEXEC-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: MPIEXEC_MAX_NUMPROCS

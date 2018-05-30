@@ -142,7 +142,7 @@ lib/libJetScapeThird.so: external_packages/CMakeFiles/JetScapeThird.dir/fjcore.c
 lib/libJetScapeThird.so: external_packages/CMakeFiles/JetScapeThird.dir/tinyxml2.cc.o
 lib/libJetScapeThird.so: external_packages/CMakeFiles/JetScapeThird.dir/gzstream.cc.o
 lib/libJetScapeThird.so: external_packages/CMakeFiles/JetScapeThird.dir/build.make
-lib/libJetScapeThird.so: /usr/lib/x86_64-linux-gnu/libz.so
+lib/libJetScapeThird.so: /home/kevin/anaconda3/lib/libz.so
 lib/libJetScapeThird.so: external_packages/CMakeFiles/JetScapeThird.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/kevin/DukeQCD/JETSCAPE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX shared library ../lib/libJetScapeThird.so"
 	cd /home/kevin/DukeQCD/JETSCAPE/build/external_packages && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/JetScapeThird.dir/link.txt --verbose=$(VERBOSE)

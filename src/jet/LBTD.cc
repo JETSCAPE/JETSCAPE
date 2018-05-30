@@ -121,8 +121,9 @@ void LBTD::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& p
 
 	  std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
 	  GetHydroCellSignal(Time, xin.x(), xin.y(), xin.z(), check_fluid_info_ptr);
-	  //VERBOSE(0)<<"Temperature from Brick (Signal) = "
-	  //	    <<check_fluid_info_ptr->temperature;
+          VERBOSE(0)<<"Inputs: "<<Time<<" "<<xin.x()<<" "<< xin.y()<<" "<< xin.z();
+	  VERBOSE(0)<<"Temperature (Signal) = "
+	  	    <<check_fluid_info_ptr->temperature<<" "<<check_fluid_info_ptr->vx<<" "<<check_fluid_info_ptr->vy<<" "<<check_fluid_info_ptr->vz;
 
 	  vx = check_fluid_info_ptr->vx;
 	  vy = check_fluid_info_ptr->vy;
@@ -130,9 +131,8 @@ void LBTD::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& p
            T = check_fluid_info_ptr->temperature;
 
           std::vector<fourvec> FS;
-	  //INFO << pin.t() << " " << pin.x() << " " << pin.y() << " " << pin.z();
-	  int channel = update_particle_momentum(deltaT*fmc_to_GeV_m1, T, 
-				{vx, vy, vz}, Id, (Time-pIn[i].form_time())*fmc_to_GeV_m1, (Time-pIn[i].absorp_time())*fmc_to_GeV_m1, fourvec{pin.t(),pin.x(),pin.y(),pin.z()}, FS);
+	  INFO << pin.t() << " " << pin.x() << " " << pin.y() << " " << pin.z()<<" "<<Time-pIn[i].form_time()<<" "<<Time-pIn[i].absorp_time();
+	  int channel = update_particle_momentum(deltaT*fmc_to_GeV_m1, T, {vx, vy, vz}, Id, (Time-pIn[i].form_time())*fmc_to_GeV_m1, (Time-pIn[i].absorp_time())*fmc_to_GeV_m1, fourvec{pin.t(),pin.x(),pin.y(),pin.z()}, FS);
 
           FourVector p1out;
           FourVector p2out;
@@ -148,16 +148,17 @@ void LBTD::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& p
 
           //free streaming
           double a = deltaT/pout.t();
-          xout.Set(xin.t() + deltaT,xin.x() + pout.x()*a,xin.y() + pout.y()*a,xin.z() + pout.z()*a);
+          //INFO<<"a: "<<a;
+          xout.Set(xin.x() + pout.x()*a, xin.y() + pout.y()*a, xin.z() + pout.z()*a, xin.t() + deltaT);
+          //INFO<<"x out: "<<xout.t()<<" "<<xout.x()<<" "<<xout.y()<<" "<<xout.z();
 
           //add outgoing heavy particle
           pOut.push_back(Parton(0, Id, 0, pout, xout));
 
           //add high energy light partons
-          //currently disabled since we only have one eloss module!
           /*
 	  switch(channel)
-	    {
+	  {
 	    case 0: {
 		      if(p1out.t()>T)
                       {
@@ -219,8 +220,12 @@ void LBTD::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& p
                       break;
 	            
 	    }
-           */
+            */
 
+       }
+     else
+       {
+	 pOut.push_back(pIn[i]);
        }
    }
 }
@@ -270,6 +275,7 @@ int LBTD::update_particle_momentum(double dt, double temp, std::vector<double> v
 	}
 	for(auto& item : P_channels) {item /= P_total;}
 	if (P_total > 0.15) LOG_WARNING << "P_total = " << P_total << " may be too large";
+	LOG_WARNING << "P_total = " << P_total;
 	if ( Srandom::init_dis(Srandom::gen) > P_total) return -1;
 	else{
 		double p = Srandom::init_dis(Srandom::gen);

@@ -92,12 +92,11 @@ LBT_brickTest: CMakeFiles/LBT_brickTest.dir/examples/LBT_brickTest.cc.o
 LBT_brickTest: CMakeFiles/LBT_brickTest.dir/build.make
 LBT_brickTest: src/lib/libJetScape.so
 LBT_brickTest: lib/libJetScapeThird.so
-LBT_brickTest: /usr/lib/x86_64-linux-gnu/libz.so
 LBT_brickTest: external_packages/gtl/lib/libGTL.so
 LBT_brickTest: /usr/lib/libpythia8.a
 LBT_brickTest: external_packages/trento/src/libtrento.a
 LBT_brickTest: external_packages/LBTD/src/libLBTD.a
-LBT_brickTest: /usr/lib/libhdf5_cpp.so
+LBT_brickTest: /home/kevin/anaconda3/lib/libhdf5_cpp.so
 LBT_brickTest: /usr/lib/x86_64-linux-gnu/libboost_filesystem.so
 LBT_brickTest: /usr/lib/x86_64-linux-gnu/libboost_program_options.so
 LBT_brickTest: /usr/lib/x86_64-linux-gnu/libboost_system.so
@@ -108,9 +107,11 @@ LBT_brickTest: /usr/lib/x86_64-linux-gnu/libboost_date_time.so
 LBT_brickTest: /usr/lib/x86_64-linux-gnu/libboost_regex.so
 LBT_brickTest: /usr/lib/x86_64-linux-gnu/libboost_chrono.so
 LBT_brickTest: /usr/lib/x86_64-linux-gnu/libboost_atomic.so
-LBT_brickTest: /usr/lib/x86_64-linux-gnu/libpthread.so
 LBT_brickTest: lib/libhydroFromFile.so
-LBT_brickTest: /usr/lib/libhdf5.so
+LBT_brickTest: /home/kevin/anaconda3/lib/libhdf5.so
+LBT_brickTest: /usr/lib/x86_64-linux-gnu/librt.so
+LBT_brickTest: /usr/lib/x86_64-linux-gnu/libpthread.so
+LBT_brickTest: /home/kevin/anaconda3/lib/libz.so
 LBT_brickTest: /usr/lib/x86_64-linux-gnu/libdl.so
 LBT_brickTest: /usr/lib/x86_64-linux-gnu/libm.so
 LBT_brickTest: CMakeFiles/LBT_brickTest.dir/link.txt

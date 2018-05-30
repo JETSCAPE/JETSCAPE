@@ -61,6 +61,8 @@ CMakeFiles/PythiaBrickTest.dir/examples/PythiaBrickTest.cc.o: ../external_packag
 CMakeFiles/PythiaBrickTest.dir/examples/PythiaBrickTest.cc.o: ../external_packages/trento/src/output.h
 CMakeFiles/PythiaBrickTest.dir/examples/PythiaBrickTest.cc.o: ../external_packages/trento/src/random.h
 CMakeFiles/PythiaBrickTest.dir/examples/PythiaBrickTest.cc.o: ../examples/PythiaBrickTest.cc
+CMakeFiles/PythiaBrickTest.dir/examples/PythiaBrickTest.cc.o: /home/kevin/anaconda3/include/zconf.h
+CMakeFiles/PythiaBrickTest.dir/examples/PythiaBrickTest.cc.o: /home/kevin/anaconda3/include/zlib.h
 CMakeFiles/PythiaBrickTest.dir/examples/PythiaBrickTest.cc.o: /usr/local/include/HepMC/Attribute.h
 CMakeFiles/PythiaBrickTest.dir/examples/PythiaBrickTest.cc.o: /usr/local/include/HepMC/Common.h
 CMakeFiles/PythiaBrickTest.dir/examples/PythiaBrickTest.cc.o: /usr/local/include/HepMC/Data/GenParticleData.h

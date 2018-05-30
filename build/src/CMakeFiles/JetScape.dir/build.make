@@ -1161,8 +1161,8 @@ src/lib/libJetScape.so: external_packages/gtl/lib/libGTL.so
 src/lib/libJetScape.so: /usr/lib/libpythia8.a
 src/lib/libJetScape.so: external_packages/trento/src/libtrento.a
 src/lib/libJetScape.so: external_packages/LBTD/src/libLBTD.a
-src/lib/libJetScape.so: /usr/lib/libhdf5_cpp.so
-src/lib/libJetScape.so: /usr/lib/libhdf5.so
+src/lib/libJetScape.so: /home/kevin/anaconda3/lib/libhdf5_cpp.so
+src/lib/libJetScape.so: /home/kevin/anaconda3/lib/libhdf5.so
 src/lib/libJetScape.so: /usr/lib/x86_64-linux-gnu/libboost_filesystem.so
 src/lib/libJetScape.so: /usr/lib/x86_64-linux-gnu/libboost_program_options.so
 src/lib/libJetScape.so: /usr/lib/x86_64-linux-gnu/libboost_system.so
@@ -1174,14 +1174,19 @@ src/lib/libJetScape.so: /usr/lib/x86_64-linux-gnu/libboost_regex.so
 src/lib/libJetScape.so: /usr/lib/x86_64-linux-gnu/libboost_chrono.so
 src/lib/libJetScape.so: /usr/lib/x86_64-linux-gnu/libboost_atomic.so
 src/lib/libJetScape.so: /usr/lib/x86_64-linux-gnu/libpthread.so
-src/lib/libJetScape.so: /usr/lib/libhdf5.so
+src/lib/libJetScape.so: /home/kevin/anaconda3/lib/libhdf5.so
+src/lib/libJetScape.so: /usr/lib/x86_64-linux-gnu/librt.so
+src/lib/libJetScape.so: /usr/lib/x86_64-linux-gnu/libpthread.so
+src/lib/libJetScape.so: /home/kevin/anaconda3/lib/libz.so
 src/lib/libJetScape.so: /usr/lib/x86_64-linux-gnu/libdl.so
 src/lib/libJetScape.so: /usr/lib/x86_64-linux-gnu/libm.so
 src/lib/libJetScape.so: lib/libhydroFromFile.so
-src/lib/libJetScape.so: /usr/lib/libhdf5.so
+src/lib/libJetScape.so: /home/kevin/anaconda3/lib/libhdf5.so
+src/lib/libJetScape.so: /usr/lib/x86_64-linux-gnu/librt.so
+src/lib/libJetScape.so: /usr/lib/x86_64-linux-gnu/libpthread.so
+src/lib/libJetScape.so: /home/kevin/anaconda3/lib/libz.so
 src/lib/libJetScape.so: /usr/lib/x86_64-linux-gnu/libdl.so
 src/lib/libJetScape.so: /usr/lib/x86_64-linux-gnu/libm.so
-src/lib/libJetScape.so: /usr/lib/x86_64-linux-gnu/libz.so
 src/lib/libJetScape.so: src/CMakeFiles/JetScape.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/kevin/DukeQCD/JETSCAPE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_43) "Linking CXX shared library lib/libJetScape.so"
 	cd /home/kevin/DukeQCD/JETSCAPE/build/src && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/JetScape.dir/link.txt --verbose=$(VERBOSE)

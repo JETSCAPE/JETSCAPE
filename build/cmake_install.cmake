@@ -45,7 +45,7 @@ if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspeci
     "/home/kevin/DukeQCD/JETSCAPE/external_packages/hydro_from_external_file/src/"
     "/home/kevin/DukeQCD/JETSCAPE/external_packages/music/src/"
     "/home/kevin/DukeQCD/JETSCAPE/external_packages/trento/src/"
-    FILES_MATCHING REGEX "/[^/]*\\.h[^/]*$" REGEX "/gtl$" EXCLUDE REGEX "/iSS$" EXCLUDE REGEX "/hydro\\_from\\_external\\_file$" EXCLUDE REGEX "/music$" EXCLUDE REGEX "/trento$" EXCLUDE REGEX "/tests$" EXCLUDE REGEX "/data\\_table$" EXCLUDE REGEX "/LBT\\-tables$" EXCLUDE REGEX "/Martini$" EXCLUDE REGEX "/googletest$" EXCLUDE)
+    FILES_MATCHING REGEX "/[^/]*\\.h[^/]*$" REGEX "/gtl$" EXCLUDE REGEX "/trento$" EXCLUDE REGEX "/tests$" EXCLUDE REGEX "/data\\_table$" EXCLUDE REGEX "/LBT\\-tables$" EXCLUDE REGEX "/Martini$" EXCLUDE REGEX "/googletest$" EXCLUDE)
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")

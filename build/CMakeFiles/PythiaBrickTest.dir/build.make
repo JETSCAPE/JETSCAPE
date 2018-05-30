@@ -92,12 +92,11 @@ PythiaBrickTest: CMakeFiles/PythiaBrickTest.dir/examples/PythiaBrickTest.cc.o
 PythiaBrickTest: CMakeFiles/PythiaBrickTest.dir/build.make
 PythiaBrickTest: src/lib/libJetScape.so
 PythiaBrickTest: lib/libJetScapeThird.so
-PythiaBrickTest: /usr/lib/x86_64-linux-gnu/libz.so
 PythiaBrickTest: external_packages/gtl/lib/libGTL.so
 PythiaBrickTest: /usr/lib/libpythia8.a
 PythiaBrickTest: external_packages/trento/src/libtrento.a
 PythiaBrickTest: external_packages/LBTD/src/libLBTD.a
-PythiaBrickTest: /usr/lib/libhdf5_cpp.so
+PythiaBrickTest: /home/kevin/anaconda3/lib/libhdf5_cpp.so
 PythiaBrickTest: /usr/lib/x86_64-linux-gnu/libboost_filesystem.so
 PythiaBrickTest: /usr/lib/x86_64-linux-gnu/libboost_program_options.so
 PythiaBrickTest: /usr/lib/x86_64-linux-gnu/libboost_system.so
@@ -108,9 +107,11 @@ PythiaBrickTest: /usr/lib/x86_64-linux-gnu/libboost_date_time.so
 PythiaBrickTest: /usr/lib/x86_64-linux-gnu/libboost_regex.so
 PythiaBrickTest: /usr/lib/x86_64-linux-gnu/libboost_chrono.so
 PythiaBrickTest: /usr/lib/x86_64-linux-gnu/libboost_atomic.so
-PythiaBrickTest: /usr/lib/x86_64-linux-gnu/libpthread.so
 PythiaBrickTest: lib/libhydroFromFile.so
-PythiaBrickTest: /usr/lib/libhdf5.so
+PythiaBrickTest: /home/kevin/anaconda3/lib/libhdf5.so
+PythiaBrickTest: /usr/lib/x86_64-linux-gnu/librt.so
+PythiaBrickTest: /usr/lib/x86_64-linux-gnu/libpthread.so
+PythiaBrickTest: /home/kevin/anaconda3/lib/libz.so
 PythiaBrickTest: /usr/lib/x86_64-linux-gnu/libdl.so
 PythiaBrickTest: /usr/lib/x86_64-linux-gnu/libm.so
 PythiaBrickTest: CMakeFiles/PythiaBrickTest.dir/link.txt

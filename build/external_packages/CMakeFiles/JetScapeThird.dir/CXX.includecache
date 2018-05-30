@@ -282,3 +282,25 @@ android/log.h
 assert.h
 -
 
+/home/kevin/anaconda3/include/zconf.h
+stddef.h
+-
+windows.h
+-
+limits.h
+-
+sys/types.h
+-
+stdarg.h
+-
+stddef.h
+-
+unistd.h
+-
+unixio.h
+-
+
+/home/kevin/anaconda3/include/zlib.h
+zconf.h
+/home/kevin/anaconda3/include/zconf.h
+

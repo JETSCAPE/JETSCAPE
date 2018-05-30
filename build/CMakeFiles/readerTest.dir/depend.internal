@@ -26,3 +26,5 @@ CMakeFiles/readerTest.dir/examples/readerTest.cc.o
  .././src/framework/StringTokenizer.h
  .././src/reader/JetScapeReader.h
  /home/kevin/DukeQCD/JETSCAPE/examples/readerTest.cc
+ /home/kevin/anaconda3/include/zconf.h
+ /home/kevin/anaconda3/include/zlib.h

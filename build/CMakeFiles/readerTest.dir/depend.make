@@ -25,4 +25,6 @@ CMakeFiles/readerTest.dir/examples/readerTest.cc.o: .././src/framework/PartonSho
 CMakeFiles/readerTest.dir/examples/readerTest.cc.o: .././src/framework/StringTokenizer.h
 CMakeFiles/readerTest.dir/examples/readerTest.cc.o: .././src/reader/JetScapeReader.h
 CMakeFiles/readerTest.dir/examples/readerTest.cc.o: ../examples/readerTest.cc
+CMakeFiles/readerTest.dir/examples/readerTest.cc.o: /home/kevin/anaconda3/include/zconf.h
+CMakeFiles/readerTest.dir/examples/readerTest.cc.o: /home/kevin/anaconda3/include/zlib.h
 

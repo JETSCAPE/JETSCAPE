@@ -49,6 +49,8 @@ CMakeFiles/SimpleValidate.dir/examples/SimpleValidate.cc.o
  .././src/initialstate/PGun.h
  .././src/jet/ElossValidation.h
  /home/kevin/DukeQCD/JETSCAPE/examples/SimpleValidate.cc
+ /home/kevin/anaconda3/include/zconf.h
+ /home/kevin/anaconda3/include/zlib.h
  /usr/local/include/HepMC/Attribute.h
  /usr/local/include/HepMC/Common.h
  /usr/local/include/HepMC/Data/GenParticleData.h

@@ -74,14 +74,17 @@ void GubserHydro::GetHydroInfo(real t, real x, real y, real z,
     double y_local = static_cast<double>(y);
     double z_local = static_cast<double>(z);
         
-    double tau_local = sqrt(t*t - z*z);
+    double tau_local = sqrt(t_local*t_local - z_local*z_local);
     double r_local = sqrt(x_local*x_local + y_local*y_local);
 
+    INFO<<"Gubser cord_local: "<<t_local<<" "<<x_local<<" "<<y_local<<" "<<z_local<<" "<<tau_local<<" "<<r_local;
     double temp = (1. + 2.*q*q*(tau_local*tau_local + r_local*r_local)
                    + q*q*q*q*pow(tau_local*tau_local - r_local*r_local, 2));
 
+    INFO<<"Gubser temp: "<<temp;
     double e_local = (
         (e_0/pow(tau_local, 4./3.))*(pow(2.*q, 8./3.))/(pow(temp, 4./3.)));
+    INFO<<"Gubser e_Local: "<<e_local;
     double T_local = temperature(e_local);           // GeV
     e_local *= hbarc;                                // GeV/fm^3
     double p_local = e_local/3.;                     // GeV/fm^3

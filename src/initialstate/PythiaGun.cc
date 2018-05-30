@@ -173,13 +173,28 @@ void PythiaGun::Exec()
     for(int parid=0; parid<event.size(); parid++){
       if ( parid<3 )continue;      // 0, 1, 2: total event and beams      
       Pythia8::Particle& particle = event[parid];
+ 
+      //INFO<<"id: "<<particle.id()<<" , status: "<<particle.status();
 
       // only accept particles after MPI
       if ( particle.status()!=62 ) continue;
+      
       // only accept gluons and quarks
       // Also accept Gammas to put into the hadron's list
-      if ( fabs( particle.id() ) > 3 && (particle.id() !=21 && particle.id() !=22) ) continue;
-      
+      // put heavy quarks in!!!
+
+      if ( fabs( particle.id() ) > 5 && (particle.id() !=21 && particle.id() !=22) ) continue;
+     // if(fabs( particle.id() )==4 || fabs( particle.id() ) == 5)
+      //{
+        //INFO<<"id: "<<particle.id()<<" status: "<<particle.status()<<", mother1: "<<particle.mother1()<<", mother2: "<<particle.mother2();
+       // vector<int> mothers=particle.motherList();
+/*
+        for(int i=0; i<mothers.size();i++)
+        {
+          INFO<<"mother: "<<mothers[i];
+        }
+*/
+     // }
       // reject rare cases of very soft particles that don't have enough e to get
       // reasonable virtuality
       if ( particle.pT() < 1.0/sqrt(vir_factor) ) continue;
@@ -247,7 +262,8 @@ void PythiaGun::Exec()
   for(int np = 0; np<p62.size(); ++np){
     Pythia8::Particle& particle = p62.at( np );
 
-    VERBOSE(7)<<"Adding particle with pid = " << particle.id()
+    //VERBOSE(7)
+    VERBOSE(7) <<"Adding particle with pid = " << particle.id()
 	      <<" at x=" << xLoc[1]
 	      <<", y=" << xLoc[2]
 	      <<", z=" << xLoc[3];

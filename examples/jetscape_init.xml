@@ -51,20 +51,28 @@
         <!-- Sensile defaults are set in the class. ptHat etc. get their own field -->
         <PythiaGun>
             <name>PythiaGun</name>
-            <pTHatMin>110</pTHatMin>
-            <pTHatMax>120</pTHatMax>
+            <pTHatMin>40</pTHatMin>
+            <pTHatMax>50</pTHatMax>
             <eCM>2760</eCM>
             <!-- You can add any number of additional lines to initialize pythia here -->
             <!-- Note that if the tag exists it cannot be empty (tinyxml produces a segfault) -->
             <!-- <LinesToRead> -->
-            <!-- 	HardQCD:all = on -->
+            <LinesToRead>
+	 HardQCD:all = off
+	 HardQCD:hardccbar = on
+         HardQCD:hardbbbar = on
+	 411:mayDecay = off
+	 421:mayDecay = off
+	 413:mayDecay = off
+	 423:mayDecay = off
+           </LinesToRead>
             <!-- </LinesToRead> -->
         </PythiaGun>
     </Hard>
     <!--Eloss Modules -->
     <!-- Individual Eloss Modules run Eloss and Eloss Manager  -->
     <Eloss>
-        <deltaT>0.02</deltaT>
+        <deltaT>0.05</deltaT>
         <formTime> -0.1</formTime>
         <maxT>4</maxT>
         <Matter>

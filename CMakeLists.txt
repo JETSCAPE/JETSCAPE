@@ -139,9 +139,9 @@ install(
   PATTERN "*.h*" # select header files
   ## Necessary to exclude directories to prevent a whole (mostly empty) hierarchy
   PATTERN "gtl" EXCLUDE
-  PATTERN "iSS" EXCLUDE
-  PATTERN "hydro_from_external_file" EXCLUDE
-  PATTERN "music" EXCLUDE
+  #PATTERN "iSS" EXCLUDE
+  #PATTERN "hydro_from_external_file" EXCLUDE
+  #PATTERN "music" EXCLUDE
   PATTERN "trento" EXCLUDE
   PATTERN "tests" EXCLUDE
   PATTERN "data_table" EXCLUDE
@@ -354,6 +354,9 @@ if(${HDF5_FOUND})
   
   add_executable(hydroJetTest  ./examples/hydroJetTest.cc)
   target_link_libraries(hydroJetTest JetScape ${_hdf5_libs})
+
+  add_executable(LBTDhydroJetTest  ./examples/LBTDhydroJetTest.cc)
+  target_link_libraries(LBTDhydroJetTest JetScape ${_hdf5_libs})
 
   add_executable(hydroJetTestPGun  ./examples/hydroJetTestPGun.cc)
   target_link_libraries(hydroJetTestPGun JetScape ${_hdf5_libs})

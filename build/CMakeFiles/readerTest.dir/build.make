@@ -92,12 +92,11 @@ readerTest: CMakeFiles/readerTest.dir/examples/readerTest.cc.o
 readerTest: CMakeFiles/readerTest.dir/build.make
 readerTest: src/lib/libJetScape.so
 readerTest: lib/libJetScapeThird.so
-readerTest: /usr/lib/x86_64-linux-gnu/libz.so
 readerTest: external_packages/gtl/lib/libGTL.so
 readerTest: /usr/lib/libpythia8.a
 readerTest: external_packages/trento/src/libtrento.a
 readerTest: external_packages/LBTD/src/libLBTD.a
-readerTest: /usr/lib/libhdf5_cpp.so
+readerTest: /home/kevin/anaconda3/lib/libhdf5_cpp.so
 readerTest: /usr/lib/x86_64-linux-gnu/libboost_filesystem.so
 readerTest: /usr/lib/x86_64-linux-gnu/libboost_program_options.so
 readerTest: /usr/lib/x86_64-linux-gnu/libboost_system.so
@@ -108,9 +107,11 @@ readerTest: /usr/lib/x86_64-linux-gnu/libboost_date_time.so
 readerTest: /usr/lib/x86_64-linux-gnu/libboost_regex.so
 readerTest: /usr/lib/x86_64-linux-gnu/libboost_chrono.so
 readerTest: /usr/lib/x86_64-linux-gnu/libboost_atomic.so
-readerTest: /usr/lib/x86_64-linux-gnu/libpthread.so
 readerTest: lib/libhydroFromFile.so
-readerTest: /usr/lib/libhdf5.so
+readerTest: /home/kevin/anaconda3/lib/libhdf5.so
+readerTest: /usr/lib/x86_64-linux-gnu/librt.so
+readerTest: /usr/lib/x86_64-linux-gnu/libpthread.so
+readerTest: /home/kevin/anaconda3/lib/libz.so
 readerTest: /usr/lib/x86_64-linux-gnu/libdl.so
 readerTest: /usr/lib/x86_64-linux-gnu/libm.so
 readerTest: CMakeFiles/readerTest.dir/link.txt

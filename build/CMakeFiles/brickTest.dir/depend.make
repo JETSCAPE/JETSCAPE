@@ -61,6 +61,8 @@ CMakeFiles/brickTest.dir/examples/brickTest.cc.o: ../external_packages/trento/sr
 CMakeFiles/brickTest.dir/examples/brickTest.cc.o: ../external_packages/trento/src/output.h
 CMakeFiles/brickTest.dir/examples/brickTest.cc.o: ../external_packages/trento/src/random.h
 CMakeFiles/brickTest.dir/examples/brickTest.cc.o: ../examples/brickTest.cc
+CMakeFiles/brickTest.dir/examples/brickTest.cc.o: /home/kevin/anaconda3/include/zconf.h
+CMakeFiles/brickTest.dir/examples/brickTest.cc.o: /home/kevin/anaconda3/include/zlib.h
 CMakeFiles/brickTest.dir/examples/brickTest.cc.o: /usr/local/include/HepMC/Attribute.h
 CMakeFiles/brickTest.dir/examples/brickTest.cc.o: /usr/local/include/HepMC/Common.h
 CMakeFiles/brickTest.dir/examples/brickTest.cc.o: /usr/local/include/HepMC/Data/GenParticleData.h

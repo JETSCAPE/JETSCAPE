@@ -174,14 +174,14 @@ void run_brick_test(double E0, double T, int events=1000)
 int main(int argc, char** argv)
 {
 
-  double E0 = 20.;
-  double T = 0.2;
+  double E0;
+  double T;
   for(int i=0; i<9;i++)
   {
-    for(int j=0;j<7;j++)
+    for(int j=0;j<=1;j++)
     {
-      E0 = 20.+10.*i;
-      T = 0.2+0.05*j;
+      E0 = 2.+2.*i;
+      T = 0.2+0.2*j;
       run_brick_test(E0,T);
     }
   }

@@ -91,7 +91,8 @@ void PGun::Exec()
   }
 
        E0=fixed_E0;
-       pT = E0*E0-mass*mass; //max_pT*(rand()/maxN);
+       pT = sqrt(E0*E0-mass*mass); //max_pT*(rand()/maxN);
+     
        
        //phi = 2.0*PI*(rand()/maxN);
        rapidity=0;//2.0*eta_cut*(rand()/maxN)-eta_cut;
@@ -102,6 +103,7 @@ void PGun::Exec()
        p[2] = pT*sin(phi);
        p[3] = E0*sinh(rapidity);
        p[0] = E0*cosh(rapidity);
+       //INFO<<"pgun p: "<<p[0]<<" "<<p[1]<<" "<<p[2]<<" "<<p[3];
   
        // Roll for a starting point
        // See: https://stackoverflow.com/questions/15039688/random-generator-from-vector-with-probability-distribution-in-c

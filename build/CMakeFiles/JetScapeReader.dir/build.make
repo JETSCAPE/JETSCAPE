@@ -223,7 +223,7 @@ lib/libJetScapeReader.so: CMakeFiles/JetScapeReader.dir/build.make
 lib/libJetScapeReader.so: lib/libJetScapeThird.so
 lib/libJetScapeReader.so: external_packages/gtl/lib/libGTL.so
 lib/libJetScapeReader.so: /usr/lib/libpythia8.a
-lib/libJetScapeReader.so: /usr/lib/x86_64-linux-gnu/libz.so
+lib/libJetScapeReader.so: /home/kevin/anaconda3/lib/libz.so
 lib/libJetScapeReader.so: CMakeFiles/JetScapeReader.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/kevin/DukeQCD/JETSCAPE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX shared library lib/libJetScapeReader.so"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/JetScapeReader.dir/link.txt --verbose=$(VERBOSE)
