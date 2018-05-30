@@ -72,16 +72,6 @@ brew install cmake
 
 brew install doxygen
 
-- Tap some repos for further sceintific packages: 
-
-brew tap davidchall/hep
-
-brew tap homebrew/science
-
-- Install Pythia8 for example:
-
-brew install pythia8
-
 - Install graphViz:
 
 brew install graphviz --with-app --with-bindings
@@ -97,8 +87,7 @@ brew install graph-tool
 - Install hdf5
 
     ```bash
-    brew tap homebrew/science
-    brew install hdf5 --enable-cxx
+    brew install hdf5 --with-mpi
     ```
 
 - Install OpenMPI
@@ -112,6 +101,14 @@ brew install graph-tool
     ```bash
     brew install gsl
     ```
+- Tap some repos for further sceintific packages: 
+
+brew tap davidchall/hep
+
+- Install Pythia8 for example:
+
+brew install pythia
+
 
 (and most of other packackes we need)
 
