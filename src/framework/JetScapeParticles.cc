@@ -275,6 +275,7 @@ namespace Jetscape {
     JetScapeParticleBase::JetScapeParticleBase (srp)
   {
     form_time_ = srp.form_time_;
+    absorp_time_ = srp.absorp_time_;
     Color_ = srp.Color_;
     antiColor_ = srp.antiColor_;
     MaxColor_ = srp.MaxColor_;
@@ -353,6 +354,7 @@ namespace Jetscape {
   {
     JetScapeParticleBase::operator=(c);
     form_time_ = c.form_time_;
+    absorp_time_ = c.absorp_time_;
     Color_ = c.Color_;
     antiColor_ = c.antiColor_;
     set_edgeid ( c.edgeid() );
@@ -365,6 +367,7 @@ namespace Jetscape {
   {
     JetScapeParticleBase::operator=(c);
     form_time_ = c.form_time_;
+    absorp_time_ = c.absorp_time_;
     Color_ = c.Color_;
     antiColor_ = c.antiColor_;
     set_edgeid ( c.edgeid() );

@@ -66,7 +66,7 @@ std::string to_string_with_precision(const T a_value, const int n = 6)
 
 // -------------------------------------
 
-void run_brick_test(double E0, double T, int events=1000)
+void run_brick_test(double E0, double T, int events=3000)
 {
   clock_t t; t = clock();
   time_t start, end; time(&start);
@@ -173,15 +173,24 @@ void run_brick_test(double E0, double T, int events=1000)
 
 int main(int argc, char** argv)
 {
-
+  vector<double> E0vec;
+  for(int i=0; i<14;i++)
+  {
+    double E0 = pow(10,0.7+0.1*i);
+    E0vec.push_back(E0);
+  }
+  for(int i=1; i<10;i++)
+  {
+    E0vec.push_back(i*10.);
+  }
   double E0;
   double T;
-  for(int i=0; i<9;i++)
+  for(int i=0; i<E0vec.size();i++)
   {
-    for(int j=0;j<=1;j++)
+    for(int j=0;j<9;j++)
     {
-      E0 = 2.+2.*i;
-      T = 0.2+0.2*j;
+      E0 = E0vec[i];
+      T = 0.2+0.05*j;
       run_brick_test(E0,T);
     }
   }
