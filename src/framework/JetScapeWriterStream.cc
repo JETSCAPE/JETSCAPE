@@ -130,6 +130,23 @@ void JetScapeWriterStream<T>::Write(weak_ptr<PartonShower> ps){
   auto pShower = ps.lock();
   if ( !pShower) return;
 
+  //specific for heavy quarks
+  int id=pShower->GetParton(*(pShower->edges_begin()))->pid();
+  if(abs(id)== 4 || abs(id) == 5)
+  {
+    int channel=pShower->GetParton(*(pShower->edges_begin()))->hq_channel();
+    std::string channel_info="hq_channel: "+to_string(channel);
+    switch(channel)
+      {
+      case 1 : channel_info += " flavor creation: gg -> QQbar"; break;
+      case 2 : channel_info += " flavor excitation: gQ(Qbar) -> gQ(Qbar)"; break;
+      case 3 : channel_info += " gluon splitting: g->QQbar"; break; 
+      default: break;
+      }
+     WriteComment(channel_info);
+  }
+
+  
   WriteComment("Parton Shower in JetScape format to be used later by GTL graph:");
     
   // write vertices

@@ -181,17 +181,17 @@ FinalStateHadrons/fast:
 .PHONY : FinalStateHadrons/fast
 
 #=============================================================================
-# Target rules for targets named readerTest
+# Target rules for targets named SimpleValidate
 
 # Build rule for target.
-readerTest: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 readerTest
-.PHONY : readerTest
+SimpleValidate: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 SimpleValidate
+.PHONY : SimpleValidate
 
 # fast build rule for target.
-readerTest/fast:
-	$(MAKE) -f CMakeFiles/readerTest.dir/build.make CMakeFiles/readerTest.dir/build
-.PHONY : readerTest/fast
+SimpleValidate/fast:
+	$(MAKE) -f CMakeFiles/SimpleValidate.dir/build.make CMakeFiles/SimpleValidate.dir/build
+.PHONY : SimpleValidate/fast
 
 #=============================================================================
 # Target rules for targets named LBT_brickTest
@@ -233,19 +233,6 @@ JetScapeReader/fast:
 .PHONY : JetScapeReader/fast
 
 #=============================================================================
-# Target rules for targets named SimpleValidate
-
-# Build rule for target.
-SimpleValidate: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 SimpleValidate
-.PHONY : SimpleValidate
-
-# fast build rule for target.
-SimpleValidate/fast:
-	$(MAKE) -f CMakeFiles/SimpleValidate.dir/build.make CMakeFiles/SimpleValidate.dir/build
-.PHONY : SimpleValidate/fast
-
-#=============================================================================
 # Target rules for targets named LBTD_brickTest
 
 # Build rule for target.
@@ -259,17 +246,30 @@ LBTD_brickTest/fast:
 .PHONY : LBTD_brickTest/fast
 
 #=============================================================================
-# Target rules for targets named hydroFileTest
+# Target rules for targets named readerTest
 
 # Build rule for target.
-hydroFileTest: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 hydroFileTest
-.PHONY : hydroFileTest
+readerTest: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 readerTest
+.PHONY : readerTest
 
 # fast build rule for target.
-hydroFileTest/fast:
-	$(MAKE) -f CMakeFiles/hydroFileTest.dir/build.make CMakeFiles/hydroFileTest.dir/build
-.PHONY : hydroFileTest/fast
+readerTest/fast:
+	$(MAKE) -f CMakeFiles/readerTest.dir/build.make CMakeFiles/readerTest.dir/build
+.PHONY : readerTest/fast
+
+#=============================================================================
+# Target rules for targets named LBTDPythiaBrickTest
+
+# Build rule for target.
+LBTDPythiaBrickTest: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 LBTDPythiaBrickTest
+.PHONY : LBTDPythiaBrickTest
+
+# fast build rule for target.
+LBTDPythiaBrickTest/fast:
+	$(MAKE) -f CMakeFiles/LBTDPythiaBrickTest.dir/build.make CMakeFiles/LBTDPythiaBrickTest.dir/build
+.PHONY : LBTDPythiaBrickTest/fast
 
 #=============================================================================
 # Target rules for targets named hydroJetTest
@@ -283,6 +283,19 @@ hydroJetTest: cmake_check_build_system
 hydroJetTest/fast:
 	$(MAKE) -f CMakeFiles/hydroJetTest.dir/build.make CMakeFiles/hydroJetTest.dir/build
 .PHONY : hydroJetTest/fast
+
+#=============================================================================
+# Target rules for targets named hydroFileTest
+
+# Build rule for target.
+hydroFileTest: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 hydroFileTest
+.PHONY : hydroFileTest
+
+# fast build rule for target.
+hydroFileTest/fast:
+	$(MAKE) -f CMakeFiles/hydroFileTest.dir/build.make CMakeFiles/hydroFileTest.dir/build
+.PHONY : hydroFileTest/fast
 
 #=============================================================================
 # Target rules for targets named LBTDhydroJetTest
@@ -467,6 +480,33 @@ examples/FinalStatePartons.s: examples/FinalStatePartons.cc.s
 examples/FinalStatePartons.cc.s:
 	$(MAKE) -f CMakeFiles/FinalStatePartons.dir/build.make CMakeFiles/FinalStatePartons.dir/examples/FinalStatePartons.cc.s
 .PHONY : examples/FinalStatePartons.cc.s
+
+examples/LBTDPythiaBrickTest.o: examples/LBTDPythiaBrickTest.cc.o
+
+.PHONY : examples/LBTDPythiaBrickTest.o
+
+# target to build an object file
+examples/LBTDPythiaBrickTest.cc.o:
+	$(MAKE) -f CMakeFiles/LBTDPythiaBrickTest.dir/build.make CMakeFiles/LBTDPythiaBrickTest.dir/examples/LBTDPythiaBrickTest.cc.o
+.PHONY : examples/LBTDPythiaBrickTest.cc.o
+
+examples/LBTDPythiaBrickTest.i: examples/LBTDPythiaBrickTest.cc.i
+
+.PHONY : examples/LBTDPythiaBrickTest.i
+
+# target to preprocess a source file
+examples/LBTDPythiaBrickTest.cc.i:
+	$(MAKE) -f CMakeFiles/LBTDPythiaBrickTest.dir/build.make CMakeFiles/LBTDPythiaBrickTest.dir/examples/LBTDPythiaBrickTest.cc.i
+.PHONY : examples/LBTDPythiaBrickTest.cc.i
+
+examples/LBTDPythiaBrickTest.s: examples/LBTDPythiaBrickTest.cc.s
+
+.PHONY : examples/LBTDPythiaBrickTest.s
+
+# target to generate assembly for a file
+examples/LBTDPythiaBrickTest.cc.s:
+	$(MAKE) -f CMakeFiles/LBTDPythiaBrickTest.dir/build.make CMakeFiles/LBTDPythiaBrickTest.dir/examples/LBTDPythiaBrickTest.cc.s
+.PHONY : examples/LBTDPythiaBrickTest.cc.s
 
 examples/LBTD_brickTest.o: examples/LBTD_brickTest.cc.o
 
@@ -911,16 +951,17 @@ help:
 	@echo "... install/strip"
 	@echo "... FinalStatePartons"
 	@echo "... FinalStateHadrons"
-	@echo "... readerTest"
+	@echo "... SimpleValidate"
 	@echo "... LBT_brickTest"
 	@echo "... brickTest"
 	@echo "... install/local"
 	@echo "... JetScapeReader"
-	@echo "... SimpleValidate"
 	@echo "... LBTD_brickTest"
-	@echo "... hydroFileTest"
+	@echo "... readerTest"
+	@echo "... LBTDPythiaBrickTest"
 	@echo "... install"
 	@echo "... hydroJetTest"
+	@echo "... hydroFileTest"
 	@echo "... LBTDhydroJetTest"
 	@echo "... rebuild_cache"
 	@echo "... PythiaBrickTest"
@@ -938,6 +979,9 @@ help:
 	@echo "... examples/FinalStatePartons.o"
 	@echo "... examples/FinalStatePartons.i"
 	@echo "... examples/FinalStatePartons.s"
+	@echo "... examples/LBTDPythiaBrickTest.o"
+	@echo "... examples/LBTDPythiaBrickTest.i"
+	@echo "... examples/LBTDPythiaBrickTest.s"
 	@echo "... examples/LBTD_brickTest.o"
 	@echo "... examples/LBTD_brickTest.i"
 	@echo "... examples/LBTD_brickTest.s"

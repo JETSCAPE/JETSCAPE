@@ -111,10 +111,10 @@ void LBTD::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& p
   for (int i=0;i<pIn.size();i++)
    {
      Id = pIn[i].pid();
-     //INFO << "--------------------------------particle id: "<<Id;
+
      if (abs(Id) == 4||abs(Id) == 5)
        {
-	  //INFO << "--------------------------------particle id: "<<Id;
+	  INFO << "--------------------------------particle id: " << Id << " channel " <<pIn[i].hq_channel();
 
 	  pin = FourVector ( pIn[i].px(), pIn[i].py(), pIn[i].pz(), pIn[i].e());
 	  xin = FourVector (pIn[i].x_in().x(),pIn[i].x_in().y(),pIn[i].x_in().z(), Time);
@@ -156,6 +156,7 @@ void LBTD::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& p
           pOut.push_back(Parton(0, Id, 0, pout, xout));
           pOut[pOut.size()-1].set_form_time(pIn[i].form_time());
           pOut[pOut.size()-1].set_absorp_time(pIn[i].absorp_time());
+          pOut[pOut.size()-1].set_hq_channel(pIn[i].hq_channel());
 
           //add high energy light partons
           

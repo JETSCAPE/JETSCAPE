@@ -44,7 +44,7 @@
         <!-- Parton Gun test with fixed E0 and fixed IS pos = 0  -->
         <PGun>
             <name>PGun</name>
-            <E0>90</E0>
+            <E0>10</E0>
             <parId>5</parId>
         </PGun>
         <!-- Pythia Gun -->
@@ -128,7 +128,7 @@
         <!-- Test Brick if bjorken_expansion_on="true", T(t) = T * (start_time[fm]/t)^{1/3} -->
         <Brick bjorken_expansion_on="false" start_time="0.6">
             <name>Brick</name>
-            <T>0.60000000000000009</T>
+            <T>0.5</T>
         </Brick>
         <!-- Test Gubser  -->
         <Gubser/>

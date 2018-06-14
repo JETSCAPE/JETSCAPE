@@ -276,6 +276,7 @@ namespace Jetscape {
   {
     form_time_ = srp.form_time_;
     absorp_time_ = srp.absorp_time_;
+    hq_channel_=srp.hq_channel_;
     Color_ = srp.Color_;
     antiColor_ = srp.antiColor_;
     MaxColor_ = srp.MaxColor_;
@@ -295,6 +296,7 @@ namespace Jetscape {
     CheckAcceptability( id );
     assert ( InternalHelperPythia.particleData.isParton(id) );
     initialize_form_time();
+    set_hq_channel(-1);
     set_color(0);
     set_anti_color(0);
     set_min_color(0);
@@ -312,6 +314,7 @@ namespace Jetscape {
     CheckAcceptability ( id );
     assert ( InternalHelperPythia.particleData.isParton(id) );
     initialize_form_time();
+    set_hq_channel(-1);
     set_color(0);
     set_anti_color(0);
     set_min_color(0);
@@ -349,12 +352,12 @@ namespace Jetscape {
     }
   }
 
-
   Parton& Parton::operator=( Parton &c)
   {
     JetScapeParticleBase::operator=(c);
     form_time_ = c.form_time_;
     absorp_time_ = c.absorp_time_;
+    hq_channel_=c.hq_channel_;
     Color_ = c.Color_;
     antiColor_ = c.antiColor_;
     set_edgeid ( c.edgeid() );
@@ -366,6 +369,7 @@ namespace Jetscape {
   Parton& Parton::operator=( const Parton &c)
   {
     JetScapeParticleBase::operator=(c);
+    hq_channel_=c.hq_channel_;
     form_time_ = c.form_time_;
     absorp_time_ = c.absorp_time_;
     Color_ = c.Color_;
@@ -376,7 +380,7 @@ namespace Jetscape {
     return *this;
   }
 
-  void Parton::set_mean_form_time ()
+  void Parton::set_mean_form_time()
   {
     mean_form_time_ = 2.0*e()/(t()+0.001)/fmToGeVinv;
   }
@@ -388,6 +392,11 @@ namespace Jetscape {
   void Parton::set_absorp_time(double absorp_time)
   {
     absorp_time_ = absorp_time;
+  }
+ 
+  void Parton::set_hq_channel(int hq_channel)
+  {
+    hq_channel_=hq_channel;
   }
     
   void Parton::initialize_form_time()
@@ -409,6 +418,11 @@ namespace Jetscape {
   const double Parton::mean_form_time()
   {
     return(mean_form_time_);
+  }
+
+  int Parton::hq_channel()
+  {
+    return hq_channel_;
   }
 
   const double Parton::t()

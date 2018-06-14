@@ -348,6 +348,10 @@ target_link_libraries(LBT_brickTest JetScape )
 add_executable(LBTD_brickTest ./examples/LBTD_brickTest.cc)
 target_link_libraries(LBTD_brickTest JetScape )
 
+add_executable(LBTDPythiaBrickTest ./examples/LBTDPythiaBrickTest.cc)
+target_link_libraries(LBTDPythiaBrickTest JetScape )
+
+
 if(${HDF5_FOUND})
   add_executable(hydroFileTest ./examples/hydroFileTest.cc)
   target_link_libraries(hydroFileTest JetScape ${_hdf5_libs})
