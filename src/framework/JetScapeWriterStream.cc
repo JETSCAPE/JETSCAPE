@@ -135,6 +135,7 @@ void JetScapeWriterStream<T>::Write(weak_ptr<PartonShower> ps){
   if(abs(id)== 4 || abs(id) == 5)
   {
     int channel=pShower->GetParton(*(pShower->edges_begin()))->hq_channel();
+    int mother_id=pShower->GetParton(*(pShower->edges_begin()))->hq_mother_id();
     std::string channel_info="hq_channel: "+to_string(channel);
     switch(channel)
       {
@@ -144,6 +145,7 @@ void JetScapeWriterStream<T>::Write(weak_ptr<PartonShower> ps){
       default: break;
       }
      WriteComment(channel_info);
+     WriteComment("hq_mother_id: "+to_string(mother_id));
   }
 
   

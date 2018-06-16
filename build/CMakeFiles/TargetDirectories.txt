@@ -3,6 +3,7 @@
 /home/kevin/DukeQCD/JETSCAPE/build/CMakeFiles/install/strip.dir
 /home/kevin/DukeQCD/JETSCAPE/build/CMakeFiles/FinalStatePartons.dir
 /home/kevin/DukeQCD/JETSCAPE/build/CMakeFiles/FinalStateHadrons.dir
+/home/kevin/DukeQCD/JETSCAPE/build/CMakeFiles/fjcorereaderTest.dir
 /home/kevin/DukeQCD/JETSCAPE/build/CMakeFiles/SimpleValidate.dir
 /home/kevin/DukeQCD/JETSCAPE/build/CMakeFiles/LBT_brickTest.dir
 /home/kevin/DukeQCD/JETSCAPE/build/CMakeFiles/brickTest.dir

@@ -84,7 +84,7 @@ namespace Jetscape {
   //  BASE CLASS
   /*************************************************************************************************/
 
-  class JetScapeParticleBase : protected fjcore::PseudoJet
+  class JetScapeParticleBase : protected fjcore::PseudoJet, public fjcore::PseudoJet::UserInfoBase
   {
     friend class fjcore::PseudoJet;
 
@@ -306,12 +306,14 @@ namespace Jetscape {
     virtual void set_mean_form_time();
     virtual void set_form_time(double form_time);   
     virtual void set_absorp_time(double absorp_time);   
-    virtual void set_hq_channel(int hq_channel);   
+    virtual void set_hq_channel(int hq_channel); 
+    virtual void set_hq_mother_id(int mother_id);   
 
-    virtual double form_time();
-    virtual double absorp_time();
-    virtual const double mean_form_time();
-    virtual int hq_channel();
+    virtual double form_time() const;
+    virtual double absorp_time() const;
+    virtual const double mean_form_time() const;
+    virtual int hq_channel() const;
+    virtual int hq_mother_id() const;
     virtual void reset_p(double px, double py, double pz);
     virtual void set_color(unsigned int col); ///< sets the color of the parton
     virtual void set_anti_color(unsigned int acol); ///< sets anti-color of the parton
@@ -354,6 +356,7 @@ namespace Jetscape {
     unsigned int MinColor_    ; ///< color of the parent
     unsigned int MinAntiColor_; ///< anti-color of the parent
     int hq_channel_;    
+    int hq_mother_id_;  
 
     weak_ptr<PartonShower> pShower_; ///< shower that this parton belongs to
     int edgeid_             ; ///< Position in the shower graph    

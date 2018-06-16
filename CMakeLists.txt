@@ -373,6 +373,9 @@ target_link_libraries(SimpleValidate JetScape )
 add_executable(readerTest ./examples/readerTest.cc)
 target_link_libraries(readerTest JetScape )
 
+add_executable(fjcorereaderTest ./examples/fjcorereaderTest.cc)
+target_link_libraries(fjcorereaderTest JetScape )
+
 add_executable(FinalStateHadrons ./examples/FinalStateHadrons.cc)
 target_link_libraries(FinalStateHadrons JetScape )
 

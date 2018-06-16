@@ -311,6 +311,7 @@ void PythiaGun::Exec()
 	{
                 shared_ptr<Parton> hq=GetPartonAt(GetNHardPartons()-1);
        		hq->set_hq_channel(hq_channels[np]);
+                hq->set_hq_mother_id(particle.mother1());
 	}
     }
     else

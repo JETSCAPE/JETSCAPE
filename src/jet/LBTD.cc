@@ -114,7 +114,7 @@ void LBTD::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& p
 
      if (abs(Id) == 4||abs(Id) == 5)
        {
-	  INFO << "--------------------------------particle id: " << Id << " channel " <<pIn[i].hq_channel();
+	  INFO << "--------------------------------particle id: " << Id << " channel " <<pIn[i].hq_channel() << " mother id: "<< pIn[i].hq_mother_id();
 
 	  pin = FourVector ( pIn[i].px(), pIn[i].py(), pIn[i].pz(), pIn[i].e());
 	  xin = FourVector (pIn[i].x_in().x(),pIn[i].x_in().y(),pIn[i].x_in().z(), Time);
@@ -157,6 +157,8 @@ void LBTD::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& p
           pOut[pOut.size()-1].set_form_time(pIn[i].form_time());
           pOut[pOut.size()-1].set_absorp_time(pIn[i].absorp_time());
           pOut[pOut.size()-1].set_hq_channel(pIn[i].hq_channel());
+          pOut[pOut.size()-1].set_hq_mother_id(pIn[i].hq_mother_id());
+          
 
           //add high energy light partons
           
@@ -165,14 +167,14 @@ void LBTD::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& p
 	    case 0: {
 		      if(p1out.t()>T)
                       {
-                        //pOut.push_back(Parton(0,qId,0,xout,p1out));
+                        pOut.push_back(Parton(0,qId,0,xout,p1out));
                       }
                       break;
                     }
             case 1: {  
 		      if(p1out.t()>T)
                       {
-                        //pOut.push_back(Parton(0,21,0,xout,p1out));
+                        pOut.push_back(Parton(0,21,0,xout,p1out));
                       }
                       break;
                     }
@@ -181,11 +183,11 @@ void LBTD::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& p
 	              p2out.Set(FS[2].x(),FS[2].y(),FS[2].z(), FS[2].t());
                       if(p1out.t()>T)
                       {
-                        //pOut.push_back(Parton(0,qId,0,xout,p1out));
+                        pOut.push_back(Parton(0,qId,0,xout,p1out));
                       }
                       if(p2out.t()>T)
                       {
-                        //pOut.push_back(Parton(0,21,0,xout,p2out));
+                        pOut.push_back(Parton(0,21,0,xout,p2out));
                       }
                       break;
                     }
@@ -194,11 +196,11 @@ void LBTD::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& p
 	              p2out.Set(FS[2].x(),FS[2].y(),FS[2].z(), FS[2].t());
                       if(p1out.t()>T)
                       {
-                       // pOut.push_back(Parton(0,21,0,xout,p1out));
+                        pOut.push_back(Parton(0,21,0,xout,p1out));
                       }
                       if(p2out.t()>T)
                       {
-                       // pOut.push_back(Parton(0,21,0,xout,p2out));
+                        pOut.push_back(Parton(0,21,0,xout,p2out));
                       }
                       break;
                     }
@@ -206,7 +208,7 @@ void LBTD::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& p
                       pOut[pOut.size()-1].set_absorp_time(Time);
                       if(p1out.t()>T)
                       {
-                        //pOut.push_back(Parton(0,qId,0,xout,p1out));
+                        pOut.push_back(Parton(0,qId,0,xout,p1out));
                       }
                       break;
                     }
@@ -214,7 +216,7 @@ void LBTD::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& p
                       pOut[pOut.size()-1].set_absorp_time(Time);
                       if(p1out.t()>T)
                       {
-                       // pOut.push_back(Parton(0,21,0,xout,p1out));
+                        pOut.push_back(Parton(0,21,0,xout,p1out));
                       }
                       break;
                     }

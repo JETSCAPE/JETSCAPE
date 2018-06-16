@@ -149,8 +149,10 @@ vector<fjcore::PseudoJet> PartonShower::GetFinalPartonsForFastJet()
   vector<fjcore::PseudoJet> forFJ;
   
   for (int i=0;i<mP.size();i++)
-    forFJ.push_back((*mP[i]).GetPseudoJet());
-
+    {
+       forFJ.push_back((*mP[i]).GetPseudoJet());
+       forFJ[i].set_user_info(new Parton(*mP[i]));
+    }
   return forFJ;
 } 
 

@@ -102,8 +102,15 @@ int main(int argc, char** argv)
 	  // Output of found jets ...
 	  //cout<<endl;	 
 	  for (int k=0;k<jets.size();k++)	    
-	    cout<<"Anti-kT jet "<<k<<" : "<<jets[k]<<endl;
+	  {
+            cout<<"Anti-kT jet "<<k<<" : "<<jets[k]<<endl;
+            vector<fjcore::PseudoJet> constituents = jets[k].constituents();
+            for(int p=0; p<constituents.size(); p++)
+            {
+              cout<<"pid: "<<constituents[p].user_info<Parton>().pid()<<endl;
+            }
 	  cout<<endl;
+          }
 	  cout<<"Shower initiating parton : "<<*(mShowers[i]->GetPartonAt(0))<<endl;
 	  cout<<endl;
 	  

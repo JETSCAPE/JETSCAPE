@@ -181,6 +181,19 @@ FinalStateHadrons/fast:
 .PHONY : FinalStateHadrons/fast
 
 #=============================================================================
+# Target rules for targets named fjcorereaderTest
+
+# Build rule for target.
+fjcorereaderTest: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 fjcorereaderTest
+.PHONY : fjcorereaderTest
+
+# fast build rule for target.
+fjcorereaderTest/fast:
+	$(MAKE) -f CMakeFiles/fjcorereaderTest.dir/build.make CMakeFiles/fjcorereaderTest.dir/build
+.PHONY : fjcorereaderTest/fast
+
+#=============================================================================
 # Target rules for targets named SimpleValidate
 
 # Build rule for target.
@@ -670,6 +683,33 @@ examples/brickTest.cc.s:
 	$(MAKE) -f CMakeFiles/brickTest.dir/build.make CMakeFiles/brickTest.dir/examples/brickTest.cc.s
 .PHONY : examples/brickTest.cc.s
 
+examples/fjcorereaderTest.o: examples/fjcorereaderTest.cc.o
+
+.PHONY : examples/fjcorereaderTest.o
+
+# target to build an object file
+examples/fjcorereaderTest.cc.o:
+	$(MAKE) -f CMakeFiles/fjcorereaderTest.dir/build.make CMakeFiles/fjcorereaderTest.dir/examples/fjcorereaderTest.cc.o
+.PHONY : examples/fjcorereaderTest.cc.o
+
+examples/fjcorereaderTest.i: examples/fjcorereaderTest.cc.i
+
+.PHONY : examples/fjcorereaderTest.i
+
+# target to preprocess a source file
+examples/fjcorereaderTest.cc.i:
+	$(MAKE) -f CMakeFiles/fjcorereaderTest.dir/build.make CMakeFiles/fjcorereaderTest.dir/examples/fjcorereaderTest.cc.i
+.PHONY : examples/fjcorereaderTest.cc.i
+
+examples/fjcorereaderTest.s: examples/fjcorereaderTest.cc.s
+
+.PHONY : examples/fjcorereaderTest.s
+
+# target to generate assembly for a file
+examples/fjcorereaderTest.cc.s:
+	$(MAKE) -f CMakeFiles/fjcorereaderTest.dir/build.make CMakeFiles/fjcorereaderTest.dir/examples/fjcorereaderTest.cc.s
+.PHONY : examples/fjcorereaderTest.cc.s
+
 examples/hydroFileTest.o: examples/hydroFileTest.cc.o
 
 .PHONY : examples/hydroFileTest.o
@@ -951,6 +991,7 @@ help:
 	@echo "... install/strip"
 	@echo "... FinalStatePartons"
 	@echo "... FinalStateHadrons"
+	@echo "... fjcorereaderTest"
 	@echo "... SimpleValidate"
 	@echo "... LBT_brickTest"
 	@echo "... brickTest"
@@ -1000,6 +1041,9 @@ help:
 	@echo "... examples/brickTest.o"
 	@echo "... examples/brickTest.i"
 	@echo "... examples/brickTest.s"
+	@echo "... examples/fjcorereaderTest.o"
+	@echo "... examples/fjcorereaderTest.i"
+	@echo "... examples/fjcorereaderTest.s"
 	@echo "... examples/hydroFileTest.o"
 	@echo "... examples/hydroFileTest.i"
 	@echo "... examples/hydroFileTest.s"

@@ -72,7 +72,7 @@
     <!--Eloss Modules -->
     <!-- Individual Eloss Modules run Eloss and Eloss Manager  -->
     <Eloss>
-        <deltaT>0.02</deltaT>
+        <deltaT>0.05</deltaT>
         <formTime> -0.1</formTime>
         <maxT>4</maxT>
         <Matter>

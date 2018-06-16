@@ -277,6 +277,7 @@ namespace Jetscape {
     form_time_ = srp.form_time_;
     absorp_time_ = srp.absorp_time_;
     hq_channel_=srp.hq_channel_;
+    hq_mother_id_=srp.hq_mother_id_;
     Color_ = srp.Color_;
     antiColor_ = srp.antiColor_;
     MaxColor_ = srp.MaxColor_;
@@ -297,6 +298,7 @@ namespace Jetscape {
     assert ( InternalHelperPythia.particleData.isParton(id) );
     initialize_form_time();
     set_hq_channel(-1);
+    set_hq_mother_id(-1);
     set_color(0);
     set_anti_color(0);
     set_min_color(0);
@@ -315,6 +317,7 @@ namespace Jetscape {
     assert ( InternalHelperPythia.particleData.isParton(id) );
     initialize_form_time();
     set_hq_channel(-1);
+    set_hq_mother_id(-1);
     set_color(0);
     set_anti_color(0);
     set_min_color(0);
@@ -358,6 +361,7 @@ namespace Jetscape {
     form_time_ = c.form_time_;
     absorp_time_ = c.absorp_time_;
     hq_channel_=c.hq_channel_;
+    hq_mother_id_=c.hq_mother_id_;
     Color_ = c.Color_;
     antiColor_ = c.antiColor_;
     set_edgeid ( c.edgeid() );
@@ -370,6 +374,7 @@ namespace Jetscape {
   {
     JetScapeParticleBase::operator=(c);
     hq_channel_=c.hq_channel_;
+    hq_mother_id_=c.hq_mother_id_;
     form_time_ = c.form_time_;
     absorp_time_ = c.absorp_time_;
     Color_ = c.Color_;
@@ -398,6 +403,11 @@ namespace Jetscape {
   {
     hq_channel_=hq_channel;
   }
+
+  void Parton::set_hq_mother_id(int hq_mother_id)
+  {
+    hq_mother_id_=hq_mother_id;
+  }
     
   void Parton::initialize_form_time()
   {
@@ -405,24 +415,29 @@ namespace Jetscape {
     absorp_time_ = -0.1;
   }
 
-  double Parton::form_time()
+  double Parton::form_time() const
   {
     return(form_time_);
   }
 
-  double Parton::absorp_time()
+  double Parton::absorp_time() const
   {
     return(absorp_time_);
   }
   
-  const double Parton::mean_form_time()
+  const double Parton::mean_form_time() const
   {
     return(mean_form_time_);
   }
 
-  int Parton::hq_channel()
+  int Parton::hq_channel() const
   {
     return hq_channel_;
+  }
+
+  int Parton::hq_mother_id() const
+  {
+    return hq_mother_id_;
   }
 
   const double Parton::t()
