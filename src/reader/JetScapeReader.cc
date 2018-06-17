@@ -40,6 +40,24 @@ void JetScapeReader<T>::Clear()
 }
 
 template<class T>
+void JetScapeReader<T>::getHQInfo(string s)
+{
+  string token; 
+  strT.set(s);
+
+  vector<string> vS;      
+  while (!strT.done())
+  {
+    token = strT.next();
+    vS.push_back(token);
+  }      
+
+  hq_current_mother_id = stod(vS[3]);
+  hq_current_channel = stod(vS[5]);
+
+}
+
+template<class T>
 void JetScapeReader<T>::AddNode(string s)
 {
   string token; 
@@ -77,6 +95,13 @@ void JetScapeReader<T>::AddEdge(string s)
 	}      
       
       pShower->new_parton(nodeVec[stoi(vS[0])],nodeVec[stoi(vS[1])],make_shared<Parton>(stoi(vS[2]),stoi(vS[3]),stoi(vS[4]),stod(vS[5]),stod(vS[6]),stod(vS[7]),stod(vS[8]))); // use different constructor wit true spatial posiiton ...
+      int partonid=stoi(vS[3]);
+      if(abs(partonid)==4||abs(partonid)==5)
+      {
+        shared_ptr<Parton> hq=pShower->GetPartonAt(pShower->GetNumberOfPartons()-1);
+        hq->set_hq_channel(hq_current_channel);
+        hq->set_hq_mother_id(hq_current_mother_id);
+      }
     }
   else
     WARN<<"Node vector not filled, can not add edges/partons!";
@@ -123,6 +148,11 @@ void JetScapeReader<T>::Next()
     {
       strT.set(line);
 
+      if ( strT.isHQInfo())
+      {
+        getHQInfo(line);
+        continue;
+      }
       if ( strT.isCommentEntry()) continue;
       
       if (strT.isEventEntry()) {
@@ -144,7 +174,8 @@ void JetScapeReader<T>::Next()
 	if (strT.isNodeZero()) {
 	  nodeZeroCounter++;
 	  if (nodeZeroCounter>currentShower) {
-	    nodeVec.clear();edgeVec.clear();
+	    nodeVec.clear();
+            edgeVec.clear();
 	    pShowers.push_back(make_shared<PartonShower>());
 	    pShower=pShowers.back();
 	    currentShower++;

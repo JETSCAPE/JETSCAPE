@@ -84,6 +84,13 @@ bool StringTokenizer::isHadronEntry() const
   return false;
 }
 
+bool StringTokenizer::isHQInfo() const
+{
+  if (buffer.length()==0)      return false;
+  if (buffer.find("# hq") <100)  return true;
+  return false;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // reset string buffer, delimiter and the currsor position
 ///////////////////////////////////////////////////////////////////////////////

@@ -136,16 +136,15 @@ void JetScapeWriterStream<T>::Write(weak_ptr<PartonShower> ps){
   {
     int channel=pShower->GetParton(*(pShower->edges_begin()))->hq_channel();
     int mother_id=pShower->GetParton(*(pShower->edges_begin()))->hq_mother_id();
-    std::string channel_info="hq_channel: "+to_string(channel);
+    std::string hq_info = "hq mother_id " + to_string(mother_id) + " channel "+to_string(channel);
     switch(channel)
       {
-      case 1 : channel_info += " flavor creation: gg -> QQbar"; break;
-      case 2 : channel_info += " flavor excitation: gQ(Qbar) -> gQ(Qbar)"; break;
-      case 3 : channel_info += " gluon splitting: g->QQbar"; break; 
+      case 1 : hq_info += " flavor creation: gg -> QQbar"; break;
+      case 2 : hq_info += " flavor excitation: gQ(Qbar) -> gQ(Qbar)"; break;
+      case 3 : hq_info += " gluon splitting: g->QQbar"; break; 
       default: break;
       }
-     WriteComment(channel_info);
-     WriteComment("hq_mother_id: "+to_string(mother_id));
+     WriteComment(hq_info);
   }
 
   
