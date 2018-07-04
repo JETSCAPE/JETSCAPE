@@ -53,7 +53,8 @@
     <!-- Parton Gun test with fixed pT and fixed IS pos = 0  -->
     <PGun>
       <name>PGun</name>
-      <pT>100</pT>
+      <parId>4</parId>
+      <E0>100</E0>
     </PGun>
 
     <!-- Pythia Gun -->
