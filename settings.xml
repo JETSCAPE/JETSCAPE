@@ -32,7 +32,7 @@
 		</rate>
 	</cg2cg>
 
-	<cq2cqg status="active" moments="on">
+	<cq2cqg status="inactive" moments="off">
 		<mass>1.3</mass>
 		<degeneracy>36</degeneracy>
 		<xsection slots="sqrts,temp,delta_t">
@@ -47,7 +47,7 @@
 		</rate>
 	</cq2cqg>
 
-	<cg2cgg status="active" moments="on">
+	<cg2cgg status="inactive" moments="off">
 		<mass>1.3</mass>
 		<degeneracy>16</degeneracy>
 		<xsection slots="sqrts,temp,delta_t">
@@ -62,7 +62,7 @@
 		</rate>
 	</cg2cgg>
 
-	<cqg2cq status="active" moments="on">
+	<cqg2cq status="inactive" moments="off">
 		<mass>1.3</mass>
 		<degeneracy>576</degeneracy>
 		<xsection slots="sqrts,temp,xinel,yinel">
@@ -78,7 +78,7 @@
 		</rate>
 	</cqg2cq>
 
-	<cgg2cg status="active" moments="on">
+	<cgg2cg status="inactive" moments="off">
 		<mass>1.3</mass>
 		<degeneracy>256</degeneracy>
 		<xsection slots="sqrts,temp,xinel,yinel">
@@ -121,7 +121,7 @@
 		</rate>
 	</bg2bg>
 
-	<bq2bqg status="active" moments="on">
+	<bq2bqg status="inactive" moments="off">
 		<mass>4.2</mass>
 		<degeneracy>36</degeneracy>
 		<xsection slots="sqrts,temp,delta_t">
@@ -136,7 +136,7 @@
 		</rate>
 	</bq2bqg>
 
-	<bg2bgg status="active" moments="on">
+	<bg2bgg status="inactive" moments="off">
 		<mass>4.2</mass>
 		<degeneracy>16</degeneracy>
 		<xsection slots="sqrts,temp,delta_t">
@@ -151,7 +151,7 @@
 		</rate>
 	</bg2bgg>
 
-	<bqg2bq status="active" moments="on">
+	<bqg2bq status="inactive" moments="off">
 		<mass>4.2</mass>
 		<degeneracy>576</degeneracy>
 		<xsection slots="sqrts,temp,xinel,yinel">
@@ -167,7 +167,7 @@
 		</rate>
 	</bqg2bq>
 
-	<bgg2bg status="active" moments="on">
+	<bgg2bg status="inactive" moments="off">
 		<mass>4.2</mass>
 		<degeneracy>256</degeneracy>
 		<xsection slots="sqrts,temp,xinel,yinel">

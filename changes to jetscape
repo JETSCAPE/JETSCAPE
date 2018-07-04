@@ -44,7 +44,7 @@ Changes made to JetScape:
     Add new attribute parId so we can produce udscb quarks. Also changed fixed_pT to fixed_E0 (just for the convenience of my own study). 
 
 ----PythiaGun.cc
-    For heavy quarks, record their production type (1: flavor creation, 2: flavor excitation, 3: gluon splitting) and mother_id in the parton class in JetScape.
+    For heavy quarks, record their production type (1: flavor creation, 2: flavor excitation, 3: gluon splitting, -1: unknown) and mother_id in the parton class in JetScape.
 
 ---jet/
 
