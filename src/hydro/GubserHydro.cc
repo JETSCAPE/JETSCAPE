@@ -74,6 +74,7 @@ void GubserHydro::GetHydroInfo(real t, real x, real y, real z,
     double y_local = static_cast<double>(y);
     double z_local = static_cast<double>(z);
         
+<<<<<<< HEAD
     double tau_local = sqrt(t_local*t_local - z_local*z_local);
     double r_local = sqrt(x_local*x_local + y_local*y_local);
 
@@ -85,6 +86,16 @@ void GubserHydro::GetHydroInfo(real t, real x, real y, real z,
     double e_local = (
         (e_0/pow(tau_local, 4./3.))*(pow(2.*q, 8./3.))/(pow(temp, 4./3.)));
     //INFO<<"Gubser e_Local: "<<e_local;
+=======
+    double tau_local = sqrt(t*t - z*z);
+    double r_local = sqrt(x_local*x_local + y_local*y_local);
+
+    double temp = (1. + 2.*q*q*(tau_local*tau_local + r_local*r_local)
+                   + q*q*q*q*pow(tau_local*tau_local - r_local*r_local, 2));
+
+    double e_local = (
+        (e_0/pow(tau_local, 4./3.))*(pow(2.*q, 8./3.))/(pow(temp, 4./3.)));
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
     double T_local = temperature(e_local);           // GeV
     e_local *= hbarc;                                // GeV/fm^3
     double p_local = e_local/3.;                     // GeV/fm^3
@@ -99,6 +110,7 @@ void GubserHydro::GetHydroInfo(real t, real x, real y, real z,
     double vx_local = ux_local/gamma;
     double vy_local = uy_local/gamma;
     double vz_local = z/t;
+<<<<<<< HEAD
     double v_max=0.9999;
     double v_local=sqrt(vx_local*vx_local+vy_local*vy_local+vz_local*vz_local);
     if(v_local>v_max)
@@ -107,6 +119,9 @@ void GubserHydro::GetHydroInfo(real t, real x, real y, real z,
 	vy_local*=v_max/v_local;
 	vz_local*=v_max/v_local;
       }
+=======
+
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
     // assign all the quantites to JETSCAPE output
     // thermodyanmic quantities
     fluid_cell_info_ptr->energy_density = e_local;

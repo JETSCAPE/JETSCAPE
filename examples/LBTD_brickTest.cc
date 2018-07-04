@@ -45,7 +45,10 @@
 #include "ColoredHadronization.h"
 #include "ColorlessHadronization.h"
 
+<<<<<<< HEAD
 #include "tinyxml2.h"
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 #include <chrono>
 #include <thread>
 
@@ -55,6 +58,7 @@ using namespace Jetscape;
 
 // Forward declaration
 void Show();
+<<<<<<< HEAD
 template <typename T>
 std::string to_string_with_precision(const T a_value, const int n = 6)
 {
@@ -67,6 +71,12 @@ std::string to_string_with_precision(const T a_value, const int n = 6)
 // -------------------------------------
 
 void run_brick_test(double E0, double T, int events=3000)
+=======
+
+// -------------------------------------
+
+int main(int argc, char** argv)
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 {
   clock_t t; t = clock();
   time_t start, end; time(&start);
@@ -83,6 +93,7 @@ void run_brick_test(double E0, double T, int events=3000)
    
   Show();
 
+<<<<<<< HEAD
   //modify the init.xml file
   JetScapeXML::Instance()->OpenXMLFile("./jetscape_init.xml");
   tinyxml2::XMLElement *pgunxml=JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Hard" )->FirstChildElement("PGun" )->FirstChildElement("E0"); 
@@ -106,6 +117,11 @@ void run_brick_test(double E0, double T, int events=3000)
   brickxml->FirstChildElement("T")->QueryDoubleText(&T);
 */
   
+=======
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",100);
+  jetscape->SetId("primary");
+
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
   // Initial conditions and hydro
   auto trento = make_shared<TrentoInitial>();
   auto pGun= make_shared<PGun> ();
@@ -135,6 +151,7 @@ void run_brick_test(double E0, double T, int events=3000)
   hadroMgr->Add(hadro);
   jetscape->Add(hadroMgr);
 
+<<<<<<< HEAD
 
   // Output
   std::string file_name="("+to_string_with_precision(E0,3)+", "+to_string_with_precision(T,3)+")test_out.dat";
@@ -145,6 +162,16 @@ void run_brick_test(double E0, double T, int events=3000)
   #ifdef USE_HEPMC
   // auto writer= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
   #endif
+=======
+  // Output
+  auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
+  // same as JetScapeWriterAscii but gzipped
+  // auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");
+  // HEPMC3
+#ifdef USE_HEPMC
+  // auto writer= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
+#endif
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
   jetscape->Add(writer);
 
   
@@ -158,7 +185,11 @@ void run_brick_test(double E0, double T, int events=3000)
   // Most thinkgs done in write and clear ...
   jetscape->Finish();
   
+<<<<<<< HEAD
   INFO_NICE << file_name << "Finished!";
+=======
+  INFO_NICE<<"Finished!";
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
   cout<<endl;
 
   // wait for 5s
@@ -169,6 +200,7 @@ void run_brick_test(double E0, double T, int events=3000)
   printf ("CPU time: %f seconds.\n",((float)t)/CLOCKS_PER_SEC);
   printf ("Real time: %f seconds.\n",difftime(end,start));
   //printf ("Real time: %f seconds.\n",(start-end));
+<<<<<<< HEAD
 }
 
 int main(int argc, char** argv)
@@ -195,6 +227,8 @@ int main(int argc, char** argv)
     }
   }
 
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
   return 0;
 }
 

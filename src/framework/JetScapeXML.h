@@ -44,7 +44,10 @@ class JetScapeXML
   
   void OpenXMLFile();
   void OpenXMLFile(string m_name);
+<<<<<<< HEAD
   void CloseXMLFile();
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
   
  private:
 

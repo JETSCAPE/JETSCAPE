@@ -84,6 +84,7 @@ bool StringTokenizer::isHadronEntry() const
   return false;
 }
 
+<<<<<<< HEAD
 bool StringTokenizer::isHQInfo() const
 {
   if (buffer.length()==0)      return false;
@@ -91,6 +92,8 @@ bool StringTokenizer::isHQInfo() const
   return false;
 }
 
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 ///////////////////////////////////////////////////////////////////////////////
 // reset string buffer, delimiter and the currsor position
 ///////////////////////////////////////////////////////////////////////////////

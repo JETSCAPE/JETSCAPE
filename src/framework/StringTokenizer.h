@@ -54,7 +54,10 @@ public:
     bool isCommentEntry() const;
     bool isEventEntry() const;
     bool isHadronEntry() const;
+<<<<<<< HEAD
     bool isHQInfo() const;
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
     
 private:
     
