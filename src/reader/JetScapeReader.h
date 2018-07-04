@@ -67,6 +67,13 @@ namespace Jetscape {
       StringTokenizer strT;
    
       void Init();
+<<<<<<< HEAD
+<<<<<<< HEAD
+      void getHQInfo(string s);
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
       void AddNode(string s);
       void AddEdge(string s);
       //void MakeGraph();
@@ -76,6 +83,15 @@ namespace Jetscape {
   
       int currentEvent;
       int currentShower;
+<<<<<<< HEAD
+<<<<<<< HEAD
+
+      int hq_current_mother_id;
+      int hq_current_channel;
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
   
       shared_ptr<PartonShower> pShower;
       vector<shared_ptr<PartonShower>> pShowers;

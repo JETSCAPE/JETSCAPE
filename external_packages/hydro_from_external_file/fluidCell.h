@@ -1,6 +1,13 @@
 #ifndef fluidCell_H_
 #define fluidCell_H_
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 struct fluidCell {
    double ed, sd, temperature, pressure;
    double vx, vy, vz;
@@ -8,6 +15,13 @@ struct fluidCell {
    double bulkPi;
 };
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 struct fluidCell_2D {
     double temperature;
     double ux, uy, ueta;

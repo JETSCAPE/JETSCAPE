@@ -1,0 +1,67 @@
+Changes made to JetScape:
+
+-JETSCAPE/
+
+--external_packages/
+
+---LBTD/
+   Add external package LBT Duke version (LBTD). Modify some CmakeLists.txt accordingly.
+
+--examples/
+
+---LBTD_brickTest.cc
+   Add brick test for LBTD which use pgun as initialization and can sweep over input parameters like temperature and initial energy. 
+
+---fjcorereaderTest.cc
+   Add fjcorereaderTest which only analyze final parton jets and deal with heavy quarks especially. 
+
+--src/
+
+---framework/
+
+----JetScapeParticles.h(.cc)
+    Make the JetScapeParticleBase inherit from fjcore::PseudoJet::UserInfoBase as well so we can later inquire details of the final parton in FastJet.
+    Add new attribute absorp_time for heavy quark evolution. 
+    Add new attribute hq_channel and hq_mother_id for heavy quark so we know how the heavy quarks were produced in Pythia throughout JetScape simulation. 
+    
+----JetScapeWriterStream.h
+    Let the writer print hq_channel and hq_mother_id information for heavy quarks at the beginning of parton showering (in comment form so it does not affect other people's analysis).
+
+----PartonShower.cc
+    Set a pointer to the final parton so we can access it in FastJet.
+
+----StringTokenizer.h(.cc)
+    Add one function to determine if one line contains information for heavy quark.
+
+---hydro/
+
+----GubserHydro.cc
+    Sometimes the velocity of the fluid cell exceeds light speed (probably due to some rounding error). Add an additional normalization for velocity of the fluid cell.
+
+---initialstate/
+
+----PGun.h(.cc)
+    Add new attribute parId so we can produce udscb quarks. Also changed fixed_pT to fixed_E0 (just for the convenience of my own study). 
+
+----PythiaGun.cc
+    For heavy quarks, record their production type (1: flavor creation, 2: flavor excitation, 3: gluon splitting, -1: unknown) and mother_id in the parton class in JetScape.
+
+---jet/
+
+----LBTD.h(.cc)
+    Basically a wrapper for the LBTD energy loss module. 
+
+---reader/
+
+----JetScapeReader.h(.cc)
+    The reader can now read in information for the heavy quarks in the comment of the output file.
+
+In conclusion:
+    1. LBTD module added.
+    2. Some modification to Pythia, JetScape parton class, JetScape writter and reader class so we can record the production channel and mother_id for heavy quarks.
+    3. Analysis for heavy quark jets and dijets with different production channel is now possible. 
+
+I was wondering should we also do these modifications for the heavy hadrons so it also contains additional information for the heavy quark it contains.   
+
+
+

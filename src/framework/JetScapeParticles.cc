@@ -275,6 +275,15 @@ namespace Jetscape {
     JetScapeParticleBase::JetScapeParticleBase (srp)
   {
     form_time_ = srp.form_time_;
+<<<<<<< HEAD
+<<<<<<< HEAD
+    absorp_time_ = srp.absorp_time_;
+    hq_channel_=srp.hq_channel_;
+    hq_mother_id_=srp.hq_mother_id_;
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
     Color_ = srp.Color_;
     antiColor_ = srp.antiColor_;
     MaxColor_ = srp.MaxColor_;
@@ -294,6 +303,14 @@ namespace Jetscape {
     CheckAcceptability( id );
     assert ( InternalHelperPythia.particleData.isParton(id) );
     initialize_form_time();
+<<<<<<< HEAD
+<<<<<<< HEAD
+    set_hq_channel(-1);
+    set_hq_mother_id(-1);
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
     set_color(0);
     set_anti_color(0);
     set_min_color(0);
@@ -311,6 +328,14 @@ namespace Jetscape {
     CheckAcceptability ( id );
     assert ( InternalHelperPythia.particleData.isParton(id) );
     initialize_form_time();
+<<<<<<< HEAD
+<<<<<<< HEAD
+    set_hq_channel(-1);
+    set_hq_mother_id(-1);
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
     set_color(0);
     set_anti_color(0);
     set_min_color(0);
@@ -348,11 +373,27 @@ namespace Jetscape {
     }
   }
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
 
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
+=======
+
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
   Parton& Parton::operator=( Parton &c)
   {
     JetScapeParticleBase::operator=(c);
     form_time_ = c.form_time_;
+<<<<<<< HEAD
+<<<<<<< HEAD
+    absorp_time_ = c.absorp_time_;
+    hq_channel_=c.hq_channel_;
+    hq_mother_id_=c.hq_mother_id_;
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
     Color_ = c.Color_;
     antiColor_ = c.antiColor_;
     set_edgeid ( c.edgeid() );
@@ -364,7 +405,18 @@ namespace Jetscape {
   Parton& Parton::operator=( const Parton &c)
   {
     JetScapeParticleBase::operator=(c);
+<<<<<<< HEAD
+<<<<<<< HEAD
+    hq_channel_=c.hq_channel_;
+    hq_mother_id_=c.hq_mother_id_;
     form_time_ = c.form_time_;
+    absorp_time_ = c.absorp_time_;
+=======
+    form_time_ = c.form_time_;
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
+=======
+    form_time_ = c.form_time_;
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
     Color_ = c.Color_;
     antiColor_ = c.antiColor_;
     set_edgeid ( c.edgeid() );
@@ -373,7 +425,15 @@ namespace Jetscape {
     return *this;
   }
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+  void Parton::set_mean_form_time()
+=======
   void Parton::set_mean_form_time ()
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
+=======
+  void Parton::set_mean_form_time ()
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
   {
     mean_form_time_ = 2.0*e()/(t()+0.001)/fmToGeVinv;
   }
@@ -382,10 +442,49 @@ namespace Jetscape {
   {
     form_time_ = form_time;
   }
+<<<<<<< HEAD
+<<<<<<< HEAD
+  void Parton::set_absorp_time(double absorp_time)
+  {
+    absorp_time_ = absorp_time;
+  }
+ 
+  void Parton::set_hq_channel(int hq_channel)
+  {
+    hq_channel_=hq_channel;
+  }
+
+  void Parton::set_hq_mother_id(int hq_mother_id)
+  {
+    hq_mother_id_=hq_mother_id;
+  }
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
     
   void Parton::initialize_form_time()
   {
     form_time_ = -0.1;
+<<<<<<< HEAD
+<<<<<<< HEAD
+    absorp_time_ = -0.1;
+  }
+
+  double Parton::form_time() const
+  {
+    return(form_time_);
+  }
+
+  double Parton::absorp_time() const
+  {
+    return(absorp_time_);
+  }
+  
+  const double Parton::mean_form_time() const
+=======
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
   }
 
   double Parton::form_time()
@@ -394,10 +493,30 @@ namespace Jetscape {
   }
   
   const double Parton::mean_form_time()
+<<<<<<< HEAD
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
   {
     return(mean_form_time_);
   }
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+  int Parton::hq_channel() const
+  {
+    return hq_channel_;
+  }
+
+  int Parton::hq_mother_id() const
+  {
+    return hq_mother_id_;
+  }
+
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
   const double Parton::t()
   {
     /// \Todo: Fix 
