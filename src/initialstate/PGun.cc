@@ -20,7 +20,8 @@ using namespace Jetscape;
 
 PGun::PGun() : HardProcess()
 {
-  fixed_pT=0;
+  fixed_E0=0;
+  parId=1;
   SetId("PGun");
   VERBOSE(8);
 }
@@ -41,10 +42,11 @@ void PGun::InitTask()
       string s = pgun->FirstChildElement( "name" )->GetText();
       JSDEBUG << s << " to be initilizied ...";
       
-      pgun->FirstChildElement("pT")->QueryDoubleText(&fixed_pT);
+      pgun->FirstChildElement("E0")->QueryDoubleText(&fixed_E0);
+      pgun->FirstChildElement("parId")->QueryIntText(&parId);
 
-      JSDEBUG << s << " with fixed pT = "<<fixed_pT;
-      INFO<<"Parton Gun with fixed pT = "<<fixed_pT;
+      JSDEBUG << s << " with fixed E0 = "<<fixed_E0;
+      INFO<<"Parton Gun with fixed E0 = "<<fixed_E0<< " and Id = "<< parId;
       
     }
   else
@@ -60,38 +62,48 @@ void PGun::Exec()
 
   double p[4], xLoc[4];
 
-  double pT, rapidity, phi;
+  double E0, pT, rapidity, phi;
   double eta_cut = 1.0;
   double tempRand;
   const double maxN = 1.0*RAND_MAX;
   const double PI = 3.1415926;
   
-  double parID,ppx,ppy,ppz,pp0,mass; 
+  double ppx,ppy,ppz,pp0,mass; 
 
   for (int i=0;i<1;i++)
      {
-       tempRand = rand()/maxN;
-       if(tempRand < 0.25) parID = 21;
-       else if(tempRand < 0.50) parID = 1;
-       else if(tempRand < 0.75) parID = 2;
-       else parID = 3;
-       if (parID != 21) {
+       if (parId != 21) {
 	 tempRand = rand()/maxN;
-	 if(tempRand < 0.50) parID = -parID;
-       }            
-         parID = 1;
-       mass = 0.0;
-       pT = fixed_pT; //max_pT*(rand()/maxN);
+	 if(tempRand < 0.50) parId = -parId;
+       }  
+
+  if(std::abs(parId)==4)
+  {
+    mass=1.3;
+  }        
+  else if(std::abs(parId)==5)
+  {
+    mass=4.2;
+  }  
+  else
+  {
+    mass = 0.0;
+  }
+
+       E0=fixed_E0;
+       pT = sqrt(E0*E0-mass*mass); //max_pT*(rand()/maxN);
+     
        
-       phi = 2.0*PI*(rand()/maxN);
+       //phi = 2.0*PI*(rand()/maxN);
        rapidity=0;//2.0*eta_cut*(rand()/maxN)-eta_cut;
-         phi = 0.0;
+       phi = 0.0;
          
          
        p[1] = pT*cos(phi);
        p[2] = pT*sin(phi);
-       p[3] = sqrt(pT*pT+mass*mass)*sinh(rapidity);
-       p[0] = sqrt(pT*pT+mass*mass)*cosh(rapidity);
+       p[3] = E0*sinh(rapidity);
+       p[0] = E0*cosh(rapidity);
+       //INFO<<"pgun p: "<<p[0]<<" "<<p[1]<<" "<<p[2]<<" "<<p[3];
   
        // Roll for a starting point
        // See: https://stackoverflow.com/questions/15039688/random-generator-from-vector-with-probability-distribution-in-c
@@ -116,7 +128,7 @@ void PGun::Exec()
 	 }
        }
 
-       AddParton(make_shared<Parton>(0,parID,0,pT,rapidity,phi,p[0],xLoc));
+       AddParton(make_shared<Parton>(0,parId,0,pT,rapidity,phi,p[0],xLoc));
   
        VERBOSEPARTON(7,*GetPartonAt(i))
 	 <<" added "

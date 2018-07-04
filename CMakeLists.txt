@@ -93,6 +93,13 @@ add_subdirectory(external_packages/trento/)
 include_directories("${CMAKE_SOURCE_DIR}/external_packages/trento/src/")
 ###########################
 
+###########################
+#### Duke Heavy Quark #####
+###########################
+add_subdirectory(external_packages/LBTD/)
+include_directories("${CMAKE_SOURCE_DIR}/external_packages/LBTD/src/")
+###########################
+
 #############################################
 ### Installing Header and Library Files   ###
 #############################################
@@ -132,9 +139,9 @@ install(
   PATTERN "*.h*" # select header files
   ## Necessary to exclude directories to prevent a whole (mostly empty) hierarchy
   PATTERN "gtl" EXCLUDE
-  PATTERN "iSS" EXCLUDE
-  PATTERN "hydro_from_external_file" EXCLUDE
-  PATTERN "music" EXCLUDE
+  #PATTERN "iSS" EXCLUDE
+  #PATTERN "hydro_from_external_file" EXCLUDE
+  #PATTERN "music" EXCLUDE
   PATTERN "trento" EXCLUDE
   PATTERN "tests" EXCLUDE
   PATTERN "data_table" EXCLUDE
@@ -177,11 +184,11 @@ install(
 ### Required packages   ###
 ###########################
 
-
 # Find and use Boost.
 message("Looking for Boost ...")
-find_package(Boost 1.50 REQUIRED COMPONENTS filesystem program_options system)
+find_package(Boost 1.50 REQUIRED COMPONENTS filesystem program_options system log log_setup thread)
 Message(STATUS "Boost Include dirs : " ${Boost_INCLUDE_DIRS})
+#Message(STATUS "Boost libs : " ${Boost_LIBRARIES})
 ## boost needs special treatment. For reasons.
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
@@ -338,12 +345,22 @@ target_link_libraries(PythiaBrickTest JetScape )
 add_executable(LBT_brickTest ./examples/LBT_brickTest.cc)
 target_link_libraries(LBT_brickTest JetScape )
 
+add_executable(LBTD_brickTest ./examples/LBTD_brickTest.cc)
+target_link_libraries(LBTD_brickTest JetScape )
+
+add_executable(LBTDPythiaBrickTest ./examples/LBTDPythiaBrickTest.cc)
+target_link_libraries(LBTDPythiaBrickTest JetScape )
+
+
 if(${HDF5_FOUND})
   add_executable(hydroFileTest ./examples/hydroFileTest.cc)
   target_link_libraries(hydroFileTest JetScape ${_hdf5_libs})
   
   add_executable(hydroJetTest  ./examples/hydroJetTest.cc)
   target_link_libraries(hydroJetTest JetScape ${_hdf5_libs})
+
+  add_executable(LBTDhydroJetTest  ./examples/LBTDhydroJetTest.cc)
+  target_link_libraries(LBTDhydroJetTest JetScape ${_hdf5_libs})
 
   add_executable(hydroJetTestPGun  ./examples/hydroJetTestPGun.cc)
   target_link_libraries(hydroJetTestPGun JetScape ${_hdf5_libs})
@@ -355,6 +372,9 @@ target_link_libraries(SimpleValidate JetScape )
 ### Read Jetscape output
 add_executable(readerTest ./examples/readerTest.cc)
 target_link_libraries(readerTest JetScape )
+
+add_executable(fjcorereaderTest ./examples/fjcorereaderTest.cc)
+target_link_libraries(fjcorereaderTest JetScape )
 
 add_executable(FinalStateHadrons ./examples/FinalStateHadrons.cc)
 target_link_libraries(FinalStateHadrons JetScape )
