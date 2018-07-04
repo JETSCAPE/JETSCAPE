@@ -21,7 +21,11 @@ using namespace Jetscape;
 PGun::PGun() : HardProcess()
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
   fixed_E0=0;
+=======
+  fixed_pT=0;
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
   fixed_pT=0;
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
@@ -47,17 +51,23 @@ void PGun::InitTask()
       JSDEBUG << s << " to be initilizied ...";
       
 <<<<<<< HEAD
+<<<<<<< HEAD
       pgun->FirstChildElement("E0")->QueryDoubleText(&fixed_E0);
       pgun->FirstChildElement("parId")->QueryIntText(&parId);
 
       JSDEBUG << s << " with fixed E0 = "<<fixed_E0;
       INFO<<"Parton Gun with fixed E0 = "<<fixed_E0<< " and Id = "<< parId;
 =======
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
       pgun->FirstChildElement("pT")->QueryDoubleText(&fixed_pT);
       pgun->FirstChildElement("parId")->QueryIntText(&parId);
 
       JSDEBUG << s << " with fixed pT = "<<fixed_pT;
       INFO<<"Parton Gun with fixed pT = "<<fixed_pT<< " and Id = "<< parId;
+<<<<<<< HEAD
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
+=======
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
       
     }
@@ -75,7 +85,11 @@ void PGun::Exec()
   double p[4], xLoc[4];
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   double E0, pT, rapidity, phi;
+=======
+  double pT, rapidity, phi;
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
   double pT, rapidity, phi;
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
@@ -107,9 +121,13 @@ void PGun::Exec()
   }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
        E0=fixed_E0;
        pT = sqrt(E0*E0-mass*mass); //max_pT*(rand()/maxN);
      
+=======
+       pT = fixed_pT; //max_pT*(rand()/maxN);
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
        pT = fixed_pT; //max_pT*(rand()/maxN);
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
@@ -122,9 +140,14 @@ void PGun::Exec()
        p[1] = pT*cos(phi);
        p[2] = pT*sin(phi);
 <<<<<<< HEAD
+<<<<<<< HEAD
        p[3] = E0*sinh(rapidity);
        p[0] = E0*cosh(rapidity);
        //INFO<<"pgun p: "<<p[0]<<" "<<p[1]<<" "<<p[2]<<" "<<p[3];
+=======
+       p[3] = sqrt(pT*pT+mass*mass)*sinh(rapidity);
+       p[0] = sqrt(pT*pT+mass*mass)*cosh(rapidity);
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
        p[3] = sqrt(pT*pT+mass*mass)*sinh(rapidity);
        p[0] = sqrt(pT*pT+mass*mass)*cosh(rapidity);

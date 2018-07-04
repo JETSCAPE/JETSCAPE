@@ -131,6 +131,7 @@ void JetScapeWriterStream<T>::Write(weak_ptr<PartonShower> ps){
   if ( !pShower) return;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   //specific for heavy quarks
   int id=pShower->GetParton(*(pShower->edges_begin()))->pid();
   if(abs(id)== 4 || abs(id) == 5)
@@ -149,6 +150,8 @@ void JetScapeWriterStream<T>::Write(weak_ptr<PartonShower> ps){
   }
 
   
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
   WriteComment("Parton Shower in JetScape format to be used later by GTL graph:");

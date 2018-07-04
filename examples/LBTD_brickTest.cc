@@ -46,7 +46,10 @@
 #include "ColorlessHadronization.h"
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 #include "tinyxml2.h"
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 #include <chrono>
@@ -58,6 +61,7 @@ using namespace Jetscape;
 
 // Forward declaration
 void Show();
+<<<<<<< HEAD
 <<<<<<< HEAD
 template <typename T>
 std::string to_string_with_precision(const T a_value, const int n = 6)
@@ -72,10 +76,15 @@ std::string to_string_with_precision(const T a_value, const int n = 6)
 
 void run_brick_test(double E0, double T, int events=3000)
 =======
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 
 // -------------------------------------
 
 int main(int argc, char** argv)
+<<<<<<< HEAD
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
+=======
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 {
   clock_t t; t = clock();
@@ -93,6 +102,7 @@ int main(int argc, char** argv)
    
   Show();
 
+<<<<<<< HEAD
 <<<<<<< HEAD
   //modify the init.xml file
   JetScapeXML::Instance()->OpenXMLFile("./jetscape_init.xml");
@@ -117,6 +127,11 @@ int main(int argc, char** argv)
   brickxml->FirstChildElement("T")->QueryDoubleText(&T);
 */
   
+=======
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",100);
+  jetscape->SetId("primary");
+
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
   auto jetscape = make_shared<JetScape>("./jetscape_init.xml",100);
   jetscape->SetId("primary");
@@ -152,6 +167,7 @@ int main(int argc, char** argv)
   jetscape->Add(hadroMgr);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
   // Output
   std::string file_name="("+to_string_with_precision(E0,3)+", "+to_string_with_precision(T,3)+")test_out.dat";
@@ -163,6 +179,8 @@ int main(int argc, char** argv)
   // auto writer= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
   #endif
 =======
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
   // Output
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
   // same as JetScapeWriterAscii but gzipped
@@ -171,6 +189,9 @@ int main(int argc, char** argv)
 #ifdef USE_HEPMC
   // auto writer= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
 #endif
+<<<<<<< HEAD
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
+=======
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
   jetscape->Add(writer);
 
@@ -186,7 +207,11 @@ int main(int argc, char** argv)
   jetscape->Finish();
   
 <<<<<<< HEAD
+<<<<<<< HEAD
   INFO_NICE << file_name << "Finished!";
+=======
+  INFO_NICE<<"Finished!";
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
   INFO_NICE<<"Finished!";
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
@@ -200,6 +225,7 @@ int main(int argc, char** argv)
   printf ("CPU time: %f seconds.\n",((float)t)/CLOCKS_PER_SEC);
   printf ("Real time: %f seconds.\n",difftime(end,start));
   //printf ("Real time: %f seconds.\n",(start-end));
+<<<<<<< HEAD
 <<<<<<< HEAD
 }
 
@@ -227,6 +253,8 @@ int main(int argc, char** argv)
     }
   }
 
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
   return 0;

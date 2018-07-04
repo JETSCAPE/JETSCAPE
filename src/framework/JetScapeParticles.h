@@ -85,7 +85,11 @@ namespace Jetscape {
   /*************************************************************************************************/
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   class JetScapeParticleBase : protected fjcore::PseudoJet, public fjcore::PseudoJet::UserInfoBase
+=======
+  class JetScapeParticleBase : protected fjcore::PseudoJet
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
   class JetScapeParticleBase : protected fjcore::PseudoJet
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
@@ -309,6 +313,7 @@ namespace Jetscape {
   public :
     virtual void set_mean_form_time();
 <<<<<<< HEAD
+<<<<<<< HEAD
     virtual void set_form_time(double form_time);   
     virtual void set_absorp_time(double absorp_time);   
     virtual void set_hq_channel(int hq_channel); 
@@ -320,10 +325,15 @@ namespace Jetscape {
     virtual int hq_channel() const;
     virtual int hq_mother_id() const;
 =======
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
     virtual void set_form_time(double form_time);    
 
     virtual double form_time();
     virtual const double mean_form_time();
+<<<<<<< HEAD
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
+=======
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
     virtual void reset_p(double px, double py, double pz);
     virtual void set_color(unsigned int col); ///< sets the color of the parton
@@ -361,7 +371,10 @@ namespace Jetscape {
     double mean_form_time_  ; ///< Mean formation time
     double form_time_       ; ///< event by event formation time
 <<<<<<< HEAD
+<<<<<<< HEAD
     double absorp_time_     ; ///< event by event absorption time
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
     unsigned int Color_      ; ///< Large Nc color of parton
@@ -370,8 +383,11 @@ namespace Jetscape {
     unsigned int MinColor_    ; ///< color of the parent
     unsigned int MinAntiColor_; ///< anti-color of the parent
 <<<<<<< HEAD
+<<<<<<< HEAD
     int hq_channel_;    
     int hq_mother_id_;  
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 

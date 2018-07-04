@@ -1,5 +1,9 @@
 <?xml version="1.0"?>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
 
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
@@ -9,6 +13,7 @@
 <!-- Report issues at https://github.com/JETSCAPE/JETSCAPE/issues -->
 <!-- or via email to bugs.jetscape@gmail.com -->
 <!-- Distributed under the GNU General Public License 3.0 (GPLv3 or later). -->
+<<<<<<< HEAD
 <<<<<<< HEAD
 <!-- See COPYING for details. -->
 <jetscape>
@@ -191,6 +196,8 @@
         </iSS>
     </SoftParticlization>
 =======
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 <!-- See COPYING for details. --> 
 
  <jetscape>
@@ -399,5 +406,8 @@
       <Perform_resonance_decays>1</Perform_resonance_decays>
     </iSS>
   </SoftParticlization>
+<<<<<<< HEAD
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
+=======
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 </jetscape>

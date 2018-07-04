@@ -26,7 +26,11 @@ class PGun: public HardProcess {
    
  private:
 <<<<<<< HEAD
+<<<<<<< HEAD
     double fixed_E0;
+=======
+    double fixed_pT;
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
     double fixed_pT;
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306

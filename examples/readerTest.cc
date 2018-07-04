@@ -103,6 +103,7 @@ int main(int argc, char** argv)
 	  //cout<<endl;	 
 	  for (int k=0;k<jets.size();k++)	    
 <<<<<<< HEAD
+<<<<<<< HEAD
 	  {
             cout<<"Anti-kT jet "<<k<<" : "<<jets[k]<<endl;
             vector<fjcore::PseudoJet> constituents = jets[k].constituents();
@@ -112,6 +113,10 @@ int main(int argc, char** argv)
             }
 	  cout<<endl;
           }
+=======
+	    cout<<"Anti-kT jet "<<k<<" : "<<jets[k]<<endl;
+	  cout<<endl;
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
 	    cout<<"Anti-kT jet "<<k<<" : "<<jets[k]<<endl;
 	  cout<<endl;

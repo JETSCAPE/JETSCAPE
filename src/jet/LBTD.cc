@@ -112,15 +112,21 @@ void LBTD::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& p
    {
      Id = pIn[i].pid();
 <<<<<<< HEAD
+<<<<<<< HEAD
 
      if (abs(Id) == 4||abs(Id) == 5)
        {
 	  INFO << "--------------------------------particle id: " << Id << " channel " <<pIn[i].hq_channel() << " mother id: "<< pIn[i].hq_mother_id();
 =======
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
      INFO << "--------------------------------particle id: "<<Id;
      if (abs(Id) == 4||abs(Id) == 5)
        {
 	  //INFO << "--------------------------------particle id: "<<Id;
+<<<<<<< HEAD
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
+=======
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 
 	  pin = FourVector ( pIn[i].px(), pIn[i].py(), pIn[i].pz(), pIn[i].e());
@@ -129,9 +135,14 @@ void LBTD::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& p
 	  std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
 	  GetHydroCellSignal(Time, xin.x(), xin.y(), xin.z(), check_fluid_info_ptr);
 <<<<<<< HEAD
+<<<<<<< HEAD
           //VERBOSE(7)<<"Inputs: "<<Time<<" "<<xin.x()<<" "<< xin.y()<<" "<< xin.z();
 	  //VERBOSE(0)<<"Temperature (Signal) = "
 	  //<<check_fluid_info_ptr->temperature<<" "<<check_fluid_info_ptr->vx<<" "<<check_fluid_info_ptr->vy<<" "<<check_fluid_info_ptr->vz;
+=======
+	  VERBOSE(0)<<"Temperature from Brick (Signal) = "
+		    <<check_fluid_info_ptr->temperature;
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
 	  VERBOSE(0)<<"Temperature from Brick (Signal) = "
 		    <<check_fluid_info_ptr->temperature;
@@ -144,8 +155,14 @@ void LBTD::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& p
 
           std::vector<fourvec> FS;
 <<<<<<< HEAD
+<<<<<<< HEAD
 	  //INFO <<"Input for update_particle_momentum: T: "<<T<<" vx: "<<vx<<" vy: "<<vy<<" vz: "<<vz<<" pin: "<< pin.t() << " " << pin.x() << " " << pin.y() << " " << pin.z()<<" time: "<<Time-pIn[i].form_time()<<" "<<Time-pIn[i].absorp_time();
 	  int channel = update_particle_momentum(deltaT*fmc_to_GeV_m1, T, {vx, vy, vz}, Id, (Time-pIn[i].form_time())*fmc_to_GeV_m1, (Time-pIn[i].absorp_time())*fmc_to_GeV_m1, fourvec{pin.t(),pin.x(),pin.y(),pin.z()}, FS);
+=======
+	  INFO << pin.t() << " " << pin.x() << " " << pin.y() << " " << pin.z();
+	  int channel = update_particle_momentum(deltaT*fmc_to_GeV_m1, T, 
+				{vx, vy, vz}, Id, (Time-pIn[i].form_time())*fmc_to_GeV_m1, (Time-pIn[i].form_time())*fmc_to_GeV_m1, fourvec{pin.t(),pin.x(),pin.y(),pin.z()}, FS);     //needs to be modified!
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
 	  INFO << pin.t() << " " << pin.x() << " " << pin.y() << " " << pin.z();
 	  int channel = update_particle_momentum(deltaT*fmc_to_GeV_m1, T, 
@@ -156,8 +173,11 @@ void LBTD::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& p
           FourVector p2out;
           int qId=random_choose_Id();
 <<<<<<< HEAD
+<<<<<<< HEAD
 	  //test!!!
 	  channel=-1;
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
           if (channel>=0) 
@@ -171,6 +191,7 @@ void LBTD::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& p
 
           //free streaming
           double a = deltaT/pout.t();
+<<<<<<< HEAD
 <<<<<<< HEAD
           //INFO<<"a: "<<a;
           xout.Set(xin.x() + pout.x()*a, xin.y() + pout.y()*a, xin.z() + pout.z()*a, xin.t() + deltaT);
@@ -189,6 +210,8 @@ void LBTD::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& p
 	  switch(channel)
 	  {
 =======
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
           xout.Set(xin.t() + deltaT,xin.x() + pout.x()*a,xin.y() + pout.y()*a,xin.z() + pout.z()*a);
 
           //add outgoing heavy particle
@@ -197,6 +220,9 @@ void LBTD::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& p
           //add high energy light partons
 	  switch(channel)
 	    {
+<<<<<<< HEAD
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
+=======
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 	    case 0: {
 		      if(p1out.t()>T)
@@ -240,7 +266,11 @@ void LBTD::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& p
                     }
             case 4: {
 <<<<<<< HEAD
+<<<<<<< HEAD
                       pOut[pOut.size()-1].set_absorp_time(Time);
+=======
+                      pOut[pOut.size()-1].set_form_time(Time);//needs modify!
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
                       pOut[pOut.size()-1].set_form_time(Time);//needs modify!
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
@@ -252,7 +282,11 @@ void LBTD::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& p
                     }
             case 5: {
 <<<<<<< HEAD
+<<<<<<< HEAD
                       pOut[pOut.size()-1].set_absorp_time(Time);
+=======
+                      pOut[pOut.size()-1].set_form_time(Time);//needs modify!
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
                       pOut[pOut.size()-1].set_form_time(Time);//needs modify!
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
@@ -268,6 +302,7 @@ void LBTD::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& p
 	            
 	    }
 <<<<<<< HEAD
+<<<<<<< HEAD
             
 
        }
@@ -276,6 +311,10 @@ void LBTD::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& p
        {
 	 pOut.push_back(pIn[i]);
        }
+=======
+
+       }
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
 
        }
@@ -289,8 +328,11 @@ int LBTD::update_particle_momentum(double dt, double temp, std::vector<double> v
 	int absid = std::abs(pid);
 	auto p_cell = incoming_p.boost_to(v3cell[0], v3cell[1], v3cell[2]);
 <<<<<<< HEAD
+<<<<<<< HEAD
 	//INFO<<"p_cell: "<< p_cell;
 	//INFO<<"incoming_p: "<<incoming_p;
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 	double D_formation_t23_cell = D_formation_t23 / incoming_p.t() * p_cell.t();
@@ -298,7 +340,10 @@ int LBTD::update_particle_momentum(double dt, double temp, std::vector<double> v
 	double dt_cell = dt / incoming_p.t() * p_cell.t();
 	double E_cell = p_cell.t();
 <<<<<<< HEAD
+<<<<<<< HEAD
 	//INFO<<"E_cell: "<<E_cell<<"dt_cell: "<<dt_cell;
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
         std::vector<double> P_channels(AllProcesses[absid].size());
@@ -333,7 +378,10 @@ int LBTD::update_particle_momentum(double dt, double temp, std::vector<double> v
 				break;
 		}
 <<<<<<< HEAD
+<<<<<<< HEAD
 		//INFO<<"dR: "<<dR;
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 		P_total += dR;
@@ -342,7 +390,10 @@ int LBTD::update_particle_momentum(double dt, double temp, std::vector<double> v
 	for(auto& item : P_channels) {item /= P_total;}
 	if (P_total > 0.15) LOG_WARNING << "P_total = " << P_total << " may be too large";
 <<<<<<< HEAD
+<<<<<<< HEAD
 	//LOG_WARNING << "P_total = " << P_total;
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 	if ( Srandom::init_dis(Srandom::gen) > P_total) return -1;
@@ -406,6 +457,7 @@ void LBTD::init_process(Process& r, std::string mode){
                                 else return;
                                 break;
 <<<<<<< HEAD
+<<<<<<< HEAD
 			case 2:
 				if (boost::get<Rate32>(r).IsActive())
 				        if(mode == "new"){
@@ -421,6 +473,8 @@ void LBTD::init_process(Process& r, std::string mode){
                                exit(-1);
                                break;
 =======
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 						case 2:
 								if (boost::get<Rate32>(r).IsActive())
 										if(mode == "new"){
@@ -435,6 +489,9 @@ void LBTD::init_process(Process& r, std::string mode){
                         default:
                                 exit(-1);
                                 break;
+<<<<<<< HEAD
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
+=======
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
                 }
 }

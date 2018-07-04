@@ -41,6 +41,7 @@ void JetScapeReader<T>::Clear()
 
 template<class T>
 <<<<<<< HEAD
+<<<<<<< HEAD
 void JetScapeReader<T>::getHQInfo(string s)
 {
   string token; 
@@ -59,6 +60,8 @@ void JetScapeReader<T>::getHQInfo(string s)
 }
 
 template<class T>
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 void JetScapeReader<T>::AddNode(string s)
@@ -99,6 +102,7 @@ void JetScapeReader<T>::AddEdge(string s)
       
       pShower->new_parton(nodeVec[stoi(vS[0])],nodeVec[stoi(vS[1])],make_shared<Parton>(stoi(vS[2]),stoi(vS[3]),stoi(vS[4]),stod(vS[5]),stod(vS[6]),stod(vS[7]),stod(vS[8]))); // use different constructor wit true spatial posiiton ...
 <<<<<<< HEAD
+<<<<<<< HEAD
       int partonid=stoi(vS[3]);
       if(abs(partonid)==4||abs(partonid)==5)
       {
@@ -106,6 +110,8 @@ void JetScapeReader<T>::AddEdge(string s)
         hq->set_hq_channel(hq_current_channel);
         hq->set_hq_mother_id(hq_current_mother_id);
       }
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
     }
@@ -155,11 +161,14 @@ void JetScapeReader<T>::Next()
       strT.set(line);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
       if ( strT.isHQInfo())
       {
         getHQInfo(line);
         continue;
       }
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
       if ( strT.isCommentEntry()) continue;
@@ -184,8 +193,12 @@ void JetScapeReader<T>::Next()
 	  nodeZeroCounter++;
 	  if (nodeZeroCounter>currentShower) {
 <<<<<<< HEAD
+<<<<<<< HEAD
 	    nodeVec.clear();
             edgeVec.clear();
+=======
+	    nodeVec.clear();edgeVec.clear();
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
 	    nodeVec.clear();edgeVec.clear();
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306

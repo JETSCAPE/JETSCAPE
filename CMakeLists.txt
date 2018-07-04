@@ -140,9 +140,15 @@ install(
   ## Necessary to exclude directories to prevent a whole (mostly empty) hierarchy
   PATTERN "gtl" EXCLUDE
 <<<<<<< HEAD
+<<<<<<< HEAD
   #PATTERN "iSS" EXCLUDE
   #PATTERN "hydro_from_external_file" EXCLUDE
   #PATTERN "music" EXCLUDE
+=======
+  PATTERN "iSS" EXCLUDE
+  PATTERN "hydro_from_external_file" EXCLUDE
+  PATTERN "music" EXCLUDE
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
   PATTERN "iSS" EXCLUDE
   PATTERN "hydro_from_external_file" EXCLUDE
@@ -355,10 +361,13 @@ add_executable(LBTD_brickTest ./examples/LBTD_brickTest.cc)
 target_link_libraries(LBTD_brickTest JetScape )
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 add_executable(LBTDPythiaBrickTest ./examples/LBTDPythiaBrickTest.cc)
 target_link_libraries(LBTDPythiaBrickTest JetScape )
 
 
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 if(${HDF5_FOUND})
@@ -369,9 +378,12 @@ if(${HDF5_FOUND})
   target_link_libraries(hydroJetTest JetScape ${_hdf5_libs})
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   add_executable(LBTDhydroJetTest  ./examples/LBTDhydroJetTest.cc)
   target_link_libraries(LBTDhydroJetTest JetScape ${_hdf5_libs})
 
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
   add_executable(hydroJetTestPGun  ./examples/hydroJetTestPGun.cc)
@@ -386,9 +398,12 @@ add_executable(readerTest ./examples/readerTest.cc)
 target_link_libraries(readerTest JetScape )
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 add_executable(fjcorereaderTest ./examples/fjcorereaderTest.cc)
 target_link_libraries(fjcorereaderTest JetScape )
 
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 add_executable(FinalStateHadrons ./examples/FinalStateHadrons.cc)

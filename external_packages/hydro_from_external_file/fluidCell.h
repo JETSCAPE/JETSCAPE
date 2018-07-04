@@ -2,7 +2,10 @@
 #define fluidCell_H_
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 struct fluidCell {
@@ -13,7 +16,10 @@ struct fluidCell {
 };
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 struct fluidCell_2D {

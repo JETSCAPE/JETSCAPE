@@ -85,6 +85,7 @@ bool StringTokenizer::isHadronEntry() const
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 bool StringTokenizer::isHQInfo() const
 {
   if (buffer.length()==0)      return false;
@@ -92,6 +93,8 @@ bool StringTokenizer::isHQInfo() const
   return false;
 }
 
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 ///////////////////////////////////////////////////////////////////////////////

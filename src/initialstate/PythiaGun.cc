@@ -51,7 +51,11 @@ void PythiaGun::InitTask()
 
   // Standard settings
 <<<<<<< HEAD
+<<<<<<< HEAD
   readString("HardQCD:all = off"); // will repeat this line in the xml for demonstration  
+=======
+  readString("HardQCD:all = on"); // will repeat this line in the xml for demonstration  
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
   readString("HardQCD:all = on"); // will repeat this line in the xml for demonstration  
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
@@ -60,7 +64,11 @@ void PythiaGun::InitTask()
   readString("PartonLevel:ISR = on");
   readString("PartonLevel:MPI = on");
 <<<<<<< HEAD
+<<<<<<< HEAD
   readString("PartonLevel:FSR = on");
+=======
+  readString("PartonLevel:FSR = off");
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
   readString("PartonLevel:FSR = off");
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
@@ -148,8 +156,12 @@ void PythiaGun::Exec()
   VERBOSE(8)<<"Current Event #"<<GetCurrentEvent();
   //Reading vir_factor from xml for MATTER
 <<<<<<< HEAD
+<<<<<<< HEAD
   tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );
   
+=======
+   tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
    tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
@@ -168,8 +180,12 @@ void PythiaGun::Exec()
   bool flag62=false;
   vector<Pythia8::Particle> p62;
 <<<<<<< HEAD
+<<<<<<< HEAD
   vector<int> hq_channels;
   vector<int> hq_mothers;
+=======
+  
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
   
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
@@ -185,8 +201,11 @@ void PythiaGun::Exec()
     next();
     p62.clear();
 <<<<<<< HEAD
+<<<<<<< HEAD
     hq_channels.clear();
     hq_mothers.clear();
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
     
@@ -196,6 +215,7 @@ void PythiaGun::Exec()
     for(int parid=0; parid<event.size(); parid++){
       if ( parid<3 )continue;      // 0, 1, 2: total event and beams      
       Pythia8::Particle& particle = event[parid];
+<<<<<<< HEAD
 <<<<<<< HEAD
  
       //INFO<<"id: "<<particle.id()<<" , status: "<<particle.status();
@@ -210,6 +230,8 @@ void PythiaGun::Exec()
       if ( fabs( particle.id() ) > 5 && (particle.id() !=21 && particle.id() !=22) ) continue;
 
 =======
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 
       // only accept particles after MPI
       if ( particle.status()!=62 ) continue;
@@ -217,6 +239,9 @@ void PythiaGun::Exec()
       // Also accept Gammas to put into the hadron's list
       if ( fabs( particle.id() ) > 3 && (particle.id() !=21 && particle.id() !=22) ) continue;
       
+<<<<<<< HEAD
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
+=======
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
       // reject rare cases of very soft particles that don't have enough e to get
       // reasonable virtuality
@@ -225,6 +250,7 @@ void PythiaGun::Exec()
 	//if(particle.id()==22) cout<<"########this is a photon!######" <<endl;
       // accept
       p62.push_back( particle );
+<<<<<<< HEAD
 <<<<<<< HEAD
       
       //specify the production type of heavy quark
@@ -308,6 +334,8 @@ void PythiaGun::Exec()
         }
 =======
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
+=======
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 
     }
 
@@ -318,7 +346,11 @@ void PythiaGun::Exec()
     // Now have all candidates, sort them
     // sort by pt
 <<<<<<< HEAD
+<<<<<<< HEAD
     //std::sort( p62.begin(), p62.end(), greater_than_pt() );
+=======
+    std::sort( p62.begin(), p62.end(), greater_than_pt() );
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
     std::sort( p62.begin(), p62.end(), greater_than_pt() );
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
@@ -373,8 +405,12 @@ void PythiaGun::Exec()
     Pythia8::Particle& particle = p62.at( np );
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     //VERBOSE(7)
     VERBOSE(7) <<"Adding particle with pid = " << particle.id()
+=======
+    VERBOSE(7)<<"Adding particle with pid = " << particle.id()
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
     VERBOSE(7)<<"Adding particle with pid = " << particle.id()
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
@@ -394,6 +430,7 @@ void PythiaGun::Exec()
     if(particle.id() !=22)
     {
 <<<<<<< HEAD
+<<<<<<< HEAD
         AddParton(make_shared<Parton>(0, particle.id(),0,particle.pT(),particle.y(),particle.phi(),particle.e(),xLoc));
         //special treatment for heavy quarks
         if (abs(particle.id()) == 4 || abs(particle.id()) == 5) 
@@ -402,6 +439,9 @@ void PythiaGun::Exec()
        		      hq->set_hq_channel(hq_channels[np]);
                 hq->set_hq_mother_id(hq_mothers[np]);
 	}
+=======
+        AddParton(make_shared<Parton>(0, particle.id(),0,particle.pT(),particle.y(),particle.phi(),particle.e(),xLoc) );
+>>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
 =======
         AddParton(make_shared<Parton>(0, particle.id(),0,particle.pT(),particle.y(),particle.phi(),particle.e(),xLoc) );
 >>>>>>> a8fdc27b03dd460fc82996bb1aa469ebf9cbe306
