@@ -51,8 +51,8 @@
         <!-- Sensile defaults are set in the class. ptHat etc. get their own field -->
         <PythiaGun>
             <name>PythiaGun</name>
-            <pTHatMin>40</pTHatMin>
-            <pTHatMax>50</pTHatMax>
+            <pTHatMin>20</pTHatMin>
+            <pTHatMax>100</pTHatMax>
             <eCM>2760</eCM>
             <!-- You can add any number of additional lines to initialize pythia here -->
             <!-- Note that if the tag exists it cannot be empty (tinyxml produces a segfault) -->

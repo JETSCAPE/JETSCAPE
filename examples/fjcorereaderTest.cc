@@ -52,6 +52,9 @@ ostream & operator<<(ostream & ostr, const fjcore::PseudoJet & jet);
 
 int main(int argc, char** argv)
 {
+  std::fstream fs;
+  fs.open ("hqjet_pT.dat", std::fstream::out | std::fstream::app);
+  
   JetScapeLogger::Instance()->SetDebug(false);
   JetScapeLogger::Instance()->SetRemark(false);
   //SetVerboseLevel (9 a lot of additional debug output ...)
@@ -65,7 +68,7 @@ int main(int argc, char** argv)
   fjcore::JetDefinition jet_def(fjcore::antikt_algorithm, 0.7);
   
   vector<shared_ptr<PartonShower>> mShowers;
-
+  
   //Directly with template: provide the relevant stream
   //auto reader=make_shared<JetScapeReader<ifstream>>("test_out.dat");
   //auto reader=make_shared<JetScapeReader<igzstream>>("test_out.dat.gz");
@@ -105,6 +108,7 @@ int main(int argc, char** argv)
       cout<<jet_def.description()<<endl;
       cout<<endl;
 
+      fs<<"event:"<<endl;
       for (int k=0;k<jets.size();k++)	    
       {
         cout<<"Anti-kT jet "<<k<<" : "<<jets[k]<<endl;
@@ -113,12 +117,16 @@ int main(int argc, char** argv)
         {
           int pid = constituents[p].user_info<Parton>().pid();
           cout<<"    pid: "<<pid<<" four vec: " << constituents[p] << " hq_channel: " << to_string(constituents[p].user_info<Parton>().hq_channel()) << endl;
+	  
           if(abs(pid)==4||abs(pid)==5)
           {
-            string heavyjet = " pt = " + to_string(jets[k].pt()) + " m = " + to_string(jets[k].m()) + " y = " + to_string(jets[k].rap()) + " phi = " + to_string(jets[k].phi());
-            heavyjet += " hq_channel: " + to_string(constituents[p].user_info<Parton>().hq_channel()) + " hq_mother_id: " + to_string(constituents[p].user_info<Parton>().hq_mother_id());
+            string heavyjet =to_string(pid)+ " " + to_string(jets[k].pt()) + " " + to_string(jets[k].m()) + " " + to_string(jets[k].rap()) + " " + to_string(jets[k].phi());
+            heavyjet += " " + to_string(constituents[p].user_info<Parton>().hq_channel()) + " " + to_string(constituents[p].user_info<Parton>().hq_mother_id());
             heavyjets.push_back(heavyjet);
-          }
+	    //print hqjet_info to a new file
+	    fs<<heavyjet<<endl;
+	  }
+	  
         }
 	cout<<endl;
       }
@@ -132,7 +140,8 @@ int main(int argc, char** argv)
       cout<<"-----------------------------------------------------------"<<endl;
     }
     
-    reader->Close(); 
+    reader->Close();
+    fs.close();
 }
 
 // -------------------------------------

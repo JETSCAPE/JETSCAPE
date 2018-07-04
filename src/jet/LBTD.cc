@@ -137,6 +137,8 @@ void LBTD::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& p
           FourVector p1out;
           FourVector p2out;
           int qId=random_choose_Id();
+	  //test!!!
+	  channel=-1;
           if (channel>=0) 
           {
 	    pout.Set(FS[0].x(),FS[0].y(),FS[0].z(), FS[0].t());  
