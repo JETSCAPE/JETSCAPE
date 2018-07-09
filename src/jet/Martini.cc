@@ -127,7 +127,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
   
   for (int i=0;i<pIn.size();i++) {
     // Only accept low t particles
-    if (pIn[i].t() > QS) continue;
+    if (pIn[i].t() > QS*QS + rounding_error) continue;
     TakeResponsibilityFor ( pIn[i] ); // Generate error if another module already has responsibility.
     
     Id = pIn[i].pid();
