@@ -17,6 +17,7 @@
 #include "JetScapeXML.h"
 #include "JetScapeLogger.h"
 #include "tinyxml2.h"
+#include "JetScapeConstants.h"
 #include <sstream>
 #include <iostream>
 #include <fstream>
@@ -283,6 +284,70 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
       JSDEBUG << "Parton #" << ipart << " is a " << pIn[ipart]->pid() << "with energy = " << pIn[ipart]->e() << " with phi= " << pIn[ipart]->phi() << " and has col= " << col[ipart] << " and acol= " << acol[ipart];
     }
     */
+      
+/***************************************************************************************************************/
+//
+// Making collinear partons not collinear
+//
+// Could have dangerous effects, yet to be tested....
+//
+            
+       for (unsigned int ipart=0; ipart <  pIn.size(); ++ipart)
+       {
+           double px=pIn[ipart]->px();
+           double py=pIn[ipart]->py();
+           double pz=pIn[ipart]->pz();
+           double ee=pIn[ipart]->e();
+           for (unsigned int j = ipart+1; j< pIn.size(); j++)
+           {
+               double p2x = pIn[j]->px();
+               double p2y = pIn[j]->py();
+               double p2z = pIn[j]->pz();
+               double e2e = pIn[j]->e();
+               
+               double diff = sqrt( pow(px-p2x,2) + pow(py-p2y,2) + pow(pz-p2z,2) );
+               double f = 4.0;
+               if (diff < f*Lambda_QCD)
+               {
+                   if ((pz>=0)&&(p2z>=0))
+                   {
+                     if (pz>=p2z)
+                     {
+                         pIn[ipart]->reset_momentum(px,py,pz+f*Lambda_QCD,sqrt(ee*ee + 2*pz*f*Lambda_QCD + f*Lambda_QCD*f*Lambda_QCD) );
+                     }
+                     else pIn[j]->reset_momentum(p2x,p2y,p2z+f*Lambda_QCD,sqrt(e2e*e2e + 2*p2z*f*Lambda_QCD + f*Lambda_QCD*f*Lambda_QCD));
+                   }
+                   else if ((pz>=0)&&(p2z<0))
+                   {
+                       if (abs(pz)>=abs(p2z))
+                       {
+                           pIn[ipart]->reset_momentum(px,py,pz+f*Lambda_QCD,sqrt(ee*ee + 2*pz*f*Lambda_QCD + f*Lambda_QCD*f*Lambda_QCD) );
+                       }
+                       else pIn[j]->reset_momentum(p2x,p2y,p2z-f*Lambda_QCD,sqrt(e2e*e2e - 2*p2z*f*Lambda_QCD + f*Lambda_QCD*f*Lambda_QCD));
+                   }
+                   else if ((pz<0)&&(p2z>=0))
+                   {
+                       if (abs(pz)>=abs(p2z))
+                       {
+                           pIn[ipart]->reset_momentum(px,py,pz-f*Lambda_QCD,sqrt(ee*ee - 2*pz*f*Lambda_QCD + f*Lambda_QCD*f*Lambda_QCD));
+                       }
+                       else pIn[j]->reset_momentum(p2x,p2y,p2z+f*Lambda_QCD,sqrt(e2e*e2e + 2*p2z*f*Lambda_QCD + f*Lambda_QCD*f*Lambda_QCD));
+                   }
+                   else
+                   {
+                       if (abs(pz)>=abs(p2z))
+                       {
+                           pIn[ipart]->reset_momentum(px,py,pz-f*Lambda_QCD,sqrt(ee*ee - 2*pz*f*Lambda_QCD + f*Lambda_QCD*f*Lambda_QCD));
+                       }
+                       else pIn[j]->reset_momentum(p2x,p2y,p2z-f*Lambda_QCD,sqrt(e2e*e2e - 2*p2z*f*Lambda_QCD + f*Lambda_QCD*f*Lambda_QCD));
+                   }
+               }
+           }
+       }
+      
+      
+/**************************************************************************************************************************/
+
     for(unsigned int ipart=0; ipart <  pIn.size(); ++ipart)
     {  
       int ide=pIn[ipart]->pid();
@@ -298,6 +363,7 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
       }
       event.append(int(ide),23,col[ipart],acol[ipart],px,py,pz,ee,mm);
     }
+    
     pythia.next();
     for (unsigned int ipart=0; ipart < event.size(); ++ipart)
     {
