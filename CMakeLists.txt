@@ -49,6 +49,16 @@ if (iSS)
   include_directories(./external_packages/iSS ./external_packages/iSS/src)
 endif (iSS)
 
+# SMASH afterburner. Turn on with 'cmake -Dmusic=ON -DiSS=ON -Dsmash=ON'.
+option(smash "Build tests for SMASH" OFF)
+if (smash)
+  message("SMASH includes and library ...")
+  find_package(SMASH)
+  if(${SMASH_FOUND})
+    include_directories(${SMASH_INCLUDE_DIR})
+  endif(${SMASH_FOUND})
+endif (smash)
+
 ###############################
 ### Compiler & Linker Flags ###
 ###############################
@@ -63,25 +73,25 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-reorder -Wno-unused-variable ")
 ### note that APPLE also defines UNIX, hence the elseif to differentiate
 if (APPLE)
   message( STATUS "Apple : " ${CMAKE_HOST_SYSTEM})
-  
+
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
   ## can turn off some warnings
   # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-private-field")
-  
+
   if(${MPI_FOUND})
     set(CMAKE_CXX_COMPILE_FLAGS ${CMAKE_CXX_COMPILE_FLAGS} ${MPI_COMPILE_FLAGS})
     set(CMAKE_CXX_LINK_FLAGS ${CMAKE_CXX_LINK_FLAGS} ${MPI_LINK_FLAGS})
   endif(${MPI_FOUND})
-elseif(UNIX) 
+elseif(UNIX)
   message( STATUS "Linux : " ${CMAKE_HOST_SYSTEM})
   ## can turn off some warnings
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare -Wno-unused-but-set-variable -Wno-parentheses")
 
   ## Additional options
   # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
-endif()   
+endif()
 
-message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS})	
+message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS})
 #message(STATUS "LD_FLAGS = " ${CMAKE_EXE_LINKER_FLAGS})
 
 ###########################
@@ -119,6 +129,7 @@ install(
   "${CMAKE_SOURCE_DIR}/src/hadronization/"
   "${CMAKE_SOURCE_DIR}/src/initialstate/"
   "${CMAKE_SOURCE_DIR}/src/hydro/"
+  "${CMAKE_SOURCE_DIR}/src/afterburner/"
   "${CMAKE_SOURCE_DIR}/src/jet/"
   "${CMAKE_SOURCE_DIR}/src/reader/"
   # external packages
@@ -127,6 +138,7 @@ install(
   "${CMAKE_SOURCE_DIR}/external_packages/hydro_from_external_file/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/music/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/trento/src/"
+  "${CMAKE_SOURCE_DIR}/external_packages/smash/src/"
   DESTINATION "include" # target directory
   FILES_MATCHING # install only matched files
   PATTERN "*.h*" # select header files
@@ -252,6 +264,7 @@ include_directories(./src/initialstate )
 include_directories(./src/preequilibrium )
 include_directories(./src/hydro )
 include_directories(./src/hadronization )
+include_directories(./src/afterburner )
 include_directories(./src/jet )
 include_directories(./src/reader )
 include_directories(./external_packages/)
@@ -371,6 +384,12 @@ if ( music AND iSS )
   add_executable(MUSICTest ./examples/MUSICTest.cc)
   target_link_libraries(MUSICTest JetScape ${MPI_LIBRARIES} ${GSL_LIBRARIES})
 endif (music AND iSS )
+if ( music AND iSS AND smash )
+  add_executable(SMASHTest ./examples/SMASHTest.cc)
+  include_directories(${SMASH_INCLUDE_DIR})
+  # "-lubsan -lasan")
+  target_link_libraries(SMASHTest JetScape ${SMASH_LIBRARIES} ${MPI_LIBRARIES} ${GSL_LIBRARIES})
+endif ( music AND iSS AND smash )
 
 # if (${ROOT_FOUND})
 #   add_executable(pwg2_reader ./examples/pwg2_reader.cxx)

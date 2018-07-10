@@ -213,4 +213,16 @@
       <Perform_resonance_decays>1</Perform_resonance_decays>
     </iSS>
   </SoftParticlization>
+
+  <!-- Hadronic Afterburner  -->
+  <Afterburner>
+    <!-- SMASH -->
+    <SMASH>
+      <name>SMASH</name>
+      <SMASH_config_file>../external_packages/smash/smash_config.yaml</SMASH_config_file>
+      <SMASH_particles_file>../external_packages/smash/smash_particles.txt</SMASH_particles_file>
+      <SMASH_decaymodes_file>../external_packages/smash/smash_decaymodes.txt</SMASH_decaymodes_file>
+      <end_time>100.0</end_time>
+    </SMASH>
+  </Afterburner>
 </jetscape>

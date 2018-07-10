@@ -126,6 +126,9 @@ void JetScape::SetPointers()
 
       if (dynamic_pointer_cast<PartonPrinter>(it))
         JetScapeSignalManager::Instance()->SetPartonPrinterPointer(dynamic_pointer_cast<PartonPrinter>(it));
+
+      if (dynamic_pointer_cast<SoftParticlization>(it))
+        JetScapeSignalManager::Instance()->SetSoftParticlizationPointer(dynamic_pointer_cast<SoftParticlization>(it));
     }
 }
 
