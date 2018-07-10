@@ -67,7 +67,7 @@ void Brick::InitTask()
       GetParameterList().hydro_input_filename = (char*) "dummy"; //*(argv+1);
 
     } else {
-      WARN << " : Brick not properly initialized in XML file ...";
+      JSWARN << " : Brick not properly initialized in XML file ...";
       exit(-1);
     }
 }
@@ -122,7 +122,7 @@ void Brick::GetHydroInfo(real t, real x, real y, real z,
     }
   else
     {
-      WARN<<"Hydro not run yet ...";
+      JSWARN<<"Hydro not run yet ...";
       exit(-1);
     }
 }

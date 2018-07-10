@@ -342,7 +342,7 @@ namespace Jetscape {
     case 21: // gluon
       break;      
     default:
-      WARN << " error in id = " << id;
+      JSWARN << " error in id = " << id;
       throw std::runtime_error ( "pid not accepted for Parton");
       break;
     }
@@ -560,7 +560,7 @@ namespace Jetscape {
 
     // -- Add unknown particles
     if  ( !InternalHelperPythia.particleData.isParticle(id) ) { // avoid doing it over and over
-      WARN << "id = " << id << " is not recognized as a hadron! "
+      JSWARN << "id = " << id << " is not recognized as a hadron! "
 	   << "Add it as a new type of particle.";
       InternalHelperPythia.particleData.addParticle( id, " ", 0, 0, 0, mass, 0.1);
     }

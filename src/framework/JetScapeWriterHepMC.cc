@@ -70,7 +70,7 @@ namespace Jetscape {
 
     // Have collected all vertices now, add them to the event
     for( auto v : vertices )      evt.add_vertex( v );
-    INFO << " found " << vertices.size() << " vertices in the list";
+    JSINFO << " found " << vertices.size() << " vertices in the list";
     
     write_event(evt);
     vertices.clear();
@@ -124,7 +124,7 @@ namespace Jetscape {
       // 2.1: No. Need to create one (thanks, HepMC)
       if ( nIt->indeg() == 0 ){
 	if (foundRoot){ // Should only happen once unless we merged showers
-	  WARN << "Found a second root! Should only happen if we merged showers. "
+	  JSWARN << "Found a second root! Should only happen if we merged showers. "
 	       << " If that's the case, please comment out the following throw and recompile";
 	  throw std::runtime_error("PROBLEM in JetScapeWriterHepMC: Found a second root.");
 	}
@@ -145,7 +145,7 @@ namespace Jetscape {
 	//  In the current framework, it should only be one.
 	//  So we will catch anything more but provide a mechanism that should work anyway.
 	if (nIt->indeg() > 1 ){
-	  WARN << "Found more than one mother parton! Should only happen if we added medium particles. "
+	  JSWARN << "Found more than one mother parton! Should only happen if we added medium particles. "
 	       << "The code should work, but proceed with caution";
 	}
 
@@ -157,7 +157,7 @@ namespace Jetscape {
 	    // We should already have one!
 	    v->add_particle_in( phepin->second );
 	  } else {
-	    WARN << "Incoming particle out of nowhere. This could maybe happen if we pick up medium particles "
+	    JSWARN << "Incoming particle out of nowhere. This could maybe happen if we pick up medium particles "
 		 << " but is probably a topsort problem. Try using the code after this throw() but be very careful.";
 	    throw std::runtime_error("PROBLEM in JetScapeWriterHepMC: Incoming particle out of nowhere.");
 
@@ -238,7 +238,7 @@ namespace Jetscape {
   void JetScapeWriterHepMC::Init()
   {
     if (GetActive()) {
-      INFO<<"JetScape HepMC Writer initialized with output file = "<<GetOutputFileName();
+      JSINFO<<"JetScape HepMC Writer initialized with output file = "<<GetOutputFileName();
     }
   }
   

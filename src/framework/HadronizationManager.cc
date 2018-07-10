@@ -62,18 +62,18 @@ void HadronizationManager::Clear()
 
 void HadronizationManager::Init()
 {
-  INFO<<"Intialize Hadronization Manager ...";
+  JSINFO<<"Intialize Hadronization Manager ...";
 
   if (GetNumberOfTasks()<1)
     {
-      WARN << " : No valid Hadronization Manager modules found ...";
+      JSWARN << " : No valid Hadronization Manager modules found ...";
       exit(-1);
     }
   
-  INFO<<"Found "<<GetNumberOfTasks()<<" Hadronization Manager Tasks/Modules Initialize them ... ";
+  JSINFO<<"Found "<<GetNumberOfTasks()<<" Hadronization Manager Tasks/Modules Initialize them ... ";
   JetScapeTask::InitTasks();
 
-  INFO<<"Connect HadronizationManager Signal to Energy Loss ...";
+  JSINFO<<"Connect HadronizationManager Signal to Energy Loss ...";
   JetScapeSignalManager::Instance()->ConnectGetFinalPartonListSignal(shared_from_this());
 
 }
@@ -92,7 +92,7 @@ void HadronizationManager::Exec()
   
   if (GetNumberOfTasks()<1)
   {
-    WARN << " : No valid Hadronization modules found ...";
+    JSWARN << " : No valid Hadronization modules found ...";
     exit(-1);
   }
 

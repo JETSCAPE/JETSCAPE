@@ -55,7 +55,7 @@ Martini::~Martini()
 
 void Martini::Init()
 {
-  INFO<<"Intialize Martini ...";
+  JSINFO<<"Intialize Martini ...";
 
   // Redundant (get this from Base) quick fix here for now
   tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );
@@ -521,7 +521,7 @@ int Martini::DetermineProcess(double pRest, double T, double deltaT, int Id)
 
       // warn if total probability exceeds 1
       if (totalQuarkProb > 1.){
-	WARN << " : Total Probability for quark processes exceeds 1 ("
+	JSWARN << " : Total Probability for quark processes exceeds 1 ("
 	     << totalQuarkProb << "). "
 	     << " : Most likely this means you should choose a smaller deltaT in the xml (e.g. 0.01).";
 	throw std::runtime_error ("Martini probability problem.");
@@ -589,7 +589,7 @@ int Martini::DetermineProcess(double pRest, double T, double deltaT, int Id)
 
       // warn if total probability exceeds 1
       if (totalGluonProb > 1.)
-	WARN << " : Total Probability for quark processes exceeds 1 ("
+	JSWARN << " : Total Probability for quark processes exceeds 1 ("
 	     << totalGluonProb << ")";
 
       double accumProb = 0.;
@@ -863,7 +863,7 @@ double Martini::getNewMomentumRad(double pRest, double T, int process)
     }
   else
     {
-      WARN << "Invalid process number (" << process << ")";
+      JSWARN << "Invalid process number (" << process << ")";
     }
 
   return newp;
@@ -1693,7 +1693,7 @@ double Martini::getEnergyTransfer(double pRest, double T, int process)
     }
   else
     {
-      WARN << "Invalid process number (" << process << ")";
+      JSWARN << "Invalid process number (" << process << ")";
 
       omega = 0.;
     }
@@ -1732,7 +1732,7 @@ double Martini::getMomentumTransfer(double pRest, double omega, double T, int pr
 	}
       else
 	{
-	  WARN << "Invalid process number (" << process << ")";
+	  JSWARN << "Invalid process number (" << process << ")";
 
 	  A = 0.;
 	  B = 0.;
@@ -1820,7 +1820,7 @@ double Martini::areaOmega(double u, int posNegSwitch, int process)
     }
   else
     {
-      WARN << "Invalid process number (" << process << ")";
+      JSWARN << "Invalid process number (" << process << ")";
     }
 
   return 0.;
@@ -1845,7 +1845,7 @@ double Martini::areaQ(double u, double omega, int process)
     }
   else
     {
-      WARN << "Invalid process number (" << process << ")";
+      JSWARN << "Invalid process number (" << process << ")";
 
       A = 0.;
       B = 0.;

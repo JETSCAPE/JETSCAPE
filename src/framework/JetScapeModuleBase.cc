@@ -55,7 +55,7 @@ namespace Jetscape {
   {
     if (!JetScapeXML::Instance()->GetXMLRoot())
       {
-	WARN << "Not a valide JetScape XML file or no XML file loaded!";
+	JSWARN << "Not a valide JetScape XML file or no XML file loaded!";
 	exit(-1);
       }
   }
