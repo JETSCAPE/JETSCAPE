@@ -21,6 +21,11 @@
 #include <iostream>
 #include <time.h>
 
+// Move it here to avoid conflicts:
+// 1. Conflicts with MUSIC macros: hbarc, theta, limit, etc
+// 2. Conflict of make_unique from smash and from JetScape
+#include "SmashWrapper.h"
+
 // JetScape Framework includes ...
 #include "JetScape.h"
 #include "JetEnergyLoss.h"
@@ -47,7 +52,6 @@
 #undef gmn
 #undef limit
 
-#include "SmashWrapper.h"
 #include "iSpectraSamplerWrapper.h"
 #include "TrentoInitial.h"
 #include "PGun.h"

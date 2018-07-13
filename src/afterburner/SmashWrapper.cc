@@ -29,12 +29,6 @@
 
 using namespace Jetscape;
 
-double AfterburnerModus::initial_conditions(smash::Particles *particles,
-                                      const smash::ExperimentParameters &) {
-  backpropagate_to_same_time(*particles);
-  return start_time_;
-}
-
 SmashWrapper::SmashWrapper() {
   SetId("SMASH");
 }
@@ -103,20 +97,19 @@ void SmashWrapper::InitTask() {
   // output path is just dummy here, because no output from SMASH is foreseen
   JSINFO << "Seting up SMASH Experiment object";
   boost::filesystem::path output_path("./smash_output");
-  smash_experiment_ = make_shared<smash::Experiment<AfterburnerModus>>(
+  smash_experiment_ = make_shared<smash::Experiment<smash::AfterburnerModus>>(
       config, output_path);
 }
 
 void SmashWrapper::ExecuteTask() {
-  // todo(oliiny): does it help to avoid copying?
   const auto& JS_initial_hadrons = soft_particlization_sampler_->Hadron_list_;
   const int n_events = JS_initial_hadrons.size();
   JSINFO << "SMASH: obtained " << n_events << " events from particlization";
   smash::Particles* smash_particles = smash_experiment_->particles();
   for (unsigned int i = 0; i < n_events; i++) {
-    JSINFO << "Event " << i << " SMASH starts with " <<
-              JS_initial_hadrons[i].size() << " particles.";
-    JS_hadrons_to_smash_particles(JS_initial_hadrons, *smash_particles);
+    JSINFO << "Event " << i << " SMASH starts with "
+           << JS_initial_hadrons[i].size() << " particles.";
+    JS_hadrons_to_smash_particles(JS_initial_hadrons[i], *smash_particles);
     if (!only_final_decays_) {
       smash_experiment_->initialize_new_event();
       smash_experiment_->run_time_evolution();
@@ -145,9 +138,9 @@ void SmashWrapper::WriteTask(weak_ptr<JetScapeWriter> w) {
 }
 
 void SmashWrapper::JS_hadrons_to_smash_particles(
-    std::vector<shared_ptr<Hadron>>& JS_hadrons,
+    const std::vector<shared_ptr<Hadron>>& JS_hadrons,
     smash::Particles& smash_particles) {
-  AfterburnerModus* modus = smash_experiment_->modus();
+  smash::AfterburnerModus* modus = smash_experiment_->modus();
   smash_particles.reset();
   for (const auto JS_hadron : JS_hadrons) {
     const FourVector p = JS_hadron->p_in();
