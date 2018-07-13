@@ -35,6 +35,18 @@
 #include "Matter.h"
 #include "Martini.h"
 #include "MusicWrapper.h"
+// Make sure that nasty MUSIC macros are neutralized
+#undef PI
+#undef hbarc
+#undef default_tol
+#undef absol
+#undef maxi
+#undef mini
+#undef sgn
+#undef theta
+#undef gmn
+#undef limit
+
 #include "SmashWrapper.h"
 #include "iSpectraSamplerWrapper.h"
 #include "TrentoInitial.h"
