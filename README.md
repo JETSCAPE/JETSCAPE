@@ -1,5 +1,6 @@
-What this branch does: A new wrapper for trento (2d and 3d) with almost all its options exposed in jetscape_init.xml
-To be done: A cache directory that generate the centrality slection table at run-time. It will also check if the centrality table is generated with the same set of parameter, otherwise, another table would be cached.
+***What this branch does*** : A new wrapper for trento (2d and 3d) with almost all its options exposed in jetscape_init.xml
+
+***To be done*** : A cache directory that generate the centrality slection table at run-time. It will also check if the centrality table is generated with the same set of parameter, otherwise, another table would be cached.
 
 Test Skeleton of (potential) JetScape Framework
 
