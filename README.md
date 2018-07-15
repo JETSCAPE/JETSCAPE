@@ -1,6 +1,10 @@
-***What this branch does*** : A new wrapper for trento (2d and 3d) with almost all its options exposed in jetscape_init.xml
+***What this branch does*** : 
 
-***To be done*** : A cache directory that generate the centrality slection table at run-time. It will also check if the centrality table is generated with the same set of parameter, otherwise, another table would be cached.
+A new wrapper for trento (2d and 3d) with almost all its options exposed in jetscape_init.xml. 
+
+It now support the centrality cut option (1% precision). The program will first call trento2d (because it is fast and the 3d extension does not affects centrality determination at mid-rapidity) with the defual grid and user-defined parameters (except the normalization (=1), since it does not affect the shape of the centrality table) and generate the table normalization * TotalEnergyDensity(centrality) using 10000 events. Next, the table is used to generate total energy density cut for trento3d.
+
+***To be done*** : A cache directory to save these centrality tables. It checks if the centrality table is generated with the same set of parameter. If it is, load the table; otherwise, another table will be generated.
 
 Test Skeleton of (potential) JetScape Framework
 
