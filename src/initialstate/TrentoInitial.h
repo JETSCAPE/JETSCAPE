@@ -76,7 +76,7 @@ class TrentoInitial : public InitialState {
 
     tinyxml2::XMLElement * trento_xml_;
 	std::shared_ptr<trento::Collider> TrentoGen_;
-
+	std::pair<double, double> GenCenTab(std::string proj, std::string targ, VarMap var_map, int cL, int cH);
     /// The output instance.
     // Output output_;
 };

@@ -42,6 +42,7 @@ class NucleonProfile;
 ///   }
 ///
 /// \endrst
+
 class Event {
  public:
   /// Instantiate from the configuration.

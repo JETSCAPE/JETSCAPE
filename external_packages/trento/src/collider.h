@@ -27,6 +27,14 @@ namespace trento {
 ///   collider.run_events();
 ///
 /// \endrst
+
+struct records {
+	int i;
+	double b;
+	double npart;
+	double mult;
+};
+
 class Collider {
  public:
   /// Instantiate from the configuration.
@@ -42,8 +50,8 @@ class Collider {
 
   /// Run events and output.
   void run_events();
-  double impact_parameter() const{
-	return impact_parameter_;
+  const std::vector<records> & all_records() const{
+	return all_records_;
   }
   const Event & expose_event() const{
     return event_;
@@ -54,7 +62,6 @@ class Collider {
 
   /// Sample a min-bias impact parameter within the set range.
   double sample_impact_param();
-  double impact_parameter_;
   /// Pair of nucleus projectiles.
   std::unique_ptr<Nucleus> nucleusA_, nucleusB_;
 
@@ -102,6 +109,9 @@ class Collider {
 
   /// Whether calculate Ncoll and nulear binary collision density
   bool with_ncoll_;
+
+  // take down id, b, npart, ncoll, mult for each event.
+  std::vector<records> all_records_;
 };
 
 }  // namespace trento

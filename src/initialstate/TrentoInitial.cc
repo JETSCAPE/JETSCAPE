@@ -18,6 +18,8 @@
 #include <fstream>
 #include <boost/bind.hpp>
 #include <boost/tokenizer.hpp>
+#include <algorithm>
+
 #include "TrentoInitial.h"
 
 namespace Jetscape {
@@ -222,8 +224,8 @@ void TrentoInitial::InitTask() {
 	double normalization = std::atof(phy_opts->Attribute("normalization"));
 	
 	std::string cen_def(cut_opts->Attribute("centrality-definition"));
-	double cen_low = std::atof(cut_opts->Attribute("centrality-low"));
-	double cen_high = std::atof(cut_opts->Attribute("centrality-high"));
+	int cen_low = std::atoi(cut_opts->Attribute("centrality-low"));
+	int cen_high = std::atoi(cut_opts->Attribute("centrality-high"));
 	
 	double p = std::atof(trans_opts->Attribute("reduced-thickness"));
 	double k = std::atof(trans_opts->Attribute("fluctuation"));
@@ -236,18 +238,10 @@ void TrentoInitial::InitTask() {
 	int skew_type = std::atof(longi_opts->Attribute("skew-type"));
 	double J = std::atof(longi_opts->Attribute("jacobian"));
 
-	std::string cmd;
-	cmd = proj + " " + targ + " 1 " // 1 event only
-		+ " --quiet " // be quite
-		+ " --ncoll " // calcualte # of binary collision
+	std::string options1 = 
 		+ " --random-seed " + std::to_string(random_seed)
 		+ " --cross-section " + std::to_string(cross_section)
 		+ " --beam-energy " + std::to_string(sqrts)
-		+ " --normalization " + std::to_string(normalization)
-		+ " --xy-max " + std::to_string(xymax)
-		+ " --xy-step " + std::to_string(dxy)
-		+ " --eta-max " + std::to_string(etamax)
-		+ " --eta-step " + std::to_string(deta)
 		+ " --reduced-thickness " + std::to_string(p)
 		+ " --fluctuation " + std::to_string(k)
 		+ " --nucleon-width " + std::to_string(w)
@@ -256,9 +250,32 @@ void TrentoInitial::InitTask() {
 		+ " --std-coeff " + std::to_string(var)
 		+ " --skew-coeff " + std::to_string(skew)
 		+ " --skew-type " + std::to_string(skew_type)
-		+ " --jacobian " + std::to_string(J);
+		+ " --jacobian " + std::to_string(J)
+		+ " --quiet ";
+	std::string options2 = 
+		" --normalization " + std::to_string(normalization)
+		+ " --ncoll " // calcualte # of binary collision
+		+ " --xy-max " + std::to_string(xymax)
+		+ " --xy-step " + std::to_string(dxy)
+		+ " --eta-max " + std::to_string(etamax)
+		+ " --eta-step " + std::to_string(deta);
+	// Handle centrality table, not normzlized, default grid, 2D (fast) !!!
+	std::string cmd_basic = proj+" "+targ+" 1000 "+options1;
+	VarMap var_map_basic{}; 
+  	po::store(po::command_line_parser(tokenize(cmd_basic))
+      .options(all_opts).positional(positional_opts).run(), var_map_basic);
+	auto Ecut = GenCenTab(proj, targ, var_map_basic, cen_low, cen_high);
+	double Ehigh = Ecut.first*normalization; // rescale the cut
+	double Elow = Ecut.second*normalization; // rescale the cut
+	INFO << "The total energy density cut for centrality = [" << cen_low << ", "
+		 << cen_high << "] (%) is:";
+	INFO << Elow << "<dE/deta(eta=0)<" << Ehigh;
+	std::string options_cut = 
+		  " --s-max " + std::to_string(Ehigh)
+		+ " --s-min " + std::to_string(Elow);
 
 	// Set trento configuration
+	std::string cmd = proj+" "+targ+" 1 "+options1+options2+options_cut;
 	INFO << cmd;
 	VarMap var_map{};
   	po::store(po::command_line_parser(tokenize(cmd))
@@ -269,6 +286,46 @@ void TrentoInitial::InitTask() {
 	INFO << "TRENTo set";
 }
 
+bool compare_E(trento::records r1, trento::records r2) { return r1.mult > r2.mult; }
+
+std::pair<double, double> TrentoInitial::GenCenTab(std::string proj, std::string targ, VarMap var_map, int cL, int cH) {
+	trento::Collider another_collider(var_map);
+	INFO << "TRENTo is generating new centrality table for this new parameter set";
+	INFO << "It may take 10(s) to 1(min).";
+
+	another_collider.run_events();
+	// Get all records and sort according to totoal energy
+	auto event_records = another_collider.all_records();
+	std::sort(event_records.begin(), event_records.end(), compare_E);
+	// write centrality table
+	double Etab[101];
+	int nstep = std::ceil(event_records.size()/100);
+	std::ofstream fout("./trento-tab.txt");
+	fout << "#\tproj\ttarj\tsqrts\tx\tp\tk\tw\td\n"
+		 << "#\t" << proj << "\t" << targ << "\t"
+		 << var_map["beam-energy"].as<double>()  << "\t"
+		 << var_map["cross-section"].as<double>()  << "\t"
+		 << var_map["reduced-thickness"].as<double>() << "\t"
+		 << var_map["fluctuation"].as<double>() << "\t"
+		 << var_map["nucleon-width"].as<double>() << "\t"
+		 << var_map["nucleon-min-dist"].as<double>() << "\n"
+		 << "#\tcen_L\tcen_H\tun-normalized total density\n";
+	Etab[0] = 1e10;
+	for (int i=1; i<100; i+=1) {
+		auto ee = event_records[i*nstep];
+		fout << i-1 << "\t" << i << "\t" << ee.mult << std::endl;
+		Etab[i] = ee.mult;
+	}
+	auto ee = event_records.back();
+	fout << 99 << "\t" << 100 << "\t" << ee.mult << std::endl;
+	Etab[100] = ee.mult;
+	fout.close();
+	if (cL<0 || cL >100 || cH<0 || cH >100 || cH < cL) {
+		WARN << "Wrong centrality cuts! To be terminated.";
+		exit(-1);
+	}
+	return std::make_pair(Etab[cL], Etab[cH]);
+}
 
 void TrentoInitial::Exec() {  
     INFO << " Exec TRENTo initial condition ";
@@ -276,7 +333,7 @@ void TrentoInitial::Exec() {
 
 	INFO << " TRENTo event info: ";
 	auto tmp_event = TrentoGen_->expose_event();
-    info_.impact_parameter = TrentoGen_->impact_parameter();
+    info_.impact_parameter = TrentoGen_->all_records().back().b;
     info_.num_participant = tmp_event.npart();
 	info_.num_binary_collisions = tmp_event.ncoll();
     info_.total_entropy = tmp_event.multiplicity();

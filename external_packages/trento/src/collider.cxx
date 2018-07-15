@@ -107,7 +107,12 @@ void Collider::run_events() {
 	}while( (!fullfil_Npart_cut) || (!fullfil_Entropy_cut) );
     // Write event data.
     output_(n, b, event_);
-	impact_parameter_ = b;
+	records this_event;
+	this_event.i = n;
+	this_event.b = b;
+	this_event.npart = event_.npart();
+	this_event.mult = event_.multiplicity();
+	all_records_.push_back(this_event);
   }
   double cross_section = nevents_*M_PI*(bmax_*bmax_ - bmin_*bmin_)/ntrys_;
   double cross_section_err = cross_section/std::sqrt(1.*nevents_);
