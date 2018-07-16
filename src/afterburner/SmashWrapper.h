@@ -31,6 +31,8 @@
 #include "Afterburner.h"
 #include "JetScapeWriter.h"
 
+using namespace Jetscape;
+
 /**
  * An Afterburner modus, which acts similarly to SMASH ListModus,
  * initializes from Jetscape hadrons, not from file. Needed to use
