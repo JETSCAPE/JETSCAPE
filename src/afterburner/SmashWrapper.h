@@ -19,33 +19,63 @@
 #ifndef SMASHWRAPPER_H
 #define SMASHWRAPPER_H
 
+#include "smash/configuration.h"
+#include "smash/experiment.h"
+// Although bad practice, including experiment.cc is the easiest way to access
+// the templated implementations of smash::Experiment class methods. Maybe in
+// future SMASH changes its design to be more friendly towards being a 3rd-party
+// library, then this include can be removed.
+#include "smash/experiment.cc"
+#include "smash/listmodus.h"
+
 #include "Afterburner.h"
 #include "JetScapeWriter.h"
 
-#include "smash/configuration.h"
-#include "smash/experiment.h"
-#include "smash/listmodus.h"
+/**
+ * An Afterburner modus, which acts similarly to SMASH ListModus,
+ * initializes from Jetscape hadrons, not from file. Needed to use
+ * SMASH as a 3rd party Afterburner.
+ */
+class AfterburnerModus : public smash::ListModus {
+public:
+  // Unlike for ListModus there is no need to get any data from the config
+  AfterburnerModus(smash::Configuration, const smash::ExperimentParameters &) {}
+  // The converter is not static, because modus holds int variables
+  // for the number of warnings, which are used in try_create_particle,
+  // called by this function. Maybe I (oliiny) will change this design in SMASH
+  // later, but now I have to put this converter inside the AfterburnerModus.
+  void JS_hadrons_to_smash_particles(
+      const std::vector<shared_ptr<Hadron>> &JS_hadrons,
+      smash::Particles &smash_particles);
 
-using namespace Jetscape;
+  // This function overrides the function from ListModus.
+  double initial_conditions(smash::Particles *particles,
+                            const smash::ExperimentParameters &) {
+    JS_hadrons_to_smash_particles(jetscape_hadrons_[event_number_], *particles);
+    backpropagate_to_same_time(*particles);
+    event_number_++;
+    return start_time_;
+  }
+  std::vector<std::vector<shared_ptr<Hadron>>> jetscape_hadrons_;
 
-class SmashWrapper: public Afterburner {
- private:
-    std::vector<std::vector<shared_ptr<Hadron>>> final_hadrons_;
-    tinyxml2::XMLElement *smash_xml_;
-    bool only_final_decays_ = false;
-    shared_ptr<smash::Experiment<smash::AfterburnerModus>> smash_experiment_;
-
-    void smash_particles_to_JS_hadrons(const smash::Particles& smash_particles,
-                                  std::vector<shared_ptr<Hadron>>& JS_hadrons);
-
-    void JS_hadrons_to_smash_particles(
-        const std::vector<shared_ptr<Hadron>>& JS_hadrons,
-        smash::Particles& smash_particles);
- public:
-    SmashWrapper();
-    void InitTask();
-    void ExecuteTask();
-    void WriteTask(weak_ptr<JetScapeWriter> w);
+private:
+  int event_number_ = 0;
 };
 
-#endif  // SMASHWRAPPER_H
+class SmashWrapper : public Afterburner {
+private:
+  tinyxml2::XMLElement *smash_xml_;
+  bool only_final_decays_ = false;
+  shared_ptr<smash::Experiment<AfterburnerModus>> smash_experiment_;
+
+public:
+  void
+  smash_particles_to_JS_hadrons(const smash::Particles &smash_particles,
+                                std::vector<shared_ptr<Hadron>> &JS_hadrons);
+  SmashWrapper();
+  void InitTask();
+  void ExecuteTask();
+  void WriteTask(weak_ptr<JetScapeWriter> w);
+};
+
+#endif // SMASHWRAPPER_H

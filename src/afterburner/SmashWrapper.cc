@@ -29,9 +29,7 @@
 
 using namespace Jetscape;
 
-SmashWrapper::SmashWrapper() {
-  SetId("SMASH");
-}
+SmashWrapper::SmashWrapper() { SetId("SMASH"); }
 
 void SmashWrapper::InitTask() {
   JSINFO << "SMASH: picking SMASH-specific configuration from xml file";
@@ -41,8 +39,8 @@ void SmashWrapper::InitTask() {
     exit(-1);
   }
   // Read SMASH config file
-  string smash_config = smash_xml_->
-      FirstChildElement("SMASH_config_file")->GetText();
+  string smash_config =
+      smash_xml_->FirstChildElement("SMASH_config_file")->GetText();
   boost::filesystem::path input_config_path(smash_config);
   if (!boost::filesystem::exists(input_config_path)) {
     JSWARN << "SMASH config file " << smash_config << " not found.";
@@ -53,8 +51,8 @@ void SmashWrapper::InitTask() {
   smash::Configuration config(input_config_path.parent_path(),
                               input_config_path.filename());
   // SMASH hadron list
-  string hadron_list = smash_xml_->
-      FirstChildElement("SMASH_particles_file")->GetText();
+  string hadron_list =
+      smash_xml_->FirstChildElement("SMASH_particles_file")->GetText();
   if (boost::filesystem::exists(hadron_list)) {
     config["particles"] =
         smash::read_all(boost::filesystem::ifstream{hadron_list});
@@ -64,8 +62,8 @@ void SmashWrapper::InitTask() {
     JSINFO << "Using default SMASH hadron list.";
   }
   // SMASH decaymodes
-  string decays_list = smash_xml_->
-      FirstChildElement("SMASH_decaymodes_file")->GetText();
+  string decays_list =
+      smash_xml_->FirstChildElement("SMASH_decaymodes_file")->GetText();
   if (boost::filesystem::exists(decays_list)) {
     config["decaymodes"] =
         smash::read_all(boost::filesystem::ifstream{decays_list});
@@ -79,7 +77,6 @@ void SmashWrapper::InitTask() {
   // Take care of the random seed. This will make SMASH results reproducible.
   auto random_seed = (*GetMt19937Generator())();
   config["General"]["Randomseed"] = random_seed;
-  VERBOSE(2) << "Random seed used for SMASH: " << random_seed;
   // Set SMASH logging
   smash::set_default_loglevel(
       config.take({"Logging", "default"}, einhard::INFO));
@@ -88,8 +85,8 @@ void SmashWrapper::InitTask() {
   float end_time;
   smash_xml_->FirstChildElement("end_time")->QueryFloatText(&end_time);
   config["General"]["End_Time"] = end_time;
-  smash_xml_->FirstChildElement("only_decays")->
-      QueryBoolText(&only_final_decays_);
+  smash_xml_->FirstChildElement("only_decays")
+      ->QueryBoolText(&only_final_decays_);
   JSINFO << "End time for SMASH is set to " << end_time << " fm/c";
   if (only_final_decays_) {
     JSINFO << "SMASH will only perform resonance decays, no propagation";
@@ -97,38 +94,40 @@ void SmashWrapper::InitTask() {
   // output path is just dummy here, because no output from SMASH is foreseen
   JSINFO << "Seting up SMASH Experiment object";
   boost::filesystem::path output_path("./smash_output");
-  smash_experiment_ = make_shared<smash::Experiment<smash::AfterburnerModus>>(
-      config, output_path);
+  smash_experiment_ =
+      make_shared<smash::Experiment<AfterburnerModus>>(config, output_path);
 }
 
 void SmashWrapper::ExecuteTask() {
-  const auto& JS_initial_hadrons = soft_particlization_sampler_->Hadron_list_;
-  const int n_events = JS_initial_hadrons.size();
+  AfterburnerModus *modus = smash_experiment_->modus();
+  modus->jetscape_hadrons_ = soft_particlization_sampler_->Hadron_list_;
+  const int n_events = modus->jetscape_hadrons_.size();
   JSINFO << "SMASH: obtained " << n_events << " events from particlization";
-  smash::Particles* smash_particles = smash_experiment_->particles();
+  smash::Particles *smash_particles = smash_experiment_->particles();
   for (unsigned int i = 0; i < n_events; i++) {
     JSINFO << "Event " << i << " SMASH starts with "
-           << JS_initial_hadrons[i].size() << " particles.";
-    JS_hadrons_to_smash_particles(JS_initial_hadrons[i], *smash_particles);
+           << modus->jetscape_hadrons_[i].size() << " particles.";
+    smash_experiment_->initialize_new_event();
     if (!only_final_decays_) {
-      smash_experiment_->initialize_new_event();
       smash_experiment_->run_time_evolution();
     }
     smash_experiment_->do_final_decays();
-    std::vector<shared_ptr<Hadron>> final_hadrons_this_event;
-    smash_particles_to_JS_hadrons(*smash_particles, final_hadrons_this_event);
-    final_hadrons_.push_back(final_hadrons_this_event);
-    JSINFO << final_hadrons_this_event.size() << " hadrons from SMASH.";
+    smash_experiment_->final_output(i);
+    smash_particles_to_JS_hadrons(*smash_particles,
+                                  modus->jetscape_hadrons_[i]);
+    JSINFO << modus->jetscape_hadrons_[i].size() << " hadrons from SMASH.";
   }
 }
 
 void SmashWrapper::WriteTask(weak_ptr<JetScapeWriter> w) {
   JSINFO << "SMASH hadronic afterburner printout";
   auto f = w.lock();
-  if ( !f ) return;
-
+  if (!f) {
+    return;
+  }
+  AfterburnerModus *modus = smash_experiment_->modus();
   f->WriteComment("JetScape module: " + GetId());
-  for (const auto &event : final_hadrons_) {
+  for (const auto &event : modus->jetscape_hadrons_) {
     int i = -1;
     for (const auto hadron : event) {
       f->WriteWhiteSpace("[" + to_string(++i) + "] H");
@@ -137,41 +136,35 @@ void SmashWrapper::WriteTask(weak_ptr<JetScapeWriter> w) {
   }
 }
 
-void SmashWrapper::JS_hadrons_to_smash_particles(
-    const std::vector<shared_ptr<Hadron>>& JS_hadrons,
-    smash::Particles& smash_particles) {
-  smash::AfterburnerModus* modus = smash_experiment_->modus();
+void AfterburnerModus::JS_hadrons_to_smash_particles(
+    const std::vector<shared_ptr<Hadron>> &JS_hadrons,
+    smash::Particles &smash_particles) {
   smash_particles.reset();
   for (const auto JS_hadron : JS_hadrons) {
     const FourVector p = JS_hadron->p_in();
     const FourVector r = JS_hadron->x_in();
     const double mass = JS_hadron->restmass();
     smash::PdgCode pdgcode = smash::PdgCode::from_decimal(JS_hadron->pid());
-    modus->try_create_particle(smash_particles,
-      pdgcode, r.t(), r.x(), r.y(), r.z(), mass,
-      JS_hadron->e(), JS_hadron->px(), JS_hadron->py(), JS_hadron->pz());
+    this->try_create_particle(smash_particles, pdgcode, r.t(), r.x(), r.y(),
+                              r.z(), mass, JS_hadron->e(), JS_hadron->px(),
+                              JS_hadron->py(), JS_hadron->pz());
   }
 }
 
 void SmashWrapper::smash_particles_to_JS_hadrons(
-    const smash::Particles& smash_particles,
-    std::vector<shared_ptr<Hadron>>& JS_hadrons) {
+    const smash::Particles &smash_particles,
+    std::vector<shared_ptr<Hadron>> &JS_hadrons) {
   JS_hadrons.clear();
   for (const auto &particle : smash_particles) {
     const int hadron_label = 0;
     const int hadron_status = -1;
     const int hadron_id = particle.pdgcode().get_decimal();
-    smash::FourVector p = particle.momentum(),
-                      r = particle.position();
+    smash::FourVector p = particle.momentum(), r = particle.position();
     const FourVector hadron_p(p.x1(), p.x2(), p.x3(), p.x0()),
-                     hadron_r(r.x1(), r.x2(), r.x3(), r.x0());
+        hadron_r(r.x1(), r.x2(), r.x3(), r.x0());
     const double hadron_mass = p.abs();
-    JS_hadrons.push_back(make_shared<Hadron>(
-         hadron_label,
-         hadron_id,
-         hadron_status,
-         hadron_p,
-         hadron_r,
-         hadron_mass));
+    JS_hadrons.push_back(make_shared<Hadron>(hadron_label, hadron_id,
+                                             hadron_status, hadron_p, hadron_r,
+                                             hadron_mass));
   }
 }
