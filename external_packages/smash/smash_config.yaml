@@ -2,7 +2,7 @@ Logging:
     default: INFO
 
 General:
-    Modus:         List
+    Modus:  Afterburner   # Dummy, but some value has to be present
     Time_Step_Mode: Fixed
     Delta_Time:    0.1
     End_Time:      100.0  # Reset from the JetScape xml config
@@ -10,15 +10,4 @@ General:
     Nevents:       1      # Dummy
 
 Output:
-    Output_Interval:  10000.0
-
-Modi:
-    List:
-        # File_Directory, File_Prefix and Shift_Id are dummy here
-        # Normally they are related to reading from file
-        File_Directory: XXX
-        File_Prefix: "mc_particle_list"
-        Shift_Id: 0
-        # Important: this is the time to which particles are backpropagated
-        # to have them at equal time
-        Start_Time: 0.0
+    Output_Interval:  5.0
