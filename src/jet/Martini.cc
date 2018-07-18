@@ -1946,8 +1946,8 @@ void Martini::readRadiativeRate(Gamma_info *dat, dGammas *Gam)
   string filename;
   filename = PathToTables+"radgamma";
 
-  INFO << "Reading rates of inelastic collisions from file " << endl;
-  INFO << filename.c_str() << " ... " << endl;
+  INFO << "Reading rates of inelastic collisions from file ";
+  INFO << filename.c_str() << " ... ";
   size_t bytes_read;
 
   rfile = fopen(filename.c_str(), "rb"); 
@@ -1997,9 +1997,9 @@ void Martini::readElasticRateOmega()
   filename[0] = PathToTables + "logEnDtrqq";
   filename[1] = PathToTables + "logEnDtrqg";
   
-  INFO << "Reading rates of elastic collisions from files" << endl;
-  INFO << filename[0] << endl;
-  INFO << filename[1] << " ..." << endl;
+  INFO << "Reading rates of elastic collisions from files";
+  INFO << filename[0];
+  INFO << filename[1] << " ...";
 
   fin.open(filename[0].c_str(), ios::in);
   if(!fin)
@@ -2052,9 +2052,9 @@ void Martini::readElasticRateQ()
   filename[0] = PathToTables + "logEnDqtrqq";
   filename[1] = PathToTables + "logEnDqtrqg";
   
-  INFO << "Reading rates of elastic collisions from files" << endl;
-  INFO << filename[0] << endl;
-  INFO << filename[1] << " ..." << endl;
+  INFO << "Reading rates of elastic collisions from files";
+  INFO << filename[0];
+  INFO << filename[1] << " ...";
 
   fin.open(filename[0].c_str(), ios::in);
   if(!fin)
