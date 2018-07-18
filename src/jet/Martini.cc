@@ -588,9 +588,12 @@ int Martini::DetermineProcess(double pRest, double T, double deltaT, int Id)
       totalGluonProb += (rateElas.gq + rateElas.gg + rateConv.gq)*dT;
 
       // warn if total probability exceeds 1
-      if (totalGluonProb > 1.)
-	WARN << " : Total Probability for quark processes exceeds 1 ("
-	     << totalGluonProb << ")";
+      if (totalGluonProb > 1.){
+	WARN << " : Total Probability for gluon processes exceeds 1 ("
+	     << totalGluonProb << "). "
+	     << " : Most likely this means you should choose a smaller deltaT in the xml (e.g. 0.01).";
+	throw std::runtime_error ("Martini probability problem.");
+      }
 
       double accumProb = 0.;
       double nextProb = 0.;
@@ -1886,21 +1889,18 @@ FourVector Martini::getNewMomentumElas(FourVector pVec, double omega, double q)
   if (pVec.y()*pVec.y() > pVec.x()*pVec.x())
     {
       xx = 0.;
-      yy = -pVec.z()/pVec.t();
-      zz = pVec.y()/pVec.t();
-      tt = sqrt(yy*yy+zz*zz);
-
-      etVec.Set(xx, yy, zz, tt);
+      yy = -pVec.z();
+      zz = pVec.y();
     }
   else
     {
-      xx = pVec.z()/pVec.t();
+      xx = pVec.z();
       yy = 0.;
-      zz = -pVec.x()/pVec.t();
-      tt = sqrt(yy*yy+zz*zz);
-
-      etVec.Set(xx, yy, zz, tt);
+      zz = -pVec.x();
     }
+
+  tt = sqrt(xx*xx+yy*yy+zz*zz);
+  etVec.Set(xx/tt, yy/tt, zz/tt, 1.);  // normalized to 1
 
   // the transverse transferred momentum vector
   qtVec.Set(etVec.x()*qt, etVec.y()*qt, etVec.z()*qt, etVec.t()*qt);
@@ -1946,8 +1946,8 @@ void Martini::readRadiativeRate(Gamma_info *dat, dGammas *Gam)
   string filename;
   filename = PathToTables+"radgamma";
 
-  cout << "Reading rates of inelastic collisions from file " << endl;
-  cout << filename.c_str() << " ... " << endl;
+  INFO << "Reading rates of inelastic collisions from file " << endl;
+  INFO << filename.c_str() << " ... " << endl;
   size_t bytes_read;
 
   rfile = fopen(filename.c_str(), "rb"); 
@@ -1969,7 +1969,6 @@ void Martini::readRadiativeRate(Gamma_info *dat, dGammas *Gam)
   bytes_read = fread((char *)Gam->qqgamma, sizeof(double), NP*NK, rfile);
   bytes_read = fread((char *)Gam->tau_qqgamma, sizeof(double), NP*NK, rfile);
   fclose (rfile);
-  cout << " ok." << endl;
 
   dat->Nf = nf;
   dat->dp = 0.05;
@@ -1998,15 +1997,15 @@ void Martini::readElasticRateOmega()
   filename[0] = PathToTables + "logEnDtrqq";
   filename[1] = PathToTables + "logEnDtrqg";
   
-  cout << "Reading rates of elastic collisions from files" << endl;
-  cout << filename[0] << endl;
-  cout << filename[1] << " ..." << endl;
+  INFO << "Reading rates of elastic collisions from files" << endl;
+  INFO << filename[0] << endl;
+  INFO << filename[1] << " ..." << endl;
 
   fin.open(filename[0].c_str(), ios::in);
   if(!fin)
     {
-      cerr << "[readElasticRateOmega]: ERROR: Unable to open file " << filename[0] << endl;
-      exit(1);
+      WARN << "[readElasticRateOmega]: ERROR: Unable to open file " << filename[0];
+      throw std::runtime_error("[readElasticRateQ]: ERROR: Unable to open ElasticRateOmega file");
     }
 
   int ik = 0;
@@ -2024,8 +2023,8 @@ void Martini::readElasticRateOmega()
   fin.open(filename[1].c_str(), ios::in);
   if(!fin)
     {
-      cerr << "[readElasticRateOmega]: ERROR: Unable to open file " << filename[1] << endl;
-      exit(1);
+      WARN << "[readElasticRateOmega]: ERROR: Unable to open file " << filename[1];
+      throw std::runtime_error("[readElasticRateQ]: ERROR: Unable to open ElasticRateOmega file");
     }
 
   ik = 0;
@@ -2039,8 +2038,6 @@ void Martini::readElasticRateOmega()
       ik++;
     }
   fin.close();
-
-  cout << " ok." << endl;
 }
 
 void Martini::readElasticRateQ()
@@ -2055,15 +2052,15 @@ void Martini::readElasticRateQ()
   filename[0] = PathToTables + "logEnDqtrqq";
   filename[1] = PathToTables + "logEnDqtrqg";
   
-  cout << "Reading rates of elastic collisions from files" << endl;
-  cout << filename[0] << endl;
-  cout << filename[1] << " ..." << endl;
+  INFO << "Reading rates of elastic collisions from files" << endl;
+  INFO << filename[0] << endl;
+  INFO << filename[1] << " ..." << endl;
 
   fin.open(filename[0].c_str(), ios::in);
   if(!fin)
     {
-      cerr << "[readElasticRateQ]: ERROR: Unable to open file " << filename[0] << endl;
-      exit(1);
+      WARN << "[readElasticRateQ]: ERROR: Unable to open file " << filename[0];
+      throw std::runtime_error("[readElasticRateQ]: ERROR: Unable to open ElasticRateQ file");
     }
 
   int ik = 0;
@@ -2082,8 +2079,8 @@ void Martini::readElasticRateQ()
   fin.open(filename[1].c_str(),ios::in);
   if(!fin)
     {
-      cerr << "[readElasticRateQ]: ERROR: Unable to open file " << filename[1] << endl;
-      exit(1);
+      WARN << "[readElasticRateQ]: ERROR: Unable to open file " << filename[1];
+      throw std::runtime_error("[readElasticRateQ]: ERROR: Unable to open ElasticRateQ file");
     }
   
   ik = 0;
@@ -2098,8 +2095,6 @@ void Martini::readElasticRateQ()
       ik++;
     }
   fin.close();
-  
-  cout << " ok." << endl;
 }
 
 double Martini::getRate_qqg(double p, double k)
@@ -2654,9 +2649,9 @@ double LambertW(double z)
 
   if(z <= -exp(-1.0))
     {
-      fprintf(stderr, "LambertW is not defined for z = %e\n", z);
-      fprintf(stderr, "z needs to be bigger than %e\n", -exp(-1.0));
-      exit(0);
+      WARN << "LambertW is not defined for z = " << z;
+      WARN << "z needs to be bigger than " << -exp(-1.0);
+      throw std::runtime_error("LambertW small z problem");
     }
 
   if(z > 3.0)
@@ -2678,12 +2673,12 @@ double LambertW(double z)
       n++;
       if(n > 99) 
 	{
-	  fprintf(stderr, "LambertW is not converging after 100 iterations.\n");
-	  fprintf(stderr, "LambertW: z = %e\n", z);
-	  fprintf(stderr, "LambertW: w_old = %e\n", w_old);
-	  fprintf(stderr, "LambertW: w_new = %e\n", w_new);
-	  fprintf(stderr, "LambertW: ratio = %e\n", ratio);
-	  exit(0);
+          WARN << "LambertW is not converging after 100 iterations.";
+          WARN << "LambertW: z = " << z;
+          WARN << "LambertW: w_old = " << w_old;
+          WARN << "LambertW: w_new = " << w_new;
+          WARN << "LambertW: ratio = " << ratio;
+          throw std::runtime_error("LambertW not conversing");
 	}
     }
 
