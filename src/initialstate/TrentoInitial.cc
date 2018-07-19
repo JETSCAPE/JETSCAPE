@@ -19,6 +19,8 @@
 #include <boost/bind.hpp>
 #include <boost/tokenizer.hpp>
 #include <algorithm>
+#include <functional>
+#include <string>
 
 #include "TrentoInitial.h"
 
@@ -260,7 +262,7 @@ void TrentoInitial::InitTask() {
 		+ " --eta-max " + std::to_string(etamax)
 		+ " --eta-step " + std::to_string(deta);
 	// Handle centrality table, not normzlized, default grid, 2D (fast) !!!
-	std::string cmd_basic = proj+" "+targ+" 1000 "+options1;
+	std::string cmd_basic = proj+" "+targ+" 10000 "+options1;
 	VarMap var_map_basic{}; 
   	po::store(po::command_line_parser(tokenize(cmd_basic))
       .options(all_opts).positional(positional_opts).run(), var_map_basic);
@@ -289,40 +291,81 @@ void TrentoInitial::InitTask() {
 bool compare_E(trento::records r1, trento::records r2) { return r1.mult > r2.mult; }
 
 std::pair<double, double> TrentoInitial::GenCenTab(std::string proj, std::string targ, VarMap var_map, int cL, int cH) {
-	trento::Collider another_collider(var_map);
-	INFO << "TRENTo is generating new centrality table for this new parameter set";
-	INFO << "It may take 10(s) to 1(min).";
-
-	another_collider.run_events();
-	// Get all records and sort according to totoal energy
-	auto event_records = another_collider.all_records();
-	std::sort(event_records.begin(), event_records.end(), compare_E);
-	// write centrality table
-	double Etab[101];
-	int nstep = std::ceil(event_records.size()/100);
-	std::ofstream fout("./trento-tab.txt");
-	fout << "#\tproj\ttarj\tsqrts\tx\tp\tk\tw\td\n"
-		 << "#\t" << proj << "\t" << targ << "\t"
-		 << var_map["beam-energy"].as<double>()  << "\t"
-		 << var_map["cross-section"].as<double>()  << "\t"
-		 << var_map["reduced-thickness"].as<double>() << "\t"
-		 << var_map["fluctuation"].as<double>() << "\t"
-		 << var_map["nucleon-width"].as<double>() << "\t"
-		 << var_map["nucleon-min-dist"].as<double>() << "\n"
-		 << "#\tcen_L\tcen_H\tun-normalized total density\n";
-	Etab[0] = 1e10;
-	for (int i=1; i<100; i+=1) {
-		auto ee = event_records[i*nstep];
-		fout << i-1 << "\t" << i << "\t" << ee.mult << std::endl;
-		Etab[i] = ee.mult;
-	}
-	auto ee = event_records.back();
-	fout << 99 << "\t" << 100 << "\t" << ee.mult << std::endl;
-	Etab[100] = ee.mult;
-	fout.close();
+	// Terminate for nonsense
 	if (cL<0 || cL >100 || cH<0 || cH >100 || cH < cL) {
 		WARN << "Wrong centrality cuts! To be terminated.";
 		exit(-1);
+	}
+	// These are all the parameters that could change the shape of centrality tables
+	// Normalization prefactor parameter is factorized
+	// They form a table header
+	trento::Collider another_collider(var_map);
+	double beamE = var_map["beam-energy"].as<double>();
+	double xsection = var_map["cross-section"].as<double>();
+	double pvalue = var_map["reduced-thickness"].as<double>();
+	double fluct = var_map["fluctuation"].as<double>();
+	double nuclw = var_map["nucleon-width"].as<double>();
+	double dmin = var_map["nucleon-min-dist"].as<double>();
+	char buffer[512];
+	std::sprintf(buffer, "%s-%s-E-%1.0f-X-%1.2f-p-%1.2f-k-%1.2f-w-%1.2f-d-%1.2f", 
+				proj.c_str(), targ.c_str(), beamE, xsection, pvalue, fluct, nuclw, dmin);
+	std::string header(buffer);
+	INFO << "TRENTO centrality table header: " << header;
+    // Create headering string hash tage for these parameter combination
+	// Use this tag as a unique table filename for this specific parameter set
+	std::hash<std::string> hash_function;
+	size_t  header_hash = hash_function(header);
+	INFO << "Hash tag for this header: " <<  header_hash;
+	// create dir incase it does not exist
+	std::system("mkdir -p ./trento_data");
+	char filename[512];
+	std::sprintf(filename, "./trento_data/%ld", header_hash);
+	// Step1: check it a table exist
+	std::ifstream infile(filename);
+	double Etab[101];
+	double buff1, buff2;
+	std::string line;
+	if (infile.good()) {
+		INFO << "The required centrality table exists. Load the table.";
+		int i=0;
+		while (std::getline(infile, line)) {
+			if(line[0] != '#'){
+				std::istringstream iss(line);
+				iss >> buff1 >> buff2 >> Etab[i];
+			}
+		}
+		infile.close();
+	}
+	else {
+		INFO << "TRENTo is generating new centrality table for this new parameter set";
+		INFO << "It may take 10(s) to 1(min).";
+
+		another_collider.run_events();
+		// Get all records and sort according to totoal energy
+		auto event_records = another_collider.all_records();
+		std::sort(event_records.begin(), event_records.end(), compare_E);
+		// write centrality table
+		int nstep = std::ceil(event_records.size()/100);
+		std::ofstream fout(filename);
+		fout << "#\tproj\ttarj\tsqrts\tx\tp\tk\tw\td\n"
+			 << "#\t" << proj << "\t" << targ << "\t"
+			 << beamE  << "\t"
+			 << xsection  << "\t"
+			 << pvalue << "\t"
+			 << fluct << "\t"
+			 << nuclw << "\t"
+			 << dmin << "\n"
+			 << "#\tcen_L\tcen_H\tun-normalized total density\n";
+		Etab[0] = 1e10;
+		for (int i=1; i<100; i+=1) {
+			auto ee = event_records[i*nstep];
+			fout << i-1 << "\t" << i << "\t" << ee.mult << std::endl;
+			Etab[i] = ee.mult;
+		}
+		auto ee = event_records.back();
+		fout << 99 << "\t" << 100 << "\t" << ee.mult << std::endl;
+		Etab[100] = ee.mult;
+		fout.close();
 	}
 	return std::make_pair(Etab[cL], Etab[cH]);
 }
