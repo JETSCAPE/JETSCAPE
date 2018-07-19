@@ -161,7 +161,7 @@ The usage of SMASH in JetScape as an afterburner requires hydro,
 sampler and SMASH itself. Therefore, to use it in JetScape,
 
 ```bash
-    cmake -Dmusic=ON -DiSS=ON -DsmashON ..
+    cmake -Dmusic=ON -DiSS=ON -Dsmash=ON ..
 ```
 
 To run JetScape test with SMASH:
