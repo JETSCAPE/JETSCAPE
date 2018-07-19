@@ -524,7 +524,7 @@ int Martini::DetermineProcess(double pRest, double T, double deltaT, int Id)
 	WARN << " : Total Probability for quark processes exceeds 1 ("
 	     << totalQuarkProb << "). "
 	     << " : Most likely this means you should choose a smaller deltaT in the xml (e.g. 0.01).";
-	throw std::runtime_error ("Martini probability problem.");
+	//throw std::runtime_error ("Martini probability problem.");
       }
 
       double accumProb = 0.;
@@ -592,7 +592,7 @@ int Martini::DetermineProcess(double pRest, double T, double deltaT, int Id)
 	WARN << " : Total Probability for gluon processes exceeds 1 ("
 	     << totalGluonProb << "). "
 	     << " : Most likely this means you should choose a smaller deltaT in the xml (e.g. 0.01).";
-	throw std::runtime_error ("Martini probability problem.");
+	//throw std::runtime_error ("Martini probability problem.");
       }
 
       double accumProb = 0.;
