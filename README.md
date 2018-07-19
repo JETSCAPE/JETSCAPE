@@ -146,3 +146,27 @@ To run JETSCAPE with MUSIC, one needs to use MPI commands,
 ```bash
     mpirun -np 1 ./MUSICTest
 ```
+
+## SMASH hadronic afterburner
+
+SMASH is a hadronic transport developed at Frankfurt. In JetScape it can
+serve as an afterburner, useful to compute soft observables.
+To download and compile SMASH, run the script in the external_packages folder:
+
+```bash
+    . get_smash.sh
+```
+
+The usage of SMASH in JetScape as an afterburner requires hydro,
+sampler and SMASH itself. Therefore, to use it in JetScape,
+
+```bash
+    cmake -Dmusic=ON -DiSS=ON -DsmashON ..
+```
+
+To run JetScape test with SMASH:
+
+```bash
+    cd build
+    ./SMASHTest
+```
