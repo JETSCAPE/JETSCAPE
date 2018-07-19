@@ -149,7 +149,8 @@ To run JETSCAPE with MUSIC, one needs to use MPI commands,
 
 ## SMASH hadronic afterburner
 
-SMASH is a hadronic transport developed at Frankfurt. In JetScape it can
+SMASH is a hadronic transport developed at Frankfurt Institute for Advanced
+ Studies by the group of Prof. H. Petersen (Elfner). In JetScape SMASH can
 serve as an afterburner, useful to compute soft observables.
 To download and compile SMASH, run the script in the external_packages folder:
 
