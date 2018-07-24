@@ -202,6 +202,11 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
     xVec = FourVector( xx+px/pAbs*deltaT, yy+py/pAbs*deltaT, zz+pz/pAbs*deltaT,
 		       Time+deltaT );
 
+    velocity_jet[0]=1.0;
+    velocity_jet[1]=pIn[i].jet_v().x();
+    velocity_jet[2]=pIn[i].jet_v().y();
+    velocity_jet[3]=pIn[i].jet_v().z()
+
     int process = DetermineProcess(pRest, T, deltaT, Id);
     VERBOSE(8)<< MAGENTA
 	      << "Time = " << Time << " Id = " << Id
@@ -215,6 +220,8 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
       {
 	pOut.push_back(Parton(0, Id, 0, pVec, xVec));
 	pOut[pOut.size()-1].set_form_time(0.);
+	pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
+
 	return;
       }
     if (std::abs(Id) == 1 || std::abs(Id) == 2 || std::abs(Id) == 3)
@@ -239,6 +246,8 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 		pVecNew.Set( (px/pAbs)*pNew, (py/pAbs)*pNew, (pz/pAbs)*pNew, pNew );
 		pOut.push_back(Parton(0, Id, 0, pVecNew, xVec));
 		pOut[pOut.size()-1].set_form_time(0.);
+		pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
+
 	      }
 
 	    if (kRest > pcut)
@@ -247,6 +256,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 		kVec.Set( (px/pAbs)*k, (py/pAbs)*k, (pz/pAbs)*k, k );
 		pOut.push_back(Parton(0, Id, 0, kVec, xVec));
 		pOut[pOut.size()-1].set_form_time(0.);
+                pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 	      }
 
 	    return;
@@ -271,6 +281,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 		pVecNew.Set( (px/pAbs)*pNew, (py/pAbs)*pNew, (pz/pAbs)*pNew, pNew );
 		pOut.push_back(Parton(0, Id, 0, pVecNew, xVec));
 		pOut[pOut.size()-1].set_form_time(0.);
+                pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 	      }
 
 	    // photon doesn't have energy threshold; No absorption into medium
@@ -281,6 +292,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 		kVec.Set( (px/pAbs)*k, (py/pAbs)*k, (pz/pAbs)*k, k );
 		pOut.push_back(Parton(0, Id, 0, kVec, xVec));
 		pOut[pOut.size()-1].set_form_time(0.);
+                pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 	      }
 
 	    return;
@@ -326,6 +338,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 
 		pOut.push_back(Parton(0, Id, 0, pVecNew, xVec));
 		pOut[pOut.size()-1].set_form_time(0.);
+                pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 	      }
 
 	    return;
@@ -335,6 +348,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 	  {
 	    pOut.push_back(Parton(0, 21, 0, pVec, xVec));
 	    pOut[pOut.size()-1].set_form_time(0.);
+	    pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 
 	    return;
 	  }
@@ -343,6 +357,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 	  {
 	    pOut.push_back(Parton(0, 22, 0, pVec, xVec));
 	    pOut[pOut.size()-1].set_form_time(0.);
+	    pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 
 	    return;
 	  }
@@ -369,6 +384,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 		pVecNew.Set( (px/pAbs)*pNew, (py/pAbs)*pNew, (pz/pAbs)*pNew, pNew );
 		pOut.push_back(Parton(0, Id, 0, pVecNew, xVec));
 		pOut[pOut.size()-1].set_form_time(0.);
+                pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 	      }
 
 	    if (kRest > pcut)
@@ -377,6 +393,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 		kVec.Set( (px/pAbs)*k, (py/pAbs)*k, (pz/pAbs)*k, k );
 		pOut.push_back(Parton(0, Id, 0, kVec, xVec));
 		pOut[pOut.size()-1].set_form_time(0.);
+                pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 	      }
 
 	    return;
@@ -408,6 +425,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 		pVecNew.Set( (px/pAbs)*pNew, (py/pAbs)*pNew, (pz/pAbs)*pNew, pNew );
 		pOut.push_back(Parton(0, Id, 0, pVecNew, xVec));
 		pOut[pOut.size()-1].set_form_time(0.);
+                pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 	      }
 
 	    if (kRest > pcut)
@@ -416,6 +434,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 		kVec.Set( (px/pAbs)*k, (py/pAbs)*k, (pz/pAbs)*k, k );
 		pOut.push_back(Parton(0, Id, 0, kVec, xVec));
 		pOut[pOut.size()-1].set_form_time(0.);
+                pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 	      }
 
 	    return;
@@ -461,6 +480,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 
 		pOut.push_back(Parton(0, Id, 0, pVecNew, xVec));
 		pOut[pOut.size()-1].set_form_time(0.);
+                pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 	      }
 
 	    return;
@@ -476,6 +496,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 
 	    pOut.push_back(Parton(0, newId, 0, pVec, xVec));
 	    pOut[pOut.size()-1].set_form_time(0.);
+	    pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 
 	    return;
 	  }
