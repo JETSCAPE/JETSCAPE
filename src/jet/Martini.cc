@@ -112,6 +112,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
   FourVector pVecNewRest;
   FourVector kVec;           // 4 vector for momentum of radiated particle
   FourVector xVec;           // 4 vector for position (for next time step!)
+  double velocity_jet[4];    // jet velocity for MATTER
   double eta;                // pseudo-rapidity
   
   // flow info
@@ -205,7 +206,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
     velocity_jet[0]=1.0;
     velocity_jet[1]=pIn[i].jet_v().x();
     velocity_jet[2]=pIn[i].jet_v().y();
-    velocity_jet[3]=pIn[i].jet_v().z()
+    velocity_jet[3]=pIn[i].jet_v().z();
 
     int process = DetermineProcess(pRest, T, deltaT, Id);
     VERBOSE(8)<< MAGENTA

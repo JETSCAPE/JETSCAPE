@@ -83,7 +83,7 @@ int main(int argc, char** argv)
    
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml", 20);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml", 1);
   // auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",5);
   jetscape->SetId("primary");
   jetscape->SetReuseHydro (true);
@@ -143,8 +143,8 @@ int main(int argc, char** argv)
   // hardcoded at 5 to be changed to xml)
   jloss->Add(matter);
   //jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
-  //jloss->Add(martini);
-  jloss->Add(adscft);
+  jloss->Add(martini);
+  //jloss->Add(adscft);
   
   jlossmanager->Add(jloss);
   
