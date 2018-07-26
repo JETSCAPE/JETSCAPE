@@ -303,6 +303,8 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 	  {
 	    omega = getEnergyTransfer(pRest, T, process);
 	    q = getMomentumTransfer(pRest, omega, T, process);
+            if(q < fabs(omega)) return;  // momentum transfer is always space-like
+
 	    pVecNewRest = getNewMomentumElas(pVecRest, omega, q);
 
 	    pNewRest = pVecNewRest.t();
@@ -445,6 +447,8 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 	  {
 	    omega = getEnergyTransfer(pRest, T, process);
 	    q = getMomentumTransfer(pRest, omega, T, process);
+            if(q < fabs(omega)) return;  // momentum transfer is always space-like
+
 	    pVecNewRest = getNewMomentumElas(pVecRest, omega, q);
 
 	    pNewRest = pVecNewRest.t();
@@ -1789,12 +1793,16 @@ double Martini::getMomentumTransfer(double pRest, double omega, double T, int pr
       const double y_min = sqrt(omega*omega);
       const double y_max = u;
 
+      int count = 0;
       // randomly select initial values of q=y, such that
       do
 	{
 	  y = y_min+ZeroOneDistribution(*GetMt19937Generator())*(y_max-y_min);
 	  g = functionQ(u, omega, y, process);
 
+          // if no y having non-zero g is found, give up here.
+          if(count > 100) return 0.;
+          count++;
 	} while (g == 0.);
     
       // number of steps in the Markov chain
@@ -2633,20 +2641,29 @@ double Martini::use_elastic_table_q(double omega, double q, int which_kind)
 	{
 	  rateQAv = exp((1.-qFrac)*log(rateOmegaAv)+qFrac*log(rateQUpOmegaAv));
 	}
-      else // use extrapolation
+      else if (rateOmegaAv < 0.)  // use extrapolation
 	{
 	  slope = (log(rate2QUpOmegaAv)-log(rateQUpOmegaAv))/qStep;
 	  rateQAv = exp(log(rateQUpOmegaAv)-slope*((1.-qFrac)*qStep));
 	}
+      else
+        {
+          rateQAv = 0.;
+        }
+
       if (rateAlphaUpOmegaAv > 0.)
 	{
 	  rateAlphaUpQAv = exp((1.-qFrac)*log(rateAlphaUpOmegaAv) + qFrac*log(rateAlphaUpQUpOmegaAv));
 	}
-      else  // use extrapolation
+      else if (rateAlphaUpOmegaAv < 0.)  // use extrapolation
 	{
 	  slopeAlphaUp = (log(rateAlphaUp2QUpOmegaAv)-log(rateAlphaUpQUpOmegaAv))/qStep;
 	  rateAlphaUpQAv = exp(log(rateAlphaUpQUpOmegaAv)-slopeAlphaUp*((1.-qFrac)*qStep));
 	}
+      else
+        {
+          rateAlphaUpQAv = 0.;
+        }
     }
   // interpolate linearly for small omega
   else
