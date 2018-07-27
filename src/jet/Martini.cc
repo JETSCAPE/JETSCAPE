@@ -34,8 +34,6 @@ using std::ostream;
 using std::ios;
 
 
-const double QS = 1.0;
-
 Martini::Martini()
 {
   SetId("Martini");
@@ -65,17 +63,25 @@ void Martini::Init()
   // check that all is there
   if ( !martini )     throw std::runtime_error("Martini not properly initialized in XML file ...");
   if ( !martini->FirstChildElement( "name" ) )     throw std::runtime_error("Martini not properly initialized in XML file ...");
+  if ( !martini->FirstChildElement( "Q0" ) )     throw std::runtime_error("Martini not properly initialized in XML file ...");
   if ( !martini->FirstChildElement( "alpha_s" ) )     throw std::runtime_error("Martini not properly initialized in XML file ...");
   if ( !martini->FirstChildElement( "pcut" ) )     throw std::runtime_error("Martini not properly initialized in XML file ...");
+  if ( !martini->FirstChildElement( "hydro_Tc" ) )     throw std::runtime_error("Martini not properly initialized in XML file ...");
 
   string s = martini->FirstChildElement( "name" )->GetText();
   JSDEBUG << s << " to be initilizied ...";
+
+  Q0 = 1.0;
+  martini->FirstChildElement("Q0")->QueryDoubleText(&Q0);
 
   alpha_s = 0.3;
   martini->FirstChildElement("alpha_s")->QueryDoubleText(&alpha_s);
     
   pcut = 2.0;
   martini->FirstChildElement("pcut")->QueryDoubleText(&pcut);
+
+  hydro_Tc = 0.16;
+  martini->FirstChildElement("hydro_Tc")->QueryDoubleText(&hydro_Tc);
 
   g = sqrt(4.*M_PI*alpha_s);
   alpha_em = 1./137.;
@@ -125,17 +131,15 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
   double cosPhiRestEl;       // angle between flow and scat. particle in rest frame
   double boostBackEl;
   
-  
   for (int i=0;i<pIn.size();i++) {
-    // Only accept low t particles
-    if (pIn[i].t() > QS*QS + rounding_error) continue;
-    TakeResponsibilityFor ( pIn[i] ); // Generate error if another module already has responsibility.
-    
+
+    // Particle infomration
     Id = pIn[i].pid();
 
     px = pIn[i].px();
     py = pIn[i].py();
     pz = pIn[i].pz();
+
     // In MARTINI, particles are all massless and on-shell
     pAbs = sqrt(px*px+py*py+pz*pz);
     pVec = FourVector ( px, py, pz, pAbs );
@@ -146,6 +150,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 
     eta = pIn[i].eta();
 
+    // Extract fluid properties
     std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
     GetHydroCellSignal(Time, xx, yy, zz, check_fluid_info_ptr);
     VERBOSE(8)<< MAGENTA<<"Temperature from Brick (Signal) = "
@@ -157,6 +162,10 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
     T = check_fluid_info_ptr->temperature;
 
     beta = sqrt( vx*vx + vy*vy + vz*vz );
+
+    // Only accept low t particles
+    if (pIn[i].t() > Q0*Q0 + rounding_error || T < hydro_Tc) continue;
+    TakeResponsibilityFor ( pIn[i] ); // Generate error if another module already has responsibility.
 
     // Set momentum in fluid cell's frame
     // 1: for brick
