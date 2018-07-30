@@ -71,7 +71,7 @@ namespace Jetscape {
     // Have collected all vertices now, add them to the event
     for( auto v : vertices )      evt.add_vertex( v );
     JSINFO << " found " << vertices.size() << " vertices in the list";
-    
+    evt.set_event_number(GetCurrentEvent());
     write_event(evt);
     vertices.clear();
     hadronizationvertex=0;
