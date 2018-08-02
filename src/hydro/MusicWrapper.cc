@@ -75,27 +75,32 @@ void MpiMusic::EvolveHydro() {
     VERBOSE(8);
     INFO << "Initialize density profiles in MUSIC ...";
     std::vector<double> entropy_density = ini->GetEntropyDensityDistribution();
-    double dx = ini->GetXStep();
+    const double dx   = ini->GetXStep();
+    const double dz   = ini->GetZStep();
+    const double zmax = ini->GetZMax();
+    const int    nz   = ini->GetZSize();
+
     if (pre_eq_ptr == nullptr) {
         music_hydro_ptr->initialize_hydro_from_vector(entropy_density, dx);
     } else {
-        music_hydro_ptr->initialize_hydro_from_pre_equilibrium_vectors(dx,
-                                                        pre_eq_ptr->e_,
-                                                        pre_eq_ptr->utau_,
-                                                        pre_eq_ptr->ux_,
-                                                        pre_eq_ptr->uy_,
-                                                        pre_eq_ptr->ueta_,
-                                                        pre_eq_ptr->pi00_,
-                                                        pre_eq_ptr->pi01_,
-                                                        pre_eq_ptr->pi02_,
-                                                        pre_eq_ptr->pi03_,
-                                                        pre_eq_ptr->pi11_,
-                                                        pre_eq_ptr->pi12_,
-                                                        pre_eq_ptr->pi13_,
-                                                        pre_eq_ptr->pi22_,
-                                                        pre_eq_ptr->pi23_,
-                                                        pre_eq_ptr->pi33_,
-                                                        pre_eq_ptr->bulk_Pi_);
+        music_hydro_ptr->initialize_hydro_from_pre_equilibrium_vectors(
+                                            dx, dz, zmax, nz,
+                                            pre_eq_ptr->e_,
+                                            pre_eq_ptr->utau_,
+                                            pre_eq_ptr->ux_,
+                                            pre_eq_ptr->uy_,
+                                            pre_eq_ptr->ueta_,
+                                            pre_eq_ptr->pi00_,
+                                            pre_eq_ptr->pi01_,
+                                            pre_eq_ptr->pi02_,
+                                            pre_eq_ptr->pi03_,
+                                            pre_eq_ptr->pi11_,
+                                            pre_eq_ptr->pi12_,
+                                            pre_eq_ptr->pi13_,
+                                            pre_eq_ptr->pi22_,
+                                            pre_eq_ptr->pi23_,
+                                            pre_eq_ptr->pi33_,
+                                            pre_eq_ptr->bulk_Pi_);
     }
 
     INFO << "initial density profile dx = " << dx << " fm";
