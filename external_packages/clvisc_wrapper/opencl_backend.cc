@@ -40,11 +40,7 @@ OpenclBackend::OpenclBackend(std::string device_type, int device_id) {
     devices_ = context_.getInfo<CL_CONTEXT_DEVICES>();
     auto num_of_devices = devices_.size();
     if (device_id_ < 0 || device_id_ > num_of_devices-1) {
-        for( std::vector<cl::Device>::size_type i=0; i!=num_of_devices; i++){
-            std::cerr << "#" << devices_[i].getInfo<CL_DEVICE_NAME>() << '\n';
-            std::cerr << "#Max compute units ="
-                << devices_[i].getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>() << '\n';
-        }
+        DeviceInfo();
         throw std::out_of_range("device_id out of range");
     } else {
         device_ = devices_[device_id_];
@@ -127,5 +123,28 @@ cl::Buffer OpenclBackend::CreateBufferByCopyVector(std::vector<ValueType> source
     } else {
         return cl::Buffer(context_, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR,
                 source_vector.size()*sizeof(ValueType), source_vector.data());
+    }
+}
+
+void OpenclBackend::DeviceInfo() {
+    int device_id = 0;
+    for (auto device : devices_) {
+        std::cout << "Device ID: " << device_id << std::endl;
+        std::cout << "Device Name: " << device.getInfo<CL_DEVICE_NAME>() << std::endl;
+        std::cout << "Max computing units: " << device.getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>();
+        std::cout << std::endl;
+        std::cout << "Max workgroup size: " << device.getInfo<CL_DEVICE_MAX_WORK_GROUP_SIZE>();
+        std::cout << std::endl;
+        std::cout << "Max work items in one work group: ";
+        for (auto sz : device.getInfo<CL_DEVICE_MAX_WORK_ITEM_SIZES>()) {
+            std::cout << sz << " ";
+        }
+        std::cout << std::endl;
+        std::cout << "Global memory size: " << device.getInfo<CL_DEVICE_GLOBAL_MEM_SIZE>()/1024/1024/1024 << "GB";
+        std::cout << std::endl;
+        std::cout << "Local memory size: " << device.getInfo<CL_DEVICE_LOCAL_MEM_SIZE>()/1024 << "KB";
+
+        std::cout << std::endl << std::endl;
+        device_id ++;
     }
 }

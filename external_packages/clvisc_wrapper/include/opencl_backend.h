@@ -68,6 +68,10 @@ class OpenclBackend {
     cl::Kernel CreateKernel(const cl::Program & prg, std::string func_name) {
         return cl::Kernel(prg, func_name.c_str());
     }
+
+
+    /*! \breif printout the available devices*/
+    void DeviceInfo();
  
     /*! \breif utility to compute the excution time of one event */
     float ExcutionTime(cl::Event & event);
