@@ -4,10 +4,11 @@ cmake_minimum_required(VERSION 2.8)
 
 #cl_spec.cpp  EosPCEv0.cl  helper.h  kernel_ideal.cl
 set ( SRC_LIST 
-    ${PROJECT_SOURCE_DIR}/opencl_backend.cc
     ${PROJECT_SOURCE_DIR}/include/cl.hpp
+    ${PROJECT_SOURCE_DIR}/opencl_backend.cc
+    ${PROJECT_SOURCE_DIR}/include/clideal.h
+    ${PROJECT_SOURCE_DIR}/clideal.cc
     ${PROJECT_SOURCE_DIR}/test.cc
-    #${PROJECT_SOURCE_DIR}/../PyVisc/pyvisc/kernel/kernel_ideal.cl
     )
 #aux_source_directory(src/ SRC_LIST)
 #aux_source_directory(inc/ SRC_LIST)

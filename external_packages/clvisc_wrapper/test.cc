@@ -1,4 +1,5 @@
 #include "include/opencl_backend.h"
+#include "include/clideal.h"
 #include <iostream>
 
 int main(int argc, char ** argv) {
@@ -7,5 +8,7 @@ int main(int argc, char ** argv) {
 
     auto backend1 = OpenclBackend("gpu", 1);
     backend1.DeviceInfo();
+
+    CLIdeal ideal("./", "gpu", 0);
     return 0;
 }

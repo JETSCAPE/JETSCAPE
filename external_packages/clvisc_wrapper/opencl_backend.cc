@@ -1,7 +1,5 @@
 #include "include/opencl_backend.h"
 
-#define __CL_ENABLE_EXCEPTIONS
-
 CompileOption::CompileOption(){
     Define("USE_SINGLE_PRECISION");
 };
@@ -19,8 +17,22 @@ void CompileOption::Define(std::string definition) {
     opt << "-D " << definition <<" ";
 }
 
-template <class ValueType>
-void CompileOption::SetValue(std::string key, ValueType value) {
+void CompileOption::KernelIncludePath(std::string abs_path) {
+    opt << "-I " << abs_path <<" ";
+}
+
+void CompileOption::SetIntConst(std::string key, int value) {
+    opt << "-D " << key << "=" << value << " ";
+}
+
+// for float values, use "#define key 0.33f" if value == 0.33.
+void CompileOption::SetFloatConst(std::string key, float value) {
+    opt.precision(12);
+    opt << "-D " << key << "=" << std::setprecision(12) << std::fixed <<  value << "f ";
+}
+
+// for double values, use "#define key 0.33" if value == 0.33.
+void CompileOption::SetDoubleConst(std::string key, double value) {
     opt << "-D " << key << "=" << value << " ";
 }
 

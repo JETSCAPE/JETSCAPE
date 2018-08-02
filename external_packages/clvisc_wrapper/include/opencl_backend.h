@@ -19,7 +19,9 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+#include <iomanip>
 #include <fstream>
+#include <type_traits>
 
 #ifdef OPENCL_USE_SINGLE_PRECISION
 /*!< typedef cl_float to cl_real for easier switch from double to float */
@@ -46,11 +48,11 @@ class CompileOption {
         /*! \breif if you see strange behaviour in opencl, please
          *  set compilation option optimize=false */
         CompileOption(bool use_single_precision, bool optimize);
-        ~CompileOption();
         void Define(std::string name);
-
-        template <class ValueType>
-        void SetValue(std::string name, ValueType value);
+        void SetDoubleConst(std::string name, double value);
+        void SetFloatConst(std::string name, float value);
+        void SetIntConst(std::string name, int value);
+        void KernelIncludePath(std::string abs_path);
 };
 
 class OpenclBackend {
@@ -89,8 +91,8 @@ class OpenclBackend {
     std::vector<cl::Device> devices_;
     cl_int device_id_;
     cl::Device device_;
-	cl::Context context_;
-	cl::CommandQueue queue_;
+    cl::Context context_;
+    cl::CommandQueue queue_;
 
     /*! \breif helper functions: create context from the device type with one platform which support it 
      * \return one context in the type of cl::Context
