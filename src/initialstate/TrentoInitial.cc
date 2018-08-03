@@ -262,7 +262,7 @@ void TrentoInitial::InitTask() {
 		+ " --eta-max " + std::to_string(etamax)
 		+ " --eta-step " + std::to_string(deta);
 	// Handle centrality table, not normzlized, default grid, 2D (fast) !!!
-	std::string cmd_basic = proj+" "+targ+" 10000 "+options1;
+	std::string cmd_basic = proj+" "+targ+" 1000000 "+options1;
 	VarMap var_map_basic{}; 
   	po::store(po::command_line_parser(tokenize(cmd_basic))
       .options(all_opts).positional(positional_opts).run(), var_map_basic);
@@ -314,12 +314,12 @@ std::pair<double, double> TrentoInitial::GenCenTab(std::string proj, std::string
     // Create headering string hash tage for these parameter combination
 	// Use this tag as a unique table filename for this specific parameter set
 	std::hash<std::string> hash_function;
-	size_t  header_hash = hash_function(header);
-	INFO << "Hash tag for this header: " <<  header_hash;
+	size_t header_hash = hash_function(header);
+	INFO << "Hash tag for this header: " << header_hash;
 	// create dir incase it does not exist
 	std::system("mkdir -p ./trento_data");
 	char filename[512];
-	std::sprintf(filename, "./trento_data/%ld", header_hash);
+	std::sprintf(filename, "./trento_data/%zu", header_hash);
 	// Step1: check it a table exist
 	std::ifstream infile(filename);
 	double Etab[101];

@@ -88,6 +88,7 @@ Collider::~Collider() = default;
 void Collider::run_events() {
   // The main event loop.
   for (int n = 0; n < nevents_; ++n) {
+	if (n%1000 == 0) std::cout<< "# "<< n << " events generated" << std::endl; 
     // Sampling the impact parameter also implicitly prepares the nuclei for
     // event computation, i.e. by sampling nucleon positions and participants.
 
