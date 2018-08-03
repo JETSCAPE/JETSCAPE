@@ -209,7 +209,7 @@ void TrentoInitial::InitTask() {
 	"To operate in 3D mode, make sure --eta-max is nonzero.\n"};
 
 	// NOW LETS FILL IN THE OPTION DESK
-	auto phy_opts = trento_xml_->FirstChildElement("PhysicalInputs");
+	auto phy_opts = trento_xml_->FirstChildElement("PhysicsInputs");
 	auto cut_opts = trento_xml_->FirstChildElement("CutInputs");
 	auto trans_opts = trento_xml_->FirstChildElement("TransInputs");
 	auto longi_opts = trento_xml_->FirstChildElement("LongiInputs");
@@ -225,14 +225,14 @@ void TrentoInitial::InitTask() {
 	double cross_section = std::atof(phy_opts->Attribute("cross-section"));
 	double normalization = std::atof(phy_opts->Attribute("normalization"));
 	
-	std::string cen_def(cut_opts->Attribute("centrality-definition"));
 	int cen_low = std::atoi(cut_opts->Attribute("centrality-low"));
 	int cen_high = std::atoi(cut_opts->Attribute("centrality-high"));
-	
+
 	double p = std::atof(trans_opts->Attribute("reduced-thickness"));
 	double k = std::atof(trans_opts->Attribute("fluctuation"));
 	double w = std::atof(trans_opts->Attribute("nucleon-width"));
 	double d = std::atof(trans_opts->Attribute("nucleon-min-dist"));
+
 
 	double mean = std::atof(longi_opts->Attribute("mean-coeff"));
 	double var = std::atof(longi_opts->Attribute("std-coeff"));
@@ -332,6 +332,7 @@ std::pair<double, double> TrentoInitial::GenCenTab(std::string proj, std::string
 			if(line[0] != '#'){
 				std::istringstream iss(line);
 				iss >> buff1 >> buff2 >> Etab[i];
+				i++;
 			}
 		}
 		infile.close();
@@ -367,6 +368,7 @@ std::pair<double, double> TrentoInitial::GenCenTab(std::string proj, std::string
 		Etab[100] = ee.mult;
 		fout.close();
 	}
+	INFO << "#########" << Etab[cL] << " " << Etab[cH];
 	return std::make_pair(Etab[cL], Etab[cH]);
 }
 

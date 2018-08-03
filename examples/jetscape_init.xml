@@ -31,10 +31,10 @@
     <!-- in units of [fm] -->
     <grid_max_x> 10 </grid_max_x>
     <grid_max_y> 10 </grid_max_y>
-    <grid_max_z> 0 </grid_max_z>
+    <grid_max_z> 10 </grid_max_z>
     <grid_step_x> 0.2 </grid_step_x>
     <grid_step_y> 0.2 </grid_step_y>
-    <grid_step_z> 0.2 </grid_step_z>
+    <grid_step_z> 0.5 </grid_step_z>
     
     <Trento>
 		<PhysicsInputs	projectile='Pb'
@@ -47,9 +47,9 @@
 					centrality-high='40'>
 		</CutInputs>
 		<TransInputs	reduced-thickness='0.0'
-						fluctuation="1.0"
-						nucleon-width="0.8"
-						nucleon-min-dist="0.0">
+						fluctuation="1.2"
+						nucleon-width="0.9"
+						nucleon-min-dist="1.2">
 		</TransInputs>
 		<LongiInputs	mean-coeff="1.0"
 						std-coeff="3.0"
