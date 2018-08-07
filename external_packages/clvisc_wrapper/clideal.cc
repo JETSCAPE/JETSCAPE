@@ -74,14 +74,14 @@ void CLIdeal::read_eos_table(std::string fname) {
         throw std::runtime_error("Failed to open equation of state table" + fname);
     }
     bool read_only = true;
-    size_t width = 155;
-    size_t height = 1000;
+    size_t width = 1555;
+    size_t height = 100;
 
     eos_table_ = backend_.CreateImage2DByCopyVector(host_eos_table,
                           width, height, read_only);
     opts_.SetFloatConst("EOS_ED_START", 0.0);
-    opts_.SetFloatConst("EOS_ED_STEP", 0.0);
-    opts_.SetFloatConst("EOS_NUM_ED", 0.0);
+    opts_.SetFloatConst("EOS_ED_STEP", 0.002);
+    opts_.SetIntConst("EOS_NUM_ED", 155500);
     opts_.SetIntConst("EOS_NUM_OF_ROWS", height);
     opts_.SetIntConst("EOS_NUM_OF_COLS", width);
 }
