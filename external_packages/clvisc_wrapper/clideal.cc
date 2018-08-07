@@ -38,12 +38,52 @@ CLIdeal::CLIdeal(std::string config_file_path, std::string device_type,
     opts_.SetIntConst("NY", NY);
     opts_.SetIntConst("NZ", NZ);
     opts_.SetIntConst("SIZE", SIZE);
+    read_eos_table("../eos_table/s95_pce165.dat");
     auto prg = backend_.BuildProgram("../../PyVisc/pyvisc/kernel/kernel_ideal.cl", opts_);
-    kernel_kt_src_christofeel_ = cl::Kernel(prg, "kernel_kt_src_christofeel");
-    kernel_kt_src_alongx_ = cl::Kernel(prg, "kernel_kt_src_alongx");
-    kernel_kt_src_alongy_ = cl::Kernel(prg, "kernel_kt_src_alongy");
-    kernel_kt_src_alongz_ = cl::Kernel(prg, "kernel_kt_src_alongz");
-    kernel_update_ev_ = cl::Kernel(prg, "kernel_update_ev_");
+    try {
+        kernel_kt_src_christofeel_ = cl::Kernel(prg, "kt_src_christoffel");
+        kernel_kt_src_alongx_ = cl::Kernel(prg, "kt_src_alongx");
+        kernel_kt_src_alongy_ = cl::Kernel(prg, "kt_src_alongy");
+        kernel_kt_src_alongz_ = cl::Kernel(prg, "kt_src_alongz");
+        kernel_update_ev_ = cl::Kernel(prg, "update_ev");
+    } catch (cl::Error & err ){
+        std::cerr<<"Error:"<<err.what()<<"("<<err.err()<<")\n";
+    }
+}
+
+
+void CLIdeal::read_eos_table(std::string fname) {
+    // eos_table stored in fname has the following format:
+    // cs2, ed [GeV/fm^3], pr[GeV/fm^3], T[GeV]
+    std::vector<cl_float4> host_eos_table;
+    std::ifstream fin(fname);
+    cl_float speed_of_sound_square;
+    cl_float pressure;
+    cl_float temperature;
+    cl_float entropy_density;
+    char comments[256];
+    if (fin.is_open()) {
+        fin.getline(comments, 256);
+        while (fin.good()) {
+            fin >> speed_of_sound_square >> pressure >> temperature >> entropy_density;
+            if (fin.eof()) break;  // eof() repeat the last line
+            host_eos_table.push_back((cl_float4){speed_of_sound_square,
+                    pressure, temperature, entropy_density});
+        }
+    } else {
+        throw std::runtime_error("Failed to open equation of state table" + fname);
+    }
+    bool read_only = true;
+    size_t width = 155;
+    size_t height = 1000;
+
+    eos_table_ = backend_.CreateImage2DByCopyVector(host_eos_table,
+                          width, height, read_only);
+    opts_.SetFloatConst("EOS_ED_START", 0.0);
+    opts_.SetFloatConst("EOS_ED_STEP", 0.0);
+    opts_.SetFloatConst("EOS_NUM_ED", 0.0);
+    opts_.SetIntConst("EOS_NUM_OF_ROWS", height);
+    opts_.SetIntConst("EOS_NUM_OF_COLS", width);
 }
 
 

@@ -23,7 +23,7 @@
 #include <fstream>
 #include <type_traits>
 
-#ifdef OPENCL_USE_SINGLE_PRECISION
+#ifdef USE_SINGLE_PRECISION
 /*!< typedef cl_float to cl_real for easier switch from double to float */
  typedef cl_float cl_real;
  typedef cl_float2 cl_real2;
@@ -82,9 +82,14 @@ class OpenclBackend {
      * the bytes_of_buffer = N * sizeof(cl_real) */
     cl::Buffer CreateBuffer(size_t bytes_of_buffer);
 
+    /*! \breif create a image2d_t buffer on GPU by copying host point*/
+    cl::Image2D CreateImage2DByCopyVector(std::vector<cl_float4> & source_vector,
+                                          size_t width, size_t height, bool read_only);
+
     /*! \breif create a buffer on GPU, with the same size and content as source_vector */
     template <class ValueType>
-    cl::Buffer CreateBufferByCopyVector(std::vector<ValueType> source_vector, bool read_only);
+    cl::Buffer CreateBufferByCopyVector(std::vector<ValueType> & source_vector,
+                                        bool read_only);
 
   private:
     cl_int device_type_;

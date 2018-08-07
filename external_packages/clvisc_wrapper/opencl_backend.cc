@@ -27,7 +27,6 @@ void CompileOption::SetIntConst(std::string key, int value) {
 
 // for float values, use "#define key 0.33f" if value == 0.33.
 void CompileOption::SetFloatConst(std::string key, float value) {
-    opt.precision(12);
     opt << "-D " << key << "=" << std::setprecision(12) << std::fixed <<  value << "f ";
 }
 
@@ -104,7 +103,9 @@ cl::Program OpenclBackend::BuildProgram(std::string fname,
                                         const CompileOption & compile_option)
 { //// build programs and print the compile error if there is
     std::ifstream kernelFile(fname.c_str());
-    if(!kernelFile.is_open()) std::cerr<<"Open "<<fname << " failed!"<<std::endl;
+    if(!kernelFile.is_open()) {
+        throw std::runtime_error("Fail to open kernel file: "+fname);
+    }
     std::string sprog(std::istreambuf_iterator<char> (kernelFile),
                       (std::istreambuf_iterator<char> ()));
     cl::Program::Sources prog(1, std::make_pair(sprog.c_str(), sprog.length()));
@@ -126,7 +127,7 @@ cl::Buffer OpenclBackend::CreateBuffer(size_t bytes_of_buffer) {
 }
 
 template <class ValueType>
-cl::Buffer OpenclBackend::CreateBufferByCopyVector(std::vector<ValueType> source_vector,
+cl::Buffer OpenclBackend::CreateBufferByCopyVector(std::vector<ValueType> & source_vector,
                                                    bool read_only) {
     //copy content from a source vector to global memory of device
     if (read_only) {
@@ -137,6 +138,23 @@ cl::Buffer OpenclBackend::CreateBufferByCopyVector(std::vector<ValueType> source
                 source_vector.size()*sizeof(ValueType), source_vector.data());
     }
 }
+
+cl::Image2D OpenclBackend::CreateImage2DByCopyVector(std::vector<cl_float4> & source_vector,
+             size_t width, size_t height, bool read_only) {
+    //copy content from a source vector to global memory of device
+    cl::ImageFormat img_fmt;
+    img_fmt.image_channel_order = CL_RGBA;
+    img_fmt.image_channel_data_type = CL_FLOAT;
+    size_t row_pitch = 0;
+    if (read_only) {
+        return cl::Image2D(context_, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
+                img_fmt, width, height, row_pitch, source_vector.data());
+    } else {
+        return cl::Image2D(context_, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR,
+                img_fmt, width, height, row_pitch, source_vector.data());
+    }
+}
+
 
 void OpenclBackend::DeviceInfo() {
     int device_id = 0;
