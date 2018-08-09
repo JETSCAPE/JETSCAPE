@@ -11,6 +11,7 @@
 //#include <CL/cl.hpp>
 //#endif
 #include "cl.hpp"
+#include "Config.h"
 
 #include <map>
 #include <ctime>
@@ -22,6 +23,8 @@
 #include <iomanip>
 #include <fstream>
 #include <type_traits>
+
+namespace clvisc {
 
 #ifdef USE_SINGLE_PRECISION
 /*!< typedef cl_float to cl_real for easier switch from double to float */
@@ -71,6 +74,11 @@ class OpenclBackend {
         return cl::Kernel(prg, func_name.c_str());
     }
 
+    /*! \breif return gpu context */
+    inline cl::Context Context() {return context_;};
+
+    /*! \breif return command queue */
+    inline cl::CommandQueue Queue() {return queue_;};
 
     /*! \breif printout the available devices*/
     void DeviceInfo();
@@ -86,8 +94,10 @@ class OpenclBackend {
     cl::Image2D CreateImage2DByCopyVector(std::vector<cl_float4> & source_vector,
                                           size_t width, size_t height, bool read_only);
 
-    /*! \breif create a buffer on GPU, with the same size and content as source_vector */
-    template <class ValueType>
+    /*! \breif create a buffer on GPU, with the same size and content as source_vector 
+    Notice: the cl.hpp does not support creating buffers from (const void *);
+    so one can not use const std::vector<ValueType> & source_vector here */
+    template <typename ValueType>
     cl::Buffer CreateBufferByCopyVector(std::vector<ValueType> & source_vector,
                                         bool read_only);
 
@@ -98,7 +108,6 @@ class OpenclBackend {
     cl::Device device_;
     cl::Context context_;
     cl::CommandQueue queue_;
-
     /*! \breif helper functions: create context from the device type with one platform which support it 
      * \return one context in the type of cl::Context
      */
@@ -106,5 +115,7 @@ class OpenclBackend {
     
     /*! \breif CreateContext, AddProgram, Build program, Initialize Buffer*/
 };
+
+} // end namespace clvisc
 
 #endif

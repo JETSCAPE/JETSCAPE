@@ -1,5 +1,7 @@
 #include "include/opencl_backend.h"
 
+namespace clvisc {
+
 CompileOption::CompileOption(){
     Define("USE_SINGLE_PRECISION");
 };
@@ -121,14 +123,13 @@ cl::Program OpenclBackend::BuildProgram(std::string fname,
     }
 }
 
-
 cl::Buffer OpenclBackend::CreateBuffer(size_t bytes_of_buffer) {
     return cl::Buffer(context_, CL_MEM_READ_WRITE, bytes_of_buffer);
 }
 
-template <class ValueType>
+template <typename ValueType>
 cl::Buffer OpenclBackend::CreateBufferByCopyVector(std::vector<ValueType> & source_vector,
-                                                   bool read_only) {
+                          bool read_only) {
     //copy content from a source vector to global memory of device
     if (read_only) {
         return cl::Buffer(context_, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
@@ -178,3 +179,17 @@ void OpenclBackend::DeviceInfo() {
         device_id ++;
     }
 }
+
+// template member functions need explicit declearation on mac
+template cl::Buffer OpenclBackend::CreateBufferByCopyVector(std::vector<cl_int> & source_vector, bool read_only);
+
+template cl::Buffer OpenclBackend::CreateBufferByCopyVector(std::vector<cl_real> & source_vector, bool read_only);
+
+template cl::Buffer OpenclBackend::CreateBufferByCopyVector(std::vector<cl_real4> & source_vector, bool read_only);
+
+// cl_real3 is the same datatype as cl_real4 in cl.hpp, so one can not re-declear
+//template cl::Buffer OpenclBackend::CreateBufferByCopyVector(std::vector<cl_real3> & source_vector, bool read_only);
+
+template cl::Buffer OpenclBackend::CreateBufferByCopyVector(std::vector<cl_real8> & source_vector, bool read_only);
+
+} // end namespace clvisc
