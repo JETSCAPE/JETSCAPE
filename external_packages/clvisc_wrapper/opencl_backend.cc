@@ -143,11 +143,12 @@ cl::Program OpenclBackend::BuildProgram(std::string fname,
     try{
         program.build(devices_, compile_option.c_str());
         kernelFile.close();
-        return program;
     } catch(cl::Error & err) {
         std::cerr << err.what() << "(" << err.err() << ")\n" \
             << program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device_);
     }
+
+    return program;
 }
 
 cl::Buffer OpenclBackend::CreateBuffer(size_t bytes_of_buffer) {

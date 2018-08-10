@@ -61,7 +61,7 @@ else( OPENCL_FOUND )
     message( "CMake did not find OpenCL, set by hand" )
 endif( OPENCL_FOUND )
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wno-deprecated")
 include_directories( ${PROJECT_SOURCE_DIR}/include )
 add_executable ( test_clvisc ${SRC_LIST} )
 target_link_libraries ( test_clvisc ${EXTRA_LIBS} )
