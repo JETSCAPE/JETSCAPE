@@ -50,17 +50,11 @@ class CLIdeal
     double tau_;
     Config cfg_;
     OpenclBackend backend_;
-    CompileOption opts_;
 
-    std::vector<cl_real4> h_ev_;
-    cl::Buffer d_ev_[3];
-    cl::Buffer d_src_;
+    std::string compile_option_;
     // d_submax is used to compute the maximum
     // energy density of the fluctuating QGP
     cl::Buffer d_submax_;
-
-    // image2d_t for eos_table
-    cl::Image2D eos_table_;
 
     // stores the maximum energy density history
     std::vector<cl_real> max_ed_history_;
@@ -72,17 +66,21 @@ class CLIdeal
 	cl::Kernel kernel_update_ev_;
 	cl::Kernel kernel_reduction_;
 
-    void read_eos_table_(std::string fname);
+    void read_eos_table_(std::string fname, CompileOption &opts_);
 
     void initialize_gpu_buffer_();
 
      // update half step using Runge-Kutta method, step = {1, 2}
     void half_step_(int step);
 
-    // return the maximum energy density, 
-    float max_energy_density_();
-
     public:
+    // h_ev_, d_ev_, eos_table_ will be used in class CLVisc
+    // it would be good to make them public
+    std::vector<cl_real4> h_ev_;
+    cl::Buffer d_ev_[3];
+    cl::Buffer d_src_;
+    // image2d_t for eos_table
+    cl::Image2D eos_table_;
 
 	CLIdeal(const Config & cfg, std::string device_type, int device_id);
 
@@ -98,9 +96,18 @@ class CLIdeal
     // run hydrodynamic evolution for one time step
     void one_step();
 
+    // predict the first step to get u^{mu} for viscous hydro
+    void predict_first_step();
+
+    // return the maximum energy density, 
+    float max_energy_density();
+
     // run hydrodynamic evolution for all time steps
     // stop when max_T < freeze_out_temperature
     void evolve();
+
+    OpenclBackend & get_backend();
+    std::string & get_compile_option();
 
 	~CLIdeal();
 

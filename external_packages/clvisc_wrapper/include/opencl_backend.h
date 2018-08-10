@@ -51,6 +51,11 @@ class CompileOption {
         /*! \breif if you see strange behaviour in opencl, please
          *  set compilation option optimize=false */
         CompileOption(bool use_single_precision, bool optimize);
+
+
+        /*! \breif return the string in the CompileOption */
+        std::string str();
+
         void Define(std::string name);
         void SetDoubleConst(std::string name, double value);
         void SetFloatConst(std::string name, float value);
@@ -74,7 +79,7 @@ class OpenclBackend {
     /*!\breif helper functions: Build each program in programs vector with given options
     *  \note The compiling error of the kernel *.cl can be print out
     */
-    cl::Program BuildProgram(std::string fname, const CompileOption & option);
+    cl::Program BuildProgram(std::string fname, const std::string & option);
 
     cl::Kernel CreateKernel(const cl::Program & prg, std::string func_name) {
         return cl::Kernel(prg, func_name.c_str());
@@ -117,6 +122,8 @@ class OpenclBackend {
     template <typename ValueType>
     void enqueue_copy(const cl::Buffer & dst_buffer, std::vector<ValueType> & source_vector);
 
+    // copy cl::Buffer to cl::Buffer
+    void enqueue_copy(const cl::Buffer & src_buffer, cl::Buffer & dst_buffer, size_t size);
   private:
     cl_int device_type_;
     std::vector<cl::Device> devices_;

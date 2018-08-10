@@ -15,6 +15,7 @@ CLIdeal::CLIdeal(const Config & cfg, std::string device_type,
     // set current time to initial time
     tau_ = cfg.tau0;
 
+    CompileOption opts_;
     opts_.KernelIncludePath("../../PyVisc/pyvisc/kernel/");
     //opts_.Define("EOSI");
     opts_.Define("EOS_TABLE");
@@ -38,11 +39,11 @@ CLIdeal::CLIdeal(const Config & cfg, std::string device_type,
 #ifdef USE_SINGLE_PRECISION
     opts_.Define("USE_SINGLE_PRECISION");
 #endif
-    read_eos_table_("../eos_table/s95_pce165.dat");
-    //std::cout << opts_.opt.str() << std::endl;
+    read_eos_table_("../eos_table/s95_pce165.dat", opts_);
+    compile_option_ = opts_.str();
     try {
         // build kernels for hydrodynamic evolution
-        auto prg = backend_.BuildProgram("../../PyVisc/pyvisc/kernel/kernel_ideal.cl", opts_);
+        auto prg = backend_.BuildProgram("../../PyVisc/pyvisc/kernel/kernel_ideal.cl", compile_option_);
         kernel_kt_src_christoffel_ = cl::Kernel(prg, "kt_src_christoffel");
         kernel_kt_src_alongx_ = cl::Kernel(prg, "kt_src_alongx");
         kernel_kt_src_alongy_ = cl::Kernel(prg, "kt_src_alongy");
@@ -50,7 +51,7 @@ CLIdeal::CLIdeal(const Config & cfg, std::string device_type,
         kernel_update_ev_ = cl::Kernel(prg, "update_ev");
         // build kernels to look for maximum energy density
         auto prg2 = backend_.BuildProgram("../../PyVisc/pyvisc/kernel/kernel_reduction.cl",
-                                          opts_);
+                                          compile_option_);
         kernel_reduction_ = cl::Kernel(prg2, "reduction_stage1");
     } catch (cl::Error & err ){
         std::cerr<<"Error:"<<err.what()<<"("<<err.err()<<")\n";
@@ -58,7 +59,7 @@ CLIdeal::CLIdeal(const Config & cfg, std::string device_type,
 }
 
 
-void CLIdeal::read_eos_table_(std::string fname) {
+void CLIdeal::read_eos_table_(std::string fname, CompileOption & opts_) {
     // eos_table stored in fname has the following format:
     // cs2, ed [GeV/fm^3], pr[GeV/fm^3], T[GeV]
     std::vector<cl_float4> host_eos_table;
@@ -132,7 +133,7 @@ void CLIdeal::half_step_(int step) {
     kernel_kt_src_christoffel_.setArg(0, d_src_);
     kernel_kt_src_christoffel_.setArg(1, d_ev_[step]);
     kernel_kt_src_christoffel_.setArg(2, eos_table_);
-    // notice: it is important to case tau_ from double to float explicitly
+    // notice: it is important to cast tau_ from double to float explicitly
     // otherwise the program will produce wrong results
     kernel_kt_src_christoffel_.setArg(3, static_cast<cl_real>(tau_));
     kernel_kt_src_christoffel_.setArg(4, step);
@@ -187,7 +188,7 @@ void CLIdeal::half_step_(int step) {
 
 // return the maximum energy density of the QGP
 // will be used to stop hydro
-float CLIdeal::max_energy_density_() {
+float CLIdeal::max_energy_density() {
     int size = cfg_.nx * cfg_.ny * cfg_.nz;
     kernel_reduction_.setArg(0, d_ev_[1]);
     kernel_reduction_.setArg(1, d_submax_);
@@ -208,6 +209,12 @@ void CLIdeal::one_step() {
     half_step_(2);
 }
 
+// predict the first half step; usful to get initial fluid velocity
+// for viscous hydrodynamics 
+void CLIdeal::predict_first_step() {
+    half_step_(1);
+}
+
 void CLIdeal::evolve() {
     int max_loops = 2000;
     float total_exec_time = 0.0;
@@ -216,8 +223,9 @@ void CLIdeal::evolve() {
         std::time_t timer1, timer2;
         std::time(&timer1);
         for (int step=0; step < max_loops; step++) {
+            float max_ed = max_energy_density();
+            if ( max_ed < 0.5 ) break;
             one_step();
-            float max_ed = max_energy_density_();
             std::time(&timer2);
             float time_diff = std::difftime(timer2, timer1);
             std::cout << "tau = " << tau_ << " fm; ";
@@ -225,13 +233,21 @@ void CLIdeal::evolve() {
             std::cout << "Total computing time: " << time_diff << " s; ";
             std::cout << std::endl;
             tau_ += cfg_.dt;
-            if ( max_ed < 0.5 ) break;
         }
         std::cout << "Total computing time: " << total_exec_time << " s; ";
     } catch (cl::Error & err) {
         std::cout << err.what() << " " << err.err() << std::endl;
     }
 }
+
+OpenclBackend & CLIdeal::get_backend() {
+    return backend_;
+}
+
+std::string & CLIdeal::get_compile_option() {
+    return compile_option_;
+}
+
 
 CLIdeal::~CLIdeal() {
 }

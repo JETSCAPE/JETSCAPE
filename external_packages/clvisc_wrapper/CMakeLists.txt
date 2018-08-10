@@ -8,11 +8,18 @@ set ( SRC_LIST
     ${PROJECT_SOURCE_DIR}/opencl_backend.cc
     ${PROJECT_SOURCE_DIR}/include/clideal.h
     ${PROJECT_SOURCE_DIR}/clideal.cc
-    ${PROJECT_SOURCE_DIR}/test.cc
+    ${PROJECT_SOURCE_DIR}/include/clvisc.h
+    ${PROJECT_SOURCE_DIR}/clvisc.cc
+    ${PROJECT_SOURCE_DIR}/test_visc.cc
+    #${PROJECT_SOURCE_DIR}/test.cc
     )
 #aux_source_directory(src/ SRC_LIST)
 #aux_source_directory(inc/ SRC_LIST)
 set( CMAKE_CXX_COMPILER  "g++" )
+
+# will enable more verbose opencl error message 
+# instead of one int error id
+set(ENV{CL_LOG_ERRORS} "stderr")
 
 set ( CMAKE_USE_RELATIVE_PATH "true")
 set ( CMAKE_EXECUTABLE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/build/ )

@@ -37,6 +37,10 @@ void CompileOption::SetDoubleConst(std::string key, double value) {
     opt << "-D " << key << "=" << value << " ";
 }
 
+std::string CompileOption::str() {
+    return opt.str();
+}
+
 OpenclBackend::OpenclBackend(std::string device_type, int device_id) {
     // select device type and device id (if there are multiple cpu/gpus)
     if (device_type == "cpu" || device_type == "CPU") {
@@ -102,7 +106,7 @@ cl::Context OpenclBackend::CreateContext_(const cl_int & device_type)
 }
 
 cl::Program OpenclBackend::BuildProgram(std::string fname,
-                                        const CompileOption & compile_option)
+                                        const std::string & compile_option)
 { //// build programs and print the compile error if there is
     std::ifstream kernelFile(fname.c_str());
     if(!kernelFile.is_open()) {
@@ -114,7 +118,7 @@ cl::Program OpenclBackend::BuildProgram(std::string fname,
     auto program = cl::Program(context_, prog);
     //programs.push(program);
     try{
-        program.build(devices_, compile_option.opt.str().c_str());
+        program.build(devices_, compile_option.c_str());
         kernelFile.close();
         return program;
     } catch(cl::Error & err) {
@@ -171,33 +175,57 @@ void OpenclBackend::enqueue_run(const cl::Kernel & kernel_,
 }
 
 
+// from std::vector to cl::Buffer
 template <typename ValueType>
-void OpenclBackend::enqueue_copy(const std::vector<ValueType> & source_vector,  cl::Buffer & dst_buffer) {
+void OpenclBackend::enqueue_copy(const std::vector<ValueType> & source_vector,
+                                 cl::Buffer & dst_buffer)
+{
     cl::Event event;
     queue_.enqueueWriteBuffer(
-            dst_buffer,            // source buffer
+            dst_buffer,               // dst buffer
             CL_TRUE,                  // blocking reading
             0,                        // offset
             source_vector.size()*sizeof(ValueType),  // size
-            source_vector.data(),
+            source_vector.data(),     // source vector
             NULL,
-            &event);                     // dst point
+            &event);                  
     event.wait();
 }
 
+// from cl::Buffer to std::vector
 template <typename ValueType>
-void OpenclBackend::enqueue_copy(const cl::Buffer & source_buffer, std::vector<ValueType> & dst_vector) {
+void OpenclBackend::enqueue_copy(const cl::Buffer & source_buffer,
+                                 std::vector<ValueType> & dst_vector)
+{
     cl::Event event;
     queue_.enqueueReadBuffer(
             source_buffer,            // source buffer
             CL_TRUE,                  // blocking reading
             0,                        // offset
             dst_vector.size()*sizeof(ValueType),  // size
-            dst_vector.data(),       // dst point
+            dst_vector.data(),       // dst vector
             NULL,
             &event);              
     event.wait();
 }
+
+// from cl::Buffer to cl::Buffer
+void OpenclBackend::enqueue_copy(const cl::Buffer & source_buffer,
+                                 cl::Buffer & dst_buffer,
+                                 size_t size_in_bytes)
+{
+    cl::Event event;
+    queue_.enqueueCopyBuffer(
+            source_buffer,            // source buffer
+            dst_buffer,               // dst buffer
+            0,                        // src offset
+            0,                        // dst offset
+            size_in_bytes,            // size
+            NULL,                     // waiting event-list
+            &event);                  // event
+    event.wait();
+}
+
 
 void OpenclBackend::DeviceInfo() {
     int device_id = 0;
