@@ -156,6 +156,48 @@ cl::Image2D OpenclBackend::CreateImage2DByCopyVector(std::vector<cl_float4> & so
     }
 }
 
+void OpenclBackend::enqueue_run(const cl::Kernel & kernel_,
+                                const cl::NDRange & global_size,
+                                const cl::NDRange & local_size) {
+    cl::Event event;
+    queue_.enqueueNDRangeKernel(
+            kernel_,                                // kernel name
+            cl::NullRange,                          // offset 
+            global_size,      // global size
+            local_size,         // local size (automatically set by system)
+            NULL,                     // event waitting list
+            &event);       // event for profiling
+    event.wait();
+}
+
+
+template <typename ValueType>
+void OpenclBackend::enqueue_copy(const std::vector<ValueType> & source_vector,  cl::Buffer & dst_buffer) {
+    cl::Event event;
+    queue_.enqueueWriteBuffer(
+            dst_buffer,            // source buffer
+            CL_TRUE,                  // blocking reading
+            0,                        // offset
+            source_vector.size()*sizeof(ValueType),  // size
+            source_vector.data(),
+            NULL,
+            &event);                     // dst point
+    event.wait();
+}
+
+template <typename ValueType>
+void OpenclBackend::enqueue_copy(const cl::Buffer & source_buffer, std::vector<ValueType> & dst_vector) {
+    cl::Event event;
+    queue_.enqueueReadBuffer(
+            source_buffer,            // source buffer
+            CL_TRUE,                  // blocking reading
+            0,                        // offset
+            dst_vector.size()*sizeof(ValueType),  // size
+            dst_vector.data(),       // dst point
+            NULL,
+            &event);              
+    event.wait();
+}
 
 void OpenclBackend::DeviceInfo() {
     int device_id = 0;
@@ -191,5 +233,21 @@ template cl::Buffer OpenclBackend::CreateBufferByCopyVector(std::vector<cl_real4
 //template cl::Buffer OpenclBackend::CreateBufferByCopyVector(std::vector<cl_real3> & source_vector, bool read_only);
 
 template cl::Buffer OpenclBackend::CreateBufferByCopyVector(std::vector<cl_real8> & source_vector, bool read_only);
+
+template void OpenclBackend::enqueue_copy(const std::vector<cl_int> & source_vector,  cl::Buffer & dst_buffer);
+
+template void OpenclBackend::enqueue_copy(const std::vector<cl_real> & source_vector,  cl::Buffer & dst_buffer);
+
+template void OpenclBackend::enqueue_copy(const std::vector<cl_real4> & source_vector,  cl::Buffer & dst_buffer);
+
+template void OpenclBackend::enqueue_copy(const std::vector<cl_real8> & source_vector,  cl::Buffer & dst_buffer);
+
+template void OpenclBackend::enqueue_copy(const cl::Buffer & source_buffer, std::vector<cl_int> & dst_vector);
+
+template void OpenclBackend::enqueue_copy(const cl::Buffer & source_buffer, std::vector<cl_real> & dst_vector);
+
+template void OpenclBackend::enqueue_copy(const cl::Buffer & source_buffer, std::vector<cl_real4> & dst_vector);
+
+template void OpenclBackend::enqueue_copy(const cl::Buffer & source_buffer, std::vector<cl_real8> & dst_vector);
 
 } // end namespace clvisc

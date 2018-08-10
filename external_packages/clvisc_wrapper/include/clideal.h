@@ -55,14 +55,12 @@ class CLIdeal
     std::vector<cl_real4> h_ev_;
     cl::Buffer d_ev_[3];
     cl::Buffer d_src_;
+    // d_submax is used to compute the maximum
+    // energy density of the fluctuating QGP
+    cl::Buffer d_submax_;
 
     // image2d_t for eos_table
     cl::Image2D eos_table_;
-
-    // submax and d_submax is used to compute the maximum
-    // energy density of the fluctuating QGP
-    std::vector<cl_real> submax_;
-    cl::Buffer d_submax_;
 
     // stores the maximum energy density history
     std::vector<cl_real> max_ed_history_;
@@ -74,18 +72,22 @@ class CLIdeal
 	cl::Kernel kernel_update_ev_;
 	cl::Kernel kernel_reduction_;
 
-	//cl::Buffer d_pi_;
-
     void read_eos_table_(std::string fname);
 
     void initialize_gpu_buffer_();
-    
+
+     // update half step using Runge-Kutta method, step = {1, 2}
+    void half_step_(int step);
+
+    // return the maximum energy density, 
+    float max_energy_density_();
+
     public:
 
 	CLIdeal(const Config & cfg, std::string device_type, int device_id);
 
     // read initial energy density from external vector
-    void read_ini_ed(const std::vector<cl_real> & ed);
+    void read_ini(const std::vector<cl_real> & ed);
 
     // read initial ed, vx, vy, vz vector
     void read_ini(const std::vector<cl_real> & ed, 
@@ -93,9 +95,11 @@ class CLIdeal
                   const std::vector<cl_real> & vy, 
                   const std::vector<cl_real> & vz);
 
-    // step update for Runge-Kutta method, step = {1, 2}
-    void step_update(int step);
+    // run hydrodynamic evolution for one time step
+    void one_step();
 
+    // run hydrodynamic evolution for all time steps
+    // stop when max_T < freeze_out_temperature
     void evolve();
 
 	~CLIdeal();

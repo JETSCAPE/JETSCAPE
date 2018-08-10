@@ -61,6 +61,12 @@ class CompileOption {
 class OpenclBackend {
   public:
     OpenclBackend(std::string device_type, int device_id);
+
+    // make context_ and queue_ public in case one wants 
+    // to use the native opencl APIs.
+    cl::Context context_;
+    cl::CommandQueue queue_;
+
     std::map<std::string, cl::Program> programs;
     std::map<std::string, cl::Kernel> kernel_funcs;
     std::map<std::string, cl::Buffer> buffers;
@@ -101,13 +107,21 @@ class OpenclBackend {
     cl::Buffer CreateBufferByCopyVector(std::vector<ValueType> & source_vector,
                                         bool read_only);
 
+    void enqueue_run(const cl::Kernel  & kernel_,
+                     const cl::NDRange & global_size,
+                     const cl::NDRange & local_size);
+
+    template <typename ValueType>
+    void enqueue_copy(const std::vector<ValueType> & source_vector,  cl::Buffer & dst_buffer);
+
+    template <typename ValueType>
+    void enqueue_copy(const cl::Buffer & dst_buffer, std::vector<ValueType> & source_vector);
+
   private:
     cl_int device_type_;
     std::vector<cl::Device> devices_;
     cl_int device_id_;
     cl::Device device_;
-    cl::Context context_;
-    cl::CommandQueue queue_;
     /*! \breif helper functions: create context from the device type with one platform which support it 
      * \return one context in the type of cl::Context
      */
