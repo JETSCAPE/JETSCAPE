@@ -117,10 +117,10 @@ class OpenclBackend {
                      const cl::NDRange & local_size);
 
     template <typename ValueType>
-    void enqueue_copy(const std::vector<ValueType> & source_vector,  cl::Buffer & dst_buffer);
+    void enqueue_copy(const std::vector<ValueType> & src_vector,  cl::Buffer & dst_buffer);
 
     template <typename ValueType>
-    void enqueue_copy(const cl::Buffer & dst_buffer, std::vector<ValueType> & source_vector);
+    void enqueue_copy(const cl::Buffer & src_buffer, std::vector<ValueType> & dst_vector);
 
     // copy cl::Buffer to cl::Buffer
     void enqueue_copy(const cl::Buffer & src_buffer, cl::Buffer & dst_buffer, size_t size);
