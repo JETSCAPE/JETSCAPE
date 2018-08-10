@@ -1,3 +1,26 @@
+/*******************************************************************************
+ * Copyright (c) 2018-2019 LongGang Pang, lgpang@qq.com
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and/or associated documentation files (the
+ * "Materials"), to deal in the Materials without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Materials, and to
+ * permit persons to whom the Materials are furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Materials.
+ *
+ * THE MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
+ ******************************************************************************/
+
 #include <cmath>
 #include <cstring>
 #include <ctime>
@@ -5,9 +28,6 @@
 #include "include/clvisc.h"
 
 namespace clvisc {
-// number of blocks for reduction on gpus
-const int REDUCTION_BLOCKS = 64;
-
 CLVisc::CLVisc(const Config & cfg, std::string device_type,
         int device_id):cfg_(cfg),
         ideal_(CLIdeal(cfg, device_type, device_id)),
@@ -209,7 +229,8 @@ void CLVisc::half_step_(int step) {
 }
 
 
-void CLVisc::read_ini(const std::vector<cl_real> & ed) {
+template <typename ValueType>
+void CLVisc::read_ini(const std::vector<ValueType> & ed) {
     ideal_.read_ini(ed);
     h_shear_pi_ = std::vector<cl_real> (10*size_, 0.0);
     h_bulk_pi_ = std::vector<cl_real> (size_, 0.0);
@@ -217,6 +238,58 @@ void CLVisc::read_ini(const std::vector<cl_real> & ed) {
     h_net_charge_ = std::vector<cl_real4> (size_, zero4);
     initialize_gpu_buffer_();
 }
+
+template <typename ValueType>
+void CLVisc::read_ini(const std::vector<ValueType> & ed, 
+                      const std::vector<ValueType> & vx, 
+                      const std::vector<ValueType> & vy, 
+                      const std::vector<ValueType> & vz)
+{
+    ideal_.read_ini(ed, vx, vy, vz);
+    h_shear_pi_ = std::vector<cl_real> (10*size_, 0.0);
+    h_bulk_pi_ = std::vector<cl_real> (size_, 0.0);
+    cl_real4 zero4 = (cl_real4){0.0, 0.0, 0.0, 0.0};
+    h_net_charge_ = std::vector<cl_real4> (size_, zero4);
+    initialize_gpu_buffer_();
+}
+
+template <typename ValueType>
+void CLVisc::read_ini(const std::vector<ValueType> & ed, 
+              const std::vector<ValueType> & vx, 
+              const std::vector<ValueType> & vy, 
+              const std::vector<ValueType> & vz,
+              const std::vector<ValueType> & pi00,
+              const std::vector<ValueType> & pi01,
+              const std::vector<ValueType> & pi02,
+              const std::vector<ValueType> & pi03,
+              const std::vector<ValueType> & pi11,
+              const std::vector<ValueType> & pi12,
+              const std::vector<ValueType> & pi13,
+              const std::vector<ValueType> & pi22,
+              const std::vector<ValueType> & pi23,
+              const std::vector<ValueType> & pi33) {
+    ideal_.read_ini(ed, vx, vy, vz);
+    h_shear_pi_.clear();
+    for (size_t i = 0; i < size_; i++) {
+        h_shear_pi_.push_back(static_cast<cl_real>(pi00.at(i)));
+        h_shear_pi_.push_back(static_cast<cl_real>(pi01.at(i)));
+        h_shear_pi_.push_back(static_cast<cl_real>(pi02.at(i)));
+        h_shear_pi_.push_back(static_cast<cl_real>(pi03.at(i)));
+        h_shear_pi_.push_back(static_cast<cl_real>(pi11.at(i)));
+        h_shear_pi_.push_back(static_cast<cl_real>(pi12.at(i)));
+        h_shear_pi_.push_back(static_cast<cl_real>(pi13.at(i)));
+        h_shear_pi_.push_back(static_cast<cl_real>(pi22.at(i)));
+        h_shear_pi_.push_back(static_cast<cl_real>(pi23.at(i)));
+        h_shear_pi_.push_back(static_cast<cl_real>(pi33.at(i)));
+    }
+    h_bulk_pi_ = std::vector<cl_real> (size_, 0.0);
+    cl_real4 zero4 = (cl_real4){0.0, 0.0, 0.0, 0.0};
+    h_net_charge_ = std::vector<cl_real4> (size_, zero4);
+    initialize_gpu_buffer_();
+}
+
+
+
 
 void CLVisc::evolve() {
     int max_loops = 5000;
@@ -227,22 +300,22 @@ void CLVisc::evolve() {
         israel_stewart_initialize_();
         ideal_.predict_first_step();
         for (int loop = 0; loop < max_loops; loop++) {
-            std::cout << "tau = " << tau_ << " fm; ";
-            if (loop % 10 == 0) {
-                float max_ed = ideal_.max_energy_density();
-                if ( max_ed < 0.5 ) break;
-                std::cout << "max_ed = " << max_ed << " ";
-            }
+            std::cout << "tau = " << tau_ << " fm; " << std::endl;
             backend_.enqueue_copy(d_shear_pi_[1], d_shear_pi_[0], 10*size_*sizeof(cl_real));
             backend_.enqueue_copy(ideal_.d_ev_[1], ideal_.d_ev_[0], size_*sizeof(cl_real4));
             half_step_(1);
             tau_ += cfg_.dt;
             half_step_(2);
             update_udiff_();
-            std::time(&timer2);
-            total_exec_time = std::difftime(timer2, timer1);
-            std::cout << "Total computing time: " << total_exec_time << " s; ";
-            std::cout << std::endl;
+            if (loop % 10 == 0) {
+                float max_ed = ideal_.max_energy_density();
+                if ( max_ed < 0.5 ) break;
+                std::cout << "max_ed = " << max_ed << " ";
+                std::time(&timer2);
+                total_exec_time = std::difftime(timer2, timer1);
+                std::cout << "Total computing time: " << total_exec_time << " s; ";
+                std::cout << std::endl;
+            }
         }
         std::cout << "Total computing time: " << total_exec_time << " s; ";
     } catch (cl::Error & err) {
@@ -252,5 +325,51 @@ void CLVisc::evolve() {
 
 CLVisc::~CLVisc() {
 }
+
+// in case the input array is a vector of double instead of float
+template void CLVisc::read_ini(const std::vector<float> & ed);
+template void CLVisc::read_ini(const std::vector<double> & ed);
+
+template void CLVisc::read_ini(const std::vector<float> & ed, 
+                      const std::vector<float> & vx, 
+                      const std::vector<float> & vy, 
+                      const std::vector<float> & vz);
+
+template void CLVisc::read_ini(const std::vector<double> & ed, 
+                      const std::vector<double> & vx, 
+                      const std::vector<double> & vy, 
+                      const std::vector<double> & vz);
+
+
+template void CLVisc::read_ini(const std::vector<float> & ed, 
+              const std::vector<float> & vx, 
+              const std::vector<float> & vy, 
+              const std::vector<float> & vz,
+              const std::vector<float> & pi00,
+              const std::vector<float> & pi01,
+              const std::vector<float> & pi02,
+              const std::vector<float> & pi03,
+              const std::vector<float> & pi11,
+              const std::vector<float> & pi12,
+              const std::vector<float> & pi13,
+              const std::vector<float> & pi22,
+              const std::vector<float> & pi23,
+              const std::vector<float> & pi33);
+
+template void CLVisc::read_ini(const std::vector<double> & ed, 
+              const std::vector<double> & vx, 
+              const std::vector<double> & vy, 
+              const std::vector<double> & vz,
+              const std::vector<double> & pi00,
+              const std::vector<double> & pi01,
+              const std::vector<double> & pi02,
+              const std::vector<double> & pi03,
+              const std::vector<double> & pi11,
+              const std::vector<double> & pi12,
+              const std::vector<double> & pi13,
+              const std::vector<double> & pi22,
+              const std::vector<double> & pi23,
+              const std::vector<double> & pi33);
+
 
 } // end namespace clvisc

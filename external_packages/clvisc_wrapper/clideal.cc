@@ -1,3 +1,26 @@
+/*******************************************************************************
+ * Copyright (c) 2018-2019 LongGang Pang, lgpang@qq.com
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and/or associated documentation files (the
+ * "Materials"), to deal in the Materials without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Materials, and to
+ * permit persons to whom the Materials are furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Materials.
+ *
+ * THE MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
+ ******************************************************************************/
+
 #include <cmath>
 #include <cstring>
 #include <ctime>
@@ -105,23 +128,28 @@ void CLIdeal::initialize_gpu_buffer_() {
 }
 
 // read initial energy density from external vector
-void CLIdeal::read_ini(const std::vector<cl_real> & ed) {
+template <typename ValueType>
+void CLIdeal::read_ini(const std::vector<ValueType> & ed) {
     h_ev_.clear();
     for (size_t idx = 0; idx < ed.size(); idx++) {
-        h_ev_.push_back((cl_real4){ed.at(idx), 0.0f, 0.0f, 0.0f});
+        h_ev_.push_back((cl_real4){static_cast<cl_real>(ed.at(idx)), 0.0f, 0.0f, 0.0f});
     }
     initialize_gpu_buffer_();
 }
 
 // read initial ed, vx, vy, vz vector
-void CLIdeal::read_ini(const std::vector<cl_real> & ed, 
-                       const std::vector<cl_real> & vx, 
-                       const std::vector<cl_real> & vy, 
-                       const std::vector<cl_real> & vz)
+template <typename ValueType>
+void CLIdeal::read_ini(const std::vector<ValueType> & ed, 
+                       const std::vector<ValueType> & vx, 
+                       const std::vector<ValueType> & vy, 
+                       const std::vector<ValueType> & vz)
 {
     h_ev_.clear();
     for (size_t idx = 0; idx < ed.size(); idx++) {
-        h_ev_.push_back((cl_real4){ed.at(idx), vx.at(idx), vy.at(idx), vz.at(idx)});
+        h_ev_.push_back((cl_real4){static_cast<cl_real>(ed.at(idx)), \
+                                   static_cast<cl_real>(vx.at(idx)), \
+                                   static_cast<cl_real>(vy.at(idx)), \
+                                   static_cast<cl_real>(vz.at(idx))});
     }
     initialize_gpu_buffer_();
 }
@@ -251,5 +279,21 @@ std::string & CLIdeal::get_compile_option() {
 
 CLIdeal::~CLIdeal() {
 }
+
+
+
+template void CLIdeal::read_ini(const std::vector<float> & ed);
+template void CLIdeal::read_ini(const std::vector<double> & ed);
+
+template void CLIdeal::read_ini(const std::vector<float> & ed, 
+                       const std::vector<float> & vx, 
+                       const std::vector<float> & vy, 
+                       const std::vector<float> & vz);
+
+template void CLIdeal::read_ini(const std::vector<double> & ed, 
+                       const std::vector<double> & vx, 
+                       const std::vector<double> & vy, 
+                       const std::vector<double> & vz);
+
 
 } // end namespace clvisc

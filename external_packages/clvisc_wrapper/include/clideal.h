@@ -1,3 +1,27 @@
+/*******************************************************************************
+ * Copyright (c) 2018-2019 LongGang Pang, lgpang@qq.com
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and/or associated documentation files (the
+ * "Materials"), to deal in the Materials without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Materials, and to
+ * permit persons to whom the Materials are furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Materials.
+ *
+ * THE MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
+ ******************************************************************************/
+
+
 #ifndef __CL_IDEAL__
 #define __CL_IDEAL__
 /*!< Use cpp exceptionn to handel errors */
@@ -85,13 +109,15 @@ class CLIdeal
 	CLIdeal(const Config & cfg, std::string device_type, int device_id);
 
     // read initial energy density from external vector
-    void read_ini(const std::vector<cl_real> & ed);
+    template <typename ValueType>
+    void read_ini(const std::vector<ValueType> & ed);
 
     // read initial ed, vx, vy, vz vector
-    void read_ini(const std::vector<cl_real> & ed, 
-                  const std::vector<cl_real> & vx, 
-                  const std::vector<cl_real> & vy, 
-                  const std::vector<cl_real> & vz);
+    template <typename ValueType>
+    void read_ini(const std::vector<ValueType> & ed, 
+                  const std::vector<ValueType> & vx, 
+                  const std::vector<ValueType> & vy, 
+                  const std::vector<ValueType> & vz);
 
     // run hydrodynamic evolution for one time step
     void one_step();

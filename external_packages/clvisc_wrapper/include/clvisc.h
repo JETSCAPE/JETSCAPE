@@ -1,3 +1,27 @@
+/*******************************************************************************
+ * Copyright (c) 2018-2019 LongGang Pang, lgpang@qq.com
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and/or associated documentation files (the
+ * "Materials"), to deal in the Materials without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Materials, and to
+ * permit persons to whom the Materials are furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Materials.
+ *
+ * THE MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
+ ******************************************************************************/
+
+
 #ifndef __CL_VISC__
 #define __CL_VISC__
 /*!< Use cpp exceptionn to handel errors */
@@ -79,50 +103,54 @@ class CLVisc
 	CLVisc(const Config & cfg, std::string device_type, int device_id);
 
     // read initial energy density from external vector
-    void read_ini(const std::vector<cl_real> & ed);
+    template <typename ValueType>
+    void read_ini(const std::vector<ValueType> & ed);
 
     // read initial ed, vx, vy, vz vector
-    void read_ini(const std::vector<cl_real> & ed, 
-                  const std::vector<cl_real> & vx, 
-                  const std::vector<cl_real> & vy, 
-                  const std::vector<cl_real> & vz);
+    template <typename ValueType>
+    void read_ini(const std::vector<ValueType> & ed, 
+                  const std::vector<ValueType> & vx, 
+                  const std::vector<ValueType> & vy, 
+                  const std::vector<ValueType> & vz);
 
     // read initial ed, vx, vy, vz vector and shear viscosity
-    void read_ini(const std::vector<cl_real> & ed, 
-                  const std::vector<cl_real> & vx, 
-                  const std::vector<cl_real> & vy, 
-                  const std::vector<cl_real> & vz,
-                  const std::vector<cl_real> & pi00,
-                  const std::vector<cl_real> & pi01,
-                  const std::vector<cl_real> & pi02,
-                  const std::vector<cl_real> & pi03,
-                  const std::vector<cl_real> & pi11,
-                  const std::vector<cl_real> & pi12,
-                  const std::vector<cl_real> & pi13,
-                  const std::vector<cl_real> & pi22,
-                  const std::vector<cl_real> & pi23,
-                  const std::vector<cl_real> & pi33);
+    template <typename ValueType>
+    void read_ini(const std::vector<ValueType> & ed, 
+                  const std::vector<ValueType> & vx, 
+                  const std::vector<ValueType> & vy, 
+                  const std::vector<ValueType> & vz,
+                  const std::vector<ValueType> & pi00,
+                  const std::vector<ValueType> & pi01,
+                  const std::vector<ValueType> & pi02,
+                  const std::vector<ValueType> & pi03,
+                  const std::vector<ValueType> & pi11,
+                  const std::vector<ValueType> & pi12,
+                  const std::vector<ValueType> & pi13,
+                  const std::vector<ValueType> & pi22,
+                  const std::vector<ValueType> & pi23,
+                  const std::vector<ValueType> & pi33);
 
     // read initial ed, vx, vy, vz vector and shear viscosity,
     // bulk viscosity and charge current
-    void read_ini(const std::vector<cl_real> & ed, 
-                  const std::vector<cl_real> & vx, 
-                  const std::vector<cl_real> & vy, 
-                  const std::vector<cl_real> & vz,
-                  const std::vector<cl_real> & pi00,
-                  const std::vector<cl_real> & pi01,
-                  const std::vector<cl_real> & pi02,
-                  const std::vector<cl_real> & pi03,
-                  const std::vector<cl_real> & pi11,
-                  const std::vector<cl_real> & pi12,
-                  const std::vector<cl_real> & pi13,
-                  const std::vector<cl_real> & pi22,
-                  const std::vector<cl_real> & pi23,
-                  const std::vector<cl_real> & pi33,
-                  const std::vector<cl_real> & bulk_pi,
-                  const std::vector<cl_real> & net_charge_baryon_,
-                  const std::vector<cl_real> & net_charge_electric,
-                  const std::vector<cl_real> & net_charge_strange);
+    template <typename ValueType>
+    void read_ini(const std::vector<ValueType> & ed, 
+                  const std::vector<ValueType> & vx, 
+                  const std::vector<ValueType> & vy, 
+                  const std::vector<ValueType> & vz,
+                  const std::vector<ValueType> & pi00,
+                  const std::vector<ValueType> & pi01,
+                  const std::vector<ValueType> & pi02,
+                  const std::vector<ValueType> & pi03,
+                  const std::vector<ValueType> & pi11,
+                  const std::vector<ValueType> & pi12,
+                  const std::vector<ValueType> & pi13,
+                  const std::vector<ValueType> & pi22,
+                  const std::vector<ValueType> & pi23,
+                  const std::vector<ValueType> & pi33,
+                  const std::vector<ValueType> & bulk_pi,
+                  const std::vector<ValueType> & net_charge_baryon_,
+                  const std::vector<ValueType> & net_charge_electric,
+                  const std::vector<ValueType> & net_charge_strange);
 
 
     // run clvisc evolution for one time step
