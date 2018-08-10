@@ -39,7 +39,7 @@ CLIdeal::CLIdeal(const Config & cfg, std::string device_type,
     tau_ = cfg.tau0;
 
     CompileOption opts_;
-    opts_.KernelIncludePath("../../PyVisc/pyvisc/kernel/");
+    opts_.KernelIncludePath("clvisc_kernel/");
     //opts_.Define("EOSI");
     opts_.Define("EOS_TABLE");
     opts_.SetFloatConst("TAU0", cfg_.tau0);
@@ -62,18 +62,18 @@ CLIdeal::CLIdeal(const Config & cfg, std::string device_type,
 #ifdef USE_SINGLE_PRECISION
     opts_.Define("USE_SINGLE_PRECISION");
 #endif
-    read_eos_table_("../eos_table/s95_pce165.dat", opts_);
+    read_eos_table_("data_table/s95_pce165.dat", opts_);
     compile_option_ = opts_.str();
     try {
         // build kernels for hydrodynamic evolution
-        auto prg = backend_.BuildProgram("../../PyVisc/pyvisc/kernel/kernel_ideal.cl", compile_option_);
+        auto prg = backend_.BuildProgram("clvisc_kernel/kernel_ideal.cl", compile_option_);
         kernel_kt_src_christoffel_ = cl::Kernel(prg, "kt_src_christoffel");
         kernel_kt_src_alongx_ = cl::Kernel(prg, "kt_src_alongx");
         kernel_kt_src_alongy_ = cl::Kernel(prg, "kt_src_alongy");
         kernel_kt_src_alongz_ = cl::Kernel(prg, "kt_src_alongz");
         kernel_update_ev_ = cl::Kernel(prg, "update_ev");
         // build kernels to look for maximum energy density
-        auto prg2 = backend_.BuildProgram("../../PyVisc/pyvisc/kernel/kernel_reduction.cl",
+        auto prg2 = backend_.BuildProgram("clvisc_kernel/kernel_reduction.cl",
                                           compile_option_);
         kernel_reduction_ = cl::Kernel(prg2, "reduction_stage1");
     } catch (cl::Error & err ){

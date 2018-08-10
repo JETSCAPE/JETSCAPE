@@ -44,7 +44,7 @@ CLVisc::CLVisc(const Config & cfg, std::string device_type,
 
     try {
         // build kernels for hydrodynamic evolution
-        auto prg = backend_.BuildProgram("../../PyVisc/pyvisc/kernel/kernel_IS.cl",
+        auto prg = backend_.BuildProgram("clvisc_kernel/kernel_IS.cl",
                 compile_option_);
         // is == Israel Stewart here
         kernel_is_initialize_ = cl::Kernel(prg, "visc_initialize");
@@ -55,7 +55,7 @@ CLVisc::CLVisc(const Config & cfg, std::string device_type,
         kernel_is_update_pimn_ = cl::Kernel(prg, "update_pimn");
         kernel_is_get_udiff_ = cl::Kernel(prg, "get_udiff");
 
-        auto prg2 = backend_.BuildProgram("../../PyVisc/pyvisc/kernel/kernel_visc.cl",
+        auto prg2 = backend_.BuildProgram("clvisc_kernel/kernel_visc.cl",
                 compile_option_);
         kernel_visc_src_christoffel_ = cl::Kernel(prg2, "kt_src_christoffel");
         kernel_visc_kt_src_alongx_ = cl::Kernel(prg2, "kt_src_alongx");
@@ -81,13 +81,17 @@ void CLVisc::initialize_gpu_buffer_() {
         d_net_charge_[i] = backend_.CreateBufferByCopyVector(h_net_charge_, read_only_option);
     }
 
+    // initialize the d_udz_ to vector of (real4)
+    // in case the nz = 1 and one wants to skip z direction calculation
+    std::vector<cl_real4> h_udz_(size_, (cl_real4){0.0f, 0.0f, 0.0f, 0.0f});
+
     d_is_shear_pi_src_ = backend_.CreateBuffer(10*ed_bytes);
     d_is_bulk_pi_src_ = backend_.CreateBuffer(ed_bytes);
     d_udx_ = backend_.CreateBuffer(4*ed_bytes);    // cl_real4 type
-    d_udy_ = backend_.CreateBuffer(4*ed_bytes);    // cl_real4 type
-    d_udz_ = backend_.CreateBuffer(4*ed_bytes);    // cl_real4 type
-    d_udiff_ = backend_.CreateBuffer(4*ed_bytes);  // cl_real4 type
-    d_goodcell_ = backend_.CreateBuffer(ed_bytes); // cl_real type
+    d_udy_ = backend_.CreateBuffer(4*ed_bytes);
+    d_udz_ = backend_.CreateBufferByCopyVector(h_udz_, read_only_option);
+    d_udiff_ = backend_.CreateBuffer(4*ed_bytes);
+    d_goodcell_ = backend_.CreateBuffer(ed_bytes);
 }
 
 
@@ -139,7 +143,7 @@ void CLVisc::half_step_israel_stewart_(int step) {
             cl::NDRange(cfg_.nx, cfg_.block_size, cfg_.nz),
             cl::NDRange(1, cfg_.block_size, 1));
 
-    //if (cfg_.nz != 1) {
+    if (cfg_.nz != 1) {
         kernel_is_src_alongz_.setArg(0, d_is_shear_pi_src_);
         kernel_is_src_alongz_.setArg(1, d_udz_);
         kernel_is_src_alongz_.setArg(2, d_shear_pi_[step]);
@@ -149,7 +153,7 @@ void CLVisc::half_step_israel_stewart_(int step) {
         backend_.enqueue_run(kernel_is_src_alongz_, 
                 cl::NDRange(cfg_.nx, cfg_.ny, cfg_.block_size),
                 cl::NDRange(1, 1, cfg_.block_size));
-    //}
+    }
 
     kernel_is_update_pimn_.setArg(0, d_shear_pi_[3-step]);
     kernel_is_update_pimn_.setArg(1, d_goodcell_);
