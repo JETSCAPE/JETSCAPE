@@ -13,6 +13,8 @@ set (SOURCES
 
 add_subdirectory( hydro_from_external_file )
 
+add_subdirectory( clvisc_wrapper )
+
 if(${ZLIB_FOUND})
   set (SOURCES ${SOURCES}  gzstream.cc )
 endif()
@@ -22,3 +24,6 @@ if(${ZLIB_FOUND})
   target_link_libraries(JetScapeThird ${ZLIB_LIBRARIES} )
 endif()
 
+if (OPENCL_FOUND)
+  target_link_libraries(JetScapeThird lib_clvisc)
+endif (OPENCL_FOUND)

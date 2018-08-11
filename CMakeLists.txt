@@ -35,6 +35,18 @@ if (freestream)
   include_directories(./external_packages/freestream-milne/src)
 endif (freestream)
 
+# CLVisc. Trun on with 'cmake -Dclvisc=ON'.
+option(clvisc "Build tests for CLVisc" ON)
+find_package(opencl)
+if (OPENCL_FOUND)
+  message("Found OpenCL, try clvisc with cmake -Dclvisc=ON")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated")
+  if (clvisc)
+      message("Includes for clvisc ...")
+      include_directories(./external_packages/clvisc_wrapper/include/)
+  endif (clvisc)
+endif (OPENCL_FOUND)
+
 # MUSIC. Turn on with 'cmake -Dmusic=ON'.
 option(music "Build tests for MUSIC" OFF)
 if (music)
@@ -337,6 +349,11 @@ target_link_libraries(PythiaBrickTest JetScape )
 
 add_executable(LBT_brickTest ./examples/LBT_brickTest.cc)
 target_link_libraries(LBT_brickTest JetScape )
+
+if ( clvisc AND OPENCL_FOUND )
+  add_executable(CLViscTest ./examples/CLViscTest.cc)
+  target_link_libraries(CLViscTest JetScape)
+endif (clvisc AND OPENCL_FOUND)
 
 if(${HDF5_FOUND})
   add_executable(hydroFileTest ./examples/hydroFileTest.cc)
