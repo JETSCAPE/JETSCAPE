@@ -4,10 +4,13 @@ project(lib_clvisc)
 #for MacOSX
 cmake_policy(SET CMP0042 NEW)
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/eos_table/s95_pce165.dat DESTINATION ${CMAKE_BINARY_DIR}/data_table)
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../PyVisc/pyvisc/kernel/ DESTINATION ${CMAKE_BINARY_DIR}/clvisc_kernel)
+if(NOT EXISTS "${CMAKE_SOURCE_DIR}/external_packages/PyVisc")
+    message(FATAL_ERROR "Error: CLVisc source has not been downloaded in external_packages by ./get_clvisc.sh")
+else()
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/eos_table/s95_pce165.dat DESTINATION ${CMAKE_BINARY_DIR}/data_table)
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../PyVisc/pyvisc/kernel/ DESTINATION ${CMAKE_BINARY_DIR}/clvisc_kernel)
+endif()
 
-#cl_spec.cpp  EosPCEv0.cl  helper.h  kernel_ideal.cl
 set ( SRC_LIST 
     ${PROJECT_SOURCE_DIR}/include/cl.hpp
     ${PROJECT_SOURCE_DIR}/opencl_backend.cc
@@ -63,8 +66,9 @@ endif( OPENCL_FOUND )
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wno-deprecated")
 include_directories( ${PROJECT_SOURCE_DIR}/include )
-add_executable ( test_clvisc ${SRC_LIST} )
-target_link_libraries ( test_clvisc ${EXTRA_LIBS} )
+
+### add_executable ( test_clvisc ${SRC_LIST} )
+### target_link_libraries ( test_clvisc ${EXTRA_LIBS} )
 
 #### compile the clvisc to one library that will be used by clvisc+jetscape interface
 add_library(lib_clvisc SHARED ${SRC_LIST})

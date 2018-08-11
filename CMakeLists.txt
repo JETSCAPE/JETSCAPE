@@ -36,14 +36,18 @@ if (freestream)
 endif (freestream)
 
 # CLVisc. Trun on with 'cmake -Dclvisc=ON'.
-option(clvisc "Build tests for CLVisc" ON)
 find_package(opencl)
+
+option(clvisc "Build tests for CLVisc" OFF)
 if (OPENCL_FOUND)
   message("Found OpenCL, try clvisc with cmake -Dclvisc=ON")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated")
   if (clvisc)
       message("Includes for clvisc ...")
       include_directories(./external_packages/clvisc_wrapper/include/)
+      if(NOT EXISTS "${CMAKE_SOURCE_DIR}/external_packages/PyVisc")
+          message(FATAL_ERROR "Error: CLVisc source has not been downloaded in external_packages by ./get_clvisc.sh")
+      endif()
   endif (clvisc)
 endif (OPENCL_FOUND)
 
@@ -312,8 +316,6 @@ if (iSS)
     message(FATAL_ERROR "Error: iSS source has not been downloaded in external_packages by ./get_iSS.sh")
   endif()      
 endif (iSS)
-
-
 
 ###########################
 ### Binary location     ###

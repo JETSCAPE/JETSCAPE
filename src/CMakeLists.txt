@@ -46,6 +46,10 @@ if(NOT "${music}")
   list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/hydro/MusicWrapper.cc)
 endif()
 
+if(NOT "${clvisc}")
+  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/hydro/CLViscWrapper.cc)
+endif()
+
 #jet
 FILE(GLOB jetsources jet/*.cc)
 set (SOURCES  ${SOURCES}  ${jetsources} )
