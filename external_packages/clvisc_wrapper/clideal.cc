@@ -97,8 +97,8 @@ void CLIdeal::read_eos_table_(std::string fname, CompileOption & opts_) {
         while (fin.good()) {
             fin >> speed_of_sound_square >> pressure >> temperature >> entropy_density;
             if (fin.eof()) break;  // eof() repeat the last line
-            host_eos_table.push_back((cl_float4){speed_of_sound_square,
-                    pressure, temperature, entropy_density});
+            host_eos_table.push_back((cl_float4){{speed_of_sound_square,
+                    pressure, temperature, entropy_density}});
         }
     } else {
         throw std::runtime_error("Failed to open equation of state table" + fname);
@@ -132,7 +132,7 @@ template <typename ValueType>
 void CLIdeal::read_ini(const std::vector<ValueType> & ed) {
     h_ev_.clear();
     for (size_t idx = 0; idx < ed.size(); idx++) {
-        h_ev_.push_back((cl_real4){static_cast<cl_real>(ed.at(idx)), 0.0f, 0.0f, 0.0f});
+        h_ev_.push_back((cl_real4){{static_cast<cl_real>(ed.at(idx)), 0.0f, 0.0f, 0.0f}});
     }
     initialize_gpu_buffer_();
 }
@@ -146,10 +146,10 @@ void CLIdeal::read_ini(const std::vector<ValueType> & ed,
 {
     h_ev_.clear();
     for (size_t idx = 0; idx < ed.size(); idx++) {
-        h_ev_.push_back((cl_real4){static_cast<cl_real>(ed.at(idx)), \
+        h_ev_.push_back((cl_real4){{static_cast<cl_real>(ed.at(idx)), \
                                    static_cast<cl_real>(vx.at(idx)), \
                                    static_cast<cl_real>(vy.at(idx)), \
-                                   static_cast<cl_real>(vz.at(idx))});
+                                   static_cast<cl_real>(vz.at(idx))}});
     }
     initialize_gpu_buffer_();
 }

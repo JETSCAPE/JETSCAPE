@@ -83,7 +83,7 @@ void CLVisc::initialize_gpu_buffer_() {
 
     // initialize the d_udz_ to vector of (real4)
     // in case the nz = 1 and one wants to skip z direction calculation
-    std::vector<cl_real4> h_udz_(size_, (cl_real4){0.0f, 0.0f, 0.0f, 0.0f});
+    std::vector<cl_real4> h_udz_(size_, (cl_real4){{0.0f, 0.0f, 0.0f, 0.0f}});
 
     d_is_shear_pi_src_ = backend_.CreateBuffer(10*ed_bytes);
     d_is_bulk_pi_src_ = backend_.CreateBuffer(ed_bytes);
@@ -238,7 +238,7 @@ void CLVisc::read_ini(const std::vector<ValueType> & ed) {
     ideal_.read_ini(ed);
     h_shear_pi_ = std::vector<cl_real> (10*size_, 0.0);
     h_bulk_pi_ = std::vector<cl_real> (size_, 0.0);
-    cl_real4 zero4 = (cl_real4){0.0, 0.0, 0.0, 0.0};
+    cl_real4 zero4 = (cl_real4){{0.0, 0.0, 0.0, 0.0}};
     h_net_charge_ = std::vector<cl_real4> (size_, zero4);
     initialize_gpu_buffer_();
 }
@@ -252,7 +252,7 @@ void CLVisc::read_ini(const std::vector<ValueType> & ed,
     ideal_.read_ini(ed, vx, vy, vz);
     h_shear_pi_ = std::vector<cl_real> (10*size_, 0.0);
     h_bulk_pi_ = std::vector<cl_real> (size_, 0.0);
-    cl_real4 zero4 = (cl_real4){0.0, 0.0, 0.0, 0.0};
+    cl_real4 zero4 = (cl_real4){{0.0, 0.0, 0.0, 0.0}};
     h_net_charge_ = std::vector<cl_real4> (size_, zero4);
     initialize_gpu_buffer_();
 }
@@ -287,7 +287,7 @@ void CLVisc::read_ini(const std::vector<ValueType> & ed,
         h_shear_pi_.push_back(static_cast<cl_real>(pi33.at(i)));
     }
     h_bulk_pi_ = std::vector<cl_real> (size_, 0.0);
-    cl_real4 zero4 = (cl_real4){0.0, 0.0, 0.0, 0.0};
+    cl_real4 zero4 = (cl_real4){{0.0, 0.0, 0.0, 0.0}};
     h_net_charge_ = std::vector<cl_real4> (size_, zero4);
     initialize_gpu_buffer_();
 }
