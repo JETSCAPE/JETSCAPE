@@ -192,7 +192,7 @@
       <name>CLVisc</name>
       <gpu_block_size>64</gpu_block_size>
       <device_type>gpu</device_type>
-      <device_id> 1 </device_id>
+      <device_id> 0 </device_id>
       <etaos_xmin> 0.15 </etaos_xmin>
       <etaos_ymin> 0.08 </etaos_ymin>
       <etaos_left_slop> 0.0 </etaos_left_slop>
