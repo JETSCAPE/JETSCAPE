@@ -52,7 +52,7 @@ void CompileOption::SetIntConst(std::string key, int value) {
 
 // for float values, use "#define key 0.33f" if value == 0.33.
 void CompileOption::SetFloatConst(std::string key, float value) {
-    opt << "-D " << key << "=" << std::setprecision(12) << std::fixed <<  value << "f ";
+    opt << "-D " << key << "=" << std::setprecision(6) << std::fixed <<  value << "f ";
 }
 
 // for double values, use "#define key 0.33" if value == 0.33.
