@@ -22,7 +22,7 @@
 using namespace Jetscape;
 
 // CLViscWrapper for jetscape
-class CLViscWrapper: public FluidDynamics {
+class CLVisc: public FluidDynamics {
  private:
      std::unique_ptr<clvisc::CLVisc> hydro_;
      int doCooperFrye;
@@ -31,8 +31,8 @@ class CLViscWrapper: public FluidDynamics {
      double initial_condition_scale_factor;
 
  public:
-     CLViscWrapper();
-     ~CLViscWrapper();
+     CLVisc();
+     ~CLVisc();
 
      void InitializeHydro(Parameter parameter_list);
      void EvolveHydro();
@@ -43,4 +43,4 @@ class CLViscWrapper: public FluidDynamics {
                            SurfaceCellInfo* surface_list_ptr) {};
 };
 
-#endif // MUSICWRAPPER_H
+#endif // CLViscWRAPPER_H

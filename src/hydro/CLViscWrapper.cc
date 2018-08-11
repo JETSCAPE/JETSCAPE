@@ -25,18 +25,18 @@
 
 using namespace Jetscape;
 
-CLViscWrapper::CLViscWrapper() {
+CLVisc::CLVisc() {
     hydro_status = NOT_START;
     doCooperFrye = 0;
     SetId("CLVisc");
 }
 
 
-CLViscWrapper::~CLViscWrapper() {
+CLVisc::~CLVisc() {
 }
 
 
-void CLViscWrapper::InitializeHydro(Parameter parameter_list) {
+void CLVisc::InitializeHydro(Parameter parameter_list) {
     INFO << "Initialize CLVisc ...";
     VERBOSE(8);
     tinyxml2::XMLElement *para =
@@ -49,7 +49,6 @@ void CLViscWrapper::InitializeHydro(Parameter parameter_list) {
     clvisc::Config cfg;
     para->FirstChildElement("gpu_block_size")->QueryIntText(&cfg.block_size);
     std::string device_type = para->FirstChildElement("device_type")->GetText();
-    std::cout << device_type << std::endl;
     int device_id;
     para->FirstChildElement("device_id")->QueryIntText(&device_id);
     para->FirstChildElement("etaos_xmin")->QueryFloatText(&cfg.etaos_xmin);
@@ -72,7 +71,7 @@ void CLViscWrapper::InitializeHydro(Parameter parameter_list) {
     para->FirstChildElement("scale_factor")->QueryDoubleText(&initial_condition_scale_factor);
 }
 
-void CLViscWrapper::EvolveHydro() {
+void CLVisc::EvolveHydro() {
     VERBOSE(8);
     INFO << "Initialize density profiles in CLVisc ...";
     std::vector<double> entropy_density = ini->GetEntropyDensityDistribution();
@@ -117,14 +116,13 @@ void CLViscWrapper::EvolveHydro() {
         hydro_status = FINISHED;
     }
     if (hydro_status == FINISHED && doCooperFrye == 1) {
-        //music_hydro_ptr->run_Cooper_Frye(1);
         INFO << "Cooper Frye not implemented yet";
     }
 }
 
-void CLViscWrapper::GetHydroInfo(
+void CLVisc::GetHydroInfo(
         Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
         std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr) {
-    fluid_cell_info_ptr = std::make_unique<FluidCellInfo>();
+        fluid_cell_info_ptr = std::make_unique<FluidCellInfo>();
 }
 

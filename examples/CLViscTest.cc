@@ -84,7 +84,7 @@ int main(int argc, char** argv)
   // Initial conditions and hydro
   auto trento = make_shared<TrentoInitial>();
   auto pGun= make_shared<PGun> ();
-  auto hydro = make_shared<CLViscWrapper> ();
+  auto hydro = make_shared<CLVisc> ();
   jetscape->Add(trento);
   jetscape->Add(pGun);
   jetscape->Add(hydro);
@@ -162,7 +162,7 @@ int main(int argc, char** argv)
 void Show()
 {
   INFO_NICE<<"-----------------------------------------------";
-  INFO_NICE<<"| MUSIC Test JetScape Framework ... |";
+  INFO_NICE<<"| CLVisc Test JetScape Framework ... |";
   INFO_NICE<<"-----------------------------------------------";
   INFO_NICE;
 }
