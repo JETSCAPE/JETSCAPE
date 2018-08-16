@@ -232,6 +232,12 @@ void CLVisc::half_step_(int step) {
     half_step_visc_(step);
 }
 
+void CLVisc::one_step() {
+    half_step_(1);
+    tau_ += cfg_.dt;
+    half_step_(2);
+}
+
 
 template <typename ValueType>
 void CLVisc::read_ini(const std::vector<ValueType> & ed) {
@@ -307,9 +313,7 @@ void CLVisc::evolve() {
             std::cout << "tau = " << tau_ << " fm; " << std::endl;
             backend_.enqueue_copy(d_shear_pi_[1], d_shear_pi_[0], 10*size_*sizeof(cl_real));
             backend_.enqueue_copy(ideal_.d_ev_[1], ideal_.d_ev_[0], size_*sizeof(cl_real4));
-            half_step_(1);
-            tau_ += cfg_.dt;
-            half_step_(2);
+            one_step();
             update_udiff_();
             if (loop % 10 == 0) {
                 float max_ed = ideal_.max_energy_density();

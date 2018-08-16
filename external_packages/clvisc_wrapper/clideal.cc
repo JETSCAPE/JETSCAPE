@@ -234,6 +234,7 @@ float CLIdeal::max_energy_density() {
 // return the excution time on device
 void CLIdeal::one_step() {
     half_step_(1);
+    tau_ += cfg_.dt;
     half_step_(2);
 }
 
@@ -260,7 +261,6 @@ void CLIdeal::evolve() {
             std::cout << "max_ed = " << max_ed << " ";
             std::cout << "Total computing time: " << time_diff << " s; ";
             std::cout << std::endl;
-            tau_ += cfg_.dt;
         }
         std::cout << "Total computing time: " << total_exec_time << " s; ";
     } catch (cl::Error & err) {
