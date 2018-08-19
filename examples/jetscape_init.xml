@@ -60,6 +60,7 @@
     <!-- Sensible defaults are set in the class. ptHat etc. get their own field -->
     <PythiaGun>
       <name>PythiaGun</name>
+      <FSR_on>1</FSR_on>
       <pTHatMin>110</pTHatMin>
       <pTHatMax>120</pTHatMax>
       <eCM>2760</eCM>
@@ -82,6 +83,7 @@
 
     <Matter>
       <name>Matter</name>
+      <matter_on> 0 </matter_on>
       <Q0> 2.0 </Q0>
       <T0> 0.16 </T0>
       <vir_factor> 0.25 </vir_factor>
@@ -91,16 +93,16 @@
       <brick_med> 0 </brick_med>
       <brick_length> 0.0 </brick_length>
       <hydro_Tc> 0.16 </hydro_Tc>
-      <qhat0> 3.0 </qhat0>
-      <alphas> 0.25 </alphas>
+      <qhat0> -3.0 </qhat0>
+      <alphas> 0.2 </alphas>
     </Matter>
 
     <Lbt>
       <name> Lbt </name>
-      <Q0> 1.0 </Q0>
+      <Q0> 2.0 </Q0>
       <in_vac> 0 </in_vac>
       <only_leading> 0 </only_leading>
-      <hydro_Tc> 0.15 </hydro_Tc>
+      <hydro_Tc> 0.16 </hydro_Tc>
       <alphas> 0.2 </alphas>
     </Lbt>
     
@@ -193,6 +195,7 @@
   <!-- Jet Hadronization Module -->
    <JetHadronization>
        <name>colored</name>
+       <take_recoil>1</take_recoil>
        <eCMforHadronization>1380</eCMforHadronization>
    </JetHadronization>
 

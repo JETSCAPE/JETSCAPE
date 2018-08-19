@@ -30,6 +30,7 @@ private:
   double pTHatMin;
   double pTHatMax;
   double eCM;
+  bool   FSR_on;
 
 public:
   /** standard ctor

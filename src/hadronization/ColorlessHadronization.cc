@@ -62,8 +62,11 @@ void ColorlessHadronization::Init()
 
     // Read sqrts to know remnants energies
     double p_read_xml = 10000 ;
+    int flagInt=1;
     hadronization->FirstChildElement("eCMforHadronization")->QueryDoubleText(&p_read_xml);
     p_fake = p_read_xml;
+    hadronization->FirstChildElement("take_recoil")->QueryIntText(&flagInt);
+    take_recoil=flagInt;
 
     JSDEBUG<<"Initialize ColorlessHadronization";
     VERBOSE(8);
@@ -106,6 +109,8 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
   {
     event.reset();
 
+    if(!take_recoil && want_pos==0) continue; // SC: don't need negative if don't take recoil
+
     // Set remnants momentum
     double rempx=0.2;
     double rempy=0.2;
@@ -117,8 +122,12 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
     for(unsigned int ishower=0; ishower <  shower.size(); ++ishower)
     {
       for(unsigned int ipart=0; ipart <  shower.at(ishower).size(); ++ipart)
-      {
-        if (shower.at(ishower).at(ipart)->pstat()==0 && want_pos==1) pIn.push_back(shower.at(ishower).at(ipart));  // Positive
+      { 
+        //if (shower.at(ishower).at(ipart)->pstat()==0 && want_pos==1) pIn.push_back(shower.at(ishower).at(ipart));  // Positive
+        if (want_pos==1) { // Positive
+	    if(take_recoil && shower.at(ishower).at(ipart)->pstat()!=0) pIn.push_back(shower.at(ishower).at(ipart));  
+	    if(!take_recoil && shower.at(ishower).at(ipart)->pstat()==0) pIn.push_back(shower.at(ishower).at(ipart));
+	}  
         if (shower.at(ishower).at(ipart)->pstat()==-1 && want_pos==0) pIn.push_back(shower.at(ishower).at(ipart));  // Negative
       }
       JSDEBUG<<"Shower#"<<ishower+1 << ". Number of partons to hadronize so far: " << pIn.size();
