@@ -11,3 +11,11 @@ General:
 
 Output:
     Output_Interval:  5.0
+
+# This section is dummy
+Modi:
+    List:
+        File_Directory: .
+        File_Prefix: "dummy"
+        Shift_Id: 0
+        Start_Time: 0.0
