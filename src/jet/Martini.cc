@@ -1,4 +1,4 @@
-/*******************************************************************************
+			/*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
  * Modular, task-based framework for simulating all aspects of heavy-ion collisions
@@ -34,8 +34,6 @@ using std::ostream;
 using std::ios;
 
 
-const double QS = 1.0;
-
 Martini::Martini()
 {
   SetId("Martini");
@@ -65,17 +63,25 @@ void Martini::Init()
   // check that all is there
   if ( !martini )     throw std::runtime_error("Martini not properly initialized in XML file ...");
   if ( !martini->FirstChildElement( "name" ) )     throw std::runtime_error("Martini not properly initialized in XML file ...");
+  if ( !martini->FirstChildElement( "Q0" ) )     throw std::runtime_error("Martini not properly initialized in XML file ...");
   if ( !martini->FirstChildElement( "alpha_s" ) )     throw std::runtime_error("Martini not properly initialized in XML file ...");
   if ( !martini->FirstChildElement( "pcut" ) )     throw std::runtime_error("Martini not properly initialized in XML file ...");
+  if ( !martini->FirstChildElement( "hydro_Tc" ) )     throw std::runtime_error("Martini not properly initialized in XML file ...");
 
   string s = martini->FirstChildElement( "name" )->GetText();
   JSDEBUG << s << " to be initilizied ...";
+
+  Q0 = 1.0;
+  martini->FirstChildElement("Q0")->QueryDoubleText(&Q0);
 
   alpha_s = 0.3;
   martini->FirstChildElement("alpha_s")->QueryDoubleText(&alpha_s);
     
   pcut = 2.0;
   martini->FirstChildElement("pcut")->QueryDoubleText(&pcut);
+
+  hydro_Tc = 0.16;
+  martini->FirstChildElement("hydro_Tc")->QueryDoubleText(&hydro_Tc);
 
   g = sqrt(4.*M_PI*alpha_s);
   alpha_em = 1./137.;
@@ -112,6 +118,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
   FourVector pVecNewRest;
   FourVector kVec;           // 4 vector for momentum of radiated particle
   FourVector xVec;           // 4 vector for position (for next time step!)
+  double velocity_jet[4];    // jet velocity for MATTER
   double eta;                // pseudo-rapidity
   
   // flow info
@@ -124,17 +131,15 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
   double cosPhiRestEl;       // angle between flow and scat. particle in rest frame
   double boostBackEl;
   
-  
   for (int i=0;i<pIn.size();i++) {
-    // Only accept low t particles
-    if (pIn[i].t() > QS*QS + rounding_error) continue;
-    TakeResponsibilityFor ( pIn[i] ); // Generate error if another module already has responsibility.
-    
+
+    // Particle infomration
     Id = pIn[i].pid();
 
     px = pIn[i].px();
     py = pIn[i].py();
     pz = pIn[i].pz();
+
     // In MARTINI, particles are all massless and on-shell
     pAbs = sqrt(px*px+py*py+pz*pz);
     pVec = FourVector ( px, py, pz, pAbs );
@@ -145,6 +150,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 
     eta = pIn[i].eta();
 
+    // Extract fluid properties
     std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
     GetHydroCellSignal(Time, xx, yy, zz, check_fluid_info_ptr);
     VERBOSE(8)<< MAGENTA<<"Temperature from Brick (Signal) = "
@@ -156,6 +162,10 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
     T = check_fluid_info_ptr->temperature;
 
     beta = sqrt( vx*vx + vy*vy + vz*vz );
+
+    // Only accept low t particles
+    if (pIn[i].t() > Q0*Q0 + rounding_error || T < hydro_Tc) continue;
+    TakeResponsibilityFor ( pIn[i] ); // Generate error if another module already has responsibility.
 
     // Set momentum in fluid cell's frame
     // 1: for brick
@@ -202,6 +212,11 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
     xVec = FourVector( xx+px/pAbs*deltaT, yy+py/pAbs*deltaT, zz+pz/pAbs*deltaT,
 		       Time+deltaT );
 
+    velocity_jet[0]=1.0;
+    velocity_jet[1]=pIn[i].jet_v().x();
+    velocity_jet[2]=pIn[i].jet_v().y();
+    velocity_jet[3]=pIn[i].jet_v().z();
+
     int process = DetermineProcess(pRest, T, deltaT, Id);
     VERBOSE(8)<< MAGENTA
 	      << "Time = " << Time << " Id = " << Id
@@ -215,6 +230,8 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
       {
 	pOut.push_back(Parton(0, Id, 0, pVec, xVec));
 	pOut[pOut.size()-1].set_form_time(0.);
+	pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
+
 	return;
       }
     if (std::abs(Id) == 1 || std::abs(Id) == 2 || std::abs(Id) == 3)
@@ -239,6 +256,8 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 		pVecNew.Set( (px/pAbs)*pNew, (py/pAbs)*pNew, (pz/pAbs)*pNew, pNew );
 		pOut.push_back(Parton(0, Id, 0, pVecNew, xVec));
 		pOut[pOut.size()-1].set_form_time(0.);
+		pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
+
 	      }
 
 	    if (kRest > pcut)
@@ -247,6 +266,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 		kVec.Set( (px/pAbs)*k, (py/pAbs)*k, (pz/pAbs)*k, k );
 		pOut.push_back(Parton(0, Id, 0, kVec, xVec));
 		pOut[pOut.size()-1].set_form_time(0.);
+                pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 	      }
 
 	    return;
@@ -271,6 +291,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 		pVecNew.Set( (px/pAbs)*pNew, (py/pAbs)*pNew, (pz/pAbs)*pNew, pNew );
 		pOut.push_back(Parton(0, Id, 0, pVecNew, xVec));
 		pOut[pOut.size()-1].set_form_time(0.);
+                pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 	      }
 
 	    // photon doesn't have energy threshold; No absorption into medium
@@ -281,6 +302,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 		kVec.Set( (px/pAbs)*k, (py/pAbs)*k, (pz/pAbs)*k, k );
 		pOut.push_back(Parton(0, Id, 0, kVec, xVec));
 		pOut[pOut.size()-1].set_form_time(0.);
+                pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 	      }
 
 	    return;
@@ -290,6 +312,8 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 	  {
 	    omega = getEnergyTransfer(pRest, T, process);
 	    q = getMomentumTransfer(pRest, omega, T, process);
+            if(q < fabs(omega)) return;  // momentum transfer is always space-like
+
 	    pVecNewRest = getNewMomentumElas(pVecRest, omega, q);
 
 	    pNewRest = pVecNewRest.t();
@@ -326,6 +350,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 
 		pOut.push_back(Parton(0, Id, 0, pVecNew, xVec));
 		pOut[pOut.size()-1].set_form_time(0.);
+                pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 	      }
 
 	    return;
@@ -335,6 +360,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 	  {
 	    pOut.push_back(Parton(0, 21, 0, pVec, xVec));
 	    pOut[pOut.size()-1].set_form_time(0.);
+	    pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 
 	    return;
 	  }
@@ -343,6 +369,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 	  {
 	    pOut.push_back(Parton(0, 22, 0, pVec, xVec));
 	    pOut[pOut.size()-1].set_form_time(0.);
+	    pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 
 	    return;
 	  }
@@ -369,6 +396,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 		pVecNew.Set( (px/pAbs)*pNew, (py/pAbs)*pNew, (pz/pAbs)*pNew, pNew );
 		pOut.push_back(Parton(0, Id, 0, pVecNew, xVec));
 		pOut[pOut.size()-1].set_form_time(0.);
+                pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 	      }
 
 	    if (kRest > pcut)
@@ -377,6 +405,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 		kVec.Set( (px/pAbs)*k, (py/pAbs)*k, (pz/pAbs)*k, k );
 		pOut.push_back(Parton(0, Id, 0, kVec, xVec));
 		pOut[pOut.size()-1].set_form_time(0.);
+                pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 	      }
 
 	    return;
@@ -408,6 +437,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 		pVecNew.Set( (px/pAbs)*pNew, (py/pAbs)*pNew, (pz/pAbs)*pNew, pNew );
 		pOut.push_back(Parton(0, Id, 0, pVecNew, xVec));
 		pOut[pOut.size()-1].set_form_time(0.);
+                pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 	      }
 
 	    if (kRest > pcut)
@@ -416,6 +446,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 		kVec.Set( (px/pAbs)*k, (py/pAbs)*k, (pz/pAbs)*k, k );
 		pOut.push_back(Parton(0, Id, 0, kVec, xVec));
 		pOut[pOut.size()-1].set_form_time(0.);
+                pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 	      }
 
 	    return;
@@ -425,6 +456,8 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 	  {
 	    omega = getEnergyTransfer(pRest, T, process);
 	    q = getMomentumTransfer(pRest, omega, T, process);
+            if(q < fabs(omega)) return;  // momentum transfer is always space-like
+
 	    pVecNewRest = getNewMomentumElas(pVecRest, omega, q);
 
 	    pNewRest = pVecNewRest.t();
@@ -461,6 +494,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 
 		pOut.push_back(Parton(0, Id, 0, pVecNew, xVec));
 		pOut[pOut.size()-1].set_form_time(0.);
+                pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 	      }
 
 	    return;
@@ -476,6 +510,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 
 	    pOut.push_back(Parton(0, newId, 0, pVec, xVec));
 	    pOut[pOut.size()-1].set_form_time(0.);
+	    pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 
 	    return;
 	  }
@@ -524,7 +559,7 @@ int Martini::DetermineProcess(double pRest, double T, double deltaT, int Id)
 	JSWARN << " : Total Probability for quark processes exceeds 1 ("
 	     << totalQuarkProb << "). "
 	     << " : Most likely this means you should choose a smaller deltaT in the xml (e.g. 0.01).";
-	throw std::runtime_error ("Martini probability problem.");
+	//throw std::runtime_error ("Martini probability problem.");
       }
 
       double accumProb = 0.;
@@ -588,9 +623,12 @@ int Martini::DetermineProcess(double pRest, double T, double deltaT, int Id)
       totalGluonProb += (rateElas.gq + rateElas.gg + rateConv.gq)*dT;
 
       // warn if total probability exceeds 1
-      if (totalGluonProb > 1.)
-	JSWARN << " : Total Probability for quark processes exceeds 1 ("
-	     << totalGluonProb << ")";
+      if (totalGluonProb > 1.){
+	JSWARN << " : Total Probability for gluon processes exceeds 1 ("
+	     << totalGluonProb << "). "
+	     << " : Most likely this means you should choose a smaller deltaT in the xml (e.g. 0.01).";
+	//throw std::runtime_error ("Martini probability problem.");
+      }
 
       double accumProb = 0.;
       double nextProb = 0.;
@@ -1764,12 +1802,16 @@ double Martini::getMomentumTransfer(double pRest, double omega, double T, int pr
       const double y_min = sqrt(omega*omega);
       const double y_max = u;
 
+      int count = 0;
       // randomly select initial values of q=y, such that
       do
 	{
 	  y = y_min+ZeroOneDistribution(*GetMt19937Generator())*(y_max-y_min);
 	  g = functionQ(u, omega, y, process);
 
+          // if no y having non-zero g is found, give up here.
+          if(count > 100) return 0.;
+          count++;
 	} while (g == 0.);
     
       // number of steps in the Markov chain
@@ -1886,21 +1928,18 @@ FourVector Martini::getNewMomentumElas(FourVector pVec, double omega, double q)
   if (pVec.y()*pVec.y() > pVec.x()*pVec.x())
     {
       xx = 0.;
-      yy = -pVec.z()/pVec.t();
-      zz = pVec.y()/pVec.t();
-      tt = sqrt(yy*yy+zz*zz);
-
-      etVec.Set(xx, yy, zz, tt);
+      yy = -pVec.z();
+      zz = pVec.y();
     }
   else
     {
-      xx = pVec.z()/pVec.t();
+      xx = pVec.z();
       yy = 0.;
-      zz = -pVec.x()/pVec.t();
-      tt = sqrt(yy*yy+zz*zz);
-
-      etVec.Set(xx, yy, zz, tt);
+      zz = -pVec.x();
     }
+
+  tt = sqrt(xx*xx+yy*yy+zz*zz);
+  etVec.Set(xx/tt, yy/tt, zz/tt, 1.);  // normalized to 1
 
   // the transverse transferred momentum vector
   qtVec.Set(etVec.x()*qt, etVec.y()*qt, etVec.z()*qt, etVec.t()*qt);
@@ -1946,8 +1985,8 @@ void Martini::readRadiativeRate(Gamma_info *dat, dGammas *Gam)
   string filename;
   filename = PathToTables+"radgamma";
 
-  cout << "Reading rates of inelastic collisions from file " << endl;
-  cout << filename.c_str() << " ... " << endl;
+  JSINFO << "Reading rates of inelastic collisions from file ";
+  JSINFO << filename.c_str() << " ... ";
   size_t bytes_read;
 
   rfile = fopen(filename.c_str(), "rb"); 
@@ -1969,7 +2008,6 @@ void Martini::readRadiativeRate(Gamma_info *dat, dGammas *Gam)
   bytes_read = fread((char *)Gam->qqgamma, sizeof(double), NP*NK, rfile);
   bytes_read = fread((char *)Gam->tau_qqgamma, sizeof(double), NP*NK, rfile);
   fclose (rfile);
-  cout << " ok." << endl;
 
   dat->Nf = nf;
   dat->dp = 0.05;
@@ -1998,15 +2036,15 @@ void Martini::readElasticRateOmega()
   filename[0] = PathToTables + "logEnDtrqq";
   filename[1] = PathToTables + "logEnDtrqg";
   
-  cout << "Reading rates of elastic collisions from files" << endl;
-  cout << filename[0] << endl;
-  cout << filename[1] << " ..." << endl;
+  JSINFO << "Reading rates of elastic collisions from files";
+  JSINFO << filename[0];
+  JSINFO << filename[1] << " ...";
 
   fin.open(filename[0].c_str(), ios::in);
   if(!fin)
     {
-      cerr << "[readElasticRateOmega]: ERROR: Unable to open file " << filename[0] << endl;
-      exit(1);
+      JSWARN << "[readElasticRateOmega]: ERROR: Unable to open file " << filename[0];
+      throw std::runtime_error("[readElasticRateQ]: ERROR: Unable to open ElasticRateOmega file");
     }
 
   int ik = 0;
@@ -2024,8 +2062,8 @@ void Martini::readElasticRateOmega()
   fin.open(filename[1].c_str(), ios::in);
   if(!fin)
     {
-      cerr << "[readElasticRateOmega]: ERROR: Unable to open file " << filename[1] << endl;
-      exit(1);
+      JSWARN << "[readElasticRateOmega]: ERROR: Unable to open file " << filename[1];
+      throw std::runtime_error("[readElasticRateQ]: ERROR: Unable to open ElasticRateOmega file");
     }
 
   ik = 0;
@@ -2039,8 +2077,6 @@ void Martini::readElasticRateOmega()
       ik++;
     }
   fin.close();
-
-  cout << " ok." << endl;
 }
 
 void Martini::readElasticRateQ()
@@ -2055,15 +2091,15 @@ void Martini::readElasticRateQ()
   filename[0] = PathToTables + "logEnDqtrqq";
   filename[1] = PathToTables + "logEnDqtrqg";
   
-  cout << "Reading rates of elastic collisions from files" << endl;
-  cout << filename[0] << endl;
-  cout << filename[1] << " ..." << endl;
+  JSINFO << "Reading rates of elastic collisions from files";
+  JSINFO << filename[0];
+  JSINFO << filename[1] << " ...";
 
   fin.open(filename[0].c_str(), ios::in);
   if(!fin)
     {
-      cerr << "[readElasticRateQ]: ERROR: Unable to open file " << filename[0] << endl;
-      exit(1);
+      JSWARN << "[readElasticRateQ]: ERROR: Unable to open file " << filename[0];
+      throw std::runtime_error("[readElasticRateQ]: ERROR: Unable to open ElasticRateQ file");
     }
 
   int ik = 0;
@@ -2082,8 +2118,8 @@ void Martini::readElasticRateQ()
   fin.open(filename[1].c_str(),ios::in);
   if(!fin)
     {
-      cerr << "[readElasticRateQ]: ERROR: Unable to open file " << filename[1] << endl;
-      exit(1);
+      JSWARN << "[readElasticRateQ]: ERROR: Unable to open file " << filename[1];
+      throw std::runtime_error("[readElasticRateQ]: ERROR: Unable to open ElasticRateQ file");
     }
   
   ik = 0;
@@ -2098,8 +2134,6 @@ void Martini::readElasticRateQ()
       ik++;
     }
   fin.close();
-  
-  cout << " ok." << endl;
 }
 
 double Martini::getRate_qqg(double p, double k)
@@ -2616,20 +2650,29 @@ double Martini::use_elastic_table_q(double omega, double q, int which_kind)
 	{
 	  rateQAv = exp((1.-qFrac)*log(rateOmegaAv)+qFrac*log(rateQUpOmegaAv));
 	}
-      else // use extrapolation
+      else if (rateOmegaAv < 0.)  // use extrapolation
 	{
 	  slope = (log(rate2QUpOmegaAv)-log(rateQUpOmegaAv))/qStep;
 	  rateQAv = exp(log(rateQUpOmegaAv)-slope*((1.-qFrac)*qStep));
 	}
+      else
+        {
+          rateQAv = 0.;
+        }
+
       if (rateAlphaUpOmegaAv > 0.)
 	{
 	  rateAlphaUpQAv = exp((1.-qFrac)*log(rateAlphaUpOmegaAv) + qFrac*log(rateAlphaUpQUpOmegaAv));
 	}
-      else  // use extrapolation
+      else if (rateAlphaUpOmegaAv < 0.)  // use extrapolation
 	{
 	  slopeAlphaUp = (log(rateAlphaUp2QUpOmegaAv)-log(rateAlphaUpQUpOmegaAv))/qStep;
 	  rateAlphaUpQAv = exp(log(rateAlphaUpQUpOmegaAv)-slopeAlphaUp*((1.-qFrac)*qStep));
 	}
+      else
+        {
+          rateAlphaUpQAv = 0.;
+        }
     }
   // interpolate linearly for small omega
   else
@@ -2654,9 +2697,9 @@ double LambertW(double z)
 
   if(z <= -exp(-1.0))
     {
-      fprintf(stderr, "LambertW is not defined for z = %e\n", z);
-      fprintf(stderr, "z needs to be bigger than %e\n", -exp(-1.0));
-      exit(0);
+      JSWARN << "LambertW is not defined for z = " << z;
+      JSWARN << "z needs to be bigger than " << -exp(-1.0);
+      throw std::runtime_error("LambertW small z problem");
     }
 
   if(z > 3.0)
@@ -2678,12 +2721,12 @@ double LambertW(double z)
       n++;
       if(n > 99) 
 	{
-	  fprintf(stderr, "LambertW is not converging after 100 iterations.\n");
-	  fprintf(stderr, "LambertW: z = %e\n", z);
-	  fprintf(stderr, "LambertW: w_old = %e\n", w_old);
-	  fprintf(stderr, "LambertW: w_new = %e\n", w_new);
-	  fprintf(stderr, "LambertW: ratio = %e\n", ratio);
-	  exit(0);
+          JSWARN << "LambertW is not converging after 100 iterations.";
+          JSWARN << "LambertW: z = " << z;
+          JSWARN << "LambertW: w_old = " << w_old;
+          JSWARN << "LambertW: w_new = " << w_new;
+          JSWARN << "LambertW: ratio = " << ratio;
+          throw std::runtime_error("LambertW not conversing");
 	}
     }
 
