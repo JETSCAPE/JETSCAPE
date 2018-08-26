@@ -59,6 +59,17 @@ void Martini::Init()
   tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );
   if ( !eloss )     throw std::runtime_error("Eloss not properly initialized in XML file ...");
 
+  double deltaT = 0.0;
+  double Martini_deltaT_Max = 0.01 + rounding_error;
+
+  eloss->FirstChildElement("deltaT")->QueryDoubleText(&deltaT);
+
+  if ( deltaT > Martini_deltaT_Max ) {
+    WARN << "Timestep for Martini ( deltaT = 0.03 ) is too large. "
+	 << "Please choose a detaT smaller than or equal to 0.01 in the XML file.";
+    throw std::runtime_error("Martini not properly initialized in XML file ...");
+  }
+
   tinyxml2::XMLElement *martini=eloss->FirstChildElement("Martini");
   // check that all is there
   if ( !martini )     throw std::runtime_error("Martini not properly initialized in XML file ...");
