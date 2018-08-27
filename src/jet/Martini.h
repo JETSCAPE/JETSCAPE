@@ -54,12 +54,13 @@ class Martini : public JetEnergyLossModule<Martini> //, public std::enable_share
   // AMY rates are calculated in p/T > AMYpCut
   static constexpr double AMYpCut = 4.01;
 
-  double Q0;
+  double Q0;            // Separation scale between Matter and Martini
   double alpha_s;
   double alpha_em;
   double g;
-  double pcut;        // below this scale, no further Eloss
-  double hydro_Tc;
+  double pcut;          // below this scale, no further Eloss
+  double hydro_Tc;      // critical temperature
+  double hydro_tStart;  // initilization time of hydro
 
   //Import.h//
   static const int NP = 230;
