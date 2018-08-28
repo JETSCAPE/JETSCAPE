@@ -277,6 +277,9 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
     	      pIn[i].set_user_info(new LBTUserInfo(0.0));
           }
 
+	  if(par_status==1) CAT[j]=2;
+	  else CAT[j]=0;
+
       } else { // negative particle, or particle no longer active, will streamly freely in LBT
 
           KATT10[j] = pIn[i].pid();
@@ -391,6 +394,8 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
           for(int j=1; j<=np; j++) { 
             // definition Parton (int label, int id, int stat, double p[4], double x[4]);
             if(P[0][j]<cutOut) continue;
+	    int out_stat=1;
+	    if(CAT[j]==0) out_stat=0; // recoil parton
             double tempP[4],tempX[4];
             tempP[0]=sqrt(P[0][j]*P[0][j]+P[6][j]);
             tempP[1]=P[1][j];
@@ -401,7 +406,7 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
             tempX[2]=Vfrozen[2][j];
             tempX[3]=Vfrozen[3][j];
             //	      pOut.push_back(Parton(0,21,0,newPt,pIn[i].eta(),pIn[i].phi(),newPt));
-            pOut.push_back(Parton(0,KATT1[j],0,tempP,tempX));
+            pOut.push_back(Parton(0,KATT1[j],out_stat,tempP,tempX));
             // remember to put Tint_lrf infomation back to JETSCAPE
             pOut.back().set_user_info(new LBTUserInfo(Tint_lrf[j]));
 
@@ -2596,7 +2601,18 @@ void LBT::collHQ22(int CT,double temp,double qhat0ud,double v0[4],double p0[4],d
     p2[2]=e4*sin(theta4)*sin(phi24);
     p2[3]=e4*cos(theta4);
     p2[0]=e4;
-    
+
+    // rotate randomly in xy plane (jet is in z), because p3 is assigned in xz plane with bias
+    double th_rotate = 2.0*pi*ran0(&NUM1);
+    double p3x_rotate = p3[1]*cos(th_rotate)-p3[2]*sin(th_rotate);
+    double p3y_rotate = p3[1]*sin(th_rotate)+p3[2]*cos(th_rotate);
+    double p2x_rotate = p2[1]*cos(th_rotate)-p2[2]*sin(th_rotate);
+    double p2y_rotate = p2[1]*sin(th_rotate)+p2[2]*cos(th_rotate);
+    p3[1]=p3x_rotate;
+    p3[2]=p3y_rotate;
+    p2[1]=p2x_rotate;
+    p2[2]=p2y_rotate;
+
     // Because we treated p0 (p1 in my note for heavy quark) as the z-direction, proper rotations are necessary here
     rotate(p4[1],p4[2],p4[3],p2,-1);
     rotate(p4[1],p4[2],p4[3],p3,-1);
