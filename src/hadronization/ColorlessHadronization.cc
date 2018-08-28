@@ -125,10 +125,10 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
       { 
         //if (shower.at(ishower).at(ipart)->pstat()==0 && want_pos==1) pIn.push_back(shower.at(ishower).at(ipart));  // Positive
         if (want_pos==1) { // Positive
-	    if(take_recoil && shower.at(ishower).at(ipart)->pstat()!=0) pIn.push_back(shower.at(ishower).at(ipart));  
-	    if(!take_recoil && shower.at(ishower).at(ipart)->pstat()==0) pIn.push_back(shower.at(ishower).at(ipart));
+	    if(take_recoil && shower.at(ishower).at(ipart)->pstat()==1) pIn.push_back(shower.at(ishower).at(ipart));  
+	    if(shower.at(ishower).at(ipart)->pstat()==0) pIn.push_back(shower.at(ishower).at(ipart));
 	}  
-        if (shower.at(ishower).at(ipart)->pstat()==-1 && want_pos==0) pIn.push_back(shower.at(ishower).at(ipart));  // Negative
+        if (take_recoil && shower.at(ishower).at(ipart)->pstat()==-1 && want_pos==0) pIn.push_back(shower.at(ishower).at(ipart));  // Negative
       }
       JSDEBUG<<"Shower#"<<ishower+1 << ". Number of partons to hadronize so far: " << pIn.size();
     }
