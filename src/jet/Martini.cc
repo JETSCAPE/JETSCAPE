@@ -59,6 +59,17 @@ void Martini::Init()
   tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );
   if ( !eloss )     throw std::runtime_error("Eloss not properly initialized in XML file ...");
 
+  double deltaT = 0.0;
+  double Martini_deltaT_Max = 0.01 + rounding_error;
+
+  eloss->FirstChildElement("deltaT")->QueryDoubleText(&deltaT);
+
+  if ( deltaT > Martini_deltaT_Max ) {
+    WARN << "Timestep for Martini ( deltaT = " << deltaT << " ) is too large. "
+	 << "Please choose a detaT smaller than or equal to 0.01 in the XML file.";
+    throw std::runtime_error("Martini not properly initialized in XML file ...");
+  }
+
   tinyxml2::XMLElement *martini=eloss->FirstChildElement("Martini");
   // check that all is there
   if ( !martini )     throw std::runtime_error("Martini not properly initialized in XML file ...");
@@ -85,6 +96,7 @@ void Martini::Init()
 
   g = sqrt(4.*M_PI*alpha_s);
   alpha_em = 1./137.;
+  hydro_tStart = 0.6;
 
   // Path to additional data
   if ( !martini->FirstChildElement( "path" ) )     throw std::runtime_error("Martini not properly initialized in XML file ...");
@@ -104,31 +116,31 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 
   // particle info
   int Id, newId;
-  double pAbs, px, py, pz;   // momentum for initial parton (pIn)
-  double pRest, pxRest;      // momentum in the rest frame of fluid cell (pIn)
+  double pAbs, px, py, pz, ee;  // momentum for initial parton (pIn)
+  double pRest, pxRest;         // momentum in the rest frame of fluid cell (pIn)
   double pyRest, pzRest;
-  double k, kRest;           // momentum for radiated parton (pOut)
-  double pNew, pxNew;        // momentum for final parton (pOut)
+  double k, kRest;              // momentum for radiated parton (pOut)
+  double pNew, pxNew;           // momentum for final parton (pOut)
   double pyNew, pzNew;
-  double pNewRest;           // momentum in the rest frame of fluid cell (pOut)
-  double omega, q;           // transferred energy/momentum for scattering
-  double xx, yy, zz;         // position of initial parton (pIn)
-  FourVector pVec, pVecNew;  // 4 vectors for momenta before & after process
-  FourVector pVecRest;       // 4 vector in the rest frame of fluid cell
+  double pNewRest;              // momentum in the rest frame of fluid cell (pOut)
+  double omega, q;              // transferred energy/momentum for scattering
+  double xx, yy, zz, tt;        // position of initial parton (pIn)
+  FourVector pVec, pVecNew;     // 4 vectors for momenta before & after process
+  FourVector pVecRest;          // 4 vector in the rest frame of fluid cell
   FourVector pVecNewRest;
-  FourVector kVec;           // 4 vector for momentum of radiated particle
-  FourVector xVec;           // 4 vector for position (for next time step!)
-  double velocity_jet[4];    // jet velocity for MATTER
-  double eta;                // pseudo-rapidity
+  FourVector kVec;              // 4 vector for momentum of radiated particle
+  FourVector xVec;              // 4 vector for position (for next time step!)
+  double velocity_jet[4];       // jet velocity for MATTER
+  double eta;                   // pseudo-rapidity
   
   // flow info
-  double vx, vy, vz;         // 3 components of flow velocity
-  double T;                  // Temperature of fluid cell
-  double beta, gamma;        // flow velocity & gamma factor
-  double cosPhi;             // angle between flow and particle
-  double cosPhiRest;         // angle between flow and particle in rest frame
-  double boostBack;          // factor for boosting back to lab frame
-  double cosPhiRestEl;       // angle between flow and scat. particle in rest frame
+  double vx, vy, vz;            // 3 components of flow velocity
+  double T;                     // Temperature of fluid cell
+  double beta, gamma;           // flow velocity & gamma factor
+  double cosPhi;                // angle between flow and particle
+  double cosPhiRest;            // angle between flow and particle in rest frame
+  double boostBack;             // factor for boosting back to lab frame
+  double cosPhiRestEl;          // angle between flow and scat. particle in rest frame
   double boostBackEl;
   
   for (int i=0;i<pIn.size();i++) {
@@ -140,13 +152,16 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
     py = pIn[i].py();
     pz = pIn[i].pz();
 
+    ee = sqrt(px*px+py*py+pz*pz);
+
     // In MARTINI, particles are all massless and on-shell
     pAbs = sqrt(px*px+py*py+pz*pz);
     pVec = FourVector ( px, py, pz, pAbs );
 
-    xx = pIn[i].x_in().x();
-    yy = pIn[i].x_in().y();
-    zz = pIn[i].x_in().z();
+    tt = pIn[i].x_in().t();
+    xx = pIn[i].x_in().x() + (Time-tt)*px/ee;
+    yy = pIn[i].x_in().y() + (Time-tt)*py/ee;
+    zz = pIn[i].x_in().z() + (Time-tt)*pz/ee;
 
     eta = pIn[i].eta();
 
@@ -164,7 +179,8 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
     beta = sqrt( vx*vx + vy*vy + vz*vz );
 
     // Only accept low t particles
-    if (pIn[i].t() > Q0*Q0 + rounding_error || T < hydro_Tc) continue;
+    if (pIn[i].t() > Q0*Q0 + rounding_error || Time <=hydro_tStart || T < hydro_Tc)
+      continue;
     TakeResponsibilityFor ( pIn[i] ); // Generate error if another module already has responsibility.
 
     // Set momentum in fluid cell's frame
