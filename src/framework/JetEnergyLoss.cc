@@ -28,6 +28,7 @@
 #include "JetScapeSignalManager.h"
 #include "JetScapeWriterStream.h"
 #include "HardProcess.h"
+#include "JetScapeEnergyLossMutex.h"
 
 #ifdef USE_HEPMC
 #include "JetScapeWriterHepMC.h"
@@ -104,6 +105,14 @@ void JetEnergyLoss::Init()
 
   INFO<<"Intialize JetEnergyLoss ..."; 
   
+  //Check mutual exclusion of Eloss Modules
+  auto eLossMutex = make_shared<JetScapeEnergyLossMutex>();
+  if(!eLossMutex->CheckEnergyLossModules(GetTaskList()))
+  {
+        WARN<<"Mutual exclusive Energy-Loss modules attached together!";
+        throw std::runtime_error("Fix it by attaching one of them.");
+  }
+
   tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );  
 
   if (!eloss)

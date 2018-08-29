@@ -129,14 +129,6 @@ int main(int argc, char** argv)
   // Intialize all modules tasks
   jetscape->Init();
 
-  //Check mutual exclusion of Eloss Modules
-  auto eLossMutex = make_shared<JetScapeEnergyLossMutex>();
-  if(!eLossMutex->CheckEnergyLossModules(jloss->GetTaskList()))
-  {
-	WARN<<"Mutual exclusive Energy-Loss modules attached together! Fix it by attaching one of them.";
-	return 0;
-  }
-
   // Run JetScape with all task/modules as specified
   jetscape->Exec();
 
