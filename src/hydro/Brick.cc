@@ -79,7 +79,12 @@ void Brick::InitializeHydro(Parameter parameter_list) {
 
 void Brick::EvolveHydro() {
   VERBOSE(8);
-  VERBOSE(2) << "size of sd = " << ini->GetEntropyDensityDistribution().size();
+  if ( ini ) {
+    VERBOSE(2) << "size of sd = " << ini->GetEntropyDensityDistribution().size();
+  } else {
+    VERBOSE(2) << "No initial state module attached";
+  }
+  
   hydro_status = FINISHED;
 }
 
