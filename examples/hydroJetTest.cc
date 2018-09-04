@@ -79,7 +79,7 @@ int main(int argc, char** argv)
   JetScapeLogger::Instance()->SetRemark(false);
   //SetVerboseLevel (9 a lot of additional debug output ...)
   //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevle(9) or 10
-  JetScapeLogger::Instance()->SetVerboseLevel(8);
+  JetScapeLogger::Instance()->SetVerboseLevel(0);
    
   Show();
 
@@ -142,8 +142,8 @@ int main(int argc, char** argv)
   // Switching Q2 (or whatever variable used
   // hardcoded at 5 to be changed to xml)
   jloss->Add(matter);
-  //jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
-  jloss->Add(martini);
+  jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
+  //jloss->Add(martini);
   //jloss->Add(adscft);
   
   jlossmanager->Add(jloss);
@@ -152,8 +152,8 @@ int main(int argc, char** argv)
 
   jetscape->Add(printer);
 
-  hadro->Add(hadroModule);
-  //hadro->Add(colorless);
+  //hadro->Add(hadroModule);
+  hadro->Add(colorless);
   hadroMgr->Add(hadro);
   jetscape->Add(hadroMgr);
 
