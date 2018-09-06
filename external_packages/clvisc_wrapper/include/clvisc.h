@@ -29,6 +29,7 @@
 // System includes
 //#include <CL/cl.hpp>
 #include "clideal.h"
+#include "bulkinfo.h"
 
 namespace clvisc {
 
@@ -102,6 +103,10 @@ class CLVisc
 
 	CLVisc(const Config & cfg, std::string device_type, int device_id);
 
+    BulkInfo bulkinfo_;
+
+    inline const Config & get_config() {return cfg_;}
+
     // read initial energy density from external vector
     template <typename ValueType>
     void read_ini(const std::vector<ValueType> & ed);
@@ -159,6 +164,7 @@ class CLVisc
     // run clvisc evolution for all time steps
     // stop when max_T < freeze_out_temperature
     void evolve();
+
 
 	~CLVisc();
 

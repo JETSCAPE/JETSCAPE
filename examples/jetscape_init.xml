@@ -198,6 +198,12 @@
       <etaos_left_slop> 0.0 </etaos_left_slop>
       <etaos_right_slop> 0.0 </etaos_right_slop>
       <tau0> 0.6 </tau0>
+      <!-- *_skip is used to save less bulk data -->
+      <ntau_skip> 10 </ntau_skip>
+      <nx_skip> 2 </nx_skip>
+      <ny_skip> 2 </ny_skip>
+      <netas_skip> 2 </netas_skip>
+      <!-- scale_factor: scale the initial entropy/energy density -->
       <scale_factor> 57 </scale_factor>
       <dtau> 0.02 </dtau>
       <result_directory>./</result_directory>

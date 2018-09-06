@@ -31,7 +31,10 @@ namespace clvisc {
 CLVisc::CLVisc(const Config & cfg, std::string device_type,
         int device_id):cfg_(cfg),
         ideal_(CLIdeal(cfg, device_type, device_id)),
-        backend_(ideal_.get_backend())
+        backend_(ideal_.get_backend()),
+        bulkinfo_(cfg.nx, cfg.ny, cfg.nz, cfg.nxskip,
+                cfg.nyskip, cfg.nzskip, backend_, 
+                ideal_.get_compile_option())
 {
     // set current time to initial time
     tau_ = cfg.tau0;
@@ -315,16 +318,20 @@ void CLVisc::evolve() {
             backend_.enqueue_copy(ideal_.d_ev_[1], ideal_.d_ev_[0], size_*sizeof(cl_real4));
             one_step();
             update_udiff_();
-            if (loop % 10 == 0) {
+            if (loop % cfg_.ntskip == 0) {
                 float max_ed = ideal_.max_energy_density();
-                if ( max_ed < 0.5 ) break;
                 std::cout << "max_ed = " << max_ed << " ";
                 std::time(&timer2);
                 total_exec_time = std::difftime(timer2, timer1);
                 std::cout << "Total computing time: " << total_exec_time << " s; ";
                 std::cout << std::endl;
+                bulkinfo_.add_data(ideal_.d_ev_[0], d_shear_pi_[0],
+                                   d_bulk_pi_[0], ideal_.eos_table_);
+                if ( max_ed < 0.05 ) break;
             }
         }
+        std::cout << std::endl;
+
         std::cout << "Total computing time: " << total_exec_time << " s; ";
     } catch (cl::Error & err) {
         std::cout << err.what() << " " << err.err() << std::endl;

@@ -63,6 +63,10 @@ typedef struct
     float etaos_ymin; // parameterized eta/s (minumum etaos)
     float etaos_left_slop; // parameterized eta/s (left slop)
     float etaos_right_slop; // parameterized eta/s (left slop)
+    int ntskip;  // number of grids to skip for output along tau
+    int nxskip;  // number of grids to skip for output along x
+    int nyskip;  // number of grids to skip for output along y
+    int nzskip;  // number of grids to skip for output along etas
     std::string result_directory;
 } Config;
 
@@ -107,6 +111,8 @@ class CLIdeal
     cl::Image2D eos_table_;
 
 	CLIdeal(const Config & cfg, std::string device_type, int device_id);
+
+    inline const Config & get_config() {return cfg_;}
 
     // read initial energy density from external vector
     template <typename ValueType>

@@ -23,6 +23,7 @@
 #include <stdexcept>
 #include <cmath>
 #include <iostream>
+#include <map>
 
 #include "InitialState.h"
 #include "JetScapeModuleBase.h"
@@ -43,6 +44,16 @@ namespace Jetscape {
   private:
     // Jetscape::real j0, j1, j2, j3;
   };
+
+  enum EntryName {ENTRY_ENERGY_DENSITY, ENTRY_ENTROPY_DENSITY, ENTRY_TEMPERATURE,
+      ENTRY_PRESSURE, ENTRY_QGP_FRACTION, ENTRY_MU_B, ENTRY_MU_C, ENTRY_MU_S,
+      ENTRY_VX, ENTRY_VY, ENTRY_VZ,
+      ENTRY_PI00, ENTRY_PI01, ENTRY_PI02, ENTRY_PI03,
+      ENTRY_PI11, ENTRY_PI12, ENTRY_PI13, 
+      ENTRY_PI22, ENTRY_PI23, ENTRY_PI33, ENTRY_BULK_PI, ENTRY_INVALID
+  };
+
+  EntryName ResolveEntryName(std::string input);
 
   //overload +-*/ for easier linear interpolation
   class FluidCellInfo {
@@ -208,14 +219,32 @@ namespace Jetscape {
     /** Default is set to false. Set flag tau_eta_is_tz to true if hydro dynamics is setup in (t,x,y,z) coordinate. */
     bool tau_eta_is_tz;   
 
-    /** The bulk information of hydro dynamics.*/
-    std::vector<FluidCellInfo> data;
+    /** The bulk information of hydro dynamics.
+     * It is easiest to pass vector of float from 3rd party hydro module
+     * to Jetscape Evolution History, where bulk info should be stored
+     * in orders of ed0, sd0, temp0, ..., ed1, sd1, temp1, ..., edn, sdn, tempn.
+     * The order and data entry is given by data_info */
+    std::vector<float> data;
+
+    /** Store the entry names of one record in the data array*/
+    std::vector<std::string> data_info;
 
     /** Default constructor. */
     EvolutionHistory() {};
 
+    void Construct(const std::vector<float> & data_,
+                   const std::vector<std::string> & data_info_,
+                   float tau_min, float dtau,
+                   float x_min, float dx, int nx,
+                   float y_min, float dy, int ny,
+                   float eta_min, float deta, int neta,
+                   bool tau_eta_is_tz);
+
     /** Default destructor. */
-    ~EvolutionHistory() {data.clear();}
+    ~EvolutionHistory() {}
+
+    /** Maximum value of tau. */
+    inline bool DataSizeMatch() {return data.size() == (ntau * nx * ny * neta * data_info.size());}
 
     /** Maximum value of tau. */
     inline Jetscape::real TauMax() {return tau_min + (ntau - 1) * dtau;}
@@ -235,24 +264,27 @@ namespace Jetscape {
 	@param y  Space coordinate.
 	@param eta Light-cone coordinate.
     */
-    void CheckInRange(Jetscape::real tau, Jetscape::real x, Jetscape::real y, Jetscape::real eta) {
+    void CheckInRange(Jetscape::real tau, Jetscape::real x, Jetscape::real y,
+                      Jetscape::real eta)
+    {
       if (tau < tau_min || tau > TauMax()) {
-	throw InvalidSpaceTimeRange("tau=" + std::to_string(tau)
+        throw InvalidSpaceTimeRange("tau=" + std::to_string(tau)
 				    + " is not in range [" + std::to_string(tau_min) + "," 
 				    + std::to_string(TauMax()) + "]");
       }
       if (x < x_min || x > XMax()) {
-	throw InvalidSpaceTimeRange("x=" + std::to_string(x)
+        throw InvalidSpaceTimeRange("x=" + std::to_string(x)
 				    + " is not in range [" + std::to_string(x_min) + "," 
 				    + std::to_string(XMax()) + "]");
       }
       if (y < y_min || y > YMax()) {
-	throw InvalidSpaceTimeRange("y=" + std::to_string(y)
+        throw InvalidSpaceTimeRange("y=" + std::to_string(y)
 				    + " is not in range [" + std::to_string(y_min) + "," 
 				    + std::to_string(YMax()) + "]");
       }
       if (eta < eta_min || eta > EtaMax()) {
-	throw InvalidSpaceTimeRange("eta=" + std::to_string(eta)
+        if (neta == 0 || neta == 1) return;
+        throw InvalidSpaceTimeRange("eta=" + std::to_string(eta)
 				    + " is not in range [" + std::to_string(eta_min) + "," 
 				    + std::to_string(EtaMax()) + "]");
       }
@@ -324,6 +356,16 @@ namespace Jetscape {
     }
 
     // get the FluidCellInfo at space point given time step
+    /** @return FluidCellInfo at a point (id_tau, id_x, id_y, id_etas)
+	@param id_tau tau-step number.
+	@param x Space coordinate.
+	@param y Space coordinate.
+	@param eta Light-cone coordinate.
+    */
+    FluidCellInfo GetFluidCell(int id_tau, int id_x, int id_y, int id_etas);
+
+
+    // get the FluidCellInfo at space point given time step
     /** @return FluidCellInfo at a point (x,y,eta) and time-step id_tau.
 	@param id_tau tau-step number.
 	@param x Space coordinate.
@@ -339,7 +381,7 @@ namespace Jetscape {
         @param y Space coordinate.
         @param eta Light-cone coordinate. 
     */
-    FluidCellInfo get(Jetscape::real tau, Jetscape::real x, Jetscape::real y, Jetscape::real etas);
+    FluidCellInfo Get(Jetscape::real tau, Jetscape::real x, Jetscape::real y, Jetscape::real etas);
   };
 
 
@@ -457,19 +499,19 @@ namespace Jetscape {
     */
     virtual void GetHydroInfo(Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
                                 std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr){
-      if (hydro_status != FINISHED || bulk_info.data.size() == 0) {
-	throw std::runtime_error("Hydro evolution is not finished "
-				 "or EvolutionHistory is empty");
+      if (hydro_status != FINISHED || !bulk_info.DataSizeMatch()) {
+        throw std::runtime_error("Hydro evolution is not finished "
+				 "or EvolutionHistory data size does no match description");
       }
       // judge whether to use 2D interpolation or 3D interpolation
       if (!bulk_info.tau_eta_is_tz) {
-	Jetscape::real tau = std::sqrt(t * t - z * z);
-	Jetscape::real eta = 0.5 * (std::log(t + z) - std::log(t - z));
-	bulk_info.CheckInRange(tau, x, y, eta);
-	//return bulk_info.get(tau, x, y, eta);
+        Jetscape::real tau = std::sqrt(t * t - z * z);
+        Jetscape::real eta = 0.5 * (std::log(t + z) - std::log(t - z));
+        bulk_info.CheckInRange(tau, x, y, eta);
+        *fluid_cell_info_ptr = bulk_info.Get(tau, x, y, eta);
       } else {
-	bulk_info.CheckInRange(t, x, y, z);
-	//return bulk_info.get(t, x, y, z);
+        bulk_info.CheckInRange(t, x, y, z);
+        *fluid_cell_info_ptr = bulk_info.Get(t, x, y, z);
       }
     }
 
@@ -477,7 +519,7 @@ namespace Jetscape {
     /** It prints out the information of the fluid cell.
 	@param fluid_cell_info_ptr A pointer to FluidCellInfor class.
     */
-    void PrintFluidCellInformation(FluidCellInfo* fluid_cell_info_ptr);
+    void PrintFluidCellInformation(const std::unique_ptr<FluidCellInfo> & fluid_cell_info_ptr);
 
     // this function returns hypersurface for Cooper-Frye or recombination
     // the detailed implementation is left to the hydro developper
@@ -555,6 +597,12 @@ namespace Jetscape {
     // */
     // virtual Jetscape::real GetNetChargeDensity(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
     
+    // How to store this data? In memory or hard disk?
+    // 3D hydro may eat out the memory,
+    // for large dataset, std::deque is better than std::vector.
+    /** Stores the evolution history. */
+    EvolutionHistory bulk_info;
+
   protected:
     // record hydro start and end proper time [fm/c]
     Jetscape::real hydro_tau_0, hydro_tau_max;
@@ -573,12 +621,6 @@ namespace Jetscape {
     Parameter parameter_list;
     tinyxml2::XMLElement *fd;
     
-    // How to store this data? In memory or hard disk?
-    // 3D hydro may eat out the memory,
-    // for large dataset, std::deque is better than std::vector.
-    /** Stores the evolution history. */
-    EvolutionHistory bulk_info;
-
   }; // end class FluidDynamics
 
 } // end namespace Jetscape

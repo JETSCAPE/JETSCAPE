@@ -56,6 +56,9 @@ CLIdeal::CLIdeal(const Config & cfg, std::string device_type,
     opts_.SetIntConst("NX", cfg_.nx);
     opts_.SetIntConst("NY", cfg_.ny);
     opts_.SetIntConst("NZ", cfg_.nz);
+    opts_.SetIntConst("NXSKIP", cfg_.nxskip);
+    opts_.SetIntConst("NYSKIP", cfg_.nyskip);
+    opts_.SetIntConst("NZSKIP", cfg_.nzskip);
     opts_.SetIntConst("BSZ", cfg.block_size);
     int SIZE = cfg_.nx * cfg_.ny * cfg_.nz;
     opts_.SetIntConst("SIZE", SIZE);

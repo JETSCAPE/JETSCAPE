@@ -14,6 +14,8 @@ endif()
 set ( SRC_LIST 
     ${PROJECT_SOURCE_DIR}/include/cl.hpp
     ${PROJECT_SOURCE_DIR}/opencl_backend.cc
+    ${PROJECT_SOURCE_DIR}/include/bulkinfo.h
+    ${PROJECT_SOURCE_DIR}/bulkinfo.cc
     ${PROJECT_SOURCE_DIR}/include/clideal.h
     ${PROJECT_SOURCE_DIR}/clideal.cc
     ${PROJECT_SOURCE_DIR}/include/clvisc.h

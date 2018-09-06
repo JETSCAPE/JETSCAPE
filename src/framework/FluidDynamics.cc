@@ -24,6 +24,166 @@
 using namespace std;
 
 namespace Jetscape {
+  // convert the string type entry name to enum type EntryNames
+  EntryName ResolveEntryName(std::string input) {
+      static const std::map<std::string, EntryName> optionStrings = {
+            { "energy_density", ENTRY_ENERGY_DENSITY},
+            { "entropy_density", ENTRY_ENTROPY_DENSITY},
+            { "temperature", ENTRY_TEMPERATURE},
+            { "pressure", ENTRY_PRESSURE},
+            { "qgp_fraction", ENTRY_QGP_FRACTION},
+            { "mu_b", ENTRY_MU_B},
+            { "mu_c", ENTRY_MU_C},
+            { "mu_s", ENTRY_MU_S},
+            { "vx", ENTRY_VX},
+            { "vy", ENTRY_VY},
+            { "vz", ENTRY_VZ},
+            { "pi00", ENTRY_PI00},
+            { "pi01", ENTRY_PI01},
+            { "pi02", ENTRY_PI02},
+            { "pi03", ENTRY_PI03},
+            { "pi11", ENTRY_PI11},
+            { "pi12", ENTRY_PI12},
+            { "pi13", ENTRY_PI13},
+            { "pi22", ENTRY_PI22},
+            { "pi23", ENTRY_PI23},
+            { "pi33", ENTRY_PI33},
+            { "bulk_pi", ENTRY_BULK_PI},
+        };
+      auto itr = optionStrings.find(input);
+      if (itr != optionStrings.end()) {
+          return itr->second;
+      } else {
+          return ENTRY_INVALID;
+      }
+ }
+
+  /* This function will read the sparse data stored in data_ with associated 
+   * information data_info_ into to FluidCellInfo object */
+  FluidCellInfo EvolutionHistory::GetFluidCell(int id_tau,
+          int id_x, int id_y, int id_eta) {
+      auto fluid_cell_ptr = std::make_unique<FluidCellInfo>();
+      int entries_per_record = data_info.size();
+      int id_eta_corrected = id_eta;
+      // set id_eta=0 if hydro is in 2+1D mode
+      if (neta == 0 || neta == 1) { id_eta_corrected = 0; }
+      int record_starting_id = CellIndex(id_tau, id_x, id_y, id_eta_corrected)
+                               *entries_per_record;
+      for (int i=0; i<entries_per_record; i++) {
+          auto entry_name = ResolveEntryName(data_info.at(i));
+          auto entry_data = data.at(record_starting_id + i);
+          switch (entry_name) {
+              case ENTRY_ENERGY_DENSITY:
+                  fluid_cell_ptr->energy_density = entry_data;
+                  break;
+              case ENTRY_ENTROPY_DENSITY:
+                  fluid_cell_ptr->entropy_density = entry_data;
+                  break;
+              case ENTRY_TEMPERATURE:
+                  fluid_cell_ptr->temperature = entry_data;
+                  break;
+              case ENTRY_PRESSURE:
+                  fluid_cell_ptr->pressure = entry_data;
+                  break;
+              case ENTRY_QGP_FRACTION:
+                  fluid_cell_ptr->qgp_fraction = entry_data;
+                  break;
+              case ENTRY_MU_B:
+                  fluid_cell_ptr->mu_B = entry_data;
+                  break;
+              case ENTRY_MU_C:
+                  fluid_cell_ptr->mu_C = entry_data;
+                  break;
+              case ENTRY_MU_S:
+                  fluid_cell_ptr->mu_S = entry_data;
+                  break;
+              case ENTRY_VX:
+                  fluid_cell_ptr->vx = entry_data;
+                  break;
+              case ENTRY_VY:
+                  fluid_cell_ptr->vy = entry_data;
+                  break;
+              case ENTRY_VZ:
+                  fluid_cell_ptr->vz = entry_data;
+                  break;
+              case ENTRY_PI00:
+                  fluid_cell_ptr->pi[0][0] = entry_data;
+                  break;
+              case ENTRY_PI01:
+                  fluid_cell_ptr->pi[0][1] = entry_data;
+                  fluid_cell_ptr->pi[1][0] = entry_data;
+                  break;
+              case ENTRY_PI02:
+                  fluid_cell_ptr->pi[0][2] = entry_data;
+                  fluid_cell_ptr->pi[2][0] = entry_data;
+                  break;
+              case ENTRY_PI03:
+                  fluid_cell_ptr->pi[0][3] = entry_data;
+                  fluid_cell_ptr->pi[3][0] = entry_data;
+                  break;
+              case ENTRY_PI11:
+                  fluid_cell_ptr->pi[1][1] = entry_data;
+                  break;
+              case ENTRY_PI12:
+                  fluid_cell_ptr->pi[1][2] = entry_data;
+                  fluid_cell_ptr->pi[2][1] = entry_data;
+                  break;
+              case ENTRY_PI13:
+                  fluid_cell_ptr->pi[1][3] = entry_data;
+                  fluid_cell_ptr->pi[3][1] = entry_data;
+                  break;
+              case ENTRY_PI22:
+                  fluid_cell_ptr->pi[2][2] = entry_data;
+                  break;
+              case ENTRY_PI23:
+                  fluid_cell_ptr->pi[2][3] = entry_data;
+                  fluid_cell_ptr->pi[3][2] = entry_data;
+                  break;
+              case ENTRY_PI33:
+                  fluid_cell_ptr->pi[3][3] = entry_data;
+                  break;
+              case ENTRY_BULK_PI:
+                  fluid_cell_ptr->bulk_Pi = entry_data;
+                  break;
+              default:
+                  WARN << "The entry name in data_info_ must be one of the \
+                          energy_density, entropy_density, temperature, pressure, qgp_fraction, \
+                          mu_b, mu_c, mu_s, vx, vy, vz, pi00, pi01, pi02, pi03, pi11, pi12, \
+                          pi13, pi22, pi23, pi33, bulk_pi";
+                  break;
+          }
+      }
+
+      return *fluid_cell_ptr;
+  }
+
+
+  /** Construct evolution history given the bulk_data and the data_info */
+  void EvolutionHistory::Construct(const std::vector<float> & data_,
+                   const std::vector<std::string> & data_info_,
+                   float tau_min_, float dtau_, 
+                   float x_min_, float dx_, int nx_,
+                   float y_min_, float dy_, int ny_,
+                   float eta_min_, float deta_, int neta_,
+                   bool tau_eta_is_tz_) {
+      data = data_;
+      data_info = data_info_;
+      tau_min = tau_min_;
+      x_min = x_min_;
+      y_min = y_min_;
+      eta_min = eta_min_;
+      dtau = dtau_;
+      dx = dx_;
+      dy = dy_;
+      deta = deta_;
+      nx = nx_;
+      ny = ny_;
+      neta = neta_;
+      tau_eta_is_tz = tau_eta_is_tz_;
+      ntau = data_.size() / (data_info_.size() * nx * ny * neta);
+  }
+
+
   /** For one given time step id_tau,
    * get FluidCellInfo at spatial point (x, y, eta)*/
   FluidCellInfo EvolutionHistory::GetAtTimeStep(int id_tau,
@@ -31,15 +191,14 @@ namespace Jetscape {
     int id_x = GetIdX(x);
     int id_y = GetIdY(y);
     int id_eta = GetIdEta(eta);
-    // cijk for idx=i, idy=j and id_eta=k
-    int c000 = CellIndex(id_tau, id_x, id_y, id_eta);
-    int c001 = CellIndex(id_tau, id_x, id_y, id_eta+1);
-    int c010 = CellIndex(id_tau, id_x, id_y+1, id_eta);
-    int c011 = CellIndex(id_tau, id_x, id_y+1, id_eta+1);
-    int c100 = CellIndex(id_tau, id_x+1, id_y, id_eta);
-    int c101 = CellIndex(id_tau, id_x+1, id_y, id_eta+1);
-    int c110 = CellIndex(id_tau, id_x+1, id_y+1, id_eta);
-    int c111 = CellIndex(id_tau, id_x+1, id_y+1, id_eta+1);
+    auto c000 = GetFluidCell(id_tau, id_x, id_y, id_eta);
+    auto c001 = GetFluidCell(id_tau, id_x, id_y, id_eta+1);
+    auto c010 = GetFluidCell(id_tau, id_x, id_y+1, id_eta);
+    auto c011 = GetFluidCell(id_tau, id_x, id_y+1, id_eta+1);
+    auto c100 = GetFluidCell(id_tau, id_x+1, id_y, id_eta);
+    auto c101 = GetFluidCell(id_tau, id_x+1, id_y, id_eta+1);
+    auto c110 = GetFluidCell(id_tau, id_x+1, id_y+1, id_eta);
+    auto c111 = GetFluidCell(id_tau, id_x+1, id_y+1, id_eta+1);
     real x0 = XCoord(id_x);
     real x1 = XCoord(id_x + 1);
     real y0 = YCoord(id_y);
@@ -48,14 +207,13 @@ namespace Jetscape {
     real eta1 = EtaCoord(id_eta + 1);
 
     return TrilinearInt(x0, x1, y0, y1, eta0, eta1,
-			 data.at(c000), data.at(c001), data.at(c010), data.at(c011),
-			 data.at(c100), data.at(c101), data.at(c110), data.at(c111),
+			 c000, c001, c010, c011, c100, c101, c110, c111,
 			 x, y, eta);
   }
 
   // do interpolation along time direction; we may also need high order
   // interpolation functions 
-  FluidCellInfo EvolutionHistory::get(real tau, real x, real y, real eta){
+  FluidCellInfo EvolutionHistory::Get(real tau, real x, real y, real eta){
     CheckInRange(tau, x, y, eta);
     int id_tau = GetIdTau(tau);
     real tau0 = TauCoord(id_tau);
@@ -189,7 +347,7 @@ namespace Jetscape {
   }
 
   void FluidDynamics::PrintFluidCellInformation(
-						   FluidCellInfo* fluid_cell_info_ptr) {
+                const std::unique_ptr<FluidCellInfo> & fluid_cell_info_ptr) {
     // this function print out the information of the fluid cell to the screen
     cout << "=======================================================" << endl;
     cout << "print out cell information:" << endl;

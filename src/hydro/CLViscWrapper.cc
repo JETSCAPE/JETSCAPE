@@ -59,6 +59,11 @@ void CLVisc::InitializeHydro(Parameter parameter_list) {
     para->FirstChildElement("Perform_CooperFrye_Feezeout")->QueryIntText(&doCooperFrye);
     para->FirstChildElement("tau0")->QueryDoubleText(&cfg.tau0);
     para->FirstChildElement("dtau")->QueryDoubleText(&cfg.dt);
+    para->FirstChildElement("ntau_skip")->QueryIntText(&cfg.ntskip);
+    para->FirstChildElement("nx_skip")->QueryIntText(&cfg.nxskip);
+    para->FirstChildElement("ny_skip")->QueryIntText(&cfg.nyskip);
+    para->FirstChildElement("netas_skip")->QueryIntText(&cfg.nzskip);
+
 
     cfg.dx = ini->GetXStep();
     cfg.dy = ini->GetYStep();
@@ -114,6 +119,26 @@ void CLVisc::EvolveHydro() {
         INFO << "running CLVisc ...";
         hydro_->evolve();
         hydro_status = FINISHED;
+
+        auto cfg = hydro_->get_config();
+        float tau_min = cfg.tau0;
+        float dtau = cfg.dt * cfg.ntskip;
+        float dx = cfg.dx * cfg.nxskip;
+        float dy = cfg.dy * cfg.nyskip;
+        float detas = cfg.dz * cfg.nzskip;
+        float x_min = - 0.5f * cfg.nx * cfg.dx;
+        float y_min = - 0.5f * cfg.ny * cfg.dy;
+        float etas_min = - 0.5f * cfg.nz * cfg.dz;
+        int nx = int(floor((cfg.nx-1) / cfg.nxskip)) + 1;
+        int ny = int(floor((cfg.ny-1) / cfg.nyskip)) + 1;
+        int netas = int(floor((cfg.nz-1) / cfg.nzskip)) + 1;
+
+        bulk_info.Construct(hydro_->bulkinfo_.get_data(),
+                hydro_->bulkinfo_.get_data_info(),
+                tau_min, dtau, x_min, dx, nx,
+                y_min, dy, ny, etas_min, detas, netas,
+                false);
+        hydro_->bulkinfo_.save("bulk_data.csv");
     }
     if (hydro_status == FINISHED && doCooperFrye == 1) {
         INFO << "Cooper Frye not implemented yet";
@@ -123,6 +148,30 @@ void CLVisc::EvolveHydro() {
 void CLVisc::GetHydroInfo(
         Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
         std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr) {
-        fluid_cell_info_ptr = std::make_unique<FluidCellInfo>();
+      fluid_cell_info_ptr = std::make_unique<FluidCellInfo> ();
+      if (hydro_status != FINISHED || !bulk_info.DataSizeMatch()) {
+        throw std::runtime_error("Hydro evolution is not finished "
+				 "or EvolutionHistory data size does no match description");
+      }
+      // judge whether to use 2D interpolation or 3D interpolation
+      if (!bulk_info.tau_eta_is_tz) {
+        Jetscape::real tau = std::sqrt(t * t - z * z);
+        Jetscape::real eta = 0.5 * (std::log(t + z) - std::log(t - z));
+        try {
+            bulk_info.CheckInRange(tau, x, y, eta);
+            *fluid_cell_info_ptr = bulk_info.Get(tau, x, y, eta);
+        } catch (std::exception& err) {
+            WARN << err.what();
+            //fluid_cell_info_ptr->Print();
+        }
+      } else {
+        try {
+            bulk_info.CheckInRange(t, x, y, z);
+            *fluid_cell_info_ptr = bulk_info.Get(t, x, y, z);
+        } catch (std::exception & err) {
+            WARN << err.what();
+            //fluid_cell_info_ptr->Print();
+        }
+      }
+      //fluid_cell_info_ptr->Print();
 }
-

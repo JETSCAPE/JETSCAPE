@@ -8,6 +8,9 @@ clvisc::Config set_hydro_config() {
     cfg.nx = 200;
     cfg.ny = 200;
     cfg.nz = 1;
+    cfg.nxskip = 2;
+    cfg.nyskip = 2;
+    cfg.nzskip = 2;
     cfg.tau0 = 0.6;
     cfg.dt = 0.02;
     cfg.dx = 0.16;
