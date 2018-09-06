@@ -138,7 +138,8 @@ void CLVisc::EvolveHydro() {
                 tau_min, dtau, x_min, dx, nx,
                 y_min, dy, ny, etas_min, detas, netas,
                 false);
-        hydro_->bulkinfo_.save("bulk_data.csv");
+        // one can save bulk data if needed
+        // hydro_->bulkinfo_.save("bulk_data.csv");
     }
     if (hydro_status == FINISHED && doCooperFrye == 1) {
         INFO << "Cooper Frye not implemented yet";
@@ -153,7 +154,7 @@ void CLVisc::GetHydroInfo(
         throw std::runtime_error("Hydro evolution is not finished "
 				 "or EvolutionHistory data size does no match description");
       }
-      // judge whether to use 2D interpolation or 3D interpolation
+
       if (!bulk_info.tau_eta_is_tz) {
         Jetscape::real tau = std::sqrt(t * t - z * z);
         Jetscape::real eta = 0.5 * (std::log(t + z) - std::log(t - z));
