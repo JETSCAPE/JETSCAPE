@@ -233,7 +233,8 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
     velocity_jet[2]=pIn[i].jet_v().y();
     velocity_jet[3]=pIn[i].jet_v().z();
 
-    int process = DetermineProcess(pRest, T, deltaT, Id);
+    double deltaTRest = deltaT/gamma;
+    int process = DetermineProcess(pRest, T, deltaTRest, Id);
     VERBOSE(8)<< MAGENTA
 	      << "Time = " << Time << " Id = " << Id
 	      << " process = " << process << " T = " << T
@@ -534,15 +535,15 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
   } // particle loop
 }
 
-int Martini::DetermineProcess(double pRest, double T, double deltaT, int Id)
+int Martini::DetermineProcess(double pRest, double T, double deltaTRest, int Id)
 {
 
-  double dT = deltaT/hbarc;   // time step in [GeV^(-1)]
+  double dT = deltaTRest/hbarc;   // time step in [GeV^(-1)]
 
   // get the rates for each process
   // total Probability = dT*Rate
   RateRadiative rateRad;
-  rateRad = getRateRadTotal(pRest, T);
+  if(pRest/T > AMYpCut) rateRad = getRateRadTotal(pRest, T);
   RateElastic rateElas;
   rateElas = getRateElasTotal(pRest, T);
   RateConversion rateConv;
@@ -565,9 +566,11 @@ int Martini::DetermineProcess(double pRest, double T, double deltaT, int Id)
 
       double totalQuarkProb = 0.;
 
-      //if (pRest > pcut) totalQuarkProb += (rateRad.qqg + rateRad.qqgamma)*dT;
+      /* block the photon process at this moment */
+      //if (pRest/T > AMYpCut) totalQuarkProb += (rateRad.qqg + rateRad.qqgamma)*dT;
       //totalQuarkProb += (rateElas.qq + rateElas.qg + rateConv.qg + rateConv.qgamma)*dT;
-      if (pRest > pcut) totalQuarkProb += rateRad.qqg*dT;
+
+      if (pRest/T > AMYpCut) totalQuarkProb += rateRad.qqg*dT;
       totalQuarkProb += (rateElas.qq + rateElas.qg + rateConv.qg)*dT;
 
       // warn if total probability exceeds 1
@@ -592,7 +595,7 @@ int Martini::DetermineProcess(double pRest, double T, double deltaT, int Id)
 
 	  // AMY radiation only happens if energy scale is above certain threshold.
 	  // but elastic/conversion processes doesn't have threshold.
-	  if(pRest > pcut)
+	  if(pRest/T > AMYpCut)
 	    {
 	      Prob = rateRad.qqg*dT/totalQuarkProb;
 	      if (accumProb <= randProb && randProb < (accumProb + Prob))
@@ -635,7 +638,7 @@ int Martini::DetermineProcess(double pRest, double T, double deltaT, int Id)
     {
       double totalGluonProb = 0.;
 
-      if (pRest > pcut) totalGluonProb += (rateRad.ggg + rateRad.gqq)*dT;
+      if (pRest/T > AMYpCut) totalGluonProb += (rateRad.ggg + rateRad.gqq)*dT;
       totalGluonProb += (rateElas.gq + rateElas.gg + rateConv.gq)*dT;
 
       // warn if total probability exceeds 1
@@ -660,7 +663,7 @@ int Martini::DetermineProcess(double pRest, double T, double deltaT, int Id)
 
 	  // AMY radiation only happens if energy scale is above certain threshold.
 	  // but elastic/conversion processes doesn't have threshold.
-	  if (pRest > pcut)
+	  if (pRest/T > AMYpCut)
 	    {
 	      Prob = rateRad.ggg*dT/totalGluonProb;
 	      if (accumProb <= randProb && randProb < (accumProb + Prob))
