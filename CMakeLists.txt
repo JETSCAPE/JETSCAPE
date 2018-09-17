@@ -207,13 +207,14 @@ endif()
 ###########################
 ### Optional packages   ###
 ###########################
-message("Looking for HepMC ...")
-find_package(HEPMC)
-if (${HEPMC_FOUND})
-  include_directories(${HEPMC_INCLUDE_DIR})
-  set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -DUSE_HEPMC" )
-  Message(STATUS "HepMC Include dir : " ${HEPMC_INCLUDE_DIR})
-endif()
+unset(USE_HEPMC)
+#message("Looking for HepMC ...")
+#find_package(HEPMC)
+#if (${HEPMC_FOUND})
+#  include_directories(${HEPMC_INCLUDE_DIR})
+#  set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -DUSE_HEPMC" )
+#  Message(STATUS "HepMC Include dir : " ${HEPMC_INCLUDE_DIR})
+#endif()
 
 message("Looking for ROOT ...")
 find_package(ROOT)
