@@ -79,7 +79,7 @@ void SmashWrapper::InitTask() {
   config["General"]["Randomseed"] = random_seed;
   // Set SMASH logging
   smash::set_default_loglevel(
-      config.take({"Logging", "default"}, einhard::INFO));
+      config.take({"Logging", "default"}, einhard::TRACE));
   smash::create_all_loggers(config["Logging"]);
   // Read in the rest of configuration
   float end_time;
@@ -96,6 +96,7 @@ void SmashWrapper::InitTask() {
   boost::filesystem::path output_path("./smash_output");
   smash_experiment_ =
       make_shared<smash::Experiment<AfterburnerModus>>(config, output_path);
+  JSINFO << "Finish initializing SMASH";
 }
 
 void SmashWrapper::ExecuteTask() {

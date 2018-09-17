@@ -21,11 +21,6 @@
 
 #include "smash/configuration.h"
 #include "smash/experiment.h"
-// Although bad practice, including experiment.cc is the easiest way to access
-// the templated implementations of smash::Experiment class methods. Maybe in
-// future SMASH changes its design to be more friendly towards being a 3rd-party
-// library, then this include can be removed.
-#include "smash/experiment.cc"
 #include "smash/listmodus.h"
 
 #include "Afterburner.h"
@@ -41,7 +36,9 @@ using namespace Jetscape;
 class AfterburnerModus : public smash::ListModus {
 public:
   // Unlike for ListModus there is no need to get any data from the config
-  AfterburnerModus(smash::Configuration, const smash::ExperimentParameters &) {}
+  AfterburnerModus(smash::Configuration, const smash::ExperimentParameters &) {
+    JSINFO << "Constructing AfterburnerModus";
+  }
   // The converter is not static, because modus holds int variables
   // for the number of warnings, which are used in try_create_particle,
   // called by this function. Maybe I (oliiny) will change this design in SMASH

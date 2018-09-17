@@ -126,11 +126,12 @@ namespace smash {
  * impact parameter distribution and use rejection sampling.
  *
  * Values (doubles, optional, default = 0.0): \n
- * Values of the impact parameter, corresponding to \key Yields. Must be same
+ * Values of the impact parameter, with corresponding \key Yields. Must be same
  * length as \key Yields. Required for \key Sample = "custom".
  *
  * \key Yields (doubles, optional): \n
- * Values of the particle yields, corresponding to \key Values. Must be same
+ * Values of the particle yields, corresponding to \key Values, i.e. the value
+ * of the custom distribution at this Value. Must be same
  * length as \key Values. Required for \key Sample = "custom".
  *
  * \key Range (double, double, optional, default = 0.):\n
@@ -222,6 +223,20 @@ namespace smash {
  *
  * Additionally, the impact parameter may be specified manually. See
  * \ref input_impact_parameter_ for an example.
+ *
+ * \n
+ * \note
+ * By default, executing SMASH without further specifying the configuration,
+ * particles or decaymodes, a collider simulation is set up according to the
+ * default 'config.yaml', 'particles.txt' and 'decaymodes.txt' files located in
+ * /input. Note though that these files were previously copied to the build
+ * directory, so changng the ones in the /input directory will not affect the
+ * default SMASH run. To run SMASH
+ * in the (default) collider setup, execute \n
+ * \n
+ * \verbatim
+    ./smash
+ \endverbatim
  *
  */
 

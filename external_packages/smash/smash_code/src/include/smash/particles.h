@@ -123,13 +123,11 @@ class Particles {
     }
     /* Check if the particles still exists. If it decayed
      * or scattered inelastically it is gone. */
-    return data_[copy.index_].id() ==
-               copy.id()
+    return data_[copy.index_].id() == copy.id()
            /* If the particle has scattered
             * elastically, its id_process has
             * changed and we consider it invalid. */
-           && data_[copy.index_].id_process() ==
-                  copy.id_process();
+           && data_[copy.index_].id_process() == copy.id_process();
   }
 
   /**
@@ -419,8 +417,11 @@ class Particles {
   /**
    * \ingroup logging
    * Print effective mass and type name for all particles to the stream.
+   * \param[in] out The ostream into which to output
+   * \param[in] particles The Particles object to write into out
    */
-  friend std::ostream &operator<<(std::ostream &out, const Particles &p);
+  friend std::ostream &operator<<(std::ostream &out,
+                                  const Particles &particles);
 
  private:
   /**
@@ -440,9 +441,10 @@ class Particles {
   /**
    * \internal
    * Ensure that the capacity of data_ is large enough to hold \p to_add more
-   * entries. If the capacity does not sufficent increase_capacity is called.
+   * entries. If the capacity does not sufficient increase_capacity is called.
    *
-   * \param[in] to_add Number of particles which is going to be added to the list.
+   * \param[in] to_add Number of particles which is going to be added to the
+   * list.
    */
   inline void ensure_capacity(unsigned to_add);
   /**
@@ -456,8 +458,8 @@ class Particles {
    * \li The ParticleData::hole_ member is not modified and might need
    *     adjustment in the calling code.
    *
-   * \param[out] to The copied version the particle added to the end of the
-   *             to the particle list.
+   * \param[out] to The copied version of the particle added to the end of the
+   *             to particle list.
    * \param[in]  from the original particle that will be copied.
    */
   inline void copy_in(ParticleData &to, const ParticleData &from);

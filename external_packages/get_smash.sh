@@ -39,17 +39,9 @@ echo "Compiling SMASH using ${number_of_cores} cores."
 make -j${number_of_cores} SmashShared
 
 #
-# 4) Copy experiment.cc to includes
-#    Unfortunately I(oliiny) have found no other way to include templated
-#    smash::Experiment<Modus> to JetScape, except dangerous
-#    #include "smash/experiment.cc".
-cd ..
-cp src/experiment.cc src/include/smash/
-
+# 4) Set the environment variable, that allows JetScape to find SMASH
 #
-# 5) Set the environment variable, that allows JetScape to find SMASH
-#
-cd ../..
+cd ../../..
 export SMASH_DIR=${PWD}/smash/smash_code
 echo "SMASH_DIR is set to ${SMASH_DIR}."
 echo "It won't work it you used ./get_smash.sh: use \". get_smash.sh\" instead."

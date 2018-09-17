@@ -53,11 +53,6 @@ namespace smash {
  * \key File_Prefix    (string, required):\n
  * Prefix for the external particle lists file.
  *
- * \key Start_Time (double, required):\n
- * Starting time of List calculation. The value provided by user is basically
- * unused. When particles in the input file are at the same time t, they start
- * at time t. When not at the same time they start at the earliest input time.
- *
  * \key Shift_Id (int, required):\n
  * Starting id for file_id_, i.e. the first file which is read.
  *
@@ -76,13 +71,11 @@ namespace smash {
  \endverbatim
  *
  * It might for some reason be necessary to not run SMASH starting with the
- * first file. In this case, the file_id can be shifted. Additionally, the
- * start time can be manually adjusted.
+ * first file. In this case, the file_id can be shifted.
  *\verbatim
  Modi:
      List:
          Shift_Id: 10
-         Start_Time: 0.0
  \endverbatim
  *
  * \n
@@ -107,13 +100,27 @@ namespace smash {
  * and 4-momenta (p0, px, py, pz) =
  * (0.232871, 0.116953, -0.115553, 0.090303) GeV,
  * with mass = 0.138 GeV, pdg = 111, id = 0 and charge 0 will be initialized for
- the first event (and also for the second event).
+ * the first event (and also for the second event).
  *
+ * \n
+ * \note
+ * SMASH is shipped with an example configuration file to set up an afterburner
+ * simulation by means of the list modus. This also requires a particle list to
+ * be read in. Both, the configuration file and the particle list, are located
+ * in /input/list. To run SMASH with the provided example configuration and
+ * particle list, execute \n
+ * \n
+ * \verbatim
+    ./smash -i INPUT_DIR/list/config.yaml
+ \endverbatim
+ * \n
+ * Where 'INPUT_DIR' needs to be replaced by the path to the input directory
+ * ('../input', if the build directory is located in the smash
+ * folder).
  */
 
 ListModus::ListModus(Configuration modus_config, const ExperimentParameters &)
-    : start_time_(modus_config.take({"List", "Start_Time"})),
-      shift_id_(modus_config.take({"List", "Shift_Id"})) {
+    : shift_id_(modus_config.take({"List", "Shift_Id"})) {
   std::string fd = modus_config.take({"List", "File_Directory"});
   particle_list_file_directory_ = fd;
 
@@ -232,9 +239,9 @@ double ListModus::initial_conditions(Particles *particles,
     std::istringstream lineinput(line.text);
     double t, x, y, z, mass, E, px, py, pz;
     int id, charge;
-    PdgCode pdgcode;
-    lineinput >> t >> x >> y >> z >> mass >> E >> px >> py >> pz >> pdgcode >>
-        id >> charge;
+    std::string pdg_string;
+    lineinput >> t >> x >> y >> z >> mass >> E >> px >> py >> pz >>
+        pdg_string >> id >> charge;
     if (lineinput.fail()) {
       throw LoadFailure(
           build_error_string("While loading external particle lists data:\n"
@@ -242,6 +249,7 @@ double ListModus::initial_conditions(Particles *particles,
                              "expected data types.",
                              line));
     }
+    PdgCode pdgcode(pdg_string);
     log.debug("Particle ", pdgcode, " (x,y,z)= (", x, ", ", y, ", ", z, ")");
 
     // Charge consistency check

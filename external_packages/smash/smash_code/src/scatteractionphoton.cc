@@ -26,10 +26,9 @@
 
 namespace smash {
 
-ScatterActionPhoton::ScatterActionPhoton(const ParticleList &in,
-                    const double time,
-                    const int n_frac_photons,
-                    const double hadronic_cross_section_input)
+ScatterActionPhoton::ScatterActionPhoton(
+    const ParticleList &in, const double time, const int n_frac_photons,
+    const double hadronic_cross_section_input)
     : ScatterAction(in[0], in[1], time),
       reac_(photon_reaction_type(in)),
       number_of_fractional_photons_(n_frac_photons),
@@ -198,6 +197,15 @@ void ScatterActionPhoton::generate_final_state() {
   outgoing_particles_ = proc->particle_list();
 
   FourVector middle_point = get_interaction_point();
+
+  // t is defined to be the momentum exchanged between the rho meson and the
+  // photon in pi + rho -> pi + photon channel. Therefore,
+  // get_t_range needs to be called with m2 being the rho mass instead of the
+  // pion mass. So, particles 1 and 2 are swapped if necessary.
+
+  if (!incoming_particles_[0].pdgcode().is_pion()) {
+    std::swap(incoming_particles_[0], incoming_particles_[1]);
+  }
 
   // 2->2 inelastic scattering
   // Sample the particle momenta in CM system

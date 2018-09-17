@@ -11,8 +11,8 @@
 
 #include <boost/filesystem.hpp>
 
-#include "setup.h"
 #include "../include/smash/collidermodus.h"
+#include "setup.h"
 
 using namespace smash;
 

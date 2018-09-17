@@ -65,7 +65,7 @@ class Tabulation {
    * asymptotics, e.g. rho(m) functions.
    *
    * \param x Argument to tabulated function.
-   * \param extrapolation \ref Extrapolation that should be used for values
+   * \param extrapolation Extrapolation that should be used for values
    * outside the tabulation.
    * \return Tabulated value using linear interpolation.
    */
@@ -166,7 +166,7 @@ inline std::unique_ptr<Tabulation> spectral_integral_semistable(
       });
 }
 
-/** 
+/**
  * Create a table for the spectral integral of two resonances.
  *
  * \param[inout] integrate2d Numerical integrator.
