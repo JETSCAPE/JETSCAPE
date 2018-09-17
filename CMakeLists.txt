@@ -3,7 +3,7 @@
 ###########################
 
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
-project (JetScape)
+project (JetScape CXX C)
 
 # Fail if cmake is called in the source directory
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
