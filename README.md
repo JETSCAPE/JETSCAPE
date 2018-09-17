@@ -189,7 +189,7 @@ tar -xf 3.2.10.tar.gz
 
 mkdir ${EIGEN_INSTALL_DIR}
 cd ${EIGEN_INSTALL_DIR}
-cmake ${EIGEN_DOWNLOAD_DIR}
+cmake ${EIGEN_DOWNLOAD_DIR} -DCMAKE_INSTALL_PREFIX=${EIGEN_INSTALL_DIR}
 make install
 
 export EIGEN3_ROOT=${EIGEN_INSTALL_DIR}/include/eigen3/
@@ -199,6 +199,9 @@ Add the last export to your .bashrc file.
 
 
 #### Using a custom GSL build
+
+This is only necessary if GSL is not installed already or something
+does not work with the installed version.
 
 Download and unpack GSL:
 
@@ -239,8 +242,16 @@ Assuming that boost is already installed in $HOME:
   mkdir build
   cd build
   cmake ..
-  number_of_cores=`nproc --all`
+  export number_of_cores=`nproc --all`
   make -j${number_of_cores} SmashShared
+```
+
+To compile and run SMASH tests (not really necessary for JetScape run,
+but may be useful in general):
+
+```bash
+make -j${number_of_cores}
+ctest -j${number_of_cores}
 ```
 
 #### Making sure that JetScape uses SMASH Pythia 
