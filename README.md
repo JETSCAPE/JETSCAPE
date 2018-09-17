@@ -152,16 +152,115 @@ To run JETSCAPE with MUSIC, one needs to use MPI commands,
 SMASH is a hadronic transport developed at Frankfurt Institute for Advanced
  Studies by the group of Prof. H. Petersen (Elfner). In JetScape SMASH can
 serve as an afterburner, useful to compute soft observables.
-To download and compile SMASH, run the script in the external_packages folder:
+
+### Installing SMASH
+
+Currently SMASH is still not published on github, so SMASH 1.4 code is added
+to JetScape repository. Before compiling JetScape with SMASH library, one has
+to compile the SMASH library first. In future part of this section should be
+removed, because it is already in SMASH README. However, I have copied it here
+with some adjustments for convenience.
+
+#### Prerequisites
+
+SMASH is known to compile and work with one of these compilers (which have the
+required C++11 features):
+- gcc >= 4.8
+- clang >= 3.2
+
+It requires the following tools & libraries:
+- cmake >= 2.8.11
+- the GNU Scientific Library >= 1.15
+- the Eigen3 library for linear algebra (see http://eigen.tuxfamily.org)
+- boost filesystem >= 1.49
+
+See more details in SMASH README.
+
+#### Installing Eigen
 
 ```bash
-    . get_smash.sh
+export EIGEN_DOWNLOAD_DIR=$HOME/Software
+export EIGEN_INSTALL_DIR=$HOME/eigen_install
+
+mkdir ${EIGEN_DOWNLOAD_DIR}
+cd ${EIGEN_DOWNLOAD_DIR}
+wget http://bitbucket.org/eigen/eigen/get/3.2.10.tar.gz
+tar -xf 3.2.10.tar.gz
+
+mkdir ${EIGEN_INSTALL_DIR}
+cd ${EIGEN_INSTALL_DIR}
+cmake ${EIGEN_DOWNLOAD_DIR}
+make install
+
+export EIGEN3_ROOT=${EIGEN_INSTALL_DIR}/include/eigen3/
 ```
+
+Add the last export to your .bashrc file.
+
+
+#### Using a custom GSL build
+
+Download and unpack GSL:
+
+```bash
+    wget ftp://ftp.gnu.org/gnu/gsl/gsl-latest.tar.gz
+    tar -zxvf gsl-latest.tar.gz
+```
+
+This creates a folder named `gsl-[version_number]` called `$GSL` here.
+
+```bash
+    cd $GSL
+    ./configure --prefix $GSL
+    make -jN
+    make install
+```
+
+Add this export to your .bashrc file:
+```bash
+    export GSL_ROOT_DIR=/opt/apps/intel18/gsl/2.3
+```
+
+#### Using boost library
+
+Assuming that boost is already installed in $HOME:
+
+```bash
+  export BOOST_ROOT=$HOME/boost_1_64_0/
+```
+
+#### Compiling SMASH
+
+```bash
+  export JETSCAPE_DIR=${HOME}/JETSCAPE-COMP
+  export SMASH_DIR=${JETSCAPE_DIR}/external_packages/smash/smash_code
+
+  cd ${SMASH_DIR}
+  mkdir build
+  cd build
+  cmake ..
+  number_of_cores=`nproc --all`
+  make -j${number_of_cores} SmashShared
+```
+
+#### Making sure that JetScape uses SMASH Pythia 
+
+  Otherwise one gets a very nasty conflict between SMASH Pythia and other Pythia.
+
+```bash
+  export PYTHIAINSTALLDIR=${SMASH_DIR}/3rdparty
+  export PYTHIA8DIR=${PYTHIAINSTALLDIR}/pythia8230
+  export PYTHIA8_ROOT_DIR=${PYTHIAINSTALLDIR}/pythia8230
+```
+
+### Compiling JetScape with SMASH
 
 The usage of SMASH in JetScape as an afterburner requires hydro,
 sampler and SMASH itself. Therefore, to use it in JetScape,
 
 ```bash
+    mkdir ${JETSCAPE_DIR}/build
+    cd ${JETSCAPE_DIR}/build
     cmake -Dmusic=ON -DiSS=ON -Dsmash=ON ..
 ```
 
@@ -171,3 +270,6 @@ To run JetScape test with SMASH:
     cd build
     ./SMASHTest
 ```
+
+Currently the iSS sampler performs resonance decays after sampling.
+For reasonable physics with SMASH these decays should be switched off.

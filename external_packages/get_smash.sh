@@ -37,11 +37,3 @@ cmake ..
 number_of_cores=`nproc --all`
 echo "Compiling SMASH using ${number_of_cores} cores."
 make -j${number_of_cores} SmashShared
-
-#
-# 4) Set the environment variable, that allows JetScape to find SMASH
-#
-cd ../../..
-export SMASH_DIR=${PWD}/smash/smash_code
-echo "SMASH_DIR is set to ${SMASH_DIR}."
-echo "It won't work it you used ./get_smash.sh: use \". get_smash.sh\" instead."
