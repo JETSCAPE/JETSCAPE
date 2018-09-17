@@ -9,6 +9,9 @@ General:
     Randomseed:    -1     # Reset from the JetScape xml config
     Nevents:       1      # Dummy
 
+#Collision_Term:
+#    Strings: False
+
 Output:
     Output_Interval:  5.0
 
