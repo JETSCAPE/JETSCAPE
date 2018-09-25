@@ -129,7 +129,7 @@ output_evolution_every_N_timesteps  5  # output evolution every Ntime steps
 # parameters for freeze out and Cooper-Frye 
 ###########################################
 Do_FreezeOut_Yes_1_No_0 1       # flag to find freeze-out surface
-freeze_out_method 2             # method for hyper-surface finder
+freeze_out_method 4             # method for hyper-surface finder
                                 # 2: Schenke's more complex method
 average_surface_over_this_many_time_steps 5   # the step skipped in the tau
 epsilon_freeze 0.18             # the freeze out energy density (GeV/fm^3)
