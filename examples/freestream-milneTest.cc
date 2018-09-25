@@ -32,6 +32,7 @@
 #include "Martini.h"
 #include "FreestreamMilneWrapper.h"
 #include "MusicWrapper.h"
+#include "iSpectraSamplerWrapper.h"
 #include "TrentoInitial.h"
 #include "PGun.h"
 #include "PythiaGun.h"
@@ -78,16 +79,19 @@ int main(int argc, char** argv)
   jetscape->SetReuseHydro (false);
   jetscape->SetNReuseHydro (0);
 
-  auto jlossmanager = make_shared<JetEnergyLossManager> ();
-  auto jloss = make_shared<JetEnergyLoss> ();
   auto trento = make_shared<TrentoInitial> ();
   auto freestream = make_shared<FreestreamMilneWrapper> ();
   auto hydro = make_shared<MpiMusic> ();
   //auto hydro = make_shared<GubserHydro> ();
+  
+  // surface sampler
+  auto iSS = make_shared<iSpectraSamplerWrapper> ();
 
+  auto jlossmanager = make_shared<JetEnergyLossManager> ();
+  auto jloss = make_shared<JetEnergyLoss> ();
   auto matter = make_shared<Matter> ();
-  auto martini = make_shared<Martini> ();
-  auto adscft = make_shared<AdSCFT> ();
+  //auto martini = make_shared<Martini> ();
+  //auto adscft = make_shared<AdSCFT> ();
   //DBEUG: Remark:
   //does not matter unfortunately since not called recursively, done by JetEnergyLoss class ...
   //matter->SetActive(false);
@@ -125,6 +129,7 @@ int main(int argc, char** argv)
   //Some modifications will be needed for reusing hydro events, so far
   //simple test hydros always executed "on the fly" ...
   jetscape->Add(hydro);
+  jetscape->Add(iSS);
 
   // Matter with silly "toy shower (no physics)
   // and Martini dummy ...
