@@ -13,10 +13,14 @@ if(LINUX)
 endif()
 
 if (APPLE)
-     message( STATUS "Apple : " ${CMAKE_HOST_SYSTEM})
-     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-builtin-macro-redefined -std=c++11 -stdlib=libc++")
-     message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS})	
-     message(STATUS "LD_FLAGS = " ${CMAKE_EXE_LINKER_FLAGS})
+    message( STATUS "Apple : " ${CMAKE_HOST_SYSTEM})
+    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-builtin-macro-redefined -std=c++11 -stdlib=libc++")
+    elseif()
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-builtin-macro-redefined -std=c++11")
+    endif()
+    message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS})	
+    message(STATUS "LD_FLAGS = " ${CMAKE_EXE_LINKER_FLAGS})
 endif()   
 
 # w/o not compiling library automatically
