@@ -62,23 +62,29 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-reorder -Wno-unused-variable ")
 ### system dependence.
 ### note that APPLE also defines UNIX, hence the elseif to differentiate
 if (APPLE)
-  message( STATUS "Apple : " ${CMAKE_HOST_SYSTEM})
-  
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
-  ## can turn off some warnings
-  # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-private-field")
-  
-  if(${MPI_FOUND})
-    set(CMAKE_CXX_COMPILE_FLAGS ${CMAKE_CXX_COMPILE_FLAGS} ${MPI_COMPILE_FLAGS})
-    set(CMAKE_CXX_LINK_FLAGS ${CMAKE_CXX_LINK_FLAGS} ${MPI_LINK_FLAGS})
-  endif(${MPI_FOUND})
-elseif(UNIX) 
-  message( STATUS "Linux : " ${CMAKE_HOST_SYSTEM})
-  ## can turn off some warnings
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare -Wno-unused-but-set-variable -Wno-parentheses")
+    message( STATUS "Apple : " ${CMAKE_HOST_SYSTEM})
+    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang") 
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+    elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare -Wno-unused-but-set-variable -Wno-parentheses")
+    endif()
 
-  ## Additional options
-  # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
+    ## can turn off some warnings
+    # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-private-field")
+  
+    if(${MPI_FOUND})
+        set(CMAKE_CXX_COMPILE_FLAGS ${CMAKE_CXX_COMPILE_FLAGS} ${MPI_COMPILE_FLAGS})
+        set(CMAKE_CXX_LINK_FLAGS ${CMAKE_CXX_LINK_FLAGS} ${MPI_LINK_FLAGS})
+    endif(${MPI_FOUND})
+elseif(UNIX) 
+    message( STATUS "Linux : " ${CMAKE_HOST_SYSTEM})
+    ## can turn off some warnings
+    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare -Wno-unused-but-set-variable -Wno-parentheses")
+    endif()
+
+    ## Additional options
+    # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
 endif()   
 
 message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS})	
