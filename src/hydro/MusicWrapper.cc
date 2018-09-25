@@ -51,23 +51,23 @@ void MpiMusic::InitializeHydro(Parameter parameter_list) {
     string input_file = para->FirstChildElement("MUSIC_input_file")->GetText();
     para->FirstChildElement("Perform_CooperFrye_Feezeout")->QueryIntText(
                                                                 &doCooperFrye);
-    int argc = 2;
-    char **argv = new char* [argc];
-    argv[0] = new char[9];
-    strcpy(argv[0], "mpihydro");
-    argv[1] = new char[input_file.length() + 1];
-    strcpy(argv[1], input_file.c_str());
-    std::cout << "check input for MUSIC: " << std::endl;
-    for (int i = 0; i < argc; i++) {
-        std::cout << argv[i] << "  ";
-    }
-    std::cout << endl;
-    music_hydro_ptr = new MUSIC(argc, argv);
+    //int argc = 2;
+    //char **argv = new char* [argc];
+    //argv[0] = new char[9];
+    //strcpy(argv[0], "mpihydro");
+    //argv[1] = new char[input_file.length() + 1];
+    //strcpy(argv[1], input_file.c_str());
+    //std::cout << "check input for MUSIC: " << std::endl;
+    //for (int i = 0; i < argc; i++) {
+    //    std::cout << argv[i] << "  ";
+    //}
+    //std::cout << endl;
+    music_hydro_ptr = new MUSIC(input_file);
 
-    for (int i = 0; i < argc; i++) {
-        delete[] argv[i];
-    }
-    delete[] argv;
+    //for (int i = 0; i < argc; i++) {
+    //    delete[] argv[i];
+    //}
+    //delete[] argv;
 }
 
 
@@ -80,25 +80,17 @@ void MpiMusic::EvolveHydro() {
     double z_max  = ini->GetZMax();
     int nz = ini->GetZSize();
     if (pre_eq_ptr == nullptr) {
-        music_hydro_ptr->initialize_hydro_from_vector(entropy_density, dx);
+        //music_hydro_ptr->initialize_hydro_from_vector(entropy_density, dx);
     } else {
-        music_hydro_ptr->initialize_hydro_from_pre_equilibrium_vectors(dx, dz, z_max, nz,
-                                                        pre_eq_ptr->e_,
-                                                        pre_eq_ptr->utau_,
-                                                        pre_eq_ptr->ux_,
-                                                        pre_eq_ptr->uy_,
-                                                        pre_eq_ptr->ueta_,
-                                                        pre_eq_ptr->pi00_,
-                                                        pre_eq_ptr->pi01_,
-                                                        pre_eq_ptr->pi02_,
-                                                        pre_eq_ptr->pi03_,
-                                                        pre_eq_ptr->pi11_,
-                                                        pre_eq_ptr->pi12_,
-                                                        pre_eq_ptr->pi13_,
-                                                        pre_eq_ptr->pi22_,
-                                                        pre_eq_ptr->pi23_,
-                                                        pre_eq_ptr->pi33_,
-                                                        pre_eq_ptr->bulk_Pi_);
+        music_hydro_ptr->initialize_hydro_from_jetscape_preequilibrium_vectors(
+                dx, dz, z_max, nz,
+                pre_eq_ptr->e_,
+                pre_eq_ptr->utau_, pre_eq_ptr->ux_,
+                pre_eq_ptr->uy_,   pre_eq_ptr->ueta_,
+                pre_eq_ptr->pi00_, pre_eq_ptr->pi01_, pre_eq_ptr->pi02_,
+                pre_eq_ptr->pi03_, pre_eq_ptr->pi11_, pre_eq_ptr->pi12_,
+                pre_eq_ptr->pi13_, pre_eq_ptr->pi22_, pre_eq_ptr->pi23_,
+                pre_eq_ptr->pi33_, pre_eq_ptr->bulk_Pi_);
     }
 
     INFO << "initial density profile dx = " << dx << " fm";
@@ -109,7 +101,7 @@ void MpiMusic::EvolveHydro() {
         hydro_status = FINISHED;
     }
     if (hydro_status == FINISHED && doCooperFrye == 1) {
-        music_hydro_ptr->run_Cooper_Frye(1);
+        music_hydro_ptr->run_Cooper_Frye();
     }
 }
 
