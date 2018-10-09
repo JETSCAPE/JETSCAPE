@@ -68,7 +68,7 @@ class ListModus : public ModusDefault {
   explicit ListModus(Configuration modus_config,
                      const ExperimentParameters &parameters);
 
-  /// Empty constructor, added for convenient JetScape connection
+  /// Construct an empty list. Useful for convenient JetScape connection.
   ListModus() :
     shift_id_(0) {}
 

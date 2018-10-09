@@ -20,20 +20,14 @@
 #    a public one.
 git clone hyihp-repos@fias.uni-frankfurt.de:scm/smash.git smash/smash_code
 
-#
-# 2) Checkout to the right branch
-#    This is only necessary now, when the changes in SMASH, that allow
-#    connection to JetScape, are not merged to master
-#    (and are not part of the tagged version).
 cd smash/smash_code
-git checkout oliiny/SMASH_with_JetScape
 
 #
-# 3) Compile SMASH
+# 2) Compile SMASH
 #
 mkdir build
 cd build
-cmake ..
+cmake .. -DPythia_CONFIG_EXECUTABLE=${PYTHIA8DIR}/bin/pythia8-config
 number_of_cores=`nproc --all`
 echo "Compiling SMASH using ${number_of_cores} cores."
-make -j${number_of_cores} SmashShared
+make -j${number_of_cores}
