@@ -143,6 +143,7 @@ install(
   "${CMAKE_SOURCE_DIR}/external_packages/hydro_from_external_file/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/music/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/trento/src/"
+  "${CMAKE_SOURCE_DIR}/external_packages/clvisc_wrapper/"
   DESTINATION "include" # target directory
   FILES_MATCHING # install only matched files
   PATTERN "*.h*" # select header files
@@ -172,6 +173,17 @@ install(
   # PATTERN "gtl/src" EXCLUDE
   )
 
+install(
+  # source directory
+  DIRECTORY
+  "${CMAKE_SOURCE_DIR}/external_packages/clvisc_wrapper/include/"
+  DESTINATION "include" # target directory
+  FILES_MATCHING # install only matched files
+  PATTERN "*.h*" # select header files
+  ## Necessary to exclude directories to prevent a whole (mostly empty) hierarchy
+  )
+
+
 # Install lib files
 install(
   # our libraries
@@ -183,6 +195,7 @@ install(
   "${PROJECT_BINARY_DIR}/external_packages/iSS/src/"
   "${PROJECT_BINARY_DIR}/external_packages/music/src/"
   "${PROJECT_BINARY_DIR}/external_packages/trento/src/"
+  "${PROJECT_BINARY_DIR}/external_packages/clvisc_wrapper/"
   DESTINATION "lib" # target directory
   FILES_MATCHING # install only matched files
   PATTERN "lib*.*" # selects .so, .a, .dylib, ...

@@ -24,5 +24,5 @@ endif()
 
 if (OPENCL_FOUND AND clvisc)
   add_subdirectory( clvisc_wrapper )
-  target_link_libraries(JetScapeThird lib_clvisc)
+  target_link_libraries(JetScapeThird clvisc)
 endif (OPENCL_FOUND AND clvisc)

@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 2.8)
-project(lib_clvisc)
+cmake_minimum_required(VERSION 3.0)
+project(clvisc)
 
 #for MacOSX
 cmake_policy(SET CMP0042 NEW)
@@ -10,6 +10,8 @@ else()
     file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/eos_table/s95_pce165.dat DESTINATION ${CMAKE_BINARY_DIR}/data_table)
     file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../PyVisc/pyvisc/kernel/ DESTINATION ${CMAKE_BINARY_DIR}/clvisc_kernel)
 endif()
+
+#set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "../../lib/")
 
 set ( SRC_LIST 
     ${PROJECT_SOURCE_DIR}/include/cl.hpp
@@ -73,5 +75,5 @@ include_directories( ${PROJECT_SOURCE_DIR}/include )
 ### target_link_libraries ( test_clvisc ${EXTRA_LIBS} )
 
 #### compile the clvisc to one library that will be used by clvisc+jetscape interface
-add_library(lib_clvisc SHARED ${SRC_LIST})
-target_link_libraries (lib_clvisc ${EXTRA_LIBS})
+add_library(clvisc SHARED ${SRC_LIST})
+target_link_libraries (clvisc ${EXTRA_LIBS})
