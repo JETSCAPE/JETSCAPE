@@ -14,4 +14,4 @@
 ##############################################################################
 
 # download the code package
-git clone git@gitlab.com:snowhitiger/PyVisc.git
+git clone https://gitlab.com/snowhitiger/PyVisc.git
