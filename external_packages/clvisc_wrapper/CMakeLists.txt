@@ -50,8 +50,6 @@ configure_file (
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../../cmakemodules/")
  
-find_package( OpenCL REQUIRED )
- 
 include_directories( "/usr/local/include/" )
 link_directories( "/usr/local/lib" )
 
