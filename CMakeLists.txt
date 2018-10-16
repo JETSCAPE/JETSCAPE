@@ -36,7 +36,7 @@ if (freestream)
 endif (freestream)
 
 # CLVisc. Trun on with 'cmake -Dclvisc=ON'.
-find_package(opencl)
+find_package(OpenCL)
 
 option(clvisc "Build tests for CLVisc" OFF)
 if (OPENCL_FOUND)
