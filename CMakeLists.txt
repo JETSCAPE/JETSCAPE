@@ -427,3 +427,9 @@ else()
   message("Warning: LBT-tables have not been downloaded in external_packages by ./get_lbtTab.sh; LBT-brickTest will NOT run properly.")
 endif()
 
+#### copy pre-calculated trento centrality tables to build/
+if(EXISTS "${CMAKE_SOURCE_DIR}/external_packages/trento/trento-data")
+  execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/external_packages/trento-data ${CMAKE_BINARY_DIR}/trento-data)
+else()
+  message("No existing trento centrality tables. They will be generated at run time on demand")
+endif()
