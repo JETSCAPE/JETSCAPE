@@ -14,5 +14,5 @@
 ##############################################################################
 
 # download the code package
-git clone https://github.com/chunshen1987/iSS iSS
+git clone --depth=1 https://github.com/chunshen1987/iSS iSS
 
