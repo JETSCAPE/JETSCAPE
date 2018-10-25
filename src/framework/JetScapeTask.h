@@ -35,7 +35,7 @@ namespace Jetscape {
 
 // need forward declaration
 class JetScapeWriter;
-
+class JetScapeModuleMutex;
 class PartonPrinter;
 class Parton;
 
@@ -188,6 +188,14 @@ class JetScapeTask
    */
   const string GetId() const {return id;}
 
+  /** This function returns the mutex of a JetScapeTask.
+   */
+  const shared_ptr<JetScapeModuleMutex> GetMutex() const {return mutex;}
+
+  /** This function sets the "mutex" of a JetScapeTask.
+   */
+  void SetMutex(shared_ptr<JetScapeModuleMutex> m_mutex) {mutex=m_mutex;}
+
  private:
 
   // can be made sortabele to put in correct oder or via xml file ...
@@ -199,7 +207,7 @@ class JetScapeTask
   // if for example a search rather position ... (or always sort with predefined order!?)
 
   int my_task_number_;
-  
+  shared_ptr<JetScapeModuleMutex> mutex;  
 };
 
 } // end namespace Jetscape

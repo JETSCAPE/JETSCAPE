@@ -28,7 +28,7 @@
 #include "JetScapeSignalManager.h"
 #include "JetScapeWriterStream.h"
 #include "HardProcess.h"
-#include "JetScapeEnergyLossMutex.h"
+#include "JetScapeModuleMutex.h"
 
 #ifdef USE_HEPMC
 #include "JetScapeWriterHepMC.h"
@@ -106,11 +106,21 @@ void JetEnergyLoss::Init()
   INFO<<"Intialize JetEnergyLoss ..."; 
   
   //Check mutual exclusion of Eloss Modules
-  auto eLossMutex = make_shared<JetScapeEnergyLossMutex>();
-  if(!eLossMutex->CheckEnergyLossModules(GetTaskList()))
+  if (GetNumberOfTasks()>1)
   {
-        WARN<<"Mutual exclusive Energy-Loss modules attached together!";
-        throw std::runtime_error("Fix it by attaching one of them.");
+    for(auto elossModule : GetTaskList())
+    {
+      shared_ptr<JetScapeModuleMutex> mutex_prt = elossModule->GetMutex();  
+      if(mutex_prt)
+      {
+	cout <<"***** mutex pointer exists" << endl;
+        if(!(mutex_prt->CheckMutex(GetTaskList())))
+        {
+	  WARN<<"Mutual exclusive Energy-Loss modules attached together!";
+          throw std::runtime_error("Fix it by attaching one of them.");
+	}
+      }
+    } 
   }
 
   tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );  
@@ -259,7 +269,6 @@ void JetEnergyLoss::DoShower()
       pInTemp.clear();
           
       vStartVec.clear();
-      
       vStartVec.insert(vStartVec.end(),vStartVecTemp.begin(),vStartVecTemp.end());
       vStartVec.insert(vStartVec.end(),vStartVecOut.begin(),vStartVecOut.end());
            
