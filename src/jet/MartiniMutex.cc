@@ -20,7 +20,6 @@ MartiniMutex::~MartiniMutex()
 
 bool MartiniMutex::CheckMutex(vector<shared_ptr<JetScapeTask>> modules)
 {
-  cout << "##### inside check mutex method of martini" << endl;
   bool isLbt = false;
   bool isAdscft = false;
 

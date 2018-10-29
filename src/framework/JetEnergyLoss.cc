@@ -104,26 +104,42 @@ void JetEnergyLoss::Init()
   JetScapeModuleBase::Init();
 
   INFO<<"Intialize JetEnergyLoss ..."; 
-  
-  //Check mutual exclusion of Eloss Modules
-  if (GetNumberOfTasks()>1)
-  {
-    for(auto elossModule : GetTaskList())
-    {
-      shared_ptr<JetScapeModuleMutex> mutex_prt = elossModule->GetMutex();  
-      if(mutex_prt)
-      {
-	cout <<"***** mutex pointer exists" << endl;
-        if(!(mutex_prt->CheckMutex(GetTaskList())))
-        {
-	  WARN<<"Mutual exclusive Energy-Loss modules attached together!";
-          throw std::runtime_error("Fix it by attaching one of them.");
-	}
-      }
-    } 
+
+  tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );
+  if ( !eloss ) {
+    WARN << "Couldn't find tag Eloss";
+    throw std::runtime_error ("Couldn't find tag Eloss");
+  }
+  tinyxml2::XMLElement *mutex=eloss->FirstChildElement("mutex");
+  if ( !mutex ) {
+    WARN << "Couldn't find tag Eloss -> mutex";
+    throw std::runtime_error ("Couldn't find tag Eloss -> mutex");
   }
 
-  tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );  
+  if (mutex)
+  {
+    string isMutexOn = mutex->GetText();
+    if(!isMutexOn.compare("ON"))
+    //Check mutual exclusion of Eloss Modulesi
+    {
+      if (GetNumberOfTasks()>1)
+      {
+        for(auto elossModule : GetTaskList())
+        {
+          shared_ptr<JetScapeModuleMutex> mutex_prt = elossModule->GetMutex();  
+          if(mutex_prt)
+          {
+            if(!(mutex_prt->CheckMutex(GetTaskList())))
+            {
+	      WARN<<"Mutual exclusive Energy-Loss modules attached together!";
+              throw std::runtime_error("Fix it by attaching one of them.");
+	    }
+          }
+        } 
+      }
+    }
+  }
+  //tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );  
 
   if (!eloss)
     {
