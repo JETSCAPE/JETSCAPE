@@ -118,18 +118,18 @@ void JetEnergyLoss::Init()
 
   if (mutex)
   {
-    string isMutexOn = mutex->GetText();
-    if(!isMutexOn.compare("ON"))
-    //Check mutual exclusion of Eloss Modulesi
+    string mutexOnString = mutex->GetText();
+    if(!mutexOnString.compare("ON"))
+    //Check mutual exclusion of Eloss Modules
     {
       if (GetNumberOfTasks()>1)
       {
         for(auto elossModule : GetTaskList())
         {
-          shared_ptr<JetScapeModuleMutex> mutex_prt = elossModule->GetMutex();  
-          if(mutex_prt)
+          shared_ptr<JetScapeModuleMutex> mutex_ptr = elossModule->GetMutex();  
+          if(mutex_ptr)
           {
-            if(!(mutex_prt->CheckMutex(GetTaskList())))
+            if(!(mutex_ptr->CheckMutex(GetTaskList())))
             {
 	      WARN<<"Mutual exclusive Energy-Loss modules attached together!";
               throw std::runtime_error("Fix it by attaching one of them.");
