@@ -59,6 +59,10 @@ if(NOT "${iSS}")
   list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/hadronization/iSpectraSamplerWrapper.cc)
 endif()
 
+if(NOT "${iS3D}")
+  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/hadronization/iS3DWrapper.cc)
+endif()
+
 #reader
 FILE(GLOB readersources reader/*.cc)
 set (SOURCES  ${SOURCES}  ${readersources} )
@@ -88,4 +92,9 @@ endif()
 if ( iSS )
   target_link_libraries (JetScape iSS_lib )
 endif()
+
+if ( iS3D )
+  target_link_libraries (JetScape iS3D_lib )
+endif()
+
 # -------------------------------------------------------------------------
