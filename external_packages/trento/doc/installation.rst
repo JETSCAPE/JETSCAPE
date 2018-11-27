@@ -2,7 +2,7 @@ Installation
 ============
 Prerequisites:
 
-- `CMake <http://www.cmake.org>`_ 2.8+
+- `CMake <http://www.cmake.org>`_ 3.4+
 - A `C++11 compiler <http://en.cppreference.com/w/cpp/compiler_support>`_ (preferably GCC 4.8+ or Clang 3.3+)
 - The `Boost <http://www.boost.org>`_ C++ libraries 1.50+, including runtime components  ``filesystem`` and ``program_options``
 - (optional) The `HDF5 <http://www.hdfgroup.org/HDF5>`_ C++ library
@@ -20,7 +20,7 @@ Fedora::
 
 Arch::
 
-   pacman -S cmake gcc boost boost-libs hdf5-cpp-fortran
+   pacman -S cmake gcc boost boost-libs hdf5
 
 After installing the dependencies, download the `latest release <https://github.com/Duke-QCD/trento/releases/latest>`_ or `clone the repository <https://github.com/Duke-QCD/trento>`_, then compile and install T\ :sub:`R`\ ENTo through the standard CMake sequence::
 

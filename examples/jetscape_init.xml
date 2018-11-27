@@ -31,16 +31,32 @@
     <!-- in units of [fm] -->
     <grid_max_x> 10 </grid_max_x>
     <grid_max_y> 10 </grid_max_y>
-    <grid_max_z> 0 </grid_max_z>
+    <grid_max_z> 10 </grid_max_z>
     <grid_step_x> 0.2 </grid_step_x>
     <grid_step_y> 0.2 </grid_step_y>
-    <grid_step_z> 0.2 </grid_step_z>
+    <grid_step_z> 0.5 </grid_step_z>
     
-    <Trento use_module="pre_defined">
-      <!-- pre-defined system: default collisions have auau200, pbpb2760, pbpb5020, more in the future -->
-      <pre_defined collision_system="auau200" centrality_min="30" centrality_max="40" />
-      <!-- user-defined system: to get one event in 0-100% centrality range -->
-      <user_defined projectile="Au" target="Au" sqrts="200" cross_section="4.2" />
+    <Trento>
+		<PhysicsInputs	projectile='Pb'
+						target='Pb'
+						sqrts='2760'
+						cross-section='6.4'
+						normalization='13.9'>
+		</PhysicsInputs>
+		<CutInputs	centrality-low='20'
+					centrality-high='40'>
+		</CutInputs>
+		<TransInputs	reduced-thickness='0.0'
+						fluctuation="1.2"
+						nucleon-width="0.9"
+						nucleon-min-dist="1.2">
+		</TransInputs>
+		<LongiInputs	mean-coeff="1.0"
+						std-coeff="3.0"
+						skew-coeff="0.0"
+						skew-type="1"
+						jacobian="0.8">
+		</LongiInputs>
     </Trento>
 
     <!-- Options to read initial conditions from saved file  -->

@@ -114,8 +114,9 @@ class InitialState : public JetScapeModuleBase {
   */
   inline std::vector<double> GetEntropyDensityDistribution() {return entropy_density_distribution_;};
   
-  /** one can sample jet production position from Ta * Tb
-      where Ta * Tb is the distribution of num_of_binary_collisions
+  /** one can sample jet production position from "binary collision density"
+      where "binary collision density" is the distribution 
+	  of num_of_binary_collisions
       @return The un-normalized probability density of binary collisions.
       @sa Function CoordFromIdx(int idx) for mapping of the index of the vector num_of_binary_collisions_ to the fluid cell at location (x, y, z or eta).
    */
@@ -171,7 +172,8 @@ class InitialState : public JetScapeModuleBase {
    */
   inline int GetZSize() {
       int nz = 1;
-      if (grid_step_z_ != 0) {
+      if (grid_step_z_ != 0) {  
+
           nz = int(std::ceil(2 * grid_max_z_ / grid_step_z_));
           // for 2d case, user may set grid_max_z_ = 0,
           if (nz == 0) nz = 1;

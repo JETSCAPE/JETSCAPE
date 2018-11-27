@@ -1,5 +1,6 @@
 // TRENTO: Reduced Thickness Event-by-event Nuclear Topology
 // Copyright 2015 Jonah E. Bernhard, J. Scott Moreland
+// TRENTO3D: Three-dimensional extension of TRENTO by Weiyao Ke
 // MIT License
 
 #ifndef COLLIDER_H
@@ -26,6 +27,14 @@ namespace trento {
 ///   collider.run_events();
 ///
 /// \endrst
+
+struct records {
+	int i;
+	double b;
+	double npart;
+	double mult;
+};
+
 class Collider {
  public:
   /// Instantiate from the configuration.
@@ -41,13 +50,18 @@ class Collider {
 
   /// Run events and output.
   void run_events();
+  const std::vector<records> & all_records() const{
+	return all_records_;
+  }
+  const Event & expose_event() const{
+    return event_;
+  }
 
  private:
   // Most of these are pretty self-explanatory...
 
   /// Sample a min-bias impact parameter within the set range.
   double sample_impact_param();
-
   /// Pair of nucleus projectiles.
   std::unique_ptr<Nucleus> nucleusA_, nucleusB_;
 
@@ -57,8 +71,17 @@ class Collider {
   /// Number of events to run.
   const int nevents_;
 
+  /// Number of trys.
+  int ntrys_;
+
   /// Minimum and maximum impact parameter.
   const double bmin_, bmax_;
+
+  /// WK: Minimum and maximum Npart.
+  const int npartmin_, npartmax_;
+
+  /// WK: Minimum and maximum total entropy (at midrapitiy).
+  const double stotmin_, stotmax_;
 
   /// Parameterizes the degree of asymmetry between the two projectiles.  Used
   /// to apportion the total impact parameter to each projectile so that the
@@ -83,6 +106,12 @@ class Collider {
 
   /// The output instance.
   Output output_;
+
+  /// Whether calculate Ncoll and nulear binary collision density
+  bool with_ncoll_;
+
+  // take down id, b, npart, ncoll, mult for each event.
+  std::vector<records> all_records_;
 };
 
 }  // namespace trento
