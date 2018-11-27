@@ -44,17 +44,17 @@ Matter::~Matter()
 
 void Matter::Init()
 {
-  INFO<<"Intialize Matter ...";
+  JSINFO<<"Intialize Matter ...";
 
   // Redundant (get this from Base) quick fix here for now
   tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );
   if ( !eloss ) {
-    WARN << "Couldn't find tag Eloss";
+    JSWARN << "Couldn't find tag Eloss";
     throw std::runtime_error ("Couldn't find tag Eloss");    
   }
   tinyxml2::XMLElement *matter=eloss->FirstChildElement("Matter");
   if ( !matter ) {
-    WARN << "Couldn't find tag Eloss -> Matter";
+    JSWARN << "Couldn't find tag Eloss -> Matter";
     throw std::runtime_error ("Couldn't find tag Eloss -> Matter");    
   }
  
@@ -73,7 +73,7 @@ void Matter::Init()
     hydro_Tc = 0.16;
     brick_length = 4.0;
     vir_factor = 1.0;
-      MaxColor = 101;
+    MaxColor = 101;
 
     double m_qhat=-99.99;
     matter->FirstChildElement("qhat0")->QueryDoubleText(&m_qhat);
@@ -86,22 +86,29 @@ void Matter::Init()
     int flagInt=-100;
     double inputDouble=-99.99;
 
+    if ( !matter->FirstChildElement("matter_on") ) {
+	JSWARN << "Couldn't find sub-tag Eloss -> Matter -> matter_on";
+        throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> matter_on");
+    }
+    matter->FirstChildElement("matter_on")->QueryIntText(&flagInt);
+    matter_on = flagInt;
+
     if ( !matter->FirstChildElement("in_vac") ) {
-	WARN << "Couldn't find sub-tag Eloss -> Matter -> in_vac";
+	JSWARN << "Couldn't find sub-tag Eloss -> Matter -> in_vac";
         throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> in_vac");
     }
     matter->FirstChildElement("in_vac")->QueryIntText(&flagInt);
     in_vac = flagInt;
 
     if ( !matter->FirstChildElement("recoil_on") ) {
-	WARN << "Couldn't find sub-tag Eloss -> Matter -> recoil_on";
+	JSWARN << "Couldn't find sub-tag Eloss -> Matter -> recoil_on";
         throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> recoil_on");
     }
     matter->FirstChildElement("recoil_on")->QueryIntText(&flagInt);
     recoil_on = flagInt;
 
     if ( !matter->FirstChildElement("broadening_on") ) {
-	WARN << "Couldn't find sub-tag Eloss -> Matter -> broadening_on";
+	JSWARN << "Couldn't find sub-tag Eloss -> Matter -> broadening_on";
         throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> broadening_on");
     }
     matter->FirstChildElement("broadening_on")->QueryIntText(&flagInt);
@@ -109,49 +116,49 @@ void Matter::Init()
 
 
     if ( !matter->FirstChildElement("brick_med") ) {
-	WARN << "Couldn't find sub-tag Eloss -> Matter -> brick_med";
+	JSWARN << "Couldn't find sub-tag Eloss -> Matter -> brick_med";
         throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> brick_med");
     }
     matter->FirstChildElement("brick_med")->QueryIntText(&flagInt);
     brick_med = flagInt;
 
     if ( !matter->FirstChildElement("Q0") ) {
-	WARN << "Couldn't find sub-tag Eloss -> Matter -> Q0";
+	JSWARN << "Couldn't find sub-tag Eloss -> Matter -> Q0";
         throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> Q0");
     }
     matter->FirstChildElement("Q0")->QueryDoubleText(&inputDouble);
     Q00 = inputDouble;
 
     if ( !matter->FirstChildElement("T0") ) {
-	WARN << "Couldn't find sub-tag Eloss -> Matter -> T0";
+	JSWARN << "Couldn't find sub-tag Eloss -> Matter -> T0";
         throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> T0");
     }
     matter->FirstChildElement("T0")->QueryDoubleText(&inputDouble);
     T0 = inputDouble;
 
     if ( !matter->FirstChildElement("alphas") ) {
-	WARN << "Couldn't find sub-tag Eloss -> Matter -> alphas";
+	JSWARN << "Couldn't find sub-tag Eloss -> Matter -> alphas";
         throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> alphas");
     }
     matter->FirstChildElement("alphas")->QueryDoubleText(&inputDouble);
     alphas = inputDouble;
 
     if ( !matter->FirstChildElement("hydro_Tc") ) {
-	WARN << "Couldn't find sub-tag Eloss -> Matter -> hydro_Tc";
+	JSWARN << "Couldn't find sub-tag Eloss -> Matter -> hydro_Tc";
         throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> hydro_Tc");
     }
     matter->FirstChildElement("hydro_Tc")->QueryDoubleText(&inputDouble);
     hydro_Tc = inputDouble;
 
     if ( !matter->FirstChildElement("brick_length") ) {
-	WARN << "Couldn't find sub-tag Eloss -> Matter -> brick_length";
+	JSWARN << "Couldn't find sub-tag Eloss -> Matter -> brick_length";
         throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> brick_length");
     }
     matter->FirstChildElement("brick_length")->QueryDoubleText(&inputDouble);
     brick_length = inputDouble;
 
     if ( !matter->FirstChildElement("vir_factor") ) {
-	WARN << "Couldn't find sub-tag Eloss -> Matter -> vir_factor";
+	JSWARN << "Couldn't find sub-tag Eloss -> Matter -> vir_factor";
         throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> vir_factor");
     }
     matter->FirstChildElement("vir_factor")->QueryDoubleText(&inputDouble);
@@ -161,13 +168,14 @@ void Matter::Init()
         cout << "Reminder: negative vir_factor is set, initial energy will be used as initial t_max" << endl;
     }
 
-    VERBOSE(7)<< MAGENTA << "MATTER input parameter";
-    INFO << MAGENTA << "in_vac: " << in_vac << "  brick_med: " << brick_med << "  recoil_on: " << recoil_on;
-    INFO << MAGENTA << "Q0: " << Q00 << " vir_factor: " << vir_factor << "  qhat0: " << qhat0 << " alphas: " << alphas << " hydro_Tc: " << hydro_Tc << " brick_length: " << brick_length;
+    JSINFO << MAGENTA << "MATTER input parameter";
+    JSINFO << MAGENTA << "matter shower on: " << matter_on;
+    JSINFO << MAGENTA << "in_vac: " << in_vac << "  brick_med: " << brick_med << "  recoil_on: " << recoil_on;
+    JSINFO << MAGENTA << "Q0: " << Q00 << " vir_factor: " << vir_factor << "  qhat0: " << qhat0 << " alphas: " << alphas << " hydro_Tc: " << hydro_Tc << " brick_length: " << brick_length;
 
   }
   else {
-    WARN << " : Matter not properly initialized in XML file ...";
+    JSWARN << " : Matter not properly initialized in XML file ...";
     throw std::runtime_error("Matter not properly initialized in XML file ...");
   }
 
@@ -201,7 +209,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
     
     //iEvent++;
     
-    //INFO << BOLDYELLOW << " Event number = " << iEvent;
+    //JSINFO << BOLDYELLOW << " Event number = " << iEvent;
     
   VERBOSESHOWER(9)<< MAGENTA << "SentInPartons Signal received : "<<deltaT<<" "<<Q2<<" "<< pIn.size();
     
@@ -238,7 +246,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
         dfs::tree_edges_iterator itt, endt;
         for (itt = search.tree_edges_begin(), endt=search.tree_edges_end(); itt !=endt; ++itt)
         {
-            INFO << MAGENTA << *itt << " Max color = " << shower->GetParton( *itt )->max_color();
+            JSINFO << MAGENTA << *itt << " Max color = " << shower->GetParton( *itt )->max_color();
             CurrentMaxColor = shower->GetParton( *itt )->max_color();
             if (CurrentMaxColor>ShowerMaxColor)
             {
@@ -259,7 +267,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
         MaxColor = pIn[0].max_color();
     }
     
-    //INFO << MAGENTA << " Max color = " << MaxColor;
+    //JSINFO << MAGENTA << " Max color = " << MaxColor;
     
     
   //JSDEBUG << " For MATTER, the qhat in GeV^-3 = " << qhat ;
@@ -276,7 +284,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 
      VERBOSE(8) << " *  parton formation spacetime point= "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z();
 
-
+      int jet_stat=pIn[i].pstat();  // daughter of recoil will always be recoil
       
       //cout << "MATTER -- status: " << pIn[i].pstat() << "  energy: " << pIn[i].e() << " color: " << pIn[i].color() << "  " << pIn[i].anti_color() << "  clock: " << time << endl;
 
@@ -375,7 +383,11 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 
           // KK:
           //pIn[i].set_jet_v(velocity); // SC: take out to the front
-          pIn[i].set_t(tQ2); // Also resets momentum!
+
+	  // SC: if matter_on = false, set zero virtuality and MATTER will not do parton shower
+          if(matter_on) pIn[i].set_t(tQ2); // Also resets momentum!
+	  else pIn[i].set_t(0.0); 
+
           pIn[i].set_mean_form_time();
           double ft = generate_L(pIn[i].mean_form_time());
           pIn[i].set_form_time(ft);
@@ -632,7 +644,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       int iout;
                       double ft;
 
-                      pOut.push_back(Parton(0,pid2,0,pc2,el_vertex)); // recoiled
+                      pOut.push_back(Parton(0,pid2,1,pc2,el_vertex)); // recoiled
                       iout = pOut.size()-1;
                       pOut[iout].set_jet_v(velocity_jet); // use initial jet velocity
                       pOut[iout].set_mean_form_time();
@@ -899,7 +911,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   newx[j] = pIn[i].x_in().comp(j) + (time - pIn[i].x_in().comp(0))*velocity[j]/velocityMod;
               }
                   
-              pOut.push_back(Parton(0,pid_a,0,newp,newx));
+              pOut.push_back(Parton(0,pid_a,jet_stat,newp,newx));
               int iout = pOut.size()-1;
                   
               pOut[iout].set_jet_v(velocity_jet); // use initial jet velocity
@@ -940,7 +952,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   newx[j] = pIn[i].x_in().comp(j) + (time - pIn[i].x_in().comp(0))*velocity[j]/velocityMod;
               }
 	      
-              pOut.push_back(Parton(0,pid_b,0,newp,newx));
+              pOut.push_back(Parton(0,pid_b,jet_stat,newp,newx));
               iout = pOut.size()-1;
               pOut[iout].set_jet_v(velocity_jet); // use initial jet velocity
               pOut[iout].set_mean_form_time();
@@ -1133,7 +1145,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
              VERBOSE(8) <<BOLDRED<< " after splits broadening qhat = " << qhat << " ehat = " << ehat << " and delT = " << delT ;
              VERBOSE(8) <<BOLDBLUE<< " zeta at formation = " << zeta << " zeta now = " << now_zeta ;
               
-              //INFO << " broadening qhat = " << qhat << " and delT = " << delT ;
+              //JSINFO << " broadening qhat = " << qhat << " and delT = " << delT ;
               
               if ((!recoil_on)&&(qhat>0.0))
               {
@@ -1807,8 +1819,8 @@ double Matter::sudakov_Pqq(double q0, double q1, double loc_c, double E)
   if (q1<2.0*q0)
     //	if (g1<g0)
     {
-      WARN << " warning: the lower limit of the sudakov > 1/2 upper limit, returning 1 ";
-      WARN << " in sudakov_Pquark quark, q0, q1 = " << q0 << "  " << q1;
+      JSWARN << " warning: the lower limit of the sudakov > 1/2 upper limit, returning 1 ";
+      JSWARN << " in sudakov_Pquark quark, q0, q1 = " << q0 << "  " << q1;
       return(sud) ;
     }
   q = 2.0*q0;
@@ -1999,8 +2011,8 @@ double Matter::sudakov_Pqg(double g0, double g1, double loc_c, double E)
     
   if (g1<2.0*g0)
     {
-      WARN << " warning: the lower limit of the sudakov > 1/2 upper limit, returning 1 ";
-      WARN << " in sudakov_Pquark gluon, g0, g1 = " << g0 << "  " << g1;
+      JSWARN << " warning: the lower limit of the sudakov > 1/2 upper limit, returning 1 ";
+      JSWARN << " in sudakov_Pquark gluon, g0, g1 = " << g0 << "  " << g1;
       return(sud) ;
     }
   g = 2.0*g0;
@@ -2105,14 +2117,14 @@ double Matter::sud_z_QG(double cg, double cg1, double loc_e, double l_fac,double
       qhat = fncAvrQhat(loc_e,tau);
       if (qhat*sqrt(2)>0.6)
       {
-        // INFO << BOLDYELLOW << " length = " << length << " loc = " << loc_e << " tau = " << tau ;
-        //INFO << BOLDYELLOW << " parton formed at x = " << initRx << " y = " << initRy << " z = " << initRz << " t = " << initR0 ;
-        // INFO << BOLDYELLOW << " mean qhat for sudakov in GeV^2/fm = " << qhat*5*sqrt(2) ;
+        // JSINFO << BOLDYELLOW << " length = " << length << " loc = " << loc_e << " tau = " << tau ;
+        //JSINFO << BOLDYELLOW << " parton formed at x = " << initRx << " y = " << initRy << " z = " << initRz << " t = " << initR0 ;
+        // JSINFO << BOLDYELLOW << " mean qhat for sudakov in GeV^2/fm = " << qhat*5*sqrt(2) ;
       }
       qL = qhat*0.6*tau;
   }
 
-    //INFO << BOLDRED << " qhat L = " << qL << " location = " << loc_e << " tau = " << tau << " length = " << length;
+    //JSINFO << BOLDRED << " qhat L = " << qL << " location = " << loc_e << " tau = " << tau << " length = " << length;
     
   res = t17 + 2.0*qL*q14/cg1 ;
     
@@ -2202,7 +2214,7 @@ double Matter::alpha_s(double q2)
     }
   else
     {        
-      WARN << " alpha too large ";
+      JSWARN << " alpha too large ";
       a=0.6;        
     }
 
@@ -3001,7 +3013,7 @@ double Matter::solve_alphas(double var_qhat, double var_ener, double var_temp) {
     double max_qhat=preFactor*pow(0.5,2)*pow(var_temp,3)*log(5.7*max(var_ener,2.0*pi*var_temp)/24/pi/0.5/var_temp);
 
     if(max_qhat<var_qhat) {
-        INFO << "qhat exceeds HTL calculation, use alpha_s = 0.5";
+        JSINFO << "qhat exceeds HTL calculation, use alpha_s = 0.5";
 	return(0.5);
     }
 
@@ -3021,7 +3033,7 @@ double Matter::solve_alphas(double var_qhat, double var_ener, double var_temp) {
     }
 
     if(solution<0.0 || solution>0.5) {
-        INFO << "unreasonable alpha_s: " << solution << " use alpha_s = 0.5";
+        JSINFO << "unreasonable alpha_s: " << solution << " use alpha_s = 0.5";
 	solution=0.5;
     }
 

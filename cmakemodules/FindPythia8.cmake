@@ -14,6 +14,7 @@ set(_pythia8dirs
     ${PYTHIA8_DIR}
     $ENV{PYTHIA8_DIR}
     $ENV{PYTHIA8DIR}
+    $ENV{SMASH_DIR}/build/3rdparty/pythia8230/
     /usr
     /opt/pythia8
     /home/chanwook/pythia8226)
@@ -23,12 +24,14 @@ find_path(PYTHIA8_INCLUDE_DIR
           HINTS ${_pythia8dirs}
           PATH_SUFFIXES include include/Pythia8 include/pythia8
           DOC "Specify the directory containing Pythia.h.")
+message("PYTHIA8_INCLUDE_DIR is ${PYTHIA8_INCLUDE_DIR}")
 
 find_library(PYTHIA8_LIBRARY
-             NAMES pythia8 Pythia8
+             NAMES pythia8 Pythia8 pythia
              HINTS ${_pythia8dirs}
              PATH_SUFFIXES lib
              DOC "Specify the Pythia8 library here.")
+message("PYTHIA8_LIBRARY is ${PYTHIA8_LIBRARY}")
 
 find_library(PYTHIA8_hepmcinterface_LIBRARY
              NAMES hepmcinterface pythia8tohepmc

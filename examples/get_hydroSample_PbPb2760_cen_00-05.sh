@@ -13,6 +13,8 @@
 # See COPYING for details.
 ##############################################################################
 
+if [ -d "test_hydro_files/event-0" ]; then rm -Rf test_hydro_files/event-0; fi
+
 # download VISHNU hydro examples
 curlcmd=wget
 command -v ${curlcmd} > /dev/null || curlcmd="curl -LO"

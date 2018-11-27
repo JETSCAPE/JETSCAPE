@@ -53,7 +53,7 @@ void ColorlessHadronization::Init()
   tinyxml2::XMLElement *hadronization= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("JetHadronization" );
 
   if ( !hadronization ) {
-    WARN << "Couldn't find tag Jet Hadronization";
+    JSWARN << "Couldn't find tag Jet Hadronization";
     throw std::runtime_error ("Couldn't find tag Jet Hadronization");
   }
   if (hadronization) {
@@ -62,8 +62,11 @@ void ColorlessHadronization::Init()
 
     // Read sqrts to know remnants energies
     double p_read_xml = 10000 ;
+    int flagInt=1;
     hadronization->FirstChildElement("eCMforHadronization")->QueryDoubleText(&p_read_xml);
     p_fake = p_read_xml;
+    hadronization->FirstChildElement("take_recoil")->QueryIntText(&flagInt);
+    take_recoil=flagInt;
 
     JSDEBUG<<"Initialize ColorlessHadronization";
     VERBOSE(8);
@@ -97,7 +100,7 @@ void ColorlessHadronization::WriteTask(weak_ptr<JetScapeWriter> w)
 
 void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& shower, vector<shared_ptr<Hadron>>& hOut, vector<shared_ptr<Parton>>& pOut)
 {
-  INFO<<"Start Hadronizing using PYTHIA Lund string model (does NOT use color flow, needs to be tested)...";
+  JSINFO<<"Start Hadronizing using PYTHIA Lund string model (does NOT use color flow, needs to be tested)...";
   Event& event      = pythia.event;
   ParticleData& pdt = pythia.particleData;
 
@@ -105,6 +108,8 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
   for (int want_pos=1; want_pos>=0; --want_pos)
   {
     event.reset();
+
+    if(!take_recoil && want_pos==0) continue; // SC: don't need negative if don't take recoil
 
     // Set remnants momentum
     double rempx=0.2;
@@ -117,14 +122,18 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
     for(unsigned int ishower=0; ishower <  shower.size(); ++ishower)
     {
       for(unsigned int ipart=0; ipart <  shower.at(ishower).size(); ++ipart)
-      {
-        if (shower.at(ishower).at(ipart)->pstat()==0 && want_pos==1) pIn.push_back(shower.at(ishower).at(ipart));  // Positive
-        if (shower.at(ishower).at(ipart)->pstat()==-1 && want_pos==0) pIn.push_back(shower.at(ishower).at(ipart));  // Negative
+      { 
+        //if (shower.at(ishower).at(ipart)->pstat()==0 && want_pos==1) pIn.push_back(shower.at(ishower).at(ipart));  // Positive
+        if (want_pos==1) { // Positive
+	    if(take_recoil && shower.at(ishower).at(ipart)->pstat()==1) pIn.push_back(shower.at(ishower).at(ipart));  
+	    if(shower.at(ishower).at(ipart)->pstat()==0) pIn.push_back(shower.at(ishower).at(ipart));
+	}  
+        if (take_recoil && shower.at(ishower).at(ipart)->pstat()==-1 && want_pos==0) pIn.push_back(shower.at(ishower).at(ipart));  // Negative
       }
       JSDEBUG<<"Shower#"<<ishower+1 << ". Number of partons to hadronize so far: " << pIn.size();
     }
-    if (want_pos==1) INFO<<"# Positive Partons to hadronize: " << pIn.size();
-    else INFO<<"# Negative Partons to hadronize: " << pIn.size(); 
+    if (want_pos==1) JSINFO<<"# Positive Partons to hadronize: " << pIn.size();
+    else JSINFO<<"# Negative Partons to hadronize: " << pIn.size(); 
 
     // Check whether event is empty (specially important for negative partons case)
     if (pIn.size()==0) continue;
@@ -161,7 +170,7 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
       nquarks+=1;
       isdone[pIn.size()-1]=1;
       one_end[0]=pIn.size()-1;
-      INFO << "Attached quark remnant flying down +Pz beam";
+      JSINFO << "Attached quark remnant flying down +Pz beam";
       // Second quark
       FourVector p2(rempx,rempy,-rempz,reme);
       FourVector x2;
@@ -170,7 +179,7 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
       nquarks+=1;
       isdone[pIn.size()-1]=1;
       two_end[istring]=pIn.size()-1;
-      INFO << "Attached quark remnant flying down -Pz beam";
+      JSINFO << "Attached quark remnant flying down -Pz beam";
     }
 
     // Assign ends of strings (order matters in this algo)
@@ -202,7 +211,7 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
           nquarks+=1;
           isdone[pIn.size()-1]=1;
           two_end[istring]=pIn.size()-1;
-          INFO << "Attached quark remnant flying down +Pz beam";
+          JSINFO << "Attached quark remnant flying down +Pz beam";
         }
       }
     }
@@ -358,7 +367,7 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
       double mm=pdt.m0(int(ide));
       ee=std::sqrt(px*px+py*py+pz*pz+mm*mm);
       if (col[ipart]==0 && acol[ipart]==0 && (ide==21 || abs(ide)<=6)) {
-        INFO<<"Stopping because of colorless parton trying to be introduced in PYTHIA string";
+        JSINFO<<"Stopping because of colorless parton trying to be introduced in PYTHIA string";
         exit(0);
       }
       event.append(int(ide),23,col[ipart],acol[ipart],px,py,pz,ee,mm);
@@ -374,12 +383,12 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
         FourVector x;
         if (want_pos==1) hOut.push_back(std::make_shared<Hadron> (Hadron (0,ide,0,p,x)));  // Positive
         else hOut.push_back(std::make_shared<Hadron> (Hadron (0,ide,-1,p,x)));  // Negative
-        //INFO << "Produced Hadron has id = " << pythia.event[ipart].id();
+        //JSINFO << "Produced Hadron has id = " << pythia.event[ipart].id();
         // Print on output file
         //hadfile << pythia.event[ipart].px() << " " << pythia.event[ipart].py() << " " << pythia.event[ipart].pz() << " " << pythia.event[ipart].e() << " " << pythia.event[ipart].id() << " " << pythia.event[ipart].charge() << endl;
       }
     } 
-    INFO<<"#Showers hadronized together: " << shower.size() << ". There are " << hOut.size() << " hadrons and " << pOut.size() << " partons after PYTHIA Hadronization";
+    JSINFO<<"#Showers hadronized together: " << shower.size() << ". There are " << hOut.size() << " hadrons and " << pOut.size() << " partons after PYTHIA Hadronization";
     //hadfile << "NEXT" << endl;
   
   } // End of positive or negative loop

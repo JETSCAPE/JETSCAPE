@@ -45,7 +45,7 @@ void HydroFromFile::InitializeHydro(Parameter parameter_list) {
     VERBOSE(8);
     para_ = GetHydroXML()->FirstChildElement("hydro_from_file");
     if (!para_) {
-        WARN << " : hydro_from_file not properly initialized in XML file ...";
+        JSWARN << " : hydro_from_file not properly initialized in XML file ...";
         exit(-1);
     }
 
@@ -65,8 +65,8 @@ void HydroFromFile::InitializeHydro(Parameter parameter_list) {
 #ifdef USE_HDF5
         hydroinfo_h5_ptr = new HydroinfoH5();
 #else
-        WARN << " : hydro_type == 1 requires the hdf5 library~";
-        WARN << " : please check your inputs~";
+        JSWARN << " : hydro_type == 1 requires the hdf5 library~";
+        JSWARN << " : please check your inputs~";
         exit(-1);
 #endif
     } else if (hydro_type_ == 2 || hydro_type_ == 3 || hydro_type_ == 4) {
@@ -79,7 +79,7 @@ void HydroFromFile::InitializeHydro(Parameter parameter_list) {
 //! This function load a VISHNew hydro event
 void HydroFromFile::read_in_hydro_event(string VISH_filename, int buffer_size,
                                     int load_viscous) {
-    INFO << "read in a VISHNew hydro event from file " << VISH_filename;
+    JSINFO << "read in a VISHNew hydro event from file " << VISH_filename;
     if (hydro_type_ == 1) {
 #ifdef USE_HDF5
         hydroinfo_h5_ptr->readHydroinfoH5(VISH_filename, buffer_size,
@@ -94,7 +94,7 @@ void HydroFromFile::read_in_hydro_event(string VISH_filename, int buffer_size,
 void HydroFromFile::read_in_hydro_event(string MUSIC_input_file,
                                     string MUSIC_hydro_ideal_file,
                                     int nskip_tau) {
-    INFO << "read in a MUSIC hydro event from file " << MUSIC_hydro_ideal_file;
+    JSINFO << "read in a MUSIC hydro event from file " << MUSIC_hydro_ideal_file;
     if (hydro_type_ == 2) {
         int hydro_mode = 8;
         string hydro_shear_file = "";
@@ -207,7 +207,7 @@ void HydroFromFile::EvolveHydro() {
         }
         read_in_hydro_event(input_file, hydro_ideal_file, 1);
     } else {
-        WARN << "main: unrecognized hydro_type = " << hydro_type_;
+        JSWARN << "main: unrecognized hydro_type = " << hydro_type_;
         exit(1);
     }
 }
@@ -215,7 +215,7 @@ void HydroFromFile::EvolveHydro() {
 
 //! clean up hydro event
 void HydroFromFile::clean_hydro_event() {
-    INFO << " clean up the loaded hydro event ...";
+    JSINFO << " clean up the loaded hydro event ...";
     if (hydro_type_ == 1) {
 #ifdef USE_HDF5
         hydroinfo_h5_ptr->clean_hydro_event();
@@ -233,7 +233,7 @@ void HydroFromFile::GetHydroInfo(
         Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
         std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr) {
     if (hydro_status != FINISHED) {
-        WARN << "Hydro not run yet ...";
+        JSWARN << "Hydro not run yet ...";
         exit(-1);
     }
 
@@ -248,9 +248,9 @@ void HydroFromFile::GetHydroInfo(
         double tau_local = sqrt(t*t - z*z);
         double eta_local = 0.5*log((t + z)/(t - z + 1e-15));
         if (std::isnan(tau_local)) {  // check
-            WARN << "[Error]: HydroFromFile::GetHydroInfo(): "
+            JSWARN << "[Error]: HydroFromFile::GetHydroInfo(): "
                  << "tau is nan!";
-            WARN << "please check: t = " << t << ", z = " << z;
+            JSWARN << "please check: t = " << t << ", z = " << z;
             exit(1);
         }
 #ifdef USE_HDF5
@@ -272,7 +272,7 @@ void HydroFromFile::GetHydroInfo(
 
     // assign all the quantites to JETSCAPE output
     // thermodyanmic quantities
-    fluid_cell_info_ptr = std::make_unique<FluidCellInfo>();
+    fluid_cell_info_ptr = make_unique<FluidCellInfo>();
     fluid_cell_info_ptr->energy_density = (
                                 static_cast<Jetscape::real>(temp_fluid_cell_ptr->ed));
     fluid_cell_info_ptr->entropy_density = (

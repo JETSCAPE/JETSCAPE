@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.4)
 project(trento VERSION 1.5.1 LANGUAGES CXX)
 
+
 # require C++11
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -15,6 +16,17 @@ if(STATIC)
   set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
   set(CMAKE_LINK_SEARCH_START_STATIC TRUE)
 endif()
+
+
+#old
+#set(CMAKE_CXX_STANDARD 11)
+#set(CMAKE_CXX_STANDARD_REQUIRED ON)
+#include(CheckCXXCompilerFlag)
+#check_cxx_compiler_flag("-std=c++11" CXX11)
+#if(NOT CXX11)
+#message(FATAL_ERROR "Your compiler does not support C++11")
+#endif()
+
 
 # Find and use Boost.
 find_package(Boost 1.60 REQUIRED COMPONENTS filesystem program_options system)

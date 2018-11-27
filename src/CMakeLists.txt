@@ -46,6 +46,14 @@ if(NOT "${music}")
   list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/hydro/MusicWrapper.cc)
 endif()
 
+#afterburner
+FILE(GLOB afterburnersources afterburner/*.cc)
+set (SOURCES  ${SOURCES}  ${afterburnersources} )
+## Take care of options
+if(NOT "${smash}")
+  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/afterburner/SmashWrapper.cc)
+endif()
+
 #jet
 FILE(GLOB jetsources jet/*.cc)
 set (SOURCES  ${SOURCES}  ${jetsources} )
@@ -57,6 +65,10 @@ set (SOURCES  ${SOURCES}  ${hadrosources} )
 ## Take care of options
 if(NOT "${iSS}")
   list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/hadronization/iSpectraSamplerWrapper.cc)
+endif()
+
+if(NOT "${iS3D}")
+  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/hadronization/iS3DWrapper.cc)
 endif()
 
 #reader
@@ -88,4 +100,16 @@ endif()
 if ( iSS )
   target_link_libraries (JetScape iSS_lib )
 endif()
+
+
+if ( iS3D )
+  target_link_libraries (JetScape iS3D_lib )
+endif()
+
+
+if ( smash )
+  # "-lubsan -lasan") # - in case of problems with address sanitizer
+  target_link_libraries (JetScape ${SMASH_LIBRARIES})
+endif()
+
 # -------------------------------------------------------------------------

@@ -67,7 +67,7 @@ void Brick::InitTask()
       GetParameterList().hydro_input_filename = (char*) "dummy"; //*(argv+1);
 
     } else {
-      WARN << " : Brick not properly initialized in XML file ...";
+      JSWARN << " : Brick not properly initialized in XML file ...";
       exit(-1);
     }
 }
@@ -88,7 +88,7 @@ void Brick::GetHydroInfo(Jetscape::real t, Jetscape::real x, Jetscape::real y, J
 			   //                           FluidCellInfo* fluid_cell_info_ptr) {
 			   std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr){
     // create the unique FluidCellInfo here
-    fluid_cell_info_ptr=std::make_unique<FluidCellInfo>();
+    fluid_cell_info_ptr=make_unique<FluidCellInfo>();
 
     // assign all the quantites to JETSCAPE output
     // thermodyanmic quantities
@@ -122,7 +122,7 @@ void Brick::GetHydroInfo(Jetscape::real t, Jetscape::real x, Jetscape::real y, J
     }
   else
     {
-      WARN<<"Hydro not run yet ...";
+      JSWARN<<"Hydro not run yet ...";
       exit(-1);
     }
 }

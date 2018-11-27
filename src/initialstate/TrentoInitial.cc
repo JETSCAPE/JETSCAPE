@@ -59,10 +59,15 @@ TrentoInitial::TrentoInitial() : InitialState() {
 TrentoInitial::~TrentoInitial() = default;
 
 void TrentoInitial::InitTask() {
-    INFO << " Initialzie TRENTo initial condition ";
+  INFO << " Initialzie TRENTo initial condition ";
 	trento_xml_ = xml_->FirstChildElement("Trento");
+}
+
+
+void TrentoInitial::Exec() {  
+    VERBOSE(2) << " : Excute initial condition ";
     if (!trento_xml_) {
-        WARN << " : Not a valid JetScape IS::Trento XML section in file!";
+        JSWARN << " : Not a valid JetScape IS::Trento XML section in file!";
         exit(-1);
     }
 	// TRENTO OPTION DESK

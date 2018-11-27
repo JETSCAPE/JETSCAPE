@@ -18,6 +18,7 @@
 #ifndef JETSCAPESIGNALMANAGER_H
 #define JETSCAPESIGNALMANAGER_H
 
+#include "Afterburner.h"
 #include "InitialState.h"
 #include "JetEnergyLoss.h"
 #include "JetEnergyLossManager.h"
@@ -53,6 +54,9 @@ class JetScapeSignalManager //: public sigslot::has_slots<sigslot::multi_threade
  
   void SetHydroPointer(shared_ptr<FluidDynamics> m_hydro) {hydro=m_hydro;}
   weak_ptr<FluidDynamics> GetHydroPointer() {return hydro;}
+
+  void SetSoftParticlizationPointer(shared_ptr<SoftParticlization> m_soft) {softparticlization=m_soft;}
+  weak_ptr<SoftParticlization> GetSoftParticlizationPointer () {return softparticlization;}
   
   void SetJetEnergyLossManagerPointer(shared_ptr<JetEnergyLossManager> m_jloss) {jloss=m_jloss;}
   weak_ptr<JetEnergyLossManager> GetJetEnergyLossManagerPointer() {return jloss;}
@@ -104,7 +108,9 @@ class JetScapeSignalManager //: public sigslot::has_slots<sigslot::multi_threade
   weak_ptr<HardProcess> hardp;
   weak_ptr<JetScapeWriter> writer;
   weak_ptr<HadronizationManager> hadro;
+  weak_ptr<Afterburner> afterburner;
   weak_ptr<PartonPrinter> pprinter;
+  weak_ptr<SoftParticlization> softparticlization;
   
   int num_jet_signals=0;
   int num_edensity_signals=0;
