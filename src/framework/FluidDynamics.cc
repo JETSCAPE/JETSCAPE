@@ -87,23 +87,23 @@ namespace Jetscape {
   void FluidDynamics::Init()
   {
     JetScapeModuleBase::Init();
-    INFO<<"Intialize FluidDynamics : "<<GetId()<< " ...";
+    JSINFO<<"Intialize FluidDynamics : "<<GetId()<< " ...";
     fd= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Hydro" );
   
     if (!fd) {
-      WARN << "Not a valid JetScape XML Hydro section file or no XML file loaded!";
+      JSWARN << "Not a valid JetScape XML Hydro section file or no XML file loaded!";
       exit(-1);
     }
   
     VERBOSE(8);  
     ini = JetScapeSignalManager::Instance()->GetInitialStatePointer().lock();
     if (!ini) {
-      WARN << "No initialization module, try: auto trento = make_shared<TrentoInitial>(); jetscape->Add(trento);";
+      JSWARN << "No initialization module, try: auto trento = make_shared<TrentoInitial>(); jetscape->Add(trento);";
     }
 
     pre_eq_ptr = JetScapeSignalManager::Instance()->GetPreEquilibriumPointer().lock();
     if (!pre_eq_ptr) {
-      WARN << "No Pre-equilibrium module";
+      JSWARN << "No Pre-equilibrium module";
     }
   
     InitializeHydro(parameter_list);
@@ -114,7 +114,7 @@ namespace Jetscape {
 
   void FluidDynamics::Exec()
   {
-    INFO <<"Run Hydro : "<<GetId()<< " ...";
+    JSINFO <<"Run Hydro : "<<GetId()<< " ...";
     VERBOSE(8)<<"Current Event #"<<GetCurrentEvent();
 
     if (ini) {

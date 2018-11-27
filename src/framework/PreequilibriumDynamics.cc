@@ -40,13 +40,13 @@ PreequilibriumDynamics::~PreequilibriumDynamics() {
 void PreequilibriumDynamics::Init() {
     JetScapeModuleBase::Init();
 
-    INFO <<"Intialize PreequilibriumDynamics : " << GetId() << " ...";
+    JSINFO <<"Intialize PreequilibriumDynamics : " << GetId() << " ...";
 
     fd = JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement(
                                                         "Preequilibrium");
 
     if (!fd) {
-        WARN << "Not a valid JetScape XML Preequilibrium Dynamics section file "
+        JSWARN << "Not a valid JetScape XML Preequilibrium Dynamics section file "
            << "or no XML file loaded!";
         exit(-1);
     }
@@ -56,7 +56,7 @@ void PreequilibriumDynamics::Init() {
     // this is grabbing the initial entropy density ?
     ini = JetScapeSignalManager::Instance()->GetInitialStatePointer().lock();
     if (!ini) {
-        WARN << "No initialization module, try: "
+        JSWARN << "No initialization module, try: "
              << "auto trento = make_shared<TrentoInitial>(); "
              << "jetscape->Add(trento);";
     }
@@ -69,7 +69,7 @@ void PreequilibriumDynamics::Init() {
 }
 
 void PreequilibriumDynamics::Exec() {
-    INFO << "Run Preequilibrium : " << GetId() << " ...";
+    JSINFO << "Run Preequilibrium : " << GetId() << " ...";
     VERBOSE(8) << "Current Event #" << GetCurrentEvent();
 
     if (ini) {

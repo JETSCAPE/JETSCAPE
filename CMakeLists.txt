@@ -3,7 +3,7 @@
 ###########################
 
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
-project (JetScape)
+project (JetScape CXX C)
 
 # Fail if cmake is called in the source directory
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
@@ -38,8 +38,9 @@ endif (freestream)
 # MUSIC. Turn on with 'cmake -Dmusic=ON'.
 option(music "Build tests for MUSIC" OFF)
 if (music)
-  message("Includes for music ...")
-  include_directories(./external_packages/music ./external_packages/music/src)
+    message("Includes for music ...")
+    include_directories(./external_packages/music ./external_packages/music/src)
+    find_package(OpenMP REQUIRED)
 endif (music)
 
 # Soft Particlization. Turn on with 'cmake -Dmusic=ON -DiSS=ON'.
@@ -49,11 +50,23 @@ if (iSS)
   include_directories(./external_packages/iSS ./external_packages/iSS/src)
 endif (iSS)
 
+
 # Soft Particlization with iS3D. Turn on with 'cmake -Dmusic=ON -DiS3D=ON'.
 if (iS3D)
   message("Includes for iS3D ...")
   include_directories(./external_packages/iS3D ./external_packages/iS3D/src/cpp)
 endif (iS3D)
+
+# SMASH afterburner. Turn on with 'cmake -Dmusic=ON -DiSS=ON -Dsmash=ON'.
+option(smash "Build tests for SMASH" OFF)
+if (smash)
+  message("SMASH includes and library ...")
+  find_package(SMASH)
+  if(${SMASH_FOUND})
+    include_directories(${SMASH_INCLUDE_DIR})
+  endif(${SMASH_FOUND})
+endif (smash)
+
 
 ###############################
 ### Compiler & Linker Flags ###
@@ -68,26 +81,27 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-reorder -Wno-unused-variable ")
 ### system dependence.
 ### note that APPLE also defines UNIX, hence the elseif to differentiate
 if (APPLE)
-  message( STATUS "Apple : " ${CMAKE_HOST_SYSTEM})
-  
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
-  ## can turn off some warnings
-  # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-private-field")
-  
-  if(${MPI_FOUND})
-    set(CMAKE_CXX_COMPILE_FLAGS ${CMAKE_CXX_COMPILE_FLAGS} ${MPI_COMPILE_FLAGS})
-    set(CMAKE_CXX_LINK_FLAGS ${CMAKE_CXX_LINK_FLAGS} ${MPI_LINK_FLAGS})
-  endif(${MPI_FOUND})
-elseif(UNIX) 
-  message( STATUS "Linux : " ${CMAKE_HOST_SYSTEM})
-  ## can turn off some warnings
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare -Wno-unused-but-set-variable -Wno-parentheses")
+    message( STATUS "Apple : " ${CMAKE_HOST_SYSTEM})
+    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang") 
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+    elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare -Wno-unused-but-set-variable -Wno-parentheses")
+    endif()
 
-  ## Additional options
-  # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
+    ## can turn off some warnings
+    # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-private-field")
+elseif(UNIX) 
+    message( STATUS "Linux : " ${CMAKE_HOST_SYSTEM})
+    ## can turn off some warnings
+    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare -Wno-unused-but-set-variable -Wno-parentheses")
+    endif()
+
+    ## Additional options
+    # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
 endif()   
 
-message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS})	
+message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS})
 #message(STATUS "LD_FLAGS = " ${CMAKE_EXE_LINKER_FLAGS})
 
 ###########################
@@ -125,6 +139,7 @@ install(
   "${CMAKE_SOURCE_DIR}/src/hadronization/"
   "${CMAKE_SOURCE_DIR}/src/initialstate/"
   "${CMAKE_SOURCE_DIR}/src/hydro/"
+  "${CMAKE_SOURCE_DIR}/src/afterburner/"
   "${CMAKE_SOURCE_DIR}/src/jet/"
   "${CMAKE_SOURCE_DIR}/src/reader/"
   # external packages
@@ -133,6 +148,7 @@ install(
   "${CMAKE_SOURCE_DIR}/external_packages/hydro_from_external_file/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/music/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/trento/src/"
+  "${CMAKE_SOURCE_DIR}/external_packages/smash/src/"
   DESTINATION "include" # target directory
   FILES_MATCHING # install only matched files
   PATTERN "*.h*" # select header files
@@ -201,13 +217,14 @@ endif()
 ###########################
 ### Optional packages   ###
 ###########################
-message("Looking for HepMC ...")
-find_package(HEPMC)
-if (${HEPMC_FOUND})
-  include_directories(${HEPMC_INCLUDE_DIR})
-  set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -DUSE_HEPMC" )
-  Message(STATUS "HepMC Include dir : " ${HEPMC_INCLUDE_DIR})
-endif()
+unset(USE_HEPMC)
+#message("Looking for HepMC ...")
+#find_package(HEPMC)
+#if (${HEPMC_FOUND})
+#  include_directories(${HEPMC_INCLUDE_DIR})
+#  set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -DUSE_HEPMC" )
+#  Message(STATUS "HepMC Include dir : " ${HEPMC_INCLUDE_DIR})
+#endif()
 
 message("Looking for ROOT ...")
 find_package(ROOT)
@@ -240,6 +257,11 @@ if(${MPI_FOUND})
   include_directories(${MPI_INCLUDE_PATH})
 endif(${MPI_FOUND})
 
+message("Looking for OpenMP ...")
+find_package(OpenMP)
+set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}" )
+
+
 message("Looking for GSL ...")
 find_package(GSL)
 if(${GSL_FOUND})
@@ -258,6 +280,7 @@ include_directories(./src/initialstate )
 include_directories(./src/preequilibrium )
 include_directories(./src/hydro )
 include_directories(./src/hadronization )
+include_directories(./src/afterburner )
 include_directories(./src/jet )
 include_directories(./src/reader )
 include_directories(./external_packages/)
@@ -283,7 +306,7 @@ if (freestream)
   if (${GSL_FOUND})
     add_subdirectory(./external_packages/freestream-milne/src)
   else()
-    message (FATAL_ERROR "MPI and GSL are necessary for MUSIC" )
+      message (FATAL_ERROR "GSL are necessary for Freestreaming" )
   endif()
 endif (freestream)
 
@@ -291,11 +314,11 @@ if (music)
   if(NOT EXISTS "${CMAKE_SOURCE_DIR}/external_packages/music")
     message(FATAL_ERROR "Error: MUSIC source has not been downloaded in external_packages by ./get_music.sh")
   endif()  
-  if (${MPI_FOUND} AND ${GSL_FOUND})
+  if (${OpenMP_CXX_FOUND} AND ${GSL_FOUND})
     message("Building MUSIC ...")
     add_subdirectory(./external_packages/music)
   else()
-    message (FATAL_ERROR "MPI and GSL are necessary for MUSIC" )
+    message (FATAL_ERROR "OpenMP and GSL are necessary for MUSIC" )
   endif()
 endif()
 
@@ -382,8 +405,14 @@ if (freestream AND music)
 endif (freestream AND music)
 if ( music AND iSS )
   add_executable(MUSICTest ./examples/MUSICTest.cc)
-  target_link_libraries(MUSICTest JetScape ${MPI_LIBRARIES} ${GSL_LIBRARIES})
+  target_link_libraries(MUSICTest JetScape ${OpenMP_CXX_LIBRARIES} ${GSL_LIBRARIES})
 endif (music AND iSS )
+if ( music AND iSS AND smash )
+  add_executable(SMASHTest ./examples/SMASHTest.cc)
+  include_directories(${SMASH_INCLUDE_DIR})
+  # "-lubsan -lasan")
+  target_link_libraries(SMASHTest JetScape ${SMASH_LIBRARIES} ${MPI_LIBRARIES} ${GSL_LIBRARIES})
+endif ( music AND iSS AND smash )
 
 if ( music AND iS3D )
   add_executable(iS3DTest ./examples/iS3DTest.cc)

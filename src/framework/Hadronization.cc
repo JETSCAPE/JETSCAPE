@@ -49,11 +49,11 @@ void Hadronization::Init()
 
   if (GetNumberOfTasks()<1)
   {
-    WARN << " : No valid Hadronization modules found ...";
+    JSWARN << " : No valid Hadronization modules found ...";
     exit(-1);
   }
  
-  INFO<<"Found "<<GetNumberOfTasks()<<" Hadronization Tasks/Modules Initialize them ... ";
+  JSINFO<<"Found "<<GetNumberOfTasks()<<" Hadronization Tasks/Modules Initialize them ... ";
   JetScapeTask::InitTasks();
 
 }

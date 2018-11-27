@@ -33,11 +33,11 @@ SoftParticlization::~SoftParticlization() {
 
 void SoftParticlization::Init() {
     JetScapeModuleBase::Init();
-    INFO << "Intialize Soft particlization module ... " << GetId() << " ...";
+    JSINFO << "Intialize Soft particlization module ... " << GetId() << " ...";
     xml_ = JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement(
                                                         "SoftParticlization");
     if (!xml_) {
-        WARN << " : Missing XML SoftParticlization section in file!";
+        JSWARN << " : Missing XML SoftParticlization section in file!";
         exit(-1);
     }
 
