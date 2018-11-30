@@ -36,10 +36,18 @@
 
 # Other commands must follow all #SBATCH directives...
 
-cd /work/05780/everett/stampede2/JETSCAPE-COMP-SIMS
+#cd to work drive
+cdw
+
+#cd to JETSCAPE working directory 
+cd JETSCAPE-COMP-SIMS
+
+#prepare some environment variables and load necessary modules 
 source sims_scripts/prepare_compilation_stampede2.sh
 module list
+
 pwd
+
 date
 
 
