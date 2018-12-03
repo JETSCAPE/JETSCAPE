@@ -1,5 +1,6 @@
 #export env variables
 #load necessary modules
+module load cmake/3.7.1
 module load intel/18.0.2
 module load gsl
 module load boost
@@ -12,7 +13,7 @@ export EIGEN3_ROOT=${EIGEN_INSTALL_DIR}/include/eigen3/
 export GSL=$(gsl-config --prefix)
 export GSL_HOME=$(gsl-config --prefix)
 export GSL_ROOT_DIR=$(gsl-config --prefix)
-export JETSCAPE_DIR=$HOME/JETSCAPE-COMP
+export JETSCAPE_DIR=$WORK/JETSCAPE-COMP-SIMS
 export SMASH_DIR=${JETSCAPE_DIR}/external_packages/smash/smash_code
 export number_of_cores=`nproc --all`
 export PYTHIAINSTALLDIR=$HOME
