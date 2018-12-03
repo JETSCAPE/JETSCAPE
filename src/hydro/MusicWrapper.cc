@@ -66,10 +66,9 @@ void MpiMusic::EvolveHydro() {
 
 
     if (pre_eq_ptr == nullptr) {
-        WARN << "Missing the pre-equilibrium module ...";
+        JSWARN << "Missing the pre-equilibrium module ...";
     } else {
-
-        music_hydro_ptr->initialize_hydro_from_pre_equilibrium_vectors(
+        music_hydro_ptr->initialize_hydro_from_jetscape_preequilibrium_vectors(
                                             dx, dz, zmax, nz,
                                             pre_eq_ptr->e_,
                                             pre_eq_ptr->utau_,

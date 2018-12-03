@@ -35,8 +35,8 @@ message(STATUS "${Boost_INCLUDE_DIRS}, ${Boost_LIBRARIES}")
 # Find and use GSL.
 #set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/src/CMake) 
 FIND_PACKAGE(GSL REQUIRED)
-include_directories(${GSL_INCLUDE_DIRS} ${GSLCBLAS_INCLUDE_DIRS})
-
+include_directories(${GSL_INCLUDE_DIR} ${GSLCBLAS_INCLUDE_DIR})
+message(STATUS ${GSL_INCLUDE_DIR} ${GSLCBLAS_INCLUDE_DIR})
 # Find the HDF5 C++ library.  The CMake FindHDF5 module does not work reliably,
 # e.g. sometimes it links unnecessary libraries, other times it fails to include
 # libz.  The following works on all systems I have tested (Ubuntu, Fedora, Arch,

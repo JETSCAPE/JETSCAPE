@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <functional>
 #include <string>
+#include "JetScapeLogger.h"
 
 #include "TrentoInitial.h"
 
@@ -59,13 +60,10 @@ TrentoInitial::TrentoInitial() : InitialState() {
 TrentoInitial::~TrentoInitial() = default;
 
 void TrentoInitial::InitTask() {
-  INFO << " Initialzie TRENTo initial condition ";
-	trento_xml_ = xml_->FirstChildElement("Trento");
-}
+    JSINFO << " Initialzie TRENTo initial condition ";
+    trento_xml_ = xml_->FirstChildElement("Trento");
 
 
-void TrentoInitial::Exec() {  
-    VERBOSE(2) << " : Excute initial condition ";
     if (!trento_xml_) {
         JSWARN << " : Not a valid JetScape IS::Trento XML section in file!";
         exit(-1);
@@ -222,7 +220,7 @@ void TrentoInitial::Exec() {
 	double xymax = GetXMax(), dxy = GetXStep();
 	double etamax = GetZMax(), deta = GetZStep();
 	auto random_seed = (*GetMt19937Generator())();
-	INFO << "Random seed used for Trento " << random_seed;
+	JSINFO << "Random seed used for Trento " << random_seed;
 
 	std::string proj(phy_opts->Attribute("projectile"));
 	std::string targ(phy_opts->Attribute("target"));
@@ -267,30 +265,30 @@ void TrentoInitial::Exec() {
 		+ " --eta-max " + std::to_string(etamax)
 		+ " --eta-step " + std::to_string(deta);
 	// Handle centrality table, not normzlized, default grid, 2D (fast) !!!
-	std::string cmd_basic = proj+" "+targ+" 1000000 "+options1;
+	std::string cmd_basic = proj+" "+targ+" 10000 "+options1;
 	VarMap var_map_basic{}; 
   	po::store(po::command_line_parser(tokenize(cmd_basic))
       .options(all_opts).positional(positional_opts).run(), var_map_basic);
 	auto Ecut = GenCenTab(proj, targ, var_map_basic, cen_low, cen_high);
 	double Ehigh = Ecut.first*normalization; // rescale the cut
 	double Elow = Ecut.second*normalization; // rescale the cut
-	INFO << "The total energy density cut for centrality = [" << cen_low << ", "
+	JSINFO << "The total energy density cut for centrality = [" << cen_low << ", "
 		 << cen_high << "] (%) is:";
-	INFO << Elow << "<dE/deta(eta=0)<" << Ehigh;
+	JSINFO << Elow << "<dE/deta(eta=0)<" << Ehigh;
 	std::string options_cut = 
 		  " --s-max " + std::to_string(Ehigh)
 		+ " --s-min " + std::to_string(Elow);
 
 	// Set trento configuration
 	std::string cmd = proj+" "+targ+" 1 "+options1+options2+options_cut;
-	INFO << cmd;
+	JSINFO << cmd;
 	VarMap var_map{};
   	po::store(po::command_line_parser(tokenize(cmd))
       .options(all_opts).positional(positional_opts).run(), var_map);
 	TrentoGen_ = std::make_shared<trento::Collider>(var_map);
    	SetRanges(xymax, xymax, etamax);
 	SetSteps(dxy, dxy, deta);
-	INFO << "TRENTo set";
+	JSINFO << "TRENTo set";
 }
 
 bool compare_E(trento::records r1, trento::records r2) { return r1.mult > r2.mult; }
@@ -298,7 +296,7 @@ bool compare_E(trento::records r1, trento::records r2) { return r1.mult > r2.mul
 std::pair<double, double> TrentoInitial::GenCenTab(std::string proj, std::string targ, VarMap var_map, int cL, int cH) {
 	// Terminate for nonsense
 	if (cL<0 || cL >100 || cH<0 || cH >100 || cH < cL) {
-		WARN << "Wrong centrality cuts! To be terminated.";
+		JSWARN << "Wrong centrality cuts! To be terminated.";
 		exit(-1);
 	}
 	// These are all the parameters that could change the shape of centrality tables
@@ -315,12 +313,12 @@ std::pair<double, double> TrentoInitial::GenCenTab(std::string proj, std::string
 	std::sprintf(buffer, "%s-%s-E-%1.0f-X-%1.2f-p-%1.2f-k-%1.2f-w-%1.2f-d-%1.2f", 
 				proj.c_str(), targ.c_str(), beamE, xsection, pvalue, fluct, nuclw, dmin);
 	std::string header(buffer);
-	INFO << "TRENTO centrality table header: " << header;
+	JSINFO << "TRENTO centrality table header: " << header;
     // Create headering string hash tage for these parameter combination
 	// Use this tag as a unique table filename for this specific parameter set
 	std::hash<std::string> hash_function;
 	size_t header_hash = hash_function(header);
-	INFO << "Hash tag for this header: " << header_hash;
+	JSINFO << "Hash tag for this header: " << header_hash;
 	// create dir incase it does not exist
 	std::system("mkdir -p ./trento_data");
 	char filename[512];
@@ -331,8 +329,7 @@ std::pair<double, double> TrentoInitial::GenCenTab(std::string proj, std::string
 	double buff1, buff2;
 	std::string line;
 	if (infile.good()) {
-		INFO << "The required centrality table exists. Load the table.";
-		int i=0;
+		JSINFO << "The required centrality table exists. Load the table."; int i=0;
 		while (std::getline(infile, line)) {
 			if(line[0] != '#'){
 				std::istringstream iss(line);
@@ -343,8 +340,8 @@ std::pair<double, double> TrentoInitial::GenCenTab(std::string proj, std::string
 		infile.close();
 	}
 	else {
-		INFO << "TRENTo is generating new centrality table for this new parameter set";
-		INFO << "It may take 10(s) to 1(min).";
+		JSINFO << "TRENTo is generating new centrality table for this new parameter set";
+		JSINFO << "It may take 10(s) to 1(min).";
 
 		another_collider.run_events();
 		// Get all records and sort according to totoal energy
@@ -373,43 +370,43 @@ std::pair<double, double> TrentoInitial::GenCenTab(std::string proj, std::string
 		Etab[100] = ee.mult;
 		fout.close();
 	}
-	INFO << "#########" << Etab[cL] << " " << Etab[cH];
+	JSINFO << "#########" << Etab[cL] << " " << Etab[cH];
 	return std::make_pair(Etab[cL], Etab[cH]);
 }
 
 void TrentoInitial::Exec() {  
-    INFO << " Exec TRENTo initial condition ";
+	JSINFO << " Exec TRENTo initial condition ";
 	TrentoGen_->run_events();
 
-	INFO << " TRENTo event info: ";
+	JSINFO << " TRENTo event info: ";
 	auto tmp_event = TrentoGen_->expose_event();
-    info_.impact_parameter = TrentoGen_->all_records().back().b;
-    info_.num_participant = tmp_event.npart();
+    	info_.impact_parameter = TrentoGen_->all_records().back().b;
+    	info_.num_participant = tmp_event.npart();
 	info_.num_binary_collisions = tmp_event.ncoll();
-    info_.total_entropy = tmp_event.multiplicity();
-    info_.ecc = tmp_event.eccentricity();
+    	info_.total_entropy = tmp_event.multiplicity();
+   	info_.ecc = tmp_event.eccentricity();
 	info_.psi = tmp_event.participant_plane();
-    info_.xmid = -GetXMax()+tmp_event.mass_center_index().first*tmp_event.dxy();
+    	info_.xmid = -GetXMax()+tmp_event.mass_center_index().first*tmp_event.dxy();
 	info_.ymid = -GetYMax()+tmp_event.mass_center_index().second*tmp_event.dxy();
-	INFO << "b\tnpart\tncoll\tET\t(x-com, y-com) (fm)";
-	INFO << info_.impact_parameter << "\t" 
+	JSINFO << "b\tnpart\tncoll\tET\t(x-com, y-com) (fm)";
+	JSINFO << info_.impact_parameter << "\t" 
 		 << info_.num_participant << "\t" 
 		 << info_.num_binary_collisions << "\t"
 		 << info_.total_entropy << "\t"
 		 << "("<< info_.xmid << ", " << info_.ymid << ")";
 
-    INFO << " Load TRENTo density and ncoll density to JETSCAPE memory ";
+    	JSINFO << " Load TRENTo density and ncoll density to JETSCAPE memory ";
 	auto density_field = tmp_event.density_grid();
 	auto ncoll_field = tmp_event.TAB_grid();
-	INFO << density_field.num_elements() << " density elements";
-    for (int i=0; i<density_field.num_elements(); i++) {
-       entropy_density_distribution_.push_back(density_field.data()[i]);
-    }
-	INFO << ncoll_field.num_elements() << " ncoll elements";
-    for (int i=0; i<ncoll_field.num_elements(); i++) {
-       num_of_binary_collisions_.push_back(ncoll_field.data()[i]);
-    }
-	INFO << " TRENTO event generated and loaded ";
+	JSINFO << density_field.num_elements() << " density elements";
+    	for (int i=0; i<density_field.num_elements(); i++) {
+       		entropy_density_distribution_.push_back(density_field.data()[i]);
+    	}
+	JSINFO << ncoll_field.num_elements() << " ncoll elements";
+    	for (int i=0; i<ncoll_field.num_elements(); i++) {
+       		num_of_binary_collisions_.push_back(ncoll_field.data()[i]);
+    	}
+	JSINFO << " TRENTO event generated and loaded ";
 }
 
 void TrentoInitial::Clear() {
