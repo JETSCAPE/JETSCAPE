@@ -28,6 +28,7 @@
 #include "JetScapeSignalManager.h"
 #include "JetScapeWriterStream.h"
 #include "HardProcess.h"
+#include "JetScapeModuleMutex.h"
 
 #ifdef USE_HEPMC
 #include "JetScapeWriterHepMC.h"
@@ -103,8 +104,42 @@ void JetEnergyLoss::Init()
   JetScapeModuleBase::Init();
 
   JSINFO<<"Intialize JetEnergyLoss ..."; 
-  
-  tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );  
+
+  tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );
+  if ( !eloss ) {
+    JSWARN << "Couldn't find tag Eloss";
+    throw std::runtime_error ("Couldn't find tag Eloss");
+  }
+  tinyxml2::XMLElement *mutex=eloss->FirstChildElement("mutex");
+  if ( !mutex ) {
+    JSWARN << "Couldn't find tag Eloss -> mutex";
+    throw std::runtime_error ("Couldn't find tag Eloss -> mutex");
+  }
+
+  if (mutex)
+  {
+    string mutexOnString = mutex->GetText();
+    if(!mutexOnString.compare("ON"))
+    //Check mutual exclusion of Eloss Modules
+    {
+      if (GetNumberOfTasks()>1)
+      {
+        for(auto elossModule : GetTaskList())
+        {
+          shared_ptr<JetScapeModuleMutex> mutex_ptr = elossModule->GetMutex();  
+          if(mutex_ptr)
+          {
+            if(!(mutex_ptr->CheckMutex(GetTaskList())))
+            {
+	      JSWARN<<"Mutual exclusive Energy-Loss modules attached together!";
+              throw std::runtime_error("Fix it by attaching one of them.");
+	    }
+          }
+        } 
+      }
+    }
+  }
+  //tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );  
 
   if (!eloss)
     {
@@ -250,7 +285,6 @@ void JetEnergyLoss::DoShower()
       pInTemp.clear();
           
       vStartVec.clear();
-      
       vStartVec.insert(vStartVec.end(),vStartVecTemp.begin(),vStartVecTemp.end());
       vStartVec.insert(vStartVec.end(),vStartVecOut.begin(),vStartVecOut.end());
            
