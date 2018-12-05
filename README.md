@@ -155,11 +155,8 @@ serve as an afterburner, useful to compute soft observables.
 
 ### Installing SMASH
 
-Currently SMASH is still not published on github, so SMASH 1.4 code is added
-to JetScape repository. Before compiling JetScape with SMASH library, one has
-to compile the SMASH library first. In future part of this section should be
-removed, because it is already in SMASH README. However, I have copied it here
-with some adjustments for convenience.
+SMASH is published on github at https://github.com/smash-transport/smash.
+See SMASH Readme for libraries required by SMASH and how to install them.
 
 #### Prerequisites
 
@@ -173,6 +170,7 @@ It requires the following tools & libraries:
 - the GNU Scientific Library >= 1.15
 - the Eigen3 library for linear algebra (see http://eigen.tuxfamily.org)
 - boost filesystem >= 1.49
+- Pythia = 8.235
 
 See more details in SMASH README.
 
