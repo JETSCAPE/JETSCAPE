@@ -13,5 +13,4 @@ external_packages/iSS*
 external_packages/music*
 examples/test_hydro_files/
 external_packages/freestream-milne/
-# When SMASH is public this should be changed to "external_packages/smash/smash_code"
-external_packages/smash/smash_code/build
+external_packages/smash/smash_code/

@@ -232,29 +232,16 @@ Assuming that boost is already installed in $HOME:
   export BOOST_ROOT=$HOME/boost_1_64_0/
 ```
 
-#### Compiling SMASH
+#### Compiling SMASH library
 
 ```bash
   export JETSCAPE_DIR=${HOME}/JETSCAPE-COMP
   export SMASH_DIR=${JETSCAPE_DIR}/external_packages/smash/smash_code
+  export PYTHIA8DIR=${PYTHIAINSTALLDIR}/pythia8235
+  export PYTHIA8_ROOT_DIR=${PYTHIAINSTALLDIR}/pythia8235
 
-  cd ${SMASH_DIR}
-  mkdir build
-  cd build
-  export PYTHIA8DIR=${PYTHIAINSTALLDIR}/pythia8230
-  export PYTHIA8_ROOT_DIR=${PYTHIAINSTALLDIR}/pythia8230
-
-  cmake .. -DPythia_CONFIG_EXECUTABLE=${PYTHIA8DIR}/bin/pythia8-config
-  export number_of_cores=`nproc --all`
-  make -j${number_of_cores} smash
-```
-
-To compile and run SMASH tests (not really necessary for JetScape run,
-but may be useful in general):
-
-```bash
-make -j${number_of_cores}
-ctest -j${number_of_cores}
+  cd ${JETSCAPE_DIR}/external_packages
+  ./get_smash.sh
 ```
 
 ### Compiling JetScape with SMASH
