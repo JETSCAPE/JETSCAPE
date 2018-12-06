@@ -32,7 +32,7 @@ iS3DWrapper::~iS3DWrapper() {
 }
 
 void iS3DWrapper::InitTask() {
-    INFO << "Initialize a particle sampler (iS3D)";
+    JSINFO << "Initialize a particle sampler (iS3D)";
 
     /*
     iS3D_xml_ = xml_->FirstChildElement("iS3D");
