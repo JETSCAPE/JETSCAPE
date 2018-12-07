@@ -35,28 +35,27 @@ result_data_type=[
     ('initial_entropy', float_t), # 1) initial entropy (eta=0) of TRENTo
     ('dNch_deta', float_t),       # 2) dNch/deta at eta=0
     ('dET_deta', float_t),        # 3) dET/deta at eta=0
-    ('dN_dy', [(s, float_t) 
-        for (s, _) in species]),  # 4) identified particle yield
-    ('mean_pT', [(s, float_t) 
-        for (s, _) in species]),  # 5) identified particle <pT> 
-    ('mean_pT2', [(s, float_t) 
-        for (s, _) in species]),  # 6) identified particle <pT^2> 
-    ('pT_fluct', [('N', int_t), ('sum_pT', float_t), ('sum_pTsq', float_t)]),
-                                  # 7) pT fluct = sum_pTsq/N^2-(sum_pT/N)^2
-    ('flow', [('N', int_t), ('Qn', complex_t, 8)]),
-                                  # 8) pT-integrated Q-vector
-                                  #    of charged particles,
-    ('EP', [('Vn', float_t, 8), ('Psin', float_t, 8)]),
-                                  # 9) Event-plane of charged particles,
-                                  #    for comparison purpose
+    ('Ttt', float_t),             # 4) t^tt
+    ('Ttx', float_t),             # 5) t^tx
+    ('Tty', float_t),             # 6) t^ty
+    ('Ttz', float_t),             # 7) t^tz
+    ('Txx', float_t),             # 8) t^xx
+    ('Txy', float_t),             # 9) t^xy
+    ('Txz', float_t),             # 10) t^xz
+    ('Tyy', float_t),             # 11) t^yy
+    ('Tyz', float_t),             # 12) t^yz
+    ('Tzz', float_t),             # 13) t^zz
+    ('dN_dy', [(s, float_t) for (s, _) in species]),  # 14) identified particle yield
+    ('mean_pT', [(s, float_t) for (s, _) in species]),  # 15) identified particle <pT>
+    ('mean_pT2', [(s, float_t) for (s, _) in species]),  # 16) identified particle <pT^2>
+    ('pT_fluct', [('N', int_t), ('sum_pT', float_t), ('sum_pTsq', float_t)]), # 17) pT fluct = sum_pTsq/N^2-(sum_pT/N)^2
+    ('flow', [('N', int_t), ('Qn', complex_t, 8)]), # 18) pT-integrated Q-vector of charged particles,
+    ('EP', [('Vn', float_t, 8), ('Psin', float_t, 8)]), # 19) Event-plane of charged particles for comparison purpose
     ('d-flow', [(s, [('N', int_t, [6, 3]), ('Qn', complex_t, [6, 3, 4])])
-        for s in ['pion','kaon','proton']]), 
-                                  # 10) Double differential q-vector
-                                  #    of proton, kaon and pions
-                                  #    A grid of 10 pT-points * 7 eta-points
+        for s in ['pion','kaon','proton']]),
+                                  # 20) Double differential q-vector of proton, kaon and pions a grid of 10 pT-points * 7 eta-points
     ('d-ref', [('N', int_t), ('Qn', complex_t, 4)]),
-                                  # 11) Q-vector for 
-                                  #    of charged particles,
+                                  # 11) Q-vector for of charged particles,
 ]
 
 
@@ -82,7 +81,7 @@ def calculate_obs(input_filename, output_filename):
             Vn_table[n] = Vn
             Psin_table[n] = Psin
         return Vn_table, Psin_table
-   
+
     # A function that calculates double differential q-vectos
     # given a list of pT-bins and a list of etabins
     # for example, pTbins = np.array([[0,1],[1,2],[2,3]])
@@ -93,15 +92,15 @@ def calculate_obs(input_filename, output_filename):
         results = {'N': np.zeros(grid_shape, dtype=int_t),
                    'Qn': np.zeros([*grid_shape, order], dtype=complex_t)}
         for i, (pT_low, pT_high) in enumerate(pTbins):
-            pT_cut = (pT_low<=pT) & (pT<=pT_high) 
+            pT_cut = (pT_low<=pT) & (pT<=pT_high)
             for j, (eta_low, eta_high) in enumerate(etabins):
-                eta_cut = (eta_low<=eta) & (eta<=eta_high)        
-    
+                eta_cut = (eta_low<=eta) & (eta<=eta_high)
+
                 kinematic_cut = pT_cut & eta_cut
                 # apply cut
                 dphi = phi[kinematic_cut]
                 results['N'][i,j] = dphi.size
-                results['Qn'][i,j] = np.array([ np.sum(np.exp(1j*n*dphi)) 
+                results['Qn'][i,j] = np.array([ np.sum(np.exp(1j*n*dphi))
                                                 for n in range(1, 1+order) ])
         return results
 
@@ -137,7 +136,28 @@ def calculate_obs(input_filename, output_filename):
     charged = (charge != 0)
     midrapidity = (np.fabs(y) < .5)
 
-    # calcualte dNch/eta and dET/deta
+    #calculate JF's Tmunu inspired observables (~ int dV T^{mu,nu} )
+    Tmunu_cut = ( np.fabs( parts['y'] ) < 1.0 )
+    Tmunu_parts = parts[Tmunu_cut]
+
+    Pt = np.multiply( Tmunu_parts['ET'], np.cosh( Tmunu_parts['y'] ) )
+    Px = np.multiply( Tmunu_parts['pT'], np.cos( Tmunu_parts['phi'] ) )
+    Py = np.multiply( Tmunu_parts['pT'], np.sin( Tmunu_parts['phi'] ) )
+    Pz = np.multiply( Tmunu_parts['ET'], np.sinh( Tmunu_parts['y'] ) )
+
+    #is this safe when Pt = 0 ?
+    results['Ttt']= np.sum(Pt)
+    results['Ttx']= np.sum(Px)
+    results['Tty']= np.sum(Py)
+    results['Ttz']= np.sum(Pz)
+    results['Txx']= np.sum( np.divide( np.multiply(Px, Px), Pt ) )
+    results['Txy']= np.sum( np.divide( np.multiply(Px, Py), Pt ) )
+    results['Txz']= np.sum( np.divide( np.multiply(Px, Pz), Pt ) )
+    results['Tyy']= np.sum( np.divide( np.multiply(Py, Py), Pt ) )
+    results['Tyz']= np.sum( np.divide( np.multiply(Py, Pz), Pt ) )
+    results['Tzz']= np.sum( np.divide( np.multiply(Pz, Pz), Pt ) )
+
+    # calculate dNch/eta and dET/deta
     results['dNch_deta'] = np.count_nonzero(charged & (abs_eta < .5)) / 1.
     results['dET_deta'] = parts['ET'][abs_eta < .6].sum() / (2*.6)
 
@@ -156,10 +176,10 @@ def calculate_obs(input_filename, output_filename):
     results['pT_fluct']['sum_pT'] = pT_alice.sum()
     results['pT_fluct']['sum_pTsq'] = np.inner(pT_alice, pT_alice)
 
-    # pT-integrated Qvector with ALICE cut 
+    # pT-integrated Qvector with ALICE cut
     pTbins = np.array([[.2, 5.0]])
     etabins = np.array([[-1,1]])
-    Q = calc_Qvector(pT[charged], phi[charged], eta[charged], 
+    Q = calc_Qvector(pT[charged], phi[charged], eta[charged],
                      pTbins, etabins, order=8)
     results['flow']['N'] = Q['N'][0,0]
 
@@ -172,9 +192,9 @@ def calculate_obs(input_filename, output_filename):
     ref_etabins = np.array([[-2,2]])
     for s, pid in zip(['pion','kaon','proton'], [211, 321, 2212]):
         cut = (abs_ID == pid) & charged
-        Q = calc_Qvector(pT[cut], phi[cut], eta[cut], 
+        Q = calc_Qvector(pT[cut], phi[cut], eta[cut],
                          pTbins, etabins, order=4)
-        Qref = calc_Qvector(pT[charged], phi[charged], eta[charged], 
+        Qref = calc_Qvector(pT[charged], phi[charged], eta[charged],
                          ref_pTbins, ref_etabins, order=4)
         results['d-flow'][s]['N'] = Q['N']
         results['d-flow'][s]['Qn'] = Q['Qn']
@@ -184,7 +204,7 @@ def calculate_obs(input_filename, output_filename):
     # write results to file
     with open(output_filename, 'wb') as results_file:
         results_file.write(results.tobytes())
-   
+
 def view_results(filename):
     data = np.fromfile(filename, dtype=result_data_type)
     print("pT-integrate Qvec:N:", *data['flow']['N'])
