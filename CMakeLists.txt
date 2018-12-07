@@ -399,12 +399,17 @@ add_executable(FinalStatePartons ./examples/FinalStatePartons.cc)
 target_link_libraries(FinalStatePartons JetScape )
 
 # executables with additional dependencies
-if (freestream AND music)
+
+if (freestream AND music AND iSS)
   add_executable(freestream-milneTest ./examples/freestream-milneTest.cc)
-  add_executable(TRENTO_FS_HYDRO ./examples/TRENTO_FS_HYDRO.cc)
   target_link_libraries(freestream-milneTest JetScape ${GSL_LIBRARIES})
+endif (freestream AND music AND iSS)
+
+if (freestream AND music)
+  add_executable(TRENTO_FS_HYDRO ./examples/TRENTO_FS_HYDRO.cc)
   target_link_libraries(TRENTO_FS_HYDRO JetScape ${GSL_LIBRARIES})
 endif (freestream AND music)
+
 if ( music AND iSS )
   add_executable(MUSICTest ./examples/MUSICTest.cc)
   target_link_libraries(MUSICTest JetScape ${OpenMP_CXX_LIBRARIES} ${GSL_LIBRARIES})
@@ -420,6 +425,11 @@ if (iSS AND smash)
    add_executable(SAMPLER_AFTERBURNER ./examples/SAMPLER_AFTERBURNER.cc)
    target_link_libraries(SAMPLER_AFTERBURNER JetScape ${SMASH_LIBRARIES} ${MPI_LIBRARIES} ${GSL_LIBRARIES})
 endif (iSS AND smash)
+
+if (iSS)
+   add_executable(iSSSamplingOnly ./examples/iSSSamplingOnly.cc)
+   target_link_libraries(iSSSamplingOnly JetScape ${GSL_LIBRARIES})
+endif (iSS)
 
 if ( music AND iS3D )
   add_executable(iS3DTest ./examples/iS3DTest.cc)
