@@ -163,11 +163,8 @@ serve as an afterburner, useful to compute soft observables.
 
 ### Installing SMASH
 
-Currently SMASH is still not published on github, so SMASH 1.4 code is added
-to JetScape repository. Before compiling JetScape with SMASH library, one has
-to compile the SMASH library first. In future part of this section should be
-removed, because it is already in SMASH README. However, I have copied it here
-with some adjustments for convenience.
+SMASH is published on github at https://github.com/smash-transport/smash.
+See SMASH Readme for libraries required by SMASH and how to install them.
 
 #### Prerequisites
 
@@ -181,6 +178,7 @@ It requires the following tools & libraries:
 - the GNU Scientific Library >= 1.15
 - the Eigen3 library for linear algebra (see http://eigen.tuxfamily.org)
 - boost filesystem >= 1.49
+- Pythia = 8.235
 
 See more details in SMASH README.
 
@@ -240,29 +238,16 @@ Assuming that boost is already installed in $HOME:
   export BOOST_ROOT=$HOME/boost_1_64_0/
 ```
 
-#### Compiling SMASH
+#### Compiling SMASH library
 
 ```bash
   export JETSCAPE_DIR=${HOME}/JETSCAPE-COMP
   export SMASH_DIR=${JETSCAPE_DIR}/external_packages/smash/smash_code
+  export PYTHIA8DIR=${PYTHIAINSTALLDIR}/pythia8235
+  export PYTHIA8_ROOT_DIR=${PYTHIAINSTALLDIR}/pythia8235
 
-  cd ${SMASH_DIR}
-  mkdir build
-  cd build
-  export PYTHIA8DIR=${PYTHIAINSTALLDIR}/pythia8230
-  export PYTHIA8_ROOT_DIR=${PYTHIAINSTALLDIR}/pythia8230
-
-  cmake .. -DPythia_CONFIG_EXECUTABLE=${PYTHIA8DIR}/bin/pythia8-config
-  export number_of_cores=`nproc --all`
-  make -j${number_of_cores} smash
-```
-
-To compile and run SMASH tests (not really necessary for JetScape run,
-but may be useful in general):
-
-```bash
-make -j${number_of_cores}
-ctest -j${number_of_cores}
+  cd ${JETSCAPE_DIR}/external_packages
+  ./get_smash.sh
 ```
 
 ### Compiling JetScape with SMASH
