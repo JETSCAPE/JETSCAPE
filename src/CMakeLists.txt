@@ -25,10 +25,10 @@ FILE(GLOB initialstatesources initialstate/*.cc)
 set (SOURCES  ${SOURCES}  ${initialstatesources} )
 
 #trento needs data tables
-file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/data_table)
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/initialstate/data_table/
-  DESTINATION ${CMAKE_BINARY_DIR}/data_table
-  )
+#file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/data_table)
+#file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/initialstate/data_table/
+#  DESTINATION ${CMAKE_BINARY_DIR}/data_table
+#  )
 
 #pre-equilibrium
 FILE(GLOB preeqsources preequilibrium/*.cc)
@@ -67,6 +67,10 @@ if(NOT "${iSS}")
   list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/hadronization/iSpectraSamplerWrapper.cc)
 endif()
 
+if(NOT "${iS3D}")
+  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/hadronization/iS3DWrapper.cc)
+endif()
+
 #reader
 FILE(GLOB readersources reader/*.cc)
 set (SOURCES  ${SOURCES}  ${readersources} )
@@ -75,7 +79,7 @@ set (SOURCES  ${SOURCES}  ${readersources} )
 #######################################
 
 add_library(JetScape SHARED ${SOURCES})
-target_link_libraries(JetScape JetScapeThird GTL ${PYTHIA8_LIBRARIES} libtrento ${Boost_LIBRARIES}  )
+target_link_libraries(JetScape JetScapeThird GTL ${PYTHIA8_LIBRARIES} libtrento ${Boost_LIBRARIES}  ${GSL_LIBRARIES})
 
 if (${ROOT_FOUND})
   target_link_libraries(JetScape ${ROOT_LIBRARIES})
@@ -97,8 +101,15 @@ if ( iSS )
   target_link_libraries (JetScape iSS_lib )
 endif()
 
+
+if ( iS3D )
+  target_link_libraries (JetScape iS3D_lib )
+endif()
+
+
 if ( smash )
   # "-lubsan -lasan") # - in case of problems with address sanitizer
   target_link_libraries (JetScape ${SMASH_LIBRARIES})
 endif()
+
 # -------------------------------------------------------------------------

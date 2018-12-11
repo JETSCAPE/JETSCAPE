@@ -38,34 +38,30 @@ void iSpectraSamplerWrapper::InitTask() {
         JSWARN << "No XML section for iSS! Please check the input file~";
         exit(-1);
     }
-    string input_file = (
-                iSS_xml_->FirstChildElement("iSS_input_file")->GetText());
-    string working_path = (
-                iSS_xml_->FirstChildElement("iSS_working_path")->GetText());
+    string input_file = (iSS_xml_->FirstChildElement("iSS_input_file")->GetText());
+    string working_path = (iSS_xml_->FirstChildElement("iSS_working_path")->GetText());
     int hydro_mode;
     iSS_xml_->FirstChildElement("hydro_mode")->QueryIntText(&hydro_mode);
 
     int number_of_repeated_sampling;
-    iSS_xml_->FirstChildElement("number_of_repeated_sampling")->QueryIntText(
-                                            &number_of_repeated_sampling);
+    iSS_xml_->FirstChildElement("number_of_repeated_sampling")->QueryIntText(&number_of_repeated_sampling);
 
     int flag_perform_decays;
-    iSS_xml_->FirstChildElement("Perform_resonance_decays")->QueryIntText(
-                                            &flag_perform_decays);
+    iSS_xml_->FirstChildElement("Perform_resonance_decays")->QueryIntText(&flag_perform_decays);
 
     iSpectraSampler_ptr_ = new iSS(working_path);
     iSpectraSampler_ptr_->paraRdr_ptr->readFromFile(input_file);
 
     // overwrite some parameters
+    //this is not useful for sims, better to leave these runtime variables 
+    /*
     iSpectraSampler_ptr_->paraRdr_ptr->setVal("hydro_mode", hydro_mode);
     iSpectraSampler_ptr_->paraRdr_ptr->setVal("output_samples_into_files", 0);
     iSpectraSampler_ptr_->paraRdr_ptr->setVal("use_OSCAR_format", 0);
     iSpectraSampler_ptr_->paraRdr_ptr->setVal("use_gzip_format", 0);
     iSpectraSampler_ptr_->paraRdr_ptr->setVal("store_samples_in_memory", 1);
-    iSpectraSampler_ptr_->paraRdr_ptr->setVal("number_of_repeated_sampling",
-                                              number_of_repeated_sampling);
-    iSpectraSampler_ptr_->paraRdr_ptr->setVal("perform_decays",
-                                              flag_perform_decays);
+    iSpectraSampler_ptr_->paraRdr_ptr->setVal("number_of_repeated_sampling", number_of_repeated_sampling);
+    iSpectraSampler_ptr_->paraRdr_ptr->setVal("perform_decays", flag_perform_decays);
 
     // set default parameters
     iSpectraSampler_ptr_->paraRdr_ptr->setVal("turn_on_shear", 1);
@@ -85,8 +81,9 @@ void iSpectraSamplerWrapper::InitTask() {
     iSpectraSampler_ptr_->paraRdr_ptr->setVal("calculate_vn", 0);
     iSpectraSampler_ptr_->paraRdr_ptr->setVal("MC_sampling", 2);
 
-    iSpectraSampler_ptr_->paraRdr_ptr->setVal(
-                                    "sample_upto_desired_particle_number", 0);
+    iSpectraSampler_ptr_->paraRdr_ptr->setVal("sample_upto_desired_particle_number", 0);
+    */
+    
     iSpectraSampler_ptr_->paraRdr_ptr->echo();
 }
 
@@ -97,10 +94,14 @@ void iSpectraSamplerWrapper::Exec() {
         exit(-1);
     }
 
-    auto random_seed = (*GetMt19937Generator())();  // get random seed
-    iSpectraSampler_ptr_->set_random_seed(random_seed);
-    VERBOSE(2) << "Random seed used for the iSS module" << random_seed;
+    //auto random_seed = (*GetMt19937Generator())();  // get random seed
+    //iSpectraSampler_ptr_->set_random_seed(random_seed);
+    //VERBOSE(2) << "Random seed used for the iSS module" << random_seed;
     
+    //set a random seed for iSS based on the parameter in iSS_parameters.dat at runtime
+    int ran_seed = iSpectraSampler_ptr_->paraRdr_ptr->getVal("randomSeed");
+    cout << "ran_seed = " << ran_seed << endl;
+    iSpectraSampler_ptr_->set_random_seed(); 
     status = iSpectraSampler_ptr_->generate_samples();
     if (status != 0) {
         JSWARN << "Some errors happened in generating particle samples";

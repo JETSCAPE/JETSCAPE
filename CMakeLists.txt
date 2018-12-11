@@ -50,6 +50,13 @@ if (iSS)
   include_directories(./external_packages/iSS ./external_packages/iSS/src)
 endif (iSS)
 
+
+# Soft Particlization with iS3D. Turn on with 'cmake -Dmusic=ON -DiS3D=ON'.
+if (iS3D)
+  message("Includes for iS3D ...")
+  include_directories(./external_packages/iS3D ./external_packages/iS3D/src/cpp)
+endif (iS3D)
+
 # SMASH afterburner. Turn on with 'cmake -Dmusic=ON -DiSS=ON -Dsmash=ON'.
 option(smash "Build tests for SMASH" OFF)
 if (smash)
@@ -59,6 +66,7 @@ if (smash)
     include_directories(${SMASH_INCLUDE_DIR})
   endif(${SMASH_FOUND})
 endif (smash)
+
 
 ###############################
 ### Compiler & Linker Flags ###
@@ -237,9 +245,9 @@ message("Looking for HDF5 ...")
 find_package(HDF5)
 if(${HDF5_FOUND})
   include_directories(${HDF5_INCLUDE_DIRS})
-  message(STATUS "HDF5 Include dir : " ${HDF5_INCLUDE_DIRS})
   set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -DUSE_HDF5" )
-  set(_hdf5_libs ${HDF5_LIBRARIES} ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES})
+  set( _hdf5_libs ${HDF5_CXX_LIB} ${HDF5_C_LIB} ${ZLIB} ${HDF5_HL_LIBRARIES})
+  message(STATUS "HDF5 include dir and libs : ${HDF5_INCLUDE_DIRS} ${_hdf5_libs} ")
 endif(${HDF5_FOUND})
 
 message("Looking for MPI ...")
@@ -257,8 +265,8 @@ set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}" )
 message("Looking for GSL ...")
 find_package(GSL)
 if(${GSL_FOUND})
-  message(STATUS "GSL_INCLUDE_DIR : " ${GSL_INCLUDE_DIR})
-  include_directories(${GSL_INCLUDE_DIR})
+  message(STATUS "GSL_INCLUDE_DIR : " ${GSL_INCLUDE_DIR} ${GSLCBLAS_INCLUDE_DIRS})
+  include_directories(${GSL_INCLUDE_DIR} ${GSLCBLAS_INCLUDE_DIRS})
 endif(${GSL_FOUND})
 
 
@@ -306,12 +314,12 @@ if (music)
   if(NOT EXISTS "${CMAKE_SOURCE_DIR}/external_packages/music")
     message(FATAL_ERROR "Error: MUSIC source has not been downloaded in external_packages by ./get_music.sh")
   endif()  
-  if (${OpenMP_CXX_FOUND} AND ${GSL_FOUND})
-    message("Building MUSIC ...")
-    add_subdirectory(./external_packages/music)
-  else()
-    message (FATAL_ERROR "OpenMP and GSL are necessary for MUSIC" )
-  endif()
+  #if (${OpenMP_CXX_FOUND} AND ${GSL_FOUND})
+  message("Building MUSIC ...")
+  add_subdirectory(./external_packages/music)
+  #else()
+  #  message (FATAL_ERROR "OpenMP and GSL are necessary for MUSIC" )
+  #endif()
 endif()
 
 if (iSS)
@@ -322,6 +330,13 @@ if (iSS)
   endif()      
 endif (iSS)
 
+if (iS3D)
+  if(EXISTS "${CMAKE_SOURCE_DIR}/external_packages/iS3D")
+    add_subdirectory( ${CMAKE_SOURCE_DIR}/external_packages/iS3D )
+  else()
+    message(FATAL_ERROR "Error: iS3D source has not been downloaded in external_packages by ./get_iS3D.sh")
+  endif()
+endif (iS3D)
 
 
 ###########################
@@ -384,10 +399,17 @@ add_executable(FinalStatePartons ./examples/FinalStatePartons.cc)
 target_link_libraries(FinalStatePartons JetScape )
 
 # executables with additional dependencies
-if (freestream AND music)
+
+if (freestream AND music AND iSS)
   add_executable(freestream-milneTest ./examples/freestream-milneTest.cc)
   target_link_libraries(freestream-milneTest JetScape ${GSL_LIBRARIES})
+endif (freestream AND music AND iSS)
+
+if (freestream AND music)
+  add_executable(TRENTO_FS_HYDRO ./examples/TRENTO_FS_HYDRO.cc)
+  target_link_libraries(TRENTO_FS_HYDRO JetScape ${GSL_LIBRARIES})
 endif (freestream AND music)
+
 if ( music AND iSS )
   add_executable(MUSICTest ./examples/MUSICTest.cc)
   target_link_libraries(MUSICTest JetScape ${OpenMP_CXX_LIBRARIES} ${GSL_LIBRARIES})
@@ -398,6 +420,26 @@ if ( music AND iSS AND smash )
   # "-lubsan -lasan")
   target_link_libraries(SMASHTest JetScape ${SMASH_LIBRARIES} ${MPI_LIBRARIES} ${GSL_LIBRARIES})
 endif ( music AND iSS AND smash )
+
+if (iSS AND smash)
+   add_executable(SAMPLER_AFTERBURNER ./examples/SAMPLER_AFTERBURNER.cc)
+   target_link_libraries(SAMPLER_AFTERBURNER JetScape ${SMASH_LIBRARIES} ${MPI_LIBRARIES} ${GSL_LIBRARIES})
+endif (iSS AND smash)
+
+if (iSS)
+   add_executable(iSSSamplingOnly ./examples/iSSSamplingOnly.cc)
+   target_link_libraries(iSSSamplingOnly JetScape ${GSL_LIBRARIES})
+endif (iSS)
+
+if ( music AND iS3D )
+  add_executable(iS3DTest ./examples/iS3DTest.cc)
+  target_link_libraries(iS3DTest JetScape ${MPI_LIBRARIES} ${GSL_LIBRARIES})
+endif (music AND iS3D )
+
+if ( iS3D )
+  add_executable(iS3DSamplingOnly ./examples/iS3DSamplingOnly.cc)
+  target_link_libraries(iS3DSamplingOnly JetScape ${GSL_LIBRARIES})
+endif ( iS3D )
 
 # if (${ROOT_FOUND})
 #   add_executable(pwg2_reader ./examples/pwg2_reader.cxx)
@@ -447,6 +489,19 @@ if (iSS)
   endif()
 endif (iSS)
 
+
+#### copy essential files for iS3D to build/
+if (iS3D)
+  if(EXISTS "${CMAKE_SOURCE_DIR}/external_packages/iS3D")
+    file(COPY ${CMAKE_SOURCE_DIR}/external_packages/iS3D/tables DESTINATION ${CMAKE_BINARY_DIR}/)
+    file(COPY ${CMAKE_SOURCE_DIR}/external_packages/iS3D/iS3D_parameters.dat DESTINATION ${CMAKE_BINARY_DIR}/)
+    file(COPY ${CMAKE_SOURCE_DIR}/external_packages/iS3D/deltaf_coefficients DESTINATION ${CMAKE_BINARY_DIR}/)
+    file(COPY ${CMAKE_SOURCE_DIR}/external_packages/iS3D/PDG DESTINATION ${CMAKE_BINARY_DIR}/)
+  else()
+    message(FATAL_ERROR "Error: iS3D has not been downloaded in external_packages by ./get_iS3D.sh")
+  endif()
+endif (iS3D)
+
 #### copy essential files for LBT to build/
 if(EXISTS "${CMAKE_SOURCE_DIR}/external_packages/LBT-tables")
   execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/external_packages/LBT-tables ${CMAKE_BINARY_DIR}/LBT-tables)
@@ -454,3 +509,9 @@ else()
   message("Warning: LBT-tables have not been downloaded in external_packages by ./get_lbtTab.sh; LBT-brickTest will NOT run properly.")
 endif()
 
+#### copy pre-calculated trento centrality tables to build/
+if(EXISTS "${CMAKE_SOURCE_DIR}/external_packages/trento/trento-data")
+  execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/external_packages/trento-data ${CMAKE_BINARY_DIR}/trento-data)
+else()
+  message("No existing trento centrality tables. They will be generated at run time on demand")
+endif()

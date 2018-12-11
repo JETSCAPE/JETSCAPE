@@ -6,11 +6,13 @@
 *.dat
 *.internal
 *.hepmc
+*.*~
 html/*
 build/*
 external_packages/LBT*
 external_packages/iSS*
 external_packages/music*
 examples/test_hydro_files/
+external_packages/iS3D
 external_packages/freestream-milne/
 external_packages/smash/smash_code/
