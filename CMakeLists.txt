@@ -38,8 +38,9 @@ endif (freestream)
 # MUSIC. Turn on with 'cmake -Dmusic=ON'.
 option(music "Build tests for MUSIC" OFF)
 if (music)
-  message("Includes for music ...")
-  include_directories(./external_packages/music ./external_packages/music/src)
+    message("Includes for music ...")
+    include_directories(./external_packages/music ./external_packages/music/src)
+    find_package(OpenMP REQUIRED)
 endif (music)
 
 # Soft Particlization. Turn on with 'cmake -Dmusic=ON -DiSS=ON'.
@@ -62,23 +63,24 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-reorder -Wno-unused-variable ")
 ### system dependence.
 ### note that APPLE also defines UNIX, hence the elseif to differentiate
 if (APPLE)
-  message( STATUS "Apple : " ${CMAKE_HOST_SYSTEM})
-  
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
-  ## can turn off some warnings
-  # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-private-field")
-  
-  if(${MPI_FOUND})
-    set(CMAKE_CXX_COMPILE_FLAGS ${CMAKE_CXX_COMPILE_FLAGS} ${MPI_COMPILE_FLAGS})
-    set(CMAKE_CXX_LINK_FLAGS ${CMAKE_CXX_LINK_FLAGS} ${MPI_LINK_FLAGS})
-  endif(${MPI_FOUND})
-elseif(UNIX) 
-  message( STATUS "Linux : " ${CMAKE_HOST_SYSTEM})
-  ## can turn off some warnings
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare -Wno-unused-but-set-variable -Wno-parentheses")
+    message( STATUS "Apple : " ${CMAKE_HOST_SYSTEM})
+    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang") 
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+    elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare -Wno-unused-but-set-variable -Wno-parentheses")
+    endif()
 
-  ## Additional options
-  # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
+    ## can turn off some warnings
+    # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-private-field")
+elseif(UNIX) 
+    message( STATUS "Linux : " ${CMAKE_HOST_SYSTEM})
+    ## can turn off some warnings
+    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare -Wno-unused-but-set-variable -Wno-parentheses")
+    endif()
+
+    ## Additional options
+    # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
 endif()   
 
 message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS})	
@@ -234,6 +236,11 @@ if(${MPI_FOUND})
   include_directories(${MPI_INCLUDE_PATH})
 endif(${MPI_FOUND})
 
+message("Looking for OpenMP ...")
+find_package(OpenMP)
+set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}" )
+
+
 message("Looking for GSL ...")
 find_package(GSL)
 if(${GSL_FOUND})
@@ -277,7 +284,7 @@ if (freestream)
   if (${GSL_FOUND})
     add_subdirectory(./external_packages/freestream-milne/src)
   else()
-    message (FATAL_ERROR "MPI and GSL are necessary for MUSIC" )
+      message (FATAL_ERROR "GSL are necessary for Freestreaming" )
   endif()
 endif (freestream)
 
@@ -285,11 +292,11 @@ if (music)
   if(NOT EXISTS "${CMAKE_SOURCE_DIR}/external_packages/music")
     message(FATAL_ERROR "Error: MUSIC source has not been downloaded in external_packages by ./get_music.sh")
   endif()  
-  if (${MPI_FOUND} AND ${GSL_FOUND})
+  if (${OpenMP_CXX_FOUND} AND ${GSL_FOUND})
     message("Building MUSIC ...")
     add_subdirectory(./external_packages/music)
   else()
-    message (FATAL_ERROR "MPI and GSL are necessary for MUSIC" )
+    message (FATAL_ERROR "OpenMP and GSL are necessary for MUSIC" )
   endif()
 endif()
 
@@ -369,7 +376,7 @@ if (freestream AND music)
 endif (freestream AND music)
 if ( music AND iSS )
   add_executable(MUSICTest ./examples/MUSICTest.cc)
-  target_link_libraries(MUSICTest JetScape ${MPI_LIBRARIES} ${GSL_LIBRARIES})
+  target_link_libraries(MUSICTest JetScape ${OpenMP_CXX_LIBRARIES} ${GSL_LIBRARIES})
 endif (music AND iSS )
 
 # if (${ROOT_FOUND})
