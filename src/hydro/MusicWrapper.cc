@@ -101,7 +101,7 @@ void MpiMusic::collect_freeze_out_surface() {
 void MpiMusic::GetHydroInfo(
         Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
         std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr) {
-    fluid_cell_info_ptr = std::make_unique<FluidCellInfo>();
+    fluid_cell_info_ptr = Jetscape::make_unique<FluidCellInfo>();
     fluidCell *fluidCell_ptr = new fluidCell;
     music_hydro_ptr->get_hydro_info(x, y, z, t, fluidCell_ptr);
     fluid_cell_info_ptr->energy_density = fluidCell_ptr->ed;

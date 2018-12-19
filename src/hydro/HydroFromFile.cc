@@ -272,36 +272,36 @@ void HydroFromFile::GetHydroInfo(
 
     // assign all the quantites to JETSCAPE output
     // thermodyanmic quantities
-    fluid_cell_info_ptr = std::make_unique<FluidCellInfo>();
+    fluid_cell_info_ptr = make_unique<FluidCellInfo>();
     fluid_cell_info_ptr->energy_density = (
-                                static_cast<real>(temp_fluid_cell_ptr->ed));
+                                static_cast<Jetscape::real>(temp_fluid_cell_ptr->ed));
     fluid_cell_info_ptr->entropy_density = (
-                                static_cast<real>(temp_fluid_cell_ptr->sd));
+                                static_cast<Jetscape::real>(temp_fluid_cell_ptr->sd));
     fluid_cell_info_ptr->temperature = (
-                        static_cast<real>(temp_fluid_cell_ptr->temperature));
+                        static_cast<Jetscape::real>(temp_fluid_cell_ptr->temperature));
     fluid_cell_info_ptr->pressure = (
-                        static_cast<real>(temp_fluid_cell_ptr->pressure));
+                        static_cast<Jetscape::real>(temp_fluid_cell_ptr->pressure));
     // QGP fraction
     double qgp_fraction_local = 1.0;
     if (temp_fluid_cell_ptr->temperature < T_c_) {
         qgp_fraction_local = 0.0;
     }
-    fluid_cell_info_ptr->qgp_fraction = static_cast<real>(qgp_fraction_local);
+    fluid_cell_info_ptr->qgp_fraction = static_cast<Jetscape::real>(qgp_fraction_local);
     // chemical potentials
     fluid_cell_info_ptr->mu_B = 0.0;
     fluid_cell_info_ptr->mu_C = 0.0;
     fluid_cell_info_ptr->mu_S = 0.0;
     // dynamical quantites
-    fluid_cell_info_ptr->vx = static_cast<real>(temp_fluid_cell_ptr->vx);
-    fluid_cell_info_ptr->vy = static_cast<real>(temp_fluid_cell_ptr->vy);
-    fluid_cell_info_ptr->vz = static_cast<real>(temp_fluid_cell_ptr->vz);
+    fluid_cell_info_ptr->vx = static_cast<Jetscape::real>(temp_fluid_cell_ptr->vx);
+    fluid_cell_info_ptr->vy = static_cast<Jetscape::real>(temp_fluid_cell_ptr->vy);
+    fluid_cell_info_ptr->vz = static_cast<Jetscape::real>(temp_fluid_cell_ptr->vz);
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
             fluid_cell_info_ptr->pi[i][j] = (
-                            static_cast<real>(temp_fluid_cell_ptr->pi[i][j]));
+                            static_cast<Jetscape::real>(temp_fluid_cell_ptr->pi[i][j]));
         }
     }
     fluid_cell_info_ptr->bulk_Pi = (
-                            static_cast<real>(temp_fluid_cell_ptr->bulkPi));
+                            static_cast<Jetscape::real>(temp_fluid_cell_ptr->bulkPi));
     delete temp_fluid_cell_ptr;
 }
