@@ -58,7 +58,7 @@ class JetEnergyLossModule : public JetEnergyLoss
    */ 
   bool TakeResponsibilityFor ( Parton& p ) {
     if ( p.GetControlled( ) ){
-      WARN << " Parton was controlled by " << p.GetController()
+      JSWARN << " Parton was controlled by " << p.GetController()
 	   << ". Now " << GetId() << " is trying to take responsibility as well.";
 	throw std::runtime_error ("Two Eloss modules were fighting for one parton!");
     };

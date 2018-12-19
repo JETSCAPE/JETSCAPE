@@ -87,7 +87,7 @@ LBT::~LBT()
 
 void LBT::Init()
 {
-  INFO<<"Intialize LBT ...";
+  JSINFO<<"Intialize LBT ...";
 
   // Redundant (get this from Base) quick fix here for now
   tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );  
@@ -125,7 +125,7 @@ void LBT::Init()
       //JSDEBUG  << s << " with qhat = "<<GetQhat();      	
 
       if ( !lbt->FirstChildElement("in_vac") ) {
-  	WARN << "Couldn't find sub-tag Eloss -> LBT -> in_vac";
+  	JSWARN << "Couldn't find sub-tag Eloss -> LBT -> in_vac";
           throw std::runtime_error ("Couldn't find sub-tag Eloss -> LBT -> in_vac");
       }
       lbt->FirstChildElement("in_vac")->QueryIntText(&flagInt);
@@ -138,40 +138,40 @@ void LBT::Init()
       }
 
       if ( !lbt->FirstChildElement("only_leading") ) {
-  	WARN << "Couldn't find sub-tag Eloss -> LBT -> only_leading";
+  	JSWARN << "Couldn't find sub-tag Eloss -> LBT -> only_leading";
           throw std::runtime_error ("Couldn't find sub-tag Eloss -> LBT -> only_leading");
       }
       lbt->FirstChildElement("only_leading")->QueryIntText(&flagInt);
       Kprimary = flagInt;
   
       if ( !lbt->FirstChildElement("Q0") ) {
-        WARN << "Couldn't find sub-tag Eloss -> LBT -> Q0";
+        JSWARN << "Couldn't find sub-tag Eloss -> LBT -> Q0";
           throw std::runtime_error ("Couldn't find sub-tag Eloss -> LBT -> Q0");
       }
       lbt->FirstChildElement("Q0")->QueryDoubleText(&inputDouble);
       Q00 = inputDouble;
   
       if ( !lbt->FirstChildElement("alphas") ) {
-  	WARN << "Couldn't find sub-tag Eloss -> LBT -> alphas";
+  	JSWARN << "Couldn't find sub-tag Eloss -> LBT -> alphas";
           throw std::runtime_error ("Couldn't find sub-tag Eloss -> LBT -> alphas");
       }
       lbt->FirstChildElement("alphas")->QueryDoubleText(&inputDouble);
       fixAlphas = inputDouble;
  
       if ( !lbt->FirstChildElement("hydro_Tc") ) {
-  	WARN << "Couldn't find sub-tag Eloss -> LBT -> hydro_Tc";
+  	JSWARN << "Couldn't find sub-tag Eloss -> LBT -> hydro_Tc";
           throw std::runtime_error ("Couldn't find sub-tag Eloss -> LBT -> hydro_Tc");
       }
       lbt->FirstChildElement("hydro_Tc")->QueryDoubleText(&inputDouble);
       hydro_Tc = inputDouble;
 
   } else {
-      WARN << " : LBT not properly initialized in XML file ...";
+      JSWARN << " : LBT not properly initialized in XML file ...";
       exit(-1);
   }
 
 
-  INFO<< MAGENTA << "LBT parameters -- in_med: " << vacORmed << " Q0: " << Q00 << "  only_leading: " << Kprimary << "  alpha_s: " << fixAlphas << "  hydro_Tc: " << hydro_Tc;
+  JSINFO<< MAGENTA << "LBT parameters -- in_med: " << vacORmed << " Q0: " << Q00 << "  only_leading: " << Kprimary << "  alpha_s: " << fixAlphas << "  hydro_Tc: " << hydro_Tc;
 
   if( !flag_init ) {
       read_tables(); // initialize various tables
@@ -1567,7 +1567,7 @@ double LBT::DebyeMass2(int &Kqhat0,double alphas,double temp0){
   case 3:
     return 1.0;
   default :
-    WARN << "Kqhat0 = " << Kqhat0;
+    JSWARN << "Kqhat0 = " << Kqhat0;
     throw std::runtime_error ("Unexpected value for Kqhat0" );    
     return -1;
   }
@@ -3126,7 +3126,7 @@ void LBT::collHQ23(int parID, double temp_med, double qhat0ud, double v0[4], dou
       transback(v0,p4);
 
       if(p00[0]+p3[0]-p0[0]-p2[0]-p4[0]>0.01) {
-          INFO<<MAGENTA<<"Violation of energy-momentum conservation: "<<p00[0]+p3[0]-p0[0]-p2[0]-p4[0]<<"  "<<p00[1]+p3[1]-p0[1]-p2[1]-p4[1]<<"  "<<p00[2]+p3[2]-p0[2]-p2[2]-p4[2]<<"  " <<p00[3]+p3[3]-p0[3]-p2[3]-p4[3];
+          JSINFO<<MAGENTA<<"Violation of energy-momentum conservation: "<<p00[0]+p3[0]-p0[0]-p2[0]-p4[0]<<"  "<<p00[1]+p3[1]-p0[1]-p2[1]-p4[1]<<"  "<<p00[2]+p3[2]-p0[2]-p2[2]-p4[2]<<"  " <<p00[3]+p3[3]-p0[3]-p2[3]-p4[3];
       }
 
       // comment for unit test begin

@@ -71,7 +71,7 @@ void JetScapeWriterStream<T>::WriteHeaderToFile()
 template<class T>
 void JetScapeWriterStream<T>::WriteEvent()
 {
-  // INFO<<"Run JetScapeWriterStream<T>: Write event # "<<GetCurrentEvent()<<" ...";
+  // JSINFO<<"Run JetScapeWriterStream<T>: Write event # "<<GetCurrentEvent()<<" ...";
   // do nothing, the modules handle this
 }
 
@@ -98,7 +98,7 @@ void JetScapeWriterStream<T>::Init()
 {
    if (GetActive())
      {
-       INFO<<"JetScape Stream Writer initialized with output file = "<<GetOutputFileName();
+       JSINFO<<"JetScape Stream Writer initialized with output file = "<<GetOutputFileName();
        output_file.open(GetOutputFileName().c_str());
        
        //Write Init Informations, like XML and ... to file ...
@@ -109,7 +109,7 @@ void JetScapeWriterStream<T>::Init()
 template<class T>
 void JetScapeWriterStream<T>::Exec()
 {
-  // INFO<<"Run JetScapeWriterStream<T>: Write event # "<<GetCurrentEvent()<<" ...";
+  // JSINFO<<"Run JetScapeWriterStream<T>: Write event # "<<GetCurrentEvent()<<" ...";
   
   // if (GetActive())
   //   WriteEvent();
