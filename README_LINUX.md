@@ -51,7 +51,6 @@ In order to install and compile the JETSCAPE framework on a Linux machine, one n
 6. Install Boost libraries (Version 1.5 or higher)
      - wget https://dl.bintray.com/boostorg/release/1.64.0/source/boost_1_64_0.tar.gz 
      - tar -xvzf boost_1_64_0.tar.gz
-     - Go to the directory tools/build/.
      - Run bootstrap.sh 
           - ./bootstrap.sh 
      - Run b2 --prefix=PREFIX where PREFIX is the directory where you want Boost. Build to be installed
