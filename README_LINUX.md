@@ -19,7 +19,7 @@ In order to install and compile the JETSCAPE framework on a Linux machine, one n
 
 3. Change Cmake configuration for HepMC (If Cmake could not find HepMC)
      - Set "HEPMC_DIR" as the root directory of HepMC
-     - Go to ../framework/Modules
+     - Go to JETSCAPE/cmakemodules
      - Open FindHEPMC.cmake
           - vim FindHEPMC.cmake
      - Make sure that cmake looks for the correct "include" and "lib" directories of HepMC
@@ -30,6 +30,8 @@ In order to install and compile the JETSCAPE framework on a Linux machine, one n
 
 
 4. Install Pythia8
+     - In the following, you can use a newer Pythia version instead
+       of 8.226 as well.
      - Create a folder for installing Pythia8
      - Got to the created folder
      - wget http://home.thep.lu.se/~torbjorn/pythia8/pythia8226.tgz
@@ -39,14 +41,12 @@ In order to install and compile the JETSCAPE framework on a Linux machine, one n
      - Run make command
           - make
 
-5. Configure the address of Pythia8 in the ../framework/activate_jetscape.sh (If cmake could not find Pythia)
+5. Configure the address of Pythia8 in activate_jetscape.sh or activate_jetscape.csh
+   (If cmake could not find Pythia)
      - vim activate_jetscape.sh
      - Change "PYTHIAINSTALLDIR" to the installing folder of Pythia8
      - Update the "PYTHIA8DIR" and "PYTHIA8_ROOT_DIR" address
           - should be "${PYTHIAINSTALLDIR}/pythia8226" by default
-     - ./activate_jetscape.sh
-     - Make sure the variable are set into the session
-     - Use source if they are not set
 
 6. Install Boost libraries (Version 1.5 or higher)
      - wget https://dl.bintray.com/boostorg/release/1.64.0/source/boost_1_64_0.tar.gz 
@@ -67,7 +67,7 @@ In order to install and compile the JETSCAPE framework on a Linux machine, one n
      - To provide a hint for CMake about where to find your HDF5 installation, you can set the environment variable HDF5_ROOT
           - export HDF5_ROOT=<HDF5_installation_directory>
 
-8. Create a build folder in ../src/framework
+8. Create a build folder in JETSCAPE/
      - mkdir build
      - Got to the build folder
           - cd build
@@ -89,3 +89,5 @@ In order to install and compile the JETSCAPE framework on a Linux machine, one n
      - run make
           - make
 
+9. You can set up environment variables anytime you want to run JETSCAPE using
+     source ./activate_jetscape.sh or source ./activate_jetscape.csh aqs appropriate for your shell type.
