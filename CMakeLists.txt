@@ -63,7 +63,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-reorder -Wno-unused-variable ")
 ### note that APPLE also defines UNIX, hence the elseif to differentiate
 if (APPLE)
     message( STATUS "Apple : " ${CMAKE_HOST_SYSTEM})
-    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang") 
+    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang") 
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
     elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare -Wno-unused-but-set-variable -Wno-parentheses")
