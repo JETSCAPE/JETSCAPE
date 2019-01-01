@@ -14,7 +14,7 @@ endif()
 
 if (APPLE)
      message( STATUS "Apple : " ${CMAKE_HOST_SYSTEM})
-    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-builtin-macro-redefined -std=c++11 -stdlib=libc++")
     elseif()
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-builtin-macro-redefined -std=c++11")
