@@ -368,6 +368,12 @@ if (freestream AND music)
   add_executable(freestream-milneTest ./examples/freestream-milneTest.cc)
   target_link_libraries(freestream-milneTest JetScape ${GSL_LIBRARIES})
 endif (freestream AND music)
+
+if ( music )
+    add_executable(MUSIC_evo ./examples/MUSIC_evo.cc)
+    target_link_libraries(MUSIC_evo JetScape ${GSL_LIBRARIES})
+endif()
+
 if ( music AND iSS )
   add_executable(MUSICTest ./examples/MUSICTest.cc)
   target_link_libraries(MUSICTest JetScape ${GSL_LIBRARIES})

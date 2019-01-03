@@ -52,6 +52,8 @@ void MpiMusic::InitializeHydro(Parameter parameter_list) {
     para->FirstChildElement("Perform_CooperFrye_Feezeout")->QueryIntText(
                                                                 &doCooperFrye);
     music_hydro_ptr = new MUSIC(input_file);
+
+    // overwrite input options
 }
 
 
