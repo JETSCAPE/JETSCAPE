@@ -54,6 +54,26 @@ void MpiMusic::InitializeHydro(Parameter parameter_list) {
     music_hydro_ptr = new MUSIC(input_file);
 
     // overwrite input options
+    int flag_output_evo_to_file = 0;
+    para->FirstChildElement("output_evolution_to_file")->QueryIntText(
+                                                    &flag_output_evo_to_file);
+    music_hydro_ptr->set_parameter("output_movie_flag",
+                                static_cast<double>(flag_output_evo_to_file));
+    double eta_over_s = 0.0;
+    para->FirstChildElement("shear_viscosity_eta_over_s")->QueryDoubleText(
+                                                                &eta_over_s);
+    if (eta_over_s > 1e-6) {
+        music_hydro_ptr->set_parameter("Viscosity_Flag_Yes_1_No_0", 1);
+        music_hydro_ptr->set_parameter("Include_Shear_Visc_Yes_1_No_0", 1);
+        music_hydro_ptr->set_parameter("Shear_to_S_ratio", eta_over_s);
+    } else if (eta_over_s >= 0.) {
+        music_hydro_ptr->set_parameter("Viscosity_Flag_Yes_1_No_0", 0);
+        music_hydro_ptr->set_parameter("Include_Shear_Visc_Yes_1_No_0", 0);
+    } else {
+        WARN << "The input shear viscosity is negative! eta/s = "
+             << eta_over_s;
+        exit(1);
+    }
 }
 
 
