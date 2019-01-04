@@ -51,23 +51,29 @@ void MpiMusic::InitializeHydro(Parameter parameter_list) {
     string input_file = para->FirstChildElement("MUSIC_input_file")->GetText();
     para->FirstChildElement("Perform_CooperFrye_Feezeout")->QueryIntText(
                                                                 &doCooperFrye);
-    int argc = 2;
-    char **argv = new char* [argc];
-    argv[0] = new char[9];
-    strcpy(argv[0], "mpihydro");
-    argv[1] = new char[input_file.length() + 1];
-    strcpy(argv[1], input_file.c_str());
-    std::cout << "check input for MUSIC: " << std::endl;
-    for (int i = 0; i < argc; i++) {
-        std::cout << argv[i] << "  ";
-    }
-    std::cout << endl;
-    music_hydro_ptr = new MUSIC(argc, argv);
+    music_hydro_ptr = new MUSIC(input_file);
 
-    for (int i = 0; i < argc; i++) {
-        delete[] argv[i];
+    // overwrite input options
+    int flag_output_evo_to_file = 0;
+    para->FirstChildElement("output_evolution_to_file")->QueryIntText(
+                                                    &flag_output_evo_to_file);
+    music_hydro_ptr->set_parameter("output_movie_flag",
+                                static_cast<double>(flag_output_evo_to_file));
+    double eta_over_s = 0.0;
+    para->FirstChildElement("shear_viscosity_eta_over_s")->QueryDoubleText(
+                                                                &eta_over_s);
+    if (eta_over_s > 1e-6) {
+        music_hydro_ptr->set_parameter("Viscosity_Flag_Yes_1_No_0", 1);
+        music_hydro_ptr->set_parameter("Include_Shear_Visc_Yes_1_No_0", 1);
+        music_hydro_ptr->set_parameter("Shear_to_S_ratio", eta_over_s);
+    } else if (eta_over_s >= 0.) {
+        music_hydro_ptr->set_parameter("Viscosity_Flag_Yes_1_No_0", 0);
+        music_hydro_ptr->set_parameter("Include_Shear_Visc_Yes_1_No_0", 0);
+    } else {
+        WARN << "The input shear viscosity is negative! eta/s = "
+             << eta_over_s;
+        exit(1);
     }
-    delete[] argv;
 }
 
 
@@ -80,27 +86,19 @@ void MpiMusic::EvolveHydro() {
     double z_max  = ini->GetZMax();
     int nz = ini->GetZSize();
     if (pre_eq_ptr == nullptr) {
-        music_hydro_ptr->initialize_hydro_from_vector(entropy_density, dx);
+        WARN << "Missing the pre-equilibrium module ...";
     } else {
-        music_hydro_ptr->initialize_hydro_from_pre_equilibrium_vectors(dx, dz, z_max, nz,
-                                                        pre_eq_ptr->e_,
-                                                        pre_eq_ptr->utau_,
-                                                        pre_eq_ptr->ux_,
-                                                        pre_eq_ptr->uy_,
-                                                        pre_eq_ptr->ueta_,
-                                                        pre_eq_ptr->pi00_,
-                                                        pre_eq_ptr->pi01_,
-                                                        pre_eq_ptr->pi02_,
-                                                        pre_eq_ptr->pi03_,
-                                                        pre_eq_ptr->pi11_,
-                                                        pre_eq_ptr->pi12_,
-                                                        pre_eq_ptr->pi13_,
-                                                        pre_eq_ptr->pi22_,
-                                                        pre_eq_ptr->pi23_,
-                                                        pre_eq_ptr->pi33_,
-                                                        pre_eq_ptr->bulk_Pi_);
+        music_hydro_ptr->initialize_hydro_from_jetscape_preequilibrium_vectors(
+                dx, dz, z_max, nz,
+                pre_eq_ptr->e_,
+                pre_eq_ptr->utau_, pre_eq_ptr->ux_,
+                pre_eq_ptr->uy_,   pre_eq_ptr->ueta_,
+                pre_eq_ptr->pi00_, pre_eq_ptr->pi01_, pre_eq_ptr->pi02_,
+                pre_eq_ptr->pi03_, pre_eq_ptr->pi11_, pre_eq_ptr->pi12_,
+                pre_eq_ptr->pi13_, pre_eq_ptr->pi22_, pre_eq_ptr->pi23_,
+                pre_eq_ptr->pi33_, pre_eq_ptr->bulk_Pi_);
     }
-
+    
     INFO << "initial density profile dx = " << dx << " fm";
     hydro_status = INITIALIZED;
     if (hydro_status == INITIALIZED) {
@@ -108,9 +106,17 @@ void MpiMusic::EvolveHydro() {
         music_hydro_ptr->run_hydro();
         hydro_status = FINISHED;
     }
+    
+    collect_freeze_out_surface();
+    
     if (hydro_status == FINISHED && doCooperFrye == 1) {
-        music_hydro_ptr->run_Cooper_Frye(1);
+        music_hydro_ptr->run_Cooper_Frye();
     }
+}
+
+void MpiMusic::collect_freeze_out_surface() {
+    system("cat surface_eps* >> surface.dat");
+    system("rm surface_eps* 2> /dev/null");
 }
 
 

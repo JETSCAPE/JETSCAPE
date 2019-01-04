@@ -17,7 +17,7 @@ mode 3   # MUSIC running mode
 ###################################
 # parameters for initial conditions
 ###################################
-Initial_profile 41              # type of initial condition 
+Initial_profile 42              # type of initial condition 
                                 # 0: for Gubser flow test (future)
                                 # 1: Optical Glauber model
                                 # 3: MC-Glauber model
@@ -86,7 +86,7 @@ Grid_size_in_y 200            # number of the grid points in y direction
 Grid_size_in_x 200            # number of the grid points in x direction
 #
 #
-EOS_to_use 3                  # type of the equation of state
+EOS_to_use 2                  # type of the equation of state
                               # 0: ideal gas
                               # 1: EOS-Q from azhydro
                               # 2: lattice EOS s95p-v1 
@@ -119,9 +119,9 @@ store_hydro_info_in_memory 1       # flag to store hydro info in memory
 output_evolution_data 0            # flag to output evolution history to file
 outputBinaryEvolution  1           # output evolution file in binary format
 output_evolution_every_N_eta  1    # output evolution file every Neta steps
-output_evolution_every_N_y  2      # output evolution file every Ny steps
-output_evolution_every_N_x  2      # output evolution file every Nx steps
-output_evolution_every_N_timesteps  5  # output evolution every Ntime steps
+output_evolution_every_N_y  1      # output evolution file every Ny steps
+output_evolution_every_N_x  1      # output evolution file every Nx steps
+output_evolution_every_N_timesteps  2  # output evolution every Ntime steps
 
 #
 #
@@ -129,7 +129,7 @@ output_evolution_every_N_timesteps  5  # output evolution every Ntime steps
 # parameters for freeze out and Cooper-Frye 
 ###########################################
 Do_FreezeOut_Yes_1_No_0 1       # flag to find freeze-out surface
-freeze_out_method 2             # method for hyper-surface finder
+freeze_out_method 4             # method for hyper-surface finder
                                 # 2: Schenke's more complex method
 average_surface_over_this_many_time_steps 5   # the step skipped in the tau
 epsilon_freeze 0.18             # the freeze out energy density (GeV/fm^3)

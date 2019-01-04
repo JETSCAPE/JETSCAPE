@@ -186,6 +186,8 @@
     <MUSIC>
       <name>MUSIC</name>
       <MUSIC_input_file>music_input</MUSIC_input_file>
+      <output_evolution_to_file>0</output_evolution_to_file>
+      <shear_viscosity_eta_over_s>0.08</shear_viscosity_eta_over_s>
       <Perform_CooperFrye_Feezeout>0</Perform_CooperFrye_Feezeout>
     </MUSIC>
   </Hydro>

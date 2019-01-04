@@ -35,7 +35,6 @@
 #include "Matter.h"
 #include "Martini.h"
 #include "MusicWrapper.h"
-#include "iSpectraSamplerWrapper.h"
 #include "TrentoInitial.h"
 #include "NullPreDynamics.h"
 #include "PGun.h"
@@ -74,10 +73,6 @@ int main(int argc, char** argv)
    
   Show();
 
-  // auto jetscape = make_shared<JetScape>("./jetscape_init.xml",10);
-  // jetscape->SetReuseHydro (true);
-  // jetscape->SetNReuseHydro (5);
-
   auto jetscape = make_shared<JetScape>("./jetscape_init.xml",1);
   jetscape->SetReuseHydro (false);
   jetscape->SetNReuseHydro (0);
@@ -91,50 +86,6 @@ int main(int argc, char** argv)
   jetscape->Add(null_predynamics);
   jetscape->Add(pGun);
   jetscape->Add(hydro);
-
-  // surface sampler
-  auto iSS = make_shared<iSpectraSamplerWrapper> ();
-  jetscape->Add(iSS);
-
-  // Energy loss
-  auto jlossmanager = make_shared<JetEnergyLossManager> ();
-  auto jloss = make_shared<JetEnergyLoss> ();
-
-  auto matter = make_shared<Matter> ();
-  // auto lbt = make_shared<LBT> ();
-  // auto martini = make_shared<Martini> ();
-  // auto adscft = make_shared<AdSCFT> ();
-
-  // Note: if you use Matter, it MUST come first (to set virtuality)
-  jloss->Add(matter);
-  // jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
-  // jloss->Add(martini);
-  // jloss->Add(adscft);  
-  jlossmanager->Add(jloss);  
-  jetscape->Add(jlossmanager);
-  
-  // Hadronization
-  // This helper module currently needs to be added for hadronization.
-  auto printer = make_shared<PartonPrinter> ();
-  jetscape->Add(printer);
-  auto hadroMgr = make_shared<HadronizationManager> ();
-  auto hadro = make_shared<Hadronization> ();
-  auto hadroModule = make_shared<ColoredHadronization> ();
-  hadro->Add(hadroModule);
-  // auto colorless = make_shared<ColorlessHadronization> ();
-  // hadro->Add(colorless);
-  hadroMgr->Add(hadro);
-  jetscape->Add(hadroMgr);
-
-  // Output
-  auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
-  // same as JetScapeWriterAscii but gzipped
-  // auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");
-  // HEPMC3
-#ifdef USE_HEPMC
-  // auto writer= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
-#endif
-  jetscape->Add(writer);
 
   // Intialize all modules tasks
   jetscape->Init();
@@ -165,7 +116,7 @@ int main(int argc, char** argv)
 void Show()
 {
   INFO_NICE<<"-----------------------------------------------";
-  INFO_NICE<<"| MUSIC Test JetScape Framework ... |";
+  INFO_NICE<<"| MUSIC evo JetScape Framework ... |";
   INFO_NICE<<"-----------------------------------------------";
   INFO_NICE;
 }
