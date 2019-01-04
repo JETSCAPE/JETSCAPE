@@ -156,9 +156,17 @@ when generating the cmake configuration file,
     cmake -Dmusic=ON ..
     make
 ```
+If you are using GNU C compiler, please make sure the version of the compiler is 7 or above. 
 
-To run JETSCAPE with MUSIC, one needs to use MPI commands,
+To run JETSCAPE with MUSIC,
 
 ```bash
-    mpirun -np 1 ./MUSICTest
+    ./MUSIC_evo
 ```
+
+MUSIC implements parallelization using OpenMP. You can use multiple threads by setting the following enviroment variable, 
+
+```bash
+    export NUM_OMP_THREADS=4
+```
+This enable the MUSIC code to use 4 threads for computation.
