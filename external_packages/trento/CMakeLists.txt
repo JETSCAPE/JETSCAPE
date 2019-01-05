@@ -3,6 +3,8 @@ project(trento CXX)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 #include(CheckCXXCompilerFlag)
 #check_cxx_compiler_flag("-std=c++11" CXX11)
 #if(NOT CXX11)
