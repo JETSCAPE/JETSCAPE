@@ -147,6 +147,29 @@ int main(int argc, char** argv)
   INFO_NICE<<"Finished!";
   cout<<endl;
 
+  //Event header Summary
+  writer->WriteComment ( "EVENT GENERATION INFORMATION" );
+  Pythia8::Info& info = pythiaGun->info;
+  std::ostringstream oss;
+  oss.str(""); oss << "nTried    = " << info.nTried();
+  writer->WriteComment ( oss.str() );
+  oss.str(""); oss << "nSelected = " << info.nSelected();
+  writer->WriteComment ( oss.str() );
+  oss.str(""); oss << "nAccepted = " << info.nAccepted();
+  writer->WriteComment ( oss.str() );
+  oss.str(""); oss << "sigmaGen  = " << info.sigmaGen();
+  writer->WriteComment ( oss.str() );
+  oss.str(""); oss << "sigmaErr  = " << info.sigmaErr();
+  writer->WriteComment ( oss.str() );
+
+  oss.str(""); oss << "eCM  = " << info.eCM();
+  writer->WriteComment ( oss.str() );
+  oss.str(""); oss << "pTHatMin  = " << pythiaGun->GetpTHatMin();
+  writer->WriteComment ( oss.str() );
+  oss.str(""); oss << "pTHatMax  = " << pythiaGun->GetpTHatMax();
+  writer->WriteComment ( oss.str() );
+  writer->WriteComment ( "/EVENT GENERATION INFORMATION" );
+
   t = clock() - t;
   time(&end);
   printf ("CPU time: %f seconds.\n",((float)t)/CLOCKS_PER_SEC);
