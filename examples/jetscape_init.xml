@@ -38,7 +38,7 @@
     
     <Trento use_module="user_defined">
       <!-- pre-defined system: default collisions have auau200, pbpb2760, pbpb5020, more in the future -->
-      <pre_defined collision_system="auau200" centrality_min="30" centrality_max="40" />
+      <pre_defined collision_system="auau200" centrality_min="30" centrality_max="40" normalisation="6.1" />
       <!-- user-defined system: to get one event in 0-100% centrality range -->
       <user_defined projectile="Au" target="Au" sqrts="200" cross_section="4.2" normalisation="6.1" />
     </Trento>
