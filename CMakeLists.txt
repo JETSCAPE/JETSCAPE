@@ -235,6 +235,7 @@ if(${MPI_FOUND})
 endif(${MPI_FOUND})
 
 message("Looking for GSL ...")
+set ( GSL_FOUND 0 )
 find_package(GSL)
 if(${GSL_FOUND})
   message(STATUS "GSL_INCLUDE_DIR : " ${GSL_INCLUDE_DIR})
