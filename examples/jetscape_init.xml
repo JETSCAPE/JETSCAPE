@@ -36,11 +36,11 @@
     <grid_step_y> 0.2 </grid_step_y>
     <grid_step_z> 0.2 </grid_step_z>
     
-    <Trento use_module="pre_defined">
+    <Trento use_module="user_defined">
       <!-- pre-defined system: default collisions have auau200, pbpb2760, pbpb5020, more in the future -->
       <pre_defined collision_system="auau200" centrality_min="30" centrality_max="40" />
       <!-- user-defined system: to get one event in 0-100% centrality range -->
-      <user_defined projectile="Au" target="Au" sqrts="200" cross_section="4.2" />
+      <user_defined projectile="Au" target="Au" sqrts="200" cross_section="4.2" normalisation="6.1" />
     </Trento>
 
     <!-- Options to read initial conditions from saved file  -->

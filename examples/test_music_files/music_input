@@ -31,7 +31,7 @@ initialize_with_entropy 1       # 0: with energy density
 Initial_Distribution_input_filename example_inputs/filename    
                                # the filename of initial profile 
                                # (for Initial_profile == 8)
-s_factor 57.00                 # normalization factor read in 
+s_factor 1.00                 # normalization factor read in 
                                # initial data file
                                # 57.0 for AuAu@200 GeV
 Eta_plateau_size 20.           # size of the plateau in eta_s
