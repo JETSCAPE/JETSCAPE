@@ -286,7 +286,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 	      {
 		k = kRest*boostBack;
 		kVec.Set( (px/pAbs)*k, (py/pAbs)*k, (pz/pAbs)*k, k );
-		pOut.push_back(Parton(0, Id, 0, kVec, xVec));
+		pOut.push_back(Parton(0, 21, 0, kVec, xVec));
 		pOut[pOut.size()-1].set_form_time(0.);
 		pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 	      }
@@ -322,7 +322,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 	      {
 		k = kRest*boostBack;
 		kVec.Set( (px/pAbs)*k, (py/pAbs)*k, (pz/pAbs)*k, k );
-		pOut.push_back(Parton(0, Id, 0, kVec, xVec));
+		pOut.push_back(Parton(0, 22, 0, kVec, xVec));
 		pOut[pOut.size()-1].set_form_time(0.);
 		pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 	      }
@@ -459,7 +459,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 		// *momentum of quark is usually larger than that of anti-quark
 		pNew = pNewRest*boostBack;
 		pVecNew.Set( (px/pAbs)*pNew, (py/pAbs)*pNew, (pz/pAbs)*pNew, pNew );
-		pOut.push_back(Parton(0, Id, 0, pVecNew, xVec));
+		pOut.push_back(Parton(0, newId, 0, pVecNew, xVec));
 		pOut[pOut.size()-1].set_form_time(0.);
 		pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 	      }
@@ -468,7 +468,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 	      {
 		k = kRest*boostBack;
 		kVec.Set( (px/pAbs)*k, (py/pAbs)*k, (pz/pAbs)*k, k );
-		pOut.push_back(Parton(0, Id, 0, kVec, xVec));
+		pOut.push_back(Parton(0, -newId, 0, kVec, xVec));
 		pOut[pOut.size()-1].set_form_time(0.);
 		pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 	      }
@@ -533,6 +533,9 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 	    if (r < 1./3.) newId = 1;
 	    else if (r < 2./3.) newId = 2;
 	    else newId = 3;
+
+	    double antiquark = ZeroOneDistribution(*GetMt19937Generator());
+            if(antiquark < 0.5) newId *= -1;
 
 	    pOut.push_back(Parton(0, newId, 0, pVec, xVec));
 	    pOut[pOut.size()-1].set_form_time(0.);
