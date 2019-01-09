@@ -52,6 +52,7 @@
 #undef gmn
 #undef limit
 
+#include "FreestreamMilneWrapper.h"
 #include "iSpectraSamplerWrapper.h"
 #include "TrentoInitial.h"
 #include "PGun.h"
@@ -100,9 +101,11 @@ int main(int argc, char** argv)
 
   // Initial conditions and hydro
   auto trento = make_shared<TrentoInitial>();
+  auto freestream = make_shared<FreestreamMilneWrapper> ();
   auto pGun= make_shared<PGun> ();
   auto hydro = make_shared<MpiMusic> ();
   jetscape->Add(trento);
+  jetscape->Add(freestream);
   jetscape->Add(pGun);
   jetscape->Add(hydro);
 
