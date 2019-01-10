@@ -316,16 +316,16 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 		pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 	      }
 
-	    // photon doesn't have energy threshold; No absorption into medium
-	    // However, we only keep positive energy photons
-	    if (kRest > 0.)
-	      {
-		k = kRest*boostBack;
-		kVec.Set( (px/pAbs)*k, (py/pAbs)*k, (pz/pAbs)*k, k );
-		pOut.push_back(Parton(0, 22, 0, kVec, xVec));
-		pOut[pOut.size()-1].set_form_time(0.);
-		pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
-	      }
+	    //// photon doesn't have energy threshold; No absorption into medium
+	    //// However, we only keep positive energy photons
+	    //if (kRest > 0.)
+	    //  {
+	    //    k = kRest*boostBack;
+	    //    kVec.Set( (px/pAbs)*k, (py/pAbs)*k, (pz/pAbs)*k, k );
+	    //    pOut.push_back(Parton(0, 22, 0, kVec, xVec));
+	    //    pOut[pOut.size()-1].set_form_time(0.);
+	    //    pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
+	    //  }
 
 	    return;
 	  }
