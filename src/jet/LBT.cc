@@ -25,7 +25,7 @@
 #include <iomanip>
 
 #include "FluidDynamics.h"
-
+#include "LBTMutex.h"
 #define MAGENTA "\033[35m"
 
 using namespace Jetscape;
@@ -74,6 +74,10 @@ LBT::LBT()
 {
   SetId("LBT");
   VERBOSE(8);
+
+  // create and set Martini Mutex
+  auto lbt_mutex = make_shared<LBTMutex>();
+  SetMutex(lbt_mutex);
 }
 
 LBT::~LBT()

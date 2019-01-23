@@ -24,7 +24,7 @@
 #include <fstream>
 
 #include "FluidDynamics.h"
-
+#include "AdSCFTMutex.h"
 #define MAGENTA "\033[35m"
 
 AdSCFT::AdSCFT() 
@@ -35,6 +35,10 @@ AdSCFT::AdSCFT()
   Q0=-99; 
  
   VERBOSE(8);
+
+  // create and set Martini Mutex
+  auto adscft_mutex = make_shared<AdSCFTMutex>();
+  SetMutex(adscft_mutex);
 }
 
 AdSCFT::~AdSCFT()
