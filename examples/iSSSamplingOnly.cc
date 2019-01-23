@@ -82,7 +82,7 @@ int main(int argc, char** argv)
   jetscape->Add(iSS);
 
   // Output
-  auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
+  auto writer= make_shared<JetScapeWriterAscii> ("finaliSSHadrons.dat");
   // same as JetScapeWriterAscii but gzipped
   // auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");
   // HEPMC3

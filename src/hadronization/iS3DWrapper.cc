@@ -82,7 +82,7 @@ void iS3DWrapper::PassHadronListToJetscape()
 
 void iS3DWrapper::WriteTask(weak_ptr<JetScapeWriter> w)
 {
-  /*
+  
   VERBOSE(4)<<"In iS3DWrapper::WriteTask";
   auto f = w.lock();
   if ( !f ) return;
@@ -100,5 +100,5 @@ void iS3DWrapper::WriteTask(weak_ptr<JetScapeWriter> w)
   } else {
     f->WriteComment("There are no bulk Hadrons");
   }
- */
+ 
 }
