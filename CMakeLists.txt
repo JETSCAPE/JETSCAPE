@@ -371,6 +371,8 @@ endif (freestream AND music)
 if ( music AND iSS )
   add_executable(MUSICTest ./examples/MUSICTest.cc)
   target_link_libraries(MUSICTest JetScape ${GSL_LIBRARIES})
+  add_executable(TwoStageHydro ./examples/TwoStagesHydro.cc)
+  target_link_libraries(TwoStageHydro JetScape ${GSL_LIBRARIES})
 endif (music AND iSS )
 
 # if (${ROOT_FOUND})
