@@ -104,6 +104,7 @@ void JetScape::SetPointers()
    // to get hydro pointer for signals, use signal?
   INFO<<"Set Hydro,JetEnergylossManager and IS Pointers for SignalManager to create Signal/Slots";
   
+  bool hydro_pointer_set = false;
   for (auto it : GetTaskList())
     {
       if (dynamic_pointer_cast<InitialState>(it))
@@ -112,8 +113,10 @@ void JetScape::SetPointers()
       if (dynamic_pointer_cast<PreequilibriumDynamics>(it))
 	JetScapeSignalManager::Instance()->SetPreEquilibriumPointer(dynamic_pointer_cast<PreequilibriumDynamics>(it));
  
-      if (dynamic_pointer_cast<FluidDynamics>(it))
-	JetScapeSignalManager::Instance()->SetHydroPointer(dynamic_pointer_cast<FluidDynamics>(it));
+      if (dynamic_pointer_cast<FluidDynamics>(it) && !hydro_pointer_set) {
+          JetScapeSignalManager::Instance()->SetHydroPointer(dynamic_pointer_cast<FluidDynamics>(it));
+          hydro_pointer_set = true;
+      }
   
       if (dynamic_pointer_cast<JetEnergyLossManager>(it))
 	JetScapeSignalManager::Instance()->SetJetEnergyLossManagerPointer(dynamic_pointer_cast<JetEnergyLossManager>(it));

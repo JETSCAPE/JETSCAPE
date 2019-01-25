@@ -87,7 +87,6 @@ int main(int argc, char** argv)
   auto null_predynamics = make_shared<NullPreDynamics> ();
   auto pGun= make_shared<PGun> ();
   auto hydro1 = make_shared<MpiMusic> ();
-  auto hydro2 = make_shared<MpiMusic> ();
   jetscape->Add(trento);
   jetscape->Add(null_predynamics);
   jetscape->Add(pGun);
@@ -114,6 +113,7 @@ int main(int argc, char** argv)
   jetscape->Add(jlossmanager);
   
   // add the second hydro
+  auto hydro2 = make_shared<MpiMusic> ();
   jetscape->Add(hydro2);
 
   // surface sampler
