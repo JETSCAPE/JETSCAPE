@@ -98,37 +98,38 @@ void JetScape::Init()
 
 // kind of cluncky, maybe a better way ... ?
 // Handle signal/slots in JetScape hence avoid passing pointers to sub tasks ...
-void JetScape::SetPointers()
-{
-  
-   // to get hydro pointer for signals, use signal?
-  INFO<<"Set Hydro,JetEnergylossManager and IS Pointers for SignalManager to create Signal/Slots";
-  
-  bool hydro_pointer_set = false;
-  for (auto it : GetTaskList())
-    {
-      if (dynamic_pointer_cast<InitialState>(it))
-	JetScapeSignalManager::Instance()->SetInitialStatePointer(dynamic_pointer_cast<InitialState>(it));
-
-      if (dynamic_pointer_cast<PreequilibriumDynamics>(it))
-	JetScapeSignalManager::Instance()->SetPreEquilibriumPointer(dynamic_pointer_cast<PreequilibriumDynamics>(it));
- 
-      if (dynamic_pointer_cast<FluidDynamics>(it) && !hydro_pointer_set) {
-          JetScapeSignalManager::Instance()->SetHydroPointer(dynamic_pointer_cast<FluidDynamics>(it));
-          hydro_pointer_set = true;
-      }
-  
-      if (dynamic_pointer_cast<JetEnergyLossManager>(it))
-	JetScapeSignalManager::Instance()->SetJetEnergyLossManagerPointer(dynamic_pointer_cast<JetEnergyLossManager>(it));
-      
-      if (dynamic_pointer_cast<HardProcess>(it))
-	JetScapeSignalManager::Instance()->SetHardProcessPointer(dynamic_pointer_cast<HardProcess>(it));
-      
-      if (dynamic_pointer_cast<JetScapeWriter>(it) && it->GetActive())
-	JetScapeSignalManager::Instance()->SetWriterPointer(dynamic_pointer_cast<JetScapeWriter>(it)); 
-
-      if (dynamic_pointer_cast<PartonPrinter>(it))
-        JetScapeSignalManager::Instance()->SetPartonPrinterPointer(dynamic_pointer_cast<PartonPrinter>(it));
+void JetScape::SetPointers() {
+    // to get hydro pointer for signals, use signal?
+    INFO << "Set Hydro,JetEnergylossManager and IS Pointers for SignalManager "
+         << "to create Signal/Slots";
+    
+    bool hydro_pointer_is_set = false;
+    for (auto it : GetTaskList()) {
+        if (dynamic_pointer_cast<InitialState>(it)) {
+            JetScapeSignalManager::Instance()->SetInitialStatePointer(
+                                    dynamic_pointer_cast<InitialState>(it));
+        } else if (dynamic_pointer_cast<PreequilibriumDynamics>(it)) {
+            JetScapeSignalManager::Instance()->SetPreEquilibriumPointer(
+                        dynamic_pointer_cast<PreequilibriumDynamics>(it));
+        } else if (dynamic_pointer_cast<FluidDynamics>(it)
+                   && !hydro_pointer_is_set) {
+            JetScapeSignalManager::Instance()->SetHydroPointer(
+                        dynamic_pointer_cast<FluidDynamics>(it));
+            hydro_pointer_is_set = true;
+        } else if (dynamic_pointer_cast<JetEnergyLossManager>(it)) {
+            JetScapeSignalManager::Instance()->SetJetEnergyLossManagerPointer(
+                        dynamic_pointer_cast<JetEnergyLossManager>(it));
+        } else if (dynamic_pointer_cast<HardProcess>(it)) {
+            JetScapeSignalManager::Instance()->SetHardProcessPointer(
+                        dynamic_pointer_cast<HardProcess>(it));
+        } else if (dynamic_pointer_cast<JetScapeWriter>(it)
+                   && it->GetActive()) {
+            JetScapeSignalManager::Instance()->SetWriterPointer(
+                        dynamic_pointer_cast<JetScapeWriter>(it)); 
+        } else if (dynamic_pointer_cast<PartonPrinter>(it)) {
+            JetScapeSignalManager::Instance()->SetPartonPrinterPointer(
+                        dynamic_pointer_cast<PartonPrinter>(it));
+        }
     }
 }
 
