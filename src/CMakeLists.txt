@@ -25,10 +25,10 @@ FILE(GLOB initialstatesources initialstate/*.cc)
 set (SOURCES  ${SOURCES}  ${initialstatesources} )
 
 #trento needs data tables
-#file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/data_table)
-#file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/initialstate/data_table/
-#  DESTINATION ${CMAKE_BINARY_DIR}/data_table
-#  )
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/data_table)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/initialstate/data_table/
+  DESTINATION ${CMAKE_BINARY_DIR}/data_table
+  )
 
 #pre-equilibrium
 FILE(GLOB preeqsources preequilibrium/*.cc)
