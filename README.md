@@ -250,7 +250,7 @@ sampler and SMASH itself. Therefore, to use it in JetScape,
 ```bash
     mkdir ${JETSCAPE_DIR}/build
     cd ${JETSCAPE_DIR}/build
-    cmake -Dmusic=ON -DiSS=ON -Dsmash=ON ..
+    cmake -Dmusic=ON -DiSS=ON -Dfreestream=ON -Dsmash=ON ..
 ```
 
 To run JetScape test with SMASH:
