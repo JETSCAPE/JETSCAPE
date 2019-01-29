@@ -63,11 +63,11 @@ double GubserHydro::temperature(double e_local) {
 }
 
 
-void GubserHydro::GetHydroInfo(Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
+void GubserHydro::GetHydroInfo(real t, real x, real y, real z,
 //                                  FluidCellInfo* fluid_cell_info_ptr) {
 				 std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr){
     // create the unique FluidCellInfo here
-  fluid_cell_info_ptr=std::make_unique<FluidCellInfo>();
+    fluid_cell_info_ptr=std::make_unique<FluidCellInfo>();
     
     double t_local = static_cast<double>(t);
     double x_local = static_cast<double>(x);

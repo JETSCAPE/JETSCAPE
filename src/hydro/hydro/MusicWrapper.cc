@@ -40,12 +40,12 @@ MpiMusic::~MpiMusic() {
 
 
 void MpiMusic::InitializeHydro(Parameter parameter_list) {
-    JSINFO << "Initialize MUSIC ...";
+    INFO << "Initialize MUSIC ...";
     VERBOSE(8);
     tinyxml2::XMLElement *para =
                     GetHydroXML()->FirstChildElement("MUSIC");
     if (!para) {
-        JSWARN << " : MUSIC not properly initialized in XML file ...";
+        WARN << " : MUSIC not properly initialized in XML file ...";
         exit(-1);
     }
     string input_file = para->FirstChildElement("MUSIC_input_file")->GetText();
@@ -57,14 +57,14 @@ void MpiMusic::InitializeHydro(Parameter parameter_list) {
 
 void MpiMusic::EvolveHydro() {
     VERBOSE(8);
-    JSINFO << "Initialize density profiles in MUSIC ...";
+    INFO << "Initialize density profiles in MUSIC ...";
     std::vector<double> entropy_density = ini->GetEntropyDensityDistribution();
     double dx = ini->GetXStep();
     double dz = ini->GetZStep();
     double z_max  = ini->GetZMax();
     int nz = ini->GetZSize();
     if (pre_eq_ptr == nullptr) {
-        JSWARN << "Missing the pre-equilibrium module ...";
+        WARN << "Missing the pre-equilibrium module ...";
     } else {
         music_hydro_ptr->initialize_hydro_from_jetscape_preequilibrium_vectors(
                 dx, dz, z_max, nz,
@@ -77,10 +77,10 @@ void MpiMusic::EvolveHydro() {
                 pre_eq_ptr->pi33_, pre_eq_ptr->bulk_Pi_);
     }
     
-    JSINFO << "initial density profile dx = " << dx << " fm";
+    INFO << "initial density profile dx = " << dx << " fm";
     hydro_status = INITIALIZED;
     if (hydro_status == INITIALIZED) {
-        JSINFO << "running MUSIC ...";
+        INFO << "running MUSIC ...";
         music_hydro_ptr->run_hydro();
         hydro_status = FINISHED;
     }
