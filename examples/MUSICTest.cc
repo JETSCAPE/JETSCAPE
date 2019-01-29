@@ -37,6 +37,7 @@
 #include "MusicWrapper.h"
 #include "iSpectraSamplerWrapper.h"
 #include "TrentoInitial.h"
+#include "NullPreDynamics.h"
 #include "PGun.h"
 #include "PartonPrinter.h"
 #include "HadronizationManager.h"
@@ -83,9 +84,11 @@ int main(int argc, char** argv)
 
   // Initial conditions and hydro
   auto trento = make_shared<TrentoInitial>();
+  auto null_predynamics = make_shared<NullPreDynamics> ();
   auto pGun= make_shared<PGun> ();
   auto hydro = make_shared<MpiMusic> ();
   jetscape->Add(trento);
+  jetscape->Add(null_predynamics);
   jetscape->Add(pGun);
   jetscape->Add(hydro);
 
