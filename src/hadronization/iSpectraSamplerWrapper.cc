@@ -32,10 +32,10 @@ iSpectraSamplerWrapper::~iSpectraSamplerWrapper() {
 }
 
 void iSpectraSamplerWrapper::InitTask() {
-    INFO << "Initialize a particle sampler (iSS)";
+    JSINFO << "Initialize a particle sampler (iSS)";
     iSS_xml_ = xml_->FirstChildElement("iSS");
     if (!iSS_xml_) {
-        WARN << "No XML section for iSS! Please check the input file~";
+        JSWARN << "No XML section for iSS! Please check the input file~";
         exit(-1);
     }
     string input_file = (
@@ -93,7 +93,7 @@ void iSpectraSamplerWrapper::InitTask() {
 void iSpectraSamplerWrapper::Exec() {
     int status = iSpectraSampler_ptr_->read_in_FO_surface();
     if (status != 0) {
-        WARN << "Some errors happened in reading in the hyper-surface";
+        JSWARN << "Some errors happened in reading in the hyper-surface";
         exit(-1);
     }
 
@@ -103,7 +103,7 @@ void iSpectraSamplerWrapper::Exec() {
     
     status = iSpectraSampler_ptr_->generate_samples();
     if (status != 0) {
-        WARN << "Some errors happened in generating particle samples";
+        JSWARN << "Some errors happened in generating particle samples";
         exit(-1);
     }
     PassHadronListToJetscape();

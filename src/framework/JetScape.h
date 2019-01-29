@@ -72,8 +72,8 @@ class JetScape : public JetScapeModuleBase
    */
   inline void SetNReuseHydro( const unsigned int n_reuse_hydro ){
     if ( !GetReuseHydro() ){
-      WARN << "Number of hydro reusals set, but reusal not turned on.";
-      WARN << "Try jetscape->SetReuseHydro (true);";
+      JSWARN << "Number of hydro reusals set, but reusal not turned on.";
+      JSWARN << "Try jetscape->SetReuseHydro (true);";
     }
     n_reuse_hydro_ = n_reuse_hydro;
   }
