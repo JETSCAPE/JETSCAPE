@@ -31,14 +31,8 @@
 #include "JetEnergyLoss.h"
 #include "JetEnergyLossManager.h"
 #include "SoftHadronWriter.h"
-//#ifdef USE_HEPMC
-//#include "JetScapeWriterHepMC.h"
-//#endif
 
 // User modules derived from jetscape framework clasess
-#include "AdSCFT.h"
-#include "Matter.h"
-#include "Martini.h"
 #include "MusicWrapper.h"
 // Make sure that nasty MUSIC macros are neutralized
 #undef PI
@@ -52,13 +46,11 @@
 #undef gmn
 #undef limit
 
-#include "iSpectraSamplerWrapper.h"
+#include "iS3DWrapper.h"
 #include "TrentoInitial.h"
-#include "PGun.h"
-#include "PartonPrinter.h"
-#include "HadronizationManager.h"
-#include "Hadronization.h"
-#include "ColoredHadronization.h"
+//#include "HadronizationManager.h"
+//#include "Hadronization.h"
+//#include "ColoredHadronization.h"
 
 #include <chrono>
 #include <thread>
@@ -67,15 +59,16 @@ using namespace std;
 
 using namespace Jetscape;
 
-// Forward declaration
 void Show();
 
 // -------------------------------------
 
 int main(int argc, char** argv)
 {
-  clock_t t; t = clock();
-  time_t start, end; time(&start);
+  clock_t t; 
+  t = clock();
+  time_t start, end; 
+  time(&start);
 
   cout<<endl;
 
@@ -95,8 +88,8 @@ int main(int argc, char** argv)
   jetscape->SetNReuseHydro (0);
 
   // surface sampler
-  auto iSS = make_shared<iSpectraSamplerWrapper> ();
-  jetscape->Add(iSS);
+  auto iS3D = make_shared<iS3DWrapper> ();
+  jetscape->Add(iS3D);
 
   // afterburner
   auto smash = make_shared<SmashWrapper> ();
@@ -104,18 +97,14 @@ int main(int argc, char** argv)
 
   // Output
   auto writer= make_shared<SoftHadronWriterAscii> ("final_smash_hadrons.dat");
-  // same as JetScapeWriterAscii but gzipped
-  // auto writer= make_shared<SoftHadronWriterAsciiGZ> ("final_smash_hadrons.gz");
-   jetscape->Add(writer);
+  jetscape->Add(writer);
 
   // Intialize all modules tasks
   jetscape->Init();
 
   // Run JetScape with all task/modules as specified ...
   jetscape->Exec();
-
-  // "dummy" so far ...
-  // Most thinkgs done in write and clear ...
+  
   jetscape->Finish();
 
   INFO_NICE<<"Finished!";

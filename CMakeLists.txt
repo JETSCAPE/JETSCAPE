@@ -422,10 +422,10 @@ if ( music AND iSS AND smash )
   target_link_libraries(SMASHTest JetScape ${SMASH_LIBRARIES} ${MPI_LIBRARIES} ${GSL_LIBRARIES})
 endif ( music AND iSS AND smash )
 
-if (iSS AND smash)
+if (iS3D AND smash)
    add_executable(SAMPLER_AFTERBURNER ./examples/SAMPLER_AFTERBURNER.cc)
    target_link_libraries(SAMPLER_AFTERBURNER JetScape ${SMASH_LIBRARIES} ${MPI_LIBRARIES} ${GSL_LIBRARIES})
-endif (iSS AND smash)
+endif (iS3D AND smash)
 
 if (iSS)
    add_executable(iSSSamplingOnly ./examples/iSSSamplingOnly.cc)

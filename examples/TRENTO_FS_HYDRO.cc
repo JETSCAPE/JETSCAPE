@@ -27,15 +27,9 @@
 
 //User modules derived from jetscape framework clasess
 //to be used to run Jetscape ...
-#include "AdSCFT.h"
-#include "Matter.h"
-#include "Martini.h"
 #include "FreestreamMilneWrapper.h"
 #include "MusicWrapper.h"
 #include "TrentoInitial.h"
-#include "PGun.h"
-#include "PythiaGun.h"
-#include "PartonPrinter.h"
 
 #include <chrono>
 #include <thread>
@@ -51,8 +45,10 @@ void Show();
 
 int main(int argc, char** argv)
 {
-  clock_t t; t = clock();
-  time_t start, end; time(&start);
+  clock_t t; 
+  t = clock();
+  time_t start, end; 
+  time(&start);
 
   cout<<endl;
 
@@ -77,11 +73,6 @@ int main(int argc, char** argv)
 
   // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
-  //auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");
-#ifdef USE_HEPMC
-  //auto writer= make_shared<JetScapeWriterHepMC> ("test_out.dat");
-#endif
-
 
   //Remark: For now modules have to be added
   //in proper "workflow" order (can be defined via xml and sorted if necessary)
@@ -90,8 +81,6 @@ int main(int argc, char** argv)
 
   jetscape->Add(freestream);
 
-  //Some modifications will be needed for reusing hydro events, so far
-  //simple test hydros always executed "on the fly" ...
   jetscape->Add(hydro);
 
   jetscape->Add(writer);
@@ -108,9 +97,6 @@ int main(int argc, char** argv)
 
   INFO_NICE<<"Finished!";
   cout<<endl;
-
-  // wait for 5s
-  //std::this_thread::sleep_for(std::chrono::milliseconds(500000));
 
   t = clock() - t;
   time(&end);
