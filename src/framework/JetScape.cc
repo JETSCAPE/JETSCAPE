@@ -55,7 +55,7 @@ void JetScape::Init()
 {
   Show();
   
-  INFO<<BOLDRED<<"Intialize JetScape ...";
+  JSINFO<<BOLDRED<<"Intialize JetScape ...";
   
   JetScapeXML::Instance()->OpenXMLFile(GetXMLFileName());
   
@@ -92,7 +92,7 @@ void JetScape::Init()
   // Has to be called explicitly since not really fully recursively (if ever needed)
    // So --> JetScape is "Task Manager" of all modules ...
    
-   INFO<<"Found "<<GetNumberOfTasks()<<" Modules Initialize them ... ";
+   JSINFO<<"Found "<<GetNumberOfTasks()<<" Modules Initialize them ... ";
    JetScapeTask::InitTasks();
 }
 
@@ -100,7 +100,7 @@ void JetScape::Init()
 // Handle signal/slots in JetScape hence avoid passing pointers to sub tasks ...
 void JetScape::SetPointers() {
     // to get hydro pointer for signals, use signal?
-    INFO << "Set Hydro,JetEnergylossManager and IS Pointers for SignalManager "
+    JSINFO << "Set Hydro,JetEnergylossManager and IS Pointers for SignalManager "
          << "to create Signal/Slots";
     
     bool hydro_pointer_is_set = false;
@@ -129,14 +129,17 @@ void JetScape::SetPointers() {
         } else if (dynamic_pointer_cast<PartonPrinter>(it)) {
             JetScapeSignalManager::Instance()->SetPartonPrinterPointer(
                         dynamic_pointer_cast<PartonPrinter>(it));
+        } else if (dynamic_pointer_cast<SoftParticlization>(it)) {
+            JetScapeSignalManager::Instance()->SetSoftParticlizationPointer(
+                        dynamic_pointer_cast<SoftParticlization>(it));
         }
     }
 }
 
 void JetScape::Exec()
 {
-  INFO<<BOLDRED<<"Run JetScape ...";
-  INFO<<BOLDRED<<"Number of Events = "<<GetNumberOfEvents();
+  JSINFO<<BOLDRED<<"Run JetScape ...";
+  JSINFO<<BOLDRED<<"Number of Events = "<<GetNumberOfEvents();
   
   // JetScapeTask::ExecuteTasks(); Has to be called explicitly since not really fully recursively (if ever needed)
   // --> JetScape is "Task Manager" of all modules ...
@@ -153,7 +156,7 @@ void JetScape::Exec()
   
   for (int i=0;i<GetNumberOfEvents();i++)
     {
-      INFO<<BOLDRED<<"Run Event # = "<<i;
+      JSINFO<<BOLDRED<<"Run Event # = "<<i;
       JSDEBUG<<"Found "<<GetNumberOfTasks()<<" Modules Execute them ... ";
 
       // First run all tasks
@@ -194,7 +197,7 @@ void JetScape::Exec()
       // For reusal, deactivate task after it has finished but before it gets cleaned up.
       if (reuse_hydro_) {
 	if (n_reuse_hydro_ <= 0) {
-	  WARN << " reuse_hydro is set, but n_reuse_hydro=" << n_reuse_hydro_;
+	  JSWARN << " reuse_hydro is set, but n_reuse_hydro=" << n_reuse_hydro_;
 	  throw std::runtime_error ("Incompatible reusal settings.");
 	}
 	for (auto it : GetTaskList()) {
@@ -220,7 +223,7 @@ void JetScape::Exec()
 
 void JetScape::Finish()
 {
-  INFO<<BOLDBLACK<<"JetScape finished after "<<GetNumberOfEvents()<<" events!";
+  JSINFO<<BOLDBLACK<<"JetScape finished after "<<GetNumberOfEvents()<<" events!";
   JSDEBUG<<"More infos wrap up/saving to file/closing file ...";
 
   // same as in Init() and Exec() ...

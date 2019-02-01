@@ -43,26 +43,26 @@ ElossValidate::~ElossValidate()
 
 void ElossValidate::Init()
 {
-  INFO<<"Intialize ElossValidate ...";
+  JSINFO<<"Intialize ElossValidate ...";
 
   // Redundant (get this from Base) quick fix here for now
   tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );
   if ( !eloss ) {
-    WARN << "Couldn't find tag Eloss";
+    JSWARN << "Couldn't find tag Eloss";
     throw std::runtime_error ("Couldn't find tag Eloss");    
   }
   tinyxml2::XMLElement *xmle=eloss->FirstChildElement("ElossValidate");
   if ( !xmle ) {
-    WARN << "Couldn't find tag Eloss -> ElossValidate";
+    JSWARN << "Couldn't find tag Eloss -> ElossValidate";
     throw std::runtime_error ("Couldn't find tag Eloss -> ElossValidate");    
   }
 
   if ( !xmle->FirstChildElement( "name" ) ){
-    WARN << "Couldn't find tag Eloss -> ElossValidate";
+    JSWARN << "Couldn't find tag Eloss -> ElossValidate";
     throw std::runtime_error ("Couldn't find tag Eloss -> ElossValidate -> name");    
   }
   string s = xmle->FirstChildElement( "name" )->GetText();
-  INFO << s << " to be initializied ...";
+  JSINFO << s << " to be initializied ...";
   
 }
 
@@ -88,16 +88,16 @@ void ElossValidate::DoEnergyLoss(double deltaT, double time, double Q2, vector<P
   double Time = time*fmToGeVinv;
   double deltaTime = delT*fmToGeVinv;
     
-  INFO << " the time in fm is " << time << " The time in GeV-1 is " << Time ;
-  INFO << " pid = " << pIn[0].pid() << " E = " << pIn[0].e() << " px = " << pIn[0].p(1) << " py = " << pIn[0].p(2) << "  pz = " << pIn[0].p(3) << " virtuality = " << pIn[0].t() << " form_time in fm = " << pIn[0].form_time()/fmToGeVinv ;
-  INFO << " color = " << pIn[0].color() << " anti-color = " << pIn[0].anti_color();
+  JSINFO << " the time in fm is " << time << " The time in GeV-1 is " << Time ;
+  JSINFO << " pid = " << pIn[0].pid() << " E = " << pIn[0].e() << " px = " << pIn[0].p(1) << " py = " << pIn[0].p(2) << "  pz = " << pIn[0].p(3) << " virtuality = " << pIn[0].t() << " form_time in fm = " << pIn[0].form_time()/fmToGeVinv ;
+  JSINFO << " color = " << pIn[0].color() << " anti-color = " << pIn[0].anti_color();
 
   
   for (int i=0;i<pIn.size();i++)
     {
       TakeResponsibilityFor ( pIn[i] ); // Generate error if another module already has responsibility.
-      INFO << " Parton Q2= " << pIn[i].t();
-      INFO << " Parton Id= " << pIn[i].pid() << " and mass= " << pIn[i].restmass();
+      JSINFO << " Parton Q2= " << pIn[i].t();
+      JSINFO << " Parton Id= " << pIn[i].pid() << " and mass= " << pIn[i].restmass();
       
       double velocity[4];
       velocity[0] = 1.0;
@@ -109,13 +109,13 @@ void ElossValidate::DoEnergyLoss(double deltaT, double time, double Q2, vector<P
 	pIn[i].set_jet_v(velocity);
 	pIn[i].set_t(QS*2.); 
 	pIn[i].set_mean_form_time();
-	INFO << " UPDATED Parton Q2= " << pIn[i].t();
+	JSINFO << " UPDATED Parton Q2= " << pIn[i].t();
       }	
 	
       if (pIn[i].t()>=QS ) {
-	INFO << " ************ ";
-	INFO << " DOING ELOSS  ";
-	INFO << " ************ ";
+	JSINFO << " ************ ";
+	JSINFO << " DOING ELOSS  ";
+	JSINFO << " ************ ";
 
 	
 	// Split once

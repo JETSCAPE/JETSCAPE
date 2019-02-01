@@ -42,7 +42,7 @@ using std::make_shared;
 
 // define nicer macros to be used for logging ...
 /*
-#define INFO  JetScapeLogger::Instance()->Info()<<" " //<<__PRETTY_FUNCTION__<<" : "
+#define JSINFO  JetScapeLogger::Instance()->Info()<<" " //<<__PRETTY_FUNCTION__<<" : "
 #define INFO_NICE  JetScapeLogger::Instance()->InfoNice()
 #define JSDEBUG JetScapeLogger::Instance()->Debug()<<__PRETTY_FUNCTION__<<" : "
 #define DEBUGTHREAD JetScapeLogger::Instance()->DebugThread()<<__PRETTY_FUNCTION__<<" : "
@@ -51,12 +51,12 @@ using std::make_shared;
 #define VERBOSESHOWER(l) JetScapeLogger::Instance()->VerboseShower(l)<<__PRETTY_FUNCTION__<<" : "
 #define VERBOSEPARTON(l,p) JetScapeLogger::Instance()->VerboseParton(l,p)<<__PRETTY_FUNCTION__<<" : "
 #define VERBOSEPVERTEX(l,v) JetScapeLogger::Instance()->VerboseVertex(l,v)<<__PRETTY_FUNCTION__<<" : "
-#define WARN JetScapeLogger::Instance()->Warn()<<__PRETTY_FUNCTION__<<" : "
+#define JSWARN JetScapeLogger::Instance()->Warn()<<__PRETTY_FUNCTION__<<" : "
 */
 
 // define nicer macros to be used for logging and check if they should print stuff ...
 // otherwise quite a performance hit ...
-#define INFO  JetScapeLogger::Instance()->Info()<<" " //<<__PRETTY_FUNCTION__<<" : "
+#define JSINFO  JetScapeLogger::Instance()->Info()<<" " //<<__PRETTY_FUNCTION__<<" : "
 #define INFO_NICE  JetScapeLogger::Instance()->InfoNice()
 #define JSDEBUG if (JetScapeLogger::Instance()->GetDebug()) JetScapeLogger::Instance()->Debug()<<__PRETTY_FUNCTION__<<" : "
 #define DEBUGTHREAD if (JetScapeLogger::Instance()->GetDebug()) JetScapeLogger::Instance()->DebugThread()<<__PRETTY_FUNCTION__<<" : "
@@ -65,7 +65,7 @@ using std::make_shared;
 #define VERBOSESHOWER(l) if (l<JetScapeLogger::Instance()->GetVerboseLevel()) JetScapeLogger::Instance()->VerboseShower(l)<<__PRETTY_FUNCTION__<<" : "
 #define VERBOSEPARTON(l,p) if (l<JetScapeLogger::Instance()->GetVerboseLevel()) JetScapeLogger::Instance()->VerboseParton(l,p)<<__PRETTY_FUNCTION__<<" : "
 #define VERBOSEPVERTEX(l,v) if (l<JetScapeLogger::Instance()->GetVerboseLevel()) JetScapeLogger::Instance()->VerboseVertex(l,v)<<__PRETTY_FUNCTION__<<" : "
-#define WARN JetScapeLogger::Instance()->Warn()<<__PRETTY_FUNCTION__<<" : "
+#define JSWARN JetScapeLogger::Instance()->Warn()<<__PRETTY_FUNCTION__<<" : "
 
 namespace Jetscape {
 

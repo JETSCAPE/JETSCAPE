@@ -141,7 +141,7 @@ int main(int argc, char** argv)
 
 void AnalyzeGraph(shared_ptr<PartonShower> mS)
 {
-  INFO<<"Some GTL graph/shower analysis/dfs search output:";
+  JSINFO<<"Some GTL graph/shower analysis/dfs search output:";
 
   // quick and dirty ...
   dfs search;

@@ -103,16 +103,16 @@ void JetEnergyLoss::Init()
 {
   JetScapeModuleBase::Init();
 
-  INFO<<"Intialize JetEnergyLoss ..."; 
+  JSINFO<<"Intialize JetEnergyLoss ..."; 
 
   tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );
   if ( !eloss ) {
-    WARN << "Couldn't find tag Eloss";
+    JSWARN << "Couldn't find tag Eloss";
     throw std::runtime_error ("Couldn't find tag Eloss");
   }
   tinyxml2::XMLElement *mutex=eloss->FirstChildElement("mutex");
   if ( !mutex ) {
-    WARN << "Couldn't find tag Eloss -> mutex";
+    JSWARN << "Couldn't find tag Eloss -> mutex";
     throw std::runtime_error ("Couldn't find tag Eloss -> mutex");
   }
 
@@ -131,7 +131,7 @@ void JetEnergyLoss::Init()
           {
             if(!(mutex_ptr->CheckMutex(GetTaskList())))
             {
-	      WARN<<"Mutual exclusive Energy-Loss modules attached together!";
+	      JSWARN<<"Mutual exclusive Energy-Loss modules attached together!";
               throw std::runtime_error("Fix it by attaching one of them.");
 	    }
           }
@@ -143,25 +143,25 @@ void JetEnergyLoss::Init()
 
   if (!eloss)
     {
-      WARN << " : Not a valid JetScape Energy Loss XML section in file!";
+      JSWARN << " : Not a valid JetScape Energy Loss XML section in file!";
       exit(-1);
     }
   else
     {
       eloss->FirstChildElement("deltaT")->QueryDoubleText(&deltaT);
       eloss->FirstChildElement("maxT")->QueryDoubleText(&maxT);
-      INFO<<"Eloss shower with deltaT = "<<deltaT<<" and maxT = "<<maxT;
+      JSINFO<<"Eloss shower with deltaT = "<<deltaT<<" and maxT = "<<maxT;
     }
   
   if (GetNumberOfTasks()<1)
     {
-      WARN << " : No valid Energy Loss modules found ...";
+      JSWARN << " : No valid Energy Loss modules found ...";
       exit(-1);
     }
 
   inP=nullptr;pShower=nullptr;
   
-  INFO<<"Found "<<GetNumberOfTasks()<<" Eloss Tasks/Modules Initialize them ... ";
+  JSINFO<<"Found "<<GetNumberOfTasks()<<" Eloss Tasks/Modules Initialize them ... ";
   JetScapeTask::InitTasks();
 }
 
@@ -209,7 +209,7 @@ void JetEnergyLoss::DoShower()
       
       for (int i=0;i<pIn.size();i++)
 	{
-	  // INFO << pIn.at(i).edgeid();
+	  // JSINFO << pIn.at(i).edgeid();
 	  pInTempModule.push_back(pIn[i]);
 	  
 	  SentInPartons(deltaT,currentTime,pIn[i].pt(),pInTempModule,pOutTemp);
@@ -301,7 +301,7 @@ void JetEnergyLoss::DoShower()
 
 void JetEnergyLoss::Exec()
 {
-  INFO<<"Run JetEnergyLoss ...";
+  JSINFO<<"Run JetEnergyLoss ...";
   VERBOSE(1)<<"Found "<<GetNumberOfTasks()<<" Eloss Tasks/Modules Execute them ... ";
   //DEBUGTHREAD<<"Task Id = "<<this_thread::get_id()<<" | Run JetEnergyLoss ...";
   //DEBUGTHREAD<<"Task Id = "<<this_thread::get_id()<<" | Found "<<GetNumberOfTasks()<<" Eloss Tasks/Modules Execute them ... ";
@@ -343,7 +343,7 @@ void JetEnergyLoss::Exec()
        }
     }
   else
-    {WARN<<"NO Initial Hard Parton for Parton shower received ...";}  
+    {JSWARN<<"NO Initial Hard Parton for Parton shower received ...";}  
 
   //DEBUGTHREAD<<"Task Id = "<<this_thread::get_id()<<" Finished!";
   //JetScapeTask::ExecuteTasks(); // prevent Further modules to be execute, everything done by JetEnergyLoss ... (also set the no active flag ...!?)

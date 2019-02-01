@@ -266,7 +266,12 @@ namespace Jetscape {
     string GetController() const {return controller_;};
     /** Check whether we have a responsible (Eloss) module */
     bool GetControlled() const {return controlled_;};
-
+    
+    // give it a static pythia to look up particle properties
+    // Be a bit careful with it!
+    // Init is never called, and this object is not configured. All it can do is look up
+    // in its original Data table
+    static Pythia8::Pythia InternalHelperPythia;
     
   protected:
   
@@ -284,7 +289,7 @@ namespace Jetscape {
     // Be a bit careful with it!
     // Init is never called, and this object is not configured. All it can do is look up
     // in its original Data table
-    static Pythia8::Pythia InternalHelperPythia;
+    //static Pythia8::Pythia InternalHelperPythia;
 
     /// check whether a module claimed responsibility of this particle
     bool controlled_=false;    

@@ -35,11 +35,11 @@ FreestreamMilneWrapper::~FreestreamMilneWrapper() {
 
 
 void FreestreamMilneWrapper::InitializePreequilibrium(PreEquilibriumParameterFile parameter_list) {
-    INFO << "Initialize freestream-milne ...";
+    JSINFO << "Initialize freestream-milne ...";
     VERBOSE(8);
     tinyxml2::XMLElement *para = GetPreequilibriumXML()->FirstChildElement("FreestreamMilne");
     if (!para) {
-      WARN << " : freestream-milne not properly initialized in XML file ...";
+      JSWARN << " : freestream-milne not properly initialized in XML file ...";
       exit(-1);
     }
     string input_file = para->FirstChildElement("freestream_input_file")->GetText();//is this necessary? if we just force the user to have the 'freestream_input' file in the correct directory
@@ -50,14 +50,14 @@ void FreestreamMilneWrapper::InitializePreequilibrium(PreEquilibriumParameterFil
 
 void FreestreamMilneWrapper::EvolvePreequilibrium() {
     VERBOSE(8);
-    INFO << "Initialize energy density profile in freestream-milne ...";
+    JSINFO << "Initialize energy density profile in freestream-milne ...";
     // grab initial energy density from vector from initial state module
     std::vector<double> entropy_density = ini->GetEntropyDensityDistribution(); //note that this is the energy density when read by freestream-milne, not actually the entropy density!
     std::vector<float> entropy_density_float(entropy_density.begin(), entropy_density.end());
     fsmilne_ptr->initialize_from_vector(entropy_density_float);
     preequilibrium_status_ = INIT;
     if (preequilibrium_status_ == INIT) {
-        INFO << "running freestream-milne ...";
+        JSINFO << "running freestream-milne ...";
         // evolve the medium via freestreaming
         fsmilne_ptr->run_freestream_milne();
         preequilibrium_status_ = DONE;

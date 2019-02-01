@@ -58,7 +58,7 @@ Martini::~Martini()
 
 void Martini::Init()
 {
-  INFO<<"Intialize Martini ...";
+  JSINFO<<"Intialize Martini ...";
 
   // Redundant (get this from Base) quick fix here for now
   tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );
@@ -70,7 +70,7 @@ void Martini::Init()
   eloss->FirstChildElement("deltaT")->QueryDoubleText(&deltaT);
 
   if ( deltaT > Martini_deltaT_Max ) {
-    WARN << "Timestep for Martini ( deltaT = " << deltaT << " ) is too large. "
+    JSWARN << "Timestep for Martini ( deltaT = " << deltaT << " ) is too large. "
 	 << "Please choose a detaT smaller than or equal to 0.01 in the XML file.";
     throw std::runtime_error("Martini not properly initialized in XML file ...");
   }
@@ -587,7 +587,7 @@ int Martini::DetermineProcess(double pRest, double T, double deltaTRest, int Id)
 
       // warn if total probability exceeds 1
       if (totalQuarkProb > 1.){
-	WARN << " : Total Probability for quark processes exceeds 1 ("
+	JSWARN << " : Total Probability for quark processes exceeds 1 ("
 	     << totalQuarkProb << "). "
 	     << " : Most likely this means you should choose a smaller deltaT in the xml"
 	     << " (e.g. 0.01).";
@@ -656,7 +656,7 @@ int Martini::DetermineProcess(double pRest, double T, double deltaTRest, int Id)
 
       // warn if total probability exceeds 1
       if (totalGluonProb > 1.){
-	WARN << " : Total Probability for gluon processes exceeds 1 ("
+	JSWARN << " : Total Probability for gluon processes exceeds 1 ("
 	     << totalGluonProb << "). "
 	     << " : Most likely this means you should choose a smaller deltaT in the xml"
 	     << " (e.g. 0.01).";
@@ -949,7 +949,7 @@ double Martini::getNewMomentumRad(double pRest, double T, int process)
     }
   else
     {
-      WARN << "Invalid process number (" << process << ")";
+      JSWARN << "Invalid process number (" << process << ")";
     }
 
   return kNew*T;  // kNew*T is in [GeV]
@@ -1781,7 +1781,7 @@ double Martini::getEnergyTransfer(double pRest, double T, int process)
     }
   else
     {
-      WARN << "Invalid process number (" << process << ")";
+      JSWARN << "Invalid process number (" << process << ")";
 
       omega = 0.;
     }
@@ -1825,7 +1825,7 @@ double Martini::getMomentumTransfer(double pRest, double omega, double T, int pr
 	}
       else
 	{
-	  WARN << "Invalid process number (" << process << ")";
+	  JSWARN << "Invalid process number (" << process << ")";
 
 	  A = 0.;
 	  B = 0.;
@@ -1918,7 +1918,7 @@ double Martini::areaOmega(double u, int posNegSwitch, int process)
     }
   else
     {
-      WARN << "Invalid process number (" << process << ")";
+      JSWARN << "Invalid process number (" << process << ")";
     }
 
   return 0.;
@@ -1943,7 +1943,7 @@ double Martini::areaQ(double u, double omega, int process)
     }
   else
     {
-      WARN << "Invalid process number (" << process << ")";
+      JSWARN << "Invalid process number (" << process << ")";
 
       A = 0.;
       B = 0.;
@@ -2041,8 +2041,8 @@ void Martini::readRadiativeRate(Gamma_info *dat, dGammas *Gam)
   string filename;
   filename = PathToTables+"radgamma";
 
-  INFO << "Reading rates of inelastic collisions from file ";
-  INFO << filename.c_str() << " ... ";
+  JSINFO << "Reading rates of inelastic collisions from file ";
+  JSINFO << filename.c_str() << " ... ";
   size_t bytes_read;
 
   rfile = fopen(filename.c_str(), "rb"); 
@@ -2092,14 +2092,14 @@ void Martini::readElasticRateOmega()
   filename[0] = PathToTables + "logEnDtrqq";
   filename[1] = PathToTables + "logEnDtrqg";
   
-  INFO << "Reading rates of elastic collisions from files";
-  INFO << filename[0];
-  INFO << filename[1] << " ...";
+  JSINFO << "Reading rates of elastic collisions from files";
+  JSINFO << filename[0];
+  JSINFO << filename[1] << " ...";
 
   fin.open(filename[0].c_str(), ios::in);
   if(!fin)
     {
-      WARN << "[readElasticRateOmega]: ERROR: Unable to open file " << filename[0];
+      JSWARN << "[readElasticRateOmega]: ERROR: Unable to open file " << filename[0];
       throw std::runtime_error("[readElasticRateQ]: ERROR: Unable to open ElasticRateOmega file");
     }
 
@@ -2118,7 +2118,7 @@ void Martini::readElasticRateOmega()
   fin.open(filename[1].c_str(), ios::in);
   if(!fin)
     {
-      WARN << "[readElasticRateOmega]: ERROR: Unable to open file " << filename[1];
+      JSWARN << "[readElasticRateOmega]: ERROR: Unable to open file " << filename[1];
       throw std::runtime_error("[readElasticRateQ]: ERROR: Unable to open ElasticRateOmega file");
     }
 
@@ -2147,14 +2147,14 @@ void Martini::readElasticRateQ()
   filename[0] = PathToTables + "logEnDqtrqq";
   filename[1] = PathToTables + "logEnDqtrqg";
   
-  INFO << "Reading rates of elastic collisions from files";
-  INFO << filename[0];
-  INFO << filename[1] << " ...";
+  JSINFO << "Reading rates of elastic collisions from files";
+  JSINFO << filename[0];
+  JSINFO << filename[1] << " ...";
 
   fin.open(filename[0].c_str(), ios::in);
   if(!fin)
     {
-      WARN << "[readElasticRateQ]: ERROR: Unable to open file " << filename[0];
+      JSWARN << "[readElasticRateQ]: ERROR: Unable to open file " << filename[0];
       throw std::runtime_error("[readElasticRateQ]: ERROR: Unable to open ElasticRateQ file");
     }
 
@@ -2174,7 +2174,7 @@ void Martini::readElasticRateQ()
   fin.open(filename[1].c_str(),ios::in);
   if(!fin)
     {
-      WARN << "[readElasticRateQ]: ERROR: Unable to open file " << filename[1];
+      JSWARN << "[readElasticRateQ]: ERROR: Unable to open file " << filename[1];
       throw std::runtime_error("[readElasticRateQ]: ERROR: Unable to open ElasticRateQ file");
     }
   
@@ -2753,8 +2753,8 @@ double LambertW(double z)
 
   if(z <= -exp(-1.0))
     {
-      WARN << "LambertW is not defined for z = " << z;
-      WARN << "z needs to be bigger than " << -exp(-1.0);
+      JSWARN << "LambertW is not defined for z = " << z;
+      JSWARN << "z needs to be bigger than " << -exp(-1.0);
       throw std::runtime_error("LambertW small z problem");
     }
 
@@ -2777,12 +2777,12 @@ double LambertW(double z)
       n++;
       if(n > 99) 
 	{
-	  WARN << "LambertW is not converging after 100 iterations.";
-	  WARN << "LambertW: z = " << z;
-	  WARN << "LambertW: w_old = " << w_old;
-	  WARN << "LambertW: w_new = " << w_new;
-	  WARN << "LambertW: ratio = " << ratio;
-	  throw std::runtime_error("LambertW not conversing");
+          JSWARN << "LambertW is not converging after 100 iterations.";
+          JSWARN << "LambertW: z = " << z;
+          JSWARN << "LambertW: w_old = " << w_old;
+          JSWARN << "LambertW: w_new = " << w_new;
+          JSWARN << "LambertW: ratio = " << ratio;
+          throw std::runtime_error("LambertW not conversing");
 	}
     }
 
