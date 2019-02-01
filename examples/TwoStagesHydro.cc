@@ -35,6 +35,7 @@
 #include "Matter.h"
 #include "Martini.h"
 #include "MusicWrapper.h"
+#include "causal_liquefier.h"
 #include "iSpectraSamplerWrapper.h"
 #include "TrentoInitial.h"
 #include "NullPreDynamics.h"
@@ -86,10 +87,13 @@ int main(int argc, char** argv)
   auto trento = make_shared<TrentoInitial>();
   auto null_predynamics = make_shared<NullPreDynamics> ();
   auto pGun= make_shared<PGun> ();
+  auto myliquefier1 = make_shared<Causal_Liquefier> ();
   auto hydro1 = make_shared<MpiMusic> ();
   jetscape->Add(trento);
   jetscape->Add(null_predynamics);
   jetscape->Add(pGun);
+
+  jetscape->Add(myliquefier1);
 
   // add the first hydro
   jetscape->Add(hydro1);
@@ -112,6 +116,10 @@ int main(int argc, char** argv)
   jlossmanager->Add(jloss);  
   jetscape->Add(jlossmanager);
   
+
+  auto myliquefier2 = make_shared<Causal_Liquefier> ();
+  jetscape->Add(myliquefier2);
+
   // add the second hydro
   auto hydro2 = make_shared<MpiMusic> ();
   jetscape->Add(hydro2);
