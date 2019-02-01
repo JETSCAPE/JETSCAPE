@@ -24,6 +24,7 @@
 #include "JetEnergyLossManager.h"
 #include "HadronizationManager.h"
 #include "Hadronization.h"
+#include "Liquefier.h"
 #include "FluidDynamics.h"
 #include "HardProcess.h"
 #include "JetScapeWriter.h"
@@ -52,6 +53,9 @@ class JetScapeSignalManager //: public sigslot::has_slots<sigslot::multi_threade
   void SetPreEquilibriumPointer(shared_ptr<PreequilibriumDynamics> m_pre_eq) {pre_equilibrium=m_pre_eq;}
   weak_ptr<PreequilibriumDynamics> GetPreEquilibriumPointer() {return pre_equilibrium;}
  
+  void SetLiquefierPointer(shared_ptr<Liquefier> m_liquefier) {liquefier=m_liquefier;}
+  weak_ptr<Liquefier> GetLiquefierPointer() {return liquefier;}
+
   void SetHydroPointer(shared_ptr<FluidDynamics> m_hydro) {hydro=m_hydro;}
   weak_ptr<FluidDynamics> GetHydroPointer() {return hydro;}
 
@@ -80,6 +84,8 @@ class JetScapeSignalManager //: public sigslot::has_slots<sigslot::multi_threade
   void ConnectSentInPartonsSignal(shared_ptr<JetEnergyLoss> j,shared_ptr<JetEnergyLoss> j2);
   void ConnectGetFinalPartonListSignal(shared_ptr<HadronizationManager> hm);
   void ConnectTransformPartonsSignal(shared_ptr<Hadronization> h,shared_ptr<Hadronization> h2); 
+
+  void ConnectGetHydroSourceSignal(shared_ptr<FluidDynamics> myhydro);
  
   void DisconnectSignal() {}; // to be implememted if needed maybe for Eloss ...!???
 
@@ -103,6 +109,7 @@ class JetScapeSignalManager //: public sigslot::has_slots<sigslot::multi_threade
 
   weak_ptr<InitialState> initial_state;
   weak_ptr<PreequilibriumDynamics> pre_equilibrium;
+  weak_ptr<Liquefier> liquefier;
   weak_ptr<FluidDynamics> hydro;
   weak_ptr<JetEnergyLossManager> jloss;
   weak_ptr<HardProcess> hardp;

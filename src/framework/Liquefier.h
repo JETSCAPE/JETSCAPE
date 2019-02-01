@@ -31,6 +31,8 @@ class Liquefier : public JetScapeModuleBase {
      void Init();
      void Exec();
 
+     void get_source(const double t, double &j0);
+
 };
 
 };

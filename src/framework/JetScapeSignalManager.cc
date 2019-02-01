@@ -124,6 +124,13 @@ void JetScapeSignalManager::ConnectTransformPartonsSignal(shared_ptr<Hadronizati
       num_TransformPartons++;
     }
 }
+
+void JetScapeSignalManager::ConnectGetHydroSourceSignal(shared_ptr<FluidDynamics> myhydro) {
+    auto hpp = GetHydroPointer().lock();
+    if (hpp) {
+        myhydro->GetHydroSource.connect(hpp.get(),&Liquefier::get_source);
+    }
+}
 			   
 void JetScapeSignalManager::CleanUp()
 {

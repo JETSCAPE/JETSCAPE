@@ -374,6 +374,10 @@ namespace Jetscape {
     virtual void UpdateEnergyDeposit(int t, double edop);
     /// slots for "jet" signals (future)
     virtual void GetEnergyDensity(int t,double& edensity);
+    
+    /// slots for "jet" signals
+    sigslot::signal2<double, double&, multi_threaded_local> GetHydroSource;
+    void CreateSignalSlots();
 
     /** @return parameter_list A pointer to the class Parameter which contains a file name for the fluid dynamics task.
 	@sa Implementation of the class Parameter.
