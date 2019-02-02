@@ -345,6 +345,8 @@ namespace Jetscape {
 
   class FluidDynamics : public JetScapeModuleBase {
 
+  private:
+      bool GetHydroSourceConnected;
 
   public:
     /** Default constructor. task ID as "FluidDynamics",  
@@ -376,8 +378,12 @@ namespace Jetscape {
     virtual void GetEnergyDensity(int t,double& edensity);
     
     /// slots for "jet" signals
-    sigslot::signal2<double, double&, multi_threaded_local> GetHydroSource;
+    sigslot::signal2<Jetscape::real, Jetscape::real&, multi_threaded_local> GetHydroSource;
     void CreateSignalSlots();
+    void SetGetHydroSourceConnected(bool m_GetHydroSourceConnected) {
+        GetHydroSourceConnected = m_GetHydroSourceConnected;
+    }
+    bool GetGetHydroSourceConnected() const {return(GetHydroSourceConnected);}
 
     /** @return parameter_list A pointer to the class Parameter which contains a file name for the fluid dynamics task.
 	@sa Implementation of the class Parameter.

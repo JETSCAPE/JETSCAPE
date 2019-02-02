@@ -17,6 +17,7 @@
 #define LIQUEFIER_H
 
 #include "JetScapeModuleBase.h"
+#include "RealType.h"
 
 namespace Jetscape {
 
@@ -31,7 +32,7 @@ class Liquefier : public JetScapeModuleBase {
      void Init();
      void Exec();
 
-     void get_source(const double t, double &j0);
+     void get_source(Jetscape::real t, Jetscape::real &j0);
 
 };
 

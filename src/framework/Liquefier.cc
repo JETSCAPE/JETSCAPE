@@ -37,7 +37,7 @@ void Liquefier::Exec() {
 }
 
 
-void Liquefier::get_source(const double t, double &j0) {
+void Liquefier::get_source(Jetscape::real t, Jetscape::real &j0) {
     j0 = 0.0;
     JSDEBUG<< "source to hydro = "<< j0 <<" at t= " << t;
 }
