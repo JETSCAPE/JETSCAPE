@@ -16,22 +16,24 @@
 // This is a causal liquefier with the JETSCAPE framework
 // -----------------------------------------
 
-#ifndef CAUSAL_LIQUEFIER_H
-#define CAUSAL_LIQUEFIER_H
+#include "CausalLiquefier.h"
+#include "JetScapeLogger.h"
 
-#include "Liquefier.h"
+using namespace Jetscape;
 
-class Causal_Liquefier: public Jetscape::Liquefier {
- private:
+CausalLiquefier::CausalLiquefier() {
+    SetId("Causal Liquefier");
+}
 
- public:
-     Causal_Liquefier();
-     ~Causal_Liquefier() {};
 
-     void Init();
-     void Exec();
-     void Clear();
+void CausalLiquefier::Init() {
+    JSINFO << "Initialize causal liquefier";
+}
 
-};
+void CausalLiquefier::Exec() {
+    JSINFO << "running causal liquefier";
+}
 
-#endif  // CAUSAL_LIQUEFIER_H
+void CausalLiquefier::Clear() {
+    JSINFO << "Finish causal liquefier";
+}

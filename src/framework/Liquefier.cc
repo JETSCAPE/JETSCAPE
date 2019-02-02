@@ -15,6 +15,7 @@
 
 #include "Liquefier.h"
 #include "JetScapeLogger.h"
+#include "RealType.h"
 
 
 namespace Jetscape {
