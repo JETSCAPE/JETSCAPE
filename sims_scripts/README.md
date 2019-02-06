@@ -43,7 +43,7 @@ Currently, the SIMS branch integrates up-to-date bulk medium simulation modules:
 
 # Compilation on stampede2 TACC
 
-1. Clone the SIMS branch into the $WORK directory (make sure it is sims branch)
+1. Clone the SIMS branch into the `$WORK` directory (make sure it is sims branch)
 
    ```bash
       cd $WORK && pwd
@@ -59,7 +59,7 @@ Currently, the SIMS branch integrates up-to-date bulk medium simulation modules:
       source <JETSCAPE>/sims-scripts/prepare_compilation_stampede2_2.sh
    ```
 
-   Then, go to the external modules directory and download smash (also compiles smash), iS3D, freestream-milne, music by
+   Then, go to the external modules directory and download `smash` (also compiles `smash`), `iS3D`, `freestream-milne`, `music` by
    
    ```bash
       cd <JETSCAPE>/external_packages/
@@ -90,7 +90,14 @@ Currently, the SIMS branch integrates up-to-date bulk medium simulation modules:
 
 4. Run simulation
 
-   Before running the program somewhere else than the build folder, or in the submit scrit. Makesure you have set the followings
+   If you want to run the program elsewhere than the build folder, or if you are writting the job submit scrit. Make sure you have set the `PATH`, `LD_LIBRARY_PATH` and PYTHIA paths. For example, create a testing folder under `build/`
+   
+   ```bash
+      mkdir <build>/test
+      cd <build>/test
+   ```
+   
+   Then, set the following to have things work properly, 
 
    ```bash
       export PATH=$WORK/software/bin:$PATH
@@ -99,24 +106,24 @@ Currently, the SIMS branch integrates up-to-date bulk medium simulation modules:
       export PYTHIA8=$HOME/software
    ```
 
-   Also remember to copy the inputfiles (can be found in build/ after compilation) for all programs to that folder, including
+   Also, remember to copy the inputfiles (can be found in `build/` after compilation) for all programs to the test folder, including,
 
-   * `EOS/` : contains hydro equation of state tables
-   * `freestream_input` : freestream configure file
-   * `iS3D_parameters.dat` : particle sampler configure file
+   * `EOS/` : contains hydro equation-of-state tables
+   * `freestream_input` : free-stream configure file
+   * `iS3D_parameters.dat` : particle sampler iS3D configure file
    * `music_input` : hydro configure file
-   * `smash_config/` : a folder containing smash config data
-   * `jetscape_init.xml` : the JetScape configure file.
+   * `smash_config/` : a folder that contains smash configure files
+   * `jetscape_init.xml` : the JETSCAPE configure file
 
-   Remark: initial condition normalization should be set by `jetscape_init.xml` via the `trento` block, the `s_factor` in `music_input` should be set to `1.0`.
+   ***Remark***: initial condition normalization parameter should be set in `jetscape_init.xml` via the `trento` block, the `s_factor` in `music_input` should be set to `1.0`.
 
    Now it should be good to go. The first executable `TRENTO_FS_HYDRO` runs trento initial condition, freestream and music hydro. The second executable `SAMPLER_AFTERBURNER` runs particle sampler iS3D and SMASH hadronic afterburner. 
 
 5. Todo
  
-   * A workflow control python script is in progress
-   * Provide sample configure files
-   * Scripts for calculating observables for each event
-   * Sample job submisstion script on stampede2
+   * A python workflow control script is in progress
+   * We should provide a set of sample configure files
+   * A script to calculate observables for each event
+   * A sample job submisstion script for stampede2
    * and more...
 
