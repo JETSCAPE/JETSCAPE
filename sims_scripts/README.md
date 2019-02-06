@@ -88,7 +88,7 @@ Currently, the SIMS branch integrates up-to-date bulk medium simulation modules:
       make install
    ``` 
 
-4. Run simulation
+# Run simulation
 
    If you want to run the program elsewhere than the build folder, or if you are writting the job submit scrit. Make sure you have set the `PATH`, `LD_LIBRARY_PATH` and PYTHIA paths. For example, create a testing folder under `build/`
    
@@ -119,7 +119,7 @@ Currently, the SIMS branch integrates up-to-date bulk medium simulation modules:
 
    Now it should be good to go. The first executable `TRENTO_FS_HYDRO` runs trento initial condition, freestream and music hydro. The second executable `SAMPLER_AFTERBURNER` runs particle sampler iS3D and SMASH hadronic afterburner. 
 
-5. Todo
+# Todo
  
    * A python workflow control script is in progress
    * We should provide a set of sample configure files
