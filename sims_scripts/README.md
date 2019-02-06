@@ -88,6 +88,8 @@ Currently, the SIMS branch integrates up-to-date bulk medium simulation modules:
       make install
    ``` 
 
+4. Run simulation
+
    Before running the program somewhere else than the build folder, or in the submit scrit. Makesure you have set the followings
 
    ```bash
@@ -97,5 +99,24 @@ Currently, the SIMS branch integrates up-to-date bulk medium simulation modules:
       export PYTHIA8=$HOME/software
    ```
 
-   Also remember to copy the inputfiles for all programs to that folder; then it should be good to go.
+   Also remember to copy the inputfiles (can be found in build/ after compilation) for all programs to that folder, including
+
+   * `EOS/` : contains hydro equation of state tables
+   * `freestream_input` : freestream configure file
+   * `iS3D_parameters.dat` : particle sampler configure file
+   * `music_input` : hydro configure file
+   * `smash_config/` : a folder containing smash config data
+   * `jetscape_init.xml` : the JetScape configure file.
+
+   Remark: initial condition normalization should be set by `jetscape_init.xml` via the `trento` block, the `s_factor` in `music_input` should be set to `1.0`.
+
+   Now it should be good to go. The first executable `TRENTO_FS_HYDRO` runs trento initial condition, freestream and music hydro. The second executable `SAMPLER_AFTERBURNER` runs particle sampler iS3D and SMASH hadronic afterburner. 
+
+5. Todo
+ 
+   * A workflow control python script is in progress
+   * Provide sample configure files
+   * Scripts for calculating observables for each event
+   * Sample job submisstion script on stampede2
+   * and more...
 
