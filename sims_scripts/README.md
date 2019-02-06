@@ -56,7 +56,7 @@ Currently, the SIMS branch integrates up-to-date bulk medium simulation modules:
    Stempede has cmake, gsl, boost and eigen3 installed already, except for pythia which should have been in you system path from the last section. Then, activate all the environments by running the sims activation script (make sure the paths are set correctly)
 
    ```bash
-      source <JETSCAPE>/sims-scripts/prepare_compilation_stampede2_2.sh
+      source <JETSCAPE>/sims_scripts/prepare_compilation_stampede2_2.sh
    ```
 
    Then, go to the external modules directory and download `smash` (also compiles `smash`), `iS3D`, `freestream-milne`, `music` by
