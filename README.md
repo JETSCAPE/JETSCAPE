@@ -1,10 +1,8 @@
-***What this branch does*** : 
+***The SIMS branch*** : 
 
-A new wrapper for trento (2d and 3d) with almost all its options exposed in jetscape_init.xml. 
+The SIMS branch contains up-to-date modules for simulating the bulk evolution of relativistic heavy-ion collions. Pleas refer to the sims [README](./sims_scripts/README.md) for installation instructions.
 
-It now supports the centrality cut option (1% precision). The program will first call trento2d (because it is fast and the 3d extension does not affect the centrality determination at mid-rapidity) with the defual grid size and user-defined parameters (except the normalization (=1), since it does not affect the shape of the centrality table). This step generates the table: normalization * TotalEnergyDensity(centrality), using 10000 events (one can change it in the source code `src/TrentoInitial.cc`). Next, given user-defined centrality cut, the table determines total-energy-density cut for trento3d.
-
-A cache directory `$PWD/trento_data/` will save these centrality tables. To distinguish different tables generated with different paremeters (only those who affect the shape of the centrality table), a hash tag number is generated for the paremeter set string (with .01 level of accuracty of each parameter) and this tag is used as the file for future use.
+***The JETSCAPE README*** :
 
 Test Skeleton of (potential) JetScape Framework
 
