@@ -188,6 +188,8 @@ install(
   # external packages
   "${PROJECT_BINARY_DIR}/external_packages/gtl/lib/"
   "${PROJECT_BINARY_DIR}/external_packages/iSS/src/"
+  "${PROJECT_BINARY_DIR}/external_packages/iS3D/src/cpp/"
+  "${PROJECT_BINARY_DIR}/../external_packages/smash/smash_code/build/src/"
   "${PROJECT_BINARY_DIR}/external_packages/music/src/"
   "${PROJECT_BINARY_DIR}/external_packages/trento/src/"
   DESTINATION "lib" # target directory
