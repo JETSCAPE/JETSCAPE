@@ -3,9 +3,9 @@
 Currently, the SIMS branch integrates up-to-date bulk medium simulation modules:
 
 1. Trento initial condition (2d and 3d)
-2. 3+1D free-stream
+2. 3+1D freestreaming
 3. 3+1D relativitic viscous hydrodynamics MUSIC
-4. is3D particlization module
+4. iS3D particlization module
 5. The hadronic transport model SMASH
 
 # Load libraries on stampede2
@@ -58,7 +58,7 @@ Currently, the SIMS branch integrates up-to-date bulk medium simulation modules:
    source <JETSCAPE>/sims-scripts/prepare_compilation_stampede2_2.sh
 ```
 
-   Then, go to the external modules directory and download smash (also compile), is3D, freestream, music by
+   Then, go to the external modules directory and download smash (also compiles smash), iS3D, freestream-milne, music by
    
 ```bash
    cd <JETSCAPE>/external_packages/
@@ -74,7 +74,7 @@ Currently, the SIMS branch integrates up-to-date bulk medium simulation modules:
    cmake -Dmusic=on -DiS3D=on -Dsmash=on -Dfreestream=on ../
 ```
 
-   Remember to swithc on all those compilation flags to use external modules.
+   Remember to switch on all those compilation flags to use external modules.
 
 ```bash
    make -j
