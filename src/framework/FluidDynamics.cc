@@ -15,8 +15,8 @@
 // This is a general basic class for hydrodynamics
 
 #include <iostream>
-#include "./FluidDynamics.h"
-#include "./LinearInterpolation.h"
+#include "FluidDynamics.h"
+#include "LinearInterpolation.h"
 #include "JetScapeSignalManager.h"
 
 #define MAGENTA "\033[35m"
@@ -24,46 +24,6 @@
 using namespace std;
 
 namespace Jetscape {
-  /** For one given time step id_tau,
-   * get FluidCellInfo at spatial point (x, y, eta)*/
-  FluidCellInfo EvolutionHistory::GetAtTimeStep(int id_tau,
-						   real x, real y, real eta) {
-    int id_x = GetIdX(x);
-    int id_y = GetIdY(y);
-    int id_eta = GetIdEta(eta);
-    // cijk for idx=i, idy=j and id_eta=k
-    int c000 = CellIndex(id_tau, id_x, id_y, id_eta);
-    int c001 = CellIndex(id_tau, id_x, id_y, id_eta+1);
-    int c010 = CellIndex(id_tau, id_x, id_y+1, id_eta);
-    int c011 = CellIndex(id_tau, id_x, id_y+1, id_eta+1);
-    int c100 = CellIndex(id_tau, id_x+1, id_y, id_eta);
-    int c101 = CellIndex(id_tau, id_x+1, id_y, id_eta+1);
-    int c110 = CellIndex(id_tau, id_x+1, id_y+1, id_eta);
-    int c111 = CellIndex(id_tau, id_x+1, id_y+1, id_eta+1);
-    real x0 = XCoord(id_x);
-    real x1 = XCoord(id_x + 1);
-    real y0 = YCoord(id_y);
-    real y1 = YCoord(id_y + 1);
-    real eta0 = EtaCoord(id_eta);
-    real eta1 = EtaCoord(id_eta + 1);
-
-    return TrilinearInt(x0, x1, y0, y1, eta0, eta1,
-			 data.at(c000), data.at(c001), data.at(c010), data.at(c011),
-			 data.at(c100), data.at(c101), data.at(c110), data.at(c111),
-			 x, y, eta);
-  }
-
-  // do interpolation along time direction; we may also need high order
-  // interpolation functions 
-  FluidCellInfo EvolutionHistory::get(real tau, real x, real y, real eta){
-    CheckInRange(tau, x, y, eta);
-    int id_tau = GetIdTau(tau);
-    real tau0 = TauCoord(id_tau);
-    real tau1 = TauCoord(id_tau + 1);
-    FluidCellInfo bulk0 = GetAtTimeStep(id_tau, x, y, eta);
-    FluidCellInfo bulk1 = GetAtTimeStep(id_tau+1, x, y, eta);
-    return LinearInt(tau0, tau1, bulk0, bulk1, tau);
-  }
 
   FluidDynamics::FluidDynamics(){
     VERBOSE(8);
