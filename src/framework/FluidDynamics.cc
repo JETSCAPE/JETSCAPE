@@ -47,10 +47,11 @@ FluidDynamics::~FluidDynamics() {
 void FluidDynamics::Init() {
     JetScapeModuleBase::Init();
     JSINFO << "Intialize FluidDynamics : "<< GetId() << " ...";
-    fd = JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Hydro" );
+    fd = JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Hydro");
   
     if (!fd) {
-        JSWARN << "Not a valid JetScape XML Hydro section file or no XML file loaded!";
+        JSWARN << "Not a valid JetScape XML Hydro section file or "
+               << "no XML file loaded!";
         exit(-1);
     }
   
@@ -85,17 +86,6 @@ void FluidDynamics::Exec() {
     EvolveHydro();  
     JetScapeTask::ExecuteTasks();
 }
-
-  void FluidDynamics::UpdateEnergyDeposit(int t, double edop) {
-    //sigslot::lock_block<multi_threaded_local> lock(this);
-    JSDEBUG<<MAGENTA<<"Jet Signal received : "<<t<<" "<<edop;
-  }
-  
-  void FluidDynamics::GetEnergyDensity(int t,double &edensity) {
-    //sigslot::lock_block<multi_threaded_local> lock(this);
-    edensity=0.5;
-    JSDEBUG<<"Edensity to Jet = "<<edensity<<" at t="<<t;
-  }
 
 void FluidDynamics::CollectHeader(weak_ptr<JetScapeWriter> w) {
     auto f = w.lock();
@@ -181,5 +171,18 @@ void FluidDynamics::PrintFluidCellInformation(
     JSINFO << "bulk_Pi = " << fluid_cell_info_ptr->bulk_Pi << " GeV/fm^3";
     JSINFO << "=======================================================";
 }
+
+
+void FluidDynamics::UpdateEnergyDeposit(int t, double edop) {
+    //sigslot::lock_block<multi_threaded_local> lock(this);
+    JSDEBUG << MAGENTA << "Jet Signal received : "<< t << " " << edop;
+}
+
+void FluidDynamics::GetEnergyDensity(int t,double &edensity) {
+    //sigslot::lock_block<multi_threaded_local> lock(this);
+    edensity=0.5;
+    JSDEBUG << "Edensity to Jet = " << edensity << " at t=" << t;
+}
+
 
 } // end namespace Jetscape

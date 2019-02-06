@@ -287,24 +287,9 @@ class FluidDynamics : public JetScapeModuleBase {
     virtual void UpdateEnergyDeposit(int t, double edop);
     /// slots for "jet" signals (future)
     virtual void GetEnergyDensity(int t,double& edensity);
-    /// Jet signals (future)
-    //virtual void AddJetSource(double t, double x, double y, double z, JetSource jS) {}; // to be implemented ...
-    /** Default function to evolve the hydrodynamics by one-time (or tau) step. It can be overridden by different modules.
-	@param jmu An object to a JetSource class.
-    */
-    //virtual void EvolveHydroOneStep(JetSource jmu) {};
 
 }; // end class FluidDynamics
   
-/// placeholder for the future
-  class JetSource {
-  public:
-    JetSource() {}
-    // JetSource():j0(0.), j1(0.), j2(0.), j3(0.) {}
-  private:
-    // Jetscape::real j0, j1, j2, j3;
-  };
-
 } // end namespace Jetscape
 
 #endif  // FLUIDDYNAMICS_H
