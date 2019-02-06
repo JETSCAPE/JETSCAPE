@@ -113,12 +113,14 @@ Currently, the SIMS branch integrates up-to-date bulk medium simulation modules:
    * `music_input` : hydro configure file  
    * `iS3D_parameters.dat` : particle sampler iS3D configure file
    * `deltaf_coefficients/` : contains delta-f correction coefficients
+   * `PDG/` : hadron info for sampler iS3D
+   * `tables` : integration tables for sampler iS3D
    * `smash_config/` : a folder that contains smash configure files
    * `jetscape_init.xml` : the JETSCAPE configure file
 
    ***Remark***: initial condition normalization parameter should be set in `jetscape_init.xml` via the `trento` block, the `s_factor` in `music_input` should be set to `1.0`.
 
-   Now it should be good to go. The first executable `TRENTO_FS_HYDRO` runs trento initial condition, freestream and music hydro. The second executable `SAMPLER_AFTERBURNER` runs particle sampler iS3D and SMASH hadronic afterburner. 
+   Now it should be good to go. The first executable `TRENTO_FS_HYDRO` runs trento initial condition, freestream and music hydro. Then `mkdir input && cp surface.dat input/` before running the next step. The second executable `SAMPLER_AFTERBURNER` runs particle sampler iS3D and SMASH hadronic afterburner. 
 
 # Todo
  
