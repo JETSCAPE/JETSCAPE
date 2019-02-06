@@ -107,11 +107,12 @@ Currently, the SIMS branch integrates up-to-date bulk medium simulation modules:
    ```
 
    Also, remember to copy the inputfiles (can be found in `build/` after compilation) for all programs to the test folder, including,
-
-   * `EOS/` : contains hydro equation-of-state tables
+   
    * `freestream_input` : free-stream configure file
+   * `EOS/` : contains hydro equation-of-state tables
+   * `music_input` : hydro configure file  
    * `iS3D_parameters.dat` : particle sampler iS3D configure file
-   * `music_input` : hydro configure file
+   * `deltaf_coefficients/` : contains delta-f correction coefficients
    * `smash_config/` : a folder that contains smash configure files
    * `jetscape_init.xml` : the JETSCAPE configure file
 
