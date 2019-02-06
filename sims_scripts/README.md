@@ -26,7 +26,7 @@ Currently, the SIMS branch integrates up-to-date bulk medium simulation modules:
 
    ```bash
       ./configure --prefix=$WORK/software
-      make -j
+      make
       make install
    ```
 
@@ -73,9 +73,18 @@ Currently, the SIMS branch integrates up-to-date bulk medium simulation modules:
       mkdir build && cd build
       cmake -Dmusic=on -DiS3D=on -Dsmash=on -Dfreestream=on ../
    ```
+   
+   In case you want to install the executables to a designated path and later add to system path (e.g. $WORK/software/bin). You can add the path flag to the Cmake command by,
+   
+   ```bash
+      cmake -DCMAKE_INSTALL_PREFIX=$WORK/software/ -Dmusic=on -DiS3D=on -Dsmash=on -Dfreestream=on ../ 
+   ```
 
    Remember to switch on all those compilation flags to use external modules.
 
    ```bash
-      make -j
-   ```    
+      make
+      make install
+   ``` 
+
+   Finally check if you have added $WORK/software/bin to your system $PATH. After that, you can call these executables in any folder you want (provided that you couple the relevant inputfiles to that folder).  
