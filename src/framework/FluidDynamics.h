@@ -152,6 +152,11 @@ class FluidDynamics : public JetScapeModuleBase {
     /** @return Status of the hydrodynamics (NOT_START, INITIALIZED, EVOLVING, FINISHED, ERROR). */
     int GetHydroStatus() const {return(hydro_status);}
 
+    void StoreHydroEvolutionHistory(
+                        std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr) {
+        bulk_info.data.push_back(*fluid_cell_info_ptr);
+    }
+
     /** @return Start time (or tau) for hydrodynamic evolution.
      */
     Jetscape::real GetHydroStartTime() const {return(hydro_tau_0);}

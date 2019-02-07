@@ -40,9 +40,14 @@ class MpiMusic: public FluidDynamics {
      void GetHydroInfo(
         Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
 		std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr);
+
+     void SetHydroGridInfo();
+     void PassHydroEvolutionHistoryToFramework();
+
      void GetHyperSurface(Jetscape::real T_cut,
                            SurfaceCellInfo* surface_list_ptr) {};
      void collect_freeze_out_surface();
+
 };
 
 #endif // MUSICWRAPPER_H
