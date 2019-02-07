@@ -47,6 +47,8 @@ class EvolutionHistory {
     /** Default is set to false. Set flag tau_eta_is_tz to true if hydro dynamics is setup in (t,x,y,z) coordinate. */
     bool tau_eta_is_tz;   
 
+    bool boost_invariant;
+
     /** The bulk information of hydro dynamics.*/
     std::vector<FluidCellInfo> data;
 
@@ -142,10 +144,10 @@ class EvolutionHistory {
 	@param id_eta Fluid cell number along eta-grid.
     */
     inline int CellIndex(int id_tau, int id_x, int id_y, int id_eta) const {
-        id_tau = std::min(ntau, std::max(0, id_tau));
-        id_x   = std::min(nx,   std::max(0, id_x  ));
-        id_y   = std::min(ny,   std::max(0, id_y  ));
-        id_eta = std::min(neta, std::max(0, id_eta));
+        id_tau = std::min(ntau - 1, std::max(0, id_tau));
+        id_x   = std::min(nx - 1,   std::max(0, id_x  ));
+        id_y   = std::min(ny - 1,   std::max(0, id_y  ));
+        id_eta = std::min(neta - 1, std::max(0, id_eta));
         return(id_tau * nx * ny * neta + id_x * ny * neta
                + id_y * neta + id_eta);
     }

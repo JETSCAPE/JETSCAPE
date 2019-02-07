@@ -118,6 +118,8 @@ void MpiMusic::SetHydroGridInfo() {
     bulk_info.dy      = music_hydro_ptr->get_hydro_dx();
     bulk_info.eta_min = -music_hydro_ptr->get_hydro_eta_max();
     bulk_info.deta    = music_hydro_ptr->get_hydro_deta();
+    
+    bulk_info.boost_invariant = music_hydro_ptr->is_boost_invariant();
 }
 
 

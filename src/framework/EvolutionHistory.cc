@@ -51,13 +51,15 @@ int EvolutionHistory::CheckInRange(Jetscape::real tau, Jetscape::real x,
         JSWARN << warn_message;
         status = 0;
     }
-    if (eta < eta_min || eta > EtaMax()) {
-        std::string warn_message = ("eta=" + std::to_string(eta)
-                + " is not in range [" + std::to_string(eta_min) + "," 
-                + std::to_string(EtaMax()) + "]");
-        //throw InvalidSpaceTimeRange(warn_message);
-        JSWARN << warn_message;
-        status = 0;
+    if (!boost_invariant) {
+        if (eta < eta_min || eta > EtaMax()) {
+            std::string warn_message = ("eta=" + std::to_string(eta)
+                    + " is not in range [" + std::to_string(eta_min) + "," 
+                    + std::to_string(EtaMax()) + "]");
+            //throw InvalidSpaceTimeRange(warn_message);
+            JSWARN << warn_message;
+            status = 0;
+        }
     }
     return(status);
 }
@@ -66,9 +68,12 @@ int EvolutionHistory::CheckInRange(Jetscape::real tau, Jetscape::real x,
    * get FluidCellInfo at spatial point (x, y, eta)*/
 FluidCellInfo EvolutionHistory::GetAtTimeStep(
         int id_tau, Jetscape::real x, Jetscape::real y, Jetscape::real eta) {
-    int id_x = GetIdX(x);
-    int id_y = GetIdY(y);
-    int id_eta = GetIdEta(eta);
+    int id_x   = GetIdX(x);
+    int id_y   = GetIdY(y);
+    int id_eta = 0;
+    if (!boost_invariant)
+        id_eta = GetIdEta(eta);
+
     // cijk for idx=i, idy=j and id_eta=k
     int c000 = CellIndex(id_tau, id_x, id_y, id_eta);
     int c001 = CellIndex(id_tau, id_x, id_y, id_eta+1);
@@ -78,12 +83,14 @@ FluidCellInfo EvolutionHistory::GetAtTimeStep(
     int c101 = CellIndex(id_tau, id_x+1, id_y, id_eta+1);
     int c110 = CellIndex(id_tau, id_x+1, id_y+1, id_eta);
     int c111 = CellIndex(id_tau, id_x+1, id_y+1, id_eta+1);
-    real x0 = XCoord(id_x);
-    real x1 = XCoord(id_x + 1);
-    real y0 = YCoord(id_y);
-    real y1 = YCoord(id_y + 1);
-    real eta0 = EtaCoord(id_eta);
-    real eta1 = EtaCoord(id_eta + 1);
+    auto x0 = XCoord(id_x);
+    auto x1 = XCoord(id_x + 1);
+    auto y0 = YCoord(id_y);
+    auto y1 = YCoord(id_y + 1);
+    auto eta0 = EtaCoord(id_eta);
+    auto eta1 = 0.0;
+    if (!boost_invariant)
+        eta1 = EtaCoord(id_eta + 1);
 
     return(TrilinearInt(x0, x1, y0, y1, eta0, eta1,
                 data.at(c000), data.at(c001), data.at(c010), data.at(c011),
