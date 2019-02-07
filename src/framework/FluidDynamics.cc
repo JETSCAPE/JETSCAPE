@@ -96,12 +96,14 @@ void FluidDynamics::CollectHeader(weak_ptr<JetScapeWriter> w) {
     }
 }
 
-void FluidDynamics::FindAConstantTemperatureSurface(Jetscape::real T_sw) {
+std::vector<SurfaceCellInfo> FluidDynamics::FindAConstantTemperatureSurface(
+                                                        Jetscape::real T_sw) {
     std::unique_ptr<SurfaceFinder> surface_finder_ptr(
                                         new SurfaceFinder (T_sw, bulk_info));
     surface_finder_ptr->Find_full_hypersurface();
-    JSINFO << "number of surface cells: "
-           << surface_finder_ptr->get_number_of_surface_cells();
+    auto surface_cells = surface_finder_ptr->get_surface_cells_vector();
+    JSINFO << "number of surface cells: " << surface_cells.size();
+    return(surface_cells);
 }
 
   

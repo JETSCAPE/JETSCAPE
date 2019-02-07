@@ -36,13 +36,16 @@ class SurfaceFinder {
  public:
     SurfaceFinder(const Jetscape::real T_in,
                   const EvolutionHistory &bulk_data);
-    ~SurfaceFinder() {};
+    ~SurfaceFinder();
 
     void Find_full_hypersurface();
 
     int get_number_of_surface_cells() const {return(surface_cell_list.size());}
     SurfaceCellInfo get_surface_cell_with_idx(int idx) const {
         return(surface_cell_list[idx]);
+    }
+    std::vector<SurfaceCellInfo> get_surface_cells_vector() const {
+        return(surface_cell_list);
     }
 
     bool check_intersect_3D(

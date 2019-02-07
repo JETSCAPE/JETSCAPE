@@ -208,10 +208,8 @@ class FluidDynamics : public JetScapeModuleBase {
     // the detailed implementation is left to the hydro developper
     /** @return Default function to get the hypersurface for Cooper-Frye or recombination model. It can overridden by different modules.
      */
-    virtual void GetHyperSurface(Jetscape::real T_cut,
-                                 SurfaceCellInfo* surface_list_ptr) {};
-
-    void FindAConstantTemperatureSurface(Jetscape::real T_sw);
+    std::vector<SurfaceCellInfo> FindAConstantTemperatureSurface(
+                                                        Jetscape::real T_sw);
 
     // all the following functions will call function GetHydroInfo()
     // to get thermaldynamic and dynamical information at a space-time point

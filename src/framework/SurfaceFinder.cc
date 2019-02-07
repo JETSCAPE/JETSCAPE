@@ -39,10 +39,19 @@ SurfaceFinder::SurfaceFinder(const Jetscape::real T_in,
 }
 
 
+SurfaceFinder::~SurfaceFinder() {
+    surface_cell_list.clear();
+}
+
+
 void SurfaceFinder::Find_full_hypersurface() {
     if (boost_invariant) {
+        JSINFO << "Finding a 2+1D hyper-surface at T = " << T_cut
+               << " GeV ...";
         Find_full_hypersurface_3D();
     } else {
+        JSINFO << "Finding a 3+1D hyper-surface at T = " << T_cut
+               << " GeV ...";
         Find_full_hypersurface_4D();
     }
 }
@@ -360,7 +369,7 @@ SurfaceCellInfo SurfaceFinder::PrepareASurfaceCell(
 
     temp_cell.energy_density  = fluid_cell.energy_density;
     temp_cell.entropy_density = fluid_cell.entropy_density;
-    temp_cell.temperature     = T_cut;
+    temp_cell.temperature     = fluid_cell.temperature;
     temp_cell.pressure        = fluid_cell.pressure;
     temp_cell.qgp_fraction    = fluid_cell.qgp_fraction;
     temp_cell.mu_B            = fluid_cell.mu_B;
