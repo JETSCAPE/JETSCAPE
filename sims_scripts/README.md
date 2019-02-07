@@ -56,7 +56,7 @@ Currently, the SIMS branch integrates up-to-date bulk medium simulation modules:
    Stempede has cmake, gsl, boost and eigen3 installed already, except for pythia which should have been in you system path from the last section. Then, activate all the environments by running the sims activation script (make sure the paths are set correctly)
 
    ```bash
-      source <JETSCAPE>/sims-scripts/prepare_compilation_stampede2_2.sh
+      source <JETSCAPE>/sims_scripts/prepare_compilation_stampede2_2.sh
    ```
 
    Then, go to the external modules directory and download `smash` (also compiles `smash`), `iS3D`, `freestream-milne`, `music` by
@@ -107,17 +107,20 @@ Currently, the SIMS branch integrates up-to-date bulk medium simulation modules:
    ```
 
    Also, remember to copy the inputfiles (can be found in `build/` after compilation) for all programs to the test folder, including,
-
-   * `EOS/` : contains hydro equation-of-state tables
+   
    * `freestream_input` : free-stream configure file
+   * `EOS/` : contains hydro equation-of-state tables
+   * `music_input` : hydro configure file  
    * `iS3D_parameters.dat` : particle sampler iS3D configure file
-   * `music_input` : hydro configure file
+   * `deltaf_coefficients/` : contains delta-f correction coefficients
+   * `PDG/` : hadron info for sampler iS3D
+   * `tables` : integration tables for sampler iS3D
    * `smash_config/` : a folder that contains smash configure files
    * `jetscape_init.xml` : the JETSCAPE configure file
 
    ***Remark***: initial condition normalization parameter should be set in `jetscape_init.xml` via the `trento` block, the `s_factor` in `music_input` should be set to `1.0`.
 
-   Now it should be good to go. The first executable `TRENTO_FS_HYDRO` runs trento initial condition, freestream and music hydro. The second executable `SAMPLER_AFTERBURNER` runs particle sampler iS3D and SMASH hadronic afterburner. 
+   Now it should be good to go. The first executable `TRENTO_FS_HYDRO` runs trento initial condition, freestream and music hydro. Then `mkdir input && cp surface.dat input/` before running the next step. The second executable `SAMPLER_AFTERBURNER` runs particle sampler iS3D and SMASH hadronic afterburner. 
 
 # Todo
  
