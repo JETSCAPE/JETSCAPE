@@ -18,7 +18,7 @@
 #git clone --depth=1 git://git.code.sf.net/p/music-hydro/code music
 
 #the new public version of music 
-git clone --depth=1 https://github.com/MUSIC-fluid/MUSIC music
+git clone https://github.com/MUSIC-fluid/MUSIC music
 cd music
 git checkout 2efc959270dc75c2cb26b34af4f9e575c25895fc
 cd ..

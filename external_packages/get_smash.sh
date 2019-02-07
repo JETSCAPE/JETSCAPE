@@ -14,7 +14,7 @@
 ##############################################################################
 
 # 1) Download the SMASH code
-git clone --depth=1 https://github.com/smash-transport/smash.git smash/smash_code
+git clone https://github.com/smash-transport/smash.git smash/smash_code
 
 # 2) Compile SMASH
 cd smash/smash_code
