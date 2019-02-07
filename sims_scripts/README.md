@@ -36,7 +36,7 @@ Currently, the SIMS branch integrates up-to-date bulk medium simulation modules:
       echo "export PATH=\$WORK/software/bin:\$PATH" >> $HOME/.bashrc
       echo "export LD_LIBRARY_PATH=\$WORK/software/lib:\$LD_LIBRARY_PATH" >> $HOME/.bashrc
       echo "export PYTHIA8DATA=\$WORK/software/share/Pythia8/xmldoc/" >> $HOME/.bashrc
-      echo "export PYTHIA8=\$HOME/software" >> $HOME/.bashrc
+      echo "export PYTHIA8=\$WORK/software" >> $HOME/.bashrc
       source $HOME/.bashrc
    ```
 
@@ -103,7 +103,7 @@ Currently, the SIMS branch integrates up-to-date bulk medium simulation modules:
       export PATH=$WORK/software/bin:$PATH
       export LD_LIBRARY_PATH=$WORK/software/lib:$LD_LIBRARY_PATH
       export PYTHIA8DATA=$WORK/software/share/Pythia8/xmldoc
-      export PYTHIA8=$HOME/software
+      export PYTHIA8=$WORK/software
    ```
 
    Also, remember to copy the inputfiles (can be found in `build/` after compilation) for all programs to the test folder, including,
