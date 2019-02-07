@@ -53,7 +53,7 @@ class EvolutionHistory {
     std::vector<FluidCellInfo> data;
 
     /** Default constructor. */
-    EvolutionHistory() {};
+    EvolutionHistory() = default;
 
     /** Default destructor. */
     ~EvolutionHistory() {data.clear();}
