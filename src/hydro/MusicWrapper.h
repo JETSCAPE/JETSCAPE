@@ -40,6 +40,13 @@ class MpiMusic: public FluidDynamics {
      void GetHydroInfo(
         Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
 		std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr);
+     
+     void GetHydroInfo_JETSCAPE(
+        Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
+		std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr);
+     void GetHydroInfo_MUSIC(
+        Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
+		std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr);
 
      void SetHydroGridInfo();
      void PassHydroEvolutionHistoryToFramework();

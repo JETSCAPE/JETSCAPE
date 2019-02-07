@@ -159,29 +159,43 @@ void MpiMusic::PassHydroEvolutionHistoryToFramework() {
 void MpiMusic::GetHydroInfo(
         Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
         std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr) {
-    //fluid_cell_info_ptr = Jetscape::make_unique<FluidCellInfo>();
-    //fluidCell *fluidCell_ptr = new fluidCell;
-    //music_hydro_ptr->get_hydro_info(x, y, z, t, fluidCell_ptr);
-    //fluid_cell_info_ptr->energy_density = fluidCell_ptr->ed;
-    //fluid_cell_info_ptr->entropy_density = fluidCell_ptr->sd;
-    //fluid_cell_info_ptr->temperature = fluidCell_ptr->temperature;
-    //fluid_cell_info_ptr->pressure = fluidCell_ptr->pressure;
-    //fluid_cell_info_ptr->vx = fluidCell_ptr->vx;
-    //fluid_cell_info_ptr->vy = fluidCell_ptr->vy;
-    //fluid_cell_info_ptr->vz = fluidCell_ptr->vz;
-    //fluid_cell_info_ptr->mu_B = 0.0;
-    //fluid_cell_info_ptr->mu_C = 0.0;
-    //fluid_cell_info_ptr->mu_S = 0.0;
-    //fluid_cell_info_ptr->qgp_fraction = 0.0;
+    GetHydroInfo_JETSCAPE(t, x, y, z, fluid_cell_info_ptr);
+    //GetHydroInfo_MUSIC(t, x, y, z, fluid_cell_info_ptr);
+}
 
-    //for (int i = 0; i < 4; i++) {
-    //    for (int j = 0; j < 4; j++) {
-    //        fluid_cell_info_ptr->pi[i][j] = fluidCell_ptr->pi[i][j];
-    //    }
-    //}
-    //fluid_cell_info_ptr->bulk_Pi = fluidCell_ptr->bulkPi;
-    //delete fluidCell_ptr;
+
+void MpiMusic::GetHydroInfo_JETSCAPE(
+        Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
+        std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr) {
     auto temp = bulk_info.get(t, x, y, z);
-    fluid_cell_info_ptr = std::unique_ptr<FluidCellInfo>(new FluidCellInfo(temp));
+    fluid_cell_info_ptr = std::unique_ptr<FluidCellInfo>(
+                                                    new FluidCellInfo(temp));
+}
+
+void MpiMusic::GetHydroInfo_MUSIC(
+        Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
+        std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr) {
+    fluid_cell_info_ptr = Jetscape::make_unique<FluidCellInfo>();
+    fluidCell *fluidCell_ptr = new fluidCell;
+    music_hydro_ptr->get_hydro_info(x, y, z, t, fluidCell_ptr);
+    fluid_cell_info_ptr->energy_density = fluidCell_ptr->ed;
+    fluid_cell_info_ptr->entropy_density = fluidCell_ptr->sd;
+    fluid_cell_info_ptr->temperature = fluidCell_ptr->temperature;
+    fluid_cell_info_ptr->pressure = fluidCell_ptr->pressure;
+    fluid_cell_info_ptr->vx = fluidCell_ptr->vx;
+    fluid_cell_info_ptr->vy = fluidCell_ptr->vy;
+    fluid_cell_info_ptr->vz = fluidCell_ptr->vz;
+    fluid_cell_info_ptr->mu_B = 0.0;
+    fluid_cell_info_ptr->mu_C = 0.0;
+    fluid_cell_info_ptr->mu_S = 0.0;
+    fluid_cell_info_ptr->qgp_fraction = 0.0;
+
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            fluid_cell_info_ptr->pi[i][j] = fluidCell_ptr->pi[i][j];
+        }
+    }
+    fluid_cell_info_ptr->bulk_Pi = fluidCell_ptr->bulkPi;
+    delete fluidCell_ptr;
 }
 
