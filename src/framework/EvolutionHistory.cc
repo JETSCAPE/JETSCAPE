@@ -14,6 +14,7 @@
  ******************************************************************************/
 // This is a general basic class for hydrodynamics
 
+#include <string>
 #include "EvolutionHistory.h"
 #include "FluidCellInfo.h"
 #include "LinearInterpolation.h"
@@ -26,24 +27,32 @@ namespace Jetscape {
 void EvolutionHistory::CheckInRange(Jetscape::real tau, Jetscape::real x,
                                 Jetscape::real y, Jetscape::real eta) const {
     if (tau < tau_min || tau > TauMax()) {
-        throw InvalidSpaceTimeRange("tau=" + std::to_string(tau)
+        std::string warn_message = ("tau=" + std::to_string(tau)
                 + " is not in range [" + std::to_string(tau_min) + ","
                 + std::to_string(TauMax()) + "]");
+        //throw InvalidSpaceTimeRange(warn_message);
+        JSWARN << warn_message;
     }
     if (x < x_min || x > XMax()) {
-        throw InvalidSpaceTimeRange("x=" + std::to_string(x)
+        std::string warn_message = ("x=" + std::to_string(x)
                 + " is not in range [" + std::to_string(x_min) + ","
                 + std::to_string(XMax()) + "]");
+        //throw InvalidSpaceTimeRange(warn_message);
+        JSWARN << warn_message;
     }
     if (y < y_min || y > YMax()) {
-        throw InvalidSpaceTimeRange("y=" + std::to_string(y)
+        std::string warn_message = ("y=" + std::to_string(y)
                 + " is not in range [" + std::to_string(y_min) + "," 
                 + std::to_string(YMax()) + "]");
+        //throw InvalidSpaceTimeRange(warn_message);
+        JSWARN << warn_message;
     }
     if (eta < eta_min || eta > EtaMax()) {
-        throw InvalidSpaceTimeRange("eta=" + std::to_string(eta)
+        std::string warn_message = ("eta=" + std::to_string(eta)
                 + " is not in range [" + std::to_string(eta_min) + "," 
                 + std::to_string(EtaMax()) + "]");
+        //throw InvalidSpaceTimeRange(warn_message);
+        JSWARN << warn_message;
     }
 }
   
