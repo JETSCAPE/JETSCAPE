@@ -24,6 +24,10 @@ namespace Jetscape {
 class SurfaceCellInfo {
  public:
     // data structure for outputing hyper-surface information
+    Jetscape::real tau;
+    Jetscape::real x;
+    Jetscape::real y;
+    Jetscape::real eta;
     Jetscape::real d3sigma_mu[4];     //!< Surface vector.
     Jetscape::real energy_density;    //!< Local energy density [GeV/fm^3].
     Jetscape::real entropy_density;   //!< Local entropy density [1/fm^3].
@@ -38,7 +42,7 @@ class SurfaceCellInfo {
     Jetscape::real bulk_Pi;           //!< Bulk viscous pressure [GeV/fm^3].
     
     /** Default constructor. */
-    SurfaceCellInfo() {};
+    SurfaceCellInfo() = default;
     
     /** Destructor. */
     ~SurfaceCellInfo() {};

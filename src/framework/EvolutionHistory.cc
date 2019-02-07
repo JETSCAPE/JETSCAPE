@@ -67,7 +67,8 @@ int EvolutionHistory::CheckInRange(Jetscape::real tau, Jetscape::real x,
 /** For one given time step id_tau,
    * get FluidCellInfo at spatial point (x, y, eta)*/
 FluidCellInfo EvolutionHistory::GetAtTimeStep(
-        int id_tau, Jetscape::real x, Jetscape::real y, Jetscape::real eta) {
+        int id_tau, Jetscape::real x, Jetscape::real y,
+        Jetscape::real eta) const {
     int id_x   = GetIdX(x);
     int id_y   = GetIdY(y);
     int id_eta = 0;
@@ -101,7 +102,8 @@ FluidCellInfo EvolutionHistory::GetAtTimeStep(
 // do interpolation along time direction; we may also need high order
 // interpolation functions 
 FluidCellInfo EvolutionHistory::get(Jetscape::real tau, Jetscape::real x,
-                                    Jetscape::real y, Jetscape::real eta) {
+                                    Jetscape::real y,
+                                    Jetscape::real eta) const {
     int status = CheckInRange(tau, x, y, eta);
     if (status == 0) {
         FluidCellInfo zero_cell;
@@ -116,7 +118,8 @@ FluidCellInfo EvolutionHistory::get(Jetscape::real tau, Jetscape::real x,
 }
     
 FluidCellInfo EvolutionHistory::get_tz(Jetscape::real t, Jetscape::real x,
-                                       Jetscape::real y, Jetscape::real z) {
+                                       Jetscape::real y,
+                                       Jetscape::real z) const {
     Jetscape::real tau = 0.0;
     Jetscape::real eta = 0.0;
     if (t*t > z*z) {

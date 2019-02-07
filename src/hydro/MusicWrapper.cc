@@ -112,6 +112,8 @@ void MpiMusic::EvolveHydro() {
         JSINFO << "number of fluid cells received by the JETSCAPE: "
                << bulk_info.data.size();
         music_hydro_ptr->clear_hydro_info_from_memory();
+
+        FindAConstantTemperatureSurface(0.16);
     }
     
     collect_freeze_out_surface();

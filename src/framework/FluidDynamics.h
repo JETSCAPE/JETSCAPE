@@ -30,8 +30,8 @@
 #include "PreequilibriumDynamics.h"
 #include "RealType.h"
 #include "FluidCellInfo.h"
-#include "SurfaceCellInfo.h"
 #include "EvolutionHistory.h"
+#include "SurfaceCellInfo.h"
 
 namespace Jetscape {
 
@@ -210,6 +210,8 @@ class FluidDynamics : public JetScapeModuleBase {
      */
     virtual void GetHyperSurface(Jetscape::real T_cut,
                                  SurfaceCellInfo* surface_list_ptr) {};
+
+    void FindAConstantTemperatureSurface(Jetscape::real T_sw);
 
     // all the following functions will call function GetHydroInfo()
     // to get thermaldynamic and dynamical information at a space-time point
