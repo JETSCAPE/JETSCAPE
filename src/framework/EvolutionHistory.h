@@ -74,7 +74,7 @@ class EvolutionHistory {
 	@param y  Space coordinate.
 	@param eta Light-cone coordinate.
     */
-    void CheckInRange(Jetscape::real tau, Jetscape::real x, Jetscape::real y,
+    int CheckInRange(Jetscape::real tau, Jetscape::real x, Jetscape::real y,
                       Jetscape::real eta) const;
 
     // get the lower bound of the fluid cell along tau
@@ -142,6 +142,10 @@ class EvolutionHistory {
 	@param id_eta Fluid cell number along eta-grid.
     */
     inline int CellIndex(int id_tau, int id_x, int id_y, int id_eta) const {
+        id_tau = std::min(ntau, std::max(0, id_tau));
+        id_x   = std::min(nx,   std::max(0, id_x  ));
+        id_y   = std::min(ny,   std::max(0, id_y  ));
+        id_eta = std::min(neta, std::max(0, id_eta));
         return(id_tau * nx * ny * neta + id_x * ny * neta
                + id_y * neta + id_eta);
     }

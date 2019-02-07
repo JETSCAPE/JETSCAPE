@@ -38,13 +38,13 @@ class FluidCellInfo {
     Jetscape::real bulk_Pi;           //!< Bulk viscous pressure [GeV/fm^3].
 
     /** Default constructor.*/
-    FluidCellInfo() = default;    
+    FluidCellInfo();
 
     /** @param b Multiply the fluid cell by scalar factor b. */ 
     FluidCellInfo inline operator*=(Jetscape::real b);
 
     /** Prints fluid cell properties to the screen. */
-    void Print();
+    //void Print();
 };
 
 

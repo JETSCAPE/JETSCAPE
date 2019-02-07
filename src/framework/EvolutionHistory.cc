@@ -24,14 +24,16 @@ namespace Jetscape {
 
 // It checks whether a space-time point (tau, x, y, eta) is inside evolution
 // history or outside.
-void EvolutionHistory::CheckInRange(Jetscape::real tau, Jetscape::real x,
+int EvolutionHistory::CheckInRange(Jetscape::real tau, Jetscape::real x,
                                 Jetscape::real y, Jetscape::real eta) const {
+    int status = 1;
     if (tau < tau_min || tau > TauMax()) {
         std::string warn_message = ("tau=" + std::to_string(tau)
                 + " is not in range [" + std::to_string(tau_min) + ","
                 + std::to_string(TauMax()) + "]");
         //throw InvalidSpaceTimeRange(warn_message);
         JSWARN << warn_message;
+        status = 0;
     }
     if (x < x_min || x > XMax()) {
         std::string warn_message = ("x=" + std::to_string(x)
@@ -39,6 +41,7 @@ void EvolutionHistory::CheckInRange(Jetscape::real tau, Jetscape::real x,
                 + std::to_string(XMax()) + "]");
         //throw InvalidSpaceTimeRange(warn_message);
         JSWARN << warn_message;
+        status = 0;
     }
     if (y < y_min || y > YMax()) {
         std::string warn_message = ("y=" + std::to_string(y)
@@ -46,6 +49,7 @@ void EvolutionHistory::CheckInRange(Jetscape::real tau, Jetscape::real x,
                 + std::to_string(YMax()) + "]");
         //throw InvalidSpaceTimeRange(warn_message);
         JSWARN << warn_message;
+        status = 0;
     }
     if (eta < eta_min || eta > EtaMax()) {
         std::string warn_message = ("eta=" + std::to_string(eta)
@@ -53,7 +57,9 @@ void EvolutionHistory::CheckInRange(Jetscape::real tau, Jetscape::real x,
                 + std::to_string(EtaMax()) + "]");
         //throw InvalidSpaceTimeRange(warn_message);
         JSWARN << warn_message;
+        status = 0;
     }
+    return(status);
 }
   
 /** For one given time step id_tau,
@@ -80,21 +86,25 @@ FluidCellInfo EvolutionHistory::GetAtTimeStep(
     real eta1 = EtaCoord(id_eta + 1);
 
     return(TrilinearInt(x0, x1, y0, y1, eta0, eta1,
-			 data.at(c000), data.at(c001), data.at(c010), data.at(c011),
-			 data.at(c100), data.at(c101), data.at(c110), data.at(c111),
-			 x, y, eta));
+                data.at(c000), data.at(c001), data.at(c010), data.at(c011),
+                data.at(c100), data.at(c101), data.at(c110), data.at(c111),
+                x, y, eta));
 }
   
 // do interpolation along time direction; we may also need high order
 // interpolation functions 
 FluidCellInfo EvolutionHistory::get(Jetscape::real tau, Jetscape::real x,
                                     Jetscape::real y, Jetscape::real eta) {
-    CheckInRange(tau, x, y, eta);
+    int status = CheckInRange(tau, x, y, eta);
+    if (status == 0) {
+        FluidCellInfo zero_cell;
+        return(zero_cell);
+    }
     int id_tau = GetIdTau(tau);
-    real tau0 = TauCoord(id_tau);
-    real tau1 = TauCoord(id_tau + 1);
-    FluidCellInfo bulk0 = GetAtTimeStep(id_tau, x, y, eta);
-    FluidCellInfo bulk1 = GetAtTimeStep(id_tau+1, x, y, eta);
+    auto tau0  = TauCoord(id_tau);
+    auto tau1  = TauCoord(id_tau + 1);
+    auto bulk0 = GetAtTimeStep(id_tau, x, y, eta);
+    auto bulk1 = GetAtTimeStep(id_tau + 1, x, y, eta);
     return(LinearInt(tau0, tau1, bulk0, bulk1, tau));
 }
     
