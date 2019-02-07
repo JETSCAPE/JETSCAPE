@@ -23,8 +23,18 @@ print( "### Cores available : " + str(num_cores) + " ###" )
 #this writes surface.dat to cwd
 os.system( 'TRENTO_FS_HYDRO' )
 
-#now call the afterburner oversampling script
-os.system( 'python run_oversampled_afterburner.py ' + str(min_num_particles) + ' ' + str(num_cores) )
+#link surface.dat into input/ for iS3D
+#os.system( 'ln -s surface.dat input/surface.dat' )
+
+#check if freezeout surface is empty
+#if so, skip sampler and afterburner
+non_empty_surf = os.stat("surface.dat").st_size
+if (non_empty_surf):
+    #call script that oversamples surface and runs afterburners
+    os.system( 'python run_oversampled_afterburner.py ' + str(min_num_particles) + ' ' + str(num_cores) )
+        
+else:
+    print("***Freezeout surface is empty for this event...***")
 
 end_time = time.time()
 

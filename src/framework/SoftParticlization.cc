@@ -38,7 +38,8 @@ void SoftParticlization::Init() {
                                                         "SoftParticlization");
     if (!xml_) {
         JSWARN << " : Missing XML SoftParticlization section in file!";
-        exit(-1);
+	//note iS3D does not require a presence in the xml file
+        //exit(-1);
     }
 
     InitTask();
