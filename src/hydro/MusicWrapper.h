@@ -29,6 +29,7 @@ class MpiMusic: public FluidDynamics {
     MUSIC *music_hydro_ptr;
     int doCooperFrye;    //!< flag to run Cooper-Frye freeze-out
                          //!< for soft particles
+    int flag_output_evo_to_file;
 
  public:
      MpiMusic();
