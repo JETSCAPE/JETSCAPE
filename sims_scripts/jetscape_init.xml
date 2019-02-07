@@ -32,15 +32,31 @@
     <grid_max_x> 10 </grid_max_x>
     <grid_max_y> 10 </grid_max_y>
     <grid_max_z> 0 </grid_max_z>
-    <grid_step_x> 0.2 </grid_step_x>
-    <grid_step_y> 0.2 </grid_step_y>
-    <grid_step_z> 0.2 </grid_step_z>
+    <grid_step_x> 0.1 </grid_step_x>
+    <grid_step_y> 0.1 </grid_step_y>
+    <grid_step_z> 0.5 </grid_step_z>
     
-    <Trento use_module="pre_defined">
-      <!-- pre-defined system: default collisions have auau200, pbpb2760, pbpb5020, more in the future -->
-      <pre_defined collision_system="auau200" centrality_min="70" centrality_max="80" />
-      <!-- user-defined system: to get one event in 0-100% centrality range -->
-      <user_defined projectile="Au" target="Au" sqrts="200" cross_section="4.2" />
+    <Trento>
+		<PhysicsInputs	projectile='Pb'
+						target='Pb'
+						sqrts='2760'
+						cross-section='6.4'
+						normalization='13.9'>
+		</PhysicsInputs>
+		<CutInputs	centrality-low='20'
+					centrality-high='30'>
+		</CutInputs>
+		<TransInputs	reduced-thickness='0.0'
+						fluctuation="1.2"
+						nucleon-width="0.9"
+						nucleon-min-dist="1.2">
+		</TransInputs>
+		<LongiInputs	mean-coeff="1.0"
+						std-coeff="3.0"
+						skew-coeff="0.0"
+						skew-type="1"
+						jacobian="0.8">
+		</LongiInputs>
     </Trento>
 
     <!-- Options to read initial conditions from saved file  -->
@@ -129,9 +145,9 @@
   <Preequilibrium>
     
     <!-- starting long. proper time for Preequilibrium dynamics -->
-    <tau0>0.1</tau0>
+    <tau0>0.0</tau0>
     <!-- switching long. proper time from Preequilibrium dynamics to Hydrodynamics (Landau Matching) -->
-    <taus>0.2</taus>
+    <taus>0.5</taus>
     
     <!-- Individual Preequilibrium Dynamics models  -->
     <FreestreamMilne>
@@ -177,7 +193,7 @@
       <MUSIC_input_file>../examples/test_hydro_files/MUSIC_input</MUSIC_input_file>
       <MUSIC_file>../examples/test_hydro_files/MUSIC_evo.dat</MUSIC_file>
       <!-- transition temperature between QGP and Hadron Resonance Gas -->
-      <T_c>0.155</T_c>
+      <T_c>0.154</T_c>
 
       <!-- read in hydro evo file every Ntau step -->
       <!-- (only works for MUSIC evo files) -->
@@ -224,9 +240,9 @@
     <!-- SMASH -->
     <SMASH>
       <name>SMASH</name>
-      <SMASH_config_file>smash_input/smash_config.yaml</SMASH_config_file>
-      <SMASH_particles_file>smash_input/smash_particles.txt</SMASH_particles_file>
-      <SMASH_decaymodes_file>smash_input/smash_decaymodes.txt</SMASH_decaymodes_file>
+      <SMASH_config_file>smash_input/config.yaml</SMASH_config_file>
+      <SMASH_particles_file>smash_input/particles.txt</SMASH_particles_file>
+      <SMASH_decaymodes_file>smash_input/decaymodes.txt</SMASH_decaymodes_file>
       <!-- time in fm/c in the computational frame, when the simulation shoud be ended -->
       <end_time>300.0</end_time>
       <!-- 0 - run the full afterburner, 1 - only decay the resonances without even propagation -->

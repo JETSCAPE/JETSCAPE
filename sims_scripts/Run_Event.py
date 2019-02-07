@@ -21,7 +21,7 @@ print( "### Cores available : " + str(num_cores) + " ###" )
 
 #first call the executable which runs TRENTO + FREESTREAMING + HYDRO
 #this writes surface.dat to cwd
-os.system( './TRENTO_FS_HYDRO' )
+os.system( 'TRENTO_FS_HYDRO' )
 
 #now call the afterburner oversampling script
 os.system( 'python run_oversampled_afterburner.py ' + str(min_num_particles) + ' ' + str(num_cores) )

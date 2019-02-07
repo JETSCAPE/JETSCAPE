@@ -471,9 +471,9 @@ endif ( iS3D )
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/examples/jetscape_init.xml DESTINATION ${CMAKE_BINARY_DIR}/)
 
 #### copy smash configure files and input files 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/external_packages/smash/smash_config.yaml DESTINATION "smash_config/")
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/external_packages/smash/smash_code/input/particles.txt DESTINATION "smash_config/")
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/external_packages/smash/smash_code/input/decaymodes.txt DESTINATION "smash_config/")
+#file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/external_packages/smash/smash_config.yaml DESTINATION "smash_config/")
+#file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/external_packages/smash/smash_code/input/particles.txt DESTINATION "smash_config/")
+#file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/external_packages/smash/smash_code/input/decaymodes.txt DESTINATION "smash_config/")
 
 #### copy essential files for MUSIC to build/
 if (freestream)

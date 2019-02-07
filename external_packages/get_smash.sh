@@ -18,10 +18,11 @@ git clone --depth=1 https://github.com/smash-transport/smash.git smash/smash_cod
 
 # 2) Compile SMASH
 cd smash/smash_code
+git checkout f068109561daeea2e55461b30dded6e2ae945c4c
 mkdir build
 cd build
 cmake .. -DPythia_CONFIG_EXECUTABLE=${PYTHIA8DIR}/bin/pythia8-config
 number_of_cores=`nproc --all`
 number_of_cores_to_compile=$(( ${number_of_cores} > 20 ? 20 : ${number_of_cores} ))
 echo "Compiling SMASH using ${number_of_cores_to_compile} cores."
-make -j${number_of_cores_to_compile}
+make -j${number_of_cores_to_compile} smash_shared
