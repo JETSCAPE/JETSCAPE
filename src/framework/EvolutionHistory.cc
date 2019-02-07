@@ -17,6 +17,7 @@
 #include "EvolutionHistory.h"
 #include "FluidCellInfo.h"
 #include "LinearInterpolation.h"
+#include "JetScapeLogger.h"
 
 namespace Jetscape {
 
@@ -86,6 +87,20 @@ FluidCellInfo EvolutionHistory::get(Jetscape::real tau, Jetscape::real x,
     FluidCellInfo bulk0 = GetAtTimeStep(id_tau, x, y, eta);
     FluidCellInfo bulk1 = GetAtTimeStep(id_tau+1, x, y, eta);
     return(LinearInt(tau0, tau1, bulk0, bulk1, tau));
+}
+    
+FluidCellInfo EvolutionHistory::get_tz(Jetscape::real t, Jetscape::real x,
+                                       Jetscape::real y, Jetscape::real z) {
+    Jetscape::real tau = 0.0;
+    Jetscape::real eta = 0.0;
+    if (t*t > z*z) {
+        tau = sqrt(t*t - z*z);
+        eta = 0.5*log((t + z)/(t - z));
+    } else {
+        JSWARN << "the quest point is outside the light cone! "
+               << "t = " << t << ", z = " << z;
+    }
+    return(get(tau, x, y, eta));
 }
 
 }  // end namespace Jetscape

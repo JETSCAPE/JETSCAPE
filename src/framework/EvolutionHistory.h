@@ -165,6 +165,8 @@ class EvolutionHistory {
     */
     FluidCellInfo get(Jetscape::real tau, Jetscape::real x, Jetscape::real y,
                       Jetscape::real etas);
+    FluidCellInfo get_tz(Jetscape::real t, Jetscape::real x, Jetscape::real y,
+                      Jetscape::real z);
 };
 
 }

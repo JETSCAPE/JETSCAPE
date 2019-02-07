@@ -167,7 +167,7 @@ void MpiMusic::GetHydroInfo(
 void MpiMusic::GetHydroInfo_JETSCAPE(
         Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
         std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr) {
-    auto temp = bulk_info.get(t, x, y, z);
+    auto temp = bulk_info.get_tz(t, x, y, z);
     fluid_cell_info_ptr = std::unique_ptr<FluidCellInfo>(
                                                     new FluidCellInfo(temp));
 }
