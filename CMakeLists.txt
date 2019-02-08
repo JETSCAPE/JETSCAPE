@@ -470,10 +470,8 @@ endif ( iS3D )
 #### copy jetscape_init.xml to build/, such that one can test xml reading in build/ directory
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/examples/jetscape_init.xml DESTINATION ${CMAKE_BINARY_DIR}/)
 
-#### copy smash configure files and input files 
-#file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/external_packages/smash/smash_config.yaml DESTINATION "smash_config/")
-#file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/external_packages/smash/smash_code/input/particles.txt DESTINATION "smash_config/")
-#file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/external_packages/smash/smash_code/input/decaymodes.txt DESTINATION "smash_config/")
+#### copy smash configure files from sims_scripts to build
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/sims_scripts/smash_input DESTINATION ${CMAKE_BINARY_DIR}/)
 
 #### copy essential files for MUSIC to build/
 if (freestream)

@@ -29,8 +29,8 @@
     <!-- y range [-grid_max_y, grid_max_y]-->
     <!-- longitudinal range [-grid_max_z, grid_max_z]-->
     <!-- in units of [fm] -->
-    <grid_max_x> 10 </grid_max_x>
-    <grid_max_y> 10 </grid_max_y>
+    <grid_max_x> 10.1 </grid_max_x>
+    <grid_max_y> 10.1 </grid_max_y>
     <grid_max_z> 0 </grid_max_z>
     <grid_step_x> 0.2 </grid_step_x>
     <grid_step_y> 0.2 </grid_step_y>
@@ -43,8 +43,8 @@
 						cross-section='6.4'
 						normalization='13.9'>
 		</PhysicsInputs>
-		<CutInputs	centrality-low='20'
-					centrality-high='40'>
+		<CutInputs	centrality-low='50'
+					centrality-high='60'>
 		</CutInputs>
 		<TransInputs	reduced-thickness='0.0'
 						fluctuation="1.2"
@@ -240,9 +240,9 @@
     <!-- SMASH -->
     <SMASH>
       <name>SMASH</name>
-      <SMASH_config_file>./smash_config/smash_config.yaml</SMASH_config_file>
-      <SMASH_particles_file>./smash_config/particles.txt</SMASH_particles_file>
-      <SMASH_decaymodes_file>./smash_config/decaymodes.txt</SMASH_decaymodes_file>
+      <SMASH_config_file>./smash_input/smash_config.yaml</SMASH_config_file>
+      <SMASH_particles_file>./smash_input/particles.txt</SMASH_particles_file>
+      <SMASH_decaymodes_file>./smash_input/decaymodes.txt</SMASH_decaymodes_file>
       <!-- time in fm/c in the computational frame, when the simulation shoud be ended -->
       <end_time>300.0</end_time>
       <!-- 0 - run the full afterburner, 1 - only decay the resonances without even propagation -->

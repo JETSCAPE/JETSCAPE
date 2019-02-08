@@ -1,220 +1,259 @@
 #!/usr/bin/env python3
 
-import argparse
-import datetime
-from itertools import chain, repeat
+import matplotlib.pyplot as plt
 import logging
 import math
 import os
-import pickle
-import signal
-import subprocess
 import sys
-import tempfile
 import numpy as np
+logging.getLogger().setLevel(logging.DEBUG)
 
-# species (name, ID) for identified particle observables
-species = [
-    ('pion', 211),
-    ('kaon', 321),
-    ('proton', 2212),
-    ('Lambda', 3122),
-    ('Sigma0', 3212),
-    ('Xi', 3312),
-    ('Omega', 3334),
-    ('phi', 333),
-]
 # fully specify numeric data types, including endianness and size, to
 # ensure consistency across all machines
 float_t = '<f8'
 int_t = '<i8'
 complex_t = '<c16'
+
+# species (name, ID) for identified particle observables
+species = [
+	('pion', 211),
+	('kaon', 321),
+	('proton', 2212),
+	('Lambda', 3122),
+	('Sigma0', 3212),
+	('Xi', 3312),
+	('Omega', 3334),
+	('phi', 333),
+]
+pi_K_p = [
+	('pion', 211),
+	('kaon', 321),
+	('proton', 2212),
+]
+
+NpT = 10
+Nharmonic = 8
+Nharmonic_diff = 5
+
+# Particle datatype
+particle_dtype = [
+				('ID', int),
+				('charge', int),
+				('pT', float),
+				('ET', float),
+				('mT', float),
+				('phi', float),
+				('y', float),
+				('eta', float),
+			]
+
 # results "array" (one element)
 # to be overwritten for each event
-result_data_type=[
-    ('initial_entropy', float_t), # 1) initial entropy (eta=0) of TRENTo
-    ('dNch_deta', float_t),       # 2) dNch/deta at eta=0
-    ('dET_deta', float_t),        # 3) dET/deta at eta=0
-    ('Ttt', float_t),             # 4) t^tt
-    ('Ttx', float_t),             # 5) t^tx
-    ('Tty', float_t),             # 6) t^ty
-    ('Ttz', float_t),             # 7) t^tz
-    ('Txx', float_t),             # 8) t^xx
-    ('Txy', float_t),             # 9) t^xy
-    ('Txz', float_t),             # 10) t^xz
-    ('Tyy', float_t),             # 11) t^yy
-    ('Tyz', float_t),             # 12) t^yz
-    ('Tzz', float_t),             # 13) t^zz
-    ('dN_dy', [(s, float_t) for (s, _) in species]),  # 14) identified particle yield
-    ('mean_pT', [(s, float_t) for (s, _) in species]),  # 15) identified particle <pT>
-    ('mean_pT2', [(s, float_t) for (s, _) in species]),  # 16) identified particle <pT^2>
-    ('pT_fluct', [('N', int_t), ('sum_pT', float_t), ('sum_pTsq', float_t)]), # 17) pT fluct = sum_pTsq/N^2-(sum_pT/N)^2
-    ('flow', [('N', int_t), ('Qn', complex_t, 8)]), # 18) pT-integrated Q-vector of charged particles,
-    ('EP', [('Vn', float_t, 8), ('Psin', float_t, 8)]), # 19) Event-plane of charged particles for comparison purpose
-    ('d-flow', [(s, [('N', int_t, [6, 3]), ('Qn', complex_t, [6, 3, 4])])
-        for s in ['pion','kaon','proton']]),
-                                  # 20) Double differential q-vector of proton, kaon and pions a grid of 10 pT-points * 7 eta-points
-    ('d-ref', [('N', int_t), ('Qn', complex_t, 4)]),
-                                  # 11) Q-vector for of charged particles,
+result_dtype=[
+('initial_entropy', float_t, 1), 
+('impact_parameter', float_t, 1), 
+('npart', float_t, 1), 
+('ALICE',
+	[
+		# 1) dNch/deta, eta[-0.5, 0.5], charged
+		('dNch_deta', float_t, 1),	   
+		# 2) dET/deta, eta[-0.6, 0.6]
+		('dET_deta', float_t, 1),		
+		# 3.1) The Tmunu observables, eta[-0.6, 0.6]
+		('Tmunu', float_t, 10),	 
+		# 3.2) The Tmunu observables, eta[-0.5, 0.5], charged   
+		('Tmunu_chg', float_t, 10),	
+		# 4.1) identified particle yield
+		('dN_dy', 	[(name, float_t, 1) for (name,_) in species], 1),  
+		# 4.2) identified particle <pT>
+		('mean_pT', [(name, float_t, 1) for (name,_) in species], 1),  
+		# 5.1) pT fluct, pT[0.15, 2], eta[-0.8, 0.8], charged
+		('pT_fluct_chg', [	('N', int_t, 1), 
+							('sum_pT', float_t, 1), 
+							('sum_pT2', float_t, 1)], 1), 
+		# 5.2) pT fluct, pT[0.15, 2], eta[-0.8, 0.8], pi, K, p			
+		('pT_fluct_pid', [	(name, [	('N', int_t, 1), 
+										('sum_pT', float_t, 1), 
+										('sum_pT2', float_t, 1)], 1	)
+							  for (name,_) in pi_K_p	], 1), 
+		# 6) Q vector, pT[0.2, 5.0], eta [-0.8, 0.8], charged
+		('flow', [	('N', int_t, 1), 
+					('Qn', complex_t, Nharmonic)], 1),
+		# 7) Q vector, diff-flow eta[-0.8, 0.8], pi, K, p	
+		# It uses #6 as its reference Q vector		
+		('d_flow_chg', [('N', int_t, NpT), 
+						('Qn', complex_t, [NpT, Nharmonic_diff])], 1), 
+		('d_flow_pid', [(name, [('N', int_t, NpT), 
+								('Qn', complex_t, [NpT, Nharmonic_diff])], 1)
+						for (name,_) in pi_K_p	], 1), 
+	], 1)
 ]
 
 
+# A function that calculates event-planes given a list of azimuthal angles
+def calculate_eventplanes(phi, Nharmonic):
+	V_n = {n: float_t for n in range(1,Nharmonic+1)}
+	Psi_n =  {n: float_t for n in range(1,Nharmonic+1)}
+	N = phi.size
+	Npairs = N*(N-1.)
+	for n in range(1,Nharmoic+1):
+		Qx = np.cos(n*phi).sum() 
+		Qy = np.sin(n*phi).sum()
+		V_n[n] = np.sqrt((Qx**2+Qy**2 - N)/pairs)
+		Psi_n[n] = np.arctan2(Qy, Qx)/n
+	return V_n, Psi_n
+
+# A function that calculates double differential q-vectors
+# given a list of pT-bins and a list of eta-bins
+# for example:
+#	 pTbins = np.array([[0,1],[1,2],[2,3]])
+#	etabins = np.array([[-3,-1],[-1,1],[1,3]])
+def calc_Qvector(pT, phi, eta, pTbins, etabins, Nharmonic):
+	shape = [pTbins.shape[0], etabins.shape[0]]
+	# calculate Qn
+	results = {'N': np.zeros(shape, dtype=int_t),
+			   'Qn': np.zeros([*shape, Nharmonic], dtype=complex_t)}
+	for i, (pT_l, pT_h) in enumerate(pTbins):
+		pT_cut = (pT_l<=pT) & (pT<=pT_h)
+		for j, (eta_l, eta_h) in enumerate(etabins):
+			eta_cut = (eta_l<=eta) & (eta<=eta_h)
+			# apply cut
+			sub_phi = phi[pT_cut & eta_cut]
+			results['N'][i,j] = sub_phi.size
+
+			results['Qn'][i,j] = np.array([ np.exp(1j*n*sub_phi).sum()
+										   for n in range(1, 1+Nharmonic) ])
+	return results
+
+
+# A function that calculates J-F's magic Tmunu observables (~ int dV T^{mu,nu} )
+# Given a y-cut = [-1,1], and a pT-cut = [.2,5.0] e.g.
+def calc_Tmunu(ET, y, pT, phi, ycut, pTcut):
+	Tmunu = np.zeros(10)
+
+	cut = (pTcut[0]<pT) & (pT<pTcut[1]) & (ycut[0]<y) & (y<ycut[1])
+	# apply cut
+	y = y[cut]	
+	ET = ET[cut]
+	phi = phi[cut]
+	pT = pT[cut]
+
+	Pmu = np.array([ET * np.cosh(y), pT * np.cos(phi),
+					pT * np.sin(phi), ET * np.sinh(y) ])
+	
+	# T0nu
+	for i in range(4):
+		Tmunu[i] = Pmu[i].sum()
+	# Tij
+	n = 4
+	for i in range(1,4):
+		for j in range(i, 4):
+			Tmunu[n] = (Pmu[i]*Pmu[j]/Pmu[0]).sum()
+			n += 1
+
+	return Tmunu			 
+
 def calculate_obs(input_filename, output_filename):
-    # A function that calculates event-planes given a list of azimuthal angles
-    def calculate_eventplanes(phi):
-        Vn_table = {n: float_t for n in range(1,8)}
-        Psin_table =  {n: float_t for n in range(1,8)}
-        N = phi.size
-        for n in range(1,8):
-            qy = np.sin(n*phi) # array of cos(n*phi_i)
-            Qy = qy.sum()       # Qx = N<cos(n*phi)>
-            qx = np.cos(n*phi) # array of cos(n*phi_i)
-            Qx = qx.sum()       # Qy = N<sin(n*phi)>
-            cov = np.cov([qy*N, qx*N])/(N-1.) # covariance between Qy and Qx array
-            varQy = cov[0,0]; varQx = cov[1,1]; covQxQy = cov[0,1]
-            Psin = np.arctan2(Qy, Qx)/n
-            Psinerr = 1./n*np.sqrt(varQy*Qx**2 + varQx*Qy**2 - 2.*covQxQy*Qy*Qx) \
-                  /(Qy**2+Qx**2) # uncertainty of Psin
-            Vn = np.sqrt((Qx**2+Qy**2 - N)/N/(N-1.))
-            Vnerr = np.sqrt(Qx**2*varQx + Qy**2*varQy + 2.*Qx*Qy*covQxQy)\
-                        /N/(N - 1.)/Vn # uncertainty of Vn
-            Vn_table[n] = Vn
-            Psin_table[n] = Psin
-        return Vn_table, Psin_table
+	# read final particle data (output from afterburner)
+	with open(input_filename, 'r') as f:
+		particles = np.fromiter(
+			(tuple(l.split()[2:]) for l in f if not l.startswith('#')),
+			dtype=particle_dtype
+		)
 
-    # A function that calculates double differential q-vectos
-    # given a list of pT-bins and a list of etabins
-    # for example, pTbins = np.array([[0,1],[1,2],[2,3]])
-    # and etabins = np.array([[-2.5,-1.5],[-1.5,-.5],[-.5,.5],[.5,1.5],[1.5,2.5]])
-    def calc_Qvector(pT, phi, eta, pTbins, etabins, order=8):
-        grid_shape = [pTbins.shape[0], etabins.shape[0]]
-        # calculate Qn
-        results = {'N': np.zeros(grid_shape, dtype=int_t),
-                   'Qn': np.zeros([*grid_shape, order], dtype=complex_t)}
-        for i, (pT_low, pT_high) in enumerate(pTbins):
-            pT_cut = (pT_low<=pT) & (pT<=pT_high)
-            for j, (eta_low, eta_high) in enumerate(etabins):
-                eta_cut = (eta_low<=eta) & (eta<=eta_high)
+	logging.info('computing observables')
 
-                kinematic_cut = pT_cut & eta_cut
-                # apply cut
-                dphi = phi[kinematic_cut]
-                results['N'][i,j] = dphi.size
-                results['Qn'][i,j] = np.array([ np.sum(np.exp(1j*n*dphi))
-                                                for n in range(1, 1+order) ])
-        return results
+	# Create result data entry and set all to 0
+	results = np.empty((), dtype=result_dtype)
+	results.fill(0.) 
 
-    # read final particle data (output from afterburner)
-    with open(input_filename, 'r') as f:
-        parts = np.fromiter(
-            (tuple(l.split()) for l in f if not l.startswith('#')),
-            dtype=[
-                ('ID', int),
-                ('charge', int),
-                ('pT', float),
-                ('ET', float),
-                ('mT', float),
-                ('phi', float),
-                ('y', float),
-                ('eta', float),
-            ]
-        )
+	# Get pT, phi, eta, y ...
+	ET = particles['ET']
+	pT = particles['pT']
+	phi = particles['phi']
+	eta = particles['eta']
+	y = particles['y']
+	charge = particles['charge']
+	abs_pid = np.abs(particles['ID'])
+	abs_eta = np.fabs(eta)
+	abs_y = np.fabs(eta)
 
-    logging.info('computing observables')
-    results = np.empty((), dtype=result_data_type)
-    results.fill(0.) # initialize all results entry with 0
+	# charged particle cut
+	charged = (charge != 0)
 
-    pT = parts['pT']
-    phi = parts['phi']
-    eta = parts['eta']
-    y = parts['y']
-    charge = parts['charge']
-    abs_ID = np.abs(parts['ID'])
-    abs_eta = np.fabs(eta)
+	# 1) calculate dNch/eta and dET/deta
+	results['ALICE']['dNch_deta'] = (charged & (abs_eta < .5)).sum() / (2*.5)
+	results['ALICE']['dET_deta'] = ET[abs_eta < .6].sum() / (2*.6)
 
-    # some useful cut
-    charged = (charge != 0)
-    midrapidity = (np.fabs(y) < .5)
+	# 2) calculate identified particle yield and mean_pT
+	for name, pid in species:
+		cut = (abs_pid == pid) & (abs_y < 0.5)
+		N = cut.sum()
+		results['ALICE']['dN_dy'][name] = N
+		results['ALICE']['mean_pT'][name] = 0 if N==0 else pT[cut].mean()
 
-    #calculate JF's Tmunu inspired observables (~ int dV T^{mu,nu} )
-    Tmunu_cut = ( np.fabs( parts['y'] ) < 1.0 )
-    Tmunu_parts = parts[Tmunu_cut]
+	# 3) calculate chagred particle pT fluctuation
+	x = pT[charged & (abs_eta < .8) & (.15 < pT) & (pT < 2.)]
+	N = x.size
+	results['ALICE']['pT_fluct_chg']['N'] = N
+	results['ALICE']['pT_fluct_chg']['sum_pT'] = 0. if N==0 else x.sum()
+	results['ALICE']['pT_fluct_chg']['sum_pT2'] = 0. if N==0 else (x**2).sum()
 
-    Pt = np.multiply( Tmunu_parts['ET'], np.cosh( Tmunu_parts['y'] ) )
-    Px = np.multiply( Tmunu_parts['pT'], np.cos( Tmunu_parts['phi'] ) )
-    Py = np.multiply( Tmunu_parts['pT'], np.sin( Tmunu_parts['phi'] ) )
-    Pz = np.multiply( Tmunu_parts['ET'], np.sinh( Tmunu_parts['y'] ) )
+	# 4) calculate identified particle pT fluctuation
+	for name, pid in pi_K_p:
+		x = pT[(abs_pid == pid) & (abs_y < 0.5)]
+		N = x.size
+		results['ALICE']['pT_fluct_pid'][name]['N'] = N
+		results['ALICE']['pT_fluct_pid'][name]['sum_pT'] = 0. \
+														if N == 0 else x.sum()
+		results['ALICE']['pT_fluct_pid'][name]['sum_pT2'] = 0. \
+														if N == 0 else (x**2).sum()
 
-    #is this safe when Pt = 0 ?
-    results['Ttt']= np.sum(Pt)
-    results['Ttx']= np.sum(Px)
-    results['Tty']= np.sum(Py)
-    results['Ttz']= np.sum(Pz)
-    results['Txx']= np.sum( np.divide( np.multiply(Px, Px), Pt ) )
-    results['Txy']= np.sum( np.divide( np.multiply(Px, Py), Pt ) )
-    results['Txz']= np.sum( np.divide( np.multiply(Px, Pz), Pt ) )
-    results['Tyy']= np.sum( np.divide( np.multiply(Py, Py), Pt ) )
-    results['Tyz']= np.sum( np.divide( np.multiply(Py, Pz), Pt ) )
-    results['Tzz']= np.sum( np.divide( np.multiply(Pz, Pz), Pt ) )
+	# 5) pT-integrated Qvector with ALICE cut
+	pTbins = np.array([[.2, 5.0]])
+	etabins = np.array([[-0.8, 0.8]])
+	info = calc_Qvector(pT[charged], phi[charged], eta[charged],
+					 pTbins, etabins, Nharmonic)
+	results['ALICE']['flow']['N'] = info['N'][0,0]
+	results['ALICE']['flow']['Qn'] = info['Qn'][0,0,:]
 
-    # calculate dNch/eta and dET/deta
-    results['dNch_deta'] = np.count_nonzero(charged & (abs_eta < .5)) / 1.
-    results['dET_deta'] = parts['ET'][abs_eta < .6].sum() / (2*.6)
+	# 6) The magic Tmunu
+	results['ALICE']['Tmunu'] = calc_Tmunu(ET, y, pT, phi, 
+								ycut=[-0.6, 0.6], pTcut=[0., 10.])
 
-    # identified particle yield
-    for name, i in species:
-        cut = (abs_ID == i) & midrapidity
-        N = np.count_nonzero(cut)
-        results['dN_dy'][name] = N
-        results['mean_pT'][name] = (0. if N == 0 else pT[cut].mean())
-        pTsq = pT[cut] * pT[cut]
-        results['mean_pT2'][name] = (0. if N == 0 else pTsq.mean())
+	results['ALICE']['Tmunu_chg'] = calc_Tmunu(ET[charged], y[charged], 
+								pT[charged], phi[charged], 
+								ycut=[-0.6, 0.6], pTcut=[0., 10.])
 
-    # pT fluctuation
-    pT_alice = pT[charged & (abs_eta < .8) & (.15 < pT) & (pT < 2.)]
-    results['pT_fluct']['N'] = pT_alice.size
-    results['pT_fluct']['sum_pT'] = pT_alice.sum()
-    results['pT_fluct']['sum_pTsq'] = np.inner(pT_alice, pT_alice)
+	# 7) Diff flow
+	pTbins = np.array([[0,.2], [.2,.4], [.4,.6],[.6,.8],[.8,1.],
+			[1.,1.2], [1.2,1.5], [1.5,2.], [2.,2.5], [2.5,3]])
+	etabins = np.array([[-0.8, 0.8]])
+	info = calc_Qvector(pT[charged], phi[charged], eta[charged],
+					 pTbins, etabins, Nharmonic_diff)
+	results['ALICE']['d_flow_chg']['N'] = info['N'][:,0]
+	results['ALICE']['d_flow_chg']['Qn'] = info['Qn'][:,0,:]
+	for name, pid in pi_K_p:
+		cut = (abs_pid == pid)
+		info = calc_Qvector(pT[cut], phi[cut], eta[cut],
+					 pTbins, etabins, Nharmonic_diff)
+		results['ALICE']['d_flow_pid'][name]['N'] = info['N'][:,0]
+		results['ALICE']['d_flow_pid'][name]['Qn'] = info['Qn'][:,0,:]
 
-    # pT-integrated Qvector with ALICE cut
-    pTbins = np.array([[.2, 5.0]])
-    etabins = np.array([[-1,1]])
-    Q = calc_Qvector(pT[charged], phi[charged], eta[charged],
-                     pTbins, etabins, order=8)
-    results['flow']['N'] = Q['N'][0,0]
+	# write results to file
+	with open(output_filename, 'wb') as results_file:
+		results_file.write(results.tobytes())
 
-    results['flow']['Qn'] = Q['Qn'][0,0,:]
-
-    # identified particle pT-differential Qvector and reference Qvector
-    pTbins = np.array([[0,.5],[.5,1.],[1.,1.5],[1.5,2.],[2.,2.5],[2.5,3.]])
-    etabins = np.array([[-3,-1],[-1,1],[1, 3]])
-    ref_pTbins = np.array([[0.2,5.]])
-    ref_etabins = np.array([[-2,2]])
-    for s, pid in zip(['pion','kaon','proton'], [211, 321, 2212]):
-        cut = (abs_ID == pid) & charged
-        Q = calc_Qvector(pT[cut], phi[cut], eta[cut],
-                         pTbins, etabins, order=4)
-        Qref = calc_Qvector(pT[charged], phi[charged], eta[charged],
-                         ref_pTbins, ref_etabins, order=4)
-        results['d-flow'][s]['N'] = Q['N']
-        results['d-flow'][s]['Qn'] = Q['Qn']
-        results['d-ref']['N'] = Qref['N'][0,0]
-        results['d-ref']['Qn'] = Qref['Qn'][0,0,:]
-
-    # write results to file
-    with open(output_filename, 'wb') as results_file:
-        results_file.write(results.tobytes())
-
-def view_results(filename):
-    data = np.fromfile(filename, dtype=result_data_type)
-    print("pT-integrate Qvec:N:", *data['flow']['N'])
-    print("pT-integrate Qvec:Qn:", *data['flow']['Qn'])
-    print("double-diff Qvec:pion:N:", *data['d-flow']['pion']['N'])
-    print("double-diff Qvec:pion:Qn:", *data['d-flow']['pion']['Qn'])
-
-def main():
-    calculate_obs("final_smash_hadrons.dat", "results.dat")
-    view_results("results.dat")
+# loop over the datatype iteratively and print every thing for a check
+def dprint(data, dtype, prefix):
+	for (name, sub_dtype, _) in dtype:
+		sub_prefix = prefix+"/"+name
+		if type(sub_dtype) == list:
+			dprint(data[name], sub_dtype, sub_prefix)
+		else:
+			print(sub_prefix,'=', data[name][0])
 
 if __name__ == "__main__":
-    main()
+	calculate_obs("final_smash_hadrons.dat", "results.dat")
+	data = np.fromfile("results.dat", dtype=result_dtype)
+	dprint(data, result_dtype, '')
