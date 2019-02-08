@@ -39,8 +39,8 @@ def spawn_afterburner(sample):
     os.system( 'ln -s ../tables tables' )
     os.system( 'ln -s ../deltaf_coefficients deltaf_coefficients' )
     
-    #run the sampler and afterburner executable
-    os.system( 'SAMPLER_AFTERBURNER' )
+    #run the sampler and afterburner executable, save each stdout to unique file
+    os.system( 'SAMPLER_AFTERBURNER > stdout_SAMPLER_AFTERBURNER.txt' )
     #return to parent dir 
     os.chdir( ".." )
 
