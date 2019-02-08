@@ -27,6 +27,10 @@ def spawn_hydro(event):
     os.system( 'ln -s ../tables tables' )
     os.system( 'ln -s ../deltaf_coefficients deltaf_coefficients' )
     
+    #TEMPORARY
+    #make a dir to store freestreaming output
+    os.system( 'mkdir output' )
+    #TEMPORARY
     #run the TRENTO+FS+HYDRO executable and save stdout to unique file
     os.system( 'TRENTO_FS_HYDRO > stdout_TRENTO_FS_HYDRO.txt' )
     #return to parent dir 

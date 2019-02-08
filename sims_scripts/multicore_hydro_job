@@ -54,6 +54,6 @@ date
 
 
 # arg is number of cores 
-python run_parallel_hydro.py 1          
+python run_parallel_hydro.py 10          
 
 # ---------------------------------------------------
