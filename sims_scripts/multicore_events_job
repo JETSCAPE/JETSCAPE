@@ -23,9 +23,9 @@
 #
 #----------------------------------------------------
 
-#SBATCH -J test_mc_hydro            # Job name
-#SBATCH -o test_mc_hydro.o          # Name of stdout output file
-#SBATCH -e test_mc_hydro.e          # Name of stderr error file
+#SBATCH -J test_mc_events            # Job name
+#SBATCH -o test_mc_events.o          # Name of stdout output file
+#SBATCH -e test_mc_events.e          # Name of stderr error file
 #SBATCH -p skx-normal      # Queue (partition) name
 #SBATCH -N 1               # Total # of nodes 
 #SBATCH -n 1               # Total # of mpi tasks
@@ -52,8 +52,9 @@ pwd
 
 date
 
-
-# arg is number of cores 
-python run_parallel_hydro.py 10          
+# first arg is number hydro events (SHOULD BE >= NUMBER CORES)
+# second arg is number of cores
+# third arg is min number of hadrons per surface 
+python Run_multicore_events.py 40 40 20000          
 
 # ---------------------------------------------------
