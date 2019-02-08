@@ -1,12 +1,16 @@
 
 #These should be set by external script/block of code
 #Parameters common to modules
-nx = 101 #num grid points in x
-ny = 101 #num grid points in y
+nx = 201 #num grid points in x
+ny = 201 #num grid points in y
 dx = 0.1 #grid spacing x [fm]
 dy = 0.1 #grid spacing y [fm]
-max_x = (nx - 1)/2.0 * dx #max x [fm]
-max_y = (ny - 1)/2.0 * dy #may y [fm]
+L_x = (nx - 1)/2.0 * dx #size of grid in x[fm]
+L_y = (ny - 1)/2.0 * dy #size of grid in y[fm]
+
+#set max_x = L_x + 0.5dx
+max_x = L_x + 0.5*dx #max x [fm]
+max_y = L_y + 0.5*dy #may y [fm]
 
 tau_s = 0.5 #time of landau-matching to hydro [fm/c]
 
