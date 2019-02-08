@@ -19,7 +19,7 @@ def spawn_hydro(event):
     os.system( 'ln -s ../jetscape_init.xml jetscape_init.xml' )
     os.system( 'ln -s ../freestream_input freestream_input' )
     os.system( 'ln -s ../music_input music_input' )
-    
+    os.system( 'ln -s ../EOS EOS' )
     #having these will be useful later for sampling and afterburner
     os.system( 'ln -s ../smash_input smash_input' )
     os.system( 'ln -s ../iS3D_parameters.dat iS3D_parameters.dat' )
