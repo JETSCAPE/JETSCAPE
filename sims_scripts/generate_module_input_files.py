@@ -12,31 +12,43 @@ L_y = (ny - 1)/2.0 * dy #size of grid in y[fm]
 max_x = L_x + 0.5*dx #max x [fm]
 max_y = L_y + 0.5*dy #may y [fm]
 
-tau_s = 0.5 #time of landau-matching to hydro [fm/c]
+tau_s = 1.16 #time of landau-matching to hydro [fm/c]
 
-e_c = 1.7  #switching energy density on freezeout hypersurface [GeV/fm^3]
+#which one will we use??
+e_c = 1.7   #switching energy density on freezeout hypersurface [GeV/fm^3]
+T_c = 0.151 #switching temperature on hypersurface [GeV]
 
 #TRENTo parameters
 projectile = 'Pb'
 target = 'Pb'
 sqrts = 2760
 cross_section = 6.4
-normalization = 13.9
+normalization = 13.94
 cent_low = 20
 cent_high = 30
-reduced_thickness = 0.0
-fluctuation = 1.2
-nucleon_width = 0.9
-nucleon_min_dist = 1.2
+reduced_thickness = 0.007
+fluctuation = 0.918
+nucleon_width = 0.956
+nucleon_min_dist = 1.27
 
 #freestream-milne Parameters
 
 #MUSIC Parameters
-eta_over_s = 0.08 # shear visc / entropy
-zeta_over_s = 0.1 # bulk visc / entropy
+#eta_over_s = 0.1 # shear visc / entropy
+#zeta_over_s = 0.1 # bulk visc / entropy
+
+#shear viscosity p'zation
+eta_over_s_min = 0.08
+eta_over_s_slope = 1.1
+eta_over_s_curv = -0.5
+
+#bulk viscosity p'zation
+bulk_viscosity_normalisation = 0.05
+bulk_viscosity_width_in_GeV = 0.02
+bulk_viscosity_peak_in_GeV = 0.18 
 
 #iS3D Parameters
-delta_f_mode = 1 # 1: 14 moment, 2: C.E., 3: McNelis feq_mod, 4: Bernhard feq_mod
+delta_f_mode = 4 # 1: 14 moment, 2: C.E., 3: McNelis feq_mod, 4: Bernhard feq_mod
 
 #write appropriate input files
 
@@ -91,8 +103,17 @@ music_file.write("Minmod_Theta 1.8\n")               # theta parameter in the mi
 music_file.write("Runge_Kutta_order 2\n")            # order of Runge_Kutta for temporal evolution
 music_file.write("Viscosity_Flag_Yes_1_No_0 1\n")    # turn on viscosity in the evolution
 music_file.write("Include_Shear_Visc_Yes_1_No_0 1\n")# include shear viscous effect
-music_file.write("Shear_to_S_ratio "+str(eta_over_s) + "\n")# value of \eta/s
-music_file.write("T_dependent_Shear_to_S_ratio  1\n")# flag to use temperature dep. \eta/s(T)
+#music_file.write("Shear_to_S_ratio "+str(eta_over_s) + "\n")# value of \eta/s
+
+music_file.write("T_dependent_Shear_to_S_ratio  2\n")# flag to use temperature dep. \eta/s(T)
+music_file.write("T_dependent_Bulk_to_S_ratio  2\n")# flag to use temperature dep. \zeta/s(T)
+music_file.write("eta_over_s_min " + str(eta_over_s_min) + "\n")
+music_file.write("eta_over_s_slope " + str(eta_over_s_slope) + "\n")
+music_file.write("eta_over_s_curv " + str(eta_over_s_curv) + "\n")
+music_file.write("bulk_viscosity_normalisation " + str(bulk_viscosity_normalisation) + "\n")
+music_file.write("bulk_viscosity_width_in_GeV " + str(bulk_viscosity_width_in_GeV) + "\n")
+music_file.write("bulk_viscosity_peak_in_GeV " + str(bulk_viscosity_peak_in_GeV) + "\n")
+
 music_file.write("Include_Bulk_Visc_Yes_1_No_0 1\n") # include bulk viscous effect
 music_file.write("Include_second_order_terms 1\n")   # include second order non-linear coupling terms
 music_file.write("store_hydro_info_in_memory 0\n")   # flag to store hydro info in memory
@@ -102,8 +123,8 @@ music_file.write("Do_FreezeOut_lowtemp 0\n")         # flag to include cold coro
 music_file.write("freeze_out_method 4\n")            # method for hyper-surface finder
 music_file.write("average_surface_over_this_many_time_steps 5\n")   # the step skipped in the tau
 music_file.write("epsilon_freeze " + str(e_c) + "\n")            # the freeze out energy density (GeV/fm^3)
-music_file.write("use_eps_for_freeze_out 1\n")       # 0: use temperature, 1: use energy density
-music_file.write("T_freeze 0.137\n")                 # freeze-out temperature (GeV)
+music_file.write("use_eps_for_freeze_out 0\n")       # 0: use temperature, 1: use energy density
+music_file.write("T_freeze " + str(T_c) + "\n")                 # freeze-out temperature (GeV)
 music_file.write("EndOfData\n")
 
 music_file.close()
@@ -121,24 +142,24 @@ iS3D_file.write("include_bulk_deltaf       	= 1\n")
 iS3D_file.write("include_shear_deltaf      	= 1\n")
 iS3D_file.write("include_baryondiff_deltaf 	= 0\n")
 iS3D_file.write("regulate_deltaf           	= 0\n")
-iS3D_file.write("outflow 			        = 1\n")
-iS3D_file.write("deta_min 			        = 1.e-2\n")
-iS3D_file.write("detc_min 			        = 1.e-2\n")
+iS3D_file.write("outflow 			= 1\n")
+iS3D_file.write("deta_min 			= 1.e-2\n")
+iS3D_file.write("detc_min 			= 1.e-2\n")
 iS3D_file.write("group_particles            = 0\n")
 iS3D_file.write("particle_diff_tolerance    = 0.01\n")
-iS3D_file.write("mass_pion0			 = 0.138\n")
+iS3D_file.write("mass_pion0		    = 0.138\n")
 iS3D_file.write("do_resonance_decays = 0\n")
 iS3D_file.write("lightest_particle 	 = 211\n")
 iS3D_file.write("oversample		     = 0\n")
 iS3D_file.write("min_num_hadrons     = 1.e+6\n")
-iS3D_file.write("sampler_seed		 = -1\n")
+iS3D_file.write("sampler_seed	     = -1\n")
 
 #these only used for testing, are dummys
 iS3D_file.write("pT_lower_cut	= 0.0\n")
 iS3D_file.write("pT_upper_cut	= 3.0\n")
-iS3D_file.write("pT_bins		= 100\n")
-iS3D_file.write("y_cut			= 5.0\n")
-iS3D_file.write("dynamical		= 0\n")
+iS3D_file.write("pT_bins	= 100\n")
+iS3D_file.write("y_cut		= 5.0\n")
+iS3D_file.write("dynamical	= 0\n")
 
 iS3D_file.close()
 
@@ -152,7 +173,7 @@ js_file.write("  <debug> on </debug>\n")
 js_file.write("  <remark> off </remark>\n")
 js_file.write("  <vlevel> 0 </vlevel>\n")
 js_file.write("  <Random>\n")
-js_file.write("    <seed>1</seed>\n")
+js_file.write("    <seed>0</seed>\n")
 js_file.write("  </Random>\n")
 
 #parameters common to TRENTo and MUSIC
