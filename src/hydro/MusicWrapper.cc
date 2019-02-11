@@ -59,38 +59,25 @@ void MpiMusic::EvolveHydro() {
     VERBOSE(8);
     JSINFO << "Initialize density profiles in MUSIC ...";
     std::vector<double> entropy_density = ini->GetEntropyDensityDistribution();
-    const double dx   = ini->GetXStep();
-    const double dz   = ini->GetZStep();
-    const double zmax = ini->GetZMax();
-    const int    nz   = ini->GetZSize();
-
-
+    double dx = ini->GetXStep();
+    double dz = ini->GetZStep();
+    double z_max  = ini->GetZMax();
+    int nz = ini->GetZSize();
     if (pre_eq_ptr == nullptr) {
         JSWARN << "Missing the pre-equilibrium module ...";
     } else {
         music_hydro_ptr->initialize_hydro_from_jetscape_preequilibrium_vectors(
-                                            dx, dz, zmax, nz,
-                                            pre_eq_ptr->e_,
-                                            pre_eq_ptr->utau_,
-                                            pre_eq_ptr->ux_,
-                                            pre_eq_ptr->uy_,
-                                            pre_eq_ptr->ueta_,
-                                            pre_eq_ptr->pi00_,
-                                            pre_eq_ptr->pi01_,
-                                            pre_eq_ptr->pi02_,
-                                            pre_eq_ptr->pi03_,
-                                            pre_eq_ptr->pi11_,
-                                            pre_eq_ptr->pi12_,
-                                            pre_eq_ptr->pi13_,
-                                            pre_eq_ptr->pi22_,
-                                            pre_eq_ptr->pi23_,
-                                            pre_eq_ptr->pi33_,
-                                            pre_eq_ptr->bulk_Pi_);
-
+                dx, dz, z_max, nz,
+                pre_eq_ptr->e_,
+                pre_eq_ptr->utau_, pre_eq_ptr->ux_,
+                pre_eq_ptr->uy_,   pre_eq_ptr->ueta_,
+                pre_eq_ptr->pi00_, pre_eq_ptr->pi01_, pre_eq_ptr->pi02_,
+                pre_eq_ptr->pi03_, pre_eq_ptr->pi11_, pre_eq_ptr->pi12_,
+                pre_eq_ptr->pi13_, pre_eq_ptr->pi22_, pre_eq_ptr->pi23_,
+                pre_eq_ptr->pi33_, pre_eq_ptr->bulk_Pi_);
     }
-
+    
     JSINFO << "initial density profile dx = " << dx << " fm";
-
     hydro_status = INITIALIZED;
     if (hydro_status == INITIALIZED) {
         JSINFO << "running MUSIC ...";
@@ -114,7 +101,7 @@ void MpiMusic::collect_freeze_out_surface() {
 void MpiMusic::GetHydroInfo(
         Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
         std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr) {
-    fluid_cell_info_ptr = make_unique<FluidCellInfo>();
+    fluid_cell_info_ptr = std::make_unique<FluidCellInfo>();
     fluidCell *fluidCell_ptr = new fluidCell;
     music_hydro_ptr->get_hydro_info(x, y, z, t, fluidCell_ptr);
     fluid_cell_info_ptr->energy_density = fluidCell_ptr->ed;

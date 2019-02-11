@@ -5,6 +5,7 @@
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 project (JetScape CXX C)
 
+
 # Fail if cmake is called in the source directory
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
   message("source directory:" ${CMAKE_SOURCE_DIR})
@@ -72,9 +73,9 @@ endif (smash)
 ### Compiler & Linker Flags ###
 ###############################
 message("Compiler and Linker flags ...")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O -fPIC -pipe -Wall -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O -fPIC -pipe -Wall -std=c++11 -fext-numeric-literals")
 ## can turn off some warnings
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-reorder -Wno-unused-variable ")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-reorder -Wno-unused-variable -wd858")
 ## can turn on debugging information
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 
@@ -187,6 +188,8 @@ install(
   # external packages
   "${PROJECT_BINARY_DIR}/external_packages/gtl/lib/"
   "${PROJECT_BINARY_DIR}/external_packages/iSS/src/"
+  "${PROJECT_BINARY_DIR}/external_packages/iS3D/src/cpp/"
+  "${PROJECT_BINARY_DIR}/../external_packages/smash/smash_code/build/src/"
   "${PROJECT_BINARY_DIR}/external_packages/music/src/"
   "${PROJECT_BINARY_DIR}/external_packages/trento/src/"
   DESTINATION "lib" # target directory
@@ -399,29 +402,55 @@ add_executable(FinalStatePartons ./examples/FinalStatePartons.cc)
 target_link_libraries(FinalStatePartons JetScape )
 
 # executables with additional dependencies
-if (freestream AND music)
+
+if (freestream AND music AND iSS)
   add_executable(freestream-milneTest ./examples/freestream-milneTest.cc)
   target_link_libraries(freestream-milneTest JetScape ${GSL_LIBRARIES})
+  install(TARGETS freestream-milneTest DESTINATION bin)
+endif (freestream AND music AND iSS)
+
+if (freestream AND music)
+  add_executable(TRENTO_FS_HYDRO ./examples/TRENTO_FS_HYDRO.cc)
+  target_link_libraries(TRENTO_FS_HYDRO JetScape ${GSL_LIBRARIES})
+  install(TARGETS TRENTO_FS_HYDRO DESTINATION bin)
 endif (freestream AND music)
+
 if ( music AND iSS )
   add_executable(MUSICTest ./examples/MUSICTest.cc)
   target_link_libraries(MUSICTest JetScape ${OpenMP_CXX_LIBRARIES} ${GSL_LIBRARIES})
+  install(TARGETS MUSICTest DESTINATION bin)
 endif (music AND iSS )
+
 if ( music AND iSS AND smash )
   add_executable(SMASHTest ./examples/SMASHTest.cc)
   include_directories(${SMASH_INCLUDE_DIR})
   # "-lubsan -lasan")
   target_link_libraries(SMASHTest JetScape ${SMASH_LIBRARIES} ${MPI_LIBRARIES} ${GSL_LIBRARIES})
+  install(TARGETS SMASHTest DESTINATION bin)
 endif ( music AND iSS AND smash )
+
+if (iS3D AND smash)
+   add_executable(SAMPLER_AFTERBURNER ./examples/SAMPLER_AFTERBURNER.cc)
+   target_link_libraries(SAMPLER_AFTERBURNER JetScape ${SMASH_LIBRARIES} ${MPI_LIBRARIES} ${GSL_LIBRARIES})
+   install(TARGETS SAMPLER_AFTERBURNER DESTINATION bin)
+endif (iS3D AND smash)
+
+if (iSS)
+   add_executable(iSSSamplingOnly ./examples/iSSSamplingOnly.cc)
+   target_link_libraries(iSSSamplingOnly JetScape ${GSL_LIBRARIES})
+   install(TARGETS iSSSamplingOnly DESTINATION bin)
+endif (iSS)
 
 if ( music AND iS3D )
   add_executable(iS3DTest ./examples/iS3DTest.cc)
   target_link_libraries(iS3DTest JetScape ${MPI_LIBRARIES} ${GSL_LIBRARIES})
+  install(TARGETS iS3DTest DESTINATION bin)
 endif (music AND iS3D )
 
 if ( iS3D )
   add_executable(iS3DSamplingOnly ./examples/iS3DSamplingOnly.cc)
   target_link_libraries(iS3DSamplingOnly JetScape ${GSL_LIBRARIES})
+  install(TARGETS iS3DSamplingOnly DESTINATION bin)
 endif ( iS3D )
 
 # if (${ROOT_FOUND})
@@ -440,6 +469,9 @@ endif ( iS3D )
 # -----------------------------------------------------------
 #### copy jetscape_init.xml to build/, such that one can test xml reading in build/ directory
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/examples/jetscape_init.xml DESTINATION ${CMAKE_BINARY_DIR}/)
+
+#### copy smash configure files from sims_scripts to build
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/sims_scripts/smash_input DESTINATION ${CMAKE_BINARY_DIR}/)
 
 #### copy essential files for MUSIC to build/
 if (freestream)

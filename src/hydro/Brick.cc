@@ -88,7 +88,7 @@ void Brick::GetHydroInfo(Jetscape::real t, Jetscape::real x, Jetscape::real y, J
 			   //                           FluidCellInfo* fluid_cell_info_ptr) {
 			   std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr){
     // create the unique FluidCellInfo here
-    fluid_cell_info_ptr=make_unique<FluidCellInfo>();
+  fluid_cell_info_ptr=std::make_unique<FluidCellInfo>();
 
     // assign all the quantites to JETSCAPE output
     // thermodyanmic quantities

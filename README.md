@@ -1,10 +1,8 @@
-***What this branch does*** : 
+***The SIMS branch*** : 
 
-A new wrapper for trento (2d and 3d) with almost all its options exposed in jetscape_init.xml. 
+The SIMS branch contains up-to-date modules for simulating the bulk evolution of relativistic heavy-ion collions. Pleas refer to the sims [README](./sims_scripts/README.md) for installation instructions.
 
-It now supports the centrality cut option (1% precision). The program will first call trento2d (because it is fast and the 3d extension does not affect the centrality determination at mid-rapidity) with the defual grid size and user-defined parameters (except the normalization (=1), since it does not affect the shape of the centrality table). This step generates the table: normalization * TotalEnergyDensity(centrality), using 10000 events (one can change it in the source code `src/TrentoInitial.cc`). Next, given user-defined centrality cut, the table determines total-energy-density cut for trento3d.
-
-A cache directory `$PWD/trento_data/` will save these centrality tables. To distinguish different tables generated with different paremeters (only those who affect the shape of the centrality table), a hash tag number is generated for the paremeter set string (with .01 level of accuracty of each parameter) and this tag is used as the file for future use.
+***The JETSCAPE README*** :
 
 Test Skeleton of (potential) JetScape Framework
 
@@ -163,11 +161,8 @@ serve as an afterburner, useful to compute soft observables.
 
 ### Installing SMASH
 
-Currently SMASH is still not published on github, so SMASH 1.4 code is added
-to JetScape repository. Before compiling JetScape with SMASH library, one has
-to compile the SMASH library first. In future part of this section should be
-removed, because it is already in SMASH README. However, I have copied it here
-with some adjustments for convenience.
+SMASH is published on github at https://github.com/smash-transport/smash.
+See SMASH Readme for libraries required by SMASH and how to install them.
 
 #### Prerequisites
 
@@ -181,6 +176,7 @@ It requires the following tools & libraries:
 - the GNU Scientific Library >= 1.15
 - the Eigen3 library for linear algebra (see http://eigen.tuxfamily.org)
 - boost filesystem >= 1.49
+- Pythia = 8.235
 
 See more details in SMASH README.
 
@@ -240,29 +236,16 @@ Assuming that boost is already installed in $HOME:
   export BOOST_ROOT=$HOME/boost_1_64_0/
 ```
 
-#### Compiling SMASH
+#### Compiling SMASH library
 
 ```bash
   export JETSCAPE_DIR=${HOME}/JETSCAPE-COMP
   export SMASH_DIR=${JETSCAPE_DIR}/external_packages/smash/smash_code
+  export PYTHIA8DIR=${PYTHIAINSTALLDIR}/pythia8235
+  export PYTHIA8_ROOT_DIR=${PYTHIAINSTALLDIR}/pythia8235
 
-  cd ${SMASH_DIR}
-  mkdir build
-  cd build
-  export PYTHIA8DIR=${PYTHIAINSTALLDIR}/pythia8230
-  export PYTHIA8_ROOT_DIR=${PYTHIAINSTALLDIR}/pythia8230
-
-  cmake .. -DPythia_CONFIG_EXECUTABLE=${PYTHIA8DIR}/bin/pythia8-config
-  export number_of_cores=`nproc --all`
-  make -j${number_of_cores} smash
-```
-
-To compile and run SMASH tests (not really necessary for JetScape run,
-but may be useful in general):
-
-```bash
-make -j${number_of_cores}
-ctest -j${number_of_cores}
+  cd ${JETSCAPE_DIR}/external_packages
+  ./get_smash.sh
 ```
 
 ### Compiling JetScape with SMASH

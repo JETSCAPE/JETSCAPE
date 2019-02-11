@@ -16,6 +16,8 @@
 #ifndef MUSICWRAPPER_H
 #define MUSICWRAPPER_H
 
+#include <memory>
+
 #include "FluidDynamics.h"
 #include "music.h"
 

@@ -27,15 +27,20 @@ def spawn_afterburner(sample):
     os.system( 'mkdir ' + sample_dir )
     os.chdir( sample_dir )
     #link necessary input files to current working dir
-    os.system( 'ln -s ../jetscape_init.xml jetscape_init.xml' )
-    os.system( 'ln -s ../surface.dat surface.dat' )
-    os.system( 'ln -s ../music_input music_input' )
+    os.system( 'mkdir input' )
+    os.chdir( 'input' )
+    os.system( 'ln -s ../../surface.dat surface.dat' )
+    os.chdir( ".." )
+
+    os.system( 'ln -s ../jetscape_init.xml jetscape_init.xml' )    
     os.system( 'ln -s ../smash_input smash_input' )
-    os.system( 'ln -s ../iSS_parameters.dat iSS_parameters.dat' )
-    os.system( 'ln -s ../iSS_tables iSS_tables' )
-    os.system( 'ln -s ../SAMPLER_AFTERBURNER SAMPLER_AFTERBURNER' )
-    #run the sampler and afterburner executable
-    os.system( './SAMPLER_AFTERBURNER' )
+    os.system( 'ln -s ../iS3D_parameters.dat iS3D_parameters.dat' )
+    os.system( 'ln -s ../PDG PDG' )
+    os.system( 'ln -s ../tables tables' )
+    os.system( 'ln -s ../deltaf_coefficients deltaf_coefficients' )
+    
+    #run the sampler and afterburner executable, save each stdout to unique file
+    os.system( 'SAMPLER_AFTERBURNER > stdout_SAMPLER_AFTERBURNER.txt' )
     #return to parent dir 
     os.chdir( ".." )
 
@@ -47,7 +52,7 @@ def get_number_particles(sample):
     #num_particles = reader.next()
     #return int(num_particles[0])
 
-    #this method assumes fixed length of header
+    #this method assumes fixed length of header = 1 line
     with open(sample_dir + '/final_smash_hadrons.dat', 'rb') as f:
         line_count = 0
         for line in f:

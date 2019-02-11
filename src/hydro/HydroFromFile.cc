@@ -272,7 +272,7 @@ void HydroFromFile::GetHydroInfo(
 
     // assign all the quantites to JETSCAPE output
     // thermodyanmic quantities
-    fluid_cell_info_ptr = make_unique<FluidCellInfo>();
+    fluid_cell_info_ptr = std::make_unique<FluidCellInfo>();
     fluid_cell_info_ptr->energy_density = (
                                 static_cast<Jetscape::real>(temp_fluid_cell_ptr->ed));
     fluid_cell_info_ptr->entropy_density = (
