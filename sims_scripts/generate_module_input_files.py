@@ -27,7 +27,7 @@ normalization = 13.94
 cent_low = 20
 cent_high = 30
 reduced_thickness = 0.007
-fluctuation = 0.918
+fluctuation = 1.2
 nucleon_width = 0.956
 nucleon_min_dist = 1.27
 
@@ -155,11 +155,17 @@ iS3D_file.write("min_num_hadrons     = 1.e+6\n")
 iS3D_file.write("sampler_seed	     = -1\n")
 
 #these only used for testing, are dummys
-iS3D_file.write("pT_lower_cut	= 0.0\n")
-iS3D_file.write("pT_upper_cut	= 3.0\n")
-iS3D_file.write("pT_bins	= 100\n")
-iS3D_file.write("y_cut		= 5.0\n")
-iS3D_file.write("dynamical	= 0\n")
+iS3D_file.write("test_sampler = 0\n") 
+iS3D_file.write("pT_lower_cut = 0.0\n")
+iS3D_file.write("pT_upper_cut = 3.0\n")
+iS3D_file.write("pT_bins = 100\n")
+iS3D_file.write("y_cut = 5.0\n")
+iS3D_file.write("tau_min = 0.0\n")
+iS3D_file.write("tau_max = 12.0\n")
+iS3D_file.write("tau_bins = 120\n")
+iS3D_file.write("r_min = 0.0\n") 
+iS3D_file.write("r_max = 10.0\n") 
+iS3D_file.write("r_bins = 50\n")
 
 iS3D_file.close()
 
