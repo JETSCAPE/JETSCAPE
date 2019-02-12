@@ -11,8 +11,8 @@ print("Number of hydro events : " + str(num_events))
 num_cores = int(sys.argv[2])
 print("Number of parallel cores : " + str(num_cores))
 
-min_num_hadrons = int(sys.argv[3])
-print("Minimum number of sampled hadrons per surface : " + str(min_num_hadrons))
+num_samples = int(sys.argv[3])
+print("number of samples per surface : " + str(num_samples))
 
 print("### Starting multiple hydro jobs on node ###")
 start_time = time.time()
@@ -29,7 +29,7 @@ def spawn_event(event):
     os.system( 'ln -s ../music_input music_input' )
     os.system( 'ln -s ../EOS EOS' )
     #files for SAMPLER+AFTERBURNER
-    os.system( 'ln -s ../run_oversampled_afterburner.py run_oversampled_afterburner.py' )
+    os.system( 'ln -s ../run_oversampled_afterburner_nonadaptive.py run_oversampled_afterburner_nonadaptive.py' )
     os.system( 'ln -s ../smash_input smash_input' )
     os.system( 'ln -s ../iS3D_parameters.dat iS3D_parameters.dat' )
     os.system( 'ln -s ../PDG PDG' )
@@ -40,7 +40,7 @@ def spawn_event(event):
     os.system( 'TRENTO_FS_HYDRO > stdout_TRENTO_FS_HYDRO.txt' )
 
     #now run the oversampling and afterburners, only call one core, other cores are busy with other events...
-    os.system( 'python run_oversampled_afterburner.py ' + str(min_num_hadrons) + ' 1' )
+    os.system( 'python run_oversampled_afterburner_nonadaptive.py ' + str(num_samples) + ' 1' )
 
     #return to parent dir 
     os.chdir( ".." )

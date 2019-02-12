@@ -29,7 +29,7 @@
 #SBATCH -p skx-normal      # Queue (partition) name
 #SBATCH -N 1               # Total # of nodes 
 #SBATCH -n 1               # Total # of mpi tasks
-#SBATCH -t 02:00:00        # Run time (hh:mm:ss)
+#SBATCH -t 05:00:00        # Run time (hh:mm:ss)
 #SBATCH --mail-user=everett.165@osu.edu
 #SBATCH --mail-type=all    # Send email at begin and end of job
 #SBATCH -A TG-PHY180024    # Allocation name (STARTUP ALLOC)
@@ -55,6 +55,6 @@ date
 # first arg is number hydro events (SHOULD BE >= NUMBER CORES)
 # second arg is number of cores
 # third arg is min number of hadrons per surface 
-python Run_multicore_events.py 100 40 100000          
+python Run_multicore_events_nonadaptive.py 100 40 10          
 
 # ---------------------------------------------------

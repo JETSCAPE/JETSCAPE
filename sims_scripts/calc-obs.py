@@ -178,6 +178,10 @@ def calculate_obs(input_filename, output_filename):
 	abs_eta = np.fabs(eta)
 	abs_y = np.fabs(eta)
 
+        #plot dN/dphi 
+	#plt.hist(phi, 20)
+	#plt.show()
+
 	# charged particle cut
 	charged = (charge != 0)
 
@@ -254,6 +258,6 @@ def dprint(data, dtype, prefix):
 			print(sub_prefix,'=', data[name][0])
 
 if __name__ == "__main__":
-	calculate_obs("final_smash_hadrons.dat", "results.dat")
+	calculate_obs("hadron_list01", "results.dat")
 	data = np.fromfile("results.dat", dtype=result_dtype)
 	dprint(data, result_dtype, '')
