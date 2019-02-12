@@ -33,6 +33,7 @@ HadronizationManager::HadronizationManager()
 {
   SetId("HadronizationManager");
   GetFinalPartonListConnected = false;
+  GetHadronListConnected = false;
   VERBOSE(8);
 }
 
