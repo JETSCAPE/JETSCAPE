@@ -97,7 +97,7 @@ music_file.write("X_grid_size_in_fm " + str(max_x) + "\n")# spatial range along 
 music_file.write("Y_grid_size_in_fm " + str(max_y) + "\n")# spatial range along y direction in the
 music_file.write("Grid_size_in_y " + str(nx) + "\n")             # number of the grid points in y direction
 music_file.write("Grid_size_in_x " + str(ny) + "\n")             # number of the grid points in x direction
-music_file.write("EOS_to_use 7\n")                   # type of the equation of state
+music_file.write("EOS_to_use 9\n")                   # type of the equation of state
 music_file.write("reconst_type  1\n")                # 0: solve energy density for hydro eqns. 1: solve flow velocity for hydro eqns.
 music_file.write("Minmod_Theta 1.8\n")               # theta parameter in the min-mod like limiter
 music_file.write("Runge_Kutta_order 2\n")            # order of Runge_Kutta for temporal evolution
