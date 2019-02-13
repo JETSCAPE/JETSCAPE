@@ -15,7 +15,7 @@
 // This is a general basic class for hydrodynamics
 
 #include <string>
-#include "EvolutionHistory.h"
+#include "FluidEvolutionHistory.h"
 #include "FluidCellInfo.h"
 #include "LinearInterpolation.h"
 #include "JetScapeLogger.h"
