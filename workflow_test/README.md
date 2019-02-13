@@ -58,6 +58,10 @@ Then `python generate_module_input_files.py`  and   `sbatch workflow_test`
 
 ***Remark***: To install the sims branch on a non-TACC machine, libraries must be changed to match the host system and the EIGEN paths will have to be specified explicitly.
 
+# Additional scripts
+
+If the user has modified the framework somehow and wants to recompile before running the `workflow_test.sh`, `sims_compile_test.sh` is provided.
+
 # Full install instructions
 
 This is the process around which the bash install and workflow scripts are based.
