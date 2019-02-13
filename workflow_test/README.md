@@ -1,4 +1,4 @@
-# ***The JETSCAPE / SIMS branch*** : 
+# The JETSCAPE / SIMS branch:
 
 Currently, the SIMS branch integrates up-to-date bulk medium simulation modules:
 
@@ -9,6 +9,8 @@ Currently, the SIMS branch integrates up-to-date bulk medium simulation modules:
 5. The hadronic transport model SMASH
 
 # Quick Install
+
+This installs the sims branch in the working directory. To install in a different directory, make sure to modify the paths in `sims_install.sh` and `sims_workflow.sh` accordingly.
 
 The fastest way to install the sims branch on stampede2 is to use the workflow test branch. Downloading `sims_install.sh` and copying it to stampede2 is the cleanest way.
 First:
@@ -21,9 +23,9 @@ The most straightforward way is to:
    ```bash
       cd $WORK
       git clone -b sims https://github.com/amajumder/JETSCAPE-COMP.git 
-      cd workflow_test/
+      cd JETSCAPE-COMP/workflow_test/
    ```
-***Then comment out line 12 which clones the Git repository***
+***Then comment out line 12 of `sims_install.sh` which clones the Git repository***
 
 Finally,
    ```bash
@@ -44,6 +46,7 @@ However, if modifying components and recompiling outside the workflow test scrip
 2. Setup environment for pythia (at least ensure paths are exported to .bashrc)
 
 ***Remark***: The following must be done before recompiling and running each time
+
 3. Proceed from step 2 of "Compilation on stampede2 TACC" below.
 
 Additional steps that must be taken can be found by following `sims_workflow.sh`, but explicitly:
@@ -53,7 +56,11 @@ Additional steps that must be taken can be found by following `sims_workflow.sh`
 4. From `/external_packages/music/` copy ` EOS/` into your `test_worflow` directory
 Then `python generate_module_input_files.py`  and   `sbatch workflow_test`
 
+***Remark***: To install the sims branch on a non-TACC machine, libraries must be changed to match the host system and the EIGEN paths will have to be specified explicitly.
+
 # Full install instructions
+
+This is the process around which the bash install and workflow scripts are based.
 
 ## Load libraries on stampede2
 
