@@ -10,12 +10,25 @@ Currently, the SIMS branch integrates up-to-date bulk medium simulation modules:
 
 # Quick Install
 
-The fastest way to install the sims branch on stampede2 is to use the workflow test branch.
+The fastest way to install the sims branch on stampede2 is to use the workflow test branch. Downloading `sims_install.sh` and copying it to stampede2 is the cleanest way.
 First:
    ```bash
       sh sims_install.sh
    ```
 This requires GitHub credentials, but otherwise can be left alone. The process takes approx. 15-20 minutes.
+
+The most straightforward way is to:
+   ```bash
+      cd $WORK
+      git clone -b sims https://github.com/amajumder/JETSCAPE-COMP.git 
+      cd workflow_test/
+   ```
+***Then comment out line 12 which clones the Git repository***
+
+Finally,
+   ```bash
+      sh sims_install.sh
+   ```
 
 To test the installation and workflow,
    ```bash
@@ -42,13 +55,13 @@ Then `python generate_module_input_files.py`  and   `sbatch workflow_test`
 
 # Full install instructions
 
-# Load libraries on stampede2
+## Load libraries on stampede2
 
    ```bash
       module load intel/18.0.2 cmake/3.7.1 gsl boost hdf5 eigen impi
    ```
 
-# Install Pythia8235
+## Install Pythia8235
 
    ```bash
       wget http://home.thep.lu.se/~torbjorn/pythia8/pythia8235.tgz
@@ -75,7 +88,7 @@ Then `python generate_module_input_files.py`  and   `sbatch workflow_test`
    ```
 
 
-# Compilation on stampede2 TACC
+## Compilation on stampede2 TACC
 
 1. Clone the SIMS branch into the `$WORK` directory (make sure it is sims branch)
 
@@ -122,7 +135,7 @@ Then `python generate_module_input_files.py`  and   `sbatch workflow_test`
       make install
    ``` 
 
-# Run simulation
+## Run simulation
 
    If you want to run the program elsewhere than the build folder, or if you are writting the job submit scrit. Make sure you have set the `PATH`, `LD_LIBRARY_PATH` and PYTHIA paths. For example, create a testing folder under `build/`
    
@@ -158,7 +171,7 @@ Then `python generate_module_input_files.py`  and   `sbatch workflow_test`
 
    Now it should be good to go. The first executable `TRENTO_FS_HYDRO` runs trento initial condition, freestream and music hydro. Then `mkdir input && cp surface.dat input/` before running the next step. The second executable `SAMPLER_AFTERBURNER` runs particle sampler iS3D and SMASH hadronic afterburner. 
 
-# Todo
+## Todo
  
       * We should provide a set of sample configure files
    * A script to calculate observables for each event
