@@ -18,7 +18,7 @@
 #include "RealType.h"
 #include "SurfaceFinder.h"
 #include "cornelius.h"
-#include "EvolutionHistory.h"
+#include "FluidEvolutionHistory.h"
 #include "JetScapeLogger.h"
 
 namespace Jetscape {

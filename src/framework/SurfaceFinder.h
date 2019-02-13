@@ -21,7 +21,7 @@
 
 #include "RealType.h"
 #include "SurfaceCellInfo.h"
-#include "EvolutionHistory.h"
+#include "FluidEvolutionHistory.h"
 
 namespace Jetscape {
 
