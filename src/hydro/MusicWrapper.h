@@ -29,6 +29,7 @@ class MpiMusic: public FluidDynamics {
     MUSIC *music_hydro_ptr;
     int doCooperFrye;    //!< flag to run Cooper-Frye freeze-out
                          //!< for soft particles
+    int flag_output_evo_to_file;
 
  public:
      MpiMusic();
@@ -40,9 +41,21 @@ class MpiMusic: public FluidDynamics {
      void GetHydroInfo(
         Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
 		std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr);
+     
+     void GetHydroInfo_JETSCAPE(
+        Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
+		std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr);
+     void GetHydroInfo_MUSIC(
+        Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
+		std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr);
+
+     void SetHydroGridInfo();
+     void PassHydroEvolutionHistoryToFramework();
+
      void GetHyperSurface(Jetscape::real T_cut,
                            SurfaceCellInfo* surface_list_ptr) {};
      void collect_freeze_out_surface();
+
 };
 
 #endif // MUSICWRAPPER_H
