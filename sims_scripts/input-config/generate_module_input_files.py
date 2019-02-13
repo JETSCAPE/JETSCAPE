@@ -1,10 +1,11 @@
+#!/usr/bin/env python
 
 #These should be set by external script/block of code
 #Parameters common to modules
 nx = 201 #num grid points in x
 ny = 201 #num grid points in y
-dx = 0.1 #grid spacing x [fm]
-dy = 0.1 #grid spacing y [fm]
+dx = 0.15 #grid spacing x [fm]
+dy = 0.15 #grid spacing y [fm]
 L_x = (nx - 1)/2.0 * dx #size of grid in x[fm]
 L_y = (ny - 1)/2.0 * dy #size of grid in y[fm]
 
@@ -14,10 +15,8 @@ max_y = L_y + 0.5*dy #may y [fm]
 
 tau_s = 1.16 #time of landau-matching to hydro [fm/c]
 
-#this is a dummy value
+#which one will we use??
 e_c = 1.7   #switching energy density on freezeout hypersurface [GeV/fm^3]
-
-#this is the real design parameter
 T_c = 0.151 #switching temperature on hypersurface [GeV]
 
 #TRENTo parameters
@@ -36,6 +35,8 @@ nucleon_min_dist = 1.27
 #freestream-milne Parameters
 
 #MUSIC Parameters
+#eta_over_s = 0.1 # shear visc / entropy
+#zeta_over_s = 0.1 # bulk visc / entropy
 
 #shear viscosity p'zation
 eta_over_s_min = 0.08
@@ -48,7 +49,7 @@ bulk_viscosity_width_in_GeV = 0.02
 bulk_viscosity_peak_in_GeV = 0.18 
 
 #iS3D Parameters
-#delta_f_mode = 4 # 1: 14 moment, 2: C.E., 3: McNelis feq_mod, 4: Bernhard feq_mod
+delta_f_mode = 4 # 1: 14 moment, 2: C.E., 3: McNelis feq_mod, 4: Bernhard feq_mod
 
 #write appropriate input files
 
@@ -90,11 +91,11 @@ music_file.write("s_factor 1.00\n")                  # normalization factor read
 music_file.write("boost_invariant  1\n")             # whether the simulation is boost-invariant
 music_file.write("Initial_time_tau_0 " +str(tau_s) + "\n")# starting time of the hydro
 music_file.write("Total_evolution_time_tau 30.\n")   # the maximum allowed running time
-music_file.write("Delta_Tau 0.02\n")                 # time step to use in the evolution [fm/c]
+music_file.write("Delta_Tau 0.04\n")                 # time step to use in the evolution [fm/c]
 music_file.write("Eta_grid_size 1.0\n")              # spatial rapidity range
 music_file.write("Grid_size_in_eta 1\n")             # number of the grid points in spatial
-music_file.write("X_grid_size_in_fm " + str(max_x) + "\n")# spatial range along x direction in the
-music_file.write("Y_grid_size_in_fm " + str(max_y) + "\n")# spatial range along y direction in the
+music_file.write("X_grid_size_in_fm " + str(2*max_x) + "\n")# spatial range along x direction in the
+music_file.write("Y_grid_size_in_fm " + str(2*max_y) + "\n")# spatial range along y direction in the
 music_file.write("Grid_size_in_y " + str(nx) + "\n")             # number of the grid points in y direction
 music_file.write("Grid_size_in_x " + str(ny) + "\n")             # number of the grid points in x direction
 music_file.write("EOS_to_use 9\n")                   # type of the equation of state
@@ -129,44 +130,45 @@ music_file.write("EndOfData\n")
 
 music_file.close()
 
-#the iS3D files, one for each delta_f
-#delta_f_mode = 4 # 1: 14 moment, 2: C.E., 3: McNelis feq_mod, 4: Bernhard feq_mod
-for df_mode in range(1,5):
-    iS3D_file = open('iS3D_parameters_df_' + str(df_mode) + '.dat','w')
-    iS3D_file.write("operation = 2\n")
-    iS3D_file.write("mode      = 6\n")
-    iS3D_file.write("dimension = 2\n")
-    iS3D_file.write("df_mode   = " + str(df_mode) + "\n")
-    iS3D_file.write("include_baryon            	= 0\n")
-    iS3D_file.write("include_bulk_deltaf       	= 1\n")
-    iS3D_file.write("include_shear_deltaf      	= 1\n")
-    iS3D_file.write("include_baryondiff_deltaf 	= 0\n")
-    iS3D_file.write("regulate_deltaf           	= 0\n")
-    iS3D_file.write("outflow 			= 1\n")
-    iS3D_file.write("deta_min 			= 1.e-2\n")
-    iS3D_file.write("detc_min 			= 1.e-2\n")
-    iS3D_file.write("group_particles            = 0\n")
-    iS3D_file.write("particle_diff_tolerance    = 0.01\n")
-    iS3D_file.write("mass_pion0		    = 0.138\n")
-    iS3D_file.write("do_resonance_decays = 0\n")
-    iS3D_file.write("lightest_particle 	 = 211\n")
-    iS3D_file.write("oversample		     = 0\n")
-    iS3D_file.write("min_num_hadrons     = 1.e+6\n")
-    iS3D_file.write("sampler_seed	     = -1\n")
-    #these only used for testing, are dummys
-    iS3D_file.write("test_sampler = 0\n") 
-    iS3D_file.write("pT_lower_cut = 0.0\n")
-    iS3D_file.write("pT_upper_cut = 3.0\n")
-    iS3D_file.write("pT_bins = 100\n")
-    iS3D_file.write("y_cut = 5.0\n")
-    iS3D_file.write("tau_min = 0.0\n")
-    iS3D_file.write("tau_max = 12.0\n")
-    iS3D_file.write("tau_bins = 120\n")
-    iS3D_file.write("r_min = 0.0\n") 
-    iS3D_file.write("r_max = 10.0\n") 
-    iS3D_file.write("r_bins = 50\n")
-    iS3D_file.close()
+#the iS3D file
 
+iS3D_file = open('iS3D_parameters.dat','w')
+
+iS3D_file.write("operation = 2\n")
+iS3D_file.write("mode      = 6\n")
+iS3D_file.write("dimension = 2\n")
+iS3D_file.write("df_mode   = " + str(delta_f_mode) + "\n")
+iS3D_file.write("include_baryon            	= 0\n")
+iS3D_file.write("include_bulk_deltaf       	= 1\n")
+iS3D_file.write("include_shear_deltaf      	= 1\n")
+iS3D_file.write("include_baryondiff_deltaf 	= 0\n")
+iS3D_file.write("regulate_deltaf           	= 0\n")
+iS3D_file.write("outflow 			= 1\n")
+iS3D_file.write("deta_min 			= 1.e-2\n")
+iS3D_file.write("detc_min 			= 1.e-2\n")
+iS3D_file.write("group_particles            = 0\n")
+iS3D_file.write("particle_diff_tolerance    = 0.01\n")
+iS3D_file.write("mass_pion0		    = 0.138\n")
+iS3D_file.write("do_resonance_decays = 0\n")
+iS3D_file.write("lightest_particle 	 = 211\n")
+iS3D_file.write("oversample		     = 0\n")
+iS3D_file.write("min_num_hadrons     = 1.e+6\n")
+iS3D_file.write("sampler_seed	     = -1\n")
+
+#these only used for testing, are dummys
+iS3D_file.write("test_sampler = 0\n") 
+iS3D_file.write("pT_lower_cut = 0.0\n")
+iS3D_file.write("pT_upper_cut = 3.0\n")
+iS3D_file.write("pT_bins = 100\n")
+iS3D_file.write("y_cut = 5.0\n")
+iS3D_file.write("tau_min = 0.0\n")
+iS3D_file.write("tau_max = 12.0\n")
+iS3D_file.write("tau_bins = 120\n")
+iS3D_file.write("r_min = 0.0\n") 
+iS3D_file.write("r_max = 10.0\n") 
+iS3D_file.write("r_bins = 50\n")
+
+iS3D_file.close()
 
 #the jetscape init xml file
 #note that this file can potentially override parameters set in the MUSIC input file

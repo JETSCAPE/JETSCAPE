@@ -1,0 +1,33 @@
+#!/bin/bash
+#SBATCH -J Parametric 
+#SBATCH -p skx-normal      # Queue (partition) name
+#SBATCH -N 1
+#SBATCH --ntasks-per-node 40
+#SBATCH -t 00:20:00        # Run time (hh:mm:ss)
+#SBATCH --mail-user=wk42@phy.duke.edu
+#SBATCH --mail-type=all    # Send email at begin and end of job
+#SBATCH -A TG-PHY180024    # Allocation name (STARTUP ALLOC)
+#SBATCH -o slurm/out-%j
+#SBATCH -e slurm/err-%j
+
+
+module load intel/18.0.2 cmake/3.7.1 gsl boost hdf5 eigen impi python3 launcher
+source ../sims_scripts/prepare_compilation_stampede2_2.sh
+module list
+
+
+inputdir=../input-config/
+job=$SLURM_JOB_ID
+# create taskfarmer tasks
+rm -f tasks # remove old tasks!!! important!!! 
+ntasks=137
+for task in $(seq -f "%05g" $ntasks); do
+    echo run-events --nevents 1 --logfile $SCRATCH/$job/$task.log --tmpdir=$SCRATCH/ --startdir=$inputdir $job/$task.dat >> tasks
+done
+
+export LAUNCHER_PLUGIN_DIR=$LAUNCHER_DIR/plugins
+export LAUNCHER_RMI=SLURM
+export LAUNCHER_JOB_FILE=tasks
+ 
+$LAUNCHER_DIR/paramrun
+

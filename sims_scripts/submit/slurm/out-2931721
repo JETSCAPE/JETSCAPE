@@ -1,0 +1,76 @@
+Launcher: Setup complete.
+
+------------- SUMMARY ---------------
+   Number of hosts:    1
+   Working directory:  /work/05780/wk42/stampede2/JETSCAPE-COMP/sims_scripts/submit
+   Processes per host: 40
+   Total processes:    40
+   Total jobs:         137
+   Scheduling method:  dynamic
+
+-------------------------------------
+Launcher: Starting parallel tasks...
+Launcher: Task 9 running job 5 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00005.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00005.dat)
+Launcher: Task 21 running job 8 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00008.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00008.dat)
+Launcher: Task 35 running job 9 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00009.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00009.dat)
+Launcher: Task 7 running job 10 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00010.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00010.dat)
+Launcher: Task 30 running job 2 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00002.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00002.dat)
+Launcher: Task 3 running job 4 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00004.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00004.dat)
+Launcher: Task 15 running job 7 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00007.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00007.dat)
+Launcher: Task 39 running job 1 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00001.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00001.dat)
+Launcher: Task 36 running job 3 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00003.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00003.dat)
+Launcher: Task 24 running job 18 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00018.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00018.dat)
+Launcher: Task 14 running job 16 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00016.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00016.dat)
+Launcher: Task 8 running job 21 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00021.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00021.dat)
+Launcher: Task 33 running job 11 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00011.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00011.dat)
+Launcher: Task 5 running job 6 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00006.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00006.dat)
+Launcher: Task 12 running job 20 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00020.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00020.dat)
+Launcher: Task 29 running job 13 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00013.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00013.dat)
+Launcher: Task 38 running job 14 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00014.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00014.dat)
+Launcher: Task 20 running job 24 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00024.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00024.dat)
+Launcher: Task 4 running job 12 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00012.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00012.dat)
+Launcher: Task 34 running job 25 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00025.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00025.dat)
+Launcher: Task 27 running job 29 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00029.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00029.dat)
+Launcher: Task 17 running job 22 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00022.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00022.dat)
+Launcher: Task 22 running job 32 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00032.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00032.dat)
+Launcher: Task 10 running job 26 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00026.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00026.dat)
+Launcher: Task 16 running job 34 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00034.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00034.dat)
+Launcher: Task 32 running job 17 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00017.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00017.dat)
+Launcher: Task 19 running job 23 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00023.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00023.dat)
+Launcher: Task 18 running job 33 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00033.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00033.dat)
+Launcher: Task 28 running job 28 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00028.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00028.dat)
+Launcher: Task 25 running job 19 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00019.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00019.dat)
+Launcher: Task 23 running job 15 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00015.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00015.dat)
+Launcher: Task 1 running job 36 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00036.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00036.dat)
+Launcher: Task 11 running job 31 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00031.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00031.dat)
+Launcher: Task 31 running job 27 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00027.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00027.dat)
+Launcher: Task 2 running job 30 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00030.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00030.dat)
+Launcher: Task 0 running job 35 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00035.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00035.dat)
+Launcher: Task 6 running job 38 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00038.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00038.dat)
+Launcher: Task 37 running job 37 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00037.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00037.dat)
+Launcher: Task 13 running job 40 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00040.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00040.dat)
+Launcher: Task 26 running job 39 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00039.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00039.dat)
+1.0
+0.0
+1.0
+1.0
+Launcher: Job 9 completed in 57 seconds.
+Launcher: Task 35 running job 41 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00041.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00041.dat)
+0.0
+2.0
+1.0
+1.0
+Launcher: Job 15 completed in 60 seconds.
+Launcher: Task 23 running job 42 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00042.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00042.dat)
+2.0
+2.0
+4.0
+5.0
+Launcher: Job 6 completed in 92 seconds.
+Launcher: Task 5 running job 43 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00043.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00043.dat)
+0.0
+3.0
+3.0
+4.0
+Launcher: Job 21 completed in 96 seconds.
+Launcher: Task 8 running job 44 on c479-034.stampede2.tacc.utexas.edu (run-events --nevents 1 --logfile /scratch/05780/wk42/2931721/00044.log --tmpdir=/scratch/05780/wk42/ --startdir=../input-config/ 2931721/00044.dat)
