@@ -30,7 +30,7 @@
 #include "PreequilibriumDynamics.h"
 #include "RealType.h"
 #include "FluidCellInfo.h"
-#include "EvolutionHistory.h"
+#include "FluidEvolutionHistory.h"
 #include "SurfaceCellInfo.h"
 
 namespace Jetscape {
