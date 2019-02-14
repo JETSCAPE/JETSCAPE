@@ -336,8 +336,8 @@ def run_events(args, results_file):
 			
 			nparts = 0
 			nos = 0
-			nos_max = 1
-			nos_min = 1
+			nos_max = 4
+			nos_min = 2
 			npart_max = 40000
 			npart_min = 10000
 			subprocess.call("rm -f particles.dat", shell=True)

@@ -3,7 +3,6 @@
 *.dylib
 *.marks
 *cache
-*.dat
 *.internal
 *.hepmc
 *.*~
@@ -16,5 +15,6 @@ examples/test_hydro_files/
 external_packages/iS3D
 external_packages/freestream-milne/
 external_packages/smash/smash_code/
-sims-scripts/submit/slurm/*
-sims-scripts/submit/[0-9]*
+sims_scripts/submit/slurm/*
+sims_scripts/submit/[0-9]*
+

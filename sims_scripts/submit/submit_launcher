@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH -J Parametric 
 #SBATCH -p skx-normal      # Queue (partition) name
-#SBATCH -N 1
+#SBATCH -N 2
 #SBATCH --ntasks-per-node 40
-#SBATCH -t 00:20:00        # Run time (hh:mm:ss)
+#SBATCH -t 01:00:00        # Run time (hh:mm:ss)
 #SBATCH --mail-user=wk42@phy.duke.edu
 #SBATCH --mail-type=all    # Send email at begin and end of job
 #SBATCH -A TG-PHY180024    # Allocation name (STARTUP ALLOC)
@@ -20,9 +20,9 @@ inputdir=../input-config/
 job=$SLURM_JOB_ID
 # create taskfarmer tasks
 rm -f tasks # remove old tasks!!! important!!! 
-ntasks=137
+ntasks=200
 for task in $(seq -f "%05g" $ntasks); do
-    echo run-events --nevents 1 --logfile $SCRATCH/$job/$task.log --tmpdir=$SCRATCH/ --startdir=$inputdir $job/$task.dat >> tasks
+    echo run-events --nevents 2 --logfile $SCRATCH/$job/$task.log --tmpdir=$SCRATCH/ --startdir=$inputdir $job/$task.dat >> tasks
 done
 
 export LAUNCHER_PLUGIN_DIR=$LAUNCHER_DIR/plugins
