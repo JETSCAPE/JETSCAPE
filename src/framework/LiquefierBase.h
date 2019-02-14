@@ -12,29 +12,33 @@
  * Distributed under the GNU General Public License 3.0 (GPLv3 or later).
  * See COPYING for details.
  ******************************************************************************/
-// -----------------------------------------
-// This is a causal liquefier with the JETSCAPE framework
-// -----------------------------------------
 
-#ifndef CAUSALLIQUEFIER_H
-#define CAUSALLIQUEFIER_H
+#ifndef LIQUEFIERBASE_H
+#define LIQUEFIERBASE_H
 
-#include "LiquefierBase.h"
-#include "RealType.h"
 #include <array>
+#include "RealType.h"
 
-class CausalLiquefier: public Jetscape::LiquefierBase {
+namespace Jetscape {
+
+
+class LiquefierBase {
  private:
+     std::array<Jetscape::real, 4> xmu;
+     std::array<Jetscape::real, 4> pmu;
 
  public:
-    CausalLiquefier() = default;
-    ~CausalLiquefier() {};
+    LiquefierBase() = default;
+    LiquefierBase(std::array<Jetscape::real, 4> x_in,
+                  std::array<Jetscape::real, 4> p_in);
+    ~LiquefierBase() {};
 
-    void smearing_kernel(Jetscape::real x, Jetscape::real y,
-                         Jetscape::real eta,
-                         std::array<Jetscape::real, 4> &jmu);
+    virtual void smearing_kernel(Jetscape::real x, Jetscape::real y,
+                                 Jetscape::real eta,
+                                 std::array<Jetscape::real, 4> &jmu);
 };
 
 };
 
-#endif  // CAUSALLIQUEFIER_H
+#endif  // LIQUEFIERBASE_H
+

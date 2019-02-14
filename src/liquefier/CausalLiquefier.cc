@@ -17,23 +17,10 @@
 // -----------------------------------------
 
 #include "CausalLiquefier.h"
-#include "JetScapeLogger.h"
 
-using namespace Jetscape;
-
-CausalLiquefier::CausalLiquefier() {
-    SetId("Causal Liquefier");
+void CausalLiquefier::smearing_kernel(
+        Jetscape::real tau, Jetscape::real x, Jetscape::real y,
+        Jetscape::real eta, std::array<Jetscape::real, 4> &jmu) {
+    jmu = {1, 0, 0, 0};
 }
 
-
-void CausalLiquefier::Init() {
-    JSINFO << "Initialize causal liquefier";
-}
-
-void CausalLiquefier::Exec() {
-    JSINFO << "running causal liquefier";
-}
-
-void CausalLiquefier::Clear() {
-    JSINFO << "Finish causal liquefier";
-}

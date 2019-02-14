@@ -13,30 +13,24 @@
  * See COPYING for details.
  ******************************************************************************/
 
-#ifndef LIQUEFIER_H
-#define LIQUEFIER_H
-
-#include "JetScapeModuleBase.h"
+#include "LiquefierBase.h"
+//#include "JetScapeLogger.h"
 #include "RealType.h"
+
 
 namespace Jetscape {
 
+LiquefierBase::LiquefierBase(std::array<Jetscape::real, 4> x_in,
+                             std::array<Jetscape::real, 4> p_in) {
+    xmu = x_in;
+    pmu = p_in;
+}
 
-class Liquefier : public JetScapeModuleBase {
- private:
+virtual void LiquefierBase::smearing_kernel(
+        Jetscape::real tau, Jetscape::real x, Jetscape::real y,
+        Jetscape::real eta, std::array<Jetscape::real, 4> &jmu) {
+    jmu = {0, 0, 0, 0};
+}
 
- public:
-     Liquefier();
-     ~Liquefier() {};
-
-     void Init();
-     void Exec();
-
-     void get_source(Jetscape::real t, Jetscape::real &j0);
-
-};
-
-};
-
-#endif  // LIQUEFIER_H
+}
 
