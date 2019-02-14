@@ -31,13 +31,19 @@ class LiquefierBase {
     LiquefierBase() = default;
     LiquefierBase(std::array<Jetscape::real, 4> x_in,
                   std::array<Jetscape::real, 4> p_in);
-    ~LiquefierBase() {};
+    ~LiquefierBase() {}
 
     virtual void smearing_kernel(Jetscape::real tau, Jetscape::real x,
                                  Jetscape::real y, Jetscape::real eta,
                                  std::array<Jetscape::real, 4> &jmu) const {
         jmu = {0, 0, 0, 0};
-    };
+    }
+
+    void get_source(Jetscape::real tau, Jetscape::real x,
+                    Jetscape::real y, Jetscape::real eta,
+                    std::array<Jetscape::real, 4> &jmu) const {
+        smearing_kernel(tau, x, y, eta, jmu);
+    }
 };
 
 };

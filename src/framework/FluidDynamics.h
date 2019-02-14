@@ -19,6 +19,7 @@
 
 #include <memory>
 #include <vector>
+#include <array>
 #include <cstring>
 #include <stdexcept>
 #include <cmath>
@@ -32,6 +33,7 @@
 #include "FluidCellInfo.h"
 #include "SurfaceCellInfo.h"
 #include "FluidEvolutionHistory.h"
+#include "LiquefierBase.h"
 
 namespace Jetscape {
 
@@ -69,6 +71,8 @@ class FluidDynamics : public JetScapeModuleBase {
     // for large dataset, std::deque is better than std::vector.
     /** Stores the evolution history. */
     EvolutionHistory bulk_info;
+
+    std::vector<std::shared_ptr<LiquefierBase>> liquefierlist;
 
  public:
     /** Default constructor. task ID as "FluidDynamics",  
@@ -287,6 +291,14 @@ class FluidDynamics : public JetScapeModuleBase {
     // */
     // virtual Jetscape::real GetNetChargeDensity(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
     
+    void add_a_liqueifier(std::shared_ptr<LiquefierBase> new_liqueifier) {
+        liquefierlist.push_back(new_liqueifier);
+    }
+
+    void get_source_term(Jetscape::real tau, Jetscape::real x,
+                         Jetscape::real y, Jetscape::real eta,
+                         std::array<Jetscape::real, 4> jmu) const;
+
     /// slots for "jet" signals (future)
     virtual void UpdateEnergyDeposit(int t, double edop);
     /// slots for "jet" signals (future)

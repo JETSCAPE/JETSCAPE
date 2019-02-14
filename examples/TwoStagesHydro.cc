@@ -87,8 +87,11 @@ int main(int argc, char** argv)
   auto trento = make_shared<TrentoInitial>();
   auto null_predynamics = make_shared<NullPreDynamics> ();
   auto pGun= make_shared<PGun> ();
-  auto myliquefier1 = make_shared<CausalLiquefier> ();
   auto hydro1 = make_shared<MpiMusic> ();
+  auto myliquefier1 = make_shared<CausalLiquefier> ();
+  hydro1->add_a_liqueifier(myliquefier1);
+
+
   jetscape->Add(trento);
   jetscape->Add(null_predynamics);
   jetscape->Add(pGun);

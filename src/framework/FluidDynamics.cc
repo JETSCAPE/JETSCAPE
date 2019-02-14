@@ -15,6 +15,7 @@
 // This is a general basic class for hydrodynamics
 
 #include <iostream>
+#include <array>
 #include "FluidDynamics.h"
 #include "LinearInterpolation.h"
 #include "JetScapeSignalManager.h"
@@ -141,6 +142,16 @@ Jetscape::real FluidDynamics::GetQgpFraction(
     GetHydroInfo(time, x, y, z, fluid_cell_ptr);
     real qgp_fraction = fluid_cell_ptr->qgp_fraction;
     return(qgp_fraction);
+}
+    
+
+void FluidDynamics::get_source_term(Jetscape::real tau, Jetscape::real x,
+                                    Jetscape::real y, Jetscape::real eta,
+                                    std::array<Jetscape::real, 4> jmu) const {
+    jmu = {0, 0, 0, 0};
+    for (const auto &iliquid: liquefierlist) {
+        iliquid->get_source(tau, x, y, eta, jmu);
+    }
 }
 
   
