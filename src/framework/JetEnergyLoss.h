@@ -18,6 +18,7 @@
 
 #include "JetScapeModuleBase.h"
 #include "FluidDynamics.h"
+#include "FluidCellInfo.h"
 #include "JetClass.h"
 #include "JetScapeWriter.h"
 #include "PartonShower.h"
