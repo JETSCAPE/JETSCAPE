@@ -5,7 +5,7 @@ General:
     Modus:  Afterburner   # Dummy, but some value has to be present
     Time_Step_Mode: Fixed
     Delta_Time:    0.5
-    End_Time:      100.0  # Reset from the JetScape xml config
+    End_Time:      8000.0  # Reset from the JetScape xml config
     Randomseed:    -1     # Reset from the JetScape xml config
     Nevents:       1      # Dummy
 
