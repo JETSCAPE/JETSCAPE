@@ -26,11 +26,5 @@ LiquefierBase::LiquefierBase(std::array<Jetscape::real, 4> x_in,
     pmu = p_in;
 }
 
-virtual void LiquefierBase::smearing_kernel(
-        Jetscape::real tau, Jetscape::real x, Jetscape::real y,
-        Jetscape::real eta, std::array<Jetscape::real, 4> &jmu) {
-    jmu = {0, 0, 0, 0};
-}
-
 }
 

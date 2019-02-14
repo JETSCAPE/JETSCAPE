@@ -78,7 +78,6 @@ void FluidDynamics::Exec() {
     JSINFO << "Run Hydro : " << GetId() << " ...";
     VERBOSE(8) << "Current Event #" << GetCurrentEvent();
 
-    CreateSignalSlots();
     if (ini) {
         VERBOSE(3) << "length of entropy density vector="
                    << ini->GetEntropyDensityDistribution().size();
@@ -86,15 +85,6 @@ void FluidDynamics::Exec() {
 
     EvolveHydro();  
     JetScapeTask::ExecuteTasks();
-}
-
-void FluidDynamics::CreateSignalSlots() {
-    for (auto it : GetTaskList()) {
-        if (dynamic_pointer_cast<FluidDynamics>(it)) {
-            JetScapeSignalManager::Instance()->ConnectGetHydroSourceSignal(
-                                dynamic_pointer_cast<FluidDynamics>(it));
-        }
-    }
 }
 
 

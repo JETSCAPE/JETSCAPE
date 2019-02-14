@@ -93,8 +93,6 @@ int main(int argc, char** argv)
   jetscape->Add(null_predynamics);
   jetscape->Add(pGun);
 
-  jetscape->Add(myliquefier1);
-
   // add the first hydro
   jetscape->Add(hydro1);
 
@@ -118,8 +116,6 @@ int main(int argc, char** argv)
   
 
   auto myliquefier2 = make_shared<CausalLiquefier> ();
-  jetscape->Add(myliquefier2);
-
   // add the second hydro
   auto hydro2 = make_shared<MpiMusic> ();
   jetscape->Add(hydro2);

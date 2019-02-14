@@ -99,8 +99,6 @@ class FluidDynamics : public JetScapeModuleBase {
     */
     Parameter& GetParameterList() {return(parameter_list);}
   
-    void CreateSignalSlots();
-
     /** Collect header information for writer modules
 	@param w is a pointer of type JetScapeWrite class.
     */
@@ -292,7 +290,7 @@ class FluidDynamics : public JetScapeModuleBase {
     /// slots for "jet" signals (future)
     virtual void UpdateEnergyDeposit(int t, double edop);
     /// slots for "jet" signals (future)
-    virtual void GetEnergyDensity(int t,double& edensity);
+    virtual void GetEnergyDensity(int t, double& edensity) {edensity = 0.0;}
 
 }; // end class FluidDynamics
   

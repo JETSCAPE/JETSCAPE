@@ -30,11 +30,9 @@ class CausalLiquefier: public Jetscape::LiquefierBase {
     CausalLiquefier() = default;
     ~CausalLiquefier() {};
 
-    void smearing_kernel(Jetscape::real x, Jetscape::real y,
-                         Jetscape::real eta,
-                         std::array<Jetscape::real, 4> &jmu);
-};
-
+    void smearing_kernel(Jetscape::real tau, Jetscape::real x,
+                         Jetscape::real y, Jetscape::real eta,
+                         std::array<Jetscape::real, 4> &jmu) const;
 };
 
 #endif  // CAUSALLIQUEFIER_H

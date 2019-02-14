@@ -17,7 +17,6 @@
 #include "JetScapeXML.h"
 #include "JetScapeSignalManager.h"
 #include "JetEnergyLossManager.h"
-#include "Liquefier.h"
 #include "FluidDynamics.h"
 #include "JetScapeBanner.h"
 #include "InitialState.h"
@@ -112,9 +111,6 @@ void JetScape::SetPointers() {
         } else if (dynamic_pointer_cast<PreequilibriumDynamics>(it)) {
             JetScapeSignalManager::Instance()->SetPreEquilibriumPointer(
                         dynamic_pointer_cast<PreequilibriumDynamics>(it));
-        } else if (dynamic_pointer_cast<Liquefier>(it)) {
-            JetScapeSignalManager::Instance()->SetLiquefierPointer(
-                        dynamic_pointer_cast<Liquefier>(it));
         } else if (dynamic_pointer_cast<FluidDynamics>(it)
                    && !hydro_pointer_is_set) {
             JetScapeSignalManager::Instance()->SetHydroPointer(
