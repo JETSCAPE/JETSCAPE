@@ -219,7 +219,8 @@ void TrentoInitial::InitTask() {
 
 	double xymax = GetXMax(), dxy = GetXStep();
 	double etamax = GetZMax(), deta = GetZStep();
-	auto random_seed = (*GetMt19937Generator())();
+	//auto random_seed = (*GetMt19937Generator())();
+        auto random_seed = 1;
 	JSINFO << "Random seed used for Trento " << random_seed;
 
 	std::string proj(phy_opts->Attribute("projectile"));
