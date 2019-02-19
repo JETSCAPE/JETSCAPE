@@ -409,6 +409,20 @@ namespace Jetscape {
     Boson& operator=( const Boson &b);
 
   };
+
+  class Photon : public Boson
+  {
+    public:
+
+    Photon (int label, int id, int stat, const FourVector& p, const FourVector& x);
+    Photon (int label, int id, int stat, double pt, double eta, double phi, double e, double* x=0);
+    Photon (int label, int id, int stat, const FourVector& p, const FourVector& x, double mass);
+    Photon (const Photon& srh);
+
+    Photon& operator=( Photon &ph);
+    Photon& operator=( const Photon &ph);
+
+  };
     
   class Lepton : public JetScapeParticleBase
   {

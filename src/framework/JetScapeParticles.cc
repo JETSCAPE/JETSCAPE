@@ -621,6 +621,43 @@ namespace Jetscape {
   }
 
   // ---------------
+  // Photon specific
+  // ---------------
+
+  Photon::Photon (const Photon& srh) :
+    Boson::Boson (srh)
+  {
+  }
+
+  Photon::Photon (int label, int id, int stat, const FourVector& p, const FourVector& x)  :
+    Boson::Boson ( label,  id,  stat,  p, x)
+  {
+  }
+
+  Photon::Photon (int label, int id, int stat, double pt, double eta, double phi, double e, double* x)  :
+    Boson::Boson ( label,  id,  stat,  pt, eta, phi, e, x)
+  {
+  }
+
+  Photon::Photon(int label, int id, int stat, const FourVector& p, const FourVector& x, double mass):
+    Boson::Boson(label, id, stat, p, x, mass)
+  {
+    set_restmass(mass);
+  }
+
+  Photon& Photon::operator=(Photon &ph)
+  {
+    Boson::operator=(ph);
+    return *this;
+  }
+
+  Photon& Photon::operator=(const Photon &ph)
+  {
+    Boson::operator=(ph);
+    return *this;
+  }
+
+  // ---------------
   // Lepton specific
   // ---------------
 
