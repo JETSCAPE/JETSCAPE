@@ -395,6 +395,20 @@ namespace Jetscape {
     double width_;
         
   };
+
+  class Boson : public JetScapeParticleBase
+  {
+    public:
+
+    Boson (int label, int id, int stat, const FourVector& p, const FourVector& x);
+    Boson (int label, int id, int stat, double pt, double eta, double phi, double e, double* x=0);
+    Boson (int label, int id, int stat, const FourVector& p, const FourVector& x, double mass);
+    Boson (const Boson& srh);
+
+    Boson& operator=( Boson &c);
+    Boson& operator=( const Boson &c);
+
+  };
     
     
 };  /// end of namespace Jetscape

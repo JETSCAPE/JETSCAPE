@@ -583,5 +583,41 @@ namespace Jetscape {
     return *this;
   }
 
+  // ---------------
+  // Boson specific
+  // ---------------
+
+   Boson::Boson (const Boson& srh) :
+    JetScapeParticleBase::JetScapeParticleBase (srh)
+  {
+  }
+
+  Boson::Boson (int label, int id, int stat, const FourVector& p, const FourVector& x)  :
+    JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  p, x)
+  {
+  }
+
+  Boson::Boson (int label, int id, int stat, double pt, double eta, double phi, double e, double* x)  :
+    JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  pt, eta, phi, e, x)
+  {
+  }
+
+  Boson::Boson(int label, int id, int stat, const FourVector& p, const FourVector& x, double mass):
+    JetScapeParticleBase::JetScapeParticleBase(label, id, stat, p, x, mass) 
+  {
+    set_restmass(mass);
+  }
+
+  Boson& Boson::operator=(Boson &b)
+  {
+    JetScapeParticleBase::operator=(b);
+    return *this;
+  }
+
+  Boson& Boson::operator=(const Boson &b)
+  {
+    JetScapeParticleBase::operator=(b);
+    return *this;
+  }
     
 } /// end of namespace Jetscape
