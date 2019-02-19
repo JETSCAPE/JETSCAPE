@@ -324,8 +324,20 @@ def run_events(args, results_file):
 		""" run a single jetscape event"""
 		results.fill(0)
 		h = run_cmd('TRENTO_FS_HYDRO')
-		print(h.stdout)
-		print(h.stderr)
+		#print(h.stdout)
+		#print(h.stderr)
+		# hydro debugging files
+		for rf, short in zip(['music_inv_reynolds_shear.txt', 
+					'music_inv_reynolds_bulk.txt'], ['iR-shear','iR-bulk']):
+			if os.path.exists(rf):
+				logging.info("{:s} exists".format(rf))
+				subprocess.call("mv {:s} {:s}/{:s}-{:s}".format(
+							rf, 
+							os.path.dirname(args.results),
+							short,
+							os.path.basename(args.results),
+						), 
+				shell=True)	
 		if os.stat("surface.dat").st_size == 0:
 			raise StopEvent('empty surface')
 		else:
@@ -336,20 +348,19 @@ def run_events(args, results_file):
 			
 			nparts = 0
 			nos = 0
-			nos_max = 4
-			nos_min = 2
-			npart_max = 40000
+			nos_max = 20
+			nos_min = 1
 			npart_min = 10000
 			subprocess.call("rm -f particles.dat", shell=True)
 			
-			while (npart_min >= nparts) and (nos_min >= nos):
+			while (nos < nos_max):
 				nos += 1
 				logging.info("Run smash # {:d}".format(nos))
 				run_cmd("SAMPLER_AFTERBURNER")
 				subprocess.call("csplit --digits=2  --quiet --prefix=hadron_list final_smash_hadrons.dat \"/# JetScape module: SMASH/+1\" \"{*}\" ", shell=True)
 				nparts += file_len("./hadron_list01")
 				subprocess.call("cat ./hadron_list01 >> particles.dat", shell=True)
-				if ( nparts >= npart_max) or (nos >= nos_max):
+				if ( nparts >= npart_min) and (nos >= nos_min):
 					break
 			
 			logging.info("{:d} # of partifcles in {:d} # of oversamples".format(
