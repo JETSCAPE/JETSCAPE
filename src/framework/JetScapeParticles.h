@@ -405,12 +405,25 @@ namespace Jetscape {
     Boson (int label, int id, int stat, const FourVector& p, const FourVector& x, double mass);
     Boson (const Boson& srh);
 
-    Boson& operator=( Boson &c);
-    Boson& operator=( const Boson &c);
+    Boson& operator=( Boson &b);
+    Boson& operator=( const Boson &b);
 
   };
     
-    
+  class Lepton : public JetScapeParticleBase
+  {
+    public:
+
+    Lepton (int label, int id, int stat, const FourVector& p, const FourVector& x);
+    Lepton (int label, int id, int stat, double pt, double eta, double phi, double e, double* x=0);
+    Lepton (int label, int id, int stat, const FourVector& p, const FourVector& x, double mass);
+    Lepton (const Lepton& srh);
+
+    Lepton& operator=( Lepton &l);
+    Lepton& operator=( const Lepton &l);
+
+  };  
+  
 };  /// end of namespace Jetscape
 
 #endif // JETSCAPEPARTICLES_H

@@ -619,5 +619,42 @@ namespace Jetscape {
     JetScapeParticleBase::operator=(b);
     return *this;
   }
+
+  // ---------------
+  // Lepton specific
+  // ---------------
+
+   Lepton::Lepton (const Lepton& srh) :
+    JetScapeParticleBase::JetScapeParticleBase (srh)
+  {
+  }
+
+  Lepton::Lepton (int label, int id, int stat, const FourVector& p, const FourVector& x)  :
+    JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  p, x)
+  {
+  }
+
+  Lepton::Lepton (int label, int id, int stat, double pt, double eta, double phi, double e, double* x)  :
+    JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  pt, eta, phi, e, x)
+  {
+  }
+
+  Lepton::Lepton(int label, int id, int stat, const FourVector& p, const FourVector& x, double mass):
+    JetScapeParticleBase::JetScapeParticleBase(label, id, stat, p, x, mass)
+  {
+    set_restmass(mass);
+  }
+
+  Lepton& Lepton::operator=(Lepton &l)
+  {
+    JetScapeParticleBase::operator=(l);
+    return *this;
+  }
+
+  Lepton& Lepton::operator=(const Lepton &l)
+  {
+    JetScapeParticleBase::operator=(l);
+    return *this;
+  }
     
 } /// end of namespace Jetscape
