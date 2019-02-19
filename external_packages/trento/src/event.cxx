@@ -65,7 +65,7 @@ Event::Event(const VarMap& var_map)
       dxy_(var_map["xy-step"].as<double>()),
       deta_(var_map["eta-step"].as<double>()),
       nsteps_(std::ceil(2.*var_map["xy-max"].as<double>()/dxy_)),
-      neta_(std::ceil(2.*var_map["eta-max"].as<double>()/deta_)),
+      neta_(std::ceil(2.*var_map["eta-max"].as<double>()/(deta_+1e-15))),
       xymax_(.5*nsteps_*dxy_),
       etamax_(var_map["eta-max"].as<double>()),
       eta2y_(var_map["jacobian"].as<double>(), etamax_, deta_),

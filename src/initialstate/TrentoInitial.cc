@@ -219,8 +219,7 @@ void TrentoInitial::InitTask() {
 
 	double xymax = GetXMax(), dxy = GetXStep();
 	double etamax = GetZMax(), deta = GetZStep();
-	//auto random_seed = (*GetMt19937Generator())();
-        auto random_seed = 1;
+	auto random_seed = (*GetMt19937Generator())();
 	JSINFO << "Random seed used for Trento " << random_seed;
 
 	std::string proj(phy_opts->Attribute("projectile"));
@@ -270,17 +269,24 @@ void TrentoInitial::InitTask() {
 	VarMap var_map_basic{}; 
   	po::store(po::command_line_parser(tokenize(cmd_basic))
       .options(all_opts).positional(positional_opts).run(), var_map_basic);
-	auto Ecut = GenCenTab(proj, targ, var_map_basic, cen_low, cen_high);
-	double Ehigh = Ecut.first*normalization; // rescale the cut
-	double Elow = Ecut.second*normalization; // rescale the cut
-	JSINFO << "The total energy density cut for centrality = [" << cen_low << ", "
-		 << cen_high << "] (%) is:";
-	JSINFO << Elow << "<dE/deta(eta=0)<" << Ehigh;
-	std::string options_cut = 
+   
+        std::string options_cut = "";    
+        if (cen_low == 0 && cen_high == 100) {
+             JSINFO << "TRENTo Minimum Biased Mode Generates 0-100(%) of nuclear inelastic cross-section";
+        }
+        else {
+      	    auto Ecut = GenCenTab(proj, targ, var_map_basic, cen_low, cen_high);
+	    double Ehigh = Ecut.first*normalization; // rescale the cut
+	    double Elow = Ecut.second*normalization; // rescale the cut
+        
+	    JSINFO << "The total energy density cut for centrality = [" << cen_low << ", "
+	   	 << cen_high << "] (%) is:";
+	    JSINFO << Elow << "<dE/deta(eta=0)<" << Ehigh;
+	    options_cut = 
 		  " --s-max " + std::to_string(Ehigh)
 		+ " --s-min " + std::to_string(Elow);
-
-	// Set trento configuration
+	    // Set trento configuration
+	}
 	std::string cmd = proj+" "+targ+" 1 "+options1+options2+options_cut;
 	JSINFO << cmd;
 	VarMap var_map{};

@@ -60,7 +60,7 @@ public:
   fast_eta2y(double J, double etamax, double deta)
       : etamax_(etamax),
         deta_(deta),
-        neta_(std::ceil(2.*etamax_/deta_)+1),
+        neta_(std::ceil(2.*etamax_/(deta_+1e-15))+1),
         y_(neta_, 0.),
         dydeta_(neta_, 0.) {
 
