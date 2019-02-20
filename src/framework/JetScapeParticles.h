@@ -437,6 +437,48 @@ namespace Jetscape {
     Lepton& operator=( const Lepton &l);
 
   };  
+
+  class Electron : public Lepton
+  {
+    public:
+
+    Electron (int label, int id, int stat, const FourVector& p, const FourVector& x);
+    Electron (int label, int id, int stat, double pt, double eta, double phi, double e, double* x=0);
+    Electron (int label, int id, int stat, const FourVector& p, const FourVector& x, double mass);
+    Electron (const Electron& srh);
+
+    Electron& operator=( Electron &e);
+    Electron& operator=( const Electron &e);
+
+  };
+
+  class Muon : public Lepton
+  {
+    public:
+
+    Muon (int label, int id, int stat, const FourVector& p, const FourVector& x);
+    Muon (int label, int id, int stat, double pt, double eta, double phi, double e, double* x=0);
+    Muon (int label, int id, int stat, const FourVector& p, const FourVector& x, double mass);
+    Muon (const Muon& srh);
+
+    Muon& operator=( Muon &m);
+    Muon& operator=( const Muon &m);
+
+  };
+
+  class Positron : public Lepton
+  {
+    public:
+
+    Positron (int label, int id, int stat, const FourVector& p, const FourVector& x);
+    Positron (int label, int id, int stat, double pt, double eta, double phi, double e, double* x=0);
+    Positron (int label, int id, int stat, const FourVector& p, const FourVector& x, double mass);
+    Positron (const Positron& srh);
+
+    Positron& operator=( Positron &po);
+    Positron& operator=( const Positron &po);
+
+  };
   
 };  /// end of namespace Jetscape
 

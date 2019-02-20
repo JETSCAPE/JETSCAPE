@@ -693,5 +693,116 @@ namespace Jetscape {
     JetScapeParticleBase::operator=(l);
     return *this;
   }
+
+  // ---------------
+  // Electron specific
+  // ---------------
+
+   Electron::Electron (const Electron& srh) :
+    Lepton::Lepton (srh)
+  {
+  }
+
+  Electron::Electron (int label, int id, int stat, const FourVector& p, const FourVector& x)  :
+    Lepton::Lepton ( label,  id,  stat,  p, x)
+  {
+  }
+
+  Electron::Electron (int label, int id, int stat, double pt, double eta, double phi, double e, double* x)  :
+    Lepton::Lepton ( label,  id,  stat,  pt, eta, phi, e, x)
+  {
+  }
+
+  Electron::Electron(int label, int id, int stat, const FourVector& p, const FourVector& x, double mass):
+    Lepton::Lepton(label, id, stat, p, x, mass)
+  {
+    set_restmass(mass);
+  }
+
+  Electron& Electron::operator=(Electron &e)
+  {
+    Lepton::operator=(e);
+    return *this;
+  }
+
+  Electron& Electron::operator=(const Electron &e)
+  {
+    Lepton::operator=(e);
+    return *this;
+  }
     
+  // ---------------
+  // Muon specific
+  // ---------------
+
+   Muon::Muon (const Muon& srh) :
+    Lepton::Lepton (srh)
+  {
+  }
+
+  Muon::Muon (int label, int id, int stat, const FourVector& p, const FourVector& x)  :
+    Lepton::Lepton ( label,  id,  stat,  p, x)
+  {
+  }
+
+  Muon::Muon (int label, int id, int stat, double pt, double eta, double phi, double e, double* x)  :
+    Lepton::Lepton ( label,  id,  stat,  pt, eta, phi, e, x)
+  {
+  }
+
+  Muon::Muon(int label, int id, int stat, const FourVector& p, const FourVector& x, double mass):
+    Lepton::Lepton(label, id, stat, p, x, mass)
+  {
+    set_restmass(mass);
+  }
+
+  Muon& Muon::operator=(Muon &m)
+  {
+    Lepton::operator=(m);
+    return *this;
+  }
+
+  Muon& Muon::operator=(const Muon &m)
+  {
+    Lepton::operator=(m);
+    return *this;
+  }
+
+  // ---------------
+  // Positron specific
+  // ---------------
+
+   Positron::Positron (const Positron& srh) :
+    Lepton::Lepton (srh)
+  {
+  }
+
+  Positron::Positron (int label, int id, int stat, const FourVector& p, const FourVector& x)  :
+    Lepton::Lepton ( label,  id,  stat,  p, x)
+  {
+  }
+
+  Positron::Positron (int label, int id, int stat, double pt, double eta, double phi, double e, double* x)  :
+    Lepton::Lepton ( label,  id,  stat,  pt, eta, phi, e, x)
+  {
+  }
+
+  Positron::Positron(int label, int id, int stat, const FourVector& p, const FourVector& x, double mass):
+    Lepton::Lepton(label, id, stat, p, x, mass)
+  {
+    set_restmass(mass);
+  }
+
+  Positron& Positron::operator=(Positron &po)
+  {
+    Lepton::operator=(po);
+    return *this;
+  }
+
+  Positron& Positron::operator=(const Positron &po)
+  {
+    Lepton::operator=(po);
+    return *this;
+  }
+
 } /// end of namespace Jetscape
