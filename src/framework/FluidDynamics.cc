@@ -148,10 +148,7 @@ Jetscape::real FluidDynamics::GetQgpFraction(
 void FluidDynamics::get_source_term(Jetscape::real tau, Jetscape::real x,
                                     Jetscape::real y, Jetscape::real eta,
                                     std::array<Jetscape::real, 4> jmu) const {
-    jmu = {0, 0, 0, 0};
-    for (const auto &iliquid: liquefierlist) {
-        iliquid->get_source(tau, x, y, eta, jmu);
-    }
+    liquefier_ptr->get_source(tau, x, y, eta, jmu);
 }
 
   

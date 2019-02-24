@@ -72,7 +72,7 @@ class FluidDynamics : public JetScapeModuleBase {
     /** Stores the evolution history. */
     EvolutionHistory bulk_info;
 
-    std::vector<std::shared_ptr<LiquefierBase>> liquefierlist;
+    std::shared_ptr<LiquefierBase> liquefier_ptr;
 
  public:
     /** Default constructor. task ID as "FluidDynamics",  
@@ -292,7 +292,7 @@ class FluidDynamics : public JetScapeModuleBase {
     // virtual Jetscape::real GetNetChargeDensity(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
     
     void add_a_liqueifier(std::shared_ptr<LiquefierBase> new_liqueifier) {
-        liquefierlist.push_back(new_liqueifier);
+        liquefier_ptr = new_liqueifier;
     }
 
     void get_source_term(Jetscape::real tau, Jetscape::real x,

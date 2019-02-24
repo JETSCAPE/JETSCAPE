@@ -91,7 +91,6 @@ int main(int argc, char** argv)
   auto myliquefier1 = make_shared<CausalLiquefier> ();
   hydro1->add_a_liqueifier(myliquefier1);
 
-
   jetscape->Add(trento);
   jetscape->Add(null_predynamics);
   jetscape->Add(pGun);
