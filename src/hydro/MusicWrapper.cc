@@ -19,6 +19,7 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 
 #include "JetScapeLogger.h"
 #include "MusicWrapper.h"
@@ -30,6 +31,9 @@ MpiMusic::MpiMusic() {
     doCooperFrye = 0;
     flag_output_evo_to_file = 0;
     SetId("MUSIC");
+    hydro_source_terms_ptr = std::shared_ptr<HydroSourceJETSCAPE> (
+                                                new HydroSourceJETSCAPE ());
+    hydro_source_terms_ptr->add_a_liqueifier(liquefier_ptr.lock());
 }
 
 
@@ -74,6 +78,8 @@ void MpiMusic::InitializeHydro(Parameter parameter_list) {
                << eta_over_s;
         exit(1);
     }
+
+    music_hydro_ptr->add_hydro_source_terms(hydro_source_terms_ptr);
 }
 
 

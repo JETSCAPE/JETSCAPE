@@ -72,7 +72,7 @@ class FluidDynamics : public JetScapeModuleBase {
     /** Stores the evolution history. */
     EvolutionHistory bulk_info;
 
-    std::shared_ptr<LiquefierBase> liquefier_ptr;
+    std::weak_ptr<LiquefierBase> liquefier_ptr;
 
  public:
     /** Default constructor. task ID as "FluidDynamics",  
