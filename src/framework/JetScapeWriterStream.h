@@ -47,7 +47,8 @@ class JetScapeWriterStream : public JetScapeWriter
   bool GetStatus() {return output_file.good();}
   void Close() {output_file.close();}
 
-  void WriteInitFileXML();
+  void WriteInitFileXMLMaster();
+  void WriteInitFileXMLUser();
 
   void Write(weak_ptr<PartonShower> ps);
   void Write(weak_ptr<Parton> p);

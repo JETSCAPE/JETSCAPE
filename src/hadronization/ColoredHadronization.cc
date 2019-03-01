@@ -38,51 +38,41 @@ ColoredHadronization::~ColoredHadronization()
 
 void ColoredHadronization::Init()
 {
-  tinyxml2::XMLElement *hadronization= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("JetHadronization" );
-    
-  if ( !hadronization ) {
-    JSWARN << "Couldn't find tag Jet Hadronization";
-    throw std::runtime_error ("Couldn't find tag Jet Hadronization");
+  
+  std::string s = GetXMLElementText({"JetHadronization", "name"});
+  JSDEBUG << s << " to be initializied ...";
+  
+  double p_read_xml = GetXMLElementDouble({"JetHadronization", "eCMforHadronization"});
+  p_fake = p_read_xml;
+  
+  VERBOSE(2)<<"Start Hadronizing using the PYTHIA module...";
+  
+  // Show initialization at DEBUG or high verbose level
+  pythia.readString("Init:showProcesses = off");
+  pythia.readString("Init:showChangedSettings = off");
+  pythia.readString("Init:showMultipartonInteractions = off");
+  pythia.readString("Init:showChangedParticleData = off");
+  if ( JetScapeLogger::Instance()->GetDebug() || JetScapeLogger::Instance()->GetVerboseLevel()>2 ) {
+    pythia.readString("Init:showProcesses = on");
+    pythia.readString("Init:showChangedSettings = on");
+    pythia.readString("Init:showMultipartonInteractions = on");
+    pythia.readString("Init:showChangedParticleData = on");
   }
-  if (hadronization) {
-    string s = hadronization->FirstChildElement( "name" )->GetText();
-    JSDEBUG << s << " to be initializied ...";
-        
-    double p_read_xml = 10000 ;
-        
-    hadronization->FirstChildElement("eCMforHadronization")->QueryDoubleText(&p_read_xml);
-    p_fake = p_read_xml;
-        
-    VERBOSE(2)<<"Start Hadronizing using the PYTHIA module...";  
-        
-    // Show initialization at DEBUG or high verbose level
-    pythia.readString("Init:showProcesses = off");
-    pythia.readString("Init:showChangedSettings = off");
-    pythia.readString("Init:showMultipartonInteractions = off");
-    pythia.readString("Init:showChangedParticleData = off");
-    if ( JetScapeLogger::Instance()->GetDebug() || JetScapeLogger::Instance()->GetVerboseLevel()>2 ) {
-      pythia.readString("Init:showProcesses = on");
-      pythia.readString("Init:showChangedSettings = on");
-      pythia.readString("Init:showMultipartonInteractions = on");
-      pythia.readString("Init:showChangedParticleData = on");
-    }
-        
-    // No event record printout.
-    pythia.readString("Next:numberShowInfo = 0");
-    pythia.readString("Next:numberShowProcess = 0");
-    pythia.readString("Next:numberShowEvent = 0");
-    if ( JetScapeLogger::Instance()->GetDebug() || JetScapeLogger::Instance()->GetVerboseLevel()>2 ) {
-      pythia.readString("Next:numberShowInfo = 1");
-      pythia.readString("Next:numberShowProcess = 1");
-      pythia.readString("Next:numberShowEvent = 1");
-    }
-        
-    pythia.readString("ProcessLevel:all = off");
-    pythia.readString("PartonLevel:FSR=off");
-    pythia.readString("HadronLevel:Decay = off");
-    pythia.init();
-        
+  
+  // No event record printout.
+  pythia.readString("Next:numberShowInfo = 0");
+  pythia.readString("Next:numberShowProcess = 0");
+  pythia.readString("Next:numberShowEvent = 0");
+  if ( JetScapeLogger::Instance()->GetDebug() || JetScapeLogger::Instance()->GetVerboseLevel()>2 ) {
+    pythia.readString("Next:numberShowInfo = 1");
+    pythia.readString("Next:numberShowProcess = 1");
+    pythia.readString("Next:numberShowEvent = 1");
   }
+  
+  pythia.readString("ProcessLevel:all = off");
+  pythia.readString("PartonLevel:FSR=off");
+  pythia.readString("HadronLevel:Decay = off");
+  pythia.init();
     
 }
 

@@ -13,6 +13,11 @@
   <debug> on </debug>
   <remark> off </remark>
   <vlevel> 0 </vlevel>
+  
+  <nEvents> 100 </nEvents>
+  
+  <setReuseHydro> true </setReuseHydro>
+  <nReuseHydro> 10 </nReuseHydro>
 
   <!--  Random Settings. For now, just a global  seed. -->
   <!--  Note: It's each modules responsibility to adopt it -->

@@ -19,12 +19,6 @@
 
 namespace Jetscape {
 
-InitialState::InitialState(){
-    //FourVector v(0,0,0,0);
-    //initialVtx.set_location(v);
-    //Init();
-}
-
 InitialState::~InitialState()
 {
 }
@@ -34,22 +28,14 @@ void InitialState::Init(){
 
   JSINFO<<"Intialize InitialState ... " << GetId() << " ...";
 
-  // JetScapeXML::Instance() returns a singleton if jetscape_init.xml is read in.
-  xml_ = JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("IS" );  
-
-  if ( !xml_ ) {
-    JSWARN << " : Not a valid JetScape Initial State XML section in file!";
-    exit(-1);
-  } else {
-    xml_->FirstChildElement("grid_max_x")->QueryDoubleText(&grid_max_x_);
-    xml_->FirstChildElement("grid_max_y")->QueryDoubleText(&grid_max_y_);
-    xml_->FirstChildElement("grid_max_z")->QueryDoubleText(&grid_max_z_);
-    xml_->FirstChildElement("grid_step_x")->QueryDoubleText(&grid_step_x_);
-    xml_->FirstChildElement("grid_step_y")->QueryDoubleText(&grid_step_y_);
-    xml_->FirstChildElement("grid_step_z")->QueryDoubleText(&grid_step_z_);
-    JSINFO<<"x range for bulk evolution = ["<< -grid_max_x_ <<", "<<grid_max_x_ << "]";
-  }
-
+  grid_max_x_ = GetXMLElementDouble({"IS", "grid_max_x"});
+  grid_max_y_ = GetXMLElementDouble({"IS", "grid_max_y"});
+  grid_max_z_ = GetXMLElementDouble({"IS", "grid_max_z"});
+  grid_step_x_ = GetXMLElementDouble({"IS", "grid_step_x"});
+  grid_step_y_ = GetXMLElementDouble({"IS", "grid_step_y"});
+  grid_step_z_ = GetXMLElementDouble({"IS", "grid_step_z"});
+  JSINFO<<"x range for bulk evolution = ["<< -grid_max_x_ <<", "<<grid_max_x_ << "]";
+  
   InitTask();
 
   JetScapeTask::InitTasks();

@@ -43,25 +43,18 @@ MpiMusic::~MpiMusic() {
 void MpiMusic::InitializeHydro(Parameter parameter_list) {
     JSINFO << "Initialize MUSIC ...";
     VERBOSE(8);
-    tinyxml2::XMLElement *para =
-                    GetHydroXML()->FirstChildElement("MUSIC");
-    if (!para) {
-        JSWARN << " : MUSIC not properly initialized in XML file ...";
-        exit(-1);
-    }
-    string input_file = para->FirstChildElement("MUSIC_input_file")->GetText();
-    para->FirstChildElement("Perform_CooperFrye_Feezeout")->QueryIntText(
-                                                                &doCooperFrye);
+
+    string input_file = GetXMLElementText({"Hydro", "MUSIC", "MUSIC_input_file"});
+    doCooperFrye = GetXMLElementInt({"Hydro", "MUSIC", "Perform_CooperFrye_Feezeout"});
+  
     music_hydro_ptr = new MUSIC(input_file);
 
     // overwrite input options
-    para->FirstChildElement("output_evolution_to_file")->QueryIntText(
-                                                    &flag_output_evo_to_file);
+    int flag_output_evo_to_file = GetXMLElementInt({"Hydro", "MUSIC", "output_evolution_to_file"});
     music_hydro_ptr->set_parameter("output_movie_flag",
                                 static_cast<double>(flag_output_evo_to_file));
-    double eta_over_s = 0.0;
-    para->FirstChildElement("shear_viscosity_eta_over_s")->QueryDoubleText(
-                                                                &eta_over_s);
+    double eta_over_s = GetXMLElementDouble({"Hydro", "MUSIC", "shear_viscosity_eta_over_s"});
+
     if (eta_over_s > 1e-6) {
         music_hydro_ptr->set_parameter("Viscosity_Flag_Yes_1_No_0", 1);
         music_hydro_ptr->set_parameter("Include_Shear_Visc_Yes_1_No_0", 1);
