@@ -370,6 +370,9 @@ void JetEnergyLoss::PrintShowerInitiatingParton()
   //JSDEBUG<<inP->pid();
 }
 
-
+void JetEnergyLoss::GetFinalPartonsForEachShower(shared_ptr<PartonShower> shower)
+{
+  this->finals_Partons.push_back(shower.get()->GetFinalPartons()); 
+}
 
 } // end namespace Jetscape

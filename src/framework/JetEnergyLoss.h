@@ -181,6 +181,8 @@ class JetEnergyLoss : public JetScapeModuleBase, public std::enable_shared_from_
    */
   const bool GetSentInPartonsConnected() {return SentInPartonsConnected;}
 
+  void GetFinalPartonsForEachShower(shared_ptr<PartonShower> shower);
+
  private:
 
   double deltaT;
@@ -204,7 +206,8 @@ class JetEnergyLoss : public JetScapeModuleBase, public std::enable_shared_from_
   bool jetSignalConnected;
   bool edensitySignalConnected;
   
- 
+  // Vector of final state partons for each shower as a vector
+  vector<vector<shared_ptr<Parton>>> finals_Partons; 
 
 };
 
