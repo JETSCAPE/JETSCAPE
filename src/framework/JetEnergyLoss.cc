@@ -95,7 +95,8 @@ void JetEnergyLoss::Clear()
   VERBOSESHOWER(8);
   if (pShower)
     pShower->clear();
-  
+ 
+  this->final_Partons.clear(); 
   //inP=nullptr;pShower=nullptr; // kind of defeating the porpose of shared pointers somehow ...
 }
 
@@ -341,6 +342,8 @@ void JetEnergyLoss::Exec()
        if ( pPrinter ){
 	 pPrinter->GetFinalPartons2(pShower);
        }
+
+       GetFinalPartonsForEachShower(pShower);
     }
   else
     {JSWARN<<"NO Initial Hard Parton for Parton shower received ...";}  
@@ -372,7 +375,7 @@ void JetEnergyLoss::PrintShowerInitiatingParton()
 
 void JetEnergyLoss::GetFinalPartonsForEachShower(shared_ptr<PartonShower> shower)
 {
-  this->finals_Partons.push_back(shower.get()->GetFinalPartons()); 
+  this->final_Partons.push_back(shower.get()->GetFinalPartons()); 
 }
 
 } // end namespace Jetscape
