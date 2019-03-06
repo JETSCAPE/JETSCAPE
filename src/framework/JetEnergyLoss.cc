@@ -343,7 +343,11 @@ void JetEnergyLoss::Exec()
 	 pPrinter->GetFinalPartons2(pShower);
        }
 
-       GetFinalPartonsForEachShower(pShower);
+       shared_ptr<JetEnergyLoss> pEloss = JetScapeSignalManager::Instance()->GetEnergyLossPointer().lock();
+       if(pEloss)
+       {
+           GetFinalPartonsForEachShower(pShower);
+       }
     }
   else
     {JSWARN<<"NO Initial Hard Parton for Parton shower received ...";}  
