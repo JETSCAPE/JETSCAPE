@@ -28,7 +28,7 @@
 #include "HardProcess.h"
 #include "JetScapeWriter.h"
 #include "PreequilibriumDynamics.h"
-
+#include "PartonPrinter.h"
 
 #include<iostream>
 #include<string>

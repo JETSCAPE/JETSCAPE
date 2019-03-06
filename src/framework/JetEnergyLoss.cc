@@ -340,7 +340,7 @@ void JetEnergyLoss::Exec()
 	
        shared_ptr<PartonPrinter> pPrinter = JetScapeSignalManager::Instance()->GetPartonPrinterPointer().lock();
        if ( pPrinter ){
-	 pPrinter->GetFinalPartons2(pShower);
+	 pPrinter->GetFinalPartons(pShower);
        }
 
        shared_ptr<JetEnergyLoss> pEloss = JetScapeSignalManager::Instance()->GetEnergyLossPointer().lock();
