@@ -18,7 +18,9 @@ git clone https://github.com/smash-transport/smash.git smash/smash_code
 
 # 2) Compile SMASH
 cd smash/smash_code
-git checkout f068109561daeea2e55461b30dded6e2ae945c4c
+
+#update March 7, 2019 Smash Bug fixed w.r.t. formation time
+#if necessary for future stability, checkout a fixed commit after this date
 mkdir build
 cd build
 cmake .. -DPythia_CONFIG_EXECUTABLE=${PYTHIA8DIR}/bin/pythia8-config
