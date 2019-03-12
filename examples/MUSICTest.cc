@@ -39,7 +39,6 @@
 #include "TrentoInitial.h"
 #include "NullPreDynamics.h"
 #include "PGun.h"
-#include "PartonPrinter.h"
 #include "HadronizationManager.h"
 #include "Hadronization.h"
 #include "ColoredHadronization.h"
@@ -114,9 +113,6 @@ int main(int argc, char** argv)
   jetscape->Add(jlossmanager);
   
   // Hadronization
-  // This helper module currently needs to be added for hadronization.
-  auto printer = make_shared<PartonPrinter> ();
-  jetscape->Add(printer);
   auto hadroMgr = make_shared<HadronizationManager> ();
   auto hadro = make_shared<Hadronization> ();
   auto hadroModule = make_shared<ColoredHadronization> ();
