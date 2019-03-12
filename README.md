@@ -1,4 +1,4 @@
-# JETSCAPE1.0-RC1
+# JETSCAPE 1.2
 The Jet Energy-loss Tomography with a Statistically and Computationally Advanced Program Envelope (JETSCAPE) collaboration
 
 
