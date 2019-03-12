@@ -20,7 +20,7 @@
 
 #include "tinyxml2.h"
 #include<iostream>
-
+#include "MartiniMutex.h"
 #include "FluidDynamics.h"
 #define hbarc 0.197327053
 
@@ -44,6 +44,10 @@ Martini::Martini()
   dGamma_qg = new vector<double>;
   dGamma_qq_q = new vector<double>;
   dGamma_qg_q = new vector<double>;
+
+  // create and set Martini Mutex
+  auto martini_mutex = make_shared<MartiniMutex>();
+  SetMutex(martini_mutex);
 }
 
 Martini::~Martini()

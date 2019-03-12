@@ -22,7 +22,7 @@
 #include "tinyxml2.h"
 #include <iostream>
 #include <fstream>
-
+#include "AdSCFTMutex.h"
 #include "FluidDynamics.h"
 
 #define MAGENTA "\033[35m"
@@ -40,6 +40,10 @@ AdSCFT::AdSCFT()
 AdSCFT::~AdSCFT()
 {
   VERBOSE(8);
+
+  // create and set AdSCFT Mutex
+  auto adscft_mutex = make_shared<AdSCFTMutex>();
+  SetMutex(adscft_mutex);
 }
 
 void AdSCFT::Init()
