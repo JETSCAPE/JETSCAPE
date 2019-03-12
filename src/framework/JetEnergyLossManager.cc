@@ -76,6 +76,13 @@ void JetEnergyLossManager::Init()
 
   INFO<<"Connect JetEnergyLossManager Signal to Hard Process ...";
   JetScapeSignalManager::Instance()->ConnectGetHardPartonListSignal(shared_from_this());
+
+  // Set the pointer of JetEnergyLoss for making connections to hadronization module
+  for (auto it : GetTaskList())
+  {
+    if (dynamic_pointer_cast<JetEnergyLoss>(it))
+        JetScapeSignalManager::Instance()->SetEnergyLossPointer(dynamic_pointer_cast<JetEnergyLoss>(it));
+  }
 }
 
 
