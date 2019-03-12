@@ -23,7 +23,7 @@
 #include <fstream>
 #include <iostream>
 #include <iomanip>
-
+#include "LBTMutex.h"
 #include "FluidDynamics.h"
 
 #define MAGENTA "\033[35m"
@@ -74,6 +74,10 @@ LBT::LBT()
 {
   SetId("LBT");
   VERBOSE(8);
+
+  // create and set LBT Mutex
+  auto lbt_mutex = make_shared<LBTMutex>();
+  SetMutex(lbt_mutex);
 }
 
 LBT::~LBT()

@@ -78,7 +78,7 @@
     <deltaT>0.1</deltaT>
     <formTime> -0.1</formTime>
     <maxT>20</maxT>
-
+    <mutex>ON</mutex>
 
     <Matter>
       <name>Matter</name>
