@@ -13,9 +13,7 @@ L_y = (ny - 1)/2.0 * dy #size of grid in y[fm]
 max_x = L_x + 0.5*dx #max x [fm]
 max_y = L_y + 0.5*dy #may y [fm]
 
-tau_s = 1.16 #time of landau-matching to hydro [fm/c]
-
-#which one will we use??
+#only T_c matters, e_c is dummy by default
 e_c = 1.7   #switching energy density on freezeout hypersurface [GeV/fm^3]
 T_c = 0.151 #switching temperature on hypersurface [GeV]
 
@@ -34,6 +32,8 @@ nucleon_min_dist = 1.27
 
 #freestream-milne Parameters
 
+tau_s = 1.16 #time of landau-matching to hydro [fm/c]
+
 #MUSIC Parameters
 
 #shear viscosity p'zation
@@ -50,7 +50,7 @@ bulk_viscosity_peak_in_GeV = 0.18
 delta_f_mode = 4 # 1: 14 moment, 2: C.E., 3: McNelis feq_mod, 4: Bernhard feq_mod
 
 #SMASH Parameters
-#max_time_smash = 10000 #max run time [fm/c]
+max_time_smash = 300.0 #max run time [fm/c]
 
 #write appropriate input files
 
@@ -69,7 +69,7 @@ fs_file.write("DIM_X " + str(nx) + "\n")
 fs_file.write("DIM_Y " + str(ny) + "\n")
 fs_file.write("DIM_ETA 1\n")
 fs_file.write("DIM_RAP 1\n")
-fs_file.write("DIM_PHIP 5000\n")
+fs_file.write("DIM_PHIP 500\n")
 fs_file.write("DX " + str(dx) + "\n")
 fs_file.write("DY " + str(dy) + "\n")
 fs_file.write("DETA 0.1\n")
@@ -77,7 +77,8 @@ fs_file.write("DRAP 0.07\n")
 fs_file.write("DTAU " + str(tau_s) + "\n")
 fs_file.write("TAU0 0.0\n")
 fs_file.write("EOS_TYPE 1\n")
-fs_file.write("E_FREEZE " + str(e_c))
+fs_file.write("E_FREEZE " + str(e_c) + "\n")
+fs_file.write("VISCOUS_MATCHING 1 ")
 
 fs_file.close()
 
@@ -92,11 +93,11 @@ music_file.write("s_factor 1.00\n")                  # normalization factor read
 music_file.write("boost_invariant  1\n")             # whether the simulation is boost-invariant
 music_file.write("Initial_time_tau_0 " +str(tau_s) + "\n")# starting time of the hydro
 music_file.write("Total_evolution_time_tau 30.\n")   # the maximum allowed running time
-music_file.write("Delta_Tau 0.04\n")                 # time step to use in the evolution [fm/c]
+music_file.write("Delta_Tau 0.02\n")                 # time step to use in the evolution [fm/c]
 music_file.write("Eta_grid_size 1.0\n")              # spatial rapidity range
 music_file.write("Grid_size_in_eta 1\n")             # number of the grid points in spatial
-music_file.write("X_grid_size_in_fm " + str(2*max_x) + "\n")# spatial range along x direction in the
-music_file.write("Y_grid_size_in_fm " + str(2*max_y) + "\n")# spatial range along y direction in the
+music_file.write("X_grid_size_in_fm " + str(max_x) + "\n")# spatial range along x direction in the
+music_file.write("Y_grid_size_in_fm " + str(max_y) + "\n")# spatial range along y direction in the
 music_file.write("Grid_size_in_y " + str(nx) + "\n")             # number of the grid points in y direction
 music_file.write("Grid_size_in_x " + str(ny) + "\n")             # number of the grid points in x direction
 music_file.write("EOS_to_use 9\n")                   # type of the equation of state
@@ -238,14 +239,14 @@ js_file.write("      <Perform_CooperFrye_Feezeout>0</Perform_CooperFrye_Feezeout
 js_file.write("    </MUSIC>\n")
 js_file.write("  </Hydro>\n")
 
-#fixed params for SMASH
+#params for SMASH
 js_file.write("  <Afterburner>\n")
 js_file.write("    <SMASH>\n")
 js_file.write("      <name>SMASH</name>\n")
 js_file.write("      <SMASH_config_file>smash_input/config.yaml</SMASH_config_file>\n")
 js_file.write("      <SMASH_particles_file>smash_input/particles.txt</SMASH_particles_file>\n")
 js_file.write("      <SMASH_decaymodes_file>smash_input/decaymodes.txt</SMASH_decaymodes_file>\n")
-js_file.write("      <end_time>10000.0</end_time>\n")
+js_file.write("      <end_time>" + str(max_time_smash) + "</end_time>\n")
 js_file.write("      <only_decays>0</only_decays>\n")
 js_file.write("    </SMASH>\n")
 js_file.write("  </Afterburner>\n")
