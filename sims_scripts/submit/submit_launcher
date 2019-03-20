@@ -1,28 +1,29 @@
 #!/bin/bash
-#SBATCH -J Parametric 
-#SBATCH -p skx-normal      # Queue (partition) name
-#SBATCH -N 2
-#SBATCH --ntasks-per-node 40
-#SBATCH -t 01:00:00        # Run time (hh:mm:ss)
-#SBATCH --mail-user=wk42@phy.duke.edu
-#SBATCH --mail-type=all    # Send email at begin and end of job
-#SBATCH -A TG-PHY180024    # Allocation name (STARTUP ALLOC)
+#SBATCH -J launcher_job_100_events 
+#SBATCH -p skx-normal        # Queue (partition) name
+#SBATCH -N 20                 # the number of nodes
+#SBATCH --ntasks-per-node 48 #set this equal to number of cores on node
+#SBATCH -t 05:00:00          # Run time (hh:mm:ss)   walltime for each node separately
+#SBATCH --mail-user=everett.165@osu.edu
+#SBATCH --mail-type=all      # Send email at begin and end of job
+#SBATCH -A TG-PHY180035      # Allocation name (Large allocation)
 #SBATCH -o slurm/out-%j
 #SBATCH -e slurm/err-%j
 
-
 module load intel/18.0.2 cmake/3.7.1 gsl boost hdf5 eigen impi python3 launcher
-source ../sims_scripts/prepare_compilation_stampede2_2.sh
+
+source ../prepare_compilation_stampede2_2.sh
 module list
 
-
-inputdir=../input-config/
+inputdir=../input-config/ #where the input files for all modules are located. remember to run ./generate_module_input_files.py first 
 job=$SLURM_JOB_ID
 # create taskfarmer tasks
-rm -f tasks # remove old tasks!!! important!!! 
-ntasks=200
+rm -f tasks # remove old tasks!!! important!!!
+
+#total number of hydro events will be (ntasks * nevents) assuming job remains within walltime 
+ntasks=500
 for task in $(seq -f "%05g" $ntasks); do
-    echo run-events --nevents 2 --logfile $SCRATCH/$job/$task.log --tmpdir=$SCRATCH/ --startdir=$inputdir $job/$task.dat >> tasks
+    echo run-events --nevents 1 --logfile $SCRATCH/$job/$task.log --tmpdir=$SCRATCH/ --startdir=$inputdir $job/$task.dat >> tasks
 done
 
 export LAUNCHER_PLUGIN_DIR=$LAUNCHER_DIR/plugins

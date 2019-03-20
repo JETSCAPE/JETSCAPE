@@ -324,8 +324,8 @@ def run_events(args, results_file):
 		""" run a single jetscape event"""
 		results.fill(0)
 		h = run_cmd('TRENTO_FS_HYDRO')
-		#print(h.stdout)
-		#print(h.stderr)
+		print(h.stdout)
+		print(h.stderr)
 		# hydro debugging files
 		for rf, short in zip(['music_inv_reynolds_shear.txt', 
 					'music_inv_reynolds_bulk.txt'], ['iR-shear','iR-bulk']):
@@ -343,27 +343,29 @@ def run_events(args, results_file):
 		else:
 			subprocess.call("mv surface.dat input/", shell=True)
 		# loop over delta-f
-		for idf in range(4):
+		for idf in range(3,4):
 			subprocess.call("sed -i \"s/df_mode.*/df_mode = {:d}/g\" iS3D_parameters.dat".format(idf+1), shell=True)
 			
 			nparts = 0
 			nos = 0
-			nos_max = 20
+			nos_max = 5
 			nos_min = 1
-			npart_min = 10000
+			npart_min = 1000000
 			subprocess.call("rm -f particles.dat", shell=True)
 			
 			while (nos < nos_max):
 				nos += 1
 				logging.info("Run smash # {:d}".format(nos))
-				run_cmd("SAMPLER_AFTERBURNER")
+				sample_burn = run_cmd("SAMPLER_AFTERBURNER")
+				print(sample_burn.stdout)
+				print(sample_burn.stderr)
 				subprocess.call("csplit --digits=2  --quiet --prefix=hadron_list final_smash_hadrons.dat \"/# JetScape module: SMASH/+1\" \"{*}\" ", shell=True)
 				nparts += file_len("./hadron_list01")
 				subprocess.call("cat ./hadron_list01 >> particles.dat", shell=True)
 				if ( nparts >= npart_min) and (nos >= nos_min):
 					break
 			
-			logging.info("{:d} # of partifcles in {:d} # of oversamples".format(
+			logging.info("{:d} particles in {:d} oversamples".format(
 						nparts, nos))
 			
 			# read final particle data (output from afterburner)
@@ -384,7 +386,7 @@ def run_events(args, results_file):
 			charge = particles['charge']
 			abs_pid = np.abs(particles['ID'])
 			abs_eta = np.fabs(eta)
-			abs_y = np.fabs(eta)
+			abs_y = np.fabs(y)
 
 			# charged particle cut
 			charged = (charge != 0)
@@ -392,7 +394,7 @@ def run_events(args, results_file):
 			# 1) calculate dNch/eta and dET/deta
 			results['ALICE'][idf]['dNch_deta'] = \
 							(charged & (abs_eta < .5)).sum() / (2*.5) / nos
-			print((charged & (abs_eta < .5)).sum() / (2*.5))
+			logging.info( "charged and abs_eta < 0.5 : " + str( (charged & (abs_eta < .5)).sum() / (2*.5) ) )
 			results['ALICE'][idf]['dET_deta'] = \
 							ET[abs_eta < .6].sum() / (2*.6) / nos
 
@@ -462,7 +464,7 @@ def run_events(args, results_file):
 		except Exception:
 			logging.exception('event %d failed', n)
 			nfail += 1
-			if nfail > 3 and nfail/n > .5:
+			if nfail/Nevents > .25:
 				logging.critical('too many failures, stopping events')
 				break
 			logging.warning('continuing to next event')
@@ -471,7 +473,7 @@ def run_events(args, results_file):
 		results_file.write(results.tobytes())
 		logging.info('event %d completed successfully', n)
 
-	return n > nfail
+	return nfail
 
 
 def main():
@@ -544,7 +546,7 @@ def main():
 		logging.info('working directory: %s', workdir)
 
 		try:
-			status = run_events(args, results_file)
+			status = run_events(args, results_file) #run_events returns the number of failed events
 		except KeyboardInterrupt:
 			# after catching the initial SIGTERM or interrupt, ignore them
 			# during shutdown -- this ensures everything will exit gracefully
@@ -564,8 +566,9 @@ def main():
 
 	end = datetime.datetime.now()
 	logging.info('finished at %s, %s elapsed', end, end - start)
-
-	if not status:
+        
+        #if events fail or keyboard interrupt status > 0
+	if status:
 		sys.exit(1)
 
 
