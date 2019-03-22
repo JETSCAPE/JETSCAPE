@@ -27,12 +27,7 @@ namespace Jetscape {
   OtherParticlesStorage::OtherParticlesStorage()
   {
     SetId("OtherParticlesStorage");
-    GetBosonListConnected = false;
-    GetLeptonListConnected = false;
     GetPhotonListConnected = false;
-    GetElectronListConnected = false;
-    GetMuonListConnected = false;
-    GetPositronListConnected = false;
     VERBOSE(8); 
   }
 
@@ -45,19 +40,9 @@ namespace Jetscape {
   {
     JSDEBUG << "Clearing other particles lists...";
 
-    bosons.clear();
-    leptons.clear();
     photons.clear();
-    electrons.clear();
-    muons.clear();
-    positrons.clear();
 
-    VERBOSE(8)<<positrons.size();
-    VERBOSE(8)<<muons.size();
-    VERBOSE(8)<<electrons.size();
     VERBOSE(8)<<photons.size();
-    VERBOSE(8)<<leptons.size();
-    VERBOSE(8)<<bosons.size();
   }
 
   void OtherParticlesStorage::Init()

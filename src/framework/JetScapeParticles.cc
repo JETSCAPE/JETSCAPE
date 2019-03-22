@@ -584,224 +584,33 @@ namespace Jetscape {
   }
 
   // ---------------
-  // Boson specific
-  // ---------------
-
-   Boson::Boson (const Boson& srh) :
-    JetScapeParticleBase::JetScapeParticleBase (srh)
-  {
-  }
-
-  Boson::Boson (int label, int id, int stat, const FourVector& p, const FourVector& x)  :
-    JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  p, x)
-  {
-  }
-
-  Boson::Boson (int label, int id, int stat, double pt, double eta, double phi, double e, double* x)  :
-    JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  pt, eta, phi, e, x)
-  {
-  }
-
-  Boson::Boson(int label, int id, int stat, const FourVector& p, const FourVector& x, double mass):
-    JetScapeParticleBase::JetScapeParticleBase(label, id, stat, p, x, mass) 
-  {
-    set_restmass(mass);
-  }
-
-  Boson& Boson::operator=(Boson &b)
-  {
-    JetScapeParticleBase::operator=(b);
-    return *this;
-  }
-
-  Boson& Boson::operator=(const Boson &b)
-  {
-    JetScapeParticleBase::operator=(b);
-    return *this;
-  }
-
-  // ---------------
   // Photon specific
   // ---------------
 
   Photon::Photon (const Photon& srh) :
-    Boson::Boson (srh)
+    Parton::Parton (srh)
   {
   }
 
   Photon::Photon (int label, int id, int stat, const FourVector& p, const FourVector& x)  :
-    Boson::Boson ( label,  id,  stat,  p, x)
+    Parton::Parton ( label,  id,  stat,  p, x)
   {
   }
 
   Photon::Photon (int label, int id, int stat, double pt, double eta, double phi, double e, double* x)  :
-    Boson::Boson ( label,  id,  stat,  pt, eta, phi, e, x)
+    Parton::Parton ( label,  id,  stat,  pt, eta, phi, e, x)
   {
-  }
-
-  Photon::Photon(int label, int id, int stat, const FourVector& p, const FourVector& x, double mass):
-    Boson::Boson(label, id, stat, p, x, mass)
-  {
-    set_restmass(mass);
   }
 
   Photon& Photon::operator=(Photon &ph)
   {
-    Boson::operator=(ph);
+    Parton::operator=(ph);
     return *this;
   }
 
   Photon& Photon::operator=(const Photon &ph)
   {
-    Boson::operator=(ph);
-    return *this;
-  }
-
-  // ---------------
-  // Lepton specific
-  // ---------------
-
-   Lepton::Lepton (const Lepton& srh) :
-    JetScapeParticleBase::JetScapeParticleBase (srh)
-  {
-  }
-
-  Lepton::Lepton (int label, int id, int stat, const FourVector& p, const FourVector& x)  :
-    JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  p, x)
-  {
-  }
-
-  Lepton::Lepton (int label, int id, int stat, double pt, double eta, double phi, double e, double* x)  :
-    JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  pt, eta, phi, e, x)
-  {
-  }
-
-  Lepton::Lepton(int label, int id, int stat, const FourVector& p, const FourVector& x, double mass):
-    JetScapeParticleBase::JetScapeParticleBase(label, id, stat, p, x, mass)
-  {
-    set_restmass(mass);
-  }
-
-  Lepton& Lepton::operator=(Lepton &l)
-  {
-    JetScapeParticleBase::operator=(l);
-    return *this;
-  }
-
-  Lepton& Lepton::operator=(const Lepton &l)
-  {
-    JetScapeParticleBase::operator=(l);
-    return *this;
-  }
-
-  // ---------------
-  // Electron specific
-  // ---------------
-
-   Electron::Electron (const Electron& srh) :
-    Lepton::Lepton (srh)
-  {
-  }
-
-  Electron::Electron (int label, int id, int stat, const FourVector& p, const FourVector& x)  :
-    Lepton::Lepton ( label,  id,  stat,  p, x)
-  {
-  }
-
-  Electron::Electron (int label, int id, int stat, double pt, double eta, double phi, double e, double* x)  :
-    Lepton::Lepton ( label,  id,  stat,  pt, eta, phi, e, x)
-  {
-  }
-
-  Electron::Electron(int label, int id, int stat, const FourVector& p, const FourVector& x, double mass):
-    Lepton::Lepton(label, id, stat, p, x, mass)
-  {
-    set_restmass(mass);
-  }
-
-  Electron& Electron::operator=(Electron &e)
-  {
-    Lepton::operator=(e);
-    return *this;
-  }
-
-  Electron& Electron::operator=(const Electron &e)
-  {
-    Lepton::operator=(e);
-    return *this;
-  }
-    
-  // ---------------
-  // Muon specific
-  // ---------------
-
-   Muon::Muon (const Muon& srh) :
-    Lepton::Lepton (srh)
-  {
-  }
-
-  Muon::Muon (int label, int id, int stat, const FourVector& p, const FourVector& x)  :
-    Lepton::Lepton ( label,  id,  stat,  p, x)
-  {
-  }
-
-  Muon::Muon (int label, int id, int stat, double pt, double eta, double phi, double e, double* x)  :
-    Lepton::Lepton ( label,  id,  stat,  pt, eta, phi, e, x)
-  {
-  }
-
-  Muon::Muon(int label, int id, int stat, const FourVector& p, const FourVector& x, double mass):
-    Lepton::Lepton(label, id, stat, p, x, mass)
-  {
-    set_restmass(mass);
-  }
-
-  Muon& Muon::operator=(Muon &m)
-  {
-    Lepton::operator=(m);
-    return *this;
-  }
-
-  Muon& Muon::operator=(const Muon &m)
-  {
-    Lepton::operator=(m);
-    return *this;
-  }
-
-  // ---------------
-  // Positron specific
-  // ---------------
-
-   Positron::Positron (const Positron& srh) :
-    Lepton::Lepton (srh)
-  {
-  }
-
-  Positron::Positron (int label, int id, int stat, const FourVector& p, const FourVector& x)  :
-    Lepton::Lepton ( label,  id,  stat,  p, x)
-  {
-  }
-
-  Positron::Positron (int label, int id, int stat, double pt, double eta, double phi, double e, double* x)  :
-    Lepton::Lepton ( label,  id,  stat,  pt, eta, phi, e, x)
-  {
-  }
-
-  Positron::Positron(int label, int id, int stat, const FourVector& p, const FourVector& x, double mass):
-    Lepton::Lepton(label, id, stat, p, x, mass)
-  {
-    set_restmass(mass);
-  }
-
-  Positron& Positron::operator=(Positron &po)
-  {
-    Lepton::operator=(po);
-    return *this;
-  }
-
-  Positron& Positron::operator=(const Positron &po)
-  {
-    Lepton::operator=(po);
+    Parton::operator=(ph);
     return *this;
   }
 

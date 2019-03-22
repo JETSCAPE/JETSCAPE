@@ -272,6 +272,8 @@ namespace Jetscape {
     // Init is never called, and this object is not configured. All it can do is look up
     // in its original Data table
     static Pythia8::Pythia InternalHelperPythia;
+
+    virtual bool isColored()=0; 
     
   protected:
   
@@ -343,6 +345,8 @@ namespace Jetscape {
     void set_shower(const weak_ptr<PartonShower> pShower);
     const weak_ptr<PartonShower> shower() const;
 
+    bool isColored() {return true;}
+
     std::vector<Parton> parents();
     
   protected :
@@ -390,96 +394,29 @@ namespace Jetscape {
     /// In addition, not all generated ids may be in the database
     /// Currently, we add these manually. Could also reject outright.
     bool CheckOrForceHadron( const int id, const double mass=0 );
-      
+ 
+    bool isColored() {return false;}
+     
   protected:
     double width_;
         
   };
 
-  class Boson : public JetScapeParticleBase
-  {
-    public:
-
-    Boson (int label, int id, int stat, const FourVector& p, const FourVector& x);
-    Boson (int label, int id, int stat, double pt, double eta, double phi, double e, double* x=0);
-    Boson (int label, int id, int stat, const FourVector& p, const FourVector& x, double mass);
-    Boson (const Boson& srh);
-
-    Boson& operator=( Boson &b);
-    Boson& operator=( const Boson &b);
-
-  };
-
-  class Photon : public Boson
+  class Photon : public Parton
   {
     public:
 
     Photon (int label, int id, int stat, const FourVector& p, const FourVector& x);
     Photon (int label, int id, int stat, double pt, double eta, double phi, double e, double* x=0);
-    Photon (int label, int id, int stat, const FourVector& p, const FourVector& x, double mass);
     Photon (const Photon& srh);
 
     Photon& operator=( Photon &ph);
     Photon& operator=( const Photon &ph);
 
-  };
-    
-  class Lepton : public JetScapeParticleBase
-  {
-    public:
-
-    Lepton (int label, int id, int stat, const FourVector& p, const FourVector& x);
-    Lepton (int label, int id, int stat, double pt, double eta, double phi, double e, double* x=0);
-    Lepton (int label, int id, int stat, const FourVector& p, const FourVector& x, double mass);
-    Lepton (const Lepton& srh);
-
-    Lepton& operator=( Lepton &l);
-    Lepton& operator=( const Lepton &l);
-
-  };  
-
-  class Electron : public Lepton
-  {
-    public:
-
-    Electron (int label, int id, int stat, const FourVector& p, const FourVector& x);
-    Electron (int label, int id, int stat, double pt, double eta, double phi, double e, double* x=0);
-    Electron (int label, int id, int stat, const FourVector& p, const FourVector& x, double mass);
-    Electron (const Electron& srh);
-
-    Electron& operator=( Electron &e);
-    Electron& operator=( const Electron &e);
+    bool isColored() {return false;}
 
   };
 
-  class Muon : public Lepton
-  {
-    public:
-
-    Muon (int label, int id, int stat, const FourVector& p, const FourVector& x);
-    Muon (int label, int id, int stat, double pt, double eta, double phi, double e, double* x=0);
-    Muon (int label, int id, int stat, const FourVector& p, const FourVector& x, double mass);
-    Muon (const Muon& srh);
-
-    Muon& operator=( Muon &m);
-    Muon& operator=( const Muon &m);
-
-  };
-
-  class Positron : public Lepton
-  {
-    public:
-
-    Positron (int label, int id, int stat, const FourVector& p, const FourVector& x);
-    Positron (int label, int id, int stat, double pt, double eta, double phi, double e, double* x=0);
-    Positron (int label, int id, int stat, const FourVector& p, const FourVector& x, double mass);
-    Positron (const Positron& srh);
-
-    Positron& operator=( Positron &po);
-    Positron& operator=( const Positron &po);
-
-  };
-  
 };  /// end of namespace Jetscape
 
 #endif // JETSCAPEPARTICLES_H

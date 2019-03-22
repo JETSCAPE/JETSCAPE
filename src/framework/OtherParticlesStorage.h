@@ -36,19 +36,8 @@ class OtherParticlesStorage : public JetScapeTask {
     
 
   private:
-    bool GetBosonListConnected;
-    bool GetLeptonListConnected;
     bool GetPhotonListConnected;
-    bool GetElectronListConnected;
-    bool GetMuonListConnected;
-    bool GetPositronListConnected;
-    vector<shared_ptr<Boson>> bosons;
-    vector<shared_ptr<Lepton>> leptons;
     vector<shared_ptr<Photon>> photons;
-    vector<shared_ptr<Electron>> electrons;
-    vector<shared_ptr<Muon>> muons;
-    vector<shared_ptr<Positron>> positrons;
-
 };
 
 };
