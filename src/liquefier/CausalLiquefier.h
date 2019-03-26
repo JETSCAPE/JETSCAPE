@@ -32,6 +32,7 @@ class CausalLiquefier: public Jetscape::LiquefierBase {
 
     void smearing_kernel(Jetscape::real tau, Jetscape::real x,
                          Jetscape::real y, Jetscape::real eta,
+                         const std::array<Jetscape::real, 4> x_i,
                          std::array<Jetscape::real, 4> &jmu) const;
 };
 

@@ -58,6 +58,7 @@ class LiquefierBase {
 
     virtual void smearing_kernel(Jetscape::real tau, Jetscape::real x,
                                  Jetscape::real y, Jetscape::real eta,
+                                 const std::array<Jetscape::real, 4> x_i,
                                  std::array<Jetscape::real, 4> &jmu) const {
         jmu = {0, 0, 0, 0};
     }
@@ -65,7 +66,12 @@ class LiquefierBase {
     void get_source(Jetscape::real tau, Jetscape::real x,
                     Jetscape::real y, Jetscape::real eta,
                     std::array<Jetscape::real, 4> &jmu) const {
-        smearing_kernel(tau, x, y, eta, jmu);
+        jmu = {0.0, 0.0, 0.0, 0.0};
+        for (const auto &drop_i : dropletlist) {
+            const auto x_i = drop_i.get_xmu();
+            std::array<Jetscape::real, 4> jmu_i = {0.0, 0.0, 0.0, 0.0};
+            smearing_kernel(tau, x, y, eta, x_i, jmu_i);
+        }
     }
 };
 
