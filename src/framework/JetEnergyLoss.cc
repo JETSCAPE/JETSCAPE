@@ -23,7 +23,6 @@
 #include "JetScapeLogger.h"
 #include "JetScapeXML.h"
 #include <string>
-#include <iostream>
 #include "tinyxml2.h"
 #include "JetScapeSignalManager.h"
 #include "JetScapeWriterStream.h"
@@ -170,6 +169,7 @@ void JetEnergyLoss::DoShower()
 {
   double tStart=0;
   double currentTime=0;
+
  
 
   VERBOSESHOWER(8)<<"Hard Parton from Initial Hard Process ...";
@@ -223,6 +223,8 @@ void JetEnergyLoss::DoShower()
 	  
 	  pInTemp.push_back(pInTempModule[0]);
 
+      add_hydro_sources(pInTempModule, pOutTemp);
+
 	  vStart=vStartVec[i];
 	  vStartVecTemp.push_back(vStart);
 
@@ -249,7 +251,7 @@ void JetEnergyLoss::DoShower()
 	      // and check if size > 1 and create additional root nodes to that vertex ...
 	      // Simple Test here below:
 	      // DEBUG:
-	      //cout<<"In JetEnergyloss : "<<pInTempModule.size()<<endl;
+	      //cout<<"In JetEnergyloss : "<<pInTempModule.size()<<end;
 	      
 	      if (pInTempModule.size()>1)
 		{
@@ -299,6 +301,55 @@ void JetEnergyLoss::DoShower()
   pIn.clear();pOut.clear();pInTemp.clear();pInTempModule.clear();pOutTemp.clear();
   vStartVec.clear();
 }
+
+
+void JetEnergyLoss::add_hydro_sources(const vector<Parton> pIn,
+                                      const vector<Parton> pOut) {
+    if (pOut.size() == 0) return;
+
+    const Jetscape::real hydro_source_abs_err = 1e-15;
+    FourVector p_final;
+    FourVector p_init;
+    FourVector x_final;
+    FourVector x_init;
+    for (const auto &iparton : pIn) {
+        auto temp = iparton.p_in();
+        p_init += temp;
+        x_init = iparton.x_in();
+    }
+    for (const auto &iparton : pOut) {
+        auto temp = iparton.p_in();
+        p_final += temp;
+        x_final = iparton.x_in();
+    }
+    if (std::abs(p_final.t() - p_init.t()) > hydro_source_abs_err) {
+        cout << "E_init = " << p_init.t() << " GeV, E_final = "
+             << p_final.t() << " GeV" << endl;
+        cout << "E_diff = " << p_final.t() - p_init.t()
+             << " GeV" << endl;
+        Jetscape::real droplet_t   = (x_final.t() + x_init.t())/2.;
+        Jetscape::real droplet_x   = (x_final.x() + x_init.x())/2.;
+        Jetscape::real droplet_y   = (x_final.y() + x_init.y())/2.;
+        Jetscape::real droplet_z   = (x_final.z() + x_init.z())/2.;
+        Jetscape::real droplet_tau = (
+                    sqrt(droplet_t*droplet_t - droplet_z*droplet_z));
+        Jetscape::real droplet_eta = (
+                    0.5*log((droplet_t + droplet_z)
+                            /(droplet_t - droplet_z)));
+        Jetscape::real droplet_E   = (p_final.t() + p_init.t());
+        Jetscape::real droplet_px  = (p_final.x() + p_init.x());
+        Jetscape::real droplet_py  = (p_final.y() + p_init.y());
+        Jetscape::real droplet_pz  = (p_final.z() + p_init.z());
+
+        std::array<Jetscape::real, 4> droplet_xmu = {
+            droplet_tau, droplet_x, droplet_y, droplet_eta};
+        std::array<Jetscape::real, 4> droplet_pmu = {
+            droplet_E, droplet_px, droplet_py, droplet_pz};
+        Droplet drop_i(droplet_xmu, droplet_pmu);
+        liquefier_ptr.lock()->add_a_droplet(drop_i);
+    }
+}
+
 
 void JetEnergyLoss::Exec()
 {

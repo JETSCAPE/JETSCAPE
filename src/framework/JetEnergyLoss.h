@@ -185,6 +185,9 @@ class JetEnergyLoss : public JetScapeModuleBase, public std::enable_shared_from_
     void add_a_liqueifier(std::shared_ptr<LiquefierBase> new_liqueifier) {
         liquefier_ptr = new_liqueifier;
     }
+
+    void add_hydro_sources(const std::vector<Parton> pIn,
+                           const std::vector<Parton> pOut);
  
  protected:
     std::weak_ptr<LiquefierBase> liquefier_ptr;
