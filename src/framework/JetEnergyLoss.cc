@@ -29,6 +29,7 @@
 #include "JetScapeWriterStream.h"
 #include "HardProcess.h"
 #include "JetScapeModuleMutex.h"
+#include "LiquefierBase.h"
 
 #ifdef USE_HEPMC
 #include "JetScapeWriterHepMC.h"

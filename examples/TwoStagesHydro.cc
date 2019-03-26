@@ -101,6 +101,7 @@ int main(int argc, char** argv)
   // Energy loss
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
+  jloss->add_a_liqueifier(myliquefier1);
 
 
   auto matter = make_shared<Matter> ();
@@ -117,9 +118,9 @@ int main(int argc, char** argv)
   jetscape->Add(jlossmanager);
   
 
-  auto myliquefier2 = make_shared<CausalLiquefier> ();
   // add the second hydro
   auto hydro2 = make_shared<MpiMusic> ();
+  hydro2->add_a_liqueifier(myliquefier1);
   jetscape->Add(hydro2);
 
   // surface sampler
