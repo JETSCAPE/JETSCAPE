@@ -346,7 +346,7 @@ void JetEnergyLoss::Exec()
        shared_ptr<JetEnergyLoss> pEloss = JetScapeSignalManager::Instance()->GetEnergyLossPointer().lock();
        if(pEloss)
        {
-           GetFinalPartonsForEachShower(pShower);
+           pEloss->GetFinalPartonsForEachShower(pShower);
        }
     }
   else
