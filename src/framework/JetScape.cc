@@ -31,12 +31,14 @@ namespace Jetscape {
   /** Default constructor to create the main task of the JetScape framework. It sets the total number of events to 1.
    * By default, hydro events are used only once
    */
-JetScape::JetScape() 
-  : n_events(1)
-  , reuse_hydro_ (false)
-  , n_reuse_hydro_ (0)
+  JetScape::JetScape():
+  JetScapeModuleBase(),
+  n_events(1),
+  reuse_hydro_(false),
+  n_reuse_hydro_(1)
 {
   VERBOSE(8);
+  SetId("primary");
 }
 
 JetScape::~JetScape()
@@ -51,51 +53,75 @@ void JetScape::Show()
   ShowJetscapeBanner();
 }
 
+//________________________________________________________________
 void JetScape::Init()
 {
   Show();
   
   JSINFO<<BOLDRED<<"Intialize JetScape ...";
   
-  JetScapeXML::Instance()->OpenXMLFile(GetXMLFileName());
+  // Set the names of the XML files in the JetScapeXML instance
+  JetScapeXML::Instance()->OpenXMLMasterFile(GetXMLMasterFileName());
+  JetScapeXML::Instance()->OpenXMLUserFile(GetXMLUserFileName());
+  JSINFO << "================================================================";
   
-  string log_debug = JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement( "debug" )->GetText();
-  string log_remark = JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement( "remark" )->GetText();
-  int m_vlevel=0;
+  // Read some general parameters from the XML configuration file
+  ReadGeneralParametersFromXML();
   
-  JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("vlevel")->QueryIntText(&m_vlevel);
+  // Has to be called explicitly since not really fully recursively (if ever needed)
+  // So --> JetScape is "Task Manager" of all modules ...
+  JSINFO<<"Found "<<GetNumberOfTasks()<<" Modules Initialize them ... ";
+  SetPointers();
+  JetScapeTask::InitTasks();
+}
   
-  // Some general JetScape interface settings can also be read in from XML file ...
-  // Order of task could also be verifed via XML or via sort of TaskList with order parameter
+//________________________________________________________________
+void JetScape::ReadGeneralParametersFromXML() {
+  
+  // Debug level
+  std::string log_debug = GetXMLElementText({"debug"});
   if ((int) log_debug.find("off")>=0)
     JetScapeLogger::Instance()->SetDebug(false);
-  
+  VERBOSE(1)<<"JetScape Debug = "<< log_debug;
+
+  // Remark
+  std::string log_remark = GetXMLElementText({"remark"});
   if ((int) log_remark.find("on")>=0)
     JetScapeLogger::Instance()->SetRemark(true);
+  VERBOSE(1)<<"JetScape Remark = "<< log_remark;
 
-  JSDEBUG<<"JetScape Debug from XML = "<< log_debug;
-  JSDEBUG<<"JetScape Remark from XML = "<< log_remark;
+  // Verbose level
+  int m_vlevel = GetXMLElementInt({"vlevel"});
+  if (m_vlevel>0) {
+    JetScapeLogger::Instance()->SetVerboseLevel(m_vlevel);
+    VERBOSE(1)<<"JetScape Verbose Level = "<<m_vlevel;
+  }
 
-   if ((int) m_vlevel>0)
-     {
-       JetScapeLogger::Instance()->SetVerboseLevel(m_vlevel);
-       JSDEBUG<<"JetScape Verbose Level from XML = "<<m_vlevel;
-     }
+  // nEvents
+  int nEvents = GetXMLElementInt({"nEvents"});
+  if (nEvents) {
+    SetNumberOfEvents(nEvents);
+    JSINFO<<"nEvents = "<< nEvents;
+  }
+  
+  // Set whether to reuse hydro
+  std::string reuseHydro = GetXMLElementText({"setReuseHydro"});
+  if ((int) reuseHydro.find("true")>=0) {
+    SetReuseHydro(true);
+    JSINFO << "Reuse Hydro: " << reuseHydro;
+  }
+  int nReuseHydro = GetXMLElementInt({"nReuseHydro"});
+  if (nReuseHydro) {
+    SetNReuseHydro(nReuseHydro);
+    JSINFO<<"nReuseHydro: "<< nReuseHydro;
+  }
+  
+  // Set up helper. Mostly used for random numbers
+  // Needs the XML reader singleton set up
+  JetScapeTaskSupport::ReadSeedFromXML( );
 
-   SetPointers();
-   
-   // Set up helper. Mostly used for random numbers
-   // Needs the XML reader singleton set up
-   JSDEBUG<<"Seeding JetScapeTaskSupport from XML";
-   JetScapeTaskSupport::ReadSeedFromXML( );
-
-  // Has to be called explicitly since not really fully recursively (if ever needed)
-   // So --> JetScape is "Task Manager" of all modules ...
-   
-   JSINFO<<"Found "<<GetNumberOfTasks()<<" Modules Initialize them ... ";
-   JetScapeTask::InitTasks();
 }
-
+  
 // kind of cluncky, maybe a better way ... ?
 // Handle signal/slots in JetScape hence avoid passing pointers to sub tasks ...
 void JetScape::SetPointers()
@@ -107,23 +133,23 @@ void JetScape::SetPointers()
   for (auto it : GetTaskList())
     {
       if (dynamic_pointer_cast<InitialState>(it))
-	JetScapeSignalManager::Instance()->SetInitialStatePointer(dynamic_pointer_cast<InitialState>(it));
-
+        JetScapeSignalManager::Instance()->SetInitialStatePointer(dynamic_pointer_cast<InitialState>(it));
+      
       if (dynamic_pointer_cast<PreequilibriumDynamics>(it))
-	JetScapeSignalManager::Instance()->SetPreEquilibriumPointer(dynamic_pointer_cast<PreequilibriumDynamics>(it));
- 
+        JetScapeSignalManager::Instance()->SetPreEquilibriumPointer(dynamic_pointer_cast<PreequilibriumDynamics>(it));
+      
       if (dynamic_pointer_cast<FluidDynamics>(it))
-	JetScapeSignalManager::Instance()->SetHydroPointer(dynamic_pointer_cast<FluidDynamics>(it));
-  
+        JetScapeSignalManager::Instance()->SetHydroPointer(dynamic_pointer_cast<FluidDynamics>(it));
+      
       if (dynamic_pointer_cast<JetEnergyLossManager>(it))
-	JetScapeSignalManager::Instance()->SetJetEnergyLossManagerPointer(dynamic_pointer_cast<JetEnergyLossManager>(it));
+        JetScapeSignalManager::Instance()->SetJetEnergyLossManagerPointer(dynamic_pointer_cast<JetEnergyLossManager>(it));
       
       if (dynamic_pointer_cast<HardProcess>(it))
-	JetScapeSignalManager::Instance()->SetHardProcessPointer(dynamic_pointer_cast<HardProcess>(it));
+        JetScapeSignalManager::Instance()->SetHardProcessPointer(dynamic_pointer_cast<HardProcess>(it));
       
       if (dynamic_pointer_cast<JetScapeWriter>(it) && it->GetActive())
-	JetScapeSignalManager::Instance()->SetWriterPointer(dynamic_pointer_cast<JetScapeWriter>(it)); 
-
+        JetScapeSignalManager::Instance()->SetWriterPointer(dynamic_pointer_cast<JetScapeWriter>(it));
+      
       if (dynamic_pointer_cast<PartonPrinter>(it))
         JetScapeSignalManager::Instance()->SetPartonPrinterPointer(dynamic_pointer_cast<PartonPrinter>(it));
 

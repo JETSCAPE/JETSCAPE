@@ -50,44 +50,34 @@ void ColorlessHadronization::Init()
   // Open output file
   //hadfile.open("CH_myhad.dat");
 
-  tinyxml2::XMLElement *hadronization= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("JetHadronization" );
+  std::string s = GetXMLElementText({"JetHadronization", "name"});
+  JSDEBUG << s << " to be initializied ...";
 
-  if ( !hadronization ) {
-    JSWARN << "Couldn't find tag Jet Hadronization";
-    throw std::runtime_error ("Couldn't find tag Jet Hadronization");
-  }
-  if (hadronization) {
-    string s = hadronization->FirstChildElement( "name" )->GetText();
-    JSDEBUG << s << " to be initializied ...";
-
-    // Read sqrts to know remnants energies
-    double p_read_xml = 10000 ;
-    int flagInt=1;
-    hadronization->FirstChildElement("eCMforHadronization")->QueryDoubleText(&p_read_xml);
-    p_fake = p_read_xml;
-    hadronization->FirstChildElement("take_recoil")->QueryIntText(&flagInt);
-    take_recoil=flagInt;
-
-    JSDEBUG<<"Initialize ColorlessHadronization";
-    VERBOSE(8);
-
-    // No event record printout.
-    pythia.readString("Next:numberShowInfo = 0");
-    pythia.readString("Next:numberShowProcess = 0");
-    pythia.readString("Next:numberShowEvent = 0");
-
-    // Standard settings
-    pythia.readString("ProcessLevel:all = off");
+  // Read sqrts to know remnants energies
+  double p_read_xml = GetXMLElementDouble({"JetHadronization", "eCMforHadronization"});
+  p_fake = p_read_xml;
   
-    // Don't let pi0 decay
-    pythia.readString("111:mayDecay = off");
+  take_recoil = GetXMLElementInt({"JetHadronization", "take_recoil"});
 
-    // Don't let any hadron decay
-    //pythia.readString("HadronLevel:Decay = off");
+  JSDEBUG<<"Initialize ColorlessHadronization";
+  VERBOSE(8);
+  
+  // No event record printout.
+  pythia.readString("Next:numberShowInfo = 0");
+  pythia.readString("Next:numberShowProcess = 0");
+  pythia.readString("Next:numberShowEvent = 0");
 
-    // And initialize
-    pythia.init();
-  }
+  // Standard settings
+  pythia.readString("ProcessLevel:all = off");
+
+  // Don't let pi0 decay
+  pythia.readString("111:mayDecay = off");
+
+  // Don't let any hadron decay
+  //pythia.readString("HadronLevel:Decay = off");
+
+  // And initialize
+  pythia.init();
 }
 
 void ColorlessHadronization::WriteTask(weak_ptr<JetScapeWriter> w)

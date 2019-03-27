@@ -37,13 +37,10 @@ FreestreamMilneWrapper::~FreestreamMilneWrapper() {
 void FreestreamMilneWrapper::InitializePreequilibrium(PreEquilibriumParameterFile parameter_list) {
     JSINFO << "Initialize freestream-milne ...";
     VERBOSE(8);
-    tinyxml2::XMLElement *para = GetPreequilibriumXML()->FirstChildElement("FreestreamMilne");
-    if (!para) {
-      JSWARN << " : freestream-milne not properly initialized in XML file ...";
-      exit(-1);
-    }
-    string input_file = para->FirstChildElement("freestream_input_file")->GetText();//is this necessary? if we just force the user to have the 'freestream_input' file in the correct directory
-
+  
+    std::string input_file = GetXMLElementText({"Preequilibrium", "FreestreamMilne", "freestream_input_file"});
+    //is this necessary? if we just force the user to have the 'freestream_input' file in the correct directory
+  
     fsmilne_ptr = new FREESTREAMMILNE();
 }
 

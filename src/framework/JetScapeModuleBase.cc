@@ -27,17 +27,13 @@ namespace Jetscape {
   // ---------------------------------------------------------------------------
   /** Default constructor to create a JetScapeModuleBase. It sets the XML file name to a default string value.                                 
    */
-  JetScapeModuleBase::JetScapeModuleBase()
+  JetScapeModuleBase::JetScapeModuleBase():
+    JetScapeTask(),
+    xml_master_file_name(""),
+    xml_user_file_name(""),
+    mt19937_generator_(nullptr)
   {
-    xml_file_name = "";
-  }
-
-  // ---------------------------------------------------------------------------
-  /** This is a constructor to create a JetScapeModuleBase. It sets the XML file name to "m_name" to be used to read input parameters.
-   */
-  JetScapeModuleBase::JetScapeModuleBase(string m_name)
-  {
-    xml_file_name = m_name;
+    current_event = 0;
   }
 
   // ---------------------------------------------------------------------------
@@ -53,11 +49,14 @@ namespace Jetscape {
    */
   void JetScapeModuleBase::Init()
   {
-    if (!JetScapeXML::Instance()->GetXMLRoot())
-      {
-	JSWARN << "Not a valide JetScape XML file or no XML file loaded!";
-	exit(-1);
-      }
+    if (!JetScapeXML::Instance()->GetXMLRootMaster()) {
+      JSWARN << "Not a valide JetScape Master XML file or no XML file loaded!";
+      exit(-1);
+    }
+    if (!JetScapeXML::Instance()->GetXMLRootUser()) {
+      JSWARN << "Not a valide JetScape XML file or no XML file loaded!";
+      exit(-1);
+    }
   }
 
   // ---------------------------------------------------------------------------

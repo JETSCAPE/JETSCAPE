@@ -46,30 +46,23 @@ void Brick::InitTask()
   
   JSDEBUG<<"Initialize Brick (Test) ...";
   VERBOSE(8);
-  tinyxml2::XMLElement *brick=GetHydroXML()->FirstChildElement("Brick");
+  
+  std::string s = GetXMLElementText({"Hydro", "Brick", "name"});
+  JSDEBUG << s << " to be initilizied ...";
+  
+  T_brick = GetXMLElementDouble({"Hydro", "Brick", "T"});
+  JSDEBUG << s << " with T = "<<T_brick;
+  VERBOSE(2)<<"Brick Temperature T = "<<T_brick;
+  
+  tinyxml2::XMLElement *brick= GetXMLElement({"Hydro", "Brick"});
+  if ( brick->Attribute("bjorken_expansion_on", "true") ) {
+      bjorken_expansion_on = true;
+      start_time = std::atof(brick->Attribute("start_time"));
+  }
 
-  if (brick) {
-      string s = brick->FirstChildElement( "name" )->GetText();
-
-      JSDEBUG << s << " to be initilizied ...";
-      
-      brick->FirstChildElement("T")->QueryDoubleText(&T_brick);
-
-      JSDEBUG << s << " with T = "<<T_brick;
-      VERBOSE(2)<<"Brick Temperature T = "<<T_brick;
-
-      if ( brick->Attribute("bjorken_expansion_on", "true") ) {
-          bjorken_expansion_on = true;
-          start_time = std::atof(brick->Attribute("start_time"));
-      }
-
-      //Parameter parameter_list;
-      GetParameterList().hydro_input_filename = (char*) "dummy"; //*(argv+1);
-
-    } else {
-      JSWARN << " : Brick not properly initialized in XML file ...";
-      exit(-1);
-    }
+  //Parameter parameter_list;
+  GetParameterList().hydro_input_filename = (char*) "dummy"; //*(argv+1);
+  
 }
 
 void Brick::InitializeHydro(Parameter parameter_list) {

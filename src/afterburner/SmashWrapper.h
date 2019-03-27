@@ -63,7 +63,6 @@ private:
 
 class SmashWrapper : public Afterburner {
 private:
-  tinyxml2::XMLElement *smash_xml_;
   bool only_final_decays_ = false;
   shared_ptr<smash::Experiment<AfterburnerModus>> smash_experiment_;
 

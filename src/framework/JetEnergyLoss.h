@@ -37,14 +37,6 @@ class JetEnergyLoss : public JetScapeModuleBase, public std::enable_shared_from_
   /** Default constructor. It sets the value of qhat, deltaT and maxT to -99.99, 0.0 and 0.0, respectively. Standard signal slot flags are set to false.
    */
   JetEnergyLoss();
-
-  /** Standard constructor. Default value of qhat is set to -99.99. Standard signal slot flags are set to false.
-      @param m_name is a name of the control XML file which contains the input parameters under the tag <Eloss>.
-   */
- JetEnergyLoss(string m_name) : JetScapeModuleBase (m_name)
-  {qhat=-99.99;SetId("JetEnergyLoss");jetSignalConnected=false;
-    edensitySignalConnected=false; 
-    GetHydroCellSignalConnected=false;}
   
   /** A copy constructor for Jet Energy Loss Physics Task.
       @param j A pointer of type JetEnergyLoss class.

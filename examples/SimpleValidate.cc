@@ -56,7 +56,9 @@ int main(int argc, char** argv)
   Show();
 
   // Main framework task
-  auto jetscape = make_shared<JetScape>("../examples/simplevalidate.xml",1);
+  auto jetscape = make_shared<JetScape>();
+  jetscape->SetXMLMasterFileName("../config/jetscape_master.xml");
+  jetscape->SetXMLUserFileName("../config/jetscape_user.xml");
   jetscape->SetId("primary");
 
   // Empty initial state
