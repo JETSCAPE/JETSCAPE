@@ -219,7 +219,7 @@ void JetEnergyLoss::DoShower()
 	    pShower->new_parton(vStart,vEnd,make_shared<Parton>(pInTempModule.at(0)));
 	    foundchangedorig=true;
 	  }
-	  
+	  cout << "### number of partons after call to eloss module is: " << pOutTemp.size() << endl; 
 	  pInTemp.push_back(pInTempModule[0]);
 
 	  vStart=vStartVec[i];
@@ -233,7 +233,8 @@ void JetEnergyLoss::DoShower()
 	      pOutTemp[k].set_edgeid( edgeid );
 		      
 	      vStartVecOut.push_back(vEnd);
-	      pOut.push_back(pOutTemp[k]);
+	      if(pOutTemp[k].isColored())
+	         pOut.push_back(pOutTemp[k]);
 
 	      Parton& particle = pOut.back();
 	      // Parton& particle = pOut[iout];
@@ -272,12 +273,13 @@ void JetEnergyLoss::DoShower()
 	  // --------------------------------------------
 	  pOutTemp.clear();
 	  pInTempModule.clear();
+	  //cout << "### number of partons after adding them to pOut is: " << pOut.size() << endl;
 	}
 
       // --------------------------------------------
       
       pIn.clear();
-      
+      cout << "### number of partons after adding them to pOut is: " << pOut.size() << endl;
       pIn.insert(pIn.end(),pInTemp.begin(),pInTemp.end());
       pIn.insert(pIn.end(),pOut.begin(),pOut.end());
       
