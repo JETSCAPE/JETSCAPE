@@ -106,13 +106,13 @@ int main(int argc, char** argv)
 
   auto matter = make_shared<Matter> ();
   // auto lbt = make_shared<LBT> ();
-  // auto martini = make_shared<Martini> ();
+  auto martini = make_shared<Martini> ();
   // auto adscft = make_shared<AdSCFT> ();
 
   // Note: if you use Matter, it MUST come first (to set virtuality)
   jloss->Add(matter);
   // jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
-  // jloss->Add(martini);
+  jloss->Add(martini);
   // jloss->Add(adscft);  
   jlossmanager->Add(jloss);  
   jetscape->Add(jlossmanager);
