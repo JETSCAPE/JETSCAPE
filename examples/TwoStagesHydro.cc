@@ -88,8 +88,8 @@ int main(int argc, char** argv)
   auto null_predynamics = make_shared<NullPreDynamics> ();
   auto pGun= make_shared<PGun> ();
   auto hydro1 = make_shared<MpiMusic> ();
-  auto myliquefier1 = make_shared<CausalLiquefier> ();
-  hydro1->add_a_liqueifier(myliquefier1);
+  auto myliquefier = make_shared<CausalLiquefier> ();
+  hydro1->add_a_liqueifier(myliquefier);
 
   jetscape->Add(trento);
   jetscape->Add(null_predynamics);
@@ -101,7 +101,7 @@ int main(int argc, char** argv)
   // Energy loss
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
-  jloss->add_a_liqueifier(myliquefier1);
+  jloss->add_a_liqueifier(myliquefier);
 
 
   auto matter = make_shared<Matter> ();
@@ -120,7 +120,7 @@ int main(int argc, char** argv)
 
   // add the second hydro
   auto hydro2 = make_shared<MpiMusic> ();
-  hydro2->add_a_liqueifier(myliquefier1);
+  hydro2->add_a_liqueifier(myliquefier);
   jetscape->Add(hydro2);
 
   // surface sampler

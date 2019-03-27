@@ -18,10 +18,13 @@
 
 #include "CausalLiquefier.h"
 
+namespace Jetscape {
+
 void CausalLiquefier::smearing_kernel(
         Jetscape::real tau, Jetscape::real x, Jetscape::real y,
-        Jetscape::real eta, const std::array<Jetscape::real, 4> x_i,
+        Jetscape::real eta, const Droplet drop_i,
         std::array<Jetscape::real, 4> &jmu) const {
-    jmu = {1, 0, 0, 0};
+    jmu = {0., 0, 0, 0};
 }
 
+};

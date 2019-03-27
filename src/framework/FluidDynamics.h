@@ -291,7 +291,8 @@ class FluidDynamics : public JetScapeModuleBase {
     // */
     // virtual Jetscape::real GetNetChargeDensity(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
     
-    void add_a_liqueifier(std::shared_ptr<LiquefierBase> new_liqueifier) {
+    virtual void add_a_liqueifier(
+                            std::shared_ptr<LiquefierBase> new_liqueifier) {
         liquefier_ptr = new_liqueifier;
     }
 

@@ -33,7 +33,6 @@ MpiMusic::MpiMusic() {
     SetId("MUSIC");
     hydro_source_terms_ptr = std::shared_ptr<HydroSourceJETSCAPE> (
                                                 new HydroSourceJETSCAPE ());
-    hydro_source_terms_ptr->add_a_liqueifier(liquefier_ptr.lock());
 }
 
 
@@ -107,6 +106,8 @@ void MpiMusic::EvolveHydro() {
     
     JSINFO << "initial density profile dx = " << dx << " fm";
     hydro_status = INITIALIZED;
+    JSINFO << "number of source terms: "
+           << hydro_source_terms_ptr->get_number_of_sources();
     if (hydro_status == INITIALIZED) {
         JSINFO << "running MUSIC ...";
         music_hydro_ptr->run_hydro();

@@ -56,25 +56,19 @@ class LiquefierBase {
         dropletlist.push_back(droplet_in);
     }
 
-    int get_droplet_size() const {return(dropletlist.size());}
+    int get_dropletlist_size() const {return(dropletlist.size());}
 
     virtual void smearing_kernel(Jetscape::real tau, Jetscape::real x,
                                  Jetscape::real y, Jetscape::real eta,
-                                 const std::array<Jetscape::real, 4> x_i,
+                                 const Droplet drop_i,
                                  std::array<Jetscape::real, 4> &jmu) const {
         jmu = {0, 0, 0, 0};
     }
 
     void get_source(Jetscape::real tau, Jetscape::real x,
                     Jetscape::real y, Jetscape::real eta,
-                    std::array<Jetscape::real, 4> &jmu) const {
-        jmu = {0.0, 0.0, 0.0, 0.0};
-        for (const auto &drop_i : dropletlist) {
-            const auto x_i = drop_i.get_xmu();
-            std::array<Jetscape::real, 4> jmu_i = {0.0, 0.0, 0.0, 0.0};
-            smearing_kernel(tau, x, y, eta, x_i, jmu_i);
-        }
-    }
+                    std::array<Jetscape::real, 4> &jmu) const;
+
 };
 
 };

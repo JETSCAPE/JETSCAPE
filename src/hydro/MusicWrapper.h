@@ -38,6 +38,10 @@ class HydroSourceJETSCAPE : public HydroSourceBase {
     void add_a_liqueifier(std::shared_ptr<LiquefierBase> new_liqueifier) {
         liquefier_ptr = new_liqueifier;
     }
+
+    int get_number_of_sources() const {
+        return(liquefier_ptr.lock()->get_dropletlist_size());
+    }
     
     //! this function returns the energy source term J^\mu at a given point
     //! (tau, x, y, eta_s)
@@ -83,6 +87,11 @@ class MpiMusic: public FluidDynamics {
 
      void SetHydroGridInfo();
      void PassHydroEvolutionHistoryToFramework();
+    
+     void add_a_liqueifier(std::shared_ptr<LiquefierBase> new_liqueifier) {
+        liquefier_ptr = new_liqueifier;
+        hydro_source_terms_ptr->add_a_liqueifier(liquefier_ptr.lock());
+    }
 
      void GetHyperSurface(Jetscape::real T_cut,
                           SurfaceCellInfo* surface_list_ptr) {};

@@ -23,6 +23,8 @@
 #include "RealType.h"
 #include <array>
 
+namespace Jetscape {
+
 class CausalLiquefier: public Jetscape::LiquefierBase {
  private:
 
@@ -32,8 +34,10 @@ class CausalLiquefier: public Jetscape::LiquefierBase {
 
     void smearing_kernel(Jetscape::real tau, Jetscape::real x,
                          Jetscape::real y, Jetscape::real eta,
-                         const std::array<Jetscape::real, 4> x_i,
+                         const Droplet drop_i,
                          std::array<Jetscape::real, 4> &jmu) const;
+};
+
 };
 
 #endif  // CAUSALLIQUEFIER_H
