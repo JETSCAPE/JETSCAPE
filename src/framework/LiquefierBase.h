@@ -56,6 +56,8 @@ class LiquefierBase {
         dropletlist.push_back(droplet_in);
     }
 
+    int get_droplet_size() const {return(dropletlist.size());}
+
     virtual void smearing_kernel(Jetscape::real tau, Jetscape::real x,
                                  Jetscape::real y, Jetscape::real eta,
                                  const std::array<Jetscape::real, 4> x_i,

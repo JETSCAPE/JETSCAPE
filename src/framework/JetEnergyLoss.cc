@@ -324,11 +324,11 @@ void JetEnergyLoss::add_hydro_sources(const vector<Parton> pIn,
         p_final += temp;
         x_final = iparton.x_in();
     }
-    if (std::abs(p_final.t() - p_init.t()) > hydro_source_abs_err) {
-        cout << "E_init = " << p_init.t() << " GeV, E_final = "
-             << p_final.t() << " GeV" << endl;
-        cout << "E_diff = " << p_final.t() - p_init.t()
-             << " GeV" << endl;
+    if (std::abs(p_final.t() - p_init.t())/p_final.t() > hydro_source_abs_err) {
+        //cout << "E_init = " << p_init.t() << " GeV, E_final = "
+        //     << p_final.t() << " GeV" << endl;
+        //cout << "E_diff = " << p_final.t() - p_init.t()
+        //     << " GeV" << endl;
         Jetscape::real droplet_t   = (x_final.t() + x_init.t())/2.;
         Jetscape::real droplet_x   = (x_final.x() + x_init.x())/2.;
         Jetscape::real droplet_y   = (x_final.y() + x_init.y())/2.;
