@@ -297,6 +297,11 @@ void JetEnergyLoss::DoShower()
     }
   while (currentTime<maxT); //other criteria (how to include; TBD)
 
+    //if (!weak_ptr_is_uninitialized(liquefier_ptr)) {
+    //    cout << "check hydro source size = "
+    //         << liquefier_ptr.lock()->get_dropletlist_size()<< endl;
+    //}
+
   // --------------------------------------------
   
   pIn.clear();pOut.clear();pInTemp.clear();pInTempModule.clear();pOutTemp.clear();
