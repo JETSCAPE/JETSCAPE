@@ -29,6 +29,7 @@
 #include "HardProcess.h"
 #include "JetScapeModuleMutex.h"
 #include "LiquefierBase.h"
+#include "MakeUniqueHelper.h"
 
 #ifdef USE_HEPMC
 #include "JetScapeWriterHepMC.h"
@@ -306,6 +307,7 @@ void JetEnergyLoss::DoShower()
 void JetEnergyLoss::add_hydro_sources(const vector<Parton> pIn,
                                       const vector<Parton> pOut) {
     if (pOut.size() == 0) return;
+    if (weak_ptr_is_uninitialized(liquefier_ptr)) return;
 
     const Jetscape::real hydro_source_abs_err = 1e-15;
     FourVector p_final;
