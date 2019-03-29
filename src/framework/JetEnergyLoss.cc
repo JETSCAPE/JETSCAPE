@@ -343,10 +343,10 @@ void JetEnergyLoss::add_hydro_sources(const vector<Parton> pIn,
         Jetscape::real droplet_eta = (
                     0.5*log((droplet_t + droplet_z)
                             /(droplet_t - droplet_z)));
-        Jetscape::real droplet_E   = (p_final.t() + p_init.t());
-        Jetscape::real droplet_px  = (p_final.x() + p_init.x());
-        Jetscape::real droplet_py  = (p_final.y() + p_init.y());
-        Jetscape::real droplet_pz  = (p_final.z() + p_init.z());
+        Jetscape::real droplet_E   = p_final.t() - p_init.t();
+        Jetscape::real droplet_px  = p_final.x() - p_init.x();
+        Jetscape::real droplet_py  = p_final.y() - p_init.y();
+        Jetscape::real droplet_pz  = p_final.z() - p_init.z();
 
         std::array<Jetscape::real, 4> droplet_xmu = {
             droplet_tau, droplet_x, droplet_y, droplet_eta};
