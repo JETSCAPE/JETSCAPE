@@ -89,7 +89,7 @@ int main(int argc, char** argv)
   auto pGun= make_shared<PGun> ();
   auto hydro1 = make_shared<MpiMusic> ();
   auto myliquefier = make_shared<CausalLiquefier> ();
-  hydro1->add_a_liqueifier(myliquefier);
+  //hydro1->add_a_liqueifier(myliquefier);
 
   jetscape->Add(trento);
   jetscape->Add(null_predynamics);

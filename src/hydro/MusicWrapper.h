@@ -23,6 +23,7 @@
 #include "hydro_source_base.h"
 #include "LiquefierBase.h"
 #include "data_struct.h"
+#include "MakeUniqueHelper.h"
 
 using namespace Jetscape;
 
@@ -40,7 +41,11 @@ class HydroSourceJETSCAPE : public HydroSourceBase {
     }
 
     int get_number_of_sources() const {
-        return(liquefier_ptr.lock()->get_dropletlist_size());
+        if (weak_ptr_is_uninitialized(liquefier_ptr)) {
+            return(0);
+        } else {
+            return(liquefier_ptr.lock()->get_dropletlist_size());
+        }
     }
     
     //! this function returns the energy source term J^\mu at a given point
@@ -48,10 +53,14 @@ class HydroSourceJETSCAPE : public HydroSourceBase {
     void get_hydro_energy_source(
         const double tau, const double x, const double y, const double eta_s,
         const FlowVec &u_mu, EnergyFlowVec &j_mu) const {
+        j_mu = {0.0};
+        if (weak_ptr_is_uninitialized(liquefier_ptr)) return;
+
         std::array<Jetscape::real, 4> jmu_tmp = {0.0};
         liquefier_ptr.lock()->get_source(tau, x, y, eta_s, jmu_tmp);
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++) {
             j_mu[i] = jmu_tmp[i];
+        }
     }
 
 };
