@@ -58,42 +58,42 @@ particle_dtype = [
 # results "array" (one element)
 # to be overwritten for each event
 result_dtype=[
-('initial_entropy', float_t, 1), 
-('impact_parameter', float_t, 1), 
-('npart', float_t, 1), 
+('initial_entropy', float_t, 1),
+('impact_parameter', float_t, 1),
+('npart', float_t, 1),
 ('ALICE',
 	[
 		# 1) dNch/deta, eta[-0.5, 0.5], charged
-		('dNch_deta', float_t, 1),	   
+		('dNch_deta', float_t, 1),
 		# 2) dET/deta, eta[-0.6, 0.6]
-		('dET_deta', float_t, 1),		
+		('dET_deta', float_t, 1),
 		# 3.1) The Tmunu observables, eta[-0.6, 0.6]
-		('Tmunu', float_t, 10),	 
-		# 3.2) The Tmunu observables, eta[-0.5, 0.5], charged   
-		('Tmunu_chg', float_t, 10),	
+		('Tmunu', float_t, 10),
+		# 3.2) The Tmunu observables, eta[-0.5, 0.5], charged
+		('Tmunu_chg', float_t, 10),
 		# 4.1) identified particle yield
-		('dN_dy', 	[(name, float_t, 1) for (name,_) in species], 1),  
+		('dN_dy', 	[(name, float_t, 1) for (name,_) in species], 1),
 		# 4.2) identified particle <pT>
-		('mean_pT', [(name, float_t, 1) for (name,_) in species], 1),  
+		('mean_pT', [(name, float_t, 1) for (name,_) in species], 1),
 		# 5.1) pT fluct, pT[0.15, 2], eta[-0.8, 0.8], charged
-		('pT_fluct_chg', [	('N', int_t, 1), 
-							('sum_pT', float_t, 1), 
-							('sum_pT2', float_t, 1)], 1), 
-		# 5.2) pT fluct, pT[0.15, 2], eta[-0.8, 0.8], pi, K, p			
-		('pT_fluct_pid', [	(name, [	('N', int_t, 1), 
-										('sum_pT', float_t, 1), 
+		('pT_fluct_chg', [	('N', int_t, 1),
+							('sum_pT', float_t, 1),
+							('sum_pT2', float_t, 1)], 1),
+		# 5.2) pT fluct, pT[0.15, 2], eta[-0.8, 0.8], pi, K, p
+		('pT_fluct_pid', [	(name, [	('N', int_t, 1),
+										('sum_pT', float_t, 1),
 										('sum_pT2', float_t, 1)], 1	)
-							  for (name,_) in pi_K_p	], 1), 
+							  for (name,_) in pi_K_p	], 1),
 		# 6) Q vector, pT[0.2, 5.0], eta [-0.8, 0.8], charged
-		('flow', [	('N', int_t, 1), 
+		('flow', [	('N', int_t, 1),
 					('Qn', complex_t, Nharmonic)], 1),
-		# 7) Q vector, diff-flow eta[-0.8, 0.8], pi, K, p	
-		# It uses #6 as its reference Q vector		
-		('d_flow_chg', [('N', int_t, NpT), 
-						('Qn', complex_t, [NpT, Nharmonic_diff])], 1), 
-		('d_flow_pid', [(name, [('N', int_t, NpT), 
+		# 7) Q vector, diff-flow eta[-0.8, 0.8], pi, K, p
+		# It uses #6 as its reference Q vector
+		('d_flow_chg', [('N', int_t, NpT),
+						('Qn', complex_t, [NpT, Nharmonic_diff])], 1),
+		('d_flow_pid', [(name, [('N', int_t, NpT),
 								('Qn', complex_t, [NpT, Nharmonic_diff])], 1)
-						for (name,_) in pi_K_p	], 1), 
+						for (name,_) in pi_K_p	], 1),
 	], 4)
 ]
 
@@ -104,7 +104,7 @@ def calculate_eventplanes(phi, Nharmonic):
 	N = phi.size
 	Npairs = N*(N-1.)
 	for n in range(1,Nharmoic+1):
-		Qx = np.cos(n*phi).sum() 
+		Qx = np.cos(n*phi).sum()
 		Qy = np.sin(n*phi).sum()
 		V_n[n] = np.sqrt((Qx**2+Qy**2 - N)/pairs)
 		Psi_n[n] = np.arctan2(Qy, Qx)/n
@@ -140,14 +140,14 @@ def calc_Tmunu(ET, y, pT, phi, ycut, pTcut):
 
 	cut = (pTcut[0]<pT) & (pT<pTcut[1]) & (ycut[0]<y) & (y<ycut[1])
 	# apply cut
-	y = y[cut]	
+	y = y[cut]
 	ET = ET[cut]
 	phi = phi[cut]
 	pT = pT[cut]
 
 	Pmu = np.array([ET * np.cosh(y), pT * np.cos(phi),
 					pT * np.sin(phi), ET * np.sinh(y) ])
-	
+
 	# T0nu
 	for i in range(4):
 		Tmunu[i] = Pmu[i].sum()
@@ -158,7 +158,7 @@ def calc_Tmunu(ET, y, pT, phi, ycut, pTcut):
 			Tmunu[n] = (Pmu[i]*Pmu[j]/Pmu[0]).sum()
 			n += 1
 
-	return Tmunu			 
+	return Tmunu
 
 # loop over the datatype iteratively and print every thing for a check
 def dprint(data, dtype, prefix):
@@ -172,13 +172,13 @@ def dprint(data, dtype, prefix):
 
 def file_len(fname):
 	""" do line count """
-	p = subprocess.Popen(['wc', '-l', fname], stdout=subprocess.PIPE, 
+	p = subprocess.Popen(['wc', '-l', fname], stdout=subprocess.PIPE,
 											  stderr=subprocess.PIPE)
 	result, err = p.communicate()
 	if p.returncode != 0:
 		raise IOError(err)
 	return int(result.strip().split()[0])
-	
+
 def run_cmd(*args):
 	"""
 	Run and log a subprocess.
@@ -318,7 +318,7 @@ def run_events(args, results_file):
 
 	"""
 	results = np.empty((), dtype=result_dtype)
-	
+
 	Nevents = args.nevents
 	def run_single_event(event_number):
 		""" run a single jetscape event"""
@@ -327,17 +327,17 @@ def run_events(args, results_file):
 		print(h.stdout)
 		print(h.stderr)
 		# hydro debugging files
-		for rf, short in zip(['music_inv_reynolds_shear.txt', 
+		for rf, short in zip(['music_inv_reynolds_shear.txt',
 					'music_inv_reynolds_bulk.txt'], ['iR-shear','iR-bulk']):
 			if os.path.exists(rf):
 				logging.info("{:s} exists".format(rf))
 				subprocess.call("mv {:s} {:s}/{:s}-{:s}".format(
-							rf, 
+							rf,
 							os.path.dirname(args.results),
 							short,
 							os.path.basename(args.results),
-						), 
-				shell=True)	
+						),
+				shell=True)
 		if os.stat("surface.dat").st_size == 0:
 			raise StopEvent('empty surface')
 		else:
@@ -345,14 +345,14 @@ def run_events(args, results_file):
 		# loop over delta-f
 		for idf in range(3,4):
 			subprocess.call("sed -i \"s/df_mode.*/df_mode = {:d}/g\" iS3D_parameters.dat".format(idf+1), shell=True)
-			
+
 			nparts = 0
 			nos = 0
 			nos_max = 5
 			nos_min = 1
 			npart_min = 1000000
 			subprocess.call("rm -f particles.dat", shell=True)
-			
+
 			while (nos < nos_max):
 				nos += 1
 				logging.info("Run smash # {:d}".format(nos))
@@ -361,19 +361,54 @@ def run_events(args, results_file):
 				print(sample_burn.stderr)
 				subprocess.call("csplit --digits=2  --quiet --prefix=hadron_list final_smash_hadrons.dat \"/# JetScape module: SMASH/+1\" \"{*}\" ", shell=True)
 				nparts += file_len("./hadron_list01")
-				subprocess.call("cat ./hadron_list01 >> particles.dat", shell=True)
+				#subprocess.call("cat ./hadron_list00 >> particles_before_smash.dat", shell=True) #particles from iS3D note charge info is wrong
+				subprocess.call("cat ./hadron_list01 >> particles.dat", shell=True) #particles after smash finished
 				if ( nparts >= npart_min) and (nos >= nos_min):
 					break
-			
+
 			logging.info("{:d} particles in {:d} oversamples".format(
 						nparts, nos))
-			
+
 			# read final particle data (output from afterburner)
 			with open("particles.dat", 'r') as f:
 				particles = np.fromiter(
 					(tuple(l.split()[2:]) for l in f if not l.startswith('#')),
 					dtype=particle_dtype
 				)
+
+			
+			#DEREK BEGIN
+			"""
+			# read particle data from iS3D
+			with open("particles_before_smash.dat", 'r') as f:
+				particles_before_smash = np.fromiter(
+					(tuple(l.split()[2:]) for l in f if not l.startswith('#')),
+					dtype=particle_dtype
+				)
+
+			
+			#check for what range of rapidity the distribution dN/dy is flat
+			
+			y_bins_check_dN_dy = np.arange( -4.0, 4.0, 0.25 )
+			y_before_smash = particles_before_smash['y']
+			freq, bins = np.histogram( y_before_smash, y_bins_check_dN_dy )
+			y_hist_before_smash = np.column_stack( (bins, freq[:-1] ) ) 
+			np.savetxt('dN_dy_iS3D.dat', freq)
+			subprocess.call("mv {:s} {:s}/{:s}-{:s}".format(
+                                                        'dN_dy_iS3D.dat',
+                                                        os.path.dirname(args.results),
+                                                        'dN_dy_iS3D',
+                                                        os.path.basename(args.results), ), shell=True)
+			y_after_smash = particles['y']
+			freq, bins = np.histogram( y_after_smash, y_bins_check_dN_dy ) 
+			np.savetxt('dN_dy_smash.dat', freq)
+			subprocess.call("mv {:s} {:s}/{:s}-{:s}".format(
+                                                        'dN_dy_smash.dat',
+                                                        os.path.dirname(args.results),
+                                                        'dN_dy_smash',
+                                                        os.path.basename(args.results), ), shell=True)
+			"""
+			#DEREK end
 
 			logging.info('computing observables for delta_f = {:d}'.format(idf+1))
 
@@ -431,11 +466,11 @@ def run_events(args, results_file):
 			results['ALICE'][idf]['flow']['Qn'] = info['Qn'][0,0,:]
 
 			# 6) The magic Tmunu
-			results['ALICE'][idf]['Tmunu'] = calc_Tmunu(ET, y, pT, phi, 
+			results['ALICE'][idf]['Tmunu'] = calc_Tmunu(ET, y, pT, phi,
 										ycut=[-0.6, 0.6], pTcut=[0., 10.]) / nos
 
-			results['ALICE'][idf]['Tmunu_chg'] = calc_Tmunu(ET[charged], y[charged], 
-										pT[charged], phi[charged], 
+			results['ALICE'][idf]['Tmunu_chg'] = calc_Tmunu(ET[charged], y[charged],
+										pT[charged], phi[charged],
 										ycut=[-0.6, 0.6], pTcut=[0., 10.]) / nos
 
 			# 7) Diff flow
@@ -524,15 +559,15 @@ def main():
 	# translate SIGTERM to KeyboardInterrupt
 	signal.signal(signal.SIGTERM, signal.default_int_handler)
 	logging.debug('set SIGTERM handler')
-	prefix=str(args.startdir) 
+	prefix=str(args.startdir)
 	logging.info('starting dir: {:s}'.format(prefix))
 	with \
 			open(args.results, filemode + 'b') as results_file, \
 			tempfile.TemporaryDirectory(
 				prefix='jetscape-', dir=args.tmpdir) as workdir:
 		os.chdir(workdir)
-		os.mkdir("input/")	
-		os.system( 'ln -s {:s}/jetscape_init.xml jetscape_init.xml'.format(prefix)  )	
+		os.mkdir("input/")
+		os.system( 'ln -s {:s}/jetscape_init.xml jetscape_init.xml'.format(prefix)  )
 		os.system( 'ln -s {:s}/freestream_input freestream_input'.format(prefix)  )
 		os.system( 'ln -s {:s}/music_input music_input'.format(prefix) )
 		os.system( 'ln -s {:s}/iS3D_parameters.dat iS3D_parameters.dat'.format(prefix)  )
@@ -541,8 +576,8 @@ def main():
 		os.system( 'ln -s {:s}/tables tables'.format(prefix)  )
 		os.system( 'ln -s {:s}/deltaf_coefficients deltaf_coefficients'.format(prefix)  )
 		os.system( 'ln -s {:s}/smash_input smash_input'.format(prefix) )
-		
-		
+
+
 		logging.info('working directory: %s', workdir)
 
 		try:
@@ -566,7 +601,7 @@ def main():
 
 	end = datetime.datetime.now()
 	logging.info('finished at %s, %s elapsed', end, end - start)
-        
+
         #if events fail or keyboard interrupt status > 0
 	if status:
 		sys.exit(1)

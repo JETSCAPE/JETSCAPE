@@ -3,7 +3,7 @@
 #SBATCH -p skx-normal      # Queue (partition) name
 #SBATCH -N 1
 #SBATCH --ntasks-per-node 1
-#SBATCH -t 00:15:00        # Run time (hh:mm:ss)
+#SBATCH -t 05:00:00        # Run time (hh:mm:ss)
 #SBATCH --mail-user=everett.165@osu.edu
 #SBATCH --mail-type=all    # Send email at begin and end of job
 #SBATCH -A TG-PHY180035    # Allocation name (STARTUP ALLOC)

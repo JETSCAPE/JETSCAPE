@@ -1,9 +1,9 @@
 #!/bin/bash
-#SBATCH -J launcher_job_100_events 
+#SBATCH -J 500_events_smash_box_after_merge 
 #SBATCH -p skx-normal        # Queue (partition) name
-#SBATCH -N 20                 # the number of nodes
+#SBATCH -N 10                 # the number of nodes
 #SBATCH --ntasks-per-node 48 #set this equal to number of cores on node
-#SBATCH -t 05:00:00          # Run time (hh:mm:ss)   walltime for each node separately
+#SBATCH -t 10:00:00          # Run time (hh:mm:ss)   walltime for each node separately
 #SBATCH --mail-user=everett.165@osu.edu
 #SBATCH --mail-type=all      # Send email at begin and end of job
 #SBATCH -A TG-PHY180035      # Allocation name (Large allocation)

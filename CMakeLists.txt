@@ -471,7 +471,7 @@ endif ( iS3D )
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/examples/jetscape_init.xml DESTINATION ${CMAKE_BINARY_DIR}/)
 
 #### copy smash configure files from sims_scripts to build
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/sims_scripts/smash_input DESTINATION ${CMAKE_BINARY_DIR}/)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/sims_scripts/input-config/smash_input DESTINATION ${CMAKE_BINARY_DIR}/)
 
 #### copy essential files for MUSIC to build/
 if (freestream)
