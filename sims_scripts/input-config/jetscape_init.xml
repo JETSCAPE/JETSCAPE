@@ -58,7 +58,7 @@
       <SMASH_config_file>smash_input/config.yaml</SMASH_config_file>
       <SMASH_particles_file>smash_input/particles.txt</SMASH_particles_file>
       <SMASH_decaymodes_file>smash_input/decaymodes.txt</SMASH_decaymodes_file>
-      <end_time>300.0</end_time>
+      <end_time>1000.0</end_time>
       <only_decays>0</only_decays>
     </SMASH>
   </Afterburner>
