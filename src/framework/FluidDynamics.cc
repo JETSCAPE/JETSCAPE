@@ -18,6 +18,7 @@
 #include "FluidDynamics.h"
 #include "LinearInterpolation.h"
 #include "JetScapeSignalManager.h"
+#include "SurfaceFinder.h"
 
 #define MAGENTA "\033[35m"
 
@@ -25,7 +26,7 @@ using namespace std;
 
 namespace Jetscape {
 
-FluidDynamics::FluidDynamics(){
+FluidDynamics::FluidDynamics() {
     VERBOSE(8);
     eta = -99.99;
     SetId("FluidDynamics");
@@ -80,6 +81,16 @@ void FluidDynamics::CollectHeader(weak_ptr<JetScapeWriter> w) {
         auto& header = f->GetHeader();
         header.SetEventPlaneAngle( GetEventPlaneAngle() );
     }
+}
+
+std::vector<SurfaceCellInfo> FluidDynamics::FindAConstantTemperatureSurface(
+                                                        Jetscape::real T_sw) {
+    std::unique_ptr<SurfaceFinder> surface_finder_ptr(
+                                        new SurfaceFinder (T_sw, bulk_info));
+    surface_finder_ptr->Find_full_hypersurface();
+    auto surface_cells = surface_finder_ptr->get_surface_cells_vector();
+    JSINFO << "number of surface cells: " << surface_cells.size();
+    return(surface_cells);
 }
 
   
