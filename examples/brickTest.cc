@@ -39,7 +39,7 @@
 #include "Brick.h"
 #include "GubserHydro.h"
 #include "PGun.h"
-#include "PartonPrinter.h"
+//#include "PartonPrinter.h"
 #include "HadronizationManager.h"
 #include "Hadronization.h"
 #include "ColoredHadronization.h"
@@ -92,13 +92,13 @@ int main(int argc, char** argv)
 
   auto matter = make_shared<Matter> ();
   // auto lbt = make_shared<LBT> ();
-  auto martini = make_shared<Martini> ();
+  // auto martini = make_shared<Martini> ();
   // auto adscft = make_shared<AdSCFT> ();
 
   // Note: if you use Matter, it MUST come first (to set virtuality)
   jloss->Add(matter);
   // jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
-  jloss->Add(martini);
+  // jloss->Add(martini);
   // jloss->Add(adscft);  
   jlossmanager->Add(jloss);  
   jetscape->Add(jlossmanager);
@@ -106,8 +106,8 @@ int main(int argc, char** argv)
   
   // Hadronization
   // This helper module currently needs to be added for hadronization.
-  auto printer = make_shared<PartonPrinter> ();
-  jetscape->Add(printer);
+  // auto printer = make_shared<PartonPrinter> ();
+  // jetscape->Add(printer);
   auto hadroMgr = make_shared<HadronizationManager> ();
   auto hadro = make_shared<Hadronization> ();
   auto hadroModule = make_shared<ColoredHadronization> ();

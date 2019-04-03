@@ -29,7 +29,6 @@
 #include "Brick.h"
 #include "PGun.h"
 #include "ElossValidation.h"
-#include "PartonPrinter.h"
 #include "HadronizationManager.h"
 #include "Hadronization.h"
 #include "ColoredHadronization.h"
