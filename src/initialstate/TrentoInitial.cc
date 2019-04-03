@@ -249,11 +249,26 @@ void TrentoInitial::PreDefined(std::string stored_system,
       entropy_density_distribution_.push_back(*iter);
     }
 
-    int nx = int(std::sqrt(entropy_density_distribution_.size()));
-    double xmax = nx * grid_step / 2;
-    SetRanges(xmax, xmax, 0.0);
-    SetSteps(grid_step, grid_step, 0.0);
+    const int entropy_array_length = entropy_density_distribution_.size();
+    int nx = int(std::sqrt(entropy_array_length));
     ComputeNbc();
+
+    // Because Trento is 2D, we assume boost invariance and copy the density
+    // profile along z direction if the input nz > 1
+    const int nz = GetZSize();
+    if (nz > 1) {
+        entropy_density_distribution_.resize(nz*entropy_array_length);
+        for (int iz = 1; iz < nz; iz++) {
+            std::copy_n(entropy_density_distribution_.begin(),
+                        entropy_array_length,
+                        (entropy_density_distribution_.begin()
+                         + entropy_array_length));
+        }
+    }
+
+    double xmax = nx * grid_step / 2;
+    SetRanges(xmax, xmax, GetZMax());
+    SetSteps(grid_step, grid_step, GetZStep());
 }
 
 
@@ -279,12 +294,27 @@ void TrentoInitial::UserDefined(std::string projectile, std::string target,
       entropy_density_distribution_.push_back(*iter);
     }
 
-    int nx = int(std::sqrt(entropy_density_distribution_.size()));
+    const int entropy_array_length = entropy_density_distribution_.size();
+    int nx = int(std::sqrt(entropy_array_length));
     VERBOSE(2) << "nx = " << nx;
-    double xmax = nx * grid_step / 2;
-    SetRanges(xmax, xmax, 0.0);
-    SetSteps(grid_step, grid_step, 0.0);
     ComputeNbc();
+    
+    // Because Trento is 2D, we assume boost invariance and copy the density
+    // profile along z direction if the input nz > 1
+    const int nz = GetZSize();
+    if (nz > 1) {
+        entropy_density_distribution_.resize(nz*entropy_array_length);
+        for (int iz = 1; iz < nz; iz++) {
+            std::copy_n(entropy_density_distribution_.begin(),
+                        entropy_array_length,
+                        (entropy_density_distribution_.begin()
+                         + entropy_array_length));
+        }
+    }
+
+    double xmax = nx * grid_step / 2;
+    SetRanges(xmax, xmax, GetZMax());
+    SetSteps(grid_step, grid_step, GetZStep());
 }
 
 
