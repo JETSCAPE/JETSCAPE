@@ -13,6 +13,7 @@
  * See COPYING for details.
  ******************************************************************************/
 #include "LiquefierBase.h"
+#include <math.h>
 
 namespace Jetscape {
 
@@ -21,9 +22,20 @@ void LiquefierBase::get_source(Jetscape::real tau, Jetscape::real x,
                                std::array<Jetscape::real, 4> &jmu) const {
     jmu = {0.0, 0.0, 0.0, 0.0};
     for (const auto &drop_i : dropletlist) {
-          std::array<Jetscape::real, 4> jmu_i = {0.0, 0.0, 0.0, 0.0};
-          smearing_kernel(tau, x, y, eta, drop_i, jmu_i);
-          for (int i = 0; i < 4; i++) jmu[i] += jmu_i[i];
+
+        std::array<Jetscape::real, 4> x_drop = drop_i.get_xmu();
+        double l
+        = (tau-x_drop[0])*(tau-x_drop[0])
+        - 2*tau*x_drop[0]*(1.0-cosh(eta-x_drop[3]))
+        - (x-x_drop[1])*(x-x_drop[1])
+        - (y-x_drop[2])*(y-x_drop[2]);
+        
+        if( l >= 0.0 ){
+            std::array<Jetscape::real, 4> jmu_i = {0.0, 0.0, 0.0, 0.0};
+            smearing_kernel(tau, x, y, eta, drop_i, jmu_i);
+            for (int i = 0; i < 4; i++) jmu[i] += jmu_i[i];
+        }
+        
     }
 }
 
