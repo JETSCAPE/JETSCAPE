@@ -1,7 +1,0 @@
-#dummy script to test afterburner oversampler script
-echo "this is an afterburner executable"
-
-#write a test file with one hadron 
-touch final_soft_hadrons.dat
-echo "1">final_soft_hadrons.dat
-echo "211 0.0 0.0 0.0 0.0">>final_soft_hadrons.dat
