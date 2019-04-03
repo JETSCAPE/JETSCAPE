@@ -78,7 +78,7 @@ bool SurfaceFinder::check_intersect_3D(
     cube[0][1][0] = fluid_cell.temperature;
     fluid_cell = bulk_info.get(tau_low, x_right, y_right, 0.0);
     cube[0][1][1] = fluid_cell.temperature;
-    fluid_cell = bulk_info.get(tau_high, x_left, y_right, 0.0);
+    fluid_cell = bulk_info.get(tau_high, x_left, y_left, 0.0);
     cube[1][0][0] = fluid_cell.temperature;
     fluid_cell = bulk_info.get(tau_high, x_left, y_right, 0.0);
     cube[1][0][1] = fluid_cell.temperature;
