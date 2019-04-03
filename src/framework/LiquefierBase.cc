@@ -26,7 +26,7 @@ void LiquefierBase::get_source(Jetscape::real tau, Jetscape::real x,
         std::array<Jetscape::real, 4> x_drop = drop_i.get_xmu();
         double l
         = (tau-x_drop[0])*(tau-x_drop[0])
-        + 2*tau*x_drop[0]*(1.0-cosh(eta-x_drop[3]))
+        + 2.0*tau*x_drop[0]*(1.0-cosh(eta-x_drop[3]))
         - (x-x_drop[1])*(x-x_drop[1])
         - (y-x_drop[2])*(y-x_drop[2]);
         
