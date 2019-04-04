@@ -23,7 +23,7 @@
 #include "RealType.h"
 #include <array>
 
-#include <math.h>
+#include <cmath>
 #include <gsl/gsl_sf_bessel.h>
 
 namespace Jetscape {
@@ -32,19 +32,19 @@ class CausalLiquefier: public Jetscape::LiquefierBase {
  private:
 
     //parameters (to be moved to xml)---------------------------
-    double tau_delay = 0.5;// in [fm]
-    double dtau = 0.2; //in [fm]
+    double tau_delay;// in [fm]
+    double dtau; //in [fm]
 
-    double time_relax = 0.1;// in [fm]
-    double d_diff = 0.08;// in [fm]
+    double time_relax;// in [fm]
+    double d_diff;// in [fm]
     
-    double width_delta = 1.0;// in [fm]
+    double width_delta;// in [fm]
     //---------------------------
-    double c_diff = sqrt(d_diff/time_relax);
-    double gamma_relax = 0.5/time_relax;
+    double c_diff;
+    double gamma_relax;
     
  public:
-    CausalLiquefier() = default;
+    CausalLiquefier();
     ~CausalLiquefier() {};
 
     void smearing_kernel(Jetscape::real tau, Jetscape::real x,

@@ -17,14 +17,30 @@
 // -----------------------------------------
 
 #include "CausalLiquefier.h"
-
 #include "JetScapeLogger.h"
 
 
-using namespace std;
-
 namespace Jetscape {
+    
+    
+CausalLiquefier::CausalLiquefier(){
+    
+    //parameters (to be moved to xml)---------------------------
+    tau_delay = 0.5;// in [fm]
+    dtau = 0.2; //in [fm]
+    
+    time_relax = 0.1;// in [fm]
+    d_diff = 0.08;// in [fm]
+    
+    width_delta = 1.0;// in [fm]
+    //---------------------------
+    
+    c_diff = sqrt(d_diff/time_relax);
+    gamma_relax = 0.5/time_relax;
+}
 
+//CausalLiquefier::~CausalLiquefier(){};
+    
     
 void CausalLiquefier::smearing_kernel(
         Jetscape::real tau, Jetscape::real x, Jetscape::real y,
@@ -33,8 +49,8 @@ void CausalLiquefier::smearing_kernel(
 
     jmu = {0., 0, 0, 0};
     
-    std::array<Jetscape::real, 4> x_drop = drop_i.get_xmu();
-    std::array<Jetscape::real, 4> p_drop = drop_i.get_pmu();
+    auto x_drop = drop_i.get_xmu();
+    const auto p_drop = drop_i.get_pmu();
     
     double tau_drop = x_drop[0];
     double eta_drop = x_drop[3];
@@ -51,13 +67,13 @@ void CausalLiquefier::smearing_kernel(
         double t_delay = get_t(tau_delay, eta);
         double delta_r2 = (x-x_drop[1])*(x-x_drop[1]) + (y-x_drop[2])*(y-x_drop[2]) +(z-x_drop[3])*(z-x_drop[3]);
         
-        double w
+        double kernel
         = causal_diffusion_kernel(t_delay, sqrt(delta_r2));
         
-        jmu[0] = w*get_ptau(p_drop[0], p_drop[3], eta);
-        jmu[1] = w*p_drop[1];
-        jmu[2] = w*p_drop[2];
-        jmu[3] = w*get_peta(p_drop[0], p_drop[3], eta);
+        jmu[0] = kernel*get_ptau(p_drop[0], p_drop[3], eta);
+        jmu[1] = kernel*p_drop[1];
+        jmu[2] = kernel*p_drop[2];
+        jmu[3] = kernel*get_peta(p_drop[0], p_drop[3], eta);
         
     }
     
