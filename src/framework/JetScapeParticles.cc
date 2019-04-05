@@ -292,7 +292,8 @@ namespace Jetscape {
     JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  p, x)
   {
     CheckAcceptability( id );
-    assert ( InternalHelperPythia.particleData.isParton(id) );
+    if(this->isColored())
+      assert ( InternalHelperPythia.particleData.isParton(id) );
     initialize_form_time();
     set_color(0);
     set_anti_color(0);
@@ -309,7 +310,8 @@ namespace Jetscape {
   Parton::Parton (int label, int id, int stat, double pt, double eta, double phi, double e, double* x)  :
     JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  pt, eta, phi, e, x){
     CheckAcceptability ( id );
-    assert ( InternalHelperPythia.particleData.isParton(id) );
+    if(this->isColored())
+      assert ( InternalHelperPythia.particleData.isParton(id) );
     initialize_form_time();
     set_color(0);
     set_anti_color(0);
