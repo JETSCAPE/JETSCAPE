@@ -77,13 +77,14 @@ int main(int argc, char** argv)
   
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",100);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",2);
   jetscape->SetId("primary");
 
   // Initial conditions and hydro
   auto trento = make_shared<TrentoInitial>();
   auto pythiaGun= make_shared<PythiaGun> ();
   auto hydro = make_shared<Brick> ();
+  jetscape->SetReuseHydro(false);
   jetscape->Add(trento);
   jetscape->Add(pythiaGun);
   jetscape->Add(hydro);

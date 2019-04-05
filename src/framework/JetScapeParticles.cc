@@ -340,6 +340,8 @@ namespace Jetscape {
     case -5:  // anti-bottom quark
       break;            
     case 21: // gluon
+      break;
+    case 22: // photon
       break;      
     default:
       JSWARN << " error in id = " << id;

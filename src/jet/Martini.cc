@@ -250,9 +250,12 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
     // Do nothing for this parton at this timestep
     if (process == 0) 
       {
-	pOut.push_back(Parton(0, Id, 0, pVec, xVec));
-	pOut[pOut.size()-1].set_form_time(0.);
-	pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
+        if(Id==22)
+          pOut.push_back(Photon(0, Id, 0, pVec, xVec));
+        else
+          pOut.push_back(Parton(0, Id, 0, pVec, xVec));
+        pOut[pOut.size()-1].set_form_time(0.);
+        pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 
 	return;
       }
@@ -298,7 +301,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 	  {
 	    if (pRest/T < AMYpCut) return;
 
-	    // sample radiated parton's momentum
+	    // sample radiated photon's momentum
 	    kRest = getNewMomentumRad(pRest, T, process);
 	    if(kRest > pRest) return;
 
@@ -316,16 +319,15 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 		pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 	      }
 
-	    //// photon doesn't have energy threshold; No absorption into medium
-	    //// However, we only keep positive energy photons
-	    //if (kRest > 0.)
-	    //  {
-	    //    k = kRest*boostBack;
-	    //    kVec.Set( (px/pAbs)*k, (py/pAbs)*k, (pz/pAbs)*k, k );
-	    //    pOut.push_back(Parton(0, 22, 0, kVec, xVec));
-	    //    pOut[pOut.size()-1].set_form_time(0.);
-	    //    pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
-	    //  }
+	    // photon doesn't have energy threshold; No absorption into medium
+	    if (kRest > 0.)
+	      {
+	        k = kRest*boostBack;
+	        kVec.Set( (px/pAbs)*k, (py/pAbs)*k, (pz/pAbs)*k, k );
+	        pOut.push_back(Photon(0, 22, 0, kVec, xVec));
+	        pOut[pOut.size()-1].set_form_time(0.);
+	        pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
+	      }
 
 	    return;
 	  }
@@ -391,7 +393,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 	// quark converting to photon
 	else if (process == 10)
 	  {
-	    pOut.push_back(Parton(0, 22, 0, pVec, xVec));
+	    pOut.push_back(Photon(0, 22, 0, pVec, xVec));
 	    pOut[pOut.size()-1].set_form_time(0.);
 	    pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 
@@ -578,12 +580,11 @@ int Martini::DetermineProcess(double pRest, double T, double deltaTRest, int Id)
 
       double totalQuarkProb = 0.;
 
-      /* block the photon process at this moment */
-      //if (pRest/T > AMYpCut) totalQuarkProb += (rateRad.qqg + rateRad.qqgamma)*dT;
-      //totalQuarkProb += (rateElas.qq + rateElas.qg + rateConv.qg + rateConv.qgamma)*dT;
+      if (pRest/T > AMYpCut) totalQuarkProb += (rateRad.qqg + rateRad.qqgamma)*dT;
+      totalQuarkProb += (rateElas.qq + rateElas.qg + rateConv.qg + rateConv.qgamma)*dT;
 
-      if (pRest/T > AMYpCut) totalQuarkProb += rateRad.qqg*dT;
-      totalQuarkProb += (rateElas.qq + rateElas.qg + rateConv.qg)*dT;
+      //if (pRest/T > AMYpCut) totalQuarkProb += rateRad.qqg*dT;
+      //totalQuarkProb += (rateElas.qq + rateElas.qg + rateConv.qg)*dT;
 
       // warn if total probability exceeds 1
       if (totalQuarkProb > 1.){
@@ -614,10 +615,10 @@ int Martini::DetermineProcess(double pRest, double T, double deltaTRest, int Id)
 	      if (accumProb <= randProb && randProb < (accumProb + Prob))
 		return 1;
 
-	      //accumProb += Prob;
-	      //Prob = rateRad.qqgamma*dT/totalQuarkProb;
-	      //if (accumProb <= randProb && randProb < (accumProb + Prob))
-	      //  return 2;
+	      accumProb += Prob;
+	      Prob = rateRad.qqgamma*dT/totalQuarkProb;
+	      if (accumProb <= randProb && randProb < (accumProb + Prob))
+	        return 2;
 	    }
 
 	  accumProb += Prob;
@@ -635,10 +636,10 @@ int Martini::DetermineProcess(double pRest, double T, double deltaTRest, int Id)
 	  if (accumProb <= randProb && randProb < (accumProb + Prob))
 	    return 9;
 
-	  //accumProb += Prob;
-	  //Prob = rateConv.qgamma*dT/totalQuarkProb;
-	  //if (accumProb <= randProb && randProb < (accumProb + Prob))
-	  //  return 10;
+	  accumProb += Prob;
+	  Prob = rateConv.qgamma*dT/totalQuarkProb;
+	  if (accumProb <= randProb && randProb < (accumProb + Prob))
+	    return 10;
 	}
       else
 	{
