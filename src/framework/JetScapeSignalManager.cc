@@ -27,7 +27,7 @@ JetScapeSignalManager* JetScapeSignalManager::Instance()
 {
   if (!m_pInstance)
     {
-      INFO<<"Created JetScapeSignalManager Instance";
+      JSINFO<<"Created JetScapeSignalManager Instance";
       m_pInstance = new JetScapeSignalManager();
     }
   

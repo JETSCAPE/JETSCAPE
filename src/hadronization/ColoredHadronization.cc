@@ -41,7 +41,7 @@ void ColoredHadronization::Init()
   tinyxml2::XMLElement *hadronization= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("JetHadronization" );
     
   if ( !hadronization ) {
-    WARN << "Couldn't find tag Jet Hadronization";
+    JSWARN << "Couldn't find tag Jet Hadronization";
     throw std::runtime_error ("Couldn't find tag Jet Hadronization");
   }
   if (hadronization) {

@@ -44,12 +44,12 @@ void PGun::InitTask()
       pgun->FirstChildElement("pT")->QueryDoubleText(&fixed_pT);
 
       JSDEBUG << s << " with fixed pT = "<<fixed_pT;
-      INFO<<"Parton Gun with fixed pT = "<<fixed_pT;
+      JSINFO<<"Parton Gun with fixed pT = "<<fixed_pT;
       
     }
   else
     {
-      WARN << " : PGun not properly initialized in XML file ...";
+      JSWARN << " : PGun not properly initialized in XML file ...";
       exit(-1);
     }
 }
@@ -100,11 +100,11 @@ void PGun::Exec()
        };
        
        if (!ini) {
-	 INFO << "No initial state module, setting the starting location to 0. ";
+	 JSINFO << "No initial state module, setting the starting location to 0. ";
        } else {
 	 auto num_bin_coll = ini->GetNumOfBinaryCollisions();
 	 if ( num_bin_coll.size()==0 ){
-	   WARN << "num_of_binary_collisions is empty, setting the starting location to 0. Make sure to add e.g. trento before PythiaGun.";
+	   JSWARN << "num_of_binary_collisions is empty, setting the starting location to 0. Make sure to add e.g. trento before PythiaGun.";
 	 } else {	 
 	   std::discrete_distribution<> dist( begin(num_bin_coll),end(num_bin_coll) ); // Create the distribution
 	   

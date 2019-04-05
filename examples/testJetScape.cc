@@ -123,8 +123,8 @@ int main(int argc, char** argv)
 
   // can add before or after jetscape (order does not matter)
   
-  //INFO<<"Number of JetScape Tasks = "<<jetscape->GetNumberOfTasks();
-  //INFO<<"Number of Eloss Tasks = "<<jloss->GetNumberOfTasks();
+  //JSINFO<<"Number of JetScape Tasks = "<<jetscape->GetNumberOfTasks();
+  //JSINFO<<"Number of Eloss Tasks = "<<jloss->GetNumberOfTasks();
   
   jetscape->Init();
 

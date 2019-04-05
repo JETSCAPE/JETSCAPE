@@ -27,7 +27,7 @@ JetScapeXML* JetScapeXML::Instance()
 {
   if (!m_pInstance)
     {
-      INFO<<"Created JetScapeXML Instance";
+      JSINFO<<"Created JetScapeXML Instance";
       m_pInstance = new JetScapeXML();
     }
   
@@ -39,21 +39,21 @@ void JetScapeXML::OpenXMLFile()
   if (!xml_file_open)
     {
       xml_doc.LoadFile((char*) GetXMLFileName().c_str());
-      INFO<<BOLDBLACK<<"Trying XML file : "<< GetXMLFileName();
+      JSINFO<<BOLDBLACK<<"Trying XML file : "<< GetXMLFileName();
       if (xml_doc.ErrorID()<1)
 	{
-	  INFO<<BOLDBLACK<<"Open XML file : "<< GetXMLFileName();
+	  JSINFO<<BOLDBLACK<<"Open XML file : "<< GetXMLFileName();
 	  xml_root = (tinyxml2::XMLElement*) xml_doc.FirstChildElement("jetscape" );
 	  
 	  if (!xml_root)
 	    {
-	      WARN << "Not a valid JetScape XML file!";
+	      JSWARN << "Not a valid JetScape XML file!";
 	      exit(-1);
 	    }
 	}
       else
 	{
-	  WARN << "XML file not found/not properly opened! Error code : "<<xml_doc.ErrorID();
+	  JSWARN << "XML file not found/not properly opened! Error code : "<<xml_doc.ErrorID();
 	  exit(-1);
 	}
       xml_file_open=true;

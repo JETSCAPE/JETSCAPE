@@ -48,7 +48,7 @@ AdSCFT::~AdSCFT()
 
 void AdSCFT::Init()
 {
-  INFO<<"Intialize AdSCFT ...";
+  JSINFO<<"Intialize AdSCFT ...";
 
   // Redundant (get this from Base) quick fix here for now
   tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );  
@@ -61,15 +61,15 @@ void AdSCFT::Init()
 
       //Kappa
       adscft->FirstChildElement("kappa")->QueryDoubleText(&kappa);
-      INFO<<"AdSCFT kappa = "<<kappa;
+      JSINFO<<"AdSCFT kappa = "<<kappa;
      
       //T0 [GeV]
       adscft->FirstChildElement("T0")->QueryDoubleText(&T0); 
-      INFO << "AdSCFT T0 = " << T0;
+      JSINFO << "AdSCFT T0 = " << T0;
 
       //Q0 [GeV]
       adscft->FirstChildElement("Q0")->QueryDoubleText(&Q0);
-      INFO << "AdSCFT Q0 = " << Q0;
+      JSINFO << "AdSCFT Q0 = " << Q0;
 
       //Vac or Med
       in_vac = false;
@@ -79,7 +79,7 @@ void AdSCFT::Init()
     }
   else
     {
-      WARN << " : AdSCFT not properly initialized in XML file ...";
+      JSWARN << " : AdSCFT not properly initialized in XML file ...";
       exit(-1);
     }
 }
