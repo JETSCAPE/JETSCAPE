@@ -321,6 +321,7 @@ namespace Jetscape {
     virtual void set_max_color(unsigned int col); ///< sets the color of the parton
     virtual void set_min_color(unsigned int col); ///< sets the color of the parton
     virtual void set_min_anti_color(unsigned int acol); ///< sets anti-color of the parton
+    bool isPhoton(int pid); // Checks to see if the particle is a photon, separate derived class for photons
 
     Parton (int label, int id, int stat, const FourVector& p, const FourVector& x);
     Parton (int label, int id, int stat, double pt, double eta, double phi, double e, double* x=0);
