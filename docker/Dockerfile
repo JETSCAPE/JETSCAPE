@@ -21,6 +21,11 @@ vim \
 #zlib1g-dev \
 && rm -rf /var/lib/apt/lists/*
 
+# Install a few useful python packages
+RUN pip3 install \
+pyyaml
+#subprocess
+
 # Install HEPMC3
 RUN curl -SL http://hepmc.web.cern.ch/hepmc/releases/hepmc3.0.0.tgz \
 | tar -xvzC /usr/local \
