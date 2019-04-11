@@ -13,6 +13,7 @@
   <debug> on </debug>
   <remark> off </remark>
   <vlevel> 0 </vlevel>
+  <enableAutomaticTaskListDetermination> true </enableAutomaticTaskListDetermination>
   
   <nEvents> 100 </nEvents>
   

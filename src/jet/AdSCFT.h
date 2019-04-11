@@ -58,6 +58,9 @@ class AdSCFT : public JetEnergyLossModule<AdSCFT>
   double Q0;			//Switching virtuality
   bool in_vac;			//In vacuum or not switch
   double kappa;			//Drag strength parameter
+  
+  // Allows the registration of the module so that it is available to be used by the Jetscape framework.
+  static RegisterJetScapeModule<AdSCFT> reg;
 
 };
 

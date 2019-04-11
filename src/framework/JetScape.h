@@ -52,6 +52,11 @@ class JetScape : public JetScapeModuleBase
    */
   int GetNumberOfEvents() {return n_events;}
   
+  /** This function sets the option to automatically determine the task list from the XML file,
+   *  rather than manually calling JetScapeTask::Add() in the run macro.
+   */
+  void EnableAutomaticTaskListDetermination(bool b) { fEnableAutomaticTaskListDetermination = b; }
+
   /** Controls whether to reuse a hydro event (for speedup).
       The number of times is controled by SetNReuseHydro
    */
@@ -76,6 +81,7 @@ class JetScape : public JetScapeModuleBase
  protected:
   
   void ReadGeneralParametersFromXML();
+  void DetermineTaskListFromXML();
   void SetPointers();
   
   void Show();
@@ -83,6 +89,8 @@ class JetScape : public JetScapeModuleBase
 
   bool reuse_hydro_;
   unsigned int n_reuse_hydro_;
+  
+  bool fEnableAutomaticTaskListDetermination;
   
 };
 

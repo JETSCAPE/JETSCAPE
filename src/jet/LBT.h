@@ -368,6 +368,9 @@ class LBT : public JetEnergyLossModule<LBT> //, public std::enable_shared_from_t
 //      void sethydrofilesez_(int *dataID_in, char *dataFN_in, int *ctlID_in, char *ctlFN_in, int *bufferSize, int len1, int len2);
 //      void readhydroinfoshanshan_(double *t, double *x, double *y, double *z, double *e, double *s, double *temp, double *vx, double *vy, double *vz, int *flag);
 //  }
+  
+  // Allows the registration of the module so that it is available to be used by the Jetscape framework.
+  static RegisterJetScapeModule<LBT> reg;
 
 };
 

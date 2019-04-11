@@ -27,6 +27,9 @@
 #include "AdSCFTMutex.h"
 #define MAGENTA "\033[35m"
 
+// Register the module with the base class
+RegisterJetScapeModule<AdSCFT> AdSCFT::reg("AdSCFT");
+
 AdSCFT::AdSCFT() 
 {
   SetId("AdSCFT");

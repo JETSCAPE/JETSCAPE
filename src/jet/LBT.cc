@@ -31,6 +31,9 @@
 using namespace Jetscape;
 using namespace std;
 
+// Register the module with the base class
+RegisterJetScapeModule<LBT> LBT::reg("Lbt");
+
 // initialize static members
 bool LBT::flag_init=0;
 double LBT::Rg[60][20]={{0.0}};         //total gluon scattering rate as functions of initial energy and temperature 

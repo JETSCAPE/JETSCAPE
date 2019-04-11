@@ -23,6 +23,9 @@
 
 using namespace Jetscape;
 
+// Register the module with the base class
+RegisterJetScapeModule<iSpectraSamplerWrapper> iSpectraSamplerWrapper::reg("iSS");
+
 iSpectraSamplerWrapper::iSpectraSamplerWrapper() {
     SetId("iSS");
     iSpectraSampler_ptr_ = nullptr;

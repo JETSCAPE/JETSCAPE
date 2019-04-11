@@ -121,6 +121,9 @@ class Martini : public JetEnergyLossModule<Martini> //, public std::enable_share
   vector<double> *dGamma_qg;
   vector<double> *dGamma_qq_q;
   vector<double> *dGamma_qg_q;
+  
+  // Allows the registration of the module so that it is available to be used by the Jetscape framework.
+  static RegisterJetScapeModule<Martini> reg;
 
  public:
   

@@ -94,6 +94,9 @@ class InitialFromFile: public Jetscape::InitialState {
     double npart=-1;
     double ncoll=-1;
     double totalentropy=-1;
+  
+    // Allows the registration of the module so that it is available to be used by the Jetscape framework.
+    static RegisterJetScapeModule<InitialFromFile> reg;
 };
 
 #endif  // INITIALFROMFILE_H

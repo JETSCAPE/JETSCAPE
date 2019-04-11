@@ -22,6 +22,9 @@
 using namespace Jetscape;
 using namespace Pythia8;
 
+// Register the module with the base class
+RegisterJetScapeModule<ColoredHadronization> ColoredHadronization::reg("ColoredHadronization");
+
 Pythia8::Pythia ColoredHadronization::pythia ("IntentionallyEmpty",false);
 
 

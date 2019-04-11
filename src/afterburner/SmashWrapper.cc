@@ -29,6 +29,9 @@
 
 using namespace Jetscape;
 
+// Register the module with the base class
+RegisterJetScapeModule<SmashWrapper> SmashWrapper::reg("SMASH");
+
 SmashWrapper::SmashWrapper() { SetId("SMASH"); }
 
 void SmashWrapper::InitTask() {
