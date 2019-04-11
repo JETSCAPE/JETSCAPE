@@ -48,6 +48,7 @@ bulk_viscosity_peak_in_GeV = 0.18
 
 #iS3D Parameters
 delta_f_mode = 4 # 1: 14 moment, 2: C.E., 3: McNelis feq_mod, 4: Bernhard feq_mod
+rap_max = 2.0    # dN/dY sampled is flat for y in (-rap_max, rap_max) and zero outside
 
 #SMASH Parameters
 max_time_smash = 300.0 #max run time [fm/c]
@@ -140,7 +141,7 @@ iS3D_file.write("operation                   = 2\n")
 iS3D_file.write("mode                        = 6\n")
 iS3D_file.write("hrg_eos                     = 3\n")
 iS3D_file.write("dimension                   = 2\n")
-iS3D_file.write("df_mode   = " + str(delta_f_mode) + "\n")
+iS3D_file.write("df_mode                     = " + str(delta_f_mode) + "\n")
 iS3D_file.write("include_baryon              = 0\n")
 iS3D_file.write("include_bulk_deltaf         = 1\n")
 iS3D_file.write("include_shear_deltaf        = 1\n")
@@ -155,6 +156,8 @@ iS3D_file.write("do_resonance_decays         = 0\n")
 iS3D_file.write("lightest_particle 	     = 111\n")
 iS3D_file.write("oversample		     = 0\n")
 iS3D_file.write("min_num_hadrons             = 1.e+6\n")
+iS3D_file.write("fast                        = 1\n")
+iS3D_file.write("y_cut                       = " + str(rap_max) + "\n")
 iS3D_file.write("sampler_seed	             = -1\n")
 
 #these only used for testing, are dummys
