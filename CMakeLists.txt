@@ -22,8 +22,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmakemodules")
 ### Parse options       ###
 ###########################
 
-# Unit Tests. Turn on with 'cmake -Dtest=ON'.
-option(test "Build all tests." OFF)
+# Unit Tests. Turn off with 'cmake -Dunittests=OFF'.
+option(unittests "Build all unittests." ON)
 
 # freestream. Turn on with 'cmake -Dfreestream=ON'.
 # Note that some warnings are generated. Could be turned off by adding the following to CFLAGS in
@@ -105,6 +105,9 @@ add_subdirectory(external_packages/trento/)
 include_directories("${CMAKE_SOURCE_DIR}/external_packages/trento/src/")
 ###########################
 
+add_subdirectory(external_packages/googletest/)
+include_directories("${CMAKE_SOURCE_DIR}/external_packages/googletest/googletest/include/")
+
 #############################################
 ### Installing Header and Library Files   ###
 #############################################
@@ -141,6 +144,7 @@ install(
   "${CMAKE_SOURCE_DIR}/external_packages/music/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/trento/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/smash/src/"
+  "${CMAKE_SOURCE_DIR}/external_packages/googletest/googletest/src/"
   DESTINATION "include" # target directory
   FILES_MATCHING # install only matched files
   PATTERN "*.h*" # select header files
@@ -285,6 +289,10 @@ include_directories(./examples/ )
 add_subdirectory(./external_packages)
 add_subdirectory(./external_packages/gtl)
 add_subdirectory(./src)
+
+if (unittests)
+    add_subdirectory(./examples/unittests/)
+endif (unittests)
 
 if (freestream)
   if(NOT EXISTS "${CMAKE_SOURCE_DIR}/external_packages/freestream-milne")

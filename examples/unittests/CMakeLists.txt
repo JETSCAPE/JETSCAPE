@@ -1,15 +1,34 @@
 ##############
 # Unit Tests
 ##############
-add_executable(test_linear_interpolation1d linear_interpolation.cc)
-add_executable(test_fluid_dynamics fluid_dynamics.cc)
 
-# Standard linking to gtest stuff.
-target_link_libraries(test_linear_interpolation1d gtest gtest_main)
-target_link_libraries(test_fluid_dynamics gtest gtest_main)
-target_link_libraries(test_fluid_dynamics JetScapeHydro)
+# tests:
+# Helper macro (from smash) that adds a run_<name> target
+macro(js_add_test name depends)
+   add_test(NAME ${name} COMMAND ${ARGN})
+   add_custom_target(run_${name}
+      COMMAND ${ARGN} ${UNITTEST_ARGS}
+      DEPENDS ${depends}
+      COMMENT "Executing test ${name}"
+      VERBATIM
+      )
+endmacro()
 
-# This is so you can do 'make test' to see all your tests run, instead of
-# manually running the executable runUnitTests to see those specific tests.
-add_test(NAME test1 COMMAND test_linear_interpolation1d)
-add_test(NAME test2 COMMAND test_fluid_dynamics)
+macro(js_add_exe name)
+  add_executable(${name} ${name}.cc)
+  target_link_libraries(${name} JetScape)
+  target_link_libraries(${name} gtest gtest_main)
+  target_link_libraries(${name} gtest gtest_main)
+endmacro()
+
+# this is the main func called by developer to add unittests
+macro(add_unittest name)
+   js_add_exe(${name})
+   js_add_test(${name} ${name} ${name})
+endmacro()
+
+
+# add your unittests after this line
+
+add_unittest(linear_interpolation)
+add_unittest(fluid_dynamics)
