@@ -135,11 +135,11 @@ double CausalLiquefier::get_z(double tau, double eta)const{
 }
     
 double CausalLiquefier::get_ptau(double pt, double pz, double eta)const{
-        return pt*cosh(eta) - pz*cosh(eta);
+        return pt*cosh(eta) - pz*sinh(eta);
 }
 
 double CausalLiquefier::get_peta(double pt, double pz, double eta)const{
-        return pz*cosh(eta) - pt*cosh(eta);
+        return pz*cosh(eta) - pt*sinh(eta);
 }
 
     
