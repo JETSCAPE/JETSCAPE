@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+#the jetscape seed sets the seed in smash, set to 0 for random (clocktime) seed
+js_seed = 0
+
 #These should be set by external script/block of code
 #Parameters common to modules
 nx = 201 #num grid points in x
@@ -51,7 +54,7 @@ delta_f_mode = 4 # 1: 14 moment, 2: C.E., 3: McNelis feq_mod, 4: Bernhard feq_mo
 rap_max = 2.0    # dN/dY sampled is flat for y in (-rap_max, rap_max) and zero outside
 
 #SMASH Parameters
-max_time_smash = 300.0 #max run time [fm/c]
+max_time_smash = 1000.0 #max run time [fm/c]
 
 #write appropriate input files
 
@@ -187,7 +190,7 @@ js_file.write("  <debug> on </debug>\n")
 js_file.write("  <remark> off </remark>\n")
 js_file.write("  <vlevel> 0 </vlevel>\n")
 js_file.write("  <Random>\n")
-js_file.write("    <seed>0</seed>\n")
+js_file.write("    <seed>" + str(js_seed) + "</seed>\n")
 js_file.write("  </Random>\n")
 
 #parameters common to TRENTo and MUSIC
