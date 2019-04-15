@@ -323,7 +323,7 @@ def run_events(args, results_file):
         def run_single_event(event_number):
                 """ run a single jetscape event"""
                 results.fill(0)
-                h = run_cmd('TRENTO_FS_HYDRO')
+                h = run_cmd('./TRENTO_FS_HYDRO')
                 print(h.stdout)
                 print(h.stderr)
                 # hydro debugging files
@@ -356,7 +356,7 @@ def run_events(args, results_file):
                         while (nos < nos_max):
                                 nos += 1
                                 logging.info("Run smash # {:d}".format(nos))
-                                sample_burn = run_cmd("SAMPLER_AFTERBURNER")
+                                sample_burn = run_cmd("./SAMPLER_AFTERBURNER")
                                 print(sample_burn.stdout)
                                 print(sample_burn.stderr)
                                 subprocess.call("csplit --digits=2  --quiet --prefix=hadron_list final_smash_hadrons.dat \"/# JetScape module: SMASH/+1\" \"{*}\" ", shell=True)
