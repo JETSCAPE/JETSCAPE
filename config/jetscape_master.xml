@@ -10,15 +10,22 @@
 
  <jetscape>
 
+  <!-- General settings -->
+  <nEvents> 100 </nEvents>
+  <setReuseHydro> true </setReuseHydro>
+  <nReuseHydro> 10 </nReuseHydro>
+
+  <!-- Technical settings -->
   <debug> on </debug>
   <remark> off </remark>
   <vlevel> 0 </vlevel>
   <enableAutomaticTaskListDetermination> true </enableAutomaticTaskListDetermination>
   
-  <nEvents> 100 </nEvents>
-  
-  <setReuseHydro> true </setReuseHydro>
-  <nReuseHydro> 10 </nReuseHydro>
+  <!--  JetScape Writer Settings -->
+  <outputFilename>test_out</outputFilename>
+  <JetScapeWriterAscii> off </JetScapeWriterAscii>
+  <JetScapeWriterAsciiGZ> off </JetScapeWriterAsciiGZ>
+  <JetScapeWriterHepMC> off </JetScapeWriterHepMC>
 
   <!--  Random Settings. For now, just a global  seed. -->
   <!--  Note: It's each modules responsibility to adopt it -->

@@ -3,6 +3,9 @@
 <jetscape>
 
   <nEvents> 200 </nEvents>
+  
+  <!-- Jetscape Writer -->
+  <JetScapeWriterAscii> on </JetScapeWriterAscii>
 
   <!-- Inital State Module  -->
   <IS>

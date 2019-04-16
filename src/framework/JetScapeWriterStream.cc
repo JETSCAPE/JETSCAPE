@@ -19,6 +19,12 @@
 #include "JetScapeXML.h"
 
 namespace Jetscape {
+  
+// Register the modules with the base class
+template<>
+RegisterJetScapeModule<JetScapeWriterStream<ofstream>> JetScapeWriterStream<ofstream>::reg("JetScapeWriterAscii");
+template<>
+RegisterJetScapeModule<JetScapeWriterStream<ogzstream>> JetScapeWriterStream<ogzstream>::regGZ("JetScapeWriterAsciiGZ");
 
 template<class T>
 JetScapeWriterStream<T>::JetScapeWriterStream(string m_file_name_out)

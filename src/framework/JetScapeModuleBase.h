@@ -170,6 +170,7 @@ public:
   /// Registers the name of the module to map to a function that can create the module
   RegisterJetScapeModule(std::string const& s)
   {
+    //std::cout << "Registering " << s << " to the map" << std::endl;
     getMap()->insert(std::make_pair(s, &createT<T>));
   }
 };

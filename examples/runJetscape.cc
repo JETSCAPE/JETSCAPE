@@ -52,14 +52,7 @@ int main(int argc, char** argv)
   // Create main Jetscape task, and assign XML configuration files
   auto jetscape = make_shared<JetScape>();
   jetscape->SetXMLMasterFileName("../config/jetscape_master.xml");
-  jetscape->SetXMLUserFileName("../config/jetscape_user_example.xml");
-  
-  // Output
-  auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
-  // same as JetScapeWriterAscii but gzipped
-  // auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");
-  // auto writer= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
-  jetscape->Add(writer);
+  jetscape->SetXMLUserFileName("../config/jetscape_user.xml");
 
   // Intialize all modules tasks
   jetscape->Init();

@@ -22,6 +22,10 @@
 #include "InitialState.h"
 #include "PreequilibriumDynamics.h"
 
+#ifdef USE_HEPMC
+#include "JetScapeWriterHepMC.h"
+#endif
+
 #include<iostream>
 
 using namespace std;
@@ -72,6 +76,7 @@ void JetScape::Init()
   // Loop through the XML User file elements to determine the task list, if enabled
   if (fEnableAutomaticTaskListDetermination) {
     DetermineTaskListFromXML();
+    DetermineWritersFromXML();
     JSINFO << "================================================================";
   }
   
@@ -108,11 +113,11 @@ void JetScape::ReadGeneralParametersFromXML() {
   // Flag for automatic task list determination from User XML
   std::string enableAutomaticTaskListDetermination = GetXMLElementText({"enableAutomaticTaskListDetermination"});
   if ((int) enableAutomaticTaskListDetermination.find("true")>=0) {
-    EnableAutomaticTaskListDetermination(true);
+    fEnableAutomaticTaskListDetermination = true;
     VERBOSE(1) << "Enable automatic task list determination from User XML: True.";
   }
   else if ((int) enableAutomaticTaskListDetermination.find("false")>=0) {
-    EnableAutomaticTaskListDetermination(false);
+    fEnableAutomaticTaskListDetermination = false;
     VERBOSE(1) << "Enable automatic task list determination from User XML: False.";
   }
 
@@ -485,6 +490,68 @@ void JetScape::DetermineTaskListFromXML() {
     element = element->NextSiblingElement();
   }
   
+}
+
+//________________________________________________________________
+void JetScape::DetermineWritersFromXML() {
+  
+  // Get file output name to write to (without file extension, except if custom writer)
+  std::string outputFilename = GetXMLElementText({"outputFilename"});
+  
+  // Copy string in order to set file extensions for each type
+  std::string outputFilenameAscii = outputFilename;
+  std::string outputFilenameAsciiGZ = outputFilename;
+  std::string outputFilenameHepMC = outputFilename;
+  
+  // Check if each writer is enabled, and if so add it to the task list
+  CheckForWriterFromXML("JetScapeWriterAscii", outputFilenameAscii.append(".dat"));
+  CheckForWriterFromXML("JetScapeWriterAsciiGZ", outputFilenameAsciiGZ.append(".dat.gz"));
+  CheckForWriterFromXML("JetScapeWriterHepMC", outputFilenameHepMC.append(".hepmc"));
+  
+  // Check for custom writers
+  tinyxml2::XMLElement* element = (tinyxml2::XMLElement*) JetScapeXML::Instance()->GetXMLRootUser()->FirstChildElement();
+  while (element) {
+    std::string elementName = element->Name();
+    VERBOSE(2) << "Parsing element: " << elementName;
+    
+    if ( ((int) elementName.find("CustomWriter")>=0) ) {
+      CheckForWriterFromXML(elementName.c_str(), outputFilename);
+    }
+    element = element->NextSiblingElement();
+  }
+  
+}
+  
+//________________________________________________________________
+void JetScape::CheckForWriterFromXML(const char* writerName, std::string outputFilename) {
+  
+  std::string enableWriter = GetXMLElementText({writerName});
+  VERBOSE(2) << "Parsing writer: " << writerName;
+  if ((int) enableWriter.find("on")>=0) {
+    VERBOSE(2) << "Writer is on.";
+    auto writer = JetScapeModuleFactory::createInstance(writerName);
+    if (writer) {
+      dynamic_pointer_cast<JetScapeWriter>(writer)->SetOutputFileName(outputFilename);
+      Add(writer);
+      JSINFO << "JetScape::DetermineTaskList() -- " << writerName << " (" << outputFilename.c_str() << ") added to task list.";
+    }
+    // Manually create HepMC writer if it is enabled, since JetScapeModuleFactor::map_type assumes single inheritance
+    // from JetScapeModuleBase -- but JetScapeWriterHepMC has multiple inheritance
+    else if (strcmp(writerName, "JetScapeWriterHepMC") == 0) {
+      #ifdef USE_HEPMC
+      VERBOSE(2) << "Manually creating JetScapeWriterHepMC (due to multiple inheritance)";
+      auto writer = std::make_shared<JetScapeWriterHepMC>(outputFilename);
+      Add(writer);
+      JSINFO << "JetScape::DetermineTaskList() -- " << writerName << " (" << outputFilename.c_str() << ") added to task list.";
+      #endif
+    }
+    else {
+      VERBOSE(2) << "Writer is NOT created...";
+    }
+  }
+  else{
+    VERBOSE(2) << "Writer is off.";
+  }
 }
   
 // kind of cluncky, maybe a better way ... ?
