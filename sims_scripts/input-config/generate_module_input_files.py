@@ -3,6 +3,9 @@
 #the jetscape seed sets the seed in smash, set to 0 for random (clocktime) seed
 js_seed = 0
 
+min_num_hadrons = 20000
+max_num_samples = 500
+
 #These should be set by external script/block of code
 #Parameters common to modules
 nx = 201 #num grid points in x
@@ -157,8 +160,9 @@ iS3D_file.write("particle_diff_tolerance     = 0.01\n")
 iS3D_file.write("mass_pion0		     = 0.138\n")
 iS3D_file.write("do_resonance_decays         = 0\n")
 iS3D_file.write("lightest_particle 	     = 111\n")
-iS3D_file.write("oversample		     = 0\n")
-iS3D_file.write("min_num_hadrons             = 1.e+6\n")
+iS3D_file.write("oversample		     = 1\n")
+iS3D_file.write("min_num_hadrons             = " + str(min_num_hadrons) + "\n")
+iS3D_file.write("max_num_samples             = " + str(max_num_samples) + "\n")
 iS3D_file.write("fast                        = 1\n")
 iS3D_file.write("y_cut                       = " + str(rap_max) + "\n")
 iS3D_file.write("sampler_seed	             = -1\n")
