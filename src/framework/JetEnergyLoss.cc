@@ -30,6 +30,8 @@
 #include "JetScapeModuleMutex.h"
 #include "LiquefierBase.h"
 #include "MakeUniqueHelper.h"
+#include "FluidDynamics.h"
+#include <GTL/dfs.h>
 
 #ifdef USE_HEPMC
 #include "JetScapeWriterHepMC.h"
@@ -224,7 +226,7 @@ void JetEnergyLoss::DoShower()
 	  
 	  pInTemp.push_back(pInTempModule[0]);
 
-      add_hydro_sources(pInTempModule, pOutTemp);
+          if(currentTime > 0.6) add_hydro_sources(pInTempModule, pOutTemp);
 
 	  vStart=vStartVec[i];
 	  vStartVecTemp.push_back(vStart);
@@ -309,8 +311,13 @@ void JetEnergyLoss::DoShower()
 }
 
 
-void JetEnergyLoss::add_hydro_sources(const vector<Parton> pIn,
-                                      const vector<Parton> pOut) {
+//void JetEnergyLoss::add_hydro_sources(const vector<Parton> pIn,
+//                                      const vector<Parton> pOut) {
+void JetEnergyLoss::add_hydro_sources(vector<Parton> pIn,
+                                      vector<Parton> pOut) {
+
+    cout << "debug, before ......." << pIn.size() << "  " << pOut.size() << endl;
+    
     if (pOut.size() == 0) return;
     if (weak_ptr_is_uninitialized(liquefier_ptr)) return;
 
@@ -319,6 +326,47 @@ void JetEnergyLoss::add_hydro_sources(const vector<Parton> pIn,
     FourVector p_init;
     FourVector x_final;
     FourVector x_init;
+
+
+    int i = 0;
+    while(i < pOut.size()){
+        if(pOut[i].pstat() == -1){ // do it later: remove negative particles from parton list, keep them now
+	    //pOut.erase(i);
+	    continue;
+	} else { // for positive particles, including jet partons and recoil partons
+ 
+
+	    double tLoc = pOut[i].x_in().t();
+	    double xLoc = pOut[i].x_in().x();
+	    double yLoc = pOut[i].x_in().y();
+	    double zLoc = pOut[i].x_in().z();
+	    cout << "debug1" << endl;
+	    std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
+            GetHydroCellSignal(tLoc, xLoc, yLoc, zLoc, check_fluid_info_ptr);
+	    cout << "debug2  " << tLoc << "  " << xLoc << "  " << yLoc << "  " << zLoc << "  " << check_fluid_info_ptr << endl;
+            double tempLoc = check_fluid_info_ptr->temperature;
+	    cout << "debug3" << endl;
+            double vxLoc = check_fluid_info_ptr->vx;
+            double vyLoc = check_fluid_info_ptr->vy;
+            double vzLoc = check_fluid_info_ptr->vz;
+            double beta2 = vxLoc*vxLoc + vyLoc*vyLoc + vzLoc*vzLoc;
+	    double gamma = 1.0 / sqrt(1.0 - beta2);
+
+	
+            // delete partons with energy smaller than 4*T (in the local rest frame) from parton list
+	    if( gamma * (pOut[i].e() - pOut[i].p(1)*vxLoc - pOut[i].p(2)*vyLoc - pOut[i].p(3)*vzLoc) < 4.0 * tempLoc ) {
+	    //if( gamma * (pOut[i].e() - pOut[i].p_in().x()*vxLoc - pOut[i].p_in().y()*vyLoc - pOut[i].p_in().z()*vzLoc) < 4.0 * tempLoc ) {
+                pOut.erase(pOut.begin() + i);
+		continue;
+	    }
+	}
+
+	i++;
+    }
+
+    cout << "debug, mid ......." << pOut.size() << endl;
+
+    // use energy conservation to deterime the source term
     for (const auto &iparton : pIn) {
         auto temp = iparton.p_in();
         p_init += temp;
@@ -326,15 +374,19 @@ void JetEnergyLoss::add_hydro_sources(const vector<Parton> pIn,
     }
     for (const auto &iparton : pOut) {
         auto temp = iparton.p_in();
-        p_final += temp;
-        x_final = iparton.x_in();
+	if(iparton.pstat() == -1) { // subtract energy for negative partons
+	    p_final -= temp;
+	} else {
+	    p_final += temp;
+	}
+        x_final = iparton.x_in(); // ?? not sure about the position calculation, but all particles should be in the same postion
     }
-    if (std::abs(p_final.t() - p_init.t())/p_final.t() > hydro_source_abs_err) {
+    if (std::abs(p_final.t() - p_init.t())/p_final.t() > hydro_source_abs_err) {  // ?? should it be init - final?
         //cout << "E_init = " << p_init.t() << " GeV, E_final = "
         //     << p_final.t() << " GeV" << endl;
         //cout << "E_diff = " << p_final.t() - p_init.t()
         //     << " GeV" << endl;
-        Jetscape::real droplet_t   = (x_final.t() + x_init.t())/2.;
+        Jetscape::real droplet_t   = (x_final.t() + x_init.t())/2.;  // ?? should it be average over # of particles?
         Jetscape::real droplet_x   = (x_final.x() + x_init.x())/2.;
         Jetscape::real droplet_y   = (x_final.y() + x_init.y())/2.;
         Jetscape::real droplet_z   = (x_final.z() + x_init.z())/2.;
@@ -343,10 +395,10 @@ void JetEnergyLoss::add_hydro_sources(const vector<Parton> pIn,
         Jetscape::real droplet_eta = (
                     0.5*log((droplet_t + droplet_z)
                             /(droplet_t - droplet_z)));
-        Jetscape::real droplet_E   = p_final.t() - p_init.t();
-        Jetscape::real droplet_px  = p_final.x() - p_init.x();
-        Jetscape::real droplet_py  = p_final.y() - p_init.y();
-        Jetscape::real droplet_pz  = p_final.z() - p_init.z();
+        Jetscape::real droplet_E   = p_init.t() - p_final.t(); // revise
+        Jetscape::real droplet_px  = p_init.x() - p_final.x();
+        Jetscape::real droplet_py  = p_init.y() - p_final.y();
+        Jetscape::real droplet_pz  = p_init.z() - p_final.z();
 
         std::array<Jetscape::real, 4> droplet_xmu = {
             droplet_tau, droplet_x, droplet_y, droplet_eta};
@@ -355,6 +407,17 @@ void JetEnergyLoss::add_hydro_sources(const vector<Parton> pIn,
         Droplet drop_i(droplet_xmu, droplet_pmu);
         liquefier_ptr.lock()->add_a_droplet(drop_i);
     }
+
+    i = 0;
+    while(i < pOut.size()){
+        if(pOut[i].pstat() == -1){ // remove negative particles from parton list
+            pOut.erase(pOut.begin() + i);
+            continue;
+	}
+        i++;
+    }
+
+    cout << "debug, after ......." << pOut.size() << endl;
 }
 
 
