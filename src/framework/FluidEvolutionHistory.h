@@ -58,6 +58,8 @@ class EvolutionHistory {
     /** Default destructor. */
     ~EvolutionHistory() {data.clear();}
 
+    void clear_up_evolution_data() {data.clear();}
+
     /** Maximum value of tau. */
     inline Jetscape::real TauMax() const {return(tau_min + (ntau - 1) * dtau);}
 

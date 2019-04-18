@@ -160,6 +160,8 @@ class FluidDynamics : public JetScapeModuleBase {
         bulk_info.data.push_back(*fluid_cell_info_ptr);
     }
 
+    void clear_up_evolution_data() {bulk_info.clear_up_evolution_data();}
+
     /** @return Start time (or tau) for hydrodynamic evolution.
      */
     Jetscape::real GetHydroStartTime() const {return(hydro_tau_0);}

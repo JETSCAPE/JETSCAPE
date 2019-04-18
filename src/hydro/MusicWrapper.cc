@@ -154,6 +154,8 @@ void MpiMusic::SetHydroGridInfo() {
 
 
 void MpiMusic::PassHydroEvolutionHistoryToFramework() {
+    clear_up_evolution_data();
+
     JSINFO << "Passing hydro evolution information to JETSCAPE ... ";
     auto number_of_cells = music_hydro_ptr->get_number_of_fluid_cells();
     JSINFO << "total number of fluid cells: " << number_of_cells;
