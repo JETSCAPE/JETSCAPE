@@ -76,7 +76,7 @@
   <!-- Individual Eloss Modules run Eloss and Eloss Manager  -->
   <Eloss>
 
-    <deltaT>0.1</deltaT>
+    <deltaT>0.01</deltaT>
     <formTime> -0.1</formTime>
     <maxT>20</maxT>
     <mutex>ON</mutex>
