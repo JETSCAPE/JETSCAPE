@@ -273,8 +273,6 @@ namespace Jetscape {
     // in its original Data table
     static Pythia8::Pythia InternalHelperPythia;
 
-    virtual bool isColored()=0; 
-    
   protected:
   
     void set_restmass(double mass_input); ///< shouldn't be called from the outside, needs to be consistent with PID
@@ -346,8 +344,6 @@ namespace Jetscape {
     void set_shower(const weak_ptr<PartonShower> pShower);
     const weak_ptr<PartonShower> shower() const;
 
-    bool isColored() {return true;}
-
     std::vector<Parton> parents();
     
   protected :
@@ -396,8 +392,6 @@ namespace Jetscape {
     /// Currently, we add these manually. Could also reject outright.
     bool CheckOrForceHadron( const int id, const double mass=0 );
  
-    bool isColored() {return false;}
-     
   protected:
     double width_;
         
@@ -413,8 +407,6 @@ namespace Jetscape {
 
     Photon& operator=( Photon &ph);
     Photon& operator=( const Photon &ph);
-
-    bool isColored() {return false;}
 
   };
 
