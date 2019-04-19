@@ -133,7 +133,7 @@ void JetScapeSignalManager::CleanUp()
 
   auto loss = jloss.lock();
   if ( loss ) { 
-    int nEnd=GetHydroCellSignal_map.size();
+    int nEnd=SentInPartons_map.size();
     int nStart=loss->GetTaskAt(0)->GetNumberOfTasks();
     
     for (int i=nStart;i<nEnd;i++){
