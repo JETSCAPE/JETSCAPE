@@ -33,7 +33,9 @@
 // User modules derived from jetscape framework clasess
 #include "AdSCFT.h"
 #include "Matter.h"
+#include "LBT.h"
 #include "Martini.h"
+#include "Brick.h"
 #include "MusicWrapper.h"
 #include "CausalLiquefier.h"
 #include "iSpectraSamplerWrapper.h"
@@ -44,6 +46,7 @@
 #include "HadronizationManager.h"
 #include "Hadronization.h"
 #include "ColoredHadronization.h"
+#include "ColorlessHadronization.h"
 
 #include <chrono>
 #include <thread>
@@ -71,7 +74,7 @@ int main(int argc, char** argv)
   JetScapeLogger::Instance()->SetRemark(false);
   //SetVerboseLevel (9 a lot of additional debug output ...)
   //If you want to suppress it: use SetVerboseLevel(0) or max  SetVerboseLevel(9) or 10
-  JetScapeLogger::Instance()->SetVerboseLevel(8);
+  JetScapeLogger::Instance()->SetVerboseLevel(0);
    
   Show();
 
@@ -87,7 +90,7 @@ int main(int argc, char** argv)
   auto trento = make_shared<TrentoInitial>();
   auto null_predynamics = make_shared<NullPreDynamics> ();
   auto pGun= make_shared<PGun> ();
-  auto hydro1 = make_shared<MpiMusic> ();
+  auto hydro1 = make_shared<Brick> ();
   auto myliquefier = make_shared<CausalLiquefier> ();
   //hydro1->add_a_liqueifier(myliquefier);
 
@@ -105,14 +108,14 @@ int main(int argc, char** argv)
 
 
   auto matter = make_shared<Matter> ();
-  // auto lbt = make_shared<LBT> ();
-  auto martini = make_shared<Martini> ();
+  auto lbt = make_shared<LBT> ();
+  //auto martini = make_shared<Martini> ();
   // auto adscft = make_shared<AdSCFT> ();
 
   // Note: if you use Matter, it MUST come first (to set virtuality)
   jloss->Add(matter);
-  // jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
-  jloss->Add(martini);
+  jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
+  //jloss->Add(martini);
   // jloss->Add(adscft);  
   jlossmanager->Add(jloss);  
   jetscape->Add(jlossmanager);
@@ -133,10 +136,10 @@ int main(int argc, char** argv)
   jetscape->Add(printer);
   auto hadroMgr = make_shared<HadronizationManager> ();
   auto hadro = make_shared<Hadronization> ();
-  auto hadroModule = make_shared<ColoredHadronization> ();
-  hadro->Add(hadroModule);
-  // auto colorless = make_shared<ColorlessHadronization> ();
-  // hadro->Add(colorless);
+  //auto hadroModule = make_shared<ColoredHadronization> ();
+  //hadro->Add(hadroModule);
+  auto colorless = make_shared<ColorlessHadronization> ();
+  hadro->Add(colorless);
   hadroMgr->Add(hadro);
   jetscape->Add(hadroMgr);
 
