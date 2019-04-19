@@ -206,7 +206,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   int iSplit,pid_a,pid_b;
   unsigned int max_color, min_color, min_anti_color;
   double velocity[4],xStart[4],velocity_jet[4];
-    
+  bool photon_brem = false;
+
     //iEvent++;
     
     //JSINFO << BOLDYELLOW << " Event number = " << iEvent;
@@ -282,13 +283,23 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   for (int i=0;i<pIn.size();i++)
   {
 
-     VERBOSE(8) << " *  parton formation spacetime point= "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z();
+      // Reject photons
+      
+      
+      if (pIn[i].pid()==photonid)
+      {
+          pOut.push_back(pIn[i]);
+          return;
+      }
+      
+      VERBOSE(8) << " *  parton formation spacetime point= "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z();
 
       int jet_stat=pIn[i].pstat();  // daughter of recoil will always be recoil
       
       //cout << "MATTER -- status: " << pIn[i].pstat() << "  energy: " << pIn[i].e() << " color: " << pIn[i].color() << "  " << pIn[i].anti_color() << "  clock: " << time << endl;
 
       velocity[0] = 1.0;
+      // Define 3 velocity of the parton
       for(int j=1;j<=3;j++)
       {
           velocity[j] = pIn[i].p(j)/pIn[i].e();
@@ -297,11 +308,13 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 
       if(pIn[i].form_time()<0.0) pIn[i].set_jet_v(velocity); // jet velocity is set only once
 
+      // Define a vector in the direction of the jet originating parton.
       velocity_jet[0]=1.0;
       velocity_jet[1]=pIn[i].jet_v().x();
       velocity_jet[2]=pIn[i].jet_v().y();
       velocity_jet[3]=pIn[i].jet_v().z();
-
+    
+      // Modulus of the vector pIn[i].jet_v
       double mod_jet_v = std::sqrt( pow(pIn[i].jet_v().x(),2) +  pow(pIn[i].jet_v().y(),2) + pow(pIn[i].jet_v().z(),2) );
           
       for(int j=0;j<=3;j++)
@@ -319,7 +332,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       initVz = velocity[3]/velocityMod;
       initRdotV = ( initRx*pIn[i].jet_v().x() + initRy*pIn[i].jet_v().y() + initRz*pIn[i].jet_v().z() )/mod_jet_v;
       initVdotV = ( initVx*pIn[i].jet_v().x() + initVy*pIn[i].jet_v().y() + initVz*pIn[i].jet_v().z() )/mod_jet_v;
-
+      // Note: jet_v()/mod_jet_v is a unit 3 vector in the direction of the jet originating parton.
+      
       initEner = pIn[i].e();
       if(!in_vac) length = fillQhatTab();
       if(brick_med) length = brick_length*fmToGeVinv; /// length in GeV-1 will have to changed for hydro
@@ -386,7 +400,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 
 	  // SC: if matter_on = false, set zero virtuality and MATTER will not do parton shower
           if(matter_on) pIn[i].set_t(tQ2); // Also resets momentum!
-	  else pIn[i].set_t(0.0); 
+          else pIn[i].set_t(0.0); 
 
           pIn[i].set_mean_form_time();
           double ft = generate_L(pIn[i].mean_form_time());
@@ -756,9 +770,24 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               }
               else
               { // we had a quark
-                  pid_a = pid ;
-                  pid_b = gid ;
-                  iSplit = 0;
+                  
+                  double r2 = ZeroOneDistribution(*GetMt19937Generator());
+                  
+                  if (r2>0.01)
+                  { // quark decay to quark and gluon
+                      pid_a = pid ;
+                      pid_b = gid ;
+                      iSplit = 0;
+                  }
+                  else
+                  { // quark decay to quark and photon
+                      pid_a = pid;
+                      pid_b = photonid;
+                      iSplit = 0;
+                      photon_brem = true;
+                  }
+                  
+                  
               }
               int ifcounter = 0;
               double l_perp2 = -1.0; // SC: initialization
