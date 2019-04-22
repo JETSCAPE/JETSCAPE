@@ -3,7 +3,7 @@
 #the jetscape seed sets the seed in smash, set to 0 for random (clocktime) seed
 js_seed = 0
 
-min_num_hadrons = 20000
+min_num_hadrons = 50000
 max_num_samples = 500
 
 #These should be set by external script/block of code
