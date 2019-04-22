@@ -294,10 +294,6 @@ parser.add_argument(
         help='start directory'
 )
 parser.add_argument(
-        '--bindir', type=os.path.abspath, metavar='PATH',
-        help='directory of TRENTO_FS_HYDRO and SAMPLER_AFTERBURNER'
-)
-parser.add_argument(
         '--logfile', type=os.path.abspath, metavar='PATH',
         help='log file (default: stdout)'
 )
@@ -327,7 +323,7 @@ def run_events(args, results_file):
         def run_single_event(event_number):
                 """ run a single jetscape event"""
                 results.fill(0)
-                h = run_cmd('./TRENTO_FS_HYDRO')
+                h = run_cmd('TRENTO_FS_HYDRO')
                 print(h.stdout)
                 print(h.stderr)
                 # hydro debugging files
@@ -360,7 +356,7 @@ def run_events(args, results_file):
                         while (nos < nos_max):
                                 nos += 1
                                 logging.info("Run smash # {:d}".format(nos))
-                                sample_burn = run_cmd("./SAMPLER_AFTERBURNER")
+                                sample_burn = run_cmd("SAMPLER_AFTERBURNER")
                                 print(sample_burn.stdout)
                                 print(sample_burn.stderr)
                                 subprocess.call("csplit --digits=2  --quiet --prefix=hadron_list final_smash_hadrons.dat \"/# JetScape module: SMASH/+1\" \"{*}\" ", shell=True)
@@ -564,7 +560,6 @@ def main():
         signal.signal(signal.SIGTERM, signal.default_int_handler)
         logging.debug('set SIGTERM handler')
         prefix=str(args.startdir)
-        binary_dir=str(args.bindir)
         logging.info('starting dir: {:s}'.format(prefix))
         with \
                         open(args.results, filemode + 'b') as results_file, \
@@ -572,8 +567,6 @@ def main():
                                 prefix='jetscape-', dir=args.tmpdir) as workdir:
                 os.chdir(workdir)
                 os.mkdir("input/")
-                os.system( 'ln -s {:s}/TRENTO_FS_HYDRO TRENTO_FS_HYDRO'.format(binary_dir) )
-                os.system( 'ln -s {:s}/SAMPLER_AFTERBURNER SAMPLER_AFTERBURNER'.format(binary_dir) )
                 os.system( 'ln -s {:s}/jetscape_init.xml jetscape_init.xml'.format(prefix)  )
                 os.system( 'ln -s {:s}/freestream_input freestream_input'.format(prefix)  )
                 os.system( 'ln -s {:s}/music_input music_input'.format(prefix) )
