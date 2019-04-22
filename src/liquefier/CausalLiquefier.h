@@ -31,10 +31,13 @@ namespace Jetscape {
 class CausalLiquefier: public Jetscape::LiquefierBase {
  private:
 
+    
+ public:
+    
     //parameters (to be moved to xml)---------------------------
     double tau_delay;// in [fm]
     double dtau; //in [fm]
-
+    
     double time_relax;// in [fm]
     double d_diff;// in [fm]
     
@@ -43,7 +46,9 @@ class CausalLiquefier: public Jetscape::LiquefierBase {
     double c_diff;
     double gamma_relax;
     
- public:
+    
+    
+    
     CausalLiquefier();
     ~CausalLiquefier() {};
 
