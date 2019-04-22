@@ -16,6 +16,17 @@
 #ifndef LIQUEFIERBASE_H
 #define LIQUEFIERBASE_H
 
+
+//#include "JetScapeModuleBase.h"
+//#include "FluidDynamics.h"
+//#include "FluidCellInfo.h"
+#include "JetClass.h"
+//#include "JetScapeWriter.h"
+//#include "PartonShower.h"
+//#include "PartonPrinter.h"
+//#include "MakeUniqueHelper.h"
+//#include <random>
+
 #include <array>
 #include <vector>
 #include "RealType.h"
@@ -55,6 +66,10 @@ class LiquefierBase {
     void add_a_droplet(Droplet droplet_in) {
         dropletlist.push_back(droplet_in);
     }
+
+    void add_hydro_sources(std::vector<Parton> &pIn,
+                           std::vector<Parton> &pOut);
+ 
 
     int get_dropletlist_size() const {return(dropletlist.size());}
 

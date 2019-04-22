@@ -229,7 +229,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 
  VERBOSE(8) << " the time in fm is " << time << " The time in GeV-1 is " << Time ;
  VERBOSE(8) << "pid = " << pIn[0].pid() << " E = " << pIn[0].e() << " px = " << pIn[0].p(1) << " py = " << pIn[0].p(2) << "  pz = " << pIn[0].p(3) << " virtuality = " << pIn[0].t() << " form_time in fm = " << pIn[0].form_time() ;
-  JSDEBUG << " color = " << pIn[0].color() << " anti-color = " << pIn[0].anti_color();
+ VERBOSE(8) << " color = " << pIn[0].color() << " anti-color = " << pIn[0].anti_color();
     
     unsigned int ShowerMaxColor = pIn[0].max_color();
     unsigned int CurrentMaxColor;
