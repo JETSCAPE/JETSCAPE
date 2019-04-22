@@ -541,7 +541,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   double soln_alphas,prob_el;
                   double muD2;
                   double recordE0;
-
+                  
+                // Convert hard parton momentum to onshell
                   pc0[1]=el_p0[1];
                   pc0[2]=el_p0[2];
                   pc0[3]=el_p0[3];
@@ -593,6 +594,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       continue;
                   }
 
+              // Calculating the delta t in the fluid rest frame
                   if(el_time+el_dt<=time) dt_lrf=el_dt*flowFactor;
                   else dt_lrf=(time-el_time)*flowFactor;
 
@@ -600,6 +602,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   if(qhat0 < 0.0) soln_alphas=alphas;
                   else soln_alphas=solve_alphas(qhatLoc,enerLoc,tempLoc);
 
+               // Calculate the proability of elastic scattering in time delta t in fluid rest frame
                   muD2=6.0*pi*soln_alphas*tempLoc*tempLoc;
                   prob_el=42.0*zeta3*el_CR*soln_alphas*tempLoc/6.0/pi/pi*dt_lrf/0.1973;
 
@@ -615,7 +618,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       int pid0=-999;
                       int pid2=-999;
                       int pid3=-999;
-                      double pc2[4]={0.0}; // final recoid thermal parton
+                      double pc2[4]={0.0}; // final recoil thermal parton
                       double pc3[4]={0.0}; // initial thermal parton
                       double pc4[4]={0.0}; // not used
                       double qt=0.0; // not used
