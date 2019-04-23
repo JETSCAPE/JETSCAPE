@@ -130,6 +130,7 @@ void MpiMusic::EvolveHydro() {
 
 
 void MpiMusic::collect_freeze_out_surface() {
+    system("rm surface.dat 2> /dev/null");
     system("cat surface_eps* >> surface.dat");
     system("rm surface_eps* 2> /dev/null");
 }

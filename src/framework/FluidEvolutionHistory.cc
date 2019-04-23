@@ -32,7 +32,7 @@ int EvolutionHistory::CheckInRange(Jetscape::real tau, Jetscape::real x,
                 + " is not in range [" + std::to_string(tau_min) + ","
                 + std::to_string(TauMax()) + "]");
         //throw InvalidSpaceTimeRange(warn_message);
-        JSWARN << warn_message;
+        //JSWARN << warn_message;
         status = 0;
     }
     if (x < x_min || x > XMax()) {
@@ -40,7 +40,7 @@ int EvolutionHistory::CheckInRange(Jetscape::real tau, Jetscape::real x,
                 + " is not in range [" + std::to_string(x_min) + ","
                 + std::to_string(XMax()) + "]");
         //throw InvalidSpaceTimeRange(warn_message);
-        JSWARN << warn_message;
+        //JSWARN << warn_message;
         status = 0;
     }
     if (y < y_min || y > YMax()) {
@@ -48,7 +48,7 @@ int EvolutionHistory::CheckInRange(Jetscape::real tau, Jetscape::real x,
                 + " is not in range [" + std::to_string(y_min) + "," 
                 + std::to_string(YMax()) + "]");
         //throw InvalidSpaceTimeRange(warn_message);
-        JSWARN << warn_message;
+        //JSWARN << warn_message;
         status = 0;
     }
     if (!boost_invariant) {
@@ -57,7 +57,7 @@ int EvolutionHistory::CheckInRange(Jetscape::real tau, Jetscape::real x,
                     + " is not in range [" + std::to_string(eta_min) + "," 
                     + std::to_string(EtaMax()) + "]");
             //throw InvalidSpaceTimeRange(warn_message);
-            JSWARN << warn_message;
+            //JSWARN << warn_message;
             status = 0;
         }
     }

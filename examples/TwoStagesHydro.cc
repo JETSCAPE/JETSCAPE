@@ -90,7 +90,7 @@ int main(int argc, char** argv)
   auto trento = make_shared<TrentoInitial>();
   auto null_predynamics = make_shared<NullPreDynamics> ();
   auto pGun= make_shared<PGun> ();
-  auto hydro1 = make_shared<Brick> ();
+  auto hydro1 = make_shared<MpiMusic> ();
   auto myliquefier = make_shared<CausalLiquefier> ();
   //hydro1->add_a_liqueifier(myliquefier);
 
@@ -126,9 +126,9 @@ int main(int argc, char** argv)
   hydro2->add_a_liqueifier(myliquefier);
   jetscape->Add(hydro2);
 
-//  // surface sampler
-//  auto iSS = make_shared<iSpectraSamplerWrapper> ();
-//  jetscape->Add(iSS);
+  // surface sampler
+  auto iSS = make_shared<iSpectraSamplerWrapper> ();
+  jetscape->Add(iSS);
 
   // Hadronization
   // This helper module currently needs to be added for hadronization.
