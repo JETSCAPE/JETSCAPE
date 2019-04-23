@@ -92,6 +92,7 @@ int main(int argc, char** argv)
   auto pGun= make_shared<PGun> ();
   auto hydro1 = make_shared<MpiMusic> ();
   auto myliquefier = make_shared<CausalLiquefier> ();
+  hydro1->SetId("MUSIC 1");
   //hydro1->add_a_liqueifier(myliquefier);
 
   jetscape->Add(trento);
@@ -124,6 +125,7 @@ int main(int argc, char** argv)
   // add the second hydro
   auto hydro2 = make_shared<MpiMusic> ();
   hydro2->add_a_liqueifier(myliquefier);
+  hydro2->SetId("MUSIC 2");
   jetscape->Add(hydro2);
 
   // surface sampler
