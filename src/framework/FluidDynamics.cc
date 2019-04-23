@@ -19,6 +19,7 @@
 #include "FluidDynamics.h"
 #include "LinearInterpolation.h"
 #include "JetScapeSignalManager.h"
+#include "MakeUniqueHelper.h"
 
 #define MAGENTA "\033[35m"
 
@@ -86,6 +87,13 @@ void FluidDynamics::Exec() {
 
     EvolveHydro();  
     JetScapeTask::ExecuteTasks();
+}
+
+void FluidDynamics::Clear() {
+    clear_up_evolution_data();
+    if (!weak_ptr_is_uninitialized(liquefier_ptr)) {
+        liquefier_ptr.lock()->Clear();
+    }
 }
 
 

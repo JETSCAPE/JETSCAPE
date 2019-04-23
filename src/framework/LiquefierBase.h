@@ -84,6 +84,7 @@ class LiquefierBase {
                     Jetscape::real y, Jetscape::real eta,
                     std::array<Jetscape::real, 4> &jmu) const;
 
+    virtual void Clear();
 };
 
 };

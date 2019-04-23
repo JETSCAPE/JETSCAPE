@@ -97,6 +97,8 @@ class FluidDynamics : public JetScapeModuleBase {
 	@sa Read about @a polymorphism in C++.
     */
     virtual void Exec();
+
+    virtual void Clear();
     
     /** @return parameter_list A pointer to the class Parameter which contains a file name for the fluid dynamics task.
 	@sa Implementation of the class Parameter.

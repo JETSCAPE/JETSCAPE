@@ -138,5 +138,8 @@ void LiquefierBase::add_hydro_sources(std::vector<Parton> &pIn, std::vector<Part
     //cout << "debug, after ......." << pOut.size() << endl;
 }
 
+void LiquefierBase::Clear() {
+    dropletlist.clear();
+}
 
 };
