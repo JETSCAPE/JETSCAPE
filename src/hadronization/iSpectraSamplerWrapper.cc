@@ -29,6 +29,9 @@ iSpectraSamplerWrapper::iSpectraSamplerWrapper() {
 }
 
 iSpectraSamplerWrapper::~iSpectraSamplerWrapper() {
+    if (iSpectraSampler_ptr_ != nullptr) {
+        delete iSpectraSampler_ptr_;
+    }
 }
 
 void iSpectraSamplerWrapper::InitTask() {
@@ -111,9 +114,7 @@ void iSpectraSamplerWrapper::Exec() {
 
 void iSpectraSamplerWrapper::Clear() {
     VERBOSE(2) << "Finish the particle sampling";
-    if (iSpectraSampler_ptr_ != nullptr) {
-        delete iSpectraSampler_ptr_;
-    }
+    iSpectraSampler_ptr_->clear();
 }
 
 void iSpectraSamplerWrapper::PassHadronListToJetscape() {
@@ -122,10 +123,13 @@ void iSpectraSamplerWrapper::PassHadronListToJetscape() {
     VERBOSE(4) << "number of events to pass : " << nev;
     for (unsigned int iev = 0; iev < nev; iev++) {
         std::vector<shared_ptr<Hadron>> hadrons;
-        unsigned int nparticles = (iSpectraSampler_ptr_->get_number_of_particles(iev));
-        VERBOSE(4) << "event " << iev << ": number of particles = "<< nparticles;
+        unsigned int nparticles = (
+                        iSpectraSampler_ptr_->get_number_of_particles(iev));
+        VERBOSE(4) << "event " << iev
+                   << ": number of particles = "<< nparticles;
         for (unsigned int ipart = 0; ipart < nparticles; ipart++) {
-            iSS_Hadron current_hadron = (iSpectraSampler_ptr_->get_hadron(iev, ipart));
+            iSS_Hadron current_hadron = (
+                                iSpectraSampler_ptr_->get_hadron(iev, ipart));
             int hadron_label = 0;
             int hadron_status = -1;
             int hadron_id = current_hadron.pid;
@@ -137,7 +141,9 @@ void iSpectraSamplerWrapper::PassHadronListToJetscape() {
                                 current_hadron.z, current_hadron.t);
 
             // create a JETSCAPE Hadron
-            hadrons.push_back(make_shared<Hadron>(hadron_label,hadron_id,hadron_status,hadron_p,hadron_x, hadron_mass));
+            hadrons.push_back(make_shared<Hadron>(
+                        hadron_label, hadron_id, hadron_status,
+                        hadron_p, hadron_x, hadron_mass));
             //Hadron* jetscape_hadron = new Hadron(hadron_label, hadron_id, hadron_status, hadron_p, hadron_x, hadron_mass);
             //(*Hadron_list_)[iev]->push_back(*jetscape_hadron);
         }
@@ -145,7 +151,8 @@ void iSpectraSamplerWrapper::PassHadronListToJetscape() {
     }
     VERBOSE(4) << "JETSCAPE received " << Hadron_list_.size() << " events.";
     for (unsigned int iev = 0; iev < Hadron_list_.size(); iev++) {
-        VERBOSE(4) << "In event " << iev << " JETSCAPE received " << Hadron_list_.at(iev).size() << " particles.";
+        VERBOSE(4) << "In event " << iev << " JETSCAPE received "
+                   << Hadron_list_.at(iev).size() << " particles.";
     }
 
 }
