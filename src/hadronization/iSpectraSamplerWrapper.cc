@@ -19,19 +19,16 @@
 #include "JetScapeLogger.h"
 #include "iSpectraSamplerWrapper.h"
 
+#include <memory>
 #include <string>
 
 using namespace Jetscape;
 
 iSpectraSamplerWrapper::iSpectraSamplerWrapper() {
     SetId("iSS");
-    iSpectraSampler_ptr_ = nullptr;
 }
 
 iSpectraSamplerWrapper::~iSpectraSamplerWrapper() {
-    if (iSpectraSampler_ptr_ != nullptr) {
-        delete iSpectraSampler_ptr_;
-    }
 }
 
 void iSpectraSamplerWrapper::InitTask() {
@@ -56,7 +53,7 @@ void iSpectraSamplerWrapper::InitTask() {
     iSS_xml_->FirstChildElement("Perform_resonance_decays")->QueryIntText(
                                             &flag_perform_decays);
 
-    iSpectraSampler_ptr_ = new iSS(working_path);
+    iSpectraSampler_ptr_ = std::unique_ptr<iSS> (new iSS(working_path));
     iSpectraSampler_ptr_->paraRdr_ptr->readFromFile(input_file);
 
     // overwrite some parameters

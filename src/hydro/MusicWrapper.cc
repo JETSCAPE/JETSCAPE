@@ -37,9 +37,6 @@ MpiMusic::MpiMusic() {
 
 
 MpiMusic::~MpiMusic() {
-    if (hydro_status != NOT_START) {
-        delete music_hydro_ptr;
-    }
 }
 
 
@@ -55,7 +52,8 @@ void MpiMusic::InitializeHydro(Parameter parameter_list) {
     string input_file = para->FirstChildElement("MUSIC_input_file")->GetText();
     para->FirstChildElement("Perform_CooperFrye_Feezeout")->QueryIntText(
                                                                 &doCooperFrye);
-    music_hydro_ptr = new MUSIC(input_file);
+
+    music_hydro_ptr = std::unique_ptr<MUSIC> (new MUSIC(input_file));
 
     // overwrite input options
     para->FirstChildElement("output_evolution_to_file")->QueryIntText(

@@ -61,7 +61,7 @@ class LiquefierBase {
 
  public:
     LiquefierBase() = default;
-    ~LiquefierBase() {}
+    ~LiquefierBase() {Clear();}
 
     void add_a_droplet(Droplet droplet_in) {
         dropletlist.push_back(droplet_in);

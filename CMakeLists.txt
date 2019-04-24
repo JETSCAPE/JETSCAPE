@@ -64,7 +64,7 @@ endif (smash)
 ### Compiler & Linker Flags ###
 ###############################
 message("Compiler and Linker flags ...")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O -fPIC -pipe -Wall -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O -fPIC -pipe -Wall -std=c++11")
 ## can turn off some warnings
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-reorder -Wno-unused-variable ")
 ## can turn on debugging information

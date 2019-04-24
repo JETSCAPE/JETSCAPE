@@ -70,7 +70,7 @@ class HydroSourceJETSCAPE : public HydroSourceBase {
 class MpiMusic: public FluidDynamics {
  private:
     // int mode;            //!< records running mode
-    MUSIC *music_hydro_ptr;
+    std::unique_ptr<MUSIC> music_hydro_ptr;
     int doCooperFrye;    //!< flag to run Cooper-Frye freeze-out
                          //!< for soft particles
     int flag_output_evo_to_file;
