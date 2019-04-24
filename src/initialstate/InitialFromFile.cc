@@ -15,6 +15,9 @@
 
 #include "InitialFromFile.h"
 
+// Register the module with the base class
+RegisterJetScapeModule<InitialFromFile> InitialFromFile::reg("InitialFromFile");
+
 InitialFromFile::InitialFromFile() {
     SetId("InitialFromFile");
     event_id_ = -1;

@@ -30,6 +30,9 @@ class iSpectraSamplerWrapper: public SoftParticlization {
 
     iSS *iSpectraSampler_ptr_;
 
+    // Allows the registration of the module so that it is available to be used by the Jetscape framework.
+    static RegisterJetScapeModule<iSpectraSamplerWrapper> reg;
+
  public:
     iSpectraSamplerWrapper();
     ~iSpectraSamplerWrapper();

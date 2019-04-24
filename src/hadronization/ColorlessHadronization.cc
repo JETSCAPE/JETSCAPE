@@ -30,6 +30,9 @@ using namespace Pythia8;
 // Hadrons output file
 //ofstream hadfile;
 
+// Register the module with the base class
+RegisterJetScapeModule<ColorlessHadronization> ColorlessHadronization::reg("ColorlessHadronization");
+
 // Initialize static helper here
 Pythia8::Pythia ColorlessHadronization::pythia ("IntentionallyEmpty",false);
 

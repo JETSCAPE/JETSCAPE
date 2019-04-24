@@ -29,6 +29,9 @@
 
 using namespace Jetscape;
 
+// Register the module with the base class
+RegisterJetScapeModule<Martini> Martini::reg("Martini");
+
 using std::ofstream;
 using std::ifstream;
 using std::ostream;

@@ -76,6 +76,10 @@ class JetScape : public JetScapeModuleBase
  protected:
   
   void ReadGeneralParametersFromXML();
+  void DetermineTaskListFromXML();
+  void DetermineWritersFromXML();
+  void CheckForWriterFromXML(const char* writerName, std::string outputFilename);
+    
   void SetPointers();
   
   void Show();
@@ -83,6 +87,9 @@ class JetScape : public JetScapeModuleBase
 
   bool reuse_hydro_;
   unsigned int n_reuse_hydro_;
+  
+  bool fEnableAutomaticTaskListDetermination; // Option to automatically determine the task list from the XML file,
+                                              // rather than manually calling JetScapeTask::Add() in the run macro.
   
 };
 

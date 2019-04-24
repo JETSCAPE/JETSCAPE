@@ -25,6 +25,9 @@
 
 using namespace Jetscape;
 
+// Register the module with the base class
+RegisterJetScapeModule<MusicWrapper> MusicWrapper::reg("MUSIC");
+
 MpiMusic::MpiMusic() {
     hydro_status = NOT_START;
     doCooperFrye = 0;

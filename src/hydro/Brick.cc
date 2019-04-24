@@ -26,6 +26,9 @@
 
 using namespace Jetscape;
 
+// Register the module with the base class
+RegisterJetScapeModule<Brick> Brick::reg("Brick");
+
 Brick::Brick() : FluidDynamics() {
     // initialize the parameter reader
     T_brick = 0.0;  // GeV

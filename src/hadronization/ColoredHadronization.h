@@ -33,6 +33,10 @@ class ColoredHadronization : public HadronizationModule<ColoredHadronization>
     
 private:
     double p_fake;
+  
+  // Allows the registration of the module so that it is available to be used by the Jetscape framework.
+  static RegisterJetScapeModule<ColoredHadronization> reg;
+  
 protected:
     static Pythia8::Pythia pythia;
 };

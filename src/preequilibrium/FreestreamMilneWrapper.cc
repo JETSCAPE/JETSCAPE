@@ -23,6 +23,9 @@
 
 using namespace std;
 
+// Register the module with the base class
+RegisterJetScapeModule<FreestreamMilneWrapper> FreestreamMilneWrapper::reg("FreestreamMilne");
+
 FreestreamMilneWrapper::FreestreamMilneWrapper() {
     preequilibrium_status_ = NOT_STARTED;
     SetId("Freestream-Milne");

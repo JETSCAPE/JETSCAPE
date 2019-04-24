@@ -18,6 +18,9 @@
 
 using namespace Jetscape;
 
+// Register the module with the base class
+RegisterJetScapeModule<PGun> PGun::reg("PGun");
+
 PGun::PGun() : HardProcess()
 {
   fixed_pT=0;

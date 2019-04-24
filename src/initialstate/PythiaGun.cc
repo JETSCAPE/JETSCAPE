@@ -22,6 +22,8 @@
 
 using namespace std;
 
+// Register the module with the base class
+RegisterJetScapeModule<PythiaGun> PythiaGun::reg("PythiaGun");
 
 PythiaGun::~PythiaGun()
 {

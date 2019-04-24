@@ -21,6 +21,9 @@
 #include "TrentoInitial.h"
 
 namespace Jetscape {
+  
+// Register the module with the base class
+RegisterJetScapeModule<TrentoInitial> TrentoInitial::reg("TrentoInitial");
 
 // Helper functions for Collider ctor.
 namespace {

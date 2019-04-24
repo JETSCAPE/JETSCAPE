@@ -248,7 +248,7 @@ double JetScapeXML::GetElementDouble(std::initializer_list<const char*> path, bo
   else {
     return 0.;
   }
-  
+
 }
   
 //________________________________________________________________

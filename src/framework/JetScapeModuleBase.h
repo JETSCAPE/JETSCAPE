@@ -19,6 +19,7 @@
 #include <string>
 #include <memory>
 #include <random>
+#include <map>
 
 #include "JetScapeTask.h"
 #include "JetScapeXML.h"
@@ -108,6 +109,70 @@ class JetScapeModuleBase : public JetScapeTask , public sigslot::has_slots<sigsl
   shared_ptr<std::mt19937> mt19937_generator_;
 
   
+};
+  
+
+/**
+ * @class JetScapeModuleComponentFactory
+ * @brief Factory for modules in the Jetscape framework.
+ *
+ * This class implements a static map (i.e. shared between all instances of JetScapeModuleBase)
+ * consisting of a std::string of module names (i.e. name in XML config) and a function that creates
+ * an instance of the module.
+ * This will allow us to automatically add new modules to Jetscape without modifying the framework classes.
+ *
+ * Based on: https://stackoverflow.com/a/582456 and
+ * https://github.com/alisw/AliPhysics/blob/master/PWG/EMCAL/EMCALtasks/AliEmcalCorrectionComponent.h
+ */
+
+/// Template function for creating a new module. Used to register the module.
+template<typename T> shared_ptr<JetScapeModuleBase> createT() { return std::make_shared<T>(); }
+
+// Factory to create and keep track of new modules
+class JetScapeModuleFactory
+{
+public:
+  virtual ~JetScapeModuleFactory() {}
+  
+  typedef std::map<std::string, shared_ptr<JetScapeModuleBase>(*)()> map_type;
+  
+  /// Creates an instance of an object based on the name if the name is registered in the map.
+  static shared_ptr<JetScapeModuleBase> createInstance(std::string const& s)
+  {
+    map_type::iterator it = getMap()->find(s);
+    if(it == getMap()->end()) {
+      return 0;
+    }
+    return it->second();
+  }
+  
+protected:
+  /// Creates and access the module map
+  static map_type * getMap() {
+    // We never delete the map (until program termination) because we cannot guarantee correct destruction order
+    if(!moduleMap) { moduleMap = new map_type;  }
+    return moduleMap;
+  }
+  
+private:
+  /// Contains the map to all of the modules
+  static map_type* moduleMap;
+};
+
+/**
+ * @class RegisterJetScapeModule
+ * @brief Registers Jetscape modules in the factory map
+ */
+template<typename T>
+class RegisterJetScapeModule : public JetScapeModuleFactory
+{
+public:
+  /// Registers the name of the module to map to a function that can create the module
+  RegisterJetScapeModule(std::string const& s)
+  {
+    //std::cout << "Registering " << s << " to the map" << std::endl;
+    getMap()->insert(std::make_pair(s, &createT<T>));
+  }
 };
 
 } // end namespace Jetscape

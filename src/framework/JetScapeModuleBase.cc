@@ -21,6 +21,9 @@
 #include<iostream>
 
 namespace Jetscape {
+  
+  // Create an instance of the static map to register modules
+  JetScapeModuleFactory::map_type* JetScapeModuleFactory::moduleMap = new JetScapeModuleFactory::map_type;
 
   int JetScapeModuleBase::current_event=0;
 

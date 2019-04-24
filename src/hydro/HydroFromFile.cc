@@ -28,6 +28,9 @@
 
 using namespace Jetscape;
 
+// Register the module with the base class
+RegisterJetScapeModule<HydroFromFile> HydroFromFile::reg("HydroFromFile");
+
 HydroFromFile::HydroFromFile() {
     hydro_status = NOT_START;
     SetId("hydroFromFile");

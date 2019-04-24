@@ -343,28 +343,8 @@ target_link_libraries(JetScapeReader JetScapeThird GTL ${PYTHIA8_LIBRARIES})
 ###########################
 
 ### Run Jetscape
-add_executable(brickTest ./examples/brickTest.cc)
-target_link_libraries(brickTest JetScape )
-
-add_executable(PythiaBrickTest ./examples/PythiaBrickTest.cc)
-target_link_libraries(PythiaBrickTest JetScape )
-
-add_executable(LBT_brickTest ./examples/LBT_brickTest.cc)
-target_link_libraries(LBT_brickTest JetScape )
-
-if(${HDF5_FOUND})
-  add_executable(hydroFileTest ./examples/hydroFileTest.cc)
-  target_link_libraries(hydroFileTest JetScape ${_hdf5_libs})
-  
-  add_executable(hydroJetTest  ./examples/hydroJetTest.cc)
-  target_link_libraries(hydroJetTest JetScape ${_hdf5_libs})
-
-  add_executable(hydroJetTestPGun  ./examples/hydroJetTestPGun.cc)
-  target_link_libraries(hydroJetTestPGun JetScape ${_hdf5_libs})
-endif()
-
-add_executable(SimpleValidate ./examples/SimpleValidate.cc)
-target_link_libraries(SimpleValidate JetScape )
+add_executable(runJetscape ./examples/runJetscape.cc)
+target_link_libraries(runJetscape JetScape )
 
 ### Read Jetscape output
 add_executable(readerTest ./examples/readerTest.cc)
@@ -378,21 +358,14 @@ target_link_libraries(FinalStatePartons JetScape )
 
 # executables with additional dependencies
 
-if (freestream AND music AND iSS)
-  add_executable(freestream-milneTest ./examples/freestream-milneTest.cc)
-  target_link_libraries(freestream-milneTest JetScape ${GSL_LIBRARIES})
-endif (freestream AND music AND iSS)
-
 if ( music AND iSS )
-  add_executable(MUSICTest ./examples/MUSICTest.cc)
-  target_link_libraries(MUSICTest JetScape ${GSL_LIBRARIES})
+  target_link_libraries(runJetscape ${GSL_LIBRARIES})
 endif (music AND iSS )
 
 if ( music AND iSS AND smash )
-  add_executable(SMASHTest ./examples/SMASHTest.cc)
   include_directories(${SMASH_INCLUDE_DIR})
   # "-lubsan -lasan")
-  target_link_libraries(SMASHTest JetScape ${SMASH_LIBRARIES} ${MPI_LIBRARIES} ${GSL_LIBRARIES})
+  target_link_libraries(runJetscape ${SMASH_LIBRARIES} ${MPI_LIBRARIES} ${GSL_LIBRARIES})
 endif ( music AND iSS AND smash )
 
 # if (${ROOT_FOUND})
@@ -409,9 +382,6 @@ endif ( music AND iSS AND smash )
 
 
 # -----------------------------------------------------------
-#### copy jetscape_init.xml to build/, such that one can test xml reading in build/ directory
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/examples/jetscape_init.xml DESTINATION ${CMAKE_BINARY_DIR}/)
-
 #### copy essential files for MUSIC to build/
 if (freestream)
   if(EXISTS "${CMAKE_SOURCE_DIR}/examples/test_freestream_files/")
