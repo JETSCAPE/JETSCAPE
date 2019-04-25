@@ -47,8 +47,12 @@ void CLVisc::InitializeHydro(Parameter parameter_list) {
     }
 
     clvisc::Config cfg;
-    para->FirstChildElement("gpu_block_size")->QueryIntText(&cfg.block_size);
     std::string device_type = para->FirstChildElement("device_type")->GetText();
+    if(device_type == "cpu" || device_type == "CPU") {
+        para->FirstChildElement("cpu_block_size")->QueryIntText(&cfg.block_size);
+    } else {
+        para->FirstChildElement("gpu_block_size")->QueryIntText(&cfg.block_size);
+    }
     int device_id;
     para->FirstChildElement("device_id")->QueryIntText(&device_id);
     para->FirstChildElement("etaos_xmin")->QueryFloatText(&cfg.etaos_xmin);

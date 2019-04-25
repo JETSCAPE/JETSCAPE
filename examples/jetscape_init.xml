@@ -190,6 +190,7 @@
     <!-- CLVisc  -->
     <CLVisc>
       <name>CLVisc</name>
+      <cpu_block_size>1</cpu_block_size>
       <gpu_block_size>64</gpu_block_size>
       <device_type>gpu</device_type>
       <device_id> 0 </device_id>
