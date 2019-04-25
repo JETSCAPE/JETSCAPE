@@ -14,6 +14,8 @@ import sys
 import tempfile
 import numpy as np
 
+import shutil
+
 # fully specify numeric data types, including endianness and size, to
 # ensure consistency across all machines
 float_t = '<f8'
@@ -127,8 +129,7 @@ def calc_Qvector(pT, phi, eta, pTbins, etabins, Nharmonic):
 			sub_phi = phi[pT_cut & eta_cut]
 			results['N'][i,j] = sub_phi.size
 
-			results['Qn'][i,j] = np.array([ np.exp(1j*n*sub_phi).sum()
-										   for n in range(1, 1+Nharmonic) ])
+			results['Qn'][i,j] = np.array( [ np.exp(1j*n*sub_phi).sum() for n in range(1, 1+Nharmonic) ] )
 	return results
 
 
@@ -144,8 +145,7 @@ def calc_Tmunu(ET, y, pT, phi, ycut, pTcut):
 	phi = phi[cut]
 	pT = pT[cut]
 
-	Pmu = np.array([ET * np.cosh(y), pT * np.cos(phi),
-					pT * np.sin(phi), ET * np.sinh(y) ])
+	Pmu = np.array( [ET * np.cosh(y), pT * np.cos(phi), pT * np.sin(phi), ET * np.sinh(y) ] )
 
 	# T0nu
 	for i in range(4):
@@ -171,8 +171,7 @@ def dprint(data, dtype, prefix):
 
 def file_len(fname):
 	""" do line count """
-	p = subprocess.Popen(['wc', '-l', fname], stdout=subprocess.PIPE,
-											  stderr=subprocess.PIPE)
+	p = subprocess.Popen(['wc', '-l', fname], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	result, err = p.communicate()
 	if p.returncode != 0:
 		raise IOError(err)
@@ -306,6 +305,7 @@ class StopEvent(Exception):
 	""" Raise to end an event early. """
 
 
+#where the magic happens 
 def run_events(args, results_file):
 	"""
 	Run events as determined by user input:
@@ -324,14 +324,13 @@ def run_events(args, results_file):
 		results.fill(0)
 		start_h = datetime.datetime.now()
 		logging.info('TRENTO_FS_HYDRO started at %s ', start_h)
-		h = run_cmd('TRENTO_FS_HYDRO')
+		h = run_cmd('TRENTO_FS_HYDRO') # this executable runs TRENTo, freestream-milne and MUSIC. writes fo surf to surface.dat
 		print(h.stdout)
 		print(h.stderr)
 		end_h = datetime.datetime.now()
 		logging.info('TRENTO_FS_HYDRO finished in %s ', end_h - start_h)
-		# hydro debugging files
-		for rf, short in zip(['music_inv_reynolds_shear.txt',
-					'music_inv_reynolds_bulk.txt'], ['iR-shear','iR-bulk']):
+		# these files contain instances of viscous regulation inside high temperature region 
+		for rf, short in zip(['music_inv_reynolds_shear.txt', 'music_inv_reynolds_bulk.txt'], ['iR-shear','iR-bulk']):
 			if os.path.exists(rf):
 				logging.info("{:s} exists".format(rf))
 				subprocess.call("mv {:s} {:s}/{:s}-{:s}".format(rf, os.path.dirname(args.results), short, os.path.basename(args.results), ), shell=True)
@@ -340,9 +339,10 @@ def run_events(args, results_file):
 		else:
 			subprocess.call("mv surface.dat input/", shell=True)
 
-		# loop over delta-f
-		# idf = 0,1,2,3 runs smash. idf = 4 runs urqmd-afterburner
+		# loop over 'delta-f'. in iS3D, delta_f = 1 : 14 mom, 2 : RTA C.E., 3 : McNelis Mod, 4 : Bernhard Mod
+		# idf = 0,1,2,3 runs iS3D and smash. idf = 4 runs iS3D and urqmd-afterburner
 		for idf in range(0,5):
+			logging.info('idf  = {:d}'.format(idf))
 
 			if (idf < 4):
 				#use appropriate delta-f mode and smash box particle list
@@ -355,15 +355,15 @@ def run_events(args, results_file):
 				logging.info("Run iS3D and smash")
 				start_s = datetime.datetime.now()
 				logging.info('SAMPLER_AFTERBURNER started at %s ', start_s)
-				sample_burn = run_cmd("SAMPLER_AFTERBURNER")
+				sample_burn = run_cmd("SAMPLER_AFTERBURNER") # this executable reads surface.dat into iS3D, samples, runs smash 
 				print(sample_burn.stdout)
 				print(sample_burn.stderr)
 				end_s = datetime.datetime.now()
 				logging.info('SAMPLER_AFTERBURNER finished in %s ', end_s - start_s)
-				#split the file into iS3D hadrons and smash hadrons separately 
+				#split the file into iS3D hadrons and smash hadrons separately)
 				subprocess.call("csplit --digits=2  --quiet --prefix=hadron_list final_smash_hadrons.dat \"/# JetScape module: SMASH/+1\" \"{*}\" ", shell=True)
-				nparts += file_len("./hadron_list01")
-				subprocess.call("cat ./hadron_list01 >> particles.dat", shell=True) #particles after smash finished
+				nparts += file_len("./hadron_list01") #particles after smash finished 
+				subprocess.call("cat ./hadron_list01 >> particles.dat", shell=True)
 				#need to get the number of oversamples from first header line in final_smash_hadrons.dat
 				nos = 0 
 				with open('final_smash_hadrons.dat') as f:
@@ -548,22 +548,19 @@ def main():
 	logging.debug('set SIGTERM handler')
 	prefix=str(args.startdir)
 	logging.info('starting dir: {:s}'.format(prefix))
-	with \
-			open(args.results, filemode + 'b') as results_file, \
-			tempfile.TemporaryDirectory(
-				prefix='jetscape-', dir=args.tmpdir) as workdir:
+	with open(args.results, filemode + 'b') as results_file, tempfile.TemporaryDirectory( prefix='jetscape-', dir=args.tmpdir) as workdir:
 		os.chdir(workdir)
 		os.mkdir("input/")
-		os.system( 'ln -s {:s}/jetscape_init.xml jetscape_init.xml'.format(prefix)  )
-		os.system( 'ln -s {:s}/freestream_input freestream_input'.format(prefix)  )
-		os.system( 'ln -s {:s}/music_input music_input'.format(prefix) )
-		os.system( 'ln -s {:s}/iS3D_parameters.dat iS3D_parameters.dat'.format(prefix)  )
-		os.system( 'ln -s {:s}/PDG PDG'.format(prefix)  )
-		os.system( 'ln -s {:s}/EOS EOS'.format(prefix)  )
-		os.system( 'ln -s {:s}/tables tables'.format(prefix)  )
-		os.system( 'ln -s {:s}/deltaf_coefficients deltaf_coefficients'.format(prefix)  )
-		os.system( 'ln -s {:s}/smash_input smash_input'.format(prefix) )
-
+		#note in general symlinks are not safe if these files need to be modified!
+		os.system( 'cp {:s}/jetscape_init.xml jetscape_init.xml'.format(prefix)  )
+		os.system( 'cp {:s}/freestream_input freestream_input'.format(prefix)  )
+		os.system( 'cp {:s}/music_input music_input'.format(prefix) )
+		os.system( 'cp {:s}/iS3D_parameters.dat iS3D_parameters.dat'.format(prefix)  )
+		os.system( 'cp -R {:s}/PDG PDG'.format(prefix)  )
+		os.system( 'cp -R {:s}/EOS EOS'.format(prefix)  )
+		os.system( 'cp -R {:s}/tables tables'.format(prefix)  )
+		os.system( 'cp -R {:s}/deltaf_coefficients deltaf_coefficients'.format(prefix)  )
+		os.system( 'cp -R {:s}/smash_input smash_input'.format(prefix) )
 
 		logging.info('working directory: %s', workdir)
 
@@ -576,15 +573,9 @@ def main():
 			signal.signal(signal.SIGTERM, signal.SIG_IGN)
 			signal.signal(signal.SIGINT, signal.SIG_IGN)
 			status = True
-			logging.info(
-				'interrupt or signal at %s, cleaning up...',
-				datetime.datetime.now()
-			)
+			logging.info( 'interrupt or signal at %s, cleaning up...', datetime.datetime.now() )
 			if args.checkpoint is not None:
-				logging.info(
-					'current event saved in checkpoint file %s',
-					args.checkpoint
-				)
+				logging.info( 'current event saved in checkpoint file %s', args.checkpoint )
 
 	end = datetime.datetime.now()
 	logging.info('finished at %s, %s elapsed', end, end - start)
