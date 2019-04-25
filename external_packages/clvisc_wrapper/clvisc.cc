@@ -318,13 +318,13 @@ void CLVisc::evolve() {
         israel_stewart_initialize_();
         ideal_.predict_first_step();
         for (int loop = 0; loop < max_loops; loop++) {
-            std::cout << "tau = " << tau_ << " fm; " << std::endl;
             backend_.enqueue_copy(d_shear_pi_[1], d_shear_pi_[0], 10*size_*sizeof(cl_real));
             backend_.enqueue_copy(ideal_.d_ev_[1], ideal_.d_ev_[0], size_*sizeof(cl_real4));
             one_step();
             update_udiff_();
             if (loop % cfg_.ntskip == 0) {
                 float max_ed = ideal_.max_energy_density();
+                std::cout << "tau = " << tau_ << " fm; ";
                 std::cout << "max_ed = " << max_ed << " ";
                 std::time(&timer2);
                 total_exec_time = std::difftime(timer2, timer1);

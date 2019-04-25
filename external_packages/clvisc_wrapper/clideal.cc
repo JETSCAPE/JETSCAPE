@@ -274,15 +274,17 @@ void CLIdeal::evolve() {
         std::time_t timer1, timer2;
         std::time(&timer1);
         for (int step=0; step < max_loops; step++) {
-            float max_ed = max_energy_density();
-            if ( max_ed < 0.5 ) break;
             one_step();
-            std::time(&timer2);
-            float time_diff = std::difftime(timer2, timer1);
-            std::cout << "tau = " << tau_ << " fm; ";
-            std::cout << "max_ed = " << max_ed << " ";
-            std::cout << "Total computing time: " << time_diff << " s; ";
-            std::cout << std::endl;
+            if (step % cfg_.ntskip == 0) {
+                float max_ed = max_energy_density();
+                std::time(&timer2);
+                float time_diff = std::difftime(timer2, timer1);
+                std::cout << "tau = " << tau_ << " fm; ";
+                std::cout << "max_ed = " << max_ed << " ";
+                std::cout << "Total computing time: " << time_diff << " s; ";
+                std::cout << std::endl;
+                if ( max_ed < 0.5 ) break;
+            }
         }
         std::cout << "Total computing time: " << total_exec_time << " s; ";
     } catch (cl::Error & err) {
