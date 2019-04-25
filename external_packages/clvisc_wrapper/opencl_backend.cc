@@ -274,6 +274,11 @@ void OpenclBackend::DeviceInfo() {
     }
 }
 
+/*! \breif printout the device type, CL_DEVICE_TYPE_CPU or  CL_DEVICE_TYPE_GPU*/
+cl_int OpenclBackend::DeviceType() {
+    return device_type_;
+}
+
 // template member functions need explicit declearation on mac
 template cl::Buffer OpenclBackend::CreateBufferByCopyVector(std::vector<cl_int> & source_vector, bool read_only);
 

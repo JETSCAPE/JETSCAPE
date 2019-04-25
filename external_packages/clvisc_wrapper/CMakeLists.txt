@@ -22,6 +22,8 @@ set ( SRC_LIST
     ${PROJECT_SOURCE_DIR}/clideal.cc
     ${PROJECT_SOURCE_DIR}/include/clvisc.h
     ${PROJECT_SOURCE_DIR}/clvisc.cc
+    ${PROJECT_SOURCE_DIR}/include/error_msgs.h
+    ${PROJECT_SOURCE_DIR}/error_msgs.cc
     ${PROJECT_SOURCE_DIR}/test_visc.cc
     #${PROJECT_SOURCE_DIR}/test.cc
     )
@@ -35,7 +37,7 @@ set ( CMAKE_USE_RELATIVE_PATH "true")
 set ( CMAKE_EXECUTABLE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/build/ )
 set ( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/build/ )
 
-set ( BSZ 256 )   
+#set ( BSZ 256 )   
 
 set ( DUMPDATA_FROM_GPU "true" )
 

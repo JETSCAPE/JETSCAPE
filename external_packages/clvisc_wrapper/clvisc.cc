@@ -24,8 +24,10 @@
 #include <cmath>
 #include <cstring>
 #include <ctime>
+#include<cstdlib>
 #include <algorithm>
 #include "include/clvisc.h"
+#include "include/error_msgs.h"
 
 namespace clvisc {
 CLVisc::CLVisc(const Config & cfg, std::string device_type,
@@ -67,6 +69,9 @@ CLVisc::CLVisc(const Config & cfg, std::string device_type,
         kernel_visc_update_ev_ = cl::Kernel(prg2, "update_ev");
     } catch (cl::Error & err ){
         std::cerr<<"Error:"<<err.what()<<"("<<err.err()<<")\n";
+        std::cerr<<"@" << __FILE__ << ":line " << __LINE__ << std::endl;
+        std::cerr<<ErrorMessage(err.err())<<std::endl;
+        throw(err);
     }
 }
 
@@ -335,6 +340,9 @@ void CLVisc::evolve() {
         std::cout << "Total computing time: " << total_exec_time << " s; ";
     } catch (cl::Error & err) {
         std::cout << err.what() << " " << err.err() << std::endl;
+        std::cerr<<"@" << __FILE__ << ":line " << __LINE__ << std::endl;
+        std::cout << ErrorMessage(err.err()) << std::endl;
+        throw(err);
     }
 }
 

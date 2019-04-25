@@ -93,6 +93,9 @@ class OpenclBackend {
 
     /*! \breif printout the available devices*/
     void DeviceInfo();
+
+    /*! \breif printout the device type, CL_DEVICE_TYPE_CPU or  CL_DEVICE_TYPE_GPU*/
+    cl_int DeviceType();
  
     /*! \breif utility to compute the excution time of one event */
     float ExcutionTime(cl::Event & event);

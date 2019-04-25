@@ -1,4 +1,4 @@
-#define BSZ 256
+#define BSZ 
 
 #define DUMPDATA_FROM_GPU true
 

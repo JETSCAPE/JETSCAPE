@@ -24,8 +24,10 @@
 #include <cmath>
 #include <cstring>
 #include <ctime>
+#include <cstdlib>
 #include <algorithm>
 #include "include/clideal.h"
+#include "include/error_msgs.h"
 
 namespace clvisc {
 // number of blocks for reduction on gpus
@@ -60,6 +62,13 @@ CLIdeal::CLIdeal(const Config & cfg, std::string device_type,
     opts_.SetIntConst("NYSKIP", cfg_.nyskip);
     opts_.SetIntConst("NZSKIP", cfg_.nzskip);
     opts_.SetIntConst("BSZ", cfg.block_size);
+
+    if (backend_.DeviceType() == CL_DEVICE_TYPE_CPU) {
+        opts_.SetIntConst("REDUCTION_BSZ", 1);
+    } else {
+        opts_.SetIntConst("REDUCTION_BSZ", 256);
+    }
+
     int SIZE = cfg_.nx * cfg_.ny * cfg_.nz;
     opts_.SetIntConst("SIZE", SIZE);
 #ifdef USE_SINGLE_PRECISION
@@ -81,6 +90,9 @@ CLIdeal::CLIdeal(const Config & cfg, std::string device_type,
         kernel_reduction_ = cl::Kernel(prg2, "reduction_stage1");
     } catch (cl::Error & err ){
         std::cerr<<"Error:"<<err.what()<<"("<<err.err()<<")\n";
+        std::cerr<<"@" << __FILE__ << ":line " << __LINE__ << std::endl;
+        std::cerr<<ErrorMessage(err.err())<<std::endl;
+        throw(err);
     }
 }
 
@@ -104,6 +116,7 @@ void CLIdeal::read_eos_table_(std::string fname, CompileOption & opts_) {
                     pressure, temperature, entropy_density}});
         }
     } else {
+        std::cerr<<"@" << __FILE__ << ":line " << __LINE__ << std::endl;
         throw std::runtime_error("Failed to open equation of state table" + fname);
     }
 
@@ -226,6 +239,12 @@ float CLIdeal::max_energy_density() {
     kernel_reduction_.setArg(2, size);
     auto global_size = cl::NDRange(256*REDUCTION_BLOCKS);
     auto local_size = cl::NDRange(256);
+
+    if (backend_.DeviceType() == CL_DEVICE_TYPE_CPU) {
+        global_size = cl::NDRange(REDUCTION_BLOCKS);
+        local_size = cl::NDRange(1);
+    }
+
     backend_.enqueue_run(kernel_reduction_, global_size, local_size);
 
     std::vector<cl_real> h_submax(REDUCTION_BLOCKS);
@@ -268,6 +287,9 @@ void CLIdeal::evolve() {
         std::cout << "Total computing time: " << total_exec_time << " s; ";
     } catch (cl::Error & err) {
         std::cout << err.what() << " " << err.err() << std::endl;
+        std::cerr<<"@" << __FILE__ << ":line " << __LINE__ << std::endl;
+        std::cerr<<ErrorMessage(err.err())<<std::endl;
+        throw(err);
     }
 }
 
