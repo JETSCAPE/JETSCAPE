@@ -146,3 +146,45 @@ To run JETSCAPE with MUSIC, one needs to use MPI commands,
 ```bash
     mpirun -np 1 ./MUSICTest
 ```
+
+## CLVisc support
+
+CLVisc is a (3+1)D viscous hydrodynamical code developed at CCNU, LBNL and Frankfurt.
+The code is parallelized on Graphics Processing Unit (GPU) using OpenCL.
+Different from CUDA, the same code runs on both CPU and GPUs.
+The fluiddynamic evolution part was integrated into the JETSCAPE framework.
+The public version of CLVisc uses Python and pyopencl. 
+A cpp wrapper is implemented in external_packages folder for JETSCAPE.
+To download the opencl kernel files, run
+
+```bash
+    ./get_clvisc.sh
+```
+
+This shell script will clone the latest version of CLVisc to external_packages folder.
+
+When compiling CLVisc with JETSCAPE, please turn on the CLVisc support option
+when generating the cmake configuration file,
+
+```bash
+    mkdir build
+    cd build
+    cmake -Dclvisc=ON ..
+    make
+```
+
+The cpp wrapper in JETSCAPE will read configurations from jetscape_init.xml to initialize clvisc.
+CLVisc will use initial condition module and other modules provided by JETSCAPE.
+
+To run JETSCAPE with CLVisc on GPU or CPU, one needs to install OpenCL library and 
+most recent GPU drivers that support OpenCL.
+The Macbook has OpenCL library installed by default.
+Other GPU work stations using NVIDIA gpus might have already installed CUDA.
+CUDA is shipped with OpenCL too.
+For AMD, intel gpus or CPUs, one can install AMD APP SDK to provide the OpenCL support.
+
+To run the JETSCAPE CLViscTest,
+
+```bash
+    ./CLViscTest
+```
