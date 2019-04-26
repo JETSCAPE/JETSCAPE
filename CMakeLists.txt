@@ -63,7 +63,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-reorder -Wno-unused-variable ")
 ### note that APPLE also defines UNIX, hence the elseif to differentiate
 if (APPLE)
     message( STATUS "Apple : " ${CMAKE_HOST_SYSTEM})
-    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang") 
+    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
     elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare -Wno-unused-but-set-variable -Wno-parentheses")
@@ -71,7 +71,7 @@ if (APPLE)
 
     ## can turn off some warnings
     # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-private-field")
-elseif(UNIX) 
+elseif(UNIX)
     message( STATUS "Linux : " ${CMAKE_HOST_SYSTEM})
     ## can turn off some warnings
     if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
@@ -80,9 +80,9 @@ elseif(UNIX)
 
     ## Additional options
     # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
-endif()   
+endif()
 
-message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS})	
+message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS})
 #message(STATUS "LD_FLAGS = " ${CMAKE_EXE_LINKER_FLAGS})
 
 ###########################
@@ -97,7 +97,7 @@ include_directories("${CMAKE_SOURCE_DIR}/external_packages/trento/src/")
 #############################################
 ### Installing Header and Library Files   ###
 #############################################
-## Run with, e.g., cmake -DCMAKE_INSTALL_PREFIX=~/tmp .. 
+## Run with, e.g., cmake -DCMAKE_INSTALL_PREFIX=~/tmp ..
 ## default directory is the build directory
 ## Note that trento also automatically populates a bin directory
 ## and we cannot disable this behavior
@@ -277,7 +277,7 @@ if (freestream)
   endif()
   message("Building freestream-milne ...")
   if (${GSL_FOUND})
-    add_subdirectory(./external_packages/freestream-milne/src)
+    add_subdirectory(./external_packages/freestream-milne)
   else()
       message (FATAL_ERROR "GSL are necessary for Freestreaming" )
   endif()
@@ -286,7 +286,7 @@ endif (freestream)
 if (music)
   if(NOT EXISTS "${CMAKE_SOURCE_DIR}/external_packages/music")
     message(FATAL_ERROR "Error: MUSIC source has not been downloaded in external_packages by ./get_music.sh")
-  endif()  
+  endif()
   if (${GSL_FOUND})
     message("Building MUSIC ...")
     add_subdirectory(./external_packages/music)
@@ -300,7 +300,7 @@ if (iSS)
     add_subdirectory( ${CMAKE_SOURCE_DIR}/external_packages/iSS )
   else()
     message(FATAL_ERROR "Error: iSS source has not been downloaded in external_packages by ./get_iSS.sh")
-  endif()      
+  endif()
 endif (iSS)
 
 
@@ -343,7 +343,7 @@ target_link_libraries(LBT_brickTest JetScape )
 if(${HDF5_FOUND})
   add_executable(hydroFileTest ./examples/hydroFileTest.cc)
   target_link_libraries(hydroFileTest JetScape ${_hdf5_libs})
-  
+
   add_executable(hydroJetTest  ./examples/hydroJetTest.cc)
   target_link_libraries(hydroJetTest JetScape ${_hdf5_libs})
 
@@ -434,4 +434,3 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/external_packages/LBT-tables")
 else()
   message("Warning: LBT-tables have not been downloaded in external_packages by ./get_lbtTab.sh; LBT-brickTest will NOT run properly.")
 endif()
-
