@@ -63,18 +63,18 @@ void JetEnergyLossManager::Clear()
 
 void JetEnergyLossManager::Init()
 {
-  INFO<<"Intialize JetEnergyLoss Manager ...";
+  JSINFO<<"Intialize JetEnergyLoss Manager ...";
 
   if (GetNumberOfTasks()<1)
     {
-      WARN << " : No valid Energy Loss Manager modules found ...";
+      JSWARN << " : No valid Energy Loss Manager modules found ...";
       exit(-1);
     }
   
-  INFO<<"Found "<<GetNumberOfTasks()<<" Eloss Manager Tasks/Modules Initialize them ... ";
+  JSINFO<<"Found "<<GetNumberOfTasks()<<" Eloss Manager Tasks/Modules Initialize them ... ";
   JetScapeTask::InitTasks();
 
-  INFO<<"Connect JetEnergyLossManager Signal to Hard Process ...";
+  JSINFO<<"Connect JetEnergyLossManager Signal to Hard Process ...";
   JetScapeSignalManager::Instance()->ConnectGetHardPartonListSignal(shared_from_this());
 
   // Set the pointer of JetEnergyLoss for making connections to hadronization module
@@ -99,7 +99,7 @@ void JetEnergyLossManager::Exec()
   
   if (GetNumberOfTasks()<1)
     {
-      WARN << " : No valid Energy Loss Manager modules found ...";
+      JSWARN << " : No valid Energy Loss Manager modules found ...";
       exit(-1);
     }
 

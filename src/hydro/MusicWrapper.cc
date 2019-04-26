@@ -40,12 +40,12 @@ MpiMusic::~MpiMusic() {
 
 
 void MpiMusic::InitializeHydro(Parameter parameter_list) {
-    INFO << "Initialize MUSIC ...";
+    JSINFO << "Initialize MUSIC ...";
     VERBOSE(8);
     tinyxml2::XMLElement *para =
                     GetHydroXML()->FirstChildElement("MUSIC");
     if (!para) {
-        WARN << " : MUSIC not properly initialized in XML file ...";
+        JSWARN << " : MUSIC not properly initialized in XML file ...";
         exit(-1);
     }
     string input_file = para->FirstChildElement("MUSIC_input_file")->GetText();
@@ -70,7 +70,7 @@ void MpiMusic::InitializeHydro(Parameter parameter_list) {
         music_hydro_ptr->set_parameter("Viscosity_Flag_Yes_1_No_0", 0);
         music_hydro_ptr->set_parameter("Include_Shear_Visc_Yes_1_No_0", 0);
     } else {
-        WARN << "The input shear viscosity is negative! eta/s = "
+        JSWARN << "The input shear viscosity is negative! eta/s = "
              << eta_over_s;
         exit(1);
     }
@@ -79,14 +79,14 @@ void MpiMusic::InitializeHydro(Parameter parameter_list) {
 
 void MpiMusic::EvolveHydro() {
     VERBOSE(8);
-    INFO << "Initialize density profiles in MUSIC ...";
+    JSINFO << "Initialize density profiles in MUSIC ...";
     std::vector<double> entropy_density = ini->GetEntropyDensityDistribution();
     double dx = ini->GetXStep();
     double dz = ini->GetZStep();
     double z_max  = ini->GetZMax();
     int nz = ini->GetZSize();
     if (pre_eq_ptr == nullptr) {
-        WARN << "Missing the pre-equilibrium module ...";
+        JSWARN << "Missing the pre-equilibrium module ...";
     } else {
         music_hydro_ptr->initialize_hydro_from_jetscape_preequilibrium_vectors(
                 dx, dz, z_max, nz,
@@ -99,10 +99,10 @@ void MpiMusic::EvolveHydro() {
                 pre_eq_ptr->pi33_, pre_eq_ptr->bulk_Pi_);
     }
     
-    INFO << "initial density profile dx = " << dx << " fm";
+    JSINFO << "initial density profile dx = " << dx << " fm";
     hydro_status = INITIALIZED;
     if (hydro_status == INITIALIZED) {
-        INFO << "running MUSIC ...";
+        JSINFO << "running MUSIC ...";
         music_hydro_ptr->run_hydro();
         hydro_status = FINISHED;
     }
@@ -123,7 +123,7 @@ void MpiMusic::collect_freeze_out_surface() {
 void MpiMusic::GetHydroInfo(
         Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
         std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr) {
-    fluid_cell_info_ptr = std::make_unique<FluidCellInfo>();
+    fluid_cell_info_ptr = Jetscape::make_unique<FluidCellInfo>();
     fluidCell *fluidCell_ptr = new fluidCell;
     music_hydro_ptr->get_hydro_info(x, y, z, t, fluidCell_ptr);
     fluid_cell_info_ptr->energy_density = fluidCell_ptr->ed;

@@ -55,7 +55,7 @@ namespace Jetscape {
       xmle = RandomXmlDescription->FirstChildElement( "seed" ); if ( !xmle ) throw std::runtime_error("Cannot parse xml");
       xmle->QueryUnsignedText(&random_seed_);
     } else {
-      WARN << "No <Random> element found in xml, seeding to 0";
+      JSWARN << "No <Random> element found in xml, seeding to 0";
     }
     
     VERBOSE(7) <<"Seeding JetScapeTaskSupport to "<< random_seed_ ;
@@ -81,7 +81,7 @@ namespace Jetscape {
   // ---------------------------------------------------------------------------
   shared_ptr<std::mt19937> JetScapeTaskSupport::GetMt19937Generator( int TaskId ) {
     if (!initialized_){
-      WARN << "Trying to use JetScapeTaskSupport::GetMt19937Generator before initialization";
+      JSWARN << "Trying to use JetScapeTaskSupport::GetMt19937Generator before initialization";
       throw std::runtime_error("Trying to use JetScapeTaskSupport::GetMt19937Generator before initialization");
     }
 

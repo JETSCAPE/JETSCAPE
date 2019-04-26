@@ -290,7 +290,7 @@ void TrentoInitial::UserDefined(std::string projectile, std::string target,
 
 
 void TrentoInitial::InitTask() {
-    INFO << " : Create initial condition ";
+    JSINFO << " : Create initial condition ";
     trento_xml_ = xml_->FirstChildElement("Trento");
 }
 
@@ -298,7 +298,7 @@ void TrentoInitial::InitTask() {
 void TrentoInitial::Exec() {  
     VERBOSE(2) << " : Excute initial condition ";
     if (!trento_xml_) {
-        WARN << " : Not a valid JetScape IS::Trento XML section in file!";
+        JSWARN << " : Not a valid JetScape IS::Trento XML section in file!";
         exit(-1);
     } else {
         // trento_xml_->Attribute("A", "B") checks whether the attribute "A" has value "B"

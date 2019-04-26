@@ -70,7 +70,7 @@ void PythiaGun::InitTask()
   stringstream numbi(stringstream::app|stringstream::in|stringstream::out);
     
   if ( !PythiaXmlDescription ) {
-    WARN << "Cannot initialize Pythia Gun";
+    JSWARN << "Cannot initialize Pythia Gun";
     throw std::runtime_error("Cannot initialize Pythia Gun");
   }
 
@@ -83,7 +83,7 @@ void PythiaGun::InitTask()
   xmle->QueryDoubleText(&pTHatMin);
   xmle = PythiaXmlDescription->FirstChildElement( "pTHatMax" ); if ( !xmle ) throw std::runtime_error("Cannot parse xml");
   xmle->QueryDoubleText(&pTHatMax);
-  
+
   VERBOSE(7) <<"Pythia Gun with "<< pTHatMin << " < pTHat < " << pTHatMax ;
   
   numbf.str("PhaseSpace:pTHatMin = "); numbf << pTHatMin;
@@ -101,7 +101,7 @@ void PythiaGun::InitTask()
     xmle = RandomXmlDescription->FirstChildElement( "seed" ); if ( !xmle ) throw std::runtime_error("Cannot parse xml");
     xmle->QueryUnsignedText(&seed);
   } else {
-    WARN << "No <Random> element found in xml, seeding to 0";
+    JSWARN << "No <Random> element found in xml, seeding to 0";
   }
   VERBOSE(7) <<"Seeding pythia to "<< seed ;
   numbi << seed;
@@ -136,17 +136,17 @@ void PythiaGun::InitTask()
 
 void PythiaGun::Exec()
 {
-  INFO<<"Run Hard Process : "<<GetId()<< " ...";
+  JSINFO<<"Run Hard Process : "<<GetId()<< " ...";
   VERBOSE(8)<<"Current Event #"<<GetCurrentEvent();
   //Reading vir_factor from xml for MATTER
    tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );
   if ( !eloss ) {
-    WARN << "Couldn't find tag Eloss";
+    JSWARN << "Couldn't find tag Eloss";
     throw std::runtime_error ("Couldn't find tag Eloss");    
   }
   tinyxml2::XMLElement *matter=eloss->FirstChildElement("Matter");
   if ( !matter ) {
-    WARN << "Couldn't find tag Eloss -> Matter";
+    JSWARN << "Couldn't find tag Eloss -> Matter";
     throw std::runtime_error ("Couldn't find tag Eloss -> Matter");
   }
   double vir_factor;
@@ -219,11 +219,11 @@ void PythiaGun::Exec()
 
   
   if (!ini) {
-      WARN << "No initial state module, setting the starting location to 0. Make sure to add e.g. trento before PythiaGun.";
+      JSWARN << "No initial state module, setting the starting location to 0. Make sure to add e.g. trento before PythiaGun.";
   } else {
     auto num_bin_coll = ini->GetNumOfBinaryCollisions();
     if ( num_bin_coll.size()==0 ){
-      WARN << "num_of_binary_collisions is empty, setting the starting location to 0. Make sure to add e.g. trento before PythiaGun.";
+      JSWARN << "num_of_binary_collisions is empty, setting the starting location to 0. Make sure to add e.g. trento before PythiaGun.";
     } else {	 
       std::discrete_distribution<> dist( begin(num_bin_coll),end(num_bin_coll) ); // Create the distribution
     
