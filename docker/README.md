@@ -50,12 +50,12 @@ The docker container will contain only the pre-requisite environment to build JE
 
     **macOS:**
     ```
-    docker run -it -v ~/jetscape-docker:/home/jetscape-user --name myJetscape jetscape/base:v1
+    docker run -it -v ~/jetscape-docker:/home/jetscape-user --name myJetscape jetscape/base:v1.2
     ```
 
     **linux:**
     ```
-    docker run -it -v ~/jetscape-docker:/home/jetscape-user --name myJetscape --user $(id -u):$(id -g) jetscape/base:v1
+    docker run -it -v ~/jetscape-docker:/home/jetscape-user --name myJetscape --user $(id -u):$(id -g) jetscape/base:v1.2
     ```
 
     This is what the `docker run` command does:
@@ -65,7 +65,7 @@ The docker container will contain only the pre-requisite environment to build JE
     - `--name` (optional) sets a name for your container, for convenience. Edit it as you like.
     - `--user $(id -u):$(id -g)` (only needed on linux) runs the docker container with the same user permissions as the current user on your machine (since docker uses the same kernel as your host machine, the UIDs are shared). Note that the prompt will display "I have no name!", which is normal.
 
-3. Build JETSCAPE as usual:
+3. Build JETSCAPE:
     ```
     cd JETSCAPE
     mkdir build
@@ -88,4 +88,3 @@ Some useful commands:
 
 ======================================================================================
 
-If you have any issues or suggestions, please send a mail to james.mulligan@berkeley.edu.
