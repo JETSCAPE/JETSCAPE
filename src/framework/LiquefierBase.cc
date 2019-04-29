@@ -111,7 +111,7 @@ void LiquefierBase::add_hydro_sources(std::vector<Parton> &pIn,
         p_final += temp;
         x_final = iparton.x_in(); 
     }
-    if (std::abs(p_init.t() - p_final.t())/p_init.t() > hydro_source_abs_err) { 
+    if (std::abs(p_init.t() - p_final.t())/p_init.t() > hydro_source_abs_err) {
     	weight_init = 1.0;
 	    if (pOut.size() > 0) {
             weight_final = 1.0;
