@@ -132,4 +132,17 @@ TEST(LiquefierBaseTest, TEST_add_hydro_source) {
     pIn.clear();
     pOut.clear();
     lqf.Clear();
+
+    // test a soft particle in pIn only
+    //pIn.push_back(test1);
+    //lqf.add_hydro_sources(pIn, pOut);
+    //EXPECT_EQ(1, lqf.get_dropletlist_size());
+    //EXPECT_DOUBLE_EQ(p_test1.t(), (lqf.get_a_droplet(0).get_pmu())[0]);
+    //EXPECT_DOUBLE_EQ(p_test1.x(), (lqf.get_a_droplet(0).get_pmu())[1]);
+    //EXPECT_DOUBLE_EQ(x_test1.t(), (lqf.get_a_droplet(0).get_xmu())[0]);
+    //EXPECT_EQ(0, pIn.size());
+    //EXPECT_EQ(0, pOut.size());
+    //pIn.clear();
+    //pOut.clear();
+    //lqf.Clear();
 }
