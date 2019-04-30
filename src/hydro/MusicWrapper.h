@@ -48,6 +48,14 @@ class HydroSourceJETSCAPE : public HydroSourceBase {
         }
     }
     
+    double get_total_E_of_sources() const {
+        if (weak_ptr_is_uninitialized(liquefier_ptr)) {
+            return(0.0);
+        } else {
+            return(liquefier_ptr.lock()->get_dropletlist_total_energy());
+        }
+    }
+    
     //! this function returns the energy source term J^\mu at a given point
     //! (tau, x, y, eta_s)
     void get_hydro_energy_source(

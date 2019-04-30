@@ -156,4 +156,13 @@ void LiquefierBase::Clear() {
     dropletlist.clear();
 }
 
+
+Jetscape::real LiquefierBase::get_dropletlist_total_energy() const {
+    Jetscape::real total_E = 0.0;
+    for (const auto &drop_i : dropletlist) {
+        total_E += drop_i.get_pmu()[0];
+    }
+    return(total_E);
+}
+
 };

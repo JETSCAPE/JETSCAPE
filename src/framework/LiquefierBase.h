@@ -75,6 +75,8 @@ class LiquefierBase {
 
     int get_dropletlist_size() const {return(dropletlist.size());}
 
+    Jetscape::real get_dropletlist_total_energy() const;
+
     virtual void smearing_kernel(Jetscape::real tau, Jetscape::real x,
                                  Jetscape::real y, Jetscape::real eta,
                                  const Droplet drop_i,
