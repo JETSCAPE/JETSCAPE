@@ -48,7 +48,7 @@ void CausalLiquefier::smearing_kernel(
         std::array<Jetscape::real, 4> &jmu) const {
 
     jmu = {0., 0, 0, 0};
-    
+    // get t-z coordinates information
     auto x_drop = drop_i.get_xmu();
     const auto p_drop = drop_i.get_pmu();
     
@@ -66,15 +66,17 @@ void CausalLiquefier::smearing_kernel(
         
         double t_delay = get_t(tau_delay, eta);
         double delta_r2 = (x-x_drop[1])*(x-x_drop[1]) + (y-x_drop[2])*(y-x_drop[2]) +(z-x_drop[3])*(z-x_drop[3]);
-        
+
+        // get diffusion_kernel in t-z coordinates
         double kernel
-        = causal_diffusion_kernel(t_delay, sqrt(delta_r2));
+        = causal_diffusion_kernel(t_delay, sqrt(delta_r2))/dtau;
         
+        // get source in tau-eta coordinates
         jmu[0] = kernel*get_ptau(p_drop[0], p_drop[3], eta);
         jmu[1] = kernel*p_drop[1];
         jmu[2] = kernel*p_drop[2];
         jmu[3] = kernel*get_peta(p_drop[0], p_drop[3], eta);
-        
+        //std::cout<<"source_tau: "<<jmu[0]<<std::endl;
     }
     
 }
