@@ -150,6 +150,12 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
   
   for (int i=0;i<pIn.size();i++) {
 
+    if (pIn[i].pid()==photonid)
+    {
+      pOut.push_back(pIn[i]);
+      return;
+    }
+
     // Particle infomration
     Id = pIn[i].pid();
 
