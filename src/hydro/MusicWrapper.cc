@@ -157,11 +157,11 @@ void MpiMusic::collect_freeze_out_surface() {
     std::ostringstream system_command;
     system_command << "rm " << surface_filename.str() << " 2> /dev/null";
     system(system_command.str().c_str());
-    system_command("");
+    system_command.str("");
     system_command.clear();
     system_command << "cat surface_eps* >> " << surface_filename.str();
     system(system_command.str().c_str());
-    system_command("");
+    system_command.str("");
     system_command.clear();
 
     // create a symbolic link to the hydro surface file for soft particlization
@@ -169,7 +169,7 @@ void MpiMusic::collect_freeze_out_surface() {
         system_command << "ln -s " << surface_filename.str()
                        << " surface.dat";
         system(system_command.str().c_str());
-        system_command("");
+        system_command.str("");
         system_command.clear();
     }
     system("rm surface_eps* 2> /dev/null");
