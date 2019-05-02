@@ -112,6 +112,10 @@ void iSpectraSamplerWrapper::Exec() {
 void iSpectraSamplerWrapper::Clear() {
     VERBOSE(2) << "Finish the particle sampling";
     iSpectraSampler_ptr_->clear();
+    for (unsigned i = 0; i < Hadron_list_.size(); i++) {
+        Hadron_list_.at(i).clear();
+    }
+    Hadron_list_.clear();
 }
 
 void iSpectraSamplerWrapper::PassHadronListToJetscape() {
@@ -154,25 +158,23 @@ void iSpectraSamplerWrapper::PassHadronListToJetscape() {
 
 }
 
-void iSpectraSamplerWrapper::WriteTask(weak_ptr<JetScapeWriter> w)
-{
-  VERBOSE(4)<<"In iSpectraSamplerWrapper::WriteTask";
-  auto f = w.lock();
-  if ( !f ) return;
+void iSpectraSamplerWrapper::WriteTask(weak_ptr<JetScapeWriter> w) {
+    VERBOSE(4)<<"In iSpectraSamplerWrapper::WriteTask";
+    auto f = w.lock();
+    if ( !f ) return;
 
-  f->WriteComment("JetScape module: "+GetId());
-  if(Hadron_list_.size()>0) {
-    f->WriteComment("Final State Bulk Hadrons");
-    for(unsigned int j=0; j<Hadron_list_.size(); j++){
-      vector<shared_ptr<Hadron>> hadVec = Hadron_list_.at(j);
-      for(unsigned int i=0; i<hadVec.size(); i++) {
-	f->WriteWhiteSpace("["+to_string(i)+"] H");
-	f->Write(hadVec.at(i));
-      }
+    f->WriteComment("JetScape module: " + GetId());
+    if (Hadron_list_.size() > 0) {
+        f->WriteComment("Final State Bulk Hadrons");
+        for(unsigned int j = 0; j < Hadron_list_.size(); j++){
+            vector<shared_ptr<Hadron>> hadVec = Hadron_list_.at(j);
+            for(unsigned int i = 0; i < hadVec.size(); i++) {
+	            f->WriteWhiteSpace("["+to_string(i)+"] H");
+	            f->Write(hadVec.at(i));
+            }
+        }
+    } else {
+        f->WriteComment("There are no bulk Hadrons");
     }
-  } else {
-    f->WriteComment("There are no bulk Hadrons");
-  }
-  
 }
 
