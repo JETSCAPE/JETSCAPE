@@ -18,6 +18,7 @@
 #include <MakeUniqueHelper.h>
 
 #include <string>
+#include <sstream>
 #include <vector>
 #include <memory>
 
@@ -30,6 +31,7 @@ MpiMusic::MpiMusic() {
     hydro_status = NOT_START;
     doCooperFrye = 0;
     flag_output_evo_to_file = 0;
+    has_source_terms = false;
     SetId("MUSIC");
     hydro_source_terms_ptr = std::shared_ptr<HydroSourceJETSCAPE> (
                                                 new HydroSourceJETSCAPE ());
@@ -108,6 +110,11 @@ void MpiMusic::EvolveHydro() {
            << hydro_source_terms_ptr->get_number_of_sources()
            << ", total E = "
            << hydro_source_terms_ptr->get_total_E_of_sources() << " GeV.";
+
+    if (hydro_source_terms_ptr->get_number_of_sources() > 0) {
+        has_source_terms = true;
+    }
+
     if (hydro_status == INITIALIZED) {
         JSINFO << "running MUSIC ...";
         music_hydro_ptr->run_hydro();
@@ -115,11 +122,20 @@ void MpiMusic::EvolveHydro() {
     }
 
     if (flag_output_evo_to_file == 1) {
-        PassHydroEvolutionHistoryToFramework();
-        JSINFO << "number of fluid cells received by the JETSCAPE: "
-               << bulk_info.data.size();
+        if (!has_source_terms) {
+            // only the first hydro without source term will be stored
+            // in memory for jet energy loss calculations
+            PassHydroEvolutionHistoryToFramework();
+            JSINFO << "number of fluid cells received by the JETSCAPE: "
+                   << bulk_info.data.size();
+        }
         music_hydro_ptr->clear_hydro_info_from_memory();
 
+        // add hydro_id to the hydro evolution filename
+        std::ostringstream system_command;
+        system_command << "mv evolution_for_movie_xyeta.dat "
+                       << "evolution_for_movie_xyeta_" << GetId() << ".dat";
+        system(system_command.str().c_str());
         //FindAConstantTemperatureSurface(0.16);
     }
     
@@ -133,7 +149,17 @@ void MpiMusic::EvolveHydro() {
 
 void MpiMusic::collect_freeze_out_surface() {
     system("rm surface.dat 2> /dev/null");
-    system("cat surface_eps* >> surface.dat");
+
+    std::ostringstream system_command;
+    system_command << "cat surface_eps* >> surface_" << GetId() << ".dat";
+    system(system_command.str().c_str());
+
+    // create a symbolic link to the hydro surface file for soft particlization
+    if (has_source_terms) {
+        std::ostringstream system_command2;
+        system_command2 << "ln -s surface_" << GetId() << ".dat surface.dat";
+        system(system_command2.str().c_str());
+    }
     system("rm surface_eps* 2> /dev/null");
 }
 

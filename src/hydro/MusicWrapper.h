@@ -82,6 +82,7 @@ class MpiMusic: public FluidDynamics {
     int doCooperFrye;    //!< flag to run Cooper-Frye freeze-out
                          //!< for soft particles
     int flag_output_evo_to_file;
+    bool has_source_terms;
     std::shared_ptr<HydroSourceJETSCAPE> hydro_source_terms_ptr;
 
  public:
