@@ -164,14 +164,11 @@ void MpiMusic::collect_freeze_out_surface() {
     system_command.str("");
     system_command.clear();
 
-    // create a symbolic link to the hydro surface file for soft particlization
-    if (has_source_terms) {
-        system_command << "ln -s " << surface_filename.str()
-                       << " surface.dat";
-        system(system_command.str().c_str());
-        system_command.str("");
-        system_command.clear();
-    }
+    system_command << "ln -s " << surface_filename.str()
+                   << " surface.dat";
+    system(system_command.str().c_str());
+    system_command.str("");
+    system_command.clear();
     system("rm surface_eps* 2> /dev/null");
 }
 
