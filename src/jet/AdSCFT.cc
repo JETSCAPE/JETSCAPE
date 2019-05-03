@@ -176,8 +176,6 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 	//JSDEBUG << " px= " << p[0] << " py= " << p[1] << " pz= " << p[2] << " en= " << p[3];
    	//JSDEBUG << " x= " << x[0] << " y= " << x[1] << " z= " << x[2] << " t= " << x[3];
 	
-        double w2=std::pow(w[0],2.)+std::pow(w[1],2.)+std::pow(w[2],2.);        
-        //JSDEBUG << " w2= " << w2;
 	double virt=std::sqrt(p[3]*p[3]-w2*p[3]*p[3]-std::pow(pIn[i].restmass(),2.));
 	//JSDEBUG << " virt= " << virt;
   	
