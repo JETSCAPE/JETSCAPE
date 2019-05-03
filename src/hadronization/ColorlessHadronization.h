@@ -36,6 +36,9 @@ class ColorlessHadronization : public HadronizationModule<ColorlessHadronization
  private:
   double p_fake;
   bool take_recoil;
+  
+  // Allows the registration of the module so that it is available to be used by the Jetscape framework.
+  static RegisterJetScapeModule<ColorlessHadronization> reg;
 
  protected:
   static Pythia8::Pythia pythia;  

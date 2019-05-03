@@ -27,7 +27,6 @@
 
 #include "InitialState.h"
 #include "JetScapeModuleBase.h"
-#include "tinyxml2.h"
 #include "PreequilibriumDynamics.h"
 #include "RealType.h"
 #include "FluidCellInfo.h"
@@ -80,11 +79,6 @@ class FluidDynamics : public JetScapeModuleBase {
     */  
     FluidDynamics();
     
-    /** Standard constructor to create a Fluid Dynamics task. Sets the task ID as "FluidDynamics", and the value of rapidity (eta) to -99.99. 
-	@param m_name is a name of the control XML file which contains the input parameters under the tag <Hydro>.
-    */
-    FluidDynamics(string m_name);
-    
     /** Default destructor. */
     virtual ~FluidDynamics();
     
@@ -134,14 +128,11 @@ class FluidDynamics : public JetScapeModuleBase {
 	@param z  rapidity eta or space z coordinate.
 	@param fCell A pointer of type FluidCellInfo class.  
     */
+
     virtual void GetHydroCell(double t, double x, double y, double z,
                               std::unique_ptr<FluidCellInfo>& fCell) {
         GetHydroInfo(t, x, y, z, fCell);
-    } 
-
-    /** @return A pointer to the XML elements. Such XML elements are the input parameters stored in an XML file under the tag <Hydro>.
-     */
-    tinyxml2::XMLElement* GetHydroXML() {return(fd);}
+    }
 
     // currently we have no standard for passing configurations 
     // pure virtual function; to be implemented by users

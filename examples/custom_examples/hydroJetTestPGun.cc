@@ -43,7 +43,6 @@
 #include "HydroFromFile.h"
 #include "PGun.h"
 #include "PythiaGun.h"
-#include "PartonPrinter.h"
 #include "HadronizationManager.h"
 #include "Hadronization.h"
 #include "ColoredHadronization.h"
@@ -84,7 +83,9 @@ int main(int argc, char** argv)
    
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml", 2000);
+  auto jetscape = make_shared<JetScape>();
+  jetscape->SetXMLMasterFileName("../config/jetscape_master.xml");
+  jetscape->SetXMLUserFileName("../config/jetscape_user.xml");
   // auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",5);
   jetscape->SetId("primary");
   jetscape->SetReuseHydro (true);
@@ -109,8 +110,6 @@ int main(int argc, char** argv)
   //jloss->SetActive(false);
 
   //auto pythiaGun= make_shared<PythiaGun> ();
-
-  auto printer = make_shared<PartonPrinter> ();
 
   auto hadroMgr = make_shared<HadronizationManager> ();
   auto hadro = make_shared<Hadronization> ();
@@ -152,8 +151,6 @@ int main(int argc, char** argv)
   jlossmanager->Add(jloss);
   
   jetscape->Add(jlossmanager);
-
-  jetscape->Add(printer);
 
   hadro->Add(hadroModule);
   //hadro->Add(colorless);

@@ -28,6 +28,9 @@
 
 using namespace Jetscape;
 
+// Register the module with the base class
+RegisterJetScapeModule<HydroFromFile> HydroFromFile::reg("HydroFromFile");
+
 HydroFromFile::HydroFromFile() {
     hydro_status = NOT_START;
     SetId("hydroFromFile");
@@ -43,22 +46,16 @@ HydroFromFile::~HydroFromFile() {
 void HydroFromFile::InitializeHydro(Parameter parameter_list) {
     JSDEBUG << "Initialize hydro from file (Test) ...";
     VERBOSE(8);
-    para_ = GetHydroXML()->FirstChildElement("hydro_from_file");
-    if (!para_) {
-        JSWARN << " : hydro_from_file not properly initialized in XML file ...";
-        exit(-1);
-    }
 
-    string s = para_->FirstChildElement("name")->GetText();
+    string s = GetXMLElementText({"Hydro", "hydro_from_file", "name"});
     JSDEBUG << s << " to be initilizied ...";
+  
+    hydro_type_ = GetXMLElementInt({"Hydro", "hydro_from_file", "hydro_type"});
+    load_viscous_ = GetXMLElementInt({"Hydro", "hydro_from_file", "load_viscous_info"});
+    nskip_tau_ = GetXMLElementInt({"Hydro", "hydro_from_file", "read_hydro_every_ntau"});
+    T_c_ = GetXMLElementDouble({"Hydro", "hydro_from_file", "T_c"});
+    flag_read_in_multiple_hydro_= GetXMLElementInt({"Hydro", "hydro_from_file", "read_in_multiple_hydro"});
 
-    para_->FirstChildElement("hydro_type")->QueryIntText(&hydro_type_);
-    para_->FirstChildElement("load_viscous_info")->QueryIntText(&load_viscous_);
-    para_->FirstChildElement("read_hydro_every_ntau")->QueryIntText(
-                                                                &nskip_tau_);
-    para_->FirstChildElement("T_c")->QueryDoubleText(&T_c_);
-    para_->FirstChildElement("read_in_multiple_hydro")->QueryIntText(
-                                            &flag_read_in_multiple_hydro_);
     hydro_event_idx_ = 0;
 
     if (hydro_type_ == 1) {

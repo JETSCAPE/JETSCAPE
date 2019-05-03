@@ -34,13 +34,6 @@ FluidDynamics::FluidDynamics() {
     SetId("FluidDynamics");
 }
 
-FluidDynamics::FluidDynamics(string m_name) : JetScapeModuleBase (m_name) {
-    VERBOSE(8);
-    eta = -99.99;
-    SetId("FluidDynamics");
-}
-
-
 FluidDynamics::~FluidDynamics() {
     VERBOSE(8);
     disconnect_all();
@@ -49,14 +42,8 @@ FluidDynamics::~FluidDynamics() {
 
 void FluidDynamics::Init() {
     JetScapeModuleBase::Init();
-    JSINFO << "Intialize FluidDynamics : "<< GetId() << " ...";
-    fd = JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Hydro");
-  
-    if (!fd) {
-        JSWARN << "Not a valid JetScape XML Hydro section file or "
-               << "no XML file loaded!";
-        exit(-1);
-    }
+
+    JSINFO<<"Intialize FluidDynamics : "<<GetId()<< " ...";
   
     VERBOSE(8);  
     ini = JetScapeSignalManager::Instance()->GetInitialStatePointer().lock();

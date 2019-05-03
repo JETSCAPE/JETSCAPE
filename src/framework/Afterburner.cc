@@ -24,13 +24,7 @@ namespace Jetscape {
     // Makes sure that XML file with options and parameters is loaded
     JetScapeModuleBase::Init();
     JSINFO << "Initializing Afterburner : " << GetId() << " ...";
-    // Link to the Afterburner configuration in the XML file
-    xml_config_ = JetScapeXML::Instance()->
-                  GetXMLRoot()->FirstChildElement("Afterburner");
-    if (!xml_config_) {
-      JSWARN << "Afterburner section was not found in the XML config file.";
-      exit(-1);
-    }
+
     // Get the pointer to sampler
     soft_particlization_sampler_ = JetScapeSignalManager::Instance()->
                                    GetSoftParticlizationPointer().lock();
