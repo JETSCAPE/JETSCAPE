@@ -178,6 +178,8 @@ void JetScape::DetermineTaskListFromXML() {
             Add(initial);
             JSINFO << "JetScape::DetermineTaskList() -- Initial state: Added InitialFromFile to task list.";
           }
+          #else
+          JSWARN << "InitialFromFile is attempted to be added, but HDF5 is not installed!";
           #endif
         }
         //   - Custom module
@@ -254,6 +256,8 @@ void JetScape::DetermineTaskListFromXML() {
             Add(predynamics);
             JSINFO << "JetScape::DetermineTaskList() -- PreDynamics: Added FreestreamMilne to task list.";
           }
+          #else
+          JSWARN << "FreestreamMilne is attempted to be added, but freestream is not installed!";
           #endif
         }
         //   - Custom module
@@ -311,6 +315,8 @@ void JetScape::DetermineTaskListFromXML() {
             Add(hydro);
             JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added MUSIC to task list.";
           }
+          #else
+          JSWARN << "MUSIC is attempted to be added, but it is not installed!";
           #endif
         }
         //   - Custom module
@@ -437,6 +443,8 @@ void JetScape::DetermineTaskListFromXML() {
             Add(iSSmodule);
             JSINFO << "JetScape::DetermineTaskList() -- SoftParticlization: Added iSS to task list.";
           }
+          #else
+          JSWARN << "iSS is attempted to be added, but iSS is not installed!";
           #endif
         }
         //   - Custom module
@@ -468,6 +476,8 @@ void JetScape::DetermineTaskListFromXML() {
             Add(smashModule);
             JSINFO << "JetScape::DetermineTaskList() -- Afterburner: Added SMASH to task list.";
           }
+          #else
+          JSWARN << "SMASH is attempted to be added, but SMASH is not installed!";
           #endif
         }
         //   - Custom module
