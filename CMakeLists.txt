@@ -368,20 +368,20 @@ target_link_libraries(FinalStatePartons JetScape )
 # executables with additional dependencies
 
 if (freestream AND music AND iSS)
-  add_executable(TwoStageHydroFromFile ./examples/TwoStagesHydroFromFile.cc)
-  target_link_libraries(TwoStageHydroFromFile JetScape ${GSL_LIBRARIES})
+    #add_executable(TwoStageHydroFromFile ./examples/TwoStagesHydroFromFile.cc)
+    #target_link_libraries(TwoStageHydroFromFile JetScape ${GSL_LIBRARIES})
 endif (freestream AND music AND iSS)
 
 if ( music AND iSS )
-  add_executable(TwoStageHydro ./examples/TwoStagesHydro.cc)
-  target_link_libraries(TwoStageHydro JetScape ${GSL_LIBRARIES})
-  target_link_libraries(runJetscape ${GSL_LIBRARIES})
+    #add_executable(TwoStageHydro ./examples/TwoStagesHydro.cc)
+    #target_link_libraries(TwoStageHydro JetScape ${GSL_LIBRARIES})
+    target_link_libraries(runJetscape ${GSL_LIBRARIES})
 endif (music AND iSS )
 
 if ( music AND iSS AND smash )
-  include_directories(${SMASH_INCLUDE_DIR})
-  # "-lubsan -lasan")
-  target_link_libraries(runJetscape ${SMASH_LIBRARIES} ${MPI_LIBRARIES} ${GSL_LIBRARIES})
+    include_directories(${SMASH_INCLUDE_DIR})
+    # "-lubsan -lasan")
+    target_link_libraries(runJetscape ${SMASH_LIBRARIES} ${MPI_LIBRARIES} ${GSL_LIBRARIES})
 endif ( music AND iSS AND smash )
 
 # if (${ROOT_FOUND})

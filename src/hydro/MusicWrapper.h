@@ -85,6 +85,10 @@ class MpiMusic: public FluidDynamics {
     bool has_source_terms;
     std::shared_ptr<HydroSourceJETSCAPE> hydro_source_terms_ptr;
 
+    // Allows the registration of the module so that it is available to be
+    // used by the Jetscape framework.
+    static RegisterJetScapeModule<MpiMusic> reg;
+
  public:
      MpiMusic();
      ~MpiMusic();
