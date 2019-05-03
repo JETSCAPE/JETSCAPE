@@ -55,7 +55,7 @@ void FluidcellStatistic::checkFreezeoutSurface(double Tdec) {
     int ny = static_cast<int>(abs(2*grid_y0)/grid_dy) + 1;
 
     double tau_local;
-    fluidCell* fluidCellptr = new fluidCell();
+    hydrofluidCell* fluidCellptr = new hydrofluidCell();
     ofstream output;
     output.open("results/checkFreezeoutSurface.dat", std::ofstream::app);
 
@@ -93,7 +93,7 @@ void FluidcellStatistic::output_temperature_vs_tau() {
     ofstream output;
     output.open("results/tau_vs_T.dat");
 
-    fluidCell* fluidCellptr = new fluidCell;
+    hydrofluidCell* fluidCellptr = new hydrofluidCell;
     for (int it = 0; it < nt; it++) {
         double tau_local = grid_tau0 + it*grid_dt;
         double avgTemp, stdTemp;
@@ -147,7 +147,7 @@ void FluidcellStatistic::output_flowvelocity_vs_tau() {
     int nx = static_cast<int>(abs(2.*grid_x0)/grid_dx) + 1;
     int ny = static_cast<int>(abs(2.*grid_y0)/grid_dy) + 1;
 
-    fluidCell* fluidCellptr = new fluidCell;
+    hydrofluidCell* fluidCellptr = new hydrofluidCell;
 
     ofstream output;
     output.open("results/tau_vs_v.dat", std::ofstream::app);
@@ -229,7 +229,7 @@ void FluidcellStatistic::output_temperature_vs_avg_utau() {
         avg_theta[i] = 0.0;
     }
 
-    fluidCell* fluidCellptr = new fluidCell;
+    hydrofluidCell* fluidCellptr = new hydrofluidCell;
     for (int it = 1; it < nt; it++) {
         double tau_local = grid_tau0 + it*grid_dt;
         double volume_element = tau_local*grid_dt*grid_dx*grid_dy;
@@ -301,7 +301,7 @@ void FluidcellStatistic::output_momentum_anisotropy_vs_tau() {
     int nx = static_cast<int>(abs(2*grid_x0)/grid_dx) + 1;
     int ny = static_cast<int>(abs(2*grid_y0)/grid_dy) + 1;
 
-    fluidCell* fluidCellptr = new fluidCell;
+    hydrofluidCell* fluidCellptr = new hydrofluidCell;
     ofstream output;
     output.open("results/tau_vs_epsP.dat");
 
@@ -363,7 +363,7 @@ void FluidcellStatistic::outputTempasTauvsX() {
     int nx = static_cast<int>(fabs(2.*grid_x0)/grid_dx) + 1;
 
     double tau_local;
-    fluidCell* fluidCellptr = new fluidCell();
+    hydrofluidCell* fluidCellptr = new hydrofluidCell();
     ofstream output;
     output.open("results/TempasTauvsX.dat");
 
@@ -406,7 +406,7 @@ void FluidcellStatistic::outputKnudersonNumberasTauvsX() {
    
     double eps = 1e-15;
 
-    fluidCell* fluidCellptr = new fluidCell;
+    hydrofluidCell* fluidCellptr = new hydrofluidCell;
     ofstream output;
     output.open("results/KnudsenNumberasTauvsX.dat");
 
@@ -451,13 +451,13 @@ double FluidcellStatistic::compute_local_expansion_rate(
     // space-time point (tau_loca, x_local, y_local)
     // theta = \patial_mu u^\mu + u^tau/tau
 
-    fluidCell* fluidCellptr = new fluidCell;
-    fluidCell* fluidCellptrt1 = new fluidCell;
-    fluidCell* fluidCellptrt2 = new fluidCell;
-    fluidCell* fluidCellptrx1 = new fluidCell;
-    fluidCell* fluidCellptrx2 = new fluidCell;
-    fluidCell* fluidCellptry1 = new fluidCell;
-    fluidCell* fluidCellptry2 = new fluidCell;
+    hydrofluidCell* fluidCellptr = new hydrofluidCell;
+    hydrofluidCell* fluidCellptrt1 = new hydrofluidCell;
+    hydrofluidCell* fluidCellptrt2 = new hydrofluidCell;
+    hydrofluidCell* fluidCellptrx1 = new hydrofluidCell;
+    hydrofluidCell* fluidCellptrx2 = new hydrofluidCell;
+    hydrofluidCell* fluidCellptry1 = new hydrofluidCell;
+    hydrofluidCell* fluidCellptry2 = new hydrofluidCell;
 
     if (hydro_type == 0) {
 #ifdef USE_HDF5
@@ -536,7 +536,7 @@ void FluidcellStatistic::outputinverseReynoldsNumberasTauvsX() {
 
     double MAX = 1000.;
 
-    fluidCell* fluidCellptr = new fluidCell();
+    hydrofluidCell* fluidCellptr = new hydrofluidCell();
     ofstream output;
     output.open("results/inverseReynoldsNumberasTauvsX.dat");
 
@@ -593,7 +593,7 @@ void FluidcellStatistic::outputBulkinverseReynoldsNumberasTauvsX() {
     int ntime = static_cast<int>((grid_tauf - grid_tau0)/grid_dt) + 1;
     int nx = static_cast<int>(fabs(2.*grid_x0)/grid_dx) + 1;
 
-    fluidCell* fluidCellptr = new fluidCell();
+    hydrofluidCell* fluidCellptr = new hydrofluidCell();
     ofstream output;
     output.open("results/inverseReynoldsNumberasTauvsX.dat");
 
@@ -655,7 +655,7 @@ double FluidcellStatistic::calculate_spacetime_4volume(double T_cut) {
     int nx = static_cast<int>(fabs(2.*grid_x0)/grid_dx) + 1;
     int ny = static_cast<int>(fabs(2.*grid_y0)/grid_dy) + 1;
 
-    fluidCell* fluidCellptr = new fluidCell();
+    hydrofluidCell* fluidCellptr = new hydrofluidCell();
 
     double volume = 0.0;
     for (int itime = 0; itime < ntime; itime++) {
@@ -699,7 +699,7 @@ double FluidcellStatistic::calculate_average_tau(double T_cut) {
     int nx = static_cast<int>(fabs(2.*grid_x0)/grid_dx) + 1;
     int ny = static_cast<int>(fabs(2.*grid_y0)/grid_dy) + 1;
 
-    fluidCell* fluidCellptr = new fluidCell();
+    hydrofluidCell* fluidCellptr = new hydrofluidCell();
 
     double average_tau = 0.0;
     double volume = 0.0;
@@ -745,7 +745,7 @@ double FluidcellStatistic::calculate_average_temperature4(double T_cut) {
     int nx = static_cast<int>(fabs(2.*grid_x0)/grid_dx) + 1;
     int ny = static_cast<int>(fabs(2.*grid_y0)/grid_dy) + 1;
 
-    fluidCell* fluidCellptr = new fluidCell();
+    hydrofluidCell* fluidCellptr = new hydrofluidCell();
 
     double average_T4 = 0.0;
     double volume = 0.0;
@@ -795,7 +795,7 @@ double FluidcellStatistic::
     int nx = static_cast<int>(fabs(2.*grid_x0)/grid_dx) + 1;
     int ny = static_cast<int>(fabs(2.*grid_y0)/grid_dy) + 1;
 
-    fluidCell* fluidCellptr = new fluidCell();
+    hydrofluidCell* fluidCellptr = new hydrofluidCell();
 
     double average_GammaT = 0.0;
     double volume = 0.0;

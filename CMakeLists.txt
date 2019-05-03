@@ -390,6 +390,8 @@ target_link_libraries(FinalStatePartons JetScape )
 if (freestream AND music AND iSS)
   add_executable(freestream-milneTest ./examples/freestream-milneTest.cc)
   target_link_libraries(freestream-milneTest JetScape ${GSL_LIBRARIES})
+  add_executable(TwoStageHydroFromFile ./examples/TwoStagesHydroFromFile.cc)
+  target_link_libraries(TwoStageHydroFromFile JetScape ${GSL_LIBRARIES})
 endif (freestream AND music AND iSS)
 
 if ( music AND iSS )

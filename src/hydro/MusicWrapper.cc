@@ -122,6 +122,8 @@ void MpiMusic::EvolveHydro() {
         hydro_status = FINISHED;
     }
 
+    exit(1);
+
     if (flag_output_evo_to_file == 1) {
         if (!has_source_terms) {
             // only the first hydro without source term will be stored
