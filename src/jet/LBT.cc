@@ -31,9 +31,6 @@
 using namespace Jetscape;
 using namespace std;
 
-// Register the module with the base class
-RegisterJetScapeModule<LBT> LBT::reg("Lbt");
-
 // initialize static members
 bool LBT::flag_init=0;
 double LBT::Rg[60][20]={{0.0}};         //total gluon scattering rate as functions of initial energy and temperature 
@@ -92,6 +89,10 @@ void LBT::Init()
 {
   JSINFO<<"Intialize LBT ...";
 
+  // Redundant (get this from Base) quick fix here for now
+  tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );  
+  tinyxml2::XMLElement *lbt=eloss->FirstChildElement("Lbt");
+
   //...Below is added by Shanshan
   //...read parameters from LBT.input first, but can be changed in JETSCAPE xml file if any conflict exists
 
@@ -103,30 +104,71 @@ void LBT::Init()
   //        cout << "Parameter check failed" << endl;
   //        exit(EXIT_FAILURE);
   //    }
+	
+  if (lbt) {   
 
-  std::string s = GetXMLElementText({"Eloss", "Lbt", "name"});
-  JSDEBUG << s << " to be initilizied ...";
+      int flagInt=-100;
+      double inputDouble=-99.99;
+      int in_vac=1;
 
-  //double m_qhat=-99.99;
-  //lbt->FirstChildElement("qhat")->QueryDoubleText(&m_qhat);
-  //SetQhat(m_qhat);
-  //
+      Q00=1.0;
+      Q0=1.0;
 
-  //JSDEBUG  << s << " with qhat = "<<GetQhat();
+      string s = lbt->FirstChildElement( "name" )->GetText();
+    
+      JSDEBUG << s << " to be initilizied ...";
 
-  int in_vac = GetXMLElementInt({"Eloss", "Lbt", "in_vac"});
+      //double m_qhat=-99.99;
+      //lbt->FirstChildElement("qhat")->QueryDoubleText(&m_qhat);
+      //SetQhat(m_qhat);
+      //
+      //JSDEBUG  << s << " with qhat = "<<GetQhat();      	
 
-  if (in_vac == 1) {
-    vacORmed = 0;
-    fixPosition = 1;
-  } else {
-    vacORmed = 1;
-  }
+      if ( !lbt->FirstChildElement("in_vac") ) {
+  	JSWARN << "Couldn't find sub-tag Eloss -> LBT -> in_vac";
+          throw std::runtime_error ("Couldn't find sub-tag Eloss -> LBT -> in_vac");
+      }
+      lbt->FirstChildElement("in_vac")->QueryIntText(&flagInt);
+      in_vac = flagInt;
+      if (in_vac == 1) {
+          vacORmed = 0;
+	  fixPosition = 1;
+      } else {
+	  vacORmed = 1;
+      }
+
+      if ( !lbt->FirstChildElement("only_leading") ) {
+  	JSWARN << "Couldn't find sub-tag Eloss -> LBT -> only_leading";
+          throw std::runtime_error ("Couldn't find sub-tag Eloss -> LBT -> only_leading");
+      }
+      lbt->FirstChildElement("only_leading")->QueryIntText(&flagInt);
+      Kprimary = flagInt;
   
-  Kprimary = GetXMLElementInt({"Eloss", "Lbt", "only_leading"});
-  Q00 = GetXMLElementDouble({"Eloss", "Lbt", "Q0"});
-  fixAlphas = GetXMLElementDouble({"Eloss", "Lbt", "alphas"});
-  hydro_Tc = GetXMLElementDouble({"Eloss", "Lbt", "hydro_Tc"});
+      if ( !lbt->FirstChildElement("Q0") ) {
+        JSWARN << "Couldn't find sub-tag Eloss -> LBT -> Q0";
+          throw std::runtime_error ("Couldn't find sub-tag Eloss -> LBT -> Q0");
+      }
+      lbt->FirstChildElement("Q0")->QueryDoubleText(&inputDouble);
+      Q00 = inputDouble;
+  
+      if ( !lbt->FirstChildElement("alphas") ) {
+  	JSWARN << "Couldn't find sub-tag Eloss -> LBT -> alphas";
+          throw std::runtime_error ("Couldn't find sub-tag Eloss -> LBT -> alphas");
+      }
+      lbt->FirstChildElement("alphas")->QueryDoubleText(&inputDouble);
+      fixAlphas = inputDouble;
+ 
+      if ( !lbt->FirstChildElement("hydro_Tc") ) {
+  	JSWARN << "Couldn't find sub-tag Eloss -> LBT -> hydro_Tc";
+          throw std::runtime_error ("Couldn't find sub-tag Eloss -> LBT -> hydro_Tc");
+      }
+      lbt->FirstChildElement("hydro_Tc")->QueryDoubleText(&inputDouble);
+      hydro_Tc = inputDouble;
+
+  } else {
+      JSWARN << " : LBT not properly initialized in XML file ...";
+      exit(-1);
+  }
 
 
   JSINFO<< MAGENTA << "LBT parameters -- in_med: " << vacORmed << " Q0: " << Q00 << "  only_leading: " << Kprimary << "  alpha_s: " << fixAlphas << "  hydro_Tc: " << hydro_Tc;

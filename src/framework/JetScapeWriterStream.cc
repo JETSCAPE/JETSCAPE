@@ -19,12 +19,6 @@
 #include "JetScapeXML.h"
 
 namespace Jetscape {
-  
-// Register the modules with the base class
-template<>
-RegisterJetScapeModule<JetScapeWriterStream<ofstream>> JetScapeWriterStream<ofstream>::reg("JetScapeWriterAscii");
-template<>
-RegisterJetScapeModule<JetScapeWriterStream<ogzstream>> JetScapeWriterStream<ogzstream>::regGZ("JetScapeWriterAsciiGZ");
 
 template<class T>
 JetScapeWriterStream<T>::JetScapeWriterStream(string m_file_name_out)
@@ -108,8 +102,7 @@ void JetScapeWriterStream<T>::Init()
        output_file.open(GetOutputFileName().c_str());
        
        //Write Init Informations, like XML and ... to file ...
-       //WriteInitFileXMLMaster();
-       //WriteInitFileXMLUser();
+       //WriteInitFileXML();
      }
 }
 
@@ -123,22 +116,12 @@ void JetScapeWriterStream<T>::Exec()
 }
 
 template<class T>
-void JetScapeWriterStream<T>::WriteInitFileXMLMaster()
+void JetScapeWriterStream<T>::WriteInitFileXML()
 {
-  JSDEBUG<<"Write XML Master to output file. XML file = "<<JetScapeXML::Instance()->GetXMLMasterFileName();
+  JSDEBUG<<"Write XML to output file. XML file = "<<JetScapeXML::Instance()->GetXMLFileName();
   tinyxml2::XMLPrinter printer;
-  JetScapeXML::Instance()->GetXMLDocumentMaster().Print(&printer);
-  WriteComment("Init XML Master file used : "+JetScapeXML::Instance()->GetXMLMasterFileName());
-  output_file<<printer.CStr();
-}
-
-template<class T>
-void JetScapeWriterStream<T>::WriteInitFileXMLUser()
-{
-  JSDEBUG<<"Write XML User to output file. XML file = "<<JetScapeXML::Instance()->GetXMLUserFileName();
-  tinyxml2::XMLPrinter printer;
-  JetScapeXML::Instance()->GetXMLDocumentUser().Print(&printer);
-  WriteComment("Init XML User file used : "+JetScapeXML::Instance()->GetXMLUserFileName());
+  JetScapeXML::Instance()->GetXMLDocument().Print(&printer);
+  WriteComment("Init XML file used : "+JetScapeXML::Instance()->GetXMLFileName());
   output_file<<printer.CStr();
 }
 

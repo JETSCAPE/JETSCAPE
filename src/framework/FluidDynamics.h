@@ -26,11 +26,12 @@
 
 #include "InitialState.h"
 #include "JetScapeModuleBase.h"
+#include "tinyxml2.h"
 #include "PreequilibriumDynamics.h"
 #include "RealType.h"
 #include "FluidCellInfo.h"
-#include "FluidEvolutionHistory.h"
 #include "SurfaceCellInfo.h"
+#include "FluidEvolutionHistory.h"
 
 namespace Jetscape {
 
@@ -74,6 +75,11 @@ class FluidDynamics : public JetScapeModuleBase {
         eta is initialized to -99.99.
     */  
     FluidDynamics();
+    
+    /** Standard constructor to create a Fluid Dynamics task. Sets the task ID as "FluidDynamics", and the value of rapidity (eta) to -99.99. 
+	@param m_name is a name of the control XML file which contains the input parameters under the tag <Hydro>.
+    */
+    FluidDynamics(string m_name);
     
     /** Default destructor. */
     virtual ~FluidDynamics();
@@ -123,11 +129,14 @@ class FluidDynamics : public JetScapeModuleBase {
 	@param z  rapidity eta or space z coordinate.
 	@param fCell A pointer of type FluidCellInfo class.  
     */
-
     virtual void GetHydroCell(double t, double x, double y, double z,
                               std::unique_ptr<FluidCellInfo>& fCell) {
         GetHydroInfo(t, x, y, z, fCell);
-    }
+    } 
+
+    /** @return A pointer to the XML elements. Such XML elements are the input parameters stored in an XML file under the tag <Hydro>.
+     */
+    tinyxml2::XMLElement* GetHydroXML() {return(fd);}
 
     // currently we have no standard for passing configurations 
     // pure virtual function; to be implemented by users
@@ -199,8 +208,8 @@ class FluidDynamics : public JetScapeModuleBase {
     // the detailed implementation is left to the hydro developper
     /** @return Default function to get the hypersurface for Cooper-Frye or recombination model. It can overridden by different modules.
      */
-    std::vector<SurfaceCellInfo> FindAConstantTemperatureSurface(
-                                                        Jetscape::real T_sw);
+    virtual void GetHyperSurface(Jetscape::real T_cut,
+                                 SurfaceCellInfo* surface_list_ptr) {};
 
     // all the following functions will call function GetHydroInfo()
     // to get thermaldynamic and dynamical information at a space-time point
@@ -278,7 +287,7 @@ class FluidDynamics : public JetScapeModuleBase {
     // 	@param z Space or eta coordinate.
     // */
     // virtual Jetscape::real GetNetChargeDensity(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
-
+    
     /// slots for "jet" signals (future)
     virtual void UpdateEnergyDeposit(int t, double edop);
     /// slots for "jet" signals (future)

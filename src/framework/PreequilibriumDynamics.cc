@@ -42,6 +42,15 @@ void PreequilibriumDynamics::Init() {
 
     JSINFO <<"Intialize PreequilibriumDynamics : " << GetId() << " ...";
 
+    fd = JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement(
+                                                        "Preequilibrium");
+
+    if (!fd) {
+        JSWARN << "Not a valid JetScape XML Preequilibrium Dynamics section file "
+           << "or no XML file loaded!";
+        exit(-1);
+    }
+
     VERBOSE(8);
 
     // this is grabbing the initial entropy density ?

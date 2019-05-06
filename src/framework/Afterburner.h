@@ -19,6 +19,7 @@
 
 #include "JetScapeModuleBase.h"
 #include "SoftParticlization.h"
+#include "tinyxml2.h"
 #include "sigslot.h"
 
 namespace Jetscape {
@@ -36,9 +37,13 @@ namespace Jetscape {
       disconnect_all();
     }
 
+    tinyxml2::XMLElement* XMLConfiguration() const { return xml_config_; }
+
     virtual void Init();
     virtual void Exec();
    protected:
+    /// Points to options specific to the afterburner
+    tinyxml2::XMLElement *xml_config_;
     /// Pointer to particlization sampler, which provides initial hadrons
     std::shared_ptr<SoftParticlization> soft_particlization_sampler_;
   };

@@ -29,9 +29,6 @@ class GubserHydro: public FluidDynamics {
     double q;
     double e_0;
     double temperature(double e_local);
-  
-    // Allows the registration of the module so that it is available to be used by the Jetscape framework.
-    static RegisterJetScapeModule<GubserHydro> reg;
 
      
  public:

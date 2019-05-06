@@ -63,11 +63,9 @@ private:
 
 class SmashWrapper : public Afterburner {
 private:
+  tinyxml2::XMLElement *smash_xml_;
   bool only_final_decays_ = false;
   shared_ptr<smash::Experiment<AfterburnerModus>> smash_experiment_;
-  
-  // Allows the registration of the module so that it is available to be used by the Jetscape framework.
-  static RegisterJetScapeModule<SmashWrapper> reg;
 
 public:
   void

@@ -21,9 +21,6 @@
 #include "JetScapeLogger.h"
 #include "NullPreDynamics.h"
 
-// Register the module with the base class
-RegisterJetScapeModule<NullPreDynamics> NullPreDynamics::reg("NullPreDynamics");
-
 NullPreDynamics::NullPreDynamics() {
     preequilibrium_status_ = NOT_STARTED;
     SetId("NullPreDynamics");

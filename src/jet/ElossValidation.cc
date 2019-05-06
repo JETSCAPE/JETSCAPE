@@ -45,7 +45,23 @@ void ElossValidate::Init()
 {
   JSINFO<<"Intialize ElossValidate ...";
 
-  std::string s = GetXMLElementText({"Eloss", "ElossValidate", "name"});
+  // Redundant (get this from Base) quick fix here for now
+  tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );
+  if ( !eloss ) {
+    JSWARN << "Couldn't find tag Eloss";
+    throw std::runtime_error ("Couldn't find tag Eloss");    
+  }
+  tinyxml2::XMLElement *xmle=eloss->FirstChildElement("ElossValidate");
+  if ( !xmle ) {
+    JSWARN << "Couldn't find tag Eloss -> ElossValidate";
+    throw std::runtime_error ("Couldn't find tag Eloss -> ElossValidate");    
+  }
+
+  if ( !xmle->FirstChildElement( "name" ) ){
+    JSWARN << "Couldn't find tag Eloss -> ElossValidate";
+    throw std::runtime_error ("Couldn't find tag Eloss -> ElossValidate -> name");    
+  }
+  string s = xmle->FirstChildElement( "name" )->GetText();
   JSINFO << s << " to be initializied ...";
   
 }

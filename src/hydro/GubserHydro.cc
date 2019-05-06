@@ -27,9 +27,6 @@
 // using namespace std;
 using namespace Jetscape;
 
-// Register the module with the base class
-RegisterJetScapeModule<GubserHydro> GubserHydro::reg("Gubser");
-
 GubserHydro::GubserHydro() : FluidDynamics(){
     // initialize the parameter reader
     q = 1.0;

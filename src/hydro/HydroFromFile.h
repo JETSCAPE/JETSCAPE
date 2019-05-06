@@ -46,9 +46,6 @@ class HydroFromFile: public FluidDynamics {
     HydroinfoH5 *hydroinfo_h5_ptr;
 #endif
     Hydroinfo_MUSIC *hydroinfo_MUSIC_ptr;
-  
-    // Allows the registration of the module so that it is available to be used by the Jetscape framework.
-    static RegisterJetScapeModule<HydroFromFile> reg;
 
  public:
      HydroFromFile();
