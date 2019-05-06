@@ -284,15 +284,13 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   {
 
       // Reject photons
-      
-      
       if (pIn[i].pid()==photonid)
       {
           pOut.push_back(pIn[i]);
           return;
       }
       
-      VERBOSE(8) << " *  parton formation spacetime point= "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z();
+      VERBOSE(2) << BOLDYELLOW << " *  parton formation spacetime point= "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z();
 
       int jet_stat=pIn[i].pstat();  // daughter of recoil will always be recoil
       
@@ -306,9 +304,13 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       }
       double velocityMod = std::sqrt(std::pow(velocity[1],2) + std::pow(velocity[2],2) + std::pow(velocity[3],2));
 
+      VERBOSE(2) << BOLDYELLOW << " velocityMod = " << velocityMod ;
+      
       if(pIn[i].form_time()<0.0) pIn[i].set_jet_v(velocity); // jet velocity is set only once
 
       // Define a vector in the direction of the jet originating parton.
+      // there is some amount of redundancy here, pIn[i].jet_v() is basically the jet velocity
+      // we are defining a local copy in velocity_jet
       velocity_jet[0]=1.0;
       velocity_jet[1]=pIn[i].jet_v().x();
       velocity_jet[2]=pIn[i].jet_v().y();
@@ -316,7 +318,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
     
       // Modulus of the vector pIn[i].jet_v
       double mod_jet_v = std::sqrt( pow(pIn[i].jet_v().x(),2) +  pow(pIn[i].jet_v().y(),2) + pow(pIn[i].jet_v().z(),2) );
-          
+      
       for(int j=0;j<=3;j++)
       {
           xStart[j] = pIn[i].x_in().comp(j) ;
@@ -342,7 +344,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       // SC
       zeta = ( ( xStart[0] + initRdotV )/std::sqrt(2) )*fmToGeVinv;
       
-     VERBOSE(8)<< BOLDYELLOW << " zeta = " << zeta;
+      VERBOSE(8)<< BOLDYELLOW << " zeta = " << zeta;
 
       double now_R0 = time;
       double now_Rx = initRx+(time-initR0)*initVx;
@@ -470,7 +472,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           if (now_temp>0.0) ehat = 0.0*qhat/4.0/now_temp ;
          VERBOSE(8) << BOLDYELLOW << "at Origin of parton, qhat = " << qhat << " ehat = " << ehat;
 
-
+// set the minimum Q0 for MATTER using Q^2 = qhat * tau  ELSE use the positive value in XML
           if(Q00 < 0.0)
           { // use dynamical Q0 if Q00 < 0
               if(pid==gid) Q0 = sqrt(sqrt(2.0*tempEner*qhat*sqrt(2.0)));
@@ -484,6 +486,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           }
       }
 
+// I dont care what you say, we are not doing pQCD below 1 GeV
       if(Q0<1.0) Q0=1.0;
 
       //if (pIn[i].t() > QS + rounding_error)
@@ -502,7 +505,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
          VERBOSE(8) << " splitTime = " << splitTime;
          VERBOSE(8) << " qhat before splitime loop = " << qhat ;
 
-          if (splitTime<time)
+          if (splitTime<time) // it is time to split and calculate the effect of scattering
           {
 
              VERBOSE(8) << "SPLIT in MATTER" ;
