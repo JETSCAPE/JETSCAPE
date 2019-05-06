@@ -28,6 +28,8 @@
 #include "JetScapeWriterHepMC.h"
 #endif
 
+#include "SoftHadronWriter.h"
+
 // User modules derived from jetscape framework clasess
 #include "iS3DWrapper.h"
 
@@ -70,7 +72,7 @@ int main(int argc, char** argv)
   jetscape->Add(iS3D);
 
   // Output
-  auto writer= make_shared<JetScapeWriterAscii> ("finaliS3DHadrons.dat");
+  auto writer= make_shared<SoftHadronWriterAscii> ("final_iS3D_hadrons.dat");
   // same as JetScapeWriterAscii but gzipped
   // auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");
   // HEPMC3
