@@ -15,6 +15,9 @@
 
 #include "InitialFromFile.h"
 
+// Register the module with the base class
+RegisterJetScapeModule<InitialFromFile> InitialFromFile::reg("InitialFromFile");
+
 InitialFromFile::InitialFromFile() {
     SetId("InitialFromFile");
     event_id_ = -1;
@@ -31,33 +34,32 @@ void InitialFromFile::Exec() {
     Clear();
     Jetscape::JSINFO << "Read initial condition from file";
     try {
-        auto * xml_path = GetIniStateXML()->FirstChildElement("initial_profile_path");
-        if (!xml_path) {
-            throw("Not a valid JetScape IS::initial_profile_path XML section in file!");
-        } else {
-            event_id_++;
-            std::ostringstream path_with_filename;
-            path_with_filename << xml_path->GetText() << "/event-" << event_id_
-                               << "/initial.hdf5";
-            Jetscape::JSINFO << "External initial profile path is"
-                           << path_with_filename.str();
+      
+        std::string initialProfilePath = GetXMLElementText({"IS", "initial_profile_path"});
 
-            herr_t status;
-            std::ostringstream event_group;
+        event_id_++;
+        std::ostringstream path_with_filename;
+        path_with_filename << initialProfilePath << "/event-" << event_id_
+                           << "/initial.hdf5";
+        JSINFO << "External initial profile path is"
+                       << path_with_filename.str();
+
+        herr_t status;
+        std::ostringstream event_group;
 
 
-            event_group << "/event_0";
-            Jetscape::JSINFO << "event_group=" << event_group.str().c_str();
-            H5file_ptr_ = H5Fopen(path_with_filename.str().c_str(), H5F_ACC_RDWR, H5P_DEFAULT);
-            H5group_ptr_ = H5Gopen(H5file_ptr_, event_group.str().c_str(), H5P_DEFAULT);
+        event_group << "/event_0";
+        JSINFO << "event_group=" << event_group.str().c_str();
+        H5file_ptr_ = H5Fopen(path_with_filename.str().c_str(), H5F_ACC_RDWR, H5P_DEFAULT);
+        H5group_ptr_ = H5Gopen(H5file_ptr_, event_group.str().c_str(), H5P_DEFAULT);
 
-            ReadConfigs();
-            ReadNbcDist();
-            ReadEntropyDist();
+        ReadConfigs();
+        ReadNbcDist();
+        ReadEntropyDist();
 
-            status = H5Gclose(H5group_ptr_);
-            status = H5Fclose(H5file_ptr_);
-        }
+        status = H5Gclose(H5group_ptr_);
+        status = H5Fclose(H5file_ptr_);
+      
     } catch(std::exception & err) {
         Jetscape::JSWARN << err.what();
         std::exit(-1);

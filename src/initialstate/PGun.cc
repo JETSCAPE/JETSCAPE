@@ -18,6 +18,9 @@
 
 using namespace Jetscape;
 
+// Register the module with the base class
+RegisterJetScapeModule<PGun> PGun::reg("PGun");
+
 PGun::PGun() : HardProcess()
 {
   fixed_pT=0;
@@ -34,24 +37,14 @@ void PGun::InitTask()
 {
   JSDEBUG<<"Initialize PGun Brick (Test) ...";
   VERBOSE(8);
-  tinyxml2::XMLElement *pgun=GetHardXML()->FirstChildElement("PGun");
 
-  if (pgun)
-    {
-      string s = pgun->FirstChildElement( "name" )->GetText();
-      JSDEBUG << s << " to be initilizied ...";
-      
-      pgun->FirstChildElement("pT")->QueryDoubleText(&fixed_pT);
-
-      JSDEBUG << s << " with fixed pT = "<<fixed_pT;
-      JSINFO<<"Parton Gun with fixed pT = "<<fixed_pT;
-      
-    }
-  else
-    {
-      JSWARN << " : PGun not properly initialized in XML file ...";
-      exit(-1);
-    }
+  std::string s = GetXMLElementText({"Hard", "PGun", "name"});
+  JSDEBUG << s << " to be initilizied ...";
+  
+  fixed_pT = GetXMLElementDouble({"Hard", "PGun", "pT"});
+  JSDEBUG << s << " with fixed pT = "<<fixed_pT;
+  JSINFO<<"Parton Gun with fixed pT = "<<fixed_pT;
+  
 }
  
 void PGun::Exec()
