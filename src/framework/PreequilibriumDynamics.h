@@ -19,7 +19,6 @@
 #include<vector>
 #include "InitialState.h"
 #include "JetScapeModuleBase.h"
-#include "tinyxml2.h"
 #include "RealType.h"
 
 namespace Jetscape {
@@ -35,15 +34,12 @@ class PreEquilibriumParameterFile {
 // Interface for the Preequilibrium Dynamics of the medium
 class PreequilibriumDynamics : public JetScapeModuleBase {
  private:
-    tinyxml2::XMLElement *fd;
     PreEquilibriumParameterFile parameter_list_;
     // record preequilibrium start and end proper time [fm/c]
     real preequilibrium_tau_0_, preequilibrium_tau_max_;
 
  public:
     PreequilibriumDynamics();
-    PreequilibriumDynamics(string m_name) : JetScapeModuleBase(m_name)
-    {SetId("PreequilibriumDynamics");}
 
     virtual ~PreequilibriumDynamics();
 
@@ -59,10 +55,6 @@ class PreequilibriumDynamics : public JetScapeModuleBase {
 
     virtual void InitializePreequilibrium(PreEquilibriumParameterFile parameter_list) {}
     virtual void EvolvePreequilibrium() {}
-
-    /** @return A pointer to the XML elements. Such XML elements are the input parameters stored in an XML file under the tag <Hydro>.
-    */
-    tinyxml2::XMLElement* GetPreequilibriumXML() {return fd;}
 
     // add initial state shared pointer
     /** A pointer of type InitialState class.

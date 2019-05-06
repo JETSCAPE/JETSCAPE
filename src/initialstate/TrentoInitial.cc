@@ -21,6 +21,9 @@
 #include "TrentoInitial.h"
 
 namespace Jetscape {
+  
+// Register the module with the base class
+RegisterJetScapeModule<TrentoInitial> TrentoInitial::reg("TrentoInitial");
 
 // Helper functions for Collider ctor.
 namespace {
@@ -290,37 +293,37 @@ void TrentoInitial::UserDefined(std::string projectile, std::string target,
 
 void TrentoInitial::InitTask() {
     JSINFO << " : Create initial condition ";
-    trento_xml_ = xml_->FirstChildElement("Trento");
+    trento_xml_ = GetXMLElement({"IS", "Trento"});
 }
 
 
 void TrentoInitial::Exec() {  
     VERBOSE(2) << " : Excute initial condition ";
-    if (!trento_xml_) {
-        JSWARN << " : Not a valid JetScape IS::Trento XML section in file!";
-        exit(-1);
-    } else {
-        // trento_xml_->Attribute("A", "B") checks whether the attribute "A" has value "B"
-        auto random_seed = (*GetMt19937Generator())();
-        VERBOSE(2) << "Random seed used for TrentoInitial class" << random_seed;
-        if ( trento_xml_->Attribute("use_module", "pre_defined") ) {
-            auto predef = trento_xml_->FirstChildElement("pre_defined");
-            std::string collision_system(predef->Attribute("collision_system"));
-            VERBOSE(2) << "collision_system=" << collision_system;
-            double centrality_min = std::atof(predef->Attribute("centrality_min"));
-            double centrality_max = std::atof(predef->Attribute("centrality_max"));
-            PreDefined(collision_system, centrality_min, centrality_max,
-                    GetXMax(), GetXStep(), random_seed);
-        } else if (trento_xml_->Attribute("use_module", "user_defined") ) {
-            auto usrdef = trento_xml_->FirstChildElement("user_defined");
-            std::string projectile(usrdef->Attribute("projectile"));
-            std::string target(usrdef->Attribute("target"));
-            // center of mass collision energy per pair of nucleon
-            double sqrts_NN = std::atof(usrdef->Attribute("sqrts"));
-            double cross_section = std::atof(usrdef->Attribute("cross_section"));
-            UserDefined(projectile, target, cross_section,
-                         GetXMax(), GetXStep(), random_seed);
-        }
+
+    // trento_xml_->Attribute("A", "B") checks whether the attribute "A" has value "B"
+    auto random_seed = (*GetMt19937Generator())();
+    VERBOSE(2) << "Random seed used for TrentoInitial class" << random_seed;
+    if ( trento_xml_->Attribute("use_module", "pre_defined") ) {
+      
+        auto predef = GetXMLElement({"IS", "Trento", "pre_defined"});
+        std::string collision_system(predef->Attribute("collision_system"));
+        VERBOSE(2) << "collision_system=" << collision_system;
+        double centrality_min = std::atof(predef->Attribute("centrality_min"));
+        double centrality_max = std::atof(predef->Attribute("centrality_max"));
+        PreDefined(collision_system, centrality_min, centrality_max,
+                GetXMax(), GetXStep(), random_seed);
+      
+    } else if (trento_xml_->Attribute("use_module", "user_defined") ) {
+      
+        auto usrdef = GetXMLElement({"IS", "Trento", "user_defined"});
+        std::string projectile(usrdef->Attribute("projectile"));
+        std::string target(usrdef->Attribute("target"));
+        // center of mass collision energy per pair of nucleon
+        double sqrts_NN = std::atof(usrdef->Attribute("sqrts"));
+        double cross_section = std::atof(usrdef->Attribute("cross_section"));
+        UserDefined(projectile, target, cross_section,
+                     GetXMax(), GetXStep(), random_seed);
+
     }
 }
 

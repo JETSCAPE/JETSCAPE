@@ -29,18 +29,14 @@
 
 using namespace Jetscape;
 
+// Register the module with the base class
+RegisterJetScapeModule<SmashWrapper> SmashWrapper::reg("SMASH");
+
 SmashWrapper::SmashWrapper() { SetId("SMASH"); }
 
 void SmashWrapper::InitTask() {
   JSINFO << "SMASH: picking SMASH-specific configuration from xml file";
-  smash_xml_ = xml_config_->FirstChildElement("SMASH");
-  if (!smash_xml_) {
-    JSWARN << "No XML section for SMASH! Please check the input file.";
-    exit(-1);
-  }
-  // Read SMASH config file
-  string smash_config =
-      smash_xml_->FirstChildElement("SMASH_config_file")->GetText();
+  std::string smash_config = GetXMLElementText({"Afterburner", "SMASH", "SMASH_config_file"});
   boost::filesystem::path input_config_path(smash_config);
   if (!boost::filesystem::exists(input_config_path)) {
     JSWARN << "SMASH config file " << smash_config << " not found.";
@@ -51,8 +47,7 @@ void SmashWrapper::InitTask() {
   smash::Configuration config(input_config_path.parent_path(),
                               input_config_path.filename());
   // SMASH hadron list
-  string hadron_list =
-      smash_xml_->FirstChildElement("SMASH_particles_file")->GetText();
+  std::string hadron_list = GetXMLElementText({"Afterburner", "SMASH", "SMASH_particles_file"});
   if (boost::filesystem::exists(hadron_list)) {
     config["particles"] =
         smash::read_all(boost::filesystem::ifstream{hadron_list});
@@ -62,8 +57,7 @@ void SmashWrapper::InitTask() {
     JSINFO << "Using default SMASH hadron list.";
   }
   // SMASH decaymodes
-  string decays_list =
-      smash_xml_->FirstChildElement("SMASH_decaymodes_file")->GetText();
+  std::string decays_list = GetXMLElementText({"Afterburner", "SMASH", "SMASH_decaymodes_file"});
   if (boost::filesystem::exists(decays_list)) {
     config["decaymodes"] =
         smash::read_all(boost::filesystem::ifstream{decays_list});
@@ -82,11 +76,9 @@ void SmashWrapper::InitTask() {
       config.take({"Logging", "default"}, einhard::TRACE));
   smash::create_all_loggers(config["Logging"]);
   // Read in the rest of configuration
-  float end_time;
-  smash_xml_->FirstChildElement("end_time")->QueryFloatText(&end_time);
+  float end_time = GetXMLDouble({"Afterburner", "SMASH", "end_time"});
   config["General"]["End_Time"] = end_time;
-  smash_xml_->FirstChildElement("only_decays")
-      ->QueryBoolText(&only_final_decays_);
+  only_final_decays_ = GetXMLElementInt({"Afterburner", "SMASH", "only_decays"});
   JSINFO << "End time for SMASH is set to " << end_time << " fm/c";
   if (only_final_decays_) {
     JSINFO << "SMASH will only perform resonance decays, no propagation";

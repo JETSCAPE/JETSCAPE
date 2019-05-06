@@ -20,8 +20,6 @@
 #include <memory>
 #include "JetScapeModuleBase.h"
 #include "JetClass.h"
-#include "tinyxml2.h"
-#include "JetScapeXML.h"
 
 namespace Jetscape {
   /** @class
@@ -30,14 +28,10 @@ namespace Jetscape {
 class InitialState : public JetScapeModuleBase {
  public:
 
-  /** Default constructor.      
+  /** Default constructor to create a Initial State Physics task. Sets the task ID as "InitialState".
    */
-  InitialState();
-  /** Standard constructor to create a Initial State Physics task. Sets the task ID as "InitialState". 
-      @param m_name is a name of the control XML file which contains the input parameters under the tag <IS>. 
-   */
-  InitialState(string m_name): JetScapeModuleBase(m_name){ SetId("InitialState"); }
-  
+  InitialState() { SetId("InitialState"); }
+
   /**  Destructor for the Initial State Physics task.
    */
   ~InitialState();
@@ -80,10 +74,6 @@ class InitialState : public JetScapeModuleBase {
       To be overwritten by implementations that have such information.
   */
   virtual double GetTotalEntropy(){ return -1; };
-
-  /** @return A pointer to the XML elements. Such XML elements are the input parameters stored in the XML file under the tag <IS>.
-   */
-  tinyxml2::XMLElement * GetIniStateXML() { return xml_; }
 
   // one can set range by hand if not read from xml file 
   /** Sets the range of the coordinates (xmax, ymax, zmax). 
@@ -214,11 +204,6 @@ class InitialState : public JetScapeModuleBase {
       @param idx is an integer which maps to an unique unit cell in the coordinate space (x,y,z or eta). 
    */
   //std::tuple<double, double, double> CoordFromIdx(int idx);
-
-  // xml_ reads the xml configurations for initial states
-  /** It is used to access the input parameters from the XML file relevant to the initial state physics.
-   */
-  tinyxml2::XMLElement * xml_;
     
   int event_id_;
   //int GetEventId() const {return(event_id_);}
