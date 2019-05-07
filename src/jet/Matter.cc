@@ -119,15 +119,10 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   unsigned int max_color, min_color, min_anti_color;
   double velocity[4],xStart[4],velocity_jet[4];
   bool photon_brem = false;
-
-    //iEvent++;
-    
-    //JSINFO << BOLDYELLOW << " Event number = " << iEvent;
     
   VERBOSESHOWER(9)<< MAGENTA << "SentInPartons Signal received : "<<deltaT<<" "<<Q2<<" "<< pIn.size();
     
   VERBOSE(8) << BOLDYELLOW << " ********************************************************** " ;
-
     
   double rNum;
         
@@ -181,7 +176,6 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
     }
     
     //JSINFO << MAGENTA << " Max color = " << MaxColor;
-    
     
   //JSDEBUG << " For MATTER, the qhat in GeV^-3 = " << qhat ;
  
@@ -248,7 +242,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       initVdotV = ( initVx*pIn[i].jet_v().x() + initVy*pIn[i].jet_v().y() + initVz*pIn[i].jet_v().z() )/mod_jet_v;
       // Note: jet_v()/mod_jet_v is a unit 3 vector in the direction of the jet originating parton.
       
-      initEner = pIn[i].e();
+      initEner = pIn[i].e(); // initial Energy of parton
       if(!in_vac) length = fillQhatTab();
       if(brick_med) length = brick_length*fmToGeVinv; /// length in GeV-1 will have to changed for hydro
       //if(brick_med) length = 5.0*fmToGeVinv; /// length in GeV-1 will have to changed for hydro
