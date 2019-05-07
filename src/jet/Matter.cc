@@ -595,7 +595,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   if(el_time+el_dt<=time) dt_lrf=el_dt*flowFactor;
                   else dt_lrf=(time-el_time)*flowFactor;
 
-		  // solve alphas
+              // solve alphas
                   if(qhat0 < 0.0) soln_alphas=alphas;
                   else soln_alphas=solve_alphas(qhatLoc,enerLoc,tempLoc);
 
@@ -2029,8 +2029,176 @@ double Matter::P_z_qq_int(double cg, double cg1, double loc_e, double cg3, doubl
   return(res);
     
 }
+//
+//
+
+// Sudakov for a quark to radiate a quark + photon
+double Matter::sudakov_Pqp(double g0, double g1, double loc_c, double E)
+{
+    double sud,g;
+    int blurb;
+    
+    sud = 1.0 ;
+    
+    if (g1<2.0*g0)
+    {
+        JSWARN << " warning: the lower limit of the sudakov > 1/2 upper limit, returning 1 ";
+        JSWARN << " in sudakov_Pquark Photon, g0, g1 = " << g0 << "  " << g1;
+        return(sud) ;
+    }
+    g = 2.0*g0;
+    
+    sud = exp( -1.0*(Cf/2.0/pi)*sud_val_QP(g0,g,g1, loc_c, E ) );
+    
+    return(sud);
+    
+}
+
+double Matter::sud_val_QP(double h0, double h1, double h2, double loc_d, double E1)
+{
+    double val, h , intg, hL, hR, diff, intg_L, intg_R, t_form, span;
+    int blurb;
+    
+    
+    val = 0.0;
+    
+    h = (h1+h2)/2.0 ;
+    
+    span = (h2-h1)/h2;
+    
+    t_form = 2.0*E1/h;
+    
+    val = alpha_s(h)*sud_z_QP(h0,h, loc_d, t_form,E1);
+    
+    intg = val*(h2-h1);
+    
+    hL = (h1 + h)/2.0 ;
+    
+    t_form = 2.0*E1/hL;
+    
+    intg_L = alpha_s(hL)*sud_z_QP(h0,hL,loc_d,t_form,E1)*(h - h1) ;
+    
+    hR = (h + h2)/2.0 ;
+    
+    t_form = 2.0*E1/hR;
+    
+    intg_R = alpha_s(hR)*sud_z_QP(h0,hR,loc_d,t_form,E1)*(h2 - h) ;
+    
+    diff = std::abs( (intg_L + intg_R - intg)/intg ) ;
+    
+    if ( (diff>approx )||(span>error ))
+    {
+        intg = sud_val_QP(h0,h1,h,loc_d, E1) + sud_val_QP(h0,h,h2,loc_d, E1);
+    }
+    
+    return(intg);
+    
+}
+
+double Matter::sud_z_QP(double cg, double cg1, double loc_e, double l_fac,double E2)
+{
+    
+    double t2,t6,t10,t11,t17, q2, q3, q4, q5,q6,q10,q14, qL, tau, res, z_min;
+    int blurb;
+    
+    z_min = std::sqrt(2)*E_minimum/E2;
+    
+    if (cg1<2.0*cg)
+    {
+        return(0.0);
+    };
+    
+    t2 = std::pow(cg1, 2);
+    t6 = std::log(cg);
+    t10 = std::abs(cg - cg1);
+    t11 = std::log(t10);
+    t17 = -1.0 / t2 * (3.0 * cg1 - 6.0 * cg + 4.0 * t6 * cg1 - 4.0 * t11 * cg1) / 2.0;
+    
+    //    return(t17);
+    
+    q14=0.0;
+    
+    tau = l_fac ;
+    
+    if ((length - loc_e) < tau) tau = (length - loc_e);
+    
+    if (loc_e > length) tau = 0.0 ;
+    
+    // SC
+    //qL = qhat*0.6*tau*profile(loc_e + tau) ;
+    if(tau<rounding_error)
+    {
+        qL = 0.0;
+    }
+    else
+    {
+        qhat = fncAvrQhat(loc_e,tau)*Cf/Ca; //for photon production, only the quark scatters
+        qL = qhat*0.6*tau;
+    }
+    
+    //JSINFO << BOLDRED << " qhat L = " << qL << " location = " << loc_e << " tau = " << tau << " length = " << length;
+    
+    res = t17 + 2.0*qL*q14/cg1 ;
+    
+    //   cout << " t0 , t , res = " << cg << "  "  << cg1 << "   " << res << endl ;
+    
+    
+    if (q14<0.0)
+    {
+        cerr << "ERROR: medium contribution negative in sud_z_QG : q14 = " << q14 << endl;
+        throw std::runtime_error("ERROR: medium contribution negative in sud_z_QG");
+    }
+    
+    return(res);
+    
+}
+double Matter::P_z_qp_int(double cg, double cg1, double loc_e, double cg3, double l_fac, double E2 )
+{
+    
+    double t2, t5, t7, t10, t12, q2, q6, q10, tau, qL, res ;
+    
+    
+    if ((cg< cg1/(2.0*E2*E2/cg1+1.0) )) cg = cg1/( 2.0*E2*E2/cg1 + 1.0 );
+    
+    t2 = std::pow(cg1, 2);
+    t5 = std::log(1.0 - cg1);
+    t7 = std::pow(cg, 2);
+    t10 = std::log(1.0 - cg);
+    t12 = -cg1 - t2 / 2.0 - 2.0 * t5 + cg + t7 / 2.0 + 2.0 * t10;
+    
+    //    return(t12);
+    
+    q10 = 0.0;
+    tau = l_fac;
+    
+    if ((length - loc_e) < tau) tau = (length - loc_e);
+    
+    if (loc_e > length) tau = 0.0 ;
+    
+    // SC
+    //qL = qhat*0.6*tau*profile(loc_e + tau) ;
+    if(tau<rounding_error) {
+        qL = 0.0;
+    } else {
+        qhat = fncAvrQhat(loc_e,tau);
+        qL = qhat*0.6*tau;
+    }
+    
+    
+    res = t12 + 2.0*qL*q10/cg3 ;
+    
+    return(res);
+
+    
+}
 
 
+
+
+
+//
+//
+// Sudakov for a quark to radiate a quark + gluon.
 double Matter::sudakov_Pqg(double g0, double g1, double loc_c, double E)
 {
   double sud,g;
@@ -2085,15 +2253,10 @@ double Matter::sud_val_QG(double h0, double h1, double h2, double loc_d, double 
     
   diff = std::abs( (intg_L + intg_R - intg)/intg ) ;
     
-  //	cout << " iline, gap, diff = " << i_line << " " << h2 << " " << h1 << "  " << diff << endl ;
-  //	cout << " intg, Left , right = " << intg << " " << intg_L << "  " << intg_R << endl;
-    
   if ( (diff>approx )||(span>error ))
     {
       intg = sud_val_QG(h0,h1,h,loc_d, E1) + sud_val_QG(h0,h,h2,loc_d, E1);
     }
-    
-  //    cout << " returning with intg = " << intg << endl;
     
   return(intg);
     
@@ -2110,9 +2273,7 @@ double Matter::sud_z_QG(double cg, double cg1, double loc_e, double l_fac,double
     
   if (cg1<2.0*cg)
     {
-        
-      //        cout << " returning with cg, cg1 = " << cg << "   " <<  cg1 << "    " << E_minimum << "  " << E2 << endl ;
-      return(0.0);
+              return(0.0);
     };
     
   t2 = std::pow(cg1, 2);
@@ -2140,9 +2301,12 @@ double Matter::sud_z_QG(double cg, double cg1, double loc_e, double l_fac,double
 
   // SC  
   //qL = qhat*0.6*tau*profile(loc_e + tau) ;
-  if(tau<rounding_error) {
+  if(tau<rounding_error)
+  {
       qL = 0.0;
-  } else {
+  }
+  else
+  {
       qhat = fncAvrQhat(loc_e,tau);
       if (qhat*sqrt(2)>0.6)
       {
