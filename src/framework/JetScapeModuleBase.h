@@ -19,10 +19,8 @@
 #include <string>
 #include <memory>
 #include <random>
-#include <map>
 
 #include "JetScapeTask.h"
-#include "JetScapeXML.h"
 #include "sigslot.h"
 
 namespace Jetscape {
@@ -60,19 +58,11 @@ class JetScapeModuleBase : public JetScapeTask , public sigslot::has_slots<sigsl
 
   /** This function sets the name of the XML file to be used to store output information for the modules/tasks of a JetScapeTask.
    */ 
-  void SetXMLMasterFileName(string m_name) { xml_master_file_name = m_name; }
+  void SetXMLFileName(string m_name) { xml_file_name = m_name; }
 
   /** This function returns the XML file name. This file contains the output data for the modules/tasks of a JetScapeTask.
    */
-  string GetXMLMasterFileName() {return xml_master_file_name;}
-  
-  /** This function sets the name of the XML file to be used to store output information for the modules/tasks of a JetScapeTask.
-   */
-  void SetXMLUserFileName(string m_name) { xml_user_file_name = m_name; }
-  
-  /** This function returns the XML file name. This file contains the output data for the modules/tasks of a JetScapeTask.
-   */
-  string GetXMLUserFileName() {return xml_user_file_name;}
+  string GetXMLFileName() {return xml_file_name;}
 
   /** This function returns the current event number.
    */
@@ -86,93 +76,13 @@ class JetScapeModuleBase : public JetScapeTask , public sigslot::has_slots<sigsl
    */
   shared_ptr<std::mt19937> GetMt19937Generator();
   
-  /** Helper functions for XML parsing, wrapping functionality in JetScapeXML:
-   */
-  tinyxml2::XMLElement* GetXMLElement(std::initializer_list<const char*> path, bool isRequired = true) {
-    return JetScapeXML::Instance()->GetElement(path, isRequired);
-  }
-  std::string GetXMLElementText(std::initializer_list<const char*> path, bool isRequired = true) {
-    return JetScapeXML::Instance()->GetElementText(path, isRequired);
-  }
-  int GetXMLElementInt(std::initializer_list<const char*> path, bool isRequired = true) {
-    return JetScapeXML::Instance()->GetElementInt(path, isRequired);
-  }
-  double GetXMLElementDouble(std::initializer_list<const char*> path, bool isRequired = true) {
-    return JetScapeXML::Instance()->GetElementDouble(path, isRequired);
-  }
-  
  private:
 
-  std::string xml_master_file_name;
-  std::string xml_user_file_name;
+  string xml_file_name;
   static int current_event; 
   shared_ptr<std::mt19937> mt19937_generator_;
 
   
-};
-  
-
-/**
- * @class JetScapeModuleComponentFactory
- * @brief Factory for modules in the Jetscape framework.
- *
- * This class implements a static map (i.e. shared between all instances of JetScapeModuleBase)
- * consisting of a std::string of module names (i.e. name in XML config) and a function that creates
- * an instance of the module.
- * This will allow us to automatically add new modules to Jetscape without modifying the framework classes.
- *
- * Based on: https://stackoverflow.com/a/582456 and
- * https://github.com/alisw/AliPhysics/blob/master/PWG/EMCAL/EMCALtasks/AliEmcalCorrectionComponent.h
- */
-
-/// Template function for creating a new module. Used to register the module.
-template<typename T> shared_ptr<JetScapeModuleBase> createT() { return std::make_shared<T>(); }
-
-// Factory to create and keep track of new modules
-class JetScapeModuleFactory
-{
-public:
-  virtual ~JetScapeModuleFactory() {}
-  
-  typedef std::map<std::string, shared_ptr<JetScapeModuleBase>(*)()> map_type;
-  
-  /// Creates an instance of an object based on the name if the name is registered in the map.
-  static shared_ptr<JetScapeModuleBase> createInstance(std::string const& s)
-  {
-    map_type::iterator it = getMap()->find(s);
-    if(it == getMap()->end()) {
-      return 0;
-    }
-    return it->second();
-  }
-  
-protected:
-  /// Creates and access the module map
-  static map_type * getMap() {
-    // We never delete the map (until program termination) because we cannot guarantee correct destruction order
-    if(!moduleMap) { moduleMap = new map_type;  }
-    return moduleMap;
-  }
-  
-private:
-  /// Contains the map to all of the modules
-  static map_type* moduleMap;
-};
-
-/**
- * @class RegisterJetScapeModule
- * @brief Registers Jetscape modules in the factory map
- */
-template<typename T>
-class RegisterJetScapeModule : public JetScapeModuleFactory
-{
-public:
-  /// Registers the name of the module to map to a function that can create the module
-  RegisterJetScapeModule(std::string const& s)
-  {
-    //std::cout << "Registering " << s << " to the map" << std::endl;
-    getMap()->insert(std::make_pair(s, &createT<T>));
-  }
 };
 
 } // end namespace Jetscape

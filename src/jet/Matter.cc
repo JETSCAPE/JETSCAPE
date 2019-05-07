@@ -15,8 +15,10 @@
 
 #include "Matter.h"
 #include "JetScapeLogger.h"
+#include "JetScapeXML.h"
 #include <string>
 
+#include "tinyxml2.h"
 #include<iostream>
 
 #include "FluidDynamics.h"
@@ -28,9 +30,6 @@ using namespace Jetscape;
 using namespace std;
 
 const double QS = 1.0 ;
-
-// Register the module with the base class
-RegisterJetScapeModule<Matter> Matter::reg("Matter");
 
 Matter::Matter()
 {
@@ -47,49 +46,138 @@ void Matter::Init()
 {
   JSINFO<<"Intialize Matter ...";
 
-  std::string s = GetXMLElementText({"Eloss", "Matter", "name"});
-  JSDEBUG << s << " to be initializied ...";
-
-  in_vac = false;
-  brick_med = true;
-  recoil_on = false;
-
-  qhat = 0.0;
-  Q00 = 1.0; // virtuality separation scale
-  qhat0 = 2.0; // GeV^2/fm for gluon at s = 96 fm^-3
-  alphas = 0.3; // only useful when qhat0 is a negative number
-  hydro_Tc = 0.16;
-  brick_length = 4.0;
-  vir_factor = 1.0;
-  MaxColor = 101;
-
-  double m_qhat = GetXMLElementDouble({"Eloss", "Matter", "qhat0"});
-  SetQhat(m_qhat);
-  //qhat = GetQhat()/fmToGeVinv ;
-  //qhat0 = GetQhat()/fmToGeVinv ;
-  qhat0 = GetQhat();
-  JSDEBUG  << s << " with qhat0 = "<<GetQhat();
-  
-  matter_on = GetXMLElementInt({"Eloss", "Matter", "matter_on"});
-  in_vac = GetXMLElementInt({"Eloss", "Matter", "in_vac"});
-  recoil_on = GetXMLElementInt({"Eloss", "Matter", "recoil_on"});
-  broadening_on = GetXMLElementInt({"Eloss", "Matter", "broadening_on"});
-  brick_med = GetXMLElementInt({"Eloss", "Matter", "brick_med"});
-  Q00 = GetXMLElementDouble({"Eloss", "Matter", "Q0"});
-  T0= GetXMLElementDouble({"Eloss", "Matter", "T0"});
-  alphas = GetXMLElementDouble({"Eloss", "Matter", "alphas"});
-  hydro_Tc = GetXMLElementDouble({"Eloss", "Matter", "hydro_Tc"});
-  brick_length = GetXMLElementDouble({"Eloss", "Matter", "brick_length"});
-  vir_factor = GetXMLElementDouble({"Eloss", "Matter", "vir_factor"});
-
-  if(vir_factor<0.0) {
-      cout << "Reminder: negative vir_factor is set, initial energy will be used as initial t_max" << endl;
+  // Redundant (get this from Base) quick fix here for now
+  tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );
+  if ( !eloss ) {
+    JSWARN << "Couldn't find tag Eloss";
+    throw std::runtime_error ("Couldn't find tag Eloss");    
   }
-  
-  JSINFO << MAGENTA << "MATTER input parameter";
-  JSINFO << MAGENTA << "matter shower on: " << matter_on;
-  JSINFO << MAGENTA << "in_vac: " << in_vac << "  brick_med: " << brick_med << "  recoil_on: " << recoil_on;
-  JSINFO << MAGENTA << "Q0: " << Q00 << " vir_factor: " << vir_factor << "  qhat0: " << qhat0 << " alphas: " << alphas << " hydro_Tc: " << hydro_Tc << " brick_length: " << brick_length;
+  tinyxml2::XMLElement *matter=eloss->FirstChildElement("Matter");
+  if ( !matter ) {
+    JSWARN << "Couldn't find tag Eloss -> Matter";
+    throw std::runtime_error ("Couldn't find tag Eloss -> Matter");    
+  }
+ 
+  if (matter) {   
+    string s = matter->FirstChildElement( "name" )->GetText();
+    JSDEBUG << s << " to be initializied ...";
+ 
+    in_vac = false;
+    brick_med = true;
+    recoil_on = false;
+
+    qhat = 0.0;
+    Q00 = 1.0; // virtuality separation scale
+    qhat0 = 2.0; // GeV^2/fm for gluon at s = 96 fm^-3
+    alphas = 0.3; // only useful when qhat0 is a negative number
+    hydro_Tc = 0.16;
+    brick_length = 4.0;
+    vir_factor = 1.0;
+    MaxColor = 101;
+
+    double m_qhat=-99.99;
+    matter->FirstChildElement("qhat0")->QueryDoubleText(&m_qhat);
+    SetQhat(m_qhat);
+    //qhat = GetQhat()/fmToGeVinv ;
+    //qhat0 = GetQhat()/fmToGeVinv ;
+    qhat0 = GetQhat();
+    JSDEBUG  << s << " with qhat0 = "<<GetQhat();
+ 
+    int flagInt=-100;
+    double inputDouble=-99.99;
+
+    if ( !matter->FirstChildElement("matter_on") ) {
+	JSWARN << "Couldn't find sub-tag Eloss -> Matter -> matter_on";
+        throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> matter_on");
+    }
+    matter->FirstChildElement("matter_on")->QueryIntText(&flagInt);
+    matter_on = flagInt;
+
+    if ( !matter->FirstChildElement("in_vac") ) {
+	JSWARN << "Couldn't find sub-tag Eloss -> Matter -> in_vac";
+        throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> in_vac");
+    }
+    matter->FirstChildElement("in_vac")->QueryIntText(&flagInt);
+    in_vac = flagInt;
+
+    if ( !matter->FirstChildElement("recoil_on") ) {
+	JSWARN << "Couldn't find sub-tag Eloss -> Matter -> recoil_on";
+        throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> recoil_on");
+    }
+    matter->FirstChildElement("recoil_on")->QueryIntText(&flagInt);
+    recoil_on = flagInt;
+
+    if ( !matter->FirstChildElement("broadening_on") ) {
+	JSWARN << "Couldn't find sub-tag Eloss -> Matter -> broadening_on";
+        throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> broadening_on");
+    }
+    matter->FirstChildElement("broadening_on")->QueryIntText(&flagInt);
+    broadening_on = flagInt;
+
+
+    if ( !matter->FirstChildElement("brick_med") ) {
+	JSWARN << "Couldn't find sub-tag Eloss -> Matter -> brick_med";
+        throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> brick_med");
+    }
+    matter->FirstChildElement("brick_med")->QueryIntText(&flagInt);
+    brick_med = flagInt;
+
+    if ( !matter->FirstChildElement("Q0") ) {
+	JSWARN << "Couldn't find sub-tag Eloss -> Matter -> Q0";
+        throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> Q0");
+    }
+    matter->FirstChildElement("Q0")->QueryDoubleText(&inputDouble);
+    Q00 = inputDouble;
+
+    if ( !matter->FirstChildElement("T0") ) {
+	JSWARN << "Couldn't find sub-tag Eloss -> Matter -> T0";
+        throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> T0");
+    }
+    matter->FirstChildElement("T0")->QueryDoubleText(&inputDouble);
+    T0 = inputDouble;
+
+    if ( !matter->FirstChildElement("alphas") ) {
+	JSWARN << "Couldn't find sub-tag Eloss -> Matter -> alphas";
+        throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> alphas");
+    }
+    matter->FirstChildElement("alphas")->QueryDoubleText(&inputDouble);
+    alphas = inputDouble;
+
+    if ( !matter->FirstChildElement("hydro_Tc") ) {
+	JSWARN << "Couldn't find sub-tag Eloss -> Matter -> hydro_Tc";
+        throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> hydro_Tc");
+    }
+    matter->FirstChildElement("hydro_Tc")->QueryDoubleText(&inputDouble);
+    hydro_Tc = inputDouble;
+
+    if ( !matter->FirstChildElement("brick_length") ) {
+	JSWARN << "Couldn't find sub-tag Eloss -> Matter -> brick_length";
+        throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> brick_length");
+    }
+    matter->FirstChildElement("brick_length")->QueryDoubleText(&inputDouble);
+    brick_length = inputDouble;
+
+    if ( !matter->FirstChildElement("vir_factor") ) {
+	JSWARN << "Couldn't find sub-tag Eloss -> Matter -> vir_factor";
+        throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> vir_factor");
+    }
+    matter->FirstChildElement("vir_factor")->QueryDoubleText(&inputDouble);
+    vir_factor = inputDouble;
+
+    if(vir_factor<0.0) {
+        cout << "Reminder: negative vir_factor is set, initial energy will be used as initial t_max" << endl;
+    }
+
+    JSINFO << MAGENTA << "MATTER input parameter";
+    JSINFO << MAGENTA << "matter shower on: " << matter_on;
+    JSINFO << MAGENTA << "in_vac: " << in_vac << "  brick_med: " << brick_med << "  recoil_on: " << recoil_on;
+    JSINFO << MAGENTA << "Q0: " << Q00 << " vir_factor: " << vir_factor << "  qhat0: " << qhat0 << " alphas: " << alphas << " hydro_Tc: " << hydro_Tc << " brick_length: " << brick_length;
+
+  }
+  else {
+    JSWARN << " : Matter not properly initialized in XML file ...";
+    throw std::runtime_error("Matter not properly initialized in XML file ...");
+  }
 
   // Initialize random number distribution
   ZeroOneDistribution = uniform_real_distribution<double> { 0.0, 1.0 };

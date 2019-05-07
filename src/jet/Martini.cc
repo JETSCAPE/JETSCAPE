@@ -29,9 +29,6 @@
 
 using namespace Jetscape;
 
-// Register the module with the base class
-RegisterJetScapeModule<Martini> Martini::reg("Martini");
-
 using std::ofstream;
 using std::ifstream;
 using std::ostream;
@@ -63,10 +60,14 @@ void Martini::Init()
 {
   JSINFO<<"Intialize Martini ...";
 
+  // Redundant (get this from Base) quick fix here for now
+  tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );
+  if ( !eloss )     throw std::runtime_error("Eloss not properly initialized in XML file ...");
+
   double deltaT = 0.0;
   double Martini_deltaT_Max = 0.01 + rounding_error;
 
-  deltaT = GetXMLElementDouble({"Eloss", "deltaT"});
+  eloss->FirstChildElement("deltaT")->QueryDoubleText(&deltaT);
 
   if ( deltaT > Martini_deltaT_Max ) {
     JSWARN << "Timestep for Martini ( deltaT = " << deltaT << " ) is too large. "
@@ -74,20 +75,37 @@ void Martini::Init()
     throw std::runtime_error("Martini not properly initialized in XML file ...");
   }
 
-  string s = GetXMLElementText({"Eloss", "Martini", "name"});
+  tinyxml2::XMLElement *martini=eloss->FirstChildElement("Martini");
+  // check that all is there
+  if ( !martini )     throw std::runtime_error("Martini not properly initialized in XML file ...");
+  if ( !martini->FirstChildElement( "name" ) )     throw std::runtime_error("Martini not properly initialized in XML file ...");
+  if ( !martini->FirstChildElement( "Q0" ) )     throw std::runtime_error("Martini not properly initialized in XML file ...");
+  if ( !martini->FirstChildElement( "alpha_s" ) )     throw std::runtime_error("Martini not properly initialized in XML file ...");
+  if ( !martini->FirstChildElement( "pcut" ) )     throw std::runtime_error("Martini not properly initialized in XML file ...");
+  if ( !martini->FirstChildElement( "hydro_Tc" ) )     throw std::runtime_error("Martini not properly initialized in XML file ...");
+
+  string s = martini->FirstChildElement( "name" )->GetText();
   JSDEBUG << s << " to be initilizied ...";
 
-  Q0 = GetXMLElementDouble({"Eloss", "Martini", "Q0"});
-  alpha_s = GetXMLElementDouble({"Eloss", "Martini", "alpha_s"});
-  pcut = GetXMLElementDouble({"Eloss", "Martini", "pcut"});
-  hydro_Tc = GetXMLElementDouble({"Eloss", "Martini", "hydro_Tc"});
+  Q0 = 1.0;
+  martini->FirstChildElement("Q0")->QueryDoubleText(&Q0);
+
+  alpha_s = 0.3;
+  martini->FirstChildElement("alpha_s")->QueryDoubleText(&alpha_s);
+    
+  pcut = 2.0;
+  martini->FirstChildElement("pcut")->QueryDoubleText(&pcut);
+
+  hydro_Tc = 0.16;
+  martini->FirstChildElement("hydro_Tc")->QueryDoubleText(&hydro_Tc);
 
   g = sqrt(4.*M_PI*alpha_s);
   alpha_em = 1./137.;
   hydro_tStart = 0.6;
 
   // Path to additional data
-  PathToTables = GetXMLElementText({"Eloss", "Martini", "path"});
+  if ( !martini->FirstChildElement( "path" ) )     throw std::runtime_error("Martini not properly initialized in XML file ...");
+  PathToTables=martini->FirstChildElement( "path" )->GetText();
 
   // Initialize random number distribution
   ZeroOneDistribution = uniform_real_distribution<double> { 0.0, 1.0 };

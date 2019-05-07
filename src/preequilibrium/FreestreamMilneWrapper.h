@@ -26,9 +26,6 @@ class FreestreamMilneWrapper: public PreequilibriumDynamics {
   //int mode; //!< records running mode
   FREESTREAMMILNE *fsmilne_ptr;
   
-  // Allows the registration of the module so that it is available to be used by the Jetscape framework.
-  static RegisterJetScapeModule<FreestreamMilneWrapper> reg;
-  
  public:
   FreestreamMilneWrapper();
   ~FreestreamMilneWrapper();

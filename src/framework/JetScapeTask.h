@@ -36,6 +36,7 @@ namespace Jetscape {
 // need forward declaration
 class JetScapeWriter;
 class JetScapeModuleMutex;
+class PartonPrinter;
 class Parton;
 
 class JetScapeTask 

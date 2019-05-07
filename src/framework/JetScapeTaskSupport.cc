@@ -49,7 +49,7 @@ namespace Jetscape {
     VERBOSE(1) << "JetScapeTaskSupport::ReadSeedFromXML called. ";
 
     // xml limits us to unsigned int :-/ -- but so does 32 bits Mersenne Twist
-    tinyxml2::XMLElement *RandomXmlDescription=JetScapeXML::Instance()->GetElement({"Random"});
+    tinyxml2::XMLElement *RandomXmlDescription=JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Random" );
     tinyxml2::XMLElement *xmle=0;
     if ( RandomXmlDescription ){
       xmle = RandomXmlDescription->FirstChildElement( "seed" ); if ( !xmle ) throw std::runtime_error("Cannot parse xml");

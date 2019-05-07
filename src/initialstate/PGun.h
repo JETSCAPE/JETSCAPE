@@ -27,9 +27,6 @@ class PGun: public HardProcess {
  private:
     double fixed_pT;
 
-    // Allows the registration of the module so that it is available to be used by the Jetscape framework.
-    static RegisterJetScapeModule<PGun> reg;
-
  public:
     
     PGun();

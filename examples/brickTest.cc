@@ -13,7 +13,7 @@
  * See COPYING for details.
  ******************************************************************************/
 // ------------------------------------------------------------
-// JetScape Framework hydro from file Test Program
+// JetScape Framework Brick Test Program
 // (use either shared library (need to add paths; see setup.csh)
 // (or create static library and link in)
 // -------------------------------------------------------------
@@ -31,22 +31,22 @@
 #endif
 
 // User modules derived from jetscape framework clasess
+#include "TrentoInitial.h"
 #include "AdSCFT.h"
 #include "Matter.h"
+#include "LBT.h"
 #include "Martini.h"
-#include "MusicWrapper.h"
-#include "iSpectraSamplerWrapper.h"
-#include "TrentoInitial.h"
-#include "NullPreDynamics.h"
+#include "Brick.h"
+#include "GubserHydro.h"
 #include "PGun.h"
+#include "PartonPrinter.h"
 #include "HadronizationManager.h"
 #include "Hadronization.h"
 #include "ColoredHadronization.h"
+#include "ColorlessHadronization.h"
 
 #include <chrono>
 #include <thread>
-
-using namespace std;
 
 using namespace Jetscape;
 
@@ -65,35 +65,24 @@ int main(int argc, char** argv)
   // DEBUG=true by default and REMARK=false
   // can be also set also via XML file (at least partially)
   JetScapeLogger::Instance()->SetInfo(true);
-  JetScapeLogger::Instance()->SetDebug(true);
+  JetScapeLogger::Instance()->SetDebug(false);
   JetScapeLogger::Instance()->SetRemark(false);
-  //SetVerboseLevel (9 a lot of additional debug output ...)
-  //If you want to suppress it: use SetVerboseLevel(0) or max  SetVerboseLevel(9) or 10
-  JetScapeLogger::Instance()->SetVerboseLevel(8);
+  //SetVerboseLevel (9 adds a lot of additional debug output)
+  //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevle(9) or 10
+  JetScapeLogger::Instance()->SetVerboseLevel(0);
    
   Show();
 
-  // auto jetscape = make_shared<JetScape>("./jetscape_init.xml",10);
-  // jetscape->SetReuseHydro (true);
-  // jetscape->SetNReuseHydro (5);
-
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",1);
-  jetscape->SetReuseHydro (false);
-  jetscape->SetNReuseHydro (0);
-
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",12);
+  jetscape->SetId("primary");
+  
   // Initial conditions and hydro
   auto trento = make_shared<TrentoInitial>();
-  auto null_predynamics = make_shared<NullPreDynamics> ();
   auto pGun= make_shared<PGun> ();
-  auto hydro = make_shared<MpiMusic> ();
+  auto hydro = make_shared<Brick> ();
   jetscape->Add(trento);
-  jetscape->Add(null_predynamics);
   jetscape->Add(pGun);
   jetscape->Add(hydro);
-
-  // surface sampler
-  auto iSS = make_shared<iSpectraSamplerWrapper> ();
-  jetscape->Add(iSS);
 
   // Energy loss
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
@@ -101,18 +90,22 @@ int main(int argc, char** argv)
 
   auto matter = make_shared<Matter> ();
   // auto lbt = make_shared<LBT> ();
-  // auto martini = make_shared<Martini> ();
+  //auto martini = make_shared<Martini> ();
   // auto adscft = make_shared<AdSCFT> ();
 
   // Note: if you use Matter, it MUST come first (to set virtuality)
   jloss->Add(matter);
   // jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
-  // jloss->Add(martini);
+  //jloss->Add(martini);
   // jloss->Add(adscft);  
   jlossmanager->Add(jloss);  
   jetscape->Add(jlossmanager);
+
   
   // Hadronization
+  // This helper module currently needs to be added for hadronization.
+  auto printer = make_shared<PartonPrinter> ();
+  jetscape->Add(printer);
   auto hadroMgr = make_shared<HadronizationManager> ();
   auto hadro = make_shared<Hadronization> ();
   auto hadroModule = make_shared<ColoredHadronization> ();
@@ -135,24 +128,19 @@ int main(int argc, char** argv)
   // Intialize all modules tasks
   jetscape->Init();
 
-  // Run JetScape with all task/modules as specified ...
+  // Run JetScape with all task/modules as specified
   jetscape->Exec();
 
-  // "dummy" so far ...
-  // Most thinkgs done in write and clear ...
+  // For the future, cleanup is mostly already done in write and clear
   jetscape->Finish();
   
   INFO_NICE<<"Finished!";
   cout<<endl;
 
-  // wait for 5s
-  //std::this_thread::sleep_for(std::chrono::milliseconds(500000));
-
   t = clock() - t;
   time(&end);
   printf ("CPU time: %f seconds.\n",((float)t)/CLOCKS_PER_SEC);
   printf ("Real time: %f seconds.\n",difftime(end,start));
-  //printf ("Real time: %f seconds.\n",(start-end));
   return 0;
 }
 
@@ -160,8 +148,8 @@ int main(int argc, char** argv)
 
 void Show()
 {
-  INFO_NICE<<"-----------------------------------------------";
-  INFO_NICE<<"| MUSIC Test JetScape Framework ... |";
-  INFO_NICE<<"-----------------------------------------------";
+  INFO_NICE<<"------------------------------------";
+  INFO_NICE<<"| Brick Test JetScape Framework ... |";
+  INFO_NICE<<"------------------------------------";
   INFO_NICE;
 }

@@ -25,9 +25,6 @@
 
 using namespace Jetscape;
 
-// Register the module with the base class
-RegisterJetScapeModule<MusicWrapper> MusicWrapper::reg("MUSIC");
-
 MpiMusic::MpiMusic() {
     hydro_status = NOT_START;
     doCooperFrye = 0;
@@ -46,18 +43,25 @@ MpiMusic::~MpiMusic() {
 void MpiMusic::InitializeHydro(Parameter parameter_list) {
     JSINFO << "Initialize MUSIC ...";
     VERBOSE(8);
-
-    string input_file = GetXMLElementText({"Hydro", "MUSIC", "MUSIC_input_file"});
-    doCooperFrye = GetXMLElementInt({"Hydro", "MUSIC", "Perform_CooperFrye_Feezeout"});
-  
+    tinyxml2::XMLElement *para =
+                    GetHydroXML()->FirstChildElement("MUSIC");
+    if (!para) {
+        JSWARN << " : MUSIC not properly initialized in XML file ...";
+        exit(-1);
+    }
+    string input_file = para->FirstChildElement("MUSIC_input_file")->GetText();
+    para->FirstChildElement("Perform_CooperFrye_Feezeout")->QueryIntText(
+                                                                &doCooperFrye);
     music_hydro_ptr = new MUSIC(input_file);
 
     // overwrite input options
-    int flag_output_evo_to_file = GetXMLElementInt({"Hydro", "MUSIC", "output_evolution_to_file"});
+    para->FirstChildElement("output_evolution_to_file")->QueryIntText(
+                                                    &flag_output_evo_to_file);
     music_hydro_ptr->set_parameter("output_movie_flag",
                                 static_cast<double>(flag_output_evo_to_file));
-    double eta_over_s = GetXMLElementDouble({"Hydro", "MUSIC", "shear_viscosity_eta_over_s"});
-
+    double eta_over_s = 0.0;
+    para->FirstChildElement("shear_viscosity_eta_over_s")->QueryDoubleText(
+                                                                &eta_over_s);
     if (eta_over_s > 1e-6) {
         music_hydro_ptr->set_parameter("Viscosity_Flag_Yes_1_No_0", 1);
         music_hydro_ptr->set_parameter("Include_Shear_Visc_Yes_1_No_0", 1);
@@ -108,8 +112,6 @@ void MpiMusic::EvolveHydro() {
         JSINFO << "number of fluid cells received by the JETSCAPE: "
                << bulk_info.data.size();
         music_hydro_ptr->clear_hydro_info_from_memory();
-
-        FindAConstantTemperatureSurface(0.16);
     }
     
     collect_freeze_out_surface();

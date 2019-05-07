@@ -21,6 +21,7 @@
 using namespace Jetscape;
 
 class NullPreDynamics: public PreequilibriumDynamics {
+ private:
   
  public:
   NullPreDynamics();
@@ -28,10 +29,6 @@ class NullPreDynamics: public PreequilibriumDynamics {
   
   void InitializePreequilibrium() {};
   void EvolvePreequilibrium();
-  
- private:
-  // Allows the registration of the module so that it is available to be used by the Jetscape framework.
-  static RegisterJetScapeModule<NullPreDynamics> reg;
 };
 
 #endif  // NULLPREDYNAMICS_H

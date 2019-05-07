@@ -46,9 +46,9 @@ void JetScapeSignalManager::ConnectGetHardPartonListSignal(shared_ptr<JetEnergyL
 
 void JetScapeSignalManager::ConnectGetFinalPartonListSignal(shared_ptr<HadronizationManager> hm) {
   if ( !hm->GetGetFinalPartonListConnected() ){
-    auto elp = GetEnergyLossPointer().lock();
-    if ( elp ) {
-      hm->GetFinalPartonList.connect(elp.get(),&JetEnergyLoss::SendFinalStatePartons);
+    auto ppp = GetPartonPrinterPointer().lock();
+    if ( ppp ) {
+      hm->GetFinalPartonList.connect(ppp.get(),&PartonPrinter::PrintFinalPartons);
       hm->SetGetFinalPartonListConnected(true);
     }
   }
@@ -133,7 +133,7 @@ void JetScapeSignalManager::CleanUp()
 
   auto loss = jloss.lock();
   if ( loss ) { 
-    int nEnd=SentInPartons_map.size();
+    int nEnd=GetHydroCellSignal_map.size();
     int nStart=loss->GetTaskAt(0)->GetNumberOfTasks();
     
     for (int i=nStart;i<nEnd;i++){

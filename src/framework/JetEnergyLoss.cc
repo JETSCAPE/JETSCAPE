@@ -95,8 +95,7 @@ void JetEnergyLoss::Clear()
   VERBOSESHOWER(8);
   if (pShower)
     pShower->clear();
- 
-  this->final_Partons.clear(); 
+  
   //inP=nullptr;pShower=nullptr; // kind of defeating the porpose of shared pointers somehow ...
 }
 
@@ -104,32 +103,55 @@ void JetEnergyLoss::Init()
 {
   JetScapeModuleBase::Init();
 
-  JSINFO<<"Intialize JetEnergyLoss ...";
-  
-  deltaT = GetXMLElementDouble({"Eloss", "deltaT"});
-  maxT = GetXMLElementDouble({"Eloss", "maxT"});
-  JSINFO<<"Eloss shower with deltaT = "<<deltaT<<" and maxT = "<<maxT;
+  JSINFO<<"Intialize JetEnergyLoss ..."; 
 
-  std::string mutexOnString = GetXMLElementText({"Eloss", "mutex"}, false);
-  if(!mutexOnString.compare("ON"))
-  //Check mutual exclusion of Eloss Modules
+  tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );
+  if ( !eloss ) {
+    JSWARN << "Couldn't find tag Eloss";
+    throw std::runtime_error ("Couldn't find tag Eloss");
+  }
+  tinyxml2::XMLElement *mutex=eloss->FirstChildElement("mutex");
+  if ( !mutex ) {
+    JSWARN << "Couldn't find tag Eloss -> mutex";
+    throw std::runtime_error ("Couldn't find tag Eloss -> mutex");
+  }
+
+  if (mutex)
   {
-    if (GetNumberOfTasks()>1)
+    string mutexOnString = mutex->GetText();
+    if(!mutexOnString.compare("ON"))
+    //Check mutual exclusion of Eloss Modules
     {
-      for(auto elossModule : GetTaskList())
+      if (GetNumberOfTasks()>1)
       {
-        shared_ptr<JetScapeModuleMutex> mutex_ptr = elossModule->GetMutex();
-        if(mutex_ptr)
+        for(auto elossModule : GetTaskList())
         {
-          if(!(mutex_ptr->CheckMutex(GetTaskList())))
+          shared_ptr<JetScapeModuleMutex> mutex_ptr = elossModule->GetMutex();  
+          if(mutex_ptr)
           {
-            JSWARN<<"Mutual exclusive Energy-Loss modules attached together!";
-            throw std::runtime_error("Fix it by attaching one of them.");
+            if(!(mutex_ptr->CheckMutex(GetTaskList())))
+            {
+	      JSWARN<<"Mutual exclusive Energy-Loss modules attached together!";
+              throw std::runtime_error("Fix it by attaching one of them.");
+	    }
           }
-        }
+        } 
       }
     }
   }
+  //tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );  
+
+  if (!eloss)
+    {
+      JSWARN << " : Not a valid JetScape Energy Loss XML section in file!";
+      exit(-1);
+    }
+  else
+    {
+      eloss->FirstChildElement("deltaT")->QueryDoubleText(&deltaT);
+      eloss->FirstChildElement("maxT")->QueryDoubleText(&maxT);
+      JSINFO<<"Eloss shower with deltaT = "<<deltaT<<" and maxT = "<<maxT;
+    }
   
   if (GetNumberOfTasks()<1)
     {
@@ -140,7 +162,6 @@ void JetEnergyLoss::Init()
   inP=nullptr;pShower=nullptr;
   
   JSINFO<<"Found "<<GetNumberOfTasks()<<" Eloss Tasks/Modules Initialize them ... ";
-  
   JetScapeTask::InitTasks();
 }
 
@@ -317,13 +338,7 @@ void JetEnergyLoss::Exec()
 	
        shared_ptr<PartonPrinter> pPrinter = JetScapeSignalManager::Instance()->GetPartonPrinterPointer().lock();
        if ( pPrinter ){
-	 pPrinter->GetFinalPartons(pShower);
-       }
-
-       shared_ptr<JetEnergyLoss> pEloss = JetScapeSignalManager::Instance()->GetEnergyLossPointer().lock();
-       if(pEloss)
-       {
-           pEloss->GetFinalPartonsForEachShower(pShower);
+	 pPrinter->GetFinalPartons2(pShower);
        }
     }
   else
@@ -354,9 +369,6 @@ void JetEnergyLoss::PrintShowerInitiatingParton()
   //JSDEBUG<<inP->pid();
 }
 
-void JetEnergyLoss::GetFinalPartonsForEachShower(shared_ptr<PartonShower> shower)
-{
-  this->final_Partons.push_back(shower.get()->GetFinalPartons()); 
-}
+
 
 } // end namespace Jetscape

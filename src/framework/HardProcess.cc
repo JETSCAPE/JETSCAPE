@@ -46,6 +46,13 @@ void HardProcess::Init()
   JetScapeModuleBase::Init();
 
   JSINFO<<"Intialize HardProcess : "<<GetId()<< " ...";
+ 
+  fd= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Hard" );
+
+  if (!fd) {
+      JSWARN << "Not a valid JetScape XML Hard section file or no XML file loaded!";
+      exit(-1);
+  }
   
   VERBOSE(8);
 

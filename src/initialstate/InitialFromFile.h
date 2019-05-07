@@ -23,8 +23,10 @@
 #include "hdf5.h"
 #include "Hydroinfo_h5.h"
 #include "JetScapeModuleBase.h"
+#include "tinyxml2.h"
 #include "InitialState.h"
 #include "JetScapeLogger.h"
+#include "JetScapeXML.h"
 
 using namespace Jetscape;
 
@@ -55,6 +57,11 @@ class InitialFromFile: public Jetscape::InitialState {
       @param w A pointer to the JetScapeWriter class.
    */
   virtual void Write(weak_ptr<JetScapeWriter> w);
+
+  /** @return A pointer to the XML elements. Such XML elements are the input parameters stored in the XML file under the tag <IS>.
+   */
+  tinyxml2::XMLElement * GetIniStateXML() { return xml_; }
+
 
   /** Generated number of collision participants.
   */
@@ -94,9 +101,6 @@ class InitialFromFile: public Jetscape::InitialState {
     double npart=-1;
     double ncoll=-1;
     double totalentropy=-1;
-  
-    // Allows the registration of the module so that it is available to be used by the Jetscape framework.
-    static RegisterJetScapeModule<InitialFromFile> reg;
 };
 
 #endif  // INITIALFROMFILE_H

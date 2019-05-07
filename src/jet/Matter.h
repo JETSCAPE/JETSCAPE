@@ -92,10 +92,6 @@ class Matter : public JetEnergyLossModule<Matter> //, public std::enable_shared_
  protected:
   uniform_real_distribution<double> ZeroOneDistribution;
   
- private:
-  // Allows the registration of the module so that it is available to be used by the Jetscape framework.
-  static RegisterJetScapeModule<Matter> reg;
-  
 };
 
 #endif // MATTER_H

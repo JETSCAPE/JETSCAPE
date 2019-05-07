@@ -27,9 +27,6 @@
 #include "AdSCFTMutex.h"
 #define MAGENTA "\033[35m"
 
-// Register the module with the base class
-RegisterJetScapeModule<AdSCFT> AdSCFT::reg("AdSCFT");
-
 AdSCFT::AdSCFT() 
 {
   SetId("AdSCFT");
@@ -52,26 +49,41 @@ AdSCFT::~AdSCFT()
 void AdSCFT::Init()
 {
   JSINFO<<"Intialize AdSCFT ...";
- 
-  std::string s = GetXMLElementText({"Eloss", "AdSCFT", "name"});
-  JSDEBUG << s << " to be initilizied ...";
 
-  //Kappa
-  kappa = GetXMLElementDouble({"Eloss", "AdSCFT", "kappa"});
-  JSINFO<<"AdSCFT kappa = "<<kappa;
- 
-  //T0 [GeV]
-  T0 = GetXMLElementDouble({"Eloss", "AdSCFT", "T0"});
-  JSINFO << "AdSCFT T0 = " << T0;
-
-  //Q0 [GeV]
-  Q0 = GetXMLElementDouble({"Eloss", "AdSCFT", "Q0"});
-  JSINFO << "AdSCFT Q0 = " << Q0;
-
-  //Vac or Med
-  in_vac = GetXMLElementDouble({"Eloss", "AdSCFT", "in_vac"});;
+  // Redundant (get this from Base) quick fix here for now
+  tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );  
+  tinyxml2::XMLElement *adscft=eloss->FirstChildElement("AdSCFT");
   
+  if (adscft)
+    {   
+      string s = adscft->FirstChildElement( "name" )->GetText();
+      JSDEBUG << s << " to be initilizied ...";
+
+      //Kappa
+      adscft->FirstChildElement("kappa")->QueryDoubleText(&kappa);
+      JSINFO<<"AdSCFT kappa = "<<kappa;
+     
+      //T0 [GeV]
+      adscft->FirstChildElement("T0")->QueryDoubleText(&T0); 
+      JSINFO << "AdSCFT T0 = " << T0;
+
+      //Q0 [GeV]
+      adscft->FirstChildElement("Q0")->QueryDoubleText(&Q0);
+      JSINFO << "AdSCFT Q0 = " << Q0;
+
+      //Vac or Med
+      in_vac = false;
+      int flagInt=-100;
+      adscft->FirstChildElement("in_vac")->QueryIntText(&flagInt);
+      in_vac = flagInt;
+    }
+  else
+    {
+      JSWARN << " : AdSCFT not properly initialized in XML file ...";
+      exit(-1);
+    }
 }
+
 
 void AdSCFT::WriteTask(weak_ptr<JetScapeWriter> w)
 {
