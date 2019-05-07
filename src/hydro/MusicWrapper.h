@@ -79,6 +79,8 @@ class MpiMusic: public FluidDynamics {
  private:
     // int mode;            //!< records running mode
     std::unique_ptr<MUSIC> music_hydro_ptr;
+    
+    Jetscape::real freezeout_temperature;  //!< [GeV]
     int doCooperFrye;    //!< flag to run Cooper-Frye freeze-out
                          //!< for soft particles
     int flag_output_evo_to_file;

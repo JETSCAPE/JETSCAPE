@@ -190,6 +190,7 @@
       <MUSIC_input_file>music_input</MUSIC_input_file>
       <output_evolution_to_file>1</output_evolution_to_file>
       <shear_viscosity_eta_over_s>0.08</shear_viscosity_eta_over_s>
+      <freezeout_temperature>0.155</freezeout_temperature>
       <Perform_CooperFrye_Feezeout>0</Perform_CooperFrye_Feezeout>
     </MUSIC>
   </Hydro>

@@ -29,6 +29,7 @@ using namespace Jetscape;
 
 MpiMusic::MpiMusic() {
     hydro_status = NOT_START;
+    freezeout_temperature = 0.0;
     doCooperFrye = 0;
     flag_output_evo_to_file = 0;
     has_source_terms = false;
@@ -65,6 +66,11 @@ void MpiMusic::InitializeHydro(Parameter parameter_list) {
     double eta_over_s = 0.0;
     para->FirstChildElement("shear_viscosity_eta_over_s")->QueryDoubleText(
                                                                 &eta_over_s);
+    double freeze_Temp = 0.0;
+    para->FirstChildElement("freezeout_temperature")->QueryDoubleText(
+                                                                &freeze_Temp);
+    freezeout_temperature = freeze_Temp;
+
     if (eta_over_s > 1e-6) {
         music_hydro_ptr->set_parameter("Viscosity_Flag_Yes_1_No_0", 1);
         music_hydro_ptr->set_parameter("Include_Shear_Visc_Yes_1_No_0", 1);
@@ -103,7 +109,7 @@ void MpiMusic::EvolveHydro() {
                 pre_eq_ptr->pi13_, pre_eq_ptr->pi22_, pre_eq_ptr->pi23_,
                 pre_eq_ptr->pi33_, pre_eq_ptr->bulk_Pi_);
     }
-    
+
     JSINFO << "initial density profile dx = " << dx << " fm";
     hydro_status = INITIALIZED;
     JSINFO << "number of source terms: "
@@ -122,8 +128,6 @@ void MpiMusic::EvolveHydro() {
         hydro_status = FINISHED;
     }
 
-    exit(1);
-
     if (flag_output_evo_to_file == 1) {
         if (!has_source_terms) {
             // only the first hydro without source term will be stored
@@ -139,7 +143,10 @@ void MpiMusic::EvolveHydro() {
         system_command << "mv evolution_for_movie_xyeta.dat "
                        << "evolution_for_movie_xyeta_" << GetId() << ".dat";
         system(system_command.str().c_str());
-        //FindAConstantTemperatureSurface(0.16);
+
+        if (freezeout_temperature > 0.0) {
+            FindAConstantTemperatureSurface(freezeout_temperature);
+        }
     }
     
     collect_freeze_out_surface();
