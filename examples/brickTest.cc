@@ -109,11 +109,11 @@ int main(int argc, char** argv)
   auto hadroMgr = make_shared<HadronizationManager> ();
   auto hadro = make_shared<Hadronization> ();
   auto hadroModule = make_shared<ColoredHadronization> ();
-  hadro->Add(hadroModule);
+  //hadro->Add(hadroModule);
   // auto colorless = make_shared<ColorlessHadronization> ();
   // hadro->Add(colorless);
-  hadroMgr->Add(hadro);
-  jetscape->Add(hadroMgr);
+  //hadroMgr->Add(hadro);
+  //jetscape->Add(hadroMgr);
 
   // Output
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
