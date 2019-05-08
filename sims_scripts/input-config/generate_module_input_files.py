@@ -1,27 +1,8 @@
 #!/usr/bin/env python
+import math
 
 #the jetscape seed sets the seed in smash, set to 0 for random (clocktime) seed
 js_seed = 0
-
-min_num_hadrons = 50000
-max_num_samples = 500
-
-#These should be set by external script/block of code
-#Parameters common to modules
-nx = 201 #num grid points in x
-ny = 201 #num grid points in y
-dx = 0.15 #grid spacing x [fm]
-dy = 0.15 #grid spacing y [fm]
-L_x = (nx - 1)/2.0 * dx #size of grid in x[fm]
-L_y = (ny - 1)/2.0 * dy #size of grid in y[fm]
-
-#set max_x = L_x + 0.5dx
-max_x = L_x + 0.5*dx #max x [fm]
-max_y = L_y + 0.5*dy #may y [fm]
-
-#only T_c matters, e_c is dummy by default
-e_c = 1.7   #switching energy density on freezeout hypersurface [GeV/fm^3]
-T_c = 0.151 #switching temperature on hypersurface [GeV]
 
 #TRENTo parameters
 projectile = 'Pb'
@@ -37,27 +18,52 @@ nucleon_width = 0.956
 nucleon_min_dist = 1.27
 
 #freestream-milne Parameters
-
 tau_s = 1.16 #time of landau-matching to hydro [fm/c]
 
 #MUSIC Parameters
-
+#only T_c matters, e_c is dummy by default
+e_c = 1.7   #switching energy density on freezeout hypersurface [GeV/fm^3]
+T_c = 0.151 #switching temperature on hypersurface [GeV]
 #shear viscosity p'zation
 eta_over_s_min = 0.08
 eta_over_s_slope = 1.1
 eta_over_s_curv = -0.5
-
 #bulk viscosity p'zation
 bulk_viscosity_normalisation = 0.05
 bulk_viscosity_width_in_GeV = 0.02
 bulk_viscosity_peak_in_GeV = 0.18 
 
 #iS3D Parameters
+#delta-f mode will be overwritten by the run-events script
 delta_f_mode = 4 # 1: 14 moment, 2: C.E., 3: McNelis feq_mod, 4: Bernhard feq_mod
 rap_max = 2.0    # dN/dY sampled is flat for y in (-rap_max, rap_max) and zero outside
+min_num_hadrons = 50000
+max_num_samples = 500
+set_T_c = 0 #if on, iS3D will use Tc read in iS3D_parameters.dat as temperature
 
 #SMASH Parameters
 max_time_smash = 1000.0 #max run time [fm/c]
+
+#this chooses grid spacing based on nucleon width
+dx = 0.15 * nucleon_width #[fm]
+dy = 0.15 * nucleon_width #[fm]
+#set hydro time step based on grid spacing for convergence 
+dt = dx / 8.0
+#choose a grid size large enough to capture central events
+#Does [-15fm, 15fm] work even for events with very large norm? 
+L_x = 15.0 #[fm]
+L_y = 15.0 #[fm]
+nx = 1.0 + (2.0 * L_x)/dx
+ny = 1.0 + (2.0 * L_y)/dy
+#get nearest integer
+nx = int( math.ceil(nx) )
+ny = int( math.ceil(ny) )
+#recalculate grid size
+L_x = ( (nx-1) / 2.0) * dx
+L_y = ( (nx-1) / 2.0) * dx
+#TRENTo needs slightly larger for odd number of points
+max_x = L_x + 0.5*dx #max x [fm]
+max_y = L_y + 0.5*dy #may y [fm]
 
 #write appropriate input files
 
@@ -98,15 +104,15 @@ music_file.write("Initial_profile 42\n")             # type of initial condition
 music_file.write("initialize_with_entropy 0\n")      # init with entropy density or energy density
 music_file.write("s_factor 1.00\n")                  # normalization factor read in
 music_file.write("boost_invariant  1\n")             # whether the simulation is boost-invariant
-music_file.write("Initial_time_tau_0 " +str(tau_s) + "\n")# starting time of the hydro
+music_file.write("Initial_time_tau_0 "+str(tau_s)+"\n")# starting time of the hydro
 music_file.write("Total_evolution_time_tau 30.\n")   # the maximum allowed running time
-music_file.write("Delta_Tau 0.02\n")                 # time step to use in the evolution [fm/c]
+music_file.write("Delta_Tau " + str(dt) + "\n")      # time step to use in the evolution [fm/c]
 music_file.write("Eta_grid_size 1.0\n")              # spatial rapidity range
 music_file.write("Grid_size_in_eta 1\n")             # number of the grid points in spatial
-music_file.write("X_grid_size_in_fm " + str(max_x) + "\n")# spatial range along x direction in the
-music_file.write("Y_grid_size_in_fm " + str(max_y) + "\n")# spatial range along y direction in the
-music_file.write("Grid_size_in_y " + str(nx) + "\n")             # number of the grid points in y direction
-music_file.write("Grid_size_in_x " + str(ny) + "\n")             # number of the grid points in x direction
+music_file.write("X_grid_size_in_fm "+str(max_x)+"\n")# spatial range along x direction in the
+music_file.write("Y_grid_size_in_fm "+str(max_y)+"\n")# spatial range along y direction in the
+music_file.write("Grid_size_in_y " + str(nx) + "\n") # number of the grid points in y direction
+music_file.write("Grid_size_in_x " + str(ny) + "\n") # number of the grid points in x direction
 music_file.write("EOS_to_use 9\n")                   # type of the equation of state
 music_file.write("reconst_type  1\n")                # 0: solve energy density for hydro eqns. 1: solve flow velocity for hydro eqns.
 music_file.write("Minmod_Theta 1.8\n")               # theta parameter in the min-mod like limiter
@@ -146,6 +152,8 @@ iS3D_file = open('iS3D_parameters.dat','w')
 iS3D_file.write("operation                   = 2\n")
 iS3D_file.write("mode                        = 6\n")
 iS3D_file.write("hrg_eos                     = 3\n")
+iS3D_file.write("set_FO_temperature          = " + str(set_T_c) + "\n")
+iS3D_file.write("T_switch                    = " + str(T_c) + "\n")
 iS3D_file.write("dimension                   = 2\n")
 iS3D_file.write("df_mode                     = " + str(delta_f_mode) + "\n")
 iS3D_file.write("include_baryon              = 0\n")
