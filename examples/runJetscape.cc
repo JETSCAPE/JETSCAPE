@@ -49,10 +49,29 @@ int main(int argc, char** argv)
    
   Show();
 
-  // Create main Jetscape task, and assign XML configuration files
+  // Create main Jetscape task, and assign XML configuration files from command line arguments.
+  // The user can supply 0, 1, 2 arguments, where the first (second) corresponds to the user (master) XML path.
   auto jetscape = make_shared<JetScape>();
-  jetscape->SetXMLMasterFileName("../config/jetscape_master.xml");
-  jetscape->SetXMLUserFileName("../config/jetscape_user.xml");
+  const char* masterXMLName = "../config/jetscape_master.xml";
+  const char* userXMLName = "../config/jetscape_user.xml";
+  if (argc == 2)  {
+    if ( strcmp(argv[1], "--help")==0 || strcmp(argv[1], "-h")==0 ){
+      std::cout << "Command line options:" << std::endl;
+      std::cout << "    First (optional) argument: path to user XML file         ./runJetscape /path/to/user.xml" << std::endl;
+      std::cout << "    Second (optional) argument: path to master XML file      ./runJetscape /path/to/user.xml /path/to/master.xml" << std::endl;
+      std::cout << "    If no command line options are given, defaults are used: config/jetscape_user.xml config/jetscape_master.xml" << std::endl;
+      return -1;
+    }
+    else {
+      userXMLName = argv[1];
+    }
+  }
+  else if (argc == 3) {
+    userXMLName = argv[1];
+    masterXMLName = argv[2];
+  }
+  jetscape->SetXMLMasterFileName(masterXMLName);
+  jetscape->SetXMLUserFileName(userXMLName);
 
   // Intialize all modules tasks
   jetscape->Init();
