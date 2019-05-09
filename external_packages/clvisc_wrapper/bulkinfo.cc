@@ -44,6 +44,7 @@
 #include "include/Config.h"
 #include "include/opencl_backend.h"
 #include "include/bulkinfo.h"
+#include "include/error_msgs.h"
 
 namespace clvisc {
 
