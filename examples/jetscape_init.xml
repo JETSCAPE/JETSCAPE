@@ -29,11 +29,11 @@
     <!-- y range [-grid_max_y, grid_max_y]-->
     <!-- longitudinal range [-grid_max_z, grid_max_z]-->
     <!-- in units of [fm] -->
-    <grid_max_x> 10 </grid_max_x>
-    <grid_max_y> 10 </grid_max_y>
-    <grid_max_z> 0 </grid_max_z>
-    <grid_step_x> 0.2 </grid_step_x>
-    <grid_step_y> 0.2 </grid_step_y>
+    <grid_max_x> 15 </grid_max_x>
+    <grid_max_y> 15 </grid_max_y>
+    <grid_max_z> 0.2 </grid_max_z>
+    <grid_step_x> 0.3 </grid_step_x>
+    <grid_step_y> 0.3 </grid_step_y>
     <grid_step_z> 0.2 </grid_step_z>
     
     <Trento use_module="pre_defined">
@@ -190,7 +190,7 @@
       <MUSIC_input_file>music_input</MUSIC_input_file>
       <output_evolution_to_file>1</output_evolution_to_file>
       <shear_viscosity_eta_over_s>0.08</shear_viscosity_eta_over_s>
-      <freezeout_temperature>0.155</freezeout_temperature>
+      <freezeout_temperature>-1</freezeout_temperature>
       <Perform_CooperFrye_Feezeout>0</Perform_CooperFrye_Feezeout>
     </MUSIC>
   </Hydro>
