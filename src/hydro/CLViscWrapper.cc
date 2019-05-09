@@ -101,10 +101,7 @@ void CLVisc::EvolveHydro() {
             vz_.push_back(pre_eq_ptr->ueta_.at(idx)/pre_eq_ptr->utau_.at(idx));
         }
 
-        hydro_->read_ini(pre_eq_ptr->e_,
-                         vx_,
-                         vy_,
-                         vz_,
+        hydro_->read_ini(pre_eq_ptr->e_, vx_, vy_, vz_,
                          pre_eq_ptr->pi00_,
                          pre_eq_ptr->pi01_,
                          pre_eq_ptr->pi02_,
@@ -136,13 +133,12 @@ void CLVisc::EvolveHydro() {
         int ny = int(floor((cfg.ny-1) / cfg.nyskip)) + 1;
         int netas = int(floor((cfg.nz-1) / cfg.nzskip)) + 1;
 
-        //bulk_info.Construct(hydro_->bulkinfo_.get_data(),
-        //        hydro_->bulkinfo_.get_data_info(),
-        //        tau_min, dtau, x_min, dx, nx,
-        //        y_min, dy, ny, etas_min, detas, netas,
-        //        false);
-        // one can save bulk data if needed
-        // hydro_->bulkinfo_.save("bulk_data.csv");
+        bulk_info.FromVector(hydro_->bulkinfo_.get_data(),
+               hydro_->bulkinfo_.get_data_info(),
+               tau_min, dtau, x_min, dx, nx,
+               y_min, dy, ny, etas_min, detas, netas,
+               false);
+        //hydro_->bulkinfo_.save("bulk_data.csv");
     }
     if (hydro_status == FINISHED && doCooperFrye == 1) {
         JSINFO << "Cooper Frye not implemented yet";
@@ -173,8 +169,6 @@ void CLVisc::GetHydroInfo(
             *fluid_cell_info_ptr = bulk_info.get(t, x, y, z);
         } catch (std::exception & err) {
             JSWARN << err.what();
-            //fluid_cell_info_ptr->Print();
         }
       }
-      //fluid_cell_info_ptr->Print();
 }

@@ -30,9 +30,8 @@ class CLVisc: public FluidDynamics {
      // the density distribution profile without scaling factor
      double initial_condition_scale_factor;
 
-    // Allows the registration of the module so that it is available to be used by the Jetscape framework.
+    // Allows the registration of the module 
     static RegisterJetScapeModule<CLVisc> reg;
-
  public:
      CLVisc();
      ~CLVisc();
