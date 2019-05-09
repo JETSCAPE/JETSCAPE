@@ -101,6 +101,11 @@ if ( iSS )
   target_link_libraries (JetScape iSS_lib )
 endif()
 
+if ( clvisc )
+  target_link_libraries (JetScape clviscwrapper )
+endif()
+
+
 if ( smash )
   target_link_libraries (JetScape ${SMASH_LIBRARIES})
 endif()

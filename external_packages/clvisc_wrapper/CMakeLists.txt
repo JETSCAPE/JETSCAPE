@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-project(clvisc)
+project(clviscwrapper)
 
 #for MacOSX
 cmake_policy(SET CMP0042 NEW)
@@ -75,5 +75,5 @@ include_directories( ${PROJECT_SOURCE_DIR}/include )
 ### target_link_libraries ( test_clvisc ${EXTRA_LIBS} )
 
 #### compile the clvisc to one library that will be used by clvisc+jetscape interface
-add_library(clvisc SHARED ${SRC_LIST})
-target_link_libraries (clvisc ${EXTRA_LIBS})
+add_library(clviscwrapper SHARED ${SRC_LIST})
+target_link_libraries (clviscwrapper ${EXTRA_LIBS})

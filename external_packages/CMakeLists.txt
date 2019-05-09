@@ -23,7 +23,4 @@ if(${ZLIB_FOUND})
     target_link_libraries(JetScapeThird ${ZLIB_LIBRARIES} )
 endif()
 
-if (OPENCL_FOUND AND clvisc)
-  add_subdirectory( clvisc_wrapper )
-  target_link_libraries(JetScapeThird clvisc)
-endif (OPENCL_FOUND AND clvisc)
+
