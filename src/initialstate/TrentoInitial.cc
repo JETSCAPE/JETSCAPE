@@ -262,7 +262,7 @@ void TrentoInitial::PreDefined(std::string stored_system,
             std::copy_n(entropy_density_distribution_.begin(),
                         entropy_array_length,
                         (entropy_density_distribution_.begin()
-                         + entropy_array_length));
+                         + iz*entropy_array_length));
         }
     }
 
