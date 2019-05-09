@@ -156,19 +156,8 @@ void CLVisc::GetHydroInfo(
       if (!bulk_info.tau_eta_is_tz) {
         Jetscape::real tau = std::sqrt(t * t - z * z);
         Jetscape::real eta = 0.5 * (std::log(t + z) - std::log(t - z));
-        try {
-            bulk_info.CheckInRange(tau, x, y, eta);
-            *fluid_cell_info_ptr = bulk_info.get(tau, x, y, eta);
-        } catch (std::exception& err) {
-            JSWARN << err.what();
-            //fluid_cell_info_ptr->Print();
-        }
+        *fluid_cell_info_ptr = bulk_info.get(tau, x, y, eta);
       } else {
-        try {
-            bulk_info.CheckInRange(t, x, y, z);
-            *fluid_cell_info_ptr = bulk_info.get(t, x, y, z);
-        } catch (std::exception & err) {
-            JSWARN << err.what();
-        }
+        *fluid_cell_info_ptr = bulk_info.get(t, x, y, z);
       }
 }
