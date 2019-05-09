@@ -375,11 +375,6 @@ target_link_libraries(JetScapeReader JetScapeThird GTL ${PYTHIA8_LIBRARIES})
 add_executable(runJetscape ./examples/runJetscape.cc)
 target_link_libraries(runJetscape JetScape )
 
-if ( clvisc AND OPENCL_FOUND )
-  add_executable(CLViscTest ./examples/CLViscTest.cc)
-  target_link_libraries(CLViscTest JetScape)
-endif (clvisc AND OPENCL_FOUND)
-
 ### Read Jetscape output
 add_executable(readerTest ./examples/readerTest.cc)
 target_link_libraries(readerTest JetScape )
@@ -391,7 +386,6 @@ add_executable(FinalStatePartons ./examples/FinalStatePartons.cc)
 target_link_libraries(FinalStatePartons JetScape )
 
 # executables with additional dependencies
-
 if ( music AND iSS )
   target_link_libraries(runJetscape ${GSL_LIBRARIES})
 endif (music AND iSS )
