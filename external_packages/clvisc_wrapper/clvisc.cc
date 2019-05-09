@@ -39,7 +39,8 @@ CLVisc::CLVisc(const Config & cfg, std::string device_type,
                 ideal_.get_compile_option())
 {
     // set current time to initial time
-    tau_ = cfg.tau0;
+    tau0_ = cfg.tau0;
+    tau_ = tau0_;
 
     size_ = cfg.nx * cfg.ny * cfg.nz;
 
@@ -314,6 +315,7 @@ void CLVisc::evolve() {
     float total_exec_time = 0.0;
     std::time_t timer1, timer2;
     std::time(&timer1);
+    tau_ = tau0_;
     try {
         israel_stewart_initialize_();
         ideal_.predict_first_step();
@@ -328,8 +330,8 @@ void CLVisc::evolve() {
                 std::cout << "max_ed = " << max_ed << " ";
                 std::time(&timer2);
                 total_exec_time = std::difftime(timer2, timer1);
-                std::cout << "Total computing time: " << total_exec_time << " s; ";
-                std::cout << std::endl;
+                //std::cout << "Total computing time: " << total_exec_time << " s; ";
+                //std::cout << std::endl;
                 bulkinfo_.add_data(ideal_.d_ev_[0], d_shear_pi_[0],
                                    d_bulk_pi_[0], ideal_.eos_table_);
                 if ( max_ed < 0.05 ) break;

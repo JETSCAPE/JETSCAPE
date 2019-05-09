@@ -37,8 +37,10 @@ CLIdeal::CLIdeal(const Config & cfg, std::string device_type,
         int device_id):cfg_(cfg),
         backend_(OpenclBackend(device_type, device_id))
 {
+    tau0_ = cfg.tau0;
+
     // set current time to initial time
-    tau_ = cfg.tau0;
+    tau_ = tau0_;
 
     CompileOption opts_;
     opts_.KernelIncludePath("clvisc_kernel/");

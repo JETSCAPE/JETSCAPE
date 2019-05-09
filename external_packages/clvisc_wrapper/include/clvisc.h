@@ -42,6 +42,12 @@ class CLVisc
     // CLVisc uses many data and member functions in ideal_
     CLIdeal ideal_;
     OpenclBackend backend_;
+
+    // store start time to avoid one initilize with multiple evolve()
+    double tau0_;
+
+    // current time during the evolution
+    
     double tau_;
     // size_ = cfg_.nx * cfg_.ny * cfg_.nz
     size_t size_;  

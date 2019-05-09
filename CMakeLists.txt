@@ -45,6 +45,7 @@ if (OPENCL_FOUND)
   if (clvisc)
       message("Includes for clvisc ...")
       include_directories(./external_packages/clvisc_wrapper/include/)
+      include_directories(./external_packages/clvisc_wrapper/)
       if(NOT EXISTS "${CMAKE_SOURCE_DIR}/external_packages/PyVisc")
           message(FATAL_ERROR "Error: CLVisc source has not been downloaded in external_packages by ./get_clvisc.sh")
       endif()
@@ -166,6 +167,7 @@ install(
   PATTERN "iSS" EXCLUDE
   PATTERN "hydro_from_external_file" EXCLUDE
   PATTERN "music" EXCLUDE
+  PATTERN "clvisc" EXCLUDE
   PATTERN "trento" EXCLUDE
   PATTERN "tests" EXCLUDE
   PATTERN "data_table" EXCLUDE
@@ -345,6 +347,11 @@ if (iSS)
     message(FATAL_ERROR "Error: iSS source has not been downloaded in external_packages by ./get_iSS.sh")
   endif()      
 endif (iSS)
+
+if (OPENCL_FOUND AND clvisc)
+  add_subdirectory( ${CMAKE_SOURCE_DIR}/external_packages/clvisc_wrapper )
+endif (OPENCL_FOUND AND clvisc)
+
 
 ###########################
 ### Binary location     ###

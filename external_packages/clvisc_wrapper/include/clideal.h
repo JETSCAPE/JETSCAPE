@@ -75,6 +75,9 @@ typedef struct
 class CLIdeal
 {
     private:
+    // initial starting time
+    double tau0_;
+    // time for the current time step
     double tau_;
     Config cfg_;
     OpenclBackend backend_;
