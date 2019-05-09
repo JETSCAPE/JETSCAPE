@@ -87,6 +87,9 @@ BulkInfo::BulkInfo(int nx, int ny, int neta,
         d_bulk3d_1step_ = backend_.CreateBuffer(size_out * sizeof(float));
     } catch (cl::Error & err ){
         std::cerr<<"Error:"<<err.what()<<"("<<err.err()<<")\n";
+        std::cerr<<"@" << __FILE__ << ":line " << __LINE__ << std::endl;
+        std::cerr<<ErrorMessage(err.err())<<std::endl;
+        throw(err);
     }
 }
 
