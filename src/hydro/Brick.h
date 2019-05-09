@@ -27,6 +27,9 @@ class Brick: public FluidDynamics {
     double T_brick;
     double start_time;
     bool bjorken_expansion_on;
+  
+    // Allows the registration of the module so that it is available to be used by the Jetscape framework.
+    static RegisterJetScapeModule<Brick> reg;
 
  public:
     

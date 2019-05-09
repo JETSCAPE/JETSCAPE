@@ -10,9 +10,22 @@
 
  <jetscape>
 
+  <!-- General settings -->
+  <nEvents> 100 </nEvents>
+  <setReuseHydro> true </setReuseHydro>
+  <nReuseHydro> 10 </nReuseHydro>
+
+  <!-- Technical settings -->
   <debug> on </debug>
   <remark> off </remark>
   <vlevel> 0 </vlevel>
+  <enableAutomaticTaskListDetermination> true </enableAutomaticTaskListDetermination>
+  
+  <!--  JetScape Writer Settings -->
+  <outputFilename>test_out</outputFilename>
+  <JetScapeWriterAscii> off </JetScapeWriterAscii>
+  <JetScapeWriterAsciiGZ> off </JetScapeWriterAsciiGZ>
+  <JetScapeWriterHepMC> off </JetScapeWriterHepMC>
 
   <!--  Random Settings. For now, just a global  seed. -->
   <!--  Note: It's each modules responsibility to adopt it -->
@@ -60,6 +73,7 @@
     <!-- Sensible defaults are set in the class. ptHat etc. get their own field -->
     <PythiaGun>
       <name>PythiaGun</name>
+      <FSR_on>0</FSR_on>
       <pTHatMin>110</pTHatMin>
       <pTHatMax>120</pTHatMax>
       <eCM>2760</eCM>
@@ -78,10 +92,11 @@
     <deltaT>0.1</deltaT>
     <formTime> -0.1</formTime>
     <maxT>20</maxT>
-
+    <mutex>ON</mutex>
 
     <Matter>
       <name>Matter</name>
+      <matter_on> 1 </matter_on>
       <Q0> 2.0 </Q0>
       <T0> 0.16 </T0>
       <vir_factor> 0.25 </vir_factor>
@@ -91,23 +106,25 @@
       <brick_med> 0 </brick_med>
       <brick_length> 0.0 </brick_length>
       <hydro_Tc> 0.16 </hydro_Tc>
-      <qhat0> 3.0 </qhat0>
-      <alphas> 0.25 </alphas>
+      <qhat0> -3.0 </qhat0>
+      <alphas> 0.2 </alphas>
     </Matter>
 
     <Lbt>
       <name> Lbt </name>
-      <Q0> 1.0 </Q0>
+      <Q0> 2.0 </Q0>
       <in_vac> 0 </in_vac>
       <only_leading> 0 </only_leading>
-      <hydro_Tc> 0.15 </hydro_Tc>
+      <hydro_Tc> 0.16 </hydro_Tc>
       <alphas> 0.2 </alphas>
     </Lbt>
     
     <Martini>
       <name > Martini </name>
+      <Q0> 1.0 </Q0>
       <alpha_s> 0.3 </alpha_s>
       <pcut> 2.0 </pcut>
+      <hydro_Tc> 0.16 </hydro_Tc>
       <path>../src/jet/Martini/</path>
     </Martini>
 
@@ -184,6 +201,8 @@
     <MUSIC>
       <name>MUSIC</name>
       <MUSIC_input_file>music_input</MUSIC_input_file>
+      <output_evolution_to_file>1</output_evolution_to_file>
+      <shear_viscosity_eta_over_s>0.08</shear_viscosity_eta_over_s>
       <Perform_CooperFrye_Feezeout>0</Perform_CooperFrye_Feezeout>
     </MUSIC>
 
@@ -216,6 +235,7 @@
   <!-- Jet Hadronization Module -->
    <JetHadronization>
        <name>colored</name>
+       <take_recoil>1</take_recoil>
        <eCMforHadronization>1380</eCMforHadronization>
    </JetHadronization>
 
@@ -238,4 +258,19 @@
       <Perform_resonance_decays>1</Perform_resonance_decays>
     </iSS>
   </SoftParticlization>
+
+  <!-- Hadronic Afterburner  -->
+  <Afterburner>
+    <!-- SMASH -->
+    <SMASH>
+      <name>SMASH</name>
+      <SMASH_config_file>../external_packages/smash/smash_config.yaml</SMASH_config_file>
+      <SMASH_particles_file>../external_packages/smash/smash_code/input/particles.txt</SMASH_particles_file>
+      <SMASH_decaymodes_file>../external_packages/smash/smash_code/input/decaymodes.txt</SMASH_decaymodes_file>
+      <!-- time in fm/c in the computational frame, when the simulation shoud be ended -->
+      <end_time>300.0</end_time>
+      <!-- 0 - run the full afterburner, 1 - only decay the resonances without even propagation -->
+      <only_decays>0</only_decays>
+    </SMASH>
+  </Afterburner>
 </jetscape>

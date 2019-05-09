@@ -22,6 +22,10 @@
 #include "InitialState.h"
 #include "PreequilibriumDynamics.h"
 
+#ifdef USE_HEPMC
+#include "JetScapeWriterHepMC.h"
+#endif
+
 #include<iostream>
 
 using namespace std;
@@ -31,12 +35,15 @@ namespace Jetscape {
   /** Default constructor to create the main task of the JetScape framework. It sets the total number of events to 1.
    * By default, hydro events are used only once
    */
-JetScape::JetScape() 
-  : n_events(1)
-  , reuse_hydro_ (false)
-  , n_reuse_hydro_ (0)
+  JetScape::JetScape():
+  JetScapeModuleBase(),
+  n_events(1),
+  reuse_hydro_(false),
+  n_reuse_hydro_(1),
+  fEnableAutomaticTaskListDetermination(true)
 {
   VERBOSE(8);
+  SetId("primary");
 }
 
 JetScape::~JetScape()
@@ -51,88 +58,552 @@ void JetScape::Show()
   ShowJetscapeBanner();
 }
 
+//________________________________________________________________
 void JetScape::Init()
 {
   Show();
   
-  INFO<<BOLDRED<<"Intialize JetScape ...";
+  JSINFO<<BOLDRED<<"Intialize JetScape ...";
   
-  JetScapeXML::Instance()->OpenXMLFile(GetXMLFileName());
+  // Set the names of the XML files in the JetScapeXML instance
+  JetScapeXML::Instance()->OpenXMLMasterFile(GetXMLMasterFileName());
+  JetScapeXML::Instance()->OpenXMLUserFile(GetXMLUserFileName());
+  JSINFO << "================================================================";
   
-  string log_debug = JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement( "debug" )->GetText();
-  string log_remark = JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement( "remark" )->GetText();
-  int m_vlevel=0;
+  // Read some general parameters from the XML configuration file
+  ReadGeneralParametersFromXML();
   
-  JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("vlevel")->QueryIntText(&m_vlevel);
+  // Loop through the XML User file elements to determine the task list, if enabled
+  if (fEnableAutomaticTaskListDetermination) {
+    DetermineTaskListFromXML();
+    DetermineWritersFromXML();
+    JSINFO << "================================================================";
+  }
   
-  // Some general JetScape interface settings can also be read in from XML file ...
-  // Order of task could also be verifed via XML or via sort of TaskList with order parameter
-  if ((int) log_debug.find("off")>=0)
-    JetScapeLogger::Instance()->SetDebug(false);
-  
-  if ((int) log_remark.find("on")>=0)
-    JetScapeLogger::Instance()->SetRemark(true);
-
-  JSDEBUG<<"JetScape Debug from XML = "<< log_debug;
-  JSDEBUG<<"JetScape Remark from XML = "<< log_remark;
-
-   if ((int) m_vlevel>0)
-     {
-       JetScapeLogger::Instance()->SetVerboseLevel(m_vlevel);
-       JSDEBUG<<"JetScape Verbose Level from XML = "<<m_vlevel;
-     }
-
-   SetPointers();
-   
-   // Set up helper. Mostly used for random numbers
-   // Needs the XML reader singleton set up
-   JSDEBUG<<"Seeding JetScapeTaskSupport from XML";
-   JetScapeTaskSupport::ReadSeedFromXML( );
-
   // Has to be called explicitly since not really fully recursively (if ever needed)
-   // So --> JetScape is "Task Manager" of all modules ...
-   
-   INFO<<"Found "<<GetNumberOfTasks()<<" Modules Initialize them ... ";
-   JetScapeTask::InitTasks();
+  // So --> JetScape is "Task Manager" of all modules ...
+  JSINFO<<"Found "<<GetNumberOfTasks()<<" Modules Initialize them ... ";
+  SetPointers();
+  JSINFO<<"Calling JetScape InitTasks()...";
+  JetScapeTask::InitTasks();
 }
 
+//________________________________________________________________
+void JetScape::ReadGeneralParametersFromXML() {
+  
+  // Debug level
+  std::string log_debug = GetXMLElementText({"debug"});
+  if ((int) log_debug.find("off")>=0)
+    JetScapeLogger::Instance()->SetDebug(false);
+  VERBOSE(1)<<"JetScape Debug = "<< log_debug;
+
+  // Remark
+  std::string log_remark = GetXMLElementText({"remark"});
+  if ((int) log_remark.find("on")>=0)
+    JetScapeLogger::Instance()->SetRemark(true);
+  VERBOSE(1)<<"JetScape Remark = "<< log_remark;
+
+  // Verbose level
+  int m_vlevel = GetXMLElementInt({"vlevel"});
+  if (m_vlevel>0) {
+    JetScapeLogger::Instance()->SetVerboseLevel(m_vlevel);
+    VERBOSE(1)<<"JetScape Verbose Level = "<<m_vlevel;
+  }
+  
+  // Flag for automatic task list determination from User XML
+  std::string enableAutomaticTaskListDetermination = GetXMLElementText({"enableAutomaticTaskListDetermination"});
+  if ((int) enableAutomaticTaskListDetermination.find("true")>=0) {
+    fEnableAutomaticTaskListDetermination = true;
+    VERBOSE(1) << "Enable automatic task list determination from User XML: True.";
+  }
+  else if ((int) enableAutomaticTaskListDetermination.find("false")>=0) {
+    fEnableAutomaticTaskListDetermination = false;
+    VERBOSE(1) << "Enable automatic task list determination from User XML: False.";
+  }
+
+  // nEvents
+  int nEvents = GetXMLElementInt({"nEvents"});
+  if (nEvents) {
+    SetNumberOfEvents(nEvents);
+    JSINFO<<"nEvents = "<< nEvents;
+  }
+  
+  // Set whether to reuse hydro
+  std::string reuseHydro = GetXMLElementText({"setReuseHydro"});
+  if ((int) reuseHydro.find("true")>=0) {
+    SetReuseHydro(true);
+    JSINFO << "Reuse Hydro: " << reuseHydro;
+  }
+  int nReuseHydro = GetXMLElementInt({"nReuseHydro"});
+  if (nReuseHydro) {
+    SetNReuseHydro(nReuseHydro);
+    JSINFO<<"nReuseHydro: "<< nReuseHydro;
+  }
+  
+  // Set up helper. Mostly used for random numbers
+  // Needs the XML reader singleton set up
+  JetScapeTaskSupport::ReadSeedFromXML( );
+
+}
+  
+//________________________________________________________________
+void JetScape::DetermineTaskListFromXML() {
+ 
+  tinyxml2::XMLElement* element = (tinyxml2::XMLElement*) JetScapeXML::Instance()->GetXMLRootUser()->FirstChildElement();
+  while (element) {
+    std::string elementName = element->Name();
+    VERBOSE(2) << "Parsing element: " << elementName;
+    
+    // Initial state
+    if (elementName == "IS") {
+      
+      tinyxml2::XMLElement* childElement = (tinyxml2::XMLElement*) element->FirstChildElement();
+      while (childElement) {
+        std::string childElementName = childElement->Name();
+        VERBOSE(2) << "Parsing childElement: " << childElementName;
+        
+        //   - Trento
+        if (childElementName == "Trento") {
+          auto trento = JetScapeModuleFactory::createInstance("TrentoInitial");
+          if (trento) {
+            Add(trento);
+            JSINFO << "JetScape::DetermineTaskList() -- Initial State: Added Trento module to task list.";
+          }
+        }
+        //   - Read initial conditions from file
+        else if (childElementName == "initial_profile_path") {
+          #ifdef USE_HDF5
+          auto initial = JetScapeModuleFactory::createInstance("InitialFromFile");
+          if (initial) {
+            Add(initial);
+            JSINFO << "JetScape::DetermineTaskList() -- Initial state: Added InitialFromFile to task list.";
+          }
+          #else
+          JSWARN << "InitialFromFile is attempted to be added, but HDF5 is not installed!";
+          #endif
+        }
+        //   - Custom module
+        else if ( ((int) childElementName.find("CustomModule")>=0) ) {
+          auto customModule = JetScapeModuleFactory::createInstance(childElementName);
+          if (customModule) {
+            Add(customModule);
+            JSINFO << "JetScape::DetermineTaskList() -- Initial state: Added " << childElementName << " to task list.";
+          }
+        }
+        
+        childElement = childElement->NextSiblingElement();
+      }
+    }
+    
+    // Hard process
+    else if (elementName == "Hard") {
+      
+      tinyxml2::XMLElement* childElement = (tinyxml2::XMLElement*) element->FirstChildElement();
+      while (childElement) {
+        std::string childElementName = childElement->Name();
+        VERBOSE(2) << "Parsing childElement: " << childElementName;
+        
+        //   - PGun
+        if (childElementName == "PGun") {
+          auto pGun = JetScapeModuleFactory::createInstance(childElementName);
+          if (pGun) {
+            Add(pGun);
+            JSINFO << "JetScape::DetermineTaskList() -- Hard Process: Added PGun to task list.";
+          }
+        }
+        //   - PythiaGun
+        else if (childElementName == "PythiaGun") {
+          auto pythiaGun = JetScapeModuleFactory::createInstance(childElementName);
+          if (pythiaGun) {
+            Add(pythiaGun);
+            JSINFO << "JetScape::DetermineTaskList() -- Hard Process: Added PythiaGun to task list.";
+          }
+        }
+        else if ( ((int) childElementName.find("CustomModule")>=0) ) {
+          auto customModule = JetScapeModuleFactory::createInstance(childElementName);
+          if (customModule) {
+            Add(customModule);
+            JSINFO << "JetScape::DetermineTaskList() -- Hard Process: Added " << childElementName << " to task list.";
+          }
+        }
+        
+        childElement = childElement->NextSiblingElement();
+      }
+      
+    }
+    
+    // Pre-equilibrium
+    else if (elementName == "Preequilibrium") {
+      
+      tinyxml2::XMLElement* childElement = (tinyxml2::XMLElement*) element->FirstChildElement();
+      while (childElement) {
+        std::string childElementName = childElement->Name();
+        VERBOSE(2) << "Parsing childElement: " << childElementName;
+        
+        //    - NullPreDynamics
+        if (childElementName == "NullPreDynamics") {
+          auto predynamics = JetScapeModuleFactory::createInstance(childElementName);
+          if (predynamics) {
+            Add(predynamics);
+            JSINFO << "JetScape::DetermineTaskList() -- PreDynamics: Added NullPreDynamics to task list.";
+          }
+        }
+        //    - FreestreamMilne
+        else if (childElementName == "FreestreamMilne") {
+          #ifdef freestream
+          auto predynamics = JetScapeModuleFactory::createInstance(childElementName);
+          if (predynamics) {
+            Add(predynamics);
+            JSINFO << "JetScape::DetermineTaskList() -- PreDynamics: Added FreestreamMilne to task list.";
+          }
+          #else
+          JSWARN << "FreestreamMilne is attempted to be added, but freestream is not installed!";
+          #endif
+        }
+        //   - Custom module
+        else if ( ((int) childElementName.find("CustomModule")>=0) ) {
+          auto customModule = JetScapeModuleFactory::createInstance(childElementName);
+          if (customModule) {
+            Add(customModule);
+            JSINFO << "JetScape::DetermineTaskList() -- PreDynamics: Added " << childElementName << " to task list.";
+          }
+        }
+
+        childElement = childElement->NextSiblingElement();
+      }
+      
+    }
+    
+    // Hydro
+    else if (elementName == "Hydro") {
+      
+      tinyxml2::XMLElement* childElement = (tinyxml2::XMLElement*) element->FirstChildElement();
+      while (childElement) {
+        std::string childElementName = childElement->Name();
+        VERBOSE(2) << "Parsing childElement: " << childElementName;
+        
+        //   - Brick
+        if (childElementName == "Brick") {
+          auto hydro = JetScapeModuleFactory::createInstance(childElementName);
+          if (hydro) {
+            Add(hydro);
+            JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added Brick to task list.";
+          }
+        }
+        //   - Gubser
+        else if (childElementName == "Gubser") {
+          auto hydro = JetScapeModuleFactory::createInstance(childElementName);
+          if (hydro) {
+            Add(hydro);
+            JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added Gubser to task list.";
+          }
+        }
+        //   - hydro_from_file
+        else if (childElementName == "hydro_from_file") {
+          auto hydro = JetScapeModuleFactory::createInstance("HydroFromFile");
+          if (hydro) {
+            Add(hydro);
+            JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added hydro_from_file to task list.";
+          }
+        }
+        //   - MUSIC
+        else if (childElementName == "MUSIC") {
+          #ifdef music
+          auto hydro = JetScapeModuleFactory::createInstance("MUSIC");
+          //auto hydro = make_shared<MpiMusic> ();
+          if (hydro) {
+            Add(hydro);
+            JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added MUSIC to task list.";
+          }
+          #else
+          JSWARN << "MUSIC is attempted to be added, but it is not installed!";
+          #endif
+        }
+        //   - Custom module
+        else if ( ((int) childElementName.find("CustomModule")>=0) ) {
+          auto customModule = JetScapeModuleFactory::createInstance(childElementName);
+          if (customModule) {
+            Add(customModule);
+            JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added " << childElementName << " to task list.";
+          }
+        }
+
+        childElement = childElement->NextSiblingElement();
+      }
+    }
+    
+    // Eloss
+    else if (elementName == "Eloss") {
+      
+      auto jlossmanager = make_shared<JetEnergyLossManager> ();
+      auto jloss = make_shared<JetEnergyLoss> ();
+      
+      tinyxml2::XMLElement* childElement = (tinyxml2::XMLElement*) element->FirstChildElement();
+      while (childElement) {
+        std::string childElementName = childElement->Name();
+        VERBOSE(2) << "Parsing childElement: " << childElementName;
+        
+        //   - Matter
+        if (childElementName == "Matter") {
+          auto matter = JetScapeModuleFactory::createInstance(childElementName);
+          if (matter) {
+            jloss->Add(matter);   // Note: if you use Matter, it MUST come first (to set virtuality)
+            JSINFO << "JetScape::DetermineTaskList() -- Eloss: Added Matter to Eloss list.";
+          }
+        }
+        //   - LBT
+        else if (childElementName == "Lbt") {
+          auto lbt = JetScapeModuleFactory::createInstance(childElementName);
+          if (lbt) {
+            jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
+            JSINFO << "JetScape::DetermineTaskList() -- Eloss: Added LBT to Eloss list.";
+          }
+        }
+        //   - Martini
+        else if (childElementName == "Martini") {
+          auto martini = JetScapeModuleFactory::createInstance(childElementName);
+          if (martini) {
+            jloss->Add(martini);
+            JSINFO << "JetScape::DetermineTaskList() -- Eloss: Added Martini to Eloss list.";
+          }
+        }
+        //   - AdS/CFT
+        else if (childElementName == "AdSCFT") {
+          auto adscft = JetScapeModuleFactory::createInstance(childElementName);
+          if (adscft) {
+            jloss->Add(adscft);
+            JSINFO << "JetScape::DetermineTaskList() -- Eloss: Added AdS/CFT to Eloss list.";
+          }
+        }
+        //   - Custom module
+        else if ( ((int) childElementName.find("CustomModule")>=0) ) {
+          auto customModule = JetScapeModuleFactory::createInstance(childElementName);
+          if (customModule) {
+            jloss->Add(customModule);
+            JSINFO << "JetScape::DetermineTaskList() -- Eloss: Added " << childElementName << " to Eloss list.";
+          }
+        }
+        
+        childElement = childElement->NextSiblingElement();
+      }
+      
+      jlossmanager->Add(jloss);
+      Add(jlossmanager);
+    }
+    
+    // Jet Hadronization
+    else if (elementName == "JetHadronization") {
+      
+      // Create hadronization manager and module
+      auto hadroMgr = make_shared<HadronizationManager> ();
+      auto hadro = make_shared<Hadronization> ();
+      
+      // Determine type of hadronization module, and add it
+      std::string hadronizationName = element->FirstChildElement("name")->GetText();
+      if (hadronizationName == "colored") {
+        auto hadroModule = JetScapeModuleFactory::createInstance("ColoredHadronization");
+        if (hadroModule) {
+          hadro->Add(hadroModule);
+          JSINFO << "JetScape::DetermineTaskList() -- JetHadronization: Added ColoredHadronization to task list.";
+        }
+      }
+      else if (hadronizationName == "colorless"){
+        auto hadroModule = JetScapeModuleFactory::createInstance("ColorlessHadronization");
+        if (hadroModule) {
+          hadro->Add(hadroModule);
+          JSINFO << "JetScape::DetermineTaskList() -- JetHadronization: Added ColorlessHadronization to task list.";
+        }
+      }
+      //   - Custom module
+      else if ( ((int) hadronizationName.find("CustomModule")>=0) ) {
+        auto customModule = JetScapeModuleFactory::createInstance(hadronizationName);
+        if (customModule) {
+          hadro->Add(customModule);
+          JSINFO << "JetScape::DetermineTaskList() -- JetHadronization: Added " << hadronizationName << " to task list.";
+        }
+      }
+      
+      hadroMgr->Add(hadro);
+      Add(hadroMgr);
+    }
+    
+    // Soft Particlization 
+    else if (elementName == "SoftParticlization") {
+      
+      tinyxml2::XMLElement* childElement = (tinyxml2::XMLElement*) element->FirstChildElement();
+      while (childElement) {
+        std::string childElementName = childElement->Name();
+        VERBOSE(2) << "Parsing childElement: " << childElementName;
+        
+        //    - iSS
+        if (childElementName == "iSS") {
+          #ifdef iSS
+          auto iSSmodule = JetScapeModuleFactory::createInstance(childElementName);
+          if (iSSmodule) {
+            Add(iSSmodule);
+            JSINFO << "JetScape::DetermineTaskList() -- SoftParticlization: Added iSS to task list.";
+          }
+          #else
+          JSWARN << "iSS is attempted to be added, but iSS is not installed!";
+          #endif
+        }
+        //   - Custom module
+        else if ( ((int) childElementName.find("CustomModule")>=0) ) {
+          auto customModule = JetScapeModuleFactory::createInstance(childElementName);
+          if (customModule) {
+            Add(customModule);
+            JSINFO << "JetScape::DetermineTaskList() -- SoftParticlization: Added " << childElementName << " to task list.";
+          }
+        }
+        
+        childElement = childElement->NextSiblingElement();
+      }
+    }
+    
+    // Afterburner
+    else if (elementName == "Afterburner") {
+      
+      tinyxml2::XMLElement* childElement = (tinyxml2::XMLElement*) element->FirstChildElement();
+      while (childElement) {
+        std::string childElementName = childElement->Name();
+        VERBOSE(2) << "Parsing childElement: " << childElementName;
+        
+        //    - SMASH
+        if (childElementName == "SMASH") {
+          #ifdef smash
+          auto smashModule = JetScapeModuleFactory::createInstance(childElementName);
+          if (smashModule) {
+            Add(smashModule);
+            JSINFO << "JetScape::DetermineTaskList() -- Afterburner: Added SMASH to task list.";
+          }
+          #else
+          JSWARN << "SMASH is attempted to be added, but SMASH is not installed!";
+          #endif
+        }
+        //   - Custom module
+        else if ( ((int) childElementName.find("CustomModule")>=0) ) {
+          auto customModule = JetScapeModuleFactory::createInstance(childElementName);
+          if (customModule) {
+            Add(customModule);
+            JSINFO << "JetScape::DetermineTaskList() -- Afterburner: Added " << childElementName << " to task list.";
+          }
+        }
+        
+        childElement = childElement->NextSiblingElement();
+      }
+    }
+    
+    else {
+      VERBOSE(2) << "Nothing to do.";
+    }
+    
+    element = element->NextSiblingElement();
+  }
+  
+}
+
+//________________________________________________________________
+void JetScape::DetermineWritersFromXML() {
+  
+  // Get file output name to write to (without file extension, except if custom writer)
+  std::string outputFilename = GetXMLElementText({"outputFilename"});
+  
+  // Copy string in order to set file extensions for each type
+  std::string outputFilenameAscii = outputFilename;
+  std::string outputFilenameAsciiGZ = outputFilename;
+  std::string outputFilenameHepMC = outputFilename;
+  
+  // Check if each writer is enabled, and if so add it to the task list
+  CheckForWriterFromXML("JetScapeWriterAscii", outputFilenameAscii.append(".dat"));
+  CheckForWriterFromXML("JetScapeWriterAsciiGZ", outputFilenameAsciiGZ.append(".dat.gz"));
+  CheckForWriterFromXML("JetScapeWriterHepMC", outputFilenameHepMC.append(".hepmc"));
+  
+  // Check for custom writers
+  tinyxml2::XMLElement* element = (tinyxml2::XMLElement*) JetScapeXML::Instance()->GetXMLRootUser()->FirstChildElement();
+  while (element) {
+    std::string elementName = element->Name();
+    VERBOSE(2) << "Parsing element: " << elementName;
+    
+    if ( ((int) elementName.find("CustomWriter")>=0) ) {
+      CheckForWriterFromXML(elementName.c_str(), outputFilename);
+    }
+    element = element->NextSiblingElement();
+  }
+  
+}
+  
+//________________________________________________________________
+void JetScape::CheckForWriterFromXML(const char* writerName, std::string outputFilename) {
+  
+  std::string enableWriter = GetXMLElementText({writerName});
+  VERBOSE(2) << "Parsing writer: " << writerName;
+  if ((int) enableWriter.find("on")>=0) {
+    VERBOSE(2) << "Writer is on.";
+    auto writer = JetScapeModuleFactory::createInstance(writerName);
+    if (writer) {
+      dynamic_pointer_cast<JetScapeWriter>(writer)->SetOutputFileName(outputFilename);
+      Add(writer);
+      JSINFO << "JetScape::DetermineTaskList() -- " << writerName << " (" << outputFilename.c_str() << ") added to task list.";
+    }
+    // Manually create HepMC writer if it is enabled, since JetScapeModuleFactor::map_type assumes single inheritance
+    // from JetScapeModuleBase -- but JetScapeWriterHepMC has multiple inheritance
+    else if (strcmp(writerName, "JetScapeWriterHepMC") == 0) {
+      #ifdef USE_HEPMC
+      VERBOSE(2) << "Manually creating JetScapeWriterHepMC (due to multiple inheritance)";
+      auto writer = std::make_shared<JetScapeWriterHepMC>(outputFilename);
+      Add(writer);
+      JSINFO << "JetScape::DetermineTaskList() -- " << writerName << " (" << outputFilename.c_str() << ") added to task list.";
+      #endif
+    }
+    else {
+      VERBOSE(2) << "Writer is NOT created...";
+    }
+  }
+  else{
+    VERBOSE(2) << "Writer is off.";
+  }
+}
+  
 // kind of cluncky, maybe a better way ... ?
 // Handle signal/slots in JetScape hence avoid passing pointers to sub tasks ...
 void JetScape::SetPointers()
 {
   
    // to get hydro pointer for signals, use signal?
-  INFO<<"Set Hydro,JetEnergylossManager and IS Pointers for SignalManager to create Signal/Slots";
+  JSINFO<<"Set Hydro,JetEnergylossManager and IS Pointers for SignalManager to create Signal/Slots";
   
   for (auto it : GetTaskList())
     {
       if (dynamic_pointer_cast<InitialState>(it))
-	JetScapeSignalManager::Instance()->SetInitialStatePointer(dynamic_pointer_cast<InitialState>(it));
-
+        JetScapeSignalManager::Instance()->SetInitialStatePointer(dynamic_pointer_cast<InitialState>(it));
+      
       if (dynamic_pointer_cast<PreequilibriumDynamics>(it))
-	JetScapeSignalManager::Instance()->SetPreEquilibriumPointer(dynamic_pointer_cast<PreequilibriumDynamics>(it));
- 
+        JetScapeSignalManager::Instance()->SetPreEquilibriumPointer(dynamic_pointer_cast<PreequilibriumDynamics>(it));
+      
       if (dynamic_pointer_cast<FluidDynamics>(it))
-	JetScapeSignalManager::Instance()->SetHydroPointer(dynamic_pointer_cast<FluidDynamics>(it));
-  
+        JetScapeSignalManager::Instance()->SetHydroPointer(dynamic_pointer_cast<FluidDynamics>(it));
+      
       if (dynamic_pointer_cast<JetEnergyLossManager>(it))
-	JetScapeSignalManager::Instance()->SetJetEnergyLossManagerPointer(dynamic_pointer_cast<JetEnergyLossManager>(it));
+        JetScapeSignalManager::Instance()->SetJetEnergyLossManagerPointer(dynamic_pointer_cast<JetEnergyLossManager>(it));
       
       if (dynamic_pointer_cast<HardProcess>(it))
-	JetScapeSignalManager::Instance()->SetHardProcessPointer(dynamic_pointer_cast<HardProcess>(it));
+        JetScapeSignalManager::Instance()->SetHardProcessPointer(dynamic_pointer_cast<HardProcess>(it));
       
       if (dynamic_pointer_cast<JetScapeWriter>(it) && it->GetActive())
-	JetScapeSignalManager::Instance()->SetWriterPointer(dynamic_pointer_cast<JetScapeWriter>(it)); 
-
+        JetScapeSignalManager::Instance()->SetWriterPointer(dynamic_pointer_cast<JetScapeWriter>(it));
+      
       if (dynamic_pointer_cast<PartonPrinter>(it))
         JetScapeSignalManager::Instance()->SetPartonPrinterPointer(dynamic_pointer_cast<PartonPrinter>(it));
+
+      if (dynamic_pointer_cast<SoftParticlization>(it))
+        JetScapeSignalManager::Instance()->SetSoftParticlizationPointer(dynamic_pointer_cast<SoftParticlization>(it));
     }
 }
 
 void JetScape::Exec()
 {
-  INFO<<BOLDRED<<"Run JetScape ...";
-  INFO<<BOLDRED<<"Number of Events = "<<GetNumberOfEvents();
+  JSINFO<<BOLDRED<<"Run JetScape ...";
+  JSINFO<<BOLDRED<<"Number of Events = "<<GetNumberOfEvents();
   
   // JetScapeTask::ExecuteTasks(); Has to be called explicitly since not really fully recursively (if ever needed)
   // --> JetScape is "Task Manager" of all modules ...
@@ -149,7 +620,7 @@ void JetScape::Exec()
   
   for (int i=0;i<GetNumberOfEvents();i++)
     {
-      INFO<<BOLDRED<<"Run Event # = "<<i;
+      JSINFO<<BOLDRED<<"Run Event # = "<<i;
       JSDEBUG<<"Found "<<GetNumberOfTasks()<<" Modules Execute them ... ";
 
       // First run all tasks
@@ -190,7 +661,7 @@ void JetScape::Exec()
       // For reusal, deactivate task after it has finished but before it gets cleaned up.
       if (reuse_hydro_) {
 	if (n_reuse_hydro_ <= 0) {
-	  WARN << " reuse_hydro is set, but n_reuse_hydro=" << n_reuse_hydro_;
+	  JSWARN << " reuse_hydro is set, but n_reuse_hydro=" << n_reuse_hydro_;
 	  throw std::runtime_error ("Incompatible reusal settings.");
 	}
 	for (auto it : GetTaskList()) {
@@ -216,7 +687,7 @@ void JetScape::Exec()
 
 void JetScape::Finish()
 {
-  INFO<<BOLDBLACK<<"JetScape finished after "<<GetNumberOfEvents()<<" events!";
+  JSINFO<<BOLDBLACK<<"JetScape finished after "<<GetNumberOfEvents()<<" events!";
   JSDEBUG<<"More infos wrap up/saving to file/closing file ...";
 
   // same as in Init() and Exec() ...

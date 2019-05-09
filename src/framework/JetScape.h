@@ -26,15 +26,9 @@ class JetScape : public JetScapeModuleBase
 {
   
  public:
-  /** Default constructor to create the main task of the JetScape framework. It sets the total number of events to 1.
+  /** Default constructor to create the main task of the JetScape framework.
   */  
   JetScape();
-  /** This is a constructor to create the main task of the JetScape framework. It sets the XML file name to "m_name", and total number of events to 1.   
-   */
-  JetScape(string m_name) : JetScapeModuleBase (m_name) {n_events=1;VERBOSE(8);}
-  /** This is a constructor to create the main task of the JetScape framework. It sets the XML file name to "m_name", and total number of events to "m_n_events".
-   */
-  JetScape(string m_name, int m_n_events) : JetScapeModuleBase (m_name) {n_events=m_n_events;VERBOSE(8);}
 
   /** This is a destructor for a JetScape.
    */
@@ -57,7 +51,7 @@ class JetScape : public JetScapeModuleBase
   /** This function returns the total number of events.
    */
   int GetNumberOfEvents() {return n_events;}
-
+  
   /** Controls whether to reuse a hydro event (for speedup).
       The number of times is controled by SetNReuseHydro
    */
@@ -72,15 +66,20 @@ class JetScape : public JetScapeModuleBase
    */
   inline void SetNReuseHydro( const unsigned int n_reuse_hydro ){
     if ( !GetReuseHydro() ){
-      WARN << "Number of hydro reusals set, but reusal not turned on.";
-      WARN << "Try jetscape->SetReuseHydro (true);";
+      JSWARN << "Number of hydro reusals set, but reusal not turned on.";
+      JSWARN << "Try jetscape->SetReuseHydro (true);";
     }
     n_reuse_hydro_ = n_reuse_hydro;
   }
   inline unsigned int GetNReuseHydro() const { return n_reuse_hydro_; }
 
  protected:
-
+  
+  void ReadGeneralParametersFromXML();
+  void DetermineTaskListFromXML();
+  void DetermineWritersFromXML();
+  void CheckForWriterFromXML(const char* writerName, std::string outputFilename);
+    
   void SetPointers();
   
   void Show();
@@ -88,6 +87,9 @@ class JetScape : public JetScapeModuleBase
 
   bool reuse_hydro_;
   unsigned int n_reuse_hydro_;
+  
+  bool fEnableAutomaticTaskListDetermination; // Option to automatically determine the task list from the XML file,
+                                              // rather than manually calling JetScapeTask::Add() in the run macro.
   
 };
 

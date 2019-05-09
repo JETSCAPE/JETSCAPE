@@ -18,8 +18,12 @@
 #include "PythiaGun.h"
 #include <sstream>
 
+#define MAGENTA "\033[35m"
+
 using namespace std;
 
+// Register the module with the base class
+RegisterJetScapeModule<PythiaGun> PythiaGun::reg("PythiaGun");
 
 PythiaGun::~PythiaGun()
 {
@@ -55,36 +59,30 @@ void PythiaGun::InitTask()
   readString("HadronLevel:all = off");
   readString("PartonLevel:ISR = on");
   readString("PartonLevel:MPI = on");
-  readString("PartonLevel:FSR = off");
+  //readString("PartonLevel:FSR = off");
   readString("PromptPhoton:all=on");
   readString("WeakSingleBoson:all=off");
   readString("WeakDoubleBoson:all=off");
 
-  tinyxml2::XMLElement *PythiaXmlDescription=GetHardXML()->FirstChildElement("PythiaGun");
-  tinyxml2::XMLElement *xmle; 
-
-  string s;
   // For parsing text
   stringstream numbf(stringstream::app|stringstream::in|stringstream::out);
   numbf.setf(ios::fixed, ios::floatfield);       numbf.setf(ios::showpoint);       numbf.precision(1);
   stringstream numbi(stringstream::app|stringstream::in|stringstream::out);
-    
-  if ( !PythiaXmlDescription ) {
-    WARN << "Cannot initialize Pythia Gun";
-    throw std::runtime_error("Cannot initialize Pythia Gun");
-  }
 
-  xmle = PythiaXmlDescription->FirstChildElement( "name" ); if ( !xmle ) throw std::runtime_error("Cannot parse xml");
-  s = xmle->GetText();
+  std::string s = GetXMLElementText({"Hard", "PythiaGun", "name"});
   SetId(s);
   // cout << s << endl;
+
+  // SC: read flag for FSR
+  FSR_on = GetXMLElementInt({"Hard", "PythiaGun", "FSR_on"});
+  if(FSR_on) readString("PartonLevel:FSR = on");
+  else readString("PartonLevel:FSR = off");
   
-  xmle = PythiaXmlDescription->FirstChildElement( "pTHatMin" ); if ( !xmle ) throw std::runtime_error("Cannot parse xml");
-  xmle->QueryDoubleText(&pTHatMin);
-  xmle = PythiaXmlDescription->FirstChildElement( "pTHatMax" ); if ( !xmle ) throw std::runtime_error("Cannot parse xml");
-  xmle->QueryDoubleText(&pTHatMax);
+  pTHatMin = GetXMLElementDouble({"Hard", "PythiaGun", "pTHatMin"});
+  pTHatMax = GetXMLElementDouble({"Hard", "PythiaGun", "pTHatMax"});
   
-  VERBOSE(7) <<"Pythia Gun with "<< pTHatMin << " < pTHat < " << pTHatMax ;
+  JSINFO << MAGENTA << "Pythia Gun with FSR_on: " << FSR_on;
+  JSINFO << MAGENTA << "Pythia Gun with "<< pTHatMin << " < pTHat < " << pTHatMax;
   
   numbf.str("PhaseSpace:pTHatMin = "); numbf << pTHatMin;
   readString ( numbf.str() );
@@ -93,15 +91,15 @@ void PythiaGun::InitTask()
   
   // random seed
   // xml limits us to unsigned int :-/ -- but so does 32 bits Mersenne Twist
-  tinyxml2::XMLElement *RandomXmlDescription=JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Random" );
+  tinyxml2::XMLElement *RandomXmlDescription= GetXMLElement({"Random"});
   readString("Random:setSeed = on");
   numbi.str("Random:seed = ");
   unsigned int seed = 0;
   if ( RandomXmlDescription ){
-    xmle = RandomXmlDescription->FirstChildElement( "seed" ); if ( !xmle ) throw std::runtime_error("Cannot parse xml");
+    tinyxml2::XMLElement *xmle = RandomXmlDescription->FirstChildElement( "seed" ); if ( !xmle ) throw std::runtime_error("Cannot parse xml");
     xmle->QueryUnsignedText(&seed);
   } else {
-    WARN << "No <Random> element found in xml, seeding to 0";
+    JSWARN << "No <Random> element found in xml, seeding to 0";
   }
   VERBOSE(7) <<"Seeding pythia to "<< seed ;
   numbi << seed;
@@ -112,21 +110,17 @@ void PythiaGun::InitTask()
   readString("Beams:idB = 2212");
   
   // Energy
-  xmle = PythiaXmlDescription->FirstChildElement( "eCM" ); if ( !xmle ) throw std::runtime_error("Cannot parse xml");
-  xmle->QueryDoubleText(&eCM);   
+  eCM = GetXMLElementDouble({"Hard", "PythiaGun", "eCM"});
   numbf.str("Beams:eCM = "); numbf << eCM;
   readString ( numbf.str() );
   
-  xmle = PythiaXmlDescription->FirstChildElement( "LinesToRead" );
-  if ( xmle ){
-    std::stringstream lines;
-    lines << xmle->GetText();
-    int i=0;
-    while(std::getline(lines,s,'\n')){
-      if( s.find_first_not_of (" \t\v\f\r") == s.npos ) continue; // skip empty lines
-      VERBOSE(7) <<  "Also reading in: " << s;
-      readString (s);
-    }
+  std::stringstream lines;
+  lines << GetXMLElementText({"Hard", "PythiaGun", "LinesToRead"}, false);
+  int i=0;
+  while(std::getline(lines,s,'\n')){
+    if( s.find_first_not_of (" \t\v\f\r") == s.npos ) continue; // skip empty lines
+    VERBOSE(7) <<  "Also reading in: " << s;
+    readString (s);
   }
   
   // And initialize
@@ -136,21 +130,11 @@ void PythiaGun::InitTask()
 
 void PythiaGun::Exec()
 {
-  INFO<<"Run Hard Process : "<<GetId()<< " ...";
+  JSINFO<<"Run Hard Process : "<<GetId()<< " ...";
   VERBOSE(8)<<"Current Event #"<<GetCurrentEvent();
+  
   //Reading vir_factor from xml for MATTER
-   tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );
-  if ( !eloss ) {
-    WARN << "Couldn't find tag Eloss";
-    throw std::runtime_error ("Couldn't find tag Eloss");    
-  }
-  tinyxml2::XMLElement *matter=eloss->FirstChildElement("Matter");
-  if ( !matter ) {
-    WARN << "Couldn't find tag Eloss -> Matter";
-    throw std::runtime_error ("Couldn't find tag Eloss -> Matter");
-  }
-  double vir_factor;
-  matter->FirstChildElement("vir_factor")->QueryDoubleText(&vir_factor);
+  double vir_factor = GetXMLElementDouble({"Eloss", "Matter", "vir_factor"});
 
   bool flag62=false;
   vector<Pythia8::Particle> p62;
@@ -174,18 +158,25 @@ void PythiaGun::Exec()
       if ( parid<3 )continue;      // 0, 1, 2: total event and beams      
       Pythia8::Particle& particle = event[parid];
 
-      // only accept particles after MPI
-      if ( particle.status()!=62 ) continue;
-      // only accept gluons and quarks
-      // Also accept Gammas to put into the hadron's list
-      if ( fabs( particle.id() ) > 3 && (particle.id() !=21 && particle.id() !=22) ) continue;
-      
-      // reject rare cases of very soft particles that don't have enough e to get
-      // reasonable virtuality
-      if ( particle.pT() < 1.0/sqrt(vir_factor) ) continue;
- 	
-	//if(particle.id()==22) cout<<"########this is a photon!######" <<endl;
-      // accept
+      if(!FSR_on) {
+          // only accept particles after MPI
+          if ( particle.status()!=62 ) continue;
+          // only accept gluons and quarks
+          // Also accept Gammas to put into the hadron's list
+          if ( fabs( particle.id() ) > 3 && (particle.id() !=21 && particle.id() !=22) ) continue;
+          
+          // reject rare cases of very soft particles that don't have enough e to get
+          // reasonable virtuality
+          if ( particle.pT() < 1.0/sqrt(vir_factor) ) continue;
+            
+            //if(particle.id()==22) cout<<"########this is a photon!######" <<endl;
+          // accept
+      } else { // FSR_on true: use Pythia vacuum shower instead of MATTER
+          if ( !particle.isFinal()) continue;
+    	  // only accept gluons and quarks
+          // Also accept Gammas to put into the hadron's list
+          if ( fabs( particle.id() ) > 3 && (particle.id() !=21 && particle.id() !=22) ) continue;
+      }    
       p62.push_back( particle );
 
     }
@@ -219,11 +210,11 @@ void PythiaGun::Exec()
 
   
   if (!ini) {
-      WARN << "No initial state module, setting the starting location to 0. Make sure to add e.g. trento before PythiaGun.";
+      JSWARN << "No initial state module, setting the starting location to 0. Make sure to add e.g. trento before PythiaGun.";
   } else {
     auto num_bin_coll = ini->GetNumOfBinaryCollisions();
     if ( num_bin_coll.size()==0 ){
-      WARN << "num_of_binary_collisions is empty, setting the starting location to 0. Make sure to add e.g. trento before PythiaGun.";
+      JSWARN << "num_of_binary_collisions is empty, setting the starting location to 0. Make sure to add e.g. trento before PythiaGun.";
     } else {	 
       std::discrete_distribution<> dist( begin(num_bin_coll),end(num_bin_coll) ); // Create the distribution
     

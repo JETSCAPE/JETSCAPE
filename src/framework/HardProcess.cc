@@ -45,20 +45,13 @@ void HardProcess::Init()
 {
   JetScapeModuleBase::Init();
 
-  INFO<<"Intialize HardProcess : "<<GetId()<< " ...";
- 
-  fd= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Hard" );
-
-  if (!fd) {
-      WARN << "Not a valid JetScape XML Hard section file or no XML file loaded!";
-      exit(-1);
-  }
+  JSINFO<<"Intialize HardProcess : "<<GetId()<< " ...";
   
   VERBOSE(8);
 
   ini = JetScapeSignalManager::Instance()->GetInitialStatePointer().lock();
   if (!ini) {
-      WARN << "No initial state module, try: auto trento = make_shared<TrentoInitial>(); jetscape->Add(trento);";
+      JSWARN << "No initial state module, try: auto trento = make_shared<TrentoInitial>(); jetscape->Add(trento);";
   }
   
   InitTask();
@@ -68,7 +61,7 @@ void HardProcess::Init()
 
 void HardProcess::Exec()
 {
-  INFO<<"Run Hard Process : "<<GetId()<< " ...";
+  JSINFO<<"Run Hard Process : "<<GetId()<< " ...";
   VERBOSE(8)<<"Current Event #"<<GetCurrentEvent();
   
   JetScapeTask::ExecuteTasks();

@@ -12,16 +12,9 @@
  * Distributed under the GNU General Public License 3.0 (GPLv3 or later).
  * See COPYING for details.
  ******************************************************************************/
-// ------------------------------------------------------------
-// JetScape Framework hydro from file Test Program
-// (use either shared library (need to add paths; see setup.csh)
-// (or create static library and link in)
-// -------------------------------------------------------------
 
 #include <iostream>
 #include <time.h>
-#include <chrono>
-#include <thread>
 
 // JetScape Framework includes ...
 #include "JetScape.h"
@@ -32,20 +25,25 @@
 #include "JetScapeWriterHepMC.h"
 #endif
 
-// User modules derived from jetscape framework clasess
-// to be used to run Jetscape ...
+//User modules derived from jetscape framework clasess
+//to be used to run Jetscape ...
 #include "AdSCFT.h"
 #include "Matter.h"
 #include "Martini.h"
-#include "Brick.h"
-#include "GubserHydro.h"
-#include "HydroFromFile.h"
+#include "FreestreamMilneWrapper.h"
+#include "MusicWrapper.h"
+#include "iSpectraSamplerWrapper.h"
+#include "TrentoInitial.h"
 #include "PGun.h"
+#include "PythiaGun.h"
+//#include "HadronizationManager.h"
+//#include "Hadronization.h"
+//#include "ColoredHadronization.h"
 
-#ifdef USE_HDF5
-#include "InitialFromFile.h"
-#endif
-// using namespace std;
+#include <chrono>
+#include <thread>
+
+using namespace std;
 
 using namespace Jetscape;
 
@@ -58,63 +56,77 @@ int main(int argc, char** argv)
 {
   clock_t t; t = clock();
   time_t start, end; time(&start);
-  
+
   cout<<endl;
-    
-  // DEBUG=true by default and REMARK=false
-  // can be also set also via XML file (at least partially)
-  JetScapeLogger::Instance()->SetDebug(false);
+
+  //DEBUG=true by default and REMARK=false
+  //can be also set also via XML file (at least partially)
+  JetScapeLogger::Instance()->SetInfo(true);
+  JetScapeLogger::Instance()->SetDebug(true);
   JetScapeLogger::Instance()->SetRemark(false);
   //SetVerboseLevel (9 a lot of additional debug output ...)
-  //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevle(9) or 10
-  JetScapeLogger::Instance()->SetVerboseLevel(8);
-   
+  //If you want to suppress it: use SetVerboseLevel(0) or max  SetVerboseLevel(9) or 10
+  JetScapeLogger::Instance()->SetVerboseLevel(0);
+
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml", 5);
-  jetscape->SetReuseHydro (true);
-  jetscape->SetNReuseHydro (5);
+  //auto jetscape = make_shared<JetScape>("./jetscape_init.xml",10);
+  //jetscape->SetReuseHydro (true);
+  //jetscape->SetNReuseHydro (5);
+
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",1);
+  jetscape->SetReuseHydro (false);
+  jetscape->SetNReuseHydro (0);
+
+  auto trento = make_shared<TrentoInitial> ();
+  auto freestream = make_shared<FreestreamMilneWrapper> ();
+  auto hydro = make_shared<MpiMusic> ();
+  //auto hydro = make_shared<GubserHydro> ();
+  
+  // surface sampler
+  auto iSS = make_shared<iSpectraSamplerWrapper> ();
 
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
-  auto hydro = make_shared<HydroFromFile> ();
-  //auto hydro = make_shared<GubserHydro> ();
-  
   auto matter = make_shared<Matter> ();
-  auto martini = make_shared<Martini> ();
-  auto adscft = make_shared<AdSCFT> ();
+  //auto martini = make_shared<Martini> ();
+  //auto adscft = make_shared<AdSCFT> ();
   //DBEUG: Remark:
   //does not matter unfortunately since not called recursively, done by JetEnergyLoss class ...
   //matter->SetActive(false);
   //martini->SetActive(false);
   // This works ... (check with above logic ...)
   //jloss->SetActive(false);
-  //
 
-  auto pGun= make_shared<PGun> ();
+  // auto pGun= make_shared<PGun> ();
+  auto pythiaGun= make_shared<PythiaGun> ();
+
+  //auto hadroMgr = make_shared<HadronizationManager> ();
+  //auto hadro = make_shared<Hadronization> ();
+  //auto hadroModule = make_shared<ColoredHadronization> ();
 
   // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
-  //auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");  
+  //auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");
 #ifdef USE_HEPMC
-  auto writerhepmc= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
-  jetscape->Add(writerhepmc);
+  //auto writer= make_shared<JetScapeWriterHepMC> ("test_out.dat");
 #endif
   //writer->SetActive(false);
 
   //Remark: For now modules have to be added
   //in proper "workflow" order (can be defined via xml and sorted if necessary)
-  
-#ifdef USE_HDF5
-  auto initial = make_shared<InitialFromFile>();
-  jetscape->Add(initial);
-#endif
 
-  jetscape->Add(pGun);
+  jetscape->Add(trento);
 
-   //Some modifications will be needed for reusing hydro events, so far
+  // jetscape->Add(pGun);
+  jetscape->Add(pythiaGun);
+
+  jetscape->Add(freestream);
+
+  //Some modifications will be needed for reusing hydro events, so far
   //simple test hydros always executed "on the fly" ...
   jetscape->Add(hydro);
+  jetscape->Add(iSS);
 
   // Matter with silly "toy shower (no physics)
   // and Martini dummy ...
@@ -122,12 +134,19 @@ int main(int argc, char** argv)
   // hardcoded at 5 to be changed to xml)
   jloss->Add(matter);
   //jloss->Add(martini);
-  // jloss->Add(adscft);
-  
+  //jloss->Add(adscft);
+
   jlossmanager->Add(jloss);
-  
+
   jetscape->Add(jlossmanager);
-  
+
+
+  //hadro->Add(hadroModule);
+  //hadroMgr->Add(hadro);
+  //jetscape->Add(hadroMgr);
+
+
+
   jetscape->Add(writer);
 
   // Intialize all modules tasks
@@ -139,7 +158,7 @@ int main(int argc, char** argv)
   // "dummy" so far ...
   // Most thinkgs done in write and clear ...
   jetscape->Finish();
-  
+
   INFO_NICE<<"Finished!";
   cout<<endl;
 
@@ -159,7 +178,7 @@ int main(int argc, char** argv)
 void Show()
 {
   INFO_NICE<<"-----------------------------------------------";
-  INFO_NICE<<"| Hydro from file Test JetScape Framework ... |";
+  INFO_NICE<<"| freestream-milne Test JetScape Framework ... |";
   INFO_NICE<<"-----------------------------------------------";
   INFO_NICE;
 }

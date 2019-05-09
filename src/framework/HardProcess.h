@@ -18,7 +18,6 @@
 
 #include "InitialState.h"
 #include "JetScapeModuleBase.h"
-#include "tinyxml2.h"
 #include "JetClass.h"
 #include <vector>
 
@@ -36,12 +35,6 @@ class HardProcess : public JetScapeModuleBase
   /** Default constructor to create a Hard Process Physics task. Sets the task ID as "HardProcess".
   */    
   HardProcess();
-
-  /** Standard constructor. Sets the task ID as "HardProcess".
-      @param m_name  is a name of the control XML file which contains the input parameters relevant to the hard process under the tag <Hard>.
-   */
-  HardProcess(string m_name) : JetScapeModuleBase (m_name)
-    {SetId("HardProcess");}
 
   /** Destructor for the Hard Process Physics task.
    */
@@ -69,10 +62,6 @@ class HardProcess : public JetScapeModuleBase
       @param w is a pointer of type JetScapeWrite class.
   */
   virtual void CollectHeader( weak_ptr<JetScapeWriter> w );
-    
-  /** @return A pointer to the XML elements. Such XML elements are the input parameters stored in the XML file under the tag <Hard>.
-   */
-  tinyxml2::XMLElement* GetHardXML() {return fd;}
 
   // connect the InitialState module with hard process
   /** A pointer of type InitialState class. 
@@ -139,8 +128,6 @@ class HardProcess : public JetScapeModuleBase
   */
   int GetNHadrons() {return hd_list.size();}
  private:
-
-  tinyxml2::XMLElement *fd;
 
   // Think of always using unique_ptr for any vector in jetscape framework !???
   // To be discussed ...

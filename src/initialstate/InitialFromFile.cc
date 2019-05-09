@@ -15,6 +15,9 @@
 
 #include "InitialFromFile.h"
 
+// Register the module with the base class
+RegisterJetScapeModule<InitialFromFile> InitialFromFile::reg("InitialFromFile");
+
 InitialFromFile::InitialFromFile() {
     SetId("InitialFromFile");
     event_id_ = -1;
@@ -29,50 +32,49 @@ void InitialFromFile::InitTask() {
 
 void InitialFromFile::Exec() {  
     Clear();
-    Jetscape::INFO << "Read initial condition from file";
+    Jetscape::JSINFO << "Read initial condition from file";
     try {
-        auto * xml_path = GetIniStateXML()->FirstChildElement("initial_profile_path");
-        if (!xml_path) {
-            throw("Not a valid JetScape IS::initial_profile_path XML section in file!");
-        } else {
-            event_id_++;
-            std::ostringstream path_with_filename;
-            path_with_filename << xml_path->GetText() << "/event-" << event_id_
-                               << "/initial.hdf5";
-            Jetscape::INFO << "External initial profile path is"
-                           << path_with_filename.str();
+      
+        std::string initialProfilePath = GetXMLElementText({"IS", "initial_profile_path"});
 
-            herr_t status;
-            std::ostringstream event_group;
+        event_id_++;
+        std::ostringstream path_with_filename;
+        path_with_filename << initialProfilePath << "/event-" << event_id_
+                           << "/initial.hdf5";
+        JSINFO << "External initial profile path is"
+                       << path_with_filename.str();
+
+        herr_t status;
+        std::ostringstream event_group;
 
 
-            event_group << "/event_0";
-            Jetscape::INFO << "event_group=" << event_group.str().c_str();
-            H5file_ptr_ = H5Fopen(path_with_filename.str().c_str(), H5F_ACC_RDWR, H5P_DEFAULT);
-            H5group_ptr_ = H5Gopen(H5file_ptr_, event_group.str().c_str(), H5P_DEFAULT);
+        event_group << "/event_0";
+        JSINFO << "event_group=" << event_group.str().c_str();
+        H5file_ptr_ = H5Fopen(path_with_filename.str().c_str(), H5F_ACC_RDWR, H5P_DEFAULT);
+        H5group_ptr_ = H5Gopen(H5file_ptr_, event_group.str().c_str(), H5P_DEFAULT);
 
-            ReadConfigs();
-            ReadNbcDist();
-            ReadEntropyDist();
+        ReadConfigs();
+        ReadNbcDist();
+        ReadEntropyDist();
 
-            status = H5Gclose(H5group_ptr_);
-            status = H5Fclose(H5file_ptr_);
-        }
+        status = H5Gclose(H5group_ptr_);
+        status = H5Fclose(H5file_ptr_);
+      
     } catch(std::exception & err) {
-        Jetscape::WARN << err.what();
+        Jetscape::JSWARN << err.what();
         std::exit(-1);
     }
 }
 
 void InitialFromFile::ReadConfigs(){
-    Jetscape::INFO << "Read initial state configurations from file";
+    Jetscape::JSINFO << "Read initial state configurations from file";
     double grid_step = h5_helper_->readH5Attribute_double(H5group_ptr_, "dxy");
     dim_x_ = h5_helper_->readH5Attribute_int(H5group_ptr_, "Nx");
     dim_y_ = h5_helper_->readH5Attribute_int(H5group_ptr_, "Ny");
     double xmax = dim_x_ * grid_step / 2;
     SetRanges(xmax, xmax, 0.0);
     SetSteps(grid_step, grid_step, 0.0);
-    Jetscape::INFO << "xmax = " << xmax;
+    Jetscape::JSINFO << "xmax = " << xmax;
 
     npart = h5_helper_->readH5Attribute_double(H5group_ptr_, "npart");
     ncoll = h5_helper_->readH5Attribute_double(H5group_ptr_, "ncoll");
@@ -80,7 +82,7 @@ void InitialFromFile::ReadConfigs(){
 }
 
 void InitialFromFile::ReadNbcDist(){
-    Jetscape::INFO << "Read number of binary collisions from file";
+    Jetscape::JSINFO << "Read number of binary collisions from file";
     auto dataset = H5Dopen(H5group_ptr_, "Ncoll_density", H5P_DEFAULT);
     int dimx = dim_x_;
     int dimy = dim_y_;
@@ -96,7 +98,7 @@ void InitialFromFile::ReadNbcDist(){
 }
 
 void InitialFromFile::ReadEntropyDist(){
-    Jetscape::INFO << "Read initial entropy density distribution from file";
+    Jetscape::JSINFO << "Read initial entropy density distribution from file";
     auto dataset = H5Dopen(H5group_ptr_, "matter_density", H5P_DEFAULT);
     int dimx = dim_x_;
     int dimy = dim_y_;
@@ -112,7 +114,7 @@ void InitialFromFile::ReadEntropyDist(){
 }
 
 void InitialFromFile::Clear() {
-    Jetscape::INFO << "clear initial condition vectors";
+    Jetscape::JSINFO << "clear initial condition vectors";
     entropy_density_distribution_.clear();
     num_of_binary_collisions_.clear();
 }

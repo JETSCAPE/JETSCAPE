@@ -1,190 +1,99 @@
-Test Skeleton of (potential) JetScape Framework
+# JETSCAPE
 
-With cmake:
+The JETSCAPE simulation framework is an overarching computational envelope for developing complete event generators for heavy-ion collisions.
+It allows for modular incorporation of a wide variety of existing and future software that simulates different aspects of a heavy-ion collision.
+For a full introduction to JETSCAPE, please see [The JETSCAPE framework](https://arxiv.org/abs/1903.07706).
 
-```bash
-    mkdir build
-    cd build
-    cmake ..
+## Installation
+
+To run JETSCAPE, you will need to clone this repository and install several software pre-requisites.
+
+We recommend to install JETSCAPE and its pre-requisities using Docker: 
+See the instructions [Using JETSCAPE via Docker](https://github.com/amajumder/JETSCAPE-COMP/tree/master/docker).
+
+If you prefer to manually install the pre-requisites, please see the instructions in [The JETSCAPE framework](https://arxiv.org/abs/1903.07706) in Appendix B.
+
+### External packages
+
+To run certain external software (MUSIC, SMASH, etc.), you will need to explicitly download them, 
+and you may need to re-run `cmake` with specific command-line options.
+Scripts to download and install the external packages are provided in `external_packages/`. 
+Please see [external packages](https://github.com/amajumder/JETSCAPE-COMP/tree/master/external_packages) for full details.
+
+## Running JETSCAPE
+
+The main executable to generate JETSCAPE events is `runJetscape`, located in the `build/` directory.
+To generate JETSCAPE events, you should pass an XML file specifying the settings with which you would like to run:
+
+```
+./runJetscape ../config/jetscape_user.xml
 ```
 
-the test binaries will be generated in the build folder
-To run the tests, you need to stay at the framework directory and type :
+### The XML Configuration
 
-```bash
-    ./build/brickTest
+All of the JETSCAPE settings are specified by two XML files:
+- Master XML file: *you don't modify this*
+  - Contains default values for every possible module and parameter
+- User XML file: *you provide this*
+  - Contains a list of which modules to run, and which default parameter values to override
+
+An example User XML file is provided at `config/jetscape_user.xml`. 
+You should adapt this as you like:
+ - Set number of events to run
+ - Set output format (`Writer` type) and filename 
+ - Set which modules to include (in order of execution)
+ - Set any default parameter values (from Master XML file) to override
+ 
+The Master XML file is located at `config/jetscape_master.xml`, and contains a list of 
+the default parameter settings which will be used for all activated modules (as specified by the User XML file),
+if they are not overridden in the User XML file.
+
+You can pass the path to your user XML file as a command-line argument to the `runJetscape` executable:
+```
+./runJetscape /path/to/my/user_config.xml
 ```
 
-This "simulates" our brick test. The temperature from the brick is available in the jet energy loss modules. The jet energyloss module consists of two "test" modules, Matter performing a random in time democratic split and Martini is doing nothing. Furthermore in "Matter" I added random "new graph roots" for testing (simulating scattering with medium partons). The switching criteria is arbitrarily set to 5GeV in pt for testing. An ascii output file is created which you can read in with the provided reader:
+## JETSCAPE Output
+
+JETSCAPE output can be generated in Ascii, gzipped Ascii, or HepMC format,
+and contains a full list of particles and the parton shower history.
+You must specify which format you would like to activate in your User XML file.
+
+### Analysis of JETSCAPE Output
+
+Analysis of JETSCAPE output is generally beyond the scope of the JETSCAPE framework, and is the responsibility of the user.
+The JETSCAPE docker container includes ROOT, python, fastjet, and several other tools that may be useful.
+
+An example reading an ascii output file is provided:
 
 ```bash
-    ./build/readerTest
+./build/readerTest
 ```
 
-which reads in the generated showers does some DFS search and shows the output. You can generate an output graph format which can be easily visualized using graphViz or other tools like Gephi (GUI for free for Mac) or more adanvanced, graph-tools (Python) and many more. Furthermore, as a "closure" test, I used the FastJet core packackage (compiled in our JetScape library) to perform a simple jetfinding (on the "final" partons, in graph language, incoming partons in a vertex with no outgoing partons/childs), and since the "shower" is perfectly collinear the jet pT is identical to the hard process parton pT (modulo some random new partons/roots in the final state, see above).  
+which reads in the generated showers does some DFS search and shows the output. You can generate an output graph format which can be easily visualized using graphViz or other tools like Gephi (GUI for free for Mac) or more adanvanced, graph-tools (Python) and many more. Furthermore, as a "closure" test, the FastJet core package (compiled in our JetScape library) is used to perform a simple jetfinding (on the "final" partons, in graph language, incoming partons in a vertex with no outgoing partons/childs), and since the "shower" is perfectly collinear the jet pT is identical to the hard process parton pT (modulo some random new partons/roots in the final state, see above).  
 
-```bash
-    ./build/hydroFromFileTest
-```
+## Developing modules
 
-This "simulates" a test by reading in hydrodynamic evolution from
-an external file. The temperature and flow velocity at any given space-time
-poisition is available in the jet energy loss modules.
-The jet energyloss module is the same as the one in the brickTest.
-The hydro file reader is from a 3rd-party program. Part of the code requires
-the HDF5 library.
+To develop a new JETSCAPE module, you should inherit from the relevant base class (InitialState, JetEnergyLoss, etc.) 
+and implement the relevant initialization and execution functions, described in detail in [The JETSCAPE framework](https://arxiv.org/abs/1903.07706)
+Section 3.3.
 
-```bash
-    ./build/MUSICTest
-```
+Additionally, you must register your module with the framework with the following steps:
+- Add the following to your module .h:
+  ```
+  private:
+  // Allows the registration of the module so that it is available to be used by the Jetscape framework.
+  static RegisterJetScapeModule<MyClass> reg;
+  ```
+- Add the following to your module .cc: 
+  ```
+  // Register the module with the base class
+  RegisterJetScapeModule<MyClass> MyClass::reg("CustomModuleBlahBlah");
+  ```
+where `MyClass` is the name of your class, and "CustomModuleBlahBlah" is the name that should be added to the XML configuration.
+You can see any of the established modules, e.g.  `Matter`, as an example.
 
-This "simulates" a test with MUSIC (a viscous hydrodynamic code).
-The temperature and flow velocity at any given space-time position
-is available in the jet energy loss modules.
-The jet energyloss module is the same as the one in the brickTest.
-MUSIC is treated as a 3rd party program outside the JETSCAPE framework.
-It requires MPI and GSL libraries installed in the computer.
+Important Note: In the case of custom modules, you *must* start your module name with "CustomModule..." 
+in order for it to be recognized by the framework (for custom writers, you must start the name with "CustomWriter"). 
 
-If cmake found other libraries HepMC, ROOT or Pythia8, you might have to add the library path's in the setup.csh script.
-For sure works on Mac Os X 10.11.6.
-
-To make a class documentation using doxygen:
-
-doxygen JetScapeDoxy.conf
-
-Getting started on a Mac:
-
-- Install Xcode and command-line tools
-
-For further packages needed (like CMake, Pythia, ROOT, GraphViz) I recommend homebrew for Mac:
-
-- Install homebrew (after you install Xcode)
-
-/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-
-- Install CMake via homebrew type: 
-
-brew install cmake
-
-- Install doxygen:
-
-brew install doxygen
-
-- Tap some repos for further sceintific packages: 
-
-brew tap davidchall/hep
-
-brew tap homebrew/science
-
-- Install Pythia8 for example:
-
-brew install pythia8
-
-- Install graphViz:
-
-brew install graphviz --with-app --with-bindings
-
-- Install root6
-
-brew install root6
-
-- Install graph-tool (python). If done you can create a colored and "fancy" graph with the provided python script.
-
-brew install graph-tool
-
-- Install hdf5
-
-    ```bash
-    brew tap homebrew/science
-    brew install hdf5 --enable-cxx
-    ```
-
-- Install OpenMPI
-
-    ```bash
-    brew install open-mpi
-    ```
-
-- Install GSL
-    
-    ```bash
-    brew install gsl
-    ```
-
-(and most of other packackes we need)
-
-Remark: So far on brew HepMC is only available in version 2, version 3 is required for the current code, nicer wirter interfaces to root for example. So one has to install it from: http://hepmc.web.cern.ch/hepmc/
-
-## MUSIC support
-
-MUSIC is a (3+1)D viscous hydrodynamical code developed at McGill university.
-(Official website: http://www.physics.mcgill.ca/MUSIC)
-MUSIC can be integrated into the JETSCAPE framework. To download the lastest
-version of MUSIC, one can run the shell script under the external_packages folder,
-
-```bash
-    ./get_music.sh
-```
-
-This shell script will clone the latest version of MUSIC to external_packages folder.
-It also setup the enviroment variables for MUSIC to run. Specifically, MUSIC
-needs the folder path for the EOS tables. Please make sure the enviroment
-variable HYDROPROGRAMPATH to be set to the path for MUSIC code package.
-
-When compiling MUSIC with JETSCAPE, please turn on the MUSIC support option
-when generating the cmake configuration file,
-
-```bash
-    mkdir build
-    cd build
-    cmake -Dmusic=ON ..
-    make
-```
-
-To run JETSCAPE with MUSIC, one needs to use MPI commands,
-
-```bash
-    mpirun -np 1 ./MUSICTest
-```
-
-## CLVisc support
-
-CLVisc is a (3+1)D viscous hydrodynamical code developed at CCNU, LBNL and Frankfurt.
-The code is parallelized on Graphics Processing Unit (GPU) using OpenCL.
-Different from CUDA, the same code runs on both CPU and GPUs.
-The fluiddynamic evolution part was integrated into the JETSCAPE framework.
-The public version of CLVisc uses Python and pyopencl. 
-A cpp wrapper is implemented in external_packages folder for JETSCAPE.
-To download the opencl kernel files, run
-
-```bash
-    ./get_clvisc.sh
-```
-
-This shell script will clone the latest version of CLVisc to external_packages folder.
-
-When compiling CLVisc with JETSCAPE, please turn on the CLVisc support option
-when generating the cmake configuration file,
-
-```bash
-    mkdir build
-    cd build
-    cmake -Dclvisc=ON ..
-    make
-```
-
-The cpp wrapper in JETSCAPE will read configurations from jetscape_init.xml to initialize clvisc.
-CLVisc will use initial condition module and other modules provided by JETSCAPE.
-
-To run JETSCAPE with CLVisc on GPU or CPU, one needs to install OpenCL library and 
-most recent GPU drivers that support OpenCL.
-The Macbook has OpenCL library installed by default.
-Other GPU work stations using NVIDIA gpus might have already installed CUDA.
-CUDA is shipped with OpenCL too.
-For AMD, intel gpus or CPUs, one can install AMD APP SDK to provide the OpenCL support.
-
-To run the JETSCAPE CLViscTest,
-
-```bash
-    ./CLViscTest
-```
+Once these steps are done, one can just add the module name to the XML, and it will be automatically available to run in JETSCAPE.

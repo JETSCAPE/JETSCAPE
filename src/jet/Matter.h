@@ -63,7 +63,7 @@ class Matter : public JetEnergyLossModule<Matter> //, public std::enable_shared_
   double fncQhat(double zeta);
   double fncAvrQhat(double zeta, double tau);
 
-  bool in_vac,brick_med,recoil_on,broadening_on;
+  bool matter_on,in_vac,brick_med,recoil_on,broadening_on;
   double hydro_Tc,qhat0,alphas,brick_length,vir_factor;
   double initR0,initRx,initRy,initRz,initVx,initVy,initVz,initRdotV,initVdotV,initEner;
   double Q00,Q0,T0;
@@ -91,6 +91,10 @@ class Matter : public JetEnergyLossModule<Matter> //, public std::enable_shared_
 
  protected:
   uniform_real_distribution<double> ZeroOneDistribution;
+  
+ private:
+  // Allows the registration of the module so that it is available to be used by the Jetscape framework.
+  static RegisterJetScapeModule<Matter> reg;
   
 };
 

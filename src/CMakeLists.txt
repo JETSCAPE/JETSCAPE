@@ -50,6 +50,14 @@ if(NOT "${clvisc}")
   list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/hydro/CLViscWrapper.cc)
 endif()
 
+#afterburner
+FILE(GLOB afterburnersources afterburner/*.cc)
+set (SOURCES  ${SOURCES}  ${afterburnersources} )
+## Take care of options
+if(NOT "${smash}")
+  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/afterburner/SmashWrapper.cc)
+endif()
+
 #jet
 FILE(GLOB jetsources jet/*.cc)
 set (SOURCES  ${SOURCES}  ${jetsources} )
@@ -71,7 +79,7 @@ set (SOURCES  ${SOURCES}  ${readersources} )
 #######################################
 
 add_library(JetScape SHARED ${SOURCES})
-target_link_libraries(JetScape JetScapeThird GTL ${PYTHIA8_LIBRARIES} libtrento ${Boost_LIBRARIES}  )
+target_link_libraries(JetScape JetScapeThird GTL ${PYTHIA8_LIBRARIES} libtrento ${Boost_LIBRARIES}  ${GSL_LIBRARIES})
 
 if (${ROOT_FOUND})
   target_link_libraries(JetScape ${ROOT_LIBRARIES})
@@ -92,4 +100,9 @@ endif()
 if ( iSS )
   target_link_libraries (JetScape iSS_lib )
 endif()
+
+if ( smash )
+  target_link_libraries (JetScape ${SMASH_LIBRARIES})
+endif()
+
 # -------------------------------------------------------------------------

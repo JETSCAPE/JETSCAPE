@@ -79,7 +79,7 @@ void JetScapeReader<T>::AddEdge(string s)
       pShower->new_parton(nodeVec[stoi(vS[0])],nodeVec[stoi(vS[1])],make_shared<Parton>(stoi(vS[2]),stoi(vS[3]),stoi(vS[4]),stod(vS[5]),stod(vS[6]),stod(vS[7]),stod(vS[8]))); // use different constructor wit true spatial posiiton ...
     }
   else
-    WARN<<"Node vector not filled, can not add edges/partons!";
+    JSWARN<<"Node vector not filled, can not add edges/partons!";
 }
 
 template<class T>
@@ -111,7 +111,7 @@ void JetScapeReader<T>::Next()
   string line;
   string token; 
 
-  INFO<<"Current Event = "<<currentEvent;
+  JSINFO<<"Current Event = "<<currentEvent;
 
   pShowers.push_back(make_shared<PartonShower>());
   pShower=pShowers[0];
@@ -187,14 +187,14 @@ template<class T>
 void JetScapeReader<T>::Init()
 {
   VERBOSE(8)<<"Open Input File = "<<file_name_in;
-  INFO<<"Open Input File = "<<file_name_in;
+  JSINFO<<"Open Input File = "<<file_name_in;
   
   inFile.open(file_name_in.c_str());
   
   if (!inFile.good())
-    { WARN<<"Corrupt input file!"; exit(-1);}
+    { JSWARN<<"Corrupt input file!"; exit(-1);}
   else
-    INFO<<"File opened";
+    JSINFO<<"File opened";
 
   currentEvent=0;
 }

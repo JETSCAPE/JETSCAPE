@@ -25,11 +25,14 @@
 #include <iomanip>
 
 #include "FluidDynamics.h"
-
+#include "LBTMutex.h"
 #define MAGENTA "\033[35m"
 
 using namespace Jetscape;
 using namespace std;
+
+// Register the module with the base class
+RegisterJetScapeModule<LBT> LBT::reg("Lbt");
 
 // initialize static members
 bool LBT::flag_init=0;
@@ -74,6 +77,10 @@ LBT::LBT()
 {
   SetId("LBT");
   VERBOSE(8);
+
+  // create and set Martini Mutex
+  auto lbt_mutex = make_shared<LBTMutex>();
+  SetMutex(lbt_mutex);
 }
 
 LBT::~LBT()
@@ -83,11 +90,7 @@ LBT::~LBT()
 
 void LBT::Init()
 {
-  INFO<<"Intialize LBT ...";
-
-  // Redundant (get this from Base) quick fix here for now
-  tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );  
-  tinyxml2::XMLElement *lbt=eloss->FirstChildElement("Lbt");
+  JSINFO<<"Intialize LBT ...";
 
   //...Below is added by Shanshan
   //...read parameters from LBT.input first, but can be changed in JETSCAPE xml file if any conflict exists
@@ -100,74 +103,33 @@ void LBT::Init()
   //        cout << "Parameter check failed" << endl;
   //        exit(EXIT_FAILURE);
   //    }
-	
-  if (lbt) {   
 
-      int flagInt=-100;
-      double inputDouble=-99.99;
-      int in_vac=1;
+  std::string s = GetXMLElementText({"Eloss", "Lbt", "name"});
+  JSDEBUG << s << " to be initilizied ...";
 
-      Q00=1.0;
-      Q0=1.0;
+  //double m_qhat=-99.99;
+  //lbt->FirstChildElement("qhat")->QueryDoubleText(&m_qhat);
+  //SetQhat(m_qhat);
+  //
 
-      string s = lbt->FirstChildElement( "name" )->GetText();
-    
-      JSDEBUG << s << " to be initilizied ...";
+  //JSDEBUG  << s << " with qhat = "<<GetQhat();
 
-      //double m_qhat=-99.99;
-      //lbt->FirstChildElement("qhat")->QueryDoubleText(&m_qhat);
-      //SetQhat(m_qhat);
-      //
-      //JSDEBUG  << s << " with qhat = "<<GetQhat();      	
+  int in_vac = GetXMLElementInt({"Eloss", "Lbt", "in_vac"});
 
-      if ( !lbt->FirstChildElement("in_vac") ) {
-  	WARN << "Couldn't find sub-tag Eloss -> LBT -> in_vac";
-          throw std::runtime_error ("Couldn't find sub-tag Eloss -> LBT -> in_vac");
-      }
-      lbt->FirstChildElement("in_vac")->QueryIntText(&flagInt);
-      in_vac = flagInt;
-      if (in_vac == 1) {
-          vacORmed = 0;
-	  fixPosition = 1;
-      } else {
-	  vacORmed = 1;
-      }
-
-      if ( !lbt->FirstChildElement("only_leading") ) {
-  	WARN << "Couldn't find sub-tag Eloss -> LBT -> only_leading";
-          throw std::runtime_error ("Couldn't find sub-tag Eloss -> LBT -> only_leading");
-      }
-      lbt->FirstChildElement("only_leading")->QueryIntText(&flagInt);
-      Kprimary = flagInt;
-  
-      if ( !lbt->FirstChildElement("Q0") ) {
-        WARN << "Couldn't find sub-tag Eloss -> LBT -> Q0";
-          throw std::runtime_error ("Couldn't find sub-tag Eloss -> LBT -> Q0");
-      }
-      lbt->FirstChildElement("Q0")->QueryDoubleText(&inputDouble);
-      Q00 = inputDouble;
-  
-      if ( !lbt->FirstChildElement("alphas") ) {
-  	WARN << "Couldn't find sub-tag Eloss -> LBT -> alphas";
-          throw std::runtime_error ("Couldn't find sub-tag Eloss -> LBT -> alphas");
-      }
-      lbt->FirstChildElement("alphas")->QueryDoubleText(&inputDouble);
-      fixAlphas = inputDouble;
- 
-      if ( !lbt->FirstChildElement("hydro_Tc") ) {
-  	WARN << "Couldn't find sub-tag Eloss -> LBT -> hydro_Tc";
-          throw std::runtime_error ("Couldn't find sub-tag Eloss -> LBT -> hydro_Tc");
-      }
-      lbt->FirstChildElement("hydro_Tc")->QueryDoubleText(&inputDouble);
-      hydro_Tc = inputDouble;
-
+  if (in_vac == 1) {
+    vacORmed = 0;
+    fixPosition = 1;
   } else {
-      WARN << " : LBT not properly initialized in XML file ...";
-      exit(-1);
+    vacORmed = 1;
   }
+  
+  Kprimary = GetXMLElementInt({"Eloss", "Lbt", "only_leading"});
+  Q00 = GetXMLElementDouble({"Eloss", "Lbt", "Q0"});
+  fixAlphas = GetXMLElementDouble({"Eloss", "Lbt", "alphas"});
+  hydro_Tc = GetXMLElementDouble({"Eloss", "Lbt", "hydro_Tc"});
 
 
-  INFO<< MAGENTA << "LBT parameters -- in_med: " << vacORmed << " Q0: " << Q00 << "  only_leading: " << Kprimary << "  alpha_s: " << fixAlphas << "  hydro_Tc: " << hydro_Tc;
+  JSINFO<< MAGENTA << "LBT parameters -- in_med: " << vacORmed << " Q0: " << Q00 << "  only_leading: " << Kprimary << "  alpha_s: " << fixAlphas << "  hydro_Tc: " << hydro_Tc;
 
   if( !flag_init ) {
       read_tables(); // initialize various tables
@@ -276,6 +238,9 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
           } else {
     	      pIn[i].set_user_info(new LBTUserInfo(0.0));
           }
+
+	  if(par_status==1) CAT[j]=2;
+	  else CAT[j]=0;
 
       } else { // negative particle, or particle no longer active, will streamly freely in LBT
 
@@ -391,6 +356,8 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
           for(int j=1; j<=np; j++) { 
             // definition Parton (int label, int id, int stat, double p[4], double x[4]);
             if(P[0][j]<cutOut) continue;
+	    int out_stat=1;
+	    if(CAT[j]==0) out_stat=0; // recoil parton
             double tempP[4],tempX[4];
             tempP[0]=sqrt(P[0][j]*P[0][j]+P[6][j]);
             tempP[1]=P[1][j];
@@ -401,7 +368,7 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
             tempX[2]=Vfrozen[2][j];
             tempX[3]=Vfrozen[3][j];
             //	      pOut.push_back(Parton(0,21,0,newPt,pIn[i].eta(),pIn[i].phi(),newPt));
-            pOut.push_back(Parton(0,KATT1[j],0,tempP,tempX));
+            pOut.push_back(Parton(0,KATT1[j],out_stat,tempP,tempX));
             // remember to put Tint_lrf infomation back to JETSCAPE
             pOut.back().set_user_info(new LBTUserInfo(Tint_lrf[j]));
 
@@ -1558,7 +1525,7 @@ double LBT::DebyeMass2(int &Kqhat0,double alphas,double temp0){
   case 3:
     return 1.0;
   default :
-    WARN << "Kqhat0 = " << Kqhat0;
+    JSWARN << "Kqhat0 = " << Kqhat0;
     throw std::runtime_error ("Unexpected value for Kqhat0" );    
     return -1;
   }
@@ -2596,7 +2563,18 @@ void LBT::collHQ22(int CT,double temp,double qhat0ud,double v0[4],double p0[4],d
     p2[2]=e4*sin(theta4)*sin(phi24);
     p2[3]=e4*cos(theta4);
     p2[0]=e4;
-    
+
+    // rotate randomly in xy plane (jet is in z), because p3 is assigned in xz plane with bias
+    double th_rotate = 2.0*pi*ran0(&NUM1);
+    double p3x_rotate = p3[1]*cos(th_rotate)-p3[2]*sin(th_rotate);
+    double p3y_rotate = p3[1]*sin(th_rotate)+p3[2]*cos(th_rotate);
+    double p2x_rotate = p2[1]*cos(th_rotate)-p2[2]*sin(th_rotate);
+    double p2y_rotate = p2[1]*sin(th_rotate)+p2[2]*cos(th_rotate);
+    p3[1]=p3x_rotate;
+    p3[2]=p3y_rotate;
+    p2[1]=p2x_rotate;
+    p2[2]=p2y_rotate;
+
     // Because we treated p0 (p1 in my note for heavy quark) as the z-direction, proper rotations are necessary here
     rotate(p4[1],p4[2],p4[3],p2,-1);
     rotate(p4[1],p4[2],p4[3],p3,-1);
@@ -3106,7 +3084,7 @@ void LBT::collHQ23(int parID, double temp_med, double qhat0ud, double v0[4], dou
       transback(v0,p4);
 
       if(p00[0]+p3[0]-p0[0]-p2[0]-p4[0]>0.01) {
-          INFO<<MAGENTA<<"Violation of energy-momentum conservation: "<<p00[0]+p3[0]-p0[0]-p2[0]-p4[0]<<"  "<<p00[1]+p3[1]-p0[1]-p2[1]-p4[1]<<"  "<<p00[2]+p3[2]-p0[2]-p2[2]-p4[2]<<"  " <<p00[3]+p3[3]-p0[3]-p2[3]-p4[3];
+          JSINFO<<MAGENTA<<"Violation of energy-momentum conservation: "<<p00[0]+p3[0]-p0[0]-p2[0]-p4[0]<<"  "<<p00[1]+p3[1]-p0[1]-p2[1]-p4[1]<<"  "<<p00[2]+p3[2]-p0[2]-p2[2]-p4[2]<<"  " <<p00[3]+p3[3]-p0[3]-p2[3]-p4[3];
       }
 
       // comment for unit test begin

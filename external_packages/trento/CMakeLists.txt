@@ -1,11 +1,13 @@
 cmake_minimum_required(VERSION 2.8)
 project(trento CXX)
 
-include(CheckCXXCompilerFlag)
-check_cxx_compiler_flag("-std=c++11" CXX11)
-if(NOT CXX11)
-  message(FATAL_ERROR "Your compiler does not support C++11")
-endif()
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+#include(CheckCXXCompilerFlag)
+#check_cxx_compiler_flag("-std=c++11" CXX11)
+#if(NOT CXX11)
+#  message(FATAL_ERROR "Your compiler does not support C++11")
+#endif()
 
 # Find and use Boost.
 find_package(Boost 1.50 REQUIRED COMPONENTS filesystem program_options system)

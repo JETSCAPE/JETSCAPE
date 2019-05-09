@@ -42,7 +42,6 @@
 #include "GubserHydro.h"
 #include "HydroFromFile.h"
 #include "PythiaGun.h"
-#include "PartonPrinter.h"
 #include "HadronizationManager.h"
 #include "Hadronization.h"
 #include "ColoredHadronization.h"
@@ -79,11 +78,13 @@ int main(int argc, char** argv)
   JetScapeLogger::Instance()->SetRemark(false);
   //SetVerboseLevel (9 a lot of additional debug output ...)
   //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevle(9) or 10
-  JetScapeLogger::Instance()->SetVerboseLevel(8);
+  JetScapeLogger::Instance()->SetVerboseLevel(0);
    
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml", 20);
+  auto jetscape = make_shared<JetScape>();
+  jetscape->SetXMLMasterFileName("../config/jetscape_master.xml");
+  jetscape->SetXMLUserFileName("../config/jetscape_user.xml");
   // auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",5);
   jetscape->SetId("primary");
   jetscape->SetReuseHydro (true);
@@ -106,8 +107,6 @@ int main(int argc, char** argv)
   //jloss->SetActive(false);
 
   auto pythiaGun= make_shared<PythiaGun> ();
-
-  auto printer = make_shared<PartonPrinter> ();
 
   auto hadroMgr = make_shared<HadronizationManager> ();
   auto hadro = make_shared<Hadronization> ();
@@ -142,18 +141,16 @@ int main(int argc, char** argv)
   // Switching Q2 (or whatever variable used
   // hardcoded at 5 to be changed to xml)
   jloss->Add(matter);
-  //jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
+  jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
   //jloss->Add(martini);
-  jloss->Add(adscft);
+  //jloss->Add(adscft);
   
   jlossmanager->Add(jloss);
   
   jetscape->Add(jlossmanager);
 
-  jetscape->Add(printer);
-
-  hadro->Add(hadroModule);
-  //hadro->Add(colorless);
+  //hadro->Add(hadroModule);
+  hadro->Add(colorless);
   hadroMgr->Add(hadro);
   jetscape->Add(hadroMgr);
 

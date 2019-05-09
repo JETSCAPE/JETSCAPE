@@ -88,6 +88,9 @@ class TrentoInitial : public InitialState {
 
     /// The output instance.
     // Output output_;
+  
+    // Allows the registration of the module so that it is available to be used by the Jetscape framework.
+    static RegisterJetScapeModule<TrentoInitial> reg;
 };
 
 } // end namespace Jetscape

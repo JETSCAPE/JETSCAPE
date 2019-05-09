@@ -13,13 +13,15 @@
  * See COPYING for details.
  ******************************************************************************/
 // ------------------------------------------------------------
-// JetScape Framework Brick Test Program
+// JetScape Framework hydro from file Test Program
 // (use either shared library (need to add paths; see setup.csh)
 // (or create static library and link in)
 // -------------------------------------------------------------
 
 #include <iostream>
 #include <time.h>
+#include <chrono>
+#include <thread>
 
 // JetScape Framework includes ...
 #include "JetScape.h"
@@ -31,24 +33,19 @@
 #endif
 
 // User modules derived from jetscape framework clasess
-#include "TrentoInitial.h"
+// to be used to run Jetscape ...
 #include "AdSCFT.h"
 #include "Matter.h"
-#include "LBT.h"
 #include "Martini.h"
 #include "Brick.h"
 #include "GubserHydro.h"
+#include "HydroFromFile.h"
 #include "PGun.h"
-#include "PartonPrinter.h"
-#include "HadronizationManager.h"
-#include "Hadronization.h"
-#include "ColoredHadronization.h"
-#include "ColorlessHadronization.h"
 
-#include <chrono>
-#include <thread>
-
-using namespace std;
+#ifdef USE_HDF5
+#include "InitialFromFile.h"
+#endif
+// using namespace std;
 
 using namespace Jetscape;
 
@@ -74,49 +71,67 @@ int main(int argc, char** argv)
    
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",3);
-  jetscape->SetId("primary");
+  auto jetscape = make_shared<JetScape>();
+  jetscape->SetXMLMasterFileName("../config/jetscape_master.xml");
+  jetscape->SetXMLUserFileName("../config/jetscape_user.xml");
+  jetscape->SetReuseHydro (true);
+  jetscape->SetNReuseHydro (5);
 
-  // Initial conditions and hydro
-  auto trento = make_shared<TrentoInitial>();
-  auto pGun= make_shared<PGun> ();
-  auto hydro = make_shared<Brick> ();
-  jetscape->Add(trento);
-  jetscape->Add(pGun);
-  jetscape->Add(hydro);
-
-  // Energy loss
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
-  auto lbt = make_shared<LBT> ();
-  jloss->Add(lbt);
-  jlossmanager->Add(jloss);  
-  jetscape->Add(jlossmanager);
+  auto hydro = make_shared<HydroFromFile> ();
+  //auto hydro = make_shared<GubserHydro> ();
+  
+  auto matter = make_shared<Matter> ();
+  auto martini = make_shared<Martini> ();
+  auto adscft = make_shared<AdSCFT> ();
+  //DBEUG: Remark:
+  //does not matter unfortunately since not called recursively, done by JetEnergyLoss class ...
+  //matter->SetActive(false);
+  //martini->SetActive(false);
+  // This works ... (check with above logic ...)
+  //jloss->SetActive(false);
+  //
 
-  // Hadronization
-  // This helper module currently needs to be added for hadronization.
-  auto printer = make_shared<PartonPrinter> ();
-  jetscape->Add(printer);
-  auto hadroMgr = make_shared<HadronizationManager> ();
-  auto hadro = make_shared<Hadronization> ();
-  auto hadroModule = make_shared<ColoredHadronization> ();
-  hadro->Add(hadroModule);
-  // auto colorless = make_shared<ColorlessHadronization> ();
-  // hadro->Add(colorless);
-  hadroMgr->Add(hadro);
-  jetscape->Add(hadroMgr);
+  auto pGun= make_shared<PGun> ();
 
-  // Output
+  // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
-  // same as JetScapeWriterAscii but gzipped
-  // auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");
-  // HEPMC3
+  //auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");  
 #ifdef USE_HEPMC
-  // auto writer= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
+  auto writerhepmc= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
+  jetscape->Add(writerhepmc);
 #endif
+  //writer->SetActive(false);
+
+  //Remark: For now modules have to be added
+  //in proper "workflow" order (can be defined via xml and sorted if necessary)
+  
+#ifdef USE_HDF5
+  auto initial = make_shared<InitialFromFile>();
+  jetscape->Add(initial);
+#endif
+
+  jetscape->Add(pGun);
+
+   //Some modifications will be needed for reusing hydro events, so far
+  //simple test hydros always executed "on the fly" ...
+  jetscape->Add(hydro);
+
+  // Matter with silly "toy shower (no physics)
+  // and Martini dummy ...
+  // Switching Q2 (or whatever variable used
+  // hardcoded at 5 to be changed to xml)
+  jloss->Add(matter);
+  //jloss->Add(martini);
+  // jloss->Add(adscft);
+  
+  jlossmanager->Add(jloss);
+  
+  jetscape->Add(jlossmanager);
+  
   jetscape->Add(writer);
 
-  
   // Intialize all modules tasks
   jetscape->Init();
 
@@ -145,8 +160,8 @@ int main(int argc, char** argv)
 
 void Show()
 {
-  INFO_NICE<<"------------------------------------";
-  INFO_NICE<<"| Brick Test JetScape Framework ... |";
-  INFO_NICE<<"------------------------------------";
+  INFO_NICE<<"-----------------------------------------------";
+  INFO_NICE<<"| Hydro from file Test JetScape Framework ... |";
+  INFO_NICE<<"-----------------------------------------------";
   INFO_NICE;
 }

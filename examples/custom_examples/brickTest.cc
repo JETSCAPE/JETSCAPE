@@ -39,7 +39,7 @@
 #include "Brick.h"
 #include "GubserHydro.h"
 #include "PGun.h"
-#include "PartonPrinter.h"
+//#include "PartonPrinter.h"
 #include "HadronizationManager.h"
 #include "Hadronization.h"
 #include "ColoredHadronization.h"
@@ -73,7 +73,9 @@ int main(int argc, char** argv)
    
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",200);
+  auto jetscape = make_shared<JetScape>();
+  jetscape->SetXMLMasterFileName("../config/jetscape_master.xml");
+  jetscape->SetXMLUserFileName("../config/jetscape_user.xml");
   jetscape->SetId("primary");
   
   // Initial conditions and hydro
@@ -104,8 +106,8 @@ int main(int argc, char** argv)
   
   // Hadronization
   // This helper module currently needs to be added for hadronization.
-  auto printer = make_shared<PartonPrinter> ();
-  jetscape->Add(printer);
+  // auto printer = make_shared<PartonPrinter> ();
+  // jetscape->Add(printer);
   auto hadroMgr = make_shared<HadronizationManager> ();
   auto hadro = make_shared<Hadronization> ();
   auto hadroModule = make_shared<ColoredHadronization> ();

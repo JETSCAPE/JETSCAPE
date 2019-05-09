@@ -63,19 +63,26 @@ void JetEnergyLossManager::Clear()
 
 void JetEnergyLossManager::Init()
 {
-  INFO<<"Intialize JetEnergyLoss Manager ...";
+  JSINFO<<"Intialize JetEnergyLoss Manager ...";
 
   if (GetNumberOfTasks()<1)
     {
-      WARN << " : No valid Energy Loss Manager modules found ...";
+      JSWARN << " : No valid Energy Loss Manager modules found ...";
       exit(-1);
     }
   
-  INFO<<"Found "<<GetNumberOfTasks()<<" Eloss Manager Tasks/Modules Initialize them ... ";
+  JSINFO<<"Found "<<GetNumberOfTasks()<<" Eloss Manager Tasks/Modules Initialize them ... ";
   JetScapeTask::InitTasks();
 
-  INFO<<"Connect JetEnergyLossManager Signal to Hard Process ...";
+  JSINFO<<"Connect JetEnergyLossManager Signal to Hard Process ...";
   JetScapeSignalManager::Instance()->ConnectGetHardPartonListSignal(shared_from_this());
+
+  // Set the pointer of JetEnergyLoss for making connections to hadronization module
+  for (auto it : GetTaskList())
+  {
+    if (dynamic_pointer_cast<JetEnergyLoss>(it))
+        JetScapeSignalManager::Instance()->SetEnergyLossPointer(dynamic_pointer_cast<JetEnergyLoss>(it));
+  }
 }
 
 
@@ -92,7 +99,7 @@ void JetEnergyLossManager::Exec()
   
   if (GetNumberOfTasks()<1)
     {
-      WARN << " : No valid Energy Loss Manager modules found ...";
+      JSWARN << " : No valid Energy Loss Manager modules found ...";
       exit(-1);
     }
 
@@ -209,7 +216,7 @@ void JetEnergyLossManager::CreateSignalSlots()
 	if(!dynamic_pointer_cast<JetEnergyLoss>(it2)->GetSentInPartonsConnected())
 	  JetScapeSignalManager::Instance()->ConnectSentInPartonsSignal(dynamic_pointer_cast<JetEnergyLoss>(it),dynamic_pointer_cast<JetEnergyLoss>(it2));
       }
-
+  
   JetScapeSignalManager::Instance()->PrintGetHydroCellSignalMap();
   VERBOSE(8);
   JetScapeSignalManager::Instance()->PrintSentInPartonsSignalMap();

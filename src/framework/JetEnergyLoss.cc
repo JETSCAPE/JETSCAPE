@@ -28,6 +28,7 @@
 #include "JetScapeSignalManager.h"
 #include "JetScapeWriterStream.h"
 #include "HardProcess.h"
+#include "JetScapeModuleMutex.h"
 
 #ifdef USE_HEPMC
 #include "JetScapeWriterHepMC.h"
@@ -94,7 +95,8 @@ void JetEnergyLoss::Clear()
   VERBOSESHOWER(8);
   if (pShower)
     pShower->clear();
-  
+ 
+  this->final_Partons.clear(); 
   //inP=nullptr;pShower=nullptr; // kind of defeating the porpose of shared pointers somehow ...
 }
 
@@ -102,31 +104,43 @@ void JetEnergyLoss::Init()
 {
   JetScapeModuleBase::Init();
 
-  INFO<<"Intialize JetEnergyLoss ..."; 
+  JSINFO<<"Intialize JetEnergyLoss ...";
   
-  tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );  
+  deltaT = GetXMLElementDouble({"Eloss", "deltaT"});
+  maxT = GetXMLElementDouble({"Eloss", "maxT"});
+  JSINFO<<"Eloss shower with deltaT = "<<deltaT<<" and maxT = "<<maxT;
 
-  if (!eloss)
+  std::string mutexOnString = GetXMLElementText({"Eloss", "mutex"}, false);
+  if(!mutexOnString.compare("ON"))
+  //Check mutual exclusion of Eloss Modules
+  {
+    if (GetNumberOfTasks()>1)
     {
-      WARN << " : Not a valid JetScape Energy Loss XML section in file!";
-      exit(-1);
+      for(auto elossModule : GetTaskList())
+      {
+        shared_ptr<JetScapeModuleMutex> mutex_ptr = elossModule->GetMutex();
+        if(mutex_ptr)
+        {
+          if(!(mutex_ptr->CheckMutex(GetTaskList())))
+          {
+            JSWARN<<"Mutual exclusive Energy-Loss modules attached together!";
+            throw std::runtime_error("Fix it by attaching one of them.");
+          }
+        }
+      }
     }
-  else
-    {
-      eloss->FirstChildElement("deltaT")->QueryDoubleText(&deltaT);
-      eloss->FirstChildElement("maxT")->QueryDoubleText(&maxT);
-      INFO<<"Eloss shower with deltaT = "<<deltaT<<" and maxT = "<<maxT;
-    }
+  }
   
   if (GetNumberOfTasks()<1)
     {
-      WARN << " : No valid Energy Loss modules found ...";
+      JSWARN << " : No valid Energy Loss modules found ...";
       exit(-1);
     }
 
   inP=nullptr;pShower=nullptr;
   
-  INFO<<"Found "<<GetNumberOfTasks()<<" Eloss Tasks/Modules Initialize them ... ";
+  JSINFO<<"Found "<<GetNumberOfTasks()<<" Eloss Tasks/Modules Initialize them ... ";
+  
   JetScapeTask::InitTasks();
 }
 
@@ -174,7 +188,7 @@ void JetEnergyLoss::DoShower()
       
       for (int i=0;i<pIn.size();i++)
 	{
-	  // INFO << pIn.at(i).edgeid();
+	  // JSINFO << pIn.at(i).edgeid();
 	  pInTempModule.push_back(pIn[i]);
 	  
 	  SentInPartons(deltaT,currentTime,pIn[i].pt(),pInTempModule,pOutTemp);
@@ -250,7 +264,6 @@ void JetEnergyLoss::DoShower()
       pInTemp.clear();
           
       vStartVec.clear();
-      
       vStartVec.insert(vStartVec.end(),vStartVecTemp.begin(),vStartVecTemp.end());
       vStartVec.insert(vStartVec.end(),vStartVecOut.begin(),vStartVecOut.end());
            
@@ -267,7 +280,7 @@ void JetEnergyLoss::DoShower()
 
 void JetEnergyLoss::Exec()
 {
-  INFO<<"Run JetEnergyLoss ...";
+  JSINFO<<"Run JetEnergyLoss ...";
   VERBOSE(1)<<"Found "<<GetNumberOfTasks()<<" Eloss Tasks/Modules Execute them ... ";
   //DEBUGTHREAD<<"Task Id = "<<this_thread::get_id()<<" | Run JetEnergyLoss ...";
   //DEBUGTHREAD<<"Task Id = "<<this_thread::get_id()<<" | Found "<<GetNumberOfTasks()<<" Eloss Tasks/Modules Execute them ... ";
@@ -305,11 +318,17 @@ void JetEnergyLoss::Exec()
 	
        shared_ptr<PartonPrinter> pPrinter = JetScapeSignalManager::Instance()->GetPartonPrinterPointer().lock();
        if ( pPrinter ){
-	 pPrinter->GetFinalPartons2(pShower);
+	 pPrinter->GetFinalPartons(pShower);
+       }
+
+       shared_ptr<JetEnergyLoss> pEloss = JetScapeSignalManager::Instance()->GetEnergyLossPointer().lock();
+       if(pEloss)
+       {
+           pEloss->GetFinalPartonsForEachShower(pShower);
        }
     }
   else
-    {WARN<<"NO Initial Hard Parton for Parton shower received ...";}  
+    {JSWARN<<"NO Initial Hard Parton for Parton shower received ...";}  
 
   //DEBUGTHREAD<<"Task Id = "<<this_thread::get_id()<<" Finished!";
   //JetScapeTask::ExecuteTasks(); // prevent Further modules to be execute, everything done by JetEnergyLoss ... (also set the no active flag ...!?)
@@ -336,6 +355,9 @@ void JetEnergyLoss::PrintShowerInitiatingParton()
   //JSDEBUG<<inP->pid();
 }
 
-
+void JetEnergyLoss::GetFinalPartonsForEachShower(shared_ptr<PartonShower> shower)
+{
+  this->final_Partons.push_back(shower.get()->GetFinalPartons()); 
+}
 
 } // end namespace Jetscape

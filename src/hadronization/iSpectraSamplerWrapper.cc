@@ -23,6 +23,9 @@
 
 using namespace Jetscape;
 
+// Register the module with the base class
+RegisterJetScapeModule<iSpectraSamplerWrapper> iSpectraSamplerWrapper::reg("iSS");
+
 iSpectraSamplerWrapper::iSpectraSamplerWrapper() {
     SetId("iSS");
     iSpectraSampler_ptr_ = nullptr;
@@ -32,30 +35,18 @@ iSpectraSamplerWrapper::~iSpectraSamplerWrapper() {
 }
 
 void iSpectraSamplerWrapper::InitTask() {
-    INFO << "Initialize a particle sampler (iSS)";
-    iSS_xml_ = xml_->FirstChildElement("iSS");
-    if (!iSS_xml_) {
-        WARN << "No XML section for iSS! Please check the input file~";
-        exit(-1);
-    }
-    string input_file = (
-                iSS_xml_->FirstChildElement("iSS_input_file")->GetText());
-    string working_path = (
-                iSS_xml_->FirstChildElement("iSS_working_path")->GetText());
-    int hydro_mode;
-    iSS_xml_->FirstChildElement("hydro_mode")->QueryIntText(&hydro_mode);
 
-    int number_of_repeated_sampling;
-    iSS_xml_->FirstChildElement("number_of_repeated_sampling")->QueryIntText(
-                                            &number_of_repeated_sampling);
-
-    int flag_perform_decays;
-    iSS_xml_->FirstChildElement("Perform_resonance_decays")->QueryIntText(
-                                            &flag_perform_decays);
+    JSINFO << "Initialize a particle sampler (iSS)";
+  
+    std::string input_file = GetXMLElementText({"SoftParticlization", "iSS", "iSS_input_file"});
+    std::string working_path = GetXMLElementText({"SoftParticlization", "iSS", "iSS_working_path"});
+    int hydro_mode = GetXMLElementInt({"SoftParticlization", "iSS", "hydro_mode"});
+    int number_of_repeated_sampling = GetXMLElementInt({"SoftParticlization", "iSS", "number_of_repeated_sampling"});
+    int flag_perform_decays = GetXMLElementInt({"SoftParticlization", "iSS", "Perform_resonance_decays"});
 
     iSpectraSampler_ptr_ = new iSS(working_path);
     iSpectraSampler_ptr_->paraRdr_ptr->readFromFile(input_file);
-
+  
     // overwrite some parameters
     iSpectraSampler_ptr_->paraRdr_ptr->setVal("hydro_mode", hydro_mode);
     iSpectraSampler_ptr_->paraRdr_ptr->setVal("output_samples_into_files", 0);
@@ -93,7 +84,7 @@ void iSpectraSamplerWrapper::InitTask() {
 void iSpectraSamplerWrapper::Exec() {
     int status = iSpectraSampler_ptr_->read_in_FO_surface();
     if (status != 0) {
-        WARN << "Some errors happened in reading in the hyper-surface";
+        JSWARN << "Some errors happened in reading in the hyper-surface";
         exit(-1);
     }
 
@@ -103,7 +94,7 @@ void iSpectraSamplerWrapper::Exec() {
     
     status = iSpectraSampler_ptr_->generate_samples();
     if (status != 0) {
-        WARN << "Some errors happened in generating particle samples";
+        JSWARN << "Some errors happened in generating particle samples";
         exit(-1);
     }
     PassHadronListToJetscape();

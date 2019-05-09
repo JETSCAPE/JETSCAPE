@@ -30,6 +30,10 @@ private:
   double pTHatMin;
   double pTHatMax;
   double eCM;
+  bool   FSR_on;
+  
+  // Allows the registration of the module so that it is available to be used by the Jetscape framework.
+  static RegisterJetScapeModule<PythiaGun> reg;
 
 public:
   /** standard ctor

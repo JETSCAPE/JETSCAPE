@@ -25,7 +25,7 @@ find_path(PYTHIA8_INCLUDE_DIR
           DOC "Specify the directory containing Pythia.h.")
 
 find_library(PYTHIA8_LIBRARY
-             NAMES pythia8 Pythia8
+             NAMES pythia8 Pythia8 pythia
              HINTS ${_pythia8dirs}
              PATH_SUFFIXES lib
              DOC "Specify the Pythia8 library here.")
