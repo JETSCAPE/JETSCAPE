@@ -44,6 +44,9 @@ void iSpectraSamplerWrapper::InitTask() {
                 iSS_xml_->FirstChildElement("iSS_working_path")->GetText());
     int hydro_mode;
     iSS_xml_->FirstChildElement("hydro_mode")->QueryIntText(&hydro_mode);
+    if (!boost_invariance) {
+        hydro_mode = 2;
+    }
 
     int number_of_repeated_sampling;
     iSS_xml_->FirstChildElement("number_of_repeated_sampling")->QueryIntText(
