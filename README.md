@@ -53,6 +53,23 @@ You can pass the path to your user XML file as a command-line argument to the `r
 ./runJetscape /path/to/my/user_config.xml
 ```
 
+## Running JETSCAPE with CLVisc
+In order to run clvisc in jetscape, one has to download it in external\_packages/, using 
+
+```
+sh get_clvisc.sh
+```
+
+Then compile and run the framework with a XML configuration file which turns clvisc on.
+```
+cd build/
+cmake .. -Dclvisc=on
+make
+./runJetscape ../config/jetscape_clvisc.xml
+```
+
+
+
 ## JETSCAPE Output
 
 JETSCAPE output can be generated in Ascii, gzipped Ascii, or HepMC format,
