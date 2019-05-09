@@ -374,33 +374,11 @@ target_link_libraries(JetScapeReader JetScapeThird GTL ${PYTHIA8_LIBRARIES})
 ### Run Jetscape
 add_executable(runJetscape ./examples/runJetscape.cc)
 target_link_libraries(runJetscape JetScape )
-add_executable(brickTest ./examples/brickTest.cc)
-target_link_libraries(brickTest JetScape )
-
-add_executable(PythiaBrickTest ./examples/PythiaBrickTest.cc)
-target_link_libraries(PythiaBrickTest JetScape )
-
-add_executable(LBT_brickTest ./examples/LBT_brickTest.cc)
-target_link_libraries(LBT_brickTest JetScape )
 
 if ( clvisc AND OPENCL_FOUND )
   add_executable(CLViscTest ./examples/CLViscTest.cc)
   target_link_libraries(CLViscTest JetScape)
 endif (clvisc AND OPENCL_FOUND)
-
-if(${HDF5_FOUND})
-  add_executable(hydroFileTest ./examples/hydroFileTest.cc)
-  target_link_libraries(hydroFileTest JetScape ${_hdf5_libs})
-  
-  add_executable(hydroJetTest  ./examples/hydroJetTest.cc)
-  target_link_libraries(hydroJetTest JetScape ${_hdf5_libs})
-
-  add_executable(hydroJetTestPGun  ./examples/hydroJetTestPGun.cc)
-  target_link_libraries(hydroJetTestPGun JetScape ${_hdf5_libs})
-endif()
-
-add_executable(SimpleValidate ./examples/SimpleValidate.cc)
-target_link_libraries(SimpleValidate JetScape )
 
 ### Read Jetscape output
 add_executable(readerTest ./examples/readerTest.cc)
