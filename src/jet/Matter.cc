@@ -1432,18 +1432,18 @@ double Matter::generate_vac_t(int p_id, double nu, double t0, double t, double l
     {
       numer = sudakov_Pgg(t0,t,loc_a,nu)*std::pow(sudakov_Pqq(t0,t,loc_a,nu),nf);
         
-      if ((is!=1)&&(is!=2))
+      if ((is!=1)&&(is!=2)) // there is almost no use of is = 2, the `is' in this function is redundant, just for consistency
         {
 	  throw std::runtime_error(" error in isp ");
         }
     }
   else
     {
-      if (is!=0)
+      if ( (is!=0)&&(is!=3) ) // there is almost no use of is = 3, the `is' in this function is redundant, just for consistency
         {
 	  throw std::runtime_error("error in isp in quark split");            
         }
-      numer = sudakov_Pqg(t0,t,loc_a,nu);
+      numer = sudakov_Pqg(t0,t,loc_a,nu)*sudakov_Pqp(t0,t,loc_a,nu);
     }
     
   t_mid = t_low;
@@ -1466,22 +1466,24 @@ double Matter::generate_vac_t(int p_id, double nu, double t0, double t, double l
       t_mid = (t_low + t_hi)/2.0;
 
       if (p_id==gid)
-        {
-	  denom = sudakov_Pgg(t0, t_mid, loc_a, nu)*std::pow(sudakov_Pqq(t0, t_mid, loc_a, nu),nf);
-            
-	  if ((is!=1)&&(is!=2))
-            {
-	      throw std::runtime_error(" error in isp numerator");             
-            }
-        }
+      {
+          denom = sudakov_Pgg(t0, t_mid, loc_a, nu)*std::pow(sudakov_Pqq(t0, t_mid, loc_a, nu),nf);
+          if ((is!=1)&&(is!=2))
+          {
+              throw std::runtime_error(" error in isp numerator");
+          }
+          
+      }
       else
-        {
-	  if (is!=0)
-            {
-	      throw std::runtime_error(" error in isp in quark split numerator  ");
-            }            
-	  denom = sudakov_Pqg(t0, t_mid, loc_a, nu);
-        }
+      {
+          if ( (is!=0)&&(is!=3) )
+          {
+              throw std::runtime_error(" error in isp in quark split numerator  ");
+              
+          }
+          denom = sudakov_Pqg(t0, t_mid, loc_a, nu)*sudakov_Pqp(t0, t_mid, loc_a, nu);
+          
+      }
         
       ratio = numer/denom ;
         
@@ -1547,22 +1549,29 @@ double  Matter::generate_vac_z(int p_id, double t0, double t, double loc_b, doub
   z_hi = double(1.0) - e ;
     
   if (p_id==gid)
-    {
+  {
       if (is==1)
-        {
-	  denom = P_z_gg_int(z_low,z_hi, loc_b, t, 2.0*nu/t, nu );
-        }
+      {
+          denom = P_z_gg_int(z_low,z_hi, loc_b, t, 2.0*nu/t, nu );
+      }
       else
-        {
-	  denom = P_z_qq_int(z_low,z_hi,loc_b,t,2.0*nu/t, nu);
-        }
-        
-    }
-  else
-    {
+      {
+          denom = P_z_qq_int(z_low,z_hi,loc_b,t,2.0*nu/t, nu);
+      }
+      
+  }
+  else if ( (p_id!=gid)&&(is==0) )
+  {
       denom = P_z_qg_int(z_low,z_hi, loc_b, t, 2.0*nu/t , nu);
-    }
-    
+  }
+  else if ( (p_id!=gid)&&(is==3) )
+  {
+      denom = P_z_qp_int(z_low,z_hi, loc_b, t, 2.0*nu/t , nu);
+  }
+  else
+  {
+      throw std::runtime_error(" I do not understand your combination of particle id and split id in denominator of generate_z ") ;
+  }
     
   //z_mid = (z_low + z_hi)/2.0 ;
   
@@ -1577,22 +1586,31 @@ double  Matter::generate_vac_z(int p_id, double t0, double t, double loc_b, doub
 
     z_mid = (z_low + z_hi)/2.0 ;
 
-    if (p_id==gid) {
-      if (is==1) {
-	numer = P_z_gg_int(e, z_mid, loc_b, t, 2.0*nu/t , nu );
-      } else {
-	numer = P_z_qq_int(e, z_mid, loc_b, t, 2.0*nu/t , nu);
+    if (p_id==gid)
+    {
+      if (is==1)
+      {
+          numer = P_z_gg_int(e, z_mid, loc_b, t, 2.0*nu/t , nu );
       }
-    } else {
+      else
+      {
+          numer = P_z_qq_int(e, z_mid, loc_b, t, 2.0*nu/t , nu);
+      }
+    }
+    else if ( (p_id!=gid)&&(is==0) )
+    {
       numer = P_z_qg_int(e, z_mid, loc_b, t, 2.0*nu/t , nu );
     }
-        
+    else if ( (p_id!=gid)&&(is==3) )
+    {
+      numer = P_z_qp_int(e, z_mid, loc_b, t, 2.0*nu/t , nu);
+    }
+    else
+    {
+        throw std::runtime_error(" I do not understand your combination of particle id and split id in numerator of generate_z ") ;
+    }
     ratio = numer/denom ;      
-    diff = (ratio - r)/r ;     
-    // cout << "num, den, r, diff = " << numer << " "<< denom << " " << r << " " << endl;	
-    // cout << " diff, z_mid = " << diff << " " << z_mid << endl ;		
-    //		cin >> test ;
-      
+    diff = (ratio - r)/r ;
         
     if (diff>0.0)
     {
@@ -2475,7 +2493,7 @@ double Matter::profile(double zeta)
 {
   double prof;
     
-  /*  Modify the next set of lines to get a particular profile */
+  /*  Modify the next set of lines to get a particular profile in brick test or further modify the profile for hydro to introduce coherence effects */
     
   prof = 1.0;
     
