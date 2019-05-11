@@ -19,6 +19,7 @@
 
 #include <memory>
 #include <vector>
+#include <array>
 #include <cstring>
 #include <stdexcept>
 #include <cmath>
@@ -30,8 +31,9 @@
 #include "PreequilibriumDynamics.h"
 #include "RealType.h"
 #include "FluidCellInfo.h"
-#include "SurfaceCellInfo.h"
 #include "FluidEvolutionHistory.h"
+#include "LiquefierBase.h"
+#include "SurfaceCellInfo.h"
 
 namespace Jetscape {
 
@@ -70,6 +72,8 @@ class FluidDynamics : public JetScapeModuleBase {
     /** Stores the evolution history. */
     EvolutionHistory bulk_info;
 
+    std::weak_ptr<LiquefierBase> liquefier_ptr;
+
  public:
     /** Default constructor. task ID as "FluidDynamics",  
         eta is initialized to -99.99.
@@ -93,8 +97,9 @@ class FluidDynamics : public JetScapeModuleBase {
 	@sa Read about @a polymorphism in C++.
     */
     virtual void Exec();
-    
 
+    virtual void Clear();
+    
     /** @return parameter_list A pointer to the class Parameter which contains a file name for the fluid dynamics task.
 	@sa Implementation of the class Parameter.
     */
@@ -157,6 +162,8 @@ class FluidDynamics : public JetScapeModuleBase {
         bulk_info.data.push_back(*fluid_cell_info_ptr);
     }
 
+    void clear_up_evolution_data() {bulk_info.clear_up_evolution_data();}
+
     /** @return Start time (or tau) for hydrodynamic evolution.
      */
     Jetscape::real GetHydroStartTime() const {return(hydro_tau_0);}
@@ -208,8 +215,8 @@ class FluidDynamics : public JetScapeModuleBase {
     // the detailed implementation is left to the hydro developper
     /** @return Default function to get the hypersurface for Cooper-Frye or recombination model. It can overridden by different modules.
      */
-    virtual void GetHyperSurface(Jetscape::real T_cut,
-                                 SurfaceCellInfo* surface_list_ptr) {};
+    std::vector<SurfaceCellInfo> FindAConstantTemperatureSurface(
+                                                        Jetscape::real T_sw);
 
     // all the following functions will call function GetHydroInfo()
     // to get thermaldynamic and dynamical information at a space-time point
@@ -288,10 +295,19 @@ class FluidDynamics : public JetScapeModuleBase {
     // */
     // virtual Jetscape::real GetNetChargeDensity(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
     
+    virtual void add_a_liqueifier(
+                            std::shared_ptr<LiquefierBase> new_liqueifier) {
+        liquefier_ptr = new_liqueifier;
+    }
+
+    void get_source_term(Jetscape::real tau, Jetscape::real x,
+                         Jetscape::real y, Jetscape::real eta,
+                         std::array<Jetscape::real, 4> jmu) const;
+
     /// slots for "jet" signals (future)
     virtual void UpdateEnergyDeposit(int t, double edop);
     /// slots for "jet" signals (future)
-    virtual void GetEnergyDensity(int t,double& edensity);
+    virtual void GetEnergyDensity(int t, double& edensity) {edensity = 0.0;}
 
 }; // end class FluidDynamics
   

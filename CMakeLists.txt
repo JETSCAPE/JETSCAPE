@@ -22,8 +22,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmakemodules")
 ### Parse options       ###
 ###########################
 
-# Unit Tests. Turn on with 'cmake -Dtest=ON'.
-option(test "Build all tests." OFF)
+# Unit Tests. Turn off with 'cmake -Dunittests=OFF'.
+option(unittests "Build all unittests." ON)
 
 # freestream. Turn on with 'cmake -Dfreestream=ON'.
 # Note that some warnings are generated. Could be turned off by adding the following to CFLAGS in
@@ -64,7 +64,7 @@ endif (smash)
 ### Compiler & Linker Flags ###
 ###############################
 message("Compiler and Linker flags ...")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O -fPIC -pipe -Wall -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O -fPIC -pipe -Wall -std=c++11")
 ## can turn off some warnings
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-reorder -Wno-unused-variable ")
 ## can turn on debugging information
@@ -105,6 +105,9 @@ add_subdirectory(external_packages/trento/)
 include_directories("${CMAKE_SOURCE_DIR}/external_packages/trento/src/")
 ###########################
 
+add_subdirectory(external_packages/googletest/)
+include_directories("${CMAKE_SOURCE_DIR}/external_packages/googletest/googletest/include/")
+
 #############################################
 ### Installing Header and Library Files   ###
 #############################################
@@ -141,6 +144,7 @@ install(
   "${CMAKE_SOURCE_DIR}/external_packages/music/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/trento/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/smash/src/"
+  "${CMAKE_SOURCE_DIR}/external_packages/googletest/googletest/src/"
   DESTINATION "include" # target directory
   FILES_MATCHING # install only matched files
   PATTERN "*.h*" # select header files
@@ -265,6 +269,7 @@ include_directories(./src/ )
 include_directories(./src/framework )
 include_directories(./src/initialstate )
 include_directories(./src/preequilibrium )
+include_directories(./src/liquefier )
 include_directories(./src/hydro )
 include_directories(./src/hadronization )
 include_directories(./src/afterburner )
@@ -284,6 +289,10 @@ include_directories(./examples/ )
 add_subdirectory(./external_packages)
 add_subdirectory(./external_packages/gtl)
 add_subdirectory(./src)
+
+if (unittests)
+    add_subdirectory(./examples/unittests/)
+endif (unittests)
 
 if (freestream)
   if(NOT EXISTS "${CMAKE_SOURCE_DIR}/external_packages/freestream-milne")
@@ -381,11 +390,15 @@ target_link_libraries(FinalStatePartons JetScape )
 if (freestream AND music AND iSS)
   add_executable(freestream-milneTest ./examples/freestream-milneTest.cc)
   target_link_libraries(freestream-milneTest JetScape ${GSL_LIBRARIES})
+  add_executable(TwoStageHydroFromFile ./examples/TwoStagesHydroFromFile.cc)
+  target_link_libraries(TwoStageHydroFromFile JetScape ${GSL_LIBRARIES})
 endif (freestream AND music AND iSS)
 
 if ( music AND iSS )
   add_executable(MUSICTest ./examples/MUSICTest.cc)
   target_link_libraries(MUSICTest JetScape ${GSL_LIBRARIES})
+  add_executable(TwoStageHydro ./examples/TwoStagesHydro.cc)
+  target_link_libraries(TwoStageHydro JetScape ${GSL_LIBRARIES})
 endif (music AND iSS )
 
 if ( music AND iSS AND smash )

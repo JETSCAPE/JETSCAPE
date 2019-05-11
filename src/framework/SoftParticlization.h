@@ -46,6 +46,9 @@ class SoftParticlization: public JetScapeModuleBase {
     std::vector<std::vector<shared_ptr<Hadron>>> Hadron_list_;
 
     tinyxml2::XMLElement *xml_;
+    
+    bool boost_invariance;
+    bool check_boost_invariance();
 };
 
 } // end namespace Jetscape

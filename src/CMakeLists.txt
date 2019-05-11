@@ -38,6 +38,10 @@ if(NOT "${freestream}")
   list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/preequilibrium/FreestreamMilneWrapper.cc)
 endif()
 
+#liquefier
+FILE(GLOB liquefiersources liquefier/*.cc)
+set (SOURCES  ${SOURCES}  ${liquefiersources} )
+
 #hydro
 FILE(GLOB hydrosources hydro/*.cc)
 set (SOURCES  ${SOURCES}  ${hydrosources} )

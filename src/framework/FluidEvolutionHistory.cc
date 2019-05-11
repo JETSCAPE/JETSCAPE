@@ -32,7 +32,7 @@ int EvolutionHistory::CheckInRange(Jetscape::real tau, Jetscape::real x,
                 + " is not in range [" + std::to_string(tau_min) + ","
                 + std::to_string(TauMax()) + "]");
         //throw InvalidSpaceTimeRange(warn_message);
-        JSWARN << warn_message;
+        //JSWARN << warn_message;
         status = 0;
     }
     if (x < x_min || x > XMax()) {
@@ -40,7 +40,7 @@ int EvolutionHistory::CheckInRange(Jetscape::real tau, Jetscape::real x,
                 + " is not in range [" + std::to_string(x_min) + ","
                 + std::to_string(XMax()) + "]");
         //throw InvalidSpaceTimeRange(warn_message);
-        JSWARN << warn_message;
+        //JSWARN << warn_message;
         status = 0;
     }
     if (y < y_min || y > YMax()) {
@@ -48,7 +48,7 @@ int EvolutionHistory::CheckInRange(Jetscape::real tau, Jetscape::real x,
                 + " is not in range [" + std::to_string(y_min) + "," 
                 + std::to_string(YMax()) + "]");
         //throw InvalidSpaceTimeRange(warn_message);
-        JSWARN << warn_message;
+        //JSWARN << warn_message;
         status = 0;
     }
     if (!boost_invariant) {
@@ -57,7 +57,7 @@ int EvolutionHistory::CheckInRange(Jetscape::real tau, Jetscape::real x,
                     + " is not in range [" + std::to_string(eta_min) + "," 
                     + std::to_string(EtaMax()) + "]");
             //throw InvalidSpaceTimeRange(warn_message);
-            JSWARN << warn_message;
+            //JSWARN << warn_message;
             status = 0;
         }
     }
@@ -67,7 +67,8 @@ int EvolutionHistory::CheckInRange(Jetscape::real tau, Jetscape::real x,
 /** For one given time step id_tau,
    * get FluidCellInfo at spatial point (x, y, eta)*/
 FluidCellInfo EvolutionHistory::GetAtTimeStep(
-        int id_tau, Jetscape::real x, Jetscape::real y, Jetscape::real eta) {
+        int id_tau, Jetscape::real x, Jetscape::real y,
+        Jetscape::real eta) const {
     int id_x   = GetIdX(x);
     int id_y   = GetIdY(y);
     int id_eta = 0;
@@ -101,7 +102,8 @@ FluidCellInfo EvolutionHistory::GetAtTimeStep(
 // do interpolation along time direction; we may also need high order
 // interpolation functions 
 FluidCellInfo EvolutionHistory::get(Jetscape::real tau, Jetscape::real x,
-                                    Jetscape::real y, Jetscape::real eta) {
+                                    Jetscape::real y,
+                                    Jetscape::real eta) const {
     int status = CheckInRange(tau, x, y, eta);
     if (status == 0) {
         FluidCellInfo zero_cell;
@@ -116,7 +118,8 @@ FluidCellInfo EvolutionHistory::get(Jetscape::real tau, Jetscape::real x,
 }
     
 FluidCellInfo EvolutionHistory::get_tz(Jetscape::real t, Jetscape::real x,
-                                       Jetscape::real y, Jetscape::real z) {
+                                       Jetscape::real y,
+                                       Jetscape::real z) const {
     Jetscape::real tau = 0.0;
     Jetscape::real eta = 0.0;
     if (t*t > z*z) {
