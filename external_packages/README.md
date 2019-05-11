@@ -30,6 +30,27 @@ To run JETSCAPE with MUSIC, one needs to use MPI commands,
     mpirun -np 1 ./MUSICTest
 ```
 
+## Running JETSCAPE with CLVisc
+In order to run clvisc in jetscape, one has to download it in external\_packages/, using 
+
+```
+sh get_clvisc.sh
+```
+
+Then compile and run the framework with a XML configuration file which turns clvisc on.
+```
+cd build/
+cmake .. -Dclvisc=on
+make
+./runJetscape ../config/jetscape_clvisc.xml
+```
+If the cmake fails because OpenCL is not installed, please check it.
+OpenCL is delivered in MacOS by default. 
+If you use linux machine with Nvidia GPUs, you will need to install CUDA,
+which will provide OpenCL support.
+If you use linux machine with AMD GPUs, Intel GPUs or any CPUs,
+you will need to install AMD APP SDK.
+
 ## SMASH hadronic afterburner
 
 SMASH is a hadronic transport developed at Frankfurt Institute for Advanced
