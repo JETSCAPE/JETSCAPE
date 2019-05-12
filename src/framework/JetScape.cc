@@ -21,6 +21,8 @@
 #include "JetScapeBanner.h"
 #include "InitialState.h"
 #include "PreequilibriumDynamics.h"
+#include "JetEnergyLoss.h"
+#include "CausalLiquefier.h"
 
 #ifdef USE_HEPMC
 #include "JetScapeWriterHepMC.h"
@@ -148,7 +150,21 @@ void JetScape::ReadGeneralParametersFromXML() {
   
 //________________________________________________________________
 void JetScape::DetermineTaskListFromXML() {
+  
+  // First, check for Liquefier and create it if so (since it needs to be passed to other modules)
+  std::shared_ptr<CausalLiquefier> liquefier;
+  VERBOSE(2) << "Checking if Liquifier should be created...";
+  tinyxml2::XMLElement* elementXML = (tinyxml2::XMLElement*) JetScapeXML::Instance()->GetXMLRootUser()->FirstChildElement();
+  while (elementXML) {
+    std::string elementName = elementXML->Name();
+    if (elementName == "Liquefier") {
+      liquefier = make_shared<CausalLiquefier>();
+      JSINFO << "Created liquefier.";
+    }
+    elementXML = elementXML->NextSiblingElement();
+  }
  
+  // Loop through and create all modules
   tinyxml2::XMLElement* element = (tinyxml2::XMLElement*) JetScapeXML::Instance()->GetXMLRootUser()->FirstChildElement();
   while (element) {
     std::string elementName = element->Name();
@@ -273,6 +289,27 @@ void JetScape::DetermineTaskListFromXML() {
     // Hydro
     else if (elementName == "Hydro") {
       
+      // First, check if liquefier should be added (Note: Can't use GetXMLElementText(), since that only works for unique tags)
+      VERBOSE(2) << "Checking if liquefer should be added: Hydro";
+      bool bAddLiquefier = false;
+      tinyxml2::XMLElement* childElementLiquefier = (tinyxml2::XMLElement*) element->FirstChildElement();
+      while (childElementLiquefier) {
+        std::string childElementName = childElementLiquefier->Name();
+        VERBOSE(2) << "Parsing childElementLiq: " << childElementName;
+        if (childElementName == "AddLiquefier") {
+          std::string strAddLiquefier = childElementLiquefier->GetText();
+          if ((int) strAddLiquefier.find("true")>=0) {
+            bAddLiquefier = true;
+            VERBOSE(1) << "Add liquefier to Hydro: True.";
+          }
+          else {
+            VERBOSE(1) << "Add liquefier to Hydro: False.";
+          }
+        }
+        childElementLiquefier = childElementLiquefier->NextSiblingElement();
+      }
+      
+      // Loop through elements to look for specific hydro module
       tinyxml2::XMLElement* childElement = (tinyxml2::XMLElement*) element->FirstChildElement();
       while (childElement) {
         std::string childElementName = childElement->Name();
@@ -284,6 +321,11 @@ void JetScape::DetermineTaskListFromXML() {
           if (hydro) {
             Add(hydro);
             JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added Brick to task list.";
+            SetModuleId(childElement, hydro);
+            if (bAddLiquefier) {
+              dynamic_pointer_cast<FluidDynamics>(hydro)->add_a_liqueifier(liquefier);
+              JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added liquefier to Brick.";
+            }
           }
         }
         //   - Gubser
@@ -292,6 +334,11 @@ void JetScape::DetermineTaskListFromXML() {
           if (hydro) {
             Add(hydro);
             JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added Gubser to task list.";
+            SetModuleId(childElement, hydro);
+            if (bAddLiquefier) {
+              dynamic_pointer_cast<FluidDynamics>(hydro)->add_a_liqueifier(liquefier);
+              JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added liquefier to Gubser.";
+            }
           }
         }
         //   - hydro_from_file
@@ -300,6 +347,11 @@ void JetScape::DetermineTaskListFromXML() {
           if (hydro) {
             Add(hydro);
             JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added hydro_from_file to task list.";
+            SetModuleId(childElement, hydro);
+            if (bAddLiquefier) {
+              dynamic_pointer_cast<FluidDynamics>(hydro)->add_a_liqueifier(liquefier);
+              JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added liquefier to hydro_from_file.";
+            }
           }
         }
         //   - MUSIC
@@ -310,6 +362,11 @@ void JetScape::DetermineTaskListFromXML() {
           if (hydro) {
             Add(hydro);
             JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added MUSIC to task list.";
+            SetModuleId(childElement, hydro);
+            if (bAddLiquefier) {
+              dynamic_pointer_cast<FluidDynamics>(hydro)->add_a_liqueifier(liquefier);
+              JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added liquefier to MUSIC.";
+            }
           }
           #endif
         }
@@ -319,6 +376,11 @@ void JetScape::DetermineTaskListFromXML() {
           if (customModule) {
             Add(customModule);
             JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added " << childElementName << " to task list.";
+            SetModuleId(childElement, customModule);
+            if (bAddLiquefier) {
+              dynamic_pointer_cast<FluidDynamics>(customModule)->add_a_liqueifier(liquefier);
+              JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added liquefier to CustomModule.";
+            }
           }
         }
 
@@ -332,6 +394,7 @@ void JetScape::DetermineTaskListFromXML() {
       auto jlossmanager = make_shared<JetEnergyLossManager> ();
       auto jloss = make_shared<JetEnergyLoss> ();
       
+      // Loop through and add Eloss modules
       tinyxml2::XMLElement* childElement = (tinyxml2::XMLElement*) element->FirstChildElement();
       while (childElement) {
         std::string childElementName = childElement->Name();
@@ -379,6 +442,16 @@ void JetScape::DetermineTaskListFromXML() {
         }
         
         childElement = childElement->NextSiblingElement();
+      }
+      
+      // Check if liquefier should be added, and add it if so
+      std::string strAddLiquefier = GetXMLElementText({"Eloss", "AddLiquefier"});
+      if ((int) strAddLiquefier.find("true")>=0) {
+        jloss->add_a_liqueifier(liquefier);
+        JSINFO << "JetScape::DetermineTaskList() -- Added liquefier to Eloss.";
+      }
+      else {
+        VERBOSE(1) << "Add liquefier to Eloss: False.";
       }
       
       jlossmanager->Add(jloss);
@@ -490,6 +563,21 @@ void JetScape::DetermineTaskListFromXML() {
     element = element->NextSiblingElement();
   }
   
+}
+
+//________________________________________________________________
+void JetScape::SetModuleId(tinyxml2::XMLElement* moduleElement, shared_ptr<JetScapeModuleBase> module) {
+    
+  tinyxml2::XMLElement* childElement = (tinyxml2::XMLElement*) moduleElement->FirstChildElement();
+  while (childElement) {
+    std::string childElementName = childElement->Name();
+    if (childElementName == "name") {
+      std::string name = childElement->GetText();
+      module->SetId(name);
+      JSINFO << "Set ID to: " << name;
+    }
+    childElement = childElement->NextSiblingElement();
+  }
 }
 
 //________________________________________________________________

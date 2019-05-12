@@ -79,6 +79,7 @@ class JetScape : public JetScapeModuleBase
   void DetermineTaskListFromXML();
   void DetermineWritersFromXML();
   void CheckForWriterFromXML(const char* writerName, std::string outputFilename);
+  void SetModuleId(tinyxml2::XMLElement* moduleElement, shared_ptr<JetScapeModuleBase> module);
     
   void SetPointers();
   

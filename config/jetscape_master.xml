@@ -93,6 +93,7 @@
     <formTime> -0.1</formTime>
     <maxT>20</maxT>
     <mutex>ON</mutex>
+    <AddLiquefier> false </AddLiquefier>
 
     <Matter>
       <name>Matter</name>
@@ -157,6 +158,8 @@
 
   <!-- Hydro  Module  -->
   <Hydro>
+    
+    <AddLiquefier> false </AddLiquefier>
 
     <!-- Test Brick if bjorken_expansion_on="true", T(t) = T * (start_time[fm]/t)^{1/3} -->
     <Brick bjorken_expansion_on="false" start_time="0.6">
