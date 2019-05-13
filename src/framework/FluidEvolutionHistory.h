@@ -58,6 +58,8 @@ class EvolutionHistory {
     /** Default destructor. */
     ~EvolutionHistory() {data.clear();}
 
+    void clear_up_evolution_data() {data.clear();}
+    
     int get_data_size() const {return(data.size());}
     bool is_boost_invariant() const {return(boost_invariant);}
 

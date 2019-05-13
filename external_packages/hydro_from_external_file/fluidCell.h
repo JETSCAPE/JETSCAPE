@@ -1,7 +1,7 @@
 #ifndef fluidCell_H_
 #define fluidCell_H_
 
-struct fluidCell {
+struct hydrofluidCell {
    double ed, sd, temperature, pressure;
    double vx, vy, vz;
    double pi[4][4];

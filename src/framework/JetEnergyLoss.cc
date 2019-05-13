@@ -23,12 +23,15 @@
 #include "JetScapeLogger.h"
 #include "JetScapeXML.h"
 #include <string>
-#include <iostream>
 #include "tinyxml2.h"
 #include "JetScapeSignalManager.h"
 #include "JetScapeWriterStream.h"
 #include "HardProcess.h"
 #include "JetScapeModuleMutex.h"
+#include "LiquefierBase.h"
+#include "MakeUniqueHelper.h"
+#include "FluidDynamics.h"
+#include <GTL/dfs.h>
 
 #ifdef USE_HEPMC
 #include "JetScapeWriterHepMC.h"
@@ -166,139 +169,142 @@ void JetEnergyLoss::Init()
   JetScapeTask::InitTasks();
 }
 
-void JetEnergyLoss::DoShower()
-{
-  double tStart=0;
-  double currentTime=0;
- 
+void JetEnergyLoss::DoShower() {
+    double tStart = 0;
+    double currentTime = 0;
+    
+    VERBOSESHOWER(8) << "Hard Parton from Initial Hard Process ...";
+    VERBOSEPARTON(6, *GetShowerInitiatingParton());
 
-  VERBOSESHOWER(8)<<"Hard Parton from Initial Hard Process ...";
-  VERBOSEPARTON(6,*GetShowerInitiatingParton());
-
-  // consider pointers for speed up ... 
-  vector<Parton> pIn; vector<Parton> pOut;
-  vector<Parton> pInTemp; vector<Parton> pOutTemp;
-  vector<Parton> pInTempModule;
+    // consider pointers for speed up ... 
+    vector<Parton> pIn; vector<Parton> pOut;
+    vector<Parton> pInTemp; vector<Parton> pOutTemp;
+    vector<Parton> pInTempModule;
   
-  vector<node> vStartVec; vector<node> vStartVecOut;
-  vector<node> vStartVecTemp;
+    vector<node> vStartVec; vector<node> vStartVecOut;
+    vector<node> vStartVecTemp;
 
-  //DEBUG this guy isn't linked to anything - put in test particle for now
-  pIn.push_back(*GetShowerInitiatingParton());
+    // DEBUG this guy isn't linked to anything - put in test particle for now
+    pIn.push_back(*GetShowerInitiatingParton());
 
-  // Add here the Hard Shower emitting parton ...
-  vStart=pShower->new_vertex(make_shared<Vertex>());
-  vEnd=pShower->new_vertex(make_shared<Vertex>());
-  // Add original parton later, after it had a chance to acquire virtuality
-  // pShower->new_parton(vStart,vEnd,make_shared<Parton>(*GetShowerInitiatingParton()));
+    // Add here the Hard Shower emitting parton ...
+    vStart = pShower->new_vertex(make_shared<Vertex>());
+    vEnd   = pShower->new_vertex(make_shared<Vertex>());
+    // Add original parton later, after it had a chance to acquire virtuality
+    // pShower->new_parton(vStart,vEnd,make_shared<Parton>(*GetShowerInitiatingParton()));
 
-  // start then the recursive shower ...
-  vStartVec.push_back(vEnd);
-  //vStartVecTemp.push_back(vEnd);
+    // start then the recursive shower ...
+    vStartVec.push_back(vEnd);
+    //vStartVecTemp.push_back(vEnd);
   
-  // --------------------------------------------
+    // --------------------------------------------
 
-  // cerr << " ---------------------------------------------- " << endl;
-  // cerr << "Start with " << *GetShowerInitiatingParton() << "  -> " << GetShowerInitiatingParton()->t() << endl;
-  bool foundchangedorig=false;
-  do
-    {
-      VERBOSESHOWER(7)<<"Current time = "<<currentTime<<" with #Input "<<pIn.size();     
-      currentTime += deltaT;
+    // cerr << " ---------------------------------------------- " << endl;
+    // cerr << "Start with " << *GetShowerInitiatingParton()
+    //      << "  -> " << GetShowerInitiatingParton()->t() << endl;
+    bool foundchangedorig=false;
+    do {
+        VERBOSESHOWER(7) << "Current time = " << currentTime
+                         << " with #Input " << pIn.size();     
+        currentTime += deltaT;
 
-      // --------------------------------------------
-      
-      for (int i=0;i<pIn.size();i++)
-	{
-	  // JSINFO << pIn.at(i).edgeid();
-	  pInTempModule.push_back(pIn[i]);
-	  
-	  SentInPartons(deltaT,currentTime,pIn[i].pt(),pInTempModule,pOutTemp);
-	  if ( !foundchangedorig ) {
-	    // cerr  << " End with "<< pInTempModule.at(0) << "  -> " << pInTempModule.at(0).t() << endl;
-	    // cerr << " ---------------------------------------------- " << endl;
-	    pShower->new_parton(vStart,vEnd,make_shared<Parton>(pInTempModule.at(0)));
-	    foundchangedorig=true;
-	  }
-	  
-	  pInTemp.push_back(pInTempModule[0]);
+        for (int i = 0; i < pIn.size(); i++) {
+	        // JSINFO << pIn.at(i).edgeid();
+	        pInTempModule.push_back(pIn[i]);
+	        SentInPartons(deltaT, currentTime, pIn[i].pt(),
+                          pInTempModule, pOutTemp);
+	        if (!foundchangedorig) {
+	            // cerr << " End with "<< pInTempModule.at(0) << "  -> "
+                //      << pInTempModule.at(0).t() << endl;
+	            // cerr << " ---------------------------------------------- "
+                //      << endl;
+	            pShower->new_parton(vStart, vEnd, 
+                                    make_shared<Parton>(pInTempModule.at(0)));
+	            foundchangedorig=true;
+	        }
+            pInTemp.push_back(pInTempModule[0]);
+            if (!weak_ptr_is_uninitialized(liquefier_ptr)
+                and currentTime > 0.1) {
+                liquefier_ptr.lock()->add_hydro_sources(pInTempModule,
+                                                        pOutTemp);
+            }
 
-	  vStart=vStartVec[i];
-	  vStartVecTemp.push_back(vStart);
+	        vStart = vStartVec[i];
+	        vStartVecTemp.push_back(vStart);
 
-	  for (int k=0;k<pOutTemp.size();k++)
-	    {
-	      vEnd=pShower->new_vertex(make_shared<Vertex>(0,0,0,currentTime));	
-	      int edgeid = pShower->new_parton(vStart,vEnd,make_shared<Parton>(pOutTemp[k]));
-	      pOutTemp[k].set_shower( pShower );
-	      pOutTemp[k].set_edgeid( edgeid );
+	        for (int k = 0; k < pOutTemp.size(); k++) { 
+	            vEnd = pShower->new_vertex(
+                                    make_shared<Vertex>(0, 0, 0, currentTime));	
+	            int edgeid = pShower->new_parton(
+                            vStart, vEnd, make_shared<Parton>(pOutTemp[k]));
+	            pOutTemp[k].set_shower(pShower);
+	            pOutTemp[k].set_edgeid(edgeid);
 		      
-	      vStartVecOut.push_back(vEnd);
-	      pOut.push_back(pOutTemp[k]);
+	            vStartVecOut.push_back(vEnd);
+	            pOut.push_back(pOutTemp[k]);
 
-	      Parton& particle = pOut.back();
-	      // Parton& particle = pOut[iout];
-	      // Parton& particle = pIn.at(i);
-	      // if ( particle.parents().size() )
-	      // 	cout << particle << "  " << particle.parents().at(0)<< endl;
+	            Parton& particle = pOut.back();
+	            // Parton& particle = pOut[iout];
+	            // Parton& particle = pIn.at(i);
+	            // if ( particle.parents().size() )
+	            // 	cout << particle << "  " << particle.parents().at(0)<< endl;
 
-	      // --------------------------------------------
-	      // Add new roots from ElossModules ...
-	      // (maybe add for clarity a new vector in the signal!???)
-	      // Otherwise keep track of input size (so far always 1
-	      // and check if size > 1 and create additional root nodes to that vertex ...
-	      // Simple Test here below:
-	      // DEBUG:
-	      //cout<<"In JetEnergyloss : "<<pInTempModule.size()<<endl;
+	            // --------------------------------------------
+	            // Add new roots from ElossModules ...
+	            // (maybe add for clarity a new vector in the signal!???)
+	            // Otherwise keep track of input size (so far always 1
+	            // and check if size > 1 and create additional root nodes to that vertex ...
+	            // Simple Test here below:
+	            // DEBUG:
+	            //cout<<"In JetEnergyloss : "<<pInTempModule.size()<<end;
 	      
-	      if (pInTempModule.size()>1)
-		{
-		  VERBOSESHOWER(7)<<pInTempModule.size()-1<<" new root node(s) to be added ...";
-		  //cout<<pInTempModule.size()-1<<" new root node(s) to be added ..."<<endl;
+	            if (pInTempModule.size() > 1) {
+		            VERBOSESHOWER(7) << pInTempModule.size()-1
+                                     << " new root node(s) to be added ...";
+		            //cout << pInTempModule.size()-1
+                    //     << " new root node(s) to be added ..." << endl;
 		  
-		  for (int l=1;l<pInTempModule.size();l++)
-		    {
-		      node vNewRootNode=pShower->new_vertex(make_shared<Vertex>(0,0,0,currentTime-deltaT));
-		      pShower->new_parton(vNewRootNode,vEnd,make_shared<Parton>(pInTempModule[l]));
-		    }
-		}
-	      // --------------------------------------------
-	      // 
-	      if (k==0)
-		{
-		  pInTemp.pop_back();       		  
-		  vStartVecTemp.pop_back();		 
-		}	  
+		            for (int l = 1; l < pInTempModule.size(); l++) {
+		                node vNewRootNode = pShower->new_vertex(
+                                make_shared<Vertex>(0,0,0,currentTime-deltaT));
+		                pShower->new_parton(vNewRootNode, vEnd,
+                                        make_shared<Parton>(pInTempModule[l]));
+		            }
+		        }
+	            if (k == 0) {
+		            pInTemp.pop_back();       		  
+		            vStartVecTemp.pop_back();		 
+		        }	  
+	        }
+	        pOutTemp.clear();
+	        pInTempModule.clear();
 	    }
-	  // --------------------------------------------
-	  pOutTemp.clear();
-	  pInTempModule.clear();
-	}
 
-      // --------------------------------------------
+        pIn.clear();
+        
+        pIn.insert(pIn.end(), pInTemp.begin(), pInTemp.end());
+        pIn.insert(pIn.end(), pOut.begin(), pOut.end());
       
-      pIn.clear();
-      
-      pIn.insert(pIn.end(),pInTemp.begin(),pInTemp.end());
-      pIn.insert(pIn.end(),pOut.begin(),pOut.end());
-      
-      pOut.clear();
-      pInTemp.clear();
+        pOut.clear();
+        pInTemp.clear();
           
-      vStartVec.clear();
-      vStartVec.insert(vStartVec.end(),vStartVecTemp.begin(),vStartVecTemp.end());
-      vStartVec.insert(vStartVec.end(),vStartVecOut.begin(),vStartVecOut.end());
-           
-      vStartVecOut.clear();
-      vStartVecTemp.clear();
-    }
-  while (currentTime<maxT); //other criteria (how to include; TBD)
+        vStartVec.clear();
+        vStartVec.insert(vStartVec.end(), vStartVecTemp.begin(),
+                         vStartVecTemp.end());
+        vStartVec.insert(vStartVec.end(), vStartVecOut.begin(),
+                         vStartVecOut.end());
+        vStartVecOut.clear();
+        vStartVecTemp.clear();
+    } while (currentTime<maxT); //other criteria (how to include; TBD)
 
-  // --------------------------------------------
-  
-  pIn.clear();pOut.clear();pInTemp.clear();pInTempModule.clear();pOutTemp.clear();
-  vStartVec.clear();
+    pIn.clear();
+    pOut.clear();
+    pInTemp.clear();
+    pInTempModule.clear();
+    pOutTemp.clear();
+    vStartVec.clear();
 }
+
 
 void JetEnergyLoss::Exec()
 {

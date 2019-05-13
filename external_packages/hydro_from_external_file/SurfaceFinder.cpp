@@ -45,7 +45,7 @@ SurfaceFinder::~SurfaceFinder() {}
 bool SurfaceFinder::check_intersect(double T_cut, double tau, double x,
                                     double y, double dt, double dx, double dy,
                                     double ***cube) {
-    fluidCell *fluidCellptr = new fluidCell();
+    hydrofluidCell *fluidCellptr = new hydrofluidCell();
     bool intersect = true;
 
     double tau_low = tau - dt/2.;
@@ -188,7 +188,7 @@ int SurfaceFinder::Find_full_hypersurface() {
         }
     }
     
-    fluidCell *fluidCellptr = new fluidCell();
+    hydrofluidCell *fluidCellptr = new hydrofluidCell();
   
     for (int itime = 0; itime < ntime; itime++) {
         // loop over time evolution

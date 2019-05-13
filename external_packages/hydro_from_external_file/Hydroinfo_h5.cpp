@@ -540,7 +540,7 @@ void HydroinfoH5::readH5Dataset_double(hid_t id, string datasetName, double** ds
    status = H5Dclose(dataset_id);
 }
 
-void HydroinfoH5::getHydroinfoOnlattice(int frameIdx, int xIdx, int yIdx, fluidCell* fluidCellptr)
+void HydroinfoH5::getHydroinfoOnlattice(int frameIdx, int xIdx, int yIdx, hydrofluidCell* fluidCellptr)
 {
    if(frameIdx < 0 || frameIdx > grid_Framenum || xIdx < 0 || xIdx > (grid_XH - grid_XL) || yIdx < 0 || yIdx > (grid_YH - grid_YL))
    {
@@ -575,7 +575,7 @@ void HydroinfoH5::getHydroinfoOnlattice(int frameIdx, int xIdx, int yIdx, fluidC
 }
 
 
-void HydroinfoH5::getHydroinfo(double tau, double x, double y, fluidCell* fluidCellptr)
+void HydroinfoH5::getHydroinfo(double tau, double x, double y, hydrofluidCell* fluidCellptr)
 {
    double eps = 1e-10;
    if(tau < grid_Tau0 || tau > grid_Taumax-eps || x < grid_X0 || x > grid_Xmax-eps || y < grid_Y0 || y > grid_Ymax-eps)
@@ -634,7 +634,7 @@ void HydroinfoH5::getHydroinfo(double tau, double x, double y, fluidCell* fluidC
    }
 }
 
-void HydroinfoH5::setZero_fluidCell(fluidCell* fluidCellptr)
+void HydroinfoH5::setZero_fluidCell(hydrofluidCell* fluidCellptr)
 {
    fluidCellptr->ed = 0.0e0;
    fluidCellptr->sd = 0.0e0;
