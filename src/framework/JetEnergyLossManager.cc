@@ -76,6 +76,13 @@ void JetEnergyLossManager::Init()
 
   JSINFO<<"Connect JetEnergyLossManager Signal to Hard Process ...";
   JetScapeSignalManager::Instance()->ConnectGetHardPartonListSignal(shared_from_this());
+
+  // Set the pointer of JetEnergyLoss for making connections to hadronization module
+  for (auto it : GetTaskList())
+  {
+    if (dynamic_pointer_cast<JetEnergyLoss>(it))
+        JetScapeSignalManager::Instance()->SetEnergyLossPointer(dynamic_pointer_cast<JetEnergyLoss>(it));
+  }
 }
 
 
@@ -209,7 +216,7 @@ void JetEnergyLossManager::CreateSignalSlots()
 	if(!dynamic_pointer_cast<JetEnergyLoss>(it2)->GetSentInPartonsConnected())
 	  JetScapeSignalManager::Instance()->ConnectSentInPartonsSignal(dynamic_pointer_cast<JetEnergyLoss>(it),dynamic_pointer_cast<JetEnergyLoss>(it2));
       }
-
+  
   JetScapeSignalManager::Instance()->PrintGetHydroCellSignalMap();
   VERBOSE(8);
   JetScapeSignalManager::Instance()->PrintSentInPartonsSignalMap();

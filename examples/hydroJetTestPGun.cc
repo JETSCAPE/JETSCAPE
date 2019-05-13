@@ -43,7 +43,6 @@
 #include "HydroFromFile.h"
 #include "PGun.h"
 #include "PythiaGun.h"
-#include "PartonPrinter.h"
 #include "HadronizationManager.h"
 #include "Hadronization.h"
 #include "ColoredHadronization.h"
@@ -110,8 +109,6 @@ int main(int argc, char** argv)
 
   //auto pythiaGun= make_shared<PythiaGun> ();
 
-  auto printer = make_shared<PartonPrinter> ();
-
   auto hadroMgr = make_shared<HadronizationManager> ();
   auto hadro = make_shared<Hadronization> ();
   auto hadroModule = make_shared<ColoredHadronization> ();
@@ -152,8 +149,6 @@ int main(int argc, char** argv)
   jlossmanager->Add(jloss);
   
   jetscape->Add(jlossmanager);
-
-  jetscape->Add(printer);
 
   hadro->Add(hadroModule);
   //hadro->Add(colorless);
