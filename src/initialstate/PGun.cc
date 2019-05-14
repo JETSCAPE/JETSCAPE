@@ -79,7 +79,7 @@ void PGun::Exec()
 	 tempRand = rand()/maxN;
 	 if(tempRand < 0.50) parID = -parID;
        }            
-         parID = 1;
+         parID = 5;
        mass = 0.0;
        pT = fixed_pT; //max_pT*(rand()/maxN);
        

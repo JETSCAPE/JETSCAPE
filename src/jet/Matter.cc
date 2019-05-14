@@ -2602,14 +2602,14 @@ double Matter::sud_z_QG_w_M(double M, double cg, double cg1, double loc_e, doubl
 
     //JSINFO << BOLDRED << " qhat L = " << qL << " location = " << loc_e << " tau = " << tau << " length = " << length;
     
-  res = t21 + qL*q53/cg1 + eL*e22/cg1+e2L*f52/cg1;
+    res = t21 + qL*q53/cg1 + eL*e22/cg1+e2L*f52/cg1;
     
   //   cout << " t0 , t , res = " << cg << "  "  << cg1 << "   " << res << endl ;
     
     
-  if (q14<0.0)
+  if (res<0.0)
     {
-      cerr << "ERROR: medium contribution negative in sud_z_QG : q14 = " << q14 << endl;
+      cerr << "ERROR: medium contribution negative in sud_z_QG : res = " << res << endl;
       throw std::runtime_error("ERROR: medium contribution negative in sud_z_QG");
     }
     
