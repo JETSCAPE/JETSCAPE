@@ -114,7 +114,7 @@ void ColoredHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& s
             {
                 
                 double blurb;
-                JSINFO << BOLDYELLOW << " photon found with " ;
+                JSINFO << BOLDYELLOW << " photon found in colored hadronization with " ;
                 JSINFO << BOLDYELLOW << "px = " << shower.at(ishower).at(ipart)->px();
                 //cin >> blurb;
             }
@@ -127,6 +127,8 @@ void ColoredHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& s
       anti_color = shower.at(ishower).at(0)->min_anti_color();
       color = shower.at(ishower).at(0)->min_color();
   
+//      JSINFO << BOLDYELLOW << " color = " << color << " anti-color = " << anti_color;
+      
       if ((color>100)&&(anti_color>100))
       {
           pid = 21;
@@ -139,10 +141,11 @@ void ColoredHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& s
       {
           pid = 1;
       }
-  
-      pz = -1*pz;
-      event.append(pid, 23, anti_color, color, 0.2, 0.2, pz, sqrt(pz*pz + 0.08));       
-    
+      if ( (color!=0)||(anti_color!=0)  ) // only add fake parton for not-photon event
+      {
+          pz = -1*pz;
+          event.append(pid, 23, anti_color, color, 0.2, 0.2, pz, sqrt(pz*pz + 0.08));
+      }
       VERBOSE(2) <<"There are " << hOut.size() << " Hadrons and " << pOut.size() << " partons after Hadronization";
     }
   
