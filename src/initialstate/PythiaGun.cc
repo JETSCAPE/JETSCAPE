@@ -281,11 +281,11 @@ void PythiaGun::Exec()
 	       <<", z=" << xLoc[3];
     
     AddParton(make_shared<Parton>(0, particle.id(),0,particle.pT(),particle.y(),particle.phi(),particle.e(),xLoc) );
-    if(particle.id() == photonid)
-    {
-	AddHadron(make_shared<Hadron>(hCounter,particle.id(),particle.status(),particle.pT(),particle.eta(),particle.phi(),particle.e(),xLoc));
-	hCounter++;
-    }
+//    if(particle.id() == photonid)
+//    {
+//	AddHadron(make_shared<Hadron>(hCounter,particle.id(),particle.status(),particle.pT(),particle.eta(),particle.phi(),particle.e(),xLoc));
+//	hCounter++;
+//    }
   }
   
 
