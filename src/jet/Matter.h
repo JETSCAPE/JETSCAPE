@@ -39,23 +39,29 @@ class Matter : public JetEnergyLossModule<Matter> //, public std::enable_shared_
   double sud_z_GG(double cg, double cg1, double loc_e , double l_fac, double E2);
   double P_z_gg_int(double cg, double cg1, double loc_e, double cg3, double l_fac , double E2);
   double sudakov_Pqg(double g0, double g1, double loc_c, double E);
-  double sud_val_QG(double h0, double h1, double h2, double loc_d, double E1);
-  double sud_z_QG(double cg, double cg1, double loc_e, double l_fac,double E2);
-  double P_z_qg_int(double cg, double cg1, double loc_e, double cg3, double l_fac , double E2 );
+  double  sud_val_QG(double h0, double h1, double h2, double loc_d, double E1);
+  double    sud_z_QG(double cg, double cg1, double loc_e, double l_fac,double E2);
+  double  P_z_qg_int(double cg, double cg1, double loc_e, double cg3, double l_fac , double E2 );
+  double sudakov_Pqg_w_M(double M, double g0, double g1, double loc_c, double E);
+  double  sud_val_QG_w_M(double M, double h0, double h1, double h2, double loc_d, double E1);
+  double    sud_z_QG_w_M(double M, double cg, double cg1, double loc_e, double l_fac,double E2);
+  double  P_z_qg_int_w_M(double M, double cg, double cg1, double loc_e, double cg3, double l_fac , double E2);
   double sudakov_Pqq(double q0, double q1, double loc_c, double E);
-  double sud_val_QQ(double h0, double h1, double h2, double loc_d, double E1);
-  double sud_z_QQ(double cg, double cg1, double loc_e , double l_fac, double E2);
-  double P_z_qq_int(double cg, double cg1, double loc_e, double cg3, double l_fac , double E2);
+  double  sud_val_QQ(double h0, double h1, double h2, double loc_d, double E1);
+  double    sud_z_QQ(double cg, double cg1, double loc_e , double l_fac, double E2);
+  double  P_z_qq_int(double cg, double cg1, double loc_e, double cg3, double l_fac, double E2);
   //  void shower_vac( int line, int pid, double nu_in, double t0_in, double t_in, double kx, double ky, double loc, bool is_lead);
   double generate_vac_t(int p_id,double nu, double t0, double t, double loc_a, int isp);
+  double generate_vac_t_w_M(int p_id, double M, double nu, double t0, double t, double loc_a, int is);
   double  generate_vac_z(int p_id, double t0, double t, double loc_b, double nu, int is  );
+  double  generate_vac_z_w_M(int p_id, double M, double t0, double t, double loc_b, double nu, int is );
   double alpha_s(double q2);
   double profile(double zeta);
 
   double generate_angle();
   double generate_kt(double local_qhat,double dzeta);
     
-  double qhat,length;
+  double qhat,ehat,e2hat,length;
     unsigned int MaxColor;
 
   //SC: for interface with hydro
