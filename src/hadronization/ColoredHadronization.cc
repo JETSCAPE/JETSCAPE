@@ -113,7 +113,6 @@ void ColoredHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& s
             if ( shower.at(ishower).at(ipart)->pid()==22 )
             {
                 
-                double blurb;
                 JSINFO << BOLDYELLOW << " photon found in colored hadronization with " ;
                 JSINFO << BOLDYELLOW << "px = " << shower.at(ishower).at(ipart)->px();
                 //cin >> blurb;
