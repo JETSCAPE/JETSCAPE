@@ -229,30 +229,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
     
     unsigned int ShowerMaxColor = pIn[0].max_color();
     unsigned int CurrentMaxColor;
-/*    auto shower=pIn[0].shower().lock();
-    // if ( !shower ) throw ( std::runtime_error( "Couldn't get a lock on the shower()" ));
-    if ( shower )
-    {
-        dfs search;
-        search.calc_comp_num(true);
-        search.scan_whole_graph(true);
-        search.start_node();// defaulted to first node ...
-        search.run(*shower);
-    
-        dfs::tree_edges_iterator itt, endt;
-        for (itt = search.tree_edges_begin(), endt=search.tree_edges_end(); itt !=endt; ++itt)
-        {
-            JSINFO << MAGENTA << *itt << " Max color = " << shower->GetParton( *itt )->max_color();
-            CurrentMaxColor = shower->GetParton( *itt )->max_color();
-            if (CurrentMaxColor>ShowerMaxColor)
-            {
-                shower->GetParton( *itt )->set_max_color(CurrentMaxColor);
-                ShowerMaxColor = CurrentMaxColor;
-            }
-        }
-    }
-   */
-    
+
     if ( pIn[0].max_color() < MaxColor )
     {
         pIn[0].set_max_color(MaxColor);
@@ -264,8 +241,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
     }
     
     //JSINFO << MAGENTA << " Max color = " << MaxColor;
-    
-  //JSDEBUG << " For MATTER, the qhat in GeV^-3 = " << qhat ;
+   //JSDEBUG << " For MATTER, the qhat in GeV^-3 = " << qhat ;
  
     double qhatbrick;
     if(brick_med) qhatbrick=qhat0/3.0;
@@ -280,7 +256,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       // Reject photons
       if (pIn[i].pid()==photonid)
       {
-          JSINFO << BOLDYELLOW << " A photon was RECEIVED from framework and sent back " ;
+          JSINFO << BOLDYELLOW << " A photon was RECEIVED with px = " << pIn[i].px() << " from framework and sent back " ;
 
           pOut.push_back(pIn[i]);
           return;
@@ -298,6 +274,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       {
           velocity[j] = pIn[i].p(j)/pIn[i].e();
       }
+      // velocityMod will be 1 for most partons except maybe heavy quarks, we say "maybe", as for very
+      // energetic heavy quarks, the velocity may be very close to 1.
       double velocityMod = std::sqrt(std::pow(velocity[1],2) + std::pow(velocity[2],2) + std::pow(velocity[3],2));
 
       VERBOSE(2) << BOLDYELLOW << " velocityMod = " << velocityMod ;
@@ -392,10 +370,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
              VERBOSE(8) << BOLDYELLOW << " at x,y,z,t = " <<  pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z() << "  " << pIn[i].x_in().t() ;
               tQ2 = generate_vac_t(pIn[i].pid(), pIn[i].nu(), QS/2.0, max_vir, zeta, iSplit);
     	  }
-
-          // KK:
-          //pIn[i].set_jet_v(velocity); // SC: take out to the front
-
+// hold point
 	  // SC: if matter_on = false, set zero virtuality and MATTER will not do parton shower
           if(matter_on) pIn[i].set_t(tQ2); // Also resets momentum!
           else pIn[i].set_t(0.0); 
@@ -778,10 +753,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   
                   double val = ProbGluon/(ProbGluon + ProbPhoton) ;
                   
-                  JSINFO << MAGENTA << " val = " << val ;
-                  
-                  cin >> blurb;
-                  
+//                  JSINFO << MAGENTA << " val = " << val ;
                   
                   double r2 = ZeroOneDistribution(*GetMt19937Generator());
                   
@@ -883,7 +855,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               //if (d2_col==0 && d2_acol==0) cout << "complain color" << endl;
 
               
-              JSINFO << " d1_col = " << d1_col << " d1_acol = " << d1_acol << " d2_col = " << d2_col << " d2_acol = " << d2_acol;
+//              JSINFO << " d1_col = " << d1_col << " d1_acol = " << d1_acol << " d2_col = " << d2_col << " d2_acol = " << d2_acol;
 
               while ((l_perp2<=Lambda_QCD*Lambda_QCD)&&(ifcounter<100))
               {
@@ -1037,7 +1009,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   pOut[iout].set_min_color(pIn[i].min_color());
                   pOut[iout].set_min_anti_color(pIn[i].min_anti_color());
                   
-                  JSINFO << BOLDYELLOW << " A photon was made and sent to the framework " ;
+                  JSINFO << BOLDYELLOW << " A photon was made with px = " << pOut[iout].px() << " and sent to the framework " ;
                   
                   
               }
@@ -1429,22 +1401,22 @@ double Matter::generate_vac_t(int p_id, double nu, double t0, double t, double l
   //    cin >> test ;
     
   if (p_id==gid)
-    {
+  {
       numer = sudakov_Pgg(t0,t,loc_a,nu)*std::pow(sudakov_Pqq(t0,t,loc_a,nu),nf);
         
       if ((is!=1)&&(is!=2)) // there is almost no use of is = 2, the `is' in this function is redundant, just for consistency
-        {
-	  throw std::runtime_error(" error in isp ");
-        }
-    }
+      {
+          throw std::runtime_error(" error in isp ");
+      }
+  }
   else
-    {
+  {
       if ( (is!=0)&&(is!=3) ) // there is almost no use of is = 3, the `is' in this function is redundant, just for consistency
-        {
-	  throw std::runtime_error("error in isp in quark split");            
-        }
+      {
+          throw std::runtime_error("error in isp in quark split");
+      }
       numer = sudakov_Pqg(t0,t,loc_a,nu)*sudakov_Pqp(t0,t,loc_a,nu);
-    }
+  }
     
   t_mid = t_low;
     

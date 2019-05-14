@@ -109,6 +109,15 @@ void ColoredHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& s
       for(unsigned int ipart=0; ipart <  shower.at(ishower).size(); ++ipart)
       {
           double onshellE = pow(pow(shower.at(ishower).at(ipart)->px(),2) + pow(shower.at(ishower).at(ipart)->py(),2) + pow(shower.at(ishower).at(ipart)->pz(),2) ,0.5 ) ;
+          
+            if ( shower.at(ishower).at(ipart)->pid()==22 )
+            {
+                
+                double blurb;
+                JSINFO << BOLDYELLOW << " photon found with " ;
+                JSINFO << BOLDYELLOW << "px = " << shower.at(ishower).at(ipart)->px();
+                //cin >> blurb;
+            }
           event.append(shower.at(ishower).at(ipart)->pid(),23,shower.at(ishower).at(ipart)->color(),shower.at(ishower).at(ipart)->anti_color(),
 		       shower.at(ishower).at(ipart)->px(),shower.at(ishower).at(ipart)->py(),shower.at(ishower).at(ipart)->pz(),onshellE);
       }
@@ -143,7 +152,7 @@ void ColoredHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& s
   unsigned int ip=hOut.size();
   for (unsigned int i=0; i<event.size(); ++i){
     if ( !event[i].isFinal() )   continue;
-    if ( !event[i].isHadron() )  continue;
+//    if ( !event[i].isHadron() )  continue;
     if(fabs(event[i].eta())>20)  continue; //To prevent "nan" from propagating, very rare though
     
     double x[4] = {0,0,0,0};
