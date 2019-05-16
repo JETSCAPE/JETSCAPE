@@ -204,22 +204,28 @@ void JetEnergyLossManager::CreateSignalSlots() {
 	            JetScapeSignalManager::Instance()->ConnectJetSignal(
                                     dynamic_pointer_cast<JetEnergyLoss>(it2));
             }
-	
-	if (!dynamic_pointer_cast<JetEnergyLoss>(it2)->GetEdensitySignalConnected())	  
-	  JetScapeSignalManager::Instance()->ConnectEdensitySignal(dynamic_pointer_cast<JetEnergyLoss>(it2));
-	
-	if (!dynamic_pointer_cast<JetEnergyLoss>(it2)-> GetGetHydroCellSignalConnected())	  
-	  JetScapeSignalManager::Instance()->ConnectGetHydroCellSignal(dynamic_pointer_cast<JetEnergyLoss>(it2));
-
-	// between eloss modules and eloss
-	// check the signals itself, probably best via manager in the long run ...
-	if(!dynamic_pointer_cast<JetEnergyLoss>(it2)->GetSentInPartonsConnected())
-	  JetScapeSignalManager::Instance()->ConnectSentInPartonsSignal(dynamic_pointer_cast<JetEnergyLoss>(it),dynamic_pointer_cast<JetEnergyLoss>(it2));
-      }
-  
-  JetScapeSignalManager::Instance()->PrintGetHydroCellSignalMap();
-  VERBOSE(8);
-  JetScapeSignalManager::Instance()->PrintSentInPartonsSignalMap();
+            if (!dynamic_pointer_cast<JetEnergyLoss>(it2)->GetEdensitySignalConnected()) {
+                JetScapeSignalManager::Instance()->ConnectEdensitySignal(
+                                    dynamic_pointer_cast<JetEnergyLoss>(it2));
+            }
+            if (!dynamic_pointer_cast<JetEnergyLoss>(it2)->GetGetHydroCellSignalConnected()) {
+                JetScapeSignalManager::Instance()->ConnectGetHydroCellSignal(
+                                    dynamic_pointer_cast<JetEnergyLoss>(it2));
+            }
+            
+            // between eloss modules and eloss
+            // check the signals itself, probably best via manager in the long run ...
+            if (!dynamic_pointer_cast<JetEnergyLoss>(it2)->GetSentInPartonsConnected()) {
+                JetScapeSignalManager::Instance()->ConnectSentInPartonsSignal(
+                        dynamic_pointer_cast<JetEnergyLoss>(it),
+                        dynamic_pointer_cast<JetEnergyLoss>(it2));
+            }
+        }
+    }
+    
+    JetScapeSignalManager::Instance()->PrintGetHydroCellSignalMap();
+    VERBOSE(8);
+    JetScapeSignalManager::Instance()->PrintSentInPartonsSignalMap();
 }
 
 } // end namespace Jetscape

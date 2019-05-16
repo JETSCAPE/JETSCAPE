@@ -219,6 +219,13 @@ void JetEnergyLoss::DoShower() {
 	        pInTempModule.push_back(pIn[i]);
 	        SentInPartons(deltaT, currentTime, pIn[i].pt(),
                           pInTempModule, pOutTemp);
+            
+            // apply liquefier
+            if (!weak_ptr_is_uninitialized(liquefier_ptr)
+                and currentTime > 0.1) {
+                liquefier_ptr.lock()->add_hydro_sources(pInTempModule,
+                                                        pOutTemp);
+            }
 
             // stuffs related to vertex
 	        if (!foundchangedorig) {
@@ -269,28 +276,14 @@ void JetEnergyLoss::DoShower() {
 		        }
 	        }
 
-            // if pOut list is empty, the parton just freestream
-            bool parton_freestream = false;
-            if (pOutTemp.size() == 0) {
-                parton_freestream = true;
-            }
-
-            // apply liquefier
-            if (!weak_ptr_is_uninitialized(liquefier_ptr)
-                and currentTime > 0.1) {
-                liquefier_ptr.lock()->add_hydro_sources(pInTempModule,
-                                                        pOutTemp);
-            }
-
             // update parton shower
-            if (parton_freestream) {
+            if (pOutTemp.size() == 0) {
                 pInTemp.push_back(pInTempModule[0]);
             }
 
 	        for (int k = 0; k < pOutTemp.size(); k++) { 
 	            pOut.push_back(pOutTemp[k]);
             }
-
 	        //pOutTemp.clear();
 	        //pInTempModule.clear();
 	    }
@@ -299,7 +292,6 @@ void JetEnergyLoss::DoShower() {
         pIn.clear();
         pIn.insert(pIn.end(), pInTemp.begin(), pInTemp.end());
         pIn.insert(pIn.end(), pOut.begin(), pOut.end());
-      
         //pOut.clear();
         //pInTemp.clear();
           

@@ -53,18 +53,10 @@ void LiquefierBase::add_hydro_sources(std::vector<Parton> &pIn,
     if (pOut.size() == 0) return;
     
     //cout << "debug, before ......." << pIn.size() << "  " << pOut.size() << endl;
-    const Jetscape::real hydro_source_abs_err = 1e-15;
-    FourVector p_final;
-    FourVector p_init;
-    FourVector x_final;
-    FourVector x_init;
-    double weight_final, weight_init;
-    
-    int i = 0;
-    while(i < pOut.size()) {
-        if (pOut[i].pstat() == -1) {
+    for (auto &iparton : pOut) {
+        if (iparton.pstat() == -1) {
             // remove negative particles from parton list
-	        pOut.erase(pOut.begin() + i);
+            iparton.set_stat(-2);
 	        continue;
         } else {
             // for positive particles, including jet partons and recoil partons
@@ -91,18 +83,22 @@ void LiquefierBase::add_hydro_sources(std::vector<Parton> &pIn,
 	        //if (gamma*(pOut[i].e() - pOut[i].p(1)*vxLoc
             //           - pOut[i].p(2)*vyLoc - pOut[i].p(3)*vzLoc)
             //    < 4.0*tempLoc) {}
-	        if (pOut[i].e() < e_threshold) {
+	        if (iparton.e() < e_threshold) {
 		        //cout << "check before remove: " << i << "  "
                 //     << pOut[i].e() << "  " << pOut.size() << endl;
-                pOut.erase(pOut.begin() + i);
+                iparton.set_stat(-2);
 		        //cout << "check after remove: " << i << "  "
                 //     << pOut.size() << endl;
 		        continue;
 	        }
 	    }
-        i++;
     }
-
+    
+    const Jetscape::real hydro_source_abs_err = 1e-15;
+    FourVector p_final;
+    FourVector p_init;
+    FourVector x_final;
+    FourVector x_init;
     //cout << "debug, mid ......." << pOut.size() << endl;
     // use energy conservation to deterime the source term
     for (const auto &iparton : pIn) {
@@ -111,17 +107,15 @@ void LiquefierBase::add_hydro_sources(std::vector<Parton> &pIn,
         x_init = iparton.x_in();
     }
     for (const auto &iparton : pOut) {
+        if (iparton.pstat() == -2) continue;
         auto temp = iparton.p_in();
         p_final += temp;
         x_final = iparton.x_in(); 
     }
+
     if (std::abs(p_init.t() - p_final.t())/p_init.t() > hydro_source_abs_err) {
-    	weight_init = 1.0;
-	    if (pOut.size() > 0) {
-            weight_final = 1.0;
-        } else {
-            weight_final = 0.0;
-        }
+    	const Jetscape::real weight_init = 1.0;
+        const Jetscape::real weight_final = 1.0;
 
         Jetscape::real droplet_t = (
                 (x_final.t()*weight_final + x_init.t()*weight_init)
