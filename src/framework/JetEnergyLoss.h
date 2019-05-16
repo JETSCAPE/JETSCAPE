@@ -185,10 +185,15 @@ class JetEnergyLoss : public JetScapeModuleBase, public std::enable_shared_from_
     void add_a_liqueifier(std::shared_ptr<LiquefierBase> new_liqueifier) {
         liquefier_ptr = new_liqueifier;
     }
+    
+    // The Slot method to send the vector of Hadronization module
+    void SendFinalStatePartons(vector<vector<shared_ptr<Parton>>>& fPartons) {fPartons = final_Partons;};
 
 
  protected:
     std::weak_ptr<LiquefierBase> liquefier_ptr;
+
+  void GetFinalPartonsForEachShower(shared_ptr<PartonShower> shower);
 
  private:
 
@@ -213,7 +218,8 @@ class JetEnergyLoss : public JetScapeModuleBase, public std::enable_shared_from_
   bool jetSignalConnected;
   bool edensitySignalConnected;
   
- 
+  // Vector of final state partons for each shower as a vector
+  vector<vector<shared_ptr<Parton>>> final_Partons; 
 
 };
 
