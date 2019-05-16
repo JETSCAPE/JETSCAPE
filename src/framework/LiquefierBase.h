@@ -70,7 +70,7 @@ class LiquefierBase {
 
     Droplet get_a_droplet(const int idx) const {return(dropletlist[idx]);}
 
-    void filter_partons(std::vector<Parton> &pIn, std::vector<Parton> &pOut);
+    void filter_partons(std::vector<Parton> &pOut);
     void add_hydro_sources(std::vector<Parton> &pIn,
                            std::vector<Parton> &pOut);
  

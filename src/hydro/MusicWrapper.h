@@ -36,7 +36,7 @@ class HydroSourceJETSCAPE : public HydroSourceBase {
     HydroSourceJETSCAPE() = default;
     ~HydroSourceJETSCAPE() {}
 
-    void add_a_liqueifier(std::shared_ptr<LiquefierBase> new_liqueifier) {
+    void add_a_liquefier(std::shared_ptr<LiquefierBase> new_liqueifier) {
         liquefier_ptr = new_liqueifier;
     }
 
@@ -108,9 +108,9 @@ class MpiMusic: public FluidDynamics {
      void SetHydroGridInfo();
      void PassHydroEvolutionHistoryToFramework();
     
-     void add_a_liqueifier(std::shared_ptr<LiquefierBase> new_liqueifier) {
+     void add_a_liquefier(std::shared_ptr<LiquefierBase> new_liqueifier) {
         liquefier_ptr = new_liqueifier;
-        hydro_source_terms_ptr->add_a_liqueifier(liquefier_ptr.lock());
+        hydro_source_terms_ptr->add_a_liquefier(liquefier_ptr.lock());
     }
 
      void GetHyperSurface(Jetscape::real T_cut,

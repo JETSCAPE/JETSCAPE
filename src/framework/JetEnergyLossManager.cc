@@ -221,12 +221,12 @@ void JetEnergyLossManager::CreateSignalSlots() {
                         dynamic_pointer_cast<JetEnergyLoss>(it2));
             }
         }
-        auto liq_pt = dynamic_pointer_cast<JetEnergyLoss>(it)->get_liquefier();
-        if (!liq_pt.lock()->get_GetHydroCellSignalConnected()) {
-                JetScapeSignalManager::Instance()->ConnectGetHydroCellSignal(
-                                                                liq_pt.lock());
-            
-        }
+        //auto liq_pt = dynamic_pointer_cast<JetEnergyLoss>(it)->get_liquefier();
+        //if (!liq_pt.lock()->get_GetHydroCellSignalConnected()) {
+        //        JetScapeSignalManager::Instance()->ConnectGetHydroCellSignal(
+        //                                                        liq_pt.lock());
+        //    
+        //}
     }
     
     JetScapeSignalManager::Instance()->PrintGetHydroCellSignalMap();

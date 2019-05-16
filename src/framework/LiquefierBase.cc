@@ -44,8 +44,7 @@ void LiquefierBase::get_source(Jetscape::real tau, Jetscape::real x,
 }
 
 
-void LiquefierBase::filter_partons(std::vector<Parton> &pIn, 
-                                   std::vector<Parton> &pOut) {
+void LiquefierBase::filter_partons(std::vector<Parton> &pOut) {
     // if e_threshold > 0, use e_threshold, else, use e_threshold*T 
     // this should be put into xml later.
     auto e_threshold = 2.0;
@@ -63,31 +62,33 @@ void LiquefierBase::filter_partons(std::vector<Parton> &pIn,
                 iparton.set_stat(drop_stat);
 		        continue;
             }
-        }
-        auto tLoc = iparton.x_in().t();
-        auto xLoc = iparton.x_in().x();
-        auto yLoc = iparton.x_in().y();
-        auto zLoc = iparton.x_in().z();
-        //cout << "debug1" << endl;
-        std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
-        GetHydroCellSignal(tLoc, xLoc, yLoc, zLoc, check_fluid_info_ptr);
-        //cout << "debug2  " << tLoc << "  " << xLoc << "  " << yLoc
-        //     << "  " << zLoc << "  " << check_fluid_info_ptr << endl;
-        auto tempLoc = check_fluid_info_ptr->temperature;
-        //cout << "debug3" << endl;
-        auto vxLoc = check_fluid_info_ptr->vx;
-        auto vyLoc = check_fluid_info_ptr->vy;
-        auto vzLoc = check_fluid_info_ptr->vz;
-        auto beta2 = vxLoc*vxLoc + vyLoc*vyLoc + vzLoc*vzLoc;
-	    auto gamma = 1.0 / sqrt(1.0 - beta2);
+        } else {
+            auto tLoc = iparton.x_in().t();
+            auto xLoc = iparton.x_in().x();
+            auto yLoc = iparton.x_in().y();
+            auto zLoc = iparton.x_in().z();
+            //cout << "debug1" << endl;
+            std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
+            GetHydroCellSignal(tLoc, xLoc, yLoc, zLoc, check_fluid_info_ptr);
+            //cout << "debug2  " << tLoc << "  " << xLoc << "  " << yLoc
+            //     << "  " << zLoc << "  " << check_fluid_info_ptr << endl;
+            auto tempLoc = check_fluid_info_ptr->temperature;
+            //cout << "debug3" << endl;
+            auto vxLoc = check_fluid_info_ptr->vx;
+            auto vyLoc = check_fluid_info_ptr->vy;
+            auto vzLoc = check_fluid_info_ptr->vz;
+            auto beta2 = vxLoc*vxLoc + vyLoc*vyLoc + vzLoc*vzLoc;
+	        auto gamma = 1.0 / sqrt(1.0 - beta2);
 
-        // delete partons with energy smaller than 4*T
-        // (in the local rest frame) from parton list
-	    if (gamma*(iparton.e() - iparton.p(1)*vxLoc
-                   - iparton.p(2)*vyLoc - iparton.p(3)*vzLoc) < 4.0*tempLoc) {
-            iparton.set_stat(drop_stat);
-		    continue;
-	    }
+            // delete partons with energy smaller than 4*T
+            // (in the local rest frame) from parton list
+	        if (gamma*(iparton.e() - iparton.p(1)*vxLoc
+                       - iparton.p(2)*vyLoc - iparton.p(3)*vzLoc)
+                < 4.0*tempLoc) {
+                iparton.set_stat(drop_stat);
+                continue;
+	        }
+        }
     }
 }
 
@@ -96,7 +97,7 @@ void LiquefierBase::add_hydro_sources(std::vector<Parton> &pIn,
                                       std::vector<Parton> &pOut) {
     if (pOut.size() == 0) return;  // the process is freestreaming, ignore
     
-    filter_partons(pIn, pOut);
+    filter_partons(pOut);
     
     FourVector p_final;
     FourVector p_init;
