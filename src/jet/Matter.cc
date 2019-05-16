@@ -1472,7 +1472,9 @@ double Matter::generate_vac_t_w_M(int p_id, double M, double nu, double t0, doub
     
   diff = (ratio - r)/r;
     
-  t_low = 2.0*t0;
+//    if (t0<M*M) t0 = M*M;
+    
+    t_low = t0*(1.0 + std::sqrt(1.0 + 2.0*M*M/t0));
     
   t_hi = t;
     
@@ -1682,6 +1684,8 @@ double  Matter::generate_vac_z_w_M(int p_id, double M, double t0, double t, doub
 
   r = ZeroOneDistribution(*GetMt19937Generator());
     
+//    if (t0<M*M) t0 = M*M;
+    
   if ((r>1)||(r<0))
     {
       throw std::runtime_error(" error in random number in z *GetMt19937Generator()");
@@ -1757,7 +1761,7 @@ double  Matter::generate_vac_z_w_M(int p_id, double M, double t0, double t, doub
     } else {
  
       if (((int) std::abs((double) p_id))==4 || ((int) std::abs((double) p_id))==5){
-        numer = P_z_qg_int_w_M(M, e, z_mid, loc_b, t, 2.0*nu/t , nu );
+        numer = P_z_qg_int_w_M(M, e + M*M/(t+M*M), z_mid, loc_b, t, 2.0*nu/t , nu );
       } else {
         numer = P_z_qg_int(e, z_mid, loc_b, t, 2.0*nu/t , nu );
       }
@@ -2289,13 +2293,13 @@ double Matter::sudakov_Pqg_w_M(double M, double g0, double g1, double loc_c, dou
     
   sud = 1.0 ;
     
-  if (g1<2.0*g0)
+    if (g1<g0*( 1.0 + std::sqrt( 1.0 + 2.0*M*M/g0 ) ) )
     {
       JSWARN << " warning: the lower limit of the sudakov > 1/2 upper limit, returning 1 ";
       JSWARN << " in sudakov_Pquark gluon, g0, g1 = " << g0 << "  " << g1;
       return(sud) ;
     }
-  g = 2.0*g0;
+  g = g0*( 1.0 + std::sqrt( 1.0 + 2.0*M*M/g0 ) );
     
   sud = exp( -1.0*(Cf/2.0/pi)*sud_val_QG_w_M(M,g0,g,g1,loc_c, E ) );
     
@@ -2480,7 +2484,7 @@ double Matter::sud_z_QG_w_M(double M, double cg, double cg1, double loc_e, doubl
   if (cg1<2.0*cg)
     {
         
-      //        cout << " returning with cg, cg1 = " << cg << "   " <<  cg1 << "    " << E_minimum << "  " << E2 << endl ;
+      JSINFO << MAGENTA << " returning with cg, cg1 = " << cg << "   " <<  cg1 << "    " << E_minimum << "  " << E2 ;
       return(0.0);
     };
     
@@ -2610,6 +2614,9 @@ double Matter::sud_z_QG_w_M(double M, double cg, double cg1, double loc_e, doubl
   if (res<0.0)
     {
       cerr << "ERROR: medium contribution negative in sud_z_QG : res = " << res << endl;
+        
+        
+        
       throw std::runtime_error("ERROR: medium contribution negative in sud_z_QG");
     }
     
