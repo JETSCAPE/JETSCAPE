@@ -54,6 +54,7 @@ class LiquefierBase {
     std::vector<Droplet> dropletlist;
     bool GetHydroCellSignalConnected;
     const int drop_stat;
+    const Jetscape::real hydro_source_abs_err;
 
  public:
     LiquefierBase();
@@ -64,10 +65,12 @@ class LiquefierBase {
     }
 
 
+
     int get_drop_stat() const {return(drop_stat);}
 
     Droplet get_a_droplet(const int idx) const {return(dropletlist[idx]);}
 
+    void filter_partons(std::vector<Parton> &pIn, std::vector<Parton> &pOut);
     void add_hydro_sources(std::vector<Parton> &pIn,
                            std::vector<Parton> &pOut);
  

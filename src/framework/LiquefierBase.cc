@@ -17,7 +17,7 @@
 
 namespace Jetscape {
 
-LiquefierBase::LiquefierBase() : drop_stat(-11) {
+LiquefierBase::LiquefierBase() : hydro_source_abs_err(1e-15), drop_stat(-11) {
     GetHydroCellSignalConnected = false;
 }
 
@@ -44,16 +44,12 @@ void LiquefierBase::get_source(Jetscape::real tau, Jetscape::real x,
 }
 
 
-void LiquefierBase::add_hydro_sources(std::vector<Parton> &pIn,
-                                      std::vector<Parton> &pOut) {
+void LiquefierBase::filter_partons(std::vector<Parton> &pIn, 
+                                   std::vector<Parton> &pOut) {
     // if e_threshold > 0, use e_threshold, else, use e_threshold*T 
     // this should be put into xml later.
     auto e_threshold = 2.0;
-
-    if (pOut.size() == 0) return;  // the process is freestreaming, ignore
     
-    //cout << "debug, before ......." << pIn.size() << "  "
-    //     << pOut.size() << endl;
     for (auto &iparton : pOut) {
         if (iparton.pstat() == -1) {
             // remove negative particles from parton list
@@ -93,8 +89,15 @@ void LiquefierBase::add_hydro_sources(std::vector<Parton> &pIn,
 		    continue;
 	    }
     }
+}
+
+
+void LiquefierBase::add_hydro_sources(std::vector<Parton> &pIn,
+                                      std::vector<Parton> &pOut) {
+    if (pOut.size() == 0) return;  // the process is freestreaming, ignore
     
-    const Jetscape::real hydro_source_abs_err = 1e-15;
+    filter_partons(pIn, pOut);
+    
     FourVector p_final;
     FourVector p_init;
     FourVector x_final;
