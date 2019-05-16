@@ -101,6 +101,19 @@ void JetScapeSignalManager::ConnectGetHydroCellSignal(shared_ptr<JetEnergyLoss> 
   }
 }
 
+
+void JetScapeSignalManager::ConnectGetHydroCellSignal(
+                                            shared_ptr<LiquefierBase> l) {
+    if (!l->get_GetHydroCellSignalConnected()) {
+        auto hp = GetHydroPointer().lock();
+        if (hp) {
+            l->GetHydroCellSignal.connect(hp.get(),
+                                          &FluidDynamics::GetHydroCell);
+            l->set_GetHydroCellSignalConnected(true);
+        }
+    }
+}
+
 void JetScapeSignalManager::ConnectSentInPartonsSignal(shared_ptr<JetEnergyLoss> j,shared_ptr<JetEnergyLoss> j2)
 {
   if (!j2->GetSentInPartonsConnected())

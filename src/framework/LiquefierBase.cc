@@ -17,6 +17,10 @@
 
 namespace Jetscape {
 
+LiquefierBase::LiquefierBase() {
+    GetHydroCellSignalConnected = false;
+}
+
 void LiquefierBase::get_source(Jetscape::real tau, Jetscape::real x,
                                Jetscape::real y, Jetscape::real eta,
                                std::array<Jetscape::real, 4> &jmu) const {

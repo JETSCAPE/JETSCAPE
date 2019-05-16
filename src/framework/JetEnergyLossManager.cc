@@ -197,13 +197,13 @@ void JetEnergyLossManager::Exec()
   VERBOSE(3)<<" "<<GetNumberOfTasks()<<" Eloss Manager Tasks/Modules finished.";
 }
 
-void JetEnergyLossManager::CreateSignalSlots()
-{
-  for (auto it : GetTaskList())
-    for (auto it2 : it->GetTaskList())
-      {
-	if (!dynamic_pointer_cast<JetEnergyLoss>(it2)->GetJetSignalConnected())
-	  JetScapeSignalManager::Instance()->ConnectJetSignal(dynamic_pointer_cast<JetEnergyLoss>(it2));
+void JetEnergyLossManager::CreateSignalSlots() {
+    for (auto it : GetTaskList()) {
+        for (auto it2 : it->GetTaskList()) {
+	        if (!dynamic_pointer_cast<JetEnergyLoss>(it2)->GetJetSignalConnected()) {
+	            JetScapeSignalManager::Instance()->ConnectJetSignal(
+                                    dynamic_pointer_cast<JetEnergyLoss>(it2));
+            }
 	
 	if (!dynamic_pointer_cast<JetEnergyLoss>(it2)->GetEdensitySignalConnected())	  
 	  JetScapeSignalManager::Instance()->ConnectEdensitySignal(dynamic_pointer_cast<JetEnergyLoss>(it2));

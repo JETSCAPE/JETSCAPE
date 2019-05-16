@@ -17,15 +17,9 @@
 #define LIQUEFIERBASE_H
 
 
-//#include "JetScapeModuleBase.h"
-//#include "FluidDynamics.h"
-//#include "FluidCellInfo.h"
 #include "JetClass.h"
-//#include "JetScapeWriter.h"
-//#include "PartonShower.h"
-//#include "PartonPrinter.h"
-//#include "MakeUniqueHelper.h"
-//#include <random>
+#include "sigslot.h"
+#include "FluidCellInfo.h"
 
 #include <array>
 #include <vector>
@@ -58,9 +52,10 @@ class Droplet {
 class LiquefierBase {
  private:
     std::vector<Droplet> dropletlist;
+    bool GetHydroCellSignalConnected;
 
  public:
-    LiquefierBase() = default;
+    LiquefierBase();
     ~LiquefierBase() {Clear();}
 
     void add_a_droplet(Droplet droplet_in) {
@@ -72,6 +67,18 @@ class LiquefierBase {
     void add_hydro_sources(std::vector<Parton> &pIn,
                            std::vector<Parton> &pOut);
  
+    //! Core signal to receive information from the medium
+    sigslot::signal5<double, double, double, double,
+                     std::unique_ptr<FluidCellInfo>&,
+                     sigslot::multi_threaded_local> GetHydroCellSignal;
+
+    const bool get_GetHydroCellSignalConnected() {
+        return GetHydroCellSignalConnected;
+    }
+
+    void set_GetHydroCellSignalConnected(bool m_GetHydroCellSignalConnected) {
+        GetHydroCellSignalConnected = m_GetHydroCellSignalConnected;
+    }
 
     int get_dropletlist_size() const {return(dropletlist.size());}
 
