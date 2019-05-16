@@ -200,12 +200,14 @@ void JetEnergyLoss::DoShower() {
     // cerr << " ---------------------------------------------- " << endl;
     // cerr << "Start with " << *GetShowerInitiatingParton()
     //      << "  -> " << GetShowerInitiatingParton()->t() << endl;
-    bool foundchangedorig=false;
+    bool foundchangedorig = false;
+    int droplet_stat = -11;
     do {
         vector<Parton> pOut;
         vector<Parton> pInTemp;
 
         vector<node> vStartVecOut;
+        vector<node> vStartVecOut2;
         vector<node> vStartVecTemp;
 
         VERBOSESHOWER(7) << "Current time = " << currentTime
@@ -223,6 +225,7 @@ void JetEnergyLoss::DoShower() {
             // apply liquefier
             if (!weak_ptr_is_uninitialized(liquefier_ptr)
                 && currentTime > 0.1) {
+                droplet_stat = liquefier_ptr.lock()->get_drop_stat();
                 liquefier_ptr.lock()->add_hydro_sources(pInTempModule,
                                                         pOutTemp);
             }
@@ -251,7 +254,11 @@ void JetEnergyLoss::DoShower() {
 	            pOutTemp[k].set_shower(pShower);
 	            pOutTemp[k].set_edgeid(edgeid);
 		      
-	            vStartVecOut.push_back(vEnd);
+                if (pOutTemp[k].pstat() == droplet_stat) {
+	                vStartVecOut2.push_back(vEnd);
+                } else {
+                    vStartVecOut.push_back(vEnd);
+                }
 
 	            // --------------------------------------------
 	            // Add new roots from ElossModules ...
@@ -284,8 +291,7 @@ void JetEnergyLoss::DoShower() {
 
 	        for (int k = 0; k < pOutTemp.size(); k++) { 
                 if (!weak_ptr_is_uninitialized(liquefier_ptr)
-                    && pOutTemp[k].pstat()
-                        == liquefier_ptr.lock()->get_drop_stat()) {
+                    && pOutTemp[k].pstat() == droplet_stat) {
                     continue;
                 }
 	            pOut.push_back(pOutTemp[k]);
@@ -307,6 +313,8 @@ void JetEnergyLoss::DoShower() {
                          vStartVecTemp.end());
         vStartVec.insert(vStartVec.end(), vStartVecOut.begin(),
                          vStartVecOut.end());
+        vStartVec.insert(vStartVec.end(), vStartVecOut2.begin(),
+                         vStartVecOut2.end());
         //vStartVecOut.clear();
         //vStartVecTemp.clear();
     } while (currentTime<maxT); //other criteria (how to include; TBD)
