@@ -53,6 +53,7 @@ class LiquefierBase {
  private:
     std::vector<Droplet> dropletlist;
     bool GetHydroCellSignalConnected;
+    const int drop_stat;
 
  public:
     LiquefierBase();
@@ -61,6 +62,9 @@ class LiquefierBase {
     void add_a_droplet(Droplet droplet_in) {
         dropletlist.push_back(droplet_in);
     }
+
+
+    int get_drop_stat() const {return(drop_stat);}
 
     Droplet get_a_droplet(const int idx) const {return(dropletlist[idx]);}
 

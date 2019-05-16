@@ -17,7 +17,7 @@
 
 namespace Jetscape {
 
-LiquefierBase::LiquefierBase() {
+LiquefierBase::LiquefierBase() : drop_stat(-11) {
     GetHydroCellSignalConnected = false;
 }
 
@@ -56,7 +56,7 @@ void LiquefierBase::add_hydro_sources(std::vector<Parton> &pIn,
     for (auto &iparton : pOut) {
         if (iparton.pstat() == -1) {
             // remove negative particles from parton list
-            iparton.set_stat(-2);
+            iparton.set_stat(drop_stat);
 	        continue;
         } else {
             // for positive particles, including jet partons and recoil partons
@@ -86,7 +86,7 @@ void LiquefierBase::add_hydro_sources(std::vector<Parton> &pIn,
 	        if (iparton.e() < e_threshold) {
 		        //cout << "check before remove: " << i << "  "
                 //     << pOut[i].e() << "  " << pOut.size() << endl;
-                iparton.set_stat(-2);
+                iparton.set_stat(drop_stat);
 		        //cout << "check after remove: " << i << "  "
                 //     << pOut.size() << endl;
 		        continue;
@@ -107,7 +107,7 @@ void LiquefierBase::add_hydro_sources(std::vector<Parton> &pIn,
         x_init = iparton.x_in();
     }
     for (const auto &iparton : pOut) {
-        if (iparton.pstat() == -2) continue;
+        if (iparton.pstat() == drop_stat) continue;
         auto temp = iparton.p_in();
         p_final += temp;
         x_final = iparton.x_in(); 

@@ -222,7 +222,7 @@ void JetEnergyLoss::DoShower() {
             
             // apply liquefier
             if (!weak_ptr_is_uninitialized(liquefier_ptr)
-                and currentTime > 0.1) {
+                && currentTime > 0.1) {
                 liquefier_ptr.lock()->add_hydro_sources(pInTempModule,
                                                         pOutTemp);
             }
@@ -269,9 +269,10 @@ void JetEnergyLoss::DoShower() {
 		  
 		            for (int l = 1; l < pInTempModule.size(); l++) {
 		                node vNewRootNode = pShower->new_vertex(
-                                make_shared<Vertex>(0,0,0,currentTime-deltaT));
-		                pShower->new_parton(vNewRootNode, vEnd,
-                                        make_shared<Parton>(pInTempModule[l]));
+                            make_shared<Vertex>(0, 0, 0, currentTime-deltaT));
+		                pShower->new_parton(
+                            vNewRootNode, vEnd,
+                            make_shared<Parton>(pInTempModule[l]));
 		            }
 		        }
 	        }
@@ -282,7 +283,11 @@ void JetEnergyLoss::DoShower() {
             }
 
 	        for (int k = 0; k < pOutTemp.size(); k++) { 
-                if (pOutTemp[k].pstat() == -2) continue;
+                if (!weak_ptr_is_uninitialized(liquefier_ptr)
+                    && pOutTemp[k].pstat()
+                        == liquefier_ptr.lock()->get_drop_stat()) {
+                    continue;
+                }
 	            pOut.push_back(pOutTemp[k]);
             }
 	        //pOutTemp.clear();
