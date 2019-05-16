@@ -182,8 +182,8 @@ class JetEnergyLoss : public JetScapeModuleBase, public std::enable_shared_from_
    */
   const bool GetSentInPartonsConnected() {return SentInPartonsConnected;}
     
-    void add_a_liqueifier(std::shared_ptr<LiquefierBase> new_liqueifier) {
-        liquefier_ptr = new_liqueifier;
+    void add_a_liquefier(std::shared_ptr<LiquefierBase> new_liquefier) {
+        liquefier_ptr = new_liquefier;
     }
 
     std::weak_ptr<LiquefierBase> get_liquefier() {return(liquefier_ptr);}
