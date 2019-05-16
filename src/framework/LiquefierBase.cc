@@ -47,7 +47,7 @@ void LiquefierBase::get_source(Jetscape::real tau, Jetscape::real x,
 void LiquefierBase::filter_partons(std::vector<Parton> &pOut) {
     // if e_threshold > 0, use e_threshold, else, use e_threshold*T 
     // this should be put into xml later.
-    auto e_threshold = -2.0;
+    auto e_threshold = 2.0;
     
     for (auto &iparton : pOut) {
         if (iparton.pstat() == -1) {
