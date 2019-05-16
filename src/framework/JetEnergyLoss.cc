@@ -169,6 +169,7 @@ void JetEnergyLoss::Init()
   JetScapeTask::InitTasks();
 }
 
+
 void JetEnergyLoss::DoShower() {
     double tStart = 0;
     double currentTime = 0;
@@ -177,12 +178,9 @@ void JetEnergyLoss::DoShower() {
     VERBOSEPARTON(6, *GetShowerInitiatingParton());
 
     // consider pointers for speed up ... 
-    vector<Parton> pIn; vector<Parton> pOut;
-    vector<Parton> pInTemp; vector<Parton> pOutTemp;
-    vector<Parton> pInTempModule;
+    vector<Parton> pIn;
   
-    vector<node> vStartVec; vector<node> vStartVecOut;
-    vector<node> vStartVecTemp;
+    vector<node> vStartVec;
 
     // DEBUG this guy isn't linked to anything - put in test particle for now
     pIn.push_back(*GetShowerInitiatingParton());
@@ -204,15 +202,25 @@ void JetEnergyLoss::DoShower() {
     //      << "  -> " << GetShowerInitiatingParton()->t() << endl;
     bool foundchangedorig=false;
     do {
+        vector<Parton> pOut;
+        vector<Parton> pInTemp;
+
+        vector<node> vStartVecOut;
+        vector<node> vStartVecTemp;
+
         VERBOSESHOWER(7) << "Current time = " << currentTime
                          << " with #Input " << pIn.size();     
         currentTime += deltaT;
 
         for (int i = 0; i < pIn.size(); i++) {
+            vector<Parton> pInTempModule;
+            vector<Parton> pOutTemp;
 	        // JSINFO << pIn.at(i).edgeid();
 	        pInTempModule.push_back(pIn[i]);
 	        SentInPartons(deltaT, currentTime, pIn[i].pt(),
                           pInTempModule, pOutTemp);
+
+            // stuffs related to vertex
 	        if (!foundchangedorig) {
 	            // cerr << " End with "<< pInTempModule.at(0) << "  -> "
                 //      << pInTempModule.at(0).t() << endl;
@@ -222,15 +230,11 @@ void JetEnergyLoss::DoShower() {
                                     make_shared<Parton>(pInTempModule.at(0)));
 	            foundchangedorig=true;
 	        }
-            pInTemp.push_back(pInTempModule[0]);
-            if (!weak_ptr_is_uninitialized(liquefier_ptr)
-                and currentTime > 0.1) {
-                liquefier_ptr.lock()->add_hydro_sources(pInTempModule,
-                                                        pOutTemp);
-            }
 
 	        vStart = vStartVec[i];
-	        vStartVecTemp.push_back(vStart);
+            if (pOutTemp.size() == 0) {
+	            vStartVecTemp.push_back(vStart);
+            }
 
 	        for (int k = 0; k < pOutTemp.size(); k++) { 
 	            vEnd = pShower->new_vertex(
@@ -241,13 +245,6 @@ void JetEnergyLoss::DoShower() {
 	            pOutTemp[k].set_edgeid(edgeid);
 		      
 	            vStartVecOut.push_back(vEnd);
-	            pOut.push_back(pOutTemp[k]);
-
-	            Parton& particle = pOut.back();
-	            // Parton& particle = pOut[iout];
-	            // Parton& particle = pIn.at(i);
-	            // if ( particle.parents().size() )
-	            // 	cout << particle << "  " << particle.parents().at(0)<< endl;
 
 	            // --------------------------------------------
 	            // Add new roots from ElossModules ...
@@ -257,9 +254,8 @@ void JetEnergyLoss::DoShower() {
 	            // Simple Test here below:
 	            // DEBUG:
 	            //cout<<"In JetEnergyloss : "<<pInTempModule.size()<<end;
-	      
 	            if (pInTempModule.size() > 1) {
-		            VERBOSESHOWER(7) << pInTempModule.size()-1
+		            VERBOSESHOWER(7) << pInTempModule.size() - 1
                                      << " new root node(s) to be added ...";
 		            //cout << pInTempModule.size()-1
                     //     << " new root node(s) to be added ..." << endl;
@@ -271,37 +267,53 @@ void JetEnergyLoss::DoShower() {
                                         make_shared<Parton>(pInTempModule[l]));
 		            }
 		        }
-	            if (k == 0) {
-		            pInTemp.pop_back();       		  
-		            vStartVecTemp.pop_back();		 
-		        }	  
 	        }
-	        pOutTemp.clear();
-	        pInTempModule.clear();
+
+            // if pOut list is empty, the parton just freestream
+            bool parton_freestream = false;
+            if (pOutTemp.size() == 0) {
+                parton_freestream = true;
+            }
+
+            // apply liquefier
+            if (!weak_ptr_is_uninitialized(liquefier_ptr)
+                and currentTime > 0.1) {
+                liquefier_ptr.lock()->add_hydro_sources(pInTempModule,
+                                                        pOutTemp);
+            }
+
+            // update parton shower
+            if (parton_freestream) {
+                pInTemp.push_back(pInTempModule[0]);
+            }
+
+	        for (int k = 0; k < pOutTemp.size(); k++) { 
+	            pOut.push_back(pOutTemp[k]);
+            }
+
+	        //pOutTemp.clear();
+	        //pInTempModule.clear();
 	    }
 
+        // one time step is finished, now update parton shower to pIn
         pIn.clear();
-        
         pIn.insert(pIn.end(), pInTemp.begin(), pInTemp.end());
         pIn.insert(pIn.end(), pOut.begin(), pOut.end());
       
-        pOut.clear();
-        pInTemp.clear();
+        //pOut.clear();
+        //pInTemp.clear();
           
+        // update vertex vector
         vStartVec.clear();
         vStartVec.insert(vStartVec.end(), vStartVecTemp.begin(),
                          vStartVecTemp.end());
         vStartVec.insert(vStartVec.end(), vStartVecOut.begin(),
                          vStartVecOut.end());
-        vStartVecOut.clear();
-        vStartVecTemp.clear();
+        //vStartVecOut.clear();
+        //vStartVecTemp.clear();
     } while (currentTime<maxT); //other criteria (how to include; TBD)
 
     pIn.clear();
-    pOut.clear();
-    pInTemp.clear();
-    pInTempModule.clear();
-    pOutTemp.clear();
     vStartVec.clear();
 }
 
