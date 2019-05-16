@@ -282,6 +282,7 @@ void JetEnergyLoss::DoShower() {
             }
 
 	        for (int k = 0; k < pOutTemp.size(); k++) { 
+                if (pOutTemp[k].pstat() == -2) continue;
 	            pOut.push_back(pOutTemp[k]);
             }
 	        //pOutTemp.clear();
