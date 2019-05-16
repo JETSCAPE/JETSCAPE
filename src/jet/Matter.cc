@@ -358,7 +358,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 	  // SC:  
           double pT2 = pIn[i].p(1)*pIn[i].p(1)+pIn[i].p(2)*pIn[i].p(2);
           double max_vir;
-          if(vir_factor<0.0) max_vir = pIn[i].e()*pIn[i].e();
+          if(vir_factor<0.0) max_vir = pIn[i].e()*pIn[i].e() - pIn[i].restmass()*pIn[i].restmass();
           else max_vir = pT2 * vir_factor;
 
           if(max_vir<=QS)
@@ -371,6 +371,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
              if(abs(pIn[i].pid()) == 4 || abs(pIn[i].pid()) == 5)
              { 
                  tQ2 = generate_vac_t_w_M(pIn[i].pid(), pIn[i].restmass(), pIn[i].nu(), QS/2.0, max_vir, zeta, iSplit);
+                 
+                 JSINFO  << BOLDYELLOW << " virtuality calculated as = " << tQ2;
              }
 	     else
              {
@@ -424,7 +426,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
          VERBOSE(8) << " E = " << pIn[i].e() << " px = " << pIn[i].px() << " py = " << pIn[i].py() << " pz = " << pIn[i].pz() ;
          VERBOSE(8) << " *  New generated virtuality = " << tQ2 << " Mean formation time = " << pIn[i].mean_form_time();
          VERBOSE(8) << " *  set new formation time to " << pIn[i].form_time() ;
-         VERBOSE(8) << " * Maximum allowed virtuality = " << pIn[i].e()*pIn[i].e() << "   Minimum Virtuality = " << QS;
+         VERBOSE(8) << " * Maximum allowed virtuality = " << pIn[i].e()*pIn[i].e() - pIn[i].restmass()*pIn[i].restmass() << "   Minimum Virtuality = " << QS;
          VERBOSE(8) << " * Qhat = " << qhat << "  Length in fm = "  << length/5.0 ;
          VERBOSE(8) << " * Jet velocity = " << pIn[i].jet_v().comp(0) << " " << pIn[i].jet_v().comp(1) << "  " << pIn[i].jet_v().comp(2) << "  " << pIn[i].jet_v().comp(3);
          VERBOSE(8) << " * reset location of parton formation = "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z();
@@ -435,6 +437,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           
       }
 
+      
+      cin >> blurb ;
       //if(pIn[i].color()==0 && pIn[i].anti_color()==0) cout << "complain 0 0 color." << endl;
 
       // SC: Q0 can be changed based on different setups

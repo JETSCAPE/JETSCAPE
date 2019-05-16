@@ -78,15 +78,15 @@
 
     <deltaT>0.1</deltaT>
     <formTime> -0.1</formTime>
-    <maxT>20</maxT>
+    <maxT>10</maxT>
     <mutex>ON</mutex>
 
     <Matter>
       <name>Matter</name>
       <matter_on> 1 </matter_on>
-      <Q0> 2.0 </Q0>
+      <Q0> 1.0 </Q0>
       <T0> 0.16 </T0>
-      <vir_factor> 0.25 </vir_factor>
+      <vir_factor> -0.25 </vir_factor>
       <in_vac> 1 </in_vac>
       <recoil_on> 0 </recoil_on>
       <broadening_on> 0 </broadening_on>
