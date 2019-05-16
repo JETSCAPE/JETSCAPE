@@ -28,7 +28,7 @@
 #include "HardProcess.h"
 #include "JetScapeWriter.h"
 #include "PreequilibriumDynamics.h"
-
+#include "PartonPrinter.h"
 
 #include<iostream>
 #include<string>
@@ -72,7 +72,10 @@ class JetScapeSignalManager //: public sigslot::has_slots<sigslot::multi_threade
 
   void SetPartonPrinterPointer(shared_ptr<PartonPrinter> m_pprinter) {pprinter=m_pprinter;}
   weak_ptr<PartonPrinter> GetPartonPrinterPointer() {return pprinter;}
-  
+
+  void SetEnergyLossPointer(shared_ptr<JetEnergyLoss> m_eloss) {eloss=m_eloss;}
+  weak_ptr<JetEnergyLoss> GetEnergyLossPointer() {return eloss;}  
+
   void ConnectJetSignal(shared_ptr<JetEnergyLoss> j);
   void ConnectEdensitySignal(shared_ptr<JetEnergyLoss> j);
   void ConnectGetHydroCellSignal(shared_ptr<JetEnergyLoss> j);
@@ -110,6 +113,7 @@ class JetScapeSignalManager //: public sigslot::has_slots<sigslot::multi_threade
   weak_ptr<HadronizationManager> hadro;
   weak_ptr<Afterburner> afterburner;
   weak_ptr<PartonPrinter> pprinter;
+  weak_ptr<JetEnergyLoss> eloss;
   weak_ptr<SoftParticlization> softparticlization;
   
   int num_jet_signals=0;

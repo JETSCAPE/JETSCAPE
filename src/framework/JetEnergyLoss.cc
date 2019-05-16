@@ -95,7 +95,7 @@ void JetEnergyLoss::Clear()
   VERBOSESHOWER(8);
   if (pShower)
     pShower->clear();
-  
+  this->final_Partons.clear();   
   //inP=nullptr;pShower=nullptr; // kind of defeating the porpose of shared pointers somehow ...
 }
 
@@ -338,7 +338,13 @@ void JetEnergyLoss::Exec()
 	
        shared_ptr<PartonPrinter> pPrinter = JetScapeSignalManager::Instance()->GetPartonPrinterPointer().lock();
        if ( pPrinter ){
-	 pPrinter->GetFinalPartons2(pShower);
+	 pPrinter->GetFinalPartons(pShower);
+       }
+
+       shared_ptr<JetEnergyLoss> pEloss = JetScapeSignalManager::Instance()->GetEnergyLossPointer().lock();
+       if(pEloss)
+       {
+           pEloss->GetFinalPartonsForEachShower(pShower);
        }
     }
   else
@@ -369,6 +375,9 @@ void JetEnergyLoss::PrintShowerInitiatingParton()
   //JSDEBUG<<inP->pid();
 }
 
-
+void JetEnergyLoss::GetFinalPartonsForEachShower(shared_ptr<PartonShower> shower)
+{
+   this->final_Partons.push_back(shower.get()->GetFinalPartons()); 
+}
 
 } // end namespace Jetscape

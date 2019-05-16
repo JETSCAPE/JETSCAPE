@@ -44,18 +44,18 @@ void PartonPrinter::Exec()
   VERBOSE(2) <<"Run PartonPrinter: print shower from event # "<<GetCurrentEvent()<<" ...";
 }
 
-void PartonPrinter::GetFinalPartons(shared_ptr<PartonShower> pShower, vector<shared_ptr<Parton>>& fPartons)
+void PartonPrinter::GetFinalPartons(shared_ptr<PartonShower> pShower/*, vector<shared_ptr<Parton>>& fPartons*/)
 {
   if(pShower)
   {
-    vector<shared_ptr<Parton>> vPin;
+    //vector<shared_ptr<Parton>> vPin;
     for(unsigned int ipart=0; ipart <  pShower.get()->GetFinalPartons().size(); ++ipart)
     {
-      fPartons.push_back( pShower.get()->GetFinalPartons().at(ipart));
-        dist_output << ipart << " " << fPartons.at(ipart)->pid() << " " << fPartons.at(ipart)->e() << " " << fPartons.at(ipart)->px() << " " << fPartons.at(ipart)->py() << " " << fPartons.at(ipart)->pz() << endl;
-      vPin.push_back( pShower.get()->GetFinalPartons().at(ipart));	
+      //fPartons.push_back( pShower.get()->GetFinalPartons().at(ipart));
+        cout << ipart << " " << pShower.get()->GetFinalPartons().at(ipart)->pid() << " " << pShower.get()->GetFinalPartons().at(ipart)->e() << " " << pShower.get()->GetFinalPartons().at(ipart)->px() << " " << pShower.get()->GetFinalPartons().at(ipart)->py() << " " << pShower.get()->GetFinalPartons().at(ipart)->pz() << endl;
+      //vPin.push_back( pShower.get()->GetFinalPartons().at(ipart));	
     }
-    this->pFinals.push_back(vPin);
+    //this->pFinals.push_back(vPin);
   }
 }
 
