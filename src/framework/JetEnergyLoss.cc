@@ -199,6 +199,7 @@ void JetEnergyLoss::DoShower() {
     //      << "  -> " << GetShowerInitiatingParton()->t() << endl;
     bool foundchangedorig = false;
     int droplet_stat = -11;
+    int miss_stat    = -13;
     do {
         vector<Parton> pOut;
         vector<Parton> pInTemp;
@@ -223,6 +224,7 @@ void JetEnergyLoss::DoShower() {
             if (!weak_ptr_is_uninitialized(liquefier_ptr)
                 && currentTime > 0.1) {
                 droplet_stat = liquefier_ptr.lock()->get_drop_stat();
+                miss_stat    = liquefier_ptr.lock()->get_miss_stat();
                 liquefier_ptr.lock()->add_hydro_sources(pInTempModule,
                                                         pOutTemp);
             }
@@ -252,6 +254,7 @@ void JetEnergyLoss::DoShower() {
 	            pOutTemp[k].set_edgeid(edgeid);
 		      
                 if (pOutTemp[k].pstat() == droplet_stat
+                    || pOutTemp[k].pstat() == miss_stat
                     || pOutTemp[k].isPhoton(pOutTemp[k].pid())) {
 	                vStartVecOut2.push_back(vEnd);
                 } else {
@@ -289,9 +292,9 @@ void JetEnergyLoss::DoShower() {
 
 	        for (int k = 0; k < pOutTemp.size(); k++) { 
                 // do not push back droplets
-                if (!weak_ptr_is_uninitialized(liquefier_ptr)
-                    && pOutTemp[k].pstat() == droplet_stat) {
-                    continue;
+                if (!weak_ptr_is_uninitialized(liquefier_ptr)) {
+                    if (pOutTemp[k].pstat() == droplet_stat) continue;
+                    if (pOutTemp[k].pstat() == miss_stat) continue;
                 }
                 
                 // do not push back photons

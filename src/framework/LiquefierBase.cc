@@ -17,7 +17,8 @@
 
 namespace Jetscape {
 
-LiquefierBase::LiquefierBase() : hydro_source_abs_err(1e-10), drop_stat(-11) {
+LiquefierBase::LiquefierBase() :
+    hydro_source_abs_err(1e-10), drop_stat(-11), miss_stat(-13) {
     GetHydroCellSignalConnected = false;
 }
 
@@ -82,7 +83,7 @@ void LiquefierBase::check_energy_momentum_conservation(
                << " GeV, px = " << p_missing.x()
                << " GeV, py = " << p_missing.y()
                << " GeV, pz = " << p_missing.z() << " GeV.";
-        Parton parton_miss(0, 21, drop_stat, p_missing, x_final);
+        Parton parton_miss(0, 21, miss_stat, p_missing, x_final);
         pOut.push_back(parton_miss);
     }
 }
@@ -94,6 +95,8 @@ void LiquefierBase::filter_partons(std::vector<Parton> &pOut) {
     auto e_threshold = 2.0;
     
     for (auto &iparton : pOut) {
+        if (iparton.pstat() == miss_stat) continue;
+
         // ignore photons
         if (iparton.isPhoton(iparton.pid())) continue;
 
@@ -163,13 +166,18 @@ void LiquefierBase::add_hydro_sources(std::vector<Parton> &pIn,
     auto weight_final = 0.0;
     for (const auto &iparton : pOut) {
         if (iparton.pstat() == drop_stat) continue;
+        if (iparton.pstat() == miss_stat) continue;
         auto temp = iparton.p_in();
         p_final += temp;
         x_final = iparton.x_in(); 
         weight_final = 1.0;
     }
 
-    if (std::abs(p_init.t() - p_final.t())/p_init.t() > hydro_source_abs_err) {
+    if (std::abs(p_init.t() - p_final.t())/p_init.t() > hydro_source_abs_err
+        || std::abs(p_init.x() - p_final.x())/p_init.t() > hydro_source_abs_err
+        || std::abs(p_init.y() - p_final.y())/p_init.t() > hydro_source_abs_err
+        || std::abs(p_init.z() - p_final.z())/p_init.t()
+            > hydro_source_abs_err) {
         auto droplet_t = ((x_final.t()*weight_final + x_init.t()*weight_init)
                           /(weight_final + weight_init));
         auto droplet_x = ((x_final.x()*weight_final + x_init.x()*weight_init)
