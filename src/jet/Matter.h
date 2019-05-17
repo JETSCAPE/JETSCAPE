@@ -46,6 +46,10 @@ class Matter : public JetEnergyLossModule<Matter> //, public std::enable_shared_
   double sud_val_QQ(double h0, double h1, double h2, double loc_d, double E1);
   double sud_z_QQ(double cg, double cg1, double loc_e , double l_fac, double E2);
   double P_z_qq_int(double cg, double cg1, double loc_e, double cg3, double l_fac , double E2);
+  double P_z_qp_int(double cg, double cg1, double loc_e, double cg3, double l_fac, double E2 );
+  double sud_z_QP(double cg, double cg1, double loc_e, double l_fac,double E2);
+  double sud_val_QP(double h0, double h1, double h2, double loc_d, double E1);
+    double sudakov_Pqp(double g0, double g1, double loc_c, double E);
   //  void shower_vac( int line, int pid, double nu_in, double t0_in, double t_in, double kx, double ky, double loc, bool is_lead);
   double generate_vac_t(int p_id,double nu, double t0, double t, double loc_a, int isp);
   double  generate_vac_z(int p_id, double t0, double t, double loc_b, double nu, int is  );

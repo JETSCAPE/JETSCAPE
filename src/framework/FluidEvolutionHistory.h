@@ -53,10 +53,11 @@ class EvolutionHistory {
     std::vector<FluidCellInfo> data;
 
     /** Default constructor. */
-    EvolutionHistory() = default;
+    EvolutionHistory() {};
 
     /** Default destructor. */
     ~EvolutionHistory() {data.clear();}
+
 
     void clear_up_evolution_data() {data.clear();}
     
@@ -67,6 +68,7 @@ class EvolutionHistory {
     Jetscape::real XMin() const {return(x_min);}
     Jetscape::real YMin() const {return(y_min);}
     Jetscape::real EtaMin() const {return(eta_min);}
+
 
     /** Maximum value of tau. */
     inline Jetscape::real TauMax() const {return(tau_min + (ntau - 1) * dtau);}
@@ -170,7 +172,7 @@ class EvolutionHistory {
 	@param eta Light-cone coordinate.
     */
     FluidCellInfo GetAtTimeStep(int id_tau, Jetscape::real x, Jetscape::real y,
-                                Jetscape::real etas) const;
+                                Jetscape::real etas);
 
     // get the FluidCellInfo at given space time point
     /** @return FluidCellInfo at a point (tau, x, y, eta).
@@ -180,9 +182,9 @@ class EvolutionHistory {
         @param eta Light-cone coordinate. 
     */
     FluidCellInfo get(Jetscape::real tau, Jetscape::real x, Jetscape::real y,
-                      Jetscape::real etas) const;
+                      Jetscape::real etas);
     FluidCellInfo get_tz(Jetscape::real t, Jetscape::real x, Jetscape::real y,
-                      Jetscape::real z) const;
+                      Jetscape::real z);
 };
 
 }

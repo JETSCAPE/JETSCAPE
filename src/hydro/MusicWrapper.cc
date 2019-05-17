@@ -138,6 +138,7 @@ void MpiMusic::EvolveHydro() {
         }
         music_hydro_ptr->clear_hydro_info_from_memory();
 
+
         // add hydro_id to the hydro evolution filename
         std::ostringstream system_command;
         system_command << "mv evolution_for_movie_xyeta.dat "
@@ -147,6 +148,7 @@ void MpiMusic::EvolveHydro() {
         if (freezeout_temperature > 0.0) {
             FindAConstantTemperatureSurface(freezeout_temperature);
         }
+
     }
     
     collect_freeze_out_surface();

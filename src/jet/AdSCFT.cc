@@ -101,6 +101,13 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 
     for (int i=0;i<pIn.size();i++)
     {
+      //Skip photons
+      if (pIn[i].pid()==photonid)
+      {
+        pOut.push_back(pIn[i]);
+        return;
+      }
+
       JSDEBUG << " in AdS/CFT";
       JSDEBUG << " Parton Q2= " << pIn[i].t();
       JSDEBUG << " Parton Id= " << pIn[i].pid() << " and mass= " << pIn[i].restmass();

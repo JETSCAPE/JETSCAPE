@@ -76,13 +76,14 @@ int main(int argc, char** argv)
   
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",100);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",1000);
   jetscape->SetId("primary");
 
   // Initial conditions and hydro
   auto trento = make_shared<TrentoInitial>();
   auto pythiaGun= make_shared<PythiaGun> ();
   auto hydro = make_shared<Brick> ();
+  jetscape->SetReuseHydro(false);
   jetscape->Add(trento);
   jetscape->Add(pythiaGun);
   jetscape->Add(hydro);
@@ -100,7 +101,9 @@ int main(int argc, char** argv)
   // Note: if you use Matter, it MUST come first (to set virtuality)
   jloss->Add(matter);
   // jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
+
   // jloss->Add(martini);
+
   // jloss->Add(adscft);  
   jlossmanager->Add(jloss);  
   jetscape->Add(jlossmanager);
@@ -109,10 +112,10 @@ int main(int argc, char** argv)
   // Hadronization
   auto hadroMgr = make_shared<HadronizationManager> ();
   auto hadro = make_shared<Hadronization> ();
-  //auto hadroModule = make_shared<ColoredHadronization> ();
-  //hadro->Add(hadroModule);
-  auto colorless = make_shared<ColorlessHadronization> ();
-  hadro->Add(colorless);
+  auto hadroModule = make_shared<ColoredHadronization> ();
+  hadro->Add(hadroModule);
+  //auto colorless = make_shared<ColorlessHadronization> ();
+  //hadro->Add(colorless);
   hadroMgr->Add(hadro);
   jetscape->Add(hadroMgr);
 

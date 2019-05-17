@@ -292,7 +292,7 @@ namespace Jetscape {
     JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  p, x)
   {
     CheckAcceptability( id );
-    assert ( InternalHelperPythia.particleData.isParton(id) );
+    assert ( InternalHelperPythia.particleData.isParton(id)||isPhoton(id) );
     initialize_form_time();
     set_color(0);
     set_anti_color(0);
@@ -309,7 +309,7 @@ namespace Jetscape {
   Parton::Parton (int label, int id, int stat, double pt, double eta, double phi, double e, double* x)  :
     JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  pt, eta, phi, e, x){
     CheckAcceptability ( id );
-    assert ( InternalHelperPythia.particleData.isParton(id) );
+    assert ( InternalHelperPythia.particleData.isParton(id)||isPhoton(id));
     initialize_form_time();
     set_color(0);
     set_anti_color(0);
@@ -340,6 +340,8 @@ namespace Jetscape {
     case -5:  // anti-bottom quark
       break;            
     case 21: // gluon
+      break;
+    case 22: // photon
       break;      
     default:
       JSWARN << " error in id = " << id;
@@ -515,6 +517,11 @@ namespace Jetscape {
     return (MaxColor_);
   }
   
+    bool Parton::isPhoton(int pid)
+    {
+        if (pid==photonid) return true;
+        return false;
+    }
   // ---------------
   // Hadron specific
   // ---------------
@@ -583,5 +590,35 @@ namespace Jetscape {
     return *this;
   }
 
-    
+  // ---------------
+  // Photon specific
+  // ---------------
+
+  Photon::Photon (const Photon& srh) :
+    Parton::Parton (srh)
+  {
+  }
+
+  Photon::Photon (int label, int id, int stat, const FourVector& p, const FourVector& x)  :
+    Parton::Parton ( label,  id,  stat,  p, x)
+  {
+  }
+
+  Photon::Photon (int label, int id, int stat, double pt, double eta, double phi, double e, double* x)  :
+    Parton::Parton ( label,  id,  stat,  pt, eta, phi, e, x)
+  {
+  }
+
+  Photon& Photon::operator=(Photon &ph)
+  {
+    Parton::operator=(ph);
+    return *this;
+  }
+
+  Photon& Photon::operator=(const Photon &ph)
+  {
+    Parton::operator=(ph);
+    return *this;
+  }
+
 } /// end of namespace Jetscape

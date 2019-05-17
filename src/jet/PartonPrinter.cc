@@ -52,7 +52,9 @@ void PartonPrinter::GetFinalPartons(shared_ptr<PartonShower> pShower/*, vector<s
     for(unsigned int ipart=0; ipart <  pShower.get()->GetFinalPartons().size(); ++ipart)
     {
       //fPartons.push_back( pShower.get()->GetFinalPartons().at(ipart));
+
         cout << ipart << " " <<  pShower.get()->GetFinalPartons().at(ipart)->pid() << " " <<  pShower.get()->GetFinalPartons().at(ipart)->e() << " " <<  pShower.get()->GetFinalPartons().at(ipart)->px() << " " <<  pShower.get()->GetFinalPartons().at(ipart)->py() << " " <<  pShower.get()->GetFinalPartons().at(ipart)->pz() << endl;
+
       //vPin.push_back( pShower.get()->GetFinalPartons().at(ipart));	
     }
     //this->pFinals.push_back(vPin);

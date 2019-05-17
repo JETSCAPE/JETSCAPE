@@ -109,6 +109,14 @@ void ColoredHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& s
       for(unsigned int ipart=0; ipart <  shower.at(ishower).size(); ++ipart)
       {
           double onshellE = pow(pow(shower.at(ishower).at(ipart)->px(),2) + pow(shower.at(ishower).at(ipart)->py(),2) + pow(shower.at(ishower).at(ipart)->pz(),2) ,0.5 ) ;
+          
+            if ( shower.at(ishower).at(ipart)->pid()==22 )
+            {
+                
+                JSINFO << BOLDYELLOW << " photon found in colored hadronization with " ;
+                JSINFO << BOLDYELLOW << "px = " << shower.at(ishower).at(ipart)->px();
+                //cin >> blurb;
+            }
           event.append(shower.at(ishower).at(ipart)->pid(),23,shower.at(ishower).at(ipart)->color(),shower.at(ishower).at(ipart)->anti_color(),
 		       shower.at(ishower).at(ipart)->px(),shower.at(ishower).at(ipart)->py(),shower.at(ishower).at(ipart)->pz(),onshellE);
       }
@@ -118,6 +126,8 @@ void ColoredHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& s
       anti_color = shower.at(ishower).at(0)->min_anti_color();
       color = shower.at(ishower).at(0)->min_color();
   
+//      JSINFO << BOLDYELLOW << " color = " << color << " anti-color = " << anti_color;
+      
       if ((color>100)&&(anti_color>100))
       {
           pid = 21;
@@ -130,10 +140,11 @@ void ColoredHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& s
       {
           pid = 1;
       }
-  
-      pz = -1*pz;
-      event.append(pid, 23, anti_color, color, 0.2, 0.2, pz, sqrt(pz*pz + 0.08));       
-    
+      if ( (color!=0)||(anti_color!=0)  ) // only add fake parton for not-photon event
+      {
+          pz = -1*pz;
+          event.append(pid, 23, anti_color, color, 0.2, 0.2, pz, sqrt(pz*pz + 0.08));
+      }
       VERBOSE(2) <<"There are " << hOut.size() << " Hadrons and " << pOut.size() << " partons after Hadronization";
     }
   
@@ -143,7 +154,7 @@ void ColoredHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& s
   unsigned int ip=hOut.size();
   for (unsigned int i=0; i<event.size(); ++i){
     if ( !event[i].isFinal() )   continue;
-    if ( !event[i].isHadron() )  continue;
+//    if ( !event[i].isHadron() )  continue;
     if(fabs(event[i].eta())>20)  continue; //To prevent "nan" from propagating, very rare though
     
     double x[4] = {0,0,0,0};
