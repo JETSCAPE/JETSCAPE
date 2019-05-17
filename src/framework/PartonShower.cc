@@ -379,7 +379,9 @@ void PartonShower::SaveAsGV(string fName)
     {
 
       //label = ("[label=\"(");
-      if( (pMap[*eIt]->pstat()) == -11  )
+      if( (pMap[*eIt]->pstat()) == -13  )
+        label = ("[style=\"dotted\" color=\"red\"label=\"(");
+      else if( (pMap[*eIt]->pstat()) == -11  )
 	label = ("[color=\"red\"label=\"(");
       else if (  (pMap[*eIt]->t()) < 4.0 )
 	label = ("[color=\"blue\"label=\"(");
