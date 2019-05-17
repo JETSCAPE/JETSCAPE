@@ -181,12 +181,10 @@ void JetEnergyLoss::DoShower() {
 
     // consider pointers for speed up ... 
     vector<Parton> pIn;
-  
-    vector<node> vStartVec;
-
     // DEBUG this guy isn't linked to anything - put in test particle for now
     pIn.push_back(*GetShowerInitiatingParton());
-
+  
+    vector<node> vStartVec;
     // Add here the Hard Shower emitting parton ...
     vStart = pShower->new_vertex(make_shared<Vertex>());
     vEnd   = pShower->new_vertex(make_shared<Vertex>());
@@ -195,10 +193,6 @@ void JetEnergyLoss::DoShower() {
 
     // start then the recursive shower ...
     vStartVec.push_back(vEnd);
-    //vStartVecTemp.push_back(vEnd);
-  
-
-    // --------------------------------------------
 
     // cerr << " ---------------------------------------------- " << endl;
     // cerr << "Start with " << *GetShowerInitiatingParton()
@@ -257,7 +251,8 @@ void JetEnergyLoss::DoShower() {
 	            pOutTemp[k].set_shower(pShower);
 	            pOutTemp[k].set_edgeid(edgeid);
 		      
-                if (pOutTemp[k].pstat() == droplet_stat) {
+                if (pOutTemp[k].pstat() == droplet_stat
+                    || pOutTemp[k].isPhoton(pOutTemp[k].pid())) {
 	                vStartVecOut2.push_back(vEnd);
                 } else {
                     vStartVecOut.push_back(vEnd);
@@ -293,22 +288,23 @@ void JetEnergyLoss::DoShower() {
             }
 
 	        for (int k = 0; k < pOutTemp.size(); k++) { 
+                // do not push back droplets
                 if (!weak_ptr_is_uninitialized(liquefier_ptr)
                     && pOutTemp[k].pstat() == droplet_stat) {
                     continue;
                 }
+                
+                // do not push back photons
+		        if (pOutTemp[k].isPhoton(pOutTemp[k].pid())) continue;
+
 	            pOut.push_back(pOutTemp[k]);
             }
-	        //pOutTemp.clear();
-	        //pInTempModule.clear();
 	    }
 
         // one time step is finished, now update parton shower to pIn
         pIn.clear();
         pIn.insert(pIn.end(), pInTemp.begin(), pInTemp.end());
         pIn.insert(pIn.end(), pOut.begin(), pOut.end());
-        //pOut.clear();
-        //pInTemp.clear();
           
         // update vertex vector
         vStartVec.clear();
@@ -318,9 +314,7 @@ void JetEnergyLoss::DoShower() {
                          vStartVecOut.end());
         vStartVec.insert(vStartVec.end(), vStartVecOut2.begin(),
                          vStartVecOut2.end());
-        //vStartVecOut.clear();
-        //vStartVecTemp.clear();
-    } while (currentTime<maxT); //other criteria (how to include; TBD)
+    } while (currentTime<maxT);  // other criteria (how to include; TBD)
 
     pIn.clear();
     vStartVec.clear();

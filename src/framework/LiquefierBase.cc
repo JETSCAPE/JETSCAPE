@@ -50,6 +50,9 @@ void LiquefierBase::filter_partons(std::vector<Parton> &pOut) {
     auto e_threshold = 2.0;
     
     for (auto &iparton : pOut) {
+        // ignore photons
+        if (iparton.isPhoton(iparton.pid())) continue;
+
         if (iparton.pstat() == -1) {
             // remove negative particles from parton list
             iparton.set_stat(drop_stat);

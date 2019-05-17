@@ -192,12 +192,11 @@ class JetEnergyLoss : public JetScapeModuleBase, public std::enable_shared_from_
     void SendFinalStatePartons(vector<vector<shared_ptr<Parton>>>& fPartons) {
         fPartons = final_Partons;
     }
-
+    void GetFinalPartonsForEachShower(shared_ptr<PartonShower> shower);
+    
  protected:
     std::weak_ptr<LiquefierBase> liquefier_ptr;
 
-    void GetFinalPartonsForEachShower(shared_ptr<PartonShower> shower);
-	
  private:
 
   double deltaT;
