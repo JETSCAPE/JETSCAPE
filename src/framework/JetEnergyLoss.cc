@@ -98,8 +98,10 @@ void JetEnergyLoss::Clear()
   VERBOSESHOWER(8);
   if (pShower)
     pShower->clear();
+
  
   this->final_Partons.clear(); 
+
   //inP=nullptr;pShower=nullptr; // kind of defeating the porpose of shared pointers somehow ...
 }
 
@@ -195,6 +197,7 @@ void JetEnergyLoss::DoShower() {
     vStartVec.push_back(vEnd);
     //vStartVecTemp.push_back(vEnd);
   
+
     // --------------------------------------------
 
     // cerr << " ---------------------------------------------- " << endl;
@@ -403,7 +406,9 @@ void JetEnergyLoss::PrintShowerInitiatingParton()
 
 void JetEnergyLoss::GetFinalPartonsForEachShower(shared_ptr<PartonShower> shower)
 {
+
   this->final_Partons.push_back(shower.get()->GetFinalPartons()); 
+
 }
 
 } // end namespace Jetscape

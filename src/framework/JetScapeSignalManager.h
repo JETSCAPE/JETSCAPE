@@ -74,8 +74,10 @@ class JetScapeSignalManager //: public sigslot::has_slots<sigslot::multi_threade
   weak_ptr<PartonPrinter> GetPartonPrinterPointer() {return pprinter;}
 
   void SetEnergyLossPointer(shared_ptr<JetEnergyLoss> m_eloss) {eloss=m_eloss;}
+
   weak_ptr<JetEnergyLoss> GetEnergyLossPointer() {return eloss;}
   
+
   void ConnectJetSignal(shared_ptr<JetEnergyLoss> j);
   void ConnectEdensitySignal(shared_ptr<JetEnergyLoss> j);
   void ConnectGetHydroCellSignal(shared_ptr<JetEnergyLoss> j);

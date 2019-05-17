@@ -46,10 +46,12 @@ void JetScapeSignalManager::ConnectGetHardPartonListSignal(shared_ptr<JetEnergyL
 
 void JetScapeSignalManager::ConnectGetFinalPartonListSignal(shared_ptr<HadronizationManager> hm) {
   if ( !hm->GetGetFinalPartonListConnected() ){
+
     auto elp = GetEnergyLossPointer().lock();
     if ( elp ) {
       hm->GetFinalPartonList.connect(elp.get(),&JetEnergyLoss::SendFinalStatePartons);
       hm->SetGetFinalPartonListConnected(true);
+
     }
   }
 

@@ -81,7 +81,9 @@ void JetEnergyLossManager::Init()
   for (auto it : GetTaskList())
   {
     if (dynamic_pointer_cast<JetEnergyLoss>(it))
+
         JetScapeSignalManager::Instance()->SetEnergyLossPointer(dynamic_pointer_cast<JetEnergyLoss>(it));
+
   }
 }
 
