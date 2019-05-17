@@ -244,7 +244,8 @@ void JetEnergyLoss::DoShower() {
 	            pOutTemp[k].set_edgeid(edgeid);
 		      
 	            vStartVecOut.push_back(vEnd);
-	            pOut.push_back(pOutTemp[k]);
+		    if(!pOutTemp[k].isPhoton(pOutTemp[k].pid()))
+	                pOut.push_back(pOutTemp[k]);
 
 	            Parton& particle = pOut.back();
 	            // Parton& particle = pOut[iout];
