@@ -21,6 +21,7 @@ using namespace Jetscape;
 PGun::PGun() : HardProcess()
 {
   fixed_pT=0;
+  flag_useHybridHad=0;
   SetId("PGun");
   VERBOSE(8);
 }
@@ -42,9 +43,11 @@ void PGun::InitTask()
       JSDEBUG << s << " to be initilizied ...";
       
       pgun->FirstChildElement("pT")->QueryDoubleText(&fixed_pT);
+      pgun->FirstChildElement("useHybridHad")->QueryIntText(&flag_useHybridHad);
 
       JSDEBUG << s << " with fixed pT = "<<fixed_pT;
       JSINFO<<"Parton Gun with fixed pT = "<<fixed_pT;
+      JSINFO<<"Use hybrid hadronization? "<<flag_useHybridHad;
       
     }
   else
@@ -119,10 +122,13 @@ void PGun::Exec()
        xLoc[1] = 0.0;
        xLoc[2] = 0.0;
 
-       //AddParton(make_shared<Parton>(0,parID,0,pT,rapidity,phi,p[0],xLoc));
-       auto ptn = make_shared<Parton>(0,parID,0,pT,rapidity,phi,p[0],xLoc);
-       ptn->set_color( (parID>0) ? 100 : 0 ); ptn->set_anti_color( ((parID>0)||(parID==21)) ? 0 : 101 ); ptn->set_max_color(102);
-       AddParton(ptn);
+       if(flag_useHybridHad != 1) { 
+           AddParton(make_shared<Parton>(0,parID,0,pT,rapidity,phi,p[0],xLoc));
+       } else {
+           auto ptn = make_shared<Parton>(0,parID,0,pT,rapidity,phi,p[0],xLoc);
+           ptn->set_color( (parID>0) ? 100 : 0 ); ptn->set_anti_color( ((parID>0)||(parID==21)) ? 0 : 101 ); ptn->set_max_color(102);
+           AddParton(ptn);
+       }
   
        VERBOSEPARTON(7,*GetPartonAt(i))
 	 <<" added "

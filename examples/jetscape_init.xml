@@ -54,6 +54,7 @@
     <PGun>
       <name>PGun</name>
       <pT>100</pT>
+      <useHybridHad>0</useHybridHad>
     </PGun>
 
     <!-- Pythia Gun -->
@@ -64,6 +65,7 @@
       <pTHatMin>110</pTHatMin>
       <pTHatMax>120</pTHatMax>
       <eCM>2760</eCM>
+      <useHybridHad>1</useHybridHad>
       <!-- You can add any number of additional lines to initialize pythia here -->
       <!-- Note that if the tag exists it cannot be empty (tinyxml produces a segfault) -->
       <!-- <LinesToRead> -->
@@ -83,11 +85,12 @@
 
     <Matter>
       <name>Matter</name>
+      <useHybridHad>1</useHybridHad>
       <matter_on> 1 </matter_on>
       <Q0> 2.0 </Q0>
       <T0> 0.16 </T0>
       <vir_factor> 0.25 </vir_factor>
-      <in_vac> 1 </in_vac>
+      <in_vac> 0 </in_vac>
       <recoil_on> 0 </recoil_on>
       <broadening_on> 0 </broadening_on>
       <brick_med> 0 </brick_med>

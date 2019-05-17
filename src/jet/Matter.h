@@ -56,7 +56,8 @@ class Matter : public JetEnergyLossModule<Matter> //, public std::enable_shared_
   double generate_kt(double local_qhat,double dzeta);
     
   double qhat,length;
-    unsigned int MaxColor;
+  unsigned int MaxColor;
+  int flag_useHybridHad;
 
   //SC: for interface with hydro
   double fillQhatTab();
