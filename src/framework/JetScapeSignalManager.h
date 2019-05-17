@@ -81,6 +81,7 @@ class JetScapeSignalManager //: public sigslot::has_slots<sigslot::multi_threade
   void ConnectJetSignal(shared_ptr<JetEnergyLoss> j);
   void ConnectEdensitySignal(shared_ptr<JetEnergyLoss> j);
   void ConnectGetHydroCellSignal(shared_ptr<JetEnergyLoss> j);
+  void ConnectGetHydroCellSignal(shared_ptr<LiquefierBase> l);
   void ConnectGetHardPartonListSignal(shared_ptr<JetEnergyLossManager> jm);
   void ConnectSentInPartonsSignal(shared_ptr<JetEnergyLoss> j,shared_ptr<JetEnergyLoss> j2);
   void ConnectGetFinalPartonListSignal(shared_ptr<HadronizationManager> hm);

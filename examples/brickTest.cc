@@ -92,7 +92,7 @@ int main(int argc, char** argv)
   // Energy loss
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
-  jloss->add_a_liqueifier(myliquefier);
+  jloss->add_a_liquefier(myliquefier);
 
 
   auto matter = make_shared<Matter> ();

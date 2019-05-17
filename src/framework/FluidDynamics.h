@@ -31,11 +31,9 @@
 #include "PreequilibriumDynamics.h"
 #include "RealType.h"
 #include "FluidCellInfo.h"
-
 #include "FluidEvolutionHistory.h"
 #include "LiquefierBase.h"
 #include "SurfaceCellInfo.h"
-#include "FluidEvolutionHistory.h"
 
 namespace Jetscape {
 
@@ -217,8 +215,8 @@ class FluidDynamics : public JetScapeModuleBase {
     // the detailed implementation is left to the hydro developper
     /** @return Default function to get the hypersurface for Cooper-Frye or recombination model. It can overridden by different modules.
      */
-    virtual void GetHyperSurface(Jetscape::real T_cut,
-                                 SurfaceCellInfo* surface_list_ptr) {};
+    std::vector<SurfaceCellInfo> FindAConstantTemperatureSurface(
+                                                        Jetscape::real T_sw);
 
     // all the following functions will call function GetHydroInfo()
     // to get thermaldynamic and dynamical information at a space-time point
@@ -297,9 +295,9 @@ class FluidDynamics : public JetScapeModuleBase {
     // */
     // virtual Jetscape::real GetNetChargeDensity(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
     
-    virtual void add_a_liqueifier(
-                            std::shared_ptr<LiquefierBase> new_liqueifier) {
-        liquefier_ptr = new_liqueifier;
+    virtual void add_a_liquefier(
+                            std::shared_ptr<LiquefierBase> new_liquefier) {
+        liquefier_ptr = new_liquefier;
     }
 
     void get_source_term(Jetscape::real tau, Jetscape::real x,
