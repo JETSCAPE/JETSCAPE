@@ -16,6 +16,7 @@
 #include "JetEnergyLossManager.h"
 #include "JetScapeLogger.h"
 #include "JetScapeSignalManager.h"
+#include "MakeUniqueHelper.h"
 #include <string>
 
 #include <iostream>
@@ -224,7 +225,8 @@ void JetEnergyLossManager::CreateSignalSlots() {
             }
         }
         auto liq_pt = dynamic_pointer_cast<JetEnergyLoss>(it)->get_liquefier();
-        if (!liq_pt.lock()->get_GetHydroCellSignalConnected()) {
+        if (!weak_ptr_is_uninitialized(liq_pt) && 
+            !liq_pt.lock()->get_GetHydroCellSignalConnected()) {
                 JetScapeSignalManager::Instance()->ConnectGetHydroCellSignal(
                                                                 liq_pt.lock());
             
