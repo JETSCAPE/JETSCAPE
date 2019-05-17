@@ -241,49 +241,50 @@ void JetEnergyLoss::DoShower() {
 	        }
 
 	        vStart = vStartVec[i];
-            if (pOutTemp.size() == 0) {
+            if (pOutTemp.size() < 2) {
 	            vStartVecTemp.push_back(vStart);
-            }
+            } else {
+	            for (int k = 0; k < pOutTemp.size(); k++) { 
+	                vEnd = pShower->new_vertex(
+                                make_shared<Vertex>(0, 0, 0, currentTime));	
+	                int edgeid = pShower->new_parton(
+                                vStart, vEnd, make_shared<Parton>(pOutTemp[k]));
+	                pOutTemp[k].set_shower(pShower);
+	                pOutTemp[k].set_edgeid(edgeid);
+		          
+                    if (pOutTemp[k].pstat() == droplet_stat
+                        || pOutTemp[k].pstat() == miss_stat
+                        || pOutTemp[k].isPhoton(pOutTemp[k].pid())) {
+	                    vStartVecOut2.push_back(vEnd);
+                    } else {
+                        vStartVecOut.push_back(vEnd);
+                    }
 
-	        for (int k = 0; k < pOutTemp.size(); k++) { 
-	            vEnd = pShower->new_vertex(
-                                    make_shared<Vertex>(0, 0, 0, currentTime));	
-	            int edgeid = pShower->new_parton(
-                            vStart, vEnd, make_shared<Parton>(pOutTemp[k]));
-	            pOutTemp[k].set_shower(pShower);
-	            pOutTemp[k].set_edgeid(edgeid);
-		      
-                if (pOutTemp[k].pstat() == droplet_stat
-                    || pOutTemp[k].pstat() == miss_stat
-                    || pOutTemp[k].isPhoton(pOutTemp[k].pid())) {
-	                vStartVecOut2.push_back(vEnd);
-                } else {
-                    vStartVecOut.push_back(vEnd);
-                }
-
-	            // --------------------------------------------
-	            // Add new roots from ElossModules ...
-	            // (maybe add for clarity a new vector in the signal!???)
-	            // Otherwise keep track of input size (so far always 1
-	            // and check if size > 1 and create additional root nodes to that vertex ...
-	            // Simple Test here below:
-	            // DEBUG:
-	            //cout<<"In JetEnergyloss : "<<pInTempModule.size()<<end;
-	            if (pInTempModule.size() > 1) {
-		            VERBOSESHOWER(7) << pInTempModule.size() - 1
-                                     << " new root node(s) to be added ...";
-		            //cout << pInTempModule.size()-1
-                    //     << " new root node(s) to be added ..." << endl;
+	                // --------------------------------------------
+	                // Add new roots from ElossModules ...
+	                // (maybe add for clarity a new vector in the signal!???)
+	                // Otherwise keep track of input size (so far always 1
+	                // and check if size > 1 and create additional root nodes to that vertex ...
+	                // Simple Test here below:
+	                // DEBUG:
+	                //cout<<"In JetEnergyloss : "<<pInTempModule.size()<<end;
+	                if (pInTempModule.size() > 1) {
+		                VERBOSESHOWER(7) << pInTempModule.size() - 1
+                                         << " new root node(s) to be added ...";
+		                //cout << pInTempModule.size()-1
+                        //     << " new root node(s) to be added ..." << endl;
 		  
-		            for (int l = 1; l < pInTempModule.size(); l++) {
-		                node vNewRootNode = pShower->new_vertex(
-                            make_shared<Vertex>(0, 0, 0, currentTime-deltaT));
-		                pShower->new_parton(
-                            vNewRootNode, vEnd,
-                            make_shared<Parton>(pInTempModule[l]));
+		                for (int l = 1; l < pInTempModule.size(); l++) {
+		                    node vNewRootNode = pShower->new_vertex(
+                                make_shared<Vertex>(0, 0, 0,
+                                                    currentTime - deltaT));
+		                    pShower->new_parton(
+                                vNewRootNode, vEnd,
+                                make_shared<Parton>(pInTempModule[l]));
+		                }
 		            }
-		        }
-	        }
+	            }
+            }
 
             // update parton shower
             if (pOutTemp.size() == 0) {
