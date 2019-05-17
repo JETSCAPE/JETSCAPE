@@ -382,10 +382,16 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 
           // KK:
           //pIn[i].set_jet_v(velocity); // SC: take out to the front
+          JSINFO << MAGENTA << " Matter_on = " << matter_on ;
 
 	  // SC: if matter_on = false, set zero virtuality and MATTER will not do parton shower
-          if(matter_on) pIn[i].set_t(tQ2); // Also resets momentum!
-	  else pIn[i].set_t(0.0); 
+          if(matter_on)
+          {
+              pIn[i].set_t(tQ2); // Also resets momentum!
+              JSINFO << BOLDYELLOW << " virtulity set to " << tQ2 ;
+              cin >> blurb;
+          }
+          else pIn[i].set_t(0.0);
 
           pIn[i].set_mean_form_time();
           double ft = generate_L(pIn[i].mean_form_time());
