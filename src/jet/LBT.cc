@@ -406,8 +406,8 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
           for(int j=1; j<=np; j++) { 
             // definition Parton (int label, int id, int stat, double p[4], double x[4]);
             if(P[0][j]<cutOut) continue;
-	    int out_stat=1;
-	    if(CAT[j]==0) out_stat=0; // recoil parton
+	    int out_stat=0; // jet parton 
+	    if(CAT[j]==2) out_stat=1; // recoil parton
             double tempP[4],tempX[4];
             tempP[0]=sqrt(P[0][j]*P[0][j]+P[6][j]);
             tempP[1]=P[1][j];
@@ -1158,6 +1158,8 @@ void LBT::LBT0(int &n, double &ti){
                   P[6][np0]=pow(P[0][np0]/Elab,2)*Qinit;
                   P0[6][np0]=0.0; 
 
+                  if(CAT[i]==2) CAT[np0]=2; // daughters of recoil are recoils 
+
 		  // comment out for unit test
 		  Tint_lrf[i]=0.0;  //reset radiation infomation for heavy quark
         
@@ -1214,6 +1216,7 @@ void LBT::LBT0(int &n, double &ti){
                       P[6][np0-1]=pow(P[0][np0-1]/Elab,2)*Qinit;
                       P[6][np0]=pow(P[0][np0]/Elab,2)*Qinit;
                       P0[6][np0]=0.0;
+                      if(CAT[i]==2) CAT[np0]=2; // daughters of recoil are recoils 
 
 		      eGluon=eGluon+pc4[0];
 		      nGluon=nGluon+1.0;
@@ -1287,15 +1290,15 @@ void LBT::LBT0(int &n, double &ti){
 	  //CAT!!!			  
 	  /*			  
 	   */			  
-	  for(int m=nnpp+1;m<=np0;m++) {
-	    if(CAT[i]==2) {
-	      CAT[m]=2;             				 
-	    }
-	  }
+	  //for(int m=nnpp+1;m<=np0;m++) { // only put recoil parton CAT as 2, radiated gluons do not count
+	  //  if(CAT[i]==2) {
+	  //    CAT[m]=2;             				 
+	  //  }
+	  //}
 
 	  if(P[0][nnpp+1]<Ecut) {
-	    CAT[nnpp+1]=1;
-	    CAT0[nnpp+1]=1;
+	  //  CAT[nnpp+1]=1;
+	  //  CAT0[nnpp+1]=1;
 	    for(int j=0; j<=3; j++) {
 	      P[j][nnpp+1]=0.0;
 	      P0[j][nnpp+1]=0.0;
@@ -1303,13 +1306,13 @@ void LBT::LBT0(int &n, double &ti){
 	  }
 
 	  if(P[0][i]<Ecut) {
-	    CAT[i]=1;
+	  //  CAT[i]=1;
 	    for(int j=0; j<=3; j++) P[j][i]=0.0;
 	  }
 
 	  for(int m=nnpp+2; m<=np0; m++) {
 	    if(P[0][m]<Ecut) {
-	      CAT[m]=1;
+	  //    CAT[m]=1;
 	      for(int j=0; j<=3; j++) P[j][m]=0.0;
 	    }
 	  }

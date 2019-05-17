@@ -15,9 +15,14 @@
 // This is a general basic class for hydrodynamics
 
 #include <iostream>
+#include <array>
 #include "FluidDynamics.h"
 #include "LinearInterpolation.h"
 #include "JetScapeSignalManager.h"
+
+#include "MakeUniqueHelper.h"
+#include "SurfaceFinder.h"
+
 
 #define MAGENTA "\033[35m"
 
@@ -87,6 +92,14 @@ void FluidDynamics::Exec() {
     JetScapeTask::ExecuteTasks();
 }
 
+void FluidDynamics::Clear() {
+    clear_up_evolution_data();
+    if (!weak_ptr_is_uninitialized(liquefier_ptr)) {
+        liquefier_ptr.lock()->Clear();
+    }
+}
+
+
 void FluidDynamics::CollectHeader(weak_ptr<JetScapeWriter> w) {
     auto f = w.lock();
     if ( f ) {
@@ -141,6 +154,13 @@ Jetscape::real FluidDynamics::GetQgpFraction(
     real qgp_fraction = fluid_cell_ptr->qgp_fraction;
     return(qgp_fraction);
 }
+    
+
+void FluidDynamics::get_source_term(Jetscape::real tau, Jetscape::real x,
+                                    Jetscape::real y, Jetscape::real eta,
+                                    std::array<Jetscape::real, 4> jmu) const {
+    liquefier_ptr.lock()->get_source(tau, x, y, eta, jmu);
+}
 
   
 void FluidDynamics::PrintFluidCellInformation(
@@ -176,12 +196,6 @@ void FluidDynamics::PrintFluidCellInformation(
 void FluidDynamics::UpdateEnergyDeposit(int t, double edop) {
     //sigslot::lock_block<multi_threaded_local> lock(this);
     JSDEBUG << MAGENTA << "Jet Signal received : "<< t << " " << edop;
-}
-
-void FluidDynamics::GetEnergyDensity(int t,double &edensity) {
-    //sigslot::lock_block<multi_threaded_local> lock(this);
-    edensity=0.5;
-    JSDEBUG << "Edensity to Jet = " << edensity << " at t=" << t;
 }
 
 

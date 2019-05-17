@@ -58,6 +58,18 @@ class EvolutionHistory {
     /** Default destructor. */
     ~EvolutionHistory() {data.clear();}
 
+
+    void clear_up_evolution_data() {data.clear();}
+    
+    int get_data_size() const {return(data.size());}
+    bool is_boost_invariant() const {return(boost_invariant);}
+
+    Jetscape::real Tau0() const {return(tau_min);}
+    Jetscape::real XMin() const {return(x_min);}
+    Jetscape::real YMin() const {return(y_min);}
+    Jetscape::real EtaMin() const {return(eta_min);}
+
+
     /** Maximum value of tau. */
     inline Jetscape::real TauMax() const {return(tau_min + (ntau - 1) * dtau);}
 

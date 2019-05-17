@@ -88,9 +88,9 @@ class HydroinfoH5
       double getHydrogridY0() {return(grid_Y0);};
       double getHydrogridXmax() {return(grid_Xmax);};
       double getHydrogridYmax() {return(grid_Ymax);};
-      void getHydroinfoOnlattice(int frameIdx, int xIdx, int yIdx, fluidCell* fluidCellptr);
-      void getHydroinfo(double tau, double x, double y, fluidCell* fluidCellptr);
-      void setZero_fluidCell(fluidCell* fluidCellptr);
+      void getHydroinfoOnlattice(int frameIdx, int xIdx, int yIdx, hydrofluidCell* fluidCellptr);
+      void getHydroinfo(double tau, double x, double y, hydrofluidCell* fluidCellptr);
+      void setZero_fluidCell(hydrofluidCell* fluidCellptr);
 
       double cubeInterpShell(int idx_x, int idx_y, int idx_z,
                              double x, double y, double z, double ***dataset);

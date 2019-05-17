@@ -116,6 +116,9 @@ void PGun::Exec()
 	 }
        }
 
+       xLoc[1] = 0.0;
+       xLoc[2] = 0.0;
+
        AddParton(make_shared<Parton>(0,parID,0,pT,rapidity,phi,p[0],xLoc));
   
        VERBOSEPARTON(7,*GetPartonAt(i))

@@ -695,7 +695,7 @@ void Hydroinfo_MUSIC::get_hydro_cell_info_3d(int cell_id,
 }
 
 void Hydroinfo_MUSIC::getHydroValues(double x, double y,
-                                     double z, double t, fluidCell* info) {
+                                     double z, double t, hydrofluidCell* info) {
 // For interpolation of evolution files in tau-eta coordinates. Only the
 // reading of MUSIC's evolution_xyeta.dat file is implemented here.
 // For simplicity, hydro_eta_max refers to MUSIC's eta_size, and similarly for
@@ -982,7 +982,7 @@ void Hydroinfo_MUSIC::getHydroValues(double x, double y,
 }
 
 void Hydroinfo_MUSIC::output_temperature_evolution(string filename_base) {
-    fluidCell *hydroInfo = new fluidCell;
+    hydrofluidCell *hydroInfo = new hydrofluidCell;
     for (int i = 0; i < itaumax; i++) {
         double tau = hydroTau0 + i*hydroDtau;
         ostringstream filename;

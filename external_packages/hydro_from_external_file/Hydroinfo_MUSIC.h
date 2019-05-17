@@ -71,7 +71,7 @@ class Hydroinfo_MUSIC {
             std::string hydro_shear_filename, std::string hydro_bulk_filename);
 
     void getHydroValues(double x, double y, double z, double t,
-                        fluidCell *info);
+                        hydrofluidCell *info);
     void get_hydro_cell_info_3d(int cell_id, fluidCell_3D_new *info);
     void output_temperature_evolution(std::string filename_base);
     void update_grid_info(double tau0, double tau_max, double dtau,
