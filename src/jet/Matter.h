@@ -17,13 +17,15 @@
 #define MATTER_H
 
 #include "JetEnergyLossModule.h"
+#include "Pythia8/Pythia.h"
 
 using namespace Jetscape;
 
 class Matter : public JetEnergyLossModule<Matter> //, public std::enable_shared_from_this<Matter>
 {  
  public:
-  
+//  static Pythia8::Pythia InternalHelperPythia;
+
   Matter();
   virtual ~Matter();
 
@@ -50,6 +52,10 @@ class Matter : public JetEnergyLossModule<Matter> //, public std::enable_shared_
   double  sud_val_QQ(double h0, double h1, double h2, double loc_d, double E1);
   double    sud_z_QQ(double cg, double cg1, double loc_e , double l_fac, double E2);
   double  P_z_qq_int(double cg, double cg1, double loc_e, double cg3, double l_fac, double E2);
+  double sudakov_Pqq_w_M_vac_only(double M, double q0, double q1, double loc_c, double E);
+  double  sud_val_QQ_w_M_vac_only(double M, double h0, double h1, double h2, double loc_d, double E1);
+  double    sud_z_QQ_w_M_vac_only(double M, double cg, double cg1, double loc_e , double l_fac, double E2);
+  double  P_z_qq_int_w_M_vac_only(double M, double cg, double cg1, double loc_e, double cg3, double l_fac, double E2);
   //  void shower_vac( int line, int pid, double nu_in, double t0_in, double t_in, double kx, double ky, double loc, bool is_lead);
   double generate_vac_t(int p_id,double nu, double t0, double t, double loc_a, int isp);
   double generate_vac_t_w_M(int p_id, double M, double nu, double t0, double t, double loc_a, int is);
