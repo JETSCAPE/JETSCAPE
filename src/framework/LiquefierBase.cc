@@ -44,6 +44,42 @@ void LiquefierBase::get_source(Jetscape::real tau, Jetscape::real x,
 }
 
 
+//! This function check the energy momentum conservation at the vertex
+//! If vertex does not conserve energy and momentum,
+//! a p_missing will be added to the pOut list
+void LiquefierBase::check_energy_momentum_conservation(
+        const std::vector<Parton> &pIn, std::vector<Parton> &pOut) {
+    FourVector p_init(0., 0., 0., 0.);
+    for (const auto &iparton : pIn) {
+        auto temp = iparton.p_in();
+        p_init += temp;
+    }
+
+    FourVector p_final(0., 0., 0., 0.);
+    FourVector x_final(0., 0., 0., 0.);
+    for (const auto &iparton : pOut) {
+        auto temp = iparton.p_in();
+        p_final += temp;
+        x_final = iparton.x_in(); 
+    }
+    
+    FourVector p_missing = p_init;
+    p_missing -= p_final;
+    if (   std::abs(p_missing.t()) > hydro_source_abs_err
+        || std::abs(p_missing.x()) > hydro_source_abs_err
+        || std::abs(p_missing.y()) > hydro_source_abs_err
+        || std::abs(p_missing.z()) > hydro_source_abs_err) {
+        JSWARN << "A vertex does not conserve energy momentum!";
+        JSWARN << "E = " << p_missing.t()
+               << " GeV, px = " << p_missing.x()
+               << " GeV, py = " << p_missing.y()
+               << " GeV, pz = " << p_missing.z() << " GeV.";
+        Parton parton_miss(0, 21, drop_stat, p_missing, x_final);
+        pOut.push_back(parton_miss);
+    }
+}
+
+
 void LiquefierBase::filter_partons(std::vector<Parton> &pOut) {
     // if e_threshold > 0, use e_threshold, else, use e_threshold*T 
     // this should be put into xml later.
@@ -100,6 +136,7 @@ void LiquefierBase::add_hydro_sources(std::vector<Parton> &pIn,
                                       std::vector<Parton> &pOut) {
     if (pOut.size() == 0) return;  // the process is freestreaming, ignore
     
+    check_energy_momentum_conservation(pIn, pOut);
     filter_partons(pOut);
     
     FourVector p_final;
