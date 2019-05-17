@@ -71,14 +71,6 @@ void HybridHadronization::Init(){
 	JSDEBUG << s << " to be initialized ...";
 	JSINFO<<"Initialize Hybrid Hadronization ...";
 
-    // Read sqrts to know remnants energies
-    double p_read_xml = 10000;
-    int flagInt=1;
-    hadronization->FirstChildElement("eCMforHadronization")->QueryDoubleText(&p_read_xml);
-    p_fake = p_read_xml;
-    hadronization->FirstChildElement("take_recoil")->QueryIntText(&flagInt);
-    take_recoil=flagInt;
-
     JSDEBUG<<"Initialize HybridHadronization";
     VERBOSE(8);
 	
@@ -91,6 +83,27 @@ void HybridHadronization::Init(){
 	sh_recofactor = 1./3.;		//suppression/enhancement factor for shower-shower recombination
 	th_recofactor = 1./3.;		//suppression/enhancement factor for shower-thermal recombination
 	attempts_max  = 10;			//maximum number of failed attempts to hadronize a single event before we give up.
+	
+	
+	//xml read in to alter settings...
+	double xml_doublein = -1.; int xml_intin = -1;
+	
+	hadronization->FirstChildElement("thermreco_distmax")->QueryDoubleText(&xml_doublein);
+	if(xml_doublein >= 0.){dist2cut = xml_doublein*xml_doublein;}
+	xml_doublein = -1.;
+	
+	hadronization->FirstChildElement("shower_recofactor")->QueryDoubleText(&xml_doublein);
+	if(xml_doublein >= 0.){sh_recofactor = xml_doublein;}
+	xml_doublein = -1.;
+	
+	hadronization->FirstChildElement("thermal_recofactor")->QueryDoubleText(&xml_doublein);
+	if(xml_doublein >= 0.){th_recofactor = xml_doublein;}
+	xml_doublein = -1.;
+	
+	hadronization->FirstChildElement("reco_Elevelmax")->QueryIntText(&xml_intin);
+	if(xml_intin >= 0){maxE_level = xml_intin;}
+	xml_intin = -1;
+	
 	
 	//quark masses/charges used to get widths from charged radii
 	double Qm_ud = 0.338; double Qm_s = 0.486; double Qm_c = 1.55; double Qm_b = 4.73;

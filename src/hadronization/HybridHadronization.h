@@ -38,9 +38,6 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
   void WriteTask(weak_ptr<JetScapeWriter> w);
 
  private:
-  double p_fake; //stuff
-  bool take_recoil; //stuff
-  
   // Allows the registration of the module so that it is available to be used by the Jetscape framework.
   //static RegisterJetScapeModule<HybridHadronization> reg;
   
