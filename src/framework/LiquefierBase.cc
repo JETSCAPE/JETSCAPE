@@ -52,7 +52,11 @@ void LiquefierBase::check_energy_momentum_conservation(
     FourVector p_init(0., 0., 0., 0.);
     for (const auto &iparton : pIn) {
         auto temp = iparton.p_in();
-        p_init += temp;
+        if (iparton.pstat() == -1) {
+            p_init -= temp;
+        } else {
+            p_init += temp;
+        }
     }
 
     FourVector p_final(0., 0., 0., 0.);
