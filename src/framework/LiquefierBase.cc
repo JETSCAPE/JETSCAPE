@@ -17,7 +17,7 @@
 
 namespace Jetscape {
 
-LiquefierBase::LiquefierBase() : hydro_source_abs_err(1e-15), drop_stat(-11) {
+LiquefierBase::LiquefierBase() : hydro_source_abs_err(1e-10), drop_stat(-11) {
     GetHydroCellSignalConnected = false;
 }
 
@@ -59,7 +59,11 @@ void LiquefierBase::check_energy_momentum_conservation(
     FourVector x_final(0., 0., 0., 0.);
     for (const auto &iparton : pOut) {
         auto temp = iparton.p_in();
-        p_final += temp;
+        if (iparton.pstat() == -1) {
+            p_final -= temp;
+        } else {
+            p_final += temp;
+        }
         x_final = iparton.x_in(); 
     }
     
