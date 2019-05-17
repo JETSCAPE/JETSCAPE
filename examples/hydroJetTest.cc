@@ -46,6 +46,7 @@
 #include "Hadronization.h"
 #include "ColoredHadronization.h"
 #include "ColorlessHadronization.h"
+#include "HybridHadronization.h"
 
 #ifdef USE_HDF5
 #include "InitialFromFile.h"
@@ -110,6 +111,7 @@ int main(int argc, char** argv)
   auto hadro = make_shared<Hadronization> ();
   auto hadroModule = make_shared<ColoredHadronization> ();
   auto colorless = make_shared<ColorlessHadronization> ();
+  auto hybridHadr = make_shared<HybridHadronization> ();
 
   // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
@@ -148,7 +150,8 @@ int main(int argc, char** argv)
   jetscape->Add(jlossmanager);
 
   //hadro->Add(hadroModule);
-  hadro->Add(colorless);
+  //hadro->Add(colorless);
+  hadro->Add(hybridHadr);
   hadroMgr->Add(hadro);
   jetscape->Add(hadroMgr);
 
