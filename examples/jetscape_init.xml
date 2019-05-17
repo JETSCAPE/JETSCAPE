@@ -197,9 +197,11 @@
   
   <!-- Jet Hadronization Module -->
    <JetHadronization>
-       <name>colored</name>
-       <take_recoil>1</take_recoil>
-       <eCMforHadronization>1380</eCMforHadronization>
+       <name>hybrid</name>
+       <reco_Elevelmax>3</reco_Elevelmax>
+       <thermreco_distmax>5.0</thermreco_distmax>
+       <shower_recofactor>0.3333333</shower_recofactor>
+       <thermal_recofactor>0.3333333</thermal_recofactor>
    </JetHadronization>
 
   <!-- Particlization Module  -->
