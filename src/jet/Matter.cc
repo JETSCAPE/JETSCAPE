@@ -15,6 +15,9 @@
 
 #include "Matter.h"
 #include "JetScapeLogger.h"
+#include "JetScapeParticles.h"
+#include "Pythia8/Pythia.h"
+
 #include <string>
 
 #include<iostream>
@@ -1506,8 +1509,9 @@ double Matter::generate_vac_t(int p_id, double nu, double t0, double t, double l
 
 double Matter::generate_vac_t_w_M(int p_id, double M, double nu, double t0, double t, double loc_a, int is)
 {
-  double r,z,ratio,diff,scale,t_low, t_hi, t_mid, numer, denom, test ;
-    
+  double r,z,ratio,diff,scale,t_low_M0,t_low_MM,t_low_00, t_hi_M0, t_hi_MM, t_hi_00, t_mid_M0, t_mid_MM, t_mid_00, numer, denom, test ;
+  double M_charm=1.5;//InternalHelperPythia.particleData.m0(4);
+  double M_bottom=4.8;//InternalHelperPythia.particleData.m0(5);  
     
   // r = double(random())/ (maxN );
   r = ZeroOneDistribution(*GetMt19937Generator());
@@ -1525,16 +1529,21 @@ double Matter::generate_vac_t_w_M(int p_id, double M, double nu, double t0, doub
     
 //    if (t0<M*M) t0 = M*M;
     
-    t_low = t0*(1.0 + std::sqrt(1.0 + 2.0*M*M/t0));
+  t_low_M0 = t0*(1.0 + std::sqrt(1.0 + 2.0*M*M/t0));
+  t_low_MM = 2.0*(M*M + t0);
+  t_low_00 = 2.0*t0;
     
-    t_hi = t;
+
+  t_hi_M0 = t;
+  t_hi_MM = t;
+  t_hi_00 = t;
     
     JSINFO << MAGENTA << " in gen_vac_t_w_M : t_low , t_hi = " << t_low << "  " << t_hi ;
     //cin >> test ;
     
   if (p_id==gid)
     {
-      numer = sudakov_Pgg(t0,t,loc_a,nu)*std::pow(sudakov_Pqq(t0,t,loc_a,nu),nf);
+      numer = sudakov_Pgg(t0,t,loc_a,nu)*std::pow(sudakov_Pqq(t0,t,loc_a,nu),3.0)*sudakov_Pqq_w_M_vac_only(M_charm,t0,t,loc_a,nu)*sudakov_Pqq_w_M_vac_only(M_bottom,t0,t,loc_a,nu);
         
       if ((is!=1)&&(is!=2))
         {
@@ -1557,12 +1566,14 @@ double Matter::generate_vac_t_w_M(int p_id, double M, double nu, double t0, doub
         }
     }
     
-  t_mid = t_low;
+  t_mid_M0 = t_low_M0;
+  t_mid_MM = t_low_MM;
+  t_mid_00 = t_low_00;
     
   if (numer>r)
     {
-      JSINFO << MAGENTA << " numer > r, i.e. ; " << numer << " > " << r ;
-      return(t_mid) ;
+      // cout << " numer > r, i.e. ; " << numer << " > " << r << endl ;
+      return(t_mid_M0) ;
     }
     
   //t_mid = (t_low+t_hi)/2.0 ;
@@ -1574,11 +1585,13 @@ double Matter::generate_vac_t_w_M(int p_id, double M, double nu, double t0, doub
     
   do {
 
-      t_mid = (t_low + t_hi)/2.0;
+      t_mid_M0 = (t_low_M0 + t_hi_M0)/2.0;
+      t_mid_MM = (t_low_MM + t_hi_MM)/2.0;
+      t_mid_00 = (t_low_00 + t_hi_00)/2.0;
 
       if (p_id==gid)
         {
-	  denom = sudakov_Pgg(t0, t_mid, loc_a, nu)*std::pow(sudakov_Pqq(t0, t_mid, loc_a, nu),nf);
+	  denom = sudakov_Pgg(t0, t_mid_00, loc_a, nu)*std::pow(sudakov_Pqq(t0, t_mid_00, loc_a, nu),3.0)*sudakov_Pqq_w_M_vac_only(M_charm, t0, t_mid_MM, loc_a, nu)*sudakov_Pqq_w_M_vac_only(M_bottom, t0, t_mid_MM, loc_a, nu);
             
 	  if ((is!=1)&&(is!=2))
             {
@@ -1593,11 +1606,11 @@ double Matter::generate_vac_t_w_M(int p_id, double M, double nu, double t0, doub
             }
           if (((int) std::abs((double) p_id))==4 || ((int) std::abs((double) p_id))==5)
             {
-             denom = sudakov_Pqg_w_M(M, t0, t, loc_a, nu);
+             denom = sudakov_Pqg_w_M(M, t0, t_mid_M0, loc_a, nu);
             }
           else
             {
-	     denom = sudakov_Pqg(t0, t_mid, loc_a, nu);
+	     denom = sudakov_Pqg(t0, t_mid_00, loc_a, nu);
             }
         }
         
@@ -1612,18 +1625,24 @@ double Matter::generate_vac_t_w_M(int p_id, double M, double nu, double t0, doub
                 
       if (diff<0.0)
         {
-	  t_low = t_mid ;
+	  t_low_M0 = t_mid_M0 ;
+	  t_low_MM = t_mid_MM ;
+	  t_low_00 = t_mid_00 ;
+
 	  //t_mid = (t_low + t_hi)/2.0;
         }
       else
         {
-	  t_hi = t_mid ;
+	  t_hi_M0 = t_mid_M0 ;
+	  t_hi_MM = t_mid_MM ;
+	  t_hi_00 = t_mid_00 ;
+
 	  //t_mid = (t_low + t_hi)/2.0;
         }
         
-  } while ((abs(diff)>s_approx)&&(abs(t_hi-t_low)/t_hi>s_error));
+  } while ((abs(diff)>s_approx)&&(abs(t_hi_M0-t_low_M0)/t_hi_M0>s_error));
     
-  return(t_mid);
+  return(t_mid_M0);
 }
 
 /*
@@ -1731,7 +1750,7 @@ double  Matter::generate_vac_z(int p_id, double t0, double t, double loc_b, doub
 
 double  Matter::generate_vac_z_w_M(int p_id, double M, double t0, double t, double loc_b, double nu, int is )
 {
-  double r,z, ratio,diff,e,numer1, numer2, numer, denom, z_low, z_hi, z_mid, test;
+  double r,z, ratio,diff,e,numer1, numer2, numer, denom, z_low_00,z_low_M0,z_low_MM, z_hi_00, z_hi_M0, z_hi_MM, z_mid_00,z_mid_M0,z_mid_MM, test;
 
   r = ZeroOneDistribution(*GetMt19937Generator());
     
@@ -1747,6 +1766,8 @@ double  Matter::generate_vac_z_w_M(int p_id, double M, double t0, double t, doub
   diff = (ratio - r)/r;
     
   e = t0/t;
+
+  double M2 = M*M;
     
   if (e>0.5)
     {
@@ -1755,37 +1776,45 @@ double  Matter::generate_vac_z_w_M(int p_id, double M, double t0, double t, doub
     
   if (((int) std::abs((double) p_id))==4 || ((int) std::abs((double) p_id))==5)
     {
-      double M2 = M*M;
-      z_low = e + M2/(t+M2);
+      z_low_M0 = e + M2/(t+M2);
     }
   else
     {
-      z_low = e;
+      z_low_00 = e;
+      z_low_MM = e+M2/t;
     }
 
-  z_hi = double(1.0) - e ;
+  z_hi_00 = double(1.0) - e;
+  z_hi_M0 = double(1.0) - e;
+  z_hi_MM = double(1.0) - e  - M2/t;
     
   if (p_id==gid)
     {
       if (is==1)
         {
-	  denom = P_z_gg_int(z_low,z_hi, loc_b, t, 2.0*nu/t, nu );
+	  denom = P_z_gg_int(z_low_00,z_hi_00, loc_b, t, 2.0*nu/t, nu );
         }
       else
         {
-	  denom = P_z_qq_int(z_low,z_hi,loc_b,t,2.0*nu/t, nu);
+          if (is==3) //THIS IS FOR GLUON-> HEAVY Q-QBAR
+            {
+             denom = P_z_qq_int_w_M_vac_only(M,z_low_MM,z_hi_MM,loc_b,t,2.0*nu/t, nu);
+            }
+          else
+            {
+	     denom = P_z_qq_int(z_low_00,z_hi_00,loc_b,t,2.0*nu/t, nu);
+            }
         }
-        
     }
   else
     {
       if (((int) std::abs((double) p_id))==4 || ((int) std::abs((double) p_id))==5)
         {
-         denom = P_z_qg_int_w_M(M, z_low,z_hi, loc_b, t, 2.0*nu/t , nu);
+         denom = P_z_qg_int_w_M(M, z_low_M0, z_hi_M0, loc_b, t, 2.0*nu/t , nu);
         }
       else
         {
-         denom = P_z_qg_int(z_low,z_hi, loc_b, t, 2.0*nu/t , nu);
+         denom = P_z_qg_int(z_low_00,z_hi_00, loc_b, t, 2.0*nu/t , nu);
         }
     }
     
@@ -1796,38 +1825,34 @@ double  Matter::generate_vac_z_w_M(int p_id, double M, double t0, double t, doub
   JSINFO << BOLDYELLOW << " generate_vac_z called with p_id = " << p_id << " t0 = " << t0 << " t = " << t << " loc_b=" << loc_b<< " nu = " <<  nu << " is = " << is ;
 
   do { // Getting stuck in here for some reason
-      if ( itcounter++ > 10000 )
-      {
-    	cout << " in vac_z_w_M" << " abs(diff) = " << abs(diff) << "  approx = " << approx << "  r = " << r << "  zmid = " << z_mid << "  denom = " << denom << "  numer = " << numer << "  e = " << e << "   " << numer/denom << endl;
-        cout << " e + M*M/(t+M*M) = " << e + M*M/(t+M*M) << " p_id = " << p_id << endl ;
+
+    if ( itcounter++ > 10000 ) {
+    	cout << " in here" << " abs(diff) = " << abs(diff) << "  approx = " << approx << "  r = " << r << "  zmid = " << z_mid_M0 << "  denom = " << denom << "  numer = " << numer << "  e = " << e << "   " << numer/denom << endl;
         throw std::runtime_error("Stuck in endless loop") ;
           
       }
 
-      z_mid = (z_low + z_hi)/2.0 ;
 
-      if (p_id==gid)
-      {
-          if (is==1)
-          {
-              numer = P_z_gg_int(e, z_mid, loc_b, t, 2.0*nu/t , nu );
-          }
-          else
-          {
-              numer = P_z_qq_int(e, z_mid, loc_b, t, 2.0*nu/t , nu);
-          }
-          
+    z_mid_00 = (z_low_00 + z_hi_00)/2.0 ;
+    z_mid_M0 = (z_low_M0 + z_hi_M0)/2.0 ;
+    z_mid_MM = (z_low_MM + z_hi_MM)/2.0 ;
+
+    if (p_id==gid) {
+      if (is==1) {
+	numer = P_z_gg_int(z_low_00, z_mid_00, loc_b, t, 2.0*nu/t , nu );
+      } else {
+        if (is==3){
+          numer = P_z_qq_int_w_M_vac_only(M, z_low_MM, z_mid_MM, loc_b, t, 2.0*nu/t , nu); 
+        } else {
+          numer = P_z_qq_int(z_low_00, z_mid_00, loc_b, t, 2.0*nu/t , nu);
+        }
       }
-      else
-      {
-          if (((int) std::abs((double) p_id))==4 || ((int) std::abs((double) p_id))==5)
-          {
-              numer = P_z_qg_int_w_M(M, e + M*M/(t+M*M), z_mid, loc_b, t, 2.0*nu/t , nu );
-          }
-          else
-          {
-              numer = P_z_qg_int(e, z_mid, loc_b, t, 2.0*nu/t , nu );
-          }
+    } else {
+ 
+      if (((int) std::abs((double) p_id))==4 || ((int) std::abs((double) p_id))==5){
+        numer = P_z_qg_int_w_M(M, z_low_M0, z_mid_M0, loc_b, t, 2.0*nu/t , nu );
+      } else {
+        numer = P_z_qg_int(z_low_M0, z_mid_M0, loc_b, t, 2.0*nu/t , nu );
       }
       ratio = numer/denom ;
       diff = (ratio - r)/r ;
@@ -1838,18 +1863,18 @@ double  Matter::generate_vac_z_w_M(int p_id, double M, double t0, double t, doub
         
     if (diff>0.0)
     {
-        z_hi = z_mid;
+        z_hi_M0 = z_mid_M0;
         //z_mid = (z_low + z_hi)/2.0;
     }
     else
     {
-        z_low = z_mid;
+        z_low_M0 = z_mid_M0;
         //z_mid = (z_low + z_hi)/2.0 ;
     }
         
   } while ((abs(diff)>approx)&&(abs(z_hi-z_low)/z_hi>s_error) );
     
-  return(z_mid);
+  return(z_mid_M0);
 }
 
 
@@ -2157,6 +2182,27 @@ double Matter::sudakov_Pqq(double q0, double q1, double loc_c, double E)
     
 }
 
+double Matter::sudakov_Pqq_w_M_vac_only(double M, double q0, double q1, double loc_c, double E)
+{
+  double sud,q;
+    
+  sud = 1.0;
+       
+  if (q1<2.0*(q0+M*M))
+    {
+      JSWARN << " warning: the lower limit of the sudakov > 1/2 upper limit, returning 1 ";
+      JSWARN << " in sudakov_Pquark quark, q0, q1 = " << q0 << "  " << q1;
+      return(sud) ;
+    }
+  else
+    {
+      q = 2.0*(q0+M*M);
+      sud = exp( -1.0*(Tf/2.0/pi)*sud_val_QQ_w_M_vac_only(M,q0,q,q1,loc_c, E) );
+      return(sud);
+    }
+}
+
+
 
 
 double Matter::sud_val_QQ(double h0, double h1, double h2, double loc_d, double E1)
@@ -2200,6 +2246,49 @@ double Matter::sud_val_QQ(double h0, double h1, double h2, double loc_d, double 
   return(intg);
     
 }
+
+double Matter::sud_val_QQ_w_M_vac_only(double M, double h0, double h1, double h2, double loc_d, double E1)
+{
+  double val, h , intg, hL, hR, diff, intg_L, intg_R, t_form, span;
+    
+  h = (h1+h2)/2.0 ;
+    
+  span = (h2 - h1)/h2;
+    
+  t_form = 2.0*E1/h;
+    
+  val = alpha_s(h)*sud_z_QQ(h0,h, loc_d, t_form,E1);
+    
+  intg = val*(h2-h1);
+    
+  hL = (h1 + h)/2.0 ;
+    
+  t_form = 2.0*E1/hL;
+    
+  intg_L = alpha_s(hL)*sud_z_QQ_w_M_vac_only(M,h0,hL,loc_d,t_form,E1)*(h - h1) ;
+    
+  hR = (h + h2)/2.0 ;
+    
+  t_form = 2.0*E1/hR;
+    
+  intg_R = alpha_s(hR)*sud_z_QQ_w_M_vac_only(M,h0,hR,loc_d,t_form,E1)*(h2 - h) ;
+    
+  diff = std::abs( (intg_L + intg_R - intg)/intg ) ;
+    
+  //	cout << " iline, gap, diff = " << i_line << " " << h2 << " " << h1 << "  " << diff << endl ;
+  //	cout << " intg, Left , right = " << intg << " " << intg_L << "  " << intg_R << endl;
+    
+  if ( (diff>approx)||(span>error) )
+    {
+      intg = sud_val_QQ_w_M_vac_only(M,h0,h1,h,loc_d,E1) + sud_val_QQ_w_M_vac_only(M,h0,h,h2,loc_d,E1);
+    }
+    
+  //	cout << " returning with intg = " << intg << endl;
+    
+  return(intg);
+    
+}
+
 
 
 
@@ -2276,9 +2365,128 @@ double Matter::sud_z_QQ(double cg, double cg1, double loc_e , double l_fac, doub
     
 }
 
+double Matter::sud_z_QQ_w_M_vac_only(double M, double cg, double cg1, double loc_e , double l_fac, double E2)
+{
+    
+  double q2, q3, q5, q6, q8, q15, qL, tau, res, z_min;
+    
+    
+  z_min = std::sqrt(2)*E_minimum/E2;
+    
+  //    if (cg<cg1*z_min) cg = cg1*z_min;
+    
+    
+    
+  //    if ((cg< cg1/(2.0*E2*E2/cg1+1.0) )) cg = cg1/( 2.0*E2*E2/cg1 + 1.0 );
+    
+  if (cg1<2.0*(cg+M*M))
+    {
+        
+      //        cout << " returning with cg, cg1 = " << cg << "   " <<  cg1 << "    " << E_minimum << "  " << E2 << endl ;
+      return(0.0);
+    };
+     
+  double t1 = M * M;
+  double t2 = t1 + cg;
+  double t3 = 1.0/cg1;
+  double t5 = -t2*t3 + 1.0;
+  double t6 = t5*t5;
+  double t8 = t2*t2;
+  double t10 = pow(cg1, 2.0);
+  double t15 = 2.0/3.0*(t6*t5-t8*t2/t10/cg1)*t3;    
+
+    
+  q2 = 1.0 / cg1;
+  q3 = (cg * q2);
+  q5 = 1.0 - q3;
+  q6 = std::log(std::abs(q5));
+  q8 = std::log(q3);
+  /*	q10 = std::log(q3);
+	q12 = std::log(q5);*/
+  q15 = (-1.0 + (2.0 * q3) + q6 - q8) * q2;
+    
+    
+    
+  if (q15<0.0)
+    {
+      cerr << "ERROR: medium contribution negative in sud_z_QQ: q15 = " << q15 << endl;
+      cerr << "cg, cg1 = " << cg << "  " << cg1 << endl;
+      cerr << " t15 = " << t15 << endl;
+      throw std::runtime_error("ERROR: medium contribution negative in sud_z_QQ");
+    }
+    
+  tau = l_fac ;
+    
+  if ((length - loc_e) < tau) tau = (length - loc_e);
+    
+  if (loc_e > length) tau = 0.0 ;
+
+  // SC  
+  //qL = qhat*0.6*tau*profile(loc_e + tau) ;
+  if(tau<rounding_error) {
+      qL = 0.0;
+  } else {
+      qhat = fncAvrQhat(loc_e,tau);
+      qL = qhat*0.6*tau;
+  }
+
+  res = t15 + 2.0*qL*q15/cg1 ;
+    
+  return(res);
+    
+    
+}
 
 
 double Matter::P_z_qq_int(double cg, double cg1, double loc_e, double cg3, double l_fac, double E2)
+{
+  double t_q1,t_q3,t_q4,t_q6,t_q8,t_q9,t_q12,q_q1,q_q4,q_q6,q_q9,q_q11,qL,tau,res;
+    
+  if ((cg< cg1/(2.0*E2*E2/cg1+1.0) )) cg = cg1/( 2.0*E2*E2/cg1 + 1.0 );
+    
+  t_q1 = std::pow(cg1, 2);
+  t_q3 = 1.0 - cg1;
+  t_q4 = t_q3 * t_q3;
+  t_q6 = std::pow(cg, 2);
+  t_q8 = 1.0 - cg;
+  t_q9 = t_q8 * t_q8;
+  t_q12 = t_q1 * cg1 / 6.0 - t_q4 * t_q3 / 6.0 - t_q6 * cg / 6.0 + t_q9 * t_q8 / 6.0;
+    
+  tau = l_fac;
+    
+  if ((length - loc_e) < tau) tau = (length - loc_e);
+    
+  if (loc_e > length) tau = 0.0 ;
+ 
+  // SC  
+  //qL = qhat*0.6*tau*profile(loc_e + tau) ;
+  if(tau<rounding_error) {
+      qL = 0.0;
+  } else {
+      qhat = fncAvrQhat(loc_e,tau);
+      qL = qhat*0.6*tau;
+  }
+
+   
+  q_q1 = std::log(cg1);
+  q_q4 = std::log(1.0 - cg1);
+  q_q6 = std::log(cg);
+  q_q9 = std::log(1.0 - cg);
+  q_q11 = -cg1 + q_q1 / 2.0 - q_q4 / 2.0 + cg - q_q6 / 2.0 + q_q9 / 2.0;
+    
+  if (q_q11<0.0)
+    {
+      cerr << "ERROR: medium contribution negative in P_z_gg_int : q_q11 = " << q_q11 << endl;
+      throw std::runtime_error("ERROR: medium contribution negative in P_z_gg_int");
+    }
+    
+  res = t_q12*Tf/Ca + 2.0*qL*q_q11/cg3*(Tf*Cf/Ca/Ca);
+    
+  return(res);
+    
+}
+
+double Matter::P_z_qq_int_w_M_vac_only(double M, double cg, double cg1, double loc_e, double cg3, double l_fac, double E2)
 {
   double t_q1,t_q3,t_q4,t_q6,t_q8,t_q9,t_q12,q_q1,q_q4,q_q6,q_q9,q_q11,qL,tau,res;
     
