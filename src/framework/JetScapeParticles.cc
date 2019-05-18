@@ -375,7 +375,7 @@ namespace Jetscape {
 
   void Parton::set_mean_form_time ()
   {
-    mean_form_time_ = 2.0*e()/(t()+0.001)/fmToGeVinv;
+    mean_form_time_ = 2.0*e()/(t()+rounding_error)/fmToGeVinv;
   }
   
   void Parton::set_form_time(double form_time)
@@ -401,7 +401,8 @@ namespace Jetscape {
   const double Parton::t()
   {
     /// \Todo: Fix
-      double t_parton = PseudoJet::m2()  - restmass()*restmass() ;
+    //  double t_parton = PseudoJet::m2()  - restmass()*restmass() ;
+      double t_parton = e()*e() - px()*px() - py()*py() - pz()*pz() - restmass()*restmass();
       if (t_parton< 0.0) JSWARN << " Virtuality is negative, MATTER cannot handle these particles " ;
     return ( t_parton ) ;
     // return (t_) ;
