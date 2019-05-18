@@ -236,7 +236,7 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
           pOut.push_back(pIn[i]);
           return;
       }
- 
+
       // pass particle infomation to LBT array (only pass one particle each time)
 
       jetClean();

@@ -377,7 +377,7 @@ namespace Jetscape {
 
   void Parton::set_mean_form_time ()
   {
-    mean_form_time_ = 2.0*e()/(t()+0.001)/fmToGeVinv;
+    mean_form_time_ = 2.0*e()/(t()+rounding_error)/fmToGeVinv;
   }
   
   void Parton::set_form_time(double form_time)
@@ -402,8 +402,11 @@ namespace Jetscape {
 
   const double Parton::t()
   {
-    /// \Todo: Fix 
-    return ( PseudoJet::m2() ) ;
+    /// \Todo: Fix
+    //  double t_parton = PseudoJet::m2()  - restmass()*restmass() ;
+      double t_parton = e()*e() - px()*px() - py()*py() - pz()*pz() - restmass()*restmass();
+      if (t_parton< 0.0) JSWARN << " Virtuality is negative, MATTER cannot handle these particles " ;
+    return ( t_parton ) ;
     // return (t_) ;
   }        
 
@@ -415,8 +418,8 @@ namespace Jetscape {
       throw std::runtime_error("Trying to set virtuality on a normal parton. You almost certainly don't want to do that. Please contact the developers if you do.");
     }
     
-    //  Reset the momentum due to virtuality              
-    double newPl = std::sqrt( e()*e() - t ) ;
+    //  Reset the momentum due to virtuality
+    double newPl = std::sqrt( e()*e() - t - restmass()*restmass()) ;
     double velocityMod = std::sqrt(std::pow(jet_v_.comp(1),2) + std::pow(jet_v_.comp(2),2) + std::pow(jet_v_.comp(3),2));
     
     newPl = newPl/velocityMod;

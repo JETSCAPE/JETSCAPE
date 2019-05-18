@@ -15,10 +15,11 @@
 
 #include "Matter.h"
 #include "JetScapeLogger.h"
-#include "JetScapeXML.h"
+#include "JetScapeParticles.h"
+#include "Pythia8/Pythia.h"
+
 #include <string>
 
-#include "tinyxml2.h"
 #include<iostream>
 
 #include "FluidDynamics.h"
@@ -73,7 +74,7 @@ void Matter::Init()
     hydro_Tc = 0.16;
     brick_length = 4.0;
     vir_factor = 1.0;
-    MaxColor = 101;
+      MaxColor = 101;
 
     double m_qhat=-99.99;
     matter->FirstChildElement("qhat0")->QueryDoubleText(&m_qhat);
@@ -85,13 +86,13 @@ void Matter::Init()
  
     int flagInt=-100;
     double inputDouble=-99.99;
-
-    if ( !matter->FirstChildElement("matter_on") ) {
-	JSWARN << "Couldn't find sub-tag Eloss -> Matter -> matter_on";
-        throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> matter_on");
-    }
-    matter->FirstChildElement("matter_on")->QueryIntText(&flagInt);
-    matter_on = flagInt;
+      
+      if ( !matter->FirstChildElement("matter_on") ) {
+          JSWARN << "Couldn't find sub-tag Eloss -> Matter -> matter_on";
+          throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> matter_on");
+      }
+      matter->FirstChildElement("matter_on")->QueryIntText(&flagInt);
+      matter_on = flagInt;
 
     if ( !matter->FirstChildElement("in_vac") ) {
 	JSWARN << "Couldn't find sub-tag Eloss -> Matter -> in_vac";
@@ -168,8 +169,7 @@ void Matter::Init()
         cout << "Reminder: negative vir_factor is set, initial energy will be used as initial t_max" << endl;
     }
 
-    JSINFO << MAGENTA << "MATTER input parameter";
-    JSINFO << MAGENTA << "matter shower on: " << matter_on;
+    VERBOSE(7)<< MAGENTA << "MATTER input parameter";
     JSINFO << MAGENTA << "in_vac: " << in_vac << "  brick_med: " << brick_med << "  recoil_on: " << recoil_on;
     JSINFO << MAGENTA << "Q0: " << Q00 << " vir_factor: " << vir_factor << "  qhat0: " << qhat0 << " alphas: " << alphas << " hydro_Tc: " << hydro_Tc << " brick_length: " << brick_length;
 
@@ -225,7 +225,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 
  VERBOSE(8) << " the time in fm is " << time << " The time in GeV-1 is " << Time ;
  VERBOSE(8) << "pid = " << pIn[0].pid() << " E = " << pIn[0].e() << " px = " << pIn[0].p(1) << " py = " << pIn[0].p(2) << "  pz = " << pIn[0].p(3) << " virtuality = " << pIn[0].t() << " form_time in fm = " << pIn[0].form_time() ;
- VERBOSE(8) << " color = " << pIn[0].color() << " anti-color = " << pIn[0].anti_color();
+  JSDEBUG << " color = " << pIn[0].color() << " anti-color = " << pIn[0].anti_color();
     
     unsigned int ShowerMaxColor = pIn[0].max_color();
     unsigned int CurrentMaxColor;
@@ -253,6 +253,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   for (int i=0;i<pIn.size();i++)
   {
 
+
       // Reject photons
       if (pIn[i].pid()==photonid)
       {
@@ -263,6 +264,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       }
       
       VERBOSE(2) << BOLDYELLOW << " *  parton formation spacetime point= "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z();
+
+      //JSINFO << MAGENTA << " particle rest mass = " << pIn[i].restmass();
+
 
       int jet_stat=pIn[i].pstat();  // daughter of recoil will always be recoil
       
@@ -281,6 +285,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       VERBOSE(2) << BOLDYELLOW << " velocityMod = " << velocityMod ;
       
       if(pIn[i].form_time()<0.0) pIn[i].set_jet_v(velocity); // jet velocity is set only once
+      // Notice the assumption that partons passed from hard scattering are on shell.
+      // If they had virtuality then this would not be correct. 
 
       // Define a vector in the direction of the jet originating parton.
       // there is some amount of redundancy here, pIn[i].jet_v() is basically the jet velocity
@@ -358,7 +364,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 	  // SC:  
           double pT2 = pIn[i].p(1)*pIn[i].p(1)+pIn[i].p(2)*pIn[i].p(2);
           double max_vir;
-          if(vir_factor<0.0) max_vir = pIn[i].e()*pIn[i].e();
+          if(vir_factor<0.0) max_vir = pIn[i].e()*pIn[i].e() - pIn[i].restmass()*pIn[i].restmass();
           else max_vir = pT2 * vir_factor;
 
           if(max_vir<=QS)
@@ -368,12 +374,28 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           else
           {
              VERBOSE(8) << BOLDYELLOW << " at x,y,z,t = " <<  pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z() << "  " << pIn[i].x_in().t() ;
-              tQ2 = generate_vac_t(pIn[i].pid(), pIn[i].nu(), QS/2.0, max_vir, zeta, iSplit);
+             if(abs(pIn[i].pid()) == 4 || abs(pIn[i].pid()) == 5)
+             { 
+                 tQ2 = generate_vac_t_w_M(pIn[i].pid(), pIn[i].restmass(), pIn[i].nu(), QS/2.0, max_vir, zeta, iSplit);
+                 
+                 JSINFO  << BOLDYELLOW << " virtuality calculated as = " << tQ2;
+             }
+	     else
+             {
+	         tQ2 = generate_vac_t(pIn[i].pid(), pIn[i].nu(), QS/2.0, max_vir, zeta, iSplit);
+             }
     	  }
-// hold point
+
+
 	  // SC: if matter_on = false, set zero virtuality and MATTER will not do parton shower
-          if(matter_on) pIn[i].set_t(tQ2); // Also resets momentum!
-          else pIn[i].set_t(0.0); 
+          if(matter_on)
+          {
+              pIn[i].set_t(tQ2); // Also resets momentum!
+              JSINFO << BOLDYELLOW << " virtuality set to " << tQ2 ;
+              //cin >> blurb;
+          }
+          else pIn[i].set_t(0.0);
+
 
           pIn[i].set_mean_form_time();
           double ft = generate_L(pIn[i].mean_form_time());
@@ -414,7 +436,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
          VERBOSE(8) << " E = " << pIn[i].e() << " px = " << pIn[i].px() << " py = " << pIn[i].py() << " pz = " << pIn[i].pz() ;
          VERBOSE(8) << " *  New generated virtuality = " << tQ2 << " Mean formation time = " << pIn[i].mean_form_time();
          VERBOSE(8) << " *  set new formation time to " << pIn[i].form_time() ;
-         VERBOSE(8) << " * Maximum allowed virtuality = " << pIn[i].e()*pIn[i].e() << "   Minimum Virtuality = " << QS;
+         VERBOSE(8) << " * Maximum allowed virtuality = " << pIn[i].e()*pIn[i].e() - pIn[i].restmass()*pIn[i].restmass() << "   Minimum Virtuality = " << QS;
          VERBOSE(8) << " * Qhat = " << qhat << "  Length in fm = "  << length/5.0 ;
          VERBOSE(8) << " * Jet velocity = " << pIn[i].jet_v().comp(0) << " " << pIn[i].jet_v().comp(1) << "  " << pIn[i].jet_v().comp(2) << "  " << pIn[i].jet_v().comp(3);
          VERBOSE(8) << " * reset location of parton formation = "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z();
@@ -425,6 +447,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           
       }
 
+      
+      //cin >> blurb ;
       //if(pIn[i].color()==0 && pIn[i].anti_color()==0) cout << "complain 0 0 color." << endl;
 
       // SC: Q0 can be changed based on different setups
@@ -500,6 +524,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   if(in_vac) continue;
                   if(!recoil_on) continue;
                   if(el_time<tStart) continue;
+		  if(abs(pid)==4 || abs(pid)==5) continue; // recoil not ready for heavy quarks yet
 
                   double el_rx=initRx+(el_time-initR0)*initVx;
                   double el_ry=initRy+(el_time-initR0)*initVy;
@@ -859,7 +884,15 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 
               while ((l_perp2<=Lambda_QCD*Lambda_QCD)&&(ifcounter<100))
               {
-                  z = generate_vac_z(pid,QS/2.0,pIn[i].t(),zeta,pIn[i].nu(),iSplit);
+
+                  if(abs(pid) == 4 || abs(pid) == 5)
+                  {
+                      z = generate_vac_z_w_M(pid, pIn[i].restmass(), QS/2.0, pIn[i].t(), zeta, pIn[i].nu(), iSplit);
+                  }
+                  else
+                  {
+                      z = generate_vac_z(pid, QS/2.0, pIn[i].t(), zeta, pIn[i].nu(), iSplit);
+                  }
                   //JSDEBUG << " generated z = " << z;
         
                   int iSplit_a = 0;
@@ -868,8 +901,30 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   // use pIn information to sample z above, but use new_parent to calculate daughter partons below            
                   if (z*z*new_parent_t>QS)
                   {
-                      tQd1 = generate_vac_t(pid_a, z*new_parent_nu, QS/2.0, z*z*new_parent_t, zeta+std::sqrt(2)*pIn[i].form_time()*fmToGeVinv, iSplit_a);
-                  } else { // SC
+                      if(abs(pid) == 4 || abs(pid) == 5)
+                      {
+                          double M = pIn[i].restmass();
+                          if (QS*(1.0 + std::sqrt(1.0 + 4.0*M*M/QS))/2.0 < z*z*new_parent_t)
+                          {
+                              tQd1 = generate_vac_t_w_M(pid_a, pIn[i].restmass(), z*new_parent_nu, QS/2.0, z*z*new_parent_t, zeta+std::sqrt(2)*pIn[i].form_time()*fmToGeVinv, iSplit_a);
+                          }
+                          else if (z*z*new_parent_t > pIn[i].restmass()*pIn[i].restmass())
+                          {
+                              tQd1 = z*z*new_parent_t;
+                          }
+                          else
+                          {
+                              tQd1 = pIn[i].restmass()*pIn[i].restmass() ;
+                          }
+                              
+                      }
+                      else
+                      {
+                           tQd1 = generate_vac_t(pid_a, z*new_parent_nu, QS/2.0, z*z*new_parent_t, zeta+std::sqrt(2)*pIn[i].form_time()*fmToGeVinv, iSplit_a);
+                      }
+                  }
+                  else
+                  { // SC
                       tQd1 = z*z*new_parent_t;
                   }
         
@@ -879,10 +934,33 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
         
                   if ( ( (1.0-z)*(1.0-z)*new_parent_t>QS )&&(iSplit<3) )
                   {
-                      tQd2 = generate_vac_t(pid_b, (1.0-z)*new_parent_nu, QS/2.0, (1.0-z)*(1.0-z)*new_parent_t, zeta+std::sqrt(2)*pIn[i].form_time()*fmToGeVinv,iSplit_b);
-                  } else { // SC
+                      if(abs(pid) == 4 || abs(pid) == 5)
+                      {
+                          double M = pIn[i].restmass();
+                          
+                          if (QS*(1.0 + std::sqrt(1.0 + 4.0*M*M/QS))/2.0 < (1.0-z)*(1.0-z)*new_parent_t)
+                          {
+                              tQd2 = generate_vac_t_w_M(pid_a, pIn[i].restmass(), (1.0-z)*new_parent_nu, QS/2.0, (1.0-z)*(1.0-z)*new_parent_t, zeta+std::sqrt(2)*pIn[i].form_time()*fmToGeVinv, iSplit_a);
+                          }
+                          else if ((1.0-z)*(1.0-z)*new_parent_t > pIn[i].restmass()*pIn[i].restmass())
+                          {
+                              tQd1 = (1.0-z)*(1.0-z)*new_parent_t;
+                          }
+                          else
+                          {
+                              tQd1 = pIn[i].restmass()*pIn[i].restmass() ;
+                          }
+                      }
+                      else
+                      {
+                           tQd2 = generate_vac_t(pid_b, (1.0-z)*new_parent_nu, QS/2.0, (1.0-z)*(1.0-z)*new_parent_t, zeta+std::sqrt(2)*pIn[i].form_time()*fmToGeVinv,iSplit_b);
+                      }
+                  }
+                  else
+                  { // SC
                       tQd2 = (1.0-z)*(1.0-z)*new_parent_t;
                   }
+
                   
                   if (iSplit == 3)
                   {
@@ -890,6 +968,17 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   }
                   
                   l_perp2 = new_parent_t*z*(1.0 - z) - tQd2*z - tQd1*(1.0-z) ; ///< the transverse momentum squared
+
+		
+                  if(abs(pid) == 4 || abs(pid) == 5)
+                  { 
+		      l_perp2 = new_parent_t*z*(1.0 - z) - tQd2*z - tQd1*(1.0-z) - pow((1.0-z)*pIn[i].restmass(),2); ///< the transverse momentum squared
+		  }
+		  else
+                  {
+		      l_perp2 = new_parent_t*z*(1.0 - z) - tQd2*z - tQd1*(1.0-z) ; ///< the transverse momentum squared
+		  }
+
                   ifcounter++;
               }
               
@@ -1482,6 +1571,144 @@ double Matter::generate_vac_t(int p_id, double nu, double t0, double t, double l
   return(t_mid);
 }
 
+double Matter::generate_vac_t_w_M(int p_id, double M, double nu, double t0, double t, double loc_a, int is)
+{
+  double r,z,ratio,diff,scale,t_low_M0,t_low_MM,t_low_00, t_hi_M0, t_hi_MM, t_hi_00, t_mid_M0, t_mid_MM, t_mid_00, numer, denom, test ;
+  double M_charm=1.5;//InternalHelperPythia.particleData.m0(4);
+  double M_bottom=4.8;//InternalHelperPythia.particleData.m0(5);  
+    
+  // r = double(random())/ (maxN );
+  r = ZeroOneDistribution(*GetMt19937Generator());
+  //        r = mtrand1();
+    
+    
+  if ((r>=1.0)||(r<=0.0))
+    {
+      throw std::runtime_error("error in random number in t *GetMt19937Generator()");
+    }
+    
+  ratio = 1.0 ;
+    
+  diff = (ratio - r)/r;
+    
+//    if (t0<M*M) t0 = M*M;
+    
+  t_low_M0 = t0*(1.0 + std::sqrt(1.0 + 2.0*M*M/t0));
+  t_low_MM = 2.0*(M*M + t0);
+  t_low_00 = 2.0*t0;
+    
+
+  t_hi_M0 = t;
+  t_hi_MM = t;
+  t_hi_00 = t;
+    
+    //JSINFO << MAGENTA << " in gen_vac_t_w_M : t_low , t_hi = " << t_low << "  " << t_hi ;
+    //cin >> test ;
+    
+  if (p_id==gid)
+    {
+      numer = sudakov_Pgg(t0,t,loc_a,nu)*std::pow(sudakov_Pqq(t0,t,loc_a,nu),3.0)*sudakov_Pqq_w_M_vac_only(M_charm,t0,t,loc_a,nu)*sudakov_Pqq_w_M_vac_only(M_bottom,t0,t,loc_a,nu);
+        
+      if ((is!=1)&&(is!=2))
+        {
+	  throw std::runtime_error(" error in isp ");
+        }
+    }
+  else
+    {
+      if (is!=0)
+        {
+	  throw std::runtime_error("error in isp in quark split");            
+        }
+      if (((int) std::abs((double) p_id))==4 || ((int) std::abs((double) p_id))==5)
+        {
+         numer = sudakov_Pqg_w_M(M,t0,t,loc_a,nu);
+        }
+      else
+        {
+         numer = sudakov_Pqg(t0,t,loc_a,nu);
+        }
+    }
+    
+  t_mid_M0 = t_low_M0;
+  t_mid_MM = t_low_MM;
+  t_mid_00 = t_low_00;
+    
+  if (numer>r)
+    {
+      // cout << " numer > r, i.e. ; " << numer << " > " << r << endl ;
+      return(t_mid_M0) ;
+    }
+    
+  //t_mid = (t_low+t_hi)/2.0 ;
+    
+    
+  scale = t0;
+    
+  //   cout << " s_approx, s_error = " << s_approx << "  " << s_error << endl;
+    
+  do {
+
+      t_mid_M0 = (t_low_M0 + t_hi_M0)/2.0;
+      t_mid_MM = (t_low_MM + t_hi_MM)/2.0;
+      t_mid_00 = (t_low_00 + t_hi_00)/2.0;
+
+      if (p_id==gid)
+        {
+	  denom = sudakov_Pgg(t0, t_mid_00, loc_a, nu)*std::pow(sudakov_Pqq(t0, t_mid_00, loc_a, nu),3.0)*sudakov_Pqq_w_M_vac_only(M_charm, t0, t_mid_MM, loc_a, nu)*sudakov_Pqq_w_M_vac_only(M_bottom, t0, t_mid_MM, loc_a, nu);
+            
+	  if ((is!=1)&&(is!=2))
+            {
+	      throw std::runtime_error(" error in isp numerator");             
+            }
+        }
+      else
+        {
+	  if (is!=0)
+            {
+	      throw std::runtime_error(" error in isp in quark split numerator  ");
+            }
+          if (((int) std::abs((double) p_id))==4 || ((int) std::abs((double) p_id))==5)
+            {
+             denom = sudakov_Pqg_w_M(M, t0, t_mid_M0, loc_a, nu);
+            }
+          else
+            {
+	     denom = sudakov_Pqg(t0, t_mid_00, loc_a, nu);
+            }
+        }
+        
+      ratio = numer/denom ;
+        
+      diff = (ratio - r)/r ;
+        
+      //       cout << "num, den, r = " << numer << " "<< denom << " " << r << " " << endl;
+      //       cout << "diff, t_mid = " << diff << " " << t_mid << endl;
+      //       cout << " t_low, t_hi = " << t_low << "  " << t_hi << endl;
+      //       cin >> test ;
+                
+      if (diff<0.0)
+        {
+	  t_low_M0 = t_mid_M0 ;
+	  t_low_MM = t_mid_MM ;
+	  t_low_00 = t_mid_00 ;
+
+	  //t_mid = (t_low + t_hi)/2.0;
+        }
+      else
+        {
+	  t_hi_M0 = t_mid_M0 ;
+	  t_hi_MM = t_mid_MM ;
+	  t_hi_00 = t_mid_00 ;
+
+	  //t_mid = (t_low + t_hi)/2.0;
+        }
+        
+  } while ((abs(diff)>s_approx)&&(abs(t_hi_M0-t_low_M0)/t_hi_M0>s_error));
+    
+  return(t_mid_M0);
+}
+
 /*
  
  
@@ -1595,10 +1822,155 @@ double  Matter::generate_vac_z(int p_id, double t0, double t, double loc_b, doub
         //z_mid = (z_low + z_hi)/2.0 ;
     }
         
-  } while (abs(diff)>approx); 
+  } while ( (abs(diff)>approx)&&(abs(z_hi-z_low)/z_hi>s_error) );
     
   return(z_mid);
 }	
+
+
+double  Matter::generate_vac_z_w_M(int p_id, double M, double t0, double t, double loc_b, double nu, int is )
+{
+  double r,z, ratio,diff,e,numer1, numer2, numer, denom, z_low_00,z_low_M0,z_low_MM, z_hi_00, z_hi_M0, z_hi_MM, z_mid_00,z_mid_M0,z_mid_MM, test;
+
+  r = ZeroOneDistribution(*GetMt19937Generator());
+    
+//    if (t0<M*M) t0 = M*M;
+    
+  if ((r>1)||(r<0))
+    {
+      throw std::runtime_error(" error in random number in z *GetMt19937Generator()");
+    }
+    
+  ratio = 1.0 ;
+    
+  diff = (ratio - r)/r;
+    
+  e = t0/t;
+
+  double M2 = M*M;
+    
+  if (e>0.5)
+    {
+      throw std::runtime_error(" error in epsilon");
+    }
+    
+  if (((int) std::abs((double) p_id))==4 || ((int) std::abs((double) p_id))==5)
+    {
+      z_low_M0 = e + M2/(t+M2);
+    }
+  else
+    {
+      z_low_00 = e;
+      z_low_MM = e+M2/t;
+    }
+
+  z_hi_00 = double(1.0) - e;
+  z_hi_M0 = double(1.0) - e;
+  z_hi_MM = double(1.0) - e  - M2/t;
+    
+  if (p_id==gid)
+    {
+      if (is==1)
+        {
+	  denom = P_z_gg_int(z_low_00,z_hi_00, loc_b, t, 2.0*nu/t, nu );
+        }
+      else
+        {
+          if (is==3) //THIS IS FOR GLUON-> HEAVY Q-QBAR
+            {
+             denom = P_z_qq_int_w_M_vac_only(M,z_low_MM,z_hi_MM,loc_b,t,2.0*nu/t, nu);
+            }
+          else
+            {
+	     denom = P_z_qq_int(z_low_00,z_hi_00,loc_b,t,2.0*nu/t, nu);
+            }
+        }
+    }
+  else
+    {
+      if (((int) std::abs((double) p_id))==4 || ((int) std::abs((double) p_id))==5)
+        {
+         denom = P_z_qg_int_w_M(M, z_low_M0, z_hi_M0, loc_b, t, 2.0*nu/t , nu);
+        }
+      else
+        {
+         denom = P_z_qg_int(z_low_00,z_hi_00, loc_b, t, 2.0*nu/t , nu);
+        }
+    }
+    
+    
+  //z_mid = (z_low + z_hi)/2.0 ;
+  
+  int itcounter=0;
+  //JSINFO << BOLDYELLOW << " generate_vac_z called with p_id = " << p_id << " t0 = " << t0 << " t = " << t << " loc_b=" << loc_b<< " nu = " <<  nu << " is = " << is ;
+
+  do
+  { // Getting stuck in here for some reason
+
+    if ( itcounter++ > 10000 )
+    {
+    	cout << " in here" << " abs(diff) = " << abs(diff) << "  approx = " << approx << "  r = " << r << "  zmid = " << z_mid_M0 << "  denom = " << denom << "  numer = " << numer << "  e = " << e << "   " << numer/denom << endl;
+        throw std::runtime_error("Stuck in endless loop") ;
+        
+    }
+
+
+    z_mid_00 = (z_low_00 + z_hi_00)/2.0 ;
+    z_mid_M0 = (z_low_M0 + z_hi_M0)/2.0 ;
+    z_mid_MM = (z_low_MM + z_hi_MM)/2.0 ;
+
+    if (p_id==gid)
+    {
+      if (is==1)
+      {
+          numer = P_z_gg_int(z_low_00, z_mid_00, loc_b, t, 2.0*nu/t , nu );
+      }
+      else
+      {
+        if (is==3)
+        {
+          numer = P_z_qq_int_w_M_vac_only(M, z_low_MM, z_mid_MM, loc_b, t, 2.0*nu/t , nu); 
+        }
+        else
+        {
+          numer = P_z_qq_int(z_low_00, z_mid_00, loc_b, t, 2.0*nu/t , nu);
+        }
+      }
+    }
+    else
+    {
+ 
+      if (((int) std::abs((double) p_id))==4 || ((int) std::abs((double) p_id))==5)
+      {
+        numer = P_z_qg_int_w_M(M, z_low_M0, z_mid_M0, loc_b, t, 2.0*nu/t , nu );
+      }
+      else
+      {
+        numer = P_z_qg_int(z_low_M0, z_mid_M0, loc_b, t, 2.0*nu/t , nu );
+      }
+    }
+      ratio = numer/denom ;
+      diff = (ratio - r)/r ;
+    // cout << "num, den, r, diff = " << numer << " "<< denom << " " << r << " " << endl;	
+    // cout << " diff, z_mid = " << diff << " " << z_mid << endl ;		
+    //		cin >> test ;
+      
+        
+    if (diff>0.0)
+    {
+        z_hi_M0 = z_mid_M0;
+        //z_mid = (z_low + z_hi)/2.0;
+    }
+    else
+    {
+        z_low_M0 = z_mid_M0;
+        //z_mid = (z_low + z_hi)/2.0 ;
+    }
+        
+  } while ((abs(diff)>approx)&&(abs(z_hi_M0-z_low_M0)/z_hi_M0>s_error) );
+    
+  return(z_mid_M0);
+}
 
 
 
@@ -1905,6 +2277,27 @@ double Matter::sudakov_Pqq(double q0, double q1, double loc_c, double E)
     
 }
 
+double Matter::sudakov_Pqq_w_M_vac_only(double M, double q0, double q1, double loc_c, double E)
+{
+  double sud,q;
+    
+  sud = 1.0;
+       
+  if (q1<2.0*(q0+M*M))
+    {
+      JSWARN << " warning: the lower limit of the sudakov > 1/2 upper limit, returning 1 ";
+      JSWARN << " in sudakov_Pquark quark, q0, q1 = " << q0 << "  " << q1;
+      return(sud) ;
+    }
+  else
+    {
+      q = 2.0*(q0+M*M);
+      sud = exp( -1.0*(Tf/2.0/pi)*sud_val_QQ_w_M_vac_only(M,q0,q,q1,loc_c, E) );
+      return(sud);
+    }
+}
+
+
 
 
 double Matter::sud_val_QQ(double h0, double h1, double h2, double loc_d, double E1)
@@ -1948,6 +2341,50 @@ double Matter::sud_val_QQ(double h0, double h1, double h2, double loc_d, double 
   return(intg);
     
 }
+
+double Matter::sud_val_QQ_w_M_vac_only(double M, double h0, double h1, double h2, double loc_d, double E1)
+{
+  double val, h , intg, hL, hR, diff, intg_L, intg_R, t_form, span;
+    
+  h = (h1+h2)/2.0 ;
+    
+  span = (h2 - h1)/h2;
+    
+  t_form = 2.0*E1/h;
+    
+  val = alpha_s(h)*sud_z_QQ(h0,h, loc_d, t_form,E1);
+    
+  intg = val*(h2-h1);
+    
+  hL = (h1 + h)/2.0 ;
+    
+  t_form = 2.0*E1/hL;
+    
+  intg_L = alpha_s(hL)*sud_z_QQ_w_M_vac_only(M,h0,hL,loc_d,t_form,E1)*(h - h1) ;
+    
+  hR = (h + h2)/2.0 ;
+    
+  t_form = 2.0*E1/hR;
+    
+  intg_R = alpha_s(hR)*sud_z_QQ_w_M_vac_only(M,h0,hR,loc_d,t_form,E1)*(h2 - h) ;
+    
+  diff = std::abs( (intg_L + intg_R - intg)/intg ) ;
+    
+  //	cout << " iline, gap, diff = " << i_line << " " << h2 << " " << h1 << "  " << diff << endl ;
+  //	cout << " intg, Left , right = " << intg << " " << intg_L << "  " << intg_R << endl;
+    
+  if ( (diff>approx)||(span>error) )
+    {
+      intg = sud_val_QQ_w_M_vac_only(M,h0,h1,h,loc_d,E1) + sud_val_QQ_w_M_vac_only(M,h0,h,h2,loc_d,E1);
+    }
+    
+  //	cout << " returning with intg = " << intg << endl;
+    
+  return(intg);
+    
+}
+
+
 
 
 double Matter::sud_z_QQ(double cg, double cg1, double loc_e , double l_fac, double E2)
@@ -2023,6 +2460,77 @@ double Matter::sud_z_QQ(double cg, double cg1, double loc_e , double l_fac, doub
     
 }
 
+double Matter::sud_z_QQ_w_M_vac_only(double M, double cg, double cg1, double loc_e , double l_fac, double E2)
+{
+    
+  double q2, q3, q5, q6, q8, q15, qL, tau, res, z_min;
+    
+    
+  z_min = std::sqrt(2)*E_minimum/E2;
+    
+  //    if (cg<cg1*z_min) cg = cg1*z_min;
+    
+    
+    
+  //    if ((cg< cg1/(2.0*E2*E2/cg1+1.0) )) cg = cg1/( 2.0*E2*E2/cg1 + 1.0 );
+    
+  if (cg1<2.0*(cg+M*M))
+    {
+        
+      //        cout << " returning with cg, cg1 = " << cg << "   " <<  cg1 << "    " << E_minimum << "  " << E2 << endl ;
+      return(0.0);
+    };
+     
+  double t1 = M * M;
+  double t2 = t1 + cg;
+  double t3 = 1.0/cg1;
+  double t5 = -t2*t3 + 1.0;
+  double t6 = t5*t5;
+  double t8 = t2*t2;
+  double t10 = pow(cg1, 2.0);
+  double t15 = 2.0/3.0*(t6*t5-t8*t2/t10/cg1)*t3;    
+
+    
+  q2 = 1.0 / cg1;
+  q3 = (cg * q2);
+  q5 = 1.0 - q3;
+  q6 = std::log(std::abs(q5));
+  q8 = std::log(q3);
+  /*	q10 = std::log(q3);
+	q12 = std::log(q5);*/
+  q15 = (-1.0 + (2.0 * q3) + q6 - q8) * q2;
+    
+    
+    
+  if (q15<0.0)
+    {
+      cerr << "ERROR: medium contribution negative in sud_z_QQ: q15 = " << q15 << endl;
+      cerr << "cg, cg1 = " << cg << "  " << cg1 << endl;
+      cerr << " t15 = " << t15 << endl;
+      throw std::runtime_error("ERROR: medium contribution negative in sud_z_QQ");
+    }
+    
+  tau = l_fac ;
+    
+  if ((length - loc_e) < tau) tau = (length - loc_e);
+    
+  if (loc_e > length) tau = 0.0 ;
+
+  // SC  
+  //qL = qhat*0.6*tau*profile(loc_e + tau) ;
+  if(tau<rounding_error) {
+      qL = 0.0;
+  } else {
+      qhat = fncAvrQhat(loc_e,tau);
+      qL = qhat*0.6*tau;
+  }
+
+  res = t15 + 2.0*qL*q15/cg1 ;
+    
+  return(res);
+    
+    
+}
 
 
 double Matter::P_z_qq_int(double cg, double cg1, double loc_e, double cg3, double l_fac, double E2)
@@ -2141,6 +2649,56 @@ double Matter::sud_val_QP(double h0, double h1, double h2, double loc_d, double 
     return(intg);
     
 }
+
+double Matter::P_z_qq_int_w_M_vac_only(double M, double cg, double cg1, double loc_e, double cg3, double l_fac, double E2)
+{
+  double t_q1,t_q3,t_q4,t_q6,t_q8,t_q9,t_q12,q_q1,q_q4,q_q6,q_q9,q_q11,qL,tau,res;
+    
+  if ((cg< cg1/(2.0*E2*E2/cg1+1.0) )) cg = cg1/( 2.0*E2*E2/cg1 + 1.0 );
+    
+  t_q1 = std::pow(cg1, 2);
+  t_q3 = 1.0 - cg1;
+  t_q4 = t_q3 * t_q3;
+  t_q6 = std::pow(cg, 2);
+  t_q8 = 1.0 - cg;
+  t_q9 = t_q8 * t_q8;
+  t_q12 = t_q1 * cg1 / 6.0 - t_q4 * t_q3 / 6.0 - t_q6 * cg / 6.0 + t_q9 * t_q8 / 6.0;
+    
+  tau = l_fac;
+    
+  if ((length - loc_e) < tau) tau = (length - loc_e);
+    
+  if (loc_e > length) tau = 0.0 ;
+ 
+  // SC  
+  //qL = qhat*0.6*tau*profile(loc_e + tau) ;
+  if(tau<rounding_error) {
+      qL = 0.0;
+  } else {
+      qhat = fncAvrQhat(loc_e,tau);
+      qL = qhat*0.6*tau;
+  }
+
+   
+  q_q1 = std::log(cg1);
+  q_q4 = std::log(1.0 - cg1);
+  q_q6 = std::log(cg);
+  q_q9 = std::log(1.0 - cg);
+  q_q11 = -cg1 + q_q1 / 2.0 - q_q4 / 2.0 + cg - q_q6 / 2.0 + q_q9 / 2.0;
+    
+  if (q_q11<0.0)
+    {
+      cerr << "ERROR: medium contribution negative in P_z_gg_int : q_q11 = " << q_q11 << endl;
+      throw std::runtime_error("ERROR: medium contribution negative in P_z_gg_int");
+    }
+    
+  res = t_q12*Tf/Ca + 2.0*qL*q_q11/cg3*(Tf*Cf/Ca/Ca);
+    
+  return(res);
+    
+}
+
+
 
 double Matter::sud_z_QP(double cg, double cg1, double loc_e, double l_fac,double E2)
 {
@@ -2267,6 +2825,27 @@ double Matter::sudakov_Pqg(double g0, double g1, double loc_c, double E)
     
 }
 
+double Matter::sudakov_Pqg_w_M(double M, double g0, double g1, double loc_c, double E)
+{
+  double sud,g;
+  int blurb;
+    
+  sud = 1.0 ;
+    
+    if (g1<g0*( 1.0 + std::sqrt( 1.0 + 2.0*M*M/g0 ) ) )
+    {
+      JSWARN << " warning: Not enough separation between upper and lower limits of Sudakov to have resolvable radiation ";
+      JSWARN << " in sudakov_Pquark gluon, g0*( 1.0 + std::sqrt( 1.0 + 2.0*M*M/g0 ) ), g1 = " << g0*( 1.0 + std::sqrt( 1.0 + 2.0*M*M/g0 ) ) << "  " << g1;
+      return(sud) ;
+    }
+  g = g0*( 1.0 + std::sqrt( 1.0 + 2.0*M*M/g0 ) );
+    
+  sud = exp( -1.0*(Cf/2.0/pi)*sud_val_QG_w_M(M,g0,g,g1,loc_c, E ) );
+    
+  return(sud);
+    
+}
+
 
 double Matter::sud_val_QG(double h0, double h1, double h2, double loc_d, double E1)
 {
@@ -2304,6 +2883,52 @@ double Matter::sud_val_QG(double h0, double h1, double h2, double loc_d, double 
     {
       intg = sud_val_QG(h0,h1,h,loc_d, E1) + sud_val_QG(h0,h,h2,loc_d, E1);
     }
+    
+  return(intg);
+    
+}
+
+double Matter::sud_val_QG_w_M(double M, double h0, double h1, double h2, double loc_d, double E1)
+{
+  double val, h , intg, hL, hR, diff, intg_L, intg_R, t_form, span;
+  int blurb;
+    
+    
+  val = 0.0;
+    
+  h = (h1+h2)/2.0 ;
+    
+  span = (h2-h1)/h2;
+    
+  t_form = 2.0*E1/h;
+    
+  val = alpha_s(h)*sud_z_QG_w_M(M,h0,h,loc_d, t_form,E1);
+    
+  intg = val*(h2-h1);
+    
+  hL = (h1 + h)/2.0 ;
+    
+  t_form = 2.0*E1/hL;
+    
+  intg_L = alpha_s(hL)*sud_z_QG_w_M(M,h0,hL,loc_d,t_form,E1)*(h - h1) ;
+    
+  hR = (h + h2)/2.0 ;
+    
+  t_form = 2.0*E1/hR;
+    
+  intg_R = alpha_s(hR)*sud_z_QG_w_M(M,h0,hR,loc_d,t_form,E1)*(h2 - h) ;
+    
+  diff = std::abs( (intg_L + intg_R - intg)/intg ) ;
+    
+  //	cout << " iline, gap, diff = " << i_line << " " << h2 << " " << h1 << "  " << diff << endl ;
+  //	cout << " intg, Left , right = " << intg << " " << intg_L << "  " << intg_R << endl;
+    
+  if ( (diff>approx )||(span>error ))
+    {
+      intg = sud_val_QG_w_M(M,h0,h1,h,loc_d, E1) + sud_val_QG_w_M(M,h0,h,h2,loc_d, E1);
+    }
+    
+  //    cout << " returning with intg = " << intg << endl;
     
   return(intg);
     
@@ -2383,6 +3008,160 @@ double Matter::sud_z_QG(double cg, double cg1, double loc_e, double l_fac,double
     
 }
 
+double Matter::sud_z_QG_w_M(double M, double cg, double cg1, double loc_e, double l_fac,double E2)//(t0,t,loc)
+{
+    
+  double  qL, tau, res, z_min;
+  int blurb;
+    
+  z_min = std::sqrt(2)*E_minimum/E2;
+    
+  if (cg1<2.0*cg)
+    {
+        
+      JSINFO << MAGENTA << " returning with cg, cg1 = " << cg << "   " <<  cg1 << "    " << E_minimum << "  " << E2 ;
+      return(0.0);
+    };
+    
+  double t1  = 1.0/cg1;
+  double t2  = t1*cg;
+  double t4  = std::pow(1.0 - t2, 2.0);
+  double t7  = std::log(t2);
+  double t9  = M*M;
+  double t10 = t1*t9;
+  double t13 = 1.0/(t10+1.0)*t10;
+  double t15 = std::pow(t2 + t13, 2.0);
+  double t18 = std::log(1.0 - t2 - t13);
+  double t21 = t1*(-t4/2.0 - 1.0 + 2.0*t2 - 2.0*t7 + t15/2.0 + t13 + 2.0*t18);
+
+  double q1  = M*M;
+  double q2  = 1.0/cg1;
+  double q3  = q2*q1;
+  double q5  = 4.0*q3+1.0;
+  double q6  = q2*cg;
+  double q7  = std::log(q6);
+  double q9  = q1*q1;
+  double q10 = std::pow(cg1, 2.0);
+  double q12 = 1.0/q10*q9;
+  double q14 = q12-2.0*q3+1.0/2.0;
+  double q15 = 1.0-q6;
+  double q16 = std::log(q15);
+  double q18 = q3+1.0;
+  double q28 = q15*q15;
+  double q33 = 1.0/q18*q3;
+  double q34 = 1.0-q6-q33;
+  double q35 = std::log(q34);
+  double q37 = q6+q33;
+  double q38 = std::log(q37);
+  double q48 = q37*q37;
+  double q52 = q7*q5+q16*q14+q15*q18/2.0+2.0/cg*cg1+3.0/2.0*q2/q15*q1-1.0/q28*q12/2.0-q35*q5-q38*q14-q37*q18/2.0-2.0/q34-3.0/2.0*q2/q37*q1+1.0/q48*q12/2.0;
+  double q53 = q2*q52;
+    
+  tau = l_fac ;
+    
+  if ((length - loc_e) < tau) tau = (length - loc_e);
+    
+  if (loc_e > length) tau = 0.0 ;
+
+  // SC  
+  //qL = qhat*0.6*tau*profile(loc_e + tau) ;
+  if(tau<rounding_error) {
+      qL = 0.0;
+  } else {
+      qhat = fncAvrQhat(loc_e,tau);
+      if (qhat*sqrt(2)>0.6)
+      {
+        // JSINFO << BOLDYELLOW << " length = " << length << " loc = " << loc_e << " tau = " << tau ;
+        //JSINFO << BOLDYELLOW << " parton formed at x = " << initRx << " y = " << initRy << " z = " << initRz << " t = " << initR0 ;
+        // JSINFO << BOLDYELLOW << " mean qhat for sudakov in GeV^2/fm = " << qhat*5*sqrt(2) ;
+      }
+      qL = qhat*0.6*2.0*tau;
+  }
+
+  double e1  = M*M;
+  double e2  = 1.0/cg1;
+  double e3  = e2*e1;
+  double e4  = e2*cg;
+  double e5  = std::log(e4);
+  double e8  = std::log(1.0-e4);
+  double e13 = 1.0/(e3+1.0)*e3;
+  double e15 = std::log(1.0-e4-e13);
+  double e18 = std::log(e4+e13);
+  double e22 = e2*(-(2.0*e5-e8+1.0-e4)*e3+(2.0*e15-e18+e4+e13)*e3);
+
+  double eL;
+
+  if(tau<rounding_error) {
+      eL = 0.0;
+  } else {
+      ehat = 0.0;//fncAvrEhat(loc_e,tau);
+      if (ehat*sqrt(2)>0.6)
+      {
+        // JSINFO << BOLDYELLOW << " length = " << length << " loc = " << loc_e << " tau = " << tau ;
+        //JSINFO << BOLDYELLOW << " parton formed at x = " << initRx << " y = " << initRy << " z = " << initRz << " t = " << initR0 ;
+        // JSINFO << BOLDYELLOW << " mean qhat for sudakov in GeV^2/fm = " << qhat*5*sqrt(2) ;
+      }
+      eL = ehat*0.6*4.0;
+  }
+
+  double f1  = M*M;
+  double f2  = 1.0/cg1;
+  double f3  = f2*f1;
+  double f4  = f2*cg;
+  double f5  = std::log(f4);
+  double f8  = f1*f1;
+  double f9  = std::pow(cg1, 2.0);
+  double f11 = 1.0/f9*f8;
+  double f14 = 13.0/4.0*f11-15.0/4.0*f3+1.0/2.0;
+  double f15 = 1.0-f4;
+  double f16 = std::log(f15);
+  double f24 = f15*f15;
+  double f32 = 1.0/(f3+1.0)*f3;
+  double f33 = 1.0-f4-f32;
+  double f34 = std::log(f33);
+  double f37 = f4+f32;
+  double f38 = std::log(f37);
+  double f45 = f37*f37;
+  double f52 = f2*((15.0/2.0*f5*f3+f16*f14+1.0/cg*cg1+15.0/4.0*f2/f15*f1-13.0/8.0/f24*f11)*f3-(15.0/2.0*f34*f3+f38*f14+1.0/f33+15.0/4.0*f2/f37*f1-13.0/8.0/f45*f11)*f3);
+  double e2L;
+
+  if(tau<rounding_error) {
+      e2L = 0.0;
+  } else {
+      e2hat = qhat/2.0;//fncAvrE2hat(loc_e,tau);
+      if (e2hat*sqrt(2)>0.6)
+      {
+        // JSINFO << BOLDYELLOW << " length = " << length << " loc = " << loc_e << " tau = " << tau ;
+        //JSINFO << BOLDYELLOW << " parton formed at x = " << initRx << " y = " << initRy << " z = " << initRz << " t = " << initR0 ;
+        // JSINFO << BOLDYELLOW << " mean qhat for sudakov in GeV^2/fm = " << qhat*5*sqrt(2) ;
+      }
+      e2L = e2hat*0.6*8.0/(tau*cg1);
+  }
+
+
+    //JSINFO << BOLDRED << " qhat L = " << qL << " location = " << loc_e << " tau = " << tau << " length = " << length;
+    
+    res = t21 + qL*q53/cg1 + eL*e22/cg1+e2L*f52/cg1;
+    
+  //   cout << " t0 , t , res = " << cg << "  "  << cg1 << "   " << res << endl ;
+    
+    
+  if (res<0.0)
+    {
+      cerr << "ERROR: medium contribution negative in sud_z_QG : res = " << res << endl;
+        
+        
+        
+      throw std::runtime_error("ERROR: medium contribution negative in sud_z_QG");
+    }
+    
+  return(res);
+    
+    
+    
+}
+
+
 double Matter::P_z_qg_int(double cg, double cg1, double loc_e, double cg3, double l_fac, double E2 )
 {
     
@@ -2420,6 +3199,114 @@ double Matter::P_z_qg_int(double cg, double cg1, double loc_e, double cg3, doubl
 
    
   res = t12 + 2.0*qL*q10/cg3 ;
+    
+  return(res);
+    
+    
+    
+}
+
+double Matter::P_z_qg_int_w_M(double M, double cg, double cg1, double loc_e, double cg3, double l_fac, double E2 )
+{
+    
+  double t2, t5, t7, t10, t12, tau, qL, res ;
+    
+    
+    if (std::abs(cg-cg1)<rounding_error) 
+  //if ((cg< cg1/(2.0*E2*E2/cg1+1.0) )) cg = cg1/( 2.0*E2*E2/cg1 + 1.0 );
+    
+  t2 = std::pow(cg1, 2);
+  t5 = std::log(1.0 - cg1);
+  t7 = std::pow(cg, 2);
+  t10 = std::log(1.0 - cg);
+  t12 = -cg1 - t2 / 2.0 - 2.0 * t5 + cg + t7 / 2.0 + 2.0 * t10;
+    
+  //	return(t12);
+
+  double q1  = M*M;
+  double q2  = 1.0/cg3;
+  double q3  = q2*q1;
+  double q5  = 4.0*q3+1.0;
+  double q6  = 1.0-cg1;
+  double q7  = std::log(q6);
+  double q9  = q1*q1;
+  double q10 = cg3*cg3;
+  double q12 = 1.0/q10*q9;
+  double q14 = q12-2.0*q3+1.0/2.0;
+  double q15 = std::log(cg1);
+  double q17 = q3+1.0;
+  double q26 = std::pow(cg1, 2.0);
+  double q30 = 1.0 - cg;
+  double q31 = std::log(q30);
+  double q33 = std::log(cg);
+  double q43 = std::pow(cg, 2.0);
+  double q47 = q7*q5+q15*q14+cg1*q17/2.0+2.0/q6+3.0/2.0*q2/cg1*q1-1.0/q26*q12/2.0-q31*q5-q33*q14-cg*q17/2.0-2.0/q30-3.0/2.0*q2/cg*q1+1.0/q43*q12/2.0;
+
+  tau = l_fac;
+    
+  if ((length - loc_e) < tau) tau = (length - loc_e);
+    
+  if (loc_e > length) tau = 0.0 ;
+
+  // SC
+  //qL = qhat*0.6*tau*profile(loc_e + tau) ;
+  if(tau<rounding_error) {
+      qL = 0.0;
+  } else {
+      qhat = fncAvrQhat(loc_e,tau);
+      qL = qhat*0.6*2.0*tau;
+  }
+
+  double e1  = M*M;
+  double e3  = 1.0/cg3*e1;
+  double e4  = 1.0-cg1;
+  double e5  = std::log(e4);
+  double e10 = 1.0-cg;
+  double e11 = std::log(e10);
+  double e17 = 2.0*(e5+1.0/e4+cg1/2.0)*e3-2.0*(e11+1.0/e10+cg/2.0)*e3;
+
+  double eL;
+
+  if(tau<rounding_error) {
+      eL = 0.0;
+  } else {
+      ehat = 0.0;//fncAvrEhat(loc_e,tau);
+      eL = ehat*0.6*4.0;
+  }
+
+  double f1  = M*M;
+  double f2  = 1.0/cg3;
+  double f3  = f2*f1;
+  double f4  = 13.0*f3;
+  double f6  = f1*f1;
+  double f7  = f6*(f4+15.0);
+  double f8  = 1.0-cg1;
+  double f9  = std::log(f8);
+  double f10 = cg3*cg3;
+  double f11 = 1.0/f10;
+  double f15 = std::log(cg1);
+  double f23 = f1*(39.0/4.0*f11*f6+15.0/2.0*f3+1.0);
+  double f28 = f6*(f4+15.0/2.0);
+  double f29 = f8*f8;
+  double f37 = 1.0/f10/cg3*f6*f1;
+  double f42 = 1.0-cg;
+  double f43 = std::log(f42);
+  double f47 = std::log(cg);
+  double f54 = f42*f42;
+  double f63 = f11*f9*f7/4.0+f2*f1*f15/2.0+1.0/f8*f2*f23-1.0/f29*f11*f28/2.0+13.0/6.0/f29/f8*f37-f11*f43*f7/4.0-f2*f1*f47/2.0-1.0/f42*f2*f23+1.0/f54*f11*f28/2.0-13.0/6.0/f54/f42*f37;
+    
+  double e2L;
+
+  if(tau<rounding_error) {
+      e2L = 0.0;
+  } else {
+      e2hat = qhat/2.0;//fncAvrE2hat(loc_e,tau);
+      e2L = e2hat*0.6*8.0/(tau*cg3);
+  }
+
+
+   
+  res = t12 + qL*q47/cg3 + eL*e17/cg3 + e2L*f63/cg3;
     
   return(res);
     

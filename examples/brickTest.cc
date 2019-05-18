@@ -69,16 +69,17 @@ int main(int argc, char** argv)
   JetScapeLogger::Instance()->SetRemark(false);
   //SetVerboseLevel (9 adds a lot of additional debug output)
   //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevle(9) or 10
-  JetScapeLogger::Instance()->SetVerboseLevel(0);
+  JetScapeLogger::Instance()->SetVerboseLevel(1);
    
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",12);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",10);
   jetscape->SetId("primary");
   
   // Initial conditions and hydro
-  auto trento = make_shared<TrentoInitial>();
+ // auto trento = make_shared<TrentoInitial>();
   auto pGun= make_shared<PGun> ();
+
   auto hydro = make_shared<Brick> ();
 
   jetscape->Add(trento);
@@ -86,13 +87,16 @@ int main(int argc, char** argv)
   auto myliquefier = make_shared<CausalLiquefier> ();
   jetscape->Add(trento);
 
+
   jetscape->Add(pGun);
-  jetscape->Add(hydro);
+//  jetscape->Add(hydro);
 
   // Energy loss
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
+
   jloss->add_a_liquefier(myliquefier);
+
 
 
   auto matter = make_shared<Matter> ();
@@ -116,14 +120,16 @@ int main(int argc, char** argv)
   
   // Hadronization
 
+
   auto hadroMgr = make_shared<HadronizationManager> ();
   auto hadro = make_shared<Hadronization> ();
   auto hadroModule = make_shared<ColoredHadronization> ();
   hadro->Add(hadroModule);
+
   // auto colorless = make_shared<ColorlessHadronization> ();
   // hadro->Add(colorless);
-  hadroMgr->Add(hadro);
-  jetscape->Add(hadroMgr);
+ // hadroMgr->Add(hadro);
+ // jetscape->Add(hadroMgr);
 
   // Output
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
