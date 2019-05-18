@@ -57,7 +57,7 @@ void PythiaGun::InitTask()
   readString("HadronLevel:all = off");
   readString("PartonLevel:ISR = on");
   readString("PartonLevel:MPI = on");
-  //readString("PartonLevel:FSR = off");
+  readString("PartonLevel:FSR = off");
   readString("PromptPhoton:all=on");
   readString("WeakSingleBoson:all=off");
   readString("WeakDoubleBoson:all=off");
@@ -279,15 +279,13 @@ void PythiaGun::Exec()
     VERBOSE(7) <<" at x=" << xLoc[1]
 	       <<", y=" << xLoc[2]
 	       <<", z=" << xLoc[3];
-    if(particle.id() !=22)
-    {
-        AddParton(make_shared<Parton>(0, particle.id(),0,particle.pT(),particle.y(),particle.phi(),particle.e(),xLoc) );
-    }
-    else
-    {
-	      AddHadron(make_shared<Hadron>(hCounter,particle.id(),particle.status(),particle.pT(),particle.eta(),particle.phi(),particle.e(),xLoc));
-	      hCounter++;
-    }
+    
+    AddParton(make_shared<Parton>(0, particle.id(),0,particle.pT(),particle.y(),particle.phi(),particle.e(),xLoc) );
+//    if(particle.id() == photonid)
+//    {
+//	AddHadron(make_shared<Hadron>(hCounter,particle.id(),particle.status(),particle.pT(),particle.eta(),particle.phi(),particle.e(),xLoc));
+//	hCounter++;
+//    }
   }
   
 

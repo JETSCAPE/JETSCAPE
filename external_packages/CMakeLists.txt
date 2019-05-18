@@ -14,12 +14,12 @@ set (SOURCES
 
 add_subdirectory( hydro_from_external_file )
 
-if(${ZLIB_FOUND})
+if (${ZLIB_FOUND})
     set (SOURCES ${SOURCES}  gzstream.cc )
 endif()
 
 add_library(JetScapeThird SHARED ${SOURCES})
-if(${ZLIB_FOUND})
+if (${ZLIB_FOUND})
     target_link_libraries(JetScapeThird ${ZLIB_LIBRARIES} )
 endif()
 

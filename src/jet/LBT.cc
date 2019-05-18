@@ -229,12 +229,13 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
   for (int i=0;i<pIn.size();i++)
     {	  
 
-      	    if (pIn[i].pid()!=21 && abs(pIn[i].pid())!=1 && abs(pIn[i].pid())!=2 && abs(pIn[i].pid())!=3 && abs(pIn[i].pid())!=4)
+      // Reject photons
+      
+      if (pIn[i].pid()==photonid)
       {
           pOut.push_back(pIn[i]);
           return;
       }
-
 
       // pass particle infomation to LBT array (only pass one particle each time)
 

@@ -360,8 +360,9 @@ void PartonShower::SaveAsGV(string fName)
   
   for (nIt = nodes_begin(), nEnd = nodes_end(); nIt != nEnd; ++nIt)
     {
-      label = ("[label=\""+to_string(n)+"(");
-      label2 = ")\"];";
+            label = ("[label=\""+to_string(n)+"(");
+      
+	label2 = ")\"];";
       stringstream stream;
       
       stream << fixed << setprecision(2) << (vMap[*nIt]->x_in().t());
@@ -377,14 +378,22 @@ void PartonShower::SaveAsGV(string fName)
   for (eIt = edges_begin(), eEnd = edges_end(); eIt != eEnd; ++eIt)
     {
 
-      label = ("[label=\"(");    
+      //label = ("[label=\"(");
+      if( (pMap[*eIt]->pstat()) == -13  )
+        label = ("[style=\"dotted\" color=\"red\"label=\"(");
+      else if( (pMap[*eIt]->pstat()) == -11  )
+	label = ("[color=\"red\"label=\"(");
+      else if (  (pMap[*eIt]->t()) < 4.0 )
+	label = ("[color=\"blue\"label=\"(");
+      else
+	label = ("[label=\"(");
       label2 = ")\"];";     
       stringstream stream;
-      stream << fixed << setprecision(2) << (pMap[*eIt]->pt());
+      stream << fixed << setprecision(2) << (pMap[*eIt]->pt())<<","<<(pMap[*eIt]->e())<<","<<(pMap[*eIt]->t())<<","<< (pMap[*eIt]->pid());
       
       gv<<to_string(eIt->source().id())+"->"+to_string(eIt->target().id())<<" "<<label<<stream.str()<<label2<<endl;
     }
-  
+   
   gv<<endl;
   gv<<"}"<<endl;
   gv.close();

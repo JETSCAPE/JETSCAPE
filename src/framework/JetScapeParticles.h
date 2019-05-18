@@ -272,7 +272,7 @@ namespace Jetscape {
     // Init is never called, and this object is not configured. All it can do is look up
     // in its original Data table
     static Pythia8::Pythia InternalHelperPythia;
-    
+
   protected:
   
     void set_restmass(double mass_input); ///< shouldn't be called from the outside, needs to be consistent with PID
@@ -319,6 +319,7 @@ namespace Jetscape {
     virtual void set_max_color(unsigned int col); ///< sets the color of the parton
     virtual void set_min_color(unsigned int col); ///< sets the color of the parton
     virtual void set_min_anti_color(unsigned int acol); ///< sets anti-color of the parton
+    bool isPhoton(int pid); // Checks to see if the particle is a photon, separate derived class for photons
 
     Parton (int label, int id, int stat, const FourVector& p, const FourVector& x);
     Parton (int label, int id, int stat, double pt, double eta, double phi, double e, double* x=0);
@@ -390,13 +391,25 @@ namespace Jetscape {
     /// In addition, not all generated ids may be in the database
     /// Currently, we add these manually. Could also reject outright.
     bool CheckOrForceHadron( const int id, const double mass=0 );
-      
+ 
   protected:
     double width_;
         
   };
-    
-    
+
+  class Photon : public Parton
+  {
+    public:
+
+    Photon (int label, int id, int stat, const FourVector& p, const FourVector& x);
+    Photon (int label, int id, int stat, double pt, double eta, double phi, double e, double* x=0);
+    Photon (const Photon& srh);
+
+    Photon& operator=( Photon &ph);
+    Photon& operator=( const Photon &ph);
+
+  };
+
 };  /// end of namespace Jetscape
 
 #endif // JETSCAPEPARTICLES_H

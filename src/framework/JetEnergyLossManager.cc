@@ -16,6 +16,7 @@
 #include "JetEnergyLossManager.h"
 #include "JetScapeLogger.h"
 #include "JetScapeSignalManager.h"
+#include "MakeUniqueHelper.h"
 #include <string>
 
 #include <iostream>
@@ -81,7 +82,9 @@ void JetEnergyLossManager::Init()
   for (auto it : GetTaskList())
   {
     if (dynamic_pointer_cast<JetEnergyLoss>(it))
+
         JetScapeSignalManager::Instance()->SetEnergyLossPointer(dynamic_pointer_cast<JetEnergyLoss>(it));
+
   }
 }
 
@@ -197,29 +200,42 @@ void JetEnergyLossManager::Exec()
   VERBOSE(3)<<" "<<GetNumberOfTasks()<<" Eloss Manager Tasks/Modules finished.";
 }
 
-void JetEnergyLossManager::CreateSignalSlots()
-{
-  for (auto it : GetTaskList())
-    for (auto it2 : it->GetTaskList())
-      {
-	if (!dynamic_pointer_cast<JetEnergyLoss>(it2)->GetJetSignalConnected())
-	  JetScapeSignalManager::Instance()->ConnectJetSignal(dynamic_pointer_cast<JetEnergyLoss>(it2));
-	
-	if (!dynamic_pointer_cast<JetEnergyLoss>(it2)->GetEdensitySignalConnected())	  
-	  JetScapeSignalManager::Instance()->ConnectEdensitySignal(dynamic_pointer_cast<JetEnergyLoss>(it2));
-	
-	if (!dynamic_pointer_cast<JetEnergyLoss>(it2)-> GetGetHydroCellSignalConnected())	  
-	  JetScapeSignalManager::Instance()->ConnectGetHydroCellSignal(dynamic_pointer_cast<JetEnergyLoss>(it2));
-
-	// between eloss modules and eloss
-	// check the signals itself, probably best via manager in the long run ...
-	if(!dynamic_pointer_cast<JetEnergyLoss>(it2)->GetSentInPartonsConnected())
-	  JetScapeSignalManager::Instance()->ConnectSentInPartonsSignal(dynamic_pointer_cast<JetEnergyLoss>(it),dynamic_pointer_cast<JetEnergyLoss>(it2));
-      }
-  
-  JetScapeSignalManager::Instance()->PrintGetHydroCellSignalMap();
-  VERBOSE(8);
-  JetScapeSignalManager::Instance()->PrintSentInPartonsSignalMap();
+void JetEnergyLossManager::CreateSignalSlots() {
+    for (auto it : GetTaskList()) {
+        for (auto it2 : it->GetTaskList()) {
+	        if (!dynamic_pointer_cast<JetEnergyLoss>(it2)->GetJetSignalConnected()) {
+	            JetScapeSignalManager::Instance()->ConnectJetSignal(
+                                    dynamic_pointer_cast<JetEnergyLoss>(it2));
+            }
+            if (!dynamic_pointer_cast<JetEnergyLoss>(it2)->GetEdensitySignalConnected()) {
+                JetScapeSignalManager::Instance()->ConnectEdensitySignal(
+                                    dynamic_pointer_cast<JetEnergyLoss>(it2));
+            }
+            if (!dynamic_pointer_cast<JetEnergyLoss>(it2)->GetGetHydroCellSignalConnected()) {
+                JetScapeSignalManager::Instance()->ConnectGetHydroCellSignal(
+                                    dynamic_pointer_cast<JetEnergyLoss>(it2));
+            }
+            
+            // between eloss modules and eloss
+            // check the signals itself, probably best via manager in the long run ...
+            if (!dynamic_pointer_cast<JetEnergyLoss>(it2)->GetSentInPartonsConnected()) {
+                JetScapeSignalManager::Instance()->ConnectSentInPartonsSignal(
+                        dynamic_pointer_cast<JetEnergyLoss>(it),
+                        dynamic_pointer_cast<JetEnergyLoss>(it2));
+            }
+        }
+        auto liq_pt = dynamic_pointer_cast<JetEnergyLoss>(it)->get_liquefier();
+        if (!weak_ptr_is_uninitialized(liq_pt) && 
+            !liq_pt.lock()->get_GetHydroCellSignalConnected()) {
+                JetScapeSignalManager::Instance()->ConnectGetHydroCellSignal(
+                                                                liq_pt.lock());
+            
+        }
+    }
+    
+    JetScapeSignalManager::Instance()->PrintGetHydroCellSignalMap();
+    VERBOSE(8);
+    JetScapeSignalManager::Instance()->PrintSentInPartonsSignalMap();
 }
 
 } // end namespace Jetscape
