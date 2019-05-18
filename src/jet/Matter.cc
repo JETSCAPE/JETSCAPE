@@ -284,7 +284,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 
      VERBOSE(8) << " *  parton formation spacetime point= "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z();
       
-      JSINFO << MAGENTA << " particle rest mass = " << pIn[i].restmass();
+      //JSINFO << MAGENTA << " particle rest mass = " << pIn[i].restmass();
 
       int jet_stat=pIn[i].pstat();  // daughter of recoil will always be recoil
       
@@ -1538,7 +1538,7 @@ double Matter::generate_vac_t_w_M(int p_id, double M, double nu, double t0, doub
   t_hi_MM = t;
   t_hi_00 = t;
     
-    JSINFO << MAGENTA << " in gen_vac_t_w_M : t_low , t_hi = " << t_low << "  " << t_hi ;
+    //JSINFO << MAGENTA << " in gen_vac_t_w_M : t_low , t_hi = " << t_low << "  " << t_hi ;
     //cin >> test ;
     
   if (p_id==gid)
@@ -1822,38 +1822,53 @@ double  Matter::generate_vac_z_w_M(int p_id, double M, double t0, double t, doub
   //z_mid = (z_low + z_hi)/2.0 ;
   
   int itcounter=0;
-  JSINFO << BOLDYELLOW << " generate_vac_z called with p_id = " << p_id << " t0 = " << t0 << " t = " << t << " loc_b=" << loc_b<< " nu = " <<  nu << " is = " << is ;
+  //JSINFO << BOLDYELLOW << " generate_vac_z called with p_id = " << p_id << " t0 = " << t0 << " t = " << t << " loc_b=" << loc_b<< " nu = " <<  nu << " is = " << is ;
 
-  do { // Getting stuck in here for some reason
+  do
+  { // Getting stuck in here for some reason
 
-    if ( itcounter++ > 10000 ) {
+    if ( itcounter++ > 10000 )
+    {
     	cout << " in here" << " abs(diff) = " << abs(diff) << "  approx = " << approx << "  r = " << r << "  zmid = " << z_mid_M0 << "  denom = " << denom << "  numer = " << numer << "  e = " << e << "   " << numer/denom << endl;
         throw std::runtime_error("Stuck in endless loop") ;
-          
-      }
+        
+    }
 
 
     z_mid_00 = (z_low_00 + z_hi_00)/2.0 ;
     z_mid_M0 = (z_low_M0 + z_hi_M0)/2.0 ;
     z_mid_MM = (z_low_MM + z_hi_MM)/2.0 ;
 
-    if (p_id==gid) {
-      if (is==1) {
-	numer = P_z_gg_int(z_low_00, z_mid_00, loc_b, t, 2.0*nu/t , nu );
-      } else {
-        if (is==3){
+    if (p_id==gid)
+    {
+      if (is==1)
+      {
+          numer = P_z_gg_int(z_low_00, z_mid_00, loc_b, t, 2.0*nu/t , nu );
+      }
+      else
+      {
+        if (is==3)
+        {
           numer = P_z_qq_int_w_M_vac_only(M, z_low_MM, z_mid_MM, loc_b, t, 2.0*nu/t , nu); 
-        } else {
+        }
+        else
+        {
           numer = P_z_qq_int(z_low_00, z_mid_00, loc_b, t, 2.0*nu/t , nu);
         }
       }
-    } else {
+    }
+    else
+    {
  
-      if (((int) std::abs((double) p_id))==4 || ((int) std::abs((double) p_id))==5){
+      if (((int) std::abs((double) p_id))==4 || ((int) std::abs((double) p_id))==5)
+      {
         numer = P_z_qg_int_w_M(M, z_low_M0, z_mid_M0, loc_b, t, 2.0*nu/t , nu );
-      } else {
+      }
+      else
+      {
         numer = P_z_qg_int(z_low_M0, z_mid_M0, loc_b, t, 2.0*nu/t , nu );
       }
+    }
       ratio = numer/denom ;
       diff = (ratio - r)/r ;
     // cout << "num, den, r, diff = " << numer << " "<< denom << " " << r << " " << endl;	
@@ -1872,7 +1887,7 @@ double  Matter::generate_vac_z_w_M(int p_id, double M, double t0, double t, doub
         //z_mid = (z_low + z_hi)/2.0 ;
     }
         
-  } while ((abs(diff)>approx)&&(abs(z_hi-z_low)/z_hi>s_error) );
+  } while ((abs(diff)>approx)&&(abs(z_hi_M0-z_low_M0)/z_hi_M0>s_error) );
     
   return(z_mid_M0);
 }
