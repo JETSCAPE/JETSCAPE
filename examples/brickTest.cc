@@ -77,7 +77,7 @@ int main(int argc, char** argv)
   jetscape->SetId("primary");
   
   // Initial conditions and hydro
- // auto trento = make_shared<TrentoInitial>();
+  auto trento = make_shared<TrentoInitial>();
   auto pGun= make_shared<PGun> ();
 
   auto hydro = make_shared<Brick> ();
