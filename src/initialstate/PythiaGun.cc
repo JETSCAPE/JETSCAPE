@@ -52,12 +52,12 @@ void PythiaGun::InitTask()
   readString("Next:numberShowEvent = 0"); 
 
   // Standard settings
-  readString("HardQCD:all = off"); // will repeat this line in the xml for demonstration  
+  readString("HardQCD:all = on"); // will repeat this line in the xml for demonstration  
   readString("HadronLevel:Decay = off");
   readString("HadronLevel:all = off");
   readString("PartonLevel:ISR = on");
   readString("PartonLevel:MPI = on");
-  //readString("PartonLevel:FSR = off");
+  readString("PartonLevel:FSR = off");
   readString("PromptPhoton:all=on");
   readString("WeakSingleBoson:all=off");
   readString("WeakDoubleBoson:all=off");
