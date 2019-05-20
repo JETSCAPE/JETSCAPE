@@ -270,7 +270,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 
       int jet_stat=pIn[i].pstat();  // daughter of recoil will always be recoil
       
-      //cout << "MATTER -- status: " << pIn[i].pstat() << "  energy: " << pIn[i].e() << " color: " << pIn[i].color() << "  " << pIn[i].anti_color() << "  clock: " << time << endl;
+      JSDEBUG << MAGENTA << "MATTER -- status: " << pIn[i].pstat() << "  energy: " << pIn[i].e() << " color: " << pIn[i].color() << "  " << pIn[i].anti_color() << "  clock: " << time ;
 
       velocity[0] = 1.0;
       // Define 3 velocity of the parton
@@ -392,7 +392,6 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           {
               pIn[i].set_t(tQ2); // Also resets momentum!
               JSINFO << BOLDYELLOW << " virtuality set to " << tQ2 ;
-              //cin >> blurb;
           }
           else pIn[i].set_t(0.0);
 
@@ -406,7 +405,6 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           
           if ( pIn[i].pid()>0 )
           {
-             // color = uni(*GetMt19937Generator());
               color = 101;
           }
           pIn[i].set_color(color);
@@ -433,9 +431,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
          VERBOSE(8) ;
          VERBOSE(8) << " ***************************************************************************** " ;
          VERBOSE(8) << " ID = " << pIn[i].pid() << " Color = " << pIn[i].color() << " Anti-Color = " << pIn[i].anti_color() ;
-         VERBOSE(8) << " E = " << pIn[i].e() << " px = " << pIn[i].px() << " py = " << pIn[i].py() << " pz = " << pIn[i].pz() ;
-         VERBOSE(8) << " *  New generated virtuality = " << tQ2 << " Mean formation time = " << pIn[i].mean_form_time();
-         VERBOSE(8) << " *  set new formation time to " << pIn[i].form_time() ;
+         JSINFO << MAGENTA << " E = " << pIn[i].e() << " px = " << pIn[i].px() << " py = " << pIn[i].py() << " pz = " << pIn[i].pz() ;
+         JSINFO << MAGENTA << " *  New generated virtuality = " << tQ2 << " Mean formation time = " << pIn[i].mean_form_time();
+         JSINFO << MAGENTA << " *  set new formation time to " << pIn[i].form_time() ;
          VERBOSE(8) << " * Maximum allowed virtuality = " << pIn[i].e()*pIn[i].e() - pIn[i].restmass()*pIn[i].restmass() << "   Minimum Virtuality = " << QS;
          VERBOSE(8) << " * Qhat = " << qhat << "  Length in fm = "  << length/5.0 ;
          VERBOSE(8) << " * Jet velocity = " << pIn[i].jet_v().comp(0) << " " << pIn[i].jet_v().comp(1) << "  " << pIn[i].jet_v().comp(2) << "  " << pIn[i].jet_v().comp(3);
@@ -448,9 +446,6 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       }
 
       
-      //cin >> blurb ;
-      //if(pIn[i].color()==0 && pIn[i].anti_color()==0) cout << "complain 0 0 color." << endl;
-
       // SC: Q0 can be changed based on different setups
       if(in_vac)
       { // for vaccuum
@@ -524,7 +519,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   if(in_vac) continue;
                   if(!recoil_on) continue;
                   if(el_time<tStart) continue;
-		  if(abs(pid)==4 || abs(pid)==5) continue; // recoil not ready for heavy quarks yet
+                  if(abs(pid)==4 || abs(pid)==5) continue; // recoil not ready for heavy quarks yet
 
                   double el_rx=initRx+(el_time-initR0)*initVx;
                   double el_ry=initRy+(el_time-initR0)*initVy;
@@ -876,11 +871,6 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                  throw std::runtime_error("error in iSplit");
               }
 
-              //if (d1_col==0 && d1_acol==0) cout << "complain color" << endl;
-              //if (d2_col==0 && d2_acol==0) cout << "complain color" << endl;
-
-              
-//              JSINFO << " d1_col = " << d1_col << " d1_acol = " << d1_acol << " d2_col = " << d2_col << " d2_acol = " << d2_acol;
 
               while ((l_perp2<=Lambda_QCD*Lambda_QCD)&&(ifcounter<100))
               {
@@ -972,12 +962,12 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 		
                   if(abs(pid) == 4 || abs(pid) == 5)
                   { 
-		      l_perp2 = new_parent_t*z*(1.0 - z) - tQd2*z - tQd1*(1.0-z) - pow((1.0-z)*pIn[i].restmass(),2); ///< the transverse momentum squared
-		  }
-		  else
+                      l_perp2 = new_parent_t*z*(1.0 - z) - tQd2*z - tQd1*(1.0-z) - std::pow((1.0-z)*pIn[i].restmass(),2); ///< the transverse momentum squared
+                  }
+                  else
                   {
-		      l_perp2 = new_parent_t*z*(1.0 - z) - tQd2*z - tQd1*(1.0-z) ; ///< the transverse momentum squared
-		  }
+                      l_perp2 = new_parent_t*z*(1.0 - z) - tQd2*z - tQd1*(1.0-z) ; ///< the transverse momentum squared
+                  }
 
                   ifcounter++;
               }
