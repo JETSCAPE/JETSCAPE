@@ -173,7 +173,7 @@ TEST(LiquefierBaseTest, TEST_add_hydro_source) {
     EXPECT_DOUBLE_EQ(p_test3.x(), (lqf.get_a_droplet(0).get_pmu())[1]);
     EXPECT_DOUBLE_EQ(x_test3.t(), (lqf.get_a_droplet(0).get_xmu())[0]);
     EXPECT_EQ(1, pIn.size());
-    EXPECT_EQ(1, pOut.size());
+    EXPECT_EQ(2, pOut.size());
     pIn.clear();
     pOut.clear();
     lqf.Clear();
