@@ -1,0 +1,35 @@
+#!/bin/bash
+#SBATCH -J 100_events_test_design
+#SBATCH -p skx-dev        # Queue (partition) name
+#SBATCH -N 2                 # the number of nodes
+#SBATCH --ntasks-per-node 48 #set this equal to number of cores on node
+#SBATCH -t 02:00:00          # Run time (hh:mm:ss)   walltime for each node separately
+#SBATCH --mail-user=everett.165@osu.edu
+#SBATCH --mail-type=all      # Send email at begin and end of job
+#SBATCH -A TG-PHY180035      # Allocation name (Large allocation)
+#SBATCH -o slurm/out-%j
+#SBATCH -e slurm/err-%j
+
+module load intel/18.0.2 cmake/3.7.1 gsl boost hdf5 eigen impi python3 launcher
+
+source ../prepare_compilation_stampede2_2.sh
+module list
+
+inputdir=../input-config/ #where the input files for all modules are located. remember to run ./generate_module_input_files.py first 
+job=$SLURM_JOB_ID
+# create taskfarmer tasks
+rm -f tasks # remove old tasks!!! important!!!
+
+#total number of hydro events will be (ntasks * nevents) assuming job remains within walltime 
+#for best scaling, set nevents 1 
+ntasks=100
+for task in $(seq -f "%05g" $ntasks); do
+    echo run-events-design --task $task --nevents 1 --logfile $SCRATCH/$job/$task.log --tmpdir=$SCRATCH/ --startdir=$inputdir $job/$task.dat >> tasks
+done
+
+export LAUNCHER_PLUGIN_DIR=$LAUNCHER_DIR/plugins
+export LAUNCHER_RMI=SLURM
+export LAUNCHER_JOB_FILE=tasks
+
+$LAUNCHER_DIR/paramrun
+
