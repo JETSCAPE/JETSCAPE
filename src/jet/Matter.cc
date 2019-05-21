@@ -531,6 +531,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               double el_p0[5];
               double el_CR;
               double el_rand;
+	      double HQ_mass;
 
               if(pid==gid) el_CR=Ca;
               else el_CR=Cf;
@@ -538,6 +539,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               for(int j=1; j<=3; j++) el_p0[j] = pIn[i].p(j);
               el_p0[0]=pIn[i].e();
               el_p0[4]=pIn[i].t();
+	      HQ_mass=pIn[i].restmass();
 
               for(double el_time=initR0; el_time<time+rounding_error; el_time=el_time+el_dt)
               {
@@ -566,7 +568,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   pc0[1]=el_p0[1];
                   pc0[2]=el_p0[2];
                   pc0[3]=el_p0[3];
-                  pc0[0]=sqrt(pc0[1]*pc0[1]+pc0[2]*pc0[2]+pc0[3]*pc0[3]);
+		  if(abs(pid)==4) pc0[0]=sqrt(pc0[1]*pc0[1]+pc0[2]*pc0[2]+pc0[3]*pc0[3]+HQ_mass*HQ_mass);
+		  else pc0[0]=sqrt(pc0[1]*pc0[1]+pc0[2]*pc0[2]+pc0[3]*pc0[3]);
 
                   recordE0=pc0[0];
 
@@ -4103,7 +4106,6 @@ void Matter::collHQ22(int CT,double temp,double qhat0ud,double v0[4],double p0[4
   //    amss=sqrt(abs(p0(4)**2-p0(1)**2-p0(2)**2-p0(3)**2))
   //
   //************************************************************
-
 
   // transform to local comoving frame of the fluid
   trans(v0,p0);
