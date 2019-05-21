@@ -39,7 +39,6 @@
 #include "Brick.h"
 #include "GubserHydro.h"
 #include "PGun.h"
-//#include "PartonPrinter.h"
 #include "HadronizationManager.h"
 #include "Hadronization.h"
 #include "ColoredHadronization.h"
@@ -70,54 +69,67 @@ int main(int argc, char** argv)
   JetScapeLogger::Instance()->SetRemark(false);
   //SetVerboseLevel (9 adds a lot of additional debug output)
   //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevle(9) or 10
-  JetScapeLogger::Instance()->SetVerboseLevel(0);
+  JetScapeLogger::Instance()->SetVerboseLevel(1);
    
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",12);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",2);
   jetscape->SetId("primary");
   
   // Initial conditions and hydro
   auto trento = make_shared<TrentoInitial>();
   auto pGun= make_shared<PGun> ();
+
   auto hydro = make_shared<Brick> ();
+
+  jetscape->Add(trento);
+
   auto myliquefier = make_shared<CausalLiquefier> ();
   jetscape->Add(trento);
+
+
   jetscape->Add(pGun);
-  jetscape->Add(hydro);
+//  jetscape->Add(hydro);
 
   // Energy loss
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
-  jloss->add_a_liqueifier(myliquefier);
+
+  jloss->add_a_liquefier(myliquefier);
+
 
 
   auto matter = make_shared<Matter> ();
   // auto lbt = make_shared<LBT> ();
+
+
   // auto martini = make_shared<Martini> ();
+
   // auto adscft = make_shared<AdSCFT> ();
 
   // Note: if you use Matter, it MUST come first (to set virtuality)
   jloss->Add(matter);
   // jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
+
   // jloss->Add(martini);
+
   // jloss->Add(adscft);  
   jlossmanager->Add(jloss);  
   jetscape->Add(jlossmanager);
 
   
   // Hadronization
-  // This helper module currently needs to be added for hadronization.
-  // auto printer = make_shared<PartonPrinter> ();
-  // jetscape->Add(printer);
+
+
   auto hadroMgr = make_shared<HadronizationManager> ();
   auto hadro = make_shared<Hadronization> ();
   auto hadroModule = make_shared<ColoredHadronization> ();
   hadro->Add(hadroModule);
+
   // auto colorless = make_shared<ColorlessHadronization> ();
   // hadro->Add(colorless);
-  hadroMgr->Add(hadro);
-  jetscape->Add(hadroMgr);
+ // hadroMgr->Add(hadro);
+ // jetscape->Add(hadroMgr);
 
   // Output
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");

@@ -22,7 +22,7 @@ export DYLD_LIBRARY_PATH
 fi
 
 export BASEDIR=${HOME}
-export PYTHIAINSTALLDIR=/usr/local/Cellar
+export PYTHIAINSTALLDIR=/Users/amajumder/Dropbox/work/pythia8230
 
 export JetScape=${PWD}/lib
 export LD_LIBRARY_PATH=${JetScape}:${LD_LIBRARY_PATH}
@@ -30,8 +30,8 @@ export LD_LIBRARY_PATH=${JetScape}:${LD_LIBRARY_PATH}
 export DYLD_LIBRARY_PATH=${JetScape}:${DYLD_LIBRARY_PATH}
 
 # PYTHIA8 directory
-export PYTHIA8DIR=${PYTHIAINSTALLDIR}/pythia8/8.223
-export PYTHIA8_ROOT_DIR=${PYTHIAINSTALLDIR}/pythia8/8.223
+export PYTHIA8DIR=${PYTHIAINSTALLDIR}
+export PYTHIA8_ROOT_DIR=${PYTHIAINSTALLDIR}
 #export PYTHIA8_INCLUDE_DIR=`${PYTHIA8DIR}/bin/pythia8-config --includedir`/Pythia8
 #export PYTHIA8_LIBRARIES=`${PYTHIA8DIR}/bin/pythia8-config --libdir`
 export LD_LIBRARY_PATH=${PYTHIA8DIR}/lib:${LD_LIBRARY_PATH}
