@@ -904,15 +904,10 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                           {
                               tQd1 = generate_vac_t_w_M(pid_a, pIn[i].restmass(), z*new_parent_nu, QS/2.0, z*z*new_parent_t, zeta+std::sqrt(2)*pIn[i].form_time()*fmToGeVinv, iSplit_a);
                           }
-                          else if (z*z*new_parent_t > pIn[i].restmass()*pIn[i].restmass())
+                          else
                           {
                               tQd1 = z*z*new_parent_t;
                           }
-                          else
-                          {
-                              tQd1 = pIn[i].restmass()*pIn[i].restmass() ;
-                          }
-                              
                       }
                       else
                       {
@@ -938,14 +933,11 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                           {
                               tQd2 = generate_vac_t_w_M(pid_a, pIn[i].restmass(), (1.0-z)*new_parent_nu, QS/2.0, (1.0-z)*(1.0-z)*new_parent_t, zeta+std::sqrt(2)*pIn[i].form_time()*fmToGeVinv, iSplit_a);
                           }
-                          else if ((1.0-z)*(1.0-z)*new_parent_t > pIn[i].restmass()*pIn[i].restmass())
+                          else 
                           {
                               tQd1 = (1.0-z)*(1.0-z)*new_parent_t;
                           }
-                          else
-                          {
-                              tQd1 = pIn[i].restmass()*pIn[i].restmass() ;
-                          }
+                          
                       }
                       else
                       {
