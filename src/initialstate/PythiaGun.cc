@@ -284,21 +284,21 @@ void PythiaGun::Exec()
 	       <<", y=" << xLoc[2]
 	       <<", z=" << xLoc[3];
 
-    if(particle.id() !=22)
-    {
-	      if(flag_useHybridHad != 1) {
+   // if(particle.id() !=22)
+   // {
+        if(flag_useHybridHad != 1) {
             AddParton(make_shared<Parton>(0, particle.id(),0,particle.pT(),particle.y(),particle.phi(),particle.e(),xLoc) );
         } else {
     	    auto ptn = make_shared<Parton>(0,particle.id(),0,particle.pT(),particle.y(),particle.phi(),particle.e(),xLoc);
             ptn->set_color(particle.col()); ptn->set_anti_color(particle.acol()); ptn->set_max_color(1000*(np+1));
             AddParton(ptn);
-	      }
-    }
-    else
-    {
-	      AddHadron(make_shared<Hadron>(hCounter,particle.id(),particle.status(),particle.pT(),particle.eta(),particle.phi(),particle.e(),xLoc));
-	      hCounter++;
-    }
+        }
+    //}
+    //else
+    //{
+    //          AddHadron(make_shared<Hadron>(hCounter,particle.id(),particle.status(),particle.pT(),particle.eta(),particle.phi(),particle.e(),xLoc));
+    //          hCounter++;
+    //}
 
   }
   
