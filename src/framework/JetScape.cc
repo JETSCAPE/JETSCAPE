@@ -319,6 +319,17 @@ void JetScape::DetermineTaskListFromXML() {
           JSWARN << "MUSIC is attempted to be added, but it is not installed!";
           #endif
         }
+        //   - CLVisc
+        else if (childElementName == "CLVisc") {
+          auto hydro = JetScapeModuleFactory::createInstance("CLVisc");
+          if (hydro) {
+            Add(hydro);
+            JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added CLVisc to task list.";
+          } else {
+          JSWARN << "CLVisc is attempted to be added, but it is not installed!";
+          }
+        }
+
         //   - Custom module
         else if ( ((int) childElementName.find("CustomModule")>=0) ) {
           auto customModule = JetScapeModuleFactory::createInstance(childElementName);

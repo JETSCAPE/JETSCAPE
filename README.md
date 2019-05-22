@@ -15,7 +15,7 @@ If you prefer to manually install the pre-requisites, please see the instruction
 
 ### External packages
 
-To run certain external software (MUSIC, SMASH, etc.), you will need to explicitly download them, 
+To run certain external software (MUSIC, CLVisc, SMASH, etc.), you will need to explicitly download them, 
 and you may need to re-run `cmake` with specific command-line options.
 Scripts to download and install the external packages are provided in `external_packages/`. 
 Please see [external packages](https://github.com/amajumder/JETSCAPE-COMP/tree/master/external_packages) for full details.

@@ -35,6 +35,23 @@ if (freestream)
   include_directories(./external_packages/freestream-milne/src)
 endif (freestream)
 
+# CLVisc. Trun on with 'cmake -Dclvisc=ON'.
+find_package(OpenCL)
+
+option(clvisc "Build tests for CLVisc" OFF)
+if (OPENCL_FOUND)
+  message("Found OpenCL, try clvisc with cmake -Dclvisc=ON")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated")
+  if (clvisc)
+      message("Includes for clvisc ...")
+      include_directories(./external_packages/clvisc_wrapper/include/)
+      include_directories(./external_packages/clvisc_wrapper/)
+      if(NOT EXISTS "${CMAKE_SOURCE_DIR}/external_packages/PyVisc")
+          message(FATAL_ERROR "Error: CLVisc source has not been downloaded in external_packages by ./get_clvisc.sh")
+      endif()
+  endif (clvisc)
+endif (OPENCL_FOUND)
+
 # MUSIC. Turn on with 'cmake -Dmusic=ON'.
 option(music "Build tests for MUSIC" OFF)
 if (music)
@@ -140,6 +157,7 @@ install(
   "${CMAKE_SOURCE_DIR}/external_packages/hydro_from_external_file/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/music/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/trento/src/"
+  "${CMAKE_SOURCE_DIR}/external_packages/clvisc_wrapper/"
   "${CMAKE_SOURCE_DIR}/external_packages/smash/src/"
   DESTINATION "include" # target directory
   FILES_MATCHING # install only matched files
@@ -149,6 +167,7 @@ install(
   PATTERN "iSS" EXCLUDE
   PATTERN "hydro_from_external_file" EXCLUDE
   PATTERN "music" EXCLUDE
+  PATTERN "clvisc" EXCLUDE
   PATTERN "trento" EXCLUDE
   PATTERN "tests" EXCLUDE
   PATTERN "data_table" EXCLUDE
@@ -170,6 +189,17 @@ install(
   # PATTERN "gtl/src" EXCLUDE
   )
 
+install(
+  # source directory
+  DIRECTORY
+  "${CMAKE_SOURCE_DIR}/external_packages/clvisc_wrapper/include/"
+  DESTINATION "include" # target directory
+  FILES_MATCHING # install only matched files
+  PATTERN "*.h*" # select header files
+  ## Necessary to exclude directories to prevent a whole (mostly empty) hierarchy
+  )
+
+
 # Install lib files
 install(
   # our libraries
@@ -181,6 +211,7 @@ install(
   "${PROJECT_BINARY_DIR}/external_packages/iSS/src/"
   "${PROJECT_BINARY_DIR}/external_packages/music/src/"
   "${PROJECT_BINARY_DIR}/external_packages/trento/src/"
+  "${PROJECT_BINARY_DIR}/external_packages/clvisc_wrapper/"
   DESTINATION "lib" # target directory
   FILES_MATCHING # install only matched files
   PATTERN "lib*.*" # selects .so, .a, .dylib, ...
@@ -317,6 +348,11 @@ if (iSS)
   endif()      
 endif (iSS)
 
+if (OPENCL_FOUND AND clvisc)
+  add_subdirectory( ${CMAKE_SOURCE_DIR}/external_packages/clvisc_wrapper )
+endif (OPENCL_FOUND AND clvisc)
+
+
 ###########################
 ### Binary location     ###
 ###########################
@@ -357,7 +393,6 @@ add_executable(FinalStatePartons ./examples/FinalStatePartons.cc)
 target_link_libraries(FinalStatePartons JetScape )
 
 # executables with additional dependencies
-
 if ( music AND iSS )
   target_link_libraries(runJetscape ${GSL_LIBRARIES})
 endif (music AND iSS )

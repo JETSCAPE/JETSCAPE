@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+
+<jetscape>
+  
+  <nEvents> 20 </nEvents>
+
+  <debug> on </debug>
+  <vlevel> 0 </vlevel>
+  
+  <JetScapeWriterAscii> on </JetScapeWriterAscii>
+
+  <!-- Inital State Module  -->
+  <IS>
+    <Trento use_module="user_defined"> </Trento>
+  </IS>
+  
+  <!-- Hard Process -->
+  <Hard>
+    <PythiaGun>
+      <pTHatMin>50</pTHatMin>
+      <pTHatMax>70</pTHatMax>
+      <eCM>5020</eCM>
+    </PythiaGun>
+  </Hard>
+  
+  <!--Preequilibrium Dynamics Module -->
+  <Preequilibrium>
+    <FreestreamMilne> </FreestreamMilne>
+  </Preequilibrium>
+  
+  <!-- Hydro  Module  -->
+  <Hydro>
+      <CLVisc></CLVisc>
+  </Hydro>
+
+   <!--Eloss Modules -->
+  <Eloss>
+    <Matter> </Matter>
+    <LBT> </LBT>
+  </Eloss>
+  
+  <!-- Jet Hadronization Module -->
+  <JetHadronization>
+    <name>colored</name>
+  </JetHadronization>
+  
+</jetscape>

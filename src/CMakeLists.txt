@@ -46,6 +46,10 @@ if(NOT "${music}")
   list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/hydro/MusicWrapper.cc)
 endif()
 
+if(NOT "${clvisc}")
+  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/hydro/CLViscWrapper.cc)
+endif()
+
 #afterburner
 FILE(GLOB afterburnersources afterburner/*.cc)
 set (SOURCES  ${SOURCES}  ${afterburnersources} )
@@ -96,6 +100,11 @@ endif()
 if ( iSS )
   target_link_libraries (JetScape iSS_lib )
 endif()
+
+if ( clvisc )
+  target_link_libraries (JetScape clviscwrapper )
+endif()
+
 
 if ( smash )
   target_link_libraries (JetScape ${SMASH_LIBRARIES})

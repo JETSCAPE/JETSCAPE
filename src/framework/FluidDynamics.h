@@ -23,6 +23,7 @@
 #include <stdexcept>
 #include <cmath>
 #include <iostream>
+#include <map>
 
 #include "InitialState.h"
 #include "JetScapeModuleBase.h"
