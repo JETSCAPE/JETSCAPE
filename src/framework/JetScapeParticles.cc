@@ -404,7 +404,17 @@ namespace Jetscape {
   {
     /// \Todo: Fix
     //  double t_parton = PseudoJet::m2()  - restmass()*restmass() ;
-      double t_parton = e()*e() - px()*px() - py()*py() - pz()*pz() - restmass()*restmass();
+      
+      double t_parton = 0.0;
+      
+      if ( (std::abs(pid()) == 4)||(std::abs(pid()) == 5) )
+      {
+          t_parton = e()*e() - px()*px() - py()*py() - pz()*pz() - restmass()*restmass();
+      }
+      else
+      {
+          t_parton = e()*e() - px()*px() - py()*py() - pz()*pz() ;
+      }
       if (t_parton< 0.0)
       {
           JSWARN << " Virtuality is negative, MATTER cannot handle these particles " << " t = " << t_parton;

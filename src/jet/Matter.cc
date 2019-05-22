@@ -348,6 +348,13 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       
       if (pIn[i].form_time()<0.0) /// A parton without a virtuality or formation time, must set...
       {
+          
+          if (pIn[i].t()<0.0)
+          {
+              JSWARN << " parton with a negative virtuality was sent to MATTER and will now have its virtuality reset!, press 1 and return to proceed... ";
+              cin >> blurb;
+          }
+          
           iSplit = 0;
           if (pIn[i].pid()==gid)
           {
@@ -933,7 +940,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                           {
                               tQd2 = generate_vac_t_w_M(pid_a, pIn[i].restmass(), (1.0-z)*new_parent_nu, QS/2.0, (1.0-z)*(1.0-z)*new_parent_t, zeta+std::sqrt(2)*pIn[i].form_time()*fmToGeVinv, iSplit_a);
                           }
-                          else 
+                          else
                           {
                               tQd1 = (1.0-z)*(1.0-z)*new_parent_t;
                           }
@@ -952,7 +959,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   
                   if (iSplit == 3)
                   {
-                    tQd2 = 0.0; // forcing the photon to have no virtuality
+                    tQd2 = rounding_error; // forcing the photon to have no virtuality
                   }
                   
                   l_perp2 = new_parent_t*z*(1.0 - z) - tQd2*z - tQd1*(1.0-z) ; ///< the transverse momentum squared
