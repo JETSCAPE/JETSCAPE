@@ -73,7 +73,7 @@ int main(int argc, char** argv)
    
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",2);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",100);
   jetscape->SetId("primary");
   
   // Initial conditions and hydro
@@ -82,10 +82,10 @@ int main(int argc, char** argv)
 
   auto hydro = make_shared<Brick> ();
 
-  jetscape->Add(trento);
+  //jetscape->Add(trento);
 
-  auto myliquefier = make_shared<CausalLiquefier> ();
-  jetscape->Add(trento);
+ // auto myliquefier = make_shared<CausalLiquefier> ();
+  //jetscape->Add(trento);
 
 
   jetscape->Add(pGun);
@@ -95,7 +95,7 @@ int main(int argc, char** argv)
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
 
-  jloss->add_a_liquefier(myliquefier);
+ // jloss->add_a_liquefier(myliquefier);
 
 
 
@@ -121,10 +121,10 @@ int main(int argc, char** argv)
   // Hadronization
 
 
-  auto hadroMgr = make_shared<HadronizationManager> ();
-  auto hadro = make_shared<Hadronization> ();
-  auto hadroModule = make_shared<ColoredHadronization> ();
-  hadro->Add(hadroModule);
+ // auto hadroMgr = make_shared<HadronizationManager> ();
+ // auto hadro = make_shared<Hadronization> ();
+ // auto hadroModule = make_shared<ColoredHadronization> ();
+// hadro->Add(hadroModule);
 
   // auto colorless = make_shared<ColorlessHadronization> ();
   // hadro->Add(colorless);
