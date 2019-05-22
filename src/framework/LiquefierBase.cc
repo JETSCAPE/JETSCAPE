@@ -99,6 +99,10 @@ void LiquefierBase::filter_partons(std::vector<Parton> &pOut) {
 
         // ignore photons
         if (iparton.isPhoton(iparton.pid())) continue;
+        
+        // ignore heavy quarks
+        if (std::abs(iparton.pid()) == 4
+            || std::abs(iparton.pid()) == 5) continue;
 
         if (iparton.pstat() == -1) {
             // remove negative particles from parton list

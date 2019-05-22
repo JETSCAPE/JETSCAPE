@@ -42,6 +42,7 @@
 #include "TrentoInitial.h"
 #include "NullPreDynamics.h"
 #include "PGun.h"
+#include "PythiaGun.h"
 #include "PartonPrinter.h"
 #include "HadronizationManager.h"
 #include "Hadronization.h"
@@ -89,7 +90,8 @@ int main(int argc, char** argv)
   // Initial conditions and hydro
   auto trento = make_shared<TrentoInitial>();
   auto null_predynamics = make_shared<NullPreDynamics> ();
-  auto pGun= make_shared<PGun> ();
+  //auto pGun= make_shared<PGun> ();
+  auto pythiaGun= make_shared<PythiaGun> ();
   auto hydro1 = make_shared<MpiMusic> ();
   auto myliquefier = make_shared<CausalLiquefier> ();
   hydro1->SetId("MUSIC_1");
@@ -97,7 +99,8 @@ int main(int argc, char** argv)
 
   jetscape->Add(trento);
   jetscape->Add(null_predynamics);
-  jetscape->Add(pGun);
+  jetscape->Add(pythiaGun);
+  //jetscape->Add(pGun);
 
   // add the first hydro
   jetscape->Add(hydro1);
