@@ -375,28 +375,36 @@ void PartonShower::SaveAsGV(string fName)
   
   edge_iterator eIt, eEnd;
   
-  for (eIt = edges_begin(), eEnd = edges_end(); eIt != eEnd; ++eIt)
-    {
-
-      //label = ("[label=\"(");
-      if( (pMap[*eIt]->pstat()) == -13  )
-        label = ("[style=\"dotted\" color=\"red\"label=\"(");
-      else if( (pMap[*eIt]->pstat()) == -11  )
-	label = ("[color=\"red\"label=\"(");
-      else if (  (pMap[*eIt]->t()) < 4.0 )
-	label = ("[color=\"blue\"label=\"(");
-      else
-	label = ("[label=\"(");
-      label2 = ")\"];";     
-      stringstream stream;
-      stream << fixed << setprecision(2) << (pMap[*eIt]->pt())<<","<<(pMap[*eIt]->e())<<","<<(pMap[*eIt]->t())<<","<< (pMap[*eIt]->pid());
+    for (eIt = edges_begin(), eEnd = edges_end(); eIt != eEnd; ++eIt) {
+        //label = ("[label=\"(");
+        if ((pMap[*eIt]->pstat()) == -13) {
+            // missing energy-momentum
+            label = ("[style=\"dotted\" color=\"red\"label=\"(");
+        } else if ((pMap[*eIt]->pstat()) == -11) {
+            // liquefied partons
+            label = ("[color=\"red\"label=\"(");
+        } else if ((pMap[*eIt]->pstat()) == -17) {
+            // thermal partons draw from the medium (negative partons)
+            label = ("[color=\"darkorange\"label=\"(");
+        } else if ((pMap[*eIt]->t()) < 4.0) {
+            // small virtuality parton
+            label = ("[color=\"blue\"label=\"(");
+        } else {
+            label = ("[label=\"(");
+        }
+        label2 = ")\"];";     
+        stringstream stream;
+        stream << fixed << setprecision(2) << (pMap[*eIt]->pt()) << ","
+               << (pMap[*eIt]->e()) << "," << (pMap[*eIt]->t()) <<","
+               << (pMap[*eIt]->pid());
       
-      gv<<to_string(eIt->source().id())+"->"+to_string(eIt->target().id())<<" "<<label<<stream.str()<<label2<<endl;
+        gv << (to_string(eIt->source().id()) + "->"
+               + to_string(eIt->target().id())) << " " << label
+           << stream.str() << label2 << endl;
     }
-   
-  gv<<endl;
-  gv<<"}"<<endl;
-  gv.close();
+    gv << endl;
+    gv << "}" << endl;
+    gv.close();
 }
 
 void PartonShower::SaveAsGraphML(string fName)
