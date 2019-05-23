@@ -209,7 +209,7 @@ void JetEnergyLoss::DoShower() {
         vector<node> vStartVecTemp;
 
         VERBOSESHOWER(7) << "Current time = " << currentTime
-                         << " with #Input " << pIn.size();     
+                         << " with #Input " << pIn.size();
         currentTime += deltaT;
 
         for (int i = 0; i < pIn.size(); i++) {
@@ -289,19 +289,20 @@ void JetEnergyLoss::DoShower() {
             // update parton shower
             if (pOutTemp.size() == 0) {
                 pInTemp.push_back(pInTempModule[0]);
-            }
+            } else if (pOutTemp.size() == 1) {
+                pInTemp.push_back(pOutTemp[0]);
+            } else {
+	            for (int k = 0; k < pOutTemp.size(); k++) {
+                    // do not push back droplets
+                    if (!weak_ptr_is_uninitialized(liquefier_ptr)) {
+                        if (pOutTemp[k].pstat() == droplet_stat) continue;
+                        if (pOutTemp[k].pstat() == miss_stat) continue;
+                    }
+                    // do not push back photons
+		            if (pOutTemp[k].isPhoton(pOutTemp[k].pid())) continue;
 
-	        for (int k = 0; k < pOutTemp.size(); k++) { 
-                // do not push back droplets
-                if (!weak_ptr_is_uninitialized(liquefier_ptr)) {
-                    if (pOutTemp[k].pstat() == droplet_stat) continue;
-                    if (pOutTemp[k].pstat() == miss_stat) continue;
+	                pOut.push_back(pOutTemp[k]);
                 }
-                
-                // do not push back photons
-		        if (pOutTemp[k].isPhoton(pOutTemp[k].pid())) continue;
-
-	            pOut.push_back(pOutTemp[k]);
             }
 	    }
 
