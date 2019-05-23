@@ -18,7 +18,8 @@
 namespace Jetscape {
 
 LiquefierBase::LiquefierBase() :
-    hydro_source_abs_err(1e-10), drop_stat(-11), miss_stat(-13) {
+    hydro_source_abs_err(1e-10), drop_stat(-11), miss_stat(-13),
+    neg_stat(-17) {
     GetHydroCellSignalConnected = false;
 }
 
@@ -90,7 +91,7 @@ void LiquefierBase::check_energy_momentum_conservation(
 
 
 void LiquefierBase::filter_partons(std::vector<Parton> &pOut) {
-    // if e_threshold > 0, use e_threshold, else, use e_threshold*T 
+    // if e_threshold > 0, use e_threshold, else, use |e_threshold|*T 
     // this should be put into xml later.
     auto e_threshold = 2.0;
     
@@ -106,7 +107,8 @@ void LiquefierBase::filter_partons(std::vector<Parton> &pOut) {
 
         if (iparton.pstat() == -1) {
             // remove negative particles from parton list
-            iparton.set_stat(drop_stat);
+            //iparton.set_stat(drop_stat);
+            iparton.set_stat(neg_stat);
 	        continue;
         }
 
@@ -138,7 +140,7 @@ void LiquefierBase::filter_partons(std::vector<Parton> &pOut) {
             // (in the local rest frame) from parton list
 	        if (gamma*(iparton.e() - iparton.p(1)*vxLoc
                        - iparton.p(2)*vyLoc - iparton.p(3)*vzLoc)
-                < 4.0*tempLoc) {
+                < std::abs(e_threshold)*tempLoc) {
                 iparton.set_stat(drop_stat);
                 continue;
 	        }
@@ -171,6 +173,7 @@ void LiquefierBase::add_hydro_sources(std::vector<Parton> &pIn,
     for (const auto &iparton : pOut) {
         if (iparton.pstat() == drop_stat) continue;
         if (iparton.pstat() == miss_stat) continue;
+        if (iparton.pstat() == neg_stat) continue;
         auto temp = iparton.p_in();
         p_final += temp;
         x_final = iparton.x_in(); 

@@ -200,12 +200,17 @@ void JetEnergyLoss::DoShower() {
     bool foundchangedorig = false;
     int droplet_stat = -11;
     int miss_stat    = -13;
+    int neg_stat     = -17;
+    if (!weak_ptr_is_uninitialized(liquefier_ptr)) {
+        droplet_stat = liquefier_ptr.lock()->get_drop_stat();
+        miss_stat    = liquefier_ptr.lock()->get_miss_stat();
+        neg_stat     = liquefier_ptr.lock()->get_neg_stat();
+    }
     do {
         vector<Parton> pOut;
         vector<Parton> pInTemp;
 
         vector<node> vStartVecOut;
-        vector<node> vStartVecOut2;
         vector<node> vStartVecTemp;
 
         VERBOSESHOWER(7) << "Current time = " << currentTime
@@ -221,10 +226,7 @@ void JetEnergyLoss::DoShower() {
                           pInTempModule, pOutTemp);
             
             // apply liquefier
-            if (!weak_ptr_is_uninitialized(liquefier_ptr)
-                && currentTime > 0.1) {
-                droplet_stat = liquefier_ptr.lock()->get_drop_stat();
-                miss_stat    = liquefier_ptr.lock()->get_miss_stat();
+            if (!weak_ptr_is_uninitialized(liquefier_ptr)) {
                 liquefier_ptr.lock()->add_hydro_sources(pInTempModule,
                                                         pOutTemp);
             }
@@ -244,22 +246,23 @@ void JetEnergyLoss::DoShower() {
             if (pOutTemp.size() < 2) {
 	            vStartVecTemp.push_back(vStart);
             } else {
-	            for (int k = 0; k < pOutTemp.size(); k++) { 
+	            for (int k = 0; k < pOutTemp.size(); k++) {
 	                vEnd = pShower->new_vertex(
-                                make_shared<Vertex>(0, 0, 0, currentTime));	
+                            make_shared<Vertex>(0, 0, 0, currentTime));	
 	                int edgeid = pShower->new_parton(
-                                vStart, vEnd, make_shared<Parton>(pOutTemp[k]));
+                        vStart, vEnd, make_shared<Parton>(pOutTemp[k]));
 	                pOutTemp[k].set_shower(pShower);
 	                pOutTemp[k].set_edgeid(edgeid);
-		          
-                    if (pOutTemp[k].pstat() == droplet_stat
-                        || pOutTemp[k].pstat() == miss_stat
-                        || pOutTemp[k].isPhoton(pOutTemp[k].pid())) {
-	                    vStartVecOut2.push_back(vEnd);
-                    } else {
+
+                    // no need to generate a vStart for photons and liquefied
+                    // partons
+                    if (pOutTemp[k].pstat() != droplet_stat
+                        && pOutTemp[k].pstat() != miss_stat
+                        && pOutTemp[k].pstat() != neg_stat
+                        && !pOutTemp[k].isPhoton(pOutTemp[k].pid())) {
                         vStartVecOut.push_back(vEnd);
                     }
-
+	                
 	                // --------------------------------------------
 	                // Add new roots from ElossModules ...
 	                // (maybe add for clarity a new vector in the signal!???)
@@ -269,8 +272,8 @@ void JetEnergyLoss::DoShower() {
 	                // DEBUG:
 	                //cout<<"In JetEnergyloss : "<<pInTempModule.size()<<end;
 	                if (pInTempModule.size() > 1) {
-		                VERBOSESHOWER(7) << pInTempModule.size() - 1
-                                         << " new root node(s) to be added ...";
+		                VERBOSE(7) << pInTempModule.size() - 1
+                                   << " new root node(s) to be added ...";
 		                //cout << pInTempModule.size()-1
                         //     << " new root node(s) to be added ..." << endl;
 		  
@@ -297,6 +300,7 @@ void JetEnergyLoss::DoShower() {
                     if (!weak_ptr_is_uninitialized(liquefier_ptr)) {
                         if (pOutTemp[k].pstat() == droplet_stat) continue;
                         if (pOutTemp[k].pstat() == miss_stat) continue;
+                        if (pOutTemp[k].pstat() == neg_stat) continue;
                     }
                     // do not push back photons
 		            if (pOutTemp[k].isPhoton(pOutTemp[k].pid())) continue;
@@ -317,8 +321,6 @@ void JetEnergyLoss::DoShower() {
                          vStartVecTemp.end());
         vStartVec.insert(vStartVec.end(), vStartVecOut.begin(),
                          vStartVecOut.end());
-        vStartVec.insert(vStartVec.end(), vStartVecOut2.begin(),
-                         vStartVecOut2.end());
     } while (currentTime<maxT);  // other criteria (how to include; TBD)
 
     pIn.clear();
