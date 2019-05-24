@@ -101,6 +101,31 @@ class Matter : public JetEnergyLossModule<Matter> //, public std::enable_shared_
   bool debug_flag=0;
   long  NUM1;                  
 
+
+  // Variables for HQ 2->2
+  static const int N_p1=500;
+  static const int N_T=60;
+  static const int N_e2=75;
+  static double distFncB[N_T][N_p1][N_e2],distFncF[N_T][N_p1][N_e2],distMaxB[N_T][N_p1][N_e2],distMaxF[N_T][N_p1][N_e2];
+  static double distFncBM[N_T][N_p1],distFncFM[N_T][N_p1];
+  double min_p1=0.0;
+  double max_p1=1000.0;
+  double bin_p1=(max_p1-min_p1)/N_p1;
+  double min_T=0.1;
+  double max_T=0.7;
+  double bin_T=(max_T-min_T)/N_T;
+  double min_e2=0.0;
+  double max_e2=15.0;
+  double bin_e2=(max_e2-min_e2)/N_e2;
+ 
+  static double RHQ[60][20];        //total scattering rate for heavy quark
+  static double RHQ11[60][20];      //Qq->Qq
+  static double RHQ12[60][20];      //Qg->Qg
+  static double qhatHQ[60][20];     //qhat of heavy quark
+
+  // flag to make sure initialize only once
+  static bool flag_init;
+
   //SC: for elastic scattering
   void flavor(int &CT,int &KATT0,int &KATT2,int &KATT3, unsigned int &max_color, unsigned int &color0, unsigned int &anti_color0, unsigned int &color2, unsigned int &anti_color2, unsigned int &color3, unsigned int &anti_color3);
   void colljet22(int CT,double temp,double qhat0ud,double v0[4],double p0[4],double p2[4],double p3[4],double p4[4],double &qt);
@@ -111,6 +136,12 @@ class Matter : public JetEnergyLossModule<Matter> //, public std::enable_shared_
   double solve_alphas(double var_qhat, double var_ener, double var_temp);
   double fnc0_alphas(double var_alphas, double var_qhat, double var_ener, double var_temp);
   double fnc0_derivative_alphas(double var_alphas, double var_qhat, double var_ener, double var_temp);
+
+  void read_tables();
+  double Mgc2gc(double s, double t, double M);
+  double Mqc2qc(double s, double t, double M);
+  void collHQ22(int CT,double temp,double qhat0ud,double v0[4],double p0[4],double p2[4],double p3[4],double p4[4],double &qt);
+
 
  protected:
   uniform_real_distribution<double> ZeroOneDistribution;
