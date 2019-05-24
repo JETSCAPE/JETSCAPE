@@ -74,8 +74,12 @@ class Matter : public JetEnergyLossModule<Matter> //, public std::enable_shared_
   double generate_angle();
   double generate_kt(double local_qhat,double dzeta);
     
-  double qhat,ehat,e2hat,length;
-    unsigned int MaxColor;
+    double qhat=0.0;
+    double ehat=0.0;
+    double e2hat=0.0;
+    double length=0.0;
+  
+    unsigned int MaxColor=0;
 
   //SC: for interface with hydro
   double fillQhatTab();

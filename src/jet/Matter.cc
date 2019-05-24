@@ -185,8 +185,8 @@ void Matter::Init()
     }
 
     VERBOSE(7)<< MAGENTA << "MATTER input parameter";
-    JSINFO << MAGENTA << "in_vac: " << in_vac << "  brick_med: " << brick_med << "  recoil_on: " << recoil_on;
-    JSINFO << MAGENTA << "Q0: " << Q00 << " vir_factor: " << vir_factor << "  qhat0: " << qhat0 << " alphas: " << alphas << " hydro_Tc: " << hydro_Tc << " brick_length: " << brick_length;
+    VERBOSE(7) << "in_vac: " << in_vac << "  brick_med: " << brick_med << "  recoil_on: " << recoil_on;
+    VERBOSE(7) << "Q0: " << Q00 << " vir_factor: " << vir_factor << "  qhat0: " << qhat0 << " alphas: " << alphas << " hydro_Tc: " << hydro_Tc << " brick_length: " << brick_length;
 
   }
   else {
@@ -244,8 +244,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
 
 
- VERBOSE(8) << " the time in fm is " << time << " The time in GeV-1 is " << Time ;
- VERBOSE(8) << "pid = " << pIn[0].pid() << " E = " << pIn[0].e() << " px = " << pIn[0].p(1) << " py = " << pIn[0].p(2) << "  pz = " << pIn[0].p(3) << " virtuality = " << pIn[0].t() << " form_time in fm = " << pIn[0].form_time() ;
+ VERBOSE(7)<< " the time in fm is " << time << " The time in GeV-1 is " << Time ;
+ VERBOSE(7) << "pid = " << pIn[0].pid() << " E = " << pIn[0].e() << " px = " << pIn[0].p(1) << " py = " << pIn[0].p(2) << "  pz = " << pIn[0].p(3) << " virtuality = " << pIn[0].t() << " form_time in fm = " << pIn[0].form_time() << " split time = " << pIn[0].form_time() + pIn[0].x_in().t();
   JSDEBUG << " color = " << pIn[0].color() << " anti-color = " << pIn[0].anti_color();
     
     unsigned int ShowerMaxColor = pIn[0].max_color();
@@ -369,6 +369,13 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       
       if (pIn[i].form_time()<0.0) /// A parton without a virtuality or formation time, must set...
       {
+          
+          if (pIn[i].t()<0.0)
+          {
+              JSWARN << " parton with a negative virtuality was sent to MATTER and will now have its virtuality reset!, press 1 and return to proceed... ";
+              cin >> blurb;
+          }
+          
           iSplit = 0;
           if (pIn[i].pid()==gid)
           {
@@ -399,7 +406,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
              { 
                  tQ2 = generate_vac_t_w_M(pIn[i].pid(), pIn[i].restmass(), pIn[i].nu(), QS/2.0, max_vir, zeta, iSplit);
                  
-                 JSINFO  << BOLDYELLOW << " virtuality calculated as = " << tQ2;
+                 //JSINFO  << BOLDYELLOW << " virtuality calculated as = " << tQ2;
              }
 	     else
              {
@@ -412,7 +419,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           if(matter_on)
           {
               pIn[i].set_t(tQ2); // Also resets momentum!
-              JSINFO << BOLDYELLOW << " virtuality set to " << tQ2 ;
+              //JSINFO << BOLDYELLOW << " virtuality set to " << tQ2 ;
           }
           else pIn[i].set_t(0.0);
 
@@ -452,9 +459,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
          VERBOSE(8) ;
          VERBOSE(8) << " ***************************************************************************** " ;
          VERBOSE(8) << " ID = " << pIn[i].pid() << " Color = " << pIn[i].color() << " Anti-Color = " << pIn[i].anti_color() ;
-         JSINFO << MAGENTA << " E = " << pIn[i].e() << " px = " << pIn[i].px() << " py = " << pIn[i].py() << " pz = " << pIn[i].pz() ;
-         JSINFO << MAGENTA << " *  New generated virtuality = " << tQ2 << " Mean formation time = " << pIn[i].mean_form_time();
-         JSINFO << MAGENTA << " *  set new formation time to " << pIn[i].form_time() ;
+         VERBOSE(8) << " E = " << pIn[i].e() << " px = " << pIn[i].px() << " py = " << pIn[i].py() << " pz = " << pIn[i].pz() ;
+         VERBOSE(8) << " *  New generated virtuality = " << tQ2 << " Mean formation time = " << pIn[i].mean_form_time();
+         VERBOSE(8) << " *  set new formation time to " << pIn[i].form_time() ;
          VERBOSE(8) << " * Maximum allowed virtuality = " << pIn[i].e()*pIn[i].e() - pIn[i].restmass()*pIn[i].restmass() << "   Minimum Virtuality = " << QS;
          VERBOSE(8) << " * Qhat = " << qhat << "  Length in fm = "  << length/5.0 ;
          VERBOSE(8) << " * Jet velocity = " << pIn[i].jet_v().comp(0) << " " << pIn[i].jet_v().comp(1) << "  " << pIn[i].jet_v().comp(2) << "  " << pIn[i].jet_v().comp(3);
@@ -834,6 +841,12 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               double new_parent_pz = el_p0[3];
               double new_parent_t = el_p0[4];
               double new_parent_pl = ( new_parent_px*pIn[i].jet_v().x() + new_parent_py*pIn[i].jet_v().y() + new_parent_pz*pIn[i].jet_v().z() )/mod_jet_v;
+              if (new_parent_pl<0.0)
+              {
+                  JSINFO << BOLDYELLOW << " parton traversing opposite to jet direction ... Just letting you know ! " ;
+                 // cin >> blurb ;
+              }
+              //JSINFO << BOLDYELLOW << " old virtuality = " << pIn[i].t() << " new virtuality = " << new_parent_t ;
               //double new_parent_pl = sqrt(pow(new_parent_px,2)+pow(new_parent_py,2)+pow(new_parent_pz,2));
 	      //double new_parent_vx = new_parent_px/new_parent_pl;
 	      //double new_parent_vy = new_parent_py/new_parent_pl;
@@ -920,22 +933,17 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   // use pIn information to sample z above, but use new_parent to calculate daughter partons below            
                   if (z*z*new_parent_t>QS)
                   {
-                      if(abs(pid) == 4 || abs(pid) == 5)
+                      if(abs(pid_a) == 4 || abs(pid_a) == 5)
                       {
                           double M = pIn[i].restmass();
                           if (QS*(1.0 + std::sqrt(1.0 + 4.0*M*M/QS))/2.0 < z*z*new_parent_t)
                           {
                               tQd1 = generate_vac_t_w_M(pid_a, pIn[i].restmass(), z*new_parent_nu, QS/2.0, z*z*new_parent_t, zeta+std::sqrt(2)*pIn[i].form_time()*fmToGeVinv, iSplit_a);
                           }
-                          else if (z*z*new_parent_t > pIn[i].restmass()*pIn[i].restmass())
+                          else
                           {
                               tQd1 = z*z*new_parent_t;
                           }
-                          else
-                          {
-                              tQd1 = pIn[i].restmass()*pIn[i].restmass() ;
-                          }
-                              
                       }
                       else
                       {
@@ -953,7 +961,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
         
                   if ( ( (1.0-z)*(1.0-z)*new_parent_t>QS )&&(iSplit<3) )
                   {
-                      if(abs(pid) == 4 || abs(pid) == 5)
+                      if(abs(pid_b) == 4 || abs(pid_b) == 5)
                       {
                           double M = pIn[i].restmass();
                           
@@ -961,14 +969,11 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                           {
                               tQd2 = generate_vac_t_w_M(pid_a, pIn[i].restmass(), (1.0-z)*new_parent_nu, QS/2.0, (1.0-z)*(1.0-z)*new_parent_t, zeta+std::sqrt(2)*pIn[i].form_time()*fmToGeVinv, iSplit_a);
                           }
-                          else if ((1.0-z)*(1.0-z)*new_parent_t > pIn[i].restmass()*pIn[i].restmass())
+                          else
                           {
                               tQd1 = (1.0-z)*(1.0-z)*new_parent_t;
                           }
-                          else
-                          {
-                              tQd1 = pIn[i].restmass()*pIn[i].restmass() ;
-                          }
+                          
                       }
                       else
                       {
@@ -983,7 +988,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   
                   if (iSplit == 3)
                   {
-                    tQd2 = 0.0; // forcing the photon to have no virtuality
+                    tQd2 = rounding_error; // forcing the photon to have no virtuality
                   }
                   
                   l_perp2 = new_parent_t*z*(1.0 - z) - tQd2*z - tQd1*(1.0-z) ; ///< the transverse momentum squared
@@ -1003,6 +1008,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               
               if (l_perp2<=Lambda_QCD*Lambda_QCD) l_perp2 = Lambda_QCD*Lambda_QCD; ///< test if negative
               double l_perp = std::sqrt(l_perp2); ///< the momentum transverse to the parent parton direction
+              //JSINFO << BOLDYELLOW << " after ifcounter = " << ifcounter << " l_perp2 = " << l_perp2 ;
+              //JSINFO << BOLDYELLOW << " z = " << z << " tQd1 = " << tQd1 << " tQd2 = " << tQd2 ;
+              
               
               // axis of split
               double angle = generate_angle();
@@ -1016,6 +1024,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               double s_p = pIn[i].jet_v().y()/std::sqrt( pow( pIn[i].jet_v().x() , 2 ) + pow( pIn[i].jet_v().y(), 2 ) ) ;
               double c_p = pIn[i].jet_v().x()/std::sqrt( pow( pIn[i].jet_v().x() , 2 ) + pow( pIn[i].jet_v().y(), 2 ) ) ;
 
+              //JSINFO << BOLDYELLOW << " cos 0 = " << c_t << " sin 0 = " << s_t << " cos p = " << c_p << " sin p = " << s_p ;
+              
               //double c_t = new_parent_vz;
               //double s_t = std::sqrt( 1.0 - c_t*c_t) ;
               //    
@@ -1029,10 +1039,19 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               k_perp1[2] = z*(new_parent_py-new_parent_pl*s_t*s_p) + l_perp*std::cos(angle)*c_t*s_p + l_perp*std::sin(angle)*c_p ;
               k_perp1[3] = z*(new_parent_pz-new_parent_pl*c_t) - l_perp*std::cos(angle)*s_t ;
               double k_perp1_2 = pow(k_perp1[1],2)+pow(k_perp1[2],2)+pow(k_perp1[3],2);
-                  
-              double energy = ( z*new_parent_nu + (tQd1 + k_perp1_2)/(2.0*z*new_parent_nu) )/std::sqrt(2.0) ;
-              double plong =  ( z*new_parent_nu - (tQd1 + k_perp1_2)/(2.0*z*new_parent_nu) )/std::sqrt(2.0) ;
-                  
+              
+              double M=0.0;
+              
+              if ((pid_a == 4)||(pid_a == 5)) M = pIn[i].restmass();
+              
+              double energy = ( z*new_parent_nu + (tQd1 + k_perp1_2 + M*M)/(2.0*z*new_parent_nu) )/std::sqrt(2.0) ;
+              double plong =  ( z*new_parent_nu - (tQd1 + k_perp1_2 + M*M)/(2.0*z*new_parent_nu) )/std::sqrt(2.0) ;
+                  if (energy < 0.0)
+                  {
+                      JSWARN << " Energy negative after rotation, press 1 and return to continue " ;
+                      cin >> blurb ;
+                  }
+              
               double newp[4];
               newp[0] = energy;
               newp[1] = plong*s_t*c_p + k_perp1[1];
@@ -1069,13 +1088,22 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               k_perp2[2] = (1.0-z)*(new_parent_py-new_parent_pl*s_t*s_p) - l_perp*std::cos(angle)*c_t*s_p - l_perp*std::sin(angle)*c_p ;
               k_perp2[3] = (1.0-z)*(new_parent_pz-new_parent_pl*c_t) + l_perp*std::cos(angle)*s_t ;
               double k_perp2_2 = pow(k_perp2[1],2)+pow(k_perp2[2],2)+pow(k_perp2[3],2);
-
-              energy = ( (1.0-z)*new_parent_nu + (tQd2 + k_perp2_2)/( 2.0*(1.0-z)*new_parent_nu ) )/std::sqrt(2.0) ;
-              plong =  ( (1.0-z)*new_parent_nu - (tQd2 + k_perp2_2)/( 2.0*(1.0-z)*new_parent_nu ) )/std::sqrt(2.0) ;
+              
+              M=0.0;
+              if ((pid_b == 4)||(pid_b == 5)) M = pIn[i].restmass();
+              
+              energy = ( (1.0-z)*new_parent_nu + (tQd2 + k_perp2_2+M*M)/( 2.0*(1.0-z)*new_parent_nu ) )/std::sqrt(2.0) ;
+              plong =  ( (1.0-z)*new_parent_nu - (tQd2 + k_perp2_2+M*M)/( 2.0*(1.0-z)*new_parent_nu ) )/std::sqrt(2.0) ;
 
               //parent_perp = std::sqrt( pow(pIn[i].p(1),2) + pow(pIn[i].p(2),2) + pow(pIn[i].p(3),2) - pow(pIn[i].pl(),2) );
               //mod_jet_v = std::sqrt( pow(pIn[i].jet_v().x(),2) +  pow(pIn[i].jet_v().y(),2) + pow(pIn[i].jet_v().z(),2) ) ;
     
+              if (energy < 0.0)
+              {
+                  JSWARN << " Energy of 2nd daughter negative after rotation, press 1 and return to continue " ;
+                  cin >> blurb ;
+              }
+              
               newp[0] = energy;
               newp[1] = plong*s_t*c_p + k_perp2[1];
               newp[2] = plong*s_t*s_p + k_perp2[2];
@@ -3035,11 +3063,11 @@ double Matter::sud_z_QG_w_M(double M, double cg, double cg1, double loc_e, doubl
     
   z_min = std::sqrt(2)*E_minimum/E2;
     
-  if (cg1<2.0*cg)
+  if (cg1<2.0*cg + M*M/(1.0 + M*M/cg1 ))
     {
         
       JSINFO << MAGENTA << " returning with cg, cg1 = " << cg << "   " <<  cg1 << "    " << E_minimum << "  " << E2 ;
-      return(0.0);
+      return(M*M);
     };
     
   double t1  = 1.0/cg1;
@@ -3169,8 +3197,6 @@ double Matter::sud_z_QG_w_M(double M, double cg, double cg1, double loc_e, doubl
     {
       cerr << "ERROR: medium contribution negative in sud_z_QG : res = " << res << endl;
         
-        
-        
       throw std::runtime_error("ERROR: medium contribution negative in sud_z_QG");
     }
     
@@ -3231,7 +3257,7 @@ double Matter::P_z_qg_int_w_M(double M, double cg, double cg1, double loc_e, dou
   double t2, t5, t7, t10, t12, tau, qL, res ;
     
     
-    if (std::abs(cg-cg1)<rounding_error) 
+    if (std::abs(cg-cg1)<rounding_error) return(cg) ;
   //if ((cg< cg1/(2.0*E2*E2/cg1+1.0) )) cg = cg1/( 2.0*E2*E2/cg1 + 1.0 );
     
   t2 = std::pow(cg1, 2);
