@@ -53,7 +53,7 @@
     <!-- Parton Gun test with fixed pT and fixed IS pos = 0  -->
     <PGun>
       <name>PGun</name>
-      <pT>10</pT>
+      <pT>50</pT>
     </PGun>
 
     <!-- Pythia Gun -->
@@ -86,7 +86,7 @@
       <matter_on> 1 </matter_on>
       <Q0> 1.0 </Q0>
       <T0> 0.16 </T0>
-      <vir_factor> -0.25 </vir_factor>
+      <vir_factor> 0.25 </vir_factor>
       <in_vac> 1 </in_vac>
       <recoil_on> 0 </recoil_on>
       <broadening_on> 0 </broadening_on>
@@ -94,12 +94,12 @@
       <brick_length> 0.0 </brick_length>
       <hydro_Tc> 0.16 </hydro_Tc>
       <qhat0> -3.0 </qhat0>
-      <alphas> 0.0 </alphas>
+      <alphas> 0.2 </alphas>
     </Matter>
 
     <Lbt>
       <name> Lbt </name>
-      <Q0> 2.0 </Q0>
+      <Q0> 1.0 </Q0>
       <in_vac> 0 </in_vac>
       <only_leading> 0 </only_leading>
       <hydro_Tc> 0.16 </hydro_Tc>
