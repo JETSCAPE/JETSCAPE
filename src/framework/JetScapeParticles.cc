@@ -417,8 +417,8 @@ namespace Jetscape {
       }
       if (t_parton< 0.0)
       {
-          JSWARN << " Virtuality is negative, MATTER cannot handle these particles " << " t = " << t_parton;
-          JSWARN << " pid = "<< pid() << " E = " << e() << " px = " << px() << " py = " << py() << " pz = " << pz() ;
+         // JSWARN << " Virtuality is negative, MATTER cannot handle these particles " << " t = " << t_parton;
+         // JSWARN << " pid = "<< pid() << " E = " << e() << " px = " << px() << " py = " << py() << " pz = " << pz() ;
       }
     return ( t_parton ) ;
     // return (t_) ;

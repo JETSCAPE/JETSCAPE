@@ -349,11 +349,11 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       if (pIn[i].form_time()<0.0) /// A parton without a virtuality or formation time, must set...
       {
           
-          if (pIn[i].t()<0.0)
-          {
-              JSWARN << " parton with a negative virtuality was sent to MATTER and will now have its virtuality reset!, press 1 and return to proceed... ";
-              cin >> blurb;
-          }
+        //  if (pIn[i].t()<0.0)
+        //  {
+        //      JSWARN << " parton with a negative virtuality was sent to MATTER and will now have its virtuality reset!, press 1 and return to proceed... ";
+        //      cin >> blurb;
+        //  }
           
           iSplit = 0;
           if (pIn[i].pid()==gid)
@@ -400,7 +400,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               pIn[i].set_t(tQ2); // Also resets momentum!
               //JSINFO << BOLDYELLOW << " virtuality set to " << tQ2 ;
           }
-          else pIn[i].set_t(0.0);
+          else pIn[i].set_t(rounding_error);
+          //else pIn[i].set_t(0.0);
 
 
           pIn[i].set_mean_form_time();
@@ -489,6 +490,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       //if (pIn[i].t() > QS + rounding_error)
       if (pIn[i].t() > Q0*Q0 + rounding_error || ((!in_vac) && now_temp<=T0 && pIn[i].t() > QS*QS + rounding_error))
       {
+
+          cout << "In matter ...   " << pIn[i].pid() << "  " << pIn[i].t() << endl;
+
           TakeResponsibilityFor ( pIn[i] ); // Generate error if another module already has responsibility.
           double decayTime = pIn[i].mean_form_time()  ;
 	    
