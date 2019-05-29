@@ -394,7 +394,7 @@ void PartonShower::SaveAsGV(string fName)
         }
         label2 = ")\"];";     
         stringstream stream;
-        stream << fixed << setprecision(2) << (pMap[*eIt]->pt()) << ","
+        stream << std::scientific << setprecision(1)
                << (pMap[*eIt]->e()) << "," << (pMap[*eIt]->t()) <<","
                << (pMap[*eIt]->pid());
       
