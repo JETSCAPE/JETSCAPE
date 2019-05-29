@@ -31,6 +31,9 @@ class MpiMusic: public FluidDynamics {
                          //!< for soft particles
     int flag_output_evo_to_file;
 
+    // Allows the registration of the module so that it is available to be used by the Jetscape framework.
+    static RegisterJetScapeModule<MpiMusic> reg;
+
  public:
      MpiMusic();
      ~MpiMusic();
