@@ -121,25 +121,23 @@ void PartonShower::CreateMaps()
 }
 */
 
-vector<shared_ptr<Parton>> PartonShower::GetFinalPartons()
-{
-  //VERBOSESHOWER(8)<<pFinal.size();
-  if (pFinal.size()==0)
-    {
-      edge_iterator eIt, eEnd;
-      for (eIt = edges_begin(), eEnd = edges_end(); eIt != eEnd; ++eIt)
-	{
-	  if (eIt->target().outdeg()<1)
-	    {
-	      pFinal.push_back(pMap[*eIt]);
-	      //DEBUG
-	      //cout<<eIt->target()<<endl;
+vector<shared_ptr<Parton>> PartonShower::GetFinalPartons() {
+    //VERBOSESHOWER(8)<<pFinal.size();
+    if (pFinal.size() == 0) {
+        edge_iterator eIt, eEnd;
+        for (eIt = edges_begin(), eEnd = edges_end(); eIt != eEnd; ++eIt) {
+            if (eIt->target().outdeg() < 1) {
+                if (pMap[*eIt]->pstat() > -10) {
+                    pFinal.push_back(pMap[*eIt]);
+                }
+	            // DEBUG
+	            //cout<<eIt->target()<<endl;
+	        }
 	    }
-	}
-      return pFinal;
+        return pFinal;
+    } else {
+        return pFinal;
     }
-  else
-    return pFinal;
 }
 
 vector<fjcore::PseudoJet> PartonShower::GetFinalPartonsForFastJet()
