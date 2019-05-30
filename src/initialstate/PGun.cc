@@ -15,8 +15,11 @@
 //Parton Gun Test
 
 #include "PGun.h"
+#include "JetScapeParticles.h"
+#include "Pythia8/Pythia.h"
 
 using namespace Jetscape;
+Pythia8::Pythia PGun::InternalHelperPythia ("IntentionallyEmpty",false);
 
 PGun::PGun() : HardProcess()
 {
@@ -71,19 +74,21 @@ void PGun::Exec()
   
   double parID,ppx,ppy,ppz,pp0,mass; 
 
-  for (int i=0;i<1;i++)
-     {
-       tempRand = rand()/maxN;
-       if(tempRand < 0.25) parID = 21;
-       else if(tempRand < 0.50) parID = 1;
-       else if(tempRand < 0.75) parID = 2;
-       else parID = 3;
-       if (parID != 21) {
-	 tempRand = rand()/maxN;
-	 if(tempRand < 0.50) parID = -parID;
-       }            
-         parID = 5;
-       mass = 4.8;
+ // for (int i=0;i<1;i++)
+ //    {
+ //      tempRand = rand()/maxN;
+   //    if(tempRand < 0.25) parID = 21;
+   //    else if(tempRand < 0.50) parID = 1;
+   //    else if(tempRand < 0.75) parID = 2;
+   //    else parID = 3;
+   //    if (parID != 21) {
+//	 tempRand = rand()/maxN;
+//	 if(tempRand < 0.50) parID = -parID;
+ //      }
+         parID = 1;
+    //     mass = 0.0;
+       mass = InternalHelperPythia.particleData.m0( parID );
+         JSINFO << BOLDYELLOW << " Mass = " << mass ;
        pT = fixed_pT; //max_pT*(rand()/maxN);
        
        phi = 2.0*PI*(rand()/maxN);
@@ -130,12 +135,8 @@ void PGun::Exec()
            AddParton(ptn);
        }
   
-       VERBOSEPARTON(7,*GetPartonAt(i))
-	 <<" added "
-	 <<" at x=" << xLoc[1]
-	 <<", y=" << xLoc[2]
-	 <<", z=" << xLoc[3];
-     }
+ //      VERBOSEPARTON(7,*GetPartonAt(i)) <<" added "<<" at x=" << xLoc[1]<<", y=" << xLoc[2]<<", z=" << xLoc[3];
+ //    }
   
   VERBOSE(8)<<GetNHardPartons();
 }

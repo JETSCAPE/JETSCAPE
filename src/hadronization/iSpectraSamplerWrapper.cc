@@ -135,7 +135,7 @@ void iSpectraSamplerWrapper::PassHadronListToJetscape() {
             iSS_Hadron current_hadron = (
                                 iSpectraSampler_ptr_->get_hadron(iev, ipart));
             int hadron_label = 0;
-            int hadron_status = -1;
+            int hadron_status = 11;
             int hadron_id = current_hadron.pid;
             //int hadron_id = 1;   // just for testing need to be changed to the line above
             double hadron_mass = current_hadron.mass;

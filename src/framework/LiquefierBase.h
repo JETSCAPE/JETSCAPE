@@ -55,6 +55,7 @@ class LiquefierBase {
     bool GetHydroCellSignalConnected;
     const int drop_stat;
     const int miss_stat;
+    const int neg_stat;
     const Jetscape::real hydro_source_abs_err;
 
  public:
@@ -67,6 +68,7 @@ class LiquefierBase {
 
     int get_drop_stat() const {return(drop_stat);}
     int get_miss_stat() const {return(miss_stat);}
+    int get_neg_stat() const {return(neg_stat);}
 
     Droplet get_a_droplet(const int idx) const {return(dropletlist[idx]);}
 
