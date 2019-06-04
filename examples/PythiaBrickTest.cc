@@ -26,6 +26,7 @@
 #include "JetEnergyLoss.h"
 #include "JetEnergyLossManager.h"
 #include "JetScapeWriterStream.h"
+#include "PartonPrinter.h"
 #ifdef USE_HEPMC
 #include "JetScapeWriterHepMC.h"
 #endif
@@ -76,7 +77,7 @@ int main(int argc, char** argv)
   
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",34);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",10000);
   jetscape->SetId("primary");
 
   // Initial conditions and hydro
@@ -105,10 +106,14 @@ int main(int argc, char** argv)
   // jloss->Add(martini);
 
   // jloss->Add(adscft);  
-  jlossmanager->Add(jloss);  
+  jlossmanager->Add(jloss);
   jetscape->Add(jlossmanager);
 
-  
+    auto printer = make_shared<PartonPrinter> ();
+    
+    jetscape->Add(printer);
+    
+    
   // Hadronization
   auto hadroMgr = make_shared<HadronizationManager> ();
   auto hadro = make_shared<Hadronization> ();

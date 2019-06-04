@@ -385,11 +385,17 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
              { 
                  tQ2 = generate_vac_t_w_M(pIn[i].pid(), pIn[i].restmass(), pIn[i].nu(), QS/2.0, max_vir, zeta, iSplit);
                  
+                 std::ofstream tdist;
+                 tdist.open("tdist_heavy.dat", std::ios::app);
+                 tdist << tQ2 << endl;
+                 tdist.close();
+
+                 
                  VERBOSE(8)  << BOLDYELLOW << " virtuality calculated as = " << tQ2;
              }
-	     else
+             else
              {
-	         tQ2 = generate_vac_t(pIn[i].pid(), pIn[i].nu(), QS/2.0, max_vir, zeta, iSplit);
+                 tQ2 = generate_vac_t(pIn[i].pid(), pIn[i].nu(), QS/2.0, max_vir, zeta, iSplit);
              }
     	  }
 
@@ -790,13 +796,13 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   { // quark decay to quark and gluon
                       pid_a = pid ;
                       pid_b = gid ;
-                      iSplit = 0;
+                      iSplit = 0;  // iSplit for quark radiating a gluon
                   }
                   else
                   { // quark decay to quark and photon
                       pid_a = pid;
                       pid_b = photonid;
-                      iSplit = 3;
+                      iSplit = 3; // iSplit for quark radiating a photon
                       photon_brem = true;
                   }
                   
@@ -912,6 +918,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       if (QS*(1.0 + std::sqrt(1.0 + 4.0*M*M/QS))/2.0 < z*z*new_parent_t)
                       {
                           tQd1 = generate_vac_t_w_M(pid_a, pIn[i].restmass(), z*new_parent_nu, QS/2.0, z*z*new_parent_t, zeta+std::sqrt(2)*pIn[i].form_time()*fmToGeVinv, iSplit_a);
+
                       }
                       else
                       {
@@ -940,6 +947,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       if (QS*(1.0 + std::sqrt(1.0 + 4.0*M*M/QS))/2.0 < (1.0-z)*(1.0-z)*new_parent_t)
                       {
                           tQd2 = generate_vac_t_w_M(pid_a, pIn[i].restmass(), (1.0-z)*new_parent_nu, QS/2.0, (1.0-z)*(1.0-z)*new_parent_t, zeta+std::sqrt(2)*pIn[i].form_time()*fmToGeVinv, iSplit_b);
+
                       }
                       else
                       {
@@ -979,6 +987,24 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 
                   ifcounter++;
               }
+              
+              std::ofstream zdist;
+              zdist.open("zdist_heavy.dat", std::ios::app);
+              std::ofstream tdist;
+              tdist.open("tdist_heavy.dat", std::ios::app);
+              if (std::abs(pid_a) == 4 || std::abs(pid_a) == 5)
+              {
+                  tdist << tQd1<< endl;
+                  zdist << z << endl;
+              }
+              else if (std::abs(pid_b) == 4 || std::abs(pid_b) == 5)
+              {
+                  tdist << tQd2<< endl;
+                  zdist << z << endl;
+              }
+              tdist.close();
+              zdist.close();
+
               
               if (l_perp2<=Lambda_QCD*Lambda_QCD) l_perp2 = Lambda_QCD*Lambda_QCD; ///< test if negative
               double l_perp = std::sqrt(l_perp2); ///< the momentum transverse to the parent parton direction
@@ -1590,15 +1616,15 @@ double Matter::generate_vac_t(int p_id, double nu, double t0, double t, double l
       //       cin >> test ;
                 
       if (diff<0.0)
-        {
-	  t_low = t_mid ;
+      {
+          t_low = t_mid ;
 	  //t_mid = (t_low + t_hi)/2.0;
-        }
+      }
       else
-        {
-	  t_hi = t_mid ;
+      {
+          t_hi = t_mid ;
 	  //t_mid = (t_low + t_hi)/2.0;
-        }
+      }
         
   } while ((abs(diff)>s_approx)&&(abs(t_hi-t_low)/t_hi>s_error));
     
@@ -1645,22 +1671,27 @@ double Matter::generate_vac_t_w_M(int p_id, double M, double nu, double t0, doub
         
       if ((is!=1)&&(is!=2))
         {
-	  throw std::runtime_error(" error in isp ");
+            throw std::runtime_error(" error in isp ");
         }
     }
   else
     {
       if (is!=0)
         {
-	  throw std::runtime_error("error in isp in quark split");            
+	        throw std::runtime_error("error in isp in quark split");
         }
-      if (((int) std::abs((double) p_id))==4 || ((int) std::abs((double) p_id))==5)
+        if (((int) std::abs((double) p_id))==4 || ((int) std::abs((double) p_id))==5)
         {
-         numer = sudakov_Pqg_w_M(M,t0,t,loc_a,nu);
+            numer = sudakov_Pqg_w_M(M,t0,t,loc_a,nu);
+            
+            std::ofstream Sud_dist;
+            Sud_dist.open("Sud_dist.dat", std::ios::app);
+            Sud_dist << t << "  " << numer << "  " << sudakov_Pqg(t0,t,loc_a,nu) << "  " << r << " t_low_MO = " << t_low_M0 << endl;
+            Sud_dist.close();
         }
-      else
+        else
         {
-         numer = sudakov_Pqg(t0,t,loc_a,nu);
+            numer = sudakov_Pqg(t0,t,loc_a,nu);
         }
     }
     
@@ -1681,62 +1712,57 @@ double Matter::generate_vac_t_w_M(int p_id, double M, double nu, double t0, doub
     
   //   cout << " s_approx, s_error = " << s_approx << "  " << s_error << endl;
     
-  do {
-
+  do
+  {
       t_mid_M0 = (t_low_M0 + t_hi_M0)/2.0;
       t_mid_MM = (t_low_MM + t_hi_MM)/2.0;
       t_mid_00 = (t_low_00 + t_hi_00)/2.0;
 
       if (p_id==gid)
-        {
-	  denom = sudakov_Pgg(t0, t_mid_00, loc_a, nu)*std::pow(sudakov_Pqq(t0, t_mid_00, loc_a, nu),3.0)*sudakov_Pqq_w_M_vac_only(M_charm, t0, t_mid_MM, loc_a, nu)*sudakov_Pqq_w_M_vac_only(M_bottom, t0, t_mid_MM, loc_a, nu);
+      {
+          denom = sudakov_Pgg(t0, t_mid_00, loc_a, nu)*std::pow(sudakov_Pqq(t0, t_mid_00, loc_a, nu),3.0)*sudakov_Pqq_w_M_vac_only(M_charm, t0, t_mid_MM, loc_a, nu)*sudakov_Pqq_w_M_vac_only(M_bottom, t0, t_mid_MM, loc_a, nu);
             
-	  if ((is!=1)&&(is!=2))
-            {
-	      throw std::runtime_error(" error in isp numerator");             
-            }
-        }
+          if ((is!=1)&&(is!=2))
+          {
+              throw std::runtime_error(" error in isp numerator");
+          }
+      }
       else
-        {
-	  if (is!=0)
-            {
-	      throw std::runtime_error(" error in isp in quark split numerator  ");
-            }
+      {
+          if (is!=0)
+          {
+              throw std::runtime_error(" error in isp in quark split numerator  ");
+          }
           if (((int) std::abs((double) p_id))==4 || ((int) std::abs((double) p_id))==5)
-            {
+          {
              denom = sudakov_Pqg_w_M(M, t0, t_mid_M0, loc_a, nu);
-            }
+          }
           else
-            {
-	     denom = sudakov_Pqg(t0, t_mid_00, loc_a, nu);
-            }
-        }
+          {
+              denom = sudakov_Pqg(t0, t_mid_00, loc_a, nu);
+          }
+      }
         
       ratio = numer/denom ;
         
       diff = (ratio - r)/r ;
-        
-      //       cout << "num, den, r = " << numer << " "<< denom << " " << r << " " << endl;
-      //       cout << "diff, t_mid = " << diff << " " << t_mid << endl;
-      //       cout << " t_low, t_hi = " << t_low << "  " << t_hi << endl;
-      //       cin >> test ;
-                
+
       if (diff<0.0)
-        {
-	  t_low_M0 = t_mid_M0 ;
-	  t_low_MM = t_mid_MM ;
-	  t_low_00 = t_mid_00 ;
+      {
+          t_low_M0 = t_mid_M0 ;
+          t_low_MM = t_mid_MM ;
+          t_low_00 = t_mid_00 ;
 
 	  //t_mid = (t_low + t_hi)/2.0;
-        }
+      }
       else
-        {
-	  t_hi_M0 = t_mid_M0 ;
-	  t_hi_MM = t_mid_MM ;
-	  t_hi_00 = t_mid_00 ;
+      {
+          t_hi_M0 = t_mid_M0 ;
+          t_hi_MM = t_mid_MM ;
+          t_hi_00 = t_mid_00 ;
 
 	  //t_mid = (t_low + t_hi)/2.0;
-        }
+      }
         
   } while ((abs(diff)>s_approx)&&(abs(t_hi_M0-t_low_M0)/t_hi_M0>s_error));
     
@@ -1903,34 +1929,34 @@ double  Matter::generate_vac_z_w_M(int p_id, double M, double t0, double t, doub
   z_hi_MM = double(1.0) - e  - M2/t;
     
   if (p_id==gid)
-    {
+  {
       if (is==1)
-        {
-	  denom = P_z_gg_int(z_low_00,z_hi_00, loc_b, t, 2.0*nu/t, nu );
-        }
+      {
+          denom = P_z_gg_int(z_low_00,z_hi_00, loc_b, t, 2.0*nu/t, nu );
+      }
       else
-        {
-          if (is==3) //THIS IS FOR GLUON-> HEAVY Q-QBAR
-            {
-             denom = P_z_qq_int_w_M_vac_only(M,z_low_MM,z_hi_MM,loc_b,t,2.0*nu/t, nu);
-            }
-          else
-            {
-	     denom = P_z_qq_int(z_low_00,z_hi_00,loc_b,t,2.0*nu/t, nu);
-            }
-        }
-    }
+      {
+          if (is>3) //THIS IS FOR GLUON-> HEAVY Q-QBAR
+          {
+              denom = P_z_qq_int_w_M_vac_only(M,z_low_MM,z_hi_MM,loc_b,t,2.0*nu/t, nu);
+          }
+          else if (is==2)
+          {
+              denom = P_z_qq_int(z_low_00,z_hi_00,loc_b,t,2.0*nu/t, nu);
+          }
+      }
+  }
   else
-    {
+  {
       if (((int) std::abs((double) p_id))==4 || ((int) std::abs((double) p_id))==5)
-        {
+      {
          denom = P_z_qg_int_w_M(M, z_low_M0, z_hi_M0, loc_b, t, 2.0*nu/t , nu);
-        }
+      }
       else
-        {
+      {
          denom = P_z_qg_int(z_low_00,z_hi_00, loc_b, t, 2.0*nu/t , nu);
-        }
-    }
+      }
+  }
     
     
   //z_mid = (z_low + z_hi)/2.0 ;
@@ -1961,11 +1987,11 @@ double  Matter::generate_vac_z_w_M(int p_id, double M, double t0, double t, doub
       }
       else
       {
-        if (is==3)
+        if (is>3) // 3 is quark radiating a photon, 4,5 is radiating a c cbar, b bbar
         {
           numer = P_z_qq_int_w_M_vac_only(M, z_low_MM, z_mid_MM, loc_b, t, 2.0*nu/t , nu); 
         }
-        else
+        else if (is==2) // gluon to light quark anti-quark
         {
           numer = P_z_qq_int(z_low_00, z_mid_00, loc_b, t, 2.0*nu/t , nu);
         }
@@ -1980,7 +2006,7 @@ double  Matter::generate_vac_z_w_M(int p_id, double M, double t0, double t, doub
       }
       else
       {
-        numer = P_z_qg_int(z_low_M0, z_mid_M0, loc_b, t, 2.0*nu/t , nu );
+        numer = P_z_qg_int(z_low_00, z_mid_00, loc_b, t, 2.0*nu/t , nu );
       }
     }
       ratio = numer/denom ;
@@ -2319,7 +2345,7 @@ double Matter::sudakov_Pqq_w_M_vac_only(double M, double q0, double q1, double l
        
   if (q1<2.0*(q0+M*M))
     {
-      JSWARN << " warning: the lower limit of the sudakov > 1/2 upper limit, returning 1 ";
+      JSWARN << " warning: the upper limit of the sudakov q1<2.0*(q0+M*M), returning 1 ";
       JSWARN << " in sudakov_Pquark quark, q0, q1 = " << q0 << "  " << q1;
       return(sud) ;
     }
