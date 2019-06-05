@@ -349,7 +349,7 @@ if (iSS)
   else()
     message(FATAL_ERROR "Error: iSS source has not been downloaded in external_packages by ./get_iSS.sh")
   endif()
-  target_compile_definitions(JetScape PRIVATE iSS)   
+  target_compile_definitions(JetScape PRIVATE iSpectraSampler)
 endif (iSS)
 
 if (OPENCL_FOUND AND clvisc)
