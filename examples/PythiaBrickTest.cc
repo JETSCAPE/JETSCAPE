@@ -26,7 +26,6 @@
 #include "JetEnergyLoss.h"
 #include "JetEnergyLossManager.h"
 #include "JetScapeWriterStream.h"
-#include "PartonPrinter.h"
 #ifdef USE_HEPMC
 #include "JetScapeWriterHepMC.h"
 #endif
@@ -109,11 +108,6 @@ int main(int argc, char** argv)
   jlossmanager->Add(jloss);
   jetscape->Add(jlossmanager);
 
-    auto printer = make_shared<PartonPrinter> ();
-    
-    jetscape->Add(printer);
-    
-    
   // Hadronization
   auto hadroMgr = make_shared<HadronizationManager> ();
   auto hadro = make_shared<Hadronization> ();
