@@ -385,10 +385,10 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
              { 
                  tQ2 = generate_vac_t_w_M(pIn[i].pid(), pIn[i].restmass(), pIn[i].nu(), QS/2.0, max_vir, zeta, iSplit);
                  
-                 std::ofstream tdist;
-                 tdist.open("tdist_heavy.dat", std::ios::app);
-                 tdist << tQ2 << endl;
-                 tdist.close();
+               //  std::ofstream tdist;
+               //  tdist.open("tdist_heavy.dat", std::ios::app);
+               //  tdist << tQ2 << endl;
+               //  tdist.close();
 
                  
                  VERBOSE(8)  << BOLDYELLOW << " virtuality calculated as = " << tQ2;
@@ -988,22 +988,22 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   ifcounter++;
               }
               
-              std::ofstream zdist;
-              zdist.open("zdist_heavy.dat", std::ios::app);
-              std::ofstream tdist;
-              tdist.open("tdist_heavy.dat", std::ios::app);
-              if (std::abs(pid_a) == 4 || std::abs(pid_a) == 5)
-              {
-                  tdist << tQd1<< endl;
-                  zdist << z << endl;
-              }
-              else if (std::abs(pid_b) == 4 || std::abs(pid_b) == 5)
-              {
-                  tdist << tQd2<< endl;
-                  zdist << z << endl;
-              }
-              tdist.close();
-              zdist.close();
+             // std::ofstream zdist;
+             // zdist.open("zdist_heavy.dat", std::ios::app);
+             // std::ofstream tdist;
+             // tdist.open("tdist_heavy.dat", std::ios::app);
+             // if (std::abs(pid_a) == 4 || std::abs(pid_a) == 5)
+             // {
+             //     tdist << tQd1<< endl;
+             //     zdist << z << endl;
+             // }
+             // else if (std::abs(pid_b) == 4 || std::abs(pid_b) == 5)
+             // {
+             //     tdist << tQd2<< endl;
+             //     zdist << z << endl;
+             // }
+             // tdist.close();
+             // zdist.close();
 
               
               if (l_perp2<=Lambda_QCD*Lambda_QCD) l_perp2 = Lambda_QCD*Lambda_QCD; ///< test if negative
@@ -1684,10 +1684,10 @@ double Matter::generate_vac_t_w_M(int p_id, double M, double nu, double t0, doub
         {
             numer = sudakov_Pqg_w_M(M,t0,t,loc_a,nu);
             
-            std::ofstream Sud_dist;
-            Sud_dist.open("Sud_dist.dat", std::ios::app);
-            Sud_dist << t << "  " << numer << "  " << sudakov_Pqg(t0,t,loc_a,nu) << "  " << r << " t_low_MO = " << t_low_M0 << endl;
-            Sud_dist.close();
+        //    std::ofstream Sud_dist;
+        //    Sud_dist.open("Sud_dist.dat", std::ios::app);
+        //    Sud_dist << t << "  " << numer << "  " << sudakov_Pqg(t0,t,loc_a,nu) << "  " << r << " t_low_MO = " << t_low_M0 << endl;
+        //    Sud_dist.close();
         }
         else
         {

@@ -77,7 +77,7 @@ int main(int argc, char** argv)
   
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",10000);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",3);
   jetscape->SetId("primary");
 
   // Initial conditions and hydro
