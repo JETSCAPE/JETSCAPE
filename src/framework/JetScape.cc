@@ -448,7 +448,7 @@ void JetScape::DetermineTaskListFromXML() {
         
         //    - iSS
         if (childElementName == "iSS") {
-          #ifdef iSS
+          #ifdef iSpectraSampler
           auto iSSmodule = JetScapeModuleFactory::createInstance(childElementName);
           if (iSSmodule) {
             Add(iSSmodule);
