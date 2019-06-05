@@ -179,6 +179,10 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
     // Extract fluid properties
     std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
     GetHydroCellSignal(Time, xx, yy, zz, check_fluid_info_ptr);
+    if(!GetJetSignalConnected()){
+       JSWARN << "Couldn't find a hydro module attached!";
+       throw std::runtime_error ("Please attach a hydro module to continue running.");
+    }
     VERBOSE(8)<< MAGENTA<<"Temperature from Brick (Signal) = "
 	      <<check_fluid_info_ptr->temperature;
 
