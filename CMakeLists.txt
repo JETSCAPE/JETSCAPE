@@ -57,6 +57,7 @@ if (smash)
   if(${SMASH_FOUND})
     include_directories(${SMASH_INCLUDE_DIR})
   endif(${SMASH_FOUND})
+  target_compile_definitions(JetScape PRIVATE smash)
 endif (smash)
 
 
@@ -304,6 +305,7 @@ if (freestream)
   else()
       message (FATAL_ERROR "GSL are necessary for Freestreaming" )
   endif()
+  target_compile_definitions(JetScape PRIVATE freestream)
 endif (freestream)
 
 if (music)
@@ -316,6 +318,7 @@ if (music)
   else()
     message (FATAL_ERROR "GSL are necessary for MUSIC" )
   endif()
+  target_compile_definitions(JetScape PRIVATE music)
 endif()
 
 if (iSS)
@@ -323,7 +326,8 @@ if (iSS)
     add_subdirectory( ${CMAKE_SOURCE_DIR}/external_packages/iSS )
   else()
     message(FATAL_ERROR "Error: iSS source has not been downloaded in external_packages by ./get_iSS.sh")
-  endif()      
+  endif()
+  target_compile_definitions(JetScape PRIVATE iSS)   
 endif (iSS)
 
 ###########################
