@@ -89,6 +89,9 @@ class MpiMusic: public FluidDynamics {
     // used by the Jetscape framework.
     static RegisterJetScapeModule<MpiMusic> reg;
 
+    // Allows the registration of the module so that it is available to be used by the Jetscape framework.
+    static RegisterJetScapeModule<MpiMusic> reg;
+
  public:
      MpiMusic();
      ~MpiMusic();

@@ -42,8 +42,8 @@
     <!-- y range [-grid_max_y, grid_max_y]-->
     <!-- longitudinal range [-grid_max_z, grid_max_z]-->
     <!-- in units of [fm] -->
-    <grid_max_x> 10 </grid_max_x>
-    <grid_max_y> 10 </grid_max_y>
+    <grid_max_x> 16 </grid_max_x>
+    <grid_max_y> 16 </grid_max_y>
     <grid_max_z> 0 </grid_max_z>
     <grid_step_x> 0.2 </grid_step_x>
     <grid_step_y> 0.2 </grid_step_y>
@@ -208,6 +208,31 @@
       <shear_viscosity_eta_over_s>0.08</shear_viscosity_eta_over_s>
       <Perform_CooperFrye_Feezeout>0</Perform_CooperFrye_Feezeout>
     </MUSIC>
+
+    <!-- CLVisc  -->
+    <CLVisc>
+      <name>CLVisc</name>
+      <cpu_block_size>1</cpu_block_size>
+      <gpu_block_size>64</gpu_block_size>
+      <device_type>gpu</device_type>
+      <device_id> 0 </device_id>
+      <etaos_xmin> 0.15 </etaos_xmin>
+      <etaos_ymin> 0.08 </etaos_ymin>
+      <etaos_left_slop> 0.0 </etaos_left_slop>
+      <etaos_right_slop> 0.0 </etaos_right_slop>
+      <tau0> 0.6 </tau0>
+      <!-- *_skip is used to save less bulk data -->
+      <ntau_skip> 10 </ntau_skip>
+      <nx_skip> 2 </nx_skip>
+      <ny_skip> 2 </ny_skip>
+      <netas_skip> 2 </netas_skip>
+      <!-- scale_factor: scale the initial entropy/energy density -->
+      <scale_factor> 57 </scale_factor>
+      <dtau> 0.02 </dtau>
+      <result_directory>./</result_directory>
+      <Perform_CooperFrye_Feezeout>0</Perform_CooperFrye_Feezeout>
+    </CLVisc>
+
   </Hydro>
   
   <!-- Jet Hadronization Module -->

@@ -23,6 +23,33 @@
 
 namespace Jetscape {
 
+// The simplest way for 3rd party hydro to provide evolution history is to 
+// send 2 vectors to the framework. One is a 1D float vector stores all
+// the evolution history to data_vector.
+// The other is the description of the content of the data to data_info.
+// E.g., data_info should store a vector of 3 strings ['energy_density', 'vx, 'vy']
+// if data_vector = [ed0, vx0, vy0, ed1, vx1, vy1, ..., edN, vxN, vyN, vzN],
+// where N = ntau * nx * ny * netas is the number of total cells.
+// One can pass these 3 data or more data to the framework, by storing them in any order,
+// as long as the description matches the data content.
+// The following is a list possible valid data names.
+// ValidNames = [ "energy_density", "entropy_density", "temperature",
+//                "pressure", "qgp_fraction", "mu_b", "mu_c", "mu_s",
+//                "vx", "vy", "vz", "pi00", "pi01", "pi02", "pi03",
+//                "pi11", "pi12", "pi13", "pi22", "pi23", "pi33", "bulk_pi"];
+//
+
+enum EntryName {ENTRY_ENERGY_DENSITY, ENTRY_ENTROPY_DENSITY, ENTRY_TEMPERATURE,
+    ENTRY_PRESSURE, ENTRY_QGP_FRACTION, ENTRY_MU_B, ENTRY_MU_C, ENTRY_MU_S,
+    ENTRY_VX, ENTRY_VY, ENTRY_VZ,
+    ENTRY_PI00, ENTRY_PI01, ENTRY_PI02, ENTRY_PI03,
+    ENTRY_PI11, ENTRY_PI12, ENTRY_PI13, 
+    ENTRY_PI22, ENTRY_PI23, ENTRY_PI33, ENTRY_BULK_PI, ENTRY_INVALID
+};
+
+EntryName ResolveEntryName(std::string input);
+
+
     
 class InvalidSpaceTimeRange : public std::invalid_argument {
     using std::invalid_argument::invalid_argument;
@@ -49,14 +76,46 @@ class EvolutionHistory {
 
     bool boost_invariant;
 
-    /** The bulk information of hydro dynamics.*/
+    /** The bulk information of hydro dynamics, in the form of 
+     * vector of FluidCellInfo objects. */
     std::vector<FluidCellInfo> data;
+
+    /** The bulk information of hydro dynamics, in the form of 1D float vector.
+     * It is easy to pass vector of float from 3rd party hydro module
+     * to Jetscape Fluid Evolution History, where bulk info should be stored
+     * in orders of ed0, sd0, temp0, ..., ed1, sd1, temp1, ..., edn, sdn, tempn.
+     * The content and order of data entres are given by data_info */
+    std::vector<float> data_vector;
+
+    /** Store the entry names of one record in the data array*/
+    std::vector<std::string> data_info;
+
 
     /** Default constructor. */
     EvolutionHistory() = default;
 
+    /** Auxiliary function that helps to read hydro evolution history from external fluid dynamic module.
+     * The history from 3rd party hydro should be stored in a std::vector<float> container.
+     * The size of the vector should equal ntau * nx * ny * neta * data_info_.size();
+     * For each piece with length data_info_.size(), the vector should store the corresponding float number
+     * whose name is written in std::vector<string> data_info_.
+     * E.g., data_info_ can be a vector of ['
+     * */
+    void FromVector(const std::vector<float> & data_,
+                   const std::vector<std::string> & data_info_,
+                   float tau_min, float dtau,
+                   float x_min, float dx, int nx,
+                   float y_min, float dy, int ny,
+                   float eta_min, float deta, int neta,
+                   bool tau_eta_is_tz);
+
+
     /** Default destructor. */
-    ~EvolutionHistory() {data.clear();}
+    ~EvolutionHistory() {
+        data.clear();
+        data_vector.clear();
+        data_info.clear();
+    }
 
     void clear_up_evolution_data() {data.clear();}
     
@@ -161,6 +220,10 @@ class EvolutionHistory {
         return(id_tau * nx * ny * neta + id_x * ny * neta
                + id_y * neta + id_eta);
     }
+
+    /* Read fluid cell info for a given lattice cell*/
+    FluidCellInfo GetFluidCell(int id_tau,
+            int id_x, int id_y, int id_eta) const;
 
     // get the FluidCellInfo at space point given time step
     /** @return FluidCellInfo at a point (x,y,eta) and time-step id_tau.
