@@ -115,7 +115,6 @@ void Matter::Init()
     matter->FirstChildElement("broadening_on")->QueryIntText(&flagInt);
     broadening_on = flagInt;
 
-
     if ( !matter->FirstChildElement("brick_med") ) {
 	JSWARN << "Couldn't find sub-tag Eloss -> Matter -> brick_med";
         throw std::runtime_error ("Couldn't find sub-tag Eloss -> Matter -> brick_med");
@@ -317,7 +316,13 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       // Note: jet_v()/mod_jet_v is a unit 3 vector in the direction of the jet originating parton.
       
       initEner = pIn[i].e(); // initial Energy of parton
-      if(!in_vac) length = fillQhatTab();
+      if(!in_vac){
+	 if(GetJetSignalConnected()) length = fillQhatTab();
+         else{
+           JSWARN << "Couldn't find a hydro module attached!";
+           throw std::runtime_error ("Please attach a hydro module or set in_vac to 1 in the XML file");
+         }
+      }
       if(brick_med) length = brick_length*fmToGeVinv; /// length in GeV-1 will have to changed for hydro
       //if(brick_med) length = 5.0*fmToGeVinv; /// length in GeV-1 will have to changed for hydro
 
