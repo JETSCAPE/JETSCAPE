@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J 100_events_test_design
+#SBATCH -J 20_events_test_fs_emulation
 #SBATCH -p skx-dev        # Queue (partition) name
 #SBATCH -N 2                 # the number of nodes
 #SBATCH --ntasks-per-node 48 #set this equal to number of cores on node
@@ -22,14 +22,18 @@ job=$SLURM_JOB_ID
 rm -f tasks # remove old tasks!!! important!!!
 
 #set the number of design points stored in input-config/design_pts
-num_design_pts=100
+num_design_pts=20
 #set the number of events to run per design point
 num_events_per_design=1
 
+#files are indexed starting at 0
+let max_design=$num_design_pts-1
+let max_events=$num_events_per_design-1
+
 #for best scaling, set nevents 1 
-for i in $(seq 1 $num_design_pts)
+for i in $(seq 0 $max_design)
 do
-    for j in $(seq 1 $num_events_per_design)
+    for j in $(seq 0 $max_events)
     do
 	echo run-events-design-new --nevents 1 --logfile $SCRATCH/$job/$i/$j.log --tmpdir=/tmp --tablesdir=$inputdir --startdir=$inputdir/design_pts/main/PbPb-2760/$i $job/$i/$j.dat >> tasks
     done
