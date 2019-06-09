@@ -40,7 +40,7 @@
   <!--Eloss Modules -->
   <Eloss>
     <Matter> </Matter>
-    <LBT> </LBT>
+    <Lbt> </Lbt>
     <AddLiquefier> true </AddLiquefier>
   </Eloss>
   

@@ -42,6 +42,7 @@ namespace Jetscape {
   n_events(1),
   reuse_hydro_(false),
   n_reuse_hydro_(1),
+  liquefier(nullptr),
   fEnableAutomaticTaskListDetermination(true)
 {
   VERBOSE(8);
@@ -152,7 +153,6 @@ void JetScape::ReadGeneralParametersFromXML() {
 void JetScape::DetermineTaskListFromXML() {
   
   // First, check for Liquefier and create it if so (since it needs to be passed to other modules)
-  std::shared_ptr<CausalLiquefier> liquefier;
   VERBOSE(2) << "Checking if Liquifier should be created...";
   tinyxml2::XMLElement* elementXML = (tinyxml2::XMLElement*) JetScapeXML::Instance()->GetXMLRootUser()->FirstChildElement();
   while (elementXML) {
@@ -362,7 +362,6 @@ void JetScape::DetermineTaskListFromXML() {
         else if (childElementName == "MUSIC") {
           #ifdef music
           auto hydro = JetScapeModuleFactory::createInstance("MUSIC");
-          //auto hydro = make_shared<MpiMusic> ();
           if (hydro) {
             Add(hydro);
             JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added MUSIC to task list.";
@@ -410,6 +409,16 @@ void JetScape::DetermineTaskListFromXML() {
       
       auto jlossmanager = make_shared<JetEnergyLossManager> ();
       auto jloss = make_shared<JetEnergyLoss> ();
+      
+      // Check if liquefier should be added, and add it if so
+      std::string strAddLiquefier = GetXMLElementText({"Eloss", "AddLiquefier"});
+      if ((int) strAddLiquefier.find("true")>=0) {
+        jloss->add_a_liqueifier(liquefier);
+        JSINFO << "JetScape::DetermineTaskList() -- Added liquefier to Eloss.";
+      }
+      else {
+        VERBOSE(1) << "Add liquefier to Eloss: False.";
+      }
       
       // Loop through and add Eloss modules
       tinyxml2::XMLElement* childElement = (tinyxml2::XMLElement*) element->FirstChildElement();
@@ -459,16 +468,6 @@ void JetScape::DetermineTaskListFromXML() {
         }
         
         childElement = childElement->NextSiblingElement();
-      }
-      
-      // Check if liquefier should be added, and add it if so
-      std::string strAddLiquefier = GetXMLElementText({"Eloss", "AddLiquefier"});
-      if ((int) strAddLiquefier.find("true")>=0) {
-        jloss->add_a_liqueifier(liquefier);
-        JSINFO << "JetScape::DetermineTaskList() -- Added liquefier to Eloss.";
-      }
-      else {
-        VERBOSE(1) << "Add liquefier to Eloss: False.";
       }
       
       jlossmanager->Add(jloss);

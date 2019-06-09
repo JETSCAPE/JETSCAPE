@@ -19,6 +19,7 @@
 #include "JetScapeLogger.h"
 #include "JetScapeTaskSupport.h"
 #include "JetScapeModuleBase.h"
+#include "CausalLiquefier.h"
 
 namespace Jetscape {
 
@@ -88,6 +89,8 @@ class JetScape : public JetScapeModuleBase
 
   bool reuse_hydro_;
   unsigned int n_reuse_hydro_;
+  
+  std::shared_ptr<CausalLiquefier> liquefier;
   
   bool fEnableAutomaticTaskListDetermination; // Option to automatically determine the task list from the XML file,
                                               // rather than manually calling JetScapeTask::Add() in the run macro.
