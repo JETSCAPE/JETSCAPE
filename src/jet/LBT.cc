@@ -752,6 +752,11 @@ void LBT::LBT0(int &n, double &ti){
     	  GetHydroCellSignal(tcar, xcar, ycar, zcar, check_fluid_info_ptr);
 	  //VERBOSE(7)<< MAGENTA<<"Temperature from Brick (Signal) = "<<check_fluid_info_ptr->temperature;
 
+	  if(!GetJetSignalConnected()){
+           	JSWARN << "Couldn't find a hydro module attached!";
+           	throw std::runtime_error ("Please attach a hydro module or set in_vac to 1 in the XML file");
+          }
+
 	  temp0 = check_fluid_info_ptr->temperature;
           sd = check_fluid_info_ptr->entropy_density;
     	  VX = check_fluid_info_ptr->vx;

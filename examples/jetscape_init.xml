@@ -61,8 +61,8 @@
     <PythiaGun>
       <name>PythiaGun</name>
       <FSR_on>0</FSR_on>
-      <pTHatMin>110</pTHatMin>
-      <pTHatMax>120</pTHatMax>
+      <pTHatMin>20</pTHatMin>
+      <pTHatMax>30</pTHatMax>
       <eCM>2760</eCM>
       <!-- You can add any number of additional lines to initialize pythia here -->
       <!-- Note that if the tag exists it cannot be empty (tinyxml produces a segfault) -->

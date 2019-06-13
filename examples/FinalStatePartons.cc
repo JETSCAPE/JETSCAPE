@@ -62,10 +62,12 @@ int main(int argc, char** argv)
       dist_output<<"Event "<< reader->GetCurrentEvent()+1<<endl;
       for (int i=0;i<mShowers.size();i++)
 	{
-	  //  cout<<" Analyze parton shower: "<<i<<endl;
+	  //cout<<" Analyze parton shower: "<<i<<endl;
 	  // Let's create a file
 	  for ( int ipart = 0; ipart< mShowers[i]->GetFinalPartons().size(); ++ipart){
 	    Parton p = *mShowers[i]->GetFinalPartons().at(ipart);
+            if(abs(p.pid())!=4) continue;
+
 	    dist_output << ipart   << "\t"
 			<< p.pid() << "\t"
 			<< p.pstat() << "\t"

@@ -76,7 +76,7 @@ int main(int argc, char** argv)
   
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",2);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",3);
   jetscape->SetId("primary");
 
   // Initial conditions and hydro
@@ -95,7 +95,7 @@ int main(int argc, char** argv)
 
   auto matter = make_shared<Matter> ();
   // auto lbt = make_shared<LBT> ();
-  auto martini = make_shared<Martini> ();
+  //auto martini = make_shared<Martini> ();
   // auto adscft = make_shared<AdSCFT> ();
 
   // Note: if you use Matter, it MUST come first (to set virtuality)
@@ -105,10 +105,9 @@ int main(int argc, char** argv)
   // jloss->Add(martini);
 
   // jloss->Add(adscft);  
-  jlossmanager->Add(jloss);  
+  jlossmanager->Add(jloss);
   jetscape->Add(jlossmanager);
 
-  
   // Hadronization
   auto hadroMgr = make_shared<HadronizationManager> ();
   auto hadro = make_shared<Hadronization> ();
@@ -123,16 +122,16 @@ int main(int argc, char** argv)
   // Output
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
   jetscape->Add(writer);
-#ifdef USE_GZIP
-  // same as JetScapeWriterAscii but gzipped
-  auto writergz= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");
-  jetscape->Add(writergz);
-#endif
-  // HEPMC3
-#ifdef USE_HEPMC
-  auto hepmcwriter= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
-  jetscape->Add(hepmcwriter);
-#endif
+//#ifdef USE_GZIP
+//  // same as JetScapeWriterAscii but gzipped
+//  auto writergz= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");
+//  jetscape->Add(writergz);
+//#endif
+//  // HEPMC3
+//#ifdef USE_HEPMC
+//  auto hepmcwriter= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
+//  jetscape->Add(hepmcwriter);
+//#endif
 
   // Intialize all modules tasks
   jetscape->Init();

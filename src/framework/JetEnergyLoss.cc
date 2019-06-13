@@ -247,10 +247,20 @@ void JetEnergyLoss::DoShower() {
 	            vStartVecTemp.push_back(vStart);
             } else {
 	            for (int k = 0; k < pOutTemp.size(); k++) {
-	                vEnd = pShower->new_vertex(
-                            make_shared<Vertex>(0, 0, 0, currentTime));	
-	                int edgeid = pShower->new_parton(
-                        vStart, vEnd, make_shared<Parton>(pOutTemp[k]));
+                    int edgeid = 0;
+                    if (pOutTemp[k].pstat() == neg_stat) {
+		                node vNewRootNode = pShower->new_vertex(
+                                make_shared<Vertex>(0, 0, 0,
+                                                    currentTime - deltaT));
+		                edgeid = pShower->new_parton(
+                                vNewRootNode, vStart,
+                                make_shared<Parton>(pOutTemp[k]));
+		            } else {
+	                    vEnd = pShower->new_vertex(
+                                make_shared<Vertex>(0, 0, 0, currentTime));	
+	                    edgeid = pShower->new_parton(
+                            vStart, vEnd, make_shared<Parton>(pOutTemp[k]));
+                    }
 	                pOutTemp[k].set_shower(pShower);
 	                pOutTemp[k].set_edgeid(edgeid);
 
