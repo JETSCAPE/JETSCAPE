@@ -1671,34 +1671,35 @@ double Matter::generate_vac_t_w_M(int p_id, double M, double nu, double t0, doub
     //cin >> test ;
     
   if (p_id==gid)
-    {
+  {
       numer = sudakov_Pgg(t0,t,loc_a,nu)*std::pow(sudakov_Pqq(t0,t,loc_a,nu),3.0)*sudakov_Pqq_w_M_vac_only(M_charm,t0,t,loc_a,nu)*sudakov_Pqq_w_M_vac_only(M_bottom,t0,t,loc_a,nu);
         
       if ((is!=1)&&(is!=2))
-        {
-            throw std::runtime_error(" error in isp ");
-        }
-    }
+      {
+          throw std::runtime_error(" error in isp ");
+      }
+  }
   else
-    {
+  {
       if (is!=0)
-        {
-	        throw std::runtime_error("error in isp in quark split");
-        }
-        if (((int) std::abs((double) p_id))==4 || ((int) std::abs((double) p_id))==5)
-        {
-            numer = sudakov_Pqg_w_M(M,t0,t,loc_a,nu);
+      {
+          throw std::runtime_error("error in isp in quark split");
+      }
+      if (((int) std::abs((double) p_id))==4 || ((int) std::abs((double) p_id))==5)
+      {
+          numer = sudakov_Pqg_w_M(M,t0,t,loc_a,nu);
             
         //    std::ofstream Sud_dist;
         //    Sud_dist.open("Sud_dist.dat", std::ios::app);
         //    Sud_dist << t << "  " << numer << "  " << sudakov_Pqg(t0,t,loc_a,nu) << "  " << r << " t_low_MO = " << t_low_M0 << endl;
         //    Sud_dist.close();
-        }
-        else
-        {
-            numer = sudakov_Pqg(t0,t,loc_a,nu);
-        }
-    }
+      }
+      else
+      {
+          numer = sudakov_Pqg(t0,t,loc_a,nu);
+      }
+      
+  }
     
   t_mid_M0 = t_low_M0;
   t_mid_MM = t_low_MM;
