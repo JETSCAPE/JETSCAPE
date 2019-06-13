@@ -788,8 +788,13 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               else
               { // we had a quark
                   
+                  double relative_charge = 0.0;
+                  if ( (std::abs(pIn[i].pid())>0)&&(std::abs(pIn[i].pid())<4) ) relative_charge = 1.0/9.0;
+                  if (std::abs(pIn[i].pid())==2) relative_charge = relative_charge*4.0;
+                
+                  
                   double ProbGluon = 1.0 - sudakov_Pqg( QS/2, pIn[i].t(), zeta, pIn[i].nu() ) ;
-                  double ProbPhoton = 1.0 - sudakov_Pqp( QS/2, pIn[i].t(), zeta, pIn[i].nu() ) ;
+                  double ProbPhoton = 1.0 - std::pow(sudakov_Pqp( QS/2, pIn[i].t(), zeta, pIn[i].nu() ), relative_charge) ;
                   
                   double val = ProbGluon/(ProbGluon + ProbPhoton) ;
                   
@@ -1569,7 +1574,11 @@ double Matter::generate_vac_t(int p_id, double nu, double t0, double t, double l
       {
           throw std::runtime_error("error in isp in quark split");
       }
-      numer = sudakov_Pqg(t0,t,loc_a,nu)*sudakov_Pqp(t0,t,loc_a,nu);
+      double relative_charge = 0.0;
+      if ( (std::abs(p_id)>0)&&(std::abs(p_id)<4) ) relative_charge = 1.0/9.0;
+      if (std::abs(p_id)==2) relative_charge = relative_charge*4.0;
+      
+      numer = sudakov_Pqg(t0,t,loc_a,nu)*std::pow(sudakov_Pqp(t0,t,loc_a,nu),relative_charge);
   }
     
   t_mid = t_low;
@@ -1607,7 +1616,11 @@ double Matter::generate_vac_t(int p_id, double nu, double t0, double t, double l
               throw std::runtime_error(" error in isp in quark split numerator  ");
               
           }
-          denom = sudakov_Pqg(t0, t_mid, loc_a, nu)*sudakov_Pqp(t0, t_mid, loc_a, nu);
+          double relative_charge = 0.0;
+          if ( (std::abs(p_id)>0)&&(std::abs(p_id)<4) ) relative_charge = 1.0/9.0;
+          if (std::abs(p_id)==2) relative_charge = relative_charge*4.0;
+          
+          denom = sudakov_Pqg(t0, t_mid, loc_a, nu)*std::pow(sudakov_Pqp(t0, t_mid, loc_a, nu),relative_charge);
           
       }
         
