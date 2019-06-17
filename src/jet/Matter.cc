@@ -1111,7 +1111,14 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   
               pOut.push_back(Parton(0,pid_a,jet_stat,newp,newx));
               int iout = pOut.size()-1;
-                  
+              
+              if(isnan(newp[1]))
+              {                
+                 JSINFO << MAGENTA <<  plong   << " " << s_t    << " " <<  c_p   << " " << k_perp1[1];
+                        
+                 JSINFO << MAGENTA <<  newp[0] << " " << newp[1] << " " << newp[2] << " " << newp[3];
+                 cin >> blurb;
+              }    
               pOut[iout].set_jet_v(velocity_jet); // use initial jet velocity
               pOut[iout].set_mean_form_time();
               double ft = generate_L (pOut[iout].mean_form_time());
@@ -1153,7 +1160,15 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               newp[1] = plong*s_t*c_p + k_perp2[1];
               newp[2] = plong*s_t*s_p + k_perp2[2];
               newp[3] = plong*c_t + k_perp2[3];
-              
+
+              if(isnan(newp[1]))
+              {              
+                 JSINFO << MAGENTA << "THIS IS THE SECOND DAUGHTER";  
+                 JSINFO << MAGENTA <<  plong   << " " << s_t    << " " <<  c_p   << " " << k_perp1[1];
+                 JSINFO << MAGENTA <<  newp[0] << " " << newp[1] << " " << newp[2] << " " << newp[3];
+                 cin >> blurb;
+              }    
+
               VERBOSE(8) << MAGENTA << " D1 px = " << newp[1] << " py = " << newp[2] << " pz = " << newp[3] << " E = " << newp[0] ;
 
               //newx[0] = time + deltaT;

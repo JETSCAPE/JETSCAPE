@@ -53,8 +53,8 @@ void PythiaGun::InitTask()
 
   // Standard settings
   readString("HardQCD:all = off"); // will repeat this line in the xml for demonstration  
-  readString("HardQCD:gg2ccbar = on"); // only switch on heavy quark channel
-  readString("HardQCD:qqbar2ccbar = on");
+  readString("HardQCD:gg2bbbar = on"); // only switch on heavy quark channel
+  readString("HardQCD:qqbar2bbbar = on");
   readString("HadronLevel:Decay = off");
   readString("HadronLevel:all = off");
   readString("PartonLevel:ISR = on");
