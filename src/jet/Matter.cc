@@ -469,16 +469,16 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           
           // VERBOSE OUTPUT ON INITIAL STATUS OF PARTICLE:
          VERBOSE(8) ;
-         VERBOSE(8) << " ***************************************************************************** " ;
-         VERBOSE(8) << " ID = " << pIn[i].pid() << " Color = " << pIn[i].color() << " Anti-Color = " << pIn[i].anti_color() ;
-         VERBOSE(8) << BOLDYELLOW << " E = " << pIn[i].e() << " px = " << pIn[i].px() << " py = " << pIn[i].py() << " pz = " << pIn[i].pz() ;
-         VERBOSE(8) << BOLDYELLOW << " *  New generated virtuality = " << tQ2 << " Mean formation time = " << pIn[i].mean_form_time();
-         VERBOSE(8) << BOLDYELLOW << " *  set new formation time to " << pIn[i].form_time() ;
+         JSINFO << " ***************************************************************************** " ;
+         JSINFO << BOLDYELLOW << " ID = " << pIn[i].pid() << " Color = " << pIn[i].color() << " Anti-Color = " << pIn[i].anti_color() ;
+         JSINFO << BOLDYELLOW << " E = " << pIn[i].e() << " px = " << pIn[i].px() << " py = " << pIn[i].py() << " pz = " << pIn[i].pz() ;
+         JSINFO << BOLDYELLOW << " *  New generated virtuality = " << tQ2 << " Mean formation time = " << pIn[i].mean_form_time();
+         JSINFO << BOLDYELLOW << " *  set new formation time to " << pIn[i].form_time() ;
          VERBOSE(8) << BOLDYELLOW << " * Maximum allowed virtuality = " << pIn[i].e()*pIn[i].e() - pIn[i].restmass()*pIn[i].restmass() << "   Minimum Virtuality = " << QS;
          VERBOSE(8) << " * Qhat = " << qhat << "  Length in fm = "  << length/5.0 ;
          VERBOSE(8) << " * Jet velocity = " << pIn[i].jet_v().comp(0) << " " << pIn[i].jet_v().comp(1) << "  " << pIn[i].jet_v().comp(2) << "  " << pIn[i].jet_v().comp(3);
          VERBOSE(8) << " * reset location of parton formation = "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z();
-         VERBOSE(8) << " ***************************************************************************** " ;
+         JSINFO << " ***************************************************************************** " ;
          VERBOSE(8) ;
           // end VERBOSE OUTPUT:
  
@@ -1112,7 +1112,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               pOut.push_back(Parton(0,pid_a,jet_stat,newp,newx));
               int iout = pOut.size()-1;
               
-              if(isnan(newp[1]))
+              if(isnan(newp[1])||isnan(newp[2])||isnan(newp[3]))
               {                
                  JSINFO << MAGENTA <<  plong   << " " << s_t    << " " <<  c_p   << " " << k_perp1[1];
                         
@@ -1161,7 +1161,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               newp[2] = plong*s_t*s_p + k_perp2[2];
               newp[3] = plong*c_t + k_perp2[3];
 
-              if(isnan(newp[1]))
+              if(isnan(newp[1])||isnan(newp[2])||isnan(newp[3]))
               {              
                  JSINFO << MAGENTA << "THIS IS THE SECOND DAUGHTER";  
                  JSINFO << MAGENTA <<  plong   << " " << s_t    << " " <<  c_p   << " " << k_perp1[1];
