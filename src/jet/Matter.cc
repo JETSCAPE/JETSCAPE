@@ -409,8 +409,17 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
              JSDEBUG << BOLDYELLOW << " at x,y,z,t = " <<  pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z() << "  " << pIn[i].x_in().t() ;
              if(abs(pIn[i].pid()) == 4 || abs(pIn[i].pid()) == 5)
              { 
-                 tQ2 = generate_vac_t_w_M(pIn[i].pid(), pIn[i].restmass(), pIn[i].nu(), QS/2.0, max_vir, zeta, iSplit);
-                 
+
+				double min_vir = (QS/2.0)*( 1.0 +  std::sqrt( 1.0 + 4.0*pIn[i].restmass()*pIn[i].restmass()/QS ) );
+
+				if (max_vir>min_vir)
+				{
+					tQ2 = generate_vac_t_w_M(pIn[i].pid(), pIn[i].restmass(), pIn[i].nu(), QS/2.0, max_vir, zeta, iSplit);
+                }
+                else
+                {
+                	tQ2 = rounding_error;
+                } 
                //  std::ofstream tdist;
                //  tdist.open("tdist_heavy.dat", std::ios::app);
                //  tdist << tQ2 << endl;
@@ -469,16 +478,16 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           
           // VERBOSE OUTPUT ON INITIAL STATUS OF PARTICLE:
          VERBOSE(8) ;
-         JSINFO << " ***************************************************************************** " ;
-         JSINFO << BOLDYELLOW << " ID = " << pIn[i].pid() << " Color = " << pIn[i].color() << " Anti-Color = " << pIn[i].anti_color() ;
-         JSINFO << BOLDYELLOW << " E = " << pIn[i].e() << " px = " << pIn[i].px() << " py = " << pIn[i].py() << " pz = " << pIn[i].pz() ;
-         JSINFO << BOLDYELLOW << " *  New generated virtuality = " << tQ2 << " Mean formation time = " << pIn[i].mean_form_time();
-         JSINFO << BOLDYELLOW << " *  set new formation time to " << pIn[i].form_time() ;
+         VERBOSE(8) << " ***************************************************************************** " ;
+         VERBOSE(8) << BOLDYELLOW << " ID = " << pIn[i].pid() << " Color = " << pIn[i].color() << " Anti-Color = " << pIn[i].anti_color() ;
+         VERBOSE(8) << BOLDYELLOW << " E = " << pIn[i].e() << " px = " << pIn[i].px() << " py = " << pIn[i].py() << " pz = " << pIn[i].pz() ;
+         VERBOSE(8) << BOLDYELLOW << " *  New generated virtuality = " << tQ2 << " Mean formation time = " << pIn[i].mean_form_time();
+         VERBOSE(8) << BOLDYELLOW << " *  set new formation time to " << pIn[i].form_time() ;
          VERBOSE(8) << BOLDYELLOW << " * Maximum allowed virtuality = " << pIn[i].e()*pIn[i].e() - pIn[i].restmass()*pIn[i].restmass() << "   Minimum Virtuality = " << QS;
          VERBOSE(8) << " * Qhat = " << qhat << "  Length in fm = "  << length/5.0 ;
          VERBOSE(8) << " * Jet velocity = " << pIn[i].jet_v().comp(0) << " " << pIn[i].jet_v().comp(1) << "  " << pIn[i].jet_v().comp(2) << "  " << pIn[i].jet_v().comp(3);
          VERBOSE(8) << " * reset location of parton formation = "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z();
-         JSINFO << " ***************************************************************************** " ;
+         VERBOSE(8) << " ***************************************************************************** " ;
          VERBOSE(8) ;
           // end VERBOSE OUTPUT:
  
@@ -1765,6 +1774,7 @@ double Matter::generate_vac_t_w_M(int p_id, double M, double nu, double t0, doub
   if (numer>r)
     {
       // cout << " numer > r, i.e. ; " << numer << " > " << r << endl ;
+      
       return(t_mid_M0) ;
     }
     
