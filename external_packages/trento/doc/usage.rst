@@ -21,8 +21,9 @@ Symbol     Name      No. nucleons  Deformed
 =========  ========  ============  ========
 p          proton    1             ---
 d          deuteron  2             ---
-Cu         copper    62            no
-Cu2        copper    62            yes
+Cu         copper    63            no
+Cu2        copper    63            yes
+Xe         xenon     129           no
 Au         gold      197           no
 Au2        gold      197           yes
 Pb         lead      208           no
@@ -47,6 +48,9 @@ U3      6.67  0.44  0.280  0.093
 
 The ``U`` and ``U2`` sets are given in this recent `overview of particle production from PHENIX <http://inspirehep.net/record/1394433>`_.
 All other Woods-Saxon parameters (including ``U3``) and the Hulthén wavefunction parameters are from the `PHOBOS Glauber model <http://inspirehep.net/record/1310629>`_.
+
+For Woods-Saxon nuclei, ``trento`` can impose a minimum nucleon-nucleon distance.
+See the :ref:`nucleon-min-dist <nucleon-min-dist>` option.
 
 In addition, ``trento`` can read :ref:`arb-configs` saved in HDF5 files.
 
@@ -83,12 +87,12 @@ with one line for each event, where
 - the ``en`` are the eccentricity harmonics ɛ\ :sub:`n`.
 
 This format is designed for easy parsing, redirection to files, etc.
+The output may be disabled with the ``-q/--quiet`` option.
 
 By default, the actual initial entropy profiles (grids) are not output.
 There are two available output formats: text and HDF5 (if compiled).
 
-In text mode, each event is written to a separate text file.
-Each file has a commented header containing the event properties, like this::
+In text mode, each event is written to a separate text file as a standard block-style grid, along with a commented header containing the event properties, like this::
 
    # event 0
    # b     = 2.964077155
@@ -99,7 +103,7 @@ Each file has a commented header containing the event properties, like this::
    # e4    = 0.1101683349
    # e5    = 0.1727159106
 
-The profile follows the header as a standard block-style grid.
+The header may be disabled with the ``--no-header`` option.
 
 HDF5 is a high-performance, cross-platform binary format for large numerical datasets.
 Libraries are available in `most languages <https://en.wikipedia.org/wiki/Hierarchical_Data_Format#Interfaces>`_.
@@ -130,6 +134,9 @@ Event properties are written to each dataset as HDF5 attributes with names ``b``
 
    - ``--output events`` will write to text files ``events/0.dat``, ``events/1.dat``, ...
    - ``--output events.hdf`` will write to HDF5 file ``events.hdf`` with dataset names ``event_0``, ``event_1``, ...
+
+``--no-header``
+   Disable writing event headers to text files.
 
 Physical options
 ----------------
@@ -172,6 +179,21 @@ These options control the physical behavior of the model.
       T_\text{nucleon}(x, y) = \frac{1}{2\pi w^2} \exp\biggl( -\frac{x^2 + y^2}{2w^2} \biggr)
 
    The default is 0.5 fm.
+
+.. _nucleon-min-dist:
+
+``-d, --nucleon-min-dist FLOAT``
+   Minimum nucleon-nucleon distance (fm) for Woods-Saxon nuclei (spherical and deformed).
+   When nonzero, if a sampled nucleon lands too close to a previously sampled nucleon, its angular position is resampled until it lands far enough away.
+   The radius is *not* resampled, since this would effectively modify the Woods-Saxon distribution.
+
+   If a nucleon cannot be placed after a reasonable number of retries, the algorithm gives up and leaves the nucleon at the last sampled position.
+   The failure rate is negligible for minimum distances of ~1 fm and below;
+   it reaches roughly 1% at 1.7 fm for spherical nuclei and 1.5 fm for deformed.
+
+   The default is zero (no minimum distance).
+
+   .. versionadded:: 1.4
 
 ``-x, --cross-section FLOAT``
    Inelastic nucleon-nucleon cross section |snn| in |fm2|.
@@ -294,6 +316,8 @@ For example, one could have a file ``common.conf`` containing settings for all c
    number-events = 100000
    grid-max = 3
 
+.. highlight:: none
+
 To be used like so::
 
    trento -c common.conf -c PbPb.conf
@@ -305,6 +329,8 @@ If an option is specified in a config file and on the command line, the command 
 
 Arbitrary nuclear configurations
 --------------------------------
+.. versionadded:: 1.3
+
 ``trento`` can read pre-generated nuclear configurations from HDF5 files.
 
 The following files were created from publicly available data and can be input directly to ``trento``.
@@ -354,9 +380,9 @@ Remember to set the appropriate cross section for the desired beam energy!
 To run custom configurations, make an HDF5 file containing a single dataset of shape ``(number_configs, number_nucleons, 3)``, where the first dimension corresponds to each configuration, the second dimension to each nucleon, and the third dimension to the (x, y, z) coordinates of each nucleon.
 Note that ``trento`` will read the file as single-precision floats, not doubles.
 
-The easiest way to write an HDF5 file is with `h5py <http://www.h5py.org>`_:
+.. highlight:: python
 
-.. code-block:: python
+The easiest way to write an HDF5 file is with `h5py <http://www.h5py.org>`_::
 
    import numpy as np
    import h5py

@@ -1,5 +1,6 @@
 // TRENTO: Reduced Thickness Event-by-event Nuclear Topology
 // Copyright 2015 Jonah E. Bernhard, J. Scott Moreland
+// TRENTO3D: Three-dimensional extension of TRENTO by Weiyao Ke
 // MIT License
 
 #include "nucleon.h"
@@ -47,11 +48,27 @@ constexpr T sqr(T value) {
   return value * value;
 }
 
+// Inelastic nucleon-nucleon cross section as function of beam energy sqrt(s)
+// Fit coefficients explained in the docs.
+double cross_sec_from_energy(double sqrts) {
+  auto a = 3.1253;
+  auto b = 0.1280;
+  auto c = 2.0412;
+  auto d = 1.8231;
+  return a + b * pow(std::log(sqrts) - c, d);
+}
+
 // Determine the cross section parameter for sampling participants.
 // See section "Fitting the cross section" in the online docs.
 double compute_cross_sec_param(const VarMap& var_map) {
   // Read parameters from the configuration.
+
+  // Use manual inelastic nucleon-nucleon cross section if specified.
+  // Otherwise default to extrapolated cross section.
   auto sigma_nn = var_map["cross-section"].as<double>();
+  if (sigma_nn < 0) {
+    sigma_nn = cross_sec_from_energy(var_map["beam-energy"].as<double>());
+  }
   auto width = var_map["nucleon-width"].as<double>();
 
   // Initialize arguments for boost root finding function.
@@ -101,10 +118,13 @@ NucleonProfile::NucleonProfile(const VarMap& var_map)
       trunc_radius_sqr_(sqr(trunc_radius_widths)*width_sqr_),
       max_impact_sqr_(sqr(max_impact_widths)*width_sqr_),
       neg_one_div_two_width_sqr_(-.5/width_sqr_),
+	  neg_one_div_four_width_sqr_(-.25/width_sqr_),
+	  one_div_four_pi_(0.5*math::double_constants::one_div_two_pi),
       cross_sec_param_(compute_cross_sec_param(var_map)),
       fast_exp_(-.5*sqr(trunc_radius_widths), 0., 1000),
       fluct_dist_(gamma_param_unit_mean(var_map["fluctuation"].as<double>())),
-      prefactor_(math::double_constants::one_div_two_pi/width_sqr_)
+      prefactor_(math::double_constants::one_div_two_pi/width_sqr_),
+      with_ncoll_(var_map["ncoll"].as<bool>())
 {}
 
 }  // namespace trento

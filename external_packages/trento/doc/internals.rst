@@ -70,9 +70,9 @@ After appropriate change of variables, this relation may be written
 .. math::
 
    \frac{\sigma_{NN}}{4\pi w^2} =
-      A^2 +
-      \text{Ei}\bigl( -e^{-A^2}\pi\sigma_{gg}/w^2 \bigr) -
-      \text{Ei}\bigl( -\pi\sigma_{gg}/w^2 \bigr)
+      \frac{A^2}{4} +
+      \text{Ei}\biggl( -e^{-A^2/4} \frac{\sigma_{gg}}{4\pi w^2} \biggr) -
+      \text{Ei}\biggl( -\frac{\sigma_{gg}}{4\pi w^2} \biggr)
 
 where `\text{Ei}` is the `exponential integral <https://en.wikipedia.org/wiki/Exponential_integral>`_.
 This is still a transcendental equation but it can be quickly solved numerically for a given cross section and nucleon width.
@@ -124,7 +124,7 @@ Nucleus types
 Nucleon
 ~~~~~~~
 .. doxygenclass:: trento::Nucleon
-   :members: Nucleon, x, y, is_participant, set_position, set_participant
+   :members: Nucleon, x, y, z, is_participant, set_position, set_participant
 
 Nucleon profile
 ~~~~~~~~~~~~~~~
