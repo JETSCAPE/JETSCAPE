@@ -370,7 +370,7 @@ def run_events(args, results_file):
 		logging.info('Max radius of freezeout surface : {:f}'.format( find_fireball_edge('input/surface.dat') ) )
 		# loop over 'delta-f'. in iS3D, delta_f = 1 : 14 mom, 2 : RTA C.E., 3 : McNelis Mod, 4 : Bernhard Mod
 		# idf = 0,1,2,3 runs iS3D and smash. idf = 4 runs iS3D and urqmd-afterburner
-		for idf in range(3,4):
+		for idf in range(4,5):
 			logging.info('idf  = {:d}'.format(idf))
 
 			if (idf < 4):
@@ -433,7 +433,13 @@ def run_events(args, results_file):
 				#read particle data after urqmd finished 
 				with open("particles.dat", 'r') as f:
 					particles = np.fromiter( (tuple(l.split()) for l in f if not l.startswith('#')), dtype=particle_dtype )
-				
+			
+			logging.info('All Oversampling and Afterburners finished in %s ', end_s - end_h)
+			time_hydro = end_h - start_h
+			time_afterburn = end_s - end_h
+			total_time = end_s - start_h
+			logging.info('Fraction of time spent in trento, fs, hydro       : %f ', time_hydro / total_time)
+			logging.info('Fraction of time spent in sampling, afterburning  : %f ', time_afterburn / total_time)				
 			logging.info('computing observables for delta_f = {:d}'.format(idf+1))
 
 			start_o = datetime.datetime.now()

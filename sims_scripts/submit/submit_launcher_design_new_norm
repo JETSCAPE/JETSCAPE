@@ -1,12 +1,12 @@
 #!/bin/bash
-#SBATCH -J 1k_events_test_smash_box
-#SBATCH -p skx-dev        # Queue (partition) name
-#SBATCH -N 2                 # the number of nodes
+#SBATCH -J 20k_events_test_etas_emulation_UrQMD
+#SBATCH -p skx-normal        # Queue (partition) name
+#SBATCH -N 40                # the number of nodes
 #SBATCH --ntasks-per-node 48 #set this equal to number of cores on node
-#SBATCH -t 02:00:00          # Run time (hh:mm:ss)   walltime for each node separately
+#SBATCH -t 01:30:00          # Run time (hh:mm:ss)   walltime for each node separately
 #SBATCH --mail-user=everett.165@osu.edu
 #SBATCH --mail-type=all      # Send email at begin and end of job
-#SBATCH -A TG-PHY180035      # Allocation name (Large allocation)
+#SBATCH -A TG-PHY180024      # Allocation name (Large allocation)
 #SBATCH -o slurm/out-%j
 #SBATCH -e slurm/err-%j
 
@@ -22,9 +22,9 @@ job=$SLURM_JOB_ID
 rm -f tasks # remove old tasks!!! important!!!
 
 #set the number of design points stored in input-config/design_pts
-num_design_pts=20
+num_design_pts=10
 #set the number of events to run per design point
-num_events_per_design=50
+num_events_per_design=2000
 
 #files are indexed starting at 0
 let max_design=$num_design_pts-1
