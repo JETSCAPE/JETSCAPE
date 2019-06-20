@@ -16,6 +16,8 @@ import numpy as np
 import pandas as pd
 import shutil
 
+from eccentricities import calc_ecc
+
 # fully specify numeric data types, including endianness and size, to
 # ensure consistency across all machines
 float_t = '<f8'
@@ -351,7 +353,9 @@ def run_events(args, results_file):
 		results.fill(0)
 		start_h = datetime.datetime.now()
 		logging.info('TRENTO_FS_HYDRO started at %s ', start_h)
+		os.mkdir('output') #make a directory for freestream-milne to dump initial T00
 		h = run_cmd('TRENTO_FS_HYDRO') # this executable runs TRENTo, freestream-milne and MUSIC. writes fo surf to surface.dat
+		eps = calc_ecc() #call calc_ecc to calculate eccentricities of initial condition 
 		#print(h.stdout)
 		#print(h.stderr)
 		end_h = datetime.datetime.now()
