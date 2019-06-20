@@ -111,7 +111,7 @@ int main(int argc, char** argv)
 
   // Note: if you use Matter, it MUST come first (to set virtuality)
   jloss->Add(matter);
-  jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
+  //jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
 
   // jloss->Add(martini);
 
@@ -119,7 +119,10 @@ int main(int argc, char** argv)
   jlossmanager->Add(jloss);  
   jetscape->Add(jlossmanager);
 
-  
+    auto printer = make_shared<PartonPrinter> () ;
+    jetscape->Add(printer);
+    
+    
   // Hadronization
 
 
