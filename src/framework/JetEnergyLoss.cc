@@ -301,8 +301,12 @@ void JetEnergyLoss::DoShower() {
 
             // update parton shower
             if (pOutTemp.size() == 0) {
+                // do not push back photons
+                if (pInTempModule[0].isPhoton(pInTempModule[0].pid())) continue;
                 pInTemp.push_back(pInTempModule[0]);
             } else if (pOutTemp.size() == 1) {
+                // do not push back photons
+                if (pOutTemp[0].isPhoton(pOutTemp[0].pid())) continue;
                 pInTemp.push_back(pOutTemp[0]);
             } else {
 	            for (int k = 0; k < pOutTemp.size(); k++) {
@@ -313,7 +317,7 @@ void JetEnergyLoss::DoShower() {
                         if (pOutTemp[k].pstat() == neg_stat) continue;
                     }
                     // do not push back photons
-		            if (pOutTemp[k].isPhoton(pOutTemp[k].pid())) continue;
+                    if (pOutTemp[k].isPhoton(pOutTemp[k].pid())) continue;
 
 	                pOut.push_back(pOutTemp[k]);
                 }
