@@ -243,8 +243,24 @@ void JetEnergyLoss::DoShower() {
             }
 
             vStart = vStartVec[i];
-            if (pOutTemp.size() < 2) {
-                vStartVecTemp.push_back(vStart);
+            if (pOutTemp.size() == 0) {
+                // no need to generate a vStart for photons and liquefied
+                // partons
+                if (pInTempModule[0].pstat() != droplet_stat
+                    && pInTempModule[0].pstat() != miss_stat
+                    && pInTempModule[0].pstat() != neg_stat
+                    && !pInTempModule[0].isPhoton(pInTempModule[0].pid())) {
+                    vStartVecTemp.push_back(vStart);
+                }
+            } else if (pOutTemp.size() == 1) {
+                // no need to generate a vStart for photons and liquefied
+                // partons
+                if (pOutTemp[0].pstat() != droplet_stat
+                    && pOutTemp[0].pstat() != miss_stat
+                    && pOutTemp[0].pstat() != neg_stat
+                    && !pOutTemp[0].isPhoton(pOutTemp[0].pid())) {
+                    vStartVecTemp.push_back(vStart);
+                }
             } else {
                 for (int k = 0; k < pOutTemp.size(); k++) {
                     int edgeid = 0;
