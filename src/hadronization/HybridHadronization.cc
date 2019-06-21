@@ -143,62 +143,62 @@ void HybridHadronization::Init(){
 	double R2chg_Sigb = 0.66 ; //?????
 
 	//meson width calculations (r2) - recalc if r2chg is changed on command line...
-	double SigPi2  = SigM2_calc(R2chg_Pi,  Qm_ud, Qm_ud, chg_d, chg_u);
-	double SigPhi2 = SigM2_calc(R2chg_Phi, Qm_s,  Qm_s,  chg_d, -chg_d)*(2./3.); //normalizing
-	double SigK2   = SigM2_calc(R2chg_K,   Qm_s,  Qm_ud, chg_d, chg_u);
-	double SigJpi2 = SigM2_calc(R2chg_Jpi, Qm_c,  Qm_c,  chg_u, -chg_u)*(4./3.); //normalizing
-	double SigDs2  = SigM2_calc(R2chg_Ds,  Qm_c,  Qm_s,  chg_u, chg_d);
-	double SigD2   = SigM2_calc(R2chg_D,   Qm_c,  Qm_ud, chg_u, chg_d);
-	double SigUps2 = SigM2_calc(R2chg_Ups, Qm_b,  Qm_b,  chg_d, -chg_d)*(2./3.); //normalizing
-	double SigBc2  = SigM2_calc(R2chg_Bc,  Qm_b,  Qm_c,  chg_d, chg_u);
-	double SigB2   = SigM2_calc(R2chg_B,   Qm_b,  Qm_ud, chg_d, chg_u); // (treating B_s as B)
+	SigPi2  = SigM2_calc(R2chg_Pi,  Qm_ud, Qm_ud, chg_d, chg_u);
+	SigPhi2 = SigM2_calc(R2chg_Phi, Qm_s,  Qm_s,  chg_d, -chg_d)*(2./3.); //normalizing
+	SigK2   = SigM2_calc(R2chg_K,   Qm_s,  Qm_ud, chg_d, chg_u);
+	SigJpi2 = SigM2_calc(R2chg_Jpi, Qm_c,  Qm_c,  chg_u, -chg_u)*(4./3.); //normalizing
+	SigDs2  = SigM2_calc(R2chg_Ds,  Qm_c,  Qm_s,  chg_u, chg_d);
+	SigD2   = SigM2_calc(R2chg_D,   Qm_c,  Qm_ud, chg_u, chg_d);
+	SigUps2 = SigM2_calc(R2chg_Ups, Qm_b,  Qm_b,  chg_d, -chg_d)*(2./3.); //normalizing
+	SigBc2  = SigM2_calc(R2chg_Bc,  Qm_b,  Qm_c,  chg_d, chg_u);
+	SigB2   = SigM2_calc(R2chg_B,   Qm_b,  Qm_ud, chg_d, chg_u); // (treating B_s as B)
 
 	//baryon width calculations (r2) - recalc if r2chg is changed on command line...
 	//light/strange baryons
-	double SigNucR2 = SigBR2_calc(R2chg_Nuc, Qm_ud, Qm_ud, Qm_ud, chg_d, chg_u, chg_u);
-	double SigNucL2 = SigBL2_calc(SigNucR2,  Qm_ud, Qm_ud, Qm_ud);
-	double SigOmgR2 = SigBR2_calc(R2chg_Omg, Qm_s,  Qm_s,  Qm_s,  chg_d, chg_d, chg_d);
-	double SigOmgL2 = SigBL2_calc(SigOmgR2,  Qm_s,  Qm_s,  Qm_s );
-	double SigXiR2  = SigBR2_calc(R2chg_Xi,  Qm_s,  Qm_s,  Qm_ud, chg_d, chg_d, chg_d);
-	double SigXiL2  = SigBL2_calc(SigXiR2,   Qm_s,  Qm_s,  Qm_ud);
-	double SigSigR2 = SigBR2_calc(R2chg_Sig, Qm_s,  Qm_ud, Qm_ud, chg_d, chg_u, chg_u);
-	double SigSigL2 = SigBL2_calc(SigSigR2,  Qm_s,  Qm_ud, Qm_ud);
+	SigNucR2 = SigBR2_calc(R2chg_Nuc, Qm_ud, Qm_ud, Qm_ud, chg_d, chg_u, chg_u);
+	SigNucL2 = SigBL2_calc(SigNucR2,  Qm_ud, Qm_ud, Qm_ud);
+	SigOmgR2 = SigBR2_calc(R2chg_Omg, Qm_s,  Qm_s,  Qm_s,  chg_d, chg_d, chg_d);
+	SigOmgL2 = SigBL2_calc(SigOmgR2,  Qm_s,  Qm_s,  Qm_s );
+	SigXiR2  = SigBR2_calc(R2chg_Xi,  Qm_s,  Qm_s,  Qm_ud, chg_d, chg_d, chg_d);
+	SigXiL2  = SigBL2_calc(SigXiR2,   Qm_s,  Qm_s,  Qm_ud);
+	SigSigR2 = SigBR2_calc(R2chg_Sig, Qm_s,  Qm_ud, Qm_ud, chg_d, chg_u, chg_u);
+	SigSigL2 = SigBL2_calc(SigSigR2,  Qm_s,  Qm_ud, Qm_ud);
 
 	//charm baryons
-	double SigOcccR2 = SigBR2_calc(R2chg_Occc, Qm_c, Qm_c,  Qm_c,  chg_d, chg_d, chg_d); // ! maybe need to normalize? (just setting all to -1/3 for now)
-	double SigOcccL2 = SigBL2_calc(SigOcccR2,  Qm_c, Qm_c,  Qm_c );
-	double SigOccR2  = SigBR2_calc(R2chg_Occ,  Qm_c, Qm_c,  Qm_s,  chg_u, chg_u, chg_d);
-	double SigOccL2  = SigBL2_calc(SigOccR2,   Qm_c, Qm_c,  Qm_s );
-	double SigXiccR2 = SigBR2_calc(R2chg_Xicc, Qm_c, Qm_c,  Qm_ud, chg_u, chg_u, chg_d);
-	double SigXiccL2 = SigBL2_calc(SigXiccR2,  Qm_c, Qm_c,  Qm_ud);
-	double SigOcR2   = SigBR2_calc(R2chg_Oc,   Qm_c, Qm_s,  Qm_s,  chg_d, chg_d, chg_d); // ! setting all quark charges to -1/3
-	double SigOcL2   = SigBL2_calc(SigOcR2,    Qm_c, Qm_s,  Qm_s );
-	double SigXicR2  = SigBR2_calc(R2chg_Xic,  Qm_c, Qm_s,  Qm_ud, chg_u, chg_d, chg_u);
-	double SigXicL2  = SigBL2_calc(SigXicR2,   Qm_c, Qm_s,  Qm_ud);
-	double SigSigcR2 = SigBR2_calc(R2chg_Sigc, Qm_c, Qm_ud, Qm_ud, chg_u, chg_d, chg_u);
-	double SigSigcL2 = SigBL2_calc(SigSigcR2,  Qm_c, Qm_ud, Qm_ud);
+	SigOcccR2 = SigBR2_calc(R2chg_Occc, Qm_c, Qm_c,  Qm_c,  chg_d, chg_d, chg_d); // ! maybe need to normalize? (just setting all to -1/3 for now)
+	SigOcccL2 = SigBL2_calc(SigOcccR2,  Qm_c, Qm_c,  Qm_c );
+	SigOccR2  = SigBR2_calc(R2chg_Occ,  Qm_c, Qm_c,  Qm_s,  chg_u, chg_u, chg_d);
+	SigOccL2  = SigBL2_calc(SigOccR2,   Qm_c, Qm_c,  Qm_s );
+	SigXiccR2 = SigBR2_calc(R2chg_Xicc, Qm_c, Qm_c,  Qm_ud, chg_u, chg_u, chg_d);
+	SigXiccL2 = SigBL2_calc(SigXiccR2,  Qm_c, Qm_c,  Qm_ud);
+	SigOcR2   = SigBR2_calc(R2chg_Oc,   Qm_c, Qm_s,  Qm_s,  chg_d, chg_d, chg_d); // ! setting all quark charges to -1/3
+	SigOcL2   = SigBL2_calc(SigOcR2,    Qm_c, Qm_s,  Qm_s );
+	SigXicR2  = SigBR2_calc(R2chg_Xic,  Qm_c, Qm_s,  Qm_ud, chg_u, chg_d, chg_u);
+	SigXicL2  = SigBL2_calc(SigXicR2,   Qm_c, Qm_s,  Qm_ud);
+	SigSigcR2 = SigBR2_calc(R2chg_Sigc, Qm_c, Qm_ud, Qm_ud, chg_u, chg_d, chg_u);
+	SigSigcL2 = SigBL2_calc(SigSigcR2,  Qm_c, Qm_ud, Qm_ud);
 
 	//bottom baryons
-	double SigObbbR2 = SigBR2_calc(R2chg_Obbb, Qm_b, Qm_b,  Qm_b,  chg_d, chg_d, chg_d);
-	double SigObbbL2 = SigBL2_calc(SigObbbR2,  Qm_b, Qm_b,  Qm_b );
-	double SigObbcR2 = SigBR2_calc(R2chg_Obbc, Qm_b, Qm_b,  Qm_c,  chg_d, chg_d, chg_d); // ! setting all quark charges to -1/3
-	double SigObbcL2 = SigBL2_calc(SigObbcR2,  Qm_b, Qm_b,  Qm_c );
-	double SigObbR2  = SigBR2_calc(R2chg_Obb,  Qm_b, Qm_b,  Qm_s,  chg_d, chg_d, chg_d);
-	double SigObbL2  = SigBL2_calc(SigObbR2,   Qm_b, Qm_b,  Qm_s );
-	double SigXibbR2 = SigBR2_calc(R2chg_Xibb, Qm_b, Qm_b,  Qm_ud, chg_d, chg_d, chg_d);
-	double SigXibbL2 = SigBL2_calc(SigXibbR2,  Qm_b, Qm_b,  Qm_ud);
-	double SigObccR2 = SigBR2_calc(R2chg_Obcc, Qm_b, Qm_c,  Qm_c,  chg_d, chg_u, chg_u);
-	double SigObccL2 = SigBL2_calc(SigObccR2,  Qm_b, Qm_c,  Qm_c );
-	double SigObcR2  = SigBR2_calc(R2chg_Obc,  Qm_b, Qm_c,  Qm_s,  chg_d, chg_d, chg_d); // ! flipping c quark charge (all to -1/3)
-	double SigObcL2  = SigBL2_calc(SigObcR2,   Qm_b, Qm_c,  Qm_s );
-	double SigXibcR2 = SigBR2_calc(R2chg_Xibc, Qm_b, Qm_c,  Qm_ud, chg_d, chg_u, chg_u);
-	double SigXibcL2 = SigBL2_calc(SigXibcR2,  Qm_b, Qm_c,  Qm_ud);
-	double SigObR2   = SigBR2_calc(R2chg_Ob,   Qm_b, Qm_s,  Qm_s,  chg_d, chg_d, chg_d);
-	double SigObL2   = SigBL2_calc(SigObR2,    Qm_b, Qm_s,  Qm_s );
-	double SigXibR2  = SigBR2_calc(R2chg_Xib,  Qm_b, Qm_s,  Qm_ud, chg_d, chg_d, chg_d);
-	double SigXibL2  = SigBL2_calc(SigXibR2,   Qm_b, Qm_s,  Qm_ud);
-	double SigSigbR2 = SigBR2_calc(R2chg_Sigb, Qm_b, Qm_ud, Qm_ud, chg_d, chg_u, chg_u);
-	double SigSigbL2 = SigBL2_calc(SigSigbR2,  Qm_b, Qm_ud, Qm_ud);
+	SigObbbR2 = SigBR2_calc(R2chg_Obbb, Qm_b, Qm_b,  Qm_b,  chg_d, chg_d, chg_d);
+	SigObbbL2 = SigBL2_calc(SigObbbR2,  Qm_b, Qm_b,  Qm_b );
+	SigObbcR2 = SigBR2_calc(R2chg_Obbc, Qm_b, Qm_b,  Qm_c,  chg_d, chg_d, chg_d); // ! setting all quark charges to -1/3
+	SigObbcL2 = SigBL2_calc(SigObbcR2,  Qm_b, Qm_b,  Qm_c );
+	SigObbR2  = SigBR2_calc(R2chg_Obb,  Qm_b, Qm_b,  Qm_s,  chg_d, chg_d, chg_d);
+	SigObbL2  = SigBL2_calc(SigObbR2,   Qm_b, Qm_b,  Qm_s );
+	SigXibbR2 = SigBR2_calc(R2chg_Xibb, Qm_b, Qm_b,  Qm_ud, chg_d, chg_d, chg_d);
+	SigXibbL2 = SigBL2_calc(SigXibbR2,  Qm_b, Qm_b,  Qm_ud);
+	SigObccR2 = SigBR2_calc(R2chg_Obcc, Qm_b, Qm_c,  Qm_c,  chg_d, chg_u, chg_u);
+	SigObccL2 = SigBL2_calc(SigObccR2,  Qm_b, Qm_c,  Qm_c );
+	SigObcR2  = SigBR2_calc(R2chg_Obc,  Qm_b, Qm_c,  Qm_s,  chg_d, chg_d, chg_d); // ! flipping c quark charge (all to -1/3)
+	SigObcL2  = SigBL2_calc(SigObcR2,   Qm_b, Qm_c,  Qm_s );
+	SigXibcR2 = SigBR2_calc(R2chg_Xibc, Qm_b, Qm_c,  Qm_ud, chg_d, chg_u, chg_u);
+	SigXibcL2 = SigBL2_calc(SigXibcR2,  Qm_b, Qm_c,  Qm_ud);
+	SigObR2   = SigBR2_calc(R2chg_Ob,   Qm_b, Qm_s,  Qm_s,  chg_d, chg_d, chg_d);
+	SigObL2   = SigBL2_calc(SigObR2,    Qm_b, Qm_s,  Qm_s );
+	SigXibR2  = SigBR2_calc(R2chg_Xib,  Qm_b, Qm_s,  Qm_ud, chg_d, chg_d, chg_d);
+	SigXibL2  = SigBL2_calc(SigXibR2,   Qm_b, Qm_s,  Qm_ud);
+	SigSigbR2 = SigBR2_calc(R2chg_Sigb, Qm_b, Qm_ud, Qm_ud, chg_d, chg_u, chg_u);
+	SigSigbL2 = SigBL2_calc(SigSigbR2,  Qm_b, Qm_ud, Qm_ud);
 
     // No event record printout.
     pythia.readString("Next:numberShowInfo = 0");
