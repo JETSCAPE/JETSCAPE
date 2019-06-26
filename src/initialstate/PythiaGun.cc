@@ -52,14 +52,14 @@ void PythiaGun::InitTask()
   readString("Next:numberShowEvent = 0"); 
 
   // Standard settings
-  readString("HardQCD:all = off"); // will repeat this line in the xml for demonstration  
-  readString("HardQCD:gg2ccbar = on"); // only switch on heavy quark channel
+  readString("HardQCD:all = off"); // will repeat this line in the xml for demonstration
+  readString("HardQCD:gg2ccbar = on"); // switch on heavy quark channel
   readString("HardQCD:qqbar2ccbar = on");
   readString("HadronLevel:Decay = off");
   readString("HadronLevel:all = off");
   readString("PartonLevel:ISR = on");
   readString("PartonLevel:MPI = on");
-  readString("PartonLevel:FSR = off");
+  //readString("PartonLevel:FSR = on");
   readString("PromptPhoton:all=on");
   readString("WeakSingleBoson:all=off");
   readString("WeakDoubleBoson:all=off");

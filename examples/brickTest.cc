@@ -84,7 +84,8 @@ int main(int argc, char** argv)
 
   //jetscape->Add(trento);
 
- // auto myliquefier = make_shared<CausalLiquefier> ();
+  auto myliquefier = make_shared<CausalLiquefier> ();
+
   //jetscape->Add(trento);
 
 
@@ -95,12 +96,13 @@ int main(int argc, char** argv)
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
 
- // jloss->add_a_liquefier(myliquefier);
+
+  //jloss->add_a_liquefier(myliquefier);
 
 
 
   auto matter = make_shared<Matter> ();
-  // auto lbt = make_shared<LBT> ();
+  auto lbt = make_shared<LBT> ();
 
 
   // auto martini = make_shared<Martini> ();
@@ -109,7 +111,7 @@ int main(int argc, char** argv)
 
   // Note: if you use Matter, it MUST come first (to set virtuality)
   jloss->Add(matter);
-  // jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
+  //jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
 
   // jloss->Add(martini);
 
@@ -117,7 +119,10 @@ int main(int argc, char** argv)
   jlossmanager->Add(jloss);  
   jetscape->Add(jlossmanager);
 
-  
+    auto printer = make_shared<PartonPrinter> () ;
+    jetscape->Add(printer);
+    
+    
   // Hadronization
 
 

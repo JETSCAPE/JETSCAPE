@@ -66,7 +66,7 @@ int main(int argc, char** argv)
 	  // Let's create a file
 	  for ( int ipart = 0; ipart< mShowers[i]->GetFinalPartons().size(); ++ipart){
 	    Parton p = *mShowers[i]->GetFinalPartons().at(ipart);
-            if(abs(p.pid())!=4) continue;
+            if(abs(p.pid())!=5) continue;
 
 	    dist_output << ipart   << "\t"
 			<< p.pid() << "\t"
