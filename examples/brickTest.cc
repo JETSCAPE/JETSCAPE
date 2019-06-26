@@ -82,7 +82,7 @@ int main(int argc, char** argv)
 
   auto hydro = make_shared<Brick> ();
 
-  //jetscape->Add(trento);
+  jetscape->Add(hydro);
 
   auto myliquefier = make_shared<CausalLiquefier> ();
 
