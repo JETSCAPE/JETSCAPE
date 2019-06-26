@@ -37,6 +37,7 @@ PartonPrinter::~PartonPrinter()
 void PartonPrinter::Init()
 {
   this->SetId("Printer");
+    dist_output.open("distributions.dat");
 }
 
 void PartonPrinter::Exec()
@@ -44,14 +45,22 @@ void PartonPrinter::Exec()
   VERBOSE(2) <<"Run PartonPrinter: print shower from event # "<<GetCurrentEvent()<<" ...";
 }
 
-void PartonPrinter::GetFinalPartons(shared_ptr<PartonShower> pShower)
+void PartonPrinter::GetFinalPartons(shared_ptr<PartonShower> pShower/*, vector<shared_ptr<Parton>>& fPartons*/)
 {
   if(pShower)
   {
+    //vector<shared_ptr<Parton>> vPin;
     for(unsigned int ipart=0; ipart <  pShower.get()->GetFinalPartons().size(); ++ipart)
     {
-        dist_output << ipart << " " << pShower.get()->GetFinalPartons().at(ipart)->pid() << " " << pShower.get()->GetFinalPartons().at(ipart)->e() << " " << pShower.get()->GetFinalPartons().at(ipart)->px() << " " << pShower.get()->GetFinalPartons().at(ipart)->py() << " " << pShower.get()->GetFinalPartons().at(ipart)->pz() << endl;
+      //fPartons.push_back( pShower.get()->GetFinalPartons().at(ipart));
+        if (std::abs(pShower.get()->GetFinalPartons().at(ipart)->pid()) == 4)
+        {
+            dist_output << ipart << " " <<  pShower.get()->GetFinalPartons().at(ipart)->pid() << " " <<  pShower.get()->GetFinalPartons().at(ipart)->e() << " " <<  pShower.get()->GetFinalPartons().at(ipart)->px() << " " <<  pShower.get()->GetFinalPartons().at(ipart)->py() << " " <<  pShower.get()->GetFinalPartons().at(ipart)->pz() << endl;
+        }
+        
+            //vPin.push_back( pShower.get()->GetFinalPartons().at(ipart));
     }
+    //this->pFinals.push_back(vPin);
   }
 }
 
@@ -73,6 +82,8 @@ void PartonPrinter::GetFinalPartons2(shared_ptr<PartonShower> pShower)
 
 void PartonPrinter::Clear()
 {
+    //dist_output << " *********************************** " << endl;
+    //dist_output.close();
     this->pFinals.clear();
 }
 
@@ -81,31 +92,3 @@ void PartonPrinter::GetPartonsAtTime(shared_ptr<PartonShower> pShower,  vector<s
 }
 
 } // end namespace Jetscape
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -20,6 +20,9 @@ class LBTMutex : public JetScapeModuleMutex
     ~LBTMutex();
     bool CheckMutex(vector<shared_ptr<JetScapeTask>> modules);
 
+
+
 };
+
 
 #endif

@@ -19,6 +19,10 @@ class AdSCFTMutex : public JetScapeModuleMutex
     AdSCFTMutex();
     ~AdSCFTMutex();
     bool CheckMutex(vector<shared_ptr<JetScapeTask>> modules);
+
+
+
 };
+
 
 #endif

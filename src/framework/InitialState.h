@@ -172,7 +172,7 @@ class InitialState : public JetScapeModuleBase {
   inline int GetZSize() {
       int nz = 1;
       if (grid_step_z_ != 0) {
-          int nz = int(std::ceil(2 * grid_max_z_ / grid_step_z_));
+          nz = int(std::ceil(2 * grid_max_z_ / grid_step_z_));
           // for 2d case, user may set grid_max_z_ = 0,
           if (nz == 0) nz = 1;
       }

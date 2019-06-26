@@ -22,8 +22,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmakemodules")
 ### Parse options       ###
 ###########################
 
-# Unit Tests. Turn on with 'cmake -Dtest=ON'.
-option(test "Build all tests." OFF)
+# Unit Tests. Turn off with 'cmake -Dunittests=OFF'.
+option(unittests "Build all unittests." ON)
 
 # freestream. Turn on with 'cmake -Dfreestream=ON'.
 # Note that some warnings are generated. Could be turned off by adding the following to CFLAGS in
@@ -64,7 +64,7 @@ endif (smash)
 ### Compiler & Linker Flags ###
 ###############################
 message("Compiler and Linker flags ...")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O -fPIC -pipe -Wall -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O -fPIC -pipe -Wall -std=c++11")
 ## can turn off some warnings
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-reorder -Wno-unused-variable ")
 ## can turn on debugging information
@@ -74,7 +74,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-reorder -Wno-unused-variable ")
 ### note that APPLE also defines UNIX, hence the elseif to differentiate
 if (APPLE)
     message( STATUS "Apple : " ${CMAKE_HOST_SYSTEM})
-    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
+    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang") 
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
     elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare -Wno-unused-but-set-variable -Wno-parentheses -fext-numeric-literals")
@@ -82,16 +82,16 @@ if (APPLE)
 
     ## can turn off some warnings
     # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-private-field")
-elseif(UNIX)
+elseif(UNIX) 
     message( STATUS "Linux : " ${CMAKE_HOST_SYSTEM})
     ## can turn off some warnings
     if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare -Wno-unused-but-set-variable -Wno-parentheses")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare -Wno-unused-but-set-variable -Wno-parentheses -fext-numeric-literals")
     endif()
 
     ## Additional options
     # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
-endif()
+endif()   
 
 message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS})
 #message(STATUS "LD_FLAGS = " ${CMAKE_EXE_LINKER_FLAGS})
@@ -105,10 +105,13 @@ add_subdirectory(external_packages/trento/)
 include_directories("${CMAKE_SOURCE_DIR}/external_packages/trento/src/")
 ###########################
 
+add_subdirectory(external_packages/googletest/)
+include_directories("${CMAKE_SOURCE_DIR}/external_packages/googletest/googletest/include/")
+
 #############################################
 ### Installing Header and Library Files   ###
 #############################################
-## Run with, e.g., cmake -DCMAKE_INSTALL_PREFIX=~/tmp ..
+## Run with, e.g., cmake -DCMAKE_INSTALL_PREFIX=~/tmp .. 
 ## default directory is the build directory
 ## Note that trento also automatically populates a bin directory
 ## and we cannot disable this behavior
@@ -141,6 +144,7 @@ install(
   "${CMAKE_SOURCE_DIR}/external_packages/music/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/trento/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/smash/src/"
+  "${CMAKE_SOURCE_DIR}/external_packages/googletest/googletest/src/"
   DESTINATION "include" # target directory
   FILES_MATCHING # install only matched files
   PATTERN "*.h*" # select header files
@@ -237,20 +241,19 @@ message("Looking for HDF5 ...")
 find_package(HDF5)
 if(${HDF5_FOUND})
   include_directories(${HDF5_INCLUDE_DIRS})
-  message(STATUS "HDF5 Include dir : " ${HDF5_INCLUDE_DIRS})
   set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -DUSE_HDF5" )
-  set(_hdf5_libs ${HDF5_LIBRARIES} ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES})
+  set( _hdf5_libs ${HDF5_CXX_LIB} ${HDF5_C_LIB} ${ZLIB} ${HDF5_HL_LIBRARIES})
+  message(STATUS "HDF5 include dir and libs : ${HDF5_INCLUDE_DIRS} ${_hdf5_libs} ")
 endif(${HDF5_FOUND})
 
-#message("Looking for MPI ...")
-#find_package(MPI)
-#if(${MPI_FOUND})
-#  message(STATUS "MPI Include dir : " ${MPI_INCLUDE_PATH})
-#  include_directories(${MPI_INCLUDE_PATH})
-#endif(${MPI_FOUND})
+message("Looking for MPI ...")
+find_package(MPI)
+if(${MPI_FOUND})
+  message(STATUS "MPI Include dir : " ${MPI_INCLUDE_PATH})
+  include_directories(${MPI_INCLUDE_PATH})
+endif(${MPI_FOUND})
 
 message("Looking for GSL ...")
-set ( GSL_FOUND 0 )
 find_package(GSL)
 if(${GSL_FOUND})
   message(STATUS "GSL_INCLUDE_DIR : " ${GSL_INCLUDE_DIR} ${GSLCBLAS_INCLUDE_DIRS})
@@ -266,6 +269,7 @@ include_directories(./src/ )
 include_directories(./src/framework )
 include_directories(./src/initialstate )
 include_directories(./src/preequilibrium )
+include_directories(./src/liquefier )
 include_directories(./src/hydro )
 include_directories(./src/hadronization )
 include_directories(./src/afterburner )
@@ -286,6 +290,10 @@ add_subdirectory(./external_packages)
 add_subdirectory(./external_packages/gtl)
 add_subdirectory(./src)
 
+if (unittests)
+    add_subdirectory(./examples/unittests/)
+endif (unittests)
+
 if (freestream)
   if(NOT EXISTS "${CMAKE_SOURCE_DIR}/external_packages/freestream-milne")
     message(FATAL_ERROR "Error: freestream-milne source has not been downloaded in external_packages by ./get_freestream-milne.sh")
@@ -301,7 +309,7 @@ endif (freestream)
 if (music)
   if(NOT EXISTS "${CMAKE_SOURCE_DIR}/external_packages/music")
     message(FATAL_ERROR "Error: MUSIC source has not been downloaded in external_packages by ./get_music.sh")
-  endif()
+  endif()  
   if (${GSL_FOUND})
     message("Building MUSIC ...")
     add_subdirectory(./external_packages/music)
@@ -315,7 +323,7 @@ if (iSS)
     add_subdirectory( ${CMAKE_SOURCE_DIR}/external_packages/iSS )
   else()
     message(FATAL_ERROR "Error: iSS source has not been downloaded in external_packages by ./get_iSS.sh")
-  endif()
+  endif()      
 endif (iSS)
 
 ###########################
@@ -356,7 +364,7 @@ target_link_libraries(LBT_brickTest JetScape )
 if(${HDF5_FOUND})
   add_executable(hydroFileTest ./examples/hydroFileTest.cc)
   target_link_libraries(hydroFileTest JetScape ${_hdf5_libs})
-
+  
   add_executable(hydroJetTest  ./examples/hydroJetTest.cc)
   target_link_libraries(hydroJetTest JetScape ${_hdf5_libs})
 
@@ -382,16 +390,15 @@ target_link_libraries(FinalStatePartons JetScape )
 if (freestream AND music AND iSS)
   add_executable(freestream-milneTest ./examples/freestream-milneTest.cc)
   target_link_libraries(freestream-milneTest JetScape ${GSL_LIBRARIES})
+  add_executable(TwoStageHydroFromFile ./examples/TwoStagesHydroFromFile.cc)
+  target_link_libraries(TwoStageHydroFromFile JetScape ${GSL_LIBRARIES})
 endif (freestream AND music AND iSS)
-
-if ( music )
-    add_executable(MUSIC_evo ./examples/MUSIC_evo.cc)
-    target_link_libraries(MUSIC_evo JetScape ${GSL_LIBRARIES})
-endif()
 
 if ( music AND iSS )
   add_executable(MUSICTest ./examples/MUSICTest.cc)
   target_link_libraries(MUSICTest JetScape ${GSL_LIBRARIES})
+  add_executable(TwoStageHydro ./examples/TwoStagesHydro.cc)
+  target_link_libraries(TwoStageHydro JetScape ${GSL_LIBRARIES})
 endif (music AND iSS )
 
 if ( music AND iSS AND smash )

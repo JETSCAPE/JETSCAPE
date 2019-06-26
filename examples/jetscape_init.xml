@@ -29,18 +29,34 @@
     <!-- y range [-grid_max_y, grid_max_y]-->
     <!-- longitudinal range [-grid_max_z, grid_max_z]-->
     <!-- in units of [fm] -->
-    <grid_max_x> 10 </grid_max_x>
-    <grid_max_y> 10 </grid_max_y>
-    <grid_max_z> 0 </grid_max_z>
-    <grid_step_x> 0.2 </grid_step_x>
-    <grid_step_y> 0.2 </grid_step_y>
+    <grid_max_x> 15 </grid_max_x>
+    <grid_max_y> 15 </grid_max_y>
+    <grid_max_z> 0.2 </grid_max_z>
+    <grid_step_x> 0.3 </grid_step_x>
+    <grid_step_y> 0.3 </grid_step_y>
     <grid_step_z> 0.2 </grid_step_z>
     
-    <Trento use_module="user_defined">
-      <!-- pre-defined system: default collisions have auau200, pbpb2760, pbpb5020, more in the future -->
-      <pre_defined collision_system="auau200" centrality_min="30" centrality_max="40" normalisation="6.1" />
-      <!-- user-defined system: to get one event in 0-100% centrality range -->
-      <user_defined projectile="Au" target="Au" sqrts="200" cross_section="4.2" normalisation="6.1" />
+    <Trento>
+		<PhysicsInputs	projectile='Pb'
+						target='Pb'
+						sqrts='2760'
+						cross-section='6.4'
+						normalization='13.9'>
+		</PhysicsInputs>
+		<CutInputs	centrality-low='50'
+					centrality-high='60'>
+		</CutInputs>
+		<TransInputs	reduced-thickness='0.0'
+						fluctuation="1.2"
+						nucleon-width="0.9"
+						nucleon-min-dist="1.2">
+		</TransInputs>
+		<LongiInputs	mean-coeff="1.0"
+						std-coeff="3.0"
+						skew-coeff="0.0"
+						skew-type="1"
+						jacobian="0.8">
+		</LongiInputs>
     </Trento>
 
     <!-- Options to read initial conditions from saved file  -->
@@ -54,15 +70,18 @@
     <PGun>
       <name>PGun</name>
       <pT>100</pT>
+      <useHybridHad>0</useHybridHad>
     </PGun>
 
     <!-- Pythia Gun -->
     <!-- Sensible defaults are set in the class. ptHat etc. get their own field -->
     <PythiaGun>
       <name>PythiaGun</name>
-      <pTHatMin>110</pTHatMin>
-      <pTHatMax>120</pTHatMax>
+      <FSR_on>0</FSR_on>
+      <pTHatMin>20</pTHatMin>
+      <pTHatMax>30</pTHatMax>
       <eCM>2760</eCM>
+      <useHybridHad>0</useHybridHad>
       <!-- You can add any number of additional lines to initialize pythia here -->
       <!-- Note that if the tag exists it cannot be empty (tinyxml produces a segfault) -->
       <!-- <LinesToRead> -->
@@ -77,30 +96,32 @@
 
     <deltaT>0.1</deltaT>
     <formTime> -0.1</formTime>
-    <maxT>20</maxT>
+    <maxT>10</maxT>
     <mutex>ON</mutex>
 
     <Matter>
       <name>Matter</name>
-      <Q0> 2.0 </Q0>
+      <useHybridHad>0</useHybridHad>
+      <matter_on> 1 </matter_on>
+      <Q0> 1.0 </Q0>
       <T0> 0.16 </T0>
       <vir_factor> 0.25 </vir_factor>
-      <in_vac> 0 </in_vac>
+      <in_vac> 1 </in_vac>
       <recoil_on> 0 </recoil_on>
       <broadening_on> 0 </broadening_on>
       <brick_med> 0 </brick_med>
       <brick_length> 0.0 </brick_length>
       <hydro_Tc> 0.16 </hydro_Tc>
-      <qhat0> 3.0 </qhat0>
-      <alphas> 0.25 </alphas>
+      <qhat0> -3.0 </qhat0>
+      <alphas> 0.0 </alphas>
     </Matter>
 
     <Lbt>
       <name> Lbt </name>
-      <Q0> 1.0 </Q0>
+      <Q0> 2.0 </Q0>
       <in_vac> 0 </in_vac>
       <only_leading> 0 </only_leading>
-      <hydro_Tc> 0.15 </hydro_Tc>
+      <hydro_Tc> 0.16 </hydro_Tc>
       <alphas> 0.2 </alphas>
     </Lbt>
     
@@ -186,16 +207,22 @@
     <MUSIC>
       <name>MUSIC</name>
       <MUSIC_input_file>music_input</MUSIC_input_file>
-      <output_evolution_to_file>0</output_evolution_to_file>
+      <output_evolution_to_file>1</output_evolution_to_file>
       <shear_viscosity_eta_over_s>0.08</shear_viscosity_eta_over_s>
+      <freezeout_temperature>-1</freezeout_temperature>
       <Perform_CooperFrye_Feezeout>0</Perform_CooperFrye_Feezeout>
     </MUSIC>
   </Hydro>
   
   <!-- Jet Hadronization Module -->
    <JetHadronization>
-       <name>colored</name>
+       <name>colored/colorless/hybrid</name>
+       <take_recoil>1</take_recoil>
        <eCMforHadronization>1380</eCMforHadronization>
+       <reco_Elevelmax>3</reco_Elevelmax>
+       <thermreco_distmax>5.0</thermreco_distmax>
+       <shower_recofactor>0.3333333</shower_recofactor>
+       <thermal_recofactor>0.3333333</thermal_recofactor>
    </JetHadronization>
 
   <!-- Particlization Module  -->

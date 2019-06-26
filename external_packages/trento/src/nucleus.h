@@ -1,5 +1,6 @@
 // TRENTO: Reduced Thickness Event-by-event Nuclear Topology
 // Copyright 2015 Jonah E. Bernhard, J. Scott Moreland
+// TRENTO3D: Three-dimensional extension of TRENTO by Weiyao Ke
 // MIT License
 
 #ifndef NUCLEUS_H
@@ -26,10 +27,10 @@ namespace trento {
 using NucleusPtr = std::unique_ptr<Nucleus>;
 
 /// \rst
-/// Interface class to all nucleus types.  Stores an ensemble of nucleons
-/// and randomly samples their transverse positions.  Implements a standard
-/// iterator interface through ``begin()`` and ``end()`` functions.  Iterating over
-/// a ``Nucleus`` means iterating over its ``Nucleon`` members.
+/// Interface class to all nucleus types.  Stores an ensemble of nucleons and
+/// randomly samples their positions.  Implements a standard iterator interface
+/// through ``begin()`` and ``end()`` functions.  Iterating over a ``Nucleus``
+/// means iterating over its ``Nucleon`` members.
 /// \endrst
 class Nucleus {
  public:
@@ -40,8 +41,6 @@ class Nucleus {
   ///
   /// - http://inspirehep.net/record/786828
   /// - http://inspirehep.net/record/1310629
-  ///
-  /// Additionally corrects the parameters for finite nucleon size.
   ///
   /// Example::
   ///
@@ -54,12 +53,13 @@ class Nucleus {
   /// \endrst
   ///
   /// \param species standard symbol, e.g. "p" for proton or "Pb" for lead-208
-  /// \param nucleon_width Gaussian nucleon width (optional, default zero)
+  /// \param nucleon_dmin minimum nucleon-nucleon distance for Woods-Saxon
+  /// nuclei (optional, default zero)
   ///
   /// \return a smart pointer \c std::unique_ptr<Nucleus>
   ///
   /// \throw std::invalid_argument for unknown species
-  static NucleusPtr create(const std::string& species, double nucleon_width = 0);
+  static NucleusPtr create(const std::string& species, double nucleon_width, double nucleon_dmin = 0);
 
   /// Default virtual destructor for abstract base class.
   virtual ~Nucleus() = default;
@@ -72,8 +72,13 @@ class Nucleus {
   /// x-direction.
   void sample_nucleons(double offset);
 
+  using size_type = std::vector<Nucleon>::size_type;
   using iterator = std::vector<Nucleon>::iterator;
   using const_iterator = std::vector<Nucleon>::const_iterator;
+
+  // size = number of nucleons
+  size_type size() const noexcept
+  { return nucleons_.size(); }
 
   // non-const overload
   iterator begin() noexcept
@@ -104,7 +109,7 @@ class Nucleus {
   /// ``Nucleus`` is a friend of ``Nucleon`` and therefore able to set nucleon
   /// positions; the derived classes must use this function to set positions.
   /// \endrst
-  void set_nucleon_position(Nucleon& nucleon, double x, double y);
+  void set_nucleon_position(iterator nucleon, double x, double y, double z);
 
  private:
   /// Internal interface to the actual implementation of the nucleon sampling
@@ -170,6 +175,26 @@ class Deuteron : public Nucleus {
   const double a_, b_;
 };
 
+/// A nucleus that can check if its nucleons are within a specified minimum
+/// distance.
+class MinDistNucleus : public Nucleus {
+ protected:
+  /// \param A number of nucleons
+  /// \param dmin minimum nucleon-nucleon distance (optional, default zero)
+  MinDistNucleus(std::size_t A, double dmin = 0);
+
+  /// \rst
+  /// Check if a ``Nucleon`` is too close (within the minimum distance) of any
+  /// previously placed nucleons.  Specifically, check nucleons from ``begin()``
+  /// up to the given iterator.
+  /// \endrst
+  bool is_too_close(const_iterator nucleon) const;
+
+ private:
+  /// Internal storage of squared minimum distance.
+  const double dminsq_;
+};
+
 /// \rst
 /// Samples nucleons from a spherically symmetric Woods-Saxon distribution
 ///
@@ -180,13 +205,14 @@ class Deuteron : public Nucleus {
 /// For non-deformed heavy nuclei such as lead.
 ///
 /// \endrst
-class WoodsSaxonNucleus : public Nucleus {
+class WoodsSaxonNucleus : public MinDistNucleus {
  public:
   /// ``Nucleus::create()`` sets these parameters for a given species.
   /// \param A number of nucleons
   /// \param R Woods-Saxon radius
   /// \param a Woods-Saxon surface thickness
-  WoodsSaxonNucleus(std::size_t A, double R, double a);
+  /// \param dmin minimum nucleon-nucleon distance (optional, default zero)
+  WoodsSaxonNucleus(std::size_t A, double R, double a, double dmin = 0);
 
   /// The radius of a Woods-Saxon Nucleus is computed from the parameters (R, a).
   virtual double radius() const override;
@@ -215,7 +241,7 @@ class WoodsSaxonNucleus : public Nucleus {
 /// For deformed heavy nuclei such as uranium.
 ///
 /// \endrst
-class DeformedWoodsSaxonNucleus : public Nucleus {
+class DeformedWoodsSaxonNucleus : public MinDistNucleus {
  public:
   /// ``Nucleus::create()`` sets these parameters for a given species.
   /// \param A number of nucleons
@@ -223,8 +249,9 @@ class DeformedWoodsSaxonNucleus : public Nucleus {
   /// \param a Woods-Saxon surface thickness
   /// \param beta2 Woods-Saxon deformation parameter
   /// \param beta4 Woods-Saxon deformation parameter
+  /// \param dmin minimum nucleon-nucleon distance (optional, default zero)
   DeformedWoodsSaxonNucleus(std::size_t A, double R, double a,
-                            double beta2, double beta4);
+                            double beta2, double beta4, double dmin = 0);
 
   /// The radius of a deformed Woods-Saxon Nucleus is computed from the
   /// parameters (R, a, beta2, beta4).
@@ -282,9 +309,6 @@ class ManualNucleus : public Nucleus {
 
   /// Internal pointer to HDF5 dataset object (PIMPL-like).
   const std::unique_ptr<H5::DataSet> dataset_;
-
-  /// Internal storage of number of nucleons.
-  const std::size_t A_;
 
   /// Internal storage of the maximum radius.
   const double rmax_;

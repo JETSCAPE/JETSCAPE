@@ -13,14 +13,15 @@
  * See COPYING for details.
  ******************************************************************************/
 
-#include "../fluid_dynamics.h"
+#include "FluidDynamics.h"
+#include "FluidEvolutionHistory.h"
 #include "gtest/gtest.h"
 
 using namespace Jetscape;
 
 void test_not_in_range(EvolutionHistory hist, real tau, real x, real y, real eta) {
     try {
-        hist.check_in_range(tau, x, y, eta);
+        hist.CheckInRange(tau, x, y, eta);
     } catch (InvalidSpaceTimeRange & e) {
         auto estr = std::string(e.what());
         ASSERT_TRUE(estr.find("not in range") != estr.npos);
@@ -44,10 +45,10 @@ TEST(EvolutionHistoryTest, TEST_WRITE){
     hist.neta = 41;
     hist.tau_eta_is_tz = false;
 
-    EXPECT_EQ(hist.tau_max(), static_cast<real>(1.6));
-    EXPECT_EQ(hist.x_max(), static_cast<real>(10.0));
-    EXPECT_EQ(hist.y_max(), static_cast<real>(10.0));
-    EXPECT_EQ(hist.eta_max(), static_cast<real>(10.0));
+    EXPECT_EQ(hist.TauMax(), static_cast<real>(1.6));
+    EXPECT_EQ(hist.XMax(), static_cast<real>(10.0));
+    EXPECT_EQ(hist.YMax(), static_cast<real>(10.0));
+    EXPECT_EQ(hist.EtaMax(), static_cast<real>(10.0));
 
     // check range test
     test_not_in_range(hist, 0.5, 0.3, 0.3, 0.3);

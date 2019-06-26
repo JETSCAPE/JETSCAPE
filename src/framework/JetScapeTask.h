@@ -206,9 +206,7 @@ class JetScapeTask
   // if for example a search rather position ... (or always sort with predefined order!?)
 
   int my_task_number_;
-
-  shared_ptr<JetScapeModuleMutex> mutex;
-  
+  shared_ptr<JetScapeModuleMutex> mutex;  
 };
 
 } // end namespace Jetscape

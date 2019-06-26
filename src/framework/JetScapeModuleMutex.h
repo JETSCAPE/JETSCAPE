@@ -17,8 +17,8 @@ class JetScapeModuleMutex
   public:
     virtual bool CheckMutex(vector<shared_ptr<JetScapeTask>> modules) = 0;
 
-};
+ };
 
-} // end namespace Jetscape
+ } // end namespace Jetscape
 
 #endif
