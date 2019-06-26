@@ -1,5 +1,13 @@
-# JETSCAPE 1.4
+# JETSCAPE 2.0
 The Jet Energy-loss Tomography with a Statistically and Computationally Advanced Program Envelope (JETSCAPE) collaboration
+
+New with release 2.0
+
+• TRENTO initial condition from (2+1)D to (3+1)D.
+• Liquifier module to create causal jet source terms for jet energy deposition and medium evolution. 
+• Handling photons generated in hard scattering and in energy-loss modules. 
+• Handling heavy-quarks in energy-loss modules.
+• Hybrid hadronization of partons. 
 
 
 With cmake:
