@@ -40,7 +40,7 @@ TEST_CASE( "nucleon" ) {
 
   // random point inside radius
   auto dsq = std::pow(R*random::canonical<>(), 2);
-  CHECK( profile.thickness(dsq) == Approx(tzero*std::exp(-.5*dsq/wsq)) );
+  CHECK( profile.thickness(dsq) == Approx(tzero*std::exp(-.5*dsq/wsq)).epsilon(1e-5).margin(1e-5) );
 
   // random point outside radius
   dsq = std::pow(R*(1+random::canonical<>()), 2);
@@ -56,7 +56,7 @@ TEST_CASE( "nucleon" ) {
   }
 
   auto mean = total/n;
-  CHECK( mean == Approx(1.).epsilon(.002) );
+  CHECK( mean == Approx(1.).epsilon(.003) );
 
   // must use a Nucleus to set Nucleon position
   // Proton conveniently sets a deterministic position
@@ -68,6 +68,7 @@ TEST_CASE( "nucleon" ) {
   auto& nB = *B.begin();
   CHECK( nA.x() == 0. );
   CHECK( nA.y() == 0. );
+  CHECK( nA.z() == 0. );
   CHECK( !nA.is_participant() );
 
   // wait until the nucleons participate
@@ -116,11 +117,14 @@ TEST_CASE( "nucleon" ) {
   no_fluct_profile.fluctuate();
   CHECK( no_fluct_profile.thickness(0) == Approx(1/(2*M_PI*wsq)) );
 
-  // nucleon width too small
-  auto bad_var_map = make_var_map({
-      {"fluctuation",   1.},
-      {"cross-section", 5.},
-      {"nucleon-width", .1},
-  });
-  CHECK_THROWS_AS( NucleonProfile bad_profile{bad_var_map}, std::domain_error );
+  CHECK_THROWS_AS([]() {
+    // nucleon width too small
+    auto bad_var_map = make_var_map({
+        {"fluctuation",   1.},
+        {"cross-section", 5.},
+        {"nucleon-width", .1},
+    });
+    NucleonProfile bad_profile{bad_var_map};
+  }(),
+  std::domain_error);
 }

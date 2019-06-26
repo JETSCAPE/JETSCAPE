@@ -1,5 +1,6 @@
 // TRENTO: Reduced Thickness Event-by-event Nuclear Topology
 // Copyright 2015 Jonah E. Bernhard, J. Scott Moreland
+// TRENTO3D: Three-dimensional extension of TRENTO by Weiyao Ke
 // MIT License
 
 #ifndef HDF5_UTILS_H
@@ -40,6 +41,7 @@ H5::H5File try_open_file(
 using H5::PredType;
 template <typename T> inline const PredType& type();
 template <> inline const PredType& type<int>()           { return PredType::NATIVE_INT; }
+template <> inline const PredType& type<unsigned long>() { return PredType::NATIVE_UINT; }
 template <> inline const PredType& type<long int>()      { return PredType::NATIVE_LONG; }
 template <> inline const PredType& type<long long int>() { return PredType::NATIVE_LLONG; }
 template <> inline const PredType& type<float>()         { return PredType::NATIVE_FLOAT; }

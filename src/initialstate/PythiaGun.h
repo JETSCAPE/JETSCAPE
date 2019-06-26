@@ -31,6 +31,7 @@ private:
   double pTHatMax;
   double eCM;
   bool   FSR_on;
+  int    flag_useHybridHad;
 
 public:
   /** standard ctor
