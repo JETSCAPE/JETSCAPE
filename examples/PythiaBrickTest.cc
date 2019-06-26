@@ -76,7 +76,7 @@ int main(int argc, char** argv)
   
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",3);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",832);
   jetscape->SetId("primary");
 
   // Initial conditions and hydro
@@ -107,6 +107,9 @@ int main(int argc, char** argv)
   // jloss->Add(adscft);  
   jlossmanager->Add(jloss);
   jetscape->Add(jlossmanager);
+
+  auto printer = make_shared<PartonPrinter> () ;
+  jetscape->Add(printer);
 
   // Hadronization
   auto hadroMgr = make_shared<HadronizationManager> ();

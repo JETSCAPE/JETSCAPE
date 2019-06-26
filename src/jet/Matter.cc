@@ -30,6 +30,21 @@
 using namespace Jetscape;
 using namespace std;
 
+bool Matter::flag_init=0;
+
+double Matter::RHQ[60][20]={{0.0}};        //total scattering rate for heavy quark
+double Matter::RHQ11[60][20]={{0.0}};      //Qq->Qq
+double Matter::RHQ12[60][20]={{0.0}};      //Qg->Qg
+double Matter::qhatHQ[60][20]={{0.0}};     //qhat of heavy quark
+
+double Matter::distFncB[N_T][N_p1][N_e2]={{{0.0}}};
+double Matter::distFncF[N_T][N_p1][N_e2]={{{0.0}}};
+double Matter::distMaxB[N_T][N_p1][N_e2]={{{0.0}}};
+double Matter::distMaxF[N_T][N_p1][N_e2]={{{0.0}}};
+double Matter::distFncBM[N_T][N_p1]={{0.0}};
+double Matter::distFncFM[N_T][N_p1]={{0.0}};
+
+
 const double QS = 1.0 ;
 
 Matter::Matter()
@@ -189,6 +204,12 @@ void Matter::Init()
   else {
     JSWARN << " : Matter not properly initialized in XML file ...";
     throw std::runtime_error("Matter not properly initialized in XML file ...");
+  }
+
+  if( recoil_on && !flag_init ) {
+      JSINFO << MAGENTA << "Reminder: download LBT tables first and cmake .. if recoil is switched on in MATTER.";
+      read_tables(); // initialize various tables
+      flag_init=true;
   }
 
   // Initialize random number distribution
@@ -401,8 +422,17 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
              JSDEBUG << BOLDYELLOW << " at x,y,z,t = " <<  pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z() << "  " << pIn[i].x_in().t() ;
              if(abs(pIn[i].pid()) == 4 || abs(pIn[i].pid()) == 5)
              { 
-                 tQ2 = generate_vac_t_w_M(pIn[i].pid(), pIn[i].restmass(), pIn[i].nu(), QS/2.0, max_vir, zeta, iSplit);
-                 
+
+				double min_vir = (QS/2.0)*( 1.0 +  std::sqrt( 1.0 + 4.0*pIn[i].restmass()*pIn[i].restmass()/QS ) );
+
+				if (max_vir>min_vir)
+				{
+					tQ2 = generate_vac_t_w_M(pIn[i].pid(), pIn[i].restmass(), pIn[i].nu(), QS/2.0, max_vir, zeta, iSplit);
+                }
+                else
+                {
+                	tQ2 = rounding_error;
+                } 
                //  std::ofstream tdist;
                //  tdist.open("tdist_heavy.dat", std::ios::app);
                //  tdist << tQ2 << endl;
@@ -470,7 +500,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           // VERBOSE OUTPUT ON INITIAL STATUS OF PARTICLE:
          VERBOSE(8) ;
          VERBOSE(8) << " ***************************************************************************** " ;
-         VERBOSE(8) << " ID = " << pIn[i].pid() << " Color = " << pIn[i].color() << " Anti-Color = " << pIn[i].anti_color() ;
+         VERBOSE(8) << BOLDYELLOW << " ID = " << pIn[i].pid() << " Color = " << pIn[i].color() << " Anti-Color = " << pIn[i].anti_color() ;
          VERBOSE(8) << BOLDYELLOW << " E = " << pIn[i].e() << " px = " << pIn[i].px() << " py = " << pIn[i].py() << " pz = " << pIn[i].pz() ;
          VERBOSE(8) << BOLDYELLOW << " *  New generated virtuality = " << tQ2 << " Mean formation time = " << pIn[i].mean_form_time();
          VERBOSE(8) << BOLDYELLOW << " *  set new formation time to " << pIn[i].form_time() ;
@@ -546,6 +576,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               double el_p0[5];
               double el_CR;
               double el_rand;
+	            double HQ_mass;
 
               if(pid==gid) el_CR=Ca;
               else el_CR=Cf;
@@ -553,6 +584,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               for(int j=1; j<=3; j++) el_p0[j] = pIn[i].p(j);
               el_p0[0]=pIn[i].e();
               el_p0[4]=pIn[i].t();
+	            HQ_mass=pIn[i].restmass();
 
               for(double el_time=initR0; el_time<time+rounding_error; el_time=el_time+el_dt)
               {
@@ -560,7 +592,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   if(in_vac) continue;
                   if(!recoil_on) continue;
                   if(el_time<tStart) continue;
-                  if(abs(pid)==4 || abs(pid)==5) continue; // recoil not ready for heavy quarks yet
+
+		              if(abs(pid)==5) continue; // recoil not ready for b quark yet
 
                   double el_rx=initRx+(el_time-initR0)*initVx;
                   double el_ry=initRy+(el_time-initR0)*initVy;
@@ -581,7 +614,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   pc0[1]=el_p0[1];
                   pc0[2]=el_p0[2];
                   pc0[3]=el_p0[3];
-                  pc0[0]=sqrt(pc0[1]*pc0[1]+pc0[2]*pc0[2]+pc0[3]*pc0[3]);
+		              if(abs(pid)==4) pc0[0]=sqrt(pc0[1]*pc0[1]+pc0[2]*pc0[2]+pc0[3]*pc0[3]+HQ_mass*HQ_mass);
+		              else pc0[0]=sqrt(pc0[1]*pc0[1]+pc0[2]*pc0[2]+pc0[3]*pc0[3]);
 
                   recordE0=pc0[0];
 
@@ -672,7 +706,11 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       //cout << "color: " << el_color0 << "  " << el_anti_color0 << "  " << el_color2 << "  " << el_anti_color2 << "  " << el_color3 << "  " << el_anti_color3 << "  max: " << el_max_color << endl;
 
                       // do scattering
-                      colljet22(CT,tempLoc,muD2,vc0,pc0,pc2,pc3,pc4,qt);
+                      if(CT==11||CT==12) { // for heavy quark scattering
+                        collHQ22(CT,tempLoc,muD2,vc0,pc0,pc2,pc3,pc4,qt);
+                      } else { // for light parton scattering
+                        colljet22(CT,tempLoc,muD2,vc0,pc0,pc2,pc3,pc4,qt);
+                      }
 
                       if(pc0[0]<pc2[0] && abs(pid0)!=4 && pid0==pid2)
                       { //disable switch for heavy quark, only allow switch for identical particles
@@ -1103,7 +1141,14 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   
               pOut.push_back(Parton(0,pid_a,jet_stat,newp,newx));
               int iout = pOut.size()-1;
-                  
+              
+              if(isnan(newp[1])||isnan(newp[2])||isnan(newp[3]))
+              {                
+                 JSINFO << MAGENTA <<  plong   << " " << s_t    << " " <<  c_p   << " " << k_perp1[1];
+                        
+                 JSINFO << MAGENTA <<  newp[0] << " " << newp[1] << " " << newp[2] << " " << newp[3];
+                 cin >> blurb;
+              }    
               pOut[iout].set_jet_v(velocity_jet); // use initial jet velocity
               pOut[iout].set_mean_form_time();
               double ft = generate_L (pOut[iout].mean_form_time());
@@ -1145,7 +1190,15 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               newp[1] = plong*s_t*c_p + k_perp2[1];
               newp[2] = plong*s_t*s_p + k_perp2[2];
               newp[3] = plong*c_t + k_perp2[3];
-              
+
+              if(isnan(newp[1])||isnan(newp[2])||isnan(newp[3]))
+              {              
+                 JSINFO << MAGENTA << "THIS IS THE SECOND DAUGHTER";  
+                 JSINFO << MAGENTA <<  plong   << " " << s_t    << " " <<  c_p   << " " << k_perp1[1];
+                 JSINFO << MAGENTA <<  newp[0] << " " << newp[1] << " " << newp[2] << " " << newp[3];
+                 cin >> blurb;
+              }    
+
               VERBOSE(8) << MAGENTA << " D1 px = " << newp[1] << " py = " << newp[2] << " pz = " << newp[3] << " E = " << newp[0] ;
 
               //newx[0] = time + deltaT;
@@ -1742,6 +1795,7 @@ double Matter::generate_vac_t_w_M(int p_id, double M, double nu, double t0, doub
   if (numer>r)
     {
       // cout << " numer > r, i.e. ; " << numer << " > " << r << endl ;
+      
       return(t_mid_M0) ;
     }
     
@@ -3674,6 +3728,77 @@ void Matter::flavor(int &CT,int &KATT0,int &KATT2,int &KATT3, unsigned int &max_
           anti_color3=backup_color0;
       }     
     }
+  } else if (abs(KATT00)==4) { // for charm quarks
+    double R1=6.0*6*4/9; // Qq->Qq
+    double R2=16.0; // Qg->Qg DOF_ag
+    double R00=R1+R2;
+
+    double a=ran0(&NUM1);
+
+    if(a<=R2/R00) { // Qg->Qg
+	CT=12;
+	KATT3=21;
+	KATT2=21; 
+        if(KATT00>0) { // Qg->Qg
+            max_color++;
+            color0=max_color;
+            anti_color0=0;
+	    max_color++;
+            color2=max_color;
+            anti_color2=color0;
+            color3=max_color;
+            anti_color3=backup_color0;
+        } else { // Qbarg->Qbarg	 
+            max_color++;
+            color0=0;
+            anti_color0=max_color;
+	    max_color++;
+            color2=anti_color0;
+            anti_color2=max_color;
+            color3=backup_anti_color0;
+            anti_color3=max_color;
+        }     
+    } else { // Qq->Qq
+	CT=11;
+      	b=floor(ran0(&NUM1)*6+1);
+	if(b==7) b=6;
+	KATT3=vb[b];
+	KATT2=KATT3;
+	if(KATT00>0 && KATT2>0) { // qq->qq
+            max_color++;
+	    color0=max_color;
+	    anti_color0=0;
+	    color2=backup_color0;
+	    anti_color2=0;
+	    color3=max_color;
+	    anti_color3=0;
+	} else if(KATT00>0 && KATT2<0) { //qqbar->qqbar
+	    max_color++;
+            color0=max_color;
+            anti_color0=0;
+            color2=0;
+            anti_color2=max_color;
+            color3=0;
+            anti_color3=backup_color0;
+        } else if(KATT00<0 && KATT2>0) { //qbarq->qbarq
+            max_color++;
+            color0=0;
+	    anti_color0=max_color;
+	    color2=max_color;
+	    anti_color2=0;
+	    color3=backup_anti_color0;
+	    anti_color3=0;
+        } else { //qbarqbar->qbarqbar
+            max_color++;
+	    color0=0;
+	    anti_color0=max_color;
+	    color2=0;
+	    anti_color2=backup_anti_color0;
+	    color3=0;
+	    anti_color3=max_color;
+        }
+    } 
+
   } else { //.....for quark and antiquark (light)
     double R3=16.0; // qg->qg DOF_g
     double R4=4.0*6*4/9; // qq'->qq' scatter with other species
@@ -4094,6 +4219,261 @@ void Matter::colljet22(int CT,double temp,double qhat0ud,double v0[4],double p0[
 	  
 }
 
+//.........................................................................
+void Matter::collHQ22(int CT,double temp,double qhat0ud,double v0[4],double p0[4],double p2[4],double p3[4],double p4[4],double &qt){
+  //
+  //    HQ 2->2 scatterings
+  //    p0 initial HQ momentum, output to final momentum
+  //    p2 final thermal momentum, p3 initial thermal energy
+  //
+  //    amss=sqrt(abs(p0(4)**2-p0(1)**2-p0(2)**2-p0(3)**2))
+  //
+  //************************************************************
+
+  // transform to local comoving frame of the fluid
+  trans(v0,p0);
+
+  //************************************************************
+
+  //    sample the medium parton thermal momentum in the comoving frame
+
+  double xw;
+  double razim;
+  double rcos;
+  double rsin;
+	  
+  double ss;  
+	  
+  double rant;
+  double tt;
+	  
+  double uu;	  
+  double ff=0.0;
+  double rank;
+	  
+  double msq=0.0;
+	  
+  double e2,theta2,theta4,phi24;   // the four independent variables      
+  double e1,e4,p1,cosTheta24,downFactor,sigFactor; // other useful variables
+  double HQmass,fBmax,fFmax,fB,fF,maxValue;
+  int index_p1,index_T,index_e2;
+  int ct1_loop,ct2_loop,flag1,flag2;
+
+  flag1=0;
+  flag2=0;
+
+  // continue this function for HQ scattering
+
+  HQmass=p0[0]*p0[0]-p0[1]*p0[1]-p0[2]*p0[2]-p0[3]*p0[3];
+  if(HQmass>1e-12) {
+    HQmass=sqrt(HQmass);
+  } else {
+    HQmass = 0.0;
+  }
+
+  //    Initial 4-momentum of HQ
+  //
+  //************************************************************
+  p4[1]=p0[1];
+  p4[2]=p0[2];
+  p4[3]=p0[3];
+  p4[0]=p0[0];	  	  
+  //************************************************************	  
+
+  p1=sqrt(p0[1]*p0[1]+p0[2]*p0[2]+p0[3]*p0[3]);
+  index_p1=(int)((p1-min_p1)/bin_p1);
+  index_T=(int)((temp-min_T)/bin_T);
+  if(index_p1>=N_p1) {
+    index_p1=N_p1-1;
+    cout << "warning: p1 is over p_max: " << p1 << endl;
+  }
+  if(index_T>=N_T) {
+    index_T=N_T-1;
+    cout << "warning: T is over T_max: " << temp << endl;
+  } 
+  if(index_T<0) {
+    index_T=0;
+    cout << "warning: T is below T_min: " << temp << endl;
+  } 
+
+  fBmax=distFncBM[index_T][index_p1];
+  fFmax=distFncFM[index_T][index_p1];  // maximum of f(xw) at given p1 and T
+
+  maxValue=10.0;  // need actual value later
+	
+  ct1_loop=0;
+  do {   // sample p2 (light parton) using distribution integrated over 3 angles
+    ct1_loop++;
+    if(ct1_loop>1e6) {
+      //            cout << "cannot sample light parton for HQ scattering ..." << endl;
+      flag1=1;
+      break;
+    }
+    xw=max_e2*ran0(&NUM1);
+    index_e2=(int)((xw-min_e2)/bin_e2);
+    if(index_e2>=N_e2) index_e2=N_e2-1;
+    if(CT==11) { // qc->qc
+      ff=distFncF[index_T][index_p1][index_e2]/fFmax;
+      maxValue=distMaxF[index_T][index_p1][index_e2];
+    } else if(CT==12) { // gc->gc
+      ff=distFncB[index_T][index_p1][index_e2]/fBmax;
+      maxValue=distMaxB[index_T][index_p1][index_e2];
+    } else {
+      cout << "Wrong HQ channel ID" << endl;
+      exit(EXIT_FAILURE);
+    }
+  } while(ran0(&NUM1)>ff);
+      
+  e2=xw*temp;
+  e1=p0[0];
+
+  // now e2 is fixed, need to sample the remaining 3 variables
+  ct2_loop=0;
+  do {
+    ct2_loop++;
+    if(ct2_loop>1e6) {
+      cout << "cannot sample final states for HQ scattering ..." << endl;
+      flag2=1;
+      break;
+    }
+
+    theta2=pi*ran0(&NUM1);
+    theta4=pi*ran0(&NUM1);
+    phi24=2.0*pi*ran0(&NUM1);
+
+    cosTheta24=sin(theta2)*sin(theta4)*cos(phi24)+cos(theta2)*cos(theta4);
+    downFactor=e1-p1*cos(theta4)+e2-e2*cosTheta24;
+    e4=(e1*e2-p1*e2*cos(theta2))/downFactor;
+    sigFactor=sin(theta2)*sin(theta4)*e2*e4/downFactor; 
+
+    // calculate s,t,u, different definition from light quark -- tt, uu are negative
+    ss=2.0*e1*e2+HQmass*HQmass-2.0*p1*e2*cos(theta2);
+    tt=-2.0*e2*e4*(1.0-cosTheta24);
+    uu=2.0*HQmass*HQmass-ss-tt;
+
+    // re-sample if the kinematic cuts are not satisfied
+    if(ss<=2.0*qhat0ud || tt>=-qhat0ud || uu>=-qhat0ud) {
+      rank=ran0(&NUM1);
+      sigFactor=0.0;
+      msq=0.0;
+      continue;
+    }
+
+    if(CT==11) {  // qc->qc
+      ff=(1.0/(exp(e2/temp)+1.0))*(1.0-1.0/(exp(e4/temp)+1.0));
+      sigFactor=sigFactor*ff;
+      msq=Mqc2qc(ss,tt,HQmass)/maxValue;
+    }
+
+    if(CT==12) {  // gc->gc
+      ff=(1.0/(exp(e2/temp)-1.0))*(1.0+1.0/(exp(e4/temp)-1.0));
+      sigFactor=sigFactor*ff;
+      msq=Mgc2gc(ss,tt,HQmass)/maxValue;
+    }
+
+    rank=ran0(&NUM1);
+
+  } while(rank>(msq*sigFactor));
+	
+  if(flag1==0 && flag2==0) {
+
+    // pass p2 value to p3 for initial thermal parton
+    p3[1]=e2*sin(theta2);
+    p3[2]=0.0;
+    p3[3]=e2*cos(theta2);
+    p3[0]=e2;
+    
+    // calculate momenta of outgoing particles
+    // here p2 is for p4 (light parton) in my note
+    
+    p2[1]=e4*sin(theta4)*cos(phi24);
+    p2[2]=e4*sin(theta4)*sin(phi24);
+    p2[3]=e4*cos(theta4);
+    p2[0]=e4;
+
+    // rotate randomly in xy plane (jet is in z), because p3 is assigned in xz plane with bias
+    double th_rotate = 2.0*pi*ran0(&NUM1);
+    double p3x_rotate = p3[1]*cos(th_rotate)-p3[2]*sin(th_rotate);
+    double p3y_rotate = p3[1]*sin(th_rotate)+p3[2]*cos(th_rotate);
+    double p2x_rotate = p2[1]*cos(th_rotate)-p2[2]*sin(th_rotate);
+    double p2y_rotate = p2[1]*sin(th_rotate)+p2[2]*cos(th_rotate);
+    p3[1]=p3x_rotate;
+    p3[2]=p3y_rotate;
+    p2[1]=p2x_rotate;
+    p2[2]=p2y_rotate;
+
+    // Because we treated p0 (p1 in my note for heavy quark) as the z-direction, proper rotations are necessary here
+    rotate(p4[1],p4[2],p4[3],p2,-1);
+    rotate(p4[1],p4[2],p4[3],p3,-1);
+	
+    p0[1]=p4[1]+p3[1]-p2[1];
+    p0[2]=p4[2]+p3[2]-p2[2];
+    p0[3]=p4[3]+p3[3]-p2[3];
+    p0[0]=sqrt(p0[1]*p0[1]+p0[2]*p0[2]+p0[3]*p0[3]+HQmass*HQmass);
+    
+    // Debug
+    if(fabs(p0[0]+p2[0]-p3[0]-p4[0])>0.00001) {
+      cout << "Violation of energy conservation in HQ 2->2 scattering:  " << fabs(p0[0]+p2[0]-p3[0]-p4[0]) << endl;
+    }
+      
+    // calculate qt in the rest frame of medium
+    rotate(p4[1],p4[2],p4[3],p0,1);
+    qt=sqrt(pow(p0[1],2)+pow(p0[2],2));
+    rotate(p4[1],p4[2],p4[3],p0,-1);
+
+    // transform from comoving frame to the lab frame
+    transback(v0,p2);
+    transback(v0,p0);
+    transback(v0,p3);
+    transback(v0,p4);
+
+  } else { // no scattering
+    transback(v0,p0);
+    transback(v0,p4);
+    qt=0;
+    p2[0]=0;
+    p2[1]=0;
+    p2[2]=0;
+    p2[3]=0;
+    p3[0]=0;
+    p3[1]=0;
+    p3[2]=0;
+    p3[3]=0;
+  }
+
+	  	 	  
+}
+
+double Matter::Mqc2qc(double s, double t, double M) {
+
+  double m2m=M*M;
+  double u=2.0*m2m-s-t;
+  double MM;
+
+  MM=64.0/9.0*(pow((m2m-u),2)+pow((s-m2m),2)+2.0*m2m*t)/t/t;
+
+  return(MM);
+
+}
+
+double Matter::Mgc2gc(double s, double t, double M) {
+
+  double m2m=M*M;
+  double u=2.0*m2m-s-t;
+  double MM;
+
+  MM=32.0*(s-m2m)*(m2m-u)/t/t;
+  MM=MM+64.0/9.0*((s-m2m)*(m2m-u)+2.0*m2m*(s+m2m))/pow((s-m2m),2);
+  MM=MM+64.0/9.0*((s-m2m)*(m2m-u)+2.0*m2m*(u+m2m))/pow((u-m2m),2);
+  MM=MM+16.0/9.0*m2m*(4.0*m2m-t)/((s-m2m)*(m2m-u));
+  MM=MM+16.0*((s-m2m)*(m2m-u)+m2m*(s-u))/(t*(s-m2m));
+  MM=MM+16.0*((s-m2m)*(m2m-u)-m2m*(s-u))/(t*(u-m2m));
+
+  return(MM);
+
+}
+
+
 void Matter::trans(double v[4],double p[4]){	
   double vv=sqrt(v[1]*v[1]+v[2]*v[2]+v[3]*v[3]);	
   double ga=1.0/sqrt(1.0-vv*vv);
@@ -4278,3 +4658,85 @@ double Matter::fnc0_derivative_alphas(double var_alphas, double var_qhat, double
     return(preFactor*pow(var_temp,3)*(2.0*var_alphas*log(5.7*max(var_ener,2.0*pi*var_temp)/24/pi/var_alphas/var_temp)-var_alphas));
 
 }
+
+void Matter::read_tables(){ // intialize various tables for LBT
+
+
+  //...read scattering rate
+  int it,ie;
+  int n=450;
+  //ifstream f1("LBT-tables/ratedata");
+  //if(!f1.is_open())
+  //  {
+  //    cout<<"Erro openning date file1!\n";
+  //  }
+  //else
+  //  {
+  //    for(int i=1;i<=n;i++)
+  //      {
+  //        f1>>it>>ie;
+  //        f1>>qhatG[it][ie]>>Rg[it][ie]>>Rg1[it][ie]>>Rg2[it][ie]>>Rg3[it][ie]>>qhatLQ[it][ie]>>Rq[it][ie]>>Rq3[it][ie]>>Rq4[it][ie]>>Rq5[it][ie]>>Rq6[it][ie]>>Rq7[it][ie]>>Rq8[it][ie];	      
+  //      }
+  //  }
+  //f1.close();
+
+  // duplicate for heavy quark
+  ifstream f11("LBT-tables/ratedata-HQ");
+  if(!f11.is_open())
+    {
+      cout<<"Erro openning HQ data file!\n";
+    }
+  else
+    {
+      for(int i=1;i<=n;i++)
+	{
+	  f11>>it>>ie;
+	  f11>>RHQ[it][ie]>>RHQ11[it][ie]>>RHQ12[it][ie]>>qhatHQ[it][ie];	      
+	}
+    }
+  f11.close();
+
+  // preparation for HQ 2->2
+  ifstream fileB("LBT-tables/distB.dat");
+  if(!fileB.is_open()) {
+    cout << "Erro openning data file distB.dat!" << endl;
+  } else {
+    for(int i=0;i<N_T;i++) {
+      for(int j=0;j<N_p1;j++) {
+	double dummy_T,dummy_p1;
+	fileB>>dummy_T>>dummy_p1;
+	if(fabs(min_T+(0.5+i)*bin_T-dummy_T)>1.0e-5 || fabs(min_p1+(0.5+j)*bin_p1-dummy_p1)>1.0e-5) {
+	  cout << "Erro in reading data file distB.dat!" << endl;
+	  exit (EXIT_FAILURE);
+	}
+	fileB>>distFncBM[i][j];
+	for(int k=0;k<N_e2;k++) fileB>>distFncB[i][j][k];
+	for(int k=0;k<N_e2;k++) fileB>>distMaxB[i][j][k];
+      }
+    }
+  }
+  fileB.close();
+   
+  ifstream fileF("LBT-tables/distF.dat");
+  if(!fileF.is_open()) {
+    cout << "Erro openning data file distF.dat!" << endl;
+  } else {
+    for(int i=0;i<N_T;i++) {
+      for(int j=0;j<N_p1;j++) {
+	double dummy_T,dummy_p1;
+	fileF>>dummy_T>>dummy_p1;
+	if(fabs(min_T+(0.5+i)*bin_T-dummy_T)>1.0e-5 || fabs(min_p1+(0.5+j)*bin_p1-dummy_p1)>1.0e-5) {
+	  cout << "Erro in reading data file distF.dat!" << endl;
+	  exit (EXIT_FAILURE);
+	}
+	fileF>>distFncFM[i][j];
+	for(int k=0;k<N_e2;k++) fileF>>distFncF[i][j][k];
+	for(int k=0;k<N_e2;k++) fileF>>distMaxF[i][j][k];
+      }
+    }
+  }
+  fileF.close();
+
+}
+
+
