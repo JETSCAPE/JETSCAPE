@@ -1,9 +1,11 @@
 // TRENTO: Reduced Thickness Event-by-event Nuclear Topology
 // Copyright 2015 Jonah E. Bernhard, J. Scott Moreland
+// TRENTO3D: Three-dimensional extension of TRENTO by Weiyao Ke
 // MIT License
 
 #include "nucleus.h"
 
+#include <algorithm>
 #include <cmath>
 #include <memory>
 #include <stdexcept>
@@ -24,25 +26,13 @@
 
 namespace trento {
 
-namespace {
-
-// Correct Woods-Saxon surface thickness parameter (a) for finite Gaussian
-// nucleon width (w):
-//
-//    a_corrected^2 = a^2 - c^2*w*2
-//
-// where c is a universal constant independent of a and w.
-//
-// See https://gist.github.com/jbernhard/60b3ab9662a4737658d8.
 double correct_a(double a, double w) {
-  constexpr auto c = 0.61;  // correction coefficient
-  constexpr auto a_min = 0.01;  // min. value (prevent div. by zero, etc.)
-  return std::sqrt(std::fmax(a*a - c*c*w*w, a_min*a_min));
+   constexpr auto c = 0.61;  // correction coefficient
+   constexpr auto a_min = 0.01;  // min. value (prevent div. by zero, etc.)
+   return std::sqrt(std::fmax(a*a - c*c*w*w, a_min*a_min));
 }
 
-}  // unnamed namespace
-
-NucleusPtr Nucleus::create(const std::string& species, double nucleon_width) {
+NucleusPtr Nucleus::create(const std::string& species, double nucleon_width, double nucleon_dmin) {
   // W-S params ref. in header
   // XXX: remember to add new species to the help output in main() and the readme
   if (species == "p")
@@ -51,35 +41,39 @@ NucleusPtr Nucleus::create(const std::string& species, double nucleon_width) {
     return NucleusPtr{new Deuteron{}};
   else if (species == "Cu")
     return NucleusPtr{new WoodsSaxonNucleus{
-       62, 4.20, correct_a(0.596, nucleon_width)
+       63, 4.20, 0.596, nucleon_dmin
     }};
   else if (species == "Cu2")
     return NucleusPtr{new DeformedWoodsSaxonNucleus{
-       62, 4.20, correct_a(0.596, nucleon_width), 0.162, -0.006
+       63, 4.20, 0.596, 0.162, -0.006, nucleon_dmin
+    }};
+  else if (species == "Xe")
+    return NucleusPtr{new WoodsSaxonNucleus{
+      129, 5.36, 0.590, nucleon_dmin
     }};
   else if (species == "Au")
     return NucleusPtr{new WoodsSaxonNucleus{
-      197, 6.38, correct_a(0.535, nucleon_width)
+      197, 6.38, 0.535, nucleon_dmin
     }};
   else if (species == "Au2")
     return NucleusPtr{new DeformedWoodsSaxonNucleus{
-      197, 6.38, correct_a(0.535, nucleon_width), -0.131, -0.031
+      197, 6.38, 0.535, -0.131, -0.031, nucleon_dmin
     }};
   else if (species == "Pb")
     return NucleusPtr{new WoodsSaxonNucleus{
-      208, 6.62, correct_a(0.546, nucleon_width)
+      208, 6.62, 0.546, nucleon_dmin
     }};
   else if (species == "U")
     return NucleusPtr{new DeformedWoodsSaxonNucleus{
-      238, 6.81, correct_a(0.600, nucleon_width), 0.280, 0.093
+      238, 6.81, 0.600, 0.280, 0.093, nucleon_dmin
     }};
   else if (species == "U2")
     return NucleusPtr{new DeformedWoodsSaxonNucleus{
-      238, 6.86, correct_a(0.420, nucleon_width), 0.265, 0.000
+      238, 6.86, 0.420, 0.265, 0.000, nucleon_dmin
     }};
   else if (species == "U3")
     return NucleusPtr{new DeformedWoodsSaxonNucleus{
-      238, 6.67, correct_a(0.440, nucleon_width), 0.280, 0.093
+      238, 6.67, 0.440, 0.280, 0.093, nucleon_dmin
     }};
   // Read nuclear configurations from HDF5.
   else if (hdf5::filename_is_hdf5(species)) {
@@ -100,8 +94,9 @@ void Nucleus::sample_nucleons(double offset) {
   sample_nucleons_impl();
 }
 
-void Nucleus::set_nucleon_position(Nucleon& nucleon, double x, double y) {
-  nucleon.set_position(x + offset_, y);
+void Nucleus::set_nucleon_position(
+    iterator nucleon, double x, double y, double z) {
+  nucleon->set_position(x + offset_, y, z);
 }
 
 Proton::Proton() : Nucleus(1) {}
@@ -113,7 +108,7 @@ double Proton::radius() const {
 
 /// Always place the nucleon at the origin.
 void Proton::sample_nucleons_impl() {
-  set_nucleon_position(*begin(), 0., 0.);
+  set_nucleon_position(begin(), 0., 0., 0.);
 }
 
 // Without loss of generality, let the internal a_ parameter be the minimum of
@@ -155,21 +150,41 @@ void Deuteron::sample_nucleons_impl() {
   auto cos_theta = random::cos_theta<double>();
   auto phi = random::phi<double>();
 
-  // And compute the transverse coordinates of one nucleon.
+  // And compute the Cartesian coordinates of one nucleon.
   auto r_sin_theta = r * std::sqrt(1. - cos_theta*cos_theta);
   auto x = r_sin_theta * std::cos(phi);
   auto y = r_sin_theta * std::sin(phi);
+  auto z = r * cos_theta;
 
-  // Place the first nucleon at the sampled coordinates (x, y).
-  set_nucleon_position(*begin(), x, y);
-  // Place the second nucleon opposite to the first, at (-x, -y).
-  set_nucleon_position(*std::next(begin()), -x, -y);
+  // Place the first nucleon at the sampled coordinates.
+  set_nucleon_position(begin(), x, y, z);
+  // Place the second nucleon opposite to the first.
+  set_nucleon_position(std::next(begin()), -x, -y, -z);
+}
+
+MinDistNucleus::MinDistNucleus(std::size_t A, double dmin)
+    : Nucleus(A),
+      dminsq_(dmin*dmin)
+{}
+
+bool MinDistNucleus::is_too_close(const_iterator nucleon) const {
+  if (dminsq_ < 1e-10)
+    return false;
+  for (const_iterator nucleon2 = begin(); nucleon2 != nucleon; ++nucleon2) {
+    auto dx = nucleon->x() - nucleon2->x();
+    auto dy = nucleon->y() - nucleon2->y();
+    auto dz = nucleon->z() - nucleon2->z();
+    if (dx*dx + dy*dy + dz*dz < dminsq_)
+      return true;
+  }
+  return false;
 }
 
 // Extend the W-S dist out to R + 10a; for typical values of (R, a), the
 // probability of sampling a nucleon beyond this radius is O(10^-5).
-WoodsSaxonNucleus::WoodsSaxonNucleus(std::size_t A, double R, double a)
-    : Nucleus(A),
+WoodsSaxonNucleus::WoodsSaxonNucleus(
+    std::size_t A, double R, double a, double dmin)
+    : MinDistNucleus(A, dmin),
       R_(R),
       a_(a),
       woods_saxon_dist_(1000, 0., R + 10.*a,
@@ -184,22 +199,51 @@ double WoodsSaxonNucleus::radius() const {
   return R_ + 3.*a_;
 }
 
-/// Sample uncorrelated Woods-Saxon nucleon positions.
+/// Sample Woods-Saxon nucleon positions.
 void WoodsSaxonNucleus::sample_nucleons_impl() {
-  for (auto&& nucleon : *this) {
-    // Sample spherical radius from Woods-Saxon distribution.
-    auto r = woods_saxon_dist_(random::engine);
+  // When placing nucleons with a minimum distance criterion, resample spherical
+  // angles until the nucleon is not too close to a previously sampled nucleon,
+  // but do not resample radius -- this could modify the Woods-Saxon dist.
 
-    // Sample isotropic spherical angles.
-    auto cos_theta = random::cos_theta<double>();
-    auto phi = random::phi<double>();
+  // Because of the r^2 Jacobian, there is less available space at smaller
+  // radii.  Therefore, pre-sample all radii first, sort them, and then place
+  // nucleons starting with the smallest radius and working outwards.  This
+  // dramatically reduces the chance that a nucleon cannot be placed.
+  std::vector<double> radii(size());
+  for (auto&& r : radii)
+    r = woods_saxon_dist_(random::engine);
+  std::sort(radii.begin(), radii.end());
 
-    // Convert to transverse Cartesian coordinates
-    auto r_sin_theta = r * std::sqrt(1. - cos_theta*cos_theta);
-    auto x = r_sin_theta * std::cos(phi);
-    auto y = r_sin_theta * std::sin(phi);
+  // Place each nucleon at a pre-sampled radius.
+  auto r_iter = radii.cbegin();
+  for (iterator nucleon = begin(); nucleon != end(); ++nucleon) {
+    // Get radius and advance iterator.
+    auto& r = *r_iter++;
 
-    set_nucleon_position(nucleon, x, y);
+    // Sample angles until the minimum distance criterion is satisfied.
+    auto ntries = 0;
+    do {
+      // Sample isotropic spherical angles.
+      auto cos_theta = random::cos_theta<double>();
+      auto phi = random::phi<double>();
+
+      // Convert to Cartesian coordinates.
+      auto r_sin_theta = r * std::sqrt(1. - cos_theta*cos_theta);
+      auto x = r_sin_theta * std::cos(phi);
+      auto y = r_sin_theta * std::sin(phi);
+      auto z = r * cos_theta;
+
+      set_nucleon_position(nucleon, x, y, z);
+
+      // Retry sampling a reasonable number of times.  If a nucleon cannot be
+      // placed, give up and leave it at its last sampled position.  Some
+      // approximate numbers for Pb nuclei:
+      //
+      //   dmin = 0.5 fm, < 0.001% of nucleons cannot be placed
+      //          1.0 fm, ~0.005%
+      //          1.5 fm, ~0.1%
+      //          1.73 fm, ~1%
+    } while (++ntries < 1000 && is_too_close(nucleon));
   }
   // XXX: re-center nucleon positions?
 }
@@ -208,8 +252,8 @@ void WoodsSaxonNucleus::sample_nucleons_impl() {
 // "effective" radius.  The numerical coefficients for beta2 and beta4 are the
 // approximate values of Y20 and Y40 at theta = 0.
 DeformedWoodsSaxonNucleus::DeformedWoodsSaxonNucleus(
-    std::size_t A, double R, double a, double beta2, double beta4)
-    : Nucleus(A),
+    std::size_t A, double R, double a, double beta2, double beta4, double dmin)
+    : MinDistNucleus(A, dmin),
       R_(R),
       a_(a),
       beta2_(beta2),
@@ -241,7 +285,7 @@ double DeformedWoodsSaxonNucleus::deformed_woods_saxon_dist(
   return 1. / (1. + std::exp((r - Reff) / a_));
 }
 
-/// Sample uncorrelated deformed Woods-Saxon nucleon positions.
+/// Sample deformed Woods-Saxon nucleon positions.
 void DeformedWoodsSaxonNucleus::sample_nucleons_impl() {
   // The deformed W-S distribution is defined so the symmetry axis is aligned
   // with the Z axis, so e.g. the long axis of uranium coincides with Z.
@@ -263,31 +307,78 @@ void DeformedWoodsSaxonNucleus::sample_nucleons_impl() {
   const auto cos_b = std::cos(angle_b);
   const auto sin_b = std::sin(angle_b);
 
-  for (auto&& nucleon : *this) {
-    // Sample (r, theta) using a standard rejection method.
-    // Remember to include the phase-space factors.
+  // Pre-sample and sort (r, cos_theta) points from the deformed W-S dist.
+  // See comments in WoodsSaxonNucleus (above) for rationale.
+  struct Sample {
     double r, cos_theta;
+  };
+
+  std::vector<Sample> samples(size());
+
+  for (auto&& sample : samples) {
+    // Sample (r, cos_theta) using a standard rejection method.
+    // Remember to include the phase-space factors.
     do {
-      r = rmax_ * std::cbrt(random::canonical<double>());
-      cos_theta = random::cos_theta<double>();
-    } while (random::canonical<double>() > deformed_woods_saxon_dist(r, cos_theta));
+      sample.r = rmax_ * std::cbrt(random::canonical<double>());
+      sample.cos_theta = random::cos_theta<double>();
+    } while (
+      random::canonical<double>() >
+      deformed_woods_saxon_dist(sample.r, sample.cos_theta)
+    );
+  }
 
-    // Sample azimuthal angle.
-    auto phi = random::phi<double>();
+  // Sort by radius.  Could also sort by e.g. the perpendicular distance from
+  // the z-axis, or by descending W-S density.  Empirically, radius leads to the
+  // smallest failure rate.
+  std::sort(
+    samples.begin(), samples.end(),
+    [](const Sample& a, const Sample& b) {
+      return a.r < b.r;
+    }
+  );
 
-    // Convert to Cartesian coordinates.
+  // Place each nucleon at a pre-sampled (r, cos_theta).
+  auto sample = samples.cbegin();
+  for (iterator nucleon = begin(); nucleon != end(); ++nucleon, ++sample) {
+    auto& r = sample->r;
+    auto& cos_theta = sample->cos_theta;
+
     auto r_sin_theta = r * std::sqrt(1. - cos_theta*cos_theta);
-    auto x = r_sin_theta * std::cos(phi);
-    auto y = r_sin_theta * std::sin(phi);
     auto z = r * cos_theta;
 
-    // Rotate.
-    // The rotation formula was derived by composing the "tilt" and "spin"
-    // rotations described above.
-    auto x_rot = x*cos_b - y*cos_a*sin_b + z*sin_a*sin_b;
-    auto y_rot = x*sin_b + y*cos_a*cos_b - z*sin_a*cos_b;
+    // Sample azimuthal angle until the minimum distance criterion is satisfied.
+    auto ntries = 0;
+    do {
+      // Choose azimuthal angle.
+      auto phi = random::phi<double>();
 
-    set_nucleon_position(nucleon, x_rot, y_rot);
+      // Convert to Cartesian coordinates.
+      auto x = r_sin_theta * std::cos(phi);
+      auto y = r_sin_theta * std::sin(phi);
+
+      // Rotate.
+      // The rotation formula was derived by composing the "tilt" and "spin"
+      // rotations described above.
+      auto x_rot = x*cos_b - y*cos_a*sin_b + z*sin_a*sin_b;
+      auto y_rot = x*sin_b + y*cos_a*cos_b - z*sin_a*cos_b;
+      auto z_rot =           y*sin_a       + z*cos_a;
+
+      set_nucleon_position(nucleon, x_rot, y_rot, z_rot);
+
+      // In addition to resampling phi, flip the z-coordinate each time.  This
+      // works because the deformed WS dist is symmetric in z.  Effectively
+      // doubles the available space for the nucleon.
+      z *= -1;
+
+      // Retry a reasonable number of times.  Unfortunately the failure rate is
+      // worse than non-deformed sampling because there is less freedom to place
+      // each nucleon.  Some approximate numbers for U nuclei:
+      //
+      //   dmin = 0.5 fm, < 0.001% of nucleons cannot be placed
+      //          1.0 fm, ~0.03%
+      //          1.3 fm, ~0.3%
+      //          1.5 fm, ~1.2%
+    } while (++ntries < 1000 && is_too_close(nucleon));
   }
 }
 
@@ -389,7 +480,6 @@ ManualNucleus::ManualNucleus(std::unique_ptr<H5::DataSet> dataset,
                              std::size_t nconfigs, std::size_t A, double rmax)
     : Nucleus(A),
       dataset_(std::move(dataset)),
-      A_(A),
       rmax_(rmax),
       index_dist_(0, nconfigs - 1)
 {}
@@ -415,16 +505,14 @@ void ManualNucleus::sample_nucleons_impl() {
   const auto s3 = std::sin(angle_3);
 
   // Choose and read a random config from the dataset.
-  std::array<hsize_t, 3> count = {1, A_, 3};
+  std::array<hsize_t, 3> count = {1, size(), 3};
   std::array<hsize_t, 3> start = {index_dist_(random::engine), 0, 0};
-  std::array<hsize_t, 2> shape = {A_, 3};
+  std::array<hsize_t, 2> shape = {size(), 3};
   const auto positions = read_dataset<float>(*dataset_, count, start, shape);
 
-  // Loop over the positions and internal nucleons together.
-  // Could use something fancy like boost::zip_iterator, but this is simpler and
-  // more readable.
+  // Loop over positions and nucleons.
   auto positions_iter = positions.begin();
-  for (auto&& nucleon : *this) {
+  for (iterator nucleon = begin(); nucleon != end(); ++nucleon) {
     // Extract position vector and increment iterator.
     auto position = *positions_iter++;
     auto& x = position[0];
@@ -434,8 +522,9 @@ void ManualNucleus::sample_nucleons_impl() {
     // Rotate.
     auto x_rot = x*(c1*c3 - c2*s1*s3) - y*(c3*s1 + c1*c2*s3) + z*s2*s3;
     auto y_rot = x*(c1*s3 + c2*c3*s1) - y*(s1*s3 - c1*c2*c3) - z*c3*s2;
+    auto z_rot = x*s1*s2              + y*c1*s2              + z*c2;
 
-    set_nucleon_position(nucleon, x_rot, y_rot);
+    set_nucleon_position(nucleon, x_rot, y_rot, z_rot);
   }
 }
 

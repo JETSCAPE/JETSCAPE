@@ -36,11 +36,27 @@
     <grid_step_y> 0.3 </grid_step_y>
     <grid_step_z> 0.2 </grid_step_z>
     
-    <Trento use_module="pre_defined">
-      <!-- pre-defined system: default collisions have auau200, pbpb2760, pbpb5020, more in the future -->
-      <pre_defined collision_system="auau200" centrality_min="30" centrality_max="40" />
-      <!-- user-defined system: to get one event in 0-100% centrality range -->
-      <user_defined projectile="Au" target="Au" sqrts="200" cross_section="4.2" />
+    <Trento>
+		<PhysicsInputs	projectile='Pb'
+						target='Pb'
+						sqrts='2760'
+						cross-section='6.4'
+						normalization='13.9'>
+		</PhysicsInputs>
+		<CutInputs	centrality-low='50'
+					centrality-high='60'>
+		</CutInputs>
+		<TransInputs	reduced-thickness='0.0'
+						fluctuation="1.2"
+						nucleon-width="0.9"
+						nucleon-min-dist="1.2">
+		</TransInputs>
+		<LongiInputs	mean-coeff="1.0"
+						std-coeff="3.0"
+						skew-coeff="0.0"
+						skew-type="1"
+						jacobian="0.8">
+		</LongiInputs>
     </Trento>
 
     <!-- Options to read initial conditions from saved file  -->
@@ -53,7 +69,8 @@
     <!-- Parton Gun test with fixed pT and fixed IS pos = 0  -->
     <PGun>
       <name>PGun</name>
-      <pT>50</pT>
+      <pT>100</pT>
+      <useHybridHad>0</useHybridHad>
     </PGun>
 
     <!-- Pythia Gun -->
@@ -64,6 +81,7 @@
       <pTHatMin>50</pTHatMin>
       <pTHatMax>60</pTHatMax>
       <eCM>2760</eCM>
+      <useHybridHad>0</useHybridHad>
       <!-- You can add any number of additional lines to initialize pythia here -->
       <!-- Note that if the tag exists it cannot be empty (tinyxml produces a segfault) -->
       <!-- <LinesToRead> -->
@@ -83,6 +101,7 @@
 
     <Matter>
       <name>Matter</name>
+      <useHybridHad>0</useHybridHad>
       <matter_on> 1 </matter_on>
       <Q0> 1.0 </Q0>
       <T0> 0.16 </T0>
@@ -197,9 +216,13 @@
   
   <!-- Jet Hadronization Module -->
    <JetHadronization>
-       <name>colored</name>
+       <name>colored/colorless/hybrid</name>
        <take_recoil>1</take_recoil>
        <eCMforHadronization>1380</eCMforHadronization>
+       <reco_Elevelmax>3</reco_Elevelmax>
+       <thermreco_distmax>5.0</thermreco_distmax>
+       <shower_recofactor>0.3333333</shower_recofactor>
+       <thermal_recofactor>0.3333333</thermal_recofactor>
    </JetHadronization>
 
   <!-- Particlization Module  -->

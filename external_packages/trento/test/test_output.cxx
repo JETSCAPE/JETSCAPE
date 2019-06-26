@@ -31,8 +31,8 @@ TEST_CASE( "output" ) {
   Event event{var_map};
   NucleonProfile profile{var_map};
 
-  auto nucleusA = Nucleus::create("Pb", 0.5);
-  auto nucleusB = Nucleus::create("Pb", 0.5);
+  auto nucleusA = Nucleus::create("Pb");
+  auto nucleusB = Nucleus::create("Pb");
 
   auto b = 4.*std::sqrt(random::canonical<>());
   nucleusA->sample_nucleons(+.5*b);
@@ -104,6 +104,7 @@ TEST_CASE( "output" ) {
     temporary_path temp{};
     auto output_var_map = make_var_map({
       {"quiet", false},
+      {"no-header", false},
       {"number-events", 50},
       {"output", temp.path}
     });

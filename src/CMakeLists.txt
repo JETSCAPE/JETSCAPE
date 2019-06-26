@@ -98,7 +98,7 @@ if ( music )
 endif()
 
 if ( iSS )
-  target_link_libraries (JetScape iSS_lib )
+  target_link_libraries (JetScape iSS )
 endif()
 
 if ( smash )
