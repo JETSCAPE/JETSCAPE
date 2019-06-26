@@ -151,8 +151,11 @@ void LiquefierBase::filter_partons(std::vector<Parton> &pOut) {
 
 void LiquefierBase::add_hydro_sources(std::vector<Parton> &pIn,
                                       std::vector<Parton> &pOut) {
-    if (pOut.size() == 0) return;  // the process is freestreaming, ignore
-    
+    if (pOut.size() == 0) {
+        // the process is freestreaming, ignore
+        filter_partons(pIn);
+        return;
+    }
     check_energy_momentum_conservation(pIn, pOut);
     filter_partons(pOut);
     
