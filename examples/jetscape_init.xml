@@ -69,7 +69,8 @@
     <!-- Parton Gun test with fixed pT and fixed IS pos = 0  -->
     <PGun>
       <name>PGun</name>
-      <pT>10</pT>
+      <pT>100</pT>
+      <useHybridHad>0</useHybridHad>
     </PGun>
 
     <!-- Pythia Gun -->
@@ -80,6 +81,7 @@
       <pTHatMin>20</pTHatMin>
       <pTHatMax>30</pTHatMax>
       <eCM>2760</eCM>
+      <useHybridHad>0</useHybridHad>
       <!-- You can add any number of additional lines to initialize pythia here -->
       <!-- Note that if the tag exists it cannot be empty (tinyxml produces a segfault) -->
       <!-- <LinesToRead> -->
@@ -99,6 +101,7 @@
 
     <Matter>
       <name>Matter</name>
+      <useHybridHad>0</useHybridHad>
       <matter_on> 1 </matter_on>
       <Q0> 1.0 </Q0>
       <T0> 0.16 </T0>
@@ -213,9 +216,13 @@
   
   <!-- Jet Hadronization Module -->
    <JetHadronization>
-       <name>colored</name>
+       <name>colored/colorless/hybrid</name>
        <take_recoil>1</take_recoil>
        <eCMforHadronization>1380</eCMforHadronization>
+       <reco_Elevelmax>3</reco_Elevelmax>
+       <thermreco_distmax>5.0</thermreco_distmax>
+       <shower_recofactor>0.3333333</shower_recofactor>
+       <thermal_recofactor>0.3333333</thermal_recofactor>
    </JetHadronization>
 
   <!-- Particlization Module  -->

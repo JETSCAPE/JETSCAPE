@@ -96,8 +96,12 @@ void PythiaGun::InitTask()
   xmle = PythiaXmlDescription->FirstChildElement( "pTHatMax" ); if ( !xmle ) throw std::runtime_error("Cannot parse xml");
   xmle->QueryDoubleText(&pTHatMax);
 
+  xmle = PythiaXmlDescription->FirstChildElement("useHybridHad"); if ( !xmle ) throw std::runtime_error("Cannot parse xml");
+  xmle->QueryIntText(&flag_useHybridHad);
+
   JSINFO << MAGENTA << "Pythia Gun with FSR_on: " << FSR_on;
   JSINFO << MAGENTA << "Pythia Gun with "<< pTHatMin << " < pTHat < " << pTHatMax;
+  JSINFO << MAGENTA << "Use hybrid hadronization? " << flag_useHybridHad;
   
   numbf.str("PhaseSpace:pTHatMin = "); numbf << pTHatMin;
   readString ( numbf.str() );
@@ -281,13 +285,23 @@ void PythiaGun::Exec()
     VERBOSE(7) <<" at x=" << xLoc[1]
 	       <<", y=" << xLoc[2]
 	       <<", z=" << xLoc[3];
-    
-    AddParton(make_shared<Parton>(0, particle.id(),0,particle.pT(),particle.y(),particle.phi(),particle.e(),xLoc) );
-//    if(particle.id() == photonid)
-//    {
-//	AddHadron(make_shared<Hadron>(hCounter,particle.id(),particle.status(),particle.pT(),particle.eta(),particle.phi(),particle.e(),xLoc));
-//	hCounter++;
-//    }
+
+   // if(particle.id() !=22)
+   // {
+        if(flag_useHybridHad != 1) {
+            AddParton(make_shared<Parton>(0, particle.id(),0,particle.pT(),particle.y(),particle.phi(),particle.e(),xLoc) );
+        } else {
+    	    auto ptn = make_shared<Parton>(0,particle.id(),0,particle.pT(),particle.y(),particle.phi(),particle.e(),xLoc);
+            ptn->set_color(particle.col()); ptn->set_anti_color(particle.acol()); ptn->set_max_color(1000*(np+1));
+            AddParton(ptn);
+        }
+    //}
+    //else
+    //{
+    //          AddHadron(make_shared<Hadron>(hCounter,particle.id(),particle.status(),particle.pT(),particle.eta(),particle.phi(),particle.e(),xLoc));
+    //          hCounter++;
+    //}
+
   }
   
 
