@@ -233,7 +233,6 @@ void Matter::WriteTask(weak_ptr<JetScapeWriter> w)
 
 void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pIn, vector<Parton>& pOut)
 {
-
   double z=0.5;
   double blurb,zeta,tQ2 ;
   int iSplit,pid_a,pid_b;
@@ -1726,8 +1725,8 @@ double Matter::generate_vac_t(int p_id, double nu, double t0, double t, double l
 double Matter::generate_vac_t_w_M(int p_id, double M, double nu, double t0, double t, double loc_a, int is)
 {
   double r,z,ratio,diff,scale,t_low_M0,t_low_MM,t_low_00, t_hi_M0, t_hi_MM, t_hi_00, t_mid_M0, t_mid_MM, t_mid_00, numer, denom, test ;
-  double M_charm=1.5;//InternalHelperPythia.particleData.m0(4);
-  double M_bottom=4.8;//InternalHelperPythia.particleData.m0(5);  
+    double M_charm=1.5;//InternalHelperPythia.particleData.m0(4);
+    double M_bottom=4.8;//InternalHelperPythia.particleData.m0(5);
     
   // r = double(random())/ (maxN );
   r = ZeroOneDistribution(*GetMt19937Generator());
@@ -3218,15 +3217,18 @@ double Matter::sud_z_QG_w_M(double M, double cg, double cg1, double loc_e, doubl
 
   // SC  
   //qL = qhat*0.6*tau*profile(loc_e + tau) ;
-  if(tau<rounding_error) {
+  if(tau<rounding_error)
+  {
       qL = 0.0;
-  } else {
+  }
+  else
+  {
       qhat = fncAvrQhat(loc_e,tau);
       if (qhat*sqrt(2)>0.6)
       {
-        // JSINFO << BOLDYELLOW << " length = " << length << " loc = " << loc_e << " tau = " << tau ;
-        //JSINFO << BOLDYELLOW << " parton formed at x = " << initRx << " y = " << initRy << " z = " << initRz << " t = " << initR0 ;
-        // JSINFO << BOLDYELLOW << " mean qhat for sudakov in GeV^2/fm = " << qhat*5*sqrt(2) ;
+        JSINFO << BOLDYELLOW << " length = " << length << " loc = " << loc_e << " tau = " << tau ;
+        JSINFO << BOLDYELLOW << " parton formed at x = " << initRx << " y = " << initRy << " z = " << initRz << " t = " << initR0 ;
+        JSINFO << BOLDYELLOW << " mean qhat for sudakov in GeV^2/fm = " << qhat*5*sqrt(2) ;
       }
       qL = qhat*0.6*2.0*tau;
   }
@@ -3292,12 +3294,13 @@ double Matter::sud_z_QG_w_M(double M, double cg, double cg1, double loc_e, doubl
   }
 
 
-    //JSINFO << BOLDRED << " qhat L = " << qL << " location = " << loc_e << " tau = " << tau << " length = " << length;
+//    JSINFO << BOLDRED << " qhat L = " << qL << " location = " << loc_e << " tau = " << tau << " length = " << length;
     
-    res = t21 + qL*q53/cg1 + eL*e22/cg1+e2L*f52/cg1;
+    res = t21 + qL*q53/cg1 ;
     
-  //   cout << " t0 , t , res = " << cg << "  "  << cg1 << "   " << res << endl ;
-    
+//+ eL*e22/cg1 +e2L*f52/cg1;
+    // Uncomment only if you have an eL larger than 2 times e2L for charm, and derive expression for bottom.
+    // MC simulation is not valid for all choices of e-hat and e2-hat.
     
   if (res<0.0)
     {
@@ -3457,7 +3460,10 @@ double Matter::P_z_qg_int_w_M(double M, double cg, double cg1, double loc_e, dou
 
 
    
-  res = t12 + qL*q47/cg3 + eL*e17/cg3 + e2L*f63/cg3;
+    res = t12 + qL*q47/cg3;
+    //+ eL*e17/cg3 + e2L*f63/cg3;
+    // Uncomment only if you have an eL larger than 2 times e2L for charm, and derive expression for bottom.
+    // MC simulation is not valid for all choices of e-hat and e2-hat.
     
   return(res);
     

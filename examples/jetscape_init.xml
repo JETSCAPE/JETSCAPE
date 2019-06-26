@@ -78,8 +78,8 @@
     <PythiaGun>
       <name>PythiaGun</name>
       <FSR_on>0</FSR_on>
-      <pTHatMin>20</pTHatMin>
-      <pTHatMax>30</pTHatMax>
+      <pTHatMin>50</pTHatMin>
+      <pTHatMax>60</pTHatMax>
       <eCM>2760</eCM>
       <useHybridHad>0</useHybridHad>
       <!-- You can add any number of additional lines to initialize pythia here -->
@@ -106,13 +106,13 @@
       <Q0> 1.0 </Q0>
       <T0> 0.16 </T0>
       <vir_factor> 0.25 </vir_factor>
-      <in_vac> 1 </in_vac>
-      <recoil_on> 0 </recoil_on>
+      <in_vac> 0 </in_vac>
+      <recoil_on> 1 </recoil_on>
       <broadening_on> 0 </broadening_on>
       <brick_med> 0 </brick_med>
-      <brick_length> 0.0 </brick_length>
+      <brick_length> 5.0 </brick_length>
       <hydro_Tc> 0.16 </hydro_Tc>
-      <qhat0> -3.0 </qhat0>
+      <qhat0> -2.0 </qhat0>
       <alphas> 0.2 </alphas>
     </Matter>
 
