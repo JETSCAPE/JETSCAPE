@@ -1,92 +1,289 @@
-In order to install and compile the JETSCAPE framework on a Linux machine, one need to follow the following steps:
-
-1. Clone the repository from Github:
-     - git clone https://github.com/JETSCAPE/JETSCAPE.git
-     - Enter your Github credentials 
-
-2. Install and configure HepMC (Version 3.0.0 or higher)
-     - Create a folder for installing HepMC
-     - Go to the created folder
-     - wget http://hepmc.web.cern.ch/hepmc/releases/hepmc3.0.0.tgz
-     - tar -xvzf hepmc3.0.0.tgz
-     - Go to the extracted folder 
-          - cd hepmc3.0.0/cmake
-     - Run cmake command
-          - cmake ..
-     - Run make command (the user has to be sudoer)
-          - make all install
-     - The default path to install HepMC is /usr/local/lib/ 
-
-3. Change Cmake configuration for HepMC (If Cmake could not find HepMC)
-     - Set "HEPMC_DIR" as the root directory of HepMC
-     - Go to JETSCAPE/cmakemodules
-     - Open FindHEPMC.cmake
-          - vim FindHEPMC.cmake
-     - Make sure that cmake looks for the correct "include" and "lib" directories of HepMC
-          - By default is "${HEPMC_DIR}/include/"
-          - By default is "${HEPMC_DIR}/lib"
-          - Replace "${HEPMC_DIR}" with "ENV{HEPMC_DIR}" if you are not root
-     - The library file that cmake must find is "libHepMC.so"
+# JETSCAPE 1.4
+The Jet Energy-loss Tomography with a Statistically and Computationally Advanced Program Envelope (JETSCAPE) collaboration
 
 
-4. Install Pythia8
-     - In the following, you can use a newer Pythia version instead
-       of 8.226 as well.
-     - Create a folder for installing Pythia8
-     - Got to the created folder
-     - wget http://home.thep.lu.se/~torbjorn/pythia8/pythia8226.tgz
-     - tar -xvzf pythia8226.tgz
-     - Go to the extracted folder 
-          - cd pythia8226
-     - Run make command
-          - make
+With cmake:
 
-5. Configure the address of Pythia8 in activate_jetscape.sh or activate_jetscape.csh
-   (If cmake could not find Pythia)
-     - vim activate_jetscape.sh
-     - Change "PYTHIAINSTALLDIR" to the installing folder of Pythia8
-     - Update the "PYTHIA8DIR" and "PYTHIA8_ROOT_DIR" address
-          - should be "${PYTHIAINSTALLDIR}/pythia8226" by default
+```bash
+    mkdir build
+    cd build
+    cmake ..
+```
 
-6. Install Boost libraries (Version 1.5 or higher)
-     - wget https://dl.bintray.com/boostorg/release/1.64.0/source/boost_1_64_0.tar.gz 
-     - tar -xvzf boost_1_64_0.tar.gz
-     - Run bootstrap.sh 
-          - ./bootstrap.sh 
-     - Run b2 --prefix=PREFIX where PREFIX is the directory where you want Boost. Build to be installed
-          - ./b2 install --prefix=PREFIX
-     - Set "BOOST_ROOT" variable to the root directory of boost
-          - export BOOST_ROOT=<root_directory> 
+the test binaries will be generated in the build folder
+To run the tests, you need to stay at the framework directory and type :
 
-7. Install HDF5 C++ library
-     - wget https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-1.8.18/src/hdf5-1.8.18.tar
-     - tar -xvvf hdf5-1.8.18.tar
-     - ./configure
-     - make
-     - To provide a hint for CMake about where to find your HDF5 installation, you can set the environment variable HDF5_ROOT
-          - export HDF5_ROOT=<HDF5_installation_directory>
+```bash
+    ./build/brickTest
+```
 
-8. Create a build folder in JETSCAPE/
-     - mkdir build
-     - Got to the build folder
-          - cd build
-     - Make sure that in CMakeLists.text there is a condition on UNIX not LINUX
-          - if(UNIX) 
-               message( STATUS "Linux : " ${CMAKE_HOST_SYSTEM})
-               set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-            endif()
-     - Make sure $LD_LIBRARY_PATH is set to the address of dynamic library files
-          - echo $LD_LIBRARY_PATH
-          - If there is nothing to dispay
-               - export LD_LIBRARY_PATH=<dynamic_lib_dir>
-          - If the address is not included in the variable
-               - LD_LIBRARY_PATH=$LD_LIBRARY_PATH:<dynamic_lib_dir>
-     - Run cmake
-          - cmake ..
-          - If cmake cannot find HDF5 library, set "-DCMAKE_LIBRARY_PATH" and "-DCMAKE_INCLUDE_PATH" flags when you run cmake
-               - cmake -DCMAKE_LIBRARY_PATH=<HDF5_Include_Path> -DCMAKE_INCLUDE_PATH=<HDF5_Lib_Path> ..
-     - run make
-          - make
+This "simulates" our brick test. The temperature from the brick is available in the jet energy loss modules. The jet energyloss module consists of two "test" modules, Matter performing a random in time democratic split and Martini is doing nothing. Furthermore in "Matter" I added random "new graph roots" for testing (simulating scattering with medium partons). The switching criteria is arbitrarily set to 5GeV in pt for testing. An ascii output file is created which you can read in with the provided reader:
 
-9. You can set up environment variables anytime you want to run JETSCAPE using
-     source ./activate_jetscape.sh or source ./activate_jetscape.csh aqs appropriate for your shell type.
+```bash
+    ./build/readerTest
+```
+
+which reads in the generated showers does some DFS search and shows the output. You can generate an output graph format which can be easily visualized using graphViz or other tools like Gephi (GUI for free for Mac) or more adanvanced, graph-tools (Python) and many more. Furthermore, as a "closure" test, I used the FastJet core packackage (compiled in our JetScape library) to perform a simple jetfinding (on the "final" partons, in graph language, incoming partons in a vertex with no outgoing partons/childs), and since the "shower" is perfectly collinear the jet pT is identical to the hard process parton pT (modulo some random new partons/roots in the final state, see above).  
+
+```bash
+    ./build/hydroFromFileTest
+```
+
+This "simulates" a test by reading in hydrodynamic evolution from
+an external file. The temperature and flow velocity at any given space-time
+poisition is available in the jet energy loss modules.
+The jet energyloss module is the same as the one in the brickTest.
+The hydro file reader is from a 3rd-party program. Part of the code requires
+the HDF5 library.
+
+```bash
+    ./build/MUSICTest
+```
+
+This "simulates" a test with MUSIC (a viscous hydrodynamic code).
+The temperature and flow velocity at any given space-time position
+is available in the jet energy loss modules.
+The jet energyloss module is the same as the one in the brickTest.
+MUSIC is treated as a 3rd party program outside the JETSCAPE framework.
+It requires MPI and GSL libraries installed in the computer.
+
+If cmake found other libraries HepMC, ROOT or Pythia8, you might have to add the library path's in the setup.csh script.
+For sure works on Mac Os X 10.11.6.
+
+To make a class documentation using doxygen:
+
+```bash
+doxygen JetScapeDoxy.conf
+```
+
+Getting started on a Mac:
+
+- Install Xcode and command-line tools
+
+For further packages needed (like CMake, Pythia, ROOT, GraphViz) I recommend homebrew for Mac:
+
+- Install homebrew (after you install Xcode)
+
+```bash
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+```
+
+- Install CMake via homebrew type: 
+
+```bash
+brew install cmake
+```
+
+- Install doxygen:
+
+```bash
+brew install doxygen
+```
+
+- Install graphViz:
+
+```bash
+brew install graphviz --with-app --with-bindings
+```
+
+- Install root6
+
+```bash
+brew install root6
+```
+
+- Install graph-tool (python). If done you can create a colored and "fancy" graph with the provided python script.
+
+```bash
+brew install graph-tool
+```
+
+- Install hdf5
+
+    ```bash
+    brew install hdf5 --with-mpi
+    ```
+
+- Install OpenMPI
+
+    ```bash
+    brew install open-mpi
+    ```
+
+- Install GSL
+    
+    ```bash
+    brew install gsl
+    ```
+- Tap some repos for further sceintific packages: 
+
+```bash
+brew tap davidchall/hep
+```
+
+- Install Pythia8 for example:
+
+```bash
+brew install pythia
+```
+
+(and most of other packackes we need)
+
+Remark: So far on brew HepMC is only available in version 2, version 3 is required for the current code, nicer wirter interfaces to root for example. So one has to install it from: http://hepmc.web.cern.ch/hepmc/
+
+## MUSIC support
+
+MUSIC is a (3+1)D viscous hydrodynamical code developed at McGill university.
+(Official website: http://www.physics.mcgill.ca/MUSIC)
+MUSIC can be integrated into the JETSCAPE framework. To download the lastest
+version of MUSIC, one can run the shell script under the external_packages folder,
+
+```bash
+    ./get_music.sh
+```
+
+This shell script will clone the latest version of MUSIC to external_packages folder.
+It also setup the enviroment variables for MUSIC to run. Specifically, MUSIC
+needs the folder path for the EOS tables. Please make sure the enviroment
+variable HYDROPROGRAMPATH to be set to the path for MUSIC code package.
+
+When compiling MUSIC with JETSCAPE, please turn on the MUSIC support option
+when generating the cmake configuration file,
+
+```bash
+    mkdir build
+    cd build
+    cmake -Dmusic=ON ..
+    make
+```
+If you are using GNU C compiler, please make sure the version of the compiler is 7 or above. 
+
+To run JETSCAPE with MUSIC,
+
+```bash
+    ./MUSIC_evo
+```
+
+MUSIC implements parallelization using OpenMP. You can use multiple threads by setting the following enviroment variable, 
+
+```bash
+    export NUM_OMP_THREADS=4
+```
+
+This enables the MUSIC code to use 4 threads for computation.
+
+## SMASH hadronic afterburner
+
+SMASH is a hadronic transport developed at Frankfurt Institute for Advanced
+ Studies by the group of Prof. H. Petersen (Elfner). In JetScape SMASH can
+serve as an afterburner, useful to compute soft observables.
+
+### Installing SMASH
+
+SMASH is published on github at https://github.com/smash-transport/smash.
+See SMASH Readme for libraries required by SMASH and how to install them.
+
+#### Prerequisites
+
+SMASH is known to compile and work with one of these compilers (which have the
+required C++11 features):
+- gcc >= 4.8
+- clang >= 3.2
+
+It requires the following tools & libraries:
+- cmake >= 2.8.11
+- the GNU Scientific Library >= 1.15
+- the Eigen3 library for linear algebra (see http://eigen.tuxfamily.org)
+- boost filesystem >= 1.49
+- Pythia = 8.235
+
+See more details in SMASH README.
+
+#### Installing Eigen
+
+```bash
+export EIGEN_DOWNLOAD_DIR=$HOME/Software
+export EIGEN_INSTALL_DIR=$HOME/eigen_install
+
+mkdir ${EIGEN_DOWNLOAD_DIR}
+cd ${EIGEN_DOWNLOAD_DIR}
+wget http://bitbucket.org/eigen/eigen/get/3.2.10.tar.gz
+tar -xf 3.2.10.tar.gz
+
+mkdir ${EIGEN_INSTALL_DIR}
+cd ${EIGEN_INSTALL_DIR}
+cmake ${EIGEN_DOWNLOAD_DIR} -DCMAKE_INSTALL_PREFIX=${EIGEN_INSTALL_DIR}
+make install
+
+export EIGEN3_ROOT=${EIGEN_INSTALL_DIR}/include/eigen3/
+```
+
+Add the last export to your .bashrc file.
+
+
+#### Using a custom GSL build
+
+This is only necessary if GSL is not installed already or something
+does not work with the installed version.
+
+Download and unpack GSL:
+
+```bash
+    wget ftp://ftp.gnu.org/gnu/gsl/gsl-latest.tar.gz
+    tar -zxvf gsl-latest.tar.gz
+```
+
+This creates a folder named `gsl-[version_number]` called `$GSL` here.
+
+```bash
+    cd $GSL
+    ./configure --prefix $GSL
+    make -jN
+    make install
+```
+
+Add this export to your .bashrc file:
+```bash
+    export GSL_ROOT_DIR=/opt/apps/intel18/gsl/2.3
+```
+
+#### Using boost library
+
+Assuming that boost is already installed in $HOME:
+
+```bash
+  export BOOST_ROOT=$HOME/boost_1_64_0/
+```
+
+#### Compiling SMASH library
+
+```bash
+  export JETSCAPE_DIR=${HOME}/JETSCAPE-COMP
+  export SMASH_DIR=${JETSCAPE_DIR}/external_packages/smash/smash_code
+  export PYTHIA8DIR=${PYTHIAINSTALLDIR}/pythia8235
+  export PYTHIA8_ROOT_DIR=${PYTHIAINSTALLDIR}/pythia8235
+
+  cd ${JETSCAPE_DIR}/external_packages
+  ./get_smash.sh
+```
+
+### Compiling JetScape with SMASH
+
+The usage of SMASH in JetScape as an afterburner requires hydro,
+sampler and SMASH itself. Therefore, to use it in JetScape,
+
+```bash
+    mkdir ${JETSCAPE_DIR}/build
+    cd ${JETSCAPE_DIR}/build
+    cmake -Dmusic=ON -DiSS=ON -Dfreestream=ON -Dsmash=ON ..
+```
+
+To run JetScape test with SMASH:
+
+```bash
+    cd build
+    ./SMASHTest
+```
+
+Currently the iSS sampler performs resonance decays after sampling.
+For reasonable physics with SMASH these decays should be switched off.

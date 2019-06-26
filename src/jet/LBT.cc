@@ -23,9 +23,9 @@
 #include <fstream>
 #include <iostream>
 #include <iomanip>
-#include "LBTMutex.h"
-#include "FluidDynamics.h"
 
+#include "FluidDynamics.h"
+#include "LBTMutex.h"
 #define MAGENTA "\033[35m"
 
 using namespace Jetscape;
@@ -75,7 +75,7 @@ LBT::LBT()
   SetId("LBT");
   VERBOSE(8);
 
-  // create and set LBT Mutex
+  // create and set Martini Mutex
   auto lbt_mutex = make_shared<LBTMutex>();
   SetMutex(lbt_mutex);
 }
@@ -229,6 +229,14 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
   for (int i=0;i<pIn.size();i++)
     {	  
 
+      // Reject photons
+      
+      if (pIn[i].pid()==photonid)
+      {
+          pOut.push_back(pIn[i]);
+          return;
+      }
+
       // pass particle infomation to LBT array (only pass one particle each time)
 
       jetClean();
@@ -280,6 +288,9 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
           } else {
     	      pIn[i].set_user_info(new LBTUserInfo(0.0));
           }
+
+	  if(par_status==1) CAT[j]=2;
+	  else CAT[j]=0;
 
       } else { // negative particle, or particle no longer active, will streamly freely in LBT
 
@@ -395,6 +406,8 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
           for(int j=1; j<=np; j++) { 
             // definition Parton (int label, int id, int stat, double p[4], double x[4]);
             if(P[0][j]<cutOut) continue;
+	    int out_stat=0; // jet parton 
+	    if(CAT[j]==2) out_stat=1; // recoil parton
             double tempP[4],tempX[4];
             tempP[0]=sqrt(P[0][j]*P[0][j]+P[6][j]);
             tempP[1]=P[1][j];
@@ -405,7 +418,7 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
             tempX[2]=Vfrozen[2][j];
             tempX[3]=Vfrozen[3][j];
             //	      pOut.push_back(Parton(0,21,0,newPt,pIn[i].eta(),pIn[i].phi(),newPt));
-            pOut.push_back(Parton(0,KATT1[j],0,tempP,tempX));
+            pOut.push_back(Parton(0,KATT1[j],out_stat,tempP,tempX));
             // remember to put Tint_lrf infomation back to JETSCAPE
             pOut.back().set_user_info(new LBTUserInfo(Tint_lrf[j]));
 
@@ -738,6 +751,11 @@ void LBT::LBT0(int &n, double &ti){
 
     	  GetHydroCellSignal(tcar, xcar, ycar, zcar, check_fluid_info_ptr);
 	  //VERBOSE(7)<< MAGENTA<<"Temperature from Brick (Signal) = "<<check_fluid_info_ptr->temperature;
+
+	  if(!GetJetSignalConnected()){
+           	JSWARN << "Couldn't find a hydro module attached!";
+           	throw std::runtime_error ("Please attach a hydro module or set in_vac to 1 in the XML file");
+          }
 
 	  temp0 = check_fluid_info_ptr->temperature;
           sd = check_fluid_info_ptr->entropy_density;
@@ -1145,6 +1163,8 @@ void LBT::LBT0(int &n, double &ti){
                   P[6][np0]=pow(P[0][np0]/Elab,2)*Qinit;
                   P0[6][np0]=0.0; 
 
+                  if(CAT[i]==2) CAT[np0]=2; // daughters of recoil are recoils 
+
 		  // comment out for unit test
 		  Tint_lrf[i]=0.0;  //reset radiation infomation for heavy quark
         
@@ -1201,6 +1221,7 @@ void LBT::LBT0(int &n, double &ti){
                       P[6][np0-1]=pow(P[0][np0-1]/Elab,2)*Qinit;
                       P[6][np0]=pow(P[0][np0]/Elab,2)*Qinit;
                       P0[6][np0]=0.0;
+                      if(CAT[i]==2) CAT[np0]=2; // daughters of recoil are recoils 
 
 		      eGluon=eGluon+pc4[0];
 		      nGluon=nGluon+1.0;
@@ -1274,15 +1295,15 @@ void LBT::LBT0(int &n, double &ti){
 	  //CAT!!!			  
 	  /*			  
 	   */			  
-	  for(int m=nnpp+1;m<=np0;m++) {
-	    if(CAT[i]==2) {
-	      CAT[m]=2;             				 
-	    }
-	  }
+	  //for(int m=nnpp+1;m<=np0;m++) { // only put recoil parton CAT as 2, radiated gluons do not count
+	  //  if(CAT[i]==2) {
+	  //    CAT[m]=2;             				 
+	  //  }
+	  //}
 
 	  if(P[0][nnpp+1]<Ecut) {
-	    CAT[nnpp+1]=1;
-	    CAT0[nnpp+1]=1;
+	  //  CAT[nnpp+1]=1;
+	  //  CAT0[nnpp+1]=1;
 	    for(int j=0; j<=3; j++) {
 	      P[j][nnpp+1]=0.0;
 	      P0[j][nnpp+1]=0.0;
@@ -1290,13 +1311,13 @@ void LBT::LBT0(int &n, double &ti){
 	  }
 
 	  if(P[0][i]<Ecut) {
-	    CAT[i]=1;
+	  //  CAT[i]=1;
 	    for(int j=0; j<=3; j++) P[j][i]=0.0;
 	  }
 
 	  for(int m=nnpp+2; m<=np0; m++) {
 	    if(P[0][m]<Ecut) {
-	      CAT[m]=1;
+	  //    CAT[m]=1;
 	      for(int j=0; j<=3; j++) P[j][m]=0.0;
 	    }
 	  }
@@ -2600,7 +2621,18 @@ void LBT::collHQ22(int CT,double temp,double qhat0ud,double v0[4],double p0[4],d
     p2[2]=e4*sin(theta4)*sin(phi24);
     p2[3]=e4*cos(theta4);
     p2[0]=e4;
-    
+
+    // rotate randomly in xy plane (jet is in z), because p3 is assigned in xz plane with bias
+    double th_rotate = 2.0*pi*ran0(&NUM1);
+    double p3x_rotate = p3[1]*cos(th_rotate)-p3[2]*sin(th_rotate);
+    double p3y_rotate = p3[1]*sin(th_rotate)+p3[2]*cos(th_rotate);
+    double p2x_rotate = p2[1]*cos(th_rotate)-p2[2]*sin(th_rotate);
+    double p2y_rotate = p2[1]*sin(th_rotate)+p2[2]*cos(th_rotate);
+    p3[1]=p3x_rotate;
+    p3[2]=p3y_rotate;
+    p2[1]=p2x_rotate;
+    p2[2]=p2y_rotate;
+
     // Because we treated p0 (p1 in my note for heavy quark) as the z-direction, proper rotations are necessary here
     rotate(p4[1],p4[2],p4[3],p2,-1);
     rotate(p4[1],p4[2],p4[3],p3,-1);

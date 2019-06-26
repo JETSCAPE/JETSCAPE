@@ -46,10 +46,12 @@ void JetScapeSignalManager::ConnectGetHardPartonListSignal(shared_ptr<JetEnergyL
 
 void JetScapeSignalManager::ConnectGetFinalPartonListSignal(shared_ptr<HadronizationManager> hm) {
   if ( !hm->GetGetFinalPartonListConnected() ){
-      auto elp = GetEnergyLossPointer().lock();
-      if ( elp ) {
-          hm->GetFinalPartonList.connect(elp.get(),&JetEnergyLoss::SendFinalStatePartons);
-          hm->SetGetFinalPartonListConnected(true);
+
+    auto elp = GetEnergyLossPointer().lock();
+    if ( elp ) {
+      hm->GetFinalPartonList.connect(elp.get(),&JetEnergyLoss::SendFinalStatePartons);
+      hm->SetGetFinalPartonListConnected(true);
+
     }
   }
 
@@ -101,6 +103,19 @@ void JetScapeSignalManager::ConnectGetHydroCellSignal(shared_ptr<JetEnergyLoss> 
   }
 }
 
+
+void JetScapeSignalManager::ConnectGetHydroCellSignal(
+                                            shared_ptr<LiquefierBase> l) {
+    if (!l->get_GetHydroCellSignalConnected()) {
+        auto hp = GetHydroPointer().lock();
+        if (hp) {
+            l->GetHydroCellSignal.connect(hp.get(),
+                                          &FluidDynamics::GetHydroCell);
+            l->set_GetHydroCellSignalConnected(true);
+        }
+    }
+}
+
 void JetScapeSignalManager::ConnectSentInPartonsSignal(shared_ptr<JetEnergyLoss> j,shared_ptr<JetEnergyLoss> j2)
 {
   if (!j2->GetSentInPartonsConnected())
@@ -124,6 +139,7 @@ void JetScapeSignalManager::ConnectTransformPartonsSignal(shared_ptr<Hadronizati
       num_TransformPartons++;
     }
 }
+
 			   
 void JetScapeSignalManager::CleanUp()
 {

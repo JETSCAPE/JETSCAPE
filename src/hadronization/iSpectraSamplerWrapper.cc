@@ -19,13 +19,13 @@
 #include "JetScapeLogger.h"
 #include "iSpectraSamplerWrapper.h"
 
+#include <memory>
 #include <string>
 
 using namespace Jetscape;
 
 iSpectraSamplerWrapper::iSpectraSamplerWrapper() {
     SetId("iSS");
-    iSpectraSampler_ptr_ = nullptr;
 }
 
 iSpectraSamplerWrapper::~iSpectraSamplerWrapper() {
@@ -44,6 +44,9 @@ void iSpectraSamplerWrapper::InitTask() {
                 iSS_xml_->FirstChildElement("iSS_working_path")->GetText());
     int hydro_mode;
     iSS_xml_->FirstChildElement("hydro_mode")->QueryIntText(&hydro_mode);
+    if (!boost_invariance) {
+        hydro_mode = 2;
+    }
 
     int number_of_repeated_sampling;
     iSS_xml_->FirstChildElement("number_of_repeated_sampling")->QueryIntText(
@@ -53,7 +56,7 @@ void iSpectraSamplerWrapper::InitTask() {
     iSS_xml_->FirstChildElement("Perform_resonance_decays")->QueryIntText(
                                             &flag_perform_decays);
 
-    iSpectraSampler_ptr_ = new iSS(working_path);
+    iSpectraSampler_ptr_ = std::unique_ptr<iSS> (new iSS(working_path));
     iSpectraSampler_ptr_->paraRdr_ptr->readFromFile(input_file);
 
     // overwrite some parameters
@@ -111,9 +114,11 @@ void iSpectraSamplerWrapper::Exec() {
 
 void iSpectraSamplerWrapper::Clear() {
     VERBOSE(2) << "Finish the particle sampling";
-    if (iSpectraSampler_ptr_ != nullptr) {
-        delete iSpectraSampler_ptr_;
+    iSpectraSampler_ptr_->clear();
+    for (unsigned i = 0; i < Hadron_list_.size(); i++) {
+        Hadron_list_.at(i).clear();
     }
+    Hadron_list_.clear();
 }
 
 void iSpectraSamplerWrapper::PassHadronListToJetscape() {
@@ -122,12 +127,15 @@ void iSpectraSamplerWrapper::PassHadronListToJetscape() {
     VERBOSE(4) << "number of events to pass : " << nev;
     for (unsigned int iev = 0; iev < nev; iev++) {
         std::vector<shared_ptr<Hadron>> hadrons;
-        unsigned int nparticles = (iSpectraSampler_ptr_->get_number_of_particles(iev));
-        VERBOSE(4) << "event " << iev << ": number of particles = "<< nparticles;
+        unsigned int nparticles = (
+                        iSpectraSampler_ptr_->get_number_of_particles(iev));
+        VERBOSE(4) << "event " << iev
+                   << ": number of particles = "<< nparticles;
         for (unsigned int ipart = 0; ipart < nparticles; ipart++) {
-            iSS_Hadron current_hadron = (iSpectraSampler_ptr_->get_hadron(iev, ipart));
+            iSS_Hadron current_hadron = (
+                                iSpectraSampler_ptr_->get_hadron(iev, ipart));
             int hadron_label = 0;
-            int hadron_status = -1;
+            int hadron_status = 11;
             int hadron_id = current_hadron.pid;
             //int hadron_id = 1;   // just for testing need to be changed to the line above
             double hadron_mass = current_hadron.mass;
@@ -137,7 +145,9 @@ void iSpectraSamplerWrapper::PassHadronListToJetscape() {
                                 current_hadron.z, current_hadron.t);
 
             // create a JETSCAPE Hadron
-            hadrons.push_back(make_shared<Hadron>(hadron_label,hadron_id,hadron_status,hadron_p,hadron_x, hadron_mass));
+            hadrons.push_back(make_shared<Hadron>(
+                        hadron_label, hadron_id, hadron_status,
+                        hadron_p, hadron_x, hadron_mass));
             //Hadron* jetscape_hadron = new Hadron(hadron_label, hadron_id, hadron_status, hadron_p, hadron_x, hadron_mass);
             //(*Hadron_list_)[iev]->push_back(*jetscape_hadron);
         }
@@ -145,30 +155,29 @@ void iSpectraSamplerWrapper::PassHadronListToJetscape() {
     }
     VERBOSE(4) << "JETSCAPE received " << Hadron_list_.size() << " events.";
     for (unsigned int iev = 0; iev < Hadron_list_.size(); iev++) {
-        VERBOSE(4) << "In event " << iev << " JETSCAPE received " << Hadron_list_.at(iev).size() << " particles.";
+        VERBOSE(4) << "In event " << iev << " JETSCAPE received "
+                   << Hadron_list_.at(iev).size() << " particles.";
     }
 
 }
 
-void iSpectraSamplerWrapper::WriteTask(weak_ptr<JetScapeWriter> w)
-{
-  VERBOSE(4)<<"In iSpectraSamplerWrapper::WriteTask";
-  auto f = w.lock();
-  if ( !f ) return;
+void iSpectraSamplerWrapper::WriteTask(weak_ptr<JetScapeWriter> w) {
+    VERBOSE(4)<<"In iSpectraSamplerWrapper::WriteTask";
+    auto f = w.lock();
+    if ( !f ) return;
 
-  f->WriteComment("JetScape module: "+GetId());
-  if(Hadron_list_.size()>0) {
-    f->WriteComment("Final State Bulk Hadrons");
-    for(unsigned int j=0; j<Hadron_list_.size(); j++){
-      vector<shared_ptr<Hadron>> hadVec = Hadron_list_.at(j);
-      for(unsigned int i=0; i<hadVec.size(); i++) {
-	f->WriteWhiteSpace("["+to_string(i)+"] H");
-	f->Write(hadVec.at(i));
-      }
+    f->WriteComment("JetScape module: " + GetId());
+    if (Hadron_list_.size() > 0) {
+        f->WriteComment("Final State Bulk Hadrons");
+        for(unsigned int j = 0; j < Hadron_list_.size(); j++){
+            vector<shared_ptr<Hadron>> hadVec = Hadron_list_.at(j);
+            for(unsigned int i = 0; i < hadVec.size(); i++) {
+	            f->WriteWhiteSpace("["+to_string(i)+"] H");
+	            f->Write(hadVec.at(i));
+            }
+        }
+    } else {
+        f->WriteComment("There are no bulk Hadrons");
     }
-  } else {
-    f->WriteComment("There are no bulk Hadrons");
-  }
-  
 }
 

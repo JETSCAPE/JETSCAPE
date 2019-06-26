@@ -20,8 +20,9 @@
 
 #include "tinyxml2.h"
 #include<iostream>
-#include "MartiniMutex.h"
+
 #include "FluidDynamics.h"
+#include "MartiniMutex.h"
 #define hbarc 0.197327053
 
 #define MAGENTA "\033[35m"
@@ -149,6 +150,12 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
   
   for (int i=0;i<pIn.size();i++) {
 
+    if (pIn[i].pid()==photonid)
+    {
+      pOut.push_back(pIn[i]);
+      return;
+    }
+
     // Particle infomration
     Id = pIn[i].pid();
 
@@ -172,6 +179,10 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
     // Extract fluid properties
     std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
     GetHydroCellSignal(Time, xx, yy, zz, check_fluid_info_ptr);
+    if(!GetJetSignalConnected()){
+       JSWARN << "Couldn't find a hydro module attached!";
+       throw std::runtime_error ("Please attach a hydro module to continue running.");
+    }
     VERBOSE(8)<< MAGENTA<<"Temperature from Brick (Signal) = "
 	      <<check_fluid_info_ptr->temperature;
 
@@ -249,9 +260,12 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
     // Do nothing for this parton at this timestep
     if (process == 0) 
       {
-	pOut.push_back(Parton(0, Id, 0, pVec, xVec));
-	pOut[pOut.size()-1].set_form_time(0.);
-	pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
+        if(Id==22)
+          pOut.push_back(Photon(0, Id, 0, pVec, xVec));
+        else
+          pOut.push_back(Parton(0, Id, 0, pVec, xVec));
+        pOut[pOut.size()-1].set_form_time(0.);
+        pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 
 	return;
       }
@@ -285,7 +299,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 	      {
 		k = kRest*boostBack;
 		kVec.Set( (px/pAbs)*k, (py/pAbs)*k, (pz/pAbs)*k, k );
-		pOut.push_back(Parton(0, Id, 0, kVec, xVec));
+		pOut.push_back(Parton(0, 21, 0, kVec, xVec));
 		pOut[pOut.size()-1].set_form_time(0.);
 		pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 	      }
@@ -297,7 +311,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 	  {
 	    if (pRest/T < AMYpCut) return;
 
-	    // sample radiated parton's momentum
+	    // sample radiated photon's momentum
 	    kRest = getNewMomentumRad(pRest, T, process);
 	    if(kRest > pRest) return;
 
@@ -316,14 +330,13 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 	      }
 
 	    // photon doesn't have energy threshold; No absorption into medium
-	    // However, we only keep positive energy photons
 	    if (kRest > 0.)
 	      {
-		k = kRest*boostBack;
-		kVec.Set( (px/pAbs)*k, (py/pAbs)*k, (pz/pAbs)*k, k );
-		pOut.push_back(Parton(0, Id, 0, kVec, xVec));
-		pOut[pOut.size()-1].set_form_time(0.);
-		pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
+	        k = kRest*boostBack;
+	        kVec.Set( (px/pAbs)*k, (py/pAbs)*k, (pz/pAbs)*k, k );
+	        pOut.push_back(Photon(0, 22, 0, kVec, xVec));
+	        pOut[pOut.size()-1].set_form_time(0.);
+	        pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 	      }
 
 	    return;
@@ -390,7 +403,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 	// quark converting to photon
 	else if (process == 10)
 	  {
-	    pOut.push_back(Parton(0, 22, 0, pVec, xVec));
+	    pOut.push_back(Photon(0, 22, 0, pVec, xVec));
 	    pOut[pOut.size()-1].set_form_time(0.);
 	    pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 
@@ -458,7 +471,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 		// *momentum of quark is usually larger than that of anti-quark
 		pNew = pNewRest*boostBack;
 		pVecNew.Set( (px/pAbs)*pNew, (py/pAbs)*pNew, (pz/pAbs)*pNew, pNew );
-		pOut.push_back(Parton(0, Id, 0, pVecNew, xVec));
+		pOut.push_back(Parton(0, newId, 0, pVecNew, xVec));
 		pOut[pOut.size()-1].set_form_time(0.);
 		pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 	      }
@@ -467,7 +480,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 	      {
 		k = kRest*boostBack;
 		kVec.Set( (px/pAbs)*k, (py/pAbs)*k, (pz/pAbs)*k, k );
-		pOut.push_back(Parton(0, Id, 0, kVec, xVec));
+		pOut.push_back(Parton(0, -newId, 0, kVec, xVec));
 		pOut[pOut.size()-1].set_form_time(0.);
 		pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 	      }
@@ -533,6 +546,9 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
 	    else if (r < 2./3.) newId = 2;
 	    else newId = 3;
 
+	    double antiquark = ZeroOneDistribution(*GetMt19937Generator());
+            if(antiquark < 0.5) newId *= -1;
+
 	    pOut.push_back(Parton(0, newId, 0, pVec, xVec));
 	    pOut[pOut.size()-1].set_form_time(0.);
 	    pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
@@ -574,12 +590,11 @@ int Martini::DetermineProcess(double pRest, double T, double deltaTRest, int Id)
 
       double totalQuarkProb = 0.;
 
-      /* block the photon process at this moment */
-      //if (pRest/T > AMYpCut) totalQuarkProb += (rateRad.qqg + rateRad.qqgamma)*dT;
-      //totalQuarkProb += (rateElas.qq + rateElas.qg + rateConv.qg + rateConv.qgamma)*dT;
+      if (pRest/T > AMYpCut) totalQuarkProb += (rateRad.qqg + rateRad.qqgamma)*dT;
+      totalQuarkProb += (rateElas.qq + rateElas.qg + rateConv.qg + rateConv.qgamma)*dT;
 
-      if (pRest/T > AMYpCut) totalQuarkProb += rateRad.qqg*dT;
-      totalQuarkProb += (rateElas.qq + rateElas.qg + rateConv.qg)*dT;
+      //if (pRest/T > AMYpCut) totalQuarkProb += rateRad.qqg*dT;
+      //totalQuarkProb += (rateElas.qq + rateElas.qg + rateConv.qg)*dT;
 
       // warn if total probability exceeds 1
       if (totalQuarkProb > 1.){
@@ -610,10 +625,10 @@ int Martini::DetermineProcess(double pRest, double T, double deltaTRest, int Id)
 	      if (accumProb <= randProb && randProb < (accumProb + Prob))
 		return 1;
 
-	      //accumProb += Prob;
-	      //Prob = rateRad.qqgamma*dT/totalQuarkProb;
-	      //if (accumProb <= randProb && randProb < (accumProb + Prob))
-	      //  return 2;
+	      accumProb += Prob;
+	      Prob = rateRad.qqgamma*dT/totalQuarkProb;
+	      if (accumProb <= randProb && randProb < (accumProb + Prob))
+	        return 2;
 	    }
 
 	  accumProb += Prob;
@@ -631,10 +646,10 @@ int Martini::DetermineProcess(double pRest, double T, double deltaTRest, int Id)
 	  if (accumProb <= randProb && randProb < (accumProb + Prob))
 	    return 9;
 
-	  //accumProb += Prob;
-	  //Prob = rateConv.qgamma*dT/totalQuarkProb;
-	  //if (accumProb <= randProb && randProb < (accumProb + Prob))
-	  //  return 10;
+	  accumProb += Prob;
+	  Prob = rateConv.qgamma*dT/totalQuarkProb;
+	  if (accumProb <= randProb && randProb < (accumProb + Prob))
+	    return 10;
 	}
       else
 	{

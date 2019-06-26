@@ -35,6 +35,7 @@ class ColorlessHadronization : public HadronizationModule<ColorlessHadronization
 
  private:
   double p_fake;
+  bool take_recoil;
 
  protected:
   static Pythia8::Pythia pythia;  

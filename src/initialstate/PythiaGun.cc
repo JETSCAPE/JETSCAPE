@@ -18,6 +18,8 @@
 #include "PythiaGun.h"
 #include <sstream>
 
+#define MAGENTA "\033[35m"
+
 using namespace std;
 
 
@@ -50,12 +52,14 @@ void PythiaGun::InitTask()
   readString("Next:numberShowEvent = 0"); 
 
   // Standard settings
-  readString("HardQCD:all = on"); // will repeat this line in the xml for demonstration  
+  readString("HardQCD:all = off"); // will repeat this line in the xml for demonstration
+  readString("HardQCD:gg2ccbar = on"); // switch on heavy quark channel
+  readString("HardQCD:qqbar2ccbar = on");
   readString("HadronLevel:Decay = off");
   readString("HadronLevel:all = off");
   readString("PartonLevel:ISR = on");
   readString("PartonLevel:MPI = on");
-  readString("PartonLevel:FSR = off");
+  //readString("PartonLevel:FSR = on");
   readString("PromptPhoton:all=on");
   readString("WeakSingleBoson:all=off");
   readString("WeakDoubleBoson:all=off");
@@ -78,13 +82,26 @@ void PythiaGun::InitTask()
   s = xmle->GetText();
   SetId(s);
   // cout << s << endl;
-  
+
+  // SC: read flag for FSR
+  int flagInt=0;
+  xmle = PythiaXmlDescription->FirstChildElement( "FSR_on" ); if ( !xmle ) throw std::runtime_error("Cannot parse xml");
+  xmle->QueryIntText(&flagInt);
+  FSR_on = flagInt;
+  if(FSR_on) readString("PartonLevel:FSR = on");
+  else readString("PartonLevel:FSR = off");
+
   xmle = PythiaXmlDescription->FirstChildElement( "pTHatMin" ); if ( !xmle ) throw std::runtime_error("Cannot parse xml");
   xmle->QueryDoubleText(&pTHatMin);
   xmle = PythiaXmlDescription->FirstChildElement( "pTHatMax" ); if ( !xmle ) throw std::runtime_error("Cannot parse xml");
   xmle->QueryDoubleText(&pTHatMax);
 
-  VERBOSE(7) <<"Pythia Gun with "<< pTHatMin << " < pTHat < " << pTHatMax ;
+  xmle = PythiaXmlDescription->FirstChildElement("useHybridHad"); if ( !xmle ) throw std::runtime_error("Cannot parse xml");
+  xmle->QueryIntText(&flag_useHybridHad);
+
+  JSINFO << MAGENTA << "Pythia Gun with FSR_on: " << FSR_on;
+  JSINFO << MAGENTA << "Pythia Gun with "<< pTHatMin << " < pTHat < " << pTHatMax;
+  JSINFO << MAGENTA << "Use hybrid hadronization? " << flag_useHybridHad;
   
   numbf.str("PhaseSpace:pTHatMin = "); numbf << pTHatMin;
   readString ( numbf.str() );
@@ -174,18 +191,25 @@ void PythiaGun::Exec()
       if ( parid<3 )continue;      // 0, 1, 2: total event and beams      
       Pythia8::Particle& particle = event[parid];
 
-      // only accept particles after MPI
-      if ( particle.status()!=62 ) continue;
-      // only accept gluons and quarks
-      // Also accept Gammas to put into the hadron's list
-      if ( fabs( particle.id() ) > 3 && (particle.id() !=21 && particle.id() !=22) ) continue;
-      
-      // reject rare cases of very soft particles that don't have enough e to get
-      // reasonable virtuality
-      if ( particle.pT() < 1.0/sqrt(vir_factor) ) continue;
- 	
-	//if(particle.id()==22) cout<<"########this is a photon!######" <<endl;
-      // accept
+      if(!FSR_on) {
+          // only accept particles after MPI
+          if ( particle.status()!=62 ) continue;
+          // only accept gluons and quarks
+          // Also accept Gammas to put into the hadron's list
+          if ( fabs( particle.id() ) > 5 && (particle.id() !=21 && particle.id() !=22) ) continue;
+          
+          // reject rare cases of very soft particles that don't have enough e to get
+          // reasonable virtuality
+          if ( particle.pT() < 1.0/sqrt(vir_factor) ) continue;
+            
+            //if(particle.id()==22) cout<<"########this is a photon!######" <<endl;
+          // accept
+      } else { // FSR_on true: use Pythia vacuum shower instead of MATTER
+          if ( !particle.isFinal()) continue;
+    	  // only accept gluons and quarks
+          // Also accept Gammas to put into the hadron's list
+          if ( fabs( particle.id() ) > 5 && (particle.id() !=21 && particle.id() !=22) ) continue;
+      }    
       p62.push_back( particle );
 
     }
@@ -261,15 +285,23 @@ void PythiaGun::Exec()
     VERBOSE(7) <<" at x=" << xLoc[1]
 	       <<", y=" << xLoc[2]
 	       <<", z=" << xLoc[3];
-    if(particle.id() !=22)
-    {
-        AddParton(make_shared<Parton>(0, particle.id(),0,particle.pT(),particle.y(),particle.phi(),particle.e(),xLoc) );
-    }
-    else
-    {
-	      AddHadron(make_shared<Hadron>(hCounter,particle.id(),particle.status(),particle.pT(),particle.eta(),particle.phi(),particle.e(),xLoc));
-	      hCounter++;
-    }
+
+   // if(particle.id() !=22)
+   // {
+        if(flag_useHybridHad != 1) {
+            AddParton(make_shared<Parton>(0, particle.id(),0,particle.pT(),particle.y(),particle.phi(),particle.e(),xLoc) );
+        } else {
+    	    auto ptn = make_shared<Parton>(0,particle.id(),0,particle.pT(),particle.y(),particle.phi(),particle.e(),xLoc);
+            ptn->set_color(particle.col()); ptn->set_anti_color(particle.acol()); ptn->set_max_color(1000*(np+1));
+            AddParton(ptn);
+        }
+    //}
+    //else
+    //{
+    //          AddHadron(make_shared<Hadron>(hCounter,particle.id(),particle.status(),particle.pT(),particle.eta(),particle.phi(),particle.e(),xLoc));
+    //          hCounter++;
+    //}
+
   }
   
 

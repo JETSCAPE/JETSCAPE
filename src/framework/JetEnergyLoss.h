@@ -18,11 +18,13 @@
 
 #include "JetScapeModuleBase.h"
 #include "FluidDynamics.h"
+#include "FluidCellInfo.h"
 #include "JetClass.h"
 #include "JetScapeWriter.h"
 #include "PartonShower.h"
 #include "PartonPrinter.h"
 #include "MakeUniqueHelper.h"
+#include "LiquefierBase.h"
 #include <vector>
 #include <random>
 
@@ -179,11 +181,21 @@ class JetEnergyLoss : public JetScapeModuleBase, public std::enable_shared_from_
       @return A boolean flag. Its status indicates whether JetEnergyLoss had sent a signal to the function DoEnergyLoss().
    */
   const bool GetSentInPartonsConnected() {return SentInPartonsConnected;}
+    
+    void add_a_liquefier(std::shared_ptr<LiquefierBase> new_liquefier) {
+        liquefier_ptr = new_liquefier;
+    }
 
-  void GetFinalPartonsForEachShower(shared_ptr<PartonShower> shower);
-
-  // The Slot method to send the vector of Hadronization module
-  void SendFinalStatePartons(vector<vector<shared_ptr<Parton>>>& fPartons) {fPartons = final_Partons;};
+    std::weak_ptr<LiquefierBase> get_liquefier() {return(liquefier_ptr);}
+    
+    // The Slot method to send the vector of Hadronization module
+    void SendFinalStatePartons(vector<vector<shared_ptr<Parton>>>& fPartons) {
+        fPartons = final_Partons;
+    }
+    void GetFinalPartonsForEachShower(shared_ptr<PartonShower> shower);
+    
+ protected:
+    std::weak_ptr<LiquefierBase> liquefier_ptr;
 
  private:
 
@@ -209,7 +221,9 @@ class JetEnergyLoss : public JetScapeModuleBase, public std::enable_shared_from_
   bool edensitySignalConnected;
   
   // Vector of final state partons for each shower as a vector
-  vector<vector<shared_ptr<Parton>>> final_Partons;
+
+  vector<vector<shared_ptr<Parton>>> final_Partons; 
+
 
 };
 

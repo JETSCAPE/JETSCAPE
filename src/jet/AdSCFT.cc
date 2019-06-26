@@ -22,9 +22,9 @@
 #include "tinyxml2.h"
 #include <iostream>
 #include <fstream>
-#include "AdSCFTMutex.h"
-#include "FluidDynamics.h"
 
+#include "FluidDynamics.h"
+#include "AdSCFTMutex.h"
 #define MAGENTA "\033[35m"
 
 AdSCFT::AdSCFT() 
@@ -35,15 +35,15 @@ AdSCFT::AdSCFT()
   Q0=-99; 
  
   VERBOSE(8);
+
+  // create and set Martini Mutex
+  auto adscft_mutex = make_shared<AdSCFTMutex>();
+  SetMutex(adscft_mutex);
 }
 
 AdSCFT::~AdSCFT()
 {
   VERBOSE(8);
-
-  // create and set AdSCFT Mutex
-  auto adscft_mutex = make_shared<AdSCFTMutex>();
-  SetMutex(adscft_mutex);
 }
 
 void AdSCFT::Init()
@@ -101,6 +101,13 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 
     for (int i=0;i<pIn.size();i++)
     {
+      //Skip photons
+      if (pIn[i].pid()==photonid)
+      {
+        pOut.push_back(pIn[i]);
+        return;
+      }
+
       JSDEBUG << " in AdS/CFT";
       JSDEBUG << " Parton Q2= " << pIn[i].t();
       JSDEBUG << " Parton Id= " << pIn[i].pid() << " and mass= " << pIn[i].restmass();
@@ -133,6 +140,11 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       if (tau>=tStart && !in_vac)  //Should use tau, not t, in absence of preequilibrium eloss
       {
         GetHydroCellSignal(x[3], x[0], x[1], x[2], check_fluid_info_ptr);
+	if(!GetJetSignalConnected()){
+           JSWARN << "Couldn't find a hydro module attached!";
+           throw std::runtime_error ("Please attach a hydro module or set in_vac to 1 in the XML file");
+         }
+
         VERBOSE(8)<< MAGENTA<<"Temperature from Brick (Signal) = "<<check_fluid_info_ptr->temperature;
 
         temp = check_fluid_info_ptr->temperature;

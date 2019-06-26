@@ -46,6 +46,7 @@
 #include "Hadronization.h"
 #include "ColoredHadronization.h"
 #include "ColorlessHadronization.h"
+#include "HybridHadronization.h"
 
 #ifdef USE_HDF5
 #include "InitialFromFile.h"
@@ -78,11 +79,11 @@ int main(int argc, char** argv)
   JetScapeLogger::Instance()->SetRemark(false);
   //SetVerboseLevel (9 a lot of additional debug output ...)
   //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevle(9) or 10
-  JetScapeLogger::Instance()->SetVerboseLevel(8);
+  JetScapeLogger::Instance()->SetVerboseLevel(0);
    
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml", 20);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml", 5);
   // auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",5);
   jetscape->SetId("primary");
   jetscape->SetReuseHydro (true);
@@ -110,6 +111,7 @@ int main(int argc, char** argv)
   auto hadro = make_shared<Hadronization> ();
   auto hadroModule = make_shared<ColoredHadronization> ();
   auto colorless = make_shared<ColorlessHadronization> ();
+  auto hybridHadr = make_shared<HybridHadronization> ();
 
   // only pure Ascii writer implemented and working with graph output ...
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
@@ -139,16 +141,17 @@ int main(int argc, char** argv)
   // Switching Q2 (or whatever variable used
   // hardcoded at 5 to be changed to xml)
   jloss->Add(matter);
-  //jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
+  jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
   //jloss->Add(martini);
-  jloss->Add(adscft);
+  //jloss->Add(adscft);
   
   jlossmanager->Add(jloss);
   
   jetscape->Add(jlossmanager);
 
-  hadro->Add(hadroModule);
+  //hadro->Add(hadroModule);
   //hadro->Add(colorless);
+  hadro->Add(hybridHadr);
   hadroMgr->Add(hadro);
   jetscape->Add(hadroMgr);
 

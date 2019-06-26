@@ -38,7 +38,7 @@ virtual void Exec() final;
 virtual void Clear();
     std::ofstream dist_output; ///< the output stream where events are saved to file
 
-void GetFinalPartons(shared_ptr<PartonShower> pShower);
+void GetFinalPartons(shared_ptr<PartonShower> pShower/*, vector<shared_ptr<Parton>>& fPartons*/);
 
 void GetFinalPartons2(shared_ptr<PartonShower> pShower);
 

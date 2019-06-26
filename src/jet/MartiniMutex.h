@@ -5,11 +5,13 @@
 #include <string>
 #include<iostream>
 #include <memory>
+
 #include "JetScapeTask.h"
 #include "JetScapeModuleMutex.h"
 
 using namespace Jetscape;
 using std::shared_ptr;
+
 
 class MartiniMutex : public JetScapeModuleMutex
 {
@@ -17,6 +19,10 @@ class MartiniMutex : public JetScapeModuleMutex
     MartiniMutex();
     ~MartiniMutex();
     bool CheckMutex(vector<shared_ptr<JetScapeTask>> modules);  
+
+
+
 };
+
 
 #endif

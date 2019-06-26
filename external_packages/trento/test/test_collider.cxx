@@ -29,7 +29,8 @@ TEST_CASE( "collider" ) {
     {"grid-step", 0.3},
     {"fluctuation", 1.},
     {"cross-section", 6.4},
-    {"nucleon-width", 0.5}
+    {"nucleon-width", 0.5},
+    {"nucleon-min-dist", 0.},
   });
 
   std::vector<int> nevent, npart;
@@ -61,7 +62,7 @@ TEST_CASE( "collider" ) {
   CHECK( nevent == sequence );
 
   // verify impact parameters are within min-bias range
-  auto impact_max = 2*Nucleus::create("Pb", .5)->radius() + 6*.5;
+  auto impact_max = 2*Nucleus::create("Pb")->radius() + 6*.5;
   CHECK( impact >= std::vector<double>(N, 0.) );
   CHECK( impact <= std::vector<double>(N, impact_max) );
 
@@ -90,7 +91,8 @@ TEST_CASE( "fixed impact parameter" ) {
     {"grid-step", 0.3},
     {"fluctuation", 1.},
     {"cross-section", 6.4},
-    {"nucleon-width", 0.5}
+    {"nucleon-width", 0.5},
+    {"nucleon-min-dist", 0.2},
   });
 
   std::vector<double> impact;
@@ -117,13 +119,15 @@ TEST_CASE( "fixed impact parameter" ) {
 TEST_CASE( "random seed" ) {
   std::vector<std::string> output(5);
 
+  const auto seed = static_cast<int64_t>(std::random_device{}());
+
   // run several collider batches with the same seed
   std::generate(output.begin(), output.end(),
-    []() {
+    [&seed]() {
       Collider collider{make_var_map({
         {"number-events", 3},
         {"quiet", false},
-        {"random-seed", static_cast<int64_t>(2308470)},
+        {"random-seed", seed},
         {"projectile", std::vector<std::string>{"p", "U"}},
         {"b-min", 0.},
         {"b-max", -1.},
@@ -133,7 +137,8 @@ TEST_CASE( "random seed" ) {
         {"grid-step", 0.3},
         {"fluctuation", 1.},
         {"cross-section", 6.4},
-        {"nucleon-width", 0.5}
+        {"nucleon-width", 0.5},
+        {"nucleon-min-dist", 0.4},
       })};
 
       capture_stdout capture;
