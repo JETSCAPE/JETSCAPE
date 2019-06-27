@@ -5,11 +5,22 @@ import math
 js_seed = 0
 
 #TRENTo parameters
-projectile = 'Pb'
-target = 'Pb'
-sqrts = 2760
-cross_section = 6.4
-normalization = 13.94
+
+#projectile = 'Pb'
+#target = 'Pb'
+
+projectile = 'Au'
+target = 'Au'
+
+#sqrts = 2760
+sqrts = 200
+
+#cross_section = 6.4 PbPb 2.76 TeV
+cross_section = 4.2 #AuAu 200 GeV
+
+#normalization = 13.94 # PbPb 2.76 TeV
+normalization = 6.1 # AuAu 200 GeV
+
 cent_low = 0
 cent_high = 100
 reduced_thickness = 0.007
@@ -18,7 +29,16 @@ nucleon_width = 0.956
 nucleon_min_dist = 1.27
 
 #freestream-milne Parameters
-tau_s = 1.16 #time of landau-matching to hydro [fm/c]
+#formula for Energy-dependent freestreaming time: tau_fs = tau_R * (e_T / e_R) ^ alpha
+e_dep_fs_time = 1 # switch for energy dependent freestreaming time 
+e_R = 4000.0 # GeV / fm
+tau_R = 1.16 # fm / c
+alpha = 0.0 
+
+#this will be a dead parameter if using energy-dependent freestreaming time
+#its value will need to be overridden by preequilibrium pointer 
+#tau_s = 1.16 #time of landau-matching to hydro [fm/c]
+tau_s = 0.5 #time of landau-matching to hydro [fm/c]
 
 #MUSIC Parameters
 #only T_c matters, e_c is dummy by default
@@ -37,8 +57,8 @@ bulk_viscosity_peak_in_GeV = 0.18
 #delta-f mode will be overwritten by the run-events script
 delta_f_mode = 4 # 1: 14 moment, 2: C.E., 3: McNelis feq_mod, 4: Bernhard feq_mod
 rap_max = 2.0    # dN/dY sampled is flat for y in (-rap_max, rap_max) and zero outside
-min_num_hadrons = 50000
-max_num_samples = 500
+min_num_hadrons = 100000
+max_num_samples = 1000
 set_T_c = 0 #if on, iS3D will use Tc read in iS3D_parameters.dat as temperature
 
 #SMASH Parameters
@@ -91,7 +111,11 @@ fs_file.write("DTAU " + str(tau_s) + "\n")
 fs_file.write("TAU0 0.0\n")
 fs_file.write("EOS_TYPE 1\n")
 fs_file.write("E_FREEZE " + str(e_c) + "\n")
-fs_file.write("VISCOUS_MATCHING 1 ")
+fs_file.write("VISCOUS_MATCHING 1 \n")
+fs_file.write("E_DEP_FS " + str(e_dep_fs_time) + "\n")
+fs_file.write("E_R " + str(e_R) + "\n")
+fs_file.write("TAU_R " + str(tau_R) + "\n")
+fs_file.write("ALPHA " + str(alpha))
 
 fs_file.close()
 
