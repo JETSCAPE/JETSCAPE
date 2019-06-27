@@ -6,20 +6,20 @@ js_seed = 0
 
 #TRENTo parameters
 
-#projectile = 'Pb'
-#target = 'Pb'
+projectile = 'Pb'
+target = 'Pb'
 
-projectile = 'Au'
-target = 'Au'
+#projectile = 'Au'
+#target = 'Au'
 
-#sqrts = 2760
-sqrts = 200
+sqrts = 2760
+#sqrts = 200
 
-#cross_section = 6.4 PbPb 2.76 TeV
-cross_section = 4.2 #AuAu 200 GeV
+cross_section = 6.4 #PbPb 2.76 TeV
+#cross_section = 4.2 #AuAu 200 GeV
 
-#normalization = 13.94 # PbPb 2.76 TeV
-normalization = 6.1 # AuAu 200 GeV
+normalization = 13.94 # PbPb 2.76 TeV
+#normalization = 6.1 # AuAu 200 GeV
 
 cent_low = 0
 cent_high = 100
@@ -37,21 +37,29 @@ alpha = 0.0
 
 #this will be a dead parameter if using energy-dependent freestreaming time
 #its value will need to be overridden by preequilibrium pointer 
-#tau_s = 1.16 #time of landau-matching to hydro [fm/c]
-tau_s = 0.5 #time of landau-matching to hydro [fm/c]
+tau_s = 1.16 #time of landau-matching to hydro [fm/c]
+#tau_s = 0.5 #time of landau-matching to hydro [fm/c]
 
 #MUSIC Parameters
 #only T_c matters, e_c is dummy by default
 e_c = 1.7   #switching energy density on freezeout hypersurface [GeV/fm^3]
 T_c = 0.151 #switching temperature on hypersurface [GeV]
+
 #shear viscosity p'zation
-eta_over_s_min = 0.08
-eta_over_s_slope = 1.1
-eta_over_s_curv = -0.5
+eta_over_s_T_kink_in_GeV = 0.0
+eta_over_s_low_T_slope_in_GeV = 0.0
+eta_over_s_high_T_slope_in_GeV = 0.0
+eta_over_s_at_kink = 0.0
+
 #bulk viscosity p'zation
-bulk_viscosity_normalisation = 0.05
-bulk_viscosity_width_in_GeV = 0.02
-bulk_viscosity_peak_in_GeV = 0.18 
+zeta_over_s_max = 0.0
+zeta_over_s_width_in_GeV = 0.0
+zeta_over_s_T_peak_in_GeV = 0.0
+zeta_over_s_lambda_asymm = 0.0
+
+#relaxation times
+shear_relax_time_factor = 1.0
+bulk_relax_time_factor = 1.0
 
 #iS3D Parameters
 #delta-f mode will be overwritten by the run-events script
@@ -147,12 +155,22 @@ music_file.write("Include_Shear_Visc_Yes_1_No_0 1\n")# include shear viscous eff
 
 music_file.write("T_dependent_Shear_to_S_ratio  2\n")# flag to use temperature dep. \eta/s(T)
 music_file.write("T_dependent_Bulk_to_S_ratio  2\n")# flag to use temperature dep. \zeta/s(T)
-music_file.write("eta_over_s_min " + str(eta_over_s_min) + "\n")
-music_file.write("eta_over_s_slope " + str(eta_over_s_slope) + "\n")
-music_file.write("eta_over_s_curv " + str(eta_over_s_curv) + "\n")
-music_file.write("bulk_viscosity_normalisation " + str(bulk_viscosity_normalisation) + "\n")
-music_file.write("bulk_viscosity_width_in_GeV " + str(bulk_viscosity_width_in_GeV) + "\n")
-music_file.write("bulk_viscosity_peak_in_GeV " + str(bulk_viscosity_peak_in_GeV) + "\n")
+
+#shear viscosity
+music_file.write("eta_over_s_T_kink_in_GeV " + str(eta_over_s_T_kink_in_GeV) + "\n")
+music_file.write("eta_over_s_low_T_slope_in_GeV " + str(eta_over_s_low_T_slope_in_GeV) + "\n")
+music_file.write("eta_over_s_high_T_slope_in_GeV " + str(eta_over_s_high_T_slope_in_GeV) + "\n")
+music_file.write("eta_over_s_at_kink " + str(eta_over_s_at_kink) + "\n")
+
+#bulk viscosity
+music_file.write("zeta_over_s_max " + str(zeta_over_s_max) + "\n")
+music_file.write("zeta_over_s_width_in_GeV " + str(zeta_over_s_width_in_GeV) + "\n")
+music_file.write("zeta_over_s_T_peak_in_GeV " + str(zeta_over_s_T_peak_in_GeV) + "\n")
+music_file.write("zeta_over_s_lambda_asymm " + str(zeta_over_s_lambda_asymm) + "\n")
+
+#relaxation times
+music_file.write("shear_relax_time_factor " + str(shear_relax_time_factor) + "\n")
+music_file.write("bulk_relax_time_factor " + str(bulk_relax_time_factor) + "\n")
 
 music_file.write("Include_Bulk_Visc_Yes_1_No_0 1\n") # include bulk viscous effect
 music_file.write("Include_second_order_terms 1\n")   # include second order non-linear coupling terms
