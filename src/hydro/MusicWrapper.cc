@@ -63,6 +63,8 @@ void MpiMusic::EvolveHydro() {
     double dz = ini->GetZStep();
     double z_max  = ini->GetZMax();
     int nz = ini->GetZSize();
+    double tau0 = pre_eq_ptr->GetPreequilibriumEndTime();
+    JSINFO << "MUSIC starting evolution at proper time tau_0 = " << tau0;
     if (pre_eq_ptr == nullptr) {
         JSWARN << "Missing the pre-equilibrium module ...";
     } else {
