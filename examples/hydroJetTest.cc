@@ -83,10 +83,10 @@ int main(int argc, char** argv)
    
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml", 100);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml", 1000);
   jetscape->SetId("primary");
   jetscape->SetReuseHydro (true);
-  jetscape->SetNReuseHydro (20);
+  jetscape->SetNReuseHydro (1000);
 
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
@@ -148,9 +148,9 @@ int main(int argc, char** argv)
   
   jetscape->Add(jlossmanager);
 
-  //hadro->Add(hadroModule);
+  hadro->Add(hadroModule);
   //hadro->Add(colorless);
-  hadro->Add(hybridHadr);
+  //hadro->Add(hybridHadr);
   hadroMgr->Add(hadro);
   jetscape->Add(hadroMgr);
 
