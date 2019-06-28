@@ -4,9 +4,13 @@ The Jet Energy-loss Tomography with a Statistically and Computationally Advanced
 New with release 2.0
 
 • TRENTO initial condition from (2+1)D to (3+1)D.
-• Liquifier module to create causal jet source terms for jet energy deposition and medium evolution. 
+
+• Liquifier module to create causal jet source terms for jet energy deposition and medium evolution.
+
 • Handling photons generated in hard scattering and in energy-loss modules. 
+
 • Handling heavy-quarks in energy-loss modules.
+
 • Hybrid hadronization of partons. 
 
 
@@ -179,6 +183,22 @@ MUSIC implements parallelization using OpenMP. You can use multiple threads by s
 ```
 
 This enables the MUSIC code to use 4 threads for computation.
+
+
+## Using 2-stage hydro
+
+In ./TwoStageHydro, MUSIC is run first, a space-time profile for jet propagation is generated. 
+A user defined number of hard-scattering events is run on this profile. 
+For each hard-scattering event, a set of source terms based on the deposited energy is generated.
+MUSIC with the same initial condition is rerun with this set of source terms, to produce jets with hydrodynamic response.
+To compile ./TwoStageHydro, in the build directory,
+
+```bash
+    cmake -Dmusic=ON -DiSS=ON ..
+    make 
+```    
+
+
 
 ## SMASH hadronic afterburner
 
