@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <functional>
 #include <string>
+#include <sstream>
 #include "JetScapeLogger.h"
 
 #include "TrentoInitial.h"
@@ -246,28 +247,32 @@ void TrentoInitial::InitTask() {
 	double skew = std::atof(longi_opts->Attribute("skew-coeff"));
 	int skew_type = std::atof(longi_opts->Attribute("skew-type"));
 	double J = std::atof(longi_opts->Attribute("jacobian"));
-
-	std::string options1 = 
-		+ " --random-seed " + std::to_string(random_seed)
-		+ " --cross-section " + std::to_string(cross_section)
-		+ " --beam-energy " + std::to_string(sqrts)
-		+ " --reduced-thickness " + std::to_string(p)
-		+ " --fluctuation " + std::to_string(k)
-		+ " --nucleon-width " + std::to_string(w)
-		+ " --nucleon-min-dist " + std::to_string(d)
-		+ " --mean-coeff " + std::to_string(mean)
-		+ " --std-coeff " + std::to_string(var)
-		+ " --skew-coeff " + std::to_string(skew)
-		+ " --skew-type " + std::to_string(skew_type)
-		+ " --jacobian " + std::to_string(J)
-		+ " --quiet ";
-	std::string options2 = 
-		" --normalization " + std::to_string(normalization)
-		+ " --ncoll " // calcualte # of binary collision
-		+ " --xy-max " + std::to_string(xymax)
-		+ " --xy-step " + std::to_string(dxy)
-		+ " --eta-max " + std::to_string(etamax)
-		+ " --eta-step " + std::to_string(deta);
+        
+        std::ostringstream stream1;
+        stream1 << std::fixed  
+		<< " --random-seed " << random_seed
+		<< " --cross-section " << cross_section
+		<< " --beam-energy " << sqrts
+		<< " --reduced-thickness " << p
+		<< " --fluctuation " << k
+		<< " --nucleon-width " << w
+		<< " --nucleon-min-dist " << d
+		<< " --mean-coeff " << mean
+		<< " --std-coeff " << var 
+		<< " --skew-coeff " << skew
+		<< " --skew-type " << skew_type
+		<< " --jacobian " << J
+		<< " --quiet ";
+	std::string options1 = stream1.str();
+        std::ostringstream stream2;
+	stream2 << std::fixed	
+                << " --normalization " << normalization
+		<< " --ncoll " // calcualte # of binary collision
+		<< std::setprecision(20) << " --xy-max " << xymax
+		<< std::setprecision(20) << " --xy-step " << dxy
+		<< std::setprecision(20) << " --eta-max " << etamax
+		<< std::setprecision(20) << " --eta-step " << deta;
+        std::string options2 = stream2.str();
 	// Handle centrality table, not normzlized, default grid, 2D (fast) !!!
 	std::string cmd_basic = proj+" "+targ+" 10000 "+options1;
 	VarMap var_map_basic{}; 
