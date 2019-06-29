@@ -17,4 +17,6 @@ external_packages/freestream-milne/
 external_packages/smash/smash_code/
 sims_scripts/submit/slurm/*
 sims_scripts/submit/[0-9]*
-
+sims_scripts/submit/task*
+sims_scripts/submit/CAT*
+sims_scripts/submit/__*

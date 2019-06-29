@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+ <jetscape>
+  <debug> on </debug>
+  <remark> off </remark>
+  <vlevel> 0 </vlevel>
+  <Random>
+    <seed>0</seed>
+  </Random>
+  <IS>
+    <grid_max_x> 20.177140528688152 </grid_max_x>
+    <grid_max_y> 20.177140528688152 </grid_max_y>
+    <grid_max_z> 0 </grid_max_z>
+    <grid_step_x> 0.18426612354966349 </grid_step_x>
+    <grid_step_y> 0.18426612354966349 </grid_step_y>
+    <grid_step_z> 0.5 </grid_step_z>
+    <Trento>
+             <PhysicsInputs  projectile='Pb'
+                                             target='Pb'
+                                             sqrts='2760'
+                                             cross-section='6.4'
+                                             normalization='14.846868940982969'>
+             </PhysicsInputs>
+             <CutInputs      centrality-low='0'
+                                     centrality-high='100'>
+             </CutInputs>
+             <TransInputs    reduced-thickness='0.007'
+                                             fluctuation='0.6843367313705389'
+                                             nucleon-width='1.2284408236644233'
+                                             nucleon-min-dist='1.27'>
+             </TransInputs>
+             <LongiInputs    mean-coeff='1.0'
+                                             std-coeff='3.0'
+                                             skew-coeff='0.0'
+                                             skew-type='1'
+                                             jacobian='0.8'>
+             </LongiInputs>
+    </Trento>
+    <initial_profile_path>../examples/test_hydro_files</initial_profile_path>
+  </IS>
+  <Preequilibrium>
+    <tau0>0.0</tau0>
+    <taus>0.5</taus>
+    <FreestreamMilne>
+      <name>FreestreamMilne</name>
+      <freestream_input_file>freestream_input</freestream_input_file>
+    </FreestreamMilne>
+  </Preequilibrium>
+  <Hydro>
+    <MUSIC>
+      <name>MUSIC</name>
+      <MUSIC_input_file>music_input</MUSIC_input_file>
+      <Perform_CooperFrye_Feezeout>0</Perform_CooperFrye_Feezeout>
+    </MUSIC>
+  </Hydro>
+  <Afterburner>
+    <SMASH>
+      <name>SMASH</name>
+      <SMASH_config_file>smash_input/config.yaml</SMASH_config_file>
+      <SMASH_particles_file>smash_input/box/particles.txt</SMASH_particles_file>
+      <SMASH_decaymodes_file>smash_input/box/decaymodes.txt</SMASH_decaymodes_file>
+      <end_time>1000.0</end_time>
+      <only_decays>0</only_decays>
+    </SMASH>
+  </Afterburner>
+</jetscape>
