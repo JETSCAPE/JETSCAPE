@@ -68,7 +68,7 @@ directly or contained within another program (e.g. Delphes, SpartyJet,
 Rivet, RHIC or LHC collaboration software frameworks, etc.), you should
 include a citation to
 
-  arXiv:aaaa.bbbb (JETSCAPE User Manual)
+  J.H. Putschke et al., arXiv:1903.07706 [nucl-th] (JETSCAPE User Manual)
 
 A number of other citations may also be relevant. Modules generally
 indicate the appropriate reference in a banner. References for other
