@@ -168,7 +168,7 @@ when generating the cmake configuration file,
     cmake -Dmusic=ON ..
     make
 ```
-If you are using GNU C compiler, please make sure the version of the compiler is 7 or above. 
+If you are using GNU C compiler, please make sure the version of the compiler is 6 or above. 
 
 To run JETSCAPE with MUSIC,
 
@@ -187,15 +187,14 @@ This enables the MUSIC code to use 4 threads for computation.
 
 ## Using 2-stage hydro
 
-In ./TwoStageHydro, MUSIC is run first, a space-time profile for jet propagation is generated. 
-A user defined number of hard-scattering events is run on this profile. 
-For each hard-scattering event, a set of source terms based on the deposited energy is generated.
+The executable TwoStageHydro implements hydrodynamic response to jet energy-momentum deposition. 
+In ./TwoStageHydro, MUSIC is run first to provide a space-time medium profile for jet shower propagation. In default, 5 hard-scattering events will be run on this profile. A new hydrodynamic background will be genereated if more than 5 hard-scattering events are computed. For each hard-scattering event, a set of source terms based on the deposited energy is generated.
 MUSIC with the same initial condition is rerun with this set of source terms, to produce jets with hydrodynamic response.
 To compile ./TwoStageHydro, in the build directory,
 
 ```bash
     cmake -Dmusic=ON -DiSS=ON ..
-    make 
+    make
 ```    
 
 
