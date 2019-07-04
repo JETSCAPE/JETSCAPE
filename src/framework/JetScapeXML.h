@@ -44,7 +44,6 @@ class JetScapeXML
   
   void OpenXMLFile();
   void OpenXMLFile(string m_name);
-  void CloseXMLFile();
   
  private:
 
