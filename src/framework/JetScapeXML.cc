@@ -66,4 +66,9 @@ void JetScapeXML::OpenXMLFile(string m_name)
   OpenXMLFile();
 }
 
+void JetScapeXML::CloseXMLFile()
+{
+xml_doc.SaveFile((char*) GetXMLFileName().c_str());
+}
+
 } // end namespace Jetscape
