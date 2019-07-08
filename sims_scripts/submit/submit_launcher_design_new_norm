@@ -1,14 +1,14 @@
 #!/bin/bash
 #SBATCH -J mini_bayes
 #SBATCH -p skx-normal        # Queue (partition) name
-#SBATCH -N 20                # the number of nodes
+#SBATCH -N 3                 # the number of nodes
 #SBATCH --ntasks-per-node 48 #set this equal to number of cores on node
-#SBATCH -t 10:00:00          # Run time (hh:mm:ss)   walltime for each node separately
+#SBATCH -t 03:00:00          # Run time (hh:mm:ss)   walltime for each node separately
 #SBATCH --mail-user=wk42@phy.duke.edu
 #SBATCH --mail-type=all      # Send email at begin and end of job
 #SBATCH -A TG-PHY180024      # Allocation name
-#SBATCH -o $SCRATCH/slurm/out-%j
-#SBATCH -e $SCRATCH/slurm/err-%j
+#SBATCH -o slurm/out-%j
+#SBATCH -e slurm/err-%j
 
 module load intel/18.0.2 cmake/3.7.1 gsl boost hdf5 eigen impi python3 launcher
 
@@ -22,7 +22,7 @@ job=$SLURM_JOB_ID
 #set the number of design points stored in input-config/design_pts
 num_design_pts=100
 #set the number of events to run per design point
-num_events_per_design=400
+num_events_per_design=20
 
 #files are indexed starting at 0
 let max_design=$num_design_pts-1
@@ -43,5 +43,7 @@ export LAUNCHER_PLUGIN_DIR=$LAUNCHER_DIR/plugins
 export LAUNCHER_RMI=SLURM
 export LAUNCHER_JOB_FILE=$taskfilename
 
+
+echo $LAUNCHER_DIR
 $LAUNCHER_DIR/paramrun
 

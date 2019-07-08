@@ -20,3 +20,4 @@ sims_scripts/submit/[0-9]*
 sims_scripts/submit/task*
 sims_scripts/submit/CAT*
 sims_scripts/submit/__*
+sims_scripts/*local*
