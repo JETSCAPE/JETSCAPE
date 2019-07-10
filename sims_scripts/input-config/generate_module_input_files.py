@@ -58,8 +58,8 @@ zeta_over_s_T_peak_in_GeV = 0.0
 zeta_over_s_lambda_asymm = 0.0
 
 #relaxation times
-shear_relax_time_factor = 1.0
-bulk_relax_time_factor = 1.0
+shear_relax_time_factor = 5.0
+bulk_relax_time_factor = 1./14.55
 
 #iS3D Parameters
 #delta-f mode will be overwritten by the run-events script
@@ -153,8 +153,8 @@ music_file.write("Viscosity_Flag_Yes_1_No_0 1\n")    # turn on viscosity in the 
 music_file.write("Include_Shear_Visc_Yes_1_No_0 1\n")# include shear viscous effect
 #music_file.write("Shear_to_S_ratio "+str(eta_over_s) + "\n")# value of \eta/s
 
-music_file.write("T_dependent_Shear_to_S_ratio  2\n")# flag to use temperature dep. \eta/s(T)
-music_file.write("T_dependent_Bulk_to_S_ratio  2\n")# flag to use temperature dep. \zeta/s(T)
+music_file.write("T_dependent_Shear_to_S_ratio  3\n")# flag to use temperature dep. \eta/s(T)
+music_file.write("T_dependent_Bulk_to_S_ratio  3\n")# flag to use temperature dep. \zeta/s(T)
 
 #shear viscosity
 music_file.write("eta_over_s_T_kink_in_GeV " + str(eta_over_s_T_kink_in_GeV) + "\n")
