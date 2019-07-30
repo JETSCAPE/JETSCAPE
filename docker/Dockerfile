@@ -21,6 +21,11 @@ vim \
 #zlib1g-dev \
 && rm -rf /var/lib/apt/lists/*
 
+# Install a few useful python packages
+RUN pip3 install \
+pyyaml
+#subprocess
+
 # Install HEPMC3
 RUN curl -SL http://hepmc.web.cern.ch/hepmc/releases/hepmc3.0.0.tgz \
 | tar -xvzC /usr/local \
@@ -28,6 +33,24 @@ RUN curl -SL http://hepmc.web.cern.ch/hepmc/releases/hepmc3.0.0.tgz \
 && cmake .. \
 && make -j8 all install \
 && rm -r /usr/local/hepmc3.0.0
+
+# Install FastJet
+RUN curl -SL http://fastjet.fr/repo/fastjet-3.3.2.tar.gz \
+| tar -xvzC /usr/local \
+&& cd /usr/local/fastjet-3.3.2 \
+&& ./configure --prefix=/usr/local \
+&& make -j8 \
+&& make -j8 install \
+&& rm -r /usr/local/fastjet-3.3.2
+
+# Install FastJet Contrib
+RUN curl -SL http://fastjet.hepforge.org/contrib/downloads/fjcontrib-1.041.tar.gz \
+| tar -xvzC /usr/local \
+&& cd /usr/local/fjcontrib-1.041 \
+&& ./configure \
+&& make -j8 \
+&& make -j8 install \
+&& rm -r /usr/local/fjcontrib-1.041
 
 # Install Pythia8
 RUN curl -SL http://home.thep.lu.se/~torbjorn/pythia8/pythia8240.tgz \
