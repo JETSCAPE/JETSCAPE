@@ -74,7 +74,6 @@ if (smash)
   if(${SMASH_FOUND})
     include_directories(${SMASH_INCLUDE_DIR})
   endif(${SMASH_FOUND})
-  target_compile_definitions(JetScape PRIVATE smash)
 endif (smash)
 
 
@@ -316,6 +315,10 @@ include_directories(./examples/ )
 add_subdirectory(./external_packages)
 add_subdirectory(./external_packages/gtl)
 add_subdirectory(./src)
+
+if (smash)
+  target_compile_definitions(JetScape PRIVATE smash)
+endif (smash)
 
 if (freestream)
   if(NOT EXISTS "${CMAKE_SOURCE_DIR}/external_packages/freestream-milne")
