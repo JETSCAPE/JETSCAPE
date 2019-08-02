@@ -94,11 +94,11 @@ if ( ${HEPMC_FOUND} )
 endif()
 
 if ( music )
-  target_link_libraries (JetScape music_lib )
+  target_link_libraries (JetScape music )
 endif()
 
 if ( iSS )
-  target_link_libraries (JetScape iSS_lib )
+  target_link_libraries (JetScape iSS )
 endif()
 
 if ( clvisc )
