@@ -90,7 +90,7 @@ if (${HDF5_FOUND})
 endif()
 
 if ( ${HEPMC_FOUND} )
-  target_link_libraries (JetScape -L${HEPMC_LIB_DIR} -lHepMC )
+  target_link_libraries (JetScape -L${HEPMC_LIB_DIR} -lHepMC3 )
 endif()
 
 if ( music )
