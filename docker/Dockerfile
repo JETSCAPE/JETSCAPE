@@ -47,6 +47,7 @@ RUN curl -SL http://hepmc.web.cern.ch/hepmc/releases/HepMC3-3.1.1.tar.gz | tar -
 && cmake ../HepMC3-3.1.1 -DCMAKE_INSTALL_PREFIX=/usr/local -DHEPMC3_ENABLE_ROOTIO=ON -DROOT_DIR=${ROOTSYS} -DHEPMC3_BUILD_EXAMPLES=ON \
 && make -j8 install \
 && rm -r /usr/local/hepmc3-build
+ENV LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH}"
 
 # Install Pythia8 (8.235 is needed by SMASH, and it should be installed in a folder called pythia8235)
 RUN curl -SL http://home.thep.lu.se/~torbjorn/pythia8/pythia8235.tgz \
