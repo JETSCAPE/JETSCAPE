@@ -74,10 +74,12 @@ void ColorlessHadronization::Init()
   pythia.readString("ProcessLevel:all = off");
 
   // Don't let pi0 decay
-  pythia.readString("111:mayDecay = off");
+  //pythia.readString("111:mayDecay = off");
 
   // Don't let any hadron decay
   //pythia.readString("HadronLevel:Decay = off");
+  pythia.readString("ParticleDecays:limitTau0 = on");
+  pythia.readString("ParticleDecays:tau0Max = 10.0");
 
   // And initialize
   pythia.init();
@@ -112,16 +114,22 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
 
     // Hadronize all showers together
     vector<shared_ptr<Parton>> pIn;
-    for(unsigned int ishower=0; ishower <  shower.size(); ++ishower)
+	vector<vector<Parton>> shower_in;
+	for(unsigned int ishower=0;ishower<shower.size();++ishower){
+		vector<Parton> p_sh;
+		for(unsigned int ipart=0;ipart<shower.at(ishower).size();++ipart){p_sh.push_back( *(shower[ishower][ipart]) );}
+		shower_in.push_back(p_sh);
+	}
+    for(unsigned int ishower=0; ishower <  shower_in.size(); ++ishower)
     {
-      for(unsigned int ipart=0; ipart <  shower.at(ishower).size(); ++ipart)
+      for(unsigned int ipart=0; ipart <  shower_in[ishower].size(); ++ipart)
       { 
-        //if (shower.at(ishower).at(ipart)->pstat()==0 && want_pos==1) pIn.push_back(shower.at(ishower).at(ipart));  // Positive
+        //if (shower_in.at(ishower).at(ipart)->pstat()==0 && want_pos==1) pIn.push_back(shower_in.at(ishower).at(ipart));  // Positive
         if (want_pos==1) { // Positive
-	    if(take_recoil && shower.at(ishower).at(ipart)->pstat()==1) pIn.push_back(shower.at(ishower).at(ipart));  
-	    if(shower.at(ishower).at(ipart)->pstat()==0) pIn.push_back(shower.at(ishower).at(ipart));
-	}  
-        if (take_recoil && shower.at(ishower).at(ipart)->pstat()==-1 && want_pos==0) pIn.push_back(shower.at(ishower).at(ipart));  // Negative
+			if(take_recoil && shower_in[ishower][ipart].pstat()==1){ pIn.push_back( make_shared<Parton> (shower_in[ishower][ipart]) ); } 
+			if(shower_in[ishower][ipart].pstat()==0){pIn.push_back( make_shared<Parton> (shower_in[ishower][ipart]) ); }
+        }  
+        if (take_recoil && shower_in[ishower][ipart].pstat()==-1 && want_pos==0){ pIn.push_back( make_shared<Parton> (shower_in[ishower][ipart]) ); }  // Negative
       }
       JSDEBUG<<"Shower#"<<ishower+1 << ". Number of partons to hadronize so far: " << pIn.size();
     }

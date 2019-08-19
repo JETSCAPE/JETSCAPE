@@ -109,7 +109,9 @@ void PGun::Exec()
 	 }
        }
 
-       AddParton(make_shared<Parton>(0,parID,0,pT,rapidity,phi,p[0],xLoc));
+       auto ptn = make_shared<Parton>(0,parID,0,pT,rapidity,phi,p[0],xLoc);
+       ptn->set_color( (parID>0) ? 100 : 0 ); ptn->set_anti_color( ((parID>0)||(parID==21)) ? 0 : 101 ); ptn->set_max_color(102);
+       AddParton(ptn);
   
        VERBOSEPARTON(7,*GetPartonAt(i))
 	 <<" added "
