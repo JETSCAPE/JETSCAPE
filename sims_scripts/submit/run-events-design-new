@@ -192,6 +192,7 @@ def run_cmd(*args):
 		proc = subprocess.run(
 			cmd.split(), check=True,
 			stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+			#stdout=sys.stdout, stderr=sys.stderr,
 			universal_newlines=True
 		)
 	except subprocess.CalledProcessError as e:
@@ -357,8 +358,8 @@ def run_events(args, results_file):
 		os.mkdir('output') #make a directory for freestream-milne to dump initial T00
 		h = run_cmd('TRENTO_FS_HYDRO') # this executable runs TRENTo, freestream-milne and MUSIC. writes fo surf to surface.dat
 		eps = calc_ecc() #call calc_ecc to calculate eccentricities of initial condition 
-		print(h.stdout)
-		print(h.stderr)
+		#print(h.stdout)
+		#print(h.stderr)
 		end_h = datetime.datetime.now()
 		logging.info('TRENTO_FS_HYDRO finished in %s ', end_h - start_h)
 		# these files contain instances of viscous regulation inside high temperature region 
@@ -375,9 +376,7 @@ def run_events(args, results_file):
 		logging.info('Max radius of freezeout surface : {:f}'.format( find_fireball_edge('input/surface.dat') ) )
 		# loop over 'delta-f'. in iS3D, delta_f = 1 : 14 mom, 2 : RTA C.E., 3 : McNelis Mod, 4 : Bernhard Mod
 		# idf = 0,1,2,3 runs iS3D and smash. idf = 4 runs iS3D and urqmd-afterburner
-		#for idf in range(4,5):
-		mini_bayes_set = [0, 3] #14 moment and bernhard df, both with smash
-		for idf in mini_bayes_set: 
+		for idf in range(0,4): 
 			logging.info('idf  = {:d}'.format(idf))
 
 			if (idf < 4):
