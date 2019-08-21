@@ -20,7 +20,7 @@
 #include "GTL/node.h"
 #include <GTL/topsort.h>
 
-using HepMC::Units;
+using HepMC3::Units;
 
 namespace Jetscape {
   
@@ -35,13 +35,13 @@ namespace Jetscape {
     evt = GenEvent(Units::GEV,Units::MM);
     
     // Expects pb, pythia delivers mb
-    auto xsec = make_shared<HepMC::GenCrossSection>();
+    auto xsec = make_shared<HepMC3::GenCrossSection>();
     xsec->set_cross_section( GetHeader().GetSigmaGen() * 1e9, 0);
     xsec->set_cross_section( GetHeader().GetSigmaGen() * 1e9, GetHeader().GetSigmaErr() * 1e9);
     evt.set_cross_section( xsec );
     evt.weights().push_back( GetHeader().GetEventWeight() );
 
-    auto heavyion = make_shared<HepMC::GenHeavyIon>();
+    auto heavyion = make_shared<HepMC3::GenHeavyIon>();
     // see https://gitlab.cern.ch/hepmc/HepMC3/blob/master/include/HepMC/GenHeavyIon.h
     if ( GetHeader().GetNpart() > -1 ){
       // Not clear what the difference is...
@@ -220,11 +220,11 @@ namespace Jetscape {
     // Create if it doesn't exist yet
     if ( !hadronizationvertex ) {
       // dummy position
-      HepMC::FourVector vtxPosition( 0,0,0, 100 ); // set it to a late time...
+      HepMC3::FourVector vtxPosition( 0,0,0, 100 ); // set it to a late time...
       hadronizationvertex =  make_shared<GenVertex>(vtxPosition);
 
       // dummy mother -- could also maybe use the first/hardest shower initiator
-      HepMC::FourVector pmom(0, 0, 0, 0);
+      HepMC3::FourVector pmom(0, 0, 0, 0);
       make_shared<GenParticle> (pmom, 0, 0);
       hadronizationvertex->add_particle_in( make_shared<GenParticle> (pmom, 0, 0) );
 

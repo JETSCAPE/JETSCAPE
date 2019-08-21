@@ -94,15 +94,15 @@ if (${HDF5_FOUND})
 endif()
 
 if ( ${HEPMC_FOUND} )
-  target_link_libraries (JetScape -L${HEPMC_LIB_DIR} -lHepMC )
+  target_link_libraries (JetScape -L${HEPMC_LIB_DIR} -lHepMC3 )
 endif()
 
 if ( music )
-  target_link_libraries (JetScape music_lib )
+  target_link_libraries (JetScape music )
 endif()
 
 if ( iSS )
-  target_link_libraries (JetScape iSS_lib )
+  target_link_libraries (JetScape iSS )
 endif()
 
 if ( clvisc )

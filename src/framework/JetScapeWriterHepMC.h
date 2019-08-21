@@ -22,27 +22,27 @@
 #include "JetScapeWriter.h"
 #include "PartonShower.h"
 
-#include "HepMC/GenEvent.h"
-#include "HepMC/ReaderAscii.h"
-#include "HepMC/WriterAscii.h"
-#include "HepMC/Print.h"
+#include "HepMC3/GenEvent.h"
+#include "HepMC3/ReaderAscii.h"
+#include "HepMC3/WriterAscii.h"
+#include "HepMC3/Print.h"
 
 // using namespace HepMC;
-using HepMC::GenEvent;
-using HepMC::GenVertex;
-using HepMC::GenParticle;
-using HepMC::GenVertexPtr;
-using HepMC::GenParticlePtr;
+using HepMC3::GenEvent;
+using HepMC3::GenVertex;
+using HepMC3::GenParticle;
+using HepMC3::GenVertexPtr;
+using HepMC3::GenParticlePtr;
 
 namespace Jetscape {
 
-  class JetScapeWriterHepMC : public JetScapeWriter , public HepMC::WriterAscii
+  class JetScapeWriterHepMC : public JetScapeWriter , public HepMC3::WriterAscii
 {
 
  public:
 
- JetScapeWriterHepMC() : HepMC::WriterAscii("") { SetId("HepMC writer"); };
- JetScapeWriterHepMC(string m_file_name_out) : JetScapeWriter(m_file_name_out), HepMC::WriterAscii(m_file_name_out) { SetId("HepMC writer"); };
+ JetScapeWriterHepMC() : HepMC3::WriterAscii("") { SetId("HepMC writer"); };
+ JetScapeWriterHepMC(string m_file_name_out) : JetScapeWriter(m_file_name_out), HepMC3::WriterAscii(m_file_name_out) { SetId("HepMC writer"); };
   virtual ~JetScapeWriterHepMC();
 
   void Init();
@@ -66,35 +66,35 @@ namespace Jetscape {
 
  private:
 
-  HepMC::GenEvent evt;
-  vector< HepMC::GenVertexPtr > vertices;
-  HepMC::GenVertexPtr hadronizationvertex;
+  HepMC3::GenEvent evt;
+  vector< HepMC3::GenVertexPtr > vertices;
+  HepMC3::GenVertexPtr hadronizationvertex;
 
-  inline HepMC::GenVertexPtr castVtxToHepMC(const shared_ptr<Vertex> vtx) const {
+  inline HepMC3::GenVertexPtr castVtxToHepMC(const shared_ptr<Vertex> vtx) const {
     double x = vtx->x_in().x();
     double y = vtx->x_in().y();
     double z = vtx->x_in().z();
     double t = vtx->x_in().t();
-    HepMC::FourVector vtxPosition( x, y, z, t );
+    HepMC3::FourVector vtxPosition( x, y, z, t );
     // if ( t< 1e-6 ) t = 1e-6; // could do this. Exact 0 is bit quirky but works for hepmc
     return make_shared<GenVertex>(vtxPosition);
   }
 
-  inline HepMC::GenParticlePtr castPartonToHepMC( const shared_ptr<Parton> pparticle) const {
+  inline HepMC3::GenParticlePtr castPartonToHepMC( const shared_ptr<Parton> pparticle) const {
     return castPartonToHepMC ( *pparticle );
   }
 
-  inline HepMC::GenParticlePtr castPartonToHepMC(const Parton &particle) const {
-    HepMC::FourVector pmom(particle.px(), particle.py(), particle.pz(), particle.e());
+  inline HepMC3::GenParticlePtr castPartonToHepMC(const Parton &particle) const {
+    HepMC3::FourVector pmom(particle.px(), particle.py(), particle.pz(), particle.e());
     return make_shared<GenParticle> (pmom, particle.pid(), particle.pstat());
   }
 
-  inline HepMC::GenParticlePtr castHadronToHepMC( const shared_ptr<Hadron> pparticle) const {
+  inline HepMC3::GenParticlePtr castHadronToHepMC( const shared_ptr<Hadron> pparticle) const {
     return castHadronToHepMC ( *pparticle );
   }
 
-  inline HepMC::GenParticlePtr castHadronToHepMC(const Hadron &particle) const {
-    HepMC::FourVector pmom(particle.px(), particle.py(), particle.pz(), particle.e());
+  inline HepMC3::GenParticlePtr castHadronToHepMC(const Hadron &particle) const {
+    HepMC3::FourVector pmom(particle.px(), particle.py(), particle.pz(), particle.e());
     return make_shared<GenParticle> (pmom, particle.pid(), particle.pstat());
   }
 
