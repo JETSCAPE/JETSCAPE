@@ -41,8 +41,16 @@ pi_K_p = [
 	('kaon', 321),
 	('proton', 2212),
 ]
+Qn_species = [
+	('pion', 211),
+	('kaon', 321),
+	('proton', 2212),
+	('Sigma', 3222),
+	('Xi', 3312),
+]
 
-NpT = 10
+Qn_diff_pT_cuts=[0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95,1.,1.05,1.1,1.15,1.2,1.25,1.3,1.35,1.4,1.45,1.5,1.55,1.6,1.65,1.7,1.75,1.8,1.85,1.9,1.95,2.,2.1,2.2,2.3,2.4,2.5,2.6,2.7,2.8,2.9,3.,3.2,3.4,3.6,3.8,4.]
+Qn_diff_NpT = len(Qn_diff_pT_cuts)-1
 Nharmonic = 8
 Nharmonic_diff = 5
 
@@ -93,11 +101,11 @@ result_dtype=[
 					('Qn', complex_t, Nharmonic)], 1),
 		# 7) Q vector, diff-flow eta[-0.8, 0.8], pi, K, p
 		# It uses #6 as its reference Q vector
-		('d_flow_chg', [('N', int_t, NpT),
-						('Qn', complex_t, [NpT, Nharmonic_diff])], 1),
-		('d_flow_pid', [(name, [('N', int_t, NpT),
-								('Qn', complex_t, [NpT, Nharmonic_diff])], 1)
-						for (name,_) in pi_K_p	], 1),
+		#('d_flow_chg', [('N', int_t, NpT),
+		#				('Qn', complex_t, [NpT, Nharmonic_diff])], 1),
+		('d_flow_pid', [(name, [('N', int_t, Qn_diff_NpT),
+								('Qn', complex_t, [Qn_diff_NpT, Nharmonic_diff])], 1)
+						for (name,_) in Qn_species	], 1),
 	], 5)
 ]
 
@@ -507,15 +515,12 @@ def run_events(args, results_file):
 
 			results['ALICE'][idf]['Tmunu_chg'] = calc_Tmunu(ET[charged], y[charged], pT[charged], phi[charged], ycut=[-0.6, 0.6], pTcut=[0., 10.]) / nos
 
-			# 7) Diff flow
-			pTbins = np.array([[0,.2], [.2,.4], [.4,.6],[.6,.8],[.8,1.], [1.,1.2], [1.2,1.5], [1.5,2.], [2.,2.5], [2.5,3]])
-			etabins = np.array([[-0.8, 0.8]])
-			info = calc_Qvector(pT[charged], phi[charged], eta[charged], pTbins, etabins, Nharmonic_diff)
-			results['ALICE'][idf]['d_flow_chg']['N'] = info['N'][:,0]
-			results['ALICE'][idf]['d_flow_chg']['Qn'] = info['Qn'][:,0,:]
-			for name, pid in pi_K_p:
+			# 7) Identified differential flow for charged stable hadrons
+                        pTbins=np.array([[Qn_diff_pT_cuts[i],Qn_diff_pT_cuts[i+1]] for i in range(Qn_diff_NpT)])
+			rapbins = np.array([[-1, 1]])
+			for name, pid in Qn_species:
 				cut = (abs_pid == pid)
-				info = calc_Qvector(pT[cut], phi[cut], eta[cut], pTbins, etabins, Nharmonic_diff)
+				info = calc_Qvector(pT[cut], phi[cut], y[cut], pTbins, rapbins, Nharmonic_diff)
 				results['ALICE'][idf]['d_flow_pid'][name]['N'] = info['N'][:,0]
 				results['ALICE'][idf]['d_flow_pid'][name]['Qn'] = info['Qn'][:,0,:]
 
