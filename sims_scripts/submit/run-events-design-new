@@ -362,6 +362,11 @@ def run_events(args, results_file):
 		#print(h.stderr)
 		end_h = datetime.datetime.now()
 		logging.info('TRENTO_FS_HYDRO finished in %s ', end_h - start_h)
+		#copy the eccentricity files to final destination
+		subprocess.call( "mkdir {:s}/eccentricities".format( os.path.dirname(args.results) ) , shell=True)
+		for ecc_file in ['ecc_before_fs', 'ecc_r3_before_fs', 'ecc_r5_before_fs', 'ecc_before_hydro', 'ecc_r3_before_hydro', 'ecc_r5_before_hydro']:
+			subprocess.call("mv {:s}.dat {:s}/eccentricities/{:s}-{:s}".format(ecc_file, os.path.dirname(args.results), 
+											ecc_file, os.path.basename(args.results), ), shell=True)
 		# these files contain instances of viscous regulation inside high temperature region 
 		for rf, short in zip(['music_inv_reynolds_shear.txt', 'music_inv_reynolds_bulk.txt'], ['iR-shear','iR-bulk']):
 			if os.path.exists(rf):
@@ -376,7 +381,8 @@ def run_events(args, results_file):
 		logging.info('Max radius of freezeout surface : {:f}'.format( find_fireball_edge('input/surface.dat') ) )
 		# loop over 'delta-f'. in iS3D, delta_f = 1 : 14 mom, 2 : RTA C.E., 3 : McNelis Mod, 4 : Bernhard Mod
 		# idf = 0,1,2,3 runs iS3D and smash. idf = 4 runs iS3D and urqmd-afterburner
-		for idf in range(0,4): 
+		#for idf in range(0,4):
+		for idf in [0, 3]: 
 			logging.info('idf  = {:d}'.format(idf))
 
 			if (idf < 4):

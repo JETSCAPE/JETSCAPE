@@ -1,12 +1,12 @@
 #!/bin/bash
-#SBATCH -J check_prior_50_pts
-#SBATCH -p skx-normal           # Queue (partition) name
-#SBATCH -N 50                 # the number of nodes
-#SBATCH --ntasks-per-node 48 #set this equal to number of cores on node
-#SBATCH -t 3:00:00           # Run time (hh:mm:ss)   walltime for each node separately
+#SBATCH -J check_prior_3_validation
+#SBATCH -p skx-normal         # Queue (partition) name
+#SBATCH -N 30                 # the number of nodes
+#SBATCH --ntasks-per-node 48  #set this equal to number of cores on node
+#SBATCH -t 8:00:00            # Run time (hh:mm:ss)   walltime for each node separately
 #SBATCH --mail-user=everett.165@osu.edu
-#SBATCH --mail-type=all      # Send email at begin and end of job
-#SBATCH -A TG-PHY180035      # Allocation name
+#SBATCH --mail-type=all       # Send email at begin and end of job
+#SBATCH -A TG-PHY180035       # Allocation name
 #SBATCH -o slurm/out-%j
 #SBATCH -e slurm/err-%j
 
@@ -24,7 +24,7 @@ job=$SLURM_JOB_ID
 #set the number of design points stored in input-config/design_pts
 num_design_pts=50
 #set the number of events to run per design point
-num_events_per_design=100
+num_events_per_design=500
 
 #files are indexed starting at 0
 let max_design=$num_design_pts-1
@@ -39,7 +39,7 @@ for j in $(seq 0 $max_events)
 do
     for i in $(seq 0 $max_design)
     do
-	echo run-events-design-new --nevents 1 --logfile $SCRATCH/logs/$job/$i/$j.log --tmpdir=/tmp --tablesdir=$inputdir --startdir=$inputdir/design_pts/main/PbPb-2760/$i $SCRATCH/results/$job/$i/$j.dat >> $taskfilename
+	echo run-events-design-new --nevents 1 --logfile $SCRATCH/logs/$job/$i/$j.log --tmpdir=/tmp --tablesdir=$inputdir --startdir=$inputdir/design_pts/validation/PbPb-2760/$i $SCRATCH/results/$job/$i/$j.dat >> $taskfilename
     done
 done
 
