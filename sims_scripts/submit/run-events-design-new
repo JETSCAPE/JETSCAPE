@@ -73,6 +73,7 @@ result_dtype=[
 ('initial_entropy', float_t, 1),
 ('impact_parameter', float_t, 1),
 ('npart', float_t, 1),
+('nsamples', int_t, 1),
 ('ALICE',
 	[
 		# 1) dNch/deta, eta[-0.5, 0.5], charged
@@ -463,6 +464,10 @@ def run_events(args, results_file):
 			logging.info('computing observables for delta_f = {:d}'.format(idf+1))
 
 			start_o = datetime.datetime.now()
+
+                        # Save number of oversamples
+                        results['ALICE'][idf]['nsamples'] = nos
+
 			# Get pT, phi, eta, y ...
 			ET = particles['ET']
 			pT = particles['pT']
