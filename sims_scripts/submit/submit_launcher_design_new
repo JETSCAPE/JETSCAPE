@@ -1,9 +1,9 @@
 #!/bin/bash
-#SBATCH -J check_regulation_3
+#SBATCH -J check_ecc_file_copy
 #SBATCH -p skx-dev           # Queue (partition) name
-#SBATCH -N 2                 # the number of nodes
+#SBATCH -N 1                 # the number of nodes
 #SBATCH --ntasks-per-node 48 #set this equal to number of cores on node
-#SBATCH -t 2:00:00           # Run time (hh:mm:ss)   walltime for each node separately
+#SBATCH -t 1:00:00           # Run time (hh:mm:ss)   walltime for each node separately
 #SBATCH --mail-user=everett.165@osu.edu
 #SBATCH --mail-type=all      # Send email at begin and end of job
 #SBATCH -A TG-PHY180035      # Allocation name
@@ -25,7 +25,7 @@ cat submit_launcher_design_new > job_history/$job
 
 # create taskfarmer tasks
 #set the number of design points stored in input-config/design_pts
-num_design_pts=40
+num_design_pts=10
 #set the number of events to run per design point
 num_events_per_design=1
 
