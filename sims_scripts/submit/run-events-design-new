@@ -107,7 +107,7 @@ result_dtype=[
 		('d_flow_pid', [(name, [('N', int_t, Qn_diff_NpT),
 								('Qn', complex_t, [Qn_diff_NpT, Nharmonic_diff])], 1)
 						for (name,_) in Qn_species	], 1),
-	], 5)
+	], 4)
 ]
 
 # A function that calculates event-planes given a list of azimuthal angles
@@ -391,7 +391,7 @@ def run_events(args, results_file):
 		# loop over 'delta-f'. in iS3D, delta_f = 1 : 14 mom, 2 : RTA C.E., 3 : McNelis Mod, 4 : Bernhard Mod
 		# idf = 0,1,2,3 runs iS3D and smash. idf = 4 runs iS3D and urqmd-afterburner
 		#for idf in range(0,4):
-		for idf in [0, 3]: 
+		for idf in [0, 1, 2, 3]: 
 			logging.info('idf  = {:d}'.format(idf))
 
 			if (idf < 4):
