@@ -73,9 +73,9 @@ result_dtype=[
 ('initial_entropy', float_t, 1),
 ('impact_parameter', float_t, 1),
 ('npart', float_t, 1),
-('nsamples', int_t, 1),
 ('ALICE',
         [
+                ('nsamples', int_t, 1),
                 # 1) dNch/deta, eta[-0.5, 0.5], charged
                 ('dNch_deta', float_t, 1),
                 # 2) dET/deta, eta[-0.6, 0.6]
