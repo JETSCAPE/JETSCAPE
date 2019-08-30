@@ -1,47 +1,52 @@
 #!/bin/bash
-#SBATCH -J mini_bayes_1k
-#SBATCH -p skx-dev        # Queue (partition) name
-#SBATCH -N 2                 # the number of nodes
+#SBATCH -J check_ecc_file_copy
+#SBATCH -p skx-dev           # Queue (partition) name
+#SBATCH -N 1                 # the number of nodes
 #SBATCH --ntasks-per-node 48 #set this equal to number of cores on node
-#SBATCH -t 02:00:00          # Run time (hh:mm:ss)   walltime for each node separately
+#SBATCH -t 1:00:00           # Run time (hh:mm:ss)   walltime for each node separately
 #SBATCH --mail-user=everett.165@osu.edu
 #SBATCH --mail-type=all      # Send email at begin and end of job
-#SBATCH -A TG-PHY180024      # Allocation name (Large allocation)
+#SBATCH -A TG-PHY180035      # Allocation name
 #SBATCH -o slurm/out-%j
 #SBATCH -e slurm/err-%j
 
 module load intel/18.0.2 cmake/3.7.1 gsl boost hdf5 eigen impi python3 launcher
 
-source ../prepare_compilation_stampede2_2.sh
+#source ../prepare_compilation_stampede2_2.sh
+source ../../jf_prepare.sh
+
 module list
 
 inputdir=../input-config #where the tables for iS3D, smash... are located. design_pts should be a folder inside!   
 job=$SLURM_JOB_ID
 
-# create taskfarmer tasks
-rm -f tasks # remove old tasks!!! important!!!
+#save job file to disk
+cat submit_launcher_design_new > job_history/$job
 
+# create taskfarmer tasks
 #set the number of design points stored in input-config/design_pts
-num_design_pts=100
+num_design_pts=10
 #set the number of events to run per design point
-num_events_per_design=10
+num_events_per_design=1
 
 #files are indexed starting at 0
 let max_design=$num_design_pts-1
 let max_events=$num_events_per_design-1
 
+taskfilename=tasks-$job
+
 #for best scaling, set nevents 1 
-for i in $(seq 0 $max_design)
+for j in $(seq 0 $max_events)
 do
-    for j in $(seq 0 $max_events)
+    for i in $(seq 0 $max_design)
     do
-	echo run-events-design-new --nevents 1 --logfile $SCRATCH/$job/$i/$j.log --tmpdir=/tmp --tablesdir=$inputdir --startdir=$inputdir/design_pts/main/PbPb-2760/$i $job/$i/$j.dat >> tasks
+	echo run-events-design-new --nevents 1 --logfile $SCRATCH/logs/$job/$i/$j.log --tmpdir=/tmp --tablesdir=$inputdir --startdir=$inputdir/design_pts/main/PbPb-2760/$i $SCRATCH/results/$job/$i/$j.dat >> $taskfilename
     done
 done
 
 export LAUNCHER_PLUGIN_DIR=$LAUNCHER_DIR/plugins
 export LAUNCHER_RMI=SLURM
-export LAUNCHER_JOB_FILE=tasks
+export LAUNCHER_JOB_FILE=$taskfilename
 
 $LAUNCHER_DIR/paramrun
 

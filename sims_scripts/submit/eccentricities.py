@@ -61,17 +61,17 @@ def calc_ecc():
      for j in range(0,zmax):
       if(not(i==0 and j==0)):  eps[i][j] /= eps[0][0]
     
-    f=open("ecc_new.dat","w")
+    f=open("ecc_before_fs.dat","w")
     for i in range(0,zmax):
      for j in range(0,zmax):
       f.write(str(i)+"	"+str(j)+"	"+"("+str(np.real(eps[i][j]))+","+str(np.imag(eps[i][j]))+")"+"\n")
     f.close()
 
-    f=open("ecc_r3_new.dat","w")
+    f=open("ecc_r3_before_fs.dat","w")
     f.write(str(eps_r3/eps[0][0]))
     f.close()
 
-    f=open("ecc_r5_new.dat","w")
+    f=open("ecc_r5_before_fs.dat","w")
     f.write(str(eps_r5/eps[0][0]))
     f.close()
     
