@@ -20,9 +20,9 @@ job=$SLURM_JOB_ID
 
 # create taskfarmer tasks
 #set the number of design points stored in input-config/design_pts
-num_design_pts=200
+num_design_pts=50
 #set the number of events to run per design point
-num_events_per_design=200
+num_events_per_design=400
 
 #files are indexed starting at 0
 let max_design=$num_design_pts-1
@@ -35,7 +35,7 @@ for j in $(seq 0 $max_events)
 do
     for i in $(seq 0 $max_design)
     do
-	echo run-events-design-new --nevents 1 --logfile $SCRATCH/logs/$job/$i/$j.log --tmpdir=/tmp --tablesdir=$inputdir --startdir=$inputdir/design_pts/main/PbPb-2760/$i $SCRATCH/results/$job/$i/$j.dat >> $taskfilename
+	echo run-events-design-new --nevents 1 --logfile $SCRATCH/logs/$job/$i/$j.log --tmpdir=/tmp --tablesdir=$inputdir --startdir=$inputdir/design_pts/validation/PbPb-2760/$i $SCRATCH/results-validation/$job/$i/$j.dat >> $taskfilename
     done
 done
 
