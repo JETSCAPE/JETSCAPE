@@ -130,7 +130,7 @@ void PythiaGun::InitTask()
 
 void PythiaGun::Exec()
 {
-  JSINFO<<"Run Hard Process : "<<GetId()<< " ...";
+  VERBOSE(1)<<"Run Hard Process : "<<GetId()<< " ...";
   VERBOSE(8)<<"Current Event #"<<GetCurrentEvent();
   
   //Reading vir_factor from xml for MATTER

@@ -631,7 +631,10 @@ void JetScape::Exec()
   
   for (int i=0;i<GetNumberOfEvents();i++)
     {
-      JSINFO<<BOLDRED<<"Run Event # = "<<i;
+      if (i % 100 == 0) {
+	JSINFO<<BOLDRED<<"Run Event # = "<<i;
+      }
+      JSDEBUG<<"Run Event # = "<<i;
       JSDEBUG<<"Found "<<GetNumberOfTasks()<<" Modules Execute them ... ";
 
       // First run all tasks
