@@ -2323,7 +2323,7 @@ double Matter::sud_z_GG(double cg, double cg1, double loc_e , double l_fac, doub
       qL = 0.0;
   } else {
       qhat = fncAvrQhat(loc_e,tau);
-      qL = qhat*0.6*tau;
+      qL = qhat*tau;
   }
 
     
@@ -2383,7 +2383,7 @@ double Matter::P_z_gg_int(double cg, double cg1, double loc_e, double cg3, doubl
       qL = 0.0;
   } else {
       qhat = fncAvrQhat(loc_e,tau);
-      qL = qhat*0.6*tau;
+      qL = qhat*tau;
   }
 
   t9 = 2.0*cg1 - 1.0 / (-1.0 + cg1) - 1.0 / cg1 - 2.0 * cg + 1.0 / (-1.0 + cg) + 1.0 / cg;
@@ -2603,7 +2603,7 @@ double Matter::sud_z_QQ(double cg, double cg1, double loc_e , double l_fac, doub
       qL = 0.0;
   } else {
       qhat = fncAvrQhat(loc_e,tau);
-      qL = qhat*0.6*tau;
+      qL = qhat*tau;
   }
 
   res = t14 + 2.0*qL*q15/cg1 ;
@@ -2674,7 +2674,7 @@ double Matter::sud_z_QQ_w_M_vac_only(double M, double cg, double cg1, double loc
       qL = 0.0;
   } else {
       qhat = fncAvrQhat(loc_e,tau);
-      qL = qhat*0.6*tau;
+      qL = qhat*tau;
   }
 
   res = t15 + 2.0*qL*q15/cg1 ;
@@ -2711,7 +2711,7 @@ double Matter::P_z_qq_int(double cg, double cg1, double loc_e, double cg3, doubl
       qL = 0.0;
   } else {
       qhat = fncAvrQhat(loc_e,tau);
-      qL = qhat*0.6*tau;
+      qL = qhat*tau;
   }
 
    
@@ -2828,7 +2828,7 @@ double Matter::P_z_qq_int_w_M_vac_only(double M, double cg, double cg1, double l
       qL = 0.0;
   } else {
       qhat = fncAvrQhat(loc_e,tau);
-      qL = qhat*0.6*tau;
+      qL = qhat*tau;
   }
 
    
@@ -2890,7 +2890,7 @@ double Matter::sud_z_QP(double cg, double cg1, double loc_e, double l_fac,double
     else
     {
         qhat = fncAvrQhat(loc_e,tau)*Cf/Ca; //for photon production, only the quark scatters
-        qL = qhat*0.6*tau;
+        qL = qhat*tau;
     }
     
     //JSINFO << BOLDRED << " qhat L = " << qL << " location = " << loc_e << " tau = " << tau << " length = " << length;
@@ -2938,7 +2938,7 @@ double Matter::P_z_qp_int(double cg, double cg1, double loc_e, double cg3, doubl
         qL = 0.0;
     } else {
         qhat = fncAvrQhat(loc_e,tau);
-        qL = qhat*0.6*tau;
+        qL = qhat*tau;
     }
     
     
@@ -3138,7 +3138,7 @@ double Matter::sud_z_QG(double cg, double cg1, double loc_e, double l_fac,double
         //JSINFO << BOLDYELLOW << " parton formed at x = " << initRx << " y = " << initRy << " z = " << initRz << " t = " << initR0 ;
         // JSINFO << BOLDYELLOW << " mean qhat for sudakov in GeV^2/fm = " << qhat*5*sqrt(2) ;
       }
-      qL = qhat*0.6*tau;
+      qL = qhat*tau;
   }
 
     //JSINFO << BOLDRED << " qhat L = " << qL << " location = " << loc_e << " tau = " << tau << " length = " << length;
@@ -3230,7 +3230,7 @@ double Matter::sud_z_QG_w_M(double M, double cg, double cg1, double loc_e, doubl
         JSINFO << BOLDYELLOW << " parton formed at x = " << initRx << " y = " << initRy << " z = " << initRz << " t = " << initR0 ;
         JSINFO << BOLDYELLOW << " mean qhat for sudakov in GeV^2/fm = " << qhat*5*sqrt(2) ;
       }
-      qL = qhat*0.6*2.0*tau;
+      qL = qhat*2.0*tau;
   }
 
   double e1  = M*M;
@@ -3256,7 +3256,7 @@ double Matter::sud_z_QG_w_M(double M, double cg, double cg1, double loc_e, doubl
         //JSINFO << BOLDYELLOW << " parton formed at x = " << initRx << " y = " << initRy << " z = " << initRz << " t = " << initR0 ;
         // JSINFO << BOLDYELLOW << " mean qhat for sudakov in GeV^2/fm = " << qhat*5*sqrt(2) ;
       }
-      eL = ehat*0.6*4.0;
+      eL = ehat*4.0;
   }
 
   double f1  = M*M;
@@ -3290,7 +3290,7 @@ double Matter::sud_z_QG_w_M(double M, double cg, double cg1, double loc_e, doubl
         //JSINFO << BOLDYELLOW << " parton formed at x = " << initRx << " y = " << initRy << " z = " << initRz << " t = " << initR0 ;
         // JSINFO << BOLDYELLOW << " mean qhat for sudakov in GeV^2/fm = " << qhat*5*sqrt(2) ;
       }
-      e2L = e2hat*0.6*8.0/(tau*cg1);
+      e2L = e2hat*8.0/(tau*cg1);
   }
 
 
@@ -3348,7 +3348,7 @@ double Matter::P_z_qg_int(double cg, double cg1, double loc_e, double cg3, doubl
       qL = 0.0;
   } else {
       qhat = fncAvrQhat(loc_e,tau);
-      qL = qhat*0.6*tau;
+      qL = qhat*tau;
   }
 
    
@@ -3408,7 +3408,7 @@ double Matter::P_z_qg_int_w_M(double M, double cg, double cg1, double loc_e, dou
       qL = 0.0;
   } else {
       qhat = fncAvrQhat(loc_e,tau);
-      qL = qhat*0.6*2.0*tau;
+      qL = qhat*2.0*tau;
   }
 
   double e1  = M*M;
@@ -3425,7 +3425,7 @@ double Matter::P_z_qg_int_w_M(double M, double cg, double cg1, double loc_e, dou
       eL = 0.0;
   } else {
       ehat = 0.0;//fncAvrEhat(loc_e,tau);
-      eL = ehat*0.6*4.0;
+      eL = ehat*4.0;
   }
 
   double f1  = M*M;
@@ -3455,7 +3455,7 @@ double Matter::P_z_qg_int_w_M(double M, double cg, double cg1, double loc_e, dou
       e2L = 0.0;
   } else {
       e2hat = qhat/2.0;//fncAvrE2hat(loc_e,tau);
-      e2L = e2hat*0.6*8.0/(tau*cg3);
+      e2L = e2hat*8.0/(tau*cg3);
   }
 
 
