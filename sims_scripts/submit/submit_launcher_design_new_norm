@@ -47,7 +47,5 @@ export LAUNCHER_PLUGIN_DIR=$LAUNCHER_DIR/plugins
 export LAUNCHER_RMI=SLURM
 export LAUNCHER_JOB_FILE=$taskfilename
 
-
-echo $LAUNCHER_DIR
 $LAUNCHER_DIR/paramrun
 
