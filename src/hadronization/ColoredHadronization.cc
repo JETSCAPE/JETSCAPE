@@ -74,7 +74,9 @@ void ColoredHadronization::Init()
   
   pythia.readString("ProcessLevel:all = off");
   pythia.readString("PartonLevel:FSR=off");
-  pythia.readString("HadronLevel:Decay = off");
+  //pythia.readString("HadronLevel:Decay = off");
+  pythia.readString("ParticleDecays:limitTau0 = on");
+  pythia.readString("ParticleDecays:tau0Max = 10.0");
   pythia.init();
     
 }
@@ -105,30 +107,58 @@ void ColoredHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& s
           event.append(shower.at(ishower).at(ipart)->pid(),23,shower.at(ishower).at(ipart)->color(),shower.at(ishower).at(ipart)->anti_color(),
 		       shower.at(ishower).at(ipart)->px(),shower.at(ishower).at(ipart)->py(),shower.at(ishower).at(ipart)->pz(),onshellE);
       }
-      unsigned int color, anti_color;
-      int pid;
-  
-      anti_color = shower.at(ishower).at(0)->min_anti_color();
-      color = shower.at(ishower).at(0)->min_color();
-  
-      if ((color>100)&&(anti_color>100))
-      {
-          pid = 21;
-      }
-      else if ((color>100)&&(anti_color<100))
-      {
-          pid = -1;
-      }
-      else
-      {
-          pid = 1;
-      }
-  
-      pz = -1*pz;
-      event.append(pid, 23, anti_color, color, 0.2, 0.2, pz, sqrt(pz*pz + 0.08));       
+
+	  //first, find unpaired color and anticolor tags.
+	  std::vector<int> cols; std::vector<int> acols;
+	  for(unsigned int ipart=0; ipart <  shower.at(ishower).size(); ++ipart){
+		  if(shower.at(ishower).at(ipart)->pid()        == 22){continue;}
+		  if(shower.at(ishower).at(ipart)->color()      != 0 ){ cols.push_back(shower.at(ishower).at(ipart)->color());}
+		  if(shower.at(ishower).at(ipart)->anti_color() != 0 ){acols.push_back(shower.at(ishower).at(ipart)->anti_color());}
+	  }
+	  //the outcomes are: 1-unpaired color tag, 2-unpaired anticolor tag, 3-both an unpaired color & anticolor tag, 4-no unpaired tags
+	  //1-add an antiquark, 2-add a quark, 3-add a gluon, 4-add nothing (possibly photon only event)
+	  int icol=0;
+	  while(icol<cols.size()){
+		  bool foundpair = false;
+		  for(int iacol=0;iacol<acols.size();++iacol){if(cols[icol]==acols[iacol]){cols.erase(cols.begin()+icol); acols.erase(acols.begin()+iacol); foundpair=true; continue;}}
+		  if(!foundpair){++icol;}
+	  }
+	  
+	  int pid=0; int color=0; int anti_color=0;
+	  if(     (cols.size()>0 ) && (acols.size()>0 )){pid=21; color=cols[0]; anti_color=acols[0];}
+	  else if((cols.size()>0 ) && (acols.size()==0)){pid=-1; color=cols[0]; anti_color=0       ;}
+	  else if((cols.size()==0) && (acols.size()>0 )){pid= 1; color=0      ; anti_color=acols[0];}
+	  
+	  if(pid != 0){pz = -1*pz; event.append(pid, 23, anti_color, color, 0.2, 0.2, pz, sqrt(pz*pz + 0.08));}    
     
       VERBOSE(2) <<"There are " << hOut.size() << " Hadrons and " << pOut.size() << " partons after Hadronization";
     }
+	
+  //there still may be color tag duplicates - will SegFault if color_reconnections is ever invoked.
+  //this should be fixed *here*, before pythia.next() below, if that's ever a concern.
+  //scan over list of color & anticolor tags - if we find a duplicate, set it to a new value >0, <101 (will fail for more than 100 duplicates)
+  std::vector<std::vector<int>> col_instances;
+  for(unsigned int i=0; i<event.size(); ++i){
+	  bool newcol = true; bool newacol = true;
+	  for(int icols=0;icols<col_instances.size();++icols){
+		  if(event[i].col()  == col_instances[icols][0]){++col_instances[icols][1]; newcol =false;}
+		  if(event[i].acol() == col_instances[icols][0]){++col_instances[icols][1]; newacol=false;}
+	  }
+	  if(newcol &&  (event[i].col()  != 0)){std::vector<int> tmpcol; tmpcol.push_back(event[i].col());  tmpcol.push_back(1); col_instances.push_back(tmpcol);}
+	  if(newacol && (event[i].acol() != 0)){std::vector<int> tmpcol; tmpcol.push_back(event[i].acol()); tmpcol.push_back(1); col_instances.push_back(tmpcol);}
+  }
+  col_instances.erase(std::remove_if(col_instances.begin(), col_instances.end(),[](const std::vector<int>& val){return val[1] <= 2;}), col_instances.end());
+  int updcol = 1;
+  while(col_instances.size() > 0){
+	  int nupd = 2;
+	  for(unsigned int i=event.size()-1; i>=0; --i){
+		  if(col_instances[0][0]==event[i].col() ){event[i].col( updcol); --nupd;}
+		  if(col_instances[0][0]==event[i].acol()){event[i].acol(updcol); --nupd;}
+		  if(nupd == 0){break;}
+	  }
+	  ++updcol; col_instances[0][1] -= 2;
+	  col_instances.erase(std::remove_if(col_instances.begin(), col_instances.end(),[](const std::vector<int>& val){return val[1] <= 2;}), col_instances.end());
+  }
   
   pythia.next();
   // event.list();

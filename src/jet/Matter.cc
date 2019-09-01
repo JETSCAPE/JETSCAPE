@@ -61,7 +61,7 @@ void Matter::Init()
   hydro_Tc = 0.16;
   brick_length = 4.0;
   vir_factor = 1.0;
-  MaxColor = 101;
+  MaxColor = 1;
 
   double m_qhat = GetXMLElementDouble({"Eloss", "Matter", "qhat0"});
   SetQhat(m_qhat);
@@ -304,7 +304,10 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           double ft = generate_L(pIn[i].mean_form_time());
           pIn[i].set_form_time(ft);
           
-          unsigned int color=0, anti_color=0;
+          pIn[i].set_min_color( pIn[i].color() );
+          pIn[i].set_min_anti_color( pIn[i].anti_color() );
+          MaxColor = pIn[i].max_color();
+/*          unsigned int color=0, anti_color=0;
           std::uniform_int_distribution<short> uni(102,103);
           
           if ( pIn[i].pid()>0 )
@@ -331,6 +334,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           pIn[i].set_min_color(min_color);
           pIn[i].set_min_anti_color(min_anti_color);
           MaxColor = max_color;
+*/
           
           // VERBOSE OUTPUT ON INITIAL STATUS OF PARTICLE:
          VERBOSE(8) ;
@@ -694,7 +698,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               unsigned int d1_col, d1_acol, d2_col, d2_acol, color, anti_color;
               //std::uniform_int_distribution<short> uni(101,103);
               //color = pIn[i].color();
-              max_color = pIn[i].max_color();
+              max_color = pIn[i].max_color(); //do not put this inside individual splits - need color continuity within shower!
               //if (pIn[i].anti_color()>maxcolor) color = pIn[i].anti_color();
               JSDEBUG << " old max color = " << max_color;
               max_color=++MaxColor;
