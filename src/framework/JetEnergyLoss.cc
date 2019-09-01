@@ -286,7 +286,7 @@ void JetEnergyLoss::DoShower() {
 
 void JetEnergyLoss::Exec()
 {
-  JSINFO<<"Run JetEnergyLoss ...";
+  VERBOSE(1)<<"Run JetEnergyLoss ...";
   VERBOSE(1)<<"Found "<<GetNumberOfTasks()<<" Eloss Tasks/Modules Execute them ... ";
   //DEBUGTHREAD<<"Task Id = "<<this_thread::get_id()<<" | Run JetEnergyLoss ...";
   //DEBUGTHREAD<<"Task Id = "<<this_thread::get_id()<<" | Found "<<GetNumberOfTasks()<<" Eloss Tasks/Modules Execute them ... ";

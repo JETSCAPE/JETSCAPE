@@ -497,6 +497,13 @@ void JetScape::DetermineTaskListFromXML() {
           JSINFO << "JetScape::DetermineTaskList() -- JetHadronization: Added ColorlessHadronization to task list.";
         }
       }
+      else if (hadronizationName == "hybrid"){
+        auto hadroModule = JetScapeModuleFactory::createInstance("HybridHadronization");
+        if (hadroModule) {
+          hadro->Add(hadroModule);
+          JSINFO << "JetScape::DetermineTaskList() -- JetHadronization: Added HybridHadronization to task list.";
+        }
+      }
       //   - Custom module
       else if ( ((int) hadronizationName.find("CustomModule")>=0) ) {
         auto customModule = JetScapeModuleFactory::createInstance(hadronizationName);

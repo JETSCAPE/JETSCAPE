@@ -130,7 +130,7 @@ void PythiaGun::InitTask()
 
 void PythiaGun::Exec()
 {
-  JSINFO<<"Run Hard Process : "<<GetId()<< " ...";
+  VERBOSE(1)<<"Run Hard Process : "<<GetId()<< " ...";
   VERBOSE(8)<<"Current Event #"<<GetCurrentEvent();
   
   //Reading vir_factor from xml for MATTER
@@ -254,7 +254,9 @@ void PythiaGun::Exec()
 	       <<", z=" << xLoc[3];
     if(particle.id() !=22)
     {
-        AddParton(make_shared<Parton>(0, particle.id(),0,particle.pT(),particle.y(),particle.phi(),particle.e(),xLoc) );
+        auto ptn = make_shared<Parton>(0,particle.id(),0,particle.pT(),particle.y(),particle.phi(),particle.e(),xLoc);
+        ptn->set_color(particle.col()); ptn->set_anti_color(particle.acol()); ptn->set_max_color(1000*(np+1));
+        AddParton(ptn);
     }
     else
     {
