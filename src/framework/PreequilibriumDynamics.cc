@@ -72,4 +72,24 @@ void PreequilibriumDynamics::Exec() {
     JetScapeTask::ExecuteTasks();
 }
 
+void PreequilibriumDynamics::Clear() {
+    e_.clear();
+    P_.clear();
+    utau_.clear();
+    ux_.clear();
+    uy_.clear();
+    ueta_.clear();
+    pi00_.clear();
+    pi01_.clear();
+    pi02_.clear();
+    pi03_.clear();
+    pi11_.clear();
+    pi12_.clear();
+    pi13_.clear();
+    pi22_.clear();
+    pi23_.clear();
+    pi33_.clear();
+    bulk_Pi_.clear();
+}
+
 }  // end namespace Jetscape

@@ -52,6 +52,9 @@ class PreequilibriumDynamics : public JetScapeModuleBase {
     @sa Read about @a polymorphism in C++.
     */
     void Exec();
+  
+    /** Default Clear() function. It can be overridden by other tasks.*/
+    virtual void Clear();
 
     virtual void InitializePreequilibrium(PreEquilibriumParameterFile parameter_list) {}
     virtual void EvolvePreequilibrium() {}

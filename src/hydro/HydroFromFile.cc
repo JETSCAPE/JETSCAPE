@@ -240,7 +240,7 @@ void HydroFromFile::GetHydroInfo(
     double z_local = static_cast<double>(z);
 
     // initialize the fluid cell pointer
-    fluidCell *temp_fluid_cell_ptr = new fluidCell;
+    hydrofluidCell *temp_fluid_cell_ptr = new hydrofluidCell;
     if (hydro_type_ == 1) {  // for OSU 2+1d hydro
         double tau_local = sqrt(t*t - z*z);
         double eta_local = 0.5*log((t + z)/(t - z + 1e-15));

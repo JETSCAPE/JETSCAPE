@@ -24,6 +24,7 @@
 #include "PartonShower.h"
 #include "PartonPrinter.h"
 #include "MakeUniqueHelper.h"
+#include "LiquefierBase.h"
 #include <vector>
 #include <random>
 
@@ -172,11 +173,21 @@ class JetEnergyLoss : public JetScapeModuleBase, public std::enable_shared_from_
       @return A boolean flag. Its status indicates whether JetEnergyLoss had sent a signal to the function DoEnergyLoss().
    */
   const bool GetSentInPartonsConnected() {return SentInPartonsConnected;}
+    
+    void add_a_liqueifier(std::shared_ptr<LiquefierBase> new_liqueifier) {
+        liquefier_ptr = new_liqueifier;
+    }
+  
+    // The Slot method to send the vector of Hadronization module
+    void SendFinalStatePartons(vector<vector<shared_ptr<Parton>>>& fPartons) {
+        fPartons = final_Partons;
+    }
+
+ protected:
+    std::weak_ptr<LiquefierBase> liquefier_ptr;
 
   void GetFinalPartonsForEachShower(shared_ptr<PartonShower> shower);
 
-  // The Slot method to send the vector of Hadronization module
-  void SendFinalStatePartons(vector<vector<shared_ptr<Parton>>>& fPartons) {fPartons = final_Partons;};
 
  private:
 

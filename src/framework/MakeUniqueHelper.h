@@ -57,6 +57,14 @@ namespace Jetscape {
   template<class T, class... Args>
     typename _Unique_if<T>::_Known_bound
     make_unique(Args&&...) = delete;
+
+  // check whether a weak pointer is initialized or not
+  template <typename T>
+    bool weak_ptr_is_uninitialized(std::weak_ptr<T> const& weak) {
+    using wt = std::weak_ptr<T>;
+    return !weak.owner_before(wt{}) && !wt{}.owner_before(weak);
+  }
+
 }
 
 #endif // MAKEUNIQUEHELPER_H

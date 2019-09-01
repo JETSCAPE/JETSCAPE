@@ -44,7 +44,10 @@ void SoftParticlization::Exec() {
 }
 
 void SoftParticlization::Clear() {
-
+    for (unsigned i = 0; i < Hadron_list_.size(); i++) {
+        Hadron_list_.at(i).clear();
+    }
+    Hadron_list_.clear();
 }
 
 

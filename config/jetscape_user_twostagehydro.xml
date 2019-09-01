@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+
+<jetscape>
+
+  <nEvents> 10 </nEvents>
+  <setReuseHydro> true </setReuseHydro>
+  <nReuseHydro> 5 </nReuseHydro>
+  <vlevel> 0 </vlevel>
+  
+  <!-- Jetscape Writer -->
+  <JetScapeWriterAscii> on </JetScapeWriterAscii>
+
+  <!-- Inital State Module  -->
+  <IS>
+    <Trento use_module="user_defined"> </Trento>
+  </IS>
+
+  <!-- Hard Process -->
+  <Hard>
+    <PGun>
+      <pT>50</pT>
+    </PGun>
+  </Hard>
+
+  <!--Preequilibrium Dynamics Module -->
+  <Preequilibrium>
+    <NullPreDynamics> </NullPreDynamics>
+  </Preequilibrium>
+
+  <!-- Hydro  Module 1 -->
+  <Hydro>
+    <MUSIC>
+      <name>MUSIC_1</name>
+    </MUSIC>
+  </Hydro>
+  
+  <!-- Create liquifier -->
+  <Liquefier> </Liquefier>
+  
+  <!--Eloss Modules -->
+  <Eloss>
+    <Matter> </Matter>
+    <Lbt> </Lbt>
+    <AddLiquefier> true </AddLiquefier>
+  </Eloss>
+  
+  <!-- Hydro  Module 2 -->
+  <Hydro>
+    <MUSIC>
+      <name>MUSIC_2</name>
+    </MUSIC>
+    <AddLiquefier> true </AddLiquefier>
+  </Hydro>
+  
+  <!-- Jet Hadronization Module -->
+  <JetHadronization>
+    <name>colored</name>
+  </JetHadronization>
+
+  <!-- Particlization Module  -->
+  <SoftParticlization>
+    <iSS> </iSS>
+  </SoftParticlization>
+  
+</jetscape>

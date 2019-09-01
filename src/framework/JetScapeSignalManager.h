@@ -83,7 +83,7 @@ class JetScapeSignalManager //: public sigslot::has_slots<sigslot::multi_threade
   void ConnectSentInPartonsSignal(shared_ptr<JetEnergyLoss> j,shared_ptr<JetEnergyLoss> j2);
   void ConnectGetFinalPartonListSignal(shared_ptr<HadronizationManager> hm);
   void ConnectTransformPartonsSignal(shared_ptr<Hadronization> h,shared_ptr<Hadronization> h2); 
- 
+
   void DisconnectSignal() {}; // to be implememted if needed maybe for Eloss ...!???
 
   void CleanUp();

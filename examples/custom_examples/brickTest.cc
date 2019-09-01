@@ -44,6 +44,7 @@
 #include "Hadronization.h"
 #include "ColoredHadronization.h"
 #include "ColorlessHadronization.h"
+#include "CausalLiquefier.h"
 
 #include <chrono>
 #include <thread>
@@ -82,6 +83,7 @@ int main(int argc, char** argv)
   auto trento = make_shared<TrentoInitial>();
   auto pGun= make_shared<PGun> ();
   auto hydro = make_shared<Brick> ();
+  auto myliquefier = make_shared<CausalLiquefier> ();
   jetscape->Add(trento);
   jetscape->Add(pGun);
   jetscape->Add(hydro);
@@ -89,6 +91,8 @@ int main(int argc, char** argv)
   // Energy loss
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
+  jloss->add_a_liqueifier(myliquefier);
+
 
   auto matter = make_shared<Matter> ();
   // auto lbt = make_shared<LBT> ();

@@ -21,6 +21,8 @@
 #include "JetScapeBanner.h"
 #include "InitialState.h"
 #include "PreequilibriumDynamics.h"
+#include "JetEnergyLoss.h"
+#include "CausalLiquefier.h"
 
 #ifdef USE_HEPMC
 #include "JetScapeWriterHepMC.h"
@@ -40,6 +42,7 @@ namespace Jetscape {
   n_events(1),
   reuse_hydro_(false),
   n_reuse_hydro_(1),
+  liquefier(nullptr),
   fEnableAutomaticTaskListDetermination(true)
 {
   VERBOSE(8);
@@ -148,7 +151,20 @@ void JetScape::ReadGeneralParametersFromXML() {
   
 //________________________________________________________________
 void JetScape::DetermineTaskListFromXML() {
+  
+  // First, check for Liquefier and create it if so (since it needs to be passed to other modules)
+  VERBOSE(2) << "Checking if Liquifier should be created...";
+  tinyxml2::XMLElement* elementXML = (tinyxml2::XMLElement*) JetScapeXML::Instance()->GetXMLRootUser()->FirstChildElement();
+  while (elementXML) {
+    std::string elementName = elementXML->Name();
+    if (elementName == "Liquefier") {
+      liquefier = make_shared<CausalLiquefier>();
+      JSINFO << "Created liquefier.";
+    }
+    elementXML = elementXML->NextSiblingElement();
+  }
  
+  // Loop through and create all modules
   tinyxml2::XMLElement* element = (tinyxml2::XMLElement*) JetScapeXML::Instance()->GetXMLRootUser()->FirstChildElement();
   while (element) {
     std::string elementName = element->Name();
@@ -277,6 +293,27 @@ void JetScape::DetermineTaskListFromXML() {
     // Hydro
     else if (elementName == "Hydro") {
       
+      // First, check if liquefier should be added (Note: Can't use GetXMLElementText(), since that only works for unique tags)
+      VERBOSE(2) << "Checking if liquefer should be added: Hydro";
+      bool bAddLiquefier = false;
+      tinyxml2::XMLElement* childElementLiquefier = (tinyxml2::XMLElement*) element->FirstChildElement();
+      while (childElementLiquefier) {
+        std::string childElementName = childElementLiquefier->Name();
+        VERBOSE(2) << "Parsing childElementLiq: " << childElementName;
+        if (childElementName == "AddLiquefier") {
+          std::string strAddLiquefier = childElementLiquefier->GetText();
+          if ((int) strAddLiquefier.find("true")>=0) {
+            bAddLiquefier = true;
+            VERBOSE(1) << "Add liquefier to Hydro: True.";
+          }
+          else {
+            VERBOSE(1) << "Add liquefier to Hydro: False.";
+          }
+        }
+        childElementLiquefier = childElementLiquefier->NextSiblingElement();
+      }
+      
+      // Loop through elements to look for specific hydro module
       tinyxml2::XMLElement* childElement = (tinyxml2::XMLElement*) element->FirstChildElement();
       while (childElement) {
         std::string childElementName = childElement->Name();
@@ -288,6 +325,11 @@ void JetScape::DetermineTaskListFromXML() {
           if (hydro) {
             Add(hydro);
             JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added Brick to task list.";
+            SetModuleId(childElement, hydro);
+            if (bAddLiquefier) {
+              dynamic_pointer_cast<FluidDynamics>(hydro)->add_a_liqueifier(liquefier);
+              JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added liquefier to Brick.";
+            }
           }
         }
         //   - Gubser
@@ -296,6 +338,11 @@ void JetScape::DetermineTaskListFromXML() {
           if (hydro) {
             Add(hydro);
             JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added Gubser to task list.";
+            SetModuleId(childElement, hydro);
+            if (bAddLiquefier) {
+              dynamic_pointer_cast<FluidDynamics>(hydro)->add_a_liqueifier(liquefier);
+              JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added liquefier to Gubser.";
+            }
           }
         }
         //   - hydro_from_file
@@ -304,16 +351,25 @@ void JetScape::DetermineTaskListFromXML() {
           if (hydro) {
             Add(hydro);
             JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added hydro_from_file to task list.";
+            SetModuleId(childElement, hydro);
+            if (bAddLiquefier) {
+              dynamic_pointer_cast<FluidDynamics>(hydro)->add_a_liqueifier(liquefier);
+              JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added liquefier to hydro_from_file.";
+            }
           }
         }
         //   - MUSIC
         else if (childElementName == "MUSIC") {
           #ifdef music
           auto hydro = JetScapeModuleFactory::createInstance("MUSIC");
-          //auto hydro = make_shared<MpiMusic> ();
           if (hydro) {
             Add(hydro);
             JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added MUSIC to task list.";
+            SetModuleId(childElement, hydro);
+            if (bAddLiquefier) {
+              dynamic_pointer_cast<FluidDynamics>(hydro)->add_a_liqueifier(liquefier);
+              JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added liquefier to MUSIC.";
+            }
           }
           #else
           JSWARN << "MUSIC is attempted to be added, but it is not installed!";
@@ -336,6 +392,11 @@ void JetScape::DetermineTaskListFromXML() {
           if (customModule) {
             Add(customModule);
             JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added " << childElementName << " to task list.";
+            SetModuleId(childElement, customModule);
+            if (bAddLiquefier) {
+              dynamic_pointer_cast<FluidDynamics>(customModule)->add_a_liqueifier(liquefier);
+              JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added liquefier to CustomModule.";
+            }
           }
         }
 
@@ -349,6 +410,17 @@ void JetScape::DetermineTaskListFromXML() {
       auto jlossmanager = make_shared<JetEnergyLossManager> ();
       auto jloss = make_shared<JetEnergyLoss> ();
       
+      // Check if liquefier should be added, and add it if so
+      std::string strAddLiquefier = GetXMLElementText({"Eloss", "AddLiquefier"});
+      if ((int) strAddLiquefier.find("true")>=0) {
+        jloss->add_a_liqueifier(liquefier);
+        JSINFO << "JetScape::DetermineTaskList() -- Added liquefier to Eloss.";
+      }
+      else {
+        VERBOSE(1) << "Add liquefier to Eloss: False.";
+      }
+      
+      // Loop through and add Eloss modules
       tinyxml2::XMLElement* childElement = (tinyxml2::XMLElement*) element->FirstChildElement();
       while (childElement) {
         std::string childElementName = childElement->Name();
@@ -521,6 +593,21 @@ void JetScape::DetermineTaskListFromXML() {
 }
 
 //________________________________________________________________
+void JetScape::SetModuleId(tinyxml2::XMLElement* moduleElement, shared_ptr<JetScapeModuleBase> module) {
+    
+  tinyxml2::XMLElement* childElement = (tinyxml2::XMLElement*) moduleElement->FirstChildElement();
+  while (childElement) {
+    std::string childElementName = childElement->Name();
+    if (childElementName == "name") {
+      std::string name = childElement->GetText();
+      module->SetId(name);
+      JSINFO << "Set ID to: " << name;
+    }
+    childElement = childElement->NextSiblingElement();
+  }
+}
+
+//________________________________________________________________
 void JetScape::DetermineWritersFromXML() {
   
   // Get file output name to write to (without file extension, except if custom writer)
@@ -584,125 +671,154 @@ void JetScape::CheckForWriterFromXML(const char* writerName, std::string outputF
   
 // kind of cluncky, maybe a better way ... ?
 // Handle signal/slots in JetScape hence avoid passing pointers to sub tasks ...
-void JetScape::SetPointers()
-{
-  
-   // to get hydro pointer for signals, use signal?
-  JSINFO<<"Set Hydro,JetEnergylossManager and IS Pointers for SignalManager to create Signal/Slots";
-  
-  for (auto it : GetTaskList())
-    {
-      if (dynamic_pointer_cast<InitialState>(it))
-        JetScapeSignalManager::Instance()->SetInitialStatePointer(dynamic_pointer_cast<InitialState>(it));
-      
-      if (dynamic_pointer_cast<PreequilibriumDynamics>(it))
-        JetScapeSignalManager::Instance()->SetPreEquilibriumPointer(dynamic_pointer_cast<PreequilibriumDynamics>(it));
-      
-      if (dynamic_pointer_cast<FluidDynamics>(it))
-        JetScapeSignalManager::Instance()->SetHydroPointer(dynamic_pointer_cast<FluidDynamics>(it));
-      
-      if (dynamic_pointer_cast<JetEnergyLossManager>(it))
-        JetScapeSignalManager::Instance()->SetJetEnergyLossManagerPointer(dynamic_pointer_cast<JetEnergyLossManager>(it));
-      
-      if (dynamic_pointer_cast<HardProcess>(it))
-        JetScapeSignalManager::Instance()->SetHardProcessPointer(dynamic_pointer_cast<HardProcess>(it));
-      
-      if (dynamic_pointer_cast<JetScapeWriter>(it) && it->GetActive())
-        JetScapeSignalManager::Instance()->SetWriterPointer(dynamic_pointer_cast<JetScapeWriter>(it));
-      
-      if (dynamic_pointer_cast<PartonPrinter>(it))
-        JetScapeSignalManager::Instance()->SetPartonPrinterPointer(dynamic_pointer_cast<PartonPrinter>(it));
-
-      if (dynamic_pointer_cast<SoftParticlization>(it))
-        JetScapeSignalManager::Instance()->SetSoftParticlizationPointer(dynamic_pointer_cast<SoftParticlization>(it));
+void JetScape::SetPointers() {
+    // to get hydro pointer for signals, use signal?
+    JSINFO << "Set Hydro,JetEnergylossManager and IS Pointers for "
+           << "SignalManager to create Signal/Slots";
+    
+    bool hydro_pointer_is_set = false;
+    for (auto it : GetTaskList()) {
+        if (dynamic_pointer_cast<InitialState>(it)) {
+            JetScapeSignalManager::Instance()->SetInitialStatePointer(
+                                    dynamic_pointer_cast<InitialState>(it));
+        } else if (dynamic_pointer_cast<PreequilibriumDynamics>(it)) {
+            JetScapeSignalManager::Instance()->SetPreEquilibriumPointer(
+                        dynamic_pointer_cast<PreequilibriumDynamics>(it));
+        } else if (dynamic_pointer_cast<FluidDynamics>(it)
+                   && !hydro_pointer_is_set) {
+            JetScapeSignalManager::Instance()->SetHydroPointer(
+                        dynamic_pointer_cast<FluidDynamics>(it));
+            hydro_pointer_is_set = true;
+        } else if (dynamic_pointer_cast<JetEnergyLossManager>(it)) {
+            JetScapeSignalManager::Instance()->SetJetEnergyLossManagerPointer(
+                        dynamic_pointer_cast<JetEnergyLossManager>(it));
+        } else if (dynamic_pointer_cast<HardProcess>(it)) {
+            JetScapeSignalManager::Instance()->SetHardProcessPointer(
+                        dynamic_pointer_cast<HardProcess>(it));
+        } else if (dynamic_pointer_cast<JetScapeWriter>(it)
+                   && it->GetActive()) {
+            JetScapeSignalManager::Instance()->SetWriterPointer(
+                        dynamic_pointer_cast<JetScapeWriter>(it)); 
+        } else if (dynamic_pointer_cast<PartonPrinter>(it)) {
+            JetScapeSignalManager::Instance()->SetPartonPrinterPointer(
+                        dynamic_pointer_cast<PartonPrinter>(it));
+        } else if (dynamic_pointer_cast<SoftParticlization>(it)) {
+            JetScapeSignalManager::Instance()->SetSoftParticlizationPointer(
+                        dynamic_pointer_cast<SoftParticlization>(it));
+        }
     }
 }
 
-void JetScape::Exec()
-{
-  JSINFO<<BOLDRED<<"Run JetScape ...";
-  JSINFO<<BOLDRED<<"Number of Events = "<<GetNumberOfEvents();
+void JetScape::Exec() {
+    JSINFO << BOLDRED <<"Run JetScape ...";
+    JSINFO << BOLDRED <<"Number of Events = " << GetNumberOfEvents();
   
   // JetScapeTask::ExecuteTasks(); Has to be called explicitly since not really fully recursively (if ever needed)
   // --> JetScape is "Task Manager" of all modules ...
 
-  // Simple way of passing the writer module pointer
-  vector<weak_ptr<JetScapeWriter>> vWriter;
+    // Simple way of passing the writer module pointer
+    vector<weak_ptr<JetScapeWriter>> vWriter;
   
-  for (auto it : GetTaskList()) {
-    if (dynamic_pointer_cast<JetScapeWriter>(it)){  
-      if (it->GetActive())
-	vWriter.push_back(dynamic_pointer_cast<JetScapeWriter>(it));
+    for (auto it : GetTaskList()) {
+        if (dynamic_pointer_cast<JetScapeWriter>(it)) {
+            if (it->GetActive()) {
+                vWriter.push_back(dynamic_pointer_cast<JetScapeWriter>(it));
+            }
+        }
     }
-  } 
   
-  for (int i=0;i<GetNumberOfEvents();i++)
-    {
-      if (i % 100 == 0) {
-	JSINFO<<BOLDRED<<"Run Event # = "<<i;
-      }
-      JSDEBUG<<"Run Event # = "<<i;
-      JSDEBUG<<"Found "<<GetNumberOfTasks()<<" Modules Execute them ... ";
+    for (int i = 0; i < GetNumberOfEvents(); i++) {
+        JSINFO << BOLDRED << "Run Event # = " << i;
+        JSDEBUG << "Found " << GetNumberOfTasks()
+                <<" Modules Execute them ... ";
 
-      // First run all tasks
-      JetScapeTask::ExecuteTasks();
+        // First run all tasks
+        JetScapeTask::ExecuteTasks();
 
-      // Then hand around the collection of writers and ask
-      // modules to write what they like
-      // Sequence of events:
-      // -- writer->Exec is called and redirects to WriteEvent, which starts a new event line
-      // -- any remaining exec's finish
-      // -- all modules write their headers
-      // -- Now all header info is known to the writers, so write out the header
-      // -- all other Write()'s are being called
-      // the result still confuses me. It's in the best possible order but it shouldn't be.
-      
-      // collect module header data
-      for (auto w : vWriter) {
-	auto f = w.lock();
-	if ( f ) JetScapeTask::CollectHeaders(w);
-      }
-      // official header
-      for (auto w : vWriter) {
-	auto f = w.lock();
-	if ( f ) f->WriteHeaderToFile();
-      }
-      // event data
-      for (auto w : vWriter) {
-	auto f = w.lock();
-	if ( f ) JetScapeTask::WriteTasks(w);
-      }
+        // Then hand around the collection of writers and ask
+        // modules to write what they like
+        // Sequence of events:
+        // -- writer->Exec is called and redirects to WriteEvent, which starts a new event line
+        // -- any remaining exec's finish
+        // -- all modules write their headers
+        // -- Now all header info is known to the writers, so write out the header
+        // -- all other Write()'s are being called
+        // the result still confuses me. It's in the best possible order but it shouldn't be.
+        
+        // collect module header data
+        for (auto w : vWriter) {
+            auto f = w.lock();
+	        if ( f ) {
+                JetScapeTask::CollectHeaders(w);
+            }
+        }
+        // official header
+        for (auto w : vWriter) {
+	        auto f = w.lock();
+	        if ( f ) {
+                f->WriteHeaderToFile();
+            }
+        }
 
-      // Finalize
-      for (auto w : vWriter) {
-	auto f = w.lock();
-	if ( f ) f->WriteEvent();
-      }
+        // event data
+        for (auto w : vWriter) {
+            auto f = w.lock();
+	        if ( f ) {
+                JetScapeTask::WriteTasks(w);
+            }
+        }
 
-      // For reusal, deactivate task after it has finished but before it gets cleaned up.
-      if (reuse_hydro_) {
-	if (n_reuse_hydro_ <= 0) {
-	  JSWARN << " reuse_hydro is set, but n_reuse_hydro=" << n_reuse_hydro_;
-	  throw std::runtime_error ("Incompatible reusal settings.");
-	}
-	for (auto it : GetTaskList()) {
-	  if (!dynamic_pointer_cast<FluidDynamics>(it)
-	      && !dynamic_pointer_cast<InitialState>(it)) {
-	    continue;
-	  }
-	  if (i%n_reuse_hydro_ == n_reuse_hydro_ - 1) {
-	    JSDEBUG << " i was " << i << " i%n_reuse_hydro_ = " << i%n_reuse_hydro_ << " --> ACTIVATING";
-	    it->SetActive(true);
-	  } else {
-	    JSDEBUG << " i was " << i << " i%n_reuse_hydro_ = " << i%n_reuse_hydro_ << " --> DE-ACTIVATING";
-	    it->SetActive(false);
-	  }
-	}
-      }
-      // Now clean up, only affects active taskjs
-      JetScapeTask::ClearTasks();
+        // Finalize
+        for (auto w : vWriter) {
+	        auto f = w.lock();
+	        if ( f ) {
+                f->WriteEvent();
+            }
+        }
 
-      IncrementCurrentEvent();
+        // For reusal, deactivate task after it has finished
+        // but before it gets cleaned up.
+        if (reuse_hydro_) {
+            if (n_reuse_hydro_ <= 0) {
+	            JSWARN << " reuse_hydro is set, but n_reuse_hydro = "
+                       << n_reuse_hydro_;
+	            throw std::runtime_error ("Incompatible reusal settings.");
+	        }
+            bool hydro_pointer_is_set = false;
+	        for (auto it : GetTaskList()) {
+	            if (!dynamic_pointer_cast<FluidDynamics>(it)
+	                && !dynamic_pointer_cast<InitialState>(it)) {
+	                continue;
+	            }
+
+                // only deactivate the first hydro
+                if (dynamic_pointer_cast<FluidDynamics>(it)
+                        && hydro_pointer_is_set) {
+                    continue;
+                }
+
+	            if (i%n_reuse_hydro_ == n_reuse_hydro_ - 1) {
+	                JSDEBUG << " i was " << i << " i%n_reuse_hydro_ = "
+                            << i%n_reuse_hydro_ << " --> ACTIVATING";
+	                it->SetActive(true);
+                    if (dynamic_pointer_cast<FluidDynamics>(it)) {
+                        hydro_pointer_is_set = true;
+                    }
+	            } else {
+	                JSDEBUG << " i was " << i << " i%n_reuse_hydro_ = "
+                            << i%n_reuse_hydro_ << " --> DE-ACTIVATING";
+	                it->SetActive(false);
+                    if (dynamic_pointer_cast<FluidDynamics>(it)) {
+                        hydro_pointer_is_set = true;
+                    }
+	            }
+	        }
+        }
+
+        // Now clean up, only affects active taskjs
+        JetScapeTask::ClearTasks();
+
+        IncrementCurrentEvent();
     }
 }
 

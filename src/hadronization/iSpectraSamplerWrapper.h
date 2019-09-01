@@ -19,6 +19,8 @@
 #ifndef ISPECTRASAMPLERWRAPPER_H
 #define ISPECTRASAMPLERWRAPPER_H
 
+#include <memory>
+
 #include "SoftParticlization.h"
 #include "iSS.h"
 
@@ -28,7 +30,7 @@ class iSpectraSamplerWrapper: public SoftParticlization {
  private:
     tinyxml2::XMLElement *iSS_xml_;
 
-    iSS *iSpectraSampler_ptr_;
+    std::unique_ptr<iSS> iSpectraSampler_ptr_;
 
     // Allows the registration of the module so that it is available to be used by the Jetscape framework.
     static RegisterJetScapeModule<iSpectraSamplerWrapper> reg;
