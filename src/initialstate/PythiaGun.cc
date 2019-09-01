@@ -210,7 +210,7 @@ void PythiaGun::Exec()
 
   
   if (!ini) {
-      JSWARN << "No initial state module, setting the starting location to 0. Make sure to add e.g. trento before PythiaGun.";
+    VERBOSE(1) << "No initial state module, setting the starting location to 0. Make sure to add e.g. trento before PythiaGun.";
   } else {
     auto num_bin_coll = ini->GetNumOfBinaryCollisions();
     if ( num_bin_coll.size()==0 ){

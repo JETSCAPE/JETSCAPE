@@ -39,7 +39,7 @@ void ShowJetscapeBanner()
   INFO_NICE<<"|                                                              |";
   INFO_NICE<<"|     The Jet Energy-loss Tomography with a Statistically      |";
   INFO_NICE<<"|       and Computationally Advanced Program Envelope          |";
-  INFO_NICE<<"|                http://jetscape.wayne.edu                     |";
+  INFO_NICE<<"|                     http://jetscape.org                      |";
   INFO_NICE<<"|                                                              |";
   INFO_NICE<<"| Please cite arXiv:1903.07706 if you use this package for     |";
   INFO_NICE<<"| scientific work.                                             |";

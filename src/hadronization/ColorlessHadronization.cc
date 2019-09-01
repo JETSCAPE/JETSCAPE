@@ -95,7 +95,7 @@ void ColorlessHadronization::WriteTask(weak_ptr<JetScapeWriter> w)
 
 void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& shower, vector<shared_ptr<Hadron>>& hOut, vector<shared_ptr<Parton>>& pOut)
 {
-  JSINFO<<"Start Hadronizing using PYTHIA Lund string model (does NOT use color flow, needs to be tested)...";
+  VERBOSE(1)<<"Start Hadronizing using PYTHIA Lund string model (does NOT use color flow, needs to be tested)...";
   Event& event      = pythia.event;
   ParticleData& pdt = pythia.particleData;
 
@@ -133,8 +133,8 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
       }
       JSDEBUG<<"Shower#"<<ishower+1 << ". Number of partons to hadronize so far: " << pIn.size();
     }
-    if (want_pos==1) JSINFO<<"# Positive Partons to hadronize: " << pIn.size();
-    else JSINFO<<"# Negative Partons to hadronize: " << pIn.size(); 
+    if (want_pos==1) VERBOSE(1)<<"# Positive Partons to hadronize: " << pIn.size();
+    else VERBOSE(1)<<"# Negative Partons to hadronize: " << pIn.size(); 
 
     // Check whether event is empty (specially important for negative partons case)
     if (pIn.size()==0) continue;
@@ -171,7 +171,7 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
       nquarks+=1;
       isdone[pIn.size()-1]=1;
       one_end[0]=pIn.size()-1;
-      JSINFO << "Attached quark remnant flying down +Pz beam";
+      VERBOSE(1) << "Attached quark remnant flying down +Pz beam";
       // Second quark
       FourVector p2(rempx,rempy,-rempz,reme);
       FourVector x2;
@@ -180,7 +180,7 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
       nquarks+=1;
       isdone[pIn.size()-1]=1;
       two_end[istring]=pIn.size()-1;
-      JSINFO << "Attached quark remnant flying down -Pz beam";
+      VERBOSE(1) << "Attached quark remnant flying down -Pz beam";
     }
 
     // Assign ends of strings (order matters in this algo)
@@ -212,7 +212,7 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
           nquarks+=1;
           isdone[pIn.size()-1]=1;
           two_end[istring]=pIn.size()-1;
-          JSINFO << "Attached quark remnant flying down +Pz beam";
+          VERBOSE(1) << "Attached quark remnant flying down +Pz beam";
         }
       }
     }
@@ -389,7 +389,7 @@ void ColorlessHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>&
         //hadfile << pythia.event[ipart].px() << " " << pythia.event[ipart].py() << " " << pythia.event[ipart].pz() << " " << pythia.event[ipart].e() << " " << pythia.event[ipart].id() << " " << pythia.event[ipart].charge() << endl;
       }
     } 
-    JSINFO<<"#Showers hadronized together: " << shower.size() << ". There are " << hOut.size() << " hadrons and " << pOut.size() << " partons after PYTHIA Hadronization";
+    VERBOSE(1)<<"#Showers hadronized together: " << shower.size() << ". There are " << hOut.size() << " hadrons and " << pOut.size() << " partons after PYTHIA Hadronization";
     //hadfile << "NEXT" << endl;
   
   } // End of positive or negative loop
