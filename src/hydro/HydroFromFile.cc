@@ -127,14 +127,14 @@ void HydroFromFile::EvolveHydro() {
     if (hydro_type_ == 1) {
         string filename;
         if (flag_read_in_multiple_hydro_ == 0) {
-            filename = para_->FirstChildElement("VISH_file")->GetText();
+	  filename = GetXMLElementText({"Hydro", "hydro_from_file", "VISH_file"});
         } else {
-            string folder = (
-                    para_->FirstChildElement("hydro_files_folder")->GetText());
-            std::ostringstream hydro_filename;
-            hydro_filename << folder << "/event-" << hydro_event_idx_
+	  string folder = GetXMLElementText({"Hydro", "hydro_from_file", "hydro_files_folder"});
+	  std::ostringstream hydro_filename;
+	  hydro_filename << folder << "/event-" << hydro_event_idx_
                            << "/JetData.h5";
-            filename = hydro_filename.str();
+          filename = hydro_filename.str();
+	  
         }
 #ifdef USE_HDF5
         read_in_hydro_event(filename, 500, load_viscous_);
