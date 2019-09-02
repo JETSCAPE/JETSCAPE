@@ -93,7 +93,7 @@ void PGun::Exec()
        };
        
        if (!ini) {
-	 JSINFO << "No initial state module, setting the starting location to 0. ";
+	 VERBOSE(1) << "No initial state module, setting the starting location to 0. ";
        } else {
 	 auto num_bin_coll = ini->GetNumOfBinaryCollisions();
 	 if ( num_bin_coll.size()==0 ){
