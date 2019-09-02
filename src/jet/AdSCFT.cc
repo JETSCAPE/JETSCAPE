@@ -103,13 +103,14 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       //Parton velocity
       vector<double> w;
       for (unsigned int j =0; j<4; j++) w.push_back(p[j]/p[3]);
+      double w2=std::pow(w[0],2.)+std::pow(w[1],2.)+std::pow(w[2],2.);
      
       //Parton 4-position
       double initR0=pIn[i].x_in().t();	//Time when the parton was last modified
       double x[4];
-      x[0]=pIn[i].x_in().x()+(time-initR0)*w[0];
-      x[1]=pIn[i].x_in().y()+(time-initR0)*w[1];
-      x[2]=pIn[i].x_in().z()+(time-initR0)*w[2];
+      x[0]=pIn[i].x_in().x()+(time-initR0)*w[0]/std::sqrt(w2);
+      x[1]=pIn[i].x_in().y()+(time-initR0)*w[1]/std::sqrt(w2);
+      x[2]=pIn[i].x_in().z()+(time-initR0)*w[2]/std::sqrt(w2);
       x[3]=pIn[i].x_in().t()+(time-initR0)*w[3];
  
       //Extract fluid properties
@@ -137,7 +138,7 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       // *Fluid temperature above Tcut ( T0 from XML )
       // *Parton is not completely quenched ( Ecut = 0.00001 )
       double QS=Q0*Q0;
-      if (pIn[i].t()<=QS+rounding_error && temp>=T0 && pIn[i].e()>0.00001)
+      if (pIn[i].t()<=QS+rounding_error && temp>=T0 && pIn[i].e()>0.00001 && pIn[i].pstat()>=0)
       {
         //cout << " ADS Q= " << pIn[i].t() << " Q0= " << Q0 << " temp= " << temp << " T0= " << T0 << endl;
 	//cout << " ADS tau= " << tau << " x= " << x[0] << " y= " << x[1] << " z= " << x[2] << " t= " << x[3] << endl;
@@ -175,8 +176,6 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 	//JSDEBUG << " px= " << p[0] << " py= " << p[1] << " pz= " << p[2] << " en= " << p[3];
    	//JSDEBUG << " x= " << x[0] << " y= " << x[1] << " z= " << x[2] << " t= " << x[3];
 	
-        double w2=std::pow(w[0],2.)+std::pow(w[1],2.)+std::pow(w[2],2.);        
-        //JSDEBUG << " w2= " << w2;
 	double virt=std::sqrt(p[3]*p[3]-w2*p[3]*p[3]-std::pow(pIn[i].restmass(),2.));
 	//JSDEBUG << " virt= " << virt;
   	
