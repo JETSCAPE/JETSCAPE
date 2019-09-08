@@ -722,6 +722,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                           }
                       }
 
+		      //Amit: do not add recoil parton with E=0,Px=0,Py=0,Pz=0 into pOut vector
+		      if(pc2[0] < rounding_error || pc3[0] < rounding_error ) continue;
+
                       // push out recoied and back-reaction (negative) partons
                       // need to add color information later!!!
                       double el_vertex[4];
