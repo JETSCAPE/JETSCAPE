@@ -59,14 +59,28 @@ int main(int argc, char** argv)
       // cout<<"Analyze current event: "<<reader->GetCurrentEvent()<<endl;
       auto mShowers=reader->GetPartonShowers();     
 
-      dist_output<<"Event "<< reader->GetCurrentEvent()+1<<endl;
+      int TotalPartons =0;
+      for (int i=0;i<mShowers.size();i++)
+        {
+	  TotalPartons = TotalPartons + mShowers[i]->GetFinalPartons().size();
+        }
+
+      dist_output << "#"  << "\tEvent"
+                  << reader->GetCurrentEvent()+1 << "ID\t"
+                  << TotalPartons << "\t"
+                  << "pstat-E"   << "\t"
+                  << "Px"  << "\t"
+                  << "Py"  << "\t"
+                  << "Pz"  << "\t"
+                  << "Eta" <<  "\t"<< "Phi" << endl;
+
       for (int i=0;i<mShowers.size();i++)
 	{
 	  //cout<<" Analyze parton shower: "<<i<<endl;
 	  // Let's create a file
 	  for ( int ipart = 0; ipart< mShowers[i]->GetFinalPartons().size(); ++ipart){
 	    Parton p = *mShowers[i]->GetFinalPartons().at(ipart);
-            if(abs(p.pid())!=5) continue;
+	    //            if(abs(p.pid())!=5) continue;
 
 	    dist_output << ipart   << "\t"
 			<< p.pid() << "\t"

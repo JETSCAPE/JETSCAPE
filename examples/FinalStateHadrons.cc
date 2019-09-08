@@ -61,9 +61,19 @@ int main(int argc, char** argv)
       //dist_output<<"Event "<< reader->GetCurrentEvent()+1<<endl;
       hadrons = reader->GetHadrons();
       cout<<"Number of hadrons is: " << hadrons.size() << endl;
+      
+      dist_output << "#"  << "\tEvent"
+                  << reader->GetCurrentEvent()+1 << "ID\t"
+                  << hadrons.size() << "\t"
+                  << "pstat-E"   << "\t"
+                  << "Px"  << "\t"
+                  << "Py"  << "\t"
+                  << "Pz"  << "\t"
+                  << "Eta" <<  "\t"<< "Phi" << endl;
+
       for(unsigned int i=0; i<hadrons.size(); i++)
 	{
-	  dist_output<<i<<" "<<hadrons[i].get()->pid()<<" "<<hadrons[i].get()->pstat()<<" "<< hadrons[i].get()->e() << " "<< hadrons[i].get()->px()<< " "<< hadrons[i].get()->py() << " "<< hadrons[i].get()->pz()<<  endl;
+	  dist_output<<i<<" "<<hadrons[i].get()->pid()<<" "<<hadrons[i].get()->pstat()<<" "<< hadrons[i].get()->e() << " "<< hadrons[i].get()->px()<< " "<< hadrons[i].get()->py() << " "<< hadrons[i].get()->pz()<<  " " << hadrons[i].get()->eta() <<" "<<hadrons[i].get()->phi() <<endl;
         }
     }
   

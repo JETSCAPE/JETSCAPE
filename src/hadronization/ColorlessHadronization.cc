@@ -80,10 +80,15 @@ void ColorlessHadronization::Init()
     pythia.readString("ProcessLevel:all = off");
   
     // Don't let pi0 decay
-    pythia.readString("111:mayDecay = off");
+    //pythia.readString("111:mayDecay = off");
 
     // Don't let any hadron decay
     //pythia.readString("HadronLevel:Decay = off");
+
+    pythia.readString("PartonLevel:FSR=off");
+    pythia.readString("HadronLevel:Decay = on");
+    pythia.readString("ParticleDecays:limitTau0=on");
+    pythia.readString("ParticleDecays:tau0Max = 10");
 
     // And initialize
     pythia.init();

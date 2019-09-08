@@ -288,7 +288,7 @@ void HydroinfoH5::readHydroinfoH5(string filename_in, int bufferSize_in, int Vis
    herr_t status;
    filename = filename_in;
    const char *fileptr = (char*) filename.c_str();
-   H5file_id = H5Fopen(fileptr, H5F_ACC_RDWR, H5P_DEFAULT);
+   H5file_id = H5Fopen(fileptr, H5F_ACC_RDONLY, H5P_DEFAULT);  ////H5F_ACC_RDWR, H5F_ACC_RDONLY
    H5groupEventid = H5Gopen(H5file_id, "/Event", H5P_DEFAULT);
 
    readHydrogridInfo();

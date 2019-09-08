@@ -80,7 +80,7 @@
       <FSR_on>0</FSR_on>
       <pTHatMin>50</pTHatMin>
       <pTHatMax>60</pTHatMax>
-      <eCM>2760</eCM>
+      <eCM>5020</eCM>
       <useHybridHad>0</useHybridHad>
       <!-- You can add any number of additional lines to initialize pythia here -->
       <!-- Note that if the tag exists it cannot be empty (tinyxml produces a segfault) -->
@@ -96,7 +96,7 @@
 
     <deltaT>0.1</deltaT>
     <formTime> -0.1</formTime>
-    <maxT>10</maxT>
+    <maxT>20</maxT>
     <mutex>ON</mutex>
 
     <Matter>
@@ -218,7 +218,7 @@
    <JetHadronization>
        <name>colored/colorless/hybrid</name>
        <take_recoil>1</take_recoil>
-       <eCMforHadronization>1380</eCMforHadronization>
+       <eCMforHadronization>2510</eCMforHadronization>
        <reco_Elevelmax>3</reco_Elevelmax>
        <thermreco_distmax>5.0</thermreco_distmax>
        <shower_recofactor>0.3333333</shower_recofactor>
