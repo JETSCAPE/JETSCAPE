@@ -79,7 +79,10 @@ void ColoredHadronization::Init()
         
     pythia.readString("ProcessLevel:all = off");
     pythia.readString("PartonLevel:FSR=off");
-    pythia.readString("HadronLevel:Decay = off");
+    pythia.readString("HadronLevel:Decay = on");
+    pythia.readString("ParticleDecays:limitTau0=on");
+    pythia.readString("ParticleDecays:tau0Max = 10");
+
     pythia.init();
         
   }

@@ -76,7 +76,7 @@ int main(int argc, char** argv)
   
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",10000);
+  auto jetscape = make_shared<JetScape>(argv[1],10000);
   jetscape->SetId("primary");
 
   // Initial conditions and hydro
@@ -86,7 +86,7 @@ int main(int argc, char** argv)
   jetscape->SetReuseHydro(false);
   jetscape->Add(trento);
   jetscape->Add(pythiaGun);
-  jetscape->Add(hydro);
+  //jetscape->Add(hydro);
 
 
   // Energy loss
@@ -114,16 +114,16 @@ int main(int argc, char** argv)
   // Hadronization
   auto hadroMgr = make_shared<HadronizationManager> ();
   auto hadro = make_shared<Hadronization> ();
-  auto hadroModule = make_shared<ColoredHadronization> ();
-  hadro->Add(hadroModule);
-  //auto colorless = make_shared<ColorlessHadronization> ();
-  //hadro->Add(colorless);
+  //auto hadroModule = make_shared<ColoredHadronization> ();
+  //hadro->Add(hadroModule);
+  auto colorless = make_shared<ColorlessHadronization> ();
+  hadro->Add(colorless);
   hadroMgr->Add(hadro);
   jetscape->Add(hadroMgr);
 
   
   // Output
-  auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
+  auto writer= make_shared<JetScapeWriterAscii> (argv[2]);
   jetscape->Add(writer);
 //#ifdef USE_GZIP
 //  // same as JetScapeWriterAscii but gzipped
@@ -157,12 +157,17 @@ int main(int argc, char** argv)
   // pythiaGun->stat();
 
   // // Demonstrate how to work with pythia statistics
-  // //Pythia8::Info& info = pythiaGun->info;
+  Pythia8::Info& info = pythiaGun->info;
   // cout << " nTried    = " << info.nTried() << endl;
   // cout << " nSelected = " << info.nSelected()  << endl;
   // cout << " nAccepted = " << info.nAccepted()  << endl;
   // cout << " sigmaGen  = " <<   info.sigmaGen()  << endl;  
   // cout << " sigmaErr  = " <<   info.sigmaErr()  << endl;
+
+  ofstream WriteSigmaHard;
+  WriteSigmaHard.open(argv[3],std::ios::out);
+  WriteSigmaHard<<info.sigmaGen()<<"\t"<<info.sigmaErr()<<endl;
+  WriteSigmaHard.close();
    
   return 0;
 }
