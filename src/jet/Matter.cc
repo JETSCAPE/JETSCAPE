@@ -1816,7 +1816,7 @@ double Matter::generate_vac_t_w_M(int p_id, double M, double nu, double t0, doub
 
       if (p_id==gid)
       {
-          denom = sudakov_Pgg(t0, t_mid_00, loc_a, nu)*std::pow(sudakov_Pqq(t0, t_mid_00, loc_a, nu),3.0)*sudakov_Pqq_w_M_vac_only(M_charm, t0, t_mid_MM, loc_a, nu)*sudakov_Pqq_w_M_vac_only(M_bottom, t0, t_mid_MM, loc_a, nu);
+          denom = sudakov_Pgg(t0, t_mid_00, loc_a, nu)*std::pow(sudakov_Pqq(t0, t_mid_00, loc_a, nu),3.0)*sudakov_Pqq_w_M_vac_only(M_charm, t0, t_mid_00, loc_a, nu)*sudakov_Pqq_w_M_vac_only(M_bottom, t0, t_mid_00, loc_a, nu);
             
           if ((is!=1)&&(is!=2))
           {
