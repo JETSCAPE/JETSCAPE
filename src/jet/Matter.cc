@@ -1797,8 +1797,8 @@ double Matter::generate_vac_t_w_M(int p_id, double M, double nu, double t0, doub
   if (numer>r)
     {
       // cout << " numer > r, i.e. ; " << numer << " > " << r << endl ;
-      
-      return(t_mid_M0) ;
+        if(std::fabs(p_id)==cid || std::fabs(p_id)=bid) return(t_mid_M0);
+        return(t_mid_00);
     }
     
   //t_mid = (t_low+t_hi)/2.0 ;
