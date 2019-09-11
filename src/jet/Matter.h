@@ -24,7 +24,6 @@ using namespace Jetscape;
 class Matter : public JetEnergyLossModule<Matter> //, public std::enable_shared_from_this<Matter>
 {  
  public:
-//  static Pythia8::Pythia InternalHelperPythia;
 
   Matter();
   virtual ~Matter();

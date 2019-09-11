@@ -30,6 +30,8 @@
 using namespace Jetscape;
 using namespace std;
 
+static Pythia8::Pythia PythiaFunction ("IntentionallyEmpty",false);
+
 bool Matter::flag_init=0;
 
 double Matter::RHQ[60][20]={{0.0}};        //total scattering rate for heavy quark
@@ -60,7 +62,8 @@ Matter::~Matter()
 
 void Matter::Init()
 {
-  JSINFO<<"Intialize Matter ...";
+    
+    JSINFO<<"Intialize Matter ...";
 
   // Redundant (get this from Base) quick fix here for now
   tinyxml2::XMLElement *eloss= JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" );
@@ -575,7 +578,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               double el_p0[5];
               double el_CR;
               double el_rand;
-	            double HQ_mass;
+              double HQ_mass;
 
               if(pid==gid) el_CR=Ca;
               else el_CR=Cf;
@@ -805,10 +808,17 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               { // gluon
                   double val1 = P_z_gg_int(z_low, z_hi, zeta, t_used, tau_form,pIn[i].nu() );
                   double val2 = nf*P_z_qq_int(z_low, z_hi, zeta, t_used, tau_form,pIn[i].nu() );
-                    
-                  if ( val1<0.0 || val2<0.0 )
+                  double M = PythiaFunction.particleData.m0( cid );
+                  double val3 = P_z_qq_int_w_M_vac_only(M,z_low, z_hi, zeta, t_used, tau_form,pIn[i].nu() );
+                  
+                  if (t_used < 2.0*(QS*QS + M*M)) val3 = 0.0;
+                  M = PythiaFunction.particleData.m0( bid );
+                  double val4 = P_z_qq_int_w_M_vac_only(M,z_low, z_hi, zeta, t_used, tau_form,pIn[i].nu() );
+                  if (t_used < 2.0*(QS*QS + M*M)) val4 = 0.0;
+                  
+                  if ( val1<0.0 || val2<0.0 || val3<0.0 )
                   {
-                      cerr << " minus log of sudakov negative val1 , val2 = " << val1 << "  " << val2 << endl;
+                      cerr << " minus log of sudakov negative val1 , val2 = " << val1 << "  " << val2 << "  " << val3 << endl;
                       throw std::runtime_error("minus log of sudakov negative");
                       // cin >> blurb ;
                   }
@@ -1728,8 +1738,9 @@ double Matter::generate_vac_t(int p_id, double nu, double t0, double t, double l
 double Matter::generate_vac_t_w_M(int p_id, double M, double nu, double t0, double t, double loc_a, int is)
 {
   double r,z,ratio,diff,scale,t_low_M0,t_low_MM,t_low_00, t_hi_M0, t_hi_MM, t_hi_00, t_mid_M0, t_mid_MM, t_mid_00, numer, denom, test ;
-    double M_charm=1.5;//InternalHelperPythia.particleData.m0(4);
-    double M_bottom=4.8;//InternalHelperPythia.particleData.m0(5);
+    
+    double M_charm=PythiaFunction.particleData.m0(cid);
+    double M_bottom=PythiaFunction.particleData.m0(bid);
     
   // r = double(random())/ (maxN );
   r = ZeroOneDistribution(*GetMt19937Generator());
@@ -1797,7 +1808,7 @@ double Matter::generate_vac_t_w_M(int p_id, double M, double nu, double t0, doub
   if (numer>r)
     {
       // cout << " numer > r, i.e. ; " << numer << " > " << r << endl ;
-        if(std::fabs(p_id)==cid || std::fabs(p_id)=bid) return(t_mid_M0);
+        if (std::fabs(p_id)==cid || std::fabs(p_id)==bid) return(t_mid_M0);
         return(t_mid_00);
     }
     
