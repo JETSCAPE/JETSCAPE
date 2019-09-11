@@ -2162,7 +2162,7 @@ double  Matter::generate_vac_z_w_M(int p_id, double M, double t0, double t, doub
   
   if (p_id==gid && (is==1 || is==2)) return(z_mid_00);
   else if (p_id==gid && (is==4 || is==5)) return(z_mid_MM);
-  else if (((int) std::abs((double) p_id))==uid || ((int) std::abs((double) p_id))==did || ((int) std::abs((double) p_id))==sid) return(z_mid_00);
+  else if (std::abs(p_id)==uid || std::abs(p_id)==did || std::abs(p_id)==sid) return(z_mid_00);
   else return(z_mid_M0);
 }
 
