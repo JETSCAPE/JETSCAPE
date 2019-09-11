@@ -85,10 +85,10 @@ void PGun::Exec()
 //	 tempRand = rand()/maxN;
 //	 if(tempRand < 0.50) parID = -parID;
  //      }
-         parID = 1;
+         parID = 21;
     //     mass = 0.0;
        mass = InternalHelperPythia.particleData.m0( parID );
-         JSINFO << BOLDYELLOW << " Mass = " << mass ;
+         //JSINFO << BOLDYELLOW << " Mass = " << mass ;
        pT = fixed_pT; //max_pT*(rand()/maxN);
        
        phi = 2.0*PI*(rand()/maxN);

@@ -317,6 +317,11 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       // energetic heavy quarks, the velocity may be very close to 1.
       double velocityMod = std::sqrt(std::pow(velocity[1],2) + std::pow(velocity[2],2) + std::pow(velocity[3],2));
 
+      if (velocityMod>1.0)
+      {
+          JSINFO << BOLDRED << " tachyonic propagation detected for parton passed from hard scattering, velocity mod = " << velocityMod ;
+          assert(velocityMod < 1.0);
+      }
       VERBOSE(2) << BOLDYELLOW << " velocityMod = " << velocityMod ;
       
       if(pIn[i].form_time()<0.0) pIn[i].set_jet_v(velocity); // jet velocity is set only once
@@ -817,9 +822,11 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   double val4 = P_z_qq_int_w_M_vac_only(M,z_low, z_hi, zeta, t_used, tau_form,pIn[i].nu() );
                   if (t_used < 2.0*(QS*QS + M*M)) val4 = 0.0;
                   
+                  JSINFO<< BOLDYELLOW << " val1 = " << val1 << " val2 = " << val2 << " val3 = " << val3 << " val4 = " << val4 ;
+                  
                   if ( val1<0.0 || val2<0.0 || val3<0.0 || val4 <0.0)
                   {
-                      cerr << " minus log of sudakov negative val1 , val2 = " << val1 << "  " << val2 << "  " << val3 << "  " << val4 << endl;
+                      cerr << " minus log of sudakov negative val1 , val2 , val3, val4 = " << val1 << "  " << val2 << "  " << val3 << "  " << val4 << endl;
                       throw std::runtime_error("minus log of sudakov negative");
                       // cin >> blurb ;
                   }
@@ -857,12 +864,17 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       pid_a = cid;
                       pid_b = -cid;
                       iSplit = 2;
+                      
+                      JSINFO << BOLDYELLOW << " split to c c-bar" ;
+                      
                   }
                   else if (r>ratio3)
                   {
                       pid_a = bid;
                       pid_b = -bid;
                       iSplit = 2;
+                      
+                      JSINFO << BOLDYELLOW << " Split to b b-bar ";
                   }
                   else
                   { // gg
@@ -877,6 +889,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   double relative_charge = 0.0;
                   if ( (std::abs(pIn[i].pid())>0)&&(std::abs(pIn[i].pid())<4) ) relative_charge = 1.0/9.0;
                   if (std::abs(pIn[i].pid())==2) relative_charge = relative_charge*4.0;
+                  if (std::abs(pIn[i].pid())==4) relative_charge = 4.0/9.0;
+                  if (std::abs(pIn[i].pid())==5) relative_charge = 1.0/9.0;
                 
                   
                   double ProbGluon = 1.0 - sudakov_Pqg( QS/2, pIn[i].t(), zeta, pIn[i].nu() ) ;
