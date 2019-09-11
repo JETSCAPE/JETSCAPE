@@ -425,16 +425,16 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
              if(abs(pIn[i].pid()) == 4 || abs(pIn[i].pid()) == 5)
              { 
 
-				double min_vir = (QS/2.0)*( 1.0 +  std::sqrt( 1.0 + 4.0*pIn[i].restmass()*pIn[i].restmass()/QS ) );
+		 double min_vir = (QS/2.0)*( 1.0 +  std::sqrt( 1.0 + 4.0*pIn[i].restmass()*pIn[i].restmass()/QS ) );
 
-				if (max_vir>min_vir)
-				{
-					tQ2 = generate_vac_t_w_M(pIn[i].pid(), pIn[i].restmass(), pIn[i].nu(), QS/2.0, max_vir, zeta, iSplit);
-                }
-                else
-                {
-                	tQ2 = rounding_error;
-                } 
+		 if (max_vir>min_vir)
+	  	 {
+	  		tQ2 = generate_vac_t_w_M(pIn[i].pid(), pIn[i].restmass(), pIn[i].nu(), QS/2.0, max_vir, zeta, iSplit);
+                 }
+                 else
+                 {
+                 	tQ2 = rounding_error;
+                 } 
                //  std::ofstream tdist;
                //  tdist.open("tdist_heavy.dat", std::ios::app);
                //  tdist << tQ2 << endl;
@@ -464,7 +464,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           double ft = generate_L(pIn[i].mean_form_time());
           pIn[i].set_form_time(ft);
           
-	        if(flag_useHybridHad != 1) {
+	  if(flag_useHybridHad != 1) {
               unsigned int color=0, anti_color=0;
               std::uniform_int_distribution<short> uni(102,103);
               
@@ -493,7 +493,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               pIn[i].set_min_anti_color(min_anti_color);
               MaxColor = max_color;
           } else {
-	            pIn[i].set_min_color( pIn[i].color() );
+	      pIn[i].set_min_color( pIn[i].color() );
               pIn[i].set_min_anti_color( pIn[i].anti_color() );
               MaxColor = pIn[i].max_color();
 
@@ -1824,7 +1824,7 @@ double Matter::generate_vac_t_w_M(int p_id, double M, double nu, double t0, doub
     {
       // cout << " numer > r, i.e. ; " << numer << " > " << r << endl ;
         if (std::fabs(p_id)==cid || std::fabs(p_id)==bid) return(t_mid_M0);
-        return(t_mid_00);
+        else return(t_mid_00);
     }
     
   //t_mid = (t_low+t_hi)/2.0 ;
@@ -1888,7 +1888,8 @@ double Matter::generate_vac_t_w_M(int p_id, double M, double nu, double t0, doub
         
   } while ((abs(diff)>s_approx)&&(abs(t_hi_M0-t_low_M0)/t_hi_M0>s_error));
     
-  return(t_mid_M0);
+  if (std::fabs(p_id)==cid || std::fabs(p_id)==bid) return(t_mid_M0);
+  else return(t_mid_00);
 }
 
 /*
@@ -2150,8 +2151,11 @@ double  Matter::generate_vac_z_w_M(int p_id, double M, double t0, double t, doub
     }
         
   } while ((abs(diff)>approx)&&(abs(z_hi_M0-z_low_M0)/z_hi_M0>s_error) );
-    
-  return(z_mid_M0);
+  
+  if (p_id==gid && (is==1 || is==2)) return(z_mid_00);
+  else if (p_id==gid && (is==4 || is==5)) return(z_mid_MM);
+  else if (((int) std::abs((double) p_id))==uid || ((int) std::abs((double) p_id))==did || ((int) std::abs((double) p_id))==sid) return(z_mid_00);
+  else return(z_mid_M0);
 }
 
 
