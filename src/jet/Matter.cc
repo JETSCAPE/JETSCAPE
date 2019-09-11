@@ -813,19 +813,22 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   
                   if (t_used < 2.0*(QS*QS + M*M)) val3 = 0.0;
                   M = PythiaFunction.particleData.m0( bid );
+
                   double val4 = P_z_qq_int_w_M_vac_only(M,z_low, z_hi, zeta, t_used, tau_form,pIn[i].nu() );
                   if (t_used < 2.0*(QS*QS + M*M)) val4 = 0.0;
                   
-                  if ( val1<0.0 || val2<0.0 || val3<0.0 )
+                  if ( val1<0.0 || val2<0.0 || val3<0.0 || val4 <0.0)
                   {
-                      cerr << " minus log of sudakov negative val1 , val2 = " << val1 << "  " << val2 << "  " << val3 << endl;
+                      cerr << " minus log of sudakov negative val1 , val2 = " << val1 << "  " << val2 << "  " << val3 << "  " << val4 << endl;
                       throw std::runtime_error("minus log of sudakov negative");
                       // cin >> blurb ;
                   }
                   
-                  double ratio = val1/(val1+val2);
+                  double ratio1 = val1/(val1+val2+val3+val4);
+                  double ratio2 = (val1+val2)/(val1+val2+val3+val4);
+                  double ratio3 = (val1+val2+val3)/(val1+val2+val3+val4);
                   double r = ZeroOneDistribution(*GetMt19937Generator());
-                  if (r>ratio)
+                  if (r>ratio1 && r<ratio2)
                   { // qqbar
 		  
                       double r2 = ZeroOneDistribution(*GetMt19937Generator());
@@ -847,6 +850,18 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                           pid_a = sid;
                           pid_b = -1*sid;
                       }
+                      iSplit = 2;
+                  }
+                  else if (r>ratio2 && r<ratio3)
+                  {
+                      pid_a = cid;
+                      pid_b = -cid;
+                      iSplit = 2;
+                  }
+                  else if (r>ratio3)
+                  {
+                      pid_a = bid;
+                      pid_b = -bid;
                       iSplit = 2;
                   }
                   else
