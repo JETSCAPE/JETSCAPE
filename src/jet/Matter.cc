@@ -2676,7 +2676,7 @@ double Matter::sud_z_QQ_w_M_vac_only(double M, double cg, double cg1, double loc
   if(tau<rounding_error) {
       qL = 0.0;
   } else {
-      qhat = fncAvrQhat(loc_e,tau);
+      qhat = 0.0;//fncAvrQhat(loc_e,tau);
       qL = qhat*tau;
   }
 
