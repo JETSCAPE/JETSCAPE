@@ -56,25 +56,24 @@ Nharmonic_diff = 5
 
 # Particle datatype
 particle_dtype = [
-	('ID', int),
-        ('charge', int),
-        ('pT', float),
-        ('ET', float),
-        ('mT', float),
-        ('phi', float),
-        ('y', float),
-        ('eta', float),
-                 ]
+                                ('ID', int),
+                                ('charge', int),
+                                ('pT', float),
+                                ('ET', float),
+                                ('mT', float),
+                                ('phi', float),
+                                ('y', float),
+                                ('eta', float),
+                        ]
 
 # results "array" (one element)
 # to be overwritten for each event
 #five entries for five 'delta-f' options: 0,1,2,3 run with smash, 4 runs with urqmd
-expt_type = 'STAR'
 result_dtype=[
 ('initial_entropy', float_t, 1),
 ('impact_parameter', float_t, 1),
 ('npart', float_t, 1),
-(expt_type,
+('ALICE',
         [
                 ('nsamples', int_t, 1),
                 # 1) dNch/deta, eta[-0.5, 0.5], charged
@@ -132,14 +131,16 @@ def calculate_eventplanes(phi, Nharmonic):
 def calc_Qvector(pT, phi, eta, pTbins, etabins, Nharmonic):
         shape = [pTbins.shape[0], etabins.shape[0]]
         # calculate Qn
-        results = {'N': np.zeros(shape, dtype=int_t), 'Qn': np.zeros([*shape, Nharmonic], dtype=complex_t)}
+        results = {'N': np.zeros(shape, dtype=int_t),
+                           'Qn': np.zeros([*shape, Nharmonic], dtype=complex_t)}
         for i, (pT_l, pT_h) in enumerate(pTbins):
-                pT_cut = (pT_l <= pT) & (pT <= pT_h)
+                pT_cut = (pT_l<=pT) & (pT<=pT_h)
                 for j, (eta_l, eta_h) in enumerate(etabins):
                         eta_cut = (eta_l<=eta) & (eta<=eta_h)
                         # apply cut
                         sub_phi = phi[pT_cut & eta_cut]
                         results['N'][i,j] = sub_phi.size
+
                         results['Qn'][i,j] = np.array( [ np.exp(1j*n*sub_phi).sum() for n in range(1, 1+Nharmonic) ] )
         return results
 
@@ -149,7 +150,7 @@ def calc_Qvector(pT, phi, eta, pTbins, etabins, Nharmonic):
 def calc_Tmunu(ET, y, pT, phi, ycut, pTcut):
         Tmunu = np.zeros(10)
 
-        cut = (pTcut[0] < pT) & (pT < pTcut[1]) & (ycut[0] < y) & (y < ycut[1])
+        cut = (pTcut[0]<pT) & (pT<pTcut[1]) & (ycut[0]<y) & (y<ycut[1])
         # apply cut
         y = y[cut]
         ET = ET[cut]
@@ -389,6 +390,7 @@ def run_events(args, results_file):
                 logging.info('Max radius of freezeout surface : {:f}'.format( find_fireball_edge('input/surface.dat') ) )
                 # loop over 'delta-f'. in iS3D, delta_f = 1 : 14 mom, 2 : RTA C.E., 3 : McNelis Mod, 4 : Bernhard Mod
                 # idf = 0,1,2,3 runs iS3D and smash. idf = 4 runs iS3D and urqmd-afterburner
+                #for idf in range(0,4):
                 for idf in [0, 1, 2, 3]: 
                         logging.info('idf  = {:d}'.format(idf))
 
@@ -464,7 +466,7 @@ def run_events(args, results_file):
                         start_o = datetime.datetime.now()
 
                         # Save number of oversamples
-                        results[expt_type][idf]['nsamples'] = nos
+                        results['ALICE'][idf]['nsamples'] = nos
 
                         # Get pT, phi, eta, y ...
                         ET = particles['ET']
@@ -477,74 +479,55 @@ def run_events(args, results_file):
                         abs_eta = np.fabs(eta)
                         abs_y = np.fabs(y)
 
-                        #TODO 
-                        #NEED TO IMPLEMENT CUTS FOR DIFFERENT EXPERIMENTS/SYSTEMS
- 
-                        #STAR CUTS
-                        #according to http://arxiv.org/pdf/0808.2041v2.pdf, for mean pT and dN/dy , pT is extrapolated using blast wave fit
-                        #so no cuts for additional cuts for dN/dy or mean pT
-                        #according to http://arxiv.org/pdf/1301.2187.pdf and http://arxiv.org/pdf/nucl-ex/0409033.pdf,
-                        # v_n{k} are calculated with cuts : 0.15 < pT < 2.0 GeV/c ; |eta| < 1.0 
-                        pT_cut_STAR  = [ 0.15, 2.0 ]
-                        eta_cut_STAR = [-1.0, 1.0 ]
-                        #STAR_kinematic_cuts = (eta > eta_cut_STAR[0]) & (eta < eta_cut_STAR[1]) & (pT > pT_cut_star[0]) & (pT < pT_cut_star[1])
-
                         # charged particle cut
                         charged = (charge != 0)
-			
-                        #WE DONT HAVE THESE DATA FOR STAR
-                        # 1) calculate dNch/eta and dET/deta
-                        results[expt_type][idf]['dNch_deta'] = ( charged & (abs_eta < .5) ).sum() / (2 * .5) / nos
-                        logging.info( "charged and abs_eta < 0.5 : " + str( (charged & (abs_eta < .5)).sum() / (2*.5) ) )
-                        results[expt_type][idf]['dET_deta'] = ET[abs_eta < .6].sum() / (2 * .6) / nos
 
-                        #THESE DATA ARE AVAILABLE FOR STAR
+                        # 1) calculate dNch/eta and dET/deta
+                        results['ALICE'][idf]['dNch_deta'] = ( charged & (abs_eta < .5) ).sum() / (2 * .5) / nos
+                        logging.info( "charged and abs_eta < 0.5 : " + str( (charged & (abs_eta < .5)).sum() / (2*.5) ) )
+                        results['ALICE'][idf]['dET_deta'] = ET[abs_eta < .6].sum() / (2 * .6) / nos
                         # 2) calculate identified particle yield and mean_pT
                         for name, pid in species:
                                 cut = (abs_pid == pid) & (abs_y < 0.5)
                                 N = cut.sum()
-                                results[expt_type][idf]['dN_dy'][name] = N * 1. / nos
-                                results[expt_type][idf]['mean_pT'][name] = 0 if N==0 else pT[cut].mean()
+                                results['ALICE'][idf]['dN_dy'][name] = N * 1. / nos
+                                results['ALICE'][idf]['mean_pT'][name] = 0 if N==0 else pT[cut].mean()
 
-                        #WE DONT HAVE THESE DATA FOR STAR
                         # 3) calculate chagred particle pT fluctuation
                         x = pT[charged & (abs_eta < .8) & (.15 < pT) & (pT < 2.)]
                         N = x.size
-                        results[expt_type][idf]['pT_fluct_chg']['N'] = N
-                        results[expt_type][idf]['pT_fluct_chg']['sum_pT'] = 0. if N==0 else x.sum()
-                        results[expt_type][idf]['pT_fluct_chg']['sum_pT2'] = 0. if N==0 else (x**2).sum()
-			
-                        #WE DONT HAVE THESE DATA FOR STAR
+                        results['ALICE'][idf]['pT_fluct_chg']['N'] = N
+                        results['ALICE'][idf]['pT_fluct_chg']['sum_pT'] = 0. if N==0 else x.sum()
+                        results['ALICE'][idf]['pT_fluct_chg']['sum_pT2'] = 0. if N==0 else (x**2).sum()
+
                         # 4) calculate identified particle pT fluctuation
                         for name, pid in pi_K_p:
                                 x = pT[(abs_pid == pid) & (abs_y < 0.5)]
                                 N = x.size
-                                results[expt_type][idf]['pT_fluct_pid'][name]['N'] = N
-                                results[expt_type][idf]['pT_fluct_pid'][name]['sum_pT'] = 0. if N == 0 else x.sum()
-                                results[expt_type][idf]['pT_fluct_pid'][name]['sum_pT2'] = 0. if N == 0 else (x**2).sum()
-			
-                        #WE HAVE THESE DATA FOR STAR
-                        # 5) pT-integrated Qvector
-                        pTbins = np.array([ pT_cut_STAR ])
-                        etabins = np.array([ eta_cut_STAR ])
-                        info = calc_Qvector(pT[charged], phi[charged], eta[charged], pTbins, etabins, Nharmonic)
-                        results[expt_type][idf]['flow']['N'] = info['N'][0,0]
-                        results[expt_type][idf]['flow']['Qn'] = info['Qn'][0,0,:]
+                                results['ALICE'][idf]['pT_fluct_pid'][name]['N'] = N
+                                results['ALICE'][idf]['pT_fluct_pid'][name]['sum_pT'] = 0. if N == 0 else x.sum()
+                                results['ALICE'][idf]['pT_fluct_pid'][name]['sum_pT2'] = 0. if N == 0 else (x**2).sum()
 
-                        #WE DONT HAVE THESE DATA FOR STAR
+                        # 5) pT-integrated Qvector with ALICE cut
+                        pTbins = np.array([[.2, 5.0]])
+                        etabins = np.array([[-0.8, 0.8]])
+                        info = calc_Qvector(pT[charged], phi[charged], eta[charged], pTbins, etabins, Nharmonic)
+                        results['ALICE'][idf]['flow']['N'] = info['N'][0,0]
+                        results['ALICE'][idf]['flow']['Qn'] = info['Qn'][0,0,:]
+
                         # 6) The magic Tmunu
-                        results[expt_type][idf]['Tmunu'] = calc_Tmunu(ET, y, pT, phi, ycut=[-0.6, 0.6], pTcut=[0., 10.]) / nos
-                        results[expt_type][idf]['Tmunu_chg'] = calc_Tmunu(ET[charged], y[charged], pT[charged], phi[charged], ycut=[-0.6, 0.6], pTcut=[0., 10.]) / nos
-			
-                        #WE DONT HAVE THESE DATA FOR STAR
+                        results['ALICE'][idf]['Tmunu'] = calc_Tmunu(ET, y, pT, phi, ycut=[-0.6, 0.6], pTcut=[0., 10.]) / nos
+
+                        results['ALICE'][idf]['Tmunu_chg'] = calc_Tmunu(ET[charged], y[charged], pT[charged], phi[charged], ycut=[-0.6, 0.6], pTcut=[0., 10.]) / nos
+
                         # 7) Identified differential flow for charged stable hadrons
                         pTbins=np.array([[Qn_diff_pT_cuts[i],Qn_diff_pT_cuts[i+1]] for i in range(Qn_diff_NpT)])
                         rapbins = np.array([[-1, 1]])
                         for name, pid in Qn_species:
                                 cut = (abs_pid == pid)
                                 info = calc_Qvector(pT[cut], phi[cut], y[cut], pTbins, rapbins, Nharmonic_diff)
-                                results[expt_type][idf]['d_flow_pid'][name]['N'] = info['N'][:,0]
-                                results[expt_type][idf]['d_flow_pid'][name]['Qn'] = info['Qn'][:,0,:]
+                                results['ALICE'][idf]['d_flow_pid'][name]['N'] = info['N'][:,0]
+                                results['ALICE'][idf]['d_flow_pid'][name]['Qn'] = info['Qn'][:,0,:]
 
                         end_o = datetime.datetime.now()
                         logging.info('Reading hadron list and computing observables finished in %s ', end_o - start_o)
