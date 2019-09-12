@@ -2157,7 +2157,7 @@ double  Matter::generate_vac_z_w_M(int p_id, double M, double t0, double t, doub
   } while ( ((std::abs(p_id)==cid || std::abs(p_id)==bid)                        && (abs(diff)>approx) && (abs(z_hi_M0-z_low_M0)/z_hi_M0>s_error)) ||
             ((std::abs(p_id)==uid || std::abs(p_id)==did || std::abs(p_id)==sid) && (abs(diff)>approx) && (abs(z_hi_00-z_low_00)/z_hi_00>s_error)) ||
             ((std::abs(p_id)==gid && is>=1 && is<3)                              && (abs(diff)>approx) && (abs(z_hi_00-z_low_00)/z_hi_00>s_error)) ||
-            ((std::abs(p_id)==gid && is>3)                                       && (abs(diff)>approx) && (abs(z_hi_MM-z_low_MM)/z_hi_MM>s_error)) ||            
+            ((std::abs(p_id)==gid && is>3)                                       && (abs(diff)>approx) && (abs(z_hi_MM-z_low_MM)/z_hi_MM>s_error)) 
           );
   
   if (p_id==gid && (is==1 || is==2)) return(z_mid_00);
