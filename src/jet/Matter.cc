@@ -317,10 +317,10 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       // energetic heavy quarks, the velocity may be very close to 1.
       double velocityMod = std::sqrt(std::pow(velocity[1],2) + std::pow(velocity[2],2) + std::pow(velocity[3],2));
 
-      if (velocityMod>1.0)
+      if (velocityMod>1.0+rounding_error)
       {
           JSINFO << BOLDRED << " tachyonic propagation detected for parton passed from hard scattering, velocity mod = " << velocityMod ;
-          assert(velocityMod < 1.0);
+          assert(velocityMod < 1.0 + rounding_error);
       }
       VERBOSE(2) << BOLDYELLOW << " velocityMod = " << velocityMod ;
       
