@@ -169,7 +169,7 @@ void SoftHadronWriter<T>::Write(weak_ptr<Hadron> h)
     auto mT = sqrt( pT*pT + m*m ); //transverse mass
     auto E = hh->e(); //energy
     auto p = hh->modp(); //magnitude of momentum
-    auto ET = E * pT / p;; //transverse energy 
+    auto ET = E * pT / p; //transverse energy 
     if (p == 0.0) ET = 0.0; 
     auto phi = hh->phi(); //momentum azimuthal angle
     auto y = hh->rap(); //rapidity
