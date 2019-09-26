@@ -7,8 +7,8 @@
 #SBATCH --mail-user=everett.165@osu.edu
 #SBATCH --mail-type=all      # Send email at begin and end of job
 #SBATCH -A TG-PHY180035      # Allocation name
-#SBATCH -o slurm/out-%j
-#SBATCH -e slurm/err-%j
+#SBATCH -o /scratch/05780/everett/slurm/out-%j
+#SBATCH -e /scratch/05780/everett/slurm/err-%j
 
 module load intel/18.0.2 cmake/3.7.1 gsl boost hdf5 eigen impi python3 launcher
 

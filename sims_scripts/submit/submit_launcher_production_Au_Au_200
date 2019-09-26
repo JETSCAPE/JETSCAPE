@@ -1,9 +1,9 @@
 #!/bin/bash
-#SBATCH -J Pb_Pb_2760_production_1kpts_320events_11
+#SBATCH -J Au_Au_200_production_500_events_1_5
 #SBATCH -p skx-normal           # Queue (partition) name
-#SBATCH -N 128                 # the number of nodes
+#SBATCH -N 100                 # the number of nodes
 #SBATCH --ntasks-per-node 48 #set this equal to number of cores on node
-#SBATCH -t 48:00:00           # Run time (hh:mm:ss)   walltime for each node separately
+#SBATCH -t 40:00:00           # Run time (hh:mm:ss)   walltime for each node separately
 #SBATCH --mail-user=everett.165@osu.edu
 #SBATCH --mail-type=all      # Send email at begin and end of job
 #SBATCH -A TG-PHY180035      # Allocation name
@@ -25,9 +25,9 @@ cat submit_launcher_design_new > job_history/$job
 
 # create taskfarmer tasks
 #set the number of design points stored in input-config/design_pts
-num_design_pts=1000
+num_design_pts=500
 #set the number of events to run per design point
-num_events_per_design=320
+num_events_per_design=500
 
 #files are indexed starting at 0
 let max_design=$num_design_pts-1
@@ -40,7 +40,7 @@ for j in $(seq 0 $max_events)
 do
     for i in $(seq 0 $max_design)
     do
-	echo run-events-design-ALICE --nevents 1 --logfile $SCRATCH/logs/$job/$i/$j.log --tmpdir=/tmp --tablesdir=$inputdir --startdir=$inputdir/design_pts_production_1kpts_Pb_Pb_2760/main/PbPb-2760/$i $SCRATCH/results/$job/$i/$j.dat >> $taskfilename
+	echo run-events-design-STAR --nevents 1 --logfile $SCRATCH/logs/$job/$i/$j.log --tmpdir=/tmp --tablesdir=$inputdir --startdir=$inputdir/design_pts_Au_Au_200_production/main/AuAu-200/$i $SCRATCH/results/$job/$i/$j.dat >> $taskfilename
     done
 done
 
