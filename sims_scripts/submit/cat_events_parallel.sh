@@ -4,11 +4,8 @@
 
 cd catted_results
 
-#mkdir $1
-#cd $1
-
-mkdir test_parallel
-cd test_parallel
+mkdir $1
+cd $1
 
 mkdir Events
 cd Events
@@ -22,7 +19,6 @@ cd ..
 
 for design_pt in {0..499}; do
     echo "catting $design_pt"
-    #cat $SCRATCH/results/$1/$design_pt/[0-9]*.dat >> catted_results/$1/Events/main/$design_pt.dat
     cat $SCRATCH/results/$1/$design_pt/[0-9]*.dat >> catted_results/test_parallel/Events/main/$design_pt.dat &
 done
 
