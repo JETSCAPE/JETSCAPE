@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J Au_Au_2760_production_1kpts_320events
+#SBATCH -J Pb_Pb_2760_production_1kpts_250events
 #SBATCH -p skx-normal           # Queue (partition) name
 #SBATCH -N 128                 # the number of nodes
 #SBATCH --ntasks-per-node 48 #set this equal to number of cores on node
@@ -27,7 +27,7 @@ job=$SLURM_JOB_ID
 #set the number of design points stored in input-config/design_pts
 num_design_pts=1000
 #set the number of events to run per design point
-num_events_per_design=320
+num_events_per_design=250
 
 #files are indexed starting at 0
 let max_design=$num_design_pts-1
@@ -40,7 +40,7 @@ for j in $(seq 0 $max_events)
 do
     for i in $(seq 0 $max_design)
     do
-	echo run-events-design-STAR --nevents 1 --logfile $SCRATCH/logs/$job/$i/$j.log --tmpdir=/tmp --tablesdir=$inputdir --startdir=$inputdir/design_pts_production_1kpts_Au_Au_200/main/AuAu-200/$i $SCRATCH/results/$job/$i/$j.dat >> $taskfilename
+	echo run-events-design-ALICE --nevents 1 --logfile $SCRATCH/logs/$job/$i/$j.log --tmpdir=/tmp --tablesdir=$inputdir --startdir=$inputdir/design_pts_production_1kpts_Pb_Pb_5020/main/PbPb-5020/$i $SCRATCH/results/$job/$i/$j.dat >> $taskfilename
     done
 done
 
@@ -49,3 +49,4 @@ export LAUNCHER_RMI=SLURM
 export LAUNCHER_JOB_FILE=$taskfilename
 
 $LAUNCHER_DIR/paramrun
+

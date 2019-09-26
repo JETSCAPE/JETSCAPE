@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J Xe_Xe_5440_production_1kpts_400events_14
+#SBATCH -J Xe_Xe_5440_production_1kpts_400events
 #SBATCH -p skx-normal           # Queue (partition) name
 #SBATCH -N 128                 # the number of nodes
 #SBATCH --ntasks-per-node 48 #set this equal to number of cores on node
@@ -21,7 +21,7 @@ inputdir=../input-config #where the tables for iS3D, smash... are located. desig
 job=$SLURM_JOB_ID
 
 #save job file to disk
-cat submit_launcher_design_new > job_history/$job
+#cat submit_launcher_design_new > job_history/$job
 
 # create taskfarmer tasks
 #set the number of design points stored in input-config/design_pts
