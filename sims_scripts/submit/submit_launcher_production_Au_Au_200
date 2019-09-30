@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J Au_Au_2760_production_1kpts_320events
+#SBATCH -J Au_Au_2760_production_1kpts_300events
 #SBATCH -p skx-normal           # Queue (partition) name
 #SBATCH -N 128                 # the number of nodes
 #SBATCH --ntasks-per-node 48 #set this equal to number of cores on node
@@ -27,7 +27,7 @@ job=$SLURM_JOB_ID
 #set the number of design points stored in input-config/design_pts
 num_design_pts=1000
 #set the number of events to run per design point
-num_events_per_design=320
+num_events_per_design=300
 
 #files are indexed starting at 0
 let max_design=$num_design_pts-1
