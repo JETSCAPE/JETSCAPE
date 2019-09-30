@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J Pb_Pb_2760_production_1kpts_250events
+#SBATCH -J Pb_Pb_5020_production_1kpts_250events
 #SBATCH -p skx-normal           # Queue (partition) name
 #SBATCH -N 128                 # the number of nodes
 #SBATCH --ntasks-per-node 48 #set this equal to number of cores on node
