@@ -307,9 +307,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       // Reject photons
       if (std::abs(pIn[i].pstat())==1)
       {
-          JSINFO << BOLDYELLOW << " A recoil was  RECEIVED with px = " << pIn[i].px() << " py = " << pIn[i].py() << " pz = " << pIn[i].pz() << " E = " << pIn[i].e() << " from framework and sent back " ;
+      //    JSINFO << BOLDYELLOW << " A recoil was  RECEIVED with px = " << pIn[i].px() << " py = " << pIn[i].py() << " pz = " << pIn[i].pz() << " E = " << pIn[i].e() << " from framework and sent back " ;
 
-          pOut.push_back(pIn[i]);
+         // pOut.push_back(pIn[i]);
           return;
       }
       

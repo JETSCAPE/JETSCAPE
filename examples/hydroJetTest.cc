@@ -83,11 +83,11 @@ int main(int argc, char** argv)
    
   Show();
 
-  auto jetscape = make_shared<JetScape>(argv[1], 10000);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml", 10000);
   // auto jetscape = make_shared<JetScape>("./jetscape_init_pythiagun.xml",5);
   jetscape->SetId("primary");
   jetscape->SetReuseHydro (true);
-  jetscape->SetNReuseHydro (25);
+  jetscape->SetNReuseHydro (20000);
 
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
@@ -114,7 +114,7 @@ int main(int argc, char** argv)
   auto hybridHadr = make_shared<HybridHadronization> ();
 
   // only pure Ascii writer implemented and working with graph output ...
-  auto writer= make_shared<JetScapeWriterAscii> (argv[2]);
+  auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
   //auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");  
 #ifdef USE_HEPMC
   auto writerhepmc= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
