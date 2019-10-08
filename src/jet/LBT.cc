@@ -259,11 +259,14 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
           P[1][j] = pIn[i].p(1); 
           P[2][j] = pIn[i].p(2);
           P[3][j] = pIn[i].p(3);
-          P[4][j] = amss;
+          P[4][j] = pIn[i].restmass();
           P[0][j] = sqrt(P[1][j]*P[1][j]+P[2][j]*P[2][j]+P[3][j]*P[3][j]+P[4][j]*P[4][j]);
           P[5][j] = sqrt(P[1][j]*P[1][j]+P[2][j]*P[2][j]);
           P[6][j] = pIn[i].e()*pIn[i].e()-P[0][j]*P[0][j]; // virtuality^2
 	  if(P[6][j]<0.0) P[6][j]=0.0;
+          //if(std::isnan(P[6][j]) || std::isinf(P[6][j]))
+          //{JSWARN << "first instance:j=" << j << ", P[0][j]=" << P[0][j] << ", P[1][j]=" << P[1][j] << ", P[2][j]=" << P[2][j] <<", P[3][j]=" << P[3][j] <<", P[4][j]=" << P[4][j] << ", P[6][j]=" << P[6][j];}
+
           WT[j] = 1.0;
 
           Vfrozen[1][j] = pIn[i].x_in().x();
@@ -418,6 +421,9 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
             tempX[2]=Vfrozen[2][j];
             tempX[3]=Vfrozen[3][j];
             //	      pOut.push_back(Parton(0,21,0,newPt,pIn[i].eta(),pIn[i].phi(),newPt));
+            
+            if(std::isnan(tempP[1])){JSWARN << "second instance: j=" << j << ", P[0][j]=" << P[0][j] << ", P[1][j]=" << P[1][j] << ", P[2][j]=" << P[2][j] <<", P[3][j]=" << P[3][j] <<", P[4][j]=" << P[4][j] << ", P[6][j]=" << P[6][j];}
+
             pOut.push_back(Parton(0,KATT1[j],out_stat,tempP,tempX));
             // remember to put Tint_lrf infomation back to JETSCAPE
             pOut.back().set_user_info(new LBTUserInfo(Tint_lrf[j]));
@@ -869,7 +875,7 @@ void LBT::LBT0(int &n, double &ti){
 	if(KATTC0==21) {
 	  RTE1=(qhatG[iT2][iE1]-qhatG[iT1][iE1])*(T-T1)/(T2-T1)+qhatG[iT1][iE1];
 	  RTE2=(qhatG[iT2][iE2]-qhatG[iT1][iE2])*(T-T1)/(T2-T1)+qhatG[iT1][iE2];
-	} else if(KATTC0==4||KATTC0==-4) {
+	} else if(KATTC0==4||KATTC0==-4||KATTC0==5||KATTC0==-5) {
 	  RTE1=(qhatHQ[iT2][iE1]-qhatHQ[iT1][iE1])*(T-T1)/(T2-T1)+qhatHQ[iT1][iE1];
 	  RTE2=(qhatHQ[iT2][iE2]-qhatHQ[iT1][iE2])*(T-T1)/(T2-T1)+qhatHQ[iT1][iE2];
 	} else {
@@ -953,7 +959,7 @@ void LBT::LBT0(int &n, double &ti){
 	if(KATTC0==21) radng[i]+=nHQgluon(KATT1[i],dt_lrf,Tdiff,temp0,E,maxFncHQ)/2.0*KTfactor*preKT;
 	else radng[i]+=nHQgluon(KATT1[i],dt_lrf,Tdiff,temp0,E,maxFncHQ)*KTfactor*preKT;
 	lim_low=sqrt(6.0*pi*alphas)*temp0/E;
-	if(abs(KATT1[i])==4) lim_high=1.0;
+	if(abs(KATT1[i])==4||abs(KATT1[i])==5) lim_high=1.0;
 	else lim_high=1.0-lim_low;
 	lim_int=lim_high-lim_low;
 	if(lim_int>0.0) probRad=1.0-exp(-radng[i]);
@@ -1025,7 +1031,7 @@ void LBT::LBT0(int &n, double &ti){
 	    KATT10[np0]=KATT3;
 
 	    //		  if(pc0[0]<pc2[0] && abs(KATTC0)!=4) { // for the purpose of unit test
-	    if(pc0[0]<pc2[0] && abs(KATTC0)!=4 && KATTC0==KATT2) { //disable switch for heavy quark, only allow switch for identical particles
+	    if(pc0[0]<pc2[0] && abs(KATTC0)!=4 && abs(KATTC0)!=5 && KATTC0==KATT2) { //disable switch for heavy quark, only allow switch for identical particles
 	      for(int k=0;k<=3;k++) {
 		p0temp[k]=pc2[k];
 		pc2[k]=pc0[k];
@@ -1250,7 +1256,7 @@ void LBT::LBT0(int &n, double &ti){
                       
         
 	  //....tiscatter information
-	  if(abs(KATT1[i])==4) radng[i]=0.0; // do it below
+	  if(abs(KATT1[i])==4||abs(KATT1[i])==5) radng[i]=0.0; // do it below
 	  tiscatter[i]=tcar;
 	  V[0][i]=-log(1.0-ran0(&NUM1));
         
@@ -1661,7 +1667,7 @@ void LBT::lam(int KATT0,double &RTE,double E,double T,double &T1,double &T2,doub
     double RTE1=(Rg[iT2][iE1]-Rg[iT1][iE1])*(T-T1)/(T2-T1)+Rg[iT1][iE1];
     double RTE2=(Rg[iT2][iE2]-Rg[iT1][iE2])*(T-T1)/(T2-T1)+Rg[iT1][iE2];
     RTE=(RTE2-RTE1)*(E-E1)/(E2-E1)+RTE1;	   
-  } else if (KATT0==4||KATT0==-4) { // add heavy quark channel
+  } else if (KATT0==4||KATT0==-4||KATT0==5||KATT0==-5) { // add heavy quark channel
     double RTE1=(RHQ[iT2][iE1]-RHQ[iT1][iE1])*(T-T1)/(T2-T1)+RHQ[iT1][iE1];
     double RTE2=(RHQ[iT2][iE2]-RHQ[iT1][iE2])*(T-T1)/(T2-T1)+RHQ[iT1][iE2];
     RTE=(RTE2-RTE1)*(E-E1)/(E2-E1)+RTE1;	   
@@ -1746,7 +1752,7 @@ void LBT::flavor(int &CT,int &KATT0,int &KATT2,int &KATT3,double RTE,double E,do
       KATT2=KATT3;
       KATT0=21;
     }
-  } else if(KATT00==4||KATT00==-4) { // for heavy quark
+  } else if(KATT00==4||KATT00==-4||KATT00==5||KATT00==-5) { // for heavy quark
     double R0=RTE;
     double R1=RTEHQ11;
     double R2=RTEHQ12;
@@ -1871,7 +1877,7 @@ void LBT::linear(int KATT,double E,double T,double &T1,double &T2,double &E1,dou
     //	  RTE2=(qhatG[iT2][iE2]-qhatG[iT1][iE2])*(T-T1)/(T2-T1)+qhatG[iT1][iE2];
     //	  qhatTP=(RTE2-RTE1)*(E-E1)/(E2-E1)+RTE1;	
 
-  } else if(KATT==4||KATT==-4){  // add heavy quark channel
+  } else if(KATT==4||KATT==-4||KATT==5||KATT==-5){  // add heavy quark channel
     double RTE1=(RHQ11[iT2][iE1]-RHQ11[iT1][iE1])*(T-T1)/(T2-T1)+RHQ11[iT1][iE1];
     double RTE2=(RHQ11[iT2][iE2]-RHQ11[iT1][iE2])*(T-T1)/(T2-T1)+RHQ11[iT1][iE2];
     RTEHQ11=(RTE2-RTE1)*(E-E1)/(E2-E1)+RTE1;
@@ -2945,7 +2951,7 @@ void LBT::collHQ23(int parID, double temp_med, double qhat0ud, double v0[4], dou
   p00[2]=p0[2];
   p00[3]=p0[3];
 
-  if(abs(parID)!=4) {
+  if(abs(parID)!=4&&abs(parID)!=5) {
     HQmass = 0.0;
     p0[0] = sqrt(p0[1]*p0[1]+p0[2]*p0[2]+p0[3]*p0[3]+HQmass*HQmass);
   }   
@@ -3182,7 +3188,7 @@ void LBT::radiationHQ(int parID, double qhat0ud, double v0[4], double P2[4], dou
   double kpGluon[4];
   double HQmass=sqrt(P3[0]*P3[0]-P3[1]*P3[1]-P3[2]*P3[2]-P3[3]*P3[3]);
 
-  if(abs(parID)!=4) {
+  if(abs(parID)!=4&&abs(parID)!=5) {
     HQmass = 0.0;
     P3[0] = sqrt(P3[1]*P3[1]+P3[2]*P3[2]+P3[3]*P3[3]);
   }   
@@ -3582,7 +3588,7 @@ double LBT::nHQgluon(int parID,double dtLRF,double &time_gluon,double &temp_med,
     max_T1E2 = max_dNgfnc_g[time_num][temp_num][HQenergy_num+1];
     max_T2E1 = max_dNgfnc_g[time_num][temp_num+1][HQenergy_num];
     max_T2E2 = max_dNgfnc_g[time_num][temp_num+1][HQenergy_num+1];
-  } else if(abs(parID)==4) {
+  } else if(abs(parID)==4||abs(parID)==5) {
     rate_T1E1 = dNg_over_dt_c[time_num][temp_num][HQenergy_num];
     rate_T1E2 = dNg_over_dt_c[time_num][temp_num][HQenergy_num+1];
     rate_T2E1 = dNg_over_dt_c[time_num][temp_num+1][HQenergy_num];

@@ -305,14 +305,19 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       }
       
       // Reject photons
+
       if (std::abs(pIn[i].pstat())==1)
       {
-      //    JSINFO << BOLDYELLOW << " A recoil was  RECEIVED with px = " << pIn[i].px() << " py = " << pIn[i].py() << " pz = " << pIn[i].pz() << " E = " << pIn[i].e() << " from framework and sent back " ;
 
-         // pOut.push_back(pIn[i]);
+//          JSINFO << BOLDYELLOW << " A recoil was  RECEIVED with px = " << pIn[i].px() << " py = " << pIn[i].py() << " pz = " << pIn[i].pz() << " E = " << pIn[i].e() << " from framework and sent back " ;
+//          JSINFO << BOLDYELLOW << "t=" << " *  parton formation spacetime point= "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z();
+//          Dump_pIn_info(i,pIn);
+
+//          pOut.push_back(pIn[i]);
+
           return;
       }
-      
+     
       
       VERBOSE(2) << BOLDYELLOW << " *  parton formation spacetime point= "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z();
 
@@ -795,6 +800,11 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       double ft;
 
                       pc2[0] = sqrt(pc2[1]*pc2[1] + pc2[2]*pc2[2] + pc2[3]*pc2[3] + rounding_error);
+
+                      if(std::isnan(pc2[1])|| std::isnan(pc2[2]) || std::isnan(pc2[3]) ||
+                         std::isinf(pc2[1])|| std::isinf(pc2[2]) || std::isinf(pc2[3]) 
+                        )
+                      {JSWARN << "recoil in MATTER instance 1: pc[0]=" << pc2[0] << ", pc2[1]=" << pc2[1] << ", pc2[2]=" << pc2[2] <<", pc2[3]=" << pc2[3];}
 
                       pOut.push_back(Parton(0,pid2,1,pc2,el_vertex)); // recoiled
                       iout = pOut.size()-1;
