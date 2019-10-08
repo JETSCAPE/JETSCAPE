@@ -234,6 +234,12 @@ void Matter::WriteTask(weak_ptr<JetScapeWriter> w)
   f->WriteComment("Energy loss to be implemented accordingly ...");
 }
 
+void Matter::Dump_pIn_info(int i, vector<Parton>& pIn)
+{
+  JSWARN << "i=" << i << " MATTER -- status: " << pIn[i].pstat() << " color: " << pIn[i].color() << "  " << pIn[i].anti_color();
+  JSWARN << "pid = " << pIn[i].pid() << " E = " << pIn[i].e() << " px = " << pIn[i].p(1) << " py = " << pIn[i].p(2) << "  pz = " << pIn[i].p(3) << " virtuality = " << pIn[i].t() << " form_time in fm = " << pIn[i].form_time() << " split time = " << pIn[i].form_time() + pIn[i].x_in().t(); 
+}
+
 void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pIn, vector<Parton>& pOut)
 {
   double z=0.5;
@@ -298,6 +304,16 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           return;
       }
       
+      // Reject photons
+      if (std::abs(pIn[i].pstat())==1)
+      {
+          JSINFO << BOLDYELLOW << " A recoil was  RECEIVED with px = " << pIn[i].px() << " py = " << pIn[i].py() << " pz = " << pIn[i].pz() << " E = " << pIn[i].e() << " from framework and sent back " ;
+
+          pOut.push_back(pIn[i]);
+          return;
+      }
+      
+      
       VERBOSE(2) << BOLDYELLOW << " *  parton formation spacetime point= "<< pIn[i].x_in().t() << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z();
 
       //JSINFO << MAGENTA << " particle rest mass = " << pIn[i].restmass();
@@ -318,9 +334,11 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       double velocityMod = std::sqrt(std::pow(velocity[1],2) + std::pow(velocity[2],2) + std::pow(velocity[3],2));
 
       if (velocityMod>1.0+rounding_error)
-      {
+      {   
           JSINFO << BOLDRED << " tachyonic propagation detected for parton passed from hard scattering, velocity mod = " << velocityMod ;
-          assert(velocityMod < 1.0 + rounding_error);
+          JSWARN << "velocityMod=" << std::setprecision(20) << velocityMod; 
+          Dump_pIn_info(i, pIn);
+          //assert(velocityMod < 1.0 + rounding_error);
       }
       VERBOSE(2) << BOLDYELLOW << " velocityMod = " << velocityMod ;
       
@@ -358,6 +376,15 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       
       initEner = pIn[i].e(); // initial Energy of parton
       if(!in_vac){
+         if(std::isnan(velocityMod) || std::isnan(velocity[1]) ||  std::isnan(velocity[2]) || std::isnan(velocity[3]) ||
+            std::isinf(velocityMod) || std::isinf(velocity[1]) ||  std::isinf(velocity[2]) || std::isinf(velocity[3])  )
+         {
+           JSWARN << "Zeroth instance";
+           JSWARN << "time, initR0, initRx, initRy, initRz=" << time << ", " << initR0 <<", " << initRx <<", " << initRy <<", " << initRz;
+           JSWARN << "Vx, Vy, Vz =" << velocity[1] << ", " << velocity[2] << ", " << velocity[3];
+           JSWARN << "initVx, initVy, initVz =" << initVx << ", " << initVy << ", " << initVz;
+           Dump_pIn_info(i, pIn);
+         }
 	 if(GetJetSignalConnected()) length = fillQhatTab();
          else{
            JSWARN << "Couldn't find a hydro module attached!";
@@ -377,7 +404,19 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       double now_Ry = initRy+(time-initR0)*initVy; 
       double now_Rz = initRz+(time-initR0)*initVz;
       double now_temp; 
+// if(now_R0^2-now_Ri^2<0) print out pIn info and exit
 
+      if(std::isinf(now_R0) || std::isnan(now_R0) || std::isinf(now_Rz) || std::isnan(now_Rz) || std::abs(now_Rz)>now_R0)
+      {
+          JSWARN << "First instance";
+          JSWARN << "now_R for vector is:" << now_R0 <<", " << now_Rx <<", " << now_Ry << ", " << now_Rz;
+          JSWARN << "time, initR0, initRx, initRy, initRz=" << time << ", " << initR0 <<", " << initRx <<", " << initRy <<", " << initRz;
+          JSWARN << "initVx, initVy, initVz =" << initVx << ", " << initVy << ", " << initVz;
+          JSWARN << "velocityMod=" << std::setprecision(20) << velocityMod;
+          JSWARN << "initVMod=" << std::setprecision(20) << std::sqrt(initVx*initVx+initVy*initVy+initVz*initVz);
+          Dump_pIn_info(i, pIn);
+          //exit(0);
+      }
       if(!in_vac && now_R0>=tStart)
       {
          if(now_R0*now_R0<now_Rz*now_Rz) cout << "Warning 1: " << now_R0 << "  " << now_Rz << endl;
@@ -621,11 +660,22 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   pc0[1]=el_p0[1];
                   pc0[2]=el_p0[2];
                   pc0[3]=el_p0[3];
-		              if(abs(pid)==4) pc0[0]=sqrt(pc0[1]*pc0[1]+pc0[2]*pc0[2]+pc0[3]*pc0[3]+HQ_mass*HQ_mass);
+		              if(abs(pid)==4 || abs(pid)==5) pc0[0]=sqrt(pc0[1]*pc0[1]+pc0[2]*pc0[2]+pc0[3]*pc0[3]+HQ_mass*HQ_mass);
 		              else pc0[0]=sqrt(pc0[1]*pc0[1]+pc0[2]*pc0[2]+pc0[3]*pc0[3]);
 
                   recordE0=pc0[0];
 
+                  if(std::isinf(el_time) || std::isnan(el_time) || std::isinf(el_rz) || std::isnan(el_rz) || std::abs(el_rz)>el_time)
+                  {
+                      JSWARN << "Secon instance"; 
+                      JSWARN << "el_vector for vector is:" << el_time <<", " << el_rx <<", " << el_ry << ", " << el_rz;
+                      JSWARN << "initR0, initRx, initRy, init Rz=" << initR0 <<", " << initRx <<", " << initRy <<", " << initRz;
+                      JSWARN << "initVx, initVy, initVz =" << initVx << ", " << initVy << ", " << initVz;
+                      JSWARN << "velocityMod=" << std::setprecision(20) << velocityMod;
+                      JSWARN << "initVMod=" << std::setprecision(20) << std::sqrt(initVx*initVx+initVy*initVy+initVz*initVz);
+                      Dump_pIn_info(i, pIn);
+                      //exit(0);
+                  }
                   GetHydroCellSignal(el_time, el_rx, el_ry, el_rz, check_fluid_info_ptr);
                	  VERBOSE(8)<<MAGENTA<<"Temperature from medium = "<<check_fluid_info_ptr->temperature;
                	 	
@@ -743,6 +793,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                  
                       int iout;
                       double ft;
+
+                      pc2[0] = sqrt(pc2[1]*pc2[1] + pc2[2]*pc2[2] + pc2[3]*pc2[3] + rounding_error);
 
                       pOut.push_back(Parton(0,pid2,1,pc2,el_vertex)); // recoiled
                       iout = pOut.size()-1;
@@ -3650,6 +3702,17 @@ double Matter::fillQhatTab() {
 //            hydro_ctl = 0;
 //            tempLoc = T;
 //        }
+
+        if(std::isinf(tLoc) || std::isnan(tLoc) || std::isinf(zLoc) || std::isnan(zLoc) || std::abs(zLoc)>tLoc)
+        {
+            JSWARN << "Third instance";
+            JSWARN << "Loc for vector is:" << tLoc <<", " << xLoc <<", " << yLoc << ", " << zLoc;
+            JSWARN << "initR0, initRx, initRy, initRz=" << ", " << initR0 <<", " << initRx <<", " << initRy <<", " << initRz;
+            JSWARN << "initVx, initVy, initVz =" << initVx << ", " << initVy << ", " << initVz;
+            JSWARN << "initVMod=" << std::setprecision(20) << std::sqrt(initVx*initVx+initVy*initVy+initVz*initVz);
+            JSWARN << "Can't dump pIn_info as we are in fillQhatTab. But it should be dumped right before this.";//Dump_pIn_info(i, pIn);
+            //exit(0);
+        }
 
         GetHydroCellSignal(tLoc, xLoc, yLoc, zLoc, check_fluid_info_ptr);
         VERBOSE(8)<< MAGENTA<<"Temperature from medium = "<<check_fluid_info_ptr->temperature;
