@@ -36,7 +36,6 @@ namespace Jetscape {
     xml_user_file_name(""),
     mt19937_generator_(nullptr)
   {
-    current_event = 0;
   }
 
   // ---------------------------------------------------------------------------
