@@ -259,7 +259,8 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
           P[1][j] = pIn[i].p(1); 
           P[2][j] = pIn[i].p(2);
           P[3][j] = pIn[i].p(3);
-          P[4][j] = pIn[i].restmass();
+          P[4][j] = amss;
+          if ( std::abs(pIn[i].pid())==4 ||  std::abs(pIn[i].pid())==5 )  P[4][j] = pIn[i].restmass();
           P[0][j] = sqrt(P[1][j]*P[1][j]+P[2][j]*P[2][j]+P[3][j]*P[3][j]+P[4][j]*P[4][j]);
           P[5][j] = sqrt(P[1][j]*P[1][j]+P[2][j]*P[2][j]);
           P[6][j] = pIn[i].e()*pIn[i].e()-P[0][j]*P[0][j]; // virtuality^2
