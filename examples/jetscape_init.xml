@@ -103,7 +103,7 @@
       <name>Matter</name>
       <useHybridHad>0</useHybridHad>
       <matter_on> 1 </matter_on>
-      <Q0> 1.0 </Q0>
+      <Q0> 2.0 </Q0>
       <T0> 0.16 </T0>
       <vir_factor> 0.25 </vir_factor>
       <in_vac> 0 </in_vac>
@@ -118,7 +118,7 @@
 
     <Lbt>
       <name> Lbt </name>
-      <Q0> 1.0 </Q0>
+      <Q0> 2.0 </Q0>
       <in_vac> 0 </in_vac>
       <only_leading> 0 </only_leading>
       <hydro_Tc> 0.16 </hydro_Tc>
