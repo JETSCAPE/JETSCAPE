@@ -375,6 +375,17 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       initVx = velocity[1]/velocityMod;
       initVy = velocity[2]/velocityMod;
       initVz = velocity[3]/velocityMod;
+      
+      if ( std::abs( pIn[i].pid() )==4 || std::abs( pIn[i].pid() )==5 )
+      {
+          double OnShellEnergy = std::sqrt( pIn[i].px()*pIn[i].px() +  pIn[i].py()*pIn[i].py() + pIn[i].pz()*pIn[i].pz() + pIn[i].restmass()*pIn[i].restmass() );
+          
+          initVx = pIn[i].px()/OnShellEnergy;
+          initVy = pIn[i].py()/OnShellEnergy;
+          initVz = pIn[i].pz()/OnShellEnergy;
+          
+      }
+      
       initRdotV = ( initRx*pIn[i].jet_v().x() + initRy*pIn[i].jet_v().y() + initRz*pIn[i].jet_v().z() )/mod_jet_v;
       initVdotV = ( initVx*pIn[i].jet_v().x() + initVy*pIn[i].jet_v().y() + initVz*pIn[i].jet_v().z() )/mod_jet_v;
       // Note: jet_v()/mod_jet_v is a unit 3 vector in the direction of the jet originating parton.
@@ -428,9 +439,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
          GetHydroCellSignal(now_R0, now_Rx, now_Ry, now_Rz, check_fluid_info_ptr);
          //VERBOSE(8)<<MAGENTA<<"Temperature from medium = "<<check_fluid_info_ptr->temperature;
          now_temp = check_fluid_info_ptr->temperature;
-          JSINFO << BOLDYELLOW << "MATTER time = " << now_R0 << " x = " << now_Rx << " y = " << now_Ry << " z = " << now_Rz << " temp = " << now_temp;
-          JSINFO << BOLDYELLOW << "MATTER initVx, initVy, initVz =" << initVx << ", " << initVy << ", " << initVz;
-          JSINFO << BOLDYELLOW << "MATTER velocityMod=" << velocityMod;
+          //JSINFO << BOLDYELLOW << "MATTER time = " << now_R0 << " x = " << now_Rx << " y = " << now_Ry << " z = " << now_Rz << " temp = " << now_temp;
+          //JSINFO << BOLDYELLOW << "MATTER initVx, initVy, initVz =" << initVx << ", " << initVy << ", " << initVz;
+          //JSINFO << BOLDYELLOW << "MATTER velocityMod=" << velocityMod;
       }
       else
       {

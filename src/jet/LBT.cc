@@ -778,8 +778,8 @@ void LBT::LBT0(int &n, double &ti){
     	      VZ = 0.0;
           }
 
-        JSINFO << BOLDYELLOW << "LBT time = " << tcar << " x = " << xcar << " y = " << ycar << " z = " << zcar << " temp = " << temp0;
-        JSINFO << BOLDYELLOW << "LBT Vel_x, Vel_y, Vel_z =" << P[1][i]/P[0][i] << ", " << P[2][i]/P[0][i]<< ", " << P[3][i]/P[0][i];
+       // JSINFO << BOLDYELLOW << "LBT time = " << tcar << " x = " << xcar << " y = " << ycar << " z = " << zcar << " temp = " << temp0;
+       // JSINFO << BOLDYELLOW << "LBT Vel_x, Vel_y, Vel_z =" << P[1][i]/P[0][i] << ", " << P[2][i]/P[0][i]<< ", " << P[3][i]/P[0][i];
         
           //JSDEBUG << "check temperature: " << temp0;
 	  hydro_ctl=0;
