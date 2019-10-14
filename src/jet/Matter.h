@@ -88,7 +88,7 @@ class Matter : public JetEnergyLossModule<Matter> //, public std::enable_shared_
 
 
   //SC: for interface with hydro
-  double fillQhatTab();
+  double fillQhatTab(double y);
   double fncQhat(double zeta);
   double fncAvrQhat(double zeta, double tau);
 

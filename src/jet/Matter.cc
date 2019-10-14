@@ -389,6 +389,18 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       initRdotV = ( initRx*pIn[i].jet_v().x() + initRy*pIn[i].jet_v().y() + initRz*pIn[i].jet_v().z() )/mod_jet_v;
       initVdotV = ( initVx*pIn[i].jet_v().x() + initVy*pIn[i].jet_v().y() + initVz*pIn[i].jet_v().z() )/mod_jet_v;
       // Note: jet_v()/mod_jet_v is a unit 3 vector in the direction of the jet originating parton.
+   
+      
+      double now_R0 = time;
+      double now_Rx = initRx+(time-initR0)*initVx;
+      double now_Ry = initRy+(time-initR0)*initVy;
+      double now_Rz = initRz+(time-initR0)*initVz;
+      double now_temp;
+      
+      double SpatialRapidity = 0.5*std::log( (now_R0 + now_Rz)/( now_R0 - now_Rz) );
+      
+      JSINFO << MAGENTA <<  " Particle Rapidity = " << SpatialRapidity ;
+
       
       initEner = pIn[i].e(); // initial Energy of parton
       if(!in_vac){
@@ -401,7 +413,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
            JSWARN << "initVx, initVy, initVz =" << initVx << ", " << initVy << ", " << initVz;
            Dump_pIn_info(i, pIn);
          }
-	 if(GetJetSignalConnected()) length = fillQhatTab();
+	 if(GetJetSignalConnected()) length = fillQhatTab(SpatialRapidity);
          else{
            JSWARN << "Couldn't find a hydro module attached!";
            throw std::runtime_error ("Please attach a hydro module or set in_vac to 1 in the XML file");
@@ -415,11 +427,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       
       VERBOSE(8)<< BOLDYELLOW << " zeta = " << zeta;
 
-      double now_R0 = time;
-      double now_Rx = initRx+(time-initR0)*initVx;
-      double now_Ry = initRy+(time-initR0)*initVy; 
-      double now_Rz = initRz+(time-initR0)*initVz;
-      double now_temp; 
+
+      
 // if(now_R0^2-now_Ri^2<0) print out pIn info and exit
 
       if(std::isinf(now_R0) || std::isnan(now_R0) || std::isinf(now_Rz) || std::isnan(now_Rz) || std::abs(now_Rz)>now_R0)
@@ -433,7 +442,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           Dump_pIn_info(i, pIn);
           //exit(0);
       }
-      if(!in_vac && now_R0>=tStart)
+      double boostedTStart = tStart*cosh( SpatialRapidity );
+      if(!in_vac && now_R0>=boostedTStart)
       {
          if(now_R0*now_R0<now_Rz*now_Rz) cout << "Warning 1: " << now_R0 << "  " << now_Rz << endl;
          GetHydroCellSignal(now_R0, now_Rx, now_Ry, now_Rz, check_fluid_info_ptr);
@@ -656,7 +666,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 
                   if(in_vac) continue;
                   if(!recoil_on) continue;
-                  if(el_time<tStart) continue;
+                  
+                  double boostedTStart = tStart*std::cosh( SpatialRapidity );
+                  if(el_time<boostedTStart) continue;
 
 		              if(abs(pid)==5) continue; // recoil not ready for b quark yet
 
@@ -3685,7 +3697,7 @@ double Matter::profile(double zeta)
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-double Matter::fillQhatTab() {
+double Matter::fillQhatTab(double y) {
 
 
     double xLoc,yLoc,zLoc,tLoc;
@@ -3705,7 +3717,9 @@ double Matter::fillQhatTab() {
         tLoc = tStep*i;
 
         //if(tLoc<initR0-tStep) { // potential problem of making t^2<z^2
-        if(tLoc<initR0 || tLoc<tStart)
+        
+        double boostedTStart = tStart*std::cosh( y );
+        if(tLoc<initR0 || tLoc<boostedTStart)
         {
             qhatTab1D[i] = 0.0; 
             continue;	    
