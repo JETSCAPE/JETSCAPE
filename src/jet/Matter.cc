@@ -384,6 +384,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           initVy = pIn[i].py()/OnShellEnergy;
           initVz = pIn[i].pz()/OnShellEnergy;
           
+          velocityMod = std::sqrt( initVx*initVx + initVy*initVy + initVz*initVz );
+          
       }
       
       initRdotV = ( initRx*pIn[i].jet_v().x() + initRy*pIn[i].jet_v().y() + initRz*pIn[i].jet_v().z() )/mod_jet_v;
