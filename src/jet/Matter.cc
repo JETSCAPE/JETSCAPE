@@ -401,7 +401,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       
       double SpatialRapidity = 0.5*std::log( (now_R0 + now_Rz)/( now_R0 - now_Rz) );
       
-      JSINFO << MAGENTA <<  " Particle Rapidity = " << SpatialRapidity ;
+      //JSINFO << MAGENTA <<  " Particle Rapidity = " << SpatialRapidity ;
 
       
       initEner = pIn[i].e(); // initial Energy of parton
@@ -1919,7 +1919,7 @@ double Matter::generate_vac_t_w_M(int p_id, double M, double nu, double t0, doub
   t_hi_MM = t;
   t_hi_00 = t;
     
-    JSINFO << MAGENTA << " in gen_vac_t_w_M : t_low , t_hi = " << t_low_M0 << "  " << t ;
+    VERBOSE(1) << MAGENTA << " in gen_vac_t_w_M : t_low , t_hi = " << t_low_M0 << "  " << t ;
     //cin >> test ;
     
   if (p_id==gid)
