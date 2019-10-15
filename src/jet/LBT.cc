@@ -593,6 +593,7 @@ void LBT::LBT0(int &n, double &ti){
   double probCol,probRad,probTot;
 
   double lrf_rStart[4]={0.0};
+  double SpatialRapidity=0.0;
 
   probCol=0.0;
   probRad=0.0;
@@ -667,6 +668,8 @@ void LBT::LBT0(int &n, double &ti){
         //Extract fluid properties
         std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
 
+        SpatialRapidity = 0.5 * std::log( (tcar0 + zcar0)/(tcar0 - zcar0) );
+
     	GetHydroCellSignal(tcar0, xcar0, ycar0, zcar0, check_fluid_info_ptr);
 	//VERBOSE(7)<< MAGENTA<<"Temperature from Brick (Signal) = "<<check_fluid_info_ptr->temperature;
 
@@ -676,7 +679,7 @@ void LBT::LBT0(int &n, double &ti){
     	VY00 = check_fluid_info_ptr->vy;
     	VZ00 = check_fluid_info_ptr->vz;
 
-        if(tcar0<tStart) {
+        if( tcar0 < tStart * cosh(SpatialRapidity) ) {
 	    temp00 = 0.0;
             sd00 = 0.0;
     	    VX00 = 0.0;
@@ -756,6 +759,8 @@ void LBT::LBT0(int &n, double &ti){
 
           std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
 
+          SpatialRapidity = 0.5 * std::log( (tcar + zcar)/(tcar - zcar) );
+
     	  GetHydroCellSignal(tcar, xcar, ycar, zcar, check_fluid_info_ptr);
 	  //VERBOSE(7)<< MAGENTA<<"Temperature from Brick (Signal) = "<<check_fluid_info_ptr->temperature;
 
@@ -770,7 +775,7 @@ void LBT::LBT0(int &n, double &ti){
     	  VY = check_fluid_info_ptr->vy;
     	  VZ = check_fluid_info_ptr->vz;
 
-  	  if(tcar<tStart) {
+  	  if( tcar < tStart * cosh(SpatialRapidity) ) {
 	      temp0 = 0.0;
               sd = 0.0;
     	      VX = 0.0;
@@ -936,13 +941,16 @@ void LBT::LBT0(int &n, double &ti){
 	    else dtLoc=ti-tLoc;
 
 	    std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
+
+            SpatialRapidity = 0.5 * std::log( (tLoc + zLoc)/(tLoc - zLoc) );
+
     	    GetHydroCellSignal(tLoc, xLoc, yLoc, zLoc, check_fluid_info_ptr);
 	    tempLoc = check_fluid_info_ptr->temperature;
     	    vxLoc = check_fluid_info_ptr->vx;
     	    vyLoc = check_fluid_info_ptr->vy;
     	    vzLoc = check_fluid_info_ptr->vz;
 
-    	    if(tLoc<tStart) {
+    	    if( tLoc < tStart * cosh(SpatialRapidity) ) {
 	        tempLoc = 0.0;
     	        vxLoc = 0.0;
     	        vyLoc = 0.0;
