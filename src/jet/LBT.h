@@ -202,7 +202,7 @@ class LBT : public JetEnergyLossModule<LBT> //, public std::enable_shared_from_t
   
   //...time system
 
-  static const int dimParList=10; // originally 500000 
+  static const int dimParList=50; // originally 500000 
   
   double tirad[dimParList]={0.0};
   double tiscatter[dimParList]={0.0};
