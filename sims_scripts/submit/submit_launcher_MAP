@@ -1,0 +1,42 @@
+#!/bin/bash
+#SBATCH -J Pb_Pb_2760_MAP
+#SBATCH -p skx-normal           # Queue (partition) name
+#SBATCH -N 128                 # the number of nodes
+#SBATCH --ntasks-per-node 48 #set this equal to number of cores on node
+#SBATCH -t 48:00:00           # Run time (hh:mm:ss)   walltime for each node separately
+#SBATCH --mail-user=everett.165@osu.edu
+#SBATCH --mail-type=all      # Send email at begin and end of job
+#SBATCH -A TG-PHY180035      # Allocation name
+#SBATCH -o /scratch/05780/everett/slurm/out-%j
+#SBATCH -e /scratch/05780/everett/slurm/err-%j
+
+module load intel/18.0.2 cmake/3.7.1 gsl boost hdf5 eigen impi python3 launcher
+
+#source ../prepare_compilation_stampede2_2.sh
+source ../../jf_prepare.sh
+
+module list
+
+inputdir=../input-config #where the tables for iS3D, smash... are located. design_pts should be a folder inside!
+job=$SLURM_JOB_ID
+
+# create taskfarmer tasks
+#set the number of events to run per design point
+num_events=100
+
+#files are indexed starting at 0
+let max_events=$num_events-1
+
+taskfilename=tasks-$job
+
+#for best scaling, set nevents 1
+for j in $(seq 0 $max_events)
+do
+  echo run-events-MAP-ALICE --nevents 1 --logfile $SCRATCH/logs/$job/$j.log --tmpdir=/tmp --tablesdir=$inputdir $SCRATCH/results/$job/$j.dat >> $taskfilename
+done
+
+export LAUNCHER_PLUGIN_DIR=$LAUNCHER_DIR/plugins
+export LAUNCHER_RMI=SLURM
+export LAUNCHER_JOB_FILE=$taskfilename
+
+$LAUNCHER_DIR/paramrun
