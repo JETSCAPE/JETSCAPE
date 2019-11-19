@@ -292,7 +292,7 @@ namespace Jetscape {
     JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  p, x)
   {
     CheckAcceptability( id );
-    assert ( InternalHelperPythia.particleData.isParton(id)||isPhoton(id) );
+    assert ( InternalHelperPythia.particleData.isParton(id) );
     initialize_form_time();
     set_color(0);
     set_anti_color(0);
@@ -309,7 +309,7 @@ namespace Jetscape {
   Parton::Parton (int label, int id, int stat, double pt, double eta, double phi, double e, double* x)  :
     JetScapeParticleBase::JetScapeParticleBase ( label,  id,  stat,  pt, eta, phi, e, x){
     CheckAcceptability ( id );
-    assert ( InternalHelperPythia.particleData.isParton(id)||isPhoton(id));
+    assert ( InternalHelperPythia.particleData.isParton(id) );
     initialize_form_time();
     set_color(0);
     set_anti_color(0);
@@ -340,8 +340,6 @@ namespace Jetscape {
     case -5:  // anti-bottom quark
       break;            
     case 21: // gluon
-      break;
-    case 22: // photon
       break;      
     default:
       JSWARN << " error in id = " << id;
@@ -377,7 +375,7 @@ namespace Jetscape {
 
   void Parton::set_mean_form_time ()
   {
-    mean_form_time_ = 2.0*e()/(t()+rounding_error)/fmToGeVinv;
+    mean_form_time_ = 2.0*e()/(t()+0.001)/fmToGeVinv;
   }
   
   void Parton::set_form_time(double form_time)
@@ -402,25 +400,8 @@ namespace Jetscape {
 
   const double Parton::t()
   {
-    /// \Todo: Fix
-    //  double t_parton = PseudoJet::m2()  - restmass()*restmass() ;
-      
-      double t_parton = 0.0;
-      
-      if ( (std::abs(pid()) == 4)||(std::abs(pid()) == 5) )
-      {
-          t_parton = e()*e() - px()*px() - py()*py() - pz()*pz() - restmass()*restmass();
-      }
-      else
-      {
-          t_parton = e()*e() - px()*px() - py()*py() - pz()*pz() ;
-      }
-      if (t_parton< 0.0)
-      {
-         // JSWARN << " Virtuality is negative, MATTER cannot handle these particles " << " t = " << t_parton;
-         // JSWARN << " pid = "<< pid() << " E = " << e() << " px = " << px() << " py = " << py() << " pz = " << pz() ;
-      }
-    return ( t_parton ) ;
+    /// \Todo: Fix 
+    return ( PseudoJet::m2() ) ;
     // return (t_) ;
   }        
 
@@ -432,8 +413,8 @@ namespace Jetscape {
       throw std::runtime_error("Trying to set virtuality on a normal parton. You almost certainly don't want to do that. Please contact the developers if you do.");
     }
     
-    //  Reset the momentum due to virtuality
-    double newPl = std::sqrt( e()*e() - t - restmass()*restmass()) ;
+    //  Reset the momentum due to virtuality              
+    double newPl = std::sqrt( e()*e() - t ) ;
     double velocityMod = std::sqrt(std::pow(jet_v_.comp(1),2) + std::pow(jet_v_.comp(2),2) + std::pow(jet_v_.comp(3),2));
     
     newPl = newPl/velocityMod;
@@ -534,11 +515,6 @@ namespace Jetscape {
     return (MaxColor_);
   }
   
-    bool Parton::isPhoton(int pid)
-    {
-        if (pid==photonid) return true;
-        return false;
-    }
   // ---------------
   // Hadron specific
   // ---------------
@@ -607,35 +583,5 @@ namespace Jetscape {
     return *this;
   }
 
-  // ---------------
-  // Photon specific
-  // ---------------
-
-  Photon::Photon (const Photon& srh) :
-    Parton::Parton (srh)
-  {
-  }
-
-  Photon::Photon (int label, int id, int stat, const FourVector& p, const FourVector& x)  :
-    Parton::Parton ( label,  id,  stat,  p, x)
-  {
-  }
-
-  Photon::Photon (int label, int id, int stat, double pt, double eta, double phi, double e, double* x)  :
-    Parton::Parton ( label,  id,  stat,  pt, eta, phi, e, x)
-  {
-  }
-
-  Photon& Photon::operator=(Photon &ph)
-  {
-    Parton::operator=(ph);
-    return *this;
-  }
-
-  Photon& Photon::operator=(const Photon &ph)
-  {
-    Parton::operator=(ph);
-    return *this;
-  }
-
+    
 } /// end of namespace Jetscape
