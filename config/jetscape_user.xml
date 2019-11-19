@@ -38,7 +38,7 @@
   
   <!-- Jet Hadronization Module -->
   <JetHadronization>
-    <name>hybrid</name>
+    <name>colored</name>
   </JetHadronization>
   
   <!-- Particlization Module  -->

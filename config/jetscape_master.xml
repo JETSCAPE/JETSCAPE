@@ -237,7 +237,7 @@
   
   <!-- Jet Hadronization Module -->
    <JetHadronization>
-       <name>hybrid</name>
+       <name>colored</name>
        <take_recoil>0</take_recoil>
        <eCMforHadronization>460.0</eCMforHadronization>
        <reco_Elevelmax>3</reco_Elevelmax>
