@@ -1,9 +1,9 @@
 #!/bin/bash
-#SBATCH -J Pb_Pb_2760_MAP
+#SBATCH -J Au_Au_200_MAP
 #SBATCH -p skx-normal           # Queue (partition) name
-#SBATCH -N 128                 # the number of nodes
+#SBATCH -N 5                 # the number of nodes
 #SBATCH --ntasks-per-node 48 #set this equal to number of cores on node
-#SBATCH -t 48:00:00           # Run time (hh:mm:ss)   walltime for each node separately
+#SBATCH -t 5:00:00           # Run time (hh:mm:ss)   walltime for each node separately
 #SBATCH --mail-user=everett.165@osu.edu
 #SBATCH --mail-type=all      # Send email at begin and end of job
 #SBATCH -A TG-PHY180035      # Allocation name
@@ -22,7 +22,7 @@ job=$SLURM_JOB_ID
 
 # create taskfarmer tasks
 #set the number of events to run per design point
-num_events=100
+num_events=5000
 
 #files are indexed starting at 0
 let max_events=$num_events-1
