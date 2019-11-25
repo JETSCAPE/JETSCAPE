@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J Au_Au_200_MAP
+#SBATCH -J Pb_Pb_2760_MAP
 #SBATCH -p skx-normal           # Queue (partition) name
 #SBATCH -N 5                 # the number of nodes
 #SBATCH --ntasks-per-node 48 #set this equal to number of cores on node
