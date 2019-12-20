@@ -66,11 +66,12 @@ int main(int argc, char** argv)
       if(hadrons.size() > 0)
 	{
 	  SN++;
-	  dist_output << "#"  << "\tEvent"
+	  dist_output << "#"<<"\t"  
+	              << reader->GetEventPlaneAngle() <<"\t"
+		      << "Event"
 		      << SN << "ID\t"
 		      << hadrons.size() << "\t"
-		      << "pstat-E"   << "\t"
-		      << "Px"  << "\t"
+		      << "pstat-EPx"   << "\t"
 		      << "Py"  << "\t"
 		      << "Pz"  << "\t"
 		      << "Eta" <<  "\t"<< "Phi" << endl;

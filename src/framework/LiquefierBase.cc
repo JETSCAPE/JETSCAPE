@@ -17,11 +17,13 @@
 
 namespace Jetscape {
 
+
 LiquefierBase::LiquefierBase() :
     hydro_source_abs_err(1e-10), drop_stat(-11), miss_stat(-13),
     neg_stat(-17) {
     GetHydroCellSignalConnected = false;
 }
+
 
 void LiquefierBase::get_source(Jetscape::real tau, Jetscape::real x,
                                Jetscape::real y, Jetscape::real eta,
@@ -35,13 +37,13 @@ void LiquefierBase::get_source(Jetscape::real tau, Jetscape::real x,
             - 2.0*tau*x_drop[0]*cosh(eta-x_drop[3])
             - (x-x_drop[1])*(x-x_drop[1])
             - (y-x_drop[2])*(y-x_drop[2]);
-        
+
         if( tau >= x_drop[0] && ds2 >= 0.0 ){
             std::array<Jetscape::real, 4> jmu_i = {0.0, 0.0, 0.0, 0.0};
             smearing_kernel(tau, x, y, eta, drop_i, jmu_i);
             for (int i = 0; i < 4; i++) jmu[i] += jmu_i[i];
         }
-        
+
     }
 }
 
@@ -72,7 +74,7 @@ void LiquefierBase::check_energy_momentum_conservation(
         }
         x_final = iparton.x_in(); 
     }
-    
+
     FourVector p_missing = p_init;
     p_missing -= p_final;
     if (   std::abs(p_missing.t()) > hydro_source_abs_err
@@ -93,14 +95,14 @@ void LiquefierBase::check_energy_momentum_conservation(
 void LiquefierBase::filter_partons(std::vector<Parton> &pOut) {
     // if e_threshold > 0, use e_threshold, else, use |e_threshold|*T 
     // this should be put into xml later.
-    auto e_threshold = 2.0;
-    
+    auto e_threshold = 2.0;  // GeV
+
     for (auto &iparton : pOut) {
         if (iparton.pstat() == miss_stat) continue;
 
         // ignore photons
         if (iparton.isPhoton(iparton.pid())) continue;
-        
+
         // ignore heavy quarks
         if (std::abs(iparton.pid()) == 4
             || std::abs(iparton.pid()) == 5) continue;
@@ -109,41 +111,38 @@ void LiquefierBase::filter_partons(std::vector<Parton> &pOut) {
             // remove negative particles from parton list
             //iparton.set_stat(drop_stat);
             iparton.set_stat(neg_stat);
-	        continue;
+            continue;
         }
 
         // for positive particles, including jet partons and recoil partons
+        auto tLoc = iparton.x_in().t();
+        auto xLoc = iparton.x_in().x();
+        auto yLoc = iparton.x_in().y();
+        auto zLoc = iparton.x_in().z();
+        std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
+        GetHydroCellSignal(tLoc, xLoc, yLoc, zLoc, check_fluid_info_ptr);
+        auto vxLoc = check_fluid_info_ptr->vx;
+        auto vyLoc = check_fluid_info_ptr->vy;
+        auto vzLoc = check_fluid_info_ptr->vz;
+        auto beta2 = vxLoc*vxLoc + vyLoc*vyLoc + vzLoc*vzLoc;
+        auto gamma = 1.0 / sqrt(1.0 - beta2);
+        auto E_boosted = gamma*(  iparton.e() - iparton.p(1)*vxLoc
+                                - iparton.p(2)*vyLoc - iparton.p(3)*vzLoc);
         if (e_threshold > 0.) {
-	        if (iparton.e() < e_threshold) {
-                iparton.set_stat(drop_stat);
-		        continue;
-            }
-        } else {
-            auto tLoc = iparton.x_in().t();
-            auto xLoc = iparton.x_in().x();
-            auto yLoc = iparton.x_in().y();
-            auto zLoc = iparton.x_in().z();
-            //cout << "debug1" << endl;
-            std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
-            GetHydroCellSignal(tLoc, xLoc, yLoc, zLoc, check_fluid_info_ptr);
-            //cout << "debug2  " << tLoc << "  " << xLoc << "  " << yLoc
-            //     << "  " << zLoc << "  " << check_fluid_info_ptr << endl;
-            auto tempLoc = check_fluid_info_ptr->temperature;
-            //cout << "debug3" << endl;
-            auto vxLoc = check_fluid_info_ptr->vx;
-            auto vyLoc = check_fluid_info_ptr->vy;
-            auto vzLoc = check_fluid_info_ptr->vz;
-            auto beta2 = vxLoc*vxLoc + vyLoc*vyLoc + vzLoc*vzLoc;
-	        auto gamma = 1.0 / sqrt(1.0 - beta2);
-
-            // delete partons with energy smaller than 4*T
+            // drop partons with energy smaller than e_threshold
             // (in the local rest frame) from parton list
-	        if (gamma*(iparton.e() - iparton.p(1)*vxLoc
-                       - iparton.p(2)*vyLoc - iparton.p(3)*vzLoc)
-                < std::abs(e_threshold)*tempLoc) {
+            if (E_boosted < e_threshold) {
                 iparton.set_stat(drop_stat);
                 continue;
-	        }
+            }
+        } else {
+            // drop partons with energy smaller than |e_threshold|*T
+            // (in the local rest frame) from parton list
+            auto tempLoc = check_fluid_info_ptr->temperature;
+            if (E_boosted < std::abs(e_threshold)*tempLoc) {
+                iparton.set_stat(drop_stat);
+                continue;
+            }
         }
     }
 }
@@ -158,7 +157,7 @@ void LiquefierBase::add_hydro_sources(std::vector<Parton> &pIn,
     }
     check_energy_momentum_conservation(pIn, pOut);
     filter_partons(pOut);
-    
+
     FourVector p_final;
     FourVector p_init;
     FourVector x_final;
@@ -171,7 +170,7 @@ void LiquefierBase::add_hydro_sources(std::vector<Parton> &pIn,
         p_init += temp;
         x_init = iparton.x_in();
     }
-    
+
     auto weight_final = 0.0;
     for (const auto &iparton : pOut) {
         if (iparton.pstat() == drop_stat) continue;
@@ -218,7 +217,6 @@ void LiquefierBase::add_hydro_sources(std::vector<Parton> &pIn,
         Droplet drop_i(droplet_xmu, droplet_pmu);
         add_a_droplet(drop_i);
     }
-    //cout << "debug, after ......." << pOut.size() << endl;
 }
 
 

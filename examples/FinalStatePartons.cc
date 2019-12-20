@@ -68,11 +68,12 @@ int main(int argc, char** argv)
 
       if(TotalPartons > 0)
 	{ SN = SN + 1;
-	  dist_output << "#"  << "\tEvent"
+	  dist_output << "#"<<"\t"
+		      << reader->GetEventPlaneAngle() <<"\t"
+		      << "Event"
 		      << SN << "ID\t"
 		      << TotalPartons << "\t"
-		      << "pstat-E"   << "\t"
-		      << "Px"  << "\t"
+		      << "pstat-EPx"  << "\t"
 		      << "Py"  << "\t"
 		      << "Pz"  << "\t"
 		      << "Eta" <<  "\t"<< "Phi" << endl;

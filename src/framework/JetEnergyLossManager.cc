@@ -109,18 +109,25 @@ void JetEnergyLossManager::Exec()
   // ----------------------------------
   // Create needed copies and connect signal/slots accordingly ...
   
-  if (GetGetHardPartonListConnected())
-    {
-      GetHardPartonList(hp);
-      
-      VERBOSE(3)<<" Number of Hard Partons = "<<hp.size();
-      
-      for (int i=1;i<hp.size();i++)
-	{
-	  JSDEBUG<<"Create the "<<i<<" th copy because number of intital hard partons = "<<hp.size();
-	 
-	  Add(make_shared<JetEnergyLoss>(*dynamic_pointer_cast<JetEnergyLoss>(GetTaskAt(0))));
-	}
+    if (GetGetHardPartonListConnected()) {
+        GetHardPartonList(hp);
+        VERBOSE(3)<<" Number of Hard Partons = "<<hp.size();
+        for (int i=1;i<hp.size();i++) {
+            JSDEBUG << "Create the " << i
+                    << " th copy because number of intital hard partons = "
+                    << hp.size();
+            // Add(make_shared<JetEnergyLoss>(*dynamic_pointer_cast<JetEnergyLoss>(GetTaskAt(0))));
+            auto jloss_org = dynamic_pointer_cast<JetEnergyLoss>(GetTaskAt(0));
+            auto jloss_copy = make_shared<JetEnergyLoss>(*jloss_org);
+
+            // if there is a liquefier attached to the jloss module
+            // also attach the liquefier to the copied jloss modules
+            // to collect hydrodynamic source terms
+            if (!weak_ptr_is_uninitialized(jloss_org->get_liquefier())) {
+                jloss_copy->add_a_liquefier(jloss_org->get_liquefier().lock());
+            }
+            Add(jloss_copy);
+	    }
     }
   
   VERBOSE(3)<<" Found "<<GetNumberOfTasks()<<" Eloss Manager Tasks/Modules Execute them ... ";

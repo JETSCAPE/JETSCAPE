@@ -58,9 +58,9 @@ namespace Jetscape {
       //shared_ptr<PartonShower> GetPartonShower() {return pShower;}
       vector<shared_ptr<PartonShower>> GetPartonShowers() {return pShowers;}
 
-      vector<shared_ptr<Hadron>> GetHadrons(){ return hadrons;}
-
+      vector<shared_ptr<Hadron>> GetHadrons(){ return hadrons;}      
       vector<fjcore::PseudoJet>  GetHadronsForFastJet();
+      double GetEventPlaneAngle()const{ return EventPlaneAngle;}
   
     private:
 
@@ -81,10 +81,9 @@ namespace Jetscape {
       vector<shared_ptr<PartonShower>> pShowers;
   
       vector<node> nodeVec;
-      vector<edge> edgeVec;
-
+      vector<edge> edgeVec;      
       vector<shared_ptr<Hadron>> hadrons; 
-  
+      double EventPlaneAngle;
     };
 
 typedef JetScapeReader<ifstream> JetScapeReaderAscii;

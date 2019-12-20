@@ -75,6 +75,7 @@ class HydroFromFile: public FluidDynamics {
                          Jetscape::real y, Jetscape::real z,
                          std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr);
 
+     double GetEventPlaneAngle();
      void set_hydro_event_idx(int idx_in) {hydro_event_idx_ = idx_in;};
      int get_hydro_event_idx() {return(hydro_event_idx_);};
      void GetHyperSurface(Jetscape::real T_cut, SurfaceCellInfo* surface_list_ptr) {};

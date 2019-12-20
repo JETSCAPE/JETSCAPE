@@ -384,6 +384,9 @@ void PartonShower::SaveAsGV(string fName)
         } else if ((pMap[*eIt]->pstat()) == -17) {
             // thermal partons draw from the medium (negative partons)
             label = ("[color=\"darkorange\"label=\"(");
+        } else if ((pMap[*eIt]->pstat()) == -1) {
+            // thermal partons draw from the medium (negative partons)
+            label = ("[color=\"green\"label=\"(");
         } else if ((pMap[*eIt]->t()) < 4.0) {
             // small virtuality parton
             label = ("[color=\"blue\"label=\"(");
@@ -394,11 +397,15 @@ void PartonShower::SaveAsGV(string fName)
         stringstream stream;
         if ((pMap[*eIt]->pstat()) == -13) {
             stream << std::scientific << setprecision(1)
-                   << (pMap[*eIt]->e()) << "," << (pMap[*eIt]->t()) <<","
+                   << (pMap[*eIt]->e()) << ","
+                   << (pMap[*eIt]->pt()) << ","
+                   << (pMap[*eIt]->t()) <<","
                    << (pMap[*eIt]->pid());
         } else {
             stream << fixed << setprecision(2)
-                   << (pMap[*eIt]->e()) << "," << (pMap[*eIt]->t()) <<","
+                   << (pMap[*eIt]->e()) << ","
+                   << (pMap[*eIt]->pt()) << ","
+                   << (pMap[*eIt]->t()) <<","
                    << (pMap[*eIt]->pid());
         }
       

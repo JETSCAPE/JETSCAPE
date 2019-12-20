@@ -305,3 +305,23 @@ void HydroFromFile::GetHydroInfo(
                             static_cast<Jetscape::real>(temp_fluid_cell_ptr->bulkPi));
     delete temp_fluid_cell_ptr;
 }
+
+double HydroFromFile::GetEventPlaneAngle() {
+    double v2 = 0.0;
+    double psi_2 = 0.0;
+    if (hydro_type_ == 1) {
+        std::ostringstream angle_filename;
+        string folder = (
+                para_->FirstChildElement("hydro_files_folder")->GetText());
+        angle_filename << folder << "/event-" << hydro_event_idx_
+                       << "/EventPlanesFrzout.dat";
+        std::ifstream inputfile(angle_filename.str().c_str());
+        string dummy;
+        std::getline(inputfile, dummy);
+        std::getline(inputfile, dummy);
+        std::getline(inputfile, dummy);
+        inputfile >> dummy >> v2 >> dummy >> psi_2;
+        inputfile.close();
+    }
+    return(psi_2);
+}
