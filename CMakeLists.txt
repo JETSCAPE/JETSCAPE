@@ -355,6 +355,12 @@ target_link_libraries(JetScapeReader JetScapeThird GTL ${PYTHIA8_LIBRARIES})
 add_executable(brickTest ./examples/brickTest.cc)
 target_link_libraries(brickTest JetScape )
 
+### Added for AAPaper First Test (PP) by Yasuki
+add_executable(FirstTestMatterVacuum ./examples/FirstTestMatterVacuum.cc)
+target_link_libraries(FirstTestMatterVacuum JetScape )
+
+
+
 add_executable(PythiaBrickTest ./examples/PythiaBrickTest.cc)
 target_link_libraries(PythiaBrickTest JetScape )
 
