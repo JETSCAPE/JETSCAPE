@@ -50,7 +50,7 @@ void InitialFromFile::Exec() {
 
         event_group << "/event_0";
         JSINFO << "event_group=" << event_group.str().c_str();
-        H5file_ptr_ = H5Fopen(path_with_filename.str().c_str(), H5F_ACC_RDWR, H5P_DEFAULT);
+        H5file_ptr_ = H5Fopen(path_with_filename.str().c_str(), H5F_ACC_RDONLY, H5P_DEFAULT); //H5F_ACC_RDWR, H5F_ACC_RDONLY
         H5group_ptr_ = H5Gopen(H5file_ptr_, event_group.str().c_str(), H5P_DEFAULT);
 
         ReadConfigs();

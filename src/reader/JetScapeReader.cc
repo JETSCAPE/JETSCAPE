@@ -14,6 +14,7 @@
  ******************************************************************************/
 
 #include "JetScapeReader.h"
+#include <sstream>
 
 namespace Jetscape {
 
@@ -22,6 +23,7 @@ JetScapeReader<T>::JetScapeReader()
 {
   VERBOSE(8);
   currentEvent=-1;
+  EventPlaneAngle=0.0;
 }
 
 template<class T>
@@ -118,12 +120,25 @@ void JetScapeReader<T>::Next()
   currentShower=1;
   
   int nodeZeroCounter=0;
-  
+  std::string EPAngleStr="EventPlaneAngle";
   while (getline(inFile,line))
     {
       strT.set(line);
 
-      if ( strT.isCommentEntry()) continue;
+      if ( strT.isCommentEntry())
+	{
+	  
+	  if(line.find(EPAngleStr)!=std::string::npos)
+	    {
+	      std::stringstream data(line);
+	      std::string dummy; 
+	      data >> dummy >> dummy >> EventPlaneAngle;
+	      JSINFO<<" EventPlaneAngle="<<EventPlaneAngle;
+	    }
+	  continue;
+	  
+	}
+
       
       if (strT.isEventEntry()) {
 	int newEvent=stoi(strT.next());		      

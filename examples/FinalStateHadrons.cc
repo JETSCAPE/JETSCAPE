@@ -49,9 +49,10 @@ int main(int argc, char** argv)
   // //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevel(9) or 10
   JetScapeLogger::Instance()->SetVerboseLevel(0);
   
-  auto reader=make_shared<JetScapeReaderAscii>("test_out.dat");
-  std::ofstream dist_output ("JetscapeFinalStateHadrons.txt"); //Format is SN, PID, E, Px, Py, Pz, Eta, Phi
+  auto reader=make_shared<JetScapeReaderAscii>(argv[1]);
+  std::ofstream dist_output (argv[2]); //Format is SN, PID, E, Px, Py, Pz, Eta, Phi
   vector<shared_ptr<Hadron>> hadrons;
+  int SN=0;
   while (!reader->Finished())
     {
       reader->Next();
@@ -61,12 +62,26 @@ int main(int argc, char** argv)
       //dist_output<<"Event "<< reader->GetCurrentEvent()+1<<endl;
       hadrons = reader->GetHadrons();
       cout<<"Number of hadrons is: " << hadrons.size() << endl;
-      for(unsigned int i=0; i<hadrons.size(); i++)
+
+      if(hadrons.size() > 0)
 	{
-	  dist_output<<i<<" "<<hadrons[i].get()->pid()<<" "<<hadrons[i].get()->pstat()<<" "<< hadrons[i].get()->e() << " "<< hadrons[i].get()->px()<< " "<< hadrons[i].get()->py() << " "<< hadrons[i].get()->pz()<<  endl;
-        }
+	  SN++;
+	  dist_output << "#"<<"\t"  
+	              << reader->GetEventPlaneAngle() <<"\t"
+		      << "Event"
+		      << SN << "ID\t"
+		      << hadrons.size() << "\t"
+		      << "pstat-EPx"   << "\t"
+		      << "Py"  << "\t"
+		      << "Pz"  << "\t"
+		      << "Eta" <<  "\t"<< "Phi" << endl;
+	  
+	  for(unsigned int i=0; i<hadrons.size(); i++)
+	    {
+	      dist_output<<i<<" "<<hadrons[i].get()->pid()<<" "<<hadrons[i].get()->pstat()<<" "<< hadrons[i].get()->e() << " "<< hadrons[i].get()->px()<< " "<< hadrons[i].get()->py() << " "<< hadrons[i].get()->pz()<<  " " << hadrons[i].get()->eta() <<" "<<hadrons[i].get()->phi() <<endl;
+	    }
+	}
     }
-  
   reader->Close();
   
 }

@@ -64,7 +64,6 @@ class FluidDynamics : public JetScapeModuleBase {
 
     double eta;
     Parameter parameter_list;
-    tinyxml2::XMLElement *fd;
     
     // How to store this data? In memory or hard disk?
     // 3D hydro may eat out the memory,
@@ -129,7 +128,6 @@ class FluidDynamics : public JetScapeModuleBase {
 	@param z  rapidity eta or space z coordinate.
 	@param fCell A pointer of type FluidCellInfo class.  
     */
-
     virtual void GetHydroCell(double t, double x, double y, double z,
                               std::unique_ptr<FluidCellInfo>& fCell) {
         GetHydroInfo(t, x, y, z, fCell);
@@ -287,9 +285,9 @@ class FluidDynamics : public JetScapeModuleBase {
     // */
     // virtual Jetscape::real GetNetChargeDensity(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
     
-    virtual void add_a_liqueifier(
-                            std::shared_ptr<LiquefierBase> new_liqueifier) {
-        liquefier_ptr = new_liqueifier;
+    virtual void add_a_liquefier(
+                            std::shared_ptr<LiquefierBase> new_liquefier) {
+        liquefier_ptr = new_liquefier;
     }
 
     void get_source_term(Jetscape::real tau, Jetscape::real x,

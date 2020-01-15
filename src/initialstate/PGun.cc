@@ -15,15 +15,20 @@
 //Parton Gun Test
 
 #include "PGun.h"
+#include "JetScapeParticles.h"
+#include "Pythia8/Pythia.h"
 
 using namespace Jetscape;
 
 // Register the module with the base class
 RegisterJetScapeModule<PGun> PGun::reg("PGun");
 
+Pythia8::Pythia PGun::InternalHelperPythia ("IntentionallyEmpty",false);
+
 PGun::PGun() : HardProcess()
 {
   fixed_pT=0;
+  flag_useHybridHad=0;
   SetId("PGun");
   VERBOSE(8);
 }
@@ -37,7 +42,7 @@ void PGun::InitTask()
 {
   JSDEBUG<<"Initialize PGun Brick (Test) ...";
   VERBOSE(8);
-
+  
   std::string s = GetXMLElementText({"Hard", "PGun", "name"});
   JSDEBUG << s << " to be initilizied ...";
   
@@ -45,6 +50,9 @@ void PGun::InitTask()
   JSDEBUG << s << " with fixed pT = "<<fixed_pT;
   JSINFO<<"Parton Gun with fixed pT = "<<fixed_pT;
   
+  flag_useHybridHad = GetXMLElementInt({"Hard", "PGun", "useHybridHad"});
+  JSINFO<<"Use hybrid hadronization? "<<flag_useHybridHad;
+
 }
  
 void PGun::Exec()
@@ -61,19 +69,21 @@ void PGun::Exec()
   
   double parID,ppx,ppy,ppz,pp0,mass; 
 
-  for (int i=0;i<1;i++)
-     {
-       tempRand = rand()/maxN;
-       if(tempRand < 0.25) parID = 21;
-       else if(tempRand < 0.50) parID = 1;
-       else if(tempRand < 0.75) parID = 2;
-       else parID = 3;
-       if (parID != 21) {
-	 tempRand = rand()/maxN;
-	 if(tempRand < 0.50) parID = -parID;
-       }            
-         parID = 1;
-       mass = 0.0;
+ // for (int i=0;i<1;i++)
+ //    {
+ //      tempRand = rand()/maxN;
+   //    if(tempRand < 0.25) parID = 21;
+   //    else if(tempRand < 0.50) parID = 1;
+   //    else if(tempRand < 0.75) parID = 2;
+   //    else parID = 3;
+   //    if (parID != 21) {
+//	 tempRand = rand()/maxN;
+//	 if(tempRand < 0.50) parID = -parID;
+ //      }
+        parID = 21;
+    //     mass = 0.0;
+       mass = InternalHelperPythia.particleData.m0( parID );
+         //JSINFO << BOLDYELLOW << " Mass = " << mass ;
        pT = fixed_pT; //max_pT*(rand()/maxN);
        
        phi = 2.0*PI*(rand()/maxN);
@@ -109,16 +119,19 @@ void PGun::Exec()
 	 }
        }
 
-       auto ptn = make_shared<Parton>(0,parID,0,pT,rapidity,phi,p[0],xLoc);
-       ptn->set_color( (parID>0) ? 100 : 0 ); ptn->set_anti_color( ((parID>0)||(parID==21)) ? 0 : 101 ); ptn->set_max_color(102);
-       AddParton(ptn);
+       xLoc[1] = 0.0;
+       xLoc[2] = 0.0;
+
+       if(flag_useHybridHad != 1) { 
+           AddParton(make_shared<Parton>(0,parID,0,pT,rapidity,phi,p[0],xLoc));
+       } else {
+           auto ptn = make_shared<Parton>(0,parID,0,pT,rapidity,phi,p[0],xLoc);
+           ptn->set_color( (parID>0) ? 100 : 0 ); ptn->set_anti_color( ((parID>0)||(parID==21)) ? 0 : 101 ); ptn->set_max_color(102);
+           AddParton(ptn);
+       }
   
-       VERBOSEPARTON(7,*GetPartonAt(i))
-	 <<" added "
-	 <<" at x=" << xLoc[1]
-	 <<", y=" << xLoc[2]
-	 <<", z=" << xLoc[3];
-     }
+ //      VERBOSEPARTON(7,*GetPartonAt(i)) <<" added "<<" at x=" << xLoc[1]<<", y=" << xLoc[2]<<", z=" << xLoc[3];
+ //    }
   
   VERBOSE(8)<<GetNHardPartons();
 }

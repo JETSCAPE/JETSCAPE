@@ -49,34 +49,55 @@ int main(int argc, char** argv)
   // //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevel(9) or 10
   JetScapeLogger::Instance()->SetVerboseLevel(0);
   
-  auto reader=make_shared<JetScapeReaderAscii>("test_out.dat");
-  std::ofstream dist_output ("JetscapeFinalStatePartons.txt"); //Format is SN, PID, E, Px, Py, Pz, Eta, Phi
-  
+  auto reader=make_shared<JetScapeReaderAscii>(argv[1]);
+  std::ofstream dist_output (argv[2]); //Format is SN, PID, E, Px, Py, Pz, Eta, Phi
+  int SN=0, TotalPartons=0;
   while (!reader->Finished())
     {
+      
       reader->Next();
       
       // cout<<"Analyze current event: "<<reader->GetCurrentEvent()<<endl;
       auto mShowers=reader->GetPartonShowers();     
 
-      dist_output<<"Event "<< reader->GetCurrentEvent()+1<<endl;
+      TotalPartons =0;
       for (int i=0;i<mShowers.size();i++)
-	{
-	  //  cout<<" Analyze parton shower: "<<i<<endl;
-	  // Let's create a file
-	  for ( int ipart = 0; ipart< mShowers[i]->GetFinalPartons().size(); ++ipart){
-	    Parton p = *mShowers[i]->GetFinalPartons().at(ipart);
-	    dist_output << ipart   << "\t"
-			<< p.pid() << "\t"
-			<< p.pstat() << "\t"
-			<< p.e()   << "\t"
-			<< p.px()  << "\t" 
-			<< p.py()  << "\t" 
-			<< p.pz()  << "\t"
-			<< p.eta()<<  "\t"<< p.phi() << endl;
-	  }
-	}
+        {
+	  TotalPartons = TotalPartons + mShowers[i]->GetFinalPartons().size();
+        }
 
+      if(TotalPartons > 0)
+	{ SN = SN + 1;
+	  dist_output << "#"<<"\t"
+		      << reader->GetEventPlaneAngle() <<"\t"
+		      << "Event"
+		      << SN << "ID\t"
+		      << TotalPartons << "\t"
+		      << "pstat-EPx"  << "\t"
+		      << "Py"  << "\t"
+		      << "Pz"  << "\t"
+		      << "Eta" <<  "\t"<< "Phi" << endl;
+	  
+	  for (int i=0;i<mShowers.size();i++)
+	    {
+	      //cout<<" Analyze parton shower: "<<i<<endl;
+	      // Let's create a file
+	      for ( int ipart = 0; ipart< mShowers[i]->GetFinalPartons().size(); ++ipart){
+		Parton p = *mShowers[i]->GetFinalPartons().at(ipart);
+		//            if(abs(p.pid())!=5) continue;
+		
+		dist_output << ipart   << "\t"
+			    << p.pid() << "\t"
+			    << p.pstat() << "\t"
+			    << p.e()   << "\t"
+			    << p.px()  << "\t" 
+			    << p.py()  << "\t" 
+			    << p.pz()  << "\t"
+			    << p.eta()<<  "\t"<< p.phi() << endl;
+	      }
+	    }
+	}
+      
     }
   
   reader->Close(); 
