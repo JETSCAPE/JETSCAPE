@@ -249,7 +249,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   double velocity[4],xStart[4],velocity_jet[4];
   bool photon_brem = false;
     
-  VERBOSESHOWER(9)<< MAGENTA << "SentInPartons Signal received : "<<deltaT<<" "<<Q2<<" "<< pIn.size();
+  VERBOSE(8) << MAGENTA << "SentInPartons Signal received : "<<deltaT<<" "<<Q2<<" "<< pIn.size();
     
   VERBOSE(8) << BOLDYELLOW << " ********************************************************** " ;
     
@@ -266,7 +266,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 
  VERBOSE(8) << MAGENTA << " the time in fm is " << time << " The time in GeV-1 is " << Time ;
  VERBOSE(8) << MAGENTA  << "pid = " << pIn[0].pid() << " E = " << pIn[0].e() << " px = " << pIn[0].p(1) << " py = " << pIn[0].p(2) << "  pz = " << pIn[0].p(3) << " virtuality = " << pIn[0].t() << " form_time in fm = " << pIn[0].form_time() << " split time = " << pIn[0].form_time() + pIn[0].x_in().t();
-  JSDEBUG << " color = " << pIn[0].color() << " anti-color = " << pIn[0].anti_color();
+  VERBOSE(8) << " color = " << pIn[0].color() << " anti-color = " << pIn[0].anti_color();
     
     unsigned int ShowerMaxColor = pIn[0].max_color();
     unsigned int CurrentMaxColor;
@@ -465,17 +465,19 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       if (pIn[i].form_time()<0.0) /// A parton without a virtuality or formation time, must set...
       {
           
+           VERBOSE(8) << BOLDYELLOW << " pid = " << pIn[i].pid() << " E = " << pIn[i].e() ;
+          
           if ( (pIn[i].t()<0.0)&&( (pIn[i].form_time()<-0.1-rounding_error)||(pIn[i].form_time()>-0.1+rounding_error) ) )
           {
             JSWARN << " parton with a negative virtuality was sent to MATTER and will now have its virtuality reset!, press 1 and return to proceed... ";
             // cin >> blurb; //remove the input to prevent an error caused by heavy quark from pythia (by Chathuranga)
          }
           
-          iSplit = 0;
+          iSplit = 0; // (anti)quark splitting into (anti)quark + gluon
           if (pIn[i].pid()==gid)
           {
               JSDEBUG << " parton is a gluon ";
-              iSplit = 1;
+              iSplit = 1; // gluon splitting to two gluons
           }
           else
           {
@@ -496,20 +498,20 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           }
           else
           {
-             JSDEBUG << BOLDYELLOW << " at x,y,z,t = " <<  pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z() << "  " << pIn[i].x_in().t() ;
-             if(abs(pIn[i].pid()) == 4 || abs(pIn[i].pid()) == 5)
+             //JSINFO << BOLDYELLOW << " at x,y,z,t = " <<  pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z() << "  " << pIn[i].x_in().t() ;
+             if(abs(pIn[i].pid()) == 4 || abs(pIn[i].pid()) == 5 || pIn[i].pid() == gid)
              { 
 
-		 double min_vir = (QS*QS/2.0)*( 1.0 +  std::sqrt( 1.0 + 4.0*pIn[i].restmass()*pIn[i].restmass()/QS/QS ) );
+                // double min_vir = (QS*QS/2.0)*( 1.0 +  std::sqrt( 1.0 + 4.0*pIn[i].restmass()*pIn[i].restmass()/QS/QS ) );
 
-		 if (max_vir>min_vir)
-	  	 {
-	  		tQ2 = generate_vac_t_w_M(pIn[i].pid(), pIn[i].restmass(), pIn[i].nu(), QS*QS/2.0, max_vir, zeta, iSplit);
-                 }
-                 else
-                 {
-                 	tQ2 = rounding_error;
-                 } 
+               //  if (max_vir>min_vir)
+               //  {
+                     tQ2 = generate_vac_t_w_M(pIn[i].pid(), pIn[i].restmass(), pIn[i].nu(), QS*QS/2.0, max_vir, zeta, iSplit);
+               //  }
+              //   else
+               //  {
+              //   	tQ2 = rounding_error;
+              //   }
                //  std::ofstream tdist;
                //  tdist.open("tdist_heavy.dat", std::ios::app);
                //  tdist << tQ2 << endl;
@@ -930,7 +932,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   double ratio2 = (val1+val2)/(val1+val2+val3+val4);
                   double ratio3 = (val1+val2+val3)/(val1+val2+val3+val4);
                   double r = ZeroOneDistribution(*GetMt19937Generator());
-                  if (r>ratio1 && r<ratio2)
+                  if (r >= ratio1 && r<ratio2)
                   { // qqbar
 		  
                       double r2 = ZeroOneDistribution(*GetMt19937Generator());
@@ -954,7 +956,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       }
                       iSplit = 2;
                   }
-                  else if (r>ratio2 && r<ratio3)
+                  else if (r>=ratio2 && r<ratio3)
                   {
                       pid_a = cid;
                       pid_b = -cid;
@@ -963,7 +965,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       JSINFO << BOLDYELLOW << " split to c c-bar" ;
                       
                   }
-                  else if (r>ratio3)
+                  else if (r>=ratio3)
                   {
                       pid_a = bid;
                       pid_b = -bid;
@@ -978,8 +980,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       iSplit = 1;
                   }
               }
-              else
-              { // we had a quark
+              else if (std::abs(pIn[i].pid())<4)
+              { // we had a light quark
                   
                   double relative_charge = 0.0;
                   if ( (std::abs(pIn[i].pid())>0)&&(std::abs(pIn[i].pid())<4) ) relative_charge = 1.0/9.0;
@@ -998,13 +1000,13 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   double r2 = ZeroOneDistribution(*GetMt19937Generator());
                   
                   if (r2<=val)
-                  { // quark decay to quark and gluon
+                  { // light quark decay to quark and gluon
                       pid_a = pid ;
                       pid_b = gid ;
                       iSplit = 0;  // iSplit for quark radiating a gluon
                   }
                   else
-                  { // quark decay to quark and photon
+                  { // light quark decay to quark and photon
                       pid_a = pid;
                       pid_b = photonid;
                       iSplit = 3; // iSplit for quark radiating a photon
@@ -1013,6 +1015,15 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   
                   
               }
+              else
+              {
+                  // we had a heavy quark
+                  pid_a = pid ;
+                  pid_b = gid ;
+                  iSplit = 0;
+              }
+                  
+                  
               int ifcounter = 0;
               double l_perp2 = -1.0; // SC: initialization
               // daughter virtualities
@@ -1117,7 +1128,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   // use pIn information to sample z above, but use new_parent to calculate daughter partons below            
                   
                   
-                  if(std::abs(pid_a) == 4 || std::abs(pid_a) == 5)
+                  if(std::abs(pid_a) == 4 || std::abs(pid_a) == 5 )
                   {
                       double M = pIn[i].restmass();
                       if (QS*QS*(1.0 + std::sqrt(1.0 + 4.0*M*M/QS/QS))/2.0 < z*z*new_parent_t)
@@ -1303,6 +1314,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   newx[j] = pIn[i].x_in().comp(j) + (time - pIn[i].x_in().comp(0))*velocity[j];
               }
                   
+              VERBOSE(8) << BOLDRED << " PiD - a = " << pid_a;
+              
               pOut.push_back(Parton(0,pid_a,jet_stat,newp,newx));
               int iout = pOut.size()-1;
               
@@ -1375,6 +1388,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 	      
               if (iSplit!=3) // not a photon
               {
+                  
+                  VERBOSE(8) << BOLDRED << " PiD - b = " << pid_b;
                   pOut.push_back(Parton(0,pid_b,jet_stat,newp,newx));
                   iout = pOut.size()-1;
                   pOut[iout].set_jet_v(velocity_jet); // use initial jet velocity
@@ -1390,6 +1405,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
               }
               else // is a photon
               {
+                  VERBOSE(8) << BOLDRED << " is a photon PiD - b = " << pid_b;
                   pOut.push_back(Photon(0,pid_b,jet_stat,newp,newx));
                   iout = pOut.size()-1;
                   pOut[iout].set_jet_v(velocity_jet); // use initial jet velocity
@@ -1919,14 +1935,29 @@ double Matter::generate_vac_t_w_M(int p_id, double M, double nu, double t0, doub
   t_hi_MM = t;
   t_hi_00 = t;
     
-    VERBOSE(1) << MAGENTA << " in gen_vac_t_w_M : t_low , t_hi = " << t_low_M0 << "  " << t ;
+   // JSINFO << MAGENTA << " in gen_vac_t_w_M : t_low , t_hi = " << t_low_M0 << "  " << t ;
     //cin >> test ;
     
   if (p_id==gid)
   {
-      numer = sudakov_Pgg(t0,t,loc_a,nu)*std::pow(sudakov_Pqq(t0,t,loc_a,nu),3.0)*sudakov_Pqq_w_M_vac_only(M_charm,t0,t,loc_a,nu)*sudakov_Pqq_w_M_vac_only(M_bottom,t0,t,loc_a,nu);
+      if (t < 2.0*(M_charm*M_charm + t0))
+      {
+          numer = sudakov_Pgg(t0,t,loc_a,nu)*std::pow(sudakov_Pqq(t0,t,loc_a,nu),3.0);
+      }
+      else if (t < 2.0*(M_bottom*M_bottom + t0) )
+      {
+          numer = sudakov_Pgg(t0,t,loc_a,nu)*std::pow(sudakov_Pqq(t0,t,loc_a,nu),3.0)*sudakov_Pqq_w_M_vac_only(M_charm,t0,t,loc_a,nu);
+      }
+      else
+      {
+          numer = sudakov_Pgg(t0,t,loc_a,nu)*std::pow(sudakov_Pqq(t0,t,loc_a,nu),3.0)*sudakov_Pqq_w_M_vac_only(M_charm,t0,t,loc_a,nu)*sudakov_Pqq_w_M_vac_only(M_bottom,t0,t,loc_a,nu);
+      }
+     // JSINFO << BOLDYELLOW << " numer = " << numer ;
+      
+     // double blurb;
+     // cin >> blurb;
         
-      if ((is!=1)&&(is!=2))
+      if ((is!=1)&&(is!=2)&&(is!=4)&&(is!=5))
       {
           throw std::runtime_error(" error in isp ");
       }
@@ -1970,6 +2001,8 @@ double Matter::generate_vac_t_w_M(int p_id, double M, double nu, double t0, doub
   scale = t0;
     
   //   cout << " s_approx, s_error = " << s_approx << "  " << s_error << endl;
+  
+    bool exit_condition = true;
     
   do
   {
@@ -1979,9 +2012,19 @@ double Matter::generate_vac_t_w_M(int p_id, double M, double nu, double t0, doub
 
       if (p_id==gid)
       {
-          denom = sudakov_Pgg(t0, t_mid_00, loc_a, nu)*std::pow(sudakov_Pqq(t0, t_mid_00, loc_a, nu),3.0)*sudakov_Pqq_w_M_vac_only(M_charm, t0, t_mid_00, loc_a, nu)*sudakov_Pqq_w_M_vac_only(M_bottom, t0, t_mid_00, loc_a, nu);
-            
-          if ((is!=1)&&(is!=2))
+          if (t_mid_00 < 2.0*(M_charm*M_charm + t0))
+          {
+              denom = sudakov_Pgg(t0, t_mid_00, loc_a, nu)*std::pow(sudakov_Pqq(t0, t_mid_00, loc_a, nu),3.0);
+          }
+          else if (t_mid_00 < 2.0*(M_bottom*M_bottom + t0) )
+          {
+              denom = sudakov_Pgg(t0, t_mid_00, loc_a, nu)*std::pow(sudakov_Pqq(t0, t_mid_00, loc_a, nu),3.0)*sudakov_Pqq_w_M_vac_only(M_charm, t0, t_mid_00, loc_a, nu);
+          }
+          else
+          {
+              denom = sudakov_Pgg(t0, t_mid_00, loc_a, nu)*std::pow(sudakov_Pqq(t0, t_mid_00, loc_a, nu),3.0)*sudakov_Pqq_w_M_vac_only(M_charm, t0, t_mid_00, loc_a, nu)*sudakov_Pqq_w_M_vac_only(M_bottom, t0, t_mid_00, loc_a, nu);
+          }
+          if ((is!=1)&&(is!=2)&&(is!=4)&&(is!=5))
           {
               throw std::runtime_error(" error in isp numerator");
           }
@@ -1994,7 +2037,8 @@ double Matter::generate_vac_t_w_M(int p_id, double M, double nu, double t0, doub
           }
           if (((int) std::abs((double) p_id))==4 || ((int) std::abs((double) p_id))==5)
           {
-             denom = sudakov_Pqg_w_M(M, t0, t_mid_M0, loc_a, nu);
+              VERBOSE(8) << BOLDYELLOW << " In generate_vac_t_w_M,  t0 = " << t0 << " t_mid_M0 = " << t_mid_M0 ;
+              denom = sudakov_Pqg_w_M(M, t0, t_mid_M0, loc_a, nu);
           }
           else
           {
@@ -2022,8 +2066,12 @@ double Matter::generate_vac_t_w_M(int p_id, double M, double nu, double t0, doub
 
 	  //t_mid = (t_low + t_hi)/2.0;
       }
-        
-  } while ((abs(diff)>s_approx)&&(abs(t_hi_M0-t_low_M0)/t_hi_M0>s_error));
+    
+      if (std::abs(p_id)==cid || std::abs(p_id)==bid) exit_condition = (std::abs(diff)<s_approx)&&(std::abs(t_hi_M0-t_low_M0)/t_hi_M0<s_error);
+      if (p_id == gid) exit_condition = (std::abs(diff)<s_approx)&&(std::abs(t_hi_00-t_low_00)/t_hi_00<s_error);
+      // need to think about the second statement in the gluon exit condition.
+      
+  } while (exit_condition);
     
   if (std::fabs(p_id)==cid || std::fabs(p_id)==bid) return(t_mid_M0);
   else return(t_mid_00);
@@ -2659,8 +2707,8 @@ double Matter::sud_val_QQ(double h0, double h1, double h2, double loc_d, double 
     
   diff = std::abs( (intg_L + intg_R - intg)/intg ) ;
     
-  //	cout << " iline, gap, diff = " << i_line << " " << h2 << " " << h1 << "  " << diff << endl ;
-  //	cout << " intg, Left , right = " << intg << " " << intg_L << "  " << intg_R << endl;
+   //JSINFO << BOLDYELLOW << " h2,  h1, diff = " << h2 << " , " << h1 << " , " << diff  ;
+   //JSINFO << BOLDYELLOW << " intg, Left , right = " << intg << " " << intg_L << "  " << intg_R ;
     
   if ( (diff>approx)||(span>error) )
     {
@@ -2683,7 +2731,7 @@ double Matter::sud_val_QQ_w_M_vac_only(double M, double h0, double h1, double h2
     
   t_form = 2.0*E1/h;
     
-  val = alpha_s(h)*sud_z_QQ(h0,h, loc_d, t_form,E1);
+  val = alpha_s(h)*sud_z_QQ_w_M_vac_only(M,h0,h, loc_d, t_form,E1);
     
   intg = val*(h2-h1);
     
