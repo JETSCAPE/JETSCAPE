@@ -440,19 +440,18 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           else
           {
              //JSINFO << BOLDYELLOW << " at x,y,z,t = " <<  pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  " << pIn[i].x_in().z() << "  " << pIn[i].x_in().t() ;
-             if(abs(pIn[i].pid()) == 4 || abs(pIn[i].pid()) == 5 || pIn[i].pid() == gid)
-             { 
-
-                // double min_vir = (QS*QS/2.0)*( 1.0 +  std::sqrt( 1.0 + 4.0*pIn[i].restmass()*pIn[i].restmass()/QS/QS ) );
-
-               //  if (max_vir>min_vir)
-               //  {
+             if(abs(pIn[i].pid()) == 4 || abs(pIn[i].pid()) == 5 )
+             {
+                 
+                 double min_vir = (QS*QS/2.0)*( 1.0 +  std::sqrt( 1.0 + 4.0*pIn[i].restmass()*pIn[i].restmass()/QS/QS ) );
+                 if (max_vir>min_vir)
+                 {
                      tQ2 = generate_vac_t_w_M(pIn[i].pid(), pIn[i].restmass(), pIn[i].nu(), QS*QS/2.0, max_vir, zeta, iSplit);
-               //  }
-              //   else
-               //  {
-              //   	tQ2 = rounding_error;
-              //   }
+                 }
+                 else
+                 {
+                 	tQ2 = min_vir;
+                 }
                //  std::ofstream tdist;
                //  tdist.open("tdist_heavy.dat", std::ios::app);
                //  tdist << tQ2 << endl;
@@ -460,6 +459,10 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 
                  
                  VERBOSE(8)  << BOLDYELLOW << " virtuality calculated as = " << tQ2;
+             }
+             else if (pIn[i].pid() == gid)
+             {
+                 tQ2 = generate_vac_t_w_M(pIn[i].pid(), pIn[i].restmass(), pIn[i].nu(), QS*QS/2.0, max_vir, zeta, iSplit);
              }
              else
              {
@@ -2012,7 +2015,7 @@ double Matter::generate_vac_t_w_M(int p_id, double M, double nu, double t0, doub
       if (p_id == gid) exit_condition = (std::abs(diff)<s_approx)&&(std::abs(t_hi_00-t_low_00)/t_hi_00<s_error);
       // need to think about the second statement in the gluon exit condition.
       
-  } while (exit_condition);
+  } while (!exit_condition);
     
   if (std::fabs(p_id)==cid || std::fabs(p_id)==bid) return(t_mid_M0);
   else return(t_mid_00);
@@ -3155,7 +3158,9 @@ double Matter::sudakov_Pqg_w_M(double M, double g0, double g1, double loc_c, dou
     if (g1<g0*( 1.0 + std::sqrt( 1.0 + 2.0*M*M/g0 ) ) )
     {
       JSWARN << " warning: Not enough separation between upper and lower limits of Sudakov to have resolvable radiation ";
-      JSWARN << " in sudakov_Pquark gluon, g0*( 1.0 + std::sqrt( 1.0 + 2.0*M*M/g0 ) ), g1 = " << g0*( 1.0 + std::sqrt( 1.0 + 2.0*M*M/g0 ) ) << "  " << g1;
+      JSWARN << " in sudakov_Pquark gluon, g0*( 1.0 + std::sqrt( 1.0 + 2.0*M*M/g0 ) ) = " << g0*( 1.0 + std::sqrt( 1.0 + 2.0*M*M/g0 ) ) << " g1 =  " << g1;
+        JSWARN << " M = " << M;
+    
       return(sud) ;
     }
   g = g0*( 1.0 + std::sqrt( 1.0 + 2.0*M*M/g0 ) );
