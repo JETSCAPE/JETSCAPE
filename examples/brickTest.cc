@@ -102,7 +102,7 @@ int main(int argc, char** argv)
 
 
   auto matter = make_shared<Matter> ();
-  auto lbt = make_shared<LBT> ();
+  //auto lbt = make_shared<LBT> ();
 
 
   // auto martini = make_shared<Martini> ();
