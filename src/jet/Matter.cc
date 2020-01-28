@@ -939,7 +939,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   
                   double val = ProbGluon/(ProbGluon + ProbPhoton) ;
                   
-                  JSINFO << MAGENTA << " probability of gluon radiation from quark = " << val ;
+                  //JSINFO << MAGENTA << " probability of gluon radiation from quark = " << val ;
                   
                   double r2 = ZeroOneDistribution(*GetMt19937Generator());
                   
@@ -2150,7 +2150,7 @@ double  Matter::generate_vac_z(int p_id, double t0, double t, double loc_b, doub
 
 double  Matter::generate_vac_z_w_M(int p_id, double M, double t0, double t, double loc_b, double nu, int is )
 {
-  double r,z, ratio,diff,e,numer1, numer2, numer, denom, z_low_00,z_low_M0,z_low_MM, z_hi_00, z_hi_M0, z_hi_MM, z_mid_00,z_mid_M0,z_mid_MM, test;
+  double r,z, ratio,diff,e,numer1, numer2, numer, denom, z_low_00,z_low_M0,z_low_MM, z_hi_00, z_hi_M0, z_hi_MM, z_mid_00,z_mid_M0,z_mid_MM, test, z_min_00, z_min_M0, z_min_MM;
 
   r = ZeroOneDistribution(*GetMt19937Generator());
     
@@ -2174,35 +2174,39 @@ double  Matter::generate_vac_z_w_M(int p_id, double M, double t0, double t, doub
       throw std::runtime_error(" error in epsilon");
     }
     
- // if (((int) std::abs((double) p_id))==4 || ((int) std::abs((double) p_id))==5)
- //   {
-      z_low_M0 = e + M2/(t+M2);
- //   }
- // else if (is == 4 || is == 5)
- //   {
-      z_low_00 = e;
-      z_low_MM = e+M2/t;
- //   }
-
-  z_hi_00 = double(1.0) - e;
-  z_hi_M0 = double(1.0) - e;
-  z_hi_MM = double(1.0) - e  - M2/t;
+    z_low_M0 = e + M2/(t+M2);
+    z_low_00 = e;
+    z_low_MM = e+M2/t;
+ 
+    z_hi_00 = double(1.0) - e;
+    z_hi_M0 = double(1.0) - e;
+    z_hi_MM = double(1.0) - e  - M2/t;
+    
+    z_min_00 = z_low_00 ;
+    z_min_M0 = z_low_M0 ;
+    z_min_MM = z_low_MM ;
+    
+    
+    
+    
+   // JSINFO << BOLDYELLOW << " r = " << r << " 1st z_low_00 = " << z_low_00 << "1st z_hi_00 = " << z_hi_00 << " M = " << M << " is = " << is << " pid = " << p_id;
     
   if (p_id==gid)
   {
       if (is==1) // for a gluon to 2 gluons
       {
-          denom = P_z_gg_int(z_low_00,z_hi_00, loc_b, t, 2.0*nu/t, nu );
+          denom = P_z_gg_int(z_min_00,z_hi_00, loc_b, t, 2.0*nu/t, nu );
+          //JSINFO << MAGENTA << " denom = " << denom ;
       }
       else
       {
           if (is>3) //THIS IS FOR GLUON-> HEAVY Q-QBAR
           {
-              denom = P_z_qq_int_w_M_vac_only(M,z_low_MM,z_hi_MM,loc_b,t,2.0*nu/t, nu);
+              denom = P_z_qq_int_w_M_vac_only(M,z_min_MM,z_hi_MM,loc_b,t,2.0*nu/t, nu);
           }
           else if (is==2) // For a gluon to light quark anti-quark
           {
-              denom = P_z_qq_int(z_low_00,z_hi_00,loc_b,t,2.0*nu/t, nu);
+              denom = P_z_qq_int(z_min_00,z_hi_00,loc_b,t,2.0*nu/t, nu);
           }
       }
   }
@@ -2210,11 +2214,11 @@ double  Matter::generate_vac_z_w_M(int p_id, double M, double t0, double t, doub
   {
       if ( ( std::abs(p_id) ==4 ) || ( std::abs(p_id) ==5 ) )
       {
-         denom = P_z_qg_int_w_M(M, z_low_M0, z_hi_M0, loc_b, t, 2.0*nu/t , nu);
+         denom = P_z_qg_int_w_M(M, z_min_M0, z_hi_M0, loc_b, t, 2.0*nu/t , nu);
       }
       else
       {
-         denom = P_z_qg_int(z_low_00,z_hi_00, loc_b, t, 2.0*nu/t , nu);
+         denom = P_z_qg_int(z_min_00,z_hi_00, loc_b, t, 2.0*nu/t , nu);
       }
   }
     
@@ -2227,6 +2231,9 @@ double  Matter::generate_vac_z_w_M(int p_id, double M, double t0, double t, doub
   do
   { // Getting stuck in here for some reason
 
+    //JSINFO << BOLDYELLOW << " r = " << r << " z_low_00 in loop = " << z_low_00 << " z_hi_00 in loop = " << z_hi_00 << " M = " << M << " is = " << is << " pid = " << p_id;
+
+      
     if ( itcounter++ > 10000 )
     {
     	cout << " in here" << " abs(diff) = " << abs(diff) << "  approx = " << approx << "  r = " << r << "  zmid = " << z_mid_M0 << "  denom = " << denom << "  numer = " << numer << "  e = " << e << "   " << numer/denom << endl;
@@ -2243,17 +2250,18 @@ double  Matter::generate_vac_z_w_M(int p_id, double M, double t0, double t, doub
     {
       if (is==1)
       {
-          numer = P_z_gg_int(z_low_00, z_mid_00, loc_b, t, 2.0*nu/t , nu );
+          numer = P_z_gg_int(z_min_00, z_mid_00, loc_b, t, 2.0*nu/t , nu );
+          //JSINFO << MAGENTA << " numer = " << numer ;
       }
       else
       {
         if (is>3) // 3 is quark radiating a photon, 4,5 is gluon radiating a c cbar, b bbar
         {
-          numer = P_z_qq_int_w_M_vac_only(M, z_low_MM, z_mid_MM, loc_b, t, 2.0*nu/t , nu); 
+          numer = P_z_qq_int_w_M_vac_only(M, z_min_MM, z_mid_MM, loc_b, t, 2.0*nu/t , nu);
         }
         else if (is==2) // gluon to light quark anti-quark
         {
-          numer = P_z_qq_int(z_low_00, z_mid_00, loc_b, t, 2.0*nu/t , nu);
+          numer = P_z_qq_int(z_min_00, z_mid_00, loc_b, t, 2.0*nu/t , nu);
         }
       }
     }
@@ -2262,18 +2270,18 @@ double  Matter::generate_vac_z_w_M(int p_id, double M, double t0, double t, doub
  
         if ( ( std::abs(p_id)==4 ) || ( std::abs(p_id)==5 ) )
       {
-        numer = P_z_qg_int_w_M(M, z_low_M0, z_mid_M0, loc_b, t, 2.0*nu/t , nu );
+        numer = P_z_qg_int_w_M(M, z_min_M0, z_mid_M0, loc_b, t, 2.0*nu/t , nu );
       }
       else
       {
-        numer = P_z_qg_int(z_low_00, z_mid_00, loc_b, t, 2.0*nu/t , nu );
+        numer = P_z_qg_int(z_min_00, z_mid_00, loc_b, t, 2.0*nu/t , nu );
       }
     }
       ratio = numer/denom ;
       diff = (ratio - r)/r ;
-    // cout << "num, den, r, diff = " << numer << " "<< denom << " " << r << " " << endl;	
-    // cout << " diff, z_mid = " << diff << " " << z_mid << endl ;		
-    //		cin >> test ;
+      //JSINFO<< BOLDYELLOW << "num = " << numer << " denom = "<< denom << " ratio = " << numer/denom << " r = " << r ;
+      // JSINFO << BOLDYELLOW << " diff = " << diff << " z_mid = " << z_mid_00 ;
+    	//	cin >> test ;
       
       
       if ( (diff == 0.0)&&( (p_id==gid)||(std::abs(p_id)<4) ) ) return(z_mid_00) ;
@@ -2300,6 +2308,8 @@ double  Matter::generate_vac_z_w_M(int p_id, double M, double t0, double t, doub
             ((std::abs(p_id)==gid && is>3)                                       && (abs(diff)>approx) && (abs(z_hi_MM-z_low_MM)/z_hi_MM>s_error)) 
           );
   
+   // JSINFO << BOLDRED << " z_mid_00 = " << z_mid_00 ;
+    
   if (p_id==gid && (is==1 || is==2)) return(z_mid_00);
   else if (p_id==gid && (is==4 || is==5)) return(z_mid_MM);
   else if (std::abs(p_id)==uid || std::abs(p_id)==did || std::abs(p_id)==sid) return(z_mid_00);
@@ -2525,7 +2535,7 @@ double Matter::P_z_gg_int(double cg, double cg1, double loc_e, double cg3, doubl
     
   double t3,t4,t5,t10,t11,t12,t15, t9, qL, tau, res, limit_factor, lz, uz, m_fac;
     
-  if ((cg< cg1/(2.0*E2*E2/cg1+1.0) )) cg = cg1/( 2.0*E2*E2/cg1 + 1.0 );
+  //if ((cg< cg1/(2.0*E2*E2/cg1+1.0) )) cg = cg1/( 2.0*E2*E2/cg1 + 1.0 );
     
   t3 = std::log((1.0 - cg1));
   t4 = std::log(cg1);
