@@ -177,12 +177,21 @@ void Matter::WriteTask(weak_ptr<JetScapeWriter> w)
 
 void Matter::Dump_pIn_info(int i, vector<Parton>& pIn)
 {
-  JSWARN << "i=" << i << " MATTER -- status: " << pIn[i].pstat() << " color: " << pIn[i].color() << "  " << pIn[i].anti_color();
-  JSWARN << "pid = " << pIn[i].pid() << " E = " << pIn[i].e() << " px = " << pIn[i].p(1) << " py = " << pIn[i].p(2) << "  pz = " << pIn[i].p(3) << " virtuality = " << pIn[i].t() << " form_time in fm = " << pIn[i].form_time() << " split time = " << pIn[i].form_time() + pIn[i].x_in().t(); 
+  JSINFO << "i=" << i << " MATTER -- status: " << pIn[i].pstat() << " color: " << pIn[i].color() << "  " << pIn[i].anti_color();
+  JSINFO << "pid = " << pIn[i].pid() << " E = " << pIn[i].e() << " px = " << pIn[i].p(1) << " py = " << pIn[i].p(2) << "  pz = " << pIn[i].p(3) << " virtuality = " << pIn[i].t() << " form_time in fm = " << pIn[i].form_time() << " split time = " << pIn[i].form_time() + pIn[i].x_in().t();
+    exit(0);
 }
 
 void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pIn, vector<Parton>& pOut)
 {
+  
+    if(std::isnan(pIn[0].e()) || std::isnan(pIn[0].px()) ||  std::isnan(pIn[0].py()) || std::isnan(pIn[0].pz()) ||
+       std::isnan(pIn[0].t()) || std::isnan(pIn[0].form_time()) )
+    {
+      JSINFO << BOLDYELLOW << "Parton on entry busted on time step " << time;
+      Dump_pIn_info(0, pIn);
+    }
+    
   double z=0.5;
   double blurb,zeta,tQ2 ;
   int iSplit,pid_a,pid_b;
@@ -344,23 +353,26 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
       
       //JSINFO << MAGENTA <<  " Particle Rapidity = " << SpatialRapidity ;
 
+      if(std::isnan(velocityMod) || std::isnan(velocity[1]) ||  std::isnan(velocity[2]) || std::isnan(velocity[3]) ||
+         std::isinf(velocityMod) || std::isinf(velocity[1]) ||  std::isinf(velocity[2]) || std::isinf(velocity[3])  )
+      {
+        JSINFO << BOLDYELLOW << "Zeroth instance";
+        JSINFO << BOLDYELLOW << "time, initR0, initRx, initRy, initRz=" << time << ", " << initR0 <<", " << initRx <<", " << initRy <<", " << initRz;
+        JSINFO << BOLDYELLOW << "Vx, Vy, Vz =" << velocity[1] << ", " << velocity[2] << ", " << velocity[3];
+        JSINFO << BOLDYELLOW << "initVx, initVy, initVz =" << initVx << ", " << initVy << ", " << initVz;
+        Dump_pIn_info(i, pIn);
+      }
+
       
       initEner = pIn[i].e(); // initial Energy of parton
-      if(!in_vac){
-         if(std::isnan(velocityMod) || std::isnan(velocity[1]) ||  std::isnan(velocity[2]) || std::isnan(velocity[3]) ||
-            std::isinf(velocityMod) || std::isinf(velocity[1]) ||  std::isinf(velocity[2]) || std::isinf(velocity[3])  )
-         {
-           JSWARN << "Zeroth instance";
-           JSWARN << "time, initR0, initRx, initRy, initRz=" << time << ", " << initR0 <<", " << initRx <<", " << initRy <<", " << initRz;
-           JSWARN << "Vx, Vy, Vz =" << velocity[1] << ", " << velocity[2] << ", " << velocity[3];
-           JSWARN << "initVx, initVy, initVz =" << initVx << ", " << initVy << ", " << initVz;
-           Dump_pIn_info(i, pIn);
-         }
-	 if(GetJetSignalConnected()) length = fillQhatTab(SpatialRapidity);
-         else{
-           JSWARN << "Couldn't find a hydro module attached!";
-           throw std::runtime_error ("Please attach a hydro module or set in_vac to 1 in the XML file");
-         }
+      if(!in_vac)
+      {
+          if(GetJetSignalConnected()) length = fillQhatTab(SpatialRapidity);
+          else
+          {
+              JSWARN << "Couldn't find a hydro module attached!";
+              throw std::runtime_error ("Please attach a hydro module or set in_vac to 1 in the XML file");
+          }
       }
       if(brick_med) length = brick_length*fmToGeVinv; /// length in GeV-1 will have to changed for hydro
       //if(brick_med) length = 5.0*fmToGeVinv; /// length in GeV-1 will have to changed for hydro
@@ -376,12 +388,12 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
 
       if(std::isinf(now_R0) || std::isnan(now_R0) || std::isinf(now_Rz) || std::isnan(now_Rz) || std::abs(now_Rz)>now_R0)
       {
-          JSWARN << "First instance";
-          JSWARN << "now_R for vector is:" << now_R0 <<", " << now_Rx <<", " << now_Ry << ", " << now_Rz;
-          JSWARN << "time, initR0, initRx, initRy, initRz=" << time << ", " << initR0 <<", " << initRx <<", " << initRy <<", " << initRz;
-          JSWARN << "initVx, initVy, initVz =" << initVx << ", " << initVy << ", " << initVz;
-          JSWARN << "velocityMod=" << std::setprecision(20) << velocityMod;
-          JSWARN << "initVMod=" << std::setprecision(20) << std::sqrt(initVx*initVx+initVy*initVy+initVz*initVz);
+          JSINFO << BOLDYELLOW << "First instance";
+          JSINFO << BOLDYELLOW << "now_R for vector is:" << now_R0 <<", " << now_Rx <<", " << now_Ry << ", " << now_Rz;
+          JSINFO << BOLDYELLOW << "time, initR0, initRx, initRy, initRz=" << time << ", " << initR0 <<", " << initRx <<", " << initRy <<", " << initRz;
+          JSINFO << BOLDYELLOW << "initVx, initVy, initVz =" << initVx << ", " << initVy << ", " << initVz;
+          JSINFO << BOLDYELLOW << "velocityMod=" << velocityMod;
+          JSINFO << BOLDYELLOW << "initVMod=" << std::sqrt(initVx*initVx+initVy*initVy+initVz*initVz);
           Dump_pIn_info(i, pIn);
           //exit(0);
       }
@@ -450,7 +462,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                  }
                  else
                  {
-                 	tQ2 = min_vir;
+                 	tQ2 = QS*QS;
                  }
                //  std::ofstream tdist;
                //  tdist.open("tdist_heavy.dat", std::ios::app);
@@ -475,7 +487,10 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
           if(matter_on)
           {
               pIn[i].set_t(tQ2); // Also resets momentum!
-              JSINFO << BOLDYELLOW << " virtuality set to " << tQ2 << " max virtuality allowed = " << max_vir;
+              //JSINFO << BOLDYELLOW << " virtuality set to " << tQ2 << " max virtuality allowed = " << max_vir;
+              //JSINFO << BOLDYELLOW << " ID = " << pIn[i].pid() << " Color = " << pIn[i].color() << " Anti-Color = " << pIn[i].anti_color() ;
+              //JSINFO << BOLDYELLOW << " E = " << pIn[i].e() << " px = " << pIn[i].px() << " py = " << pIn[i].py() << " pz = " << pIn[i].pz() ;
+
           }
           else pIn[i].set_t(rounding_error);
           //else pIn[i].set_t(0.0);
@@ -1174,7 +1189,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                       
                       double M = PythiaFunction.particleData.m0( pid_a );
                       
-                      l_perp2 = new_parent_t*z*(1.0 - z) - tQd2*z - tQd1*(1.0-z) - std::pow((1.0-z)*M,2) - std::pow(z*M,2);
+                      l_perp2 = new_parent_t*z*(1.0 - z) - tQd2*z - tQd1*(1.0-z) - M*M;
                   }
                   else
                   {
