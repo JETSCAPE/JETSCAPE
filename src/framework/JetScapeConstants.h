@@ -58,8 +58,8 @@ static double error = 0.02 ;
 
 static double approx = 0.02 ;
 
-static double s_error = 0.001;
-static double s_approx = 0.001;
+static double s_error = 0.01;
+static double s_approx = 0.01;
 
 static double E_minimum = 1.0 ;
 
