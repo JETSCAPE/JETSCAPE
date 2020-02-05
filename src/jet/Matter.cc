@@ -273,8 +273,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
   std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
 
 
- VERBOSE(8) << MAGENTA << " the time in fm is " << time << " The time in GeV-1 is " << Time ;
- VERBOSE(8) << MAGENTA  << "pid = " << pIn[0].pid() << " E = " << pIn[0].e() << " px = " << pIn[0].p(1) << " py = " << pIn[0].p(2) << "  pz = " << pIn[0].p(3) << " virtuality = " << pIn[0].t() << " form_time in fm = " << pIn[0].form_time() << " split time = " << pIn[0].form_time() + pIn[0].x_in().t();
+ //JSINFO << MAGENTA << " the time in fm is " << time << " The time in GeV-1 is " << Time ;
+ //JSINFO << MAGENTA  << "pid = " << pIn[0].pid() << " E = " << pIn[0].e() << " px = " << pIn[0].p(1) << " py = " << pIn[0].p(2) << "  pz = " << pIn[0].p(3) << " virtuality = " << pIn[0].t() << " form_time in fm = " << pIn[0].form_time() << " split time = " << pIn[0].form_time() + pIn[0].x_in().t();
   VERBOSE(8) << " color = " << pIn[0].color() << " anti-color = " << pIn[0].anti_color();
     
     unsigned int ShowerMaxColor = pIn[0].max_color();
@@ -529,7 +529,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                //  tdist.close();
 
                  
-                 VERBOSE(8)  << BOLDYELLOW << " virtuality calculated as = " << tQ2;
+                // JSINFO  << BOLDYELLOW << " virtuality calculated as = " << tQ2;
              }
              else if (pIn[i].pid() == gid)
              {
@@ -3492,12 +3492,13 @@ double Matter::sud_z_QG_w_M(double M, double cg, double cg1, double loc_e, doubl
   else
   {
       qhat = fncAvrQhat(loc_e,tau);
-      if (qhat*sqrt(2)>0.6)
-      {
-        JSINFO << BOLDYELLOW << " length = " << length << " loc = " << loc_e << " tau = " << tau ;
-        JSINFO << BOLDYELLOW << " parton formed at x = " << initRx << " y = " << initRy << " z = " << initRz << " t = " << initR0 ;
-        JSINFO << BOLDYELLOW << " mean qhat for sudakov in GeV^2/fm = " << qhat*5*sqrt(2) ;
-      }
+     // if (qhat*sqrt(2)>0.6)
+     // {
+     //   JSINFO << MAGENTA << " Big q-hat warning ! ";
+     //   JSINFO << BOLDYELLOW << " length = " << length << " loc = " << loc_e << " tau = " << tau ;
+     //   JSINFO << BOLDYELLOW << " parton formed at x = " << initRx << " y = " << initRy << " z = " << initRz << " t = " << initR0 ;
+     //   JSINFO << BOLDYELLOW << " mean qhat for sudakov in GeV^2/fm = " << qhat*5*sqrt(2) ;
+     // }
       qL = qhat*2.0*tau;
   }
 

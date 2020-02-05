@@ -22,7 +22,7 @@ export DYLD_LIBRARY_PATH
 fi
 
 export BASEDIR=${HOME}
-export PYTHIAINSTALLDIR=/Users/amajumder/Dropbox/work/pythia8230
+export PYTHIAINSTALLDIR=/Users/amajumder/Dropbox/work/pythia8235
 
 export JetScape=${PWD}/lib
 export LD_LIBRARY_PATH=${JetScape}:${LD_LIBRARY_PATH}
