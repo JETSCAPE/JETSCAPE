@@ -586,6 +586,16 @@ void JetScape::DetermineTaskListFromXML() {
       }
     }
     
+    // Parton printer
+    else if (elementName == "PartonPrinter") {
+      
+      auto partonPrinter = JetScapeModuleFactory::createInstance(elementName);
+      if (partonPrinter) {
+        Add(partonPrinter);
+        JSINFO << "JetScape::DetermineTaskList() -- Added PartonPrinter to task list.";
+      }
+    }
+    
     else {
       VERBOSE(2) << "Nothing to do.";
     }
