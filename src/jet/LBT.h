@@ -127,6 +127,7 @@ class LBT : public JetEnergyLossModule<LBT> //, public std::enable_shared_from_t
   //...derived quantities
   int       KINT;                     //radiation switch
   double    alphas;
+  double    qhatInput;
   double    qhat0;                    //Debye mass RENAME
   double    qhat00;		
   
@@ -352,7 +353,11 @@ class LBT : public JetEnergyLossModule<LBT> //, public std::enable_shared_from_t
   double nflavor(double kTFnc);
   double alphasHQ(double kTFnc, double tempFnc);
   double nHQgluon(int parID,double dtLRF,double &time_gluon,double &temp_med,double &HQenergy,double &max_Ng);
-  
+  double solve_alphas(double var_qhat, double var_ener, double var_temp);
+  double fnc0_alphas(double var_alphas, double var_qhat, double var_ener, double var_temp);
+  double fnc0_derivative_alphas(double var_alphas, double var_qhat, double var_ener, double var_temp);
+
+ 
   void read_xyMC(int &numXY);
   void jetInitialize(int numXY);
   void setJetX(int numXY);

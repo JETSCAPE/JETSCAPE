@@ -157,6 +157,13 @@ void LBT::Init()
       }
       lbt->FirstChildElement("alphas")->QueryDoubleText(&inputDouble);
       fixAlphas = inputDouble;
+
+      if ( !lbt->FirstChildElement("qhat0") ) {
+  	JSWARN << "Couldn't find sub-tag Eloss -> LBT -> qhat0";
+          throw std::runtime_error ("Couldn't find sub-tag Eloss -> LBT -> qhat0");
+      }
+      lbt->FirstChildElement("qhat0")->QueryDoubleText(&inputDouble);
+      qhatInput = inputDouble;
  
       if ( !lbt->FirstChildElement("hydro_Tc") ) {
   	JSWARN << "Couldn't find sub-tag Eloss -> LBT -> hydro_Tc";
@@ -698,6 +705,12 @@ void LBT::LBT0(int &n, double &ti){
 
 	if(hydro_ctl0==0 && temp00>=hydro_Tc) {
 
+          if(qhatInput > 0.0) 
+          {
+              double qhatLoc = qhatInput * pow(temp00/0.346, 3) * 0.1973;
+              alphas = solve_alphas(qhatLoc,P0[0][i],temp00);
+          }
+
 	  qhat00=DebyeMass2(Kqhat0,alphas,temp00);
 	  fraction0=1.0;
 
@@ -806,7 +819,16 @@ void LBT::LBT0(int &n, double &ti){
 
         
 	    //...alphas!	
-	    alphas=alphas0(Kalphas,temp0);
+            if(qhatInput > 0.0) 
+            {
+                double qhatLoc = qhatInput * pow(temp0/0.346, 3) * 0.1973;
+                alphas = solve_alphas(qhatLoc,P[0][i],temp0);
+            }
+            else
+            {
+	        alphas=alphas0(Kalphas,temp0);
+            }
+
 	    //...Debye Mass square
 	    qhat0=DebyeMass2(Kqhat0,alphas,temp0);	
 	
@@ -4196,6 +4218,62 @@ int LBT::checkParameter(int nArg) {
   }
 
   return(ctErr);
+
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+double LBT::solve_alphas(double var_qhat, double var_ener, double var_temp) {
+
+    double preFactor=42.0*Ca*zeta3/pi;
+
+    if(var_ener < 5.0) var_ener = 5.0;
+
+    // reference: qhatLoc = Ca*50.4864/pi*pow(alphas,2)*pow(tempLoc,3)*log(5.7*2.0*pi*tempLoc*tempLoc/4.0/muD2);
+    double max_qhat=preFactor*pow(0.5,2)*pow(var_temp,3)*log(5.7*max(var_ener,2.0*pi*var_temp)/24/pi/0.5/var_temp);
+
+    if(max_qhat<var_qhat) {
+        JSINFO << "qhat exceeds HTL calculation, use alpha_s = 0.5";
+        cout << "energy: " << var_ener << "  temperature: " << var_temp << endl;
+	return(0.5);
+    }
+
+    double solution=sqrt(var_qhat/preFactor/pow(var_temp,3)/log(5.7*max(var_ener,2.0*pi*var_temp)/24/pi/0.2/var_temp));
+    double fnc_value,fnc_derivative;
+    fnc_value=fnc0_alphas(solution,var_qhat,var_ener,var_temp);
+    fnc_derivative=fnc0_derivative_alphas(solution,var_qhat,var_ener,var_temp);
+
+    //cout << "initial guess: " << solution << "  " << fnc_value << endl;
+
+    while(fabs(fnc_value/var_qhat)>0.001) {
+    
+	solution=solution-fnc_value/fnc_derivative;
+        fnc_value=fnc0_alphas(solution,var_qhat,var_ener,var_temp);
+        fnc_derivative=fnc0_derivative_alphas(solution,var_qhat,var_ener,var_temp);
+
+    }
+
+    if(solution<0.0 || solution>0.5) {
+        JSINFO << "unreasonable alpha_s: " << solution << " use alpha_s = 0.5";
+	solution=0.5;
+    }
+
+    return(solution);
+    
+}
+
+double LBT::fnc0_alphas(double var_alphas, double var_qhat, double var_ener, double var_temp) {
+   
+    double preFactor=42.0*Ca*zeta3/pi;
+    return(preFactor*var_alphas*var_alphas*pow(var_temp,3)*log(5.7*max(var_ener,2.0*pi*var_temp)/24/pi/var_alphas/var_temp)-var_qhat);
+
+}
+
+double LBT::fnc0_derivative_alphas(double var_alphas, double var_qhat, double var_ener, double var_temp) {
+   
+    double preFactor=42.0*Ca*zeta3/pi;
+    return(preFactor*pow(var_temp,3)*(2.0*var_alphas*log(5.7*max(var_ener,2.0*pi*var_temp)/24/pi/var_alphas/var_temp)-var_alphas));
 
 }
 
