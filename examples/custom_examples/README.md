@@ -11,3 +11,5 @@ or in the example itself:
 ```
 jetscape->EnableAutomaticTaskListDetermination(false);
 ```
+
+You will also need to edit CMakeLists.txt in order to build the desired executable.
