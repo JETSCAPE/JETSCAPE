@@ -23,6 +23,7 @@
 #include <cmath>
 #include <random>
 #include <vector>
+#include <array>
 
 using namespace Jetscape;
 
