@@ -1,24 +1,26 @@
-# JETSCAPE
+# JETSCAPE 3.0
 
-The JETSCAPE simulation framework is an overarching computational envelope for developing complete event generators for heavy-ion collisions.
+The [JETSCAPE](http://jetscape.org) simulation framework is an overarching computational envelope for developing complete event generators for heavy-ion collisions.
 It allows for modular incorporation of a wide variety of existing and future software that simulates different aspects of a heavy-ion collision.
 For a full introduction to JETSCAPE, please see [The JETSCAPE framework](https://arxiv.org/abs/1903.07706).
+
+Please cite [The JETSCAPE framework](https://arxiv.org/abs/1903.07706) if you use this package for scientific work.
 
 ## Installation
 
 To run JETSCAPE, you will need to clone this repository and install several software pre-requisites.
 
 We recommend to install JETSCAPE and its pre-requisities using Docker: 
-See the instructions [Using JETSCAPE via Docker](https://github.com/amajumder/JETSCAPE-COMP/tree/master/docker).
+See the instructions [Using JETSCAPE via Docker](https://github.com/JETSCAPE/JETSCAPE/tree/master/docker).
 
 If you prefer to manually install the pre-requisites, please see the instructions in [The JETSCAPE framework](https://arxiv.org/abs/1903.07706) in Appendix B.
 
 ### External packages
 
-To run certain external software (MUSIC, CLVisc, SMASH, etc.), you will need to explicitly download them, 
+To run certain external software (MUSIC, CLVisc, SMASH), you will need to explicitly download them, 
 and you may need to re-run `cmake` with specific command-line options.
 Scripts to download and install the external packages are provided in `external_packages/`. 
-Please see [external packages](https://github.com/amajumder/JETSCAPE-COMP/tree/master/external_packages) for full details.
+Please see [external packages](https://github.com/JETSCAPE/JETSCAPE/tree/master/external_packages) for full details.
 
 ## Running JETSCAPE
 
@@ -72,6 +74,16 @@ An example reading an ascii output file is provided:
 
 which reads in the generated showers does some DFS search and shows the output. You can generate an output graph format which can be easily visualized using graphViz or other tools like Gephi (GUI for free for Mac) or more adanvanced, graph-tools (Python) and many more. Furthermore, as a "closure" test, the FastJet core package (compiled in our JetScape library) is used to perform a simple jetfinding (on the "final" partons, in graph language, incoming partons in a vertex with no outgoing partons/childs), and since the "shower" is perfectly collinear the jet pT is identical to the hard process parton pT (modulo some random new partons/roots in the final state, see above).  
 
+## JETSCAPE Tunes
+
+Currently, there exists a pp tune [PP19](https://arxiv.org/abs/1910.05481), which can be run by:
+```
+./runJetscape ../config/jetscape_user_PP19.xml
+```
+
+Tuning of Pb-Pb is ongoing.
+Several example hydro profiles can be downloaded using `examples/get_hydroSample*`.
+
 ## Developing modules
 
 To develop a new JETSCAPE module, you should inherit from the relevant base class (InitialState, JetEnergyLoss, etc.) 
@@ -96,4 +108,17 @@ You can see any of the established modules, e.g.  `Matter`, as an example.
 Important Note: In the case of custom modules, you *must* start your module name with "CustomModule..." 
 in order for it to be recognized by the framework (for custom writers, you must start the name with "CustomWriter"). 
 
+New modules should not use multiple inheritance, if avoidable.
+
 Once these steps are done, one can just add the module name to the XML, and it will be automatically available to run in JETSCAPE.
+
+## Troubleshooting
+
+If you encounter a problem, please report the issue [here](https://github.com/JETSCAPE/JETSCAPE/issues).
+Please be sure to include enough information so that we can reproduce your issue: your platform, JETSCAPE version,
+configuration file, and anything else that may be relevant.
+
+## Contributing to JETSCAPE
+
+If you would like to contribute code to JETSCAPE (new module, feature, bug fix, etc.) please open 
+a [Pull Request](https://github.com/JETSCAPE/JETSCAPE/pulls) or an [Issue](https://github.com/JETSCAPE/JETSCAPE/issues).
