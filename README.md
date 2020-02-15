@@ -8,19 +8,7 @@ Please cite [The JETSCAPE framework](https://arxiv.org/abs/1903.07706) if you us
 
 ## Installation
 
-To run JETSCAPE, you will need to clone this repository and install several software pre-requisites.
-
-We recommend to install JETSCAPE and its pre-requisities using Docker: 
-See the instructions [Using JETSCAPE via Docker](https://github.com/JETSCAPE/JETSCAPE/tree/master/docker).
-
-If you prefer to manually install the pre-requisites, please see the instructions in [The JETSCAPE framework](https://arxiv.org/abs/1903.07706) in Appendix B.
-
-### External packages
-
-To run certain external software (MUSIC, CLVisc, SMASH), you will need to explicitly download them, 
-and you may need to re-run `cmake` with specific command-line options.
-Scripts to download and install the external packages are provided in `external_packages/`. 
-Please see [external packages](https://github.com/JETSCAPE/JETSCAPE/tree/master/external_packages) for full details.
+Please see the [Installation Instructions](https://github.com/JETSCAPE/JETSCAPE/wiki/JETSCAPE-Installation).
 
 ## Running JETSCAPE
 
