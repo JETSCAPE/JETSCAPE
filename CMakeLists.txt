@@ -225,7 +225,6 @@ install(
 ### Required packages   ###
 ###########################
 
-
 # Find and use Boost.
 message("Looking for Boost ...")
 find_package(Boost 1.50 REQUIRED COMPONENTS filesystem program_options system)
@@ -234,11 +233,21 @@ Message(STATUS "Boost Include dirs : " ${Boost_INCLUDE_DIRS})
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
 message("Looking for ZLIB ...")
-find_package(ZLIB)
-if(${ZLIB_FOUND})
-  message(STATUS "ZLib found")
-  set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -DUSE_GZIP" )
-endif()
+find_package(ZLIB REQUIRED)
+message(STATUS "ZLib found")
+set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -DUSE_GZIP" )
+
+message("Looking for Pythia8 ...")
+find_package(Pythia8 REQUIRED)
+include_directories(${PYTHIA8_INCLUDE_DIR})
+Message(STATUS "Pythia8 Include dir : " ${PYTHIA8_INCLUDE_DIR})
+
+message("Looking for HDF5 ...")
+find_package(HDF5 REQUIRED)
+include_directories(${HDF5_INCLUDE_DIRS})
+set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -DUSE_HDF5" )
+set( _hdf5_libs ${HDF5_CXX_LIB} ${HDF5_C_LIB} ${ZLIB} ${HDF5_HL_LIBRARIES})
+message(STATUS "HDF5 include dir and libs : ${HDF5_INCLUDE_DIRS} ${_hdf5_libs} ")
 
 ###########################
 ### Optional packages   ###
@@ -260,22 +269,6 @@ if (${ROOT_FOUND})
   Message(STATUS "ROOT Libraries : " ${ROOT_LIBRARIES})
 endif()
 
-message("Looking for Pythia8 ...")
-find_package(Pythia8)
-if (${PYTHIA8_FOUND})
-  include_directories(${PYTHIA8_INCLUDE_DIR})
-  Message(STATUS "Pythia8 Include dir : " ${PYTHIA8_INCLUDE_DIR})
-endif()
-
-message("Looking for HDF5 ...")
-find_package(HDF5)
-if(${HDF5_FOUND})
-  include_directories(${HDF5_INCLUDE_DIRS})
-  set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -DUSE_HDF5" )
-  set( _hdf5_libs ${HDF5_CXX_LIB} ${HDF5_C_LIB} ${ZLIB} ${HDF5_HL_LIBRARIES})
-  message(STATUS "HDF5 include dir and libs : ${HDF5_INCLUDE_DIRS} ${_hdf5_libs} ")
-endif(${HDF5_FOUND})
-
 message("Looking for MPI ...")
 find_package(MPI)
 if(${MPI_FOUND})
@@ -289,7 +282,6 @@ if(${GSL_FOUND})
   message(STATUS "GSL_INCLUDE_DIR : " ${GSL_INCLUDE_DIR} ${GSLCBLAS_INCLUDE_DIRS})
   include_directories(${GSL_INCLUDE_DIR} ${GSLCBLAS_INCLUDE_DIRS})
 endif(${GSL_FOUND})
-
 
 ###########################
 ### Framework Includes  ###
@@ -367,12 +359,10 @@ if (OPENCL_FOUND AND USE_CLVISC)
   add_subdirectory( ${CMAKE_SOURCE_DIR}/external_packages/clvisc_wrapper )
 endif (OPENCL_FOUND AND USE_CLVISC)
 
-
 ###########################
 ### Binary location     ###
 ###########################
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
-
 
 ##############################
 ### Standalone Reader lib  ###
@@ -429,7 +419,6 @@ endif ( USE_MUSIC AND USE_ISS AND USE_SMASH )
 #   target_link_libraries(PythiaBrickTest ${ROOT_LIBRARIES})
 #   target_link_libraries(writerTest ${ROOT_LIBRARIES})
 # endif()
-
 
 # -----------------------------------------------------------
 #### copy essential files for MUSIC to build/
