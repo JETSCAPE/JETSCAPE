@@ -20,7 +20,7 @@ when generating the cmake configuration file,
 ```bash
     mkdir build
     cd build
-    cmake -Dmusic=ON ..
+    cmake -DUSE_MUSIC=ON ..
     make
 ```
 
@@ -40,7 +40,7 @@ sh get_clvisc.sh
 Then compile and run the framework with a XML configuration file which turns clvisc on.
 ```
 cd build/
-cmake .. -Dclvisc=on
+cmake .. -DUSE_CLVISC=on
 make
 ./runJetscape ../config/jetscape_clvisc.xml
 ```
@@ -154,7 +154,7 @@ sampler and SMASH itself. Therefore, to use it in JetScape,
 ```bash
     mkdir ${JETSCAPE_DIR}/build
     cd ${JETSCAPE_DIR}/build
-    cmake -Dmusic=ON -DiSS=ON -Dfreestream=ON -Dsmash=ON ..
+    cmake -DUSE_MUSIC=ON -DUSE_ISS=ON -DUSE_FREESTREAM=ON -DUSE_SMASH=ON ..
 ```
 
 To run JetScape test with SMASH:

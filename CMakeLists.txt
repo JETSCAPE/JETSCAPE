@@ -25,57 +25,56 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmakemodules")
 # Unit Tests. Turn off with 'cmake -Dunittests=OFF'.
 option(unittests "Build all unittests." ON)
 
-# freestream. Turn on with 'cmake -Dfreestream=ON'.
+# freestream. Turn on with 'cmake -DUSE_FREESTREAM=ON'.
 # Note that some warnings are generated. Could be turned off by adding the following to CFLAGS in
 # external_packages/freestream-milne/Makefile
 # -Wno-unknown-pragmas -Wno-writable-strings -Wno-return-type -Wc++11-compat-deprecated-writable-strings
-option(freestream "Build tests for freestream-milne" OFF)
-if (freestream)
+option(USE_FREESTREAM "Build tests for freestream-milne" OFF)
+if (USE_FREESTREAM)
   message("Includes for freestream ...")
   include_directories(./external_packages/freestream-milne/src)
-endif (freestream)
+endif (USE_FREESTREAM)
 
-# CLVisc. Trun on with 'cmake -Dclvisc=ON'.
+# CLVisc. Trun on with 'cmake -DUSE_CLVISC=ON'.
 find_package(OpenCL)
 
-option(clvisc "Build tests for CLVisc" OFF)
+option(USE_CLVISC "Build tests for CLVisc" OFF)
 if (OPENCL_FOUND)
-  message("Found OpenCL, try clvisc with cmake -Dclvisc=ON")
+  message("Found OpenCL, try clvisc with cmake -DUSE_CLVISC=ON")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated")
-  if (clvisc)
+  if (USE_CLVISC)
       message("Includes for clvisc ...")
       include_directories(./external_packages/clvisc_wrapper/include/)
       include_directories(./external_packages/clvisc_wrapper/)
       if(NOT EXISTS "${CMAKE_SOURCE_DIR}/external_packages/PyVisc")
           message(FATAL_ERROR "Error: CLVisc source has not been downloaded in external_packages by ./get_clvisc.sh")
       endif()
-  endif (clvisc)
+  endif (USE_CLVISC)
 endif (OPENCL_FOUND)
 
-# MUSIC. Turn on with 'cmake -Dmusic=ON'.
-option(music "Build tests for MUSIC" OFF)
-if (music)
+# MUSIC. Turn on with 'cmake -DUSE_MUSIC=ON'.
+option(USE_MUSIC "Build tests for MUSIC" OFF)
+if (USE_MUSIC)
     message("Includes for music ...")
     include_directories(./external_packages/music ./external_packages/music/src)
-endif (music)
+endif (USE_MUSIC)
 
-# Soft Particlization. Turn on with 'cmake -Dmusic=ON -DiSS=ON'.
-option(iSS "Build tests for iSS" OFF)
-if (iSS)
+# Soft Particlization. Turn on with 'cmake -DUSE_MUSIC=ON -DUSE_ISS=ON'.
+option(USE_ISS "Build tests for iSS" OFF)
+if (USE_ISS)
   message("Includes for iSS ...")
   include_directories(./external_packages/iSS ./external_packages/iSS/src)
-endif (iSS)
+endif (USE_ISS)
 
-# SMASH afterburner. Turn on with 'cmake -Dmusic=ON -DiSS=ON -Dsmash=ON'.
-option(smash "Build tests for SMASH" OFF)
-if (smash)
+# SMASH afterburner. Turn on with 'cmake -DUSE_MUSIC=ON -DUSE_ISS=ON -Dsmash=ON'.
+option(USE_SMASH "Build tests for SMASH" OFF)
+if (USE_SMASH)
   message("SMASH includes and library ...")
   find_package(SMASH)
   if(${SMASH_FOUND})
     include_directories(${SMASH_INCLUDE_DIR})
   endif(${SMASH_FOUND})
-endif (smash)
-
+endif (USE_SMASH)
 
 ###############################
 ### Compiler & Linker Flags ###
@@ -325,11 +324,11 @@ if (unittests)
     add_subdirectory(./examples/unittests/)
 endif (unittests)
 
-if (smash)
-  target_compile_definitions(JetScape PRIVATE smash)
-endif (smash)
+if (USE_SMASH)
+  target_compile_definitions(JetScape PRIVATE USE_SMASH)
+endif (USE_SMASH)
 
-if (freestream)
+if (USE_FREESTREAM)
   if(NOT EXISTS "${CMAKE_SOURCE_DIR}/external_packages/freestream-milne")
     message(FATAL_ERROR "Error: freestream-milne source has not been downloaded in external_packages by ./get_freestream-milne.sh")
   endif()
@@ -339,10 +338,10 @@ if (freestream)
   else()
       message (FATAL_ERROR "GSL are necessary for Freestreaming" )
   endif()
-  target_compile_definitions(JetScape PRIVATE freestream)
-endif (freestream)
+  target_compile_definitions(JetScape PRIVATE USE_FREESTREAM)
+endif (USE_FREESTREAM)
 
-if (music)
+if (USE_MUSIC)
   if(NOT EXISTS "${CMAKE_SOURCE_DIR}/external_packages/music")
     message(FATAL_ERROR "Error: MUSIC source has not been downloaded in external_packages by ./get_music.sh")
   endif()  
@@ -352,21 +351,21 @@ if (music)
   else()
     message (FATAL_ERROR "GSL are necessary for MUSIC" )
   endif()
-  target_compile_definitions(JetScape PRIVATE music)
+  target_compile_definitions(JetScape PRIVATE USE_MUSIC)
 endif()
 
-if (iSS)
+if (USE_ISS)
   if(EXISTS "${CMAKE_SOURCE_DIR}/external_packages/iSS")
     add_subdirectory( ${CMAKE_SOURCE_DIR}/external_packages/iSS )
   else()
     message(FATAL_ERROR "Error: iSS source has not been downloaded in external_packages by ./get_iSS.sh")
   endif()
   target_compile_definitions(JetScape PRIVATE iSpectraSampler)
-endif (iSS)
+endif (USE_ISS)
 
-if (OPENCL_FOUND AND clvisc)
+if (OPENCL_FOUND AND USE_CLVISC)
   add_subdirectory( ${CMAKE_SOURCE_DIR}/external_packages/clvisc_wrapper )
-endif (OPENCL_FOUND AND clvisc)
+endif (OPENCL_FOUND AND USE_CLVISC)
 
 
 ###########################
@@ -409,15 +408,15 @@ add_executable(FinalStatePartons ./examples/FinalStatePartons.cc)
 target_link_libraries(FinalStatePartons JetScape )
 
 # executables with additional dependencies
-if ( music AND iSS )
+if ( USE_MUSIC AND USE_ISS )
     target_link_libraries(runJetscape ${GSL_LIBRARIES})
-endif (music AND iSS )
+endif (USE_MUSIC AND USE_ISS )
 
-if ( music AND iSS AND smash )
+if ( USE_MUSIC AND USE_ISS AND USE_SMASH )
     include_directories(${SMASH_INCLUDE_DIR})
     # "-lubsan -lasan")
     target_link_libraries(runJetscape ${SMASH_LIBRARIES} ${MPI_LIBRARIES} ${GSL_LIBRARIES})
-endif ( music AND iSS AND smash )
+endif ( USE_MUSIC AND USE_ISS AND USE_SMASH )
 
 # if (${ROOT_FOUND})
 #   add_executable(pwg2_reader ./examples/pwg2_reader.cxx)
@@ -434,15 +433,15 @@ endif ( music AND iSS AND smash )
 
 # -----------------------------------------------------------
 #### copy essential files for MUSIC to build/
-if (freestream)
+if (USE_FREESTREAM)
   if(EXISTS "${CMAKE_SOURCE_DIR}/examples/test_freestream_files/")
     file(COPY ./examples/test_freestream_files/freestream_input
       DESTINATION ${CMAKE_BINARY_DIR})
   else()
     message(FATAL_ERROR "Error: Cannot find files for freestream-milne.")
   endif()
-endif (freestream)
-if (music)
+endif (USE_FREESTREAM)
+if (USE_MUSIC)
   if(EXISTS "${CMAKE_SOURCE_DIR}/external_packages/music/EOS/")
     file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/EOS)
     file(COPY ${CMAKE_SOURCE_DIR}/external_packages/music/EOS/
@@ -455,14 +454,14 @@ if (music)
 endif()
 
 #### copy essential files for iSS to build/
-if (iSS)
+if (USE_ISS)
   if(EXISTS "${CMAKE_SOURCE_DIR}/external_packages/iSS/iSS_tables")
     file(COPY ${CMAKE_SOURCE_DIR}/external_packages/iSS/iSS_tables DESTINATION ${CMAKE_BINARY_DIR}/)
     file(COPY ${CMAKE_SOURCE_DIR}/external_packages/iSS/iSS_parameters.dat DESTINATION ${CMAKE_BINARY_DIR}/)
   else()
     message(FATAL_ERROR "Error: iSS tables have not been downloaded in external_packages by ./get_iSS.sh")
   endif()
-endif (iSS)
+endif (USE_ISS)
 
 #### copy essential files for LBT to build/
 if(EXISTS "${CMAKE_SOURCE_DIR}/external_packages/LBT-tables")
