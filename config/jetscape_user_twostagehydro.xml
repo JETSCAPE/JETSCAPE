@@ -12,7 +12,7 @@
 
   <!-- Inital State Module  -->
   <IS>
-    <Trento use_module="user_defined"> </Trento>
+    <Trento> </Trento>
   </IS>
 
   <!-- Hard Process -->

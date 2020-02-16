@@ -25,11 +25,9 @@
 
 #include "fwd_decl.h"
 #include "JetScapeModuleBase.h"
-#include "tinyxml2.h"
 #include "collider.h"
 #include "InitialState.h"
 #include "JetScapeLogger.h"
-#include "JetScapeXML.h"
 
 using OptDesc = po::options_description;
 using VarMap = po::variables_map;
@@ -74,7 +72,6 @@ class TrentoInitial : public InitialState {
 
   private:
 
-    tinyxml2::XMLElement * trento_xml_;
 	std::shared_ptr<trento::Collider> TrentoGen_;
 	std::pair<double, double> GenCenTab(std::string proj, std::string targ, VarMap var_map, int cL, int cH);
     /// The output instance.

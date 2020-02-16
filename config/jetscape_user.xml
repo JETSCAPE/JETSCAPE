@@ -8,7 +8,7 @@
 
   <!-- Inital State Module  -->
   <IS>
-    <Trento use_module="user_defined"> </Trento>
+    <Trento> </Trento>
   </IS>
   
   <!-- Hard Process -->
@@ -22,7 +22,7 @@
   
   <!--Preequilibrium Dynamics Module -->
   <Preequilibrium>
-    <FreestreamMilne> </FreestreamMilne>
+    <NullPreDynamics> </NullPreDynamics>
   </Preequilibrium>
   
   <!-- Hydro  Module  -->
@@ -40,10 +40,5 @@
   <JetHadronization>
     <name>hybrid</name>
   </JetHadronization>
-  
-  <!-- Particlization Module  -->
-  <SoftParticlization>
-    <iSS> </iSS>
-  </SoftParticlization>
   
 </jetscape>

@@ -64,7 +64,6 @@ TrentoInitial::~TrentoInitial() = default;
 
 void TrentoInitial::InitTask() {
     JSINFO << " Initialzie TRENTo initial condition ";
-    trento_xml_ = GetXMLElement({"IS", "Trento"});
 
 	// TRENTO OPTION DESK
 	using namespace trento;
@@ -210,10 +209,10 @@ void TrentoInitial::InitTask() {
 	"To operate in 3D mode, make sure --eta-max is nonzero.\n"};
 
 	// NOW LETS FILL IN THE OPTION DESK
-	auto phy_opts = trento_xml_->FirstChildElement("PhysicsInputs");
-	auto cut_opts = trento_xml_->FirstChildElement("CutInputs");
-	auto trans_opts = trento_xml_->FirstChildElement("TransInputs");
-	auto longi_opts = trento_xml_->FirstChildElement("LongiInputs");
+  auto phy_opts = GetXMLElement({"IS", "Trento", "PhysicsInputs"});
+  auto cut_opts = GetXMLElement({"IS", "Trento", "CutInputs"});
+  auto trans_opts = GetXMLElement({"IS", "Trento", "TransInputs"});
+  auto longi_opts = GetXMLElement({"IS", "Trento", "LongiInputs"});
 
 	double xymax = GetXMax(), dxy = GetXStep();
 	double etamax = GetZMax(), deta = GetZStep();
