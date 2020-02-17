@@ -19,7 +19,7 @@
 #include <string>
 
 #include "tinyxml2.h"
-#include<iostream>
+#include <iostream>
 
 #include "FluidDynamics.h"
 #include "MartiniMutex.h"
@@ -37,9 +37,9 @@ using std::ifstream;
 using std::ostream;
 using std::ios;
 
+int Martini::pLabelNew = 0;
 
-Martini::Martini()
-{
+Martini::Martini() {
   SetId("Martini");
   VERBOSE(8);
 
@@ -54,34 +54,33 @@ Martini::Martini()
   SetMutex(martini_mutex);
 }
 
-Martini::~Martini()
-{
+Martini::~Martini() {
   VERBOSE(8);
 }
 
-void Martini::Init()
-{
+void Martini::Init() {
   JSINFO<<"Intialize Martini ...";
 
   double deltaT = 0.0;
-  double Martini_deltaT_Max = 0.01 + rounding_error;
+  double Martini_deltaT_Max = 0.03 + rounding_error;
 
   deltaT = GetXMLElementDouble({"Eloss", "deltaT"});
 
   if ( deltaT > Martini_deltaT_Max ) {
     JSWARN << "Timestep for Martini ( deltaT = " << deltaT << " ) is too large. "
-	 << "Please choose a detaT smaller than or equal to 0.01 in the XML file.";
+	 << "Please choose a detaT smaller than or equal to 0.03 in the XML file.";
     throw std::runtime_error("Martini not properly initialized in XML file ...");
   }
 
   string s = GetXMLElementText({"Eloss", "Martini", "name"});
   JSDEBUG << s << " to be initilizied ...";
-
+  
   Q0 = GetXMLElementDouble({"Eloss", "Martini", "Q0"});
   alpha_s = GetXMLElementDouble({"Eloss", "Martini", "alpha_s"});
   pcut = GetXMLElementDouble({"Eloss", "Martini", "pcut"});
   hydro_Tc = GetXMLElementDouble({"Eloss", "Martini", "hydro_Tc"});
-
+  recoil_on = GetXMLElementInt({"Eloss", "Martini", "recoil_on"});
+  
   g = sqrt(4.*M_PI*alpha_s);
   alpha_em = 1./137.;
   hydro_tStart = 0.6;
@@ -97,28 +96,48 @@ void Martini::Init()
   readElasticRateQ();
 }
 
-void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& pIn, vector<Parton>& pOut)
-{
+void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>& pIn, vector<Parton>& pOut) {
   VERBOSESHOWER(5)<< MAGENTA << "SentInPartons Signal received : "<<deltaT<<" "<<Q2<<" "<< pIn.size();
 
   // particle info
   int Id, newId;
-  double pAbs, px, py, pz, ee;  // momentum for initial parton (pIn)
+  int pStat;                    // status of parton:
+                                // 0: normal parton, 1: recoil parton,
+                                // -1: sampled thermal parton (negative)
+  int pLabel;                   // particle number
+  double pAbs, px, py, pz;      // momentum of initial parton (pIn)
   double pRest, pxRest;         // momentum in the rest frame of fluid cell (pIn)
   double pyRest, pzRest;
-  double k, kRest;              // momentum for radiated parton (pOut)
-  double pNew, pxNew;           // momentum for final parton (pOut)
+  double k, kRest;              // momentum of radiated parton (pOut)
+  double pNew, pxNew;           // momentum of final parton (pOut)
   double pyNew, pzNew;
   double pNewRest;              // momentum in the rest frame of fluid cell (pOut)
   double omega, q;              // transferred energy/momentum for scattering
+  double pThermal, pxThermal;   // momentum of thermal parton (pOut)
+  double pyThermal, pzThermal;
+  double pRecoil, pxRecoil;     // momentum of recoil parton (pOut)
+  double pyRecoil, pzRecoil;    
+  double pRecoilRest;
   double xx, yy, zz, tt;        // position of initial parton (pIn)
-  FourVector pVec, pVecNew;     // 4 vectors for momenta before & after process
-  FourVector pVecRest;          // 4 vector in the rest frame of fluid cell
+  FourVector pVec, pVecNew;     // 4-vectors of momenta before & after process
+  FourVector kVec;              // 4-vector of momentum of radiated parton
+  FourVector pVecRest;          // 4-vectors in the rest frame of fluid cell
   FourVector pVecNewRest;
-  FourVector kVec;              // 4 vector for momentum of radiated particle
-  FourVector xVec;              // 4 vector for position (for next time step!)
+  FourVector qVec;              // 4-vector of momentum transfer (Note: space-like)
+  FourVector pVecThermalRest;   // 4-vectors of thermal parton in the rest frame of
+  FourVector pVecThermal;       // fluid cell and lab frame
+  FourVector pVecRecoilRest;    // 4-vectors of recoil parton in the rest frame of 
+  FourVector pVecRecoil;        // fluid cell and lab frame
+  FourVector xVec;              // 4-vector of position (for next time step!)
   double velocity_jet[4];       // jet velocity for MATTER
   double eta;                   // pseudo-rapidity
+  bool coherent;                // whether particle is coherent with its
+                                // mother or daughter.
+                                // while coherent, additional radiation is prohibited.
+  int sibling;                  // counter parton in radiation process
+  FourVector pAtSplit;          // mother's momentum when splitting happens
+  bool userInfo;                // whether user information is stored
+  bool active;                  // wheter this parton is active in MARTINI
   
   // flow info
   double vx, vy, vz;            // 3 components of flow velocity
@@ -132,31 +151,32 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
   
   for (int i=0;i<pIn.size();i++) {
 
-    // Particle infomration
     Id = pIn[i].pid();
+    pStat = pIn[i].pstat();
+    // do nothing for negative particles
+    if (pStat < 0) continue;
 
     px = pIn[i].px();
     py = pIn[i].py();
     pz = pIn[i].pz();
 
-    ee = sqrt(px*px+py*py+pz*pz);
+    pAbs = sqrt(px*px+py*py+pz*pz);
 
     // In MARTINI, particles are all massless and on-shell
-    pAbs = sqrt(px*px+py*py+pz*pz);
     pVec = FourVector ( px, py, pz, pAbs );
 
     tt = pIn[i].x_in().t();
-    xx = pIn[i].x_in().x() + (Time-tt)*px/ee;
-    yy = pIn[i].x_in().y() + (Time-tt)*py/ee;
-    zz = pIn[i].x_in().z() + (Time-tt)*pz/ee;
+    xx = pIn[i].x_in().x() + (Time-tt)*px/pAbs;
+    yy = pIn[i].x_in().y() + (Time-tt)*py/pAbs;
+    zz = pIn[i].x_in().z() + (Time-tt)*pz/pAbs;
 
     eta = pIn[i].eta();
 
     // Extract fluid properties
     std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
     GetHydroCellSignal(Time, xx, yy, zz, check_fluid_info_ptr);
-    VERBOSE(8)<< MAGENTA<<"Temperature from Brick (Signal) = "
-	      <<check_fluid_info_ptr->temperature;
+    VERBOSE(8) << MAGENTA<<"Temperature from Brick (Signal) = "
+               <<check_fluid_info_ptr->temperature;
 
     vx = check_fluid_info_ptr->vx;
     vy = check_fluid_info_ptr->vy;
@@ -170,50 +190,74 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
       continue;
     TakeResponsibilityFor ( pIn[i] ); // Generate error if another module already has responsibility.
 
+    pLabel = pIn[i].plabel();
+    if(pLabel == 0) {
+      IncrementpLable();
+      pIn[i].set_label(pLabelNew);
+      pLabel = pLabelNew;
+    }
+
+    userInfo = pIn[i].has_user_info<MARTINIUserInfo>();
+    // set user information to every parton
+    if (!userInfo) pIn[i].set_user_info(new MARTINIUserInfo());
+
+    coherent = pIn[i].user_info<MARTINIUserInfo>().coherent();
+    sibling = pIn[i].user_info<MARTINIUserInfo>().coherent_with();
+    pAtSplit = pIn[i].user_info<MARTINIUserInfo>().p_at_split();
+
     // Set momentum in fluid cell's frame
-    // 1: for brick
-    if (beta < 1e-10)
-      {
-	gamma = 1.;
-	cosPhi = 1.;
-	pRest = pAbs;
-	pVecRest = pVec;
+    if (beta < 1e-10) {
+      // 1: for static medium
+      gamma = 1.;
+      cosPhi = 1.;
+      pRest = pAbs;
+      pVecRest = pVec;
 
-	cosPhiRest = 1.;
-	boostBack = 1.;
-      }
-    // 2: for evolving medium
-    else
-      {
-	gamma  = 1./sqrt( 1. - beta*beta );
-	cosPhi = ( px*vx + py*vy + pz*vz )/( pAbs*beta );
+      cosPhiRest = 1.;
+      boostBack = 1.;
+    } else {
+      // 2: for evolving medium
+      gamma  = 1./sqrt( 1. - beta*beta );
+      cosPhi = ( px*vx + py*vy + pz*vz )/( pAbs*beta );
 
-	// boost particle to the local rest frame of fluid cell
-	pRest  = pAbs*gamma*( 1. - beta*cosPhi );
+      // boost particle to the local rest frame of fluid cell
+      pRest  = pAbs*gamma*( 1. - beta*cosPhi );
 
-	pxRest = -vx*gamma*pAbs
-	  + (1.+(gamma-1.)*vx*vx/(beta*beta))*px
-	  + (gamma-1.)*vx*vy/(beta*beta)*py
-	  + (gamma-1.)*vx*vz/(beta*beta)*pz;
-	pyRest = -vy*gamma*pAbs
-	  + (1.+(gamma-1.)*vy*vy/(beta*beta))*py
-	  + (gamma-1.)*vx*vy/(beta*beta)*px
-	  + (gamma-1.)*vy*vz/(beta*beta)*pz;
-	pzRest = -vz*gamma*pAbs
-	  + (1.+(gamma-1.)*vz*vz/(beta*beta))*pz
-	  + (gamma-1.)*vx*vz/(beta*beta)*px
-	  + (gamma-1.)*vy*vz/(beta*beta)*py;
+      pxRest = -vx*gamma*pAbs
+        + (1.+(gamma-1.)*vx*vx/(beta*beta))*px
+        + (gamma-1.)*vx*vy/(beta*beta)*py
+        + (gamma-1.)*vx*vz/(beta*beta)*pz;
+      pyRest = -vy*gamma*pAbs
+        + (1.+(gamma-1.)*vy*vy/(beta*beta))*py
+        + (gamma-1.)*vx*vy/(beta*beta)*px
+        + (gamma-1.)*vy*vz/(beta*beta)*pz;
+      pzRest = -vz*gamma*pAbs
+        + (1.+(gamma-1.)*vz*vz/(beta*beta))*pz
+        + (gamma-1.)*vx*vz/(beta*beta)*px
+        + (gamma-1.)*vy*vz/(beta*beta)*py;
 
-	pVecRest = FourVector ( pxRest, pyRest, pzRest, pRest );
+      pVecRest = FourVector ( pxRest, pyRest, pzRest, pRest );
 
-	cosPhiRest = ( pxRest*vx + pyRest*vy + pzRest*vz )/( pRest*beta );
-	boostBack = gamma*( 1. + beta*cosPhiRest );
-      }
+      cosPhiRest = ( pxRest*vx + pyRest*vy + pzRest*vz )/( pRest*beta );
+      boostBack = gamma*( 1. + beta*cosPhiRest );
+    }
 
-    if (pRest < pcut) continue;
+
+    //cout << "Time = " << Time << " Id = " << Id
+	//     << " T = " << setprecision(3) << T
+	//     << " pAbs = " << pAbs << " " << sqrt(px*px+py*py) << " " << pz 
+    //     << " | pRest = " << pRest << "/" << pcut
+	//     << " | position = " << xx << " " << yy << " " << zz
+    //     << " | stat = " << pStat << " " << pLabel << " ";
+
+    //if (pRest < eLossCut) continue;
+    if (pRest < eLossCut) {
+    //  cout << endl;
+      continue;
+    }
 
     xVec = FourVector( xx+px/pAbs*deltaT, yy+py/pAbs*deltaT, zz+pz/pAbs*deltaT,
-		       Time+deltaT );
+                       Time+deltaT );
 
     velocity_jet[0]=1.0;
     velocity_jet[1]=pIn[i].jet_v().x();
@@ -221,316 +265,500 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton>
     velocity_jet[3]=pIn[i].jet_v().z();
 
     double deltaTRest = deltaT/gamma;
+    // determine the energy-loss process
     int process = DetermineProcess(pRest, T, deltaTRest, Id);
-    VERBOSE(8)<< MAGENTA
-	      << "Time = " << Time << " Id = " << Id
-	      << " process = " << process << " T = " << T
-	      << " pAbs = " << pAbs << " " << px << " " << py << " " << pz 
-	      << " | position = " << xx << " " << yy << " " << zz;
 
+    //cout << "process = " << process << endl;
+
+    VERBOSE(8) << MAGENTA
+               << "Time = " << Time << " Id = " << Id
+	           << " process = " << process << " T = " << setprecision(3) << T
+	           << " pAbs = " << pAbs << " " << px << " " << py << " " << pz 
+               << " | pRest = " << pRest << "/" << pcut
+	           << " | position = " << xx << " " << yy << " " << zz
+               << " | stat = " << pStat << " " << pLabel << " " << coherent
+               << " | " << pAtSplit.x();
+
+    // update the status of parton if this parton is still coherent with its sibling
+    bool coherent_temp = coherent;
+    // de-activate formation time of in-medium radiation at this moment..
+    //if ( coherent ) coherent = isCoherent(pIn[i], sibling, T);
+    //if ( coherent_temp != coherent )
+    //  JSDEBUG << "Coherent status changed: " << coherent_temp << " -> " << coherent;
 
     // Do nothing for this parton at this timestep
-    if (process == 0) 
-      {
-	pOut.push_back(Parton(0, Id, 0, pVec, xVec));
-	pOut[pOut.size()-1].set_form_time(0.);
-	pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
+    // If this parton is in coherent state with its sibling,
+    // further radiation is prohibited until it becomes de-coherent
+    if ( process == 0 || ( coherent && (process < 5) ) ) {
+	  pOut.push_back(Parton(pLabel, Id, pStat, pVec, xVec));
+	  pOut[pOut.size()-1].set_form_time(0.);
+	  pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 
-	return;
+      if(coherent) {
+        pOut[pOut.size()-1].set_user_info(
+                            new MARTINIUserInfo(coherent, sibling, pAtSplit));
+      } else {
+        pOut[pOut.size()-1].set_user_info(new MARTINIUserInfo());
       }
-    if (std::abs(Id) == 1 || std::abs(Id) == 2 || std::abs(Id) == 3)
-      {
-	// quark radiating gluon (q->qg)
-	if (process == 1)
-	  {
-	    if (pRest/T < AMYpCut) return;
 
-	    // sample radiated parton's momentum
-	    kRest = getNewMomentumRad(pRest, T, process);
-	    if(kRest > pRest) return;
+	  return;
+    }
 
-	    // final state parton's momentum
-	    pNewRest = pRest - kRest;
+    if (std::abs(Id) == 1 || std::abs(Id) == 2 || std::abs(Id) == 3) {
 
-	    // if pNew is smaller than pcut, final state parton is
-	    // absorbed into medium
-	    if (pNewRest > pcut)
-	      {
-		pNew = pNewRest*boostBack;
-		pVecNew.Set( (px/pAbs)*pNew, (py/pAbs)*pNew, (pz/pAbs)*pNew, pNew );
-		pOut.push_back(Parton(0, Id, 0, pVecNew, xVec));
+      // quark radiating gluon (q->qg)
+      if (process == 1) {
+        if (pRest/T < AMYpCut) return;
+
+        // sample radiated parton's momentum
+        kRest = getNewMomentumRad(pRest, T, process);
+        if(kRest > pRest) return;
+
+        // final state parton's momentum
+        pNewRest = pRest - kRest;
+
+        pNew = pNewRest*boostBack;
+        pVecNew.Set( (px/pAbs)*pNew, (py/pAbs)*pNew, (pz/pAbs)*pNew, pNew );
+		pOut.push_back(Parton(pLabel, Id, pStat, pVecNew, xVec));
 		pOut[pOut.size()-1].set_form_time(0.);
 		pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
+        pOut[pOut.size()-1].set_user_info(new MARTINIUserInfo());
 
-	      }
+        if (kRest > pcut) {
+          IncrementpLable();
+          k = kRest*boostBack;
+          kVec.Set( (px/pAbs)*k, (py/pAbs)*k, (pz/pAbs)*k, k );
+		  pOut.push_back(Parton(pLabelNew, 21, pStat, kVec, xVec));
+          pOut[pOut.size()-1].set_form_time(0.);
+          pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
+        }
 
-	    if (kRest > pcut)
-	      {
-		k = kRest*boostBack;
-		kVec.Set( (px/pAbs)*k, (py/pAbs)*k, (pz/pAbs)*k, k );
-		pOut.push_back(Parton(0, 21, 0, kVec, xVec));
-		pOut[pOut.size()-1].set_form_time(0.);
-		pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
-	      }
+        //// If original and radiated partons are above pcut, set them coherent
+        //if (pOut.size() == 2) {
+        //  bool coherentNew = true;
+        //  FourVector pAtSplitNew = pOut[0].p_in();
+        //  pOut[0].set_user_info(new MARTINIUserInfo(coherentNew, pLabelNew, pAtSplitNew));
+        //  pOut[1].set_user_info(new MARTINIUserInfo(coherentNew, pLabel, pAtSplitNew));
+        //}
 
-	    return;
-	  }
-	// quark radiating photon (q->qgamma)
-	else if (process == 2)
-	  {
-	    if (pRest/T < AMYpCut) return;
+        return;
+      } else if (process == 2) {
+        // quark radiating photon (q->qgamma)
+        if (pRest/T < AMYpCut) return;
 
-	    // sample radiated parton's momentum
-	    kRest = getNewMomentumRad(pRest, T, process);
-	    if(kRest > pRest) return;
+        // sample radiated parton's momentum
+        kRest = getNewMomentumRad(pRest, T, process);
+        if(kRest > pRest) return;
 
-	    // final state parton's momentum
-	    pNewRest = pRest - kRest;
+        // final state parton's momentum
+        pNewRest = pRest - kRest;
 
-	    // if pNew is smaller than pcut, final state parton is
-	    // absorbed into medium
-	    if (pNewRest > pcut)
-	      {
-		pNew = pNewRest*boostBack;
-		pVecNew.Set( (px/pAbs)*pNew, (py/pAbs)*pNew, (pz/pAbs)*pNew, pNew );
-		pOut.push_back(Parton(0, Id, 0, pVecNew, xVec));
-		pOut[pOut.size()-1].set_form_time(0.);
-		pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
-	      }
+        pNew = pNewRest*boostBack;
+        pVecNew.Set( (px/pAbs)*pNew, (py/pAbs)*pNew, (pz/pAbs)*pNew, pNew );
+		pOut.push_back(Parton(pLabel, Id, pStat, pVecNew, xVec));
+        pOut[pOut.size()-1].set_form_time(0.);
+        pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
+        pOut[pOut.size()-1].set_user_info(new MARTINIUserInfo());
 
-	    //// photon doesn't have energy threshold; No absorption into medium
-	    //// However, we only keep positive energy photons
-	    //if (kRest > 0.)
-	    //  {
-	    //    k = kRest*boostBack;
-	    //    kVec.Set( (px/pAbs)*k, (py/pAbs)*k, (pz/pAbs)*k, k );
-	    //    pOut.push_back(Parton(0, 22, 0, kVec, xVec));
-	    //    pOut[pOut.size()-1].set_form_time(0.);
-	    //    pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
-	    //  }
+        // photon doesn't have energy threshold; No absorption into medium
+        // However, we only keep positive energy photons
+        if (kRest > 0.) {
+          IncrementpLable();
+          k = kRest*boostBack;
+          kVec.Set( (px/pAbs)*k, (py/pAbs)*k, (pz/pAbs)*k, k );
+		  pOut.push_back(Parton(pLabelNew, 21, pStat, kVec, xVec));
+          pOut[pOut.size()-1].set_form_time(0.);
+          pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
+        }
 
-	    return;
-	  }
-	// quark scattering with either quark (qq->qq) or gluon (qg->qg)
-	else if (process == 5 || process == 6)
-	  {
-	    omega = getEnergyTransfer(pRest, T, process);
-	    q = getMomentumTransfer(pRest, omega, T, process);
+        return;
+      } else if (process == 5 || process == 6) {
+        // quark scattering with either quark (qq->qq) or gluon (qg->qg)
+        omega = getEnergyTransfer(pRest, T, process);
+        q = getMomentumTransfer(pRest, omega, T, process);
 
-	    // momentum transfer is always space-like
-	    if(q < fabs(omega)) return;
+        // momentum transfer is always space-like
+        if(q < fabs(omega)) return;
 
-	    pVecNewRest = getNewMomentumElas(pVecRest, omega, q);
+        pVecNewRest = getNewMomentumElas(pVecRest, omega, q);
 
-	    pNewRest = pVecNewRest.t();
+        pNewRest = pVecNewRest.t();
 
-	    // if pNew is smaller than pcut, final state parton is
-	    // absorbed into medium
-	    if (pNewRest > pcut)
-	      {
-		// Boost scattered particle to lab frame
-		// 1: for brick
-		if (beta < 1e-10)
-		  {
-		    pVecNew = pVecNewRest;
-		  }
-		// 2: for evolving medium
-		else
-		  {
-		    pxNew = vx*gamma*pVecNewRest.t() 
-		      + (1.+(gamma-1.)*vx*vx/(beta*beta))*pVecNewRest.x()
-		      + (gamma-1.)*vx*vy/(beta*beta)*pVecNewRest.y()
-		      + (gamma-1.)*vx*vz/(beta*beta)*pVecNewRest.z();
-		    pyNew = vy*gamma*pVecNewRest.t() 
-		      + (1.+(gamma-1.)*vy*vy/(beta*beta))*pVecNewRest.y()
-		      + (gamma-1.)*vx*vy/(beta*beta)*pVecNewRest.x()
-		      + (gamma-1.)*vy*vz/(beta*beta)*pVecNewRest.z();
-		    pzNew = vz*gamma*pVecNewRest.t() 
-		      + (1.+(gamma-1.)*vz*vz/(beta*beta))*pVecNewRest.z()
-		      + (gamma-1.)*vx*vz/(beta*beta)*pVecNewRest.x()
-		      + (gamma-1.)*vy*vz/(beta*beta)*pVecNewRest.y();
-			  
-		    pNew = sqrt( pxNew*pxNew + pyNew*pyNew + pzNew*pzNew );
-		    pVecNew.Set( pxNew, pyNew, pzNew, pNew );
-		  }
+        // Boost scattered particle to lab frame
+        if (beta < 1e-10) {
+          // 1: for static medium
+          pVecNew = pVecNewRest;
+        } else {
+          // 2: for evolving medium
+          pxNew = vx*gamma*pVecNewRest.t() 
+            + (1.+(gamma-1.)*vx*vx/(beta*beta))*pVecNewRest.x()
+            + (gamma-1.)*vx*vy/(beta*beta)*pVecNewRest.y()
+            + (gamma-1.)*vx*vz/(beta*beta)*pVecNewRest.z();
+          pyNew = vy*gamma*pVecNewRest.t() 
+            + (1.+(gamma-1.)*vy*vy/(beta*beta))*pVecNewRest.y()
+            + (gamma-1.)*vx*vy/(beta*beta)*pVecNewRest.x()
+            + (gamma-1.)*vy*vz/(beta*beta)*pVecNewRest.z();
+          pzNew = vz*gamma*pVecNewRest.t() 
+            + (1.+(gamma-1.)*vz*vz/(beta*beta))*pVecNewRest.z()
+            + (gamma-1.)*vx*vz/(beta*beta)*pVecNewRest.x()
+            + (gamma-1.)*vy*vz/(beta*beta)*pVecNewRest.y();
+          
+          pNew = sqrt( pxNew*pxNew + pyNew*pyNew + pzNew*pzNew );
+          pVecNew.Set( pxNew, pyNew, pzNew, pNew );
+        }
 
-		pOut.push_back(Parton(0, Id, 0, pVecNew, xVec));
-		pOut[pOut.size()-1].set_form_time(0.);
-		pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
-	      }
+		pOut.push_back(Parton(pLabel, Id, pStat, pVecNew, xVec));
+        pOut[pOut.size()-1].set_form_time(0.);
+        pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 
-	    return;
-	  }
-	// quark converting to gluon
-	else if (process == 9)
-	  {
-	    pOut.push_back(Parton(0, 21, 0, pVec, xVec));
-	    pOut[pOut.size()-1].set_form_time(0.);
-	    pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
+        if(coherent) {
+          pOut[pOut.size()-1].set_user_info(
+                              new MARTINIUserInfo(coherent, sibling, pAtSplit));
+        } else {
+          pOut[pOut.size()-1].set_user_info(new MARTINIUserInfo());
+        }
 
-	    return;
-	  }
-	// quark converting to photon
-	else if (process == 10)
-	  {
-	    pOut.push_back(Parton(0, 22, 0, pVec, xVec));
-	    pOut[pOut.size()-1].set_form_time(0.);
-	    pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
+        if ( recoil_on ) {
+          // momentum transfer between elastic scattering
+          qVec = pVecRest;
+          qVec -= pVecNewRest;
 
-	    return;
-	  }
+          pVecThermalRest = getThermalVec(qVec, T, Id);
+          pVecRecoilRest = qVec;
+          pVecRecoilRest += pVecThermalRest;
+          double pRecoilRest = pVecRecoilRest.t();
+
+          if (pRecoilRest > pcut) {
+
+            // Boost recoil particle to lab frame
+            if (beta < 1e-10) {
+              // 1: for static medium
+              pVecThermal = pVecThermalRest;
+              pVecRecoil = pVecRecoilRest;
+            } else {
+              // 2: for evolving medium
+              pxThermal = vx*gamma*pVecThermalRest.t() 
+                + (1.+(gamma-1.)*vx*vx/(beta*beta))*pVecThermalRest.x()
+                + (gamma-1.)*vx*vy/(beta*beta)*pVecThermalRest.y()
+                + (gamma-1.)*vx*vz/(beta*beta)*pVecThermalRest.z();
+              pyThermal = vy*gamma*pVecThermalRest.t() 
+                + (1.+(gamma-1.)*vy*vy/(beta*beta))*pVecThermalRest.y()
+                + (gamma-1.)*vx*vy/(beta*beta)*pVecThermalRest.x()
+                + (gamma-1.)*vy*vz/(beta*beta)*pVecThermalRest.z();
+              pzThermal = vz*gamma*pVecThermalRest.t() 
+                + (1.+(gamma-1.)*vz*vz/(beta*beta))*pVecThermalRest.z()
+                + (gamma-1.)*vx*vz/(beta*beta)*pVecThermalRest.x()
+                + (gamma-1.)*vy*vz/(beta*beta)*pVecThermalRest.y();
+              
+              pThermal = sqrt( pxThermal*pxThermal
+                             + pyThermal*pyThermal
+                             + pzThermal*pzThermal );
+              pVecThermal.Set( pxThermal, pyThermal, pzThermal, pThermal );
+
+              pxRecoil = vx*gamma*pVecRecoilRest.t() 
+                + (1.+(gamma-1.)*vx*vx/(beta*beta))*pVecRecoilRest.x()
+                + (gamma-1.)*vx*vy/(beta*beta)*pVecRecoilRest.y()
+                + (gamma-1.)*vx*vz/(beta*beta)*pVecRecoilRest.z();
+              pyRecoil = vy*gamma*pVecRecoilRest.t() 
+                + (1.+(gamma-1.)*vy*vy/(beta*beta))*pVecRecoilRest.y()
+                + (gamma-1.)*vx*vy/(beta*beta)*pVecRecoilRest.x()
+                + (gamma-1.)*vy*vz/(beta*beta)*pVecRecoilRest.z();
+              pzRecoil = vz*gamma*pVecRecoilRest.t() 
+                + (1.+(gamma-1.)*vz*vz/(beta*beta))*pVecRecoilRest.z()
+                + (gamma-1.)*vx*vz/(beta*beta)*pVecRecoilRest.x()
+                + (gamma-1.)*vy*vz/(beta*beta)*pVecRecoilRest.y();
+              
+              pRecoil = sqrt( pxRecoil*pxRecoil + pyRecoil*pyRecoil + pzRecoil*pzRecoil );
+              pVecRecoil.Set( pxRecoil, pyRecoil, pzRecoil, pRecoil );
+            }
+
+            // determine id of recoil parton
+            if ( process == 5 ) {
+              // choose the Id of new qqbar pair. Note that we only deal with nf = 3
+              double r = ZeroOneDistribution(*GetMt19937Generator());
+              if (r < 1./3.) newId = 1;
+              else if (r < 2./3.) newId = 2;
+              else newId = 3;
+            } else {
+              newId = 21;
+            }
+
+            if (pVecThermal.t() > 1e-5) {
+              IncrementpLable();
+		      pOut.push_back(Parton(pLabelNew, newId, -1, pVecThermal, xVec));
+              pOut[pOut.size()-1].set_form_time(0.);
+              pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
+              //cout << "process == 5&6::newLabel:" << pLabelNew << endl;
+            }
+
+            IncrementpLable();
+		    pOut.push_back(Parton(pLabelNew, newId, 1, pVecRecoil, xVec));
+            pOut[pOut.size()-1].set_form_time(0.);
+            pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
+            //cout << "process == 5&6::newLabel:" << pLabelNew << endl;
+          }
+        }
+        return;
+      } else if (process == 9) {
+        // quark converting to gluon
+	    pOut.push_back(Parton(pLabel, 21, pStat, pVec, xVec));
+        pOut[pOut.size()-1].set_form_time(0.);
+        pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
+
+        if(coherent) {
+          pOut[pOut.size()-1].set_user_info(
+                              new MARTINIUserInfo(coherent, sibling, pAtSplit));
+        } else {
+          pOut[pOut.size()-1].set_user_info(new MARTINIUserInfo());
+        }
+
+        return;
+      } else if (process == 10) {
+        // quark converting to photon
+	    pOut.push_back(Parton(pLabel, 22, pStat, pVec, xVec));
+        pOut[pOut.size()-1].set_form_time(0.);
+        pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
+
+        return;
       }
-    else if (Id == 21)
-      {
-	// gluon radiating gluon (g->gg)
-	if (process == 3)
-	  {
-	    if (pRest/T < AMYpCut) return;
+    } else if (Id == 21) {
 
-	    // sample radiated parton's momentum
-	    kRest = getNewMomentumRad(pRest, T, process);
-	    if(kRest > pRest) return;
+      // gluon radiating gluon (g->gg)
+      if (process == 3) {
+        if (pRest/T < AMYpCut) return;
 
-	    // final state parton's momentum
-	    pNewRest = pRest - kRest;
+        // sample radiated parton's momentum
+        kRest = getNewMomentumRad(pRest, T, process);
+        if(kRest > pRest) return;
 
-	    // if pNew is smaller than pcut, final state parton is
-	    // absorbed into medium
-	    if (pNewRest > pcut)
-	      {
-		pNew = pNewRest*boostBack;
-		pVecNew.Set( (px/pAbs)*pNew, (py/pAbs)*pNew, (pz/pAbs)*pNew, pNew );
-		pOut.push_back(Parton(0, Id, 0, pVecNew, xVec));
-		pOut[pOut.size()-1].set_form_time(0.);
-		pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
-	      }
+        // final state parton's momentum
+        pNewRest = pRest - kRest;
 
-	    if (kRest > pcut)
-	      {
-		k = kRest*boostBack;
-		kVec.Set( (px/pAbs)*k, (py/pAbs)*k, (pz/pAbs)*k, k );
-		pOut.push_back(Parton(0, Id, 0, kVec, xVec));
-		pOut[pOut.size()-1].set_form_time(0.);
-		pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
-	      }
+        pNew = pNewRest*boostBack;
+        pVecNew.Set( (px/pAbs)*pNew, (py/pAbs)*pNew, (pz/pAbs)*pNew, pNew );
+		pOut.push_back(Parton(pLabel, Id, pStat, pVecNew, xVec));
+        pOut[pOut.size()-1].set_form_time(0.);
+        pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
+        pOut[pOut.size()-1].set_user_info(new MARTINIUserInfo());
 
-	    return;
-	  }
-	// gluon split into quark-antiquark pair (g->qqbar)
-	if (process == 4)
-	  {
-	    if (pRest/T < AMYpCut) return;
+        if (kRest > pcut) {
+          IncrementpLable();
+          k = kRest*boostBack;
+          kVec.Set( (px/pAbs)*k, (py/pAbs)*k, (pz/pAbs)*k, k );
+		  pOut.push_back(Parton(pLabelNew, Id, pStat, kVec, xVec));
+          pOut[pOut.size()-1].set_form_time(0.);
+          pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
+        }
 
-	    // sample radiated parton's momentum
-	    kRest = getNewMomentumRad(pRest, T, process);
-	    if(kRest > pRest) return;
+        //// If original and radiated partons are above pcut, set them coherent
+        //if (pOut.size() == 2) {
+        //  bool coherentNew = true;
+        //  FourVector pAtSplitNew = pOut[0].p_in();
+        //  pOut[0].set_user_info(new MARTINIUserInfo(coherentNew, pLabelNew, pAtSplitNew));
+        //  pOut[1].set_user_info(new MARTINIUserInfo(coherentNew, pLabel, pAtSplitNew));
+        //}
 
-	    // final state parton's momentum
-	    pNewRest = pRest - kRest;
+        return;
+      } else if (process == 4) {
+        // gluon split into quark-antiquark pair (g->qqbar)
+        if (pRest/T < AMYpCut) return;
 
-	    // choose the Id of new qqbar pair. Note that we only deal with nf = 3
-	    double r = ZeroOneDistribution(*GetMt19937Generator());
-	    if (r < 1./3.) newId = 1;
-	    else if (r < 2./3.) newId = 2;
-	    else newId = 3;
+        // sample radiated parton's momentum
+        kRest = getNewMomentumRad(pRest, T, process);
+        if(kRest > pRest) return;
 
-	    // if pNew is smaller than pcut, final state parton is
-	    // absorbed into medium
-	    if (pNewRest > pcut)
-	      {
-		// *momentum of quark is usually larger than that of anti-quark
-		pNew = pNewRest*boostBack;
-		pVecNew.Set( (px/pAbs)*pNew, (py/pAbs)*pNew, (pz/pAbs)*pNew, pNew );
-		pOut.push_back(Parton(0, newId, 0, pVecNew, xVec));
-		pOut[pOut.size()-1].set_form_time(0.);
-		pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
-	      }
+        // final state parton's momentum
+        pNewRest = pRest - kRest;
 
-	    if (kRest > pcut)
-	      {
-		k = kRest*boostBack;
-		kVec.Set( (px/pAbs)*k, (py/pAbs)*k, (pz/pAbs)*k, k );
-		pOut.push_back(Parton(0, -newId, 0, kVec, xVec));
-		pOut[pOut.size()-1].set_form_time(0.);
-		pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
-	      }
+        // choose the Id of new qqbar pair. Note that we only deal with nf = 3
+        double r = ZeroOneDistribution(*GetMt19937Generator());
+        if (r < 1./3.) newId = 1;
+        else if (r < 2./3.) newId = 2;
+        else newId = 3;
 
-	    return;
-	  }
-	// gluon scattering with either quark (gq->gq) or gluon (gg->gg)
-	else if (process == 7 || process == 8)
-	  {
-	    omega = getEnergyTransfer(pRest, T, process);
-	    q = getMomentumTransfer(pRest, omega, T, process);
+        // *momentum of quark is usually larger than that of anti-quark
+        pNew = pNewRest*boostBack;
+        pVecNew.Set( (px/pAbs)*pNew, (py/pAbs)*pNew, (pz/pAbs)*pNew, pNew );
+		pOut.push_back(Parton(pLabel, newId, pStat, pVecNew, xVec));
+        pOut[pOut.size()-1].set_form_time(0.);
+        pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
+        pOut[pOut.size()-1].set_user_info(new MARTINIUserInfo());
 
-	    // momentum transfer is always space-like
-	    if(q < fabs(omega)) return;
+        if (kRest > pcut) {
+          IncrementpLable();
+          k = kRest*boostBack;
+          kVec.Set( (px/pAbs)*k, (py/pAbs)*k, (pz/pAbs)*k, k );
+		  pOut.push_back(Parton(pLabelNew, -newId, pStat, kVec, xVec));
+          pOut[pOut.size()-1].set_form_time(0.);
+          pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
+        }
 
-	    pVecNewRest = getNewMomentumElas(pVecRest, omega, q);
+        //// If original and radiated partons are above pcut, set them coherent
+        //if (pOut.size() == 2) {
+        //  bool coherentNew = true;
+        //  FourVector pAtSplitNew = pOut[0].p_in();
+        //  pOut[0].set_user_info(new MARTINIUserInfo(coherentNew, pLabelNew, pAtSplitNew));
+        //  pOut[1].set_user_info(new MARTINIUserInfo(coherentNew, pLabel, pAtSplitNew));
+        //}
 
-	    pNewRest = pVecNewRest.t();
+        return;
+      } else if (process == 7 || process == 8) {
+      // gluon scattering with either quark (gq->gq) or gluon (gg->gg)
+        omega = getEnergyTransfer(pRest, T, process);
+        q = getMomentumTransfer(pRest, omega, T, process);
 
-	    // if pNew is smaller than pcut, final state parton is
-	    // absorbed into medium
-	    if (pNewRest > pcut)
-	      {
-		// Boost scattered particle to lab frame
-		// 1: for brick
-		if (beta < 1e-10)
-		  {
-		    pVecNew = pVecNewRest;
-		  }
-		// 2: for evolving medium
-		else
-		  {
-		    pxNew = vx*gamma*pVecNewRest.t()
-		      + (1.+(gamma-1.)*vx*vx/(beta*beta))*pVecNewRest.x()
-		      + (gamma-1.)*vx*vy/(beta*beta)*pVecNewRest.y()
-		      + (gamma-1.)*vx*vz/(beta*beta)*pVecNewRest.z();
-		    pyNew = vy*gamma*pVecNewRest.t()
-		      + (1.+(gamma-1.)*vy*vy/(beta*beta))*pVecNewRest.y()
-		      + (gamma-1.)*vx*vy/(beta*beta)*pVecNewRest.x()
-		      + (gamma-1.)*vy*vz/(beta*beta)*pVecNewRest.z();
-		    pzNew = vz*gamma*pVecNewRest.t() 
-		      + (1.+(gamma-1.)*vz*vz/(beta*beta))*pVecNewRest.z()
-		      + (gamma-1.)*vx*vz/(beta*beta)*pVecNewRest.x()
-		      + (gamma-1.)*vy*vz/(beta*beta)*pVecNewRest.y();
-			  
-		    pNew = sqrt( pxNew*pxNew + pyNew*pyNew + pzNew*pzNew );
-		    pVecNew.Set( pxNew, pyNew, pzNew, pNew );
-		  }
+        // momentum transfer is always space-like
+        if(q < fabs(omega)) return;
 
-		pOut.push_back(Parton(0, Id, 0, pVecNew, xVec));
-		pOut[pOut.size()-1].set_form_time(0.);
-		pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
-	      }
+        pVecNewRest = getNewMomentumElas(pVecRest, omega, q);
 
-	    return;
-	  }
-	// gluon converting to quark
-	else if (process == 11)
-	  {
-	    // choose the Id of new qqbar pair. Note that we only deal with nf = 3
-	    double r = ZeroOneDistribution(*GetMt19937Generator());
-	    if (r < 1./3.) newId = 1;
-	    else if (r < 2./3.) newId = 2;
-	    else newId = 3;
+        pNewRest = pVecNewRest.t();
 
-	    double antiquark = ZeroOneDistribution(*GetMt19937Generator());
+        // Boost scattered particle to lab frame
+        if (beta < 1e-10) {
+          // 1: for static medium
+          pVecNew = pVecNewRest;
+        } else {
+          // 2: for evolving medium
+          pxNew = vx*gamma*pVecNewRest.t()
+            + (1.+(gamma-1.)*vx*vx/(beta*beta))*pVecNewRest.x()
+            + (gamma-1.)*vx*vy/(beta*beta)*pVecNewRest.y()
+            + (gamma-1.)*vx*vz/(beta*beta)*pVecNewRest.z();
+          pyNew = vy*gamma*pVecNewRest.t()
+            + (1.+(gamma-1.)*vy*vy/(beta*beta))*pVecNewRest.y()
+            + (gamma-1.)*vx*vy/(beta*beta)*pVecNewRest.x()
+            + (gamma-1.)*vy*vz/(beta*beta)*pVecNewRest.z();
+          pzNew = vz*gamma*pVecNewRest.t() 
+            + (1.+(gamma-1.)*vz*vz/(beta*beta))*pVecNewRest.z()
+            + (gamma-1.)*vx*vz/(beta*beta)*pVecNewRest.x()
+            + (gamma-1.)*vy*vz/(beta*beta)*pVecNewRest.y();
+            
+          pNew = sqrt( pxNew*pxNew + pyNew*pyNew + pzNew*pzNew );
+          pVecNew.Set( pxNew, pyNew, pzNew, pNew );
+        }
+
+		pOut.push_back(Parton(pLabel, Id, pStat, pVecNew, xVec));
+        pOut[pOut.size()-1].set_form_time(0.);
+        pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
+
+        if(coherent) {
+          pOut[pOut.size()-1].set_user_info(
+                              new MARTINIUserInfo(coherent, sibling, pAtSplit));
+        } else {
+          pOut[pOut.size()-1].set_user_info(new MARTINIUserInfo());
+        }
+
+        if ( recoil_on ) {
+          // momentum transfer between elastic scattering
+          qVec = pVecRest;
+          qVec -= pVecNewRest;
+
+          pVecThermalRest = getThermalVec(qVec, T, Id);
+          pVecRecoilRest = qVec;
+          pVecRecoilRest += pVecThermalRest;
+          double pRecoilRest = pVecRecoilRest.t();
+
+          if (pRecoilRest > pcut) {
+
+            // Boost recoil particle to lab frame
+            if (beta < 1e-10) {
+              // 1: for static medium
+              pVecThermal = pVecThermalRest;
+              pVecRecoil = pVecRecoilRest;
+            } else {
+              // 2: for evolving medium
+              pxThermal = vx*gamma*pVecThermalRest.t() 
+                + (1.+(gamma-1.)*vx*vx/(beta*beta))*pVecThermalRest.x()
+                + (gamma-1.)*vx*vy/(beta*beta)*pVecThermalRest.y()
+                + (gamma-1.)*vx*vz/(beta*beta)*pVecThermalRest.z();
+              pyThermal = vy*gamma*pVecThermalRest.t() 
+                + (1.+(gamma-1.)*vy*vy/(beta*beta))*pVecThermalRest.y()
+                + (gamma-1.)*vx*vy/(beta*beta)*pVecThermalRest.x()
+                + (gamma-1.)*vy*vz/(beta*beta)*pVecThermalRest.z();
+              pzThermal = vz*gamma*pVecThermalRest.t() 
+                + (1.+(gamma-1.)*vz*vz/(beta*beta))*pVecThermalRest.z()
+                + (gamma-1.)*vx*vz/(beta*beta)*pVecThermalRest.x()
+                + (gamma-1.)*vy*vz/(beta*beta)*pVecThermalRest.y();
+              
+              pThermal = sqrt( pxThermal*pxThermal
+                             + pyThermal*pyThermal
+                             + pzThermal*pzThermal );
+              pVecThermal.Set( pxThermal, pyThermal, pzThermal, pThermal );
+
+              pxRecoil = vx*gamma*pVecRecoilRest.t() 
+                + (1.+(gamma-1.)*vx*vx/(beta*beta))*pVecRecoilRest.x()
+                + (gamma-1.)*vx*vy/(beta*beta)*pVecRecoilRest.y()
+                + (gamma-1.)*vx*vz/(beta*beta)*pVecRecoilRest.z();
+              pyRecoil = vy*gamma*pVecRecoilRest.t() 
+                + (1.+(gamma-1.)*vy*vy/(beta*beta))*pVecRecoilRest.y()
+                + (gamma-1.)*vx*vy/(beta*beta)*pVecRecoilRest.x()
+                + (gamma-1.)*vy*vz/(beta*beta)*pVecRecoilRest.z();
+              pzRecoil = vz*gamma*pVecRecoilRest.t() 
+                + (1.+(gamma-1.)*vz*vz/(beta*beta))*pVecRecoilRest.z()
+                + (gamma-1.)*vx*vz/(beta*beta)*pVecRecoilRest.x()
+                + (gamma-1.)*vy*vz/(beta*beta)*pVecRecoilRest.y();
+              
+              pRecoil = sqrt( pxRecoil*pxRecoil + pyRecoil*pyRecoil + pzRecoil*pzRecoil );
+              pVecRecoil.Set( pxRecoil, pyRecoil, pzRecoil, pRecoil );
+            }
+
+            // determine id of recoil parton
+            if ( process == 7 ) {
+              // choose the Id of new qqbar pair. Note that we only deal with nf = 3
+              double r = ZeroOneDistribution(*GetMt19937Generator());
+              if (r < 1./3.) newId = 1;
+              else if (r < 2./3.) newId = 2;
+              else newId = 3;
+            } else {
+              newId = 21;
+            }
+
+            if (pVecThermal.t() > 1e-5) {
+              IncrementpLable();
+		      pOut.push_back(Parton(pLabelNew, newId, -1, pVecThermal, xVec));
+              pOut[pOut.size()-1].set_form_time(0.);
+              pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
+              //cout << "process == 7&8::newLabel:" << pLabelNew << endl;
+            }
+
+            IncrementpLable();
+		    pOut.push_back(Parton(pLabelNew, newId, 1, pVecRecoil, xVec));
+            pOut[pOut.size()-1].set_form_time(0.);
+            pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
+            //cout << "process == 7&8::newLabel:" << pLabelNew << endl;
+          }
+        }
+
+        return;
+      } else if (process == 11) {
+        // gluon converting to quark
+        // choose the Id of new qqbar pair. Note that we only deal with nf = 3
+        double r = ZeroOneDistribution(*GetMt19937Generator());
+        if (r < 1./3.) newId = 1;
+        else if (r < 2./3.) newId = 2;
+        else newId = 3;
+
+        double antiquark = ZeroOneDistribution(*GetMt19937Generator());
             if(antiquark < 0.5) newId *= -1;
 
-	    pOut.push_back(Parton(0, newId, 0, pVec, xVec));
-	    pOut[pOut.size()-1].set_form_time(0.);
-	    pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
+	    pOut.push_back(Parton(pLabel, newId, pStat, pVec, xVec));
+        pOut[pOut.size()-1].set_form_time(0.);
+        pOut[pOut.size()-1].set_jet_v(velocity_jet); // use initial jet velocity
 
-	    return;
-	  }
-      } // Id==21
+        if(coherent) {
+          pOut[pOut.size()-1].set_user_info(
+                              new MARTINIUserInfo(coherent, sibling, pAtSplit));
+        } else {
+          pOut[pOut.size()-1].set_user_info(new MARTINIUserInfo());
+        }
+
+        return;
+      }
+    } // Id==21
   } // particle loop
 }
 
-int Martini::DetermineProcess(double pRest, double T, double deltaTRest, int Id)
-{
+int Martini::DetermineProcess(double pRest, double T, double deltaTRest, int Id) {
 
   double dT = deltaTRest/hbarc;   // time step in [GeV^(-1)]
 
@@ -544,154 +772,142 @@ int Martini::DetermineProcess(double pRest, double T, double deltaTRest, int Id)
   rateConv = getRateConv(pRest, T);
 
   // evolution for quark (u, d, s)
-  if (std::abs(Id) == 1 || std::abs(Id) == 2 || std::abs(Id) == 3)
-    {
-      // multiplying by (ef/e)^2
-      if (abs(Id) == 1)
-	{
-	  rateRad.qqgamma *= 4./9.;
-	  rateConv.qgamma *= 4./9.;
-	}
-      else
-	{
-	  rateRad.qqgamma *= 1./9.;
-	  rateConv.qgamma *= 1./9.;
-	}
+  if (std::abs(Id) == 1 || std::abs(Id) == 2 || std::abs(Id) == 3) {
+    // multiplying by (ef/e)^2
+    if (abs(Id) == 1) {
+      rateRad.qqgamma *= 4./9.;
+      rateConv.qgamma *= 4./9.;
+    } else {
+      rateRad.qqgamma *= 1./9.;
+      rateConv.qgamma *= 1./9.;
+    }
 
-      double totalQuarkProb = 0.;
+    double totalQuarkProb = 0.;
 
-      /* block the photon process at this moment */
-      //if (pRest/T > AMYpCut) totalQuarkProb += (rateRad.qqg + rateRad.qqgamma)*dT;
-      //totalQuarkProb += (rateElas.qq + rateElas.qg + rateConv.qg + rateConv.qgamma)*dT;
+    /* block the photon process at this moment */
+    //if (pRest/T > AMYpCut) totalQuarkProb += (rateRad.qqg + rateRad.qqgamma)*dT;
+    //totalQuarkProb += (rateElas.qq + rateElas.qg + rateConv.qg + rateConv.qgamma)*dT;
 
-      if (pRest/T > AMYpCut) totalQuarkProb += rateRad.qqg*dT;
-      totalQuarkProb += (rateElas.qq + rateElas.qg + rateConv.qg)*dT;
+    if (pRest/T > AMYpCut) totalQuarkProb += rateRad.qqg*dT;
+    totalQuarkProb += (rateElas.qq + rateElas.qg + rateConv.qg)*dT;
 
-      // warn if total probability exceeds 1
-      if (totalQuarkProb > 1.){
-	JSWARN << " : Total Probability for quark processes exceeds 1 ("
-	     << totalQuarkProb << "). "
-	     << " : Most likely this means you should choose a smaller deltaT in the xml"
-	     << " (e.g. 0.01).";
-	//throw std::runtime_error ("Martini probability problem.");
+    // warn if total probability exceeds 1
+    if (totalQuarkProb > 1.) {
+    JSWARN << " : Total Probability for quark processes exceeds 1 ("
+           << totalQuarkProb << "). "
+             << " : Most likely this means you should choose a smaller deltaT in the xml"
+             << " (e.g. 0.01). "
+             << "pRest=" << pRest << " T=" << T << " pRest/T=" << pRest/T;
+    //throw std::runtime_error ("Martini probability problem.");
+    }
+
+    double accumProb = 0.;
+    double nextProb = 0.;
+    double Prob = 0.;
+
+    if (ZeroOneDistribution(*GetMt19937Generator()) < totalQuarkProb) {
+      /* label for process
+         [1-4  : Radiation ] 1: q->qg , 2 : q->qgamma, 3 : g->gg , 4: g->qqbar
+         [5-8  : Elastic   ] 5: qq->qq, 6 : qg->qg   , 7 : gq->gq, 8: gg->gg
+         [9-11 : Conversion] 9: q->g  , 10: q->gamma , 11: g->q                */
+      double randProb = ZeroOneDistribution(*GetMt19937Generator());
+
+      // AMY radiation only happens if energy scale is above certain threshold.
+      // but elastic/conversion processes doesn't have threshold.
+      if(pRest/T > AMYpCut) {
+        Prob = rateRad.qqg*dT/totalQuarkProb;
+        if (accumProb <= randProb && randProb < (accumProb + Prob))
+        return 1;
+
+        accumProb += Prob;
+        Prob = rateRad.qqgamma*dT/totalQuarkProb;
+        if (accumProb <= randProb && randProb < (accumProb + Prob))
+          return 2;
       }
 
-      double accumProb = 0.;
-      double nextProb = 0.;
-      double Prob = 0.;
+      accumProb += Prob;
+      Prob = rateElas.qq*dT/totalQuarkProb;
+      if (accumProb <= randProb && randProb < (accumProb + Prob))
+        return 5;
 
-      if (ZeroOneDistribution(*GetMt19937Generator()) < totalQuarkProb)
-	{
-	  /* label for process
-	     [1-4  : Radiation ] 1: q->qg , 2 : q->qgamma, 3 : g->gg , 4: g->qqbar
-	     [5-8  : Elastic   ] 5: qq->qq, 6 : qg->qg   , 7 : gq->gq, 8: gg->gg
-	     [9-11 : Conversion] 9: q->g  , 10: q->gamma , 11: g->q                */
-	  double randProb = ZeroOneDistribution(*GetMt19937Generator());
+      accumProb += Prob;
+      Prob = rateElas.qg*dT/totalQuarkProb;
+      if (accumProb <= randProb && randProb < (accumProb + Prob))
+        return 6;
 
-	  // AMY radiation only happens if energy scale is above certain threshold.
-	  // but elastic/conversion processes doesn't have threshold.
-	  if(pRest/T > AMYpCut)
-	    {
-	      Prob = rateRad.qqg*dT/totalQuarkProb;
-	      if (accumProb <= randProb && randProb < (accumProb + Prob))
-		return 1;
+      accumProb += Prob;
+      Prob = rateConv.qg*dT/totalQuarkProb;
+      if (accumProb <= randProb && randProb < (accumProb + Prob))
+        return 9;
 
-	      //accumProb += Prob;
-	      //Prob = rateRad.qqgamma*dT/totalQuarkProb;
-	      //if (accumProb <= randProb && randProb < (accumProb + Prob))
-	      //  return 2;
-	    }
-
-	  accumProb += Prob;
-	  Prob = rateElas.qq*dT/totalQuarkProb;
-	  if (accumProb <= randProb && randProb < (accumProb + Prob))
-	    return 5;
-
-	  accumProb += Prob;
-	  Prob = rateElas.qg*dT/totalQuarkProb;
-	  if (accumProb <= randProb && randProb < (accumProb + Prob))
-	    return 6;
-
-	  accumProb += Prob;
-	  Prob = rateConv.qg*dT/totalQuarkProb;
-	  if (accumProb <= randProb && randProb < (accumProb + Prob))
-	    return 9;
-
-	  //accumProb += Prob;
-	  //Prob = rateConv.qgamma*dT/totalQuarkProb;
-	  //if (accumProb <= randProb && randProb < (accumProb + Prob))
-	  //  return 10;
-	}
-      else
-	{
-	  // nothing happens to quark
-	  return 0;
-	}
+      accumProb += Prob;
+      Prob = rateConv.qgamma*dT/totalQuarkProb;
+      if (accumProb <= randProb && randProb < (accumProb + Prob))
+        return 10;
+    } else {
+      // nothing happens to quark
+      return 0;
     }
-  // evolution for gluon
-  else if (Id == 21)
-    {
-      double totalGluonProb = 0.;
+  } else if (Id == 21) {
+    // evolution for gluon
+    double totalGluonProb = 0.;
 
-      if (pRest/T > AMYpCut) totalGluonProb += (rateRad.ggg + rateRad.gqq)*dT;
-      totalGluonProb += (rateElas.gq + rateElas.gg + rateConv.gq)*dT;
+    if (pRest/T > AMYpCut) totalGluonProb += (rateRad.ggg + rateRad.gqq)*dT;
+    totalGluonProb += (rateElas.gq + rateElas.gg + rateConv.gq)*dT;
 
-      // warn if total probability exceeds 1
-      if (totalGluonProb > 1.){
-	JSWARN << " : Total Probability for gluon processes exceeds 1 ("
-	     << totalGluonProb << "). "
-	     << " : Most likely this means you should choose a smaller deltaT in the xml"
-	     << " (e.g. 0.01).";
-	//throw std::runtime_error ("Martini probability problem.");
+    // warn if total probability exceeds 1
+    if (totalGluonProb > 1.) {
+      JSWARN << " : Total Probability for gluon processes exceeds 1 ("
+             << totalGluonProb << "). "
+             << " : Most likely this means you should choose a smaller deltaT in the xml"
+             << " (e.g. 0.01). "
+             << "pRest=" << pRest << " T=" << T << " pRest/T=" << pRest/T;
+      //throw std::runtime_error ("Martini probability problem.");
+    }
+
+    double accumProb = 0.;
+    double nextProb = 0.;
+    double Prob = 0.;
+
+    if (ZeroOneDistribution(*GetMt19937Generator()) < totalGluonProb) {
+      /* label for process
+         [1-4  : Radiation ] 1: q->qg, 2 : q->qgamma, 3 : g->gg, 4: g->qq
+         [5-8  : Elastic   ] 5: q->q , 6 : q->g     , 7 : g->q , 8: g->g
+         [9-11 : Conversion] 9: q->g , 10: q->gamma , 11: g->q            */
+      double randProb = ZeroOneDistribution(*GetMt19937Generator());
+
+      // AMY radiation only happens if energy scale is above certain threshold.
+      // but elastic/conversion processes doesn't have threshold.
+      if (pRest/T > AMYpCut) {
+        Prob = rateRad.ggg*dT/totalGluonProb;
+        if (accumProb <= randProb && randProb < (accumProb + Prob))
+        return 3;
+
+        accumProb += Prob;
+        Prob = rateRad.gqq*dT/totalGluonProb;
+        if (accumProb <= randProb && randProb < (accumProb + Prob))
+        return 4;
       }
 
-      double accumProb = 0.;
-      double nextProb = 0.;
-      double Prob = 0.;
+      accumProb += Prob;
+      Prob = rateElas.gq*dT/totalGluonProb;
+      if (accumProb <= randProb && randProb < (accumProb + Prob))
+        return 7;
 
-      if (ZeroOneDistribution(*GetMt19937Generator()) < totalGluonProb)
-	{
-	  /* label for process
-	     [1-4  : Radiation ] 1: q->qg, 2 : q->qgamma, 3 : g->gg, 4: g->qq
-	     [5-8  : Elastic   ] 5: q->q , 6 : q->g     , 7 : g->q , 8: g->g
-	     [9-11 : Conversion] 9: q->g , 10: q->gamma , 11: g->q            */
-	  double randProb = ZeroOneDistribution(*GetMt19937Generator());
+      accumProb += Prob;
+      Prob = rateElas.gg*dT/totalGluonProb;
+      if (accumProb <= randProb && randProb < (accumProb + Prob))
+        return 8;
 
-	  // AMY radiation only happens if energy scale is above certain threshold.
-	  // but elastic/conversion processes doesn't have threshold.
-	  if (pRest/T > AMYpCut)
-	    {
-	      Prob = rateRad.ggg*dT/totalGluonProb;
-	      if (accumProb <= randProb && randProb < (accumProb + Prob))
-		return 3;
-
-	      accumProb += Prob;
-	      Prob = rateRad.gqq*dT/totalGluonProb;
-	      if (accumProb <= randProb && randProb < (accumProb + Prob))
-		return 4;
-	    }
-
-	  accumProb += Prob;
-	  Prob = rateElas.gq*dT/totalGluonProb;
-	  if (accumProb <= randProb && randProb < (accumProb + Prob))
-	    return 7;
-
-	  accumProb += Prob;
-	  Prob = rateElas.gg*dT/totalGluonProb;
-	  if (accumProb <= randProb && randProb < (accumProb + Prob))
-	    return 8;
-
-	  accumProb += Prob;
-	  Prob = rateConv.gq*dT/totalGluonProb;
-	  if (accumProb <= randProb && randProb < (accumProb + Prob))
-	    return 11;
-	}
-      else
-	{
-	  // nothing happens to gluon
-	  return 0;
-	}
+      accumProb += Prob;
+      Prob = rateConv.gq*dT/totalGluonProb;
+      if (accumProb <= randProb && randProb < (accumProb + Prob))
+        return 11;
+    } else {
+      // nothing happens to gluon
+      return 0;
     }
+  }
 
   // if parton is other than u,d,s,g, do nothing
   return 0;
@@ -707,11 +923,11 @@ RateRadiative Martini::getRateRadTotal(double pRest, double T)
     {
       rate.qqg     = (0.8616 - 3.2913/(u*u) + 2.1102/u - 0.9485/sqrt(u))*pow(g, 4.)*T;
       rate.ggg     = (1.9463 + 61.7856/(u*u*u) - 30.7877/(u*u) + 8.0409/u - 2.6249/sqrt(u))
-            	 *pow(g, 4.)*T;
+                 *pow(g, 4.)*T;
       rate.gqq     = (2.5830/(u*u*u) - 1.7010/(u*u) + 1.4977/u - 1.1961/pow(u,0.8)
-            	+ 0.1807/sqrt(u))*pow(g, 4.)*T*nf; 
+                + 0.1807/sqrt(u))*pow(g, 4.)*T*nf; 
       rate.qqgamma = (0.0053056 + 2.3279/pow(u,3.) - 0.6676/u + 0.3223/sqrt(u))
-            	 *pow(g, 4.)*alpha_em/alpha_s*T;
+                 *pow(g, 4.)*alpha_em/alpha_s*T;
 
       double runningFactor = log(g*T*pow(10., 0.25)/.175)/log(g*T*pow(u, 0.25)/.175);
       if (runningFactor < 1.)
@@ -740,7 +956,7 @@ RateRadiative Martini::getRateRadPos(double u, double T)
   rate.qqg = (0.5322 - 3.1037/(u*u) + 2.0139/u - 0.9417/sqrt(u))*pow(g, 4.)*T;
   rate.ggg = (1.1923 - 11.5250/(u*u*u) + 3.3010/u - 1.9049/sqrt(u))*pow(g, 4.)*T;
   rate.gqq = (0.0004656 - 0.04621/(u*u) + 0.0999/u - 0.08171/pow(u,0.8) 
-	      + 0.008090/pow(u,0.2) - 1.2525*pow(10.,-8.)*u)*pow(g, 4.)*T*nf; 
+          + 0.008090/pow(u,0.2) - 1.2525*pow(10.,-8.)*u)*pow(g, 4.)*T*nf; 
   rate.qqgamma = 0.;
 
   return rate;
@@ -751,10 +967,10 @@ RateRadiative Martini::getRateRadNeg(double u, double T)
   RateRadiative rate;
 
   rate.qqg = (0.3292 - 0.6759/(u*u) + 0.4871/pow(u,1.5) - 0.05393/u + 0.007878/sqrt(u))
-	     *pow(g, 4.)*T;
+         *pow(g, 4.)*T;
   rate.ggg = (0.7409 + 1.8608/(u*u*u) - 0.1353/(u*u) + 0.1401/u)*pow(g, 4.)*T;
   rate.gqq = (0.03215/(u*u*u) + 0.01419/(u*u) + 0.004338/u - 0.00001246/sqrt(u))
-	     *pow(g, 4.)*T*nf;
+         *pow(g, 4.)*T*nf;
   rate.qqgamma = 0.;
 
   return rate;
@@ -789,57 +1005,57 @@ double Martini::getNewMomentumRad(double pRest, double T, int process)
       // decide whether k shall be positive or negative 
       // if x (uniform on [0,1]) < area(k<0)/area(all k) then k < 0
       if (ZeroOneDistribution(*GetMt19937Generator()) < Neg.qqg/(Neg.qqg+Pos.qqg))
-	posNegSwitch = 0;
+    posNegSwitch = 0;
 
       if (posNegSwitch == 1) // if k > 0
-	{
-	  do
-	    {
-	      randA = ZeroOneDistribution(*GetMt19937Generator())
-		     *area(u+12., u, posNegSwitch, 1);
-	      y = 2.5/(LambertW(2.59235*pow(10.,23.)*exp(-100.*randA)));
+    {
+      do
+        {
+          randA = ZeroOneDistribution(*GetMt19937Generator())
+             *area(u+12., u, posNegSwitch, 1);
+          y = 2.5/(LambertW(2.59235*pow(10.,23.)*exp(-100.*randA)));
 
-	      fy = 0.025/(y*y)+0.01/y;
-	      fyAct = function(u, y, process);
+          fy = 0.025/(y*y)+0.01/y;
+          fyAct = function(u, y, process);
 
-	      x = ZeroOneDistribution(*GetMt19937Generator());
+          x = ZeroOneDistribution(*GetMt19937Generator());
 
-	    } while (x > fyAct/fy); 
-	  // reject if x is larger than the ratio fyAct/fy
-	  kNew = y;
-	}
+        } while (x > fyAct/fy); 
+      // reject if x is larger than the ratio fyAct/fy
+      kNew = y;
+    }
       else // if k < 0
-	{
-	  do
-	    {
-	      randA = ZeroOneDistribution(*GetMt19937Generator())
-		     *area(-0.05, u, posNegSwitch, 1);
-	      y = -12./(1.+480.*randA);
+    {
+      do
+        {
+          randA = ZeroOneDistribution(*GetMt19937Generator())
+             *area(-0.05, u, posNegSwitch, 1);
+          y = -12./(1.+480.*randA);
 
-	      fy = 0.025/(y*y);
-	      fyAct = function(u, y, process);
+          fy = 0.025/(y*y);
+          fyAct = function(u, y, process);
 
-	      x = ZeroOneDistribution(*GetMt19937Generator());
+          x = ZeroOneDistribution(*GetMt19937Generator());
 
-	    } while (x > fyAct/fy); 
-	  // reject if x is larger than the ratio fyAct/fy
-	  kNew = y;
-	}
+        } while (x > fyAct/fy); 
+      // reject if x is larger than the ratio fyAct/fy
+      kNew = y;
+    }
     }
   else if (process == 2)
     {
       do
-	{
-	  randA = ZeroOneDistribution(*GetMt19937Generator())
-		 *area(1.15*u, u, posNegSwitch, 2);
-	  y = 83895.3*pow(pow(u, 0.5)*randA, 10./3.);
+    {
+      randA = ZeroOneDistribution(*GetMt19937Generator())
+         *area(1.15*u, u, posNegSwitch, 2);
+      y = 83895.3*pow(pow(u, 0.5)*randA, 10./3.);
 
-	  fy = (0.01/(pow(y, 0.7)))/pow(u, 0.5);
-	  fyAct = function(u, y, process);
+      fy = (0.01/(pow(y, 0.7)))/pow(u, 0.5);
+      fyAct = function(u, y, process);
 
-	  x = ZeroOneDistribution(*GetMt19937Generator());
+      x = ZeroOneDistribution(*GetMt19937Generator());
 
-	} while (x > fyAct/fy); 
+    } while (x > fyAct/fy); 
       // reject if x is larger than the ratio fyAct/fy
       kNew = y;
     }
@@ -848,86 +1064,86 @@ double Martini::getNewMomentumRad(double pRest, double T, int process)
       // decide whether k shall be positive or negative 
       // if x (uniform on [0,1]) < area(k<0)/area(all k) then k < 0
       if (ZeroOneDistribution(*GetMt19937Generator()) < Neg.ggg/(Neg.ggg+Pos.ggg))
-	posNegSwitch = 0;
+    posNegSwitch = 0;
 
       if( posNegSwitch == 1 ) // if k > 0
-	{
-	  do
-	    {
-	      randA = ZeroOneDistribution(*GetMt19937Generator())
-		     *area(u/2., u, posNegSwitch, 3);
-	      y = 5./(LambertW(2.68812*pow(10., 45.)*exp(-50.*randA)));
+    {
+      do
+        {
+          randA = ZeroOneDistribution(*GetMt19937Generator())
+             *area(u/2., u, posNegSwitch, 3);
+          y = 5./(LambertW(2.68812*pow(10., 45.)*exp(-50.*randA)));
 
-	      fy = 0.1/(y*y)+0.02/y;
-	      fyAct = function(u, y, process);
+          fy = 0.1/(y*y)+0.02/y;
+          fyAct = function(u, y, process);
 
-	      x = ZeroOneDistribution(*GetMt19937Generator());
+          x = ZeroOneDistribution(*GetMt19937Generator());
 
-	    } while (x > fyAct/fy); 
-	  // reject if x is larger than the ratio fyAct/fy
-	  kNew = y;
-	}
+        } while (x > fyAct/fy); 
+      // reject if x is larger than the ratio fyAct/fy
+      kNew = y;
+    }
       else // if k < 0
-	{
-	  do
-	    {
-	      randA = ZeroOneDistribution(*GetMt19937Generator())
-		     *area(-0.05, u, posNegSwitch, 3);
-	      y = -12./(1. + 120.*randA);
+    {
+      do
+        {
+          randA = ZeroOneDistribution(*GetMt19937Generator())
+             *area(-0.05, u, posNegSwitch, 3);
+          y = -12./(1. + 120.*randA);
 
-	      fy = 0.1/(y*y);
-	      fyAct = function(u, y, process);
+          fy = 0.1/(y*y);
+          fyAct = function(u, y, process);
 
-	      x = ZeroOneDistribution(*GetMt19937Generator());
+          x = ZeroOneDistribution(*GetMt19937Generator());
 
-	    } while(x > fyAct/fy); 
-	  // reject if x is larger than the ratio fyAct/fy
-	  kNew = y;
-	}
+        } while(x > fyAct/fy); 
+      // reject if x is larger than the ratio fyAct/fy
+      kNew = y;
+    }
     }
   else if (process == 4)
     {
       // decide whether k shall be positive or negative 
       // if x (uniform on [0,1]) < area(k<0)/area(all k) then k < 0
       if (ZeroOneDistribution(*GetMt19937Generator()) < Neg.gqq/(Neg.gqq+Pos.gqq))
-	posNegSwitch = 0;
+    posNegSwitch = 0;
 
       if( posNegSwitch == 1 ) // if k > 0
-	{
-	  do
-	    {
-	      randA = ZeroOneDistribution(*GetMt19937Generator())
-		     *area(u/2., u, posNegSwitch, 4);
-	      y = 0.83333*(0.06*function(u, 0.05, process)+randA)
-		 /function(u, 0.05, process);
+    {
+      do
+        {
+          randA = ZeroOneDistribution(*GetMt19937Generator())
+             *area(u/2., u, posNegSwitch, 4);
+          y = 0.83333*(0.06*function(u, 0.05, process)+randA)
+         /function(u, 0.05, process);
 
-	      fy = 1.2*function(u, 0.05, process);
-	      fyAct = function(u, y, process);
+          fy = 1.2*function(u, 0.05, process);
+          fyAct = function(u, y, process);
 
-	      x = ZeroOneDistribution(*GetMt19937Generator());
+          x = ZeroOneDistribution(*GetMt19937Generator());
 
-	    } while (x > fyAct/fy); 
-	  // reject if x is larger than the ratio fyAct/fy
-	  kNew = y;
-	}
+        } while (x > fyAct/fy); 
+      // reject if x is larger than the ratio fyAct/fy
+      kNew = y;
+    }
       else // if k < 0
-	{
-	  do
-	    {
-	      randA = ZeroOneDistribution(*GetMt19937Generator())
-		     *area(-0.05, u, posNegSwitch, 4);
-	      y = (2.5-u*log(7.81082*pow(10., -6.)*exp(14.5/u)
-			  +(-115.883+113.566*u)*randA))/(1.-0.98*u);
+    {
+      do
+        {
+          randA = ZeroOneDistribution(*GetMt19937Generator())
+             *area(-0.05, u, posNegSwitch, 4);
+          y = (2.5-u*log(7.81082*pow(10., -6.)*exp(14.5/u)
+              +(-115.883+113.566*u)*randA))/(1.-0.98*u);
 
-	      fy = 0.98*exp((1.-1./u)*(-2.5+y))/u;
-	      fyAct = function(u, y, process);
+          fy = 0.98*exp((1.-1./u)*(-2.5+y))/u;
+          fyAct = function(u, y, process);
 
-	      x = ZeroOneDistribution(*GetMt19937Generator());
+          x = ZeroOneDistribution(*GetMt19937Generator());
 
-	    } while (x > fyAct/fy); 
-	  // reject if x is larger than the ratio fyAct/fy
-	  kNew = y;
-	}
+        } while (x > fyAct/fy); 
+      // reject if x is larger than the ratio fyAct/fy
+      kNew = y;
+    }
     }
   else
     {
@@ -944,9 +1160,9 @@ double Martini::area(double y, double u, int posNegSwitch, int process)
   if (process == 1)
     {
       if (posNegSwitch == 1)
-	return (0.5299 - 0.025/y + 0.01*log(y));
+    return (0.5299 - 0.025/y + 0.01*log(y));
       else 
-	return (-0.002083-0.025/y);
+    return (-0.002083-0.025/y);
     }
   else if (process == 2)
     {
@@ -955,17 +1171,17 @@ double Martini::area(double y, double u, int posNegSwitch, int process)
   else if (process == 3)
     {
       if (posNegSwitch == 1)
-	return (2.05991 - 0.1/y + 0.02*log(y));
+    return (2.05991 - 0.1/y + 0.02*log(y));
       else 
-	return (-0.008333 - 0.1/y);
+    return (-0.008333 - 0.1/y);
     }      
   else if (process == 4)
     {
       if (posNegSwitch == 1)
-	return (1.2*function(u, 0.05, process)*(y-0.05));
+    return (1.2*function(u, 0.05, process)*(y-0.05));
       else 
-	return ((6.8778*pow(10., -8.)*exp(14.5/u)
-		 -0.008805*exp((2.5-y+0.98*u*y)/u))/(1.0204-u));
+    return ((6.8778*pow(10., -8.)*exp(14.5/u)
+         -0.008805*exp((2.5-y+0.98*u*y)/u))/(1.0204-u));
     }      
 
   return 0.;
@@ -981,6 +1197,81 @@ double Martini::function(double u, double y, int process)
   return 0.;
 }
 
+bool Martini::isCoherent(Parton& pIn, int sibling, double T) {
+  bool coherentNow = false;
+  const weak_ptr<PartonShower> pShower = pIn.shower();
+  auto shower = pShower.lock();
+
+  PartonShower::edge_iterator eIt,eEnd;
+  for (eIt = shower->edges_begin(), eEnd = shower->edges_end(); eIt != eEnd; ++eIt) {
+    if (eIt->target().outdeg() < 1) {
+
+      auto p =shower->GetParton(*eIt);
+      if (p->plabel() == sibling) {
+
+        // synchronize the status of coherence with its sibling
+        if(p->has_user_info<MARTINIUserInfo>()) {
+          bool coherentSibling = p->user_info<MARTINIUserInfo>().coherent();
+          if (!coherentSibling) return coherentSibling;
+        }
+        else{
+          JSWARN << "MARTINIUserInfo not set!!" << " plabel:" << p->plabel()
+                 << " Make this parton in de-coherent state";
+          return false;
+        }
+
+        // check the sibling is out of energy loss modules
+        bool activeCoherent = ( fabs(p->x_in().t() - pIn.x_in().t()) < 0.015 );
+        if (!activeCoherent) return activeCoherent;
+
+        JSDEBUG << "  [Sibling]" << p->plabel() << " " << p->pid()
+                << " " << p->x_in().t() << " " << p->x_in().x();
+
+        // momentum at the spliting
+        FourVector pInitVec = pIn.user_info<MARTINIUserInfo>().p_at_split();
+        double pxInit = pInitVec.x();
+        double pyInit = pInitVec.y();
+        double pzInit = pInitVec.z();
+        double pInit = pInitVec.t();
+
+        if (pInit < 1e-2)
+          return false;
+
+        // spatial distance between two partons
+        double xDelta = pIn.x_in().x() - p->x_in().x();
+        double yDelta = pIn.x_in().x() - p->x_in().x();
+        double zDelta = pIn.x_in().x() - p->x_in().x();
+
+        // cross product of pInit and rDelta
+        double xCrox = yDelta*pzInit - zDelta*pyInit;
+        double yCrox = zDelta*pxInit - xDelta*pzInit;
+        double zCrox = xDelta*pyInit - yDelta*pxInit;
+
+        // transverse distance with respect to original parton
+        double rPerp = sqrt(xCrox*xCrox + yCrox*yCrox + zCrox*zCrox)/pInit;
+
+        // momentum difference between two partons
+        double pxDelta = pIn.px() - p->px();
+        double pyDelta = pIn.py() - p->py();
+        double pzDelta = pIn.pz() - p->pz();
+
+        // cross product of pInit and pDelta
+        double pxCrox = pyDelta*pzInit - pzDelta*pyInit;
+        double pyCrox = pzDelta*pxInit - pxDelta*pzInit;
+        double pzCrox = pxDelta*pyInit - pyDelta*pxInit;
+
+        // transverse momentum with respect to original parton
+        double pPerp = sqrt(pxCrox*pxCrox + pyCrox*pyCrox + pzCrox*pzCrox)/pInit;
+
+        double Crperp = 0.25*pow(p->e()/T, 0.11);
+        if (rPerp*pPerp < Crperp*hbarc)
+          return true;
+      }
+    }
+  }
+
+  return coherentNow;
+}
 RateElastic Martini::getRateElasTotal(double pRest, double T)
 {
   // compute the total transition rate in GeV, integrated over k, omega
@@ -1005,8 +1296,8 @@ RateElastic Martini::getRateElasTotal(double pRest, double T)
   for (int i=0; i<2; i++)
     for (int j=0; j<6; j++)
       {
-	c[i][j] = 0.;
-	d[i][j] = 0.;
+    c[i][j] = 0.;
+    d[i][j] = 0.;
       }
 
   if ( alpha_s >= 0.15 && alpha_s < 0.18 )
@@ -1092,11 +1383,11 @@ RateElastic Martini::getRateElasTotal(double pRest, double T)
     }
 
   rateLower = T*(c[0][0]             + c[0][1]/pow(u, 4.) - 
-		 c[0][2]/pow(u, 3.)  - c[0][3]/pow(u, 2.) + 
-		 c[0][4]/pow(u, 1.5) - c[0][5]/u);
+         c[0][2]/pow(u, 3.)  - c[0][3]/pow(u, 2.) + 
+         c[0][4]/pow(u, 1.5) - c[0][5]/u);
   rateUpper = T*(c[1][0]             + c[1][1]/pow(u, 4.) - 
-		 c[1][2]/pow(u, 3.)  - c[1][3]/pow(u, 2.) + 
-		 c[1][4]/pow(u, 1.5) - c[1][5]/u);
+         c[1][2]/pow(u, 3.)  - c[1][3]/pow(u, 2.) + 
+         c[1][4]/pow(u, 1.5) - c[1][5]/u);
 
   rate.qq = (1.-alphaFrac)*rateLower+alphaFrac*rateUpper;
   rate.qq *= nf/3.; // adjust number of flavors
@@ -1186,11 +1477,11 @@ RateElastic Martini::getRateElasTotal(double pRest, double T)
     }
 
   rateLower = T*(d[1][0]             + d[0][1]/pow(u, 4.) -
-		 d[0][2]/pow(u, 3.)  - d[0][3]/pow(u, 2.) +
-		 d[0][4]/pow(u, 1.5) - d[0][5]/u);
+         d[0][2]/pow(u, 3.)  - d[0][3]/pow(u, 2.) +
+         d[0][4]/pow(u, 1.5) - d[0][5]/u);
   rateUpper = T*(d[1][0]             + d[1][1]/pow(u, 4.) -
-		 d[1][2]/pow(u, 3.)  - d[1][3]/pow(u, 2.) +
-		 d[1][4]/pow(u, 1.5) - d[1][5]/u);
+         d[1][2]/pow(u, 3.)  - d[1][3]/pow(u, 2.) +
+         d[1][4]/pow(u, 1.5) - d[1][5]/u);
       
   rate.qg = (1.-alphaFrac)*rateLower+alphaFrac*rateUpper;
   rate.qg /= 3.; // historic reasons
@@ -1214,8 +1505,8 @@ RateElastic Martini::getRateElasPos(double u, double T)
   for (int i=0; i<2; i++)
     for (int j=0; j<6; j++)
       {
-	c[i][j] = 0.;
-	d[i][j] = 0.;
+    c[i][j] = 0.;
+    d[i][j] = 0.;
       }
 
   if ( alpha_s >= 0.15 && alpha_s < 0.18 )
@@ -1301,11 +1592,11 @@ RateElastic Martini::getRateElasPos(double u, double T)
     }
 
   rateLower = T*(c[0][0]             + c[0][1]/pow(u, 4.) -
-		 c[0][2]/pow(u, 3.)  - c[0][3]/pow(u, 2.) +
-		 c[0][4]/pow(u, 1.5) - c[0][5]/u);
+         c[0][2]/pow(u, 3.)  - c[0][3]/pow(u, 2.) +
+         c[0][4]/pow(u, 1.5) - c[0][5]/u);
   rateUpper = T*(c[1][0]             + c[1][1]/pow(u, 4.) -
-		 c[1][2]/pow(u, 3.)  - c[1][3]/pow(u, 2.) +
-		 c[1][4]/pow(u, 1.5) - c[1][5]/u);
+         c[1][2]/pow(u, 3.)  - c[1][3]/pow(u, 2.) +
+         c[1][4]/pow(u, 1.5) - c[1][5]/u);
 
   rate.qq = (1.-alphaFrac)*rateLower+alphaFrac*rateUpper;
   rate.qq *= nf/3.; // adjust number of flavors
@@ -1395,11 +1686,11 @@ RateElastic Martini::getRateElasPos(double u, double T)
     }
 
   rateLower = T*(d[0][0]             + d[0][1]/pow(u, 4.) -
-		 d[0][2]/pow(u, 3.)  - d[0][3]/pow(u, 2.) +
-		 d[0][4]/pow(u, 1.5) - d[0][5]/u);
+         d[0][2]/pow(u, 3.)  - d[0][3]/pow(u, 2.) +
+         d[0][4]/pow(u, 1.5) - d[0][5]/u);
   rateUpper = T*(d[1][0]             + d[1][1]/pow(u, 4.) -
-		 d[1][2]/pow(u, 3.)  - d[1][3]/pow(u, 2.) +
-		 d[1][4]/pow(u, 1.5) - d[1][5]/u);
+         d[1][2]/pow(u, 3.)  - d[1][3]/pow(u, 2.) +
+         d[1][4]/pow(u, 1.5) - d[1][5]/u);
       
   rate.qg = (1.-alphaFrac)*rateLower+alphaFrac*rateUpper;
   rate.qg /= 3.; // historic reasons
@@ -1423,8 +1714,8 @@ RateElastic Martini::getRateElasNeg(double u, double T)
   for (int i=0; i<2; i++)
     for (int j=0; j<6; j++)
       {
-	c[i][j] = 0.;
-	d[i][j] = 0.;
+    c[i][j] = 0.;
+    d[i][j] = 0.;
       }
 
   if ( alpha_s >= 0.15 && alpha_s < 0.18 )
@@ -1510,11 +1801,11 @@ RateElastic Martini::getRateElasNeg(double u, double T)
     }
 
   rateLower = T*(c[0][0]             + c[0][1]/pow(u, 4.) -
-		 c[0][2]/pow(u, 3.)  - c[0][3]/pow(u, 2.) +
-		 c[0][4]/pow(u, 1.5) - c[0][5]/u);
+         c[0][2]/pow(u, 3.)  - c[0][3]/pow(u, 2.) +
+         c[0][4]/pow(u, 1.5) - c[0][5]/u);
   rateUpper = T*(c[1][0]             + c[1][1]/pow(u, 4.) -
-		 c[1][2]/pow(u, 3.)  - c[1][3]/pow(u, 2.) +
-		 c[1][4]/pow(u, 1.5) - c[1][5]/u);
+         c[1][2]/pow(u, 3.)  - c[1][3]/pow(u, 2.) +
+         c[1][4]/pow(u, 1.5) - c[1][5]/u);
 
   rate.qq = (1.-alphaFrac)*rateLower+alphaFrac*rateUpper;
   rate.qq *= nf/3.; // adjust number of flavors
@@ -1604,11 +1895,11 @@ RateElastic Martini::getRateElasNeg(double u, double T)
     }
 
   rateLower = T*(d[0][0]             + d[0][1]/pow(u, 4.) -
-		 d[0][2]/pow(u, 3.)  - d[0][3]/pow(u, 2.) +
-		 d[0][4]/pow(u, 1.5) - d[0][5]/u);
+         d[0][2]/pow(u, 3.)  - d[0][3]/pow(u, 2.) +
+         d[0][4]/pow(u, 1.5) - d[0][5]/u);
   rateUpper = T*(d[1][0]             + d[1][1]/pow(u, 4.) -
-		 d[1][2]/pow(u, 3.)  - d[1][3]/pow(u, 2.) +
-		 d[1][4]/pow(u, 1.5) - d[1][5]/u);
+         d[1][2]/pow(u, 3.)  - d[1][3]/pow(u, 2.) +
+         d[1][4]/pow(u, 1.5) - d[1][5]/u);
       
   rate.qg = (1.-alphaFrac)*rateLower+alphaFrac*rateUpper;
   rate.qg /= 3.; // historic reasons
@@ -1623,11 +1914,11 @@ RateConversion Martini::getRateConv(double pRest, double T)
   RateConversion rate;
 
   rate.qg     = 4./3.*2.*M_PI*alpha_s*alpha_s*T*T/(3.*pRest)
-	       *(0.5*log(pRest*T/((1./6.)*pow(g*T, 2.)))-0.36149);
+           *(0.5*log(pRest*T/((1./6.)*pow(g*T, 2.)))-0.36149);
   rate.gq     = nf*3./8.*4./3.*2.*M_PI*alpha_s*alpha_s*T*T/(3.*pRest)
-	       *(0.5*log(pRest*T/((1./6.)*pow(g*T, 2.)))-0.36149);
+           *(0.5*log(pRest*T/((1./6.)*pow(g*T, 2.)))-0.36149);
   rate.qgamma = 2.*M_PI*alpha_s*alpha_em*T*T/(3.*pRest)
-	       *(0.5*log(pRest*T/((1./6.)*pow(g*T, 2.)))-0.36149);
+           *(0.5*log(pRest*T/((1./6.)*pow(g*T, 2.)))-0.36149);
 
   return rate;
 }
@@ -1661,105 +1952,105 @@ double Martini::getEnergyTransfer(double pRest, double T, int process)
       // decide whether k shall be positive or negative 
       // if x (uniform on [0,1]) < area(k<0)/area(all k) then k < 0
       if (process == 5)
-	{
-	  if (ZeroOneDistribution(*GetMt19937Generator()) < Neg.qq/(Neg.qq+Pos.qq))
-	    posNegSwitch = 0;
-	}
+    {
+      if (ZeroOneDistribution(*GetMt19937Generator()) < Neg.qq/(Neg.qq+Pos.qq))
+        posNegSwitch = 0;
+    }
       else
-	{
-	  if (ZeroOneDistribution(*GetMt19937Generator()) < Neg.gq/(Neg.gq+Pos.gq))
-	    posNegSwitch = 0;
-	}
+    {
+      if (ZeroOneDistribution(*GetMt19937Generator()) < Neg.gq/(Neg.gq+Pos.gq))
+        posNegSwitch = 0;
+    }
 
       if (posNegSwitch == 1) // if omega > 0
-	{
-	  do
-	    {
-	      randA = ZeroOneDistribution(*GetMt19937Generator())
-		     *areaOmega(u, posNegSwitch, process);
-	      y = exp((-1.41428*pow(10., 9.)*alpha_s
-		      - 8.08158*pow(10., 8.)*alpha_s*alpha_s + 2.02327*pow(10., 9.)*randA)
-		      /(alpha_s*(4.72097*pow(10., 8.) + 2.6977*pow(10., 8.)*alpha_s)));
+    {
+      do
+        {
+          randA = ZeroOneDistribution(*GetMt19937Generator())
+             *areaOmega(u, posNegSwitch, process);
+          y = exp((-1.41428*pow(10., 9.)*alpha_s
+              - 8.08158*pow(10., 8.)*alpha_s*alpha_s + 2.02327*pow(10., 9.)*randA)
+              /(alpha_s*(4.72097*pow(10., 8.) + 2.6977*pow(10., 8.)*alpha_s)));
 
-	      fy = alpha_s/0.15*(0.035 + alpha_s*0.02)/sqrt(y*y);
-	      fyAct = functionOmega(u, y, process);
+          fy = alpha_s/0.15*(0.035 + alpha_s*0.02)/sqrt(y*y);
+          fyAct = functionOmega(u, y, process);
 
-	      x = ZeroOneDistribution(*GetMt19937Generator());
+          x = ZeroOneDistribution(*GetMt19937Generator());
 
-	    } while (x > fyAct/fy); 
-	  // reject if x is larger than the ratio fyAct/fy
-	  omega = y;
-	}
+        } while (x > fyAct/fy); 
+      // reject if x is larger than the ratio fyAct/fy
+      omega = y;
+    }
       else // if omega < 0
-	{
-	  do
-	    {
-	      randA = ZeroOneDistribution(*GetMt19937Generator())
-		     *areaOmega(-0.05, posNegSwitch, process);
-	      y = -12.*exp(-30.*randA/(alpha_s*(7.+ 4.*alpha_s)));
+    {
+      do
+        {
+          randA = ZeroOneDistribution(*GetMt19937Generator())
+             *areaOmega(-0.05, posNegSwitch, process);
+          y = -12.*exp(-30.*randA/(alpha_s*(7.+ 4.*alpha_s)));
 
-	      fy = alpha_s/0.15*(0.035 + alpha_s*0.02)/sqrt(y*y);
-	      fyAct = functionOmega(u, y, process);
+          fy = alpha_s/0.15*(0.035 + alpha_s*0.02)/sqrt(y*y);
+          fyAct = functionOmega(u, y, process);
 
-	      x = ZeroOneDistribution(*GetMt19937Generator());
+          x = ZeroOneDistribution(*GetMt19937Generator());
 
-	    } while (x > fyAct/fy); 
-	  // reject if x is larger than the ratio fyAct/fy
-	  omega = y;
-	}
+        } while (x > fyAct/fy); 
+      // reject if x is larger than the ratio fyAct/fy
+      omega = y;
+    }
     }
   else if (process == 6 || process == 8) // for qg or gg
     {
       // decide whether k shall be positive or negative 
       // if x (uniform on [0,1]) < area(k<0)/area(all k) then k < 0
       if (process == 6)
-	{
-	  if (ZeroOneDistribution(*GetMt19937Generator()) < Neg.qg/(Neg.qg+Pos.qg))
-	    posNegSwitch = 0;
-	}
+    {
+      if (ZeroOneDistribution(*GetMt19937Generator()) < Neg.qg/(Neg.qg+Pos.qg))
+        posNegSwitch = 0;
+    }
       else
-	{
-	  if (ZeroOneDistribution(*GetMt19937Generator()) < Neg.gg/(Neg.gg+Pos.gg))
-	    posNegSwitch = 0;
-	}
+    {
+      if (ZeroOneDistribution(*GetMt19937Generator()) < Neg.gg/(Neg.gg+Pos.gg))
+        posNegSwitch = 0;
+    }
 
       if( posNegSwitch == 1 ) // if omega > 0
-	{
-	  do
-	    {
-	      randA = ZeroOneDistribution(*GetMt19937Generator())
-		     *areaOmega(u, posNegSwitch, process);
-	      y = exp((-2.32591*pow(10.,17.)*alpha_s
-		      - 1.32909*pow(10.,17.)*alpha_s*alpha_s + 2.2183*pow(10.,17.)*randA)
-		      /(alpha_s*(7.76406*pow(10.,16.) + 4.43661*pow(10.,16.)*alpha_s)));
+    {
+      do
+        {
+          randA = ZeroOneDistribution(*GetMt19937Generator())
+             *areaOmega(u, posNegSwitch, process);
+          y = exp((-2.32591*pow(10.,17.)*alpha_s
+              - 1.32909*pow(10.,17.)*alpha_s*alpha_s + 2.2183*pow(10.,17.)*randA)
+              /(alpha_s*(7.76406*pow(10.,16.) + 4.43661*pow(10.,16.)*alpha_s)));
 
-	      fy = 1.5*alpha_s/0.15*(0.035 + alpha_s*0.02)/sqrt(y*y);
-	      fyAct = functionOmega(u, y, process);
+          fy = 1.5*alpha_s/0.15*(0.035 + alpha_s*0.02)/sqrt(y*y);
+          fyAct = functionOmega(u, y, process);
 
-	      x = ZeroOneDistribution(*GetMt19937Generator());
+          x = ZeroOneDistribution(*GetMt19937Generator());
 
-	    } while (x > fyAct/fy); 
-	  // reject if x is larger than the ratio fyAct/fy
-	  omega = y;
-	}
+        } while (x > fyAct/fy); 
+      // reject if x is larger than the ratio fyAct/fy
+      omega = y;
+    }
       else // if omega < 0
-	{
-	  do
-	    {
-	      randA = ZeroOneDistribution(*GetMt19937Generator())
-		     *areaOmega(-0.05, posNegSwitch, process);
-	      y = -12.*exp(-2.81475*pow(10.,15.)*randA
-			 /(alpha_s*(9.85162*pow(10.,14.) + 5.6295*pow(10.,14.)*alpha_s)));
+    {
+      do
+        {
+          randA = ZeroOneDistribution(*GetMt19937Generator())
+             *areaOmega(-0.05, posNegSwitch, process);
+          y = -12.*exp(-2.81475*pow(10.,15.)*randA
+             /(alpha_s*(9.85162*pow(10.,14.) + 5.6295*pow(10.,14.)*alpha_s)));
 
-	      fy = 1.5*alpha_s/0.15*(0.035 + alpha_s*0.02)/sqrt(y*y);
-	      fyAct = functionOmega(u, y, process);
+          fy = 1.5*alpha_s/0.15*(0.035 + alpha_s*0.02)/sqrt(y*y);
+          fyAct = functionOmega(u, y, process);
 
-	      x = ZeroOneDistribution(*GetMt19937Generator());
+          x = ZeroOneDistribution(*GetMt19937Generator());
 
-	    } while (x > fyAct/fy); 
-	  // reject if x is larger than the ratio fyAct/fy
-	  omega = y;
-	}
+        } while (x > fyAct/fy); 
+      // reject if x is larger than the ratio fyAct/fy
+      omega = y;
+    }
     }
   else
     {
@@ -1794,41 +2085,41 @@ double Martini::getMomentumTransfer(double pRest, double omega, double T, int pr
   if (omega < 10. && omega > -3.)
     {
       if (process == 5 || process == 7) // for qq or gq
-	{
-	  A = (0.7+alpha_s)*0.0014
-	     *(1000.+40./sqrt(omega*omega)+10.5*pow(omega, 4.))*alpha_s;
-	  B = 2.*sqrt(omega*omega)+0.01;
-	}
+    {
+      A = (0.7+alpha_s)*0.0014
+         *(1000.+40./sqrt(omega*omega)+10.5*pow(omega, 4.))*alpha_s;
+      B = 2.*sqrt(omega*omega)+0.01;
+    }
       else if (process == 6 || process == 8) // for qg or gg
-	{
-	  A = (0.7+alpha_s)*0.0022
-	     *(1000.+40./sqrt(omega*omega)+10.5* pow(omega, 4.))*alpha_s;
-	  B = 2.*sqrt(omega*omega)+0.002;
-	}
+    {
+      A = (0.7+alpha_s)*0.0022
+         *(1000.+40./sqrt(omega*omega)+10.5* pow(omega, 4.))*alpha_s;
+      B = 2.*sqrt(omega*omega)+0.002;
+    }
       else
-	{
-	  JSWARN << "Invalid process number (" << process << ")";
+    {
+      JSWARN << "Invalid process number (" << process << ")";
 
-	  A = 0.;
-	  B = 0.;
-	}
+      A = 0.;
+      B = 0.;
+    }
 
       do
-	{
-	  randA = ZeroOneDistribution(*GetMt19937Generator())*areaQ(u, omega, process);
-	  y = pow(B, 0.25)*sqrt(tan((2.*sqrt(B)*randA+A*atan(omega*omega/sqrt(B)))/A));
+    {
+      randA = ZeroOneDistribution(*GetMt19937Generator())*areaQ(u, omega, process);
+      y = pow(B, 0.25)*sqrt(tan((2.*sqrt(B)*randA+A*atan(omega*omega/sqrt(B)))/A));
 
-	  fy = A*y/(pow(y, 4.)+B);
-	  fyAct = functionQ(u, omega, y, process);
+      fy = A*y/(pow(y, 4.)+B);
+      fyAct = functionQ(u, omega, y, process);
 
-	  x = ZeroOneDistribution(*GetMt19937Generator());
+      x = ZeroOneDistribution(*GetMt19937Generator());
 
-	} while (x > fyAct/fy); 
+    } while (x > fyAct/fy); 
       // reject if x is larger than the ratio fyAct/fy
       q = y;
     }
   // large omega using the Metropolis method
-  else
+  else if (omega < 40.)
     {
       double g = 0, g_new = 0;
       double ratio;
@@ -1841,41 +2132,46 @@ double Martini::getMomentumTransfer(double pRest, double omega, double T, int pr
       int count = 0;
       // randomly select initial values of q=y, such that
       do
-	{
-	  y = y_min+ZeroOneDistribution(*GetMt19937Generator())*(y_max-y_min);
-	  g = functionQ(u, omega, y, process);
+    {
+      y = y_min+ZeroOneDistribution(*GetMt19937Generator())*(y_max-y_min);
+      g = functionQ(u, omega, y, process);
 
-	  // if no y having non-zero g is found, give up here.
-	  if(count > 100) return 0.;
-	  count++;
-	} while (g == 0.);
+      // if no y having non-zero g is found, give up here.
+      if(count > 100) return 0.;
+      count++;
+    } while (g == 0.);
     
       // number of steps in the Markov chain
       const int n_steps = 500;
     
       for(int i=0; i<n_steps; i++)
-	{
-	  do
-	    {
-	      y_new = y_min+ZeroOneDistribution(*GetMt19937Generator())*(y_max-y_min);
-	    }
-	  while (y_new < y_min || y_new > y_max);
-	  // check that the new value is in range
+    {
+      do
+        {
+          y_new = y_min+ZeroOneDistribution(*GetMt19937Generator())*(y_max-y_min);
+        }
+      while (y_new < y_min || y_new > y_max);
+      // check that the new value is in range
 
-	  // calculate the function at the proposed point
-	  g_new = functionQ(u, omega, y_new, process);
-	  // ratio of g(y_new)/g(y)
-	  ratio = g_new/g;
+      // calculate the function at the proposed point
+      g_new = functionQ(u, omega, y_new, process);
+      // ratio of g(y_new)/g(y)
+      ratio = g_new/g;
 
-	  // accept if probability g(y_new)/g(y) is larger than randon number
-	  if (ZeroOneDistribution(*GetMt19937Generator()) < ratio)
-	    {
-	      y = y_new;
-	      g = g_new;
-	    }
-	}
+      // accept if probability g(y_new)/g(y) is larger than randon number
+      if (ZeroOneDistribution(*GetMt19937Generator()) < ratio)
+        {
+          y = y_new;
+          g = g_new;
+        }
+    }
       q = y;
     }
+  // set collinear for too large omega 
+  else 
+  {
+    q = omega;
+  }
   
   return q*T;  // q*T is in [GeV]
 }
@@ -1887,16 +2183,16 @@ double Martini::areaOmega(double u, int posNegSwitch, int process)
   if (process == 5 || process == 7)
     {
       if (posNegSwitch == 1)
-	return (0.0333333*alpha_s*(7.+ 4.*alpha_s)*(2.99573+log(u)));
+    return (0.0333333*alpha_s*(7.+ 4.*alpha_s)*(2.99573+log(u)));
       else 
-	return (-0.133333*alpha_s*(1.75+alpha_s)*log(-0.0833333*u));
+    return (-0.133333*alpha_s*(1.75+alpha_s)*log(-0.0833333*u));
     }
   else if (process == 6 || process == 8)
     {
       if (posNegSwitch == 1)
-	return (0.05*alpha_s*(7.+ 4.*alpha_s)*(2.99573+log(u)));
+    return (0.05*alpha_s*(7.+ 4.*alpha_s)*(2.99573+log(u)));
       else 
-	return (-0.2*alpha_s*(1.75+alpha_s)*log(-0.0833333*u));
+    return (-0.2*alpha_s*(1.75+alpha_s)*log(-0.0833333*u));
     }
   else
     {
@@ -1914,13 +2210,13 @@ double Martini::areaQ(double u, double omega, int process)
   if (process == 5 || process == 7)
     {
       A = (0.7+alpha_s-0.3)*0.0014*alpha_s
-	 *(1000.+40./sqrt(omega*omega)+10.5*pow(omega, 4.));
+     *(1000.+40./sqrt(omega*omega)+10.5*pow(omega, 4.));
       B = 2.*sqrt(omega*omega)+0.01;
     }
   else if (process == 6 || process == 8)
     {
       A = (0.7+alpha_s-0.3)*0.0022*alpha_s
-	 *(1000.+40./sqrt(omega*omega)+10.5*pow(omega, 4.));
+     *(1000.+40./sqrt(omega*omega)+10.5*pow(omega, 4.));
       B = 2.*sqrt(omega*omega)+0.002;
     }
   else
@@ -1983,7 +2279,7 @@ FourVector Martini::getNewMomentumElas(FourVector pVec, double omega, double q)
   qtVec.Set(etVec.x()*qt, etVec.y()*qt, etVec.z()*qt, etVec.t()*qt);
   // the longuitudinal transferred momentum vector
   qlVec.Set(pVec.x()/pAbs*ql, pVec.y()/pAbs*ql,
-	    pVec.z()/pAbs*ql, pVec.t()/pAbs*ql);
+        pVec.z()/pAbs*ql, pVec.t()/pAbs*ql);
 
   pVecNewTemp = pVec;
   pVecNewTemp -= qtVec;  // change transverse momentum
@@ -2016,18 +2312,166 @@ FourVector Martini::getNewMomentumElas(FourVector pVec, double omega, double q)
   return pVecNew;
 }
 
+FourVector Martini::getThermalVec(FourVector qVec, double T, int id)
+{
+  int kind = 1;               // 1: fermion, 2: boson
+  if (fabs(id) < 4)  kind = 1;
+  else if (id == 21) kind = -1;
+
+  FourVector kVec;            // new thermal parton's momentum
+  double k, k_min;            // (minimum) mangitude of thermal momentum
+  double cosTh, sinTh;        // angle between vector q and k
+  double u1[3], u2[3];        // unit vector in rotation axis
+  double M1[3][3], M2[3][3];  // rotation matrix
+  double xx, yy, zz, tt;      // components of 4-vector
+
+  double q = sqrt(qVec.x()*qVec.x()+qVec.y()*qVec.y()+qVec.z()*qVec.z());
+  double omega = qVec.t();
+
+  // if momentum transfer is on-shell or time-like
+  // return null FourVector
+  if (q - fabs(omega) < 1e-5)
+  {
+    return FourVector( 0., 0., 0., 0.);
+  }
+
+  // minimum momenum of thermal parton k that makes recoil parton on-shell
+  k_min = (q-omega)/2.;
+
+  // sampled magnitude of thermal momentum
+  k = getThermal(k_min, T, kind);
+
+  cosTh = (2.*k*omega - q*q + omega*omega)/(2.*k*q);
+  sinTh = sqrt(1.-cosTh*cosTh);
+
+  // choose a unit vector perpendicular to qVec with which qVec is rotated by theta
+  // to get the direction of thermal parton kVec
+  double norm = sqrt( qVec.x()*qVec.x() + qVec.y()*qVec.y() );
+  if (norm > 1e-10) 
+  {
+    u1[0] = qVec.y()/norm;
+    u1[1] = -qVec.x()/norm;
+    u1[2] = 0.;
+  }
+  // if momentum transfer is z-direction u1 is set to x-direction
+  else 
+  { 
+    u1[0] = 1.;
+    u1[1] = 0.;
+    u1[2] = 0.;
+  }
+
+  // define the rotation matrix for theta rotations 
+  M1[0][0]=u1[0]*u1[0]*(1.-cosTh)+cosTh;
+  M1[1][0]=u1[0]*u1[1]*(1.-cosTh)-u1[2]*sinTh;
+  M1[2][0]=u1[0]*u1[2]*(1.-cosTh)+u1[1]*sinTh;
+
+  M1[0][1]=u1[1]*u1[0]*(1.-cosTh)+u1[2]*sinTh;
+  M1[1][1]=u1[1]*u1[1]*(1.-cosTh)+cosTh;
+  M1[2][1]=u1[1]*u1[2]*(1.-cosTh)-u1[0]*sinTh;
+
+  M1[0][2]=u1[2]*u1[0]*(1.-cosTh)-u1[1]*sinTh;
+  M1[1][2]=u1[2]*u1[1]*(1.-cosTh)+u1[0]*sinTh;
+  M1[2][2]=u1[2]*u1[2]*(1.-cosTh)+cosTh;
+
+  // get thermal parton's momentum by rotating theta from qVec
+  xx = M1[0][0]*qVec.x()+M1[0][1]*qVec.y()+M1[0][2]*qVec.z();
+  yy = M1[1][0]*qVec.x()+M1[1][1]*qVec.y()+M1[1][2]*qVec.z();
+  zz = M1[2][0]*qVec.x()+M1[2][1]*qVec.y()+M1[2][2]*qVec.z();
+
+  // momentum is normalized to k
+  tt = sqrt( xx*xx + yy*yy + zz*zz );
+  xx /= tt/k;
+  yy /= tt/k;
+  zz /= tt/k;
+
+  kVec.Set( xx, yy, zz, k );
+
+
+  // rotate kVec in random azimuthal angle with respect to the momentum transfer qVec
+  double phi=2.*M_PI*ZeroOneDistribution(*GetMt19937Generator());
+  
+  xx = qVec.x();
+  yy = qVec.y();
+  zz = qVec.z();
+  tt = sqrt( xx*xx + yy*yy + zz*zz );
+
+  u2[0] = xx/tt;
+  u2[1] = yy/tt;
+  u2[2] = zz/tt;
+
+  M2[0][0]=u2[0]*u2[0]*(1.-cos(phi))+cos(phi);
+  M2[1][0]=u2[0]*u2[1]*(1.-cos(phi))-u2[2]*sin(phi);
+  M2[2][0]=u2[0]*u2[2]*(1.-cos(phi))+u2[1]*sin(phi);
+
+  M2[0][1]=u2[1]*u2[0]*(1.-cos(phi))+u2[2]*sin(phi);
+  M2[1][1]=u2[1]*u2[1]*(1.-cos(phi))+cos(phi);
+  M2[2][1]=u2[1]*u2[2]*(1.-cos(phi))-u2[0]*sin(phi);
+
+  M2[0][2]=u2[2]*u2[0]*(1.-cos(phi))-u2[1]*sin(phi);
+  M2[1][2]=u2[2]*u2[1]*(1.-cos(phi))+u2[0]*sin(phi);
+  M2[2][2]=u2[2]*u2[2]*(1.-cos(phi))+cos(phi);
+
+  xx = M2[0][0]*kVec.x()+M2[0][1]*kVec.y()+M2[0][2]*kVec.z();
+  yy = M2[1][0]*kVec.x()+M2[1][1]*kVec.y()+M2[1][2]*kVec.z();
+  zz = M2[2][0]*kVec.x()+M2[2][1]*kVec.y()+M2[2][2]*kVec.z();
+  tt = sqrt( xx*xx + yy*yy + zz*zz );
+
+  kVec.Set( xx, yy, zz ,tt );
+
+  return kVec;
+}
+
+double Martini::getThermal(double k_min, double T, int kind)
+{
+  // this algorithm uses 5.5/(1+px2) as envelope function and then uses the rejection method
+  // tan (Pi/2*x) is the inverse of the integral of the envelope function
+  // this can be improved
+  // kind: -1 = Boson
+  //        1 = Fermion
+  double p;
+  double gm = 5.5;
+  int repeat = 1;
+  double gx = 0.;
+  double px;
+  double px2;
+  double ex;
+
+  do 
+  {
+    px = k_min/T + tan (M_PI * ZeroOneDistribution(*GetMt19937Generator()) / 2.0);
+    px2 = px*px;
+    ex = sqrt (px2);
+    if (kind == 0) gx = px2 * (1.0 + px2) * exp (- ex);
+    else if (kind == -1) gx = px2 * (1.0 + px2) * 1/(exp(ex)-1);
+    else if (kind == +1) gx = px2 * (1.0 + px2) * 1/(exp(ex)+1);
+    if ( ZeroOneDistribution(*GetMt19937Generator()) < gx / gm)
+    {
+      repeat = 0;
+      p = ex;
+    } 
+  } while (repeat);   
+  
+  return p*T;  // p*T is in [GeV]
+}
+
 // Reads in the binary stored file of dGamma values
 void Martini::readRadiativeRate(Gamma_info *dat, dGammas *Gam)
 {
   FILE *rfile;
   string filename;
-  filename = PathToTables+"radgamma";
+  filename = PathToTables+"/radgamma";
 
   JSINFO << "Reading rates of inelastic collisions from file ";
   JSINFO << filename.c_str() << " ... ";
   size_t bytes_read;
 
   rfile = fopen(filename.c_str(), "rb"); 
+  if (rfile == NULL) {
+    JSWARN << "[readRadiativeRate]: ERROR: Unable to open file " << filename;
+    throw std::runtime_error("[readRadiativeRate]: ERROR: Unable to open Radiative rate file");
+  }
+
   bytes_read = fread((char *)(&dat->ddf), sizeof(double), 1, rfile);
   bytes_read = fread((char *)(&dat->dda), sizeof(double), 1, rfile);
   bytes_read = fread((char *)(&dat->dcf), sizeof(double), 1, rfile);
@@ -2071,8 +2515,8 @@ void Martini::readElasticRateOmega()
   double dGamma;
       
   // open files with data to read in:
-  filename[0] = PathToTables + "logEnDtrqq";
-  filename[1] = PathToTables + "logEnDtrqg";
+  filename[0] = PathToTables + "/logEnDtrqq";
+  filename[1] = PathToTables + "/logEnDtrqg";
   
   JSINFO << "Reading rates of elastic collisions from files";
   JSINFO << filename[0];
@@ -2126,8 +2570,8 @@ void Martini::readElasticRateQ()
   double dGamma;
       
   // open files with data to read in:
-  filename[0] = PathToTables + "logEnDqtrqq";
-  filename[1] = PathToTables + "logEnDqtrqg";
+  filename[0] = PathToTables + "/logEnDqtrqq";
+  filename[1] = PathToTables + "/logEnDqtrqg";
   
   JSINFO << "Reading rates of elastic collisions from files";
   JSINFO << filename[0];
@@ -2219,33 +2663,33 @@ double Martini::use_table(double p, double k, double dGamma[NP][NK], int which_k
   if (k < 2.)
     {
       if (k < -1)
-	{
-	  if (k < -2) b = 60.+5.*k;
-	  else b = 70.+10.*k;
-	}
+    {
+      if (k < -2) b = 60.+5.*k;
+      else b = 70.+10.*k;
+    }
       else
-	{
-	  if (k < 1.) b = 80. + 20.*k;
-	  else b = 90.+10.*k;
-	}
+    {
+      if (k < 1.) b = 80. + 20.*k;
+      else b = 90.+10.*k;
+    }
     }
   else if ( k < p-2. )
     { /* This is that tricky middle ground. */
       b = 190.-10.*log(1.000670700260932956l/ 
-		       (0.0003353501304664781l+(k-2.)/(p-4.))-1.);
+               (0.0003353501304664781l+(k-2.)/(p-4.))-1.);
     }
   else
     {
       if (k < p+1.)
-	{
-	  if (k < p-1.) b = 290. + 10.*(k-p);
-	  else  b = 300. + 20.*(k-p);
-	}
+    {
+      if (k < p-1.) b = 290. + 10.*(k-p);
+      else  b = 300. + 20.*(k-p);
+    }
       else
-	{
-	  if (k < p+2.) b = 310. + 10.*(k-p);
-	  else b = 320. + 5.*(k-p);
-	}
+    {
+      if (k < p+2.) b = 310. + 10.*(k-p);
+      else b = 320. + 5.*(k-p);
+    }
     }
 
   n_k = (int)b;
@@ -2256,35 +2700,35 @@ double Martini::use_table(double p, double k, double dGamma[NP][NK], int which_k
   if (std::abs(k) > 0.001) // Avoid division by 0, should never get asked for
     {
       switch (which_kind)
-	{
-	case 0:
-	  result /= k;
-	  if (k < 20.)
-	    result /= 1.-exp(-k);
-	  if (k > p-20.)
-	    result /= 1. + exp(k-p);
-	  break;
-	case 1:
-	  result /= p;
-	  if (k < 20.)
-	    result /= 1 + exp(-k);
-	  if (k > p-20.)
-	    result /= 1. + exp(k-p);
-	  break;
-	case 2:
-	  result /= k*(p-k)/p;
-	  if (k < 20.)
-	    result /= 1.-exp(-k);
-	  if (k > p-20.)
-	    result /= 1.-exp(k-p);
-	  break;
-	case 3:
-	  result /= k;
-	  if (k < 0) result = 0.;
-	  if (k > p-20.)
-	    result /= 1. + exp(k-p);
-	  break;
-	}
+    {
+    case 0:
+      result /= k;
+      if (k < 20.)
+        result /= 1.-exp(-k);
+      if (k > p-20.)
+        result /= 1. + exp(k-p);
+      break;
+    case 1:
+      result /= p;
+      if (k < 20.)
+        result /= 1 + exp(-k);
+      if (k > p-20.)
+        result /= 1. + exp(k-p);
+      break;
+    case 2:
+      result /= k*(p-k)/p;
+      if (k < 20.)
+        result /= 1.-exp(-k);
+      if (k > p-20.)
+        result /= 1.-exp(k-p);
+      break;
+    case 3:
+      result /= k;
+      if (k < 0) result = 0.;
+      if (k > p-20.)
+        result /= 1. + exp(k-p);
+      break;
+    }
     }
 
   return result;
@@ -2330,65 +2774,65 @@ double Martini::use_elastic_table_omega(double omega, int which_kind)
   if (omega > 0.) 
     {
       if (exp(ceil((log(omega)+5)/omegaStep)*omegaStep-5)
-	  != exp(floor((log(omega)+5)/omegaStep)*omegaStep-5))
-	omegaFrac = (omega - (exp(floor((log(omega)+5)/omegaStep)*omegaStep-5)))
-	  /((exp(ceil((log(omega)+5)/omegaStep)*omegaStep-5))
-	    - exp(floor((log(omega)+5)/omegaStep)*omegaStep-5));
+      != exp(floor((log(omega)+5)/omegaStep)*omegaStep-5))
+    omegaFrac = (omega - (exp(floor((log(omega)+5)/omegaStep)*omegaStep-5)))
+      /((exp(ceil((log(omega)+5)/omegaStep)*omegaStep-5))
+        - exp(floor((log(omega)+5)/omegaStep)*omegaStep-5));
       else omegaFrac = 0.;
     }
   else
     {
       if (exp(ceil((log(-omega)+5)/omegaStep)*omegaStep-5)
-	  != exp(floor((log(-omega)+5)/omegaStep)*omegaStep-5))
-	omegaFrac = (-omega - (exp(floor((log(-omega)+5)/omegaStep)*omegaStep-5)))
-	  /((exp(ceil((log(-omega)+5)/omegaStep)*omegaStep-5))
-	    -exp(floor((log(-omega)+5)/omegaStep)*omegaStep-5));
+      != exp(floor((log(-omega)+5)/omegaStep)*omegaStep-5))
+    omegaFrac = (-omega - (exp(floor((log(-omega)+5)/omegaStep)*omegaStep-5)))
+      /((exp(ceil((log(-omega)+5)/omegaStep)*omegaStep-5))
+        -exp(floor((log(-omega)+5)/omegaStep)*omegaStep-5));
       else omegaFrac = 0.;
     }
 
   if (which_kind == 5 || which_kind == 7)
     {
       if (position > 0 && iAlphas < Nalphas && iOmega < Nomega) 
-	rate = dGamma_qq->at(position);
+    rate = dGamma_qq->at(position);
       else 
-	rate = 0.;
+    rate = 0.;
 
       if (iAlphas+1 < Nalphas) 
-	rateAlphaUp = dGamma_qq->at(positionAlphaUp);
+    rateAlphaUp = dGamma_qq->at(positionAlphaUp);
       else 
-	rateAlphaUp = rate;
+    rateAlphaUp = rate;
 
       if (iOmega+1 < Nomega)
-	rateOmegaUp = dGamma_qq->at(positionOmegaUp);
+    rateOmegaUp = dGamma_qq->at(positionOmegaUp);
       else 
-	rateOmegaUp = rate;
+    rateOmegaUp = rate;
 
       if (iAlphas < Nalphas && iOmega < Nomega)
-	rateAlphaUpOmegaUp = dGamma_qq->at(positionAlphaUpOmegaUp);
+    rateAlphaUpOmegaUp = dGamma_qq->at(positionAlphaUpOmegaUp);
       else
-	rateAlphaUpOmegaUp = rate;
+    rateAlphaUpOmegaUp = rate;
     }
   else 
     {
       if (position > 0 && iAlphas<Nalphas && iOmega<Nomega)
-	rate = dGamma_qg->at(position);
+    rate = dGamma_qg->at(position);
       else
-	rate = 0.;
+    rate = 0.;
 
       if (iAlphas+1 < Nalphas)
-	rateAlphaUp = dGamma_qg->at(positionAlphaUp);
+    rateAlphaUp = dGamma_qg->at(positionAlphaUp);
       else
-	rateAlphaUp = rate;
+    rateAlphaUp = rate;
 
       if (iOmega+1 < Nomega)
-	rateOmegaUp = dGamma_qg->at(positionOmegaUp);
+    rateOmegaUp = dGamma_qg->at(positionOmegaUp);
       else
-	rateOmegaUp = rate;
+    rateOmegaUp = rate;
 
       if (iAlphas < Nalphas && iOmega < Nomega)
-	rateAlphaUpOmegaUp = dGamma_qg->at(positionAlphaUpOmegaUp);
+    rateAlphaUpOmegaUp = dGamma_qg->at(positionAlphaUpOmegaUp);
       else
-	rateAlphaUpOmegaUp = rate;
+    rateAlphaUpOmegaUp = rate;
     }
   
   if (omega > 0.)
@@ -2455,19 +2899,19 @@ double Martini::use_elastic_table_q(double omega, double q, int which_kind)
   if (omega > 0.) 
     {
       if (exp(ceil((log(omega)+5)/omegaStep)*omegaStep-5)
-	  != exp(floor((log(omega)+5)/omegaStep)*omegaStep-5))
-	omegaFrac = (omega-(exp(floor((log(omega)+5)/omegaStep)*omegaStep-5)))
-	  /((exp(ceil((log(omega)+5)/omegaStep)*omegaStep-5))
-	    -exp(floor((log(omega)+5)/omegaStep)*omegaStep-5));
+      != exp(floor((log(omega)+5)/omegaStep)*omegaStep-5))
+    omegaFrac = (omega-(exp(floor((log(omega)+5)/omegaStep)*omegaStep-5)))
+      /((exp(ceil((log(omega)+5)/omegaStep)*omegaStep-5))
+        -exp(floor((log(omega)+5)/omegaStep)*omegaStep-5));
       else omegaFrac = 0.;
     }
   else
     {
       if (exp(ceil((log(-omega)+5)/omegaStep)*omegaStep-5)
-	  != exp(floor((log(-omega)+5)/omegaStep)*omegaStep-5))
-	omegaFrac = (-omega-(exp(floor((log(-omega)+5)/omegaStep)*omegaStep-5)))
-	  /((exp(ceil((log(-omega)+5)/omegaStep)*omegaStep-5))
-	    -exp(floor((log(-omega)+5)/omegaStep)*omegaStep-5));
+      != exp(floor((log(-omega)+5)/omegaStep)*omegaStep-5))
+    omegaFrac = (-omega-(exp(floor((log(-omega)+5)/omegaStep)*omegaStep-5)))
+      /((exp(ceil((log(-omega)+5)/omegaStep)*omegaStep-5))
+        -exp(floor((log(-omega)+5)/omegaStep)*omegaStep-5));
       else omegaFrac = 0.;
     }
 
@@ -2481,144 +2925,144 @@ double Martini::use_elastic_table_q(double omega, double q, int which_kind)
   else 
     {
       if (exp(ceil((log(q)+5.)/qStep)*qStep-5.)
-	  !=exp(floor((log(q)+5.)/qStep)*qStep-5.))
-	qFrac = (q-(exp(floor((log(q)+5.)/qStep)*qStep-5.)))
-	  /((exp(ceil((log(q)+5.)/qStep)*qStep-5.))
-	    -exp(floor((log(q)+5.)/qStep)*qStep-5.));
+      !=exp(floor((log(q)+5.)/qStep)*qStep-5.))
+    qFrac = (q-(exp(floor((log(q)+5.)/qStep)*qStep-5.)))
+      /((exp(ceil((log(q)+5.)/qStep)*qStep-5.))
+        -exp(floor((log(q)+5.)/qStep)*qStep-5.));
       else qFrac = 0.;
     }
 
   if (which_kind == 5 || which_kind == 7)
     {
       if (position >= 0 && iAlphas<Nalphas && iOmega<Nomega && iQ < Nq )
-	rate = dGamma_qq_q->at(position);
+    rate = dGamma_qq_q->at(position);
       else
-	rate = 0.;
+    rate = 0.;
 
       if (iAlphas+1 < Nalphas)
-	rateAlphaUp = dGamma_qq_q->at(positionAlphaUp);
+    rateAlphaUp = dGamma_qq_q->at(positionAlphaUp);
       else
-	rateAlphaUp = rate;
+    rateAlphaUp = rate;
 
       if (iOmega+1 < Nomega)
-	rateOmegaUp = dGamma_qq_q->at(positionOmegaUp);
+    rateOmegaUp = dGamma_qq_q->at(positionOmegaUp);
       else
-	rateOmegaUp = rate;
+    rateOmegaUp = rate;
 
       if (iQ+1 < Nq)
-	rateQUp = dGamma_qq_q->at(positionQUp);
+    rateQUp = dGamma_qq_q->at(positionQUp);
       else
-	rateQUp = rate;
+    rateQUp = rate;
 
       if (iAlphas < Nalphas && iOmega < Nomega)
-	rateAlphaUpOmegaUp = dGamma_qq_q->at(positionAlphaUpOmegaUp);
+    rateAlphaUpOmegaUp = dGamma_qq_q->at(positionAlphaUpOmegaUp);
       else
-	rateAlphaUpOmegaUp = rate;
+    rateAlphaUpOmegaUp = rate;
 
       if (iAlphas < Nalphas && iQ < Nq)
-	rateAlphaUpQUp = dGamma_qq_q->at(positionAlphaUpQUp);
+    rateAlphaUpQUp = dGamma_qq_q->at(positionAlphaUpQUp);
       else
-	rateAlphaUpQUp = rate;
+    rateAlphaUpQUp = rate;
 
       if (iOmega+1 < Nomega && iQ+1 < Nq)
-	rateOmegaUpQUp = dGamma_qq_q->at(positionOmegaUpQUp);
+    rateOmegaUpQUp = dGamma_qq_q->at(positionOmegaUpQUp);
       else
-	rateOmegaUpQUp = rate;
+    rateOmegaUpQUp = rate;
 
       if (iAlphas < Nalphas && iOmega < Nomega && iQ < Nq)
-	rateAlphaUpOmegaUpQUp = dGamma_qq_q->at(positionAlphaUpOmegaUpQUp);
+    rateAlphaUpOmegaUpQUp = dGamma_qq_q->at(positionAlphaUpOmegaUpQUp);
       else
-	rateAlphaUpOmegaUpQUp = rate;
+    rateAlphaUpOmegaUpQUp = rate;
 
       // used for extrapolation when the data points are too far apart
       if (omega > 20.)
-	{ 
-	  if (iQ+2 < Nq )
-	    rate2QUp = dGamma_qq_q->at(position2QUp);
-	  else
-	    rate2QUp = rateQUp;
+    { 
+      if (iQ+2 < Nq )
+        rate2QUp = dGamma_qq_q->at(position2QUp);
+      else
+        rate2QUp = rateQUp;
 
-	  if (iAlphas < Nalphas && iQ+2 < Nq )
-	    rateAlphaUp2QUp = dGamma_qq_q->at(positionAlphaUpQUp+1);
-	  else
-	    rateAlphaUp2QUp = rateAlphaUpQUp;
+      if (iAlphas < Nalphas && iQ+2 < Nq )
+        rateAlphaUp2QUp = dGamma_qq_q->at(positionAlphaUpQUp+1);
+      else
+        rateAlphaUp2QUp = rateAlphaUpQUp;
 
-	  if (iOmega < Nomega && iQ+2 < Nq )
-	    rateOmegaUp2QUp = dGamma_qq_q->at(positionOmegaUpQUp+1);
-	  else
-	    rateOmegaUp2QUp = rateOmegaUpQUp;
+      if (iOmega < Nomega && iQ+2 < Nq )
+        rateOmegaUp2QUp = dGamma_qq_q->at(positionOmegaUpQUp+1);
+      else
+        rateOmegaUp2QUp = rateOmegaUpQUp;
 
-	  if (iAlphas < Nalphas && iOmega < Nomega && iQ+2 < Nq )
-	    rateAlphaUpOmegaUp2QUp = dGamma_qq_q->at(positionAlphaUpOmegaUpQUp+1);
-	  else
-	    rateAlphaUpOmegaUp2QUp = rateAlphaUpOmegaUpQUp;
-	}
+      if (iAlphas < Nalphas && iOmega < Nomega && iQ+2 < Nq )
+        rateAlphaUpOmegaUp2QUp = dGamma_qq_q->at(positionAlphaUpOmegaUpQUp+1);
+      else
+        rateAlphaUpOmegaUp2QUp = rateAlphaUpOmegaUpQUp;
+    }
     }
   else
     {
       if (position > 0 && iAlphas < Nalphas && iOmega < Nomega && iQ < Nq )
-	rate = dGamma_qg_q->at(position);
+    rate = dGamma_qg_q->at(position);
       else
-	rate = 0.;
+    rate = 0.;
 
       if (iAlphas+1 < Nalphas)
-	rateAlphaUp = dGamma_qg_q->at(positionAlphaUp);
+    rateAlphaUp = dGamma_qg_q->at(positionAlphaUp);
       else
-	rateAlphaUp = rate;
+    rateAlphaUp = rate;
 
       if (iOmega+1 < Nomega)
-	rateOmegaUp = dGamma_qg_q->at(positionOmegaUp);
+    rateOmegaUp = dGamma_qg_q->at(positionOmegaUp);
       else
-	rateOmegaUp = rate;
+    rateOmegaUp = rate;
 
       if (iQ+1 < Nq)
-	rateQUp = dGamma_qg_q->at(positionQUp);
+    rateQUp = dGamma_qg_q->at(positionQUp);
       else
-	rateQUp = rate;
+    rateQUp = rate;
 
       if (iAlphas < Nalphas && iOmega < Nomega)
-	rateAlphaUpOmegaUp = dGamma_qg_q->at(positionAlphaUpOmegaUp);
+    rateAlphaUpOmegaUp = dGamma_qg_q->at(positionAlphaUpOmegaUp);
       else
-	rateAlphaUpOmegaUp = rate;
+    rateAlphaUpOmegaUp = rate;
 
       if (iAlphas < Nalphas && iQ < Nq)
-	rateAlphaUpQUp = dGamma_qg_q->at(positionAlphaUpQUp);
+    rateAlphaUpQUp = dGamma_qg_q->at(positionAlphaUpQUp);
       else
-	rateAlphaUpQUp = rate;
+    rateAlphaUpQUp = rate;
 
       if (iOmega+1 < Nomega && iQ+1 < Nq)
-	rateOmegaUpQUp = dGamma_qg_q->at(positionOmegaUpQUp);
+    rateOmegaUpQUp = dGamma_qg_q->at(positionOmegaUpQUp);
       else
-	rateOmegaUpQUp = rate;
+    rateOmegaUpQUp = rate;
 
       if (iAlphas < Nalphas && iOmega < Nomega && iQ < Nq)
-	rateAlphaUpOmegaUpQUp = dGamma_qg_q->at(positionAlphaUpOmegaUpQUp);
+    rateAlphaUpOmegaUpQUp = dGamma_qg_q->at(positionAlphaUpOmegaUpQUp);
       else
-	rateAlphaUpOmegaUpQUp = rate;
+    rateAlphaUpOmegaUpQUp = rate;
 
       // used for extrapolation when the data points are too far apart
       if (omega > 20.)
-	{ 
-	  if (iQ+2 < Nq )
-	    rate2QUp = dGamma_qg_q->at(position2QUp);
-	  else
-	    rate2QUp = rateQUp;
+    { 
+      if (iQ+2 < Nq )
+        rate2QUp = dGamma_qg_q->at(position2QUp);
+      else
+        rate2QUp = rateQUp;
 
-	  if (iAlphas < Nalphas && iQ+2 < Nq )
-	    rateAlphaUp2QUp = dGamma_qg_q->at(positionAlphaUpQUp+1);
-	  else
-	    rateAlphaUp2QUp = rateAlphaUpQUp;
+      if (iAlphas < Nalphas && iQ+2 < Nq )
+        rateAlphaUp2QUp = dGamma_qg_q->at(positionAlphaUpQUp+1);
+      else
+        rateAlphaUp2QUp = rateAlphaUpQUp;
 
-	  if (iOmega < Nomega && iQ+2 < Nq )
-	    rateOmegaUp2QUp = dGamma_qg_q->at(positionOmegaUpQUp+1);
-	  else
-	    rateOmegaUp2QUp = rateOmegaUpQUp;
+      if (iOmega < Nomega && iQ+2 < Nq )
+        rateOmegaUp2QUp = dGamma_qg_q->at(positionOmegaUpQUp+1);
+      else
+        rateOmegaUp2QUp = rateOmegaUpQUp;
 
-	  if (iAlphas < Nalphas && iOmega < Nomega && iQ+2 < Nq )
-	    rateAlphaUpOmegaUp2QUp = dGamma_qg_q->at(positionAlphaUpOmegaUpQUp+1);
-	  else
-	    rateAlphaUpOmegaUp2QUp = rateAlphaUpOmegaUpQUp;
-	}
+      if (iAlphas < Nalphas && iOmega < Nomega && iQ+2 < Nq )
+        rateAlphaUpOmegaUp2QUp = dGamma_qg_q->at(positionAlphaUpOmegaUpQUp+1);
+      else
+        rateAlphaUpOmegaUp2QUp = rateAlphaUpOmegaUpQUp;
+    }
     }
   
   if (omega > 0. && omega <= 20.)
@@ -2631,47 +3075,47 @@ double Martini::use_elastic_table_q(double omega, double q, int which_kind)
   else if (omega > 20.)
     {
       if (rate != 0. && rateOmegaUp != 0.)
-	rateOmegaAv = exp((1.-omegaFrac)*log(rate)+omegaFrac*log(rateOmegaUp));
+    rateOmegaAv = exp((1.-omegaFrac)*log(rate)+omegaFrac*log(rateOmegaUp));
       else if (rate == 0.)
-	rateOmegaAv = rateOmegaUp;
+    rateOmegaAv = rateOmegaUp;
       else if (rateOmegaUp == 0.)
-	rateOmegaAv = rate;
+    rateOmegaAv = rate;
       else 
-	rateOmegaAv = 0.;
+    rateOmegaAv = 0.;
 
       if (rateAlphaUpOmegaUp != 0. && rateAlphaUp != 0.)
-	rateAlphaUpOmegaAv = exp((1.-omegaFrac)*log(rateAlphaUp)
-				 +omegaFrac*log(rateAlphaUpOmegaUp));
+    rateAlphaUpOmegaAv = exp((1.-omegaFrac)*log(rateAlphaUp)
+                 +omegaFrac*log(rateAlphaUpOmegaUp));
       else if (rateAlphaUp == 0.)
-	rateAlphaUpOmegaAv = rateAlphaUpOmegaUp;
+    rateAlphaUpOmegaAv = rateAlphaUpOmegaUp;
       else if (rateAlphaUpOmegaUp == 0.)
-	rateAlphaUpOmegaAv = rateAlphaUp;
+    rateAlphaUpOmegaAv = rateAlphaUp;
       else 
-	rateAlphaUpOmegaAv = 0.;
+    rateAlphaUpOmegaAv = 0.;
 
       if (rateOmegaUpQUp != 0. && rateQUp != 0.)
-	rateQUpOmegaAv = exp((1.-omegaFrac)*log(rateQUp)
-			     +omegaFrac*log(rateOmegaUpQUp));
+    rateQUpOmegaAv = exp((1.-omegaFrac)*log(rateQUp)
+                 +omegaFrac*log(rateOmegaUpQUp));
       else if (rateOmegaUpQUp == 0.)
-	rateQUpOmegaAv = rateQUp;
+    rateQUpOmegaAv = rateQUp;
       else if (rateQUp == 0.)
-	rateQUpOmegaAv = rateOmegaUpQUp;
+    rateQUpOmegaAv = rateOmegaUpQUp;
       else 
-	rateQUpOmegaAv = 0.;
+    rateQUpOmegaAv = 0.;
 
       if (rateAlphaUpOmegaUpQUp != 0. && rateAlphaUpQUp != 0.)
-	rateAlphaUpQUpOmegaAv = exp((1.-omegaFrac)*log(rateAlphaUpQUp)
-				    +omegaFrac*log(rateAlphaUpOmegaUpQUp));
+    rateAlphaUpQUpOmegaAv = exp((1.-omegaFrac)*log(rateAlphaUpQUp)
+                    +omegaFrac*log(rateAlphaUpOmegaUpQUp));
       else if (rateAlphaUpQUp == 0.)
-	rateAlphaUpQUpOmegaAv = rateAlphaUpOmegaUpQUp;
+    rateAlphaUpQUpOmegaAv = rateAlphaUpOmegaUpQUp;
       else if (rateAlphaUpOmegaUpQUp == 0.)
-	rateAlphaUpQUpOmegaAv = rateAlphaUpQUp;
+    rateAlphaUpQUpOmegaAv = rateAlphaUpQUp;
       else 
-	rateAlphaUpQUpOmegaAv = 0.;
+    rateAlphaUpQUpOmegaAv = 0.;
 
       rate2QUpOmegaAv = exp((1.-omegaFrac)*log(rate2QUp)+omegaFrac*log(rateOmegaUp2QUp));
       rateAlphaUp2QUpOmegaAv = exp((1.-omegaFrac)*log(rateAlphaUp2QUp)
-				   +omegaFrac*log(rateAlphaUpOmegaUp2QUp));
+                   +omegaFrac*log(rateAlphaUpOmegaUp2QUp));
     }
   else if (omega < 0.)
     {
@@ -2685,32 +3129,32 @@ double Martini::use_elastic_table_q(double omega, double q, int which_kind)
   if (omega > 20.)
     {
       if (rateOmegaAv > 0.)
-	{
-	  rateQAv = exp((1.-qFrac)*log(rateOmegaAv)+qFrac*log(rateQUpOmegaAv));
-	}
+    {
+      rateQAv = exp((1.-qFrac)*log(rateOmegaAv)+qFrac*log(rateQUpOmegaAv));
+    }
       else if (rateOmegaAv < 0.)  // use extrapolation
-	{
-	  slope = (log(rate2QUpOmegaAv)-log(rateQUpOmegaAv))/qStep;
-	  rateQAv = exp(log(rateQUpOmegaAv)-slope*((1.-qFrac)*qStep));
-	}
+    {
+      slope = (log(rate2QUpOmegaAv)-log(rateQUpOmegaAv))/qStep;
+      rateQAv = exp(log(rateQUpOmegaAv)-slope*((1.-qFrac)*qStep));
+    }
       else
-	{
-	  rateQAv = 0.;
-	}
+    {
+      rateQAv = 0.;
+    }
 
       if (rateAlphaUpOmegaAv > 0.)
-	{
-	  rateAlphaUpQAv = exp((1.-qFrac)*log(rateAlphaUpOmegaAv) + qFrac*log(rateAlphaUpQUpOmegaAv));
-	}
+    {
+      rateAlphaUpQAv = exp((1.-qFrac)*log(rateAlphaUpOmegaAv) + qFrac*log(rateAlphaUpQUpOmegaAv));
+    }
       else if (rateAlphaUpOmegaAv < 0.)  // use extrapolation
-	{
-	  slopeAlphaUp = (log(rateAlphaUp2QUpOmegaAv)-log(rateAlphaUpQUpOmegaAv))/qStep;
-	  rateAlphaUpQAv = exp(log(rateAlphaUpQUpOmegaAv)-slopeAlphaUp*((1.-qFrac)*qStep));
-	}
+    {
+      slopeAlphaUp = (log(rateAlphaUp2QUpOmegaAv)-log(rateAlphaUpQUpOmegaAv))/qStep;
+      rateAlphaUpQAv = exp(log(rateAlphaUpQUpOmegaAv)-slopeAlphaUp*((1.-qFrac)*qStep));
+    }
       else
-	{
-	  rateAlphaUpQAv = 0.;
-	}
+    {
+      rateAlphaUpQAv = 0.;
+    }
     }
   // interpolate linearly for small omega
   else
@@ -2758,14 +3202,14 @@ double LambertW(double z)
       w_old = w_new;
       n++;
       if(n > 99) 
-	{
+    {
           JSWARN << "LambertW is not converging after 100 iterations.";
           JSWARN << "LambertW: z = " << z;
           JSWARN << "LambertW: w_old = " << w_old;
           JSWARN << "LambertW: w_new = " << w_new;
           JSWARN << "LambertW: ratio = " << ratio;
           throw std::runtime_error("LambertW not conversing");
-	}
+    }
     }
 
   return w_new;

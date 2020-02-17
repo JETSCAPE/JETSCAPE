@@ -62,10 +62,10 @@ namespace Jetscape {
     if ( random_seed_==0 ){
       // random seed
       random_seed_ = std::chrono::system_clock::now().time_since_epoch().count();
-      VERBOSE(7) <<"JetScapeTaskSupport found seed 0, using one engine for all and reseeding to "<< random_seed_ ;
+      JSINFO <<"JetScapeTaskSupport found seed 0, using one engine for all and reseeding to "<< random_seed_ ;
       one_generator_per_task_=false;
     } else {
-      VERBOSE(7) <<"JetScapeTaskSupport found seed " << random_seed_ << ", using individual engines with seeds created from "<< random_seed_ ;
+      JSINFO <<"JetScapeTaskSupport found seed " << random_seed_ << ", using individual engines with seeds created from "<< random_seed_ ;
       one_generator_per_task_=true;
     }
 

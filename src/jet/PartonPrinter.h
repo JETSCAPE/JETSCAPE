@@ -49,6 +49,9 @@ void PrintFinalPartons(vector<vector<shared_ptr<Parton>>>& fPartons) {fPartons =
 private:
 
 vector<vector<shared_ptr<Parton>>> pFinals;
+  
+   // Allows the registration of the module so that it is available to be used by the Jetscape framework.
+   static RegisterJetScapeModule<PartonPrinter> reg;
 
 };
 

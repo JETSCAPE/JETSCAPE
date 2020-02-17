@@ -42,7 +42,9 @@ class SoftParticlization: public JetScapeModuleBase {
     virtual void Clear();
     
     std::vector<std::vector<shared_ptr<Hadron>>> Hadron_list_;
-
+    
+    bool boost_invariance;
+    bool check_boost_invariance();
 };
 
 } // end namespace Jetscape

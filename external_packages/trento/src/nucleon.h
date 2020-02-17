@@ -1,5 +1,6 @@
 // TRENTO: Reduced Thickness Event-by-event Nuclear Topology
 // Copyright 2015 Jonah E. Bernhard, J. Scott Moreland
+// TRENTO3D: Three-dimensional extension of TRENTO by Weiyao Ke
 // MIT License
 
 #ifndef NUCLEON_H
@@ -39,6 +40,13 @@ class NucleonProfile {
   /// center.
   double thickness(double distance_sqr) const;
 
+  /// WK: same as above, but without the Gamma fluctuation, 
+  /// used in the calculation of binary collision density 
+  double deterministic_thickness(double distance_sqr) const;
+
+  /// WK: return Tpp given bpp^2
+  double norm_Tpp(double bpp_sqr) const;
+
   /// Randomly determine if a pair of nucleons participates.
   bool participate(Nucleon& A, Nucleon& B) const;
 
@@ -56,6 +64,12 @@ class NucleonProfile {
   /// Yes, this actually makes a speed difference...
   const double neg_one_div_two_width_sqr_;
 
+  /// WK 1/4w^2
+  const double neg_one_div_four_width_sqr_;
+
+  /// WK 1/4pi
+  const double one_div_four_pi_;
+
   /// Dimensionless parameter set to reproduce the inelastic nucleon-nucleon
   /// cross section \sigma_{NN}.  Calculated in constructor.
   const double cross_sec_param_;
@@ -68,12 +82,15 @@ class NucleonProfile {
 
   /// Thickness function prefactor = fluct/(2*pi*w^2)
   double prefactor_;
+ 
+  /// bool variable to calcualte Ncoll
+  bool with_ncoll_;
 };
 
 /// \rst
-/// Represents a single nucleon.  Stores its transverse position and whether or
-/// not it's a participant.  These properties are globally readable, but can
-/// only be set through ``Nucleus`` and ``NucleonProfile``.
+/// Represents a single nucleon.  Stores its position and whether or not it's a
+/// participant.  These properties are globally readable, but can only be set
+/// through ``Nucleus`` and ``NucleonProfile``.
 /// \endrst
 class Nucleon {
  public:
@@ -87,6 +104,9 @@ class Nucleon {
   /// The transverse \em y position.
   double y() const;
 
+  /// The longitudinal \em z position.
+  double z() const;
+
   /// Whether or not this nucleon is a participant.
   bool is_participant() const;
 
@@ -98,14 +118,14 @@ class Nucleon {
   /// participation status.
   friend bool NucleonProfile::participate(Nucleon&, Nucleon&) const;
 
-  /// Set the transverse position and reset participant status to false.
-  void set_position(double x, double y);
+  /// Set the position and reset participant status to false.
+  void set_position(double x, double y, double z);
 
   /// Mark as a participant.
   void set_participant();
 
-  /// Internal storage of the transverse position.
-  double x_, y_;
+  /// Internal storage of the position.
+  double x_, y_, z_;
 
   /// Internal storage of participant status.
   bool participant_;
@@ -124,13 +144,18 @@ inline double Nucleon::y() const {
   return y_;
 }
 
+inline double Nucleon::z() const {
+  return z_;
+}
+
 inline bool Nucleon::is_participant() const {
   return participant_;
 }
 
-inline void Nucleon::set_position(double x, double y) {
+inline void Nucleon::set_position(double x, double y, double z) {
   x_ = x;
   y_ = y;
+  z_ = z;
   participant_ = false;
 }
 
@@ -159,9 +184,24 @@ inline double NucleonProfile::thickness(double distance_sqr) const {
   return prefactor_ * fast_exp_(neg_one_div_two_width_sqr_*distance_sqr);
 }
 
+// WK
+inline double NucleonProfile::deterministic_thickness(double distance_sqr) const {
+  if (distance_sqr > trunc_radius_sqr_)
+    return 0.;
+  return math::double_constants::one_div_two_pi / width_sqr_ 
+		* fast_exp_(neg_one_div_two_width_sqr_*distance_sqr);
+}
+
+// WK
+inline double NucleonProfile::norm_Tpp(double bpp_sqr) const  {
+  return one_div_four_pi_ / width_sqr_ 
+		* fast_exp_(neg_one_div_four_width_sqr_*bpp_sqr);
+}
+
 inline bool NucleonProfile::participate(Nucleon& A, Nucleon& B) const {
-  // If both nucleons are already participants, there's nothing to do.
-  if (A.is_participant() && B.is_participant())
+  // If both nucleons are already participants, there's nothing to do, unless
+  // in Ncoll mode
+  if (A.is_participant() && B.is_participant() && (! with_ncoll_))
     return true;
 
   double dx = A.x() - B.x();

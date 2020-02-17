@@ -19,14 +19,18 @@
 
 #include "HardProcess.h"
 #include "JetScapeLogger.h"
+#include "Pythia8/Pythia.h"
 
 using namespace Jetscape;
 
 class PGun: public HardProcess {
    
+     static Pythia8::Pythia InternalHelperPythia;
+    
  private:
     double fixed_pT;
-
+    int flag_useHybridHad;
+  
     // Allows the registration of the module so that it is available to be used by the Jetscape framework.
     static RegisterJetScapeModule<PGun> reg;
 

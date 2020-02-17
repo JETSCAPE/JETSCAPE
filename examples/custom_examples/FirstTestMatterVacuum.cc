@@ -13,7 +13,7 @@
  * See COPYING for details.
  ******************************************************************************/
 // ------------------------------------------------------------
-// JetScape Framework Brick Test Program
+// JetScape Framework Brick Test Program with Pythia IS
 // (use either shared library (need to add paths; see setup.csh)
 // (or create static library and link in)
 // -------------------------------------------------------------
@@ -30,6 +30,7 @@
 #include "JetScapeWriterHepMC.h"
 #endif
 
+
 // User modules derived from jetscape framework clasess
 #include "TrentoInitial.h"
 #include "AdSCFT.h"
@@ -38,16 +39,16 @@
 #include "Martini.h"
 #include "Brick.h"
 #include "GubserHydro.h"
-#include "PGun.h"
-//#include "PartonPrinter.h"
+#include "PythiaGun.h"
 #include "HadronizationManager.h"
 #include "Hadronization.h"
 #include "ColoredHadronization.h"
 #include "ColorlessHadronization.h"
-#include "CausalLiquefier.h"
 
 #include <chrono>
 #include <thread>
+
+using namespace std;
 
 using namespace Jetscape;
 
@@ -60,7 +61,7 @@ int main(int argc, char** argv)
 {
   clock_t t; t = clock();
   time_t start, end; time(&start);
-  
+
   cout<<endl;
     
   // DEBUG=true by default and REMARK=false
@@ -68,68 +69,72 @@ int main(int argc, char** argv)
   JetScapeLogger::Instance()->SetInfo(true);
   JetScapeLogger::Instance()->SetDebug(false);
   JetScapeLogger::Instance()->SetRemark(false);
-  //SetVerboseLevel (9 adds a lot of additional debug output)
+  //SetVerboseLevel (9 a lot of additional debug output ...)
   //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevle(9) or 10
   JetScapeLogger::Instance()->SetVerboseLevel(0);
-   
+
+  
   Show();
 
-  auto jetscape = make_shared<JetScape>();
-  jetscape->SetXMLMasterFileName("../config/jetscape_master.xml");
-  jetscape->SetXMLUserFileName("../config/jetscape_user.xml");
+  auto jetscape = make_shared<JetScape>(argv[1],10000);
   jetscape->SetId("primary");
-  
+
   // Initial conditions and hydro
   auto trento = make_shared<TrentoInitial>();
-  auto pGun= make_shared<PGun> ();
+  auto pythiaGun= make_shared<PythiaGun> ();
   auto hydro = make_shared<Brick> ();
-  auto myliquefier = make_shared<CausalLiquefier> ();
+  jetscape->SetReuseHydro(false);
   jetscape->Add(trento);
-  jetscape->Add(pGun);
-  jetscape->Add(hydro);
+  jetscape->Add(pythiaGun);
+  //jetscape->Add(hydro);
+
 
   // Energy loss
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
-  jloss->add_a_liqueifier(myliquefier);
-
 
   auto matter = make_shared<Matter> ();
-  //auto lbt = make_shared<LBT> ();
-  // auto martini = make_shared<Martini> ();
+  // auto lbt = make_shared<LBT> ();
+  //auto martini = make_shared<Martini> ();
   // auto adscft = make_shared<AdSCFT> ();
 
   // Note: if you use Matter, it MUST come first (to set virtuality)
   jloss->Add(matter);
   // jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
+
   // jloss->Add(martini);
+
   // jloss->Add(adscft);  
-  jlossmanager->Add(jloss);  
+  jlossmanager->Add(jloss);
   jetscape->Add(jlossmanager);
 
-  
+  auto printer = make_shared<PartonPrinter> () ;
+  jetscape->Add(printer);
+
   // Hadronization
-  // This helper module currently needs to be added for hadronization.
-  // auto printer = make_shared<PartonPrinter> ();
-  // jetscape->Add(printer);
   auto hadroMgr = make_shared<HadronizationManager> ();
   auto hadro = make_shared<Hadronization> ();
-  auto hadroModule = make_shared<ColoredHadronization> ();
-  hadro->Add(hadroModule);
-  // auto colorless = make_shared<ColorlessHadronization> ();
-  // hadro->Add(colorless);
+  //auto hadroModule = make_shared<ColoredHadronization> ();
+  //hadro->Add(hadroModule);
+  auto colorless = make_shared<ColorlessHadronization> ();
+  hadro->Add(colorless);
   hadroMgr->Add(hadro);
   jetscape->Add(hadroMgr);
 
+  
   // Output
-  auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
-  // same as JetScapeWriterAscii but gzipped
-  // auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");
-  // HEPMC3
-#ifdef USE_HEPMC
-  // auto writer= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
-#endif
+  auto writer= make_shared<JetScapeWriterAscii> (argv[2]);
   jetscape->Add(writer);
+//#ifdef USE_GZIP
+//  // same as JetScapeWriterAscii but gzipped
+//  auto writergz= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");
+//  jetscape->Add(writergz);
+//#endif
+//  // HEPMC3
+//#ifdef USE_HEPMC
+//  auto hepmcwriter= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
+//  jetscape->Add(hepmcwriter);
+//#endif
 
   // Intialize all modules tasks
   jetscape->Init();
@@ -147,6 +152,23 @@ int main(int argc, char** argv)
   time(&end);
   printf ("CPU time: %f seconds.\n",((float)t)/CLOCKS_PER_SEC);
   printf ("Real time: %f seconds.\n",difftime(end,start));
+
+  // Print pythia statistics
+  // pythiaGun->stat();
+
+  // // Demonstrate how to work with pythia statistics
+  Pythia8::Info& info = pythiaGun->info;
+  // cout << " nTried    = " << info.nTried() << endl;
+  // cout << " nSelected = " << info.nSelected()  << endl;
+  // cout << " nAccepted = " << info.nAccepted()  << endl;
+  // cout << " sigmaGen  = " <<   info.sigmaGen()  << endl;  
+  // cout << " sigmaErr  = " <<   info.sigmaErr()  << endl;
+
+  ofstream WriteSigmaHard;
+  WriteSigmaHard.open(argv[3],std::ios::out);
+  WriteSigmaHard<<info.sigmaGen()<<"\t"<<info.sigmaErr()<<endl;
+  WriteSigmaHard.close();
+   
   return 0;
 }
 

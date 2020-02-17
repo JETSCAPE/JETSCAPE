@@ -103,7 +103,7 @@ void LBT::Init()
   //        cout << "Parameter check failed" << endl;
   //        exit(EXIT_FAILURE);
   //    }
-
+  
   std::string s = GetXMLElementText({"Eloss", "Lbt", "name"});
   JSDEBUG << s << " to be initilizied ...";
 
@@ -111,9 +111,8 @@ void LBT::Init()
   //lbt->FirstChildElement("qhat")->QueryDoubleText(&m_qhat);
   //SetQhat(m_qhat);
   //
-
   //JSDEBUG  << s << " with qhat = "<<GetQhat();
-
+  
   int in_vac = GetXMLElementInt({"Eloss", "Lbt", "in_vac"});
 
   if (in_vac == 1) {
@@ -127,7 +126,6 @@ void LBT::Init()
   Q00 = GetXMLElementDouble({"Eloss", "Lbt", "Q0"});
   fixAlphas = GetXMLElementDouble({"Eloss", "Lbt", "alphas"});
   hydro_Tc = GetXMLElementDouble({"Eloss", "Lbt", "hydro_Tc"});
-
 
   JSINFO<< MAGENTA << "LBT parameters -- in_med: " << vacORmed << " Q0: " << Q00 << "  only_leading: " << Kprimary << "  alpha_s: " << fixAlphas << "  hydro_Tc: " << hydro_Tc;
 
@@ -187,6 +185,14 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
   for (int i=0;i<pIn.size();i++)
     {	  
 
+      // Reject photons
+      
+      if (pIn[i].pid()==photonid)
+      {
+          pOut.push_back(pIn[i]);
+          return;
+      }
+
       // pass particle infomation to LBT array (only pass one particle each time)
 
       jetClean();
@@ -210,10 +216,14 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
           P[2][j] = pIn[i].p(2);
           P[3][j] = pIn[i].p(3);
           P[4][j] = amss;
+          if ( std::abs(pIn[i].pid())==4 ||  std::abs(pIn[i].pid())==5 )  P[4][j] = pIn[i].restmass();
           P[0][j] = sqrt(P[1][j]*P[1][j]+P[2][j]*P[2][j]+P[3][j]*P[3][j]+P[4][j]*P[4][j]);
           P[5][j] = sqrt(P[1][j]*P[1][j]+P[2][j]*P[2][j]);
           P[6][j] = pIn[i].e()*pIn[i].e()-P[0][j]*P[0][j]; // virtuality^2
 	  if(P[6][j]<0.0) P[6][j]=0.0;
+          //if(std::isnan(P[6][j]) || std::isinf(P[6][j]))
+          //{JSWARN << "first instance:j=" << j << ", P[0][j]=" << P[0][j] << ", P[1][j]=" << P[1][j] << ", P[2][j]=" << P[2][j] <<", P[3][j]=" << P[3][j] <<", P[4][j]=" << P[4][j] << ", P[6][j]=" << P[6][j];}
+
           WT[j] = 1.0;
 
           Vfrozen[1][j] = pIn[i].x_in().x();
@@ -368,6 +378,9 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pI
             tempX[2]=Vfrozen[2][j];
             tempX[3]=Vfrozen[3][j];
             //	      pOut.push_back(Parton(0,21,0,newPt,pIn[i].eta(),pIn[i].phi(),newPt));
+            
+            if(std::isnan(tempP[1])){JSWARN << "second instance: j=" << j << ", P[0][j]=" << P[0][j] << ", P[1][j]=" << P[1][j] << ", P[2][j]=" << P[2][j] <<", P[3][j]=" << P[3][j] <<", P[4][j]=" << P[4][j] << ", P[6][j]=" << P[6][j];}
+
             pOut.push_back(Parton(0,KATT1[j],out_stat,tempP,tempX));
             // remember to put Tint_lrf infomation back to JETSCAPE
             pOut.back().set_user_info(new LBTUserInfo(Tint_lrf[j]));
@@ -536,6 +549,7 @@ void LBT::LBT0(int &n, double &ti){
   double probCol,probRad,probTot;
 
   double lrf_rStart[4]={0.0};
+  double SpatialRapidity=0.0;
 
   probCol=0.0;
   probRad=0.0;
@@ -610,6 +624,8 @@ void LBT::LBT0(int &n, double &ti){
         //Extract fluid properties
         std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
 
+        SpatialRapidity = 0.5 * std::log( (tcar0 + zcar0)/(tcar0 - zcar0) );
+
     	GetHydroCellSignal(tcar0, xcar0, ycar0, zcar0, check_fluid_info_ptr);
 	//VERBOSE(7)<< MAGENTA<<"Temperature from Brick (Signal) = "<<check_fluid_info_ptr->temperature;
 
@@ -619,7 +635,7 @@ void LBT::LBT0(int &n, double &ti){
     	VY00 = check_fluid_info_ptr->vy;
     	VZ00 = check_fluid_info_ptr->vz;
 
-        if(tcar0<tStart) {
+        if( tcar0 < tStart * cosh(SpatialRapidity) ) {
 	    temp00 = 0.0;
             sd00 = 0.0;
     	    VX00 = 0.0;
@@ -699,8 +715,15 @@ void LBT::LBT0(int &n, double &ti){
 
           std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
 
+          SpatialRapidity = 0.5 * std::log( (tcar + zcar)/(tcar - zcar) );
+
     	  GetHydroCellSignal(tcar, xcar, ycar, zcar, check_fluid_info_ptr);
 	  //VERBOSE(7)<< MAGENTA<<"Temperature from Brick (Signal) = "<<check_fluid_info_ptr->temperature;
+
+	  if(!GetJetSignalConnected()){
+           	JSWARN << "Couldn't find a hydro module attached!";
+           	throw std::runtime_error ("Please attach a hydro module or set in_vac to 1 in the XML file");
+          }
 
 	  temp0 = check_fluid_info_ptr->temperature;
           sd = check_fluid_info_ptr->entropy_density;
@@ -708,7 +731,7 @@ void LBT::LBT0(int &n, double &ti){
     	  VY = check_fluid_info_ptr->vy;
     	  VZ = check_fluid_info_ptr->vz;
 
-  	  if(tcar<tStart) {
+  	  if( tcar < tStart * cosh(SpatialRapidity) ) {
 	      temp0 = 0.0;
               sd = 0.0;
     	      VX = 0.0;
@@ -716,7 +739,9 @@ void LBT::LBT0(int &n, double &ti){
     	      VZ = 0.0;
           }
 
-
+       // JSINFO << BOLDYELLOW << "LBT time = " << tcar << " x = " << xcar << " y = " << ycar << " z = " << zcar << " temp = " << temp0;
+       // JSINFO << BOLDYELLOW << "LBT Vel_x, Vel_y, Vel_z =" << P[1][i]/P[0][i] << ", " << P[2][i]/P[0][i]<< ", " << P[3][i]/P[0][i];
+        
           //JSDEBUG << "check temperature: " << temp0;
 	  hydro_ctl=0;
 	  //                  }
@@ -814,7 +839,7 @@ void LBT::LBT0(int &n, double &ti){
 	if(KATTC0==21) {
 	  RTE1=(qhatG[iT2][iE1]-qhatG[iT1][iE1])*(T-T1)/(T2-T1)+qhatG[iT1][iE1];
 	  RTE2=(qhatG[iT2][iE2]-qhatG[iT1][iE2])*(T-T1)/(T2-T1)+qhatG[iT1][iE2];
-	} else if(KATTC0==4||KATTC0==-4) {
+	} else if(KATTC0==4||KATTC0==-4||KATTC0==5||KATTC0==-5) {
 	  RTE1=(qhatHQ[iT2][iE1]-qhatHQ[iT1][iE1])*(T-T1)/(T2-T1)+qhatHQ[iT1][iE1];
 	  RTE2=(qhatHQ[iT2][iE2]-qhatHQ[iT1][iE2])*(T-T1)/(T2-T1)+qhatHQ[iT1][iE2];
 	} else {
@@ -872,13 +897,16 @@ void LBT::LBT0(int &n, double &ti){
 	    else dtLoc=ti-tLoc;
 
 	    std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
+
+            SpatialRapidity = 0.5 * std::log( (tLoc + zLoc)/(tLoc - zLoc) );
+
     	    GetHydroCellSignal(tLoc, xLoc, yLoc, zLoc, check_fluid_info_ptr);
 	    tempLoc = check_fluid_info_ptr->temperature;
     	    vxLoc = check_fluid_info_ptr->vx;
     	    vyLoc = check_fluid_info_ptr->vy;
     	    vzLoc = check_fluid_info_ptr->vz;
 
-    	    if(tLoc<tStart) {
+    	    if( tLoc < tStart * cosh(SpatialRapidity) ) {
 	        tempLoc = 0.0;
     	        vxLoc = 0.0;
     	        vyLoc = 0.0;
@@ -898,7 +926,7 @@ void LBT::LBT0(int &n, double &ti){
 	if(KATTC0==21) radng[i]+=nHQgluon(KATT1[i],dt_lrf,Tdiff,temp0,E,maxFncHQ)/2.0*KTfactor*preKT;
 	else radng[i]+=nHQgluon(KATT1[i],dt_lrf,Tdiff,temp0,E,maxFncHQ)*KTfactor*preKT;
 	lim_low=sqrt(6.0*pi*alphas)*temp0/E;
-	if(abs(KATT1[i])==4) lim_high=1.0;
+	if(abs(KATT1[i])==4||abs(KATT1[i])==5) lim_high=1.0;
 	else lim_high=1.0-lim_low;
 	lim_int=lim_high-lim_low;
 	if(lim_int>0.0) probRad=1.0-exp(-radng[i]);
@@ -970,7 +998,7 @@ void LBT::LBT0(int &n, double &ti){
 	    KATT10[np0]=KATT3;
 
 	    //		  if(pc0[0]<pc2[0] && abs(KATTC0)!=4) { // for the purpose of unit test
-	    if(pc0[0]<pc2[0] && abs(KATTC0)!=4 && KATTC0==KATT2) { //disable switch for heavy quark, only allow switch for identical particles
+	    if(pc0[0]<pc2[0] && abs(KATTC0)!=4 && abs(KATTC0)!=5 && KATTC0==KATT2) { //disable switch for heavy quark, only allow switch for identical particles
 	      for(int k=0;k<=3;k++) {
 		p0temp[k]=pc2[k];
 		pc2[k]=pc0[k];
@@ -1195,7 +1223,7 @@ void LBT::LBT0(int &n, double &ti){
                       
         
 	  //....tiscatter information
-	  if(abs(KATT1[i])==4) radng[i]=0.0; // do it below
+	  if(abs(KATT1[i])==4||abs(KATT1[i])==5) radng[i]=0.0; // do it below
 	  tiscatter[i]=tcar;
 	  V[0][i]=-log(1.0-ran0(&NUM1));
         
@@ -1606,7 +1634,7 @@ void LBT::lam(int KATT0,double &RTE,double E,double T,double &T1,double &T2,doub
     double RTE1=(Rg[iT2][iE1]-Rg[iT1][iE1])*(T-T1)/(T2-T1)+Rg[iT1][iE1];
     double RTE2=(Rg[iT2][iE2]-Rg[iT1][iE2])*(T-T1)/(T2-T1)+Rg[iT1][iE2];
     RTE=(RTE2-RTE1)*(E-E1)/(E2-E1)+RTE1;	   
-  } else if (KATT0==4||KATT0==-4) { // add heavy quark channel
+  } else if (KATT0==4||KATT0==-4||KATT0==5||KATT0==-5) { // add heavy quark channel
     double RTE1=(RHQ[iT2][iE1]-RHQ[iT1][iE1])*(T-T1)/(T2-T1)+RHQ[iT1][iE1];
     double RTE2=(RHQ[iT2][iE2]-RHQ[iT1][iE2])*(T-T1)/(T2-T1)+RHQ[iT1][iE2];
     RTE=(RTE2-RTE1)*(E-E1)/(E2-E1)+RTE1;	   
@@ -1691,7 +1719,7 @@ void LBT::flavor(int &CT,int &KATT0,int &KATT2,int &KATT3,double RTE,double E,do
       KATT2=KATT3;
       KATT0=21;
     }
-  } else if(KATT00==4||KATT00==-4) { // for heavy quark
+  } else if(KATT00==4||KATT00==-4||KATT00==5||KATT00==-5) { // for heavy quark
     double R0=RTE;
     double R1=RTEHQ11;
     double R2=RTEHQ12;
@@ -1816,7 +1844,7 @@ void LBT::linear(int KATT,double E,double T,double &T1,double &T2,double &E1,dou
     //	  RTE2=(qhatG[iT2][iE2]-qhatG[iT1][iE2])*(T-T1)/(T2-T1)+qhatG[iT1][iE2];
     //	  qhatTP=(RTE2-RTE1)*(E-E1)/(E2-E1)+RTE1;	
 
-  } else if(KATT==4||KATT==-4){  // add heavy quark channel
+  } else if(KATT==4||KATT==-4||KATT==5||KATT==-5){  // add heavy quark channel
     double RTE1=(RHQ11[iT2][iE1]-RHQ11[iT1][iE1])*(T-T1)/(T2-T1)+RHQ11[iT1][iE1];
     double RTE2=(RHQ11[iT2][iE2]-RHQ11[iT1][iE2])*(T-T1)/(T2-T1)+RHQ11[iT1][iE2];
     RTEHQ11=(RTE2-RTE1)*(E-E1)/(E2-E1)+RTE1;
@@ -2890,7 +2918,7 @@ void LBT::collHQ23(int parID, double temp_med, double qhat0ud, double v0[4], dou
   p00[2]=p0[2];
   p00[3]=p0[3];
 
-  if(abs(parID)!=4) {
+  if(abs(parID)!=4&&abs(parID)!=5) {
     HQmass = 0.0;
     p0[0] = sqrt(p0[1]*p0[1]+p0[2]*p0[2]+p0[3]*p0[3]+HQmass*HQmass);
   }   
@@ -3127,7 +3155,7 @@ void LBT::radiationHQ(int parID, double qhat0ud, double v0[4], double P2[4], dou
   double kpGluon[4];
   double HQmass=sqrt(P3[0]*P3[0]-P3[1]*P3[1]-P3[2]*P3[2]-P3[3]*P3[3]);
 
-  if(abs(parID)!=4) {
+  if(abs(parID)!=4&&abs(parID)!=5) {
     HQmass = 0.0;
     P3[0] = sqrt(P3[1]*P3[1]+P3[2]*P3[2]+P3[3]*P3[3]);
   }   
@@ -3527,7 +3555,7 @@ double LBT::nHQgluon(int parID,double dtLRF,double &time_gluon,double &temp_med,
     max_T1E2 = max_dNgfnc_g[time_num][temp_num][HQenergy_num+1];
     max_T2E1 = max_dNgfnc_g[time_num][temp_num+1][HQenergy_num];
     max_T2E2 = max_dNgfnc_g[time_num][temp_num+1][HQenergy_num+1];
-  } else if(abs(parID)==4) {
+  } else if(abs(parID)==4||abs(parID)==5) {
     rate_T1E1 = dNg_over_dt_c[time_num][temp_num][HQenergy_num];
     rate_T1E2 = dNg_over_dt_c[time_num][temp_num][HQenergy_num+1];
     rate_T2E1 = dNg_over_dt_c[time_num][temp_num+1][HQenergy_num];

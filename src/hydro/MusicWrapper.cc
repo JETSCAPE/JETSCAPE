@@ -32,6 +32,7 @@ RegisterJetScapeModule<MpiMusic> MpiMusic::reg("MUSIC");
 
 MpiMusic::MpiMusic() {
     hydro_status = NOT_START;
+    freezeout_temperature = 0.0;
     doCooperFrye = 0;
     flag_output_evo_to_file = 0;
     has_source_terms = false;
@@ -63,6 +64,8 @@ void MpiMusic::InitializeHydro(Parameter parameter_list) {
                                 static_cast<double>(flag_output_evo_to_file));
     double eta_over_s = GetXMLElementDouble({
                             "Hydro", "MUSIC", "shear_viscosity_eta_over_s"});
+  
+    double freeze_Temp = GetXMLElementDouble({"Hydro", "MUSIC", "freezeout_temperature"});
 
     if (eta_over_s > 1e-6) {
         music_hydro_ptr->set_parameter("Viscosity_Flag_Yes_1_No_0", 1);
@@ -102,7 +105,7 @@ void MpiMusic::EvolveHydro() {
                 pre_eq_ptr->pi13_, pre_eq_ptr->pi22_, pre_eq_ptr->pi23_,
                 pre_eq_ptr->pi33_, pre_eq_ptr->bulk_Pi_);
     }
-    
+
     JSINFO << "initial density profile dx = " << dx << " fm";
     hydro_status = INITIALIZED;
     JSINFO << "number of source terms: "
@@ -131,12 +134,17 @@ void MpiMusic::EvolveHydro() {
         }
         music_hydro_ptr->clear_hydro_info_from_memory();
 
+
         // add hydro_id to the hydro evolution filename
         std::ostringstream system_command;
         system_command << "mv evolution_for_movie_xyeta.dat "
                        << "evolution_for_movie_xyeta_" << GetId() << ".dat";
         system(system_command.str().c_str());
-        //FindAConstantTemperatureSurface(0.16);
+
+        if (freezeout_temperature > 0.0) {
+            FindAConstantTemperatureSurface(freezeout_temperature);
+        }
+
     }
     
     collect_freeze_out_surface();

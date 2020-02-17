@@ -61,7 +61,7 @@ void ColoredHadronization::Init()
     pythia.readString("Init:showMultipartonInteractions = on");
     pythia.readString("Init:showChangedParticleData = on");
   }
-  
+      
   // No event record printout.
   pythia.readString("Next:numberShowInfo = 0");
   pythia.readString("Next:numberShowProcess = 0");
@@ -71,10 +71,10 @@ void ColoredHadronization::Init()
     pythia.readString("Next:numberShowProcess = 1");
     pythia.readString("Next:numberShowEvent = 1");
   }
-  
+      
   pythia.readString("ProcessLevel:all = off");
   pythia.readString("PartonLevel:FSR=off");
-  //pythia.readString("HadronLevel:Decay = off");
+  pythia.readString("HadronLevel:Decay = on");
   pythia.readString("ParticleDecays:limitTau0 = on");
   pythia.readString("ParticleDecays:tau0Max = 10.0");
   pythia.init();
@@ -104,6 +104,14 @@ void ColoredHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& s
       for(unsigned int ipart=0; ipart <  shower.at(ishower).size(); ++ipart)
       {
           double onshellE = pow(pow(shower.at(ishower).at(ipart)->px(),2) + pow(shower.at(ishower).at(ipart)->py(),2) + pow(shower.at(ishower).at(ipart)->pz(),2) ,0.5 ) ;
+          
+            if ( shower.at(ishower).at(ipart)->pid()==22 )
+            {
+                
+                JSINFO << BOLDYELLOW << " photon found in colored hadronization with " ;
+                JSINFO << BOLDYELLOW << "px = " << shower.at(ishower).at(ipart)->px();
+                //cin >> blurb;
+            }
           event.append(shower.at(ishower).at(ipart)->pid(),23,shower.at(ishower).at(ipart)->color(),shower.at(ishower).at(ipart)->anti_color(),
 		       shower.at(ishower).at(ipart)->px(),shower.at(ishower).at(ipart)->py(),shower.at(ishower).at(ipart)->pz(),onshellE);
       }
@@ -131,8 +139,8 @@ void ColoredHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& s
 	  
 	  if(pid != 0){pz = -1*pz; event.append(pid, 23, anti_color, color, 0.2, 0.2, pz, sqrt(pz*pz + 0.08));}    
     
-      VERBOSE(2) <<"There are " << hOut.size() << " Hadrons and " << pOut.size() << " partons after Hadronization";
-    }
+    VERBOSE(2) <<"There are " << hOut.size() << " Hadrons and " << pOut.size() << " partons after Hadronization";
+  }
 	
   //there still may be color tag duplicates - will SegFault if color_reconnections is ever invoked.
   //this should be fixed *here*, before pythia.next() below, if that's ever a concern.
@@ -166,7 +174,7 @@ void ColoredHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& s
   unsigned int ip=hOut.size();
   for (unsigned int i=0; i<event.size(); ++i){
     if ( !event[i].isFinal() )   continue;
-    if ( !event[i].isHadron() )  continue;
+    //if ( !event[i].isHadron() )  continue;
     if(fabs(event[i].eta())>20)  continue; //To prevent "nan" from propagating, very rare though
     
     double x[4] = {0,0,0,0};

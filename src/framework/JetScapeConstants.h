@@ -58,8 +58,8 @@ static double error = 0.02 ;
 
 static double approx = 0.02 ;
 
-static double s_error = 0.001;
-static double s_approx = 0.001;
+static double s_error = 0.01;
+static double s_approx = 0.01;
 
 static double E_minimum = 1.0 ;
 
@@ -77,6 +77,16 @@ static int uid=2;
 static int did=1;
 
 static int sid=3;
+    
+static int cid=4;
+    
+static int bid=5;
+    
+static int photonid=22;
+    
+static int Zid = 23;
+    
+static int Wid = 24; // refers to W+, use -24 for W-
 /*******************************************************************/
 
 };

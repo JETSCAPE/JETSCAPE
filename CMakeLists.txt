@@ -272,9 +272,9 @@ message("Looking for HDF5 ...")
 find_package(HDF5)
 if(${HDF5_FOUND})
   include_directories(${HDF5_INCLUDE_DIRS})
-  message(STATUS "HDF5 Include dir : " ${HDF5_INCLUDE_DIRS})
   set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -DUSE_HDF5" )
-  set(_hdf5_libs ${HDF5_LIBRARIES} ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES})
+  set( _hdf5_libs ${HDF5_CXX_LIB} ${HDF5_C_LIB} ${ZLIB} ${HDF5_HL_LIBRARIES})
+  message(STATUS "HDF5 include dir and libs : ${HDF5_INCLUDE_DIRS} ${_hdf5_libs} ")
 endif(${HDF5_FOUND})
 
 message("Looking for MPI ...")
@@ -410,8 +410,6 @@ target_link_libraries(FinalStatePartons JetScape )
 
 # executables with additional dependencies
 if ( music AND iSS )
-    #add_executable(TwoStageHydro ./examples/TwoStagesHydro.cc)
-    #target_link_libraries(TwoStageHydro JetScape ${GSL_LIBRARIES})
     target_link_libraries(runJetscape ${GSL_LIBRARIES})
 endif (music AND iSS )
 

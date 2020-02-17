@@ -43,6 +43,10 @@ void iSpectraSamplerWrapper::InitTask() {
     int hydro_mode = GetXMLElementInt({"SoftParticlization", "iSS", "hydro_mode"});
     int number_of_repeated_sampling = GetXMLElementInt({"SoftParticlization", "iSS", "number_of_repeated_sampling"});
     int flag_perform_decays = GetXMLElementInt({"SoftParticlization", "iSS", "Perform_resonance_decays"});
+  
+    if (!boost_invariance) {
+      hydro_mode = 2;
+    }
 
     iSpectraSampler_ptr_ = std::unique_ptr<iSS> (new iSS(working_path));
     iSpectraSampler_ptr_->paraRdr_ptr->readFromFile(input_file);
@@ -123,7 +127,7 @@ void iSpectraSamplerWrapper::PassHadronListToJetscape() {
             iSS_Hadron current_hadron = (
                                 iSpectraSampler_ptr_->get_hadron(iev, ipart));
             int hadron_label = 0;
-            int hadron_status = -1;
+            int hadron_status = 11;
             int hadron_id = current_hadron.pid;
             //int hadron_id = 1;   // just for testing need to be changed to the line above
             double hadron_mass = current_hadron.mass;

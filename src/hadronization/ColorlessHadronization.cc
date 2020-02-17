@@ -52,7 +52,7 @@ void ColorlessHadronization::Init()
 {
   // Open output file
   //hadfile.open("CH_myhad.dat");
-
+  
   std::string s = GetXMLElementText({"JetHadronization", "name"});
   JSDEBUG << s << " to be initializied ...";
 
@@ -61,7 +61,7 @@ void ColorlessHadronization::Init()
   p_fake = p_read_xml;
   
   take_recoil = GetXMLElementInt({"JetHadronization", "take_recoil"});
-
+  
   JSDEBUG<<"Initialize ColorlessHadronization";
   VERBOSE(8);
   
@@ -78,11 +78,15 @@ void ColorlessHadronization::Init()
 
   // Don't let any hadron decay
   //pythia.readString("HadronLevel:Decay = off");
+
+  pythia.readString("PartonLevel:FSR=off");
+  pythia.readString("HadronLevel:Decay = on");
   pythia.readString("ParticleDecays:limitTau0 = on");
   pythia.readString("ParticleDecays:tau0Max = 10.0");
 
   // And initialize
   pythia.init();
+  
 }
 
 void ColorlessHadronization::WriteTask(weak_ptr<JetScapeWriter> w)

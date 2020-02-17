@@ -37,7 +37,7 @@ namespace Jetscape {
   /** Default constructor to create the main task of the JetScape framework. It sets the total number of events to 1.
    * By default, hydro events are used only once
    */
-  JetScape::JetScape():
+JetScape::JetScape():
   JetScapeModuleBase(),
   n_events(1),
   reuse_hydro_(false),
@@ -146,6 +146,9 @@ void JetScape::ReadGeneralParametersFromXML() {
   // Set up helper. Mostly used for random numbers
   // Needs the XML reader singleton set up
   JetScapeTaskSupport::ReadSeedFromXML( );
+  
+  JSDEBUG<<"JetScape Debug from XML = "<< log_debug;
+  JSDEBUG<<"JetScape Remark from XML = "<< log_remark;
 
 }
   
@@ -327,7 +330,7 @@ void JetScape::DetermineTaskListFromXML() {
             JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added Brick to task list.";
             SetModuleId(childElement, hydro);
             if (bAddLiquefier) {
-              dynamic_pointer_cast<FluidDynamics>(hydro)->add_a_liqueifier(liquefier);
+              dynamic_pointer_cast<FluidDynamics>(hydro)->add_a_liquefier(liquefier);
               JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added liquefier to Brick.";
             }
           }
@@ -340,7 +343,7 @@ void JetScape::DetermineTaskListFromXML() {
             JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added Gubser to task list.";
             SetModuleId(childElement, hydro);
             if (bAddLiquefier) {
-              dynamic_pointer_cast<FluidDynamics>(hydro)->add_a_liqueifier(liquefier);
+              dynamic_pointer_cast<FluidDynamics>(hydro)->add_a_liquefier(liquefier);
               JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added liquefier to Gubser.";
             }
           }
@@ -353,7 +356,7 @@ void JetScape::DetermineTaskListFromXML() {
             JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added hydro_from_file to task list.";
             SetModuleId(childElement, hydro);
             if (bAddLiquefier) {
-              dynamic_pointer_cast<FluidDynamics>(hydro)->add_a_liqueifier(liquefier);
+              dynamic_pointer_cast<FluidDynamics>(hydro)->add_a_liquefier(liquefier);
               JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added liquefier to hydro_from_file.";
             }
           }
@@ -367,7 +370,7 @@ void JetScape::DetermineTaskListFromXML() {
             JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added MUSIC to task list.";
             SetModuleId(childElement, hydro);
             if (bAddLiquefier) {
-              dynamic_pointer_cast<FluidDynamics>(hydro)->add_a_liqueifier(liquefier);
+              dynamic_pointer_cast<FluidDynamics>(hydro)->add_a_liquefier(liquefier);
               JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added liquefier to MUSIC.";
             }
           }
@@ -394,7 +397,7 @@ void JetScape::DetermineTaskListFromXML() {
             JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added " << childElementName << " to task list.";
             SetModuleId(childElement, customModule);
             if (bAddLiquefier) {
-              dynamic_pointer_cast<FluidDynamics>(customModule)->add_a_liqueifier(liquefier);
+              dynamic_pointer_cast<FluidDynamics>(customModule)->add_a_liquefier(liquefier);
               JSINFO << "JetScape::DetermineTaskList() -- Hydro: Added liquefier to CustomModule.";
             }
           }
@@ -413,7 +416,7 @@ void JetScape::DetermineTaskListFromXML() {
       // Check if liquefier should be added, and add it if so
       std::string strAddLiquefier = GetXMLElementText({"Eloss", "AddLiquefier"});
       if ((int) strAddLiquefier.find("true")>=0) {
-        jloss->add_a_liqueifier(liquefier);
+        jloss->add_a_liquefier(liquefier);
         JSINFO << "JetScape::DetermineTaskList() -- Added liquefier to Eloss.";
       }
       else {
@@ -583,6 +586,16 @@ void JetScape::DetermineTaskListFromXML() {
       }
     }
     
+    // Parton printer
+    else if (elementName == "PartonPrinter") {
+      
+      auto partonPrinter = JetScapeModuleFactory::createInstance(elementName);
+      if (partonPrinter) {
+        Add(partonPrinter);
+        JSINFO << "JetScape::DetermineTaskList() -- Added PartonPrinter to task list.";
+      }
+    }
+    
     else {
       VERBOSE(2) << "Nothing to do.";
     }
@@ -728,7 +741,10 @@ void JetScape::Exec() {
     }
   
     for (int i = 0; i < GetNumberOfEvents(); i++) {
-        JSINFO << BOLDRED << "Run Event # = " << i;
+        if (i % 100 == 0) {
+          JSINFO << BOLDRED << "Run Event # = " << i;
+        }
+        VERBOSE(1) << BOLDRED << "Run Event # = " << i;
         JSDEBUG << "Found " << GetNumberOfTasks()
                 <<" Modules Execute them ... ";
 

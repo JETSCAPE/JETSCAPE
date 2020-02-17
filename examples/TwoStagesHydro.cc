@@ -42,6 +42,7 @@
 #include "TrentoInitial.h"
 #include "NullPreDynamics.h"
 #include "PGun.h"
+#include "PythiaGun.h"
 #include "PartonPrinter.h"
 #include "HadronizationManager.h"
 #include "Hadronization.h"
@@ -78,7 +79,7 @@ int main(int argc, char** argv)
    
   Show();
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",10);
+  auto jetscape = make_shared<JetScape>("./jetscape_init.xml", 1);
   jetscape->SetReuseHydro (true);
   jetscape->SetNReuseHydro (5);
 
@@ -89,7 +90,8 @@ int main(int argc, char** argv)
   // Initial conditions and hydro
   auto trento = make_shared<TrentoInitial>();
   auto null_predynamics = make_shared<NullPreDynamics> ();
-  auto pGun= make_shared<PGun> ();
+  //auto pGun= make_shared<PGun> ();
+  auto pythiaGun= make_shared<PythiaGun> ();
   auto hydro1 = make_shared<MpiMusic> ();
   auto myliquefier = make_shared<CausalLiquefier> ();
   hydro1->SetId("MUSIC_1");
@@ -97,7 +99,8 @@ int main(int argc, char** argv)
 
   jetscape->Add(trento);
   jetscape->Add(null_predynamics);
-  jetscape->Add(pGun);
+  jetscape->Add(pythiaGun);
+  //jetscape->Add(pGun);
 
   // add the first hydro
   jetscape->Add(hydro1);
@@ -105,7 +108,7 @@ int main(int argc, char** argv)
   // Energy loss
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
-  jloss->add_a_liqueifier(myliquefier);
+  jloss->add_a_liquefier(myliquefier);
 
 
   auto matter = make_shared<Matter> ();
@@ -124,7 +127,7 @@ int main(int argc, char** argv)
 
   // add the second hydro
   auto hydro2 = make_shared<MpiMusic> ();
-  hydro2->add_a_liqueifier(myliquefier);
+  hydro2->add_a_liquefier(myliquefier);
   hydro2->SetId("MUSIC_2");
   jetscape->Add(hydro2);
 

@@ -23,6 +23,22 @@
 
 using namespace Jetscape;
 
+class MARTINIUserInfo: public fjcore::PseudoJet::UserInfoBase {
+  private :
+    bool _coherent{ false };
+    int _sibling{ -1 };
+    FourVector _pAtSplit{ FourVector(0., 0., 0., 0.) };
+
+  public :
+    MARTINIUserInfo() {}
+    MARTINIUserInfo(bool coherent, int sibling, FourVector pAtSplit) 
+                    : _coherent(coherent), _sibling(sibling), _pAtSplit(pAtSplit){};
+
+    bool coherent() const { return _coherent; }
+    int coherent_with() const { return _sibling;}
+    FourVector p_at_split() const { return _pAtSplit;}
+};
+
 //Basic.h//
 struct RateRadiative
 {
@@ -53,6 +69,8 @@ class Martini : public JetEnergyLossModule<Martini> //, public std::enable_share
 
   // AMY rates are calculated in p/T > AMYpCut
   static constexpr double AMYpCut = 4.01;
+  // minimum energy of parton that can lose energy
+  const double eLossCut = 1.0;
 
   double Q0;            // Separation scale between Matter and Martini
   double alpha_s;
@@ -61,6 +79,7 @@ class Martini : public JetEnergyLossModule<Martini> //, public std::enable_share
   double pcut;          // below this scale, no further Eloss
   double hydro_Tc;      // critical temperature
   double hydro_tStart;  // initilization time of hydro
+  int    recoil_on;     // turn on recoil
 
   //Import.h//
   static const int NP = 230;
@@ -122,6 +141,8 @@ class Martini : public JetEnergyLossModule<Martini> //, public std::enable_share
   vector<double> *dGamma_qq_q;
   vector<double> *dGamma_qg_q;
   
+  static int pLabelNew;
+  
   // Allows the registration of the module so that it is available to be used by the Jetscape framework.
   static RegisterJetScapeModule<Martini> reg;
 
@@ -136,7 +157,7 @@ class Martini : public JetEnergyLossModule<Martini> //, public std::enable_share
   int DetermineProcess(double p, double T, double deltaTRest, int id);
   void WriteTask(weak_ptr<JetScapeWriter> w) {};
   
-  //Radiative.h//
+  //Radiative//
   RateRadiative getRateRadTotal(double p, double T);
   RateRadiative getRateRadPos(double u, double T);
   RateRadiative getRateRadNeg(double u, double T);
@@ -145,7 +166,9 @@ class Martini : public JetEnergyLossModule<Martini> //, public std::enable_share
   double area(double y, double u, int posNegSwitch, int process);
   double function(double u, double y, int process);
 
-  //Elastic.h//
+  bool isCoherent(Parton& pIn, int sibling, double T);
+
+  //Elastic//
   RateElastic getRateElasTotal(double p, double T);
   RateElastic getRateElasPos(double u, double T);
   RateElastic getRateElasNeg(double u, double T);
@@ -161,9 +184,11 @@ class Martini : public JetEnergyLossModule<Martini> //, public std::enable_share
     return getElasticRateOmega(u, y, process);}
   double functionQ(double u, double omega, double q, int process) {
     return getElasticRateQ(u, omega, q, process);}
-  Jetscape::FourVector getNewMomentumElas(Jetscape::FourVector pVec, double omega, double q);
+  FourVector getNewMomentumElas(FourVector pVec, double omega, double q);
+  FourVector getThermalVec(FourVector qVec, double T, int id);
+  double getThermal(double k_min, double T, int kind);
 
-  //Import.h//
+  //Rate table//
   void readRadiativeRate(Gamma_info *dat, dGammas *Gam);
   void readElasticRateOmega();
   void readElasticRateQ();
@@ -178,6 +203,9 @@ class Martini : public JetEnergyLossModule<Martini> //, public std::enable_share
   double getElasticRateQ(double u, double omega, double q, int process);
   double use_elastic_table_omega(double omega, int which_kind);
   double use_elastic_table_q(double u, double omega, int which_kind);
+
+
+  static void IncrementpLable() {pLabelNew++;}
 
  protected:
   uniform_real_distribution<double> ZeroOneDistribution;

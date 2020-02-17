@@ -54,12 +54,14 @@ void PythiaGun::InitTask()
   readString("Next:numberShowEvent = 0"); 
 
   // Standard settings
-  readString("HardQCD:all = on"); // will repeat this line in the xml for demonstration  
+  readString("HardQCD:all = on"); // will repeat this line in the xml for demonstration
+  //  readString("HardQCD:gg2ccbar = on"); // switch on heavy quark channel
+  //readString("HardQCD:qqbar2ccbar = on");
   readString("HadronLevel:Decay = off");
   readString("HadronLevel:all = off");
   readString("PartonLevel:ISR = on");
   readString("PartonLevel:MPI = on");
-  //readString("PartonLevel:FSR = off");
+  //readString("PartonLevel:FSR = on");
   readString("PromptPhoton:all=on");
   readString("WeakSingleBoson:all=off");
   readString("WeakDoubleBoson:all=off");
@@ -80,9 +82,12 @@ void PythiaGun::InitTask()
   
   pTHatMin = GetXMLElementDouble({"Hard", "PythiaGun", "pTHatMin"});
   pTHatMax = GetXMLElementDouble({"Hard", "PythiaGun", "pTHatMax"});
-  
+
+  flag_useHybridHad = GetXMLElementInt({"Hard", "PGun", "useHybridHad"});
+
   JSINFO << MAGENTA << "Pythia Gun with FSR_on: " << FSR_on;
   JSINFO << MAGENTA << "Pythia Gun with "<< pTHatMin << " < pTHat < " << pTHatMax;
+  JSINFO << MAGENTA << "Use hybrid hadronization? " << flag_useHybridHad;
   
   numbf.str("PhaseSpace:pTHatMin = "); numbf << pTHatMin;
   readString ( numbf.str() );
@@ -132,7 +137,6 @@ void PythiaGun::Exec()
 {
   VERBOSE(1)<<"Run Hard Process : "<<GetId()<< " ...";
   VERBOSE(8)<<"Current Event #"<<GetCurrentEvent();
-  
   //Reading vir_factor from xml for MATTER
   double vir_factor = GetXMLElementDouble({"Eloss", "Matter", "vir_factor"});
 
@@ -163,7 +167,7 @@ void PythiaGun::Exec()
           if ( particle.status()!=62 ) continue;
           // only accept gluons and quarks
           // Also accept Gammas to put into the hadron's list
-          if ( fabs( particle.id() ) > 3 && (particle.id() !=21 && particle.id() !=22) ) continue;
+          if ( fabs( particle.id() ) > 5 && (particle.id() !=21 && particle.id() !=22) ) continue;
           
           // reject rare cases of very soft particles that don't have enough e to get
           // reasonable virtuality
@@ -175,7 +179,7 @@ void PythiaGun::Exec()
           if ( !particle.isFinal()) continue;
     	  // only accept gluons and quarks
           // Also accept Gammas to put into the hadron's list
-          if ( fabs( particle.id() ) > 3 && (particle.id() !=21 && particle.id() !=22) ) continue;
+          if ( fabs( particle.id() ) > 5 && (particle.id() !=21 && particle.id() !=22) ) continue;
       }    
       p62.push_back( particle );
 
@@ -252,17 +256,23 @@ void PythiaGun::Exec()
     VERBOSE(7) <<" at x=" << xLoc[1]
 	       <<", y=" << xLoc[2]
 	       <<", z=" << xLoc[3];
-    if(particle.id() !=22)
-    {
-        auto ptn = make_shared<Parton>(0,particle.id(),0,particle.pT(),particle.y(),particle.phi(),particle.e(),xLoc);
-        ptn->set_color(particle.col()); ptn->set_anti_color(particle.acol()); ptn->set_max_color(1000*(np+1));
-        AddParton(ptn);
-    }
-    else
-    {
-	      AddHadron(make_shared<Hadron>(hCounter,particle.id(),particle.status(),particle.pT(),particle.eta(),particle.phi(),particle.e(),xLoc));
-	      hCounter++;
-    }
+
+   // if(particle.id() !=22)
+   // {
+        if(flag_useHybridHad != 1) {
+            AddParton(make_shared<Parton>(0, particle.id(),0,particle.pT(),particle.y(),particle.phi(),particle.e(),xLoc) );
+        } else {
+    	    auto ptn = make_shared<Parton>(0,particle.id(),0,particle.pT(),particle.y(),particle.phi(),particle.e(),xLoc);
+            ptn->set_color(particle.col()); ptn->set_anti_color(particle.acol()); ptn->set_max_color(1000*(np+1));
+            AddParton(ptn);
+        }
+    //}
+    //else
+    //{
+    //          AddHadron(make_shared<Hadron>(hCounter,particle.id(),particle.status(),particle.pT(),particle.eta(),particle.phi(),particle.e(),xLoc));
+    //          hCounter++;
+    //}
+
   }
   
 
