@@ -329,7 +329,7 @@ void HybridHadronization::WriteTask(weak_ptr<JetScapeWriter> w){
 //TODO: Junction Strings, Thermal Partons
 void HybridHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& shower, vector<shared_ptr<Hadron>>& hOut, vector<shared_ptr<Parton>>& pOut){
   
-  JSINFO<<"Start Hybrid Hadronization using both Recombination and PYTHIA Lund string model.";
+  VERBOSE(2)<<"Start Hybrid Hadronization using both Recombination and PYTHIA Lund string model.";
   pythia.event.reset(); HH_shower.clear();
   
   for(unsigned int ishower=0; ishower < shower.size(); ++ishower){
@@ -348,7 +348,7 @@ void HybridHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& sh
 	}
 	JSDEBUG<<"Shower#"<<ishower+1 << ". Number of partons to hadronize so far: " << HH_shower.num();
   }
-  JSINFO<<"# Partons to hadronize: " << HH_shower.num();
+  VERBOSE(2)<<"# Partons to hadronize: " << HH_shower.num();
   
   int num_strings = 0;
   
@@ -451,7 +451,7 @@ void HybridHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& sh
 		hOut.push_back(std::make_shared<Hadron> (Hadron (0,idH,1,p,x,mH)));
 	}
   }
-  JSINFO<<"#Showers hadronized together: " << shower.size() << " ( " << num_strings << " initial strings ). There are " <<
+  VERBOSE(2)<<"#Showers hadronized together: " << shower.size() << " ( " << num_strings << " initial strings ). There are " <<
     hOut.size() << " hadrons and " << pOut.size() << " partons after Hybrid Hadronization";
   
 }

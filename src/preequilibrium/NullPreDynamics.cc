@@ -30,13 +30,12 @@ NullPreDynamics::NullPreDynamics() {
 }
 
 void NullPreDynamics::EvolvePreequilibrium() {
-    VERBOSE(8);
-    JSINFO << "Initialize energy density profile in NullPreDynamics ...";
+    VERBOSE(2) << "Initialize energy density profile in NullPreDynamics ...";
     // grab initial energy density from vector from initial state module
     std::vector<double> energy_density = ini->GetEntropyDensityDistribution();
     preequilibrium_status_ = INIT;
     if (preequilibrium_status_ == INIT) {
-        JSINFO << "running NullPreDynamics ...";
+        VERBOSE(2) << "running NullPreDynamics ...";
         for (auto const &e_local: energy_density) {
             e_.push_back(e_local);
             P_.push_back(e_local/3.);
