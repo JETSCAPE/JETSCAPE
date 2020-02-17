@@ -103,18 +103,22 @@ void LBT::Init()
   //        cout << "Parameter check failed" << endl;
   //        exit(EXIT_FAILURE);
   //    }
+	
+//  if (lbt) {
   
-  std::string s = GetXMLElementText({"Eloss", "Lbt", "name"});
-  JSDEBUG << s << " to be initilizied ...";
-
   //double m_qhat=-99.99;
   //lbt->FirstChildElement("qhat")->QueryDoubleText(&m_qhat);
   //SetQhat(m_qhat);
   //
   //JSDEBUG  << s << " with qhat = "<<GetQhat();
+
+  int flagInt=-100;
+  double inputDouble=-99.99;
+
+  Q00=1.0;
+  Q0=1.0;
   
   int in_vac = GetXMLElementInt({"Eloss", "Lbt", "in_vac"});
-
   if (in_vac == 1) {
     vacORmed = 0;
     fixPosition = 1;
