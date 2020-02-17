@@ -138,12 +138,12 @@ void JetEnergyLossManager::Exec()
   // ----------------------------------
   // Copy Shower initiating partons to JetEnergyLoss tasks ...
   
-  if (GetGetHardPartonListConnected())
+  if (GetGetHardPartonListConnected() && hp.size() > 0)
     {
       int n=0;
       for (auto it : GetTaskList())
 	{
-	  dynamic_pointer_cast<JetEnergyLoss>(it)->AddShowerInitiatingParton(hp[n]);
+	  dynamic_pointer_cast<JetEnergyLoss>(it)->AddShowerInitiatingParton(hp.at(n));
 	  n++;
 	}
     }

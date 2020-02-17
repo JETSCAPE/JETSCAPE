@@ -76,7 +76,7 @@ void SmashWrapper::InitTask() {
       config.take({"Logging", "default"}, einhard::TRACE));
   smash::create_all_loggers(config["Logging"]);
   // Read in the rest of configuration
-  float end_time = GetXMLDouble({"Afterburner", "SMASH", "end_time"});
+  float end_time = GetXMLElementDouble({"Afterburner", "SMASH", "end_time"});
   config["General"]["End_Time"] = end_time;
   only_final_decays_ = GetXMLElementInt({"Afterburner", "SMASH", "only_decays"});
   JSINFO << "End time for SMASH is set to " << end_time << " fm/c";

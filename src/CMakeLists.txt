@@ -34,7 +34,7 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/initialstate/data_table/
 FILE(GLOB preeqsources preequilibrium/*.cc)
 set (SOURCES  ${SOURCES}  ${preeqsources} )
 ## Take care of options
-if(NOT "${freestream}")
+if(NOT "${USE_FREESTREAM}")
   list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/preequilibrium/FreestreamMilneWrapper.cc)
 endif()
 
@@ -46,11 +46,11 @@ set (SOURCES  ${SOURCES}  ${liquefiersources} )
 FILE(GLOB hydrosources hydro/*.cc)
 set (SOURCES  ${SOURCES}  ${hydrosources} )
 ## Take care of options
-if(NOT "${music}")
+if(NOT "${USE_MUSIC}")
   list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/hydro/MusicWrapper.cc)
 endif()
 
-if(NOT "${clvisc}")
+if(NOT "${USE_CLVISC}")
   list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/hydro/CLViscWrapper.cc)
 endif()
 
@@ -58,7 +58,7 @@ endif()
 FILE(GLOB afterburnersources afterburner/*.cc)
 set (SOURCES  ${SOURCES}  ${afterburnersources} )
 ## Take care of options
-if(NOT "${smash}")
+if(NOT "${USE_SMASH}")
   list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/afterburner/SmashWrapper.cc)
 endif()
 
@@ -97,20 +97,20 @@ if ( ${HEPMC_FOUND} )
   target_link_libraries (JetScape -L${HEPMC_LIB_DIR} -lHepMC3 )
 endif()
 
-if ( music )
+if ( USE_MUSIC )
   target_link_libraries (JetScape music )
 endif()
 
-if ( iSS )
+if ( USE_ISS )
   target_link_libraries (JetScape iSS )
 endif()
 
-if ( clvisc )
+if ( USE_CLVISC )
   target_link_libraries (JetScape clviscwrapper )
 endif()
 
 
-if ( smash )
+if ( USE_SMASH )
   target_link_libraries (JetScape ${SMASH_LIBRARIES})
 endif()
 

@@ -36,7 +36,7 @@ namespace Jetscape {
   }
 
   void Afterburner::Exec() {
-    JSINFO << "Afterburner running: " << GetId() << " ...";
+    VERBOSE(2) << "Afterburner running: " << GetId() << " ...";
     ExecuteTask();
   }
 } // end namespace Jetscape

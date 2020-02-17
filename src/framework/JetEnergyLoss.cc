@@ -101,7 +101,7 @@ void JetEnergyLoss::Clear()
 
   this->final_Partons.clear(); 
 
-  //inP=nullptr;pShower=nullptr; // kind of defeating the porpose of shared pointers somehow ...
+  inP = nullptr;
 }
 
 void JetEnergyLoss::Init()

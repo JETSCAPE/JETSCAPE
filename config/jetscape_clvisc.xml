@@ -3,15 +3,12 @@
 <jetscape>
   
   <nEvents> 20 </nEvents>
-
-  <debug> on </debug>
-  <vlevel> 0 </vlevel>
   
   <JetScapeWriterAscii> on </JetScapeWriterAscii>
 
   <!-- Inital State Module  -->
   <IS>
-    <Trento use_module="user_defined"> </Trento>
+    <Trento> </Trento>
   </IS>
   
   <!-- Hard Process -->
@@ -41,7 +38,7 @@
   
   <!-- Jet Hadronization Module -->
   <JetHadronization>
-    <name>colored</name>
+    <name>colorless</name>
   </JetHadronization>
   
 </jetscape>

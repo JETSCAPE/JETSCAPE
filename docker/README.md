@@ -57,6 +57,8 @@ The docker container will contain only the pre-requisite environment to build JE
     ```
     docker run -it -v ~/jetscape-docker:/home/jetscape-user --name myJetscape --user $(id -u):$(id -g) jetscape/base:v1.3
     ```
+    
+    For details on the compatibility of docker image versions with JETSCAPE versions, please see the [jetscape dockerhub](https://hub.docker.com/r/jetscape/base) page.
 
     This is what the `docker run` command does:
     - `docker run` creates and starts a new docker container from a pre-defined image jetscape/base:v1.3, which will be downloaded if necessary.
@@ -64,6 +66,9 @@ The docker container will contain only the pre-requisite environment to build JE
     - `-v` mounts a shared folder between your machine (at ~/jetscape-docker) and the container (at /home/jetscape-user), through which you can transfer files to and from the container. You can edit the location of the folder on your machine as you like.
     - `--name` (optional) sets a name for your container, for convenience. Edit it as you like.
     - `--user $(id -u):$(id -g)` (only needed on linux) runs the docker container with the same user permissions as the current user on your machine (since docker uses the same kernel as your host machine, the UIDs are shared). Note that the prompt will display "I have no name!", which is normal.
+    
+    Note that on linux, you may want to add the option `--memory <limit>` to limit the amount of memory that docker is allowed to 
+    consume (by default, the available memory and CPUs are not limited on linux, since it is not run in a VM as in macOS).
 
 3. Build JETSCAPE:
     ```

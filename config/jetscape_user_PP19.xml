@@ -2,7 +2,7 @@
 
 <jetscape>
   
-  <nEvents> 10000 </nEvents>
+  <nEvents> 1000 </nEvents>
   
   <JetScapeWriterHepMC> on </JetScapeWriterHepMC>
 

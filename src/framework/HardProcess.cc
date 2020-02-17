@@ -51,7 +51,12 @@ void HardProcess::Init()
 
   ini = JetScapeSignalManager::Instance()->GetInitialStatePointer().lock();
   if (!ini) {
-      JSWARN << "No initial state module, try: auto trento = make_shared<TrentoInitial>(); jetscape->Add(trento);";
+    
+    // If not vacuum case, give warning to add initial state module
+    bool in_vac = GetXMLElementInt({"Eloss", "Matter", "in_vac"});
+    if (!in_vac) {
+      JSWARN << "No initial state module! Please check whether you intend to add an initial state module.";
+    }
   }
   
   InitTask();

@@ -269,7 +269,7 @@ void JetScape::DetermineTaskListFromXML() {
         }
         //    - FreestreamMilne
         else if (childElementName == "FreestreamMilne") {
-          #ifdef freestream
+          #ifdef USE_FREESTREAM
           auto predynamics = JetScapeModuleFactory::createInstance(childElementName);
           if (predynamics) {
             Add(predynamics);
@@ -363,7 +363,7 @@ void JetScape::DetermineTaskListFromXML() {
         }
         //   - MUSIC
         else if (childElementName == "MUSIC") {
-          #ifdef music
+          #ifdef USE_MUSIC
           auto hydro = JetScapeModuleFactory::createInstance("MUSIC");
           if (hydro) {
             Add(hydro);
@@ -563,7 +563,7 @@ void JetScape::DetermineTaskListFromXML() {
         
         //    - SMASH
         if (childElementName == "SMASH") {
-          #ifdef smash
+          #ifdef USE_SMASH
           auto smashModule = JetScapeModuleFactory::createInstance(childElementName);
           if (smashModule) {
             Add(smashModule);

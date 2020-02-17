@@ -60,7 +60,7 @@ void PreequilibriumDynamics::Init() {
 }
 
 void PreequilibriumDynamics::Exec() {
-    JSINFO << "Run Preequilibrium : " << GetId() << " ...";
+    VERBOSE(2) << "Run Preequilibrium : " << GetId() << " ...";
     VERBOSE(8) << "Current Event #" << GetCurrentEvent();
 
     if (ini) {

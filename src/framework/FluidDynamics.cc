@@ -65,7 +65,7 @@ void FluidDynamics::Init() {
 }
 
 void FluidDynamics::Exec() {
-    JSINFO << "Run Hydro : " << GetId() << " ...";
+    VERBOSE(2) << "Run Hydro : " << GetId() << " ...";
     VERBOSE(8) << "Current Event #" << GetCurrentEvent();
 
     if (ini) {
