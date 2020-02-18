@@ -27,22 +27,22 @@ sqrts = 2760
 cross_section = 6.4 #PbPb 2.76 TeV
 #cross_section = 4.2 #AuAu 200 GeV
 
-normalization = 16.252 # PbPb 2.76 TeV
-#normalization = 6.382 # AuAu 200 GeV
+normalization = 15.71 # PbPb 2.76 TeV
+#normalization = 6.242 # AuAu 200 GeV
 
 cent_low = 0
 cent_high = 100
-reduced_thickness = 0.032
-fluctuation = 0.979
-nucleon_width = 1.186
-nucleon_min_dist = 1.327
+reduced_thickness = 0.057
+fluctuation = 0.998
+nucleon_width = 1.197
+nucleon_min_dist = 1.35
 
 #freestream-milne Parameters
 #formula for Energy-dependent freestreaming time: tau_fs = tau_R * (e_T / e_R) ^ alpha
 e_dep_fs_time = 1 # switch for energy dependent freestreaming time 
 e_R = 4.0 # GeV / fm
-tau_R = 0.745 # fm / c
-alpha = -0.16 
+tau_R = 1.02 # fm / c
+alpha = 0.02 
 
 #this will be a dead parameter if using energy-dependent freestreaming time
 #its value will need to be overridden by preequilibrium pointer 
@@ -51,22 +51,22 @@ tau_s = 1.16 #time of landau-matching to hydro [fm/c]
 #MUSIC Parameters
 #only T_c matters, e_c is dummy by default
 e_c = 1.7   #switching energy density on freezeout hypersurface [GeV/fm^3]
-T_c = 0.149 #switching temperature on hypersurface [GeV]
+T_c = 0.146 #switching temperature on hypersurface [GeV]
 
 #shear viscosity p'zation
-eta_over_s_T_kink_in_GeV = 0.223
-eta_over_s_low_T_slope_in_GeV = -0.653
-eta_over_s_high_T_slope_in_GeV = 0.489
-eta_over_s_at_kink = 0.068
+eta_over_s_T_kink_in_GeV = 0.253
+eta_over_s_low_T_slope_in_GeV = -0.76
+eta_over_s_high_T_slope_in_GeV = 0.12
+eta_over_s_at_kink = 0.051
 
 #bulk viscosity p'zation
-zeta_over_s_max = 0.103
+zeta_over_s_max = 0.138
 zeta_over_s_width_in_GeV = 0.025
-zeta_over_s_T_peak_in_GeV = 0.133
-zeta_over_s_lambda_asymm = -0.565
+zeta_over_s_T_peak_in_GeV = 0.121
+zeta_over_s_lambda_asymm = -0.03
 
 #relaxation times
-shear_relax_time_factor = 5.731
+shear_relax_time_factor = 5.66
 bulk_relax_time_factor = (1./14.55)
 
 #iS3D Parameters
