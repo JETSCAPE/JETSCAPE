@@ -30,7 +30,7 @@
 using namespace Jetscape;
 using namespace std;
 
-const double QS = 1.0 ;
+const double QS = 0.9 ;
 
 // Register the module with the base class
 RegisterJetScapeModule<Matter> Matter::reg("Matter");
