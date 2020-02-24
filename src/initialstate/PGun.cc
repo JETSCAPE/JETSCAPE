@@ -28,6 +28,7 @@ Pythia8::Pythia PGun::InternalHelperPythia ("IntentionallyEmpty",false);
 PGun::PGun() : HardProcess()
 {
   fixed_pT=0;
+  parID = 21;
   flag_useHybridHad=0;
   SetId("PGun");
   VERBOSE(8);
@@ -50,6 +51,9 @@ void PGun::InitTask()
   JSDEBUG << s << " with fixed pT = "<<fixed_pT;
   JSINFO<<"Parton Gun with fixed pT = "<<fixed_pT;
   
+  parID = GetXMLElementDouble({"Hard", "PGun", "parID"});
+  JSINFO<<"Parton Gun with parID = "<< parID;
+
   flag_useHybridHad = GetXMLElementInt({"Hard", "PGun", "useHybridHad"});
   JSINFO<<"Use hybrid hadronization? "<<flag_useHybridHad;
 
@@ -67,7 +71,7 @@ void PGun::Exec()
   const double maxN = 1.0*RAND_MAX;
   const double PI = 3.1415926;
   
-  double parID,ppx,ppy,ppz,pp0,mass; 
+  double ppx,ppy,ppz,pp0,mass;
 
  // for (int i=0;i<1;i++)
  //    {
@@ -80,7 +84,6 @@ void PGun::Exec()
 //	 tempRand = rand()/maxN;
 //	 if(tempRand < 0.50) parID = -parID;
  //      }
-        parID = 21;
     //     mass = 0.0;
        mass = InternalHelperPythia.particleData.m0( parID );
          //JSINFO << BOLDYELLOW << " Mass = " << mass ;

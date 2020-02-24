@@ -29,6 +29,7 @@ class PGun: public HardProcess {
     
  private:
     double fixed_pT;
+    double parID;
     int flag_useHybridHad;
   
     // Allows the registration of the module so that it is available to be used by the Jetscape framework.
