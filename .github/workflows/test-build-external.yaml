@@ -1,0 +1,45 @@
+name: build test
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: external packages
+    runs-on: ubuntu-latest
+    
+    container:
+      image: jetscape/base:v1.3
+      options: --user root
+      
+    steps:
+      
+    - name: Checkout JETSCAPE
+      uses: actions/checkout@v2
+      with:
+        path: JETSCAPE
+        
+    - name: Download MUSIC
+      run: $GITHUB_WORKSPACE/JETSCAPE/external_packages/get_music.sh
+    
+    - name: Download ISS
+      run: $GITHUB_WORKSPACE/JETSCAPE/external_packages/get_iSS.sh
+    
+    - name: Download FREESTREAM
+      run: $GITHUB_WORKSPACE/JETSCAPE/external_packages/get_freestream-milne.sh
+
+    - name: Download SMASH
+      run: $GITHUB_WORKSPACE/JETSCAPE/external_packages/get_smash.sh
+    
+    - name: Download CLVISC
+      run: $GITHUB_WORKSPACE/JETSCAPE/external_packages/get_clvisc.sh
+      
+    - name: Build JETSCAPE
+      run: |
+        cd $GITHUB_WORKSPACE/JETSCAPE
+        mkdir build
+        cd build
+        cmake .. -DUSE_MUSIC=ON -DUSE_ISS=ON -DUSE_FREESTREAM=ON -DUSE_SMASH=ON -DUSE_CLVISC=ON
+        make
