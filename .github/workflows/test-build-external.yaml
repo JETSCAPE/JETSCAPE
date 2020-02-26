@@ -33,13 +33,10 @@ jobs:
     - name: Download SMASH
       run: $GITHUB_WORKSPACE/JETSCAPE/external_packages/get_smash.sh
     
-    - name: Download CLVISC
-      run: $GITHUB_WORKSPACE/JETSCAPE/external_packages/get_clvisc.sh
-      
     - name: Build JETSCAPE
       run: |
         cd $GITHUB_WORKSPACE/JETSCAPE
         mkdir build
         cd build
-        cmake .. -DUSE_MUSIC=ON -DUSE_ISS=ON -DUSE_FREESTREAM=ON -DUSE_SMASH=ON -DUSE_CLVISC=ON
+        cmake .. -DUSE_MUSIC=ON -DUSE_ISS=ON -DUSE_FREESTREAM=ON -DUSE_SMASH=ON
         make
