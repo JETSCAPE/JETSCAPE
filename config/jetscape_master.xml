@@ -33,7 +33,7 @@
   <!--  Note: Both 0 and non-zero values require careful treatment in case of multi-threading -->
   <!--           An example implementation is in JetEnergyLossManager.cc -->
   <Random>
-    <seed>1</seed>
+    <seed>0</seed>
   </Random>
 
   <!-- Inital State Module  -->
