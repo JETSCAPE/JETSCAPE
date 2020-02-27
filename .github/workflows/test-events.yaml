@@ -1,0 +1,42 @@
+name: build+regression test
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: pp+PbPb
+    runs-on: ubuntu-latest
+    
+    container:
+      image: jetscape/base:v1.3
+      options: --user root
+      
+    steps:
+      
+    - name: Checkout JETSCAPE
+      uses: actions/checkout@v2
+      with:
+        path: JETSCAPE
+      
+    - name: Build JETSCAPE
+      run: |
+        cd $GITHUB_WORKSPACE/JETSCAPE
+        mkdir build
+        cd build
+        cmake ..
+        make -j2
+        
+    - name: Checkout JETSCAPE-analysis
+      uses: actions/checkout@v2
+      with:
+        repository: jdmulligan/JETSCAPE-analysis
+        path: JETSCAPE-analysis
+      
+    - name: Run pp tests
+      run: $GITHUB_WORKSPACE/JETSCAPE-analysis/test/runTest.sh -j $GITHUB_WORKSPACE/JETSCAPE -a $GITHUB_WORKSPACE/JETSCAPE-analysis -c $GITHUB_WORKSPACE/JETSCAPE-analysis/test/pp/config/jetscapeTestConfig.yaml -o $GITHUB_WORKSPACE/JETSCAPE-analysis/test/pp/output/new -r $GITHUB_WORKSPACE/JETSCAPE-analysis/test/pp/output/20200225
+      
+    - name: Run Pb-Pb tests
+      run: $GITHUB_WORKSPACE/JETSCAPE-analysis/test/runTest.sh -j $GITHUB_WORKSPACE/JETSCAPE -a $GITHUB_WORKSPACE/JETSCAPE-analysis -c $GITHUB_WORKSPACE/JETSCAPE-analysis/test/PbPb/config/jetscapeTestConfig.yaml -o $GITHUB_WORKSPACE/JETSCAPE-analysis/test/PbPb/output/new -r $GITHUB_WORKSPACE/JETSCAPE-analysis/test/PbPb/output/20200225
