@@ -707,7 +707,8 @@ void LBT::LBT0(int &n, double &ti){
 
           if(qhatInput > 0.0) 
           {
-              double qhatLoc = qhatInput * pow(temp00/0.346, 3) * 0.1973;
+              //double qhatLoc = qhatInput * pow(temp00/0.346, 3) * 0.1973;
+              double qhatLoc = qhatInput * sd00/96.0 * 0.1973;
               alphas = solve_alphas(qhatLoc,P0[0][i],temp00);
           }
 
@@ -821,7 +822,8 @@ void LBT::LBT0(int &n, double &ti){
 	    //...alphas!	
             if(qhatInput > 0.0) 
             {
-                double qhatLoc = qhatInput * pow(temp0/0.346, 3) * 0.1973;
+                //double qhatLoc = qhatInput * pow(temp0/0.346, 3) * 0.1973;
+                double qhatLoc = qhatInput * sd/96.0 * 0.1973;
                 alphas = solve_alphas(qhatLoc,P[0][i],temp0);
             }
             else
@@ -4234,8 +4236,8 @@ double LBT::solve_alphas(double var_qhat, double var_ener, double var_temp) {
     double max_qhat=preFactor*pow(0.5,2)*pow(var_temp,3)*log(5.7*max(var_ener,2.0*pi*var_temp)/24/pi/0.5/var_temp);
 
     if(max_qhat<var_qhat) {
-        JSINFO << "qhat exceeds HTL calculation, use alpha_s = 0.5";
-        cout << "energy: " << var_ener << "  temperature: " << var_temp << endl;
+      VERBOSE(1) << "qhat exceeds HTL calculation, use alpha_s = 0.5";
+      //cout << "energy: " << var_ener << "  temperature: " << var_temp << endl;
 	return(0.5);
     }
 
