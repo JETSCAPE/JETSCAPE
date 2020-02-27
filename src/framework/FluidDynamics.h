@@ -37,137 +37,135 @@
 
 namespace Jetscape {
 
-/// Flags for hydrodynamics status.  
-enum HydroStatus {NOT_START, INITIALIZED, EVOLVING, FINISHED, ERROR};
+/// Flags for hydrodynamics status.
+enum HydroStatus { NOT_START, INITIALIZED, EVOLVING, FINISHED, ERROR };
 
 /** A helper class for hydro parameters file name.*/
 class Parameter {
- public:
-    char* hydro_input_filename;
+public:
+  char *hydro_input_filename;
 };
 
-
 class FluidDynamics : public JetScapeModuleBase {
- protected:
-    // record hydro start and end proper time [fm/c]
-    Jetscape::real hydro_tau_0, hydro_tau_max;
-    // record hydro freeze out temperature [GeV]
-    Jetscape::real hydro_freeze_out_temperature;
-    // record hydro running status
-    HydroStatus hydro_status;
+protected:
+  // record hydro start and end proper time [fm/c]
+  Jetscape::real hydro_tau_0, hydro_tau_max;
+  // record hydro freeze out temperature [GeV]
+  Jetscape::real hydro_freeze_out_temperature;
+  // record hydro running status
+  HydroStatus hydro_status;
 
-    // add initial state shared pointer
-    /** A pointer of type InitialState class.
+  // add initial state shared pointer
+  /** A pointer of type InitialState class.
      */
-    std::shared_ptr<InitialState> ini;
-    std::shared_ptr<PreequilibriumDynamics> pre_eq_ptr;
+  std::shared_ptr<InitialState> ini;
+  std::shared_ptr<PreequilibriumDynamics> pre_eq_ptr;
 
-    double eta;
-    Parameter parameter_list;
-    
-    // How to store this data? In memory or hard disk?
-    // 3D hydro may eat out the memory,
-    // for large dataset, std::deque is better than std::vector.
-    /** Stores the evolution history. */
-    EvolutionHistory bulk_info;
+  double eta;
+  Parameter parameter_list;
 
-    std::weak_ptr<LiquefierBase> liquefier_ptr;
+  // How to store this data? In memory or hard disk?
+  // 3D hydro may eat out the memory,
+  // for large dataset, std::deque is better than std::vector.
+  /** Stores the evolution history. */
+  EvolutionHistory bulk_info;
 
- public:
-    /** Default constructor. task ID as "FluidDynamics",  
+  std::weak_ptr<LiquefierBase> liquefier_ptr;
+
+public:
+  /** Default constructor. task ID as "FluidDynamics",  
         eta is initialized to -99.99.
-    */  
-    FluidDynamics();
-    
-    /** Default destructor. */
-    virtual ~FluidDynamics();
-    
-    /** Reads the input parameters from the XML file under the tag <Hydro>. Uses JetScapeSingnalManager Instance to retrive the Initial State Physics information. Calls InitializeHydro(parameter_list) and InitTask(); This explicit call can be used for actual initialization of modules such as @a Brick, @a MpiMusic, or @a OSU-HYDRO if attached as a @a polymorphic class. It also initializes the tasks within the current module.   
-	@sa Read about @a polymorphism in C++.
     */
-    virtual void Init();
-    
-    /** Calls EvolveHydro(); This explicit call can be used for actual execution of hydrodynamic evolution defined in the modules such as @a Brick, @a MpiMusic, or @a OSU-HYDRO if attached as a @a polymorphic class. It also execute the tasks within the current module.
-	@sa Read about @a polymorphism in C++.
-    */
-    virtual void Exec();
+  FluidDynamics();
 
-    virtual void Clear();
-    
-    /** @return parameter_list A pointer to the class Parameter which contains a file name for the fluid dynamics task.
+  /** Default destructor. */
+  virtual ~FluidDynamics();
+
+  /** Reads the input parameters from the XML file under the tag <Hydro>. Uses JetScapeSingnalManager Instance to retrive the Initial State Physics information. Calls InitializeHydro(parameter_list) and InitTask(); This explicit call can be used for actual initialization of modules such as @a Brick, @a MpiMusic, or @a OSU-HYDRO if attached as a @a polymorphic class. It also initializes the tasks within the current module.   
+	@sa Read about @a polymorphism in C++.
+    */
+  virtual void Init();
+
+  /** Calls EvolveHydro(); This explicit call can be used for actual execution of hydrodynamic evolution defined in the modules such as @a Brick, @a MpiMusic, or @a OSU-HYDRO if attached as a @a polymorphic class. It also execute the tasks within the current module.
+	@sa Read about @a polymorphism in C++.
+    */
+  virtual void Exec();
+
+  virtual void Clear();
+
+  /** @return parameter_list A pointer to the class Parameter which contains a file name for the fluid dynamics task.
 	@sa Implementation of the class Parameter.
     */
-    Parameter& GetParameterList() {return(parameter_list);}
-  
-    /** Collect header information for writer modules
+  Parameter &GetParameterList() { return (parameter_list); }
+
+  /** Collect header information for writer modules
 	@param w is a pointer of type JetScapeWrite class.
     */
-    virtual void CollectHeader( weak_ptr<JetScapeWriter> w );
-    
-    /** Generated event plane angle
+  virtual void CollectHeader(weak_ptr<JetScapeWriter> w);
+
+  /** Generated event plane angle
 	To be overwritten by implementations that have such information.
     */
-    virtual double GetEventPlaneAngle() {return(-999);}
-    
-    /** It stores the temperature of the fluid cell at location (t or tau,x,y,z or eta) into an input variable "mT". It can be overridden by modules attached to the FluidDynamics class.
+  virtual double GetEventPlaneAngle() { return (-999); }
+
+  /** It stores the temperature of the fluid cell at location (t or tau,x,y,z or eta) into an input variable "mT". It can be overridden by modules attached to the FluidDynamics class.
 	@param t  tau or t coordinate.
 	@param x  space x coordinate. 
 	@param y  space y coordinate.
 	@param z  rapidity eta or space z coordinate.
 	@param mT temperature.
     */
-    virtual void GetTemperature(double t, double x, double y, double z,
-                                double &mT) {
-        mT = GetTemperature(t,x,y,z);
-    }
+  virtual void GetTemperature(double t, double x, double y, double z,
+                              double &mT) {
+    mT = GetTemperature(t, x, y, z);
+  }
 
-    /** It calls GetHydroInfo(t,x,y,z,fCell) to retrieve the properties of the fluid cell at location (t or tau,x,y,z or eta). It can be overridden by modules attached to the FluidDynamics class. 
+  /** It calls GetHydroInfo(t,x,y,z,fCell) to retrieve the properties of the fluid cell at location (t or tau,x,y,z or eta). It can be overridden by modules attached to the FluidDynamics class. 
 	@param t  tau or t coordinate.
 	@param x  space x coordinate.      
 	@param y  space y coordinate.       
 	@param z  rapidity eta or space z coordinate.
 	@param fCell A pointer of type FluidCellInfo class.  
     */
-    virtual void GetHydroCell(double t, double x, double y, double z,
-                              std::unique_ptr<FluidCellInfo>& fCell) {
-        GetHydroInfo(t, x, y, z, fCell);
-    }
+  virtual void GetHydroCell(double t, double x, double y, double z,
+                            std::unique_ptr<FluidCellInfo> &fCell) {
+    GetHydroInfo(t, x, y, z, fCell);
+  }
 
-    // currently we have no standard for passing configurations 
-    // pure virtual function; to be implemented by users
-    // should make it easy to save evolution history to bulk_info
-    /** Default function to initialize the hydrodynamics. It can be overridden by different modules. 
+  // currently we have no standard for passing configurations
+  // pure virtual function; to be implemented by users
+  // should make it easy to save evolution history to bulk_info
+  /** Default function to initialize the hydrodynamics. It can be overridden by different modules. 
 	@param parameter_list An object of the class Parameter. */
-    virtual void InitializeHydro(Parameter parameter_list) {};
-    
-    /** Default function to evolve the hydrodynamics. It can be overridden by different modules. */
-    virtual void EvolveHydro() {};
-    
+  virtual void InitializeHydro(Parameter parameter_list){};
 
-    /** @return Status of the hydrodynamics (NOT_START, INITIALIZED, EVOLVING, FINISHED, ERROR). */
-    int GetHydroStatus() const {return(hydro_status);}
+  /** Default function to evolve the hydrodynamics. It can be overridden by different modules. */
+  virtual void EvolveHydro(){};
 
-    void StoreHydroEvolutionHistory(
-                        std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr) {
-        bulk_info.data.push_back(*fluid_cell_info_ptr);
-    }
+  /** @return Status of the hydrodynamics (NOT_START, INITIALIZED, EVOLVING, FINISHED, ERROR). */
+  int GetHydroStatus() const { return (hydro_status); }
 
-    void clear_up_evolution_data() {bulk_info.clear_up_evolution_data();}
+  void StoreHydroEvolutionHistory(
+      std::unique_ptr<FluidCellInfo> &fluid_cell_info_ptr) {
+    bulk_info.data.push_back(*fluid_cell_info_ptr);
+  }
 
-    /** @return Start time (or tau) for hydrodynamic evolution.
+  void clear_up_evolution_data() { bulk_info.clear_up_evolution_data(); }
+
+  /** @return Start time (or tau) for hydrodynamic evolution.
      */
-    Jetscape::real GetHydroStartTime() const {return(hydro_tau_0);}
+  Jetscape::real GetHydroStartTime() const { return (hydro_tau_0); }
 
-    /** @return End time (or tau) for hydrodynamic evolution.
+  /** @return End time (or tau) for hydrodynamic evolution.
      */
-    Jetscape::real GetHydroEndTime() const {return(hydro_tau_max);}
-    /** @return Freeze-out temperature.
+  Jetscape::real GetHydroEndTime() const { return (hydro_tau_max); }
+  /** @return Freeze-out temperature.
      */
-    Jetscape::real GetHydroFreezeOutTemperature() const {
-        return(hydro_freeze_out_temperature);
-    }
+  Jetscape::real GetHydroFreezeOutTemperature() const {
+    return (hydro_freeze_out_temperature);
+  }
 
-    /** Retrieves the hydro information at a given space-time point.
+  /** Retrieves the hydro information at a given space-time point.
      * It throws a InvalidSpaceTimeRange message when
      * (t or tau, x, y, z or eta) is out of the evolution history range. 
      @param time Time or tau coordinate. 
@@ -176,131 +174,128 @@ class FluidDynamics : public JetScapeModuleBase {
      @param z Space or eta coordinate.
      @param fluid_cell_info_ptr A pointer to the FluidCellInfo class.
     */
-    virtual void GetHydroInfo(
-        Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
-        std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr) {
-        if (hydro_status != FINISHED || bulk_info.data.size() == 0) {
-	        throw std::runtime_error("Hydro evolution is not finished "
-				                     "or EvolutionHistory is empty");
-        }
-        // judge whether to use 2D interpolation or 3D interpolation
-        if (!bulk_info.tau_eta_is_tz) {
-	        Jetscape::real tau = std::sqrt(t * t - z * z);
-	        Jetscape::real eta = 0.5 * (std::log(t + z) - std::log(t - z));
-	        bulk_info.CheckInRange(tau, x, y, eta);
-	        //return bulk_info.get(tau, x, y, eta);
-        } else {
-	        bulk_info.CheckInRange(t, x, y, z);
-	        //return bulk_info.get(t, x, y, z);
-        }
+  virtual void
+  GetHydroInfo(Jetscape::real t, Jetscape::real x, Jetscape::real y,
+               Jetscape::real z,
+               std::unique_ptr<FluidCellInfo> &fluid_cell_info_ptr) {
+    if (hydro_status != FINISHED || bulk_info.data.size() == 0) {
+      throw std::runtime_error("Hydro evolution is not finished "
+                               "or EvolutionHistory is empty");
     }
+    // judge whether to use 2D interpolation or 3D interpolation
+    if (!bulk_info.tau_eta_is_tz) {
+      Jetscape::real tau = std::sqrt(t * t - z * z);
+      Jetscape::real eta = 0.5 * (std::log(t + z) - std::log(t - z));
+      bulk_info.CheckInRange(tau, x, y, eta);
+      //return bulk_info.get(tau, x, y, eta);
+    } else {
+      bulk_info.CheckInRange(t, x, y, z);
+      //return bulk_info.get(t, x, y, z);
+    }
+  }
 
-    // this function print out the information of the fluid cell to the screen
-    /** It prints out the information of the fluid cell.
+  // this function print out the information of the fluid cell to the screen
+  /** It prints out the information of the fluid cell.
 	@param fluid_cell_info_ptr A pointer to FluidCellInfor class.
     */
-    void PrintFluidCellInformation(FluidCellInfo* fluid_cell_info_ptr);
+  void PrintFluidCellInformation(FluidCellInfo *fluid_cell_info_ptr);
 
-    // this function returns hypersurface for Cooper-Frye or recombination
-    // the detailed implementation is left to the hydro developper
-    /** @return Default function to get the hypersurface for Cooper-Frye or recombination model. It can overridden by different modules.
+  // this function returns hypersurface for Cooper-Frye or recombination
+  // the detailed implementation is left to the hydro developper
+  /** @return Default function to get the hypersurface for Cooper-Frye or recombination model. It can overridden by different modules.
      */
-    std::vector<SurfaceCellInfo> FindAConstantTemperatureSurface(
-                                                        Jetscape::real T_sw);
+  std::vector<SurfaceCellInfo>
+  FindAConstantTemperatureSurface(Jetscape::real T_sw);
 
-    // all the following functions will call function GetHydroInfo()
-    // to get thermaldynamic and dynamical information at a space-time point
-    // (time, x, y, z)
+  // all the following functions will call function GetHydroInfo()
+  // to get thermaldynamic and dynamical information at a space-time point
+  // (time, x, y, z)
 
-    /** @return Energy density at point (t or tau, x, y, z or eta)
+  /** @return Energy density at point (t or tau, x, y, z or eta)
         @param time Time or tau coordinate.
         @param x Space coordinate.
         @param y Space coordinate. 
         @param z Space or eta coordinate.
     */
-    virtual Jetscape::real GetEnergyDensity(
-                Jetscape::real time, Jetscape::real x,
-                Jetscape::real y, Jetscape::real z);
+  virtual Jetscape::real GetEnergyDensity(Jetscape::real time, Jetscape::real x,
+                                          Jetscape::real y, Jetscape::real z);
 
-    /** @return Entropy density at point (t or tau, x, y, z or eta)
+  /** @return Entropy density at point (t or tau, x, y, z or eta)
         @param time Time or tau coordinate.
         @param x Space coordinate.
         @param y Space coordinate. 
         @param z Space or eta coordinate.
     */
-    virtual Jetscape::real GetEntropyDensity(
-                Jetscape::real time, Jetscape::real x,
-                Jetscape::real y, Jetscape::real z);
+  virtual Jetscape::real GetEntropyDensity(Jetscape::real time,
+                                           Jetscape::real x, Jetscape::real y,
+                                           Jetscape::real z);
 
-    /** @return Temperature at point (t or tau, x, y, z or eta)
+  /** @return Temperature at point (t or tau, x, y, z or eta)
 	@param time Time or tau coordinate.
         @param x Space coordinate.
         @param y Space coordinate.
         @param z Space or eta coordinate.
     */
-    virtual Jetscape::real GetTemperature(
-                Jetscape::real time, Jetscape::real x,
-                Jetscape::real y, Jetscape::real z);
+  virtual Jetscape::real GetTemperature(Jetscape::real time, Jetscape::real x,
+                                        Jetscape::real y, Jetscape::real z);
 
-    /** @return Fraction of quark gluon plasma assuming medium is in QGP+HRG phase at point (t or tau, x, y, z or eta).
+  /** @return Fraction of quark gluon plasma assuming medium is in QGP+HRG phase at point (t or tau, x, y, z or eta).
 	@param time Time or tau coordinate.
         @param x Space coordinate.
         @param y Space coordinate.
         @param z Space or eta coordinate.
     */
-    virtual Jetscape::real GetQgpFraction(
-                Jetscape::real time, Jetscape::real x,
-                Jetscape::real y, Jetscape::real z);
+  virtual Jetscape::real GetQgpFraction(Jetscape::real time, Jetscape::real x,
+                                        Jetscape::real y, Jetscape::real z);
 
-    // These have no default implementation
-    // /** @return 3-component (vx,vy,vz) fluid velocity at point (t or tau, x, y, z or eta).
-    //     @param time Time or tau coordinate.
-    //     @param x Space coordinate.
-    //     @param y Space coordinate.
-    //     @param z Space or eta coordinate.
-    // */
-    // virtual real3 Get3FluidVelocity(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z)=0;
+  // These have no default implementation
+  // /** @return 3-component (vx,vy,vz) fluid velocity at point (t or tau, x, y, z or eta).
+  //     @param time Time or tau coordinate.
+  //     @param x Space coordinate.
+  //     @param y Space coordinate.
+  //     @param z Space or eta coordinate.
+  // */
+  // virtual real3 Get3FluidVelocity(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z)=0;
 
-    // /** @return 4-component fluid velocity at point (t or tau, x, y, zor eta).
-    //     @param time Time or tau coordinate.
-    //     @param x Space coordinate.
-    //     @param y Space coordinate.
-    //     @param z Space or eta coordinate. 
-    // */
-    // virtual real4 Get4FluidVelocity(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
+  // /** @return 4-component fluid velocity at point (t or tau, x, y, zor eta).
+  //     @param time Time or tau coordinate.
+  //     @param x Space coordinate.
+  //     @param y Space coordinate.
+  //     @param z Space or eta coordinate.
+  // */
+  // virtual real4 Get4FluidVelocity(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
 
-    // /** @return Net baryon density at point (t or tau, x, y, z or eta).
-    //     @param time Time or tau coordinate.
-    //     @param x Space coordinate.
-    //     @param y Space coordinate.
-    //     @param z Space or eta coordinate. 
-    // */
-    // virtual Jetscape::real GetNetBaryonDensity(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
+  // /** @return Net baryon density at point (t or tau, x, y, z or eta).
+  //     @param time Time or tau coordinate.
+  //     @param x Space coordinate.
+  //     @param y Space coordinate.
+  //     @param z Space or eta coordinate.
+  // */
+  // virtual Jetscape::real GetNetBaryonDensity(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
 
-    // /** @return Net charge density at point (t or tau, x, y, z or eta).
-    // 	@param time Time or tau coordinate.
-    // 	@param x Space coordinate.
-    // 	@param y Space coordinate.
-    // 	@param z Space or eta coordinate.
-    // */
-    // virtual Jetscape::real GetNetChargeDensity(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
-    
-    virtual void add_a_liquefier(
-                            std::shared_ptr<LiquefierBase> new_liquefier) {
-        liquefier_ptr = new_liquefier;
-    }
+  // /** @return Net charge density at point (t or tau, x, y, z or eta).
+  // 	@param time Time or tau coordinate.
+  // 	@param x Space coordinate.
+  // 	@param y Space coordinate.
+  // 	@param z Space or eta coordinate.
+  // */
+  // virtual Jetscape::real GetNetChargeDensity(Jetscape::real time, Jetscape::real x, Jetscape::real y, Jetscape::real z);
 
-    void get_source_term(Jetscape::real tau, Jetscape::real x,
-                         Jetscape::real y, Jetscape::real eta,
-                         std::array<Jetscape::real, 4> jmu) const;
+  virtual void add_a_liquefier(std::shared_ptr<LiquefierBase> new_liquefier) {
+    liquefier_ptr = new_liquefier;
+  }
 
-    /// slots for "jet" signals (future)
-    virtual void UpdateEnergyDeposit(int t, double edop);
-    /// slots for "jet" signals (future)
-    virtual void GetEnergyDensity(int t, double& edensity) {edensity = 0.0;}
+  void get_source_term(Jetscape::real tau, Jetscape::real x, Jetscape::real y,
+                       Jetscape::real eta,
+                       std::array<Jetscape::real, 4> jmu) const;
+
+  /// slots for "jet" signals (future)
+  virtual void UpdateEnergyDeposit(int t, double edop);
+  /// slots for "jet" signals (future)
+  virtual void GetEnergyDensity(int t, double &edensity) { edensity = 0.0; }
 
 }; // end class FluidDynamics
-  
+
 } // end namespace Jetscape
 
-#endif  // FLUIDDYNAMICS_H
+#endif // FLUIDDYNAMICS_H

@@ -24,13 +24,6 @@
 
 namespace Jetscape {
 
+Vertex::~Vertex() { VERBOSESHOWER(9); }
 
-
-Vertex::~Vertex()
-{
-  VERBOSESHOWER(9);
-}
-
-
-
-} /// end of namespace Jetscape
+} // namespace Jetscape

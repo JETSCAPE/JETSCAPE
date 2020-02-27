@@ -21,212 +21,209 @@ using namespace std;
 
 namespace Jetscape {
 
-JetScapeSignalManager* JetScapeSignalManager::m_pInstance = NULL;
+JetScapeSignalManager *JetScapeSignalManager::m_pInstance = NULL;
 
-JetScapeSignalManager* JetScapeSignalManager::Instance()
-{
-  if (!m_pInstance)
-    {
-      JSINFO<<"Created JetScapeSignalManager Instance";
-      m_pInstance = new JetScapeSignalManager();
-    }
-  
+JetScapeSignalManager *JetScapeSignalManager::Instance() {
+  if (!m_pInstance) {
+    JSINFO << "Created JetScapeSignalManager Instance";
+    m_pInstance = new JetScapeSignalManager();
+  }
+
   return m_pInstance;
 }
 
-void JetScapeSignalManager::ConnectGetHardPartonListSignal(shared_ptr<JetEnergyLossManager> jm){
-  if (!jm->GetGetHardPartonListConnected()){
+void JetScapeSignalManager::ConnectGetHardPartonListSignal(
+    shared_ptr<JetEnergyLossManager> jm) {
+  if (!jm->GetGetHardPartonListConnected()) {
     auto hpp = GetHardProcessPointer().lock();
-    if ( hpp ) {
-      jm->GetHardPartonList.connect(hpp.get(),&HardProcess::GetHardPartonList);
+    if (hpp) {
+      jm->GetHardPartonList.connect(hpp.get(), &HardProcess::GetHardPartonList);
       jm->SetGetHardPartonListConnected(true);
     }
   }
 }
 
-void JetScapeSignalManager::ConnectGetFinalPartonListSignal(shared_ptr<HadronizationManager> hm) {
-  if ( !hm->GetGetFinalPartonListConnected() ){
+void JetScapeSignalManager::ConnectGetFinalPartonListSignal(
+    shared_ptr<HadronizationManager> hm) {
+  if (!hm->GetGetFinalPartonListConnected()) {
 
     auto elp = GetEnergyLossPointer().lock();
-    if ( elp ) {
-      hm->GetFinalPartonList.connect(elp.get(),&JetEnergyLoss::SendFinalStatePartons);
+    if (elp) {
+      hm->GetFinalPartonList.connect(elp.get(),
+                                     &JetEnergyLoss::SendFinalStatePartons);
       hm->SetGetFinalPartonListConnected(true);
-
     }
   }
 
-  if ( !hm->GetGetHadronListConnected() ){
+  if (!hm->GetGetHadronListConnected()) {
     auto hpp = GetHardProcessPointer().lock();
-    if ( hpp ) {
-      hm->GetHadronList.connect(hpp.get(),&HardProcess::GetHadronList);
+    if (hpp) {
+      hm->GetHadronList.connect(hpp.get(), &HardProcess::GetHadronList);
       hm->SetGetHadronListConnected(true);
     }
   }
 }
 
-void JetScapeSignalManager::ConnectJetSignal(shared_ptr<JetEnergyLoss> j) 
-{  
+void JetScapeSignalManager::ConnectJetSignal(shared_ptr<JetEnergyLoss> j) {
   if (!j->GetJetSignalConnected()) {
     auto hp = GetHydroPointer().lock();
-    if ( hp ){
-      j->jetSignal.connect( hp.get(),&FluidDynamics::UpdateEnergyDeposit);
+    if (hp) {
+      j->jetSignal.connect(hp.get(), &FluidDynamics::UpdateEnergyDeposit);
       j->SetJetSignalConnected(true);
-      jet_signal_map.emplace(num_jet_signals,(weak_ptr<JetEnergyLoss>) j);      
+      jet_signal_map.emplace(num_jet_signals, (weak_ptr<JetEnergyLoss>)j);
       num_jet_signals++;
     }
   }
 }
 
-void JetScapeSignalManager::ConnectEdensitySignal(shared_ptr<JetEnergyLoss> j) 
-{  
-  if (!j->GetEdensitySignalConnected()){
+void JetScapeSignalManager::ConnectEdensitySignal(shared_ptr<JetEnergyLoss> j) {
+  if (!j->GetEdensitySignalConnected()) {
     auto hp = GetHydroPointer().lock();
-    if ( hp ){      
-      j->edensitySignal.connect(hp.get(),&FluidDynamics::GetEnergyDensity);
+    if (hp) {
+      j->edensitySignal.connect(hp.get(), &FluidDynamics::GetEnergyDensity);
       j->SetEdensitySignalConnected(true);
-      edensity_signal_map.emplace(num_edensity_signals,(weak_ptr<JetEnergyLoss>) j);      
+      edensity_signal_map.emplace(num_edensity_signals,
+                                  (weak_ptr<JetEnergyLoss>)j);
       num_edensity_signals++;
     }
   }
 }
 
-void JetScapeSignalManager::ConnectGetHydroCellSignal(shared_ptr<JetEnergyLoss> j)
-{
+void JetScapeSignalManager::ConnectGetHydroCellSignal(
+    shared_ptr<JetEnergyLoss> j) {
   if (!j->GetGetHydroCellSignalConnected()) {
     auto hp = GetHydroPointer().lock();
-    if ( hp ){
-      j->GetHydroCellSignal.connect(hp.get(),&FluidDynamics::GetHydroCell);
+    if (hp) {
+      j->GetHydroCellSignal.connect(hp.get(), &FluidDynamics::GetHydroCell);
       j->SetGetHydroCellSignalConnected(true);
-      GetHydroCellSignal_map.emplace(num_GetHydroCellSignals,(weak_ptr<JetEnergyLoss>) j);      
+      GetHydroCellSignal_map.emplace(num_GetHydroCellSignals,
+                                     (weak_ptr<JetEnergyLoss>)j);
       num_GetHydroCellSignals++;
     }
   }
 }
 
-
 void JetScapeSignalManager::ConnectGetHydroCellSignal(
-                                            shared_ptr<LiquefierBase> l) {
-    if (!l->get_GetHydroCellSignalConnected()) {
-        auto hp = GetHydroPointer().lock();
-        if (hp) {
-            l->GetHydroCellSignal.connect(hp.get(),
-                                          &FluidDynamics::GetHydroCell);
-            l->set_GetHydroCellSignalConnected(true);
-        }
+    shared_ptr<LiquefierBase> l) {
+  if (!l->get_GetHydroCellSignalConnected()) {
+    auto hp = GetHydroPointer().lock();
+    if (hp) {
+      l->GetHydroCellSignal.connect(hp.get(), &FluidDynamics::GetHydroCell);
+      l->set_GetHydroCellSignalConnected(true);
     }
+  }
 }
 
-void JetScapeSignalManager::ConnectSentInPartonsSignal(shared_ptr<JetEnergyLoss> j,shared_ptr<JetEnergyLoss> j2)
-{
-  if (!j2->GetSentInPartonsConnected())
-    {
-      j->SentInPartons.connect(j2.get(), &JetEnergyLoss::DoEnergyLoss);
-      j2->SetSentInPartonsConnected(true);
-      SentInPartons_map.emplace(num_SentInPartons,(weak_ptr<JetEnergyLoss>) j2);
+void JetScapeSignalManager::ConnectSentInPartonsSignal(
+    shared_ptr<JetEnergyLoss> j, shared_ptr<JetEnergyLoss> j2) {
+  if (!j2->GetSentInPartonsConnected()) {
+    j->SentInPartons.connect(j2.get(), &JetEnergyLoss::DoEnergyLoss);
+    j2->SetSentInPartonsConnected(true);
+    SentInPartons_map.emplace(num_SentInPartons, (weak_ptr<JetEnergyLoss>)j2);
 
-      num_SentInPartons++;
-    }
+    num_SentInPartons++;
+  }
 }
 
-void JetScapeSignalManager::ConnectTransformPartonsSignal(shared_ptr<Hadronization> h,shared_ptr<Hadronization> h2)
-{
-  if (!h2->GetTransformPartonsConnected())
-    {
-      h->TransformPartons.connect(h2.get(), &Hadronization::DoHadronization);
-      h2->SetTransformPartonsConnected(true);
-      TransformPartons_map.emplace(num_TransformPartons,(weak_ptr<Hadronization>) h2);
+void JetScapeSignalManager::ConnectTransformPartonsSignal(
+    shared_ptr<Hadronization> h, shared_ptr<Hadronization> h2) {
+  if (!h2->GetTransformPartonsConnected()) {
+    h->TransformPartons.connect(h2.get(), &Hadronization::DoHadronization);
+    h2->SetTransformPartonsConnected(true);
+    TransformPartons_map.emplace(num_TransformPartons,
+                                 (weak_ptr<Hadronization>)h2);
 
-      num_TransformPartons++;
-    }
+    num_TransformPartons++;
+  }
 }
 
-			   
-void JetScapeSignalManager::CleanUp()
-{
+void JetScapeSignalManager::CleanUp() {
   VERBOSE(8);
 
   // hmmm wrong caintainer .. should have used vectore with struct instead of map!!!!
 
   auto loss = jloss.lock();
-  if ( loss ) { 
-    int nEnd=SentInPartons_map.size();
-    int nStart=loss->GetTaskAt(0)->GetNumberOfTasks();
-    
-    for (int i=nStart;i<nEnd;i++){
+  if (loss) {
+    int nEnd = SentInPartons_map.size();
+    int nStart = loss->GetTaskAt(0)->GetNumberOfTasks();
+
+    for (int i = nStart; i < nEnd; i++) {
       jet_signal_map.erase(i);
       num_jet_signals--;
-      
+
       edensity_signal_map.erase(i);
       num_edensity_signals--;
-      
+
       GetHydroCellSignal_map.erase(i);
       num_GetHydroCellSignals--;
-      
+
       SentInPartons_map.erase(i);
-      num_SentInPartons--;  
-      
+      num_SentInPartons--;
+
       TransformPartons_map.erase(i);
       num_TransformPartons--;
     }
   } else {
-    jet_signal_map.clear();edensity_signal_map.clear();GetHydroCellSignal_map.clear(),SentInPartons_map.clear();
+    jet_signal_map.clear();
+    edensity_signal_map.clear();
+    GetHydroCellSignal_map.clear(), SentInPartons_map.clear();
     TransformPartons_map.clear();
     // think better here how to handle the clean of when the instance goes out of scope ...!???
   }
 
   PrintGetHydroCellSignalMap();
   PrintSentInPartonsSignalMap();
-  PrintTransformPartonsSignalMap();  
+  PrintTransformPartonsSignalMap();
 
-  VERBOSE(8)<<"Done ...";
+  VERBOSE(8) << "Done ...";
 }
-  
-void JetScapeSignalManager::PrintJetSignalMap()
-{
-  for (auto& x: jet_signal_map){
+
+void JetScapeSignalManager::PrintJetSignalMap() {
+  for (auto &x : jet_signal_map) {
     auto xs = x.second.lock();
-    if ( xs ){
-      VERBOSE(8) << "[" << x.first << ':' << xs.get() << ']'<<" "<< xs->GetId();
+    if (xs) {
+      VERBOSE(8) << "[" << x.first << ':' << xs.get() << ']' << " "
+                 << xs->GetId();
     }
   }
 }
 
-void JetScapeSignalManager::PrintEdensitySignalMap()
-{
-  for (auto& x: edensity_signal_map){
+void JetScapeSignalManager::PrintEdensitySignalMap() {
+  for (auto &x : edensity_signal_map) {
     auto xs = x.second.lock();
-    if ( xs ){
-      VERBOSE(8) << "[" << x.first << ':' << xs.get() << ']'<<" "<<xs->GetId();
+    if (xs) {
+      VERBOSE(8) << "[" << x.first << ':' << xs.get() << ']' << " "
+                 << xs->GetId();
     }
   }
 }
 
-void JetScapeSignalManager::PrintGetHydroCellSignalMap()
-{
-  for (auto& x: GetHydroCellSignal_map){
+void JetScapeSignalManager::PrintGetHydroCellSignalMap() {
+  for (auto &x : GetHydroCellSignal_map) {
     auto xs = x.second.lock();
-    if ( xs ){
-      VERBOSE(8) << "[" << x.first << ':' << xs.get() << ']'<<" "<<xs->GetId();
+    if (xs) {
+      VERBOSE(8) << "[" << x.first << ':' << xs.get() << ']' << " "
+                 << xs->GetId();
     }
   }
 }
 
-void JetScapeSignalManager::PrintSentInPartonsSignalMap()
-{
-  for (auto& x: SentInPartons_map){
+void JetScapeSignalManager::PrintSentInPartonsSignalMap() {
+  for (auto &x : SentInPartons_map) {
     auto xs = x.second.lock();
-    if ( xs ){
-      VERBOSE(8) << "[" << x.first << ':' << xs.get() << ']'<<" "<<xs->GetId();
+    if (xs) {
+      VERBOSE(8) << "[" << x.first << ':' << xs.get() << ']' << " "
+                 << xs->GetId();
     }
   }
 }
 
-void JetScapeSignalManager::PrintTransformPartonsSignalMap()
-{
-  for (auto& x: TransformPartons_map){
+void JetScapeSignalManager::PrintTransformPartonsSignalMap() {
+  for (auto &x : TransformPartons_map) {
     auto xs = x.second.lock();
-    if ( xs ){      
-      VERBOSE(8) << "[" << x.first << ':' << xs.get() << ']'<<" "<<xs->GetId();
+    if (xs) {
+      VERBOSE(8) << "[" << x.first << ':' << xs.get() << ']' << " "
+                 << xs->GetId();
     }
   }
 }

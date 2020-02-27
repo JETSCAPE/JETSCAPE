@@ -23,50 +23,51 @@
 
 namespace Jetscape {
 
-class JetScape : public JetScapeModuleBase
-{
-  
- public:
+class JetScape : public JetScapeModuleBase {
+
+public:
   /** Default constructor to create the main task of the JetScape framework.
-  */  
+  */
   JetScape();
 
   /** This is a destructor for a JetScape.
    */
   virtual ~JetScape();
-  
+
   /** This function initializes the main task of the JetScape framework. It calls JetScapeTask::InitTaks() function to initialize the modules/tasks of a JetScapeTask.
   */
-  void Init(); 
+  void Init();
 
   /** This function execute the modules/tasks of a JetScapeTask for all the events. It also calls "GetPartons()" function to print parton shower, and  "WriteTasks()" function to store the data in the XML file.  
-  */  
+  */
   void Exec();
 
   void Finish();
 
   /** This function sets the total number of events to "m_n_events".
    */
-  void SetNumberOfEvents(int m_n_events) {n_events=m_n_events;}
+  void SetNumberOfEvents(int m_n_events) { n_events = m_n_events; }
 
   /** This function returns the total number of events.
    */
-  int GetNumberOfEvents() {return n_events;}
-  
+  int GetNumberOfEvents() { return n_events; }
+
   /** Controls whether to reuse a hydro event (for speedup).
       The number of times is controled by SetNReuseHydro
    */
-  inline void SetReuseHydro( const bool reuse_hydro ){ reuse_hydro_ = reuse_hydro;}
+  inline void SetReuseHydro(const bool reuse_hydro) {
+    reuse_hydro_ = reuse_hydro;
+  }
   /** Returns whether hydro events are reused.
    */
   inline bool GetReuseHydro() const { return reuse_hydro_; }
-  
+
   /** Controls number of times a hydro event gets reused.
       Reusal has to be explicitly turned on by SetReuseHydro.
       Turn it on first to avoid a warning.
    */
-  inline void SetNReuseHydro( const unsigned int n_reuse_hydro ){
-    if ( !GetReuseHydro() ){
+  inline void SetNReuseHydro(const unsigned int n_reuse_hydro) {
+    if (!GetReuseHydro()) {
       JSWARN << "Number of hydro reusals set, but reusal not turned on.";
       JSWARN << "Try jetscape->SetReuseHydro (true);";
     }
@@ -74,27 +75,28 @@ class JetScape : public JetScapeModuleBase
   }
   inline unsigned int GetNReuseHydro() const { return n_reuse_hydro_; }
 
- protected:
-  
+protected:
   void ReadGeneralParametersFromXML();
   void DetermineTaskListFromXML();
   void DetermineWritersFromXML();
-  void CheckForWriterFromXML(const char* writerName, std::string outputFilename);
-  void SetModuleId(tinyxml2::XMLElement* moduleElement, shared_ptr<JetScapeModuleBase> module);
-    
+  void CheckForWriterFromXML(const char *writerName,
+                             std::string outputFilename);
+  void SetModuleId(tinyxml2::XMLElement *moduleElement,
+                   shared_ptr<JetScapeModuleBase> module);
+
   void SetPointers();
-  
+
   void Show();
   int n_events;
 
   bool reuse_hydro_;
   unsigned int n_reuse_hydro_;
-  
+
   std::shared_ptr<CausalLiquefier> liquefier;
-  
-  bool fEnableAutomaticTaskListDetermination; // Option to automatically determine the task list from the XML file,
-                                              // rather than manually calling JetScapeTask::Add() in the run macro.
-  
+
+  bool
+      fEnableAutomaticTaskListDetermination; // Option to automatically determine the task list from the XML file,
+      // rather than manually calling JetScapeTask::Add() in the run macro.
 };
 
 } // end namespace Jetscape

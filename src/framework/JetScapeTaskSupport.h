@@ -39,60 +39,57 @@
 #include "HardProcess.h"
 #include "JetScapeWriter.h"
 
-#include<iostream>
-#include<atomic>
-#include<memory>
-#include<random>
-#include<thread>
+#include <iostream>
+#include <atomic>
+#include <memory>
+#include <random>
+#include <thread>
 
 using std::atomic_int;
 
 namespace Jetscape {
 
-  class JetScapeTaskSupport //: public sigslot::has_slots<sigslot::multi_threaded_local>
-  {
-  
-  public:
+class
+    JetScapeTaskSupport //: public sigslot::has_slots<sigslot::multi_threaded_local>
+{
 
-    static JetScapeTaskSupport* Instance();    
-    // void CleanUp();
+public:
+  static JetScapeTaskSupport *Instance();
+  // void CleanUp();
 
-    /// Tasks should call this method at creation and
-    /// remember the answer as their task id
-    /// This could co a lot more, like keep a map of numbers to task.id (essentially the name of the task)
-    /// But for now keep it simple
-    int RegisterTask();
+  /// Tasks should call this method at creation and
+  /// remember the answer as their task id
+  /// This could co a lot more, like keep a map of numbers to task.id (essentially the name of the task)
+  /// But for now keep it simple
+  int RegisterTask();
 
-    /// Initialize random engine functionality from the XML file
-    static void ReadSeedFromXML();
+  /// Initialize random engine functionality from the XML file
+  static void ReadSeedFromXML();
 
-    /// Return a handle to a mersenne twister
-    /// Usually this should be just one shared by everybody
-    /// but if reproducible seeds are requested,
-    /// every task gets their own
-    shared_ptr<std::mt19937> GetMt19937Generator( int TaskId );
-  
-    // Getters
-    static unsigned int GetRandomSeed() { return random_seed_;};
+  /// Return a handle to a mersenne twister
+  /// Usually this should be just one shared by everybody
+  /// but if reproducible seeds are requested,
+  /// every task gets their own
+  shared_ptr<std::mt19937> GetMt19937Generator(int TaskId);
 
-  protected:
-    static bool one_generator_per_task_;
-    
-  private:
+  // Getters
+  static unsigned int GetRandomSeed() { return random_seed_; };
 
-    JetScapeTaskSupport() : CurrentTaskNumber(0) {};
+protected:
+  static bool one_generator_per_task_;
 
-    static JetScapeTaskSupport* m_pInstance;
-    
-    atomic_int CurrentTaskNumber;
-    static unsigned int random_seed_;
-    static bool initialized_;
-    
-    static shared_ptr<std::mt19937> one_for_all_;
-    
-  };
+private:
+  JetScapeTaskSupport() : CurrentTaskNumber(0){};
+
+  static JetScapeTaskSupport *m_pInstance;
+
+  atomic_int CurrentTaskNumber;
+  static unsigned int random_seed_;
+  static bool initialized_;
+
+  static shared_ptr<std::mt19937> one_for_all_;
+};
 
 } // end namespace Jetscape
 
 #endif
-

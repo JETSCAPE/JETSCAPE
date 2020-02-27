@@ -26,25 +26,25 @@
 
 using namespace Jetscape;
 
-class iSpectraSamplerWrapper: public SoftParticlization {
- private:
-    tinyxml2::XMLElement *iSS_xml_;
+class iSpectraSamplerWrapper : public SoftParticlization {
+private:
+  tinyxml2::XMLElement *iSS_xml_;
 
-    std::unique_ptr<iSS> iSpectraSampler_ptr_;
+  std::unique_ptr<iSS> iSpectraSampler_ptr_;
 
-    // Allows the registration of the module so that it is available to be used by the Jetscape framework.
-    static RegisterJetScapeModule<iSpectraSamplerWrapper> reg;
+  // Allows the registration of the module so that it is available to be used by the Jetscape framework.
+  static RegisterJetScapeModule<iSpectraSamplerWrapper> reg;
 
- public:
-    iSpectraSamplerWrapper();
-    ~iSpectraSamplerWrapper();
+public:
+  iSpectraSamplerWrapper();
+  ~iSpectraSamplerWrapper();
 
-    void InitTask();
-    void Exec();
-    void Clear();
-    void WriteTask(weak_ptr<JetScapeWriter> w);
+  void InitTask();
+  void Exec();
+  void Clear();
+  void WriteTask(weak_ptr<JetScapeWriter> w);
 
-    void PassHadronListToJetscape();
+  void PassHadronListToJetscape();
 };
 
-#endif  // ISPECTRASAMPLERWRAPPER_H
+#endif // ISPECTRASAMPLERWRAPPER_H

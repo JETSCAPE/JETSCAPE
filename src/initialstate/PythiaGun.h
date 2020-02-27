@@ -24,15 +24,15 @@
 
 using namespace Jetscape;
 
-class PythiaGun: public HardProcess, public Pythia8::Pythia {
-   
+class PythiaGun : public HardProcess, public Pythia8::Pythia {
+
 private:
   double pTHatMin;
   double pTHatMax;
   double eCM;
-  bool   FSR_on;
-  int    flag_useHybridHad;
-  
+  bool FSR_on;
+  int flag_useHybridHad;
+
   // Allows the registration of the module so that it is available to be used by the Jetscape framework.
   static RegisterJetScapeModule<PythiaGun> reg;
 
@@ -42,25 +42,23 @@ public:
       @param printBanner: Suppress starting blurb. Should be set to true in production, credit where it's due
   */
   PythiaGun(string xmlDir = "DONTUSETHIS", bool printBanner = false)
-    : Pythia8::Pythia(xmlDir,printBanner), HardProcess()
-  {
+      : Pythia8::Pythia(xmlDir, printBanner), HardProcess() {
     SetId("UninitializedPythiaGun");
   }
-  
+
   ~PythiaGun();
- 
+
   void InitTask();
   void Exec();
 
   // Getters
-  double GetpTHatMin() const {return pTHatMin;}
-  double GetpTHatMax() const {return pTHatMax;}
+  double GetpTHatMin() const { return pTHatMin; }
+  double GetpTHatMax() const { return pTHatMax; }
 
   // Cross-section information in mb and event weight.
-  double GetSigmaGen(){ return info.sigmaGen();};
-  double GetSigmaErr(){ return info.sigmaErr();};  
-  double GetEventWeight(){ return info.weight(); };
-  
+  double GetSigmaGen() { return info.sigmaGen(); };
+  double GetSigmaErr() { return info.sigmaErr(); };
+  double GetEventWeight() { return info.weight(); };
 };
 
-#endif  // PYTHIAGUN_H
+#endif // PYTHIAGUN_H

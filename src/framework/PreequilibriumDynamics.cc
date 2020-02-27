@@ -19,7 +19,7 @@
 #include "JetScapeSignalManager.h"
 #include <string>
 
-#include<iostream>
+#include <iostream>
 
 using namespace std;
 
@@ -28,68 +28,69 @@ using namespace std;
 namespace Jetscape {
 
 PreequilibriumDynamics::PreequilibriumDynamics() {
-    VERBOSE(8);
-    SetId("PreequilibriumDynamics");
+  VERBOSE(8);
+  SetId("PreequilibriumDynamics");
 }
 
 PreequilibriumDynamics::~PreequilibriumDynamics() {
-    VERBOSE(8);
-    disconnect_all();
+  VERBOSE(8);
+  disconnect_all();
 }
 
 void PreequilibriumDynamics::Init() {
-    JetScapeModuleBase::Init();
+  JetScapeModuleBase::Init();
 
-    JSINFO <<"Intialize PreequilibriumDynamics : " << GetId() << " ...";
+  JSINFO << "Intialize PreequilibriumDynamics : " << GetId() << " ...";
 
-    VERBOSE(8);
+  VERBOSE(8);
 
-    // this is grabbing the initial entropy density ?
-    ini = JetScapeSignalManager::Instance()->GetInitialStatePointer().lock();
-    if (!ini) {
-        JSWARN << "No initialization module, try: "
-             << "auto trento = make_shared<TrentoInitial>(); "
-             << "jetscape->Add(trento);";
-    }
+  // this is grabbing the initial entropy density ?
+  ini = JetScapeSignalManager::Instance()->GetInitialStatePointer().lock();
+  if (!ini) {
+    JSWARN << "No initialization module, try: "
+           << "auto trento = make_shared<TrentoInitial>(); "
+           << "jetscape->Add(trento);";
+  }
 
-    InitializePreequilibrium(parameter_list_);
+  InitializePreequilibrium(parameter_list_);
 
-    InitTask();
+  InitTask();
 
-    JetScapeTask::InitTasks();
+  JetScapeTask::InitTasks();
 }
 
 void PreequilibriumDynamics::Exec() {
-    VERBOSE(2) << "Run Preequilibrium : " << GetId() << " ...";
-    VERBOSE(8) << "Current Event #" << GetCurrentEvent();
+  VERBOSE(2) << "Run Preequilibrium : " << GetId() << " ...";
+  VERBOSE(8) << "Current Event #" << GetCurrentEvent();
 
-    if (ini) {
-      VERBOSE(3) << "length of entropy density vector=" << ini->GetEntropyDensityDistribution().size();
-    }
+  if (ini) {
+    VERBOSE(3) << "length of entropy density vector="
+               << ini->GetEntropyDensityDistribution().size();
+  }
 
-    EvolvePreequilibrium();
+  EvolvePreequilibrium();
 
-    JetScapeTask::ExecuteTasks();
+  JetScapeTask::ExecuteTasks();
 }
 
 void PreequilibriumDynamics::Clear() {
-    e_.clear();
-    P_.clear();
-    utau_.clear();
-    ux_.clear();
-    uy_.clear();
-    ueta_.clear();
-    pi00_.clear();
-    pi01_.clear();
-    pi02_.clear();
-    pi03_.clear();
-    pi11_.clear();
-    pi12_.clear();
-    pi13_.clear();
-    pi22_.clear();
-    pi23_.clear();
-    pi33_.clear();
-    bulk_Pi_.clear();
+  e_.clear();
+  P_.clear();
+  utau_.clear();
+  ux_.clear();
+  uy_.clear();
+  ueta_.clear();
+  pi00_.clear();
+  pi01_.clear();
+  pi02_.clear();
+  pi03_.clear();
+  pi11_.clear();
+  pi12_.clear();
+  pi13_.clear();
+  pi22_.clear();
+  pi23_.clear();
+  pi33_.clear();
+  bulk_Pi_.clear();
 }
 
-}  // end namespace Jetscape
+} // end namespace Jetscape

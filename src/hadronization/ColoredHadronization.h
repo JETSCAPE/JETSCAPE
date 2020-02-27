@@ -21,26 +21,25 @@
 
 using namespace Jetscape;
 
-class ColoredHadronization : public HadronizationModule<ColoredHadronization>
-{  
- public:
+class ColoredHadronization : public HadronizationModule<ColoredHadronization> {
+public:
   ColoredHadronization();
   virtual ~ColoredHadronization();
-  
+
   void Init();
-  void DoHadronization(vector<vector<shared_ptr<Parton>>>& shower, vector<shared_ptr<Hadron>>& hOut, vector<shared_ptr<Parton>>& pOut);
+  void DoHadronization(vector<vector<shared_ptr<Parton>>> &shower,
+                       vector<shared_ptr<Hadron>> &hOut,
+                       vector<shared_ptr<Parton>> &pOut);
   void WriteTask(weak_ptr<JetScapeWriter> w);
-    
+
 private:
-    double p_fake;
-  
+  double p_fake;
+
   // Allows the registration of the module so that it is available to be used by the Jetscape framework.
   static RegisterJetScapeModule<ColoredHadronization> reg;
-  
+
 protected:
-    static Pythia8::Pythia pythia;
+  static Pythia8::Pythia pythia;
 };
 
-
 #endif // COLOREDHADRONIZATION_H
-

@@ -18,116 +18,112 @@
 
 namespace Jetscape {
 
-  /**
+/**
      Container for a multitude of event-related information
      such as xsec, centrality, ...
    */
-  class JetScapeEventHeader {
+class JetScapeEventHeader {
 
-  public:
+public:
+  JetScapeEventHeader(){};
+  // ~JetScapeEventHeader(){};
+  // JetScapeEventHeader(const JetScapeEventHeader &c); //copy constructor
 
-  JetScapeEventHeader() {};
-    // ~JetScapeEventHeader(){};
-    // JetScapeEventHeader(const JetScapeEventHeader &c); //copy constructor
+  /* const Parton& getParton(int idx) const; */
+  /* const vector<Parton>& getPartonCollection() const; */
+  /* void addParton(Parton &p); */
+  /* void addPartonShower(shared_ptr<PartonShower> ps); */
+  /* void deleteParton(int idx); */
 
-    /* const Parton& getParton(int idx) const; */
-    /* const vector<Parton>& getPartonCollection() const; */
-    /* void addParton(Parton &p); */
-    /* void addPartonShower(shared_ptr<PartonShower> ps); */
-    /* void deleteParton(int idx); */
+  // ============================ Initial Hard Process =================================
+  /// Initial Hard Process: Get cross section
+  /// Note: In most cases, this value becomes more precise as more events are created.
+  /// It is recommended to use the last event's value
+  double GetSigmaGen() { return SigmaGen; };
+  /// Initial Hard Process: Set cross section
+  void SetSigmaGen(double d) { SigmaGen = d; };
 
+  /// Initial Hard Process: Get uncertainty on the cross section
+  /// Note: In most cases, this value becomes more smaller as more events are created.
+  /// It is recommended to use the last event's value
+  double GetSigmaErr() { return SigmaErr; };
+  /// Initial Hard Process: Set uncertainty on the cross section
+  void SetSigmaErr(double d) { SigmaErr = d; };
 
-    // ============================ Initial Hard Process =================================
-    /// Initial Hard Process: Get cross section
-    /// Note: In most cases, this value becomes more precise as more events are created.
-    /// It is recommended to use the last event's value
-    double GetSigmaGen(){return SigmaGen;};
-    /// Initial Hard Process: Set cross section
-    void SetSigmaGen( double d){ SigmaGen=d; };
+  /// Initial Hard Process: Get additionally created weight (e.g. pythia.event().weight())
+  double GetEventWeight() { return EventWeight; };
+  /// Initial Hard Process: Set additionally created weight (e.g. pythia.event().weight())
+  void SetEventWeight(double d) { EventWeight = d; };
 
-    /// Initial Hard Process: Get uncertainty on the cross section
-    /// Note: In most cases, this value becomes more smaller as more events are created.
-    /// It is recommended to use the last event's value
-    double GetSigmaErr(){return SigmaErr;};
-    /// Initial Hard Process: Set uncertainty on the cross section
-    void SetSigmaErr( double d){ SigmaErr=d; };
+  // ============================ Initial State =================================
+  /// Initial State: Get number of participants
+  double GetNpart() { return Npart; };
+  /// Initial State: Get number of participants
+  void SetNpart(double d) { Npart = d; };
 
-    /// Initial Hard Process: Get additionally created weight (e.g. pythia.event().weight())
-    double GetEventWeight(){return EventWeight;};
-    /// Initial Hard Process: Set additionally created weight (e.g. pythia.event().weight())
-    void SetEventWeight( double d){ EventWeight=d; };
+  /// Initial State: Get number of binary collisions
+  double GetNcoll() { return Ncoll; };
+  /// Initial State: Get number of binary collisions
+  void SetNcoll(double d) { Ncoll = d; };
 
-    // ============================ Initial State =================================
-    /// Initial State: Get number of participants
-    double GetNpart(){return Npart;};
-    /// Initial State: Get number of participants
-    void SetNpart( double d){ Npart=d; };
+  /// Initial State: Get total entropy
+  double GetTotalEntropy() { return TotalEntropy; };
+  /// Initial State: Get total entropy
+  void SetTotalEntropy(double d) { TotalEntropy = d; };
 
-    /// Initial State: Get number of binary collisions
-    double GetNcoll(){return Ncoll;};
-    /// Initial State: Get number of binary collisions
-    void SetNcoll( double d){ Ncoll=d; };
+  // ============================ Hydro =================================
+  /// Hydro: Get (2nd order) event plane angle
+  double GetEventPlaneAngle() { return EventPlaneAngle; };
+  /// Hydro: Set (2nd order) event plane angle
+  void SetEventPlaneAngle(double d) { EventPlaneAngle = d; };
 
-    /// Initial State: Get total entropy
-    double GetTotalEntropy(){return TotalEntropy;};
-    /// Initial State: Get total entropy
-    void SetTotalEntropy( double d){ TotalEntropy=d; };
+private:
+  // ============================ Initial Hard Process =================================
+  double SigmaGen = -1;
+  double SigmaErr = -1;
+  double EventWeight = 1;
 
-    // ============================ Hydro =================================
-    /// Hydro: Get (2nd order) event plane angle
-    double GetEventPlaneAngle(){return EventPlaneAngle;};
-    /// Hydro: Set (2nd order) event plane angle
-    void SetEventPlaneAngle( double d){ EventPlaneAngle=d; };
+  // ============================ Initial State =================================
+  double Npart = -1; // could be int, but using double to allow averaged values
+  double Ncoll = -1; // could be int, but using double to allow averaged values
+  double TotalEntropy = -1;
 
-  private:
-    // ============================ Initial Hard Process =================================
-    double SigmaGen=-1;
-    double SigmaErr=-1;
-    double EventWeight=1;
+  // ============================ Hydro =================================
+  double EventPlaneAngle = -999;
 
-    // ============================ Initial State =================================
-    double Npart=-1;   // could be int, but using double to allow averaged values
-    double Ncoll=-1;   // could be int, but using double to allow averaged values
-    double TotalEntropy=-1;
+  // ============================ Other possible options =================================
+  // IS:
+  // double Eccentricity;
+  // double ImpactParameter;
 
-    // ============================ Hydro =================================
-    double EventPlaneAngle=-999;
+  // Hydro:
+  // angles, eccentricities
 
-    // ============================ Other possible options =================================
-    // IS: 
-    // double Eccentricity;
-    // double ImpactParameter;
+  // Eloss:
+  // Switching criteria
 
-    // Hydro:
-    // angles, eccentricities
+  // Potential for consistency checks:
+  // TotalEntropy from Free Streaming and from Hydro
 
-    // Eloss:
-    // Switching criteria
+  // Potential file-wide parameters (should be implemented in a different class)
 
+  // IS:
+  // string NuclearDensity; // (Woods-Saxon?)
+  // string SaturationModel; // (IP-SAT, MCKLN, ...)
 
-    // Potential for consistency checks:
-    // TotalEntropy from Free Streaming and from Hydro
+  // Inital Hard Process:
+  // ptHat_min, ptHat_max
+  // generator name, npdf,
 
-    // Potential file-wide parameters (should be implemented in a different class)
+  // Hydro:
+  // EOS
 
-    // IS:
-    // string NuclearDensity; // (Woods-Saxon?)
-    // string SaturationModel; // (IP-SAT, MCKLN, ...)
+  // Free Streaming:
+  // Name, version
 
-    // Inital Hard Process:
-    // ptHat_min, ptHat_max
-    // generator name, npdf,
-
-    // Hydro:
-    // EOS
-
-    // Free Streaming:
-    // Name, version
-
-    // Hadronization:
-    // type (colorless/colored, reco, ...)
-
-  };
+  // Hadronization:
+  // type (colorless/colored, reco, ...)
+};
 
 } // end namespace Jetscape
 

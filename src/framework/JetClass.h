@@ -32,11 +32,9 @@ using std::ostream;
 
 namespace Jetscape {
 
-
-  // class Parton;
+// class Parton;
 class Vertex;
 class FourVector;
-
 
 /**************************************************************************************************/
 
@@ -46,12 +44,10 @@ class FourVector;
 
 //dummy for now figure out after graph structure ...
 
-class Jet
-{
-  Jet() {};
-  ~Jet() {};
+class Jet {
+  Jet(){};
+  ~Jet(){};
 };
-
 
 /**************************************************************************************************/
 
@@ -59,38 +55,29 @@ class Jet
 
 /*************************************************************************************************/
 
-class Vertex
-{
-    
+class Vertex {
+
 public:
-
-  Vertex() {x_in_.Set(0,0,0,0);}
-  Vertex(double x, double y, double z, double t) {x_in_.Set(x,y,z,t);}
-  Vertex(FourVector &x) {set_location(x);}  
+  Vertex() { x_in_.Set(0, 0, 0, 0); }
+  Vertex(double x, double y, double z, double t) { x_in_.Set(x, y, z, t); }
+  Vertex(FourVector &x) { set_location(x); }
   virtual ~Vertex();
-  
-  void set_location(FourVector &x)
-    {
-      x_in_ = x;
-    }
-  
-  FourVector &x_in()
-  {
-    return(x_in_);
-  }
 
-  friend ostream &operator<<( ostream &output, Vertex & vertex ) {
-    output<<vertex.x_in().x()<<" "<<vertex.x_in().y()<<" "<<vertex.x_in().z()<<" "<<vertex.x_in().t();
+  void set_location(FourVector &x) { x_in_ = x; }
+
+  FourVector &x_in() { return (x_in_); }
+
+  friend ostream &operator<<(ostream &output, Vertex &vertex) {
+    output << vertex.x_in().x() << " " << vertex.x_in().y() << " "
+           << vertex.x_in().z() << " " << vertex.x_in().t();
     return output;
   }
 
 protected:
-  
-  FourVector x_in_        ; //location of the vertex
+  FourVector x_in_; //location of the vertex
   // parents and siblings from Graph structure later ...
-  
 };
 
-};  /// end of namespace Jetscape
+}; // namespace Jetscape
 
 #endif /* JetClass_h */

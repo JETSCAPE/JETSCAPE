@@ -26,48 +26,46 @@
 namespace Jetscape {
 
 class SurfaceFinder {
- private:
-     Jetscape::real T_cut;
-     const EvolutionHistory &bulk_info;
-     bool boost_invariant;
+private:
+  Jetscape::real T_cut;
+  const EvolutionHistory &bulk_info;
+  bool boost_invariant;
 
-     std::vector<SurfaceCellInfo> surface_cell_list;
+  std::vector<SurfaceCellInfo> surface_cell_list;
 
- public:
-    SurfaceFinder(const Jetscape::real T_in,
-                  const EvolutionHistory &bulk_data);
-    ~SurfaceFinder();
+public:
+  SurfaceFinder(const Jetscape::real T_in, const EvolutionHistory &bulk_data);
+  ~SurfaceFinder();
 
-    void Find_full_hypersurface();
+  void Find_full_hypersurface();
 
-    int get_number_of_surface_cells() const {return(surface_cell_list.size());}
-    SurfaceCellInfo get_surface_cell_with_idx(int idx) const {
-        return(surface_cell_list[idx]);
-    }
-    std::vector<SurfaceCellInfo> get_surface_cells_vector() const {
-        return(surface_cell_list);
-    }
+  int get_number_of_surface_cells() const { return (surface_cell_list.size()); }
+  SurfaceCellInfo get_surface_cell_with_idx(int idx) const {
+    return (surface_cell_list[idx]);
+  }
+  std::vector<SurfaceCellInfo> get_surface_cells_vector() const {
+    return (surface_cell_list);
+  }
 
-    bool check_intersect_3D(
-            Jetscape::real tau, Jetscape::real x, Jetscape::real y,
-            Jetscape::real dt, Jetscape::real dx, Jetscape::real dy,
-            double ***cube);
-    void Find_full_hypersurface_3D();
-    
-    bool check_intersect_4D(
-            Jetscape::real tau, Jetscape::real x, Jetscape::real y,
-            Jetscape::real eta,
-            Jetscape::real dt, Jetscape::real dx, Jetscape::real dy,
-            Jetscape::real deta, double ****cube);
-    void Find_full_hypersurface_4D();
+  bool check_intersect_3D(Jetscape::real tau, Jetscape::real x,
+                          Jetscape::real y, Jetscape::real dt,
+                          Jetscape::real dx, Jetscape::real dy, double ***cube);
+  void Find_full_hypersurface_3D();
 
-    SurfaceCellInfo PrepareASurfaceCell(
-                Jetscape::real tau, Jetscape::real x, Jetscape::real y,
-                Jetscape::real eta,
-                Jetscape::real da0, Jetscape::real da1, Jetscape::real da2,
-                Jetscape::real da3, const FluidCellInfo fluid_cell);
+  bool check_intersect_4D(Jetscape::real tau, Jetscape::real x,
+                          Jetscape::real y, Jetscape::real eta,
+                          Jetscape::real dt, Jetscape::real dx,
+                          Jetscape::real dy, Jetscape::real deta,
+                          double ****cube);
+  void Find_full_hypersurface_4D();
+
+  SurfaceCellInfo PrepareASurfaceCell(Jetscape::real tau, Jetscape::real x,
+                                      Jetscape::real y, Jetscape::real eta,
+                                      Jetscape::real da0, Jetscape::real da1,
+                                      Jetscape::real da2, Jetscape::real da3,
+                                      const FluidCellInfo fluid_cell);
 };
 
-}
+} // namespace Jetscape
 
-#endif  // SURFACEFINDER_H_
+#endif // SURFACEFINDER_H_

@@ -23,26 +23,24 @@
 
 using namespace Jetscape;
 
-class PGun: public HardProcess {
-   
-     static Pythia8::Pythia InternalHelperPythia;
-    
- private:
-    double fixed_pT;
-    double parID;
-    int flag_useHybridHad;
-  
-    // Allows the registration of the module so that it is available to be used by the Jetscape framework.
-    static RegisterJetScapeModule<PGun> reg;
+class PGun : public HardProcess {
 
- public:
-    
-    PGun();
-     ~PGun();
-     
-     void InitTask();
-     void Exec();
-     
+  static Pythia8::Pythia InternalHelperPythia;
+
+private:
+  double fixed_pT;
+  double parID;
+  int flag_useHybridHad;
+
+  // Allows the registration of the module so that it is available to be used by the Jetscape framework.
+  static RegisterJetScapeModule<PGun> reg;
+
+public:
+  PGun();
+  ~PGun();
+
+  void InitTask();
+  void Exec();
 };
 
-#endif  // PGUN_H
+#endif // PGUN_H

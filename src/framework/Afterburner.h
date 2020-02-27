@@ -23,26 +23,27 @@
 
 namespace Jetscape {
 
-  /// Interface to hadronic afterburner
-  class Afterburner : public JetScapeModuleBase {
-   public:
-    Afterburner() {
-      VERBOSE(8);
-      SetId("Afterburner");
-    }
+/// Interface to hadronic afterburner
+class Afterburner : public JetScapeModuleBase {
+public:
+  Afterburner() {
+    VERBOSE(8);
+    SetId("Afterburner");
+  }
 
-    ~Afterburner() {
-      VERBOSE(8);
-      disconnect_all();
-    }
+  ~Afterburner() {
+    VERBOSE(8);
+    disconnect_all();
+  }
 
-    virtual void Init();
-    virtual void Exec();
-   protected:
-    /// Pointer to particlization sampler, which provides initial hadrons
-    std::shared_ptr<SoftParticlization> soft_particlization_sampler_;
-  };
+  virtual void Init();
+  virtual void Exec();
+
+protected:
+  /// Pointer to particlization sampler, which provides initial hadrons
+  std::shared_ptr<SoftParticlization> soft_particlization_sampler_;
+};
 
 } // end namespace Jetscape
 
-#endif  // AFTERBURNER_H
+#endif // AFTERBURNER_H

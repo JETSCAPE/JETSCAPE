@@ -27,101 +27,99 @@
 
 using namespace Jetscape;
 
-
 class HydroSourceJETSCAPE : public HydroSourceBase {
- private:
-    std::weak_ptr<LiquefierBase> liquefier_ptr;
+private:
+  std::weak_ptr<LiquefierBase> liquefier_ptr;
 
- public:
-    HydroSourceJETSCAPE() = default;
-    ~HydroSourceJETSCAPE() {}
+public:
+  HydroSourceJETSCAPE() = default;
+  ~HydroSourceJETSCAPE() {}
 
-    void add_a_liquefier(std::shared_ptr<LiquefierBase> new_liqueifier) {
-        liquefier_ptr = new_liqueifier;
+  void add_a_liquefier(std::shared_ptr<LiquefierBase> new_liqueifier) {
+    liquefier_ptr = new_liqueifier;
+  }
+
+  int get_number_of_sources() const {
+    if (weak_ptr_is_uninitialized(liquefier_ptr)) {
+      return (0);
+    } else {
+      return (liquefier_ptr.lock()->get_dropletlist_size());
     }
+  }
 
-    int get_number_of_sources() const {
-        if (weak_ptr_is_uninitialized(liquefier_ptr)) {
-            return(0);
-        } else {
-            return(liquefier_ptr.lock()->get_dropletlist_size());
-        }
+  double get_total_E_of_sources() const {
+    if (weak_ptr_is_uninitialized(liquefier_ptr)) {
+      return (0.0);
+    } else {
+      return (liquefier_ptr.lock()->get_dropletlist_total_energy());
     }
-    
-    double get_total_E_of_sources() const {
-        if (weak_ptr_is_uninitialized(liquefier_ptr)) {
-            return(0.0);
-        } else {
-            return(liquefier_ptr.lock()->get_dropletlist_total_energy());
-        }
-    }
-    
-    //! this function returns the energy source term J^\mu at a given point
-    //! (tau, x, y, eta_s)
-    void get_hydro_energy_source(
-        const double tau, const double x, const double y, const double eta_s,
-        const FlowVec &u_mu, EnergyFlowVec &j_mu) const {
-        j_mu = {0.0};
-        if (weak_ptr_is_uninitialized(liquefier_ptr)) return;
+  }
 
-        std::array<Jetscape::real, 4> jmu_tmp = {0.0};
-        liquefier_ptr.lock()->get_source(tau, x, y, eta_s, jmu_tmp);
-        for (int i = 0; i < 4; i++) {
-            j_mu[i] = jmu_tmp[i];
-        }
-    }
+  //! this function returns the energy source term J^\mu at a given point
+  //! (tau, x, y, eta_s)
+  void get_hydro_energy_source(const double tau, const double x, const double y,
+                               const double eta_s, const FlowVec &u_mu,
+                               EnergyFlowVec &j_mu) const {
+    j_mu = {0.0};
+    if (weak_ptr_is_uninitialized(liquefier_ptr))
+      return;
 
+    std::array<Jetscape::real, 4> jmu_tmp = {0.0};
+    liquefier_ptr.lock()->get_source(tau, x, y, eta_s, jmu_tmp);
+    for (int i = 0; i < 4; i++) {
+      j_mu[i] = jmu_tmp[i];
+    }
+  }
 };
 
 //! this is wrapper class for MUSIC so that it can be used as a external
 //! library for the JETSCAPE integrated framework
-class MpiMusic: public FluidDynamics {
- private:
-    // int mode;            //!< records running mode
-    std::unique_ptr<MUSIC> music_hydro_ptr;
-    
-    Jetscape::real freezeout_temperature;  //!< [GeV]
-    int doCooperFrye;    //!< flag to run Cooper-Frye freeze-out
-                         //!< for soft particles
-    int flag_output_evo_to_file;
-    bool has_source_terms;
-    std::shared_ptr<HydroSourceJETSCAPE> hydro_source_terms_ptr;
+class MpiMusic : public FluidDynamics {
+private:
+  // int mode;            //!< records running mode
+  std::unique_ptr<MUSIC> music_hydro_ptr;
 
-    // Allows the registration of the module so that it is available to be
-    // used by the Jetscape framework.
-    static RegisterJetScapeModule<MpiMusic> reg;
- public:
-     MpiMusic();
-     ~MpiMusic();
+  Jetscape::real freezeout_temperature; //!< [GeV]
+  int doCooperFrye;                     //!< flag to run Cooper-Frye freeze-out
+                                        //!< for soft particles
+  int flag_output_evo_to_file;
+  bool has_source_terms;
+  std::shared_ptr<HydroSourceJETSCAPE> hydro_source_terms_ptr;
 
-     void InitializeHydro(Parameter parameter_list);
+  // Allows the registration of the module so that it is available to be
+  // used by the Jetscape framework.
+  static RegisterJetScapeModule<MpiMusic> reg;
 
-     void EvolveHydro();
-     void GetHydroInfo(
-        Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
-		std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr);
-     
-     void GetHydroInfo_JETSCAPE(
-        Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
-		std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr);
-     void GetHydroInfo_MUSIC(
-        Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
-		std::unique_ptr<FluidCellInfo>& fluid_cell_info_ptr);
+public:
+  MpiMusic();
+  ~MpiMusic();
 
-     void SetHydroGridInfo();
-     void PassHydroEvolutionHistoryToFramework();
-    
-     void add_a_liquefier(std::shared_ptr<LiquefierBase> new_liqueifier) {
-        liquefier_ptr = new_liqueifier;
-        hydro_source_terms_ptr->add_a_liquefier(liquefier_ptr.lock());
-    }
+  void InitializeHydro(Parameter parameter_list);
 
-     void GetHyperSurface(Jetscape::real T_cut,
-                          SurfaceCellInfo* surface_list_ptr) {};
-     void collect_freeze_out_surface();
+  void EvolveHydro();
+  void GetHydroInfo(Jetscape::real t, Jetscape::real x, Jetscape::real y,
+                    Jetscape::real z,
+                    std::unique_ptr<FluidCellInfo> &fluid_cell_info_ptr);
 
+  void
+  GetHydroInfo_JETSCAPE(Jetscape::real t, Jetscape::real x, Jetscape::real y,
+                        Jetscape::real z,
+                        std::unique_ptr<FluidCellInfo> &fluid_cell_info_ptr);
+  void GetHydroInfo_MUSIC(Jetscape::real t, Jetscape::real x, Jetscape::real y,
+                          Jetscape::real z,
+                          std::unique_ptr<FluidCellInfo> &fluid_cell_info_ptr);
+
+  void SetHydroGridInfo();
+  void PassHydroEvolutionHistoryToFramework();
+
+  void add_a_liquefier(std::shared_ptr<LiquefierBase> new_liqueifier) {
+    liquefier_ptr = new_liqueifier;
+    hydro_source_terms_ptr->add_a_liquefier(liquefier_ptr.lock());
+  }
+
+  void GetHyperSurface(Jetscape::real T_cut,
+                       SurfaceCellInfo *surface_list_ptr){};
+  void collect_freeze_out_surface();
 };
-
-
 
 #endif // MUSICWRAPPER_H

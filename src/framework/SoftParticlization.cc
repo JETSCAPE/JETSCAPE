@@ -21,48 +21,42 @@
 
 namespace Jetscape {
 
-SoftParticlization::SoftParticlization() {
-    boost_invariance = false;
-}
+SoftParticlization::SoftParticlization() { boost_invariance = false; }
 
 SoftParticlization::~SoftParticlization() {
-    for (unsigned i = 0; i < Hadron_list_.size(); i++) {
-        Hadron_list_.at(i).clear();
-    }
-    Hadron_list_.clear();
+  for (unsigned i = 0; i < Hadron_list_.size(); i++) {
+    Hadron_list_.at(i).clear();
+  }
+  Hadron_list_.clear();
 }
 
 void SoftParticlization::Init() {
-    JetScapeModuleBase::Init();
-    JSINFO << "Intialize Soft particlization module ... " << GetId() << " ...";
+  JetScapeModuleBase::Init();
+  JSINFO << "Intialize Soft particlization module ... " << GetId() << " ...";
 
-    boost_invariance = check_boost_invariance();
+  boost_invariance = check_boost_invariance();
 
-    InitTask();
+  InitTask();
 }
 
-void SoftParticlization::Exec() {
-
-}
+void SoftParticlization::Exec() {}
 
 void SoftParticlization::Clear() {
-    for (unsigned i = 0; i < Hadron_list_.size(); i++) {
-        Hadron_list_.at(i).clear();
-    }
-    Hadron_list_.clear();
+  for (unsigned i = 0; i < Hadron_list_.size(); i++) {
+    Hadron_list_.at(i).clear();
+  }
+  Hadron_list_.clear();
 }
-
 
 bool SoftParticlization::check_boost_invariance() {
-    bool boost_invaiance_flag = false;
-    double grid_max_z = GetXMLElementDouble({"IS", "grid_max_z"});
-    double grid_step_z = GetXMLElementDouble({"IS", "grid_step_z"});
-    int nz = static_cast<int>(2.*grid_max_z/grid_step_z);
-    if (nz <= 1) {
-        boost_invariance = true;
-    }
-    return(boost_invaiance_flag);
+  bool boost_invaiance_flag = false;
+  double grid_max_z = GetXMLElementDouble({"IS", "grid_max_z"});
+  double grid_step_z = GetXMLElementDouble({"IS", "grid_step_z"});
+  int nz = static_cast<int>(2. * grid_max_z / grid_step_z);
+  if (nz <= 1) {
+    boost_invariance = true;
+  }
+  return (boost_invaiance_flag);
 }
 
-
-}  // end namespace Jetscape
+} // end namespace Jetscape

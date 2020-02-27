@@ -20,18 +20,18 @@
 
 using namespace Jetscape;
 
-class NullPreDynamics: public PreequilibriumDynamics {
-  
- public:
+class NullPreDynamics : public PreequilibriumDynamics {
+
+public:
   NullPreDynamics();
-  ~NullPreDynamics() {};
-  
-  void InitializePreequilibrium() {};
+  ~NullPreDynamics(){};
+
+  void InitializePreequilibrium(){};
   void EvolvePreequilibrium();
-  
- private:
+
+private:
   // Allows the registration of the module so that it is available to be used by the Jetscape framework.
   static RegisterJetScapeModule<NullPreDynamics> reg;
 };
 
-#endif  // NULLPREDYNAMICS_H
+#endif // NULLPREDYNAMICS_H

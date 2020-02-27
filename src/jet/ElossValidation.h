@@ -20,22 +20,17 @@
 
 using namespace Jetscape;
 
-class ElossValidate : public JetEnergyLossModule<ElossValidate>
-{  
- public:
-  
+class ElossValidate : public JetEnergyLossModule<ElossValidate> {
+public:
   ElossValidate();
   virtual ~ElossValidate();
 
   void Init();
-  void DoEnergyLoss(double deltaT,double time, double Q2, vector<Parton>& pIn, vector<Parton>& pOut);
+  void DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton> &pIn,
+                    vector<Parton> &pOut);
   void WriteTask(weak_ptr<JetScapeWriter> w);
 
-
- protected:
-  
+protected:
 };
 
-
 #endif // ELOSSVALIDATION_H
-

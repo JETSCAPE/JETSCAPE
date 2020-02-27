@@ -38,10 +38,9 @@ class JetScapeWriter;
 class JetScapeModuleMutex;
 class Parton;
 
-class JetScapeTask 
-{
-  
- public:
+class JetScapeTask {
+
+public:
   /** Default constructor to create a JetScapeTask. It sets the flag "active_exec" to true and  "id" to default string value.
   */
   JetScapeTask();
@@ -60,11 +59,11 @@ class JetScapeTask
 
   /** A virtual function to define a default Finish() function for a JetScapeTask. It can  be overridden by different modules/tasks.
    */
-  virtual void Finish() {};
+  virtual void Finish(){};
 
   /** A virtual function to define a default Clear() function for a JetScapeTask. It can be overridden by different modules/tasks.
    */
-  virtual void Clear() {};
+  virtual void Clear(){};
 
   // Extensions for "recursive" handling ...
   /** Recursive Execution of all the subtasks of the JetScapeTask.
@@ -73,11 +72,11 @@ class JetScapeTask
 
   /** A virtual function to define a default ExecuteTask() function for a JetScapeTask. It can be overridden by different modules/tasks. 
    */
-  virtual void ExecuteTask() {};
+  virtual void ExecuteTask(){};
 
   /** A virtual function to define a default InitTask() function for a JetScapeTask. It can be overridden by different modules/tasks.                                 
    */
-  virtual void InitTask() {};
+  virtual void InitTask(){};
 
   /** Recursive initialization of all the subtasks of the JetScapeTask. Subtasks are also of type JetScapeTask such as Pythia Gun, Trento, Energy Loss Matter and Martini etc.
   */
@@ -90,16 +89,16 @@ class JetScapeTask
 
   /** A virtual function to define a default ClearTask() function for a JetScapeTask. It can be overridden by different modules/tasks.
    */
-  virtual void ClearTask() {};
+  virtual void ClearTask(){};
 
   /** A virtual function to define a default FinishTask() function for a JetScapeTask. It can be overridden by different modules/tasks.                           
    */
-  virtual void FinishTask() {};
+  virtual void FinishTask(){};
 
   /** A virtual function to define a default FinishTasks() function for a JetScapeTask. It can be overridden by different modules/tasks.
    */
-  virtual void FinishTasks() {};
-  
+  virtual void FinishTasks(){};
+
   /** Recursively write the output information of different tasks/subtasks of a JetScapeTask into a file.
       We use "active_exec" flag to decide whether to write the output in the file or not.
   */
@@ -121,12 +120,12 @@ class JetScapeTask
       and implement WriteEvent appropriately. The latter is obviously better, but
       it's non-trivial to collect this information.
    */
-  virtual void WriteTask(weak_ptr<JetScapeWriter> w) {};
+  virtual void WriteTask(weak_ptr<JetScapeWriter> w){};
 
   /** Should get called only by CollectHeaders. Maybe make protected?
       @param w is a pointer of type JetScapeWrite class.
   */
-  virtual void CollectHeader( weak_ptr<JetScapeWriter> w ){};
+  virtual void CollectHeader(weak_ptr<JetScapeWriter> w){};
 
   /** Recursively collect the header information of different tasks/subtasks of a JetScapeTask into a writer.
       We use "active_exec" flag to decide whether to write the output in the file or not.
@@ -139,64 +138,62 @@ class JetScapeTask
 
   /** This function returns the current task number. 
    */
-  virtual const inline int GetMyTaskNumber() const {return my_task_number_;} ;
+  virtual const inline int GetMyTaskNumber() const { return my_task_number_; };
 
   /** This function returns the vector of tasks of a JetScapeTask.
    */
-  const vector<shared_ptr<JetScapeTask>> GetTaskList() const {return tasks;}
+  const vector<shared_ptr<JetScapeTask>> GetTaskList() const { return tasks; }
 
   /** This function returns the task at  ith location in the vector of tasks of a JetScapeTask.*/
-  shared_ptr<JetScapeTask> GetTaskAt(int i) {return tasks.at(i);}
+  shared_ptr<JetScapeTask> GetTaskAt(int i) { return tasks.at(i); }
 
   /** This function deletes the last task in the vector  of tasks of a JetScapeTask. */
-  void EraseTaskLast() {tasks.erase(tasks.begin()+(tasks.size()-1));}
+  void EraseTaskLast() { tasks.erase(tasks.begin() + (tasks.size() - 1)); }
   //funny syntax (why last() not working here!?)
 
   /** This function deletes the task at ith location in the vector of tasks of a JetScapeTask.
    */
-  void EraseTaskAt(int i) {tasks.erase((tasks.begin()+i));}
-
+  void EraseTaskAt(int i) { tasks.erase((tasks.begin() + i)); }
 
   /** This function resizes the length of the vector of tasks to "i". If "i" is less than the current size, it will keep the first i elements of the vector of the tasks of a JetScapeTask. 
    */
-  void ResizeTaskList(int i) {tasks.resize(i);}
+  void ResizeTaskList(int i) { tasks.resize(i); }
 
   /** This function removes all the tasks in the vector of tasks of a JetScapeTask and changes the size to 0.
    */
-  void ClearTaskList() {tasks.clear();}
+  void ClearTaskList() { tasks.clear(); }
 
   /** This function returns the number of tasks of a JetScapeTask stored in the vector array of tasks.
    */
-  int GetNumberOfTasks() {return (int) tasks.size();}
+  int GetNumberOfTasks() { return (int)tasks.size(); }
 
   /** This function tells whether the task is active or not.
    */
-  const bool GetActive() const {return active_exec;}
+  const bool GetActive() const { return active_exec; }
 
   /** This functions sets the flag "active_exec" to true (active) or false(deactive).
    */
-  void SetActive(bool m_active_exec) {active_exec=m_active_exec;}
+  void SetActive(bool m_active_exec) { active_exec = m_active_exec; }
   // needed to access tasks not recursively by default but individually ...
   // also usefull to prevent hydro if multiple read ins of the same event ...
- 
+
   /** This function sets the string "id" of the task of a JetScapeTask.
    */
-  void SetId(string m_id) {id=m_id;}
+  void SetId(string m_id) { id = m_id; }
 
   /** This function returns the id of the task of a JetScapeTask.
    */
-  const string GetId() const {return id;}
+  const string GetId() const { return id; }
 
   /** This function returns the mutex of a JetScapeTask.
    */
-  const shared_ptr<JetScapeModuleMutex> GetMutex() const {return mutex;}
+  const shared_ptr<JetScapeModuleMutex> GetMutex() const { return mutex; }
 
   /** This function sets the "mutex" of a JetScapeTask.
    */
-  void SetMutex(shared_ptr<JetScapeModuleMutex> m_mutex) {mutex=m_mutex;}
+  void SetMutex(shared_ptr<JetScapeModuleMutex> m_mutex) { mutex = m_mutex; }
 
- private:
-
+private:
   // can be made sortabele to put in correct oder or via xml file ...
   vector<shared_ptr<JetScapeTask>> tasks;
   //list<shared_ptr<JetScapeTask>> tasks; // list vs vector any advantage of list?
@@ -206,7 +203,7 @@ class JetScapeTask
   // if for example a search rather position ... (or always sort with predefined order!?)
 
   int my_task_number_;
-  shared_ptr<JetScapeModuleMutex> mutex;  
+  shared_ptr<JetScapeModuleMutex> mutex;
 };
 
 } // end namespace Jetscape
