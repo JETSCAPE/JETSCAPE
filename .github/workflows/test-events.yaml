@@ -27,7 +27,7 @@ jobs:
         mkdir build
         cd build
         cmake ..
-        make
+        make -j2
         
     - name: Checkout JETSCAPE-analysis
       uses: actions/checkout@v2

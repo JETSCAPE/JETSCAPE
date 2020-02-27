@@ -22,21 +22,29 @@ jobs:
         path: JETSCAPE
         
     - name: Download MUSIC
-      run: $GITHUB_WORKSPACE/JETSCAPE/external_packages/get_music.sh
+      run: |
+        cd $GITHUB_WORKSPACE/JETSCAPE/external_packages
+        ./get_music.sh
     
     - name: Download ISS
-      run: $GITHUB_WORKSPACE/JETSCAPE/external_packages/get_iSS.sh
+      run: |
+        cd $GITHUB_WORKSPACE/JETSCAPE/external_packages
+        ./get_iSS.sh
     
     - name: Download FREESTREAM
-      run: $GITHUB_WORKSPACE/JETSCAPE/external_packages/get_freestream-milne.sh
+      run: |
+        cd $GITHUB_WORKSPACE/JETSCAPE/external_packages
+        ./get_freestream-milne.sh
 
     - name: Download SMASH
-      run: $GITHUB_WORKSPACE/JETSCAPE/external_packages/get_smash.sh
-    
+      run: |
+        cd $GITHUB_WORKSPACE/JETSCAPE/external_packages
+        ./get_smash.sh
+
     - name: Build JETSCAPE
       run: |
         cd $GITHUB_WORKSPACE/JETSCAPE
         mkdir build
         cd build
-        cmake .. -DUSE_MUSIC=ON -DUSE_ISS=ON -DUSE_FREESTREAM=ON -DUSE_SMASH=ON
-        make
+        cmake .. -DUSE_MUSIC=ON -DUSE_ISS=ON -DUSE_FREESTREAM=ON
+        make -j2
