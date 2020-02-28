@@ -43,6 +43,9 @@ void ColoredHadronization::Init() {
       GetXMLElementDouble({"JetHadronization", "eCMforHadronization"});
   p_fake = p_read_xml;
 
+  std::string weak_decays =
+      GetXMLElementText({"JetHadronization", "weak_decays"});
+
   VERBOSE(2) << "Start Hadronizing using the PYTHIA module...";
 
   // Show initialization at DEBUG or high verbose level
@@ -71,9 +74,15 @@ void ColoredHadronization::Init() {
 
   pythia.readString("ProcessLevel:all = off");
   pythia.readString("PartonLevel:FSR=off");
-  pythia.readString("HadronLevel:Decay = on");
-  pythia.readString("ParticleDecays:limitTau0 = on");
-  pythia.readString("ParticleDecays:tau0Max = 10.0");
+  if (weak_decays == "off") {
+    JSINFO << "Weak decays are turned off";
+    pythia.readString("HadronLevel:Decay = off");
+  } else {
+    JSINFO << "Weak decays are turned on";
+    pythia.readString("HadronLevel:Decay = on");
+    pythia.readString("ParticleDecays:limitTau0 = on");
+    pythia.readString("ParticleDecays:tau0Max = 10.0");
+  }
   pythia.init();
 }
 
@@ -106,8 +115,10 @@ void ColoredHadronization::DoHadronization(
 
       if (shower.at(ishower).at(ipart)->pid() == 22) {
 
-        JSINFO << BOLDYELLOW << " photon found in colored hadronization with ";
-        JSINFO << BOLDYELLOW << "px = " << shower.at(ishower).at(ipart)->px();
+        VERBOSE(1) << BOLDYELLOW
+                   << " photon found in colored hadronization with ";
+        VERBOSE(1) << BOLDYELLOW
+                   << "px = " << shower.at(ishower).at(ipart)->px();
         //cin >> blurb;
       }
       event.append(shower.at(ishower).at(ipart)->pid(), 23,
