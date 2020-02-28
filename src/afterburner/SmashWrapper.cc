@@ -36,7 +36,8 @@ SmashWrapper::SmashWrapper() { SetId("SMASH"); }
 
 void SmashWrapper::InitTask() {
   JSINFO << "SMASH: picking SMASH-specific configuration from xml file";
-  std::string smash_config = GetXMLElementText({"Afterburner", "SMASH", "SMASH_config_file"});
+  std::string smash_config =
+      GetXMLElementText({"Afterburner", "SMASH", "SMASH_config_file"});
   boost::filesystem::path input_config_path(smash_config);
   if (!boost::filesystem::exists(input_config_path)) {
     JSWARN << "SMASH config file " << smash_config << " not found.";
@@ -47,7 +48,8 @@ void SmashWrapper::InitTask() {
   smash::Configuration config(input_config_path.parent_path(),
                               input_config_path.filename());
   // SMASH hadron list
-  std::string hadron_list = GetXMLElementText({"Afterburner", "SMASH", "SMASH_particles_file"});
+  std::string hadron_list =
+      GetXMLElementText({"Afterburner", "SMASH", "SMASH_particles_file"});
   if (boost::filesystem::exists(hadron_list)) {
     config["particles"] =
         smash::read_all(boost::filesystem::ifstream{hadron_list});
@@ -57,7 +59,8 @@ void SmashWrapper::InitTask() {
     JSINFO << "Using default SMASH hadron list.";
   }
   // SMASH decaymodes
-  std::string decays_list = GetXMLElementText({"Afterburner", "SMASH", "SMASH_decaymodes_file"});
+  std::string decays_list =
+      GetXMLElementText({"Afterburner", "SMASH", "SMASH_decaymodes_file"});
   if (boost::filesystem::exists(decays_list)) {
     config["decaymodes"] =
         smash::read_all(boost::filesystem::ifstream{decays_list});
@@ -78,7 +81,8 @@ void SmashWrapper::InitTask() {
   // Read in the rest of configuration
   float end_time = GetXMLElementDouble({"Afterburner", "SMASH", "end_time"});
   config["General"]["End_Time"] = end_time;
-  only_final_decays_ = GetXMLElementInt({"Afterburner", "SMASH", "only_decays"});
+  only_final_decays_ =
+      GetXMLElementInt({"Afterburner", "SMASH", "only_decays"});
   JSINFO << "End time for SMASH is set to " << end_time << " fm/c";
   if (only_final_decays_) {
     JSINFO << "SMASH will only perform resonance decays, no propagation";

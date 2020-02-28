@@ -26,44 +26,48 @@
 
 namespace Jetscape {
 
-class Hadronization : public JetScapeModuleBase, public std::enable_shared_from_this<Hadronization> 
-{
+class Hadronization : public JetScapeModuleBase,
+                      public std::enable_shared_from_this<Hadronization> {
 public:
-
   Hadronization();
   virtual ~Hadronization();
-  virtual shared_ptr<Hadronization> Clone() const {return nullptr;}
+  virtual shared_ptr<Hadronization> Clone() const { return nullptr; }
   virtual void Init();
   virtual void Exec();
-  virtual void DoHadronization(vector<vector<shared_ptr<Parton>>>& pIn, vector<shared_ptr<Hadron>>& hOut, vector<shared_ptr<Parton>>& pOut){};
-  virtual void WriteTask(weak_ptr<JetScapeWriter> w); 
+  virtual void DoHadronization(vector<vector<shared_ptr<Parton>>> &pIn,
+                               vector<shared_ptr<Hadron>> &hOut,
+                               vector<shared_ptr<Parton>> &pOut){};
+  virtual void WriteTask(weak_ptr<JetScapeWriter> w);
   virtual void Clear();
 
+  sigslot::signal3<vector<vector<shared_ptr<Parton>>> &,
+                   vector<shared_ptr<Hadron>> &, vector<shared_ptr<Parton>> &,
+                   multi_threaded_local>
+      TransformPartons;
 
-  sigslot::signal3<vector<vector<shared_ptr<Parton>>>&, vector<shared_ptr<Hadron>>&, vector<shared_ptr<Parton>>&, multi_threaded_local> TransformPartons;
+  vector<shared_ptr<Hadron>> GetHadrons() { return outHadrons; }
+  vector<shared_ptr<Parton>> GetOutPartons() { return outPartons; }
 
-  vector<shared_ptr<Hadron>> GetHadrons(){return outHadrons;}
-  vector<shared_ptr<Parton>> GetOutPartons(){return outPartons;}
-  
-  void AddInPartons(vector<vector<shared_ptr<Parton>>> ip) {inPartons = ip;}
+  void AddInPartons(vector<vector<shared_ptr<Parton>>> ip) { inPartons = ip; }
 
-  void SetTransformPartonsConnected(bool m_TransformPartonsConnected) {TransformPartonsConnected=m_TransformPartonsConnected;}
-  const bool GetTransformPartonsConnected() {return TransformPartonsConnected;}
+  void SetTransformPartonsConnected(bool m_TransformPartonsConnected) {
+    TransformPartonsConnected = m_TransformPartonsConnected;
+  }
+  const bool GetTransformPartonsConnected() {
+    return TransformPartonsConnected;
+  }
 
-  void AddInHadrons(vector<shared_ptr<Hadron>> ih) {outHadrons = ih;}
+  void AddInHadrons(vector<shared_ptr<Hadron>> ih) { outHadrons = ih; }
 
 private:
-
   vector<vector<shared_ptr<Parton>>> inPartons;
   vector<shared_ptr<Hadron>> outHadrons;
   vector<shared_ptr<Parton>> outPartons;
   void DoHadronize();
 
   bool TransformPartonsConnected;
-
 };
 
-
-}
+} // namespace Jetscape
 
 #endif

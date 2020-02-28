@@ -20,23 +20,23 @@
 using namespace std;
 
 namespace Jetscape {
-  void Afterburner::Init() {
-    // Makes sure that XML file with options and parameters is loaded
-    JetScapeModuleBase::Init();
-    JSINFO << "Initializing Afterburner : " << GetId() << " ...";
+void Afterburner::Init() {
+  // Makes sure that XML file with options and parameters is loaded
+  JetScapeModuleBase::Init();
+  JSINFO << "Initializing Afterburner : " << GetId() << " ...";
 
-    // Get the pointer to sampler
-    soft_particlization_sampler_ = JetScapeSignalManager::Instance()->
-                                   GetSoftParticlizationPointer().lock();
-    if (!soft_particlization_sampler_) {
-      JSWARN << "No soft particlization module found. It is necessary to provide"
+  // Get the pointer to sampler
+  soft_particlization_sampler_ =
+      JetScapeSignalManager::Instance()->GetSoftParticlizationPointer().lock();
+  if (!soft_particlization_sampler_) {
+    JSWARN << "No soft particlization module found. It is necessary to provide"
            << " hadrons to afterburner.";
-    }
-    InitTask();
   }
+  InitTask();
+}
 
-  void Afterburner::Exec() {
-    VERBOSE(2) << "Afterburner running: " << GetId() << " ...";
-    ExecuteTask();
-  }
+void Afterburner::Exec() {
+  VERBOSE(2) << "Afterburner running: " << GetId() << " ...";
+  ExecuteTask();
+}
 } // end namespace Jetscape

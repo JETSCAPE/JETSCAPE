@@ -17,7 +17,6 @@
 // This module will generate Monte-Carlo samples for soft hadrons
 // -----------------------------------------
 
-
 #ifndef SOFTPARTICLIZATION_H_
 #define SOFTPARTICLIZATION_H_
 
@@ -29,25 +28,22 @@
 
 namespace Jetscape {
 
+class SoftParticlization : public JetScapeModuleBase {
+private:
+public:
+  SoftParticlization();
+  ~SoftParticlization();
 
-class SoftParticlization: public JetScapeModuleBase {
- private:
+  virtual void Init();
+  virtual void Exec();
+  virtual void Clear();
 
- public:
-    SoftParticlization();
-    ~SoftParticlization();
+  std::vector<std::vector<shared_ptr<Hadron>>> Hadron_list_;
 
-    virtual void Init();
-    virtual void Exec();
-    virtual void Clear();
-    
-    std::vector<std::vector<shared_ptr<Hadron>>> Hadron_list_;
-    
-    bool boost_invariance;
-    bool check_boost_invariance();
+  bool boost_invariance;
+  bool check_boost_invariance();
 };
 
 } // end namespace Jetscape
 
-
-#endif  // SOFTPARTICLIZATION_H_
+#endif // SOFTPARTICLIZATION_H_

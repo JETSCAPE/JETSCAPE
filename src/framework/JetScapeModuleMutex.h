@@ -8,17 +8,13 @@
 using namespace std;
 using std::shared_ptr;
 
+namespace Jetscape {
 
-namespace Jetscape
-{
+class JetScapeModuleMutex {
+public:
+  virtual bool CheckMutex(vector<shared_ptr<JetScapeTask>> modules) = 0;
+};
 
-class JetScapeModuleMutex
-{
-  public:
-    virtual bool CheckMutex(vector<shared_ptr<JetScapeTask>> modules) = 0;
-
- };
-
- } // end namespace Jetscape
+} // end namespace Jetscape
 
 #endif

@@ -19,14 +19,12 @@
 
 namespace Jetscape {
 
-InitialState::~InitialState()
-{
-}
+InitialState::~InitialState() {}
 
-void InitialState::Init(){
+void InitialState::Init() {
   JetScapeModuleBase::Init();
 
-  JSINFO<<"Intialize InitialState ... " << GetId() << " ...";
+  JSINFO << "Intialize InitialState ... " << GetId() << " ...";
 
   grid_max_x_ = GetXMLElementDouble({"IS", "grid_max_x"});
   grid_max_y_ = GetXMLElementDouble({"IS", "grid_max_y"});
@@ -34,49 +32,48 @@ void InitialState::Init(){
   grid_step_x_ = GetXMLElementDouble({"IS", "grid_step_x"});
   grid_step_y_ = GetXMLElementDouble({"IS", "grid_step_y"});
   grid_step_z_ = GetXMLElementDouble({"IS", "grid_step_z"});
-  JSINFO<<"x range for bulk evolution = ["<< -grid_max_x_ <<", "<<grid_max_x_ << "]";
-  
+  JSINFO << "x range for bulk evolution = [" << -grid_max_x_ << ", "
+         << grid_max_x_ << "]";
+
   InitTask();
 
   JetScapeTask::InitTasks();
 }
 
-void InitialState::Exec(){
-    // Do whatever is needed to figure out the internal temp...
-    
+void InitialState::Exec() {
+  // Do whatever is needed to figure out the internal temp...
 }
 
-void InitialState::Clear(){
-}
+void InitialState::Clear() {}
 
-void InitialState::Write(weak_ptr<JetScapeWriter> w){
+void InitialState::Write(weak_ptr<JetScapeWriter> w) {
   //Write out the original vertex so the writer can keep track of it...
   // auto f = w.lock();
   // if ( f ) f->Write(make_shared<Vertex>(initialVtx));
 }
 
-void InitialState::CollectHeader( weak_ptr<JetScapeWriter> w ){
+void InitialState::CollectHeader(weak_ptr<JetScapeWriter> w) {
   auto f = w.lock();
-  if ( f ){
-    auto& header = f->GetHeader();
-    header.SetNpart( GetNpart() );
-    header.SetNcoll( GetNcoll() );
-    header.SetTotalEntropy( GetTotalEntropy() );
+  if (f) {
+    auto &header = f->GetHeader();
+    header.SetNpart(GetNpart());
+    header.SetNcoll(GetNcoll());
+    header.SetTotalEntropy(GetTotalEntropy());
   }
 }
 
 std::tuple<double, double, double> InitialState::CoordFromIdx(int idx) {
-    int nx = GetXSize();
-    int ny = GetYSize();
-    int nz = GetZSize();
+  int nx = GetXSize();
+  int ny = GetYSize();
+  int nz = GetZSize();
 
-    int page = idx / (nx * ny);
-    int row = (idx - page * nx * ny) / nx;
-    int col = idx - page * nx * ny - row * nx;
+  int page = idx / (nx * ny);
+  int row = (idx - page * nx * ny) / nx;
+  int col = idx - page * nx * ny - row * nx;
 
-    return std::make_tuple(-grid_max_x_ + col * grid_step_x_,
-                           -grid_max_y_ + row * grid_step_y_,
-                           -grid_max_z_ + page * grid_step_z_);
+  return std::make_tuple(-grid_max_x_ + col * grid_step_x_,
+                         -grid_max_y_ + row * grid_step_y_,
+                         -grid_max_z_ + page * grid_step_z_);
 }
 
 } // end namespace Jetscape

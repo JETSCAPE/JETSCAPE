@@ -36,13 +36,13 @@ using namespace trento;
 namespace Jetscape {
 
 typedef struct {
-    double impact_parameter;
-    double num_participant;
-    double num_binary_collisions;
-    double total_entropy;
-    std::map<int, double> ecc; // order, eccentricity
-    std::map<int, double> psi; // order, participant_plane
-    double xmid, ymid;
+  double impact_parameter;
+  double num_participant;
+  double num_binary_collisions;
+  double total_entropy;
+  std::map<int, double> ecc; // order, eccentricity
+  std::map<int, double> psi; // order, participant_plane
+  double xmid, ymid;
 } EventInfo;
 
 /**The output data format (from http://qcd.phy.duke.edu/trento/usage.html#output-options):
@@ -55,30 +55,30 @@ typedef struct {
 
 ////////////////////////// Trento Initial Condition Wrapper //////////////////////
 class TrentoInitial : public InitialState {
-  public:
-    // Initialize from XML configuration
-    TrentoInitial();
-    ~TrentoInitial();
+public:
+  // Initialize from XML configuration
+  TrentoInitial();
+  ~TrentoInitial();
 
-    //void Init();
-    void Exec();
-    void Clear();
-    void InitTask();
+  //void Init();
+  void Exec();
+  void Clear();
+  void InitTask();
 
-    struct RangeFailure : public std::runtime_error {
-        using std::runtime_error::runtime_error;
-    };
-	EventInfo info_;
+  struct RangeFailure : public std::runtime_error {
+    using std::runtime_error::runtime_error;
+  };
+  EventInfo info_;
 
-  private:
+private:
+  std::shared_ptr<trento::Collider> TrentoGen_;
+  std::pair<double, double> GenCenTab(std::string proj, std::string targ,
+                                      VarMap var_map, int cL, int cH);
+  /// The output instance.
+  // Output output_;
 
-	std::shared_ptr<trento::Collider> TrentoGen_;
-	std::pair<double, double> GenCenTab(std::string proj, std::string targ, VarMap var_map, int cL, int cH);
-    /// The output instance.
-    // Output output_;
-  
-    // Allows the registration of the module so that it is available to be used by the Jetscape framework.
-    static RegisterJetScapeModule<TrentoInitial> reg;
+  // Allows the registration of the module so that it is available to be used by the Jetscape framework.
+  static RegisterJetScapeModule<TrentoInitial> reg;
 };
 
 } // end namespace Jetscape

@@ -14,49 +14,42 @@
  ******************************************************************************/
 
 #include "JetScapeEvent.h"
-#include<iostream>
+#include <iostream>
 
 using namespace std;
 
 namespace Jetscape {
 
-JetScapeEvent::JetScapeEvent()
-{
+JetScapeEvent::JetScapeEvent() {}
+
+JetScapeEvent::JetScapeEvent(const JetScapeEvent &c) {
+  partonCollection.clear();
+  const vector<Parton> tmp = c.getPartonCollection();
+  for (unsigned int ipart = 0; ipart < tmp.size(); ipart++) {
+    partonCollection.push_back(c.getParton(ipart));
+  }
 }
 
-JetScapeEvent::JetScapeEvent(const JetScapeEvent &c){
-    partonCollection.clear();
-    const vector<Parton> tmp = c.getPartonCollection();
-    for(unsigned int ipart=0; ipart<tmp.size(); ipart++){
-        partonCollection.push_back(c.getParton(ipart));
-    }
+JetScapeEvent::~JetScapeEvent() { partonCollection.clear(); }
+
+const vector<Parton> &JetScapeEvent::getPartonCollection() const {
+  return partonCollection;
 }
 
-JetScapeEvent::~JetScapeEvent()
-{
-    partonCollection.clear();
+const Parton &JetScapeEvent::getParton(int idx) const {
+  return partonCollection.at(idx);
 }
 
-const vector<Parton>& JetScapeEvent::getPartonCollection() const {
-    return partonCollection;
+void JetScapeEvent::addParton(Parton &p) { partonCollection.push_back(p); }
+
+void JetScapeEvent::addPartonShower(shared_ptr<PartonShower> ps) {
+  for (unsigned int ipart = 0; ipart < ps->GetNumberOfPartons(); ipart++) {
+    partonCollection.push_back(*(ps->GetPartonAt(ipart)));
+  }
 }
 
-const Parton& JetScapeEvent::getParton(int idx) const {
-    return partonCollection.at(idx);
-}
-
-void JetScapeEvent::addParton(Parton &p){
-    partonCollection.push_back(p);
-}
-
-void JetScapeEvent::addPartonShower(shared_ptr<PartonShower> ps){
-    for(unsigned int ipart=0; ipart<ps->GetNumberOfPartons(); ipart++){
-        partonCollection.push_back(*(ps->GetPartonAt(ipart)));
-    } 
-}
-
-void JetScapeEvent::deleteParton(int idx){
-    partonCollection.erase(partonCollection.begin()+idx); //inefficient delete!!
+void JetScapeEvent::deleteParton(int idx) {
+  partonCollection.erase(partonCollection.begin() + idx); //inefficient delete!!
 }
 
 } // end namespace Jetscape

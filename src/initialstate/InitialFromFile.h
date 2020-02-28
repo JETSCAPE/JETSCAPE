@@ -28,11 +28,11 @@
 
 using namespace Jetscape;
 
-class InitialFromFile: public Jetscape::InitialState {
-  // this is wrapper class to read external files that 
+class InitialFromFile : public Jetscape::InitialState {
+  // this is wrapper class to read external files that
   // stores initial number of binary collisions and corresponding
   // configurations
-  public:
+public:
   InitialFromFile();
   ~InitialFromFile();
 
@@ -44,7 +44,7 @@ class InitialFromFile: public Jetscape::InitialState {
   /** Default Exec() function. It can be overridden by other tasks.
    */
   void Exec();
-  
+
   /** Default Clear() function. It can be overridden by other tasks.
    */
   void Clear();
@@ -58,45 +58,43 @@ class InitialFromFile: public Jetscape::InitialState {
 
   /** Generated number of collision participants.
   */
-  double GetNpart(){ return npart; };
+  double GetNpart() { return npart; };
 
   /** Generated number of binary collisions.
   */
-  double GetNcoll(){ return ncoll; };
+  double GetNcoll() { return ncoll; };
 
   /** Generated total entropy
   */
-  double GetTotalEntropy(){ return totalentropy; };
-  
+  double GetTotalEntropy() { return totalentropy; };
 
-   private:
+private:
+  // the hdf5 file pointer, e.g. *.hdf5
+  hid_t H5file_ptr_;
 
-   // the hdf5 file pointer, e.g. *.hdf5
-   hid_t H5file_ptr_;
+  // the hdf5/group pointer, e.g. /event0
+  hid_t H5group_ptr_;
 
-   // the hdf5/group pointer, e.g. /event0
-   hid_t H5group_ptr_;
+  //! Load saved configurations for each event
+  void ReadConfigs();
 
-    //! Load saved configurations for each event
-   void ReadConfigs();
- 
-   //! Load saved number of binary collisions
-   void ReadNbcDist();
+  //! Load saved number of binary collisions
+  void ReadNbcDist();
 
-   //! Load saved initial entropy density distribution
-   void ReadEntropyDist();
+  //! Load saved initial entropy density distribution
+  void ReadEntropyDist();
 
-   //! want to use auxiliary hdf5 file readers 
-    HydroinfoH5 * h5_helper_;
+  //! want to use auxiliary hdf5 file readers
+  HydroinfoH5 *h5_helper_;
 
-    int dim_x_, dim_y_;
+  int dim_x_, dim_y_;
 
-    double npart=-1;
-    double ncoll=-1;
-    double totalentropy=-1;
-  
-    // Allows the registration of the module so that it is available to be used by the Jetscape framework.
-    static RegisterJetScapeModule<InitialFromFile> reg;
+  double npart = -1;
+  double ncoll = -1;
+  double totalentropy = -1;
+
+  // Allows the registration of the module so that it is available to be used by the Jetscape framework.
+  static RegisterJetScapeModule<InitialFromFile> reg;
 };
 
-#endif  // INITIALFROMFILE_H
+#endif // INITIALFROMFILE_H

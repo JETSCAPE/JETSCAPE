@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <string>
-#include<iostream>
+#include <iostream>
 #include <memory>
 
 #include "JetScapeTask.h"
@@ -12,17 +12,11 @@
 using namespace Jetscape;
 using std::shared_ptr;
 
-
-class LBTMutex : public JetScapeModuleMutex
-{
-  public:
-    LBTMutex();
-    ~LBTMutex();
-    bool CheckMutex(vector<shared_ptr<JetScapeTask>> modules);
-
-
-
+class LBTMutex : public JetScapeModuleMutex {
+public:
+  LBTMutex();
+  ~LBTMutex();
+  bool CheckMutex(vector<shared_ptr<JetScapeTask>> modules);
 };
-
 
 #endif

@@ -21,25 +21,21 @@
 
 namespace Jetscape {
 
-class JetScapeEvent
-{
-  
- public:
-  
+class JetScapeEvent {
+
+public:
   JetScapeEvent();
   JetScapeEvent(const JetScapeEvent &c); //copy constructor
   ~JetScapeEvent();
 
-  const Parton& getParton(int idx) const;
-  const vector<Parton>& getPartonCollection() const;
+  const Parton &getParton(int idx) const;
+  const vector<Parton> &getPartonCollection() const;
   void addParton(Parton &p);
   void addPartonShower(shared_ptr<PartonShower> ps);
   void deleteParton(int idx);
 
- private:
-
+private:
   vector<Parton> partonCollection;
-  
 };
 
 } // end namespace Jetscape

@@ -31,21 +31,18 @@ using std::ofstream;
 
 namespace Jetscape {
 
-template<class T>  
-class JetScapeWriterStream : public JetScapeWriter
-{
+template <class T> class JetScapeWriterStream : public JetScapeWriter {
 
- public:
-
-  JetScapeWriterStream<T>() {};
+public:
+  JetScapeWriterStream<T>(){};
   JetScapeWriterStream<T>(string m_file_name_out);
   virtual ~JetScapeWriterStream<T>();
 
   void Init();
   void Exec();
-  
-  bool GetStatus() {return output_file.good();}
-  void Close() {output_file.close();}
+
+  bool GetStatus() { return output_file.good(); }
+  void Close() { output_file.close(); }
 
   void WriteInitFileXMLMaster();
   void WriteInitFileXMLUser();
@@ -55,23 +52,21 @@ class JetScapeWriterStream : public JetScapeWriter
   void Write(weak_ptr<Vertex> v);
   void Write(weak_ptr<Hadron> h);
   void WriteHeaderToFile();
-  
-  void Write(string s) {output_file<<s<<endl;}
-  void WriteComment(string s) {output_file<<"# "<<s<<endl;}
-  void WriteWhiteSpace(string s) {output_file<<s<<" ";}
-  void WriteEvent(); 
-  
- protected:
 
+  void Write(string s) { output_file << s << endl; }
+  void WriteComment(string s) { output_file << "# " << s << endl; }
+  void WriteWhiteSpace(string s) { output_file << s << " "; }
+  void WriteEvent();
+
+protected:
   T output_file; //!< Output file
   //int m_precision; //!< Output precision
-  
+
   // Allows the registration of the module so that it is available to be used by the Jetscape framework.
   static RegisterJetScapeModule<JetScapeWriterStream<ofstream>> reg;
   static RegisterJetScapeModule<JetScapeWriterStream<ogzstream>> regGZ;
-  
 };
-  
+
 typedef JetScapeWriterStream<ofstream> JetScapeWriterAscii;
 #ifdef USE_GZIP
 typedef JetScapeWriterStream<ogzstream> JetScapeWriterAsciiGZ;

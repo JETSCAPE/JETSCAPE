@@ -20,16 +20,12 @@ namespace Jetscape {
 
 class JetEnergyLoss;
 
-class PartonShowerGenerator
-{
- public:
-
-  PartonShowerGenerator() {};
-  virtual ~PartonShowerGenerator() {};
+class PartonShowerGenerator {
+public:
+  PartonShowerGenerator(){};
+  virtual ~PartonShowerGenerator(){};
 
   virtual void DoShower(JetEnergyLoss &j);
-
-
 };
 
 } // end namespace Jetscape

@@ -27,4 +27,4 @@ typedef std::tuple<real, real, real, real> real4;
 
 } // end namespace Jetscape
 
-#endif  // REALTYPE_H
+#endif // REALTYPE_H
