@@ -265,6 +265,7 @@
        <thermreco_distmax>5.0</thermreco_distmax>
        <shower_recofactor>0.3333333</shower_recofactor>
        <thermal_recofactor>0.3333333</thermal_recofactor>
+       <weak_decays>on</weak_decays>
    </JetHadronization>
 
   <!-- Particlization Module  -->

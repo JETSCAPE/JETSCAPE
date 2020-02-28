@@ -56,6 +56,8 @@ void ColorlessHadronization::Init() {
       GetXMLElementDouble({"JetHadronization", "eCMforHadronization"});
   p_fake = p_read_xml;
 
+  std::string weak_decays =
+      GetXMLElementText({"JetHadronization", "weak_decays"});
   take_recoil = GetXMLElementInt({"JetHadronization", "take_recoil"});
 
   JSDEBUG << "Initialize ColorlessHadronization";
@@ -76,9 +78,16 @@ void ColorlessHadronization::Init() {
   //pythia.readString("HadronLevel:Decay = off");
 
   pythia.readString("PartonLevel:FSR=off");
-  pythia.readString("HadronLevel:Decay = on");
-  pythia.readString("ParticleDecays:limitTau0 = on");
-  pythia.readString("ParticleDecays:tau0Max = 10.0");
+
+  if (weak_decays == "off") {
+    JSINFO << "Weak decays are turned off";
+    pythia.readString("HadronLevel:Decay = off");
+  } else {
+    JSINFO << "Weak decays are turned on";
+    pythia.readString("HadronLevel:Decay = on");
+    pythia.readString("ParticleDecays:limitTau0 = on");
+    pythia.readString("ParticleDecays:tau0Max = 10.0");
+  }
 
   // And initialize
   pythia.init();
