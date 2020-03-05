@@ -138,7 +138,10 @@ void PythiaGun::InitTask() {
   }
 
   // And initialize
-  init(); // Pythia>8.1
+  if (!init()) { // Pythia>8.1
+    throw std::runtime_error("Pythia init() failed.");
+  }
+
 }
 
 void PythiaGun::Exec() {
