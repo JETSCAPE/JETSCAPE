@@ -6,10 +6,6 @@
   
   <JetScapeWriterHepMC> on </JetScapeWriterHepMC>
 
-  <Random>
-    <seed>0</seed>
-  </Random>
-
   <!-- Hard Process -->
   <Hard>
     <PythiaGun>
@@ -25,8 +21,6 @@
       <Q0> 1.0 </Q0>
       <in_vac> 1 </in_vac>
       <vir_factor> 0.25 </vir_factor>
-      <qhat0> 0.0 </qhat0>
-      <alphas> 0.25 </alphas>      
     </Matter>
   </Eloss>
   
