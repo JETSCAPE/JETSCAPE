@@ -100,19 +100,14 @@ void LBT::Init() {
   //        exit(EXIT_FAILURE);
   //    }
 
-  //  if (lbt) {
+  std::string s = GetXMLElementText({"Eloss", "Lbt", "name"});
+  JSDEBUG << s << " to be initilizied ...";
 
   //double m_qhat=-99.99;
   //lbt->FirstChildElement("qhat")->QueryDoubleText(&m_qhat);
   //SetQhat(m_qhat);
   //
   //JSDEBUG  << s << " with qhat = "<<GetQhat();
-
-  int flagInt = -100;
-  double inputDouble = -99.99;
-
-  Q00 = 1.0;
-  Q0 = 1.0;
 
   int in_vac = GetXMLElementInt({"Eloss", "Lbt", "in_vac"});
   if (in_vac == 1) {
@@ -547,7 +542,7 @@ void LBT::LBT0(int &n, double &ti) {
   int nnpp = np; //...................number of particles in the current np loop
   int np0 =
       np; //...................number of particles in the current step (np0)
-      //...................number of particles in the beginning of current step (np)
+  //...................number of particles in the beginning of current step (np)
 
   int free = 0;
   int free0 = 0;
