@@ -1250,23 +1250,23 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>&
                   ifcounter++;
               }
               
-             std::ofstream zdist;
-             zdist.open("zdist.dat", std::ios::app);
+//             std::ofstream zdist;
+//             zdist.open("zdist.dat", std::ios::app);
              // std::ofstream tdist;
              // tdist.open("tdist_heavy.dat", std::ios::app);
              // if (std::abs(pid_a) == 4 || std::abs(pid_a) == 5)
-              if (new_parent_t<1.2&&std::abs(pid)<4)
-             {
+//              if (new_parent_t<1.2&&std::abs(pid)<4)
+//             {
              //     tdist << tQd1<< endl;
-                  zdist << z << endl;
-             }
+ //                 zdist << z << endl;
+//             }
              // else if (std::abs(pid_b) == 4 || std::abs(pid_b) == 5)
              // {
              //     tdist << tQd2<< endl;
              //     zdist << z << endl;
              // }
              // tdist.close();
-             zdist.close();
+//             zdist.close();
 
               
 //              if (l_perp2<=Lambda_QCD*Lambda_QCD) l_perp2 = Lambda_QCD*Lambda_QCD; ///< test if negative
@@ -1869,9 +1869,14 @@ double Matter::generate_vac_t(int p_id, double nu, double t0, double t, double l
   scale = t0;
     
   //   cout << " s_approx, s_error = " << s_approx << "  " << s_error << endl;
+    int itcounter = 0;
     
   do {
 
+      if ( itcounter++ > 10000 ) {
+          cout << " in generate_vac_t " << " abs(diff) = " << abs(diff) << "  s_approx = " << s_approx << "  r = " << r << "  t_mid = " << t_mid << "  denom = " << denom << "  numer = " << numer << "  t0 = " << t0 << "  numer/denom = " << numer/denom << endl;
+          throw std::runtime_error("Stuck in endless loop") ;
+      }
       t_mid = (t_low + t_hi)/2.0;
 
       if (p_id==gid)
@@ -2023,9 +2028,16 @@ double Matter::generate_vac_t_w_M(int p_id, double M, double nu, double t0, doub
   //   cout << " s_approx, s_error = " << s_approx << "  " << s_error << endl;
   
     bool exit_condition = true;
+    int itcounter = 0;
     
   do
   {
+
+      if ( itcounter++ > 10000 ) {
+          cout << " in generate_vac_t_w_M " << " abs(diff) = " << abs(diff) << "  s_approx = " << s_approx << "  r = " << r << "  t_mid_00 = " << t_mid_00 << "  denom = " << denom << "  numer = " << numer << "  t0 = " << t0 << "  numer/denom = " << numer/denom << endl;
+          throw std::runtime_error("Stuck in endless loop") ;
+      }
+      
       t_mid_M0 = (t_low_M0 + t_hi_M0)/2.0;
       t_mid_MM = (t_low_MM + t_hi_MM)/2.0;
       t_mid_00 = (t_low_00 + t_hi_00)/2.0;
