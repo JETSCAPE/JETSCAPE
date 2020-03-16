@@ -42,7 +42,7 @@ void KTIsoWrapper::InitializePreequilibrium(PreEquilibriumParameterFile paramete
       JSWARN << " : KTIso not properly initialized in XML file ...";
       exit(-1);
     }
-    string input_file = para->FirstChildElement("ktiso_input_file")->GetText();//is this necessary? if we just force the user to have the 'freestream_input' file in the correct directory
+    string input_file = para->FirstChildElement("freestream_input_file")->GetText();//is this necessary? if we just force the user to have the 'freestream_input' file in the correct directory
 
     ktiso_ptr = new ITA();
 }
