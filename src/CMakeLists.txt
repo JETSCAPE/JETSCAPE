@@ -37,6 +37,9 @@ set (SOURCES  ${SOURCES}  ${preeqsources} )
 if(NOT "${freestream}")
   list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/preequilibrium/FreestreamMilneWrapper.cc)
 endif()
+if(NOT "${ktiso}")
+  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/preequilibrium/KTIsoWrapper.cc)
+endif()
 
 #hydro
 FILE(GLOB hydrosources hydro/*.cc)
