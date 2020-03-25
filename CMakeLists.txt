@@ -440,6 +440,12 @@ if (ktiso AND music)
   install(TARGETS TRENTO_KT_HYDRO DESTINATION bin)
 endif (ktiso AND music)
 
+if (ktiso)
+  add_executable(TRENTO_KT ./examples/TRENTO_KT.cc)
+  target_link_libraries(TRENTO_KT JetScape ${GSL_LIBRARIES})
+  install(TARGETS TRENTO_KT DESTINATION bin)
+endif (ktiso)
+
 if ( music AND iSS )
   add_executable(MUSICTest ./examples/MUSICTest.cc)
   target_link_libraries(MUSICTest JetScape ${OpenMP_CXX_LIBRARIES} ${GSL_LIBRARIES})
