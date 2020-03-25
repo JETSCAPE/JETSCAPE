@@ -11,8 +11,8 @@ js_seed = 1
 
 #TRENTo parameters
 
-projectile = 'Pb'
-target = 'Pb'
+projectile = 'p'
+target = 'p'
 
 #projectile = 'Au'
 #target = 'Au'
@@ -31,11 +31,14 @@ normalization = 14.128 # PbPb 2.76 TeV
 #normalization = 5.821 # AuAu 200 GeV
 
 cent_low = 0
-cent_high = 100
+cent_high = 10
 reduced_thickness = 0.089
 fluctuation = 1.054
-nucleon_width = 0.6
+nucleon_width = 1.0
 nucleon_min_dist = 1.617
+#nucleon sub-structure
+constit_width = 0.3
+constit_number = 3
 
 #freestream-milne Parameters
 #formula for Energy-dependent freestreaming time: tau_fs = tau_R * (e_T / e_R) ^ alpha
@@ -85,15 +88,16 @@ set_T_c = 0 #if on, iS3D will use Tc read in iS3D_parameters.dat as temperature
 #SMASH Parameters
 max_time_smash = 1000.0 #max run time [fm/c]
 
-#this chooses grid spacing based on nucleon width
-dx = 0.15 * nucleon_width #[fm]
-dy = 0.15 * nucleon_width #[fm]
+smallest_scale = min(nucleon_width, constit_width)
+#this chooses grid spacing based on smallest scale 
+dx = 0.15 * smallest_scale #[fm]
+dy = 0.15 * smallest_scale #[fm]
 #set hydro time step based on grid spacing for convergence 
 dt = dx / 8.0
 #choose a grid size large enough to capture central events
 #Does [-15fm, 15fm] work even for events with very large norm? 
-L_x = 15.0 #[fm]
-L_y = 15.0 #[fm]
+L_x = 5.0 #[fm]
+L_y = 5.0 #[fm]
 nx = 1.0 + (2.0 * L_x)/dx
 ny = 1.0 + (2.0 * L_y)/dy
 #get nearest ODD integer (freestream requires odd number of points)
@@ -156,15 +160,18 @@ ktiso_file.write("ny " + str(ny) + "\n")
 ktiso_file.write("nvz 1\n")
 ktiso_file.write("dx " + str(dx) + "\n")
 ktiso_file.write("dy " + str(dy) + "\n")
-ktiso_file.write("dt 0.0125\n")
-ktiso_file.write("t0 0.0\n")
+ktiso_file.write("dt 0.001\n")
+ktiso_file.write("t0 0.1\n")
 ktiso_file.write("tf " + str(tau_s) + "\n")
 ktiso_file.write("eos_type 1\n")
 ktiso_file.write("e_sw 1.7\n")
 ktiso_file.write("eta_over_s " + str(eta_over_s_ktiso) + "\n")
 ktiso_file.write("collisions 1\n")
 ktiso_file.write("sources 0\n")
-ktiso_file.write("adapt_time 1")
+ktiso_file.write("adapt_time 1\n")
+ktiso_file.write("angular_acc_factor 1.0\n")
+ktiso_file.write("fs_acc_factor 8.0\n")
+ktiso_file.write("coll_acc_factor 8.0")
 
 ktiso_file.close()
 
@@ -305,6 +312,8 @@ js_file.write("						target=\'" + str(target) + "\'\n")
 js_file.write("						sqrts=\'" + str(sqrts) + "\'\n")
 js_file.write("						cross-section=\'" + str(cross_section) + "\'\n")
 js_file.write("						normalization=\'" + str(normalization) + "\'>\n")
+js_file.write("						constit-width=\'" + str(constit_width) + "\'>\n")
+js_file.write("						constit-number=\'" + str(constit_number) + "\'>\n")
 js_file.write("		</PhysicsInputs>\n")
 js_file.write("		<CutInputs	centrality-low=\'" + str(cent_low) + "\'\n")
 js_file.write("					centrality-high=\'" + str(cent_high) + "\'>\n")
