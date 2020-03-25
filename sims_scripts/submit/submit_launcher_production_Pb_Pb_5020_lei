@@ -1,0 +1,83 @@
+#!/bin/bash
+#SBATCH -J Pb_Pb_5020_production_1kpts_250events_lei_14
+##SBATCH -p development
+#SBATCH -p skx-normal           # Queue (partition) name
+#SBATCH -N 128                 # the number of nodes
+#SBATCH --ntasks-per-node 48 #set this equal to number of cores on node
+#SBATCH -t 48:00:00           # Run time (hh:mm:ss)   walltime for each node separately
+#SBATCH --mail-user=everett.165@osu.edu
+#SBATCH --mail-type=all      # Send email at begin and end of job
+#SBATCH -A TG-PHY180035      # Allocation name
+#SBATCH -o /scratch/05780/everett/slurm/out-%j
+#SBATCH -e /scratch/05780/everett/slurm/err-%j
+
+org_wd=`pwd`
+
+module load intel/18.0.2 cmake/3.7.1 gsl boost hdf5 eigen impi python3 launcher
+
+export MY_FS="/tmp/fs_850794/rw"
+mkdir -p $MY_FS
+cd $MY_FS
+tar -xvf /scratch/05780/everett/JETSCAPE-COMP-PRODUCTION-5TEV/sims_scripts/submit/save_lei/test_everett.tar > log_untar
+#scontrol show hostnames $SLURM_NODELIST > hostfile
+#mpiexec.hydra -np 2 -ppn 1 -f hostfile /work/00410/huang/share/bcast_dir_mpi /tmp/fs_850794
+cp /scratch/05780/everett/JETSCAPE-COMP-PRODUCTION-5TEV/sims_scripts/submit/save_lei/jf_prepare.sh .
+cd sims_scripts/submit
+#source ../prepare_compilation_stampede2_2.sh
+source ../../jf_prepare.sh
+
+module list
+
+inputdir=../input-config #where the tables for iS3D, smash... are located. design_pts should be a folder inside!   
+job=$SLURM_JOB_ID
+
+#save job file to disk
+#cat submit_launcher_design_new > job_history/$job
+
+# create taskfarmer tasks
+#set the number of design points stored in input-config/design_pts
+num_design_pts=1000
+#set the number of events to run per design point
+num_events_per_design=250
+
+#files are indexed starting at 0
+let max_design=$num_design_pts-1
+let max_events=$num_events_per_design-1
+
+taskfilename=tasks-$job
+
+echo $PATH > ${org_wd}/log_dbg_path
+which run-events-design-ALICE > ${org_wd}/log_dbg_path_ALICE
+echo $LD_LIBRARY_PATH > ${org_wd}/log_dbg_ld_libpath
+
+mkdir ${SCRATCH}/logs/${job}
+mkdir ${SCRATCH}/results/${job}
+mkdir ${MY_FS}/logs/${job}
+mkdir ${MY_FS}/results/${job}
+
+#for i in $(seq 0 $max_design)
+#do
+#    mkdir $SCRATCH/logs/${job}/${i}
+#    mkdir $SCRATCH/results/${job}/${i}
+#done
+
+#for best scaling, set nevents 1 
+for j in $(seq 0 $max_events)
+do
+    for i in $(seq 0 $max_design)
+    do
+	echo "${MY_FS}/sims_scripts/submit/run-events-design-ALICE --nevents 1 --logfile ${MY_FS}/logs/$job/$i/$j.log --tmpdir=/tmp --tablesdir=$inputdir --startdir=$inputdir/design_pts_production_1kpts_Pb_Pb_5020/main/PbPb-5020/$i ${MY_FS}/results/$job/$i/$j.dat ; mv ${MY_FS}/logs/${job}/${i} $SCRATCH/logs/${job}/ ; mv ${MY_FS}/results/${job}/${i} $SCRATCH/results/${job}/ "   >> $taskfilename
+    done
+done
+cp $taskfilename ${org_wd}/
+scontrol show hostnames $SLURM_NODELIST > hostfile
+mpiexec.hydra -np $SLURM_NNODES -ppn 1 -f hostfile /work/00410/huang/share/bcast_dir_mpi /tmp/fs_850794
+
+export LAUNCHER_PLUGIN_DIR=$LAUNCHER_DIR/plugins
+export LAUNCHER_RMI=SLURM
+export LAUNCHER_JOB_FILE=$taskfilename
+
+#export LD_PRELOAD=/work/00410/huang/share/patch/io_profiler/io_monitor.so:/work/00410/huang/share/patch/io_profiler/hook.so
+
+$LAUNCHER_DIR/paramrun
+
