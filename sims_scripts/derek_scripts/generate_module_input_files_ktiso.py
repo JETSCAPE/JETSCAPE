@@ -10,26 +10,11 @@ import math
 js_seed = 1
 
 #TRENTo parameters
-
-projectile = 'p'
-target = 'p'
-
-#projectile = 'Au'
-#target = 'Au'
-
-#NOTE for Xe use the deformed nucleus in TRENTo
-#projectile = 'Xe2'
-#target = 'Xe2'
-
+projectile = 'Pb'
+target = 'Pb'
 sqrts = 2760
-#sqrts = 200
-
 cross_section = 6.4 #PbPb 2.76 TeV
-#cross_section = 4.2 #AuAu 200 GeV
-
-normalization = 14.128 # PbPb 2.76 TeV
-#normalization = 5.821 # AuAu 200 GeV
-
+normalization = 15.
 cent_low = 0
 cent_high = 10
 reduced_thickness = 0.089
@@ -37,8 +22,8 @@ fluctuation = 1.054
 nucleon_width = 1.0
 nucleon_min_dist = 1.617
 #nucleon sub-structure
-constit_width = 0.3
-constit_number = 3
+constit_width = 1.0
+constit_number = 1
 
 #freestream-milne Parameters
 #formula for Energy-dependent freestreaming time: tau_fs = tau_R * (e_T / e_R) ^ alpha
@@ -50,10 +35,10 @@ alpha = 0.113
 #this will be a dead parameter if using energy-dependent freestreaming time
 #its value will need to be overridden by preequilibrium pointer
 #if running ktiso, this parameter will determine the matching time 
-tau_s = 1.5 #time of landau-matching to hydro [fm/c]
+tau_s = 2.0 #time of landau-matching to hydro [fm/c]
 
 #ktiso parameters
-eta_over_s_ktiso = 10.
+eta_over_s_ktiso = 0.1
 #also tau_s above is used as the matching time
 
 #MUSIC Parameters
@@ -160,8 +145,8 @@ ktiso_file.write("ny " + str(ny) + "\n")
 ktiso_file.write("nvz 1\n")
 ktiso_file.write("dx " + str(dx) + "\n")
 ktiso_file.write("dy " + str(dy) + "\n")
-ktiso_file.write("dt 0.001\n")
-ktiso_file.write("t0 0.1\n")
+ktiso_file.write("dt 0.01\n")
+ktiso_file.write("t0 0.0\n")
 ktiso_file.write("tf " + str(tau_s) + "\n")
 ktiso_file.write("eos_type 1\n")
 ktiso_file.write("e_sw 1.7\n")
@@ -171,7 +156,8 @@ ktiso_file.write("sources 0\n")
 ktiso_file.write("adapt_time 1\n")
 ktiso_file.write("angular_acc_factor 1.0\n")
 ktiso_file.write("fs_acc_factor 8.0\n")
-ktiso_file.write("coll_acc_factor 8.0")
+ktiso_file.write("coll_acc_factor 8.0\n")
+ktiso_file.write("coll_RK_order 4")
 
 ktiso_file.close()
 
@@ -312,8 +298,6 @@ js_file.write("						target=\'" + str(target) + "\'\n")
 js_file.write("						sqrts=\'" + str(sqrts) + "\'\n")
 js_file.write("						cross-section=\'" + str(cross_section) + "\'\n")
 js_file.write("						normalization=\'" + str(normalization) + "\'>\n")
-js_file.write("						constit-width=\'" + str(constit_width) + "\'>\n")
-js_file.write("						constit-number=\'" + str(constit_number) + "\'>\n")
 js_file.write("		</PhysicsInputs>\n")
 js_file.write("		<CutInputs	centrality-low=\'" + str(cent_low) + "\'\n")
 js_file.write("					centrality-high=\'" + str(cent_high) + "\'>\n")
@@ -321,6 +305,8 @@ js_file.write("		</CutInputs>\n")
 js_file.write("		<TransInputs	reduced-thickness=\'" + str(reduced_thickness) + "\'\n")
 js_file.write("						fluctuation=\'" + str(fluctuation) + "\'\n")
 js_file.write("						nucleon-width=\'" + str(nucleon_width) + "\'\n")
+js_file.write("						constit-width=\'" + str(constit_width) + "\'\n")
+js_file.write("						constit-number=\'" + str(constit_number) + "\'\n")
 js_file.write("						nucleon-min-dist=\'" + str(nucleon_min_dist) + "\'>\n")
 js_file.write("		</TransInputs>\n")
 js_file.write("		<LongiInputs	mean-coeff=\'1.0\'\n")
