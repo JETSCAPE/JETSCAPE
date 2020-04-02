@@ -54,8 +54,8 @@ void MpiMusic::InitializeHydro(Parameter parameter_list) {
   music_hydro_ptr = std::unique_ptr<MUSIC>(new MUSIC(input_file));
 
   // overwrite input options
-  int flag_output_evo_to_file =
-      GetXMLElementInt({"Hydro", "MUSIC", "output_evolution_to_file"});
+  flag_output_evo_to_file = (
+      GetXMLElementInt({"Hydro", "MUSIC", "output_evolution_to_file"}));
   music_hydro_ptr->set_parameter("output_movie_flag",
                                  static_cast<double>(flag_output_evo_to_file));
   double eta_over_s =
