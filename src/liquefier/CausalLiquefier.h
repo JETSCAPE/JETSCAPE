@@ -28,39 +28,57 @@
 
 namespace Jetscape {
 
-class CausalLiquefier : public Jetscape::LiquefierBase {
-private:
-public:
-  //parameters (to be moved to xml)---------------------------
-  double tau_delay; // in [fm]
-  double dtau;      //in [fm]
+class CausalLiquefier: public Jetscape::LiquefierBase {
+ private:
 
-  double time_relax; // in [fm]
-  double d_diff;     // in [fm]
+    
+ public:
+    
+    //parameters (to be moved to xml)---------------------------
+    double dtau, dx, dy , deta;//in [fm]
+    double tau_delay;// in [fm]
+    double time_relax;// in [fm]
+    double d_diff;// in [fm]
+    double width_delta;// in [fm]
+    //---------------------------
+    double c_diff;
+    double gamma_relax;
+    
+    
+    
+    
+    CausalLiquefier();
+    ~CausalLiquefier() {};
+    
+    void Init();
+    
+    void smearing_kernel(Jetscape::real tau, Jetscape::real x,
+                         Jetscape::real y, Jetscape::real eta,
+                         const Droplet drop_i,
+                         std::array<Jetscape::real, 4> &jmu) const;
+    
+    double dumping(double t) const;
 
-  double width_delta; // in [fm]
-  //---------------------------
-  double c_diff;
-  double gamma_relax;
+    double kernel_rho(double t, double r) const;
+    double rho_smooth(double t, double r) const;
+    double rho_delta(double t, double r) const;
 
-  CausalLiquefier();
-  ~CausalLiquefier(){};
+    double kernel_j(double t, double r) const;
+    double j_smooth(double t, double r) const;
+    double j_delta(double t, double r) const;
+    
+    double get_t(double tau, double eta) const;
+    double get_z(double tau, double eta) const;
+    
+    double get_ptau(double px, double pz, double eta) const;
+    double get_peta(double px, double pz, double eta) const;
 
-  void smearing_kernel(Jetscape::real tau, Jetscape::real x, Jetscape::real y,
-                       Jetscape::real eta, const Droplet drop_i,
-                       std::array<Jetscape::real, 4> &jmu) const;
+    //For debug
+    void set_t_delay(double new_tau_delay);
 
-  double causal_diffusion_kernel(double t, double r) const;
-  double causal_diffusion_smooth(double t, double r) const;
-  double causal_diffusion_delta(double t, double r) const;
-
-  double get_t(double tau, double eta) const;
-  double get_z(double tau, double eta) const;
-
-  double get_ptau(double px, double pz, double eta) const;
-  double get_peta(double px, double pz, double eta) const;
+    
 };
 
-}; // namespace Jetscape
+};
 
-#endif // CAUSALLIQUEFIER_H
+#endif  // CAUSALLIQUEFIER_H
