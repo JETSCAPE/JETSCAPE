@@ -22,13 +22,6 @@
         <pT>100</pT>
         <useHybridHad>0</useHybridHad>
       </PGun>
-<!--      <PythiaGun>-->
-<!--          <FSR_on>0</FSR_on>-->
-<!--          <pTHatMin>100</pTHatMin>-->
-<!--          <pTHatMax>200</pTHatMax>-->
-<!--          <eCM>5020</eCM>-->
-<!--          <useHybridHad>0</useHybridHad>-->
-<!--      </PythiaGun>-->
   </Hard>
 
   <!--Preequilibrium Dynamics Module -->
@@ -82,7 +75,7 @@
       </Matter>
 
       <Lbt>
-        <name> Lbt </name>
+        <name>Lbt</name>
         <Q0> 2.0 </Q0>
         <in_vac> 0 </in_vac>
         <only_leading> 0 </only_leading>

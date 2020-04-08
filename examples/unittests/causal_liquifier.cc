@@ -23,7 +23,7 @@ using namespace Jetscape;
 // check coordinate transformation
 TEST(CausalLiquifierTest, TEST_COORDINATES){
     
-    CausalLiquefier lqf;
+    CausalLiquefier lqf(0.3,0.3,0.3,0.3);
     
     // for the transformation from tau-eta to t-z (configuration space)
     EXPECT_DOUBLE_EQ(0.0, lqf.get_t(0.0,0.5));
@@ -51,7 +51,7 @@ TEST(CausalLiquifierTest, TEST_COORDINATES){
 // check causality
 TEST(CausalLiquifierTest, TEST_CAUSALITY){
     
-    CausalLiquefier lqf;
+    CausalLiquefier lqf(0.3,0.3,0.3,0.3);
     
     // check zero source outside of the cousal area
     double time = lqf.tau_delay;
@@ -83,10 +83,10 @@ TEST(CausalLiquifierTest, TEST_CAUSALITY){
 // check conservation law
 TEST(CausalLiquifierTest, TEST_CONSERVATION){
     
-    CausalLiquefier lqf;
-    
     double dr = 0.005; //in [fm]
     double dt = 0.005; //in [fm]
+    
+    CausalLiquefier lqf(dt,dr,dr,dr);
     
     for(double t=0.3; t < 3.0; t+=dt){
         double integrated_value = 0.0;
@@ -103,8 +103,6 @@ TEST(CausalLiquifierTest, TEST_CONSERVATION){
 // check conservation law
 TEST(CausalLiquifierTest, TEST_GRID_CARTESIAN_CONSERVATION){
     
-    CausalLiquefier lqf;
-    
     double ll[3] = {0.05,0.1,0.3};
     
     for( int i=0; i<0; i++){
@@ -116,6 +114,8 @@ TEST(CausalLiquifierTest, TEST_GRID_CARTESIAN_CONSERVATION){
         double dz = l;
         int n_cells = 5.0/l;
         double dV = dx*dx*dz;
+        
+        CausalLiquefier lqf(dt,dx,dy,dz);
         
         //std::o/Users/yasukitachibana/Dropbox (Personal)/Codes/Release2.2CandidateLiquefierUpdate/examples/unittests/causal_liquifier.ccfstream ofs;
         //string filename = "liq_cons_test_dx" + std::to_string(int(l*1000)) + "_tr3000_d2400_delta300.txt";
@@ -151,7 +151,7 @@ TEST(CausalLiquifierTest, TEST_GRID_CARTESIAN_CONSERVATION){
 // check conservation law
 TEST(CausalLiquifierTest, TEST_GRID_TAU_ETA_CONSERVATION){
     
-    CausalLiquefier lqf;
+
     std::array<Jetscape::real, 4> x_in = {1.0, 0.0, 0.0, 1.0};// in tau-eta
     std::array<Jetscape::real, 4> p_in = {1.0, 1.0, 1.0, 1.0};// in Cartesian
     Droplet a_drop(x_in,p_in);
@@ -164,6 +164,8 @@ TEST(CausalLiquifierTest, TEST_GRID_TAU_ETA_CONSERVATION){
     double deta = 0.05;
     int n_xy = 8.0/dl;
     int n_eta = 5.0/deta;
+    
+    CausalLiquefier lqf(dtau,dx,dy,deta);
     
     
 //    std::ofstream ofs;
