@@ -30,6 +30,10 @@ CausalLiquefier::CausalLiquefier(){
     dx = 0.3;
     dy = 0.3;
     deta = 0.3;
+    tau_delay = 2.0;
+    time_relax = 0.1;
+    d_diff = 0.08;
+    width_delta = 0.1;
     Init();// Get values of parameters from XML
     c_diff = sqrt(d_diff/time_relax);
     gamma_relax = 0.5/time_relax;
@@ -41,6 +45,35 @@ CausalLiquefier::CausalLiquefier(){
 //        JSINFO << "c_diff = " << c_diff;
 //    }
 
+}
+
+CausalLiquefier::CausalLiquefier(double dtau_in, double dx_in, double dy_in, double deta_in){
+    VERBOSE(8);
+    JSINFO<<"Intialize CausalLiquefier (for Unit Test) ...";
+    dtau = dtau_in;
+    dx = dx_in;
+    dy = dy_in;
+    deta = deta_in;
+    tau_delay = 2.0;
+    time_relax = 0.1;
+    d_diff = 0.08;
+    width_delta = 0.1;
+    
+    c_diff = sqrt(d_diff/time_relax);
+    gamma_relax = 0.5/time_relax;
+
+    JSINFO
+    << "<CausalLiquefier> Fluid Time Step and Cell Size: dtau="
+    << dtau << " fm, dx="
+    << dx << " fm, dy="
+    << dy << " fm, deta="
+    << deta;
+    JSINFO
+    << "<CausalLiquefier> Parameters: tau_delay="
+    << tau_delay << " fm, time_relax="
+    << time_relax << " fm, d_diff="
+    << d_diff << " fm, width_delta="
+    << width_delta <<" fm";
 }
 
 void CausalLiquefier::Init(){

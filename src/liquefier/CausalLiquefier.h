@@ -48,6 +48,7 @@ class CausalLiquefier: public Jetscape::LiquefierBase {
     
     
     CausalLiquefier();
+    CausalLiquefier(double dtau, double dx, double dy , double deta);
     ~CausalLiquefier() {};
     
     void Init();
