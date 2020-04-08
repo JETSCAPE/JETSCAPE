@@ -71,7 +71,7 @@ FILE(GLOB hadrosources hadronization/*.cc)
 set (SOURCES  ${SOURCES}  ${hadrosources} )
 
 ## Take care of options
-if(NOT "${iSS}")
+if(NOT "${USE_ISS}")
   list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/hadronization/iSpectraSamplerWrapper.cc)
 endif()
 
