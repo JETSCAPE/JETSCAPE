@@ -11,38 +11,38 @@ js_seed = 0
 
 #TRENTo parameters
 
-#projectile = 'Pb'
-#target = 'Pb'
+projectile = 'Pb'
+target = 'Pb'
 
-projectile = 'Au'
-target = 'Au'
+#projectile = 'Au'
+#target = 'Au'
 
 #NOTE for Xe use the deformed nucleus in TRENTo
 #projectile = 'Xe2'
 #target = 'Xe2'
 
-#sqrts = 2760
-sqrts = 200
+sqrts = 2760
+#sqrts = 200
 
-#cross_section = 6.4 #PbPb 2.76 TeV
-cross_section = 4.2 #AuAu 200 GeV
+cross_section = 6.4 #PbPb 2.76 TeV
+#cross_section = 4.2 #AuAu 200 GeV
 
-#normalization = 14.128 # PbPb 2.76 TeV
-normalization = 5.821 # AuAu 200 GeV
+normalization = 14.2 # PbPb 2.76 TeV
+#normalization = 5.73 # AuAu 200 GeV
 
 cent_low = 0
 cent_high = 100
-reduced_thickness = 0.089
-fluctuation = 1.054
-nucleon_width = 1.064
-nucleon_min_dist = 1.617
+reduced_thickness = 0.063
+fluctuation = 1.05
+nucleon_width = 1.12
+nucleon_min_dist = 1.44
 
 #freestream-milne Parameters
 #formula for Energy-dependent freestreaming time: tau_fs = tau_R * (e_T / e_R) ^ alpha
 e_dep_fs_time = 1 # switch for energy dependent freestreaming time 
 e_R = 4.0 # GeV / fm
-tau_R = 1.507 # fm / c
-alpha = 0.113 
+tau_R = 1.46 # fm / c
+alpha = 0.03 
 
 #this will be a dead parameter if using energy-dependent freestreaming time
 #its value will need to be overridden by preequilibrium pointer 
@@ -55,18 +55,18 @@ T_c = 0.136 #switching temperature on hypersurface [GeV]
 
 #shear viscosity p'zation
 eta_over_s_T_kink_in_GeV = 0.223
-eta_over_s_low_T_slope_in_GeV = -1.585
-eta_over_s_high_T_slope_in_GeV = 0.32
-eta_over_s_at_kink = 0.056
+eta_over_s_low_T_slope_in_GeV = -0.776
+eta_over_s_high_T_slope_in_GeV = 0.37
+eta_over_s_at_kink = 0.096
 
 #bulk viscosity p'zation
-zeta_over_s_max = 0.11
-zeta_over_s_width_in_GeV = 0.093
-zeta_over_s_T_peak_in_GeV = 0.16
-zeta_over_s_lambda_asymm = -0.084
+zeta_over_s_max = 0.13
+zeta_over_s_width_in_GeV = 0.072
+zeta_over_s_T_peak_in_GeV = 0.12
+zeta_over_s_lambda_asymm = -0.122
 
 #relaxation times
-shear_relax_time_factor = 4.666
+shear_relax_time_factor = 4.65
 bulk_relax_time_factor = 1./14.55
 
 #iS3D Parameters
