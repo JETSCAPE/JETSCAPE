@@ -32,13 +32,15 @@
   
   <!--Eloss Modules -->
   <Eloss>
-    <Matter> </Matter>
-    <LBT> </LBT>
+    <Matter>
+      <in_vac> 0 </in_vac>
+    </Matter>
+    <Lbt> </Lbt>
   </Eloss>
   
   <!-- Jet Hadronization Module -->
   <JetHadronization>
-    <name>hybrid</name>
+    <name>colorless</name>
   </JetHadronization>
   
 </jetscape>
