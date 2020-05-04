@@ -256,6 +256,11 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2,
       double ft = pOut[pOut.size() - 1].mean_form_time();
       pOut[pOut.size() - 1].set_form_time(ft);
 
+      //Add missing momentum
+      FourVector pVecM(pIn[i].px()-p[0], pIn[i].py()-p[1], pIn[i].pz()-p[2], pIn[i].e()-p[3]);
+      pOut.push_back(Parton(0, 21, -13, pVecM, xVec));
+      pOut[pOut.size() - 1].set_x(fx);
+
     } //End if do-eloss
 
   } //End pIn loop
