@@ -2,9 +2,13 @@
 
 <jetscape>
   
-  <nEvents> 1 </nEvents>
+  <nEvents> 100 </nEvents>
   
   <JetScapeWriterAscii> on </JetScapeWriterAscii>
+  
+  <Random>
+    <seed>1</seed>
+  </Random>
 
   <!-- Inital State Module  -->
   <IS>
@@ -13,11 +17,12 @@
   
   <!-- Hard Process -->
   <Hard>
-    <PythiaGun>
+	  <!--<PythiaGun>
       <pTHatMin>50</pTHatMin>
       <pTHatMax>70</pTHatMax>
       <eCM>5020</eCM>
-    </PythiaGun>
+    </PythiaGun> -->
+    <PGun> </PGun>
   </Hard>
   
   <!--Preequilibrium Dynamics Module -->
@@ -29,6 +34,9 @@
   <Hydro>
     <Brick bjorken_expansion_on="false" start_time="0.6"> </Brick>
   </Hydro>
+  
+  <!-- Create liquifier -->
+  <Liquefier> </Liquefier>
   
   <!--Eloss Modules -->
   <Eloss>

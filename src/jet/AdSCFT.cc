@@ -158,8 +158,8 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2,
     double QS = Q0 * Q0;
     if (pIn[i].t() <= QS + rounding_error && temp >= T0 &&
         pmod > 0.00001 && pIn[i].pstat() >= 0) {
-      //cout << " ADS Q= " << pIn[i].t() << " Q0= " << Q0 << " temp= " << temp << " T0= " << T0 << endl;
-      //cout << " ADS tau= " << tau << " x= " << x[0] << " y= " << x[1] << " z= " << x[2] << " t= " << x[3] << endl;
+        //cout << " ADS Q= " << pIn[i].t() << " Q0= " << Q0 << " temp= " << temp << " T0= " << T0 << endl;
+        //cout << " ADS tau= " << tau << " x= " << x[0] << " y= " << x[1] << " z= " << x[2] << " t= " << x[3] << endl;
       TakeResponsibilityFor(
           pIn[i]); // Generate error if another module already has responsibility.
 
@@ -195,7 +195,7 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2,
       //JSDEBUG << " px= " << p[0] << " py= " << p[1] << " pz= " << p[2] << " en= " << p[3];
       //JSDEBUG << " x= " << x[0] << " y= " << x[1] << " z= " << x[2] << " t= " << x[3];
 
-      double virt = std::sqrt(p[3] * p[3] - p[0] * p[0] - p[1] * p[1] - p[2] * p[2]);
+      double virt = std::sqrt(p[3] * p[3] - p[0] * p[0] - p[1] * p[1] - p[2] * p[2] - pIn[i].restmass() * pIn[i].restmass());
       //JSDEBUG << " virt= " << virt;
 
       //Needed for boosts (v.w)
@@ -227,17 +227,22 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2,
       //Update 4-momentum (don't modify mass)
       for (unsigned a = 0; a < 3; a++)
         p[a] *= lambda;
-      p[3] = std::sqrt(p[0]*p[0] + p[1]*p[1] + p[2]*p[2] + virt*virt);
-      pIn[i].reset_momentum(p[0], p[1], p[2], p[3]);
-
+      virt *= lambda;
+      p[3] = std::sqrt(p[0]*p[0] + p[1]*p[1] + p[2]*p[2] + virt*virt + pIn[i].restmass()*pIn[i].restmass());
+      
       //DON'T Update 4-position here, already done at beginning
       //for (unsigned a=0; a<4; a++) x[a]+=w[a]*deltaT;
 
       double fx[4];
       fx[0] = x[3], fx[1] = x[0], fx[2] = x[1], fx[3] = x[2];
-      pIn[i].set_x(fx);
       //Feed into parton list
-      pOut.push_back(pIn[i]);
+      int pLabel = pIn[i].plabel();
+      int Id = pIn[i].pid();
+      int pStat = pIn[i].pstat();
+      FourVector pVec(p[0], p[1], p[2], p[3]);
+      FourVector xVec;
+      pOut.push_back(Parton(pLabel, Id, pStat, pVec, xVec));
+      pOut[pOut.size() - 1].set_x(fx);
       pOut.back().set_user_info(new AdSCFTUserInfo(ei, f_dist, l_dist));
 
       //Copy variables needed in case parton returns to MATTER in future steps
