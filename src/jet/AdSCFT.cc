@@ -101,19 +101,25 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2,
     p[1] = pIn[i].py();
     p[2] = pIn[i].pz();
     p[3] = pIn[i].e();
+    double pmod = std::sqrt(p[0]*p[0] + p[1]*p[1] + p[2]*p[2]);
 
     //Parton velocity
     vector<double> w;
     for (unsigned int j = 0; j < 4; j++)
       w.push_back(p[j] / p[3]);
     double w2 = std::pow(w[0], 2.) + std::pow(w[1], 2.) + std::pow(w[2], 2.);
+    for (unsigned int j = 0; j < 3; j++)
+      w[j]/=std::sqrt(w2);
 
     //Parton 4-position
     double initR0 = pIn[i].x_in().t(); //Time when the parton was last modified
     double x[4];
-    x[0] = pIn[i].x_in().x() + (time - initR0) * w[0] / std::sqrt(w2);
-    x[1] = pIn[i].x_in().y() + (time - initR0) * w[1] / std::sqrt(w2);
-    x[2] = pIn[i].x_in().z() + (time - initR0) * w[2] / std::sqrt(w2);
+    //x[0] = pIn[i].x_in().x() + (time - initR0) * w[0] / std::sqrt(w2);
+    //x[1] = pIn[i].x_in().y() + (time - initR0) * w[1] / std::sqrt(w2);
+    //x[2] = pIn[i].x_in().z() + (time - initR0) * w[2] / std::sqrt(w2);
+    x[0] = pIn[i].x_in().x() + (time - initR0) * w[0];
+    x[1] = pIn[i].x_in().y() + (time - initR0) * w[1];
+    x[2] = pIn[i].x_in().z() + (time - initR0) * w[2];
     x[3] = pIn[i].x_in().t() + (time - initR0) * w[3];
 
     //Extract fluid properties
@@ -151,7 +157,7 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2,
     // *Parton is not completely quenched ( Ecut = 0.00001 )
     double QS = Q0 * Q0;
     if (pIn[i].t() <= QS + rounding_error && temp >= T0 &&
-        pIn[i].e() > 0.00001 && pIn[i].pstat() >= 0) {
+        pmod > 0.00001 && pIn[i].pstat() >= 0) {
       //cout << " ADS Q= " << pIn[i].t() << " Q0= " << Q0 << " temp= " << temp << " T0= " << T0 << endl;
       //cout << " ADS tau= " << tau << " x= " << x[0] << " y= " << x[1] << " z= " << x[2] << " t= " << x[3] << endl;
       TakeResponsibilityFor(
@@ -174,8 +180,8 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2,
       else
         CF = 1.; //Quark
 
-      //Energy of parton as it entered this module for the first time
-      double ei = p[3];
+      //Energy (three-momentum) of parton as it entered this module for the first time
+      double ei = pmod;
       double l_dist = 0., f_dist = 0.;
       if (pIn[i].has_user_info<AdSCFTUserInfo>()) {
         ei = pIn[i].user_info<AdSCFTUserInfo>().part_ei();
@@ -189,8 +195,7 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2,
       //JSDEBUG << " px= " << p[0] << " py= " << p[1] << " pz= " << p[2] << " en= " << p[3];
       //JSDEBUG << " x= " << x[0] << " y= " << x[1] << " z= " << x[2] << " t= " << x[3];
 
-      double virt = std::sqrt(p[3] * p[3] - w2 * p[3] * p[3] -
-                              std::pow(pIn[i].restmass(), 2.));
+      double virt = std::sqrt(p[3] * p[3] - p[0] * p[0] - p[1] * p[1] - p[2] * p[2]);
       //JSDEBUG << " virt= " << virt;
 
       //Needed for boosts (v.w)
@@ -200,26 +205,29 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2,
       l_dist += deltaT;
 
       //Distance travelled in FRF - accumulating steps from previous, different fluid cells
+      double insqrt=w2 + lore * lore * (v2 - 2. * vscalw + vscalw * vscalw);
+      if (insqrt<=0.) insqrt=0.;
       f_dist +=
           deltaT *
-          std::sqrt(w2 + lore * lore * (v2 - 2. * vscalw + vscalw * vscalw));
+          std::sqrt(insqrt);
 
       //JSDEBUG << " l_dist= " << l_dist << " f_dist= " << f_dist;
       //Initial energy of the parton in the FRF
       double Efs = ei * lore * (1. - vscalw);
 
-      double newEn = p[3];
+      double newEn = pmod;
       if (temp >= 0.)
-        newEn = p[3] - AdSCFT::Drag(f_dist, deltaT, Efs, temp, CF);
+        newEn = pmod - AdSCFT::Drag(f_dist, deltaT, Efs, temp, CF);
       if (newEn < 0.)
-        newEn = p[3] / 10000000.;
-      double lambda = newEn / p[3];
+        newEn = pmod / 10000000.;
+      double lambda = newEn / pmod;
       //JSDEBUG << " lambda= " << lambda;
-      //JSDEBUG << " Elost= " << p[3]-newEn;
+      //JSDEBUG << " Elost= " << pmod-newEn;
 
-      //Update 4-momentum
-      for (unsigned a = 0; a < 4; a++)
+      //Update 4-momentum (don't modify mass)
+      for (unsigned a = 0; a < 3; a++)
         p[a] *= lambda;
+      p[3] = std::sqrt(p[0]*p[0] + p[1]*p[1] + p[2]*p[2] + virt*virt);
       pIn[i].reset_momentum(p[0], p[1], p[2], p[3]);
 
       //DON'T Update 4-position here, already done at beginning
