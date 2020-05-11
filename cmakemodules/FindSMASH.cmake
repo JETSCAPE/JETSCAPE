@@ -15,6 +15,7 @@ set(SMASH_INCLUDE_DIR
    $ENV{SMASH_DIR}/3rdparty/Cuba-4.2
    $ENV{SMASH_DIR}/3rdparty/einhard
    $ENV{SMASH_DIR}/3rdparty/yaml-cpp-0.6.2/include
+   $ENV{SMASH_DIR}/build/src/include
    $ENV{SMASH_DIR}/src/include
 )
 message(STATUS "SMASH includes found in ${SMASH_INCLUDE_DIR}")
