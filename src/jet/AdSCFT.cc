@@ -195,7 +195,10 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2,
       //JSDEBUG << " px= " << p[0] << " py= " << p[1] << " pz= " << p[2] << " en= " << p[3];
       //JSDEBUG << " x= " << x[0] << " y= " << x[1] << " z= " << x[2] << " t= " << x[3];
 
-      double virt = std::sqrt(p[3] * p[3] - p[0] * p[0] - p[1] * p[1] - p[2] * p[2] - pIn[i].restmass() * pIn[i].restmass());
+      double restmass = pIn[i].restmass();
+      if (abs(pIn[i].pid())<=3) restmass = 0.;
+      double virttwo = p[3] * p[3] - p[0] * p[0] - p[1] * p[1] - p[2] * p[2] - restmass * restmass;
+      double virt = std::sqrt(virttwo);
       //JSDEBUG << " virt= " << virt;
 
       //Needed for boosts (v.w)
@@ -228,7 +231,9 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2,
       for (unsigned a = 0; a < 3; a++)
         p[a] *= lambda;
       virt *= lambda;
-      p[3] = std::sqrt(p[0]*p[0] + p[1]*p[1] + p[2]*p[2] + virt*virt + pIn[i].restmass()*pIn[i].restmass());
+      p[3] = std::sqrt(p[0]*p[0] + p[1]*p[1] + p[2]*p[2] + virt*virt + restmass*restmass);
+      virttwo = p[3] * p[3] - p[0] * p[0] - p[1] * p[1] - p[2] * p[2] - restmass * restmass;
+      virt = std::sqrt(virttwo);
       
       //DON'T Update 4-position here, already done at beginning
       //for (unsigned a=0; a<4; a++) x[a]+=w[a]*deltaT;
@@ -239,6 +244,7 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2,
       int pLabel = pIn[i].plabel();
       int Id = pIn[i].pid();
       int pStat = pIn[i].pstat();
+      //cout << " pStat= " << pStat << endl;
       FourVector pVec(p[0], p[1], p[2], p[3]);
       FourVector xVec;
       pOut.push_back(Parton(pLabel, Id, pStat, pVec, xVec));

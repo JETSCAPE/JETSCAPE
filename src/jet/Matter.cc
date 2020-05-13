@@ -281,6 +281,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
     //JSINFO << MAGENTA << " particle rest mass = " << pIn[i].restmass();
 
     int jet_stat = pIn[i].pstat(); // daughter of recoil will always be recoil
+    if (jet_stat == -13) cout << " getting missings!!!!! \n \n";
 
     JSDEBUG << MAGENTA << "MATTER -- status: " << pIn[i].pstat()
             << "  energy: " << pIn[i].e() << " color: " << pIn[i].color()
