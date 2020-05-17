@@ -321,7 +321,7 @@ void JetEnergyLoss::DoShower() {
             if (pOutTemp[k].pstat() == neg_stat)
               continue;
           }
-	  // do not push back missing (from AdSCFT)
+          // do not push back missing (from AdSCFT)
           if (pOutTemp[k].pstat() == miss_stat)
             continue;
           // do not push back photons

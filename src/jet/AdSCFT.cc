@@ -101,7 +101,7 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2,
     p[1] = pIn[i].py();
     p[2] = pIn[i].pz();
     p[3] = pIn[i].e();
-    double pmod = std::sqrt(p[0]*p[0] + p[1]*p[1] + p[2]*p[2]);
+    double pmod = std::sqrt(p[0] * p[0] + p[1] * p[1] + p[2] * p[2]);
 
     //Parton velocity
     vector<double> w;
@@ -109,7 +109,7 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2,
       w.push_back(p[j] / p[3]);
     double w2 = std::pow(w[0], 2.) + std::pow(w[1], 2.) + std::pow(w[2], 2.);
     for (unsigned int j = 0; j < 3; j++)
-      w[j]/=std::sqrt(w2);
+      w[j] /= std::sqrt(w2);
 
     //Parton 4-position
     double initR0 = pIn[i].x_in().t(); //Time when the parton was last modified
@@ -156,10 +156,10 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2,
     // *Fluid temperature above Tcut ( T0 from XML )
     // *Parton is not completely quenched ( Ecut = 0.00001 )
     double QS = Q0 * Q0;
-    if (pIn[i].t() <= QS + rounding_error && temp >= T0 &&
-        pmod > 0.00001 && pIn[i].pstat() >= 0) {
-        //cout << " ADS Q= " << pIn[i].t() << " Q0= " << Q0 << " temp= " << temp << " T0= " << T0 << endl;
-        //cout << " ADS tau= " << tau << " x= " << x[0] << " y= " << x[1] << " z= " << x[2] << " t= " << x[3] << endl;
+    if (pIn[i].t() <= QS + rounding_error && temp >= T0 && pmod > 0.00001 &&
+        pIn[i].pstat() >= 0) {
+      //cout << " ADS Q= " << pIn[i].t() << " Q0= " << Q0 << " temp= " << temp << " T0= " << T0 << endl;
+      //cout << " ADS tau= " << tau << " x= " << x[0] << " y= " << x[1] << " z= " << x[2] << " t= " << x[3] << endl;
       TakeResponsibilityFor(
           pIn[i]); // Generate error if another module already has responsibility.
 
@@ -196,8 +196,10 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2,
       //JSDEBUG << " x= " << x[0] << " y= " << x[1] << " z= " << x[2] << " t= " << x[3];
 
       double restmass = pIn[i].restmass();
-      if (abs(pIn[i].pid())<=3) restmass = 0.;
-      double virttwo = p[3] * p[3] - p[0] * p[0] - p[1] * p[1] - p[2] * p[2] - restmass * restmass;
+      if (abs(pIn[i].pid()) <= 3)
+        restmass = 0.;
+      double virttwo = p[3] * p[3] - p[0] * p[0] - p[1] * p[1] - p[2] * p[2] -
+                       restmass * restmass;
       double virt = std::sqrt(virttwo);
       //JSDEBUG << " virt= " << virt;
 
@@ -208,11 +210,10 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2,
       l_dist += deltaT;
 
       //Distance travelled in FRF - accumulating steps from previous, different fluid cells
-      double insqrt=w2 + lore * lore * (v2 - 2. * vscalw + vscalw * vscalw);
-      if (insqrt<=0.) insqrt=0.;
-      f_dist +=
-          deltaT *
-          std::sqrt(insqrt);
+      double insqrt = w2 + lore * lore * (v2 - 2. * vscalw + vscalw * vscalw);
+      if (insqrt <= 0.)
+        insqrt = 0.;
+      f_dist += deltaT * std::sqrt(insqrt);
 
       //JSDEBUG << " l_dist= " << l_dist << " f_dist= " << f_dist;
       //Initial energy of the parton in the FRF
@@ -231,10 +232,12 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2,
       for (unsigned a = 0; a < 3; a++)
         p[a] *= lambda;
       virt *= lambda;
-      p[3] = std::sqrt(p[0]*p[0] + p[1]*p[1] + p[2]*p[2] + virt*virt + restmass*restmass);
-      virttwo = p[3] * p[3] - p[0] * p[0] - p[1] * p[1] - p[2] * p[2] - restmass * restmass;
+      p[3] = std::sqrt(p[0] * p[0] + p[1] * p[1] + p[2] * p[2] + virt * virt +
+                       restmass * restmass);
+      virttwo = p[3] * p[3] - p[0] * p[0] - p[1] * p[1] - p[2] * p[2] -
+                restmass * restmass;
       virt = std::sqrt(virttwo);
-      
+
       //DON'T Update 4-position here, already done at beginning
       //for (unsigned a=0; a<4; a++) x[a]+=w[a]*deltaT;
 
@@ -263,7 +266,8 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2,
       pOut[pOut.size() - 1].set_form_time(ft);
 
       //Add missing momentum
-      FourVector pVecM(pIn[i].px()-p[0], pIn[i].py()-p[1], pIn[i].pz()-p[2], pIn[i].e()-p[3]);
+      FourVector pVecM(pIn[i].px() - p[0], pIn[i].py() - p[1],
+                       pIn[i].pz() - p[2], pIn[i].e() - p[3]);
       pOut.push_back(Parton(0, 21, -13, pVecM, xVec));
       pOut[pOut.size() - 1].set_x(fx);
 

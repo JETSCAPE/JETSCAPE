@@ -2,13 +2,9 @@
 
 <jetscape>
   
-  <nEvents> 100 </nEvents>
+  <nEvents> 200 </nEvents>
   
   <JetScapeWriterAscii> on </JetScapeWriterAscii>
-  
-  <Random>
-    <seed>1</seed>
-  </Random>
 
   <!-- Inital State Module  -->
   <IS>
