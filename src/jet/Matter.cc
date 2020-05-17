@@ -1387,7 +1387,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
         pOut.push_back(Parton(0, pid_a, jet_stat, newp, newx));
         int iout = pOut.size() - 1;
 
-        if (isnan(newp[1]) || isnan(newp[2]) || isnan(newp[3])) {
+        if (std::isnan(newp[1]) || std::isnan(newp[2]) || std::isnan(newp[3])) {
           JSINFO << MAGENTA << plong << " " << s_t << " " << c_p << " "
                  << k_perp1[1];
 
@@ -1450,7 +1450,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
         newp[2] = plong * s_t * s_p + k_perp2[2];
         newp[3] = plong * c_t + k_perp2[3];
 
-        if (isnan(newp[1]) || isnan(newp[2]) || isnan(newp[3])) {
+        if (std::isnan(newp[1]) || std::isnan(newp[2]) || std::isnan(newp[3])) {
           JSINFO << MAGENTA << "THIS IS THE SECOND DAUGHTER";
           JSINFO << MAGENTA << plong << " " << s_t << " " << c_p << " "
                  << k_perp1[1];
