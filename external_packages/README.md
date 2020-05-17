@@ -53,8 +53,9 @@ you will need to install AMD APP SDK.
 
 ## SMASH hadronic afterburner
 
-SMASH is a hadronic transport developed at Frankfurt Institute for Advanced
- Studies by the group of Prof. H. Petersen (Elfner). In JetScape SMASH can
+SMASH [https://smash-transport.github.io] is a hadronic transport approach
+developed at Frankfurt University and GSI by the group of
+Prof. H. Elfner (nee Petersen).  In JetScape SMASH can
 serve as an afterburner, useful to compute soft observables.
 
 ### Installing SMASH
@@ -62,85 +63,15 @@ serve as an afterburner, useful to compute soft observables.
 SMASH is published on github at https://github.com/smash-transport/smash.
 See SMASH Readme for libraries required by SMASH and how to install them.
 
-#### Prerequisites
-
-SMASH is known to compile and work with one of these compilers (which have the
-required C++11 features):
-- gcc >= 4.8
-- clang >= 3.2
-
-It requires the following tools & libraries:
-- cmake >= 2.8.11
-- the GNU Scientific Library >= 1.15
-- the Eigen3 library for linear algebra (see http://eigen.tuxfamily.org)
-- boost filesystem >= 1.49
-- Pythia = 8.235
-
-See more details in SMASH README.
-
-#### Installing Eigen
-
-```bash
-export EIGEN_DOWNLOAD_DIR=$HOME/Software
-export EIGEN_INSTALL_DIR=$HOME/eigen_install
-
-mkdir ${EIGEN_DOWNLOAD_DIR}
-cd ${EIGEN_DOWNLOAD_DIR}
-wget http://bitbucket.org/eigen/eigen/get/3.2.10.tar.gz
-tar -xf 3.2.10.tar.gz
-
-mkdir ${EIGEN_INSTALL_DIR}
-cd ${EIGEN_INSTALL_DIR}
-cmake ${EIGEN_DOWNLOAD_DIR} -DCMAKE_INSTALL_PREFIX=${EIGEN_INSTALL_DIR}
-make install
-
-export EIGEN3_ROOT=${EIGEN_INSTALL_DIR}/include/eigen3/
 ```
-
-Add the last export to your .bashrc file.
-
-
-#### Using a custom GSL build
-
-This is only necessary if GSL is not installed already or something
-does not work with the installed version.
-
-Download and unpack GSL:
-
-```bash
-    wget ftp://ftp.gnu.org/gnu/gsl/gsl-latest.tar.gz
-    tar -zxvf gsl-latest.tar.gz
-```
-
-This creates a folder named `gsl-[version_number]` called `$GSL` here.
-
-```bash
-    cd $GSL
-    ./configure --prefix $GSL
-    make -jN
-    make install
-```
-
-Add this export to your .bashrc file:
-```bash
-    export GSL_ROOT_DIR=/opt/apps/intel18/gsl/2.3
-```
-
-#### Using boost library
-
-Assuming that boost is already installed in $HOME:
-
-```bash
-  export BOOST_ROOT=$HOME/boost_1_64_0/
-```
-
-#### Compiling SMASH library
-
-```bash
-  export JETSCAPE_DIR=${HOME}/JETSCAPE-COMP
-  export SMASH_DIR=${JETSCAPE_DIR}/external_packages/smash/smash_code
+  export EIGEN3_ROOT=<eigen install directory>/include/eigen3/
+  export GSL_ROOT_DIR=$(gsl-config --prefix)
+  export BOOST_ROOT=<boost install directory>
   export PYTHIA8DIR=${PYTHIAINSTALLDIR}/pythia8235
   export PYTHIA8_ROOT_DIR=${PYTHIAINSTALLDIR}/pythia8235
+
+  export JETSCAPE_DIR=${HOME}/JETSCAPE-COMP
+  export SMASH_DIR=${JETSCAPE_DIR}/external_packages/smash/smash_code
 
   cd ${JETSCAPE_DIR}/external_packages
   ./get_smash.sh
