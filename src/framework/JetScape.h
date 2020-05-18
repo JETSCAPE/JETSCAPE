@@ -88,6 +88,7 @@ protected:
 
   void Show();
   int n_events;
+  int n_events_printout;
 
   bool reuse_hydro_;
   unsigned int n_reuse_hydro_;
