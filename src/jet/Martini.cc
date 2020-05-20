@@ -108,7 +108,9 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2,
                            // 0: normal parton, 1: recoil parton,
                            // -1: sampled thermal parton (negative)
   int pLabel;              // particle number
-  double pAbs, px, py, pz; // momentum of initial parton (pIn)
+  double p0, px, py, pz; // momentum of initial parton (pIn)
+  double pAbs;
+  double velx, vely, velz;
   double pRest, pxRest;    // momentum in the rest frame of fluid cell (pIn)
   double pyRest, pzRest;
   double k, kRest;    // momentum of radiated parton (pOut)
@@ -135,6 +137,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2,
   FourVector xVec;           // 4-vector of position (for next time step!)
   double velocity_jet[4];    // jet velocity for MATTER
   double eta;                // pseudo-rapidity
+  double SpatialRapidity;    // space-time rapidity
   bool coherent;             // whether particle is coherent with its
                              // mother or daughter.
       // while coherent, additional radiation is prohibited.
@@ -164,18 +167,26 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2,
     px = pIn[i].px();
     py = pIn[i].py();
     pz = pIn[i].pz();
+    p0 = pIn[i].e();
 
     pAbs = sqrt(px * px + py * py + pz * pz);
 
     // In MARTINI, particles are all massless and on-shell
     pVec = FourVector(px, py, pz, pAbs);
 
-    tt = pIn[i].x_in().t();
-    xx = pIn[i].x_in().x() + (Time - tt) * px / pAbs;
-    yy = pIn[i].x_in().y() + (Time - tt) * py / pAbs;
-    zz = pIn[i].x_in().z() + (Time - tt) * pz / pAbs;
+    velx = px / p0;
+    vely = py / p0;
+    velz = pz / p0;
+    double velocityMod = std::sqrt(std::pow(velx, 2) + std::pow(vely, 2) +
+                                   std::pow(velz, 2));
+    tt = Time;
+    xx = pIn[i].x_in().x() + (Time - pIn[i].x_in().t()) * velx / velocityMod;
+    yy = pIn[i].x_in().y() + (Time - pIn[i].x_in().t()) * vely / velocityMod;
+    zz = pIn[i].x_in().z() + (Time - pIn[i].x_in().t()) * velz / velocityMod;
 
     eta = pIn[i].eta();
+    SpatialRapidity = 0.5 * std::log((tt + zz) / (tt - zz));
+    double boostedTStart = hydro_tStart * cosh(SpatialRapidity);
 
     // Extract fluid properties
     std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
@@ -191,7 +202,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2,
     beta = sqrt(vx * vx + vy * vy + vz * vz);
 
     // Only accept low t particles
-    if (pIn[i].t() > Q0 * Q0 + rounding_error || Time <= hydro_tStart ||
+    if (pIn[i].t() > Q0 * Q0 + rounding_error || Time <= boostedTStart ||
         T < hydro_Tc)
       continue;
     TakeResponsibilityFor(
