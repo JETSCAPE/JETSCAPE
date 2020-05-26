@@ -557,7 +557,8 @@ void HybridHadronization::DoHadronization(
     //setting up the strings appropriately for showers - assumes that color tags are set.
     //if there are colored particles without set color tags, it will dump those partons in particular into a single string
     stringform();
-    num_strings = HH_showerptns[HH_showerptns.num() - 1].string_id();
+    if (HH_showerptns.num() > 0)
+      num_strings = HH_showerptns[HH_showerptns.num() - 1].string_id();
 
     //running recombination
     recomb();
@@ -934,7 +935,8 @@ void HybridHadronization::recomb() {
   //constructing a list of all the strings in the event
   std::vector<int> list_strs;
   //adding the first string to the list
-  list_strs.push_back(HH_showerptns[0].string_id());
+  if (HH_showerptns.num() > 0)
+    list_strs.push_back(HH_showerptns[0].string_id());
   //looping over all the partons in the event, and writing each 'unique' string to the list
   for (int i = 0; i < HH_showerptns.num(); ++i) {
     bool str_match = false;
