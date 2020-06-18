@@ -18,6 +18,7 @@
 #define EVOLUTIONHISTORY_H
 
 #include <vector>
+#include <stdexcept>
 #include "FluidCellInfo.h"
 #include "RealType.h"
 
