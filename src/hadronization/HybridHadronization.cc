@@ -79,8 +79,8 @@ void HybridHadronization::Init(){
 	
 	maxE_level    = 3;			//maximum energy level considered for the recombination (was 3 in recent fortran code, prev. set to 8)
 	gmax          = 1.25;		//maximum allowed mass of the gluon (for q-qbar split), in GeV
-	xmq           = 0.33;		//light quark mass, in GeV
-	xms           = 0.5;		//strange quark mass, in GeV
+	xmq           = 0.338; //0.33;		//light quark mass, in GeV
+	xms           = 0.486; //0.5;		//strange quark mass, in GeV
 	hbarc         = 0.197327;	// GeV*fm - maybe just set this as a constant in common?
 	dist2cut      = 25.;		//maximum distance [fm] squared for recombination (involving thermal partons) - in lab frame
 	sh_recofactor = 1./3.;		//suppression/enhancement factor for shower-shower recombination
@@ -266,7 +266,7 @@ void HybridHadronization::Init(){
     //pythia.readString("111:mayDecay = off");
 
     // Don't let any hadron decay
-    pythia.readString("HadronLevel:Decay = off");
+    //pythia.readString("HadronLevel:Decay = off");
 	
 	//setting seed, or using random seed
 	pythia.readString("Random:setSeed = on");
@@ -284,10 +284,10 @@ void HybridHadronization::Init(){
 	//pythia.readString("Check:mTolErr   = 1e-1");   // setting EP/M conservation violation constraint somewhat weaker, just for ease
 	
 	//setting a decay threshold for subsequent hadron production
-//	pythia.readString("ParticleDecays:limitTau0 = on");       //When on, only particles with tau0 < tau0Max are decayed
+	pythia.readString("ParticleDecays:limitTau0 = on");       //When on, only particles with tau0 < tau0Max are decayed
 	//pythia.readString("ParticleDecays:tau0Max = 0.000003"); //The above tau0Max, expressed in mm/c :: default = 10. :: default, mayDecay()=true for tau0 below 1000 mm
 															  //set to 1E-17sec (in mm/c) to be smaller than pi0 lifetime
-//	pythia.readString("ParticleDecays:tau0Max = 10.0");
+	pythia.readString("ParticleDecays:tau0Max = 10.0");
 	
 	//allowing for partonic space-time information to be used by PYTHIA
 	//pythia.readString("PartonVertex:setVertex = on");        //this might allow PYTHIA to keep track of partonic space-time information (default was for 'rope hadronization')
@@ -833,8 +833,9 @@ std::vector<int*> ColInfo2;
 			//maybe discard gluon if it is under some threshold of mass (eg < pion?)
 			//temporarily saving previously set mass here - here's a good place to check if this is even necessary?
 			double temp_glumass = HH_showerptns[i_pt].mass();
-			HH_showerptns[i_pt].mass( 2.*xmq + (gmax - 2.*xmq)*ran() );	// gluon virtuality
-
+			//HH_showerptns[i_pt].mass( 2.*xmq + (gmax - 2.*xmq)*ran() );	// gluon virtuality
+			if(HH_showerptns[i_pt].mass()<2.*xmq+0.001){HH_showerptns[i_pt].mass(2.*xmq+0.001);}
+			
 			//gluon decay function reads in the gluon (and the overwritten random mass), and writes the output q-qbar pair to qpair
 			parton_collection qpair;
 			gluon_decay(HH_showerptns[i_pt], qpair);
