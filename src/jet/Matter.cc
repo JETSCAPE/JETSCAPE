@@ -133,11 +133,11 @@ void Matter::Init() {
          << endl;
   }
 
-  if (flag_useHybridHad != 1) {
+//  if (flag_useHybridHad != 1) {
     MaxColor = 101; // MK:recomb
-  } else {
-    MaxColor = 1;
-  }
+//  } else {
+//    MaxColor = 1;
+//  }
 
   JSINFO << MAGENTA << "MATTER input parameter";
   JSINFO << MAGENTA << "use hybrid hadronization later? " << flag_useHybridHad;
