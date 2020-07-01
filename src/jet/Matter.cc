@@ -1053,7 +1053,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
         unsigned int d1_col, d1_acol, d2_col, d2_acol, color, anti_color;
         //std::uniform_int_distribution<short> uni(101,103);
         //color = pIn[i].color();
-
+        max_color = pIn[i].max_color(); //fixing color tracking
         if (iSplit != 3) // not photon radiation, generate new colors
         {
           max_color = pIn[i].max_color();
