@@ -47,9 +47,6 @@ void PGun::InitTask() {
 
   parID = GetXMLElementDouble({"Hard", "PGun", "parID"});
   JSINFO << "Parton Gun with parID = " << parID;
-
-  flag_useHybridHad = GetXMLElementInt({"Hard", "PGun", "useHybridHad"});
-  JSINFO << "Use hybrid hadronization? " << flag_useHybridHad;
 }
 
 void PGun::Exec() {
