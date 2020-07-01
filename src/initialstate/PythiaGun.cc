@@ -84,12 +84,9 @@ void PythiaGun::InitTask() {
   pTHatMin = GetXMLElementDouble({"Hard", "PythiaGun", "pTHatMin"});
   pTHatMax = GetXMLElementDouble({"Hard", "PythiaGun", "pTHatMax"});
 
-  flag_useHybridHad = GetXMLElementInt({"Hard", "PGun", "useHybridHad"});
-
   JSINFO << MAGENTA << "Pythia Gun with FSR_on: " << FSR_on;
   JSINFO << MAGENTA << "Pythia Gun with " << pTHatMin << " < pTHat < "
          << pTHatMax;
-  JSINFO << MAGENTA << "Use hybrid hadronization? " << flag_useHybridHad;
 
   numbf.str("PhaseSpace:pTHatMin = ");
   numbf << pTHatMin;
@@ -269,19 +266,11 @@ void PythiaGun::Exec() {
 
     VERBOSE(7) << " at x=" << xLoc[1] << ", y=" << xLoc[2] << ", z=" << xLoc[3];
 
-    // if(particle.id() !=22)
-    // {
     auto ptn = make_shared<Parton>(0, particle.id(), 0, particle.pT(), particle.y(), particle.phi(), particle.e(), xLoc);
     ptn->set_color(particle.col());
     ptn->set_anti_color(particle.acol());
     ptn->set_max_color(1000 * (np + 1));
     AddParton(ptn);
-    //}
-    //else
-    //{
-    //          AddHadron(make_shared<Hadron>(hCounter,particle.id(),particle.status(),particle.pT(),particle.eta(),particle.phi(),particle.e(),xLoc));
-    //          hCounter++;
-    //}
   }
 
   VERBOSE(8) << GetNHardPartons();
