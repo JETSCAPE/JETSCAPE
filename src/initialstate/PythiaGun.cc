@@ -169,6 +169,15 @@ void PythiaGun::Exec() {
       if (parid < 3)
         continue; // 0, 1, 2: total event and beams
       Pythia8::Particle &particle = event[parid];
+      
+      //replacing diquarks with antiquarks (and anti-dq's with quarks)
+      //the id is set to the heaviest quark in the diquark (except down quark)
+      //this technically violates baryon number conservation over the entire event
+      //also can violate electric charge conservation
+      if( (std::abs(particle.id()) > 1100) && (std::abs(particle.id()) < 6000) && ((std::abs(particle.id())/10)%10 == 0) ){
+        if(particle.id() > 0){particle.id( -1*particle.id()/1000 );}
+        else{particle.id( particle.id()/1000 );}
+      }
 
       if (!FSR_on) {
         // only accept particles after MPI
