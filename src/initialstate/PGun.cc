@@ -28,7 +28,6 @@ Pythia8::Pythia PGun::InternalHelperPythia("IntentionallyEmpty", false);
 PGun::PGun() : HardProcess() {
   fixed_pT = 0;
   parID = 21;
-  flag_useHybridHad = 0;
   SetId("PGun");
   VERBOSE(8);
 }
