@@ -33,7 +33,8 @@ normalization = 14.2 # PbPb 2.76 TeV
 cent_low = 0
 cent_high = 100
 reduced_thickness = 0.063
-fluctuation = 1.05
+fluct_sigma = 1.05 # sigma_k
+fluct_k = 1. / (fluct_sigma**2.) # $k = 1 / sigma_k^2$
 nucleon_width = 1.12
 nucleon_min_dist = 1.44
 
@@ -280,7 +281,7 @@ js_file.write("		<CutInputs	centrality-low=\'" + str(cent_low) + "\'\n")
 js_file.write("					centrality-high=\'" + str(cent_high) + "\'>\n")
 js_file.write("		</CutInputs>\n")
 js_file.write("		<TransInputs	reduced-thickness=\'" + str(reduced_thickness) + "\'\n")
-js_file.write("						fluctuation=\'" + str(fluctuation) + "\'\n")
+js_file.write("						fluctuation=\'" + str( round(fluct_k, 4) ) + "\'\n")
 js_file.write("						nucleon-width=\'" + str(nucleon_width) + "\'\n")
 js_file.write("						nucleon-min-dist=\'" + str(nucleon_min_dist) + "\'>\n")
 js_file.write("		</TransInputs>\n")

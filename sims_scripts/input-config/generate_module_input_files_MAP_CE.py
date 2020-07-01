@@ -27,22 +27,23 @@ sqrts = 2760
 cross_section = 6.4 #PbPb 2.76 TeV
 #cross_section = 4.2 #AuAu 200 GeV
 
-normalization = 15.71 # PbPb 2.76 TeV
+normalization = 15.6 # PbPb 2.76 TeV
 #normalization = 6.242 # AuAu 200 GeV
 
 cent_low = 0
 cent_high = 100
-reduced_thickness = 0.057
-fluctuation = 0.998
-nucleon_width = 1.197
-nucleon_min_dist = 1.35
+reduced_thickness = 0.063
+fluct_sigma = 1.00 # sigma_k
+fluct_k = 1. / (fluct_sigma**2.) # $k = 1 / sigma_k^2$
+nucleon_width = 1.19
+nucleon_min_dist = 1.37
 
 #freestream-milne Parameters
 #formula for Energy-dependent freestreaming time: tau_fs = tau_R * (e_T / e_R) ^ alpha
 e_dep_fs_time = 1 # switch for energy dependent freestreaming time 
 e_R = 4.0 # GeV / fm
-tau_R = 1.02 # fm / c
-alpha = 0.02 
+tau_R = 1.04 # fm / c
+alpha = 0.024 
 
 #this will be a dead parameter if using energy-dependent freestreaming time
 #its value will need to be overridden by preequilibrium pointer 
@@ -54,19 +55,19 @@ e_c = 1.7   #switching energy density on freezeout hypersurface [GeV/fm^3]
 T_c = 0.146 #switching temperature on hypersurface [GeV]
 
 #shear viscosity p'zation
-eta_over_s_T_kink_in_GeV = 0.253
-eta_over_s_low_T_slope_in_GeV = -0.76
-eta_over_s_high_T_slope_in_GeV = 0.12
-eta_over_s_at_kink = 0.051
+eta_over_s_T_kink_in_GeV = 0.268
+eta_over_s_low_T_slope_in_GeV = -0.73
+eta_over_s_high_T_slope_in_GeV = 0.38
+eta_over_s_at_kink = 0.042
 
 #bulk viscosity p'zation
-zeta_over_s_max = 0.138
+zeta_over_s_max = 0.127
 zeta_over_s_width_in_GeV = 0.025
-zeta_over_s_T_peak_in_GeV = 0.121
-zeta_over_s_lambda_asymm = -0.03
+zeta_over_s_T_peak_in_GeV = 0.12
+zeta_over_s_lambda_asymm = 0.095
 
 #relaxation times
-shear_relax_time_factor = 5.66
+shear_relax_time_factor = 5.62
 bulk_relax_time_factor = (1./14.55)
 
 #iS3D Parameters
@@ -280,7 +281,7 @@ js_file.write("		<CutInputs	centrality-low=\'" + str(cent_low) + "\'\n")
 js_file.write("					centrality-high=\'" + str(cent_high) + "\'>\n")
 js_file.write("		</CutInputs>\n")
 js_file.write("		<TransInputs	reduced-thickness=\'" + str(reduced_thickness) + "\'\n")
-js_file.write("						fluctuation=\'" + str(fluctuation) + "\'\n")
+js_file.write("						fluctuation=\'" + str( round(fluct_k, 4) ) + "\'\n")
 js_file.write("						nucleon-width=\'" + str(nucleon_width) + "\'\n")
 js_file.write("						nucleon-min-dist=\'" + str(nucleon_min_dist) + "\'>\n")
 js_file.write("		</TransInputs>\n")
