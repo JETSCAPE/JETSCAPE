@@ -38,6 +38,11 @@ void iSpectraSamplerWrapper::InitTask() {
 
   std::string input_file =
       GetXMLElementText({"SoftParticlization", "iSS", "iSS_input_file"});
+  std::string table_path =
+      GetXMLElementText({"SoftParticlization", "iSS", "iSS_table_path"});
+  std::string particle_table_path =
+      GetXMLElementText({"SoftParticlization", "iSS",
+                         "iSS_particle_table_path"});
   std::string working_path =
       GetXMLElementText({"SoftParticlization", "iSS", "iSS_working_path"});
   int hydro_mode =
@@ -51,7 +56,8 @@ void iSpectraSamplerWrapper::InitTask() {
     hydro_mode = 2;
   }
 
-  iSpectraSampler_ptr_ = std::unique_ptr<iSS>(new iSS(working_path));
+  iSpectraSampler_ptr_ = std::unique_ptr<iSS>(
+          new iSS(working_path, table_path, particle_table_path, input_file));
   iSpectraSampler_ptr_->paraRdr_ptr->readFromFile(input_file);
 
   // overwrite some parameters
