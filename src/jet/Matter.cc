@@ -3679,6 +3679,8 @@ double Matter::alpha_s(double q2) {
     a = 0.6;
   }
 
+  if(a > 0.6){a = 0.6;}
+
   return (a);
 }
 
