@@ -141,9 +141,9 @@ void MpiMusic::EvolveHydro() {
                    << "evolution_for_movie_xyeta_" << GetId() << ".dat";
     system(system_command.str().c_str());
 
-    if (freezeout_temperature > 0.0) {
-      FindAConstantTemperatureSurface(freezeout_temperature);
-    }
+    //if (freezeout_temperature > 0.0) {
+    //  FindAConstantTemperatureSurface(freezeout_temperature);
+    //}
   }
 
   collect_freeze_out_surface();

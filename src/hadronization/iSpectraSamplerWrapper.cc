@@ -21,6 +21,7 @@
 
 #include <memory>
 #include <string>
+#include <fstream>
 
 using namespace Jetscape;
 
@@ -95,6 +96,21 @@ void iSpectraSamplerWrapper::InitTask() {
 }
 
 void iSpectraSamplerWrapper::Exec() {
+  // generate symbolic links with music_input_file
+  std::string music_input_file_path = GetXMLElementText(
+          {"Hydro", "MUSIC", "MUSIC_input_file"});
+  std::string working_path =
+      GetXMLElementText({"SoftParticlization", "iSS", "iSS_working_path"});
+  std::string music_input = working_path + "/music_input";
+  std::ifstream inputfile(music_input.c_str());
+  if (!inputfile.good()) {
+    std::ostringstream system_command;
+    system_command << "ln -s " << music_input_file_path << " "
+                   << music_input;
+    system(system_command.str().c_str());
+  }
+  inputfile.close();
+
   int status = iSpectraSampler_ptr_->read_in_FO_surface();
   if (status != 0) {
     JSWARN << "Some errors happened in reading in the hyper-surface";
