@@ -60,7 +60,6 @@ void MpiMusic::InitializeHydro(Parameter parameter_list) {
                                  static_cast<double>(flag_output_evo_to_file));
   double eta_over_s =
       GetXMLElementDouble({"Hydro", "MUSIC", "shear_viscosity_eta_over_s"});
-
   if (eta_over_s > 1e-6) {
     music_hydro_ptr->set_parameter("Viscosity_Flag_Yes_1_No_0", 1);
     music_hydro_ptr->set_parameter("Include_Shear_Visc_Yes_1_No_0", 1);
@@ -71,6 +70,18 @@ void MpiMusic::InitializeHydro(Parameter parameter_list) {
   } else {
     JSWARN << "The input shear viscosity is negative! eta/s = " << eta_over_s;
     exit(1);
+  }
+
+  int flag_bulkvis = GetXMLElementInt(
+          {"Hydro", "MUSIC", "temperature_dependent_bulk_viscosity"});
+  if (flag_bulkvis != 0) {
+    music_hydro_ptr->set_parameter("Include_Bulk_Visc_Yes_1_No_0", 1);
+  }
+
+  int flag_secondorderTerms = GetXMLElementInt(
+          {"Hydro", "MUSIC", "Include_second_order_terms"});
+  if (flag_secondorderTerms == 1) {
+    music_hydro_ptr->set_parameter("Include_second_order_terms", 1);
   }
 
   freezeout_temperature =
