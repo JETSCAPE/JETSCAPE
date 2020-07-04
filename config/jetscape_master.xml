@@ -280,10 +280,14 @@
       <hydro_mode>1</hydro_mode>
 
       <!-- file path for the default input file  -->
-      <iSS_input_file>iSS_parameters.dat</iSS_input_file>
+      <iSS_input_file>../external_packages/iSS/iSS_parameters.dat</iSS_input_file>
       <!-- directory path where the hydro surface is stored  -->
       <iSS_working_path>.</iSS_working_path>
-      
+      <!-- file path for the default table files  -->
+      <iSS_table_path>../external_packages/iSS/iSS_tables</iSS_table_path>
+      <!-- file path for the default particle table files  -->
+      <iSS_particle_table_path>../external_packages/iSS/iSS_tables</iSS_particle_table_path>
+
       <number_of_repeated_sampling>1</number_of_repeated_sampling>
       <Perform_resonance_decays>1</Perform_resonance_decays>
     </iSS>

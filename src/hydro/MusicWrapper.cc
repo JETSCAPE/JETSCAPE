@@ -60,10 +60,6 @@ void MpiMusic::InitializeHydro(Parameter parameter_list) {
                                  static_cast<double>(flag_output_evo_to_file));
   double eta_over_s =
       GetXMLElementDouble({"Hydro", "MUSIC", "shear_viscosity_eta_over_s"});
-
-  double freeze_Temp =
-      GetXMLElementDouble({"Hydro", "MUSIC", "freezeout_temperature"});
-
   if (eta_over_s > 1e-6) {
     music_hydro_ptr->set_parameter("Viscosity_Flag_Yes_1_No_0", 1);
     music_hydro_ptr->set_parameter("Include_Shear_Visc_Yes_1_No_0", 1);
@@ -75,6 +71,29 @@ void MpiMusic::InitializeHydro(Parameter parameter_list) {
     JSWARN << "The input shear viscosity is negative! eta/s = " << eta_over_s;
     exit(1);
   }
+
+  int flag_bulkvis = GetXMLElementInt(
+          {"Hydro", "MUSIC", "temperature_dependent_bulk_viscosity"});
+  if (flag_bulkvis != 0) {
+    music_hydro_ptr->set_parameter("Include_Bulk_Visc_Yes_1_No_0", 1);
+  }
+
+  int flag_secondorderTerms = GetXMLElementInt(
+          {"Hydro", "MUSIC", "Include_second_order_terms"});
+  if (flag_secondorderTerms == 1) {
+    music_hydro_ptr->set_parameter("Include_second_order_terms", 1);
+  }
+
+  freezeout_temperature =
+      GetXMLElementDouble({"Hydro", "MUSIC", "freezeout_temperature"});
+  if (freezeout_temperature > 0.05) {
+    music_hydro_ptr->set_parameter("T_freeze", freezeout_temperature);
+  } else {
+    JSWARN << "The input freeze-out temperature is too low! T_frez = "
+           << freezeout_temperature << " GeV!";
+    exit(1);
+  }
+
 
   music_hydro_ptr->add_hydro_source_terms(hydro_source_terms_ptr);
 }
@@ -133,9 +152,9 @@ void MpiMusic::EvolveHydro() {
                    << "evolution_for_movie_xyeta_" << GetId() << ".dat";
     system(system_command.str().c_str());
 
-    if (freezeout_temperature > 0.0) {
-      FindAConstantTemperatureSurface(freezeout_temperature);
-    }
+    //if (freezeout_temperature > 0.0) {
+    //  FindAConstantTemperatureSurface(freezeout_temperature);
+    //}
   }
 
   collect_freeze_out_surface();
