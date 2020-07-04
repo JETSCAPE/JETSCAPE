@@ -3,10 +3,10 @@ FROM python:3.6-stretch
 
 # Install pre-reqs (commented ones are already in base image)
 RUN apt-get update && apt-get install -y \
-cmake \
 #curl \
 doxygen \
 emacs \
+ffmpeg \
 #g++ \
 gsl-bin \
 hdf5-tools \
@@ -18,14 +18,38 @@ libhdf5-serial-dev \
 libxpm-dev \
 openmpi-bin \
 rsync \
+swig \
 valgrind \
 vim \
 #zlib1g-dev \
 && rm -rf /var/lib/apt/lists/*
 
 # Install additional useful python packages
-RUN pip install \
-pyyaml
+RUN pip install --upgrade pip \
+&& pip install \
+emcee==2.2.1 \
+h5py \
+hic \
+hsluv \
+jupyter \
+matplotlib \
+nbdime \
+numpy \
+pandas \
+pathlib \
+ptemcee \
+pyhepmc_ng \
+pyyaml \
+scikit-learn \
+scipy \
+seaborn \
+tqdm
+
+# We need cmake >= 3.13.5 for the analysis package heppy
+RUN cd /opt \
+&& wget https://github.com/Kitware/CMake/releases/download/v3.17.0/cmake-3.17.0-Linux-x86_64.sh \
+&& echo "y" | bash ./cmake-3.17.0-Linux-x86_64.sh \
+&& ln -s /opt/cmake-3.17.0-Linux-x86_64/bin/* /usr/local/bin
 
 # Install ROOT6 from source
 ENV ROOTSYS="/usr/local/root"
@@ -33,7 +57,7 @@ ENV PATH="${ROOTSYS}/bin:${PATH}"
 ENV LD_LIBRARY_PATH="${ROOTSYS}/lib:${LD_LIBRARY_PATH}"
 ENV PYTHONPATH="${ROOTSYS}/lib"
 RUN mkdir -p ${ROOTSYS} && mkdir -p ${HOME}/root && cd ${HOME}/root \
-&& git clone --depth 1 --branch v6-14-06 https://github.com/root-project/root.git src \
+&& git clone --depth 1 --branch v6-18-04 https://github.com/root-project/root.git src \
 && mkdir build && cd build \
 && cmake ../src -DCMAKE_INSTALL_PREFIX=${ROOTSYS} \
 && make -j8 install \
@@ -57,31 +81,34 @@ RUN curl -SL http://home.thep.lu.se/~torbjorn/pythia8/pythia8235.tgz \
 && make -j8 \
 && make -j8 install
 
-# Install FastJet
-RUN curl -SL http://fastjet.fr/repo/fastjet-3.3.2.tar.gz \
-| tar -xvzC /usr/local \
-&& cd /usr/local/fastjet-3.3.2 \
-&& ./configure --prefix=/usr/local \
-&& make -j8 \
-&& make -j8 install \
-&& rm -r /usr/local/fastjet-3.3.2
-
-# Install FastJet Contrib
-RUN curl -SL http://fastjet.hepforge.org/contrib/downloads/fjcontrib-1.041.tar.gz \
-| tar -xvzC /usr/local \
-&& cd /usr/local/fjcontrib-1.041 \
-&& ./configure \
-&& make -j8 \
-&& make -j8 install \
-&& rm -r /usr/local/fjcontrib-1.041
-
-# Set environmental variables for cmake to know where things are (needed for SMASH)
+# Set environmental variables for cmake to know where things are (needed for SMASH, heppy)
 ARG username=jetscape-user
 ENV JETSCAPE_DIR="/home/${username}/JETSCAPE"
 ENV SMASH_DIR="${JETSCAPE_DIR}/external_packages/smash/smash_code"
 ENV EIGEN3_ROOT /usr/include/eigen3
 ENV PYTHIA8DIR /usr/local/pythia8235
 ENV PYTHIA8_ROOT_DIR /usr/local/pythia8235
+ENV PATH $PATH:$PYTHIA8DIR/bin
+
+# Build heppy (various HEP tools via python)
+RUN git clone https://github.com/matplo/heppy.git \
+&& cd heppy \
+&& ./external/fastjet/build.sh \
+&& ./external/lhapdf6/build.sh \
+&& ./external/hepmc2/build.sh \
+&& ./cpptools/build.sh
+
+# Install environment modules
+RUN curl -SL https://sourceforge.net/projects/modules/files/Modules/modules-4.5.1/modules-4.5.1.tar.gz \
+| tar -xvzC /usr/local \
+&& cd /usr/local/modules-4.5.1 \
+&& ./configure --prefix=/usr/local --modulefilesdir=/heppy/modules \
+&& make -j8 \
+&& make -j8 install
+
+# To load heppy, from inside the container:
+# source /usr/local/init/profile.sh
+# module load heppy/1.0
 
 # Set up a user group
 ARG id=1234
