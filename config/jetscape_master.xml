@@ -220,13 +220,18 @@
       <!-- (only works for MUSIC evo files) -->
       <read_hydro_every_ntau>1</read_hydro_every_ntau>
     </hydro_from_file>
-    
+
     <!-- MUSIC  -->
     <MUSIC>
       <name>MUSIC</name>
       <MUSIC_input_file>music_input</MUSIC_input_file>
       <output_evolution_to_file>1</output_evolution_to_file>
       <shear_viscosity_eta_over_s>0.08</shear_viscosity_eta_over_s>
+      <T_dependent_Shear_to_S_ratio>0</T_dependent_Shear_to_S_ratio>
+      <eta_over_s_T_kink_in_GeV>0.16</eta_over_s_T_kink_in_GeV>
+      <eta_over_s_low_T_slope_in_GeV>0.</eta_over_s_low_T_slope_in_GeV>
+      <eta_over_s_high_T_slope_in_GeV>0.</eta_over_s_high_T_slope_in_GeV>
+      <eta_over_s_at_kink>0.08</eta_over_s_at_kink>
       <temperature_dependent_bulk_viscosity>0</temperature_dependent_bulk_viscosity>
       <zeta_over_s_max>0</zeta_over_s_max>
       <zeta_over_s_T_peak_in_GeV>0.18</zeta_over_s_T_peak_in_GeV>
