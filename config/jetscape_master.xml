@@ -227,6 +227,12 @@
       <MUSIC_input_file>music_input</MUSIC_input_file>
       <output_evolution_to_file>1</output_evolution_to_file>
       <shear_viscosity_eta_over_s>0.08</shear_viscosity_eta_over_s>
+      <temperature_dependent_bulk_viscosity>0</temperature_dependent_bulk_viscosity>
+      <zeta_over_s_max>0</zeta_over_s_max>
+      <zeta_over_s_T_peak_in_GeV>0.18</zeta_over_s_T_peak_in_GeV>
+      <zeta_over_s_width_in_GeV>0.02</zeta_over_s_width_in_GeV>
+      <zeta_over_s_lambda_asymm>0.0</zeta_over_s_lambda_asymm>
+      <Include_second_order_terms>1</Include_second_order_terms>
       <freezeout_temperature>-1</freezeout_temperature>
       <Perform_CooperFrye_Feezeout>0</Perform_CooperFrye_Feezeout>
     </MUSIC>

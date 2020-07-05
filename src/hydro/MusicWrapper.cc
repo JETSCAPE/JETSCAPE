@@ -76,6 +76,20 @@ void MpiMusic::InitializeHydro(Parameter parameter_list) {
           {"Hydro", "MUSIC", "temperature_dependent_bulk_viscosity"});
   if (flag_bulkvis != 0) {
     music_hydro_ptr->set_parameter("Include_Bulk_Visc_Yes_1_No_0", 1);
+    music_hydro_ptr->set_parameter("T_dependent_Bulk_to_S_ratio", flag_bulkvis);
+    double bulk_max = GetXMLElementDouble(
+          {"Hydro", "MUSIC", "zeta_over_s_max"});
+    music_hydro_ptr->set_parameter("zeta_over_s_max", bulk_max);
+    double bulk_peakT = GetXMLElementDouble(
+          {"Hydro", "MUSIC", "zeta_over_s_T_peak_in_GeV"});
+    music_hydro_ptr->set_parameter("zeta_over_s_T_peak_in_GeV", bulk_peakT);
+    double bulk_width = GetXMLElementDouble(
+          {"Hydro", "MUSIC", "zeta_over_s_width_in_GeV"});
+    music_hydro_ptr->set_parameter("zeta_over_s_width_in_GeV", bulk_width);
+    double bulk_asy = GetXMLElementDouble(
+          {"Hydro", "MUSIC", "zeta_over_s_lambda_asymm"});
+    music_hydro_ptr->set_parameter("zeta_over_s_lambda_asymm", bulk_asy);
+
   }
 
   int flag_secondorderTerms = GetXMLElementInt(
