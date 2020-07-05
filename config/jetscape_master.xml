@@ -299,6 +299,8 @@
       <iSS_table_path>../external_packages/iSS/iSS_tables</iSS_table_path>
       <!-- file path for the default particle table files  -->
       <iSS_particle_table_path>../external_packages/iSS/iSS_tables</iSS_particle_table_path>
+      <!-- hadron species list  0: PDG 2005; 1: UrQMD; 2: SMASH -->
+      <afterburner_type>1</afterburner_type>
 
       <number_of_repeated_sampling>1</number_of_repeated_sampling>
       <Perform_resonance_decays>1</Perform_resonance_decays>
