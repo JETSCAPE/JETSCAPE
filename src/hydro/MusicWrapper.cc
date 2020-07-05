@@ -58,6 +58,10 @@ void MpiMusic::InitializeHydro(Parameter parameter_list) {
       GetXMLElementInt({"Hydro", "MUSIC", "output_evolution_to_file"}));
   music_hydro_ptr->set_parameter("output_movie_flag",
                                  static_cast<double>(flag_output_evo_to_file));
+  double tau_hydro = (
+          GetXMLElementDouble({"Hydro", "MUSIC", "Initial_time_tau_0"}));
+  music_hydro_ptr->set_parameter("Initial_time_tau_0", tau_hydro);
+
   double eta_over_s =
       GetXMLElementDouble({"Hydro", "MUSIC", "shear_viscosity_eta_over_s"});
   if (eta_over_s > 1e-6) {
