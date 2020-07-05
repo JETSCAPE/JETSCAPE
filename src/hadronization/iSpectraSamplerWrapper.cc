@@ -52,6 +52,8 @@ void iSpectraSamplerWrapper::InitTask() {
       {"SoftParticlization", "iSS", "number_of_repeated_sampling"});
   int flag_perform_decays = GetXMLElementInt(
       {"SoftParticlization", "iSS", "Perform_resonance_decays"});
+  int afterburner_type = (
+      GetXMLElementInt({"SoftParticlization", "iSS", "afterburner_type"}));
 
   if (!boost_invariance) {
     hydro_mode = 2;
@@ -63,6 +65,8 @@ void iSpectraSamplerWrapper::InitTask() {
 
   // overwrite some parameters
   iSpectraSampler_ptr_->paraRdr_ptr->setVal("hydro_mode", hydro_mode);
+  iSpectraSampler_ptr_->paraRdr_ptr->setVal("afterburner_type",
+                                            afterburner_type);
   iSpectraSampler_ptr_->paraRdr_ptr->setVal("output_samples_into_files", 0);
   iSpectraSampler_ptr_->paraRdr_ptr->setVal("use_OSCAR_format", 0);
   iSpectraSampler_ptr_->paraRdr_ptr->setVal("use_gzip_format", 0);

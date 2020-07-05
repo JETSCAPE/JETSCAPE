@@ -58,6 +58,10 @@ void MpiMusic::InitializeHydro(Parameter parameter_list) {
       GetXMLElementInt({"Hydro", "MUSIC", "output_evolution_to_file"}));
   music_hydro_ptr->set_parameter("output_movie_flag",
                                  static_cast<double>(flag_output_evo_to_file));
+  double tau_hydro = (
+          GetXMLElementDouble({"Hydro", "MUSIC", "Initial_time_tau_0"}));
+  music_hydro_ptr->set_parameter("Initial_time_tau_0", tau_hydro);
+
   double eta_over_s =
       GetXMLElementDouble({"Hydro", "MUSIC", "shear_viscosity_eta_over_s"});
   if (eta_over_s > 1e-6) {
@@ -72,10 +76,51 @@ void MpiMusic::InitializeHydro(Parameter parameter_list) {
     exit(1);
   }
 
+  int flag_shear_Tdep = (
+      GetXMLElementInt({"Hydro", "MUSIC", "T_dependent_Shear_to_S_ratio"}));
+  if (flag_shear_Tdep > 0) {
+    music_hydro_ptr->set_parameter("Viscosity_Flag_Yes_1_No_0", 1);
+    if (flag_shear_Tdep == 3) {
+      double shear_kinkT = (
+        GetXMLElementDouble({"Hydro", "MUSIC", "eta_over_s_T_kink_in_GeV"}));
+      music_hydro_ptr->set_parameter("eta_over_s_T_kink_in_GeV", shear_kinkT);
+      double shear_lowTslope = (
+        GetXMLElementDouble({"Hydro", "MUSIC",
+                             "eta_over_s_low_T_slope_in_GeV"}));
+      music_hydro_ptr->set_parameter("eta_over_s_low_T_slope_in_GeV",
+                                     shear_lowTslope);
+      double shear_highTslope = (
+        GetXMLElementDouble({"Hydro", "MUSIC",
+                             "eta_over_s_high_T_slope_in_GeV"}));
+      music_hydro_ptr->set_parameter("eta_over_s_high_T_slope_in_GeV",
+                                     shear_highTslope);
+      double shear_kink = (
+        GetXMLElementDouble({"Hydro", "MUSIC", "eta_over_s_at_kink"}));
+      music_hydro_ptr->set_parameter("eta_over_s_at_kink", shear_kink);
+    }
+  }
+
   int flag_bulkvis = GetXMLElementInt(
           {"Hydro", "MUSIC", "temperature_dependent_bulk_viscosity"});
   if (flag_bulkvis != 0) {
     music_hydro_ptr->set_parameter("Include_Bulk_Visc_Yes_1_No_0", 1);
+    music_hydro_ptr->set_parameter("T_dependent_Bulk_to_S_ratio",
+                                   flag_bulkvis);
+    if (flag_bulkvis == 3) {
+        double bulk_max = GetXMLElementDouble(
+              {"Hydro", "MUSIC", "zeta_over_s_max"});
+        music_hydro_ptr->set_parameter("zeta_over_s_max", bulk_max);
+        double bulk_peakT = GetXMLElementDouble(
+              {"Hydro", "MUSIC", "zeta_over_s_T_peak_in_GeV"});
+        music_hydro_ptr->set_parameter("zeta_over_s_T_peak_in_GeV",
+                                       bulk_peakT);
+        double bulk_width = GetXMLElementDouble(
+              {"Hydro", "MUSIC", "zeta_over_s_width_in_GeV"});
+        music_hydro_ptr->set_parameter("zeta_over_s_width_in_GeV", bulk_width);
+        double bulk_asy = GetXMLElementDouble(
+              {"Hydro", "MUSIC", "zeta_over_s_lambda_asymm"});
+        music_hydro_ptr->set_parameter("zeta_over_s_lambda_asymm", bulk_asy);
+    }
   }
 
   int flag_secondorderTerms = GetXMLElementInt(
