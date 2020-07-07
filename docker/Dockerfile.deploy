@@ -12,3 +12,4 @@ RUN cd JETSCAPE/external_packages && \
 
 RUN cd && mkdir bin && cd bin && ln -s ../JETSCAPE/build/runJetscape .
 ENV PATH="${PATH}:${HOME}/bin"
+RUN umask 000
