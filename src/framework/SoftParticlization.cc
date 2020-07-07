@@ -36,6 +36,8 @@ void SoftParticlization::Init() {
 
   boost_invariance = check_boost_invariance();
 
+  JSINFO << "boost invariance: " << boost_invariance;
+
   InitTask();
 }
 
@@ -49,14 +51,14 @@ void SoftParticlization::Clear() {
 }
 
 bool SoftParticlization::check_boost_invariance() {
-  bool boost_invaiance_flag = false;
+  bool boost_invariance_flag = false;
   double grid_max_z = GetXMLElementDouble({"IS", "grid_max_z"});
   double grid_step_z = GetXMLElementDouble({"IS", "grid_step_z"});
   int nz = static_cast<int>(2. * grid_max_z / grid_step_z);
   if (nz <= 1) {
-    boost_invariance = true;
+    boost_invariance_flag = true;
   }
-  return (boost_invaiance_flag);
+  return (boost_invariance_flag);
 }
 
 } // end namespace Jetscape
