@@ -534,7 +534,7 @@ def run_events(args, results_file):
                                 results[expt_type][idf]['pT_fluct_pid'][name]['sum_pT2'] = 0. if N == 0 else (x**2).sum()
                         
                         #WE HAVE THESE DATA FOR STAR
-                        # 5) pT-integrated Qvector with ALICE cut
+                        # 5) pT-integrated Qvector with STAR cut
                         pTbins = np.array([ pT_cut_STAR ])
                         etabins = np.array([ eta_cut_STAR ])
                         info = calc_Qvector(pT[charged], phi[charged], eta[charged], pTbins, etabins, Nharmonic)
