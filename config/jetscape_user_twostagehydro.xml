@@ -2,7 +2,7 @@
 
 <jetscape>
 
-  <nEvents> 10 </nEvents>
+  <nEvents> 1 </nEvents>
   <setReuseHydro> true </setReuseHydro>
   <nReuseHydro> 5 </nReuseHydro>
   <vlevel> 0 </vlevel>
@@ -17,9 +17,11 @@
 
   <!-- Hard Process -->
   <Hard>
-    <PGun>
-      <pT>50</pT>
-    </PGun>
+      <PGun>
+        <name>PGun</name>
+        <pT>100</pT>
+        <useHybridHad>0</useHybridHad>
+      </PGun>
   </Hard>
 
   <!--Preequilibrium Dynamics Module -->
@@ -35,12 +37,51 @@
   </Hydro>
   
   <!-- Create liquifier -->
-  <Liquefier> </Liquefier>
+  <Liquefier>
+      <!-- CausalLiquefier -->
+      <CausalLiquefier>
+          <name>CausalLiquefier</name>
+          <dtau>0.02</dtau><!-- fluid time step in [fm] -->
+          <dx>0.3</dx><!-- fluid cell size in [fm] -->
+          <dy>0.3</dy><!-- fluid cell size in [fm] -->
+          <deta>0.2</deta><!-- fluid cell size -->
+          <tau_delay>2.0</tau_delay><!-- in [fm] -->
+          <time_relax>0.1</time_relax><!-- in [fm] -->
+          <d_diff>0.08</d_diff><!-- in [fm] -->
+          <width_delta>0.1</width_delta><!-- in [fm] -->
+      </CausalLiquefier>
+  </Liquefier>
   
   <!--Eloss Modules -->
   <Eloss>
-    <Matter> </Matter>
-    <Lbt> </Lbt>
+      <deltaT>0.1</deltaT>
+      <formTime> -0.1</formTime>
+      <maxT>250</maxT>
+      <mutex>ON</mutex>
+
+      <Matter>
+        <name>Matter</name>
+        <matter_on> 1 </matter_on>
+        <Q0> 2.0 </Q0>
+        <T0> 0.16 </T0>
+        <vir_factor> 0.25 </vir_factor>
+        <in_vac> 0 </in_vac>
+        <recoil_on> 1 </recoil_on>
+        <broadening_on> 0 </broadening_on>
+        <brick_med> 0 </brick_med>
+        <hydro_Tc> 0.15 </hydro_Tc>
+        <qhat0> -2.0 </qhat0>
+        <alphas> 0.25 </alphas>
+      </Matter>
+
+      <Lbt>
+        <name>Lbt</name>
+        <Q0> 2.0 </Q0>
+        <in_vac> 0 </in_vac>
+        <only_leading> 0 </only_leading>
+        <hydro_Tc> 0.16 </hydro_Tc>
+        <alphas> 0.25 </alphas>
+      </Lbt>
     <AddLiquefier> true </AddLiquefier>
   </Eloss>
   
@@ -54,7 +95,9 @@
   
   <!-- Jet Hadronization Module -->
   <JetHadronization>
-    <name>colored</name>
+    <name>colorless</name>
+    <take_recoil>1</take_recoil>
+    <eCMforHadronization>2510</eCMforHadronization>
   </JetHadronization>
 
   <!-- Particlization Module  -->
