@@ -12,5 +12,5 @@ RUN cd JETSCAPE/external_packages && \
 
 RUN cd && mkdir bin && cd bin && ln -s ../JETSCAPE/build/runJetscape .
 ENV PATH="${PATH}:${HOME}/bin"
-RUN chown -R 777 /home/jetscape-user/
+RUN chmod -R 777 /home/jetscape-user/
 RUN umask 000
