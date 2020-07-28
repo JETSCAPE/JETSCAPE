@@ -5375,7 +5375,6 @@ bool HybridHadronization::invoke_py(){
 			if(std::abs(event[event.size()-1].id()) > 1114){
 				event.appendJunction(((event[event.size()-1].id()>0) ? 1 : 2), HH_pyremn[i].PY_tag1(), HH_pyremn[i].PY_tag2(), HH_pyremn[i].PY_tag3());
 			}
-			++size_input; eve_to_had.push_back(i+1);
 			eve_to_had.push_back(-i-1);
 		}
 		
@@ -5390,6 +5389,8 @@ bool HybridHadronization::invoke_py(){
 			//event.append(HH_hadrons[i].id,81,0,0,HH_hadrons[i].px(),HH_hadrons[i].py(),HH_hadrons[i].pz(),HH_hadrons[i].e(),HH_hadrons[i].mass);
 			event.append(HH_hadrons[i].id(),81,0,0,HH_hadrons[i].px(),HH_hadrons[i].py(),HH_hadrons[i].pz(),HH_hadrons[i].e(),massnow);
 			event[event.size()-1].vProd(HH_hadrons[i].x()*fm_to_mm, HH_hadrons[i].y()*fm_to_mm, HH_hadrons[i].z()*fm_to_mm, HH_hadrons[i].x_t()*fm_to_mm);
+			
+			++size_input; eve_to_had.push_back(i+1);
 		}}
 		
 		//make PYTHIA hadronize this event, if it fails then retry N=10 times... (PYTHIA can and will rarely fail, without concern)
