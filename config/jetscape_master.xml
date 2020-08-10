@@ -100,7 +100,20 @@
       <!-- <LinesToRead> -->
       <!-- 	HardQCD:all = on -->
       <!-- </LinesToRead> -->
-    </PythiaGun>     
+    </PythiaGun> 
+
+    <!-- epem Gun -->
+    <!-- Sensible defaults are set in the class. ptHat etc. get their own field -->
+    <epemGun>
+      <name>epemGun</name>
+      <eCM>91.19</eCM>
+      <!-- You can add any number of additional lines to initialize pythia here -->
+      <!-- Note that if the tag exists it cannot be empty (tinyxml produces a segfault) -->
+      <!-- <LinesToRead> -->
+      <!--      HardQCD:all = on -->
+      <!-- </LinesToRead> -->
+    </epemGun>
+    
   </Hard>   
   
   <!--Eloss Modules -->
