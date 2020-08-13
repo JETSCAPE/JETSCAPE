@@ -97,6 +97,10 @@ void SmashWrapper::InitTask() {
 
 void SmashWrapper::ExecuteTask() {
   AfterburnerModus *modus = smash_experiment_->modus();
+  // This is necessary to correctly handle indices of particle sets from hydro.
+  // Every hydro event creates a new structure like jetscape_hadrons_
+  // with as many events in it as one has samples per hydro
+  modus->reset_event_numbering();
   modus->jetscape_hadrons_ = soft_particlization_sampler_->Hadron_list_;
   const int n_events = modus->jetscape_hadrons_.size();
   JSINFO << "SMASH: obtained " << n_events << " events from particlization";
