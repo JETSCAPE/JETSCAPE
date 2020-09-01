@@ -39,6 +39,7 @@ public:
   AfterburnerModus(smash::Configuration, const smash::ExperimentParameters &) {
     JSINFO << "Constructing AfterburnerModus";
   }
+  void reset_event_numbering() { event_number_ = 0; }
   // The converter is not static, because modus holds int variables
   // for the number of warnings, which are used in try_create_particle,
   // called by this function. Maybe I (oliiny) will change this design in SMASH
