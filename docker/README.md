@@ -34,6 +34,10 @@ or in the docker container, as appropriate &mdash; otherwise it will not work.
     sudo usermod -aG docker $USER
     ```
     Log out and log back in.
+    
+For **Windows**, please follow the analogous instructions: https://docs.docker.com/install/
+
+Please note that if you have an older OS, you may need to download an older version of docker.
 
 ### Step 2: Run JETSCAPE
 
@@ -45,17 +49,20 @@ The docker container will contain only the pre-requisite environment to build JE
     cd ~/jetscape-docker
     git clone https://github.com/JETSCAPE/JETSCAPE.git
     ```
+    
+    In what follows we assume such a directory at `~/jetscape-docker`. You may decide to name your directory something else,
+    but if so **please be careful to substitute your directory name appropriately in the instructions below**.
 
 2. Create and start a docker container that contains all of the JETSCAPE pre-reqs: 
 
     **macOS:**
     ```
-    docker run -it -v ~/jetscape-docker:/home/jetscape-user --name myJetscape jetscape/base:v1.3
+    docker run -it -v ~/jetscape-docker:/home/jetscape-user --name myJetscape jetscape/base:v1.4
    ```
 
     **linux:**
     ```
-    docker run -it -v ~/jetscape-docker:/home/jetscape-user --name myJetscape --user $(id -u):$(id -g) jetscape/base:v1.3
+    docker run -it -v ~/jetscape-docker:/home/jetscape-user --name myJetscape --user $(id -u):$(id -g) jetscape/base:v1.4
     ```
     
     For details on the compatibility of docker image versions with JETSCAPE versions, please see the [jetscape dockerhub](https://hub.docker.com/r/jetscape/base) page.
@@ -69,8 +76,34 @@ The docker container will contain only the pre-requisite environment to build JE
     
     Note that on linux, you may want to add the option `--memory <limit>` to limit the amount of memory that docker is allowed to 
     consume (by default, the available memory and CPUs are not limited on linux, since it is not run in a VM as in macOS).
+    
+    Some useful commands:
+    - To see the containers you have running, and get their ID: `docker container ls` (`-a` to see also stopped containers)
+    - To stop the container: `docker stop <container>` or `exit`
+    - To re-start the container: `docker start -ai <container>`
+    - To put a running container into detatched mode: `Ctrl-p Ctrl-q`, and to re-attach: `docker attach <container>` 
+    - To delete a container: `docker container rm <container>`
+    
+    For example to exit and re-enter the docker container:
+    ```
+    [From inside the container]
+    exit
+
+    [Now we are outside the container]
+    docker container ls -a
+    ...
+    docker start -ai myJetscape
+
+    [Now we are inside the container again]
+    ```
+
+    You may find it useful to keep two terminals open — one inside the docker container, and one outside the container —
+    so that you can easily execute commands either inside or outside the container, as appropriate.
 
 3. Build JETSCAPE:
+
+From **inside** the docker container, we can now build JETSCAPE:
+
     ```
     cd JETSCAPE
     mkdir build
@@ -82,11 +115,4 @@ The docker container will contain only the pre-requisite environment to build JE
 *That's it!* You are now inside the docker container, with JETSCAPE and all of its prequisites installed. 
 You can run JETSCAPE executables or re-compile code. Moreover, since we set up the jetscape-docker folder to be shared between your 
 host and the docker container, you can do text-editing etc. on your host machine, and then immediately build JETSCAPE in the docker container. 
-Output files are also immediately accessible on your host machine for analysis.
-
-Some useful commands:
-- To see the containers you have running, and get their ID: `docker container ls` (`-a` to see also stopped containers)
-- To stop the container: `docker stop <container>` or `exit`
-- To re-start the container: `docker start -ai <container>`
-- To put a running container into detatched mode: `Ctrl-p Ctrl-q`, and to re-attach: `docker attach <container>` 
-- To delete a container: `docker container rm <container>`
+Output files are also immediately accessible on your host machine if desired.

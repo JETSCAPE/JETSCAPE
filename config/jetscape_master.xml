@@ -220,13 +220,25 @@
       <!-- (only works for MUSIC evo files) -->
       <read_hydro_every_ntau>1</read_hydro_every_ntau>
     </hydro_from_file>
-    
+
     <!-- MUSIC  -->
     <MUSIC>
       <name>MUSIC</name>
       <MUSIC_input_file>music_input</MUSIC_input_file>
+      <Initial_time_tau_0>0.5</Initial_time_tau_0>
       <output_evolution_to_file>1</output_evolution_to_file>
       <shear_viscosity_eta_over_s>0.08</shear_viscosity_eta_over_s>
+      <T_dependent_Shear_to_S_ratio>0</T_dependent_Shear_to_S_ratio>
+      <eta_over_s_T_kink_in_GeV>0.16</eta_over_s_T_kink_in_GeV>
+      <eta_over_s_low_T_slope_in_GeV>0.</eta_over_s_low_T_slope_in_GeV>
+      <eta_over_s_high_T_slope_in_GeV>0.</eta_over_s_high_T_slope_in_GeV>
+      <eta_over_s_at_kink>0.08</eta_over_s_at_kink>
+      <temperature_dependent_bulk_viscosity>0</temperature_dependent_bulk_viscosity>
+      <zeta_over_s_max>0</zeta_over_s_max>
+      <zeta_over_s_T_peak_in_GeV>0.18</zeta_over_s_T_peak_in_GeV>
+      <zeta_over_s_width_in_GeV>0.02</zeta_over_s_width_in_GeV>
+      <zeta_over_s_lambda_asymm>0.0</zeta_over_s_lambda_asymm>
+      <Include_second_order_terms>1</Include_second_order_terms>
       <freezeout_temperature>-1</freezeout_temperature>
       <Perform_CooperFrye_Feezeout>0</Perform_CooperFrye_Feezeout>
     </MUSIC>
@@ -280,10 +292,16 @@
       <hydro_mode>1</hydro_mode>
 
       <!-- file path for the default input file  -->
-      <iSS_input_file>iSS_parameters.dat</iSS_input_file>
+      <iSS_input_file>../external_packages/iSS/iSS_parameters.dat</iSS_input_file>
       <!-- directory path where the hydro surface is stored  -->
       <iSS_working_path>.</iSS_working_path>
-      
+      <!-- file path for the default table files  -->
+      <iSS_table_path>../external_packages/iSS/iSS_tables</iSS_table_path>
+      <!-- file path for the default particle table files  -->
+      <iSS_particle_table_path>../external_packages/iSS/iSS_tables</iSS_particle_table_path>
+      <!-- hadron species list  0: PDG 2005; 1: UrQMD; 2: SMASH -->
+      <afterburner_type>1</afterburner_type>
+
       <number_of_repeated_sampling>1</number_of_repeated_sampling>
       <Perform_resonance_decays>1</Perform_resonance_decays>
     </iSS>

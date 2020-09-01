@@ -21,6 +21,7 @@
 
 #include <memory>
 #include <string>
+#include <fstream>
 
 using namespace Jetscape;
 
@@ -38,6 +39,11 @@ void iSpectraSamplerWrapper::InitTask() {
 
   std::string input_file =
       GetXMLElementText({"SoftParticlization", "iSS", "iSS_input_file"});
+  std::string table_path =
+      GetXMLElementText({"SoftParticlization", "iSS", "iSS_table_path"});
+  std::string particle_table_path =
+      GetXMLElementText({"SoftParticlization", "iSS",
+                         "iSS_particle_table_path"});
   std::string working_path =
       GetXMLElementText({"SoftParticlization", "iSS", "iSS_working_path"});
   int hydro_mode =
@@ -46,16 +52,21 @@ void iSpectraSamplerWrapper::InitTask() {
       {"SoftParticlization", "iSS", "number_of_repeated_sampling"});
   int flag_perform_decays = GetXMLElementInt(
       {"SoftParticlization", "iSS", "Perform_resonance_decays"});
+  int afterburner_type = (
+      GetXMLElementInt({"SoftParticlization", "iSS", "afterburner_type"}));
 
   if (!boost_invariance) {
     hydro_mode = 2;
   }
 
-  iSpectraSampler_ptr_ = std::unique_ptr<iSS>(new iSS(working_path));
+  iSpectraSampler_ptr_ = std::unique_ptr<iSS>(
+          new iSS(working_path, table_path, particle_table_path, input_file));
   iSpectraSampler_ptr_->paraRdr_ptr->readFromFile(input_file);
 
   // overwrite some parameters
   iSpectraSampler_ptr_->paraRdr_ptr->setVal("hydro_mode", hydro_mode);
+  iSpectraSampler_ptr_->paraRdr_ptr->setVal("afterburner_type",
+                                            afterburner_type);
   iSpectraSampler_ptr_->paraRdr_ptr->setVal("output_samples_into_files", 0);
   iSpectraSampler_ptr_->paraRdr_ptr->setVal("use_OSCAR_format", 0);
   iSpectraSampler_ptr_->paraRdr_ptr->setVal("use_gzip_format", 0);
@@ -89,6 +100,21 @@ void iSpectraSamplerWrapper::InitTask() {
 }
 
 void iSpectraSamplerWrapper::Exec() {
+  // generate symbolic links with music_input_file
+  std::string music_input_file_path = GetXMLElementText(
+          {"Hydro", "MUSIC", "MUSIC_input_file"});
+  std::string working_path =
+      GetXMLElementText({"SoftParticlization", "iSS", "iSS_working_path"});
+  std::string music_input = working_path + "/music_input";
+  std::ifstream inputfile(music_input.c_str());
+  if (!inputfile.good()) {
+    std::ostringstream system_command;
+    system_command << "ln -s " << music_input_file_path << " "
+                   << music_input;
+    system(system_command.str().c_str());
+  }
+  inputfile.close();
+
   int status = iSpectraSampler_ptr_->read_in_FO_surface();
   if (status != 0) {
     JSWARN << "Some errors happened in reading in the hyper-surface";
