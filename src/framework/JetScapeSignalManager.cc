@@ -114,6 +114,17 @@ void JetScapeSignalManager::ConnectGetHydroCellSignal(
   }
 }
 
+void JetScapeSignalManager::ConnectGetHydroCellSignal(
+    shared_ptr<Hadronization> h) {
+  if (!h->GetGetHydroCellSignalConnected()) {
+    auto hp = GetHydroPointer().lock();
+    if (hp) {
+      h->GetHydroCellSignal.connect(hp.get(), &FluidDynamics::GetHydroCell);
+      h->SetGetHydroCellSignalConnected(true);
+    }
+  }
+}
+
 void JetScapeSignalManager::ConnectSentInPartonsSignal(
     shared_ptr<JetEnergyLoss> j, shared_ptr<JetEnergyLoss> j2) {
   if (!j2->GetSentInPartonsConnected()) {
@@ -134,6 +145,19 @@ void JetScapeSignalManager::ConnectTransformPartonsSignal(
                                  (weak_ptr<Hadronization>)h2);
 
     num_TransformPartons++;
+  }
+}
+
+
+void JetScapeSignalManager::ConnectGetHydroHyperSurfaceSignal(
+    shared_ptr<Hadronization> h) {
+  if (!h->GetGetHydroHyperSurfaceConnected()) {
+    auto hp = GetHydroPointer().lock();
+    if (hp) {
+        h->GetHydroHyperSurface.connect(
+                hp.get(), &FluidDynamics::FindAConstantTemperatureSurface);
+        h->SetGetHydroHyperSurfaceConnected(true);
+    }
   }
 }
 

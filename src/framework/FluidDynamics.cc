@@ -92,14 +92,13 @@ void FluidDynamics::CollectHeader(weak_ptr<JetScapeWriter> w) {
   }
 }
 
-std::vector<SurfaceCellInfo>
-FluidDynamics::FindAConstantTemperatureSurface(Jetscape::real T_sw) {
+void FluidDynamics::FindAConstantTemperatureSurface(
+        Jetscape::real T_sw, std::vector<SurfaceCellInfo> &surface_cells) {
   std::unique_ptr<SurfaceFinder> surface_finder_ptr(
       new SurfaceFinder(T_sw, bulk_info));
   surface_finder_ptr->Find_full_hypersurface();
-  auto surface_cells = surface_finder_ptr->get_surface_cells_vector();
+  surface_cells = surface_finder_ptr->get_surface_cells_vector();
   JSINFO << "number of surface cells: " << surface_cells.size();
-  return (surface_cells);
 }
 
 // this function returns the energy density [GeV] at a space time point
