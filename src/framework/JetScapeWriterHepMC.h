@@ -70,6 +70,9 @@ private:
   vector<HepMC3::GenVertexPtr> vertices;
   HepMC3::GenVertexPtr hadronizationvertex;
 
+  /// WriteEvent needs to know whether it should overwrite final partons status to 1
+  bool hashadrons=false; 
+  
   inline HepMC3::GenVertexPtr
   castVtxToHepMC(const shared_ptr<Vertex> vtx) const {
     double x = vtx->x_in().x();

@@ -13,6 +13,35 @@
  * See COPYING for details.
  ******************************************************************************/
 
+/*******************************************************************************
+ * kk Sep 22, 2020:  Significant updates to status codes
+ * to conform with Appendix A in https://arxiv.org/pdf/1912.08005.pdf
+ * We will follow Pythia's example of preserving as much of the internal status code as possible
+ * Specifically:
+ - beam particles. We don't have those, yet. If they ever become part of initial
+   state moduls, those module writers MUST set the status to 4, all we do here 
+   is respect that code (for the future). 
+   However, this particle won't be a parton, so we only check that for hadrons.
+   In practice, this will probably require a revamp of the graph structure, both
+   in the framework and in here. Then, probably also use GenEvent::add_beam_particle()
+ - decayed particle. We don't have those either yet, but it's a feature that may 
+   come pretty soon.
+   Here, we use that exclusively to mean decayed unstable hadrons, 
+   e.g. K0S -> pi pi 
+   In this case, the module that produced the hadron list MUST ensure to set the 
+   status of K0s to 2. The pions are final particles, see below.
+ - Final hadrons will all be forced to status 1
+ - Partons: By default, we will accept and use any code provided by the framework
+            within 11<=status<=200 and use the absolute value.
+   Parton exceptions: 
+            1) If the code is not HepMC-legal (|status|<11 or >200, often 0), 
+               we assign 12 to most and 11 to the final partons before hadronization
+               (to mimic the 1, 2 scheme)
+            2) If there are NO hadrons in the event, we assume the user would like to treat 
+               the final partons (like 11 from above) as final particles and assign 1
+ ******************************************************************************/
+
+
 #include "JetScapeWriterHepMC.h"
 #include "JetScapeLogger.h"
 #include "HardProcess.h"
@@ -65,15 +94,37 @@ void JetScapeWriterHepMC::WriteHeaderToFile() {
   }
 
   evt.set_heavy_ion(heavyion);
+
+  // also a good moment to initialize the hadron boolean
 }
 
 void JetScapeWriterHepMC::WriteEvent() {
   VERBOSE(1) << "Run JetScapeWriterHepMC: Write event # " << GetCurrentEvent();
-
-  // Have collected all vertices now, add them to the event
-  for (auto v : vertices)
+  
+  // Have collected all vertices now.
+  // Add all vertices to the event
+  for (auto v : vertices){
     evt.add_vertex(v);
+  }
+
   VERBOSE(1) << " found " << vertices.size() << " vertices in the list";
+
+  // If there are no hadrons, promote final partons
+  // The graph support of hepmc is a bit rudimentary.
+  // easiest is to just check all childless particles
+  // Note, one could just check for status==11,
+  // but modules are allowed to assign that number to non-final partons
+  if ( !hashadrons ) {
+    VERBOSE(1) << " found no hadrons, promoting final partons to status 1";
+    for ( auto p : evt.particles() ){
+      if ( p->children().size() == 0 ){
+	if ( p->status() !=11 ){
+	  JSWARN << "Found a final parton with status!=11 : status=" << p->status() << ". This should not happen";
+	}
+	p->set_status(1);
+      }
+    }
+  }
   evt.set_event_number(GetCurrentEvent());
   write_event(evt);
   vertices.clear();
@@ -119,92 +170,101 @@ void JetScapeWriterHepMC::Write(weak_ptr<PartonShower> ps) {
     // cout << *nIt << "  " << nIt->indeg() << "  " << nIt->outdeg() << endl;
 
     // Should be the only time we see this node.
-    if (vused.find(nIt->id()) != vused.end())
-      throw std::runtime_error(
-          "PROBLEM in JetScapeWriterHepMC: Reusing a vertex.");
+    if (vused.find(nIt->id()) != vused.end()){
+      throw std::runtime_error( "PROBLEM in JetScapeWriterHepMC: Reusing a vertex.");
+    }
     vused[nIt->id()] = true;
+
+    // 0. No incoming edges?
+    // ---------------------
+    // This is typically a shower initiator.
+    // HepMC needs an incoming and outgoing particle for every vertex.
+    // That could be a place to attach partons or ions.
+    // We could also do both, but as of now, JETSCAPE actually attaches a dummy vertex
+    // to the start of the initiator, that can safely go away.
+    // Previously, we attached a dummy or clone of the outgoing one here.
+    // Instead, we can just skip the vertex. Its outgoing edges will be picked up
+    // as incomers in a later vertex.
+    // Note that the [0]=>[1] connection in JETSCAPE
+    // already uses a dummy node[0], and [1] is at time t=0; removing that seems correct.
+    if (nIt->indeg() == 0)    continue;
 
     // 1. Create a new vertex.
     // --------------------------------------------
     auto v = castVtxToHepMC(pShower->GetVertex(*nIt));
 
-    // 2. Incoming edges?
-    // --------------------------------------------
-    // 2.1: No. Need to create one (thanks, HepMC)
-    if (nIt->indeg() == 0) {
-      if (foundRoot) { // Should only happen once unless we merged showers
-        JSWARN
-            << "Found a second root! Should only happen if we merged showers. "
-            << " If that's the case, please comment out the following throw "
-               "and recompile";
-        throw std::runtime_error(
-            "PROBLEM in JetScapeWriterHepMC: Found a second root.");
-      }
-      foundRoot = true;
-
-      // Some choices here. In general, could just attach to a dummy.
-      // Maybe better: The root should only have exactly one daughter, let's check and clone
-      if (nIt->outdeg() != 1) {
-        throw std::runtime_error("PROBLEM in JetScapeWriterHepMC: Root has "
-                                 "illegal number of daughters");
-      }
-      auto out = pShower->GetParton(*(nIt->out_edges_begin()));
-      auto hepin = castPartonToHepMC(out);
-      v->add_particle_in(hepin);
+    // 2. Incoming edges
+    // -----------------
+    //  In the current framework, it should only be one.
+    //  So we will catch anything more but provide a mechanism that should work anyway.
+    if (nIt->indeg() > 1) {
+      JSWARN << "Found more than one mother parton! Should only happen if we "
+	"added medium particles. "
+	     << "The code should work, but proceed with caution";
     }
 
-    // 2.2: Have incoming edges.
-    if (nIt->indeg() > 0) {
-      //  In the current framework, it should only be one.
-      //  So we will catch anything more but provide a mechanism that should work anyway.
-      if (nIt->indeg() > 1) {
-        JSWARN << "Found more than one mother parton! Should only happen if we "
-                  "added medium particles. "
-               << "The code should work, but proceed with caution";
-      }
-
-      auto inIt = nIt->in_edges_begin();
-      auto inEnd = nIt->in_edges_end();
-      for (/* nop */; inIt != inEnd; ++inIt) {
-        auto phepin = CreatedPartons.find(inIt->id());
-        if (phepin != CreatedPartons.end()) {
-          // We should already have one!
-          v->add_particle_in(phepin->second);
-        } else {
-          JSWARN << "Incoming particle out of nowhere. This could maybe happen "
-                    "if we pick up medium particles "
-                 << " but is probably a topsort problem. Try using the code "
-                    "after this throw() but be very careful.";
-          throw std::runtime_error("PROBLEM in JetScapeWriterHepMC: Incoming "
-                                   "particle out of nowhere.");
-
-          auto in = pShower->GetParton(*inIt);
-          auto hepin = castPartonToHepMC(in);
-          CreatedPartons[inIt->id()] = hepin;
-          v->add_particle_in(hepin);
-        }
+    auto inIt = nIt->in_edges_begin();
+    auto inEnd = nIt->in_edges_end();
+    for (/* nop */; inIt != inEnd; ++inIt) {
+      auto phepin = CreatedPartons.find(inIt->id());
+      if (phepin != CreatedPartons.end()) {
+	// We should already have one!
+	v->add_particle_in(phepin->second);
+      } else {
+	// This indicates we skipped an earlier vertex without incomers.
+	// JSWARN << "Incoming particle out of nowhere. This could maybe happen "
+	//           "if we pick up medium particles "
+	//        << " but is probably a topsort problem. Try using the code "
+	//           "after this throw() but be very careful.";
+	// throw std::runtime_error("PROBLEM in JetScapeWriterHepMC: Incoming "
+	//                          "particle out of nowhere.");
+	
+	auto in = pShower->GetParton(*inIt);
+	auto hepin = castPartonToHepMC(in);
+	auto status = std::abs(hepin->status());
+	if ( status < 11 || status > 200) {
+	  // incoming edge can't be final
+	  status = 12;
+	}
+	hepin->set_status(status);
+	CreatedPartons[inIt->id()] = hepin;
+	v->add_particle_in(hepin);
+	
+	if ( nIt->outdeg() == 0 ) {
+	  // However, motherless AND childless particles do exist
+	  // I.e., a shower initiator that never actually showers
+	  // For this, we need an out going clone, much like 3) below
+	  auto hepout = castPartonToHepMC(in);
+	  // Since the status information is preserved in the incomer, we'll force 11
+	  // Note: if we later see in WriteEvent() that there are no hadrons, this will be overwritten to 1
+	  hepout->set_status( 11 );
+	  // Note that we do not register this particle. Since it's pointing nowhere it can never be reused.
+	  v->add_particle_out(hepout);
+	} 
       }
     }
 
     // 3. Outgoing edges?
     // --------------------------------------------
-    // 3.1: No. Need to create one (thanks, HepMC)
+    // 3.1: No. Need to create one.
+    // We'll use this opportunity to copy the incomer but give it a final code
     if (nIt->outdeg() == 0) {
-      // Some choices here. In general, could just attach to a dummy.
-      // That may be the best option, but it is hard to imagine a physics scenario
-      // where a final vertex should have more than one parent
-      // So let's clone the incoming guy
       if (nIt->indeg() != 1) {
+	// This won't work with multiple incomers (but that's pretty unphysical)
         throw std::runtime_error("PROBLEM in JetScapeWriterHepMC: Need exactly "
                                  "one parent to clone final state partons.");
       }
       auto in = pShower->GetParton(*(nIt->in_edges_begin()));
       auto hepout = castPartonToHepMC(in);
+      // an outgoing edge without terminator is "final"
+      // Since the status information is preserved in the incomer, we'll force 11
+      // Note: if we later see in WriteEvent() that there are no hadrons, this will be overwritten to 1
+      hepout->set_status( 11 );
       v->add_particle_out(hepout);
       // Note that we do not register this particle. Since it's pointing nowhere it can never be reused.
     }
 
-    // 3.2: Otherwise use it and register it
+    // 3.2: Otherwise use and register the outgoing edge
     if (nIt->outdeg() > 0) {
       auto outIt = nIt->out_edges_begin();
       auto outEnd = nIt->out_edges_end();
@@ -215,11 +275,16 @@ void JetScapeWriterHepMC::Write(weak_ptr<PartonShower> ps) {
         }
         auto out = pShower->GetParton(*outIt);
         auto hepout = castPartonToHepMC(out);
+	if ( !hepout->status()) {
+	  // incoming and outgoing -> status 12
+	  hepout->set_status(12);
+	}
+	
         CreatedPartons[outIt->id()] = hepout;
         v->add_particle_out(hepout);
       }
     }
-
+    
     vertices.push_back(v);
   }
 }
@@ -248,10 +313,17 @@ void JetScapeWriterHepMC::Write(weak_ptr<Hadron> h) {
     hadronizationvertex->add_particle_in(make_shared<GenParticle>(pmom, 0, 0));
 
     vertices.push_back(hadronizationvertex);
+    hashadrons=true;
   }
 
   // now attach
-  hadronizationvertex->add_particle_out(castHadronToHepMC(hadron));
+  auto hepmc = castHadronToHepMC(hadron);
+  if ( !hepmc->status() ) {
+    // unless otherwise specified, all hadrons get status 1
+    // TODO: Need to better account for short-lived hadrons
+    hepmc->set_status(1);
+  }
+  hadronizationvertex->add_particle_out(hepmc);
 }
 
 void JetScapeWriterHepMC::Init() {
@@ -264,13 +336,4 @@ void JetScapeWriterHepMC::Init() {
 void JetScapeWriterHepMC::Exec() {
   // Nothing to do
 }
-
-// // NEVER use this!
-// // Can work with only one writer, but with a second one it gets called twice
-// void JetScapeWriterHepMC::WriteTask(weak_ptr<JetScapeWriter> w){
-//   //redirect - do the writing in WriteEvent, not in exec...
-//   cerr << "GETTING CALLED"<<endl;
-//   // WriteEvent();
-// }
-
 } // end namespace Jetscape
