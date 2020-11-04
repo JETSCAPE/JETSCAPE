@@ -160,6 +160,10 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2,
 
     Id = pIn[i].pid();
     pStat = pIn[i].pstat();
+
+    // do nothing for particles other than u/d/s/g
+    if (std::abs(Id) != 1 && std::abs(Id) != 2 && std::abs(Id) != 3 && Id != 21)
+      continue;
     // do nothing for negative particles
     if (pStat < 0)
       continue;
