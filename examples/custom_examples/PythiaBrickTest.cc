@@ -45,6 +45,9 @@
 #include "ColoredHadronization.h"
 #include "ColorlessHadronization.h"
 
+#include "MainClock.h"
+#include "ModuleClock.h"
+
 #include <chrono>
 #include <thread>
 
@@ -71,18 +74,40 @@ int main(int argc, char** argv)
   JetScapeLogger::Instance()->SetRemark(false);
   //SetVerboseLevel (9 a lot of additional debug output ...)
   //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevle(9) or 10
-  JetScapeLogger::Instance()->SetVerboseLevel(0);
+  //JetScapeLogger::Instance()->SetVerboseLevel(0);
 
   
   Show();
 
+  // -------------
+  //Test clock ...
+  
+  auto mClock = make_shared<MainClock>();
+  mClock->SetTimeRefFrameId("SpaceTime");
+  auto mModuleClock = make_shared<ModuleClock>();
+  mModuleClock->SetTimeRefFrameId("SpaceTime * 2");
+
+  mClock->Info();
+  
+  //while (mClock->Next()) {
+  mClock->Next();
+  mClock->Info();
+
+  mModuleClock->Transform(mClock);
+  mModuleClock->Info(); 
+
+  //};
+  
+  // -------------
+
   auto jetscape = make_shared<JetScape>();
   jetscape->SetXMLMasterFileName("../config/jetscape_master.xml");
-  jetscape->SetXMLUserFileName("../config/jetscape_user.xml");
+  jetscape->SetXMLUserFileName("../config/jetscape_user_test.xml");
   jetscape->SetId("primary");
 
   // Initial conditions and hydro
-  auto trento = make_shared<TrentoInitial>();
+  //auto trento = make_shared<TrentoInitial>();
+  auto trento = make_shared<InitialState>();
   auto pythiaGun= make_shared<PythiaGun> ();
   auto hydro = make_shared<Brick> ();
   jetscape->Add(trento);
@@ -96,7 +121,7 @@ int main(int argc, char** argv)
 
   auto matter = make_shared<Matter> ();
   // auto lbt = make_shared<LBT> ();
-  auto martini = make_shared<Martini> ();
+  //auto martini = make_shared<Martini> ();
   // auto adscft = make_shared<AdSCFT> ();
 
   // Note: if you use Matter, it MUST come first (to set virtuality)
@@ -122,6 +147,8 @@ int main(int argc, char** argv)
   // Output
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
   jetscape->Add(writer);
+
+  /*
 #ifdef USE_GZIP
   // same as JetScapeWriterAscii but gzipped
   auto writergz= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");
@@ -132,6 +159,7 @@ int main(int argc, char** argv)
   auto hepmcwriter= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
   jetscape->Add(hepmcwriter);
 #endif
+  */
 
   // Intialize all modules tasks
   jetscape->Init();

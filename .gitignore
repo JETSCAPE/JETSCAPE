@@ -8,7 +8,7 @@
 *.hepmc
 *.*~
 html/*
-build/*
+build*/*
 external_packages/LBT*
 external_packages/iSS*
 external_packages/music*

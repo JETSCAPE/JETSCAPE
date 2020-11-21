@@ -397,6 +397,9 @@ target_link_libraries(FinalStateHadrons JetScape )
 add_executable(FinalStatePartons ./examples/FinalStatePartons.cc)
 target_link_libraries(FinalStatePartons JetScape )
 
+add_executable(PythiaBrickTest ./examples/custom_examples/PythiaBrickTest.cc)
+target_link_libraries(PythiaBrickTest JetScape )
+
 # executables with additional dependencies
 if ( USE_MUSIC AND USE_ISS )
     target_link_libraries(runJetscape ${GSL_LIBRARIES})
