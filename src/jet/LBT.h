@@ -96,6 +96,7 @@ private:
       2; //1 initialize by the code itself; 2 initialize by reading in particle list
   int fixMomentum = 0;
   int fixPosition = 1;
+  int run_alphas = 1;
   int flagJetX =
       0; // 0: do nothing; 1: keep momentum but reset jet position within LBT
   int Kjet = 21; //initial flavor of the jet parton

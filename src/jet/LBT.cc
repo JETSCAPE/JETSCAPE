@@ -118,6 +118,7 @@ void LBT::Init() {
   }
 
   Kprimary = GetXMLElementInt({"Eloss", "Lbt", "only_leading"});
+  run_alphas = GetXMLElementInt({"Eloss", "Lbt", "run_alphas"});
   Q00 = GetXMLElementDouble({"Eloss", "Lbt", "Q0"});
   fixAlphas = GetXMLElementDouble({"Eloss", "Lbt", "alphas"});
   hydro_Tc = GetXMLElementDouble({"Eloss", "Lbt", "hydro_Tc"});
@@ -852,7 +853,7 @@ void LBT::LBT0(int &n, double &ti) {
         //              if(E<T) preKT=4.0*pi/9.0/log(scaleAK*T*T/0.04)/alphas/fixKT;
         //              else preKT=4.0*pi/9.0/log(scaleAK*E*T/0.04)/alphas/fixKT;
 
-        //              runKT=4.0*pi/9.0/log(2.0*E*T/0.04)/0.3;
+        if(run_alphas==1) runKT=4.0*pi/9.0/log(2.0*E*T/0.04)/0.3;
 
         lam(KATTC0, RTE, PLen, T, T1, T2, E1, E2, iT1, iT2, iE1,
             iE2); //modified: use P instead
@@ -863,8 +864,13 @@ void LBT::LBT0(int &n, double &ti) {
         KPfactor = 1.0 + KPamp * exp(-PLen * PLen / 2.0 / KPsig / KPsig);
         KTfactor = 1.0 + KTamp * exp(-pow((temp0 - hydro_Tc), 2) / 2.0 / KTsig /
                                      KTsig);
-        Kfactor =
-            KPfactor * KTfactor * KTfactor * preKT * preKT; // K factor for qhat
+
+        if(run_alphas==1) {
+           Kfactor = KPfactor * KTfactor * KTfactor * runKT * preKT; // K factor for qhat
+        } else {
+           Kfactor = KPfactor * KTfactor * KTfactor * preKT * preKT; // K factor for qhat
+        }
+       
 
         // get qhat from table
         if (KATTC0 == 21) {
@@ -979,12 +985,19 @@ void LBT::LBT0(int &n, double &ti) {
         Tdiff = Tint_lrf[i];
 
         // get radiation probablity by reading tables -- same for heavy and light partons
-        if (KATTC0 == 21)
-          radng[i] += nHQgluon(KATT1[i], dt_lrf, Tdiff, temp0, E, maxFncHQ) /
-                      2.0 * KTfactor * preKT;
-        else
-          radng[i] += nHQgluon(KATT1[i], dt_lrf, Tdiff, temp0, E, maxFncHQ) *
-                      KTfactor * preKT;
+        if (KATTC0 == 21) {
+            if (run_alphas==1) {
+                radng[i] += nHQgluon(KATT1[i], dt_lrf, Tdiff, temp0, E, maxFncHQ) / 2.0 * KTfactor * runKT;
+            } else {
+                radng[i] += nHQgluon(KATT1[i], dt_lrf, Tdiff, temp0, E, maxFncHQ) / 2.0 * KTfactor * preKT;
+            }
+        } else {
+            if (run_alphas==1) {
+                radng[i] += nHQgluon(KATT1[i], dt_lrf, Tdiff, temp0, E, maxFncHQ) * KTfactor * runKT;
+            } else {
+                radng[i] += nHQgluon(KATT1[i], dt_lrf, Tdiff, temp0, E, maxFncHQ) * KTfactor * preKT;
+            }
+        }
         lim_low = sqrt(6.0 * pi * alphas) * temp0 / E;
         if (abs(KATT1[i]) == 4 || abs(KATT1[i]) == 5)
           lim_high = 1.0;
@@ -1027,7 +1040,11 @@ void LBT::LBT0(int &n, double &ti) {
 
         if (KINT0 == 0)
           probRad = 0.0; // switch off radiation
-        probCol = probCol * KPfactor * KTfactor * preKT;
+        if (run_alphas==1) {
+            probCol = probCol * KPfactor * KTfactor * runKT;
+        } else {
+            probCol = probCol * KPfactor * KTfactor * preKT;
+        }
         probCol = (1.0 - exp(-probCol)) *
                   (1.0 - probRad); // probability of pure elastic scattering
         if (KINT0 == 2)
