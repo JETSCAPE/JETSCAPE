@@ -41,7 +41,7 @@ public:
 
   void CreateSignalSlots();
 
-  sigslot::signal1<vector<shared_ptr<Hadron>> &> GetHadronList;
+  sigslot::signal1<vector<shared_ptr<Hadron>> &> GetHadronList; //get Hadrons from HardProcess NOT Hadronization submodules
 
   sigslot::signal1<vector<vector<shared_ptr<Parton>>> &> GetFinalPartonList;
 

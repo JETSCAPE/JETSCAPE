@@ -29,6 +29,7 @@
 #include "JetScapeWriter.h"
 #include "PreequilibriumDynamics.h"
 #include "PartonPrinter.h"
+#include "HadronPrinter.h"
 
 #include <iostream>
 #include <string>
