@@ -132,6 +132,7 @@
       <hydro_Tc> 0.16 </hydro_Tc>
       <qhat0> -2.0 </qhat0>
       <alphas> 0.2 </alphas>
+      <run_alphas>1</run_alphas>
     </Matter>
 
     <Lbt>
@@ -141,6 +142,7 @@
       <only_leading> 0 </only_leading>
       <hydro_Tc> 0.16 </hydro_Tc>
       <alphas> 0.2 </alphas>
+      <run_alphas>1</run_alphas>
     </Lbt>
     
     <Martini>
