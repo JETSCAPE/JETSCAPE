@@ -40,6 +40,7 @@ public:
   virtual void WriteTask(weak_ptr<JetScapeWriter> w);
   virtual void Clear();
 
+  void GetHadrons(vector<shared_ptr<Hadron>>& signal){signal = outHadrons;}
   sigslot::signal3<vector<vector<shared_ptr<Parton>>> &,
                    vector<shared_ptr<Hadron>> &, vector<shared_ptr<Parton>> &,
                    multi_threaded_local>
