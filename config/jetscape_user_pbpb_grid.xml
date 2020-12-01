@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+
+<jetscape>
+  
+  <nEvents> 2 </nEvents>
+  <setReuseHydro> true </setReuseHydro>
+  <nReuseHydro> 5 </nReuseHydro>
+  
+  <JetScapeWriterAscii> on </JetScapeWriterAscii>
+  <outputFilename>test_out</outputFilename>
+  <vlevel> 0 </vlevel>
+  <nEvents_printout> 1 </nEvents_printout>
+
+  <Random>
+    <seed>0</seed>
+  </Random>
+  <!-- Inital State Module  -->
+  <IS>
+    <initial_profile_path>/wsu/home/groups/maj-shen/JETSCAPEDataFile/HydroProfiles/5TeV_0-10</initial_profile_path>
+  </IS>
+  
+  <!-- Hard Process -->
+  <Hard>
+    <PythiaGun>
+      <FSR_on>0</FSR_on>
+      <pTHatMin>500</pTHatMin>
+      <pTHatMax>550</pTHatMax>
+      <eCM>5020</eCM>
+      <useHybridHad>0</useHybridHad>
+    </PythiaGun>
+  </Hard>
+  
+  <!--Preequilibrium Dynamics Module -->
+  <Preequilibrium>
+    <NullPreDynamics> </NullPreDynamics>
+  </Preequilibrium>
+  
+  <!-- Hydro  Module  -->
+  <Hydro>
+    <hydro_from_file>
+      <name>Hydro from file </name>
+      <read_in_multiple_hydro>1</read_in_multiple_hydro>
+      <hydro_files_folder>/wsu/home/groups/maj-shen/JETSCAPEDataFile/HydroProfiles/5TeV_0-10</hydro_files_folder>
+    </hydro_from_file>
+  </Hydro>
+  
+  <!--Eloss Modules -->
+  <Eloss>
+
+    <deltaT>0.1</deltaT>
+    <formTime> -0.1</formTime>
+    <maxT>250</maxT>
+    <mutex>ON</mutex>
+
+    <Matter>
+      <name>Matter</name>
+      <useHybridHad>0</useHybridHad>
+      <matter_on> 1 </matter_on>
+      <Q0> 2.0 </Q0>
+      <T0> 0.16 </T0>
+      <vir_factor> 0.25 </vir_factor>
+      <in_vac> 0 </in_vac>
+      <recoil_on> 1 </recoil_on>
+      <broadening_on> 0 </broadening_on>
+      <brick_med> 0 </brick_med>
+      <brick_length> 5.0 </brick_length>
+      <hydro_Tc> 0.16 </hydro_Tc>
+      <qhat0> -2.0 </qhat0>
+      <alphas> 0.25 </alphas>
+      <run_alphas>1</run_alphas>
+    </Matter>
+
+    <Lbt>
+      <name> Lbt </name>
+      <Q0> 2.0 </Q0>
+      <in_vac> 0 </in_vac>
+      <only_leading> 0 </only_leading>
+      <hydro_Tc> 0.16 </hydro_Tc>
+      <alphas> 0.25 </alphas>
+      <run_alphas>1</run_alphas>
+    </Lbt>
+  </Eloss>
+  
+  <!-- Jet Hadronization Module -->
+  <JetHadronization>
+    <name>colorless</name>
+    <take_recoil>1</take_recoil>
+    <eCMforHadronization>2510</eCMforHadronization>
+  </JetHadronization>
+  
+</jetscape>

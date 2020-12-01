@@ -123,6 +123,7 @@ void Matter::Init() {
   Q00 = GetXMLElementDouble({"Eloss", "Matter", "Q0"});
   T0 = GetXMLElementDouble({"Eloss", "Matter", "T0"});
   alphas = GetXMLElementDouble({"Eloss", "Matter", "alphas"});
+  run_alphas = GetXMLElementInt({"Eloss", "Matter", "run_alphas"});
   hydro_Tc = GetXMLElementDouble({"Eloss", "Matter", "hydro_Tc"});
   brick_length = GetXMLElementDouble({"Eloss", "Matter", "brick_length"});
   vir_factor = GetXMLElementDouble({"Eloss", "Matter", "vir_factor"});
@@ -147,6 +148,7 @@ void Matter::Init() {
   JSINFO << MAGENTA << "Q0: " << Q00 << " vir_factor: " << vir_factor
          << "  qhat0: " << qhat0 << " alphas: " << alphas
          << " hydro_Tc: " << hydro_Tc << " brick_length: " << brick_length;
+  if(run_alphas==1){ JSINFO <<"Running alphas will be used as 4*pi/(9.0*log(2*enerLoc*tempLoc/0.04))"; }
 
   if (recoil_on && !flag_init) {
     JSINFO << MAGENTA
@@ -763,6 +765,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
                 gammaLoc *
                 (1.0 - (initVx * vxLoc + initVy * vyLoc + initVz * vzLoc));
 
+	    if(run_alphas==1){ alphas= 4*pi/(9.0*log(2*enerLoc*tempLoc/0.04));}
+
             if (qhat0 < 0.0) { // calculate qhat with alphas
               muD2 = 6.0 * pi * alphas * tempLoc * tempLoc;
               if (enerLoc > 2.0 * pi * tempLoc)
@@ -788,6 +792,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
             dt_lrf = el_dt * flowFactor;
           else
             dt_lrf = (time - el_time) * flowFactor;
+
+	  if(run_alphas==1){ alphas= 4*pi/(9.0*log(2*enerLoc*tempLoc/0.04));}
 
           // solve alphas
           if (qhat0 < 0.0)
@@ -3809,6 +3815,8 @@ double Matter::fillQhatTab(double y) {
       gammaLoc = 1.0 / sqrt(1.0 - betaLoc * betaLoc);
       flowFactor =
           gammaLoc * (1.0 - (initVx * vxLoc + initVy * vyLoc + initVz * vzLoc));
+
+      if(run_alphas==1){ alphas= 4*pi/(9.0*log(2*initEner*tempLoc/0.04));}
 
       if (qhat0 < 0.0) {
         // calculate qhat with alphas

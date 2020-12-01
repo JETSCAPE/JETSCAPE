@@ -92,6 +92,7 @@ public:
   double generate_kt(double local_qhat, double dzeta);
 
   int flag_useHybridHad = 0;
+  int run_alphas = 1; //flag to enable(1) or disable(0) running alphas in HTL q-hat
 
   double qhat = 0.0;
   double ehat = 0.0;
