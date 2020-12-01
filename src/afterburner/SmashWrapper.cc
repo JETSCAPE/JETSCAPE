@@ -21,6 +21,7 @@
 #include "smash/decaymodes.h"
 #include "smash/inputfunctions.h"
 #include "smash/particles.h"
+#include "smash/sha256.h"
 
 #include <string>
 
@@ -71,6 +72,18 @@ void SmashWrapper::InitTask() {
   }
   // Make sure that unstable hadrons have decays and stable not
   smash::ParticleType::check_consistency();
+
+  // Let SMASH tabulate cross sections
+  boost::filesystem::path tabulations_path = "./tabulations";
+  boost::filesystem::create_directories(tabulations_path);
+  const std::string particle_string = config["particles"].to_string();
+  const std::string decay_string = config["decaymodes"].to_string();
+  smash::sha256::Context hash_context;
+  hash_context.update(particle_string);
+  hash_context.update(decay_string);
+  const auto hash = hash_context.finalize();
+  smash::IsoParticleType::tabulate_integrals(hash, tabulations_path);
+
   // Take care of the random seed. This will make SMASH results reproducible.
   auto random_seed = (*GetMt19937Generator())();
   config["General"]["Randomseed"] = random_seed;
@@ -97,6 +110,10 @@ void SmashWrapper::InitTask() {
 
 void SmashWrapper::ExecuteTask() {
   AfterburnerModus *modus = smash_experiment_->modus();
+  // This is necessary to correctly handle indices of particle sets from hydro.
+  // Every hydro event creates a new structure like jetscape_hadrons_
+  // with as many events in it as one has samples per hydro
+  modus->reset_event_numbering();
   modus->jetscape_hadrons_ = soft_particlization_sampler_->Hadron_list_;
   const int n_events = modus->jetscape_hadrons_.size();
   JSINFO << "SMASH: obtained " << n_events << " events from particlization";
