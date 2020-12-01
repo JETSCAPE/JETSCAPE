@@ -17,7 +17,7 @@ ModuleClock::ModuleClock() : ClockBase()
 void ModuleClock::Info()
 {
 	ClockBase::Info();
-	JSINFO<<"Curent Module Time = "<<currentModuleTime;
+	JSINFO<<" Curent Module Time = "<<currentModuleTime;
 }  
 
 void ModuleClock::Transform(string mainClockRef, double mainClockCurrentTime)

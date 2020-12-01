@@ -75,6 +75,7 @@ JetEnergyLoss::JetEnergyLoss(const JetEnergyLoss &j) {
   SetEdensitySignalConnected(false);
   SetGetHydroCellSignalConnected(false);
   SetSentInPartonsConnected(false);
+  AddModuleClock(j.GetModuleClock()); //JP: Check if memory leak ... should not due to shared_ptr usage, but confirm ...
 
   deltaT = j.deltaT;
   maxT = j.maxT;
@@ -85,8 +86,7 @@ JetEnergyLoss::JetEnergyLoss(const JetEnergyLoss &j) {
   VERBOSE(8) << "To be copied : # Subtasks = " << j.GetTaskList().size();
   for (auto it : j.GetTaskList()) {
     // Working via CRTP JetEnergyLossModule Clone function !
-    auto st = dynamic_pointer_cast<JetEnergyLoss>(it)
-                  ->Clone(); //shared ptr with clone !!????
+    auto st = dynamic_pointer_cast<JetEnergyLoss>(it)->Clone(); //shared ptr with clone !!????
     Add(st);
   }
 }
@@ -405,6 +405,17 @@ void JetEnergyLoss::Exec() {
 
   //DEBUGTHREAD<<"Task Id = "<<this_thread::get_id()<<" Finished!";
   //JetScapeTask::ExecuteTasks(); // prevent Further modules to be execute, everything done by JetEnergyLoss ... (also set the no active flag ...!?)
+}
+
+void JetEnergyLoss::CalculateTime()
+{
+   VERBOSE(3)<<"Calculate JLoss per time step ... Current (Module) Time = "<<GetModuleCurrentTime();
+   //ClockInfo(); 
+}
+
+void JetEnergyLoss::ExecTime()
+{
+   VERBOSE(3)<<"Execute JLoss per time step ... Current (Module) Time = "<<GetModuleCurrentTime();
 }
 
 void JetEnergyLoss::WriteTask(weak_ptr<JetScapeWriter> w) {

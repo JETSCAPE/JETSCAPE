@@ -12,11 +12,9 @@
  * Distributed under the GNU General Public License 3.0 (GPLv3 or later).
  * See COPYING for details.
  ******************************************************************************/
-// ------------------------------------------------------------
-// JetScape Framework Brick Test Program with Pythia IS
-// (use either shared library (need to add paths; see setup.csh)
-// (or create static library and link in)
-// -------------------------------------------------------------
+// -------------------------------------------------
+// XSCAPE Framework Clock Pythia Brick Test Program 
+// -------------------------------------------------
 
 #include <iostream>
 #include <time.h>
@@ -74,7 +72,7 @@ int main(int argc, char** argv)
   JetScapeLogger::Instance()->SetRemark(false);
   //SetVerboseLevel (9 a lot of additional debug output ...)
   //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevle(9) or 10
-  //JetScapeLogger::Instance()->SetVerboseLevel(0);
+  JetScapeLogger::Instance()->SetVerboseLevel(0);
 
   
   Show();
@@ -82,34 +80,45 @@ int main(int argc, char** argv)
   // -------------
   //Test clock ...
   
-  auto mClock = make_shared<MainClock>();
-  mClock->SetTimeRefFrameId("SpaceTime");
-  auto mModuleClock = make_shared<ModuleClock>();
+  //auto mClock = make_shared<MainClock>();
+  //mClock->SetTimeRefFrameId("SpaceTime");
+
+  // clocks here are defaulted for testing, clocks can costumized via inhererting from the MainClock/ModuleClock base classes ...
+  auto mClock = make_shared<MainClock>("SpaceTime",0,0.5,0.1); // JP: make consistent with reading from XML in init phase ...
+  auto mModuleClock = make_shared<ModuleClock>(); 
   mModuleClock->SetTimeRefFrameId("SpaceTime * 2");
 
   mClock->Info();
+  mModuleClock->Info(); 
+
+  /*
+  mClock->Info();
   
   //while (mClock->Next()) {
-  mClock->Next();
+
+  mClock->Tick();
   mClock->Info();
 
   mModuleClock->Transform(mClock);
   mModuleClock->Info(); 
 
   //};
-  
+  */
   // -------------
 
   auto jetscape = make_shared<JetScape>();
   jetscape->SetXMLMasterFileName("../config/jetscape_master.xml");
   jetscape->SetXMLUserFileName("../config/jetscape_user_test.xml");
   jetscape->SetId("primary");
+  jetscape->AddMainClock(mClock);
+  jetscape->ClockInfo();
 
   // Initial conditions and hydro
   //auto trento = make_shared<TrentoInitial>();
   auto trento = make_shared<InitialState>();
   auto pythiaGun= make_shared<PythiaGun> ();
   auto hydro = make_shared<Brick> ();
+
   jetscape->Add(trento);
   jetscape->Add(pythiaGun);
   jetscape->Add(hydro);
@@ -119,21 +128,32 @@ int main(int argc, char** argv)
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
   auto jloss = make_shared<JetEnergyLoss> ();
 
+  //Set inactive task (per event) and with main clock attached do per time step for these modules ...
+  //Needed to overwrite functions: CalculateTime() and ExecTime(), in these functions get 
+  //time, either main clock time or if module clock attached the tranformed time via: GetModuleCurrentTime();
+  jlossmanager->SetActive(false);  
+  jloss->SetActive(false);
+  //quick and dirty to check if module clock transformation is working conceptually ...
+  jloss->AddModuleClock(mModuleClock);
+
+  //Matter is added but not executed, need to implement the per time step execution in JetEnergyLoss::DoShower()...
   auto matter = make_shared<Matter> ();
   // auto lbt = make_shared<LBT> ();
   //auto martini = make_shared<Martini> ();
-  // auto adscft = make_shared<AdSCFT> ();
+  //auto adscft = make_shared<AdSCFT> ();
 
   // Note: if you use Matter, it MUST come first (to set virtuality)
   jloss->Add(matter);
   // jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
   // jloss->Add(martini);
-  // jloss->Add(adscft);  
-  jlossmanager->Add(jloss);  
+  //jloss->Add(adscft);  
+  jlossmanager->Add(jloss);
   jetscape->Add(jlossmanager);
 
   
+  // JP: Leave out for now for testing clock(s) ... has to be updated accordingly ... (see JetEnergyLossManager as an example ...)
   // Hadronization
+  /*
   auto hadroMgr = make_shared<HadronizationManager> ();
   auto hadro = make_shared<Hadronization> ();
   //auto hadroModule = make_shared<ColoredHadronization> ();
@@ -142,7 +162,7 @@ int main(int argc, char** argv)
   hadro->Add(colorless);
   hadroMgr->Add(hadro);
   jetscape->Add(hadroMgr);
-
+  */
   
   // Output
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
@@ -196,8 +216,8 @@ int main(int argc, char** argv)
 
 void Show()
 {
-  INFO_NICE<<"------------------------------------";
-  INFO_NICE<<"| Brick Test JetScape Framework ... |";
-  INFO_NICE<<"------------------------------------";
+  INFO_NICE<<"-------------------------------------------";
+  INFO_NICE<<"| Clock Brick Test XSCAPE Framework ...   |";
+  INFO_NICE<<"-------------------------------------------";
   INFO_NICE;
 }

@@ -33,7 +33,7 @@ int JetScapeModuleBase::current_event = 0;
    */
 JetScapeModuleBase::JetScapeModuleBase()
     : JetScapeTask(), xml_master_file_name(""), xml_user_file_name(""),
-      mt19937_generator_(nullptr) {}
+      mt19937_generator_(nullptr), TimeModule() {}
 
 // ---------------------------------------------------------------------------
 /** This is a destructor for the JetScapeModuleBase.                       
@@ -64,6 +64,42 @@ shared_ptr<std::mt19937> JetScapeModuleBase::GetMt19937Generator() {
         JetScapeTaskSupport::Instance()->GetMt19937Generator(GetMyTaskNumber());
   }
   return mt19937_generator_;
+}
+
+void JetScapeModuleBase::CalculateTimeTasks()
+{
+  if (ClockUsed()) {
+  auto tasks =  GetTaskList();
+  VERBOSE(3) << " : # Subtasks = " << tasks.size();
+  for (auto it : tasks) {
+    
+    //cout<<it->GetId()<<" "<<it->GetActive()<<endl;
+
+    if (std::dynamic_pointer_cast<JetScapeModuleBase>(it) && !it->GetActive()) {
+    VERBOSE(3) << "Calculate Time Step = " << it->GetId();
+    //if (it->active_exec) 
+      std::dynamic_pointer_cast<JetScapeModuleBase>(it)->CalculateTime();
+    }
+  }
+ }
+}
+
+void JetScapeModuleBase::ExecTimeTasks()
+{
+  if (ClockUsed()) {
+  auto tasks =  GetTaskList();
+  VERBOSE(3) << " : # Subtasks = " << tasks.size();
+  for (auto it : tasks) {
+    
+    //cout<<it->GetId()<<" "<<it->GetActive()<<endl;
+
+    if (std::dynamic_pointer_cast<JetScapeModuleBase>(it) && !it->GetActive()) {
+    VERBOSE(3) << "Execute Time Step = " << it->GetId();
+    //if (it->active_exec) 
+      std::dynamic_pointer_cast<JetScapeModuleBase>(it)->ExecTime();
+    }
+  }
+ }
 }
 
 } // end namespace Jetscape

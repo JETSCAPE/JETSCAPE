@@ -102,7 +102,7 @@ void JetScapeXML::OpenXMLUserFile(string m_name) {
 tinyxml2::XMLElement *
 JetScapeXML::GetXMLElementMaster(std::initializer_list<const char *> &path) {
 
-  VERBOSE(2) << "Looking for element in Master file: " << path;
+  VERBOSE(4) << "Looking for element in Master file: " << path;
 
   OpenXMLMasterFile();
 
@@ -112,26 +112,26 @@ JetScapeXML::GetXMLElementMaster(std::initializer_list<const char *> &path) {
       currentElement = xml_root_master->FirstChildElement(elementName);
 
       if (currentElement) {
-        VERBOSE(3) << "Loaded " << elementName << " from xml_root_master";
+        VERBOSE(5) << "Loaded " << elementName << " from xml_root_master";
       } else {
-        VERBOSE(3) << elementName << " not found in xml_root_master";
+        VERBOSE(5) << elementName << " not found in xml_root_master";
       }
     } else {
       currentElement = currentElement->FirstChildElement(elementName);
 
       if (currentElement) {
-        VERBOSE(3) << "Loaded " << elementName << " from "
+        VERBOSE(5) << "Loaded " << elementName << " from "
                    << currentElement->Name();
       } else {
-        VERBOSE(3) << elementName << " not found in " << elementName;
+        VERBOSE(5) << elementName << " not found in " << elementName;
       }
     }
   }
 
   if (currentElement) {
-    VERBOSE(2) << "Found element.";
+    VERBOSE(4) << "Found element.";
   } else {
-    VERBOSE(2) << "Did not find element.";
+    VERBOSE(4) << "Did not find element.";
   }
 
   return currentElement;
@@ -141,7 +141,7 @@ JetScapeXML::GetXMLElementMaster(std::initializer_list<const char *> &path) {
 tinyxml2::XMLElement *
 JetScapeXML::GetXMLElementUser(std::initializer_list<const char *> &path) {
 
-  VERBOSE(2) << "Looking for element in User file: " << path;
+  VERBOSE(4) << "Looking for element in User file: " << path;
 
   OpenXMLUserFile();
 
@@ -151,26 +151,26 @@ JetScapeXML::GetXMLElementUser(std::initializer_list<const char *> &path) {
       currentElement = xml_root_user->FirstChildElement(elementName);
 
       if (currentElement) {
-        VERBOSE(3) << "Loaded " << elementName << " from xml_root_user";
+        VERBOSE(5) << "Loaded " << elementName << " from xml_root_user";
       } else {
-        VERBOSE(3) << elementName << " not found in xml_root_user";
+        VERBOSE(5) << elementName << " not found in xml_root_user";
       }
     } else {
       currentElement = currentElement->FirstChildElement(elementName);
 
       if (currentElement) {
-        VERBOSE(3) << "Loaded " << elementName << " from "
+        VERBOSE(4) << "Loaded " << elementName << " from "
                    << currentElement->Name();
       } else {
-        VERBOSE(3) << elementName << " not found in " << elementName;
+        VERBOSE(4) << elementName << " not found in " << elementName;
       }
     }
   }
 
   if (currentElement) {
-    VERBOSE(2) << "Found element.";
+    VERBOSE(4) << "Found element.";
   } else {
-    VERBOSE(2) << "Did not find element.";
+    VERBOSE(4) << "Did not find element.";
   }
 
   return currentElement;

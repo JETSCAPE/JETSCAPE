@@ -822,8 +822,25 @@ void JetScape::Exec() {
     VERBOSE(1) << BOLDRED << "Run Event # = " << i;
     JSDEBUG << "Found " << GetNumberOfTasks() << " Modules Execute them ... ";
 
-    // First run all tasks
+    // First run all tasks per event if possible/required ...
     JetScapeTask::ExecuteTasks();
+
+    // Execute and run per time step for modules if implemented ...
+    if (ClockUsed())
+    {
+      VERBOSE(3)<<"Main Clock Reset ...";
+
+      GetMainClock()->Reset();
+
+      do {
+        
+        VERBOSE(3)<< BOLDRED << "Current Main Clock Time = "<<GetMainClock()->GetCurrentTime();
+
+        JetScapeModuleBase::CalculateTimeTasks();
+        JetScapeModuleBase::ExecTimeTasks();
+
+      } while (GetMainClock()->Tick());     
+    }
 
     // Then hand around the collection of writers and ask
     // modules to write what they like
@@ -866,6 +883,7 @@ void JetScape::Exec() {
       }
     }
 
+    // JP: If task not active then per time step is active (see above), which could lead to issues with hydro resuse. Follow up!
     // For reusal, deactivate task after it has finished
     // but before it gets cleaned up.
     if (reuse_hydro_) {

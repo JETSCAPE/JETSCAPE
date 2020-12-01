@@ -16,7 +16,8 @@
 #ifndef JETENERGYLOSSMANAGER_H
 #define JETENERGYLOSSMANAGER_H
 
-#include "JetScapeTask.h"
+//#include "JetScapeTask.h"
+#include "JetScapeModuleBase.h"
 #include "JetClass.h"
 #include "sigslot.h"
 
@@ -26,7 +27,7 @@ namespace Jetscape {
 /** @class Jet energy loss manager.
    */
 class JetEnergyLossManager
-    : public JetScapeTask,
+    : public JetScapeModuleBase,
       public std::enable_shared_from_this<JetEnergyLossManager> {
 
 public:
@@ -50,6 +51,10 @@ public:
   /** It erases the tasks attached with the energy loss manager. It can be overridden by other tasks.
    */
   virtual void Clear();
+
+  virtual void CalculateTime();
+
+  virtual void ExecTime();
 
   /** It writes the output information relevant to the jet energy loss tasks/subtasks into a file. It can be overridden by other tasks.
       @param w A pointer of type JetScapeWriter class.
@@ -82,6 +87,10 @@ public:
   }
 
 private:
+
+  void MakeCopies();
+  bool copiesMade;
+
   bool GetHardPartonListConnected;
   vector<shared_ptr<Parton>> hp;
 };

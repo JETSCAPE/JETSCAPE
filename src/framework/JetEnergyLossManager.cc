@@ -27,9 +27,10 @@ using namespace std;
 
 namespace Jetscape {
 
-JetEnergyLossManager::JetEnergyLossManager() {
+JetEnergyLossManager::JetEnergyLossManager() : JetScapeModuleBase() {
   SetId("JLossManager");
   GetHardPartonListConnected = false;
+  copiesMade = false;
   VERBOSE(8);
 }
 
@@ -88,18 +89,11 @@ void JetEnergyLossManager::WriteTask(weak_ptr<JetScapeWriter> w) {
   JetScapeTask::WriteTasks(w);
 }
 
-void JetEnergyLossManager::Exec() {
-  VERBOSE(1) << "Run JetEnergyLoss Manager ...";
-  JSDEBUG << "Task Id = " << this_thread::get_id();
-
-  if (GetNumberOfTasks() < 1) {
-    JSWARN << " : No valid Energy Loss Manager modules found ...";
-    exit(-1);
-  }
-
-  // ----------------------------------
+void JetEnergyLossManager::MakeCopies()
+{
+   // ----------------------------------
   // Create needed copies and connect signal/slots accordingly ...
-
+  if (!copiesMade) {
   if (GetGetHardPartonListConnected()) {
     GetHardPartonList(hp);
     VERBOSE(3) << " Number of Hard Partons = " << hp.size();
@@ -139,8 +133,25 @@ void JetEnergyLossManager::Exec() {
       n++;
     }
   }
+  copiesMade = true;
+ }
+ else {JSWARN<<"JetEnergloss Module copies already made!";exit(-1);}
+}
+
+void JetEnergyLossManager::Exec() {
+  VERBOSE(1) << "Run JetEnergyLoss Manager ...";
+  JSDEBUG << "Task Id = " << this_thread::get_id();
+
+  if (GetNumberOfTasks() < 1) {
+    JSWARN << " : No valid Energy Loss Manager modules found ...";
+    exit(-1);
+  }
+
+  if (!copiesMade)
+    MakeCopies();
 
   // ----------------------------------
+  /*
   // quick and dirty here, only include after further testing (flag in init xml files ...)
   bool multiTask = false;
 
@@ -192,12 +203,43 @@ void JetEnergyLossManager::Exec() {
   }
   // ----------------------------------
   else
-    // Standard "serial" execution for the JetEnerguLoss (+submodules) task ...
-    JetScapeTask::ExecuteTasks();
+  */
+  
+  // Standard "serial" execution for the JetEnerguLoss (+submodules) task ...
+  JetScapeTask::ExecuteTasks();
 
   //Add acheck if the parton shower was actually created for the Modules ....
   VERBOSE(3) << " " << GetNumberOfTasks()
              << " Eloss Manager Tasks/Modules finished.";
+}
+
+void JetEnergyLossManager::CalculateTime()
+{
+  VERBOSE(1) << "Calculate JetEnergyLoss Manager per timestep ... Current Time = "<<GetModuleCurrentTime();
+  JSDEBUG << "Task Id = " << this_thread::get_id();
+
+  if (GetNumberOfTasks() < 1) {
+    JSWARN << " : No valid Energy Loss Manager modules found ...";
+    exit(-1);
+  }
+
+  if (!copiesMade)
+    MakeCopies();
+
+  JetScapeModuleBase::CalculateTimeTasks();
+}
+
+void JetEnergyLossManager::ExecTime()
+{
+  VERBOSE(1) << "Execute JetEnergyLoss Manager per timestep ... Current Time = "<<GetModuleCurrentTime();
+  JSDEBUG << "Task Id = " << this_thread::get_id();
+
+  if (GetNumberOfTasks() < 1) {
+    JSWARN << " : No valid Energy Loss Manager modules found ...";
+    exit(-1);
+  }
+
+  JetScapeModuleBase::ExecTimeTasks();
 }
 
 void JetEnergyLossManager::CreateSignalSlots() {

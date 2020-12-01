@@ -7,10 +7,14 @@
   <setReuseHydro> false </setReuseHydro>
   <!-- <nReuseHydro> 10 </nReuseHydro> -->
 
-  <vlevel> 0 </vlevel>
+  <vlevel> 4 </vlevel>
 
   <nEvents> 1 </nEvents>
   
+  <Random>
+    <seed>1</seed>
+  </Random>
+
   <JetScapeWriterAscii> on </JetScapeWriterAscii>
 
   <!-- Inital State Module  -->

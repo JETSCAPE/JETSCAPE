@@ -74,6 +74,10 @@ public:
   */
   virtual void Clear();
 
+  virtual void CalculateTime();
+
+  virtual void ExecTime();
+
   /** Default function to perform the energy loss for partons at time "time". It should be overridden by different energy loss tasks.
       @param deltaT Step-size.
       @param time Current time.
