@@ -26,6 +26,25 @@ void TimeModule::ClockInfo()
     JSINFO<<"Current Module Time = "<<GetModuleCurrentTime();
 }
 
+double TimeModule::GetModuleDeltaT()
+{
+    double dT=-99.0;
+
+    if (UseModuleClock())
+    {
+        mClock->Transform(mainClock);
+        dT = mClock->GetDeltaT();
+    }
+    else if (ClockUsed())
+    {
+        dT = mainClock->GetDeltaT();
+    }
+    else
+        {JSWARN<<"No clocks found ..."; exit(-1);}
+
+    return dT;
+}
+
 double TimeModule::GetModuleCurrentTime()
 {
     double cTime=-99.0;

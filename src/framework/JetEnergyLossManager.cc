@@ -56,6 +56,8 @@ void JetEnergyLossManager::Clear() {
   JetScapeSignalManager::Instance()->CleanUp();
   JetScapeTask::ClearTasks();
 
+  copiesMade = false;
+
   VERBOSE(8) << hp.size();
 }
 
@@ -218,14 +220,6 @@ void JetEnergyLossManager::CalculateTime()
   VERBOSE(1) << "Calculate JetEnergyLoss Manager per timestep ... Current Time = "<<GetModuleCurrentTime();
   JSDEBUG << "Task Id = " << this_thread::get_id();
 
-  if (GetNumberOfTasks() < 1) {
-    JSWARN << " : No valid Energy Loss Manager modules found ...";
-    exit(-1);
-  }
-
-  if (!copiesMade)
-    MakeCopies();
-
   JetScapeModuleBase::CalculateTimeTasks();
 }
 
@@ -234,12 +228,27 @@ void JetEnergyLossManager::ExecTime()
   VERBOSE(1) << "Execute JetEnergyLoss Manager per timestep ... Current Time = "<<GetModuleCurrentTime();
   JSDEBUG << "Task Id = " << this_thread::get_id();
 
-  if (GetNumberOfTasks() < 1) {
-    JSWARN << " : No valid Energy Loss Manager modules found ...";
-    exit(-1);
-  }
-
   JetScapeModuleBase::ExecTimeTasks();
+}
+
+void JetEnergyLossManager::InitPerEvent()
+{
+  VERBOSE(1) << "InitPerEvent JetEnergyLoss Manager when used per timestep ...";
+  JSDEBUG << "Task Id = " << this_thread::get_id();
+
+  MakeCopies();
+
+  JetScapeModuleBase::InitPerEventTasks();
+}
+
+void JetEnergyLossManager::FinishPerEvent()
+{
+  VERBOSE(1) << "FinishPerEvent JetEnergyLoss Manager when used per timestep ...";
+  JSDEBUG << "Task Id = " << this_thread::get_id();
+  
+  JetScapeModuleBase::FinishPerEventTasks();
+
+  Clear();
 }
 
 void JetEnergyLossManager::CreateSignalSlots() {

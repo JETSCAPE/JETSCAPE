@@ -102,4 +102,40 @@ void JetScapeModuleBase::ExecTimeTasks()
  }
 }
 
+void JetScapeModuleBase::InitPerEventTasks()
+{
+  if (ClockUsed()) {
+  auto tasks =  GetTaskList();
+  VERBOSE(3) << " : # Subtasks = " << tasks.size();
+  for (auto it : tasks) {
+    
+    //cout<<it->GetId()<<" "<<it->GetActive()<<endl;
+
+    if (std::dynamic_pointer_cast<JetScapeModuleBase>(it) && !it->GetActive()) {
+    VERBOSE(3) << "InitPerEventTasks " << it->GetId();
+    //if (it->active_exec) 
+      std::dynamic_pointer_cast<JetScapeModuleBase>(it)->InitPerEvent();
+    }
+  }
+ }
+}
+
+void JetScapeModuleBase::FinishPerEventTasks()
+{
+  if (ClockUsed()) {
+  auto tasks =  GetTaskList();
+  VERBOSE(3) << " : # Subtasks = " << tasks.size();
+  for (auto it : tasks) {
+    
+    //cout<<it->GetId()<<" "<<it->GetActive()<<endl;
+
+    if (std::dynamic_pointer_cast<JetScapeModuleBase>(it) && !it->GetActive()) {
+    VERBOSE(3) << "FinishPerEventTasks " << it->GetId();
+    //if (it->active_exec) 
+      std::dynamic_pointer_cast<JetScapeModuleBase>(it)->FinishPerEvent();
+    }
+  }
+ }
+}
+
 } // end namespace Jetscape

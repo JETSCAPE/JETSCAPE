@@ -84,7 +84,7 @@ int main(int argc, char** argv)
   //mClock->SetTimeRefFrameId("SpaceTime");
 
   // clocks here are defaulted for testing, clocks can costumized via inhererting from the MainClock/ModuleClock base classes ...
-  auto mClock = make_shared<MainClock>("SpaceTime",0,0.5,0.1); // JP: make consistent with reading from XML in init phase ...
+  auto mClock = make_shared<MainClock>("SpaceTime",0,20,0.1); // JP: make consistent with reading from XML in init phase ...
   auto mModuleClock = make_shared<ModuleClock>(); 
   mModuleClock->SetTimeRefFrameId("SpaceTime * 2");
 
@@ -134,7 +134,7 @@ int main(int argc, char** argv)
   jlossmanager->SetActive(false);  
   jloss->SetActive(false);
   //quick and dirty to check if module clock transformation is working conceptually ...
-  jloss->AddModuleClock(mModuleClock);
+  //jloss->AddModuleClock(mModuleClock);
 
   //Matter is added but not executed, need to implement the per time step execution in JetEnergyLoss::DoShower()...
   auto matter = make_shared<Matter> ();

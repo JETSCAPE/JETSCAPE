@@ -68,20 +68,23 @@ void JetScapeTask::ClearTasks() {
       it->Clear();
 }
 
+//JP: Quick and dirty fix to force all tasks if active or not to use the writer 
+//since choosing per time step currently requires the task to be set to non active ...
+//Maybe new flag etc ... to be discussed ...
 void JetScapeTask::WriteTasks(weak_ptr<JetScapeWriter> w) {
   //VERBOSE(10);
-  if (active_exec) {
+  //if (active_exec) {
     for (auto it : tasks)
       it->WriteTask(w);
-  }
+  //}
 }
 
 void JetScapeTask::CollectHeaders(weak_ptr<JetScapeWriter> w) {
   //VERBOSE(10);
-  if (active_exec) {
+  //if (active_exec) {
     for (auto it : tasks)
       it->CollectHeader(w);
-  }
+  //}
 }
 
 void JetScapeTask::Add(shared_ptr<JetScapeTask> m_tasks) {

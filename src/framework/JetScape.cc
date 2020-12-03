@@ -827,19 +827,23 @@ void JetScape::Exec() {
 
     // Execute and run per time step for modules if implemented ...
     if (ClockUsed())
-    {
+    {      
       VERBOSE(3)<<"Main Clock Reset ...";
 
       GetMainClock()->Reset();
 
+      JetScapeModuleBase::InitPerEventTasks();
+
       do {
         
-        VERBOSE(3)<< BOLDRED << "Current Main Clock Time = "<<GetMainClock()->GetCurrentTime();
+        VERBOSE(3)<< BOLDRED << "Current Main Clock Time = "<<GetMainClock()->GetCurrentTime()<<" dT = "<<GetMainClock()->GetDeltaT();
 
         JetScapeModuleBase::CalculateTimeTasks();
         JetScapeModuleBase::ExecTimeTasks();
 
       } while (GetMainClock()->Tick());     
+
+      //JetScapeModuleBase::FinishPerEventTasks();
     }
 
     // Then hand around the collection of writers and ask
@@ -925,6 +929,9 @@ void JetScape::Exec() {
 
     // Now clean up, only affects active taskjs
     JetScapeTask::ClearTasks();
+    
+    if (ClockUsed())
+      JetScapeModuleBase::FinishPerEventTasks();
 
     IncrementCurrentEvent();
   }

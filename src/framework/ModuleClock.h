@@ -35,15 +35,16 @@ public:
 	ModuleClock();
 	virtual ~ModuleClock() {};
 
-	virtual void Transform(string mainClockRef, double mainClockCurrentTime);
+	//virtual void Transform(string mainClockRef, double mainClockCurrentTime);
 	virtual void Transform(std::weak_ptr<MainClock> mainClock);
 	virtual void Info();
 
 	inline double GetCurrentTime() {return currentModuleTime;}
-
+        inline double GetDeltaT() {return moduleDeltaT;}
 private:
 
 	double currentModuleTime;
+        double moduleDeltaT;
 
 };
 

@@ -62,7 +62,7 @@ public:
   virtual void Clear(){};
 
   // --------------
-  
+
   virtual void CalculateTime() {};
 
   virtual void CalculateTimeTasks();
@@ -82,11 +82,11 @@ public:
   
   virtual void InitPerEvent() {};
 
-  virtual void InitPerEventTasks() {};
+  virtual void InitPerEventTasks();
 
   virtual void FinishPerEvent() {};
 
-  virtual void FinishPerEventTasks() {};
+  virtual void FinishPerEventTasks();
 
   //virtual void FinishPerEventTask() {}; // JP: see also in JetScapeTask ... is it really used or would this be the per event way ...
 

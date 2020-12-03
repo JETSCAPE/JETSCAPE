@@ -7,9 +7,9 @@
   <setReuseHydro> false </setReuseHydro>
   <!-- <nReuseHydro> 10 </nReuseHydro> -->
 
-  <vlevel> 4 </vlevel>
+  <vlevel> 3 </vlevel>
 
-  <nEvents> 1 </nEvents>
+  <nEvents> 2 </nEvents>
   
   <Random>
     <seed>1</seed>

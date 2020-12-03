@@ -49,7 +49,9 @@ public:
 
     //static bool use_clock; //better in time based module base ...
 
-    double GetModuleCurrentTime();
+    double GetModuleCurrentTime();   
+
+    double GetModuleDeltaT();
 
 private:
 

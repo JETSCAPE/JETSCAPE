@@ -56,6 +56,10 @@ public:
 
   virtual void ExecTime();
 
+  virtual void InitPerEvent();
+
+  virtual void FinishPerEvent();  
+
   /** It writes the output information relevant to the jet energy loss tasks/subtasks into a file. It can be overridden by other tasks.
       @param w A pointer of type JetScapeWriter class.
       @sa JetScapeWriter class for further information. 
