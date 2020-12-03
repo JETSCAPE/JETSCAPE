@@ -248,6 +248,7 @@ void JetEnergyLossManager::FinishPerEvent()
   
   JetScapeModuleBase::FinishPerEventTasks();
 
+  //JP: Quick fix, to be discussed, similar to writer, clear is only called for active tasks, so call here directly ...
   Clear();
 }
 

@@ -927,9 +927,12 @@ void JetScape::Exec() {
       }
     }
 
-    // Now clean up, only affects active taskjs
+    // Now clean up, only affects active tasks
     JetScapeTask::ClearTasks();
-    
+
+    //have to call this after writer and call explciitly the clear functions
+    //in finish per event, because like writer, clear only for active tasks ...
+    //have to think a bit more how to make this workflow more consistent ...
     if (ClockUsed())
       JetScapeModuleBase::FinishPerEventTasks();
 
