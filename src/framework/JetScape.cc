@@ -24,6 +24,8 @@
 #include "JetEnergyLoss.h"
 #include "CausalLiquefier.h"
 
+#include "QueryHistory.h"
+
 #ifdef USE_HEPMC
 #include "JetScapeWriterHepMC.h"
 #endif
@@ -74,6 +76,8 @@ void JetScape::Init() {
         << "================================================================";
   }
 
+  QueryHistory::Instance()->AddMainTask(shared_from_this());
+  
   // Has to be called explicitly since not really fully recursively (if ever needed)
   // So --> JetScape is "Task Manager" of all modules ...
   JSINFO << "Found " << GetNumberOfTasks() << " Modules Initialize them ... ";
@@ -824,6 +828,12 @@ void JetScape::Exec() {
 
     // First run all tasks per event if possible/required ...
     JetScapeTask::ExecuteTasks();
+    
+    //JP: in case of execution without clock, just to provide that functionality too
+    //maybe not really required if only per event execution ... to be discussed ...
+    QueryHistory::Instance()->UpdateTaskMap();
+    //QueryHistory::Instance()->PrintTaskMap();
+
 
     // Execute and run per time step for modules if implemented ...
     if (ClockUsed())
@@ -833,6 +843,21 @@ void JetScape::Exec() {
       GetMainClock()->Reset();
 
       JetScapeModuleBase::InitPerEventTasks();
+
+      QueryHistory::Instance()->UpdateTaskMap();
+      
+      //QueryHistory::Instance()->PrintTaskMap();
+      //Quick and dirty to see all tasks ... make recursive ...
+      /*
+      for (auto it : GetTaskList()) {
+        cout << it->GetId() << endl;
+        for (auto it2 : it->GetTaskList()) {
+          cout << " " << it2->GetId() << endl;
+          for (auto it3 : it2->GetTaskList())
+            cout << "  " << it3->GetId() << endl;
+        }
+      }
+      */
 
       do {
         

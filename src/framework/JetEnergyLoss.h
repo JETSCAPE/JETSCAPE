@@ -212,6 +212,8 @@ public:
 
   void GetFinalPartonsForEachShower(shared_ptr<PartonShower> shower);
 
+  virtual any GetHistory() {return any(pShower);}
+
 protected:
   std::weak_ptr<LiquefierBase> liquefier_ptr;
 

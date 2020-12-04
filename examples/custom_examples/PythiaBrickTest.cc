@@ -46,12 +46,44 @@
 #include "MainClock.h"
 #include "ModuleClock.h"
 
+#include "QueryHistory.h"
+
 #include <chrono>
 #include <thread>
 
 using namespace std;
 
 using namespace Jetscape;
+
+// ------------------------------------------
+//JP: Quick test module for access to history ...
+//To be done currently hardcoded for a quick test in JetScape.cc ...
+class HistTest : public JetScapeModuleBase
+{
+  public:
+
+  HistTest() : JetScapeModuleBase() {};
+
+  virtual void ExecTime()
+  {
+    
+    vector<any> eLossHistories = QueryHistory::Instance()->GetHistoryFromModules("JetEnergyLoss");
+   
+    if (GetMainClock()->GetCurrentTime()<2) {
+
+    cout<< "HistTest::ExecTime(): Current Main Clock Time = "<<GetMainClock()->GetCurrentTime() << endl;
+    cout<< "HistTest::ExecTime(): Print Histories via vector<any> eLossHistories = QueryHistory::Instance()->GetHistoryFromModules(\"JetEnergyLoss\")" <<endl;
+    
+    for (auto mHist : eLossHistories)
+    {          
+      any_cast<std::shared_ptr<PartonShower>>(mHist)->PrintEdges(false);
+    }
+   }
+  }
+
+  private:
+};
+// ------------------------------------------
 
 // Forward declaration
 void Show();
@@ -131,8 +163,10 @@ int main(int argc, char** argv)
   //Set inactive task (per event) and with main clock attached do per time step for these modules ...
   //Needed to overwrite functions: CalculateTime() and ExecTime(), in these functions get 
   //time, either main clock time or if module clock attached the tranformed time via: GetModuleCurrentTime();
+  
   jlossmanager->SetActive(false);  
   jloss->SetActive(false);
+  
   //quick and dirty to check if module clock transformation is working conceptually ...
   //jloss->AddModuleClock(mModuleClock);
 
@@ -150,6 +184,10 @@ int main(int argc, char** argv)
   jlossmanager->Add(jloss);
   jetscape->Add(jlossmanager);
 
+  //Test task for access of History via QueryHistory instance and use any data-type for generic access via JetScapeModuleBase::GetHistory()
+  auto histTest = make_shared<HistTest>();
+  histTest->SetActive(false); // to be executed per time step
+  jetscape->Add(histTest);
   
   // JP: Leave out for now for testing clock(s) ... has to be updated accordingly ... (see JetEnergyLossManager as an example ...)
   // Hadronization
@@ -166,6 +204,7 @@ int main(int argc, char** argv)
   
   // Output
   auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
+  writer->SetId("AsciiWriter"); //for task search test ...
   jetscape->Add(writer);
 
   /*
@@ -180,6 +219,26 @@ int main(int argc, char** argv)
   jetscape->Add(hepmcwriter);
 #endif
   */
+
+  //test ...
+  //QueryHistory::Instance()->AddMainTask(jetscape);
+  //QueryHistory::Instance()->PrintTasks();
+  //QueryHistory::Instance()->PrintTaskMap();
+
+  //check with quick and dirty ... make recursive ...
+  /*
+  cout<<jetscape->GetNumberOfTasks()<<endl;
+  auto taskList = jetscape->GetTaskList();
+  for (auto it : taskList) {
+    cout<<it->GetId()<<endl;
+    for (auto it2 : it->GetTaskList()) {
+      cout<<" "<<it2->GetId()<<endl;
+      for (auto it3 : it2->GetTaskList())
+        cout<<"  "<<it3->GetId()<<endl;}
+  }
+  */
+
+  //printAllTasks(taskList);
 
   // Intialize all modules tasks
   jetscape->Init();

@@ -23,7 +23,9 @@
 
 namespace Jetscape {
 
-class JetScape : public JetScapeModuleBase {
+class JetScape : public JetScapeModuleBase, 
+                 public std::enable_shared_from_this<JetScape> 
+{
 
 public:
   /** Default constructor to create the main task of the JetScape framework.

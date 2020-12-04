@@ -26,6 +26,13 @@
 #include "TimeModule.h"
 #include "sigslot.h"
 
+#include "cpp17/any.hpp"
+#include "cpp17/variant.hpp"
+
+//Maybe change, namespaces for any and varaint ...
+using namespace linb;
+using namespace mpark;
+
 namespace Jetscape {
 
 class JetScapeWriter;
@@ -89,6 +96,13 @@ public:
   virtual void FinishPerEventTasks();
 
   //virtual void FinishPerEventTask() {}; // JP: see also in JetScapeTask ... is it really used or would this be the per event way ...
+
+  // --------------
+
+  //JP: same can be done with variant if all datatypes are know
+  //and put into the varaint definition --> elevated to framework like data types
+  //maybe not ideal, to be discussed ...
+  virtual any GetHistory() {return 0;}
 
   // --------------
 
