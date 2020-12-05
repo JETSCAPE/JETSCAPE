@@ -3808,7 +3808,11 @@ double LBT::nHQgluon(int parID, double dtLRF, double &time_gluon,
     temp_med = temp_min;
   }
 
-  time_num = (int)(time_gluon / delta_tg + 0.5) + 1;
+  if(time_gluon < t_max_1) {
+      time_num = (int)(time_gluon / delta_tg_1 + 0.5) + 1;
+  } else {
+      time_num = (int)((time_gluon - t_max_1) / delta_tg_2 + 0.5) + t_gn_1 + 1;
+  }
   //  temp_num=(int)((temp_med-temp_min)/delta_temp+0.5);
   //  HQenergy_num=(int)(HQenergy/delta_HQener+0.5); // use linear interpolation instead of finding nearest point for E and T dimensions
   temp_num = (int)((temp_med - temp_min) / delta_temp);

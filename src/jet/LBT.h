@@ -173,7 +173,9 @@ private:
 
   // for heavy quark radiation table
   static const int HQener_gn = 500;
-  static const int t_gn = 75;
+  static const int t_gn_1 = 100;
+  static const int t_gn_2 = 125;
+  static const int t_gn = t_gn_1 + t_gn_2;
   static const int temp_gn = 100;
 
   static double dNg_over_dt_c[t_gn + 2][temp_gn + 1][HQener_gn + 1];
@@ -184,10 +186,13 @@ private:
   static double max_dNgfnc_g[t_gn + 2][temp_gn + 1][HQener_gn + 1];
 
   const double HQener_max = 1000.0;
-  const double t_max = 15.0;
+  const double t_max_1 = 20.0;
+  const double t_max_2 = 270.0;
+  const double t_max = t_max_2;
   const double temp_max = 0.65;
   const double temp_min = 0.15;
-  double delta_tg = t_max / t_gn;
+  double delta_tg_1 = t_max_1 / t_gn_1;
+  double delta_tg_2 = (t_max_2 - t_max_1) / t_gn_2;
   double delta_temp = (temp_max - temp_min) / temp_gn;
   double delta_HQener = HQener_max / HQener_gn;
 
