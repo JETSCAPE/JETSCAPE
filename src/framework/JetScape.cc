@@ -910,7 +910,8 @@ void JetScape::Exec() {
           for (auto t : vTask)
           {
             if (std::dynamic_pointer_cast<JetScapeModuleBase>(t.lock()))
-              threads.push_back(thread(&JetScapeModuleBase::CalculateTime, dynamic_pointer_cast<JetScapeModuleBase>(t.lock())));
+              //threads.push_back(thread(&JetScapeModuleBase::CalculateTime, dynamic_pointer_cast<JetScapeModuleBase>(t.lock())));
+              std::dynamic_pointer_cast<JetScapeModuleBase>(t.lock())->CalculateTime();
           }
 
           for (auto &th : threads)
