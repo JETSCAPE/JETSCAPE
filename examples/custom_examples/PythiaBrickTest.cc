@@ -36,12 +36,14 @@
 #include "LBT.h"
 #include "Martini.h"
 #include "Brick.h"
+#include "BrickTest.h"
 #include "GubserHydro.h"
 #include "PythiaGun.h"
 #include "HadronizationManager.h"
 #include "Hadronization.h"
 #include "ColoredHadronization.h"
 #include "ColorlessHadronization.h"
+#include "CascadeTest.h"
 
 #include "MainClock.h"
 #include "ModuleClock.h"
@@ -62,11 +64,15 @@ class HistTest : public JetScapeModuleBase
 {
   public:
 
-  HistTest() : JetScapeModuleBase() {};
+  HistTest() : JetScapeModuleBase() {SetId("HistTest");}
+
+  //virtual void InitPerEvent() {QueryHistory::Instance()->PrintTaskMap();}
 
   virtual void ExecTime()
   {
     
+    if (GetMainClock()->GetCurrentTime()<GetMainClock()->GetDeltaT()) QueryHistory::Instance()->PrintTaskMap();
+
     vector<any> eLossHistories = QueryHistory::Instance()->GetHistoryFromModules("JetEnergyLoss");
    
     if (GetMainClock()->GetCurrentTime()<2) {
@@ -116,7 +122,7 @@ int main(int argc, char** argv)
   //mClock->SetTimeRefFrameId("SpaceTime");
 
   // clocks here are defaulted for testing, clocks can costumized via inhererting from the MainClock/ModuleClock base classes ...
-  auto mClock = make_shared<MainClock>("SpaceTime",0,20,0.1); // JP: make consistent with reading from XML in init phase ...
+  auto mClock = make_shared<MainClock>("SpaceTime",0,5,0.1); // JP: make consistent with reading from XML in init phase ...
   auto mModuleClock = make_shared<ModuleClock>(); 
   mModuleClock->SetTimeRefFrameId("SpaceTime * 2");
 
@@ -151,10 +157,14 @@ int main(int argc, char** argv)
   auto pythiaGun= make_shared<PythiaGun> ();
   auto hydro = make_shared<Brick> ();
 
+  auto hydroTest = make_shared<BrickTest> (); 
+  hydroTest->SetMultiThread(true); 
+  hydroTest->SetActive(false);
+
   jetscape->Add(trento);
   jetscape->Add(pythiaGun);
-  jetscape->Add(hydro);
-
+  //jetscape->Add(hydro);
+  jetscape->Add(hydroTest);
 
   // Energy loss
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
@@ -184,10 +194,15 @@ int main(int argc, char** argv)
   jlossmanager->Add(jloss);
   jetscape->Add(jlossmanager);
 
+  auto cascadeTest = make_shared<CascadeTest> ();  
+  cascadeTest->SetMultiThread(true); 
+  cascadeTest->SetActive(false);
+  jetscape->Add(cascadeTest);
+
   //Test task for access of History via QueryHistory instance and use any data-type for generic access via JetScapeModuleBase::GetHistory()
   auto histTest = make_shared<HistTest>();
   histTest->SetActive(false); // to be executed per time step
-  jetscape->Add(histTest);
+  //jetscape->Add(histTest);
   
   // JP: Leave out for now for testing clock(s) ... has to be updated accordingly ... (see JetEnergyLossManager as an example ...)
   // Hadronization

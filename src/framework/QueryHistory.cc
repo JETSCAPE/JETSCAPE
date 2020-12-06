@@ -21,26 +21,26 @@ QueryHistory *QueryHistory::Instance() {
 
 any QueryHistory::GetHistoryFromModule(string mName)
 {
-	//JP: TO be implement and or only use the FromMpdules ...
-	return 0;
+  //JP: TO be implement and or only use the FromMpdules ...
+  return 0;
 }
 
 vector<any> QueryHistory::GetHistoryFromModules(string mName)
 {
-	int num = taskMap.count(mName);
-	//DEBUG:
-	//cout<<"--> "<<num<<endl;
-	vector<any> mHistories;
-	auto it = taskMap.equal_range(mName);
-	
-  	for (auto itr = it.first; itr != it.second; ++itr) 
-  	{
-  		//JP: maybe change JetSccapeTask -> JetScapeModuleBase in header to avoid this dynamic casting etc to be followed up ...
-  		if (std::dynamic_pointer_cast<JetScapeModuleBase>(itr->second.lock()))
-  			mHistories.push_back(std::dynamic_pointer_cast<JetScapeModuleBase>(itr->second.lock())->GetHistory());
-  	}
+  int num = taskMap.count(mName);
+  //DEBUG:
+  //cout<<"--> "<<num<<endl;
+  vector<any> mHistories;
+  auto it = taskMap.equal_range(mName);
+  
+  for (auto itr = it.first; itr != it.second; ++itr) 
+  {
+    //JP: maybe change JetSccapeTask -> JetScapeModuleBase in header to avoid this dynamic casting etc to be followed up ...
+    if (std::dynamic_pointer_cast<JetScapeModuleBase>(itr->second.lock()))
+    	mHistories.push_back(std::dynamic_pointer_cast<JetScapeModuleBase>(itr->second.lock())->GetHistory());
+  }
 
-	return mHistories;
+  return mHistories;
 }
 
 void QueryHistory::UpdateTaskMap()
@@ -56,26 +56,26 @@ auto mt = main_task.lock();
 if (mt) {
 
 for (auto it : mt->GetTaskList())
-	{
+    {
 
-	//JSINFO << it->GetId();	
-	taskMap.emplace(it->GetId(), it);
+    //JSINFO << it->GetId();	
+    taskMap.emplace(it->GetId(), it);
 
-	for (auto it2 : it->GetTaskList()) 
-		{
-  			//JSINFO  << " " << it2->GetId() ;
-  			taskMap.emplace(it2->GetId(), it2);
-  		}
-  	}
+    for (auto it2 : it->GetTaskList()) 
+    	{
+  	//JSINFO  << " " << it2->GetId() ;
+  	taskMap.emplace(it2->GetId(), it2);
+    	}
+    }
   }
 }	
 
 void QueryHistory::PrintTaskMap()
 {
-	JSINFO<< "QueryHistory::PrintTaskMap()";
+  JSINFO<< "QueryHistory::PrintTaskMap()";
 
-	for (auto& x: taskMap)
-    	JSINFO << " " << x.first << ": " << x.second.lock().get();
+  for (auto& x: taskMap)
+    JSINFO << " " << x.first << ":\t " << x.second.lock().get()<<"\t active = "<<x.second.lock()->GetActive()<<"\t multiThread = "<<x.second.lock()->GetMultiThread();
 }
 
 void QueryHistory::PrintTasks()

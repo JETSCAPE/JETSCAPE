@@ -153,11 +153,16 @@ public:
     return JetScapeXML::Instance()->GetElementDouble(path, isRequired);
   }
 
+  //bool GetMultiThread() {return multiThread;}
+
+  //void SetMultiThread(bool m_multiThread) {multiThread = m_multiThread;}
+
 private:
   std::string xml_master_file_name;
   std::string xml_user_file_name;
   static int current_event;
   shared_ptr<std::mt19937> mt19937_generator_;
+  //bool multiThread = false;
 };
 
 /**

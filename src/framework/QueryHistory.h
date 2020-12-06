@@ -44,29 +44,32 @@ class QueryHistory
 {
   public:
 
-  	static QueryHistory *Instance();
-  	void AddMainTask(std::shared_ptr<JetScapeTask> m_main_task) {main_task = m_main_task;}
-  	void UpdateTaskMap();
-  	void PrintTasks();
-  	void PrintTaskMap();
+    static QueryHistory *Instance();
+    
+    void AddMainTask(std::shared_ptr<JetScapeTask> m_main_task) {main_task = m_main_task;}
+    void UpdateTaskMap();
+    void PrintTasks();
+    void PrintTaskMap();
 
-  	//JP: same can be done with variant if all datatypes are know
-  	//and put into the varaint definition --> elevated to framework like data types
-  	//maybe not ideal, to be discussed ...
-  	any GetHistoryFromModule(string mName);
+    std::unordered_multimap<std::string,std::weak_ptr<JetScapeTask> > GetTaskMap() {return taskMap;}
 
-  	//JP: maybe use as standard only to allow for multipe modules like in JetEnhergyLoss ...
-  	vector<any> GetHistoryFromModules(string mName);
+    //JP: same can be done with variant if all datatypes are know
+    //and put into the varaint definition --> elevated to framework like data types
+    //maybe not ideal, to be discussed ...
+    any GetHistoryFromModule(string mName);
+
+    //JP: maybe use as standard only to allow for multipe modules like in JetEnhergyLoss ...
+    vector<any> GetHistoryFromModules(string mName);
 
   private:
 
-  	QueryHistory(){};
-  	QueryHistory(QueryHistory const &){};
-  	static QueryHistory *m_pInstance;
+    QueryHistory(){};
+    QueryHistory(QueryHistory const &){};
+    static QueryHistory *m_pInstance;
 
-  	std::unordered_multimap<std::string,std::weak_ptr<JetScapeTask> > taskMap;
+    std::unordered_multimap<std::string,std::weak_ptr<JetScapeTask> > taskMap;
 
-  	std::weak_ptr<JetScapeTask> main_task;
+    std::weak_ptr<JetScapeTask> main_task;
 
 };
 

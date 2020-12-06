@@ -193,12 +193,18 @@ public:
    */
   void SetMutex(shared_ptr<JetScapeModuleMutex> m_mutex) { mutex = m_mutex; }
 
+  bool GetMultiThread() {return multiThread;}
+
+  void SetMultiThread(bool m_multiThread) {multiThread = m_multiThread;}
+
 private:
   // can be made sortabele to put in correct oder or via xml file ...
   vector<shared_ptr<JetScapeTask>> tasks;
   //list<shared_ptr<JetScapeTask>> tasks; // list vs vector any advantage of list?
 
   bool active_exec;
+  bool multiThread = false;
+  
   string id;
   // if for example a search rather position ... (or always sort with predefined order!?)
 

@@ -217,7 +217,7 @@ void JetEnergyLossManager::Exec() {
 
 void JetEnergyLossManager::CalculateTime()
 {
-  VERBOSE(1) << "Calculate JetEnergyLoss Manager per timestep ... Current Time = "<<GetModuleCurrentTime();
+  VERBOSE(3) << "Calculate JetEnergyLoss Manager per timestep ... Current Time = "<<GetModuleCurrentTime();
   JSDEBUG << "Task Id = " << this_thread::get_id();
 
   JetScapeModuleBase::CalculateTimeTasks();
@@ -225,7 +225,7 @@ void JetEnergyLossManager::CalculateTime()
 
 void JetEnergyLossManager::ExecTime()
 {
-  VERBOSE(1) << "Execute JetEnergyLoss Manager per timestep ... Current Time = "<<GetModuleCurrentTime();
+  VERBOSE(2) << "Execute JetEnergyLoss Manager per timestep ... Current Time = "<<GetModuleCurrentTime()<<" Thread Id = "<<this_thread::get_id();
   JSDEBUG << "Task Id = " << this_thread::get_id();
 
   JetScapeModuleBase::ExecTimeTasks();
@@ -233,7 +233,7 @@ void JetEnergyLossManager::ExecTime()
 
 void JetEnergyLossManager::InitPerEvent()
 {
-  VERBOSE(1) << "InitPerEvent JetEnergyLoss Manager when used per timestep ...";
+  VERBOSE(3) << "InitPerEvent JetEnergyLoss Manager when used per timestep ...";
   JSDEBUG << "Task Id = " << this_thread::get_id();
 
   MakeCopies();
@@ -243,7 +243,7 @@ void JetEnergyLossManager::InitPerEvent()
 
 void JetEnergyLossManager::FinishPerEvent()
 {
-  VERBOSE(1) << "FinishPerEvent JetEnergyLoss Manager when used per timestep ...";
+  VERBOSE(3) << "FinishPerEvent JetEnergyLoss Manager when used per timestep ...";
   JSDEBUG << "Task Id = " << this_thread::get_id();
   
   JetScapeModuleBase::FinishPerEventTasks();
