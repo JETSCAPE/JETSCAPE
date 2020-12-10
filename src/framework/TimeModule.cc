@@ -25,7 +25,15 @@ void TimeModule::ClockInfo()
     	mainClock->Info();
     JSINFO<<"Current Module Time = "<<GetModuleCurrentTime();
 }
-
+    
+void TimeModule::AddMainClock(shared_ptr<MainClock> m_mainClock)
+{
+    if(mainClock != nullptr)
+	JSWARN<<"Trying to add more than one main clock ... overwriting first main clock...";
+    mainClock = m_mainClock;
+    use_clock = true;
+}
+    
 double TimeModule::GetModuleDeltaT()
 {
     double dT=-99.0;
