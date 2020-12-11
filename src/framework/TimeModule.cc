@@ -29,8 +29,9 @@ void TimeModule::ClockInfo()
 void TimeModule::AddMainClock(shared_ptr<MainClock> m_mainClock)
 {
     if(mainClock != nullptr)
-	JSWARN<<"Trying to add more than one main clock ... overwriting first main clock...";
-    mainClock = m_mainClock;
+	JSWARN<<"Trying to add more than one main clock - will keep first one only ...";
+    else
+	mainClock = m_mainClock;
     use_clock = true;
 }
     
