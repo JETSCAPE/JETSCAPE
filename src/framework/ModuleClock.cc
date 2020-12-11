@@ -30,15 +30,15 @@ void ModuleClock::Transform(string mainClockRef, double mainClockCurrentTime)
 
 void ModuleClock::Transform(std::weak_ptr<MainClock> mainClock)
 {
-    auto p = mainClock.lock();
-    if(p)
-    {
-	currentModuleTime = p->GetCurrentTime() * 2.;
-	moduleDeltaT = p->GetDeltaT() * 2.;
-    }
-    else
-    {JSWARN<<"Trying to transform module clock with no main clock ... exiting ..."; exit(-1);}
-    
+	auto p = mainClock.lock();
+	if (p)
+	{
+		currentModuleTime = p->GetCurrentTime() * 2.;
+		moduleDeltaT = p->GetDeltaT() * 2.;
+	}
+	else
+	{JSWARN << "Trying to transform module clock with no main clock ... exiting ..."; exit(-1);}
+
 }
     
 }

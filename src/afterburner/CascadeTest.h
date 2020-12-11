@@ -8,6 +8,8 @@ using namespace Jetscape;
 class CascadeTest : public Afterburner {
 private:
   
+  std::vector<std::shared_ptr<Hadron>> hList;
+
 public:
 
   CascadeTest() {SetId("CascadeTest");};

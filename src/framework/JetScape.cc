@@ -865,7 +865,7 @@ void JetScape::Exec() {
 
         // quick and dirty here ... (mainly for curiosity ...) and only for CalculateTime assuming that in any case this should take the longest and/or avoiding issues 
         // via data exchanges in executive part ... as said, just a first quick look at how things could work out .,,.
-        bool multiTask = false;   
+        bool multiTask = true;   
 
         //JP: silly to do everything per time step, everything with task map and task vectors could be done in InitPerTimeStep ...
         if (multiTask) {
