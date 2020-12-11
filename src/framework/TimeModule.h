@@ -41,7 +41,7 @@ public:
     void AddModuleClock(shared_ptr<ModuleClock> m_mClock) {mClock = m_mClock;}
     shared_ptr<ModuleClock> GetModuleClock() const {return mClock;}
 
-    void AddMainClock(shared_ptr<MainClock> m_mainClock) {mainClock = m_mainClock; use_clock = true;}
+    void AddMainClock(shared_ptr<MainClock> m_mainClock);
     static shared_ptr<MainClock> GetMainClock() {return mainClock;}
 
     static bool ClockUsed() { return use_clock; }
