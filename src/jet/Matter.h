@@ -92,7 +92,7 @@ public:
   double generate_kt(double local_qhat, double dzeta);
 
   int flag_useHybridHad = 0;
-  int run_alphas = 1; //flag to enable(1) or disable(0) running alphas in HTL q-hat
+
 
   double qhat = 0.0;
   double ehat = 0.0;
@@ -146,6 +146,12 @@ public:
   // flag to make sure initialize only once
   static bool flag_init;
 
+
+  //qhat related functions
+  int QhatParametrizationType=-1;
+  double GeneralQhatFunction(int QhatParametrizationType, double Temperature, double EntropyDensity, double FixAlphas, double Qhat0, double E, double muSquare);
+  double RunningAlphaS(double muSquare);
+  
   //SC: for elastic scattering
   void flavor(int &CT, int &KATT0, int &KATT2, int &KATT3,
               unsigned int &max_color, unsigned int &color0,

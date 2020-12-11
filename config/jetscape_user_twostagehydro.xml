@@ -70,8 +70,15 @@
         <broadening_on> 0 </broadening_on>
         <brick_med> 0 </brick_med>
         <hydro_Tc> 0.15 </hydro_Tc>
-        <qhat0> -2.0 </qhat0>
-        <alphas> 0.25 </alphas>
+	<!-- Pick a qhat formula -->
+	<!-- Type=0 : HTL Formula with both alpha_s fixed  -->
+	<!-- Type=1 : HTL Formula with one running alpha_s and one fixed alpha_s  -->
+	<!-- Type=2 : Constant q-hat; qhat=qhat0   -->
+	<!-- Type=3 : qhat=qhat0*T^3  -->
+	<!-- Type=4 : qhat=qhat0*s; s=entropy density  -->
+	<QhatParametrizationType> 1 </QhatParametrizationType>
+	<qhat0> -2.0 </qhat0>  <!-- If Type=0 or 1 set qhat0 as negative  -->
+	<alphas> 0.25 </alphas>
       </Matter>
 
       <Lbt>
@@ -81,6 +88,7 @@
         <only_leading> 0 </only_leading>
         <hydro_Tc> 0.16 </hydro_Tc>
         <alphas> 0.25 </alphas>
+	<run_alphas>1</run_alphas>   <!-- 0 for fixed alpha_s and 1 for running alpha_s -->
       </Lbt>
     <AddLiquefier> true </AddLiquefier>
   </Eloss>

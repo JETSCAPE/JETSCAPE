@@ -123,7 +123,8 @@ void Matter::Init() {
   Q00 = GetXMLElementDouble({"Eloss", "Matter", "Q0"});
   T0 = GetXMLElementDouble({"Eloss", "Matter", "T0"});
   alphas = GetXMLElementDouble({"Eloss", "Matter", "alphas"});
-  run_alphas = GetXMLElementInt({"Eloss", "Matter", "run_alphas"});
+  //run_alphas = GetXMLElementInt({"Eloss", "Matter", "run_alphas"});
+  QhatParametrizationType=GetXMLElementInt({"Eloss", "Matter", "QhatParametrizationType"});
   hydro_Tc = GetXMLElementDouble({"Eloss", "Matter", "hydro_Tc"});
   brick_length = GetXMLElementDouble({"Eloss", "Matter", "brick_length"});
   vir_factor = GetXMLElementDouble({"Eloss", "Matter", "vir_factor"});
@@ -148,7 +149,7 @@ void Matter::Init() {
   JSINFO << MAGENTA << "Q0: " << Q00 << " vir_factor: " << vir_factor
          << "  qhat0: " << qhat0 << " alphas: " << alphas
          << " hydro_Tc: " << hydro_Tc << " brick_length: " << brick_length;
-  if(run_alphas==1){ JSINFO <<"Running alphas will be used as 4*pi/(9.0*log(2*enerLoc*tempLoc/0.04))"; }
+  if(QhatParametrizationType !=0){ JSINFO <<"Running alphas will be used as 4*pi/(9.0*log(2*enerLoc*tempLoc/0.04))"; }
 
   if (recoil_on && !flag_init) {
     JSINFO << MAGENTA
@@ -765,9 +766,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
                 gammaLoc *
                 (1.0 - (initVx * vxLoc + initVy * vyLoc + initVz * vzLoc));
 
-	    if(run_alphas==1){ alphas= 4*pi/(9.0*log(2*enerLoc*tempLoc/0.04));}
+	    //if(run_alphas==1){ alphas= 4*pi/(9.0*log(2*enerLoc*tempLoc/0.04));}
 
-            if (qhat0 < 0.0) { // calculate qhat with alphas
+	    /*            if (qhat0 < 0.0) { // calculate qhat with alphas
               muD2 = 6.0 * pi * alphas * tempLoc * tempLoc;
               if (enerLoc > 2.0 * pi * tempLoc)
                 qhatLoc = Ca * 50.4864 / pi * pow(alphas, 2) * pow(tempLoc, 3) *
@@ -782,7 +783,14 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
                 qhatLoc = qhat0 * 0.1973;
               else
                 qhatLoc = qhat0 / 96.0 * sdLoc * 0.1973;
-            }
+		}*/
+
+	    //GeneralQhatFunction(int QhatParametrizationType, double Temperature, double EntropyDensity, double FixAlphas,  double Qhat0, double E, double muSquare)
+	    double Scale=2*enerLoc*tempLoc;
+	    if (enerLoc < 2.0*pi*tempLoc){Scale=2*pi*tempLoc;}
+
+	    qhatLoc= GeneralQhatFunction(QhatParametrizationType, tempLoc, sdLoc, alphas, qhat0, enerLoc, Scale);
+
           } else { // outside the QGP medium
             continue;
           }
@@ -793,18 +801,27 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
           else
             dt_lrf = (time - el_time) * flowFactor;
 
-	  if(run_alphas==1){ alphas= 4*pi/(9.0*log(2*enerLoc*tempLoc/0.04));}
+	  //if(run_alphas==1){ alphas= 4*pi/(9.0*log(2*enerLoc*tempLoc/0.04));}
 
           // solve alphas
-          if (qhat0 < 0.0)
+          if (qhat0 < 0.0 || QhatParametrizationType==0 || QhatParametrizationType==1 )
             soln_alphas = alphas;
           else
             soln_alphas = solve_alphas(qhatLoc, enerLoc, tempLoc);
-
+          
           // Calculate the proability of elastic scattering in time delta t in fluid rest frame
           muD2 = 6.0 * pi * soln_alphas * tempLoc * tempLoc;
-          prob_el = 42.0 * zeta3 * el_CR * soln_alphas * tempLoc / 6.0 / pi /
+          prob_el = 42.0 * zeta3 * el_CR  * tempLoc / 6.0 / pi /
                     pi * dt_lrf / 0.1973;
+	
+	  double ScaleNet=2*enerLoc*tempLoc;
+	  if (enerLoc < 2.0*pi*tempLoc){ScaleNet=2*pi*tempLoc;}
+
+	  if(QhatParametrizationType != 0)
+	    {
+	      prob_el=prob_el*RunningAlphaS(ScaleNet);
+	    }
+	  else prob_el=prob_el*soln_alphas;
 
           el_rand = ZeroOneDistribution(*GetMt19937Generator());
 
@@ -3816,9 +3833,9 @@ double Matter::fillQhatTab(double y) {
       flowFactor =
           gammaLoc * (1.0 - (initVx * vxLoc + initVy * vyLoc + initVz * vzLoc));
 
-      if(run_alphas==1){ alphas= 4*pi/(9.0*log(2*initEner*tempLoc/0.04));}
+      //if(run_alphas==1){ alphas= 4*pi/(9.0*log(2*initEner*tempLoc/0.04));}
 
-      if (qhat0 < 0.0) {
+      /* if (qhat0 < 0.0) {
         // calculate qhat with alphas
         double muD2 = 6.0 * pi * alphas * tempLoc * tempLoc;
         // if(initEner > pi*tempLoc) qhatLoc = Ca*alphas*muD2*tempLoc*log(6.0*initEner*tempLoc/muD2);
@@ -3840,7 +3857,15 @@ double Matter::fillQhatTab(double y) {
           qhatLoc = qhat0 / 96.0 * sdLoc * 0.1973 *
                     flowFactor; // qhat0 at s = 96fm^-3
         }
-      }
+      }*/
+
+      // GeneralQhatFunction(int QhatParametrizationType, double Temperature, double EntropyDensity, double FixAlphas,  double Qhat0, double E, double muSquare);
+      double Scale=2*initEner*tempLoc;
+      if (initEner < 2.0*pi*tempLoc){Scale=2*pi*tempLoc;}
+
+      qhatLoc= GeneralQhatFunction(QhatParametrizationType, tempLoc, sdLoc, alphas, qhat0, initEner, Scale);      
+      qhatLoc = qhatLoc * flowFactor;
+
       //    cout << "check qhat --  ener, T, qhat: " << initEner << "  " << tempLoc << "  " << qhatLoc << endl;
     } else { // outside the QGP medium
       qhatLoc = 0.0;
@@ -3864,6 +3889,53 @@ double Matter::fillQhatTab(double y) {
   //return(lastLength*sqrt(2.0)*5.0); // light cone + GeV unit
   return ((2.0 * lastLength + initRdotV - initR0) / sqrt(2.0) *
           5.0); // light cone + GeV unit
+}
+
+//////////////////////////////////General Function of q-hat//////////////////////////////////
+double Matter::GeneralQhatFunction(int QhatParametrizationType, double Temperature, double EntropyDensity, double FixAlphas, double Qhat0, double E, double muSquare)
+{
+  int ActiveFlavor=3; double qhat=0.0;
+  double DebyeMassSquare = FixAlphas*4.0*pi*pow(Temperature,2.0)*(3.0 + (ActiveFlavor/2.0))/3.0; 
+  switch(QhatParametrizationType)
+    {
+      //HTL formula with all alpha_s as constant and controlled by XML
+    case 0:
+      qhat = (Ca*50.4864/pi)*pow(FixAlphas,2)*pow(Temperature,3)*log(2.0*E*Temperature/DebyeMassSquare); 
+      break;
+      
+      //alpha_s at scale muS=2ET and second alpha_s at muS=DebyeMassSquare is fit parameter
+    case 1:	
+      qhat = (Ca*50.4864/pi)*RunningAlphaS(muSquare)*FixAlphas*pow(Temperature,3)*log(2.0*E*Temperature/DebyeMassSquare);
+      break;
+      
+      //Constant q-hat for brick study
+    case 2:
+    qhat = Qhat0*0.1973;
+    break;
+
+    //Scale with T^3
+    case 3:
+    qhat = Qhat0*pow(Temperature/0.3,3)*0.1973; // w.r.t T=0.3 GeV
+    break;
+  
+    //Scale with entropy density
+    case 4:
+    qhat = Qhat0*(EntropyDensity/96.0)*0.1973; // w.r.t S0=96 fm^-3
+    break;
+    //PDF-Scale dependent q-hat  
+
+    default:      
+      JSINFO<<"q-hat Parametrization "<<QhatParametrizationType<<" is not used, qhat will be set to zero";    
+    }
+  return qhat;
+}
+
+/////////////////// Running alphas///////////////////
+double Matter::RunningAlphaS(double muSquare)
+{
+  int ActiveFlavor=3;
+  double ans = 4.0*pi/( (11.0-(2.0*ActiveFlavor/3.0))*log(muSquare/(Lambda_QCD*Lambda_QCD)) );
+  return ans;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
