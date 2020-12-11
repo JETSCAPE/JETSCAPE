@@ -3894,7 +3894,7 @@ double Matter::fillQhatTab(double y) {
 //////////////////////////////////General Function of q-hat//////////////////////////////////
 double Matter::GeneralQhatFunction(int QhatParametrizationType, double Temperature, double EntropyDensity, double FixAlphas, double Qhat0, double E, double muSquare)
 {
-  int ActiveFlavor=3; double qhat=0.0;
+  int ActiveFlavor=3; qhat=0.0;
   double DebyeMassSquare = FixAlphas*4.0*pi*pow(Temperature,2.0)*(3.0 + (ActiveFlavor/2.0))/3.0; 
   switch(QhatParametrizationType)
     {
