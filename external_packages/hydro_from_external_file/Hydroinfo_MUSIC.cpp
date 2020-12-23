@@ -21,24 +21,18 @@ using namespace std;
 
 Hydroinfo_MUSIC::Hydroinfo_MUSIC() {
     hbarC = 0.19733;
-    lattice_2D = new vector<fluidCell_2D>;
-    lattice_3D = new vector<fluidCell_3D>;
-    lattice_3D_new = new vector<fluidCell_3D_new>;
 }
 
 Hydroinfo_MUSIC::~Hydroinfo_MUSIC() {
     clean_hydro_event();
-    delete lattice_2D;
-    delete lattice_3D;
-    delete lattice_3D_new;
 }
 
 void Hydroinfo_MUSIC::clean_hydro_event() {
     if (boost_invariant) {
-        lattice_2D->clear();
+        lattice_2D.clear();
     } else {
-        lattice_3D->clear();
-        lattice_3D_new->clear();
+        lattice_3D.clear();
+        lattice_3D_ideal.clear();
     }
 }
 
@@ -49,9 +43,9 @@ void Hydroinfo_MUSIC::readHydroData(int whichHydro, int nskip_tau_in,
                                     string hydro_bulk_filename_in) {
     // all hydro data is stored in tau steps (not t)
     // evolution is converted to tau when accessing the hydro data
-    lattice_2D->clear();
-    lattice_3D->clear();
-    lattice_3D_new->clear();
+    lattice_2D.clear();
+    lattice_3D.clear();
+    lattice_3D_ideal.clear();
 
     input_filename = input_filename_in;
     hydro_ideal_filename = hydro_ideal_filename_in;
@@ -59,77 +53,72 @@ void Hydroinfo_MUSIC::readHydroData(int whichHydro, int nskip_tau_in,
     hydro_bulk_filename = hydro_bulk_filename_in;
 
     // read in setups of the hydro simulation
-    ostringstream config_file;
-    config_file << input_filename;
-    ifstream configuration;
-    configuration.open(config_file.str().c_str(), ios::in);
-    if (!configuration) {
-        cerr << "[Hydroinfo_MUSIC::readHydroData]: ERROR: "
-             << "Unable to open file: " << config_file.str() << endl;
-        exit(1);
-    }
-    string temp1;
-    string temp_name;
-    while (!configuration.eof()) {
-        getline(configuration, temp1);
-        stringstream ss(temp1);
-        ss >> temp_name;
-
-        // read in grid information
-        if (temp_name == "Initial_time_tau_0") {
-            ss >> hydroTau0;
-        } else if (temp_name == "Delta_Tau") {
-            ss >> hydroDtau;
-        } else if (temp_name == "X_grid_size_in_fm") {
-            double temp;
-            ss >> temp;
-            hydroXmax = temp/2.;
-        } else if (temp_name == "Grid_size_in_x") {
-            ss >> ixmax;
-        } else if (temp_name == "Eta_grid_size") {
-            double temp;
-            ss >> temp;
-            hydro_eta_max = temp/2.;
-        } else if (temp_name == "Grid_size_in_eta") {
-            ss >> ietamax;
-        } else if (temp_name == "output_evolution_every_N_timesteps") {
-            ss >> nskip_tau;
-        } else if (temp_name == "output_evolution_every_N_x") {
-            ss >> nskip_x;
-        } else if (temp_name == "output_evolution_every_N_eta") {
-            ss >> nskip_eta;
-        }
-        // read in additioinal information
-        if (temp_name == "Include_Rhob_Yes_1_No_0") {
-            ss >> turn_on_rhob;
-        } else if (temp_name == "Include_Shear_Visc_Yes_1_No_0") {
-            ss >> turn_on_shear;
-        } else if (temp_name == "Include_Bulk_Visc_Yes_1_No_0") {
-            ss >> turn_on_bulk;
-        } else if (temp_name == "turn_on_baryon_diffusion") {
-            ss >> turn_on_diff;
-        }
-    }
-    configuration.close();
-
-    hydroDx = 2.*hydroXmax/(ixmax - 1.);
-    hydroDeta = 2.*hydro_eta_max/(static_cast<double>(ietamax));
-
     hydroWhichHydro = whichHydro;
-    use_tau_eta_coordinate = 1;
+    if (hydroWhichHydro < 10) {
+        ostringstream config_file;
+        config_file << input_filename;
+        ifstream configuration;
+        configuration.open(config_file.str().c_str(), ios::in);
+        if (!configuration) {
+            cerr << "[Hydroinfo_MUSIC::readHydroData]: ERROR: "
+                 << "Unable to open file: " << config_file.str() << endl;
+            exit(1);
+        }
+        string temp1;
+        string temp_name;
+        while (!configuration.eof()) {
+            getline(configuration, temp1);
+            stringstream ss(temp1);
+            ss >> temp_name;
 
+            // read in grid information
+            if (temp_name == "Initial_time_tau_0") {
+                ss >> hydroTau0;
+            } else if (temp_name == "Delta_Tau") {
+                ss >> hydroDtau;
+            } else if (temp_name == "X_grid_size_in_fm") {
+                double temp;
+                ss >> temp;
+                hydroXmax = temp/2.;
+            } else if (temp_name == "Grid_size_in_x") {
+                ss >> ixmax;
+            } else if (temp_name == "Eta_grid_size") {
+                double temp;
+                ss >> temp;
+                hydro_eta_max = temp/2.;
+            } else if (temp_name == "Grid_size_in_eta") {
+                ss >> ietamax;
+            } else if (temp_name == "output_evolution_every_N_timesteps") {
+                ss >> nskip_tau;
+            } else if (temp_name == "output_evolution_every_N_x") {
+                ss >> nskip_x;
+            } else if (temp_name == "output_evolution_every_N_eta") {
+                ss >> nskip_eta;
+            }
+            // read in additioinal information
+            if (temp_name == "Include_Rhob_Yes_1_No_0") {
+                ss >> turn_on_rhob;
+            } else if (temp_name == "Include_Shear_Visc_Yes_1_No_0") {
+                ss >> turn_on_shear;
+            } else if (temp_name == "Include_Bulk_Visc_Yes_1_No_0") {
+                ss >> turn_on_bulk;
+            } else if (temp_name == "turn_on_baryon_diffusion") {
+                ss >> turn_on_diff;
+            }
+        }
+        configuration.close();
+        hydroDx = 2.*hydroXmax/(ixmax - 1.);
+        hydroDeta = 2.*hydro_eta_max/(static_cast<double>(ietamax));
+    }
+
+    use_tau_eta_coordinate = 1;
     if (use_tau_eta_coordinate == 0) {
         cout << "Hydroinfo_MUSIC:: Warning hydro grid is set to "
              << "cartesian coordinates, please make sure this is correct!"
              << endl;
     }
 
-    if (whichHydro != 6 && whichHydro != 8 && whichHydro != 9
-            && whichHydro !=10) {
-        cout << "Hydroinfo_MUSIC:: This option is obsolete! whichHydro = "
-             << whichHydro << endl;
-        exit(1);
-    } else if (whichHydro == 6) {
+    if (whichHydro == 6) {
         // 3+1D MUSIC hydro (Schenke, Jeon, Gale)
         cout << "Using 3+1D Jeon Schenke hydro reading data ..." << endl;
         boost_invariant = false;
@@ -164,7 +153,7 @@ void Hydroinfo_MUSIC::readHydroData(int whichHydro, int nskip_tau_in,
             newCell.vy = vy;
             newCell.vz = vz;
 
-            lattice_3D->push_back(newCell);
+            lattice_3D.push_back(newCell);
             if (ik%50000 == 0)
                 cout << "o" << flush;
         }
@@ -269,7 +258,7 @@ void Hydroinfo_MUSIC::readHydroData(int whichHydro, int nskip_tau_in,
                 status_pi += std::fread(&pi22, size, 1, fin1);
                 status_pi += std::fread(&pi23, size, 1, fin1);
                 status_pi += std::fread(&pi33, size, 1, fin1);
-            
+
                 if (status_pi != 10) {
                     cout << "Error:Hydroinfo_MUSIC::readHydroData: "
                          << "Wmunu file does not have the same number of "
@@ -283,7 +272,7 @@ void Hydroinfo_MUSIC::readHydroData(int whichHydro, int nskip_tau_in,
                 status_bulkPi = std::fread(&bulkPi, size, 1, fin2);
                 status_bulkPi += std::fread(&e_plus_P, size, 1, fin2);
                 status_bulkPi += std::fread(&cs2, size, 1, fin2);
-                
+
                 if (status_bulkPi != 3) {
                     cout << "Error:Hydroinfo_MUSIC::readHydroData: "
                          << "bulkPi file does not have the same number of "
@@ -346,7 +335,7 @@ void Hydroinfo_MUSIC::readHydroData(int whichHydro, int nskip_tau_in,
                 } else {
                     newCell.bulkPi = bulkPi;   // [1/fm^4]
                 }
-                lattice_2D->push_back(newCell);
+                lattice_2D.push_back(newCell);
             }
         }
         std::fclose(fin);
@@ -357,7 +346,7 @@ void Hydroinfo_MUSIC::readHydroData(int whichHydro, int nskip_tau_in,
             std::fclose(fin2);
         }
         cout << endl;
-        cout << "number of fluid cells: " << lattice_2D->size() << endl;
+        cout << "number of fluid cells: " << lattice_2D.size() << endl;
     } else if (whichHydro == 9) {
         // event-by-event (2+1)-d MUSIC hydro
         // the output medium is at middle rapidity
@@ -454,7 +443,7 @@ void Hydroinfo_MUSIC::readHydroData(int whichHydro, int nskip_tau_in,
             ux = vx*gamma;
             uy = vy*gamma;
             ueta = vz*gamma;  // assuming at the eta = 0
-            
+
             int status_pi = 0;
             if (turn_on_shear == 1) {
                 status_pi = std::fread(&pi00, size, 1, fin1);
@@ -467,7 +456,7 @@ void Hydroinfo_MUSIC::readHydroData(int whichHydro, int nskip_tau_in,
                 status_pi += std::fread(&pi22, size, 1, fin1);
                 status_pi += std::fread(&pi23, size, 1, fin1);
                 status_pi += std::fread(&pi33, size, 1, fin1);
-                
+
                 if (status_pi != 10) {
                     cout << "Error:Hydroinfo_MUSIC::readHydroData: "
                          << "Wmunu file does not have the same number of "
@@ -481,7 +470,7 @@ void Hydroinfo_MUSIC::readHydroData(int whichHydro, int nskip_tau_in,
                 status_bulkPi = std::fread(&bulkPi, size, 1, fin2);
                 status_bulkPi += std::fread(&e_plus_P, size, 1, fin2);
                 status_bulkPi += std::fread(&cs2, size, 1, fin2);
-                
+
                 if (status_bulkPi != 3) {
                     cout << "Error:Hydroinfo_MUSIC::readHydroData: "
                          << "bulkPi file does not have the same number of "
@@ -526,7 +515,7 @@ void Hydroinfo_MUSIC::readHydroData(int whichHydro, int nskip_tau_in,
                 } else {
                     newCell.bulkPi = bulkPi;   // [1/fm^4]
                 }
-                lattice_2D->push_back(newCell);
+                lattice_2D.push_back(newCell);
             }
         }
         std::fclose(fin);
@@ -537,16 +526,13 @@ void Hydroinfo_MUSIC::readHydroData(int whichHydro, int nskip_tau_in,
             std::fclose(fin2);
         }
         cout << endl;
-        cout << "number of fluid cells: " << lattice_2D->size() << endl;
+        cout << "number of fluid cells: " << lattice_2D.size() << endl;
     } else if (whichHydro == 10) {
-        // new 3+1D MUSIC hydro (Schenke, Jeon, Gale, Shen)
+        // new 3+1D MUSIC hydro (no regular grid)
         cout << "Using 3+1D new MUSIC hydro reading data ..." << endl;
         boost_invariant = false;
 
-        ixmax = static_cast<int>(2.*hydroXmax/hydroDx + 0.001);
-        ietamax = static_cast<int>(2.*hydro_eta_max/hydroDeta + 0.001);
-
-        // read in temperature, QGP fraction , flow velocity
+        // read in temperature and flow velocity
         // The name of the evolution file: evolution_name
         string evolution_name = hydro_ideal_filename;
         cout << "Evolution file name = " << evolution_name << endl;
@@ -557,87 +543,69 @@ void Hydroinfo_MUSIC::readHydroData(int whichHydro, int nskip_tau_in,
                  << "Unable to open file: " << evolution_name << endl;
             exit(1);
         }
-        
-        int idx[4];
+
+        float header[16];
+        int status = std::fread(&header, sizeof(float), 16, fin);
+        if (status == 0) {
+            cerr << "[Hydroinfo_MUSIC::readHydroData]: ERROR: "
+                 << "Can not read the evolution file header" << endl;
+            exit(1);
+        }
+
+        hydroTau0 = header[0];
+        hydroDtau = header[1];
+        ixmax = static_cast<int>(header[2]);
+        hydroDx = header[3];
+        hydroXmax = std::abs(header[4]);
+        ietamax = static_cast<int>(header[8]);
+        hydroDeta = header[9];
+        hydro_eta_max = std::abs(header[10]);
+        turn_on_rhob = static_cast<int>(header[11]);
+        turn_on_shear = static_cast<int>(header[12]);
+        turn_on_bulk = static_cast<int>(header[13]);
+        turn_on_diff = static_cast<int>(header[14]);
+        const int nVar_per_cell = static_cast<int>(header[15]);
+
+        float cell_info[nVar_per_cell];
+
         int itau_max = 0;
-        double ideal_variables[4];
-        fluidCell_3D_new newCell;
+        fluidCell_3D_ideal zeroCell;
+        zeroCell.itau = 0;
+        zeroCell.ix = 0;
+        zeroCell.iy = 0;
+        zeroCell.ieta = 0;
+        zeroCell.temperature = 0.;
+        zeroCell.ed = 0.;
+        zeroCell.pressure = 0.;
+        zeroCell.ux = 0.;
+        zeroCell.uy = 0.;
+        zeroCell.uz = 0.;
+        lattice_3D_ideal.push_back(zeroCell);
         int ik = 0;
         while (true) {
-            int status = 0;
-            status = std::fread(&idx, sizeof(int), 4, fin);
+            status = 0;
+            status = std::fread(&cell_info, sizeof(float), nVar_per_cell, fin);
             if (status == 0) break;
-            
-            status = std::fread(&ideal_variables, sizeof(double), 4, fin);
-            if (status == 0) {
+            if (status != nVar_per_cell) {
                 cerr << "[Hydroinfo_MUSIC::readHydroData]: ERROR: "
-                     << "file format is read in wrong" << endl;
+                     << "the evolution file format is not correct" << endl;
                 exit(1);
             }
 
-            double muB_local = 0.0;
-            if (turn_on_rhob == 1) {
-                status = std::fread(&muB_local, sizeof(double), 1, fin);
-                if (status == 0) {
-                    cerr << "[Hydroinfo_MUSIC::readHydroData]: ERROR: "
-                         << "file format is read in wrong" << endl;
-                    exit(1);
-                }
-            }
-            
-            double Wmunu[5] = {0., 0., 0., 0., 0.};
-            if (turn_on_shear == 1) {
-                status = std::fread(&Wmunu, sizeof(double), 5, fin);
-                if (status == 0) {
-                    cerr << "[Hydroinfo_MUSIC::readHydroData]: ERROR: "
-                         << "file format is read in wrong" << endl;
-                    exit(1);
-                }
-            }
-
-            double pi11 = Wmunu[0];
-            double pi12 = Wmunu[1];
-            double pi13 = Wmunu[2];
-            double pi22 = Wmunu[3];
-            double pi23 = Wmunu[4];
-           
-            double bulkPi;
-            if (turn_on_bulk == 1) {
-                status = std::fread(&bulkPi, sizeof(double), 1, fin);
-                if (status == 0) {
-                    cerr << "[Hydroinfo_MUSIC::readHydroData]: ERROR: "
-                         << "file format is read in wrong" << endl;
-                    exit(1);
-                }
-            }
-
-            double qmu[3] = {0., 0., 0.};
-            if (turn_on_diff == 1) {
-                status = std::fread(&qmu, sizeof(double), 3, fin);
-                if (status == 0) {
-                    cerr << "[Hydroinfo_MUSIC::readHydroData]: ERROR: "
-                         << "file format is read in wrong" << endl;
-                    exit(1);
-                }
-            }
-
-            if (itau_max < idx[0])
-                itau_max = idx[0];
-            newCell.itau = idx[0];
-            newCell.ix = idx[1];
-            newCell.iy = idx[2];
-            newCell.ieta = idx[3];
-            newCell.temperature = ideal_variables[0];
-            newCell.ux = ideal_variables[1];
-            newCell.uy = ideal_variables[2];
-            newCell.ueta = ideal_variables[3];
-            newCell.pi11 = pi11;
-            newCell.pi12 = pi12;
-            newCell.pi13 = pi13;
-            newCell.pi22 = pi22;
-            newCell.pi23 = pi23;
-            newCell.bulkPi = bulkPi;
-            lattice_3D_new->push_back(newCell);
+            if (itau_max < static_cast<int>(cell_info[0]))
+                itau_max = static_cast<int>(cell_info[0]);
+            fluidCell_3D_ideal newCell;
+            newCell.itau = static_cast<int>(cell_info[0]);
+            newCell.ix   = static_cast<int>(cell_info[1]);
+            newCell.iy   = static_cast<int>(cell_info[2]);
+            newCell.ieta = static_cast<int>(cell_info[3]);
+            newCell.temperature = cell_info[6];
+            newCell.ed = cell_info[4];
+            newCell.pressure = cell_info[5];
+            newCell.ux = cell_info[8];
+            newCell.uy = cell_info[9];
+            newCell.uz = cell_info[10];
+            lattice_3D_ideal.push_back(newCell);
             ik++;
             if (ik%50000 == 0)
                 cout << "o" << flush;
@@ -645,7 +613,21 @@ void Hydroinfo_MUSIC::readHydroData(int whichHydro, int nskip_tau_in,
         cout << endl;
         std::fclose(fin);
         itaumax = itau_max;
+        // create the index map
+        long long ncells = (itaumax + 1)*ixmax*ixmax*ietamax;
+        idx_map_.resize(ncells, 0);
+        for (int i = 0; i < lattice_3D_ideal.size(); i++) {
+            const auto cell_i = lattice_3D_ideal[i];
+            int cell_idx = (
+                (  (cell_i.itau*ietamax + cell_i.ieta)*ixmax
+                 + cell_i.iy)*ixmax + cell_i.ix);
+            idx_map_[cell_idx] = i;
+        }
         hydroTauMax = hydroTau0 + hydroDtau*itaumax;
+    } else {
+        cout << "Hydroinfo_MUSIC:: This option is obsolete! whichHydro = "
+             << whichHydro << endl;
+        exit(1);
     }
 
     // One final step for easy automation of MARTINI:
@@ -654,7 +636,7 @@ void Hydroinfo_MUSIC::readHydroData(int whichHydro, int nskip_tau_in,
     if (whichHydro == 6) {
         hydroTauMax = (
             hydroTau0 + hydroDtau*static_cast<int>(
-                        static_cast<double>(lattice_3D->size())
+                        static_cast<double>(lattice_3D.size())
                         /((2.*hydroXmax/hydroDx+1.)*(2.*hydroXmax/hydroDx+1.)
                         *2.*(hydro_eta_max/hydroDeta))));
         itaumax = static_cast<int>((hydroTauMax-hydroTau0)/hydroDtau+0.001);
@@ -662,7 +644,7 @@ void Hydroinfo_MUSIC::readHydroData(int whichHydro, int nskip_tau_in,
     if (whichHydro == 8 || whichHydro == 9) {
         hydroTauMax = (
             hydroTau0 + hydroDtau*static_cast<int>(
-                        static_cast<double>(lattice_2D->size())
+                        static_cast<double>(lattice_2D.size())
                         /((2.*hydroXmax/hydroDx)*(2.*hydroXmax/hydroDx)) - 1));
         itaumax = static_cast<int>((hydroTauMax - hydroTau0)/hydroDtau);
     }
@@ -676,23 +658,6 @@ void Hydroinfo_MUSIC::readHydroData(int whichHydro, int nskip_tau_in,
     cout << "hydro_deta = " << hydroDeta << " fm" << endl;
 }
 
-void Hydroinfo_MUSIC::get_hydro_cell_info_3d(int cell_id,
-                                             fluidCell_3D_new *info) {
-    info->itau = (*lattice_3D_new)[cell_id].itau;
-    info->ix = (*lattice_3D_new)[cell_id].ix;
-    info->iy = (*lattice_3D_new)[cell_id].iy;
-    info->ieta = (*lattice_3D_new)[cell_id].ieta;
-    info->temperature = (*lattice_3D_new)[cell_id].temperature;
-    info->ux = (*lattice_3D_new)[cell_id].ux;
-    info->uy = (*lattice_3D_new)[cell_id].uy;
-    info->ueta = (*lattice_3D_new)[cell_id].ueta;
-    info->pi11 = (*lattice_3D_new)[cell_id].pi11;
-    info->pi12 = (*lattice_3D_new)[cell_id].pi12;
-    info->pi13 = (*lattice_3D_new)[cell_id].pi13;
-    info->pi22 = (*lattice_3D_new)[cell_id].pi22;
-    info->pi23 = (*lattice_3D_new)[cell_id].pi23;
-    info->bulkPi = (*lattice_3D_new)[cell_id].bulkPi;
-}
 
 void Hydroinfo_MUSIC::getHydroValues(double x, double y,
                                      double z, double t, hydrofluidCell* info) {
@@ -786,9 +751,9 @@ void Hydroinfo_MUSIC::getHydroValues(double x, double y,
         return;
     }
 
-  // The array of positions on the 4-dimensional rectangle:
-  int position[2][2][2][2];
-  for (int ipx = 0; ipx < 2; ipx++) {
+    // The array of positions on the 4-dimensional rectangle:
+    int position[2][2][2][2];
+    for (int ipx = 0; ipx < 2; ipx++) {
         int px;
         if (ipx == 0 || ix == ixmax-1)
             px = ix;
@@ -821,11 +786,14 @@ void Hydroinfo_MUSIC::getHydroValues(double x, double y,
 
     // And now, the interpolation:
     double T = 0.0;
+    double ed = 0.;
+    double p = 0.;
     double vx = 0.0;
     double vy = 0.0;
     double vz = 0.0;
     double ux = 0.0;
     double uy = 0.0;
+    double uz = 0.0;
     double ueta = 0.0;
     double pi00 = 0.0;
     double pi01 = 0.0;
@@ -841,6 +809,7 @@ void Hydroinfo_MUSIC::getHydroValues(double x, double y,
 
     fluidCell_2D *HydroCell_2D_ptr1, *HydroCell_2D_ptr2;
     fluidCell_3D *HydroCell_3D_ptr1, *HydroCell_3D_ptr2;
+    fluidCell_3D_ideal *HydroCell_3D_ideal_ptr1, *HydroCell_3D_ideal_ptr2;
     for (int iptau = 0; iptau < 2; iptau++) {
         double taufactor;
         if (iptau == 0)
@@ -864,9 +833,9 @@ void Hydroinfo_MUSIC::getHydroValues(double x, double y,
 
                 if (boost_invariant) {
                     HydroCell_2D_ptr1 = (
-                            &(*lattice_2D)[position[0][ipy][ipeta][iptau]]);
+                            &lattice_2D[position[0][ipy][ipeta][iptau]]);
                     HydroCell_2D_ptr2 = (
-                            &(*lattice_2D)[position[1][ipy][ipeta][iptau]]);
+                            &lattice_2D[position[1][ipy][ipeta][iptau]]);
                     T += prefrac*((1. - xfrac)*HydroCell_2D_ptr1->temperature
                                   + xfrac*HydroCell_2D_ptr2->temperature);
                     ux += prefrac*((1. - xfrac)*HydroCell_2D_ptr1->ux
@@ -892,46 +861,65 @@ void Hydroinfo_MUSIC::getHydroValues(double x, double y,
                     bulkPi += prefrac*((1. - xfrac)*HydroCell_2D_ptr1->bulkPi
                                     + xfrac*HydroCell_2D_ptr2->bulkPi);
                 } else {
-                    HydroCell_3D_ptr1 = (
-                            &(*lattice_3D)[position[0][ipy][ipeta][iptau]]);
-                    HydroCell_3D_ptr2 = (
-                            &(*lattice_3D)[position[1][ipy][ipeta][iptau]]);
-                    T += prefrac*((1. - xfrac)*HydroCell_3D_ptr1->temperature
-                                  + xfrac*HydroCell_3D_ptr2->temperature);
-                    vx += prefrac*((1. - xfrac)*HydroCell_3D_ptr1->vx
-                                    + xfrac*HydroCell_3D_ptr2->vx);
-                    vy += prefrac*((1. - xfrac)*HydroCell_3D_ptr1->vy
-                                    + xfrac*HydroCell_3D_ptr2->vy);
-                    vz += prefrac*((1. - xfrac)*HydroCell_3D_ptr1->vz
-                                    + xfrac*HydroCell_3D_ptr2->vz);
-                    pi00 += prefrac*((1. - xfrac)*HydroCell_3D_ptr1->pi00
-                                    + xfrac*HydroCell_3D_ptr2->pi00);
-                    pi01 += prefrac*((1. - xfrac)*HydroCell_3D_ptr1->pi01
-                                    + xfrac*HydroCell_3D_ptr2->pi01);
-                    pi02 += prefrac*((1. - xfrac)*HydroCell_3D_ptr1->pi02
-                                    + xfrac*HydroCell_3D_ptr2->pi02);
-                    pi03 += prefrac*((1. - xfrac)*HydroCell_3D_ptr1->pi03
-                                    + xfrac*HydroCell_3D_ptr2->pi03);
-                    pi11 += prefrac*((1. - xfrac)*HydroCell_3D_ptr1->pi11
-                                    + xfrac*HydroCell_3D_ptr2->pi11);
-                    pi12 += prefrac*((1. - xfrac)*HydroCell_3D_ptr1->pi12
-                                    + xfrac*HydroCell_3D_ptr2->pi12);
-                    pi13 += prefrac*((1. - xfrac)*HydroCell_3D_ptr1->pi13
-                                    + xfrac*HydroCell_3D_ptr2->pi13);
-                    pi22 += prefrac*((1. - xfrac)*HydroCell_3D_ptr1->pi22
-                                    + xfrac*HydroCell_3D_ptr2->pi22);
-                    pi23 += prefrac*((1. - xfrac)*HydroCell_3D_ptr1->pi23
-                                    + xfrac*HydroCell_3D_ptr2->pi23);
-                    pi33 += prefrac*((1. - xfrac)*HydroCell_3D_ptr1->pi33
-                                    + xfrac*HydroCell_3D_ptr2->pi33);
-                    bulkPi += prefrac*((1. - xfrac)*HydroCell_3D_ptr1->bulkPi
-                                    + xfrac*HydroCell_3D_ptr2->bulkPi);
+                    if (hydroWhichHydro < 10) {
+                        HydroCell_3D_ptr1 = (
+                                &lattice_3D[position[0][ipy][ipeta][iptau]]);
+                        HydroCell_3D_ptr2 = (
+                                &lattice_3D[position[1][ipy][ipeta][iptau]]);
+                        T += prefrac*((1. - xfrac)*HydroCell_3D_ptr1->temperature
+                                      + xfrac*HydroCell_3D_ptr2->temperature);
+                        vx += prefrac*((1. - xfrac)*HydroCell_3D_ptr1->vx
+                                        + xfrac*HydroCell_3D_ptr2->vx);
+                        vy += prefrac*((1. - xfrac)*HydroCell_3D_ptr1->vy
+                                        + xfrac*HydroCell_3D_ptr2->vy);
+                        vz += prefrac*((1. - xfrac)*HydroCell_3D_ptr1->vz
+                                        + xfrac*HydroCell_3D_ptr2->vz);
+                        pi00 += prefrac*((1. - xfrac)*HydroCell_3D_ptr1->pi00
+                                        + xfrac*HydroCell_3D_ptr2->pi00);
+                        pi01 += prefrac*((1. - xfrac)*HydroCell_3D_ptr1->pi01
+                                        + xfrac*HydroCell_3D_ptr2->pi01);
+                        pi02 += prefrac*((1. - xfrac)*HydroCell_3D_ptr1->pi02
+                                        + xfrac*HydroCell_3D_ptr2->pi02);
+                        pi03 += prefrac*((1. - xfrac)*HydroCell_3D_ptr1->pi03
+                                        + xfrac*HydroCell_3D_ptr2->pi03);
+                        pi11 += prefrac*((1. - xfrac)*HydroCell_3D_ptr1->pi11
+                                        + xfrac*HydroCell_3D_ptr2->pi11);
+                        pi12 += prefrac*((1. - xfrac)*HydroCell_3D_ptr1->pi12
+                                        + xfrac*HydroCell_3D_ptr2->pi12);
+                        pi13 += prefrac*((1. - xfrac)*HydroCell_3D_ptr1->pi13
+                                        + xfrac*HydroCell_3D_ptr2->pi13);
+                        pi22 += prefrac*((1. - xfrac)*HydroCell_3D_ptr1->pi22
+                                        + xfrac*HydroCell_3D_ptr2->pi22);
+                        pi23 += prefrac*((1. - xfrac)*HydroCell_3D_ptr1->pi23
+                                        + xfrac*HydroCell_3D_ptr2->pi23);
+                        pi33 += prefrac*((1. - xfrac)*HydroCell_3D_ptr1->pi33
+                                        + xfrac*HydroCell_3D_ptr2->pi33);
+                        bulkPi += prefrac*((1. - xfrac)*HydroCell_3D_ptr1->bulkPi
+                                        + xfrac*HydroCell_3D_ptr2->bulkPi);
+                    } else {
+                        HydroCell_3D_ideal_ptr1 = (
+                            &lattice_3D_ideal[idx_map_[position[0][ipy][ipeta][iptau]]]);
+                        HydroCell_3D_ideal_ptr2 = (
+                            &lattice_3D_ideal[idx_map_[position[1][ipy][ipeta][iptau]]]);
+                        T += prefrac*((1. - xfrac)*HydroCell_3D_ideal_ptr1->temperature
+                                      + xfrac*HydroCell_3D_ideal_ptr2->temperature);
+                        ed += prefrac*((1. - xfrac)*HydroCell_3D_ideal_ptr1->ed
+                                      + xfrac*HydroCell_3D_ideal_ptr2->ed);
+                        p += prefrac*((1. - xfrac)*HydroCell_3D_ideal_ptr1->pressure
+                                      + xfrac*HydroCell_3D_ideal_ptr2->pressure);
+                        ux += prefrac*((1. - xfrac)*HydroCell_3D_ideal_ptr1->ux
+                                        + xfrac*HydroCell_3D_ideal_ptr2->ux);
+                        uy += prefrac*((1. - xfrac)*HydroCell_3D_ideal_ptr1->uy
+                                        + xfrac*HydroCell_3D_ideal_ptr2->uy);
+                        uz += prefrac*((1. - xfrac)*HydroCell_3D_ideal_ptr1->uz
+                                       + xfrac*HydroCell_3D_ideal_ptr2->uz);
+                    }
                 }
             }
         }
     }
 
-    if (boost_invariant) {      // for boost invariant medium
+    if (hydroWhichHydro < 10) {
         double eta_local = 0.5*log((t + z)/(t - z));
         double sinh_eta, cosh_eta;
         if (fabs(eta_local) < 1e-6) {
@@ -949,6 +937,11 @@ void Hydroinfo_MUSIC::getHydroValues(double x, double y,
         vx = ux/ut;
         vy = uy/ut;
         vz = uz/ut;
+    } else {
+        float ut = sqrt(1. + ux*ux + uy*uy + uz*uz);
+        vx = ux/ut;
+        vy = uy/ut;
+        vz = uz/ut;
     }
 
     info->temperature = T;
@@ -956,9 +949,15 @@ void Hydroinfo_MUSIC::getHydroValues(double x, double y,
     info->vy = vy;
     info->vz = vz;
 
-    info->ed = 1.0;                 // pi's are already divided by e+P
-    info->sd = 0.0;
-    info->pressure = 0.0;
+    if (hydroWhichHydro < 10) {
+        info->ed = 1.0;                 // pi's are already divided by e+P
+        info->sd = 0.0;
+        info->pressure = 0.0;
+    } else {
+        info->ed = ed;
+        info->sd = (ed + p)/(T + 1e-16);
+        info->pressure = p;
+    }
 
     info->pi[0][0] = pi00;
     info->pi[0][1] = pi01;
@@ -980,6 +979,7 @@ void Hydroinfo_MUSIC::getHydroValues(double x, double y,
     info->bulkPi = bulkPi;
     return;
 }
+
 
 void Hydroinfo_MUSIC::output_temperature_evolution(string filename_base) {
     hydrofluidCell *hydroInfo = new hydrofluidCell;
@@ -1003,6 +1003,7 @@ void Hydroinfo_MUSIC::output_temperature_evolution(string filename_base) {
     }
     delete hydroInfo;
 }
+
 
 void Hydroinfo_MUSIC::update_grid_info(
     double tau0, double tau_max, double dtau,

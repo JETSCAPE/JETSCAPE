@@ -8,6 +8,7 @@ struct hydrofluidCell {
    double bulkPi;
 };
 
+
 struct fluidCell_2D {
     double temperature;
     double ux, uy, ueta;
@@ -19,6 +20,15 @@ struct fluidCell_2D {
     double bulkPi;
 };
 
+
+struct fluidCell_3D_ideal {
+    int itau, ix, iy, ieta;
+    float temperature;
+    float ed, pressure;
+    float ux, uy, uz;
+};
+
+
 struct fluidCell_3D {
     double temperature;
     double vx, vy, vz;
@@ -29,6 +39,7 @@ struct fluidCell_3D {
     double pi33;
     double bulkPi;
 };
+
 
 struct fluidCell_3D_new {
     int itau, ix, iy, ieta;

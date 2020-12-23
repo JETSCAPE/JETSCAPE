@@ -45,9 +45,10 @@ class Hydroinfo_MUSIC {
     std::string hydro_shear_filename;
     std::string hydro_bulk_filename;
 
-    std::vector<fluidCell_2D> *lattice_2D;  // array to store hydro information
-    std::vector<fluidCell_3D> *lattice_3D;  // array to store hydro information
-    std::vector<fluidCell_3D_new> *lattice_3D_new;
+    std::vector<fluidCell_2D> lattice_2D;  // array to store hydro information
+    std::vector<fluidCell_3D> lattice_3D;  // array to store hydro information
+    std::vector<fluidCell_3D_ideal> lattice_3D_ideal;
+    std::vector<int> idx_map_;
 
  public:
     Hydroinfo_MUSIC();       // constructor
@@ -64,7 +65,7 @@ class Hydroinfo_MUSIC {
     int get_hydro_Nskip_tau() {return(nskip_tau);}
     int get_hydro_Nskip_x() {return(nskip_x);}
     int get_hydro_Nskip_eta() {return(nskip_eta);}
-    int get_number_of_fluid_cells_3d() {return(lattice_3D_new->size());}
+    int get_number_of_fluid_cells_3d() {return(lattice_3D_ideal.size());}
 
     void readHydroData(int whichHydro, int nskip_tau_in,
             std::string input_filename_in, std::string hydro_ideal_filename,
@@ -72,7 +73,6 @@ class Hydroinfo_MUSIC {
 
     void getHydroValues(double x, double y, double z, double t,
                         hydrofluidCell *info);
-    void get_hydro_cell_info_3d(int cell_id, fluidCell_3D_new *info);
     void output_temperature_evolution(std::string filename_base);
     void update_grid_info(double tau0, double tau_max, double dtau,
                           double x_max, double dx, double z_max, double dz);
