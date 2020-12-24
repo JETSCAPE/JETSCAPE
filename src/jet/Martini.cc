@@ -84,7 +84,8 @@ void Martini::Init() {
 
   g = sqrt(4. * M_PI * alpha_s);
   alpha_em = 1. / 137.;
-  hydro_tStart = 0.6;
+  //hydro_tStart = 0.6;
+  hydro_tStart = 1.0;
 
   // Path to additional data
   PathToTables = GetXMLElementText({"Eloss", "Martini", "path"});
@@ -188,6 +189,10 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2,
     SpatialRapidity = 0.5 * std::log((tt + zz) / (tt - zz));
     double boostedTStart = hydro_tStart * cosh(SpatialRapidity);
 
+    // Only accept low t particles
+    if (pIn[i].t() > Q0 * Q0 + rounding_error || Time <= boostedTStart)
+      continue;
+
     // Extract fluid properties
     std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
     GetHydroCellSignal(Time, xx, yy, zz, check_fluid_info_ptr);
@@ -201,10 +206,8 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2,
 
     beta = sqrt(vx * vx + vy * vy + vz * vz);
 
-    // Only accept low t particles
-    if (pIn[i].t() > Q0 * Q0 + rounding_error || Time <= boostedTStart ||
-        T < hydro_Tc)
-      continue;
+    if (T < hydro_Tc) continue;
+
     TakeResponsibilityFor(
         pIn[i]); // Generate error if another module already has responsibility.
 
