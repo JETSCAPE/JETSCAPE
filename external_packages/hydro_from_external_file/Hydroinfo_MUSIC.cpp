@@ -618,7 +618,7 @@ void Hydroinfo_MUSIC::readHydroData(int whichHydro, int nskip_tau_in,
         idx_map_.resize(ncells, 0);
         for (int i = 0; i < lattice_3D_ideal.size(); i++) {
             const auto cell_i = lattice_3D_ideal[i];
-            int cell_idx = (
+            long long cell_idx = (
                 (  (cell_i.itau*ietamax + cell_i.ieta)*ixmax
                  + cell_i.iy)*ixmax + cell_i.ix);
             idx_map_[cell_idx] = i;
@@ -654,8 +654,8 @@ void Hydroinfo_MUSIC::readHydroData(int whichHydro, int nskip_tau_in,
     cout << "hydry_dtau = " << hydroDtau << " fm" << endl;
     cout << "hydro_Xmax = " << hydroXmax << " fm" << endl;
     cout << "hydro_dx = " << hydroDx << " fm" << endl;
-    cout << "hydro_eta_max = " << hydro_eta_max << " fm" << endl;
-    cout << "hydro_deta = " << hydroDeta << " fm" << endl;
+    cout << "hydro_eta_max = " << hydro_eta_max << endl;
+    cout << "hydro_deta = " << hydroDeta << endl;
 }
 
 
@@ -755,28 +755,32 @@ void Hydroinfo_MUSIC::getHydroValues(double x, double y,
     int position[2][2][2][2];
     for (int ipx = 0; ipx < 2; ipx++) {
         int px;
-        if (ipx == 0 || ix == ixmax-1)
+        if (ipx == 0 || ix == ixmax-1) {
             px = ix;
-        else
+        } else {
             px = ix + 1;
+        }
         for (int ipy = 0; ipy < 2; ipy++) {
             int py;
-            if (ipy == 0 || iy == ixmax-1)
+            if (ipy == 0 || iy == ixmax-1) {
                 py = iy;
-            else
+            } else {
                 py = iy + 1;
+            }
             for (int ipeta = 0; ipeta < 2; ipeta++) {
                 int peta;
-                if (ipeta == 0 || ieta == ietamax-1)
+                if (ipeta == 0 || ieta == ietamax-1) {
                     peta = ieta;
-                else
+                } else {
                     peta = ieta + 1;
+                }
                 for (int iptau = 0; iptau < 2; iptau++) {
                     int ptau;
-                    if (iptau == 0 || itau == itaumax-1)
+                    if (iptau == 0 || itau == itaumax) {
                         ptau = itau;
-                    else
+                    } else {
                         ptau = itau + 1;
+                    }
                     position[ipx][ipy][ipeta][iptau] = (
                                 px + ixmax*(py + ixmax*(peta + ietamax*ptau)));
                 }
