@@ -136,6 +136,8 @@ void HydroFromFile::EvolveHydro() {
     }
 #ifdef USE_HDF5
     read_in_hydro_event(filename, 500, load_viscous_);
+    hydro_tau_0 = hydroinfo_h5_ptr->getHydrogridTau0();
+    hydro_tau_max = hydroinfo_h5_ptr->getHydrogridTaumax();
 #endif
     hydro_status = FINISHED;
   } else if (hydro_type_ == 2) {
@@ -159,6 +161,8 @@ void HydroFromFile::EvolveHydro() {
       hydro_ideal_file = hydro_filename.str();
     }
     read_in_hydro_event(input_file, hydro_ideal_file, nskip_tau_);
+    hydro_tau_0 = hydroinfo_MUSIC_ptr->get_hydro_tau0();
+    hydro_tau_max = hydroinfo_MUSIC_ptr->get_hydro_tau_max();
   } else if (hydro_type_ == 3) {
     string input_file;
     string hydro_ideal_file;
@@ -180,6 +184,8 @@ void HydroFromFile::EvolveHydro() {
       hydro_ideal_file = hydro_filename.str();
     }
     read_in_hydro_event(input_file, hydro_ideal_file, nskip_tau_);
+    hydro_tau_0 = hydroinfo_MUSIC_ptr->get_hydro_tau0();
+    hydro_tau_max = hydroinfo_MUSIC_ptr->get_hydro_tau_max();
   } else if (hydro_type_ == 4) {
     string input_file;
     string hydro_ideal_file;
@@ -201,6 +207,8 @@ void HydroFromFile::EvolveHydro() {
       hydro_ideal_file = hydro_filename.str();
     }
     read_in_hydro_event(input_file, hydro_ideal_file, 1);
+    hydro_tau_0 = hydroinfo_MUSIC_ptr->get_hydro_tau0();
+    hydro_tau_max = hydroinfo_MUSIC_ptr->get_hydro_tau_max();
   } else {
     JSWARN << "main: unrecognized hydro_type = " << hydro_type_;
     exit(1);
