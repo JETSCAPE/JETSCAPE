@@ -20,6 +20,7 @@
 using namespace std;
 
 Hydroinfo_MUSIC::Hydroinfo_MUSIC() {
+    verbose_ = 9;
     hbarC = 0.19733;
 }
 
@@ -607,8 +608,10 @@ void Hydroinfo_MUSIC::readHydroData(int whichHydro, int nskip_tau_in,
             newCell.uz = cell_info[10];
             lattice_3D_ideal.push_back(newCell);
             ik++;
-            if (ik%50000 == 0)
-                cout << "o" << flush;
+            if (verbose_ > 7) {
+                if (ik%50000 == 0)
+                    cout << "o" << flush;
+            }
         }
         cout << endl;
         std::fclose(fin);
@@ -697,13 +700,15 @@ void Hydroinfo_MUSIC::getHydroValues(double x, double y,
     double taufrac = (tau - hydroTau0)/hydroDtau - static_cast<double>(itau);
 
     if (ix < 0 || ix >= ixmax) {
-        cout << "[MARTINI:Hydroinfo_MUSIC::getHydroValues]: "
-             << "WARNING - x out of range x=" << x
-             << ", ix=" << ix << ", ixmax=" << ixmax << endl;
-        cout << "x=" << x << " y=" << y << " eta=" << eta
-             << " ix=" << ix << " iy=" << iy << " ieta=" << ieta << endl;
-        cout << "t=" << t << " tau=" << tau
-             << " itau=" << itau << " itaumax=" << itaumax << endl;
+        if (verbose_ > 7) {
+            cout << "[Hydroinfo_MUSIC::getHydroValues]: "
+                 << "WARNING - x out of range x=" << x
+                 << ", ix=" << ix << ", ixmax=" << ixmax << endl;
+            cout << "x=" << x << " y=" << y << " eta=" << eta
+                 << " ix=" << ix << " iy=" << iy << " ieta=" << ieta << endl;
+            cout << "t=" << t << " tau=" << tau
+                 << " itau=" << itau << " itaumax=" << itaumax << endl;
+        }
 
         info->temperature = 0.0;
         info->vx = 0.0;
@@ -712,13 +717,15 @@ void Hydroinfo_MUSIC::getHydroValues(double x, double y,
         return;
     }
     if (iy < 0 || iy >= ixmax) {
-        cout << "[MARTINI:Hydroinfo_MUSIC::getHydroValues]: "
-             << "WARNING - y out of range, y=" << y << ", iy="  << iy
-             << ", iymax=" << ixmax << endl;
-        cout << "x=" << x << " y=" << y << " eta=" << eta
-             << " ix=" << ix << " iy=" << iy << " ieta=" << ieta << endl;
-        cout << "t=" << t << " tau=" << tau
-             << " itau=" << itau << " itaumax=" << itaumax << endl;
+        if (verbose_ > 7) {
+            cout << "[Hydroinfo_MUSIC::getHydroValues]: "
+                 << "WARNING - y out of range, y=" << y << ", iy="  << iy
+                 << ", iymax=" << ixmax << endl;
+            cout << "x=" << x << " y=" << y << " eta=" << eta
+                 << " ix=" << ix << " iy=" << iy << " ieta=" << ieta << endl;
+            cout << "t=" << t << " tau=" << tau
+                 << " itau=" << itau << " itaumax=" << itaumax << endl;
+        }
 
         info->temperature = 0.0;
         info->vx = 0.0;
@@ -727,12 +734,14 @@ void Hydroinfo_MUSIC::getHydroValues(double x, double y,
         return;
     }
     if (itau < 0 || itau > itaumax) {
-        cout << "[MARTINI:Hydroinfo_MUSIC::getHydroValues]: WARNING - "
-             << "tau out of range, itau=" << itau << ", itaumax=" << itaumax
-             << endl;
-        cout << "[MARTINI:Hydroinfo_MUSIC::getHydroValues]: tau= " << tau
-             << ", hydroTauMax = " << hydroTauMax
-             << ", hydroDtau = " << hydroDtau << endl;
+        if (verbose_ > 7) {
+            cout << "[Hydroinfo_MUSIC::getHydroValues]: WARNING - "
+                 << "tau out of range, itau=" << itau
+                 << ", itaumax=" << itaumax << endl;
+            cout << "[MARTINI:Hydroinfo_MUSIC::getHydroValues]: tau= " << tau
+                 << ", hydroTauMax = " << hydroTauMax
+                 << ", hydroDtau = " << hydroDtau << endl;
+        }
 
         info->temperature = 0.0;
         info->vx = 0.0;
@@ -741,9 +750,12 @@ void Hydroinfo_MUSIC::getHydroValues(double x, double y,
         return;
     }
     if (ieta < 0 || ieta >= ietamax) {
-        cout << "[MARTINI:Hydroinfo_MUSIC::getHydroValues]: WARNING - "
-             << "eta out of range, ieta=" << ieta << ", ietamax=" << ietamax
-             << endl;
+        if (verbose_ > 7) {
+            cout << "[Hydroinfo_MUSIC::getHydroValues]: WARNING - "
+                 << "eta out of range, ieta=" << ieta
+                 << ", ietamax=" << ietamax
+                 << endl;
+        }
         info->temperature = 0.0;
         info->vx = 0.0;
         info->vy = 0.0;

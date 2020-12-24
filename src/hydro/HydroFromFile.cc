@@ -67,6 +67,8 @@ void HydroFromFile::InitializeHydro(Parameter parameter_list) {
 #endif
   } else if (hydro_type_ == 2 || hydro_type_ == 3 || hydro_type_ == 4) {
     hydroinfo_MUSIC_ptr = new Hydroinfo_MUSIC();
+    int verbose = GetXMLElementInt({"vlevel"});
+    hydroinfo_MUSIC_ptr->set_verbose(verbose);
   }
 
   hydro_status = INITIALIZED;

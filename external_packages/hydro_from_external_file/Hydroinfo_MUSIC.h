@@ -34,6 +34,7 @@ class Hydroinfo_MUSIC {
 
     bool boost_invariant;
 
+    int verbose_;
     int itaumax, ixmax, ietamax;
     int turn_on_shear;
     int turn_on_bulk;
@@ -55,6 +56,7 @@ class Hydroinfo_MUSIC {
     ~Hydroinfo_MUSIC();      // destructor
 
     void clean_hydro_event();
+    void set_verbose(int verbose) {verbose_ = verbose;}
     double get_hydro_tau_max() {return(hydroTauMax);}
     double get_hydro_tau0() {return(hydroTau0);}
     double get_hydro_dtau() {return(hydroDtau);}
