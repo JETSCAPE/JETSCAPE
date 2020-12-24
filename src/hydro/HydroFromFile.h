@@ -31,8 +31,6 @@ class HydroFromFile : public FluidDynamics {
   // this is wrapper class for MUSIC so that it can be used as a external
   // library for the JETSCAPE integrated framework
 private:
-  tinyxml2::XMLElement *para_;
-
   int flag_read_in_multiple_hydro_;
   int hydro_event_idx_;
 

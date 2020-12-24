@@ -140,11 +140,13 @@ void HydroFromFile::EvolveHydro() {
     string input_file;
     string hydro_ideal_file;
     if (flag_read_in_multiple_hydro_ == 0) {
-      input_file = (para_->FirstChildElement("MUSIC_input_file")->GetText());
-      hydro_ideal_file = (para_->FirstChildElement("MUSIC_file")->GetText());
+      input_file = GetXMLElementText(
+              {"Hydro", "hydro_from_file", "MUSIC_input_file"});
+      hydro_ideal_file = GetXMLElementText(
+              {"Hydro", "hydro_from_file", "MUSIC_file"});
     } else {
-      string folder =
-          (para_->FirstChildElement("hydro_files_folder")->GetText());
+      string folder = GetXMLElementText(
+              {"Hydro", "hydro_from_file", "hydro_files_folder"});
       std::ostringstream input_filename;
       std::ostringstream hydro_filename;
       input_filename << folder << "/event-" << hydro_event_idx_
@@ -159,11 +161,13 @@ void HydroFromFile::EvolveHydro() {
     string input_file;
     string hydro_ideal_file;
     if (flag_read_in_multiple_hydro_ == 0) {
-      input_file = (para_->FirstChildElement("MUSIC_input_file")->GetText());
-      hydro_ideal_file = (para_->FirstChildElement("MUSIC_file")->GetText());
+      input_file = GetXMLElementText(
+              {"Hydro", "hydro_from_file", "MUSIC_input_file"});
+      hydro_ideal_file = GetXMLElementText(
+              {"Hydro", "hydro_from_file", "MUSIC_file"});
     } else {
-      string folder =
-          (para_->FirstChildElement("hydro_files_folder")->GetText());
+      string folder = GetXMLElementText(
+              {"Hydro", "hydro_from_file", "hydro_files_folder"});
       std::ostringstream input_filename;
       std::ostringstream hydro_filename;
       input_filename << folder << "/event-" << hydro_event_idx_
@@ -178,11 +182,13 @@ void HydroFromFile::EvolveHydro() {
     string input_file;
     string hydro_ideal_file;
     if (flag_read_in_multiple_hydro_ == 0) {
-      input_file = (para_->FirstChildElement("MUSIC_input_file")->GetText());
-      hydro_ideal_file = (para_->FirstChildElement("MUSIC_file")->GetText());
+      input_file = GetXMLElementText(
+              {"Hydro", "hydro_from_file", "MUSIC_input_file"});
+      hydro_ideal_file = GetXMLElementText(
+              {"Hydro", "hydro_from_file", "MUSIC_file"});
     } else {
-      string folder =
-          (para_->FirstChildElement("hydro_files_folder")->GetText());
+      string folder = GetXMLElementText(
+              {"Hydro", "hydro_from_file", "hydro_files_folder"});
       std::ostringstream input_filename;
       std::ostringstream hydro_filename;
       input_filename << folder << "/event-" << hydro_event_idx_
