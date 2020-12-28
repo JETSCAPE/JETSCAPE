@@ -84,7 +84,7 @@ void Martini::Init() {
 
   g = sqrt(4. * M_PI * alpha_s);
   alpha_em = 1. / 137.;
-  hydro_tStart = 0.6;
+  //hydro_tStart = 0.6;
 
   // Path to additional data
   PathToTables = GetXMLElementText({"Eloss", "Martini", "path"});
@@ -155,6 +155,8 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2,
   double boostBack;    // factor for boosting back to lab frame
   double cosPhiRestEl; // angle between flow and scat. particle in rest frame
   double boostBackEl;
+
+  GetHydroTau0Signal(hydro_tStart);
 
   for (int i = 0; i < pIn.size(); i++) {
 

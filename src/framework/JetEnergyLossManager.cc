@@ -217,6 +217,11 @@ void JetEnergyLossManager::CreateSignalSlots() {
         JetScapeSignalManager::Instance()->ConnectGetHydroCellSignal(
             dynamic_pointer_cast<JetEnergyLoss>(it2));
       }
+      if (!dynamic_pointer_cast<JetEnergyLoss>(it2)
+               ->GetGetHydroTau0SignalConnected()) {
+        JetScapeSignalManager::Instance()->ConnectGetHydroTau0Signal(
+            dynamic_pointer_cast<JetEnergyLoss>(it2));
+      }
 
       // between eloss modules and eloss
       // check the signals itself, probably best via manager in the long run ...

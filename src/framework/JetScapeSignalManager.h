@@ -107,6 +107,7 @@ public:
 
   void ConnectJetSignal(shared_ptr<JetEnergyLoss> j);
   void ConnectEdensitySignal(shared_ptr<JetEnergyLoss> j);
+  void ConnectGetHydroTau0Signal(shared_ptr<JetEnergyLoss> j);
   void ConnectGetHydroCellSignal(shared_ptr<JetEnergyLoss> j);
   void ConnectGetHydroCellSignal(shared_ptr<LiquefierBase> l);
   void ConnectGetHardPartonListSignal(shared_ptr<JetEnergyLossManager> jm);
