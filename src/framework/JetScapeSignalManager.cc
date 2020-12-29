@@ -89,6 +89,17 @@ void JetScapeSignalManager::ConnectEdensitySignal(shared_ptr<JetEnergyLoss> j) {
   }
 }
 
+void JetScapeSignalManager::ConnectGetHydroTau0Signal(
+    shared_ptr<JetEnergyLoss> j) {
+  if (!j->GetGetHydroTau0SignalConnected()) {
+    auto hp = GetHydroPointer().lock();
+    if (hp) {
+      j->GetHydroTau0Signal.connect(hp.get(), &FluidDynamics::GetHydroStartTime);
+      j->SetGetHydroTau0SignalConnected(true);
+    }
+  }
+}
+
 void JetScapeSignalManager::ConnectGetHydroCellSignal(
     shared_ptr<JetEnergyLoss> j) {
   if (!j->GetGetHydroCellSignalConnected()) {

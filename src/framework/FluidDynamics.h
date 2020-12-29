@@ -154,7 +154,7 @@ public:
 
   /** @return Start time (or tau) for hydrodynamic evolution.
      */
-  Jetscape::real GetHydroStartTime() const { return (hydro_tau_0); }
+  void GetHydroStartTime(double &tau0) { tau0 = hydro_tau_0; }
 
   /** @return End time (or tau) for hydrodynamic evolution.
      */
