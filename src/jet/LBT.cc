@@ -178,6 +178,9 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2,
 
   //DEBUG:
   //cout<<" ---> "<<pIn.size()<<endl;
+
+  GetHydroTau0Signal(tStart);
+
   for (int i = 0; i < pIn.size(); i++) {
 
     // Reject photons
