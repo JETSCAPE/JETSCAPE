@@ -49,6 +49,7 @@ JetEnergyLoss::JetEnergyLoss() {
   jetSignalConnected = false;
   edensitySignalConnected = false;
   GetHydroCellSignalConnected = false;
+  GetHydroTau0SignalConnected = false;
   SentInPartonsConnected = false;
 
   deltaT = 0;
@@ -74,6 +75,7 @@ JetEnergyLoss::JetEnergyLoss(const JetEnergyLoss &j) {
   SetJetSignalConnected(false);
   SetEdensitySignalConnected(false);
   SetGetHydroCellSignalConnected(false);
+  SetGetHydroTau0SignalConnected(false);
   SetSentInPartonsConnected(false);
 
   deltaT = j.deltaT;
