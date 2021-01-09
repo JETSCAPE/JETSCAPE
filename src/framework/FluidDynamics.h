@@ -62,6 +62,7 @@ protected:
   std::shared_ptr<PreequilibriumDynamics> pre_eq_ptr;
 
   double eta;
+  bool boost_invariant_;
   Parameter parameter_list;
 
   // How to store this data? In memory or hard disk?

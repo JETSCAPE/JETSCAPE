@@ -47,6 +47,13 @@ void HydroFromFile::InitializeHydro(Parameter parameter_list) {
   JSDEBUG << s << " to be initilizied ...";
 
   hydro_type_ = GetXMLElementInt({"Hydro", "hydro_from_file", "hydro_type"});
+  int boost_inv = GetXMLElementInt(
+          {"Hydro", "hydro_from_file", "boost_invariant_"});
+  if (boost_inv == 0) {
+      boost_invariant_ = false;
+  } else {
+      boost_invariant_ = true;
+  }
   load_viscous_ =
       GetXMLElementInt({"Hydro", "hydro_from_file", "load_viscous_info"});
   nskip_tau_ =
@@ -243,17 +250,20 @@ void HydroFromFile::GetHydroInfo(
   double y_local = static_cast<double>(y);
   double z_local = static_cast<double>(z);
 
+  if (t_local < z_local) {
+      JSWARN << "Request a space-like point, t = " << t_local
+             << ", z = " << z_local;
+      exit(1);
+  }
+  double tau_local = sqrt(t * t - z * z);
+  double eta_local = 0.5 * log((t + z) / (t - z + 1e-15));
+  if (boost_invariant_) {
+      eta_local = 0.;
+  }
+
   // initialize the fluid cell pointer
   hydrofluidCell *temp_fluid_cell_ptr = new hydrofluidCell;
   if (hydro_type_ == 1) { // for OSU 2+1d hydro
-    double tau_local = sqrt(t * t - z * z);
-    double eta_local = 0.5 * log((t + z) / (t - z + 1e-15));
-    if (std::isnan(tau_local)) { // check
-      JSWARN << "[Error]: HydroFromFile::GetHydroInfo(): "
-             << "tau is nan!";
-      JSWARN << "please check: t = " << t << ", z = " << z;
-      exit(1);
-    }
 #ifdef USE_HDF5
     hydroinfo_h5_ptr->getHydroinfo(tau_local, x_local, y_local,
                                    temp_fluid_cell_ptr);
@@ -267,6 +277,8 @@ void HydroFromFile::GetHydroInfo(
     temp_fluid_cell_ptr->vz = z / (t + 1e-15);
 #endif
   } else if (hydro_type_ == 2 || hydro_type_ == 3 || hydro_type_ == 4) {
+    t_local = tau_local*cosh(eta_local);
+    z_local = tau_local*sinh(eta_local);
     hydroinfo_MUSIC_ptr->getHydroValues(x_local, y_local, z_local, t_local,
                                         temp_fluid_cell_ptr);
   }
