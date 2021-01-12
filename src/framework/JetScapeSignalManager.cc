@@ -137,6 +137,14 @@ void JetScapeSignalManager::ConnectTransformPartonsSignal(
   }
 }
 
+void JetScapeSignalManager::ConnectGetFinalHadronListSignal(
+	shared_ptr<HadronPrinter> h){
+		auto hadroMgrShared = GetHadronizationManagerPointer().lock();
+  //hadronPrinter->GetFinalHadronList.connect(hadro.get(), &Hadronization::GetHadrons);
+  h->GetFinalHadronList.connect(hadroMgrShared.get(), 
+			&HadronizationManager::GetHadrons);
+}
+
 void JetScapeSignalManager::CleanUp() {
   VERBOSE(8);
 
