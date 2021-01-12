@@ -14,7 +14,11 @@
  ******************************************************************************/
 
 #include "HadronPrinter.h"
+#include "JetScapeSignalManager.h"
 namespace Jetscape {
+
+// Register the module with the base class
+RegisterJetScapeModule<HadronPrinter> HadronPrinter::reg("HadronPrinter");
 
 HadronPrinter::HadronPrinter()
 {
@@ -28,6 +32,10 @@ void HadronPrinter::Init()
 {
   this->SetId("Printer");
   fHadronOutfile.open("finalStateHadrons.dat");
+  JetScapeSignalManager::Instance()->ConnectGetFinalHadronListSignal(
+      shared_from_this());
+
+  //hadronPrinter->GetFinalHadronList.connect(hadro.get(), &Hadronization::GetHadrons);
 }
 
 void HadronPrinter::Exec()

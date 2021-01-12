@@ -27,7 +27,8 @@
 
 namespace Jetscape {
 
-class HadronPrinter : public JetScapeModuleBase
+class HadronPrinter : public JetScapeModuleBase,
+      public std::enable_shared_from_this<HadronPrinter> 
 {
 
  public:
@@ -54,6 +55,8 @@ class HadronPrinter : public JetScapeModuleBase
   vector<shared_ptr<Hadron>> finalHadrons;
 	 std::ofstream fHadronOutfile;  ///< the output stream where events are saved to file
 
+  // Allows the registration of the module so that it is available to be used by the Jetscape framework.
+  static RegisterJetScapeModule<HadronPrinter> reg;
 };
 
 } // end namespace Jetscape

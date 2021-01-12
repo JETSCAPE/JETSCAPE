@@ -20,12 +20,15 @@
 #include "JetClass.h"
 #include "sigslot.h"
 
+#include "Hadronization.h"
+
 #include <vector>
 
 namespace Jetscape {
 
+//    : public JetScapeTask,
 class HadronizationManager
-    : public JetScapeTask,
+    : public JetScapeModuleBase,
       public std::enable_shared_from_this<HadronizationManager> {
 
 public:
@@ -40,6 +43,9 @@ public:
   int GetNumSignals();
 
   void CreateSignalSlots();
+
+		//get Hadrons from Hadronization submodules
+  void GetHadrons(vector<shared_ptr<Hadron>>& signal);
 
   sigslot::signal1<vector<shared_ptr<Hadron>> &> GetHadronList; //get Hadrons from HardProcess NOT Hadronization submodules
 
