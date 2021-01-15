@@ -149,7 +149,7 @@ void Matter::Init() {
   JSINFO << MAGENTA << "Q0: " << Q00 << " vir_factor: " << vir_factor
          << "  qhat0: " << qhat0 << " alphas: " << alphas
          << " hydro_Tc: " << hydro_Tc << " brick_length: " << brick_length;
-  if(QhatParametrizationType !=0){ JSINFO <<"Running alphas will be used as 4*pi/(9.0*log(2*enerLoc*tempLoc/0.04))"; }
+  if(QhatParametrizationType ==1){ JSINFO <<"Running alphas will be used as 4*pi/(9.0*log(2*enerLoc*tempLoc/LambdaQCDS))"; }
 
   if (recoil_on && !flag_init) {
     JSINFO << MAGENTA
@@ -786,9 +786,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
 		}*/
 
 	    //GeneralQhatFunction(int QhatParametrizationType, double Temperature, double EntropyDensity, double FixAlphas,  double Qhat0, double E, double muSquare)
-	    double Scale=2*enerLoc*tempLoc;
-	    if (enerLoc < 2.0*pi*tempLoc){Scale=2*pi*tempLoc;}
-
+	    double Scale=1.0; //Revist this when q-hat is virtuality dependent 
 	    qhatLoc= GeneralQhatFunction(QhatParametrizationType, tempLoc, sdLoc, alphas, qhat0, enerLoc, Scale);
 
           } else { // outside the QGP medium
@@ -815,9 +813,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
                     pi * dt_lrf / 0.1973;
 	
 	  double ScaleNet=2*enerLoc*tempLoc;
-	  if (enerLoc < 2.0*pi*tempLoc){ScaleNet=2*pi*tempLoc;}
+	  if (enerLoc < pi){ScaleNet=2*pi*tempLoc;}
 
-	  if(QhatParametrizationType != 0)
+	  if(QhatParametrizationType == 1)
 	    {
 	      prob_el=prob_el*RunningAlphaS(ScaleNet);
 	    }
@@ -3860,8 +3858,7 @@ double Matter::fillQhatTab(double y) {
       }*/
 
       // GeneralQhatFunction(int QhatParametrizationType, double Temperature, double EntropyDensity, double FixAlphas,  double Qhat0, double E, double muSquare);
-      double Scale=2*initEner*tempLoc;
-      if (initEner < 2.0*pi*tempLoc){Scale=2*pi*tempLoc;}
+      double Scale=1.0;// To implement virtuality dependent q-hat, make the table 3D table
 
       qhatLoc= GeneralQhatFunction(QhatParametrizationType, tempLoc, sdLoc, alphas, qhat0, initEner, Scale);      
       qhatLoc = qhatLoc * flowFactor;
@@ -3892,20 +3889,23 @@ double Matter::fillQhatTab(double y) {
 }
 
 //////////////////////////////////General Function of q-hat//////////////////////////////////
+// E is the energy and muSquare is the virtuality of the parton
 double Matter::GeneralQhatFunction(int QhatParametrizationType, double Temperature, double EntropyDensity, double FixAlphas, double Qhat0, double E, double muSquare)
 {
   int ActiveFlavor=3; qhat=0.0;
-  double DebyeMassSquare = FixAlphas*4.0*pi*pow(Temperature,2.0)*(3.0 + (ActiveFlavor/2.0))/3.0; 
+  double DebyeMassSquare = FixAlphas*4*pi*pow(Temperature,2.0)*(6.0 + ActiveFlavor)/6.0; 
+  double ScaleNet=2*E*Temperature; 
+  if(E < pi){ ScaleNet=2*pi*Temperature; }
   switch(QhatParametrizationType)
     {
       //HTL formula with all alpha_s as constant and controlled by XML
     case 0:
-      qhat = (Ca*50.4864/pi)*pow(FixAlphas,2)*pow(Temperature,3)*log(2.0*E*Temperature/DebyeMassSquare); 
+      qhat = (Ca*50.4864/pi)*pow(FixAlphas,2)*pow(Temperature,3)*log(ScaleNet/DebyeMassSquare); 
       break;
       
       //alpha_s at scale muS=2ET and second alpha_s at muS=DebyeMassSquare is fit parameter
     case 1:	
-      qhat = (Ca*50.4864/pi)*RunningAlphaS(muSquare)*FixAlphas*pow(Temperature,3)*log(2.0*E*Temperature/DebyeMassSquare);
+      qhat = (Ca*50.4864/pi)*RunningAlphaS(ScaleNet)*FixAlphas*pow(Temperature,3)*log(ScaleNet/DebyeMassSquare);
       break;
       
       //Constant q-hat for brick study
@@ -3930,11 +3930,15 @@ double Matter::GeneralQhatFunction(int QhatParametrizationType, double Temperatu
   return qhat;
 }
 
-/////////////////// Running alphas///////////////////
+/////////////////// Running alphas for HTL-qhat: Do not use for others///////////////////
 double Matter::RunningAlphaS(double muSquare)
 {
   int ActiveFlavor=3;
-  double ans = 4.0*pi/( (11.0-(2.0*ActiveFlavor/3.0))*log(muSquare/(Lambda_QCD*Lambda_QCD)) );
+  double Square_Lambda_QCD_HTL = exp( -12.0*pi/( (33 - 2*ActiveFlavor)*alphas) );
+  double ans = 12.0*pi/( (33.0- 2.0*ActiveFlavor)*log(muSquare/Square_Lambda_QCD_HTL) );
+  if(muSquare < 1.0) {ans=alphas; }
+  
+  VERBOSE(4)<<"Fixed-alphaS="<<alphas<<", Lambda_QCD_HTL="<<sqrt(Square_Lambda_QCD_HTL)<<", mu2="<<muSquare<<", Running alpha_s"<<ans;
   return ans;
 }
 
