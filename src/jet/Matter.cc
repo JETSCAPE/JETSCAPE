@@ -3895,7 +3895,7 @@ double Matter::GeneralQhatFunction(int QhatParametrizationType, double Temperatu
   int ActiveFlavor=3; qhat=0.0;
   double DebyeMassSquare = FixAlphas*4*pi*pow(Temperature,2.0)*(6.0 + ActiveFlavor)/6.0; 
   double ScaleNet=2*E*Temperature; 
-  if(E < pi){ ScaleNet=2*pi*Temperature; }
+  if(ScaleNet < 1.0){ ScaleNet=1.0; }
   switch(QhatParametrizationType)
     {
       //HTL formula with all alpha_s as constant and controlled by XML
