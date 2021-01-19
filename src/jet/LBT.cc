@@ -853,7 +853,20 @@ void LBT::LBT0(int &n, double &ti) {
         //              if(E<T) preKT=4.0*pi/9.0/log(scaleAK*T*T/0.04)/alphas/fixKT;
         //              else preKT=4.0*pi/9.0/log(scaleAK*E*T/0.04)/alphas/fixKT;
 
-        if(run_alphas==1) runKT=4.0*pi/9.0/log(2.0*E*T/0.04)/0.3;
+        if(run_alphas==1) {
+            //runKT=4.0*pi/9.0/log(2.0*E*T/0.04)/0.3;
+            fixedLog = log(5.7*E/4.0/6.0/pi/0.3/T);
+            scaleMu2 = 2.0*E*T;
+            if(scaleMu2 < 1.0) {
+                scaleMu2 = 1.0;
+                runAlphas = alphas;
+            } else {
+                double lambdaQCD2 = exp(-4.0*pi/9.0/alphas);
+                runAlphas = 4.0*pi/9.0/log(scaleMu2/lambdaQCD2);
+            }
+            runKT = runAlphas/0.3;
+            runLog = log(scaleMu2/6.0/pi/T/T/alphas)/fixedLog;
+        }    
 
         lam(KATTC0, RTE, PLen, T, T1, T2, E1, E2, iT1, iT2, iE1,
             iE2); //modified: use P instead
@@ -866,7 +879,7 @@ void LBT::LBT0(int &n, double &ti) {
                                      KTsig);
 
         if(run_alphas==1) {
-           Kfactor = KPfactor * KTfactor * KTfactor * runKT * preKT; // K factor for qhat
+           Kfactor = KPfactor * KTfactor * KTfactor * runKT * preKT * runLog; // K factor for qhat
         } else {
            Kfactor = KPfactor * KTfactor * KTfactor * preKT * preKT; // K factor for qhat
         }

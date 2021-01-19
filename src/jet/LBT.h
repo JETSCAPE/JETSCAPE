@@ -90,6 +90,7 @@ private:
   double scaleAK = 2.0;
   //...derived quantities
   double KPfactor, KTfactor, Kfactor, runKT;
+  double fixedLog, runLog, scaleMu2, runAlphas;
 
   //...initialization parameters for jet partons
   int initHardFlag =
