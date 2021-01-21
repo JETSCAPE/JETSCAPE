@@ -1,0 +1,35 @@
+name: docker-deploy
+
+on:
+  release: 
+    types: [published] 
+#    types: [published, created, edited, prereleased, released] 
+#  push:
+#    tags:
+#      - docker*
+
+jobs:
+  deploy:
+    name: Build and Push Docker
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout JETSCAPE
+      uses: actions/checkout@v2
+      with:
+        path: JETSCAPE-DOCKER
+        
+    - name: Copy Dockerfile
+      run: cp JETSCAPE-DOCKER/docker/Dockerfile.deploy Dockerfile
+      
+    #https://github.com/marketplace/actions/docker-publish
+    #https://www.docker.com/blog/first-docker-github-action-is-here/
+    - name: Dockerize
+      uses: docker/build-push-action@v1
+      with:
+       username: ${{ secrets.DOCKER_USERNAME }}
+       password: ${{ secrets.DOCKER_PASSWORD }}
+       repository: ${{ secrets.DOCKER_REPO }} 
+       tag_with_ref: true
+       #tags: dockerize
+

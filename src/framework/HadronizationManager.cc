@@ -122,4 +122,19 @@ void HadronizationManager::CreateSignalSlots() {
   JetScapeSignalManager::Instance()->PrintTransformPartonsSignalMap();
 }
 
+void HadronizationManager::GetHadrons(vector<shared_ptr<Hadron>>& signal){
+	//signal = outHadrons;
+	signal.clear();
+	// foreach hadronizon object tasks
+	for(shared_ptr<JetScapeTask> it : GetTaskList()){ 
+		vector<shared_ptr<Hadron>> tempHadronList;
+		JetScapeTask *jet = it.get();
+		Hadronization *hit = (Hadronization *) jet;
+		tempHadronList = hit->GetHadrons();
+		for(auto hadron : tempHadronList){
+			signal.push_back(hadron);
+		}
+	}
+}
+
 } // namespace Jetscape
