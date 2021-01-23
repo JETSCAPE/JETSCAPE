@@ -123,6 +123,7 @@ void Matter::Init() {
   Q00 = GetXMLElementDouble({"Eloss", "Matter", "Q0"});
   T0 = GetXMLElementDouble({"Eloss", "Matter", "T0"});
   alphas = GetXMLElementDouble({"Eloss", "Matter", "alphas"});
+  tStart = GetXMLElementDouble({"Eloss", "Matter", "tStart"});
   //run_alphas = GetXMLElementInt({"Eloss", "Matter", "run_alphas"});
   QhatParametrizationType=GetXMLElementInt({"Eloss", "Matter", "QhatParametrizationType"});
   hydro_Tc = GetXMLElementDouble({"Eloss", "Matter", "hydro_Tc"});
@@ -145,7 +146,7 @@ void Matter::Init() {
   JSINFO << MAGENTA << "use hybrid hadronization later? " << flag_useHybridHad;
   JSINFO << MAGENTA << "matter shower on: " << matter_on;
   JSINFO << MAGENTA << "in_vac: " << in_vac << "  brick_med: " << brick_med
-         << "  recoil_on: " << recoil_on;
+         << "  recoil_on: " << recoil_on<<", tStart ="<<tStart;
   JSINFO << MAGENTA << "Q0: " << Q00 << " vir_factor: " << vir_factor
          << "  qhat0: " << qhat0 << " alphas: " << alphas
          << " hydro_Tc: " << hydro_Tc << " brick_length: " << brick_length;
@@ -250,8 +251,6 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
   qhat = qhat0;
 
   VERBOSE(8) << " qhat0 = " << qhat0 << " qhat = " << qhat;
-
-  GetHydroTau0Signal(tStart);
 
   for (int i = 0; i < pIn.size(); i++) {
 

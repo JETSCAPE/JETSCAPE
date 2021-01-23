@@ -74,6 +74,7 @@
       <QhatParametrizationType> 1 </QhatParametrizationType>
       <qhat0> -2.0 </qhat0>  <!-- If Type=0 or 1 set qhat0 as negative  -->
       <alphas> 0.25 </alphas>
+      <tStart> 0.6 </tStart> <!-- Start time of jet quenching, proper time, fm/c   -->
     </Matter>
 
     <Lbt>
@@ -84,6 +85,7 @@
       <hydro_Tc> 0.16 </hydro_Tc>
       <alphas> 0.25 </alphas>
       <run_alphas>1</run_alphas>   <!-- 0 for fixed alpha_s and 1 for running alpha_s -->
+      <tStart> 0.6 </tStart> <!-- Start time of jet quenching, proper time, fm/c   -->
     </Lbt>
   </Eloss>
   

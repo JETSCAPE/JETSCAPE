@@ -326,7 +326,7 @@ private:
   int flagScatter, flag_update, flag_update0;
   double Q00, Q0;
 
-  double tStart;
+  double tStart;// = 0.6;
 
   //...functions
 

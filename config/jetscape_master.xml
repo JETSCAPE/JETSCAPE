@@ -27,8 +27,6 @@
   <JetScapeWriterAscii> off </JetScapeWriterAscii>
   <JetScapeWriterAsciiGZ> off </JetScapeWriterAsciiGZ>
   <JetScapeWriterHepMC> off </JetScapeWriterHepMC>
-  <JetScapeWriterFinalStatePartonsAscii> off </JetScapeWriterFinalStatePartonsAscii>
-  <JetScapeWriterFinalStateHadronsAscii> off </JetScapeWriterFinalStateHadronsAscii>
 
   <!--  Random Settings. For now, just a global  seed. -->
   <!--  Note: It's each modules responsibility to adopt it -->
@@ -139,6 +137,7 @@
       <QhatParametrizationType> 1 </QhatParametrizationType>
       <qhat0> -2.0 </qhat0>  <!-- If Type=0 or 1 set qhat0 as negative  -->
       <alphas> 0.2 </alphas> 
+      <tStart> 0.6 </tStart> <!-- Start time of jet quenching, proper time, fm/c   -->
     </Matter>
 
     <Lbt>
@@ -149,12 +148,13 @@
       <hydro_Tc> 0.16 </hydro_Tc>
       <alphas> 0.2 </alphas>
       <run_alphas>1</run_alphas>   <!-- 0 for fixed alpha_s and 1 for running alpha_s -->
+      <tStart> 0.6 </tStart> <!-- Start time of jet quenching, proper time, fm/c   -->
     </Lbt>
     
     <Martini>
       <name > Martini </name>
       <Q0> 2.0 </Q0>
-      <alphas> 0.3 </alphas>
+      <alpha_s> 0.3 </alpha_s>
       <pcut> 2.0 </pcut>
       <hydro_Tc> 0.16 </hydro_Tc>
       <recoil_on> 0 </recoil_on>
