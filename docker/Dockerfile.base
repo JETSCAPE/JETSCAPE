@@ -73,11 +73,11 @@ RUN curl -SL http://hepmc.web.cern.ch/hepmc/releases/HepMC3-3.1.1.tar.gz | tar -
 && rm -r /usr/local/hepmc3-build
 ENV LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH}"
 
-# Install Pythia8 (8.235 is needed by SMASH, and it should be installed in a folder called pythia8235)
-RUN curl -SL http://home.thep.lu.se/~torbjorn/pythia8/pythia8235.tgz \
+# Install Pythia8 (8.303 is needed by SMASH)
+RUN curl -SL http://home.thep.lu.se/~torbjorn/pythia8/pythia8303.tgz \
 | tar -xvzC /usr/local \
-&& cd /usr/local/pythia8235 \
-&& ./configure --enable-shared --prefix=/usr/local/pythia8235 --with-hepmc3=/usr/local/HepMC3-3.1.1 \
+&& cd /usr/local/pythia8303 \
+&& ./configure --enable-shared --prefix=/usr/local --with-hepmc3=/usr/local/HepMC3-3.1.1 \
 && make -j8 \
 && make -j8 install
 
@@ -86,8 +86,8 @@ ARG username=jetscape-user
 ENV JETSCAPE_DIR="/home/${username}/JETSCAPE"
 ENV SMASH_DIR="${JETSCAPE_DIR}/external_packages/smash/smash_code"
 ENV EIGEN3_ROOT /usr/include/eigen3
-ENV PYTHIA8DIR /usr/local/pythia8235
-ENV PYTHIA8_ROOT_DIR /usr/local/pythia8235
+ENV PYTHIA8DIR /usr/local
+ENV PYTHIA8_ROOT_DIR /usr/local
 ENV PATH $PATH:$PYTHIA8DIR/bin
 
 # Build heppy (various HEP tools via python)
