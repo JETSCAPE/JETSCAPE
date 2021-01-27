@@ -57,12 +57,12 @@ The docker container will contain only the pre-requisite environment to build JE
 
     **macOS:**
     ```
-    docker run -it -v ~/jetscape-docker:/home/jetscape-user --name myJetscape jetscape/base:v1.4
+    docker run -it -v ~/jetscape-docker:/home/jetscape-user --name myJetscape jetscape/base:v1.5
    ```
 
     **linux:**
     ```
-    docker run -it -v ~/jetscape-docker:/home/jetscape-user --name myJetscape --user $(id -u):$(id -g) jetscape/base:v1.4
+    docker run -it -v ~/jetscape-docker:/home/jetscape-user --name myJetscape --user $(id -u):$(id -g) jetscape/base:v1.5
     ```
     
     For details on the compatibility of docker image versions with JETSCAPE versions, please see the [jetscape dockerhub](https://hub.docker.com/r/jetscape/base) page.
