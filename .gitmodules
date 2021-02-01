@@ -1,0 +1,15 @@
+[submodule "external_packages/PyVisc"]
+	path = external_packages/PyVisc
+	url = https://gitlab.com/snowhitiger/PyVisc.git
+[submodule "external_packages/freestream-milne"]
+	path = external_packages/freestream-milne
+	url = https://github.com/derekeverett/freestream-milne.git
+[submodule "external_packages/iSS"]
+	path = external_packages/iSS
+	url = https://github.com/chunshen1987/iSS
+[submodule "external_packages/music"]
+	path = external_packages/music
+	url = https://github.com/MUSIC-fluid/MUSIC
+[submodule "external_packages/smash/smash_code"]
+	path = external_packages/smash/smash_code
+	url = https://github.com/smash-transport/smash.git
