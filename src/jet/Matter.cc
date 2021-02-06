@@ -68,6 +68,9 @@ Matter::Matter() {
   hydro_Tc = 0.;
   qhat0 = 0.;
   alphas = 0.;
+  tscale=1;
+  qhatA=0.;
+  qhatB=0.;
   brick_length = 0.;
   vir_factor = 0.;
   initR0 = 0.;
@@ -100,6 +103,9 @@ void Matter::Init() {
   Q00 = 1.0;    // virtuality separation scale
   qhat0 = 2.0;  // GeV^2/fm for gluon at s = 96 fm^-3
   alphas = 0.3; // only useful when qhat0 is a negative number
+  tscale=1;
+  qhatA=1;
+  qhatB=1;
   hydro_Tc = 0.16;
   brick_length = 4.0;
   vir_factor = 1.0;
@@ -123,6 +129,8 @@ void Matter::Init() {
   Q00 = GetXMLElementDouble({"Eloss", "Matter", "Q0"});
   T0 = GetXMLElementDouble({"Eloss", "Matter", "T0"});
   alphas = GetXMLElementDouble({"Eloss", "Matter", "alphas"});
+  qhatA = GetXMLElementDouble({"Eloss", "Matter", "qhatA"});
+  qhatB = GetXMLElementDouble({"Eloss", "Matter", "qhatB"});
   tStart = GetXMLElementDouble({"Eloss", "Matter", "tStart"});
   //run_alphas = GetXMLElementInt({"Eloss", "Matter", "run_alphas"});
   QhatParametrizationType=GetXMLElementInt({"Eloss", "Matter", "QhatParametrizationType"});
@@ -149,6 +157,7 @@ void Matter::Init() {
          << "  recoil_on: " << recoil_on<<", tStart ="<<tStart;
   JSINFO << MAGENTA << "Q0: " << Q00 << " vir_factor: " << vir_factor
          << "  qhat0: " << qhat0 << " alphas: " << alphas
+         << "  qhatA: " << qhatA << " qhatB:  " <<qhatB
          << " hydro_Tc: " << hydro_Tc << " brick_length: " << brick_length;
   if(QhatParametrizationType ==1){ JSINFO <<"Running alphas will be used as 4*pi/(9.0*log(2*enerLoc*tempLoc/LambdaQCDS))"; }
 
@@ -785,9 +794,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
 		}*/
 
 	    //GeneralQhatFunction(int QhatParametrizationType, double Temperature, double EntropyDensity, double FixAlphas,  double Qhat0, double E, double muSquare)
-	    double Scale=1.0; //Revist this when q-hat is virtuality dependent 
-	    qhatLoc= GeneralQhatFunction(QhatParametrizationType, tempLoc, sdLoc, alphas, qhat0, enerLoc, Scale);
-
+	    double muSquare= pIn[i].t(); //Virtuality of the parent; Revist this when q-hat is virtuality dependent 
+	    qhatLoc= GeneralQhatFunction(QhatParametrizationType, tempLoc, sdLoc, alphas, qhat0, enerLoc, muSquare);
+	  
           } else { // outside the QGP medium
             continue;
           }
@@ -801,7 +810,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
 	  //if(run_alphas==1){ alphas= 4*pi/(9.0*log(2*enerLoc*tempLoc/0.04));}
 
           // solve alphas
-          if (qhat0 < 0.0 || QhatParametrizationType==0 || QhatParametrizationType==1 )
+          if (qhat0 < 0.0 || QhatParametrizationType==0 || QhatParametrizationType==1 || QhatParametrizationType==5)
             soln_alphas = alphas;
           else
             soln_alphas = solve_alphas(qhatLoc, enerLoc, tempLoc);
@@ -810,16 +819,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
           muD2 = 6.0 * pi * soln_alphas * tempLoc * tempLoc;
           prob_el = 42.0 * zeta3 * el_CR  * tempLoc / 6.0 / pi /
                     pi * dt_lrf / 0.1973;
-	
-	  double ScaleNet=2*enerLoc*tempLoc;
-	  if (enerLoc < pi){ScaleNet=2*pi*tempLoc;}
-
-	  if(QhatParametrizationType == 1)
-	    {
-	      prob_el=prob_el*RunningAlphaS(ScaleNet);
-	    }
-	  else prob_el=prob_el*soln_alphas;
-
+		  
+	  prob_el=prob_el*ModifiedProbability(QhatParametrizationType, tempLoc, sdLoc, enerLoc, pIn[i].t());
+	    
           el_rand = ZeroOneDistribution(*GetMt19937Generator());
 
           //cout << "  qhat: " << qhatLoc << "  alphas: " << soln_alphas << "  ener: " << enerLoc << "  prob_el: " << prob_el << "  " << el_rand << endl;
@@ -1906,6 +1908,7 @@ double Matter::generate_vac_t(int p_id, double nu, double t0, double t,
 
   t_hi = t;
 
+  tscale = t; //for virtuality dependent q-hat
   //    cout << " in gen_vac_t : t_low , t_hi = " << t_low << "  " << t_hi << endl;
   //    cin >> test ;
 
@@ -2027,6 +2030,8 @@ double Matter::generate_vac_t_w_M(int p_id, double M, double nu, double t0,
   t_hi_MM = t;
   t_hi_00 = t;
 
+  tscale = t; //for virtuality dependent q-hat
+  
   VERBOSE(1) << MAGENTA << " in gen_vac_t_w_M : t_low , t_hi = " << t_low_M0 << "  " << t ;
   //cin >> test ;
 
@@ -3857,12 +3862,12 @@ double Matter::fillQhatTab(double y) {
       }*/
 
       // GeneralQhatFunction(int QhatParametrizationType, double Temperature, double EntropyDensity, double FixAlphas,  double Qhat0, double E, double muSquare);
-      double Scale=1.0;// To implement virtuality dependent q-hat, make the table 3D table
+      double muSquare=-1;//For virtuality dependent cases, we explicitly modify q-hat inside Sudakov, due to which we set here scale=-1; Alternatively one could extend the dimension of the q-hat table
 
-      qhatLoc= GeneralQhatFunction(QhatParametrizationType, tempLoc, sdLoc, alphas, qhat0, initEner, Scale);      
+      qhatLoc= GeneralQhatFunction(QhatParametrizationType, tempLoc, sdLoc, alphas, qhat0, initEner, muSquare);      
       qhatLoc = qhatLoc * flowFactor;
 
-      //    cout << "check qhat --  ener, T, qhat: " << initEner << "  " << tempLoc << "  " << qhatLoc << endl;
+      //JSINFO << "check qhat --  ener, T, qhat: " << initEner << " , " << tempLoc << " , " << qhatLoc;
     } else { // outside the QGP medium
       qhatLoc = 0.0;
     }
@@ -3907,7 +3912,7 @@ double Matter::GeneralQhatFunction(int QhatParametrizationType, double Temperatu
       qhat = (Ca*50.4864/pi)*RunningAlphaS(ScaleNet)*FixAlphas*pow(Temperature,3)*log(ScaleNet/DebyeMassSquare);
       break;
       
-      //Constant q-hat for brick study
+      //Constant q-hat 
     case 2:
     qhat = Qhat0*0.1973;
     break;
@@ -3921,11 +3926,16 @@ double Matter::GeneralQhatFunction(int QhatParametrizationType, double Temperatu
     case 4:
     qhat = Qhat0*(EntropyDensity/96.0)*0.1973; // w.r.t S0=96 fm^-3
     break;
-    //PDF-Scale dependent q-hat  
-
+    
+    //HTL q-hat multiplied by Virtuality dependent function to mimic PDF-Scale dependent q-hat  
+    case 5:
+      qhat = (Ca*50.4864/pi)*RunningAlphaS(ScaleNet)*FixAlphas*pow(Temperature,3)*log(ScaleNet/DebyeMassSquare);
+      qhat = qhat*VirtualityQhatFunction(5, E, muSquare);
+    break;
+    
     default:      
       JSINFO<<"q-hat Parametrization "<<QhatParametrizationType<<" is not used, qhat will be set to zero";    
-    }
+    }  
   return qhat;
 }
 
@@ -3937,12 +3947,76 @@ double Matter::RunningAlphaS(double muSquare)
   double ans = 12.0*pi/( (33.0- 2.0*ActiveFlavor)*log(muSquare/Square_Lambda_QCD_HTL) );
   if(muSquare < 1.0) {ans=alphas; }
   
-  VERBOSE(4)<<"Fixed-alphaS="<<alphas<<", Lambda_QCD_HTL="<<sqrt(Square_Lambda_QCD_HTL)<<", mu2="<<muSquare<<", Running alpha_s"<<ans;
+  VERBOSE(8)<<"Fixed-alphaS="<<alphas<<", Lambda_QCD_HTL="<<sqrt(Square_Lambda_QCD_HTL)<<", mu2="<<muSquare<<", Running alpha_s"<<ans;
   return ans;
 }
-
 //////////////////////////////////////////////////////////////////////////////////////
+///////////// Virtuality dependent prefactor for q-hat function /////////////////////////
+double Matter::VirtualityQhatFunction(int QhatParametrizationType,  double enerLoc, double muSquare)
+{
+  double ans=0;
+  if(QhatParametrizationType==5 && muSquare > Q00*Q00)
+    {
+      ans =  1.0 + qhatA*log(Q00*Q00)*log(Q00*Q00) + qhatB*pow(log(Q00*Q00),4);
+      ans = ans/( 1.0 + qhatA*log(muSquare)*log(muSquare) + qhatB*pow(log(muSquare),4)  );
+    }
+  else 
+    {
+      ans=1; //when muSquare=-1, ans should be ans=1, because q-hat table does not have virtuality dependence
+    }
 
+  //JSINFO<<"Qhat Type="<<QhatParametrizationType<<", and (E,muSquare)=("<<enerLoc<<","<<muSquare<<"), and Virtuality dep Qhat="<<ans;
+  return ans;  
+}
+////////////Modification of elastic scattering probability due to modified q-hat//////
+double Matter::ModifiedProbability(int QhatParametrizationType, double tempLoc, double sdLoc, double enerLoc, double muSquare)
+{
+  double ModifiedAlphas=0;double qhatLoc=0;
+  double ScaleNet=2*enerLoc*tempLoc;
+  if(ScaleNet <1.0) { ScaleNet=1.0; }
+  
+  switch(QhatParametrizationType)
+    {
+      //For HTL q-hat formula with all alpha_s as constant and controlled by XML
+    case 0:
+      ModifiedAlphas = alphas;
+      break;
+
+      //For HTL q-hat where one alpha_s at scale muS=2ET and second alpha_s at muS=DebyeMassSquare is fit parameter
+    case 1:      
+      ModifiedAlphas = RunningAlphaS(ScaleNet);
+      break;
+
+      //Constant q-hat case, alphas is computed using HTL formula with all alpha_s fixed
+    case 2:
+      qhatLoc = qhat0*0.1973;
+      ModifiedAlphas = solve_alphas(qhatLoc, enerLoc, tempLoc);  
+      break;
+      
+      //For q-hat goes as T^3, alphas is computed using HTL formula with all alpha_s fixed
+    case 3:
+      qhatLoc = qhat0*pow(tempLoc/0.3,3)*0.1973; // w.r.t T=0.3 GeV
+      ModifiedAlphas = solve_alphas(qhatLoc, enerLoc, tempLoc);
+      break;
+
+      //For q-hat goes as entropy density
+    case 4:
+      qhatLoc = qhat0*(sdLoc/96.0)*0.1973; // w.r.t S0=96 fm^-3
+      ModifiedAlphas = solve_alphas(qhatLoc, enerLoc, tempLoc);
+      break;
+
+      //For HTL q-hat multiplied by Virtuality dependent function to mimic PDF-Scale dependent q-hat
+    case 5:
+      ModifiedAlphas = RunningAlphaS(ScaleNet)*VirtualityQhatFunction(5,  enerLoc, muSquare) ;
+      break;
+      
+    default:      
+      JSINFO<<"q-hat Parametrization "<<QhatParametrizationType<<" is not used,Elastic scattering alphas will be set to zero"; 
+    }
+  //JSINFO<<"q-hat Parametrization "<<QhatParametrizationType<<" modified alphas="<<ModifiedAlphas;
+  return ModifiedAlphas;
+}
+  
 double Matter::fncQhat(double zeta) {
   if (in_vac)
     return (0.0);
@@ -3957,7 +4031,7 @@ double Matter::fncQhat(double zeta) {
   if (indexZeta >= dimQhatTab)
     return (0);
 
-  double avrQhat = qhatTab1D[indexZeta];
+  double avrQhat = qhatTab1D[indexZeta]*VirtualityQhatFunction(QhatParametrizationType, initEner, tscale);
   return (avrQhat);
 }
 
@@ -3982,7 +4056,7 @@ double Matter::fncAvrQhat(double zeta, double tau) {
   if (indexTau >= dimQhatTab)
     indexTau = dimQhatTab - 1;
 
-  double avrQhat = qhatTab2D[indexZeta][indexTau];
+  double avrQhat = qhatTab2D[indexZeta][indexTau]*VirtualityQhatFunction(QhatParametrizationType, initEner, tscale);
   return (avrQhat);
 }
 

@@ -151,6 +151,9 @@ public:
   int QhatParametrizationType=-1;
   double GeneralQhatFunction(int QhatParametrizationType, double Temperature, double EntropyDensity, double FixAlphas, double Qhat0, double E, double muSquare);
   double RunningAlphaS(double muSquare);
+  double VirtualityQhatFunction(int QhatParametrizationType,  double enerLoc, double muSquare);
+  double ModifiedProbability(int QhatParametrizationType, double tempLoc, double sdLoc, double enerLoc, double muSquare);  
+  double qhatA, qhatB;
   
   //SC: for elastic scattering
   void flavor(int &CT, int &KATT0, int &KATT2, int &KATT3,
@@ -183,6 +186,7 @@ protected:
 private:
   // Allows the registration of the module so that it is available to be used by the Jetscape framework.
   static RegisterJetScapeModule<Matter> reg;
+  double tscale;
 };
 
 #endif // MATTER_H

@@ -62,7 +62,7 @@
       <in_vac> 0 </in_vac>
       <recoil_on> 1 </recoil_on>
       <broadening_on> 0 </broadening_on>
-      <brick_med> 0 </brick_med>
+      <brick_med> 0 </brick_med>   <!-- Set brick_med to 1 while using Brick Hydro module-->
       <brick_length> 5.0 </brick_length>
       <hydro_Tc> 0.16 </hydro_Tc>
       <!-- Pick a qhat formula -->
@@ -71,9 +71,12 @@
       <!-- Type=2 : Constant q-hat; qhat=qhat0   -->
       <!-- Type=3 : qhat=qhat0*T^3  -->
       <!-- Type=4 : qhat=qhat0*s; s=entropy density  -->
-      <QhatParametrizationType> 1 </QhatParametrizationType>
-      <qhat0> -2.0 </qhat0>  <!-- If Type=0 or 1 set qhat0 as negative  -->
-      <alphas> 0.25 </alphas>
+      <!-- Type=5 : HTL q-hat with Virtuality dependent function  -->
+      <QhatParametrizationType> 5 </QhatParametrizationType>
+      <qhat0> -2.0 </qhat0>  <!-- If Type=0, 1, 5 set qhat0 as negative since alphas will be used-->
+      <alphas> 0.3 </alphas>
+      <qhatA> 10.0 </qhatA>    <!-- Always positive, Used only if QhatParametrizationType=5  -->
+      <qhatB> 0.0 </qhatB>    <!-- Always positive, Used only if QhatParametrizationType=5  -->
       <tStart> 0.6 </tStart> <!-- Start time of jet quenching, proper time, fm/c   -->
     </Matter>
 
@@ -83,7 +86,7 @@
       <in_vac> 0 </in_vac>
       <only_leading> 0 </only_leading>
       <hydro_Tc> 0.16 </hydro_Tc>
-      <alphas> 0.25 </alphas>
+      <alphas> 0.3 </alphas>
       <run_alphas>1</run_alphas>   <!-- 0 for fixed alpha_s and 1 for running alpha_s -->
       <tStart> 0.6 </tStart> <!-- Start time of jet quenching, proper time, fm/c   -->
     </Lbt>
