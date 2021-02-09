@@ -29,6 +29,7 @@
 #include "JetScapeWriter.h"
 #include "PreequilibriumDynamics.h"
 #include "PartonPrinter.h"
+#include "HadronPrinter.h"
 
 #include <iostream>
 #include <string>
@@ -99,6 +100,12 @@ public:
   }
   weak_ptr<PartonPrinter> GetPartonPrinterPointer() { return pprinter; }
 
+  void SetHadronPrinterPointer(shared_ptr<HadronPrinter> m_hprinter) {
+    hprinter = m_hprinter;
+  }
+  weak_ptr<HadronPrinter> GetHadronPrinterPointer() { return hprinter; }
+
+
   void SetEnergyLossPointer(shared_ptr<JetEnergyLoss> m_eloss) {
     eloss = m_eloss;
   }
@@ -115,6 +122,7 @@ public:
   void ConnectGetFinalPartonListSignal(shared_ptr<HadronizationManager> hm);
   void ConnectTransformPartonsSignal(shared_ptr<Hadronization> h,
                                      shared_ptr<Hadronization> h2);
+		void ConnectGetFinalHadronListSignal(shared_ptr<HadronPrinter> h);
 
   void
   DisconnectSignal(){}; // to be implememted if needed maybe for Eloss ...!???
@@ -145,6 +153,7 @@ private:
   weak_ptr<HadronizationManager> hadro;
   weak_ptr<Afterburner> afterburner;
   weak_ptr<PartonPrinter> pprinter;
+  weak_ptr<HadronPrinter> hprinter;
   weak_ptr<JetEnergyLoss> eloss;
   weak_ptr<SoftParticlization> softparticlization;
 
