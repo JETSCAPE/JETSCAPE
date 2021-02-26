@@ -72,7 +72,8 @@ void HydroFromFile::InitializeHydro(Parameter parameter_list) {
     JSWARN << " : please check your inputs~";
     exit(-1);
 #endif
-  } else if (hydro_type_ == 2 || hydro_type_ == 3 || hydro_type_ == 4) {
+  } else if (hydro_type_ == 2 || hydro_type_ == 3
+             || hydro_type_ == 4 || hydro_type_ == 5) {
     hydroinfo_MUSIC_ptr = new Hydroinfo_MUSIC();
     int verbose = GetXMLElementInt({"vlevel"});
     hydroinfo_MUSIC_ptr->set_verbose(verbose);
@@ -114,6 +115,13 @@ void HydroFromFile::read_in_hydro_event(string MUSIC_input_file,
                                        hydro_bulk_file);
   } else if (hydro_type_ == 4) {
     int hydro_mode = 10;
+    string hydro_shear_file = "";
+    string hydro_bulk_file = "";
+    hydroinfo_MUSIC_ptr->readHydroData(hydro_mode, nskip_tau, MUSIC_input_file,
+                                       MUSIC_hydro_ideal_file, hydro_shear_file,
+                                       hydro_bulk_file);
+  } else if (hydro_type_ == 5) {
+    int hydro_mode = 11;
     string hydro_shear_file = "";
     string hydro_bulk_file = "";
     hydroinfo_MUSIC_ptr->readHydroData(hydro_mode, nskip_tau, MUSIC_input_file,
@@ -193,7 +201,7 @@ void HydroFromFile::EvolveHydro() {
     read_in_hydro_event(input_file, hydro_ideal_file, nskip_tau_);
     hydro_tau_0 = hydroinfo_MUSIC_ptr->get_hydro_tau0();
     hydro_tau_max = hydroinfo_MUSIC_ptr->get_hydro_tau_max();
-  } else if (hydro_type_ == 4) {
+  } else if (hydro_type_ == 4 || hydro_type_ == 5) {
     string input_file;
     string hydro_ideal_file;
     if (flag_read_in_multiple_hydro_ == 0) {
@@ -276,7 +284,8 @@ void HydroFromFile::GetHydroInfo(
     temp_fluid_cell_ptr->vy *= u0_perp / u0;
     temp_fluid_cell_ptr->vz = z / (t + 1e-15);
 #endif
-  } else if (hydro_type_ == 2 || hydro_type_ == 3 || hydro_type_ == 4) {
+  } else if (hydro_type_ == 2 || hydro_type_ == 3
+             || hydro_type_ == 4 || hydro_type_ == 5) {
     t_local = tau_local*cosh(eta_local);
     z_local = tau_local*sinh(eta_local);
     hydroinfo_MUSIC_ptr->getHydroValues(x_local, y_local, z_local, t_local,
