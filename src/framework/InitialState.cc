@@ -76,4 +76,21 @@ std::tuple<double, double, double> InitialState::CoordFromIdx(int idx) {
                          -grid_max_z_ + page * grid_step_z_);
 }
 
+
+void InitialState::SampleABinaryCollisionPoint(double &x, double &y) {
+  if (num_of_binary_collisions_.size() == 0) {
+    JSWARN << "num_of_binary_collisions is empty, setting the starting "
+              "location to 0. Make sure to add e.g. trento before PythiaGun.";
+  } else {
+    std::discrete_distribution<> dist(
+        begin(num_of_binary_collisions_),
+        end(num_of_binary_collisions_)); // Create the distribution
+    // Now generate values
+    auto idx = dist(*GetMt19937Generator());
+    auto coord = ini->CoordFromIdx(idx);
+    x = std::get<0>(coord);
+    y = std::get<1>(coord);
+  }
+}
+
 } // end namespace Jetscape
