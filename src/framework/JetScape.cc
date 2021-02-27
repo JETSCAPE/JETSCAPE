@@ -203,6 +203,14 @@ void JetScape::DetermineTaskListFromXML() {
           JSWARN << "InitialFromFile is attempted to be added, but HDF5 is not "
                     "installed!";
 #endif
+        } else if (childElementName == "initial_Ncoll_list") {
+          auto initial =
+              JetScapeModuleFactory::createInstance("NcollListFromFile");
+          if (initial) {
+            Add(initial);
+            JSINFO << "JetScape::DetermineTaskList() -- Initial state: Added "
+                      "NcollListFromFile to task list.";
+          }
         }
         //   - Custom module
         else if (((int)childElementName.find("CustomModule") >= 0)) {

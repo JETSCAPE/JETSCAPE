@@ -18,7 +18,7 @@
 #include "NcollListFromFile.h"
 
 // Register the module with the base class
-RegisterJetScapeModule<InitialFromFile> InitialFromFile::reg(
+RegisterJetScapeModule<NcollListFromFile> NcollListFromFile::reg(
         "NcollListFromFile");
 
 NcollListFromFile::NcollListFromFile() {
@@ -33,7 +33,7 @@ void NcollListFromFile::Exec() {
   Jetscape::JSINFO << "Read binary collision list from file ...";
   try {
     std::string initialProfilePath =
-        GetXMLElementText({"IS", "initial_profile_path"});
+        GetXMLElementText({"IS", "initial_Ncoll_list"});
 
     event_id_++;
     std::ostringstream path_with_filename;
@@ -41,7 +41,7 @@ void NcollListFromFile::Exec() {
                        << "/NcollList.dat";
     JSINFO << "External initial profile path is" << path_with_filename.str();
 
-    ReadNbcDist(initialProfilePath);
+    ReadNbcList(path_with_filename.str());
   } catch (std::exception &err) {
     Jetscape::JSWARN << err.what();
     std::exit(-1);
@@ -79,7 +79,7 @@ void NcollListFromFile::ReadNbcList(std::string filename) {
 
 
 void NcollListFromFile::SampleABinaryCollisionPoint(double &x, double &y) {
-  int rand_idx = *rand_int_ptr(*GetMt19937Generator());
+  int rand_idx = (*rand_int_ptr_)(*GetMt19937Generator());
   x = binary_collision_x_[rand_idx];
   y = binary_collision_y_[rand_idx];
 }

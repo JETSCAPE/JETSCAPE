@@ -49,9 +49,9 @@ public:
   double GetNcoll() { return(ncoll_); };
 
   //! Load saved number of binary collisions
-  void ReadNbcList();
+  void ReadNbcList(std::string filename);
 
-  void SampleABinaryCollisionPoint(double &x, double &y) {
+  void SampleABinaryCollisionPoint(double &x, double &y);
 
 private:
   std::vector<double> binary_collision_x_;
@@ -62,7 +62,7 @@ private:
 
   // Allows the registration of the module so that it is available to be used
   // by the Jetscape framework.
-  static RegisterJetScapeModule<InitialFromFile> reg;
+  static RegisterJetScapeModule<NcollListFromFile> reg;
 };
 
 #endif  // NCOLLLISTFROMFILE_H

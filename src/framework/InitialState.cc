@@ -87,7 +87,7 @@ void InitialState::SampleABinaryCollisionPoint(double &x, double &y) {
         end(num_of_binary_collisions_)); // Create the distribution
     // Now generate values
     auto idx = dist(*GetMt19937Generator());
-    auto coord = ini->CoordFromIdx(idx);
+    auto coord = CoordFromIdx(idx);
     x = std::get<0>(coord);
     y = std::get<1>(coord);
   }
