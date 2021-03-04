@@ -77,12 +77,12 @@ void Martini::Init() {
   JSDEBUG << s << " to be initilizied ...";
 
   Q0 = GetXMLElementDouble({"Eloss", "Martini", "Q0"});
-  alpha_s = GetXMLElementDouble({"Eloss", "Martini", "alpha_s"});
+  alpha_s0 = GetXMLElementDouble({"Eloss", "Martini", "alpha_s"});
   pcut = GetXMLElementDouble({"Eloss", "Martini", "pcut"});
   hydro_Tc = GetXMLElementDouble({"Eloss", "Martini", "hydro_Tc"});
   recoil_on = GetXMLElementInt({"Eloss", "Martini", "recoil_on"});
+  run_alphas = GetXMLElementInt({"Eloss", "Martini", "run_alphas"});
 
-  g = sqrt(4. * M_PI * alpha_s);
   alpha_em = 1. / 137.;
   hydro_tStart = 0.6;
 
@@ -281,6 +281,14 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2,
     velocity_jet[1] = pIn[i].jet_v().x();
     velocity_jet[2] = pIn[i].jet_v().y();
     velocity_jet[3] = pIn[i].jet_v().z();
+
+    // set alpha_s and g
+    alpha_s = alpha_s0;
+    if (run_alphas) {
+      double mu = sqrt(2.*pAbs*T);
+      alpha_s = RunningAlphaS(mu);
+    }
+    g = sqrt(4. * M_PI * alpha_s);
 
     double deltaTRest = deltaT / gamma;
     // determine the energy-loss process
@@ -847,6 +855,16 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2,
       }
     } // Id==21
   }   // particle loop
+}
+
+double Martini::RunningAlphaS(double mu) {
+
+  if (mu < 1.0) return alpha_s0;
+
+  double beta0 = 9./(4.*M_PI);
+  double LambdaQCD = exp( -1./(2.*beta0*alpha_s0) );
+  double running_alphas = 1./(beta0 * log( pow(mu/LambdaQCD, 2.) ));
+  return running_alphas;
 }
 
 int Martini::DetermineProcess(double pRest, double T, double deltaTRest,

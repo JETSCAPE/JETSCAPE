@@ -161,6 +161,7 @@
       <pcut> 2.0 </pcut>
       <hydro_Tc> 0.16 </hydro_Tc>
       <recoil_on> 0 </recoil_on>
+      <run_alphas>1</run_alphas>
       <path>../src/jet/Martini/</path>
     </Martini>
 
