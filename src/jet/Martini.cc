@@ -261,18 +261,8 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2,
       boostBack = gamma * (1. + beta * cosPhiRest);
     }
 
-    //cout << "Time = " << Time << " Id = " << Id
-    //     << " T = " << setprecision(3) << T
-    //     << " pAbs = " << pAbs << " " << sqrt(px*px+py*py) << " " << pz
-    //     << " | pRest = " << pRest << "/" << pcut
-    //     << " | position = " << xx << " " << yy << " " << zz
-    //     << " | stat = " << pStat << " " << pLabel << " ";
-
-    //if (pRest < eLossCut) continue;
-    if (pRest < eLossCut) {
-      //  cout << endl;
-      continue;
-    }
+    // free-streaming for too soft partons
+    if (pRest < eLossCut) continue;
 
     xVec = FourVector(xx + px / pAbs * deltaT, yy + py / pAbs * deltaT,
                       zz + pz / pAbs * deltaT, Time + deltaT);
