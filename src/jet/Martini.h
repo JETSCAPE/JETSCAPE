@@ -75,7 +75,7 @@ private:
   double g;
   double pcut;         // below this scale, no further Eloss
   double hydro_Tc;     // critical temperature
-  double hydro_tStart; // initilization time of hydro
+  double tStart; // initilization time of hydro
   int run_alphas;      // running alpha_s or not
   int recoil_on;       // turn on recoil
 

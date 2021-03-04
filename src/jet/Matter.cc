@@ -131,7 +131,7 @@ void Matter::Init() {
   alphas = GetXMLElementDouble({"Eloss", "Matter", "alphas"});
   qhatA = GetXMLElementDouble({"Eloss", "Matter", "qhatA"});
   qhatB = GetXMLElementDouble({"Eloss", "Matter", "qhatB"});
-  tStart = GetXMLElementDouble({"Eloss", "Matter", "tStart"});
+  tStart = GetXMLElementDouble({"Eloss", "tStart"});
   //run_alphas = GetXMLElementInt({"Eloss", "Matter", "run_alphas"});
   QhatParametrizationType=GetXMLElementInt({"Eloss", "Matter", "QhatParametrizationType"});
   hydro_Tc = GetXMLElementDouble({"Eloss", "Matter", "hydro_Tc"});

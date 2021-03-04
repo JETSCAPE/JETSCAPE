@@ -76,6 +76,7 @@ void Martini::Init() {
   string s = GetXMLElementText({"Eloss", "Martini", "name"});
   JSDEBUG << s << " to be initilizied ...";
 
+  tStart = GetXMLElementDouble({"Eloss", "tStart"});
   Q0 = GetXMLElementDouble({"Eloss", "Martini", "Q0"});
   alpha_s0 = GetXMLElementDouble({"Eloss", "Martini", "alpha_s"});
   pcut = GetXMLElementDouble({"Eloss", "Martini", "pcut"});
@@ -84,7 +85,6 @@ void Martini::Init() {
   run_alphas = GetXMLElementInt({"Eloss", "Martini", "run_alphas"});
 
   alpha_em = 1. / 137.;
-  hydro_tStart = 0.6;
 
   // Path to additional data
   PathToTables = GetXMLElementText({"Eloss", "Martini", "path"});
@@ -186,7 +186,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2,
 
     eta = pIn[i].eta();
     SpatialRapidity = 0.5 * std::log((tt + zz) / (tt - zz));
-    double boostedTStart = hydro_tStart * cosh(SpatialRapidity);
+    double boostedTStart = tStart * cosh(SpatialRapidity);
 
     // Extract fluid properties
     std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;

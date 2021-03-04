@@ -50,6 +50,7 @@
     <deltaT>0.1</deltaT>
     <formTime> -0.1</formTime>
     <maxT>250</maxT>
+    <tStart> 0.6 </tStart> <!-- Start time of jet quenching, proper time, fm/c   -->
     <mutex>ON</mutex>
 
     <Matter>
@@ -77,7 +78,6 @@
       <alphas> 0.3 </alphas>
       <qhatA> 10.0 </qhatA>    <!-- Always positive, Used only if QhatParametrizationType=5  -->
       <qhatB> 0.0 </qhatB>    <!-- Always positive, Used only if QhatParametrizationType=5  -->
-      <tStart> 0.6 </tStart> <!-- Start time of jet quenching, proper time, fm/c   -->
     </Matter>
 
     <Lbt>
@@ -88,7 +88,6 @@
       <hydro_Tc> 0.16 </hydro_Tc>
       <alphas> 0.3 </alphas>
       <run_alphas>1</run_alphas>   <!-- 0 for fixed alpha_s and 1 for running alpha_s -->
-      <tStart> 0.6 </tStart> <!-- Start time of jet quenching, proper time, fm/c   -->
     </Lbt>
   </Eloss>
   

@@ -122,7 +122,7 @@ void LBT::Init() {
   Q00 = GetXMLElementDouble({"Eloss", "Lbt", "Q0"});
   fixAlphas = GetXMLElementDouble({"Eloss", "Lbt", "alphas"});
   hydro_Tc = GetXMLElementDouble({"Eloss", "Lbt", "hydro_Tc"});
-  tStart = GetXMLElementDouble({"Eloss", "Lbt", "tStart"});
+  tStart = GetXMLElementDouble({"Eloss", "tStart"});
   JSINFO << MAGENTA << "LBT parameters -- in_med: " << vacORmed
          << " Q0: " << Q00 << "  only_leading: " << Kprimary
          << "  alpha_s: " << fixAlphas << "  hydro_Tc: " << hydro_Tc<<", tStart="<<tStart;
