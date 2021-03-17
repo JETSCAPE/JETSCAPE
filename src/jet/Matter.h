@@ -148,12 +148,13 @@ public:
 
 
   //qhat related functions
-  int QhatParametrizationType=-1;
-  double GeneralQhatFunction(int QhatParametrizationType, double Temperature, double EntropyDensity, double FixAlphas, double Qhat0, double E, double muSquare);
+  int QhatParametrizationType;
+  double GeneralQhatFunction(int QhatParametrization, double Temperature, double EntropyDensity, double FixAlphas, double Qhat0, double E, double muSquare);
   double RunningAlphaS(double muSquare);
-  double VirtualityQhatFunction(int QhatParametrizationType,  double enerLoc, double muSquare);
-  double ModifiedProbability(int QhatParametrizationType, double tempLoc, double sdLoc, double enerLoc, double muSquare);  
-  double qhatA, qhatB;
+  double VirtualityQhatFunction(int QhatParametrization,  double enerLoc, double muSquare);
+  double ModifiedProbability(int QhatParametrization, double tempLoc, double sdLoc, double enerLoc, double muSquare);  
+  double IntegralPDF(double xB, double a, double b);
+  double qhatA, qhatB, qhatC, qhatD;
   
   //SC: for elastic scattering
   void flavor(int &CT, int &KATT0, int &KATT2, int &KATT3,

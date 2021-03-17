@@ -69,8 +69,11 @@ Matter::Matter() {
   qhat0 = 0.;
   alphas = 0.;
   tscale=1;
+  QhatParametrizationType=-1;
   qhatA=0.;
   qhatB=0.;
+  qhatC=0.;
+  qhatD=0.;
   brick_length = 0.;
   vir_factor = 0.;
   initR0 = 0.;
@@ -104,8 +107,11 @@ void Matter::Init() {
   qhat0 = 2.0;  // GeV^2/fm for gluon at s = 96 fm^-3
   alphas = 0.3; // only useful when qhat0 is a negative number
   tscale=1;
+  QhatParametrizationType=-1;
   qhatA=1;
   qhatB=1;
+  qhatC=1;
+  qhatD=1;
   hydro_Tc = 0.16;
   brick_length = 4.0;
   vir_factor = 1.0;
@@ -131,6 +137,8 @@ void Matter::Init() {
   alphas = GetXMLElementDouble({"Eloss", "Matter", "alphas"});
   qhatA = GetXMLElementDouble({"Eloss", "Matter", "qhatA"});
   qhatB = GetXMLElementDouble({"Eloss", "Matter", "qhatB"});
+  qhatC = GetXMLElementDouble({"Eloss", "Matter", "qhatC"});
+  qhatD = GetXMLElementDouble({"Eloss", "Matter", "qhatD"});
   tStart = GetXMLElementDouble({"Eloss", "tStart"});
   //run_alphas = GetXMLElementInt({"Eloss", "Matter", "run_alphas"});
   QhatParametrizationType=GetXMLElementInt({"Eloss", "Matter", "QhatParametrizationType"});
@@ -156,8 +164,8 @@ void Matter::Init() {
   JSINFO << MAGENTA << "in_vac: " << in_vac << "  brick_med: " << brick_med
          << "  recoil_on: " << recoil_on<<", tStart ="<<tStart;
   JSINFO << MAGENTA << "Q0: " << Q00 << " vir_factor: " << vir_factor
-         << "  qhat0: " << qhat0 << " alphas: " << alphas
-         << "  qhatA: " << qhatA << " qhatB:  " <<qhatB
+         << "  qhat0: " << qhat0 << " alphas: " << alphas << ", QhatParametrizationType="<<QhatParametrizationType
+         << "  qhatA: " << qhatA << " qhatB:  " <<qhatB  << "  qhatC: " << qhatC << " qhatD:  " <<qhatD
          << " hydro_Tc: " << hydro_Tc << " brick_length: " << brick_length;
   if(QhatParametrizationType ==1){ JSINFO <<"Running alphas will be used as 4*pi/(9.0*log(2*enerLoc*tempLoc/LambdaQCDS))"; }
 
@@ -810,7 +818,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
 	  //if(run_alphas==1){ alphas= 4*pi/(9.0*log(2*enerLoc*tempLoc/0.04));}
 
           // solve alphas
-          if (qhat0 < 0.0 || QhatParametrizationType==0 || QhatParametrizationType==1 || QhatParametrizationType==5)
+          if (qhat0 < 0.0 || QhatParametrizationType==0 || QhatParametrizationType==1 || QhatParametrizationType==5 || 
+              QhatParametrizationType==6 || QhatParametrizationType==7 )
             soln_alphas = alphas;
           else
             soln_alphas = solve_alphas(qhatLoc, enerLoc, tempLoc);
@@ -3894,13 +3903,13 @@ double Matter::fillQhatTab(double y) {
 
 //////////////////////////////////General Function of q-hat//////////////////////////////////
 // E is the energy and muSquare is the virtuality of the parton
-double Matter::GeneralQhatFunction(int QhatParametrizationType, double Temperature, double EntropyDensity, double FixAlphas, double Qhat0, double E, double muSquare)
+double Matter::GeneralQhatFunction(int QhatParametrization, double Temperature, double EntropyDensity, double FixAlphas, double Qhat0, double E, double muSquare)
 {
   int ActiveFlavor=3; qhat=0.0;
   double DebyeMassSquare = FixAlphas*4*pi*pow(Temperature,2.0)*(6.0 + ActiveFlavor)/6.0; 
   double ScaleNet=2*E*Temperature; 
   if(ScaleNet < 1.0){ ScaleNet=1.0; }
-  switch(QhatParametrizationType)
+  switch(QhatParametrization)
     {
       //HTL formula with all alpha_s as constant and controlled by XML
     case 0:
@@ -3928,13 +3937,28 @@ double Matter::GeneralQhatFunction(int QhatParametrizationType, double Temperatu
     break;
     
     //HTL q-hat multiplied by Virtuality dependent function to mimic PDF-Scale dependent q-hat  
+    //Function is 1/(1+A*pow(log(Q^2),2)+B*pow(log(Q^2),4)) 
     case 5:
       qhat = (Ca*50.4864/pi)*RunningAlphaS(ScaleNet)*FixAlphas*pow(Temperature,3)*log(ScaleNet/DebyeMassSquare);
       qhat = qhat*VirtualityQhatFunction(5, E, muSquare);
     break;
     
+    //HTL q-hat multiplied by Virtuality dependent function to mimic PDF-Scale dependent q-hat
+    //Function is int^{1}_{xB} e^{-ax} / (1+A*pow(log(Q^2),1)+B*pow(log(Q^2),2)) 
+    case 6:
+      qhat = (Ca*50.4864/pi)*RunningAlphaS(ScaleNet)*FixAlphas*pow(Temperature,3)*log(ScaleNet/DebyeMassSquare);
+      qhat = qhat*VirtualityQhatFunction(6, E, muSquare);
+      break;
+
+      //HTL q-hat multiplied by Virtuality dependent function to mimic PDF-Scale dependent q-hat
+      //Function is int^{1}_{xB} x^{a}(1-x)^{b} / (1+A*pow(log(Q^2),1)+B*pow(log(Q^2),2)) 
+    case 7:
+      qhat = (Ca*50.4864/pi)*RunningAlphaS(ScaleNet)*FixAlphas*pow(Temperature,3)*log(ScaleNet/DebyeMassSquare);
+      qhat = qhat*VirtualityQhatFunction(7, E, muSquare);
+      break;
+
     default:      
-      JSINFO<<"q-hat Parametrization "<<QhatParametrizationType<<" is not used, qhat will be set to zero";    
+      JSINFO<<"q-hat Parametrization "<<QhatParametrization<<" is not used, qhat will be set to zero";    
     }  
   return qhat;
 }
@@ -3952,30 +3976,67 @@ double Matter::RunningAlphaS(double muSquare)
 }
 //////////////////////////////////////////////////////////////////////////////////////
 ///////////// Virtuality dependent prefactor for q-hat function /////////////////////////
-double Matter::VirtualityQhatFunction(int QhatParametrizationType,  double enerLoc, double muSquare)
+double Matter::VirtualityQhatFunction(int QhatParametrization,  double enerLoc, double muSquare)
 {
-  double ans=0;
-  if(QhatParametrizationType==5 && muSquare > Q00*Q00)
-    {
-      ans =  1.0 + qhatA*log(Q00*Q00)*log(Q00*Q00) + qhatB*pow(log(Q00*Q00),4);
-      ans = ans/( 1.0 + qhatA*log(muSquare)*log(muSquare) + qhatB*pow(log(muSquare),4)  );
-    }
-  else 
-    {
-      ans=1; //when muSquare=-1, ans should be ans=1, because q-hat table does not have virtuality dependence
+  double ans=0;double xB=0, xB0=0, IntegralNorm=0;
+  
+  if( muSquare <= Q00*Q00) {ans=1;}
+  else
+    {  
+      switch(QhatParametrization)
+	{
+	case 5:
+	  ans =  1.0 + qhatA*log(Q00*Q00)*log(Q00*Q00) + qhatB*pow(log(Q00*Q00),4);
+	  ans = ans/( 1.0 + qhatA*log(muSquare)*log(muSquare) + qhatB*pow(log(muSquare),4)  );
+	  break;
+	  
+	case 6: 
+	  xB  = muSquare/(2.0*enerLoc);
+	  xB0 = Q00*Q00/(2.0*enerLoc);
+	  if ( qhatC > 0.0 && xB < 0.99)
+	    {
+	      ans = ( exp(qhatC*(1.0-xB)) - 1.0 )/(1.0 + qhatA*log(muSquare/0.04) + qhatB*log(muSquare/0.04)*log(muSquare/0.04) );
+	      ans = ans*(1.0 + qhatA*log(Q00*Q00/0.04) + qhatB*log(Q00*Q00/0.04)*log(Q00*Q00/0.04) )/( exp(qhatC*(1.0-xB0)) - 1.0 );
+	      //JSINFO<<"K xB="<<xB<<", and (E,muSquare)=("<<enerLoc<<","<<muSquare<<"), and Virtuality dep Qhat="<<ans;
+	    }
+	  else if( qhatC == 0.0 && xB < 0.99)
+	    {
+	      ans = (1.0-xB)/(1.0 + qhatA*log(muSquare/0.04) + qhatB*log(muSquare/0.04)*log(muSquare/0.04) );
+	      ans = ans*(1.0 + qhatA*log(Q00*Q00/0.04) + qhatB*log(Q00*Q00/0.04)*log(Q00*Q00/0.04) )/(1-xB0);
+	    }
+	  else {ans=0.0;}	  
+	  //JSINFO<<"L xB="<<xB<<", and (E,muSquare)=("<<enerLoc<<","<<muSquare<<"), and Virtuality dep Qhat="<<ans;
+          break;
+
+	case 7:
+	  xB  = muSquare/(2.0*enerLoc);
+	  xB0 = Q00*Q00/(2.0*enerLoc);
+	  ans = IntegralPDF(xB, qhatC, qhatD)/(1.0 + qhatA*log(muSquare/0.04) + qhatB*log(muSquare/0.04)*log(muSquare/0.04) );
+	  IntegralNorm = IntegralPDF(xB0, qhatC, qhatD);
+	  if( IntegralNorm > 0.0 )
+	    {
+	      ans=ans*(1.0 + qhatA*log(muSquare/0.04) + qhatB*log(muSquare/0.04)*log(muSquare/0.04) )/IntegralNorm;
+	    }
+	  else {ans=0;}
+	  //JSINFO<<"L xB="<<xB<<", and (E,muSquare)=("<<enerLoc<<","<<muSquare<<"), and Virtuality dep Qhat="<<ans; 
+	  break;
+	  
+	default:
+	  JSINFO<<"q-hat Parametrization "<<QhatParametrization<<" is not used, VirtualityQhatFunction is set to zero or one";
+	}
     }
 
-  //JSINFO<<"Qhat Type="<<QhatParametrizationType<<", and (E,muSquare)=("<<enerLoc<<","<<muSquare<<"), and Virtuality dep Qhat="<<ans;
+  //JSINFO<<"Qhat Type="<<QhatParametrization<<", and (E,muSquare)=("<<enerLoc<<","<<muSquare<<"), and Virtuality dep Qhat="<<ans;
   return ans;  
 }
 ////////////Modification of elastic scattering probability due to modified q-hat//////
-double Matter::ModifiedProbability(int QhatParametrizationType, double tempLoc, double sdLoc, double enerLoc, double muSquare)
+double Matter::ModifiedProbability(int QhatParametrization, double tempLoc, double sdLoc, double enerLoc, double muSquare)
 {
   double ModifiedAlphas=0;double qhatLoc=0;
   double ScaleNet=2*enerLoc*tempLoc;
   if(ScaleNet <1.0) { ScaleNet=1.0; }
   
-  switch(QhatParametrizationType)
+  switch(QhatParametrization)
     {
       //For HTL q-hat formula with all alpha_s as constant and controlled by XML
     case 0:
@@ -4006,17 +4067,49 @@ double Matter::ModifiedProbability(int QhatParametrizationType, double tempLoc, 
       break;
 
       //For HTL q-hat multiplied by Virtuality dependent function to mimic PDF-Scale dependent q-hat
+      //Function is 1 / (1+A*pow(log(Q^2),2)+B*pow(log(Q^2),4))   
     case 5:
       ModifiedAlphas = RunningAlphaS(ScaleNet)*VirtualityQhatFunction(5,  enerLoc, muSquare) ;
       break;
+      //HTL q-hat multiplied by Virtuality dependent function to mimic PDF-Scale dependent q-hat 
+      //Function is int^{1}_{xB} e^{-ax} / (1+A*pow(log(Q^2),1)+B*pow(log(Q^2),2)) 
+    case 6:
+      ModifiedAlphas = RunningAlphaS(ScaleNet)*VirtualityQhatFunction(6,  enerLoc, muSquare) ;
+      break;
+
+      //HTL q-hat multiplied by Virtuality dependent function to mimic PDF-Scale dependent q-hat
+      //Function is int^{1}_{xB} x^{a}(1-x)^{b} / (1+A*pow(log(Q^2),1)+B*pow(log(Q^2),2))  
+    case 7:
+      ModifiedAlphas = RunningAlphaS(ScaleNet)*VirtualityQhatFunction(7,  enerLoc, muSquare) ;
+      break;
       
     default:      
-      JSINFO<<"q-hat Parametrization "<<QhatParametrizationType<<" is not used,Elastic scattering alphas will be set to zero"; 
+      JSINFO<<"q-hat Parametrization "<<QhatParametrization<<" is not used,Elastic scattering alphas will be set to zero"; 
     }
-  //JSINFO<<"q-hat Parametrization "<<QhatParametrizationType<<" modified alphas="<<ModifiedAlphas;
+  //JSINFO<<"q-hat Parametrization "<<QhatParametrization<<" modified alphas="<<ModifiedAlphas;
   return ModifiedAlphas;
 }
-  
+
+//x integration  of QGP-PDF from xB to 1
+double Matter::IntegralPDF(double xB, double a, double b)
+{
+  double Xmin=0.01, Xmax=0.99, X=0, dX=0, ans=0; int N=100; 
+  if(xB > Xmax) {ans=0;}
+  else 
+    {
+      for(int i=0; i<N; i++)
+	{
+	  dX = (Xmax - xB)/N;
+	  X= xB + i*dX;	
+	  if (X<Xmin){X=Xmin;}
+	  ans = ans + pow(X,a)*pow(1-X,b)*dX;
+	}
+    }
+  //JSINFO<<"(xB,a,b)=("<<xB<<","<<a<<","<<b<<"), \t Area="<<ans;
+  return ans;
+}
+
+
 double Matter::fncQhat(double zeta) {
   if (in_vac)
     return (0.0);
