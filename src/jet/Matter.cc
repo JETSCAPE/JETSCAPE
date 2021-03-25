@@ -3979,12 +3979,32 @@ double Matter::RunningAlphaS(double muSquare)
 double Matter::VirtualityQhatFunction(int QhatParametrization,  double enerLoc, double muSquare)
 {
   double ans=0;double xB=0, xB0=0, IntegralNorm=0;
-  
+
   if( muSquare <= Q00*Q00) {ans=1;}
   else
     {  
       switch(QhatParametrization)
 	{
+	case 0:
+          ans =  1.0;
+          break;
+	  
+	case 1:
+          ans =  1.0;
+          break;
+
+	case 2:
+          ans =  1.0;
+          break;  
+	  
+	case 3:
+          ans =  1.0;
+          break;
+
+	case 4:
+          ans =  1.0;
+          break;  
+
 	case 5:
 	  ans =  1.0 + qhatA*log(Q00*Q00)*log(Q00*Q00) + qhatB*pow(log(Q00*Q00),4);
 	  ans = ans/( 1.0 + qhatA*log(muSquare)*log(muSquare) + qhatB*pow(log(muSquare),4)  );
@@ -4148,7 +4168,7 @@ double Matter::fncAvrQhat(double zeta, double tau) {
     return (0);
   if (indexTau >= dimQhatTab)
     indexTau = dimQhatTab - 1;
-
+  
   double avrQhat = qhatTab2D[indexZeta][indexTau]*VirtualityQhatFunction(QhatParametrizationType, initEner, tscale);
   return (avrQhat);
 }
