@@ -39,6 +39,7 @@
 #include "BrickTest.h"
 #include "GubserHydro.h"
 #include "PythiaGun.h"
+#include "InitialStateRadiation.h"
 #include "HadronizationManager.h"
 #include "Hadronization.h"
 #include "ColoredHadronization.h"
@@ -155,6 +156,7 @@ int main(int argc, char** argv)
   //auto trento = make_shared<TrentoInitial>();
   auto trento = make_shared<InitialState>();
   auto pythiaGun= make_shared<PythiaGun> ();
+  auto isr = make_shared<InitialStateRadiation> ();
   auto hydro = make_shared<Brick> ();
 
   auto hydroTest = make_shared<BrickTest> (); 
@@ -163,6 +165,7 @@ int main(int argc, char** argv)
 
   jetscape->Add(trento);
   jetscape->Add(pythiaGun);
+  //jetscape->Add(isr);
   //jetscape->Add(hydro);
   jetscape->Add(hydroTest);
 

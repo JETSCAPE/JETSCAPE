@@ -102,6 +102,10 @@
       <!-- 	HardQCD:all = on -->
       <!-- </LinesToRead> -->
     </PythiaGun>     
+
+    <InitialStateRadiation>
+      <name>InitialStateRadiation</name>
+    </InitialStateRadiation>     
   </Hard>   
   
   <!--Eloss Modules -->
