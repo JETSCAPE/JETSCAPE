@@ -103,9 +103,9 @@
       <!-- </LinesToRead> -->
     </PythiaGun>     
 
-    <InitialStateRadiation>
-      <name>InitialStateRadiation</name>
-    </InitialStateRadiation>     
+    <InitialStateRadiationTest>
+      <name>InitialStateRadiationTest</name>
+    </InitialStateRadiationTest>
   </Hard>   
   
   <!--Eloss Modules -->

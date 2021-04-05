@@ -15,7 +15,7 @@
 
 // Create a pythia collision at a specified point and return the two inital hard partons
 
-#include "InitialStateRadiation.h"
+#include "InitialStateRadiationTest.h"
 #include <sstream>
 #include "QueryHistory.h"
 
@@ -24,21 +24,21 @@
 using namespace std;
 
 // Register the module with the base class
-RegisterJetScapeModule<InitialStateRadiation> InitialStateRadiation::reg("InitialStateRadiation");
+RegisterJetScapeModule<InitialStateRadiationTest> InitialStateRadiationTest::reg("InitialStateRadiationTest");
 
-InitialStateRadiation::~InitialStateRadiation() { VERBOSE(8); }
+InitialStateRadiationTest::~InitialStateRadiationTest() { VERBOSE(8); }
 
-void InitialStateRadiation::InitTask() {
+void InitialStateRadiationTest::InitTask() {
 
-  //JSDEBUG << "Initialize InitialStateRadiation";
   //VERBOSE(8);
 
-  std::string s = GetXMLElementText({"Hard", "InitialStateRadiation", "name"});
+  std::string s = GetXMLElementText({"Hard", "InitialStateRadiationTest", "name"});
   SetId(s);
-  cout << "Initializing " << s << endl;
+  JSDEBUG << "Initializing " << s;
+  cout << "Initializing InitialStateRadiationTest" << endl;;
 }
 
-void InitialStateRadiation::Exec() {
+void InitialStateRadiationTest::Exec() {
   VERBOSE(1) << "Run Hard Process : " << GetId() << " ...";
   VERBOSE(8) << "Current Event #" << GetCurrentEvent();
 
@@ -71,17 +71,6 @@ void InitialStateRadiation::Exec() {
     pShowerMaster.push_back(initShower);
   }
 
-  cout << endl << "Dummy initial PartonShowers" << endl;
-  for (auto pShower : pShowerMaster) {
-    pShower->PrintEdges(false);
-    pShower->PrintNodes(false);
-    unsigned int NumberOfPartons = pShower->GetNumberOfPartons();
-    for (unsigned int ipart=0; ipart < NumberOfPartons; ipart++) {
-      cout << *(pShower->GetPartonAt(ipart)) << endl;
-    }
-  }
-  cout << endl;
-
   timeVec.resize(pShowerMaster.size());
 
   // Backward Shower
@@ -90,28 +79,26 @@ void InitialStateRadiation::Exec() {
   ForwardISR();
 
   int ab=0;
-  cout << "Add fianl partons" << endl;
+  JSDEBUG << "Add fianl partons";
   // Send final state partons to the framework
   for (auto pShower : pShowerMaster) {
-    cout << "Shower:" << ab << endl;
+    JSDEBUG << "Shower:" << ab;
     ab++;
     unsigned int NumberOfPartons = pShower->GetNumberOfPartons();
     for (unsigned int ipart=0; ipart < NumberOfPartons; ipart++) {
       if (pShower->GetNumberOfChilds(ipart) == 0 &&
           pShower->GetPartonAt(ipart)->edgeid() > 0) {
         AddParton(pShower->GetPartonAt(ipart));
-        cout << *(pShower->GetPartonAt(ipart)) << " | "
-             << pShower->GetPartonAt(ipart)->edgeid() << endl;
       }
     }
   }
-  cout << "End of InitialStateRadiation" << endl << endl;
+  JSDEBUG << "End of InitialStateRadiationTest";
 
   VERBOSE(8) << "GetNHardPartons():" << GetNHardPartons();
 }
 
-void InitialStateRadiation::BackwardISR() {
-  cout << endl << "Beginning of Backward Shower" << endl;
+void InitialStateRadiationTest::BackwardISR() {
+  JSDEBUG << "Beginning of Backward Shower";
 
   vector<Parton> pIn, pOut;
   vector<node> vEndVec, vEndVecTemp;
@@ -134,7 +121,7 @@ void InitialStateRadiation::BackwardISR() {
     // put the initial parton into pIn
     pIn.push_back(*pShower->GetPartonAt(0));
     vEndVec.push_back(pShower->GetNodeAt(1));
-    cout << endl << "pShowerMaster[" << ip << "]" << endl;
+    JSDEBUG << "pShowerMaster[" << ip << "]";
 
     nodePartonPair.clear();
 
@@ -142,7 +129,7 @@ void InitialStateRadiation::BackwardISR() {
     for (unsigned int i_timestep=0; i_timestep<n_timeStep; i_timestep++) {
 
       currentTime -= deltaT;
-      cout << "currentTime:" << currentTime << endl;
+      JSDEBUG << "currentTime:" << currentTime;
 
 
       pOut.clear();
@@ -164,8 +151,8 @@ void InitialStateRadiation::BackwardISR() {
                               make_shared<Vertex>(0, 0, 0, currentTime + deltaT));
         edgeid = pShower->new_parton(vEnd, vNewChildNode,
                                      make_shared<Parton>(p_tlike));
-        cout << "time-like vEnd->vNewChildNode:" << vEnd << " " << vNewChildNode
-             << " edgeid:" << edgeid << endl;
+        JSDEBUG << "time-like vEnd->vNewChildNode:" << vEnd << " " << vNewChildNode
+             << " edgeid:" << edgeid;
         n_parton++;
         pShower->GetPartonAt(n_parton-1)->set_edgeid(edgeid);
         pShower->GetPartonAt(n_parton-1)->set_shower(pShower);
@@ -177,8 +164,8 @@ void InitialStateRadiation::BackwardISR() {
                               make_shared<Vertex>(0, 0, 0, currentTime - deltaT));
         edgeid = pShower->new_parton(vStart, vEnd,
                                      make_shared<Parton>(p_slike));
-        cout << "space-like vStart->vEnd:" << vStart << " " << vEnd
-             << " edgeid:" << edgeid << endl;
+        JSDEBUG << "space-like vStart->vEnd:" << vStart << " " << vEnd
+             << " edgeid:" << edgeid;
         pOut.push_back(p_slike);
         vEndVecTemp.push_back(vStart);
         n_parton++;
@@ -199,23 +186,11 @@ void InitialStateRadiation::BackwardISR() {
     // push back node-parton (time-like) pairs for forward shower
     nodePartonPairVec.push_back(nodePartonPair);
   }
-
-  cout << endl << "End of Backward Shower" << endl;
-  for (auto pShower : pShowerMaster) {
-    pShower->PrintVertices();
-    pShower->PrintPartons();
-    unsigned int NumberOfPartons = pShower->GetNumberOfPartons();
-    for (unsigned int ipart=0; ipart < NumberOfPartons; ipart++) {
-      cout << *(pShower->GetPartonAt(ipart)) << " | "
-           << pShower->GetPartonAt(ipart)->edgeid() << endl;
-    }
-  }
-  cout << endl;
 }
 
-void InitialStateRadiation::ForwardISR() {
+void InitialStateRadiationTest::ForwardISR() {
 
-  cout << endl << "Beginning of Forward Shower" << endl;
+  JSDEBUG << "Beginning of Forward Shower";
   vector<Parton> pIn, pOut;
   vector<node> vStartVec, vStartVecTemp;
 
@@ -238,12 +213,12 @@ void InitialStateRadiation::ForwardISR() {
 
     // current time
     currentTime = timeVec[ip];
-    cout << endl << "pShowerMaster[" << ip << "]" << endl;
+    JSDEBUG << "pShowerMaster[" << ip << "]";
 
     while (currentTime < -deltaT-eps) {
 
       currentTime += deltaT;
-      cout << "currentTime:" << currentTime << endl;
+      JSDEBUG << "currentTime:" << currentTime;
 
       pOut.clear();
       vStartVecTemp.clear();
@@ -251,15 +226,14 @@ void InitialStateRadiation::ForwardISR() {
       for (unsigned int i=0; i<pIn.size(); i++) {
 
         double parton_time = pIn[i].time();
-        cout << "parton_time:" << parton_time << " "
-             << vStartVec[i] << endl;
+        JSDEBUG << "parton_time:" << parton_time << " "
+             << vStartVec[i];
 
         // skip if this parton was created later than current time
         if (parton_time > currentTime + eps) {
           vStartVecTemp.push_back(vStartVec[i]);
           pOut.push_back(pIn[i]);
         } else {
-          cout << "entered" << endl;
 
           vector<Parton> pInModule, pOutModule;
           pInModule.push_back(pIn[i]);
@@ -273,12 +247,9 @@ void InitialStateRadiation::ForwardISR() {
           FourVector p_new(0.5*p_val.x(), 0.5*p_val.y(), 0.5*p_val.z(), 0.5*p_val.t());
           FourVector x_new(0., 0., 0., currentTime);
           pOutModule.push_back(Parton(0, 21, 0, p_new, x_new));
-          cout << "Add new parton: " << pOutModule[pOutModule.size()-1] << endl;
           pOutModule.push_back(Parton(0, 21, 0, p_new, x_new));
-          cout << "Add new parton: " << pOutModule[pOutModule.size()-1] << endl;
           if (i == 0) {
           pOutModule.push_back(Parton(0, 21, -17, p_new, x_new));
-          cout << "Add new negative: " << pOutModule[pOutModule.size()-1] << endl;
           }
 
           // apply liquefier -- add later
@@ -324,15 +295,15 @@ void InitialStateRadiation::ForwardISR() {
                                   make_shared<Vertex>(0, 0, 0, currentTime - deltaT));
                 edgeid = pShower->new_parton(vNewRootNode, vStart,
                                              make_shared<Parton>(pOutModule[k]));
-                cout << "negative vNewRootNode->vStart:"
-                     << vNewRootNode << " " << vStart << " edgeid:" << edgeid << endl;
+                JSDEBUG << "negative vNewRootNode->vStart:"
+                     << vNewRootNode << " " << vStart << " edgeid:" << edgeid;
               } else {
                 vEnd = pShower->new_vertex(
                                   make_shared<Vertex>(0, 0, 0, currentTime + deltaT));
                 edgeid = pShower->new_parton(vStart, vEnd,
                                              make_shared<Parton>(pOutModule[k]));
-                cout << "positive vStart->vEnd:"
-                     << vStart << " " << vEnd << " edgeid:" << edgeid << endl;
+                JSDEBUG << "positive vStart->vEnd:"
+                     << vStart << " " << vEnd << " edgeid:" << edgeid;
               }
               n_parton++;
               pShower->GetPartonAt(n_parton-1)->set_edgeid(edgeid);
@@ -361,22 +332,6 @@ void InitialStateRadiation::ForwardISR() {
       pIn = pOut;
       vStartVec.clear();
       vStartVec = vStartVecTemp;
-
-      cout << "update vStartVec ";
-      for (auto v : vStartVec) cout << v << " ";
-      cout << endl;
     }
   }
-
-  cout << endl << "End of Forward Shower" << endl;
-  for (auto pShower : pShowerMaster) {
-    pShower->PrintVertices();
-    pShower->PrintPartons();
-    unsigned int NumberOfPartons = pShower->GetNumberOfPartons();
-    for (unsigned int ipart=0; ipart < NumberOfPartons; ipart++) {
-      cout << *(pShower->GetPartonAt(ipart)) << " | "
-           << pShower->GetPartonAt(ipart)->edgeid() << endl;
-    }
-  }
-  cout << endl;
 }

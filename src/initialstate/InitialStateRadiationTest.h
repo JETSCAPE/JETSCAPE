@@ -15,8 +15,8 @@
 
 // Create a pythia collision at a specified point and return the two inital hard partons
 
-#ifndef ISRTEST_ACTIVE_H
-#define ISRTEST_ACTIVE_H
+#ifndef INITIALSTATERADIATIONTEST_H
+#define INITIALSTATERADIATIONTEST_H
 
 #include "HardProcess.h"
 #include "JetScapeLogger.h"
@@ -24,11 +24,11 @@
 
 using namespace Jetscape;
 
-class InitialStateRadiation : public HardProcess, public Pythia8::Pythia {
+class InitialStateRadiationTest : public HardProcess, public Pythia8::Pythia {
 
 public:
 
-  ~InitialStateRadiation();
+  ~InitialStateRadiationTest();
 
   void InitTask();
   void Exec();
@@ -60,11 +60,11 @@ private:
   const int neg_stat = -17;
 
   // Allows the registration of the module so that it is available to be used by the Jetscape framework.
-  static RegisterJetScapeModule<InitialStateRadiation> reg;
+  static RegisterJetScapeModule<InitialStateRadiationTest> reg;
 
   void BackwardISR();
   void ForwardISR();
 
 };
 
-#endif // ISRTEST_ACTIVE_H
+#endif // INITIALSTATERADIATIONTEST_H
