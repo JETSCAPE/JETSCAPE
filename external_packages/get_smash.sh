@@ -18,8 +18,17 @@ git clone https://github.com/smash-transport/smash.git smash/smash_code
 
 # 2) Compile SMASH
 cd smash/smash_code
-#checkout the commit version that was used for production runs 
+#checkout the commit version that was used for production runs
 git checkout 0063efcc88c11151fa4422940a8bd145a52c356d
+# Need to specify a dummy name and email here for the cherry-pick to succeed...
+git config user.email "jetscape@jetscape.org"
+git config user.name "JETSCAPE"
+# Include fixes for g++ 10
+git cherry-pick 353b1b5f55c72867044927029566528b67720e9f
+# Fixes for pythia version detection
+git cherry-pick 5f05981d1f5f7904b184c3dfdc599718211aa6f9
+# Print the log to verify that we're where we think we are.
+git log -n 10 --oneline
 
 #update March 7, 2019 Smash Bug fixed w.r.t. formation time
 #if necessary for future stability, checkout a fixed commit after this date
