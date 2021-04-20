@@ -33,7 +33,10 @@ using namespace Jetscape;
 // Register the module with the base class
 RegisterJetScapeModule<SmashWrapper> SmashWrapper::reg("SMASH");
 
-SmashWrapper::SmashWrapper() { SetId("SMASH"); }
+SmashWrapper::SmashWrapper() {
+  SetId("SMASH");
+  SetActive(false);
+}
 
 void SmashWrapper::InitTask() {
   JSINFO << "SMASH: picking SMASH-specific configuration from xml file";
@@ -108,22 +111,45 @@ void SmashWrapper::InitTask() {
   JSINFO << "Finish initializing SMASH";
 }
 
+std::vector<std::vector<shared_ptr<Hadron>>> TestHadronList() {
+  std::vector<std::vector<shared_ptr<Hadron>>> hadron_list_list;
+  std::vector<shared_ptr<Hadron>> hadron_list;
+  unsigned int nparticles = 6;
+  for (unsigned int ipart = 0; ipart < nparticles; ipart++) {
+    const int hadron_label = 0;
+    const int hadron_status = 11;
+    const int hadron_id = 111; // current_hadron.pid;
+    const double hadron_mass = 0.138;
+    FourVector hadron_p(1.0 * ipart, 0.0,
+                            0.0, +1.0  * ipart);
+    FourVector hadron_x(ipart, 0.0, 0.0,
+                        ipart);
+
+    // create a JETSCAPE Hadron
+    hadron_list.push_back(make_shared<Hadron>(hadron_label, hadron_id,
+                                          hadron_status, hadron_p, hadron_x,
+                                          hadron_mass));
+  }
+  hadron_list_list.push_back(hadron_list);
+  return hadron_list_list;
+}
+
 void SmashWrapper::ExecuteTask() {
   AfterburnerModus *modus = smash_experiment_->modus();
   // This is necessary to correctly handle indices of particle sets from hydro.
   // Every hydro event creates a new structure like jetscape_hadrons_
   // with as many events in it as one has samples per hydro
   modus->reset_event_numbering();
-  modus->jetscape_hadrons_ = soft_particlization_sampler_->Hadron_list_;
+  modus->jetscape_hadrons_ = TestHadronList(); // soft_particlization_sampler_->Hadron_list_;
   const int n_events = modus->jetscape_hadrons_.size();
   JSINFO << "SMASH: obtained " << n_events << " events from particlization";
   smash::Particles *smash_particles = smash_experiment_->particles();
   for (unsigned int i = 0; i < n_events; i++) {
     JSINFO << "Event " << i << " SMASH starts with "
            << modus->jetscape_hadrons_[i].size() << " particles.";
-    smash_experiment_->initialize_new_event();
+    smash_experiment_->initialize_new_event(i);
     if (!only_final_decays_) {
-      smash_experiment_->run_time_evolution();
+      smash_experiment_->run_time_evolution(300.0);  // endtime hardcoded for now
     }
     smash_experiment_->do_final_decays();
     smash_experiment_->final_output(i);
@@ -131,6 +157,40 @@ void SmashWrapper::ExecuteTask() {
                                   modus->jetscape_hadrons_[i]);
     JSINFO << modus->jetscape_hadrons_[i].size() << " hadrons from SMASH.";
   }
+}
+
+
+void SmashWrapper::InitPerEvent() {
+  JSINFO << "Initalizing new SMASH event with test hadron list...";
+  AfterburnerModus *modus = smash_experiment_->modus();
+  modus->reset_event_numbering();
+  modus->jetscape_hadrons_ = TestHadronList(); // soft_particlization_sampler_->Hadron_list_;
+  smash_experiment_->initialize_new_event(0);  //event numbering not correct
+
+}
+
+
+void SmashWrapper::CalculateTimeTask() {
+  const double until_time = GetMainClock()->GetCurrentTime();
+  JSINFO << "Propgating SMASH until t = " << until_time;
+  // if (!only_final_decays_) {
+  smash_experiment_->run_time_evolution(until_time);
+  // }
+
+}
+
+void SmashWrapper::FinishPerEvent() {
+  JSINFO << "Finishing SMASH event...";
+
+  AfterburnerModus *modus = smash_experiment_->modus();
+
+  smash::Particles *smash_particles = smash_experiment_->particles();
+
+  smash_experiment_->do_final_decays();
+  smash_experiment_->final_output(0);
+  smash_particles_to_JS_hadrons(*smash_particles,
+                                modus->jetscape_hadrons_[0]);
+  JSINFO << modus->jetscape_hadrons_[0].size() << " hadrons from SMASH.";
 }
 
 void SmashWrapper::WriteTask(weak_ptr<JetScapeWriter> w) {

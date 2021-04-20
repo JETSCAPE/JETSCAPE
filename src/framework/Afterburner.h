@@ -38,6 +38,7 @@ public:
 
   virtual void Init();
   virtual void Exec();
+  virtual void CalculateTime();
 
 protected:
   /// Pointer to particlization sampler, which provides initial hadrons
