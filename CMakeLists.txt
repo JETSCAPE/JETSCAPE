@@ -78,6 +78,12 @@ if (USE_ISS)
   include_directories(./external_packages/iSS ./external_packages/iSS/src)
 endif (USE_ISS)
 
+# Soft Particlization with iS3D. Turn on with 'cmake -DUSE_MUSIC=ON -DUSE_IS3D=ON'.
+if (USE_IS3D)
+  message("Includes for iS3D ...")
+  include_directories(./external_packages/iS3D ./external_packages/iS3D/src/cpp)
+endif (USE_IS3D)
+
 # SMASH afterburner. Turn on with 'cmake -DUSE_MUSIC=ON -DUSE_ISS=ON -Dsmash=ON'.
 option(USE_SMASH "Build tests for SMASH" OFF)
 if (USE_SMASH)
@@ -231,6 +237,8 @@ install(
   "${PROJECT_BINARY_DIR}/external_packages/gtl/lib/"
   "${PROJECT_BINARY_DIR}/external_packages/ipglasma/src/"
   "${PROJECT_BINARY_DIR}/external_packages/iSS/src/"
+  "${PROJECT_BINARY_DIR}/external_packages/iS3D/src/cpp/"
+  "${PROJECT_BINARY_DIR}/../external_packages/smash/smash_code/build/src/"
   "${PROJECT_BINARY_DIR}/external_packages/music/src/"
   "${PROJECT_BINARY_DIR}/external_packages/trento/src/"
   "${PROJECT_BINARY_DIR}/external_packages/clvisc_wrapper/"
@@ -387,6 +395,15 @@ if (USE_ISS)
   target_compile_definitions(JetScape PRIVATE iSpectraSampler)
 endif (USE_ISS)
 
+if (USE_IS3D)
+  if(EXISTS "${CMAKE_SOURCE_DIR}/external_packages/iS3D")
+    add_subdirectory( ${CMAKE_SOURCE_DIR}/external_packages/iS3D )
+  else()
+    message(FATAL_ERROR "Error: iS3D source has not been downloaded in external_packages by ./get_iS3D.sh")
+  endif()
+  target_compile_definitions(JetScape PRIVATE iS3D)
+endif (USE_IS3D)
+
 if (OPENCL_FOUND AND USE_CLVISC)
   add_subdirectory( ${CMAKE_SOURCE_DIR}/external_packages/clvisc_wrapper )
 endif (OPENCL_FOUND AND USE_CLVISC)
@@ -495,6 +512,18 @@ if (USE_ISS)
     message(FATAL_ERROR "Error: iSS tables have not been downloaded in external_packages by ./get_iSS.sh")
   endif()
 endif (USE_ISS)
+
+#### copy essential files for iS3D to build/
+if (USE_IS3D)
+  if(EXISTS "${CMAKE_SOURCE_DIR}/external_packages/iS3D")
+    file(COPY ${CMAKE_SOURCE_DIR}/external_packages/iS3D/tables DESTINATION ${CMAKE_BINARY_DIR}/)
+    file(COPY ${CMAKE_SOURCE_DIR}/external_packages/iS3D/iS3D_parameters.dat DESTINATION ${CMAKE_BINARY_DIR}/)
+    file(COPY ${CMAKE_SOURCE_DIR}/external_packages/iS3D/deltaf_coefficients DESTINATION ${CMAKE_BINARY_DIR}/)
+    file(COPY ${CMAKE_SOURCE_DIR}/external_packages/iS3D/PDG DESTINATION ${CMAKE_BINARY_DIR}/)
+  else()
+    message(FATAL_ERROR "Error: iS3D has not been downloaded in external_packages by ./get_iS3D.sh")
+  endif()
+endif (USE_IS3D)
 
 #### copy essential files for LBT to build/
 if(EXISTS "${CMAKE_SOURCE_DIR}/external_packages/LBT-tables")
