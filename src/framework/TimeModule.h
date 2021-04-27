@@ -34,6 +34,9 @@ class TimeModule //: public JetScapeTask
 public:
 
     TimeModule();
+
+    TimeModule(double t1,double t2);
+
     virtual ~TimeModule() {};
 
     void ClockInfo();
@@ -53,11 +56,22 @@ public:
 
     double GetModuleDeltaT();
 
+    bool IsValidModuleTime() {if (GetModuleCurrentTime() >= t0 && GetModuleCurrentTime() < tn) return true; else return false;};  
+  
+    void SetTimeRange(double t1, double t2) {t0 = t1; tn = t2;};
+
+    double GetTStart() {return t0;};
+
+    double GetTEnd() {return tn;};
+  
 private:
 
     shared_ptr<ModuleClock> mClock;
     static shared_ptr<MainClock> mainClock;
 
+    double t0;// module start time; default is 0
+    double tn;// module end time; default is 100
+  
     static bool use_clock; //better in time based module base ...
 };
 
