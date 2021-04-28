@@ -141,7 +141,7 @@ int main(int argc, char** argv)
   //mClock->SetTimeRefFrameId("SpaceTime");
 
   // clocks here are defaulted for testing, clocks can costumized via inhererting from the MainClock/ModuleClock base classes ...
-  auto mClock = make_shared<MainClock>("SpaceTime",1,5,0.1); // JP: make consistent with reading from XML in init phase ...
+  auto mClock = make_shared<MainClock>("SpaceTime",-1,5,0.1); // JP: make consistent with reading from XML in init phase ...
   auto mModuleClock = make_shared<ModuleClock>(); 
   mModuleClock->SetTimeRefFrameId("SpaceTime * 2");
 
@@ -168,19 +168,19 @@ int main(int argc, char** argv)
   jetscape->SetXMLUserFileName("../config/jetscape_user_test.xml");
   jetscape->SetId("primary");
   jetscape->AddMainClock(mClock);
-  jetscape->AddModuleClock(mModuleClock);
   jetscape->ClockInfo();
 
   auto clockTest1 = make_shared<ClockTest>();
   clockTest1->SetActive(false);
+  clockTest1->SetTimeRange(-1,0);
 
   auto clockTest2 = make_shared<ClockTest>();
   clockTest2->SetActive(false);
-  clockTest2->SetTimeRange(2.,3.5);
+  //clockTest2->SetTimeRange(0,3.5);
   
   auto clockTest3 = make_shared<ClockTest>();
   clockTest3->SetActive(false);
-  clockTest3->SetTimeRange(2.,4.);
+  //clockTest3->SetTimeRange(0,4.);
   clockTest3->AddModuleClock(mModuleClock);
   
   jetscape->Add(clockTest1);
