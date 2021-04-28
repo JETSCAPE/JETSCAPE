@@ -4012,7 +4012,7 @@ double Matter::VirtualityQhatFunction(int QhatParametrization,  double enerLoc, 
 	  
 	case 6: 
 	  xB  = muSquare/(2.0*enerLoc);
-	  xB0 = Q00*Q00/(2.0*enerLoc);
+	  xB0 = Q00*Q00/(2.0*enerLoc); if(xB<=xB0){ans=1.0; break; }
 	  if ( qhatC > 0.0 && xB < 0.99)
 	    {
 	      ans = ( exp(qhatC*(1.0-xB)) - 1.0 )/(1.0 + qhatA*log(muSquare/0.04) + qhatB*log(muSquare/0.04)*log(muSquare/0.04) );
@@ -4030,7 +4030,7 @@ double Matter::VirtualityQhatFunction(int QhatParametrization,  double enerLoc, 
 
 	case 7:
 	  xB  = muSquare/(2.0*enerLoc);
-	  xB0 = Q00*Q00/(2.0*enerLoc);
+	  xB0 = Q00*Q00/(2.0*enerLoc); if(xB<=xB0){ans=1.0; break; }
 	  ans = IntegralPDF(xB, qhatC, qhatD)/(1.0 + qhatA*log(muSquare/0.04) + qhatB*log(muSquare/0.04)*log(muSquare/0.04) );
 	  IntegralNorm = IntegralPDF(xB0, qhatC, qhatD);
 	  if( IntegralNorm > 0.0 )
@@ -4113,14 +4113,15 @@ double Matter::ModifiedProbability(int QhatParametrization, double tempLoc, doub
 //x integration  of QGP-PDF from xB to 1
 double Matter::IntegralPDF(double xB, double a, double b)
 {
-  double Xmin=0.01, Xmax=0.99, X=0, dX=0, ans=0; int N=100; 
+  double Xmin=0.01, Xmax=0.99, X=0, dX=0, ans=0; int N=100, ix=0;
+  dX = (1.0-0.0)/N;
   if(xB > Xmax) {ans=0;}
-  else 
+  else
     {
-      for(int i=0; i<N; i++)
+      ix = xB/dX;
+      for(int i=ix; i<N; i++)
 	{
-	  dX = (Xmax - xB)/N;
-	  X= xB + i*dX;	
+	  X= (i+0.5)*dX;
 	  if (X<Xmin){X=Xmin;}
 	  ans = ans + pow(X,a)*pow(1-X,b)*dX;
 	}
