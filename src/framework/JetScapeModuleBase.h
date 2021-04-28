@@ -97,7 +97,7 @@ public:
 
   //virtual void FinishPerEventTask() {}; // JP: see also in JetScapeTask ... is it really used or would this be the per event way ...
 
-  // --------------
+  // --------------                                                                                                                                                                                                   
 
   //JP: same can be done with variant if all datatypes are know
   //and put into the varaint definition --> elevated to framework like data types

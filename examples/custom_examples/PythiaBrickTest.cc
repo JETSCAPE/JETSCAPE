@@ -91,7 +91,26 @@ class HistTest : public JetScapeModuleBase
   private:
 };
 // ------------------------------------------
+class ClockTest : public JetScapeModuleBase
+{
+public:
 
+  ClockTest() : JetScapeModuleBase() {SetId("ClockTest");}
+
+  virtual void ExecTime(){
+    cout<< "ClockTest::ExecTime():============================ " <<     endl;
+    cout<< "ClockTest::ExecTime(): Current Main Clock Time = "<<GetMainClock()->GetCurrentTime() << endl;
+    cout<< "ClockTest::ExecTime(): Current Main Clock Detla T = "<<GetMainClock()->GetDeltaT() << endl;
+    if(UseModuleClock())cout<< "ClockTest::ExecTime(): Current Module Clock Time = "<<GetModuleClock()->GetCurrentTime() << endl;
+    if(UseModuleClock())cout<< "ClockTest::ExecTime(): Current Module Clock Detla T = "<<GetModuleClock()->GetDeltaT() << endl;
+    cout<< "ClockTest::ExecTime(): Current Module Start Time = "<< GetTStart() << endl;
+    cout<< "ClockTest::ExecTime(): Current Module End Time = "<< GetTEnd() << endl;
+    cout<< "ClockTest::ExecTime(): IsValidModuleTime?  "<< IsValidModuleTime() << endl;
+    cout<< "ClockTest::ExecTime():============================ " <<     endl;
+  }
+
+private:
+};
 // Forward declaration
 void Show();
 
@@ -123,7 +142,7 @@ int main(int argc, char** argv)
   //mClock->SetTimeRefFrameId("SpaceTime");
 
   // clocks here are defaulted for testing, clocks can costumized via inhererting from the MainClock/ModuleClock base classes ...
-  auto mClock = make_shared<MainClock>("SpaceTime",0,5,0.1); // JP: make consistent with reading from XML in init phase ...
+  auto mClock = make_shared<MainClock>("SpaceTime",-1,5,0.1); // JP: make consistent with reading from XML in init phase ...
   auto mModuleClock = make_shared<ModuleClock>(); 
   mModuleClock->SetTimeRefFrameId("SpaceTime * 2");
 
@@ -152,6 +171,23 @@ int main(int argc, char** argv)
   jetscape->AddMainClock(mClock);
   jetscape->ClockInfo();
 
+  auto clockTest1 = make_shared<ClockTest>();
+  clockTest1->SetActive(false);
+  clockTest1->SetTimeRange(-1,0);
+
+  auto clockTest2 = make_shared<ClockTest>();
+  clockTest2->SetActive(false);
+  //clockTest2->SetTimeRange(0,3.5);
+  
+  auto clockTest3 = make_shared<ClockTest>();
+  clockTest3->SetActive(false);
+  //clockTest3->SetTimeRange(0,4.);
+  clockTest3->AddModuleClock(mModuleClock);
+  
+  jetscape->Add(clockTest1);
+  jetscape->Add(clockTest2);
+  jetscape->Add(clockTest3);
+  
   // Initial conditions and hydro
   //auto trento = make_shared<TrentoInitial>();
   auto trento = make_shared<InitialState>();

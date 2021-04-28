@@ -13,7 +13,12 @@ TimeModule::TimeModule()
 {
     mClock = nullptr;    
 }
-
+TimeModule::TimeModule(double t1, double t2)
+{
+  mClock = nullptr;
+  t0 = t1;
+  tn = t2;
+}
 void TimeModule::ClockInfo()
 {
     JSINFO<<"TimeModule::Info()";
