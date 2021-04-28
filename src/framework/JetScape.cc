@@ -666,7 +666,15 @@ void JetScape::DetermineTaskListFromXML() {
                   "task list.";
       }
     }
-
+    else if (elementName == "HadronPrinter") {
+      auto hadronPrinter = JetScapeModuleFactory::createInstance(elementName);
+      if (hadronPrinter) {
+        Add(hadronPrinter);
+        JSINFO << "JetScape::DetermineTaskList() -- Added HadronPrinter to "
+                  "task list.";
+      }
+    }
+ 
     else {
       VERBOSE(2) << "Nothing to do.";
     }
@@ -797,7 +805,13 @@ void JetScape::SetPointers() {
     } else if (dynamic_pointer_cast<SoftParticlization>(it)) {
       JetScapeSignalManager::Instance()->SetSoftParticlizationPointer(
           dynamic_pointer_cast<SoftParticlization>(it));
-    }
+    } else if (dynamic_pointer_cast<HadronizationManager>(it)) {
+      JetScapeSignalManager::Instance()->SetHadronizationManagerPointer(
+										dynamic_pointer_cast<HadronizationManager>(it));
+    } else if (dynamic_pointer_cast<HadronPrinter>(it)) {
+      JetScapeSignalManager::Instance()->SetHadronPrinterPointer(
+										dynamic_pointer_cast<HadronPrinter>(it));
+				}
   }
 }
 
