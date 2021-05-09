@@ -14,6 +14,4 @@
 ##############################################################################
 
 # download the code package
-git clone --depth=1 https://github.com/chunshen1987/ipglasma ipglasma
-
-
+git clone --depth=1 -b InterfaceJETSCAPE https://github.com/chunshen1987/ipglasma ipglasma
