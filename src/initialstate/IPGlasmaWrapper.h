@@ -16,13 +16,12 @@
 #ifndef IPGLASMAWRAPPER_H
 #define IPGLASMAWRAPPER_H
 
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <cmath>
+#include <memory>
+
 #include "JetScapeModuleBase.h"
 #include "InitialState.h"
 #include "JetScapeLogger.h"
+#include "IPGlasma.h"
 
 using namespace Jetscape;
 
@@ -67,6 +66,7 @@ public:
   double GetTotalEntropy() { return totalentropy; };
 
 private:
+  std::unique_ptr<IPGlasma> IPGlasma_ptr_;
   int dim_x_, dim_y_;
 
   double npart = -1;

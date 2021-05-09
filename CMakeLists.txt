@@ -162,6 +162,7 @@ install(
   "${CMAKE_SOURCE_DIR}/src/reader/"
   # external packages
   "${CMAKE_SOURCE_DIR}/external_packages/"
+  "${CMAKE_SOURCE_DIR}/external_packages/ipglasma/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/iSS/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/hydro_from_external_file/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/music/src/"
@@ -176,6 +177,7 @@ install(
   PATTERN "gtl" EXCLUDE
   PATTERN "iSS" EXCLUDE
   PATTERN "hydro_from_external_file" EXCLUDE
+  PATTERN "ipglasma" EXCLUDE
   PATTERN "music" EXCLUDE
   PATTERN "clvisc" EXCLUDE
   PATTERN "trento" EXCLUDE
@@ -218,6 +220,7 @@ install(
   "${PROJECT_BINARY_DIR}/lib/"
   # external packages
   "${PROJECT_BINARY_DIR}/external_packages/gtl/lib/"
+  "${PROJECT_BINARY_DIR}/external_packages/ipglasma/src/"
   "${PROJECT_BINARY_DIR}/external_packages/iSS/src/"
   "${PROJECT_BINARY_DIR}/external_packages/music/src/"
   "${PROJECT_BINARY_DIR}/external_packages/trento/src/"
@@ -445,6 +448,15 @@ endif ( USE_MUSIC AND USE_ISS AND USE_SMASH )
 
 # -----------------------------------------------------------
 #### copy essential files for MUSIC to build/
+if (USE_IPGlasma)
+  if(EXISTS "${CMAKE_SOURCE_DIR}/external_packages/ipglasma/")
+    file(COPY ${CMAKE_SOURCE_DIR}/external_packages/ipglasma/input DESTINATION ${CMAKE_BINARY_DIR}/)
+    file(RENAME ${CMAKE_BINARY_DIR}/input ${CMAKE_BINARY_DIR}/ipglasma.input)
+    file(COPY ${CMAKE_SOURCE_DIR}/external_packages/ipglasma/qs2Adj_vs_Tp_vs_Y_200.in DESTINATION ${CMAKE_BINARY_DIR}/)
+  else()
+    message(FATAL_ERROR "Error: Cannot find files for IPGlasma.")
+  endif()
+endif()
 if (USE_FREESTREAM)
   if(EXISTS "${CMAKE_SOURCE_DIR}/examples/test_freestream_files/")
     file(COPY ./examples/test_freestream_files/freestream_input

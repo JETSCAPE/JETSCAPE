@@ -203,6 +203,13 @@ void JetScape::DetermineTaskListFromXML() {
           JSWARN << "InitialFromFile is attempted to be added, but HDF5 is not "
                     "installed!";
 #endif
+        } else if (childElementName == "IPGlasma") {
+          auto ipglasma = JetScapeModuleFactory::createInstance("IPGlasma");
+          if (ipglasma) {
+            Add(ipglasma);
+            JSINFO << "JetScape::DetermineTaskList() -- Initial State: Added "
+                      "IPGlasma module to task list.";
+          }
         }
         //   - Custom module
         else if (((int)childElementName.find("CustomModule") >= 0)) {
