@@ -153,7 +153,7 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
 	
 	void is_shower(bool val) {is_shower_ = val;} void is_thermal(bool val) {is_thermal_ = val;} void is_used(bool val) {is_used_ = val;} void is_decayedglu(bool val) {is_decayedglu_ = val;}
 	void is_remnant(bool val) {is_remnant_ = val;} void used_reco(bool val) {used_reco_ = val;} void used_str(bool val) {used_str_ = val;} void is_strendpt(bool val) {is_strendpt_ = val;}
-    void used_junction(bool val) {used_junction_ = val;}
+	void used_junction(bool val) {used_junction_ = val;}
 	void id(int val) {alt_id_ = val;} void orig(int val) {orig_ = val;} void par(int val) {par_ = val;}
 	void string_id(int val) {string_id_ = val;} void pos_str(int val) {pos_str_ = val;} void endpt_id(int val) {endpt_id_ = val;} void sibling(int val) {sibling_ = val;}
 	void PY_par1(int val) {PY_par1_ = val;} void PY_par2(int val) {PY_par2_ = val;} void PY_dau1(int val) {PY_dau1_ = val;} void PY_dau2(int val) {PY_dau2_ = val;}
@@ -198,6 +198,13 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
 	//getter/setter for parents
 	int par(int i){if((i>=0) && (i<parents.size())){return parents[i];}else{return 999999;}}
 	void add_par(int i){parents.push_back(i);}
+	
+	//vector of colors (from partons that formed it)
+	std::vector<int> cols;
+	
+	//getter/setter for colors
+	int col(int i){if((i>=0) && (i<cols.size())){return cols[i];}else{return -1;}}
+	void add_col(int i){cols.push_back(i);}
 	
 	//getter functions
 	double  x() {return x_in().x();} double  y() {return x_in().y();} double  z() {return x_in().z();} double x_t() {return x_in().t();}
