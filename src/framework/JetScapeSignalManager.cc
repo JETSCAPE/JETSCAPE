@@ -225,7 +225,7 @@ void JetScapeSignalManager::PrintGetHydroCellSignalMap() {
   for (auto &x : GetHydroCellSignal_map) {
     auto xs = x.second.lock();
     if (xs) {
-      VERBOSE(8) << "[" << x.first << ':' << xs.get() << ']' << " "
+      VERBOSE(3) << "[" << x.first << ':' << xs.get() << ']' << " "
                  << xs->GetId();
     }
   }
@@ -235,7 +235,7 @@ void JetScapeSignalManager::PrintSentInPartonsSignalMap() {
   for (auto &x : SentInPartons_map) {
     auto xs = x.second.lock();
     if (xs) {
-      VERBOSE(8) << "[" << x.first << ':' << xs.get() << ']' << " "
+      VERBOSE(3) << "[" << x.first << ':' << xs.get() << ']' << " "
                  << xs->GetId();
     }
   }

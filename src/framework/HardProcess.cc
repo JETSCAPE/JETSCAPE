@@ -37,7 +37,7 @@ HardProcess::~HardProcess() {
   hp_list.clear();
   hd_list.clear();
   ps_list.clear();
-  
+
   disconnect_all();
 }
 
@@ -77,6 +77,8 @@ void HardProcess::Clear() {
   hp_list.clear();
   hd_list.clear();
   VERBOSE(8) << hp_list.size();
+
+  JetScapeTask::ClearTasks();
 }
 
 void HardProcess::WriteTask(weak_ptr<JetScapeWriter> w) {
