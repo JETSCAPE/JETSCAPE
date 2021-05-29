@@ -31,6 +31,7 @@ namespace Jetscape {
 FluidDynamics::FluidDynamics() {
   VERBOSE(8);
   eta = -99.99;
+  boost_invariant_ = true;
   SetId("FluidDynamics");
 }
 

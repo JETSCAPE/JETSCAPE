@@ -62,6 +62,7 @@ protected:
   std::shared_ptr<PreequilibriumDynamics> pre_eq_ptr;
 
   double eta;
+  bool boost_invariant_;
   Parameter parameter_list;
 
   // How to store this data? In memory or hard disk?
@@ -154,7 +155,7 @@ public:
 
   /** @return Start time (or tau) for hydrodynamic evolution.
      */
-  Jetscape::real GetHydroStartTime() const { return (hydro_tau_0); }
+  void GetHydroStartTime(double &tau0) { tau0 = hydro_tau_0; }
 
   /** @return End time (or tau) for hydrodynamic evolution.
      */
