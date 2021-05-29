@@ -35,6 +35,10 @@ void Glasma::EvolvePreequilibrium() {
     std::string IPGlasmaFileName = "epsilon-u-Hydro-t0.6-0.dat";
     VERBOSE(2) << "Read in IPGlasma Tmunu ...";
     std::ifstream IPGFile(IPGlasmaFileName.c_str());
+    if (!IPGFile.good()) {
+        Jetscape::JSWARN << "Can not open " << IPGlasmaFileName;
+        exit(1);
+    }
     std::string tempString;
     std::getline(IPGFile, tempString);
     double dummy;
