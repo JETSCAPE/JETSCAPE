@@ -68,6 +68,7 @@ void HardProcess::Exec() {
   JSINFO << "Run Hard Process : " << GetId() << " ...";
   VERBOSE(8) << "Current Event #" << GetCurrentEvent();
 
+  //Assume here for now that they are ISR related ...
   JetScapeTask::ExecuteTasks();
 }
 
@@ -76,6 +77,8 @@ void HardProcess::Clear() {
 
   hp_list.clear();
   hd_list.clear();
+  ps_list.clear();
+
   VERBOSE(8) << hp_list.size();
 
   JetScapeTask::ClearTasks();
@@ -104,7 +107,8 @@ void HardProcess::WriteTask(weak_ptr<JetScapeWriter> w) {
     for (auto hp : hp_list)
       f->Write(hp);
 
-    JetScapeTask::WriteTasks(w);
+    // Commented out for now, decide/fix how to safe store the ISR shower ...
+    //JetScapeTask::WriteTasks(w);
   }
 }
 
