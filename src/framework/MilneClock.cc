@@ -29,9 +29,9 @@ MilneClock::MilneClock() {
 }
 
 void MilneClock::Info() {
-    ClockBase::Info();
-    JSINFO<<"tauMin = "<< tauMin_;
-    JSINFO<<"tauMax = "<< tauMax_;
+    JSINFO << "Clock Name: " << GetId();
+    JSINFO << "tauMin = " << tauMin_ << " fm/c";
+    JSINFO << "tauMax = " << tauMax_ << " fm/c";
 }
 
 void MilneClock::Transform(std::weak_ptr<MainClock> mainClock) {
