@@ -22,6 +22,7 @@
 #include "InitialState.h"
 #include "JetEnergyLoss.h"
 #include "JetEnergyLossManager.h"
+#include "IsrManager.h"
 #include "HadronizationManager.h"
 #include "Hadronization.h"
 #include "FluidDynamics.h"
@@ -117,6 +118,7 @@ public:
   void ConnectGetHydroCellSignal(shared_ptr<JetEnergyLoss> j);
   void ConnectGetHydroCellSignal(shared_ptr<LiquefierBase> l);
   void ConnectGetHardPartonListSignal(shared_ptr<JetEnergyLossManager> jm);
+  void ConnectGetHardPartonListSignal(shared_ptr<IsrManager> jm);
   void ConnectSentInPartonsSignal(shared_ptr<JetEnergyLoss> j,
                                   shared_ptr<JetEnergyLoss> j2);
   void ConnectGetFinalPartonListSignal(shared_ptr<HadronizationManager> hm);

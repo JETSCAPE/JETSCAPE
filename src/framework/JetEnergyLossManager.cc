@@ -142,7 +142,7 @@ void JetEnergyLossManager::MakeCopies()
       // REMARK: think about later what to sent to JLoss with ISR ...
       //         Nonetheless like this here and in dev branch, could
       //         be used to iterate like there over Pythia shower etc ...
-      
+
       //if (hp.size()==ps.size())
         //dynamic_pointer_cast<JetEnergyLoss>(it)->AddInitalPartonShower(ps[n]);
 

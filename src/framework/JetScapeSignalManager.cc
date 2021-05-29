@@ -39,7 +39,20 @@ void JetScapeSignalManager::ConnectGetHardPartonListSignal(
     if (hpp) {
       jm->GetHardPartonList.connect(hpp.get(), &HardProcess::GetHardPartonList);
       jm->GetPartonShowerList.connect(hpp.get(),&HardProcess::GetPartonShowerList);
-      
+
+      jm->SetGetHardPartonListConnected(true);
+    }
+  }
+}
+
+void JetScapeSignalManager::ConnectGetHardPartonListSignal(
+    shared_ptr<IsrManager> jm) {
+  if (!jm->GetGetHardPartonListConnected()) {
+    auto hpp = GetHardProcessPointer().lock();
+    if (hpp) {
+      jm->GetHardPartonList.connect(hpp.get(), &HardProcess::GetHardPartonList);
+      jm->GetPartonShowerList.connect(hpp.get(),&HardProcess::GetPartonShowerList);
+
       jm->SetGetHardPartonListConnected(true);
     }
   }

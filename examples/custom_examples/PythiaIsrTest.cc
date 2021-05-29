@@ -45,6 +45,8 @@
 #include "ColoredHadronization.h"
 #include "ColorlessHadronization.h"
 #include "CascadeTest.h"
+#include "IsrManager.h"
+#include "DummyEloss.h"
 
 #include "MainClock.h"
 #include "ModuleClock.h"
@@ -115,6 +117,16 @@ int main(int argc, char** argv)
   //hydroTest->SetActive(false);
 
   jetscape->Add(trento);
+
+  auto isrManager = make_shared<IsrManager>();
+  auto isrJloss = make_shared<JetEnergyLoss> (); //to be followed up ... make isr module ... !!!!
+  auto iDummy = make_shared<DummyEloss> ();
+
+  isrJloss->Add(iDummy);
+  isrManager->Add(isrJloss);
+
+  pythiaGun->Add(isrManager);
+
   jetscape->Add(pythiaGun);
   //jetscape->Add(isr);
   jetscape->Add(hydro);

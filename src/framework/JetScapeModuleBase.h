@@ -2,7 +2,7 @@
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
  * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -40,6 +40,7 @@ class JetScapeWriter;
 class JetScapeModuleBase
     : public JetScapeTask,
       public sigslot::has_slots<sigslot::multi_threaded_local>,
+      //public std::enable_shared_from_this<JetScapeModuleBase>,
       public TimeModule {
 
 public:
@@ -86,7 +87,7 @@ public:
   //see also if one could reuse the InitTask() etc from JetScapeTask since in principle it would be better in the task class
   //since exection is once per event ... well, with this approach the lifetime per event per time step in class hierachry is
   //not very transparent and consistent ... Think about and try a more elegant approach before pulishing the code ...
-  
+
   virtual void InitPerEvent() {};
 
   virtual void InitPerEventTasks();
@@ -97,7 +98,7 @@ public:
 
   //virtual void FinishPerEventTask() {}; // JP: see also in JetScapeTask ... is it really used or would this be the per event way ...
 
-  // --------------                                                                                                                                                                                                   
+  // --------------
 
   //JP: same can be done with variant if all datatypes are know
   //and put into the varaint definition --> elevated to framework like data types
@@ -156,6 +157,10 @@ public:
   //bool GetMultiThread() {return multiThread;}
 
   //void SetMultiThread(bool m_multiThread) {multiThread = m_multiThread;}
+protected:
+
+  //template<typename T>
+    //shared_ptr<T> GetThis() {return std::static_pointer_cast<T>(shared_from_this());}
 
 private:
   std::string xml_master_file_name;
