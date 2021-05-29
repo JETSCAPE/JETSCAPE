@@ -73,7 +73,7 @@ void IsrManager::Init()
 
 void IsrManager::Exec()
 {
-  VERBOSE(1) << "Run ISR Manager ...";
+  VERBOSE(1) << "Run ISR Manager via JetEnergyLossManager::Exec() ...";
   JSDEBUG << "Task Id = " << this_thread::get_id();
 
   if (GetNumberOfTasks() < 1) {
@@ -82,6 +82,36 @@ void IsrManager::Exec()
   }
 
   JetEnergyLossManager::Exec();
+
+  // REMARK JP:
+  // quick and dirty for now:
+  // get pointer rather than signal/slot (to be done ...)
+  // Create list of final ISR shower partons and overwrite the inital partons
+  // from PythiaGun (for example) --> they will get treated as independent
+  // --> Work on creating/extending the ISR shower/multi graph class etc ...
+
+  // To be checked/implemented: time of these partons in forward evolution
+  // --> setting negative start time ... needs some testing ...
+  // --> does the JetEnergyLoss class has to be modified, create an ISR class ...
+
+  auto hpp = JetScapeSignalManager::Instance()->GetHardProcessPointer().lock();
+  if (hpp) hpp->GetPartonList().clear();
+
+  for (auto it : GetTaskList()) {
+    if (dynamic_pointer_cast<JetEnergyLoss>(it))
+    {
+      auto ps = dynamic_pointer_cast<JetEnergyLoss>(it)->GetShower();
+      //DEBUG:
+      //ps->PrintEdges(false);
+
+      auto fp = ps->GetFinalPartons();
+      JSDEBUG<<"# of shower initiaing partons after ISR  = "<<fp.size();
+
+      for (auto p : fp) hpp->AddParton(p);
+
+    }
+  }
+
 }
 
 } // end namespace Jetscape

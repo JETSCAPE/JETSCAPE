@@ -385,6 +385,9 @@ void JetEnergyLoss::Exec() {
     weak_ptr<HardProcess> hproc =
       JetScapeSignalManager::Instance()->GetHardProcessPointer();
 
+    //REMARK JP: No idea what and why code below is needed !!!!
+    //           Discuss and clean up in the future !!!!
+
     for (unsigned int ipart = 0; ipart < pShower->GetNumberOfPartons();
          ipart++) {
       //   Uncomment to dump the whole parton shower into the parton container
@@ -404,7 +407,7 @@ void JetEnergyLoss::Exec() {
       pEloss->GetFinalPartonsForEachShower(pShower);
     }
   } else {
-    JSWARN << "NO Initial Hard Parton for Parton shower received ...";
+    JSWARN << "NO Initial Hard Parton for Parton shower received ...";exit(-1);
   }
 
   //DEBUGTHREAD<<"Task Id = "<<this_thread::get_id()<<" Finished!";
@@ -433,7 +436,7 @@ void JetEnergyLoss::InitPerEvent()
     }
 
   } else {
-    JSWARN << "NO Initial Hard Parton for Parton shower received ...";
+    JSWARN << "NO Initial Hard Parton for Parton shower received ...";exit(-1);
   }
 
 }
