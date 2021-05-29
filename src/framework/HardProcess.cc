@@ -2,7 +2,7 @@
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
  * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -36,6 +36,8 @@ HardProcess::~HardProcess() {
   VERBOSE(8);
   hp_list.clear();
   hd_list.clear();
+  ps_list.clear();
+  
   disconnect_all();
 }
 

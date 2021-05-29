@@ -2,7 +2,7 @@
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
  * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -122,7 +122,7 @@ public:
   void ConnectGetFinalPartonListSignal(shared_ptr<HadronizationManager> hm);
   void ConnectTransformPartonsSignal(shared_ptr<Hadronization> h,
                                      shared_ptr<Hadronization> h2);
-		void ConnectGetFinalHadronListSignal(shared_ptr<HadronPrinter> h);
+	void ConnectGetFinalHadronListSignal(shared_ptr<HadronPrinter> h);
 
   void
   DisconnectSignal(){}; // to be implememted if needed maybe for Eloss ...!???

@@ -2,7 +2,7 @@
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
  * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- *
+ * 
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -97,13 +97,7 @@ void JetEnergyLossManager::MakeCopies()
   // Create needed copies and connect signal/slots accordingly ...
   if (!copiesMade) {
   if (GetGetHardPartonListConnected()) {
-
     GetHardPartonList(hp);
-    GetPartonShowerList(ps);
-
-    JSINFO<<" Number of Hard Partons = "<<hp.size();
-    JSINFO<<" Number of Parton Showers = "<<ps.size();
-
     VERBOSE(3) << " Number of Hard Partons = " << hp.size();
     for (int i = 1; i < hp.size(); i++) {
       JSDEBUG << "Create the " << i
@@ -138,14 +132,6 @@ void JetEnergyLossManager::MakeCopies()
     for (auto it : GetTaskList()) {
       dynamic_pointer_cast<JetEnergyLoss>(it)->AddShowerInitiatingParton(
           hp.at(n));
-
-      // REMARK: think about later what to sent to JLoss with ISR ...
-      //         Nonetheless like this here and in dev branch, could
-      //         be used to iterate like there over Pythia shower etc ...
-      
-      //if (hp.size()==ps.size())
-        //dynamic_pointer_cast<JetEnergyLoss>(it)->AddInitalPartonShower(ps[n]);
-
       n++;
     }
   }
@@ -220,7 +206,7 @@ void JetEnergyLossManager::Exec() {
   // ----------------------------------
   else
   */
-
+  
   // Standard "serial" execution for the JetEnerguLoss (+submodules) task ...
   JetScapeTask::ExecuteTasks();
 
@@ -259,7 +245,7 @@ void JetEnergyLossManager::FinishPerEvent()
 {
   VERBOSE(3) << "FinishPerEvent JetEnergyLoss Manager when used per timestep ...";
   JSDEBUG << "Task Id = " << this_thread::get_id();
-
+  
   JetScapeModuleBase::FinishPerEventTasks();
 
   //JP: Quick fix, to be discussed, similar to writer, clear is only called for active tasks, so call here directly ...

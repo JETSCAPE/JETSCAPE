@@ -73,7 +73,7 @@ int main(int argc, char** argv)
   // DEBUG=true by default and REMARK=false
   // can be also set also via XML file (at least partially)
   JetScapeLogger::Instance()->SetInfo(true);
-  JetScapeLogger::Instance()->SetDebug(false);
+  JetScapeLogger::Instance()->SetDebug(true);
   JetScapeLogger::Instance()->SetRemark(false);
   //SetVerboseLevel (9 a lot of additional debug output ...)
   //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevle(9) or 10
@@ -89,27 +89,12 @@ int main(int argc, char** argv)
   //mClock->SetTimeRefFrameId("SpaceTime");
 
   // clocks here are defaulted for testing, clocks can costumized via inhererting from the MainClock/ModuleClock base classes ...
-  auto mClock = make_shared<MainClock>("SpaceTime",-1,5,0.1); // JP: make consistent with reading from XML in init phase ...
+  auto mClock = make_shared<MainClock>("SpaceTime",0,1,0.1); // JP: make consistent with reading from XML in init phase ...
   auto mModuleClock = make_shared<ModuleClock>();
   mModuleClock->SetTimeRefFrameId("SpaceTime * 2");
 
   mClock->Info();
   mModuleClock->Info();
-
-  /*
-  mClock->Info();
-
-  //while (mClock->Next()) {
-
-  mClock->Tick();
-  mClock->Info();
-
-  mModuleClock->Transform(mClock);
-  mModuleClock->Info();
-
-  //};
-  */
-  // -------------
 
   auto jetscape = make_shared<JetScape>();
   jetscape->SetXMLMasterFileName("../config/jetscape_master.xml");
@@ -125,15 +110,15 @@ int main(int argc, char** argv)
   //auto isr = make_shared<InitialStateRadiationTest> ();
   auto hydro = make_shared<Brick> ();
 
-  auto hydroTest = make_shared<BrickTest> ();
-  hydroTest->SetMultiThread(true);
-  hydroTest->SetActive(false);
+  //auto hydroTest = make_shared<BrickTest> ();
+  //hydroTest->SetMultiThread(true);
+  //hydroTest->SetActive(false);
 
   jetscape->Add(trento);
   jetscape->Add(pythiaGun);
   //jetscape->Add(isr);
-  //jetscape->Add(hydro);
-  jetscape->Add(hydroTest);
+  jetscape->Add(hydro);
+  //jetscape->Add(hydroTest);
 
   // Energy loss
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
@@ -166,7 +151,7 @@ int main(int argc, char** argv)
   auto cascadeTest = make_shared<CascadeTest> ();
   cascadeTest->SetMultiThread(true);
   cascadeTest->SetActive(false);
-  jetscape->Add(cascadeTest);
+  //jetscape->Add(cascadeTest);
 
 
   // JP: Leave out for now for testing clock(s) ... has to be updated accordingly ... (see JetEnergyLossManager as an example ...)
@@ -199,26 +184,6 @@ int main(int argc, char** argv)
   jetscape->Add(hepmcwriter);
 #endif
   */
-
-  //test ...
-  //QueryHistory::Instance()->AddMainTask(jetscape);
-  //QueryHistory::Instance()->PrintTasks();
-  //QueryHistory::Instance()->PrintTaskMap();
-
-  //check with quick and dirty ... make recursive ...
-  /*
-  cout<<jetscape->GetNumberOfTasks()<<endl;
-  auto taskList = jetscape->GetTaskList();
-  for (auto it : taskList) {
-    cout<<it->GetId()<<endl;
-    for (auto it2 : it->GetTaskList()) {
-      cout<<" "<<it2->GetId()<<endl;
-      for (auto it3 : it2->GetTaskList())
-        cout<<"  "<<it3->GetId()<<endl;}
-  }
-  */
-
-  //printAllTasks(taskList);
 
   // Intialize all modules tasks
   jetscape->Init();

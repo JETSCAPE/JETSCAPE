@@ -2,7 +2,7 @@
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
  * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -38,6 +38,8 @@ void JetScapeSignalManager::ConnectGetHardPartonListSignal(
     auto hpp = GetHardProcessPointer().lock();
     if (hpp) {
       jm->GetHardPartonList.connect(hpp.get(), &HardProcess::GetHardPartonList);
+      jm->GetPartonShowerList.connect(hpp.get(),&HardProcess::GetPartonShowerList);
+      
       jm->SetGetHardPartonListConnected(true);
     }
   }
@@ -141,7 +143,7 @@ void JetScapeSignalManager::ConnectGetFinalHadronListSignal(
 	shared_ptr<HadronPrinter> h){
 		auto hadroMgrShared = GetHadronizationManagerPointer().lock();
   //hadronPrinter->GetFinalHadronList.connect(hadro.get(), &Hadronization::GetHadrons);
-  h->GetFinalHadronList.connect(hadroMgrShared.get(), 
+  h->GetFinalHadronList.connect(hadroMgrShared.get(),
 			&HadronizationManager::GetHadrons);
 }
 

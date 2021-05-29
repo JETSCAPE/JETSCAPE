@@ -2,7 +2,7 @@
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
  * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- *
+ * 
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -40,7 +40,7 @@ public:
   virtual ~JetEnergyLossManager();
 
   /** It initializes the tasks attached to the jet energy loss manager. It also sends a signal to connect the JetEnergyLoss object to the GetHardPartonList() function of the HardProcess class. It can be overridden by other tasks.
-      @sa JetScapeSignalManager to understand the implementation of signal slots philosophy.
+      @sa JetScapeSignalManager to understand the implementation of signal slots philosophy. 
    */
   virtual void Init();
 
@@ -58,11 +58,11 @@ public:
 
   virtual void InitPerEvent();
 
-  virtual void FinishPerEvent();
+  virtual void FinishPerEvent();  
 
   /** It writes the output information relevant to the jet energy loss tasks/subtasks into a file. It can be overridden by other tasks.
       @param w A pointer of type JetScapeWriter class.
-      @sa JetScapeWriter class for further information.
+      @sa JetScapeWriter class for further information. 
   */
   virtual void WriteTask(weak_ptr<JetScapeWriter> w);
 
@@ -73,10 +73,9 @@ public:
    */
   void CreateSignalSlots();
 
-  /** A signal to connect the JetEnergyLossManager to the function GetHardPartonList() of the class HardProcess.
+  /** A signal to connect the JetEnergyLossManager to the function GetHardPartonList() of the class HardProcess. 
    */
   sigslot::signal1<vector<shared_ptr<Parton>> &> GetHardPartonList;
-  sigslot::signal1<vector<shared_ptr<PartonShower>>& > GetPartonShowerList;
 
   /** Use the flag m_GetHardPartonListConnected as true, if JetEnergyLossManager had sent a signal to function GetHardPartonList() of the class HardProcess.
       @param m_GetHardPartonListConnected A boolean flag.
@@ -85,7 +84,7 @@ public:
     GetHardPartonListConnected = m_GetHardPartonListConnected;
   }
 
-  /** @return GetHardPartonListConnected A boolean flag. Its status indicates whether JetEnergyLossManager had sent a signal to the function GetHardPartonList() of the class HardProcess.
+  /** @return GetHardPartonListConnected A boolean flag. Its status indicates whether JetEnergyLossManager had sent a signal to the function GetHardPartonList() of the class HardProcess. 
    */
   const bool GetGetHardPartonListConnected() {
     return GetHardPartonListConnected;
@@ -98,8 +97,6 @@ private:
 
   bool GetHardPartonListConnected;
   vector<shared_ptr<Parton>> hp;
-  vector<shared_ptr<PartonShower>> ps;
-
 };
 
 } // end namespace Jetscape
