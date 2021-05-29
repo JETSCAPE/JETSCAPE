@@ -478,11 +478,11 @@ void JetEnergyLoss::CalculateTime()
   //ClockInfo();
 }
 
-//Put shower generation in exec for now ... to be discussed if correct and/or 
-//if in general Calc and Exec is needed. Adavantage, if multi-threaded and exec after cals, no issues with 
+//Put shower generation in exec for now ... to be discussed if correct and/or
+//if in general Calc and Exec is needed. Adavantage, if multi-threaded and exec after cals, no issues with
 //data not availabe at exec time ...
 
-//JP: Exact copy of DoShower() for now, for test purpose only, should be 
+//JP: Exact copy of DoShower() for now, for test purpose only, should be
 //seperated out in an extra function so that no duplciate code needed!!!
 
 void JetEnergyLoss::ExecTime()

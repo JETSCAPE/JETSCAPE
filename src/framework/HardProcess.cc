@@ -103,6 +103,8 @@ void HardProcess::WriteTask(weak_ptr<JetScapeWriter> w) {
     f->WriteComment("HardProcess Parton List: " + GetId());
     for (auto hp : hp_list)
       f->Write(hp);
+
+    JetScapeTask::WriteTasks(w);
   }
 }
 
