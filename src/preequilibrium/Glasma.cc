@@ -32,17 +32,18 @@ Glasma::Glasma() {
 
 void Glasma::EvolvePreequilibrium() {
     VERBOSE(2) << "Initialize density profiles in Glasma ...";
-    std::string IPGlasmaFileName = "epsilon-u-hydro-t0.6-0.dat";
+    std::string IPGlasmaFileName = "epsilon-u-Hydro-t0.6-0.dat";
     VERBOSE(2) << "Read in IPGlasma Tmunu ...";
     std::ifstream IPGFile(IPGlasmaFileName.c_str());
     std::string tempString;
     std::getline(IPGFile, tempString);
     double dummy;
-    IPGFile >> dummy >> dummy >> dummy;
+    IPGFile >> dummy;
     while (!IPGFile.eof()) {
         double e_local;
         double u[4];
         double pi[10];
+        IPGFile >> dummy >> dummy;
         IPGFile >> e_local >> u[0] >> u[1] >> u[2] >> u[3];
         e_.push_back(e_local);
         P_.push_back(e_local/3.);
@@ -62,7 +63,8 @@ void Glasma::EvolvePreequilibrium() {
         pi23_.push_back(pi[8]);
         pi33_.push_back(pi[9]);
         bulk_Pi_.push_back(0.);
-        IPGFile >> dummy >> dummy >> dummy;
+        IPGFile >> dummy;
     }
     preequilibrium_status_ = DONE;
+    IPGFile.close();
 }
