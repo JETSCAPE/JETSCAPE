@@ -7,10 +7,10 @@
 
   <JetScapeWriterAscii> on </JetScapeWriterAscii>
 
-  <!-- Inital State Module  -->
-  <IS>
-    <IPGlasma> </IPGlasma>
-  </IS>
+    <!-- Inital State Module  -->
+    <IS>
+        <IPGlasma> </IPGlasma>
+    </IS>
 
   <!-- Hard Process -->
   <Hard>
@@ -21,17 +21,18 @@
     </PythiaGun>
   </Hard>
 
-  <!--Preequilibrium Dynamics Module -->
-  <Preequilibrium>
-      <Glasma> </Glasma>
-  </Preequilibrium>
+    <!--Preequilibrium Dynamics Module -->
+    <Preequilibrium>
+        <Glasma> </Glasma>
+    </Preequilibrium>
 
-  <!-- Hydro  Module  -->
-  <Hydro>
-      <MUSIC>
-        <freezeout_temperature>0.15</freezeout_temperature>
-      </MUSIC>
-  </Hydro>
+    <!-- Hydro  Module  -->
+    <Hydro>
+        <MUSIC>
+            <Initial_time_tau_0>0.4</Initial_time_tau_0>
+            <freezeout_temperature>0.15</freezeout_temperature>
+        </MUSIC>
+    </Hydro>
 
   <!--Eloss Modules -->
   <Eloss>

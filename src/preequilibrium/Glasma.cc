@@ -35,7 +35,7 @@ Glasma::Glasma() {
 
 void Glasma::EvolvePreequilibrium() {
     VERBOSE(2) << "Initialize density profiles in Glasma ...";
-    std::string IPGlasmaFileName = "epsilon-u-Hydro-t0.6-0.dat";
+    std::string IPGlasmaFileName = "epsilon-u-Hydro-t0.4-0.dat";
     VERBOSE(2) << "Read in IPGlasma Tmunu ...";
     const double norm = 0.235;
     std::ifstream IPGFile(IPGlasmaFileName.c_str());
