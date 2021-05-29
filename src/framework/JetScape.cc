@@ -209,6 +209,7 @@ void JetScape::DetermineTaskListFromXML() {
             Add(ipglasma);
             JSINFO << "JetScape::DetermineTaskList() -- Initial State: Added "
                       "IPGlasma module to task list.";
+          }
         } else if (childElementName == "initial_Ncoll_list") {
           auto initial =
               JetScapeModuleFactory::createInstance("NcollListFromFile");
@@ -293,9 +294,16 @@ void JetScape::DetermineTaskListFromXML() {
             JSINFO << "JetScape::DetermineTaskList() -- PreDynamics: Added "
                       "NullPreDynamics to task list.";
           }
-        }
+        } else if (childElementName == "Glasma") {
+          auto predynamics =
+              JetScapeModuleFactory::createInstance(childElementName);
+          if (predynamics) {
+            Add(predynamics);
+            JSINFO << "JetScape::DetermineTaskList() -- PreDynamics: Added "
+                      "Glasma to task list.";
+          }
+        } else if (childElementName == "FreestreamMilne") {
         //    - FreestreamMilne
-        else if (childElementName == "FreestreamMilne") {
 #ifdef USE_FREESTREAM
           auto predynamics =
               JetScapeModuleFactory::createInstance(childElementName);
@@ -308,9 +316,8 @@ void JetScape::DetermineTaskListFromXML() {
           JSWARN << "FreestreamMilne is attempted to be added, but freestream "
                     "is not installed!";
 #endif
-        }
+        } else if (((int)childElementName.find("CustomModule") >= 0)) {
         //   - Custom module
-        else if (((int)childElementName.find("CustomModule") >= 0)) {
           auto customModule =
               JetScapeModuleFactory::createInstance(childElementName);
           if (customModule) {

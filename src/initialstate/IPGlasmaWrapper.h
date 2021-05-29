@@ -53,25 +53,24 @@ public:
    */
   virtual void Write(weak_ptr<JetScapeWriter> w);
 
-  /** Generated number of collision participants.
-  */
-  double GetNpart() { return npart; };
-
   /** Generated number of binary collisions.
   */
-  double GetNcoll() { return ncoll; };
+  double GetNcoll() { return(static_cast<double>(ncoll_)); };
 
-  /** Generated total entropy
-  */
-  double GetTotalEntropy() { return totalentropy; };
+  //! Load saved number of binary collisions
+  void ReadNbcList(std::string filename);
+
+  void SampleABinaryCollisionPoint(double &x, double &y);
 
 private:
   std::unique_ptr<IPGlasma> IPGlasma_ptr_;
   int dim_x_, dim_y_;
 
-  double npart = -1;
-  double ncoll = -1;
-  double totalentropy = -1;
+  std::vector<double> binary_collision_x_;
+  std::vector<double> binary_collision_y_;
+  std::shared_ptr<std::uniform_int_distribution<int>> rand_int_ptr_;
+
+  int ncoll_ = -1;
 
   // Allows the registration of the module so that it is available to be used by the Jetscape framework.
   static RegisterJetScapeModule<IPGlasmaWrapper> reg;

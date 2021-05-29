@@ -66,7 +66,7 @@ void NcollListFromFile::ReadNbcList(std::string filename) {
 
   double x, y;
   infile >> x >> y;
-  if (!infile.eof()) {
+  while (!infile.eof()) {
     binary_collision_x_.push_back(x);
     binary_collision_y_.push_back(y);
     infile >> x >> y;
