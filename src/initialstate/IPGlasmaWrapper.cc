@@ -33,6 +33,11 @@ IPGlasmaWrapper::~IPGlasmaWrapper() {}
 void IPGlasmaWrapper::InitTask() {
     IPGlasma_ptr_ = std::unique_ptr<IPGlasma>(
                                 new IPGlasma(0, 1, 1, "ipglasma.input"));
+    int grid_nx = IPGlasma_ptr_->getGridSizeX();
+    double grid_spacing_x = IPGlasma_ptr_->getGridSpacingX();
+    double grid_size_x = grid_nx*grid_spacing_x/2.;
+    SetRanges(grid_size_x, grid_size_x, 0.);
+    SetSteps(grid_spacing_x, grid_spacing_x, 0.);
 }
 
 
