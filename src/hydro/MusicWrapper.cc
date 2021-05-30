@@ -155,12 +155,12 @@ void MpiMusic::EvolveHydro() {
     JSWARN << "Missing the pre-equilibrium module ...";
   } else {
     music_hydro_ptr->initialize_hydro_from_jetscape_preequilibrium_vectors(
-        dx, dz, z_max, nz, pre_eq_ptr->e_, pre_eq_ptr->utau_, pre_eq_ptr->ux_,
-        pre_eq_ptr->uy_, pre_eq_ptr->ueta_, pre_eq_ptr->pi00_,
-        pre_eq_ptr->pi01_, pre_eq_ptr->pi02_, pre_eq_ptr->pi03_,
-        pre_eq_ptr->pi11_, pre_eq_ptr->pi12_, pre_eq_ptr->pi13_,
-        pre_eq_ptr->pi22_, pre_eq_ptr->pi23_, pre_eq_ptr->pi33_,
-        pre_eq_ptr->bulk_Pi_);
+        dx, dz, z_max, nz, pre_eq_ptr->e_, pre_eq_ptr->P_,
+        pre_eq_ptr->utau_, pre_eq_ptr->ux_, pre_eq_ptr->uy_, pre_eq_ptr->ueta_,
+        pre_eq_ptr->pi00_, pre_eq_ptr->pi01_, pre_eq_ptr->pi02_,
+        pre_eq_ptr->pi03_, pre_eq_ptr->pi11_, pre_eq_ptr->pi12_,
+        pre_eq_ptr->pi13_, pre_eq_ptr->pi22_, pre_eq_ptr->pi23_,
+        pre_eq_ptr->pi33_, pre_eq_ptr->bulk_Pi_);
   }
 
   JSINFO << "initial density profile dx = " << dx << " fm";
