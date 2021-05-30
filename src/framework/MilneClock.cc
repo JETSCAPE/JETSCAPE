@@ -37,8 +37,12 @@ void MilneClock::Info() {
 void MilneClock::Transform(std::weak_ptr<MainClock> mainClock) {
     auto p = mainClock.lock();
     if (p) {
-        tauMax_ = p->GetCurrentTime();
-        tauMin_ = p->GetCurrentTime()/cosh(etaMax_);
+        currentModuleTime_ = p->GetCurrentTime();
+        moduleDeltaT_ = p->GetDeltaT();
+        if (currentModuleTime_ > 0.) {
+            tauMax_ = currentModuleTime_;
+            tauMin_ = p->GetCurrentTime()/cosh(etaMax_);
+        }
     } else {
         JSWARN << "Trying to transform module clock with no main clock ... ";
         exit(-1);

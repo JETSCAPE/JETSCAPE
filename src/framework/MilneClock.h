@@ -33,11 +33,17 @@ class MilneClock : public ModuleClock {
     void Info();
     void Transform(std::weak_ptr<MainClock> mainClock);
 
-    void setEtaMax(real etaMax) {etaMax_ = etaMax;}
-    real getTauMin() const {return(tauMin_);}
-    real getTauMax() const {return(tauMax_);}
+    void setEtaMax(const real etaMax) {etaMax_ = etaMax;}
+
+    real getTMin() const {return(tauMin_);}
+    real getTMax() const {return(tauMax_);}
+
+    double GetCurrentTime() {return(currentModuleTime_);}
+    double GetDeltaT() {return(moduleDeltaT_);}
 
  private:
+    real currentModuleTime_;
+    real moduleDeltaT_;
     real etaMax_;
     real tauMin_;
     real tauMax_;

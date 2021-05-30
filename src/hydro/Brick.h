@@ -17,6 +17,7 @@
 #define BRICK_H
 
 #include "FluidDynamics.h"
+#include "RealType.h"
 
 using namespace Jetscape;
 
@@ -47,6 +48,12 @@ public:
 
   void InitTask();
   //virtual void Exec();
+
+  void CalculateTime();
+  void ExecTime();
+
+  void EvolveHydroFromTminToTmax(const Jetscape::real tauMin,
+                                 const Jetscape::real tauMax);
 };
 
 #endif // BRICK_H

@@ -198,16 +198,18 @@ int main(int argc, char** argv)
   auto pythiaGun= make_shared<PythiaGun> ();
   auto isr = make_shared<InitialStateRadiationTest> ();
   auto hydro = make_shared<Brick> ();
+  hydro->AddModuleClock(mMilneClock);
+  hydro->SetActive(false);
 
-  auto hydroTest = make_shared<BrickTest> (); 
-  hydroTest->SetMultiThread(true); 
-  hydroTest->SetActive(false);
+  //auto hydroTest = make_shared<BrickTest> (); 
+  //hydroTest->SetMultiThread(true); 
+  //hydroTest->SetActive(false);
 
   jetscape->Add(trento);
   jetscape->Add(pythiaGun);
   //jetscape->Add(isr);
-  //jetscape->Add(hydro);
-  jetscape->Add(hydroTest);
+  jetscape->Add(hydro);
+  //jetscape->Add(hydroTest);
 
   // Energy loss
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
