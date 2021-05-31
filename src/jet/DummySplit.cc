@@ -54,7 +54,7 @@ void DummySplit::DoEnergyLoss(double deltaT, double time, double Q2, vector<Part
   //DEBUG:
   //cout<< rNum<<endl;
 
-  if (rNum<0.05 && time<5)
+  if (rNum<0.05 && time<3)
     {
       //DEBUG:
       JSDEBUG<<"My dummy split  module ..."<<time<<" "<<deltaT;//<<endl;

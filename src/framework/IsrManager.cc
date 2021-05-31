@@ -73,6 +73,7 @@ void IsrManager::Init()
 
 void IsrManager::Exec()
 {
+  JSINFO << "Create ISR from HardProcess partons ...";
   VERBOSE(1) << "Run ISR Manager via JetEnergyLossManager::Exec() ...";
   JSDEBUG << "Task Id = " << this_thread::get_id();
 
@@ -104,14 +105,18 @@ void IsrManager::Exec()
       //DEBUG:
       //ps->PrintEdges(false);
 
+      if (hpp)
+        hpp->AddPartonShower(ps);
+
       auto fp = ps->GetFinalPartons();
       JSDEBUG<<"# of shower initiaing partons after ISR  = "<<fp.size();
 
-      for (auto p : fp) hpp->AddParton(p);
+      for (auto p : fp) if (hpp) hpp->AddParton(p);
 
     }
   }
 
+  JSINFO<< "Shower initating parton list/parton showers after ISR updated in HardProcess ...";
 }
 
 } // end namespace Jetscape

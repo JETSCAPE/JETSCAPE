@@ -102,7 +102,8 @@ void JetEnergyLossManager::MakeCopies()
     GetPartonShowerList(ps);
 
     JSINFO<<" Number of Hard Partons = "<<hp.size();
-    JSINFO<<" Number of Parton Showers = "<<ps.size();
+    if (ps.size()>0)
+      JSINFO<<" Number of Parton Showers = "<<ps.size();
 
     VERBOSE(3) << " Number of Hard Partons = " << hp.size();
     for (int i = 1; i < hp.size(); i++) {

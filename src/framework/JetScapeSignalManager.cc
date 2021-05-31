@@ -163,6 +163,9 @@ void JetScapeSignalManager::ConnectGetFinalHadronListSignal(
 void JetScapeSignalManager::CleanUp() {
   VERBOSE(8);
 
+  // REMARK JP: In case of two managers attached, Eloss and Isr
+  //            the bookeeping here is not correct, while signal/slots itself are (to be checked)!
+
   // hmmm wrong caintainer .. should have used vectore with struct instead of map!!!!
 
   auto loss = jloss.lock();
