@@ -20,32 +20,35 @@
 
 #include "ClockBase.h"
 #include "MainClock.h"
+#include "RealType.h"
 #include <string>
 #include <memory>
 
 using std::string;
+using Jetscape::real;
 
 namespace Jetscape {
 
-class ModuleClock 
-	: public ClockBase {
+class ModuleClock : public ClockBase {
+ public:
 
-public:
+    ModuleClock();
+    virtual ~ModuleClock() {};
 
-	ModuleClock();
-	virtual ~ModuleClock() {};
+    //virtual void Transform(string mainClockRef, double mainClockCurrentTime);
+    virtual void Transform(std::weak_ptr<MainClock> mainClock);
+    virtual void Info();
 
-	//virtual void Transform(string mainClockRef, double mainClockCurrentTime);
-	virtual void Transform(std::weak_ptr<MainClock> mainClock);
-	virtual void Info();
+    inline double GetCurrentTime() {return currentModuleTime;}
+    inline double GetDeltaT() {return moduleDeltaT;}
 
-	inline double GetCurrentTime() {return currentModuleTime;}
-        inline double GetDeltaT() {return moduleDeltaT;}
-private:
+    virtual real getTMax() const {return(currentModuleTime);}
+    virtual real getTMin() const {return(currentModuleTime);}
 
-	double currentModuleTime;
-        double moduleDeltaT;
+ private:
 
+    double currentModuleTime;
+    double moduleDeltaT;
 };
 
 } // end namespace Jetscape

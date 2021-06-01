@@ -48,6 +48,7 @@
 
 #include "MainClock.h"
 #include "ModuleClock.h"
+#include "MilneClock.h"
 
 #include "QueryHistory.h"
 
@@ -145,9 +146,12 @@ int main(int argc, char** argv)
   auto mClock = make_shared<MainClock>("SpaceTime",-1,5,0.1); // JP: make consistent with reading from XML in init phase ...
   auto mModuleClock = make_shared<ModuleClock>(); 
   mModuleClock->SetTimeRefFrameId("SpaceTime * 2");
+  auto mMilneClock = make_shared<MilneClock>();
+  mMilneClock->setEtaMax(5.0);
 
   mClock->Info();
-  mModuleClock->Info(); 
+  mModuleClock->Info();
+  mMilneClock->Info();
 
   /*
   mClock->Info();
@@ -194,16 +198,18 @@ int main(int argc, char** argv)
   auto pythiaGun= make_shared<PythiaGun> ();
   auto isr = make_shared<InitialStateRadiationTest> ();
   auto hydro = make_shared<Brick> ();
+  hydro->AddModuleClock(mMilneClock);
+  hydro->SetActive(false);
 
-  auto hydroTest = make_shared<BrickTest> (); 
-  hydroTest->SetMultiThread(true); 
-  hydroTest->SetActive(false);
+  //auto hydroTest = make_shared<BrickTest> (); 
+  //hydroTest->SetMultiThread(true); 
+  //hydroTest->SetActive(false);
 
   jetscape->Add(trento);
   jetscape->Add(pythiaGun);
   //jetscape->Add(isr);
-  //jetscape->Add(hydro);
-  jetscape->Add(hydroTest);
+  jetscape->Add(hydro);
+  //jetscape->Add(hydroTest);
 
   // Energy loss
   auto jlossmanager = make_shared<JetEnergyLossManager> ();
