@@ -47,6 +47,7 @@
 #include "CascadeTest.h"
 #include "IsrManager.h"
 #include "DummySplit.h"
+#include "PartonShowerGeneratorDefault.h"
 
 #include "MainClock.h"
 #include "ModuleClock.h"
@@ -120,6 +121,10 @@ int main(int argc, char** argv)
 
   auto isrManager = make_shared<IsrManager>();
   auto isrJloss = make_shared<JetEnergyLoss> (); //to be followed up ... make isr module ... !!!!
+  auto oldPSG = make_shared<PartonShowerGeneratorDefault>(); //modify for ISR evolution ... to be discussed ...
+
+  isrJloss->AddPartonShowerGenerator(oldPSG);
+
   auto iDummy = make_shared<DummySplit> ();
 
   isrJloss->Add(iDummy);

@@ -371,19 +371,6 @@ void JetEnergyLoss::Exec() {
       //VERBOSE(8)<<"Use Default DoShower() to do Parton shower stored in PartonShower Graph class";
       JSDEBUG<<"--> Use Default DoShower() to do Parton shower stored in PartonShower Graph class";
 
-      /*
-       //Check Memory ...
-       VERBOSE(8)<<"Use PartonShowerGenerator to do Parton shower stored in PartonShower Graph class";
-       JSDEBUG<<"Use PartonShowerGenerator to do Parton shower stored in PartonShower Graph class";
-
-       PartonShowerGenerator PSG;
-       PSG.DoShower(*shared_from_this()); //needed otherwise all signal slots have to be recreated for shower module ....
-       // Overall not the nicest logic though .... Just to make changing and expanding the shower code in the future ...
-       // (basically, just now to remove the code out of the jet energy loss class ...) TBD
-       // also not really nice, since now the energy loss part in the parton shower and not really visible in this class ...
-       // Keep both codes so far ...
-      */
-
       // Shower handled in this class ...
       DoShower();
     }
@@ -392,36 +379,6 @@ void JetEnergyLoss::Exec() {
 
       GetPartonShowerGenerator()->DoShower(*dynamic_pointer_cast<JetEnergyLoss>(shared_from_this()));
     }
-
-    pShower->PrintNodes();
-    pShower->PrintEdges();
-
-    //REMARK JP: No idea what and why code below is needed !!!!
-    //           Discuss and clean up in the future !!!!
-    /*
-    weak_ptr<HardProcess> hproc =
-      JetScapeSignalManager::Instance()->GetHardProcessPointer();
-
-    for (unsigned int ipart = 0; ipart < pShower->GetNumberOfPartons();
-         ipart++) {
-      //   Uncomment to dump the whole parton shower into the parton container
-      // auto hp = hproc.lock();
-      // if ( hp ) hp->AddParton(pShower->GetPartonAt(ipart));
-    }
-
-    shared_ptr<PartonPrinter> pPrinter =
-      JetScapeSignalManager::Instance()->GetPartonPrinterPointer().lock();
-    if (pPrinter) {
-      pPrinter->GetFinalPartons(pShower);
-    }
-
-    shared_ptr<JetEnergyLoss> pEloss =
-      JetScapeSignalManager::Instance()->GetEnergyLossPointer().lock();
-    if (pEloss) {
-      pEloss->GetFinalPartonsForEachShower(pShower);
-    }
-    */
-
   }
   else if (GetInitialPartonShower() && useShower)
     {
@@ -430,16 +387,42 @@ void JetEnergyLoss::Exec() {
           pShower=make_shared<PartonShower>();
 
           JSDEBUG<<"--> Use DoShower() provided from PSG reading in full intial shower to do Parton shower stored in PartonShower Graph class";
-	        GetPartonShowerGenerator()->DoShower(*dynamic_pointer_cast<JetEnergyLoss>(shared_from_this()));
 
-          pShower->PrintNodes();
-          pShower->PrintEdges();
+	        GetPartonShowerGenerator()->DoShower(*dynamic_pointer_cast<JetEnergyLoss>(shared_from_this()));
         }
       else
         {JSWARN<<"No proper external Parton Shower Generator attached ..."; exit(-1);}
     }
   else {
     JSWARN << "NO Initial Hard Parton/or (ISR) shower for Parton shower received ...";exit(-1);
+  }
+
+  pShower->PrintNodes();
+  pShower->PrintEdges();
+
+  //REMARK JP: No idea what and why code below is needed !!!!
+  //           Discuss and clean up in the future !!!!
+
+  weak_ptr<HardProcess> hproc =
+    JetScapeSignalManager::Instance()->GetHardProcessPointer();
+
+  for (unsigned int ipart = 0; ipart < pShower->GetNumberOfPartons();
+       ipart++) {
+    //   Uncomment to dump the whole parton shower into the parton container
+    // auto hp = hproc.lock();
+    // if ( hp ) hp->AddParton(pShower->GetPartonAt(ipart));
+  }
+
+  shared_ptr<PartonPrinter> pPrinter =
+    JetScapeSignalManager::Instance()->GetPartonPrinterPointer().lock();
+  if (pPrinter) {
+    pPrinter->GetFinalPartons(pShower);
+  }
+
+  shared_ptr<JetEnergyLoss> pEloss =
+    JetScapeSignalManager::Instance()->GetEnergyLossPointer().lock();
+  if (pEloss) {
+    pEloss->GetFinalPartonsForEachShower(pShower);
   }
 
   //DEBUGTHREAD<<"Task Id = "<<this_thread::get_id()<<" Finished!";
@@ -483,6 +466,10 @@ void JetEnergyLoss::FinishPerEvent()
   weak_ptr<HardProcess> hproc =
     JetScapeSignalManager::Instance()->GetHardProcessPointer();
 
+
+  //REMARK JP: No idea what and why code below is needed !!!!
+  //           Discuss and clean up in the future !!!!
+
   for (unsigned int ipart = 0; ipart < pShower->GetNumberOfPartons();
        ipart++) {
     //   Uncomment to dump the whole parton shower into the parton container
@@ -519,6 +506,8 @@ void JetEnergyLoss::CalculateTime()
 
 //JP: Exact copy of DoShower() for now, for test purpose only, should be
 //seperated out in an extra function so that no duplciate code needed!!!
+
+// Think about how to do this modular with PSG !????
 
 void JetEnergyLoss::ExecTime()
 {
