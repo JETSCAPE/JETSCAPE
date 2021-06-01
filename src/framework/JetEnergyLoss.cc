@@ -83,6 +83,9 @@ JetEnergyLoss::JetEnergyLoss(const JetEnergyLoss &j) {
   inP = nullptr;
   pShower = nullptr;
 
+  SetUseIntialPartonShower(j.GetUseIntialPartonShower());
+  AddPartonShowerGenerator(j.GetPartonShowerGenerator());
+
   VERBOSE(8) << "To be copied : # Subtasks = " << j.GetTaskList().size();
   for (auto it : j.GetTaskList()) {
     // Working via CRTP JetEnergyLossModule Clone function !
@@ -360,10 +363,15 @@ void JetEnergyLoss::Exec() {
   //DEBUGTHREAD<<"Task Id = "<<this_thread::get_id()<<" | Run JetEnergyLoss ...";
   //DEBUGTHREAD<<"Task Id = "<<this_thread::get_id()<<" | Found "<<GetNumberOfTasks()<<" Eloss Tasks/Modules Execute them ... ";
 
-  if (GetShowerInitiatingParton()) {
+  //if (GetShowerInitiatingParton()) {
+  if (GetShowerInitiatingParton() && !useShower) {
     pShower = make_shared<PartonShower>();
 
-    /*
+    if (!GetPartonShowerGenerator()) {
+      //VERBOSE(8)<<"Use Default DoShower() to do Parton shower stored in PartonShower Graph class";
+      JSDEBUG<<"--> Use Default DoShower() to do Parton shower stored in PartonShower Graph class";
+
+      /*
        //Check Memory ...
        VERBOSE(8)<<"Use PartonShowerGenerator to do Parton shower stored in PartonShower Graph class";
        JSDEBUG<<"Use PartonShowerGenerator to do Parton shower stored in PartonShower Graph class";
@@ -374,19 +382,25 @@ void JetEnergyLoss::Exec() {
        // (basically, just now to remove the code out of the jet energy loss class ...) TBD
        // also not really nice, since now the energy loss part in the parton shower and not really visible in this class ...
        // Keep both codes so far ...
-       */
+      */
 
-    // Shower handled in this class ...
-    DoShower();
+      // Shower handled in this class ...
+      DoShower();
+    }
+    else {
+      JSDEBUG<<"--> Use PartonShowerGenerator to do Parton shower stored in PartonShower Graph class";
+
+      GetPartonShowerGenerator()->DoShower(*dynamic_pointer_cast<JetEnergyLoss>(shared_from_this()));
+    }
 
     pShower->PrintNodes();
     pShower->PrintEdges();
 
-    weak_ptr<HardProcess> hproc =
-      JetScapeSignalManager::Instance()->GetHardProcessPointer();
-
     //REMARK JP: No idea what and why code below is needed !!!!
     //           Discuss and clean up in the future !!!!
+    /*
+    weak_ptr<HardProcess> hproc =
+      JetScapeSignalManager::Instance()->GetHardProcessPointer();
 
     for (unsigned int ipart = 0; ipart < pShower->GetNumberOfPartons();
          ipart++) {
@@ -406,8 +420,26 @@ void JetEnergyLoss::Exec() {
     if (pEloss) {
       pEloss->GetFinalPartonsForEachShower(pShower);
     }
-  } else {
-    JSWARN << "NO Initial Hard Parton for Parton shower received ...";exit(-1);
+    */
+
+  }
+  else if (GetInitialPartonShower() && useShower)
+    {
+      if (GetPartonShowerGenerator())
+        {
+          pShower=make_shared<PartonShower>();
+
+          JSDEBUG<<"--> Use DoShower() provided from PSG reading in full intial shower to do Parton shower stored in PartonShower Graph class";
+	        GetPartonShowerGenerator()->DoShower(*dynamic_pointer_cast<JetEnergyLoss>(shared_from_this()));
+
+          pShower->PrintNodes();
+          pShower->PrintEdges();
+        }
+      else
+        {JSWARN<<"No proper external Parton Shower Generator attached ..."; exit(-1);}
+    }
+  else {
+    JSWARN << "NO Initial Hard Parton/or (ISR) shower for Parton shower received ...";exit(-1);
   }
 
   //DEBUGTHREAD<<"Task Id = "<<this_thread::get_id()<<" Finished!";
