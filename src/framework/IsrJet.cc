@@ -13,28 +13,34 @@
  * See COPYING for details.
  ******************************************************************************/
 
-//REMARK: Old JetScape PSG w/o droplets etc ...
-// pretty much copy of the DoShower in JetEnergyLoss ....
+#include "IsrJet.h"
+#include "JetScapeLogger.h"
+#include "JetScapeSignalManager.h"
 
-#ifndef PARTONSHOWERGENERATORDEFAULT_H
-#define PARTONSHOWERGENERATORDEFAULT_H
+#include <string>
+#include <iostream>
+#include <vector>
 
-#include "PartonShowerGenerator.h"
+using namespace std;
 
 namespace Jetscape {
 
-class JetEnergyLoss;
+IsrJet::IsrJet() : JetEnergyLoss() {
+  SetId("IsrJet");
+  VERBOSE(8);
+}
 
-class PartonShowerGeneratorDefault : public PartonShowerGenerator
+IsrJet::~IsrJet() {
+  // Check if this is all really needed with shared_ptr ...
+  JSDEBUG;
+}
+
+void IsrJet::Init()
 {
- public:
+  JSINFO << "Intialize ISR Jet ..."; //via JetEnergyLossManager::Init() ...";
+  JSDEBUG << " --> everything set not via XML for now ...";
 
-   PartonShowerGeneratorDefault() : PartonShowerGenerator()  {};
-   virtual ~PartonShowerGeneratorDefault() {};
-
-   virtual void DoShower(JetEnergyLoss &j);
-};
+  JetScapeTask::InitTasks();
+}
 
 } // end namespace Jetscape
-
-#endif

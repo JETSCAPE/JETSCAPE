@@ -79,6 +79,7 @@ JetEnergyLoss::JetEnergyLoss(const JetEnergyLoss &j) {
 
   deltaT = j.deltaT;
   maxT = j.maxT;
+  startT = j.startT;
 
   inP = nullptr;
   pShower = nullptr;
@@ -115,7 +116,11 @@ void JetEnergyLoss::Init() {
   deltaT = GetXMLElementDouble({"Eloss", "deltaT"});
 
   maxT = GetXMLElementDouble({"Eloss", "maxT"});
-  JSINFO << "Eloss shower with deltaT = " << deltaT << " and maxT = " << maxT;
+
+  if (GetActive())
+    JSINFO << "Eloss shower with deltaT = " << deltaT << " and maxT = " << maxT;
+  else
+    JSINFO << "Eloss shower via Main Clock ...";
 
   std::string mutexOnString = GetXMLElementText({"Eloss", "mutex"}, false);
   if (!mutexOnString.compare("ON"))
@@ -151,7 +156,7 @@ void JetEnergyLoss::Init() {
 // JP: with all changes check for memory leaks ...
 
 void JetEnergyLoss::DoShower() {
-  double tStart = 0;
+  double tStart = startT;
   double currentTime = 0;
 
   VERBOSESHOWER(8) << "Hard Parton from Initial Hard Process ...";

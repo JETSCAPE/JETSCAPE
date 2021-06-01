@@ -63,8 +63,7 @@ public:
       To avoid abuse, this can NOT be overwritten. Eloss happens on a parton-by-parton level,
       Exec() should only be executed once per event.
    */
-  virtual void
-  Exec() final; // prevents eloss modules from overwrting and missusing
+  virtual void Exec() final; // prevents eloss modules from overwrting and missusing
 
   /** Write output information for each tasks/subtasks attached to the JetEnergyLoss module using JetScapeWriter functionality.
       @param w A pointer of type JetScapeWriter.
@@ -138,10 +137,15 @@ public:
   /** @return The time-step "deltaT" used by energy loss task.
    */
   double GetDeltaT() { return deltaT; }
+  void SetDeltaT(double m_deltaT) {deltaT = m_deltaT;}
 
   /** @return The maximum time limit for parton shower.
    */
   double GetMaxT() { return maxT; }
+  void SetMaxT(double m_maxT) {maxT = m_maxT;}
+
+  double GetStartT() { return startT;}
+  void SetStartT(double m_startT) {startT = m_startT;}
 
   /** @return The current shower.
    */
@@ -235,6 +239,7 @@ private:
 
   double deltaT;
   double maxT;
+  double startT = 0;
 
   double qhat;
   shared_ptr<Parton> inP;

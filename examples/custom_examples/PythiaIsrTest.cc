@@ -48,6 +48,7 @@
 #include "IsrManager.h"
 #include "DummySplit.h"
 #include "PartonShowerGeneratorDefault.h"
+#include "IsrJet.h"
 
 #include "MainClock.h"
 #include "ModuleClock.h"
@@ -120,14 +121,16 @@ int main(int argc, char** argv)
   jetscape->Add(trento);
 
   auto isrManager = make_shared<IsrManager>();
-  auto isrJloss = make_shared<JetEnergyLoss> (); //to be followed up ... make isr module ... !!!!
+  //auto isrJloss = make_shared<JetEnergyLoss> (); //to be followed up ... make isr module ... !!!!
+  auto isrJloss = make_shared<IsrJet>();
   auto oldPSG = make_shared<PartonShowerGeneratorDefault>(); //modify for ISR evolution ... to be discussed ...
-
-  isrJloss->AddPartonShowerGenerator(oldPSG);
-
   auto iDummy = make_shared<DummySplit> ();
 
+  isrJloss->SetDeltaT(-0.1); isrJloss->SetStartT(0); isrJloss->SetMaxT(-20.); //will be moved to XML and proper Init() in IsrJet later ...
+
+  isrJloss->AddPartonShowerGenerator(oldPSG);
   isrJloss->Add(iDummy);
+
   isrManager->Add(isrJloss);
 
   pythiaGun->Add(isrManager);

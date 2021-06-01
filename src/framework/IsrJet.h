@@ -13,26 +13,35 @@
  * See COPYING for details.
  ******************************************************************************/
 
-//REMARK: Old JetScape PSG w/o droplets etc ...
-// pretty much copy of the DoShower in JetEnergyLoss ....
+#ifndef ISRJET_H
+#define ISRJET_H
 
-#ifndef PARTONSHOWERGENERATORDEFAULT_H
-#define PARTONSHOWERGENERATORDEFAULT_H
-
-#include "PartonShowerGenerator.h"
+//#include "JetScapeTask.h"
+#include "JetEnergyLoss.h"
+#include "sigslot.h"
 
 namespace Jetscape {
+/** @class Jet energy loss manager.
+   */
+class IsrJet
+    : public JetEnergyLoss
+      //public std::enable_shared_from_this<IsrManager>
+      {
 
-class JetEnergyLoss;
+public:
+  /** Default constructor to create a jet energy loss manager. Sets task ID as "JLossManager". Flag GetHardPartonListConnected is set to false.
+   */
+  IsrJet();
 
-class PartonShowerGeneratorDefault : public PartonShowerGenerator
-{
- public:
+  /** Destructor for the jet energy loss manager.
+   */
+  virtual ~IsrJet();
 
-   PartonShowerGeneratorDefault() : PartonShowerGenerator()  {};
-   virtual ~PartonShowerGeneratorDefault() {};
+  virtual void Init();
 
-   virtual void DoShower(JetEnergyLoss &j);
+
+private:
+
 };
 
 } // end namespace Jetscape
