@@ -56,6 +56,7 @@ JetEnergyLoss::JetEnergyLoss() {
 
   inP = nullptr;
   pShower = nullptr;
+  pInShower = nullptr;
 
   VERBOSE(8);
 }
@@ -103,6 +104,8 @@ void JetEnergyLoss::Clear() {
   this->final_Partons.clear();
 
   inP = nullptr;
+  pShower = nullptr;
+  pInShower = nullptr;
 
   pIn.clear();
   vStartVec.clear();
@@ -146,6 +149,7 @@ void JetEnergyLoss::Init() {
 
   inP = nullptr;
   pShower = nullptr;
+  pInShower = nullptr;
 
   JSINFO << "Found " << GetNumberOfTasks()
          << " Eloss Tasks/Modules Initialize them ... ";
@@ -374,16 +378,18 @@ void JetEnergyLoss::Exec() {
 
     if (!GetPartonShowerGenerator()) {
       //VERBOSE(8)<<"Use Default DoShower() to do Parton shower stored in PartonShower Graph class";
-      JSDEBUG<<"--> Use Default DoShower() to do Parton shower stored in PartonShower Graph class";
+      JSDEBUG<<"--> Use Default DoShower() from JetEnergyLoss to do Parton shower stored in PartonShower Graph class";
 
       // Shower handled in this class ...
       DoShower();
     }
-    else {
-      JSDEBUG<<"--> Use PartonShowerGenerator to do Parton shower stored in PartonShower Graph class";
+    else if (GetPartonShowerGenerator()) {
+      JSDEBUG<<"--> Use DoShower() provided from PSG to do Parton shower stored in PartonShower Graph class";
 
       GetPartonShowerGenerator()->DoShower(*dynamic_pointer_cast<JetEnergyLoss>(shared_from_this()));
     }
+    else
+      {JSWARN<<"No proper external Parton Shower Generator attached ..."; exit(-1);}
   }
   else if (GetInitialPartonShower() && useShower)
     {
@@ -529,8 +535,7 @@ void JetEnergyLoss::ExecTime()
     vector<node> vStartVecOut;
     vector<node> vStartVecTemp;
 
-    VERBOSESHOWER(7) << "Current time = " << currentTime << " with #Input "
-    << pIn.size();
+    VERBOSESHOWER(7) << "Current time = " << currentTime << " with #Input "<< pIn.size();
 
     //JP: Check if this usage is consistent with master clock etc start time ... !!!!
 

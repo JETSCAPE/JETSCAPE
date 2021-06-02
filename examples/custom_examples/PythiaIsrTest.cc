@@ -150,6 +150,7 @@ int main(int argc, char** argv)
 
   jlossmanager->SetActive(false);
   jloss->SetActive(false);
+  //jloss->SetUseIntialPartonShower(true); // no effect for time step based approach ... to be added ...
 
   //quick and dirty to check if module clock transformation is working conceptually ...
   //jloss->AddModuleClock(mModuleClock);

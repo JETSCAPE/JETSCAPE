@@ -242,10 +242,10 @@ private:
   double startT = 0;
 
   double qhat;
-  shared_ptr<Parton> inP;
-  shared_ptr<PartonShower> pInShower;
+  shared_ptr<Parton> inP = nullptr;
+  shared_ptr<PartonShower> pInShower = nullptr;
 
-  shared_ptr<PartonShower> pShower;
+  shared_ptr<PartonShower> pShower = nullptr;
 
   bool GetHydroCellSignalConnected;
   bool SentInPartonsConnected;

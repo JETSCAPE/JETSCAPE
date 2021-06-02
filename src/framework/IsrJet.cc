@@ -40,6 +40,18 @@ void IsrJet::Init()
   JSINFO << "Intialize ISR Jet ..."; //via JetEnergyLossManager::Init() ...";
   JSDEBUG << " --> everything set not via XML for now ...";
 
+  if (GetNumberOfTasks() < 1) {
+    JSWARN << " : No valid Energy Loss modules found ...";
+    exit(-1);
+  }
+
+  // Should be done here too; set to nullptr in JetEnergyLoss header ...
+  //inP = nullptr;
+  //pShower = nullptr;
+
+  JSINFO << "Found " << GetNumberOfTasks()
+         << " ISR Tasks/Modules Initialize them ... ";
+
   JetScapeTask::InitTasks();
 }
 
