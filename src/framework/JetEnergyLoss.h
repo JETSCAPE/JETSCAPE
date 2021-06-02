@@ -254,6 +254,12 @@ private:
   */
   void DoShower();
 
+  void DoCalculateTime() {};
+  void DoExecTime();
+  void DoInitPerEvent();
+  void DoFinishPerEvent();
+
+
   shared_ptr<PartonShowerGenerator> psGen;
 
   node vStart;

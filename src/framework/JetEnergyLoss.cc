@@ -440,13 +440,56 @@ void JetEnergyLoss::Exec() {
   //JetScapeTask::ExecuteTasks(); // prevent Further modules to be execute, everything done by JetEnergyLoss ... (also set the no active flag ...!?)
 }
 
+// ***************************************************************
+// Remark JP: Really not very happy about the whole design now ...
+//           Think about more streamlining etc ... !!!!
+// ***************************************************************
+
 void JetEnergyLoss::InitPerEvent()
+{
+  if (GetShowerInitiatingParton() && !useShower) {
+    pShower = make_shared<PartonShower>();
+    DoInitPerEvent();
+  }
+  else if (GetInitialPartonShower() && useShower) {
+    if (GetPartonShowerGenerator()) {
+
+      pShower = make_shared<PartonShower>();
+
+      JSDEBUG<<"--> Use DoShower() provided from PSG to do Parton shower stored in PartonShower Graph class";
+
+      GetPartonShowerGenerator()->DoInitPerEvent(*dynamic_pointer_cast<JetEnergyLoss>(shared_from_this()));
+    }
+    else
+      {JSWARN<<"No proper external Parton Shower Generator attached ..."; exit(-1);}
+  }
+  else
+    {JSWARN << "NO Initial Hard Parton/or (ISR) shower for Parton shower received ...";exit(-1);}
+
+}
+
+void JetEnergyLoss::ExecTime()
+{
+  if (!useShower) {
+    DoExecTime();
+  }
+}
+
+void JetEnergyLoss::FinishPerEvent()
+{
+  if (!useShower) {
+    DoFinishPerEvent();
+  }
+
+  Clear();
+}
+
+void JetEnergyLoss::DoInitPerEvent()
 {
   VERBOSE(3) << "InitPerEvent() for usage per time step ...";
 
   if (GetShowerInitiatingParton())
   {
-    pShower = make_shared<PartonShower>();
     pIn.push_back(*GetShowerInitiatingParton());
 
     vStart = pShower->new_vertex(make_shared<Vertex>());
@@ -461,13 +504,12 @@ void JetEnergyLoss::InitPerEvent()
     neg_stat = liquefier_ptr.lock()->get_neg_stat();
     }
 
-  } else {
-    JSWARN << "NO Initial Hard Parton for Parton shower received ...";exit(-1);
   }
-
+  else
+    {JSWARN << "NO Initial Hard Parton for Parton shower received ...";exit(-1);}
 }
 
-void JetEnergyLoss::FinishPerEvent()
+void JetEnergyLoss::DoFinishPerEvent()
 {
   VERBOSE(3) << "FinishPerEvent() for usage per time step ...";
 
@@ -499,10 +541,6 @@ void JetEnergyLoss::FinishPerEvent()
   if (pEloss) {
     pEloss->GetFinalPartonsForEachShower(pShower);
   }
-
-  //JP: Quick fix, to be discussed, similar to writer, clear is only called for active tasks, so call here directly ...
-
-  Clear();
 }
 
 void JetEnergyLoss::CalculateTime()
@@ -520,7 +558,7 @@ void JetEnergyLoss::CalculateTime()
 
 // Think about how to do this modular with PSG !????
 
-void JetEnergyLoss::ExecTime()
+void JetEnergyLoss::DoExecTime()
 {
   VERBOSE(3) << "Execute JLoss per time step ... Current (Module) Time = " << GetModuleCurrentTime() << " dT = " << GetModuleDeltaT();
 
