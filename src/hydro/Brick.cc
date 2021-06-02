@@ -42,6 +42,7 @@ Brick::Brick() : FluidDynamics() {
 
 Brick::~Brick() { VERBOSE(8); }
 
+
 void Brick::InitTask() {
   // kind of stupid ... do pointer GetHydroXML() via XML instance ...
 
@@ -65,15 +66,18 @@ void Brick::InitTask() {
   GetParameterList().hydro_input_filename = (char *)"dummy"; //*(argv+1);
 }
 
+
 void Brick::InitializeHydro(Parameter parameter_list) {
   hydro_status = INITIALIZED;
 }
 
+
 void Brick::EvolveHydro() {
   VERBOSE(8);
-  VERBOSE(2) << "size of sd = " << ini->GetEntropyDensityDistribution().size();
+  VERBOSE(3) << "size of sd = " << ini->GetEntropyDensityDistribution().size();
   hydro_status = FINISHED;
 }
+
 
 void Brick::GetHydroInfo(
     Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
@@ -115,4 +119,29 @@ void Brick::GetHydroInfo(
     JSWARN << "Hydro not run yet ...";
     exit(-1);
   }
+}
+
+
+void Brick::CalculateTime() {
+    Jetscape::real tauCurrent = GetModuleCurrentTime();
+    Jetscape::real tauMax = GetModuleClock()->getTMax();
+    Jetscape::real tauMin = GetModuleClock()->getTMin();
+    VERBOSE(2) << "tau_min = " << tauMin << " fm/c, tau_max = "
+               << tauMax << " fm/c.";
+}
+
+
+void Brick::ExecTime() {
+    JSINFO << "Brick::ExecTime(): Current Main Clock Time = "
+           << GetMainClock()->GetCurrentTime() << " fm/c";
+    EvolveHydroFromTminToTmax(GetModuleClock()->getTMin(),
+                              GetModuleClock()->getTMax());
+}
+
+
+void Brick::EvolveHydroFromTminToTmax(const real tauMin, const real tauMax) {
+    VERBOSE(8);
+    JSINFO << "Brick::ExecTime(): hydro medium is available from tau_min = "
+           << tauMin << " fm/c to tau_max = " << tauMax << " fm/c.";
+    hydro_status = FINISHED;
 }

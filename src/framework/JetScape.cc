@@ -24,6 +24,8 @@
 #include "JetEnergyLoss.h"
 #include "CausalLiquefier.h"
 
+#include "QueryHistory.h"
+
 #ifdef USE_HEPMC
 #include "JetScapeWriterHepMC.h"
 #endif
@@ -74,6 +76,8 @@ void JetScape::Init() {
         << "================================================================";
   }
 
+  QueryHistory::Instance()->AddMainTask(shared_from_this());
+  
   // Has to be called explicitly since not really fully recursively (if ever needed)
   // So --> JetScape is "Task Manager" of all modules ...
   JSINFO << "Found " << GetNumberOfTasks() << " Modules Initialize them ... ";
@@ -836,8 +840,108 @@ void JetScape::Exec() {
     VERBOSE(1) << BOLDRED << "Run Event # = " << i;
     JSDEBUG << "Found " << GetNumberOfTasks() << " Modules Execute them ... ";
 
-    // First run all tasks
+    // First run all tasks per event if possible/required ...
     JetScapeTask::ExecuteTasks();
+    
+    //JP: in case of execution without clock, just to provide that functionality too
+    //maybe not really required if only per event execution ... to be discussed ...
+    QueryHistory::Instance()->UpdateTaskMap();
+    //QueryHistory::Instance()->PrintTaskMap();
+
+
+    // Execute and run per time step for modules if implemented ...
+    if (ClockUsed())
+    {      
+      VERBOSE(3)<<"Main Clock Reset ...";
+
+      GetMainClock()->Reset();
+
+      JetScapeModuleBase::InitPerEventTasks();
+
+      QueryHistory::Instance()->UpdateTaskMap();
+      
+      //QueryHistory::Instance()->PrintTaskMap();
+      //Quick and dirty to see all tasks ... make recursive ...
+      /*
+      for (auto it : GetTaskList()) {
+        cout << it->GetId() << endl;
+        for (auto it2 : it->GetTaskList()) {
+          cout << " " << it2->GetId() << endl;
+          for (auto it3 : it2->GetTaskList())
+            cout << "  " << it3->GetId() << endl;
+        }
+      }
+      */
+
+      do {
+        
+        VERBOSE(3)<< BOLDRED << "Current Main Clock Time = "<<GetMainClock()->GetCurrentTime()<<" dT = "<<GetMainClock()->GetDeltaT();
+
+        // quick and dirty here ... (mainly for curiosity ...) and only for CalculateTime assuming that in any case this should take the longest and/or avoiding issues 
+        // via data exchanges in executive part ... as said, just a first quick look at how things could work out .,,.
+        bool multiTask = true;   
+
+        //JP: silly to do everything per time step, everything with task map and task vectors could be done in InitPerTimeStep ...
+        if (multiTask) {
+     
+          int nTasks = GetNumberOfTasks();
+          int nCPUs = thread::hardware_concurrency();
+
+          std::vector<thread> threads;
+
+          int nMaxThreads = nCPUs * 2;
+          int n = 0;
+
+          std::vector<std::weak_ptr<JetScapeTask>> vTaskMulti;
+          std::vector<std::weak_ptr<JetScapeTask>> vTask;
+
+          VERBOSE(2) << " Use multi-threading: (max) # of threads = # of CPU's "
+               << nCPUs << " (found) * 2";
+
+           // also quick and dirty via task map from QueryHistory instance ...     
+          auto tMap = QueryHistory::Instance()->GetTaskMap();
+
+          for(const auto &x: tMap){
+            //if (std::dynamic_pointer_cast<JetScapeModuleBase>(x.second.lock()))
+            if (x.second.lock()->GetMultiThread()) {
+              //DEBUG                                      
+              //cout<<x.second.lock()->GetId()<<endl;
+              vTaskMulti.push_back(x.second);
+            }
+            else
+              vTask.push_back(x.second);
+          }
+          
+          //DEBUG:
+          //cout<<vTaskMulti.size()<<" "<<vTask.size()<<endl;
+
+          for (auto t : vTaskMulti)
+          {
+            if (std::dynamic_pointer_cast<JetScapeModuleBase>(t.lock()))
+              threads.push_back(thread(&JetScapeModuleBase::CalculateTime, dynamic_pointer_cast<JetScapeModuleBase>(t.lock())));
+          }
+
+          for (auto t : vTask)
+          {
+            if (std::dynamic_pointer_cast<JetScapeModuleBase>(t.lock()))
+              //threads.push_back(thread(&JetScapeModuleBase::CalculateTime, dynamic_pointer_cast<JetScapeModuleBase>(t.lock())));
+              std::dynamic_pointer_cast<JetScapeModuleBase>(t.lock())->CalculateTime();
+          }
+
+          for (auto &th : threads)
+            th.join();
+
+          threads.clear(); vTaskMulti.clear(); vTask.clear();         
+        }
+        else
+          JetScapeModuleBase::CalculateTimeTasks();
+
+        JetScapeModuleBase::ExecTimeTasks();
+
+      } while (GetMainClock()->Tick());     
+
+      //JetScapeModuleBase::FinishPerEventTasks();
+    }
 
     // Then hand around the collection of writers and ask
     // modules to write what they like
@@ -880,6 +984,7 @@ void JetScape::Exec() {
       }
     }
 
+    // JP: If task not active then per time step is active (see above), which could lead to issues with hydro resuse. Follow up!
     // For reusal, deactivate task after it has finished
     // but before it gets cleaned up.
     if (reuse_hydro_) {
@@ -919,8 +1024,14 @@ void JetScape::Exec() {
       }
     }
 
-    // Now clean up, only affects active taskjs
+    // Now clean up, only affects active tasks
     JetScapeTask::ClearTasks();
+
+    //have to call this after writer and call explciitly the clear functions
+    //in finish per event, because like writer, clear only for active tasks ...
+    //have to think a bit more how to make this workflow more consistent ...
+    if (ClockUsed())
+      JetScapeModuleBase::FinishPerEventTasks();
 
     IncrementCurrentEvent();
   }

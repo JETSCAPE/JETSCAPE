@@ -74,6 +74,14 @@ public:
   */
   virtual void Clear();
 
+  virtual void CalculateTime() final;
+
+  virtual void ExecTime() final;
+
+  virtual void InitPerEvent();
+
+  virtual void FinishPerEvent();
+
   /** Default function to perform the energy loss for partons at time "time". It should be overridden by different energy loss tasks.
       @param deltaT Step-size.
       @param time Current time.
@@ -204,6 +212,8 @@ public:
 
   void GetFinalPartonsForEachShower(shared_ptr<PartonShower> shower);
 
+  virtual any GetHistory() {return any(pShower);}
+
 protected:
   std::weak_ptr<LiquefierBase> liquefier_ptr;
 
@@ -225,6 +235,14 @@ private:
   node vStart;
   node vEnd;
 
+  vector<Parton> pIn;
+  vector<node> vStartVec;
+
+  bool foundchangedorig = false;
+  int droplet_stat = -11;
+  int miss_stat = -13;
+  int neg_stat = -17;
+  
   //old test signals
   bool jetSignalConnected;
   bool edensitySignalConnected;

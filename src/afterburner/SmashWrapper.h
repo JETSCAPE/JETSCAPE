@@ -78,6 +78,10 @@ public:
   void InitTask();
   void ExecuteTask();
   void WriteTask(weak_ptr<JetScapeWriter> w);
+
+  void InitPerEvent() override;
+  void CalculateTimeTask() override;
+  void FinishPerEvent() override;
 };
 
 #endif // SMASHWRAPPER_H

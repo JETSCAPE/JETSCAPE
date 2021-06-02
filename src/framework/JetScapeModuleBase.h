@@ -23,7 +23,15 @@
 
 #include "JetScapeTask.h"
 #include "JetScapeXML.h"
+#include "TimeModule.h"
 #include "sigslot.h"
+
+#include "cpp17/any.hpp"
+#include "cpp17/variant.hpp"
+
+//Maybe change, namespaces for any and varaint ...
+using namespace linb;
+using namespace mpark;
 
 namespace Jetscape {
 
@@ -31,7 +39,8 @@ class JetScapeWriter;
 
 class JetScapeModuleBase
     : public JetScapeTask,
-      public sigslot::has_slots<sigslot::multi_threaded_local> {
+      public sigslot::has_slots<sigslot::multi_threaded_local>,
+      public TimeModule {
 
 public:
   /** Default constructor to create a JetScapeModuleBase. It sets the XML file name to a default string value.
@@ -58,6 +67,44 @@ public:
   /**  A virtual function to define a default Clear() function for a JetScapeModuleBase. It can be overridden by different modules/tasks.
    */
   virtual void Clear(){};
+
+  // --------------
+
+  virtual void CalculateTime() {};
+
+  virtual void CalculateTimeTasks();
+
+  virtual void CalculateTimeTask() {};
+
+  virtual void ExecTime() {};
+
+  virtual void ExecTimeTasks();
+
+  virtual void ExecTimeTask() {};
+
+  //JP Might be necessary to initialize and finsih things per event if in per time step execution mode ... (to be follow up)
+  //see also if one could reuse the InitTask() etc from JetScapeTask since in principle it would be better in the task class
+  //since exection is once per event ... well, with this approach the lifetime per event per time step in class hierachry is
+  //not very transparent and consistent ... Think about and try a more elegant approach before pulishing the code ...
+  
+  virtual void InitPerEvent() {};
+
+  virtual void InitPerEventTasks();
+
+  virtual void FinishPerEvent() {};
+
+  virtual void FinishPerEventTasks();
+
+  //virtual void FinishPerEventTask() {}; // JP: see also in JetScapeTask ... is it really used or would this be the per event way ...
+
+  // --------------                                                                                                                                                                                                   
+
+  //JP: same can be done with variant if all datatypes are know
+  //and put into the varaint definition --> elevated to framework like data types
+  //maybe not ideal, to be discussed ...
+  virtual any GetHistory() {return 0;}
+
+  // --------------
 
   /** This function sets the name of the XML file to be used to store output information for the modules/tasks of a JetScapeTask.
    */
@@ -106,11 +153,16 @@ public:
     return JetScapeXML::Instance()->GetElementDouble(path, isRequired);
   }
 
+  //bool GetMultiThread() {return multiThread;}
+
+  //void SetMultiThread(bool m_multiThread) {multiThread = m_multiThread;}
+
 private:
   std::string xml_master_file_name;
   std::string xml_user_file_name;
   static int current_event;
   shared_ptr<std::mt19937> mt19937_generator_;
+  //bool multiThread = false;
 };
 
 /**

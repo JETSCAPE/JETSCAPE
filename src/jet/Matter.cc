@@ -273,7 +273,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
       return;
     }
 
-    VERBOSE(2) << BOLDYELLOW
+    VERBOSE(4) << BOLDYELLOW
                << " *  parton formation spacetime point= " << pIn[i].x_in().t()
                << "  " << pIn[i].x_in().x() << "  " << pIn[i].x_in().y() << "  "
                << pIn[i].x_in().z();
@@ -306,7 +306,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
       Dump_pIn_info(i, pIn);
       //assert(velocityMod < 1.0 + rounding_error);
     }
-    VERBOSE(2) << BOLDYELLOW << " velocityMod = " << velocityMod;
+    VERBOSE(4) << BOLDYELLOW << " velocityMod = " << velocityMod;
 
     if (pIn[i].form_time() < 0.0)
       pIn[i].set_jet_v(velocity); // jet velocity is set only once
