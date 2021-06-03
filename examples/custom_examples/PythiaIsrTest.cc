@@ -49,6 +49,7 @@
 #include "DummySplit.h"
 #include "PartonShowerGeneratorDefault.h"
 #include "IsrJet.h"
+#include "IsrShowerPSG.h"
 
 #include "MainClock.h"
 #include "ModuleClock.h"
@@ -93,7 +94,7 @@ int main(int argc, char** argv)
   //mClock->SetTimeRefFrameId("SpaceTime");
 
   // clocks here are defaulted for testing, clocks can costumized via inhererting from the MainClock/ModuleClock base classes ...
-  auto mClock = make_shared<MainClock>("SpaceTime",0,1,0.1); // JP: make consistent with reading from XML in init phase ...
+  auto mClock = make_shared<MainClock>("SpaceTime",0,0.2,0.1); // JP: make consistent with reading from XML in init phase ...
   auto mModuleClock = make_shared<ModuleClock>();
   mModuleClock->SetTimeRefFrameId("SpaceTime * 2");
 
@@ -126,7 +127,11 @@ int main(int argc, char** argv)
   auto oldPSG = make_shared<PartonShowerGeneratorDefault>(); //modify for ISR evolution ... to be discussed ...
   auto iDummy = make_shared<DummySplit> ();
 
-  isrJloss->SetDeltaT(-0.1); isrJloss->SetStartT(0); isrJloss->SetMaxT(-20.); //will be moved to XML and proper Init() in IsrJet later ...
+  //isrJloss->SetDeltaT(-0.1); isrJloss->SetStartT(0); isrJloss->SetMaxT(-20.); //will be moved to XML and proper Init() in IsrJet later ...
+
+  //REMARK: Think a bit harder about directed graph creation and time direction !!!!! Graph inversion !???
+  //make positve just for testing of iterating through a shower ...
+  isrJloss->SetDeltaT(0.1); isrJloss->SetStartT(0); isrJloss->SetMaxT(3);
 
   isrJloss->AddPartonShowerGenerator(oldPSG);
   isrJloss->Add(iDummy);
@@ -149,20 +154,28 @@ int main(int argc, char** argv)
   //time, either main clock time or if module clock attached the tranformed time via: GetModuleCurrentTime();
 
   jlossmanager->SetActive(false);
+  jlossmanager->SetUseIntialPartonShower(true);
   jloss->SetActive(false);
-  //jloss->SetUseIntialPartonShower(true); // no effect for time step based approach ... to be added ...
+  jloss->SetUseIntialPartonShower(true);
+
+  auto isrPSG = make_shared<IsrShowerPSG>();
+
+  jloss->AddPartonShowerGenerator(isrPSG);
 
   //quick and dirty to check if module clock transformation is working conceptually ...
   //jloss->AddModuleClock(mModuleClock);
 
   //Matter is added but not executed, need to implement the per time step execution in JetEnergyLoss::DoShower()...
   auto matter = make_shared<Matter> ();
+  auto dummy = make_shared<DummySplit> ();
   // auto lbt = make_shared<LBT> ();
   //auto martini = make_shared<Martini> ();
   //auto adscft = make_shared<AdSCFT> ();
 
   // Note: if you use Matter, it MUST come first (to set virtuality)
-  jloss->Add(matter);
+  //jloss->Add(matter);
+  jloss->Add(dummy);
+
   // jloss->Add(lbt);  // go to 3rd party and ./get_lbtTab before adding this module
   // jloss->Add(martini);
   //jloss->Add(adscft);

@@ -84,6 +84,7 @@ JetEnergyLoss::JetEnergyLoss(const JetEnergyLoss &j) {
 
   inP = nullptr;
   pShower = nullptr;
+  pInShower = nullptr;
 
   SetUseIntialPartonShower(j.GetUseIntialPartonShower());
   AddPartonShowerGenerator(j.GetPartonShowerGenerator());
@@ -447,14 +448,18 @@ void JetEnergyLoss::Exec() {
 
 void JetEnergyLoss::InitPerEvent()
 {
+  GetInitialPartonShower()->PrintEdges(false);
+
   if (GetShowerInitiatingParton() && !useShower) {
     pShower = make_shared<PartonShower>();
     DoInitPerEvent();
   }
   else if (GetInitialPartonShower() && useShower) {
+
     if (GetPartonShowerGenerator()) {
 
-      pShower = make_shared<PartonShower>();
+      auto pSTemp=GetInitialPartonShower()->Clone();
+      pShower = move(pSTemp);
 
       JSDEBUG<<"--> Use DoShower() provided from PSG to do Parton shower stored in PartonShower Graph class";
 
@@ -462,6 +467,7 @@ void JetEnergyLoss::InitPerEvent()
     }
     else
       {JSWARN<<"No proper external Parton Shower Generator attached ..."; exit(-1);}
+
   }
   else
     {JSWARN << "NO Initial Hard Parton/or (ISR) shower for Parton shower received ...";exit(-1);}
@@ -473,12 +479,19 @@ void JetEnergyLoss::ExecTime()
   if (!useShower) {
     DoExecTime();
   }
+  else {
+    //VERBOSE(3)<<GetInitialPartonShower();
+    GetPartonShowerGenerator()->DoExecTime(*dynamic_pointer_cast<JetEnergyLoss>(shared_from_this()));
+  }
 }
 
 void JetEnergyLoss::FinishPerEvent()
 {
   if (!useShower) {
     DoFinishPerEvent();
+  }
+  else {
+    GetPartonShowerGenerator()->DoFinishPerEvent(*dynamic_pointer_cast<JetEnergyLoss>(shared_from_this()));
   }
 
   Clear();

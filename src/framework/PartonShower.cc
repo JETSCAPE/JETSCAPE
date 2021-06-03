@@ -50,13 +50,14 @@ unique_ptr<PartonShower> PartonShower::Clone() //shared_ptr<PartonShower> pS)
   GetBfsSortedListOfNodesAndEdges(bfslist,ebfslist);
 
   //DEBUG:
-
+  /*
   for (auto i : bfslist) cout<<i<<" ";
   cout<<endl;
 
   for (auto i : ebfslist) cout<<i<<" ";
   cout<<endl;
-
+  */
+  
   map<node,node> oldToNew;
 
   //for (auto currNode : bfslist)

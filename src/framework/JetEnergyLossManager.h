@@ -91,10 +91,16 @@ public:
     return GetHardPartonListConnected;
   }
 
+  const bool GetUseIntialPartonShower() const {return useShower;}
+  
+  void SetUseIntialPartonShower(bool m_Use) {useShower=m_Use;}
+
 private:
 
   void MakeCopies();
   bool copiesMade;
+
+  bool useShower=false;
 
   bool GetHardPartonListConnected;
   vector<shared_ptr<Parton>> hp;
