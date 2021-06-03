@@ -31,7 +31,7 @@ void IsrShowerPSG::DoExecTime(JetEnergyLoss &j)
 
 void IsrShowerPSG::DoInitPerEvent(JetEnergyLoss &j)
 {
-  VERBOSE(3);
+  VERBOSE(2);
   auto pS=j.GetShower();
 
   pS->SaveAsGV("isr.gv");
@@ -43,11 +43,13 @@ void IsrShowerPSG::DoInitPerEvent(JetEnergyLoss &j)
 
 void IsrShowerPSG::DoFinishPerEvent(JetEnergyLoss &j)
 {
-  VERBOSE(3);
+  VERBOSE(2);
 
   auto pS=j.GetShower();
   pS->PrintEdges(false);
   //cout<<&j<<endl;
+
+  pS->SaveAsGV("isr_fsr.gv");
 }
 
 } // end namespace Jetscape

@@ -448,8 +448,6 @@ void JetEnergyLoss::Exec() {
 
 void JetEnergyLoss::InitPerEvent()
 {
-  GetInitialPartonShower()->PrintEdges(false);
-
   if (GetShowerInitiatingParton() && !useShower) {
     pShower = make_shared<PartonShower>();
     DoInitPerEvent();
@@ -501,25 +499,19 @@ void JetEnergyLoss::DoInitPerEvent()
 {
   VERBOSE(3) << "InitPerEvent() for usage per time step ...";
 
-  if (GetShowerInitiatingParton())
-  {
-    pIn.push_back(*GetShowerInitiatingParton());
+  pIn.push_back(*GetShowerInitiatingParton());
 
-    vStart = pShower->new_vertex(make_shared<Vertex>());
-    vEnd = pShower->new_vertex(make_shared<Vertex>());
+  vStart = pShower->new_vertex(make_shared<Vertex>());
+  vEnd = pShower->new_vertex(make_shared<Vertex>());
 
-    // start then the recursive shower ...
-    vStartVec.push_back(vEnd);
+  // start then the recursive shower ...
+  vStartVec.push_back(vEnd);
 
-    if (!weak_ptr_is_uninitialized(liquefier_ptr)) {
-    droplet_stat = liquefier_ptr.lock()->get_drop_stat();
-    miss_stat = liquefier_ptr.lock()->get_miss_stat();
-    neg_stat = liquefier_ptr.lock()->get_neg_stat();
-    }
-
+  if (!weak_ptr_is_uninitialized(liquefier_ptr)) {
+  droplet_stat = liquefier_ptr.lock()->get_drop_stat();
+  miss_stat = liquefier_ptr.lock()->get_miss_stat();
+  neg_stat = liquefier_ptr.lock()->get_neg_stat();
   }
-  else
-    {JSWARN << "NO Initial Hard Parton for Parton shower received ...";exit(-1);}
 }
 
 void JetEnergyLoss::DoFinishPerEvent()
@@ -575,182 +567,177 @@ void JetEnergyLoss::DoExecTime()
 {
   VERBOSE(3) << "Execute JLoss per time step ... Current (Module) Time = " << GetModuleCurrentTime() << " dT = " << GetModuleDeltaT();
 
-  double currentTime = GetModuleCurrentTime();
-  double moduleDeltaT = GetModuleDeltaT();
+  //double currentTime = GetModuleCurrentTime();
+  //double moduleDeltaT = GetModuleDeltaT();
 
-  if (GetShowerInitiatingParton())
-  {
-    vector<Parton> pOut;
-    vector<Parton> pInTemp;
+  vector<Parton> pOut;
+  vector<Parton> pInTemp;
 
-    vector<node> vStartVecOut;
-    vector<node> vStartVecTemp;
+  vector<node> vStartVecOut;
+  vector<node> vStartVecTemp;
 
-    VERBOSESHOWER(7) << "Current time = " << currentTime << " with #Input "<< pIn.size();
+  VERBOSESHOWER(7) << "Current time = " << GetModuleCurrentTime()+GetModuleDeltaT() << " with #Input "<< pIn.size();
 
-    //JP: Check if this usage is consistent with master clock etc start time ... !!!!
+  //JP: Check if this usage is consistent with master clock etc start time ... !!!!
 
-    currentTime += moduleDeltaT;
+  //currentTime += moduleDeltaT;
 
-    for (int i = 0; i < pIn.size(); i++) {
-      vector<Parton> pInTempModule;
-      vector<Parton> pOutTemp;
-      // JSINFO << pIn.at(i).edgeid();
-      pInTempModule.push_back(pIn[i]);
-      SentInPartons(moduleDeltaT, currentTime, pIn[i].pt(), pInTempModule, pOutTemp);
+  for (int i = 0; i < pIn.size(); i++) {
+    vector<Parton> pInTempModule;
+    vector<Parton> pOutTemp;
+    // JSINFO << pIn.at(i).edgeid();
+    pInTempModule.push_back(pIn[i]);
+    SentInPartons(GetModuleDeltaT(), GetModuleCurrentTime()+GetModuleDeltaT(), pIn[i].pt(), pInTempModule, pOutTemp);
 
-      // apply liquefier
-      if (!weak_ptr_is_uninitialized(liquefier_ptr)) {
-        liquefier_ptr.lock()->add_hydro_sources(pInTempModule, pOutTemp);
+    // apply liquefier
+    if (!weak_ptr_is_uninitialized(liquefier_ptr)) {
+      liquefier_ptr.lock()->add_hydro_sources(pInTempModule, pOutTemp);
+    }
+
+    // stuffs related to vertex
+    if (!foundchangedorig) {
+      // cerr << " End with "<< pInTempModule.at(0) << "  -> "
+      //      << pInTempModule.at(0).t() << endl;
+      // cerr << " ---------------------------------------------- "
+      //      << endl;
+      pShower->new_parton(vStart, vEnd,
+                          make_shared<Parton>(pInTempModule.at(0)));
+      foundchangedorig = true;
+    }
+
+    vStart = vStartVec[i];
+    if (pOutTemp.size() == 0) {
+      // no need to generate a vStart for photons and liquefied
+      // partons
+      if (pInTempModule[0].pstat() != droplet_stat &&
+          pInTempModule[0].pstat() != miss_stat &&
+          pInTempModule[0].pstat() != neg_stat &&
+          !pInTempModule[0].isPhoton(pInTempModule[0].pid())) {
+        vStartVecTemp.push_back(vStart);
       }
-
-      // stuffs related to vertex
-      if (!foundchangedorig) {
-        // cerr << " End with "<< pInTempModule.at(0) << "  -> "
-        //      << pInTempModule.at(0).t() << endl;
-        // cerr << " ---------------------------------------------- "
-        //      << endl;
-        pShower->new_parton(vStart, vEnd,
-                            make_shared<Parton>(pInTempModule.at(0)));
-        foundchangedorig = true;
+    } else if (pOutTemp.size() == 1) {
+      // no need to generate a vStart for photons and liquefied
+      // partons
+      if (pOutTemp[0].pstat() != droplet_stat &&
+          pOutTemp[0].pstat() != miss_stat &&
+          pOutTemp[0].pstat() != neg_stat &&
+          !pOutTemp[0].isPhoton(pOutTemp[0].pid())) {
+        vStartVecTemp.push_back(vStart);
       }
+    } else {
+      for (int k = 0; k < pOutTemp.size(); k++) {
+        int edgeid = 0;
+        if (pOutTemp[k].pstat() == neg_stat) {
+          node vNewRootNode = pShower->new_vertex(
+                                make_shared<Vertex>(0, 0, 0, GetModuleCurrentTime()));
+          edgeid = pShower->new_parton(vNewRootNode, vStart,
+                                       make_shared<Parton>(pOutTemp[k]));
+        } else {
+          vEnd =
+            pShower->new_vertex(make_shared<Vertex>(0, 0, 0, GetModuleCurrentTime()+GetModuleDeltaT()));
+          edgeid = pShower->new_parton(vStart, vEnd,
+                                       make_shared<Parton>(pOutTemp[k]));
+        }
+        pOutTemp[k].set_shower(pShower);
+        pOutTemp[k].set_edgeid(edgeid);
 
-      vStart = vStartVec[i];
-      if (pOutTemp.size() == 0) {
         // no need to generate a vStart for photons and liquefied
         // partons
-        if (pInTempModule[0].pstat() != droplet_stat &&
-            pInTempModule[0].pstat() != miss_stat &&
-            pInTempModule[0].pstat() != neg_stat &&
-            !pInTempModule[0].isPhoton(pInTempModule[0].pid())) {
-          vStartVecTemp.push_back(vStart);
+        if (pOutTemp[k].pstat() != droplet_stat &&
+            pOutTemp[k].pstat() != miss_stat &&
+            pOutTemp[k].pstat() != neg_stat &&
+            !pOutTemp[k].isPhoton(pOutTemp[k].pid())) {
+          vStartVecOut.push_back(vEnd);
         }
-      } else if (pOutTemp.size() == 1) {
-        // no need to generate a vStart for photons and liquefied
-        // partons
-        if (pOutTemp[0].pstat() != droplet_stat &&
-            pOutTemp[0].pstat() != miss_stat &&
-            pOutTemp[0].pstat() != neg_stat &&
-            !pOutTemp[0].isPhoton(pOutTemp[0].pid())) {
-          vStartVecTemp.push_back(vStart);
-        }
-      } else {
-        for (int k = 0; k < pOutTemp.size(); k++) {
-          int edgeid = 0;
-          if (pOutTemp[k].pstat() == neg_stat) {
+
+        // --------------------------------------------
+        // Add new roots from ElossModules ...
+        // (maybe add for clarity a new vector in the signal!???)
+        // Otherwise keep track of input size (so far always 1
+        // and check if size > 1 and create additional root nodes to that vertex ...
+        // Simple Test here below:
+        // DEBUG:
+        //cout<<"In JetEnergyloss : "<<pInTempModule.size()<<end;
+        if (pInTempModule.size() > 1) {
+          VERBOSE(7) << pInTempModule.size() - 1
+                     << " new root node(s) to be added ...";
+          //cout << pInTempModule.size()-1
+          //     << " new root node(s) to be added ..." << endl;
+
+          for (int l = 1; l < pInTempModule.size(); l++) {
             node vNewRootNode = pShower->new_vertex(
-                                  make_shared<Vertex>(0, 0, 0, currentTime - deltaT));
-            edgeid = pShower->new_parton(vNewRootNode, vStart,
-                                         make_shared<Parton>(pOutTemp[k]));
-          } else {
-            vEnd =
-              pShower->new_vertex(make_shared<Vertex>(0, 0, 0, currentTime));
-            edgeid = pShower->new_parton(vStart, vEnd,
-                                         make_shared<Parton>(pOutTemp[k]));
+                                  make_shared<Vertex>(0, 0, 0, GetModuleCurrentTime()));
+            pShower->new_parton(vNewRootNode, vEnd,
+                                make_shared<Parton>(pInTempModule[l]));
           }
-          pOutTemp[k].set_shower(pShower);
-          pOutTemp[k].set_edgeid(edgeid);
-
-          // no need to generate a vStart for photons and liquefied
-          // partons
-          if (pOutTemp[k].pstat() != droplet_stat &&
-              pOutTemp[k].pstat() != miss_stat &&
-              pOutTemp[k].pstat() != neg_stat &&
-              !pOutTemp[k].isPhoton(pOutTemp[k].pid())) {
-            vStartVecOut.push_back(vEnd);
-          }
-
-          // --------------------------------------------
-          // Add new roots from ElossModules ...
-          // (maybe add for clarity a new vector in the signal!???)
-          // Otherwise keep track of input size (so far always 1
-          // and check if size > 1 and create additional root nodes to that vertex ...
-          // Simple Test here below:
-          // DEBUG:
-          //cout<<"In JetEnergyloss : "<<pInTempModule.size()<<end;
-          if (pInTempModule.size() > 1) {
-            VERBOSE(7) << pInTempModule.size() - 1
-                       << " new root node(s) to be added ...";
-            //cout << pInTempModule.size()-1
-            //     << " new root node(s) to be added ..." << endl;
-
-            for (int l = 1; l < pInTempModule.size(); l++) {
-              node vNewRootNode = pShower->new_vertex(
-                                    make_shared<Vertex>(0, 0, 0, currentTime - deltaT));
-              pShower->new_parton(vNewRootNode, vEnd,
-                                  make_shared<Parton>(pInTempModule[l]));
-            }
-          }
-        }
-      }
-
-      // update parton shower
-      if (pOutTemp.size() == 0) {
-        // this is the free-streaming case for MATTER
-        // do not push back droplets
-        if (!weak_ptr_is_uninitialized(liquefier_ptr)) {
-          if (pInTempModule[0].pstat() == droplet_stat)
-            continue;
-          if (pInTempModule[0].pstat() == miss_stat)
-            continue;
-          if (pInTempModule[0].pstat() == neg_stat)
-            continue;
-        }
-        // do not push back photons
-        if (pInTempModule[0].isPhoton(pInTempModule[0].pid()))
-          continue;
-        pInTemp.push_back(pInTempModule[0]);
-      } else if (pOutTemp.size() == 1) {
-        // this is the free-streaming case for MARTINI or LBT
-        // do not push back droplets
-        if (!weak_ptr_is_uninitialized(liquefier_ptr)) {
-          if (pOutTemp[0].pstat() == droplet_stat)
-            continue;
-          if (pOutTemp[0].pstat() == miss_stat)
-            continue;
-          if (pOutTemp[0].pstat() == neg_stat)
-            continue;
-        }
-        // do not push back photons
-        if (pOutTemp[0].isPhoton(pOutTemp[0].pid()))
-          continue;
-        pInTemp.push_back(pOutTemp[0]);
-      } else {
-        for (int k = 0; k < pOutTemp.size(); k++) {
-          // do not push back droplets
-          if (!weak_ptr_is_uninitialized(liquefier_ptr)) {
-            if (pOutTemp[k].pstat() == droplet_stat)
-              continue;
-            if (pOutTemp[k].pstat() == miss_stat)
-              continue;
-            if (pOutTemp[k].pstat() == neg_stat)
-              continue;
-          }
-          // do not push back missing (from AdSCFT)
-          if (pOutTemp[k].pstat() == miss_stat)
-            continue;
-          // do not push back photons
-          if (pOutTemp[k].isPhoton(pOutTemp[k].pid()))
-            continue;
-
-          pOut.push_back(pOutTemp[k]);
         }
       }
     }
 
-    // one time step is finished, now update parton shower to pIn
-    pIn.clear();
-    pIn.insert(pIn.end(), pInTemp.begin(), pInTemp.end());
-    pIn.insert(pIn.end(), pOut.begin(), pOut.end());
+    // update parton shower
+    if (pOutTemp.size() == 0) {
+      // this is the free-streaming case for MATTER
+      // do not push back droplets
+      if (!weak_ptr_is_uninitialized(liquefier_ptr)) {
+        if (pInTempModule[0].pstat() == droplet_stat)
+          continue;
+        if (pInTempModule[0].pstat() == miss_stat)
+          continue;
+        if (pInTempModule[0].pstat() == neg_stat)
+          continue;
+      }
+      // do not push back photons
+      if (pInTempModule[0].isPhoton(pInTempModule[0].pid()))
+        continue;
+      pInTemp.push_back(pInTempModule[0]);
+    } else if (pOutTemp.size() == 1) {
+      // this is the free-streaming case for MARTINI or LBT
+      // do not push back droplets
+      if (!weak_ptr_is_uninitialized(liquefier_ptr)) {
+        if (pOutTemp[0].pstat() == droplet_stat)
+          continue;
+        if (pOutTemp[0].pstat() == miss_stat)
+          continue;
+        if (pOutTemp[0].pstat() == neg_stat)
+          continue;
+      }
+      // do not push back photons
+      if (pOutTemp[0].isPhoton(pOutTemp[0].pid()))
+        continue;
+      pInTemp.push_back(pOutTemp[0]);
+    } else {
+      for (int k = 0; k < pOutTemp.size(); k++) {
+        // do not push back droplets
+        if (!weak_ptr_is_uninitialized(liquefier_ptr)) {
+          if (pOutTemp[k].pstat() == droplet_stat)
+            continue;
+          if (pOutTemp[k].pstat() == miss_stat)
+            continue;
+          if (pOutTemp[k].pstat() == neg_stat)
+            continue;
+        }
+        // do not push back missing (from AdSCFT)
+        if (pOutTemp[k].pstat() == miss_stat)
+          continue;
+        // do not push back photons
+        if (pOutTemp[k].isPhoton(pOutTemp[k].pid()))
+          continue;
 
-    // update vertex vector
-    vStartVec.clear();
-    vStartVec.insert(vStartVec.end(), vStartVecTemp.begin(),
-                     vStartVecTemp.end());
-    vStartVec.insert(vStartVec.end(), vStartVecOut.begin(), vStartVecOut.end());
-  } else {
-    JSWARN << "NO Initial Hard Parton for Parton shower received ...";
+        pOut.push_back(pOutTemp[k]);
+      }
+    }
   }
+
+  // one time step is finished, now update parton shower to pIn
+  pIn.clear();
+  pIn.insert(pIn.end(), pInTemp.begin(), pInTemp.end());
+  pIn.insert(pIn.end(), pOut.begin(), pOut.end());
+
+  // update vertex vector
+  vStartVec.clear();
+  vStartVec.insert(vStartVec.end(), vStartVecTemp.begin(),
+                   vStartVecTemp.end());
+  vStartVec.insert(vStartVec.end(), vStartVecOut.begin(), vStartVecOut.end());
 }
 
 void JetEnergyLoss::WriteTask(weak_ptr<JetScapeWriter> w) {
