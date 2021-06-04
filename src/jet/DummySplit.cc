@@ -47,6 +47,7 @@ void DummySplit::Init()
 void DummySplit::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton>& pIn, vector<Parton>& pOut)
 {
 
+  VERBOSE(3)<<"DummySplit::DoEnergyLoss at time = "<<time;
   VERBOSESHOWER(8)<< MAGENTA << "SentInPartons Signal received : "<<deltaT<<" "<<Q2<<" "<<&pIn;
   //INFO<<"Do dummy splits to test SoftDrop ...";
 
@@ -65,7 +66,7 @@ void DummySplit::DoEnergyLoss(double deltaT, double time, double Q2, vector<Part
 
       Parton pp=pIn.front();
 
-      double x[4]={0,0,0,0};
+      double x[4]={time,0,0,0};
       //Parton pNew(p.plabel(),p.pid(),p.pstat(),p.pt(),p.eta(),p.phi(),p.e(),x);
       double z=0.8;
       //double e=sqrt(p.pt()*z*p.pt()*z*cosh(p.eta())*cosh(p.eta())+p.m()*p.m());

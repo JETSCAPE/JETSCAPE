@@ -94,7 +94,7 @@ int main(int argc, char** argv)
   //mClock->SetTimeRefFrameId("SpaceTime");
 
   // clocks here are defaulted for testing, clocks can costumized via inhererting from the MainClock/ModuleClock base classes ...
-  auto mClock = make_shared<MainClock>("SpaceTime",0,3,0.1); // JP: make consistent with reading from XML in init phase ...
+  auto mClock = make_shared<MainClock>("SpaceTime",-1,3,0.1); // JP: make consistent with reading from XML in init phase ...
   auto mModuleClock = make_shared<ModuleClock>();
   mModuleClock->SetTimeRefFrameId("SpaceTime * 2");
 
@@ -127,11 +127,11 @@ int main(int argc, char** argv)
   auto oldPSG = make_shared<PartonShowerGeneratorDefault>(); //modify for ISR evolution ... to be discussed ...
   auto iDummy = make_shared<DummySplit> ();
 
-  //isrJloss->SetDeltaT(-0.1); isrJloss->SetStartT(0); isrJloss->SetMaxT(-20.); //will be moved to XML and proper Init() in IsrJet later ...
+  isrJloss->SetDeltaT(-0.1); isrJloss->SetStartT(0); isrJloss->SetMaxT(-3.); //will be moved to XML and proper Init() in IsrJet later ...
 
   //REMARK: Think a bit harder about directed graph creation and time direction !!!!! Graph inversion !???
   //make positve just for testing of iterating through a shower ...
-  isrJloss->SetDeltaT(0.1); isrJloss->SetStartT(0); isrJloss->SetMaxT(3);
+  //isrJloss->SetDeltaT(0.1); isrJloss->SetStartT(0); isrJloss->SetMaxT(3);
 
   isrJloss->AddPartonShowerGenerator(oldPSG);
   isrJloss->Add(iDummy);
@@ -154,13 +154,20 @@ int main(int argc, char** argv)
   //time, either main clock time or if module clock attached the tranformed time via: GetModuleCurrentTime();
 
   jlossmanager->SetActive(false);
-  jlossmanager->SetUseIntialPartonShower(true);
   jloss->SetActive(false);
+
+  //***************************************************************************
+  //REMARK: Ordering of graph with negative times and iteration to be fixed!!!
+  //        Invert graph ... certainly needs some more thinking ... !!!
+  //        Otherwise seems to working fine, definitely for positive times!!!
+  //***************************************************************************
+  /*
+  jlossmanager->SetUseIntialPartonShower(true);
   jloss->SetUseIntialPartonShower(true);
 
   auto isrPSG = make_shared<IsrShowerPSG>();
-
   jloss->AddPartonShowerGenerator(isrPSG);
+  */
 
   //quick and dirty to check if module clock transformation is working conceptually ...
   //jloss->AddModuleClock(mModuleClock);
@@ -171,6 +178,13 @@ int main(int argc, char** argv)
   // auto lbt = make_shared<LBT> ();
   //auto martini = make_shared<Martini> ();
   //auto adscft = make_shared<AdSCFT> ();
+
+  //Has to be set now if one wants to deal with negative
+  //times in forward evolution; default is: 0 -- 100 ...
+  jlossmanager->SetTimeRange(-20.0,20.0);
+  jloss->SetTimeRange(-20.0,20.0);
+  matter->SetTimeRange(-20.0,20.0);
+  dummy->SetTimeRange(-20.0,20.0);
 
   // Note: if you use Matter, it MUST come first (to set virtuality)
   //jloss->Add(matter);

@@ -96,57 +96,29 @@ void IsrShowerPSG::DoInitPerEvent(JetEnergyLoss &j)
 
   j.foundchangedorig = true;
 
+  //debug:
   /*
   auto pS=j.GetShower();
-
-  pS->SaveAsGV("isr.gv");
-  cout<<"IsrShowerPSG::DoInitPerEvent(JetEnergyLoss &j)"<<endl;
-  pS->PrintNodes(false);
-  pS->PrintEdges(false);
+  pS->SaveAsGV("isr_"+std::to_string(j.GetMyTaskNumber())+".gv");
+  */
+  //cout<<"IsrShowerPSG::DoInitPerEvent(JetEnergyLoss &j)"<<endl;
+  //pS->PrintNodes(false);
+  //pS->PrintEdges(false);
   //cout<<this<<endl;
-  */
-
-  /*
-  bfs search;
-  search.reset();
-  search.scan_whole_graph(true);
-  //search.store_non_tree_edges(true);
-  search.start_node();
-  search.run(*pS);
-
-  //bfs::non_tree_edges_iterator Eitt, Eendt;
-  bfs::tree_edges_iterator Eitt, Eendt;
-  for (Eitt = search.tree_edges_begin(), Eendt=search.tree_edges_end(); Eitt !=Eendt; ++Eitt)
-    {
-        edge eS=*Eitt;
-        node nEnd = eS.target();
-        if (pS->IsEndNode(nEnd))
-          cout<<eS<<" ";
-    }
-  cout<<endl;
-
-  auto vE = pS->GetFinalEdges();
-  for (auto e : vE) cout<<e<<" ";
-  cout<<endl;
-
-  vector<edge> vecE;
-  GetFinalEdgesForTime(pS,0.2,vecE);
-  for (auto e : vecE) cout<<e<<" ";
-  cout<<endl;
-  */
 
 }
 
+// for debug ...
 /*
 void IsrShowerPSG::DoFinishPerEvent(JetEnergyLoss &j)
 {
   VERBOSE(2);
 
   auto pS=j.GetShower();
-  pS->PrintEdges(false);
-  //cout<<&j<<endl;
+  pS->SaveAsGV("isr_fsr_"+std::to_string(j.GetMyTaskNumber())+".gv");
 
-  pS->SaveAsGV("isr_fsr.gv");
+  //pS->PrintEdges(false);
+  //cout<<&j<<endl;
 }
 */
 

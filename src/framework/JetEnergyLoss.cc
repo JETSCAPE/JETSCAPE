@@ -78,6 +78,8 @@ JetEnergyLoss::JetEnergyLoss(const JetEnergyLoss &j) {
   SetSentInPartonsConnected(false);
   AddModuleClock(j.GetModuleClock()); //JP: Check if memory leak ... should not due to shared_ptr usage, but confirm ...
 
+  SetTimeRange(j.GetTStart(),j.GetTEnd());
+
   deltaT = j.deltaT;
   maxT = j.maxT;
   startT = j.startT;
@@ -570,6 +572,12 @@ void JetEnergyLoss::DoExecTime()
   //double currentTime = GetModuleCurrentTime();
   //double moduleDeltaT = GetModuleDeltaT();
 
+  //****************************************************************************************************
+  //REMARK: Check if this is fully correct, also solve the deltaT issues wrt to module current time ...
+  //****************************************************************************************************
+
+  if (GetShowerInitiatingParton()->x_in().t()<GetModuleCurrentTime()) {
+
   vector<Parton> pOut;
   vector<Parton> pInTemp;
 
@@ -579,13 +587,15 @@ void JetEnergyLoss::DoExecTime()
   VERBOSESHOWER(7) << "Current time = " << GetModuleCurrentTime()+GetModuleDeltaT() << " with #Input "<< pIn.size();
 
   //JP: Check if this usage is consistent with master clock etc start time ... !!!!
-
   //currentTime += moduleDeltaT;
 
   for (int i = 0; i < pIn.size(); i++) {
+
     vector<Parton> pInTempModule;
     vector<Parton> pOutTemp;
     // JSINFO << pIn.at(i).edgeid();
+    //cout<<pIn[i].x_in().t()<<endl;
+
     pInTempModule.push_back(pIn[i]);
     SentInPartons(GetModuleDeltaT(), GetModuleCurrentTime()+GetModuleDeltaT(), pIn[i].pt(), pInTempModule, pOutTemp);
 
@@ -738,6 +748,7 @@ void JetEnergyLoss::DoExecTime()
   vStartVec.insert(vStartVec.end(), vStartVecTemp.begin(),
                    vStartVecTemp.end());
   vStartVec.insert(vStartVec.end(), vStartVecOut.begin(), vStartVecOut.end());
+ }
 }
 
 void JetEnergyLoss::WriteTask(weak_ptr<JetScapeWriter> w) {
