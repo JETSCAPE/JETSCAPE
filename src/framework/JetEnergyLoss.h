@@ -230,6 +230,12 @@ public:
 
   virtual any GetHistory() {return any(pShower);}
 
+  //REMARK: Quick fix to test IsrShowerPSG ... fix later!!!!
+  void DoExecTime();
+  vector<Parton> pIn;
+  vector<node> vStartVec;
+  bool foundchangedorig = false;
+
 protected:
   std::weak_ptr<LiquefierBase> liquefier_ptr;
 
@@ -255,7 +261,7 @@ private:
   void DoShower();
 
   void DoCalculateTime() {};
-  void DoExecTime();
+  //void DoExecTime();
   void DoInitPerEvent();
   void DoFinishPerEvent();
 
@@ -265,10 +271,10 @@ private:
   node vStart;
   node vEnd;
 
-  vector<Parton> pIn;
-  vector<node> vStartVec;
+  //vector<Parton> pIn;
+  //vector<node> vStartVec;
 
-  bool foundchangedorig = false;
+  //bool foundchangedorig = false;
   int droplet_stat = -11;
   int miss_stat = -13;
   int neg_stat = -17;

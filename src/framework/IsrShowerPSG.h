@@ -27,12 +27,15 @@ class IsrShowerPSG : public PartonShowerGenerator
   virtual void DoCalculateTime(JetEnergyLoss &j);
   virtual void DoExecTime(JetEnergyLoss &j);
   virtual void DoInitPerEvent(JetEnergyLoss &j);
-  virtual void DoFinishPerEvent(JetEnergyLoss &j);
+  //virtual void DoFinishPerEvent(JetEnergyLoss &j);
 
  private:
 
    //shared_ptr<PartonShower> pS = nullptr;
    //if use pointers or anything, proper copy has to be made of the PSG!!!
+
+   void GetFinalEdgesForTime(shared_ptr<PartonShower> pS, double t, vector<edge> &vE);
+   void GetFinalPartonsForTime(shared_ptr<PartonShower> pS, double t, vector<std::shared_ptr<Parton>> &vP);
 
 };
 
