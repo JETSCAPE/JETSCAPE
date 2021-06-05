@@ -2,7 +2,7 @@
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
  * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -77,7 +77,7 @@ void JetScape::Init() {
   }
 
   QueryHistory::Instance()->AddMainTask(shared_from_this());
-  
+
   // Has to be called explicitly since not really fully recursively (if ever needed)
   // So --> JetScape is "Task Manager" of all modules ...
   JSINFO << "Found " << GetNumberOfTasks() << " Modules Initialize them ... ";
@@ -674,7 +674,7 @@ void JetScape::DetermineTaskListFromXML() {
                   "task list.";
       }
     }
- 
+
     else {
       VERBOSE(2) << "Nothing to do.";
     }
@@ -842,7 +842,7 @@ void JetScape::Exec() {
 
     // First run all tasks per event if possible/required ...
     JetScapeTask::ExecuteTasks();
-    
+
     //JP: in case of execution without clock, just to provide that functionality too
     //maybe not really required if only per event execution ... to be discussed ...
     QueryHistory::Instance()->UpdateTaskMap();
@@ -851,7 +851,7 @@ void JetScape::Exec() {
 
     // Execute and run per time step for modules if implemented ...
     if (ClockUsed())
-    {      
+    {
       VERBOSE(3)<<"Main Clock Reset ...";
 
       GetMainClock()->Reset();
@@ -859,7 +859,7 @@ void JetScape::Exec() {
       JetScapeModuleBase::InitPerEventTasks();
 
       QueryHistory::Instance()->UpdateTaskMap();
-      
+
       //QueryHistory::Instance()->PrintTaskMap();
       //Quick and dirty to see all tasks ... make recursive ...
       /*
@@ -874,16 +874,18 @@ void JetScape::Exec() {
       */
 
       do {
-        
+
         VERBOSE(3)<< BOLDRED << "Current Main Clock Time = "<<GetMainClock()->GetCurrentTime()<<" dT = "<<GetMainClock()->GetDeltaT();
 
-        // quick and dirty here ... (mainly for curiosity ...) and only for CalculateTime assuming that in any case this should take the longest and/or avoiding issues 
+        // quick and dirty here ... (mainly for curiosity ...) and only for CalculateTime assuming that in any case this should take the longest and/or avoiding issues
         // via data exchanges in executive part ... as said, just a first quick look at how things could work out .,,.
-        bool multiTask = true;   
+        bool multiTask = false;
 
         //JP: silly to do everything per time step, everything with task map and task vectors could be done in InitPerTimeStep ...
+        //   --> to be changed!!!
+        
         if (multiTask) {
-     
+
           int nTasks = GetNumberOfTasks();
           int nCPUs = thread::hardware_concurrency();
 
@@ -898,20 +900,20 @@ void JetScape::Exec() {
           VERBOSE(2) << " Use multi-threading: (max) # of threads = # of CPU's "
                << nCPUs << " (found) * 2";
 
-           // also quick and dirty via task map from QueryHistory instance ...     
+           // also quick and dirty via task map from QueryHistory instance ...
           auto tMap = QueryHistory::Instance()->GetTaskMap();
 
           for(const auto &x: tMap){
             //if (std::dynamic_pointer_cast<JetScapeModuleBase>(x.second.lock()))
             if (x.second.lock()->GetMultiThread()) {
-              //DEBUG                                      
+              //DEBUG
               //cout<<x.second.lock()->GetId()<<endl;
               vTaskMulti.push_back(x.second);
             }
             else
               vTask.push_back(x.second);
           }
-          
+
           //DEBUG:
           //cout<<vTaskMulti.size()<<" "<<vTask.size()<<endl;
 
@@ -931,14 +933,14 @@ void JetScape::Exec() {
           for (auto &th : threads)
             th.join();
 
-          threads.clear(); vTaskMulti.clear(); vTask.clear();         
+          threads.clear(); vTaskMulti.clear(); vTask.clear();
         }
         else
           JetScapeModuleBase::CalculateTimeTasks();
 
         JetScapeModuleBase::ExecTimeTasks();
 
-      } while (GetMainClock()->Tick());     
+      } while (GetMainClock()->Tick());
 
       //JetScapeModuleBase::FinishPerEventTasks();
     }

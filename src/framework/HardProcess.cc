@@ -2,7 +2,7 @@
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
  * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -36,6 +36,8 @@ HardProcess::~HardProcess() {
   VERBOSE(8);
   hp_list.clear();
   hd_list.clear();
+  ps_list.clear();
+
   disconnect_all();
 }
 
@@ -66,6 +68,7 @@ void HardProcess::Exec() {
   JSINFO << "Run Hard Process : " << GetId() << " ...";
   VERBOSE(8) << "Current Event #" << GetCurrentEvent();
 
+  //Assume here for now that they are ISR related ...
   JetScapeTask::ExecuteTasks();
 }
 
@@ -74,7 +77,11 @@ void HardProcess::Clear() {
 
   hp_list.clear();
   hd_list.clear();
+  ps_list.clear();
+
   VERBOSE(8) << hp_list.size();
+
+  JetScapeTask::ClearTasks();
 }
 
 void HardProcess::WriteTask(weak_ptr<JetScapeWriter> w) {
@@ -99,6 +106,9 @@ void HardProcess::WriteTask(weak_ptr<JetScapeWriter> w) {
     f->WriteComment("HardProcess Parton List: " + GetId());
     for (auto hp : hp_list)
       f->Write(hp);
+
+    // Commented out for now, decide/fix how to safe store the ISR shower ...
+    //JetScapeTask::WriteTasks(w);
   }
 }
 

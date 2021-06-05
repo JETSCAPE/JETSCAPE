@@ -98,7 +98,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 ### note that APPLE also defines UNIX, hence the elseif to differentiate
 if (APPLE)
     message( STATUS "Apple : " ${CMAKE_HOST_SYSTEM})
-    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang") 
+    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
     elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare -Wno-unused-but-set-variable -Wno-parentheses -fext-numeric-literals")
@@ -106,7 +106,7 @@ if (APPLE)
 
     ## can turn off some warnings
     # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-private-field")
-elseif(UNIX) 
+elseif(UNIX)
     message( STATUS "Linux : " ${CMAKE_HOST_SYSTEM})
     ## can turn off some warnings
     if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
@@ -115,7 +115,7 @@ elseif(UNIX)
 
     ## Additional options
     # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
-endif()   
+endif()
 
 message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS})
 #message(STATUS "LD_FLAGS = " ${CMAKE_EXE_LINKER_FLAGS})
@@ -135,7 +135,7 @@ include_directories("${CMAKE_SOURCE_DIR}/external_packages/googletest/googletest
 #############################################
 ### Installing Header and Library Files   ###
 #############################################
-## Run with, e.g., cmake -DCMAKE_INSTALL_PREFIX=~/tmp .. 
+## Run with, e.g., cmake -DCMAKE_INSTALL_PREFIX=~/tmp ..
 ## default directory is the build directory
 ## Note that trento also automatically populates a bin directory
 ## and we cannot disable this behavior
@@ -344,7 +344,7 @@ endif (USE_FREESTREAM)
 if (USE_MUSIC)
   if(NOT EXISTS "${CMAKE_SOURCE_DIR}/external_packages/music")
     message(FATAL_ERROR "Error: MUSIC source has not been downloaded in external_packages by ./get_music.sh")
-  endif()  
+  endif()
   if (${GSL_FOUND})
     message("Building MUSIC ...")
     add_subdirectory(./external_packages/music)
@@ -407,6 +407,9 @@ target_link_libraries(FinalStatePartons JetScape )
 
 add_executable(PythiaBrickTest ./examples/custom_examples/PythiaBrickTest.cc)
 target_link_libraries(PythiaBrickTest JetScape )
+
+add_executable(PythiaIsrTest ./examples/custom_examples/PythiaIsrTest.cc)
+target_link_libraries(PythiaIsrTest JetScape )
 
 # executables with additional dependencies
 if ( USE_MUSIC AND USE_ISS )

@@ -13,27 +13,26 @@
  * See COPYING for details.
  ******************************************************************************/
 
-#ifndef PARTONSHOWERGENERATOR_H
-#define PARTONSHOWERGENERATOR_H
+//REMARK: Old JetScape PSG w/o droplets etc ...
+// pretty much copy of the DoShower in JetEnergyLoss ....
+
+#ifndef PARTONSHOWERGENERATORDEFAULT_H
+#define PARTONSHOWERGENERATORDEFAULT_H
+
+#include "PartonShowerGenerator.h"
 
 namespace Jetscape {
 
 class JetEnergyLoss;
 
-class PartonShowerGenerator {
+class PartonShowerGeneratorDefault : public PartonShowerGenerator
+{
+ public:
 
-public:
+   PartonShowerGeneratorDefault() : PartonShowerGenerator()  {};
+   virtual ~PartonShowerGeneratorDefault() {};
 
-  PartonShowerGenerator(){};
-  virtual ~PartonShowerGenerator(){};
-
-  virtual void DoShower(JetEnergyLoss &j) {};
-
-  virtual void DoCalculateTime(JetEnergyLoss &j) {};
-  virtual void DoExecTime(JetEnergyLoss &j) {};
-  virtual void DoInitPerEvent(JetEnergyLoss &j) {};
-  virtual void DoFinishPerEvent(JetEnergyLoss &j) {};
-  
+   virtual void DoShower(JetEnergyLoss &j);
 };
 
 } // end namespace Jetscape

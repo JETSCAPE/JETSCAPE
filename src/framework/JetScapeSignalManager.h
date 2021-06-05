@@ -2,7 +2,7 @@
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
  * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -22,6 +22,7 @@
 #include "InitialState.h"
 #include "JetEnergyLoss.h"
 #include "JetEnergyLossManager.h"
+#include "IsrManager.h"
 #include "HadronizationManager.h"
 #include "Hadronization.h"
 #include "FluidDynamics.h"
@@ -117,12 +118,13 @@ public:
   void ConnectGetHydroCellSignal(shared_ptr<JetEnergyLoss> j);
   void ConnectGetHydroCellSignal(shared_ptr<LiquefierBase> l);
   void ConnectGetHardPartonListSignal(shared_ptr<JetEnergyLossManager> jm);
+  void ConnectGetHardPartonListSignal(shared_ptr<IsrManager> jm);
   void ConnectSentInPartonsSignal(shared_ptr<JetEnergyLoss> j,
                                   shared_ptr<JetEnergyLoss> j2);
   void ConnectGetFinalPartonListSignal(shared_ptr<HadronizationManager> hm);
   void ConnectTransformPartonsSignal(shared_ptr<Hadronization> h,
                                      shared_ptr<Hadronization> h2);
-		void ConnectGetFinalHadronListSignal(shared_ptr<HadronPrinter> h);
+	void ConnectGetFinalHadronListSignal(shared_ptr<HadronPrinter> h);
 
   void
   DisconnectSignal(){}; // to be implememted if needed maybe for Eloss ...!???

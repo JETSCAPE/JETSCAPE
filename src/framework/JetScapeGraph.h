@@ -13,52 +13,53 @@
  * See COPYING for details.
  ******************************************************************************/
 
-//PartonShower with graph from GTL
 
-#ifndef PARTONSHOWER_H
-#define PARTONSHOWER_H
+#ifndef JETSCAPEGRAPH_H
+#define JETSCAPEGRAPH_H
 
 #include "GTL/graph.h"
 #include <GTL/edge_map.h>
 #include <GTL/node_map.h>
 #include "JetClass.h"
-//#include "JetScapeParticles.hpp"
+//#include "JetScapeParticles.h"
 #include "JetScapeLogger.h"
 //#include "helper.h"
 
-#include <map>
-
-using std::shared_ptr;
+// REMARK: Still keeping the orginal PartonShower class for now. Even though
+//    in the future it should be derived from the templated based class!!!
 
 namespace Jetscape {
 
   class Vertex;
   class Parton;
+  class JetScapeParticleBase;
+  class Hadron;
 
-class PartonShower : public graph
+template<class T>
+class JetScapeGraph : public graph
 {
 
 public:
 
-  PartonShower();
-  virtual ~PartonShower();
+  JetScapeGraph<T>();
+  virtual ~JetScapeGraph<T>();
 
   node new_vertex(std::shared_ptr<Vertex> v);
-  int new_parton(node s, node t, std::shared_ptr<Parton> p);
+  int new_particle(node s, node t, std::shared_ptr<T> p);
 
-  virtual std::unique_ptr<PartonShower> Clone(); //not yet working for 2--2 !!! Fix it !!!
+  //virtual std::unique_ptr<JetScapeGraph> Clone(); //not yet working for 2--2 !!! Fix it !!!
 
-  void InsertParton(edge e, std::shared_ptr<Vertex> v, std::shared_ptr<Parton> p);
-  void InsertPartonAfter(edge e, std::shared_ptr<Vertex> v, std::shared_ptr<Parton> p);
+  void InsertParticle(edge e, std::shared_ptr<Vertex> v, std::shared_ptr<T> p);
+  void InsertParticleAfter(edge e, std::shared_ptr<Vertex> v, std::shared_ptr<T> p);
   void InsertEdge(edge e, edge eIns) {};
 
   std::shared_ptr<Vertex> GetVertex(node n) {return vMap[n];}
-  std::shared_ptr<Parton> GetParton(edge e) {return pMap[e];}
+  std::shared_ptr<T> GetParticle(edge e) {return pMap[e];}
 
-  std::shared_ptr<Parton> GetPartonAt(int n);
+  std::shared_ptr<T> GetParticleAt(int n);
   std::shared_ptr<Vertex> GetVertexAt(int n);
 
-  edge GetEdge(std::shared_ptr<Parton> p) {return eMap.at(p);}
+  edge GetEdge(std::shared_ptr<T> p) {return eMap.at(p);}
   node GetNode(std::shared_ptr<Vertex> v) {return nMap.at(v);}
 
   node GetNodeAt(int n);
@@ -92,15 +93,10 @@ public:
   int GetNumberOfParents(int n);
   int GetNumberOfChilds(int n);
 
-  vector<std::shared_ptr<Parton>> GetFinalPartons();
-  vector<fjcore::PseudoJet> GetFinalPartonsForFastJet();
+  vector<std::shared_ptr<T>> GetFinalParticles();
+  vector<fjcore::PseudoJet> GetFinalParticlesForFastJet();
 
-  vector<std::shared_ptr<Parton>> GetPartons();
-
-  vector<edge> GetFinalEdges();
-
-  void ClearFinalPartonList() {pFinal.clear();}
-  void ClearPartonList() {pAll.clear();}
+  void ClearFinalParticleList() {pFinal.clear();}
 
   int GetNumberOfPartons() const {return number_of_edges();}
   int GetNumberOfVertices() const {return number_of_nodes ();}
@@ -124,16 +120,18 @@ public:
 private:
 
   node_map<std::shared_ptr<Vertex>> vMap;
-  edge_map<std::shared_ptr<Parton>> pMap;
+  edge_map<std::shared_ptr<T>> pMap;
 
-  std::map<std::shared_ptr<Parton>,edge> eMap;
+  //REMARK: check if needed clearing in destructor ...
+  std::map<std::shared_ptr<T>,edge> eMap;
   std::map<std::shared_ptr<Vertex>,node> nMap;
 
-  vector<std::shared_ptr<Parton>> pFinal;
-  vector<std::shared_ptr<Parton>> pAll;
+  vector<std::shared_ptr<T>> pFinal;
 
-  vector<edge> eFinal;
 };
+
+//typedef JetScapeGraph<JetScapeParticleBase> EventGraph;
+//typedef JetScapeGraph<Hadron> HadronGraph;
 
 } // end namespace Jetscape
 #endif
