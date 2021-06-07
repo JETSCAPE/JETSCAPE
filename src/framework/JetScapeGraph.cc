@@ -13,11 +13,12 @@
  * See COPYING for details.
  ******************************************************************************/
 
-#include "PartonShower.h"
+
+#include "JetScapeGraph.h"
 #include <sstream>
 #include <fstream>
 #include <iomanip>
-#include "MakeUniqueHelper.h"
+//#include "MakeUniqueHelper.h"
 #include <GTL/bfs.h>
 
 using std::setprecision;
@@ -30,16 +31,25 @@ using std::unique_ptr;
 
 namespace Jetscape {
 
-
-PartonShower::PartonShower() : graph() {
+template<class T>
+JetScapeGraph<T>::JetScapeGraph() : graph() {
   VERBOSESHOWER(8);
 }
 
-unique_ptr<PartonShower> PartonShower::Clone() //shared_ptr<PartonShower> pS)
+template<class T>
+JetScapeGraph<T>::~JetScapeGraph()
+{
+  VERBOSESHOWER(8);pFinal.clear();//pVec.clear();vVec.clear();
+}
+
+
+// REMARK JP: To be checked ...
+  /*
+unique_ptr<JetScapeGraph> JetScapeGraph::Clone() //shared_ptr<PartonShower> pS)
 {
   JSDEBUG<<"unique_ptr<PartonShower> PartonShower::Clone()";//<<endl;
 
-  auto pC=make_unique<PartonShower>();
+  auto pC=make_unique<JetScapeGraph>();
 
   //DEBUG:
   //PrintNodes(false);
@@ -50,14 +60,13 @@ unique_ptr<PartonShower> PartonShower::Clone() //shared_ptr<PartonShower> pS)
   GetBfsSortedListOfNodesAndEdges(bfslist,ebfslist);
 
   //DEBUG:
-  /*
+
   for (auto i : bfslist) cout<<i<<" ";
   cout<<endl;
 
   for (auto i : ebfslist) cout<<i<<" ";
   cout<<endl;
-  */
-  
+
   map<node,node> oldToNew;
 
   //for (auto currNode : bfslist)
@@ -84,8 +93,10 @@ unique_ptr<PartonShower> PartonShower::Clone() //shared_ptr<PartonShower> pS)
 
   return pC;
 }
+  */
 
-node PartonShower::new_vertex(shared_ptr<Vertex> v)
+template<class T>
+node JetScapeGraph<T>::new_vertex(shared_ptr<Vertex> v)
  {
    node n=graph::new_node();
    vMap[n]=v;
@@ -94,19 +105,18 @@ node PartonShower::new_vertex(shared_ptr<Vertex> v)
    return n;
  }
 
-int PartonShower::new_parton(node s, node t, shared_ptr<Parton> p)
+template<class T>
+int JetScapeGraph<T>::new_particle(node s, node t, shared_ptr<T> p)
 {
   edge e=graph::new_edge(s,t);
   pMap[e]=p;
   eMap[p]=e;
 
-  //eMap.emplace(p,e);
-
   return e.id();
 }
 
-
-void PartonShower::InsertParton(edge e,  shared_ptr<Vertex> v, shared_ptr<Parton> p)
+template<class T>
+void JetScapeGraph<T>::InsertParticle(edge e,  shared_ptr<Vertex> v, shared_ptr<T> p)
 {
   node nS=e.source();
   node nE=e.target();
@@ -115,11 +125,12 @@ void PartonShower::InsertParton(edge e,  shared_ptr<Vertex> v, shared_ptr<Parton
 
   e.change_target(nNew);
 
-  new_parton(nNew,nE,p);
+  new_particle(nNew,nE,p);
 
 }
 
-void PartonShower::InsertPartonAfter(edge e,  shared_ptr<Vertex> v, shared_ptr<Parton> p)
+template<class T>
+void JetScapeGraph<T>::InsertParticleAfter(edge e,  shared_ptr<Vertex> v, shared_ptr<T> p)
 {
   node nS=e.source();
   node nE=e.target();
@@ -131,33 +142,14 @@ void PartonShower::InsertPartonAfter(edge e,  shared_ptr<Vertex> v, shared_ptr<P
 
   e.change_target(nNew);
 
-  new_parton(nNew,nE,p);
+  new_particle(nNew,nE,p);
 
   *GetVertex(nE)=*v;
 
 }
 
-vector<shared_ptr<Parton>> PartonShower::GetPartons()
-{
-  if (pAll.size()==0)
-    {
-      //edge_iterator eIt, eEnd;
-      //for (eIt = edges_begin(), eEnd = edges_end(); eIt != eEnd; ++eIt)
-      for (auto e : all_edges())
-	{
-	  pAll.push_back(pMap[e]);
-
-	  //pAll.push_back(pMap[*eIt]);
-	  //DEBUG
-	  //cout<<eIt->target()<<endl;
-	}
-      return pAll;
-    }
-  else
-    return pAll;
-}
-
-vector<shared_ptr<Parton>> PartonShower::GetFinalPartons()
+template<class T>
+vector<shared_ptr<T>> JetScapeGraph<T>::GetFinalParticles()
 {
   //VERBOSESHOWER(8)<<pFinal.size();
   if (pFinal.size()==0)
@@ -178,32 +170,10 @@ vector<shared_ptr<Parton>> PartonShower::GetFinalPartons()
     return pFinal;
 }
 
-vector<edge> PartonShower::GetFinalEdges()
+template<class T>
+vector<fjcore::PseudoJet> JetScapeGraph<T>::GetFinalParticlesForFastJet()
 {
-  //VERBOSESHOWER(8)<<pFinal.size();
-  if (eFinal.size()==0)
-    {
-      edge_iterator eIt, eEnd;
-      for (eIt = edges_begin(), eEnd = edges_end(); eIt != eEnd; ++eIt)
-	{
-	  if (eIt->target().outdeg()<1)
-	    {
-	      eFinal.push_back(*eIt);
-	      //DEBUG
-	      //cout<<eIt->target()<<endl;
-	    }
-	}
-      return eFinal;
-    }
-  else
-    return eFinal;
-}
-
-
-
-vector<fjcore::PseudoJet> PartonShower::GetFinalPartonsForFastJet()
-{
-  vector<shared_ptr<Parton>> mP=GetFinalPartons(); // to ensure that pFinal is filled
+  vector<shared_ptr<T>> mP=GetFinalParticles(); // to ensure that pFinal is filled
 
   vector<fjcore::PseudoJet> forFJ;
 
@@ -213,7 +183,8 @@ vector<fjcore::PseudoJet> PartonShower::GetFinalPartonsForFastJet()
   return forFJ;
 }
 
-bool PartonShower::IsNtoOne(node n)
+template<class T>
+bool JetScapeGraph<T>::IsNtoOne(node n)
 {
   if (n.indeg()>=0 && n.outdeg()<=1)
     return true;
@@ -222,7 +193,8 @@ bool PartonShower::IsNtoOne(node n)
 
 }
 
-bool PartonShower::IsOneToOne(node n)
+template<class T>
+bool JetScapeGraph<T>::IsOneToOne(node n)
 {
   if (n.indeg()==1 && n.outdeg()==1)
     return true;
@@ -230,7 +202,8 @@ bool PartonShower::IsOneToOne(node n)
     return false;
 }
 
-bool PartonShower::IsOneToTwo(node n)
+template<class T>
+bool JetScapeGraph<T>::IsOneToTwo(node n)
 {
   if (n.indeg()==1 && n.outdeg()==2)
     return true;
@@ -238,7 +211,8 @@ bool PartonShower::IsOneToTwo(node n)
     return false;
 }
 
-bool PartonShower::IsEndNode(node n)
+template<class T>
+bool JetScapeGraph<T>::IsEndNode(node n)
 {
   if (n.indeg()>0 && n.outdeg()==0)
     return true;
@@ -246,7 +220,8 @@ bool PartonShower::IsEndNode(node n)
     return false;
 }
 
-bool PartonShower::IsHighSplitEdge(edge e)
+template<class T>
+bool JetScapeGraph<T>::IsHighSplitEdge(edge e)
 {
   node nBefore=e.source();
   edge eInHigh=GetHighSplitEdge(nBefore);
@@ -257,22 +232,24 @@ bool PartonShower::IsHighSplitEdge(edge e)
     return false;
 }
 
-bool PartonShower::IsHighSplitNode(node n)
+template<class T>
+bool JetScapeGraph<T>::IsHighSplitNode(node n)
 {
   edge eIn=*n.in_edges_begin();
 
   return IsHighSplitEdge(eIn);
 }
 
-double PartonShower::GetSplitDeltaR(node n)
+template<class T>
+double JetScapeGraph<T>::GetSplitDeltaR(node n)
 {
   if (IsOneToTwo(n))
     {
       edge eOut1=*n.out_edges_begin();
       edge eOut2=*++n.out_edges_begin ();
 
-      fjcore::PseudoJet o1=GetParton(eOut1)->GetPseudoJet();
-      fjcore::PseudoJet o2=GetParton(eOut2)->GetPseudoJet();
+      fjcore::PseudoJet o1=GetParticle(eOut1)->GetPseudoJet();
+      fjcore::PseudoJet o2=GetParticle(eOut2)->GetPseudoJet();
 
       return o1.delta_R(o2);
     }
@@ -281,7 +258,8 @@ double PartonShower::GetSplitDeltaR(node n)
 
 }
 
-double PartonShower::GetSplitKt(node n)
+template<class T>
+double JetScapeGraph<T>::GetSplitKt(node n)
 {
   if (IsOneToTwo(n))
     {
@@ -289,9 +267,9 @@ double PartonShower::GetSplitKt(node n)
       edge eOut2=*++n.out_edges_begin ();
       edge eIn=*n.in_edges_begin();
 
-      fjcore::PseudoJet o1=GetParton(eOut1)->GetPseudoJet();
-      fjcore::PseudoJet o2=GetParton(eOut2)->GetPseudoJet();
-      fjcore::PseudoJet in=GetParton(eIn)->GetPseudoJet();
+      fjcore::PseudoJet o1=GetParticle(eOut1)->GetPseudoJet();
+      fjcore::PseudoJet o2=GetParticle(eOut2)->GetPseudoJet();
+      fjcore::PseudoJet in=GetParticle(eIn)->GetPseudoJet();
 
       if (o1.pt()>o2.pt())
 	return o2.pt()*GetSplitDeltaR(n);
@@ -302,7 +280,9 @@ double PartonShower::GetSplitKt(node n)
     return -99.;
 }
 
-double PartonShower::GetSplitZ(node n)
+
+template<class T>
+double JetScapeGraph<T>::GetSplitZ(node n)
 {
   if (IsOneToTwo(n))
     {
@@ -310,9 +290,9 @@ double PartonShower::GetSplitZ(node n)
       edge eOut2=*++n.out_edges_begin ();
       edge eIn=*n.in_edges_begin();
 
-      fjcore::PseudoJet o1=GetParton(eOut1)->GetPseudoJet();
-      fjcore::PseudoJet o2=GetParton(eOut2)->GetPseudoJet();
-      fjcore::PseudoJet in=GetParton(eIn)->GetPseudoJet();
+      fjcore::PseudoJet o1=GetParticle(eOut1)->GetPseudoJet();
+      fjcore::PseudoJet o2=GetParticle(eOut2)->GetPseudoJet();
+      fjcore::PseudoJet in=GetParticle(eIn)->GetPseudoJet();
 
       if (o1.pt()>o2.pt())
 	return o2.pt()/in.pt();
@@ -323,15 +303,16 @@ double PartonShower::GetSplitZ(node n)
     return -99.;
 }
 
-edge PartonShower::GetHighSplitEdge(node n)
+template<class T>
+edge JetScapeGraph<T>::GetHighSplitEdge(node n)
 {
    if (IsOneToTwo(n))
     {
       edge eOut1=*n.out_edges_begin();
       edge eOut2=*++n.out_edges_begin ();
 
-      fjcore::PseudoJet o1=GetParton(eOut1)->GetPseudoJet();
-      fjcore::PseudoJet o2=GetParton(eOut2)->GetPseudoJet();
+      fjcore::PseudoJet o1=GetParticle(eOut1)->GetPseudoJet();
+      fjcore::PseudoJet o2=GetParticle(eOut2)->GetPseudoJet();
 
       if (o1.pt()>o2.pt())
 	return eOut1;
@@ -342,15 +323,16 @@ edge PartonShower::GetHighSplitEdge(node n)
      {JSWARN<<n; exit(-1);} // to be done nicer ...
 }
 
-edge PartonShower::GetLowSplitEdge(node n)
+template<class T>
+edge JetScapeGraph<T>::GetLowSplitEdge(node n)
 {
   if (IsOneToTwo(n))
     {
       edge eOut1=*n.out_edges_begin();
       edge eOut2=*++n.out_edges_begin ();
 
-      fjcore::PseudoJet o1=GetParton(eOut1)->GetPseudoJet();
-      fjcore::PseudoJet o2=GetParton(eOut2)->GetPseudoJet();
+      fjcore::PseudoJet o1=GetParticle(eOut1)->GetPseudoJet();
+      fjcore::PseudoJet o2=GetParticle(eOut2)->GetPseudoJet();
 
       if (o1.pt()>o2.pt())
 	return eOut2;
@@ -361,7 +343,8 @@ edge PartonShower::GetLowSplitEdge(node n)
     {JSWARN<<n; exit(-1);} // to be done nicer ...
 }
 
-void PartonShower::GetBfsSortedListOfOneToTwoNodes(vector<node> &nl)
+template<class T>
+void JetScapeGraph<T>::GetBfsSortedListOfOneToTwoNodes(vector<node> &nl)
 {
   bfs search;
   search.reset();
@@ -378,7 +361,8 @@ void PartonShower::GetBfsSortedListOfOneToTwoNodes(vector<node> &nl)
     }
 }
 
-void PartonShower::GetBfsSortedListOfNodes(vector<node> &nl)
+template<class T>
+void JetScapeGraph<T>::GetBfsSortedListOfNodes(vector<node> &nl)
 {
   bfs search;
   search.reset();
@@ -395,7 +379,8 @@ void PartonShower::GetBfsSortedListOfNodes(vector<node> &nl)
     }
 }
 
-void PartonShower::GetBfsSortedListOfNodesAndEdges(vector<node> &nl, vector<edge> &el)
+template<class T>
+void JetScapeGraph<T>::GetBfsSortedListOfNodesAndEdges(vector<node> &nl, vector<edge> &el)
 {
   bfs search;
   search.reset();
@@ -419,12 +404,14 @@ void PartonShower::GetBfsSortedListOfNodesAndEdges(vector<node> &nl, vector<edge
     }
 }
 
-double PartonShower::GetNodeTime(node n)
+template<class T>
+double JetScapeGraph<T>::GetNodeTime(node n)
 {
   return GetVertex(n)->x_in().t();
 }
 
-double PartonShower::GetNextNodeTime(node n)
+template<class T>
+double JetScapeGraph<T>::GetNextNodeTime(node n)
 {
   node::adj_nodes_iterator Aitt = n.adj_nodes_begin();
 
@@ -435,46 +422,48 @@ double PartonShower::GetNextNodeTime(node n)
 
 }
 
-int PartonShower::GetNumberOfParents(int n)
+template<class T>
+int JetScapeGraph<T>::GetNumberOfParents(int n)
 {
   return GetEdgeAt(n).source().indeg();
 }
 
-int PartonShower::GetNumberOfChilds(int n)
+template<class T>
+int JetScapeGraph<T>::GetNumberOfChilds(int n)
 {
   return GetEdgeAt(n).target().outdeg();
 }
 
-edge PartonShower::GetEdgeAt(int n)
+template<class T>
+edge JetScapeGraph<T>::GetEdgeAt(int n)
 {
   edge_iterator eIt; eIt = edges_begin();advance(eIt,n);
   return *eIt;
 }
 
-node PartonShower::GetNodeAt(int n)
+template<class T>
+node JetScapeGraph<T>::GetNodeAt(int n)
 {
   node_iterator nIt; nIt = nodes_begin();advance(nIt,n);
   return *nIt;
 }
 
-shared_ptr<Parton> PartonShower::GetPartonAt(int n)
+template<class T>
+shared_ptr<T> JetScapeGraph<T>::GetParticleAt(int n)
 {
   edge_iterator eIt; eIt = edges_begin();advance(eIt,n);
-  return GetParton(*eIt);
+  return GetParticle(*eIt);
 }
 
-shared_ptr<Vertex> PartonShower::GetVertexAt(int n)
+template<class T>
+shared_ptr<Vertex> JetScapeGraph<T>::GetVertexAt(int n)
 {
   node_iterator nIt; nIt = nodes_begin();advance(nIt,n);
   return GetVertex(*nIt);
 }
 
-PartonShower::~PartonShower()
-{
-  VERBOSESHOWER(8);pFinal.clear();pAll.clear();eFinal.clear();//pVec.clear();vVec.clear();
-}
-
-void PartonShower::save_node_info_handler (ostream *o, node n) const
+template<class T>
+void JetScapeGraph<T>::save_node_info_handler (ostream *o, node n) const
 {
   *o<<"label "<<"\""<<n.id()<<"("<< fixed << setprecision(2) <<vMap[n]->x_in().t()<<")\""<<endl;
   *o<<"x "<<vMap[n]->x_in().x()<<endl;
@@ -483,8 +472,8 @@ void PartonShower::save_node_info_handler (ostream *o, node n) const
   *o<<"t "<<vMap[n]->x_in().t()<<endl;
 }
 
-
-void PartonShower::save_edge_info_handler (ostream *o, edge e) const
+template<class T>
+void JetScapeGraph<T>::save_edge_info_handler (ostream *o, edge e) const
 {
   *o<<"label "<<"\"("<< fixed << setprecision(2) <<pMap[e]->pt()<<")\""<<endl;
   *o<<"plabel "<<pMap[e]->plabel()<<endl;
@@ -497,7 +486,8 @@ void PartonShower::save_edge_info_handler (ostream *o, edge e) const
 
 }
 
-void PartonShower::pre_clear_handler()
+template<class T>
+void JetScapeGraph<T>::pre_clear_handler()
 {
   VERBOSESHOWER(8);
   edge_iterator eIt, eEnd;
@@ -513,7 +503,8 @@ void PartonShower::pre_clear_handler()
     }
 }
 
-void PartonShower::PrintNodes(bool verbose)
+template<class T>
+void JetScapeGraph<T>::PrintNodes(bool verbose)
 {
   node_iterator nIt, nEnd;
   ostringstream os;
@@ -533,7 +524,8 @@ void PartonShower::PrintNodes(bool verbose)
     }
 }
 
-void PartonShower::PrintEdges(bool verbose)
+template<class T>
+void JetScapeGraph<T>::PrintEdges(bool verbose)
 {
   edge_iterator eIt, eEnd;
   ostringstream os;
@@ -559,7 +551,8 @@ void PartonShower::PrintEdges(bool verbose)
 // These handlers are needed if one wants to use load and GML files ...
 // Obsolete with new JetScape reader ...
 
-void PartonShower::load_edge_info_handler (edge e, GML_pair *read)
+template<class T>
+void JetScapeGraph<T>::load_edge_info_handler (edge e, GML_pair *read)
 {
   VERBOSESHOWER(8)<<"Load edge ... "<<e;
   struct GML_pair* tmp = read;
@@ -587,10 +580,11 @@ void PartonShower::load_edge_info_handler (edge e, GML_pair *read)
     tmp = tmp->next;
   }
 
-  pMap[e]=make_shared<Parton>(plabel,pid,pstat,pT,eta,phi,E);
+  pMap[e]=make_shared<T>(plabel,pid,pstat,pT,eta,phi,E);
 }
 
-void PartonShower::load_node_info_handler (node n, GML_pair *read)
+template<class T>
+void JetScapeGraph<T>::load_node_info_handler (node n, GML_pair *read)
 {
   VERBOSESHOWER(8)<<"Load node ... "<<n;
   struct GML_pair* tmp = read;
@@ -620,7 +614,8 @@ void PartonShower::load_node_info_handler (node n, GML_pair *read)
 // use with graphviz (on Mac: brew install graphviz --with-app)
 // dot GVfile.gv -Tpdf -o outputPDF.pdf
 
-void PartonShower::SaveAsGV(string fName)
+template<class T>
+void JetScapeGraph<T>::SaveAsGV(string fName)
 {
   ofstream gv; gv.open(fName.c_str());
 
@@ -662,8 +657,7 @@ void PartonShower::SaveAsGV(string fName)
   for (eIt = edges_begin(), eEnd = edges_end(); eIt != eEnd; ++eIt)
     {
 
-      //label = ("[label=\"(");
-      label = ("[label=\""+to_string(eIt->id())+" (");
+      label = ("[label=\"(");
       label2 = ")\"];";
       stringstream stream;
       //stream << fixed << setprecision(2) << (pMap[*eIt]->pt());
@@ -671,15 +665,12 @@ void PartonShower::SaveAsGV(string fName)
       //stream << "E="<<fixed << setprecision(2) << (pMap[*eIt]->e());
       //stream<<endl;
       stream <<",E="<<fixed << setprecision(2) << (pMap[*eIt]->e());
-      //stream <<","<<fixed << setprecision(2) << (pMap[*eIt]->pstat());
+      stream <<","<<fixed << setprecision(2) << (pMap[*eIt]->pstat());
 
       stringstream stream1;
       stream1 <<fixed << setprecision(2) << (pMap[*eIt]->plabel()) <<",";
 
-      //if (eIt->target().id()>1)
-      //gv<<to_string(eIt->source().id())+"->"+to_string(eIt->target().id())<<" "<<label<<stream1.str()<<stream.str()<<label2<<endl;
-      //else
-      gv<<to_string(eIt->source().id())+"->"+to_string(eIt->target().id())<<" "<<label<<stream.str()<<label2<<endl;
+      gv<<to_string(eIt->source().id())+"->"+to_string(eIt->target().id())<<" "<<label<<stream1.str()<<stream.str()<<label2<<endl;
     }
 
   gv<<endl;
@@ -687,7 +678,8 @@ void PartonShower::SaveAsGV(string fName)
   gv.close();
 }
 
-void PartonShower::SaveAsGraphML(string fName)
+template<class T>
+void JetScapeGraph<T>::SaveAsGraphML(string fName)
 {
   // Think about using tinyxml2 in future (if needed ...)
 
@@ -700,16 +692,15 @@ void PartonShower::SaveAsGraphML(string fName)
   g<<" http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd\">"<<endl;
 
   g<<"<key id=\"nlabel\" for=\"node\" attr.name=\"label\" attr.type=\"string\"/>"<<endl;
-  //g<<"<key id=\"nx\" for=\"node\" attr.name=\"x\" attr.type=\"double\"/>"<<endl;
-  //g<<"<key id=\"ny\" for=\"node\" attr.name=\"y\" attr.type=\"double\"/>"<<endl;
-  //g<<"<key id=\"nz\" for=\"node\" attr.name=\"z\" attr.type=\"double\"/>"<<endl;
+  g<<"<key id=\"nx\" for=\"node\" attr.name=\"x\" attr.type=\"double\"/>"<<endl;
+  g<<"<key id=\"ny\" for=\"node\" attr.name=\"y\" attr.type=\"double\"/>"<<endl;
+  g<<"<key id=\"nz\" for=\"node\" attr.name=\"z\" attr.type=\"double\"/>"<<endl;
   g<<"<key id=\"nt\" for=\"node\" attr.name=\"t\" attr.type=\"double\"/>"<<endl;
-  g<<"<key id=\"nzg\" for=\"node\" attr.name=\"zg\" attr.type=\"double\"/>"<<endl;
 
-  //g<<"<key id=\"elabel\" for=\"edge\" attr.name=\"label\" attr.type=\"string\"/>"<<endl;
-  //g<<"<key id=\"epl\" for=\"edge\" attr.name=\"plabel\" attr.type=\"int\"/>"<<endl;
-  //g<<"<key id=\"epid\" for=\"edge\" attr.name=\"pid\" attr.type=\"int\"/>"<<endl;
-  //g<<"<key id=\"estat\" for=\"edge\" attr.name=\"pstat\" attr.type=\"int\"/>"<<endl;
+  g<<"<key id=\"elabel\" for=\"edge\" attr.name=\"label\" attr.type=\"string\"/>"<<endl;
+  g<<"<key id=\"epl\" for=\"edge\" attr.name=\"plabel\" attr.type=\"int\"/>"<<endl;
+  g<<"<key id=\"epid\" for=\"edge\" attr.name=\"pid\" attr.type=\"int\"/>"<<endl;
+  g<<"<key id=\"estat\" for=\"edge\" attr.name=\"pstat\" attr.type=\"int\"/>"<<endl;
 
   g<<"<key id=\"ept\" for=\"edge\" attr.name=\"pT\" attr.type=\"double\"/>"<<endl;
   g<<"<key id=\"eeta\" for=\"edge\" attr.name=\"eta\" attr.type=\"double\"/>"<<endl;
@@ -730,16 +721,10 @@ void PartonShower::SaveAsGraphML(string fName)
       g<<"<node id=\""<<n<<"\">"<<endl;
       //g<<"<data key=\"nlabel\">"<<to_string(n)+"("+to_string(vMap[*nIt]->x_in().t())+")"<<"</data>"<<endl;
       g<<"<data key=\"nlabel\">"<<to_string(n)+"("+stream.str()+")"<<"</data>"<<endl;
-      //g<<"<data key=\"nx\">"<<vMap[*nIt]->x_in().x()<<"</data>"<<endl;
-      //g<<"<data key=\"ny\">"<<vMap[*nIt]->x_in().y()<<"</data>"<<endl;
-      //g<<"<data key=\"nz\">"<<vMap[*nIt]->x_in().z()<<"</data>"<<endl;
+      g<<"<data key=\"nx\">"<<vMap[*nIt]->x_in().x()<<"</data>"<<endl;
+      g<<"<data key=\"ny\">"<<vMap[*nIt]->x_in().y()<<"</data>"<<endl;
+      g<<"<data key=\"nz\">"<<vMap[*nIt]->x_in().z()<<"</data>"<<endl;
       g<<"<data key=\"nt\">"<<vMap[*nIt]->x_in().t()<<"</data>"<<endl;
-
-      if (GetSplitZ(*nIt)>0)
-	g<<"<data key=\"nzg\">"<<GetSplitZ(*nIt)<<"</data>"<<endl;
-      else
-	g<<"<data key=\"nzg\">"<<0<<"</data>"<<endl;
-
       g<<"</node>"<<endl;
       n++;
     }
@@ -749,10 +734,10 @@ void PartonShower::SaveAsGraphML(string fName)
   for (eIt = edges_begin(), eEnd = edges_end(); eIt != eEnd; ++eIt)
     {
       g<<"<edge id=\""<<n<<"\" source=\""<<to_string(eIt->source().id())<<"\" target=\""<<to_string(eIt->target().id())<<"\">"<<endl;
-      //g<<"<data key=\"elabel\">"<<to_string((pMap[*eIt]->pt()))<<"</data>"<<endl;
-      //g<<"<data key=\"epl\">"<<pMap[*eIt]->plabel()<<"</data>"<<endl;
-      //g<<"<data key=\"epid\">"<<pMap[*eIt]->pid()<<"</data>"<<endl;
-      //g<<"<data key=\"estat\">"<<pMap[*eIt]->pstat()<<"</data>"<<endl;
+      g<<"<data key=\"elabel\">"<<to_string((pMap[*eIt]->pt()))<<"</data>"<<endl;
+      g<<"<data key=\"epl\">"<<pMap[*eIt]->plabel()<<"</data>"<<endl;
+      g<<"<data key=\"epid\">"<<pMap[*eIt]->pid()<<"</data>"<<endl;
+      g<<"<data key=\"estat\">"<<pMap[*eIt]->pstat()<<"</data>"<<endl;
       g<<"<data key=\"ept\">"<<pMap[*eIt]->pt()<<"</data>"<<endl;
       g<<"<data key=\"eeta\">"<<pMap[*eIt]->eta()<<"</data>"<<endl;
       g<<"<data key=\"ephi\">"<<pMap[*eIt]->phi()<<"</data>"<<endl;
@@ -767,4 +752,7 @@ void PartonShower::SaveAsGraphML(string fName)
   g.close();
 
 } // end namespace Jetscape
+
+  template class JetScapeGraph<Hadron>;
+  template class JetScapeGraph<JetScapeParticleBase>;
 }

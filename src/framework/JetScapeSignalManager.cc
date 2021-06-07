@@ -2,7 +2,7 @@
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
  * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -38,6 +38,21 @@ void JetScapeSignalManager::ConnectGetHardPartonListSignal(
     auto hpp = GetHardProcessPointer().lock();
     if (hpp) {
       jm->GetHardPartonList.connect(hpp.get(), &HardProcess::GetHardPartonList);
+      jm->GetPartonShowerList.connect(hpp.get(),&HardProcess::GetPartonShowerList);
+
+      jm->SetGetHardPartonListConnected(true);
+    }
+  }
+}
+
+void JetScapeSignalManager::ConnectGetHardPartonListSignal(
+    shared_ptr<IsrManager> jm) {
+  if (!jm->GetGetHardPartonListConnected()) {
+    auto hpp = GetHardProcessPointer().lock();
+    if (hpp) {
+      jm->GetHardPartonList.connect(hpp.get(), &HardProcess::GetHardPartonList);
+      jm->GetPartonShowerList.connect(hpp.get(),&HardProcess::GetPartonShowerList);
+
       jm->SetGetHardPartonListConnected(true);
     }
   }
@@ -141,12 +156,15 @@ void JetScapeSignalManager::ConnectGetFinalHadronListSignal(
 	shared_ptr<HadronPrinter> h){
 		auto hadroMgrShared = GetHadronizationManagerPointer().lock();
   //hadronPrinter->GetFinalHadronList.connect(hadro.get(), &Hadronization::GetHadrons);
-  h->GetFinalHadronList.connect(hadroMgrShared.get(), 
+  h->GetFinalHadronList.connect(hadroMgrShared.get(),
 			&HadronizationManager::GetHadrons);
 }
 
 void JetScapeSignalManager::CleanUp() {
   VERBOSE(8);
+
+  // REMARK JP: In case of two managers attached, Eloss and Isr
+  //            the bookeeping here is not correct, while signal/slots itself are (to be checked)!
 
   // hmmm wrong caintainer .. should have used vectore with struct instead of map!!!!
 
@@ -210,7 +228,7 @@ void JetScapeSignalManager::PrintGetHydroCellSignalMap() {
   for (auto &x : GetHydroCellSignal_map) {
     auto xs = x.second.lock();
     if (xs) {
-      VERBOSE(8) << "[" << x.first << ':' << xs.get() << ']' << " "
+      VERBOSE(3) << "[" << x.first << ':' << xs.get() << ']' << " "
                  << xs->GetId();
     }
   }
@@ -220,7 +238,7 @@ void JetScapeSignalManager::PrintSentInPartonsSignalMap() {
   for (auto &x : SentInPartons_map) {
     auto xs = x.second.lock();
     if (xs) {
-      VERBOSE(8) << "[" << x.first << ':' << xs.get() << ']' << " "
+      VERBOSE(3) << "[" << x.first << ':' << xs.get() << ']' << " "
                  << xs->GetId();
     }
   }

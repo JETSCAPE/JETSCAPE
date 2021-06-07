@@ -13,27 +13,35 @@
  * See COPYING for details.
  ******************************************************************************/
 
-#ifndef PARTONSHOWERGENERATOR_H
-#define PARTONSHOWERGENERATOR_H
+#ifndef ISRJET_H
+#define ISRJET_H
+
+//#include "JetScapeTask.h"
+#include "JetEnergyLoss.h"
+#include "sigslot.h"
 
 namespace Jetscape {
-
-class JetEnergyLoss;
-
-class PartonShowerGenerator {
+/** @class Jet energy loss manager.
+   */
+class IsrJet
+    : public JetEnergyLoss
+      //public std::enable_shared_from_this<IsrManager>
+      {
 
 public:
+  /** Default constructor to create a jet energy loss manager. Sets task ID as "JLossManager". Flag GetHardPartonListConnected is set to false.
+   */
+  IsrJet();
 
-  PartonShowerGenerator(){};
-  virtual ~PartonShowerGenerator(){};
+  /** Destructor for the jet energy loss manager.
+   */
+  virtual ~IsrJet();
 
-  virtual void DoShower(JetEnergyLoss &j) {};
+  virtual void Init();
 
-  virtual void DoCalculateTime(JetEnergyLoss &j) {};
-  virtual void DoExecTime(JetEnergyLoss &j) {};
-  virtual void DoInitPerEvent(JetEnergyLoss &j) {};
-  virtual void DoFinishPerEvent(JetEnergyLoss &j) {};
-  
+
+private:
+
 };
 
 } // end namespace Jetscape
