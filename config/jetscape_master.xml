@@ -177,6 +177,10 @@
     </AdSCFT>
     
   </Eloss>
+  
+  <PartonPrinter>
+      <FileName>./FinalPartonsInfo.dat</FileName>
+  </PartonPrinter>
 
   <!--Preequilibrium Dynamics Module -->
   <Preequilibrium>

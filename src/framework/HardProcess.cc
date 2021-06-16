@@ -56,6 +56,7 @@ void HardProcess::Init() {
                 "add an initial state module.";
     }
   }
+    printer = GetXMLElementText({"PartonPrinter","FileName"});
 
   InitTask();
 

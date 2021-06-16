@@ -17,7 +17,8 @@
 
 #include "PythiaGun.h"
 #include <sstream>
-
+#include <iostream>
+#include <fstream>
 #define MAGENTA "\033[35m"
 
 using namespace std;
@@ -142,6 +143,10 @@ void PythiaGun::InitTask() {
     throw std::runtime_error("Pythia init() failed.");
   }
 
+    std::ofstream sigma_printer;
+    sigma_printer.open(printer, std::ios::trunc);
+
+    
 }
 
 void PythiaGun::Exec() {
@@ -164,6 +169,15 @@ void PythiaGun::Exec() {
   do {
     next();
     p62.clear();
+      //  if (!printer.empty()){
+            std::ofstream sigma_printer;
+            sigma_printer.open(printer, std::ios::out | std::ios::app);
+            
+            sigma_printer << "sigma = " << GetSigmaGen() << " Err =  " << GetSigmaErr() << endl ;
+            //sigma_printer.close();
+      
+//      JSINFO << BOLDYELLOW << " sigma = " << GetSigmaGen() << " sigma err = " << GetSigmaErr() << " printer = " << printer << " is " << sigma_printer.is_open() ;
+      //  };
 
     // pTarr[0]=0.0; pTarr[1]=0.0;
     // pindexarr[0]=0; pindexarr[1]=0;
