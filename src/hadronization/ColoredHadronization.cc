@@ -225,7 +225,7 @@ void ColoredHadronization::DoHadronization(
   int updcol = 1;
   while (col_instances.size() > 0) {
     int nupd = 2;
-    for (unsigned int i = event.size() - 1; i >= 0; --i) {
+    for ( int i = event.size() - 1; i >= 0; --i) {
       if (col_instances[0][0] == event[i].col()) {
         event[i].col(updcol);
         --nupd;
