@@ -58,7 +58,10 @@ int main(int argc, char** argv)
     std::cout << "NOTE: Writing header v2, and final cross section and error at EOF.\n";
   }
 
-  auto reader=make_shared<JetScapeReaderAscii>(argv[1]);
+  // The seperator between particles _does not_ depend on the header for final state hadrons
+  std::string particleSeperator = " ";
+
+  auto reader = make_shared<JetScapeReaderAscii>(argv[1]);
   std::ofstream dist_output (argv[2]); //Format is SN, PID, E, Px, Py, Pz, Eta, Phi
   vector<shared_ptr<Hadron>> hadrons;
   int SN=0;
@@ -77,21 +80,20 @@ int main(int argc, char** argv)
       ++SN;
       if (writeHeaderV2) {
         // NOTE: Needs consistent "\t" between all entries to simplify parsing later.
-        dist_output << "#" << "\t"
-            << "Event\t" << SN << "\t"
-            << "weight\t" << reader->GetEventWeight() << "\t"
-            << "EPangle\t" << reader->GetEventPlaneAngle() <<"\t"
-            << "N_hadrons\t" << hadrons.size() << "\t"
-            << "|" << "\t"  // As a delimiter
-            << "N" << "\t"
-            << "pid" << "\t"
-            << "status" << "\t"
-            << "E"   << "\t"
-            << "Px"  << "\t"
-            << "Py"  << "\t"
-            << "Pz"  << "\t"
-            << "Eta" <<  "\t"
-            << "Phi" << "\n";
+        dist_output << "#"
+            << "\t" << "Event\t" << SN
+            << "\t" << "weight\t" << reader->GetEventWeight()
+            << "\t" << "EPangle\t" << reader->GetEventPlaneAngle()
+            << "\t" << "N_hadrons\t" << hadrons.size()
+            << "\t" << "|"  // As a delimiter
+            << "\t" << "N"
+            << "\t" << "pid"
+            << "\t" << "status"
+            << "\t" << "E"
+            << "\t" << "Px"
+            << "\t" << "Py"
+            << "\t" << "Pz"
+            << "\n";
       }
       else {
         dist_output << "#" << "\t"
@@ -108,23 +110,31 @@ int main(int argc, char** argv)
       for (unsigned int i=0; i<hadrons.size(); i++)
       {
         dist_output << i
-            << " " << hadrons[i].get()->pid()
-            << " " << hadrons[i].get()->pstat()
-            << " " << hadrons[i].get()->e()
-            << " " << hadrons[i].get()->px()
-            << " " << hadrons[i].get()->py()
-            << " " << hadrons[i].get()->pz()
-            << " " << hadrons[i].get()->eta()
-            << " " << hadrons[i].get()->phi() << "\n";
+            << particleSeperator << hadrons[i].get()->pid()
+            << particleSeperator << hadrons[i].get()->pstat()
+            << particleSeperator << hadrons[i].get()->e()
+            << particleSeperator << hadrons[i].get()->px()
+            << particleSeperator << hadrons[i].get()->py()
+            << particleSeperator << hadrons[i].get()->pz();
+
+        // v2 drops eta and phi, so only include it for v1
+        if (!writeHeaderV2) {
+            dist_output << particleSeperator << hadrons[i].get()->eta()
+                << particleSeperator << hadrons[i].get()->phi();
+        }
+
+        // Finish up
+        dist_output << "\n";
       }
     }
   }
   // Write the final cross section and error if requested by using header v2
   if (writeHeaderV2) {
     // NOTE: Needs consistent "\t" between all entries to simplify parsing later.
-    dist_output << "#" << "\t"
-        << "sigmaGen\t" << reader->GetSigmaGen() << "\t"
-        << "sigmaErr\t" << reader->GetSigmaErr() << "\n";
+    dist_output << "#"
+        << "\t" << "sigmaGen\t" << reader->GetSigmaGen()
+        << "\t" << "sigmaErr\t" << reader->GetSigmaErr()
+        << "\n";
   }
   reader->Close();
 }

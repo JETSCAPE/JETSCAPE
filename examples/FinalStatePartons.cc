@@ -58,6 +58,12 @@ int main(int argc, char** argv)
     std::cout << "NOTE: Writing header v2, and final cross section and error at EOF.\n";
   }
 
+  // The seperator between particles depends on the header.
+  std::string particleSeperator = " ";
+  if (!writeHeaderV2) {
+    particleSeperator = "\t";
+  }
+
   auto reader=make_shared<JetScapeReaderAscii>(argv[1]);
   std::ofstream dist_output (argv[2]); //Format is SN, PID, E, Px, Py, Pz, Eta, Phi
   int SN=0, TotalPartons=0;
@@ -79,21 +85,20 @@ int main(int argc, char** argv)
       ++SN;
       if (writeHeaderV2) {
         // NOTE: Needs consistent "\t" between all entries to simplify parsing later.
-        dist_output << "#" << "\t"
-            << "Event\t" << SN << "\t"
-            << "weight\t" << reader->GetEventWeight() << "\t"
-            << "EPangle\t" << reader->GetEventPlaneAngle() <<"\t"
-            << "N_partons\t" << TotalPartons << "\t"
-            << "|" << "\t"  // As a delimiter
-            << "N" << "\t"
-            << "pid" << "\t"
-            << "status" << "\t"
-            << "E"   << "\t"
-            << "Px"  << "\t"
-            << "Py"  << "\t"
-            << "Pz"  << "\t"
-            << "Eta" <<  "\t"
-            << "Phi" << "\n";
+        dist_output << "#"
+            << "\t" << "Event\t" << SN
+            << "\t" << "weight\t" << reader->GetEventWeight()
+            << "\t" << "EPangle\t" << reader->GetEventPlaneAngle()
+            << "\t" << "N_partons\t" << TotalPartons
+            << "\t" << "|"  // As a delimiter
+            << "\t" << "N"
+            << "\t" << "pid"
+            << "\t" << "status"
+            << "\t" << "E"
+            << "\t" << "Px"
+            << "\t" << "Py"
+            << "\t" << "Pz"
+            << "\n";
       }
       else {
         dist_output << "#" << "\t"
@@ -116,15 +121,22 @@ int main(int argc, char** argv)
           Parton p = *mShowers[i]->GetFinalPartons().at(ipart);
           //            if(abs(p.pid())!=5) continue;
 
-          dist_output << ipart   << "\t"
-              << p.pid() << "\t"
-              << p.pstat() << "\t"
-              << p.e()   << "\t"
-              << p.px()  << "\t"
-              << p.py()  << "\t"
-              << p.pz()  << "\t"
-              << p.eta() <<  "\t"
-              << p.phi() << "\n";
+          dist_output << ipart
+              << particleSeperator << p.pid()
+              << particleSeperator << p.pstat()
+              << particleSeperator << p.e()
+              << particleSeperator << p.px()
+              << particleSeperator << p.py()
+              << particleSeperator << p.pz();
+
+          // v2 drops eta and phi, so only include it for v1
+          if (!writeHeaderV2) {
+              dist_output << particleSeperator << p.eta()
+                  << particleSeperator << p.phi();
+          }
+
+          // Finish up
+          dist_output << "\n";
         }
       }
     }
@@ -132,9 +144,10 @@ int main(int argc, char** argv)
   // Write the final cross section and error if requested by using header v2
   if (writeHeaderV2) {
     // NOTE: Needs consistent "\t" between all entries to simplify parsing later.
-    dist_output << "#" << "\t"
-        << "sigmaGen\t" << reader->GetSigmaGen() << "\t"
-        << "sigmaErr\t" << reader->GetSigmaErr() << "\n";
+    dist_output << "#"
+        << "\t" << "sigmaGen\t" << reader->GetSigmaGen()
+        << "\t" << "sigmaErr\t" << reader->GetSigmaErr()
+        << "\n";
   }
   reader->Close();
 }
