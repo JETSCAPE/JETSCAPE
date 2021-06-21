@@ -25,26 +25,20 @@ namespace Jetscape {
 // Register the modules with the base class
 template <>
 RegisterJetScapeModule<JetScapeWriterFinalStatePartonsStream<ofstream>>
-    JetScapeWriterFinalStatePartonsStream<ofstream>::regParton("CustomWriterFinalStatePartonsAscii");
+    JetScapeWriterFinalStatePartonsStream<ofstream>::regParton("JetScapeWriterFinalStatePartonsAscii");
 template <>
 RegisterJetScapeModule<JetScapeWriterFinalStateHadronsStream<ofstream>>
-    JetScapeWriterFinalStateHadronsStream<ofstream>::regHadron("CustomWriterFinalStateHadronsAscii");
+    JetScapeWriterFinalStateHadronsStream<ofstream>::regHadron("JetScapeWriterFinalStateHadronsAscii");
 template <>
 RegisterJetScapeModule<JetScapeWriterFinalStatePartonsStream<ogzstream>>
-    JetScapeWriterFinalStatePartonsStream<ogzstream>::regPartonGZ("CustomWriterFinalStatePartonsAsciiGZ");
+    JetScapeWriterFinalStatePartonsStream<ogzstream>::regPartonGZ("JetScapeWriterFinalStatePartonsAsciiGZ");
 template <>
 RegisterJetScapeModule<JetScapeWriterFinalStateHadronsStream<ogzstream>>
-    JetScapeWriterFinalStateHadronsStream<ogzstream>::regHadronGZ("CustomWriterFinalStateHadronsAsciiGZ");
+    JetScapeWriterFinalStateHadronsStream<ogzstream>::regHadronGZ("JetScapeWriterFinalStateHadronsAsciiGZ");
 
 template <class T>
 JetScapeWriterFinalStateStream<T>::JetScapeWriterFinalStateStream(string m_file_name_out) {
   SetOutputFileName(m_file_name_out);
-}
-
-template <class T>
-void JetScapeWriterFinalStateStream<T>::SetOutputFileName(string m_file_name_out) {
-  m_file_name_out.append("_final_state_" + GetName() + ".dat");
-  file_name_out = m_file_name_out;
 }
 
 template <class T> JetScapeWriterFinalStateStream<T>::~JetScapeWriterFinalStateStream() {

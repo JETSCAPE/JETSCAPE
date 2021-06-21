@@ -41,9 +41,6 @@ public:
   JetScapeWriterFinalStateStream<T>(string m_file_name_out);
   virtual ~JetScapeWriterFinalStateStream<T>();
 
-  // This add "_final_state_*.dat" to the given filename.
-  virtual void SetOutputFileName(string m_file_name_out);
-
   void Init();
   void Exec();
 
