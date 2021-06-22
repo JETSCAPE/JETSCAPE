@@ -58,14 +58,6 @@ template <class T> void JetScapeWriterFinalStateStream<T>::WriteEvent() {
       << "\t" << "weight\t" << GetHeader().GetEventWeight()
       << "\t" << "EPangle\t" << (GetHeader().GetEventPlaneAngle() > -999 ? GetHeader().GetEventPlaneAngle() : 0)
       << "\t" << "N_" << GetName() << "\t" << particles.size()
-      << "\t" << "|"  // As a delimiter
-      << "\t" << "N"
-      << "\t" << "pid"
-      << "\t" << "status"
-      << "\t" << "E"
-      << "\t" << "Px"
-      << "\t" << "Py"
-      << "\t" << "Pz"
       << "\n";
 
   // Next, write the particles. Will contain either hadrons or partons based on the derived class.
@@ -95,6 +87,20 @@ template <class T> void JetScapeWriterFinalStateStream<T>::Init() {
     JSINFO << "JetScape Final State " << name << " Stream Writer initialized with output file = "
            << GetOutputFileName();
     output_file.open(GetOutputFileName().c_str());
+    // NOTE: This header will only be printed once at the beginning on the file.
+    output_file << "#"
+        // The specifics the version number. For consistency in parsing, the string
+        // will always be "v<number>"
+        << "\t" << "JETSCAPE_FINAL_STATE\t" << "v2"
+        << "\t" << "|"  // As a delimiter
+        << "\t" << "N"
+        << "\t" << "pid"
+        << "\t" << "status"
+        << "\t" << "E"
+        << "\t" << "Px"
+        << "\t" << "Py"
+        << "\t" << "Pz"
+        << "\n";
   }
 }
 
