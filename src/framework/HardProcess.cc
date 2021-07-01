@@ -56,8 +56,12 @@ void HardProcess::Init() {
                 "add an initial state module.";
     }
   }
-    printer = GetXMLElementText({"PartonPrinter","FileName"});
-
+    string status = GetXMLElementText({"PartonPrinter","Status"});
+    if (status!="off")
+    {
+        printer = GetXMLElementText({"PartonPrinter","FileName"});
+        JSINFO << BOLDYELLOW << "Extra parton info goes to " << printer ;
+    }
   InitTask();
 
   JetScapeTask::InitTasks();

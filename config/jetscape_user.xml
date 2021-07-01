@@ -37,9 +37,9 @@
     </Matter>
   </Eloss>
   
-  <PartonPrinter>
+  <!--PartonPrinter>
       <FileName>./FinalPartonsInfo.dat</FileName>
-  </PartonPrinter>
+  </PartonPrinter-->
   
   <!-- Jet Hadronization Module -->
   <JetHadronization>

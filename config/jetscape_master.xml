@@ -179,6 +179,7 @@
   </Eloss>
   
   <PartonPrinter>
+      <Status>off</Status>
       <FileName>./FinalPartonsInfo.dat</FileName>
   </PartonPrinter>
 

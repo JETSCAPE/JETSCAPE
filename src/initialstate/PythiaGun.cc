@@ -169,7 +169,7 @@ void PythiaGun::Exec() {
   do {
     next();
     p62.clear();
-      //  if (!printer.empty()){
+      if (!printer.empty()){
             std::ofstream sigma_printer;
             sigma_printer.open(printer, std::ios::out | std::ios::app);
             
@@ -177,7 +177,7 @@ void PythiaGun::Exec() {
             //sigma_printer.close();
       
 //      JSINFO << BOLDYELLOW << " sigma = " << GetSigmaGen() << " sigma err = " << GetSigmaErr() << " printer = " << printer << " is " << sigma_printer.is_open() ;
-      //  };
+    };
 
     // pTarr[0]=0.0; pTarr[1]=0.0;
     // pindexarr[0]=0; pindexarr[1]=0;
