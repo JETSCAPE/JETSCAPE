@@ -116,11 +116,12 @@ Include_second_order_terms 0       # include second order non-linear coupling te
 #
 # switches to output evolution information
 store_hydro_info_in_memory 1       # flag to store hydro info in memory
-output_evolution_data 0            # flag to output evolution history to file
+output_evolution_data 2            # flag to output evolution history to file
 outputBinaryEvolution  1           # output evolution file in binary format
+output_evolution_T_cut 0.14        # GeV
 output_evolution_every_N_eta  1    # output evolution file every Neta steps
-output_evolution_every_N_y  2      # output evolution file every Ny steps
-output_evolution_every_N_x  2      # output evolution file every Nx steps
+output_evolution_every_N_y  1      # output evolution file every Ny steps
+output_evolution_every_N_x  1      # output evolution file every Nx steps
 output_evolution_every_N_timesteps  5  # output evolution every Ntime steps
 
 #
