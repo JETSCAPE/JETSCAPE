@@ -4930,18 +4930,18 @@ for(int ifq1 = 0; ifq1 < cols.size(); ifq1++){
   }
   if( !paired ){
     int ifinptn = -1;
-    for(int iptn = 0; iptn < finalstring.size; ++iptn){if(finalstring.at(iptn).col()==cols.at(ifq1)){ifinptn = iptn; break;}}
+    for(int iptn = 0; iptn < finalstring.size(); ++iptn){if(finalstring.at(iptn).col()==cols.at(ifq1)){ifinptn = iptn; break;}}
     
     int loc = findcloserepl(finalstring.at(ifinptn), ifinptn+1, false, true, HH_showerptns, HH_thermal);
     if(loc == 999999999 || loc > 0){
-        HHparton fakep = finalstring.at(ifinptn); fakep.id(-fakep.id()); fakeq.set_color(0); fakeq.set_anti_color(cols.at(ifq1));
+        HHparton fakep = finalstring.at(ifinptn); fakep.id(-fakep.id()); fakep.set_color(0); fakep.set_anti_color(cols.at(ifq1));
         double dir = (ran() < 0.5) ? 1. : -1.; double fake_pT = (p_fake >= 1.) ? 0.282842712474619 : 0.; double fake_phi = 2. * 3.14159265358979 * ran();
         fakep.px(fake_pT * cos(fake_phi)); fakep.py(fake_pT * sin(fake_phi)); fakep.pz(p_fake * dir);
         fakep.e(std::sqrt(fakep.px()*fakep.px() + fakep.py()*fakep.py() + fakep.pz()*fakep.pz() + fakep.mass()*fakep.mass()));
         fakep.orig(-1); fakep.is_remnant(true);
         finalstring.push_back(fakeq);
     }
-    else if(loc < 0){HH_thermal[-loc-1].acol(cols.at(ifq1)); HH_thermal[-loc-1].is_remnant(true); finalstring.push_back(HH_thermal[-loc-1]); finalstring[finalstring.size()-1].par(-i-1);}
+    else if(loc < 0){HH_thermal[-loc-1].acol(cols.at(ifq1)); HH_thermal[-loc-1].is_remnant(true); finalstring.push_back(HH_thermal[-loc-1]); finalstring[finalstring.size()-1].par(-loc-1);}
   }
   paired = false;
 }
@@ -4955,18 +4955,18 @@ for(int ifaq1 = 0; ifaq1 < acols.size(); ifaq1++){
   }
   if( !paired ){
     int ifinptn = -1;
-    for(int iptn = 0; iptn < finalstring.size; ++iptn){if(finalstring.at(iptn).acol()==acols.at(ifaq1)){ifinptn = iptn; break;}}
+    for(int iptn = 0; iptn < finalstring.size(); ++iptn){if(finalstring.at(iptn).acol()==acols.at(ifaq1)){ifinptn = iptn; break;}}
     
     int loc = findcloserepl(finalstring.at(ifinptn), ifinptn+1, false, true, HH_showerptns, HH_thermal);
     if(loc == 999999999 || loc > 0){
-        HHparton fakep = finalstring.at(ifinptn); fakep.id(-fakep.id()); fakeq.set_color(acols.at(ifaq1)); fakeq.set_anti_color(0);
+        HHparton fakep = finalstring.at(ifinptn); fakep.id(-fakep.id()); fakep.set_color(acols.at(ifaq1)); fakep.set_anti_color(0);
         double dir = (ran() < 0.5) ? 1. : -1.; double fake_pT = (p_fake >= 1.) ? 0.282842712474619 : 0.; double fake_phi = 2. * 3.14159265358979 * ran();
         fakep.px(fake_pT * cos(fake_phi)); fakep.py(fake_pT * sin(fake_phi)); fakep.pz(p_fake * dir);
         fakep.e(std::sqrt(fakep.px()*fakep.px() + fakep.py()*fakep.py() + fakep.pz()*fakep.pz() + fakep.mass()*fakep.mass()));
         fakep.orig(-1); fakep.is_remnant(true);
         finalstring.push_back(fakeq);
     }
-    else if(loc < 0){HH_thermal[-loc-1].col(acols.at(ifaq1)); HH_thermal[-loc-1].is_remnant(true); finalstring.push_back(HH_thermal[-loc-1]); finalstring[finalstring.size()-1].par(-i-1);}
+    else if(loc < 0){HH_thermal[-loc-1].col(acols.at(ifaq1)); HH_thermal[-loc-1].is_remnant(true); finalstring.push_back(HH_thermal[-loc-1]); finalstring[finalstring.size()-1].par(-loc-1);}
   }
   paired = false;
 }
