@@ -4939,7 +4939,7 @@ for(int ifq1 = 0; ifq1 < cols.size(); ifq1++){
         fakep.px(fake_pT * cos(fake_phi)); fakep.py(fake_pT * sin(fake_phi)); fakep.pz(p_fake * dir);
         fakep.e(std::sqrt(fakep.px()*fakep.px() + fakep.py()*fakep.py() + fakep.pz()*fakep.pz() + fakep.mass()*fakep.mass()));
         fakep.orig(-1); fakep.is_remnant(true);
-        finalstring.push_back(fakeq);
+        finalstring.push_back(fakep);
     }
     else if(loc < 0){HH_thermal[-loc-1].acol(cols.at(ifq1)); HH_thermal[-loc-1].is_remnant(true); finalstring.push_back(HH_thermal[-loc-1]); finalstring[finalstring.size()-1].par(-loc-1);}
   }
@@ -4964,7 +4964,7 @@ for(int ifaq1 = 0; ifaq1 < acols.size(); ifaq1++){
         fakep.px(fake_pT * cos(fake_phi)); fakep.py(fake_pT * sin(fake_phi)); fakep.pz(p_fake * dir);
         fakep.e(std::sqrt(fakep.px()*fakep.px() + fakep.py()*fakep.py() + fakep.pz()*fakep.pz() + fakep.mass()*fakep.mass()));
         fakep.orig(-1); fakep.is_remnant(true);
-        finalstring.push_back(fakeq);
+        finalstring.push_back(fakep);
     }
     else if(loc < 0){HH_thermal[-loc-1].col(acols.at(ifaq1)); HH_thermal[-loc-1].is_remnant(true); finalstring.push_back(HH_thermal[-loc-1]); finalstring[finalstring.size()-1].par(-loc-1);}
   }
