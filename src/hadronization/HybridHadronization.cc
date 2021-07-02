@@ -77,14 +77,14 @@ void HybridHadronization::Init(){
     JSDEBUG<<"Initialize HybridHadronization";
     VERBOSE(8);
 	
-	maxE_level    = 3;			//maximum energy level considered for the recombination (was 3 in recent fortran code, prev. set to 8)
+	maxE_level    = 1;			//maximum energy level considered for the recombination (was 3 in recent fortran code, prev. set to 8)
 	gmax          = 1.25;		//maximum allowed mass of the gluon (for q-qbar split), in GeV
 	xmq           = 0.338; //0.33;		//light quark mass, in GeV
 	xms           = 0.486; //0.5;		//strange quark mass, in GeV
 	hbarc         = 0.197327;	// GeV*fm - maybe just set this as a constant in common?
 	dist2cut      = 25.;		//maximum distance [fm] squared for recombination (involving thermal partons) - in lab frame
-	sh_recofactor = 1./3.;		//suppression/enhancement factor for shower-shower recombination
-	th_recofactor = 1./3.;		//suppression/enhancement factor for shower-thermal recombination
+	sh_recofactor = 1.;		//suppression/enhancement factor for shower-shower recombination
+	th_recofactor = 1.;		//suppression/enhancement factor for shower-thermal recombination
 	attempts_max  = 10;			//maximum number of failed attempts to hadronize a single event before we give up.
 	p_fake        = 0.;			//momentum used for fake parton, if needed
 	rand_seed     = 0;			//seed for RNGs used - 0 means use a randomly determined random seed (from system time or std::random_device{}())
@@ -1100,8 +1100,8 @@ std::vector<double> BaryonrecoMatrix3; // this is 2d vector of (probabilty, requ
 for(int irow=0; irow < IndiceForColFin.size(); irow++){
     for(int icol=0; icol < IndiceForColFin.size(); icol++){
         double Baryonfactor;
-        BaryonrecoMatrix3.push_back((double)1/27);//1/27: probabiity to get singlet state
-        BaryonrecoMatrix3.push_back(0); // now the probability factor and color(not specified yet, it'll be done with baryon formation) for neutrality are saved.
+        BaryonrecoMatrix3.push_back(1./27.);//1/27: probabiity to get singlet state
+        BaryonrecoMatrix3.push_back(0.); // now the probability factor and color(not specified yet, it'll be done with baryon formation) for neutrality are saved.
 
         BaryonrecoMatrix2.push_back(BaryonrecoMatrix3);
         BaryonrecoMatrix3.clear();
@@ -1191,7 +1191,7 @@ std::cout <<endl<<endl;
 
 				considering.add(showerquarks[element[1]]);
 				showerquarks[element[1]].status(-992);
-				recofactor2 = sh_recofactor*sh_recofactor;
+				//recofactor2 = sh_recofactor*sh_recofactor;
 			}
 			else if(perm2[q2]<0){
 				//skipping if current quark has been used
@@ -1216,7 +1216,7 @@ std::cout <<endl<<endl;
 
 				considering.add(HH_thermal[-element[1]]);
 				HH_thermal[-element[1]].status(-992);
-				recofactor2 = th_recofactor*sh_recofactor;
+				//recofactor2 = th_recofactor*sh_recofactor;
 			}
 			else{JSWARN << "SOMETHING WENT HORRIBLY WRONG - DO NOT KNOW WHERE CURRENT QUARK CAME FROM?!";}
 
@@ -1339,9 +1339,9 @@ if(considering[0].id()*considering[1].id()*considering[2].id() > 0){
       if(MesonrecoMatrix1.at(loc1).at(loc2) == 1) {
       recofactor3 = 1; // one specific tag, which is located in different location from other two strings from a junction, is neighbored with the tag in the not used tag in junction
       }
-      else{recofactor3 = (double) 0;} // general case
+      else{recofactor3 = 0.;} // general case
     }
-    else{recofactor3 = (double) 1/27;} // general case
+    else{recofactor3 = 1./27.;} // general case
 
 
  }
@@ -1400,9 +1400,9 @@ else if(considering[0].id()*considering[1].id()*considering[2].id() < 0){
     if(MesonrecoMatrix1.at(loc1).at(loc2) == 1) {
     recofactor3 = 1; // one specific tag, which is located in different location from other two strings from a junction, is neighbored with the tag in the not used tag in junction
     }
-    else{recofactor3 = (double) 0;} // general case
+    else{recofactor3 = 0.;} // general case
   }
-  else{recofactor3 = (double) 1/27;} // general case
+  else{recofactor3 = 1./27.;} // general case
 
  }
 
@@ -1442,7 +1442,7 @@ else if(considering[0].id()*considering[1].id()*considering[2].id() < 0){
 
 					considering.add(HH_thermal[-element[2]]);
 					HH_thermal[-element[2]].status(-993);
-					recofactor3 = th_recofactor*recofactor2;
+					//recofactor3 = th_recofactor*recofactor2;
 				}
 				else{JSWARN << "SOMETHING WENT HORRIBLY WRONG - DO NOT KNOW WHERE CURRENT QUARK CAME FROM?!";}
 
@@ -1644,7 +1644,8 @@ if(considering[0].id() > 0 && considering[1].id() < 0){//case of first parton is
 
 
 //TODO:Starting point of the string repair after Baryon Formation!
-		 	if(WigB[1]*recofactor3 >= rndbaryon){
+			double mult = (considering[1].is_thermal() || considering[2].is_thermal()) ? th_recofactor : sh_recofactor;
+		 	if(WigB[1]*recofactor3*mult >= rndbaryon){
 				//if(rndbaryon >= 0.99){
 /*This Variables are in header file
                     vector<vector<vector<int>>> Tempjunctions; // vector of all tempjunctions
@@ -2821,7 +2822,7 @@ std::cout <<endl<<endl;
 					if(perm2[q3]>0){formedhadron.add_par(showerquarks[element[2]].par());}else{formedhadron.add_par(element[2]);}
 
 					//now setting if baryon is in excited state
-					if(WigB[0]*recofactor3 < rndbaryon){formedhadron.is_excited(true);}
+					if(WigB[0]*recofactor3*mult < rndbaryon){formedhadron.is_excited(true);}
 
 					//setting if there are any thermal partons used to make the hadron (with the '0' thermal parent as -99999 so that it doesn't conflict with '0' shower parton)
 					if(     perm2[q2]>0 && perm2[q3]>0){/*is sh-sh-sh*/ formedhadron.is_shsh(true);}
@@ -2898,7 +2899,7 @@ std::cout <<endl<<endl;
                        recofactor2 = (MesonrecoMatrix1.at(indexMatrix1).at(indexMatrix2));
 //                       std::cout <<endl<<" the recofactor for meson is "<<(MesonrecoMatrix1.at(indexMatrix1).at(indexMatrix2))<<endl;
                        }
-                      else{recofactor2 = (double) 1/9;}
+                      else{recofactor2 = 1./9.;}
                   }
 				
                else if(considering[1].id() > 0 && considering[0].id() < 0){
@@ -2913,7 +2914,7 @@ std::cout <<endl<<endl;
 
                        recofactor2 = (MesonrecoMatrix1.at(indexMatrix1).at(indexMatrix2));
                        }
-                       else{recofactor2 = (double) 1/9;}
+                       else{recofactor2 = 1./9.;}
 //                       std::cout <<endl<<" the recofactor for meson is "<<(MesonrecoMatrix1.at(indexMatrix1).at(indexMatrix2))<<endl;
                 }
 				//now that we *could* form a meson, now we check if we actually do form one
@@ -2941,7 +2942,7 @@ std::cout <<endl<<endl;
 				double curtime = (pos_MCM[0].t() > pos_MCM[1].t()) ? pos_MCM[0].t() : pos_MCM[1].t();
 				FourVector cur_pos[2];
 				cur_pos[0].Set(pos_MCM[0].x()+v_MCM[0].x()*(curtime-pos_MCM[0].t()),pos_MCM[0].y()+v_MCM[0].y()*(curtime-pos_MCM[0].t()),pos_MCM[0].z()+v_MCM[0].z()*(curtime-pos_MCM[0].t()),curtime);
-				cur_pos[0].Set(pos_MCM[1].x()+v_MCM[1].x()*(curtime-pos_MCM[1].t()),pos_MCM[1].y()+v_MCM[1].y()*(curtime-pos_MCM[1].t()),pos_MCM[1].z()+v_MCM[1].z()*(curtime-pos_MCM[1].t()),curtime);
+				cur_pos[1].Set(pos_MCM[1].x()+v_MCM[1].x()*(curtime-pos_MCM[1].t()),pos_MCM[1].y()+v_MCM[1].y()*(curtime-pos_MCM[1].t()),pos_MCM[1].z()+v_MCM[1].z()*(curtime-pos_MCM[1].t()),curtime);
 
 				//finding position of CM at curtime
 				FourVector pos_CM;
@@ -3005,12 +3006,13 @@ std::cout <<endl<<endl;
 				//Checking if meson is formed (either ground or excited state)
 				double rndmeson = ran();
 //				if(WigM[1]*recofactor2 >= 1){
-				if(WigM[1]*recofactor2 >= rndmeson){
+				double mult = (considering[1].is_thermal()) ? th_recofactor : sh_recofactor;
+				if(WigM[1]*recofactor2*mult >= rndmeson){
 //TODO:confirm if the partons not used into Meson get back to the original permutation list
 //std::cout <<endl<<"Let's find what was recombined!"<<endl<<endl;
 
 
-                    if(considering[0].id() > 0 && considering[1].id() < 0){//case of first parton is q and second is q-bar
+                   if(considering[0].id() > 0 && considering[1].id() < 0){//case of first parton is q and second is q-bar
                     //std::cout <<endl<<"chosen partons are "<< int(considering[0].id()) << " and " << int(considering[1].id()) << endl <<endl;
                     //std::cout <<endl<<"and their color tag is "<< int(considering[0].col()) << " and " << int(considering[1].acol()) << endl <<endl;
                     //std::cout <<"color correction implemented as Follows: "<< considering[0].col() <<" = " << considering[1].acol()<<endl;
@@ -3062,12 +3064,22 @@ std::cout <<endl<<endl;
                     int loc1 = std::distance(IndiceForColFin.begin(), I1);
                     int loc2 = std::distance(IndiceForColFin.begin(), I2); //set up for find matrix indices corresponding to the color tags
 
-                    MesonrecoMatrix1.at(loc1).at(loc2) = 0;
-                    MesonrecoMatrix1.at(loc2).at(loc1) = 0; //Matrix revised
-
-		//the below may have been considered, but I don't think is correct?  remove if everything works.
-                    //MesonrecoMatrix1.at(loc1).at(loc2) = 1;
-                    //MesonrecoMatrix1.at(loc2).at(loc1) = 1; //Matrix revised
+                    //MesonrecoMatrix1.at(loc1).at(loc2) = 0;
+                    //MesonrecoMatrix1.at(loc2).at(loc1) = 0; //Matrix revised
+					
+					MesonrecoMatrix1.at(loc1).at(loc2) = 1;
+                    MesonrecoMatrix1.at(loc2).at(loc1) = 1; //Matrix revised
+					
+					for(int iM=0;iM<MesonrecoMatrix1[0].size();++iM){
+						if(MesonrecoMatrix1[loc1][iM]==0){MesonrecoMatrix1[loc2][iM]=0;}
+						if(MesonrecoMatrix1[loc2][iM]==0){MesonrecoMatrix1[loc1][iM]=0;}
+						if(MesonrecoMatrix1[iM][loc1]==0){MesonrecoMatrix1[iM][loc2]=0;}
+						if(MesonrecoMatrix1[iM][loc2]==0){MesonrecoMatrix1[iM][loc1]=0;}
+						if(MesonrecoMatrix1[loc1][iM]==1){MesonrecoMatrix1[loc2][iM]=1;}
+						if(MesonrecoMatrix1[loc2][iM]==1){MesonrecoMatrix1[loc1][iM]=1;}
+						if(MesonrecoMatrix1[iM][loc1]==1){MesonrecoMatrix1[iM][loc2]=1;}
+						if(MesonrecoMatrix1[iM][loc2]==1){MesonrecoMatrix1[iM][loc1]=1;}
+					}
 /*
                     std::cout <<endl<<"Revised Matrix is same as below"<<endl;
                     for(int irow=0; irow < IndiceForColFin.size(); irow++){
@@ -3082,61 +3094,61 @@ std::cout <<endl<<endl;
             //TODO: Need to be changed to reflect thermal parton(04232020)
             //possible case  MAT+LBT, MAT+THERM,
             //treatment 1 : based on distance.
-                    if(considering[0].col() > 0 && considering[1].acol() > 0){ //MAT/lbt or therm with color tags + MAT/lbt or therm with color tags
-                    	if(perm2[q2] > 0){
-                    		HH_showerptns[showerquarks[element[1]].par()].acol(considering[0].col());//now color tags from both partons are same
-                    		//also need to set the remaining color tag in showerquarks (if present) [**]
-				for(int ishq=0;ishq<showerquarks.num();++ishq){
-					if(!showerquarks[ishq].is_used() && showerquarks[ishq].col()==considering[1].acol()){showerquarks[ishq].col(considering[0].col());/*break;*/}
-				}
-				for(int ishq=0;ishq<HH_showerptns.num();++ishq){
-					if(HH_showerptns[ishq].col()==considering[1].acol()){HH_showerptns[ishq].col(considering[0].col());/*break;*/}
-				}
-			}
-			else{HH_thermal[-element[1]].acol(considering[0].col());}
-		    }
-
-			else if(considering[0].col() > 0){ // MAT + LBT/THERM
-				int thermsib = findcloserepl(considering[0] , perm1[q1]+1, true, true, HH_showerptns, HH_thermal); // functon to find
-				if(thermsib == 999999999){
-					//std::cout <<endl<<"Warning : extra parton used for string repair!!"<<endl;
-					HHparton fakep = considering[0]; fakep.id(-fakep.id());  fakep.acol(++maxtag);
-					Extraparton.add(fakep);
-					//somewhere, we need to make for loop to toss all partons to remnants list.
-				}
-				else if(thermsib < 0){HH_thermal[-thermsib-1].acol(considering[0].col());}
-				else{
-					for(int ishq=0;ishq<showerquarks.num();++ishq){
-						if(!showerquarks[ishq].is_used() && showerquarks[ishq].col()==HH_showerptns[thermsib-1].acol()){showerquarks[ishq].col(considering[0].col());/*break;*/}
-					}
-					for(int ishq=0;ishq<HH_showerptns.num();++ishq){
-						if(HH_showerptns[ishq].col()==HH_showerptns[thermsib-1].acol()){if(ishq==thermsib-1){continue;} HH_showerptns[ishq].col(considering[0].col());/*break;*/}
-					}//[**]
-					HH_showerptns[thermsib-1].acol(considering[0].col());
-				}
-				}
-					
-				else if(considering[1].acol() > 0){ //LBT + MAT
-					int thermsib = findcloserepl(considering[1] , perm2[q2], true, true, HH_showerptns, HH_thermal);
-					if(thermsib == 999999999){
-						//std::cout <<endl<<"Warning : extra parton used for string repair!!"<<endl;
-						HHparton fakep = considering[1]; fakep.id(-fakep.id());  fakep.acol(++maxtag);
-						Extraparton.add(fakep);
-						//somewhere, we need to make for loop to toss all partons to remnants list.
-					}
-					else if(thermsib < 0){HH_thermal[-thermsib-1].col(considering[1].acol());}
-					else{
-						for(int ishq=0;ishq<showerquarks.num();++ishq){
-							if(!showerquarks[ishq].is_used() && showerquarks[ishq].acol()==HH_showerptns[thermsib-1].col()){showerquarks[ishq].acol(considering[1].acol());/*break;*/}
+					if(considering[0].col() > 0 && considering[1].acol() > 0){ //MAT/lbt or therm with color tags + MAT/lbt or therm with color tags
+						if(perm2[q2] > 0){
+							HH_showerptns[showerquarks[element[1]].par()].acol(considering[0].col());//now color tags from both partons are same
+							//also need to set the remaining color tag in showerquarks (if present) [**]
+							for(int ishq=0;ishq<showerquarks.num();++ishq){
+								if(!showerquarks[ishq].is_used() && showerquarks[ishq].col()==considering[1].acol()){showerquarks[ishq].col(considering[0].col());/*break;*/}
+							}
+							for(int ishq=0;ishq<HH_showerptns.num();++ishq){
+								if(HH_showerptns[ishq].col()==considering[1].acol()){HH_showerptns[ishq].col(considering[0].col());/*break;*/}
+							}
 						}
-						for(int ishq=0;ishq<HH_showerptns.num();++ishq){
-							if(HH_showerptns[ishq].acol()==HH_showerptns[thermsib-1].col()){if(ishq==thermsib-1){continue;} HH_showerptns[ishq].acol(considering[1].acol());/*break;*/}
-						}//[**]
-						HH_showerptns[thermsib-1].col(considering[1].acol());
+						else{HH_thermal[-element[1]].acol(considering[0].col());}
 					}
-				}
+
+					else if(considering[0].col() > 0){ // MAT + LBT/THERM
+						int thermsib = findcloserepl(considering[0] , perm1[q1]+1, true, true, HH_showerptns, HH_thermal); // functon to find
+						if(thermsib == 999999999){
+							//std::cout <<endl<<"Warning : extra parton used for string repair!!"<<endl;
+							HHparton fakep = considering[0]; fakep.id(-fakep.id());  fakep.acol(++maxtag);
+							Extraparton.add(fakep);
+							//somewhere, we need to make for loop to toss all partons to remnants list.
+						}
+						else if(thermsib < 0){HH_thermal[-thermsib-1].acol(considering[0].col());}
+						else{
+							for(int ishq=0;ishq<showerquarks.num();++ishq){
+								if(!showerquarks[ishq].is_used() && showerquarks[ishq].col()==HH_showerptns[thermsib-1].acol()){showerquarks[ishq].col(considering[0].col());/*break;*/}
+							}
+							for(int ishq=0;ishq<HH_showerptns.num();++ishq){
+								if(HH_showerptns[ishq].col()==HH_showerptns[thermsib-1].acol()){if(ishq==thermsib-1){continue;} HH_showerptns[ishq].col(considering[0].col());/*break;*/}
+							}//[**]
+							HH_showerptns[thermsib-1].acol(considering[0].col());
+						}
+					}
 					
-			}
+					else if(considering[1].acol() > 0){ //LBT + MAT
+						int thermsib = findcloserepl(considering[1] , perm2[q2], true, true, HH_showerptns, HH_thermal);
+						if(thermsib == 999999999){
+							//std::cout <<endl<<"Warning : extra parton used for string repair!!"<<endl;
+							HHparton fakep = considering[1]; fakep.id(-fakep.id());  fakep.acol(++maxtag);
+							Extraparton.add(fakep);
+							//somewhere, we need to make for loop to toss all partons to remnants list.
+						}
+						else if(thermsib < 0){HH_thermal[-thermsib-1].col(considering[1].acol());}
+						else{
+							for(int ishq=0;ishq<showerquarks.num();++ishq){
+								if(!showerquarks[ishq].is_used() && showerquarks[ishq].acol()==HH_showerptns[thermsib-1].col()){showerquarks[ishq].acol(considering[1].acol());/*break;*/}
+							}
+							for(int ishq=0;ishq<HH_showerptns.num();++ishq){
+								if(HH_showerptns[ishq].acol()==HH_showerptns[thermsib-1].col()){if(ishq==thermsib-1){continue;} HH_showerptns[ishq].acol(considering[1].acol());/*break;*/}
+							}//[**]
+							HH_showerptns[thermsib-1].col(considering[1].acol());
+						}
+					}
+					
+					}
 
                     else if(considering[0].id() < 0 && considering[1].id() > 0){//case of first parton is q-bar and second is q
                     //std::cout <<endl<<"chosen partons are "<< int(considering[0].id()) << " and " << int(considering[1].id()) << endl <<endl;
@@ -3189,12 +3201,22 @@ std::cout <<endl<<endl;
                     int loc1 = std::distance(IndiceForColFin.begin(), I1);
                     int loc2 = std::distance(IndiceForColFin.begin(), I2); //set up for find matrix indices corresponding to the color tags
 
-                    MesonrecoMatrix1.at(loc1).at(loc2) = 0;
-                    MesonrecoMatrix1.at(loc2).at(loc1) = 0; //Matrix revised
-			    
-		//the below may have been considered, but I don't think is correct?  remove if everything works.
-                    //MesonrecoMatrix1.at(loc1).at(loc2) = 1;
-                    //MesonrecoMatrix1.at(loc2).at(loc1) = 1; //Matrix revised
+                    //MesonrecoMatrix1.at(loc1).at(loc2) = 0;
+                    //MesonrecoMatrix1.at(loc2).at(loc1) = 0; //Matrix revised
+					
+					MesonrecoMatrix1.at(loc1).at(loc2) = 1;
+                    MesonrecoMatrix1.at(loc2).at(loc1) = 1; //Matrix revised
+					
+					for(int iM=0;iM<MesonrecoMatrix1[0].size();++iM){
+						if(MesonrecoMatrix1[loc1][iM]==0){MesonrecoMatrix1[loc2][iM]=0;}
+						if(MesonrecoMatrix1[loc2][iM]==0){MesonrecoMatrix1[loc1][iM]=0;}
+						if(MesonrecoMatrix1[iM][loc1]==0){MesonrecoMatrix1[iM][loc2]=0;}
+						if(MesonrecoMatrix1[iM][loc2]==0){MesonrecoMatrix1[iM][loc1]=0;}
+						if(MesonrecoMatrix1[loc1][iM]==1){MesonrecoMatrix1[loc2][iM]=1;}
+						if(MesonrecoMatrix1[loc2][iM]==1){MesonrecoMatrix1[loc1][iM]=1;}
+						if(MesonrecoMatrix1[iM][loc1]==1){MesonrecoMatrix1[iM][loc2]=1;}
+						if(MesonrecoMatrix1[iM][loc2]==1){MesonrecoMatrix1[iM][loc1]=1;}
+					}
                     }
 /*
                     std::cout <<endl<<"Revised Matrix is same as below"<<endl;
@@ -3220,72 +3242,72 @@ std::cout <<endl<<endl;
 
 
 */ //TODO:NEED TO BE DEALT IN THERMAL PARTON PROCESSING{04232020}
-		if(considering[0].acol() > 0 && considering[1].col() > 0){ //MAT + MAT
-			if(perm2[q2] > 0){
-				HH_showerptns[showerquarks[element[1]].par()].col(considering[0].acol());//now color tags from both partons are same
-				//also need to set the remaining color tag in showerquarks (if present) [**]
-				for(int ishq=0;ishq<showerquarks.num();++ishq){
-					if(!showerquarks[ishq].is_used() && showerquarks[ishq].acol()==considering[1].col()){showerquarks[ishq].acol(considering[0].acol());/*break;*/}
-				}
-				for(int ishq=0;ishq<HH_showerptns.num();++ishq){
-					if(HH_showerptns[ishq].acol()==considering[1].col()){HH_showerptns[ishq].acol(considering[0].acol());/*break;*/}
-				}
-			}
-			else{HH_thermal[-element[1]].col(considering[0].acol());}
-		}
+					if(considering[0].acol() > 0 && considering[1].col() > 0){ //MAT + MAT
+						if(perm2[q2] > 0){
+							HH_showerptns[showerquarks[element[1]].par()].col(considering[0].acol());//now color tags from both partons are same
+							//also need to set the remaining color tag in showerquarks (if present) [**]
+							for(int ishq=0;ishq<showerquarks.num();++ishq){
+									if(!showerquarks[ishq].is_used() && showerquarks[ishq].acol()==considering[1].col()){showerquarks[ishq].acol(considering[0].acol());/*break;*/}
+							}
+							for(int ishq=0;ishq<HH_showerptns.num();++ishq){
+								if(HH_showerptns[ishq].acol()==considering[1].col()){HH_showerptns[ishq].acol(considering[0].acol());/*break;*/}
+							}
+						}
+						else{HH_thermal[-element[1]].col(considering[0].acol());}
+					}
 					
-		else if(considering[0].acol() > 0){ // MAT + LBT/THERM
-			int loc = findcloserepl(considering[0], perm1[q1]+1, true, true, HH_showerptns, HH_thermal );
-			if(loc == 999999999){
-				//std::cout <<endl<<"Warning : extra parton used for string repair!!"<<endl;
-				HHparton fakep = considering[0]; fakep.id(-fakep.id());  fakep.acol(++maxtag);
-				Extraparton.add(fakep);
-				//somewhere, we need to make for loop to toss all partons to remnants list.
-			}
-			else if (loc > 0){
-				for(int ishq=0;ishq<showerquarks.num();++ishq){
-					if(!showerquarks[ishq].is_used() && showerquarks[ishq].acol()==HH_showerptns[loc-1].col()){showerquarks[ishq].acol(considering[0].acol());/*break;*/}
-				}
-				for(int ishq=0;ishq<HH_showerptns.num();++ishq){
-					if(HH_showerptns[ishq].acol()==HH_showerptns[loc-1].col()){if(ishq==loc-1){continue;}HH_showerptns[ishq].acol(considering[0].acol());/*break;*/}
-				}//[**]
-				HH_showerptns[loc - 1].col(considering[0].acol());
-			}
-			else if(loc < 0){HH_thermal[-loc - 1].col(considering[0].acol());}
-			/*
-			int thermsib = findthermalsibling(-element[1] , HH_thermal); // functon to find
-			if(thermsib < 0){HH_thermal[thermsib-1].col(considering[0].acol());}
-			else{HH_showerptns[thermsib+1].col(considering[0].acol());}
-			*/
-		}
+					else if(considering[0].acol() > 0){ // MAT + LBT/THERM
+						int loc = findcloserepl(considering[0], perm1[q1]+1, true, true, HH_showerptns, HH_thermal );
+						if(loc == 999999999){
+							//std::cout <<endl<<"Warning : extra parton used for string repair!!"<<endl;
+							HHparton fakep = considering[0]; fakep.id(-fakep.id());  fakep.acol(++maxtag);
+							Extraparton.add(fakep);
+							//somewhere, we need to make for loop to toss all partons to remnants list.
+						}
+						else if (loc > 0){
+							for(int ishq=0;ishq<showerquarks.num();++ishq){
+								if(!showerquarks[ishq].is_used() && showerquarks[ishq].acol()==HH_showerptns[loc-1].col()){showerquarks[ishq].acol(considering[0].acol());/*break;*/}
+							}
+							for(int ishq=0;ishq<HH_showerptns.num();++ishq){
+								if(HH_showerptns[ishq].acol()==HH_showerptns[loc-1].col()){if(ishq==loc-1){continue;}HH_showerptns[ishq].acol(considering[0].acol());/*break;*/}
+							}//[**]
+							HH_showerptns[loc - 1].col(considering[0].acol());
+						}
+						else if(loc < 0){HH_thermal[-loc - 1].col(considering[0].acol());}
+						/*
+						int thermsib = findthermalsibling(-element[1] , HH_thermal); // functon to find
+						if(thermsib < 0){HH_thermal[thermsib-1].col(considering[0].acol());}
+						else{HH_showerptns[thermsib+1].col(considering[0].acol());}
+						*/
+					}
 					 
-		else if(considering[1].col() > 0){ //LBT + MAT
-			int loc = findcloserepl(considering[1], perm2[q2], true, true, HH_showerptns, HH_thermal );
-			if(loc == 999999999){
-				//std::cout <<endl<<"Warning : extra parton used for string repair!!"<<endl;
-				HHparton fakep = considering[1]; fakep.id(-fakep.id());  fakep.acol(++maxtag);
-				Extraparton.add(fakep);
-				//somewhere, we need to make for loop to toss all partons to remnants list.
-			}
-			else if (loc > 0){
-				for(int ishq=0;ishq<showerquarks.num();++ishq){
-					if(!showerquarks[ishq].is_used() && showerquarks[ishq].acol()==HH_showerptns[loc-1].col()){showerquarks[ishq].acol(considering[0].acol());/*break;*/}
-				}
-				for(int ishq=0;ishq<HH_showerptns.num();++ishq){
-					if(HH_showerptns[ishq].acol()==HH_showerptns[loc-1].col()){if(ishq==loc-1){continue;}HH_showerptns[ishq].acol(considering[0].acol());/*break;*/}
-				}//[**]
-				HH_showerptns[loc - 1].col(considering[0].acol());
-			}
-			else if(loc < 0){HH_thermal[-loc - 1].col(considering[0].acol());}
-			/*
-			int thermsib = findthermalsibling(-element[0] , HH_thermal);
-			if(thermsib < 0){HH_thermal[thermsib-1].acol(considering[1].col());}
-			else{HH_showerptns[thermsib+1].acol(considering[1].col()); }
-			}
-			*/
-		}
+					else if(considering[1].col() > 0){ //LBT + MAT
+						int loc = findcloserepl(considering[1], perm2[q2], true, true, HH_showerptns, HH_thermal );
+						if(loc == 999999999){
+							//std::cout <<endl<<"Warning : extra parton used for string repair!!"<<endl;
+							HHparton fakep = considering[1]; fakep.id(-fakep.id());  fakep.acol(++maxtag);
+							Extraparton.add(fakep);
+							//somewhere, we need to make for loop to toss all partons to remnants list.
+						}
+						else if (loc > 0){
+							for(int ishq=0;ishq<showerquarks.num();++ishq){
+								if(!showerquarks[ishq].is_used() && showerquarks[ishq].acol()==HH_showerptns[loc-1].col()){showerquarks[ishq].acol(considering[0].acol());/*break;*/}
+							}
+							for(int ishq=0;ishq<HH_showerptns.num();++ishq){
+								if(HH_showerptns[ishq].acol()==HH_showerptns[loc-1].col()){if(ishq==loc-1){continue;}HH_showerptns[ishq].acol(considering[0].acol());/*break;*/}
+							}//[**]
+							HH_showerptns[loc - 1].col(considering[0].acol());
+						}
+						else if(loc < 0){HH_thermal[-loc - 1].col(considering[0].acol());}
+						/*
+						int thermsib = findthermalsibling(-element[0] , HH_thermal);
+						if(thermsib < 0){HH_thermal[thermsib-1].acol(considering[1].col());}
+						else{HH_showerptns[thermsib+1].acol(considering[1].col()); }
+						}
+						*/
+					}
                     //now color tags from both partons are same
-            }
+                  }
 
 
 // DO the test without part below
@@ -3374,7 +3396,7 @@ std::cout <<endl<<endl;
 					if(perm2[q2]>0){formedhadron.add_par(showerquarks[element[1]].par());}else{formedhadron.add_par(element[1]);}
 
 					//now setting if baryon is in excited state
-					if(WigM[0]*recofactor2 < rndmeson){formedhadron.is_excited(true);}
+					if(WigM[0]*recofactor2*mult < rndmeson){formedhadron.is_excited(true);}
 
 					//setting if there are any thermal partons used to make the hadron: (setting the '0' thermal parent to -99999 so that it doesn't conflict with '0' shower parton)
 					if(     perm2[q2]>0){/*is sh-sh*/ formedhadron.is_shsh(true);}
@@ -3485,6 +3507,10 @@ std::cout <<endl<<endl;
        if(sel_out[0] == 999999999 || sel_out[1] == 999999999){
          //std::cout <<endl<<"Warning : extra parton used for string repair!!"<<endl;
          HHparton fakeg = HH_showerptns[i]; fakeg.id(21);  fakeg.acol(++maxtag); fakeg.col(++maxtag);
+         double dir = (ran() < 0.5) ? 1. : -1.; double fake_pT = (p_fake >= 1.) ? 0.282842712474619 : 0.; double fake_phi = 2. * 3.14159265358979 * ran();
+         fakeg.px(fake_pT * cos(fake_phi)); fakeg.py(fake_pT * sin(fake_phi)); fakeg.pz(p_fake * dir);
+         fakeg.e(std::sqrt(fakeg.px()*fakeg.px() + fakeg.py()*fakeg.py() + fakeg.pz()*fakeg.pz() + fakeg.mass()*fakeg.mass()));
+         fakeg.orig(-1); fakeg.is_remnant(true);
          Extraparton.add(fakeg);
        }
        else if(sel_out[0] > 0){HH_showerptns[sel_out[0]-1].col(++maxtag); HH_showerptns[i].acol(maxtag);}
@@ -3500,6 +3526,10 @@ std::cout <<endl<<endl;
       if(loc == 999999999){
          //std::cout <<endl<<"Warning : extra parton used for string repair!!"<<endl;
          HHparton fakep = HH_showerptns[i]; fakep.id(-fakep.id());  fakep.acol(++maxtag);
+         double dir = (ran() < 0.5) ? 1. : -1.; double fake_pT = (p_fake >= 1.) ? 0.282842712474619 : 0.; double fake_phi = 2. * 3.14159265358979 * ran();
+         fakep.px(fake_pT * cos(fake_phi)); fakep.py(fake_pT * sin(fake_phi)); fakep.pz(p_fake * dir);
+         fakep.e(std::sqrt(fakep.px()*fakep.px() + fakep.py()*fakep.py() + fakep.pz()*fakep.pz() + fakep.mass()*fakep.mass()));
+         fakep.orig(-1); fakep.is_remnant(true);
          Extraparton.add(fakep);
          //somewhere, we need to make for loop to toss all partons to remnants list.
       }
@@ -3513,6 +3543,10 @@ std::cout <<endl<<endl;
       if(loc == 999999999){
          //std::cout <<endl<<"Warning : extra parton used for string repair!!"<<endl;
          HHparton fakep = HH_showerptns[i]; fakep.id(-fakep.id());  fakep.col(++maxtag);
+         double dir = (ran() < 0.5) ? 1. : -1.; double fake_pT = (p_fake >= 1.) ? 0.282842712474619 : 0.; double fake_phi = 2. * 3.14159265358979 * ran();
+         fakep.px(fake_pT * cos(fake_phi)); fakep.py(fake_pT * sin(fake_phi)); fakep.pz(p_fake * dir);
+         fakep.e(std::sqrt(fakep.px()*fakep.px() + fakep.py()*fakep.py() + fakep.pz()*fakep.pz() + fakep.mass()*fakep.mass()));
+         fakep.orig(-1); fakep.is_remnant(true);
          Extraparton.add(fakep);
          //somewhere, we need to make for loop to toss all partons to remnants list.
       }
@@ -3537,6 +3571,10 @@ std::cout <<endl<<endl;
           if(loc == 999999999){
              //std::cout <<endl<<"Warning : extra parton used for string repair!!"<<endl;
              HHparton fakep = showerquarks[j]; fakep.id(-fakep.id());  fakep.acol(++maxtag);
+             double dir = (ran() < 0.5) ? 1. : -1.; double fake_pT = (p_fake >= 1.) ? 0.282842712474619 : 0.; double fake_phi = 2. * 3.14159265358979 * ran();
+             fakep.px(fake_pT * cos(fake_phi)); fakep.py(fake_pT * sin(fake_phi)); fakep.pz(p_fake * dir);
+             fakep.e(std::sqrt(fakep.px()*fakep.px() + fakep.py()*fakep.py() + fakep.pz()*fakep.pz() + fakep.mass()*fakep.mass()));
+             fakep.orig(-1); fakep.is_remnant(true);
              Extraparton.add(fakep);
              //somewhere, we need to make for loop to toss all partons to remnants list.
           }
@@ -3551,6 +3589,10 @@ std::cout <<endl<<endl;
           if(loc == 999999999){
              //std::cout <<endl<<"Warning : extra parton used for string repair!!"<<endl;
              HHparton fakep = showerquarks[j]; fakep.id(-fakep.id());  fakep.col(++maxtag);
+             double dir = (ran() < 0.5) ? 1. : -1.; double fake_pT = (p_fake >= 1.) ? 0.282842712474619 : 0.; double fake_phi = 2. * 3.14159265358979 * ran();
+             fakep.px(fake_pT * cos(fake_phi)); fakep.py(fake_pT * sin(fake_phi)); fakep.pz(p_fake * dir);
+             fakep.e(std::sqrt(fakep.px()*fakep.px() + fakep.py()*fakep.py() + fakep.pz()*fakep.pz() + fakep.mass()*fakep.mass()));
+             fakep.orig(-1); fakep.is_remnant(true);
              Extraparton.add(fakep);
              //somewhere, we need to make for loop to toss all partons to remnants list.
           }
@@ -3579,6 +3621,7 @@ std::cout <<endl<<endl;
   }
 
   // add fakeparton for color neutrality
+//I don't think this will ever actually trip? ~Michael: July 2, 2021
   HHparton partonforneutrality;
   parton_collection fpartonforneutrality;
   fpartonforneutrality.add(partonforneutrality);
@@ -4886,11 +4929,19 @@ for(int ifq1 = 0; ifq1 < cols.size(); ifq1++){
     }
   }
   if( !paired ){
-    HHparton fakeq;
-    fakeq.id(-1);//set fake anti up quark
-    fakeq.set_color(0);
-    fakeq.set_anti_color(cols.at(ifq1));
-    finalstring.push_back(fakeq);
+    int ifinptn = -1;
+    for(int iptn = 0; iptn < finalstring.size; ++iptn){if(finalstring.at(iptn).col()==cols.at(ifq1)){ifinptn = iptn; break;}}
+    
+    int loc = findcloserepl(finalstring.at(ifinptn), ifinptn+1, false, true, HH_showerptns, HH_thermal);
+    if(loc == 999999999 || loc > 0){
+        HHparton fakep = finalstring.at(ifinptn); fakep.id(-fakep.id()); fakeq.set_color(0); fakeq.set_anti_color(cols.at(ifq1));
+        double dir = (ran() < 0.5) ? 1. : -1.; double fake_pT = (p_fake >= 1.) ? 0.282842712474619 : 0.; double fake_phi = 2. * 3.14159265358979 * ran();
+        fakep.px(fake_pT * cos(fake_phi)); fakep.py(fake_pT * sin(fake_phi)); fakep.pz(p_fake * dir);
+        fakep.e(std::sqrt(fakep.px()*fakep.px() + fakep.py()*fakep.py() + fakep.pz()*fakep.pz() + fakep.mass()*fakep.mass()));
+        fakep.orig(-1); fakep.is_remnant(true);
+        finalstring.push_back(fakeq);
+    }
+    else if(loc < 0){HH_thermal[-loc-1].acol(cols.at(ifq1)); HH_thermal[-loc-1].is_remnant(true); finalstring.push_back(HH_thermal[-loc-1]); finalstring[finalstring.size()-1].par(-i-1);}
   }
   paired = false;
 }
@@ -4903,11 +4954,19 @@ for(int ifaq1 = 0; ifaq1 < acols.size(); ifaq1++){
     }
   }
   if( !paired ){
-    HHparton fakeaq;
-    fakeaq.id(1);//add fake up quark id
-    fakeaq.set_color(acols.at(ifaq1));
-    fakeaq.set_anti_color(0);
-    finalstring.push_back(fakeaq);
+    int ifinptn = -1;
+    for(int iptn = 0; iptn < finalstring.size; ++iptn){if(finalstring.at(iptn).acol()==acols.at(ifaq1)){ifinptn = iptn; break;}}
+    
+    int loc = findcloserepl(finalstring.at(ifinptn), ifinptn+1, false, true, HH_showerptns, HH_thermal);
+    if(loc == 999999999 || loc > 0){
+        HHparton fakep = finalstring.at(ifinptn); fakep.id(-fakep.id()); fakeq.set_color(acols.at(ifaq1)); fakeq.set_anti_color(0);
+        double dir = (ran() < 0.5) ? 1. : -1.; double fake_pT = (p_fake >= 1.) ? 0.282842712474619 : 0.; double fake_phi = 2. * 3.14159265358979 * ran();
+        fakep.px(fake_pT * cos(fake_phi)); fakep.py(fake_pT * sin(fake_phi)); fakep.pz(p_fake * dir);
+        fakep.e(std::sqrt(fakep.px()*fakep.px() + fakep.py()*fakep.py() + fakep.pz()*fakep.pz() + fakep.mass()*fakep.mass()));
+        fakep.orig(-1); fakep.is_remnant(true);
+        finalstring.push_back(fakeq);
+    }
+    else if(loc < 0){HH_thermal[-loc-1].col(acols.at(ifaq1)); HH_thermal[-loc-1].is_remnant(true); finalstring.push_back(HH_thermal[-loc-1]); finalstring[finalstring.size()-1].par(-i-1);}
   }
   paired = false;
 }
