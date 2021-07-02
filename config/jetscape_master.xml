@@ -272,11 +272,11 @@
    <JetHadronization>
        <name>colored/colorless/hybrid</name>
        <take_recoil>1</take_recoil>
-       <eCMforHadronization>2510</eCMforHadronization>
-       <reco_Elevelmax>3</reco_Elevelmax>
+       <eCMforHadronization>460</eCMforHadronization>
+       <reco_Elevelmax>1</reco_Elevelmax>
        <thermreco_distmax>5.0</thermreco_distmax>
-       <shower_recofactor>0.3333333</shower_recofactor>
-       <thermal_recofactor>0.3333333</thermal_recofactor>
+       <shower_recofactor>1.0</shower_recofactor>
+       <thermal_recofactor>1.0</thermal_recofactor>
        <weak_decays>on</weak_decays>
    </JetHadronization>
 
