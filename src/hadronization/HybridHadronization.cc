@@ -3475,7 +3475,7 @@ std::cout <<endl<<endl;
 			//if this is the second (last) used quark in a splitting, set the status to 1
 			else if(HH_showerptns[showerquarks[i].par()].status() == -1){HH_showerptns[showerquarks[i].par()].status(1);}
 			//remove this check if it never throws.
-			else{JSWARN << "SOMETHING HAS GONE VERY WRONG WITH REFORMING GLUON IN POS: " << showerquarks[i].par(); int val; std::cin >> val; showerquarks[i].par(val);}
+			else{JSWARN << "SOMETHING HAS GONE VERY WRONG WITH REFORMING GLUON IN POS: " << showerquarks[i].par(); int val; /*std::cin >> val; showerquarks[i].par(val);*/ showerquarks[i].par(0);}
 		}
 	}
 	//need to run back through shower; if there are any gluons that didn't get used at all in the shower - restore them (and output to remnants below)
