@@ -727,6 +727,8 @@ void JetScape::DetermineWritersFromXML() {
   std::string outputFilenameAscii = outputFilename;
   std::string outputFilenameAsciiGZ = outputFilename;
   std::string outputFilenameHepMC = outputFilename;
+  std::string outputFilenameFinalStatePartonsAscii = outputFilename;
+  std::string outputFilenameFinalStateHadronsAscii = outputFilename;
 
   // Check if each writer is enabled, and if so add it to the task list
   CheckForWriterFromXML("JetScapeWriterAscii",
@@ -735,6 +737,10 @@ void JetScape::DetermineWritersFromXML() {
                         outputFilenameAsciiGZ.append(".dat.gz"));
   CheckForWriterFromXML("JetScapeWriterHepMC",
                         outputFilenameHepMC.append(".hepmc"));
+  CheckForWriterFromXML("JetScapeWriterFinalStatePartonsAscii",
+                        outputFilenameFinalStatePartonsAscii.append("_final_state_partons.dat"));
+  CheckForWriterFromXML("JetScapeWriterFinalStateHadronsAscii",
+                        outputFilenameFinalStateHadronsAscii.append("_final_state_hadrons.dat"));
 
   // Check for custom writers
   tinyxml2::XMLElement *element =
