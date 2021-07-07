@@ -23,6 +23,10 @@ endif()
 #initialstate
 FILE(GLOB initialstatesources initialstate/*.cc)
 set (SOURCES  ${SOURCES}  ${initialstatesources} )
+## Take care of options
+if(NOT "${USE_IPGlasma}")
+  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/initialstate/IPGlasmaWrapper.cc)
+endif()
 
 #trento needs data tables
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/data_table)
@@ -45,7 +49,6 @@ set (SOURCES  ${SOURCES}  ${liquefiersources} )
 #hydro
 FILE(GLOB hydrosources hydro/*.cc)
 set (SOURCES  ${SOURCES}  ${hydrosources} )
-## Take care of options
 if(NOT "${USE_MUSIC}")
   list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/hydro/MusicWrapper.cc)
 endif()
@@ -95,6 +98,10 @@ endif()
 
 if ( ${HEPMC_FOUND} )
   target_link_libraries (JetScape -L${HEPMC_LIB_DIR} -lHepMC3 )
+endif()
+
+if ( USE_IPGlasma)
+  target_link_libraries (JetScape ipglasma_lib)
 endif()
 
 if ( USE_MUSIC )

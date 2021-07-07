@@ -47,6 +47,13 @@ void HydroFromFile::InitializeHydro(Parameter parameter_list) {
   JSDEBUG << s << " to be initilizied ...";
 
   hydro_type_ = GetXMLElementInt({"Hydro", "hydro_from_file", "hydro_type"});
+  int boost_inv = GetXMLElementInt(
+          {"Hydro", "hydro_from_file", "boost_invariant_"});
+  if (boost_inv == 0) {
+      boost_invariant_ = false;
+  } else {
+      boost_invariant_ = true;
+  }
   load_viscous_ =
       GetXMLElementInt({"Hydro", "hydro_from_file", "load_viscous_info"});
   nskip_tau_ =
@@ -65,8 +72,11 @@ void HydroFromFile::InitializeHydro(Parameter parameter_list) {
     JSWARN << " : please check your inputs~";
     exit(-1);
 #endif
-  } else if (hydro_type_ == 2 || hydro_type_ == 3 || hydro_type_ == 4) {
+  } else if (hydro_type_ == 2 || hydro_type_ == 3
+             || hydro_type_ == 4 || hydro_type_ == 5) {
     hydroinfo_MUSIC_ptr = new Hydroinfo_MUSIC();
+    int verbose = GetXMLElementInt({"vlevel"});
+    hydroinfo_MUSIC_ptr->set_verbose(verbose);
   }
 
   hydro_status = INITIALIZED;
@@ -110,6 +120,13 @@ void HydroFromFile::read_in_hydro_event(string MUSIC_input_file,
     hydroinfo_MUSIC_ptr->readHydroData(hydro_mode, nskip_tau, MUSIC_input_file,
                                        MUSIC_hydro_ideal_file, hydro_shear_file,
                                        hydro_bulk_file);
+  } else if (hydro_type_ == 5) {
+    int hydro_mode = 11;
+    string hydro_shear_file = "";
+    string hydro_bulk_file = "";
+    hydroinfo_MUSIC_ptr->readHydroData(hydro_mode, nskip_tau, MUSIC_input_file,
+                                       MUSIC_hydro_ideal_file, hydro_shear_file,
+                                       hydro_bulk_file);
   }
   hydro_status = FINISHED;
 }
@@ -134,17 +151,21 @@ void HydroFromFile::EvolveHydro() {
     }
 #ifdef USE_HDF5
     read_in_hydro_event(filename, 500, load_viscous_);
+    hydro_tau_0 = hydroinfo_h5_ptr->getHydrogridTau0();
+    hydro_tau_max = hydroinfo_h5_ptr->getHydrogridTaumax();
 #endif
     hydro_status = FINISHED;
   } else if (hydro_type_ == 2) {
     string input_file;
     string hydro_ideal_file;
     if (flag_read_in_multiple_hydro_ == 0) {
-      input_file = (para_->FirstChildElement("MUSIC_input_file")->GetText());
-      hydro_ideal_file = (para_->FirstChildElement("MUSIC_file")->GetText());
+      input_file = GetXMLElementText(
+              {"Hydro", "hydro_from_file", "MUSIC_input_file"});
+      hydro_ideal_file = GetXMLElementText(
+              {"Hydro", "hydro_from_file", "MUSIC_file"});
     } else {
-      string folder =
-          (para_->FirstChildElement("hydro_files_folder")->GetText());
+      string folder = GetXMLElementText(
+              {"Hydro", "hydro_from_file", "hydro_files_folder"});
       std::ostringstream input_filename;
       std::ostringstream hydro_filename;
       input_filename << folder << "/event-" << hydro_event_idx_
@@ -155,15 +176,19 @@ void HydroFromFile::EvolveHydro() {
       hydro_ideal_file = hydro_filename.str();
     }
     read_in_hydro_event(input_file, hydro_ideal_file, nskip_tau_);
+    hydro_tau_0 = hydroinfo_MUSIC_ptr->get_hydro_tau0();
+    hydro_tau_max = hydroinfo_MUSIC_ptr->get_hydro_tau_max();
   } else if (hydro_type_ == 3) {
     string input_file;
     string hydro_ideal_file;
     if (flag_read_in_multiple_hydro_ == 0) {
-      input_file = (para_->FirstChildElement("MUSIC_input_file")->GetText());
-      hydro_ideal_file = (para_->FirstChildElement("MUSIC_file")->GetText());
+      input_file = GetXMLElementText(
+              {"Hydro", "hydro_from_file", "MUSIC_input_file"});
+      hydro_ideal_file = GetXMLElementText(
+              {"Hydro", "hydro_from_file", "MUSIC_file"});
     } else {
-      string folder =
-          (para_->FirstChildElement("hydro_files_folder")->GetText());
+      string folder = GetXMLElementText(
+              {"Hydro", "hydro_from_file", "hydro_files_folder"});
       std::ostringstream input_filename;
       std::ostringstream hydro_filename;
       input_filename << folder << "/event-" << hydro_event_idx_
@@ -174,15 +199,19 @@ void HydroFromFile::EvolveHydro() {
       hydro_ideal_file = hydro_filename.str();
     }
     read_in_hydro_event(input_file, hydro_ideal_file, nskip_tau_);
-  } else if (hydro_type_ == 4) {
+    hydro_tau_0 = hydroinfo_MUSIC_ptr->get_hydro_tau0();
+    hydro_tau_max = hydroinfo_MUSIC_ptr->get_hydro_tau_max();
+  } else if (hydro_type_ == 4 || hydro_type_ == 5) {
     string input_file;
     string hydro_ideal_file;
     if (flag_read_in_multiple_hydro_ == 0) {
-      input_file = (para_->FirstChildElement("MUSIC_input_file")->GetText());
-      hydro_ideal_file = (para_->FirstChildElement("MUSIC_file")->GetText());
+      input_file = GetXMLElementText(
+              {"Hydro", "hydro_from_file", "MUSIC_input_file"});
+      hydro_ideal_file = GetXMLElementText(
+              {"Hydro", "hydro_from_file", "MUSIC_file"});
     } else {
-      string folder =
-          (para_->FirstChildElement("hydro_files_folder")->GetText());
+      string folder = GetXMLElementText(
+              {"Hydro", "hydro_from_file", "hydro_files_folder"});
       std::ostringstream input_filename;
       std::ostringstream hydro_filename;
       input_filename << folder << "/event-" << hydro_event_idx_
@@ -193,6 +222,8 @@ void HydroFromFile::EvolveHydro() {
       hydro_ideal_file = hydro_filename.str();
     }
     read_in_hydro_event(input_file, hydro_ideal_file, 1);
+    hydro_tau_0 = hydroinfo_MUSIC_ptr->get_hydro_tau0();
+    hydro_tau_max = hydroinfo_MUSIC_ptr->get_hydro_tau_max();
   } else {
     JSWARN << "main: unrecognized hydro_type = " << hydro_type_;
     exit(1);
@@ -227,17 +258,20 @@ void HydroFromFile::GetHydroInfo(
   double y_local = static_cast<double>(y);
   double z_local = static_cast<double>(z);
 
+  if (t_local < z_local) {
+      JSWARN << "Request a space-like point, t = " << t_local
+             << ", z = " << z_local;
+      exit(1);
+  }
+  double tau_local = sqrt(t * t - z * z);
+  double eta_local = 0.5 * log((t + z) / (t - z + 1e-15));
+  if (boost_invariant_) {
+      eta_local = 0.;
+  }
+
   // initialize the fluid cell pointer
   hydrofluidCell *temp_fluid_cell_ptr = new hydrofluidCell;
   if (hydro_type_ == 1) { // for OSU 2+1d hydro
-    double tau_local = sqrt(t * t - z * z);
-    double eta_local = 0.5 * log((t + z) / (t - z + 1e-15));
-    if (std::isnan(tau_local)) { // check
-      JSWARN << "[Error]: HydroFromFile::GetHydroInfo(): "
-             << "tau is nan!";
-      JSWARN << "please check: t = " << t << ", z = " << z;
-      exit(1);
-    }
 #ifdef USE_HDF5
     hydroinfo_h5_ptr->getHydroinfo(tau_local, x_local, y_local,
                                    temp_fluid_cell_ptr);
@@ -250,7 +284,10 @@ void HydroFromFile::GetHydroInfo(
     temp_fluid_cell_ptr->vy *= u0_perp / u0;
     temp_fluid_cell_ptr->vz = z / (t + 1e-15);
 #endif
-  } else if (hydro_type_ == 2 || hydro_type_ == 3 || hydro_type_ == 4) {
+  } else if (hydro_type_ == 2 || hydro_type_ == 3
+             || hydro_type_ == 4 || hydro_type_ == 5) {
+    t_local = tau_local*cosh(eta_local);
+    z_local = tau_local*sinh(eta_local);
     hydroinfo_MUSIC_ptr->getHydroValues(x_local, y_local, z_local, t_local,
                                         temp_fluid_cell_ptr);
   }
