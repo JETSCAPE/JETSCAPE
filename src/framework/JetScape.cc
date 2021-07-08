@@ -261,7 +261,18 @@ void JetScape::DetermineTaskListFromXML() {
             JSINFO << "JetScape::DetermineTaskList() -- Hard Process: Added "
                       "PythiaGun to task list.";
           }
-        } else if (((int)childElementName.find("CustomModule") >= 0)) {
+        }
+        //   - epemGun
+        else if (childElementName == "epemGun") {
+          auto EpemGun =
+              JetScapeModuleFactory::createInstance(childElementName);
+          if (EpemGun) {
+            Add(EpemGun);
+            JSINFO << "JetScape::DetermineTaskList() -- Hard Process: Added "
+                      "epemGun to task list.";
+            }
+          } 
+	else if (((int)childElementName.find("CustomModule") >= 0)) {
           auto customModule =
               JetScapeModuleFactory::createInstance(childElementName);
           if (customModule) {
