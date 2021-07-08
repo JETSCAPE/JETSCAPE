@@ -223,7 +223,7 @@ void PythiaGun::Exec() {
     // for (auto& p : p62 ) cout << p.pT() << endl;
 	
 	//skipping event if softQCD is on & pThat exceeds max (where next bin is HardQCD with this as pThatmin)
-	if(softQCD && (pythia.info.pTHat() >= pTHatMax)){continue;}
+	if(softQCD && (info.pTHat() >= pTHatMax)){continue;}
 
     flag62 = true;
 
