@@ -73,20 +73,20 @@ void PythiaGun::InitTask() {
   pTHatMin = GetXMLElementDouble({"Hard", "PythiaGun", "pTHatMin"});
   pTHatMax = GetXMLElementDouble({"Hard", "PythiaGun", "pTHatMax"});
   
-  if(pTHatMin < 0.01){ //assuming low bin where softQCD should be used
+/*  if(pTHatMin < 0.01){ //assuming low bin where softQCD should be used
     //running softQCD - inelastic nondiffrative (min-bias)
     readString("HardQCD:all = off");
     readString("SoftQCD:nonDiffractive = on");
     softQCD = true;
   }
   else{ //running normal hardQCD
-    readString("HardQCD:all = on"); // will repeat this line in the xml for demonstration
+*/    readString("HardQCD:all = on"); // will repeat this line in the xml for demonstration
     //  readString("HardQCD:gg2ccbar = on"); // switch on heavy quark channel
     //readString("HardQCD:qqbar2ccbar = on");
     numbf.str("PhaseSpace:pTHatMin = "); numbf << pTHatMin; readString(numbf.str());
     numbf.str("PhaseSpace:pTHatMax = "); numbf << pTHatMax; readString(numbf.str());
 	  softQCD = false;
-  }
+//  }
 
   // SC: read flag for FSR
   FSR_on = GetXMLElementInt({"Hard", "PythiaGun", "FSR_on"});
@@ -177,11 +177,11 @@ void PythiaGun::Exec() {
       //the id is set to the heaviest quark in the diquark (except down quark)
       //this technically violates baryon number conservation over the entire event
       //also can violate electric charge conservation
-      if( (std::abs(particle.id()) > 1100) && (std::abs(particle.id()) < 6000) && ((std::abs(particle.id())/10)%10 == 0) ){
+/*      if( (std::abs(particle.id()) > 1100) && (std::abs(particle.id()) < 6000) && ((std::abs(particle.id())/10)%10 == 0) ){
         if(particle.id() > 0){particle.id( -1*particle.id()/1000 );}
         else{particle.id( particle.id()/1000 );}
       }
-
+*/
       if (!FSR_on) {
         // only accept particles after MPI
         if (particle.status() != 62)
@@ -194,8 +194,8 @@ void PythiaGun::Exec() {
 
         // reject rare cases of very soft particles that don't have enough e to get
         // reasonable virtuality
-//        if (particle.pT() < 1.0 / sqrt(vir_factor))
-//          continue;
+        if (particle.pT() < 1.0 / sqrt(vir_factor))
+          continue;
 
         //if(particle.id()==22) cout<<"########this is a photon!######" <<endl;
         // accept
@@ -245,20 +245,10 @@ void PythiaGun::Exec() {
     VERBOSE(1) << "No initial state module, setting the starting location to "
                   "0. Make sure to add e.g. trento before PythiaGun.";
   } else {
-    auto num_bin_coll = ini->GetNumOfBinaryCollisions();
-    if (num_bin_coll.size() == 0) {
-      JSWARN << "num_of_binary_collisions is empty, setting the starting "
-                "location to 0. Make sure to add e.g. trento before PythiaGun.";
-    } else {
-      std::discrete_distribution<> dist(
-          begin(num_bin_coll), end(num_bin_coll)); // Create the distribution
-
-      // Now generate values
-      auto idx = dist(*GetMt19937Generator());
-      auto coord = ini->CoordFromIdx(idx);
-      xLoc[1] = get<0>(coord);
-      xLoc[2] = get<1>(coord);
-    }
+    double x, y;
+    ini->SampleABinaryCollisionPoint(x, y);
+    xLoc[1] = x;
+    xLoc[2] = y;
   }
 
   // Loop through particles
@@ -281,6 +271,25 @@ void PythiaGun::Exec() {
 
     VERBOSE(7) << " at x=" << xLoc[1] << ", y=" << xLoc[2] << ", z=" << xLoc[3];
 
+    if (true) { //if (flag_useHybridHad != 1) {
+      AddParton(make_shared<Parton>(0, particle.id(), 0, particle.pT(),
+                                    particle.y(), particle.phi(), particle.e(),
+                                    xLoc));
+    } else {
+      auto ptn =
+          make_shared<Parton>(0, particle.id(), 0, particle.pT(), particle.y(),
+                              particle.phi(), particle.e(), xLoc);
+      ptn->set_color(particle.col());
+      ptn->set_anti_color(particle.acol());
+      ptn->set_max_color(1000 * (np + 1));
+      AddParton(ptn);
+    }
+    //}
+    //else
+    //{
+    //          AddHadron(make_shared<Hadron>(hCounter,particle.id(),particle.status(),particle.pT(),particle.eta(),particle.phi(),particle.e(),xLoc));
+    //          hCounter++;
+    //}
     auto ptn = make_shared<Parton>(0, particle.id(), 0, particle.pT(), particle.y(), particle.phi(), particle.e(), xLoc);
     ptn->set_color(particle.col());
     ptn->set_anti_color(particle.acol());
