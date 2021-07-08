@@ -54,7 +54,6 @@ double Matter::distFncFM[N_T][N_p1] = {{0.0}};
 Matter::Matter() {
   SetId("Matter");
   VERBOSE(8);
-  flag_useHybridHad = 0;
   qhat = 0.0;
   ehat = 0.0;
   e2hat = 0.0;
@@ -103,7 +102,6 @@ void Matter::Init() {
   hydro_Tc = 0.16;
   brick_length = 4.0;
   vir_factor = 1.0;
-  flag_useHybridHad = 0;
 
   double m_qhat = GetXMLElementDouble({"Eloss", "Matter", "qhat0"});
   SetQhat(m_qhat);
@@ -116,7 +114,6 @@ void Matter::Init() {
 
   matter_on = GetXMLElementInt({"Eloss", "Matter", "matter_on"});
   in_vac = GetXMLElementInt({"Eloss", "Matter", "in_vac"});
-  flag_useHybridHad = GetXMLElementInt({"Eloss", "Matter", "useHybridHad"});
   recoil_on = GetXMLElementInt({"Eloss", "Matter", "recoil_on"});
   broadening_on = GetXMLElementInt({"Eloss", "Matter", "broadening_on"});
   brick_med = GetXMLElementInt({"Eloss", "Matter", "brick_med"});
@@ -133,14 +130,9 @@ void Matter::Init() {
          << endl;
   }
 
-  if (flag_useHybridHad != 1) {
-    MaxColor = 101; // MK:recomb
-  } else {
-    MaxColor = 1;
-  }
+  MaxColor = 101;
 
   JSINFO << MAGENTA << "MATTER input parameter";
-  JSINFO << MAGENTA << "use hybrid hadronization later? " << flag_useHybridHad;
   JSINFO << MAGENTA << "matter shower on: " << matter_on;
   JSINFO << MAGENTA << "in_vac: " << in_vac << "  brick_med: " << brick_med
          << "  recoil_on: " << recoil_on;
@@ -531,38 +523,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
       double ft = generate_L(pIn[i].mean_form_time());
       pIn[i].set_form_time(ft);
 
-      if (flag_useHybridHad != 1) {
-        unsigned int color = 0, anti_color = 0;
-        std::uniform_int_distribution<short> uni(102, 103);
-
-        if (pIn[i].pid() > 0) {
-          // color = uni(*GetMt19937Generator());
-          color = 101;
-        }
-        pIn[i].set_color(color);
-        if ((pIn[i].pid() < 0) || (pIn[i].pid() == 21)) {
-          anti_color = uni(*GetMt19937Generator());
-        }
-        pIn[i].set_anti_color(anti_color);
-
-        max_color = color;
-
-        if (anti_color > color)
-          max_color = anti_color;
-
-        min_color = color;
-
-        min_anti_color = anti_color;
-
-        pIn[i].set_max_color(max_color);
-        pIn[i].set_min_color(min_color);
-        pIn[i].set_min_anti_color(min_anti_color);
-        MaxColor = max_color;
-      } else {
-        pIn[i].set_min_color(pIn[i].color());
-        pIn[i].set_min_anti_color(pIn[i].anti_color());
-        MaxColor = pIn[i].max_color();
-      }
+      pIn[i].set_min_color(pIn[i].color());
+      pIn[i].set_min_anti_color(pIn[i].anti_color());
+      MaxColor = pIn[i].max_color();
 
       // VERBOSE OUTPUT ON INITIAL STATUS OF PARTICLE:
       VERBOSE(8);
@@ -1092,6 +1055,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
         unsigned int d1_col, d1_acol, d2_col, d2_acol, color, anti_color;
         //std::uniform_int_distribution<short> uni(101,103);
         //color = pIn[i].color();
+	max_color = pIn[i].max_color(); //fixing color tracking
 
         if (iSplit != 3) // not photon radiation, generate new colors
         {
