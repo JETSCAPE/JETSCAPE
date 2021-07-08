@@ -63,6 +63,16 @@ void Brick::InitTask() {
 
   //Parameter parameter_list;
   GetParameterList().hydro_input_filename = (char *)"dummy"; //*(argv+1);
+  
+  
+  brick_L = GetXMLElementDouble({"Eloss", "Matter", "brick_length"});
+/*  tinyxml2::XMLElement *bri_L=JetScapeXML::Instance()->GetXMLRoot()->FirstChildElement("Eloss" )->FirstChildElement("Matter")->FirstChildElement("brick_length");
+  double dbl_in;
+  if (bri_L){
+      bri_L->QueryDoubleText(&dbl_in);
+      if(dbl_in >= 0.){brick_L = dbl_in;}else{brick_L = 999999999.9;}
+  }
+  else{brick_L = 999999999.9;}*/
 }
 
 void Brick::InitializeHydro(Parameter parameter_list) {
@@ -88,7 +98,8 @@ void Brick::GetHydroInfo(
   if (hydro_status == FINISHED) {
     fluid_cell_info_ptr->energy_density = 0.0;
     fluid_cell_info_ptr->entropy_density = 0.0;
-    if (bjorken_expansion_on) {
+	if(t > brick_L){fluid_cell_info_ptr->temperature = 0.;}
+    else if (bjorken_expansion_on) {
       fluid_cell_info_ptr->temperature =
           T_brick * std::pow(start_time / t, 1.0 / 3.0);
     } else {
