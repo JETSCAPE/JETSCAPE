@@ -49,20 +49,6 @@ void PythiaGun::InitTask() {
   readString("Next:numberShowProcess = 0");
   readString("Next:numberShowEvent = 0");
 
-  // Standard settings
-  readString(
-      "HardQCD:all = on"); // will repeat this line in the xml for demonstration
-  //  readString("HardQCD:gg2ccbar = on"); // switch on heavy quark channel
-  //readString("HardQCD:qqbar2ccbar = on");
-  readString("HadronLevel:Decay = off");
-  readString("HadronLevel:all = off");
-  readString("PartonLevel:ISR = on");
-  readString("PartonLevel:MPI = on");
-  //readString("PartonLevel:FSR = on");
-  readString("PromptPhoton:all=on");
-  readString("WeakSingleBoson:all=off");
-  readString("WeakDoubleBoson:all=off");
-
   // For parsing text
   stringstream numbf(stringstream::app | stringstream::in | stringstream::out);
   numbf.setf(ios::fixed, ios::floatfield);
@@ -74,6 +60,34 @@ void PythiaGun::InitTask() {
   SetId(s);
   // cout << s << endl;
 
+  //other Pythia settings
+  readString("HadronLevel:Decay = off");
+  readString("HadronLevel:all = off");
+  readString("PartonLevel:ISR = on");
+  readString("PartonLevel:MPI = on");
+  //readString("PartonLevel:FSR = on");
+  readString("PromptPhoton:all=on");
+  readString("WeakSingleBoson:all=off");
+  readString("WeakDoubleBoson:all=off");
+  
+  pTHatMin = GetXMLElementDouble({"Hard", "PythiaGun", "pTHatMin"});
+  pTHatMax = GetXMLElementDouble({"Hard", "PythiaGun", "pTHatMax"});
+  
+  if(pTHatMin < 0.01){ //assuming low bin where softQCD should be used
+    //running softQCD - inelastic nondiffrative (min-bias)
+    readString("HardQCD:all = off");
+    readString("SoftQCD:nonDiffractive = on");
+    softQCD = true;
+  }
+  else{ //running normal hardQCD
+    readString("HardQCD:all = on"); // will repeat this line in the xml for demonstration
+    //  readString("HardQCD:gg2ccbar = on"); // switch on heavy quark channel
+    //readString("HardQCD:qqbar2ccbar = on");
+    numbf.str("PhaseSpace:pTHatMin = "); numbf << pTHatMin; readString(numbf.str());
+    numbf.str("PhaseSpace:pTHatMax = "); numbf << pTHatMax; readString(numbf.str());
+	  softQCD = false;
+  }
+
   // SC: read flag for FSR
   FSR_on = GetXMLElementInt({"Hard", "PythiaGun", "FSR_on"});
   if (FSR_on)
@@ -81,19 +95,8 @@ void PythiaGun::InitTask() {
   else
     readString("PartonLevel:FSR = off");
 
-  pTHatMin = GetXMLElementDouble({"Hard", "PythiaGun", "pTHatMin"});
-  pTHatMax = GetXMLElementDouble({"Hard", "PythiaGun", "pTHatMax"});
-
   JSINFO << MAGENTA << "Pythia Gun with FSR_on: " << FSR_on;
-  JSINFO << MAGENTA << "Pythia Gun with " << pTHatMin << " < pTHat < "
-         << pTHatMax;
-
-  numbf.str("PhaseSpace:pTHatMin = ");
-  numbf << pTHatMin;
-  readString(numbf.str());
-  numbf.str("PhaseSpace:pTHatMax = ");
-  numbf << pTHatMax;
-  readString(numbf.str());
+  JSINFO << MAGENTA << "Pythia Gun with " << pTHatMin << " < pTHat < " << pTHatMax;
 
   // random seed
   // xml limits us to unsigned int :-/ -- but so does 32 bits Mersenne Twist
@@ -191,8 +194,8 @@ void PythiaGun::Exec() {
 
         // reject rare cases of very soft particles that don't have enough e to get
         // reasonable virtuality
-        if (particle.pT() < 1.0 / sqrt(vir_factor))
-          continue;
+//        if (particle.pT() < 1.0 / sqrt(vir_factor))
+//          continue;
 
         //if(particle.id()==22) cout<<"########this is a photon!######" <<endl;
         // accept
@@ -218,6 +221,9 @@ void PythiaGun::Exec() {
     std::sort(p62.begin(), p62.end(), greater_than_pt());
     // // check...
     // for (auto& p : p62 ) cout << p.pT() << endl;
+	
+	//skipping event if softQCD is on & pThat exceeds max (where next bin is HardQCD with this as pThatmin)
+	if(softQCD && (pythia.info.pTHat() >= pTHatMax)){continue;}
 
     flag62 = true;
 
