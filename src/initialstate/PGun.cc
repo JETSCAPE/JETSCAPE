@@ -28,7 +28,6 @@ Pythia8::Pythia PGun::InternalHelperPythia("IntentionallyEmpty", false);
 PGun::PGun() : HardProcess() {
   fixed_pT = 0;
   parID = 21;
-  flag_useHybridHad = 0;
   SetId("PGun");
   VERBOSE(8);
 }
@@ -48,9 +47,6 @@ void PGun::InitTask() {
 
   parID = GetXMLElementDouble({"Hard", "PGun", "parID"});
   JSINFO << "Parton Gun with parID = " << parID;
-
-  flag_useHybridHad = GetXMLElementInt({"Hard", "PGun", "useHybridHad"});
-  JSINFO << "Use hybrid hadronization? " << flag_useHybridHad;
 }
 
 void PGun::Exec() {
@@ -101,24 +97,30 @@ void PGun::Exec() {
     VERBOSE(1)
         << "No initial state module, setting the starting location to 0. ";
   } else {
-    double x, y;
-    ini->SampleABinaryCollisionPoint(x, y);
-    xLoc[1] = x;
-    xLoc[2] = y;
+    auto num_bin_coll = ini->GetNumOfBinaryCollisions();
+    if (num_bin_coll.size() == 0) {
+      JSWARN << "num_of_binary_collisions is empty, setting the starting "
+                "location to 0. Make sure to add e.g. trento before PythiaGun.";
+    } else {
+      std::discrete_distribution<> dist(
+          begin(num_bin_coll), end(num_bin_coll)); // Create the distribution
+
+      // Now generate values
+      auto idx = dist(*GetMt19937Generator());
+      auto coord = ini->CoordFromIdx(idx);
+      xLoc[1] = std::get<0>(coord);
+      xLoc[2] = std::get<1>(coord);
+    }
   }
 
   xLoc[1] = 0.0;
   xLoc[2] = 0.0;
 
-  if (flag_useHybridHad != 1) {
-    AddParton(make_shared<Parton>(0, parID, 0, pT, rapidity, phi, p[0], xLoc));
-  } else {
     auto ptn = make_shared<Parton>(0, parID, 0, pT, rapidity, phi, p[0], xLoc);
     ptn->set_color((parID > 0) ? 100 : 0);
     ptn->set_anti_color(((parID > 0) || (parID == 21)) ? 0 : 101);
     ptn->set_max_color(102);
     AddParton(ptn);
-  }
 
   //      VERBOSEPARTON(7,*GetPartonAt(i)) <<" added "<<" at x=" << xLoc[1]<<", y=" << xLoc[2]<<", z=" << xLoc[3];
   //    }
