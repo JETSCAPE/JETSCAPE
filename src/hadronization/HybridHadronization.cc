@@ -267,6 +267,15 @@ void HybridHadronization::Init(){
 
     // Don't let any hadron decay
     //pythia.readString("HadronLevel:Decay = off");
+	  
+    std::string weak_decays = GetXMLElementText({"JetHadronization", "weak_decays"});
+    if (weak_decays == "off"){JSINFO << "Weak decays are turned off"; pythia.readString("HadronLevel:Decay = off");}
+    else {
+        JSINFO << "Weak decays are turned on";
+        pythia.readString("HadronLevel:Decay = on");
+        pythia.readString("ParticleDecays:limitTau0 = on");
+        pythia.readString("ParticleDecays:tau0Max = 10.0");
+    }
 	
 	//setting seed, or using random seed
 	pythia.readString("Random:setSeed = on");
@@ -284,10 +293,10 @@ void HybridHadronization::Init(){
 	//pythia.readString("Check:mTolErr   = 1e-1");   // setting EP/M conservation violation constraint somewhat weaker, just for ease
 	
 	//setting a decay threshold for subsequent hadron production
-	pythia.readString("ParticleDecays:limitTau0 = on");       //When on, only particles with tau0 < tau0Max are decayed
+//	pythia.readString("ParticleDecays:limitTau0 = on");       //When on, only particles with tau0 < tau0Max are decayed
 	//pythia.readString("ParticleDecays:tau0Max = 0.000003"); //The above tau0Max, expressed in mm/c :: default = 10. :: default, mayDecay()=true for tau0 below 1000 mm
 															  //set to 1E-17sec (in mm/c) to be smaller than pi0 lifetime
-	pythia.readString("ParticleDecays:tau0Max = 10.0");
+//	pythia.readString("ParticleDecays:tau0Max = 10.0");
 	
 	//allowing for partonic space-time information to be used by PYTHIA
 	//pythia.readString("PartonVertex:setVertex = on");        //this might allow PYTHIA to keep track of partonic space-time information (default was for 'rope hadronization')
