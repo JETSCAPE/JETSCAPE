@@ -290,11 +290,6 @@ void PythiaGun::Exec() {
     //          AddHadron(make_shared<Hadron>(hCounter,particle.id(),particle.status(),particle.pT(),particle.eta(),particle.phi(),particle.e(),xLoc));
     //          hCounter++;
     //}
-    auto ptn = make_shared<Parton>(0, particle.id(), 0, particle.pT(), particle.y(), particle.phi(), particle.e(), xLoc);
-    ptn->set_color(particle.col());
-    ptn->set_anti_color(particle.acol());
-    ptn->set_max_color(1000 * (np + 1));
-    AddParton(ptn);
   }
 
   VERBOSE(8) << GetNHardPartons();
