@@ -111,13 +111,26 @@ void HadronizationManager::Exec() {
 }
 
 void HadronizationManager::CreateSignalSlots() {
-  for (auto it : GetTaskList())
-    for (auto it2 : it->GetTaskList())
+  for (auto it : GetTaskList()) {
+    for (auto it2 : it->GetTaskList()) {
       if (!dynamic_pointer_cast<Hadronization>(it2)
-               ->GetTransformPartonsConnected())
+               ->GetTransformPartonsConnected()) {
         JetScapeSignalManager::Instance()->ConnectTransformPartonsSignal(
             dynamic_pointer_cast<Hadronization>(it),
             dynamic_pointer_cast<Hadronization>(it2));
+      }
+      if (!dynamic_pointer_cast<Hadronization>(it2)
+               ->GetGetHydroHyperSurfaceConnected()) {
+        JetScapeSignalManager::Instance()->ConnectGetHydroHyperSurfaceSignal(
+            dynamic_pointer_cast<Hadronization>(it2));
+      }
+      if (!dynamic_pointer_cast<Hadronization>(it2)
+               ->GetGetHydroCellSignalConnected()) {
+        JetScapeSignalManager::Instance()->ConnectGetHydroCellSignal(
+            dynamic_pointer_cast<Hadronization>(it2));
+      }
+    }
+  }
 
   JetScapeSignalManager::Instance()->PrintTransformPartonsSignalMap();
 }

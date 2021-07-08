@@ -20,6 +20,7 @@
 #include "JetClass.h"
 #include "JetScapeWriter.h"
 #include "PartonShower.h"
+#include "SurfaceFinder.h"
 //#include "MakeUniqueHelper.h"
 #include <vector>
 #include <random>
@@ -46,6 +47,14 @@ public:
                    multi_threaded_local>
       TransformPartons;
 
+  sigslot::signal2<Jetscape::real, std::vector<SurfaceCellInfo> &,
+                   multi_threaded_local> GetHydroHyperSurface;
+
+  sigslot::signal5<double, double, double, double,
+                   std::unique_ptr<FluidCellInfo> &, multi_threaded_local>
+      GetHydroCellSignal;
+
+
   vector<shared_ptr<Hadron>> GetHadrons() { return outHadrons; }
   vector<shared_ptr<Parton>> GetOutPartons() { return outPartons; }
 
@@ -58,6 +67,20 @@ public:
     return TransformPartonsConnected;
   }
 
+  void SetGetHydroHyperSurfaceConnected(bool m_GetHydroHyperSurfaceConnected) {
+    HydroHyperSurfaceConnected_ = m_GetHydroHyperSurfaceConnected;
+  }
+  const bool GetGetHydroHyperSurfaceConnected() {
+    return HydroHyperSurfaceConnected_;
+  }
+
+  void SetGetHydroCellSignalConnected(bool m_GetHydroCellSignalConnected) {
+    GetHydroCellSignalConnected_ = m_GetHydroCellSignalConnected;
+  }
+  const bool GetGetHydroCellSignalConnected() {
+    return GetHydroCellSignalConnected_;
+  }
+
   void AddInHadrons(vector<shared_ptr<Hadron>> ih) { outHadrons = ih; }
 
 private:
@@ -67,6 +90,8 @@ private:
   void DoHadronize();
 
   bool TransformPartonsConnected;
+  bool HydroHyperSurfaceConnected_;
+  bool GetHydroCellSignalConnected_;
 };
 
 } // namespace Jetscape
