@@ -197,8 +197,9 @@ void MpiMusic::EvolveHydro() {
                    << "evolution_all_xyeta_" << GetId() << ".dat";
     system(system_command.str().c_str());
 
+    //std::vector<SurfaceCellInfo> surface_cells;
     //if (freezeout_temperature > 0.0) {
-    //  FindAConstantTemperatureSurface(freezeout_temperature);
+    //  FindAConstantTemperatureSurface(freezeout_temperature, surface_cells);
     //}
   }
 

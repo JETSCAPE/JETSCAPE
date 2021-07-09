@@ -205,8 +205,8 @@ public:
   // the detailed implementation is left to the hydro developper
   /** @return Default function to get the hypersurface for Cooper-Frye or recombination model. It can overridden by different modules.
      */
-  std::vector<SurfaceCellInfo>
-  FindAConstantTemperatureSurface(Jetscape::real T_sw);
+  void FindAConstantTemperatureSurface(
+          Jetscape::real T_sw, std::vector<SurfaceCellInfo> &surface_cells);
 
   // all the following functions will call function GetHydroInfo()
   // to get thermaldynamic and dynamical information at a space-time point

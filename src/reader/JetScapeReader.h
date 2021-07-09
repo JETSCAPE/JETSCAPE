@@ -60,6 +60,9 @@ public:
 
   vector<shared_ptr<Hadron>> GetHadrons() { return hadrons; }
   vector<fjcore::PseudoJet> GetHadronsForFastJet();
+  double GetSigmaGen() const { return sigmaGen; }
+  double GetSigmaErr() const { return sigmaErr; }
+  double GetEventWeight() const { return eventWeight; }
   double GetEventPlaneAngle() const { return EventPlaneAngle; }
 
 private:
@@ -82,6 +85,9 @@ private:
   vector<node> nodeVec;
   vector<edge> edgeVec;
   vector<shared_ptr<Hadron>> hadrons;
+  double sigmaGen;
+  double sigmaErr;
+  double eventWeight;
   double EventPlaneAngle;
 };
 
