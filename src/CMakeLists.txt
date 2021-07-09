@@ -112,6 +112,10 @@ if ( USE_ISS )
   target_link_libraries (JetScape iSS )
 endif()
 
+if ( USE_IS3D )
+  target_link_libraries (JetScape iS3D_lib )
+endif()
+
 if ( USE_CLVISC )
   target_link_libraries (JetScape clviscwrapper )
 endif()

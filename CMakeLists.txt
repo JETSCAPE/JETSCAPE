@@ -179,6 +179,7 @@ install(
   "${CMAKE_SOURCE_DIR}/external_packages/"
   "${CMAKE_SOURCE_DIR}/external_packages/ipglasma/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/iSS/src/"
+  "${CMAKE_SOURCE_DIR}/external_packages/iS3D/src/cpp/"
   "${CMAKE_SOURCE_DIR}/external_packages/hydro_from_external_file/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/music/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/trento/src/"
@@ -401,7 +402,8 @@ if (USE_IS3D)
   else()
     message(FATAL_ERROR "Error: iS3D source has not been downloaded in external_packages by ./get_iS3D.sh")
   endif()
-  target_compile_definitions(JetScape PRIVATE iS3D)
+  message("Building iS3D ...")
+  target_compile_definitions(JetScape PRIVATE USE_IS3D)
 endif (USE_IS3D)
 
 if (OPENCL_FOUND AND USE_CLVISC)
@@ -450,9 +452,9 @@ target_link_libraries(FinalStatePartons JetScape )
 if ( USE_IPGlasma )
     target_link_libraries(runJetscape ${GSL_LIBRARIES})
 endif (USE_IPGlasma )
-if ( USE_MUSIC AND USE_ISS )
+if ( USE_MUSIC AND (USE_ISS OR USE_IS3D) )
     target_link_libraries(runJetscape ${GSL_LIBRARIES})
-endif (USE_MUSIC AND USE_ISS )
+endif ( USE_MUSIC AND (USE_ISS OR USE_IS3D) )
 
 if ( USE_MUSIC AND USE_ISS AND USE_SMASH )
     include_directories(${SMASH_INCLUDE_DIR})
