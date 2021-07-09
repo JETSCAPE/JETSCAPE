@@ -130,7 +130,7 @@ void Matter::Init() {
          << endl;
   }
 
-  MaxColor = 1; //MaxColor = 101;
+  MaxColor = 101; //MaxColor = 1;
 
   JSINFO << MAGENTA << "MATTER input parameter";
   JSINFO << MAGENTA << "matter shower on: " << matter_on;
