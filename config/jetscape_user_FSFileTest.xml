@@ -32,6 +32,10 @@
 
   <!--Preequilibrium Dynamics Module -->
   <Preequilibrium>
+    <!-- starting long. proper time for Preequilibrium dynamics -->
+    <tau0>0.1</tau0>
+    <!-- switching long. proper time from Preequilibrium dynamics to Hydrodynamics (Landau Matching) -->
+    <taus>0.6</taus>
     <FreestreamMilne> </FreestreamMilne>
   </Preequilibrium>
 
