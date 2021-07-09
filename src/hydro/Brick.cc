@@ -98,8 +98,8 @@ void Brick::GetHydroInfo(
   if (hydro_status == FINISHED) {
     fluid_cell_info_ptr->energy_density = 0.0;
     fluid_cell_info_ptr->entropy_density = 0.0;
-	if(t > brick_L){fluid_cell_info_ptr->temperature = 0.;}
-    else if (bjorken_expansion_on) {
+/*	if(t > brick_L){fluid_cell_info_ptr->temperature = 0.;}
+    else */ if (bjorken_expansion_on) {
       fluid_cell_info_ptr->temperature =
           T_brick * std::pow(start_time / t, 1.0 / 3.0);
     } else {
