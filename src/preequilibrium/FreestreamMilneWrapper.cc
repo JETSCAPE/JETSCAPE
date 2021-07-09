@@ -55,7 +55,7 @@ void FreestreamMilneWrapper::InitializePreequilibrium(
       {"Preequilibrium", "taus"});
 
   params->TAU0 = tau0;
-  params->DTAU = taus;
+  params->DTAU = taus - tau0;
 }
 
 void FreestreamMilneWrapper::EvolvePreequilibrium() {
