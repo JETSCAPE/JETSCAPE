@@ -125,6 +125,7 @@ public:
       @param idx is an integer which maps to an unique unit cell in the coordinate space (x,y,z or eta). 
    */
   std::tuple<double, double, double> CoordFromIdx(int idx);
+  virtual void SampleABinaryCollisionPoint(double &x, double &y);
 
   /**  @return The maximum value of coordinate "x" in the nuclear profile of a nucleus.
    */

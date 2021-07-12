@@ -14,7 +14,7 @@ endif()
 
 # Default to the release build.
 if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Release)
+    set(CMAKE_BUILD_TYPE Release)
 endif()
 
 # for mac compliance
@@ -57,6 +57,13 @@ if (OPENCL_FOUND)
   endif (USE_CLVISC)
 endif (OPENCL_FOUND)
 
+# IPGlasma. Turn on with 'cmake -DUSE_IPGlasma=ON'.
+option(USE_IPGlasma "Build with IPGlasma " OFF)
+if (USE_IPGlasma)
+    message("Includes for IPGlasma ...")
+    include_directories(./external_packages/ipglasma ./external_packages/ipglasma/src)
+endif (USE_IPGlasma)
+
 # MUSIC. Turn on with 'cmake -DUSE_MUSIC=ON'.
 option(USE_MUSIC "Build tests for MUSIC" OFF)
 if (USE_MUSIC)
@@ -91,6 +98,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-reorder -Wno-unused-variable ")
 ## Then set the build type specific options. These will be automatically appended.
 set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+
 ## can turn on debugging information
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 
@@ -163,6 +171,7 @@ install(
   "${CMAKE_SOURCE_DIR}/src/reader/"
   # external packages
   "${CMAKE_SOURCE_DIR}/external_packages/"
+  "${CMAKE_SOURCE_DIR}/external_packages/ipglasma/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/iSS/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/hydro_from_external_file/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/music/src/"
@@ -177,6 +186,7 @@ install(
   PATTERN "gtl" EXCLUDE
   PATTERN "iSS" EXCLUDE
   PATTERN "hydro_from_external_file" EXCLUDE
+  PATTERN "ipglasma" EXCLUDE
   PATTERN "music" EXCLUDE
   PATTERN "clvisc" EXCLUDE
   PATTERN "trento" EXCLUDE
@@ -219,6 +229,7 @@ install(
   "${PROJECT_BINARY_DIR}/lib/"
   # external packages
   "${PROJECT_BINARY_DIR}/external_packages/gtl/lib/"
+  "${PROJECT_BINARY_DIR}/external_packages/ipglasma/src/"
   "${PROJECT_BINARY_DIR}/external_packages/iSS/src/"
   "${PROJECT_BINARY_DIR}/external_packages/music/src/"
   "${PROJECT_BINARY_DIR}/external_packages/trento/src/"
@@ -341,6 +352,19 @@ if (USE_FREESTREAM)
   target_compile_definitions(JetScape PRIVATE USE_FREESTREAM)
 endif (USE_FREESTREAM)
 
+if (USE_IPGlasma)
+  if(NOT EXISTS "${CMAKE_SOURCE_DIR}/external_packages/ipglasma")
+      message(FATAL_ERROR "Error: IPGlasma source has not been downloaded in external_packages by ./get_ipglasma.sh")
+  endif()
+  if (${GSL_FOUND})
+    message("Building IPGlasma ...")
+    add_subdirectory(./external_packages/ipglasma)
+  else()
+    message (FATAL_ERROR "GSL are necessary for ipglasma" )
+  endif()
+  target_compile_definitions(JetScape PRIVATE USE_IPGlasma)
+endif()
+
 if (USE_MUSIC)
   if(NOT EXISTS "${CMAKE_SOURCE_DIR}/external_packages/music")
     message(FATAL_ERROR "Error: MUSIC source has not been downloaded in external_packages by ./get_music.sh")
@@ -406,6 +430,9 @@ add_executable(FinalStatePartons ./examples/FinalStatePartons.cc)
 target_link_libraries(FinalStatePartons JetScape )
 
 # executables with additional dependencies
+if ( USE_IPGlasma )
+    target_link_libraries(runJetscape ${GSL_LIBRARIES})
+endif (USE_IPGlasma )
 if ( USE_MUSIC AND USE_ISS )
     target_link_libraries(runJetscape ${GSL_LIBRARIES})
 endif (USE_MUSIC AND USE_ISS )
@@ -430,6 +457,15 @@ endif ( USE_MUSIC AND USE_ISS AND USE_SMASH )
 
 # -----------------------------------------------------------
 #### copy essential files for MUSIC to build/
+if (USE_IPGlasma)
+  if(EXISTS "${CMAKE_SOURCE_DIR}/external_packages/ipglasma/")
+    file(COPY ${CMAKE_SOURCE_DIR}/external_packages/ipglasma/input DESTINATION ${CMAKE_BINARY_DIR}/)
+    file(RENAME ${CMAKE_BINARY_DIR}/input ${CMAKE_BINARY_DIR}/ipglasma.input)
+    file(COPY ${CMAKE_SOURCE_DIR}/external_packages/ipglasma/qs2Adj_vs_Tp_vs_Y_200.in DESTINATION ${CMAKE_BINARY_DIR}/)
+  else()
+    message(FATAL_ERROR "Error: Cannot find files for IPGlasma.")
+  endif()
+endif()
 if (USE_FREESTREAM)
   if(EXISTS "${CMAKE_SOURCE_DIR}/examples/test_freestream_files/")
     file(COPY ./examples/test_freestream_files/freestream_input

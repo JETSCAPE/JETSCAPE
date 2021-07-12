@@ -101,20 +101,10 @@ void PGun::Exec() {
     VERBOSE(1)
         << "No initial state module, setting the starting location to 0. ";
   } else {
-    auto num_bin_coll = ini->GetNumOfBinaryCollisions();
-    if (num_bin_coll.size() == 0) {
-      JSWARN << "num_of_binary_collisions is empty, setting the starting "
-                "location to 0. Make sure to add e.g. trento before PythiaGun.";
-    } else {
-      std::discrete_distribution<> dist(
-          begin(num_bin_coll), end(num_bin_coll)); // Create the distribution
-
-      // Now generate values
-      auto idx = dist(*GetMt19937Generator());
-      auto coord = ini->CoordFromIdx(idx);
-      xLoc[1] = std::get<0>(coord);
-      xLoc[2] = std::get<1>(coord);
-    }
+    double x, y;
+    ini->SampleABinaryCollisionPoint(x, y);
+    xLoc[1] = x;
+    xLoc[2] = y;
   }
 
   xLoc[1] = 0.0;

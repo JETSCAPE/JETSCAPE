@@ -37,6 +37,8 @@ static double Lambda_QCD = 0.2;
 static double fmToGeVinv = 5.0;
 /// < should be 1/0.197, but 5 helps in debugging.
 
+static const double hbarC = 0.197327053;
+
 static double zeta3 = 1.20206;
 
 static double mu = 0.722;

@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+
+<jetscape>
+
+  <vlevel> 0 </vlevel>
+  <nEvents> 1 </nEvents>
+
+  <JetScapeWriterAscii> on </JetScapeWriterAscii>
+
+    <!-- Inital State Module  -->
+    <IS>
+        <IPGlasma> </IPGlasma>
+    </IS>
+
+  <!-- Hard Process -->
+  <Hard>
+    <PythiaGun>
+      <pTHatMin>50</pTHatMin>
+      <pTHatMax>70</pTHatMax>
+      <eCM>5020</eCM>
+    </PythiaGun>
+  </Hard>
+
+    <!--Preequilibrium Dynamics Module -->
+    <Preequilibrium>
+        <Glasma> </Glasma>
+    </Preequilibrium>
+
+    <!-- Hydro  Module  -->
+    <Hydro>
+        <MUSIC>
+            <Initial_time_tau_0>0.4</Initial_time_tau_0>
+            <freezeout_temperature>0.15</freezeout_temperature>
+        </MUSIC>
+    </Hydro>
+
+  <!--Eloss Modules -->
+  <Eloss>
+    <Matter>
+      <in_vac> 0 </in_vac>
+    </Matter>
+  </Eloss>
+
+  <!-- Jet Hadronization Module -->
+  <JetHadronization>
+    <name>colorless</name>
+  </JetHadronization>
+
+</jetscape>

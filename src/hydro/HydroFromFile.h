@@ -31,8 +31,6 @@ class HydroFromFile : public FluidDynamics {
   // this is wrapper class for MUSIC so that it can be used as a external
   // library for the JETSCAPE integrated framework
 private:
-  tinyxml2::XMLElement *para_;
-
   int flag_read_in_multiple_hydro_;
   int hydro_event_idx_;
 
@@ -46,6 +44,10 @@ private:
   HydroinfoH5 *hydroinfo_h5_ptr;
 #endif
   Hydroinfo_MUSIC *hydroinfo_MUSIC_ptr;
+
+  double PreEq_tau0_;
+  double PreEq_tauf_;
+  Hydroinfo_MUSIC *hydroinfo_PreEq_ptr;
 
   // Allows the registration of the module so that it is available to be used by the Jetscape framework.
   static RegisterJetScapeModule<HydroFromFile> reg;
@@ -66,6 +68,11 @@ public:
 
   //! This function load a MUSIC hydro event
   void read_in_hydro_event(string input_file, string hydro_ideal_file,
+                           int nskip_tau);
+
+  //! This function load a PreEq event and a MUSIC hydro event
+  void read_in_hydro_event(string input_file, string preEq_file,
+                           string hydro_ideal_file,
                            int nskip_tau);
 
   //! This function is a dummy function

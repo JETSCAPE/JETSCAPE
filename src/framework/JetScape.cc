@@ -203,6 +203,21 @@ void JetScape::DetermineTaskListFromXML() {
           JSWARN << "InitialFromFile is attempted to be added, but HDF5 is not "
                     "installed!";
 #endif
+        } else if (childElementName == "IPGlasma") {
+          auto ipglasma = JetScapeModuleFactory::createInstance("IPGlasma");
+          if (ipglasma) {
+            Add(ipglasma);
+            JSINFO << "JetScape::DetermineTaskList() -- Initial State: Added "
+                      "IPGlasma module to task list.";
+          }
+        } else if (childElementName == "initial_Ncoll_list") {
+          auto initial =
+              JetScapeModuleFactory::createInstance("NcollListFromFile");
+          if (initial) {
+            Add(initial);
+            JSINFO << "JetScape::DetermineTaskList() -- Initial state: Added "
+                      "NcollListFromFile to task list.";
+          }
         }
         //   - Custom module
         else if (((int)childElementName.find("CustomModule") >= 0)) {
@@ -279,9 +294,16 @@ void JetScape::DetermineTaskListFromXML() {
             JSINFO << "JetScape::DetermineTaskList() -- PreDynamics: Added "
                       "NullPreDynamics to task list.";
           }
-        }
+        } else if (childElementName == "Glasma") {
+          auto predynamics =
+              JetScapeModuleFactory::createInstance(childElementName);
+          if (predynamics) {
+            Add(predynamics);
+            JSINFO << "JetScape::DetermineTaskList() -- PreDynamics: Added "
+                      "Glasma to task list.";
+          }
+        } else if (childElementName == "FreestreamMilne") {
         //    - FreestreamMilne
-        else if (childElementName == "FreestreamMilne") {
 #ifdef USE_FREESTREAM
           auto predynamics =
               JetScapeModuleFactory::createInstance(childElementName);
@@ -294,9 +316,8 @@ void JetScape::DetermineTaskListFromXML() {
           JSWARN << "FreestreamMilne is attempted to be added, but freestream "
                     "is not installed!";
 #endif
-        }
+        } else if (((int)childElementName.find("CustomModule") >= 0)) {
         //   - Custom module
-        else if (((int)childElementName.find("CustomModule") >= 0)) {
           auto customModule =
               JetScapeModuleFactory::createInstance(childElementName);
           if (customModule) {
@@ -706,6 +727,8 @@ void JetScape::DetermineWritersFromXML() {
   std::string outputFilenameAscii = outputFilename;
   std::string outputFilenameAsciiGZ = outputFilename;
   std::string outputFilenameHepMC = outputFilename;
+  std::string outputFilenameFinalStatePartonsAscii = outputFilename;
+  std::string outputFilenameFinalStateHadronsAscii = outputFilename;
 
   // Check if each writer is enabled, and if so add it to the task list
   CheckForWriterFromXML("JetScapeWriterAscii",
@@ -714,6 +737,10 @@ void JetScape::DetermineWritersFromXML() {
                         outputFilenameAsciiGZ.append(".dat.gz"));
   CheckForWriterFromXML("JetScapeWriterHepMC",
                         outputFilenameHepMC.append(".hepmc"));
+  CheckForWriterFromXML("JetScapeWriterFinalStatePartonsAscii",
+                        outputFilenameFinalStatePartonsAscii.append("_final_state_partons.dat"));
+  CheckForWriterFromXML("JetScapeWriterFinalStateHadronsAscii",
+                        outputFilenameFinalStateHadronsAscii.append("_final_state_hadrons.dat"));
 
   // Check for custom writers
   tinyxml2::XMLElement *element =
