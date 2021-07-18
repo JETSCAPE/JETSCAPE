@@ -282,6 +282,7 @@ void HydroFromFile::GetHydroInfo(
   hydrofluidCell *temp_fluid_cell_ptr = new hydrofluidCell;
   if (hydro_type_ == 1) { // for OSU 2+1d hydro
 #ifdef USE_HDF5
+    eta_local = 0.5 * log((t + z) / (t - z + 1e-15));
     hydroinfo_h5_ptr->getHydroinfo(tau_local, x_local, y_local,
                                    temp_fluid_cell_ptr);
     // compute the flow velocity in the lab frame
