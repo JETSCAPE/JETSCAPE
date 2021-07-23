@@ -368,19 +368,19 @@ void HybridHadronization::Init(){
 	}
 	
 	//temp. outputting thermal partons to ensure they're sampled...
-	std::cout << "\n\n\n";
+/*	std::cout << "\n\n\n";
 	for(int i=0;i<HH_thermal.num();++i){
 		std::cout << HH_thermal[i].id() << ", " << HH_thermal[i].px() << ", " << HH_thermal[i].py() << ", " << HH_thermal[i].pz() << ", " << HH_thermal[i].e() << ", " << 
 		  HH_thermal[i].x() << ", " << HH_thermal[i].y() << ", " << HH_thermal[i].z() << ", " << HH_thermal[i].x_t() << "\n";
 	}
-	std::cout << "\n\n\n";
+	std::cout << "\n\n\n";*/
   }
 }
 
 void HybridHadronization::WriteTask(weak_ptr<JetScapeWriter> w){
   VERBOSE(8);
   auto f = w.lock();
-  if ( !f ) return; 
+  if ( !f ) return;
   f->WriteComment("Hadronization Module : "+GetId());
 }
 
@@ -1624,7 +1624,6 @@ if(considering[0].id() > 0 && considering[1].id() < 0){//case of first parton is
                     std::cout <<endl<<"chosen partons are "<< int(considering[0].id()) << " and " << int(considering[1].id()) << endl <<endl;
                     std::cout <<endl<<"and their color tag is "<< int(HH_showerptns[showerquarks[element[0]].par()].col()) << " and " << int(HH_showerptns[showerquarks[element[1]].par()].acol()) << endl <<endl;
                     std::cout <<"color correction implemented as Follows: "<< HH_showerptns[showerquarks[element[0]].par()].col() <<" = " << HH_showerptns[showerquarks[element[1]].par()].acol()<<endl;
-
 //before changing the tags, revise the MesonrecoMatrix elements!
                     int coltag1 = HH_showerptns[showerquarks[element[0]].par()].col();
                     int coltag2 = HH_showerptns[showerquarks[element[1]].par()].acol();
@@ -1632,10 +1631,8 @@ if(considering[0].id() > 0 && considering[1].id() < 0){//case of first parton is
                     std::vector<int>::iterator I2 = std::find(IndiceForColFin.begin(), IndiceForColFin.end(), coltag2);
                     int loc1 = std::distance(IndiceForColFin.begin(), I1);
                     int loc2 = std::distance(IndiceForColFin.begin(), I2); //set up for find matrix indices corresponding to the color tags
-
                     MesonrecoMatrix1.at(loc1).at(loc2) = 0;
                     MesonrecoMatrix1.at(loc2).at(loc1) = 0; //Matrix revised
-
                     std::cout <<endl<<"Revised Matrix is same as below"<<endl;
                     for(int irow=0; irow < IndiceForColFin.size(); irow++){
                     for(int icol=0; icol < IndiceForColFin.size(); icol++){
@@ -1643,10 +1640,7 @@ if(considering[0].id() > 0 && considering[1].id() < 0){//case of first parton is
                     }
                     std::cout <<endl<<endl;
                     }
-
-
                     HH_showerptns[showerquarks[element[0]].par()].col(HH_showerptns[showerquarks[element[1]].par()].acol());//now color tags from both partons are same
-
                     }
 */
 //declare the vector needed to form fake parton to meet the need of PYTHIA {color neutrality}
@@ -1686,8 +1680,6 @@ if(considering[0].id() > 0 && considering[1].id() < 0){//case of first parton is
                 break;
                }
               } // this data will be used for appending fake partons {at the last part of recomb function, pid, pstat col, acol needed, }
-
-
             }
             */
 
@@ -1700,11 +1692,11 @@ if(considering[0].id() > 0 && considering[1].id() < 0){//case of first parton is
                                         (Tempjunctions.at(ijunc).at(1).at(1) == considering[1].col()) ||
                                         (Tempjunctions.at(ijunc).at(1).at(1) == considering[2].col())){
                                           Tempjunctions.at(ijunc).at(1).pop_back();
-                                          Tempjunctions.at(ijunc).at(1).push_back(999);
+                                          Tempjunctions.at(ijunc).at(1).push_back(9999999);
                                           Tempjunctions.at(ijunc).at(2).pop_back();
-                                          Tempjunctions.at(ijunc).at(2).push_back(999);
+                                          Tempjunctions.at(ijunc).at(2).push_back(9999999);
                                           Tempjunctions.at(ijunc).at(3).pop_back();
-                                          Tempjunctions.at(ijunc).at(3).push_back(999);// replace all the col tag in junction candidate with zero to preserve the size of the vector, or the code would be broken
+                                          Tempjunctions.at(ijunc).at(3).push_back(9999999);// replace all the col tag in junction candidate with zero to preserve the size of the vector, or the code would be broken
                                         }
                                       }
                                       for(int ijunc=0; ijunc<Tempjunctions.size(); ijunc++){
@@ -1712,11 +1704,11 @@ if(considering[0].id() > 0 && considering[1].id() < 0){//case of first parton is
                                         (Tempjunctions.at(ijunc).at(2).at(1) == considering[1].col()) ||
                                         (Tempjunctions.at(ijunc).at(2).at(1) == considering[2].col()) ){
                                           Tempjunctions.at(ijunc).at(1).pop_back();
-                                          Tempjunctions.at(ijunc).at(1).push_back(888);
+                                          Tempjunctions.at(ijunc).at(1).push_back(8888888);
                                           Tempjunctions.at(ijunc).at(2).pop_back();
-                                          Tempjunctions.at(ijunc).at(2).push_back(888);
+                                          Tempjunctions.at(ijunc).at(2).push_back(8888888);
                                           Tempjunctions.at(ijunc).at(3).pop_back();
-                                          Tempjunctions.at(ijunc).at(3).push_back(888);// replace all the col tag in junction candidate with zero to preserve the size of the vector, or the code would be broken
+                                          Tempjunctions.at(ijunc).at(3).push_back(8888888);// replace all the col tag in junction candidate with zero to preserve the size of the vector, or the code would be broken
                                         }
                                       }
                                       for(int ijunc=0; ijunc<Tempjunctions.size(); ijunc++){
@@ -1724,11 +1716,11 @@ if(considering[0].id() > 0 && considering[1].id() < 0){//case of first parton is
                                         (Tempjunctions.at(ijunc).at(3).at(1) == considering[1].col() ||
                                         (Tempjunctions.at(ijunc).at(3).at(1) == considering[2].col())) ){
                                           Tempjunctions.at(ijunc).at(1).pop_back();
-                                          Tempjunctions.at(ijunc).at(1).push_back(777);
+                                          Tempjunctions.at(ijunc).at(1).push_back(7777777);
                                           Tempjunctions.at(ijunc).at(2).pop_back();
-                                          Tempjunctions.at(ijunc).at(2).push_back(777);
+                                          Tempjunctions.at(ijunc).at(2).push_back(7777777);
                                           Tempjunctions.at(ijunc).at(3).pop_back();
-                                          Tempjunctions.at(ijunc).at(3).push_back(777);// replace all the col tag in junction candidate with zero to preserve the size of the vector, or the code would be broken
+                                          Tempjunctions.at(ijunc).at(3).push_back(7777777);// replace all the col tag in junction candidate with zero to preserve the size of the vector, or the code would be broken
                                       }
                                   } // now corresponding Tempjunction vector is cleared!
                 // baryon is to be formed, so temporary anti junction is defined
@@ -1761,7 +1753,7 @@ if(considering[0].id() > 0 && considering[1].id() < 0){//case of first parton is
                     int coltag1 = considering[0].col();
                     int coltag2 = considering[1].col();
                     int coltag3 = considering[2].col();
-                    if(coltag1 > 0 && coltag2 > 0 && coltag3 && coltag1 < limit && coltag2 < limit && coltag3 < limit ){
+                    if(coltag1 > 0 && coltag2 > 0 && coltag3 && coltag1 <= limit && coltag2 <= limit && coltag3 <= limit ){
                     double tag1 = (double)coltag1;  // they are casted to be inserted into the matrix(since it's vector of double
                     double tag2 = (double)coltag2;
                     double tag3 = (double)coltag3;
@@ -2092,15 +2084,12 @@ if(considering[0].id() > 0 && considering[1].id() < 0){//case of first parton is
                     if(considering[0].col() == 0 && considering[1].col() == 0 && considering[2].col() == 0){ //  Therm/LBT + Therm/LBT + MAT case
                       IdColInfo1.push_back(-1); // antijunction tag(-1)
                       IdColInfo1.push_back(0); // zero(just room for the other usage) {-1, 0} will be in 1st
-
                       maxtag++;
                       int loc1 = findcloserepl(considering[0], element[0] + 1, true, true, showerquarks, HH_thermal);
                       if (loc1 > 0){showerquarks[loc1 - 1].acol(maxtag); }
                       else if(loc1 < 0){HH_thermal[-loc1 - 1].acol(maxtag); }
                       IdColInfo2.push_back(-1);
                       IdColInfo2.push_back(maxtag);
-
-
                       maxtag++;
                       int loc2 = findcloserepl(considering[1], perm2[q2], true, true, showerquarks, HH_thermal);
                       if(loc2 = 999999999){
@@ -2108,42 +2097,27 @@ if(considering[0].id() > 0 && considering[1].id() < 0){//case of first parton is
                          HHparton fakep = considering[1]; fakep.id(-fakep.id());  fakep.acol(maxtag);
                          //Extraparton collection.add{fakep};
                          //somewhere, we need to make for loop to toss all partons to remnants list.
-
-
                       }
-
                       if (loc2 > 0){showerquarks[loc2 - 1].acol(maxtag); }
                       else if(loc2 < 0){HH_thermal[-loc2 - 1].acol(maxtag); }
-
-
                       IdColInfo3.push_back(-1);
                       IdColInfo3.push_back(maxtag);
-
-
                       int loc3 = findcloserepl(considering[2], perm2[q3], true, true, showerquarks, HH_thermal);
                       if (loc3 > 0){showerquarks[loc3 - 1].acol(++maxtag); }
                       else if(loc3 < 0){HH_thermal[-loc3 - 1].acol(++maxtag); }
                       IdColInfo4.push_back(-1);
                       IdColInfo4.push_back(maxtag);
                       //TODO: give thermal partons "ANTI COLOR TAGS" to form anti junction and conserve baryon number.
-
-
-
-
-
                       JunctionInfo.push_back(IdColInfo1);
                       JunctionInfo.push_back(IdColInfo2);
                       JunctionInfo.push_back(IdColInfo3);
                       JunctionInfo.push_back(IdColInfo4);
-
                       Tempjunctions.push_back(JunctionInfo); // information of tempjunction is saved so et clear subordinate vector for next entry
-
                       IdColInfo1.clear();
                       IdColInfo2.clear();
                       IdColInfo3.clear();
                       IdColInfo4.clear();
                       JunctionInfo.clear();
-
                     } // so far, we are finished with the list with three zeros
                     */
 
@@ -2172,11 +2146,11 @@ if(considering[0].id() > 0 && considering[1].id() < 0){//case of first parton is
                         (Tempjunctions.at(ijunc).at(1).at(1) == considering[1].acol()) ||
                         (Tempjunctions.at(ijunc).at(1).at(1) == considering[2].acol())){
                          Tempjunctions.at(ijunc).at(1).pop_back();
-                         Tempjunctions.at(ijunc).at(1).push_back(999);
+                         Tempjunctions.at(ijunc).at(1).push_back(9999999);
                          Tempjunctions.at(ijunc).at(2).pop_back();
-                         Tempjunctions.at(ijunc).at(2).push_back(999);
+                         Tempjunctions.at(ijunc).at(2).push_back(9999999);
                          Tempjunctions.at(ijunc).at(3).pop_back();
-                         Tempjunctions.at(ijunc).at(3).push_back(999); // replace all the col tag in junction candidate to preserve the size of the vector, or the code would be broken
+                         Tempjunctions.at(ijunc).at(3).push_back(9999999); // replace all the col tag in junction candidate to preserve the size of the vector, or the code would be broken
                         }
                       }
                       for(int ijunc=0; ijunc<Tempjunctions.size(); ijunc++){
@@ -2184,11 +2158,11 @@ if(considering[0].id() > 0 && considering[1].id() < 0){//case of first parton is
                         (Tempjunctions.at(ijunc).at(2).at(1) == considering[1].acol()) ||
                         (Tempjunctions.at(ijunc).at(2).at(1) == considering[2].acol()) ){
                           Tempjunctions.at(ijunc).at(1).pop_back();
-                          Tempjunctions.at(ijunc).at(1).push_back(999);
+                          Tempjunctions.at(ijunc).at(1).push_back(9999999);
                           Tempjunctions.at(ijunc).at(2).pop_back();
-                          Tempjunctions.at(ijunc).at(2).push_back(999);
+                          Tempjunctions.at(ijunc).at(2).push_back(9999999);
                           Tempjunctions.at(ijunc).at(3).pop_back();
-                          Tempjunctions.at(ijunc).at(3).push_back(999);// replace all the col tag in junction candidate with zero to preserve the size of the vector, or the code would be broken
+                          Tempjunctions.at(ijunc).at(3).push_back(9999999);// replace all the col tag in junction candidate with zero to preserve the size of the vector, or the code would be broken
                         }
                       }
                       for(int ijunc=0; ijunc<Tempjunctions.size(); ijunc++){
@@ -2196,11 +2170,11 @@ if(considering[0].id() > 0 && considering[1].id() < 0){//case of first parton is
                         (Tempjunctions.at(ijunc).at(3).at(1) == considering[1].acol() ||
                         (Tempjunctions.at(ijunc).at(3).at(1) == considering[2].acol())) ){
                           Tempjunctions.at(ijunc).at(1).pop_back();
-                          Tempjunctions.at(ijunc).at(1).push_back(999);
+                          Tempjunctions.at(ijunc).at(1).push_back(9999999);
                           Tempjunctions.at(ijunc).at(2).pop_back();
-                          Tempjunctions.at(ijunc).at(2).push_back(999);
+                          Tempjunctions.at(ijunc).at(2).push_back(9999999);
                           Tempjunctions.at(ijunc).at(3).pop_back();
-                          Tempjunctions.at(ijunc).at(3).push_back(999);// replace all the col tag in junction candidate with zero to preserve the size of the vector, or the code would be broken
+                          Tempjunctions.at(ijunc).at(3).push_back(9999999);// replace all the col tag in junction candidate with zero to preserve the size of the vector, or the code would be broken
                       }
                   } // now corresponding Tempjunction vector is cleared!
                   if(considering[0].acol() > 0 && considering[1].acol() > 0 && considering[2].acol() > 0){
@@ -2230,7 +2204,7 @@ if(considering[0].id() > 0 && considering[1].id() < 0){//case of first parton is
                     int coltag1 = considering[0].acol();
                     int coltag2 = considering[1].acol();
                     int coltag3 = considering[2].acol();
-                    if(coltag1 > 0 && coltag2 > 0 && coltag3 > 0 && coltag1 < limit  && coltag2 < limit  && coltag3 < limit ){
+                    if(coltag1 > 0 && coltag2 > 0 && coltag3 > 0 && coltag1 <= limit  && coltag2 <= limit  && coltag3 <= limit ){
                     double tag1 = (double)coltag1;  // they are casted to be inserted into the matrix(since it's vector of double
                     double tag2 = (double)coltag2;
                     double tag3 = (double)coltag3;
@@ -2540,49 +2514,35 @@ if(considering[0].id() > 0 && considering[1].id() < 0){//case of first parton is
                  if(considering[0].acol() == 0 && considering[1].acol() == 0 && considering[2].acol() == 0){ //  Therm/LBT + Therm/LBT + MAT case
                    IdColInfo1.push_back(1); // junction tag(1)
                    IdColInfo1.push_back(0); // zero(just room for the other usage) {1, 0} will be in 1st
-
                    maxtag++;
                    int loc1 = findcloserepl(considering[0], element[0] + 1, true, true, showerquarks, HH_thermal);
                    if (loc1 > 0){showerquarks[loc1 - 1].col(maxtag); }
                    else if(loc1 < 0){HH_thermal[-loc1 - 1].col(maxtag); }
                    IdColInfo2.push_back(1);
                    IdColInfo2.push_back(maxtag);
-
-
                    maxtag++;
                    int loc2 = findcloserepl(considering[1], perm2[q2], true, true, showerquarks, HH_thermal);
                    if (loc2 > 0){showerquarks[loc2 - 1].col(maxtag); }
                    else if(loc2 < 0){HH_thermal[-loc2 - 1].col(maxtag); }
                    IdColInfo3.push_back(1);
                    IdColInfo3.push_back(maxtag);
-
-
                    int loc3 = findcloserepl(considering[2], perm2[q3], true, true, showerquarks, HH_thermal);
                    if (loc3 > 0){showerquarks[loc3 - 1].col(++maxtag); }
                    else if(loc3 < 0){HH_thermal[-loc3 - 1].col(++maxtag); }
                    IdColInfo4.push_back(1);
                    IdColInfo4.push_back(maxtag);
                    //TODO: give thermal partons "ANTI COLOR TAGS" to form anti junction and conserve baryon number.
-
-
-
-
-
                    JunctionInfo.push_back(IdColInfo1);
                    JunctionInfo.push_back(IdColInfo2);
                    JunctionInfo.push_back(IdColInfo3);
                    JunctionInfo.push_back(IdColInfo4);
-
                    Tempjunctions.push_back(JunctionInfo); // information of tempjunction is saved so et clear subordinate vector for next entry
-
                    IdColInfo1.clear();
                    IdColInfo2.clear();
                    IdColInfo3.clear();
                    IdColInfo4.clear();
                    JunctionInfo.clear();
-
                  } // so far, we are finished with the list with three zeros
-
                  */
 //dignostic measure
 /*
@@ -2882,7 +2842,6 @@ std::cout <<endl<<endl;
 
 
 /*below is for reference for the process below(12/23/2019)--shoudl be deleted at last
-
 //dignostic measure
 std::cout <<endl<<"Matrix is same as below"<<endl;
 for(int irow=0; irow < IndiceForColFin.size(); irow++){
@@ -2891,7 +2850,6 @@ for(int irow=0; irow < IndiceForColFin.size(); irow++){
     }
 std::cout <<endl<<endl;
 }
-
 */
 
 			else if(considering[0].id()*considering[1].id() < 0){
@@ -2899,7 +2857,7 @@ std::cout <<endl<<endl;
                if(considering[0].id() > 0 && considering[1].id() < 0){
                        int tag0 = considering[0].col();
                        int tag1 = considering[1].acol();
-                       if(tag0 > 0 && tag1 > 0 && tag0 < limit  && tag1 < limit ){
+                       if(tag0 > 0 && tag1 > 0 && tag0 <= limit  && tag1 <= limit ){
                        std::vector<int>::iterator L1 = std::find(IndiceForColFin.begin(), IndiceForColFin.end(), tag0);
                        std::vector<int>::iterator L2 = std::find(IndiceForColFin.begin(), IndiceForColFin.end(), tag1);
                        int indexMatrix1 = std::distance(IndiceForColFin.begin(), L1);
@@ -2915,7 +2873,7 @@ std::cout <<endl<<endl;
 
                        int tag0 = considering[1].col();
                        int tag1 = considering[0].acol();
-                       if(tag0 > 0 && tag1 > 0 && tag0 < limit && tag1 < limit){
+                       if(tag0 > 0 && tag1 > 0 && tag0 <= limit && tag1 <= limit){
                        std::vector<int>::iterator L1 = std::find(IndiceForColFin.begin(), IndiceForColFin.end(), tag0);
                        std::vector<int>::iterator L2 = std::find(IndiceForColFin.begin(), IndiceForColFin.end(), tag1);
                        int indexMatrix1 = std::distance(IndiceForColFin.begin(), L1);
@@ -3031,11 +2989,11 @@ std::cout <<endl<<endl;
                        if( (Tempjunctions.at(ijunc).at(1).at(1) == considering[0].col()) ||
                            (Tempjunctions.at(ijunc).at(1).at(1) == considering[1].acol()) ){
                              Tempjunctions.at(ijunc).at(1).pop_back();
-                             Tempjunctions.at(ijunc).at(1).push_back(999);
+                             Tempjunctions.at(ijunc).at(1).push_back(9999999);
                              Tempjunctions.at(ijunc).at(2).pop_back();
-                             Tempjunctions.at(ijunc).at(2).push_back(999);
+                             Tempjunctions.at(ijunc).at(2).push_back(9999999);
                              Tempjunctions.at(ijunc).at(3).pop_back();
-                             Tempjunctions.at(ijunc).at(3).push_back(999);
+                             Tempjunctions.at(ijunc).at(3).push_back(9999999);
                              // replace all the col tag in junction candidate with zero to preserve the size of the vector, or the code would be broken
                           }
                         }
@@ -3043,11 +3001,11 @@ std::cout <<endl<<endl;
                        if( (Tempjunctions.at(ijunc).at(2).at(1) == considering[0].col()) ||
                            (Tempjunctions.at(ijunc).at(2).at(1) == considering[1].acol()) ){
                              Tempjunctions.at(ijunc).at(1).pop_back();
-                             Tempjunctions.at(ijunc).at(1).push_back(888);
+                             Tempjunctions.at(ijunc).at(1).push_back(8888888);
                              Tempjunctions.at(ijunc).at(2).pop_back();
-                             Tempjunctions.at(ijunc).at(2).push_back(888);
+                             Tempjunctions.at(ijunc).at(2).push_back(8888888);
                              Tempjunctions.at(ijunc).at(3).pop_back();
-                             Tempjunctions.at(ijunc).at(3).push_back(888);
+                             Tempjunctions.at(ijunc).at(3).push_back(8888888);
                              // replace all the col tag in junction candidate with zero to preserve the size of the vector, or the code would be broken
                           }
                         }
@@ -3055,11 +3013,11 @@ std::cout <<endl<<endl;
                        if( (Tempjunctions.at(ijunc).at(3).at(1) == considering[0].col()) ||
                            (Tempjunctions.at(ijunc).at(3).at(1) == considering[1].acol()) ){
                              Tempjunctions.at(ijunc).at(1).pop_back();
-                             Tempjunctions.at(ijunc).at(1).push_back(777);
+                             Tempjunctions.at(ijunc).at(1).push_back(7777777);
                              Tempjunctions.at(ijunc).at(2).pop_back();
-                             Tempjunctions.at(ijunc).at(2).push_back(777);
+                             Tempjunctions.at(ijunc).at(2).push_back(7777777);
                              Tempjunctions.at(ijunc).at(3).pop_back();
-                             Tempjunctions.at(ijunc).at(3).push_back(777);
+                             Tempjunctions.at(ijunc).at(3).push_back(7777777);
                              // replace all the col tag in junction candidate with zero to preserve the size of the vector, or the code would be broken
                           }
                     } // now corresponding Tempjunction vector is cleared!
@@ -3067,7 +3025,7 @@ std::cout <<endl<<endl;
 //before changing the tags, revise the MesonrecoMatrix elements!
                     int coltag1 = considering[0].col();
                     int coltag2 = considering[1].acol();
-                    if(coltag1 > 0 && coltag2 && coltag1 < limit && coltag2 < limit){
+                    if(coltag1 > 0 && coltag2 && coltag1 <= limit && coltag2 <= limit){
                     std::vector<int>::iterator I1 = std::find(IndiceForColFin.begin(), IndiceForColFin.end(), coltag1);
                     std::vector<int>::iterator I2 = std::find(IndiceForColFin.begin(), IndiceForColFin.end(), coltag2);
                     int loc1 = std::distance(IndiceForColFin.begin(), I1);
@@ -3118,42 +3076,42 @@ std::cout <<endl<<endl;
 					}
 
 					else if(considering[0].col() > 0){ // MAT + LBT/THERM
-						int thermsib = findcloserepl(considering[0] , perm1[q1]+1, true, true, HH_showerptns, HH_thermal); // functon to find
+						int thermsib = findcloserepl(considering[1] , perm2[q2], true, true, showerquarks, HH_thermal); // functon to find
 						if(thermsib == 999999999){
 							//std::cout <<endl<<"Warning : extra parton used for string repair!!"<<endl;
-							HHparton fakep = considering[0]; fakep.id(-fakep.id());  fakep.acol(++maxtag);
+							HHparton fakep = considering[1]; fakep.id(-fakep.id());  fakep.col(considering[0].col());
 							Extraparton.add(fakep);
 							//somewhere, we need to make for loop to toss all partons to remnants list.
 						}
-						else if(thermsib < 0){HH_thermal[-thermsib-1].acol(considering[0].col());}
-						else{
-							for(int ishq=0;ishq<showerquarks.num();++ishq){
-								if(!showerquarks[ishq].is_used() && showerquarks[ishq].col()==HH_showerptns[thermsib-1].acol()){showerquarks[ishq].col(considering[0].col());/*break;*/}
+						else if(thermsib < 0){HH_thermal[-thermsib+1].col(considering[0].col());}
+						else{showerquarks[thermsib-1].col(considering[0].col());
+							/*for(int ishq=0;ishq<showerquarks.num();++ishq){
+								if(!showerquarks[ishq].is_used() && showerquarks[ishq].col()==HH_showerptns[thermsib-1].acol()){showerquarks[ishq].col(considering[0].col());}
 							}
 							for(int ishq=0;ishq<HH_showerptns.num();++ishq){
-								if(HH_showerptns[ishq].col()==HH_showerptns[thermsib-1].acol()){if(ishq==thermsib-1){continue;} HH_showerptns[ishq].col(considering[0].col());/*break;*/}
+								if(HH_showerptns[ishq].col()==HH_showerptns[thermsib-1].acol()){if(ishq==thermsib-1){continue;} HH_showerptns[ishq].col(considering[0].col());}
 							}//[**]
-							HH_showerptns[thermsib-1].acol(considering[0].col());
+							HH_showerptns[thermsib-1].acol(considering[0].col());*/
 						}
 					}
 					
 					else if(considering[1].acol() > 0){ //LBT + MAT
-						int thermsib = findcloserepl(considering[1] , perm2[q2], true, true, HH_showerptns, HH_thermal);
+						int thermsib = findcloserepl(considering[0] , perm1[q1]+1, true, true, showerquarks, HH_thermal);
 						if(thermsib == 999999999){
 							//std::cout <<endl<<"Warning : extra parton used for string repair!!"<<endl;
-							HHparton fakep = considering[1]; fakep.id(-fakep.id());  fakep.acol(++maxtag);
+							HHparton fakep = considering[0]; fakep.id(-fakep.id());  fakep.acol(considering[1].acol());
 							Extraparton.add(fakep);
 							//somewhere, we need to make for loop to toss all partons to remnants list.
 						}
-						else if(thermsib < 0){HH_thermal[-thermsib-1].col(considering[1].acol());}
-						else{
-							for(int ishq=0;ishq<showerquarks.num();++ishq){
-								if(!showerquarks[ishq].is_used() && showerquarks[ishq].acol()==HH_showerptns[thermsib-1].col()){showerquarks[ishq].acol(considering[1].acol());/*break;*/}
+						else if(thermsib < 0){HH_thermal[-thermsib+1].acol(considering[1].acol());}
+						else{showerquarks[thermsib-1].acol(considering[1].acol());
+							/*for(int ishq=0;ishq<showerquarks.num();++ishq){
+								if(!showerquarks[ishq].is_used() && showerquarks[ishq].acol()==HH_showerptns[thermsib-1].col()){showerquarks[ishq].acol(considering[1].acol());}
 							}
 							for(int ishq=0;ishq<HH_showerptns.num();++ishq){
-								if(HH_showerptns[ishq].acol()==HH_showerptns[thermsib-1].col()){if(ishq==thermsib-1){continue;} HH_showerptns[ishq].acol(considering[1].acol());/*break;*/}
+								if(HH_showerptns[ishq].acol()==HH_showerptns[thermsib-1].col()){if(ishq==thermsib-1){continue;} HH_showerptns[ishq].acol(considering[1].acol());}
 							}//[**]
-							HH_showerptns[thermsib-1].col(considering[1].acol());
+							HH_showerptns[thermsib-1].col(considering[1].acol());*/
 						}
 					}
 					
@@ -3168,11 +3126,11 @@ std::cout <<endl<<endl;
                        if( (Tempjunctions.at(ijunc).at(1).at(1) == considering[0].acol()) ||
                            (Tempjunctions.at(ijunc).at(1).at(1) == considering[1].col()) ){
                              Tempjunctions.at(ijunc).at(1).pop_back();
-                             Tempjunctions.at(ijunc).at(1).push_back(999);
+                             Tempjunctions.at(ijunc).at(1).push_back(9999999);
                              Tempjunctions.at(ijunc).at(2).pop_back();
-                             Tempjunctions.at(ijunc).at(2).push_back(999);
+                             Tempjunctions.at(ijunc).at(2).push_back(9999999);
                              Tempjunctions.at(ijunc).at(3).pop_back();
-                             Tempjunctions.at(ijunc).at(3).push_back(999);
+                             Tempjunctions.at(ijunc).at(3).push_back(9999999);
                              // replace all the col tag in junction candidate with zero to preserve the size of the vector, or the code would be broken
                           }
                         }
@@ -3180,11 +3138,11 @@ std::cout <<endl<<endl;
                        if( (Tempjunctions.at(ijunc).at(2).at(1) == considering[0].acol()) ||
                            (Tempjunctions.at(ijunc).at(2).at(1) == considering[1].col()) ){
                              Tempjunctions.at(ijunc).at(1).pop_back();
-                             Tempjunctions.at(ijunc).at(1).push_back(999);
+                             Tempjunctions.at(ijunc).at(1).push_back(9999999);
                              Tempjunctions.at(ijunc).at(2).pop_back();
-                             Tempjunctions.at(ijunc).at(2).push_back(999);
+                             Tempjunctions.at(ijunc).at(2).push_back(9999999);
                              Tempjunctions.at(ijunc).at(3).pop_back();
-                             Tempjunctions.at(ijunc).at(3).push_back(999);
+                             Tempjunctions.at(ijunc).at(3).push_back(9999999);
                              // replace all the col tag in junction candidate with zero to preserve the size of the vector, or the code would be broken
                           }
                         }
@@ -3192,11 +3150,11 @@ std::cout <<endl<<endl;
                        if( (Tempjunctions.at(ijunc).at(3).at(1) == considering[0].acol()) ||
                            (Tempjunctions.at(ijunc).at(3).at(1) == considering[1].col()) ){
                              Tempjunctions.at(ijunc).at(1).pop_back();
-                             Tempjunctions.at(ijunc).at(1).push_back(999);
+                             Tempjunctions.at(ijunc).at(1).push_back(9999999);
                              Tempjunctions.at(ijunc).at(2).pop_back();
-                             Tempjunctions.at(ijunc).at(2).push_back(999);
+                             Tempjunctions.at(ijunc).at(2).push_back(9999999);
                              Tempjunctions.at(ijunc).at(3).pop_back();
-                             Tempjunctions.at(ijunc).at(3).push_back(999);
+                             Tempjunctions.at(ijunc).at(3).push_back(9999999);
                              // replace all the col tag in junction candidate with zero to preserve the size of the vector, or the code would be broken
                           }
                     } // now corresponding Tempjunction vector is cleared!
@@ -3204,7 +3162,7 @@ std::cout <<endl<<endl;
 //before changing the tags, revise the MesonrecoMatrix elements!
                     int coltag1 = considering[0].acol();
                     int coltag2 = considering[1].col();
-                    if(coltag1 > 0 && coltag2 && coltag1 < limit && coltag2 < limit){
+                    if(coltag1 > 0 && coltag2 && coltag1 <= limit && coltag2 <= limit){
                     std::vector<int>::iterator I1 = std::find(IndiceForColFin.begin(), IndiceForColFin.end(), coltag1);
                     std::vector<int>::iterator I2 = std::find(IndiceForColFin.begin(), IndiceForColFin.end(), coltag2);
                     int loc1 = std::distance(IndiceForColFin.begin(), I1);
@@ -3244,12 +3202,8 @@ std::cout <<endl<<endl;
                     }
                     else if (loc > 0){HH_showerptns[loc - 1].acol(++maxtag); }
                     else if(loc < 0){HH_thermal[-loc - 1].acol(++maxtag); }
-
                     HH_showerptns[i].col(maxtag);
                   }
-
-
-
 */ //TODO:NEED TO BE DEALT IN THERMAL PARTON PROCESSING{04232020}
 					if(considering[0].acol() > 0 && considering[1].col() > 0){ //MAT + MAT
 						if(perm2[q2] > 0){
@@ -3266,23 +3220,23 @@ std::cout <<endl<<endl;
 					}
 					
 					else if(considering[0].acol() > 0){ // MAT + LBT/THERM
-						int loc = findcloserepl(considering[0], perm1[q1]+1, true, true, HH_showerptns, HH_thermal );
+						int loc = findcloserepl(considering[1], perm2[q2], true, true, showerquarks, HH_thermal );
 						if(loc == 999999999){
 							//std::cout <<endl<<"Warning : extra parton used for string repair!!"<<endl;
-							HHparton fakep = considering[0]; fakep.id(-fakep.id());  fakep.acol(++maxtag);
+							HHparton fakep = considering[1]; fakep.id(-fakep.id());  fakep.acol(considering[0].acol());
 							Extraparton.add(fakep);
 							//somewhere, we need to make for loop to toss all partons to remnants list.
 						}
-						else if (loc > 0){
-							for(int ishq=0;ishq<showerquarks.num();++ishq){
-								if(!showerquarks[ishq].is_used() && showerquarks[ishq].acol()==HH_showerptns[loc-1].col()){showerquarks[ishq].acol(considering[0].acol());/*break;*/}
+						else if (loc > 0){showerquarks[loc-1].acol(considering[0].acol());
+							/*for(int ishq=0;ishq<showerquarks.num();++ishq){
+								if(!showerquarks[ishq].is_used() && showerquarks[ishq].acol()==HH_showerptns[loc-1].col()){showerquarks[ishq].acol(considering[0].acol());}
 							}
 							for(int ishq=0;ishq<HH_showerptns.num();++ishq){
-								if(HH_showerptns[ishq].acol()==HH_showerptns[loc-1].col()){if(ishq==loc-1){continue;}HH_showerptns[ishq].acol(considering[0].acol());/*break;*/}
+								if(HH_showerptns[ishq].acol()==HH_showerptns[loc-1].col()){if(ishq==loc-1){continue;}HH_showerptns[ishq].acol(considering[0].acol());}
 							}//[**]
-							HH_showerptns[loc - 1].col(considering[0].acol());
+							HH_showerptns[loc - 1].col(considering[0].acol());*/
 						}
-						else if(loc < 0){HH_thermal[-loc - 1].col(considering[0].acol());}
+						else if(loc < 0){HH_thermal[-loc + 1].acol(considering[0].acol());}
 						/*
 						int thermsib = findthermalsibling(-element[1] , HH_thermal); // functon to find
 						if(thermsib < 0){HH_thermal[thermsib-1].col(considering[0].acol());}
@@ -3291,23 +3245,23 @@ std::cout <<endl<<endl;
 					}
 					 
 					else if(considering[1].col() > 0){ //LBT + MAT
-						int loc = findcloserepl(considering[1], perm2[q2], true, true, HH_showerptns, HH_thermal );
+						int loc = findcloserepl(considering[0], perm1[q1]+1, true, true, showerquarks, HH_thermal );
 						if(loc == 999999999){
 							//std::cout <<endl<<"Warning : extra parton used for string repair!!"<<endl;
-							HHparton fakep = considering[1]; fakep.id(-fakep.id());  fakep.acol(++maxtag);
+							HHparton fakep = considering[0]; fakep.id(-fakep.id());  fakep.col(considering[1].col());
 							Extraparton.add(fakep);
 							//somewhere, we need to make for loop to toss all partons to remnants list.
 						}
-						else if (loc > 0){
-							for(int ishq=0;ishq<showerquarks.num();++ishq){
-								if(!showerquarks[ishq].is_used() && showerquarks[ishq].acol()==HH_showerptns[loc-1].col()){showerquarks[ishq].acol(considering[0].acol());/*break;*/}
+						else if (loc > 0){showerquarks[loc-1].col(considering[1].col());
+							/*for(int ishq=0;ishq<showerquarks.num();++ishq){
+								if(!showerquarks[ishq].is_used() && showerquarks[ishq].acol()==HH_showerptns[loc-1].col()){showerquarks[ishq].acol(considering[0].acol());}
 							}
 							for(int ishq=0;ishq<HH_showerptns.num();++ishq){
-								if(HH_showerptns[ishq].acol()==HH_showerptns[loc-1].col()){if(ishq==loc-1){continue;}HH_showerptns[ishq].acol(considering[0].acol());/*break;*/}
+								if(HH_showerptns[ishq].acol()==HH_showerptns[loc-1].col()){if(ishq==loc-1){continue;}HH_showerptns[ishq].acol(considering[0].acol());}
 							}//[**]
-							HH_showerptns[loc - 1].col(considering[0].acol());
+							HH_showerptns[loc - 1].col(considering[0].acol());*/
 						}
-						else if(loc < 0){HH_thermal[-loc - 1].col(considering[0].acol());}
+						else if(loc < 0){HH_thermal[-loc + 1].col(considering[1].col());}
 						/*
 						int thermsib = findthermalsibling(-element[0] , HH_thermal);
 						if(thermsib < 0){HH_thermal[thermsib-1].acol(considering[1].col());}
@@ -3327,11 +3281,9 @@ std::cout <<endl<<endl;
 									if(showerquarks[element[0]].is_strendpt()){++numendpoints; is_endpoint[0] = true;}
 					if(perm2[q2]>0){if(showerquarks[element[1]].is_strendpt()){++numendpoints; is_endpoint[1] = true;}}
 					else{            if(HH_thermal[-element[1]].is_strendpt()){++numendpoints; is_endpoint[1] = true;}}
-
 					//setting the current string value to the value of the first parton (since it can't be a thermal parton)
 					//this might have to change if partons are allowed to recombine from multiple strings...
 					int cur_str = showerquarks[element[0]].string_id();
-
 					if(numendpoints == 0){//no parton is an endpoint
 						//finding the string id for this new string...
 						//start by choosing an appropriate string 'index'
@@ -3341,7 +3293,6 @@ std::cout <<endl<<endl;
 						{int i=0; while(i<list_strs.size()){if(new_str == list_strs[i]){++new_str; i=-1;} ++i;}}
 						//need to add the new string to the list of strings, unless for some reason we want to keep adding the 'new' strings together?
 						list_strs.push_back(new_str);
-
 						showerquarks[showerquarks[element[0]].sibling()].string_id(new_str);
 						showerquarks[showerquarks[element[0]].sibling()].is_strendpt(true);
 						showerquarks[showerquarks[element[0]].sibling()].pos_str(0);
@@ -3388,8 +3339,6 @@ std::cout <<endl<<endl;
 							}
 						}
 					}
-
-
 */
 					//else{//both endpoints are endpoints
 					//	//whelp, this string is now a gluon loop?
@@ -3506,67 +3455,107 @@ std::cout <<endl<<endl;
   // sol 1 : gluon loops.
   //sol 2 : decay gluon find pairs.{concern : energy conservation violated}
   // sol 3 : find two theraml siblings for gluon. declate fincloserepl twice. first pick quark and antiquarks to the 2nd.--> this is chosen
-  for(int i = 0; i < HH_showerptns.num(); i++){
-    if(HH_showerptns[i].col() == 0 && HH_showerptns[i].acol() == 0 && !HH_showerptns[i].is_used() ){
-    if(HH_showerptns[i].id() == 21){
-       int sel_out[2] = { 0 , 0 };
+	for(int i = 0; i < HH_showerptns.num(); i++){
+		if(HH_showerptns[i].is_used()){continue;}
+		
+		if(HH_showerptns[i].id() == 21 && HH_showerptns[i].col() == 0 && HH_showerptns[i].acol() == 0){
+			int sel_out[2] = { 0 , 0 };
+			
+			findcloserepl_glu(HH_showerptns[i], i+1, true, true, HH_showerptns, HH_thermal, sel_out);
+			
+			if(sel_out[0] == 999999999 || sel_out[1] == 999999999){
+				//std::cout <<endl<<"Warning : extra parton used for string repair!!"<<endl;
+				HHparton fakeg = HH_showerptns[i]; fakeg.id(21);  fakeg.acol(++maxtag); fakeg.col(++maxtag);
+				double dir = (ran() < 0.5) ? 1. : -1.; double fake_pT = (p_fake >= 1.) ? 0.282842712474619 : 0.; double fake_phi = 2. * 3.14159265358979 * ran();
+				fakeg.px(fake_pT * cos(fake_phi)); fakeg.py(fake_pT * sin(fake_phi)); fakeg.pz(p_fake * dir);
+				fakeg.e(std::sqrt(fakeg.px()*fakeg.px() + fakeg.py()*fakeg.py() + fakeg.pz()*fakeg.pz() + fakeg.mass()*fakeg.mass()));
+				fakeg.orig(-1); fakeg.is_remnant(true);
+				Extraparton.add(fakeg); HH_showerptns[i].col(fakeg.acol()); HH_showerptns[i].acol(fakeg.col());
+			}
+			else if(sel_out[0] > 0){HH_showerptns[sel_out[0]-1].col(++maxtag); HH_showerptns[i].acol(maxtag);}
+			else if(sel_out[0] < 0){HH_thermal[-sel_out[0]-1].col(++maxtag); HH_showerptns[i].acol(maxtag);}
+			
+			if(sel_out[1] > 0 && sel_out[1] != 999999999){HH_showerptns[sel_out[1]-1].acol(++maxtag); HH_showerptns[i].col(maxtag);}
+			else if(sel_out[1] < 0){HH_thermal[-sel_out[1]-1].acol(++maxtag); HH_showerptns[i].col(maxtag);}
+		}
+		
+		else if(HH_showerptns[i].id() == 21 && (HH_showerptns[i].col() == 0 || HH_showerptns[i].acol() == 0)){ //gluon that needs a single quark to fix
+			if(HH_showerptns[i].col() == 0){
+				HH_showerptns[i].id(1); //need to temporarily pretend gluon is a quark, swap back id after...
+				int loc = findcloserepl(HH_showerptns[i], i+1, true, true, HH_showerptns, HH_thermal );
+				HH_showerptns[i].id(21);
+				if(loc == 999999999){
+					//std::cout <<endl<<"Warning : extra parton used for string repair!!"<<endl;
+					double fid = (ran() > 0.5) ? -1 : -2;
+					HHparton fakep = HH_showerptns[i]; fakep.id((ran() > 0.5) ? -1 : -2);  fakep.acol(++maxtag);
+					double dir = (ran() < 0.5) ? 1. : -1.; double fake_pT = (p_fake >= 1.) ? 0.282842712474619 : 0.; double fake_phi = 2. * 3.14159265358979 * ran();
+					fakep.px(fake_pT * cos(fake_phi)); fakep.py(fake_pT * sin(fake_phi)); fakep.pz(p_fake * dir);
+					fakep.e(std::sqrt(fakep.px()*fakep.px() + fakep.py()*fakep.py() + fakep.pz()*fakep.pz() + fakep.mass()*fakep.mass()));
+					fakep.orig(-1); fakep.is_remnant(true);
+					Extraparton.add(fakep);
+					//somewhere, we need to make for loop to toss all partons to remnants list.
+				}
+				else if (loc > 0){HH_showerptns[loc - 1].acol(++maxtag); }
+				else if(loc < 0){HH_thermal[-loc - 1].acol(++maxtag); }
 
-       findcloserepl_glu(HH_showerptns[i], i+1, true, true, HH_showerptns, HH_thermal, sel_out);
+				HH_showerptns[i].col(maxtag);
+			}
+			else if(HH_showerptns[i].acol() == 0){
+				HH_showerptns[i].id(-1); //need to temporarily pretend gluon is an antiquark, swap back id after...
+				int loc = findcloserepl(HH_showerptns[i], i+1, true, true, HH_showerptns, HH_thermal );
+				HH_showerptns[i].id(21);
+				if(loc == 999999999){
+					HHparton fakep = HH_showerptns[i]; fakep.id((ran() > 0.5) ? 1 : 2);  fakep.col(++maxtag);
+					double dir = (ran() < 0.5) ? 1. : -1.; double fake_pT = (p_fake >= 1.) ? 0.282842712474619 : 0.; double fake_phi = 2. * 3.14159265358979 * ran();
+					fakep.px(fake_pT * cos(fake_phi)); fakep.py(fake_pT * sin(fake_phi)); fakep.pz(p_fake * dir);
+					fakep.e(std::sqrt(fakep.px()*fakep.px() + fakep.py()*fakep.py() + fakep.pz()*fakep.pz() + fakep.mass()*fakep.mass()));
+					fakep.orig(-1); fakep.is_remnant(true);
+					Extraparton.add(fakep);
+					//somewhere, we need to make for loop to toss all partons to remnants list.
+				}
+				else if (loc > 0){HH_showerptns[loc - 1].col(++maxtag); }
+				else if(loc < 0){HH_thermal[-loc - 1].col(++maxtag); }
 
-       if(sel_out[0] == 999999999 || sel_out[1] == 999999999){
-         //std::cout <<endl<<"Warning : extra parton used for string repair!!"<<endl;
-         HHparton fakeg = HH_showerptns[i]; fakeg.id(21);  fakeg.acol(++maxtag); fakeg.col(++maxtag);
-         double dir = (ran() < 0.5) ? 1. : -1.; double fake_pT = (p_fake >= 1.) ? 0.282842712474619 : 0.; double fake_phi = 2. * 3.14159265358979 * ran();
-         fakeg.px(fake_pT * cos(fake_phi)); fakeg.py(fake_pT * sin(fake_phi)); fakeg.pz(p_fake * dir);
-         fakeg.e(std::sqrt(fakeg.px()*fakeg.px() + fakeg.py()*fakeg.py() + fakeg.pz()*fakeg.pz() + fakeg.mass()*fakeg.mass()));
-         fakeg.orig(-1); fakeg.is_remnant(true);
-         Extraparton.add(fakeg);
-       }
-       else if(sel_out[0] > 0){HH_showerptns[sel_out[0]-1].col(++maxtag); HH_showerptns[i].acol(maxtag);}
-       else if(sel_out[0] < 0){HH_thermal[-sel_out[0]-1].col(++maxtag); HH_showerptns[i].acol(maxtag);}
+				HH_showerptns[i].acol(maxtag);
+			}
+		}
+		
+		else if(HH_showerptns[i].id() > 0 && HH_showerptns[i].col() == 0){
+			int loc = findcloserepl(HH_showerptns[i], i+1, true, true, HH_showerptns, HH_thermal );
+			if(loc == 999999999){
+				//std::cout <<endl<<"Warning : extra parton used for string repair!!"<<endl;
+				HHparton fakep = HH_showerptns[i]; fakep.id(-fakep.id());  fakep.acol(++maxtag);
+				double dir = (ran() < 0.5) ? 1. : -1.; double fake_pT = (p_fake >= 1.) ? 0.282842712474619 : 0.; double fake_phi = 2. * 3.14159265358979 * ran();
+				fakep.px(fake_pT * cos(fake_phi)); fakep.py(fake_pT * sin(fake_phi)); fakep.pz(p_fake * dir);
+				fakep.e(std::sqrt(fakep.px()*fakep.px() + fakep.py()*fakep.py() + fakep.pz()*fakep.pz() + fakep.mass()*fakep.mass()));
+				fakep.orig(-1); fakep.is_remnant(true);
+				Extraparton.add(fakep);
+				//somewhere, we need to make for loop to toss all partons to remnants list.
+			}
+			else if (loc > 0){HH_showerptns[loc - 1].acol(++maxtag); }
+			else if(loc < 0){HH_thermal[-loc - 1].acol(++maxtag); }
 
-       if(sel_out[1] > 0 && sel_out[1] != 999999999){HH_showerptns[sel_out[1]-1].acol(++maxtag); HH_showerptns[i].col(maxtag);}
-       else if(sel_out[1] < 0){HH_thermal[-sel_out[1]-1].acol(++maxtag); HH_showerptns[i].col(maxtag);}
+			HH_showerptns[i].col(maxtag);
+		}
+		
+		else if(HH_showerptns[i].id() < 0 && HH_showerptns[i].acol() == 0){
+			int loc = findcloserepl(HH_showerptns[i], i+1, true, true, HH_showerptns, HH_thermal );
+			if(loc == 999999999){
+				//std::cout <<endl<<"Warning : extra parton used for string repair!!"<<endl;
+				HHparton fakep = HH_showerptns[i]; fakep.id(-fakep.id());  fakep.col(++maxtag);
+				double dir = (ran() < 0.5) ? 1. : -1.; double fake_pT = (p_fake >= 1.) ? 0.282842712474619 : 0.; double fake_phi = 2. * 3.14159265358979 * ran();
+				fakep.px(fake_pT * cos(fake_phi)); fakep.py(fake_pT * sin(fake_phi)); fakep.pz(p_fake * dir);
+				fakep.e(std::sqrt(fakep.px()*fakep.px() + fakep.py()*fakep.py() + fakep.pz()*fakep.pz() + fakep.mass()*fakep.mass()));
+				fakep.orig(-1); fakep.is_remnant(true);
+				Extraparton.add(fakep);
+				//somewhere, we need to make for loop to toss all partons to remnants list.
+			}
+			else if (loc > 0){HH_showerptns[loc - 1].col(++maxtag); }
+			else if(loc < 0){HH_thermal[-loc - 1].col(++maxtag); }
 
-      }
-
-    else if(HH_showerptns[i].id() > 0){
-      int loc = findcloserepl(HH_showerptns[i], i+1, true, true, HH_showerptns, HH_thermal );
-      if(loc == 999999999){
-         //std::cout <<endl<<"Warning : extra parton used for string repair!!"<<endl;
-         HHparton fakep = HH_showerptns[i]; fakep.id(-fakep.id());  fakep.acol(++maxtag);
-         double dir = (ran() < 0.5) ? 1. : -1.; double fake_pT = (p_fake >= 1.) ? 0.282842712474619 : 0.; double fake_phi = 2. * 3.14159265358979 * ran();
-         fakep.px(fake_pT * cos(fake_phi)); fakep.py(fake_pT * sin(fake_phi)); fakep.pz(p_fake * dir);
-         fakep.e(std::sqrt(fakep.px()*fakep.px() + fakep.py()*fakep.py() + fakep.pz()*fakep.pz() + fakep.mass()*fakep.mass()));
-         fakep.orig(-1); fakep.is_remnant(true);
-         Extraparton.add(fakep);
-         //somewhere, we need to make for loop to toss all partons to remnants list.
-      }
-      else if (loc > 0){HH_showerptns[loc - 1].acol(++maxtag); }
-      else if(loc < 0){HH_thermal[-loc - 1].acol(++maxtag); }
-
-      HH_showerptns[i].col(maxtag);
-    }
-    else if(HH_showerptns[i].id() < 0){
-      int loc = findcloserepl(HH_showerptns[i], i+1, true, true, HH_showerptns, HH_thermal );
-      if(loc == 999999999){
-         //std::cout <<endl<<"Warning : extra parton used for string repair!!"<<endl;
-         HHparton fakep = HH_showerptns[i]; fakep.id(-fakep.id());  fakep.col(++maxtag);
-         double dir = (ran() < 0.5) ? 1. : -1.; double fake_pT = (p_fake >= 1.) ? 0.282842712474619 : 0.; double fake_phi = 2. * 3.14159265358979 * ran();
-         fakep.px(fake_pT * cos(fake_phi)); fakep.py(fake_pT * sin(fake_phi)); fakep.pz(p_fake * dir);
-         fakep.e(std::sqrt(fakep.px()*fakep.px() + fakep.py()*fakep.py() + fakep.pz()*fakep.pz() + fakep.mass()*fakep.mass()));
-         fakep.orig(-1); fakep.is_remnant(true);
-         Extraparton.add(fakep);
-         //somewhere, we need to make for loop to toss all partons to remnants list.
-      }
-      else if (loc > 0){HH_showerptns[loc - 1].col(++maxtag); }
-      else if(loc < 0){HH_thermal[-loc - 1].col(++maxtag); }
-
-      HH_showerptns[i].acol(maxtag);
-    }
-    }
-
-  }
+			HH_showerptns[i].acol(maxtag);
+		}
+	}
 	//sticking all unused partons into remnants; keeping order intact (a partially used gluon is replaced with it's unused quark)
 	for(int i=0; i<HH_showerptns.num(); ++i){
 		//if unused parton, write into remnants
@@ -4417,7 +4406,6 @@ for(int iloop1 = 0; iloop1 < IMStructure1.size(); iloop1++){
                       std::cout <<IMStructure1.at(icheck1).at(icheck2).at(icheck3)<<" , ";
                     }
                   std::cout <<" ) ";
-
                   }
                     std::cout <<endl;
                 }
@@ -4943,7 +4931,9 @@ for(int ifq1 = 0; ifq1 < cols.size(); ifq1++){
     
     int loc = findcloserepl(finalstring.at(ifinptn), ifinptn+1, false, true, HH_showerptns, HH_thermal);
     if(loc == 999999999 || loc > 0){
-        HHparton fakep = finalstring.at(ifinptn); fakep.id(-fakep.id()); fakep.set_color(0); fakep.set_anti_color(cols.at(ifq1));
+		int fid = (fakep.id() == 21) ? ((ran() > 0.5) ? -1 : -2) : -fakep.id();
+        //HHparton fakep = finalstring.at(ifinptn); fakep.id(-fakep.id()); fakep.set_color(0); fakep.set_anti_color(cols.at(ifq1));
+        HHparton fakep = finalstring.at(ifinptn); fakep.id(fid); fakep.set_color(0); fakep.set_anti_color(cols.at(ifq1));
         double dir = (ran() < 0.5) ? 1. : -1.; double fake_pT = (p_fake >= 1.) ? 0.282842712474619 : 0.; double fake_phi = 2. * 3.14159265358979 * ran();
         fakep.px(fake_pT * cos(fake_phi)); fakep.py(fake_pT * sin(fake_phi)); fakep.pz(p_fake * dir);
         fakep.e(std::sqrt(fakep.px()*fakep.px() + fakep.py()*fakep.py() + fakep.pz()*fakep.pz() + fakep.mass()*fakep.mass()));
@@ -4968,7 +4958,9 @@ for(int ifaq1 = 0; ifaq1 < acols.size(); ifaq1++){
     
     int loc = findcloserepl(finalstring.at(ifinptn), ifinptn+1, false, true, HH_showerptns, HH_thermal);
     if(loc == 999999999 || loc > 0){
-        HHparton fakep = finalstring.at(ifinptn); fakep.id(-fakep.id()); fakep.set_color(acols.at(ifaq1)); fakep.set_anti_color(0);
+		int fid = (fakep.id() == 21) ? ((ran() > 0.5) ? 1 : 2) : -fakep.id();
+        //HHparton fakep = finalstring.at(ifinptn); fakep.id(-fakep.id()); fakep.set_color(acols.at(ifaq1)); fakep.set_anti_color(0);
+        HHparton fakep = finalstring.at(ifinptn); fakep.id(fid); fakep.set_color(acols.at(ifaq1)); fakep.set_anti_color(0);
         double dir = (ran() < 0.5) ? 1. : -1.; double fake_pT = (p_fake >= 1.) ? 0.282842712474619 : 0.; double fake_phi = 2. * 3.14159265358979 * ran();
         fakep.px(fake_pT * cos(fake_phi)); fakep.py(fake_pT * sin(fake_phi)); fakep.pz(p_fake * dir);
         fakep.e(std::sqrt(fakep.px()*fakep.px() + fakep.py()*fakep.py() + fakep.pz()*fakep.pz() + fakep.mass()*fakep.mass()));
@@ -5501,7 +5493,7 @@ bool HybridHadronization::invoke_py(){
 		//adding in hadrons/leptons/other colorless particles too...
 		for(int i=0; i<HH_hadrons.num(); ++i){if(!HH_hadrons[i].is_final()){
 			//to make sure mass is set appropriately (if E^2-P^2<0, then mass is too)
-			double massnow = HH_hadrons[i].e()*HH_hadrons[i].e() - 
+			double massnow = HH_hadrons[i].e()*HH_hadrons[i].e() -
 			(HH_hadrons[i].px()*HH_hadrons[i].px() + HH_hadrons[i].py()*HH_hadrons[i].py() + HH_hadrons[i].pz()*HH_hadrons[i].pz());
 			massnow = (massnow >= 0.) ? sqrt(massnow) : -sqrt(-massnow);
 			
