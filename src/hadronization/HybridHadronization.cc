@@ -4931,7 +4931,7 @@ for(int ifq1 = 0; ifq1 < cols.size(); ifq1++){
     
     int loc = findcloserepl(finalstring.at(ifinptn), ifinptn+1, false, true, HH_showerptns, HH_thermal);
     if(loc == 999999999 || loc > 0){
-		int fid = (fakep.id() == 21) ? ((ran() > 0.5) ? -1 : -2) : -fakep.id();
+	int fid = (finalstring.at(ifinptn).id() == 21) ? ((ran() > 0.5) ? -1 : -2) : -finalstring.at(ifinptn).id();
         //HHparton fakep = finalstring.at(ifinptn); fakep.id(-fakep.id()); fakep.set_color(0); fakep.set_anti_color(cols.at(ifq1));
         HHparton fakep = finalstring.at(ifinptn); fakep.id(fid); fakep.set_color(0); fakep.set_anti_color(cols.at(ifq1));
         double dir = (ran() < 0.5) ? 1. : -1.; double fake_pT = (p_fake >= 1.) ? 0.282842712474619 : 0.; double fake_phi = 2. * 3.14159265358979 * ran();
@@ -4958,7 +4958,7 @@ for(int ifaq1 = 0; ifaq1 < acols.size(); ifaq1++){
     
     int loc = findcloserepl(finalstring.at(ifinptn), ifinptn+1, false, true, HH_showerptns, HH_thermal);
     if(loc == 999999999 || loc > 0){
-		int fid = (fakep.id() == 21) ? ((ran() > 0.5) ? 1 : 2) : -fakep.id();
+	int fid = (finalstring.at(ifinptn).id() == 21) ? ((ran() > 0.5) ? 1 : 2) : -finalstring.at(ifinptn).id();
         //HHparton fakep = finalstring.at(ifinptn); fakep.id(-fakep.id()); fakep.set_color(acols.at(ifaq1)); fakep.set_anti_color(0);
         HHparton fakep = finalstring.at(ifinptn); fakep.id(fid); fakep.set_color(acols.at(ifaq1)); fakep.set_anti_color(0);
         double dir = (ran() < 0.5) ? 1. : -1.; double fake_pT = (p_fake >= 1.) ? 0.282842712474619 : 0.; double fake_phi = 2. * 3.14159265358979 * ran();
