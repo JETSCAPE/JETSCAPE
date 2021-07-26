@@ -4929,7 +4929,14 @@ for(int ifq1 = 0; ifq1 < cols.size(); ifq1++){
     int ifinptn = -1;
     for(int iptn = 0; iptn < finalstring.size(); ++iptn){if(finalstring.at(iptn).col()==cols.at(ifq1)){ifinptn = iptn; break;}}
     
-    int loc = findcloserepl(finalstring.at(ifinptn), ifinptn+1, false, true, HH_showerptns, HH_thermal);
+    int loc = 0;
+    if(finalstring.at(ifinptn).id() == 21){
+        finalstring.at(ifinptn).id(1);
+        loc = findcloserepl(finalstring.at(ifinptn), ifinptn+1, false, true, HH_showerptns, HH_thermal);
+        finalstring.at(ifinptn).id(21);
+    }
+    else{loc = findcloserepl(finalstring.at(ifinptn), ifinptn+1, false, true, HH_showerptns, HH_thermal);}
+    
     if(loc == 999999999 || loc > 0){
 	int fid = (finalstring.at(ifinptn).id() == 21) ? ((ran() > 0.5) ? -1 : -2) : -finalstring.at(ifinptn).id();
         //HHparton fakep = finalstring.at(ifinptn); fakep.id(-fakep.id()); fakep.set_color(0); fakep.set_anti_color(cols.at(ifq1));
@@ -4956,7 +4963,14 @@ for(int ifaq1 = 0; ifaq1 < acols.size(); ifaq1++){
     int ifinptn = -1;
     for(int iptn = 0; iptn < finalstring.size(); ++iptn){if(finalstring.at(iptn).acol()==acols.at(ifaq1)){ifinptn = iptn; break;}}
     
-    int loc = findcloserepl(finalstring.at(ifinptn), ifinptn+1, false, true, HH_showerptns, HH_thermal);
+    int loc = 0;
+    if(finalstring.at(ifinptn).id() == 21){
+        finalstring.at(ifinptn).id(-1);
+        loc = findcloserepl(finalstring.at(ifinptn), ifinptn+1, false, true, HH_showerptns, HH_thermal);
+        finalstring.at(ifinptn).id(21);
+    }
+    else{loc = findcloserepl(finalstring.at(ifinptn), ifinptn+1, false, true, HH_showerptns, HH_thermal);}
+    
     if(loc == 999999999 || loc > 0){
 	int fid = (finalstring.at(ifinptn).id() == 21) ? ((ran() > 0.5) ? 1 : 2) : -finalstring.at(ifinptn).id();
         //HHparton fakep = finalstring.at(ifinptn); fakep.id(-fakep.id()); fakep.set_color(acols.at(ifaq1)); fakep.set_anti_color(0);
