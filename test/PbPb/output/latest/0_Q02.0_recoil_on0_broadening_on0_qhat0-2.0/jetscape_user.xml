@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+
+<jetscape>
+  
+  <nEvents> 10 </nEvents>
+  
+  <JetScapeWriterHepMC> on </JetScapeWriterHepMC>
+  <JetScapeWriterAscii> on </JetScapeWriterAscii>
+
+  <Random>
+    <seed>1</seed>
+  </Random>
+  
+  <!-- Inital State Module  -->
+  <IS>
+    <Trento> </Trento>
+  </IS>
+  
+  <!-- Hard Process -->
+  <Hard>
+    <PythiaGun>
+      <pTHatMin>20</pTHatMin>
+      <pTHatMax>30</pTHatMax>
+      <eCM>5020</eCM>
+    </PythiaGun>
+  </Hard>
+  
+  <!--Preequilibrium Dynamics Module -->
+  <Preequilibrium>
+    <NullPreDynamics> </NullPreDynamics>
+  </Preequilibrium>
+  
+  <!-- Hydro  Module  -->
+  <Hydro>
+    <Brick bjorken_expansion_on="false" start_time="0.6"> </Brick>
+  </Hydro>
+  
+  <!--Eloss Modules -->
+  <Eloss>
+    <Matter>
+      <in_vac> 0 </in_vac>
+      <Q0> 2.0 </Q0>
+      <recoil_on> 0 </recoil_on>
+      <broadening_on> 0 </broadening_on>
+      <qhat0> -2.0 </qhat0>
+    </Matter>
+    <LBT>
+      <Q0> 2.0 </Q0>
+    </LBT>
+  </Eloss>
+  
+  <!-- Jet Hadronization Module -->
+  <JetHadronization>
+    <name>colorless</name>
+  </JetHadronization>
+  
+</jetscape>

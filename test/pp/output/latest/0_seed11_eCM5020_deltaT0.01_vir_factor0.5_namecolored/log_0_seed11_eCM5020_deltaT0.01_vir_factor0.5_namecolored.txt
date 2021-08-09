@@ -1,0 +1,180 @@
+[Info] ------------------------------[0m
+[Info] | ... JetScape Framework ... |[0m
+[Info] ------------------------------[0m
+[Info] [0m
+[Info] *--------------------------------------------------------------*[0m
+[Info] |                                                              |[0m
+[Info] |                  /\                                          |[0m
+[Info] |                 /  \                                         |[0m
+[Info] |                / |  \                                        |[0m
+[Info] |               /  |   \              /\                       |[0m
+[Info] |              /   |    \          /\/  \                      |[0m
+[Info] |             / \  |  /  \      /\/   |  \/\                   |[0m
+[Info] |            /   \ | /    \    /    % | %   \                  |[0m
+[Info] |         __/     \|/      \__/      %|%     \/\__             |[0m
+[Info] |                                                              |[0m
+[Info] |                          JETSCAPE                            |[0m
+[Info] |                                                              |[0m
+[Info] |     The Jet Energy-loss Tomography with a Statistically      |[0m
+[Info] |       and Computationally Advanced Program Envelope          |[0m
+[Info] |                     http://jetscape.org                      |[0m
+[Info] |                                                              |[0m
+[Info] | Please cite arXiv:1903.07706 if you use this package for     |[0m
+[Info] | scientific work.                                             |[0m
+[Info] |                                                              |[0m
+[Info] | JETSCAPE is provided without warranty under the terms        |[0m
+[Info] | of the GNU GPLv3. It uses xxx code(s).                       |[0m
+[Info] | See COPYING file for details.                                |[0m
+[Info] |                                                              |[0m
+[Info] *--------------------------------------------------------------*[0m
+[Info] 147MB  [1m[31mIntialize JetScape ...[0m
+[Info] 147MB  Created JetScapeXML Instance[0m
+[Info] 147MB  Open XML Master file : jetscape_master.xml[0m
+[Info] 147MB  Open XML User file : jetscape_user.xml[0m
+[Info] 147MB  ================================================================[0m
+[Info] 147MB  nEvents = 10[0m
+[Info] 147MB  Reuse Hydro:  true [0m
+[Info] 147MB  nReuseHydro: 10[0m
+[Info] 147MB  JetScapeTaskSupport found seed 11, using individual engines with seeds created from 11[0m
+[Info] 150MB  JetScape::DetermineTaskList() -- Hard Process: Added PythiaGun to task list.[0m
+[Info] 150MB  JetScape::DetermineTaskList() -- Eloss: Added Matter to Eloss list.[0m
+[Info] 150MB  JetScape::DetermineTaskList() -- JetHadronization: Added ColoredHadronization to task list.[0m
+[Info] 150MB  JetScape::DetermineTaskList() -- JetScapeWriterAscii (test_out.dat) added to task list.[0m
+[Info] 150MB  JetScape::DetermineTaskList() -- JetScapeWriterHepMC (test_out.hepmc) added to task list.[0m
+[Info] 150MB  ================================================================[0m
+[Info] 150MB  Found 5 Modules Initialize them ... [0m
+[Info] 150MB  Set Hydro,JetEnergylossManager and IS Pointers for SignalManager to create Signal/Slots[0m
+[Info] 150MB  Created JetScapeSignalManager Instance[0m
+[Info] 150MB  Calling JetScape InitTasks()...[0m
+[Info] 150MB  Intialize HardProcess : UninitializedPythiaGun ...[0m
+[Info] 150MB  [35mPythia Gun with FSR_on: 0[0m
+[Info] 150MB  [35mPythia Gun with 5 < pTHat < 7[0m
+[Info] 150MB  [35mUse hybrid hadronization? 0[0m
+
+ *-------  PYTHIA Process Initialization  --------------------------*
+ |                                                                  |
+ | We collide p+ with p+ at a CM energy of 5.020e+03 GeV            |
+ |                                                                  |
+ |------------------------------------------------------------------|
+ |                                                    |             |
+ | Subprocess                                    Code |   Estimated |
+ |                                                    |    max (mb) |
+ |                                                    |             |
+ |------------------------------------------------------------------|
+ |                                                    |             |
+ | g g -> g g                                     111 |   4.501e+01 |
+ | g g -> q qbar (uds)                            112 |   8.348e-01 |
+ | q g -> q g                                     113 |   3.302e+01 |
+ | q q(bar)' -> q q(bar)'                         114 |   2.791e+00 |
+ | q qbar -> g g                                  115 |   1.876e-02 |
+ | q qbar -> q' qbar' (uds)                       116 |   1.580e-02 |
+ | g g -> c cbar                                  121 |   2.441e-01 |
+ | q qbar -> c cbar                               122 |   4.789e-03 |
+ | g g -> b bbar                                  123 |   9.554e-02 |
+ | q qbar -> b bbar                               124 |   2.373e-03 |
+ | q g -> q gamma (udscb)                         201 |   8.542e-03 |
+ | q qbar -> g gamma                              202 |   4.431e-04 |
+ | g g -> g gamma                                 203 |   1.343e-05 |
+ | f fbar -> gamma gamma                          204 |   2.193e-06 |
+ | g g -> gamma gamma                             205 |   7.472e-06 |
+ |                                                                  |
+ *-------  End PYTHIA Process Initialization -----------------------*
+
+ *-------  PYTHIA Multiparton Interactions Initialization  ---------* 
+ |                                                                  | 
+ |                   sigmaNonDiffractive =    47.72 mb              | 
+ |                                                                  | 
+ |    pT0 =  2.12 gives sigmaInteraction =   213.00 mb: accepted    | 
+ |                                                                  | 
+ *-------  End PYTHIA Multiparton Interactions Initialization  -----* 
+
+ *-------  PYTHIA Flag + Mode + Parm + Word + FVec + MVec + PVec + WVec Settings (changes only)  ------------------* 
+ |                                                                                                                 | 
+ | Name                                          |                      Now |      Default         Min         Max | 
+ |                                               |                          |                                      | 
+ | Beams:eCM                                     |                 5020.000 |    14000.000    10.00000             | 
+ | HadronLevel:all                               |                      off |           on                         | 
+ | HadronLevel:Decay                             |                      off |           on                         | 
+ | HardQCD:all                                   |                       on |          off                         | 
+ | Next:numberShowEvent                          |                        0 |            1           0             | 
+ | Next:numberShowInfo                           |                        0 |            1           0             | 
+ | Next:numberShowProcess                        |                        0 |            1           0             | 
+ | PartonLevel:FSR                               |                      off |           on                         | 
+ | PhaseSpace:pTHatMax                           |                  7.00000 |     -1.00000                         | 
+ | PhaseSpace:pTHatMin                           |                  5.00000 |          0.0         0.0             | 
+ | PromptPhoton:all                              |                       on |          off                         | 
+ | Random:seed                                   |                       11 |           -1               900000000 | 
+ | Random:setSeed                                |                       on |          off                         | 
+ |                                                                                                                 | 
+ *-------  End PYTHIA Flag + Mode + Parm + Word + FVec + MVec + PVec + WVec Settings  -----------------------------* 
+
+ --------  PYTHIA Particle Data Table (changed only)  ------------------------------------------------------------------------------
+ 
+      id   name            antiName         spn chg col      m0        mWidth      mMin       mMax       tau0    res dec ext vis wid
+             no onMode   bRatio   meMode     products 
+
+ no particle data has been changed from its default value 
+
+ --------  End PYTHIA Particle Data Table  -----------------------------------------------------------------------------------------
+
+[Info] 155MB  Intialize JetEnergyLoss Manager ...[0m
+[Info] 155MB  Found 1 Eloss Manager Tasks/Modules Initialize them ... [0m
+[Info] 155MB  Intialize JetEnergyLoss ...[0m
+[Info] 155MB  Eloss shower with deltaT = 0.1 and maxT = 20[0m
+[Info] 155MB  Found 1 Eloss Tasks/Modules Initialize them ... [0m
+[Info] 155MB  Intialize Matter ...[0m
+[Info] 155MB  [35mMATTER input parameter[0m
+[Info] 155MB  [35muse hybrid hadronization later? 0[0m
+[Info] 155MB  [35mmatter shower on: 1[0m
+[Info] 155MB  [35min_vac: 1  brick_med: 0  recoil_on: 0[0m
+[Info] 155MB  [35mQ0: 1 vir_factor: 0.25  qhat0: 0 alphas: 0.25 hydro_Tc: 0.16 brick_length: 5[0m
+[Info] 155MB  Connect JetEnergyLossManager Signal to Hard Process ...[0m
+[Info] 155MB  Intialize Hadronization Manager ...[0m
+[Info] 155MB  Found 1 Hadronization Manager Tasks/Modules Initialize them ... [0m
+[Info] 155MB  Found 1 Hadronization Tasks/Modules Initialize them ... [0m
+[Info] 155MB  Weak decays are turned on[0m
+[Info] 155MB  Connect HadronizationManager Signal to Energy Loss ...[0m
+[Info] 155MB  JetScape Stream Writer initialized with output file = test_out.dat[0m
+[Info] 155MB  JetScape HepMC Writer initialized with output file = test_out.hepmc[0m
+[Info] 155MB  [1m[31mRun JetScape ...[0m
+[Info] 155MB  [1m[31mNumber of Events = 10[0m
+[Info] 155MB  [1m[31mRun Event # = 0[0m
+[Info] 161MB  [1m[30mJetScape finished after 10 events![0m
+[Info] Finished![0m
+
+CPU time: 1.381710 seconds.
+Real time: 5.000000 seconds.
+[Info] 147MB  Open Input File = test_out.dat[0m
+[Info] 147MB  File opened[0m
+[Info] 147MB  Current Event = 0[0m
+Number of hadrons is: 437
+[Info] 148MB  Current Event = 1[0m
+Number of hadrons is: 166
+[Info] 148MB  Current Event = 2[0m
+Number of hadrons is: 968
+[Info] 148MB  Current Event = 3[0m
+Number of hadrons is: 250
+[Info] 148MB  Current Event = 4[0m
+Number of hadrons is: 480
+[Info] 148MB  Current Event = 5[0m
+Number of hadrons is: 967
+[Info] 148MB  Current Event = 6[0m
+Number of hadrons is: 267
+[Info] 148MB  Current Event = 7[0m
+Number of hadrons is: 445
+[Info] 148MB  Current Event = 8[0m
+Number of hadrons is: 639
+[Info] 148MB  Current Event = 9[0m
+Number of hadrons is: 766
+[Info] 147MB  Open Input File = test_out.dat[0m
+[Info] 147MB  File opened[0m
+[Info] 147MB  Current Event = 0[0m
+[Info] 148MB  Current Event = 1[0m
+[Info] 148MB  Current Event = 2[0m
+[Info] 148MB  Current Event = 3[0m
+[Info] 148MB  Current Event = 4[0m
+[Info] 148MB  Current Event = 5[0m
+[Info] 148MB  Current Event = 6[0m
+[Info] 148MB  Current Event = 7[0m
+[Info] 148MB  Current Event = 8[0m
+[Info] 148MB  Current Event = 9[0m
