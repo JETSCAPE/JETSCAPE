@@ -1,0 +1,434 @@
+#------------------------------------------------------------------
+# This configuration file and QA machinery is adapted from the STAT analysis
+#------------------------------------------------------------------
+#
+# We group observables into blocks according to type of observable
+# for convenience, e.g. {type}: {observable}_{experiment}
+#
+# For each observable, we include its specific cuts in its block
+#
+# In the analysis code, we will store observables in a dictionary,
+# labeled as: {type}_{observable}_{experiment}_{suffix}
+# For example: hadron_pt_cms
+#              jet_mass_alice_R0.2
+# where the optional suffix is only present when needed. 
+#
+# We consider only pp observables here (i.e. no centrality consideration or hole subtraction)
+#
+# We include hepdata file paths when appropriate (relative to JETSCAPE-analysis directory),
+# to be used for histogram binning (via hepdata histogram) and plotting (via hepdata tgraph).
+#
+# The histogram binnings are determined from: plot_results_STAT_utils.bins_from_config()
+# The data TGraphs are determined from: plot_results_STAT_utils.tgraph_from_hepdata()
+#------------------------------------------------------------------
+sqrt_s: 5020
+power: 4.
+pt_ref: 10.
+
+# General jet finding parameters
+jet_R: [0.2, 0.3, 0.4, 0.5, 0.6, 0.8, 1.0]
+min_jet_pt: 20.
+max_jet_y: 3.
+
+# General grooming parameters
+SoftDrop:
+  - {'zcut': 0.1, 'beta': 0}
+  - {'zcut': 0.2, 'beta': 0}
+  - {'zcut': 0.4, 'beta': 0}
+  - {'zcut': 0.5, 'beta': 1.5}
+#------------------------------------------------------------------
+#------------------------------------------------------------------
+# Hadron spectra
+# Unless otherwise noted: Primary charged particles (w/ mean proper lifetime τ larger than 1 cm/c )
+hadron:
+
+  # https://www.hepdata.net/record/ins1657384
+  pt_ch_alice:
+    eta_cut: 0.8
+    pt: [5.0, 50.]
+    xtitle: '#it{p}_{T} (GeV/#it{c})'
+    logy: True
+    
+    hepdata: 'HEPData-ins1657384-v1-root.root'
+    hepdata_pp_dir: 'Table 4'
+    hepdata_pp_gname: 'Graph1D_y1'
+    ytitle_pp: '#frac{1}{#it{N}_{event}} #frac{d^{2}#it{N}}{d#it{p}_{T}d#it{#eta}} #left[(GeV/c)^{-1}#right]'
+    y_min_pp: 2e-8
+    y_max_pp: 1e4
+    
+    hepdata_AA_dir: 'Table 8'
+    hepdata_AA_gname: ['Graph1D_y1', 'Graph1D_y2', 'Graph1D_y3', 'Graph1D_y4', 'Graph1D_y5', 'Graph1D_y6']
+    hepdata_AA_hname: ['Hist1D_y1', 'Hist1D_y2', 'Hist1D_y3', 'Hist1D_y4', 'Hist1D_y5', 'Hist1D_y6']
+    ytitle_AA: '#it{R}_{AA}'
+  
+  # https://www.hepdata.net/record/ins1759506 -- charged pions
+  pt_pi_alice:
+    eta_cut: 0.8
+    pt: [5.0, 20.]
+    xtitle: '#it{p}_{T}'
+    logy: True
+    
+    hepdata: 'HEPData-ins1759506-v1-root.root'
+    hepdata_pp_dir: 'Table 2'
+    hepdata_pp_gname: 'Graph1D_y1'
+    ytitle_pp: '#frac{1}{#it{N}_{event}} #frac{d^{2}#it{N}}{d#it{p}_{T}d#it{#eta}} #left[(GeV/c)^{-1}#right]'
+    y_min_pp: 2e-8
+    y_max_pp: 1e4
+    
+    hepdata_AA_dir: 'Table 15'
+    hepdata_AA_gname: ['Graph1D_y1', 'Graph1D_y2', 'Graph1D_y3', 'Graph1D_y7', 'Graph1D_y8', 'Graph1D_y9']
+    hepdata_AA_hname: ['Hist1D_y1', 'Hist1D_y2', 'Hist1D_y3', 'Hist1D_y7', 'Hist1D_y8', 'Hist1D_y9']
+    ytitle_AA: '#it{R}_{AA}'
+
+  # https://www.hepdata.net/record/ins1496050
+  pt_ch_cms:
+    eta_cut: 1.0
+    pt: [5.0, 400.]
+    xtitle: '#it{p}_{T}'
+    logy: True
+    
+    hepdata: 'HEPData-ins1496050-v2-root.root'
+    hepdata_pp_dir: 'Table 7'
+    hepdata_pp_gname: 'Graph1D_y1'
+    ytitle_pp: 'E #frac{d^{3}#it{N}_{ch}}{d^{3}#it{p}} #left[GeV^{-2}c^{3}#right]'
+    y_min_pp: 2e-18
+    y_max_pp: 1e4
+    scale_by: '1/pt'
+    
+    hepdata_AA_dir: ['Table 8', 'Table 9', 'Table 10', 'Table 11']
+    hepdata_AA_gname: 'Graph1D_y1'
+    hepdata_AA_hname: 'Hist1D_y1'
+    ytitle_AA: '#it{R}_{AA}'
+    y_min_AA: 0
+    y_max_AA: 2.
+#------------------------------------------------------------------
+#------------------------------------------------------------------
+# Hadron correlations
+hadron_correlations:
+
+  # https://www.hepdata.net/record/ins1686834
+  # Fig 5 (scalar product method)
+  v2_atlas:
+    eta_cut: 2.5
+    pt: [5., 60.]
+    xtitle: '#it{p}_{T} (GeV/#it{c})'
+    
+    hepdata: 'HEPData-ins1686834-v1-root.root'
+    hepdata_pp_dir: 'Table 11'
+    hepdata_pp_gname: 'Graph1D_y1'
+    ytitle_pp: '#it{v}_{2}(SP)'
+    y_min_pp: 0.3
+    y_max_pp: 0.
+    
+    hepdata_AA_dir: ['Table 3', 'Table 4', 'Table 5', 'Table 6', 'Table 7', 'Table 8']
+    hepdata_AA_gname: 'Graph1D_y1'
+    hepdata_AA_hname: 'Hist1D_y1'
+    ytitle_AA: '#it{v}_{2}(SP)'
+  
+  # https://www.hepdata.net/record/ins1511868
+  # Fig 1 (scalar product method)
+  # Note: histogram binnings are not provided
+  v2_cms:
+    eta_cut: 1.
+    pt: [5., 100.]
+    pt_min: 1.
+    xtitle: '#it{p}_{T} (GeV/#it{c})'
+    
+    hepdata: 'HEPData-ins1511868-v1-root.root'
+    hepdata_pp_dir: 'Table 7'
+    hepdata_pp_gname: 'Graph1D_y1'
+    ytitle_pp: '#it{v}_{2}(SP)'
+    y_min_pp: 0.3
+    y_max_pp: 0.
+    
+    hepdata_AA_dir: ['Table 1', 'Table 2', 'Table 3', 'Table 4', 'Table 5', 'Table 6']
+    hepdata_AA_gname: 'Graph1D_y1'
+    ytitle_AA: '#it{v}_{2}(SP)'
+#------------------------------------------------------------------
+#------------------------------------------------------------------
+# Inclusive jet observables -- full jets
+inclusive_jet:
+
+  # https://www.hepdata.net/record/ins1755387
+  # Note: pT^{ch lead} > 5,7 GeV (for R=0.2,0.4)
+  # Note that results are reported both with and without the pT,lead cut on the pp jet cross-section
+  # Here, we use the result where the cut is applied on PbPb and pp
+  # Note: The pp HEPData file contains no leading track requirement (only used for QA)
+  pt_alice:
+    jet_R: [0.2, 0.4]
+    eta_cut_R: 0.7
+    pt: [40., 140.]
+    xtitle: '#it{p}_{T,jet} (GeV/#it{c})'
+    logy: True
+    
+    hepdata: 'HEPData-ins1755387-v1-root.root'
+    hepdata_pp_dir_R0.2: 'Table 2'
+    hepdata_pp_dir_R0.4: 'Table 4'
+    hepdata_pp_gname: 'Graph1D_y1'
+    ytitle_pp: '#frac{d^{2}#sigma}{d#it{p}_{T}d#it{#eta}} #left[mb/(GeV/c)^{-1}#right]'
+    y_min_pp: 2e-7
+    y_max_pp: 1e-3
+    
+    hepdata_AA_dir_R0.2: ['Table 30']
+    hepdata_AA_dir_R0.4: ['Table 31']
+    hepdata_AA_gname: 'Graph1D_y1'
+    hepdata_AA_hname: 'Hist1D_y1'
+    ytitle_AA: '#it{R}_{AA}'
+    y_min_AA: 0.
+    y_max_AA: 1.9
+
+  # https://www.hepdata.net/record/ins1673184
+  # Note: Two charged tracks with pt>4 GeV are required in Pb-Pb
+  #       (they argue this is small...unclear if they correct for it...we will ignore it here)
+  # Note: The paper also performs rapidity dependence for 0-10%, which we omit for now
+  # Note the PbPb binning in hepdata is different than the pp hepdata cross-section binning
+  pt_atlas:
+    jet_R: [0.4]
+    y_cut: 2.8
+    pt: [50., 1000.]
+    xtitle: '#it{p}_{T,jet} (GeV/#it{c})'
+    logy: True
+
+    hepdata: 'HEPData-ins1673184-v1-root.root'
+    hepdata_pp_dir_R0.4: 'Table 4'
+    hepdata_pp_gname: 'Graph1D_y1'
+    ytitle_pp: '#frac{d^{2}#sigma}{d#it{p}_{T}d#it{y}} #left[nb/(GeV/c)^{-1}#right]'
+    y_min_pp: 2e-7
+    y_max_pp: 1e4
+    skip_pp_ratio: True
+    
+    hepdata_AA_dir_R0.4: ['Table 19', 'Table 20', 'Table 21', 'Table 22', 'Table 23']
+    hepdata_AA_gname: 'Graph1D_y1'
+    hepdata_AA_hname: 'Hist1D_y1'
+    ytitle_AA: '#it{R}_{AA}'
+    y_min_AA: 0.
+    y_max_AA: 1.9
+    
+  # https://www.hepdata.net/record/ins1848440
+  pt_cms:
+    jet_R: [0.2, 0.4, 0.6, 0.8, 1.0]
+    eta_cut: 2.0
+    pt: [200., 1000.]
+    xtitle: '#it{p}_{T,jet} (GeV/#it{c})'
+    logy: True
+
+    hepdata: 'HEPData-ins1848440-v1-root.root'
+    hepdata_pp_dir_R0.2: 'Figure 5-1'
+    hepdata_pp_dir_R0.4: 'Figure 5-3'
+    hepdata_pp_dir_R0.6: 'Figure 5-4'
+    hepdata_pp_dir_R0.8: 'Figure 5-5'
+    hepdata_pp_dir_R1.0: 'Figure 5-6'
+    hepdata_pp_gname: ['Graph1D_y1', 'Graph1D_y2', 'Graph1D_y3']
+    ytitle_pp: '#frac{d^{2}#sigma}{d#it{p}_{T}d#it{#eta}} #left[nb/(GeV/c)^{-1}#right]'
+    y_min_pp: 2e-8
+    y_max_pp: 1e2
+    
+    hepdata_AA_dir_R0.2: 'Figure 7-1'
+    hepdata_AA_dir_R0.4: 'Figure 7-3'
+    hepdata_AA_dir_R0.6: 'Figure 7-4'
+    hepdata_AA_dir_R0.8: 'Figure 7-5'
+    hepdata_AA_dir_R1.0: 'Figure 7-6'
+    hepdata_AA_gname: ['Graph1D_y1', 'Graph1D_y2', 'Graph1D_y3']
+    hepdata_AA_hname: ['Hist1D_y1', 'Hist1D_y2', 'Hist1D_y3']
+    ytitle_AA: '#it{R}_{AA}'
+    y_min_AA: 0.
+    y_max_AA: 1.9
+
+  # https://www.hepdata.net/record/ins1673177
+  Dz_atlas:
+    jet_R: [0.4]
+    y_cut: 2.1
+    pt: [126., 158.49, 199.53]
+    xtitle: '#it{z}'
+    logy: True
+    
+    hepdata: 'HEPData-ins1673177-v2-root.root'
+    hepdata_pp_dir_R0.4_pt0: 'Table 0'
+    hepdata_pp_dir_R0.4_pt1: 'Table 4'
+    hepdata_pp_gname: 'Graph1D_y1'
+    ytitle_pp: '#frac{1}{N_{jet}} #frac{dN_{ch}}{d#it{z}}'
+    y_min_pp: 2e-3
+    y_max_pp: 1e6
+    
+    hepdata_AA_dir_R0.4_pt0: 'Table 2'
+    hepdata_AA_dir_R0.4_pt1: 'Table 6'
+    hepdata_AA_gname: ['Graph1D_y1', 'Graph1D_y2']
+    hepdata_AA_hname: ['Hist1D_y1', 'Hist1D_y2']
+    ytitle_AA: '#it{R}_{D(z)}'
+    y_min_AA: 0
+    y_max_AA: 2.5
+    
+  Dpt_atlas:
+    jet_R: [0.4]
+    y_cut: 2.1
+    pt: [126., 158.49, 199.53]
+    xtitle: '#it{p}_{T} (GeV/#it{c})'
+    logy: True
+    
+    hepdata: 'HEPData-ins1673177-v2-root.root'
+    hepdata_pp_dir_R0.4_pt0: 'Table 1'
+    hepdata_pp_dir_R0.4_pt1: 'Table 5'
+    hepdata_pp_gname: 'Graph1D_y1'
+    ytitle_pp: '#frac{1}{N_{jet}} #frac{dN_{ch}}{d#it{p}_{T}} #left[(GeV/c)^{-1}#right]'
+    y_min_pp: 2e-4
+    y_max_pp: 1e2
+    
+    hepdata_AA_dir_R0.4_pt0: 'Table 3'
+    hepdata_AA_dir_R0.4_pt1: 'Table 7'
+    hepdata_AA_gname: ['Graph1D_y1', 'Graph1D_y2']
+    hepdata_AA_hname: ['Hist1D_y1', 'Hist1D_y2']
+    ytitle_AA: '#it{R}_{D(pt)}'
+    y_min_AA: 0
+    y_max_AA: 2.5
+  
+  # https://www.hepdata.net/record/ins1789224
+  # Note that the paper does not construct the PbPb/pp ratio directly, 
+  # but only contains the distributions (and q/g templates).
+  # We therefore skip constructing the PbPb/pp ratio for now.
+  charge_cms:
+    jet_R: [0.4]
+    eta_cut: 1.5
+    pt_min: 120.
+    pt: [120., 1000000]
+    xtitle: 'Q'
+    track_pt_min: 1.
+    kappa: [0.5]
+    
+    hepdata: 'HEPData-ins1789224-v1-root.root'
+    hepdata_pp_dir_R0.4_k0.5: 'Table 1'
+    hepdata_pp_gname: 'Graph1D_y5'
+    ytitle_pp: '#frac{1}{#sigma} #frac{d#sigma}{d#it{Q}} #left[1/e#right]'
+    y_min_pp: 0.
+    y_max_pp: 2.5
+    
+    hepdata_AA_dir_R0.4_k0.5: 'Table 1'
+    hepdata_AA_gname: ['Graph1D_y2']
+    hepdata_AA_hname: ['Hist1D_y2']
+    ytitle_AA: '#frac{1}{#sigma} #frac{d#sigma}{d#it{Q}} #left[1/e#right]'
+    y_min_AA: 0
+    y_max_AA: 2.5
+    skip_AA_ratio: True
+    
+  # https://www.hepdata.net/record/ins1672962
+  mg_cms:
+    jet_R: [0.4]
+    eta_cut: 1.3
+    pt: [140., 160., 180.]
+    dR: 0.1
+    SoftDrop:
+      - {'zcut': 0.1, 'beta': 0}
+      - {'zcut': 0.5, 'beta': 1.5}
+    xtitle: '#it{m}_{g}/#it{p}_{T,jet}'
+    
+    hepdata: 'HEPData-ins1672962-v1-root.root'
+    hepdata_pp_dir_R0.4_zcut0.1_beta0: 'Figure 2a'
+    hepdata_pp_dir_R0.4_zcut0.5_beta1.5: 'Figure 2b'
+    hepdata_pp_gname: 'Graph1D_y1'
+    ytitle_pp: '#frac{1}{#sigma} #frac{d#sigma}{d#it{m}_{g}} #left[GeV^{-2}#right]'
+    y_min_pp: 0.
+    y_max_pp: 25
+    skip_pp_ratio: True
+    
+    hepdata_AA_dir_R0.4_zcut0.1_beta0_pt0: 'Figure 5b'
+    hepdata_AA_gname_R0.4_zcut0.1_beta0_pt0: ['Graph1D_y1']
+    hepdata_AA_hname_R0.4_zcut0.1_beta0_pt0: ['Hist1D_y1']
+    
+    hepdata_AA_dir_R0.4_zcut0.5_beta1.5_pt0: 'Figure 6b'
+    hepdata_AA_gname_R0.4_zcut0.5_beta1.5_pt0: ['Graph1D_y1']
+    hepdata_AA_hname_R0.4_zcut0.5_beta1.5_pt0: ['Hist1D_y1']
+
+    hepdata_AA_dir_R0.4_zcut0.1_beta0_pt1: 'Figure 3b'
+    hepdata_AA_gname_R0.4_zcut0.1_beta0_pt1: ['Graph1D_y1', 'Graph1D_y2', 'Graph1D_y3']
+    hepdata_AA_hname_R0.4_zcut0.1_beta0_pt1: ['Hist1D_y1', 'Hist1D_y2', 'Hist1D_y3']
+    
+    hepdata_AA_dir_R0.4_zcut0.5_beta1.5_pt1: 'Figure 4b'
+    hepdata_AA_gname_R0.4_zcut0.5_beta1.5_pt1: ['Graph1D_y1', 'Graph1D_y2', 'Graph1D_y3']
+    hepdata_AA_hname_R0.4_zcut0.5_beta1.5_pt1: ['Hist1D_y1', 'Hist1D_y2', 'Hist1D_y3']
+
+    ytitle_AA: 'PbPb / smeared pp'
+    y_min_AA: 0.
+    y_max_AA: 7.
+    
+  # https://www.hepdata.net/record/ins1620905
+  # Note that pp distributions are not reported except for 160-180 GeV 
+  # (the other pt bins have only "pp smeared" reported)
+  zg_cms:
+    jet_R: [0.4]
+    eta_cut: 1.3
+    pt: [140., 160., 180.]
+    dR: 0.1
+    SoftDrop:
+      - {'zcut': 0.1, 'beta': 0}
+    xtitle: '#it{z}_{g}'
+
+    hepdata: 'HEPData-ins1620905-v1-root.root'
+    hepdata_pp_dir_R0.4_zcut0.1_beta0_pt1: 'Table 2'
+    hepdata_pp_gname: 'Graph1D_y1'
+    ytitle_pp: '#frac{1}{#sigma} #frac{d#sigma}{d#it{z}_{g}}'
+    y_min_pp: 0.
+    y_max_pp: 15
+    skip_pp: True
+    
+    hepdata_AA_dir_R0.4_zcut0.1_beta0_pt0: ['Table 11']
+    hepdata_AA_dir_R0.4_zcut0.1_beta0_pt1: ['Table 10', 'Table 9', 'Table 8']
+    hepdata_AA_gname: 'Graph1D_y1'
+    hepdata_AA_hname: 'Hist1D_y1'
+    ytitle_AA: 'PbPb / smeared pp'
+    y_min_AA: 0.
+    y_max_AA: 2.
+    
+#------------------------------------------------------------------
+#------------------------------------------------------------------
+# Inclusive jet observables -- charged jets
+inclusive_chjet:
+  
+  # https://inspirehep.net/literature/1893479 (no hepdata yet)
+  # TODO: update hepdata
+  zg_alice:
+    jet_R: [0.2, 0.4]
+    eta_cut_R: 0.9
+    pt: [60., 80.]
+    SoftDrop:
+      - {'zcut': 0.2, 'beta': 0}
+    xtitle: '#it{z}_{g}'
+
+    hepdata: 'HEPData-1627454721-v1-root.root'
+    hepdata_pp_dir_R0.2_zcut0.2_beta0: ['Table 2']
+    hepdata_pp_dir_R0.4_zcut0.2_beta0: ['Table 4']
+    hepdata_pp_gname: 'Graph1D_y1'
+    ytitle_pp: '#frac{1}{#sigma} #frac{d#sigma}{d#it{z}_{g}}'
+    y_min_pp: 0.
+    y_max_pp: 7.
+    
+    hepdata_AA_dir_R0.2_zcut0.2_beta0: ['Table 3']
+    hepdata_AA_dir_R0.4_zcut0.2_beta0: ['Table 6']
+    hepdata_AA_gname: 'Graph1D_y1'
+    hepdata_AA_hname: 'Hist1D_y1'
+    ytitle_AA: 'PbPb / pp'
+    y_min_AA: 0.
+    y_max_AA: 2.
+
+  tg_alice:
+    jet_R: [0.2, 0.4]
+    eta_cut_R: 0.9
+    pt: [60., 80.]
+    SoftDrop:
+      - {'zcut': 0.2, 'beta': 0}
+    xtitle: '#it{#theta}_{g}'
+
+    hepdata: 'HEPData-1627454721-v1-root.root'
+    hepdata_pp_dir_R0.2_zcut0.2_beta0: ['Table 7']
+    hepdata_pp_dir_R0.4_zcut0.2_beta0: ['Table 10']
+    hepdata_pp_gname: 'Graph1D_y1'
+    ytitle_pp: '#frac{1}{#sigma} #frac{d#sigma}{d#it{#theta}_{g}}'
+    y_min_pp: 0.
+    y_max_pp: 5.
+    
+    hepdata_AA_dir_R0.2_zcut0.2_beta0: ['Table 9']
+    hepdata_AA_dir_R0.4_zcut0.2_beta0: ['Table 12']
+    hepdata_AA_gname: 'Graph1D_y1'
+    hepdata_AA_hname: 'Hist1D_y1'
+    ytitle_AA: 'PbPb / pp'
+    y_min_AA: 0.
+    y_max_AA: 2.
+#------------------------------------------------------------------
