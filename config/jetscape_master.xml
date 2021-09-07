@@ -27,6 +27,8 @@
   <JetScapeWriterAscii> off </JetScapeWriterAscii>
   <JetScapeWriterAsciiGZ> off </JetScapeWriterAsciiGZ>
   <JetScapeWriterHepMC> off </JetScapeWriterHepMC>
+  <JetScapeWriterFinalStatePartonsAscii> off </JetScapeWriterFinalStatePartonsAscii>
+  <JetScapeWriterFinalStateHadronsAscii> off </JetScapeWriterFinalStateHadronsAscii>
 
   <!--  Random Settings. For now, just a global  seed. -->
   <!--  Note: It's each modules responsibility to adopt it -->
@@ -226,6 +228,7 @@
       <!-- hydro_type == 2 read in evo file from MUSIC -->
       <hydro_type>1</hydro_type>
 
+      <boost_invariant_>1</boost_invariant_>
       <!-- VISHNew hydro evolution filename (hdf5 format) -->
       <VISH_file>../examples/test_hydro_files/VISH_evo.h5</VISH_file>
       <!-- flag whether read in viscous information -->
@@ -302,6 +305,11 @@
        <shower_recofactor>0.3333333</shower_recofactor>
        <thermal_recofactor>0.3333333</thermal_recofactor>
        <weak_decays>on</weak_decays>
+       <!-- You can add any number of additional lines to initialize pythia hadronization here -->
+       <!-- Note that if the tag exists it cannot be empty (tinyxml produces a segfault) -->
+       <!-- <LinesToRead> -->
+       <!--   111:mayDecay = off  -->
+       <!-- </LinesToRead> -->
    </JetHadronization>
 
   <!-- Particlization Module  -->

@@ -100,6 +100,9 @@
     <name>colorless</name>
     <take_recoil>1</take_recoil>
     <eCMforHadronization>2510</eCMforHadronization>
+    <LinesToRead>
+      111:mayDecay = off
+    </LinesToRead>
   </JetHadronization>
   
 </jetscape>
