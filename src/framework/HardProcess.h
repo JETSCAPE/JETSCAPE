@@ -100,6 +100,11 @@ public:
   */
   virtual double GetSigmaErr() { return 0; };
 
+  /** Generated pt-hat
+      To be overwritten by implementations that have such information.
+  */
+  virtual double GetPtHat() { return 0; };
+
   /** Generated weight.
       This is in addition to sigmaGen, e.g. coming from dynamic oversampling.
       To be overwritten by implementations that have such information.

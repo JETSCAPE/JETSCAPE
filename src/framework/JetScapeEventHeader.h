@@ -50,6 +50,10 @@ public:
   /// Initial Hard Process: Set uncertainty on the cross section
   void SetSigmaErr(double d) { SigmaErr = d; };
 
+    /// Initial Hard Process: pt-hat
+  double GetPtHat() { return PtHat; };
+  void SetPtHat(double d) { PtHat = d; };
+
   /// Initial Hard Process: Get additionally created weight (e.g. pythia.event().weight())
   double GetEventWeight() { return EventWeight; };
   /// Initial Hard Process: Set additionally created weight (e.g. pythia.event().weight())
@@ -81,6 +85,7 @@ private:
   // ============================ Initial Hard Process =================================
   double SigmaGen = -1;
   double SigmaErr = -1;
+  double PtHat = -1;
   double EventWeight = 1;
 
   // ============================ Initial State =================================
