@@ -121,7 +121,7 @@ void SmashWrapper::ExecuteTask() {
   for (unsigned int i = 0; i < n_events; i++) {
     JSINFO << "Event " << i << " SMASH starts with "
            << modus->jetscape_hadrons_[i].size() << " particles.";
-    smash_experiment_->initialize_new_event(i);
+    smash_experiment_->initialize_new_event();
     if (!only_final_decays_) {
       smash_experiment_->run_time_evolution();
     }
