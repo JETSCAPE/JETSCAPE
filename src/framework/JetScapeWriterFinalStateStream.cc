@@ -63,7 +63,7 @@ template <class T> void JetScapeWriterFinalStateStream<T>::WriteEvent() {
   // NOTE: Could also add Npart, Ncoll, and TotalEntropy. See the original stream writer.
   output_file << "#"
       << "\t" << "Event\t" << GetCurrentEvent() + 1  // +1 to index the event count from 1
-      << "\t" << "weight\t" << GetHeader().GetEventWeight()
+      << "\t" << "weight\t" << std::setprecision(15) << GetHeader().GetEventWeight() << std::setprecision(6)
       << "\t" << "EPangle\t" << (GetHeader().GetEventPlaneAngle() > -999 ? GetHeader().GetEventPlaneAngle() : 0)
       << "\t" << "N_" << GetName() << "\t" << particles.size()
       << pt_hat_text
