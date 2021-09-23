@@ -113,6 +113,7 @@ void HardProcess::CollectHeader(weak_ptr<JetScapeWriter> w) {
     auto &header = f->GetHeader();
     header.SetSigmaGen(GetSigmaGen());
     header.SetSigmaErr(GetSigmaErr());
+    header.SetPtHat(GetPtHat());
     header.SetEventWeight(GetEventWeight());
   }
 }

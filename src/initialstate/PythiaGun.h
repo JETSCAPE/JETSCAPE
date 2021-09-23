@@ -58,6 +58,7 @@ public:
   // Cross-section information in mb and event weight.
   double GetSigmaGen() { return info.sigmaGen(); };
   double GetSigmaErr() { return info.sigmaErr(); };
+  double GetPtHat() { return info.pTHat(); };
   double GetEventWeight() { return info.weight(); };
 };
 
