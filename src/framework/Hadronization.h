@@ -21,7 +21,7 @@
 #include "JetScapeWriter.h"
 #include "PartonShower.h"
 #include "SurfaceFinder.h"
-//#include "MakeUniqueHelper.h"
+#include "LiquefierBase.h"
 #include <vector>
 #include <random>
 
@@ -82,6 +82,15 @@ public:
   }
 
   void AddInHadrons(vector<shared_ptr<Hadron>> ih) { outHadrons = ih; }
+
+  void add_a_liquefier(std::shared_ptr<LiquefierBase> new_liquefier) {
+    liquefier_ptr_ = new_liquefier;
+  }
+
+  std::weak_ptr<LiquefierBase> get_liquefier() { return (liquefier_ptr_); }
+
+protected:
+  std::weak_ptr<LiquefierBase> liquefier_ptr_;
 
 private:
   vector<vector<shared_ptr<Parton>>> inPartons;

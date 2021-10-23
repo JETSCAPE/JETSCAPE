@@ -552,6 +552,17 @@ void JetScape::DetermineTaskListFromXML() {
       auto hadroMgr = make_shared<HadronizationManager>();
       auto hadro = make_shared<Hadronization>();
 
+      // Check if liquefier should be added, and add it if so
+      bool bAddLiquefier = false;
+      std::string strAddLiquefier =
+          GetXMLElementText({"JetHadronization", "AddLiquefier"});
+      if ((int)strAddLiquefier.find("true") >= 0) {
+        bAddLiquefier = true;
+        VERBOSE(1) << "Add liquefier to Hadronization: True.";
+      } else {
+        VERBOSE(1) << "Add liquefier to Hadronization: False.";
+      }
+
       // Determine type of hadronization module, and add it
       std::string hadronizationName =
           element->FirstChildElement("name")->GetText();
@@ -567,6 +578,12 @@ void JetScape::DetermineTaskListFromXML() {
         auto hadroModule =
             JetScapeModuleFactory::createInstance("ColorlessHadronization");
         if (hadroModule) {
+          if (bAddLiquefier) {
+            dynamic_pointer_cast<Hadronization>(hadroModule)->add_a_liquefier(
+                    liquefier);
+            JSINFO << "JetScape::DetermineTaskList() -- Hadronization: Added "
+                   << "liquefier to ColorlessHadronization";
+          }
           hadro->Add(hadroModule);
           JSINFO << "JetScape::DetermineTaskList() -- JetHadronization: Added "
                     "ColorlessHadronization to task list.";
