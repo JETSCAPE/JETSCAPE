@@ -196,6 +196,8 @@ void JetEnergyLoss::DoShower() {
       pInTempModule.push_back(pIn[i]);
       SentInPartons(deltaT, currentTime, pIn[i].pt(), pInTempModule, pOutTemp);
 
+      check_energy_momentum_conservation(pInTempModule, pOutTemp);
+
       // apply liquefier
       if (!weak_ptr_is_uninitialized(liquefier_ptr)) {
         liquefier_ptr.lock()->add_hydro_sources(pInTempModule, pOutTemp);
@@ -431,6 +433,55 @@ void JetEnergyLoss::GetFinalPartonsForEachShower(
     shared_ptr<PartonShower> shower) {
 
   this->final_Partons.push_back(shower.get()->GetFinalPartons());
+}
+
+
+//! This function check the energy momentum conservation at the vertex
+//! If vertex does not conserve energy and momentum,
+//! a p_missing will be added to the pOut list
+void JetEnergyLoss::check_energy_momentum_conservation(
+    const std::vector<Parton> &pIn, std::vector<Parton> &pOut) {
+  const double abs_err = 1e-10;
+  if (pOut.size() == 0) {
+    // the process is freestreaming, ignore
+    return;
+  }
+
+  FourVector p_init(0., 0., 0., 0.);
+  for (const auto &iparton : pIn) {
+    auto temp = iparton.p_in();
+    if (iparton.pstat() == -1) {
+      p_init -= temp;
+    } else {
+      p_init += temp;
+    }
+  }
+
+  FourVector p_final(0., 0., 0., 0.);
+  FourVector x_final(0., 0., 0., 0.);
+  for (const auto &iparton : pOut) {
+    auto temp = iparton.p_in();
+    if (iparton.pstat() == -1) {
+      p_final -= temp;
+    } else {
+      p_final += temp;
+    }
+    x_final = iparton.x_in();
+  }
+
+  FourVector p_missing = p_init;
+  p_missing -= p_final;
+  if (std::abs(p_missing.t()) > abs_err ||
+      std::abs(p_missing.x()) > abs_err ||
+      std::abs(p_missing.y()) > abs_err ||
+      std::abs(p_missing.z()) > abs_err) {
+    JSWARN << "A vertex does not conserve energy momentum!";
+    JSWARN << "E = " << p_missing.t() << " GeV, px = " << p_missing.x()
+           << " GeV, py = " << p_missing.y() << " GeV, pz = " << p_missing.z()
+           << " GeV.";
+    Parton parton_miss(0, 21, miss_stat_, p_missing, x_final);
+    pOut.push_back(parton_miss);
+  }
 }
 
 } // end namespace Jetscape

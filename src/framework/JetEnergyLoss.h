@@ -214,10 +214,14 @@ public:
 
   void GetFinalPartonsForEachShower(shared_ptr<PartonShower> shower);
 
+  void check_energy_momentum_conservation(
+    const std::vector<Parton> &pIn, std::vector<Parton> &pOut);
+
 protected:
   std::weak_ptr<LiquefierBase> liquefier_ptr;
 
 private:
+  const int miss_stat_ = 13;
   double deltaT;
   double maxT;
 
