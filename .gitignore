@@ -7,6 +7,7 @@
 *.internal
 *.hepmc
 *.*~
+*.swp
 .DS_Store
 html/*
 build/*
