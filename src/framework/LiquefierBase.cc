@@ -17,11 +17,13 @@
 
 namespace Jetscape {
 
+
 LiquefierBase::LiquefierBase()
     : hydro_source_abs_err(1e-10), drop_stat(-11), miss_stat(-13),
       neg_stat(-17) {
   GetHydroCellSignalConnected = false;
 }
+
 
 void LiquefierBase::get_source(Jetscape::real tau, Jetscape::real x,
                                Jetscape::real y, Jetscape::real eta,
@@ -43,6 +45,7 @@ void LiquefierBase::get_source(Jetscape::real tau, Jetscape::real x,
     }
   }
 }
+
 
 //! This function check the energy momentum conservation at the vertex
 //! If vertex does not conserve energy and momentum,
@@ -85,6 +88,7 @@ void LiquefierBase::check_energy_momentum_conservation(
     pOut.push_back(parton_miss);
   }
 }
+
 
 void LiquefierBase::filter_partons(std::vector<Parton> &pOut) {
   // if e_threshold > 0, use e_threshold, else, use |e_threshold|*T
@@ -165,6 +169,7 @@ void LiquefierBase::add_hydro_sources(std::vector<Parton> &pList) {
     }
 }
 
+
 void LiquefierBase::add_hydro_sources(std::vector<Parton> &pIn,
                                       std::vector<Parton> &pOut) {
   if (pOut.size() == 0) {
@@ -238,7 +243,6 @@ void LiquefierBase::add_hydro_sources(std::vector<Parton> &pIn,
   }
 }
 
-void LiquefierBase::Clear() { dropletlist.clear(); }
 
 Jetscape::real LiquefierBase::get_dropletlist_total_energy() const {
   Jetscape::real total_E = 0.0;

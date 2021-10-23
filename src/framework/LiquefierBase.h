@@ -100,7 +100,7 @@ public:
   void get_source(Jetscape::real tau, Jetscape::real x, Jetscape::real y,
                   Jetscape::real eta, std::array<Jetscape::real, 4> &jmu) const;
 
-  virtual void Clear();
+  virtual void Clear() { dropletlist.clear(); }
 };
 
 }; // namespace Jetscape
