@@ -70,6 +70,7 @@ public:
                                           std::vector<Parton> &pOut);
   void filter_partons(std::vector<Parton> &pOut);
   void add_hydro_sources(std::vector<Parton> &pIn, std::vector<Parton> &pOut);
+  void add_hydro_sources(std::vector<Parton> &pList);
 
   //! Core signal to receive information from the medium
   sigslot::signal5<double, double, double, double,

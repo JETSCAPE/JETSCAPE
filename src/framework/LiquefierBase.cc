@@ -143,6 +143,28 @@ void LiquefierBase::filter_partons(std::vector<Parton> &pOut) {
   }
 }
 
+
+void LiquefierBase::add_hydro_sources(std::vector<Parton> &pList) {
+    for (const auto &iparton : pList) {
+        double t = iparton.x_in().t();
+        double z = iparton.x_in().z();
+        double tau = sqrt(t*t - z*z);
+        double eta_s = 0.5*log((t + z)/(t - z));
+        std::array<Jetscape::real, 4> droplet_xmu = {
+            static_cast<Jetscape::real>(tau),
+            static_cast<Jetscape::real>(iparton.x_in().x()),
+            static_cast<Jetscape::real>(iparton.x_in().y()),
+            static_cast<Jetscape::real>(eta_s)};
+        std::array<Jetscape::real, 4> droplet_pmu = {
+            static_cast<Jetscape::real>(iparton.p_in().t()),
+            static_cast<Jetscape::real>(iparton.p_in().x()),
+            static_cast<Jetscape::real>(iparton.p_in().y()),
+            static_cast<Jetscape::real>(iparton.p_in().z())};
+        Droplet drop_i(droplet_xmu, droplet_pmu);
+        add_a_droplet(drop_i);
+    }
+}
+
 void LiquefierBase::add_hydro_sources(std::vector<Parton> &pIn,
                                       std::vector<Parton> &pOut) {
   if (pOut.size() == 0) {
