@@ -319,7 +319,7 @@ private:
   int flagScatter, flag_update, flag_update0;
   double Q00, Q0;
 
-  double tStart = 0.6;
+  double tStart;
 
   //...functions
 

@@ -47,6 +47,15 @@ void FreestreamMilneWrapper::InitializePreequilibrium(
   //is this necessary? if we just force the user to have the 'freestream_input' file in the correct directory
 
   fsmilne_ptr = new FREESTREAMMILNE();
+  struct parameters *params = fsmilne_ptr->configure(input_file.c_str());
+
+  double tau0 = GetXMLElementDouble(
+      {"Preequilibrium", "tau0"});
+  double taus = GetXMLElementDouble(
+      {"Preequilibrium", "taus"});
+
+  params->TAU0 = tau0;
+  params->DTAU = taus - tau0;
 }
 
 void FreestreamMilneWrapper::EvolvePreequilibrium() {

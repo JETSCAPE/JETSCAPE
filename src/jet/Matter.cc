@@ -248,6 +248,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
 
   VERBOSE(8) << " qhat0 = " << qhat0 << " qhat = " << qhat;
 
+  GetHydroTau0Signal(tStart);
+
   for (int i = 0; i < pIn.size(); i++) {
 
     // Reject photons

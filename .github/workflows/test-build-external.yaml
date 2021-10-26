@@ -3,7 +3,8 @@ name: build test
 on:
   pull_request:
     branches:
-      - master
+      - main
+      - release-candidate
 
 jobs:
   build:

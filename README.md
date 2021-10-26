@@ -1,4 +1,4 @@
-# JETSCAPE 3.1
+# JETSCAPE 3.4
 
 The [JETSCAPE](http://jetscape.org) simulation framework is an overarching computational envelope for developing complete event generators for heavy-ion collisions.
 It allows for modular incorporation of a wide variety of existing and future software that simulates different aspects of a heavy-ion collision.
@@ -109,4 +109,4 @@ configuration file, and anything else that may be relevant.
 ## Contributing to JETSCAPE
 
 If you would like to contribute code to JETSCAPE (new module, feature, bug fix, etc.) please open 
-a [Pull Request](https://github.com/JETSCAPE/JETSCAPE/pulls) or an [Issue](https://github.com/JETSCAPE/JETSCAPE/issues).
+a [Pull Request](https://github.com/JETSCAPE/JETSCAPE/pulls) with your changes, or an [Issue](https://github.com/JETSCAPE/JETSCAPE/issues) describing what you intend to do. For further details, see [Tips for git management](https://github.com/JETSCAPE/JETSCAPE/wiki/Tips-for-git-management).

@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+
+<jetscape>
+
+  <nEvents> 1 </nEvents>
+  <setReuseHydro> true </setReuseHydro>
+  <nReuseHydro> 5 </nReuseHydro>
+  <vlevel> 0 </vlevel>
+
+  <!-- Jetscape Writer -->
+  <JetScapeWriterAscii> on </JetScapeWriterAscii>
+
+  <!-- Inital State Module  -->
+  <IS>
+    <grid_max_x> 10 </grid_max_x>
+    <grid_max_y> 10 </grid_max_y>
+    <grid_max_z> 0.0 </grid_max_z>
+    <grid_step_x> 0.2 </grid_step_x>
+    <grid_step_y> 0.2 </grid_step_y>
+    <grid_step_z> 0.2 </grid_step_z>
+    <Trento> </Trento>
+  </IS>
+
+  <!-- Hard Process -->
+  <Hard>
+      <PGun>
+        <name>PGun</name>
+        <pT>100</pT>
+        <useHybridHad>0</useHybridHad>
+      </PGun>
+  </Hard>
+
+  <!-- Hydro  Module 1 -->
+  <Hydro>
+    <hydro_from_file>
+        <name>MUSICFile</name>
+        <read_in_multiple_hydro>0</read_in_multiple_hydro>
+        <hydro_files_folder>.</hydro_files_folder>
+
+        <!-- read in file type  -->
+        <!-- hydro_type == 1 read in evo file from VISHNew -->
+        <!-- hydro_type == 2 read in evo file from MUSIC -->
+        <hydro_type>7</hydro_type>
+        <boost_invariant_>1</boost_invariant_>
+
+        <!-- MUSIC hydro evolution filename (plain binary format) -->
+        <!-- the associated input file specifies the grid information -->
+        <MUSIC_input_file>music_input</MUSIC_input_file>
+        <PreEq_file>evolution_all_xyeta_fs.dat</PreEq_file>
+        <MUSIC_file>evolution_all_xyeta_MUSIC.dat</MUSIC_file>
+        <!-- transition temperature between QGP and Hadron Resonance Gas -->
+        <T_c>0.154</T_c>
+
+        <!-- read in hydro evo file every Ntau step -->
+        <!-- (only works for MUSIC evo files) -->
+        <read_hydro_every_ntau>1</read_hydro_every_ntau>
+    </hydro_from_file>
+  </Hydro>
+
+  <!--Eloss Modules -->
+  <Eloss>
+      <deltaT>0.1</deltaT>
+      <formTime> -0.1</formTime>
+      <maxT>250</maxT>
+      <mutex>ON</mutex>
+
+      <Matter>
+        <name>Matter</name>
+        <matter_on> 1 </matter_on>
+        <Q0> 2.0 </Q0>
+        <T0> 0.16 </T0>
+        <vir_factor> 0.25 </vir_factor>
+        <in_vac> 0 </in_vac>
+        <recoil_on> 1 </recoil_on>
+        <broadening_on> 0 </broadening_on>
+        <brick_med> 0 </brick_med>
+        <hydro_Tc> 0.15 </hydro_Tc>
+        <qhat0> -2.0 </qhat0>
+        <alphas> 0.25 </alphas>
+      </Matter>
+
+      <Lbt>
+        <name>Lbt</name>
+        <Q0> 2.0 </Q0>
+        <in_vac> 0 </in_vac>
+        <only_leading> 0 </only_leading>
+        <hydro_Tc> 0.16 </hydro_Tc>
+        <alphas> 0.25 </alphas>
+      </Lbt>
+    <AddLiquefier> true </AddLiquefier>
+  </Eloss>
+
+  <!-- Jet Hadronization Module -->
+  <JetHadronization>
+    <name>colorless</name>
+    <take_recoil>1</take_recoil>
+    <eCMforHadronization>2510</eCMforHadronization>
+  </JetHadronization>
+
+</jetscape>

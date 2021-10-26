@@ -83,6 +83,8 @@ void AdSCFT::DoEnergyLoss(double deltaT, double time, double Q2,
   VERBOSESHOWER(8) << MAGENTA << "SentInPartons Signal received : " << deltaT
                    << " " << Q2 << " " << &pIn;
 
+  GetHydroTau0Signal(tStart);
+
   for (int i = 0; i < pIn.size(); i++) {
     //Skip photons
     if (pIn[i].pid() == photonid) {

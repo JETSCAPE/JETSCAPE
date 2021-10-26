@@ -56,8 +56,9 @@ void MpiMusic::InitializeHydro(Parameter parameter_list) {
   // overwrite input options
   flag_output_evo_to_file = (
       GetXMLElementInt({"Hydro", "MUSIC", "output_evolution_to_file"}));
-  music_hydro_ptr->set_parameter("output_movie_flag",
-                                 static_cast<double>(flag_output_evo_to_file));
+  if (flag_output_evo_to_file == 1) {
+    music_hydro_ptr->set_parameter("output_evolution_to_file", 2);
+  }
   double tau_hydro = (
           GetXMLElementDouble({"Hydro", "MUSIC", "Initial_time_tau_0"}));
   music_hydro_ptr->set_parameter("Initial_time_tau_0", tau_hydro);
@@ -139,7 +140,6 @@ void MpiMusic::InitializeHydro(Parameter parameter_list) {
     exit(1);
   }
 
-
   music_hydro_ptr->add_hydro_source_terms(hydro_source_terms_ptr);
 }
 
@@ -155,12 +155,12 @@ void MpiMusic::EvolveHydro() {
     JSWARN << "Missing the pre-equilibrium module ...";
   } else {
     music_hydro_ptr->initialize_hydro_from_jetscape_preequilibrium_vectors(
-        dx, dz, z_max, nz, pre_eq_ptr->e_, pre_eq_ptr->utau_, pre_eq_ptr->ux_,
-        pre_eq_ptr->uy_, pre_eq_ptr->ueta_, pre_eq_ptr->pi00_,
-        pre_eq_ptr->pi01_, pre_eq_ptr->pi02_, pre_eq_ptr->pi03_,
-        pre_eq_ptr->pi11_, pre_eq_ptr->pi12_, pre_eq_ptr->pi13_,
-        pre_eq_ptr->pi22_, pre_eq_ptr->pi23_, pre_eq_ptr->pi33_,
-        pre_eq_ptr->bulk_Pi_);
+        dx, dz, z_max, nz, pre_eq_ptr->e_, pre_eq_ptr->P_,
+        pre_eq_ptr->utau_, pre_eq_ptr->ux_, pre_eq_ptr->uy_, pre_eq_ptr->ueta_,
+        pre_eq_ptr->pi00_, pre_eq_ptr->pi01_, pre_eq_ptr->pi02_,
+        pre_eq_ptr->pi03_, pre_eq_ptr->pi11_, pre_eq_ptr->pi12_,
+        pre_eq_ptr->pi13_, pre_eq_ptr->pi22_, pre_eq_ptr->pi23_,
+        pre_eq_ptr->pi33_, pre_eq_ptr->bulk_Pi_);
   }
 
   JSINFO << "initial density profile dx = " << dx << " fm";
@@ -193,12 +193,13 @@ void MpiMusic::EvolveHydro() {
 
     // add hydro_id to the hydro evolution filename
     std::ostringstream system_command;
-    system_command << "mv evolution_for_movie_xyeta.dat "
-                   << "evolution_for_movie_xyeta_" << GetId() << ".dat";
+    system_command << "mv evolution_all_xyeta.dat "
+                   << "evolution_all_xyeta_" << GetId() << ".dat";
     system(system_command.str().c_str());
 
+    //std::vector<SurfaceCellInfo> surface_cells;
     //if (freezeout_temperature > 0.0) {
-    //  FindAConstantTemperatureSurface(freezeout_temperature);
+    //  FindAConstantTemperatureSurface(freezeout_temperature, surface_cells);
     //}
   }
 

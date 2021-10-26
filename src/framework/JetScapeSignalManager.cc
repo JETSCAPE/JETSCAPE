@@ -89,6 +89,17 @@ void JetScapeSignalManager::ConnectEdensitySignal(shared_ptr<JetEnergyLoss> j) {
   }
 }
 
+void JetScapeSignalManager::ConnectGetHydroTau0Signal(
+    shared_ptr<JetEnergyLoss> j) {
+  if (!j->GetGetHydroTau0SignalConnected()) {
+    auto hp = GetHydroPointer().lock();
+    if (hp) {
+      j->GetHydroTau0Signal.connect(hp.get(), &FluidDynamics::GetHydroStartTime);
+      j->SetGetHydroTau0SignalConnected(true);
+    }
+  }
+}
+
 void JetScapeSignalManager::ConnectGetHydroCellSignal(
     shared_ptr<JetEnergyLoss> j) {
   if (!j->GetGetHydroCellSignalConnected()) {
@@ -110,6 +121,17 @@ void JetScapeSignalManager::ConnectGetHydroCellSignal(
     if (hp) {
       l->GetHydroCellSignal.connect(hp.get(), &FluidDynamics::GetHydroCell);
       l->set_GetHydroCellSignalConnected(true);
+    }
+  }
+}
+
+void JetScapeSignalManager::ConnectGetHydroCellSignal(
+    shared_ptr<Hadronization> h) {
+  if (!h->GetGetHydroCellSignalConnected()) {
+    auto hp = GetHydroPointer().lock();
+    if (hp) {
+      h->GetHydroCellSignal.connect(hp.get(), &FluidDynamics::GetHydroCell);
+      h->SetGetHydroCellSignalConnected(true);
     }
   }
 }
@@ -137,12 +159,28 @@ void JetScapeSignalManager::ConnectTransformPartonsSignal(
   }
 }
 
+
+
 void JetScapeSignalManager::ConnectGetFinalHadronListSignal(
-	shared_ptr<HadronPrinter> h){
-		auto hadroMgrShared = GetHadronizationManagerPointer().lock();
-  //hadronPrinter->GetFinalHadronList.connect(hadro.get(), &Hadronization::GetHadrons);
-  h->GetFinalHadronList.connect(hadroMgrShared.get(), 
-			&HadronizationManager::GetHadrons);
+                                                shared_ptr<HadronPrinter> h){
+    auto hadroMgrShared = GetHadronizationManagerPointer().lock();
+    //hadronPrinter->GetFinalHadronList.connect(hadro.get(), &Hadronization::GetHadrons);
+    h->GetFinalHadronList.connect(hadroMgrShared.get(),
+                                  &HadronizationManager::GetHadrons);
+}
+
+
+void JetScapeSignalManager::ConnectGetHydroHyperSurfaceSignal(
+    shared_ptr<Hadronization> h) {
+    if (!h->GetGetHydroHyperSurfaceConnected()) {
+        auto hp = GetHydroPointer().lock();
+        if (hp) {
+            h->GetHydroHyperSurface.connect(
+                hp.get(), &FluidDynamics::FindAConstantTemperatureSurface);
+            h->SetGetHydroHyperSurfaceConnected(true);
+        }
+    }
+
 }
 
 void JetScapeSignalManager::CleanUp() {

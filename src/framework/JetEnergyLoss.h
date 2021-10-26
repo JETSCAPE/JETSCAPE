@@ -88,6 +88,8 @@ public:
   sigslot::signal5<double, double, double, double,
                    std::unique_ptr<FluidCellInfo> &, multi_threaded_local>
       GetHydroCellSignal;
+  
+  sigslot::signal1<double &, multi_threaded_local> GetHydroTau0Signal;
 
   /** For future development. A signal to connect the JetEnergyLoss object to the function UpdateEnergyDeposit() of the FluidDynamics class.
    */
@@ -105,7 +107,7 @@ public:
   sigslot::signal5<double, double, double, vector<Parton> &, vector<Parton> &,
                    multi_threaded_local>
       SentInPartons;
-
+  
   /** Sets the value of qhat to "m_qhat". 
       @param m_qhat Jet quenching parameter q-hat.
    */
@@ -179,6 +181,14 @@ public:
     return GetHydroCellSignalConnected;
   }
 
+  void SetGetHydroTau0SignalConnected(bool m_GetHydroTau0SignalConnected) {
+    GetHydroTau0SignalConnected = m_GetHydroTau0SignalConnected;
+  }
+
+  const bool GetGetHydroTau0SignalConnected() {
+    return GetHydroTau0SignalConnected;
+  }
+
   /** Set the flag m_SentInPartonsConnected to true, if JetEnergyLoss had sent a signal to the function DoEnergyLoss().
       @param m_SentInPartonsConnected A boolean flag.
    */
@@ -204,10 +214,14 @@ public:
 
   void GetFinalPartonsForEachShower(shared_ptr<PartonShower> shower);
 
+  void check_energy_momentum_conservation(
+    const std::vector<Parton> &pIn, std::vector<Parton> &pOut);
+
 protected:
   std::weak_ptr<LiquefierBase> liquefier_ptr;
 
 private:
+  const int miss_stat_ = 13;
   double deltaT;
   double maxT;
 
@@ -216,6 +230,7 @@ private:
   shared_ptr<PartonShower> pShower;
 
   bool GetHydroCellSignalConnected;
+  bool GetHydroTau0SignalConnected;
   bool SentInPartonsConnected;
 
   /** This function executes the shower process for the partons produced from the hard scaterring.                                                                         

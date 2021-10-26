@@ -18,10 +18,14 @@
 
 namespace Jetscape {
 
-template <class T> JetScapeReader<T>::JetScapeReader() {
+template <class T> JetScapeReader<T>::JetScapeReader():
+  currentEvent{-1}
+  , sigmaGen{-1}
+  , sigmaErr{-1}
+  , eventWeight{-1}
+  , EventPlaneAngle{0.0}
+{
   VERBOSE(8);
-  currentEvent = -1;
-  EventPlaneAngle = 0.0;
 }
 
 template <class T> JetScapeReader<T>::~JetScapeReader() { VERBOSE(8); }
@@ -32,6 +36,11 @@ template <class T> void JetScapeReader<T>::Clear() {
   //pShower->clear();//pShower=nullptr; //check ...
   pShowers.clear();
   hadrons.clear();
+
+  sigmaGen = -1;
+  sigmaErr = -1;
+  eventWeight = -1;
+  EventPlaneAngle = 0.0;
 }
 
 template <class T> void JetScapeReader<T>::AddNode(string s) {
@@ -114,11 +123,33 @@ template <class T> void JetScapeReader<T>::Next() {
 
     if (strT.isCommentEntry()) {
 
+      // Cross section
+      if (line.find("sigmaGen") != std::string::npos) {
+        std::stringstream data(line);
+        std::string dummy;
+        data >> dummy >> dummy >> sigmaGen;
+        JSDEBUG << " sigma gen=" << sigmaGen;
+      }
+      // Cross section error
+      if (line.find("sigmaErr") != std::string::npos) {
+        std::stringstream data(line);
+        std::string dummy;
+        data >> dummy >> dummy >> sigmaErr;
+        JSDEBUG << " sigma err=" << sigmaErr;
+      }
+      // Event weight
+      if (line.find("weight") != std::string::npos) {
+        std::stringstream data(line);
+        std::string dummy;
+        data >> dummy >> dummy >> eventWeight;
+        JSDEBUG << " Event weight=" << eventWeight;
+      }
+      // EP angle
       if (line.find(EPAngleStr) != std::string::npos) {
         std::stringstream data(line);
         std::string dummy;
         data >> dummy >> dummy >> EventPlaneAngle;
-        JSINFO << " EventPlaneAngle=" << EventPlaneAngle;
+        JSDEBUG << " EventPlaneAngle=" << EventPlaneAngle;
       }
       continue;
     }

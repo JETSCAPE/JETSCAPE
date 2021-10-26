@@ -26,6 +26,8 @@
   <JetScapeWriterAscii> off </JetScapeWriterAscii>
   <JetScapeWriterAsciiGZ> off </JetScapeWriterAsciiGZ>
   <JetScapeWriterHepMC> off </JetScapeWriterHepMC>
+  <JetScapeWriterFinalStatePartonsAscii> off </JetScapeWriterFinalStatePartonsAscii>
+  <JetScapeWriterFinalStateHadronsAscii> off </JetScapeWriterFinalStateHadronsAscii>
 
   <!--  Random Settings. For now, just a global  seed. -->
   <!--  Note: It's each modules responsibility to adopt it -->
@@ -143,7 +145,7 @@
     <Martini>
       <name > Martini </name>
       <Q0> 2.0 </Q0>
-      <alpha_s> 0.3 </alpha_s>
+      <alphas> 0.3 </alphas>
       <pcut> 2.0 </pcut>
       <hydro_Tc> 0.16 </hydro_Tc>
       <recoil_on> 0 </recoil_on>

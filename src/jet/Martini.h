@@ -70,7 +70,7 @@ private:
   const double eLossCut = 1.0;
 
   double Q0; // Separation scale between Matter and Martini
-  double alpha_s;
+  double alphas;
   double alpha_em;
   double g;
   double pcut;         // below this scale, no further Eloss

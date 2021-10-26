@@ -70,6 +70,7 @@ public:
                                           std::vector<Parton> &pOut);
   void filter_partons(std::vector<Parton> &pOut);
   void add_hydro_sources(std::vector<Parton> &pIn, std::vector<Parton> &pOut);
+  void add_hydro_sources(std::vector<Parton> &pList);
 
   //! Core signal to receive information from the medium
   sigslot::signal5<double, double, double, double,
@@ -99,7 +100,7 @@ public:
   void get_source(Jetscape::real tau, Jetscape::real x, Jetscape::real y,
                   Jetscape::real eta, std::array<Jetscape::real, 4> &jmu) const;
 
-  virtual void Clear();
+  virtual void Clear() { dropletlist.clear(); }
 };
 
 }; // namespace Jetscape

@@ -14,6 +14,9 @@
 ##############################################################################
 
 # download the 3+1D OSU freestreaming code
-git clone --depth=1 https://github.com/derekeverett/freestream-milne.git freestream-milne
-#cd freestream-milne
-#git checkout double_prec
+#git clone --depth=1 https://github.com/derekeverett/freestream-milne.git freestream-milne
+#git clone --depth=1 https://github.com/derekeverett/freestream-milne.git -b time_step_history freestream-milne
+git clone --depth=1 https://github.com/chunshen1987/freestream-milne -b time_step_history freestream-milne
+
+cd freestream-milne
+patch -p0 -Ni ../freestream-milne-external-params.patch
