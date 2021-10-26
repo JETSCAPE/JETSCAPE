@@ -57,9 +57,9 @@ void HadronPrinter::WriteTask(weak_ptr<JetScapeWriter> w)
 void HadronPrinter::PrintFinalHadron(){
   char buffer [33];
 
-  JSINFO << "HadronPrinter : starting to print hadrons";
+  //JSINFO << "HadronPrinter : starting to print hadrons";
   int i=0;
-    fHadronOutfile << "#  PID  pstat  E  Px  Py  Pz  eta  phi" << endl;
+    //fHadronOutfile << "#  PID  pstat  E  Px  Py  Pz  eta  phi" << endl;
   for(auto it : finalHadrons){
     Hadron h = *it.get();
     fHadronOutfile << i <<"  "<< h.pid() <<"  "<< h.pstat() <<"  "<< h.e() <<"  "<< h.px() <<"  "<< h.py() <<"  "<< h.pz() <<"  "<< h.eta() <<"  "<< h.phi() << endl;

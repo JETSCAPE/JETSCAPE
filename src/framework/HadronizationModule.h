@@ -18,6 +18,8 @@
 
 #include "Hadronization.h"
 
+using std::uniform_real_distribution;
+
 namespace Jetscape {
 
 template <typename Derived> class HadronizationModule : public Hadronization {

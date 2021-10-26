@@ -88,8 +88,10 @@ void ColorlessHadronization::Init() {
     pythia.readString("ParticleDecays:limitTau0 = on");
     pythia.readString("ParticleDecays:tau0Max = 10.0");
   }
+    // Initialize random number distribution
+    ZeroOneDistribution = uniform_real_distribution<double>{0.0, 1.0};
 
-  // And initialize
+    // And initialize
   pythia.init();
 }
 
@@ -116,25 +118,33 @@ void ColorlessHadronization::DoHadronization(
     if (!take_recoil && want_pos == 0)
       continue; // SC: don't need negative if don't take recoil
 
+      double random_number = ZeroOneDistribution(*GetMt19937Generator());
+      
+      //JSINFO << BOLDYELLOW << " random number = " << random_number ;
+      
+      double direction = 1.0;
+      
+      if (random_number<0.5) direction = -1.0;
+      
     // Set remnants momentum
     double rempx = 0.2;
     double rempy = 0.2;
-    double rempz = p_fake;
+    double rempz = p_fake*direction;
     double reme = std::sqrt(std::pow(rempx, 2.) + std::pow(rempy, 2.) +
                             std::pow(rempz, 2.));
 
     // Hadronize all showers together
     vector<shared_ptr<Parton>> pIn;
     vector<vector<Parton>> shower_in;
-    for (unsigned int ishower = 0; ishower < shower.size(); ++ishower) {
+    for (int ishower = 0; ishower < shower.size(); ++ishower) {
       vector<Parton> p_sh;
-      for (unsigned int ipart = 0; ipart < shower.at(ishower).size(); ++ipart) {
+      for (int ipart = 0; ipart < shower.at(ishower).size(); ++ipart) {
         p_sh.push_back(*(shower[ishower][ipart]));
       }
       shower_in.push_back(p_sh);
     }
-    for (unsigned int ishower = 0; ishower < shower_in.size(); ++ishower) {
-      for (unsigned int ipart = 0; ipart < shower_in[ishower].size(); ++ipart) {
+    for (int ishower = 0; ishower < shower_in.size(); ++ishower) {
+      for (int ipart = 0; ipart < shower_in[ishower].size(); ++ipart) {
         //if (shower_in.at(ishower).at(ipart)->pstat()==0 && want_pos==1) pIn.push_back(shower_in.at(ishower).at(ipart));  // Positive
         if (want_pos == 1) { // Positive
           if (take_recoil && shower_in[ishower][ipart].pstat() == 1) {
@@ -170,7 +180,7 @@ void ColorlessHadronization::DoHadronization(
     int nquarks = 0;
     int isquark[pIn.size() + 2];
     memset(isquark, 0, (pIn.size() + 2) * sizeof(int));
-    for (unsigned int ipart = 0; ipart < pIn.size(); ++ipart) {
+    for (int ipart = 0; ipart < pIn.size(); ++ipart) {
       if (abs(pIn[ipart]->pid()) <= 6) {
         isquark[nquarks] = ipart;
         nquarks += 1;
@@ -207,13 +217,13 @@ void ColorlessHadronization::DoHadronization(
     }
 
     // Assign ends of strings (order matters in this algo)
-    for (unsigned int iquark = 0; iquark < nquarks; iquark++) {
+    for (int iquark = 0; iquark < nquarks; iquark++) {
       if (isdone[isquark[iquark]] == 0) {
         isdone[isquark[iquark]] = 1;
         one_end[istring] = isquark[iquark];
         double min_delR = 10000.;
         int partner = -2;
-        for (unsigned int jquark = 0; jquark < nquarks; jquark++) {
+        for (int jquark = 0; jquark < nquarks; jquark++) {
           if (iquark == jquark)
             continue;
           int d_jquark = isquark[jquark];
@@ -333,12 +343,12 @@ void ColorlessHadronization::DoHadronization(
     // Could have dangerous effects, yet to be tested....
     //
 
-    for (unsigned int ipart = 0; ipart < pIn.size(); ++ipart) {
+    for (int ipart = 0; ipart < pIn.size(); ++ipart) {
       double px = pIn[ipart]->px();
       double py = pIn[ipart]->py();
       double pz = pIn[ipart]->pz();
       double ee = pIn[ipart]->e();
-      for (unsigned int j = ipart + 1; j < pIn.size(); j++) {
+      for (int j = ipart + 1; j < pIn.size(); j++) {
         double p2x = pIn[j]->px();
         double p2y = pIn[j]->py();
         double p2z = pIn[j]->pz();
