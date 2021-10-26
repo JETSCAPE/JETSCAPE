@@ -160,6 +160,7 @@ void JetScapeSignalManager::ConnectTransformPartonsSignal(
 }
 
 
+
 void JetScapeSignalManager::ConnectGetFinalHadronListSignal(
                                                 shared_ptr<HadronPrinter> h){
     auto hadroMgrShared = GetHadronizationManagerPointer().lock();
@@ -179,6 +180,7 @@ void JetScapeSignalManager::ConnectGetHydroHyperSurfaceSignal(
             h->SetGetHydroHyperSurfaceConnected(true);
         }
     }
+
 }
 
 void JetScapeSignalManager::CleanUp() {

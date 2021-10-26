@@ -42,6 +42,7 @@ private:
   static RegisterJetScapeModule<ColorlessHadronization> reg;
 
 protected:
+        uniform_real_distribution<double> ZeroOneDistribution;
   static Pythia8::Pythia pythia;
 };
 

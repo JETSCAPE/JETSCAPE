@@ -126,6 +126,7 @@ public:
                                      shared_ptr<Hadronization> h2);
 		void ConnectGetFinalHadronListSignal(shared_ptr<HadronPrinter> h);
 
+
   void ConnectGetHydroHyperSurfaceSignal(shared_ptr<Hadronization> h);
 
   void
