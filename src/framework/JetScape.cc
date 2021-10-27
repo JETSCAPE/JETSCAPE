@@ -619,6 +619,20 @@ void JetScape::DetermineTaskListFromXML() {
           JSWARN << "iSS is attempted to be added, but iSS is not installed!";
 #endif
         }
+        //   - iS3D
+        else if (childElementName == "iS3D") {
+#ifdef USE_IS3D
+          auto iS3Dmodule =
+              JetScapeModuleFactory::createInstance(childElementName);
+          if (iS3Dmodule) {
+            Add(iS3Dmodule);
+            JSINFO << "JetScape::DetermineTaskList() -- SoftParticlization: "
+                      "Added iS3D to task list.";
+          }
+#else
+          JSWARN << "iS3D is attempted to be added, but iS3D is not installed!";
+#endif
+        }
         //   - Custom module
         else if (((int)childElementName.find("CustomModule") >= 0)) {
           auto customModule =
