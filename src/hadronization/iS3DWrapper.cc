@@ -22,6 +22,7 @@
 #include <string>
 
 using namespace Jetscape;
+using namespace iS3D;
 
 // Register the module with the base class
 RegisterJetScapeModule<iS3DWrapper>

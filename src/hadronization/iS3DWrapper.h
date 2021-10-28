@@ -26,7 +26,7 @@ using namespace Jetscape;
 
 class iS3DWrapper: public SoftParticlization {
  private:
-    IS3D iS3D_;
+    iS3D::IS3D iS3D_;
 
   // Allows the registration of the module so that it is available to be used by the Jetscape framework.
   static RegisterJetScapeModule<iS3DWrapper> reg;
