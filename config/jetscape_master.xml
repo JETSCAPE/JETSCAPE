@@ -340,6 +340,8 @@
 
     <!-- iS3D -->
     <iS3D>
+        <!-- 0 = read from memory, 1 = read from file -->
+        <freezeout_surface_from_file>1</freezeout_surface_from_file>
     </iS3D>
   </SoftParticlization>
 

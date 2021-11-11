@@ -28,7 +28,8 @@ using namespace iS3D;
 RegisterJetScapeModule<iS3DWrapper>
     iS3DWrapper::reg("iS3D");
 
-iS3DWrapper::iS3DWrapper() 
+iS3DWrapper::iS3DWrapper():
+    freezeoutSurfaceFromFile_{1}
 {
     SetId("iS3D");
 }
@@ -40,13 +41,14 @@ iS3DWrapper::~iS3DWrapper()
 void iS3DWrapper::InitTask() 
 {
     JSINFO << "Initialize a particle sampler (iS3D)";
+    freezeoutSurfaceFromFile_ = GetXMLElementInt({"SoftParticlization", "iS3D", "freezeout_surface_from_file"});
 }
 
 void iS3DWrapper::Exec() 
 {
   // run_particlization(0) : read surface from memory
   // run_particlization(1) : read fo surface from file
-  iS3D_.run_particlization(1);
+  iS3D_.run_particlization(freezeoutSurfaceFromFile_);
   PassHadronListToJetscape();
 }
 
