@@ -29,7 +29,7 @@ jobs:
         cd build
         cmake ..
         make -j2
-      
+
     - name: Generate pp events
       run: |
         cd $GITHUB_WORKSPACE/JETSCAPE/build
@@ -37,3 +37,14 @@ jobs:
 
     - name: Plot observables
       run: $GITHUB_WORKSPACE/JETSCAPE/test/generate_plots.sh -j $GITHUB_WORKSPACE/JETSCAPE -o $GITHUB_WORKSPACE/JETSCAPE/test/plot/output/new
+
+    - name: Deploy Plots
+      uses: SamKirkland/FTP-Deploy-Action@4.2.0
+      with:
+        server: ftp.joelatessa.com
+        port: 21
+        username: jetscapeTest@joelatessa.com
+        password: ${{ secrets.JETSCAPE_FTP_PASS }}
+        local-dir: /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/new/
+        # local-dir: /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/pp/output/new/
+        server-dir: ./
