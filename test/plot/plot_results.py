@@ -53,7 +53,7 @@ class PlotResults(common_base.CommonBase):
         self.marker_size = 1.5
         self.line_width = 2
         self.line_style = 1
-        self.file_format = '.pdf'
+        self.file_format = '.png'
 
         # Read config file
         with open(config_file, 'r') as stream:
