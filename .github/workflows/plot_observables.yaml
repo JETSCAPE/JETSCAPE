@@ -6,6 +6,9 @@ on:
       - main
       - release-candidate
 
+env:
+  PULL_NUMBER: ${{ github.event.number }}
+
 jobs:
   build:
     name: pp+PbPb
@@ -36,7 +39,9 @@ jobs:
         $GITHUB_WORKSPACE/JETSCAPE/build/runJetscape $GITHUB_WORKSPACE/JETSCAPE/test/pp/config/jetscape_user_PP19_weighted.xml $GITHUB_WORKSPACE/JETSCAPE/config/jetscape_master.xml
 
     - name: Plot observables
-      run: $GITHUB_WORKSPACE/JETSCAPE/test/generate_plots.sh -j $GITHUB_WORKSPACE/JETSCAPE -o $GITHUB_WORKSPACE/JETSCAPE/test/plot/output/new
+      run: |
+        echo $PULL_NUMBER
+        $GITHUB_WORKSPACE/JETSCAPE/test/generate_plots.sh -j $GITHUB_WORKSPACE/JETSCAPE -o $GITHUB_WORKSPACE/JETSCAPE/test/plot/output/new
 
     - name: Deploy Plots
       uses: SamKirkland/FTP-Deploy-Action@4.2.0

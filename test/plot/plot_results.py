@@ -22,6 +22,7 @@ import pptx             # pip install python-pptx
 sys.path.append('.')
 from jetscape_analysis.base import common_base
 from plot import plot_results_utils
+from datetime import datetime
 
 # Prevent ROOT from stealing focus when plotting
 ROOT.gROOT.SetBatch(True)
@@ -54,6 +55,10 @@ class PlotResults(common_base.CommonBase):
         self.line_width = 2
         self.line_style = 1
         self.file_format = '.png'
+        
+        # saving the current time and PR number for use in file names
+        self.prNum = os.getenv('PULL_NUMBER').zfill(5)
+        self.now = datetime.now().strftime("%Y%m%d")
 
         # Read config file
         with open(config_file, 'r') as stream:
@@ -803,7 +808,7 @@ class PlotResults(common_base.CommonBase):
             text_latex.DrawLatex(x, 0.93, text)
 
         if self.observable_settings['data_distribution']:
-            c.SaveAs(os.path.join(self.output_dir, f'{self.hname}{self.file_format}'))
+            c.SaveAs(os.path.join(self.output_dir, f'pr{self.prNum}_{self.now}_{self.hname}{self.file_format}'))
         c.Close()
 
     # ---------------------------------------------------------------
@@ -812,7 +817,7 @@ class PlotResults(common_base.CommonBase):
     def write_output_objects(self):
 
         # Save output objects
-        self.output_filename = os.path.join(self.output_dir, 'final_results.root')
+        self.output_filename = os.path.join(self.output_dir, f'pr{self.prNum}_{self.now}_final_results.root')
         fout = ROOT.TFile(self.output_filename, 'recreate')
         fout.cd()
         for key,val in self.output_dict.items():
@@ -851,7 +856,7 @@ class PlotResults(common_base.CommonBase):
                                           top=pptx.util.Inches(1.),
                                           width=pptx.util.Inches(5.))
             
-        p.save(os.path.join(self.output_dir, 'results.pptx'))
+        p.save(os.path.join(self.output_dir, f'pr{self.prNum}_{self.now}_results.pptx'))
 
 #-------------------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------------------
