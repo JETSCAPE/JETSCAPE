@@ -1705,7 +1705,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
           }
 
         } // end if(broadening_on)
-          //pOut.push_back(pIn[i]);
+          pOut.push_back(pIn[i]);
       }
     } else { // virtuality too low lets broaden it
 
