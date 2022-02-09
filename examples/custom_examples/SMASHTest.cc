@@ -90,13 +90,18 @@ int main(int argc, char** argv)
 
   Show();
 
-  // auto jetscape = make_shared<JetScape>("./jetscape_init.xml",10);
-  // jetscape->SetReuseHydro (true);
-  // jetscape->SetNReuseHydro (5);
+  auto jetscape = make_shared<JetScape>();
+  const char* masterXMLName = "../config/jetscape_master.xml";
+  const char* userXMLName = "../config/jetscape_user.xml";
 
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",1);
+  jetscape->SetXMLMasterFileName(masterXMLName);
+  jetscape->SetXMLUserFileName(userXMLName);
+
+
   jetscape->SetReuseHydro (false);
   jetscape->SetNReuseHydro (0);
+  // jetscape->SetReuseHydro (true);
+  // jetscape->SetNReuseHydro (5);
 
   // Initial conditions and hydro
   auto trento = make_shared<TrentoInitial>();
