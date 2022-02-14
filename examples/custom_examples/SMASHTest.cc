@@ -97,9 +97,10 @@ int main(int argc, char** argv)
   jetscape->SetXMLMasterFileName(masterXMLName);
   jetscape->SetXMLUserFileName(userXMLName);
 
-
+  jetscape->SetNumberOfEvents(1);
   jetscape->SetReuseHydro (false);
   jetscape->SetNReuseHydro (0);
+  // jetscape->SetNumberOfEvents(10);
   // jetscape->SetReuseHydro (true);
   // jetscape->SetNReuseHydro (5);
 
