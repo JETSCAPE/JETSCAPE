@@ -56,8 +56,9 @@ void MpiMusic::InitializeHydro(Parameter parameter_list) {
   // overwrite input options
   flag_output_evo_to_file = (
       GetXMLElementInt({"Hydro", "MUSIC", "output_evolution_to_file"}));
-  music_hydro_ptr->set_parameter("output_movie_flag",
-                                 static_cast<double>(flag_output_evo_to_file));
+  if (flag_output_evo_to_file == 1) {
+    music_hydro_ptr->set_parameter("output_evolution_to_file", 2);
+  }
   double tau_hydro = (
           GetXMLElementDouble({"Hydro", "MUSIC", "Initial_time_tau_0"}));
   music_hydro_ptr->set_parameter("Initial_time_tau_0", tau_hydro);
@@ -139,7 +140,6 @@ void MpiMusic::InitializeHydro(Parameter parameter_list) {
     exit(1);
   }
 
-
   music_hydro_ptr->add_hydro_source_terms(hydro_source_terms_ptr);
 }
 
@@ -193,12 +193,13 @@ void MpiMusic::EvolveHydro() {
 
     // add hydro_id to the hydro evolution filename
     std::ostringstream system_command;
-    system_command << "mv evolution_for_movie_xyeta.dat "
-                   << "evolution_for_movie_xyeta_" << GetId() << ".dat";
+    system_command << "mv evolution_all_xyeta.dat "
+                   << "evolution_all_xyeta_" << GetId() << ".dat";
     system(system_command.str().c_str());
 
+    //std::vector<SurfaceCellInfo> surface_cells;
     //if (freezeout_temperature > 0.0) {
-    //  FindAConstantTemperatureSurface(freezeout_temperature);
+    //  FindAConstantTemperatureSurface(freezeout_temperature, surface_cells);
     //}
   }
 

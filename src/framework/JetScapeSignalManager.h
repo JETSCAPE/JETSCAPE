@@ -117,6 +117,7 @@ public:
   void ConnectGetHydroTau0Signal(shared_ptr<JetEnergyLoss> j);
   void ConnectGetHydroCellSignal(shared_ptr<JetEnergyLoss> j);
   void ConnectGetHydroCellSignal(shared_ptr<LiquefierBase> l);
+  void ConnectGetHydroCellSignal(shared_ptr<Hadronization> h);
   void ConnectGetHardPartonListSignal(shared_ptr<JetEnergyLossManager> jm);
   void ConnectSentInPartonsSignal(shared_ptr<JetEnergyLoss> j,
                                   shared_ptr<JetEnergyLoss> j2);
@@ -124,6 +125,8 @@ public:
   void ConnectTransformPartonsSignal(shared_ptr<Hadronization> h,
                                      shared_ptr<Hadronization> h2);
 		void ConnectGetFinalHadronListSignal(shared_ptr<HadronPrinter> h);
+
+  void ConnectGetHydroHyperSurfaceSignal(shared_ptr<Hadronization> h);
 
   void
   DisconnectSignal(){}; // to be implememted if needed maybe for Eloss ...!???

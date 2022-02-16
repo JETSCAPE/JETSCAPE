@@ -3,7 +3,7 @@ name: build+regression test
 on:
   pull_request:
     branches:
-      - master
+      - main
       - release-candidate
 
 jobs:
