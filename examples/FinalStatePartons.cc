@@ -49,12 +49,13 @@ int main(int argc, char** argv)
   // //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevel(9) or 10
   JetScapeLogger::Instance()->SetVerboseLevel(0);
 
-  // Whether to write the new header (ie. v2), including xsec info.
-  // To enable, pass anything as the third argument to enable this option.
-  // Default: version 1.
-  int headerVersion = 1;
+  // Whether to write a particular header version (eg. v2), including xsec info.
+  // To enable, pass the desired version (just the number) as the third argument.
+  // Default: v1
+  unsigned int headerVersion = 1;
   if (argc > 3) {
     headerVersion = std::atoi(argv[3]);
+    std::cout << "NOTE: Writing header v" << headerVersion << ", and final cross section and error at EOF.\n";
   }
   std::cout << "NOTE: Writing with output version v" << headerVersion << "\n";
 
@@ -83,13 +84,20 @@ int main(int argc, char** argv)
     if(TotalPartons > 0)
     {
       ++SN;
-      if (headerVersion == 2) {
+      if (headerVersion > 1) {
         // NOTE: Needs consistent "\t" between all entries to simplify parsing later.
         dist_output << "#"
             << "\t" << "Event\t" << SN
             << "\t" << "weight\t" << reader->GetEventWeight()
             << "\t" << "EPangle\t" << reader->GetEventPlaneAngle()
-            << "\t" << "N_partons\t" << TotalPartons
+            << "\t" << "N_partons\t" << TotalPartons;
+        if (headerVersion == 3) {
+          dist_output
+              << "\t" << "vertex_x\t" << reader->GetVertexX()
+              << "\t" << "vertex_y\t" << reader->GetVertexY()
+              << "\t" << "vertex_z\t" << reader->GetVertexZ();
+        }
+        dist_output
             << "\t" << "|"  // As a delimiter
             << "\t" << "N"
             << "\t" << "pid"

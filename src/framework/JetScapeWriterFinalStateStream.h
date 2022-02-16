@@ -37,7 +37,7 @@ template <class T>
 class JetScapeWriterFinalStateStream : public JetScapeWriter {
 
 public:
-  JetScapeWriterFinalStateStream<T>(){};
+  JetScapeWriterFinalStateStream<T>();
   JetScapeWriterFinalStateStream<T>(string m_file_name_out);
   virtual ~JetScapeWriterFinalStateStream<T>();
 
@@ -64,6 +64,7 @@ public:
 
 protected:
   T output_file; //!< Output file
+  unsigned int headerVersion;
   std::vector<std::shared_ptr<JetScapeParticleBase>> particles;
   bool writeCentrality;
   bool writePtHat;
