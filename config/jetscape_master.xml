@@ -86,7 +86,6 @@
       <name>PGun</name>
       <pT>100</pT>
       <parID>21</parID>
-      <useHybridHad>0</useHybridHad>
     </PGun>
 
     <!-- Pythia Gun -->
@@ -97,7 +96,6 @@
       <pTHatMin>100</pTHatMin>
       <pTHatMax>120</pTHatMax>
       <eCM>5020</eCM>
-      <useHybridHad>0</useHybridHad>
       <!-- You can add any number of additional lines to initialize pythia here -->
       <!-- Note that if the tag exists it cannot be empty (tinyxml produces a segfault) -->
       <!-- <LinesToRead> -->
@@ -118,7 +116,6 @@
 
     <Matter>
       <name>Matter</name>
-      <useHybridHad>0</useHybridHad>
       <matter_on> 1 </matter_on>
       <Q0> 2.0 </Q0>
       <T0> 0.16 </T0>
@@ -276,10 +273,10 @@
        <name>colored/colorless/hybrid</name>
        <take_recoil>1</take_recoil>
        <eCMforHadronization>2510</eCMforHadronization>
-       <reco_Elevelmax>3</reco_Elevelmax>
+       <reco_Elevelmax>1</reco_Elevelmax>
        <thermreco_distmax>5.0</thermreco_distmax>
-       <shower_recofactor>0.3333333</shower_recofactor>
-       <thermal_recofactor>0.3333333</thermal_recofactor>
+       <shower_recofactor>1.0</shower_recofactor>
+       <thermal_recofactor>1.0</thermal_recofactor>
        <weak_decays>on</weak_decays>
    </JetHadronization>
 
