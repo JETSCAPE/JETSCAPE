@@ -73,20 +73,20 @@ void PythiaGun::InitTask() {
   pTHatMin = GetXMLElementDouble({"Hard", "PythiaGun", "pTHatMin"});
   pTHatMax = GetXMLElementDouble({"Hard", "PythiaGun", "pTHatMax"});
   
-/*  if(pTHatMin < 0.01){ //assuming low bin where softQCD should be used
+  if(pTHatMin < 0.01){ //assuming low bin where softQCD should be used
     //running softQCD - inelastic nondiffrative (min-bias)
     readString("HardQCD:all = off");
     readString("SoftQCD:nonDiffractive = on");
     softQCD = true;
   }
   else{ //running normal hardQCD
-*/    readString("HardQCD:all = on"); // will repeat this line in the xml for demonstration
+    readString("HardQCD:all = on"); // will repeat this line in the xml for demonstration
     //  readString("HardQCD:gg2ccbar = on"); // switch on heavy quark channel
     //readString("HardQCD:qqbar2ccbar = on");
     numbf.str("PhaseSpace:pTHatMin = "); numbf << pTHatMin; readString(numbf.str());
     numbf.str("PhaseSpace:pTHatMax = "); numbf << pTHatMax; readString(numbf.str());
 	  softQCD = false;
-//  }
+  }
 
   // SC: read flag for FSR
   FSR_on = GetXMLElementInt({"Hard", "PythiaGun", "FSR_on"});
@@ -177,11 +177,10 @@ void PythiaGun::Exec() {
       //the id is set to the heaviest quark in the diquark (except down quark)
       //this technically violates baryon number conservation over the entire event
       //also can violate electric charge conservation
-/*      if( (std::abs(particle.id()) > 1100) && (std::abs(particle.id()) < 6000) && ((std::abs(particle.id())/10)%10 == 0) ){
-        if(particle.id() > 0){particle.id( -1*particle.id()/1000 );}
-        else{particle.id( particle.id()/1000 );}
+      if( (std::abs(particle.id()) > 1100) && (std::abs(particle.id()) < 6000) && ((std::abs(particle.id())/10)%10 == 0) ){
+            (particle.id() > 0) ? particle.id( -1*particle.id()/1000 ) : particle.id( particle.id()/1000 );
       }
-*/
+
       if (!FSR_on) {
         // only accept particles after MPI
         if (particle.status() != 62)
@@ -271,18 +270,12 @@ void PythiaGun::Exec() {
 
     VERBOSE(7) << " at x=" << xLoc[1] << ", y=" << xLoc[2] << ", z=" << xLoc[3];
 
-    if (true) { //if (flag_useHybridHad != 1) {
-      AddParton(make_shared<Parton>(0, particle.id(), 0, particle.pT(),
-                                    particle.y(), particle.phi(), particle.e(),
-                                    xLoc));
-    } else {
-      auto ptn = make_shared<Parton>(0, particle.id(), 0, particle.pT(), particle.y(),
-                              particle.phi(), particle.e(), xLoc);
+      auto ptn = make_shared<Parton>(0, particle.id(), 0, particle.pT(), particle.y(),particle.phi(), particle.e(), xLoc);
       ptn->set_color(particle.col());
       ptn->set_anti_color(particle.acol());
       ptn->set_max_color(1000 * (np + 1));
       AddParton(ptn);
-    }
+
     //}
     //else
     //{
