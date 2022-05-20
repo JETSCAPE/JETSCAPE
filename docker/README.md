@@ -68,7 +68,7 @@ The docker container will contain only the pre-requisite environment to build JE
     For details on the compatibility of docker image versions with JETSCAPE versions, please see the [jetscape dockerhub](https://hub.docker.com/r/jetscape/base) page.
 
     This is what the `docker run` command does:
-    - `docker run` creates and starts a new docker container from a pre-defined image jetscape/base:v1.3, which will be downloaded if necessary.
+    - `docker run` creates and starts a new docker container from a pre-defined image jetscape/base:v1.4, which will be downloaded if necessary.
     - `-it` runs the container with an interactive shell.
     - `-v` mounts a shared folder between your machine (at ~/jetscape-docker) and the container (at /home/jetscape-user), through which you can transfer files to and from the container. You can edit the location of the folder on your machine as you like.
     - `--name` (optional) sets a name for your container, for convenience. Edit it as you like.
