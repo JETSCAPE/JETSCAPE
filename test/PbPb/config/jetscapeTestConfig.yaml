@@ -1,0 +1,31 @@
+# Common parameters
+debug_level: 0
+
+# Scan over all combinations of specified parameter values
+parameter_scan:
+
+  # pthat bins are required, and should come first
+  pt_hat_bins:
+    label: 'pt_hat_bins'
+    values: [20, 30]
+
+  # additional parameters are optional
+  parameter1:
+    label: 'Q0'
+    values: [1.0, 2.0]
+    
+  parameter2:
+    label: 'recoil_on'
+    values: [0, 1]
+    
+  parameter3:
+    label: 'broadening_on'
+    values: [0, 1]
+
+  parameter4:
+    label: 'qhat0'
+    values: [-2.0, 0.5]
+
+# Generation
+xml_user_file: '${GITHUB_WORKSPACE}/JETSCAPE/test/PbPb/config/jetscape_user.xml'
+xml_master_file: '${GITHUB_WORKSPACE}/JETSCAPE/config/jetscape_master.xml'
