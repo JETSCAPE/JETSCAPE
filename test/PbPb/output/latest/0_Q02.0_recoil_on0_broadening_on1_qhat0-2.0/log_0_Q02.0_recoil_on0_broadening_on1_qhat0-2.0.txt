@@ -27,36 +27,36 @@
 [Info] | See COPYING file for details.                                |[0m
 [Info] |                                                              |[0m
 [Info] *--------------------------------------------------------------*[0m
-[Info] 148MB  [1m[31mIntialize JetScape ...[0m
-[Info] 148MB  Created JetScapeXML Instance[0m
-[Info] 148MB  Open XML Master file : jetscape_master.xml[0m
-[Info] 148MB  Open XML User file : jetscape_user.xml[0m
-[Info] 148MB  ================================================================[0m
-[Info] 148MB  nEvents = 10[0m
-[Info] 148MB  Reuse Hydro:  true [0m
-[Info] 148MB  nReuseHydro: 10[0m
-[Info] 148MB  JetScapeTaskSupport found seed 1, using individual engines with seeds created from 1[0m
-[Info] 148MB  JetScape::DetermineTaskList() -- Initial State: Added Trento module to task list.[0m
+[Info] 149MB  [1m[31mIntialize JetScape ...[0m
+[Info] 149MB  Created JetScapeXML Instance[0m
+[Info] 149MB  Open XML Master file : jetscape_master.xml[0m
+[Info] 149MB  Open XML User file : jetscape_user.xml[0m
+[Info] 149MB  ================================================================[0m
+[Info] 149MB  nEvents = 10[0m
+[Info] 149MB  Reuse Hydro:  true [0m
+[Info] 149MB  nReuseHydro: 10[0m
+[Info] 149MB  JetScapeTaskSupport found seed 1, using individual engines with seeds created from 1[0m
+[Info] 149MB  JetScape::DetermineTaskList() -- Initial State: Added Trento module to task list.[0m
 [Info] 152MB  JetScape::DetermineTaskList() -- Hard Process: Added PythiaGun to task list.[0m
 [Info] 152MB  JetScape::DetermineTaskList() -- PreDynamics: Added NullPreDynamics to task list.[0m
 [Info] 152MB  JetScape::DetermineTaskList() -- Hydro: Added Brick to task list.[0m
-[Info] 152MB  JetScape::DetermineTaskList() -- Eloss: Added Matter to Eloss list.[0m
-[Info] 152MB  JetScape::DetermineTaskList() -- JetHadronization: Added ColorlessHadronization to task list.[0m
-[Info] 152MB  JetScape::DetermineTaskList() -- JetScapeWriterAscii (test_out.dat) added to task list.[0m
-[Info] 152MB  JetScape::DetermineTaskList() -- JetScapeWriterHepMC (test_out.hepmc) added to task list.[0m
-[Info] 152MB  ================================================================[0m
-[Info] 152MB  Found 8 Modules Initialize them ... [0m
-[Info] 152MB  Set Hydro,JetEnergylossManager and IS Pointers for SignalManager to create Signal/Slots[0m
-[Info] 152MB  Created JetScapeSignalManager Instance[0m
-[Info] 152MB  Calling JetScape InitTasks()...[0m
-[Info] 152MB  Intialize InitialState ... Trento ...[0m
-[Info] 152MB  x range for bulk evolution = [-15, 15][0m
-[Info] 152MB   Initialzie TRENTo initial condition [0m
-[Info] 152MB  Random seed used for Trento 1350755646[0m
-[Info] 153MB  TRENTO centrality table header: Pb-Pb-E-2760-X-6.40-p-0.00-k-1.20-w-0.90-d-1.20[0m
-[Info] 153MB  Hash tag for this header: 13010470827798989771[0m
-[Info] 153MB  TRENTo is generating new centrality table for this new parameter set[0m
-[Info] 153MB  It may take 10(s) to 1(min).[0m
+[Info] 153MB  JetScape::DetermineTaskList() -- Eloss: Added Matter to Eloss list.[0m
+[Info] 153MB  JetScape::DetermineTaskList() -- JetHadronization: Added ColorlessHadronization to task list.[0m
+[Info] 153MB  JetScape::DetermineTaskList() -- JetScapeWriterAscii (test_out.dat) added to task list.[0m
+[Info] 153MB  JetScape::DetermineTaskList() -- JetScapeWriterHepMC (test_out.hepmc) added to task list.[0m
+[Info] 153MB  ================================================================[0m
+[Info] 153MB  Found 8 Modules Initialize them ... [0m
+[Info] 153MB  Set Hydro,JetEnergylossManager and IS Pointers for SignalManager to create Signal/Slots[0m
+[Info] 153MB  Created JetScapeSignalManager Instance[0m
+[Info] 153MB  Calling JetScape InitTasks()...[0m
+[Info] 153MB  Intialize InitialState ... Trento ...[0m
+[Info] 153MB  x range for bulk evolution = [-15, 15][0m
+[Info] 153MB   Initialzie TRENTo initial condition [0m
+[Info] 153MB  Random seed used for Trento 1350755646[0m
+[Info] 154MB  TRENTO centrality table header: Pb-Pb-E-2760-X-6.40-p-0.00-k-1.20-w-0.90-d-1.20[0m
+[Info] 154MB  Hash tag for this header: 13010470827798989771[0m
+[Info] 154MB  TRENTo is generating new centrality table for this new parameter set[0m
+[Info] 154MB  It may take 10(s) to 1(min).[0m
 # 1000 events generated
 # 2000 events generated
 # 3000 events generated
@@ -67,14 +67,14 @@
 # 8000 events generated
 # 9000 events generated
 [Info] 154MB  #########21.3052 11.42[0m
-[Info] 154MB  The total energy density cut for centrality = [50, 60] (%) is:[0m
-[Info] 154MB  158.738<dE/deta(eta=0)<296.143[0m
-[Info] 154MB  Pb Pb 1  --random-seed 1350755646 --cross-section 6.400000 --beam-energy 2760.000000 --reduced-thickness 0.000000 --fluctuation 1.200000 --nucleon-width 0.900000 --nucleon-min-dist 1.200000 --mean-coeff 1.000000 --std-coeff 3.000000 --skew-coeff 0.000000 --skew-type 1 --jacobian 0.800000 --quiet  --normalization 13.900000 --ncoll  --xy-max 15.000000 --xy-step 0.300000 --eta-max 0.200000 --eta-step 0.200000 --s-max 296.142663 --s-min 158.737749[0m
-[Info] 154MB  TRENTo set[0m
-[Info] 154MB  Intialize HardProcess : UninitializedPythiaGun ...[0m
-[Info] 154MB  [35mPythia Gun with FSR_on: 0[0m
-[Info] 154MB  [35mPythia Gun with 20 < pTHat < 30[0m
-[Info] 154MB  [35mUse hybrid hadronization? 0[0m
+[Info] 155MB  The total energy density cut for centrality = [50, 60] (%) is:[0m
+[Info] 155MB  158.738<dE/deta(eta=0)<296.143[0m
+[Info] 155MB  Pb Pb 1  --random-seed 1350755646 --cross-section 6.400000 --beam-energy 2760.000000 --reduced-thickness 0.000000 --fluctuation 1.200000 --nucleon-width 0.900000 --nucleon-min-dist 1.200000 --mean-coeff 1.000000 --std-coeff 3.000000 --skew-coeff 0.000000 --skew-type 1 --jacobian 0.800000 --quiet  --normalization 13.900000 --ncoll  --xy-max 15.000000 --xy-step 0.300000 --eta-max 0.200000 --eta-step 0.200000 --s-max 296.142663 --s-min 158.737749[0m
+[Info] 155MB  TRENTo set[0m
+[Info] 155MB  Intialize HardProcess : UninitializedPythiaGun ...[0m
+[Info] 155MB  [35mPythia Gun with FSR_on: 0[0m
+[Info] 155MB  [35mPythia Gun with 20 < pTHat < 30[0m
+[Info] 155MB  [35mUse hybrid hadronization? 0[0m
 
  *-------  PYTHIA Process Initialization  --------------------------*
  |                                                                  |
@@ -184,22 +184,22 @@
 
  --------  End PYTHIA Particle Data Table  -----------------------------------------------------------------------------------------
 
-[Info] 158MB  Connect HadronizationManager Signal to Energy Loss ...[0m
-[Info] 158MB  JetScape Stream Writer initialized with output file = test_out.dat[0m
-[Info] 158MB  JetScape HepMC Writer initialized with output file = test_out.hepmc[0m
-[Info] 158MB  [1m[31mRun JetScape ...[0m
-[Info] 158MB  [1m[31mNumber of Events = 10[0m
-[Info] 158MB  [1m[31mRun Event # = 0[0m
-[Info] 158MB   Exec TRENTo initial condition [0m
-[Info] 158MB   TRENTo event info: [0m
+[Info] 159MB  Connect HadronizationManager Signal to Energy Loss ...[0m
+[Info] 159MB  JetScape Stream Writer initialized with output file = test_out.dat[0m
+[Info] 159MB  JetScape HepMC Writer initialized with output file = test_out.hepmc[0m
+[Info] 159MB  [1m[31mRun JetScape ...[0m
+[Info] 159MB  [1m[31mNumber of Events = 10[0m
+[Info] 159MB  [1m[31mRun Event # = 0[0m
+[Info] 159MB   Exec TRENTo initial condition [0m
+[Info] 159MB   TRENTo event info: [0m
 [Info] 159MB  b	npart	ncoll	ET	(x-com, y-com) (fm)[0m
 [Info] 159MB  12.4827	37	40	167.272	(0.419844, 0.440687)[0m
 [Info] 159MB   Load TRENTo density and ncoll density to JETSCAPE memory [0m
-[Info] 159MB  20000 density elements[0m
-[Info] 159MB  10000 ncoll elements[0m
-[Info] 159MB   TRENTO event generated and loaded [0m
-[Info] 167MB  [1m[30mJetScape finished after 10 events![0m
+[Info] 160MB  20000 density elements[0m
+[Info] 160MB  10000 ncoll elements[0m
+[Info] 160MB   TRENTO event generated and loaded [0m
+[Info] 168MB  [1m[30mJetScape finished after 10 events![0m
 [Info] Finished![0m
 
-CPU time: 32.131100 seconds.
-Real time: 32.000000 seconds.
+CPU time: 31.488314 seconds.
+Real time: 31.000000 seconds.

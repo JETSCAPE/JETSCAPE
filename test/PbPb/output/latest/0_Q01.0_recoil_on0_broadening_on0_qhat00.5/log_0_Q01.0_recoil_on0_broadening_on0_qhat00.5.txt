@@ -27,16 +27,16 @@
 [Info] | See COPYING file for details.                                |[0m
 [Info] |                                                              |[0m
 [Info] *--------------------------------------------------------------*[0m
-[Info] 148MB  [1m[31mIntialize JetScape ...[0m
-[Info] 148MB  Created JetScapeXML Instance[0m
-[Info] 148MB  Open XML Master file : jetscape_master.xml[0m
-[Info] 148MB  Open XML User file : jetscape_user.xml[0m
-[Info] 148MB  ================================================================[0m
-[Info] 148MB  nEvents = 10[0m
-[Info] 148MB  Reuse Hydro:  true [0m
-[Info] 148MB  nReuseHydro: 10[0m
-[Info] 148MB  JetScapeTaskSupport found seed 1, using individual engines with seeds created from 1[0m
-[Info] 148MB  JetScape::DetermineTaskList() -- Initial State: Added Trento module to task list.[0m
+[Info] 149MB  [1m[31mIntialize JetScape ...[0m
+[Info] 149MB  Created JetScapeXML Instance[0m
+[Info] 149MB  Open XML Master file : jetscape_master.xml[0m
+[Info] 149MB  Open XML User file : jetscape_user.xml[0m
+[Info] 149MB  ================================================================[0m
+[Info] 149MB  nEvents = 10[0m
+[Info] 149MB  Reuse Hydro:  true [0m
+[Info] 149MB  nReuseHydro: 10[0m
+[Info] 149MB  JetScapeTaskSupport found seed 1, using individual engines with seeds created from 1[0m
+[Info] 149MB  JetScape::DetermineTaskList() -- Initial State: Added Trento module to task list.[0m
 [Info] 152MB  JetScape::DetermineTaskList() -- Hard Process: Added PythiaGun to task list.[0m
 [Info] 152MB  JetScape::DetermineTaskList() -- PreDynamics: Added NullPreDynamics to task list.[0m
 [Info] 152MB  JetScape::DetermineTaskList() -- Hydro: Added Brick to task list.[0m
@@ -198,8 +198,8 @@
 [Info] 159MB  20000 density elements[0m
 [Info] 159MB  10000 ncoll elements[0m
 [Info] 159MB   TRENTO event generated and loaded [0m
-[Info] 167MB  [1m[30mJetScape finished after 10 events![0m
+[Info] 168MB  [1m[30mJetScape finished after 10 events![0m
 [Info] Finished![0m
 
-CPU time: 31.843412 seconds.
-Real time: 32.000000 seconds.
+CPU time: 31.323112 seconds.
+Real time: 31.000000 seconds.

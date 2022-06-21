@@ -40,23 +40,23 @@
 [Info] 152MB  JetScape::DetermineTaskList() -- Hard Process: Added PythiaGun to task list.[0m
 [Info] 152MB  JetScape::DetermineTaskList() -- PreDynamics: Added NullPreDynamics to task list.[0m
 [Info] 152MB  JetScape::DetermineTaskList() -- Hydro: Added Brick to task list.[0m
-[Info] 153MB  JetScape::DetermineTaskList() -- Eloss: Added Matter to Eloss list.[0m
-[Info] 153MB  JetScape::DetermineTaskList() -- JetHadronization: Added ColorlessHadronization to task list.[0m
-[Info] 153MB  JetScape::DetermineTaskList() -- JetScapeWriterAscii (test_out.dat) added to task list.[0m
-[Info] 153MB  JetScape::DetermineTaskList() -- JetScapeWriterHepMC (test_out.hepmc) added to task list.[0m
-[Info] 153MB  ================================================================[0m
-[Info] 153MB  Found 8 Modules Initialize them ... [0m
-[Info] 153MB  Set Hydro,JetEnergylossManager and IS Pointers for SignalManager to create Signal/Slots[0m
-[Info] 153MB  Created JetScapeSignalManager Instance[0m
-[Info] 153MB  Calling JetScape InitTasks()...[0m
-[Info] 153MB  Intialize InitialState ... Trento ...[0m
-[Info] 153MB  x range for bulk evolution = [-15, 15][0m
-[Info] 153MB   Initialzie TRENTo initial condition [0m
+[Info] 152MB  JetScape::DetermineTaskList() -- Eloss: Added Matter to Eloss list.[0m
+[Info] 152MB  JetScape::DetermineTaskList() -- JetHadronization: Added ColorlessHadronization to task list.[0m
+[Info] 152MB  JetScape::DetermineTaskList() -- JetScapeWriterAscii (test_out.dat) added to task list.[0m
+[Info] 152MB  JetScape::DetermineTaskList() -- JetScapeWriterHepMC (test_out.hepmc) added to task list.[0m
+[Info] 152MB  ================================================================[0m
+[Info] 152MB  Found 8 Modules Initialize them ... [0m
+[Info] 152MB  Set Hydro,JetEnergylossManager and IS Pointers for SignalManager to create Signal/Slots[0m
+[Info] 152MB  Created JetScapeSignalManager Instance[0m
+[Info] 152MB  Calling JetScape InitTasks()...[0m
+[Info] 152MB  Intialize InitialState ... Trento ...[0m
+[Info] 152MB  x range for bulk evolution = [-15, 15][0m
+[Info] 152MB   Initialzie TRENTo initial condition [0m
 [Info] 153MB  Random seed used for Trento 1350755646[0m
-[Info] 154MB  TRENTO centrality table header: Pb-Pb-E-2760-X-6.40-p-0.00-k-1.20-w-0.90-d-1.20[0m
-[Info] 154MB  Hash tag for this header: 13010470827798989771[0m
-[Info] 154MB  TRENTo is generating new centrality table for this new parameter set[0m
-[Info] 154MB  It may take 10(s) to 1(min).[0m
+[Info] 153MB  TRENTO centrality table header: Pb-Pb-E-2760-X-6.40-p-0.00-k-1.20-w-0.90-d-1.20[0m
+[Info] 153MB  Hash tag for this header: 13010470827798989771[0m
+[Info] 153MB  TRENTo is generating new centrality table for this new parameter set[0m
+[Info] 153MB  It may take 10(s) to 1(min).[0m
 # 1000 events generated
 # 2000 events generated
 # 3000 events generated
@@ -160,7 +160,7 @@
 [Info] 158MB  Intialize Hadronization Manager ...[0m
 [Info] 158MB  Found 1 Hadronization Manager Tasks/Modules Initialize them ... [0m
 [Info] 158MB  Found 1 Hadronization Tasks/Modules Initialize them ... [0m
-[Info] 159MB  Weak decays are turned on[0m
+[Info] 158MB  Weak decays are turned on[0m
 
  *-------  PYTHIA Flag + Mode + Parm + Word + FVec + MVec + PVec + WVec Settings (changes only)  ------------------* 
  |                                                                                                                 | 
@@ -201,5 +201,5 @@
 [Info] 168MB  [1m[30mJetScape finished after 10 events![0m
 [Info] Finished![0m
 
-CPU time: 32.034409 seconds.
-Real time: 32.000000 seconds.
+CPU time: 31.426540 seconds.
+Real time: 31.000000 seconds.

@@ -27,8 +27,8 @@
 [Info] | See COPYING file for details.                                |[0m
 [Info] |                                                              |[0m
 [Info] *--------------------------------------------------------------*[0m
-[Info] 150MB  [1m[31mIntialize JetScape ...[0m
-[Info] 150MB  Created JetScapeXML Instance[0m
+[Info] 149MB  [1m[31mIntialize JetScape ...[0m
+[Info] 149MB  Created JetScapeXML Instance[0m
 [Info] 150MB  Open XML Master file : jetscape_master.xml[0m
 [Info] 150MB  Open XML User file : jetscape_user.xml[0m
 [Info] 150MB  ================================================================[0m
@@ -184,22 +184,22 @@
 
  --------  End PYTHIA Particle Data Table  -----------------------------------------------------------------------------------------
 
-[Info] 160MB  Connect HadronizationManager Signal to Energy Loss ...[0m
-[Info] 160MB  JetScape Stream Writer initialized with output file = test_out.dat[0m
-[Info] 160MB  JetScape HepMC Writer initialized with output file = test_out.hepmc[0m
-[Info] 160MB  [1m[31mRun JetScape ...[0m
-[Info] 160MB  [1m[31mNumber of Events = 10[0m
-[Info] 160MB  [1m[31mRun Event # = 0[0m
-[Info] 160MB   Exec TRENTo initial condition [0m
-[Info] 160MB   TRENTo event info: [0m
+[Info] 159MB  Connect HadronizationManager Signal to Energy Loss ...[0m
+[Info] 159MB  JetScape Stream Writer initialized with output file = test_out.dat[0m
+[Info] 159MB  JetScape HepMC Writer initialized with output file = test_out.hepmc[0m
+[Info] 159MB  [1m[31mRun JetScape ...[0m
+[Info] 159MB  [1m[31mNumber of Events = 10[0m
+[Info] 159MB  [1m[31mRun Event # = 0[0m
+[Info] 159MB   Exec TRENTo initial condition [0m
+[Info] 159MB   TRENTo event info: [0m
 [Info] 160MB  b	npart	ncoll	ET	(x-com, y-com) (fm)[0m
 [Info] 160MB  12.4827	37	40	167.272	(0.419844, 0.440687)[0m
 [Info] 160MB   Load TRENTo density and ncoll density to JETSCAPE memory [0m
 [Info] 160MB  20000 density elements[0m
-[Info] 161MB  10000 ncoll elements[0m
-[Info] 161MB   TRENTO event generated and loaded [0m
+[Info] 160MB  10000 ncoll elements[0m
+[Info] 160MB   TRENTO event generated and loaded [0m
 [Info] 169MB  [1m[30mJetScape finished after 10 events![0m
 [Info] Finished![0m
 
-CPU time: 31.513613 seconds.
-Real time: 31.000000 seconds.
+CPU time: 31.223043 seconds.
+Real time: 32.000000 seconds.

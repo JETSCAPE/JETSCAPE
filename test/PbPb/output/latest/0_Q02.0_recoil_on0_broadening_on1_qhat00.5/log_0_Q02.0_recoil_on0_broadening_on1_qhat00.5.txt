@@ -67,14 +67,14 @@
 # 8000 events generated
 # 9000 events generated
 [Info] 157MB  #########21.3052 11.42[0m
-[Info] 157MB  The total energy density cut for centrality = [50, 60] (%) is:[0m
-[Info] 157MB  158.738<dE/deta(eta=0)<296.143[0m
-[Info] 157MB  Pb Pb 1  --random-seed 1350755646 --cross-section 6.400000 --beam-energy 2760.000000 --reduced-thickness 0.000000 --fluctuation 1.200000 --nucleon-width 0.900000 --nucleon-min-dist 1.200000 --mean-coeff 1.000000 --std-coeff 3.000000 --skew-coeff 0.000000 --skew-type 1 --jacobian 0.800000 --quiet  --normalization 13.900000 --ncoll  --xy-max 15.000000 --xy-step 0.300000 --eta-max 0.200000 --eta-step 0.200000 --s-max 296.142663 --s-min 158.737749[0m
-[Info] 157MB  TRENTo set[0m
-[Info] 157MB  Intialize HardProcess : UninitializedPythiaGun ...[0m
-[Info] 157MB  [35mPythia Gun with FSR_on: 0[0m
-[Info] 157MB  [35mPythia Gun with 20 < pTHat < 30[0m
-[Info] 157MB  [35mUse hybrid hadronization? 0[0m
+[Info] 158MB  The total energy density cut for centrality = [50, 60] (%) is:[0m
+[Info] 158MB  158.738<dE/deta(eta=0)<296.143[0m
+[Info] 158MB  Pb Pb 1  --random-seed 1350755646 --cross-section 6.400000 --beam-energy 2760.000000 --reduced-thickness 0.000000 --fluctuation 1.200000 --nucleon-width 0.900000 --nucleon-min-dist 1.200000 --mean-coeff 1.000000 --std-coeff 3.000000 --skew-coeff 0.000000 --skew-type 1 --jacobian 0.800000 --quiet  --normalization 13.900000 --ncoll  --xy-max 15.000000 --xy-step 0.300000 --eta-max 0.200000 --eta-step 0.200000 --s-max 296.142663 --s-min 158.737749[0m
+[Info] 158MB  TRENTo set[0m
+[Info] 158MB  Intialize HardProcess : UninitializedPythiaGun ...[0m
+[Info] 158MB  [35mPythia Gun with FSR_on: 0[0m
+[Info] 158MB  [35mPythia Gun with 20 < pTHat < 30[0m
+[Info] 158MB  [35mUse hybrid hadronization? 0[0m
 
  *-------  PYTHIA Process Initialization  --------------------------*
  |                                                                  |
@@ -184,14 +184,14 @@
 
  --------  End PYTHIA Particle Data Table  -----------------------------------------------------------------------------------------
 
-[Info] 161MB  Connect HadronizationManager Signal to Energy Loss ...[0m
-[Info] 161MB  JetScape Stream Writer initialized with output file = test_out.dat[0m
-[Info] 161MB  JetScape HepMC Writer initialized with output file = test_out.hepmc[0m
-[Info] 161MB  [1m[31mRun JetScape ...[0m
-[Info] 161MB  [1m[31mNumber of Events = 10[0m
-[Info] 161MB  [1m[31mRun Event # = 0[0m
-[Info] 161MB   Exec TRENTo initial condition [0m
-[Info] 161MB   TRENTo event info: [0m
+[Info] 162MB  Connect HadronizationManager Signal to Energy Loss ...[0m
+[Info] 162MB  JetScape Stream Writer initialized with output file = test_out.dat[0m
+[Info] 162MB  JetScape HepMC Writer initialized with output file = test_out.hepmc[0m
+[Info] 162MB  [1m[31mRun JetScape ...[0m
+[Info] 162MB  [1m[31mNumber of Events = 10[0m
+[Info] 162MB  [1m[31mRun Event # = 0[0m
+[Info] 162MB   Exec TRENTo initial condition [0m
+[Info] 162MB   TRENTo event info: [0m
 [Info] 162MB  b	npart	ncoll	ET	(x-com, y-com) (fm)[0m
 [Info] 162MB  12.4827	37	40	167.272	(0.419844, 0.440687)[0m
 [Info] 162MB   Load TRENTo density and ncoll density to JETSCAPE memory [0m
@@ -201,5 +201,5 @@
 [Info] 171MB  [1m[30mJetScape finished after 10 events![0m
 [Info] Finished![0m
 
-CPU time: 31.774372 seconds.
+CPU time: 31.291843 seconds.
 Real time: 31.000000 seconds.
