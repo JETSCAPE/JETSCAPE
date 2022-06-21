@@ -27,16 +27,16 @@
 [Info] | See COPYING file for details.                                |[0m
 [Info] |                                                              |[0m
 [Info] *--------------------------------------------------------------*[0m
-[Info] 150MB  [1m[31mIntialize JetScape ...[0m
-[Info] 150MB  Created JetScapeXML Instance[0m
-[Info] 150MB  Open XML Master file : jetscape_master.xml[0m
-[Info] 150MB  Open XML User file : jetscape_user.xml[0m
-[Info] 150MB  ================================================================[0m
-[Info] 150MB  nEvents = 10[0m
-[Info] 150MB  Reuse Hydro:  true [0m
-[Info] 150MB  nReuseHydro: 10[0m
-[Info] 150MB  JetScapeTaskSupport found seed 1, using individual engines with seeds created from 1[0m
-[Info] 150MB  JetScape::DetermineTaskList() -- Initial State: Added Trento module to task list.[0m
+[Info] 149MB  [1m[31mIntialize JetScape ...[0m
+[Info] 149MB  Created JetScapeXML Instance[0m
+[Info] 149MB  Open XML Master file : jetscape_master.xml[0m
+[Info] 149MB  Open XML User file : jetscape_user.xml[0m
+[Info] 149MB  ================================================================[0m
+[Info] 149MB  nEvents = 10[0m
+[Info] 149MB  Reuse Hydro:  true [0m
+[Info] 149MB  nReuseHydro: 10[0m
+[Info] 149MB  JetScapeTaskSupport found seed 1, using individual engines with seeds created from 1[0m
+[Info] 149MB  JetScape::DetermineTaskList() -- Initial State: Added Trento module to task list.[0m
 [Info] 153MB  JetScape::DetermineTaskList() -- Hard Process: Added PythiaGun to task list.[0m
 [Info] 153MB  JetScape::DetermineTaskList() -- PreDynamics: Added NullPreDynamics to task list.[0m
 [Info] 153MB  JetScape::DetermineTaskList() -- Hydro: Added Brick to task list.[0m
@@ -143,24 +143,24 @@
 
  --------  End PYTHIA Particle Data Table  -----------------------------------------------------------------------------------------
 
-[Info] 159MB  Intialize PreequilibriumDynamics : NullPreDynamics ...[0m
-[Info] 159MB  Intialize FluidDynamics : Brick ...[0m
-[Info] 159MB  Intialize JetEnergyLoss Manager ...[0m
-[Info] 159MB  Found 1 Eloss Manager Tasks/Modules Initialize them ... [0m
-[Info] 159MB  Intialize JetEnergyLoss ...[0m
-[Info] 159MB  Eloss shower with deltaT = 0.1 and maxT = 20[0m
-[Info] 159MB  Found 1 Eloss Tasks/Modules Initialize them ... [0m
-[Info] 159MB  Intialize Matter ...[0m
-[Info] 159MB  [35mMATTER input parameter[0m
-[Info] 159MB  [35muse hybrid hadronization later? 0[0m
-[Info] 159MB  [35mmatter shower on: 1[0m
-[Info] 159MB  [35min_vac: 0  brick_med: 0  recoil_on: 0[0m
-[Info] 159MB  [35mQ0: 2 vir_factor: 0.25  qhat0: -2 alphas: 0.2 hydro_Tc: 0.16 brick_length: 5[0m
-[Info] 159MB  Connect JetEnergyLossManager Signal to Hard Process ...[0m
-[Info] 159MB  Intialize Hadronization Manager ...[0m
-[Info] 159MB  Found 1 Hadronization Manager Tasks/Modules Initialize them ... [0m
-[Info] 159MB  Found 1 Hadronization Tasks/Modules Initialize them ... [0m
-[Info] 159MB  Weak decays are turned on[0m
+[Info] 158MB  Intialize PreequilibriumDynamics : NullPreDynamics ...[0m
+[Info] 158MB  Intialize FluidDynamics : Brick ...[0m
+[Info] 158MB  Intialize JetEnergyLoss Manager ...[0m
+[Info] 158MB  Found 1 Eloss Manager Tasks/Modules Initialize them ... [0m
+[Info] 158MB  Intialize JetEnergyLoss ...[0m
+[Info] 158MB  Eloss shower with deltaT = 0.1 and maxT = 20[0m
+[Info] 158MB  Found 1 Eloss Tasks/Modules Initialize them ... [0m
+[Info] 158MB  Intialize Matter ...[0m
+[Info] 158MB  [35mMATTER input parameter[0m
+[Info] 158MB  [35muse hybrid hadronization later? 0[0m
+[Info] 158MB  [35mmatter shower on: 1[0m
+[Info] 158MB  [35min_vac: 0  brick_med: 0  recoil_on: 0[0m
+[Info] 158MB  [35mQ0: 2 vir_factor: 0.25  qhat0: -2 alphas: 0.2 hydro_Tc: 0.16 brick_length: 5[0m
+[Info] 158MB  Connect JetEnergyLossManager Signal to Hard Process ...[0m
+[Info] 158MB  Intialize Hadronization Manager ...[0m
+[Info] 158MB  Found 1 Hadronization Manager Tasks/Modules Initialize them ... [0m
+[Info] 158MB  Found 1 Hadronization Tasks/Modules Initialize them ... [0m
+[Info] 158MB  Weak decays are turned on[0m
 
  *-------  PYTHIA Flag + Mode + Parm + Word + FVec + MVec + PVec + WVec Settings (changes only)  ------------------* 
  |                                                                                                                 | 
@@ -201,39 +201,5 @@
 [Info] 168MB  [1m[30mJetScape finished after 10 events![0m
 [Info] Finished![0m
 
-CPU time: 30.976492 seconds.
+CPU time: 31.478874 seconds.
 Real time: 31.000000 seconds.
-[Info] 153MB  Open Input File = test_out.dat[0m
-[Info] 153MB  File opened[0m
-[Info] 153MB  Current Event = 0[0m
-Number of hadrons is: 54
-[Info] 153MB  Current Event = 1[0m
-Number of hadrons is: 121
-[Info] 153MB  Current Event = 2[0m
-Number of hadrons is: 119
-[Info] 153MB  Current Event = 3[0m
-Number of hadrons is: 159
-[Info] 153MB  Current Event = 4[0m
-Number of hadrons is: 177
-[Info] 153MB  Current Event = 5[0m
-Number of hadrons is: 161
-[Info] 153MB  Current Event = 6[0m
-Number of hadrons is: 132
-[Info] 153MB  Current Event = 7[0m
-Number of hadrons is: 89
-[Info] 153MB  Current Event = 8[0m
-Number of hadrons is: 142
-[Info] 153MB  Current Event = 9[0m
-Number of hadrons is: 184
-[Info] 151MB  Open Input File = test_out.dat[0m
-[Info] 151MB  File opened[0m
-[Info] 151MB  Current Event = 0[0m
-[Info] 151MB  Current Event = 1[0m
-[Info] 151MB  Current Event = 2[0m
-[Info] 151MB  Current Event = 3[0m
-[Info] 151MB  Current Event = 4[0m
-[Info] 151MB  Current Event = 5[0m
-[Info] 151MB  Current Event = 6[0m
-[Info] 151MB  Current Event = 7[0m
-[Info] 151MB  Current Event = 8[0m
-[Info] 151MB  Current Event = 9[0m
