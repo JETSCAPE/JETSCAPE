@@ -58,7 +58,7 @@ class PlotResults(common_base.CommonBase):
         
         # saving the current time and PR number for use in file names
         self.prNum = os.getenv('PULL_NUMBER').zfill(5)
-        self.now = datetime.now().strftime("%Y%m%d")
+        self.now = datetime.now().strftime("%Y%m%d_%H%M%S")
 
         # Read config file
         with open(config_file, 'r') as stream:
