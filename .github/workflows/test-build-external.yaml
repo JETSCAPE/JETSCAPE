@@ -5,6 +5,10 @@ on:
     branches:
       - main
       - release-candidate
+      - JETSCAPE-3.5-RC
+  push:
+    branches:
+      - JETSCAPE-3.5-RC
 
 jobs:
   build:
