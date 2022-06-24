@@ -4287,8 +4287,8 @@ void LBT::setParameter(string fileName) {
   string line;
 
   while (getline(input, line)) {
-    char str[1024];
-    strncpy(str, line.c_str(), sizeof(str));
+    char str[1025];
+    strncpy(str, line.c_str(), sizeof(str)-1);
     //          cout << str << endl;
 
     char *divideChar[5];
