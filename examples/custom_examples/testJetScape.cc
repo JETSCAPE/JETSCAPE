@@ -89,7 +89,14 @@ int main(int argc, char** argv)
   // Current: Just use make_shared always (propably not the most efficient solution ...)
   
   //auto jetscape = make_shared<JetScape>("/Users/putschke/JetScape/framework_xcode/jetscape_init.xml",3);
-  auto jetscape = make_shared<JetScape>("./jetscape_init.xml",3);
+  auto jetscape = make_shared<JetScape>();
+  const char* masterXMLName = "../config/jetscape_master.xml";
+  const char* userXMLName = "../config/jetscape_user.xml";
+
+  jetscape->SetXMLMasterFileName(masterXMLName);
+  jetscape->SetXMLUserFileName(userXMLName);
+
+  jetscape->SetNumberOfEvents(3);
   // if << overloaded for classes then for example (see commented out in JetScape.h)
   //cout<<*jetscape<<endl; 
   // try to automatically create in Add()!? and to handle things behind the scene ...
