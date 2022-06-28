@@ -65,6 +65,7 @@ private:
 class SmashWrapper : public Afterburner {
 private:
   bool only_final_decays_ = false;
+  double end_time_ = -1.0;
   shared_ptr<smash::Experiment<AfterburnerModus>> smash_experiment_;
 
   // Allows the registration of the module so that it is available to be used by the Jetscape framework.
