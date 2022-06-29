@@ -27,29 +27,29 @@
 [Info] | See COPYING file for details.                                |[0m
 [Info] |                                                              |[0m
 [Info] *--------------------------------------------------------------*[0m
-[Info] 147MB  [1m[31mIntialize JetScape ...[0m
-[Info] 147MB  Created JetScapeXML Instance[0m
-[Info] 147MB  Open XML Master file : jetscape_master.xml[0m
-[Info] 148MB  Open XML User file : jetscape_user.xml[0m
-[Info] 148MB  ================================================================[0m
-[Info] 148MB  nEvents = 10[0m
-[Info] 148MB  Reuse Hydro:  true [0m
-[Info] 148MB  nReuseHydro: 10[0m
-[Info] 148MB  JetScapeTaskSupport found seed 10, using individual engines with seeds created from 10[0m
-[Info] 150MB  JetScape::DetermineTaskList() -- Hard Process: Added PythiaGun to task list.[0m
-[Info] 150MB  JetScape::DetermineTaskList() -- Eloss: Added Matter to Eloss list.[0m
-[Info] 150MB  JetScape::DetermineTaskList() -- JetHadronization: Added ColoredHadronization to task list.[0m
-[Info] 150MB  JetScape::DetermineTaskList() -- JetScapeWriterAscii (test_out.dat) added to task list.[0m
-[Info] 151MB  JetScape::DetermineTaskList() -- JetScapeWriterHepMC (test_out.hepmc) added to task list.[0m
-[Info] 151MB  ================================================================[0m
-[Info] 151MB  Found 5 Modules Initialize them ... [0m
-[Info] 151MB  Set Hydro,JetEnergylossManager and IS Pointers for SignalManager to create Signal/Slots[0m
-[Info] 151MB  Created JetScapeSignalManager Instance[0m
-[Info] 151MB  Calling JetScape InitTasks()...[0m
-[Info] 151MB  Intialize HardProcess : UninitializedPythiaGun ...[0m
-[Info] 151MB  [35mPythia Gun with FSR_on: 0[0m
-[Info] 151MB  [35mPythia Gun with 7 < pTHat < 9[0m
-[Info] 151MB  [35mUse hybrid hadronization? 0[0m
+[Info] 156MB  [1m[31mIntialize JetScape ...[0m
+[Info] 156MB  Created JetScapeXML Instance[0m
+[Info] 156MB  Open XML Master file : jetscape_master.xml[0m
+[Info] 156MB  Open XML User file : jetscape_user.xml[0m
+[Info] 156MB  ================================================================[0m
+[Info] 156MB  nEvents = 10[0m
+[Info] 156MB  Reuse Hydro:  true [0m
+[Info] 156MB  nReuseHydro: 10[0m
+[Info] 156MB  JetScapeTaskSupport found seed 10, using individual engines with seeds created from 10[0m
+[Info] 160MB  JetScape::DetermineTaskList() -- Hard Process: Added PythiaGun to task list.[0m
+[Info] 160MB  JetScape::DetermineTaskList() -- Eloss: Added Matter to Eloss list.[0m
+[Info] 160MB  JetScape::DetermineTaskList() -- JetHadronization: Added ColoredHadronization to task list.[0m
+[Info] 160MB  JetScape::DetermineTaskList() -- JetScapeWriterAscii (test_out.dat) added to task list.[0m
+[Info] 160MB  JetScape::DetermineTaskList() -- JetScapeWriterHepMC (test_out.hepmc) added to task list.[0m
+[Info] 160MB  ================================================================[0m
+[Info] 160MB  Found 5 Modules Initialize them ... [0m
+[Info] 160MB  Set Hydro,JetEnergylossManager and IS Pointers for SignalManager to create Signal/Slots[0m
+[Info] 160MB  Created JetScapeSignalManager Instance[0m
+[Info] 160MB  Calling JetScape InitTasks()...[0m
+[Info] 160MB  Intialize HardProcess : UninitializedPythiaGun ...[0m
+[Info] 160MB  [35mPythia Gun with FSR_on: 0[0m
+[Info] 160MB  [35mPythia Gun with 7 < pTHat < 9[0m
+[Info] 160MB  [35mUse hybrid hadronization? 0[0m
  PYTHIA Warning in PhaseSpace2to2tauyz::trialKin: maximum for cross section violated  
 
  *-------  PYTHIA Process Initialization  --------------------------*
@@ -63,15 +63,15 @@
  |                                                    |             |
  |------------------------------------------------------------------|
  |                                                    |             |
- | g g -> g g                                     111 |   6.508e-02 |
+ | g g -> g g                                     111 |   6.510e-02 |
  | g g -> q qbar (uds)                            112 |   1.658e-03 |
  | q g -> q g                                     113 |   1.077e-01 |
- | q q(bar)' -> q q(bar)'                         114 |   2.234e-02 |
+ | q q(bar)' -> q q(bar)'                         114 |   2.235e-02 |
  | q qbar -> g g                                  115 |   2.636e-04 |
  | q qbar -> q' qbar' (uds)                       116 |   1.766e-04 |
- | g g -> c cbar                                  121 |   4.971e-04 |
+ | g g -> c cbar                                  121 |   4.972e-04 |
  | q qbar -> c cbar                               122 |   5.530e-05 |
- | g g -> b bbar                                  123 |   1.973e-04 |
+ | g g -> b bbar                                  123 |   1.974e-04 |
  | q qbar -> b bbar                               124 |   3.263e-05 |
  | q g -> q gamma (udscb)                         201 |   4.621e-05 |
  | q qbar -> g gamma                              202 |   5.907e-06 |
@@ -85,7 +85,7 @@
  |                                                                  | 
  |                   sigmaNonDiffractive =    28.49 mb              | 
  |                                                                  | 
- |    pT0 =  1.06 gives sigmaInteraction =    84.70 mb: accepted    | 
+ |    pT0 =  1.06 gives sigmaInteraction =    85.45 mb: accepted    | 
  |                                                                  | 
  *-------  End PYTHIA Multiparton Interactions Initialization  -----* 
 
@@ -93,7 +93,7 @@
  |                                                                                                                 | 
  | Name                                          |                      Now |      Default         Min         Max | 
  |                                               |                          |                                      | 
- | Beams:eCM                                     |                200.00000 |    14000.000    10.00000             | 
+ | Beams:eCM                                     |                200.00000 |    14000.000         0.0             | 
  | HadronLevel:all                               |                      off |           on                         | 
  | HadronLevel:Decay                             |                      off |           on                         | 
  | HardQCD:all                                   |                       on |          off                         | 
@@ -118,65 +118,30 @@
 
  --------  End PYTHIA Particle Data Table  -----------------------------------------------------------------------------------------
 
-[Info] 156MB  Intialize JetEnergyLoss Manager ...[0m
-[Info] 156MB  Found 1 Eloss Manager Tasks/Modules Initialize them ... [0m
-[Info] 156MB  Intialize JetEnergyLoss ...[0m
-[Info] 156MB  Eloss shower with deltaT = 0.1 and maxT = 20[0m
-[Info] 156MB  Found 1 Eloss Tasks/Modules Initialize them ... [0m
-[Info] 156MB  Intialize Matter ...[0m
-[Info] 156MB  [35mMATTER input parameter[0m
-[Info] 156MB  [35muse hybrid hadronization later? 0[0m
-[Info] 156MB  [35mmatter shower on: 1[0m
-[Info] 156MB  [35min_vac: 1  brick_med: 0  recoil_on: 0[0m
-[Info] 156MB  [35mQ0: 1 vir_factor: 0.25  qhat0: 0 alphas: 0.25 hydro_Tc: 0.16 brick_length: 5[0m
-[Info] 156MB  Connect JetEnergyLossManager Signal to Hard Process ...[0m
-[Info] 156MB  Intialize Hadronization Manager ...[0m
-[Info] 156MB  Found 1 Hadronization Manager Tasks/Modules Initialize them ... [0m
-[Info] 156MB  Found 1 Hadronization Tasks/Modules Initialize them ... [0m
-[Info] 156MB  Weak decays are turned on[0m
-[Info] 156MB  Connect HadronizationManager Signal to Energy Loss ...[0m
-[Info] 156MB  JetScape Stream Writer initialized with output file = test_out.dat[0m
-[Info] 156MB  JetScape HepMC Writer initialized with output file = test_out.hepmc[0m
-[Info] 156MB  [1m[31mRun JetScape ...[0m
-[Info] 156MB  [1m[31mNumber of Events = 10[0m
-[Info] 156MB  [1m[31mRun Event # = 0[0m
- PYTHIA Error in BeamRemnants::setKinematics: kinematics construction failed  
-[Info] 158MB  [1m[30mJetScape finished after 10 events![0m
+[Info] 166MB  Intialize JetEnergyLoss Manager ...[0m
+[Info] 166MB  Found 1 Eloss Manager Tasks/Modules Initialize them ... [0m
+[Info] 166MB  Intialize JetEnergyLoss ...[0m
+[Info] 166MB  Eloss shower with deltaT = 0.1 and maxT = 20[0m
+[Info] 166MB  Found 1 Eloss Tasks/Modules Initialize them ... [0m
+[Info] 166MB  Intialize Matter ...[0m
+[Info] 166MB  [35mMATTER input parameter[0m
+[Info] 166MB  [35muse hybrid hadronization later? 0[0m
+[Info] 166MB  [35mmatter shower on: 1[0m
+[Info] 166MB  [35min_vac: 1  brick_med: 0  recoil_on: 0[0m
+[Info] 166MB  [35mQ0: 1 vir_factor: 0.25  qhat0: 0 alphas: 0.25 hydro_Tc: 0.16 brick_length: 5[0m
+[Info] 166MB  Connect JetEnergyLossManager Signal to Hard Process ...[0m
+[Info] 166MB  Intialize Hadronization Manager ...[0m
+[Info] 166MB  Found 1 Hadronization Manager Tasks/Modules Initialize them ... [0m
+[Info] 166MB  Found 1 Hadronization Tasks/Modules Initialize them ... [0m
+[Info] 166MB  Weak decays are turned on[0m
+[Info] 167MB  Connect HadronizationManager Signal to Energy Loss ...[0m
+[Info] 167MB  JetScape Stream Writer initialized with output file = test_out.dat[0m
+[Info] 167MB  JetScape HepMC Writer initialized with output file = test_out.hepmc[0m
+[Info] 167MB  [1m[31mRun JetScape ...[0m
+[Info] 167MB  [1m[31mNumber of Events = 10[0m
+[Info] 167MB  [1m[31mRun Event # = 0[0m
+[Info] 169MB  [1m[30mJetScape finished after 10 events![0m
 [Info] Finished![0m
 
-CPU time: 0.980578 seconds.
-Real time: 2.000000 seconds.
-[Info] 147MB  Open Input File = test_out.dat[0m
-[Info] 147MB  File opened[0m
-[Info] 147MB  Current Event = 0[0m
-Number of hadrons is: 139
-[Info] 147MB  Current Event = 1[0m
-Number of hadrons is: 104
-[Info] 148MB  Current Event = 2[0m
-Number of hadrons is: 106
-[Info] 148MB  Current Event = 3[0m
-Number of hadrons is: 196
-[Info] 148MB  Current Event = 4[0m
-Number of hadrons is: 210
-[Info] 148MB  Current Event = 5[0m
-Number of hadrons is: 149
-[Info] 148MB  Current Event = 6[0m
-Number of hadrons is: 132
-[Info] 148MB  Current Event = 7[0m
-Number of hadrons is: 65
-[Info] 148MB  Current Event = 8[0m
-Number of hadrons is: 147
-[Info] 148MB  Current Event = 9[0m
-Number of hadrons is: 177
-[Info] 147MB  Open Input File = test_out.dat[0m
-[Info] 147MB  File opened[0m
-[Info] 147MB  Current Event = 0[0m
-[Info] 148MB  Current Event = 1[0m
-[Info] 148MB  Current Event = 2[0m
-[Info] 148MB  Current Event = 3[0m
-[Info] 148MB  Current Event = 4[0m
-[Info] 148MB  Current Event = 5[0m
-[Info] 148MB  Current Event = 6[0m
-[Info] 148MB  Current Event = 7[0m
-[Info] 148MB  Current Event = 8[0m
-[Info] 148MB  Current Event = 9[0m
+CPU time: 0.758709 seconds.
+Real time: 1.000000 seconds.
