@@ -1,4 +1,4 @@
-FROM jetscape/base:v1.4
+FROM jetscape/base:stable
 
 COPY --chown=jetscape-user:jetscape-user JETSCAPE-DOCKER /home/jetscape-user/JETSCAPE
 RUN cd JETSCAPE/external_packages && \
