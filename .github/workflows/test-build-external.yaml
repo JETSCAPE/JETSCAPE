@@ -11,7 +11,7 @@ on:
       - JETSCAPE-3.5-RC
 
 env:
-   SMASH_DIR: /__w/JETSCAPE/JETSCAPE/JETSCAPE
+   SMASH_DIR: /__w/JETSCAPE/JETSCAPE
 
 jobs:
   build:
