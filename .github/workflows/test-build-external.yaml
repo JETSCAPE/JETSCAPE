@@ -18,7 +18,7 @@ jobs:
     container:
       image: jetscape/base:stable
       options: --user root
-      
+    
     steps:
       
     - name: Checkout JETSCAPE
@@ -47,6 +47,8 @@ jobs:
         ./get_smash.sh
 
     - name: Build JETSCAPE
+      env:
+        SMASH_DIR: $GITHUB_WORKSPACE/JETSCAPE
       run: |
         cd $GITHUB_WORKSPACE/JETSCAPE
         mkdir build
