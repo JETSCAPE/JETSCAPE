@@ -51,6 +51,6 @@ jobs:
         cd $GITHUB_WORKSPACE/JETSCAPE
         mkdir build
         cd build
-        export SMASH_DIR='${GITHUB_WORKSPACE}/JETSCAPE'
+        export SMASH_DIR=${GITHUB_WORKSPACE}/JETSCAPE/external_packages/smash
         cmake .. -DUSE_MUSIC=ON -DUSE_ISS=ON -DUSE_FREESTREAM=ON -DUSE_SMASH=ON
         make -j2
