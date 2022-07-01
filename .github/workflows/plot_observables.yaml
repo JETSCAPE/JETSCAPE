@@ -8,7 +8,7 @@ on:
       - JETSCAPE-3.5-RC
   push:
     branches:
-      - JETSCAPE-3.5-RC
+    #  - JETSCAPE-3.5-RC
 
 env:
   PULL_NUMBER: ${{ github.event.number }}
