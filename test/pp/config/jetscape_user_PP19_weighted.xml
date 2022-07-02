@@ -2,7 +2,7 @@
 
 <jetscape>
   
-  <nEvents> 4000 </nEvents>
+  <nEvents> 40000 </nEvents>
   
   <outputFilename>test_out</outputFilename>
   <JetScapeWriterFinalStateHadronsAscii> on </JetScapeWriterFinalStateHadronsAscii>
