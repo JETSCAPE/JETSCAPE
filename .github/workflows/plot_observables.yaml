@@ -47,13 +47,15 @@ jobs:
         echo $PULL_NUMBER
         $GITHUB_WORKSPACE/JETSCAPE/test/generate_plots.sh -j $GITHUB_WORKSPACE/JETSCAPE -o $GITHUB_WORKSPACE/JETSCAPE/test/plot/output/new
 
-    - name: TAR files for transfer
+    - name: TAR files for transfer  
       run: |
         mkdir /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive
         cd /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/new
         tar -cvzf /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive/files.tar.gz .
-
+  
+  web-deploy:
     - name: Deploy Plots
+      timeout-minutes: 15
       uses: SamKirkland/FTP-Deploy-Action@4.3.0
       with:
         server: ftp.joelatessa.com
