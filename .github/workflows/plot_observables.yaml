@@ -53,7 +53,6 @@ jobs:
         cd /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/new
         tar -cvzf /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive/files.tar.gz .
   
-  web-deploy:
     - name: Deploy Plots
       timeout-minutes: 15
       uses: SamKirkland/FTP-Deploy-Action@4.3.0
