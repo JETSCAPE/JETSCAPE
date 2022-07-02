@@ -51,7 +51,7 @@ jobs:
       run: |
         mkdir /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive
         cd /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/new
-        tar cvzf /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive/files.tar.gz .
+        tar -cvzf /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive/files.tar.gz .
 
     - name: Deploy Plots
       uses: SamKirkland/FTP-Deploy-Action@4.3.0
