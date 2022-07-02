@@ -47,13 +47,19 @@ jobs:
         echo $PULL_NUMBER
         $GITHUB_WORKSPACE/JETSCAPE/test/generate_plots.sh -j $GITHUB_WORKSPACE/JETSCAPE -o $GITHUB_WORKSPACE/JETSCAPE/test/plot/output/new
 
+    - name: TAR files for transfer
+      run: |
+        mkdir /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive
+        cd /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/new
+        tar cvzf /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive/files.tar.gz .
+
     - name: Deploy Plots
-      uses: SamKirkland/FTP-Deploy-Action@2.0.0
+      uses: SamKirkland/FTP-Deploy-Action@4.3.0
       with:
         server: ftp.joelatessa.com
         port: 21
         username: jetscapeTest@joelatessa.com
         password: ${{ secrets.JETSCAPE_FTP_PASS }}
-        local-dir: /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/new/
+        local-dir: /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive/
         # local-dir: /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/pp/output/new/
         server-dir: ./
