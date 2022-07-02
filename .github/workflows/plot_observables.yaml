@@ -50,6 +50,8 @@ jobs:
     - name: Deploy Plots
       uses: SamKirkland/FTP-Deploy-Action@4.2.0
       with:
+        timeout_minutes: 1
+        max_attempts: 3
         server: ftp.joelatessa.com
         port: 21
         username: jetscapeTest@joelatessa.com
