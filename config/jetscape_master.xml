@@ -141,7 +141,7 @@
       <!-- Type=5 : HTL q-hat with Virtuality dependent function 1/(1+A*pow(ln(Q2),2) + B*pow(ln(Q2),4))  -->
       <!-- Type=6 : HTL q-hat with Virtuality dependent function int e^{-Cx}/(1+A*pow(ln(Q2),1) + B*pow(ln(Q2),2)) -->
       <!-- Type=7 : HTL q-hat with Virtuality dependent function  int x^{C}(1-x)^{D}/(1+A*pow(ln(Q2),1) + B*pow(ln(Q2),2))-->
-      <QhatParametrizationType> -1 </QhatParametrizationType>
+      <QhatParametrizationType> 0 </QhatParametrizationType>
       <qhat0> -2.0 </qhat0>  <!-- If Type=0, 1, 5,6,7 set qhat0 as negative since alphas will be used-->
       <alphas> 0.25 </alphas>
       <qhatA> 10.0 </qhatA>    <!-- Always positive, Used only if QhatParametrizationType=5,6,7  -->

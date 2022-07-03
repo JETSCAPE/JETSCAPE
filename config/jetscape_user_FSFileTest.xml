@@ -65,7 +65,7 @@
         <recoil_on> 1 </recoil_on>
         <broadening_on> 0 </broadening_on>
         <brick_med> 0 </brick_med>
-        <hydro_Tc> 0.15 </hydro_Tc>
+        <hydro_Tc> 0.16 </hydro_Tc>
         <qhat0> -2.0 </qhat0>
         <alphas> 0.25 </alphas>
       </Matter>

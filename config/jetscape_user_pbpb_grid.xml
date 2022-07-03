@@ -2,9 +2,9 @@
 
 <jetscape>
   
-  <nEvents> 2 </nEvents>
+  <nEvents> 5 </nEvents>
   <setReuseHydro> true </setReuseHydro>
-  <nReuseHydro> 5 </nReuseHydro>
+  <nReuseHydro> 10 </nReuseHydro>
   
   <JetScapeWriterAscii> on </JetScapeWriterAscii>
   <outputFilename>test_out</outputFilename>
@@ -16,7 +16,8 @@
   </Random>
   <!-- Inital State Module  -->
   <IS>
-    <initial_profile_path>/wsu/home/groups/maj-shen/JETSCAPEDataFile/HydroProfiles/5TeV_0-10</initial_profile_path>
+    <!-- initial_profile_path  /wsu/home/groups/maj-shen/JETSCAPEDataFile/HydroProfiles/5020GeV_0-10  initial_profile_path -->
+     <initial_profile_path>../examples/test_hydro_files</initial_profile_path>
   </IS>
   
   <!-- Hard Process -->
@@ -26,6 +27,18 @@
       <pTHatMin>500</pTHatMin>
       <pTHatMax>550</pTHatMax>
       <eCM>5020</eCM>
+      <!-- You can add any number of additional lines to initialize pythia here -->
+      <!-- Note that if the tag exists it cannot be empty (tinyxml produces a segfault) -->
+      <!-- EPS09 Avg Nuclear PDF for nucleon in Pb nucleus -->
+      <LinesToRead> 
+	HardQCD:all = on
+        PDF:useHardNPDFA=on
+	PDF:useHardNPDFB=on
+	PDF:nPDFSetA=1         
+	PDF:nPDFSetB=1
+	PDF:nPDFBeamA = 100822080
+	PDF:nPDFBeamB = 100822080
+      </LinesToRead>
       <useHybridHad>0</useHybridHad>
     </PythiaGun>
   </Hard>
@@ -40,7 +53,8 @@
     <hydro_from_file>
       <name>Hydro from file </name>
       <read_in_multiple_hydro>1</read_in_multiple_hydro>
-      <hydro_files_folder>/wsu/home/groups/maj-shen/JETSCAPEDataFile/HydroProfiles/5TeV_0-10</hydro_files_folder>
+      <!-- hydro_files_folder  /wsu/home/groups/maj-shen/JETSCAPEDataFile/HydroProfiles/5020GeV_0-10 hydro_files_folder -->
+      <hydro_files_folder>../examples/test_hydro_files</hydro_files_folder>
     </hydro_from_file>
   </Hydro>
   
@@ -49,7 +63,7 @@
 
     <deltaT>0.1</deltaT>
     <formTime> -0.1</formTime>
-    <maxT>250</maxT>
+    <maxT>150</maxT>
     <tStart> 0.6 </tStart> <!-- Start time of jet quenching, proper time, fm/c   -->
     <mutex>ON</mutex>
 
@@ -75,7 +89,7 @@
       <!-- Type=5 : HTL q-hat with Virtuality dependent function 1/(1+A*pow(ln(Q2),2) + B*pow(ln(Q2),4))  -->
       <!-- Type=6 : HTL q-hat with Virtuality dependent function int e^{-Cx}/(1+A*pow(ln(Q2),1) + B*pow(ln(Q2),2)) -->
       <!-- Type=7 : HTL q-hat with Virtuality dependent function  int x^{C}(1-x)^{D}/(1+A*pow(ln(Q2),1) + B*pow(ln(Q2),2))-->
-      <QhatParametrizationType> 5 </QhatParametrizationType>
+      <QhatParametrizationType> 5  </QhatParametrizationType>
       <qhat0> -2.0 </qhat0>  <!-- If Type=0, 1, 5,6,7 set qhat0 as negative since alphas will be used-->
       <alphas> 0.3 </alphas>
       <qhatA> 10.0 </qhatA>    <!-- Always positive, Used only if QhatParametrizationType=5,6,7  -->
