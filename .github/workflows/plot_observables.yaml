@@ -49,10 +49,10 @@ jobs:
 
     - name: Prepare TAR file for transfer
       run: |
-        echo "NOW::$(date +'%Y%m%dT_%H%M%S')" >> $GITHUB_ENV
+        export E_TIME='date +%s'
         mkdir /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive
         cd /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/new
-        tar -cvzf /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive/files_$NOW.tar.gz .
+        tar -cvzf /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive/files_$E_TIME.tar.gz .
         cd /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive
         echo "pwd of archive"
         pwd
