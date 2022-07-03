@@ -59,13 +59,23 @@ jobs:
         echo "ls of archive"
         ls
 
-    - name: Deploy Plots
-      uses: SamKirkland/FTP-Deploy-Action@4.3.0
+    - name: Publish Plots
+      uses: nogsantos/scp-deploy@master
       with:
-        server: ftp.joelatessa.com
-        port: 21
-        username: jetscapeTest@joelatessa.com
-        password: ${{ secrets.JETSCAPE_FTP_PASS }}
-        local-dir: /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive/
-        # local-dir: /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/pp/output/new/
-        server-dir: ./
+        src: /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive/*
+        host: ${{ secrets.SSH_HOST }}
+        remote: ${{ secrets.SSH_REMOTE }}
+        port: ${{ secrets.SSH_PORT }}
+        user: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_WORKFLOWS_KEY }}
+
+#    - name: Deploy Plots
+#      uses: SamKirkland/FTP-Deploy-Action@4.3.0
+#      with:
+#        server: ftp.joelatessa.com
+#        port: 21
+#        username: jetscapeTest@joelatessa.com
+#        password: ${{ secrets.JETSCAPE_FTP_PASS }}
+#        local-dir: /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive/
+#        # local-dir: /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/pp/output/new/
+#        server-dir: ./
