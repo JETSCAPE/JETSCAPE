@@ -49,15 +49,16 @@ jobs:
 
     - name: Prepare TAR file for transfer
       run: |
+        export ET=`date "+%Y%m%d%H%M%S"`
         mkdir /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive
         cd /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/new
-        tar -cvzf /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive/files.tar.gz .
+        tar -cvzf /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive/files_$ET.tar.gz .
         cd /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive
         echo "pwd of archive"
         pwd
         echo "ls of archive"
         ls
-  
+
     - name: Deploy Plots
       uses: SamKirkland/FTP-Deploy-Action@4.3.0
       with:
