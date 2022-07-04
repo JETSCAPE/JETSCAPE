@@ -37,6 +37,10 @@ jobs:
         cmake ..
         make -j2
 
+    - name: Curl site to process any pending files
+      run: |
+        curl http://plot.joelatessa.com
+
     - name: Generate pp events
       run: |
         cd $GITHUB_WORKSPACE/JETSCAPE/build
@@ -89,7 +93,7 @@ jobs:
         server: "ftp.joelatessa.com"
         user: "jetscapeTest@plot.joelatessa.com"
         password: ${{ secrets.JETSCAPE_FTP_PASS }}
-        local_dir: "/__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive"
+        local_dir: $GITHUB_WORKSPACE/JETSCAPE/test/plot/output/archive
         remote_dir: "./"
         delete: "false"
 
