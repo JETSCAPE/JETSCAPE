@@ -64,8 +64,7 @@ jobs:
       with:
         server: ftp.joelatessa.com
         port: 21
-        username: jetscapeTest@joelatessa.com
+        username: jetscapeTest@plot.joelatessa.com
         password: ${{ secrets.JETSCAPE_FTP_PASS }}
         local-dir: /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive/
-        # local-dir: /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/pp/output/new/
         server-dir: ./
