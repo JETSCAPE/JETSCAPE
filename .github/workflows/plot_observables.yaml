@@ -37,6 +37,10 @@ jobs:
         cmake ..
         make -j2
 
+    - name: Curl site to process any pending files
+      run: |
+        curl http://plot.joelatessa.com
+
     - name: Generate pp events
       run: |
         cd $GITHUB_WORKSPACE/JETSCAPE/build
@@ -60,11 +64,11 @@ jobs:
         ls
 
     - name: Deploy Plots
-      uses: SamKirkland/FTP-Deploy-Action@4.3.0
+      uses: airvzxf/ftp-deployment-action@latest
       with:
-        server: ftp.joelatessa.com
-        port: 21
-        username: jetscapeTest@plot.joelatessa.com
+        server: "ftp.joelatessa.com"
+        user: "jetscapeTest@plot.joelatessa.com"
         password: ${{ secrets.JETSCAPE_FTP_PASS }}
-        local-dir: /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive/
-        server-dir: ./
+        local_dir: "./JETSCAPE/test/plot/output/archive"
+        remote_dir: "./"
+        delete: "false"
