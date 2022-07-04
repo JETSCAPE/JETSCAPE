@@ -58,16 +58,13 @@ jobs:
         pwd
         echo "ls of archive"
         ls
-        cd /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output
-        echo "pwd of output"
-        pwd
-        echo "ls of output"
-        ls
+        export SOURCE_FOLDER="/__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive"
+
 
     - name: Publish Plots
       uses: nogsantos/scp-deploy@master
       with:
-        src: ./archive/*
+        src: $SOURCE_FOLDER
         host: ${{ secrets.SSH_HOST }}
         remote: ${{ secrets.SSH_REMOTE }}
         port: ${{ secrets.SSH_PORT }}
