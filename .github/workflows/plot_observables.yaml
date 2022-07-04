@@ -60,16 +60,25 @@ jobs:
         ls
         export SOURCE_FOLDER="/__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive"
 
-
     - name: Publish Plots
-      uses: nogsantos/scp-deploy@master
+      uses: appleboy/scp-action@master
       with:
-        src: $SOURCE_FOLDER
         host: ${{ secrets.SSH_HOST }}
-        remote: ${{ secrets.SSH_REMOTE }}
+        username: ${{ secrets.SSH_USER }}
         port: ${{ secrets.SSH_PORT }}
-        user: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_WORKFLOWS_KEY }}
+        source: "/__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive/files_$ET.tar.gz"
+        target: ${{ secrets.SSH_REMOTE }}
+  
+#    - name: Publish Plots
+#      uses: nogsantos/scp-deploy@master
+#      with:
+#        src: $SOURCE_FOLDER
+#        host: ${{ secrets.SSH_HOST }}
+#        remote: ${{ secrets.SSH_REMOTE }}
+#        port: ${{ secrets.SSH_PORT }}
+#        user: ${{ secrets.SSH_USER }}
+#        key: ${{ secrets.SSH_WORKFLOWS_KEY }}
 
 #    - name: Deploy Plots
 #      uses: SamKirkland/FTP-Deploy-Action@4.3.0
