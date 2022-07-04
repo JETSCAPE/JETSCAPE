@@ -93,7 +93,6 @@ jobs:
         server: "ftp.joelatessa.com"
         user: "jetscapeTest@plot.joelatessa.com"
         password: ${{ secrets.JETSCAPE_FTP_PASS }}
-        local_dir: $GITHUB_WORKSPACE/JETSCAPE/test/plot/output/archive
+        local_dir: "./JETSCAPE/test/plot/output/archive"
         remote_dir: "./"
         delete: "false"
-
