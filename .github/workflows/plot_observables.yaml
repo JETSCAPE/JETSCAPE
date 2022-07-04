@@ -59,27 +59,26 @@ jobs:
         echo "ls of archive"
         ls
 
-    - name: Create SSH key
-      run: |
-        mkdir -p ~/.ssh/
-        echo "$SSH_WORKFLOWS_KEY" > ../private.key
-        chmod 600 ../private.key
-      shell: bash
-      env:
-        SSH_WORKFLOWS_KEY: ${{secrets.SSH_WORKFLOWS_KEY}}
-        SSH_KEY_PATH: ${{ github.workspace }}/../private.key
+    # - name: Create SSH key
+    #   run: |
+    #     mkdir -p ~/.ssh/
+    #     echo "$SSH_WORKFLOWS_KEY" > ../private.key
+    #     chmod 600 ../private.key
+    #   shell: bash
+    #   env:
+    #     SSH_WORKFLOWS_KEY: ${{secrets.SSH_WORKFLOWS_KEY}}
+    #     SSH_KEY_PATH: ${{ github.workspace }}/../private.key
           
-    - name: Deploy Plots
-      run: |
-        scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i $SSH_KEY_PATH -r /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive/ jn0ktcjw69va@68.178.247.27:/home/jn0ktcjw69va/public_html/plot.joelatessa.com/images/
+    # - name: Deploy Plots
+    #   run: |
+    #     scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i $SSH_KEY_PATH /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive/ jn0ktcjw69va@68.178.247.27:/home/jn0ktcjw69va/public_html/plot.joelatessa.com/images/
 
-#    - name: Deploy Plots
-#      uses: SamKirkland/FTP-Deploy-Action@4.3.0
-#      with:
-#        server: ftp.joelatessa.com
-#        port: 21
-#        username: jetscapeTest@plot.joelatessa.com
-#        password: ${{ secrets.JETSCAPE_FTP_PASS }}
-#        local-dir: /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive/
-#        # local-dir: /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/pp/output/new/
-#        server-dir: ./
+    - name: Deploy Plots
+      uses: SamKirkland/FTP-Deploy-Action@4.3.0
+      with:
+        server: ftp.joelatessa.com
+        port: 21
+        username: jetscapeTest@plot.joelatessa.com
+        password: ${{ secrets.JETSCAPE_FTP_PASS }}
+        local-dir: /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive/
+        server-dir: ./
