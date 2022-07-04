@@ -60,14 +60,19 @@ jobs:
         ls
 
     - name: Publish Plots
-      uses: nogsantos/scp-deploy@master
-      with:
-        # src: /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive/
-        host: ${{ secrets.SSH_HOST }}
-        remote: ${{ secrets.SSH_REMOTE }}
-        port: ${{ secrets.SSH_PORT }}
-        user: ${{ secrets.SSH_USER }}
-        key: ${{ secrets.SSH_WORKFLOWS_KEY }}
+      run: |
+        echo -e "${{ secrets.SSH_WORKFLOWS_KEY }}" >__TEMP_INPUT_KEY_FILE
+        chmod 600 __TEMP_INPUT_KEY_FILE
+        scp -o StrictHostKeyChecking=no -v -i __TEMP_INPUT_KEY_FILE -P "22" -r ./* "${{ secrets.SSH_USER }}"@"${{ secrets.SSH_HOST }}":"${{ secrets.SSH_REMOTE }}"
+
+#      uses: nogsantos/scp-deploy@master
+#      with:
+#        # src: /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive/
+#        host: ${{ secrets.SSH_HOST }}
+#        remote: ${{ secrets.SSH_REMOTE }}
+#        port: ${{ secrets.SSH_PORT }}
+#        user: ${{ secrets.SSH_USER }}
+#        key: ${{ secrets.SSH_WORKFLOWS_KEY }}
 
 #    - name: Deploy Plots
 #      uses: SamKirkland/FTP-Deploy-Action@4.3.0
