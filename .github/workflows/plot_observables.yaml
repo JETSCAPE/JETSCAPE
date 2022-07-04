@@ -62,7 +62,7 @@ jobs:
     - name: Publish Plots
       uses: nogsantos/scp-deploy@master
       with:
-        src: ./files_$ET.tar.gz
+        src: $GITHUB_WORKSPACE/JETSCAPE/test/plot/output/archive
         host: ${{ secrets.SSH_HOST }}
         remote: ${{ secrets.SSH_REMOTE }}
         port: ${{ secrets.SSH_PORT }}
