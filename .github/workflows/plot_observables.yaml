@@ -61,14 +61,13 @@ jobs:
         export SOURCE_FOLDER="/__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive"
 
     - name: Publish Plots
-      uses: appleboy/scp-action@master
+      uses: sebastianpopp/ftp-action@releases/v2
       with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USER }}
-        port: ${{ secrets.SSH_PORT }}
-        key: ${{ secrets.SSH_WORKFLOWS_KEY }}
-        source: "/__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/new/*"
-        target: ${{ secrets.SSH_REMOTE }}
+        host: "ftp.joelatessa.com"
+        user: "jetscapeTest@joelatessa.com"
+        password: ${{ secrets.JETSCAPE_FTP_PASS }}
+        localDir: "/__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive/"
+        remoteDir: "./"
   
 #    - name: Publish Plots
 #      uses: nogsantos/scp-deploy@master
