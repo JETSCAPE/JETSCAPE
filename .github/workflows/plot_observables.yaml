@@ -73,12 +73,23 @@ jobs:
     #   run: |
     #     scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i $SSH_KEY_PATH /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive/ jn0ktcjw69va@68.178.247.27:/home/jn0ktcjw69va/public_html/plot.joelatessa.com/images/
 
+    # - name: Deploy Plots
+    #   uses: SamKirkland/FTP-Deploy-Action@4.3.0
+    #   with:
+    #     server: ftp.joelatessa.com
+    #     port: 21
+    #     username: jetscapeTest@plot.joelatessa.com
+    #     password: ${{ secrets.JETSCAPE_FTP_PASS }}
+    #     local-dir: /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive/
+    #     server-dir: ./
+
     - name: Deploy Plots
-      uses: SamKirkland/FTP-Deploy-Action@4.3.0
+      uses: airvzxf/ftp-deployment-action@latest
       with:
-        server: ftp.joelatessa.com
-        port: 21
-        username: jetscapeTest@plot.joelatessa.com
+        server: "ftp.joelatessa.com"
+        user: "jetscapeTest@plot.joelatessa.com"
         password: ${{ secrets.JETSCAPE_FTP_PASS }}
-        local-dir: /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive/
-        server-dir: ./
+        local_dir: "/__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive"
+        remote_dir: "./"
+        delete: "false";
+
