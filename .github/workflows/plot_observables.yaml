@@ -61,8 +61,11 @@ jobs:
 
     - name: Publish Plots
       uses: nogsantos/scp-deploy@master
+      run: |
+        cd /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output
+        pwd
       with:
-        src:  /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive
+        src: ./archive/*
         host: ${{ secrets.SSH_HOST }}
         remote: ${{ secrets.SSH_REMOTE }}
         port: ${{ secrets.SSH_PORT }}
