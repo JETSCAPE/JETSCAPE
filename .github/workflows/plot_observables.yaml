@@ -61,12 +61,12 @@ jobs:
         export SOURCE_FOLDER="/__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive"
 
     - name: Publish Plots
-      uses: sebastianpopp/ftp-action@releases/v2
+      uses: dennisameling/ftp-upload-action@v1
       with:
-        host: "ftp.joelatessa.com"
-        user: "jetscapeTest@joelatessa.com"
+        server: "ftp.joelatessa.com"
+        username: "jetscapeTest@plot.joelatessa.com"
         password: ${{ secrets.JETSCAPE_FTP_PASS }}
-        localDir: "/__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive/"
+        local_dir: "/__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive/"
         remoteDir: "./"
   
 #    - name: Publish Plots
