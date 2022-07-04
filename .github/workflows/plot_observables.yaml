@@ -67,7 +67,7 @@ jobs:
         username: ${{ secrets.SSH_USER }}
         port: ${{ secrets.SSH_PORT }}
         key: ${{ secrets.SSH_WORKFLOWS_KEY }}
-        source: "/__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive/files_$ET.tar.gz"
+        source: "/__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/new/*"
         target: ${{ secrets.SSH_REMOTE }}
   
 #    - name: Publish Plots
