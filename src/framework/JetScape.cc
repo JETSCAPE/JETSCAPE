@@ -783,7 +783,7 @@ void JetScape::CheckForWriterFromXML(const char *writerName,
     VERBOSE(2) << "Writer is on.";
     auto writer = JetScapeModuleFactory::createInstance(writerName);
     if (writer) {
-      writer->SetId(writerName);
+      writer->SetId("JetScape writer");
       dynamic_pointer_cast<JetScapeWriter>(writer)->SetOutputFileName(
           outputFilename);
       Add(writer);
@@ -797,7 +797,6 @@ void JetScape::CheckForWriterFromXML(const char *writerName,
       VERBOSE(2) << "Manually creating JetScapeWriterHepMC (due to multiple "
                     "inheritance)";
       auto writer = std::make_shared<JetScapeWriterHepMC>(outputFilename);
-      writer->SetId(writerName);
       Add(writer);
       JSINFO << "JetScape::DetermineTaskList() -- " << writerName << " ("
              << outputFilename.c_str() << ") added to task list.";
