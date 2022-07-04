@@ -91,5 +91,5 @@ jobs:
         password: ${{ secrets.JETSCAPE_FTP_PASS }}
         local_dir: "/__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive"
         remote_dir: "./"
-        delete: "false";
+        delete: "false"
 
