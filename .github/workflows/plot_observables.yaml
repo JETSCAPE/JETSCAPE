@@ -63,7 +63,7 @@ jobs:
       run: |
         mkdir -p ~/.ssh/
         echo "$SSH_WORKFLOWS_KEY" > ../private.key
-        sudo chmod 600 ../private.key
+        chmod 600 ../private.key
       shell: bash
       env:
         SSH_WORKFLOWS_KEY: ${{secrets.SSH_WORKFLOWS_KEY}}
