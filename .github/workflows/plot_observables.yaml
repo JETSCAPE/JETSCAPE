@@ -58,34 +58,14 @@ jobs:
         pwd
         echo "ls of archive"
         ls
-        export SOURCE_FOLDER="/__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive"
 
-    - name: Publish Plots
-      uses: dennisameling/ftp-upload-action@v1
+    - name: Deploy Plots
+      uses: SamKirkland/FTP-Deploy-Action@4.3.0
       with:
-        server: "ftp.joelatessa.com"
-        username: "jetscapeTest@plot.joelatessa.com"
+        server: ftp.joelatessa.com
+        port: 21
+        username: jetscapeTest@plot.joelatessa.com
         password: ${{ secrets.JETSCAPE_FTP_PASS }}
-        local_dir: "/__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive/"
-        remoteDir: "./"
-  
-#    - name: Publish Plots
-#      uses: nogsantos/scp-deploy@master
-#      with:
-#        src: $SOURCE_FOLDER
-#        host: ${{ secrets.SSH_HOST }}
-#        remote: ${{ secrets.SSH_REMOTE }}
-#        port: ${{ secrets.SSH_PORT }}
-#        user: ${{ secrets.SSH_USER }}
-#        key: ${{ secrets.SSH_WORKFLOWS_KEY }}
-
-#    - name: Deploy Plots
-#      uses: SamKirkland/FTP-Deploy-Action@4.3.0
-#      with:
-#        server: ftp.joelatessa.com
-#        port: 21
-#        username: jetscapeTest@joelatessa.com
-#        password: ${{ secrets.JETSCAPE_FTP_PASS }}
-#        local-dir: /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive/
-#        # local-dir: /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/pp/output/new/
-#        server-dir: ./
+        local-dir: /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive/
+        # local-dir: /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/pp/output/new/
+        server-dir: ./
