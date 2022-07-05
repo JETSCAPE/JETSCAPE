@@ -5,7 +5,8 @@
   <nEvents> 1000 </nEvents>
   
   <outputFilename>test_out</outputFilename>
-  <JetScapeWriterHepMC> on </JetScapeWriterHepMC>
+  <JetScapeWriterFinalStateHadronsAscii> on </JetScapeWriterFinalStateHadronsAscii>
+  <JetScapeWriterFinalStatePartonsAscii> on </JetScapeWriterFinalStatePartonsAscii>
   
   <!-- Hard Process -->
   <Hard>
