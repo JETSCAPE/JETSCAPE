@@ -8,7 +8,7 @@ Please cite [The JETSCAPE framework](https://arxiv.org/abs/1903.07706) if you us
 
 ## Installation
 
-Please see the [Installation Instructions](https://github.com/JETSCAPE/JETSCAPE/wiki/JETSCAPE-Installation).
+Please see the [Installation Instructions](https://github.com/JETSCAPE/JETSCAPE/wiki/Doc.Installation).
 
 ## Running JETSCAPE
 
