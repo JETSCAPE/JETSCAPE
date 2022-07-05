@@ -5,6 +5,10 @@ on:
     branches:
       - main
       - release-candidate
+      - JETSCAPE-3.5-RC
+  push:
+    branches:
+      - JETSCAPE-3.5-RC
 
 jobs:
   build:
@@ -12,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     
     container:
-      image: jetscape/base:v1.4
+      image: jetscape/base:stable
       options: --user root
       
     steps:
@@ -47,5 +51,6 @@ jobs:
         cd $GITHUB_WORKSPACE/JETSCAPE
         mkdir build
         cd build
-        cmake .. -DUSE_MUSIC=ON -DUSE_ISS=ON -DUSE_FREESTREAM=ON
+        export SMASH_DIR='/__w/JETSCAPE/JETSCAPE/JETSCAPE/external_packages/smash/smash_code'
+        cmake .. -DUSE_MUSIC=ON -DUSE_ISS=ON -DUSE_FREESTREAM=ON -DUSE_SMASH=ON
         make -j2
