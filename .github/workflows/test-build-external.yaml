@@ -6,9 +6,9 @@ on:
       - main
       - release-candidate
       - JETSCAPE-3.5-RC
-  push:
-    branches:
-      - JETSCAPE-3.5-RC
+  #push:
+  #  branches:
+  #    - JETSCAPE-3.5-RC
 
 jobs:
   build:
@@ -18,7 +18,7 @@ jobs:
     container:
       image: jetscape/base:stable
       options: --user root
-      
+    
     steps:
       
     - name: Checkout JETSCAPE
