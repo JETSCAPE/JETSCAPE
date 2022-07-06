@@ -37,19 +37,19 @@
 [Info] 159MB  nReuseHydro: 10[0m
 [Info] 159MB  JetScapeTaskSupport found seed 10, using individual engines with seeds created from 10[0m
 [Info] 162MB  JetScape::DetermineTaskList() -- Hard Process: Added PythiaGun to task list.[0m
-[Info] 163MB  JetScape::DetermineTaskList() -- Eloss: Added Matter to Eloss list.[0m
-[Info] 163MB  JetScape::DetermineTaskList() -- JetHadronization: Added ColoredHadronization to task list.[0m
-[Info] 163MB  JetScape::DetermineTaskList() -- JetScapeWriterAscii (test_out.dat) added to task list.[0m
-[Info] 163MB  JetScape::DetermineTaskList() -- JetScapeWriterHepMC (test_out.hepmc) added to task list.[0m
-[Info] 163MB  ================================================================[0m
-[Info] 163MB  Found 5 Modules Initialize them ... [0m
-[Info] 163MB  Set Hydro,JetEnergylossManager and IS Pointers for SignalManager to create Signal/Slots[0m
-[Info] 163MB  Created JetScapeSignalManager Instance[0m
-[Info] 163MB  Calling JetScape InitTasks()...[0m
-[Info] 163MB  Intialize HardProcess : UninitializedPythiaGun ...[0m
-[Info] 163MB  [35mPythia Gun with FSR_on: 0[0m
-[Info] 163MB  [35mPythia Gun with 5 < pTHat < 7[0m
-[Info] 163MB  [35mUse hybrid hadronization? 0[0m
+[Info] 162MB  JetScape::DetermineTaskList() -- Eloss: Added Matter to Eloss list.[0m
+[Info] 162MB  JetScape::DetermineTaskList() -- JetHadronization: Added ColoredHadronization to task list.[0m
+[Info] 162MB  JetScape::DetermineTaskList() -- JetScapeWriterAscii (test_out.dat) added to task list.[0m
+[Info] 162MB  JetScape::DetermineTaskList() -- JetScapeWriterHepMC (test_out.hepmc) added to task list.[0m
+[Info] 162MB  ================================================================[0m
+[Info] 162MB  Found 5 Modules Initialize them ... [0m
+[Info] 162MB  Set Hydro,JetEnergylossManager and IS Pointers for SignalManager to create Signal/Slots[0m
+[Info] 162MB  Created JetScapeSignalManager Instance[0m
+[Info] 162MB  Calling JetScape InitTasks()...[0m
+[Info] 162MB  Intialize HardProcess : UninitializedPythiaGun ...[0m
+[Info] 162MB  [35mPythia Gun with FSR_on: 0[0m
+[Info] 162MB  [35mPythia Gun with 5 < pTHat < 7[0m
+[Info] 162MB  [35mUse hybrid hadronization? 0[0m
 
  *-------  PYTHIA Process Initialization  --------------------------*
  |                                                                  |
@@ -142,5 +142,5 @@
 [Info] 171MB  [1m[30mJetScape finished after 10 events![0m
 [Info] Finished![0m
 
-CPU time: 0.787335 seconds.
+CPU time: 0.728203 seconds.
 Real time: 1.000000 seconds.

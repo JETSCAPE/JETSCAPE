@@ -133,14 +133,14 @@
 [Info] 167MB  Found 1 Hadronization Manager Tasks/Modules Initialize them ... [0m
 [Info] 167MB  Found 1 Hadronization Tasks/Modules Initialize them ... [0m
 [Info] 167MB  Weak decays are turned on[0m
-[Info] 167MB  Connect HadronizationManager Signal to Energy Loss ...[0m
-[Info] 167MB  JetScape Stream Writer initialized with output file = test_out.dat[0m
-[Info] 167MB  JetScape HepMC Writer initialized with output file = test_out.hepmc[0m
-[Info] 167MB  [1m[31mRun JetScape ...[0m
-[Info] 167MB  [1m[31mNumber of Events = 10[0m
-[Info] 167MB  [1m[31mRun Event # = 0[0m
+[Info] 168MB  Connect HadronizationManager Signal to Energy Loss ...[0m
+[Info] 168MB  JetScape Stream Writer initialized with output file = test_out.dat[0m
+[Info] 168MB  JetScape HepMC Writer initialized with output file = test_out.hepmc[0m
+[Info] 168MB  [1m[31mRun JetScape ...[0m
+[Info] 168MB  [1m[31mNumber of Events = 10[0m
+[Info] 168MB  [1m[31mRun Event # = 0[0m
 [Info] 173MB  [1m[30mJetScape finished after 10 events![0m
 [Info] Finished![0m
 
-CPU time: 0.868997 seconds.
-Real time: 1.000000 seconds.
+CPU time: 0.837171 seconds.
+Real time: 0.000000 seconds.

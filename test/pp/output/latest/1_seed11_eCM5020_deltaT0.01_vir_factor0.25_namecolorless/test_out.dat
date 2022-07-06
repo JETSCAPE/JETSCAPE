@@ -1,7 +1,7 @@
 0 Event
-# sigmaGen 2.73886
-# sigmaErr 2.73886
-# weight 1
+# JetScape writersigmaGen 2.73886
+# JetScape writersigmaErr 2.73886
+# JetScape writerweight 1
 # HardProcess Parton List: PythiaGun
 0 1 0 10.1048 -4.12172 6.18408 311.806 0 0 0 0
 0 21 0 6.4902 -2.80451 3.34417 53.8021 0 0 0 0
@@ -187,7 +187,7 @@
 [0] V 0 0 0 0
 [1] V 0 0 0 0
 [0]=>[1] P 0 21 0 2.27815 -4.46313 2.63017 98.8423 0 0 0 0
-# Hadronization module: 
+# Hadronization module: Hadronization
 # Final State Hadrons
 [0] H 0 -211 0 1.56211 2.04965 0.762212 6.16718 0 0 0 0
 [1] H 0 211 0 0.554986 3.18454 1.98691 6.71613 0 0 0 0
@@ -385,9 +385,9 @@
 [193] H 0 22 0 0.321044 1.3749 5.11795 0.675407 0 0 0 0
 [194] H 0 22 0 0.531596 1.05025 5.09734 0.852734 0 0 0 0
 1 Event
-# sigmaGen 9.09135
-# sigmaErr 7.6043
-# weight 1
+# JetScape writersigmaGen 9.09135
+# JetScape writersigmaErr 7.6043
+# JetScape writerweight 1
 # HardProcess Parton List: PythiaGun
 0 21 0 12.0939 0.612412 6.21289 14.4336 0 0 0 0
 0 21 0 10.103 -2.26032 0.169386 48.9514 0 0 0 0
@@ -728,7 +728,7 @@
 [0] V 0 0 0 0
 [1] V 0 0 0 0
 [0]=>[1] P 0 2 0 1.9061 0.253913 0.384776 2.18893 0 0 0 0
-# Hadronization module: 
+# Hadronization module: Hadronization
 # Final State Hadrons
 [0] H 0 -211 0 0.822625 5.80934 0.618084 137.132 0 0 0 0
 [1] H 0 -211 0 1.54333 5.03826 0.917576 118.997 0 0 0 0
@@ -981,9 +981,9 @@
 [248] H 0 22 0 0.937523 -0.930823 4.7727 1.37386 0 0 0 0
 [249] H 0 22 0 0.0152092 -1.82166 4.10437 0.0482427 0 0 0 0
 2 Event
-# sigmaGen 5.55037
-# sigmaErr 2.40946
-# weight 1
+# JetScape writersigmaGen 5.55037
+# JetScape writersigmaErr 2.40946
+# JetScape writerweight 1
 # HardProcess Parton List: PythiaGun
 0 21 0 11.27 0.0992197 1.91712 11.3255 0 0 0 0
 0 21 0 8.84276 1.63267 5.72452 23.4904 0 0 0 0
@@ -1239,7 +1239,7 @@
 [0] V 0 0 0 0
 [1] V 0 0 0 0
 [0]=>[1] P 0 21 0 2.03536 4.0037 1.03307 55.7951 0 0 0 0
-# Hadronization module: 
+# Hadronization module: Hadronization
 # Final State Hadrons
 [0] H 0 321 0 0.444897 2.25741 1.76957 2.20547 0 0 0 0
 [1] H 0 2112 0 3.03445 -4.51439 2.69459 138.576 0 0 0 0
@@ -1471,9 +1471,9 @@
 [227] H 0 22 0 0.244313 0.261168 0.966344 0.252693 0 0 0 0
 [228] H 0 22 0 0.138942 -0.183467 1.55422 0.141287 0 0 0 0
 3 Event
-# sigmaGen 4.57958
-# sigmaErr 1.7977
-# weight 1
+# JetScape writersigmaGen 4.57958
+# JetScape writersigmaErr 1.7977
+# JetScape writerweight 1
 # HardProcess Parton List: PythiaGun
 0 21 0 13.3806 4.13579 4.1727 418.513 0 0 0 0
 0 21 0 9.81581 1.584 1.48654 24.93 0 0 0 0
@@ -1760,7 +1760,7 @@
 [0] V 0 0 0 0
 [1] V 0 0 0 0
 [0]=>[1] P 0 21 0 2.18523 4.0177 0.533247 60.7461 0 0 0 0
-# Hadronization module: 
+# Hadronization module: Hadronization
 # Final State Hadrons
 [0] H 0 211 0 0.133872 6.46814 3.54564 43.1263 0 0 0 0
 [1] H 0 2212 0 2.32972 4.5001 3.92386 104.886 0 0 0 0
@@ -1965,9 +1965,9 @@
 [200] H 0 22 0 0.296879 1.97918 1.67606 1.09474 0 0 0 0
 [201] H 0 22 0 0.179213 1.48311 1.37278 0.415196 0 0 0 0
 4 Event
-# sigmaGen 3.57959
-# sigmaErr 1.38404
-# weight 1
+# JetScape writersigmaGen 3.57959
+# JetScape writersigmaErr 1.38404
+# JetScape writerweight 1
 # HardProcess Parton List: PythiaGun
 0 21 0 9.73658 -4.49942 0.978228 438.031 0 0 0 0
 0 21 0 8.95799 4.30243 4.67695 330.963 0 0 0 0
@@ -2202,7 +2202,7 @@
 [0] V 0 0 0 0
 [1] V 0 0 0 0
 [0]=>[1] P 0 21 0 2.18178 -3.40679 3.17637 32.9587 0 0 0 0
-# Hadronization module: 
+# Hadronization module: Hadronization
 # Final State Hadrons
 [0] H 0 -211 0 0.528458 6.80215 5.13408 237.748 0 0 0 0
 [1] H 0 211 0 0.683669 8.62461 1.03691 1902.99 0 0 0 0
@@ -2410,9 +2410,9 @@
 [203] H 0 22 0 0.258423 -2.08903 4.67721 1.05965 0 0 0 0
 [204] H 0 22 0 0.376973 -1.96685 2.54428 1.37369 0 0 0 0
 5 Event
-# sigmaGen 3.37043
-# sigmaErr 0.734215
-# weight 1
+# JetScape writersigmaGen 3.37043
+# JetScape writersigmaErr 0.734215
+# JetScape writerweight 1
 # HardProcess Parton List: PythiaGun
 0 21 0 7.23648 -0.850601 4.06731 10.0161 0 0 0 0
 0 -3 0 6.73326 -0.319554 0.73396 7.09947 0 0 0 0
@@ -2458,7 +2458,7 @@
 [0] V 0 0 0 0
 [1] V 0 0 0 0
 [0]=>[1] P 0 21 0 2.1607 -3.22329 2.95449 27.1861 0 0 0 0
-# Hadronization module: 
+# Hadronization module: Hadronization
 # Final State Hadrons
 [0] H 0 321 0 0.39217 0.0470035 5.01888 0.630759 0 0 0 0
 [1] H 0 211 0 0.48274 -1.16751 3.86782 0.862227 0 0 0 0
@@ -2499,9 +2499,9 @@
 [36] H 0 22 0 0.323384 -0.264873 6.22708 0.334795 0 0 0 0
 [37] H 0 22 0 0.112086 0.338145 0.303414 0.118555 0 0 0 0
 6 Event
-# sigmaGen 4.0597
-# sigmaErr 0.75053
-# weight 1
+# JetScape writersigmaGen 4.0597
+# JetScape writersigmaErr 0.75053
+# JetScape writerweight 1
 # HardProcess Parton List: PythiaGun
 0 3 0 9.60041 -1.83994 5.74641 31.0273 0 0 0 0
 0 21 0 8.65626 -0.974231 4.93879 13.0996 0 0 0 0
@@ -2643,7 +2643,7 @@
 [0] V 0 0 0 0
 [1] V 0 0 0 0
 [0]=>[1] P 0 21 0 2.00206 2.13227 3.81556 8.60853 0 0 0 0
-# Hadronization module: 
+# Hadronization module: Hadronization
 # Final State Hadrons
 [0] H 0 -211 0 4.25552 -1.78606 5.51102 13.0514 0 0 0 0
 [1] H 0 211 0 1.28539 -2.53921 5.70564 8.1946 0 0 0 0
@@ -2776,9 +2776,9 @@
 [128] H 0 22 0 0.426697 -0.707034 4.83427 0.537867 0 0 0 0
 [129] H 0 22 0 0.504737 -0.993511 4.78994 0.775017 0 0 0 0
 7 Event
-# sigmaGen 3.50002
-# sigmaErr 0.545261
-# weight 1
+# JetScape writersigmaGen 3.50002
+# JetScape writersigmaErr 0.545261
+# JetScape writerweight 1
 # HardProcess Parton List: PythiaGun
 0 21 0 11.202 0.846791 4.88032 15.464 0 0 0 0
 0 21 0 6.21573 -0.641609 3.53342 7.53962 0 0 0 0
@@ -2956,7 +2956,7 @@
 [0] V 0 0 0 0
 [1] V 0 0 0 0
 [0]=>[1] P 0 -4 0 2.04734 0.185936 5.6277 2.71996 0 0 0 0
-# Hadronization module: 
+# Hadronization module: Hadronization
 # Final State Hadrons
 [0] H 0 -211 0 0.81541 -1.46038 0.934193 1.85614 0 0 0 0
 [1] H 0 -211 0 0.0548957 -4.29001 1.01373 2.00803 0 0 0 0
@@ -3110,9 +3110,9 @@
 [149] H 0 22 0 0.299562 -0.995429 1.5071 0.460644 0 0 0 0
 [150] H 0 22 0 1.01504 -1.04492 1.26679 1.62147 0 0 0 0
 8 Event
-# sigmaGen 3.46444
-# sigmaErr 0.53918
-# weight 1
+# JetScape writersigmaGen 3.46444
+# JetScape writersigmaErr 0.53918
+# JetScape writerweight 1
 # HardProcess Parton List: PythiaGun
 0 2 0 11.3467 1.08573 0.380566 18.7258 0 0 0 0
 0 2 0 8.53331 3.93789 3.64508 219.17 0 0 0 0
@@ -3146,7 +3146,7 @@
 [0] V 0 0 0 0
 [1] V 0 0 0 0
 [0]=>[1] P 0 1 0 2.49348 -5.67145 4.94472 362.127 0 0 0 0
-# Hadronization module: 
+# Hadronization module: Hadronization
 # Final State Hadrons
 [0] H 0 -211 0 1.40539 0.398751 5.82892 1.52501 0 0 0 0
 [1] H 0 211 0 0.225293 2.3258 6.11049 1.17226 0 0 0 0
@@ -3195,9 +3195,9 @@
 [44] H 0 22 0 0.0589194 0.99049 3.71502 0.090263 0 0 0 0
 [45] H 0 22 0 0.204077 0.471916 2.53388 0.227226 0 0 0 0
 9 Event
-# sigmaGen 3.54067
-# sigmaErr 0.531322
-# weight 1
+# JetScape writersigmaGen 3.54067
+# JetScape writersigmaErr 0.531322
+# JetScape writerweight 1
 # HardProcess Parton List: PythiaGun
 0 21 0 10.4305 -3.32085 4.27304 144.567 0 0 0 0
 0 21 0 9.70433 2.26711 1.37634 47.333 0 0 0 0
@@ -3272,7 +3272,7 @@
 [0] V 0 0 0 0
 [1] V 0 0 0 0
 [0]=>[1] P 0 21 0 2.42363 6.22935 5.6653 614.908 0 0 0 0
-# Hadronization module: 
+# Hadronization module: Hadronization
 # Final State Hadrons
 [0] H 0 -211 0 0.841398 -2.3759 0.861308 4.56824 0 0 0 0
 [1] H 0 211 0 1.16066 0.330332 2.37671 1.23249 0 0 0 0

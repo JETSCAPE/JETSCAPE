@@ -66,15 +66,15 @@
 # 7000 events generated
 # 8000 events generated
 # 9000 events generated
-[Info] 164MB  #########21.3052 11.42[0m
-[Info] 164MB  The total energy density cut for centrality = [50, 60] (%) is:[0m
-[Info] 164MB  158.738<dE/deta(eta=0)<296.143[0m
-[Info] 164MB  Pb Pb 1  --random-seed 1350755646 --cross-section 6.400000 --beam-energy 2760.000000 --reduced-thickness 0.000000 --fluctuation 1.200000 --nucleon-width 0.900000 --nucleon-min-dist 1.200000 --mean-coeff 1.000000 --std-coeff 3.000000 --skew-coeff 0.000000 --skew-type 1 --jacobian 0.800000 --quiet  --normalization 13.900000 --ncoll  --xy-max 15.000000 --xy-step 0.300000 --eta-max 0.200000 --eta-step 0.200000 --s-max 296.142663 --s-min 158.737749[0m
-[Info] 164MB  TRENTo set[0m
-[Info] 164MB  Intialize HardProcess : UninitializedPythiaGun ...[0m
-[Info] 164MB  [35mPythia Gun with FSR_on: 0[0m
-[Info] 164MB  [35mPythia Gun with 20 < pTHat < 30[0m
-[Info] 164MB  [35mUse hybrid hadronization? 0[0m
+[Info] 165MB  #########21.3052 11.42[0m
+[Info] 165MB  The total energy density cut for centrality = [50, 60] (%) is:[0m
+[Info] 165MB  158.738<dE/deta(eta=0)<296.143[0m
+[Info] 165MB  Pb Pb 1  --random-seed 1350755646 --cross-section 6.400000 --beam-energy 2760.000000 --reduced-thickness 0.000000 --fluctuation 1.200000 --nucleon-width 0.900000 --nucleon-min-dist 1.200000 --mean-coeff 1.000000 --std-coeff 3.000000 --skew-coeff 0.000000 --skew-type 1 --jacobian 0.800000 --quiet  --normalization 13.900000 --ncoll  --xy-max 15.000000 --xy-step 0.300000 --eta-max 0.200000 --eta-step 0.200000 --s-max 296.142663 --s-min 158.737749[0m
+[Info] 165MB  TRENTo set[0m
+[Info] 165MB  Intialize HardProcess : UninitializedPythiaGun ...[0m
+[Info] 165MB  [35mPythia Gun with FSR_on: 0[0m
+[Info] 165MB  [35mPythia Gun with 20 < pTHat < 30[0m
+[Info] 165MB  [35mUse hybrid hadronization? 0[0m
 
  *-------  PYTHIA Process Initialization  --------------------------*
  |                                                                  |
@@ -195,10 +195,10 @@
 [Info] 171MB  12.4827	37	40	167.272	(0.419844, 0.440687)[0m
 [Info] 171MB   Load TRENTo density and ncoll density to JETSCAPE memory [0m
 [Info] 171MB  20000 density elements[0m
-[Info] 171MB  10000 ncoll elements[0m
-[Info] 171MB   TRENTO event generated and loaded [0m
+[Info] 172MB  10000 ncoll elements[0m
+[Info] 172MB   TRENTO event generated and loaded [0m
 [Info] 180MB  [1m[30mJetScape finished after 10 events![0m
 [Info] Finished![0m
 
-CPU time: 31.057667 seconds.
+CPU time: 31.265320 seconds.
 Real time: 31.000000 seconds.

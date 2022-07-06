@@ -27,29 +27,29 @@
 [Info] | See COPYING file for details.                                |[0m
 [Info] |                                                              |[0m
 [Info] *--------------------------------------------------------------*[0m
-[Info] 157MB  [1m[31mIntialize JetScape ...[0m
-[Info] 157MB  Created JetScapeXML Instance[0m
-[Info] 157MB  Open XML Master file : jetscape_master.xml[0m
-[Info] 157MB  Open XML User file : jetscape_user.xml[0m
-[Info] 157MB  ================================================================[0m
-[Info] 157MB  nEvents = 10[0m
-[Info] 157MB  Reuse Hydro:  true [0m
-[Info] 157MB  nReuseHydro: 10[0m
-[Info] 157MB  JetScapeTaskSupport found seed 10, using individual engines with seeds created from 10[0m
+[Info] 158MB  [1m[31mIntialize JetScape ...[0m
+[Info] 158MB  Created JetScapeXML Instance[0m
+[Info] 158MB  Open XML Master file : jetscape_master.xml[0m
+[Info] 158MB  Open XML User file : jetscape_user.xml[0m
+[Info] 158MB  ================================================================[0m
+[Info] 158MB  nEvents = 10[0m
+[Info] 158MB  Reuse Hydro:  true [0m
+[Info] 158MB  nReuseHydro: 10[0m
+[Info] 158MB  JetScapeTaskSupport found seed 10, using individual engines with seeds created from 10[0m
 [Info] 161MB  JetScape::DetermineTaskList() -- Hard Process: Added PythiaGun to task list.[0m
-[Info] 161MB  JetScape::DetermineTaskList() -- Eloss: Added Matter to Eloss list.[0m
-[Info] 161MB  JetScape::DetermineTaskList() -- JetHadronization: Added ColoredHadronization to task list.[0m
-[Info] 161MB  JetScape::DetermineTaskList() -- JetScapeWriterAscii (test_out.dat) added to task list.[0m
-[Info] 161MB  JetScape::DetermineTaskList() -- JetScapeWriterHepMC (test_out.hepmc) added to task list.[0m
-[Info] 161MB  ================================================================[0m
-[Info] 161MB  Found 5 Modules Initialize them ... [0m
-[Info] 161MB  Set Hydro,JetEnergylossManager and IS Pointers for SignalManager to create Signal/Slots[0m
-[Info] 161MB  Created JetScapeSignalManager Instance[0m
-[Info] 161MB  Calling JetScape InitTasks()...[0m
-[Info] 161MB  Intialize HardProcess : UninitializedPythiaGun ...[0m
-[Info] 161MB  [35mPythia Gun with FSR_on: 0[0m
-[Info] 161MB  [35mPythia Gun with 7 < pTHat < 9[0m
-[Info] 161MB  [35mUse hybrid hadronization? 0[0m
+[Info] 162MB  JetScape::DetermineTaskList() -- Eloss: Added Matter to Eloss list.[0m
+[Info] 162MB  JetScape::DetermineTaskList() -- JetHadronization: Added ColoredHadronization to task list.[0m
+[Info] 162MB  JetScape::DetermineTaskList() -- JetScapeWriterAscii (test_out.dat) added to task list.[0m
+[Info] 162MB  JetScape::DetermineTaskList() -- JetScapeWriterHepMC (test_out.hepmc) added to task list.[0m
+[Info] 162MB  ================================================================[0m
+[Info] 162MB  Found 5 Modules Initialize them ... [0m
+[Info] 162MB  Set Hydro,JetEnergylossManager and IS Pointers for SignalManager to create Signal/Slots[0m
+[Info] 162MB  Created JetScapeSignalManager Instance[0m
+[Info] 162MB  Calling JetScape InitTasks()...[0m
+[Info] 162MB  Intialize HardProcess : UninitializedPythiaGun ...[0m
+[Info] 162MB  [35mPythia Gun with FSR_on: 0[0m
+[Info] 162MB  [35mPythia Gun with 7 < pTHat < 9[0m
+[Info] 162MB  [35mUse hybrid hadronization? 0[0m
  PYTHIA Warning in PhaseSpace2to2tauyz::trialKin: maximum for cross section violated  
 
  *-------  PYTHIA Process Initialization  --------------------------*
@@ -140,8 +140,8 @@
 [Info] 168MB  [1m[31mRun JetScape ...[0m
 [Info] 168MB  [1m[31mNumber of Events = 10[0m
 [Info] 168MB  [1m[31mRun Event # = 0[0m
-[Info] 170MB  [1m[30mJetScape finished after 10 events![0m
+[Info] 171MB  [1m[30mJetScape finished after 10 events![0m
 [Info] Finished![0m
 
-CPU time: 0.792352 seconds.
-Real time: 1.000000 seconds.
+CPU time: 0.750107 seconds.
+Real time: 0.000000 seconds.
