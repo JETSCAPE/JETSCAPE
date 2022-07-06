@@ -27,16 +27,16 @@
 [Info] | See COPYING file for details.                                |[0m
 [Info] |                                                              |[0m
 [Info] *--------------------------------------------------------------*[0m
-[Info] 156MB  [1m[31mIntialize JetScape ...[0m
-[Info] 156MB  Created JetScapeXML Instance[0m
-[Info] 156MB  Open XML Master file : jetscape_master.xml[0m
-[Info] 156MB  Open XML User file : jetscape_user.xml[0m
-[Info] 156MB  ================================================================[0m
-[Info] 156MB  nEvents = 10[0m
-[Info] 156MB  Reuse Hydro:  true [0m
-[Info] 156MB  nReuseHydro: 10[0m
-[Info] 156MB  JetScapeTaskSupport found seed 1, using individual engines with seeds created from 1[0m
-[Info] 156MB  JetScape::DetermineTaskList() -- Initial State: Added Trento module to task list.[0m
+[Info] 157MB  [1m[31mIntialize JetScape ...[0m
+[Info] 157MB  Created JetScapeXML Instance[0m
+[Info] 157MB  Open XML Master file : jetscape_master.xml[0m
+[Info] 157MB  Open XML User file : jetscape_user.xml[0m
+[Info] 157MB  ================================================================[0m
+[Info] 157MB  nEvents = 10[0m
+[Info] 157MB  Reuse Hydro:  true [0m
+[Info] 157MB  nReuseHydro: 10[0m
+[Info] 157MB  JetScapeTaskSupport found seed 1, using individual engines with seeds created from 1[0m
+[Info] 157MB  JetScape::DetermineTaskList() -- Initial State: Added Trento module to task list.[0m
 [Info] 160MB  JetScape::DetermineTaskList() -- Hard Process: Added PythiaGun to task list.[0m
 [Info] 160MB  JetScape::DetermineTaskList() -- PreDynamics: Added NullPreDynamics to task list.[0m
 [Info] 160MB  JetScape::DetermineTaskList() -- Hydro: Added Brick to task list.[0m
@@ -153,8 +153,8 @@
 [Info] 167MB  [35mMATTER input parameter[0m
 [Info] 167MB  [35muse hybrid hadronization later? 0[0m
 [Info] 167MB  [35mmatter shower on: 1[0m
-[Info] 167MB  [35min_vac: 0  brick_med: 0  recoil_on: 0[0m
-[Info] 167MB  [35mQ0: 2 vir_factor: 0.25  qhat0: -2 alphas: 0.2 hydro_Tc: 0.16 brick_length: 5[0m
+[Info] 167MB  [35min_vac: 0  brick_med: 0  recoil_on: 0, tStart =0.6[0m
+[Info] 167MB  [35mQ0: 2 vir_factor: 0.25  qhat0: -2 alphas: 0.25, QhatParametrizationType=0  qhatA: 10 qhatB:  10  qhatC: 1 qhatD:  0 hydro_Tc: 0.16 brick_length: 5[0m
 [Info] 167MB  Connect JetEnergyLossManager Signal to Hard Process ...[0m
 [Info] 167MB  Intialize Hadronization Manager ...[0m
 [Info] 167MB  Found 1 Hadronization Manager Tasks/Modules Initialize them ... [0m
@@ -191,14 +191,14 @@
 [Info] 168MB  [1m[31mRun Event # = 0[0m
 [Info] 168MB   Exec TRENTo initial condition [0m
 [Info] 168MB   TRENTo event info: [0m
-[Info] 168MB  b	npart	ncoll	ET	(x-com, y-com) (fm)[0m
-[Info] 168MB  12.4827	37	40	167.272	(0.419844, 0.440687)[0m
-[Info] 168MB   Load TRENTo density and ncoll density to JETSCAPE memory [0m
+[Info] 169MB  b	npart	ncoll	ET	(x-com, y-com) (fm)[0m
+[Info] 169MB  12.4827	37	40	167.272	(0.419844, 0.440687)[0m
+[Info] 169MB   Load TRENTo density and ncoll density to JETSCAPE memory [0m
 [Info] 169MB  20000 density elements[0m
 [Info] 169MB  10000 ncoll elements[0m
 [Info] 169MB   TRENTO event generated and loaded [0m
-[Info] 177MB  [1m[30mJetScape finished after 10 events![0m
+[Info] 178MB  [1m[30mJetScape finished after 10 events![0m
 [Info] Finished![0m
 
-CPU time: 31.688223 seconds.
-Real time: 31.000000 seconds.
+CPU time: 31.819925 seconds.
+Real time: 32.000000 seconds.

@@ -38,8 +38,9 @@ jobs:
         make -j2
 
     - name: Curl site to process any pending files
-      run: |
-        curl http://plot.joelatessa.com
+      uses: wei/curl@master
+      with:
+        args: http://plot.joelatessa.com
 
     - name: Generate pp events
       run: |
