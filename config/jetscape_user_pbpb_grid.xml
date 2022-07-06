@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+
+<jetscape>
+  
+  <nEvents> 5 </nEvents>
+  <setReuseHydro> true </setReuseHydro>
+  <nReuseHydro> 10 </nReuseHydro>
+  
+  <JetScapeWriterAscii> on </JetScapeWriterAscii>
+  <outputFilename>test_out</outputFilename>
+  <vlevel> 0 </vlevel>
+  <nEvents_printout> 1 </nEvents_printout>
+
+  <Random>
+    <seed>0</seed>
+  </Random>
+  <!-- Inital State Module  -->
+  <IS>
+    <!-- initial_profile_path  /wsu/home/groups/maj-shen/JETSCAPEDataFile/HydroProfiles/5020GeV_0-10  initial_profile_path -->
+     <initial_profile_path>../examples/test_hydro_files</initial_profile_path>
+  </IS>
+  
+  <!-- Hard Process -->
+  <Hard>
+    <PythiaGun>
+      <FSR_on>0</FSR_on>
+      <pTHatMin>500</pTHatMin>
+      <pTHatMax>550</pTHatMax>
+      <eCM>5020</eCM>
+      <!-- You can add any number of additional lines to initialize pythia here -->
+      <!-- Note that if the tag exists it cannot be empty (tinyxml produces a segfault) -->
+      <!-- EPS09 Avg Nuclear PDF for nucleon in Pb nucleus -->
+      <LinesToRead> 
+	HardQCD:all = on
+        PDF:useHardNPDFA=on
+	PDF:useHardNPDFB=on
+	PDF:nPDFSetA=1         
+	PDF:nPDFSetB=1
+	PDF:nPDFBeamA = 100822080
+	PDF:nPDFBeamB = 100822080
+      </LinesToRead>
+      <useHybridHad>0</useHybridHad>
+    </PythiaGun>
+  </Hard>
+  
+  <!--Preequilibrium Dynamics Module -->
+  <Preequilibrium>
+    <NullPreDynamics> </NullPreDynamics>
+  </Preequilibrium>
+  
+  <!-- Hydro  Module  -->
+  <Hydro>
+    <hydro_from_file>
+      <name>Hydro from file </name>
+      <read_in_multiple_hydro>1</read_in_multiple_hydro>
+      <!-- hydro_files_folder  /wsu/home/groups/maj-shen/JETSCAPEDataFile/HydroProfiles/5020GeV_0-10 hydro_files_folder -->
+      <hydro_files_folder>../examples/test_hydro_files</hydro_files_folder>
+    </hydro_from_file>
+  </Hydro>
+  
+  <!--Eloss Modules -->
+  <Eloss>
+
+    <deltaT>0.1</deltaT>
+    <formTime> -0.1</formTime>
+    <maxT>150</maxT>
+    <tStart> 0.6 </tStart> <!-- Start time of jet quenching, proper time, fm/c   -->
+    <mutex>ON</mutex>
+
+    <Matter>
+      <name>Matter</name>
+      <useHybridHad>0</useHybridHad>
+      <matter_on> 1 </matter_on>
+      <Q0> 2.0 </Q0>
+      <T0> 0.16 </T0>
+      <vir_factor> 0.25 </vir_factor>
+      <in_vac> 0 </in_vac>
+      <recoil_on> 1 </recoil_on>
+      <broadening_on> 0 </broadening_on>
+      <brick_med> 0 </brick_med>   <!-- Set brick_med to 1 while using Brick Hydro module-->
+      <brick_length> 5.0 </brick_length>
+      <hydro_Tc> 0.16 </hydro_Tc>
+      <!-- Pick a qhat formula -->
+      <!-- Type=0 : HTL Formula with both alpha_s fixed  -->
+      <!-- Type=1 : HTL Formula with one running alpha_s and one fixed alpha_s  -->
+      <!-- Type=2 : Constant q-hat; qhat=qhat0   -->
+      <!-- Type=3 : qhat=qhat0*T^3  -->
+      <!-- Type=4 : qhat=qhat0*s; s=entropy density  -->
+      <!-- Type=5 : HTL q-hat with Virtuality dependent function 1/(1+A*pow(ln(Q2),2) + B*pow(ln(Q2),4))  -->
+      <!-- Type=6 : HTL q-hat with Virtuality dependent function int e^{-Cx}/(1+A*pow(ln(Q2),1) + B*pow(ln(Q2),2)) -->
+      <!-- Type=7 : HTL q-hat with Virtuality dependent function  int x^{C}(1-x)^{D}/(1+A*pow(ln(Q2),1) + B*pow(ln(Q2),2))-->
+      <QhatParametrizationType> 5  </QhatParametrizationType>
+      <qhat0> -2.0 </qhat0>  <!-- If Type=0, 1, 5,6,7 set qhat0 as negative since alphas will be used-->
+      <alphas> 0.3 </alphas>
+      <qhatA> 10.0 </qhatA>    <!-- Always positive, Used only if QhatParametrizationType=5,6,7  -->
+      <qhatB> 100.0 </qhatB>    <!-- Always positive, Used only if QhatParametrizationType=5,6,7  -->
+      <qhatC> 0.2 </qhatC>    <!-- (0,100) for Type=6, and (-10,100) for Type=7, Used only if QhatParametrizationType=6,7  -->
+      <qhatD> 5.0 </qhatD>    <!-- (-10,100), Used only if QhatParametrizationType=7  -->
+    </Matter>
+
+    <Lbt>
+      <name> Lbt </name>
+      <Q0> 2.0 </Q0>
+      <in_vac> 0 </in_vac>
+      <only_leading> 0 </only_leading>
+      <hydro_Tc> 0.16 </hydro_Tc>
+      <alphas> 0.3 </alphas>
+      <run_alphas>1</run_alphas>   <!-- 0 for fixed alpha_s and 1 for running alpha_s -->
+    </Lbt>
+  </Eloss>
+  
+  <!-- Jet Hadronization Module -->
+  <JetHadronization>
+    <name>colorless</name>
+    <take_recoil>1</take_recoil>
+    <eCMforHadronization>2510</eCMforHadronization>
+    <LinesToRead>
+      111:mayDecay = off
+    </LinesToRead>
+  </JetHadronization>
+  
+</jetscape>

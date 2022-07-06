@@ -50,15 +50,24 @@ template <class T> JetScapeWriterFinalStateStream<T>::~JetScapeWriterFinalStateS
 template <class T> void JetScapeWriterFinalStateStream<T>::WriteEvent() {
   // Write the entire event all at once.
 
+  // Optionally write pt-hat value to event header
+  std::string pt_hat_text = "";
+  int write_pthat = JetScapeXML::Instance()->GetElementInt({"write_pthat"});
+  if (write_pthat) {
+    pt_hat_text += "\tpt_hat\t";
+    pt_hat_text += std::to_string(GetHeader().GetPtHat());
+  }
+
   // First, write header
   // NOTE: Needs consistent "\t" between all entries to simplify parsing later.
   // NOTE: Could also add Npart, Ncoll, and TotalEntropy. See the original stream writer.
   output_file << "#"
       << "\t" << "Event\t" << GetCurrentEvent() + 1  // +1 to index the event count from 1
-      << "\t" << "weight\t" << GetHeader().GetEventWeight()
+      << "\t" << "weight\t" << std::setprecision(15) << GetHeader().GetEventWeight() << std::setprecision(6)
       << "\t" << "EPangle\t" << (GetHeader().GetEventPlaneAngle() > -999 ? GetHeader().GetEventPlaneAngle() : 0)
       << "\t" << "N_" << GetName() << "\t" << particles.size()
-      << "\n";
+      << pt_hat_text
+      <<  "\n";
 
   // Next, write the particles. Will contain either hadrons or partons based on the derived class.
   unsigned int ipart = 0;

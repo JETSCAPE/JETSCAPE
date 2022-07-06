@@ -918,6 +918,7 @@ void JetScape::Exec() {
       bool hydro_pointer_is_set = false;
       for (auto it : GetTaskList()) {
         if (!dynamic_pointer_cast<FluidDynamics>(it) &&
+            !dynamic_pointer_cast<PreequilibriumDynamics>(it) &&
             !dynamic_pointer_cast<InitialState>(it)) {
           continue;
         }

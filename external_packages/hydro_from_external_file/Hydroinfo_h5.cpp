@@ -44,17 +44,19 @@ void HydroinfoH5::clean_hydro_event() {
            delete[] vy[i][j];
            delete[] Temperature[i][j];
            delete[] Pressure[i][j];
-           delete[] pi00[i][j];
-           delete[] pi01[i][j];
-           delete[] pi02[i][j];
-           delete[] pi03[i][j];
-           delete[] pi11[i][j];
-           delete[] pi12[i][j];
-           delete[] pi13[i][j];
-           delete[] pi22[i][j];
-           delete[] pi23[i][j];
-           delete[] pi33[i][j];
-           delete[] BulkPi[i][j];
+           if (Visflag == 1) {
+              delete[] pi00[i][j];
+              delete[] pi01[i][j];
+              delete[] pi02[i][j];
+              delete[] pi03[i][j];
+              delete[] pi11[i][j];
+              delete[] pi12[i][j];
+              delete[] pi13[i][j];
+              delete[] pi22[i][j];
+              delete[] pi23[i][j];
+              delete[] pi33[i][j];
+              delete[] BulkPi[i][j];
+           }
         }
         delete[] ed[i];
         delete[] sd[i];
@@ -62,17 +64,19 @@ void HydroinfoH5::clean_hydro_event() {
         delete[] vy[i];
         delete[] Temperature[i];
         delete[] Pressure[i];
-        delete[] pi00[i];
-        delete[] pi01[i];
-        delete[] pi02[i];
-        delete[] pi03[i];
-        delete[] pi11[i];
-        delete[] pi12[i];
-        delete[] pi13[i];
-        delete[] pi22[i];
-        delete[] pi23[i];
-        delete[] pi33[i];
-        delete[] BulkPi[i];
+        if (Visflag == 1) {
+           delete[] pi00[i];
+           delete[] pi01[i];
+           delete[] pi02[i];
+           delete[] pi03[i];
+           delete[] pi11[i];
+           delete[] pi12[i];
+           delete[] pi13[i];
+           delete[] pi22[i];
+           delete[] pi23[i];
+           delete[] pi33[i];
+           delete[] BulkPi[i];
+        }
     }
     delete[] ed;
     delete[] sd;
@@ -80,17 +84,19 @@ void HydroinfoH5::clean_hydro_event() {
     delete[] vy;
     delete[] Temperature;
     delete[] Pressure;
-    delete[] pi00;
-    delete[] pi01;
-    delete[] pi02;
-    delete[] pi03;
-    delete[] pi11;
-    delete[] pi12;
-    delete[] pi13;
-    delete[] pi22;
-    delete[] pi23;
-    delete[] pi33;
-    delete[] BulkPi;
+    if (Visflag == 1) {
+       delete[] pi00;
+       delete[] pi01;
+       delete[] pi02;
+       delete[] pi03;
+       delete[] pi11;
+       delete[] pi12;
+       delete[] pi13;
+       delete[] pi22;
+       delete[] pi23;
+       delete[] pi33;
+       delete[] BulkPi;
+    }
     readinFlag = 0;
 }
 
@@ -110,7 +116,7 @@ void HydroinfoH5::setHydroFiles(int XL_in, int XH_in, double DX_in, int LSX_in, 
     grid_LST = LST_in;
     LST_cur = grid_LST - 1;
     Visflag = Visflag_in;
-    
+
     int XShift = abs(grid_XL%grid_LSX);
     int YShift = abs(grid_YL%grid_LSY);
     dimensionX = (int) (grid_XH - grid_XL - 2*XShift)/grid_LSX + 1;
@@ -120,7 +126,7 @@ void HydroinfoH5::setHydroFiles(int XL_in, int XH_in, double DX_in, int LSX_in, 
     herr_t status;
     /* Create a new file using default properties. */
     H5file_id = H5Fcreate(filename.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
-    
+
     /* Create a group named "/Event" in the file. */
     H5groupEventid = H5Gcreate(H5file_id, "/Event", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
 
@@ -153,7 +159,7 @@ void HydroinfoH5::addGroupattributeInt(hid_t H5groupEventid, string attName, int
    herr_t status;
    hsize_t dims;
    hid_t attribute_id, dataspace_id;
-   
+
    /* Create the data space for the attribute. */
    dims = 1;
    dataspace_id = H5Screate_simple(1, &dims, NULL);
@@ -310,17 +316,19 @@ void HydroinfoH5::readHydroinfoH5(string filename_in, int bufferSize_in, int Vis
    vy = new double** [Buffersize];
    Temperature = new double** [Buffersize];
    Pressure = new double** [Buffersize];
-   pi00 = new double** [Buffersize];
-   pi01 = new double** [Buffersize];
-   pi02 = new double** [Buffersize];
-   pi03 = new double** [Buffersize];
-   pi11 = new double** [Buffersize];
-   pi12 = new double** [Buffersize];
-   pi13 = new double** [Buffersize];
-   pi22 = new double** [Buffersize];
-   pi23 = new double** [Buffersize];
-   pi33 = new double** [Buffersize];
-   BulkPi = new double** [Buffersize];
+   if (Visflag == 1) {
+      pi00 = new double** [Buffersize];
+      pi01 = new double** [Buffersize];
+      pi02 = new double** [Buffersize];
+      pi03 = new double** [Buffersize];
+      pi11 = new double** [Buffersize];
+      pi12 = new double** [Buffersize];
+      pi13 = new double** [Buffersize];
+      pi22 = new double** [Buffersize];
+      pi23 = new double** [Buffersize];
+      pi33 = new double** [Buffersize];
+      BulkPi = new double** [Buffersize];
+   }
    for(int i=0; i<Buffersize; i++)
    {
       ed[i] = new double* [dimensionX];
@@ -329,17 +337,19 @@ void HydroinfoH5::readHydroinfoH5(string filename_in, int bufferSize_in, int Vis
       vy[i] = new double* [dimensionX];
       Temperature[i] = new double* [dimensionX];
       Pressure[i] = new double* [dimensionX];
-      pi00[i] = new double* [dimensionX];
-      pi01[i] = new double* [dimensionX];
-      pi02[i] = new double* [dimensionX];
-      pi03[i] = new double* [dimensionX];
-      pi11[i] = new double* [dimensionX];
-      pi12[i] = new double* [dimensionX];
-      pi13[i] = new double* [dimensionX];
-      pi22[i] = new double* [dimensionX];
-      pi23[i] = new double* [dimensionX];
-      pi33[i] = new double* [dimensionX];
-      BulkPi[i] = new double* [dimensionX];
+      if (Visflag == 1) {
+         pi00[i] = new double* [dimensionX];
+         pi01[i] = new double* [dimensionX];
+         pi02[i] = new double* [dimensionX];
+         pi03[i] = new double* [dimensionX];
+         pi11[i] = new double* [dimensionX];
+         pi12[i] = new double* [dimensionX];
+         pi13[i] = new double* [dimensionX];
+         pi22[i] = new double* [dimensionX];
+         pi23[i] = new double* [dimensionX];
+         pi33[i] = new double* [dimensionX];
+         BulkPi[i] = new double* [dimensionX];
+      }
       for(int j=0; j<dimensionX; j++)
       {
          ed[i][j] = new double [dimensionY];
@@ -348,21 +358,23 @@ void HydroinfoH5::readHydroinfoH5(string filename_in, int bufferSize_in, int Vis
          vy[i][j] = new double [dimensionY];
          Temperature[i][j] = new double [dimensionY];
          Pressure[i][j] = new double [dimensionY];
-         pi00[i][j] = new double [dimensionY];
-         pi01[i][j] = new double [dimensionY];
-         pi02[i][j] = new double [dimensionY];
-         pi03[i][j] = new double [dimensionY];
-         pi11[i][j] = new double [dimensionY];
-         pi12[i][j] = new double [dimensionY];
-         pi13[i][j] = new double [dimensionY];
-         pi22[i][j] = new double [dimensionY];
-         pi23[i][j] = new double [dimensionY];
-         pi33[i][j] = new double [dimensionY];
-         BulkPi[i][j] = new double [dimensionY];
+         if (Visflag == 1) {
+            pi00[i][j] = new double [dimensionY];
+            pi01[i][j] = new double [dimensionY];
+            pi02[i][j] = new double [dimensionY];
+            pi03[i][j] = new double [dimensionY];
+            pi11[i][j] = new double [dimensionY];
+            pi12[i][j] = new double [dimensionY];
+            pi13[i][j] = new double [dimensionY];
+            pi22[i][j] = new double [dimensionY];
+            pi23[i][j] = new double [dimensionY];
+            pi33[i][j] = new double [dimensionY];
+            BulkPi[i][j] = new double [dimensionY];
+         }
       }
    }
-  
-   readHydroinfoBuffered_total(); 
+
+   readHydroinfoBuffered_total();
 
    status = H5Gclose(H5groupEventid);
    status = H5Fclose(H5file_id);
@@ -386,7 +398,7 @@ void HydroinfoH5::readHydrogridInfo()
    grid_Y0 = grid_YL * grid_dy;
    grid_Xmax = grid_XH * grid_dx;
    grid_Ymax = grid_YH * grid_dy;
-   
+
    hsize_t tempFramenum;
    status = H5Gget_num_objs(H5groupEventid, &tempFramenum);
    grid_Framenum = (int) tempFramenum;
@@ -445,7 +457,7 @@ void HydroinfoH5::readHydroinfoBuffered_total()
 {
    hid_t group_id;
    herr_t status;
-   
+
    int frameIdx;
    for(int i=0; i<Buffersize; i++)
    {
@@ -455,7 +467,7 @@ void HydroinfoH5::readHydroinfoBuffered_total()
          stringstream frameName;
          frameName << "Frame_" <<  setw(4) << setfill('0') << frameIdx;
          group_id = H5Gopen(H5groupEventid, frameName.str().c_str(), H5P_DEFAULT);
-      
+
          readH5Dataset_double(group_id, "e", ed[i]);
          readH5Dataset_double(group_id, "s", sd[i]);
          readH5Dataset_double(group_id, "Vx", vx[i]);
@@ -493,7 +505,7 @@ void HydroinfoH5::readHydroinfoSingleframe(int frameIdx)
       stringstream frameName;
       frameName << "Frame_" <<  setw(4) << setfill('0') << frameIdx;
       group_id = H5Gopen(H5groupEventid, frameName.str().c_str(), H5P_DEFAULT);
-      
+
       int Idx = frameIdx;
 
       readH5Dataset_double(group_id, "e", ed[Idx]);

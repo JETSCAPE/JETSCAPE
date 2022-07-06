@@ -88,7 +88,19 @@ void ColorlessHadronization::Init() {
     pythia.readString("ParticleDecays:limitTau0 = on");
     pythia.readString("ParticleDecays:tau0Max = 10.0");
   }
+  
+  std::stringstream lines;
+  lines << GetXMLElementText({"JetHadronization", "LinesToRead"}, false);
+  int i = 0;
+  while (std::getline(lines, s, '\n')) {
+    if (s.find_first_not_of(" \t\v\f\r") == s.npos)
+      continue; // skip empty lines
+    JSINFO << "Also reading in: " << s;
+    pythia.readString(s);
+  }
 
+  // Initialize random number distribution
+  ZeroOneDistribution = std::uniform_real_distribution<double> { 0.0, 1.0 };
   // And initialize
   pythia.init();
 }
@@ -117,9 +129,16 @@ void ColorlessHadronization::DoHadronization(
       continue; // SC: don't need negative if don't take recoil
 
     // Set remnants momentum
+    double random_direction = ZeroOneDistribution(*GetMt19937Generator());
+    if (random_direction>0.5) {
+      random_direction = 1.0;
+    }else{
+      random_direction = -1.0;
+    };
+
     double rempx = 0.2;
     double rempy = 0.2;
-    double rempz = p_fake;
+    double rempz = random_direction*p_fake;
     double reme = std::sqrt(std::pow(rempx, 2.) + std::pow(rempy, 2.) +
                             std::pow(rempz, 2.));
 

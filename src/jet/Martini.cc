@@ -76,15 +76,15 @@ void Martini::Init() {
   string s = GetXMLElementText({"Eloss", "Martini", "name"});
   JSDEBUG << s << " to be initilizied ...";
 
+  tStart = GetXMLElementDouble({"Eloss", "tStart"});
   Q0 = GetXMLElementDouble({"Eloss", "Martini", "Q0"});
-  alphas = GetXMLElementDouble({"Eloss", "Martini", "alphas"});
+  alpha_s0 = GetXMLElementDouble({"Eloss", "Martini", "alpha_s"});
   pcut = GetXMLElementDouble({"Eloss", "Martini", "pcut"});
   hydro_Tc = GetXMLElementDouble({"Eloss", "Martini", "hydro_Tc"});
   recoil_on = GetXMLElementInt({"Eloss", "Martini", "recoil_on"});
+  run_alphas = GetXMLElementInt({"Eloss", "Martini", "run_alphas"});
 
-  g = sqrt(4. * M_PI * alphas);
   alpha_em = 1. / 137.;
-  //hydro_tStart = 0.6;
 
   // Path to additional data
   PathToTables = GetXMLElementText({"Eloss", "Martini", "path"});
@@ -156,16 +156,10 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2,
   double cosPhiRestEl; // angle between flow and scat. particle in rest frame
   double boostBackEl;
 
-  GetHydroTau0Signal(hydro_tStart);
-
   for (int i = 0; i < pIn.size(); i++) {
 
     Id = pIn[i].pid();
     pStat = pIn[i].pstat();
-
-    // do nothing for particles other than u/d/s/g
-    if (std::abs(Id) != 1 && std::abs(Id) != 2 && std::abs(Id) != 3 && Id != 21)
-      continue;
     // do nothing for negative particles
     if (pStat < 0)
       continue;
@@ -192,11 +186,7 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2,
 
     eta = pIn[i].eta();
     SpatialRapidity = 0.5 * std::log((tt + zz) / (tt - zz));
-    double boostedTStart = hydro_tStart * cosh(SpatialRapidity);
-
-    // Only accept low t particles
-    if (pIn[i].t() > Q0 * Q0 + rounding_error || Time <= boostedTStart)
-      continue;
+    double boostedTStart = tStart * cosh(SpatialRapidity);
 
     // Extract fluid properties
     std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
@@ -211,8 +201,10 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2,
 
     beta = sqrt(vx * vx + vy * vy + vz * vz);
 
-    if (T < hydro_Tc) continue;
-
+    // Only accept low t particles
+    if (pIn[i].t() > Q0 * Q0 + rounding_error || Time <= boostedTStart ||
+        T < hydro_Tc)
+      continue;
     TakeResponsibilityFor(
         pIn[i]); // Generate error if another module already has responsibility.
 
@@ -269,18 +261,8 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2,
       boostBack = gamma * (1. + beta * cosPhiRest);
     }
 
-    //cout << "Time = " << Time << " Id = " << Id
-    //     << " T = " << setprecision(3) << T
-    //     << " pAbs = " << pAbs << " " << sqrt(px*px+py*py) << " " << pz
-    //     << " | pRest = " << pRest << "/" << pcut
-    //     << " | position = " << xx << " " << yy << " " << zz
-    //     << " | stat = " << pStat << " " << pLabel << " ";
-
-    //if (pRest < eLossCut) continue;
-    if (pRest < eLossCut) {
-      //  cout << endl;
-      continue;
-    }
+    // free-streaming for too soft partons
+    if (pRest < eLossCut) continue;
 
     xVec = FourVector(xx + px / pAbs * deltaT, yy + py / pAbs * deltaT,
                       zz + pz / pAbs * deltaT, Time + deltaT);
@@ -289,6 +271,14 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2,
     velocity_jet[1] = pIn[i].jet_v().x();
     velocity_jet[2] = pIn[i].jet_v().y();
     velocity_jet[3] = pIn[i].jet_v().z();
+
+    // set alpha_s and g
+    alpha_s = alpha_s0;
+    if (run_alphas) {
+      double mu = sqrt(2.*pAbs*T);
+      alpha_s = RunningAlphaS(mu);
+    }
+    g = sqrt(4. * M_PI * alpha_s);
 
     double deltaTRest = deltaT / gamma;
     // determine the energy-loss process
@@ -857,6 +847,16 @@ void Martini::DoEnergyLoss(double deltaT, double Time, double Q2,
   }   // particle loop
 }
 
+double Martini::RunningAlphaS(double mu) {
+
+  if (mu < 1.0) return alpha_s0;
+
+  double beta0 = 9./(4.*M_PI);
+  double LambdaQCD = exp( -1./(2.*beta0*alpha_s0) );
+  double running_alphas = 1./(beta0 * log( pow(mu/LambdaQCD, 2.) ));
+  return running_alphas;
+}
+
 int Martini::DetermineProcess(double pRest, double T, double deltaTRest,
                               int Id) {
 
@@ -1033,7 +1033,7 @@ RateRadiative Martini::getRateRadTotal(double pRest, double T) {
                pow(g, 4.) * T * nf;
     rate.qqgamma =
         (0.0053056 + 2.3279 / pow(u, 3.) - 0.6676 / u + 0.3223 / sqrt(u)) *
-        pow(g, 4.) * alpha_em / alphas * T;
+        pow(g, 4.) * alpha_em / alpha_s * T;
 
     double runningFactor =
         log(g * T * pow(10., 0.25) / .175) / log(g * T * pow(u, 0.25) / .175);
@@ -1370,7 +1370,7 @@ RateElastic Martini::getRateElasTotal(double pRest, double T) {
   // compute the total transition rate in GeV, integrated over k, omega
   // and q and angles for fixed E=p and temperature T
   // using parametrization of numerically computed integral
-  // then interpolate to get right value for used alphas
+  // then interpolate to get right value for used alpha_s
   // IMPORTANT: all computed values below are for a minimal omega of 0.05*T
   // so this is the cutoff to use in the calculation also!
   // also Nf=3 was used ... scales out though
@@ -1381,8 +1381,8 @@ RateElastic Martini::getRateElasTotal(double pRest, double T) {
 
   double alpha0 = 0.15;
   double deltaAlpha = 0.03;
-  double iAlpha = floor((alphas - alpha0) / deltaAlpha + 0.001);
-  double alphaFrac = (alphas - alpha0) / deltaAlpha - iAlpha;
+  double iAlpha = floor((alpha_s - alpha0) / deltaAlpha + 0.001);
+  double alphaFrac = (alpha_s - alpha0) / deltaAlpha - iAlpha;
   double rateLower, rateUpper;
   double c[2][6], d[2][6];
 
@@ -1392,7 +1392,7 @@ RateElastic Martini::getRateElasTotal(double pRest, double T) {
       d[i][j] = 0.;
     }
 
-  if (alphas >= 0.15 && alphas < 0.18) {
+  if (alpha_s >= 0.15 && alpha_s < 0.18) {
     c[0][0] = 0.18172488396136807;
     c[1][0] = 0.224596478395945;
     c[0][1] = 0.6004740049060965;
@@ -1405,7 +1405,7 @@ RateElastic Martini::getRateElasTotal(double pRest, double T) {
     c[1][4] = -0.001719701730785056;
     c[0][5] = 0.04731599462749122;
     c[1][5] = 0.06734745496415469;
-  } else if (alphas >= 0.18 && alphas < 0.21) {
+  } else if (alpha_s >= 0.18 && alpha_s < 0.21) {
     c[0][0] = 0.224596478395945;
     c[1][0] = 0.2686436092048326;
     c[0][1] = 1.0874259848101948;
@@ -1418,7 +1418,7 @@ RateElastic Martini::getRateElasTotal(double pRest, double T) {
     c[1][4] = -0.004876376882437649;
     c[0][5] = 0.06734745496415469;
     c[1][5] = 0.09140316977554151;
-  } else if (alphas >= 0.21 && alphas < 0.24) {
+  } else if (alpha_s >= 0.21 && alpha_s < 0.24) {
     c[0][0] = 0.2686436092048326;
     c[1][0] = 0.3137234778163784;
     c[0][1] = 1.7286136256785387;
@@ -1431,7 +1431,7 @@ RateElastic Martini::getRateElasTotal(double pRest, double T) {
     c[1][4] = 0.006098371807040589;
     c[0][5] = 0.09140316977554151;
     c[1][5] = 0.12054238276023879;
-  } else if (alphas >= 0.24 && alphas < 0.27) {
+  } else if (alpha_s >= 0.24 && alpha_s < 0.27) {
     c[0][0] = 0.3137234778163784;
     c[1][0] = 0.3597255453974444;
     c[0][1] = 2.445764079999846;
@@ -1444,7 +1444,7 @@ RateElastic Martini::getRateElasTotal(double pRest, double T) {
     c[1][4] = 0.04285103618362223;
     c[0][5] = 0.12054238276023879;
     c[1][5] = 0.1558288379712527;
-  } else if (alphas >= 0.27 && alphas < 0.3) {
+  } else if (alpha_s >= 0.27 && alpha_s < 0.3) {
     c[0][0] = 0.3597255453974444;
     c[1][0] = 0.40656130602563223;
     c[0][1] = 3.140669321831845;
@@ -1457,7 +1457,7 @@ RateElastic Martini::getRateElasTotal(double pRest, double T) {
     c[1][4] = 0.11594975218839362;
     c[0][5] = 0.1558288379712527;
     c[1][5] = 0.1982063104156748;
-  } else if (alphas >= 0.3 && alphas < 0.33) {
+  } else if (alpha_s >= 0.3 && alpha_s < 0.33) {
     c[0][0] = 0.40656130602563223;
     c[1][0] = 0.45415805200862863;
     c[0][1] = 3.713430971987352;
@@ -1470,7 +1470,7 @@ RateElastic Martini::getRateElasTotal(double pRest, double T) {
     c[1][4] = 0.23371456949506658;
     c[0][5] = 0.1982063104156748;
     c[1][5] = 0.24840524848507203;
-  } else if (alphas >= 0.33 && alphas < 0.36) {
+  } else if (alpha_s >= 0.33 && alpha_s < 0.36) {
     c[0][0] = 0.45415805200862863;
     c[1][0] = 0.5024541413891354;
     c[0][1] = 4.0758813206143785;
@@ -1483,7 +1483,7 @@ RateElastic Martini::getRateElasTotal(double pRest, double T) {
     c[1][4] = 0.4010658149846402;
     c[0][5] = 0.24840524848507203;
     c[1][5] = 0.3067901992139913;
-  } else if (alphas >= 0.36 && alphas < 0.39) {
+  } else if (alpha_s >= 0.36 && alpha_s < 0.39) {
     c[0][0] = 0.5024541413891354;
     c[1][0] = 0.5513999693402064;
     c[0][1] = 4.159425815179756;
@@ -1496,7 +1496,7 @@ RateElastic Martini::getRateElasTotal(double pRest, double T) {
     c[1][4] = 0.6260756501912864;
     c[0][5] = 0.3067901992139913;
     c[1][5] = 0.37424991045026396;
-  } else if (alphas >= 0.39 && alphas <= 0.42) {
+  } else if (alpha_s >= 0.39 && alpha_s <= 0.42) {
     c[0][0] = 0.5513999693402064;
     c[1][0] = 0.600941593540798;
     c[0][1] = 3.893153859527746;
@@ -1521,7 +1521,7 @@ RateElastic Martini::getRateElasTotal(double pRest, double T) {
 
   rate.gq = rate.qq * 9. / 4.;
 
-  if (alphas >= 0.15 && alphas < 0.18) {
+  if (alpha_s >= 0.15 && alpha_s < 0.18) {
     d[0][0] = 0.9364689080337059;
     d[1][0] = 1.1485486950080581;
     d[0][1] = 2.626076478553979;
@@ -1534,7 +1534,7 @@ RateElastic Martini::getRateElasTotal(double pRest, double T) {
     d[1][4] = 0.010598257485913224;
     d[0][5] = 0.27736469898722244;
     d[1][5] = 0.3949856219367327;
-  } else if (alphas >= 0.18 && alphas < 0.21) {
+  } else if (alpha_s >= 0.18 && alpha_s < 0.21) {
     d[0][0] = 1.1485486950080581;
     d[1][0] = 1.3645568637616001;
     d[0][1] = 4.993647646894147;
@@ -1547,7 +1547,7 @@ RateElastic Martini::getRateElasTotal(double pRest, double T) {
     d[1][4] = 0.011703596451947428;
     d[0][5] = 0.3949856219367327;
     d[1][5] = 0.5354757997870718;
-  } else if (alphas >= 0.21 && alphas < 0.24) {
+  } else if (alpha_s >= 0.21 && alpha_s < 0.24) {
     d[0][0] = 1.3645568637616001;
     d[1][0] = 1.5839378568555678;
     d[0][1] = 8.174225869366722;
@@ -1560,7 +1560,7 @@ RateElastic Martini::getRateElasTotal(double pRest, double T) {
     d[1][4] = 0.09016386041913003;
     d[0][5] = 0.5354757997870718;
     d[1][5] = 0.7042577279136836;
-  } else if (alphas >= 0.24 && alphas < 0.27) {
+  } else if (alpha_s >= 0.24 && alpha_s < 0.27) {
     d[0][0] = 1.5839378568555678;
     d[1][0] = 1.8062676019060235;
     d[0][1] = 11.785897000063443;
@@ -1573,7 +1573,7 @@ RateElastic Martini::getRateElasTotal(double pRest, double T) {
     d[1][4] = 0.30577623140224813;
     d[0][5] = 0.7042577279136836;
     d[1][5] = 0.9066501895009754;
-  } else if (alphas >= 0.27 && alphas < 0.3) {
+  } else if (alpha_s >= 0.27 && alpha_s < 0.3) {
     d[0][0] = 1.8062676019060235;
     d[1][0] = 2.0312125903238236;
     d[0][1] = 15.344112642069764;
@@ -1586,7 +1586,7 @@ RateElastic Martini::getRateElasTotal(double pRest, double T) {
     d[1][4] = 0.7109302867706849;
     d[0][5] = 0.9066501895009754;
     d[1][5] = 1.1472148515742653;
-  } else if (alphas >= 0.3 && alphas < 0.33) {
+  } else if (alpha_s >= 0.3 && alpha_s < 0.33) {
     d[0][0] = 2.0312125903238236;
     d[1][0] = 2.258502734110078;
     d[0][1] = 18.36844006721506;
@@ -1599,7 +1599,7 @@ RateElastic Martini::getRateElasTotal(double pRest, double T) {
     d[1][4] = 1.3473328178504662;
     d[0][5] = 1.1472148515742653;
     d[1][5] = 1.429497460496924;
-  } else if (alphas >= 0.33 && alphas < 0.36) {
+  } else if (alpha_s >= 0.33 && alpha_s < 0.36) {
     d[0][0] = 2.258502734110078;
     d[1][0] = 2.4879110920956653;
     d[0][1] = 20.43444928479894;
@@ -1612,7 +1612,7 @@ RateElastic Martini::getRateElasTotal(double pRest, double T) {
     d[1][4] = 2.2381176005506016;
     d[0][5] = 1.429497460496924;
     d[1][5] = 1.7550164762706189;
-  } else if (alphas >= 0.36 && alphas < 0.39) {
+  } else if (alpha_s >= 0.36 && alpha_s < 0.39) {
     d[0][0] = 2.4879110920956653;
     d[1][0] = 2.7192501243929903;
     d[0][1] = 21.220550462966102;
@@ -1625,7 +1625,7 @@ RateElastic Martini::getRateElasTotal(double pRest, double T) {
     d[1][4] = 3.401378906197122;
     d[0][5] = 1.7550164762706189;
     d[1][5] = 2.1251383942923474;
-  } else if (alphas >= 0.39 && alphas <= 0.42) {
+  } else if (alpha_s >= 0.39 && alpha_s <= 0.42) {
     d[0][0] = 2.7192501243929903;
     d[1][0] = 2.9523522354248817;
     d[0][1] = 20.470583876561985;
@@ -1658,8 +1658,8 @@ RateElastic Martini::getRateElasPos(double u, double T) {
 
   double alpha0 = 0.15;
   double deltaAlpha = 0.03;
-  double iAlpha = floor((alphas - alpha0) / deltaAlpha + 0.001);
-  double alphaFrac = (alphas - alpha0) / deltaAlpha - iAlpha;
+  double iAlpha = floor((alpha_s - alpha0) / deltaAlpha + 0.001);
+  double alphaFrac = (alpha_s - alpha0) / deltaAlpha - iAlpha;
   double rateLower, rateUpper;
   double c[2][6], d[2][6];
 
@@ -1669,7 +1669,7 @@ RateElastic Martini::getRateElasPos(double u, double T) {
       d[i][j] = 0.;
     }
 
-  if (alphas >= 0.15 && alphas < 0.18) {
+  if (alpha_s >= 0.15 && alpha_s < 0.18) {
     c[0][0] = 0.12199410313320332;
     c[1][0] = 0.15243607717720586;
     c[0][1] = 0.23732051765097376;
@@ -1682,7 +1682,7 @@ RateElastic Martini::getRateElasPos(double u, double T) {
     c[1][4] = 0.04948438583750772;
     c[0][5] = 0.05022641428394594;
     c[1][5] = 0.07152523367501308;
-  } else if (alphas >= 0.18 && alphas < 0.21) {
+  } else if (alpha_s >= 0.18 && alpha_s < 0.21) {
     c[0][0] = 0.15243607717720586;
     c[1][0] = 0.15243607717720586;
     c[0][1] = 0.5403120875137825;
@@ -1695,7 +1695,7 @@ RateElastic Martini::getRateElasPos(double u, double T) {
     c[1][4] = 0.04948438583750772;
     c[0][5] = 0.07152523367501308;
     c[1][5] = 0.07152523367501308;
-  } else if (alphas >= 0.21 && alphas < 0.24) {
+  } else if (alpha_s >= 0.21 && alpha_s < 0.24) {
     c[0][0] = 0.15243607717720586;
     c[1][0] = 0.21661000995329158;
     c[0][1] = 0.5403120875137825;
@@ -1708,7 +1708,7 @@ RateElastic Martini::getRateElasPos(double u, double T) {
     c[1][4] = 0.09567346780679847;
     c[0][5] = 0.07152523367501308;
     c[1][5] = 0.12780677622585393;
-  } else if (alphas >= 0.24 && alphas < 0.27) {
+  } else if (alpha_s >= 0.24 && alpha_s < 0.27) {
     c[0][0] = 0.21661000995329158;
     c[1][0] = 0.2501007467879627;
     c[0][1] = 1.4087570376612657;
@@ -1721,7 +1721,7 @@ RateElastic Martini::getRateElasPos(double u, double T) {
     c[1][4] = 0.15430793601338547;
     c[0][5] = 0.12780677622585393;
     c[1][5] = 0.1648297331159989;
-  } else if (alphas >= 0.27 && alphas < 0.3) {
+  } else if (alpha_s >= 0.27 && alpha_s < 0.3) {
     c[0][0] = 0.2501007467879627;
     c[1][0] = 0.28440720063047276;
     c[0][1] = 1.8034683081244214;
@@ -1734,7 +1734,7 @@ RateElastic Martini::getRateElasPos(double u, double T) {
     c[1][4] = 0.2503738253300167;
     c[0][5] = 0.1648297331159989;
     c[1][5] = 0.2090067594645225;
-  } else if (alphas >= 0.3 && alphas < 0.33) {
+  } else if (alpha_s >= 0.3 && alpha_s < 0.33) {
     c[0][0] = 0.28440720063047276;
     c[1][0] = 0.31945943548344036;
     c[0][1] = 2.0448244620634055;
@@ -1747,7 +1747,7 @@ RateElastic Martini::getRateElasPos(double u, double T) {
     c[1][4] = 0.3918202096574105;
     c[0][5] = 0.2090067594645225;
     c[1][5] = 0.26103455441873036;
-  } else if (alphas >= 0.33 && alphas < 0.36) {
+  } else if (alpha_s >= 0.33 && alpha_s < 0.36) {
     c[0][0] = 0.31945943548344036;
     c[1][0] = 0.35519799231686516;
     c[0][1] = 2.0482495934952256;
@@ -1760,7 +1760,7 @@ RateElastic Martini::getRateElasPos(double u, double T) {
     c[1][4] = 0.5832315715098879;
     c[0][5] = 0.26103455441873036;
     c[1][5] = 0.32124694953933486;
-  } else if (alphas >= 0.36 && alphas < 0.39) {
+  } else if (alpha_s >= 0.36 && alpha_s < 0.39) {
     c[0][0] = 0.35519799231686516;
     c[1][0] = 0.39157507493019383;
     c[0][1] = 1.7485135425544152;
@@ -1773,7 +1773,7 @@ RateElastic Martini::getRateElasPos(double u, double T) {
     c[1][4] = 0.8323699786704292;
     c[0][5] = 0.32124694953933486;
     c[1][5] = 0.3905055907877247;
-  } else if (alphas >= 0.39 && alphas <= 0.42) {
+  } else if (alpha_s >= 0.39 && alpha_s <= 0.42) {
     c[0][0] = 0.39157507493019383;
     c[1][0] = 0.4285382777192131;
     c[0][1] = 1.0778995684787331;
@@ -1798,7 +1798,7 @@ RateElastic Martini::getRateElasPos(double u, double T) {
 
   rate.gq = rate.qq * 9. / 4.;
 
-  if (alphas >= 0.15 && alphas < 0.18) {
+  if (alpha_s >= 0.15 && alpha_s < 0.18) {
     d[0][0] = 0.6197775378922895;
     d[1][0] = 0.7680959463632293;
     d[0][1] = 1.5268694134079064;
@@ -1811,7 +1811,7 @@ RateElastic Martini::getRateElasPos(double u, double T) {
     d[1][4] = 0.22074166337990309;
     d[0][5] = 0.28964614117694565;
     d[1][5] = 0.4128184793199476;
-  } else if (alphas >= 0.18 && alphas < 0.21) {
+  } else if (alpha_s >= 0.18 && alpha_s < 0.21) {
     d[0][0] = 0.7680959463632293;
     d[1][0] = 0.9206225398305536;
     d[0][1] = 3.282164035377037;
@@ -1824,7 +1824,7 @@ RateElastic Martini::getRateElasPos(double u, double T) {
     d[1][4] = 0.2995126102416747;
     d[0][5] = 0.4128184793199476;
     d[1][5] = 0.5598645426609049;
-  } else if (alphas >= 0.21 && alphas < 0.24) {
+  } else if (alpha_s >= 0.21 && alpha_s < 0.24) {
     d[0][0] = 0.9206225398305536;
     d[1][0] = 1.0767954081327265;
     d[0][1] = 5.690562370150853;
@@ -1837,7 +1837,7 @@ RateElastic Martini::getRateElasPos(double u, double T) {
     d[1][4] = 0.46570985770548107;
     d[0][5] = 0.5598645426609049;
     d[1][5] = 0.7360069767362173;
-  } else if (alphas >= 0.24 && alphas < 0.27) {
+  } else if (alpha_s >= 0.24 && alpha_s < 0.27) {
     d[0][0] = 1.0767954081327265;
     d[1][0] = 1.2361819653856791;
     d[0][1] = 8.378841394880034;
@@ -1850,7 +1850,7 @@ RateElastic Martini::getRateElasPos(double u, double T) {
     d[1][4] = 0.7769917594310469;
     d[0][5] = 0.7360069767362173;
     d[1][5] = 0.9463662091275489;
-  } else if (alphas >= 0.27 && alphas < 0.3) {
+  } else if (alpha_s >= 0.27 && alpha_s < 0.3) {
     d[0][0] = 1.2361819653856791;
     d[1][0] = 1.3984393292278847;
     d[0][1] = 10.877148035367144;
@@ -1863,7 +1863,7 @@ RateElastic Martini::getRateElasPos(double u, double T) {
     d[1][4] = 1.2836917844304823;
     d[0][5] = 0.9463662091275489;
     d[1][5] = 1.1953148369630755;
-  } else if (alphas >= 0.3 && alphas < 0.33) {
+  } else if (alpha_s >= 0.3 && alpha_s < 0.33) {
     d[0][0] = 1.3984393292278847;
     d[1][0] = 1.5632880021613935;
     d[0][1] = 12.72181515837248;
@@ -1876,7 +1876,7 @@ RateElastic Martini::getRateElasPos(double u, double T) {
     d[1][4] = 2.0259357821768784;
     d[0][5] = 1.1953148369630755;
     d[1][5] = 1.486253368704046;
-  } else if (alphas >= 0.33 && alphas < 0.36) {
+  } else if (alpha_s >= 0.33 && alpha_s < 0.36) {
     d[0][0] = 1.5632880021613935;
     d[1][0] = 1.730492163581557;
     d[0][1] = 13.502896915302873;
@@ -1889,7 +1889,7 @@ RateElastic Martini::getRateElasPos(double u, double T) {
     d[1][4] = 3.0253452576771465;
     d[0][5] = 1.486253368704046;
     d[1][5] = 1.8205651561017433;
-  } else if (alphas >= 0.36 && alphas < 0.39) {
+  } else if (alpha_s >= 0.36 && alpha_s < 0.39) {
     d[0][0] = 1.730492163581557;
     d[1][0] = 1.8998560359992867;
     d[0][1] = 12.913294655478987;
@@ -1902,7 +1902,7 @@ RateElastic Martini::getRateElasPos(double u, double T) {
     d[1][4] = 4.298747764427364;
     d[0][5] = 1.8205651561017433;
     d[1][5] = 2.199497022778097;
-  } else if (alphas >= 0.39 && alphas <= 0.42) {
+  } else if (alpha_s >= 0.39 && alpha_s <= 0.42) {
     d[0][0] = 1.8998560359992867;
     d[1][0] = 2.071204284004704;
     d[0][1] = 10.708892844334745;
@@ -1935,8 +1935,8 @@ RateElastic Martini::getRateElasNeg(double u, double T) {
 
   double alpha0 = 0.15;
   double deltaAlpha = 0.03;
-  double iAlpha = floor((alphas - alpha0) / deltaAlpha + 0.001);
-  double alphaFrac = (alphas - alpha0) / deltaAlpha - iAlpha;
+  double iAlpha = floor((alpha_s - alpha0) / deltaAlpha + 0.001);
+  double alphaFrac = (alpha_s - alpha0) / deltaAlpha - iAlpha;
   double rateLower, rateUpper;
   double c[2][6], d[2][6];
 
@@ -1946,7 +1946,7 @@ RateElastic Martini::getRateElasNeg(double u, double T) {
       d[i][j] = 0.;
     }
 
-  if (alphas >= 0.15 && alphas < 0.18) {
+  if (alpha_s >= 0.15 && alpha_s < 0.18) {
     c[0][0] = 0.059730780828164666;
     c[1][0] = 0.07216040121873951;
     c[0][1] = 0.3631534872548789;
@@ -1959,7 +1959,7 @@ RateElastic Martini::getRateElasNeg(double u, double T) {
     c[1][4] = 0.05120408756812135;
     c[0][5] = 0.00291041965645416;
     c[1][5] = 0.0041777787108426695;
-  } else if (alphas >= 0.18 && alphas < 0.21) {
+  } else if (alpha_s >= 0.18 && alpha_s < 0.21) {
     c[0][0] = 0.07216040121873951;
     c[1][0] = 0.0846236909779996;
     c[0][1] = 0.5471138972952214;
@@ -1972,7 +1972,7 @@ RateElastic Martini::getRateElasNeg(double u, double T) {
     c[1][4] = 0.06935459958589639;
     c[0][5] = 0.0041777787108426695;
     c[1][5] = 0.005644055718614478;
-  } else if (alphas >= 0.21 && alphas < 0.24) {
+  } else if (alpha_s >= 0.21 && alpha_s < 0.24) {
     c[0][0] = 0.0846236909779996;
     c[1][0] = 0.09711346786308672;
     c[0][1] = 0.7725791286875564;
@@ -1985,7 +1985,7 @@ RateElastic Martini::getRateElasNeg(double u, double T) {
     c[1][4] = 0.08957509599955729;
     c[0][5] = 0.005644055718614478;
     c[1][5] = 0.007264393465593115;
-  } else if (alphas >= 0.24 && alphas < 0.27) {
+  } else if (alpha_s >= 0.24 && alpha_s < 0.27) {
     c[0][0] = 0.09711346786308672;
     c[1][0] = 0.10962479860948156;
     c[0][1] = 1.0370070423372528;
@@ -1998,7 +1998,7 @@ RateElastic Martini::getRateElasNeg(double u, double T) {
     c[1][4] = 0.111456899829735;
     c[0][5] = 0.007264393465593115;
     c[1][5] = 0.009000895144744121;
-  } else if (alphas >= 0.27 && alphas < 0.3) {
+  } else if (alpha_s >= 0.27 && alpha_s < 0.3) {
     c[0][0] = 0.10962479860948156;
     c[1][0] = 0.1221541053951596;
     c[0][1] = 1.3372010137066646;
@@ -2011,7 +2011,7 @@ RateElastic Martini::getRateElasNeg(double u, double T) {
     c[1][4] = 0.13442407314203592;
     c[0][5] = 0.009000895144744121;
     c[1][5] = 0.010800449048880756;
-  } else if (alphas >= 0.3 && alphas < 0.33) {
+  } else if (alpha_s >= 0.3 && alpha_s < 0.33) {
     c[0][0] = 0.1221541053951596;
     c[1][0] = 0.13469861652518803;
     c[0][1] = 1.6686065099273535;
@@ -2024,7 +2024,7 @@ RateElastic Martini::getRateElasNeg(double u, double T) {
     c[1][4] = 0.15810564016236883;
     c[0][5] = 0.010800449048880756;
     c[1][5] = 0.012629305933671075;
-  } else if (alphas >= 0.33 && alphas < 0.36) {
+  } else if (alpha_s >= 0.33 && alpha_s < 0.36) {
     c[0][0] = 0.13469861652518803;
     c[1][0] = 0.14725614907227047;
     c[0][1] = 2.0276317271182074;
@@ -2037,7 +2037,7 @@ RateElastic Martini::getRateElasNeg(double u, double T) {
     c[1][4] = 0.18216575652552597;
     c[0][5] = 0.012629305933671075;
     c[1][5] = 0.014456750325370632;
-  } else if (alphas >= 0.36 && alphas < 0.39) {
+  } else if (alpha_s >= 0.36 && alpha_s < 0.39) {
     c[0][0] = 0.14725614907227047;
     c[1][0] = 0.15982489441001274;
     c[0][1] = 2.4109122726272654;
@@ -2050,7 +2050,7 @@ RateElastic Martini::getRateElasNeg(double u, double T) {
     c[1][4] = 0.20629432847931367;
     c[0][5] = 0.014456750325370632;
     c[1][5] = 0.01625568033747704;
-  } else if (alphas >= 0.39 && alphas <= 0.42) {
+  } else if (alpha_s >= 0.39 && alpha_s <= 0.42) {
     c[0][0] = 0.15982489441001274;
     c[1][0] = 0.17240331582158486;
     c[0][1] = 2.815254291049982;
@@ -2075,7 +2075,7 @@ RateElastic Martini::getRateElasNeg(double u, double T) {
 
   rate.gq = rate.qq * 9. / 4.;
 
-  if (alphas >= 0.15 && alphas < 0.18) {
+  if (alpha_s >= 0.15 && alpha_s < 0.18) {
     d[0][0] = 0.3166913701414167;
     d[1][0] = 0.3804527486448292;
     d[0][1] = 1.0992070651449564;
@@ -2088,7 +2088,7 @@ RateElastic Martini::getRateElasNeg(double u, double T) {
     d[1][4] = 0.21014340589291994;
     d[0][5] = 0.012281442189758532;
     d[1][5] = 0.017832857383112792;
-  } else if (alphas >= 0.18 && alphas < 0.21) {
+  } else if (alpha_s >= 0.18 && alpha_s < 0.21) {
     d[0][0] = 0.3804527486448292;
     d[1][0] = 0.44393432393104637;
     d[0][1] = 1.7114836115114735;
@@ -2101,7 +2101,7 @@ RateElastic Martini::getRateElasNeg(double u, double T) {
     d[1][4] = 0.28780901378857465;
     d[0][5] = 0.017832857383112792;
     d[1][5] = 0.02438874287373154;
-  } else if (alphas >= 0.21 && alphas < 0.24) {
+  } else if (alpha_s >= 0.21 && alpha_s < 0.24) {
     d[0][0] = 0.44393432393104637;
     d[1][0] = 0.5071424487228405;
     d[0][1] = 2.483663499207573;
@@ -2114,7 +2114,7 @@ RateElastic Martini::getRateElasNeg(double u, double T) {
     d[1][4] = 0.3755459972857442;
     d[0][5] = 0.02438874287373154;
     d[1][5] = 0.03174924882247299;
-  } else if (alphas >= 0.24 && alphas < 0.27) {
+  } else if (alpha_s >= 0.24 && alpha_s < 0.27) {
     d[0][0] = 0.5071424487228405;
     d[1][0] = 0.5700856365203443;
     d[0][1] = 3.4070556051784515;
@@ -2127,7 +2127,7 @@ RateElastic Martini::getRateElasNeg(double u, double T) {
     d[1][4] = 0.471215528026891;
     d[0][5] = 0.03174924882247299;
     d[1][5] = 0.03971601962636114;
-  } else if (alphas >= 0.27 && alphas < 0.3) {
+  } else if (alpha_s >= 0.27 && alpha_s < 0.3) {
     d[0][0] = 0.5700856365203443;
     d[1][0] = 0.6327732610959403;
     d[0][1] = 4.466964606692036;
@@ -2140,7 +2140,7 @@ RateElastic Martini::getRateElasNeg(double u, double T) {
     d[1][4] = 0.572761497659723;
     d[0][5] = 0.03971601962636114;
     d[1][5] = 0.04809998538877525;
-  } else if (alphas >= 0.3 && alphas < 0.33) {
+  } else if (alpha_s >= 0.3 && alpha_s < 0.33) {
     d[0][0] = 0.6327732610959403;
     d[1][0] = 0.6952147319486842;
     d[0][1] = 5.646624908846933;
@@ -2153,7 +2153,7 @@ RateElastic Martini::getRateElasNeg(double u, double T) {
     d[1][4] = 0.6786029643259804;
     d[0][5] = 0.04809998538877525;
     d[1][5] = 0.056755908207122875;
-  } else if (alphas >= 0.33 && alphas < 0.36) {
+  } else if (alpha_s >= 0.33 && alpha_s < 0.36) {
     d[0][0] = 0.6952147319486842;
     d[1][0] = 0.7574189285141091;
     d[0][1] = 6.931552369487635;
@@ -2166,7 +2166,7 @@ RateElastic Martini::getRateElasNeg(double u, double T) {
     d[1][4] = 0.7872276571283385;
     d[0][5] = 0.056755908207122875;
     d[1][5] = 0.06554867983133447;
-  } else if (alphas >= 0.36 && alphas < 0.39) {
+  } else if (alpha_s >= 0.36 && alpha_s < 0.39) {
     d[0][0] = 0.7574189285141091;
     d[1][0] = 0.8193940883937045;
     d[0][1] = 8.307255807497631;
@@ -2179,7 +2179,7 @@ RateElastic Martini::getRateElasNeg(double u, double T) {
     d[1][4] = 0.8973688582323887;
     d[0][5] = 0.06554867983133447;
     d[1][5] = 0.07435862848596686;
-  } else if (alphas >= 0.39 && alphas <= 0.42) {
+  } else if (alpha_s >= 0.39 && alpha_s <= 0.42) {
     d[0][0] = 0.8193940883937045;
     d[1][0] = 0.8811479514201789;
     d[0][1] = 9.761691032241623;
@@ -2210,12 +2210,12 @@ RateElastic Martini::getRateElasNeg(double u, double T) {
 RateConversion Martini::getRateConv(double pRest, double T) {
   RateConversion rate;
 
-  rate.qg = 4. / 3. * 2. * M_PI * alphas * alphas * T * T / (3. * pRest) *
+  rate.qg = 4. / 3. * 2. * M_PI * alpha_s * alpha_s * T * T / (3. * pRest) *
             (0.5 * log(pRest * T / ((1. / 6.) * pow(g * T, 2.))) - 0.36149);
-  rate.gq = nf * 3. / 8. * 4. / 3. * 2. * M_PI * alphas * alphas * T * T /
+  rate.gq = nf * 3. / 8. * 4. / 3. * 2. * M_PI * alpha_s * alpha_s * T * T /
             (3. * pRest) *
             (0.5 * log(pRest * T / ((1. / 6.) * pow(g * T, 2.))) - 0.36149);
-  rate.qgamma = 2. * M_PI * alphas * alpha_em * T * T / (3. * pRest) *
+  rate.qgamma = 2. * M_PI * alpha_s * alpha_em * T * T / (3. * pRest) *
                 (0.5 * log(pRest * T / ((1. / 6.) * pow(g * T, 2.))) - 0.36149);
 
   return rate;
@@ -2263,13 +2263,13 @@ double Martini::getEnergyTransfer(double pRest, double T, int process) {
       do {
         randA = ZeroOneDistribution(*GetMt19937Generator()) *
                 areaOmega(u, posNegSwitch, process);
-        y = exp((-1.41428 * pow(10., 9.) * alphas -
-                 8.08158 * pow(10., 8.) * alphas * alphas +
+        y = exp((-1.41428 * pow(10., 9.) * alpha_s -
+                 8.08158 * pow(10., 8.) * alpha_s * alpha_s +
                  2.02327 * pow(10., 9.) * randA) /
-                (alphas *
-                 (4.72097 * pow(10., 8.) + 2.6977 * pow(10., 8.) * alphas)));
+                (alpha_s *
+                 (4.72097 * pow(10., 8.) + 2.6977 * pow(10., 8.) * alpha_s)));
 
-        fy = alphas / 0.15 * (0.035 + alphas * 0.02) / sqrt(y * y);
+        fy = alpha_s / 0.15 * (0.035 + alpha_s * 0.02) / sqrt(y * y);
         fyAct = functionOmega(u, y, process);
 
         x = ZeroOneDistribution(*GetMt19937Generator());
@@ -2282,9 +2282,9 @@ double Martini::getEnergyTransfer(double pRest, double T, int process) {
       do {
         randA = ZeroOneDistribution(*GetMt19937Generator()) *
                 areaOmega(-0.05, posNegSwitch, process);
-        y = -12. * exp(-30. * randA / (alphas * (7. + 4. * alphas)));
+        y = -12. * exp(-30. * randA / (alpha_s * (7. + 4. * alpha_s)));
 
-        fy = alphas / 0.15 * (0.035 + alphas * 0.02) / sqrt(y * y);
+        fy = alpha_s / 0.15 * (0.035 + alpha_s * 0.02) / sqrt(y * y);
         fyAct = functionOmega(u, y, process);
 
         x = ZeroOneDistribution(*GetMt19937Generator());
@@ -2312,13 +2312,13 @@ double Martini::getEnergyTransfer(double pRest, double T, int process) {
       do {
         randA = ZeroOneDistribution(*GetMt19937Generator()) *
                 areaOmega(u, posNegSwitch, process);
-        y = exp((-2.32591 * pow(10., 17.) * alphas -
-                 1.32909 * pow(10., 17.) * alphas * alphas +
+        y = exp((-2.32591 * pow(10., 17.) * alpha_s -
+                 1.32909 * pow(10., 17.) * alpha_s * alpha_s +
                  2.2183 * pow(10., 17.) * randA) /
-                (alphas * (7.76406 * pow(10., 16.) +
-                            4.43661 * pow(10., 16.) * alphas)));
+                (alpha_s * (7.76406 * pow(10., 16.) +
+                            4.43661 * pow(10., 16.) * alpha_s)));
 
-        fy = 1.5 * alphas / 0.15 * (0.035 + alphas * 0.02) / sqrt(y * y);
+        fy = 1.5 * alpha_s / 0.15 * (0.035 + alpha_s * 0.02) / sqrt(y * y);
         fyAct = functionOmega(u, y, process);
 
         x = ZeroOneDistribution(*GetMt19937Generator());
@@ -2332,10 +2332,10 @@ double Martini::getEnergyTransfer(double pRest, double T, int process) {
         randA = ZeroOneDistribution(*GetMt19937Generator()) *
                 areaOmega(-0.05, posNegSwitch, process);
         y = -12. * exp(-2.81475 * pow(10., 15.) * randA /
-                       (alphas * (9.85162 * pow(10., 14.) +
-                                   5.6295 * pow(10., 14.) * alphas)));
+                       (alpha_s * (9.85162 * pow(10., 14.) +
+                                   5.6295 * pow(10., 14.) * alpha_s)));
 
-        fy = 1.5 * alphas / 0.15 * (0.035 + alphas * 0.02) / sqrt(y * y);
+        fy = 1.5 * alpha_s / 0.15 * (0.035 + alpha_s * 0.02) / sqrt(y * y);
         fyAct = functionOmega(u, y, process);
 
         x = ZeroOneDistribution(*GetMt19937Generator());
@@ -2376,13 +2376,13 @@ double Martini::getMomentumTransfer(double pRest, double omega, double T,
   if (omega < 10. && omega > -3.) {
     if (process == 5 || process == 7) // for qq or gq
     {
-      A = (0.7 + alphas) * 0.0014 *
-          (1000. + 40. / sqrt(omega * omega) + 10.5 * pow(omega, 4.)) * alphas;
+      A = (0.7 + alpha_s) * 0.0014 *
+          (1000. + 40. / sqrt(omega * omega) + 10.5 * pow(omega, 4.)) * alpha_s;
       B = 2. * sqrt(omega * omega) + 0.01;
     } else if (process == 6 || process == 8) // for qg or gg
     {
-      A = (0.7 + alphas) * 0.0022 *
-          (1000. + 40. / sqrt(omega * omega) + 10.5 * pow(omega, 4.)) * alphas;
+      A = (0.7 + alpha_s) * 0.0022 *
+          (1000. + 40. / sqrt(omega * omega) + 10.5 * pow(omega, 4.)) * alpha_s;
       B = 2. * sqrt(omega * omega) + 0.002;
     } else {
       JSWARN << "Invalid process number (" << process << ")";
@@ -2465,14 +2465,14 @@ double Martini::getMomentumTransfer(double pRest, double omega, double T,
 double Martini::areaOmega(double u, int posNegSwitch, int process) {
   if (process == 5 || process == 7) {
     if (posNegSwitch == 1)
-      return (0.0333333 * alphas * (7. + 4. * alphas) * (2.99573 + log(u)));
+      return (0.0333333 * alpha_s * (7. + 4. * alpha_s) * (2.99573 + log(u)));
     else
-      return (-0.133333 * alphas * (1.75 + alphas) * log(-0.0833333 * u));
+      return (-0.133333 * alpha_s * (1.75 + alpha_s) * log(-0.0833333 * u));
   } else if (process == 6 || process == 8) {
     if (posNegSwitch == 1)
-      return (0.05 * alphas * (7. + 4. * alphas) * (2.99573 + log(u)));
+      return (0.05 * alpha_s * (7. + 4. * alpha_s) * (2.99573 + log(u)));
     else
-      return (-0.2 * alphas * (1.75 + alphas) * log(-0.0833333 * u));
+      return (-0.2 * alpha_s * (1.75 + alpha_s) * log(-0.0833333 * u));
   } else {
     JSWARN << "Invalid process number (" << process << ")";
   }
@@ -2485,11 +2485,11 @@ double Martini::areaQ(double u, double omega, int process) {
   double areaQ;
 
   if (process == 5 || process == 7) {
-    A = (0.7 + alphas - 0.3) * 0.0014 * alphas *
+    A = (0.7 + alpha_s - 0.3) * 0.0014 * alpha_s *
         (1000. + 40. / sqrt(omega * omega) + 10.5 * pow(omega, 4.));
     B = 2. * sqrt(omega * omega) + 0.01;
   } else if (process == 6 || process == 8) {
-    A = (0.7 + alphas - 0.3) * 0.0022 * alphas *
+    A = (0.7 + alpha_s - 0.3) * 0.0022 * alpha_s *
         (1000. + 40. / sqrt(omega * omega) + 10.5 * pow(omega, 4.));
     B = 2. * sqrt(omega * omega) + 0.002;
   } else {
@@ -3019,7 +3019,7 @@ double Martini::getElasticRateQ(double u, double omega, double q, int process) {
 
 double Martini::use_elastic_table_omega(double omega, int which_kind)
 /* Uses the lookup table and simple interpolation to get the value
-   of dGamma/domega at some value of omega and alphas. */
+   of dGamma/domega at some value of omega and alpha_s. */
 {
   double result;
   double alphaFrac, omegaFrac;
@@ -3032,14 +3032,14 @@ double Martini::use_elastic_table_omega(double omega, int which_kind)
     iOmega = Nomega / 2 + floor((log(omega) + 5) / omegaStep);
   else
     iOmega = Nomega / 2 - ceil((log(-omega) + 5) / omegaStep) - 1;
-  iAlphas = floor((alphas - 0.15) / alphaStep);
+  iAlphas = floor((alpha_s - 0.15) / alphaStep);
 
   position = iOmega + Nomega * (iAlphas);
   positionAlphaUp = iOmega + Nomega * (iAlphas + 1);
   positionOmegaUp = iOmega + 1 + Nomega * (iAlphas);
   positionAlphaUpOmegaUp = iOmega + 1 + Nomega * (iAlphas + 1);
 
-  alphaFrac = (alphas - (floor((alphas - alphaMin) / alphaStep) * alphaStep +
+  alphaFrac = (alpha_s - (floor((alpha_s - alphaMin) / alphaStep) * alphaStep +
                           alphaMin)) /
               alphaStep;
   if (omega > 0.) {
@@ -3122,7 +3122,7 @@ double Martini::use_elastic_table_omega(double omega, int which_kind)
 
 double Martini::use_elastic_table_q(double omega, double q, int which_kind)
 /* Uses the lookup table and simple interpolation to get the value
-   of dGamma/domegadq at some value of omega, q, and alphas. */
+   of dGamma/domegadq at some value of omega, q, and alpha_s. */
 {
   double result;
   double alphaFrac, omegaFrac, qFrac;
@@ -3155,7 +3155,7 @@ double Martini::use_elastic_table_q(double omega, double q, int which_kind)
   else
     iOmega = Nomega / 2 - ceil((log(-omega) + 5) / omegaStep) - 1;
   iQ = floor((log(q) + 5) / qStep + 0.0001);
-  iAlphas = floor((alphas - 0.15) / alphaStep + 0.0001);
+  iAlphas = floor((alpha_s - 0.15) / alphaStep + 0.0001);
 
   position = iQ + Nq * (iOmega + Nomega * (iAlphas));
   positionAlphaUp = iQ + Nq * (iOmega + Nomega * (iAlphas + 1));
@@ -3168,7 +3168,7 @@ double Martini::use_elastic_table_q(double omega, double q, int which_kind)
   positionAlphaUpOmegaUpQUp =
       iQ + 1 + Nq * (iOmega + 1 + Nomega * (iAlphas + 1));
 
-  alphaFrac = (alphas - (floor((alphas - alphaMin) / alphaStep) * alphaStep +
+  alphaFrac = (alpha_s - (floor((alpha_s - alphaMin) / alphaStep) * alphaStep +
                           alphaMin)) /
               alphaStep;
   if (omega > 0.) {
