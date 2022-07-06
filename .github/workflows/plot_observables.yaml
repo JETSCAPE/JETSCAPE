@@ -38,9 +38,8 @@ jobs:
         make -j2
 
     - name: Curl site to process any pending files
-      uses: wei/curl@master
-      with:
-        args: http://plot.joelatessa.com
+      run: |
+        $GITHUB_WORKSPACE/JETSCAPE/test/plot/load_site.py
 
     - name: Generate pp events
       run: |
