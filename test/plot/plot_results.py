@@ -329,26 +329,31 @@ class PlotResults(common_base.CommonBase):
         # Get histogram and add to self.observable_settings
         #  - In AA case, also add hole histogram
         #  - In the case of semi-inclusive measurements construct difference of histograms
-        self.get_histogram(observable_type, observable, pt_suffix=pt_suffix, jetscape_key=jetscape_key)
+        self.get_histogram(observable_type, observable, pt_suffix=pt_suffix, jetscape_key=jetscape_key, reference=reference)
 
         # Normalization
         # Note: If we divide by the sum of weights (corresponding to n_events) and multiply by the
         #       pt-hat cross-section, then JETSCAPE distribution gives cross-section: dsigma/dx (in mb)
         self.scale_histogram(self.observable_settings[jetscape_key], observable_type, observable, 
-                             pt_suffix=pt_suffix, self_normalize=self_normalize)
+                             pt_suffix=pt_suffix, self_normalize=self_normalize, reference=reference)
     
     #-------------------------------------------------------------------------------------------
     # Get histogram and add to self.observable_settings
     #  - In AA case, also add hole histogram
     #  - In the case of semi-inclusive measurements construct difference of histograms    
     #-------------------------------------------------------------------------------------------
-    def get_histogram(self, observable_type, observable, pt_suffix='', jetscape_key=''):
+    def get_histogram(self, observable_type, observable, pt_suffix='', jetscape_key='', reference=False):
 
-        keys = [key.ReadObj().GetTitle() for key in self.input_file.GetListOfKeys()]
+        if reference:
+            input_file = self.reference_file
+        else:
+            input_file = self.input_file
+
+        keys = [key.ReadObj().GetTitle() for key in input_file.GetListOfKeys()]
 
         # In the case of semi-inclusive measurements construct difference of histograms  
         if 'semi_inclusive' in observable_type:
-            self.construct_semi_inclusive_histogram(keys, observable_type, observable, jetscape_key)
+            self.construct_semi_inclusive_histogram(keys, observable_type, observable, jetscape_key, reference)
 
         # For all other histograms, get the histogram directly
         # For those observables that we do hole subtraction, also construct the hole histogram
@@ -357,7 +362,7 @@ class PlotResults(common_base.CommonBase):
             # Get histogram
             self.hname = f'h_{observable_type}_{observable}{self.suffix}{pt_suffix}'
             if self.hname in keys:
-                h_jetscape = self.input_file.Get(self.hname)
+                h_jetscape = input_file.Get(self.hname)
                 h_jetscape.SetDirectory(0)
                 h_jetscape.SetName(f'{self.hname}_{jetscape_key}')
             else:
@@ -367,7 +372,12 @@ class PlotResults(common_base.CommonBase):
     #-------------------------------------------------------------------------------------------
     # Construct semi-inclusive observables from difference of histograms
     #-------------------------------------------------------------------------------------------
-    def construct_semi_inclusive_histogram(self, keys, observable_type, observable, jetscape_key):
+    def construct_semi_inclusive_histogram(self, keys, observable_type, observable, jetscape_key, reference):
+
+        if reference:
+            input_file = self.reference_file
+        else:
+            input_file = self.input_file
 
         if self.sqrts == 2760: # Delta recoil
 
@@ -376,11 +386,11 @@ class PlotResults(common_base.CommonBase):
             hname_ntrigger = f'h_{observable_type}_alice_trigger_pt{observable}'
             self.hname = f'h_{observable_type}_{observable}_R{self.jet_R}'
             if hname_low_trigger in keys and hname_high_trigger in keys and hname_ntrigger in keys:
-                h_jetscape_low = self.input_file.Get(hname_low_trigger)
+                h_jetscape_low = input_file.Get(hname_low_trigger)
                 h_jetscape_low.SetDirectory(0)
-                h_jetscape_high = self.input_file.Get(hname_high_trigger)
+                h_jetscape_high = input_file.Get(hname_high_trigger)
                 h_jetscape_high.SetDirectory(0)
-                h_jetscape_ntrigger = self.input_file.Get(hname_ntrigger)
+                h_jetscape_ntrigger = input_file.Get(hname_ntrigger)
                 h_jetscape_ntrigger.SetDirectory(0)
                 
                 low_trigger = (self.low_trigger_range[0]+self.low_trigger_range[1])/2
@@ -400,9 +410,9 @@ class PlotResults(common_base.CommonBase):
             hname_ntrigger = f'h_{observable_type}_star_trigger_pt'
             self.hname = f'h_{observable_type}_{observable}_R{self.jet_R}'
             if hname in keys and hname_ntrigger in keys:
-                self.observable_settings[jetscape_key] = self.input_file.Get(hname)
+                self.observable_settings[jetscape_key] = input_file.Get(hname)
                 self.observable_settings[jetscape_key].SetDirectory(0)
-                h_jetscape_ntrigger = self.input_file.Get(hname_ntrigger)
+                h_jetscape_ntrigger = input_file.Get(hname_ntrigger)
                 h_jetscape_ntrigger.SetDirectory(0)
                 
                 trigger = (self.trigger_range[0]+self.trigger_range[1])/2
@@ -418,15 +428,20 @@ class PlotResults(common_base.CommonBase):
     #  - observable-specific factors (eta, sigma_inel, n_jets, ...)
     #  - self-normalization
     #-------------------------------------------------------------------------------------------
-    def scale_histogram(self, h, observable_type, observable, pt_suffix='', self_normalize=False):
+    def scale_histogram(self, h, observable_type, observable, pt_suffix='', self_normalize=False, reference=False):
 
         if not h:
             return
 
+        if reference:
+            input_file = self.reference_file
+        else:
+            input_file = self.input_file
+
         #--------------------------------------------------
         # (1) Scale all histograms by the min-pt-hat cross-section and weight-sum
-        h_xsec = self.input_file.Get('h_xsec')
-        weight_sum = self.input_file.Get('h_weight_sum').GetBinContent(1)
+        h_xsec = input_file.Get('h_xsec')
+        weight_sum = input_file.Get('h_weight_sum').GetBinContent(1)
         xsec = h_xsec.GetBinContent(1) / h_xsec.GetEntries()
         h.Scale(xsec/weight_sum)
         
@@ -486,7 +501,7 @@ class PlotResults(common_base.CommonBase):
                         hname = f'h_{observable_type}_Dz_atlas{self.suffix}_Njets{pt_suffix}'
                     elif observable in ['Dz_cms', 'Dpt_cms']:
                         hname = f'h_{observable_type}_Dz_cms{self.suffix}_Njets{pt_suffix}'
-                    h_njets = self.input_file.Get(hname)
+                    h_njets = input_file.Get(hname)
                     h_njets.SetDirectory(0)
                     n_jets = h_njets.GetBinContent(1) # Note that Njets histogram should also be scaled by xsec/n_events
                     if n_jets > 0.:
@@ -523,7 +538,7 @@ class PlotResults(common_base.CommonBase):
                     h.Scale(1.e6) # convert to nb
                 if observable in ['Dz_atlas', 'Dpt_atlas']:
                     hname = f'h_{observable_type}_Dz_atlas{self.suffix}_Njets{pt_suffix}'
-                    h_njets = self.input_file.Get(hname)
+                    h_njets = input_file.Get(hname)
                     h_njets.SetDirectory(0)
                     n_jets = h_njets.GetBinContent(1) # Note that Njets histogram should also be scaled by xsec/n_events
                     if n_jets > 0.:
@@ -906,6 +921,11 @@ if __name__ == '__main__':
     # If invalid inputDir is given, exit
     if not os.path.exists(args.inputFile):
         print('File "{0}" does not exist! Exiting!'.format(args.inputFile))
+        sys.exit(0)
+
+    # If invalid reference file is given, exit
+    if not os.path.exists(args.refFile):
+        print('File "{0}" does not exist! Exiting!'.format(args.refFile))
         sys.exit(0)
 
     analysis = PlotResults(config_file=args.configFile, input_file=args.inputFile, reference_file=args.refFile)
