@@ -37,7 +37,7 @@ jobs:
         cmake ..
         make -j2
 
-    - name: Curl site to process any pending files
+    - name: load website to process any pending files
       run: |
         $GITHUB_WORKSPACE/JETSCAPE/test/plot/load_site.py
 
