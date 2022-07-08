@@ -37,10 +37,6 @@ jobs:
         cmake ..
         make -j2
 
-    - name: load website to process any pending files
-      run: |
-        $GITHUB_WORKSPACE/JETSCAPE/test/plot/load_site.py
-
     - name: Generate pp events
       run: |
         cd $GITHUB_WORKSPACE/JETSCAPE/build
