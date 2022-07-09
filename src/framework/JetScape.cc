@@ -783,7 +783,6 @@ void JetScape::CheckForWriterFromXML(const char *writerName,
     VERBOSE(2) << "Writer is on.";
     auto writer = JetScapeModuleFactory::createInstance(writerName);
     if (writer) {
-      writer->SetId("JetScape writer");
       dynamic_pointer_cast<JetScapeWriter>(writer)->SetOutputFileName(
           outputFilename);
       Add(writer);
