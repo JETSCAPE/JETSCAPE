@@ -31,7 +31,7 @@ namespace Jetscape {
 class JetScapeWriter : public JetScapeModuleBase {
 
 public:
-  JetScapeWriter(){ SetId("Jetscape writer"); };
+  JetScapeWriter(){ SetId("JetScape writer"); };
   JetScapeWriter(string m_file_name_out) { file_name_out = m_file_name_out; }
   virtual ~JetScapeWriter(){};
 
