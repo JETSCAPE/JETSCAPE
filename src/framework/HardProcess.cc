@@ -56,7 +56,12 @@ void HardProcess::Init() {
                 "add an initial state module.";
     }
   }
-
+    string status = GetXMLElementText({"PartonPrinter","Status"});
+    if (status!="off")
+    {
+        printer = GetXMLElementText({"PartonPrinter","FileName"});
+        JSINFO << BOLDYELLOW << "Extra parton info goes to " << printer ;
+    }
   InitTask();
 
   JetScapeTask::InitTasks();
@@ -108,6 +113,7 @@ void HardProcess::CollectHeader(weak_ptr<JetScapeWriter> w) {
     auto &header = f->GetHeader();
     header.SetSigmaGen(GetSigmaGen());
     header.SetSigmaErr(GetSigmaErr());
+    header.SetPtHat(GetPtHat());
     header.SetEventWeight(GetEventWeight());
   }
 }

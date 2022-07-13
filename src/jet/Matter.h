@@ -93,6 +93,7 @@ public:
 
   int flag_useHybridHad = 0;
 
+
   double qhat = 0.0;
   double ehat = 0.0;
   double e2hat = 0.0;
@@ -115,7 +116,7 @@ public:
   double qhatTab1D[dimQhatTab] = {0.0};
   double qhatTab2D[dimQhatTab][dimQhatTab] = {{0.0}};
 
-  double tStart;
+  double tStart;// = 0.6;
   int iEvent;
   bool debug_flag = 0;
   long NUM1;
@@ -145,6 +146,16 @@ public:
   // flag to make sure initialize only once
   static bool flag_init;
 
+
+  //qhat related functions
+  int QhatParametrizationType;
+  double GeneralQhatFunction(int QhatParametrization, double Temperature, double EntropyDensity, double FixAlphas, double Qhat0, double E, double muSquare);
+  double RunningAlphaS(double muSquare);
+  double VirtualityQhatFunction(int QhatParametrization,  double enerLoc, double muSquare);
+  double ModifiedProbability(int QhatParametrization, double tempLoc, double sdLoc, double enerLoc, double muSquare);  
+  double IntegralPDF(double xB, double a, double b);
+  double qhatA, qhatB, qhatC, qhatD;
+  
   //SC: for elastic scattering
   void flavor(int &CT, int &KATT0, int &KATT2, int &KATT3,
               unsigned int &max_color, unsigned int &color0,
@@ -176,6 +187,7 @@ protected:
 private:
   // Allows the registration of the module so that it is available to be used by the Jetscape framework.
   static RegisterJetScapeModule<Matter> reg;
+  double tscale;
 };
 
 #endif // MATTER_H

@@ -2,14 +2,14 @@
 
 <jetscape>
   
-  <nEvents> 200 </nEvents>
+  <nEvents> 2 </nEvents>
   
   <JetScapeWriterAscii> on </JetScapeWriterAscii>
 
   <!-- Inital State Module  -->
-  <IS>
+  <!--IS>
     <Trento> </Trento>
-  </IS>
+  </IS-->
   
   <!-- Hard Process -->
   <Hard>
@@ -21,22 +21,25 @@
   </Hard>
   
   <!--Preequilibrium Dynamics Module -->
-  <Preequilibrium>
+  <!--Preequilibrium>
     <NullPreDynamics> </NullPreDynamics>
-  </Preequilibrium>
+  </Preequilibrium-->
   
   <!-- Hydro  Module  -->
-  <Hydro>
+  <!--Hydro>
     <Brick bjorken_expansion_on="false" start_time="0.6"> </Brick>
-  </Hydro>
+  </Hydro-->
   
   <!--Eloss Modules -->
   <Eloss>
     <Matter>
-      <in_vac> 0 </in_vac>
+      <in_vac> 1 </in_vac>
     </Matter>
-    <Lbt> </Lbt>
   </Eloss>
+  
+  <!--PartonPrinter>
+      <FileName>./FinalPartonsInfo.dat</FileName>
+  </PartonPrinter-->
   
   <!-- Jet Hadronization Module -->
   <JetHadronization>

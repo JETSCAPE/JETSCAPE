@@ -43,6 +43,7 @@ private:
 
 protected:
   static Pythia8::Pythia pythia;
+  std::uniform_real_distribution<double> ZeroOneDistribution;
 };
 
 #endif // COLORLESSHADRONIZATION_H

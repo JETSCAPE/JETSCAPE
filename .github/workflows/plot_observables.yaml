@@ -1,0 +1,67 @@
+name: plot observables
+
+on:
+  pull_request:
+    branches:
+      - main
+      - release-candidate
+      - JETSCAPE-3.5-RC
+
+env:
+  PULL_NUMBER: ${{ github.event.number }}
+
+jobs:
+  build:
+    name: Run_Plot_Test
+    runs-on: ubuntu-latest
+    
+    container:
+      image: jetscape/base:stable
+      options: --user root
+      
+    steps:
+      
+    - name: Checkout JETSCAPE
+      uses: actions/checkout@v2
+      with:
+        path: JETSCAPE
+      
+    - name: Build JETSCAPE
+      run: |
+        cd $GITHUB_WORKSPACE/JETSCAPE
+        mkdir build
+        cd build
+        cmake ..
+        make -j2
+
+    - name: Generate pp events
+      run: |
+        cd $GITHUB_WORKSPACE/JETSCAPE/build
+        $GITHUB_WORKSPACE/JETSCAPE/build/runJetscape $GITHUB_WORKSPACE/JETSCAPE/test/pp/config/jetscape_user_PP19_weighted.xml $GITHUB_WORKSPACE/JETSCAPE/config/jetscape_master.xml
+
+    - name: Plot observables
+      run: |
+        echo $PULL_NUMBER
+        $GITHUB_WORKSPACE/JETSCAPE/test/generate_plots.sh -j $GITHUB_WORKSPACE/JETSCAPE -o $GITHUB_WORKSPACE/JETSCAPE/test/plot/output/new
+
+    - name: Prepare TAR file for transfer
+      run: |
+        export ET=`date "+%Y%m%d%H%M%S"`
+        mkdir /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive
+        cd /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/new
+        tar -cvzf /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive/files_$ET.tar.gz .
+        cd /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive
+        echo "pwd of archive"
+        pwd
+        echo "ls of archive"
+        ls
+
+    - name: Deploy Plots
+      uses: airvzxf/ftp-deployment-action@latest
+      with:
+        server: "ftp.joelatessa.com"
+        user: "jetscapeTest@plot.joelatessa.com"
+        password: ${{ secrets.JETSCAPE_FTP_PASS }}
+        local_dir: "./JETSCAPE/test/plot/output/archive"
+        remote_dir: "./"
+        delete: "false"

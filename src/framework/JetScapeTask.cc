@@ -55,9 +55,10 @@ void JetScapeTask::Exec() { VERBOSE(7); }
 void JetScapeTask::ExecuteTasks() {
   VERBOSE(7) << " : # Subtasks = " << tasks.size();
   for (auto it : tasks) {
-    JSDEBUG << "Executing " << it->GetId();
-    if (it->active_exec)
+    if (it->active_exec) {
+      JSDEBUG << "Executing " << it->GetId();
       it->Exec();
+	}
   }
 }
 

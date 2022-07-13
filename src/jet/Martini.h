@@ -70,12 +70,13 @@ private:
   const double eLossCut = 1.0;
 
   double Q0; // Separation scale between Matter and Martini
-  double alphas;
+  double alpha_s0, alpha_s;
   double alpha_em;
   double g;
   double pcut;         // below this scale, no further Eloss
   double hydro_Tc;     // critical temperature
-  double hydro_tStart; // initilization time of hydro
+  double tStart; // initilization time of hydro
+  int run_alphas;      // running alpha_s or not
   int recoil_on;       // turn on recoil
 
   //Import.h//
@@ -140,6 +141,8 @@ private:
 
   // Allows the registration of the module so that it is available to be used by the Jetscape framework.
   static RegisterJetScapeModule<Martini> reg;
+
+  double RunningAlphaS(double muSquare);
 
 public:
   Martini();

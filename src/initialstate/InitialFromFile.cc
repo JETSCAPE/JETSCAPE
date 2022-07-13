@@ -20,10 +20,13 @@ RegisterJetScapeModule<InitialFromFile> InitialFromFile::reg("InitialFromFile");
 
 InitialFromFile::InitialFromFile() {
   SetId("InitialFromFile");
+  h5_helper_ = new HydroinfoH5;
   event_id_ = -1;
 }
 
-InitialFromFile::~InitialFromFile() {}
+InitialFromFile::~InitialFromFile() {
+  delete h5_helper_;
+}
 
 void InitialFromFile::InitTask() {}
 

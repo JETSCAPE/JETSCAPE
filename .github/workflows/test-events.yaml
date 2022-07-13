@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - release-candidate
+      - JETSCAPE-3.5-RC
 
 jobs:
   build:
@@ -12,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     
     container:
-      image: jetscape/base:v1.4
+      image: jetscape/base:stable
       options: --user root
       
     steps:
@@ -29,15 +30,9 @@ jobs:
         cd build
         cmake ..
         make -j2
-        
-    - name: Checkout JETSCAPE-analysis
-      uses: actions/checkout@v2
-      with:
-        repository: jdmulligan/JETSCAPE-analysis
-        path: JETSCAPE-analysis
       
     - name: Run pp tests
-      run: $GITHUB_WORKSPACE/JETSCAPE-analysis/test/runTest.sh -j $GITHUB_WORKSPACE/JETSCAPE -a $GITHUB_WORKSPACE/JETSCAPE-analysis -c $GITHUB_WORKSPACE/JETSCAPE-analysis/test/pp/config/jetscapeTestConfig.yaml -o $GITHUB_WORKSPACE/JETSCAPE-analysis/test/pp/output/new -r $GITHUB_WORKSPACE/JETSCAPE-analysis/test/pp/output/latest
+      run: $GITHUB_WORKSPACE/JETSCAPE/test/runTest.sh -j $GITHUB_WORKSPACE/JETSCAPE -c $GITHUB_WORKSPACE/JETSCAPE/test/pp/config/jetscapeTestConfig.yaml -o $GITHUB_WORKSPACE/JETSCAPE/test/pp/output/new -r $GITHUB_WORKSPACE/JETSCAPE/test/pp/output/latest
       
     - name: Run Pb-Pb tests
-      run: $GITHUB_WORKSPACE/JETSCAPE-analysis/test/runTest.sh -j $GITHUB_WORKSPACE/JETSCAPE -a $GITHUB_WORKSPACE/JETSCAPE-analysis -c $GITHUB_WORKSPACE/JETSCAPE-analysis/test/PbPb/config/jetscapeTestConfig.yaml -o $GITHUB_WORKSPACE/JETSCAPE-analysis/test/PbPb/output/new -r $GITHUB_WORKSPACE/JETSCAPE-analysis/test/PbPb/output/latest
+      run: $GITHUB_WORKSPACE/JETSCAPE/test/runTest.sh -j $GITHUB_WORKSPACE/JETSCAPE -c $GITHUB_WORKSPACE/JETSCAPE/test/PbPb/config/jetscapeTestConfig.yaml -o $GITHUB_WORKSPACE/JETSCAPE/test/PbPb/output/new -r $GITHUB_WORKSPACE/JETSCAPE/test/PbPb/output/latest

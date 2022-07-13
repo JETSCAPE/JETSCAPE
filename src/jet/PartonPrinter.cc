@@ -21,6 +21,7 @@
 #include <GTL/node_map.h>
 #include "JetClass.h"
 #include "JetScapeLogger.h"
+#include <string>
 
 using namespace std;
 
@@ -35,7 +36,10 @@ PartonPrinter::~PartonPrinter() {}
 
 void PartonPrinter::Init() {
   this->SetId("PartonPrinter");
-  dist_output.open("./distributions.dat");
+    JSINFO << "Intialize PartonPrinter ...";
+    string filename = GetXMLElementText({"PartonPrinter","FileName"});
+    
+  dist_output.open(filename,std::ios::app);
 }
 
 void PartonPrinter::Exec() {

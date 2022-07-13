@@ -92,11 +92,11 @@ void SmashWrapper::InitTask() {
       config.take({"Logging", "default"}, einhard::TRACE));
   smash::create_all_loggers(config["Logging"]);
   // Read in the rest of configuration
-  float end_time = GetXMLElementDouble({"Afterburner", "SMASH", "end_time"});
-  config["General"]["End_Time"] = end_time;
+  end_time_ = GetXMLElementDouble({"Afterburner", "SMASH", "end_time"});
+  config["General"]["End_Time"] = end_time_;
   only_final_decays_ =
       GetXMLElementInt({"Afterburner", "SMASH", "only_decays"});
-  JSINFO << "End time for SMASH is set to " << end_time << " fm/c";
+  JSINFO << "End time for SMASH is set to " << end_time_ << " fm/c";
   if (only_final_decays_) {
     JSINFO << "SMASH will only perform resonance decays, no propagation";
   }
@@ -117,16 +117,17 @@ void SmashWrapper::ExecuteTask() {
   modus->jetscape_hadrons_ = soft_particlization_sampler_->Hadron_list_;
   const int n_events = modus->jetscape_hadrons_.size();
   JSINFO << "SMASH: obtained " << n_events << " events from particlization";
-  smash::Particles *smash_particles = smash_experiment_->particles();
+  // SMASH within JETSCAPE only works with one (the first) ensemble
+  smash::Particles *smash_particles = smash_experiment_->first_ensemble();
   for (unsigned int i = 0; i < n_events; i++) {
     JSINFO << "Event " << i << " SMASH starts with "
            << modus->jetscape_hadrons_[i].size() << " particles.";
     smash_experiment_->initialize_new_event();
     if (!only_final_decays_) {
-      smash_experiment_->run_time_evolution();
+      smash_experiment_->run_time_evolution(end_time_);
     }
     smash_experiment_->do_final_decays();
-    smash_experiment_->final_output(i);
+    smash_experiment_->final_output();
     smash_particles_to_JS_hadrons(*smash_particles,
                                   modus->jetscape_hadrons_[i]);
     JSINFO << modus->jetscape_hadrons_[i].size() << " hadrons from SMASH.";

@@ -47,7 +47,7 @@ public:
   void WriteTask(weak_ptr<JetScapeWriter> w);
 
 private:
-  double tStart;       //Hydro starting time
+  double tStart = 0.6; //Hydro starting time
   double T0;           //End of quenching temperature
   double Q0;           //Switching virtuality
   bool in_vac;         //In vacuum or not switch

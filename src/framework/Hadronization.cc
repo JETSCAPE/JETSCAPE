@@ -26,6 +26,7 @@ using namespace std;
 namespace Jetscape {
 
 Hadronization::Hadronization() {
+    SetId("Hadronization");
     TransformPartonsConnected = false;
     HydroHyperSurfaceConnected_ = false;
     GetHydroCellSignalConnected_ = false;
