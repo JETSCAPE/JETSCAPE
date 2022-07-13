@@ -17,8 +17,3 @@ examples/test_hydro_files/
 external_packages/freestream-milne/
 external_packages/smash/smash_code/
 external_packages/ipglasma
-
-# include otherwise ignored .dat and .hepmc files if
-# they are in the test directory or its subdirectories
-!test/**/*.dat
-!test/**/*.hepmc
