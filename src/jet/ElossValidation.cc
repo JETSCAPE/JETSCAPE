@@ -38,7 +38,7 @@ ElossValidate::ElossValidate() {
 ElossValidate::~ElossValidate() { VERBOSE(8); }
 
 void ElossValidate::Init() {
-  JSINFO << "Intialize ElossValidate ...";
+  JSINFO << "Initialize ElossValidate ...";
 
   std::string s = GetXMLElementText({"Eloss", "ElossValidate", "name"});
   JSINFO << s << " to be initializied ...";

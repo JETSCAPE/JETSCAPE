@@ -24,7 +24,7 @@ InitialState::~InitialState() {}
 void InitialState::Init() {
   JetScapeModuleBase::Init();
 
-  JSINFO << "Intialize InitialState ... " << GetId() << " ...";
+  JSINFO << "Initialize InitialState ... " << GetId() << " ...";
 
   grid_max_x_ = GetXMLElementDouble({"IS", "grid_max_x"});
   grid_max_y_ = GetXMLElementDouble({"IS", "grid_max_y"});

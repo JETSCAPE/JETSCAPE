@@ -42,7 +42,7 @@ HardProcess::~HardProcess() {
 void HardProcess::Init() {
   JetScapeModuleBase::Init();
 
-  JSINFO << "Intialize HardProcess : " << GetId() << " ...";
+  JSINFO << "Initialize HardProcess : " << GetId() << " ...";
 
   VERBOSE(8);
 

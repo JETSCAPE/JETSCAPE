@@ -45,11 +45,11 @@ JetScapeModuleBase::~JetScapeModuleBase() { disconnect_all(); }
    */
 void JetScapeModuleBase::Init() {
   if (!JetScapeXML::Instance()->GetXMLRootMaster()) {
-    JSWARN << "Not a valide JetScape Master XML file or no XML file loaded!";
+    JSWARN << "Not a valid JetScape Main XML file or no XML file loaded!";
     exit(-1);
   }
   if (!JetScapeXML::Instance()->GetXMLRootUser()) {
-    JSWARN << "Not a valide JetScape XML file or no XML file loaded!";
+    JSWARN << "Not a valid JetScape XML file or no XML file loaded!";
     exit(-1);
   }
 }
