@@ -68,13 +68,13 @@ void JetScapeXML::OpenXMLMainFile() {
         if (!xml_root_main) {
           JSWARN << "Not a valid JetScape XML Main file!";
           exit(-1);
-        } else {
+        }
+      } else {
           JSWARN << "XML Main file not found/not properly opened! Error code : "
                  << errCode;
           exit(-1);
-	    }
+	      }
       }
-	}
 
     xml_main_file_open = true;
   }
