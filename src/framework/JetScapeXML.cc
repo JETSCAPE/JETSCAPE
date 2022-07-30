@@ -130,7 +130,7 @@ tinyxml2::XMLElement *
 JetScapeXML::GetXMLElementMaster(std::initializer_list<const char *> &path) {
 
   JSWARN << "Deprecated function GetXMLElementMaster(). Call GetXMLElementMain() instead!";
-  return GetXMLElementMain(std::initializer_list<const char *> &path);
+  return GetXMLElementMain(path);
 }
 
 //________________________________________________________________
@@ -144,7 +144,7 @@ JetScapeXML::GetXMLElementMain(std::initializer_list<const char *> &path) {
   tinyxml2::XMLElement *currentElement = nullptr;
   for (auto &elementName : path) {
     if (!currentElement) {
-      currentElement = xml_root_master->FirstChildElement(elementName);
+      currentElement = xml_root_main->FirstChildElement(elementName);
 
       if (currentElement) {
         VERBOSE(3) << "Loaded " << elementName << " from xml_root_main";

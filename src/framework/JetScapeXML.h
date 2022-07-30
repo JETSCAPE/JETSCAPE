@@ -59,9 +59,9 @@ public:
   // Main file:
 
   tinyxml2::XMLElement *GetXMLRootMain() const { return xml_root_main; }
-  tinyxml2::XMLDocument &GetXMLDocumentMain() const { return xml_doc_main; }
+  tinyxml2::XMLDocument &GetXMLDocumentMain() { return xml_doc_main; }
   tinyxml2::XMLElement *
-  GetXMLElementMain(std::initializer_list<const char *> &path) const;
+  GetXMLElementMain(std::initializer_list<const char *> &path);
 
   void SetXMLMainFileName(string m_name) { xml_main_file_name = m_name; }
   std::string GetXMLMainFileName() const { return xml_main_file_name; }
