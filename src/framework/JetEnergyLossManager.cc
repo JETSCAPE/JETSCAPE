@@ -59,7 +59,7 @@ void JetEnergyLossManager::Clear() {
 }
 
 void JetEnergyLossManager::Init() {
-  JSINFO << "Intialize JetEnergyLoss Manager ...";
+  JSINFO << "Initialize JetEnergyLoss Manager ...";
 
   if (GetNumberOfTasks() < 1) {
     JSWARN << " : No valid Energy Loss Manager modules found ...";
@@ -123,7 +123,7 @@ void JetEnergyLossManager::Exec() {
 
   VERBOSE(3) << " Found " << GetNumberOfTasks()
              << " Eloss Manager Tasks/Modules Execute them ... ";
-  JSDEBUG << "Check and Create Signal/Slots via JetScapeSignalManaher instance "
+  JSDEBUG << "Check and Create Signal/Slots via JetScapeSignalManager instance "
              "if needed ...";
 
   CreateSignalSlots();

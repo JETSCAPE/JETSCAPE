@@ -73,7 +73,7 @@ int main(int argc, char** argv)
   jetscape->SetXMLMasterFileName(masterXMLName);
   jetscape->SetXMLUserFileName(userXMLName);
 
-  // Intialize all modules tasks
+  // Initialize all modules tasks
   jetscape->Init();
 
   // Run JetScape with all task/modules as specified

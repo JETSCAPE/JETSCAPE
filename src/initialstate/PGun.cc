@@ -40,7 +40,7 @@ void PGun::InitTask() {
   VERBOSE(8);
 
   std::string s = GetXMLElementText({"Hard", "PGun", "name"});
-  JSDEBUG << s << " to be initilizied ...";
+  JSDEBUG << s << " to be initialized ...";
 
   fixed_pT = GetXMLElementDouble({"Hard", "PGun", "pT"});
   JSDEBUG << s << " with fixed pT = " << fixed_pT;

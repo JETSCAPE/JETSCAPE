@@ -46,10 +46,10 @@ AdSCFT::AdSCFT() {
 AdSCFT::~AdSCFT() { VERBOSE(8); }
 
 void AdSCFT::Init() {
-  JSINFO << "Intialize AdSCFT ...";
+  JSINFO << "Initialize AdSCFT ...";
 
   std::string s = GetXMLElementText({"Eloss", "AdSCFT", "name"});
-  JSDEBUG << s << " to be initilizied ...";
+  JSDEBUG << s << " to be initialized ...";
 
   //Kappa
   kappa = GetXMLElementDouble({"Eloss", "AdSCFT", "kappa"});

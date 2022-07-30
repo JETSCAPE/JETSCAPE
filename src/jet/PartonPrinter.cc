@@ -36,7 +36,7 @@ PartonPrinter::~PartonPrinter() {}
 
 void PartonPrinter::Init() {
   this->SetId("PartonPrinter");
-    JSINFO << "Intialize PartonPrinter ...";
+    JSINFO << "Initialize PartonPrinter ...";
     string filename = GetXMLElementText({"PartonPrinter","FileName"});
     
   dist_output.open(filename,std::ios::app);

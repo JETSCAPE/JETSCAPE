@@ -46,7 +46,7 @@ void HydroFromFile::InitializeHydro(Parameter parameter_list) {
   VERBOSE(8);
 
   string s = GetXMLElementText({"Hydro", "hydro_from_file", "name"});
-  JSDEBUG << s << " to be initilizied ...";
+  JSDEBUG << s << " to be initialized ...";
 
   hydro_type_ = GetXMLElementInt({"Hydro", "hydro_from_file", "hydro_type"});
   int boost_inv = GetXMLElementInt(

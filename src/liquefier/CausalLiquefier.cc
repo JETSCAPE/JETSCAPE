@@ -49,7 +49,7 @@ CausalLiquefier::CausalLiquefier(){
 
 CausalLiquefier::CausalLiquefier(double dtau_in, double dx_in, double dy_in, double deta_in){
     VERBOSE(8);
-    JSINFO<<"Intialize CausalLiquefier (for Unit Test) ...";
+    JSINFO<<"Initialize CausalLiquefier (for Unit Test) ...";
     dtau = dtau_in;
     dx = dx_in;
     dy = dy_in;
@@ -79,7 +79,7 @@ CausalLiquefier::CausalLiquefier(double dtau_in, double dx_in, double dy_in, dou
 void CausalLiquefier::Init(){
     
     // Initialize parameter with values in XML
-    JSINFO<<"Intialize CausalLiquefier ...";
+    JSINFO<<"Initialize CausalLiquefier ...";
 
     dtau = JetScapeXML::Instance()->GetElementDouble({"Liquefier", "CausalLiquefier", "dtau"});
     dx = JetScapeXML::Instance()->GetElementDouble({"Liquefier", "CausalLiquefier", "dx"});

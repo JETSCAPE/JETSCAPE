@@ -96,7 +96,7 @@ Matter::Matter() {
 Matter::~Matter() { VERBOSE(8); }
 
 void Matter::Init() {
-  JSINFO << "Intialize Matter ...";
+  JSINFO << "Initialize Matter ...";
 
   in_vac = false;
   brick_med = true;
