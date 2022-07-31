@@ -104,7 +104,7 @@ template <class T> void JetScapeWriterStream<T>::Init() {
     output_file.open(GetOutputFileName().c_str());
 
     //Write Init Informations, like XML and ... to file ...
-    //WriteInitFileXMLMaster();
+    //WriteInitFileXMLMain();
     //WriteInitFileXMLUser();
   }
 }
@@ -116,13 +116,13 @@ template <class T> void JetScapeWriterStream<T>::Exec() {
   //   WriteEvent();
 }
 
-template <class T> void JetScapeWriterStream<T>::WriteInitFileXMLMaster() {
-  JSDEBUG << "Write XML Master to output file. XML file = "
-          << JetScapeXML::Instance()->GetXMLMasterFileName();
+template <class T> void JetScapeWriterStream<T>::WriteInitFileXMLMain() {
+  JSDEBUG << "Write XML Main to output file. XML file = "
+          << JetScapeXML::Instance()->GetXMLMainFileName();
   tinyxml2::XMLPrinter printer;
-  JetScapeXML::Instance()->GetXMLDocumentMaster().Print(&printer);
-  WriteComment("Init XML Master file used : " +
-               JetScapeXML::Instance()->GetXMLMasterFileName());
+  JetScapeXML::Instance()->GetXMLDocumentMain().Print(&printer);
+  WriteComment("Init XML Main file used : " +
+               JetScapeXML::Instance()->GetXMLMainFileName());
   output_file << printer.CStr();
 }
 

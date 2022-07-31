@@ -59,7 +59,7 @@ void JetScape::Init() {
   JSINFO << BOLDRED << "Initialize JetScape ...";
 
   // Set the names of the XML files in the JetScapeXML instance
-  JetScapeXML::Instance()->OpenXMLMasterFile(GetXMLMasterFileName());
+  JetScapeXML::Instance()->OpenXMLMainFile(GetXMLMainFileName());
   JetScapeXML::Instance()->OpenXMLUserFile(GetXMLUserFileName());
   JSINFO << "================================================================";
 

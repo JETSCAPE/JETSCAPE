@@ -27,7 +27,7 @@
  * @class JetScapeXML
  * @brief JetScape XML init reader class (meant as singleton)
  *
- * This class contains the machinery to load two XML configuration files: a Master file, and a User file.
+ * This class contains the machinery to load two XML configuration files: a Main file, and a User file.
  *
  */
 
@@ -41,19 +41,34 @@ class JetScapeXML {
 public:
   static JetScapeXML *Instance();
 
-  // Master file
+  // Master file: These functions are deprecated. Users should use the Main functions instead.
+  // These functions have been updated to use the 'main' instead of 'master' variables
 
-  tinyxml2::XMLElement *GetXMLRootMaster() { return xml_root_master; }
-  tinyxml2::XMLDocument &GetXMLDocumentMaster() { return xml_doc_master; }
+  tinyxml2::XMLElement *GetXMLRootMaster() { return xml_root_main; }
+  tinyxml2::XMLDocument &GetXMLDocumentMaster() { return xml_doc_main; }
   tinyxml2::XMLElement *
   GetXMLElementMaster(std::initializer_list<const char *> &path);
 
-  void SetXMLMasterFileName(string m_name) { xml_master_file_name = m_name; }
-  std::string GetXMLMasterFileName() { return xml_master_file_name; }
-  bool IsMasterFileOpen() { return xml_master_file_open; }
+  void SetXMLMasterFileName(string m_name) { xml_main_file_name = m_name; }
+  std::string GetXMLMasterFileName() { return xml_main_file_name; }
+  bool IsMasterFileOpen() { return xml_main_file_open; }
 
   void OpenXMLMasterFile();
   void OpenXMLMasterFile(string m_name);
+
+  // Main file:
+
+  tinyxml2::XMLElement *GetXMLRootMain() const { return xml_root_main; }
+  tinyxml2::XMLDocument &GetXMLDocumentMain() { return xml_doc_main; }
+  tinyxml2::XMLElement *
+  GetXMLElementMain(std::initializer_list<const char *> &path);
+
+  void SetXMLMainFileName(string m_name) { xml_main_file_name = m_name; }
+  std::string GetXMLMainFileName() const { return xml_main_file_name; }
+  bool IsMainFileOpen() const { return xml_main_file_open; }
+
+  void OpenXMLMainFile();
+  void OpenXMLMainFile(string m_name);
 
   // User file
 
@@ -70,7 +85,7 @@ public:
   void OpenXMLUserFile(string m_name);
 
   // Helper functions for XML parsing/
-  // Look first in user XML file for a parameter, and if not found look in the master XML file.
+  // Look first in user XML file for a parameter, and if not found look in the main XML file.
   tinyxml2::XMLElement *GetElement(std::initializer_list<const char *> path,
                                    bool isRequired = true);
   std::string GetElementText(std::initializer_list<const char *> path,
@@ -82,22 +97,22 @@ public:
 
 private:
   JetScapeXML() {
-    xml_master_file_name = "";
-    xml_master_file_open = false;
+    xml_main_file_name = "";
+    xml_main_file_open = false;
     xml_user_file_name = "";
     xml_user_file_open = false;
   };
   JetScapeXML(JetScapeXML const &){};
   static JetScapeXML *m_pInstance;
 
-  // Master file
+  // Main file
 
   tinyxml2::XMLElement *
-      xml_root_master; //use unique pointer here instead of raw pointer (check with tinyxml interface)
-  tinyxml2::XMLDocument xml_doc_master;
+      xml_root_main; //use unique pointer here instead of raw pointer (check with tinyxml interface)
+  tinyxml2::XMLDocument xml_doc_main;
 
-  std::string xml_master_file_name;
-  bool xml_master_file_open;
+  std::string xml_main_file_name;
+  bool xml_main_file_open;
 
   // User file
 

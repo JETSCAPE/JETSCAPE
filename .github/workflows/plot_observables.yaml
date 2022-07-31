@@ -37,7 +37,7 @@ jobs:
     - name: Generate pp events
       run: |
         cd $GITHUB_WORKSPACE/JETSCAPE/build
-        $GITHUB_WORKSPACE/JETSCAPE/build/runJetscape $GITHUB_WORKSPACE/JETSCAPE/test/pp/config/jetscape_user_PP19_weighted.xml $GITHUB_WORKSPACE/JETSCAPE/config/jetscape_master.xml
+        $GITHUB_WORKSPACE/JETSCAPE/build/runJetscape $GITHUB_WORKSPACE/JETSCAPE/test/pp/config/jetscape_user_PP19_weighted.xml $GITHUB_WORKSPACE/JETSCAPE/config/jetscape_main.xml
 
     - name: Plot observables
       run: |

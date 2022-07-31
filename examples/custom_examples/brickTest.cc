@@ -75,7 +75,7 @@ int main(int argc, char** argv)
   Show();
 
   auto jetscape = make_shared<JetScape>();
-  jetscape->SetXMLMasterFileName("../config/jetscape_master.xml");
+  jetscape->SetXMLMainFileName("../config/jetscape_main.xml");
   jetscape->SetXMLUserFileName("../config/jetscape_user.xml");
   jetscape->SetId("primary");
   

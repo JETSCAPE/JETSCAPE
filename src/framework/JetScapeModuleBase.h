@@ -61,11 +61,11 @@ public:
 
   /** This function sets the name of the XML file to be used to store output information for the modules/tasks of a JetScapeTask.
    */
-  void SetXMLMasterFileName(string m_name) { xml_master_file_name = m_name; }
+  void SetXMLMainFileName(string m_name) { xml_main_file_name = m_name; }
 
   /** This function returns the XML file name. This file contains the output data for the modules/tasks of a JetScapeTask.
    */
-  string GetXMLMasterFileName() { return xml_master_file_name; }
+  string GetXMLMainFileName() { return xml_main_file_name; }
 
   /** This function sets the name of the XML file to be used to store output information for the modules/tasks of a JetScapeTask.
    */
@@ -107,7 +107,7 @@ public:
   }
 
 private:
-  std::string xml_master_file_name;
+  std::string xml_main_file_name;
   std::string xml_user_file_name;
   static int current_event;
   shared_ptr<std::mt19937> mt19937_generator_;
