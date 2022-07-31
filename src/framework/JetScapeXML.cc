@@ -34,35 +34,62 @@ JetScapeXML *JetScapeXML::Instance() {
 
 //________________________________________________________________
 void JetScapeXML::OpenXMLMasterFile() {
+  JSWARN << "Deprecated function OpenXMLMasterFile(): Call OpenXMLMainFile() instead!";
+  OpenXMLMainFile();
+}
 
-  if (!xml_master_file_open) {
+void JetScapeXML::OpenXMLMainFile() {
 
-    xml_doc_master.LoadFile((char *)GetXMLMasterFileName().c_str());
-    VERBOSE(2) << "Trying XML Master file : " << GetXMLMasterFileName();
+  if (!IsMainFileOpen()) {
 
-    if (xml_doc_master.ErrorID() < 1) {
-      JSINFO << "Open XML Master file : " << GetXMLMasterFileName();
-      xml_root_master =
-          (tinyxml2::XMLElement *)xml_doc_master.FirstChildElement("jetscape");
+    xml_doc_main.LoadFile((char *)GetXMLMainFileName().c_str());
+    VERBOSE(2) << "Trying XML Main file : " << GetXMLMainFileName();
 
-      if (!xml_root_master) {
-        JSWARN << "Not a valid JetScape XML Master file!";
+    if (xml_doc_main.ErrorID() < 1) {
+      JSINFO << "Open XML Main file : " << GetXMLMainFileName();
+      xml_root_main =
+          (tinyxml2::XMLElement *)xml_doc_main.FirstChildElement("jetscape");
+
+      if (!xml_root_main) {
+        JSWARN << "Not a valid JetScape XML Main file!";
         exit(-1);
       }
-    } else {
-      JSWARN << "XML Master file not found/not properly opened! Error code : "
-             << xml_doc_master.ErrorID();
-      exit(-1);
-    }
+    } else { //Check for an old default Master file
+	  auto errCode = xml_doc_main.ErrorID(); //Save the original error code
+      SetXMLMainFileName("../config/jetscape_master.xml"); //Try old default Master XML file
+      xml_doc_main.LoadFile((char *)GetXMLMainFileName().c_str());
+      VERBOSE(2) << "Looking for Old XML Master file : " << GetXMLMainFileName();
 
-    xml_master_file_open = true;
+      if (xml_doc_main.ErrorID() < 1) {
+        JSWARN << "Using Deprecated XML Master file : " << GetXMLMainFileName();
+        xml_root_main =
+            (tinyxml2::XMLElement *)xml_doc_main.FirstChildElement("jetscape");
+
+        if (!xml_root_main) {
+          JSWARN << "Not a valid JetScape XML Main file!";
+          exit(-1);
+        }
+      } else {
+          JSWARN << "XML Main file not found/not properly opened! Error code : "
+                 << errCode;
+          exit(-1);
+	      }
+      }
+
+    xml_main_file_open = true;
   }
 }
 
 //________________________________________________________________
 void JetScapeXML::OpenXMLMasterFile(string m_name) {
-  SetXMLMasterFileName(m_name);
-  OpenXMLMasterFile();
+  JSWARN << "Deprecated function OpenXMLMasterFile(): Call OpenXMLMainFile() instead!";
+  OpenXMLMainFile(m_name);
+}
+
+//________________________________________________________________
+void JetScapeXML::OpenXMLMainFile(string m_name) {
+  SetXMLMainFileName(m_name);
+  OpenXMLMainFile();
 }
 
 //________________________________________________________________
@@ -102,19 +129,27 @@ void JetScapeXML::OpenXMLUserFile(string m_name) {
 tinyxml2::XMLElement *
 JetScapeXML::GetXMLElementMaster(std::initializer_list<const char *> &path) {
 
-  VERBOSE(2) << "Looking for element in Master file: " << path;
+  JSWARN << "Deprecated function GetXMLElementMaster(). Call GetXMLElementMain() instead!";
+  return GetXMLElementMain(path);
+}
 
-  OpenXMLMasterFile();
+//________________________________________________________________
+tinyxml2::XMLElement *
+JetScapeXML::GetXMLElementMain(std::initializer_list<const char *> &path) {
+
+  VERBOSE(2) << "Looking for element in Main file: " << path;
+
+  OpenXMLMainFile();
 
   tinyxml2::XMLElement *currentElement = nullptr;
   for (auto &elementName : path) {
     if (!currentElement) {
-      currentElement = xml_root_master->FirstChildElement(elementName);
+      currentElement = xml_root_main->FirstChildElement(elementName);
 
       if (currentElement) {
-        VERBOSE(3) << "Loaded " << elementName << " from xml_root_master";
+        VERBOSE(3) << "Loaded " << elementName << " from xml_root_main";
       } else {
-        VERBOSE(3) << elementName << " not found in xml_root_master";
+        VERBOSE(3) << elementName << " not found in xml_root_main";
       }
     } else {
       currentElement = currentElement->FirstChildElement(elementName);
@@ -186,11 +221,11 @@ JetScapeXML::GetElement(std::initializer_list<const char *> path,
   if (elementUser) {
     return elementUser;
   }
-  // Else, try to get value from Master XML file
+  // Else, try to get value from Main XML file
   else {
-    tinyxml2::XMLElement *elementMaster = GetXMLElementMaster(path);
-    if (elementMaster) {
-      return elementMaster;
+    tinyxml2::XMLElement *elementMain = GetXMLElementMain(path);
+    if (elementMain) {
+      return elementMain;
     } else {
       if (isRequired) {
         JSWARN << "XML element " << path << " not found, but is required.";
