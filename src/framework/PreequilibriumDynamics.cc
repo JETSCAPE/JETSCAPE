@@ -40,7 +40,7 @@ PreequilibriumDynamics::~PreequilibriumDynamics() {
 void PreequilibriumDynamics::Init() {
   JetScapeModuleBase::Init();
 
-  JSINFO << "Intialize PreequilibriumDynamics : " << GetId() << " ...";
+  JSINFO << "Initialize PreequilibriumDynamics : " << GetId() << " ...";
 
   VERBOSE(8);
 

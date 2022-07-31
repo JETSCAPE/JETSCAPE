@@ -43,7 +43,7 @@ FluidDynamics::~FluidDynamics() {
 void FluidDynamics::Init() {
   JetScapeModuleBase::Init();
 
-  JSINFO << "Intialize FluidDynamics : " << GetId() << " ...";
+  JSINFO << "Initialize FluidDynamics : " << GetId() << " ...";
 
   VERBOSE(8);
   ini = JetScapeSignalManager::Instance()->GetInitialStatePointer().lock();

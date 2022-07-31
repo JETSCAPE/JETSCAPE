@@ -106,7 +106,7 @@ void JetEnergyLoss::Clear() {
 void JetEnergyLoss::Init() {
   JetScapeModuleBase::Init();
 
-  JSINFO << "Intialize JetEnergyLoss ...";
+  JSINFO << "Initialize JetEnergyLoss ...";
 
   deltaT = GetXMLElementDouble({"Eloss", "deltaT"});
 
@@ -122,7 +122,7 @@ void JetEnergyLoss::Init() {
         shared_ptr<JetScapeModuleMutex> mutex_ptr = elossModule->GetMutex();
         if (mutex_ptr) {
           if (!(mutex_ptr->CheckMutex(GetTaskList()))) {
-            JSWARN << "Mutual exclusive Energy-Loss modules attached together!";
+            JSWARN << "Mutually exclusive Energy-Loss modules attached together!";
             throw std::runtime_error("Fix it by attaching one of them.");
           }
         }

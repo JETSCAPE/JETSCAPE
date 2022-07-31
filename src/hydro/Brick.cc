@@ -49,7 +49,7 @@ void Brick::InitTask() {
   VERBOSE(8);
 
   std::string s = GetXMLElementText({"Hydro", "Brick", "name"});
-  JSDEBUG << s << " to be initilizied ...";
+  JSDEBUG << s << " to be initialized ...";
 
   T_brick = GetXMLElementDouble({"Hydro", "Brick", "T"});
   JSDEBUG << s << " with T = " << T_brick;

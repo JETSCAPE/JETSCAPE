@@ -132,7 +132,7 @@ int main(int argc, char** argv)
   
   jetscape->Add(writer);
 
-  // Intialize all modules tasks
+  // Initialize all modules tasks
   jetscape->Init();
 
   // Run JetScape with all task/modules as specified ...

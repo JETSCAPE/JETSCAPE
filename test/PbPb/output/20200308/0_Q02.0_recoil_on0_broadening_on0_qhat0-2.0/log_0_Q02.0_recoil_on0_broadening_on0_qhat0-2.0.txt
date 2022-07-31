@@ -49,7 +49,7 @@
 [Info] 156MB  Set Hydro,JetEnergylossManager and IS Pointers for SignalManager to create Signal/Slots[0m
 [Info] 156MB  Created JetScapeSignalManager Instance[0m
 [Info] 156MB  Calling JetScape InitTasks()...[0m
-[Info] 156MB  Intialize InitialState ... Trento ...[0m
+[Info] 156MB  Initialize InitialState ... Trento ...[0m
 [Info] 156MB  x range for bulk evolution = [-15, 15][0m
 [Info] 156MB   Initialzie TRENTo initial condition [0m
 [Info] 156MB  Random seed used for Trento 1350755646[0m
@@ -71,7 +71,7 @@
 [Info] 158MB  158.738<dE/deta(eta=0)<296.143[0m
 [Info] 158MB  Pb Pb 1  --random-seed 1350755646 --cross-section 6.400000 --beam-energy 2760.000000 --reduced-thickness 0.000000 --fluctuation 1.200000 --nucleon-width 0.900000 --nucleon-min-dist 1.200000 --mean-coeff 1.000000 --std-coeff 3.000000 --skew-coeff 0.000000 --skew-type 1 --jacobian 0.800000 --quiet  --normalization 13.900000 --ncoll  --xy-max 15.000000 --xy-step 0.300000 --eta-max 0.200000 --eta-step 0.200000 --s-max 296.142663 --s-min 158.737749[0m
 [Info] 158MB  TRENTo set[0m
-[Info] 158MB  Intialize HardProcess : UninitializedPythiaGun ...[0m
+[Info] 158MB  Initialize HardProcess : UninitializedPythiaGun ...[0m
 [Info] 158MB  [35mPythia Gun with FSR_on: 0[0m
 [Info] 158MB  [35mPythia Gun with 20 < pTHat < 30[0m
 [Info] 158MB  [35mUse hybrid hadronization? 0[0m
@@ -143,21 +143,21 @@
 
  --------  End PYTHIA Particle Data Table  -----------------------------------------------------------------------------------------
 
-[Info] 161MB  Intialize PreequilibriumDynamics : NullPreDynamics ...[0m
-[Info] 161MB  Intialize FluidDynamics : Brick ...[0m
-[Info] 161MB  Intialize JetEnergyLoss Manager ...[0m
+[Info] 161MB  Initialize PreequilibriumDynamics : NullPreDynamics ...[0m
+[Info] 161MB  Initialize FluidDynamics : Brick ...[0m
+[Info] 161MB  Initialize JetEnergyLoss Manager ...[0m
 [Info] 161MB  Found 1 Eloss Manager Tasks/Modules Initialize them ... [0m
-[Info] 161MB  Intialize JetEnergyLoss ...[0m
+[Info] 161MB  Initialize JetEnergyLoss ...[0m
 [Info] 161MB  Eloss shower with deltaT = 0.1 and maxT = 20[0m
 [Info] 161MB  Found 1 Eloss Tasks/Modules Initialize them ... [0m
-[Info] 161MB  Intialize Matter ...[0m
+[Info] 161MB  Initialize Matter ...[0m
 [Info] 161MB  [35mMATTER input parameter[0m
 [Info] 161MB  [35muse hybrid hadronization later? 0[0m
 [Info] 161MB  [35mmatter shower on: 1[0m
 [Info] 161MB  [35min_vac: 0  brick_med: 0  recoil_on: 0[0m
 [Info] 161MB  [35mQ0: 2 vir_factor: 0.25  qhat0: -2 alphas: 0.2 hydro_Tc: 0.16 brick_length: 5[0m
 [Info] 161MB  Connect JetEnergyLossManager Signal to Hard Process ...[0m
-[Info] 161MB  Intialize Hadronization Manager ...[0m
+[Info] 161MB  Initialize Hadronization Manager ...[0m
 [Info] 161MB  Found 1 Hadronization Manager Tasks/Modules Initialize them ... [0m
 [Info] 161MB  Found 1 Hadronization Tasks/Modules Initialize them ... [0m
 [Info] 162MB  Weak decays are turned on[0m

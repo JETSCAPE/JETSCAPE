@@ -85,7 +85,7 @@ LBT::LBT() {
 LBT::~LBT() { VERBOSE(8); }
 
 void LBT::Init() {
-  JSINFO << "Intialize LBT ...";
+  JSINFO << "Initialize LBT ...";
 
   //...Below is added by Shanshan
   //...read parameters from LBT.input first, but can be changed in JETSCAPE xml file if any conflict exists
@@ -101,7 +101,7 @@ void LBT::Init() {
   //    }
 
   std::string s = GetXMLElementText({"Eloss", "Lbt", "name"});
-  JSDEBUG << s << " to be initilizied ...";
+  JSDEBUG << s << " to be initialized ...";
 
   //double m_qhat=-99.99;
   //lbt->FirstChildElement("qhat")->QueryDoubleText(&m_qhat);
