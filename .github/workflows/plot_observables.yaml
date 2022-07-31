@@ -1,11 +1,11 @@
 name: plot observables
 
 on:
-  pull_request:
+  push:
     branches:
       - main
       - release-candidate
-      - JETSCAPE-3.5-RC
+      - JETSCAPE-3.5.1-RC
 
 env:
   PULL_NUMBER: ${{ github.event.number }}
