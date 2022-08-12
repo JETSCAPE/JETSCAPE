@@ -96,7 +96,7 @@ Matter::Matter() {
 Matter::~Matter() { VERBOSE(8); }
 
 void Matter::Init() {
-  JSINFO << "Initialize Matter ...";
+  JSINFO << "Intialize Matter ...";
 
   in_vac = false;
   brick_med = true;
@@ -782,9 +782,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
                 gammaLoc *
                 (1.0 - (initVx * vxLoc + initVy * vyLoc + initVz * vzLoc));
 
-	    //if(run_alphas==1){ alphas= 4*pi/(9.0*log(2*enerLoc*tempLoc/0.04));}
+        //if(run_alphas==1){ alphas= 4*pi/(9.0*log(2*enerLoc*tempLoc/0.04));}
 
-	    /*            if (qhat0 < 0.0) { // calculate qhat with alphas
+        /*            if (qhat0 < 0.0) { // calculate qhat with alphas
               muD2 = 6.0 * pi * alphas * tempLoc * tempLoc;
               if (enerLoc > 2.0 * pi * tempLoc)
                 qhatLoc = Ca * 50.4864 / pi * pow(alphas, 2) * pow(tempLoc, 3) *
@@ -799,12 +799,12 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
                 qhatLoc = qhat0 * 0.1973;
               else
                 qhatLoc = qhat0 / 96.0 * sdLoc * 0.1973;
-		}*/
+        }*/
 
-	    //GeneralQhatFunction(int QhatParametrizationType, double Temperature, double EntropyDensity, double FixAlphas,  double Qhat0, double E, double muSquare)
-	    double muSquare= pIn[i].t(); //Virtuality of the parent; Revist this when q-hat is virtuality dependent 
-	    qhatLoc= GeneralQhatFunction(QhatParametrizationType, tempLoc, sdLoc, alphas, qhat0, enerLoc, muSquare);
-	  
+        //GeneralQhatFunction(int QhatParametrizationType, double Temperature, double EntropyDensity, double FixAlphas,  double Qhat0, double E, double muSquare)
+        double muSquare= pIn[i].t(); //Virtuality of the parent; Revist this when q-hat is virtuality dependent 
+        qhatLoc= GeneralQhatFunction(QhatParametrizationType, tempLoc, sdLoc, alphas, qhat0, enerLoc, muSquare);
+      
           } else { // outside the QGP medium
             continue;
           }
@@ -815,7 +815,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
           else
             dt_lrf = (time - el_time) * flowFactor;
 
-	  //if(run_alphas==1){ alphas= 4*pi/(9.0*log(2*enerLoc*tempLoc/0.04));}
+      //if(run_alphas==1){ alphas= 4*pi/(9.0*log(2*enerLoc*tempLoc/0.04));}
 
           // solve alphas
           if (qhat0 < 0.0 || QhatParametrizationType==0 || QhatParametrizationType==1 || QhatParametrizationType==5 || 
@@ -828,9 +828,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
           muD2 = 6.0 * pi * soln_alphas * tempLoc * tempLoc;
           prob_el = 42.0 * zeta3 * el_CR  * tempLoc / 6.0 / pi /
                     pi * dt_lrf / 0.1973;
-		  
-	  prob_el=prob_el*ModifiedProbability(QhatParametrizationType, tempLoc, sdLoc, enerLoc, pIn[i].t());
-	    
+          
+      prob_el=prob_el*ModifiedProbability(QhatParametrizationType, tempLoc, sdLoc, enerLoc, pIn[i].t());
+        
           el_rand = ZeroOneDistribution(*GetMt19937Generator());
 
           //cout << "  qhat: " << qhatLoc << "  alphas: " << soln_alphas << "  ener: " << enerLoc << "  prob_el: " << prob_el << "  " << el_rand << endl;
@@ -2388,7 +2388,7 @@ double Matter::generate_vac_z_w_M(int p_id, double M, double t0, double t,
     diff = (ratio - r) / r;
     //JSINFO<< BOLDYELLOW << "num = " << numer << " denom = "<< denom << " ratio = " << numer/denom << " r = " << r ;
     // JSINFO << BOLDYELLOW << " diff = " << diff << " z_mid = " << z_mid_00 ;
-    //	cin >> test ;
+    //    cin >> test ;
 
     if ((diff == 0.0) && ((p_id == gid) || (std::abs(p_id) < 4)))
       return (z_mid_00);
@@ -2477,7 +2477,7 @@ double Matter::generate_L(double form_time) {
     span = (x_high - x_low) / x_high;
   }
 
-  //	cout << " random number for dist = " << r << " distance generated = " << x << endl;
+  //    cout << " random number for dist = " << r << " distance generated = " << x << endl;
 
   return (x);
 }
@@ -2537,14 +2537,14 @@ double Matter::sud_val_GG(double h0, double h1, double h2, double loc_d,
 
   diff = std::abs((intg_L + intg_R - intg) / intg);
 
-  //	cout << " iline, gap, diff = " << i_line << " " << h2 << " " << h1 << "  " << diff << endl ;
-  //	cout << " intg, Left , right = " << intg << " " << intg_L << "  " << intg_R << endl;
+  //    cout << " iline, gap, diff = " << i_line << " " << h2 << " " << h1 << "  " << diff << endl ;
+  //    cout << " intg, Left , right = " << intg << " " << intg_L << "  " << intg_R << endl;
 
   if ((diff > approx) || (span > error)) {
     intg = sud_val_GG(h0, h1, h, loc_d, E1) + sud_val_GG(h0, h, h2, loc_d, E1);
   }
 
-  //	cout << " returning with intg = " << intg << endl;
+  //    cout << " returning with intg = " << intg << endl;
 
   return (intg);
 }
@@ -2702,7 +2702,7 @@ double Matter::sudakov_Pqq(double q0, double q1, double loc_c, double E) {
   sud = 1.0;
 
   if (q1 < 2.0 * q0)
-  //	if (g1<g0)
+  //    if (g1<g0)
   {
     JSWARN << " warning: the lower limit of the sudakov > 1/2 upper limit, "
               "returning 1 ";
@@ -2711,7 +2711,7 @@ double Matter::sudakov_Pqq(double q0, double q1, double loc_c, double E) {
   }
   q = 2.0 * q0;
 
-  //	g = g0 ;
+  //    g = g0 ;
 
   sud = exp(-1.0 * (Tf / 2.0 / pi) * sud_val_QQ(q0, q, q1, loc_c, E));
 
@@ -2772,7 +2772,7 @@ double Matter::sud_val_QQ(double h0, double h1, double h2, double loc_d,
     intg = sud_val_QQ(h0, h1, h, loc_d, E1) + sud_val_QQ(h0, h, h2, loc_d, E1);
   }
 
-  //	cout << " returning with intg = " << intg << endl;
+  //    cout << " returning with intg = " << intg << endl;
 
   return (intg);
 }
@@ -2807,15 +2807,15 @@ double Matter::sud_val_QQ_w_M_vac_only(double M, double h0, double h1,
 
   diff = std::abs((intg_L + intg_R - intg) / intg);
 
-  //	cout << " iline, gap, diff = " << i_line << " " << h2 << " " << h1 << "  " << diff << endl ;
-  //	cout << " intg, Left , right = " << intg << " " << intg_L << "  " << intg_R << endl;
+  //    cout << " iline, gap, diff = " << i_line << " " << h2 << " " << h1 << "  " << diff << endl ;
+  //    cout << " intg, Left , right = " << intg << " " << intg_L << "  " << intg_R << endl;
 
   if ((diff > approx) || (span > error)) {
     intg = sud_val_QQ_w_M_vac_only(M, h0, h1, h, loc_d, E1) +
            sud_val_QQ_w_M_vac_only(M, h0, h, h2, loc_d, E1);
   }
 
-  //	cout << " returning with intg = " << intg << endl;
+  //    cout << " returning with intg = " << intg << endl;
 
   return (intg);
 }
@@ -2844,15 +2844,15 @@ double Matter::sud_z_QQ(double cg, double cg1, double loc_e, double l_fac,
   t9 = std::pow(cg1, 2.0);
   t14 = ((t5 * t4) - t7 * cg / t9 / cg1) * t2 / 3.0;
 
-  //	return(t25);
+  //    return(t25);
 
   q2 = 1.0 / cg1;
   q3 = (cg * q2);
   q5 = 1.0 - q3;
   q6 = std::log(std::abs(q5));
   q8 = std::log(q3);
-  /*	q10 = std::log(q3);
-	q12 = std::log(q5);*/
+  /*    q10 = std::log(q3);
+    q12 = std::log(q5);*/
   q15 = (-1.0 + (2.0 * q3) + q6 - q8) * q2;
 
   if (q15 < 0.0) {
@@ -2916,8 +2916,8 @@ double Matter::sud_z_QQ_w_M_vac_only(double M, double cg, double cg1,
   q5 = 1.0 - q3;
   q6 = std::log(std::abs(q5));
   q8 = std::log(q3);
-  /*	q10 = std::log(q3);
-	q12 = std::log(q5);*/
+  /*    q10 = std::log(q3);
+    q12 = std::log(q5);*/
   q15 = (-1.0 + (2.0 * q3) + q6 - q8) * q2;
 
   if (q15 < 0.0) {
@@ -3330,8 +3330,8 @@ double Matter::sud_val_QG_w_M(double M, double h0, double h1, double h2,
 
   diff = std::abs((intg_L + intg_R - intg) / intg);
 
-  //	cout << " iline, gap, diff = " << i_line << " " << h2 << " " << h1 << "  " << diff << endl ;
-  //	cout << " intg, Left , right = " << intg << " " << intg_L << "  " << intg_R << endl;
+  //    cout << " iline, gap, diff = " << i_line << " " << h2 << " " << h1 << "  " << diff << endl ;
+  //    cout << " intg, Left , right = " << intg << " " << intg_L << "  " << intg_R << endl;
 
   if ((diff > approx) || (span > error)) {
     intg = sud_val_QG_w_M(M, h0, h1, h, loc_d, E1) +
@@ -3363,7 +3363,7 @@ double Matter::sud_z_QG(double cg, double cg1, double loc_e, double l_fac,
   t17 = -1.0 / t2 * (3.0 * cg1 - 6.0 * cg + 4.0 * t6 * cg1 - 4.0 * t11 * cg1) /
         2.0;
 
-  //	return(t17);
+  //    return(t17);
 
   q2 = 1.0 / cg1;
   q3 = cg * q2;
@@ -3584,7 +3584,7 @@ double Matter::P_z_qg_int(double cg, double cg1, double loc_e, double cg3,
   t10 = std::log(1.0 - cg);
   t12 = -cg1 - t2 / 2.0 - 2.0 * t5 + cg + t7 / 2.0 + 2.0 * t10;
 
-  //	return(t12);
+  //    return(t12);
 
   q2 = std::log(cg1);
   q6 = std::log(cg);
@@ -3627,7 +3627,7 @@ double Matter::P_z_qg_int_w_M(double M, double cg, double cg1, double loc_e,
   t10 = std::log(1.0 - cg);
   t12 = -cg1 - t2 / 2.0 - 2.0 * t5 + cg + t7 / 2.0 + 2.0 * t10;
 
-  //	return(t12);
+  //    return(t12);
 
   double q1 = M * M;
   double q2 = 1.0 / cg3;
@@ -3917,7 +3917,7 @@ double Matter::GeneralQhatFunction(int QhatParametrization, double Temperature, 
       break;
       
       //alpha_s at scale muS=2ET and second alpha_s at muS=DebyeMassSquare is fit parameter
-    case 1:	
+    case 1:    
       qhat = (Ca*50.4864/pi)*RunningAlphaS(ScaleNet)*FixAlphas*pow(Temperature,3)*log(ScaleNet/DebyeMassSquare);
       break;
       
@@ -3984,66 +3984,66 @@ double Matter::VirtualityQhatFunction(int QhatParametrization,  double enerLoc, 
   else
     {  
       switch(QhatParametrization)
-	{
-	case 0:
+    {
+    case 0:
           ans =  1.0;
           break;
-	  
-	case 1:
+      
+    case 1:
           ans =  1.0;
           break;
 
-	case 2:
+    case 2:
           ans =  1.0;
           break;  
-	  
-	case 3:
+      
+    case 3:
           ans =  1.0;
           break;
 
-	case 4:
+    case 4:
           ans =  1.0;
           break;  
 
-	case 5:
-	  ans =  1.0 + qhatA*log(Q00*Q00)*log(Q00*Q00) + qhatB*pow(log(Q00*Q00),4);
-	  ans = ans/( 1.0 + qhatA*log(muSquare)*log(muSquare) + qhatB*pow(log(muSquare),4)  );
-	  break;
-	  
-	case 6: 
-	  xB  = muSquare/(2.0*enerLoc);
-	  xB0 = Q00*Q00/(2.0*enerLoc); if(xB<=xB0){ans=1.0; break; }
-	  if ( qhatC > 0.0 && xB < 0.99)
-	    {
-	      ans = ( exp(qhatC*(1.0-xB)) - 1.0 )/(1.0 + qhatA*log(muSquare/0.04) + qhatB*log(muSquare/0.04)*log(muSquare/0.04) );
-	      ans = ans*(1.0 + qhatA*log(Q00*Q00/0.04) + qhatB*log(Q00*Q00/0.04)*log(Q00*Q00/0.04) )/( exp(qhatC*(1.0-xB0)) - 1.0 );
-	      //JSINFO<<"K xB="<<xB<<", and (E,muSquare)=("<<enerLoc<<","<<muSquare<<"), and Virtuality dep Qhat="<<ans;
-	    }
-	  else if( qhatC == 0.0 && xB < 0.99)
-	    {
-	      ans = (1.0-xB)/(1.0 + qhatA*log(muSquare/0.04) + qhatB*log(muSquare/0.04)*log(muSquare/0.04) );
-	      ans = ans*(1.0 + qhatA*log(Q00*Q00/0.04) + qhatB*log(Q00*Q00/0.04)*log(Q00*Q00/0.04) )/(1-xB0);
-	    }
-	  else {ans=0.0;}	  
-	  //JSINFO<<"L xB="<<xB<<", and (E,muSquare)=("<<enerLoc<<","<<muSquare<<"), and Virtuality dep Qhat="<<ans;
+    case 5:
+      ans =  1.0 + qhatA*log(Q00*Q00)*log(Q00*Q00) + qhatB*pow(log(Q00*Q00),4);
+      ans = ans/( 1.0 + qhatA*log(muSquare)*log(muSquare) + qhatB*pow(log(muSquare),4)  );
+      break;
+      
+    case 6: 
+      xB  = muSquare/(2.0*enerLoc);
+      xB0 = Q00*Q00/(2.0*enerLoc); if(xB<=xB0){ans=1.0; break; }
+      if ( qhatC > 0.0 && xB < 0.99)
+        {
+          ans = ( exp(qhatC*(1.0-xB)) - 1.0 )/(1.0 + qhatA*log(muSquare/0.04) + qhatB*log(muSquare/0.04)*log(muSquare/0.04) );
+          ans = ans*(1.0 + qhatA*log(Q00*Q00/0.04) + qhatB*log(Q00*Q00/0.04)*log(Q00*Q00/0.04) )/( exp(qhatC*(1.0-xB0)) - 1.0 );
+          //JSINFO<<"K xB="<<xB<<", and (E,muSquare)=("<<enerLoc<<","<<muSquare<<"), and Virtuality dep Qhat="<<ans;
+        }
+      else if( qhatC == 0.0 && xB < 0.99)
+        {
+          ans = (1.0-xB)/(1.0 + qhatA*log(muSquare/0.04) + qhatB*log(muSquare/0.04)*log(muSquare/0.04) );
+          ans = ans*(1.0 + qhatA*log(Q00*Q00/0.04) + qhatB*log(Q00*Q00/0.04)*log(Q00*Q00/0.04) )/(1-xB0);
+        }
+      else {ans=0.0;}      
+      //JSINFO<<"L xB="<<xB<<", and (E,muSquare)=("<<enerLoc<<","<<muSquare<<"), and Virtuality dep Qhat="<<ans;
           break;
 
-	case 7:
-	  xB  = muSquare/(2.0*enerLoc);
-	  xB0 = Q00*Q00/(2.0*enerLoc); if(xB<=xB0){ans=1.0; break; }
-	  ans = IntegralPDF(xB, qhatC, qhatD)/(1.0 + qhatA*log(muSquare/0.04) + qhatB*log(muSquare/0.04)*log(muSquare/0.04) );
-	  IntegralNorm = IntegralPDF(xB0, qhatC, qhatD);
-	  if( IntegralNorm > 0.0 )
-	    {
-	      ans=ans*(1.0 + qhatA*log(muSquare/0.04) + qhatB*log(muSquare/0.04)*log(muSquare/0.04) )/IntegralNorm;
-	    }
-	  else {ans=0;}
-	  //JSINFO<<"L xB="<<xB<<", and (E,muSquare)=("<<enerLoc<<","<<muSquare<<"), and Virtuality dep Qhat="<<ans; 
-	  break;
-	  
-	default:
-	  JSINFO<<"q-hat Parametrization "<<QhatParametrization<<" is not used, VirtualityQhatFunction is set to zero or one";
-	}
+    case 7:
+      xB  = muSquare/(2.0*enerLoc);
+      xB0 = Q00*Q00/(2.0*enerLoc); if(xB<=xB0){ans=1.0; break; }
+      ans = IntegralPDF(xB, qhatC, qhatD)/(1.0 + qhatA*log(muSquare/0.04) + qhatB*log(muSquare/0.04)*log(muSquare/0.04) );
+      IntegralNorm = IntegralPDF(xB0, qhatC, qhatD);
+      if( IntegralNorm > 0.0 )
+        {
+          ans=ans*(1.0 + qhatA*log(muSquare/0.04) + qhatB*log(muSquare/0.04)*log(muSquare/0.04) )/IntegralNorm;
+        }
+      else {ans=0;}
+      //JSINFO<<"L xB="<<xB<<", and (E,muSquare)=("<<enerLoc<<","<<muSquare<<"), and Virtuality dep Qhat="<<ans; 
+      break;
+      
+    default:
+      JSINFO<<"q-hat Parametrization "<<QhatParametrization<<" is not used, VirtualityQhatFunction is set to zero or one";
+    }
     }
 
   //JSINFO<<"Qhat Type="<<QhatParametrization<<", and (E,muSquare)=("<<enerLoc<<","<<muSquare<<"), and Virtuality dep Qhat="<<ans;
@@ -4120,11 +4120,11 @@ double Matter::IntegralPDF(double xB, double a, double b)
     {
       ix = xB/dX;
       for(int i=ix; i<N; i++)
-	{
-	  X= (i+0.5)*dX;
-	  if (X<Xmin){X=Xmin;}
-	  ans = ans + pow(X,a)*pow(1-X,b)*dX;
-	}
+    {
+      X= (i+0.5)*dX;
+      if (X<Xmin){X=Xmin;}
+      ans = ans + pow(X,a)*pow(1-X,b)*dX;
+    }
     }
   //JSINFO<<"(xB,a,b)=("<<xB<<","<<a<<","<<b<<"), \t Area="<<ans;
   return ans;
@@ -4497,6 +4497,11 @@ void Matter::colljet22(int CT, double temp, double qhat0ud, double v0[4],
   double p0ex[4] = {0.0};
   double vc[4] = {0.0};
 
+  int ct1_loop, ct2_loop, flag1, flag2;
+
+  flag1 = 0;
+  flag2 = 0;
+
   //  Initial 4-momentum of jet
   //
   //************************************************************
@@ -4508,8 +4513,20 @@ void Matter::colljet22(int CT, double temp, double qhat0ud, double v0[4],
 
   int ic = 0;
 
+  ct1_loop = 0;
   do {
+    ct1_loop++;
+    if(flag2 == 1 || ct1_loop > 1e6){
+       flag1 = 1;
+       break;
+    }
+    ct2_loop = 0;
     do {
+      ct2_loop++;
+      if(ct2_loop > 1e6){
+         flag2 = 1;
+         break;
+      }
       xw = 15.0 * ran0(&NUM1);
       razim = 2.0 * pi * ran0(&NUM1);
       rcos = 1.0 - 2.0 * ran0(&NUM1);
@@ -4520,15 +4537,13 @@ void Matter::colljet22(int CT, double temp, double qhat0ud, double v0[4],
       p2[1] = p2[0] * rsin * cos(razim);
       p2[2] = p2[0] * rsin * sin(razim);
 
-      f1 = pow(xw, 3) / (exp(xw) - 1) / 1.4215;
-      f2 = pow(xw, 3) / (exp(xw) + 1) / 1.2845;
       //
       //    cms energy
       //
       ss =
           2.0 * (p0[0] * p2[0] - p0[1] * p2[1] - p0[2] * p2[2] - p0[3] * p2[3]);
 
-      //	if(ss.lt.2.d0*qhat0ud) goto 14
+      //    if(ss.lt.2.d0*qhat0ud) goto 14
 
       tmin = qhat0ud;
       tmid = ss / 2.0;
@@ -4539,13 +4554,16 @@ void Matter::colljet22(int CT, double temp, double qhat0ud, double v0[4],
       rant = ran0(&NUM1);
       tt = rant * ss;
 
-      //		ic+=1;
-      //		cout << p0[0] << "  " << p2[0] <<  endl;
-      //		cout << tt << "  " << ss <<  "" << qhat0ud <<endl;
-      //		cout << ic << endl;
+      //        ic+=1;
+      //        cout << p0[0] << "  " << p2[0] <<  endl;
+      //        cout << tt << "  " << ss <<  "" << qhat0ud <<endl;
+      //        cout << ic << endl;
 
     } while ((tt < qhat0ud) || (tt > (ss - qhat0ud)));
 
+    f1 = pow(xw, 3) / (exp(xw) - 1) / 1.4215;
+    f2 = pow(xw, 3) / (exp(xw) + 1) / 1.2845;
+ 
     uu = ss - tt;
 
     if (CT == 1) {
@@ -4680,6 +4698,21 @@ void Matter::colljet22(int CT, double temp, double qhat0ud, double v0[4],
     rank = ran0(&NUM1);
   } while (rank > (msq * ff));
 
+  if(flag1 == 1 || flag2 == 1){ // scatterings cannot be properly sampled
+    transback(v0, p0);
+    transback(v0, p4);
+    qt = 0;
+    p2[0] = 0;
+    p2[1] = 0;
+    p2[2] = 0;
+    p2[3] = 0;
+    p3[0] = 0;
+    p3[1] = 0;
+    p3[2] = 0;
+    p3[3] = 0;
+    return;
+  }
+
   //
   p3[1] = p2[1];
   p3[2] = p2[2];
@@ -4748,17 +4781,17 @@ void Matter::colljet22(int CT, double temp, double qhat0ud, double v0[4],
   //     calculate qt in the rest frame of medium
   //
   //  if(p0[4]>p2[4])
-  //	{
+  //    {
   rotate(p4[1], p4[2], p4[3], p0, 1);
   qt = sqrt(pow(p0[1], 2) + pow(p0[2], 2));
   rotate(p4[1], p4[2], p4[3], p0, -1);
-  //	}
+  //    }
   //  else
-  //	{
-  //	  rotate(p4[1],p4[2],p4[3],p2,1);
-  //	  qt=sqrt(pow(p2[1],2)+pow(p2[2],2));
-  //	  rotate(p4[1],p4[2],p4[3],p2,-1);
-  //	}
+  //    {
+  //      rotate(p4[1],p4[2],p4[3],p2,1);
+  //      qt=sqrt(pow(p2[1],2)+pow(p2[2],2));
+  //      rotate(p4[1],p4[2],p4[3],p2,-1);
+  //    }
   //************************************************************
 
   //
