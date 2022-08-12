@@ -85,7 +85,7 @@ LBT::LBT() {
 LBT::~LBT() { VERBOSE(8); }
 
 void LBT::Init() {
-  JSINFO << "Intialize LBT ...";
+  JSINFO << "Initialize LBT ...";
 
   //...Below is added by Shanshan
   //...read parameters from LBT.input first, but can be changed in JETSCAPE xml file if any conflict exists
@@ -101,7 +101,7 @@ void LBT::Init() {
   //    }
 
   std::string s = GetXMLElementText({"Eloss", "Lbt", "name"});
-  JSDEBUG << s << " to be initilizied ...";
+  JSDEBUG << s << " to be initialized ...";
 
   //double m_qhat=-99.99;
   //lbt->FirstChildElement("qhat")->QueryDoubleText(&m_qhat);
@@ -388,7 +388,7 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2,
         tempX[1] = Vfrozen[1][j];
         tempX[2] = Vfrozen[2][j];
         tempX[3] = Vfrozen[3][j];
-        //          pOut.push_back(Parton(0,21,0,newPt,pIn[i].eta(),pIn[i].phi(),newPt));
+        //	      pOut.push_back(Parton(0,21,0,newPt,pIn[i].eta(),pIn[i].phi(),newPt));
 
         if (std::isnan(tempP[1])) {
           JSWARN << "second instance: j=" << j << ", P[0][j]=" << P[0][j]
@@ -421,7 +421,7 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2,
         tempX[1] = Vfrozen0[1][j];
         tempX[2] = Vfrozen0[2][j];
         tempX[3] = Vfrozen0[3][j];
-        //          pOut.push_back(Parton(0,21,0,newPt,pIn[i].eta(),pIn[i].phi(),newPt));
+        //	      pOut.push_back(Parton(0,21,0,newPt,pIn[i].eta(),pIn[i].phi(),newPt));
         pOut.push_back(Parton(0, KATT10[j], -1, tempP, tempX));
         pOut.back().set_user_info(new LBTUserInfo(0.0));
 
@@ -456,7 +456,7 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2,
         tempX[1] = Vfrozen0[1][j];
         tempX[2] = Vfrozen0[2][j];
         tempX[3] = Vfrozen0[3][j];
-        //          pOut.push_back(Parton(0,21,0,newPt,pIn[i].eta(),pIn[i].phi(),newPt));
+        //	      pOut.push_back(Parton(0,21,0,newPt,pIn[i].eta(),pIn[i].phi(),newPt));
         pOut.push_back(Parton(0, KATT10[j], -1, tempP, tempX));
         pOut.back().set_user_info(new LBTUserInfo(0.0));
 
@@ -822,7 +822,7 @@ void LBT::LBT0(int &n, double &ti) {
       //if(tauswitch==1) { // not ready for JETSCAPE
       //} // if(tauswitch==1)
 
-      //......propagation of each positive particle and its negative counterpart in the current time step    end
+      //......propagation of each positive particle and its negative counterpart in the current time step	end
 
       //......CAT[i]=1 free streaming particle
 
@@ -1028,7 +1028,7 @@ void LBT::LBT0(int &n, double &ti) {
           pc0[0] = P[0][i];
 
           //                V[0][i]=V[0][i]-dt*RTE/0.1970*sqrt(pow(P[1][i],2)+pow(P[2][i],2)+pow(P[3][i],2))/P[0][i];
-          //          Ncoll22=dt*RTE/0.197*((pc0[0]*1-pc0[1]*vc0[1]-pc0[2]*vc0[2]-pc0[3]*vc0[3])/E);
+          //		  Ncoll22=dt*RTE/0.197*((pc0[0]*1-pc0[1]*vc0[1]-pc0[2]*vc0[2]-pc0[3]*vc0[3])/E);
 
           //??????@@@
           //////////////////
@@ -1043,7 +1043,7 @@ void LBT::LBT0(int &n, double &ti) {
 
         //  V[0][i]=V[0][i]-dt*RTE*Xtau/0.1970*sqrt(pow(P[1][i],2)+pow(P[2][i],2)+pow(P[3][i],2))/P[0][i];
         //  probCol=dt_lrf*RTE*Xtau/0.1970;  // ?? fraction
-        //  //          Ncoll22=dt*RTE/0.197*Xtau*((pc0[0]*1-pc0[1]*vc0[1]-pc0[2]*vc0[2]-pc0[3]*vc0[3])/E);
+        //  //		  Ncoll22=dt*RTE/0.197*Xtau*((pc0[0]*1-pc0[1]*vc0[1]-pc0[2]*vc0[2]-pc0[3]*vc0[3])/E);
         //}
 
         ////////////////////////////////////////
@@ -1095,7 +1095,7 @@ void LBT::LBT0(int &n, double &ti) {
             KATT1[np0] = KATT2;
             KATT10[np0] = KATT3;
 
-            //          if(pc0[0]<pc2[0] && abs(KATTC0)!=4) { // for the purpose of unit test
+            //		  if(pc0[0]<pc2[0] && abs(KATTC0)!=4) { // for the purpose of unit test
             if (pc0[0] < pc2[0] && abs(KATTC0) != 4 && abs(KATTC0) != 5 &&
                 KATTC0 ==
                     KATT2) { //disable switch for heavy quark, only allow switch for identical particles
@@ -1375,8 +1375,8 @@ void LBT::LBT0(int &n, double &ti) {
           //........................................................................................................
 
           //CAT!!!
-          /*              
-       */
+          /*			  
+	   */
           //for(int m=nnpp+1;m<=np0;m++) { // only put recoil parton CAT as 2, radiated gluons do not count
           //  if(CAT[i]==2) {
           //    CAT[m]=2;
@@ -1699,9 +1699,9 @@ void LBT::titau(double ti, double vf[4], double vp[4], double p0[4], double &Vx,
                 double &Vy, double &Veta, double &Xtau) {
 
   //..............................................................test part
-  //          cout<<"ti"<<" "<<ti<<" "<<"vf"<<" "<<vf[1]<<" "<<vf[2]<<" "<<vf[3]<<endl;
-  //          cout<<"vp[4]"<<" "<<vp[1]<<" "<<vp[2]<<" "<<vp[3]<<" "<<vp[0]<<endl;
-  //          cout<<"p0[4]"<<" "<<p0[1]<<" "<<p0[2]<<" "<<p0[3]<<" "<<p0[0]<<endl;
+  //		  cout<<"ti"<<" "<<ti<<" "<<"vf"<<" "<<vf[1]<<" "<<vf[2]<<" "<<vf[3]<<endl;
+  //		  cout<<"vp[4]"<<" "<<vp[1]<<" "<<vp[2]<<" "<<vp[3]<<" "<<vp[0]<<endl;
+  //		  cout<<"p0[4]"<<" "<<p0[1]<<" "<<p0[2]<<" "<<p0[3]<<" "<<p0[0]<<endl;
   //..............................................................test part
 
   //....notice the form of vf
@@ -1721,11 +1721,11 @@ void LBT::titau(double ti, double vf[4], double vp[4], double p0[4], double &Vx,
   Xtau = (gamma * mt * cosh(Yp - etaf) - pvper * vper) / (mt * cosh(Yp - etas));
 
   //..............................................................test part
-  //          cout<<"gamma"<<" "<<gamma<<" "<<"mt"<<" "<<mt<<" "<<"Yp"<<" "<<Yp<<endl;
-  //          cout<<"etas"<<" "<<etas<<" "<<"etaf"<<" "<<etaf<<" "<<"pper"<<" "<<pper<<endl;
-  //          cout<<"vper"<<" "<<vper<<" "<<"pvper"<<" "<<pvper<<endl;
-  //          cout<<"Vx"<<" "<<Vx<<" "<<"Vy"<<" "<<Vy<<" "<<"Veta"<<" "<<Veta<<endl;
-  //          cout<<"Xtau"<<" "<<Xtau<<endl;
+  //		  cout<<"gamma"<<" "<<gamma<<" "<<"mt"<<" "<<mt<<" "<<"Yp"<<" "<<Yp<<endl;
+  //		  cout<<"etas"<<" "<<etas<<" "<<"etaf"<<" "<<etaf<<" "<<"pper"<<" "<<pper<<endl;
+  //		  cout<<"vper"<<" "<<vper<<" "<<"pvper"<<" "<<pvper<<endl;
+  //		  cout<<"Vx"<<" "<<Vx<<" "<<"Vy"<<" "<<Vy<<" "<<"Veta"<<" "<<Veta<<endl;
+  //		  cout<<"Xtau"<<" "<<Xtau<<endl;
   //..............................................................test part
 }
 //.........................................................................
@@ -1885,7 +1885,7 @@ void LBT::flavor(int &CT, int &KATT0, int &KATT2, int &KATT3, double RTE,
       CT = 13;
       KATT3 = 21;
       KATT2 = 21;
-      //          KATT0=KATT0;
+      //	      KATT0=KATT0;
     }
 
     if (a > R3 / R00 && a <= (R3 + R4) / R00) {
@@ -1900,7 +1900,7 @@ void LBT::flavor(int &CT, int &KATT0, int &KATT2, int &KATT3, double RTE,
         goto f1;
       }
       KATT2 = KATT3;
-      //          KATT0=KATT0
+      //	      KATT0=KATT0
     }
 
     if (a > (R3 + R4) / R00 && a <= (R3 + R4 + R5) / R00) {
@@ -1929,7 +1929,7 @@ void LBT::flavor(int &CT, int &KATT0, int &KATT2, int &KATT3, double RTE,
       CT = 7;
       KATT3 = -KATT0;
       KATT2 = KATT3;
-      //          KATT0=KATT0
+      //	      KATT0=KATT0
     }
 
     //  if(a>(R00-R8)/R00 && a<=1.0)
@@ -1969,9 +1969,9 @@ void LBT::linear(int KATT, double E, double T, double &T1, double &T2,
         (Rg3[iT2][iE2] - Rg3[iT1][iE2]) * (T - T1) / (T2 - T1) + Rg3[iT1][iE2];
     RTEg3 = (RTE2 - RTE1) * (E - E1) / (E2 - E1) + RTE1;
 
-    //      RTE1=(qhatG[iT2][iE1]-qhatG[iT1][iE1])*(T-T1)/(T2-T1)+qhatG[iT1][iE1];
-    //      RTE2=(qhatG[iT2][iE2]-qhatG[iT1][iE2])*(T-T1)/(T2-T1)+qhatG[iT1][iE2];
-    //      qhatTP=(RTE2-RTE1)*(E-E1)/(E2-E1)+RTE1;
+    //	  RTE1=(qhatG[iT2][iE1]-qhatG[iT1][iE1])*(T-T1)/(T2-T1)+qhatG[iT1][iE1];
+    //	  RTE2=(qhatG[iT2][iE2]-qhatG[iT1][iE2])*(T-T1)/(T2-T1)+qhatG[iT1][iE2];
+    //	  qhatTP=(RTE2-RTE1)*(E-E1)/(E2-E1)+RTE1;
 
   } else if (KATT == 4 || KATT == -4 || KATT == 5 ||
              KATT == -5) { // add heavy quark channel
@@ -1987,9 +1987,9 @@ void LBT::linear(int KATT, double E, double T, double &T1, double &T2,
            RHQ12[iT1][iE2];
     RTEHQ12 = (RTE2 - RTE1) * (E - E1) / (E2 - E1) + RTE1;
 
-    //      RTE1=(qhatHQ[iT2][iE1]-qhatHQ[iT1][iE1])*(T-T1)/(T2-T1)+qhatHQ[iT1][iE1];
-    //      RTE2=(qhatHQ[iT2][iE2]-qhatHQ[iT1][iE2])*(T-T1)/(T2-T1)+qhatHQ[iT1][iE2];
-    //      qhatTP=(RTE2-RTE1)*(E-E1)/(E2-E1)+RTE1;
+    //	  RTE1=(qhatHQ[iT2][iE1]-qhatHQ[iT1][iE1])*(T-T1)/(T2-T1)+qhatHQ[iT1][iE1];
+    //	  RTE2=(qhatHQ[iT2][iE2]-qhatHQ[iT1][iE2])*(T-T1)/(T2-T1)+qhatHQ[iT1][iE2];
+    //	  qhatTP=(RTE2-RTE1)*(E-E1)/(E2-E1)+RTE1;
 
   } else {
     double RTE1 =
@@ -2028,9 +2028,9 @@ void LBT::linear(int KATT, double E, double T, double &T1, double &T2,
         (Rq8[iT2][iE2] - Rq8[iT1][iE2]) * (T - T1) / (T2 - T1) + Rq8[iT1][iE2];
     RTEq8 = (RTE2 - RTE1) * (E - E1) / (E2 - E1) + RTE1;
 
-    //      RTE1=(qhatLQ[iT2][iE1]-qhatLQ[iT1][iE1])*(T-T1)/(T2-T1)+qhatLQ[iT1][iE1];
-    //      RTE2=(qhatLQ[iT2][iE2]-qhatLQ[iT1][iE2])*(T-T1)/(T2-T1)+qhatLQ[iT1][iE2];
-    //      qhatTP=(RTE2-RTE1)*(E-E1)/(E2-E1)+RTE1;
+    //	  RTE1=(qhatLQ[iT2][iE1]-qhatLQ[iT1][iE1])*(T-T1)/(T2-T1)+qhatLQ[iT1][iE1];
+    //	  RTE2=(qhatLQ[iT2][iE2]-qhatLQ[iT1][iE2])*(T-T1)/(T2-T1)+qhatLQ[iT1][iE2];
+    //	  qhatTP=(RTE2-RTE1)*(E-E1)/(E2-E1)+RTE1;
   }
 }
 
@@ -2066,23 +2066,23 @@ void LBT::twflavor(int &CT, int &KATT0, int &KATT2, double E, double T) {
 
   //.....for gluon
   if (KATT00 == 21) {
-    //    R0  =RTE
+    //	R0  =RTE
     double R1 = RTEg1;
     double R2 = RTEg2;
-    //    R3  =RTEg3
+    //	R3  =RTEg3
 
     if (KATT20 == 21) {
       double a = ran0(&NUM1);
       if (a <= R1 / (R1 + R2)) {
         CT = 1;
-        //            KATT3=KATT2
-        //            KATT2=21
-        //            KATT0=21
+        //	        KATT3=KATT2
+        //		    KATT2=21
+        //		    KATT0=21
       }
 
       if (a > R1 / (R1 + R2)) {
         CT = 2;
-        //            KATT3=KATT2
+        //	        KATT3=KATT2
         b = floor(ran0(&NUM1) * 6 + 1);
         if (b == 7) {
           b = 6;
@@ -2094,19 +2094,19 @@ void LBT::twflavor(int &CT, int &KATT0, int &KATT2, double E, double T) {
 
     if (KATT20 != 21) {
       CT = 3;
-      //          KATT3=KATT2
-      //          KATT2=KATT2
-      //          KATT0=21
+      //	      KATT3=KATT2
+      //		  KATT2=KATT2
+      //		  KATT0=21
     }
   }
 
   //.....for quark and antiquark
   if (KATT00 != 21) {
 
-    //    R00 =RTE
-    //    R3  =RTEq3
-    //    R4  =RTEq4
-    //    R5  =RTEq5
+    //	R00 =RTE
+    //	R3  =RTEq3
+    //	R4  =RTEq4
+    //	R5  =RTEq5
     double R6 = RTEq6;
     double R7 = RTEq7;
     double R8 = RTEq8;
@@ -2114,31 +2114,31 @@ void LBT::twflavor(int &CT, int &KATT0, int &KATT2, double E, double T) {
 
     if (KATT20 == 21) {
       CT = 13;
-      //          KATT3=KATT2
-      //          KATT2=21
-      //          KATT0=KATT0
+      //	      KATT3=KATT2
+      //		  KATT2=21
+      //		  KATT0=KATT0
     }
 
     if (KATT20 != 21) {
 
       if (abs(KATT20) != abs(KATT00)) {
         CT = 4;
-        //          KATT3=KATT2
-        //          KATT2=KATT3
-        //          KATT0=KATT0
+        //	      KATT3=KATT2
+        //		  KATT2=KATT3
+        //		  KATT0=KATT0
       }
 
       if (KATT20 == KATT00) {
         CT = 5;
-        //          KATT3=KATT2
-        //          KATT0=KATT0
+        //	      KATT3=KATT2
+        //	      KATT0=KATT0
       }
 
       if (KATT20 == -KATT00) {
         double a = ran0(&NUM1);
         if (a <= (R6) / R00) {
           CT = 6;
-          //             KATT3=KATT2
+          //	         KATT3=KATT2
         tf2:
           b = floor(ran0(&NUM1) * 3 + 1);
           if (b == 4) {
@@ -2153,14 +2153,14 @@ void LBT::twflavor(int &CT, int &KATT0, int &KATT2, double E, double T) {
 
         if (a > (R6) / R00 && a <= (R6 + R7) / R00) {
           CT = 7;
-          //             KATT3=KATT2
-          //             KATT2=KATT3
-          //             KATT0=KATT0
+          //	         KATT3=KATT2
+          //		     KATT2=KATT3
+          //		     KATT0=KATT0
         }
 
         if (a > (R6 + R7) / R00 && a <= 1.0) {
           CT = 8;
-          //             KATT3=KATT2
+          //	         KATT3=KATT2
           KATT2 = 21;
           KATT0 = 21;
         }
@@ -2199,23 +2199,23 @@ void LBT::twlinear(int KATT, double E, double T, double &RTEg1, double &RTEg2,
         (Rg2[iT2][iE2] - Rg2[iT1][iE2]) * (T - T1) / (T2 - T1) + Rg2[iT1][iE2];
     RTEg2 = (RTE2 - RTE1) * (E - E1) / (E2 - E1) + RTE1;
 
-    //       RTE1=(Rg3[iT2][iE1]-Rg3[iT1][iE1])*(T-T1)/(T2-T1)+Rg3[iT1][iE1];
-    //       RTE2=(Rg3[iT2][iE2]-Rg3[iT1][iE2])*(T-T1)/(T2-T1)+Rg3[iT1][iE2];
-    //       RTEg3=(RTE2-RTE1)*(E-E1)/(E2-E1)+RTE1;
+    //	   RTE1=(Rg3[iT2][iE1]-Rg3[iT1][iE1])*(T-T1)/(T2-T1)+Rg3[iT1][iE1];
+    //	   RTE2=(Rg3[iT2][iE2]-Rg3[iT1][iE2])*(T-T1)/(T2-T1)+Rg3[iT1][iE2];
+    //	   RTEg3=(RTE2-RTE1)*(E-E1)/(E2-E1)+RTE1;
   }
 
   if (KATT != 21) {
-    //       RTE1=(Rq3[iT2][iE1]-Rq3[iT1][iE1])*(T-T1)/(T2-T1)+Rq3[iT1][iE1];
-    //       RTE2=(Rq3[iT2][iE2]-Rq3[iT1][iE2])*(T-T1)/(T2-T1)+Rq3[iT1][iE2];
-    //       RTEq3=(RTE2-RTE1)*(E-E1)/(E2-E1)+RTE1;
+    //	   RTE1=(Rq3[iT2][iE1]-Rq3[iT1][iE1])*(T-T1)/(T2-T1)+Rq3[iT1][iE1];
+    //	   RTE2=(Rq3[iT2][iE2]-Rq3[iT1][iE2])*(T-T1)/(T2-T1)+Rq3[iT1][iE2];
+    //	   RTEq3=(RTE2-RTE1)*(E-E1)/(E2-E1)+RTE1;
 
-    //       RTE1=(Rq4[iT2][iE1]-Rq4[iT1][iE1])*(T-T1)/(T2-T1)+Rq4[iT1][iE1];
-    //       RTE2=(Rq4[iT2][iE2]-Rq4[iT1][iE2])*(T-T1)/(T2-T1)+Rq4[iT1][iE2];
-    //       RTEq4=(RTE2-RTE1)*(E-E1)/(E2-E1)+RTE1
+    //	   RTE1=(Rq4[iT2][iE1]-Rq4[iT1][iE1])*(T-T1)/(T2-T1)+Rq4[iT1][iE1];
+    //	   RTE2=(Rq4[iT2][iE2]-Rq4[iT1][iE2])*(T-T1)/(T2-T1)+Rq4[iT1][iE2];
+    //	   RTEq4=(RTE2-RTE1)*(E-E1)/(E2-E1)+RTE1
 
-    //       RTE1=(Rq5[iT2][iE1]-Rq5[iT1][iE1])*(T-T1)/(T2-T1)+Rq5[iT1][iE1];
-    //       RTE2=(Rq5[iT2][iE2]-Rq5[iT1][iE2])*(T-T1)/(T2-T1)+Rq5[iT1][iE2];
-    //       RTEq5=(RTE2-RTE1)*(E-E1)/(E2-E1)+RTE1;
+    //	   RTE1=(Rq5[iT2][iE1]-Rq5[iT1][iE1])*(T-T1)/(T2-T1)+Rq5[iT1][iE1];
+    //	   RTE2=(Rq5[iT2][iE2]-Rq5[iT1][iE2])*(T-T1)/(T2-T1)+Rq5[iT1][iE2];
+    //	   RTEq5=(RTE2-RTE1)*(E-E1)/(E2-E1)+RTE1;
 
     double RTE1 =
         (Rq6[iT2][iE1] - Rq6[iT1][iE1]) * (T - T1) / (T2 - T1) + Rq6[iT1][iE1];
@@ -2366,7 +2366,7 @@ void LBT::colljet22(int CT, double temp, double qhat0ud, double v0[4],
       ss =
           2.0 * (p0[0] * p2[0] - p0[1] * p2[1] - p0[2] * p2[2] - p0[3] * p2[3]);
 
-      //    if(ss.lt.2.d0*qhat0ud) goto 14
+      //	if(ss.lt.2.d0*qhat0ud) goto 14
 
       tmin = qhat0ud;
       tmid = ss / 2.0;
@@ -2377,10 +2377,10 @@ void LBT::colljet22(int CT, double temp, double qhat0ud, double v0[4],
       rant = ran0(&NUM1);
       tt = rant * ss;
 
-      //        ic+=1;
-      //        cout << p0[0] << "  " << p2[0] <<  endl;
-      //        cout << tt << "  " << ss <<  "" << qhat0ud <<endl;
-      //        cout << ic << endl;
+      //		ic+=1;
+      //		cout << p0[0] << "  " << p2[0] <<  endl;
+      //		cout << tt << "  " << ss <<  "" << qhat0ud <<endl;
+      //		cout << ic << endl;
 
     } while ((tt < qhat0ud) || (tt > (ss - qhat0ud)));
 
@@ -2604,17 +2604,17 @@ void LBT::colljet22(int CT, double temp, double qhat0ud, double v0[4],
   //     calculate qt in the rest frame of medium
   //
   //  if(p0[4]>p2[4])
-  //    {
+  //	{
   rotate(p4[1], p4[2], p4[3], p0, 1);
   qt = sqrt(pow(p0[1], 2) + pow(p0[2], 2));
   rotate(p4[1], p4[2], p4[3], p0, -1);
-  //    }
+  //	}
   //  else
-  //    {
-  //      rotate(p4[1],p4[2],p4[3],p2,1);
-  //      qt=sqrt(pow(p2[1],2)+pow(p2[2],2));
-  //      rotate(p4[1],p4[2],p4[3],p2,-1);
-  //    }
+  //	{
+  //	  rotate(p4[1],p4[2],p4[3],p2,1);
+  //	  qt=sqrt(pow(p2[1],2)+pow(p2[2],2));
+  //	  rotate(p4[1],p4[2],p4[3],p2,-1);
+  //	}
   //************************************************************
 
   //
@@ -2927,7 +2927,7 @@ void LBT::twcoll(int CT, double qhat0ud, double v0[4], double p0[4],
   /////////////////////////////////////////////
 
   //
-  //       CT is a variable notated different collision types.
+  //	   CT is a variable notated different collision types.
   //
 
   do {
@@ -2938,11 +2938,11 @@ void LBT::twcoll(int CT, double qhat0ud, double v0[4], double p0[4],
       break;
     //      if((tt<qhat0ud) || (tt>(ss-qhat0ud)))
     //      {
-    //        goto t59;
+    //		goto t59;
     //      }
     uu = ss - tt;
 
-    //       gg to gg
+    //	   gg to gg
     if (CT == 1) {
       //
       mmax = 3.0 - tmin * (ss - tmin) / pow(ss, 2) +
@@ -2953,7 +2953,7 @@ void LBT::twcoll(int CT, double qhat0ud, double v0[4], double p0[4],
       //
     }
 
-    //       gg to qqbar
+    //	   gg to qqbar
     if (CT == 2) {
       //
       mmax = 4.0 / 9.0 * (pow(tmin, 2) + pow((ss - tmin), 2)) / tmin /
@@ -2965,7 +2965,7 @@ void LBT::twcoll(int CT, double qhat0ud, double v0[4], double p0[4],
       //
     }
 
-    //       gq to gq, gqbar to gqbar
+    //	   gq to gq, gqbar to gqbar
     if (CT == 3) {
       //
       if (((pow(ss, 2) + pow((ss - tmin), 2)) / pow(tmin, 2) +
@@ -2989,7 +2989,7 @@ void LBT::twcoll(int CT, double qhat0ud, double v0[4], double p0[4],
       //
     }
 
-    //       qg to qg, qbarg to qbarg
+    //	   qg to qg, qbarg to qbarg
     if (CT == 13) {
       //
       if (((pow(ss, 2) + pow((ss - tmin), 2)) / pow(tmin, 2) +
@@ -3013,8 +3013,8 @@ void LBT::twcoll(int CT, double qhat0ud, double v0[4], double p0[4],
       //
     }
 
-    //       qiqj to qiqj, qiqjbar to qiqjbar, qibarqj to qibarqj, qibarqjbar to qibarqjbar
-    //       for i not equal j
+    //	   qiqj to qiqj, qiqjbar to qiqjbar, qibarqj to qibarqj, qibarqjbar to qibarqjbar
+    //	   for i not equal j
     if (CT == 4) {
       //
       mmax = 4.0 / 9.0 * (pow(ss, 2) + pow((ss - tmin), 2)) / pow(tmin, 2);
@@ -3022,7 +3022,7 @@ void LBT::twcoll(int CT, double qhat0ud, double v0[4], double p0[4],
       //
     }
 
-    //       qiqi to qiqi, qibarqibar to qibarqibar
+    //	   qiqi to qiqi, qibarqibar to qibarqibar
     if (CT == 5) {
       //
       mmax = 4.0 / 9.0 * (pow(ss, 2) + pow((ss - tmin), 2)) / pow(tmin, 2) +
@@ -3044,7 +3044,7 @@ void LBT::twcoll(int CT, double qhat0ud, double v0[4], double p0[4],
       //
     }
 
-    //       qiqibar to qiqibar
+    //	   qiqibar to qiqibar
     if (CT == 7) {
       //
       mmax = 4.0 / 9.0 * (pow(ss, 2) + pow((ss - tmin), 2)) / pow(tmin, 2) +
@@ -3058,7 +3058,7 @@ void LBT::twcoll(int CT, double qhat0ud, double v0[4], double p0[4],
       //
     }
 
-    //       qqbar to gg
+    //	   qqbar to gg
     if (CT == 8) {
       //
       mmax = 4.0 / 9.0 * (pow(tmin, 2) + pow((ss - tmin), 2)) / tmin /
