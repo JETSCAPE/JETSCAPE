@@ -4497,6 +4497,11 @@ void Matter::colljet22(int CT, double temp, double qhat0ud, double v0[4],
   double p0ex[4] = {0.0};
   double vc[4] = {0.0};
 
+  int ct1_loop, ct2_loop, flag1, flag2;
+
+  flag1 = 0;
+  flag2 = 0;
+
   //  Initial 4-momentum of jet
   //
   //************************************************************
@@ -4508,8 +4513,20 @@ void Matter::colljet22(int CT, double temp, double qhat0ud, double v0[4],
 
   int ic = 0;
 
+  ct1_loop = 0;
   do {
+    ct1_loop++;
+    if(flag2 == 1 || ct1_loop > 1e6){
+       flag1 = 1;
+       break;
+    }
+    ct2_loop = 0;
     do {
+      ct2_loop++;
+      if(ct2_loop > 1e6){
+         flag2 = 1;
+         break;
+      }
       xw = 15.0 * ran0(&NUM1);
       razim = 2.0 * pi * ran0(&NUM1);
       rcos = 1.0 - 2.0 * ran0(&NUM1);
@@ -4520,8 +4537,6 @@ void Matter::colljet22(int CT, double temp, double qhat0ud, double v0[4],
       p2[1] = p2[0] * rsin * cos(razim);
       p2[2] = p2[0] * rsin * sin(razim);
 
-      f1 = pow(xw, 3) / (exp(xw) - 1) / 1.4215;
-      f2 = pow(xw, 3) / (exp(xw) + 1) / 1.2845;
       //
       //    cms energy
       //
@@ -4546,6 +4561,9 @@ void Matter::colljet22(int CT, double temp, double qhat0ud, double v0[4],
 
     } while ((tt < qhat0ud) || (tt > (ss - qhat0ud)));
 
+    f1 = pow(xw, 3) / (exp(xw) - 1) / 1.4215;
+    f2 = pow(xw, 3) / (exp(xw) + 1) / 1.2845;
+ 
     uu = ss - tt;
 
     if (CT == 1) {
@@ -4679,6 +4697,21 @@ void Matter::colljet22(int CT, double temp, double qhat0ud, double v0[4],
 
     rank = ran0(&NUM1);
   } while (rank > (msq * ff));
+
+  if(flag1 == 1 || flag2 == 1){ // scatterings cannot be properly sampled
+    transback(v0, p0);
+    transback(v0, p4);
+    qt = 0;
+    p2[0] = 0;
+    p2[1] = 0;
+    p2[2] = 0;
+    p2[3] = 0;
+    p3[0] = 0;
+    p3[1] = 0;
+    p3[2] = 0;
+    p3[3] = 0;
+    return;
+  }
 
   //
   p3[1] = p2[1];
