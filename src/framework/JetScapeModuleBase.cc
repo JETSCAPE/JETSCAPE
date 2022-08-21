@@ -32,7 +32,7 @@ int JetScapeModuleBase::current_event = 0;
 /** Default constructor to create a JetScapeModuleBase. It sets the XML file name to a default string value.                                 
    */
 JetScapeModuleBase::JetScapeModuleBase()
-    : JetScapeTask(), xml_master_file_name(""), xml_user_file_name(""),
+    : JetScapeTask(), xml_main_file_name(""), xml_user_file_name(""),
       mt19937_generator_(nullptr) {}
 
 // ---------------------------------------------------------------------------
@@ -44,12 +44,12 @@ JetScapeModuleBase::~JetScapeModuleBase() { disconnect_all(); }
 /** A virtual function for a default initialization of a JetScapeModuleBase. It also checks whether a XML file is loaded or not.
    */
 void JetScapeModuleBase::Init() {
-  if (!JetScapeXML::Instance()->GetXMLRootMaster()) {
-    JSWARN << "Not a valide JetScape Master XML file or no XML file loaded!";
+  if (!JetScapeXML::Instance()->GetXMLRootMain()) {
+    JSWARN << "Not a valid JetScape Main XML file or no XML file loaded!";
     exit(-1);
   }
   if (!JetScapeXML::Instance()->GetXMLRootUser()) {
-    JSWARN << "Not a valide JetScape XML file or no XML file loaded!";
+    JSWARN << "Not a valid JetScape XML file or no XML file loaded!";
     exit(-1);
   }
 }

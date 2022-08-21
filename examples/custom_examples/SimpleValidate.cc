@@ -56,7 +56,7 @@ int main(int argc, char** argv)
 
   // Main framework task
   auto jetscape = make_shared<JetScape>();
-  jetscape->SetXMLMasterFileName("../config/jetscape_master.xml");
+  jetscape->SetXMLMainFileName("../config/jetscape_main.xml");
   jetscape->SetXMLUserFileName("../config/jetscape_user.xml");
   jetscape->SetId("primary");
 
@@ -99,7 +99,7 @@ int main(int argc, char** argv)
   // Add the writer
   jetscape->Add(writer);
 
-  // Intialize all modules tasks
+  // Initialize all modules tasks
   jetscape->Init();
 
   // Run JetScape with all task/modules as specified ...

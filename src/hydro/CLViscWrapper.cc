@@ -40,7 +40,7 @@ void CLVisc::InitializeHydro(Parameter parameter_list) {
   VERBOSE(8);
 
   std::string s = GetXMLElementText({"Hydro", "CLVisc", "name"});
-  JSDEBUG << s << " to be initilizied ...";
+  JSDEBUG << s << " to be initialized ...";
 
   clvisc::Config cfg;
 

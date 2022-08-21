@@ -56,10 +56,10 @@ void JetScape::Show() { ShowJetscapeBanner(); }
 void JetScape::Init() {
   Show();
 
-  JSINFO << BOLDRED << "Intialize JetScape ...";
+  JSINFO << BOLDRED << "Initialize JetScape ...";
 
   // Set the names of the XML files in the JetScapeXML instance
-  JetScapeXML::Instance()->OpenXMLMasterFile(GetXMLMasterFileName());
+  JetScapeXML::Instance()->OpenXMLMainFile(GetXMLMainFileName());
   JetScapeXML::Instance()->OpenXMLUserFile(GetXMLUserFileName());
   JSINFO << "================================================================";
 

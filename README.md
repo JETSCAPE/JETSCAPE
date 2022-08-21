@@ -1,4 +1,4 @@
-# JETSCAPE 3.5
+# JETSCAPE 3.5.1
 
 The [JETSCAPE](http://jetscape.org) simulation framework is an overarching computational envelope for developing complete event generators for heavy-ion collisions.
 It allows for modular incorporation of a wide variety of existing and future software that simulates different aspects of a heavy-ion collision.
@@ -22,7 +22,7 @@ To generate JETSCAPE events, you should pass an XML file specifying the settings
 ### The XML Configuration
 
 All of the JETSCAPE settings are specified by two XML files:
-- Master XML file: *you don't modify this*
+- Main XML file: *you don't modify this*
   - Contains default values for every possible module and parameter
 - User XML file: *you provide this*
   - Contains a list of which modules to run, and which default parameter values to override
@@ -32,9 +32,9 @@ You should adapt this as you like:
  - Set number of events to run
  - Set output format (`Writer` type) and filename 
  - Set which modules to include (in order of execution)
- - Set any default parameter values (from Master XML file) to override
+ - Set any default parameter values (from Main XML file) to override
  
-The Master XML file is located at `config/jetscape_master.xml`, and contains a list of 
+The Main XML file is located at `config/jetscape_main.xml`, and contains a list of 
 the default parameter settings which will be used for all activated modules (as specified by the User XML file),
 if they are not overridden in the User XML file.
 

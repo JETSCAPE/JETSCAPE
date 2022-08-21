@@ -32,7 +32,7 @@ SoftParticlization::~SoftParticlization() {
 
 void SoftParticlization::Init() {
   JetScapeModuleBase::Init();
-  JSINFO << "Intialize Soft particlization module ... " << GetId() << " ...";
+  JSINFO << "Initialize Soft particlization module ... " << GetId() << " ...";
 
   boost_invariance = check_boost_invariance();
 

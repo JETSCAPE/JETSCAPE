@@ -57,7 +57,7 @@ Martini::Martini() {
 Martini::~Martini() { VERBOSE(8); }
 
 void Martini::Init() {
-  JSINFO << "Intialize Martini ...";
+  JSINFO << "Initialize Martini ...";
 
   double deltaT = 0.0;
   double Martini_deltaT_Max = 0.03 + rounding_error;
@@ -74,7 +74,7 @@ void Martini::Init() {
   }
 
   string s = GetXMLElementText({"Eloss", "Martini", "name"});
-  JSDEBUG << s << " to be initilizied ...";
+  JSDEBUG << s << " to be initialized ...";
 
   tStart = GetXMLElementDouble({"Eloss", "tStart"});
   Q0 = GetXMLElementDouble({"Eloss", "Martini", "Q0"});

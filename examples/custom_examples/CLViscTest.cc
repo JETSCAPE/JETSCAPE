@@ -74,10 +74,10 @@ int main(int argc, char** argv)
   Show();
 
   auto jetscape = make_shared<JetScape>();
-  const char* masterXMLName = "../config/jetscape_master.xml";
+  const char* mainXMLName = "../config/jetscape_main.xml";
   const char* userXMLName = "../config/jetscape_user.xml";
 
-  jetscape->SetXMLMasterFileName(masterXMLName);
+  jetscape->SetXMLMainFileName(mainXMLName);
   jetscape->SetXMLUserFileName(userXMLName);
 
   jetscape->SetNumberOfEvents(1);
@@ -139,7 +139,7 @@ int main(int argc, char** argv)
 #endif
   jetscape->Add(writer);
 
-  // Intialize all modules tasks
+  // Initialize all modules tasks
   jetscape->Init();
 
   // Run JetScape with all task/modules as specified ...

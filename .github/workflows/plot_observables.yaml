@@ -1,11 +1,11 @@
 name: plot observables
 
 on:
-  pull_request:
+  push:
     branches:
       - main
       - release-candidate
-      - JETSCAPE-3.5-RC
+      - JETSCAPE-3.5.1-RC
 
 env:
   PULL_NUMBER: ${{ github.event.number }}
@@ -37,7 +37,7 @@ jobs:
     - name: Generate pp events
       run: |
         cd $GITHUB_WORKSPACE/JETSCAPE/build
-        $GITHUB_WORKSPACE/JETSCAPE/build/runJetscape $GITHUB_WORKSPACE/JETSCAPE/test/pp/config/jetscape_user_PP19_weighted.xml $GITHUB_WORKSPACE/JETSCAPE/config/jetscape_master.xml
+        $GITHUB_WORKSPACE/JETSCAPE/build/runJetscape $GITHUB_WORKSPACE/JETSCAPE/test/pp/config/jetscape_user_PP19_weighted.xml $GITHUB_WORKSPACE/JETSCAPE/config/jetscape_main.xml
 
     - name: Plot observables
       run: |

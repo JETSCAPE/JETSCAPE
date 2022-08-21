@@ -4797,7 +4797,7 @@ void HybridHadronization::stringprep(parton_collection &SP_remnants,
             //for each of those, we will run over each list - if this parton is connected to all partons in the junction, it is taken as part of the junction
             //if the parton is not a part of any preexisting junctions, we create a new junction with the 'current' parton and this parton
             //once we've run through all connected partons, we look at the vector of junctions
-            //any 'junction' composed of more than 2 partons is a 'true' junction and needs to be added to the master junction vector
+            //any 'junction' composed of more than 2 partons is a 'true' junction and needs to be added to the main junction vector
             //any 'junction' composed of 2 partons is NOT a true junction, and the 2nd parton (not the 'current') is not part of any junction
 
             //setting up a few vectors

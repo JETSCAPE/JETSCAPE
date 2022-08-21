@@ -62,7 +62,7 @@ class GenerateJetscapeEvents(common_base.CommonBase):
         self.debug_level = config["debug_level"]
 
         self.xml_user_file = config["xml_user_file"]
-        self.xml_master_file = config["xml_master_file"]
+        self.xml_main_file = config["xml_main_file"]
                 
         self.parameter_scan_dict = config['parameter_scan']
         self.pt_hat_bins = self.parameter_scan_dict['pt_hat_bins']['values']
@@ -115,8 +115,8 @@ class GenerateJetscapeEvents(common_base.CommonBase):
                 os.makedirs(output_dir_bin)
 
             # Copy XML files to pt-hat bin directory
-            xml_master_file_copy = "{}{}".format(output_dir_bin, "jetscape_master.xml")
-            cmd = "rsync {} {}".format(self.xml_master_file, xml_master_file_copy)
+            xml_main_file_copy = "{}{}".format(output_dir_bin, "jetscape_main.xml")
+            cmd = "rsync {} {}".format(self.xml_main_file, xml_main_file_copy)
             os.system(cmd)
 
             xml_user_file_copy = "{}{}".format(output_dir_bin, "jetscape_user.xml")
@@ -156,7 +156,7 @@ class GenerateJetscapeEvents(common_base.CommonBase):
             # Run Jetscape executable
             logfile_name = os.path.join(output_dir_bin, "log_{}.txt".format(dir_label))
             with open(logfile_name, "w") as logfile:
-                cmd = '{}/build/runJetscape jetscape_user.xml jetscape_master.xml'.format(self.jetscape_dir)
+                cmd = '{}/build/runJetscape jetscape_user.xml jetscape_main.xml'.format(self.jetscape_dir)
                 subprocess.run(cmd, check=True, shell=True, stdout=logfile)
                 
             os.chdir(self.output_dir)

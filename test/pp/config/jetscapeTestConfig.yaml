@@ -32,4 +32,4 @@ parameter_scan:
 
 # Generation
 xml_user_file: '${GITHUB_WORKSPACE}/JETSCAPE/test/pp/config/jetscape_user_PP19.xml'
-xml_master_file: '${GITHUB_WORKSPACE}/JETSCAPE/config/jetscape_master.xml'
+xml_main_file: '${GITHUB_WORKSPACE}/JETSCAPE/config/jetscape_main.xml'

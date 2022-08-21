@@ -44,7 +44,7 @@ public:
   bool GetStatus() { return output_file.good(); }
   void Close() { output_file.close(); }
 
-  void WriteInitFileXMLMaster();
+  void WriteInitFileXMLMain();
   void WriteInitFileXMLUser();
 
   void Write(weak_ptr<PartonShower> ps);

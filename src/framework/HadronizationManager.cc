@@ -59,7 +59,7 @@ void HadronizationManager::Clear() {
 }
 
 void HadronizationManager::Init() {
-  JSINFO << "Intialize Hadronization Manager ...";
+  JSINFO << "Initialize Hadronization Manager ...";
 
   if (GetNumberOfTasks() < 1) {
     JSWARN << " : No valid Hadronization Manager modules found ...";
@@ -98,7 +98,7 @@ void HadronizationManager::Exec() {
     GetHadronList(hadrons);
     VERBOSE(2) << " There are " << hd.size()
                << " partons ready for hadronization";
-    VERBOSE(2) << " There are alreay " << hadrons.size() << " hadrons";
+    VERBOSE(2) << " There are already " << hadrons.size() << " hadrons";
 
     for (auto it : GetTaskList()) {
       dynamic_pointer_cast<Hadronization>(it)->AddInPartons(hd);
