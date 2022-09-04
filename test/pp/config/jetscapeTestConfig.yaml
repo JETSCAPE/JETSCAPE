@@ -31,5 +31,5 @@ parameter_scan:
     values: [colorless, colored]
 
 # Generation
-xml_user_file: '${GITHUB_WORKSPACE}/JETSCAPE/test/pp/config/jetscape_user_PP19.xml'
-xml_main_file: '${GITHUB_WORKSPACE}/JETSCAPE/config/jetscape_main.xml'
+xml_user_file: '${GITHUB_WORKSPACE}/${REPO_NAME}/test/pp/config/jetscape_user_PP19.xml'
+xml_main_file: '${GITHUB_WORKSPACE}/${REPO_NAME}/config/jetscape_main.xml'

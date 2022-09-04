@@ -27,5 +27,5 @@ parameter_scan:
     values: [-2.0, 0.5]
 
 # Generation
-xml_user_file: '${GITHUB_WORKSPACE}/JETSCAPE/test/PbPb/config/jetscape_user.xml'
-xml_main_file: '${GITHUB_WORKSPACE}/JETSCAPE/config/jetscape_main.xml'
+xml_user_file: '${GITHUB_WORKSPACE}/${REPO_NAME}/test/PbPb/config/jetscape_user.xml'
+xml_main_file: '${GITHUB_WORKSPACE}/${REPO_NAME}/config/jetscape_main.xml'

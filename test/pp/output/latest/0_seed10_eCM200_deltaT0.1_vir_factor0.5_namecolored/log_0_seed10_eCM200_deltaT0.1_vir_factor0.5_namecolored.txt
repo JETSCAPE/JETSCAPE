@@ -27,9 +27,9 @@
 [Info] | See COPYING file for details.                                |[0m
 [Info] |                                                              |[0m
 [Info] *--------------------------------------------------------------*[0m
-[Info] 158MB  [1m[31mIntialize JetScape ...[0m
+[Info] 158MB  [1m[31mInitialize JetScape ...[0m
 [Info] 158MB  Created JetScapeXML Instance[0m
-[Info] 158MB  Open XML Master file : jetscape_master.xml[0m
+[Info] 158MB  Open XML Main file : jetscape_main.xml[0m
 [Info] 158MB  Open XML User file : jetscape_user.xml[0m
 [Info] 158MB  ================================================================[0m
 [Info] 158MB  nEvents = 10[0m
@@ -37,9 +37,9 @@
 [Info] 158MB  nReuseHydro: 10[0m
 [Info] 158MB  JetScapeTaskSupport found seed 10, using individual engines with seeds created from 10[0m
 [Info] 161MB  JetScape::DetermineTaskList() -- Hard Process: Added PythiaGun to task list.[0m
-[Info] 161MB  JetScape::DetermineTaskList() -- Eloss: Added Matter to Eloss list.[0m
-[Info] 161MB  JetScape::DetermineTaskList() -- JetHadronization: Added ColoredHadronization to task list.[0m
-[Info] 161MB  JetScape::DetermineTaskList() -- JetScapeWriterAscii (test_out.dat) added to task list.[0m
+[Info] 162MB  JetScape::DetermineTaskList() -- Eloss: Added Matter to Eloss list.[0m
+[Info] 162MB  JetScape::DetermineTaskList() -- JetHadronization: Added ColoredHadronization to task list.[0m
+[Info] 162MB  JetScape::DetermineTaskList() -- JetScapeWriterAscii (test_out.dat) added to task list.[0m
 [Info] 162MB  JetScape::DetermineTaskList() -- JetScapeWriterHepMC (test_out.hepmc) added to task list.[0m
 [Info] 162MB  ================================================================[0m
 [Info] 162MB  Found 5 Modules Initialize them ... [0m
@@ -142,5 +142,5 @@
 [Info] 170MB  [1m[30mJetScape finished after 10 events![0m
 [Info] Finished![0m
 
-CPU time: 0.728143 seconds.
+CPU time: 0.752390 seconds.
 Real time: 1.000000 seconds.

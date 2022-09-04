@@ -1,6 +1,6 @@
 #! /bin/bash
 
-JETSCAPE="/home/jetscape-user/JETSCAPE"
+JETSCAPE="/home/jetscape-user/${REPO_NAME}"
 OUTPUT_DIR="${JETSCAPE}/test/pp/output/new"
 
 #  Parse command line options

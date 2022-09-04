@@ -12,8 +12,8 @@ parameter_scan:
 
 #------------------------------------------------------------------
 # Generation parameters
-xml_user_file: '/home/jetscape-user/JETSCAPE/config/jetscape_user_PP19.xml'
-xml_main_file: '/home/jetscape-user/JETSCAPE/config/jetscape_main.xml'
+xml_user_file: '/home/jetscape-user/${REPO_NAME}/config/jetscape_user_PP19.xml'
+xml_main_file: '/home/jetscape-user/${REPO_NAME}/config/jetscape_main.xml'
 
 #------------------------------------------------------------------
 # Analysis parameters -- nothing below affects the generation stage
