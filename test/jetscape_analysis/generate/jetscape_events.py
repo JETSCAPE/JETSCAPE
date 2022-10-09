@@ -83,8 +83,23 @@ class GenerateJetscapeEvents(common_base.CommonBase):
         n_combinations_per_pthat = int(len(parameter_combinations)/len(self.pt_hat_bins))
         parameter_combinations = parameter_combinations[:-n_combinations_per_pthat]
 
+        # Prepare to skip combinations when recoil_on is false AND broadening_on is true
+        recoil_on_idx = -1
+        broadening_on_idx = -1
+
+        if "recoil_on" in parameter_labels:
+            recoil_on_idx = parameter_labels.index("recoil_on")
+
+        if "broadening_on" in parameter_labels:
+            broadening_on_idx = parameter_labels.index("broadening_on")
+
         # Loop through all parameter combinations
         for index, parameter_combination in enumerate(parameter_combinations):
+
+            # Skips combinations when recoil_on is false AND broadening_on is true
+            if recoil_on_idx >= 0 and broadening_on_idx >= 0:
+                if parameter_combination[recoil_on_idx] == 0 and parameter_combination[broadening_on_idx] == 1:
+                    continue
         
             pt_hat_bin = int(index / n_combinations_per_pthat)
             if pt_hat_bin < len(self.pt_hat_bins) - 1:
@@ -146,7 +161,7 @@ class GenerateJetscapeEvents(common_base.CommonBase):
                     for line in fileinput.input(xml_user_file_copy, inplace=True):
                     
                         if parameter_label in line:
-                            print(re.sub(r'{0}>\w*</{0}'.format(parameter_label), '{0}>{1}</{0}'.format(parameter_label, value), line), end='')
+                            print(re.sub(r'{0}>.*?</{0}'.format(parameter_label), '{0}>{1}</{0}'.format(parameter_label, value), line), end='')
                         else:
                             print(line, end='')
 

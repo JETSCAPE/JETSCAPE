@@ -6,7 +6,6 @@ on:
       - main
       - release-candidate
       - JETSCAPE-3.5.1-RC
-      - latessa/generalizedTests
 
 env:
   PULL_NUMBER: ${{ github.event.number }}
