@@ -23,6 +23,7 @@
 #include "hydro_source_base.h"
 #include "LiquefierBase.h"
 #include "data_struct.h"
+#include "JetScapeConstants.h"
 #include "MakeUniqueHelper.h"
 
 using namespace Jetscape;
@@ -67,7 +68,7 @@ public:
     std::array<Jetscape::real, 4> jmu_tmp = {0.0};
     liquefier_ptr.lock()->get_source(tau, x, y, eta_s, jmu_tmp);
     for (int i = 0; i < 4; i++) {
-      j_mu[i] = jmu_tmp[i];
+      j_mu[i] = jmu_tmp[i]/hbarC;  // convert the unit from GeV/fm^4 to 1/fm^5
     }
   }
 };
