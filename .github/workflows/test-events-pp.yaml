@@ -1,4 +1,4 @@
-name: build+regression test
+name: build+regression test pp
 
 on:
   pull_request:
@@ -49,6 +49,3 @@ jobs:
       
     - name: Run pp tests
       run: ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/runTest.sh -j ${GITHUB_WORKSPACE}/${REPO_NAME} -a ${GITHUB_WORKSPACE}/TEST-EXAMPLES -c ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/pp/config/jetscapeTestConfig.yaml -o ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/pp/output/new -r ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/pp/output/latest
-      
-    - name: Run Pb-Pb tests
-      run: ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/runTest.sh -j ${GITHUB_WORKSPACE}/${REPO_NAME} -a ${GITHUB_WORKSPACE}/TEST-EXAMPLES -c ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/PbPb/config/jetscapeTestConfig.yaml -o ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/PbPb/output/new -r ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/PbPb/output/latest
