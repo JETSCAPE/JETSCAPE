@@ -6,11 +6,13 @@ on:
       - main
       - release-candidate
       - JETSCAPE-3.5.1-RC
+      - latessa/generalizedTests
   push:
     branches:
       - main
       - release-candidate
       - JETSCAPE-3.5.1-RC
+      - latessa/generalizedTests
 
 env:
   REPO_NAME: ${{ github.event.repository.name }}
@@ -38,9 +40,15 @@ jobs:
         cd build
         cmake ..
         make -j2
+
+    - name: Checkout TEST-EXAMPLES
+      uses: actions/checkout@v2
+      with:
+        repository: JETSCAPE/TEST-EXAMPLES
+        path: TEST-EXAMPLES
       
     - name: Run pp tests
-      run: ${GITHUB_WORKSPACE}/${REPO_NAME}/test/runTest.sh -j ${GITHUB_WORKSPACE}/${REPO_NAME} -c ${GITHUB_WORKSPACE}/${REPO_NAME}/test/pp/config/jetscapeTestConfig.yaml -o ${GITHUB_WORKSPACE}/${REPO_NAME}/test/pp/output/new -r ${GITHUB_WORKSPACE}/${REPO_NAME}/test/pp/output/latest
+      run: ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/runTest.sh -j ${GITHUB_WORKSPACE}/${REPO_NAME} -a ${GITHUB_WORKSPACE}/TEST-EXAMPLES -c ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/pp/config/jetscapeTestConfig.yaml -o ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/pp/output/new -r ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/pp/output/latest
       
     - name: Run Pb-Pb tests
-      run: ${GITHUB_WORKSPACE}/${REPO_NAME}/test/runTest.sh -j ${GITHUB_WORKSPACE}/${REPO_NAME} -c ${GITHUB_WORKSPACE}/${REPO_NAME}/test/PbPb/config/jetscapeTestConfig.yaml -o ${GITHUB_WORKSPACE}/${REPO_NAME}/test/PbPb/output/new -r ${GITHUB_WORKSPACE}/${REPO_NAME}/test/PbPb/output/latest
+      run: ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/runTest.sh -j ${GITHUB_WORKSPACE}/${REPO_NAME} -a ${GITHUB_WORKSPACE}/TEST-EXAMPLES -c ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/PbPb/config/jetscapeTestConfig.yaml -o ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/PbPb/output/new -r ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/PbPb/output/latest

@@ -35,23 +35,29 @@ jobs:
         cmake ..
         make -j2
 
+    - name: Checkout TEST-EXAMPLES
+      uses: actions/checkout@v2
+      with:
+        repository: JETSCAPE/TEST-EXAMPLES
+        path: TEST-EXAMPLES
+
     - name: Generate pp events
       run: |
         cd ${GITHUB_WORKSPACE}/${REPO_NAME}/build
-        ${GITHUB_WORKSPACE}/${REPO_NAME}/build/runJetscape ${GITHUB_WORKSPACE}/${REPO_NAME}/test/pp/config/jetscape_user_PP19_weighted.xml ${GITHUB_WORKSPACE}/${REPO_NAME}/config/jetscape_main.xml
+        ${GITHUB_WORKSPACE}/${REPO_NAME}/build/runJetscape ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/pp/config/jetscape_user_PP19_weighted.xml ${GITHUB_WORKSPACE}/${REPO_NAME}/config/jetscape_main.xml
 
     - name: Plot observables
       run: |
         echo ${PULL_NUMBER}
-        ${GITHUB_WORKSPACE}/${REPO_NAME}/test/generate_plots.sh -j ${GITHUB_WORKSPACE}/${REPO_NAME} -o ${GITHUB_WORKSPACE}/${REPO_NAME}/test/plot/output/new
+        ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/generate_plots.sh -j ${GITHUB_WORKSPACE}/${REPO_NAME} -a ${GITHUB_WORKSPACE}/TEST-EXAMPLES -o ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/plot/output/new
 
     - name: Prepare TAR file for transfer
       run: |
         export ET=`date "+%Y%m%d%H%M%S"`
-        mkdir ${GITHUB_WORKSPACE}/${REPO_NAME}/test/plot/output/archive
-        cd ${GITHUB_WORKSPACE}/${REPO_NAME}/test/plot/output/new
-        tar -cvzf ${GITHUB_WORKSPACE}/${REPO_NAME}/test/plot/output/archive/files_${ET}.tar.gz .
-        cd ${GITHUB_WORKSPACE}/${REPO_NAME}/test/plot/output/archive
+        mkdir ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/plot/output/archive
+        cd ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/plot/output/new
+        tar -cvzf ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/plot/output/archive/files_${ET}.tar.gz .
+        cd ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/plot/output/archive
         echo "pwd of archive"
         pwd
         echo "ls of archive"
@@ -63,6 +69,6 @@ jobs:
         server: ${{ secrets.JETSCAPE_FTP_SERVER }}
         user: ${{ secrets.JETSCAPE_FTP_USER }}
         password: ${{ secrets.JETSCAPE_FTP_PASS }}
-        local_dir: "./${{ github.event.repository.name }}/test/plot/output/archive"
+        local_dir: "./TEST-EXAMPLES/test/plot/output/archive"
         remote_dir: "./"
         delete: "false"
