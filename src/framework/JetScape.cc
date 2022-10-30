@@ -29,6 +29,9 @@
 #endif
 
 #include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -63,6 +66,9 @@ void JetScape::Init() {
   JetScapeXML::Instance()->OpenXMLUserFile(GetXMLUserFileName());
   JSINFO << "================================================================";
 
+  // Check whether XML elements in the User file are not included in the Main file
+  CompareElementsFromXML();
+
   // Read some general parameters from the XML configuration file
   ReadGeneralParametersFromXML();
 
@@ -80,6 +86,52 @@ void JetScape::Init() {
   SetPointers();
   JSINFO << "Calling JetScape InitTasks()...";
   JetScapeTask::InitTasks();
+}
+
+//________________________________________________________________
+void JetScape::recurseToBuild(std::vector<std::string> &elems, tinyxml2::XMLElement *mElement)
+{
+  tinyxml2::XMLElement *nextElement = mElement->FirstChildElement();
+
+  if (nextElement != nullptr)
+    recurseToBuild(elems, nextElement);
+
+  nextElement = mElement->NextSiblingElement();
+
+  if (nextElement != nullptr)
+    recurseToBuild(elems, nextElement);
+
+  elems.push_back(mElement->Name());
+}
+
+//________________________________________________________________
+void JetScape::recurseToSearch(std::vector<std::string> &elems, tinyxml2::XMLElement *uElement)
+{
+  tinyxml2::XMLElement *nextElement = uElement->FirstChildElement();
+
+  if (nextElement != nullptr)
+    recurseToSearch(elems, nextElement);
+
+  nextElement = uElement->NextSiblingElement();
+
+  if (nextElement != nullptr)
+    recurseToSearch(elems, nextElement);
+
+  if (!std::binary_search(elems.begin(), elems.end(), uElement->Name()))
+    JSWARN << "user XML element <" << uElement->Name() << "> not found in main XML file.";
+}
+
+//________________________________________________________________
+void JetScape::CompareElementsFromXML() {
+
+  tinyxml2::XMLElement *uElement = JetScapeXML::Instance()->GetXMLRootUser()->FirstChildElement();
+  tinyxml2::XMLElement *mElement = JetScapeXML::Instance()->GetXMLRootMain()->FirstChildElement();
+
+  std::vector<std::string> elems;
+
+  recurseToBuild(elems, mElement);
+  sort(elems.begin(), elems.end());
+  recurseToSearch(elems, uElement);
 }
 
 //________________________________________________________________

@@ -7,12 +7,14 @@ on:
       - release-candidate
       - JETSCAPE-3.5.1-RC
       - latessa/generalizedTests
+      - latessa/unknownUserXMLTagWarn
   push:
     branches:
       - main
       - release-candidate
       - JETSCAPE-3.5.1-RC
       - latessa/generalizedTests
+      - latessa/unknownUserXMLTagWarn
 
 env:
   REPO_NAME: ${{ github.event.repository.name }}
