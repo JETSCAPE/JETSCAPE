@@ -76,6 +76,9 @@ public:
   inline unsigned int GetNReuseHydro() const { return n_reuse_hydro_; }
 
 protected:
+  void CompareElementsFromXML();
+  void recurseToBuild(std::vector<std::string> &elems, tinyxml2::XMLElement *mElement);
+  void recurseToSearch(std::vector<std::string> &elems, tinyxml2::XMLElement *uElement);
   void ReadGeneralParametersFromXML();
   void DetermineTaskListFromXML();
   void DetermineWritersFromXML();
