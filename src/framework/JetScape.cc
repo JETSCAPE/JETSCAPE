@@ -118,7 +118,8 @@ void JetScape::recurseToSearch(std::vector<std::string> &elems, tinyxml2::XMLEle
     recurseToSearch(elems, nextElement);
 
   if (!std::binary_search(elems.begin(), elems.end(), uElement->Name()))
-    JSWARN << "user XML element <" << uElement->Name() << "> not found in main XML file.";
+    JSWARN << "User XML tag <" << uElement->Name() << "> is unrecognized. A default entry in the main XML file is required.";
+    exit(-1);
 }
 
 //________________________________________________________________
