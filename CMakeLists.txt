@@ -106,7 +106,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 ### note that APPLE also defines UNIX, hence the elseif to differentiate
 if (APPLE)
     message( STATUS "Apple : " ${CMAKE_HOST_SYSTEM})
-    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang") 
+    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
     elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare -Wno-unused-but-set-variable -Wno-parentheses -fext-numeric-literals")
@@ -114,7 +114,7 @@ if (APPLE)
 
     ## can turn off some warnings
     # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-private-field")
-elseif(UNIX) 
+elseif(UNIX)
     message( STATUS "Linux : " ${CMAKE_HOST_SYSTEM})
     ## can turn off some warnings
     if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
@@ -123,7 +123,7 @@ elseif(UNIX)
 
     ## Additional options
     # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
-endif()   
+endif()
 
 message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS})
 #message(STATUS "LD_FLAGS = " ${CMAKE_EXE_LINKER_FLAGS})
@@ -143,7 +143,7 @@ include_directories("${CMAKE_SOURCE_DIR}/external_packages/googletest/googletest
 #############################################
 ### Installing Header and Library Files   ###
 #############################################
-## Run with, e.g., cmake -DCMAKE_INSTALL_PREFIX=~/tmp .. 
+## Run with, e.g., cmake -DCMAKE_INSTALL_PREFIX=~/tmp ..
 ## default directory is the build directory
 ## Note that trento also automatically populates a bin directory
 ## and we cannot disable this behavior
@@ -281,10 +281,13 @@ if (${HEPMC_FOUND})
 endif()
 
 message("Looking for ROOT ...")
+#find_package(ROOT)
+list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 find_package(ROOT)
 if (${ROOT_FOUND})
-  include_directories(${ROOT_INCLUDES})
-  Message(STATUS "ROOT Include dir : " ${ROOT_INCLUDES})
+  #include_directories(${ROOT_INCLUDES})
+  include_directories(${ROOT_INCLUDE_DIRS})
+  Message(STATUS "ROOT Include dir : " ${ROOT_INCLUDE_DIRS})
   Message(STATUS "ROOT Libraries : " ${ROOT_LIBRARIES})
 endif()
 
@@ -368,7 +371,7 @@ endif()
 if (USE_MUSIC)
   if(NOT EXISTS "${CMAKE_SOURCE_DIR}/external_packages/music")
     message(FATAL_ERROR "Error: MUSIC source has not been downloaded in external_packages by ./get_music.sh")
-  endif()  
+  endif()
   if (${GSL_FOUND})
     message("Building MUSIC ...")
     add_subdirectory(./external_packages/music)
@@ -390,6 +393,11 @@ endif (USE_ISS)
 if (OPENCL_FOUND AND USE_CLVISC)
   add_subdirectory( ${CMAKE_SOURCE_DIR}/external_packages/clvisc_wrapper )
 endif (OPENCL_FOUND AND USE_CLVISC)
+
+if (${ROOT_FOUND})
+        include_directories(./src/root)
+        add_subdirectory(./src/root)
+endif()
 
 ###########################
 ### Binary location     ###
@@ -443,17 +451,10 @@ if ( USE_MUSIC AND USE_ISS AND USE_SMASH )
     target_link_libraries(runJetscape ${SMASH_LIBRARIES} ${MPI_LIBRARIES} ${GSL_LIBRARIES})
 endif ( USE_MUSIC AND USE_ISS AND USE_SMASH )
 
-# if (${ROOT_FOUND})
-#   add_executable(pwg2_reader ./examples/pwg2_reader.cxx)
-#   target_link_libraries(pwg2_reader JetScape )
-# endif(${ROOT_FOUND})
-
-# if (${ROOT_FOUND})
-#   target_link_libraries(brickTest ${ROOT_LIBRARIES})
-#   target_link_libraries(LBT_brickTest ${ROOT_LIBRARIES})
-#   target_link_libraries(PythiaBrickTest ${ROOT_LIBRARIES})
-#   target_link_libraries(writerTest ${ROOT_LIBRARIES})
-# endif()
+if (${ROOT_FOUND})
+  add_executable(PythiaBrickTestRoot ./examples/custom_examples/PythiaBrickTestRoot.cc)
+  target_link_libraries(PythiaBrickTestRoot JetScape JetScapeRoot)
+endif(${ROOT_FOUND})
 
 # -----------------------------------------------------------
 #### copy essential files for MUSIC to build/

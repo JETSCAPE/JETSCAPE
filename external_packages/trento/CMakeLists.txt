@@ -138,7 +138,7 @@ if(NATIVE)
     # All other compilers (gcc-like): search for -m flags;
     # if not found add -march=native.
     if(NOT CMAKE_CXX_FLAGS MATCHES "(^| )-m[^ ]+")
-      string(APPEND CMAKE_CXX_FLAGS " -march=native")
+      #string(APPEND CMAKE_CXX_FLAGS " -march=native")
     endif()
   endif()
 endif()
