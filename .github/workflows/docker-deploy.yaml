@@ -26,5 +26,6 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
+          file: docker/Dockerfile.base
           push: true
           tags: ${{ secrets.DOCKER_DRAFT_USERNAME }}/jetscap:v1.8_beta
