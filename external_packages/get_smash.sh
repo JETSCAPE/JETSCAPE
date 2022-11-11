@@ -20,7 +20,7 @@ git clone --depth=1 https://github.com/smash-transport/smash.git --branch SMASH-
 cd smash/smash_code
 mkdir build
 cd build
-cmake .. -DPythia_CONFIG_EXECUTABLE=${PYTHIA8DIR}/bin/pythia8-config
+cmake .. -DCMAKE_CXX_STANDARD=14 -DPythia_CONFIG_EXECUTABLE=${PYTHIA8DIR}/bin/pythia8-config
 number_of_cores=`nproc --all`
 number_of_cores_to_compile=$(( ${number_of_cores} > 20 ? 20 : ${number_of_cores} ))
 echo "Compiling SMASH using ${number_of_cores_to_compile} cores."
