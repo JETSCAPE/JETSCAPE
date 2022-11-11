@@ -1,5 +1,10 @@
 name: docker-build
 
+on:
+  push:
+    branches:
+      - "latessa/dockerImage"
+
 env:
   REPO_NAME: ${{ github.event.repository.name }}
 
