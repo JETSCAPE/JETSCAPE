@@ -11,6 +11,11 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    container:
+      image: jetscape/base:stable
+      options: --user root
+
     steps:
       -
         name: Checkout Repository
