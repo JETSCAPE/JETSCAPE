@@ -31,6 +31,6 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          file: ${GITHUB_WORKSPACE}/${REPO_NAME}/docker/Dockerfile.base
+          file: ./Dockerfile.base
           push: true
           tags: ${{ secrets.DOCKER_DRAFT_USERNAME }}/jetscap:v1.8_beta
