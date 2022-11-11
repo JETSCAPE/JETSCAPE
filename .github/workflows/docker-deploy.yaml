@@ -25,6 +25,6 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v3
         with:
-          file: ./docker/Dockerfile.base
+          file: ./docker/Dockerfile_root6-18-04_hepmc3-1-1
           push: true
-          tags: ${{ secrets.DOCKER_DRAFT_USERNAME }}/jetscap:v1.8_beta
+          tags: ${{ secrets.DOCKER_DRAFT_USERNAME }}/jetscap:v1.7.1_beta
