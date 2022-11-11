@@ -30,6 +30,7 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v3
         with:
-          file: ${GITHUB_WORKSPACE}/${REPO_NAME}/Dockerfile.base
+          context: .
+          file: ${{ GITHUB_WORKSPACE }}/${{ env.REPO_NAME }}/Dockerfile.base
           push: true
           tags: ${{ secrets.DOCKER_DRAFT_USERNAME }}/jetscap:v1.8_beta
