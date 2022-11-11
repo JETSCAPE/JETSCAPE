@@ -11,11 +11,6 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    container:
-      image: jetscape/base:stable
-      options: --user root
-
     steps:
       -
         name: Checkout Repository
@@ -36,6 +31,5 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          file: docker/Dockerfile.base
           push: true
           tags: ${{ secrets.DOCKER_DRAFT_USERNAME }}/jetscap:v1.8_beta
