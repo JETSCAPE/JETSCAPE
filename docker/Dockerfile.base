@@ -25,7 +25,6 @@ cmake \
 wget \
 curl \
 tclsh \
-python \
 libxft-dev \
 libxext-dev \
 #zlib1g-dev \
