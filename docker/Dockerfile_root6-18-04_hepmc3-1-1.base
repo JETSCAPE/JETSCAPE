@@ -66,7 +66,7 @@ ENV PATH="${ROOTSYS}/bin:${PATH}"
 ENV LD_LIBRARY_PATH="${ROOTSYS}/lib:${LD_LIBRARY_PATH}"
 ENV PYTHONPATH="${ROOTSYS}/lib"
 RUN mkdir -p ${ROOTSYS} && mkdir -p ${HOME}/root && cd ${HOME}/root \
-&& git clone --depth 1 --branch v6-18-04 https://github.com/root-project/root.git src \
+&& git clone --branch v6-18-04 --depth=1 https://github.com/root-project/root.git src \
 && mkdir build && cd build \
 && cmake ../src -DCMAKE_INSTALL_PREFIX=${ROOTSYS} \
 && make -j8 install \
@@ -87,7 +87,7 @@ ARG pythiaV="8307"
 RUN curl -SLk http://pythia.org/download/pythia83/pythia${pythiaV}.tgz \
 | tar -xvzC /usr/local \
 && cd /usr/local/pythia${pythiaV} \
-&& ./configure --enable-shared --prefix=/usr/local/ --with-hepmc3=/usr/local/HepMC3-3.2.5 \
+&& ./configure --enable-shared --prefix=/usr/local/ --with-hepmc3=/usr/local/HepMC3-3.1.1 \
 && make -j8 \
 && make -j8 install
 
