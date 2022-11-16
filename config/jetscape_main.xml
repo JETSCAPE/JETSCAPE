@@ -102,9 +102,9 @@
       <useHybridHad>0</useHybridHad>
       <!-- You can add any number of additional lines to initialize pythia here -->
       <!-- Note that if the tag exists it cannot be empty (tinyxml produces a segfault) -->
-      <!-- <LinesToRead> -->
-      <!-- 	HardQCD:all = on -->
-      <!-- </LinesToRead> -->
+      <LinesToRead>
+        HardQCD:all = on
+      </LinesToRead>
     </PythiaGun>     
   </Hard>   
   

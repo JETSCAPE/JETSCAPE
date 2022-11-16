@@ -25,6 +25,7 @@ cmake \
 wget \
 curl \
 tclsh \
+tcl-dev \
 libxft-dev \
 libxext-dev \
 #zlib1g-dev \
@@ -100,20 +101,20 @@ ENV PYTHIA8_ROOT_DIR /usr/local/
 ENV PATH $PATH:$PYTHIA8DIR/bin
 
 # Build heppy (various HEP tools via python)
-# RUN git clone https://github.com/matplo/heppy.git \
-# && cd heppy \
-# && ./external/fastjet/build.sh \
-# && ./external/lhapdf6/build.sh \
-# && ./external/hepmc2/build.sh \
-# && ./cpptools/build.sh
+RUN cd / \
+&& git clone https://github.com/matplo/heppy.git \
+&& cd heppy \
+&& ./external/fastjet/build.sh \
+&& ./external/hepmc2/build.sh \
+&& ./cpptools/build.sh
 
 # Install environment modules
-# RUN curl -SLk https://sourceforge.net/projects/modules/files/Modules/modules-4.5.1/modules-4.5.1.tar.gz \
-# | tar -xvzC /usr/local \
-# && cd /usr/local/modules-4.5.1 \
-# && ./configure --prefix=/usr/local --modulefilesdir=/heppy/modules \
-# && make -j8 \
-# && make -j8 install
+RUN curl -SLk https://sourceforge.net/projects/modules/files/Modules/modules-4.5.1/modules-4.5.1.tar.gz \
+| tar -xvzC /usr/local \
+&& cd /usr/local/modules-4.5.1 \
+&& ./configure --prefix=/usr/local --modulefilesdir=/heppy/modules \
+&& make -j8 \
+&& make -j8 install
 
 # To load heppy, from inside the container:
 # source /usr/local/init/profile.sh
