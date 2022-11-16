@@ -59,7 +59,7 @@ tqdm
 # && echo "y" | bash ./cmake-3.17.0-Linux-x86_64.sh \
 # && ln -s /opt/cmake-3.17.0-Linux-x86_64/bin/* /usr/local/bin
 
-# Install ROOT6 from source
+# Install ROOT6 v6-18-04 from source
 ENV ROOTSYS="/usr/local/root"
 ENV PATH="${ROOTSYS}/bin:${PATH}"
 ENV LD_LIBRARY_PATH="${ROOTSYS}/lib:${LD_LIBRARY_PATH}"
@@ -81,7 +81,7 @@ RUN curl -SL http://hepmc.web.cern.ch/hepmc/releases/HepMC3-3.1.1.tar.gz | tar -
 && rm -r /usr/local/hepmc3-build
 ENV LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH}"
 
-# Install Pythia8 (that is needed by SMASH)
+# Install Pythia8 with HepMC3-3.1.1 (that is needed by SMASH)
 ARG pythiaV="8307"
 RUN curl -SLk http://pythia.org/download/pythia83/pythia${pythiaV}.tgz \
 | tar -xvzC /usr/local \
