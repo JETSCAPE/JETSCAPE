@@ -4,7 +4,8 @@ on:
   push:
     branches:
       - main
-      - JETSCAPE-3.5.1-RC
+      - JETSCAPE-3.5.2-RC
+      - latessa/dockerImage
 
 env:
   PULL_NUMBER: ${{ github.event.number }}
@@ -16,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     
     container:
-      image: jetscape/base:stable
+      image: jetscape/base:v1.8
       options: --user root
       
     steps:
