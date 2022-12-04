@@ -97,6 +97,7 @@ ENV JETSCAPE_DIR="/home/${username}/JETSCAPE"
 ENV SMASH_DIR="${JETSCAPE_DIR}/external_packages/smash/smash_code"
 ENV EIGEN3_ROOT /usr/include/eigen3
 ENV PYTHIA8DIR /usr/local/
+ENV PYTHIA8 /usr/local/
 ENV PYTHIA8_ROOT_DIR /usr/local/
 ENV PATH $PATH:$PYTHIA8DIR/bin
 
