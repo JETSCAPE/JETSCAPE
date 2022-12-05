@@ -29,6 +29,7 @@
   <JetScapeWriterHepMC> off </JetScapeWriterHepMC>
   <JetScapeWriterFinalStatePartonsAscii> off </JetScapeWriterFinalStatePartonsAscii>
   <JetScapeWriterFinalStateHadronsAscii> off </JetScapeWriterFinalStateHadronsAscii>
+  <JetScapeWriterRootHepMC> off </JetScapeWriterRootHepMC>
   <write_pthat> 0 </write_pthat>
 
   <!--  Random Settings. For now, just a global  seed. -->

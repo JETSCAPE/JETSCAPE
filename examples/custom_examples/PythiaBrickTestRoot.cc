@@ -121,17 +121,17 @@ int main(int argc, char** argv)
 
 
   // Output
-  auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
-  jetscape->Add(writer);
-#ifdef USE_GZIP
-  // same as JetScapeWriterAscii but gzipped
-  auto writergz= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");
-  jetscape->Add(writergz);
-#endif
+  // auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
+  // jetscape->Add(writer);
+// #ifdef USE_GZIP
+//   // same as JetScapeWriterAscii but gzipped
+//   auto writergz= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");
+//   jetscape->Add(writergz);
+// #endif
   // HEPMC3
 #ifdef USE_HEPMC
-  auto hepmcwriter= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
-  jetscape->Add(hepmcwriter);
+  // auto hepmcwriter= make_shared<JetScapeWriterHepMC> ("test_out.hepmc");
+  // jetscape->Add(hepmcwriter);
   auto hepmcwriterRoot= make_shared<JetScapeWriterRootHepMC> ("test_out_hepmc.root");
   jetscape->Add(hepmcwriterRoot);
 #endif

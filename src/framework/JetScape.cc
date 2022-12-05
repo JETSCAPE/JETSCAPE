@@ -26,7 +26,9 @@
 
 #ifdef USE_HEPMC
 #include "JetScapeWriterHepMC.h"
+#include "root/JetScapeWriterRootHepMC.h"
 #endif
+
 
 #include <iostream>
 #include <string>
@@ -784,6 +786,7 @@ void JetScape::DetermineWritersFromXML() {
   std::string outputFilenameHepMC = outputFilename;
   std::string outputFilenameFinalStatePartonsAscii = outputFilename;
   std::string outputFilenameFinalStateHadronsAscii = outputFilename;
+  std::string outputFilenameRootHepMC = outputFilename;
 
   // Check if each writer is enabled, and if so add it to the task list
   CheckForWriterFromXML("JetScapeWriterAscii",
@@ -796,6 +799,8 @@ void JetScape::DetermineWritersFromXML() {
                         outputFilenameFinalStatePartonsAscii.append("_final_state_partons.dat"));
   CheckForWriterFromXML("JetScapeWriterFinalStateHadronsAscii",
                         outputFilenameFinalStateHadronsAscii.append("_final_state_hadrons.dat"));
+  CheckForWriterFromXML("JetScapeWriterRootHepMC",
+                      outputFilenameRootHepMC.append("_hepmc.root"));
 
   // Check for custom writers
   tinyxml2::XMLElement *element =
@@ -831,14 +836,24 @@ void JetScape::CheckForWriterFromXML(const char *writerName,
     }
     // Manually create HepMC writer if it is enabled, since JetScapeModuleFactor::map_type assumes single inheritance
     // from JetScapeModuleBase -- but JetScapeWriterHepMC has multiple inheritance
-    else if (strcmp(writerName, "JetScapeWriterHepMC") == 0) {
+    else if (strcmp(writerName, "JetScapeWriterHepMC") == 0 || strcmp(writerName, "JetScapeWriterRootHepMC") == 0) {
 #ifdef USE_HEPMC
-      VERBOSE(2) << "Manually creating JetScapeWriterHepMC (due to multiple "
-                    "inheritance)";
-      auto writer = std::make_shared<JetScapeWriterHepMC>(outputFilename);
-      Add(writer);
-      JSINFO << "JetScape::DetermineTaskList() -- " << writerName << " ("
+      if(strcmp(writerName, "JetScapeWriterHepMC") == 0){
+            VERBOSE(2) << "Manually creating JetScapeWriterHepMC (due to multiple "
+                                "inheritance)";
+            auto writer = std::make_shared<JetScapeWriterHepMC>(outputFilename);
+            Add(writer);
+            JSINFO << "JetScape::DetermineTaskList() -- " << writerName << " ("
              << outputFilename.c_str() << ") added to task list.";
+      }
+      if(strcmp(writerName, "JetScapeWriterRootHepMC") == 0){
+            VERBOSE(2) << "Manually creating JetScapeWriterRootHepMC (due to multiple "
+                                "inheritance)";
+            auto writer = std::make_shared<JetScapeWriterRootHepMC>(outputFilename);
+            Add(writer);
+            JSINFO << "JetScape::DetermineTaskList() -- " << writerName << " ("
+             << outputFilename.c_str() << ") added to task list.";
+      }
 #endif
     } else {
       VERBOSE(2) << "Writer is NOT created...";
