@@ -1,4 +1,4 @@
-name: build+regression test PbPb
+name: build+regression test (limited) PbPb
 
 on:
   pull_request:
