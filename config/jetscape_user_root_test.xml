@@ -10,8 +10,11 @@
     <seed>1</seed>
   </Random>
 
+  <vlevel> 0 </vlevel>
+
 
   <JetScapeWriterAscii> on </JetScapeWriterAscii>
+  <JetScapeWriterHepMC> on </JetScapeWriterHepMC>
   <JetScapeWriterRootHepMC> on </JetScapeWriterRootHepMC>
 
   <!-- Inital State Module  -->
