@@ -53,6 +53,11 @@ using HepMC3::Units;
 
 namespace Jetscape {
 
+// Register the modules with the base class
+RegisterJetScapeModule<JetScapeWriterRootHepMC>
+    JetScapeWriterRootHepMC::reg("JetScapeWriterRootHepMC");
+
+
 JetScapeWriterRootHepMC::~JetScapeWriterRootHepMC() {
   if (GetActive())
     Close();

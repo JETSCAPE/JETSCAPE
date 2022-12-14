@@ -64,6 +64,9 @@ public:
   void Write(weak_ptr<PartonShower> ps);
   void Write(weak_ptr<Hadron> h);
   void WriteHeaderToFile();
+protected:
+
+  static RegisterJetScapeModule<JetScapeWriterRootHepMC> reg;
 
 private:
   HepMC3::GenEvent evt;
