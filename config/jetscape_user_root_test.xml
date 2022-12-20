@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+
+<jetscape>
+
+  <enableAutomaticTaskListDetermination> true </enableAutomaticTaskListDetermination>
+
+  <nEvents> 2 </nEvents>
+
+  <Random>
+    <seed>1</seed>
+  </Random>
+
+  <vlevel> 0 </vlevel>
+
+
+  <JetScapeWriterAscii> on </JetScapeWriterAscii>
+  <JetScapeWriterHepMC> on </JetScapeWriterHepMC>
+  <JetScapeWriterRootHepMC> on </JetScapeWriterRootHepMC>
+
+  <!-- Inital State Module  -->
+  <IS>
+    <Trento> </Trento>
+  </IS>
+
+  <!-- Hard Process -->
+  <Hard>
+    <PythiaGun>
+      <pTHatMin>50</pTHatMin>
+      <pTHatMax>70</pTHatMax>
+      <eCM>5020</eCM>
+    </PythiaGun>
+  </Hard>
+
+  <!--Preequilibrium Dynamics Module -->
+  <!--Preequilibrium>
+    <NullPreDynamics> </NullPreDynamics>
+  </Preequilibrium-->
+
+  <!-- Hydro  Module  -->
+  <Hydro>
+    <Brick bjorken_expansion_on="false" start_time="0.6"> </Brick>
+  </Hydro>
+
+  <!--Eloss Modules -->
+  <Eloss>
+    <Matter>
+      <in_vac> 1 </in_vac>
+    </Matter>
+  </Eloss>
+
+  <!--PartonPrinter>
+      <FileName>./FinalPartonsInfo.dat</FileName>
+  </PartonPrinter-->
+
+  <!-- Jet Hadronization Module -->
+  <JetHadronization>
+    <name>colorless</name>
+  </JetHadronization>
+
+</jetscape>

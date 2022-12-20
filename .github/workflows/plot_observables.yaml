@@ -4,11 +4,12 @@ on:
   push:
     branches:
       - main
-      - release-candidate
-      - JETSCAPE-3.5.1-RC
+      - JETSCAPE-3.5.2-RC
+      - latessa/dockerImage
 
 env:
   PULL_NUMBER: ${{ github.event.number }}
+  REPO_NAME: ${{ github.event.repository.name }}
 
 jobs:
   build:
@@ -21,47 +22,53 @@ jobs:
       
     steps:
       
-    - name: Checkout JETSCAPE
+    - name: Checkout Repository
       uses: actions/checkout@v2
       with:
-        path: JETSCAPE
+        path: ${{ github.event.repository.name }}
       
-    - name: Build JETSCAPE
+    - name: Build Application
       run: |
-        cd $GITHUB_WORKSPACE/JETSCAPE
+        cd ${GITHUB_WORKSPACE}/${REPO_NAME}
         mkdir build
         cd build
         cmake ..
         make -j2
 
+    - name: Checkout TEST-EXAMPLES
+      uses: actions/checkout@v2
+      with:
+        repository: JETSCAPE/TEST-EXAMPLES
+        path: TEST-EXAMPLES
+
     - name: Generate pp events
       run: |
-        cd $GITHUB_WORKSPACE/JETSCAPE/build
-        $GITHUB_WORKSPACE/JETSCAPE/build/runJetscape $GITHUB_WORKSPACE/JETSCAPE/test/pp/config/jetscape_user_PP19_weighted.xml $GITHUB_WORKSPACE/JETSCAPE/config/jetscape_main.xml
+        cd ${GITHUB_WORKSPACE}/${REPO_NAME}/build
+        ${GITHUB_WORKSPACE}/${REPO_NAME}/build/runJetscape ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/pp/config/jetscape_user_PP19_weighted.xml ${GITHUB_WORKSPACE}/${REPO_NAME}/config/jetscape_main.xml
 
     - name: Plot observables
       run: |
-        echo $PULL_NUMBER
-        $GITHUB_WORKSPACE/JETSCAPE/test/generate_plots.sh -j $GITHUB_WORKSPACE/JETSCAPE -o $GITHUB_WORKSPACE/JETSCAPE/test/plot/output/new
+        echo ${PULL_NUMBER}
+        ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/generate_plots.sh -j ${GITHUB_WORKSPACE}/${REPO_NAME} -a ${GITHUB_WORKSPACE}/TEST-EXAMPLES -o ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/plot/output/new
 
     - name: Prepare TAR file for transfer
       run: |
         export ET=`date "+%Y%m%d%H%M%S"`
-        mkdir /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive
-        cd /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/new
-        tar -cvzf /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive/files_$ET.tar.gz .
-        cd /__w/JETSCAPE/JETSCAPE/JETSCAPE/test/plot/output/archive
+        mkdir ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/plot/output/archive
+        cd ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/plot/output/new
+        tar -cvzf ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/plot/output/archive/files_${ET}.tar.gz .
+        cd ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/plot/output/archive
         echo "pwd of archive"
         pwd
         echo "ls of archive"
         ls
-
+        
     - name: Deploy Plots
       uses: airvzxf/ftp-deployment-action@latest
       with:
-        server: "ftp.joelatessa.com"
-        user: "jetscapeTest@plot.joelatessa.com"
+        server: ${{ secrets.JETSCAPE_FTP_SERVER }}
+        user: ${{ secrets.JETSCAPE_FTP_USER }}
         password: ${{ secrets.JETSCAPE_FTP_PASS }}
-        local_dir: "./JETSCAPE/test/plot/output/archive"
+        local_dir: "./TEST-EXAMPLES/test/plot/output/archive"
         remote_dir: "./"
         delete: "false"

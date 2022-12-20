@@ -2,7 +2,7 @@
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
  * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -26,9 +26,15 @@
 
 #ifdef USE_HEPMC
 #include "JetScapeWriterHepMC.h"
+  #ifdef USE_ROOT
+  #include "JetScapeWriterRootHepMC.h"
+  #endif
 #endif
 
 #include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -63,6 +69,9 @@ void JetScape::Init() {
   JetScapeXML::Instance()->OpenXMLUserFile(GetXMLUserFileName());
   JSINFO << "================================================================";
 
+  // Check whether XML elements in the User file are not included in the Main file
+  CompareElementsFromXML();
+
   // Read some general parameters from the XML configuration file
   ReadGeneralParametersFromXML();
 
@@ -80,6 +89,54 @@ void JetScape::Init() {
   SetPointers();
   JSINFO << "Calling JetScape InitTasks()...";
   JetScapeTask::InitTasks();
+}
+
+//________________________________________________________________
+void JetScape::recurseToBuild(std::vector<std::string> &elems, tinyxml2::XMLElement *mElement)
+{
+  tinyxml2::XMLElement *nextElement = mElement->FirstChildElement();
+
+  if (nextElement != nullptr)
+    recurseToBuild(elems, nextElement);
+
+  nextElement = mElement->NextSiblingElement();
+
+  if (nextElement != nullptr)
+    recurseToBuild(elems, nextElement);
+
+  elems.push_back(mElement->Name());
+}
+
+//________________________________________________________________
+void JetScape::recurseToSearch(std::vector<std::string> &elems, tinyxml2::XMLElement *uElement)
+{
+  tinyxml2::XMLElement *nextElement = uElement->FirstChildElement();
+
+  if (nextElement != nullptr)
+    recurseToSearch(elems, nextElement);
+
+  nextElement = uElement->NextSiblingElement();
+
+  if (nextElement != nullptr)
+    recurseToSearch(elems, nextElement);
+
+  if (!std::binary_search(elems.begin(), elems.end(), uElement->Name())) {
+    JSWARN << "User XML tag <" << uElement->Name() << "> is unrecognized. A default entry in the main XML file is required.";
+    exit(-1);
+  }
+}
+
+//________________________________________________________________
+void JetScape::CompareElementsFromXML() {
+
+  tinyxml2::XMLElement *uElement = JetScapeXML::Instance()->GetXMLRootUser()->FirstChildElement();
+  tinyxml2::XMLElement *mElement = JetScapeXML::Instance()->GetXMLRootMain()->FirstChildElement();
+
+  std::vector<std::string> elems;
+
+  recurseToBuild(elems, mElement);
+  sort(elems.begin(), elems.end());
+  recurseToSearch(elems, uElement);
 }
 
 //________________________________________________________________
@@ -692,7 +749,7 @@ void JetScape::DetermineTaskListFromXML() {
                   "task list.";
       }
     }
- 
+
     else {
       VERBOSE(2) << "Nothing to do.";
     }
@@ -728,6 +785,7 @@ void JetScape::DetermineWritersFromXML() {
   std::string outputFilenameAscii = outputFilename;
   std::string outputFilenameAsciiGZ = outputFilename;
   std::string outputFilenameHepMC = outputFilename;
+  std::string outputFilenameRootHepMC = outputFilename;
   std::string outputFilenameFinalStatePartonsAscii = outputFilename;
   std::string outputFilenameFinalStateHadronsAscii = outputFilename;
 
@@ -738,6 +796,8 @@ void JetScape::DetermineWritersFromXML() {
                         outputFilenameAsciiGZ.append(".dat.gz"));
   CheckForWriterFromXML("JetScapeWriterHepMC",
                         outputFilenameHepMC.append(".hepmc"));
+  CheckForWriterFromXML("JetScapeWriterRootHepMC",
+                        outputFilenameRootHepMC.append("_hepmc.root"));
   CheckForWriterFromXML("JetScapeWriterFinalStatePartonsAscii",
                         outputFilenameFinalStatePartonsAscii.append("_final_state_partons.dat"));
   CheckForWriterFromXML("JetScapeWriterFinalStateHadronsAscii",
@@ -768,6 +828,7 @@ void JetScape::CheckForWriterFromXML(const char *writerName,
   if ((int)enableWriter.find("on") >= 0) {
     VERBOSE(2) << "Writer is on.";
     auto writer = JetScapeModuleFactory::createInstance(writerName);
+    
     if (writer) {
       dynamic_pointer_cast<JetScapeWriter>(writer)->SetOutputFileName(
           outputFilename);
@@ -785,6 +846,18 @@ void JetScape::CheckForWriterFromXML(const char *writerName,
       Add(writer);
       JSINFO << "JetScape::DetermineTaskList() -- " << writerName << " ("
              << outputFilename.c_str() << ") added to task list.";
+#endif
+    }
+    else if (strcmp(writerName, "JetScapeWriterRootHepMC") == 0) {
+#ifdef USE_HEPMC
+      #ifdef USE_ROOT
+      VERBOSE(2) << "Manually creating JetScapeWriterRootHepMC (due to multiple "
+                    "inheritance)";
+      auto writer = std::make_shared<JetScapeWriterRootHepMC>(outputFilename);
+      Add(writer);
+      JSINFO << "JetScape::DetermineTaskList() -- " << writerName << " ("
+             << outputFilename.c_str() << ") added to task list.";
+      #endif
 #endif
     } else {
       VERBOSE(2) << "Writer is NOT created...";
