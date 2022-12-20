@@ -27,5 +27,5 @@ jobs:
         with:
           file: ./docker/Dockerfile.base
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/base:v1.8
+          tags: ${{ secrets.DOCKER_USERNAME }}/base:stable
 

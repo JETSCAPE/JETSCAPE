@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     
     container:
-      image: jetscape/base:v1.8
+      image: jetscape/base:stable
       options: --user root
       
     steps:
