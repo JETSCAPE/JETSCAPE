@@ -172,7 +172,7 @@ void SmashWrapper::smash_particles_to_JS_hadrons(
   JS_hadrons.clear();
   for (const auto &particle : smash_particles) {
     const int hadron_label = 0;
-    const int hadron_status = -1;
+    const int hadron_status = 27;
     const int hadron_id = particle.pdgcode().get_decimal();
     smash::FourVector p = particle.momentum(), r = particle.position();
     const FourVector hadron_p(p.x1(), p.x2(), p.x3(), p.x0()),
