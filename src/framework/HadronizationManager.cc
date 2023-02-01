@@ -150,4 +150,13 @@ void HadronizationManager::GetHadrons(vector<shared_ptr<Hadron>>& signal){
 	}
 }
 
+void HadronizationManager::DeleteHadrons() {
+  // foreach hadronizon object tasks
+	for(shared_ptr<JetScapeTask> it : GetTaskList()){
+		JetScapeTask *jet = it.get();
+		Hadronization *hit = (Hadronization *) jet;
+		hit->DeleteHadrons();
+	}
+}
+
 } // namespace Jetscape

@@ -114,7 +114,7 @@ void SmashWrapper::ExecuteTask() {
   // Every hydro event creates a new structure like jetscape_hadrons_
   // with as many events in it as one has samples per hydro
   modus->reset_event_numbering();
-  modus->jetscape_hadrons_ = soft_particlization_sampler_->Hadron_list_;
+  modus->jetscape_hadrons_ = GatherAfterburnerHadrons();
   const int n_events = modus->jetscape_hadrons_.size();
   JSINFO << "SMASH: obtained " << n_events << " events from particlization";
   // SMASH within JETSCAPE only works with one (the first) ensemble

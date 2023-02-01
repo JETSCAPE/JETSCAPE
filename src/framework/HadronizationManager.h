@@ -47,6 +47,12 @@ public:
 		//get Hadrons from Hadronization submodules
   void GetHadrons(vector<shared_ptr<Hadron>>& signal);
 
+  // deletes the hadrons from the different hadronization modules
+  // this is used in the case of hadronization hadrons in the afterburner
+  // otherwise these hadrons are printed to file and the same hadrons will be 
+  // modified in the transport and printed again
+  void DeleteHadrons();
+
   sigslot::signal1<vector<shared_ptr<Hadron>> &> GetHadronList; //get Hadrons from HardProcess NOT Hadronization submodules
 
   sigslot::signal1<vector<vector<shared_ptr<Parton>>> &> GetFinalPartonList;

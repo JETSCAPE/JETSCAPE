@@ -501,6 +501,13 @@ bool Hadron::CheckOrForceHadron(const int id, const double mass) {
   return true;
 }
 
+bool Hadron::has_no_position(){
+  return (x_in_.t() < 1e-6) &&
+         (x_in_.x() < 1e-6) &&
+         (x_in_.y() < 1e-6) &&
+         (x_in_.z() < 1e-6);
+}
+
 Hadron &Hadron::operator=(Hadron &c) {
   JetScapeParticleBase::operator=(c);
   width_ = c.width_;
