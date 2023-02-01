@@ -28,7 +28,6 @@ Pythia8::Pythia PGun::InternalHelperPythia("IntentionallyEmpty", false);
 PGun::PGun() : HardProcess() {
   fixed_pT = 0;
   parID = 21;
-  flag_useHybridHad = 0;
   SetId("PGun");
   VERBOSE(8);
 }
@@ -48,9 +47,6 @@ void PGun::InitTask() {
 
   parID = GetXMLElementDouble({"Hard", "PGun", "parID"});
   JSINFO << "Parton Gun with parID = " << parID;
-
-  flag_useHybridHad = GetXMLElementInt({"Hard", "PGun", "useHybridHad"});
-  JSINFO << "Use hybrid hadronization? " << flag_useHybridHad;
 }
 
 void PGun::Exec() {
@@ -110,18 +106,11 @@ void PGun::Exec() {
   xLoc[1] = 0.0;
   xLoc[2] = 0.0;
 
-  if (flag_useHybridHad != 1) {
-    AddParton(make_shared<Parton>(0, parID, 0, pT, rapidity, phi, p[0], xLoc));
-  } else {
-    auto ptn = make_shared<Parton>(0, parID, 0, pT, rapidity, phi, p[0], xLoc);
-    ptn->set_color((parID > 0) ? 100 : 0);
-    ptn->set_anti_color(((parID > 0) || (parID == 21)) ? 0 : 101);
-    ptn->set_max_color(102);
-    AddParton(ptn);
-  }
-
-  //      VERBOSEPARTON(7,*GetPartonAt(i)) <<" added "<<" at x=" << xLoc[1]<<", y=" << xLoc[2]<<", z=" << xLoc[3];
-  //    }
+  auto ptn = make_shared<Parton>(0, parID, 0, pT, rapidity, phi, p[0], xLoc);
+  ptn->set_color((parID > 0) ? 100 : 0);
+  ptn->set_anti_color(((parID > 0) || (parID == 21)) ? 0 : 101);
+  ptn->set_max_color(102);
+  AddParton(ptn);
 
   VERBOSE(8) << GetNHardPartons();
 }
