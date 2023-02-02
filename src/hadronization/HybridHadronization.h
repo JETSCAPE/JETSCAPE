@@ -46,7 +46,7 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
   double SigBL2_calc(double SigBR2, double qm1, double qm2, double qm3);
   
   //double sigma_pi, sigma_k, sigma_nuc, maxE_level, gmax, xmq, xms, hbarc, dist2cut, sh_recofactor, th_recofactor, SigRB, SigLB;
-  double maxE_level, gmax, xmq, xms, hbarc, dist2cut, sh_recofactor, th_recofactor, p_fake;
+  double maxE_level, gmax, xmq, xms, hbarc, dist2cut, sh_recofactor, th_recofactor, p_fake, had_prop;
   double SigNucR2,SigNucL2,SigOmgR2,SigOmgL2,SigXiR2,SigXiL2,SigSigR2,SigSigL2,
 	SigOcccR2,SigOcccL2,SigOccR2,SigOccL2,SigXiccR2,SigXiccL2,SigOcR2,SigOcL2,SigXicR2,SigXicL2,SigSigcR2,SigSigcL2,
 	SigObbbR2,SigObbbL2,SigObbcR2,SigObbcL2,SigObbR2,SigObbL2,SigXibbR2,SigXibbL2,
