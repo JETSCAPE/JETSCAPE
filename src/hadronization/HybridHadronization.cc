@@ -82,18 +82,18 @@ void HybridHadronization::Init(){
     JSDEBUG<<"Initialize HybridHadronization";
     VERBOSE(8);
 	
-	maxE_level    = 1;			//maximum energy level considered for the recombination (was 3 in recent fortran code, prev. set to 8)
+	maxE_level    = 1;		//maximum energy level considered for the recombination (was 3 in recent fortran code, prev. set to 8)
 	gmax          = 1.25;		//maximum allowed mass of the gluon (for q-qbar split), in GeV
-	xmq           = 0.338; //0.33;		//light quark mass, in GeV
-	xms           = 0.486; //0.5;		//strange quark mass, in GeV
+	xmq           = 0.338; //0.33;	//light quark mass, in GeV
+	xms           = 0.486; //0.5;	//strange quark mass, in GeV
 	hbarc         = 0.197327;	// GeV*fm - maybe just set this as a constant in common?
 	dist2cut      = 25.;		//maximum distance [fm] squared for recombination (involving thermal partons) - in lab frame
 	sh_recofactor = 1.;		//suppression/enhancement factor for shower-shower recombination
 	th_recofactor = 1.;		//suppression/enhancement factor for shower-thermal recombination
-	attempts_max  = 10;			//maximum number of failed attempts to hadronize a single event before we give up.
-	p_fake        = 0.;			//momentum used for fake parton, if needed
-	rand_seed     = 0;			//seed for RNGs used - 0 means use a randomly determined random seed (from system time or std::random_device{}())
-	
+	attempts_max  = 10;		//maximum number of failed attempts to hadronize a single event before we give up.
+	p_fake        = 0.;		//momentum used for fake parton, if needed
+	rand_seed     = 0;		//seed for RNGs used - 0 means use a randomly determined random seed (from system time or std::random_device{}())
+	had_prop      = 0.;		//propagation of hadrons after formation by this time in lab frame
 	
 	//xml read in to alter settings...
 	double xml_doublein = -1.; int xml_intin = -1; unsigned int xml_uintin = std::numeric_limits<unsigned int>::max();
@@ -117,6 +117,10 @@ void HybridHadronization::Init(){
 	//hadronization->FirstChildElement("reco_Elevelmax")->QueryIntText(&xml_intin);
 	xml_intin = GetXMLElementInt({"JetHadronization", "reco_Elevelmax"});
 	if(xml_intin >= 0){maxE_level = xml_intin;} xml_intin = -1;
+
+	//hadronization->FirstChildElement("had_postprop")->QueryIntText(&xml_intin);
+	xml_intin = GetXMLElementInt({"JetHadronization", "had_postprop"});
+	if(xml_intin >= 0){had_prop = xml_intin;} xml_intin = -1;
 	
 	// random seed
 	// xml limits us to unsigned int :-/ -- but so does 32 bits Mersenne Twist
@@ -569,6 +573,15 @@ if(HH_shower.num() == 0){continue;} //attempting to handle events/configurations
 			//final state reco hadron
 			else if((HH_hadrons[iHad].is_final()) && (HH_hadrons[iHad].parh() >= 0) && (HH_hadrons[iHad].parh() < HH_hadrons.num()) && (HH_hadrons[iHad].parh() != iHad)){
 				HH_hadrons[iHad].parents = HH_hadrons[HH_hadrons[iHad].parh()].parents;
+			}
+			
+			//hadron propagation
+			if(std::abs(had_prop) > 0.0001){ //assumes that hadron will be propagated by more than 0.0001 fm/c in lab frame - can even propagate backwards, if that's something wanted...
+				double vel[3]; vel[0]=HH_hadrons[iHad].px()/HH_hadrons[iHad].e(); vel[1]=HH_hadrons[iHad].py()/HH_hadrons[iHad].e(); vel[2]=HH_hadrons[iHad].pz()/HH_hadrons[iHad].e();
+				double t_prop = had_prop/sqrt(1. - vel[0]*vel[0] - vel[1]*vel[1] - vel[2]*vel[2]);
+				HH_hadrons[iHad].x(HH_hadrons[iHad].x() + vel[0]*t_prop); HH_hadrons[iHad].y(HH_hadrons[iHad].y() + vel[1]*t_prop); HH_hadrons[iHad].z(HH_hadrons[iHad].z() + vel[2]*t_prop);
+				HH_hadrons[iHad].x_t(HH_hadrons[iHad].x_t() + had_prop);
+				//JSINFO<<"Hadron propagated to: " << HH_hadrons[iHad].x() << ", " << HH_hadrons[iHad].y() << ", " << HH_hadrons[iHad].z() << ", " << HH_hadrons[iHad].x_t();
 			}
 		}
 	}
