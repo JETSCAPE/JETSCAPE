@@ -49,6 +49,9 @@ protected:
 
   // rng for the Kaon-L / Kaon-S switch to K0 / Anti-K0
   std::shared_ptr<std::uniform_int_distribution<int>> rand_int_ptr_;
+
+  std::vector<std::vector<std::shared_ptr<Hadron>>> test;
+  std::uniform_real_distribution<double> ZeroOneDistribution;
 };
 
 } // end namespace Jetscape

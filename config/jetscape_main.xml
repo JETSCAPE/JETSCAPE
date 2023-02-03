@@ -105,6 +105,16 @@
         HardQCD:all = on
       </LinesToRead>
     </PythiaGun>
+
+    <epemGun>
+      <name>epemgun</name>
+      <eCM>5020</eCM>
+      <!-- You can add any number of additional lines to initialize pythia here -->
+      <!-- Note that if the tag exists it cannot be empty (tinyxml produces a segfault) -->
+      <LinesToRead>
+        HadronLevel::all = off
+      </LinesToRead>
+    </epemGun>
   </Hard>
 
   <!--Eloss Modules -->
