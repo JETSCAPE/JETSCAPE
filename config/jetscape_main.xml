@@ -315,6 +315,7 @@
        <thermreco_distmax>5.0</thermreco_distmax>
        <shower_recofactor>1.0</shower_recofactor>
        <thermal_recofactor>1.0</thermal_recofactor>
+       <had_postprop>0.0</had_postprop>
        <weak_decays>on</weak_decays>
        <!-- You can add any number of additional lines to initialize pythia hadronization here -->
        <!-- Note that if the tag exists it cannot be empty (tinyxml produces a segfault) -->
