@@ -118,9 +118,9 @@ void HybridHadronization::Init(){
 	xml_intin = GetXMLElementInt({"JetHadronization", "reco_Elevelmax"});
 	if(xml_intin >= 0){maxE_level = xml_intin;} xml_intin = -1;
 
-	//hadronization->FirstChildElement("had_postprop")->QueryIntText(&xml_intin);
-	xml_intin = GetXMLElementInt({"JetHadronization", "had_postprop"});
-	if(xml_intin >= 0){had_prop = xml_intin;} xml_intin = -1;
+	//hadronization->FirstChildElement("had_postprop")->QueryDoubleText(&xml_doublein);
+	xml_doublein = GetXMLElementDouble({"JetHadronization", "had_postprop"});
+	if(xml_doublein >= 0){had_prop = xml_doublein;} xml_doublein = -1;
 	
 	// random seed
 	// xml limits us to unsigned int :-/ -- but so does 32 bits Mersenne Twist
