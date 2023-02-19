@@ -184,7 +184,10 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2,
     // Reject photons
 
     if (pIn[i].pid() == photonid) {
-      pOut.push_back(pIn[i]);
+      if(pIn[i].pstat() != 22) {
+	      pIn[i].set_stat(22); //Add status code 22 for photons that pass through LBT if it is already not assigned by one of the other JEL modules.
+              pOut.push_back(pIn[i]);
+      }
       return;
     }
 
