@@ -162,6 +162,9 @@ void ColorlessHadronization::DoHadronization(
           if (shower_in[ishower][ipart].pstat() == 0) {
             pIn.push_back(make_shared<Parton>(shower_in[ishower][ipart]));
           }
+          if (shower_in[ishower][ipart].pstat() == 22) {
+            pIn.push_back(make_shared<Parton>(shower_in[ishower][ipart])); //Allow photons with status code 22 to pass through Colorless hadronization.
+          }
         }
         if (take_recoil && shower_in[ishower][ipart].pstat() == -1 &&
             want_pos == 0) {
