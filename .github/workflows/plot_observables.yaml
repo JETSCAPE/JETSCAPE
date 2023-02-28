@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - JETSCAPE-3.5.4-RC
       - JETSCAPE-3.6-RC
       - latessa/dockerImage
 
