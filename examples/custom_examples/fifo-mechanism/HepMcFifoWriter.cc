@@ -13,8 +13,14 @@
 
 using namespace std;
 
-int main()
+int main(int argc, char** argv)
 {
+    if(argv[1]){
+        cout << argv[1] << endl;
+    }
+    // for (int i = 0; i < argc; ++i) {
+    //   cout << argv[i] << endl;
+    // }
     // Creating FIFO FILE
     char *myfifo="/tmp/myfifo";
 
@@ -34,7 +40,8 @@ int main()
 
     printf("Opened\n");
     ifstream hepmc_file;
-    hepmc_file.open("../../../build/test_out.hepmc");
+    hepmc_file.open(argv[1]);
+    // hepmc_file.open("../../../build/test_out.hepmc");
     string current_line;
     char* current_line_char_array;
     //Writing info FIFO FILE in the write Mode
