@@ -118,9 +118,9 @@ void HybridHadronization::Init(){
 	xml_intin = GetXMLElementInt({"JetHadronization", "reco_Elevelmax"});
 	if(xml_intin >= 0){maxE_level = xml_intin;} xml_intin = -1;
 
-	//hadronization->FirstChildElement("had_postprop")->QueryIntText(&xml_intin);
-	xml_intin = GetXMLElementInt({"JetHadronization", "had_postprop"});
-	if(xml_intin >= 0){had_prop = xml_intin;} xml_intin = -1;
+	//hadronization->FirstChildElement("had_postprop")->QueryDoubleText(&xml_doublein);
+	xml_doublein = GetXMLElementDouble({"JetHadronization", "had_postprop"});
+	if(xml_doublein >= 0){had_prop = xml_doublein;} xml_doublein = -1;
 	
 	// random seed
 	// xml limits us to unsigned int :-/ -- but so does 32 bits Mersenne Twist
@@ -551,6 +551,124 @@ if(HH_shower.num() == 0){continue;} //attempting to handle events/configurations
 	
 	//for a successful run, go though final hadrons here and set parton parents up
 	if(run_successfully){
+
+        //to calc. E conservation violation
+        //double Ebefore = 0.; double Eafter = 0.; double pTbefore = 0.; double pTafter = 0.;
+        //for(int iHad=0; iHad<HH_hadrons.num(); ++iHad){if(!HH_hadrons[iHad].is_final()){continue;} Ebefore += HH_hadrons[iHad].e(); pTbefore += HH_hadrons[iHad].pt();}
+        //std::cout << std::setprecision(5);
+
+//std::ofstream eviol; std::ofstream echg; std::ofstream ptchg;
+//eviol.open("Evio.dat", std::ios::app); echg.open("Echg.dat", std::ios::app); ptchg.open("ptchg.dat", std::ios::app);
+		
+		//hadron mass adjust
+		double osf = 0.05;
+		for(int iHad=0; iHad<HH_hadrons.num(); ++iHad){
+			//if this isn't a final state hadron, there's no point in fixing it.
+			if(!HH_hadrons[iHad].is_final()){continue;}
+			
+			//need hadron mass and pdg (pythia) mass to check
+			double hadmass = HH_hadrons[iHad].mass(); double m1 = pythia.particleData.m0(HH_hadrons[iHad].id());
+			//if this hadron doesn't need to be fixed, then we skip it
+			if(!(std::abs(hadmass - m1)/m1 > osf)){continue;}
+			
+			//this hadron needs fixing, so we prepare to find a partner hadron to adjust with it
+			int partner = -1;
+			
+			//if this hadron has colors, then we can use that info to fix it
+			if(HH_hadrons[iHad].cols.size()){
+				//looking through the hadron list to find another hadron with the same color tag.
+				for(int jHad=0; jHad<HH_hadrons.num(); ++jHad){
+					if(!HH_hadrons[jHad].is_final()){continue;} //do not want a non-final hadron
+					if(iHad == jHad){continue;} //needs to be a different hadron
+					if(HH_hadrons[jHad].cols.size()){//if this hadron has color tags, check
+						for(int icol=0; icol<HH_hadrons[iHad].cols.size(); ++icol){for(int jcol=0; jcol<HH_hadrons[jHad].cols.size(); ++jcol){
+							if(!(HH_hadrons[iHad].col(icol) == HH_hadrons[jHad].col(jcol))){continue;} //color not matching
+							//if the previous condition isn't met, that means the colors match!
+							partner = jHad; break;
+						}if(partner > -1){break;}}
+					}
+					if(partner > -1){break;}
+				}
+			}
+			
+			//ready to fix, if a partner has not been found, pick a close-by hadron
+			if(partner == -1){
+				//grabbing closest final state hadron before and after, if it exists
+				int iprev = iHad-1; int inext = iHad+1;
+				while(iprev >= 0){if(HH_hadrons[iprev].is_final()){break;} --iprev;}
+				while(inext < HH_hadrons.num()){if(HH_hadrons[inext].is_final()){break;} ++inext;}
+				
+				//if there is no closest before, then grab closest after
+				//or if no closest after, then grab closest before
+				//if both exist, grab the one that's closest, unless both are the same in which case grab the one after
+				if(iprev < 0){partner = inext;}
+				else if(inext >= HH_hadrons.num()){partner = iprev;}
+				else{partner = (inext - iHad <= iHad - iprev) ? inext : iprev;}
+			}
+			
+			//by now, a partner *must* have been chosen - unless there's only 1 hadron in the event, which is BAD.
+			//time to fix.
+			
+			//if somehow everything failed, just skip this hadron...
+			if(partner == -1){continue;}
+
+//std::cout << "H1_before: " << iHad << ", " << HH_hadrons[iHad].id() << ", " << HH_hadrons[iHad].px() << ", " << HH_hadrons[iHad].py() << ", " << HH_hadrons[iHad].pz() << ", " << HH_hadrons[iHad].e() << "\n";
+//std::cout << "H2_before: " << partner << ", " << HH_hadrons[partner].id() << ", " << HH_hadrons[partner].px() << ", " << HH_hadrons[partner].py() << ", " << HH_hadrons[partner].pz() << ", " << HH_hadrons[partner].e() << "\n";			
+
+			//Psys
+			FourVector Psys;
+			Psys.Set(HH_hadrons[iHad].px()+HH_hadrons[partner].px(),HH_hadrons[iHad].py()+HH_hadrons[partner].py(),HH_hadrons[iHad].pz()+HH_hadrons[partner].pz(),HH_hadrons[iHad].e()+HH_hadrons[partner].e());
+			
+			//CM velocity
+			FourVector beta;
+			beta.Set(Psys.x()/Psys.t(),Psys.y()/Psys.t(),Psys.z()/Psys.t(),0.);
+			beta.Set(beta.x(),beta.y(),beta.z(),1./(sqrt(1.-(beta.x()*beta.x() + beta.y()*beta.y() + beta.z()*beta.z()))));
+
+//std::cout << beta.t() << "\n";
+
+//std::cout << "\nbeta: "<< beta.x() << ", " << beta.y() << ", " << beta.z() << ", " << beta.t() << "\n";
+
+			//boosting into CM frame
+			FourVector p_CM[2]; p_CM[0] = HH_hadrons[iHad].boost_P(beta); p_CM[1] = HH_hadrons[partner].boost_P(beta);
+//std::cout << "\nboosted1: " << p_CM[0].x() << ", " << p_CM[0].y() << ", " << p_CM[0].z() << ", " << p_CM[0].t() << "\n";
+//std::cout << "boosted2: " << p_CM[1].x() << ", " << p_CM[1].y() << ", " << p_CM[1].z() << ", " << p_CM[1].t() << "\n";
+			
+			//if E1 + E2 >= m1 + m2, shift momenta
+			double m2 = pythia.particleData.m0(HH_hadrons[partner].id());
+			double Etot = p_CM[0].t() + p_CM[1].t();
+			if(Etot < m1 + m2 + 0.00001){Etot = m1 + m2 + 0.00001; /*eviol << Etot - (p_CM[0].t() + p_CM[1].t()) << "\n";*/}//can't shift, violating E/P cons.
+			double E1 = Etot/2. + ((m1*m1)-(m2*m2))/(2.*Etot);
+			double E2 = Etot/2. - ((m1*m1)-(m2*m2))/(2.*Etot);
+			double pmag = sqrt(p_CM[0].x()*p_CM[0].x() + p_CM[0].y()*p_CM[0].y() + p_CM[0].z()*p_CM[0].z());
+			double fac = sqrt(Etot*Etot/4. + ((m1*m1)-(m2*m2))*((m1*m1)-(m2*m2))/(4.*Etot*Etot) - ((m1*m1)+(m2*m2))/2.)/pmag;
+
+//std::cout << "\nstuff: " << m1 << ", " << m2 << ", " << Etot << ", " << E1 << ", " << E2 << ", " << pmag << ", " << fac << "\n";
+//std::cout << "facstuff: " << Etot/4. << ", " << ((m1*m1)-(m2*m2))/(4.*Etot*Etot) << ", " << ((m1*m1)+(m2*m2))/2. << ", " << Etot/4. + ((m1*m1)-(m2*m2))/(4.*Etot*Etot) - ((m1*m1)+(m2*m2))/2. << "\n";
+			
+			//rescaling in CM frame
+            p_CM[0].Set(fac*p_CM[0].x(), fac*p_CM[0].y(), fac*p_CM[0].z(), E1);
+            p_CM[1].Set(fac*p_CM[1].x(), fac*p_CM[1].y(), fac*p_CM[1].z(), E2);
+
+//std::cout << "\nrescaled1: " << p_CM[0].x() << ", " << p_CM[0].y() << ", " << p_CM[0].z() << ", " << p_CM[0].t() << "\n";
+//std::cout << "rescaled2: " << p_CM[1].x() << ", " << p_CM[1].y() << ", " << p_CM[1].z() << ", " << p_CM[1].t() << "\n";
+			
+			//boosting back and setting hadron E,P to fixed values
+            beta.Set(-beta.x(), -beta.y(), -beta.z(), 0.);
+            beta.Set(beta.x(),beta.y(),beta.z(),1./(sqrt(1.-(beta.x()*beta.x() + beta.y()*beta.y() + beta.z()*beta.z()))));
+			FourVector p_fin[2]; p_fin[0] = HHboost(beta, p_CM[0]); p_fin[1] = HHboost(beta, p_CM[1]);
+			HH_hadrons[iHad].P(p_fin[0]); HH_hadrons[partner].P(p_fin[1]);
+
+//std::cout << "H1_after: " << iHad << ", " << HH_hadrons[iHad].id() << ", " << HH_hadrons[iHad].px() << ", " << HH_hadrons[iHad].py() << ", " << HH_hadrons[iHad].pz() << ", " << HH_hadrons[iHad].e() << "\n";
+//std::cout << "H2_after: " << partner << ", " << HH_hadrons[partner].id() << ", " << HH_hadrons[partner].px() << ", " << HH_hadrons[partner].py() << ", " << HH_hadrons[partner].pz() << ", " << HH_hadrons[partner].e() << "\n";
+
+		}
+        
+        //calc. Etot after
+        //for(int iHad=0; iHad<HH_hadrons.num(); ++iHad){if(!HH_hadrons[iHad].is_final()){continue;} Eafter += HH_hadrons[iHad].e(); pTafter += HH_hadrons[iHad].pt();}
+        //echg << Eafter-Ebefore << "\n"; ptchg << pTafter-pTbefore << "\n";
+
+//eviol.close(); echg.close(); ptchg.close();
+		
 		//partons that have parh set need to have the reco parents of that hadron
 		//partons that do not have parh set need to have the parents vector reset to the original shower/thermal partons
 		//until this is done, the par(i) for each parton is *wrong*

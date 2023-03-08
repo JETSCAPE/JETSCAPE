@@ -4,12 +4,14 @@ on:
   pull_request:
     branches:
       - main
-      - JETSCAPE-3.5.2-RC
+      - JETSCAPE-3.5.4-RC
+      - JETSCAPE-3.6-RC
       - latessa/dockerImage
   push:
     branches:
       - main
-      - JETSCAPE-3.5.2-RC
+      - JETSCAPE-3.5.4-RC
+      - JETSCAPE-3.6-RC
       - latessa/dockerImage
 
 env:

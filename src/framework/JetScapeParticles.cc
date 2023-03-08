@@ -77,7 +77,11 @@ JetScapeParticleBase::JetScapeParticleBase(int label, int id, int stat,
   init_jet_v();
 
   assert(InternalHelperPythia.particleData.isParticle(id));
-  set_restmass(InternalHelperPythia.particleData.m0(id));
+  if ((std::abs(pid()) == 1) || (std::abs(pid()) == 2) || (std::abs(pid()) == 3)) {
+        set_restmass(0.0);
+  } else {
+        set_restmass(InternalHelperPythia.particleData.m0(id));
+  }
 
   reset_momentum(p);
   x_in_ = x;
@@ -349,13 +353,8 @@ const double Parton::t() {
   //  double t_parton = PseudoJet::m2()  - restmass()*restmass() ;
 
   double t_parton = 0.0;
-
-  if ((std::abs(pid()) == 4) || (std::abs(pid()) == 5)) {
-    t_parton = e() * e() - px() * px() - py() * py() - pz() * pz() -
-               restmass() * restmass();
-  } else {
-    t_parton = e() * e() - px() * px() - py() * py() - pz() * pz();
-  }
+  t_parton = e() * e() - px() * px() - py() * py() - pz() * pz() -
+             restmass() * restmass();
   if (t_parton < 0.0) {
     // JSWARN << " Virtuality is negative, MATTER cannot handle these particles " << " t = " << t_parton;
     // JSWARN << " pid = "<< pid() << " E = " << e() << " px = " << px() << " py = " << py() << " pz = " << pz() ;

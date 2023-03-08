@@ -265,11 +265,14 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
 
     // Reject photons
     if (pIn[i].pid() == photonid) {
-      VERBOSE(1) << BOLDYELLOW
-                 << " A photon was RECEIVED with px = " << pIn[i].px()
-                 << " from framework and sent back ";
+      if(pIn[i].pstat() != 22) {
+            pIn[i].set_stat(22);
+      	    VERBOSE(1) << BOLDYELLOW
+                       << " A photon was RECEIVED with px = " << pIn[i].px()
+                       << " from framework and sent back ";
 
-      pOut.push_back(pIn[i]);
+            pOut.push_back(pIn[i]);
+      }
       return;
     }
 
