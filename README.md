@@ -106,7 +106,7 @@ If you encounter a problem, please report the issue [here](https://github.com/JE
 Please be sure to include enough information so that we can reproduce your issue: your platform, JETSCAPE version,
 configuration file, and anything else that may be relevant.
 
-## Contributing to JETSCAPE
+## Contributing to JETSCAP
 
 If you would like to contribute code to JETSCAPE (new module, feature, bug fix, etc.) please open 
 a [Pull Request](https://github.com/JETSCAPE/JETSCAPE/pulls) with your changes, or an [Issue](https://github.com/JETSCAPE/JETSCAPE/issues) describing what you intend to do. For further details, see [Tips for git management](https://github.com/JETSCAPE/JETSCAPE/wiki/Tips-for-git-management).
