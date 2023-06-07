@@ -40,8 +40,8 @@ std::vector<std::vector<std::shared_ptr<Hadron>>> Afterburner::GetSoftParticliza
     JSWARN << "No soft particlization module found. Check if fragmentation"
            << " hadrons are handed to afterburner.";
     std::vector<std::shared_ptr<Hadron>> hadrons;
-    test.push_back(hadrons);
-    return test;
+    dummy.push_back(hadrons);
+    return dummy;
   } else {
     return soft_particlization->Hadron_list_;
   }
@@ -60,37 +60,31 @@ std::vector<shared_ptr<Hadron>> Afterburner::GetFragmentationHadrons() {
   JSINFO << "Got " << h_list.size() << " fragmentation hadrons from HadronizationManager.";
   
   rand_int_ptr_ = (std::make_shared<std::uniform_int_distribution<int>>(0,1));
+  std::vector<shared_ptr<Hadron>> h_list_new;
   for (auto h : h_list) {
     if (h->has_no_position()) {
-      // No position info set in hadronization module
       JSWARN << "Found fragmentation hadron without properly set position in "
                 "Afterburner.\nInclusion of fragmentation hadrons only "
-                "possible for HybridHadronization.\nExiting.";
-      exit(1);
-      //const FourVector r = h->x_in();
-      //JSINFO << "t = " << r.t() << " x = " << r.x() << " y = " <<  r.y() << " z = " << r.z();
-    }
-    // convert Kaon-L or Kaon-S into K0 or Anti-K0
-    // Kaon-L or Kaon-S are unknown particles for SMASH
-    if (h->pid() == 310 || h->pid() == 130) {
-      const int rand_int = (*rand_int_ptr_)(*GetMt19937Generator());
-      const int id = (rand_int == 0) ? 311 : -311;
-      h->set_id(id);
+                "possible for HybridHadronization.";
     }
 
+    //move all the fragmentation hadrons a little bit around to avoid having 
+    //multiple hadrons at the same position if they are at the same position
     const FourVector r = h->x_in();
-    //JSINFO << "before: t = " << r.t() << " x = " << r.x() << " y = " <<  r.y() << " z = " << r.z();
     const double rand_x = ZeroOneDistribution(*GetMt19937Generator()) * 2e-4 - 1e-4;
     const double rand_y = ZeroOneDistribution(*GetMt19937Generator()) * 2e-4 - 1e-4;
     const double rand_z = ZeroOneDistribution(*GetMt19937Generator()) * 2e-4 - 1e-4;
     double position_smeared[4] = {r.t(), r.x()+rand_x, r.y()+rand_y, r.z()+rand_z};
     h->set_x(position_smeared);
-    //const FourVector r_after = h->x_in();
-    //JSINFO << "id = " << h->pid();
-    //JSINFO << "after: t = " << r_after.t() << " x = " << r_after.x() << " y = " <<  r_after.y() << " z = " << r_after.z();
 
+    if ((std::abs(h->pid())>10) && (h->pid() != 21)) {
+      h_list_new.push_back(h);
+    } else {
+      JSWARN << "Found a free quark or gluon! This can not be handed over to SMASH.\n"
+                "Check confinement in hadronization module!";
+    }
   }
-  return h_list;
+  return h_list_new;
 }
 
 std::vector<std::vector<std::shared_ptr<Hadron>>> Afterburner::GatherAfterburnerHadrons() {
@@ -124,8 +118,7 @@ std::vector<std::vector<std::shared_ptr<Hadron>>> Afterburner::GatherAfterburner
 
     afterburner_had_events[0].insert(afterburner_had_events[0].end(),
                                      frag_hadrons.begin(), frag_hadrons.end());
-
-    test.clear();
+    dummy.clear();
   }
   return afterburner_had_events;
 }
