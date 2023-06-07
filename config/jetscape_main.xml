@@ -213,6 +213,22 @@
   </Preequilibrium>
 
 
+  <!-- Create liquifier -->
+  <Liquefier>
+      <!-- CausalLiquefier -->
+      <CausalLiquefier>
+          <name>CausalLiquefier</name>
+          <dtau>0.02</dtau><!-- fluid time step in [fm] -->
+          <dx>0.3</dx><!-- fluid cell size in [fm] -->
+          <dy>0.3</dy><!-- fluid cell size in [fm] -->
+          <deta>0.2</deta><!-- fluid cell size -->
+          <tau_delay>2.0</tau_delay><!-- in [fm] -->
+          <time_relax>0.1</time_relax><!-- in [fm] -->
+          <d_diff>0.08</d_diff><!-- in [fm] -->
+          <width_delta>0.1</width_delta><!-- in [fm] -->
+      </CausalLiquefier>
+  </Liquefier>
+
   <!-- Hydro  Module  -->
   <Hydro>
 
@@ -310,18 +326,24 @@
    <JetHadronization>
        <name>colored/colorless/hybrid</name>
        <take_recoil>1</take_recoil>
-       <eCMforHadronization>2510</eCMforHadronization>
-       <reco_Elevelmax>1</reco_Elevelmax>
+       <!--eCMforHadronization only for pp collisions-->
+       <!--in hybrid put the full eCM here, this is distributed to the beam partons-->
+       <eCMforHadronization>5020</eCMforHadronization>
+       <reco_Mlevelmax>1</reco_Mlevelmax>
+       <reco_Blevelmax>1</reco_Blevelmax>
+       <reco_goldstone>0</reco_goldstone>
        <thermreco_distmax>5.0</thermreco_distmax>
        <shower_recofactor>1.0</shower_recofactor>
        <thermal_recofactor>1.0</thermal_recofactor>
        <had_postprop>0.0</had_postprop>
+       <part_prop>1.0</part_prop>
        <weak_decays>on</weak_decays>
        <!-- You can add any number of additional lines to initialize pythia hadronization here -->
        <!-- Note that if the tag exists it cannot be empty (tinyxml produces a segfault) -->
        <!-- <LinesToRead> -->
        <!--   111:mayDecay = off  -->
        <!-- </LinesToRead> -->
+       <reco_hadrons_in_pythia>0</reco_hadrons_in_pythia>
    </JetHadronization>
 
   <!-- Particlization Module  -->

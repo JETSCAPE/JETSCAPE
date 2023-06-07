@@ -46,7 +46,8 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
   double SigBL2_calc(double SigBR2, double qm1, double qm2, double qm3);
   
   //double sigma_pi, sigma_k, sigma_nuc, maxE_level, gmax, xmq, xms, hbarc, dist2cut, sh_recofactor, th_recofactor, SigRB, SigLB;
-  double maxE_level, gmax, xmq, xms, hbarc, dist2cut, sh_recofactor, th_recofactor, p_fake, had_prop;
+  double maxM_level, maxB_level, gmax, xmq, xms, xmc, xmb, hbarc, dist2cut, sh_recofactor, th_recofactor, p_fake, had_prop, part_prop;
+  int number_p_fake;
   double SigNucR2,SigNucL2,SigOmgR2,SigOmgL2,SigXiR2,SigXiL2,SigSigR2,SigSigL2,
 	SigOcccR2,SigOcccL2,SigOccR2,SigOccL2,SigXiccR2,SigXiccL2,SigOcR2,SigOcL2,SigXicR2,SigXicL2,SigSigcR2,SigSigcL2,
 	SigObbbR2,SigObbbL2,SigObbcR2,SigObbcL2,SigObbR2,SigObbL2,SigXibbR2,SigXibbL2,
@@ -55,6 +56,8 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
   const double pi = 3.1415926535897932384626433832795;
   int attempts_max;
   unsigned int rand_seed;
+  int reco_hadrons_pythia;
+  bool goldstonereco;
   
   //variables for recombination color structure
   vector<vector<vector<int>>> Tempjunctions; // vector of all tempjunctions
@@ -338,7 +341,7 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
 
   //functions to set hadron id based on quark content, mass, and if it's in an excited state
   void set_baryon_id(parton_collection& qrks,HHhadron& had);
-  void set_meson_id(parton_collection& qrks,HHhadron& had);
+  void set_meson_id(parton_collection& qrks,HHhadron& had, int l, int k);
 
   //gluon to q-qbar splitting function - for recombination use
   void gluon_decay(HHparton& glu, parton_collection& qrks);
@@ -353,6 +356,14 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
 
   //function to hand partons/strings and hadron resonances (and other color neutral objects) to Pythia8
   bool invoke_py();
+
+  // function to set the spacetime information for the hadrons coming from pythia
+  void set_spacetime_for_pythia_hadrons(Pythia8::Event &event, int &size_input, std::vector<int> &eve_to_had, int pythia_attempt);
+
+  // function to 'shake' the event a bit to bring the hadrons to their mass shell
+  void bring_hadrons_to_mass_shell(hadron_collection& HH_hadrons);
+
+  void set_initial_parton_masses(parton_collection& HH_showerptns);
 
   protected:
 	static Pythia8::Pythia pythia;
