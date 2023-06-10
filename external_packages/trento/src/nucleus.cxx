@@ -33,9 +33,7 @@ double correct_a(double a, double w) {
 }
 
 NucleusPtr Nucleus::create(const std::string& species, double nucleon_width, double nucleon_dmin) {
-
-  nucleon_width += 0;
-  nucleon_dmin += 0;
+  
   // W-S params ref. in header
   // XXX: remember to add new species to the help output in main() and the readme
   if (species == "p")

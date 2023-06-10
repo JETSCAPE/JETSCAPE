@@ -23,8 +23,6 @@ class DataSet;
 
 namespace trento {
 
-double correct_a(double, double);
-
 // Alias for a smart pointer to a Nucleus.
 using NucleusPtr = std::unique_ptr<Nucleus>;
 
