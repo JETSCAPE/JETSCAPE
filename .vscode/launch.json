@@ -5,7 +5,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceRoot}/build/runJetscape",
-            "args": ["../config/jetscape_user_PP19.xml"],
+            "args": ["../config/jetscape_user_lbt.xml"],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],

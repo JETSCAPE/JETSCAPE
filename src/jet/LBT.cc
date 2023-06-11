@@ -91,7 +91,7 @@ void LBT::Init() {
   //...read parameters from LBT.input first, but can be changed in JETSCAPE xml file if any conflict exists
 
   setParameter(
-      "LBT-tables/LBT.input"); // re-set parameters from input parameter file
+      "../build/LBT-tables/LBT.input"); // re-set parameters from input parameter file
 
   //    if(checkParameter(argc)==0) { // check whether the input parameters are all correct
   //        cout << "Parameter check passed" << endl;
