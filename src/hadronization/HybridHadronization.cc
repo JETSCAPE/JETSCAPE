@@ -640,6 +640,7 @@ void HybridHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& sh
 		    FourVector p(HH_hadrons[iHad].P()); FourVector x(HH_hadrons[iHad].pos());
 		    //hOut.push_back(std::make_shared<Hadron> (Hadron (0,idH,1,p,x,mH)));
 		    hOut.push_back(std::make_shared<Hadron> (Hadron (stat,idH,lab,p,x,mH)));
+        //JSINFO <<idH<<" "<<mH<<" "<<p.t()<<" "<<p.x()<<" "<<p.y()<<" "<<p.z();
 	    }
     }
     //JSINFO<<"#Showers hadronized together: " << shower.size() << " ( " << num_strings << " initial strings ). There are " <<
@@ -1568,22 +1569,22 @@ void HybridHadronization::recomb(){
 				  FourVector pos_lab = HHboost(betaB, pos_CM);
 
 				  //finding relative momenta of partons in CM frame
-				  FourVector k_rel[2];
-				  k_rel[0].Set(
+				  FourVector k_rel_square[2];
+				  k_rel_square[0].Set(
 				  (considering[1].mass()*p_BCM[0].x()-considering[0].mass()*p_BCM[1].x())/(considering[0].mass()+considering[1].mass()),
 				  (considering[1].mass()*p_BCM[0].y()-considering[0].mass()*p_BCM[1].y())/(considering[0].mass()+considering[1].mass()),
 				  (considering[1].mass()*p_BCM[0].z()-considering[0].mass()*p_BCM[1].z())/(considering[0].mass()+considering[1].mass()),
 				  0.);
-				  k_rel[1].Set(
+				  k_rel_square[1].Set(
 				  (considering[2].mass()*(p_BCM[0].x()+p_BCM[1].x())-(considering[0].mass()+considering[1].mass())*p_BCM[2].x())/(considering[0].mass()+considering[1].mass()+considering[2].mass()),
 				  (considering[2].mass()*(p_BCM[0].y()+p_BCM[1].y())-(considering[0].mass()+considering[1].mass())*p_BCM[2].y())/(considering[0].mass()+considering[1].mass()+considering[2].mass()),
 				  (considering[2].mass()*(p_BCM[0].z()+p_BCM[1].z())-(considering[0].mass()+considering[1].mass())*p_BCM[2].z())/(considering[0].mass()+considering[1].mass()+considering[2].mass()),
 				  0.);
 
 				  //finding relative positions of partons in CM frame
-				  FourVector pos_rel[2];
-				  pos_rel[0].Set((cur_pos[0].x()-cur_pos[1].x())/sqrt(2.),(cur_pos[0].y()-cur_pos[1].y())/sqrt(2.),(cur_pos[0].z()-cur_pos[1].z())/sqrt(2.),0.);
-				  pos_rel[1].Set(
+				  FourVector pos_rel_square[2];
+				  pos_rel_square[0].Set((cur_pos[0].x()-cur_pos[1].x())/sqrt(2.),(cur_pos[0].y()-cur_pos[1].y())/sqrt(2.),(cur_pos[0].z()-cur_pos[1].z())/sqrt(2.),0.);
+				  pos_rel_square[1].Set(
 				  ((cur_pos[0].x()*considering[0].mass()+cur_pos[1].x()*considering[1].mass())/(considering[0].mass()+considering[1].mass())-cur_pos[2].x())*sqrt(2./3.),
 				  ((cur_pos[0].y()*considering[0].mass()+cur_pos[1].y()*considering[1].mass())/(considering[0].mass()+considering[1].mass())-cur_pos[2].y())*sqrt(2./3.),
 				  ((cur_pos[0].z()*considering[0].mass()+cur_pos[1].z()*considering[1].mass())/(considering[0].mass()+considering[1].mass())-cur_pos[2].z())*sqrt(2./3.),
@@ -1636,12 +1637,12 @@ void HybridHadronization::recomb(){
 				  //precalc's for Wigner Wavefunction
 				  //0:x, 1:y, 2:z ::: urho:(rel. between partons 1,2), ulamb:(rel. between partons (1,2),3)
 				  double urho[3], ulamb[3];
-				  urho[0] =  0.5*(pos_rel[0].x()*pos_rel[0].x()/SigRB2 + k_rel[0].x()*k_rel[0].x()*SigRB2/hbarc2);
-				  urho[1] =  0.5*(pos_rel[0].y()*pos_rel[0].y()/SigRB2 + k_rel[0].y()*k_rel[0].y()*SigRB2/hbarc2);
-				  urho[2] =  0.5*(pos_rel[0].z()*pos_rel[0].z()/SigRB2 + k_rel[0].z()*k_rel[0].z()*SigRB2/hbarc2);
-				  ulamb[0] = 0.5*(pos_rel[1].x()*pos_rel[1].x()/SigLB2 + k_rel[1].x()*k_rel[1].x()*SigLB2/hbarc2);
-				  ulamb[1] = 0.5*(pos_rel[1].y()*pos_rel[1].y()/SigLB2 + k_rel[1].y()*k_rel[1].y()*SigLB2/hbarc2);
-				  ulamb[2] = 0.5*(pos_rel[1].z()*pos_rel[1].z()/SigLB2 + k_rel[1].z()*k_rel[1].z()*SigLB2/hbarc2);
+				  urho[0] =  0.5*(pos_rel_square[0].x()*pos_rel_square[0].x()/SigRB2 + k_rel_square[0].x()*k_rel_square[0].x()*SigRB2/hbarc2);
+				  urho[1] =  0.5*(pos_rel_square[0].y()*pos_rel_square[0].y()/SigRB2 + k_rel_square[0].y()*k_rel_square[0].y()*SigRB2/hbarc2);
+				  urho[2] =  0.5*(pos_rel_square[0].z()*pos_rel_square[0].z()/SigRB2 + k_rel_square[0].z()*k_rel_square[0].z()*SigRB2/hbarc2);
+				  ulamb[0] = 0.5*(pos_rel_square[1].x()*pos_rel_square[1].x()/SigLB2 + k_rel_square[1].x()*k_rel_square[1].x()*SigLB2/hbarc2);
+				  ulamb[1] = 0.5*(pos_rel_square[1].y()*pos_rel_square[1].y()/SigLB2 + k_rel_square[1].y()*k_rel_square[1].y()*SigLB2/hbarc2);
+				  ulamb[2] = 0.5*(pos_rel_square[1].z()*pos_rel_square[1].z()/SigLB2 + k_rel_square[1].z()*k_rel_square[1].z()*SigLB2/hbarc2);
 
 				  //1D GS Wig. wavefunction
 				  double wig0[2][3];
@@ -2921,15 +2922,16 @@ void HybridHadronization::recomb(){
 				betaM.Set(-betaM.x(),-betaM.y(),-betaM.z(),betaM.t());
 				FourVector pos_lab = HHboost(betaM, pos_CM);
 
-				//finding relative momenta of partons in CM frame
-				FourVector k_rel;
-				k_rel.Set((p_MCM[1].x()-p_MCM[0].x())*(p_MCM[1].x()-p_MCM[0].x())/4.,(p_MCM[1].y()-p_MCM[0].y())*(p_MCM[1].y()-p_MCM[0].y())/4.,(p_MCM[1].z()-p_MCM[0].z())*(p_MCM[1].z()-p_MCM[0].z())/4.,0.);
-				k_rel.Set(k_rel.x(),k_rel.y(),k_rel.z(),k_rel.x()+k_rel.y()+k_rel.z());
+				//finding the squares of the relative momenta of partons in CM frame
+				FourVector k_rel_square;
+        double sum_mass_square = (considering[0].mass()+considering[1].mass())*(considering[0].mass()+considering[1].mass());
+				k_rel_square.Set(std::pow(considering[1].mass()*p_MCM[0].x()-considering[0].mass()*p_MCM[1].x(),2.)/sum_mass_square,std::pow(considering[1].mass()*p_MCM[0].y()-considering[0].mass()*p_MCM[1].y(),2.)/sum_mass_square,std::pow(considering[1].mass()*p_MCM[0].z()-considering[0].mass()*p_MCM[1].z(),2.)/sum_mass_square,0.);
+				k_rel_square.Set(k_rel_square.x(),k_rel_square.y(),k_rel_square.z(),k_rel_square.x()+k_rel_square.y()+k_rel_square.z());
 
-				//finding relative positions of partons in CM frame
-				FourVector pos_rel;
-				pos_rel.Set((cur_pos[0].x()-cur_pos[1].x())*(cur_pos[0].x()-cur_pos[1].x()),(cur_pos[0].y()-cur_pos[1].y())*(cur_pos[0].y()-cur_pos[1].y()),(cur_pos[0].z()-cur_pos[1].z())*(cur_pos[0].z()-cur_pos[1].z()),0.);
-				pos_rel.Set(pos_rel.x(),pos_rel.y(),pos_rel.z(),pos_rel.x()+pos_rel.y()+pos_rel.z());
+				//finding the squares of relative positions of partons in CM frame
+				FourVector pos_rel_square;
+				pos_rel_square.Set((cur_pos[0].x()-cur_pos[1].x())*(cur_pos[0].x()-cur_pos[1].x()),(cur_pos[0].y()-cur_pos[1].y())*(cur_pos[0].y()-cur_pos[1].y()),(cur_pos[0].z()-cur_pos[1].z())*(cur_pos[0].z()-cur_pos[1].z()),0.);
+				pos_rel_square.Set(pos_rel_square.x(),pos_rel_square.y(),pos_rel_square.z(),pos_rel_square.x()+pos_rel_square.y()+pos_rel_square.z());
 
 				//setting appropriate sigma...
 				double SigM2 = SigPi2;
@@ -2953,31 +2955,25 @@ void HybridHadronization::recomb(){
 					else{                   SigM2 = SigB2;}
 				}
 
-				//Calc'ing Wig. wavefunction
-				double WigM[2]; WigM[1] = 0.;//sumWigM;
-				//3D GS Wig. wavefunction
-				WigM[0] = std::exp(-pos_rel.t()/(2.*SigM2) - k_rel.t()*SigM2/hbarc2);
-
 				double u[4];  
         // This is the squared distance in phase space weighted with the widths
-				u[1] = 0.5*(pos_rel.x()/SigM2 + k_rel.x()*SigM2/hbarc2);
-				u[2] = 0.5*(pos_rel.y()/SigM2 + k_rel.y()*SigM2/hbarc2);
-				u[3] = 0.5*(pos_rel.z()/SigM2 + k_rel.z()*SigM2/hbarc2);
+				u[1] = 0.5*(pos_rel_square.x()/SigM2 + k_rel_square.x()*SigM2/hbarc2);
+				u[2] = 0.5*(pos_rel_square.y()/SigM2 + k_rel_square.y()*SigM2/hbarc2);
+				u[3] = 0.5*(pos_rel_square.z()/SigM2 + k_rel_square.z()*SigM2/hbarc2);
 				u[0] = u[1] + u[2] + u[3];
 
         // Ground state wave function
-        WigM[1] = std::exp(-u[0])*recofactor2 ;
+        double WigM = std::exp(-u[0])*recofactor2;
 
         // Computing s ~ L^2 for the system
-        double rdotr = std::pow(pos_rel.x(), 2) + std::pow(pos_rel.y(), 2) + std::pow(pos_rel.z(), 2);
-				double pdotp = std::pow(k_rel.x(), 2) + std::pow(k_rel.y(), 2) + std::pow(k_rel.z(), 2);
-				double pdotr = (pos_rel.x()*k_rel.x()) + (pos_rel.y()*k_rel.y()) + (pos_rel.z()*k_rel.z());
+        double rdotr = pos_rel_square.t();
+				double pdotp = k_rel_square.t();
+				double pdotr = std::sqrt(pos_rel_square.x())*std::sqrt(k_rel_square.x()) + std::sqrt(pos_rel_square.y())*std::sqrt(k_rel_square.y()) + std::sqrt(pos_rel_square.z())*std::sqrt(k_rel_square.z());
 
 				double s = 1/hbarc2*(pdotp*rdotr - pdotr*pdotr);
 
-
 				//this will fail if iME is too large (but why would you want anything quite that big?)
-				//for(int iME=0; iME<=maxM_level; ++iME){WigM[1] += std::pow(u[0],iME)*std::exp(-u[0])/double(std::tgamma(iME+1));} //std::tgamma(iME+1)==factorial(N)
+				//for(int iME=0; iME<=maxM_level; ++iME){WigM += std::pow(u[0],iME)*std::exp(-u[0])/double(std::tgamma(iME+1));} //std::tgamma(iME+1)==factorial(N)
 
 				// Random number for recombination dice roll
 				double rndmeson = ran();
@@ -2985,7 +2981,7 @@ void HybridHadronization::recomb(){
         // Initialize quantum numbers and recombination probability
         int angular_qnum = -1; // l 
 				int radial_qnum = -1; // k
-        double total_prob =  WigM[1];
+        double total_prob =  WigM;
 
         if(total_prob >= rndmeson)
         {
@@ -2994,7 +2990,7 @@ void HybridHadronization::recomb(){
 				}
 				else
         {
-          total_prob += WigM[1]*u[0];
+          total_prob += WigM*u[0];
           if(total_prob >= rndmeson && maxM_level>0)
           {
 					  angular_qnum = 1;
@@ -3002,7 +2998,7 @@ void HybridHadronization::recomb(){
 				  }
 				  else 
           {
-            total_prob += (1./2.)*WigM[1]*((2./3.)*std::pow(u[0],2) + (1./3.)*s);
+            total_prob += (1./2.)*WigM*((2./3.)*std::pow(u[0],2) + (1./3.)*s);
             if(total_prob >= rndmeson && maxM_level>1)
             {
 					    angular_qnum = 2;
@@ -3010,7 +3006,7 @@ void HybridHadronization::recomb(){
 				    }
 				    else 
             {
-              total_prob += (1./2.)*WigM[1]*((1./3.)*std::pow(u[0],2) - (1./3.)*s);
+              total_prob += (1./2.)*WigM*((1./3.)*std::pow(u[0],2) - (1./3.)*s);
               if(total_prob >= rndmeson && maxM_level>1 )
               {
 					    angular_qnum = 0;
@@ -3018,7 +3014,7 @@ void HybridHadronization::recomb(){
 				      }
 				      else 
               {
-                total_prob += (1./6.)*WigM[1]*((2./5.)*std::pow(u[0],3) + (3./5.)*u[0]*s);
+                total_prob += (1./6.)*WigM*((2./5.)*std::pow(u[0],3) + (3./5.)*u[0]*s);
                 if(total_prob >= rndmeson && maxM_level>2)
                 {
 					        angular_qnum = 1; 
@@ -3026,7 +3022,7 @@ void HybridHadronization::recomb(){
 				        }
 				        else 
                 {
-                  total_prob += (1./6.)*WigM[1]*((3./5.)*std::pow(u[0],3) - (3./5.)*u[0]*s);
+                  total_prob += (1./6.)*WigM*((3./5.)*std::pow(u[0],3) - (3./5.)*u[0]*s);
                   if(total_prob >= rndmeson && maxM_level>2)
                   {
           					angular_qnum = 3;
@@ -3034,7 +3030,7 @@ void HybridHadronization::recomb(){
 				          }
                   else
                   {
-                    total_prob += (1./120.)*WigM[1]*std::pow((std::pow(u[0],2)-s),2);
+                    total_prob += (1./120.)*WigM*std::pow((std::pow(u[0],2)-s),2);
                     if(total_prob >= rndmeson && maxM_level>3)
                     {
             					angular_qnum = 0;
@@ -3042,7 +3038,7 @@ void HybridHadronization::recomb(){
 				            }
                     else
                     {
-                      total_prob += (1./24.)*WigM[1]*((4./7.)*std::pow(u[0],4)-(2./7.)*std::pow(u[0],2)*s-(2./7.)*std::pow(s,2));
+                      total_prob += (1./24.)*WigM*((4./7.)*std::pow(u[0],4)-(2./7.)*std::pow(u[0],2)*s-(2./7.)*std::pow(s,2));
                       if(total_prob >= rndmeson && maxM_level>3)
                       {
 			          		  angular_qnum = 2;
@@ -3050,7 +3046,7 @@ void HybridHadronization::recomb(){
 				              }
                       else
                       {
-                        total_prob += (1./24.)*WigM[1]*((8./35.)*std::pow(u[0],4)+(24./35.)*std::pow(u[0],2)*s+(3./35.)*std::pow(s,2));
+                        total_prob += (1./24.)*WigM*((8./35.)*std::pow(u[0],4)+(24./35.)*std::pow(u[0],2)*s+(3./35.)*std::pow(s,2));
                         if(total_prob >= rndmeson && maxM_level>3)
                         {
                 					angular_qnum = 4;
@@ -5479,9 +5475,9 @@ void HybridHadronization::stringprep(parton_collection& SP_remnants, parton_coll
     0.);*/
 
     //finding relative positions of partons in CM frame
-    FourVector pos_rel[2];
-    pos_rel[0].Set((cur_pos[0].x()-cur_pos[1].x())/sqrt(2.),(cur_pos[0].y()-cur_pos[1].y())/sqrt(2.),(cur_pos[0].z()-cur_pos[1].z())/sqrt(2.),0.);
-    pos_rel[1].Set(
+    FourVector pos_rel_square[2];
+    pos_rel_square[0].Set((cur_pos[0].x()-cur_pos[1].x())/sqrt(2.),(cur_pos[0].y()-cur_pos[1].y())/sqrt(2.),(cur_pos[0].z()-cur_pos[1].z())/sqrt(2.),0.);
+    pos_rel_square[1].Set(
     ((cur_pos[0].x()*Recombearly1.at(irb)[0].mass()+cur_pos[1].x()*Recombearly1.at(irb)[1].mass())/(Recombearly1.at(irb)[0].mass()+Recombearly1.at(irb)[1].mass())-cur_pos[2].x())*sqrt(2./3.),
     ((cur_pos[0].y()*Recombearly1.at(irb)[0].mass()+cur_pos[1].y()*Recombearly1.at(irb)[1].mass())/(Recombearly1.at(irb)[0].mass()+Recombearly1.at(irb)[1].mass())-cur_pos[2].y())*sqrt(2./3.),
     ((cur_pos[0].z()*Recombearly1.at(irb)[0].mass()+cur_pos[1].z()*Recombearly1.at(irb)[1].mass())/(Recombearly1.at(irb)[0].mass()+Recombearly1.at(irb)[1].mass())-cur_pos[2].z())*sqrt(2./3.),
@@ -6696,9 +6692,9 @@ void HybridHadronization::bring_hadrons_to_mass_shell(hadron_collection& HH_hadr
 		int partner = -1;
 
 		//if this hadron has colors, then we can use that info to fix it
-		if(HH_hadrons[iHad].cols.size()){
+		if(HH_hadrons[iHad].cols.size() > 0){
 		  //looking through the hadron list to find another hadron with the same color tag.
-		  for(int jHad=0; jHad<HH_hadrons.num(); ++jHad){
+		  for(int jHad = 0; jHad < HH_hadrons.num(); ++jHad){
 		    if(!HH_hadrons[jHad].is_final()){continue;} //do not want a non-final hadron
 		    if(iHad == jHad){continue;} //needs to be a different hadron
         double m2 = pythia.particleData.m0(HH_hadrons[jHad].id());
@@ -6711,12 +6707,16 @@ void HybridHadronization::bring_hadrons_to_mass_shell(hadron_collection& HH_hadr
         double momentum_diff = (HH_hadrons[iHad].px()-HH_hadrons[jHad].px())*(HH_hadrons[iHad].px()-HH_hadrons[jHad].px()) 
                       + (HH_hadrons[iHad].py()-HH_hadrons[jHad].py())*(HH_hadrons[iHad].py()-HH_hadrons[jHad].py()) 
                       + (HH_hadrons[iHad].pz()-HH_hadrons[jHad].pz())*(HH_hadrons[iHad].pz()-HH_hadrons[jHad].pz());
-		    if(HH_hadrons[jHad].cols.size()){//if this hadron has color tags, check
-  			  for(int icol=0; icol<HH_hadrons[iHad].cols.size(); ++icol){for(int jcol=0; jcol<HH_hadrons[jHad].cols.size(); ++jcol){
-            if(!(HH_hadrons[iHad].col(icol) == HH_hadrons[jHad].col(jcol)) || momentum_diff < 1e-6 || (pair_mass < m1+m2)){continue;} //color not matching
-					  //if the previous condition isn't met, that means the colors match!
-					  partner = jHad; break;
-				  }if(partner > -1){break;}}
+		    if(HH_hadrons[jHad].cols.size() > 0){//if this hadron has color tags, check
+          //JSINFO << "iHad = " << iHad << ", jHad = " << jHad << ", momentum_diff = " << momentum_diff << ", pair_mass - m1 - m2 = " << pair_mass-m1-m2;
+  			  for(int icol = 0; icol < HH_hadrons[iHad].cols.size(); ++icol){
+            for(int jcol = 0; jcol < HH_hadrons[jHad].cols.size(); ++jcol){
+              if(!(HH_hadrons[iHad].col(icol) == HH_hadrons[jHad].col(jcol)) || momentum_diff < 1e-6 || (pair_mass < m1+m2)){continue;} //color not matching
+					    //if the previous condition isn't met, that means the colors match!
+					    partner = jHad; break;
+				    }
+            if(partner > -1){break;}
+          }
 		    }
 		    if(partner > -1){break;}
 		  }
@@ -6761,6 +6761,28 @@ void HybridHadronization::bring_hadrons_to_mass_shell(hadron_collection& HH_hadr
 
       if((partner >= HH_hadrons.num()) || (partner < 0)) {partner = -1;}
 		}
+
+    //choose the hadron with the smallest pair_mass - m1 - m2 value
+    if(partner == -1){
+      double minimum = 1e6;
+      int partner_temporary = -1;
+		  for(int jHad = 0; jHad < HH_hadrons.num(); ++jHad){
+        if(!HH_hadrons[jHad].is_final()){continue;} //do not want a non-final hadron
+		    if(iHad == jHad){continue;} //needs to be a different hadron
+        double m2 = pythia.particleData.m0(HH_hadrons[jHad].id());
+        double pair_mass = std::sqrt((HH_hadrons[iHad].e() + HH_hadrons[jHad].e())*(HH_hadrons[iHad].e() + HH_hadrons[jHad].e()) 
+            - (HH_hadrons[iHad].px() + HH_hadrons[jHad].px())*(HH_hadrons[iHad].px() + HH_hadrons[jHad].px())
+            - (HH_hadrons[iHad].py() + HH_hadrons[jHad].py())*(HH_hadrons[iHad].py() + HH_hadrons[jHad].py())
+            - (HH_hadrons[iHad].pz() + HH_hadrons[jHad].pz())*(HH_hadrons[iHad].pz() + HH_hadrons[jHad].pz()));
+        if(std::abs(pair_mass-m1-m2) < minimum){
+          minimum = std::abs(pair_mass-m1-m2);
+          partner_temporary = jHad;
+        }
+      }
+      if(partner_temporary != -1){
+        partner = partner_temporary;
+      }
+    }
 			
 		//by now, a partner *must* have been chosen - unless there's only 1 hadron in the event, which is BAD.
 		//time to fix.
