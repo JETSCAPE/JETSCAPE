@@ -16,7 +16,7 @@ MESSAGE(STATUS "Looking for HepMC ...")
 FIND_PATH(HEPMC_INCLUDE_DIR NAMES HepMC3/Version.h PATHS
   $ENV{HEPMC_DIR}/include
   /usr/local/lib/include/
-  /usr/local/include/
+  /home/cameron.parker/.local/HepMC3-3.2.5/include/HepMC3/
   ${SIMPATH}/include/
   NO_DEFAULT_PATH
 )
@@ -25,7 +25,7 @@ FIND_PATH(HEPMC_LIB_DIR  NAMES libHepMC3.dylib libHepMC3.so PATHS
   $ENV{HEPMC_DIR}/lib
   $ENV{HEPMC_DIR}/lib64
   /usr/local/lib
-  /usr/local/lib/lib64
+  /home/cameron.parker/.local/HepMC3-3.2.5/cmake/outputs/lib64/
   ${SIMPATH}/lib
   NO_DEFAULT_PATH
 )

@@ -92,8 +92,9 @@ endif (USE_SMASH)
 ###############################
 ### Compiler & Linker Flags ###
 ###############################
+set(Boost_USE_MULTITHREADED FALSE)
 message("Compiler and Linker flags ...")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -pipe -Wall -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -pipe -Wall -std=c++11 -lboost_system -pthread -ldl")
 ## can turn off some warnings
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-reorder -Wno-unused-variable ")
 ## Then set the build type specific options. These will be automatically appended.
@@ -272,14 +273,14 @@ message(STATUS "HDF5 include dir and libs : ${HDF5_INCLUDE_DIRS} ${_hdf5_libs} "
 ###########################
 ### Optional packages   ###
 ###########################
-unset(USE_HEPMC)
-message("Looking for HepMC ...")
-find_package(HEPMC)
-if (${HEPMC_FOUND})
-  include_directories(${HEPMC_INCLUDE_DIR})
-  set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -DUSE_HEPMC" )
-  Message(STATUS "HepMC Include dir : " ${HEPMC_INCLUDE_DIR})
-endif()
+#unset(USE_HEPMC)
+#message("Looking for HepMC ...")
+#find_package(HEPMC)
+#if (${HEPMC_FOUND})
+#  include_directories(${HEPMC_INCLUDE_DIR})
+#  set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -DUSE_HEPMC" )
+#  Message(STATUS "HepMC Include dir : " ${HEPMC_INCLUDE_DIR})
+#endif()
 
 option(USE_ROOT "Build using ROOT Libraries and Output" OFF)
 if (USE_ROOT)
@@ -328,6 +329,7 @@ include_directories(./external_packages/)
 include_directories(./external_packages/gtl/include )
 include_directories(./external_packages/hydro_from_external_file )
 include_directories(./examples/ )
+include_directories(./execs/ )
 if ("${ROOT_FOUND}")
   include_directories(./src/root)
   #add_subdirectory(./src/root)
@@ -458,6 +460,67 @@ endif ( USE_MUSIC AND USE_ISS AND USE_SMASH )
 #  add_executable(PythiaBrickTestRoot ./examples/custom_examples/PythiaBrickTestRoot.cc)
 #  target_link_libraries(PythiaBrickTestRoot JetScape)
 #endif(${ROOT_FOUND})
+
+#my library
+link_directories(analysis)
+include_directories(./analysis)
+add_subdirectory(./analysis)
+
+if (${ROOT_FOUND}) 
+  add_executable(pp-2760-spectra ./execs/pp-2760-spectra.cc)
+  target_link_libraries(pp-2760-spectra JetScape analysis)
+  endif()
+
+if (${ROOT_FOUND}) 
+  add_executable(pp-200-spectra ./execs/pp-200-spectra.cc)
+  target_link_libraries(pp-200-spectra JetScape analysis)
+  endif()
+
+if (${ROOT_FOUND}) 
+  add_executable(pp-5020-spectra ./execs/pp-5020-spectra.cc)
+  target_link_libraries(pp-5020-spectra JetScape analysis)
+  endif()
+
+if (${ROOT_FOUND}) 
+  add_executable(pp-13000-spectra ./execs/pp-13000-spectra.cc)
+  target_link_libraries(pp-13000-spectra JetScape analysis)
+  endif()
+
+if (${ROOT_FOUND}) 
+  add_executable(test-pp-spectra ./execs/test-pp-spectra.cc)
+  target_link_libraries(test-pp-spectra JetScape analysis)
+  endif()
+
+if (${ROOT_FOUND}) 
+  add_executable(pp-2760-comparison ./execs/pp-2760-comparison.cc)
+  target_link_libraries(pp-2760-comparison JetScape analysis)
+  endif()
+
+if (${ROOT_FOUND}) 
+  add_executable(pp-200-comparison ./execs/pp-200-comparison.cc)
+  target_link_libraries(pp-200-comparison JetScape analysis)
+  endif()
+
+if (${ROOT_FOUND}) 
+  add_executable(ee-analysis-spectra ./execs/ee-analysis-spectra.cc)
+  target_link_libraries(ee-analysis-spectra JetScape analysis)
+  endif()
+
+if (${ROOT_FOUND}) 
+  add_executable(ee-comparison ./execs/ee-comparison.cc)
+  target_link_libraries(ee-comparison JetScape analysis)
+  endif()
+
+if (${ROOT_FOUND}) 
+  add_executable(pp-200-smoothing ./execs/pp-200-smoothing.cc)
+  target_link_libraries(pp-200-smoothing JetScape analysis)
+  endif()
+
+if (${ROOT_FOUND}) 
+  add_executable(pp-2760-smoothing ./execs/pp-2760-smoothing.cc)
+  target_link_libraries(pp-2760-smoothing JetScape analysis)
+  endif()
+
 
 # -----------------------------------------------------------
 #### copy essential files for MUSIC to build/
