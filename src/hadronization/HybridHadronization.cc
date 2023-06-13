@@ -58,13 +58,12 @@ HybridHadronization::~HybridHadronization(){
 
 //meson width function
 double HybridHadronization::SigM2_calc(double R2chg, double qm1, double qm2, double qq1, double qq2){
-  return R2chg*(2./3.)*(qm1+qm2)*(qm1+qm2)/(std::abs(qq1*qm2*qm2 - qq2*qm1*qm1));
+  return R2chg*(2./3.)*(qm1+qm2)*(qm1+qm2)/(std::abs(qq1)*qm2*qm2 + std::abs(qq2)*qm1*qm1) * (std::abs(qq1) + std::abs(qq2));
 }
 
 //baryon width function
-//CAREFUL, qmi's and qqi's need to be consistent for BOTH of these (mass1(2)(3) is the same for both!)...
 double HybridHadronization::SigBR2_calc(double R2chg, double qm1, double qm2, double qm3, double qq1, double qq2, double qq3){
-	return R2chg*2.*(2./3.)*(2./3.)*(qm1+qm2+qm3)*(qm1+qm2+qm3)/((qm1+qm2) * std::abs(qq1*(qm2+qm3)*(qm3/qm1)+qq2*(qm1+qm3)*(qm3/qm2)+qq3*(qm1+qm2)));
+	return R2chg*(2./3.)*(qm1+qm2+qm3)/(std::abs(qq1)*qm2*(qm2+qm3)/(qm1+qm2)+std::abs(qq2)*qm1*(qm1+qm3)/(qm1+qm2)+std::abs(qq3)*(qm1*qm2)/qm3) * (std::abs(qq1) + std::abs(qq2) + std::abs(qq3));
 }
 
 double HybridHadronization::SigBL2_calc(double SigBR2, double qm1, double qm2, double qm3){
@@ -224,12 +223,12 @@ void HybridHadronization::Init(){
 
 	  //meson width calculations (r2) - recalc if r2chg is changed on command line...
 	  SigPi2  = SigM2_calc(R2chg_Pi,  Qm_ud, Qm_ud, chg_d, chg_u);
-	  SigPhi2 = SigM2_calc(R2chg_Phi, Qm_s,  Qm_s,  chg_d, -chg_d)*(2./3.); //normalizing
+	  SigPhi2 = SigM2_calc(R2chg_Phi, Qm_s,  Qm_s,  chg_d, -chg_d); //normalizing
 	  SigK2   = SigM2_calc(R2chg_K,   Qm_s,  Qm_ud, chg_d, chg_u);
-	  SigJpi2 = SigM2_calc(R2chg_Jpi, Qm_c,  Qm_c,  chg_u, -chg_u)*(4./3.); //normalizing
+	  SigJpi2 = SigM2_calc(R2chg_Jpi, Qm_c,  Qm_c,  chg_u, -chg_u); //normalizing
 	  SigDs2  = SigM2_calc(R2chg_Ds,  Qm_c,  Qm_s,  chg_u, chg_d);
 	  SigD2   = SigM2_calc(R2chg_D,   Qm_c,  Qm_ud, chg_u, chg_d);
-	  SigUps2 = SigM2_calc(R2chg_Ups, Qm_b,  Qm_b,  chg_d, -chg_d)*(2./3.); //normalizing
+	  SigUps2 = SigM2_calc(R2chg_Ups, Qm_b,  Qm_b,  chg_d, -chg_d); //normalizing
 	  SigBc2  = SigM2_calc(R2chg_Bc,  Qm_b,  Qm_c,  chg_d, chg_u);
 	  SigB2   = SigM2_calc(R2chg_B,   Qm_b,  Qm_ud, chg_d, chg_u); // (treating B_s as B)
 
@@ -361,11 +360,10 @@ void HybridHadronization::Init(){
 	
 	  if(brickptns){
     
-	  	thermptnsampler brick; //creating a thermal brick
+	  	thermptnsampler brick(rand_seed); //creating a thermal brick
 	  	brick.brick_LWo(2.*brick_L,2.*brick_L,2.*brick_L); //(double len_bri(z), double wid_bri(x,y), double offset_in(unused)) //Just setting as a 'normal' brick 'cube'
 	  	//brick.brick_flow(0., 0., tanh(0.6)); //(double vx_in, double vy_in, double vz_in)
-	  	brick.brick_flow(0.6, 0., 0.); //(double vx_in, double vy_in, double vz_in)
-	  	brick.samp_seed(rand_seed); //(unsigned int seed_in)
+	  	brick.brick_flow(0., 0., 0.); //(double vx_in, double vy_in, double vz_in)
 	  	brick.samplebrick();
   
 	  	JSINFO << "A " << brick_L << " fm brick was sampled, generating " << brick.nTot() << " partons (" << brick.th_nL() << " light, " << brick.th_nS() << " strange).";
@@ -1583,11 +1581,11 @@ void HybridHadronization::recomb(){
 
 				  //finding relative positions of partons in CM frame
 				  FourVector pos_rel_square[2];
-				  pos_rel_square[0].Set((cur_pos[0].x()-cur_pos[1].x())/sqrt(2.),(cur_pos[0].y()-cur_pos[1].y())/sqrt(2.),(cur_pos[0].z()-cur_pos[1].z())/sqrt(2.),0.);
+				  pos_rel_square[0].Set((cur_pos[0].x()-cur_pos[1].x()),(cur_pos[0].y()-cur_pos[1].y()),(cur_pos[0].z()-cur_pos[1].z()),0.);
 				  pos_rel_square[1].Set(
-				  ((cur_pos[0].x()*considering[0].mass()+cur_pos[1].x()*considering[1].mass())/(considering[0].mass()+considering[1].mass())-cur_pos[2].x())*sqrt(2./3.),
-				  ((cur_pos[0].y()*considering[0].mass()+cur_pos[1].y()*considering[1].mass())/(considering[0].mass()+considering[1].mass())-cur_pos[2].y())*sqrt(2./3.),
-				  ((cur_pos[0].z()*considering[0].mass()+cur_pos[1].z()*considering[1].mass())/(considering[0].mass()+considering[1].mass())-cur_pos[2].z())*sqrt(2./3.),
+				  ((cur_pos[0].x()*considering[0].mass()+cur_pos[1].x()*considering[1].mass())/(considering[0].mass()+considering[1].mass())-cur_pos[2].x()),
+				  ((cur_pos[0].y()*considering[0].mass()+cur_pos[1].y()*considering[1].mass())/(considering[0].mass()+considering[1].mass())-cur_pos[2].y()),
+				  ((cur_pos[0].z()*considering[0].mass()+cur_pos[1].z()*considering[1].mass())/(considering[0].mass()+considering[1].mass())-cur_pos[2].z()),
 				  0.);
 
 
