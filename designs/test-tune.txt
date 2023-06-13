@@ -1,0 +1,4 @@
+# Version 1.0
+# Parameter q0 virFac lambdaQCD pionScale kaonScale protonScale StoUD QQtoQ
+#2.412 0.226 0.11800000000000001 1.0 1.0 1.0 0.32 0.081 2.28
+2.412 0.226 0.11800000000000001 1.0 1.0 1.0 0.32 0.1974 2.28
