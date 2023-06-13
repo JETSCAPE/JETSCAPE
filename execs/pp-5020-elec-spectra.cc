@@ -71,30 +71,30 @@ int main(int argc, char* argv[]){
     //cout << xsectotal << endl;
 
     //Cut variables
-    double AssHadPtMin = 1.0;
-    double AssHadPtMax = 7.0;
-    double deltaEtaCut = 1;
-    double leadingYcut = 0.6;
-    double triggerptmax = 4.0;
-    double triggerptmin = 16.0;
+    double AssHadPtCut = 1.0;
+    double deltaEtaCut = 1.0;
+    double eYcut = 0.6;
+    double triggerptcut[] = {4.0}; int nTrigRegions = 1;
+    double assptmin[] = {1.0,2.0,5.0};  int nAssRegions = 3;
+    double assptmax[] = {2.0,3.0,7.0};
 
     //output file for associated hadrons
     ofstream hadfile;
     hadfile.open("asshads.txt");
     
     //Variables for single hadron spectrum
-    double LphiBin[17];
-    for(int i = 0; i < 17; i++) LphiBin[i] = i*pi/16;
-    double phibinw = LphiBin[1]-LphiBin[0];
-    int NphiLBin = sizeof(LphiBin)/sizeof(LphiBin[0])-1;
-    TH1D *HistLPhi[3][3]; //identified hadrons hists
-    double totLcount[3][3] = {0};
-    string names[3][3];
-    for(int i1 = 0; i1 < 3; i1++){
-        for(int i2 = 0; i2 < 3; i2++){
+    double ephiBin[17];
+    for(int i = 0; i < 17; i++) ephiBin[i] = i*pi/16;
+    double phibinw = ephiBin[1]-ephiBin[0];
+    int NphieBin = sizeof(ephiBin)/sizeof(ephiBin[0])-1;
+    TH1D *HistePhi[1][3]; //identified hadrons hists
+    double totecount[1][3] = {0};
+    string names[1][3];
+    for(int i1 = 0; i1 < nTrigRegions; i1++){
+        for(int i2 = 0; i2 < nAssRegions; i2++){
             names[i1][i2] = "D Azi Cor "+to_string(triggerptcut[i1])+"-"+to_string(triggerptcut[i1+1])+" "+
                 to_string(assptmin[i2])+"-"+to_string(assptmax[i2]);
-            HistLPhi[i1][i2] = new TH1D("Hybrid Had. Prediction", names[i1][i2].c_str(), NphiLBin, LphiBin);
+            HistePhi[i1][i2] = new TH1D("Hybrid Had. Prediction", names[i1][i2].c_str(), NphieBin, ephiBin);
         }
     }   
 
@@ -116,7 +116,7 @@ int main(int argc, char* argv[]){
         double Px, Py, Pz, E, Eta, Phi, pStat, mass, Y;
         int Events =0;
         int TriggeredJetNumber=0;
-        int Lcount[3][3] = {0};
+        int ecount[1][3] = {0};
         
         // Create a file on which histogram(s) can be saved.
         char outFileName[1000];
@@ -126,19 +126,34 @@ int main(int argc, char* argv[]){
         char HistName[100];
 
         //temp hists for identified hadrons
-        TH1D *Lpts = new TH1D("D counts", "D counts", 3, triggerptcut);
-        TH1D *tempL[3][3]; //identified hadrons hists
-        for(int i1 = 0; i1 < 3; i1++)
-            for(int i2 = 0; i2 < 3; i2++)
-                tempL[i1][i2] = new TH1D(names[i1][i2].c_str(), names[i1][i2].c_str(), NphiLBin, LphiBin);
+        TH1D *epts = new TH1D("D counts", "D counts", 3, triggerptcut);
+        TH1D *tempe[1][3]; //identified hadrons hists
+        for(int i1 = 0; i1 < nTrigRegions; i1++)
+            for(int i2 = 0; i2 < nAssRegions; i2++)
+                tempe[i1][i2] = new TH1D(names[i1][i2].c_str(), names[i1][i2].c_str(), NphieBin, ephiBin);
 
         //Data structures for events read in to save run time
-        vector<shared_ptr<Hadron>> hadrons, Ls, others;
+        vector<shared_ptr<Hadron>> hadrons, es, others;
         
         //actually reading in
         while (!myfile->Finished()){
             myfile->Next();
             hadrons = myfile->GetHadrons();
+
+            //double counting protection
+            if(k == 0){
+                auto partons = myfile->GetPartonShowers();
+                bool skip = false;
+
+                for(int i = 0; i < partons.size(); i++){
+                    if(partons[i]->GetPartonAt(0)->pt() > stod(pTHatMax[0])){
+                        //cout << partons[i]->GetPartonAt(0)->pt() << endl;
+                        skip = true;
+                    }  
+                }
+
+                if(skip) continue;
+            }
 
             //cout<<"Number of hadrons is: " << hadrons.size() << endl;
             Events++;
@@ -157,10 +172,10 @@ int main(int argc, char* argv[]){
                 double PT = TMath::Sqrt((Px*Px) + (Py*Py));                
                 
                 // making particle lists
-                if(abs(PID) == 411 || abs(PID) == 413 || abs(PID) == 421){
-                    if(abs(Y) < LYcut){
-                        Ls.push_back(hadrons[i]);
-                        Lpts->Fill(PT);
+                if(abs(PID) == 11){
+                    if(abs(Y) < eYcut){
+                        es.push_back(hadrons[i]);
+                        epts->Fill(PT);
                     }
                 }
                 
@@ -174,17 +189,17 @@ int main(int argc, char* argv[]){
             }
 
             //forming and binning pairs
-            for(int i = 0; i < Ls.size(); i++){
+            for(int i = 0; i < es.size(); i++){
                 for(int j = 0; j < others.size(); j++){
-                    if(abs(Ls[i].get()->eta() - others[j].get()->eta()) < deltaEtaCut){
-                        double deltaphi = abs(Ls[i].get()->phi() - others[j].get()->phi());
+                    if(abs(es[i].get()->eta() - others[j].get()->eta()) < deltaEtaCut){
+                        double deltaphi = abs(es[i].get()->phi() - others[j].get()->phi());
                         if(deltaphi > pi) deltaphi = (2*pi) - deltaphi;
 
-                        for(int i1 = 0; i1 < 3; i1++){
-                            for(int i2 = 0; i2 < 3; i2++){
-                                if(Ls[i].get()->pt() > triggerptcut[i1] && Ls[i].get()->pt() < triggerptcut[i1+1] 
+                        for(int i1 = 0; i1 < nTrigRegions; i1++){
+                            for(int i2 = 0; i2 < nAssRegions; i2++){
+                                if(es[i].get()->pt() > triggerptcut[i1] && es[i].get()->pt() < triggerptcut[i1+1] 
                                     && others[j].get()->pt() > assptmin[i2] && others[j].get()->pt() < assptmax[i2]){
-                                        tempL[i1][i2]->Fill(deltaphi, 1.0/(phibinw));
+                                        tempe[i1][i2]->Fill(deltaphi, 1.0/(phibinw));
                                 }
                             }
                         }
@@ -193,14 +208,14 @@ int main(int argc, char* argv[]){
             }
 
             //writing out associated hadrons
-            if(Ls.size() > 0){
+            if(es.size() > 0){
                 hadfile << "pTHat: " << pTHatMin[k] << " to " << pTHatMax[k] << endl;
                 for(int i = 0; i < others.size(); i++)
                     hadfile << others[i].get()->pid() << " " << others[i].get()->pt() << " " << others[i].get()->eta() << " " << others[i].get()->phi() << endl;
             }
 
             //clearing had vecs
-            Ls.clear();
+            es.clear();
             others.clear();
         }
         
@@ -210,23 +225,23 @@ int main(int argc, char* argv[]){
         double HardCrossSectionError = xsecErrorList[k];
         
         //Dcounts
-        for(int i1 = 0; i1 < 3; i1++)
-            for(int i2 = 0; i2 < 3; i2++)
-                totLcount[i1][i2] += Lpts->GetBinContent(i1+1)*HardCrossSection/(xsectotal*Events);
+        for(int i1 = 0; i1 < nTrigRegions; i1++)
+            for(int i2 = 0; i2 < nAssRegions; i2++)
+                totecount[i1][i2] += epts->GetBinContent(i1+1)*HardCrossSection/(xsectotal*Events);
         
         //event info
         TVector EventInfo(3);
-        EventInfo[0] = Lcount[1][0];
-        EventInfo[1] = Lcount[1][1];
-        EventInfo[2] = Lcount[1][2];
+        EventInfo[0] = ecount[1][0];
+        EventInfo[1] = ecount[1][1];
+        EventInfo[2] = ecount[1][2];
         EventInfo.Write("EventInfo");
         
         //add to totals histograms
         //tempD->Scale(1.0/(Dcount));
-        for(int i1 = 0; i1 < 3; i1++){
-            for(int i2 = 0; i2 < 3; i2++){
-                tempL[i1][i2]->Write(names[i1][i2].c_str());
-                HistLPhi[i1][i2]->Add(tempL[i1][i2],HardCrossSection/(xsectotal*Events));
+        for(int i1 = 0; i1 < nTrigRegions; i1++){
+            for(int i2 = 0; i2 < nAssRegions; i2++){
+                tempe[i1][i2]->Write(names[i1][i2].c_str());
+                HistePhi[i1][i2]->Add(tempe[i1][i2],HardCrossSection/(xsectotal*Events));
             }
         }
 
@@ -240,18 +255,18 @@ int main(int argc, char* argv[]){
 
     //Scaling totals by global factors and the identified pions by bin centers: dSigma/(2*pi*pT*dpT*dEta)
     //HistDPhi->SetNormFactor(1.0);
-    for(int i1 = 0; i1 < 3; i1++){
-        for(int i2 = 0; i2 < 3; i2++){
-            HistLPhi[i1][i2]->Scale(1.0/totLcount[i1][i2]);
-            HistLPhi[i1][i2]->GetXaxis()->SetTitle("Delta phi (rad)");
-            HistLPhi[i1][i2]->GetYaxis()->SetTitle("(1/ND)(dNassc/dDelphi)");
- 	        HistLPhi[i1][i2]->Write(names[i1][i2].c_str());
+    for(int i1 = 0; i1 < nTrigRegions; i1++){
+        for(int i2 = 0; i2 < nAssRegions; i2++){
+            HistePhi[i1][i2]->Scale(1.0/totecount[i1][i2]);
+            HistePhi[i1][i2]->GetXaxis()->SetTitle("Delta phi (rad)");
+            HistePhi[i1][i2]->GetYaxis()->SetTitle("(1/Ne)(dNassc/dDelphi)");
+ 	        HistePhi[i1][i2]->Write(names[i1][i2].c_str());
 
             //plot output
             TCanvas *c = new TCanvas();
-            HistLPhi[i1][i2]->Draw();
+            HistePhi[i1][i2]->Draw();
             string plotname = "plots/" + names[i1][i2] + ".png";
-            HistLPhi[i1][i2]->GetYaxis()->SetRangeUser(0,10);
+            HistePhi[i1][i2]->GetYaxis()->SetRangeUser(0,10);
             c->SaveAs(plotname.c_str());
             c->Close();
 
@@ -259,9 +274,9 @@ int main(int argc, char* argv[]){
             ofstream asciifile;
             asciifile.open(names[i1][i2]);
             asciifile << "x\ty\tyerr" << endl;
-            for(int i = 1; i <= HistLPhi[i1][i2]->GetNbinsX(); i++)
-                asciifile << HistLPhi[i1][i2]->GetBinCenter(i) << "\t" << HistLPhi[i1][i2]->GetBinContent(i)
-                    << "\t" << HistLPhi[i1][i2]->GetBinError(i) << endl;
+            for(int i = 1; i <= HistePhi[i1][i2]->GetNbinsX(); i++)
+                asciifile << HistePhi[i1][i2]->GetBinCenter(i) << "\t" << HistePhi[i1][i2]->GetBinContent(i)
+                    << "\t" << HistePhi[i1][i2]->GetBinError(i) << endl;
             asciifile.close();
 
         }
