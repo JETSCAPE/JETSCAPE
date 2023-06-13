@@ -142,6 +142,7 @@ void Matter::Init() {
   hydro_Tc = GetXMLElementDouble({"Eloss", "Matter", "hydro_Tc"});
   brick_length = GetXMLElementDouble({"Eloss", "Matter", "brick_length"});
   vir_factor = GetXMLElementDouble({"Eloss", "Matter", "vir_factor"});
+  Lambda_QCD = GetXMLElementDouble({"Eloss","lambdaQCD"});
 
   if (vir_factor < 0.0) {
     cout << "Reminder: negative vir_factor is set, initial energy will be used "
