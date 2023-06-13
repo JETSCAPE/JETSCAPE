@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+
+<jetscape>
+  
+  <nEvents> 100 </nEvents>
+  
+  <outputFilename>/scratch/user/cameron.parker/JETSCAPE-COMP-HH_colorrecomb/test</outputFilename>
+  <JetScapeWriterAscii> on </JetScapeWriterAscii>
+  
+  <!-- Hard Process -->
+  <Hard>
+    <PythiaGun>
+      <pTHatMin>0</pTHatMin>
+      <pTHatMax>5</pTHatMax>
+      <eCM>13000</eCM>
+      <LinesToRead>
+        HardQCD:all = off
+        HardQCD:hardccbar = on
+      </LinesToRead>
+    </PythiaGun>
+  </Hard>
+  
+  <!--Eloss Modules -->
+  <Eloss>
+    <maxT> 400 </maxT>
+    <lambdaQCD> 0.2 </lambdaQCD>
+    
+    <Matter> 
+      <Q0>1</Q0>
+      <in_vac> 1 </in_vac>
+      <vir_factor>0.25</vir_factor>
+      <recoil_on> 0 </recoil_on>
+      <broadening_on> 0 </broadening_on>
+      <brick_med> 0 </brick_med>
+    </Matter>
+  </Eloss>
+  
+  <!-- Jet Hadronization Module -->
+  <JetHadronization>
+    <name>hybrid</name>
+    <eCMforHadronization>2167</eCMforHadronization>
+    <reco_Elevelmax>1</reco_Elevelmax>
+    <pionWidthScale>1.0</pionWidthScale>
+    <kaonWidthScale>1.0</kaonWidthScale>
+    <protonWidthScale>1.0</protonWidthScale>
+    <decayTime>10</decayTime>
+    <StoUD>0.217</StoUD>
+    <QQtoQ>0.081</QQtoQ>
+  </JetHadronization>
+  
+</jetscape>
