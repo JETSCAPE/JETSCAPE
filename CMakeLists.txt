@@ -521,6 +521,12 @@ if (${ROOT_FOUND})
   target_link_libraries(pp-2760-smoothing JetScape analysis)
   endif()
 
+if (${ROOT_FOUND}) 
+  add_executable(pp-5020-elec-spectra ./execs/pp-5020-elec-spectra.cc)
+  target_link_libraries(pp-5020-elec-spectra JetScape analysis)
+  endif()
+  
+  
 
 # -----------------------------------------------------------
 #### copy essential files for MUSIC to build/
