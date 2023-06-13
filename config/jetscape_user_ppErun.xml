@@ -48,6 +48,7 @@
     <LinesToRead>
       StringFlav:probStoUD = 0.217
       StringFlav:probQQtoQ = 0.081
+      ParticleDecays:tau0Max = 10
     </LinesToRead>
   </JetHadronization>
   
