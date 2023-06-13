@@ -11,9 +11,11 @@ from operator import itemgetter
 import time
 
 ##option reading
+system = "LHC"
 RHIC = False
 Drun = False
 Lrun = False
+Erun = False
 reading = False
 rerunning = False
 appending = False
@@ -21,11 +23,17 @@ design = []
 startdir = ""
 for i, option in enumerate(sys.argv):
     if "RHIC" in option:
+        system = "RHIC"
         RHIC = True
     if "Drun" in option:
+        system = "Drun"
         Drun = True
     if "Lrun" in option:
+        system = "Lrun"
         Lrun = True
+    if "Erun" in option:
+        system = "Erun"
+        Erun = True
     if "-d" in option:
         reading = True
         design = readDesign(sys.argv[i+1])
@@ -41,9 +49,6 @@ for i, option in enumerate(sys.argv):
 
 #date and file initiation
 todays_date = date.today()
-system = "LHC"
-if RHIC:
-    system = "RHIC"
 totaldir = "/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/runs/" + system + "-" + str(todays_date.month) + "-" + str(todays_date.day) + "/"
 if rerunning: 
     totaldir = startdir
@@ -174,7 +179,7 @@ else:
     intervals = [0, 5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5, 25, 27.5, 30, 32.5, 35, 37.5, 40, 42.5, 45, 50, 55, 60, 65, 70, 75, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 230, 250, 270, 290, 310, 330, 350, 400, 450, 500, 550, 600, 1000]
     ECM = "2760"
 
-xmlname = "/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/config/jetscape_user_pp"+ECM+".xml"
+xmlname = "/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/config/jetscape_user_pp"+system+".xml"
 
 xmltemplate = open(xmlname,"r")
 xmllines = xmltemplate.readlines()
