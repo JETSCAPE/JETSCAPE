@@ -59,7 +59,6 @@ std::vector<shared_ptr<Hadron>> Afterburner::GetFragmentationHadrons() {
   hadronization_mgr->GetHadrons(h_list);
   JSINFO << "Got " << h_list.size() << " fragmentation hadrons from HadronizationManager.";
   
-  rand_int_ptr_ = (std::make_shared<std::uniform_int_distribution<int>>(0,1));
   std::vector<shared_ptr<Hadron>> h_list_new;
   for (auto h : h_list) {
     if (h->has_no_position()) {
