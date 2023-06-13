@@ -13,7 +13,7 @@ class thermptnsampler
 {
  public:
 	//constructor - initializes variables
-	thermptnsampler();
+	thermptnsampler(unsigned int ran_seed);
 	
 	//sampler - samples thermal partons (u,d,s) from brick or 2+1d / 3+1d hydro
 	void samplebrick(); void sample_2p1d(); void sample_3p1d();
@@ -27,7 +27,6 @@ class thermptnsampler
 	void brick_LWo(double len_bri, double wid_bri, double offset_in){L = len_bri; W = wid_bri; offset = offset_in;}
 	void brick_off(double offset_in){offset = offset_in;}
 	void brick_flow(double vx_in, double vy_in, double vz_in){Vx = vx_in; Vy = vy_in; Vz = vz_in;}
-	void samp_seed(unsigned int seed_in){ran_seed = seed_in;}
 	
 	//getters for thermal partons
 	int nTot(         ){return Plist.size();}
@@ -60,7 +59,7 @@ class thermptnsampler
 	//double BosePDF (double P, double M, double T, double mu);			
 	//double BoltzPDF (double P, double M, double T, double mu);		
 	void CDFGen(double Temp, double M, int quark);						//generates Cumulative distribution in thermal rest frame "quark" is 1 for light and 2 for strange
-	double ran(); unsigned int ran_seed; std::mt19937_64 eng;			//RNG - Mersenne Twist - 64 bit
+	double ran(); std::mt19937_64 eng;			//RNG - Mersenne Twist - 64 bit
 	
 	/* Static Parameters, Do not change */
 	double PIE, GEVFM, muPi0;

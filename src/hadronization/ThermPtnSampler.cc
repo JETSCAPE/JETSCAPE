@@ -8,7 +8,7 @@
 
 using namespace Jetscape;
 
-thermptnsampler::thermptnsampler(){
+thermptnsampler::thermptnsampler(unsigned int ran_seed){
 	
 	/* Static Parameters, Do not change */
 	PIE = 3.141592653589793;
@@ -74,7 +74,6 @@ thermptnsampler::thermptnsampler(){
 	num_ud = 0; num_s = 0;
 	
 	for(int iCDF=0; iCDF<NUMSTEP; ++iCDF){std::vector<double> temp = {0., 0.}; CDFTabLight.push_back(temp); CDFTabStrange.push_back(temp);}
-	
 	// random seed
 	if(ran_seed != 0){eng.seed(ran_seed);}
 	//else{eng.seed(std::random_device{}());}
