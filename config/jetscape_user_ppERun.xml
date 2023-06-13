@@ -12,7 +12,7 @@
     <PythiaGun>
       <pTHatMin>0</pTHatMin>
       <pTHatMax>5</pTHatMax>
-      <eCM>13000</eCM>
+      <eCM>5020</eCM>
       <LinesToRead>
         HardQCD:all = off
         HardQCD:hardccbar = on
@@ -45,8 +45,10 @@
     <kaonWidthScale>1.0</kaonWidthScale>
     <protonWidthScale>1.0</protonWidthScale>
     <decayTime>10</decayTime>
-    <StoUD>0.217</StoUD>
-    <QQtoQ>0.081</QQtoQ>
+    <LinesToRead>
+      StringFlav:probStoUD = 0.217
+      StringFlav:probQQtoQ = 0.081
+    </LinesToRead>
   </JetHadronization>
   
 </jetscape>

@@ -86,8 +86,8 @@ def makexml(bound, parameters, baseDir, xmltemplate, ECM):
     pionLine = "    <pionWidthScale>" + str(parameters[4]) + "</pionWidthScale>\n"
     kaonLine = "    <kaonWidthScale>" + str(parameters[5]) + "</kaonWidthScale>\n"
     protonLine = "    <protonWidthScale>" + str(parameters[6]) + "</protonWidthScale>\n"
-    StoUDline = "    <StoUD>" + str(parameters[7]) + "</StoUD>\n"
-    QQtoQline = "    <QQtoQ>" + str(parameters[8]) + "</QQtoQ>\n"
+    StoUDline = "      StringFlav:probStoUD = " + str(parameters[7]) + "\n"
+    QQtoQline = "      StringFlav:probQQtoQ = " + str(parameters[8]) + "\n"
     pt0refline = "         MultipartonInteractions:pT0Ref = " + str(parameters[9]) +"\n"
 
 
@@ -103,8 +103,8 @@ def makexml(bound, parameters, baseDir, xmltemplate, ECM):
         elif "<pionWidthScale>" in line: newlines.append(pionLine)
         elif "<kaonWidthScale>" in line: newlines.append(kaonLine)
         elif "<protonWidthScale>" in line: newlines.append(protonLine)
-        elif "<StoUD>" in line: newlines.append(StoUDline)
-        elif "<QQtoQ>" in line: newlines.append(QQtoQline)
+        elif "StoUD" in line: newlines.append(StoUDline)
+        elif "QQtoQ" in line: newlines.append(QQtoQline)
         elif "pT0Ref" in line: newlines.append(pt0refline)
         else: newlines.append(line)
 
