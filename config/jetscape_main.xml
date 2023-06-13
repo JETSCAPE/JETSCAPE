@@ -338,6 +338,9 @@
        <had_postprop>0.0</had_postprop>
        <part_prop>1.0</part_prop>
        <weak_decays>on</weak_decays>
+       <pionWidthScale>1.0</pionWidthScale>
+       <kaonWidthScale>1.0</kaonWidthScale>
+       <protonWidthScale>1.0</protonWidthScale>
        <!-- You can add any number of additional lines to initialize pythia hadronization here -->
        <!-- Note that if the tag exists it cannot be empty (tinyxml produces a segfault) -->
        <!-- <LinesToRead> -->

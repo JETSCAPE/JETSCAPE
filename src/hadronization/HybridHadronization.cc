@@ -221,6 +221,16 @@ void HybridHadronization::Init(){
 	  double R2chg_Xib  = 0.63 ; //?????
 	  double R2chg_Sigb = 0.66 ; //?????
 
+    //variable widths set in xml
+    xml_doublein = GetXMLElementDouble({"JetHadronization", "pionWidthScale"});
+    if(xml_doublein >= 0.){R2chg_Pi *= xml_doublein*xml_doublein;} xml_doublein = -1.;
+
+    xml_doublein = GetXMLElementDouble({"JetHadronization", "kaonWidthScale"});
+    if(xml_doublein >= 0.){R2chg_K *= xml_doublein*xml_doublein;} xml_doublein = -1.;
+
+    xml_doublein = GetXMLElementDouble({"JetHadronization", "protonWidthScale"});
+    if(xml_doublein >= 0.){R2chg_Nuc *= xml_doublein*xml_doublein;} xml_doublein = -1.;
+
 	  //meson width calculations (r2) - recalc if r2chg is changed on command line...
 	  SigPi2  = SigM2_calc(R2chg_Pi,  Qm_ud, Qm_ud, chg_d, chg_u);
 	  SigPhi2 = SigM2_calc(R2chg_Phi, Qm_s,  Qm_s,  chg_d, -chg_d); //normalizing
