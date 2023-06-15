@@ -38,7 +38,7 @@ if setStart:
     directories = newdirectories
 
 
-os.chdir("/scratch/user/cameron.parker/JETSCAPE-COMP-HH_colorrecomb/build/")
+os.chdir("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/build/")
 
 #ECM setting
 ECM = "2760"
@@ -49,7 +49,7 @@ def run(directory):
     if analysisDir.startswith("/"):
         baseDir = analysisDir + directory
     else:
-        baseDir = "/scratch/user/cameron.parker/JETSCAPE-COMP-HH_colorrecomb/" + analysisDir + directory
+        baseDir = "/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/" + analysisDir + directory
     
     if smoothrun:
         cmd = "./pp-"+ECM+"-smoothing " + baseDir
