@@ -76,7 +76,7 @@ std::vector<shared_ptr<Hadron>> Afterburner::GetFragmentationHadrons() {
     double position_smeared[4] = {r.t(), r.x()+rand_x, r.y()+rand_y, r.z()+rand_z};
     h->set_x(position_smeared);
 
-    if ((std::abs(h->pid())>10) && (h->pid() != 21)) {
+    if ((std::abs(h->pid())>10) && (h->pid() != 21) && (h->pstat() > 0)) {
       h_list_new.push_back(h);
     } else {
       JSWARN << "Found a free quark or gluon! This can not be handed over to SMASH.\n"
