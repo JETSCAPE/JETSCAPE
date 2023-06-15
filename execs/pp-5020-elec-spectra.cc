@@ -74,7 +74,8 @@ int main(int argc, char* argv[]){
     double AssHadPtCut = 1.0;
     double deltaEtaCut = 1.0;
     double eYcut = 0.6;
-    double triggerptcut[] = {4.0}; int nTrigRegions = 1;
+    double triggerPtMin[] = {4.0}; int nTrigRegions = 1;
+    double triggerPtMax[] = {12.0};
     double assptmin[] = {1.0,2.0,5.0};  int nAssRegions = 3;
     double assptmax[] = {2.0,3.0,7.0};
 
@@ -87,12 +88,12 @@ int main(int argc, char* argv[]){
     for(int i = 0; i < 17; i++) ephiBin[i] = i*pi/16;
     double phibinw = ephiBin[1]-ephiBin[0];
     int NphieBin = sizeof(ephiBin)/sizeof(ephiBin[0])-1;
-    TH1D *HistePhi[1][3]; //identified hadrons hists
-    double totecount[1][3] = {0};
-    string names[1][3];
+    TH1D *HistePhi[nTrigRegions][nAssRegions]; //identified hadrons hists
+    double totecount[nTrigRegions][nAssRegions] = {0};
+    string names[nTrigRegions][nAssRegions];
     for(int i1 = 0; i1 < nTrigRegions; i1++){
         for(int i2 = 0; i2 < nAssRegions; i2++){
-            names[i1][i2] = "D Azi Cor "+to_string(triggerptcut[i1])+"-"+to_string(triggerptcut[i1+1])+" "+
+            names[i1][i2] = "e Azi Cor "+to_string(triggerPtMin[i1])+"-"+to_string(triggerPtMax[i1])+" "+
                 to_string(assptmin[i2])+"-"+to_string(assptmax[i2]);
             HistePhi[i1][i2] = new TH1D("Hybrid Had. Prediction", names[i1][i2].c_str(), NphieBin, ephiBin);
         }
@@ -116,7 +117,7 @@ int main(int argc, char* argv[]){
         double Px, Py, Pz, E, Eta, Phi, pStat, mass, Y;
         int Events =0;
         int TriggeredJetNumber=0;
-        int ecount[1][3] = {0};
+        int ecount[nTrigRegions] = {0};
         
         // Create a file on which histogram(s) can be saved.
         char outFileName[1000];
@@ -126,8 +127,7 @@ int main(int argc, char* argv[]){
         char HistName[100];
 
         //temp hists for identified hadrons
-        TH1D *epts = new TH1D("D counts", "D counts", 3, triggerptcut);
-        TH1D *tempe[1][3]; //identified hadrons hists
+        TH1D *tempe[nTrigRegions][nAssRegions]; //identified hadrons hists
         for(int i1 = 0; i1 < nTrigRegions; i1++)
             for(int i2 = 0; i2 < nAssRegions; i2++)
                 tempe[i1][i2] = new TH1D(names[i1][i2].c_str(), names[i1][i2].c_str(), NphieBin, ephiBin);
@@ -175,12 +175,17 @@ int main(int argc, char* argv[]){
                 if(abs(PID) == 11){
                     if(abs(Y) < eYcut){
                         es.push_back(hadrons[i]);
-                        epts->Fill(PT);
+                        for(int i1 = 0; i1 < nTrigRegions; i1++){
+                            if(PT > triggerPtMin[i1] && PT < triggerPtMax[i1]){
+                                //cout << "valid electron" << endl;
+                                ecount[i1]++;
+                            }
+                        }
                     }
                 }
                 
                 //associated particles are electrons, muons, pions, kaons, protons
-                if(abs(PID) == 11 || abs(PID) == 13 || abs(PID) == 211 || abs(PID) == 321 || abs(PID) == 2212){
+                if(abs(PID) == 13 || abs(PID) == 211 || abs(PID) == 321 || abs(PID) == 2212){
                     if(PT > AssHadPtCut){
                         others.push_back(hadrons[i]);
                     }
@@ -197,8 +202,9 @@ int main(int argc, char* argv[]){
 
                         for(int i1 = 0; i1 < nTrigRegions; i1++){
                             for(int i2 = 0; i2 < nAssRegions; i2++){
-                                if(es[i].get()->pt() > triggerptcut[i1] && es[i].get()->pt() < triggerptcut[i1+1] 
-                                    && others[j].get()->pt() > assptmin[i2] && others[j].get()->pt() < assptmax[i2]){
+                                if(es[i].get()->pt() > triggerPtMin[i1] && es[i].get()->pt() < triggerPtMax[i1+1] 
+                                    && others[j].get()->pt() > assptmin[i2] && others[j].get()->pt() < assptmax[i2]
+                                    && es[i].get()->pt() > others[j].get()->pt()){
                                         tempe[i1][i2]->Fill(deltaphi, 1.0/(phibinw));
                                 }
                             }
@@ -210,8 +216,8 @@ int main(int argc, char* argv[]){
             //writing out associated hadrons
             if(es.size() > 0){
                 hadfile << "pTHat: " << pTHatMin[k] << " to " << pTHatMax[k] << endl;
-                for(int i = 0; i < others.size(); i++)
-                    hadfile << others[i].get()->pid() << " " << others[i].get()->pt() << " " << others[i].get()->eta() << " " << others[i].get()->phi() << endl;
+                for(int i = 0; i < es.size(); i++)
+                    hadfile << es[i].get()->pid() << " " << es[i].get()->pt() << " " << es[i].get()->eta() << " " << es[i].get()->phi() << endl;
             }
 
             //clearing had vecs
@@ -227,13 +233,13 @@ int main(int argc, char* argv[]){
         //Dcounts
         for(int i1 = 0; i1 < nTrigRegions; i1++)
             for(int i2 = 0; i2 < nAssRegions; i2++)
-                totecount[i1][i2] += epts->GetBinContent(i1+1)*HardCrossSection/(xsectotal*Events);
+                totecount[i1][i2] += ecount[i1]*HardCrossSection/(xsectotal*Events);
         
         //event info
         TVector EventInfo(3);
-        EventInfo[0] = ecount[1][0];
-        EventInfo[1] = ecount[1][1];
-        EventInfo[2] = ecount[1][2];
+        EventInfo[0] = ecount[0];
+        EventInfo[1] = HardCrossSection;
+        EventInfo[2] = HardCrossSectionError;
         EventInfo.Write("EventInfo");
         
         //add to totals histograms
@@ -241,7 +247,8 @@ int main(int argc, char* argv[]){
         for(int i1 = 0; i1 < nTrigRegions; i1++){
             for(int i2 = 0; i2 < nAssRegions; i2++){
                 tempe[i1][i2]->Write(names[i1][i2].c_str());
-                HistePhi[i1][i2]->Add(tempe[i1][i2],HardCrossSection/(xsectotal*Events));
+                if(ecount[i1] > 10)
+                    HistePhi[i1][i2]->Add(tempe[i1][i2],HardCrossSection/(xsectotal*Events));
             }
         }
 
@@ -266,18 +273,18 @@ int main(int argc, char* argv[]){
             TCanvas *c = new TCanvas();
             HistePhi[i1][i2]->Draw();
             string plotname = "plots/" + names[i1][i2] + ".png";
-            HistePhi[i1][i2]->GetYaxis()->SetRangeUser(0,10);
+            HistePhi[i1][i2]->GetYaxis()->SetRangeUser(0,5);
             c->SaveAs(plotname.c_str());
             c->Close();
 
             //ascii output
-            ofstream asciifile;
+            /*ofstream asciifile;
             asciifile.open(names[i1][i2]);
             asciifile << "x\ty\tyerr" << endl;
             for(int i = 1; i <= HistePhi[i1][i2]->GetNbinsX(); i++)
                 asciifile << HistePhi[i1][i2]->GetBinCenter(i) << "\t" << HistePhi[i1][i2]->GetBinContent(i)
                     << "\t" << HistePhi[i1][i2]->GetBinError(i) << endl;
-            asciifile.close();
+            asciifile.close();*/
 
         }
     }
