@@ -6235,7 +6235,7 @@ void HybridHadronization::set_spacetime_for_pythia_hadrons(Pythia8::Event &event
             hadron_out.add_par(mothers[hadron_parent]-1);
             if(HH_pyremn[mothers[hadron_parent]-1].is_thermal()) {is_therm = true;}
           }
-				}else if(mothers[hadron_parent] <= size_input){ //shouldn't actually need to check, but doing so just in case.
+				}else if(mothers[hadron_parent] < size_input){ //shouldn't actually need to check, but doing so just in case.
 					hadron_out.parh(eve_to_had[mothers[hadron_parent]]-1); 
           if(HH_hadrons[hadron_out.parh()].is_shth()) {is_therm = true;}
 				}
