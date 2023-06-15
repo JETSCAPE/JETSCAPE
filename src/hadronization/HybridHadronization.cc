@@ -420,6 +420,7 @@ void HybridHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& sh
   pythia.event.reset(); HH_shower.clear();
   parton_collection neg_ptns;
   
+  //sort positive partons into HH_shower and negative partons from LBT to neg_ptns
   for(unsigned int ishower=0; ishower < shower.size(); ++ishower){
 	  for(unsigned int ipart=0; ipart < shower.at(ishower).size(); ++ipart){
 		  HHparton sh_parton;
@@ -526,6 +527,13 @@ void HybridHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& sh
     if(pos_ptn == 0){//handling negative partons by wiping shower partons & hadrons, then rerunning with negative partons
 	    pythia.event.reset(); HH_shower.clear(); HH_shower = neg_ptns; //hadrons, remnants, pyremn cleared below
 	    th_recofactor = 0.;//killing thermal + negative parton recombination.
+
+      //add holes left by used thermal partons to HH_thermal
+      for(int i=0; i<HH_thermal.num(); ++i){
+        if(HH_thermal[i].is_used()) {
+          HH_shower.add(HH_thermal[i]);
+        }
+      }
     }
     if(HH_shower.num() == 0){continue;} //attempting to handle events/configurations with 0 partons will result in a crash
   
@@ -6245,7 +6253,7 @@ void HybridHadronization::set_spacetime_for_pythia_hadrons(Pythia8::Event &event
             hadron_out.add_par(mothers[hadron_parent]-1);
             if(HH_pyremn[mothers[hadron_parent]-1].is_thermal()) {is_therm = true;}
           }
-				}else if(mothers[hadron_parent] <= size_input){ //shouldn't actually need to check, but doing so just in case.
+				}else if(mothers[hadron_parent] < size_input){ //shouldn't actually need to check, but doing so just in case.
 					hadron_out.parh(eve_to_had[mothers[hadron_parent]]-1); 
           if(HH_hadrons[hadron_out.parh()].is_shth()) {is_therm = true;}
 				}
