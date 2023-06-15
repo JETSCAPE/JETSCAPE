@@ -19,3 +19,4 @@ external_packages/smash/smash_code/
 external_packages/ipglasma
 runs/*
 __pycache__/*
+data/*
