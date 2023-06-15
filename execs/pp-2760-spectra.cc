@@ -143,10 +143,10 @@ int main(int argc, char* argv[]){
     TH1D *HistTempJetMass = new TH1D("JetMassBin", "Jet Mass", NJetMassBin, JetMassBin);
 	
     TH1D *HistTotalHadron = new TH1D("HadronSpectrumBin", "Combined Hadron pT Spectrum", NpTSingleHadronBin, SingleHadronpTBin); //Total hist for hadrons
-	TH1D *HistTotalJet = new TH1D("JetSpectrumBin", "Combined Jet pT Spectrum", NpTJetBin, JetpTBin); //Total hist for jets
+	TH1D *HistTotalJet = new TH1D("JetSpectrumBin1", "Combined Jet pT Spectrum", NpTJetBin, JetpTBin); //Total hist for jets
     TH1D *HistTotalJetShape = new TH1D("JetShape", "Jet Shape", NrJetShapeBin, JetShaperBin); //Total hist for jet shape
-    TH1D *HistTotalJet2 = new TH1D("JetSpectrumBin", "Combined Jet pT Spectrum 0.2 R", NpTJetBin, JetpTBin); //Total hist for jets
-	TH1D *HistTotalJet3 = new TH1D("JetSpectrumBin", "Combined Jet pT Spectrum 0.4 R", NpTJetBin, JetpTBin); //Total hist for jets
+    TH1D *HistTotalJet2 = new TH1D("JetSpectrumBin2", "Combined Jet pT Spectrum 0.2 R", NpTJetBin, JetpTBin); //Total hist for jets
+	TH1D *HistTotalJet3 = new TH1D("JetSpectrumBin3", "Combined Jet pT Spectrum 0.4 R", NpTJetBin, JetpTBin); //Total hist for jets
     TH1D *HistTotalPions = new TH1D("Pion Spectrum", "Pion Spectrum pT", NpTpionBin, pionpTBin); //identified hadrons hists
     TH1D *HistTotalKaons = new TH1D("Kaon Spectrum", "Kaon Spectrum pT", NpTkaonBin, kaonpTBin);
     TH1D *HistTotalProtons = new TH1D("Proton Spectrum", "Proton Spectrum pT", NpTprotonBin, protonpTBin);
@@ -155,9 +155,9 @@ int main(int argc, char* argv[]){
 
     //profile histograms
     TProfile *ProfTotalHadron = new TProfile("HadronSpectrumBin", "Combined Hadron pT Spectrum", NpTSingleHadronBin, SingleHadronpTBin);
-    TProfile *ProfTotalPions = new TProfile("Pion Spectrum", "Pion Spectrum pT", NpTpionBin, pionpTBin);
-    TProfile *ProfTotalKaons = new TProfile("Kaon Spectrum", "Kaon Spectrum pT", NpTkaonBin, kaonpTBin);
-    TProfile *ProfTotalProtons = new TProfile("Proton Spectrum", "Proton Spectrum pT", NpTprotonBin, protonpTBin);
+    TProfile *ProfTotalPions = new TProfile("Pion Profile", "Pion Spectrum pT", NpTpionBin, pionpTBin);
+    TProfile *ProfTotalKaons = new TProfile("Kaon Profile", "Kaon Spectrum pT", NpTkaonBin, kaonpTBin);
+    TProfile *ProfTotalProtons = new TProfile("Proton Profile", "Proton Spectrum pT", NpTprotonBin, protonpTBin);
 
     //Running totals for total spectra
     double DifferentialJetTotal[NpTJetBin] = {0};
@@ -235,19 +235,19 @@ int main(int argc, char* argv[]){
         chargeList.resize(0);
         
         //temp hists for jets
-        TH1D *HistTempJet2 = new TH1D("JetSpectrumBin", "Jet Spectrum pT", NpTJetBin, JetpTBin);
-        TH1D *HistTempJet3 = new TH1D("JetSpectrumBin", "Jet Spectrum pT", NpTJetBin, JetpTBin);
+        TH1D *HistTempJet2 = new TH1D("JetSpectrumBinTemp2", "Jet Spectrum pT", NpTJetBin, JetpTBin);
+        TH1D *HistTempJet3 = new TH1D("JetSpectrumBinTemp3", "Jet Spectrum pT", NpTJetBin, JetpTBin);
 
         //temp hists for identified hadrons
-        TH1D *tempPions = new TH1D("Pion Spectrum", "Pion Spectrum pT", NpTpionBin, pionpTBin);
-        TH1D *tempKaons = new TH1D("Kaon Spectrum", "Kaon Spectrum pT", NpTkaonBin, kaonpTBin);
-        TH1D *tempProtons = new TH1D("Proton Spectrum", "Proton Spectrum pT", NpTprotonBin, protonpTBin);
+        TH1D *tempPions = new TH1D("Pion Spectrum Temp", "Pion Spectrum pT", NpTpionBin, pionpTBin);
+        TH1D *tempKaons = new TH1D("Kaon Spectrum Temp", "Kaon Spectrum pT", NpTkaonBin, kaonpTBin);
+        TH1D *tempProtons = new TH1D("Proton Spectrum Temp", "Proton Spectrum pT", NpTprotonBin, protonpTBin);
 
         //profile histograms
         TProfile *ProfTempHadron = new TProfile("HadronSpectrumBin", "Combined Hadron pT Spectrum", NpTSingleHadronBin, SingleHadronpTBin);
-        TProfile *ProfTempPions = new TProfile("Pion Spectrum", "Pion Spectrum pT", NpTpionBin, pionpTBin);
-        TProfile *ProfTempKaons = new TProfile("Kaon Spectrum", "Kaon Spectrum pT", NpTkaonBin, kaonpTBin);
-        TProfile *ProfTempProtons = new TProfile("Proton Spectrum", "Proton Spectrum pT", NpTprotonBin, protonpTBin);
+        TProfile *ProfTempPions = new TProfile("Pion Profile Temp", "Pion Spectrum pT", NpTpionBin, pionpTBin);
+        TProfile *ProfTempKaons = new TProfile("Kaon Profile Temp", "Kaon Spectrum pT", NpTkaonBin, kaonpTBin);
+        TProfile *ProfTempProtons = new TProfile("Proton Profile Temp", "Proton Spectrum pT", NpTprotonBin, protonpTBin);
 
         //Data structures for events read in to save run time
         vector<shared_ptr<Hadron>> hadrons;
