@@ -889,13 +889,13 @@ vector<double> getXsec(char HadronFile[300]){
 	if (myfile.is_open()){
         //go line by line and see if it matches the line for xsecs
 		while( getline(myfile,line) ){
-            std::size_t found = line.find("# sigmaGen ");
+            std::size_t found = line.find("# JetScape writersigmaGen ");
             if(found!=std::string::npos){
-                xsec = stod(line.substr(11));
+                xsec = stod(line.substr(26));
 
                 //getting err
                 getline(myfile,line);
-                xsecerr = stod(line.substr(11));
+                xsecerr = stod(line.substr(26));
             }
         }
     }
