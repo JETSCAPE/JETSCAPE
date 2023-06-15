@@ -59,7 +59,13 @@ void Brick::InitTask() {
   if (brick->Attribute("bjorken_expansion_on", "true")) {
     bjorken_expansion_on = true;
     start_time = std::atof(brick->Attribute("start_time"));
+  } else {
+    if (brick->Attribute("start_time")){
+      start_time = std::atof(brick->Attribute("start_time"));
+    }
   }
+
+  hydro_tau_0 = start_time;
 
   brick_L = GetXMLElementDouble({"Eloss", "Matter", "brick_length"});
 
