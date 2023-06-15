@@ -76,18 +76,17 @@ int main(int argc, char* argv[]){
     double eYcut = 0.6;
     double triggerPtMin[] = {4.0}; int nTrigRegions = 1;
     double triggerPtMax[] = {12.0};
-    double assptmin[] = {1.0,2.0,5.0};  int nAssRegions = 3;
-    double assptmax[] = {2.0,3.0,7.0};
+    double assptmin[] = {1.0,2.0,3.0,4.0,5.0};  int nAssRegions = 3;
+    double assptmax[] = {2.0,3.0,4.0,5.0,7.0};
 
     //output file for associated hadrons
     ofstream hadfile;
     hadfile.open("asshads.txt");
     
     //Variables for single hadron spectrum
-    double ephiBin[17];
-    for(int i = 0; i < 17; i++) ephiBin[i] = i*pi/16;
+    int NphieBin = 32; double ephiBin[NphieBin+1]; 
+    for(int i = 0; i <= NphieBin; i++) ephiBin[i] = i*pi/NphieBin;
     double phibinw = ephiBin[1]-ephiBin[0];
-    int NphieBin = sizeof(ephiBin)/sizeof(ephiBin[0])-1;
     TH1D *HistePhi[nTrigRegions][nAssRegions]; //identified hadrons hists
     double totecount[nTrigRegions][nAssRegions] = {0};
     string names[nTrigRegions][nAssRegions];
