@@ -13,7 +13,10 @@
       <pTHatMin>0</pTHatMin>
       <pTHatMax>5</pTHatMax>
       <eCM>5020</eCM>
-      <tune>18</tune>
+      <LinesToRead>
+        HardQCD:all = off
+        HardQCD:hardccbar = on
+      </LinesToRead>
     </PythiaGun>
   </Hard>
   
@@ -35,14 +38,16 @@
   <!-- Jet Hadronization Module -->
   <JetHadronization>
     <name>hybrid</name>
-    <eCMforHadronization>837</eCMforHadronization>
+    <eCMforHadronization>5020</eCMforHadronization>
     <reco_Elevelmax>1</reco_Elevelmax>
     <pionWidthScale>1.0</pionWidthScale>
     <kaonWidthScale>1.0</kaonWidthScale>
     <protonWidthScale>1.0</protonWidthScale>
-    <decayTime>10</decayTime>
-    <StoUD>0.217</StoUD>
-    <QQtoQ>0.081</QQtoQ>
+    <LinesToRead>
+      StringFlav:probStoUD = 0.217
+      StringFlav:probQQtoQ = 0.081
+      ParticleDecays:tau0Max = 10
+    </LinesToRead>
   </JetHadronization>
   
 </jetscape>
