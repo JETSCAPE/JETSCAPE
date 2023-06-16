@@ -249,7 +249,7 @@ void ratioPlot(TGraphErrors* dataHist, TH1D* predictionHist, string title, bool 
     line->SetLineStyle(9);
     line->Draw();
 
-    string filename  = "plots"+splitString(title," (")[0]+".png"; //trims off the units in the file name
+    string filename  = "plots/"+splitString(title," (")[0]+".png"; //trims off the units in the file name
     c->Print(filename.c_str());
 }
 
