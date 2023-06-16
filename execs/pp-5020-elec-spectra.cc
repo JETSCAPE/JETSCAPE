@@ -76,7 +76,7 @@ int main(int argc, char* argv[]){
     double eYcut = 0.6;
     double triggerPtMin[] = {4.0}; int nTrigRegions = 1;
     double triggerPtMax[] = {12.0};
-    double assptmin[] = {1.0,2.0,3.0,4.0,5.0};  int nAssRegions = 3;
+    double assptmin[] = {1.0,2.0,3.0,4.0,5.0};  int nAssRegions = 5;
     double assptmax[] = {2.0,3.0,4.0,5.0,7.0};
 
     //output file for associated hadrons
@@ -85,8 +85,9 @@ int main(int argc, char* argv[]){
     
     //Variables for single hadron spectrum
     int NphieBin = 32; double ephiBin[NphieBin+1]; 
-    for(int i = 0; i <= NphieBin; i++) ephiBin[i] = i*pi/NphieBin;
+    for(int i = 0; i <= NphieBin; i++) ephiBin[i] = 2*(i-8)*pi/NphieBin;
     double phibinw = ephiBin[1]-ephiBin[0];
+
     TH1D *HistePhi[nTrigRegions][nAssRegions]; //identified hadrons hists
     double totecount[nTrigRegions][nAssRegions] = {0};
     string names[nTrigRegions][nAssRegions];
@@ -104,7 +105,7 @@ int main(int argc, char* argv[]){
     
     cout<<"These are pTHat loops "<<endl;
     // For loop to open different pTHat bin files
-    for (int k = 0; k<NpTHardBin; ++k){
+    for (int k = 2; k<NpTHardBin; ++k){
         char HadronFile[300], pTBinString[100];
         sprintf(HadronFile,"dat/PP_Bin%s_%s.dat", pTHatMin[k].c_str(), pTHatMax[k].c_str());
         //sprintf(HadronFile,"test_out.dat");
@@ -196,8 +197,8 @@ int main(int argc, char* argv[]){
             for(int i = 0; i < es.size(); i++){
                 for(int j = 0; j < others.size(); j++){
                     if(abs(es[i].get()->eta() - others[j].get()->eta()) < deltaEtaCut){
-                        double deltaphi = abs(es[i].get()->phi() - others[j].get()->phi());
-                        if(deltaphi > pi) deltaphi = (2*pi) - deltaphi;
+                        double deltaphi = es[i].get()->phi() - others[j].get()->phi();
+                        if(deltaphi > ephiBin[NphieBin]) deltaphi = deltaphi - 2*pi;
 
                         for(int i1 = 0; i1 < nTrigRegions; i1++){
                             for(int i2 = 0; i2 < nAssRegions; i2++){
@@ -256,6 +257,15 @@ int main(int argc, char* argv[]){
     } //k-loop ends here (pTHatBin loop)
     hadfile.close();
 
+    //opening data file
+    TFile hadron_file("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/data/ElectrionCorrelation.root");
+    TDirectory* hadrondir = (TDirectory*)hadron_file.Get("Table 1");
+    TGraphErrors* aliceData[nAssRegions];
+    for(int i2 = 0; i2 < nAssRegions; i2++){
+        string dataname = "Graph1D_y"+to_string(i2+1);
+        aliceData[i2] = (TGraphErrors*)hadrondir->Get(dataname.c_str());
+    }
+
     //create root file for total plots
     TFile* totalroot = new TFile( "root/totals.root", "RECREATE");
 
@@ -263,30 +273,22 @@ int main(int argc, char* argv[]){
     //HistDPhi->SetNormFactor(1.0);
     for(int i1 = 0; i1 < nTrigRegions; i1++){
         for(int i2 = 0; i2 < nAssRegions; i2++){
+            //hist properties
             HistePhi[i1][i2]->Scale(1.0/totecount[i1][i2]);
             HistePhi[i1][i2]->GetXaxis()->SetTitle("Delta phi (rad)");
             HistePhi[i1][i2]->GetYaxis()->SetTitle("(1/Ne)(dNassc/dDelphi)");
  	        HistePhi[i1][i2]->Write(names[i1][i2].c_str());
 
-            //plot output
-            TCanvas *c = new TCanvas();
-            HistePhi[i1][i2]->Draw();
-            string plotname = "plots/" + names[i1][i2] + ".png";
-            HistePhi[i1][i2]->GetYaxis()->SetRangeUser(0,5);
-            c->SaveAs(plotname.c_str());
-            c->Close();
-
-            //ascii output
-            /*ofstream asciifile;
-            asciifile.open(names[i1][i2]);
-            asciifile << "x\ty\tyerr" << endl;
-            for(int i = 1; i <= HistePhi[i1][i2]->GetNbinsX(); i++)
-                asciifile << HistePhi[i1][i2]->GetBinCenter(i) << "\t" << HistePhi[i1][i2]->GetBinContent(i)
-                    << "\t" << HistePhi[i1][i2]->GetBinError(i) << endl;
-            asciifile.close();*/
-
+            //grabbing appropriate data file
+            string dataname = "Graph1D_y"+to_string(i2+1);
+            aliceData[i2] = (TGraphErrors*)hadrondir->Get(dataname.c_str());
+            ratioPlot(aliceData[i2],HistePhi[i1][i2],names[i1][i2]);
         }
     }
+
+    //end behavior
+    hadron_file.Close();
+    totalroot->Close();
 
     //Done. Script run time
     int EndTime = time(NULL);
