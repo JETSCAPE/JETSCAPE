@@ -66,7 +66,7 @@ int main(int argc, char* argv[]){
 	vector<double> xsecList = xsecout[0];
     vector<double> xsecErrorList = xsecout[1];
     double xsectotal = 0;
-    for(int k = 0; k<NpTHardBin; k++) xsectotal += xsecList[k];
+    for(int k = 2; k<NpTHardBin; k++) xsectotal += xsecList[k];
     //for(int k = 0; k<NpTHardBin; k++) cout << pTHatMin[k] << " " << pTHatMax[k] << " " << xsecList[k]*100000 << endl; //debugging line
     //cout << xsectotal << endl;
 
@@ -139,21 +139,6 @@ int main(int argc, char* argv[]){
         while (!myfile->Finished()){
             myfile->Next();
             hadrons = myfile->GetHadrons();
-
-            //double counting protection
-            if(k == 0){
-                auto partons = myfile->GetPartonShowers();
-                bool skip = false;
-
-                for(int i = 0; i < partons.size(); i++){
-                    if(partons[i]->GetPartonAt(0)->pt() > stod(pTHatMax[0])){
-                        //cout << partons[i]->GetPartonAt(0)->pt() << endl;
-                        skip = true;
-                    }  
-                }
-
-                if(skip) continue;
-            }
 
             //cout<<"Number of hadrons is: " << hadrons.size() << endl;
             Events++;
