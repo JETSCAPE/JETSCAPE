@@ -65,6 +65,8 @@ def makexml(bound, parameters, baseDir, xmltemplate, ECM):
         events = events*20
     if Lrun:
         events = 50000
+    if Lrun:
+        events = 20000
     if bound[0] == 0 and not RHIC:
         events = events*2
 
