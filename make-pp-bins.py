@@ -62,12 +62,14 @@ def makexml(bound, parameters, baseDir, xmltemplate, ECM):
     if RHIC:
         events = events*6
     if Drun:
-        events = events*20
+        events = 100000
     if Lrun:
-        events = 50000
+        events = 100000
     if Erun:
         events = 100000
-    if bound[0] == 0 and not RHIC:
+    if bound[0] == 0:
+        events = events*2
+    if Lrun or Drun or Erun and bound[0] <= 10:
         events = events*2
 
     #appending option and filename
