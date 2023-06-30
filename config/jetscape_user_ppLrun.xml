@@ -39,7 +39,6 @@
   <JetHadronization>
     <name>hybrid</name>
     <eCMforHadronization>13000</eCMforHadronization>
-    <reco_Elevelmax>1</reco_Elevelmax>
     <pionWidthScale>1.0</pionWidthScale>
     <kaonWidthScale>1.0</kaonWidthScale>
     <protonWidthScale>1.0</protonWidthScale>
@@ -47,6 +46,8 @@
       StringFlav:probStoUD = 0.217
       StringFlav:probQQtoQ = 0.081
       ParticleDecays:tau0Max = 10
+      4122:mayDecay = off
+      -4122:mayDecay = off
     </LinesToRead>
   </JetHadronization>
   

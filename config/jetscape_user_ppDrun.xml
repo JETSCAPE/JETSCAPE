@@ -46,6 +46,12 @@
       StringFlav:probStoUD = 0.217
       StringFlav:probQQtoQ = 0.081
       ParticleDecays:tau0Max = 10
+      413:mayDecay = off
+      -413:mayDecay = off
+      411:mayDecay = off
+      -411:mayDecay = off
+      421:mayDecay = off
+      -421:mayDecay = off
     </LinesToRead>
   </JetHadronization>
   
