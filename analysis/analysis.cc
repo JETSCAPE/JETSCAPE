@@ -162,7 +162,7 @@ void ratioPlot(TH1D* dataHist, TH1D* predictionHist, string title, bool xlog){
 }
 
 //overload for graph input
-void ratioPlot(TGraphErrors* dataHist, TH1D* predictionHist, string title, bool xlog, bool ylog){
+void ratioPlot(TGraphErrors* dataHist, TH1D* predictionHist, string title, bool xlog, bool ylog, string xname){
     //values for plots
     int bins = predictionHist->GetNbinsX();
     double data[bins], prediction[bins], xcoords[bins], dataErrors[bins], binWidths[bins], asym[bins], asymErrors[bins];
@@ -212,7 +212,7 @@ void ratioPlot(TGraphErrors* dataHist, TH1D* predictionHist, string title, bool 
     comparisonPlot->SetTitle("");
     comparisonPlot->GetXaxis()->SetRangeUser(xcoords[0]-binWidths[0],xcoords[bins-1]+binWidths[bins-1]);
     comparisonPlot->GetYaxis()->SetRangeUser(0,2);
-    comparisonPlot->GetXaxis()->SetTitle("pT (GeV)");
+    comparisonPlot->GetXaxis()->SetTitle(xname.c_str());
     comparisonPlot->GetXaxis()->SetTitleSize(0.06);
     comparisonPlot->GetXaxis()->SetLabelSize(0.06);
     comparisonPlot->GetYaxis()->SetTitle("Asymmetry");
@@ -233,7 +233,7 @@ void ratioPlot(TGraphErrors* dataHist, TH1D* predictionHist, string title, bool 
     //Legend
     TLegend leg(.7,.7,.9,.9,"Sources");
     leg.AddEntry(predictionPlot,"Jetscape","l");
-    leg.AddEntry(dataPlot,"CMS Data","ep");
+    leg.AddEntry(dataPlot,"Data","ep");
     leg.DrawClone("Same");
 
     //drawing ratio plot

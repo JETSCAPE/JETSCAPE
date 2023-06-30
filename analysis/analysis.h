@@ -43,7 +43,7 @@ TGraphErrors histToGraph(TH1D* hist);
 
 void ratioPlot(TH1D* dataHist, TH1D* predictionHist, string title, bool xlog = false);
 
-void ratioPlot(TGraphErrors* dataHist, TH1D* predictionHist, string title, bool xlog = false, bool ylog = false);
+void ratioPlot(TGraphErrors* dataHist, TH1D* predictionHist, string title, bool xlog = false, bool ylog = false, string xname = "pT (GeV)");
 
 vector<double> getThrustSphericity(vector<shared_ptr<Hadron>> hadrons);
 

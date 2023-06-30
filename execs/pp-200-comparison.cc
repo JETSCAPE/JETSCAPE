@@ -64,7 +64,7 @@ int main(int argc, char* argv[]){
         }
         directories.insert(directories.end(), sorteddirs.begin(), sorteddirs.end()); //inserting into the end of total vector
     }
-    chdir("/scratch/user/cameron.parker/JETSCAPE-COMP-HH_colorrecomb/build");
+    chdir("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/build");
 
     // Create the ROOT application environment.
     TApplication theApp("hist", &argc, argv);

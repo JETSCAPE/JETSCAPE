@@ -184,6 +184,7 @@ int main(int argc, char* argv[]){
                     if(abs(es[i].get()->eta() - others[j].get()->eta()) < deltaEtaCut){
                         double deltaphi = es[i].get()->phi() - others[j].get()->phi();
                         if(deltaphi > ephiBin[NphieBin]) deltaphi = deltaphi - 2*pi;
+                        if(deltaphi < ephiBin[0]) deltaphi = deltaphi + 2*pi;
 
                         for(int i1 = 0; i1 < nTrigRegions; i1++){
                             for(int i2 = 0; i2 < nAssRegions; i2++){
@@ -267,7 +268,7 @@ int main(int argc, char* argv[]){
             //grabbing appropriate data file
             string dataname = "Graph1D_y"+to_string(i2+1);
             aliceData[i2] = (TGraphErrors*)hadrondir->Get(dataname.c_str());
-            ratioPlot(aliceData[i2],HistePhi[i1][i2],names[i1][i2]);
+            ratioPlot(aliceData[i2],HistePhi[i1][i2],names[i1][i2],false,false,"delta phi");
         }
     }
 
