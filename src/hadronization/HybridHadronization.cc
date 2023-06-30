@@ -297,6 +297,17 @@ void HybridHadronization::Init(){
     pythia.readString("Init:showChangedSettings = off");
     pythia.readString("Init:showMultipartonInteractions = off");
     pythia.readString("Init:showChangedParticleData = off");
+
+    //Lines to read
+    std::stringstream lines;
+    lines << GetXMLElementText({"JetHadronization", "LinesToRead"}, false);
+    int i = 0;
+    while (std::getline(lines, s, '\n')) {
+      if (s.find_first_not_of(" \t\v\f\r") == s.npos)
+        continue; // skip empty lines
+      JSINFO << "Also reading in: " << s;
+      pythia.readString(s);
+    }
 	
     // Standard settings
     pythia.readString("ProcessLevel:all = off");
