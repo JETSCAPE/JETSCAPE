@@ -138,10 +138,7 @@ private:
   double qhat0; //Debye mass RENAME
   double qhat00;
 
-  //...input with current machine time
-  //...random number seed (any negative integer)
-  //  long  NUM1=-33;
-  long NUM1;
+  std::uniform_real_distribution<double> ZeroOneDistribution;
 
   // flag to make sure initialize only once
   static bool flag_init;
