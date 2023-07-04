@@ -111,7 +111,7 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
   class HHparton : public Parton{
   protected:
 	//is shower/thermal originating parton; has been used; is a decayed gluon; is a remnant parton; used for reco; used for stringfrag; is endpoint of string
-	bool is_shower_, is_thermal_, is_used_, is_decayedglu_, is_remnant_, used_reco_, used_str_, is_strendpt_, used_junction_;
+	bool is_shower_, is_thermal_, is_used_, is_decayedglu_, is_remnant_, used_reco_, used_str_, is_strendpt_, used_junction_, is_fakep_;
 	//id: particle id, ?orig: particle origin(shower, thermal...)?, par: parent parton (perm. set for gluon decays), status: status of particle (is being considered in loop 'i')
 	//string_id: string identifier, pos_str: position of parton in string, endpt_id: denotes which endpoint this parton is (of the string), if it is one
 	int alt_id_, orig_, par_, string_id_, pos_str_, endpt_id_, sibling_, PY_par1_, PY_par2_, PY_dau1_, PY_dau2_, PY_stat_, PY_origid_, PY_tag1_, PY_tag2_, PY_tag3_;
@@ -121,7 +121,7 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
   public:
 	//default constructor
 	HHparton() : Parton::Parton(1,1,1,0.,0.,0.,0.) {
-		is_shower_ = false; is_thermal_ = false; is_used_ = false; is_decayedglu_ = false; is_remnant_ = false; used_reco_ = false; used_str_ = false; is_strendpt_ = false; used_junction_ = false;
+		is_shower_ = false; is_thermal_ = false; is_used_ = false; is_decayedglu_ = false; is_remnant_ = false; used_reco_ = false; used_str_ = false; is_strendpt_ = false; used_junction_ = false; is_fakep_ = false;
 		alt_id_ = 0; orig_ = 0; par_ = -1; string_id_ = 0; pos_str_ = 0; endpt_id_ = 0; sibling_ = 0; alt_mass_ = 0.;
 		PY_origid_ = 0; PY_par1_ = -1; PY_par2_ = -1; PY_dau1_ = -1; PY_dau2_ = -1; PY_stat_ = 23; /*PY_stat_ = 11;*/ PY_tag1_ = 0; PY_tag2_ = 0; PY_tag3_ = 0;
 		set_color(0); set_anti_color(0); set_stat(0);
@@ -132,7 +132,7 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
 	double px() {return p_in().x();} double py() {return p_in().y();} double pz() {return p_in().z();} double   e() {return p_in().t();}
 	bool is_shower() {return is_shower_;} bool is_thermal() {return is_thermal_;} bool is_used() {return is_used_;} bool is_decayedglu() {return is_decayedglu_;}
 	bool is_remnant() {return is_remnant_;} bool used_reco() {return used_reco_;} bool used_str() {return used_str_;} bool is_strendpt() {return is_strendpt_;}
-	bool used_junction() {return used_junction_;}
+	bool used_junction() {return used_junction_;} bool is_fakeparton() {return is_fakep_;}
 	int id() {return alt_id_;} int orig() {return orig_;} int par() {return par_;} int string_id() const {return string_id_;} int pos_str() const {return pos_str_;}
 	int endpt_id() {return endpt_id_;} int sibling() {return sibling_;} int PY_par1() {return PY_par1_;} int PY_par2() {return PY_par2_;}
 	int PY_dau1() {return PY_dau1_;} int PY_dau2() {return PY_dau2_;} int PY_stat() {return PY_stat_;} int PY_origid() {return PY_origid_;}
@@ -156,7 +156,7 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
 	
 	void is_shower(bool val) {is_shower_ = val;} void is_thermal(bool val) {is_thermal_ = val;} void is_used(bool val) {is_used_ = val;} void is_decayedglu(bool val) {is_decayedglu_ = val;}
 	void is_remnant(bool val) {is_remnant_ = val;} void used_reco(bool val) {used_reco_ = val;} void used_str(bool val) {used_str_ = val;} void is_strendpt(bool val) {is_strendpt_ = val;}
-	void used_junction(bool val) {used_junction_ = val;}
+	void used_junction(bool val) {used_junction_ = val;} void is_fakeparton(bool val) {is_fakep_ = val;}
 	void id(int val) {alt_id_ = val;} void orig(int val) {orig_ = val;} void par(int val) {par_ = val;}
 	void string_id(int val) {string_id_ = val;} void pos_str(int val) {pos_str_ = val;} void endpt_id(int val) {endpt_id_ = val;} void sibling(int val) {sibling_ = val;}
 	void PY_par1(int val) {PY_par1_ = val;} void PY_par2(int val) {PY_par2_ = val;} void PY_dau1(int val) {PY_dau1_ = val;} void PY_dau2(int val) {PY_dau2_ = val;}
@@ -331,7 +331,7 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
   //used classes
   parton_collection HH_shower, HH_thermal;
   parton_collection HH_showerptns, HH_remnants, HH_pyremn;
-  hadron_collection HH_hadrons;
+  hadron_collection HH_hadrons, HH_pythia_hadrons;
 
   //function to form strings out of original shower
   void stringform();
@@ -358,12 +358,14 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
   bool invoke_py();
 
   // function to set the spacetime information for the hadrons coming from pythia
-  void set_spacetime_for_pythia_hadrons(Pythia8::Event &event, int &size_input, std::vector<int> &eve_to_had, int pythia_attempt);
+  void set_spacetime_for_pythia_hadrons(Pythia8::Event &event, int &size_input, std::vector<int> &eve_to_had, int pythia_attempt, bool find_positions);
 
   // function to 'shake' the event a bit to bring the hadrons to their mass shell
   void bring_hadrons_to_mass_shell(hadron_collection& HH_hadrons);
 
   void set_initial_parton_masses(parton_collection& HH_showerptns);
+
+  void convert_color_tags_to_int_type(vector<vector<shared_ptr<Parton>>>& shower);
 
   protected:
 	static Pythia8::Pythia pythia;
