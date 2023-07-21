@@ -337,13 +337,18 @@
        <thermal_recofactor>1.0</thermal_recofactor>
        <had_postprop>0.0</had_postprop>
        <part_prop>1.0</part_prop>
-       <weak_decays>on</weak_decays>
+       <pythia_decays>on</pythia_decays> <!-- lets the particles given to pythia decay-->
+       <tau0Max>10.0</tau0Max> <!-- only particles with tau0 < tau0Max (given in mm/c) can decay, increase to include weak decays-->
        <!-- You can add any number of additional lines to initialize pythia hadronization here -->
        <!-- Note that if the tag exists it cannot be empty (tinyxml produces a segfault) -->
        <!-- <LinesToRead> -->
        <!--   111:mayDecay = off  -->
        <!-- </LinesToRead> -->
-       <reco_hadrons_in_pythia>0</reco_hadrons_in_pythia>
+       <reco_hadrons_in_pythia>1</reco_hadrons_in_pythia>
+       <!-- Switch to include more pythia particles from an additional xml file with particle information -->
+       <additional_pythia_particles>0</additional_pythia_particles>
+       <!-- Path to file with additional particles for pythia (for higher reco_Mlevelmax)-->
+       <additional_pythia_particles>../config/HH_LightExcitedMesons.xml</additional_pythia_particles>
    </JetHadronization>
 
   <!-- Particlization Module  -->

@@ -2,7 +2,7 @@
  * Copyright (c) The JETSCAPE Collaboration, 2019
  *
  * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -27,12 +27,12 @@
 using namespace Jetscape;
 
 class HybridHadronization : public HadronizationModule<HybridHadronization>
-{  
+{
  public:
 
   HybridHadronization();
   virtual ~HybridHadronization();
-  
+
   void Init();
   void DoHadronization(vector<vector<shared_ptr<Parton>>>& shower, vector<shared_ptr<Hadron>>& hOut, vector<shared_ptr<Parton>>& pOut);
   void WriteTask(weak_ptr<JetScapeWriter> w);
@@ -40,11 +40,11 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
  private:
   // Allows the registration of the module so that it is available to be used by the Jetscape framework.
   static RegisterJetScapeModule<HybridHadronization> reg;
-  
+
   double SigM2_calc(double R2chg, double qm1, double qm2, double qq1, double qq2);
   double SigBR2_calc(double R2chg, double qm1, double qm2, double qm3, double qq1, double qq2, double qq3);
   double SigBL2_calc(double SigBR2, double qm1, double qm2, double qm3);
-  
+
   //double sigma_pi, sigma_k, sigma_nuc, maxE_level, gmax, xmq, xms, hbarc, dist2cut, sh_recofactor, th_recofactor, SigRB, SigLB;
   double maxM_level, maxB_level, gmax, xmq, xms, xmc, xmb, hbarc, dist2cut, sh_recofactor, th_recofactor, p_fake, had_prop, part_prop;
   int number_p_fake;
@@ -57,22 +57,23 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
   int attempts_max;
   unsigned int rand_seed;
   int reco_hadrons_pythia;
+  int additional_pythia_particles;
   bool goldstonereco;
-  
+
   //variables for recombination color structure
   vector<vector<vector<int>>> Tempjunctions; // vector of all tempjunctions
   vector<vector<int>> JunctionInfo; // vector of one junction's color tag and particle info
   vector<int> IdColInfo1; vector<int> IdColInfo2; vector<int> IdColInfo3; vector<int> IdColInfo4;
-  
+
   std::mt19937_64 eng; //RNG - Mersenne Twist - 64 bit
   double ran();
-  
+
   //4-vector boost
   static FourVector HHboost(FourVector B, FourVector vec_in){
 	double xlam[4][4], beta2;
 		beta2 = B.x()*B.x() + B.y()*B.y() + B.z()*B.z();
 		B.Set(B.x(),B.y(),B.z(),1./(sqrt(1. - beta2)));
-	
+
 	double beta2inv;
 	if(beta2 > 0.){beta2inv = 1./beta2;}
 	else{beta2inv = 0.;}
@@ -99,10 +100,10 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
 	double y_out = vec_in.t()*xlam[2][0] + vec_in.x()*xlam[2][1] + vec_in.y()*xlam[2][2] + vec_in.z()*xlam[2][3];
 	double z_out = vec_in.t()*xlam[3][0] + vec_in.x()*xlam[3][1] + vec_in.y()*xlam[3][2] + vec_in.z()*xlam[3][3];
 	FourVector vec_out(x_out,y_out,z_out,t_out);
-	
+
 	return vec_out;
   }
-  
+
   //3-vec (4-vec w/3 components) diff^2 function
   static double dif2(FourVector vec1, FourVector vec2){return (vec2.x()-vec1.x())*(vec2.x()-vec1.x()) + (vec2.y()-vec1.y())*(vec2.y()-vec1.y()) + (vec2.z()-vec1.z())*(vec2.z()-vec1.z());}
 
@@ -117,7 +118,7 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
 	int alt_id_, orig_, par_, string_id_, pos_str_, endpt_id_, sibling_, PY_par1_, PY_par2_, PY_dau1_, PY_dau2_, PY_stat_, PY_origid_, PY_tag1_, PY_tag2_, PY_tag3_;
 	//parton mass
 	double alt_mass_;
-	
+
   public:
 	//default constructor
 	HHparton() : Parton::Parton(1,1,1,0.,0.,0.,0.) {
@@ -126,7 +127,7 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
 		PY_origid_ = 0; PY_par1_ = -1; PY_par2_ = -1; PY_dau1_ = -1; PY_dau2_ = -1; PY_stat_ = 23; /*PY_stat_ = 11;*/ PY_tag1_ = 0; PY_tag2_ = 0; PY_tag3_ = 0;
 		set_color(0); set_anti_color(0); set_stat(0);
 	}
-	
+
 	//getter functions
 	double  x() {return x_in().x();} double  y() {return x_in().y();} double  z() {return x_in().z();} double x_t() {return x_in().t();}
 	double px() {return p_in().x();} double py() {return p_in().y();} double pz() {return p_in().z();} double   e() {return p_in().t();}
@@ -141,7 +142,7 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
 	FourVector pos() {return x_in();}
 	FourVector P()   {return p_in();}
 	int status() {return pstat();} int col() {return color();} int acol() {return anti_color();}
-	
+
 	//setter functions
 	void  x(double val) {x_in_.Set(val,x_in().y(),x_in().z(),x_in().t());}
 	void  y(double val) {x_in_.Set(x_in().x(),val,x_in().z(),x_in().t());}
@@ -153,7 +154,7 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
 	void pz(double val) {reset_momentum(px(),py(),val,e());}
 	void  e(double val) {reset_momentum(px(),py(),pz(),val);}
 	void  P(FourVector val) {reset_momentum(val);}
-	
+
 	void is_shower(bool val) {is_shower_ = val;} void is_thermal(bool val) {is_thermal_ = val;} void is_used(bool val) {is_used_ = val;} void is_decayedglu(bool val) {is_decayedglu_ = val;}
 	void is_remnant(bool val) {is_remnant_ = val;} void used_reco(bool val) {used_reco_ = val;} void used_str(bool val) {used_str_ = val;} void is_strendpt(bool val) {is_strendpt_ = val;}
 	void used_junction(bool val) {used_junction_ = val;} void is_fakeparton(bool val) {is_fakep_ = val;}
@@ -164,16 +165,16 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
 	void PY_tag1(int val) {PY_tag1_ = val;} void PY_tag2(int val) {PY_tag2_ = val;} void PY_tag3(int val) {PY_tag3_ = val;}
 	void mass(double val) {alt_mass_ = val;}
 	void status(int val) {set_stat(val);} void col(int val) {set_color(val);} void acol(int val) {set_anti_color(val);}
-	
+
 	//boost functions
 	FourVector boost_P(FourVector B){return HHboost(B,p_in());}
 	FourVector boost_P(double vx, double vy, double vz){FourVector B(vx,vy,vz,0.); return HHboost(B,p_in());}
 	FourVector boost_pos(FourVector B){return HHboost(B,x_in());}
 	FourVector boost_pos(double vx, double vy, double vz){FourVector B(vx,vy,vz,0.); return HHboost(B,x_in());}
-	
+
 	double pDif2(HHparton comp){return dif2(p_in(),comp.p_in());}
 	double posDif2(HHparton comp){return dif2(x_in(),comp.x_in());}
-	
+
   };
 
 	//hadron class
@@ -187,28 +188,28 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
 	double alt_mass_;
 	//vector of partonic parents
 	//std::vector<int> parents;
-	
+
   public:
 	//default constructor
 	HHhadron() : Hadron::Hadron(1,1,1,0.,0.,0.,0.) {
 		is_excited_ = false; is_shsh_ = false; is_shth_ = false; is_thth_ = false; is_recohad_ = false; is_strhad_ = false; is_final_ = false;
 		orig_ = 0; parstr_ = 0; parh_ = -1; alt_mass_ = 0.; set_stat(0);
 	}
-	
+
 	//vector of partonic parents
 	std::vector<int> parents;
-	
+
 	//getter/setter for parents
 	int par(int i){if((i>=0) && (i<parents.size())){return parents[i];}else{return 999999;}}
 	void add_par(int i){parents.push_back(i);}
-	
+
 	//vector of colors (from partons that formed it)
 	std::vector<int> cols;
-	
+
 	//getter/setter for colors
 	int col(int i){if((i>=0) && (i<cols.size())){return cols[i];}else{return -1;}}
 	void add_col(int i){cols.push_back(i);}
-	
+
 	//getter functions
 	double  x() {return x_in().x();} double  y() {return x_in().y();} double  z() {return x_in().z();} double x_t() {return x_in().t();}
 	double px() {return p_in().x();} double py() {return p_in().y();} double pz() {return p_in().z();} double   e() {return p_in().t();}
@@ -219,7 +220,7 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
 	FourVector pos() {return x_in();}
 	FourVector P()   {return p_in();}
 	int id() {return pid();} int status() {return pstat();}
-	
+
 	//setter functions
 	void  x(double val) {x_in_.Set(val,x_in().y(),x_in().z(),x_in().t());}
 	void  y(double val) {x_in_.Set(x_in().x(),val,x_in().z(),x_in().t());}
@@ -231,13 +232,13 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
 	void pz(double val) {reset_momentum(px(),py(),val,e());}
 	void  e(double val) {reset_momentum(px(),py(),pz(),val);}
 	void  P(FourVector val) {reset_momentum(val);}
-	
+
 	void is_excited(bool val) {is_excited_ = val;} void is_shsh(bool val) {is_shsh_ = val;} void is_shth(bool val) {is_shth_ = val;} void is_thth(bool val) {is_thth_ = val;}
 	void is_recohad(bool val) {is_recohad_ = val;} void is_strhad(bool val) {is_strhad_ = val;} void is_final(bool val) {is_final_ = val;}
 	void orig(int val) {orig_ = val;} void parstr(int val) {parstr_ = val;} void parh(int val) {parh_ = val;}
 	void mass(double val) {alt_mass_ = val;}
 	void id(int val) {set_id(val);} void status(int val) {set_stat(val);}
-	
+
 	//Lorentz boost functions
 	FourVector boost_P(FourVector B){return HHboost(B,p_in());}
 	FourVector boost_P(double vx, double vy, double vz){FourVector B(vx,vy,vz,0.); return HHboost(B,p_in());}
@@ -272,7 +273,7 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
 	std::vector<HHparton>::iterator begin() {return partons.begin();}
 	//random access iterator pointing to last element in partons
 	std::vector<HHparton>::iterator end() {return partons.end();}
-	
+
 	//overloading a few operators; ++, --, []
 	//++ adds an empty particle, -- removes last particle, [i] allows access to i'th particle directly
 /*	parton_collection& operator++(){HHparton par; partons.push_back(par);}
@@ -308,7 +309,7 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
 	int num() {return hadrons.size();}
 	//empty the collection
 	void clear() {hadrons.clear();}
-	
+
 	//overloading a few operators; ++, --, []
 	//++ adds an empty particle, -- removes last particle, [i] allows access to i'th particle directly
 /*	hadron_collection& operator++(){HHhadron had; hadrons.push_back(had);}
@@ -327,9 +328,10 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
 //	const HHhadron& operator[](int i) {return hadrons[i];}
 	const HHhadron& operator[](int i) const {return hadrons[i];}
   };
-  
+
   //used classes
   parton_collection HH_shower, HH_thermal;
+  parton_collection HH_recomb_extrapartons;
   parton_collection HH_showerptns, HH_remnants, HH_pyremn;
   hadron_collection HH_hadrons, HH_pythia_hadrons;
 
@@ -345,12 +347,12 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
 
   //gluon to q-qbar splitting function - for recombination use
   void gluon_decay(HHparton& glu, parton_collection& qrks);
-  
+
   //finding a sibling thermal parton for the "ithm'th" thermal parton
   int findthermalsibling(int ithm, parton_collection& therm);
   int findcloserepl(HHparton ptn, int iptn, bool lbt, bool thm, parton_collection& sh_lbt, parton_collection& therm);
   void findcloserepl_glu(HHparton ptn, int iptn, bool lbt, bool thm, parton_collection& sh_lbt, parton_collection& therm, int sel_out[]);
-  
+
   //function to prepare strings for input into Pythia8
   void stringprep(parton_collection& SP_remnants, parton_collection& SP_prepremn, bool cutstr);
 
@@ -369,7 +371,7 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
 
   protected:
 	static Pythia8::Pythia pythia;
-	
+
 };
 
 

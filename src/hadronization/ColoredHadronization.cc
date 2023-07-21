@@ -2,7 +2,7 @@
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
  * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -43,8 +43,8 @@ void ColoredHadronization::Init() {
       GetXMLElementDouble({"JetHadronization", "eCMforHadronization"});
   p_fake = p_read_xml;
 
-  std::string weak_decays =
-      GetXMLElementText({"JetHadronization", "weak_decays"});
+  /*std::string weak_decays =
+      GetXMLElementText({"JetHadronization", "weak_decays"});*/
 
   VERBOSE(2) << "Start Hadronizing using the PYTHIA module...";
 
@@ -74,7 +74,22 @@ void ColoredHadronization::Init() {
 
   pythia.readString("ProcessLevel:all = off");
   pythia.readString("PartonLevel:FSR=off");
-  if (weak_decays == "off") {
+
+  std::string pythia_decays = GetXMLElementText({"JetHadronization", "pythia_decays"});
+  double tau0Max = 10.0;
+  double xml_doublein = GetXMLElementDouble({"JetHadronization", "tau0Max"});
+	if(xml_doublein >= 0){tau0Max = xml_doublein;} xml_doublein = -1;
+  if(pythia_decays == "on"){
+    JSINFO << "Pythia decays are turned on for tau0Max < " << tau0Max;
+    pythia.readString("HadronLevel:Decay = on");
+    pythia.readString("ParticleDecays:limitTau0 = on");
+    pythia.readString("ParticleDecays:tau0Max = " + std::to_string(tau0Max));
+  } else {
+    JSINFO << "Pythia decays are turned off";
+    pythia.readString("HadronLevel:Decay = off");
+  }
+
+  /*if (weak_decays == "off") {
     JSINFO << "Weak decays are turned off";
     pythia.readString("HadronLevel:Decay = off");
   } else {
@@ -82,11 +97,10 @@ void ColoredHadronization::Init() {
     pythia.readString("HadronLevel:Decay = on");
     pythia.readString("ParticleDecays:limitTau0 = on");
     pythia.readString("ParticleDecays:tau0Max = 10.0");
-  }
+  }*/
 
   std::stringstream lines;
   lines << GetXMLElementText({"JetHadronization", "LinesToRead"}, false);
-  int i = 0;
   while (std::getline(lines, s, '\n')) {
     if (s.find_first_not_of(" \t\v\f\r") == s.npos)
       continue; // skip empty lines
