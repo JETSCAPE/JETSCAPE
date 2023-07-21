@@ -2,7 +2,7 @@
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
  * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -61,8 +61,9 @@ void epemGun::InitTask() {
   readString("PartonLevel:FSR = off");
   //readString("PromptPhoton:all=on");
   readString("PDF:lepton = off");                           //<-- Added by me.
-  readString("WeakSingleBoson:ffbar2gmz=on");		   //<-- Changed from "all=off"
-  //readString("WeakDoubleBoson:all=off");
+  readString("WeakSingleBoson:ffbar2gmz=on"); //Scattering f fbar → gamma^*/Z^0, with full interference between the gamma^* and Z^0
+  readString("WeakDoubleBoson:all=on"); //Common switch for the group of pair production of gamma^*/Z^0 and W^+-
+  readString("WeakBosonExchange:all=on"); //Common switch for the group of gamma^*/Z^0 or W^+- exchange between two fermions
 
   //Stuff I added. Ask if I'm allowed to just do this.
   readString("23:onMode = off");
@@ -153,7 +154,7 @@ void epemGun::Exec() {
   VERBOSE(1) << "Run Hard Process : " << GetId() << " ...";
   VERBOSE(8) << "Current Event #" << GetCurrentEvent();
   //Reading vir_factor from xml for MATTER
-  double vir_factor = GetXMLElementDouble({"Eloss", "Matter", "vir_factor"});
+  //double vir_factor = GetXMLElementDouble({"Eloss", "Matter", "vir_factor"});
 
   bool flag62 = false;
   vector<Pythia8::Particle> p62;
@@ -178,7 +179,7 @@ void epemGun::Exec() {
       if (parid < 3)
         continue; // 0, 1, 2: total event and beams
       Pythia8::Particle &particle = event[parid];
-      
+
       //replacing diquarks with antiquarks (and anti-dq's with quarks)
       //the id is set to the heaviest quark in the diquark (except down quark)
       //this technically violates baryon number conservation over the entire event
