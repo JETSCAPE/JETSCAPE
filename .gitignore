@@ -20,3 +20,4 @@ external_packages/ipglasma
 runs/*
 __pycache__/*
 data/*
+test/*
