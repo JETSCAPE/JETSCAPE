@@ -102,15 +102,18 @@ int main(int argc, char* argv[]){
     //graph declaration for adding hadron spectra
     TMultiGraph* hadronComp = new TMultiGraph();
     TGraph* hadronComponents[NpTHardBin];
+
+    //debugging
+    bool flag = true;
     
     cout<<"These are pTHat loops "<<endl;
     // For loop to open different pTHat bin files
     for (int k = 0; k<NpTHardBin; ++k){
         char HadronFile[300], pTBinString[100];
-        sprintf(HadronFile,"dat/PP_Bin%s_%s.dat", pTHatMin[k].c_str(), pTHatMax[k].c_str());
+        sprintf(HadronFile,"dat/PP_Bin%s_%s.dat.gz", pTHatMin[k].c_str(), pTHatMax[k].c_str());
         //sprintf(HadronFile,"test_out.dat");
         
-        auto myfile  = make_shared<JetScapeReaderAscii>(HadronFile);
+        auto myfile  = make_shared<JetScapeReaderAsciiGZ>(HadronFile);
         sprintf(pTBinString,"Current pTHatBin is %i (%s,%s) GeV",k,pTHatMin[k].c_str(),pTHatMax[k].c_str());
         
         int  SN=0,PID=0;
@@ -139,22 +142,8 @@ int main(int argc, char* argv[]){
         //actually reading in
         while (!myfile->Finished()){
             myfile->Next();
+            //cout << "Geting hadrons" << endl;
             hadrons = myfile->GetHadrons();
-
-            //double counting protection
-            if(k == 0){
-                auto partons = myfile->GetPartonShowers();
-                bool skip = false;
-
-                for(int i = 0; i < partons.size(); i++){
-                    if(partons[i]->GetPartonAt(0)->pt() > stod(pTHatMax[0])){
-                        //cout << partons[i]->GetPartonAt(0)->pt() << endl;
-                        skip = true;
-                    }  
-                }
-
-                if(skip) continue;
-            }
 
             //cout<<"Number of hadrons is: " << hadrons.size() << endl;
             Events++;
@@ -216,8 +205,10 @@ int main(int argc, char* argv[]){
             }
 
             //clearing had vecs
+            if(Ls.size() == 0) flag = false;
             Ls.clear();
             others.clear();
+            //cout << " . Event over." << endl;
         }
         
         //xsec and event count handling
@@ -232,9 +223,9 @@ int main(int argc, char* argv[]){
         
         //event info
         TVector EventInfo(3);
-        EventInfo[0] = Lcount[1][0];
-        EventInfo[1] = Lcount[1][1];
-        EventInfo[2] = Lcount[1][2];
+        EventInfo[0] = HardCrossSection;
+        EventInfo[1] = HardCrossSectionError;
+        EventInfo[2] = Events;
         EventInfo.Write("EventInfo");
         
         //add to totals histograms
@@ -270,16 +261,6 @@ int main(int argc, char* argv[]){
             HistLPhi[i1][i2]->GetYaxis()->SetRangeUser(0,10);
             c->SaveAs(plotname.c_str());
             c->Close();
-
-            //ascii output
-            ofstream asciifile;
-            asciifile.open(names[i1][i2]);
-            asciifile << "x\ty\tyerr" << endl;
-            for(int i = 1; i <= HistLPhi[i1][i2]->GetNbinsX(); i++)
-                asciifile << HistLPhi[i1][i2]->GetBinCenter(i) << "\t" << HistLPhi[i1][i2]->GetBinContent(i)
-                    << "\t" << HistLPhi[i1][i2]->GetBinError(i) << endl;
-            asciifile.close();
-
         }
     }
 
@@ -292,6 +273,7 @@ int main(int argc, char* argv[]){
     
     //test comment
     //debugging
+    cout << flag << endl;
 
     return 0;
 }
