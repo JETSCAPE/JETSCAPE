@@ -297,17 +297,6 @@ void HybridHadronization::Init(){
     pythia.readString("Init:showChangedSettings = off");
     pythia.readString("Init:showMultipartonInteractions = off");
     pythia.readString("Init:showChangedParticleData = off");
-
-    //Lines to read
-    std::stringstream lines;
-    lines << GetXMLElementText({"JetHadronization", "LinesToRead"}, false);
-    int i = 0;
-    while (std::getline(lines, s, '\n')) {
-      if (s.find_first_not_of(" \t\v\f\r") == s.npos)
-        continue; // skip empty lines
-      JSINFO << "Also reading in: " << s;
-      pythia.readString(s);
-    }
 	
     // Standard settings
     pythia.readString("ProcessLevel:all = off");
@@ -368,6 +357,18 @@ void HybridHadronization::Init(){
 	  pythia.readString("ColourReconnection:timeDilationMode = 3");     //allow reconnection if single pair of dipoles are in causal contact (maybe try 5 as well?)
 	  pythia.readString("ColourReconnection:timeDilationPar = 0.18");   //parameter used in causal interaction between strings (mode set above)(maybe try 0.073?)
     */
+
+    //Lines to read
+    std::stringstream lines;
+    lines << GetXMLElementText({"JetHadronization", "LinesToRead"}, false);
+    int i = 0;
+    while (std::getline(lines, s, '\n')) {
+      if (s.find_first_not_of(" \t\v\f\r") == s.npos)
+        continue; // skip empty lines
+      JSINFO << "Also reading in: " << s;
+      pythia.readString(s);
+    }
+
     // And initialize
     pythia.init();
 	
@@ -652,8 +653,35 @@ void HybridHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& sh
 	    }
 	    ++attempt_num;
     }
-	
+    
+    //add condition here to not write if no necessary particles met
+    std::vector<int> IDs;
+    std::stringstream lines; string s;
+    lines << GetXMLElementText({"IDs"}, false);
+    int i = 0;
+    while (std::getline(lines, s, '\n')) {
+      if (s.find_first_not_of(" \t\v\f\r") == s.npos)
+        continue; // skip empty lines
+      if(std::stoi(s) == 0) continue; //skip default value
+      IDs.push_back(std::stoi(s));
+    }
+
+    //checking if we keeping event only if we have IDs to loop over
+    if(IDs.size() > 0){
+      bool keepevent = false;
+      for(unsigned int iHad=0; iHad<HH_hadrons.num(); ++iHad){
+        for(int i=0; i<IDs.size(); i++)
+          if(abs(HH_hadrons[iHad].id()) == IDs[i] && HH_hadrons[iHad].is_final()) keepevent = true;
+      }
+      if(!keepevent) {
+        JSINFO << "Requirements not met, thrown out.";
+        run_successfully = false;
+      }
+    }
+
     if(!run_successfully){HH_hadrons.clear(); JSWARN << "This event could not be hadronized.";}
+    
+    //pythia.event.list();
 
     for(unsigned int iHad=0; iHad<HH_hadrons.num(); ++iHad){
 	    if(HH_hadrons[iHad].is_final()){
@@ -662,6 +690,7 @@ void HybridHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& sh
   		  stat += (HH_hadrons[iHad].is_shth()) ? 2 : 1;
 	  	  stat *= (pos_ptn == 0) ? -1 : 1 ;
 		    int lab = (pos_ptn == 0) ? -1 : 1 ;
+
   		  //int had_parstr = HH_showerptns[HH_hadrons[iHad].par(0)].string_id();
 	  	  int idH = HH_hadrons[iHad].id(); double mH = HH_hadrons[iHad].mass();
 		    FourVector p(HH_hadrons[iHad].P()); FourVector x(HH_hadrons[iHad].pos());
@@ -6204,6 +6233,20 @@ void HybridHadronization::set_spacetime_for_pythia_hadrons(Pythia8::Event &event
       hadron_out.py(event[hadron_idx].py());
       hadron_out.pz(event[hadron_idx].pz());
       hadron_out.e(event[hadron_idx].e());
+
+      //specific decays for heavy flavor analysis
+      if(abs(event[event[hadron_idx].mother1()].id()) == 413 && hadron_out.id() == 211) {
+        JSINFO << "Pion from D* decay thrown out.";
+        continue;
+      }
+      if(abs(event[event[hadron_idx].mother1()].id()) == 4222 && hadron_out.id() == 211) {
+        JSINFO << "Pion from Sigma++c decay thrown out.";
+        continue;
+      }
+      if(abs(event[event[hadron_idx].mother1()].id()) == 4112 && hadron_out.id() == 211) {
+        JSINFO << "Pion from Sigma0c decay thrown out.";
+        continue;
+      }
 
       //since using inbuilt pythia mother/daughter functions will segfault 'occasionally', going to code it in by hand.
 			//this could probably be done more efficiently, but it's good enough for now...
