@@ -81,6 +81,11 @@
     <initial_profile_path>../examples/test_hydro_files</initial_profile_path>
   </IS>
 
+  <!-- Particle IDs we select for -->
+  <IDs>
+    0
+  </IDs>
+
   <!-- Hard Process -->
   <Hard>
 
