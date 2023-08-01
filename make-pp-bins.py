@@ -19,6 +19,7 @@ Erun = False
 reading = False
 rerunning = False
 appending = False
+softOnly = False
 design = []
 startdir = ""
 for i, option in enumerate(sys.argv):
@@ -28,12 +29,15 @@ for i, option in enumerate(sys.argv):
     if "Drun" in option:
         system = "Drun"
         Drun = True
+        softOnly = True
     if "Lrun" in option:
         system = "Lrun"
         Lrun = True
+        softOnly = True
     if "Erun" in option:
         system = "Erun"
         Erun = True
+        softOnly = True
     if "-d" in option:
         reading = True
         design = readDesign(sys.argv[i+1])
@@ -57,19 +61,17 @@ if rerunning:
 
 
 def makexml(bound, parameters, baseDir, xmltemplate, ECM):
-    events  = 10000
+    events  = 20000
     #extra events in first bin
     if RHIC:
         events = events*6
     if Drun:
-        events = 400000
+        events = 1000000
     if Lrun:
-        events = 100000
+        events = 2000000
     if Erun:
         events = 100000
     if bound[0] == 0:
-        events = events*2
-    if (Lrun or Drun or Erun) and bound[0] <= 10:
         events = events*2
 
     #appending option and filename
@@ -112,7 +114,7 @@ def makexml(bound, parameters, baseDir, xmltemplate, ECM):
         elif "pT0Ref" in line: newlines.append(pt0refline)
         else: newlines.append(line)
 
-    xmlname = baseDir+"/xml/pp_"+ECM+"_"+str(parameters[0])+"_"+str(bound[0])+".xml"
+    xmlname = baseDir+"/xml/pp_"+ECM+"_"+str(bound[0])+"_"+str(bound[1])+".xml"
     xml = open(xmlname,'w')
     xml.writelines(newlines)
     xml.close()
@@ -174,10 +176,10 @@ if RHIC:
     intervals = [0, 5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5, 25, 27.5, 30, 32.5, 35, 37.5, 40, 42.5, 45, 50, 55, 60, 65, 70]
     ECM = "200"
 elif Drun or Erun:
-    intervals = [5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5, 25, 27.5, 30, 32.5, 35, 37.5, 40, 42.5, 45, 50, 55, 60, 65, 70, 75, 80, 90, 100]#, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 230, 250, 270, 290, 310, 330, 350, 400, 450, 500, 550, 600, 1000]
+    intervals = range(0,25+1) #need to add one more to the range than bins desired
     ECM = "5020"
 elif Lrun:
-    intervals = [5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5, 25, 27.5, 30, 32.5, 35, 37.5, 40, 42.5, 45, 50, 55, 60, 65, 70, 75, 80, 90, 100]#, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 230, 250, 270, 290, 310, 330, 350, 400, 450, 500, 550, 600, 1000]
+    intervals = range(0,25+1) #need to add one more to the range than bins desired
     ECM = "13000"
 else:
     intervals = [0, 5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5, 25, 27.5, 30, 32.5, 35, 37.5, 40, 42.5, 45, 50, 55, 60, 65, 70, 75, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 230, 250, 270, 290, 310, 330, 350, 400, 450, 500, 550, 600, 1000]
@@ -195,7 +197,9 @@ if not reading: design = createDesign(nsamples)
 #pthat bounds formed into pairs
 pTHatBounds = []
 for i in range(len(intervals)-1):
-    if i is 0 and intervals[i] == 0:
+    if softOnly:
+        pTHatBounds.append((0,-i-1)) #setting all soft bins upper bound to negative
+    elif i is 0 and intervals[i] == 0:
         pTHatBounds.append((intervals[i],-1))
     else:
         pTHatBounds.append((intervals[i],intervals[i+1]))
@@ -232,5 +236,16 @@ for index, Q, vir, lQCD, pionWidth, kaonWidth, protonWidth, StoUD, QQtoQ, pt0ref
             appendcommand = "cat " + dat + "temp.dat >> " + dat + ".dat"
             os.system(appendcommand)
             os.system('rm '+dat+'temp.dat')
+
+    ##concatonating all soft bins together
+    if softOnly:
+        cmd = "cat "
+        for dat in dats:
+            cmd = cmd + dat + ".dat.gz "
+        cmd = cmd + " > " + dats[-1] + "0.dat.gz"
+        os.system(cmd)
+        
+        for dat in dats:
+            os.remove(dat+".dat.gz")
 
 pool.close()
