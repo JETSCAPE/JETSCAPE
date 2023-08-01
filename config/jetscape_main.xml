@@ -32,7 +32,7 @@
   <JetScapeWriterFinalStateHadronsAscii> off </JetScapeWriterFinalStateHadronsAscii>
   <JetScapeWriterFinalStateHadronsAsciiGZ> off </JetScapeWriterFinalStateHadronsAsciiGZ>
   <write_pthat> 0 </write_pthat>
-  <finalhadsonly> off </finalhadsonly>
+  <finalHadsOnly> off </finalHadsOnly>
 
   <!--  Random Settings. For now, just a global  seed. -->
   <!--  Note: It's each modules responsibility to adopt it -->
@@ -355,6 +355,7 @@
        <!--   111:mayDecay = off  -->
        <!-- </LinesToRead> -->
        <reco_hadrons_in_pythia>0</reco_hadrons_in_pythia>
+       <ignorePhotons> off </ignorePhotons>
    </JetHadronization>
 
   <!-- Particlization Module  -->

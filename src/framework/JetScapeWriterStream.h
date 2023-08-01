@@ -46,7 +46,7 @@ public:
 
   bool finalhadsonly = false;
   void SetFinalHadsOnly(){
-    std::string log_debug = GetXMLElementText({"finalhadsonly"});
+    std::string log_debug = GetXMLElementText({"finalHadsOnly"});
     if((int)log_debug.find("on") >= 0){
       finalhadsonly = true;
       JSINFO << "Final hadrons only";
