@@ -6,7 +6,7 @@
   
   <outputFilename>/scratch/user/cameron.parker/JETSCAPE-COMP-HH_colorrecomb/test</outputFilename>
   <JetScapeWriterAsciiGZ> on </JetScapeWriterAsciiGZ>
-  <finalhadsonly> on </finalhadsonly>
+  <finalHadsOnly> on </finalHadsOnly>
 
   <IDs>
     4122
