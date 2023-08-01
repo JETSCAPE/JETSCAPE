@@ -653,6 +653,10 @@ void HybridHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& sh
 	    }
 	    ++attempt_num;
     }
+
+    if(!run_successfully){HH_hadrons.clear(); JSWARN << "This event could not be hadronized.";}
+    
+    //pythia.event.list();
     
     //add condition here to not write if no necessary particles met
     std::vector<int> IDs;
@@ -676,12 +680,9 @@ void HybridHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& sh
       if(!keepevent) {
         JSINFO << "Requirements not met, thrown out.";
         run_successfully = false;
+        HH_hadrons.clear(); 
       }
     }
-
-    if(!run_successfully){HH_hadrons.clear(); JSWARN << "This event could not be hadronized.";}
-    
-    //pythia.event.list();
 
     for(unsigned int iHad=0; iHad<HH_hadrons.num(); ++iHad){
 	    if(HH_hadrons[iHad].is_final()){
