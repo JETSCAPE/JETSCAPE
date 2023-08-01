@@ -139,6 +139,17 @@ void HybridHadronization::Init(){
 	  xml_intin = GetXMLElementInt({"JetHadronization", "reco_hadrons_in_pythia"});
 	  if(xml_intin == 0 || xml_intin == 1){reco_hadrons_pythia = xml_intin;} xml_intin = -1;
 
+    //checking for IDs we need to keep event
+    std::stringstream linestemp; string stemp;
+    linestemp << GetXMLElementText({"IDs"}, false);
+    while (std::getline(linestemp, stemp, '\n')) {
+      if (stemp.find_first_not_of(" \t\v\f\r") == stemp.npos)
+        continue; // skip empty lines
+      if(std::stoi(stemp) == 0) break; //skip default value
+      IDs.push_back(std::stoi(stemp));
+      JSINFO << "Requiring hadrons in final state: " << stemp;
+    }
+
     if(maxM_level > 4) {
       maxM_level=4;
       JSWARN << "Maximum energy level for mesons set to 4";
@@ -658,18 +669,6 @@ void HybridHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& sh
     
     //pythia.event.list();
     
-    //add condition here to not write if no necessary particles met
-    std::vector<int> IDs;
-    std::stringstream lines; string s;
-    lines << GetXMLElementText({"IDs"}, false);
-    int i = 0;
-    while (std::getline(lines, s, '\n')) {
-      if (s.find_first_not_of(" \t\v\f\r") == s.npos)
-        continue; // skip empty lines
-      if(std::stoi(s) == 0) continue; //skip default value
-      IDs.push_back(std::stoi(s));
-    }
-
     //checking if we keeping event only if we have IDs to loop over
     if(IDs.size() > 0){
       bool keepevent = false;

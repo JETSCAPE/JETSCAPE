@@ -58,6 +58,7 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
   unsigned int rand_seed;
   int reco_hadrons_pythia;
   bool goldstonereco;
+  std::vector<int> IDs;
   
   //variables for recombination color structure
   vector<vector<vector<int>>> Tempjunctions; // vector of all tempjunctions
