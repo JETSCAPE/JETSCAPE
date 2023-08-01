@@ -5,7 +5,13 @@
   <nEvents> 100 </nEvents>
   
   <outputFilename>/scratch/user/cameron.parker/JETSCAPE-COMP-HH_colorrecomb/test</outputFilename>
-  <JetScapeWriterAscii> on </JetScapeWriterAscii>
+  <JetScapeWriterAsciiGZ> on </JetScapeWriterAsciiGZ>
+  <finalhadsonly> on </finalhadsonly>
+
+  <IDs>
+    411
+    421
+  </IDs>
   
   <!-- Hard Process -->
   <Hard>
@@ -42,13 +48,13 @@
     <pionWidthScale>1.0</pionWidthScale>
     <kaonWidthScale>1.0</kaonWidthScale>
     <protonWidthScale>1.0</protonWidthScale>
-    <weak_decays>off<\weak_decays>
+    <weak_decays>on</weak_decays>
+    <shower_recofactor>1</shower_recofactor>
+    <thermal_recofactor>1</thermal_recofactor>
     <LinesToRead>
       StringFlav:probStoUD = 0.217
       StringFlav:probQQtoQ = 0.081
       ParticleDecays:tau0Max = 10
-      413:mayDecay = off
-      -413:mayDecay = off
       411:mayDecay = off
       -411:mayDecay = off
       421:mayDecay = off
