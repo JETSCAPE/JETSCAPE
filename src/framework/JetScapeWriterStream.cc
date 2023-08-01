@@ -76,7 +76,6 @@ template <class T> void JetScapeWriterStream<T>::WriteHeaderToFile() {
     oss << GetId() << "EventPlaneAngle " << GetHeader().GetEventPlaneAngle();
     WriteComment(oss.str());
   }
-  //SetFinalHadsOnly();
 }
 
 template <class T> void JetScapeWriterStream<T>::WriteEvent() {
