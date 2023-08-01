@@ -141,7 +141,7 @@ template <class T> void JetScapeReader<T>::Next() {
       if (line.find("weight") != std::string::npos) {
         std::stringstream data(line);
         std::string dummy;
-        data >> dummy >> dummy >> eventWeight;
+        data >> dummy >> dummy >> dummy >> eventWeight;
         JSDEBUG << " Event weight=" << eventWeight;
       }
       // EP angle
