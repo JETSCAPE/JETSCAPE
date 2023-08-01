@@ -31,7 +31,6 @@ RegisterJetScapeModule<JetScapeWriterStream<ogzstream>>
 template <class T>
 JetScapeWriterStream<T>::JetScapeWriterStream(string m_file_name_out) {
   SetOutputFileName(m_file_name_out);
-  SetFinalHadsOnly();
 }
 
 template <class T> JetScapeWriterStream<T>::~JetScapeWriterStream() {
