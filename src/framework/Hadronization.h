@@ -96,6 +96,7 @@ private:
   bool TransformPartonsConnected;
   bool HydroHyperSurfaceConnected_;
   bool GetHydroCellSignalConnected_;
+  bool ignorePhotons;
 };
 
 } // namespace Jetscape
