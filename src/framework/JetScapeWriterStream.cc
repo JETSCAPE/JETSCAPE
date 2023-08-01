@@ -31,6 +31,7 @@ RegisterJetScapeModule<JetScapeWriterStream<ogzstream>>
 template <class T>
 JetScapeWriterStream<T>::JetScapeWriterStream(string m_file_name_out) {
   SetOutputFileName(m_file_name_out);
+  SetFinalHadsOnly();
 }
 
 template <class T> JetScapeWriterStream<T>::~JetScapeWriterStream() {
@@ -76,6 +77,7 @@ template <class T> void JetScapeWriterStream<T>::WriteHeaderToFile() {
     oss << GetId() << "EventPlaneAngle " << GetHeader().GetEventPlaneAngle();
     WriteComment(oss.str());
   }
+  //SetFinalHadsOnly();
 }
 
 template <class T> void JetScapeWriterStream<T>::WriteEvent() {
@@ -85,6 +87,7 @@ template <class T> void JetScapeWriterStream<T>::WriteEvent() {
 
 template <class T> void JetScapeWriterStream<T>::Write(weak_ptr<Parton> p) {
   auto pp = p.lock();
+  if(finalhadsonly) return;
   if (pp) {
     output_file << *pp << endl;
   }
@@ -92,6 +95,7 @@ template <class T> void JetScapeWriterStream<T>::Write(weak_ptr<Parton> p) {
 
 template <class T> void JetScapeWriterStream<T>::Write(weak_ptr<Vertex> v) {
   auto vv = v.lock();
+  if(finalhadsonly) return;
   if (vv) {
     output_file << *vv << endl;
   }
@@ -102,6 +106,7 @@ template <class T> void JetScapeWriterStream<T>::Init() {
     JSINFO << "JetScape Stream Writer initialized with output file = "
            << GetOutputFileName();
     output_file.open(GetOutputFileName().c_str());
+    SetFinalHadsOnly();
 
     //Write Init Informations, like XML and ... to file ...
     //WriteInitFileXMLMain();
@@ -140,6 +145,9 @@ template <class T>
 void JetScapeWriterStream<T>::Write(weak_ptr<PartonShower> ps) {
   auto pShower = ps.lock();
   if (!pShower)
+    return;
+
+  if(finalhadsonly)
     return;
 
   WriteComment(

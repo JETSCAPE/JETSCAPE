@@ -44,6 +44,14 @@ public:
   bool GetStatus() { return output_file.good(); }
   void Close() { output_file.close(); }
 
+  bool finalhadsonly = false;
+  void SetFinalHadsOnly(){
+    std::string log_debug = GetXMLElementText({"finalhadsonly"});
+    if((int)log_debug.find("on") >= 0) finalhadsonly = true;
+    cout << "Final Hadrons Only: " << finalhadsonly << endl;
+  }
+  void GetFinalHadsOnlyStatus(){cout << "Final Hadrons Only: " << finalhadsonly << endl;}
+
   void WriteInitFileXMLMain();
   void WriteInitFileXMLUser();
 
