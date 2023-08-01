@@ -61,14 +61,8 @@ int main(int argc, char* argv[]){
         return 0;
     }
 
-    //get list of cross sections
-    vector<vector<double>> xsecout = getXsecs(pTHatMin,pTHatMax);
-	vector<double> xsecList = xsecout[0];
-    vector<double> xsecErrorList = xsecout[1];
+    //variable to total xsec
     double xsectotal = 0;
-    for(int k = 0; k<NpTHardBin; k++) xsectotal += xsecList[k];
-    //for(int k = 0; k<NpTHardBin; k++) cout << pTHatMin[k] << " " << pTHatMax[k] << " " << xsecList[k]*100000 << endl; //debugging line
-    //cout << xsectotal << endl;
 
     //Cut variables
     double AssHadEtaCut = 0.8;
@@ -78,10 +72,6 @@ int main(int argc, char* argv[]){
     double triggerptcut[] = {3,5,8,16};
     double assptmin[] = {0.3,0.3,1};
     double assptmax[] = {10000,1,10000};
-
-    //output file for associated hadrons
-    ofstream hadfile;
-    hadfile.open("asshads.txt");
     
     //Variables for single hadron spectrum
     double LphiBin[17];
@@ -147,6 +137,7 @@ int main(int argc, char* argv[]){
 
             //cout<<"Number of hadrons is: " << hadrons.size() << endl;
             Events++;
+            //if(Events == 10000) break;
             for(unsigned int i=0; i<hadrons.size(); i++){
                 SN = i;
                 PID= hadrons[i].get()->pid();
@@ -197,13 +188,6 @@ int main(int argc, char* argv[]){
                 }
             }
 
-            //writing out associated hadrons
-            if(Ls.size() > 0){
-                hadfile << "pTHat: " << pTHatMin[k] << " to " << pTHatMax[k] << endl;
-                for(int i = 0; i < others.size(); i++)
-                    hadfile << others[i].get()->pid() << " " << others[i].get()->pt() << " " << others[i].get()->eta() << " " << others[i].get()->phi() << endl;
-            }
-
             //clearing had vecs
             if(Ls.size() == 0) flag = false;
             Ls.clear();
@@ -213,13 +197,15 @@ int main(int argc, char* argv[]){
         
         //xsec and event count handling
         eventCount.push_back(Events);
-        double HardCrossSection = xsecList[k];
-        double HardCrossSectionError = xsecErrorList[k];
+        double HardCrossSection = myfile->GetSigmaGen();
+        //cout << "Xsec: " << HardCrossSection << endl;
+        double HardCrossSectionError = myfile->GetSigmaErr();
+        xsectotal += HardCrossSection;
         
         //Dcounts
         for(int i1 = 0; i1 < 3; i1++)
             for(int i2 = 0; i2 < 3; i2++)
-                totLcount[i1][i2] += Lpts->GetBinContent(i1+1)*HardCrossSection/(xsectotal*Events);
+                totLcount[i1][i2] += Lpts->GetBinContent(i1+1)*HardCrossSection/(Events);
         
         //event info
         TVector EventInfo(3);
@@ -233,14 +219,13 @@ int main(int argc, char* argv[]){
         for(int i1 = 0; i1 < 3; i1++){
             for(int i2 = 0; i2 < 3; i2++){
                 tempL[i1][i2]->Write(names[i1][i2].c_str());
-                HistLPhi[i1][i2]->Add(tempL[i1][i2],HardCrossSection/(xsectotal*Events));
+                HistLPhi[i1][i2]->Add(tempL[i1][i2],HardCrossSection/(Events));
             }
         }
 
         myfile->Close();
         outFile->Close();
     } //k-loop ends here (pTHatBin loop)
-    hadfile.close();
 
     //create root file for total plots
     TFile* totalroot = new TFile( "root/totals.root", "RECREATE");
@@ -249,7 +234,7 @@ int main(int argc, char* argv[]){
     //HistDPhi->SetNormFactor(1.0);
     for(int i1 = 0; i1 < 3; i1++){
         for(int i2 = 0; i2 < 3; i2++){
-            HistLPhi[i1][i2]->Scale(1.0/totLcount[i1][i2]);
+            HistLPhi[i1][i2]->Scale(1.0/(totLcount[i1][i2]));
             HistLPhi[i1][i2]->GetXaxis()->SetTitle("Delta phi (rad)");
             HistLPhi[i1][i2]->GetYaxis()->SetTitle("(1/ND)(dNassc/dDelphi)");
  	        HistLPhi[i1][i2]->Write(names[i1][i2].c_str());
@@ -273,7 +258,7 @@ int main(int argc, char* argv[]){
     
     //test comment
     //debugging
-    cout << flag << endl;
+    //cout << flag << endl;
 
     return 0;
 }
