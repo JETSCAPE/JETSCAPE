@@ -51,6 +51,7 @@
     <weak_decays>on</weak_decays>
     <shower_recofactor>1</shower_recofactor>
     <thermal_recofactor>1</thermal_recofactor>
+    <ignorePhotons>on</ignorePhotons>
     <LinesToRead>
       StringFlav:probStoUD = 0.217
       StringFlav:probQQtoQ = 0.081

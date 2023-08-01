@@ -5,7 +5,8 @@
   <nEvents> 100 </nEvents>
   
   <outputFilename>/scratch/user/cameron.parker/JETSCAPE-COMP-HH_colorrecomb/test</outputFilename>
-  <JetScapeWriterAscii> on </JetScapeWriterAscii>
+  <JetScapeWriterAsciiGZ> on </JetScapeWriterAsciiGZ>
+  <finalhadsonly> on </finalhadsonly>
 
   <IDs>
     4122
@@ -49,6 +50,7 @@
     <weak_decays>on</weak_decays>
     <shower_recofactor>1</shower_recofactor>
     <thermal_recofactor>1</thermal_recofactor>
+    <ignorePhotons>on</ignorePhotons>
     <LinesToRead>
       StringFlav:probStoUD = 0.217
       StringFlav:probQQtoQ = 0.081
