@@ -56,8 +56,6 @@ void ColorlessHadronization::Init() {
       GetXMLElementDouble({"JetHadronization", "eCMforHadronization"});
   p_fake = p_read_xml;
 
-  /*std::string weak_decays =
-      GetXMLElementText({"JetHadronization", "weak_decays"});*/
   take_recoil = GetXMLElementInt({"JetHadronization", "take_recoil"});
 
   JSDEBUG << "Initialize ColorlessHadronization";
@@ -70,19 +68,14 @@ void ColorlessHadronization::Init() {
 
   // Standard settings
   pythia.readString("ProcessLevel:all = off");
-
-  // Don't let pi0 decay
-  //pythia.readString("111:mayDecay = off");
-
-  // Don't let any hadron decay
-  //pythia.readString("HadronLevel:Decay = off");
-
   pythia.readString("PartonLevel:FSR=off");
 
+  // General settings for hadron decays
   std::string pythia_decays = GetXMLElementText({"JetHadronization", "pythia_decays"});
   double tau0Max = 10.0;
-  double xml_doublein = GetXMLElementDouble({"JetHadronization", "tau0Max"});
-	if(xml_doublein >= 0){tau0Max = xml_doublein;} xml_doublein = -1;
+  double tau0Max_xml = GetXMLElementDouble({"JetHadronization", "tau0Max"});
+	if(tau0Max_xml >= 0){tau0Max = tau0Max_xml;}
+  else{JSWARN << "tau0Max should be larger than 0. Set it to 10.";}
   if(pythia_decays == "on"){
     JSINFO << "Pythia decays are turned on for tau0Max < " << tau0Max;
     pythia.readString("HadronLevel:Decay = on");
@@ -93,15 +86,21 @@ void ColorlessHadronization::Init() {
     pythia.readString("HadronLevel:Decay = off");
   }
 
-  /*if (weak_decays == "off") {
-    JSINFO << "Weak decays are turned off";
+  // Settings for decays (old flag, will be depracted at some point)
+  // This overwrites the previous settings if the user xml file contains the flag
+  std::string weak_decays =
+    GetXMLElementText({"JetHadronization", "weak_decays"});
+  if (weak_decays == "off") {
+    JSINFO << "Hadron decays are turned off.";
+    JSWARN << "This parameter will be depracted at some point. Use 'pythia_decays' instead.\nOverwriting 'pythia_decays'.";
     pythia.readString("HadronLevel:Decay = off");
-  } else {
-    JSINFO << "Weak decays are turned on";
+  } else if(weak_decays == "on") {
+    JSINFO << "Hadron decays inside a range of 10 mm/c are turned on.";
+    JSWARN << "This parameter will be depracted at some point. Use 'pythia_decays' and 'tau0Max' for more control on decays.\nOverwriting 'pythia_decays' and fix 'tau0Max' to 10.";
     pythia.readString("HadronLevel:Decay = on");
     pythia.readString("ParticleDecays:limitTau0 = on");
     pythia.readString("ParticleDecays:tau0Max = 10.0");
-  }*/
+  }
 
   std::stringstream lines;
   lines << GetXMLElementText({"JetHadronization", "LinesToRead"}, false);
