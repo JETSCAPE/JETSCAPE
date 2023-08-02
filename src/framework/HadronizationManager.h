@@ -39,6 +39,7 @@ public:
   virtual void Exec();
   virtual void Clear();
   virtual void WriteTask(weak_ptr<JetScapeWriter> w);
+  virtual bool CheckTask(weak_ptr<JetScapeWriter> w);
 
   int GetNumSignals();
 

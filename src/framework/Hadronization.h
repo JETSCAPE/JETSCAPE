@@ -39,6 +39,7 @@ public:
                                vector<shared_ptr<Hadron>> &hOut,
                                vector<shared_ptr<Parton>> &pOut){};
   virtual void WriteTask(weak_ptr<JetScapeWriter> w);
+  virtual bool CheckTask(weak_ptr<JetScapeWriter> w);
   virtual void Clear();
 
   void GetHadrons(vector<shared_ptr<Hadron>>& signal){signal = outHadrons;}

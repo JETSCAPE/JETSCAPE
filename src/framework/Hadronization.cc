@@ -105,6 +105,14 @@ void Hadronization::WriteTask(weak_ptr<JetScapeWriter> w) {
   }
 }
 
+bool Hadronization::CheckTask(weak_ptr<JetScapeWriter> w) {
+  auto f = w.lock();
+  if (!f)
+    return true;
+  if(GetHadrons().size() > 0) return true;
+  return false;
+}
+
 void Hadronization::DeleteHadrons() {
   outHadrons.clear();
 }

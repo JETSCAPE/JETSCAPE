@@ -104,6 +104,9 @@ public:
   */
   virtual void WriteTasks(weak_ptr<JetScapeWriter> w);
 
+  //checking to see if event should be kept
+  virtual bool CheckTasks(weak_ptr<JetScapeWriter> w);
+
   //add here a write task (depending on if JetScapeWriter is initiallized and active) ...
   // Think about workflow ...
   /** A virtual function to define a default WriteTask() function for a JetScapeTask.
@@ -121,6 +124,9 @@ public:
       it's non-trivial to collect this information.
    */
   virtual void WriteTask(weak_ptr<JetScapeWriter> w){};
+
+  //default function to return true for a task returning true on a check
+  virtual bool CheckTask(weak_ptr<JetScapeWriter> w){return true;};
 
   /** Should get called only by CollectHeaders. Maybe make protected?
       @param w is a pointer of type JetScapeWrite class.

@@ -964,81 +964,94 @@ void JetScape::Exec() {
     // -- all other Write()'s are being called
     // the result still confuses me. It's in the best possible order but it shouldn't be.
 
-    // collect module header data
+    // checking if everything should be written out
+    bool keep = true;
     for (auto w : vWriter) {
       auto f = w.lock();
       if (f) {
-        JetScapeTask::CollectHeaders(w);
+        keep = JetScapeTask::CheckTasks(w);
       }
     }
-    // official header
-    for (auto w : vWriter) {
-      auto f = w.lock();
-      if (f) {
-        f->WriteHeaderToFile();
-      }
-    }
-
-    // event data
-    for (auto w : vWriter) {
-      auto f = w.lock();
-      if (f) {
-        JetScapeTask::WriteTasks(w);
-      }
-    }
-
-    // Finalize
-    for (auto w : vWriter) {
-      auto f = w.lock();
-      if (f) {
-        f->WriteEvent();
-      }
-    }
-
-    // For reusal, deactivate task after it has finished
-    // but before it gets cleaned up.
-    if (reuse_hydro_) {
-      if (n_reuse_hydro_ <= 0) {
-        JSWARN << " reuse_hydro is set, but n_reuse_hydro = " << n_reuse_hydro_;
-        throw std::runtime_error("Incompatible reusal settings.");
-      }
-      bool hydro_pointer_is_set = false;
-      for (auto it : GetTaskList()) {
-        if (!dynamic_pointer_cast<FluidDynamics>(it) &&
-            !dynamic_pointer_cast<PreequilibriumDynamics>(it) &&
-            !dynamic_pointer_cast<InitialState>(it)) {
-          continue;
+    if(keep == false){
+      JetScapeTask::ClearTasks();
+      --i;
+    }else{
+      // collect module header data
+      for (auto w : vWriter) {
+        auto f = w.lock();
+        if (f) {
+          JetScapeTask::CollectHeaders(w);
         }
-
-        // only deactivate the first hydro
-        if (dynamic_pointer_cast<FluidDynamics>(it) && hydro_pointer_is_set) {
-          continue;
+      }
+      // official header
+      for (auto w : vWriter) {
+        auto f = w.lock();
+        if (f) {
+          f->WriteHeaderToFile();
         }
+      }
 
-        if (i % n_reuse_hydro_ == n_reuse_hydro_ - 1) {
-          JSDEBUG << " i was " << i
-                  << " i%n_reuse_hydro_ = " << i % n_reuse_hydro_
-                  << " --> ACTIVATING";
-          it->SetActive(true);
-          if (dynamic_pointer_cast<FluidDynamics>(it)) {
-            hydro_pointer_is_set = true;
+      // event data
+      for (auto w : vWriter) {
+        auto f = w.lock();
+        if (f) {
+          JetScapeTask::WriteTasks(w);
+        }
+      }
+
+      // Finalize
+      for (auto w : vWriter) {
+        auto f = w.lock();
+        if (f) {
+          f->WriteEvent();
+        }
+      }
+
+      // For reusal, deactivate task after it has finished
+      // but before it gets cleaned up.
+      if (reuse_hydro_) {
+        if (n_reuse_hydro_ <= 0) {
+          JSWARN << " reuse_hydro is set, but n_reuse_hydro = " << n_reuse_hydro_;
+          throw std::runtime_error("Incompatible reusal settings.");
+        }
+        bool hydro_pointer_is_set = false;
+        for (auto it : GetTaskList()) {
+          if (!dynamic_pointer_cast<FluidDynamics>(it) &&
+              !dynamic_pointer_cast<PreequilibriumDynamics>(it) &&
+              !dynamic_pointer_cast<InitialState>(it)) {
+            continue;
           }
-        } else {
-          JSDEBUG << " i was " << i
-                  << " i%n_reuse_hydro_ = " << i % n_reuse_hydro_
-                  << " --> DE-ACTIVATING";
-          it->SetActive(false);
-          if (dynamic_pointer_cast<FluidDynamics>(it)) {
-            hydro_pointer_is_set = true;
+
+          // only deactivate the first hydro
+          if (dynamic_pointer_cast<FluidDynamics>(it) && hydro_pointer_is_set) {
+            continue;
+          }
+
+          if (i % n_reuse_hydro_ == n_reuse_hydro_ - 1) {
+            JSDEBUG << " i was " << i
+                    << " i%n_reuse_hydro_ = " << i % n_reuse_hydro_
+                    << " --> ACTIVATING";
+            it->SetActive(true);
+            if (dynamic_pointer_cast<FluidDynamics>(it)) {
+              hydro_pointer_is_set = true;
+            }
+          } else {
+            JSDEBUG << " i was " << i
+                    << " i%n_reuse_hydro_ = " << i % n_reuse_hydro_
+                    << " --> DE-ACTIVATING";
+            it->SetActive(false);
+            if (dynamic_pointer_cast<FluidDynamics>(it)) {
+              hydro_pointer_is_set = true;
+            }
           }
         }
       }
+
+      // Now clean up, only affects active taskjs
+      JetScapeTask::ClearTasks();
+
+      IncrementCurrentEvent();
     }
-
-    // Now clean up, only affects active taskjs
-    JetScapeTask::ClearTasks();
-
-    IncrementCurrentEvent();
   }
 }
 

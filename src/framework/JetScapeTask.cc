@@ -77,6 +77,18 @@ void JetScapeTask::WriteTasks(weak_ptr<JetScapeWriter> w) {
   }
 }
 
+bool JetScapeTask::CheckTasks(weak_ptr<JetScapeWriter> w) {
+  bool keep = true;
+  //VERBOSE(10);
+  if (active_exec) {
+    for (auto it : tasks){
+      if(it->CheckTask(w) == false) keep = false;
+    }
+  }
+
+  return keep;
+}
+
 void JetScapeTask::CollectHeaders(weak_ptr<JetScapeWriter> w) {
   //VERBOSE(10);
   if (active_exec) {

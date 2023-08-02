@@ -80,6 +80,11 @@ void HadronizationManager::WriteTask(weak_ptr<JetScapeWriter> w) {
   JetScapeTask::WriteTasks(w);
 }
 
+bool HadronizationManager::CheckTask(weak_ptr<JetScapeWriter> w) {
+  VERBOSE(8);
+  return JetScapeTask::CheckTasks(w);
+}
+
 void HadronizationManager::Exec() {
 
   VERBOSE(2) << "Run Hadronization Manager ...";
