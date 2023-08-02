@@ -23,6 +23,8 @@
 #include "FluidDynamics.h"
 #include "FluidCellInfo.h"
 #include "SurfaceCellInfo.h"
+#include "FluidEvolutionHistory.h"
+#include "JetScapeSignalManager.h"
 
 #include <sstream>
 #include <iostream>
@@ -131,7 +133,10 @@ void HybridHadronization::Init(){
     xml_intin = GetXMLElementInt({"JetHadronization", "reco_goldstone"});
 	  if(xml_intin >= 0){goldstonereco = xml_intin;} xml_intin = -1;
 
-	  xml_doublein = GetXMLElementDouble({"JetHadronization", "had_postprop"});
+    xml_doublein = GetXMLElementDouble({"JetHadronization", "hydro_Tc"});
+	  if(xml_doublein >= 0){hydro_Tc = xml_doublein;} xml_doublein = -1;
+
+    xml_doublein = GetXMLElementDouble({"JetHadronization", "had_postprop"});
 	  if(xml_doublein >= 0){had_prop = xml_doublein;} xml_doublein = -1;
 
     xml_doublein = GetXMLElementDouble({"JetHadronization", "part_prop"});
@@ -293,13 +298,12 @@ void HybridHadronization::Init(){
     pythia.readString("ProcessLevel:all = off");
 	  //pythia.readString("PartonLevel:FSR=off"); //is this necessary?
 
-    // Don't let pi0 decay
-    //pythia.readString("111:mayDecay = off");
-
+    // General settings for hadron decays
     std::string pythia_decays = GetXMLElementText({"JetHadronization", "pythia_decays"});
     double tau0Max = 10.0;
-    xml_doublein = GetXMLElementDouble({"JetHadronization", "tau0Max"});
-	  if(xml_doublein >= 0){tau0Max = xml_doublein;} xml_doublein = -1;
+    double tau0Max_xml = GetXMLElementDouble({"JetHadronization", "tau0Max"});
+	  if(tau0Max_xml >= 0){tau0Max = tau0Max_xml;}
+    else{JSWARN << "tau0Max should be larger than 0. Set it to 10.";}
     if(pythia_decays == "on"){
       JSINFO << "Pythia decays are turned on for tau0Max < " << tau0Max;
       pythia.readString("HadronLevel:Decay = on");
@@ -310,16 +314,21 @@ void HybridHadronization::Init(){
       pythia.readString("HadronLevel:Decay = off");
     }
 
-    /*std::string weak_decays = GetXMLElementText({"JetHadronization", "weak_decays"});
-    if (weak_decays == "off"){
-      JSINFO << "Weak decays are turned off";
+    // Settings for decays (old flag, will be depracted at some point)
+    // This overwrites the previous settings if the user xml file contains the flag
+    std::string weak_decays =
+      GetXMLElementText({"JetHadronization", "weak_decays"});
+    if (weak_decays == "off") {
+      JSINFO << "Hadron decays are turned off.";
+      JSWARN << "This parameter will be depracted at some point. Use 'pythia_decays' instead.\nOverwriting 'pythia_decays'.";
       pythia.readString("HadronLevel:Decay = off");
-    }else{
-      JSINFO << "Weak decays are turned on";
+    } else if(weak_decays == "on") {
+      JSINFO << "Hadron decays inside a range of 10 mm/c are turned on.";
+      JSWARN << "This parameter will be depracted at some point. Use 'pythia_decays' and 'tau0Max' for more control on decays.\nOverwriting 'pythia_decays' and fix 'tau0Max' to 10.";
       pythia.readString("HadronLevel:Decay = on");
       pythia.readString("ParticleDecays:limitTau0 = on");
       pythia.readString("ParticleDecays:tau0Max = 10.0");
-    }*/
+    }
 
 	  //setting seed, or using random seed
 	  pythia.readString("Random:setSeed = on");
@@ -382,49 +391,54 @@ void HybridHadronization::Init(){
     // And initialize
     pythia.init();
 
-	  //setting up thermal partons...
-	  bool brickptns = false; double brick_L = -1;
+    //reading in info for thermal partons
+	  inbrick = false; brickL = -1.;
+    inhydro = false; nreusehydro = 1;
+
 	  xml_intin = GetXMLElementInt({"Eloss", "Matter", "brick_med"});
-	  if(xml_intin == 1){brickptns = true;} xml_intin = -1;
+	  if(xml_intin == 1){inbrick = true;} xml_intin = -1;
 	  xml_doublein = GetXMLElementDouble({"Eloss", "Matter", "brick_length"});
-	  if(brickptns && (xml_doublein >= 0.)){brick_L = xml_doublein;} xml_doublein = -1.;
-	  if(brick_L < 0.){brick_L = 0.; brickptns = false;}
+	  if(inbrick && (xml_doublein >= 0.)){brickL = xml_doublein;} xml_doublein = -1.;
+    xml_intin = GetXMLElementInt({"nReuseHydro"});
+	  if(xml_intin > 0){nreusehydro = xml_intin;} xml_intin = -1;
+	  xml_doublein = GetXMLElementDouble({"Eloss", "deltaT"});
+	  if(xml_doublein >= 0.){delta_t = xml_doublein;} xml_doublein = -1.;
+    xml_doublein = GetXMLElementDouble({"Hydro", "Brick", "T"});
+	  if(xml_doublein >= 0.){brickT = xml_doublein;} xml_doublein = -1.;
 
-	  if(brickptns){
+    // Check if hydro is used in user xml file
+    tinyxml2::XMLElement *elementXML = (tinyxml2::XMLElement *)JetScapeXML::Instance()->GetXMLRootUser()->FirstChildElement();
+    while (elementXML) {
+      std::string elementName = elementXML->Name();
+      if (elementName == "Hydro") {
+        inhydro = true;
+      }
+      elementXML = elementXML->NextSiblingElement();
+    } // at this point the hydro could still be a brick -> check this in the following part
 
-	  	thermptnsampler brick(rand_seed); //creating a thermal brick
-	  	brick.brick_LWo(2.*brick_L,2.*brick_L,2.*brick_L); //(double len_bri(z), double wid_bri(x,y), double offset_in(unused)) //Just setting as a 'normal' brick 'cube'
-	  	//brick.brick_flow(0., 0., tanh(0.6)); //(double vx_in, double vy_in, double vz_in)
-	  	brick.brick_flow(0., 0., 0.); //(double vx_in, double vy_in, double vz_in)
-	  	brick.samplebrick();
+    if(inhydro){
+      tinyxml2::XMLElement *element = (tinyxml2::XMLElement *)JetScapeXML::Instance()->GetXMLRootUser()->FirstChildElement();
+      while (element) {
+        std::string elementName = element->Name();
+        if (elementName == "Hydro") {
+          inhydro = true;
+          tinyxml2::XMLElement *childElement = (tinyxml2::XMLElement *)element->FirstChildElement();
+          while (childElement) {
+            std::string childElementName = childElement->Name();
+            if (childElementName == "Brick") {
+              inbrick = true;
+              inhydro = false;
+            }
+            childElement = childElement->NextSiblingElement();
+          }
+        }
+        element = element->NextSiblingElement();
+      }
+    }
 
-	  	JSINFO << "A " << brick_L << " fm brick was sampled, generating " << brick.nTot() << " partons (" << brick.th_nL() << " light, " << brick.th_nS() << " strange).";
-
-	  	for(int ith=0; ith<brick.nTot(); ++ith){
-	  		HHparton thparton;
-	  		thparton.is_thermal(true); thparton.id(brick.th_pid(ith)); thparton.orig(1); //sh_parton.string_id(str)
-        thparton.col(0); thparton.acol(0);
-	  		thparton.px(brick.th_px(ith)); thparton.py(brick.th_py(ith)); thparton.pz(brick.th_pz(ith)); thparton.e(  brick.th_e(ith));
-	  		thparton.x( brick.th_x(ith) ); thparton.y( brick.th_y(ith) ); thparton.z( brick.th_z(ith) ); thparton.x_t(brick.th_t(ith));
-	  		thparton.mass( thparton.e()*thparton.e() - thparton.px()*thparton.px() - thparton.py()*thparton.py() - thparton.pz()*thparton.pz() );
-	  		thparton.mass( (thparton.mass() >= 0.) ? sqrt(thparton.mass()) : sqrt(-thparton.mass()) );
-	  		thparton.pos_str(1);
-	  		HH_thermal.add(thparton); //adding this parton to thermal collection
-	  	}
-	  }
-	  //read in thermal partons, THEN do sibling setup...
-	  for(int i=0;i<HH_thermal.num();++i){
-	  	HH_thermal[i].sibling(i); HH_thermal[i].string_id(-i);
-	  	HH_thermal[i].is_used(true); HH_thermal[i].sibling( findthermalsibling(i, HH_thermal) ); HH_thermal[i].is_used(false);
-	  }
-
-	  //temp. outputting thermal partons to ensure they're sampled...
-    /*std::cout << "\n\n\n";
-	  for(int i=0;i<HH_thermal.num();++i){
-	  	std::cout << HH_thermal[i].id() << ", " << HH_thermal[i].px() << ", " << HH_thermal[i].py() << ", " << HH_thermal[i].pz() << ", " << HH_thermal[i].e() << ", " <<
-	  	  HH_thermal[i].x() << ", " << HH_thermal[i].y() << ", " << HH_thermal[i].z() << ", " << HH_thermal[i].x_t() << "\n";
-	  }
-	  std::cout << "\n\n\n";*/
+    // this is only important if a boost invariant 2+1d hydro is used
+    xml_doublein = GetXMLElementDouble({"JetHadronization", "eta_max_boost_inv"});
+	  if(inbrick && (xml_doublein >= 0.)){eta_max_boost_inv = xml_doublein;} xml_doublein = -1.;
   }
 }
 
@@ -442,6 +456,23 @@ void HybridHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& sh
   //JSINFO<<"Start Hybrid Hadronization using both Recombination and PYTHIA Lund string model.";
   pythia.event.reset(); HH_shower.clear();
   parton_collection neg_ptns;
+
+  //pointer to get hydro temperature info
+  std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
+
+  bool boost_invariant = true;
+  bool Cartesian_hydro = false; // not properly initialized by all hydro modules at the moment, don't use it
+  if(inhydro){
+      std::shared_ptr<FluidDynamics> hydro_ptr = JetScapeSignalManager::Instance()->GetHydroPointer().lock();
+      const EvolutionHistory& bulk_info = hydro_ptr->get_bulk_info();
+
+      boost_invariant = bulk_info.is_boost_invariant();
+      Cartesian_hydro = bulk_info.is_Cartesian();
+      Cartesian_hydro = false;
+  }
+
+  //negative brickL, then we will not run a brick sampler
+	if(brickL < 0.){brickL = 0.; inbrick = false;}
 
   //The framework uses unsigned int for partons, while HHpartons have int anti-/color tags.
   //Changing the HH partons to unsigned int is not that easy as some workflow, e.g. in recomb(),
@@ -469,27 +500,89 @@ void HybridHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& sh
 	  JSDEBUG<<"Shower#"<<ishower+1 << ". Number of (neg) partons to hadronize: " << neg_ptns.num();
   }
 
-	//checking to see if in brick, and if so then propagate all partons to hypersurface, also the negative ones
-	bool in_brick = false; double brick_L = -1;
-	(GetXMLElementInt({"Eloss", "Matter", "brick_med"}) > 0) ? in_brick = true : in_brick = false;
-	if(in_brick){brick_L = GetXMLElementDouble({"Eloss", "Matter", "brick_length"});}
-	if(brick_L < 0.){brick_L = 0.; in_brick = false;}
-	if(in_brick){
-		for(int i_sh=0; i_sh<HH_shower.num(); ++i_sh){
-			double t_dif = brick_L - HH_shower[i_sh].x_t();
-      double max_t_dif = std::max(t_dif,part_prop);
-			double vel[3]; vel[0]=HH_shower[i_sh].px()/HH_shower[i_sh].e(); vel[1]=HH_shower[i_sh].py()/HH_shower[i_sh].e(); vel[2]=HH_shower[i_sh].pz()/HH_shower[i_sh].e();
-			HH_shower[i_sh].x(HH_shower[i_sh].x() + vel[0]*max_t_dif); HH_shower[i_sh].y(HH_shower[i_sh].y() + vel[1]*max_t_dif); HH_shower[i_sh].z(HH_shower[i_sh].z() + vel[2]*max_t_dif);
-			HH_shower[i_sh].x_t(HH_shower[i_sh].x_t() + max_t_dif);
+  //sample thermal partons, brick or hydro hypersurface
+	//checking to see if we need to sample thermal partons, if either in brick or hydro
+	bool runsampler = (((inhydro || inbrick) && HH_thermal.num()==0) || (GetCurrentEvent()%nreusehydro==0)) ? true : false;
+
+  if(runsampler && inbrick){
+    HH_thermal.clear(); //emptying the thermal partons if we're resampling
+    ThermalPartonSampler brick(rand_seed); //creating a thermal brick
+	  brick.brick_length_width(2.*brickL,2.*brickL); // 2*brickL -> factor 2 for recentering
+	  brick.brick_flow(0., 0., 0.);
+    brick.brick_temperature(brickT);
+	  brick.samplebrick();
+
+	  JSINFO << "A " << brickL << " fm brick was sampled, generating " << brick.nTot() << " partons (" << brick.th_nL() << " light, " << brick.th_nS() << " strange).";
+
+	  for(int ith=0; ith<brick.nTot(); ++ith){
+	  	HHparton thparton;
+	  	thparton.is_thermal(true); thparton.id(brick.th_pid(ith)); thparton.orig(1); //sh_parton.string_id(str)
+      thparton.col(0); thparton.acol(0);
+	  	thparton.px(brick.th_px(ith)); thparton.py(brick.th_py(ith)); thparton.pz(brick.th_pz(ith)); thparton.e(  brick.th_e(ith));
+	  	thparton.x( brick.th_x(ith) ); thparton.y( brick.th_y(ith) ); thparton.z( brick.th_z(ith) ); thparton.x_t(brick.th_t(ith));
+	  	thparton.mass( thparton.e()*thparton.e() - thparton.px()*thparton.px() - thparton.py()*thparton.py() - thparton.pz()*thparton.pz() );
+	  	thparton.mass( (thparton.mass() >= 0.) ? sqrt(thparton.mass()) : sqrt(-thparton.mass()) );
+	  	thparton.pos_str(1);
+	  	HH_thermal.add(thparton); //adding this parton to thermal collection
+	  }
+	  //read in thermal partons, THEN do sibling setup...
+	  for(int i=0;i<HH_thermal.num();++i){
+	  	HH_thermal[i].sibling(i); HH_thermal[i].string_id(-i);
+	  	HH_thermal[i].is_used(true); HH_thermal[i].sibling( findthermalsibling(i, HH_thermal) ); HH_thermal[i].is_used(false);
+	  }
+  } else if(runsampler && inhydro){
+    HH_thermal.clear(); //emptying the thermal partons if we're resampling
+		std::vector<SurfaceCellInfo> surface_cells;
+    GetHydroHyperSurface(hydro_Tc, surface_cells);
+    /*std::cout << "\n\n     Surface Cells\n";
+    for(int icel=0; icel<surface_cells.size(); ++icel){
+    	if(icel % int(surface_cells.size()/100) != 0){continue;}
+    	std::cout << surface_cells[icel].tau << ":" << surface_cells[icel].eta << ":" << surface_cells[icel].x << ":" << surface_cells[icel].y << ",   ";
+    	std::cout << surface_cells[icel].vx << ":" << surface_cells[icel].vy << ":" << surface_cells[icel].vz << ",   ";
+    	std::cout << surface_cells[icel].qgp_fraction << ":" << surface_cells[icel].temperature << ":" << surface_cells[icel].pressure << "\n";
     }
-    for(int i_sh=0; i_sh<neg_ptns.num(); ++i_sh){
-			double t_dif = brick_L - neg_ptns[i_sh].x_t();
-      double max_t_dif = std::max(t_dif,part_prop);
-			double vel[3]; vel[0]=neg_ptns[i_sh].px()/neg_ptns[i_sh].e(); vel[1]=neg_ptns[i_sh].py()/neg_ptns[i_sh].e(); vel[2]=neg_ptns[i_sh].pz()/neg_ptns[i_sh].e();
-			neg_ptns[i_sh].x(neg_ptns[i_sh].x() + vel[0]*max_t_dif); neg_ptns[i_sh].y(neg_ptns[i_sh].y() + vel[1]*max_t_dif); neg_ptns[i_sh].z(neg_ptns[i_sh].z() + vel[2]*max_t_dif);
-			neg_ptns[i_sh].x_t(neg_ptns[i_sh].x_t() + max_t_dif);
+    std::cout << "\n\n";*/
+
+		//not happy about having to do this, this way, but it is what it is.
+		std::vector<std::vector<double>> surface;
+		for(int icel=0; icel<surface_cells.size(); ++icel){
+			std::vector<double> cell;
+			cell.push_back(surface_cells[icel].tau); cell.push_back(surface_cells[icel].x); cell.push_back(surface_cells[icel].y); cell.push_back(surface_cells[icel].eta);
+			cell.push_back(surface_cells[icel].d3sigma_mu[0]); cell.push_back(surface_cells[icel].d3sigma_mu[1]);
+			cell.push_back(surface_cells[icel].d3sigma_mu[2]); cell.push_back(surface_cells[icel].d3sigma_mu[3]);
+			cell.push_back(surface_cells[icel].temperature);
+			cell.push_back(surface_cells[icel].vx); cell.push_back(surface_cells[icel].vy); cell.push_back(surface_cells[icel].vz);
+			surface.push_back(cell);
+		}
+
+		ThermalPartonSampler part_samp(rand_seed); //initializing sampler with random seed
+		part_samp.set_hypersurface(surface);
+    if(boost_invariant){
+      part_samp.sample_2p1d(eta_max_boost_inv);
+    }else{
+      part_samp.sample_3p1d(Cartesian_hydro);
     }
-	} else { // vacuum case
+
+		JSINFO << "Hydro was sampled, generating " << part_samp.nTot() << " partons (" << part_samp.th_nL() << " light, " << part_samp.th_nS() << " strange).";
+
+		for(int ith=0; ith<part_samp.nTot(); ++ith){
+			HHparton thparton;
+			thparton.is_thermal(true); thparton.id(part_samp.th_pid(ith)); thparton.orig(1); //sh_parton.string_id(str)
+			thparton.px(part_samp.th_px(ith)); thparton.py(part_samp.th_py(ith)); thparton.pz(part_samp.th_pz(ith)); thparton.e(  part_samp.th_e(ith));
+			thparton.x( part_samp.th_x(ith) ); thparton.y( part_samp.th_y(ith) ); thparton.z( part_samp.th_z(ith) ); thparton.x_t(part_samp.th_t(ith));
+			thparton.mass( thparton.e()*thparton.e() - thparton.px()*thparton.px() - thparton.py()*thparton.py() - thparton.pz()*thparton.pz() );
+			thparton.mass( (thparton.mass() >= 0.) ? sqrt(thparton.mass()) : sqrt(-thparton.mass()) );
+			thparton.pos_str(1);
+			HH_thermal.add(thparton); //adding this parton to thermal collection
+		}
+		//read in thermal partons, THEN do sibling setup...
+		for(int i=0;i<HH_thermal.num();++i){
+			HH_thermal[i].sibling(i); HH_thermal[i].string_id(-i);
+			HH_thermal[i].is_used(true); HH_thermal[i].sibling( findthermalsibling(i, HH_thermal) ); HH_thermal[i].is_used(false);
+		}
+  }
+
+  if(!inbrick && !inhydro){ //propagate positive and negative partons for time part_prop in vacuum
     for(int i_sh=0; i_sh<HH_shower.num(); ++i_sh){
       double max_t_dif = part_prop;
 			double vel[3]; vel[0]=HH_shower[i_sh].px()/HH_shower[i_sh].e(); vel[1]=HH_shower[i_sh].py()/HH_shower[i_sh].e(); vel[2]=HH_shower[i_sh].pz()/HH_shower[i_sh].e();
@@ -504,56 +597,64 @@ void HybridHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& sh
     }
   }
 
-  //********************************************************************************
-  /*if(HH_thermal.num() == 0){
-  std::vector<SurfaceCellInfo> surface_cells;
-  GetHydroHyperSurface(.150, surface_cells);
-  std::cout << "\n\n     Surface Cells\n";
-  for(int icel=0; icel<surface_cells.size(); ++icel){
-	  if(icel % int(surface_cells.size()/100) != 0){continue;}
-	  std::cout << surface_cells[icel].tau << ":" << surface_cells[icel].eta << ":" << surface_cells[icel].x << ":" << surface_cells[icel].y << ",   ";
-	  std::cout << surface_cells[icel].vx << ":" << surface_cells[icel].vy << ":" << surface_cells[icel].vz << ",   ";
-	  std::cout << surface_cells[icel].qgp_fraction << ":" << surface_cells[icel].temperature << ":" << surface_cells[icel].pressure << "\n";
-  }
-  std::cout << "\n\n";
-  */ /*
-  //not happy about having to do this, this way, but it is what it is.
-	std::vector<std::vector<double>> surface;
-	for(int icel=0; icel<surface_cells.size(); ++icel){
-		std::vector<double> cell;
-
-		cell.push_back(surface_cells[icel].tau); cell.push_back(surface_cells[icel].x); cell.push_back(surface_cells[icel].y); cell.push_back(surface_cells[icel].eta);
-		cell.push_back(surface_cells[icel].d3sigma_mu[0]); cell.push_back(surface_cells[icel].d3sigma_mu[1]);
-		cell.push_back(surface_cells[icel].d3sigma_mu[2]); cell.push_back(surface_cells[icel].d3sigma_mu[3]);
-		cell.push_back(surface_cells[icel].temperature);
-		cell.push_back(surface_cells[icel].vx); cell.push_back(surface_cells[icel].vy); cell.push_back(surface_cells[icel].vz);
-
-		surface.push_back(cell);
+  //checking to see if partons are inside medium, and if so then propagate all partons to hypersurface!
+	//also can propagate by part_prop time
+	for(int i_sh=0; i_sh<HH_shower.num(); ++i_sh){
+		double vel[3]; vel[0]=HH_shower[i_sh].px()/HH_shower[i_sh].e(); vel[1]=HH_shower[i_sh].py()/HH_shower[i_sh].e(); vel[2]=HH_shower[i_sh].pz()/HH_shower[i_sh].e();
+		double t_dif = inbrick ? brickL - HH_shower[i_sh].x_t() : 0.;
+		if(inhydro){
+      int i=0;
+      double temp=999999.;
+      while(temp > hydro_Tc){
+			  double tnow = HH_shower[i_sh].x_t() + delta_t*double(i);
+			  double xnow = HH_shower[i_sh].x() + vel[0]*delta_t*double(i);
+			  double ynow = HH_shower[i_sh].y() + vel[1]*delta_t*double(i);
+			  double znow = HH_shower[i_sh].z() + vel[2]*delta_t*double(i);
+			  GetHydroCellSignal(tnow, xnow, ynow, znow, check_fluid_info_ptr);
+			  temp = check_fluid_info_ptr->temperature;
+			  if(temp <= hydro_Tc){
+          t_dif = delta_t*double(i);
+        }
+			  ++i;
+		  }
+    }
+		double max_t_dif = std::max(t_dif,part_prop);
+		HH_shower[i_sh].x(HH_shower[i_sh].x() + vel[0]*max_t_dif); HH_shower[i_sh].y(HH_shower[i_sh].y() + vel[1]*max_t_dif); HH_shower[i_sh].z(HH_shower[i_sh].z() + vel[2]*max_t_dif);
+		HH_shower[i_sh].x_t(HH_shower[i_sh].x_t() + max_t_dif);
+		//JSINFO<<"Parton propagated to: " << HH_shower[i_sh].x() << ", " << HH_shower[i_sh].y() << ", " << HH_shower[i_sh].z() << ", " << HH_shower[i_sh].x_t();
 	}
-	thermptnsampler surf_3p1; //initializing sampler
-	surf_3p1.hypersurface(surface);
-	surf_3p1.samp_seed(rand_seed); //(unsigned int seed_in)
-	surf_3p1.sample_3p1d();
-
-	for(int ith=0; ith<surf_3p1.nTot(); ++ith){
-		HHparton thparton;
-
-		thparton.is_thermal(true); thparton.id(surf_3p1.th_pid(ith)); thparton.orig(1); //sh_parton.string_id(str)
-		thparton.px(surf_3p1.th_px(ith)); thparton.py(surf_3p1.th_py(ith)); thparton.pz(surf_3p1.th_pz(ith)); thparton.e(  surf_3p1.th_e(ith));
-		thparton.x( surf_3p1.th_x(ith) ); thparton.y( surf_3p1.th_y(ith) ); thparton.z( surf_3p1.th_z(ith) ); thparton.x_t(surf_3p1.th_t(ith));
-		thparton.mass( thparton.e()*thparton.e() - thparton.px()*thparton.px() - thparton.py()*thparton.py() - thparton.pz()*thparton.pz() );
-		thparton.mass( (thparton.mass() >= 0.) ? sqrt(thparton.mass()) : sqrt(-thparton.mass()) );
-		thparton.pos_str(1);
-
-		HH_thermal.add(thparton); //adding this parton to thermal collection
+  //do the same for the negative partons
+  for(int i_sh=0; i_sh<neg_ptns.num(); ++i_sh){
+		double vel[3]; vel[0]=neg_ptns[i_sh].px()/neg_ptns[i_sh].e(); vel[1]=neg_ptns[i_sh].py()/neg_ptns[i_sh].e(); vel[2]=neg_ptns[i_sh].pz()/neg_ptns[i_sh].e();
+		double t_dif = inbrick ? brickL - neg_ptns[i_sh].x_t() : 0.;
+		if(inhydro){
+      int i=0;
+      double temp=999999.;
+      while(temp > hydro_Tc){
+			  double tnow = neg_ptns[i_sh].x_t() + delta_t*double(i);
+			  double xnow = neg_ptns[i_sh].x() + vel[0]*delta_t*double(i);
+			  double ynow = neg_ptns[i_sh].y() + vel[1]*delta_t*double(i);
+			  double znow = neg_ptns[i_sh].z() + vel[2]*delta_t*double(i);
+			  GetHydroCellSignal(tnow, xnow, ynow, znow, check_fluid_info_ptr);
+			  temp = check_fluid_info_ptr->temperature;
+			  if(temp <= hydro_Tc){
+          t_dif = delta_t*double(i);
+        }
+			  ++i;
+		  }
+    }
+		double max_t_dif = std::max(t_dif,part_prop);
+		neg_ptns[i_sh].x(neg_ptns[i_sh].x() + vel[0]*max_t_dif); neg_ptns[i_sh].y(neg_ptns[i_sh].y() + vel[1]*max_t_dif); neg_ptns[i_sh].z(neg_ptns[i_sh].z() + vel[2]*max_t_dif);
+		neg_ptns[i_sh].x_t(neg_ptns[i_sh].x_t() + max_t_dif);
+		//JSINFO<<"Parton propagated to: " << neg_ptns[i_sh].x() << ", " << neg_ptns[i_sh].y() << ", " << neg_ptns[i_sh].z() << ", " << neg_ptns[i_sh].x_t();
 	}
-	//read in thermal partons, THEN do sibling setup...
-	for(int i=0;i<HH_thermal.num();++i){
-		HH_thermal[i].sibling(i); HH_thermal[i].string_id(-i);
-		HH_thermal[i].is_used(true); HH_thermal[i].sibling( findthermalsibling(i, HH_thermal) ); HH_thermal[i].is_used(false);
-	}
+
+  /*for(int i=0; i<HH_thermal.num(); i++){
+    std::cout << HH_thermal[i].id() << "," << HH_thermal[i].x_t() << "," << HH_thermal[i].x()
+    << "," << HH_thermal[i].y() << "," << HH_thermal[i].z() << "," << HH_thermal[i].e()
+    << "," << HH_thermal[i].px() << "," << HH_thermal[i].py() << "," << HH_thermal[i].pz()
+    << "," << HH_thermal[i].mass() << std::endl;
   }*/
-  //********************************************************************************
 
   //separately running over positive and negative partons
   for(int pos_ptn = 1; pos_ptn>=0; --pos_ptn){

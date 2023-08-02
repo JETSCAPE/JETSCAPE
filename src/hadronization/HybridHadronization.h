@@ -46,13 +46,14 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
   double SigBL2_calc(double SigBR2, double qm1, double qm2, double qm3);
 
   //double sigma_pi, sigma_k, sigma_nuc, maxE_level, gmax, xmq, xms, hbarc, dist2cut, sh_recofactor, th_recofactor, SigRB, SigLB;
-  double maxM_level, maxB_level, gmax, xmq, xms, xmc, xmb, hbarc, dist2cut, sh_recofactor, th_recofactor, p_fake, had_prop, part_prop;
+  double maxM_level, maxB_level, gmax, xmq, xms, xmc, xmb, hbarc, dist2cut, sh_recofactor, th_recofactor, p_fake, had_prop, part_prop, delta_t, hydro_Tc, eta_max_boost_inv;
   int number_p_fake;
   double SigNucR2,SigNucL2,SigOmgR2,SigOmgL2,SigXiR2,SigXiL2,SigSigR2,SigSigL2,
 	SigOcccR2,SigOcccL2,SigOccR2,SigOccL2,SigXiccR2,SigXiccL2,SigOcR2,SigOcL2,SigXicR2,SigXicL2,SigSigcR2,SigSigcL2,
 	SigObbbR2,SigObbbL2,SigObbcR2,SigObbcL2,SigObbR2,SigObbL2,SigXibbR2,SigXibbL2,
 	SigObccR2,SigObccL2,SigObcR2,SigObcL2,SigXibcR2,SigXibcL2,SigObR2,SigObL2,SigXibR2,SigXibL2,SigSigbR2,SigSigbL2;
   double SigPi2, SigPhi2, SigK2, SigJpi2, SigDs2, SigD2, SigUps2, SigBc2, SigB2;
+  bool inbrick, inhydro; int nreusehydro; double brickL, brickT;
   const double pi = 3.1415926535897932384626433832795;
   int attempts_max;
   unsigned int rand_seed;
