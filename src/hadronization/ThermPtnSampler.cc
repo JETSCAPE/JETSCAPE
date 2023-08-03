@@ -231,7 +231,9 @@ void ThermalPartonSampler::samplebrick(){
 
 	// End definition of static variables
 
-	// For parity in coding style for accept/reject code
+	// Define hypersurface for brick here
+	// Default t=const hypersurface
+	// Vector must be covariant (negative signs on spatial components)
 	LFSigma[0] = 1.;
 	LFSigma[1] = 0.;
 	LFSigma[2] = 0.;
@@ -292,6 +294,7 @@ void ThermalPartonSampler::samplebrick(){
 
 	// Code parity with hypersurface case
 	// Lambda_u^v Sigma_v = CMSigma_u
+	// Caution: CMSigma is a covariant vector
 	CMSigma[0] = (LorBoost[0][0]*LFSigma[0] + LorBoost[0][1]*LFSigma[1] + LorBoost[0][2]*LFSigma[2] + LorBoost[0][3]*LFSigma[3]);
 	CMSigma[1] = (LorBoost[1][0]*LFSigma[0] + LorBoost[1][1]*LFSigma[1] + LorBoost[1][2]*LFSigma[2] + LorBoost[1][3]*LFSigma[3]);
 	CMSigma[2] = (LorBoost[2][0]*LFSigma[0] + LorBoost[2][1]*LFSigma[1] + LorBoost[2][2]*LFSigma[2] + LorBoost[2][3]*LFSigma[3]);
@@ -485,7 +488,7 @@ void ThermalPartonSampler::sample_3p1d(bool Cartesian_hydro){
 
 	// Input read from cells
 	double CPos[4];		// Position of the current cell (tau/t, x, y , eta/z=0)
-	double LFSigma[4];		// LabFrame hypersurface (tau/t,x,y,eta/z=0)
+	double LFSigma[4];		// LabFrame hypersurface (tau/t,x,y,eta/z=0), expect Sigma_mu
 	double CMSigma[4];		// Center of mass hypersurface (tau/t,x,y,eta/z=0)
 	double TRead;			// Temperature of cell
 	double Vel[4];			// Gamma & 3-Velocity of cell (gamma, Vx, Vy, Vz) NOT FOUR VELOCITY
@@ -572,10 +575,6 @@ void ThermalPartonSampler::sample_3p1d(bool Cartesian_hydro){
 		Vel[2] = surface[iS][10];
 		Vel[3] = surface[iS][11];
 
-		/*JSINFO << tau_pos <<","<<CPos[0] <<","<<CPos[1] <<","<<eta_pos <<","
-		<<tau_sur <<","<<LFSigma[1] <<","<<LFSigma[2] <<","<<eta_sur <<","<<TRead
-		 <<","<<Vel[1] <<","<<Vel[2] <<","<<Vel[3];*/
-
 		cut = 10*TRead;
 
 		// check if the CDFs for light quarks for this temperature are already in the cache and within the accuracy range
@@ -646,29 +645,29 @@ void ThermalPartonSampler::sample_3p1d(bool Cartesian_hydro){
 		LorBoost[0][1]= Vel[0]*Vel[1];
 		LorBoost[0][2]= Vel[0]*Vel[2];
 		LorBoost[0][3]= Vel[0]*Vel[3];
-		LorBoost[1][0]= -Vel[0]*Vel[1];
-		LorBoost[1][1]= -(Vel[0] - 1.)*Vel[1]*Vel[1]/vsquare - 1.;
-		LorBoost[1][2]= -(Vel[0] - 1.)*Vel[1]*Vel[2]/vsquare;
-		LorBoost[1][3]= -(Vel[0] - 1.)*Vel[1]*Vel[3]/vsquare;
-		LorBoost[2][0]= -Vel[0]*Vel[2];
-		LorBoost[2][1]= -(Vel[0] - 1.)*Vel[1]*Vel[2]/vsquare;
-		LorBoost[2][2]= -(Vel[0] - 1.)*Vel[2]*Vel[2]/vsquare - 1.;
-		LorBoost[2][3]= -(Vel[0] - 1.)*Vel[2]*Vel[3]/vsquare;
-		LorBoost[3][0]= -Vel[0]*Vel[3];
-		LorBoost[3][1]= -(Vel[0] - 1.)*Vel[1]*Vel[3]/vsquare;
-		LorBoost[3][2]= -(Vel[0] - 1.)*Vel[2]*Vel[3]/vsquare;
-		LorBoost[3][3]= -(Vel[0] - 1.)*Vel[3]*Vel[3]/vsquare - 1.;
+		LorBoost[1][0]= Vel[0]*Vel[1];
+		LorBoost[1][1]= (Vel[0] - 1.)*Vel[1]*Vel[1]/vsquare + 1.;
+		LorBoost[1][2]= (Vel[0] - 1.)*Vel[1]*Vel[2]/vsquare;
+		LorBoost[1][3]= (Vel[0] - 1.)*Vel[1]*Vel[3]/vsquare;
+		LorBoost[2][0]= Vel[0]*Vel[2];
+		LorBoost[2][1]= (Vel[0] - 1.)*Vel[1]*Vel[2]/vsquare;
+		LorBoost[2][2]= (Vel[0] - 1.)*Vel[2]*Vel[2]/vsquare + 1.;
+		LorBoost[2][3]= (Vel[0] - 1.)*Vel[2]*Vel[3]/vsquare;
+		LorBoost[3][0]= Vel[0]*Vel[3];
+		LorBoost[3][1]= (Vel[0] - 1.)*Vel[1]*Vel[3]/vsquare;
+		LorBoost[3][2]= (Vel[0] - 1.)*Vel[2]*Vel[3]/vsquare;
+		LorBoost[3][3]= (Vel[0] - 1.)*Vel[3]*Vel[3]/vsquare + 1.;
 
 		if(vsquare == 0){
-			LorBoost[1][1]= -1.;
+			LorBoost[1][1]= 1.;
 			LorBoost[1][2]= 0;
 			LorBoost[1][3]= 0;
 			LorBoost[2][1]= 0;
-			LorBoost[2][2]= -1.;
+			LorBoost[2][2]= 1.;
 			LorBoost[2][3]= 0;
 			LorBoost[3][1]= 0;
 			LorBoost[3][2]= 0;
-			LorBoost[3][3]= -1.;
+			LorBoost[3][3]= 1.;
 		}
 		// Lambda_u^v Sigma_v = CMSigma_u
 		CMSigma[0] = (LorBoost[0][0]*LFSigma[0] + LorBoost[0][1]*LFSigma[1] + LorBoost[0][2]*LFSigma[2] + LorBoost[0][3]*LFSigma[3]);
@@ -739,10 +738,10 @@ void ThermalPartonSampler::sample_3p1d(bool Cartesian_hydro){
 			// PLab^u = g^u^t Lambda_t ^v pres^w g_w _v
 			// Returns P in GeV
 			new_quark_energy = sqrt(xmq*xmq + NewP*NewP);
-			Plist[PartCount][6]= (LorBoost[0][0]*new_quark_energy - LorBoost[0][1]*NewX - LorBoost[0][2]*NewY - LorBoost[0][3]*NewZ)*GEVFM;
-			Plist[PartCount][3]=(-LorBoost[1][0]*new_quark_energy + LorBoost[1][1]*NewX + LorBoost[1][2]*NewY + LorBoost[1][3]*NewZ)*GEVFM;
-			Plist[PartCount][4]=(-LorBoost[2][0]*new_quark_energy + LorBoost[2][1]*NewX + LorBoost[2][2]*NewY + LorBoost[2][3]*NewZ)*GEVFM;
-			Plist[PartCount][5]=(-LorBoost[3][0]*new_quark_energy + LorBoost[3][1]*NewX + LorBoost[3][2]*NewY + LorBoost[3][3]*NewZ)*GEVFM;
+			Plist[PartCount][6] = (LorBoost[0][0]*new_quark_energy + LorBoost[0][1]*NewX + LorBoost[0][2]*NewY + LorBoost[0][3]*NewZ)*GEVFM;
+			Plist[PartCount][3] = (LorBoost[1][0]*new_quark_energy + LorBoost[1][1]*NewX + LorBoost[1][2]*NewY + LorBoost[1][3]*NewZ)*GEVFM;
+			Plist[PartCount][4] = (LorBoost[2][0]*new_quark_energy + LorBoost[2][1]*NewX + LorBoost[2][2]*NewY + LorBoost[2][3]*NewZ)*GEVFM;
+			Plist[PartCount][5] = (LorBoost[3][0]*new_quark_energy + LorBoost[3][1]*NewX + LorBoost[3][2]*NewY + LorBoost[3][3]*NewZ)*GEVFM;
 
 			// Additional information
 			Plist[PartCount][0]  = 1; // Event ID, to match jet formatting
@@ -791,10 +790,10 @@ void ThermalPartonSampler::sample_3p1d(bool Cartesian_hydro){
 			// PLab^u = g^u^t Lambda_t ^v pres^w g_w _v
 			// Returns P in GeV
 			new_quark_energy = sqrt(xms*xms + NewP*NewP);
-			Plist[PartCount][6]=( LorBoost[0][0]*new_quark_energy - LorBoost[0][1]*NewX - LorBoost[0][2]*NewY - LorBoost[0][3]*NewZ)*GEVFM;
-			Plist[PartCount][3]=(-LorBoost[1][0]*new_quark_energy + LorBoost[1][1]*NewX + LorBoost[1][2]*NewY + LorBoost[1][3]*NewZ)*GEVFM;
-			Plist[PartCount][4]=(-LorBoost[2][0]*new_quark_energy + LorBoost[2][1]*NewX + LorBoost[2][2]*NewY + LorBoost[2][3]*NewZ)*GEVFM;
-			Plist[PartCount][5]=(-LorBoost[3][0]*new_quark_energy + LorBoost[3][1]*NewX + LorBoost[3][2]*NewY + LorBoost[3][3]*NewZ)*GEVFM;
+			Plist[PartCount][6] = (LorBoost[0][0]*new_quark_energy + LorBoost[0][1]*NewX + LorBoost[0][2]*NewY + LorBoost[0][3]*NewZ)*GEVFM;
+			Plist[PartCount][3] = (LorBoost[1][0]*new_quark_energy + LorBoost[1][1]*NewX + LorBoost[1][2]*NewY + LorBoost[1][3]*NewZ)*GEVFM;
+			Plist[PartCount][4] = (LorBoost[2][0]*new_quark_energy + LorBoost[2][1]*NewX + LorBoost[2][2]*NewY + LorBoost[2][3]*NewZ)*GEVFM;
+			Plist[PartCount][5] = (LorBoost[3][0]*new_quark_energy + LorBoost[3][1]*NewX + LorBoost[3][2]*NewY + LorBoost[3][3]*NewZ)*GEVFM;
 
 			// Additional information
 			Plist[PartCount][0]  = 1; // Event ID, to match jet formatting
@@ -983,29 +982,29 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 			LorBoost[0][1]= Vel[0]*Vel[1];
 			LorBoost[0][2]= Vel[0]*Vel[2];
 			LorBoost[0][3]= Vel[0]*Vel[3];
-			LorBoost[1][0]= -Vel[0]*Vel[1];
-			LorBoost[1][1]= -(Vel[0] - 1.)*Vel[1]*Vel[1]/vsquare - 1.;
-			LorBoost[1][2]= -(Vel[0] - 1.)*Vel[1]*Vel[2]/vsquare;
-			LorBoost[1][3]= -(Vel[0] - 1.)*Vel[1]*Vel[3]/vsquare;
-			LorBoost[2][0]= -Vel[0]*Vel[2];
-			LorBoost[2][1]= -(Vel[0] - 1.)*Vel[1]*Vel[2]/vsquare;
-			LorBoost[2][2]= -(Vel[0] - 1.)*Vel[2]*Vel[2]/vsquare - 1.;
-			LorBoost[2][3]= -(Vel[0] - 1.)*Vel[2]*Vel[3]/vsquare;
-			LorBoost[3][0]= -Vel[0]*Vel[3];
-			LorBoost[3][1]= -(Vel[0] - 1.)*Vel[1]*Vel[3]/vsquare;
-			LorBoost[3][2]= -(Vel[0] - 1.)*Vel[2]*Vel[3]/vsquare;
-			LorBoost[3][3]= -(Vel[0] - 1.)*Vel[3]*Vel[3]/vsquare - 1.;
+			LorBoost[1][0]= Vel[0]*Vel[1];
+			LorBoost[1][1]= (Vel[0] - 1.)*Vel[1]*Vel[1]/vsquare + 1.;
+			LorBoost[1][2]= (Vel[0] - 1.)*Vel[1]*Vel[2]/vsquare;
+			LorBoost[1][3]= (Vel[0] - 1.)*Vel[1]*Vel[3]/vsquare;
+			LorBoost[2][0]= Vel[0]*Vel[2];
+			LorBoost[2][1]= (Vel[0] - 1.)*Vel[1]*Vel[2]/vsquare;
+			LorBoost[2][2]= (Vel[0] - 1.)*Vel[2]*Vel[2]/vsquare + 1.;
+			LorBoost[2][3]= (Vel[0] - 1.)*Vel[2]*Vel[3]/vsquare;
+			LorBoost[3][0]= Vel[0]*Vel[3];
+			LorBoost[3][1]= (Vel[0] - 1.)*Vel[1]*Vel[3]/vsquare;
+			LorBoost[3][2]= (Vel[0] - 1.)*Vel[2]*Vel[3]/vsquare;
+			LorBoost[3][3]= (Vel[0] - 1.)*Vel[3]*Vel[3]/vsquare + 1.;
 
 			if(vsquare == 0){
-				LorBoost[1][1]= -1.;
+				LorBoost[1][1]= 1.;
 				LorBoost[1][2]= 0;
 				LorBoost[1][3]= 0;
 				LorBoost[2][1]= 0;
-				LorBoost[2][2]= -1.;
+				LorBoost[2][2]= 1.;
 				LorBoost[2][3]= 0;
 				LorBoost[3][1]= 0;
 				LorBoost[3][2]= 0;
-				LorBoost[3][3]= -1.;
+				LorBoost[3][3]= 1.;
 			}
 			// Lambda_u^v Sigma_v = CMSigma_u
 			CMSigma[0] = (LorBoost[0][0]*LFSigma[0] + LorBoost[0][1]*LFSigma[1] + LorBoost[0][2]*LFSigma[2] + LorBoost[0][3]*LFSigma[3]);
@@ -1086,39 +1085,39 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 				LorBoost[0][1]= Vel[0]*Vel[1];
 				LorBoost[0][2]= Vel[0]*Vel[2];
 				LorBoost[0][3]= Vel[0]*Vel[3];
-				LorBoost[1][0]= -Vel[0]*Vel[1];
-				LorBoost[1][1]= -(Vel[0] - 1.)*Vel[1]*Vel[1]/vsquare - 1.;
-				LorBoost[1][2]= -(Vel[0] - 1.)*Vel[1]*Vel[2]/vsquare;
-				LorBoost[1][3]= -(Vel[0] - 1.)*Vel[1]*Vel[3]/vsquare;
-				LorBoost[2][0]= -Vel[0]*Vel[2];
-				LorBoost[2][1]= -(Vel[0] - 1.)*Vel[1]*Vel[2]/vsquare;
-				LorBoost[2][2]= -(Vel[0] - 1.)*Vel[2]*Vel[2]/vsquare - 1.;
-				LorBoost[2][3]= -(Vel[0] - 1.)*Vel[2]*Vel[3]/vsquare;
-				LorBoost[3][0]= -Vel[0]*Vel[3];
-				LorBoost[3][1]= -(Vel[0] - 1.)*Vel[1]*Vel[3]/vsquare;
-				LorBoost[3][2]= -(Vel[0] - 1.)*Vel[2]*Vel[3]/vsquare;
-				LorBoost[3][3]= -(Vel[0] - 1.)*Vel[3]*Vel[3]/vsquare - 1.;
+				LorBoost[1][0]= Vel[0]*Vel[1];
+				LorBoost[1][1]= (Vel[0] - 1.)*Vel[1]*Vel[1]/vsquare + 1.;
+				LorBoost[1][2]= (Vel[0] - 1.)*Vel[1]*Vel[2]/vsquare;
+				LorBoost[1][3]= (Vel[0] - 1.)*Vel[1]*Vel[3]/vsquare;
+				LorBoost[2][0]= Vel[0]*Vel[2];
+				LorBoost[2][1]= (Vel[0] - 1.)*Vel[1]*Vel[2]/vsquare;
+				LorBoost[2][2]= (Vel[0] - 1.)*Vel[2]*Vel[2]/vsquare + 1.;
+				LorBoost[2][3]= (Vel[0] - 1.)*Vel[2]*Vel[3]/vsquare;
+				LorBoost[3][0]= Vel[0]*Vel[3];
+				LorBoost[3][1]= (Vel[0] - 1.)*Vel[1]*Vel[3]/vsquare;
+				LorBoost[3][2]= (Vel[0] - 1.)*Vel[2]*Vel[3]/vsquare;
+				LorBoost[3][3]= (Vel[0] - 1.)*Vel[3]*Vel[3]/vsquare + 1.;
 
 				if(vsquare == 0){
-					LorBoost[1][1]= -1.;
+					LorBoost[1][1]= 1.;
 					LorBoost[1][2]= 0;
 					LorBoost[1][3]= 0;
 					LorBoost[2][1]= 0;
-					LorBoost[2][2]= -1.;
+					LorBoost[2][2]= 1.;
 					LorBoost[2][3]= 0;
 					LorBoost[3][1]= 0;
 					LorBoost[3][2]= 0;
-					LorBoost[3][3]= -1.;
+					LorBoost[3][3]= 1.;
 				}
 
 				// USE THE SAME BOOST AS BEFORE
 				// PLab^u = g^u^t Lambda_t ^v pres^w g_w _v
 				// Returns P in GeV
 				new_quark_energy = sqrt(xmq*xmq + NewP*NewP);
-				Plist[PartCount][6]= (LorBoost[0][0]*new_quark_energy - LorBoost[0][1]*NewX - LorBoost[0][2]*NewY - LorBoost[0][3]*NewZ)*GEVFM;
-				Plist[PartCount][3]=(-LorBoost[1][0]*new_quark_energy + LorBoost[1][1]*NewX + LorBoost[1][2]*NewY + LorBoost[1][3]*NewZ)*GEVFM;
-				Plist[PartCount][4]=(-LorBoost[2][0]*new_quark_energy + LorBoost[2][1]*NewX + LorBoost[2][2]*NewY + LorBoost[2][3]*NewZ)*GEVFM;
-				Plist[PartCount][5]=(-LorBoost[3][0]*new_quark_energy + LorBoost[3][1]*NewX + LorBoost[3][2]*NewY + LorBoost[3][3]*NewZ)*GEVFM;
+				Plist[PartCount][6] = (LorBoost[0][0]*new_quark_energy + LorBoost[0][1]*NewX + LorBoost[0][2]*NewY + LorBoost[0][3]*NewZ)*GEVFM;
+				Plist[PartCount][3] = (LorBoost[1][0]*new_quark_energy + LorBoost[1][1]*NewX + LorBoost[1][2]*NewY + LorBoost[1][3]*NewZ)*GEVFM;
+				Plist[PartCount][4] = (LorBoost[2][0]*new_quark_energy + LorBoost[2][1]*NewX + LorBoost[2][2]*NewY + LorBoost[2][3]*NewZ)*GEVFM;
+				Plist[PartCount][5] = (LorBoost[3][0]*new_quark_energy + LorBoost[3][1]*NewX + LorBoost[3][2]*NewY + LorBoost[3][3]*NewZ)*GEVFM;
 
 				// Additional information
 				Plist[PartCount][0]  = 1; // Event ID, to match jet formatting
@@ -1177,39 +1176,39 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 				LorBoost[0][1]= Vel[0]*Vel[1];
 				LorBoost[0][2]= Vel[0]*Vel[2];
 				LorBoost[0][3]= Vel[0]*Vel[3];
-				LorBoost[1][0]= -Vel[0]*Vel[1];
-				LorBoost[1][1]= -(Vel[0] - 1.)*Vel[1]*Vel[1]/vsquare - 1.;
-				LorBoost[1][2]= -(Vel[0] - 1.)*Vel[1]*Vel[2]/vsquare;
-				LorBoost[1][3]= -(Vel[0] - 1.)*Vel[1]*Vel[3]/vsquare;
-				LorBoost[2][0]= -Vel[0]*Vel[2];
-				LorBoost[2][1]= -(Vel[0] - 1.)*Vel[1]*Vel[2]/vsquare;
-				LorBoost[2][2]= -(Vel[0] - 1.)*Vel[2]*Vel[2]/vsquare - 1.;
-				LorBoost[2][3]= -(Vel[0] - 1.)*Vel[2]*Vel[3]/vsquare;
-				LorBoost[3][0]= -Vel[0]*Vel[3];
-				LorBoost[3][1]= -(Vel[0] - 1.)*Vel[1]*Vel[3]/vsquare;
-				LorBoost[3][2]= -(Vel[0] - 1.)*Vel[2]*Vel[3]/vsquare;
-				LorBoost[3][3]= -(Vel[0] - 1.)*Vel[3]*Vel[3]/vsquare - 1.;
+				LorBoost[1][0]= Vel[0]*Vel[1];
+				LorBoost[1][1]= (Vel[0] - 1.)*Vel[1]*Vel[1]/vsquare + 1.;
+				LorBoost[1][2]= (Vel[0] - 1.)*Vel[1]*Vel[2]/vsquare;
+				LorBoost[1][3]= (Vel[0] - 1.)*Vel[1]*Vel[3]/vsquare;
+				LorBoost[2][0]= Vel[0]*Vel[2];
+				LorBoost[2][1]= (Vel[0] - 1.)*Vel[1]*Vel[2]/vsquare;
+				LorBoost[2][2]= (Vel[0] - 1.)*Vel[2]*Vel[2]/vsquare + 1.;
+				LorBoost[2][3]= (Vel[0] - 1.)*Vel[2]*Vel[3]/vsquare;
+				LorBoost[3][0]= Vel[0]*Vel[3];
+				LorBoost[3][1]= (Vel[0] - 1.)*Vel[1]*Vel[3]/vsquare;
+				LorBoost[3][2]= (Vel[0] - 1.)*Vel[2]*Vel[3]/vsquare;
+				LorBoost[3][3]= (Vel[0] - 1.)*Vel[3]*Vel[3]/vsquare + 1.;
 
 				if(vsquare == 0){
-					LorBoost[1][1]= -1.;
+					LorBoost[1][1]= 1.;
 					LorBoost[1][2]= 0;
 					LorBoost[1][3]= 0;
 					LorBoost[2][1]= 0;
-					LorBoost[2][2]= -1.;
+					LorBoost[2][2]= 1.;
 					LorBoost[2][3]= 0;
 					LorBoost[3][1]= 0;
 					LorBoost[3][2]= 0;
-					LorBoost[3][3]= -1.;
+					LorBoost[3][3]= 1.;
 				}
 
 				// USE THE SAME BOOST AS BEFORE
 				// PLab^u = g^u^t Lambda_t ^v pres^w g_w _v
 				// Returns P in GeV
 				new_quark_energy = sqrt(xms*xms + NewP*NewP);
-				Plist[PartCount][6]=( LorBoost[0][0]*new_quark_energy - LorBoost[0][1]*NewX - LorBoost[0][2]*NewY - LorBoost[0][3]*NewZ)*GEVFM;
-				Plist[PartCount][3]=(-LorBoost[1][0]*new_quark_energy + LorBoost[1][1]*NewX + LorBoost[1][2]*NewY + LorBoost[1][3]*NewZ)*GEVFM;
-				Plist[PartCount][4]=(-LorBoost[2][0]*new_quark_energy + LorBoost[2][1]*NewX + LorBoost[2][2]*NewY + LorBoost[2][3]*NewZ)*GEVFM;
-				Plist[PartCount][5]=(-LorBoost[3][0]*new_quark_energy + LorBoost[3][1]*NewX + LorBoost[3][2]*NewY + LorBoost[3][3]*NewZ)*GEVFM;
+				Plist[PartCount][6] = (LorBoost[0][0]*new_quark_energy + LorBoost[0][1]*NewX + LorBoost[0][2]*NewY + LorBoost[0][3]*NewZ)*GEVFM;
+				Plist[PartCount][3] = (LorBoost[1][0]*new_quark_energy + LorBoost[1][1]*NewX + LorBoost[1][2]*NewY + LorBoost[1][3]*NewZ)*GEVFM;
+				Plist[PartCount][4] = (LorBoost[2][0]*new_quark_energy + LorBoost[2][1]*NewX + LorBoost[2][2]*NewY + LorBoost[2][3]*NewZ)*GEVFM;
+				Plist[PartCount][5] = (LorBoost[3][0]*new_quark_energy + LorBoost[3][1]*NewX + LorBoost[3][2]*NewY + LorBoost[3][3]*NewZ)*GEVFM;
 
 				// Additional information
 				Plist[PartCount][0]  = 1; // Event ID, to match jet formatting
