@@ -452,6 +452,7 @@ void HybridHadronization::WriteTask(weak_ptr<JetScapeWriter> w){
 //TODO: Junction Strings, Thermal Partons
 void HybridHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& shower, vector<shared_ptr<Hadron>>& hOut, vector<shared_ptr<Parton>>& pOut){
   number_p_fake = 0;    //reset counter for the number of fake partons
+  double energy_hadrons = 0.; //needed for the kinetic scaling of the negative hadrons
 
   //JSINFO<<"Start Hybrid Hadronization using both Recombination and PYTHIA Lund string model.";
   pythia.event.reset(); HH_shower.clear();
@@ -480,6 +481,8 @@ void HybridHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& sh
   //tags of partons which are too large for an int value to a new unused value.
   convert_color_tags_to_int_type(shower);
 
+  double total_shower_energy = 0.; // used to scale the negative hadrons
+  double total_shower_energy_neg = 0.; // used to scale the negative hadrons
   //sort positive partons into HH_shower and negative partons from LBT to neg_ptns
   for(unsigned int ishower=0; ishower < shower.size(); ++ishower){
 	  for(unsigned int ipart=0; ipart < shower.at(ishower).size(); ++ipart){
@@ -493,8 +496,13 @@ void HybridHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& sh
 		  sh_parton.mass( (sh_parton.mass() >= 0.) ? sqrt(sh_parton.mass()) : sqrt(-sh_parton.mass()) );
 		  sh_parton.col( shower.at(ishower).at(ipart)->color() ); sh_parton.acol( shower.at(ishower).at(ipart)->anti_color() );
 
-		  if(shower.at(ishower).at(ipart)->pstat()>-1){HH_shower.add(sh_parton);}
-		  else{neg_ptns.add(sh_parton);}
+		  if(shower.at(ishower).at(ipart)->pstat()>-1){
+        HH_shower.add(sh_parton);
+        total_shower_energy += HH_shower[HH_shower.num()-1].e();
+      }else{
+        neg_ptns.add(sh_parton);
+        total_shower_energy_neg += neg_ptns[neg_ptns.num()-1].e();
+      }
 	  }
 	  JSDEBUG<<"Shower#"<<ishower+1 << ". Number of partons to hadronize: " << HH_shower.num();
 	  JSDEBUG<<"Shower#"<<ishower+1 << ". Number of (neg) partons to hadronize: " << neg_ptns.num();
@@ -809,6 +817,15 @@ void HybridHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& sh
       }
     }
 
+    // scale the negative hadron energies/momenta such that the energy is
+    // conserved when subtracting negative hadrons from the positive ones
+    if(pos_ptn == 0){
+      if(HH_hadrons.num() > 0){
+        scale_kinematics_negative_hadrons(HH_hadrons, total_shower_energy-total_shower_energy_neg, energy_hadrons);
+      }
+    }
+
+
     for(unsigned int iHad=0; iHad<HH_hadrons.num(); ++iHad){
 	    if(HH_hadrons[iHad].is_final()){
 		    //setting status flag =>  XY -> x=1 reco, x=2 frag; y=1 sh-sh, y=2 sh-th; neg sign means negative hadron
@@ -819,11 +836,46 @@ void HybridHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& sh
 	  	  int idH = HH_hadrons[iHad].id(); double mH = HH_hadrons[iHad].mass();
 		    FourVector p(HH_hadrons[iHad].P()); FourVector x(HH_hadrons[iHad].pos());
 		    hOut.push_back(std::make_shared<Hadron> (Hadron (lab,idH,stat,p,x,mH)));
+
+        if(pos_ptn == 1){ // used for scaling of negative hadrons
+          energy_hadrons += HH_hadrons[iHad].e();
+        }
 	    }
     }
 	  th_recofactor = tmp_threco;
     maxB_level = tmp_maxB_level;
 	}
+}
+
+// scale the negative hadron energies/momenta such that the energy is
+// conserved when subtracting negative hadrons from the positive ones
+void HybridHadronization::scale_kinematics_negative_hadrons(hadron_collection& HH_hadrons, double shower_energy, double positive_hadrons_energy){
+  double negative_hadrons_energy_initial = 0;
+  for(int i = 0; i < HH_hadrons.num(); i++){
+    negative_hadrons_energy_initial += HH_hadrons[i].e();
+  }
+  double e_scaling_factor = (positive_hadrons_energy - shower_energy) / negative_hadrons_energy_initial;
+  if(e_scaling_factor < 0.){
+    JSWARN << "e_scaling_factor negative, hadron energy below parton energy";
+    return;
+  }
+
+  for(int i = 0; i < HH_hadrons.num(); i++){
+    double new_energy = HH_hadrons[i].e() * e_scaling_factor;
+    if(new_energy > HH_hadrons[i].mass()){
+      HH_hadrons[i].e(new_energy);
+      double new_abs_momentum = std::sqrt(new_energy*new_energy - HH_hadrons[i].mass()*HH_hadrons[i].mass());
+      double p_scaling_factor = new_abs_momentum / std::sqrt(HH_hadrons[i].px()*HH_hadrons[i].px()+HH_hadrons[i].py()*HH_hadrons[i].py()+HH_hadrons[i].pz()*HH_hadrons[i].pz());
+      HH_hadrons[i].px(HH_hadrons[i].px() * p_scaling_factor);
+      HH_hadrons[i].py(HH_hadrons[i].py() * p_scaling_factor);
+      HH_hadrons[i].pz(HH_hadrons[i].pz() * p_scaling_factor);
+    }else{
+      HH_hadrons[i].e(HH_hadrons[i].mass());
+      HH_hadrons[i].px(0.0);
+      HH_hadrons[i].py(0.0);
+      HH_hadrons[i].pz(0.0);
+    }
+  }
 }
 
 void HybridHadronization::convert_color_tags_to_int_type(vector<vector<shared_ptr<Parton>>>& shower){

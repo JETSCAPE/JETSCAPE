@@ -370,6 +370,9 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
 
   void convert_color_tags_to_int_type(vector<vector<shared_ptr<Parton>>>& shower);
 
+  // scale the energies/momenta of the negative hadrons to have energy conservation
+  void scale_kinematics_negative_hadrons(hadron_collection& HH_hadrons, double shower_energy, double positive_hadrons_energy);
+
   protected:
 	static Pythia8::Pythia pythia;
 
