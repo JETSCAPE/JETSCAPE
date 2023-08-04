@@ -354,7 +354,7 @@
        <!-- <LinesToRead> -->
        <!--   111:mayDecay = off  -->
        <!-- </LinesToRead> -->
-       <reco_hadrons_in_pythia>0</reco_hadrons_in_pythia>
+       <reco_hadrons_in_pythia>1</reco_hadrons_in_pythia>
        <ignorePhotons> off </ignorePhotons>
    </JetHadronization>
 
