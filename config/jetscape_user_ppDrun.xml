@@ -21,7 +21,6 @@
       <eCM>5020</eCM>
       <LinesToRead>
         HardQCD:all = off
-        HardQCD:hardccbar = on
       </LinesToRead>
     </PythiaGun>
   </Hard>
