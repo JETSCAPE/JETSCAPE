@@ -227,7 +227,7 @@ for i in range(len(design)):
 
     # Running jetscape for them
     xmls, dats = zip(*map(itemgetter('xml', 'dat'), output)) 
-    #pool.map(runxml, xmls)
+    pool.map(runxml, xmls)
 
     # Handling appending runs
     if appending:
