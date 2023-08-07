@@ -15,6 +15,7 @@
       <eCM>2760</eCM>
       <LinesToRead>
          MultipartonInteractions:pT0Ref = 2.28
+         MultipartonInteractions:ecmPow = 0.215
       </LinesToRead>
     </PythiaGun>
   </Hard>
@@ -41,6 +42,7 @@
     <pionWidthScale>1.0</pionWidthScale>
     <kaonWidthScale>1.0</kaonWidthScale>
     <protonWidthScale>1.0</protonWidthScale>
+    <shower_recofactor>1.0</shower_recofactor>
     <LinesToRead>
       StringFlav:probStoUD = 0.217
       StringFlav:probQQtoQ = 0.081
