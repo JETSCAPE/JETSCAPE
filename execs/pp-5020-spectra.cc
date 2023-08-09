@@ -21,6 +21,7 @@
 #include <GTL/dfs.h>
 //ROOT headers
 #include <TH1.h>
+#include <TH2.h>
 #include <TFile.h>
 #include <TVector.h>
 #include "TApplication.h"
@@ -126,6 +127,12 @@ int main(int argc, char* argv[]){
             for(int i2 = 0; i2 < 3; i2++)
                 tempL[i1][i2] = new TH1D(names[i1][i2].c_str(), names[i1][i2].c_str(), NphiLBin, LphiBin);
 
+        //hists for reco vs fragmentation
+        TH2D *recoHist[3][3]; //identified hadrons hists
+        for(int i1 = 0; i1 < 3; i1++)
+            for(int i2 = 0; i2 < 3; i2++)
+                recoHist[i1][i2] = new TH2D(names[i1][i2].c_str(), names[i1][i2].c_str(), 2, 10, 30, 2, 10, 30);
+
         //Data structures for events read in to save run time
         vector<shared_ptr<Hadron>> hadrons, Ls, others;
         
@@ -138,6 +145,8 @@ int main(int argc, char* argv[]){
             //cout<<"Number of hadrons is: " << hadrons.size() << endl;
             Events++;
             //if(Events == 10000) break;
+
+            //particle loop
             for(unsigned int i=0; i<hadrons.size(); i++){
                 SN = i;
                 PID= hadrons[i].get()->pid();
@@ -169,6 +178,8 @@ int main(int argc, char* argv[]){
                 
             }
 
+            //event variables
+
             //forming and binning pairs
             for(int i = 0; i < Ls.size(); i++){
                 for(int j = 0; j < others.size(); j++){
@@ -181,6 +192,8 @@ int main(int argc, char* argv[]){
                                 if(Ls[i].get()->pt() > triggerptcut[i1] && Ls[i].get()->pt() < triggerptcut[i1+1] 
                                     && others[j].get()->pt() > assptmin[i2] && others[j].get()->pt() < assptmax[i2]){
                                         tempL[i1][i2]->Fill(deltaphi, 1.0/(phibinw));
+                                        recoHist[i1][i2]->Fill(Ls[i].get()->plabel(), others[j].get()->plabel());
+                                        //cout << Ls[i].get()->plabel() << " " << others[j].get()->plabel() << endl;
                                 }
                             }
                         }
@@ -218,7 +231,10 @@ int main(int argc, char* argv[]){
         //tempD->Scale(1.0/(Dcount));
         for(int i1 = 0; i1 < 3; i1++){
             for(int i2 = 0; i2 < 3; i2++){
+                tempL[i1][i2]->GetXaxis()->SetTitle("D Reco Label");
+                tempL[i1][i2]->GetYaxis()->SetTitle("Hadron Reco Label");
                 tempL[i1][i2]->Write(names[i1][i2].c_str());
+                recoHist[i1][i2]->Write(names[i1][i2].c_str());
                 HistLPhi[i1][i2]->Add(tempL[i1][i2],HardCrossSection/(Events));
             }
         }
