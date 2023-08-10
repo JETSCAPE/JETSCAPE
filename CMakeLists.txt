@@ -282,7 +282,7 @@ message(STATUS "HDF5 include dir and libs : ${HDF5_INCLUDE_DIRS} ${_hdf5_libs} "
 #  Message(STATUS "HepMC Include dir : " ${HEPMC_INCLUDE_DIR})
 #endif()
 
-option(USE_ROOT "Build using ROOT Libraries and Output" OFF)
+option(USE_ROOT "Build using ROOT Libraries and Output" ON)
 if (USE_ROOT)
   message("Looking for ROOT ...")
   #find_package(ROOT)
@@ -525,8 +525,26 @@ if (${ROOT_FOUND})
   add_executable(pp-5020-elec-spectra ./execs/pp-5020-elec-spectra.cc)
   target_link_libraries(pp-5020-elec-spectra JetScape analysis)
   endif()
-  
-  
+ 
+if (${ROOT_FOUND}) 
+  add_executable(pp-900-spectra ./execs/pp-900-spectra.cc)
+  target_link_libraries(pp-900-spectra JetScape analysis)
+  endif()
+
+if (${ROOT_FOUND}) 
+  add_executable(pp-900-comparison ./execs/pp-900-comparison.cc)
+  target_link_libraries(pp-900-comparison JetScape analysis)
+  endif() 
+ 
+if (${ROOT_FOUND}) 
+  add_executable(pp-7000-spectra ./execs/pp-7000-spectra.cc)
+  target_link_libraries(pp-7000-spectra JetScape analysis)
+  endif()
+
+if (${ROOT_FOUND}) 
+  add_executable(pp-7000-comparison ./execs/pp-7000-comparison.cc)
+  target_link_libraries(pp-7000-comparison JetScape analysis)
+  endif() 
 
 # -----------------------------------------------------------
 #### copy essential files for MUSIC to build/
