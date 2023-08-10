@@ -666,6 +666,21 @@ void scaleBins(TH1D* hist, TProfile* prof, double scale = 1){
 
     //cout << sum << endl;
 }
+//scales histogram and adjusts bin content for bin widths and centers since ROOT can only do width
+void scaleBins(TH1D* hist, double scale = 1){
+    double sum = 0;
+
+    for(int i = 1; i <= hist->GetNbinsX(); i++){
+        double raw = hist->GetBinContent(i);
+        double center = hist->GetBinCenter(i); if(center == 0 || isnan(center)) continue;
+        double scaled = raw*scale/(hist->GetBinWidth(i)*center);
+        //cout << raw << " " << scaled << " " << hist->GetBinWidth(i) << " " << scale << endl;
+        hist->SetBinContent(i, scaled);
+        sum += scaled*hist->GetBinWidth(i);
+    }
+
+    //cout << sum << endl;
+}
 
 //to iterate over directories for q vir analysis
 std::vector<std::string> get_directories(const std::string& s){
@@ -676,6 +691,34 @@ std::vector<std::string> get_directories(const std::string& s){
             r.push_back(dir);
         }
     return r;
+}
+
+//getting directories for comparisons
+std::vector<std::string> getComparisonDirs(int argc, char* argv[]){
+    std::vector<std::string> directories;
+
+    for(int i = 1; i < argc; i++){
+        chdir(argv[i]);
+        vector<string> tempdirs = get_directories(".");
+
+        //removing the results dir
+        int rmindex = 0;
+        for(int j = 0; j < tempdirs.size(); j++){
+            tempdirs[j].erase(0,2);
+            if(tempdirs[j].find("QVir_Analysis") != string::npos) rmindex = j;
+        }
+        tempdirs.erase(tempdirs.begin() + rmindex); 
+
+        vector<string> sorteddirs = doubleSort(tempdirs); //sorting for consistency
+        for(int j = 0; j < sorteddirs.size(); j++){
+            string temp = argv[i] + sorteddirs[j];
+            sorteddirs[j] = temp;
+        }
+        directories.insert(directories.end(), sorteddirs.begin(), sorteddirs.end()); //inserting into the end of total vector
+    }
+    chdir("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/build");
+
+    return directories;
 }
 
 //gets ptHat bounds associated with dat files in a directories

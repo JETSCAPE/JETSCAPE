@@ -99,7 +99,7 @@ int main(int argc, char* argv[]){
     TGraphErrors* jetscapejets[directories.size()];
 
     //hadron data file
-    TFile hadron_file("/scratch/user/cameron.parker/JETSCAPE-COMP-HH_colorrecomb/data/HadronData.root");
+    TFile hadron_file("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/data/HadronData.root");
     TDirectory* hadrondir = (TDirectory*)hadron_file.Get("Table 1");
     TGraphErrors* hadronData = (TGraphErrors*)hadrondir->Get("Graph1D_y1");
     hadronData->SetMarkerStyle(kFullDotLarge);
@@ -107,7 +107,7 @@ int main(int argc, char* argv[]){
     hadronleg.AddEntry(hadronData,"Data","ep");
 
     //Jet data file
-    TFile jet_file("/scratch/user/cameron.parker/JETSCAPE-COMP-HH_colorrecomb/data/JetData.root");
+    TFile jet_file("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/data/JetData.root");
     TDirectory* jetdir = (TDirectory*)jet_file.Get("Table 4");
     TGraphErrors* jetData = (TGraphErrors*)jetdir->Get("Graph1D_y2");
     jetData->SetMarkerStyle(kFullDotLarge);
@@ -115,7 +115,7 @@ int main(int argc, char* argv[]){
     jetleg.AddEntry(jetData,"Data","ep");
 
     //ID hadron data file
-    TFile idhadron_file("/scratch/user/cameron.parker/JETSCAPE-COMP-HH_colorrecomb/data/LHC-ID-hads.root");
+    TFile idhadron_file("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/data/LHC-ID-hads.root");
     TDirectory* piondir = (TDirectory*)idhadron_file.Get("Table 1");
     TGraphErrors* pionData = (TGraphErrors*)piondir->Get("Graph1D_y3");
     pionData->SetMarkerStyle(kFullDotLarge);

@@ -6,7 +6,10 @@ import multiprocessing as mp
 from functions import *
 
 #setting run options
+ECM = "2760"
 RHICrun = False
+LHC900 = False
+LHC7000 = False
 smoothrun = False
 setStart = False
 parallel = False
@@ -14,6 +17,13 @@ startdir = 0
 for i, option in enumerate(sys.argv):
     if "RHIC" in option:
         RHICrun = True
+        ECM = "200"
+    if "LHC900" in option:
+        LHC900 = True
+        ECM = "900"
+    if "LHC7000" in option:
+        LHC7000 = True
+        ECM = "7000"
     if "smooth" in option:
         smoothrun = True
     if "-s" in option and option.startswith("-"):
@@ -39,11 +49,6 @@ if setStart:
 
 
 os.chdir("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/build/")
-
-#ECM setting
-ECM = "2760"
-if RHICrun:
-    ECM = "200"
 
 def run(directory):
     if analysisDir.startswith("/"):

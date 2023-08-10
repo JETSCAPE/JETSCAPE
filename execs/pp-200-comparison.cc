@@ -80,7 +80,7 @@ int main(int argc, char* argv[]){
     TGraphErrors* jetscapehadrons[directories.size()];
 
     //hadron data file
-    TFile hadron_file("/scratch/user/cameron.parker/JETSCAPE-COMP-HH_colorrecomb/data/STARhadData.root");
+    TFile hadron_file("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/data/STARhadData.root");
     TDirectory* hadrondir = (TDirectory*)hadron_file.Get("Table 1");
     TGraphErrors* hadronData = (TGraphErrors*)hadrondir->Get("Graph1D_y8");
     hadronData->SetMarkerStyle(kFullDotLarge);

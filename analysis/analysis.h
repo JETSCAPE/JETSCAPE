@@ -34,6 +34,7 @@
 #include "TMultiGraph.h"
 #include "TLegend.h"
 #include "TRatioPlot.h"
+#include "TProfile.h"
 
 using namespace Jetscape;
 
@@ -51,9 +52,12 @@ int histToCSV(TH1D* hist, string title);
 
 void makeDatFile(vector<vector<double>> data, string title, string header);
 
+void scaleBins(TH1D* hist, TProfile* prof, double scale);
 void scaleBins(TH1D* hist, double scale);
 
 std::vector<std::string> get_directories(const std::string& s);
+
+std::vector<std::string> getComparisonDirs(int argc, char* argv[]);
 
 std::vector<std::vector<string>> get_dat_bounds(const std::string& s);
 
