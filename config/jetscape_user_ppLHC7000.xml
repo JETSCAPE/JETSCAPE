@@ -5,7 +5,7 @@
   <nEvents> 100 </nEvents>
   
   <outputFilename>/scratch/user/cameron.parker/JETSCAPE-COMP-HH_colorrecomb/test</outputFilename>
-  <JetScapeWriterAscii> on </JetScapeWriterAscii>
+  <JetScapeWriterAsciiGZ> on </JetScapeWriterAsciiGZ>
   
   <!-- Hard Process -->
   <Hard>
