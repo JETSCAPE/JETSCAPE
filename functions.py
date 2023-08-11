@@ -178,3 +178,22 @@ def runxml(xmlname):
     runjetscapecmd = "./runJetscape " + xmlname
     update(runjetscapecmd)
     os.system(runjetscapecmd)
+
+# writing set of xmls to a file to be run later
+def writeXmls(xmls,baseDir):
+    outfile = open(baseDir+"/xml/cmds.txt","w")
+    outfile.writelines(xml+"\n" for xml in xmls)
+    outfile.close()
+
+# reading xmls to run
+def readXmls(baseDir):
+    infile = open(baseDir+"/xml/cmds.txt","r")
+    lines = infile.readlines()
+    return lines
+
+# sorting list of strings by int value
+def intSort(dirs):
+    dirs = [int(x) for x in dirs]
+    dirs.sort()
+    dirs = [str(x) for x in dirs]
+    return dirs

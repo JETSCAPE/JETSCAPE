@@ -208,7 +208,7 @@ xmltemplate = open(xmlname,"r")
 xmllines = xmltemplate.readlines()
 
 # making design points
-nsamples = 48
+nsamples = 500
 if not reading: design = createPandaDesign(nsamples)
 
 # pthat bounds formed into pairs
@@ -237,7 +237,8 @@ for i in range(len(design)):
 
     # Running jetscape for them
     xmls, dats = zip(*map(itemgetter('xml', 'dat'), output)) 
-    pool.map(runxml, xmls)
+    writeXmls(xmls,baseDir)
+    #pool.map(runxml, xmls)
 
     # Handling appending runs
     if appending:
