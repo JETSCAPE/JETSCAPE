@@ -35,10 +35,12 @@ for i, option in enumerate(sys.argv):
         system = "LHC900"
         LHC900 = True
         ECM = "900"
+        softOnly = True
     if "LHC7000" in option:
         system = "LHC7000"
         LHC7000 = True
         ECM = "7000"
+        softOnly = True
     if "Drun" in option:
         system = "Drun"
         Drun = True
@@ -77,14 +79,10 @@ if rerunning:
 
 # function to make xmls
 def makexml(bound, parameters, baseDir, xmltemplate, ECM):
-    events  = 20000
+    events  = 20
     # extra events in first bin
     if RHIC:
         events = events*6
-    if Drun:
-        events = 20000
-    if Lrun:
-        events = 20000
     if Erun:
         events = 100000
     if bound[0] == 0:
@@ -238,7 +236,8 @@ for i in range(len(design)):
     # Running jetscape for them
     xmls, dats = zip(*map(itemgetter('xml', 'dat'), output)) 
     writeXmls(xmls,baseDir)
-    #pool.map(runxml, xmls)
+    #continue
+    pool.map(runxml, xmls)
 
     # Handling appending runs
     if appending:

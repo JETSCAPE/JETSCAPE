@@ -197,3 +197,20 @@ def intSort(dirs):
     dirs.sort()
     dirs = [str(x) for x in dirs]
     return dirs
+
+# gets list of directories in the target directory
+def concatDats(dir):
+    startdir = os.getcwd()
+    os.chdir(dir+"/dat")
+    dats = os.listdir(".")
+
+    cmd = "cat "
+    for dat in dats:
+        cmd = cmd + dat + " "
+    cmd = cmd + " > " + dats[0].rstrip(".dat.gz") + "0.dat.gz"
+    os.system(cmd)
+    
+    for dat in dats:
+        os.remove(dat)
+
+    os.chdir(startdir)

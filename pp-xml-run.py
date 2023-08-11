@@ -29,4 +29,8 @@ for dir in dirs[start:finish]:
 
     pool.map(runxml, xmls)
     pool.close()
+
+    # concatonating all soft bins together
+    if "_0_" in xmls[1]:
+        dats = concatDats(totdir+dir)
     
