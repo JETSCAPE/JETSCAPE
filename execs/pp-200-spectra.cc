@@ -82,10 +82,6 @@ int main(int argc, char* argv[]){
     int NpTHardBin = pTHatMin.size();
     //for(int i = 0; i < pTHatMin.size(); i++) cout << pTHatMin[i] << endl; //debugging line
     vector<int> eventCount;
-    if(stoi(getEcm()) != 200){
-        cout << "Center of mass energy does not match." << endl;
-        return 0;
-    }
 
     //get list of cross sections
     vector<vector<double>> xsecout = getAllXsecs(pTHatMin,pTHatMax);

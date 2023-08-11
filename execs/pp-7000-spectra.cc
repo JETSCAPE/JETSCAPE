@@ -55,10 +55,6 @@ int main(int argc, char* argv[]){
     int NpTHardBin = pTHatMin.size();
     //for(int i = 0; i < pTHatMin.size(); i++) cout << pTHatMin[i] << endl; //debugging line
     vector<int> eventCount;
-    if(stoi(getEcm()) != 7000){
-        cout << "Center of mass energy does not match." << endl;
-        return 0;
-    }
 
     //xsec total running count
     double xsectotal = 0.0;

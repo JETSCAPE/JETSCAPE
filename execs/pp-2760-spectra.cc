@@ -72,12 +72,6 @@ int main(int argc, char* argv[]){
     int StartTime = time(NULL);
     // Create the ROOT application environment.
     TApplication theApp("hist", &argc, argv);
-
-    //checking for right energy
-    if(stoi(getEcm()) != 2760){
-        cout << "Center of mass energy does not match." << endl;
-        return 0;
-    }
     
     //Reading ptHat bins from list of made directories
     vector<vector<string>> tempvec = getDatBounds("./dat");
