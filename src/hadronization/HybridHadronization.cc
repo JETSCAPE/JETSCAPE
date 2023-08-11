@@ -1306,7 +1306,7 @@ void HybridHadronization::recomb(){
 			//set q2 variables here - if we can form a meson, then skip q3 loop
 			//also skip q3 loop if q2 is at last quark
 
-			double recofactor2 = 0.;
+			double recofactor2 = 1./9.;
 
 			//accessing the second considered quark
 			//this will skip over non-quark entries in HH_thermal
@@ -1367,7 +1367,7 @@ void HybridHadronization::recomb(){
 			if((considering[0].id()*considering[1].id() > 0) && (q2 < showerquarks.num()+HH_thermal.num()-1)){
         for(int q3=q2+1;q3<showerquarks.num()+HH_thermal.num();++q3){
 
-				  double recofactor3 = recofactor2;
+				  double recofactor3 = 1./27.;
 
 				  //removing all but the first two entries in the considering collection...
 				  //this should have been done before, but have this here just in case - remove if this doesn't ever trigger
