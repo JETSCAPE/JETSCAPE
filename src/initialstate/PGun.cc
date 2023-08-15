@@ -94,7 +94,7 @@ void PGun::Exec() {
 
   double p_abs = std::sqrt(pT*pT + p[3]*p[3]);
   if(std::abs(p_abs - p[3]) > rounding_error){
-    pseudorapidity = std::log((p_abs + p[3]) / (p_abs - p[3]));
+    pseudorapidity = 0.5 * std::log((p_abs + p[3]) / (p_abs - p[3]));
   } else {
     JSWARN << "Particle in PGun has infinite pseudorapidity.";
   }
