@@ -2,7 +2,7 @@
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
  * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -34,10 +34,9 @@ static double Nc = 3.0;
 static double Lambda_QCD = 0.2;
 // 0.4 is the value chosen in JETSET
 
-static double fmToGeVinv = 5.0;
-/// < should be 1/0.197, but 5 helps in debugging.
-
 static const double hbarC = 0.197327053;
+
+static const double fmToGeVinv = 1.0 / hbarC;
 
 static double zeta3 = 1.20206;
 
