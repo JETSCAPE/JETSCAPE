@@ -16,7 +16,6 @@
 
 #include "PGun.h"
 #include "JetScapeParticles.h"
-#include "JetScapeConstants.h"
 #include "Pythia8/Pythia.h"
 
 using namespace Jetscape;
