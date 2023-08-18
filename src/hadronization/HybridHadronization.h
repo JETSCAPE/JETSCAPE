@@ -60,6 +60,8 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
   int reco_hadrons_pythia;
   int additional_pythia_particles;
   bool goldstonereco;
+  bool afterburner_frag_hadrons = false;
+  std::string pythia_decays;
 
   //variables for recombination color structure
   vector<vector<vector<int>>> Tempjunctions; // vector of all tempjunctions
@@ -361,7 +363,7 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
   bool invoke_py();
 
   // function to set the spacetime information for the hadrons coming from pythia
-  void set_spacetime_for_pythia_hadrons(Pythia8::Event &event, int &size_input, std::vector<int> &eve_to_had, int pythia_attempt, bool find_positions);
+  void set_spacetime_for_pythia_hadrons(Pythia8::Event &event, int &size_input, std::vector<int> &eve_to_had, int pythia_attempt, bool find_positions, bool is_recohadron, bool recohadron_shsh);
 
   // function to 'shake' the event a bit to bring the hadrons to their mass shell
   void bring_hadrons_to_mass_shell(hadron_collection& HH_hadrons);
