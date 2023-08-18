@@ -898,13 +898,15 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 	std::vector<double> NumLightList;
 	std::vector<double> NumStrangeList;
 
-	int N_slices = std::floor((eta_max / CellDZ)-0.5)+1; // CellDZ - is d_eta here
+	double d_eta = CellDZ;
+
+	int N_slices = std::floor((eta_max / d_eta)-0.5)+1;
 	for(int slice=1; slice <= (2*N_slices+1); slice++){
-		double eta_slice = (slice-N_slices-1)*CellDZ;
+		double eta_slice = (slice-N_slices-1)*d_eta;
 
 		JSINFO << "Sampling thermal partons for pseudorapidity slice " << slice
-		<< " (eta_min = " << eta_slice-(CellDZ/2.) << ", eta_max = "
-		<< eta_slice+(CellDZ/2.) << ")";
+		<< " (eta_min = " << eta_slice-(d_eta/2.) << ", eta_max = "
+		<< eta_slice+(d_eta/2.) << ")";
 
 		for(int iS=0; iS<surface.size(); ++iS){
 			tau_pos = surface[iS][0];
@@ -973,6 +975,8 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 			double sinh_eta_pos = std::sinh(eta_pos);
 			LFSigma[0] = cosh_eta_pos*tau_sur - (sinh_eta_pos / tau_pos) * eta_sur;
 			LFSigma[3] = -sinh_eta_pos*tau_sur + (cosh_eta_pos / tau_pos) * eta_sur;
+
+			CellDZ = CPos[0] * 2. * std::sinh(d_eta/2.);
 
 			double vsquare = Vel[1]*Vel[1] + Vel[2]*Vel[2] + Vel[3]*Vel[3];
 			if(vsquare < 10e-16){
