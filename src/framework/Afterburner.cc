@@ -60,6 +60,7 @@ std::vector<shared_ptr<Hadron>> Afterburner::GetFragmentationHadrons() {
   JSINFO << "Got " << h_list.size() << " fragmentation hadrons from HadronizationManager.";
 
   std::vector<shared_ptr<Hadron>> h_list_new;
+  rand_int_ptr_ = (std::make_shared<std::uniform_int_distribution<int>>(0,1));
   for (auto h : h_list) {
     if (h->has_no_position()) {
       JSINFO << "Found fragmentation hadron without properly set position in "
@@ -76,8 +77,18 @@ std::vector<shared_ptr<Hadron>> Afterburner::GetFragmentationHadrons() {
     double position_smeared[4] = {r.t(), r.x()+rand_x, r.y()+rand_y, r.z()+rand_z};
     h->set_x(position_smeared);
 
-    if ((std::abs(h->pid())>10) && (h->pid() != 21) && (h->pstat() > 0)) {
-      h_list_new.push_back(h);
+    if ((std::abs(h->pid())>10) && (h->pid() != 21)) {
+      if (h->pstat() > 0) { // conversion is done in SMASH
+        h_list_new.push_back(h);
+      } else if(h->pstat() < 0) {
+        // convert Kaon-L or Kaon-S into K0 or Anti-K0
+        // change id of negative Kaons to make them consistent with the SMASH output
+        if (h->pid() == 310 || h->pid() == 130) {
+          const int rand_int = (*rand_int_ptr_)(*GetMt19937Generator());
+          const int id = (rand_int == 0) ? 311 : -311;
+          h->set_id(id);
+        }
+      }
     } else if((std::abs(h->pid())<10) || (h->pid() == 21)){
       JSWARN << "Found a free quark or gluon! This can not be handed over to SMASH.\n"
                 "Check confinement in hadronization module!";
