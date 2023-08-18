@@ -351,7 +351,7 @@
        <!-- Switch to include more pythia particles from an additional xml file with particle information -->
        <additional_pythia_particles>0</additional_pythia_particles>
        <!-- Path to file with additional particles for pythia (for higher reco_Mlevelmax)-->
-       <additional_pythia_particles>../config/HH_LightExcitedMesons.xml</additional_pythia_particles>
+       <additional_pythia_particles_path>../config/HH_LightExcitedMesons.xml</additional_pythia_particles_path>
    </JetHadronization>
 
   <!-- Particlization Module  -->
