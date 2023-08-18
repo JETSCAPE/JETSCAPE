@@ -3,6 +3,7 @@
 #include "JetScapeXML.h"
 #include "JetScapeLogger.h"
 #include "JetScapeConstants.h"
+#include <omp.h>
 #include <vector>
 #include <random>
 #include <cmath>
@@ -57,6 +58,7 @@ ThermalPartonSampler::ThermalPartonSampler(unsigned int ran_seed){
 	// Brick Info
 	L = 4.0; // Thickness from box edge
 	W = 4.0; // x/y width of box
+	Time = 2.0; // Time of the brick partons
 
 	Vx = 0.; // 'Uniform' no flow in x-dir
 	Vy = 0.; // 'Uniform' no flow in y-dir
@@ -146,7 +148,7 @@ void ThermalPartonSampler::MCSampler(double Temp, int quark) { // input temperat
 	while (sample) {
 		PRoll = ran();
 
-    	for (int i = 0; i < 25; i++) { // Use 15 iterations for both quark types
+    	for (int i = 0; i < 25; i++) { // Use 25 iterations for both quark types
         	if (SplitSort(PRoll, floor, ceiling, quark)) {
             	floor = ((floor + ceiling) / 2);
         	} else {
@@ -168,38 +170,6 @@ void ThermalPartonSampler::MCSampler(double Temp, int quark) { // input temperat
     NewY = PMag * sqrt(1 - CosT * CosT) * sin(Phi);
     NewZ = PMag * CosT;
     NewP = PMag;
-}
-
-// Generates the number of particles produced in a cell based on the average number of
-// particles up to a certain order in the Poisson distribution
-int ThermalPartonSampler::generateParticlesPoisson(int order, double AvgNumParticles) {
-    int GeneratedParticles = 0;
-
-    // Function to generate a single Poisson random variable
-    auto funPoissonSingle = [](double lambda, std::function<double()> randGen) {
-        double exp_lambda = exp(-lambda);
-        double randUni;
-        double prodUni;
-        int randPoisson;
-
-        //initialize variables
-        randPoisson = -1;
-        prodUni = 1;
-        do {
-            randUni = randGen();
-            prodUni = prodUni * randUni; //update product
-            randPoisson++; //increase Poisson variable
-        } while (prodUni > exp_lambda);
-
-        return randPoisson;
-    };
-
-    for (int i = 0; i < order; i++) {
-        int randPoisson = funPoissonSingle(AvgNumParticles, [this](){ return ran(); });
-        GeneratedParticles += randPoisson;
-    }
-
-    return GeneratedParticles;
 }
 
 void ThermalPartonSampler::samplebrick(){
@@ -342,8 +312,8 @@ void ThermalPartonSampler::samplebrick(){
 	}
 
 	// Normalization factors: degeneracy, gaussian integration, and 1/(2Pi)^3
-	NumLight = NumLight*UDDeg*cut*cut*cut/(8.*PI*PI*PI);
-	NumStrange = NumStrange*OddDeg*cut*cut*cut/(8.*PI*PI*PI);
+	NumLight *= UDDeg*cut*cut*cut/(8.*PI*PI*PI);
+	NumStrange *= OddDeg*cut*cut*cut/(8.*PI*PI*PI);
 
 	// Define rest-frame cumulative functions
 	CDFGenerator(T, xmq, 1); // for light quarks
@@ -357,6 +327,9 @@ void ThermalPartonSampler::samplebrick(){
 	// <N> = V <n>
 	double NumOddHere = NumStrange*L*W*W;
 
+	std::poisson_distribution<int> poisson_ud(NumHere);
+	std::poisson_distribution<int> poisson_s(NumOddHere);
+
 	// In case of overwriting
 	if(SetNum){
 		NumHere = SetNumLight;
@@ -364,7 +337,7 @@ void ThermalPartonSampler::samplebrick(){
 	}
 
 	// Generating light quarks
-	GeneratedParticles = generateParticlesPoisson(10, NumHere);
+	GeneratedParticles = poisson_ud(getRandomGenerator());
 
 	// List of particles ( pos(x,y,z,t), mom(px,py,pz,E), species)
 	for(int partic = 0; partic < GeneratedParticles; partic++){
@@ -395,7 +368,7 @@ void ThermalPartonSampler::samplebrick(){
 		Plist[PartCount][9] = ZRoll*W;
 
 		// Time
-		Plist[PartCount][10] = L/2.; // Tau = L/2.: assume jet at light speed
+		Plist[PartCount][10] = Time; // Tau = L/2.: assume jet at light speed
 
 		// Momentum
 		// Sample rest frame momentum given T and mass of light quark
@@ -416,14 +389,12 @@ void ThermalPartonSampler::samplebrick(){
 		PartCount++;
 	}
 
-	int nL = GeneratedParticles;
-	nL_tot += nL;
+	nL_tot += GeneratedParticles;
 
 	// Generate strange quarks
-	GeneratedParticles = generateParticlesPoisson(10, NumOddHere); //Initialize particles created in this cell
+	GeneratedParticles = poisson_s(getRandomGenerator());
 
-	int nS = GeneratedParticles;
-	nS_tot += nS;
+	nS_tot += GeneratedParticles;
 	//List of particles ( pos(x,y,z,t), mom(px,py,pz,E), species)
 	for(int partic = 0; partic < GeneratedParticles; partic++){
 		// adding space to PList for output quarks
@@ -449,7 +420,7 @@ void ThermalPartonSampler::samplebrick(){
 		Plist[PartCount][9] = ZRoll*W;
 
 		// Time
-		Plist[PartCount][10] = L/2.; // Tau = L/2.: assume jet at light speed
+		Plist[PartCount][10] = Time; // Tau = L/2.: assume jet at light speed
 
 		// Momentum
 		// Sample rest frame momentum given T and mass of s quark
@@ -482,6 +453,19 @@ void ThermalPartonSampler::samplebrick(){
 		// Shuffle the Plist using the random engine
     	std::shuffle(&Plist[0], &Plist[PartCount], getRandomGenerator());
 	}
+
+	//print Plist for testing
+	/*std::cout << std::setprecision(5);
+  	std::ofstream thermalP;
+  	thermalP.open("thermal_partons.dat", std::ios::app);
+	for(int p=0; p < Plist.size(); p++){
+		thermalP << Plist[p][0] << " " << Plist[p][1] << " " << Plist[p][2]
+		<< " " << Plist[p][3] << " " << Plist[p][4] << " " << Plist[p][5]
+		<< " " << Plist[p][6] << " " << Plist[p][7] << " " << Plist[p][8]
+		<< " " << Plist[p][9] << " " << Plist[p][10] << " " << Plist[p][11]
+		<< "\n";
+	}
+	thermalP.close();*/
 }
 
 void ThermalPartonSampler::sample_3p1d(bool Cartesian_hydro){
@@ -619,12 +603,15 @@ void ThermalPartonSampler::sample_3p1d(bool Cartesian_hydro){
         	CDFTabStrange = cdfStrangeIter->second;
     	}
 
-		//getting t,z from tau,eta
 		if (Cartesian_hydro == false){
+			//getting t,z from tau, eta
 			CPos[0] = tau_pos*std::cosh(eta_pos);
 			CPos[3] = tau_pos*std::sinh(eta_pos);
-			LFSigma[0] = tau_sur*std::cosh(eta_sur);
-			LFSigma[3] = tau_sur*std::sinh(eta_sur);
+			//transform surface vector to Minkowski coordinates
+			double cosh_eta_pos = std::cosh(eta_pos);
+			double sinh_eta_pos = std::sinh(eta_pos);
+			LFSigma[0] = cosh_eta_pos*tau_sur - (sinh_eta_pos / tau_pos) * eta_sur;
+			LFSigma[3] = -sinh_eta_pos*tau_sur + (cosh_eta_pos / tau_pos) * eta_sur;
 		}else{ // check later!
 			CPos[0] = tau_pos;
 			CPos[3] = eta_pos;
@@ -701,9 +688,10 @@ void ThermalPartonSampler::sample_3p1d(bool Cartesian_hydro){
 		// U, D, UBAR, DBAR QUARKS
 		// <N> = V <n>
 		double NumHere = NumLight*UDDeg*cut*cut*cut/(8.*PI*PI*PI);
+		std::poisson_distribution<int> poisson_ud(NumHere);
 
 		// Generating light quarks
-		GeneratedParticles = generateParticlesPoisson(10, NumHere); // Initialize particles created in this cell
+		GeneratedParticles = poisson_ud(getRandomGenerator()); // Initialize particles created in this cell
 
 		// List of particles ( pos(x,y,z,t), mom(px,py,pz,E), species)
 		for(int partic = 0; partic < GeneratedParticles; partic++){
@@ -753,11 +741,13 @@ void ThermalPartonSampler::sample_3p1d(bool Cartesian_hydro){
 		// S, SBAR QUARKS
 		// <N> = V <n>
 		double NumOddHere = NumStrange*OddDeg*cut*cut*cut/(8.*PI*PI*PI);
+		std::poisson_distribution<int> poisson_s(NumOddHere);
+
 		// Generate s quarks
 		int nL = GeneratedParticles;
 		nL_tot += nL;
 
-		GeneratedParticles = generateParticlesPoisson(10, NumOddHere); //Initialize particles created in this cell
+		GeneratedParticles = poisson_s(getRandomGenerator()); //Initialize particles created in this cell
 
 		int nS = GeneratedParticles;
 		nS_tot += nS;
@@ -814,6 +804,19 @@ void ThermalPartonSampler::sample_3p1d(bool Cartesian_hydro){
 		// Shuffle the Plist using the random engine
     	std::shuffle(&Plist[0], &Plist[PartCount], getRandomGenerator());
 	}
+
+	//print Plist for testing
+	/*std::cout << std::setprecision(5);
+  	std::ofstream thermalP;
+  	thermalP.open("thermal_partons.dat", std::ios::app);
+	for(int p=0; p < Plist.size(); p++){
+		thermalP << Plist[p][0] << " " << Plist[p][1] << " " << Plist[p][2]
+		<< " " << Plist[p][3] << " " << Plist[p][4] << " " << Plist[p][5]
+		<< " " << Plist[p][6] << " " << Plist[p][7] << " " << Plist[p][8]
+		<< " " << Plist[p][9] << " " << Plist[p][10] << " " << Plist[p][11]
+		<< "\n";
+	}
+	thermalP.close();*/
 }
 
 void ThermalPartonSampler::sample_2p1d(double eta_max){
@@ -892,13 +895,16 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 	    return 1. / (exp(energy / temperature) + 1.);
 	};
 
+	std::vector<double> NumLightList;
+	std::vector<double> NumStrangeList;
+
 	int N_slices = std::floor((eta_max / CellDZ)-0.5)+1; // CellDZ - is d_eta here
 	for(int slice=1; slice <= (2*N_slices+1); slice++){
 		double eta_slice = (slice-N_slices-1)*CellDZ;
 
 		JSINFO << "Sampling thermal partons for pseudorapidity slice " << slice
-		<< " (eta_min = " << eta_slice << ", eta_max = "
-		<< eta_slice+CellDZ << ")";
+		<< " (eta_min = " << eta_slice-(CellDZ/2.) << ", eta_max = "
+		<< eta_slice+(CellDZ/2.) << ")";
 
 		for(int iS=0; iS<surface.size(); ++iS){
 			tau_pos = surface[iS][0];
@@ -914,10 +920,6 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 			Vel[1] = surface[iS][9];
 			Vel[2] = surface[iS][10];
 			Vel[3] = surface[iS][11];
-
-			/*JSINFO << tau_pos <<","<<CPos[0] <<","<<CPos[1] <<","<<eta_pos <<","
-			<<tau_sur <<","<<LFSigma[1] <<","<<LFSigma[2] <<","<<eta_sur <<","<<TRead
-			 <<","<<Vel[1] <<","<<Vel[2] <<","<<Vel[3];*/
 
 			cut = 10*TRead;
 
@@ -963,11 +965,14 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
         		CDFTabStrange = cdfStrangeIter->second;
     		}
 
-			//getting t,z from tau,eta
+			//getting t,z from tau, eta
 			CPos[0] = tau_pos*std::cosh(eta_pos);
 			CPos[3] = tau_pos*std::sinh(eta_pos);
-			LFSigma[0] = tau_sur*std::cosh(eta_sur);
-			LFSigma[3] = tau_sur*std::sinh(eta_sur);
+			//transform surface vector to Minkowski coordinates
+			double cosh_eta_pos = std::cosh(eta_pos);
+			double sinh_eta_pos = std::sinh(eta_pos);
+			LFSigma[0] = cosh_eta_pos*tau_sur - (sinh_eta_pos / tau_pos) * eta_sur;
+			LFSigma[3] = -sinh_eta_pos*tau_sur + (cosh_eta_pos / tau_pos) * eta_sur;
 
 			double vsquare = Vel[1]*Vel[1] + Vel[2]*Vel[2] + Vel[3]*Vel[3];
 			if(vsquare < 10e-16){
@@ -1006,41 +1011,57 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 				LorBoost[3][2]= 0;
 				LorBoost[3][3]= 1.;
 			}
-			// Lambda_u^v Sigma_v = CMSigma_u
-			CMSigma[0] = (LorBoost[0][0]*LFSigma[0] + LorBoost[0][1]*LFSigma[1] + LorBoost[0][2]*LFSigma[2] + LorBoost[0][3]*LFSigma[3]);
-			CMSigma[1] = (LorBoost[1][0]*LFSigma[0] + LorBoost[1][1]*LFSigma[1] + LorBoost[1][2]*LFSigma[2] + LorBoost[1][3]*LFSigma[3]);
-			CMSigma[2] = (LorBoost[2][0]*LFSigma[0] + LorBoost[2][1]*LFSigma[1] + LorBoost[2][2]*LFSigma[2] + LorBoost[2][3]*LFSigma[3]);
-			CMSigma[3] = (LorBoost[3][0]*LFSigma[0] + LorBoost[3][1]*LFSigma[1] + LorBoost[3][2]*LFSigma[2] + LorBoost[3][3]*LFSigma[3]);
 
-			// GAUSSIAN INTEGRALS <n> = int f(p)d3p
-			NumLight = 0.;
-			NumStrange = 0.;
+			double NumHere;
+			double NumOddHere;
+			if(slice == 1){
+				// Lambda_u^v Sigma_v = CMSigma_u
+				CMSigma[0] = (LorBoost[0][0]*LFSigma[0] + LorBoost[0][1]*LFSigma[1] + LorBoost[0][2]*LFSigma[2] + LorBoost[0][3]*LFSigma[3]);
+				CMSigma[1] = (LorBoost[1][0]*LFSigma[0] + LorBoost[1][1]*LFSigma[1] + LorBoost[1][2]*LFSigma[2] + LorBoost[1][3]*LFSigma[3]);
+				CMSigma[2] = (LorBoost[2][0]*LFSigma[0] + LorBoost[2][1]*LFSigma[1] + LorBoost[2][2]*LFSigma[2] + LorBoost[2][3]*LFSigma[3]);
+				CMSigma[3] = (LorBoost[3][0]*LFSigma[0] + LorBoost[3][1]*LFSigma[1] + LorBoost[3][2]*LFSigma[2] + LorBoost[3][3]*LFSigma[3]);
 
-			for (int l = 0; l < GPoints; l++) {
-			    for (int m = 0; m < GPoints; m++) {
-			        for (int k = 0; k < GPoints; k++) {
-						GWeightProd = GWeight[l] * GWeight[m] * GWeight[k];
-						pSpatialdSigma = (cut * GAbs[l]) * CMSigma[1] + (cut * GAbs[m]) * CMSigma[2] + (cut * GAbs[k]) * CMSigma[3];
+				// GAUSSIAN INTEGRALS <n> = int f(p)d3p
+				NumLight = 0.;
+				NumStrange = 0.;
 
-						// For UD quarks
-						E_light = computeEnergy(xmq, cut, GAbs[l], GAbs[m], GAbs[k]);
-		            	NumLight += GWeightProd * FermiDistribution(E_light, TRead) *
-		            	           (E_light * CMSigma[0] + pSpatialdSigma) / E_light;
+				for (int l = 0; l < GPoints; l++) {
+				    for (int m = 0; m < GPoints; m++) {
+				        for (int k = 0; k < GPoints; k++) {
+							GWeightProd = GWeight[l] * GWeight[m] * GWeight[k];
+							pSpatialdSigma = (cut * GAbs[l]) * CMSigma[1] + (cut * GAbs[m]) * CMSigma[2] + (cut * GAbs[k]) * CMSigma[3];
 
-		            	// For S quarks
-						E_strange = computeEnergy(xms, cut, GAbs[l], GAbs[m], GAbs[k]);
-		            	NumStrange += GWeightProd * FermiDistribution(E_strange, TRead) *
-		            	             (E_strange * CMSigma[0] + pSpatialdSigma) / E_strange;
-			        }
-			    }
+							// For UD quarks
+							E_light = computeEnergy(xmq, cut, GAbs[l], GAbs[m], GAbs[k]);
+		            		NumLight += GWeightProd * FermiDistribution(E_light, TRead) *
+		            		           (E_light * CMSigma[0] + pSpatialdSigma) / E_light;
+
+		            		// For S quarks
+							E_strange = computeEnergy(xms, cut, GAbs[l], GAbs[m], GAbs[k]);
+		            		NumStrange += GWeightProd * FermiDistribution(E_strange, TRead) *
+		            		             (E_strange * CMSigma[0] + pSpatialdSigma) / E_strange;
+				        }
+				    }
+				}
+				// U, D, UBAR, DBAR QUARKS
+				// <N> = V <n>
+				NumHere = NumLight*UDDeg*cut*cut*cut/(8.*PI*PI*PI);
+
+				// S, SBAR QUARKS
+				// <N> = V <n>
+				NumOddHere = NumStrange*OddDeg*cut*cut*cut/(8.*PI*PI*PI);
+
+				NumLightList.push_back(NumHere);
+				NumStrangeList.push_back(NumOddHere);
+			} else {
+				NumHere = NumLightList[iS];
+				NumOddHere = NumStrangeList[iS];
 			}
 
-			// U, D, UBAR, DBAR QUARKS
-			// <N> = V <n>
-			double NumHere = NumLight*UDDeg*cut*cut*cut/(8.*PI*PI*PI);
+			std::poisson_distribution<int> poisson_ud(NumHere);
 
 			// Generating light quarks
-			GeneratedParticles = generateParticlesPoisson(10, NumHere); // Initialize particles created in this cell
+			GeneratedParticles = poisson_ud(getRandomGenerator()); // Initialize particles created in this cell
 
 			// List of particles ( pos(x,y,z,t), mom(px,py,pz,E), species)
 			for(int partic = 0; partic < GeneratedParticles; partic++){
@@ -1067,11 +1088,21 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 				Plist[PartCount][8] = CPos[2] + (ran() - 0.5)*CellDY;
 				Plist[PartCount][9] = CPos[3] + (ran() - 0.5)*CellDZ;
 
+				if(std::abs(Plist[PartCount][9]) >= std::abs(Plist[PartCount][10])) {
+					Plist[PartCount][10] = std::abs(Plist[PartCount][9]) + 10e-3;
+				}
+				double temp_t = std::sqrt(Plist[PartCount][10]*Plist[PartCount][10]-Plist[PartCount][9]*Plist[PartCount][9])
+						* std::cosh(eta_slice+0.5*std::log((Plist[PartCount][10]+Plist[PartCount][9])/(Plist[PartCount][10]-Plist[PartCount][9])));
+				double temp_z = std::sqrt(Plist[PartCount][10]*Plist[PartCount][10]-Plist[PartCount][9]*Plist[PartCount][9])
+						* std::sinh(eta_slice+0.5*std::log((Plist[PartCount][10]+Plist[PartCount][9])/(Plist[PartCount][10]-Plist[PartCount][9])));
+				Plist[PartCount][10] = temp_t;
+				Plist[PartCount][9] = temp_z;
+
 				// Momentum
 				// Sample rest frame momentum given T and mass of light quark
 				MCSampler(TRead, 1); // NewP=P, NewX=Px, ...
 
-				Vel[3] = atanh(eta_slice);
+				Vel[3] = tanh(eta_slice);
 				double vsquare = Vel[1]*Vel[1] + Vel[2]*Vel[2] + Vel[3]*Vel[3];
 				if(vsquare < 10e-16){
 					vsquare = 10e-16;
@@ -1126,14 +1157,13 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 				PartCount++;
 			}
 
-			// S, SBAR QUARKS
-			// <N> = V <n>
-			double NumOddHere = NumStrange*OddDeg*cut*cut*cut/(8.*PI*PI*PI);
+			std::poisson_distribution<int> poisson_s(NumOddHere);
+
 			// Generate s quarks
 			int nL = GeneratedParticles;
 			nL_tot += nL;
 
-			GeneratedParticles = generateParticlesPoisson(10, NumOddHere); //Initialize particles created in this cell
+			GeneratedParticles = poisson_s(getRandomGenerator()); //Initialize particles created in this cell
 
 			int nS = GeneratedParticles;
 			nS_tot += nS;
@@ -1158,11 +1188,21 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 				Plist[PartCount][8] = CPos[2] + (ran() - 0.5)*CellDY;
 				Plist[PartCount][9] = CPos[3] + (ran() - 0.5)*CellDZ;
 
+				if(std::abs(Plist[PartCount][9]) >= std::abs(Plist[PartCount][10])) {
+					Plist[PartCount][10] = std::abs(Plist[PartCount][9]) + 10e-3;
+				}
+				double temp_t = std::sqrt(Plist[PartCount][10]*Plist[PartCount][10]-Plist[PartCount][9]*Plist[PartCount][9])
+						* std::cosh(eta_slice+0.5*std::log((Plist[PartCount][10]+Plist[PartCount][9])/(Plist[PartCount][10]-Plist[PartCount][9])));
+				double temp_z = std::sqrt(Plist[PartCount][10]*Plist[PartCount][10]-Plist[PartCount][9]*Plist[PartCount][9])
+						* std::sinh(eta_slice+0.5*std::log((Plist[PartCount][10]+Plist[PartCount][9])/(Plist[PartCount][10]-Plist[PartCount][9])));
+				Plist[PartCount][10] = temp_t;
+				Plist[PartCount][9] = temp_z;
+
 				// Momentum
 				// Sample rest frame momentum given T and mass of s quark
 				MCSampler(TRead, 2); // NewP=P, NewX=Px, ...
 
-				Vel[3] = atanh(eta_slice);
+				Vel[3] = tanh(eta_slice);
 				double vsquare = Vel[1]*Vel[1] + Vel[2]*Vel[2] + Vel[3]*Vel[3];
 				if(vsquare < 10e-16){
 					vsquare = 10e-16;
@@ -1231,4 +1271,17 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 		// Shuffle the Plist using the random engine
     	std::shuffle(&Plist[0], &Plist[PartCount], getRandomGenerator());
 	}
+
+	//print Plist for testing
+	/*std::cout << std::setprecision(5);
+  	std::ofstream thermalP;
+  	thermalP.open("thermal_partons.dat", std::ios::app);
+	for(int p=0; p < Plist.size(); p++){
+		thermalP << Plist[p][0] << " " << Plist[p][1] << " " << Plist[p][2]
+		<< " " << Plist[p][3] << " " << Plist[p][4] << " " << Plist[p][5]
+		<< " " << Plist[p][6] << " " << Plist[p][7] << " " << Plist[p][8]
+		<< " " << Plist[p][9] << " " << Plist[p][10] << " " << Plist[p][11]
+		<< "\n";
+	}
+	thermalP.close();*/
 }

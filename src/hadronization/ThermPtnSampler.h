@@ -2,7 +2,6 @@
 #define THERMPTNSAMPLER_H
 
 #include "JetScapeLogger.h"
-//#include "SurfaceCellInfo.h"
 #include <vector>
 #include <random>
 
@@ -24,9 +23,9 @@ class ThermalPartonSampler
 	void set_hypersurface(std::vector<std::vector<double>> surf_in){surface = surf_in;}
 
 	//setters for params
-	void brick_length_width(double len_bri, double wid_bri){L = len_bri; W = wid_bri;}
+	void brick_length_width(double len_bri, double wid_bri){L = 2.*len_bri + 4.; W = 2.*wid_bri + 4.; Time = len_bri;} // +4 gives 2fm additional brick in each direction
 	void brick_flow(double vx_in, double vy_in, double vz_in){Vx = vx_in; Vy = vy_in; Vz = vz_in;}
-	void brick_temperature(double brick_temperature){T = brick_temperature/GEVFM;}
+	void brick_Tc(double brick_Tc){T = brick_Tc/GEVFM;}
 
 	//getters for thermal partons
 	int nTot(         ){return Plist.size();}
@@ -66,8 +65,6 @@ class ThermalPartonSampler
 	// Function to get the random number generator
     std::mt19937_64& getRandomGenerator() {return rng_engine;}
 
-	int generateParticlesPoisson(int order, double AvgNumParticles); //Samples number of particles from average value with a Poisson distribution
-
 	// Static parameters, do not change
 	const double PI = 3.141592653589793;
 	double muPi0 = 0.;
@@ -79,7 +76,7 @@ class ThermalPartonSampler
 
 	// Gaussian weights and abscissa (50 pt)
 	// Used in numeric integration
-	int GPoints = 50;		// Amount of Gaussian points for 1uadrature
+	int GPoints = 50;		// Amount of Gaussian points for quadrature
 	double GWeight[50];		// Gaussian weights for integration
 	double GAbs[50];		// Gaussian abscissas for integration
 
@@ -96,7 +93,7 @@ class ThermalPartonSampler
 	//L is the length of the brick sampled for thermal partons
 	//W is the width of the face of the brick - should be scaled somewhat against L
 	//Vx,Vy,Vz is a flow given to the brick
-	double L, W, Vx, Vy, Vz;
+	double L, W, Time, Vx, Vy, Vz;
 
 	// HyperSurface
 	std::vector<std::vector<double>> surface;
