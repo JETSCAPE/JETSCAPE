@@ -58,16 +58,16 @@ std::vector<shared_ptr<Hadron>> Afterburner::GetFragmentationHadrons() {
   std::vector<shared_ptr<Hadron>> h_list;
   hadronization_mgr->GetHadrons(h_list);
   JSINFO << "Got " << h_list.size() << " fragmentation hadrons from HadronizationManager.";
-  
+
   std::vector<shared_ptr<Hadron>> h_list_new;
   for (auto h : h_list) {
     if (h->has_no_position()) {
-      JSWARN << "Found fragmentation hadron without properly set position in "
+      JSINFO << "Found fragmentation hadron without properly set position in "
                 "Afterburner.\nInclusion of fragmentation hadrons only "
                 "possible for HybridHadronization.";
     }
 
-    //move all the fragmentation hadrons a little bit around to avoid having 
+    //move all the fragmentation hadrons a little bit around to avoid having
     //multiple hadrons at the same position if they are at the same position
     const FourVector r = h->x_in();
     const double rand_x = ZeroOneDistribution(*GetMt19937Generator()) * 2e-4 - 1e-4;
@@ -78,7 +78,7 @@ std::vector<shared_ptr<Hadron>> Afterburner::GetFragmentationHadrons() {
 
     if ((std::abs(h->pid())>10) && (h->pid() != 21) && (h->pstat() > 0)) {
       h_list_new.push_back(h);
-    } else {
+    } else if((std::abs(h->pid())<10) || (h->pid() == 21)){
       JSWARN << "Found a free quark or gluon! This can not be handed over to SMASH.\n"
                 "Check confinement in hadronization module!";
     }
@@ -91,12 +91,12 @@ std::vector<std::vector<std::shared_ptr<Hadron>>> Afterburner::GatherAfterburner
   afterburner_had_events = GetSoftParticlizationHadrons();
 
   if (GetXMLElementInt({"Afterburner", "output_only_final_state_hadrons"})) {
-    // clear Hadron_list_ in soft_particlization, otherwise the final hadron 
-    // output of the writer contains also the soft hadrons which were used as 
+    // clear Hadron_list_ in soft_particlization, otherwise the final hadron
+    // output of the writer contains also the soft hadrons which were used as
     // input for SMASH
     auto soft_particlization = JetScapeSignalManager::Instance()->GetSoftParticlizationPointer().lock();
     if (soft_particlization) {
-      soft_particlization->Hadron_list_.clear(); 
+      soft_particlization->Hadron_list_.clear();
     }
   }
 
@@ -112,7 +112,7 @@ std::vector<std::vector<std::shared_ptr<Hadron>>> Afterburner::GatherAfterburner
       // empty the hadron vector in the hadronization manager to circumvent the
       // output of these hadrons if they are implemented in the SMASH afterburner
       auto hadronization_mgr = JetScapeSignalManager::Instance()->GetHadronizationManagerPointer().lock();
-      hadronization_mgr->DeleteHadrons();
+      hadronization_mgr->DeleteRealHadrons();
     }
 
     afterburner_had_events[0].insert(afterburner_had_events[0].end(),
