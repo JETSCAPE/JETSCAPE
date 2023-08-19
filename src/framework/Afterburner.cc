@@ -78,7 +78,13 @@ std::vector<shared_ptr<Hadron>> Afterburner::GetFragmentationHadrons() {
     h->set_x(position_smeared);
 
     if ((std::abs(h->pid())>10) && (h->pid() != 21)) {
-      if (h->pstat() > 0) { // conversion is done in SMASH
+      if (h->pstat() > 0) {
+        // convert Kaon-L or Kaon-S into K0 or Anti-K0
+        if (h->pid() == 310 || h->pid() == 130) {
+          const int rand_int = (*rand_int_ptr_)(*GetMt19937Generator());
+          const int id = (rand_int == 0) ? 311 : -311;
+          h->set_id(id);
+        }
         h_list_new.push_back(h);
       } else if(h->pstat() < 0) {
         // convert Kaon-L or Kaon-S into K0 or Anti-K0

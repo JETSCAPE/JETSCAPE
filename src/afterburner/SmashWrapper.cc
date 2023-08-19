@@ -39,11 +39,11 @@ void SmashWrapper::InitTask() {
       GetXMLElementText({"Afterburner", "SMASH", "SMASH_particles_file"});
   std::string smash_decays_list =
       GetXMLElementText({"Afterburner", "SMASH", "SMASH_decaymodes_file"});
-  
+
   // do not store tabulation, which is achieved by an empty tabulations path
   std::string tabulations_path("");
 
-  auto config = smash::setup_config_and_logging(smash_config_file, 
+  auto config = smash::setup_config_and_logging(smash_config_file,
                                                 smash_hadron_list,
                                                 smash_decays_list);
 
