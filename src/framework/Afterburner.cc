@@ -63,7 +63,7 @@ std::vector<shared_ptr<Hadron>> Afterburner::GetFragmentationHadrons() {
   rand_int_ptr_ = (std::make_shared<std::uniform_int_distribution<int>>(0,1));
   for (auto h : h_list) {
     if (h->has_no_position()) {
-      JSINFO << "Found fragmentation hadron without properly set position in "
+      JSDEBUG << "Found fragmentation hadron without properly set position in "
                 "Afterburner.\nInclusion of fragmentation hadrons only "
                 "possible for HybridHadronization.";
     }

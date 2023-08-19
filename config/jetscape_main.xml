@@ -382,6 +382,7 @@
 
   <!-- Hadronic Afterburner  -->
   <Afterburner>
+    <!-- fragmentation hadrons in the afterburner only possible with hybrid hadronization-->
     <include_fragmentation_hadrons>0</include_fragmentation_hadrons>
     <!-- only the afterburner hadrons are written to a file -->
     <!-- if fragmentation hadrons are not included in the afterburner they are also written  -->
