@@ -79,7 +79,7 @@ if rerunning:
 
 # function to make xmls
 def makexml(bound, parameters, baseDir, xmltemplate, ECM):
-    events  = 20
+    events  = 20000
     # extra events in first bin
     if RHIC:
         events = events*6
