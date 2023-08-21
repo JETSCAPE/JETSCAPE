@@ -188,7 +188,7 @@ int main(int argc, char* argv[]){
                                 if(Ls[i].get()->pt() > triggerptcut[i1] && Ls[i].get()->pt() < triggerptcut[i1+1] 
                                     && others[j].get()->pt() > assptmin[i2] && others[j].get()->pt() < assptmax[i2]){
                                         tempL[i1][i2]->Fill(deltaphi, 1.0/(phibinw));
-                                        recoHist[i1][i2]->Fill(Ls[i].get()->plabel(), others[j].get()->plabel());
+                                        recoHist[i1][i2]->Fill(Ls[i].get()->plabel()-800, others[j].get()->plabel()-800);
                                         //cout << Ls[i].get()->plabel() << " " << others[j].get()->plabel() << endl;
                                 }
                             }
