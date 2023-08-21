@@ -596,6 +596,15 @@ void JetScape::DetermineTaskListFromXML() {
                       "to Eloss list.";
           }
         }
+        //   photon module
+        else if (childElementName == "gammaLoss") {
+          auto adscft = JetScapeModuleFactory::createInstance(childElementName);
+          if (adscft) {
+            jloss->Add(adscft);
+            JSINFO << "JetScape::DetermineTaskList() -- Eloss: Added gammaLoss "
+                      "to Eloss list.";
+          }
+        }
         //   - Custom module
         else if (((int)childElementName.find("CustomModule") >= 0)) {
           auto customModule =

@@ -195,6 +195,11 @@
       <in_vac> 0 </in_vac>
     </AdSCFT>
 
+    <gammaLoss>
+      <name> gammaLoss </name>
+      <gammaLoss_on> 0 </gammaLoss_on>
+    </gammaLoss>
+
   </Eloss>
 
   <PartonPrinter>
