@@ -2,7 +2,7 @@
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
  * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -92,7 +92,7 @@ public:
 
   bool boost_invariant;
 
-  /** The bulk information of hydro dynamics, in the form of 
+  /** The bulk information of hydro dynamics, in the form of
      * vector of FluidCellInfo objects. */
   std::vector<FluidCellInfo> data;
 
@@ -133,6 +133,7 @@ public:
 
   int get_data_size() const { return (data.size()); }
   bool is_boost_invariant() const { return (boost_invariant); }
+  bool is_Cartesian() const { return (tau_eta_is_tz); }
 
   Jetscape::real Tau0() const { return (tau_min); }
   Jetscape::real XMin() const { return (x_min); }
@@ -153,7 +154,7 @@ public:
 
   /** It checks whether a space-time point (tau, x, y, eta) is inside evolution history or outside.
 	@param tau Light-cone coordinate.
-	@param x  Space coordinate.   
+	@param x  Space coordinate.
 	@param y  Space coordinate.
 	@param eta Light-cone coordinate.
     */
@@ -169,16 +170,16 @@ public:
   }
 
   // get the lower bound of the fluid cell along x
-  /** @return Fluid cell number along the x-grid.           
-        @param x Space coordinate.                          
+  /** @return Fluid cell number along the x-grid.
+        @param x Space coordinate.
     */
   inline int GetIdX(Jetscape::real x) const {
     return (static_cast<int>((x - x_min) / dx));
   }
 
   // get the lower bound of the fluid cell along y
-  /** @return Fluid cell number along the y-grid.                
-        @param y Space coordinate. 
+  /** @return Fluid cell number along the y-grid.
+        @param y Space coordinate.
     */
   inline int GetIdY(Jetscape::real y) const {
     return (static_cast<int>((y - y_min) / dy));
@@ -250,7 +251,7 @@ public:
         @param tau Light-cone coordinate.
         @param x Space coordinate.
         @param y Space coordinate.
-        @param eta Light-cone coordinate. 
+        @param eta Light-cone coordinate.
     */
   FluidCellInfo get(Jetscape::real tau, Jetscape::real x, Jetscape::real y,
                     Jetscape::real etas) const;

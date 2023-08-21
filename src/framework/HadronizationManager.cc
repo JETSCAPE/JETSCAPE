@@ -2,7 +2,7 @@
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
  * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -144,7 +144,7 @@ void HadronizationManager::GetHadrons(vector<shared_ptr<Hadron>>& signal){
 	//signal = outHadrons;
 	signal.clear();
 	// foreach hadronizon object tasks
-	for(shared_ptr<JetScapeTask> it : GetTaskList()){ 
+	for(shared_ptr<JetScapeTask> it : GetTaskList()){
 		vector<shared_ptr<Hadron>> tempHadronList;
 		JetScapeTask *jet = it.get();
 		Hadronization *hit = (Hadronization *) jet;
@@ -161,6 +161,15 @@ void HadronizationManager::DeleteHadrons() {
 		JetScapeTask *jet = it.get();
 		Hadronization *hit = (Hadronization *) jet;
 		hit->DeleteHadrons();
+	}
+}
+
+void HadronizationManager::DeleteRealHadrons() {
+  // foreach hadronizon object tasks
+	for(shared_ptr<JetScapeTask> it : GetTaskList()){
+		JetScapeTask *jet = it.get();
+		Hadronization *hit = (Hadronization *) jet;
+		hit->DeleteRealHadrons();
 	}
 }
 

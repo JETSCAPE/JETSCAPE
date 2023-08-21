@@ -2,7 +2,7 @@
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
  * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -84,9 +84,12 @@ public:
 
   void AddInHadrons(vector<shared_ptr<Hadron>> ih) { outHadrons = ih; }
 
-  // empties the outHadrons vector, explanation why this is necessary is given 
+  // empties the outHadrons vector, explanation why this is necessary is given
   // in HadronizationManager.h
   void DeleteHadrons();
+
+  // erases the outHadrons with positive status flag
+  void DeleteRealHadrons();
 
 private:
   vector<vector<shared_ptr<Parton>>> inPartons;

@@ -58,16 +58,17 @@ std::vector<shared_ptr<Hadron>> Afterburner::GetFragmentationHadrons() {
   std::vector<shared_ptr<Hadron>> h_list;
   hadronization_mgr->GetHadrons(h_list);
   JSINFO << "Got " << h_list.size() << " fragmentation hadrons from HadronizationManager.";
-  
+
   std::vector<shared_ptr<Hadron>> h_list_new;
+  rand_int_ptr_ = (std::make_shared<std::uniform_int_distribution<int>>(0,1));
   for (auto h : h_list) {
     if (h->has_no_position()) {
-      JSWARN << "Found fragmentation hadron without properly set position in "
+      JSDEBUG << "Found fragmentation hadron without properly set position in "
                 "Afterburner.\nInclusion of fragmentation hadrons only "
                 "possible for HybridHadronization.";
     }
 
-    //move all the fragmentation hadrons a little bit around to avoid having 
+    //move all the fragmentation hadrons a little bit around to avoid having
     //multiple hadrons at the same position if they are at the same position
     const FourVector r = h->x_in();
     const double rand_x = ZeroOneDistribution(*GetMt19937Generator()) * 2e-4 - 1e-4;
@@ -76,9 +77,25 @@ std::vector<shared_ptr<Hadron>> Afterburner::GetFragmentationHadrons() {
     double position_smeared[4] = {r.t(), r.x()+rand_x, r.y()+rand_y, r.z()+rand_z};
     h->set_x(position_smeared);
 
-    if ((std::abs(h->pid())>10) && (h->pid() != 21) && (h->pstat() > 0)) {
-      h_list_new.push_back(h);
-    } else {
+    if ((std::abs(h->pid())>10) && (h->pid() != 21)) {
+      if (h->pstat() > 0) {
+        // convert Kaon-L or Kaon-S into K0 or Anti-K0
+        if (h->pid() == 310 || h->pid() == 130) {
+          const int rand_int = (*rand_int_ptr_)(*GetMt19937Generator());
+          const int id = (rand_int == 0) ? 311 : -311;
+          h->set_id(id);
+        }
+        h_list_new.push_back(h);
+      } else if(h->pstat() < 0) {
+        // convert Kaon-L or Kaon-S into K0 or Anti-K0
+        // change id of negative Kaons to make them consistent with the SMASH output
+        if (h->pid() == 310 || h->pid() == 130) {
+          const int rand_int = (*rand_int_ptr_)(*GetMt19937Generator());
+          const int id = (rand_int == 0) ? 311 : -311;
+          h->set_id(id);
+        }
+      }
+    } else if((std::abs(h->pid())<10) || (h->pid() == 21)){
       JSWARN << "Found a free quark or gluon! This can not be handed over to SMASH.\n"
                 "Check confinement in hadronization module!";
     }
@@ -91,12 +108,12 @@ std::vector<std::vector<std::shared_ptr<Hadron>>> Afterburner::GatherAfterburner
   afterburner_had_events = GetSoftParticlizationHadrons();
 
   if (GetXMLElementInt({"Afterburner", "output_only_final_state_hadrons"})) {
-    // clear Hadron_list_ in soft_particlization, otherwise the final hadron 
-    // output of the writer contains also the soft hadrons which were used as 
+    // clear Hadron_list_ in soft_particlization, otherwise the final hadron
+    // output of the writer contains also the soft hadrons which were used as
     // input for SMASH
     auto soft_particlization = JetScapeSignalManager::Instance()->GetSoftParticlizationPointer().lock();
     if (soft_particlization) {
-      soft_particlization->Hadron_list_.clear(); 
+      soft_particlization->Hadron_list_.clear();
     }
   }
 
@@ -112,7 +129,7 @@ std::vector<std::vector<std::shared_ptr<Hadron>>> Afterburner::GatherAfterburner
       // empty the hadron vector in the hadronization manager to circumvent the
       // output of these hadrons if they are implemented in the SMASH afterburner
       auto hadronization_mgr = JetScapeSignalManager::Instance()->GetHadronizationManagerPointer().lock();
-      hadronization_mgr->DeleteHadrons();
+      hadronization_mgr->DeleteRealHadrons();
     }
 
     afterburner_had_events[0].insert(afterburner_had_events[0].end(),

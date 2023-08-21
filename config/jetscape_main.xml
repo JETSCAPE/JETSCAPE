@@ -348,9 +348,13 @@
        <thermreco_distmax>5.0</thermreco_distmax>
        <shower_recofactor>1.0</shower_recofactor>
        <thermal_recofactor>1.0</thermal_recofactor>
+       <hydro_Tc>0.16</hydro_Tc>
+       <eta_max_boost_inv>2.0</eta_max_boost_inv> <!--only relevant for boost invariant hydro, max eta for thermal parton sampler-->
        <had_postprop>0.0</had_postprop>
        <part_prop>1.0</part_prop>
-       <weak_decays>on</weak_decays>
+       <pythia_decays>on</pythia_decays> <!-- lets the particles given to pythia decay-->
+       <tau0Max>10.0</tau0Max> <!-- only particles with tau0 < tau0Max (given in mm/c) can decay, increase to include weak decays-->
+       <weak_decays>depracted</weak_decays> <!-- use the parameters pythia_decays and tau0Max, this parameter is only a dummy to make old xml files work-->
        <pionWidthScale>1.0</pionWidthScale>
        <kaonWidthScale>1.0</kaonWidthScale>
        <protonWidthScale>1.0</protonWidthScale>
@@ -359,6 +363,11 @@
        <!-- <LinesToRead> -->
        <!--   111:mayDecay = off  -->
        <!-- </LinesToRead> -->
+       <reco_hadrons_in_pythia>1</reco_hadrons_in_pythia>
+       <!-- Switch to include more pythia particles from an additional xml file with particle information -->
+       <additional_pythia_particles>0</additional_pythia_particles>
+       <!-- Path to file with additional particles for pythia (for higher reco_Mlevelmax)-->
+       <additional_pythia_particles_path>../config/HH_LightExcitedMesons.xml</additional_pythia_particles_path>
        <reco_hadrons_in_pythia>1</reco_hadrons_in_pythia>
        <ignorePhotons> off </ignorePhotons>
    </JetHadronization>
@@ -391,6 +400,7 @@
 
   <!-- Hadronic Afterburner  -->
   <Afterburner>
+    <!-- fragmentation hadrons in the afterburner only possible with hybrid hadronization-->
     <include_fragmentation_hadrons>0</include_fragmentation_hadrons>
     <!-- only the afterburner hadrons are written to a file -->
     <!-- if fragmentation hadrons are not included in the afterburner they are also written  -->
