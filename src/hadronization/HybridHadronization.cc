@@ -136,6 +136,10 @@ void HybridHadronization::Init(){
     xml_intin = GetXMLElementInt({"JetHadronization", "reco_goldstone"});
 	  if(xml_intin >= 0){goldstonereco = xml_intin;} xml_intin = -1;
 
+    torder_reco = false;
+	  xml_intin = GetXMLElementInt({"JetHadronization", "recobias_t"});
+	  if(xml_intin == 1){torder_reco = true;} xml_intin = -1;
+
     xml_doublein = GetXMLElementDouble({"JetHadronization", "hydro_Tc"});
 	  if(xml_doublein >= 0){hydro_Tc = xml_doublein;} xml_doublein = -1;
 
@@ -1306,34 +1310,60 @@ void HybridHadronization::recomb(){
 
 	//constructing permutation arrays; shower quarks are > 0, thermal are < 0
 	//perm2 will always access element [std::abs(perm2[i]) - 1]
-	int perm1[showerquarks.num()],
-  perm2[showerquarks.num()+HH_thermal.num()];
-	for(int i=0; i<showerquarks.num(); ++i){
-    perm1[i]=i;
-  }
-	for(int i=0; i<HH_thermal.num(); ++i){
-    perm2[i]=(i-HH_thermal.num());
-  }
-	for(int i=HH_thermal.num(); i<showerquarks.num()+HH_thermal.num(); ++i){
-    perm2[i]=(i-HH_thermal.num()+1);
-  }
+	int perm1[showerquarks.num()], perm2[showerquarks.num()+HH_thermal.num()];
 
-	//permuting these arrays using Fisher-Yates algorithm
-	//-- To shuffle an array a of n elements (indices 0..n-1):
-	//for i from 0 to n−2 do
-	//  j ← random integer such that i ≤ j < n
-	//  exchange a[i] and a[j]
-	for(int i=0;i<showerquarks.num()-1;++i){
-		int ranelement = i+floor((showerquarks.num()-i)*ran());
-		int temp = perm1[i];
-    perm1[i] = perm1[ranelement];
-    perm1[ranelement] = temp;
-	}
-	for(int i=0;i<showerquarks.num()+HH_thermal.num()-1;++i){
-		int ranelement = i+floor((showerquarks.num()+HH_thermal.num()-i)*ran());
-		int temp = perm2[i];
-    perm2[i] = perm2[ranelement];
-    perm2[ranelement] = temp;
+  //option to either bias recombination, earlier particles attempt to recombine first
+	if(torder_reco){
+		//placeholders to sort by time
+		std::vector<std::pair<double,int>> tosort1, tosort2;
+		for (int i=0;i<showerquarks.num();++i){
+			tosort1.push_back(std::make_pair(showerquarks[i].x_t(),i));
+			tosort2.push_back(std::make_pair(showerquarks[i].x_t(),i+1));
+		}
+		for (int i=0;i<HH_thermal.num();++i){
+      tosort2.push_back({HH_thermal[i].x_t(),-i-1});
+    }
+
+		//sorting
+		std::stable_sort(std::begin(tosort1), std::end(tosort1));
+		std::stable_sort(std::begin(tosort2), std::end(tosort2));
+
+		//saving order into permutation arrays
+		for(int i=0;i<tosort1.size();++i){
+      perm1[i]=tosort1[i].second;
+    }
+		for(int i=0;i<tosort2.size();++i){
+      perm2[i]=tosort2[i].second;
+    }
+	}else{
+		//prepping permutation arrays to be shuffled
+		for(int i=0;i<showerquarks.num();++i){
+      perm1[i]=i;
+    }
+		for(int i=0;i<HH_thermal.num();++i){
+      perm2[i]=(i-HH_thermal.num());
+    }
+		for(int i=HH_thermal.num();i<showerquarks.num()+HH_thermal.num();++i){
+      perm2[i]=(i-HH_thermal.num()+1);
+    }
+
+		//permuting these arrays using Fisher-Yates algorithm
+		//-- To shuffle an array a of n elements (indices 0..n-1):
+		//for i from 0 to n−2 do
+		//  j ← random integer such that i ≤ j < n
+		//  exchange a[i] and a[j]
+		for(int i=0;i<showerquarks.num()-1;++i){
+			int ranelement = i+floor((showerquarks.num()-i)*ran());
+			int temp = perm1[i];
+      perm1[i] = perm1[ranelement];
+      perm1[ranelement] = temp;
+		}
+		for(int i=0;i<showerquarks.num()+HH_thermal.num()-1;++i){
+			int ranelement = i+floor((showerquarks.num()+HH_thermal.num()-i)*ran());
+			int temp = perm2[i];
+      perm2[i] = perm2[ranelement];
+      perm2[ranelement] = temp;
+		}
 	}
 
   //std::cout <<"Below is Color information of all particles in the String (Col, Acol)"<<endl;
