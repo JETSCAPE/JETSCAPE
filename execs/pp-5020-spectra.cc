@@ -57,6 +57,8 @@ int main(int argc, char* argv[]){
     int NpTHardBin = pTHatMin.size();
     //for(int i = 0; i < pTHatMin.size(); i++) cout << pTHatMin[i] << endl; //debugging line
     vector<int> eventCount;
+    double recohads = 0;
+    double fraghads = 0;
 
     //variable to total xsec
     double xsectotal = 0;
@@ -155,7 +157,10 @@ int main(int argc, char* argv[]){
                 Phi = hadrons[i].get()->phi();
                 pStat = hadrons[i].get()->pstat();
                 mass = hadrons[i].get()->restmass();
-                double PT = TMath::Sqrt((Px*Px) + (Py*Py));                
+                double PT = TMath::Sqrt((Px*Px) + (Py*Py));       
+
+                if(pStat == 811) recohads++;
+                else fraghads++;         
                 
                 // making particle lists
                 if(abs(PID) == 411 || abs(PID) == 413 || abs(PID) == 421){
@@ -267,6 +272,8 @@ int main(int argc, char* argv[]){
     int Minute = ((EndTime-StartTime)/60)-Hour*60;
     int Second = (EndTime-StartTime)-Hour*60*60 - Minute*60;
     cout<<"Program run time = "<<Hour<<"::"<<Minute<<"::"<<Second<<endl;
+    cout<<"Recombined hadrons: "<<recohads<<endl;
+    cout<<"Fragmented hadrons: "<<fraghads<<endl;
     
     //test comment
     //debugging
