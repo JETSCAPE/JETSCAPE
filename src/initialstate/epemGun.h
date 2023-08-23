@@ -2,7 +2,7 @@
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
  * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -34,6 +34,13 @@ private:
 
   // Allows the registration of the module so that it is available to be used by the Jetscape framework.
   static RegisterJetScapeModule<epemGun> reg;
+
+  double sud_val_QG_w_M(double M, double h0, double h1, double h2, double E1);
+  double sud_z_QG_w_M(double M, double cg, double cg1, double E2);
+  double alpha_s(double q2);
+
+protected:
+  std::uniform_real_distribution<double> ZeroOneDistribution;
 
 public:
   /** standard ctor
