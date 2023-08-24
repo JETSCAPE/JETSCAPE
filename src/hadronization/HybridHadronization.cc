@@ -6454,15 +6454,15 @@ void HybridHadronization::set_spacetime_for_pythia_hadrons(Pythia8::Event &event
       hadron_out.e(event[hadron_idx].e());
 
       //specific decays for heavy flavor analysis
-      if(abs(event[event[hadron_idx].mother1()].id()) == 413 && hadron_out.id() == 211) {
+      if(IDs.size() != 0 && abs(event[event[hadron_idx].mother1()].id()) == 413 && hadron_out.id() == 211) {
         JSINFO << "Pion from D* decay thrown out.";
         continue;
       }
-      if(abs(event[event[hadron_idx].mother1()].id()) == 4222 && hadron_out.id() == 211) {
+      if(IDs.size() != 0 && abs(event[event[hadron_idx].mother1()].id()) == 4222 && hadron_out.id() == 211) {
         JSINFO << "Pion from Sigma++c decay thrown out.";
         continue;
       }
-      if(abs(event[event[hadron_idx].mother1()].id()) == 4112 && hadron_out.id() == 211) {
+      if(IDs.size() != 0 && abs(event[event[hadron_idx].mother1()].id()) == 4112 && hadron_out.id() == 211) {
         JSINFO << "Pion from Sigma0c decay thrown out.";
         continue;
       }
