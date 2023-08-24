@@ -6,6 +6,7 @@
   
   <outputFilename>/scratch/user/cameron.parker/JETSCAPE-COMP-HH_colorrecomb/test</outputFilename>
   <JetScapeWriterAsciiGZ> on </JetScapeWriterAsciiGZ>
+  <finalHadsOnly> on </finalHadsOnly>
   
   <!-- Hard Process -->
   <Hard>
@@ -48,6 +49,7 @@
       StringFlav:probQQtoQ = 0.081
       ParticleDecays:tau0Max = 10
     </LinesToRead>
+    <ignorePhotons> on </ignorePhotons>
   </JetHadronization>
   
 </jetscape>
