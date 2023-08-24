@@ -2,7 +2,7 @@
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
  * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -146,7 +146,7 @@ void PythiaGun::InitTask() {
     std::ofstream sigma_printer;
     sigma_printer.open(printer, std::ios::trunc);
 
-    
+
 }
 
 void PythiaGun::Exec() {
@@ -172,10 +172,10 @@ void PythiaGun::Exec() {
       if (!printer.empty()){
             std::ofstream sigma_printer;
             sigma_printer.open(printer, std::ios::out | std::ios::app);
-            
+
             sigma_printer << "sigma = " << GetSigmaGen() << " Err =  " << GetSigmaErr() << endl ;
             //sigma_printer.close();
-      
+
 //      JSINFO << BOLDYELLOW << " sigma = " << GetSigmaGen() << " sigma err = " << GetSigmaErr() << " printer = " << printer << " is " << sigma_printer.is_open() ;
     };
 
@@ -280,12 +280,12 @@ void PythiaGun::Exec() {
                << " at x=" << xLoc[1] << ", y=" << xLoc[2] << ", z=" << xLoc[3];
 
     VERBOSE(7) << "Adding particle with pid = " << particle.id()
-               << ", pT = " << particle.pT() << ", y = " << particle.y()
+               << ", pT = " << particle.pT() << ", eta = " << particle.eta()
                << ", phi = " << particle.phi() << ", e = " << particle.e();
 
     VERBOSE(7) << " at x=" << xLoc[1] << ", y=" << xLoc[2] << ", z=" << xLoc[3];
 
-    auto ptn = make_shared<Parton>(0, particle.id(), 0, particle.pT(), particle.y(),particle.phi(), particle.e(), xLoc);
+    auto ptn = make_shared<Parton>(0, particle.id(), 0, particle.pT(), particle.eta(),particle.phi(), particle.e(), xLoc);
     ptn->set_color(particle.col());
     ptn->set_anti_color(particle.acol());
     ptn->set_max_color(1000 * (np + 1));

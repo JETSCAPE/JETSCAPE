@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - JETSCAPE-3.5.4-RC
       - JETSCAPE-3.6-RC
       - latessa/dockerImage
 
@@ -40,6 +39,7 @@ jobs:
       uses: actions/checkout@v2
       with:
         repository: JETSCAPE/TEST-EXAMPLES
+        ref: jetscape-3.6-rc
         path: TEST-EXAMPLES
 
     - name: Generate pp events
