@@ -169,9 +169,6 @@ int main(int argc, char* argv[]){
     Pythia8::Pythia pythia;//("",false);
 	
 	//get list of cross sections
-    vector<vector<double>> xsecout = getAllXsecs(pTHatMin,pTHatMax);
-	vector<double> xsecList = xsecout[0];
-    vector<double> xsecErrorList = xsecout[0];
     double xsectotal = 62.8; //experimental value: https://arxiv.org/pdf/1208.4968.pdf
     //for(int k = 1; k<NpTHardBin; k++) xsectotal += xsecList[k]; //skip soft bin since it is not added to hard spectra
     //for(int k = 0; k<NpTHardBin; k++) cout << pTHatMin[k] << " " << pTHatMax[k] << " " << xsecList[k]*100000 << endl; //debugging line
@@ -246,11 +243,6 @@ int main(int argc, char* argv[]){
         //Data structures for events read in to save run time
         vector<shared_ptr<Hadron>> hadrons;
         vector <fjcore::PseudoJet> UnSortedJets, SortedJets, UnSortedJets2, SortedJets2, UnSortedJets3, SortedJets3, constituents;
-
-        //xsec stuff
-        double HardCrossSection = xsecList[k];
-        double HardCrossSectionError = xsecErrorList[k];
-        if(k == 0) HardCrossSection = xsectotal; //set for first bin to match experimental value; end of reading cross section
         
         //actually reading in, event loop
         while (!myfile->Finished()){
@@ -418,6 +410,11 @@ int main(int argc, char* argv[]){
                 } 
             }
         }
+
+        //xsec stuff
+        double HardCrossSection = myfile->GetSigmaGen();
+        double HardCrossSectionError = myfile->GetSigmaErr();
+        //if(k == 0) HardCrossSection = xsectotal; //set for first bin to match experimental value; end of reading cross section
 
         //cleaning up 0s in soft bin
         if(k == 0){
@@ -703,7 +700,7 @@ int main(int argc, char* argv[]){
     //jets
     //jet data graph
     TMultiGraph *GEJetTotal = new TMultiGraph();
-    TFile jet_file("/scratch/user/cameron.parker/JETSCAPE-COMP-HH_colorrecomb/data/JetData.root");
+    TFile jet_file("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/data/JetData.root");
     TDirectory* jetdir = (TDirectory*)jet_file.Get("Table 4");
     TGraphErrors* jetData = (TGraphErrors*) jetdir->Get("Graph1D_y2");
     TH1D* jetDataHistOriginal = (TH1D*) jetdir->Get("Hist1D_y2");
@@ -766,7 +763,7 @@ int main(int argc, char* argv[]){
     //hadrons
     //hadron data graph
     TMultiGraph *GEHadronTotal = new TMultiGraph();
-    TFile hadron_file("/scratch/user/cameron.parker/JETSCAPE-COMP-HH_colorrecomb/data/HadronData.root");
+    TFile hadron_file("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/data/HadronData.root");
     TDirectory* hadrondir = (TDirectory*)hadron_file.Get("Table 1");
     TGraphErrors* hadronData = (TGraphErrors*) hadrondir->Get("Graph1D_y1");
     TH1D* hadronDataHist = (TH1D*)hadrondir->Get("Hist1D_y1");

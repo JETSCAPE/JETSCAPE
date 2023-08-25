@@ -84,9 +84,6 @@ int main(int argc, char* argv[]){
     vector<int> eventCount;
 
     //get list of cross sections
-    vector<vector<double>> xsecout = getAllXsecs(pTHatMin,pTHatMax);
-	vector<double> xsecList = xsecout[0];
-    vector<double> xsecErrorList = xsecout[0];
     double xsectotal = 42.7; //experimental value: https://arxiv.org/pdf/2005.00776.pdf
     //for(int k = 0; k<NpTHardBin; k++) cout << pTHatMin[k] << " " << pTHatMax[k] << " " << xsecList[k]*100000 << endl; //debugging line
     //cout << xsectotal << endl;
@@ -143,11 +140,6 @@ int main(int argc, char* argv[]){
 
         //Data structures for events read in to save run time
         vector<shared_ptr<Hadron>> hadrons;
-
-        //xsec stuff
-        double HardCrossSection = xsecList[k];
-        double HardCrossSectionError = xsecErrorList[k];
-        if(k == 0) HardCrossSection = xsectotal; //set for first bin to match experimental value; end of reading cross section
         
         //actually reading in
         while (!myfile->Finished()){
@@ -189,6 +181,11 @@ int main(int argc, char* argv[]){
                 }
             }
         }
+
+        //xsec stuff
+        double HardCrossSection = myfile->GetSigmaGen();
+        double HardCrossSectionError = myfile->GetSigmaErr();
+        //if(k == 0) HardCrossSection = xsectotal; //set for first bin to match experimental value; end of reading cross section
         
         //event count handling
         eventCount.push_back(Events);
