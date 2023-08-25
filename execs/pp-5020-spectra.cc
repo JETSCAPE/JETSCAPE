@@ -68,9 +68,9 @@ int main(int argc, char* argv[]){
     double AssHadPtCut = 0.3;
     double deltaEtaCut = 1;
     double LYcut = 0.5;
-    double triggerptcut[] = {3,5,8,16};
-    double assptmin[] = {0.3,0.3,1};
-    double assptmax[] = {10000,1,10000};
+    double triggerptcut[] = {0,3,5,8,16};
+    double assptmin[] = {0.3,0.3,1,0};
+    double assptmax[] = {10000,1,10000,10000};
     
     //Variables for single hadron spectrum
     double LphiBin[17];
