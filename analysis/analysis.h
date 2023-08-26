@@ -79,4 +79,7 @@ double integral(TH1D* hist);
 //assigning weights to hadrons to blend hard and soft QCD
 double blending(int binID, double pT, double center, double width, double softcut);
 
+//subtracting floors out of azi correlation hists
+TH1D* getZeroedHist(TH1D* hist);
+
 #endif

@@ -159,6 +159,7 @@ void ratioPlot(TH1D* dataHist, TH1D* predictionHist, string title, bool xlog){
 
     string filename  = splitString(title," (")[0]+".png"; //trims off the units in the file name
     c->Print(filename.c_str());
+    c->Close();
 }
 
 //overload for graph input
@@ -251,6 +252,7 @@ void ratioPlot(TGraphErrors* dataHist, TH1D* predictionHist, string title, bool 
 
     string filename  = "plots/"+splitString(title," (")[0]+".png"; //trims off the units in the file name
     c->Print(filename.c_str());
+    c->Close();
 }
 
 //thrust calculation classes and methods
@@ -992,4 +994,17 @@ double blending(int binID, double pT, double center, double width, double softcu
 
     //catch all returning 0 in case of error
     return 0;
+}
+
+//subtracting floors out of azi correlation hists
+TH1D* getZeroedHist(TH1D* hist){
+    //cloning hist so we dont overwrite old files
+    TH1D* histout = (TH1D*)hist->Clone();
+
+    //subtracting out floor
+    double floor = histout->GetMinimum();
+    for(int i = 1; i<=histout->GetNbinsX(); i++) histout->Fill(histout->GetBinCenter(i),-1.0*floor);
+
+    //returning output
+    return histout;
 }
