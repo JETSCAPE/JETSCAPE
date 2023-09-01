@@ -208,8 +208,8 @@ void PythiaGun::Exec() {
 
         // reject rare cases of very soft particles that don't have enough e to get
         // reasonable virtuality
-        if (particle.pT() < 1.0 / sqrt(vir_factor))
-          continue;
+        /*if (particle.pT() < 1.0 / sqrt(vir_factor))
+          continue;*/
 
         //if(particle.id()==22) cout<<"########this is a photon!######" <<endl;
         // accept
