@@ -202,13 +202,13 @@ int main(int argc, char* argv[]){
         
         //xsec and event count handling
         eventCount.push_back(Events);
-        double HardCrossSection = xsecList[k];
-        double HardCrossSectionError = xsecErrorList[k];
+        double HardCrossSection = myfile->GetSigmaGen();;
+        double HardCrossSectionError = myfile->GetSigmaErr();;
         
         //Dcounts
         for(int i1 = 0; i1 < 3; i1++)
             for(int i2 = 0; i2 < 3; i2++)
-                totLcount[i1][i2] += Lpts->GetBinContent(i1+1)*HardCrossSection/(xsectotal*Events);
+                totLcount[i1][i2] += Lpts->GetBinContent(i1+1)*HardCrossSection/(Events);
         
         //event info
         TVector EventInfo(3);
@@ -222,7 +222,7 @@ int main(int argc, char* argv[]){
         for(int i1 = 0; i1 < 3; i1++){
             for(int i2 = 0; i2 < 3; i2++){
                 tempL[i1][i2]->Write(names[i1][i2].c_str());
-                HistLPhi[i1][i2]->Add(tempL[i1][i2],HardCrossSection/(xsectotal*Events));
+                HistLPhi[i1][i2]->Add(tempL[i1][i2],HardCrossSection/(Events));
             }
         }
 
@@ -250,16 +250,6 @@ int main(int argc, char* argv[]){
             HistLPhi[i1][i2]->GetYaxis()->SetRangeUser(0,10);
             c->SaveAs(plotname.c_str());
             c->Close();
-
-            //ascii output
-            ofstream asciifile;
-            asciifile.open(names[i1][i2]);
-            asciifile << "x\ty\tyerr" << endl;
-            for(int i = 1; i <= HistLPhi[i1][i2]->GetNbinsX(); i++)
-                asciifile << HistLPhi[i1][i2]->GetBinCenter(i) << "\t" << HistLPhi[i1][i2]->GetBinContent(i)
-                    << "\t" << HistLPhi[i1][i2]->GetBinError(i) << endl;
-            asciifile.close();
-
         }
     }
 
