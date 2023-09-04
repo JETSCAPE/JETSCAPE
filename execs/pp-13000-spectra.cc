@@ -56,10 +56,6 @@ int main(int argc, char* argv[]){
     int NpTHardBin = pTHatMin.size();
     //for(int i = 0; i < pTHatMin.size(); i++) cout << pTHatMin[i] << endl; //debugging line
     vector<int> eventCount;
-    if(stoi(getEcm()) != 13000){
-        cout << "Center of mass energy does not match." << endl;
-        return 0;
-    }
 
     //get list of cross sections
     vector<vector<double>> xsecout = getXsecs(pTHatMin,pTHatMax);
@@ -107,9 +103,9 @@ int main(int argc, char* argv[]){
     // For loop to open different pTHat bin files
     for (int k = 0; k<NpTHardBin; ++k){
         char HadronFile[300], pTBinString[100];
-        sprintf(HadronFile,"dat/PP_Bin%s_%s.dat", pTHatMin[k].c_str(), pTHatMax[k].c_str());
+        sprintf(HadronFile,"dat/PP_Bin%s_%s.dat.gz", pTHatMin[k].c_str(), pTHatMax[k].c_str());
         
-        auto myfile  = make_shared<JetScapeReaderAscii>(HadronFile);
+        auto myfile  = make_shared<JetScapeReaderAsciiGZ>(HadronFile);
         sprintf(pTBinString,"Current pTHatBin is %i (%s,%s) GeV",k,pTHatMin[k].c_str(),pTHatMax[k].c_str());
         
         int  SN=0,PID=0;
