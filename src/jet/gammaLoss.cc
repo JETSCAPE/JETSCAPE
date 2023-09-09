@@ -93,7 +93,7 @@ void gammaLoss::Dump_pIn_info(int i, vector<Parton> &pIn) {
 
 void gammaLoss::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton> &pIn, vector<Parton> &pOut){
   for(auto & thisparton : pIn){
-    if(thisparton.pid() == 22) JSINFO << "Photon found";
+    if(thisparton.pid() == 22) JSINFO << "Photon found with label " << thisparton.plabel() << " and status " << thisparton.pstat();
   }
   return;
 }

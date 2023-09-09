@@ -60,6 +60,7 @@ Matter::Matter() {
   length = 0.0;
   MaxColor = 0;
   matter_on = true;
+  gammaLoss_on = false;
   in_vac = false;
   brick_med = true;
   recoil_on = false;
@@ -124,6 +125,7 @@ void Matter::Init() {
   int flagInt = -100;
   double inputDouble = -99.99;
 
+  gammaLoss_on = GetXMLElementInt({"Eloss", "gammaLoss", "gammaLoss_on"});
   matter_on = GetXMLElementInt({"Eloss", "Matter", "matter_on"});
   in_vac = GetXMLElementInt({"Eloss", "Matter", "in_vac"});
   recoil_on = GetXMLElementInt({"Eloss", "Matter", "recoil_on"});
@@ -265,7 +267,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
   for (int i = 0; i < pIn.size(); i++) {
 
     // Reject photons
-    if (pIn[i].pid() == photonid) {
+    if (pIn[i].pid() == photonid && !gammaLoss_on) {
       if(pIn[i].pstat() != 22) {
             pIn[i].set_stat(22);
       	    VERBOSE(1) << BOLDYELLOW
@@ -1502,8 +1504,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
           pOut[iout].set_max_color(max_color);
           pOut[iout].set_min_color(pIn[i].min_color());
           pOut[iout].set_min_anti_color(pIn[i].min_anti_color());
+          pOut[iout].set_stat(1);
 
-          //JSINFO << BOLDYELLOW << " A photon was made in MATTER with px = " << pOut[iout].px() << " and sent to the framework " ;
+          JSINFO << BOLDYELLOW << " A photon was made in MATTER with px = " << pOut[iout].px() << " and sent to the framework " ;
         }
 
         VERBOSE(8) << BOLDRED << " virtuality of D 2 = " << pOut[iout].t();

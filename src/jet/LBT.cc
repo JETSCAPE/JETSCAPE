@@ -117,6 +117,7 @@ void LBT::Init() {
     vacORmed = 1;
   }
 
+  gammaLoss_on = GetXMLElementInt({"Eloss", "gammaLoss", "gammaLoss_on"});
   Kprimary = GetXMLElementInt({"Eloss", "Lbt", "only_leading"});
   run_alphas = GetXMLElementInt({"Eloss", "Lbt", "run_alphas"});
   Q00 = GetXMLElementDouble({"Eloss", "Lbt", "Q0"});
@@ -181,7 +182,7 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2,
     // Reject photons
 
     if (pIn[i].pid() == photonid) {
-      if(pIn[i].pstat() != 22) {
+      if(pIn[i].pstat() != 22 && !gammaLoss_on) {
 	      pIn[i].set_stat(22); //Add status code 22 for photons that pass through LBT if it is already not assigned by one of the other JEL modules.
               pOut.push_back(pIn[i]);
       }
