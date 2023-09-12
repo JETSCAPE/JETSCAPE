@@ -546,6 +546,11 @@ if (${ROOT_FOUND})
   target_link_libraries(pp-7000-comparison JetScape analysis)
   endif() 
 
+if (${ROOT_FOUND}) 
+  add_executable(ee-charm-spectra ./execs/ee-charm-spectra.cc)
+  target_link_libraries(ee-charm-spectra JetScape analysis)
+  endif() 
+
 # -----------------------------------------------------------
 #### copy essential files for MUSIC to build/
 if (USE_IPGlasma)

@@ -30,6 +30,7 @@
 #include "TMultiGraph.h"
 #include "TLegend.h"
 #include "TRatioPlot.h"
+#include "TH2D.h"
 
 #include "analysis.cc"
 
@@ -71,13 +72,9 @@ int main(int argc, char* argv[]){
     double AssHadPtCut = 0.3;
     double deltaEtaCut = 1;
     double LYcut = 0.5;
-    double triggerptcut[] = {3,5,8,16};
-    double assptmin[] = {0.3,0.3,1};
+    double triggerptcut[] = {3,5,8,16}; int ntrigbins = 3;
+    double assptmin[] = {0.3,0.3,1}; int nassbins = 3;
     double assptmax[] = {10000,1,10000};
-
-    //output file for associated hadrons
-    ofstream hadfile;
-    hadfile.open("asshads.txt");
     
     //Variables for single hadron spectrum
     double LphiBin[17];
@@ -130,6 +127,12 @@ int main(int argc, char* argv[]){
 
         //Data structures for events read in to save run time
         vector<shared_ptr<Hadron>> hadrons, Ls, others;
+
+        //hists for reco vs fragmentation
+        TH2D *recoHist[ntrigbins][nassbins]; //identified hadrons hists
+        for(int i1 = 0; i1 < ntrigbins; i1++)
+            for(int i2 = 0; i2 < nassbins; i2++)
+                recoHist[i1][i2] = new TH2D(names[i1][i2].c_str(), names[i1][i2].c_str(), 2, 10, 30, 2, 10, 30);
         
         //actually reading in
         while (!myfile->Finished()){
@@ -181,18 +184,12 @@ int main(int argc, char* argv[]){
                                 if(Ls[i].get()->pt() > triggerptcut[i1] && Ls[i].get()->pt() < triggerptcut[i1+1] 
                                     && others[j].get()->pt() > assptmin[i2] && others[j].get()->pt() < assptmax[i2]){
                                         tempL[i1][i2]->Fill(deltaphi, 1.0/(phibinw));
+                                        recoHist[i1][i2]->Fill(Ls[i].get()->pstat()-800, others[j].get()->pstat()-800);
                                 }
                             }
                         }
                     }
                 }
-            }
-
-            //writing out associated hadrons
-            if(Ls.size() > 0){
-                hadfile << "pTHat: " << pTHatMin[k] << " to " << pTHatMax[k] << endl;
-                for(int i = 0; i < others.size(); i++)
-                    hadfile << others[i].get()->pid() << " " << others[i].get()->pt() << " " << others[i].get()->eta() << " " << others[i].get()->phi() << endl;
             }
 
             //clearing had vecs
@@ -222,6 +219,7 @@ int main(int argc, char* argv[]){
         for(int i1 = 0; i1 < 3; i1++){
             for(int i2 = 0; i2 < 3; i2++){
                 tempL[i1][i2]->Write(names[i1][i2].c_str());
+                recoHist[i1][i2]->Write(names[i1][i2].c_str());
                 HistLPhi[i1][i2]->Add(tempL[i1][i2],HardCrossSection/(Events));
             }
         }
@@ -229,7 +227,6 @@ int main(int argc, char* argv[]){
         myfile->Close();
         outFile->Close();
     } //k-loop ends here (pTHatBin loop)
-    hadfile.close();
 
     //create root file for total plots
     TFile* totalroot = new TFile( "root/totals.root", "RECREATE");

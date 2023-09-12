@@ -68,8 +68,8 @@ int main(int argc, char* argv[]){
     double AssHadPtCut = 0.3;
     double deltaEtaCut = 1;
     double LYcut = 0.5;
-    double triggerptcut[] = {0,3,5,8,16};
-    double assptmin[] = {0.3,0.3,1,0};
+    double triggerptcut[] = {0,3,5,8,16,24}; int ntrigbins = 5;
+    double assptmin[] = {0.3,0.3,1,0}; int nassbins = 4;
     double assptmax[] = {10000,1,10000,10000};
     
     //Variables for single hadron spectrum
@@ -77,11 +77,11 @@ int main(int argc, char* argv[]){
     for(int i = 0; i < 17; i++) LphiBin[i] = i*pi/16;
     double phibinw = LphiBin[1]-LphiBin[0];
     int NphiLBin = sizeof(LphiBin)/sizeof(LphiBin[0])-1;
-    TH1D *HistLPhi[3][3]; //identified hadrons hists
-    double totLcount[3][3] = {0};
-    string names[3][3];
-    for(int i1 = 0; i1 < 3; i1++){
-        for(int i2 = 0; i2 < 3; i2++){
+    TH1D *HistLPhi[ntrigbins][nassbins]; //identified hadrons hists
+    double totLcount[ntrigbins][nassbins] = {0};
+    string names[ntrigbins][nassbins];
+    for(int i1 = 0; i1 < ntrigbins; i1++){
+        for(int i2 = 0; i2 < nassbins; i2++){
             names[i1][i2] = "D Azi Cor "+to_string(triggerptcut[i1])+"-"+to_string(triggerptcut[i1+1])+" "+
                 to_string(assptmin[i2])+"-"+to_string(assptmax[i2]);
             HistLPhi[i1][i2] = new TH1D("Hybrid Had. Prediction", names[i1][i2].c_str(), NphiLBin, LphiBin);
@@ -109,7 +109,7 @@ int main(int argc, char* argv[]){
         double Px, Py, Pz, E, Eta, Phi, pStat, mass, Y;
         int Events =0;
         int TriggeredJetNumber=0;
-        int Lcount[3][3] = {0};
+        int Lcount[ntrigbins][nassbins] = {0};
         
         // Create a file on which histogram(s) can be saved.
         char outFileName[1000];
@@ -120,15 +120,15 @@ int main(int argc, char* argv[]){
 
         //temp hists for identified hadrons
         TH1D *Lpts = new TH1D("D counts", "D counts", 3, triggerptcut);
-        TH1D *tempL[3][3]; //identified hadrons hists
-        for(int i1 = 0; i1 < 3; i1++)
-            for(int i2 = 0; i2 < 3; i2++)
+        TH1D *tempL[ntrigbins][nassbins]; //identified hadrons hists
+        for(int i1 = 0; i1 < ntrigbins; i1++)
+            for(int i2 = 0; i2 < nassbins; i2++)
                 tempL[i1][i2] = new TH1D(names[i1][i2].c_str(), names[i1][i2].c_str(), NphiLBin, LphiBin);
 
         //hists for reco vs fragmentation
-        TH2D *recoHist[3][3]; //identified hadrons hists
-        for(int i1 = 0; i1 < 3; i1++)
-            for(int i2 = 0; i2 < 3; i2++)
+        TH2D *recoHist[ntrigbins][nassbins]; //identified hadrons hists
+        for(int i1 = 0; i1 < ntrigbins; i1++)
+            for(int i2 = 0; i2 < nassbins; i2++)
                 recoHist[i1][i2] = new TH2D(names[i1][i2].c_str(), names[i1][i2].c_str(), 2, 10, 30, 2, 10, 30);
 
         //Data structures for events read in to save run time
@@ -188,8 +188,8 @@ int main(int argc, char* argv[]){
                         double deltaphi = abs(Ls[i].get()->phi() - others[j].get()->phi());
                         if(deltaphi > pi) deltaphi = (2*pi) - deltaphi;
 
-                        for(int i1 = 0; i1 < 3; i1++){
-                            for(int i2 = 0; i2 < 3; i2++){
+                        for(int i1 = 0; i1 < ntrigbins; i1++){
+                            for(int i2 = 0; i2 < nassbins; i2++){
                                 if(Ls[i].get()->pt() > triggerptcut[i1] && Ls[i].get()->pt() < triggerptcut[i1+1] 
                                     && others[j].get()->pt() > assptmin[i2] && others[j].get()->pt() < assptmax[i2]){
                                         tempL[i1][i2]->Fill(deltaphi, 1.0/(phibinw));
@@ -217,8 +217,8 @@ int main(int argc, char* argv[]){
         xsectotal += HardCrossSection;
         
         //Dcounts
-        for(int i1 = 0; i1 < 3; i1++)
-            for(int i2 = 0; i2 < 3; i2++)
+        for(int i1 = 0; i1 < ntrigbins; i1++)
+            for(int i2 = 0; i2 < nassbins; i2++)
                 totLcount[i1][i2] += Lpts->GetBinContent(i1+1)*HardCrossSection/(Events);
         
         //event info
@@ -230,8 +230,8 @@ int main(int argc, char* argv[]){
         
         //add to totals histograms
         //tempD->Scale(1.0/(Dcount));
-        for(int i1 = 0; i1 < 3; i1++){
-            for(int i2 = 0; i2 < 3; i2++){
+        for(int i1 = 0; i1 < ntrigbins; i1++){
+            for(int i2 = 0; i2 < nassbins; i2++){
                 tempL[i1][i2]->GetXaxis()->SetTitle("D Reco Label");
                 tempL[i1][i2]->GetYaxis()->SetTitle("Hadron Reco Label");
                 tempL[i1][i2]->Write(names[i1][i2].c_str());
@@ -244,25 +244,25 @@ int main(int argc, char* argv[]){
         outFile->Close();
     } //k-loop ends here (pTHatBin loop)
 
-    //create root file for total plots
+    //Scaling totals by global factors and the identified pions by bin centers: dSigma/(2*pi*pT*dpT*dEta) and writing
+    int i = 1;
+    TFile hadron_file("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/data/D-meson-data.root");
     TFile* totalroot = new TFile( "root/totals.root", "RECREATE");
+    cout << "Got data file" << endl;
 
-    //Scaling totals by global factors and the identified pions by bin centers: dSigma/(2*pi*pT*dpT*dEta)
-    //HistDPhi->SetNormFactor(1.0);
-    for(int i1 = 0; i1 < 3; i1++){
-        for(int i2 = 0; i2 < 3; i2++){
+    for(int i2 = 0; i2 < nassbins-1; i2++){
+        for(int i1 = 1; i1 < ntrigbins; i1++){
             HistLPhi[i1][i2]->Scale(1.0/(totLcount[i1][i2]));
             HistLPhi[i1][i2]->GetXaxis()->SetTitle("Delta phi (rad)");
             HistLPhi[i1][i2]->GetYaxis()->SetTitle("(1/ND)(dNassc/dDelphi)");
  	        HistLPhi[i1][i2]->Write(names[i1][i2].c_str());
 
-            //plot output
-            TCanvas *c = new TCanvas();
-            HistLPhi[i1][i2]->Draw();
-            string plotname = "plots/" + names[i1][i2] + ".png";
-            HistLPhi[i1][i2]->GetYaxis()->SetRangeUser(0,10);
-            c->SaveAs(plotname.c_str());
-            c->Close();
+            //data comparison
+            string tablename = "Table " + to_string(i); i++;
+            TDirectory* hadrondir = (TDirectory*)hadron_file.Get(tablename.c_str());
+            TGraphErrors* hadronData = (TGraphErrors*) hadrondir->Get("Graph1D_y1");
+            TH1D* temphist = getZeroedHist(HistLPhi[i1][i2]);
+            ratioPlot(hadronData,temphist,names[i1][i2],false,false,"del phi");
         }
     }
 
