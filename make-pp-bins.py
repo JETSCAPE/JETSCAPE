@@ -79,12 +79,10 @@ if rerunning:
 
 # function to make xmls
 def makexml(bound, parameters, baseDir, xmltemplate, ECM):
-    events  = 10000
+    events  = 20000
     # extra events in first bin
     if RHIC:
         events = events*6
-    if bound[0] == 0:
-        events = events*2
 
     # appending option and filename
     ogfile = baseDir + "/dat/PP_Bin" + str(bound[0])+ "_" + str(bound[1])
