@@ -256,10 +256,13 @@ int main(int argc, char* argv[]){
     TFile* totalroot = new TFile( "root/totals.root", "RECREATE");
     cout << "Got data file" << endl;
 
-    THStack *histStack = new THStack();
-    histStack->Add(dRecoSpectra);
-    histStack->Add(dFragSpectra);
-    histStack->Write();
+    THStack *histStack = new THStack("Reco vs. Frag", "Reco vs. Frag");
+    dRecoSpectra->GetXaxis()->SetTitle("pT (GeV)"); dRecoSpectra->GetYaxis()->SetTitle("Yields");
+    scaleBins(dRecoSpectra); histStack->Add(dRecoSpectra);
+    scaleBins(dFragSpectra); histStack->Add(dFragSpectra);
+    dRecoSpectra->Write();
+    dFragSpectra->Write();
+    histStack->Write("Revo vs Frag");
 
     int i = 1;
     for(int i2 = 0; i2 < nassbins-1; i2++){
