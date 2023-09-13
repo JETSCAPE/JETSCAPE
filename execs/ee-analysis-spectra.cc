@@ -264,15 +264,15 @@ int main(int argc, char* argv[]){
     HistTempdiJet->Write();
     
     //scaling histograms
-    HistMultiplicity->Scale(1/(double)Events); //times 2 to match the data
-    HistTempSingleHadron->Scale(1/(double)Events,"width");
-    HistRecoHadron->Scale(1/(double)Events,"width");
-    tempPions->Scale(1/(double)Events,"width");
-    tempKaons->Scale(1/(double)Events,"width");
-    tempProtons->Scale(1/(double)Events,"width");
-    HistThrust->Scale(1/(double)thrustCount,"width");
-    HistTempJet->Scale(1/(double)Events);
-    HistTempdiJet->Scale(1/(double)Events);
+    HistMultiplicity->Scale(1.0/(double)Events); //times 2 to match the data
+    HistTempSingleHadron->Scale(1.0/(double)Events,"width");
+    HistRecoHadron->Scale(1.0/(double)Events,"width");
+    tempPions->Scale(1.0/(double)Events,"width");
+    tempKaons->Scale(1.0/(double)Events,"width");
+    tempProtons->Scale(1.0/(double)Events,"width");
+    HistThrust->Scale(1.0/(double)thrustCount,"width");
+    HistTempJet->Scale(1.0/(double)Events);
+    HistTempdiJet->Scale(1.0/(double)Events);
     
     TVector EventInfo(3);
     EventInfo[0] = 1;

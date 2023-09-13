@@ -31,6 +31,7 @@
 #include "TMultiGraph.h"
 #include "TLegend.h"
 #include "TRatioPlot.h"
+#include "THStack.h"
 
 #include "analysis.cc"
 
@@ -72,6 +73,10 @@ int main(int argc, char* argv[]){
     double assptmin[] = {0.3,0.3,1,0}; int nassbins = 4;
     double assptmax[] = {10000,1,10000,10000};
     
+    //D spectra variables
+    double spectraBins[] = {0.45, 0.6, 0.75, 0.9, 1.05, 1.2, 1.5, 1.8, 2.1, 2.4, 3.6, 4.8, 6.0, 7.2, 10.8, 14.4, 21.6, 28.8, 38.4, 48.0, 67.2, 86.4, 112.2};
+    int nSpectraBins = sizeof(spectraBins)/sizeof(spectraBins[0])-1;
+
     //Variables for single hadron spectrum
     double LphiBin[17];
     for(int i = 0; i < 17; i++) LphiBin[i] = i*pi/16;
@@ -89,8 +94,8 @@ int main(int argc, char* argv[]){
     }   
 
     //graph declaration for adding hadron spectra
-    TMultiGraph* hadronComp = new TMultiGraph();
-    TGraph* hadronComponents[NpTHardBin];
+    TH1D *dRecoSpectra = new TH1D("Reco hads", "Reco hads",nSpectraBins,spectraBins);
+    TH1D *dFragSpectra = new TH1D("Frag hads", "Frag hads",nSpectraBins,spectraBins);
 
     //debugging
     bool flag = true;
@@ -167,6 +172,8 @@ int main(int argc, char* argv[]){
                     if(abs(Y) < LYcut){
                         Ls.push_back(hadrons[i]);
                         Lpts->Fill(PT);
+                        if(pStat==811) dRecoSpectra->Fill(PT);
+                        if(pStat==821) dFragSpectra->Fill(PT);
                     }
                 }
                 
@@ -244,12 +251,17 @@ int main(int argc, char* argv[]){
         outFile->Close();
     } //k-loop ends here (pTHatBin loop)
 
-    //Scaling totals by global factors and the identified pions by bin centers: dSigma/(2*pi*pT*dpT*dEta) and writing
-    int i = 1;
+    //Final writing
     TFile hadron_file("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/data/D-meson-data.root");
     TFile* totalroot = new TFile( "root/totals.root", "RECREATE");
     cout << "Got data file" << endl;
 
+    THStack *histStack = new THStack();
+    histStack->Add(dRecoSpectra);
+    histStack->Add(dFragSpectra);
+    histStack->Write();
+
+    int i = 1;
     for(int i2 = 0; i2 < nassbins-1; i2++){
         for(int i1 = 1; i1 < ntrigbins; i1++){
             HistLPhi[i1][i2]->Scale(1.0/(totLcount[i1][i2]));
@@ -265,6 +277,7 @@ int main(int argc, char* argv[]){
             ratioPlot(hadronData,temphist,names[i1][i2],false,false,"del phi");
         }
     }
+    totalroot->Close();
 
     //Done. Script run time
     int EndTime = time(NULL);

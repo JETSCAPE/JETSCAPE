@@ -140,9 +140,9 @@ int main(int argc, char* argv[]){
     myfile->Close();
     
     //scaling histograms
-    HistDstars->Scale(1/(double)Events,"width");
+    HistDstars->Scale(1.0/(double)Events,"width");
     HistDstars->Write("Reco Hadron Ratio");
-    ratioPlot(data,HistDstars,"D* xp");
+    ratioPlot(data,HistDstars,"Dstarxp");
     
     TVector EventInfo(3);
     EventInfo[0] = 1;

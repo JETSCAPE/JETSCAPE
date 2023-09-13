@@ -214,8 +214,8 @@ int main(int argc, char* argv[]){
     } //k-loop ends here (pTHatBin loop)
 
     //Scaling totals by global factors and the identified pions by bin centers: dSigma/(2*pi*pT*dpT*dEta)
-    scaleBins(HistTotalPions,ProfileTotalPions,(1/(2*M_PI*2.0*idHadronEtaCut)));
-    scaleBins(HistTotalHads,ProfileTotalHads,(1/(2*M_PI*2.0*SingleHadronEtaCut)));
+    scaleBins(HistTotalPions,ProfileTotalPions,(1.0/(2*M_PI*2.0*idHadronEtaCut)));
+    scaleBins(HistTotalHads,ProfileTotalHads,(1.0/(2*M_PI*2.0*SingleHadronEtaCut)));
  	
     //create root file for total plots
     TFile* totalroot = new TFile( "root/totals.root", "RECREATE");
