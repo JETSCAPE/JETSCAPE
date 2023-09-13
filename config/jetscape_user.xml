@@ -2,48 +2,49 @@
 
 <jetscape>
   
-  <nEvents> 2 </nEvents>
+  <nEvents> 100000 </nEvents>
   
-  <JetScapeWriterAscii> on </JetScapeWriterAscii>
-
-  <!-- Inital State Module  -->
-  <!--IS>
-    <Trento> </Trento>
-  </IS-->
+  <outputFilename>/scratch/user/cameron.parker/JETSCAPE-COMP-HH_colorrecomb/test</outputFilename>
+  <JetScapeWriterAsciiGZ> on </JetScapeWriterAsciiGZ>
+  <finalHadsOnly> on </finalHadsOnly>
   
   <!-- Hard Process -->
   <Hard>
-    <PythiaGun>
-      <pTHatMin>50</pTHatMin>
-      <pTHatMax>70</pTHatMax>
-      <eCM>5020</eCM>
-    </PythiaGun>
+    <epemGun>
+      <eCM>91.2</eCM>
+      <LinesToRead>
+         MultipartonInteractions:pT0Ref = 2.28
+         MultipartonInteractions:ecmPow = 0.215
+      </LinesToRead>
+    </epemGun>
   </Hard>
-  
-  <!--Preequilibrium Dynamics Module -->
-  <!--Preequilibrium>
-    <NullPreDynamics> </NullPreDynamics>
-  </Preequilibrium-->
-  
-  <!-- Hydro  Module  -->
-  <!--Hydro>
-    <Brick bjorken_expansion_on="false" start_time="0.6"> </Brick>
-  </Hydro-->
   
   <!--Eloss Modules -->
   <Eloss>
-    <Matter>
+    <maxT> 200 </maxT>
+    <lambdaQCD> 0.2 </lambdaQCD>
+    
+    <Matter> 
+      <Q0>1</Q0>
       <in_vac> 1 </in_vac>
+      <vir_factor>0.25</vir_factor>
+      <recoil_on> 0 </recoil_on>
+      <broadening_on> 0 </broadening_on>
+      <brick_med> 0 </brick_med>
     </Matter>
   </Eloss>
   
-  <!--PartonPrinter>
-      <FileName>./FinalPartonsInfo.dat</FileName>
-  </PartonPrinter-->
-  
   <!-- Jet Hadronization Module -->
   <JetHadronization>
-    <name>colorless</name>
+    <name>hybrid</name>
+    <eCMforHadronization>0</eCMforHadronization>
+    <shower_recofactor>1.0</shower_recofactor>
+    <LinesToRead>
+      StringFlav:probStoUD = 0.217
+      StringFlav:probQQtoQ = 0.081
+      ParticleDecays:tau0Max = 10
+    </LinesToRead>
+    <ignorePhotons> on </ignorePhotons>
   </JetHadronization>
   
 </jetscape>
