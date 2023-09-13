@@ -16,8 +16,7 @@ RHIC = False
 Drun = False
 Lrun = False
 Erun = False
-LHC900 = False
-LHC7000 = False
+LHC13000 = False
 reading = False
 rerunning = False
 appending = False
@@ -31,16 +30,10 @@ for i, option in enumerate(sys.argv):
         system = "RHIC"
         RHIC = True
         ECM = "200"
-    if "LHC900" in option:
-        system = "LHC900"
-        LHC900 = True
-        ECM = "900"
-        softOnly = True
-    if "LHC7000" in option:
-        system = "LHC7000"
-        LHC7000 = True
-        ECM = "7000"
-        softOnly = True
+    if "LHC13000" in option:
+        system = "LHC13000"
+        LHC13000 = True
+        ECM = "LHC13000"
     if "Drun" in option:
         system = "Drun"
         Drun = True
