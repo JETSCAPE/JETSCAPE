@@ -163,7 +163,7 @@ void ratioPlot(TH1D* dataHist, TH1D* predictionHist, string title, bool xlog){
 }
 
 //overload for graph input
-void ratioPlot(TGraphErrors* dataHist, TH1D* predictionHist, string title, bool xlog, bool ylog, string xname){
+void ratioPlot(TGraphErrors* dataHist, TH1D* predictionHist, string title, string xname, string yname, bool xlog, bool ylog){
     //values for plots
     int bins = predictionHist->GetNbinsX();
     double data[bins], prediction[bins], xcoords[bins], dataErrors[bins], binWidths[bins], asym[bins], asymErrors[bins];
@@ -202,8 +202,8 @@ void ratioPlot(TGraphErrors* dataHist, TH1D* predictionHist, string title, bool 
     TMultiGraph* total = new TMultiGraph();
     total->Add(predictionPlot,"l");
     total->Add(dataPlot,"AP");
-    total->SetTitle("Jetscape Comparison");
-    total->GetYaxis()->SetTitle(title.c_str());
+    total->SetTitle(title.c_str());
+    total->GetYaxis()->SetTitle(yname.c_str());
     total->GetXaxis()->SetRangeUser(xcoords[0]-binWidths[0],xcoords[bins-1]+binWidths[bins-1]);
     //total->GetYaxis()->SetTitleSize(0.05);
     total->GetYaxis()->SetLabelSize(0.04);
@@ -214,9 +214,10 @@ void ratioPlot(TGraphErrors* dataHist, TH1D* predictionHist, string title, bool 
     comparisonPlot->GetXaxis()->SetRangeUser(xcoords[0]-binWidths[0],xcoords[bins-1]+binWidths[bins-1]);
     comparisonPlot->GetYaxis()->SetRangeUser(0,2);
     comparisonPlot->GetXaxis()->SetTitle(xname.c_str());
+    comparisonPlot->GetXaxis()->SetTitleOffset(0.75);
     comparisonPlot->GetXaxis()->SetTitleSize(0.06);
     comparisonPlot->GetXaxis()->SetLabelSize(0.06);
-    comparisonPlot->GetYaxis()->SetTitle("Asymmetry");
+    comparisonPlot->GetYaxis()->SetTitle("JETSCAPE/data");
     comparisonPlot->GetYaxis()->SetTitleSize(0.06);
     comparisonPlot->GetYaxis()->SetLabelSize(0.06);
     comparisonPlot->SetMarkerStyle(kFullDotLarge);

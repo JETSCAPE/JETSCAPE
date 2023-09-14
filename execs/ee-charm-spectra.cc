@@ -95,7 +95,7 @@ int main(int argc, char* argv[]){
     //particle info declaration
     int  SN=0,PID=0;
     double Px, Py, Pz, E, Eta, Phi,pStat;
-    int Events =0;
+    int Events=0;
     vector<shared_ptr<Hadron>> hadrons;
     vector<double> pts, ids, recos;
     
@@ -140,9 +140,9 @@ int main(int argc, char* argv[]){
     myfile->Close();
     
     //scaling histograms
-    HistDstars->Scale(1.0/(double)Events,"width");
+    HistDstars->Scale((1000.0*0.0389*0.677)/(double)Events,"width");
     HistDstars->Write("Reco Hadron Ratio");
-    ratioPlot(data,HistDstars,"Dstarxp");
+    ratioPlot(data,HistDstars,"Dstarxe","xe","1/Nevents dD*/dxe",false,false);
     
     TVector EventInfo(3);
     EventInfo[0] = 1;

@@ -74,7 +74,7 @@ int main(int argc, char* argv[]){
     double assptmax[] = {10000,1,10000,10000};
     
     //D spectra variables
-    double spectraBins[] = {0.45, 0.6, 0.75, 0.9, 1.05, 1.2, 1.5, 1.8, 2.1, 2.4, 3.6, 4.8, 6.0, 7.2, 10.8, 14.4, 21.6, 28.8, 38.4, 48.0, 67.2, 86.4, 112.2};
+    double spectraBins[] = {0.3,0.45, 0.6, 0.75, 0.9, 1.05, 1.2, 1.5, 1.8, 2.1, 2.4, 3.6, 4.8, 6.0, 7.2, 10.8, 14.4, 21.6, 28.8, 38.4, 48.0, 67.2, 86.4, 112.2};
     int nSpectraBins = sizeof(spectraBins)/sizeof(spectraBins[0])-1;
 
     //Variables for single hadron spectrum
@@ -169,11 +169,11 @@ int main(int argc, char* argv[]){
                 
                 // making particle lists
                 if(abs(PID) == 411 || abs(PID) == 413 || abs(PID) == 421){
+                    if(pStat==811) dRecoSpectra->Fill(PT);
+                    if(pStat==821) dFragSpectra->Fill(PT);
                     if(abs(Y) < LYcut){
                         Ls.push_back(hadrons[i]);
                         Lpts->Fill(PT);
-                        if(pStat==811) dRecoSpectra->Fill(PT);
-                        if(pStat==821) dFragSpectra->Fill(PT);
                     }
                 }
                 
@@ -277,7 +277,8 @@ int main(int argc, char* argv[]){
             TDirectory* hadrondir = (TDirectory*)hadron_file.Get(tablename.c_str());
             TGraphErrors* hadronData = (TGraphErrors*) hadrondir->Get("Graph1D_y1");
             TH1D* temphist = getZeroedHist(HistLPhi[i1][i2]);
-            ratioPlot(hadronData,temphist,names[i1][i2],false,false,"del phi");
+            string xname = "Del Phi", yname = "1/ND dNpairs/dDelPhi";
+            ratioPlot(hadronData,temphist,names[i1][i2],xname,yname);
         }
     }
     totalroot->Close();

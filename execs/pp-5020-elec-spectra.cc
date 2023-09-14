@@ -268,7 +268,7 @@ int main(int argc, char* argv[]){
             //grabbing appropriate data file
             string dataname = "Graph1D_y"+to_string(i2+1);
             aliceData[i2] = (TGraphErrors*)hadrondir->Get(dataname.c_str());
-            ratioPlot(aliceData[i2],HistePhi[i1][i2],names[i1][i2],false,false,"delta phi");
+            ratioPlot(aliceData[i2],HistePhi[i1][i2],names[i1][i2],"delta phi","1/Nel dNpairs/dDelPhi");
         }
     }
 

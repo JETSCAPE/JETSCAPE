@@ -318,8 +318,8 @@ int main(int argc, char* argv[]){
     TDirectory* multdir = (TDirectory*)alephfile.Get("Table 18");
     TGraphErrors* thrustgraph = (TGraphErrors*) thrustdir->Get("Graph1D_y1");
     TGraphErrors* multgraph = (TGraphErrors*) multdir->Get("Graph1D_y1");
-    ratioPlot(thrustgraph, HistThrust, "Thrust");
-    ratioPlot(multgraph, HistMultiplicity, "Multiplicity");
+    //ratioPlot(thrustgraph, HistThrust, "Thrust");
+    //ratioPlot(multgraph, HistMultiplicity, "Multiplicity");
 
     //Done. Script run time
     int EndTime = time(NULL);
