@@ -43,10 +43,26 @@ public:
 
   bool gammaLoss_on, in_vac, brick_med, recoil_on, broadening_on;
 
+  double initR0, initRx, initRy, initRz, initVx, initVy, initVz, initRdotV,
+      initVdotV, initEner;
+
   double tStart;// = 0.6;
+  double hydro_Tc, qhat0, alphas, brick_length, vir_factor, qhat, Q00;
   int iEvent;
   bool debug_flag = 0;
   long NUM1;
+
+
+  //qhat stuff
+  double GeneralQhatFunction(int QhatParametrization, double Temperature, double EntropyDensity, double FixAlphas, double Qhat0, double E, double muSquare);
+  double RunningAlphaS(double muSquare);
+  double VirtualityQhatFunction(int QhatParametrization,  double enerLoc, double muSquare);  
+  double IntegralPDF(double xB, double a, double b);
+  int QhatParametrizationType;
+  double qhatA, qhatB, qhatC, qhatD;
+  static const int dimQhatTab = 151;
+  double qhatTab1D[dimQhatTab] = {0.0};
+  double qhatTab2D[dimQhatTab][dimQhatTab] = {{0.0}};
 
   // flag to make sure initialize only once
   static bool flag_init;
