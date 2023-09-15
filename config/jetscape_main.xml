@@ -255,6 +255,7 @@
     <MUSIC>
       <name>MUSIC</name>
       <MUSIC_input_file>music_input</MUSIC_input_file>
+      <beastMode>0</beastMode>
       <Initial_time_tau_0>0.5</Initial_time_tau_0>
       <output_evolution_to_file>1</output_evolution_to_file>
       <shear_viscosity_eta_over_s>0.08</shear_viscosity_eta_over_s>
