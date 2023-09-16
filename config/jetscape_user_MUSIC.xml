@@ -41,9 +41,9 @@
   <!-- Hard Process -->
   <Hard>
     <PythiaGun>
-      <pTHatMin>50</pTHatMin>
-      <pTHatMax>70</pTHatMax>
-      <eCM>5020</eCM>
+      <pTHatMin>20</pTHatMin>
+      <pTHatMax>30</pTHatMax>
+      <eCM>200</eCM>
     </PythiaGun>
   </Hard>
 
