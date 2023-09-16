@@ -454,10 +454,31 @@ if ( USE_MUSIC AND USE_ISS AND USE_SMASH )
     target_link_libraries(runJetscape ${SMASH_LIBRARIES} ${MPI_LIBRARIES} ${GSL_LIBRARIES})
 endif ( USE_MUSIC AND USE_ISS AND USE_SMASH )
 
-#if (${ROOT_FOUND})
-#  add_executable(PythiaBrickTestRoot ./examples/custom_examples/PythiaBrickTestRoot.cc)
-#  target_link_libraries(PythiaBrickTestRoot JetScape)
-#endif(${ROOT_FOUND})
+if (${ROOT_FOUND})
+  add_executable(PythiaBrickTestRoot ./examples/custom_examples/PythiaBrickTestRoot.cc)
+  target_link_libraries(PythiaBrickTestRoot JetScape)
+
+  find_program(FASTJET_CONFIG fastjet-config)
+
+  if(FASTJET_CONFIG)
+
+    execute_process(COMMAND ${FASTJET_CONFIG} --prefix OUTPUT_VARIABLE FASTJETJDIR OUTPUT_STRIP_TRAILING_WHITESPACE)
+    set(FJDIR ${FASTJETJDIR})
+
+    message("ROOT and Full Fastjet and Recursive tools needed more detailed analysis ...")
+    message("Found ... Fastjet DIR: ${FJDIR}")
+
+    include_directories(${FJDIR}/include)
+
+    add_executable(anaTest ../examples/custom_examples/anaTest.cc)
+
+    target_link_libraries(anaTest JetScape)
+    target_link_libraries(anaTest -L${FJDIR}/lib -lRecursiveTools -lfastjet -lfastjettools)
+
+  endif(FASTJET_CONFIG)
+
+
+endif(${ROOT_FOUND})
 
 # -----------------------------------------------------------
 #### copy essential files for MUSIC to build/
