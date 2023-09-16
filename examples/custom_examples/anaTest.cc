@@ -121,11 +121,6 @@ int main(int argc, char** argv)
   vector<shared_ptr<PartonShower>> mShowers;
   vector<fastjet::PseudoJet> vfinals;
 
-  //Directly with template: provide the relevant stream
-  //auto reader=make_shared<JetScapeReader<ifstream>>("test_out.dat");
-  //auto reader=make_shared<JetScapeReader<igzstream>>("test_out.dat.gz");
-
-  // Hide Template (see class declarations in reader/JetScapeReader.h) ...
   auto reader=make_shared<JetScapeReaderAscii>("test_out_music.dat");
   //auto reader=make_shared<JetScapeReaderAsciiGZ>("test_out.dat.gz");
 
