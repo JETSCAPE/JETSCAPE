@@ -108,8 +108,11 @@ int main(int argc, char** argv)
   //----------------------------------------------------------------------
 
   TFile *f=new TFile("ana_test.root","RECREATE");
-  TH1D *hPt=new TH1D("hPt","",60,0,60);
-  TH1D *hPtP=new TH1D("hPtP","",60,0,60);
+  TH1D *hPt=new TH1D("hPt","",60,0,60);hPt->Sumw2();
+  TH1D *hPtP=new TH1D("hPtP","",60,0,60);hPtP->Sumw2();
+  TH1D *hM=new TH1D("hM","",80,0,20);hM->Sumw2();
+  TH1D *hRg=new TH1D("hRg","",20,0,1);hRg->Sumw2();
+  TH1D *hZg=new TH1D("hZg","",12,0,0.6);hZg->Sumw2();
 
   //Do some dummy jetfinding ...
   fastjet::JetDefinition jet_def(fastjet::antikt_algorithm, R);
@@ -172,13 +175,24 @@ int main(int argc, char** argv)
         cout<<"Anti-kT jet "<<k<<" : "<<jets[k]<<endl;
 
         double rg=sd(jets[k]).structure_of<fastjet::contrib::SoftDrop>().delta_R();
-	      double z=sd(jets[k]).structure_of<fastjet::contrib::SoftDrop>().symmetry();
-        cout<<rg<<" "<<z<<endl;
+	      double zg=sd(jets[k]).structure_of<fastjet::contrib::SoftDrop>().symmetry();
+        cout<<rg<<" "<<zg<<endl;
 
         hPt->Fill(jets[k].pt());
+        hM->Fill(jets[k].pt());
+        hRg->Fill(rg);
+        hZg->Fill(zg);
 
         nJets++;
+
+        if (k>1) break;
       }
+
+      /*
+      auto hadrons = reader->GetHadrons();
+      cout<<"Number of hadrons is: " << hadrons.size() << endl;
+      */
+      
       cout<<endl;
 
       vfinals.clear();
