@@ -156,6 +156,7 @@ void Matter::Init() {
 
   JSINFO << MAGENTA << "MATTER input parameter";
   JSINFO << MAGENTA << "matter shower on: " << matter_on;
+  JSINFO << MAGENTA << "gamma shower on: " << gammaLoss_on;
   JSINFO << MAGENTA << "in_vac: " << in_vac << "  brick_med: " << brick_med
          << "  recoil_on: " << recoil_on<<", tStart ="<<tStart;
   JSINFO << MAGENTA << "Q0: " << Q00 << " vir_factor: " << vir_factor
@@ -203,6 +204,7 @@ void Matter::Dump_pIn_info(int i, vector<Parton> &pIn) {
 
 void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
                           vector<Parton> &pIn, vector<Parton> &pOut) {
+  //JSINFO << "matter";
 
   if (std::isnan(pIn[0].e()) || std::isnan(pIn[0].px()) ||
       std::isnan(pIn[0].py()) || std::isnan(pIn[0].pz()) ||
@@ -267,10 +269,10 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
   for (int i = 0; i < pIn.size(); i++) {
 
     // Reject photons
-    if (pIn[i].pid() == photonid && !gammaLoss_on) {
-      if(pIn[i].pstat() != 22) {
+    if (pIn[i].pid() == photonid) {
+      if(pIn[i].pstat() != 22 && gammaLoss_on == false) {
             pIn[i].set_stat(22);
-      	    VERBOSE(1) << BOLDYELLOW
+      	    JSINFO << BOLDYELLOW
                        << " A photon was RECEIVED with px = " << pIn[i].px()
                        << " from framework and sent back ";
 

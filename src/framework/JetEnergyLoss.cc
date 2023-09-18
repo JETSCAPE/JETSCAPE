@@ -51,6 +51,7 @@ JetEnergyLoss::JetEnergyLoss() {
   GetHydroCellSignalConnected = false;
   GetHydroTau0SignalConnected = false;
   SentInPartonsConnected = false;
+  gammaLoss_on = false;
 
   deltaT = 0;
   maxT = 0;
@@ -112,6 +113,9 @@ void JetEnergyLoss::Init() {
 
   maxT = GetXMLElementDouble({"Eloss", "maxT"});
   JSINFO << "Eloss shower with deltaT = " << deltaT << " and maxT = " << maxT;
+
+  gammaLoss_on = GetXMLElementInt({"Eloss", "gammaLoss", "gammaLoss_on"});
+  JSINFO << "gamma shower on: " << gammaLoss_on;
 
   std::string mutexOnString = GetXMLElementText({"Eloss", "mutex"}, false);
   if (!mutexOnString.compare("ON"))
@@ -190,9 +194,10 @@ void JetEnergyLoss::DoShower() {
     currentTime += deltaT;
 
     for (int i = 0; i < pIn.size(); i++) {
+      if(pIn[i].pstat() == 22) continue;
       vector<Parton> pInTempModule;
       vector<Parton> pOutTemp;
-      // JSINFO << pIn.at(i).edgeid();
+      //JSINFO << pIn.at(i).edgeid();
       pInTempModule.push_back(pIn[i]);
       SentInPartons(deltaT, currentTime, pIn[i].pt(), pInTempModule, pOutTemp);
 
@@ -281,6 +286,7 @@ void JetEnergyLoss::DoShower() {
         }
       }
 
+      //JSINFO << "Updating parton shower";
       // update parton shower
       if (pOutTemp.size() == 0) {
         // this is the free-streaming case for MATTER
@@ -294,7 +300,7 @@ void JetEnergyLoss::DoShower() {
             continue;
         }
         // do not push back photons
-        if (pInTempModule[0].isPhoton(pInTempModule[0].pid()))
+        if (pInTempModule[0].isPhoton(pInTempModule[0].pid()) && gammaLoss_on == false)
           continue;
         pInTemp.push_back(pInTempModule[0]);
       } else if (pOutTemp.size() == 1) {
@@ -309,7 +315,7 @@ void JetEnergyLoss::DoShower() {
             continue;
         }
         // do not push back photons
-        if (pOutTemp[0].isPhoton(pOutTemp[0].pid()))
+        if (pOutTemp[0].isPhoton(pOutTemp[0].pid()) && gammaLoss_on == false)
           continue;
         pInTemp.push_back(pOutTemp[0]);
       } else {
@@ -327,13 +333,15 @@ void JetEnergyLoss::DoShower() {
           if (pOutTemp[k].pstat() == miss_stat)
             continue;
           // do not push back photons
-          if (pOutTemp[k].isPhoton(pOutTemp[k].pid()))
+          if (pOutTemp[k].isPhoton(pOutTemp[k].pid()) && gammaLoss_on == false)
             continue;
 
           pOut.push_back(pOutTemp[k]);
         }
       }
     }
+
+    //JSINFO << "Did eloss for timestep";
 
     // one time step is finished, now update parton shower to pIn
     pIn.clear();

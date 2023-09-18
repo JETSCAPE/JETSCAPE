@@ -220,6 +220,7 @@ protected:
 private:
   double deltaT;
   double maxT;
+  double gammaLoss_on;
 
   double qhat;
   shared_ptr<Parton> inP;

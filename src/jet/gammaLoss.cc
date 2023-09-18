@@ -126,8 +126,11 @@ void gammaLoss::Dump_pIn_info(int i, vector<Parton> &pIn) {
 }
 
 void gammaLoss::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton> &pIn, vector<Parton> &pOut){
+  //JSINFO << "gamma";
+
   //initial declarations
   double velocity[4], xStart[4], velocity_jet[4];
+  std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
 
   //parton loop
   for(int i=0; i<pIn.size(); i++){
@@ -228,7 +231,28 @@ void gammaLoss::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parto
       }
     }
     if(brick_med) length = brick_length*fmToGeVinv; /// length in GeV-1 will have to changed for hydro
+
+    //getting temp from hydro
+    double boostedTStart = tStart * cosh(SpatialRapidity);
+    if (!in_vac && now_R0 >= boostedTStart) {
+      if (now_R0 * now_R0 < now_Rz * now_Rz)
+        cout << "Warning 1: " << now_R0 << "  " << now_Rz << endl;
+      GetHydroCellSignal(now_R0, now_Rx, now_Ry, now_Rz, check_fluid_info_ptr);
+      //VERBOSE(8)<<MAGENTA<<"Temperature from medium = "<<check_fluid_info_ptr->temperature;
+      now_temp = check_fluid_info_ptr->temperature;
+      //JSINFO << BOLDYELLOW << "MATTER time = " << now_R0 << " x = " << now_Rx << " y = " << now_Ry << " z = " << now_Rz << " temp = " << now_temp;
+      //JSINFO << BOLDYELLOW << "MATTER initVx, initVy, initVz =" << initVx << ", " << initVy << ", " << initVz;
+      //JSINFO << BOLDYELLOW << "MATTER velocityMod=" << velocityMod;
+    } else {
+      now_temp = 0.0;
+    }
+
+    cout << "Temp: " << now_temp << endl;
+    pIn[i].set_stat(22);
+    /*pOut.push_back(pIn[i]);*/
+    //pIn.erase(pIn.begin()+i);
   }
+
   return;
 }
 

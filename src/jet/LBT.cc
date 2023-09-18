@@ -127,6 +127,7 @@ void LBT::Init() {
   JSINFO << MAGENTA << "LBT parameters -- in_med: " << vacORmed
          << " Q0: " << Q00 << "  only_leading: " << Kprimary
          << "  alpha_s: " << fixAlphas << "  hydro_Tc: " << hydro_Tc<<", tStart="<<tStart;
+  JSINFO << MAGENTA << "gamma shower on: " << gammaLoss_on;
 
   if (!flag_init) {
     read_tables(); // initialize various tables
@@ -157,6 +158,7 @@ void LBT::WriteTask(weak_ptr<JetScapeWriter> w) {
 
 void LBT::DoEnergyLoss(double deltaT, double time, double Q2,
                        vector<Parton> &pIn, vector<Parton> &pOut) {
+  //JSINFO << "lbt";
 
   double z = 0.5;
 
@@ -182,7 +184,10 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2,
     // Reject photons
 
     if (pIn[i].pid() == photonid) {
-      if(pIn[i].pstat() != 22 && !gammaLoss_on) {
+      if(pIn[i].pstat() != 22 && gammaLoss_on == false) {
+        JSINFO << BOLDYELLOW
+                       << " A photon was RECEIVED with px = " << pIn[i].px()
+                       << " from framework and sent back ";
 	      pIn[i].set_stat(22); //Add status code 22 for photons that pass through LBT if it is already not assigned by one of the other JEL modules.
               pOut.push_back(pIn[i]);
       }
