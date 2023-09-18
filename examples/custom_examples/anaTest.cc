@@ -84,6 +84,14 @@ int main(int argc, char** argv)
   cout<<endl;
   Show();
 
+  string fName = "test_out";
+
+  if (argc > 1)
+    fName = argv[1];
+
+  string outFile = (fName + ".root");
+  //cout<<outFile<<endl;
+  string inFile = (fName + ".dat.gz");
   //----------------------------------------------------------------------
 
   double z_cut = 0.1;
@@ -99,7 +107,7 @@ int main(int argc, char** argv)
 
   // first get some anti-kt jets
   double R = .4;
-  double ptmin = 2.0;
+  double ptmin = 5.;
 
   // jet selectors
   fastjet::Selector sel_rap_jet = fastjet::SelectorAbsRapMax(etaMax-R);
@@ -107,12 +115,17 @@ int main(int argc, char** argv)
 
   //----------------------------------------------------------------------
 
-  TFile *f=new TFile("ana_test.root","RECREATE");
+  TFile *f=new TFile(outFile.c_str(),"RECREATE");
   TH1D *hPt=new TH1D("hPt","",60,0,60);hPt->Sumw2();
   TH1D *hPtP=new TH1D("hPtP","",60,0,60);hPtP->Sumw2();
   TH1D *hM=new TH1D("hM","",80,0,20);hM->Sumw2();
   TH1D *hRg=new TH1D("hRg","",20,0,1);hRg->Sumw2();
   TH1D *hZg=new TH1D("hZg","",12,0,0.6);hZg->Sumw2();
+
+  TH1D *hPtH=new TH1D("hPtH","",60,0,60);hPtH->Sumw2();
+  TH1D *hMH=new TH1D("hMH","",80,0,20);hMH->Sumw2();
+  TH1D *hRgH=new TH1D("hRgH","",20,0,1);hRgH->Sumw2();
+  TH1D *hZgH=new TH1D("hZgH","",12,0,0.6);hZgH->Sumw2();
 
   //Do some dummy jetfinding ...
   fastjet::JetDefinition jet_def(fastjet::antikt_algorithm, R);
@@ -124,27 +137,29 @@ int main(int argc, char** argv)
   vector<shared_ptr<PartonShower>> mShowers;
   vector<fastjet::PseudoJet> vfinals;
 
-  auto reader=make_shared<JetScapeReaderAscii>("test_out_music.dat");
-  //auto reader=make_shared<JetScapeReaderAsciiGZ>("test_out.dat.gz");
+  //auto reader=make_shared<JetScapeReaderAscii>("test_out_music.dat");
+  auto reader=make_shared<JetScapeReaderAsciiGZ>(inFile);
 
   // reads in multiple events and multiple shower per event
   // commentend out so that you get the dot graph file for the first shower in the first event
   // (add in and the file gets overriden)
 
-  int nJets = 0;
+  int nJetsP = 0;
+  int nJetsH = 0;
+  int nEvents = 0;
 
   while (!reader->Finished())
     {
       reader->Next();
 
-      cout<<"Analyze current event = "<<reader->GetCurrentEvent()<<endl;
+      //cout<<"Analyze current event = "<<reader->GetCurrentEvent()<<endl;
       mShowers=reader->GetPartonShowers();
 
       int finals = 0;
       for (int i=0;i<mShowers.size();i++)
       {
-        cout<<" Analyze parton shower = "<<i<<endl;
-        cout<<"Shower initiating parton : "<<*(mShowers[i]->GetPartonAt(0))<<endl;
+        //cout<<" Analyze parton shower = "<<i<<endl;
+        //cout<<"Shower initiating parton : "<<*(mShowers[i]->GetPartonAt(0))<<endl;
         //cout<<endl;
         hPtP->Fill(mShowers[i]->GetPartonAt(0)->pt());
 
@@ -156,13 +171,13 @@ int main(int argc, char** argv)
         vfinals.insert(vfinals.end(),mSfinal.begin(), mSfinal.end());
       }
 
-      cout << " Found " << finals << " final state partons." << endl;
+      //cout << " Found " << finals << " final state partons." << endl;
       //DEBUG:
       //cout<<vfinals.size()<<endl;
 
       fastjet::ClusterSequence cs(vfinals, jet_def);
-
       vector<fastjet::PseudoJet> jets = sel_rap_jet(fastjet::sorted_by_pt(cs.inclusive_jets(ptmin)));
+
       // Output of found jets ...
       //cout<<endl;
       /*
@@ -170,30 +185,50 @@ int main(int argc, char** argv)
       vector<fastjet::PseudoJet> jetPar_matched;
       jetPar_matched = fastjet::sorted_by_pt(sel_match(jets));
       */
-
+      //cout<<"AT PARTONIC LEVEL " << endl;
       for (int k=0;k<jets.size();k++) {
-        cout<<"Anti-kT jet "<<k<<" : "<<jets[k]<<endl;
+        //cout<<"Anti-kT jet "<<k<<" : "<<jets[k]<<endl;
 
         double rg=sd(jets[k]).structure_of<fastjet::contrib::SoftDrop>().delta_R();
 	      double zg=sd(jets[k]).structure_of<fastjet::contrib::SoftDrop>().symmetry();
-        cout<<rg<<" "<<zg<<endl;
+        //cout<<rg<<" "<<zg<<endl;
 
         hPt->Fill(jets[k].pt());
-        hM->Fill(jets[k].pt());
+        hM->Fill(jets[k].m());
         hRg->Fill(rg);
         hZg->Fill(zg);
 
-        nJets++;
+        nJetsP++;
 
-        if (k>1) break;
+        //if (k>1) break;
       }
 
-      /*
+      //On Hadronic level ...
       auto hadrons = reader->GetHadrons();
-      cout<<"Number of hadrons is: " << hadrons.size() << endl;
-      */
-      
-      cout<<endl;
+      //cout<<"Number of hadrons is: " << hadrons.size() << endl;
+
+      fastjet::ClusterSequence hcs(reader->GetHadronsForFastJet(), jet_def);
+      vector<fastjet::PseudoJet> hjets = sel_rap_jet(fastjet::sorted_by_pt(hcs.inclusive_jets(ptmin)));
+
+      //cout<<"AT HADRONIC LEVEL " << endl;
+      for (int k=0;k<hjets.size();k++) {
+        //cout<<"Anti-kT jet "<<k<<" : "<<hjets[k]<<endl;
+
+        double rg=sd(hjets[k]).structure_of<fastjet::contrib::SoftDrop>().delta_R();
+	      double zg=sd(hjets[k]).structure_of<fastjet::contrib::SoftDrop>().symmetry();
+        //cout<<rg<<" "<<zg<<endl;
+
+        hPtH->Fill(hjets[k].pt());
+        hMH->Fill(hjets[k].m());
+        hRgH->Fill(rg);
+        hZgH->Fill(zg);
+
+        nJetsH++;
+      }
+
+      //REMARK JP: Fill the histograms can be done smarter ...
+      nEvents++;
+      //cout<<endl;
 
       vfinals.clear();
       mShowers.clear();
@@ -203,6 +238,12 @@ int main(int argc, char** argv)
     f->Close();
 
     reader->Close();
+
+    cout<<"Analyzed #Events = "<<nEvents<<endl;
+    cout<<"pTmin = "<<ptmin<<endl;
+    cout<<"# Partonic Jets = "<<nJetsP<<endl;
+    cout<<"# Hadronic Jets = "<<nJetsH<<endl;
+    cout<<endl;
 }
 
 // -------------------------------------

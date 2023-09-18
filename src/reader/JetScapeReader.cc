@@ -2,7 +2,7 @@
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
  * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -110,7 +110,8 @@ template <class T> void JetScapeReader<T>::Next() {
   string line;
   string token;
 
-  JSINFO << "Current Event = " << currentEvent;
+  if (currentEvent%100 == 0)
+    JSINFO << "Current Event = " << currentEvent;
 
   pShowers.push_back(make_shared<PartonShower>());
   pShower = pShowers[0];
