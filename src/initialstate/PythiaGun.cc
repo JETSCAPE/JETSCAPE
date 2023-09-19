@@ -77,6 +77,7 @@ void PythiaGun::InitTask() {
   if(pTHatMin < 0.01){ //assuming low bin where softQCD should be used
     //running softQCD - inelastic nondiffrative (min-bias)
     readString("HardQCD:all = off");
+    readString("PromptPhoton:all = off");
     readString("SoftQCD:nonDiffractive = on");
     softQCD = true;
   }
