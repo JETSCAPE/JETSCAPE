@@ -487,7 +487,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
       double max_vir;
       if (vir_factor < 0.0)
         max_vir =
-            pIn[i].e() * pIn[i].e() - pIn[i].restmass() * pIn[i].restmass();
+            std::abs(vir_factor) * (pIn[i].e() * pIn[i].e() - pIn[i].restmass() * pIn[i].restmass());
       else
         max_vir = pT2 * vir_factor;
 
