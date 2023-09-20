@@ -18,6 +18,7 @@
 
 #include "JetEnergyLossModule.h"
 #include "Pythia8/Pythia.h"
+#include "TLorentzVector.h"
 
 using namespace Jetscape;
 
@@ -54,10 +55,8 @@ public:
 
 
   //qhat stuff
-  double GeneralQhatFunction(int QhatParametrization, double Temperature, double EntropyDensity, double FixAlphas, double Qhat0, double E, double muSquare);
+  double absFactor(TLorentzVector pVec, double T);
   double RunningAlphaS(double muSquare);
-  double VirtualityQhatFunction(int QhatParametrization,  double enerLoc, double muSquare);  
-  double IntegralPDF(double xB, double a, double b);
   int QhatParametrizationType;
   double qhatA, qhatB, qhatC, qhatD;
   static const int dimQhatTab = 151;

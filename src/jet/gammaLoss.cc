@@ -17,6 +17,11 @@
 #include "JetScapeLogger.h"
 #include "JetScapeParticles.h"
 #include "Pythia8/Pythia.h"
+#include "Math/Boost.h"
+#include "Math/LorentzVector.h"
+#include "TMath.h"
+#include "TLorentzVector.h"
+#include "TVector3.h"
 
 #include <string>
 
@@ -31,6 +36,8 @@ using namespace Jetscape;
 using namespace std;
 
 const double QS = 0.9;
+const double alpha = 1./137.;
+const double alphaS = 0.3;
 
 // Register the module with the base class
 RegisterJetScapeModule<gammaLoss> gammaLoss::reg("gammaLoss");
@@ -247,208 +254,26 @@ void gammaLoss::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parto
       now_temp = 0.0;
     }
 
-    cout << "Temp: " << now_temp << endl;
+    //Lorentz math for boosting
+    TLorentzVector pLab(pIn[i].px(),pIn[i].py(),pIn[i].pz(),pIn[i].e());
+    TLorentzVector tLab(0.,0.,0.,1.);
+    TVector3 vMed(check_fluid_info_ptr->vx, check_fluid_info_ptr->vy, check_fluid_info_ptr->vz);
+    pLab.Boost(-vMed);
+    tLab.Boost(-vMed); 
+    double deltaTprime = deltaT/tLab.T();
+    //cout << tLab.T(); tLab.Print();
+
+    cout << "Temp: " << now_temp << ". Abs factor: " << gammaLoss::absFactor(pLab,now_temp)*100000 << endl;
     pIn[i].set_stat(22);
-    /*pOut.push_back(pIn[i]);*/
-    //pIn.erase(pIn.begin()+i);
   }
 
   return;
 }
 
-double gammaLoss::fillQhatTab(double y) {
-
-  double xLoc, yLoc, zLoc, tLoc;
-  double vxLoc, vyLoc, vzLoc, gammaLoc, betaLoc;
-  double edLoc, sdLoc;
-  double tempLoc;
-  double flowFactor, qhatLoc;
-  int hydro_ctl;
-  double lastLength = initR0;
-
-  double tStep = 0.1;
-
-  std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
-
-  for (int i = 0; i < dimQhatTab; i++) {
-    tLoc = tStep * i;
-
-    //if(tLoc<initR0-tStep) { // potential problem of making t^2<z^2
-
-    double boostedTStart = tStart * std::cosh(y);
-    if (tLoc < initR0 || tLoc < boostedTStart) {
-      qhatTab1D[i] = 0.0;
-      continue;
-    }
-
-    xLoc = initRx + (tLoc - initR0) * initVx;
-    yLoc = initRy + (tLoc - initR0) * initVy;
-    zLoc = initRz + (tLoc - initR0) * initVz;
-
-    //        if(bulkFlag == 1) { // read OSU hydro
-    //            readhydroinfoshanshan_(&tLoc,&xLoc,&yLoc,&zLoc,&edLoc,&sdLoc,&tempLoc,&vxLoc,&vyLoc,&vzLoc,&hydro_ctl);
-    //        } else if(bulkFlag == 2) { // read CCNU hydro
-    //            hydroinfoccnu_(&tLoc, &xLoc, &yLoc, &zLoc, &tempLoc, &vxLoc, &vyLoc, &vzLoc, &hydro_ctl);
-    //        } else if(bulkFlag == 0) { // static medium
-    //            vxLoc = 0.0;
-    //            vyLoc = 0.0;
-    //            vzLoc = 0.0;
-    //            hydro_ctl = 0;
-    //            tempLoc = T;
-    //        }
-
-    if (std::isinf(tLoc) || std::isnan(tLoc) || std::isinf(zLoc) ||
-        std::isnan(zLoc) || std::abs(zLoc) > tLoc) {
-      JSWARN << "Third instance";
-      JSWARN << "Loc for vector is:" << tLoc << ", " << xLoc << ", " << yLoc
-             << ", " << zLoc;
-      JSWARN << "initR0, initRx, initRy, initRz="
-             << ", " << initR0 << ", " << initRx << ", " << initRy << ", "
-             << initRz;
-      JSWARN << "initVx, initVy, initVz =" << initVx << ", " << initVy << ", "
-             << initVz;
-      JSWARN << "initVMod=" << std::setprecision(20)
-             << std::sqrt(initVx * initVx + initVy * initVy + initVz * initVz);
-      JSWARN << "Can't dump pIn_info as we are in fillQhatTab. But it should "
-                "be dumped right before this."; //Dump_pIn_info(i, pIn);
-                                                //exit(0);
-    }
-
-    GetHydroCellSignal(tLoc, xLoc, yLoc, zLoc, check_fluid_info_ptr);
-    VERBOSE(8) << MAGENTA << "Temperature from medium = "
-               << check_fluid_info_ptr->temperature;
-
-    tempLoc = check_fluid_info_ptr->temperature;
-    sdLoc = check_fluid_info_ptr->entropy_density;
-    vxLoc = check_fluid_info_ptr->vx;
-    vyLoc = check_fluid_info_ptr->vy;
-    vzLoc = check_fluid_info_ptr->vz;
-
-    hydro_ctl = 0;
-
-    if (hydro_ctl == 0 && tempLoc >= hydro_Tc) {
-      lastLength = tLoc;
-      betaLoc = sqrt(vxLoc * vxLoc + vyLoc * vyLoc + vzLoc * vzLoc);
-      gammaLoc = 1.0 / sqrt(1.0 - betaLoc * betaLoc);
-      flowFactor =
-          gammaLoc * (1.0 - (initVx * vxLoc + initVy * vyLoc + initVz * vzLoc));
-
-      //if(run_alphas==1){ alphas= 4*pi/(9.0*log(2*initEner*tempLoc/0.04));}
-
-      /* if (qhat0 < 0.0) {
-        // calculate qhat with alphas
-        double muD2 = 6.0 * pi * alphas * tempLoc * tempLoc;
-        // if(initEner > pi*tempLoc) qhatLoc = Ca*alphas*muD2*tempLoc*log(6.0*initEner*tempLoc/muD2);
-        // else qhatLoc = Ca*alphas*muD2*tempLoc*log(6.0*pi*tempLoc*tempLoc/muD2);
-        // fitted formula from https://arxiv.org/pdf/1503.03313.pdf
-        if (initEner > pi * tempLoc)
-          qhatLoc = Ca * 50.4864 / pi * pow(alphas, 2) * pow(tempLoc, 3) *
-                    log(5.7 * initEner * tempLoc / 4.0 / muD2);
-        else
-          qhatLoc = Ca * 50.4864 / pi * pow(alphas, 2) * pow(tempLoc, 3) *
-                    log(5.7 * pi * tempLoc * tempLoc / 4.0 / muD2);
-        qhatLoc = qhatLoc * flowFactor;
-        if (qhatLoc < 0.0)
-          qhatLoc = 0.0;
-      } else { // use input qhat
-        if (brick_med) {
-          qhatLoc = qhat0 * 0.1973 * flowFactor;
-        } else {
-          qhatLoc = qhat0 / 96.0 * sdLoc * 0.1973 *
-                    flowFactor; // qhat0 at s = 96fm^-3
-        }
-      }*/
-
-      // GeneralQhatFunction(int QhatParametrizationType, double Temperature, double EntropyDensity, double FixAlphas,  double Qhat0, double E, double muSquare);
-      double muSquare=-1;//For virtuality dependent cases, we explicitly modify q-hat inside Sudakov, due to which we set here scale=-1; Alternatively one could extend the dimension of the q-hat table
-
-      qhatLoc= GeneralQhatFunction(QhatParametrizationType, tempLoc, sdLoc, alphas, qhat0, initEner, muSquare);      
-      qhatLoc = qhatLoc * flowFactor;
-
-      //JSINFO << "check qhat --  ener, T, qhat: " << initEner << " , " << tempLoc << " , " << qhatLoc;
-    } else { // outside the QGP medium
-      qhatLoc = 0.0;
-    }
-
-    qhatTab1D[i] =
-        qhatLoc / sqrt(2.0); // store qhat value in light cone coordinate
-  }
-
-  for (int i = 0; i < dimQhatTab; i++) { // dim of loc
-
-    double totValue = 0.0;
-
-    for (int j = 0; i + j < dimQhatTab; j++) { // dim of tau_f
-
-      totValue = totValue + qhatTab1D[i + j];
-      qhatTab2D[i][j] = totValue / (j + 1);
-    }
-  }
-
-  //return(lastLength*sqrt(2.0)*5.0); // light cone + GeV unit
-  return ((2.0 * lastLength + initRdotV - initR0) / sqrt(2.0) *
-          5.0); // light cone + GeV unit
-}
-
-//////////////////////////////////General Function of q-hat//////////////////////////////////
-// E is the energy and muSquare is the virtuality of the parton
-double gammaLoss::GeneralQhatFunction(int QhatParametrization, double Temperature, double EntropyDensity, double FixAlphas, double Qhat0, double E, double muSquare){
-  int ActiveFlavor=3; qhat=0.0;
-  double DebyeMassSquare = FixAlphas*4*pi*pow(Temperature,2.0)*(6.0 + ActiveFlavor)/6.0; 
-  double ScaleNet=2*E*Temperature; 
-  if(ScaleNet < 1.0){ ScaleNet=1.0; }
-  switch(QhatParametrization)
-    {
-      //HTL formula with all alpha_s as constant and controlled by XML
-    case 0:
-      qhat = (Ca*50.4864/pi)*pow(FixAlphas,2)*pow(Temperature,3)*log(ScaleNet/DebyeMassSquare); 
-      break;
-      
-      //alpha_s at scale muS=2ET and second alpha_s at muS=DebyeMassSquare is fit parameter
-    case 1:	
-      qhat = (Ca*50.4864/pi)*RunningAlphaS(ScaleNet)*FixAlphas*pow(Temperature,3)*log(ScaleNet/DebyeMassSquare);
-      break;
-      
-      //Constant q-hat 
-    case 2:
-    qhat = Qhat0*0.1973;
-    break;
-
-    //Scale with T^3
-    case 3:
-    qhat = Qhat0*pow(Temperature/0.3,3)*0.1973; // w.r.t T=0.3 GeV
-    break;
-  
-    //Scale with entropy density
-    case 4:
-    qhat = Qhat0*(EntropyDensity/96.0)*0.1973; // w.r.t S0=96 fm^-3
-    break;
-    
-    //HTL q-hat multiplied by Virtuality dependent function to mimic PDF-Scale dependent q-hat  
-    //Function is 1/(1+A*pow(log(Q^2),2)+B*pow(log(Q^2),4)) 
-    case 5:
-      qhat = (Ca*50.4864/pi)*RunningAlphaS(ScaleNet)*FixAlphas*pow(Temperature,3)*log(ScaleNet/DebyeMassSquare);
-      qhat = qhat*VirtualityQhatFunction(5, E, muSquare);
-    break;
-    
-    //HTL q-hat multiplied by Virtuality dependent function to mimic PDF-Scale dependent q-hat
-    //Function is int^{1}_{xB} e^{-ax} / (1+A*pow(log(Q^2),1)+B*pow(log(Q^2),2)) 
-    case 6:
-      qhat = (Ca*50.4864/pi)*RunningAlphaS(ScaleNet)*FixAlphas*pow(Temperature,3)*log(ScaleNet/DebyeMassSquare);
-      qhat = qhat*VirtualityQhatFunction(6, E, muSquare);
-      break;
-
-      //HTL q-hat multiplied by Virtuality dependent function to mimic PDF-Scale dependent q-hat
-      //Function is int^{1}_{xB} x^{a}(1-x)^{b} / (1+A*pow(log(Q^2),1)+B*pow(log(Q^2),2)) 
-    case 7:
-      qhat = (Ca*50.4864/pi)*RunningAlphaS(ScaleNet)*FixAlphas*pow(Temperature,3)*log(ScaleNet/DebyeMassSquare);
-      qhat = qhat*VirtualityQhatFunction(7, E, muSquare);
-      break;
-
-    default:      
-      JSINFO<<"q-hat Parametrization "<<QhatParametrization<<" is not used, qhat will be set to zero";    
-    }  
-  return qhat;
+//chance for photon to be absorbed from https://arxiv.org/abs/hep-ph/9405309
+double gammaLoss::absFactor(TLorentzVector pVec, double T){
+  double p = pVec.P();
+  return (5.*pi/9.)*(alpha*alphaS*T*T/p)*log(0.2317*p/(alphaS*T));
 }
 
 /////////////////// Running alphas for HTL-qhat: Do not use for others///////////////////
@@ -459,99 +284,5 @@ double gammaLoss::RunningAlphaS(double muSquare){
   if(muSquare < 1.0) {ans=alphas; }
   
   VERBOSE(8)<<"Fixed-alphaS="<<alphas<<", Lambda_QCD_HTL="<<sqrt(Square_Lambda_QCD_HTL)<<", mu2="<<muSquare<<", Running alpha_s"<<ans;
-  return ans;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////
-///////////// Virtuality dependent prefactor for q-hat function /////////////////////////
-double gammaLoss::VirtualityQhatFunction(int QhatParametrization,  double enerLoc, double muSquare){
-  double ans=0;double xB=0, xB0=0, IntegralNorm=0;
-
-  if( muSquare <= Q00*Q00) {ans=1;}
-  else
-    {  
-      switch(QhatParametrization)
-	{
-	case 0:
-          ans =  1.0;
-          break;
-	  
-	case 1:
-          ans =  1.0;
-          break;
-
-	case 2:
-          ans =  1.0;
-          break;  
-	  
-	case 3:
-          ans =  1.0;
-          break;
-
-	case 4:
-          ans =  1.0;
-          break;  
-
-	case 5:
-	  ans =  1.0 + qhatA*log(Q00*Q00)*log(Q00*Q00) + qhatB*pow(log(Q00*Q00),4);
-	  ans = ans/( 1.0 + qhatA*log(muSquare)*log(muSquare) + qhatB*pow(log(muSquare),4)  );
-	  break;
-	  
-	case 6: 
-	  xB  = muSquare/(2.0*enerLoc);
-	  xB0 = Q00*Q00/(2.0*enerLoc); if(xB<=xB0){ans=1.0; break; }
-	  if ( qhatC > 0.0 && xB < 0.99)
-	    {
-	      ans = ( exp(qhatC*(1.0-xB)) - 1.0 )/(1.0 + qhatA*log(muSquare/0.04) + qhatB*log(muSquare/0.04)*log(muSquare/0.04) );
-	      ans = ans*(1.0 + qhatA*log(Q00*Q00/0.04) + qhatB*log(Q00*Q00/0.04)*log(Q00*Q00/0.04) )/( exp(qhatC*(1.0-xB0)) - 1.0 );
-	      //JSINFO<<"K xB="<<xB<<", and (E,muSquare)=("<<enerLoc<<","<<muSquare<<"), and Virtuality dep Qhat="<<ans;
-	    }
-	  else if( qhatC == 0.0 && xB < 0.99)
-	    {
-	      ans = (1.0-xB)/(1.0 + qhatA*log(muSquare/0.04) + qhatB*log(muSquare/0.04)*log(muSquare/0.04) );
-	      ans = ans*(1.0 + qhatA*log(Q00*Q00/0.04) + qhatB*log(Q00*Q00/0.04)*log(Q00*Q00/0.04) )/(1-xB0);
-	    }
-	  else {ans=0.0;}	  
-	  //JSINFO<<"L xB="<<xB<<", and (E,muSquare)=("<<enerLoc<<","<<muSquare<<"), and Virtuality dep Qhat="<<ans;
-          break;
-
-	case 7:
-	  xB  = muSquare/(2.0*enerLoc);
-	  xB0 = Q00*Q00/(2.0*enerLoc); if(xB<=xB0){ans=1.0; break; }
-	  ans = IntegralPDF(xB, qhatC, qhatD)/(1.0 + qhatA*log(muSquare/0.04) + qhatB*log(muSquare/0.04)*log(muSquare/0.04) );
-	  IntegralNorm = IntegralPDF(xB0, qhatC, qhatD);
-	  if( IntegralNorm > 0.0 )
-	    {
-	      ans=ans*(1.0 + qhatA*log(muSquare/0.04) + qhatB*log(muSquare/0.04)*log(muSquare/0.04) )/IntegralNorm;
-	    }
-	  else {ans=0;}
-	  //JSINFO<<"L xB="<<xB<<", and (E,muSquare)=("<<enerLoc<<","<<muSquare<<"), and Virtuality dep Qhat="<<ans; 
-	  break;
-	  
-	default:
-	  JSINFO<<"q-hat Parametrization "<<QhatParametrization<<" is not used, VirtualityQhatFunction is set to zero or one";
-	}
-    }
-
-  //JSINFO<<"Qhat Type="<<QhatParametrization<<", and (E,muSquare)=("<<enerLoc<<","<<muSquare<<"), and Virtuality dep Qhat="<<ans;
-  return ans;  
-}
-
-//x integration  of QGP-PDF from xB to 1
-double gammaLoss::IntegralPDF(double xB, double a, double b){
-  double Xmin=0.01, Xmax=0.99, X=0, dX=0, ans=0; int N=100, ix=0;
-  dX = (1.0-0.0)/N;
-  if(xB > Xmax) {ans=0;}
-  else
-    {
-      ix = xB/dX;
-      for(int i=ix; i<N; i++)
-	{
-	  X= (i+0.5)*dX;
-	  if (X<Xmin){X=Xmin;}
-	  ans = ans + pow(X,a)*pow(1-X,b)*dX;
-	}
-    }
-  //JSINFO<<"(xB,a,b)=("<<xB<<","<<a<<","<<b<<"), \t Area="<<ans;
   return ans;
 }
