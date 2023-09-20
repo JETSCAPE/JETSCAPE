@@ -56,6 +56,7 @@ public:
 
   //qhat stuff
   double absFactor(TLorentzVector pVec, double T);
+  bool isAbsorbed(TLorentzVector pVec, double T, double delTime);
   double RunningAlphaS(double muSquare);
   int QhatParametrizationType;
   double qhatA, qhatB, qhatC, qhatD;

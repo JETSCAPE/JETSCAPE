@@ -143,6 +143,7 @@ void gammaLoss::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parto
   for(int i=0; i<pIn.size(); i++){
     if(pIn[i].pid() == 22) JSINFO << "Photon found with label " << pIn[i].plabel() << " and status " << pIn[i].pstat();
     if(pIn[i].pid() != 22) continue;
+    if(pIn[i].pstat() == -22) continue; //skipping absorbed photons
 
     //velocity and spatial settings
     velocity[0] = 1.0;
@@ -274,6 +275,14 @@ void gammaLoss::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parto
 double gammaLoss::absFactor(TLorentzVector pVec, double T){
   double p = pVec.P();
   return (5.*pi/9.)*(alpha*alphaS*T*T/p)*log(0.2317*p/(alphaS*T));
+}
+
+//seeing if photon gets absorbed
+bool gammaLoss::isAbsorbed(TLorentzVector pVec, double T, double delTime){
+  double chance = gammaLoss::absFactor(pVec, T)*delTime;
+
+  if((float)rand()/RAND_MAX < chance) return true;
+  else return false;
 }
 
 /////////////////// Running alphas for HTL-qhat: Do not use for others///////////////////

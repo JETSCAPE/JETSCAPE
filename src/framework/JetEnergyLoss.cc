@@ -177,6 +177,7 @@ void JetEnergyLoss::DoShower() {
   int droplet_stat = -11;
   int miss_stat = -13;
   int neg_stat = -17;
+  int abs_stat = -22;
   if (!weak_ptr_is_uninitialized(liquefier_ptr)) {
     droplet_stat = liquefier_ptr.lock()->get_drop_stat();
     miss_stat = liquefier_ptr.lock()->get_miss_stat();
@@ -302,6 +303,10 @@ void JetEnergyLoss::DoShower() {
         // do not push back photons
         if (pInTempModule[0].isPhoton(pInTempModule[0].pid()) && gammaLoss_on == false)
           continue;
+
+        //skipping absorbed photons
+        if(pInTempModule[0].pstat() == abs_stat)
+          continue;
         pInTemp.push_back(pInTempModule[0]);
       } else if (pOutTemp.size() == 1) {
         // this is the free-streaming case for MARTINI or LBT
@@ -316,6 +321,10 @@ void JetEnergyLoss::DoShower() {
         }
         // do not push back photons
         if (pOutTemp[0].isPhoton(pOutTemp[0].pid()) && gammaLoss_on == false)
+          continue;
+
+        //skipping absorbed photons
+        if(pOutTemp[0].pstat() == abs_stat)
           continue;
         pInTemp.push_back(pOutTemp[0]);
       } else {
@@ -334,6 +343,10 @@ void JetEnergyLoss::DoShower() {
             continue;
           // do not push back photons
           if (pOutTemp[k].isPhoton(pOutTemp[k].pid()) && gammaLoss_on == false)
+            continue;
+
+          //skipping absorbed photons
+          if(pOutTemp[k].pstat() == abs_stat)
             continue;
 
           pOut.push_back(pOutTemp[k]);
