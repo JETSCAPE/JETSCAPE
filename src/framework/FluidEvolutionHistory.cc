@@ -292,8 +292,8 @@ FluidCellInfo EvolutionHistory::get_tz(Jetscape::real t, Jetscape::real x,
     tau = sqrt(t * t - z * z);
     eta = 0.5 * log((t + z) / (t - z));
   } else {
-    JSWARN << "the quest point is outside the light cone! "
-           << "t = " << t << ", z = " << z;
+    VERBOSE(4) << "the quest point is outside the light cone! "
+               << "t = " << t << ", z = " << z;
   }
   return (get(tau, x, y, eta));
 }
