@@ -70,10 +70,10 @@ void PythiaGun::InitTask() {
   readString("PromptPhoton:all=on");
   readString("WeakSingleBoson:all=off");
   readString("WeakDoubleBoson:all=off");
-  
+
   pTHatMin = GetXMLElementDouble({"Hard", "PythiaGun", "pTHatMin"});
   pTHatMax = GetXMLElementDouble({"Hard", "PythiaGun", "pTHatMax"});
-  
+
   if(pTHatMin < 0.01){ //assuming low bin where softQCD should be used
     //running softQCD - inelastic nondiffrative (min-bias)
     readString("HardQCD:all = off");
@@ -208,8 +208,14 @@ void PythiaGun::Exec() {
 
         // reject rare cases of very soft particles that don't have enough e to get
         // reasonable virtuality
-        if (particle.pT() < 1.0 / sqrt(vir_factor))
+        if (vir_factor > 0. && (particle.pT() < 1.0 / sqrt(vir_factor))) {
           continue;
+        } else if(vir_factor < 0. && (particle.pAbs() < 1.0 / sqrt(abs(vir_factor)))) {
+          continue;
+        } else {
+          JSWARN << "vir_factor should not be zero.";
+          exit(1);
+        }
 
         //if(particle.id()==22) cout<<"########this is a photon!######" <<endl;
         // accept
