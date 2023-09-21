@@ -130,6 +130,7 @@ void gammaLoss::Dump_pIn_info(int i, vector<Parton> &pIn) {
          << "  pz = " << pIn[i].p(3) << " virtuality = " << pIn[i].t()
          << " form_time in fm = " << pIn[i].form_time()
          << " split time = " << pIn[i].form_time() + pIn[i].x_in().t();
+  JSWARN << "Position: " << pIn[i].x_in().x() << " " << pIn[i].x_in().y()  << " "<< pIn[i].x_in().z() ;
 }
 
 void gammaLoss::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton> &pIn, vector<Parton> &pOut){
@@ -225,6 +226,10 @@ void gammaLoss::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parto
     double now_temp;
 
     double SpatialRapidity = 0.5 * std::log((now_R0 + now_Rz) / (now_R0 - now_Rz));
+    
+    //updating pos info
+    double newpos[4] = {now_R0,now_Rx,now_Ry,now_Rz};
+    pIn[i].set_x(newpos);
 
     //hydro settings
     double length;
@@ -255,6 +260,12 @@ void gammaLoss::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parto
       now_temp = 0.0;
     }
 
+    //sending photons that have left medium to the final state
+    if(now_temp == 0.0){
+      pIn[i].set_stat(22);
+      continue;
+    }
+
     //Lorentz math for boosting
     TLorentzVector pLab(pIn[i].px(),pIn[i].py(),pIn[i].pz(),pIn[i].e());
     TLorentzVector tLab(0.,0.,0.,1.);
@@ -265,7 +276,9 @@ void gammaLoss::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parto
     //cout << tLab.T(); tLab.Print();
 
     cout << "Temp: " << now_temp << ". Abs factor: " << gammaLoss::absFactor(pLab,now_temp)*100000 << endl;
-    pIn[i].set_stat(22);
+    Dump_pIn_info(i,pIn);
+    //pIn[i].set_stat(22);
+
   }
 
   return;
