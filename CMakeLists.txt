@@ -329,7 +329,6 @@ include_directories(./external_packages/)
 include_directories(./external_packages/gtl/include )
 include_directories(./external_packages/hydro_from_external_file )
 include_directories(./examples/ )
-include_directories(./execs/ )
 if ("${ROOT_FOUND}")
   include_directories(./src/root)
   #add_subdirectory(./src/root)
@@ -460,96 +459,6 @@ endif ( USE_MUSIC AND USE_ISS AND USE_SMASH )
 #  add_executable(PythiaBrickTestRoot ./examples/custom_examples/PythiaBrickTestRoot.cc)
 #  target_link_libraries(PythiaBrickTestRoot JetScape)
 #endif(${ROOT_FOUND})
-
-#my library
-link_directories(analysis)
-include_directories(./analysis)
-add_subdirectory(./analysis)
-
-if (${ROOT_FOUND}) 
-  add_executable(pp-2760-spectra ./execs/pp-2760-spectra.cc)
-  target_link_libraries(pp-2760-spectra JetScape analysis)
-  endif()
-
-if (${ROOT_FOUND}) 
-  add_executable(pp-200-spectra ./execs/pp-200-spectra.cc)
-  target_link_libraries(pp-200-spectra JetScape analysis)
-  endif()
-
-if (${ROOT_FOUND}) 
-  add_executable(pp-5020-spectra ./execs/pp-5020-spectra.cc)
-  target_link_libraries(pp-5020-spectra JetScape analysis)
-  endif()
-
-if (${ROOT_FOUND}) 
-  add_executable(pp-13000-spectra ./execs/pp-13000-spectra.cc)
-  target_link_libraries(pp-13000-spectra JetScape analysis)
-  endif()
-
-if (${ROOT_FOUND}) 
-  add_executable(test-pp-spectra ./execs/test-pp-spectra.cc)
-  target_link_libraries(test-pp-spectra JetScape analysis)
-  endif()
-
-if (${ROOT_FOUND}) 
-  add_executable(pp-2760-comparison ./execs/pp-2760-comparison.cc)
-  target_link_libraries(pp-2760-comparison JetScape analysis)
-  endif()
-
-if (${ROOT_FOUND}) 
-  add_executable(pp-200-comparison ./execs/pp-200-comparison.cc)
-  target_link_libraries(pp-200-comparison JetScape analysis)
-  endif()
-
-if (${ROOT_FOUND}) 
-  add_executable(ee-analysis-spectra ./execs/ee-analysis-spectra.cc)
-  target_link_libraries(ee-analysis-spectra JetScape analysis)
-  endif()
-
-if (${ROOT_FOUND}) 
-  add_executable(ee-comparison ./execs/ee-comparison.cc)
-  target_link_libraries(ee-comparison JetScape analysis)
-  endif()
-
-if (${ROOT_FOUND}) 
-  add_executable(pp-200-smoothing ./execs/pp-200-smoothing.cc)
-  target_link_libraries(pp-200-smoothing JetScape analysis)
-  endif()
-
-if (${ROOT_FOUND}) 
-  add_executable(pp-2760-smoothing ./execs/pp-2760-smoothing.cc)
-  target_link_libraries(pp-2760-smoothing JetScape analysis)
-  endif()
-
-if (${ROOT_FOUND}) 
-  add_executable(pp-5020-elec-spectra ./execs/pp-5020-elec-spectra.cc)
-  target_link_libraries(pp-5020-elec-spectra JetScape analysis)
-  endif()
- 
-if (${ROOT_FOUND}) 
-  add_executable(pp-900-spectra ./execs/pp-900-spectra.cc)
-  target_link_libraries(pp-900-spectra JetScape analysis)
-  endif()
-
-if (${ROOT_FOUND}) 
-  add_executable(pp-900-comparison ./execs/pp-900-comparison.cc)
-  target_link_libraries(pp-900-comparison JetScape analysis)
-  endif() 
- 
-if (${ROOT_FOUND}) 
-  add_executable(pp-7000-spectra ./execs/pp-7000-spectra.cc)
-  target_link_libraries(pp-7000-spectra JetScape analysis)
-  endif()
-
-if (${ROOT_FOUND}) 
-  add_executable(pp-7000-comparison ./execs/pp-7000-comparison.cc)
-  target_link_libraries(pp-7000-comparison JetScape analysis)
-  endif() 
-
-if (${ROOT_FOUND}) 
-  add_executable(ee-charm-spectra ./execs/ee-charm-spectra.cc)
-  target_link_libraries(ee-charm-spectra JetScape analysis)
-  endif() 
 
 # -----------------------------------------------------------
 #### copy essential files for MUSIC to build/
