@@ -39,7 +39,7 @@ jobs:
       uses: actions/checkout@v2
       with:
         repository: JETSCAPE/TEST-EXAMPLES
-        ref: jetscape-3.6-rc
+        ref: main
         path: TEST-EXAMPLES
 
     - name: Generate pp events
