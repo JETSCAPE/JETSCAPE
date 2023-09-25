@@ -117,7 +117,6 @@ void LBT::Init() {
     vacORmed = 1;
   }
 
-  gammaLoss_on = GetXMLElementInt({"Eloss", "gammaLoss", "gammaLoss_on"});
   Kprimary = GetXMLElementInt({"Eloss", "Lbt", "only_leading"});
   run_alphas = GetXMLElementInt({"Eloss", "Lbt", "run_alphas"});
   Q00 = GetXMLElementDouble({"Eloss", "Lbt", "Q0"});
@@ -127,7 +126,6 @@ void LBT::Init() {
   JSINFO << MAGENTA << "LBT parameters -- in_med: " << vacORmed
          << " Q0: " << Q00 << "  only_leading: " << Kprimary
          << "  alpha_s: " << fixAlphas << "  hydro_Tc: " << hydro_Tc<<", tStart="<<tStart;
-  JSINFO << MAGENTA << "gamma shower on: " << gammaLoss_on;
 
   if (!flag_init) {
     read_tables(); // initialize various tables
@@ -184,7 +182,7 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2,
     // Reject photons
 
     if (pIn[i].pid() == photonid) {
-      if(pIn[i].pstat() != 22 && gammaLoss_on == false) {
+      if(pIn[i].pstat() != 22) {
         JSINFO << BOLDYELLOW
                        << " A photon was RECEIVED with px = " << pIn[i].px()
                        << " from framework and sent back ";

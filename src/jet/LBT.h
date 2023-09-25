@@ -125,7 +125,6 @@ private:
   double timend; //end time or tau RENAME
 
   //...switches and cuts
-  bool gammaLoss_on = false;
   int Kprimary =
       0; // 0 keep all partons, 1 keep leading jet parton only (switch off other partons)
   int KINT0 = 1;     // 0 no radiation, 1 elastic + inelastic

@@ -51,7 +51,6 @@ JetEnergyLoss::JetEnergyLoss() {
   GetHydroCellSignalConnected = false;
   GetHydroTau0SignalConnected = false;
   SentInPartonsConnected = false;
-  gammaLoss_on = false;
 
   deltaT = 0;
   maxT = 0;
@@ -113,9 +112,6 @@ void JetEnergyLoss::Init() {
 
   maxT = GetXMLElementDouble({"Eloss", "maxT"});
   JSINFO << "Eloss shower with deltaT = " << deltaT << " and maxT = " << maxT;
-
-  gammaLoss_on = GetXMLElementInt({"Eloss", "gammaLoss", "gammaLoss_on"});
-  JSINFO << "gamma shower on: " << gammaLoss_on;
 
   std::string mutexOnString = GetXMLElementText({"Eloss", "mutex"}, false);
   if (!mutexOnString.compare("ON"))
@@ -300,7 +296,7 @@ void JetEnergyLoss::DoShower() {
             continue;
         }
         // do not push back photons
-        if (pInTempModule[0].isPhoton(pInTempModule[0].pid()) && gammaLoss_on == false)
+        if (pInTempModule[0].isPhoton(pInTempModule[0].pid()))
           continue;
         pInTemp.push_back(pInTempModule[0]);
       } else if (pOutTemp.size() == 1) {
@@ -315,7 +311,7 @@ void JetEnergyLoss::DoShower() {
             continue;
         }
         // do not push back photons
-        if (pOutTemp[0].isPhoton(pOutTemp[0].pid()) && gammaLoss_on == false)
+        if (pOutTemp[0].isPhoton(pOutTemp[0].pid()))
           continue;
         pInTemp.push_back(pOutTemp[0]);
       } else {
@@ -333,7 +329,7 @@ void JetEnergyLoss::DoShower() {
           if (pOutTemp[k].pstat() == miss_stat)
             continue;
           // do not push back photons
-          if (pOutTemp[k].isPhoton(pOutTemp[k].pid()) && gammaLoss_on == false)
+          if (pOutTemp[k].isPhoton(pOutTemp[k].pid()))
             continue;
 
           pOut.push_back(pOutTemp[k]);

@@ -60,7 +60,6 @@ Matter::Matter() {
   length = 0.0;
   MaxColor = 0;
   matter_on = true;
-  gammaLoss_on = false;
   in_vac = false;
   brick_med = true;
   recoil_on = false;
@@ -125,7 +124,6 @@ void Matter::Init() {
   int flagInt = -100;
   double inputDouble = -99.99;
 
-  gammaLoss_on = GetXMLElementInt({"Eloss", "gammaLoss", "gammaLoss_on"});
   matter_on = GetXMLElementInt({"Eloss", "Matter", "matter_on"});
   in_vac = GetXMLElementInt({"Eloss", "Matter", "in_vac"});
   recoil_on = GetXMLElementInt({"Eloss", "Matter", "recoil_on"});
@@ -156,7 +154,6 @@ void Matter::Init() {
 
   JSINFO << MAGENTA << "MATTER input parameter";
   JSINFO << MAGENTA << "matter shower on: " << matter_on;
-  JSINFO << MAGENTA << "gamma shower on: " << gammaLoss_on;
   JSINFO << MAGENTA << "in_vac: " << in_vac << "  brick_med: " << brick_med
          << "  recoil_on: " << recoil_on<<", tStart ="<<tStart;
   JSINFO << MAGENTA << "Q0: " << Q00 << " vir_factor: " << vir_factor
@@ -270,7 +267,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
 
     // Reject photons
     if (pIn[i].pid() == photonid) {
-      if(pIn[i].pstat() != 22 && gammaLoss_on == false) {
+      if(pIn[i].pstat() != 22) {
             pIn[i].set_stat(22);
       	    JSINFO << BOLDYELLOW
                        << " A photon was RECEIVED with px = " << pIn[i].px()
