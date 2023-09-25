@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 
 <jetscape>
-  
+
   <nEvents> 5 </nEvents>
   <setReuseHydro> true </setReuseHydro>
   <nReuseHydro> 10 </nReuseHydro>
-  
+
   <JetScapeWriterAscii> on </JetScapeWriterAscii>
   <outputFilename>test_out</outputFilename>
   <vlevel> 0 </vlevel>
@@ -19,7 +19,7 @@
     <!-- initial_profile_path  /wsu/home/groups/maj-shen/JETSCAPEDataFile/HydroProfiles/5020GeV_0-10  initial_profile_path -->
      <initial_profile_path>../examples/test_hydro_files</initial_profile_path>
   </IS>
-  
+
   <!-- Hard Process -->
   <Hard>
     <PythiaGun>
@@ -30,24 +30,23 @@
       <!-- You can add any number of additional lines to initialize pythia here -->
       <!-- Note that if the tag exists it cannot be empty (tinyxml produces a segfault) -->
       <!-- EPS09 Avg Nuclear PDF for nucleon in Pb nucleus -->
-      <LinesToRead> 
+      <LinesToRead>
 	HardQCD:all = on
         PDF:useHardNPDFA=on
 	PDF:useHardNPDFB=on
-	PDF:nPDFSetA=1         
+	PDF:nPDFSetA=1
 	PDF:nPDFSetB=1
 	PDF:nPDFBeamA = 100822080
 	PDF:nPDFBeamB = 100822080
       </LinesToRead>
-      <useHybridHad>0</useHybridHad>
     </PythiaGun>
   </Hard>
-  
+
   <!--Preequilibrium Dynamics Module -->
   <Preequilibrium>
     <NullPreDynamics> </NullPreDynamics>
   </Preequilibrium>
-  
+
   <!-- Hydro  Module  -->
   <Hydro>
     <hydro_from_file>
@@ -57,7 +56,7 @@
       <hydro_files_folder>../examples/test_hydro_files</hydro_files_folder>
     </hydro_from_file>
   </Hydro>
-  
+
   <!--Eloss Modules -->
   <Eloss>
 
@@ -108,7 +107,7 @@
       <run_alphas>1</run_alphas>   <!-- 0 for fixed alpha_s and 1 for running alpha_s -->
     </Lbt>
   </Eloss>
-  
+
   <!-- Jet Hadronization Module -->
   <JetHadronization>
     <name>colorless</name>
@@ -118,5 +117,5 @@
       111:mayDecay = off
     </LinesToRead>
   </JetHadronization>
-  
+
 </jetscape>
