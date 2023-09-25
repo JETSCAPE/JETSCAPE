@@ -21,13 +21,13 @@ jobs:
     runs-on: ubuntu-latest
     
     container:
-      image: jetscape/base:v1.9
+      image: jetscape/base:stable
       options: --user root
       
     steps:
       
     - name: Checkout Repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         path: ${{ github.event.repository.name }}
       
@@ -40,7 +40,7 @@ jobs:
         make -j2
 
     - name: Checkout TEST-EXAMPLES
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         repository: JETSCAPE/TEST-EXAMPLES
         ref: main

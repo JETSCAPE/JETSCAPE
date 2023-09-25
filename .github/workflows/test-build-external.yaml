@@ -21,13 +21,13 @@ jobs:
     runs-on: ubuntu-latest
     
     container:
-      image: jetscape/base:v1.9
+      image: jetscape/base:stable
       options: --user root
       
     steps:
       
     - name: Checkout Repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         path: ${{ github.event.repository.name }}
         
@@ -57,5 +57,5 @@ jobs:
         mkdir build
         cd build
         export SMASH_DIR="${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages/smash/smash_code"
-        cmake .. -DUSE_MUSIC=ON -DUSE_ISS=ON -DUSE_FREESTREAM=ON -DUSE_SMASH=ON -DCMAKE_CXX_STANDARD=17
+        cmake .. -DUSE_MUSIC=ON -DUSE_ISS=ON -DUSE_FREESTREAM=ON -DUSE_SMASH=ON
         make -j2
