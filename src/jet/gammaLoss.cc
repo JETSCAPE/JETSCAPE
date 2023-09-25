@@ -13,6 +13,9 @@
  * See COPYING for details.
  ******************************************************************************/
 
+//photons given code 22 sent to final state
+//photons given code -22 removed entirely
+
 #include "gammaLoss.h"
 #include "JetScapeLogger.h"
 #include "JetScapeParticles.h"
@@ -137,14 +140,14 @@ void gammaLoss::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parto
   //JSINFO << "gamma";
 
   //initial declarations
-  double velocity[4], xStart[4], velocity_jet[4];
+  double velocity[4], xStart[4];
   std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
 
   //parton loop
   for(int i=0; i<pIn.size(); i++){
-    if(pIn[i].pid() == 22) JSINFO << "Photon found with label " << pIn[i].plabel() << " and status " << pIn[i].pstat();
     if(pIn[i].pid() != 22) continue;
-    if(pIn[i].pstat() == -22) continue; //skipping absorbed photons
+    //JSINFO << "Photon found with label " << pIn[i].plabel() << " and status " << pIn[i].pstat();
+    if(abs(pIn[i].pstat()) == 22) continue; //skipping absorbed photons and final state photons
 
     //velocity and spatial settings
     velocity[0] = 1.0;
@@ -171,14 +174,6 @@ void gammaLoss::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parto
     if (pIn[i].form_time() < 0.0) pIn[i].set_jet_v(velocity); // jet velocity is set only once
     // Notice the assumption that partons passed from hard scattering are on shell.
     // If they had virtuality then this would not be correct.
-
-    // Define a vector in the direction of the jet originating parton.
-    // there is some amount of redundancy here, pIn[i].jet_v() is basically the jet velocity
-    // we are defining a local copy in velocity_jet
-    velocity_jet[0] = 1.0;
-    velocity_jet[1] = pIn[i].jet_v().x();
-    velocity_jet[2] = pIn[i].jet_v().y();
-    velocity_jet[3] = pIn[i].jet_v().z();
 
     // Modulus of the vector pIn[i].jet_v
     double mod_jet_v =
@@ -211,14 +206,7 @@ void gammaLoss::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parto
           std::sqrt(initVx * initVx + initVy * initVy + initVz * initVz);
     }
 
-    initRdotV = (initRx * pIn[i].jet_v().x() + initRy * pIn[i].jet_v().y() +
-                 initRz * pIn[i].jet_v().z()) /
-                mod_jet_v;
-    initVdotV = (initVx * pIn[i].jet_v().x() + initVy * pIn[i].jet_v().y() +
-                 initVz * pIn[i].jet_v().z()) /
-                mod_jet_v;
-    // Note: jet_v()/mod_jet_v is a unit 3 vector in the direction of the jet originating parton.
-
+    //current position
     double now_R0 = time;
     double now_Rx = initRx + (time - initR0) * initVx;
     double now_Ry = initRy + (time - initR0) * initVy;
@@ -273,12 +261,18 @@ void gammaLoss::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parto
     pLab.Boost(-vMed);
     tLab.Boost(-vMed); 
     double deltaTprime = deltaT/tLab.T();
-    //cout << tLab.T(); tLab.Print();
 
-    cout << "Temp: " << now_temp << ". Abs factor: " << gammaLoss::absFactor(pLab,now_temp)*100000 << endl;
-    Dump_pIn_info(i,pIn);
-    //pIn[i].set_stat(22);
-
+    //debugging statements
+    //cout << "Temp: " << now_temp << ". Abs factor: " << gammaLoss::absFactor(pLab,now_temp)*100000 << endl;
+    //Dump_pIn_info(i,pIn);
+    
+    //removing photon if its absorbed
+    if(gammaLoss::isAbsorbed(pLab,now_temp,deltaTprime)){
+      Parton *pTemp = new Parton(0,22,-22,0.0,0.0,0.0,0.0,newpos);
+      pOut.push_back(*pTemp);
+      pOut.push_back(*pTemp);
+      JSINFO << BOLDYELLOW << "Photon absorbed!";
+    }
   }
 
   return;

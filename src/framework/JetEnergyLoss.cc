@@ -195,7 +195,11 @@ void JetEnergyLoss::DoShower() {
     currentTime += deltaT;
 
     for (int i = 0; i < pIn.size(); i++) {
-      if(pIn[i].pstat() == 22) continue;
+      /*if(abs(pIn[i].pstat()) == 22){
+        JSINFO << "Photon skipped at eloss phase";
+        continue;
+      }*/
+
       vector<Parton> pInTempModule;
       vector<Parton> pOutTemp;
       //JSINFO << pIn.at(i).edgeid();
@@ -255,11 +259,11 @@ void JetEnergyLoss::DoShower() {
           pOutTemp[k].set_edgeid(edgeid);
 
           // no need to generate a vStart for photons and liquefied
-          // partons
+          // partons (modified for absorbing photons)
           if (pOutTemp[k].pstat() != droplet_stat &&
               pOutTemp[k].pstat() != miss_stat &&
               pOutTemp[k].pstat() != neg_stat &&
-              !pOutTemp[k].isPhoton(pOutTemp[k].pid())) {
+              !(pOutTemp[k].isPhoton(pOutTemp[k].pid()) && gammaLoss_on == false)) {
             vStartVecOut.push_back(vEnd);
           }
 
@@ -305,8 +309,10 @@ void JetEnergyLoss::DoShower() {
           continue;
 
         //skipping absorbed photons
-        if(pInTempModule[0].pstat() == abs_stat)
+        if(pInTempModule[0].pstat() == abs_stat){
           continue;
+        }
+
         pInTemp.push_back(pInTempModule[0]);
       } else if (pOutTemp.size() == 1) {
         // this is the free-streaming case for MARTINI or LBT
@@ -324,8 +330,10 @@ void JetEnergyLoss::DoShower() {
           continue;
 
         //skipping absorbed photons
-        if(pOutTemp[0].pstat() == abs_stat)
+        if(pOutTemp[0].pstat() == abs_stat){
           continue;
+        }
+        
         pInTemp.push_back(pOutTemp[0]);
       } else {
         for (int k = 0; k < pOutTemp.size(); k++) {
@@ -346,8 +354,9 @@ void JetEnergyLoss::DoShower() {
             continue;
 
           //skipping absorbed photons
-          if(pOutTemp[k].pstat() == abs_stat)
+          if(pOutTemp[k].pstat() == abs_stat){
             continue;
+          }
 
           pOut.push_back(pOutTemp[k]);
         }
