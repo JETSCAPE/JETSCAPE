@@ -83,11 +83,6 @@
     <initial_profile_path>../examples/test_hydro_files</initial_profile_path>
   </IS>
 
-  <!-- Particle IDs we select for -->
-  <IDs>
-    0
-  </IDs>
-
   <!-- Hard Process -->
   <Hard>
 
@@ -373,7 +368,6 @@
        <!-- Path to file with additional particles for pythia (for higher reco_Mlevelmax)-->
        <additional_pythia_particles_path>../config/HH_LightExcitedMesons.xml</additional_pythia_particles_path>
        <reco_hadrons_in_pythia>1</reco_hadrons_in_pythia>
-       <ignorePhotons> off </ignorePhotons>
    </JetHadronization>
 
   <!-- Particlization Module  -->

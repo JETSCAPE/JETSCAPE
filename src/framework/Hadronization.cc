@@ -30,7 +30,6 @@ Hadronization::Hadronization() {
     TransformPartonsConnected = false;
     HydroHyperSurfaceConnected_ = false;
     GetHydroCellSignalConnected_ = false;
-    ignorePhotons = false;
 }
 
 Hadronization::~Hadronization() {}
@@ -53,12 +52,6 @@ void Hadronization::Init() {
   JSINFO << "Found " << GetNumberOfTasks()
          << " Hadronization Tasks/Modules Initialize them ... ";
   JetScapeTask::InitTasks();
-
-  std::string log_debug = GetXMLElementText({"JetHadronization","ignorePhotons"});
-  if((int)log_debug.find("on") >= 0){
-    ignorePhotons = true;
-    JSINFO << "Ignoring final state photons";
-  }
 }
 
 void Hadronization::DoHadronize() {
@@ -95,7 +88,6 @@ void Hadronization::WriteTask(weak_ptr<JetScapeWriter> w) {
     f->WriteComment("Final State Hadrons");
     int i = 0;
     for (auto &h : GetHadrons()) {
-      if(ignorePhotons && h->pid() == 22) continue;
       f->WriteWhiteSpace("[" + to_string(i) + "] H");
       f->Write(h);
       ++i;

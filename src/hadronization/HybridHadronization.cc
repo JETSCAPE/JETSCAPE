@@ -152,16 +152,6 @@ void HybridHadronization::Init(){
 	  xml_intin = GetXMLElementInt({"JetHadronization", "reco_hadrons_in_pythia"});
 	  if(xml_intin == 0 || xml_intin == 1){reco_hadrons_pythia = xml_intin;} xml_intin = -1;
 
-    //checking for IDs we need to keep event
-    std::stringstream linestemp; string stemp;
-    linestemp << GetXMLElementText({"IDs"}, false);
-    while (std::getline(linestemp, stemp, '\n')) {
-      if (stemp.find_first_not_of(" \t\v\f\r") == stemp.npos)
-        continue; // skip empty lines
-      if(std::stoi(stemp) == 0) break; //skip default value
-      IDs.push_back(std::stoi(stemp));
-      JSINFO << "Requiring hadrons in final state: " << stemp;
-    }
     xml_intin = GetXMLElementInt({"Afterburner", "include_fragmentation_hadrons"});
 	  if(xml_intin == 1){afterburner_frag_hadrons = true;} xml_intin = -1;
 
@@ -881,19 +871,6 @@ void HybridHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& sh
     
     //pythia.event.list();
     
-    //checking if we keeping event only if we have IDs to loop over
-    if(IDs.size() > 0){
-      bool keepevent = false;
-      for(unsigned int iHad=0; iHad<HH_hadrons.num(); ++iHad){
-        for(int i=0; i<IDs.size(); i++)
-          if(abs(HH_hadrons[iHad].id()) == IDs[i] && HH_hadrons[iHad].is_final()) keepevent = true;
-      }
-      if(!keepevent) {
-        JSINFO << "Requirements not met, thrown out.";
-        run_successfully = false;
-        HH_hadrons.clear(); 
-      }
-    }
 
     for(unsigned int iHad=0; iHad<HH_hadrons.num(); ++iHad){
 	    if(HH_hadrons[iHad].is_final()){
@@ -6482,20 +6459,6 @@ void HybridHadronization::set_spacetime_for_pythia_hadrons(Pythia8::Event &event
       hadron_out.py(event[hadron_idx].py());
       hadron_out.pz(event[hadron_idx].pz());
       hadron_out.e(event[hadron_idx].e());
-
-      //specific decays for heavy flavor analysis
-      if(IDs.size() != 0 && abs(event[event[hadron_idx].mother1()].id()) == 413 && hadron_out.id() == 211) {
-        JSINFO << "Pion from D* decay thrown out.";
-        continue;
-      }
-      if(IDs.size() != 0 && abs(event[event[hadron_idx].mother1()].id()) == 4222 && hadron_out.id() == 211) {
-        JSINFO << "Pion from Sigma++c decay thrown out.";
-        continue;
-      }
-      if(IDs.size() != 0 && abs(event[event[hadron_idx].mother1()].id()) == 4112 && hadron_out.id() == 211) {
-        JSINFO << "Pion from Sigma0c decay thrown out.";
-        continue;
-      }
 
       //since using inbuilt pythia mother/daughter functions will segfault 'occasionally', going to code it in by hand.
 			//this could probably be done more efficiently, but it's good enough for now...
