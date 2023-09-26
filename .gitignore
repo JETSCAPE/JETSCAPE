@@ -21,3 +21,4 @@ runs/*
 __pycache__/*
 data/*
 test/*
+CMakeLists.txt
