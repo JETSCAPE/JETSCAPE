@@ -195,11 +195,6 @@ void JetEnergyLoss::DoShower() {
     currentTime += deltaT;
 
     for (int i = 0; i < pIn.size(); i++) {
-      /*if(abs(pIn[i].pstat()) == 22){
-        JSINFO << "Photon skipped at eloss phase";
-        continue;
-      }*/
-
       vector<Parton> pInTempModule;
       vector<Parton> pOutTemp;
       //JSINFO << pIn.at(i).edgeid();
@@ -349,6 +344,7 @@ void JetEnergyLoss::DoShower() {
           // do not push back missing (from AdSCFT)
           if (pOutTemp[k].pstat() == miss_stat)
             continue;
+
           // do not push back photons
           if (pOutTemp[k].isPhoton(pOutTemp[k].pid()) && gammaLoss_on == false)
             continue;
