@@ -393,6 +393,9 @@ public:
   /// Currently, we add these manually. Could also reject outright.
   bool CheckOrForceHadron(const int id, const double mass = 0);
 
+  /// Returns true when all x entries of the hadrons are (close to) 0
+  bool has_no_position();
+
 protected:
   double width_;
 };

@@ -89,7 +89,6 @@
       <name>PGun</name>
       <pT>100</pT>
       <parID>21</parID>
-      <useHybridHad>0</useHybridHad>
     </PGun>
 
     <!-- Pythia Gun -->
@@ -100,13 +99,24 @@
       <pTHatMin>100</pTHatMin>
       <pTHatMax>120</pTHatMax>
       <eCM>5020</eCM>
-      <useHybridHad>0</useHybridHad>
+      <!-- The soft momentum cutoff in GeV removes partons from the pythia gun. The default matches the PP19 setup. -->
+      <softMomentumCutoff>2.0</softMomentumCutoff>
       <!-- You can add any number of additional lines to initialize pythia here -->
       <!-- Note that if the tag exists it cannot be empty (tinyxml produces a segfault) -->
       <LinesToRead>
         HardQCD:all = on
       </LinesToRead>
     </PythiaGun>
+
+    <epemGun>
+      <name>epemgun</name>
+      <eCM>5020</eCM>
+      <!-- You can add any number of additional lines to initialize pythia here -->
+      <!-- Note that if the tag exists it cannot be empty (tinyxml produces a segfault) -->
+      <LinesToRead>
+        HadronLevel::all = off
+      </LinesToRead>
+    </epemGun>
   </Hard>
 
   <!--Eloss Modules -->
@@ -122,7 +132,6 @@
 
     <Matter>
       <name>Matter</name>
-      <useHybridHad>0</useHybridHad>
       <matter_on> 1 </matter_on>
       <Q0> 2.0 </Q0>
       <T0> 0.16 </T0>
@@ -206,6 +215,22 @@
   </Preequilibrium>
 
 
+  <!-- Create liquifier -->
+  <Liquefier>
+      <!-- CausalLiquefier -->
+      <CausalLiquefier>
+          <name>CausalLiquefier</name>
+          <dtau>0.02</dtau><!-- fluid time step in [fm] -->
+          <dx>0.3</dx><!-- fluid cell size in [fm] -->
+          <dy>0.3</dy><!-- fluid cell size in [fm] -->
+          <deta>0.2</deta><!-- fluid cell size -->
+          <tau_delay>2.0</tau_delay><!-- in [fm] -->
+          <time_relax>0.1</time_relax><!-- in [fm] -->
+          <d_diff>0.08</d_diff><!-- in [fm] -->
+          <width_delta>0.1</width_delta><!-- in [fm] -->
+      </CausalLiquefier>
+  </Liquefier>
+
   <!-- Hydro  Module  -->
   <Hydro>
 
@@ -255,6 +280,7 @@
     <MUSIC>
       <name>MUSIC</name>
       <MUSIC_input_file>music_input</MUSIC_input_file>
+      <beastMode>0</beastMode>
       <Initial_time_tau_0>0.5</Initial_time_tau_0>
       <output_evolution_to_file>1</output_evolution_to_file>
       <shear_viscosity_eta_over_s>0.08</shear_viscosity_eta_over_s>
@@ -303,17 +329,33 @@
    <JetHadronization>
        <name>colored/colorless/hybrid</name>
        <take_recoil>1</take_recoil>
-       <eCMforHadronization>2510</eCMforHadronization>
-       <reco_Elevelmax>3</reco_Elevelmax>
+       <!--eCMforHadronization only for pp collisions-->
+       <!--in hybrid put the full eCM here, this is distributed to the beam partons-->
+       <eCMforHadronization>5020</eCMforHadronization>
+       <reco_Mlevelmax>1</reco_Mlevelmax>
+       <reco_Blevelmax>1</reco_Blevelmax>
+       <reco_goldstone>0</reco_goldstone>
        <thermreco_distmax>5.0</thermreco_distmax>
-       <shower_recofactor>0.3333333</shower_recofactor>
-       <thermal_recofactor>0.3333333</thermal_recofactor>
-       <weak_decays>on</weak_decays>
+       <shower_recofactor>1.0</shower_recofactor>
+       <thermal_recofactor>1.0</thermal_recofactor>
+       <recobias_t>0</recobias_t>
+       <hydro_Tc>0.16</hydro_Tc>
+       <eta_max_boost_inv>2.0</eta_max_boost_inv> <!--only relevant for boost invariant hydro, max eta for thermal parton sampler-->
+       <had_postprop>0.0</had_postprop>
+       <part_prop>1.0</part_prop>
+       <pythia_decays>on</pythia_decays> <!-- lets the particles given to pythia decay-->
+       <tau0Max>10.0</tau0Max> <!-- only particles with tau0 < tau0Max (given in mm/c) can decay, increase to include weak decays-->
+       <weak_decays>depracted</weak_decays> <!-- use the parameters pythia_decays and tau0Max, this parameter is only a dummy to make old xml files work-->
        <!-- You can add any number of additional lines to initialize pythia hadronization here -->
        <!-- Note that if the tag exists it cannot be empty (tinyxml produces a segfault) -->
        <!-- <LinesToRead> -->
        <!--   111:mayDecay = off  -->
        <!-- </LinesToRead> -->
+       <reco_hadrons_in_pythia>1</reco_hadrons_in_pythia>
+       <!-- Switch to include more pythia particles from an additional xml file with particle information -->
+       <additional_pythia_particles>0</additional_pythia_particles>
+       <!-- Path to file with additional particles for pythia (for higher reco_Mlevelmax)-->
+       <additional_pythia_particles_path>../config/HH_LightExcitedMesons.xml</additional_pythia_particles_path>
    </JetHadronization>
 
   <!-- Particlization Module  -->
@@ -344,6 +386,11 @@
 
   <!-- Hadronic Afterburner  -->
   <Afterburner>
+    <!-- fragmentation hadrons in the afterburner only possible with hybrid hadronization-->
+    <include_fragmentation_hadrons>0</include_fragmentation_hadrons>
+    <!-- only the afterburner hadrons are written to a file -->
+    <!-- if fragmentation hadrons are not included in the afterburner they are also written  -->
+    <output_only_final_state_hadrons>1</output_only_final_state_hadrons>
     <!-- SMASH -->
     <SMASH>
       <name>SMASH</name>

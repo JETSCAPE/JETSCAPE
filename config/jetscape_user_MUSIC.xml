@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+
+<jetscape>
+
+  <vlevel> 0 </vlevel>
+  <nEvents> 1 </nEvents>
+
+  <JetScapeWriterAscii> on </JetScapeWriterAscii>
+
+    <!-- Inital State Module  -->
+    <IS>
+        <grid_max_x> 15 </grid_max_x>
+        <grid_max_y> 15 </grid_max_y>
+        <grid_max_z> 0 </grid_max_z>
+        <grid_step_x> 0.2 </grid_step_x>
+        <grid_step_y> 0.2 </grid_step_y>
+        <Trento>
+        <PhysicsInputs  projectile='Au'
+                target='Au'
+                sqrts='200'
+                cross-section='4.2'
+                normalization='5.73'>
+        </PhysicsInputs>
+        <CutInputs  centrality-low='0'
+              centrality-high='10'>
+        </CutInputs>
+        <TransInputs  reduced-thickness='0.0'
+                fluctuation="1.2"
+                nucleon-width="0.9"
+                nucleon-min-dist="1.2">
+        </TransInputs>
+        <LongiInputs  mean-coeff="1.0"
+                std-coeff="3.0"
+                skew-coeff="0.0"
+                skew-type="1"
+                jacobian="0.8">
+        </LongiInputs>
+        </Trento>
+    </IS>
+
+  <!-- Hard Process -->
+  <Hard>
+    <PythiaGun>
+      <pTHatMin>20</pTHatMin>
+      <pTHatMax>30</pTHatMax>
+      <eCM>200</eCM>
+    </PythiaGun>
+  </Hard>
+
+    <!--Preequilibrium Dynamics Module -->
+    <Preequilibrium>
+        <NullPreDynamics> </NullPreDynamics>
+    </Preequilibrium>
+
+    <!-- Hydro  Module  -->
+    <Hydro>
+        <MUSIC>
+            <beastMode>1</beastMode>
+            <Initial_time_tau_0>0.6</Initial_time_tau_0>
+            <freezeout_temperature>0.15</freezeout_temperature>
+            <shear_viscosity_eta_over_s>0.10</shear_viscosity_eta_over_s>
+        </MUSIC>
+    </Hydro>
+
+  <!--Eloss Modules -->
+  <Eloss>
+    <Matter>
+      <in_vac> 0 </in_vac>
+    </Matter>
+  </Eloss>
+
+  <SoftParticlization>
+    <iSS>
+        <number_of_repeated_sampling>1</number_of_repeated_sampling>
+        <Perform_resonance_decays>1</Perform_resonance_decays>
+    </iSS>
+  </SoftParticlization>
+
+  <!-- Jet Hadronization Module -->
+  <JetHadronization>
+    <name>colorless</name>
+  </JetHadronization>
+
+</jetscape>

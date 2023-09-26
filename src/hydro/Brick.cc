@@ -2,7 +2,7 @@
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
  * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -59,7 +59,15 @@ void Brick::InitTask() {
   if (brick->Attribute("bjorken_expansion_on", "true")) {
     bjorken_expansion_on = true;
     start_time = std::atof(brick->Attribute("start_time"));
+  } else {
+    if (brick->Attribute("start_time")){
+      start_time = std::atof(brick->Attribute("start_time"));
+    }
   }
+
+  hydro_tau_0 = start_time;
+
+  brick_L = GetXMLElementDouble({"Eloss", "Matter", "brick_length"});
 
   //Parameter parameter_list;
   GetParameterList().hydro_input_filename = (char *)"dummy"; //*(argv+1);
@@ -88,7 +96,8 @@ void Brick::GetHydroInfo(
   if (hydro_status == FINISHED) {
     fluid_cell_info_ptr->energy_density = 0.0;
     fluid_cell_info_ptr->entropy_density = 0.0;
-    if (bjorken_expansion_on) {
+	if(t > brick_L){fluid_cell_info_ptr->temperature = 0.;}
+    else if (bjorken_expansion_on) {
       fluid_cell_info_ptr->temperature =
           T_brick * std::pow(start_time / t, 1.0 / 3.0);
     } else {

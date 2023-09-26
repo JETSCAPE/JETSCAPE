@@ -1,5 +1,6 @@
 # Build from the official docker python base image, based on Debian
-FROM debian:stable 
+FROM ubuntu:focal
+ARG DEBIAN_FRONTEND=noninteractive
 
 # Install pre-reqs (commented ones are already in base image)
 RUN apt update && apt install -y \
@@ -28,6 +29,7 @@ tclsh \
 tcl-dev \
 libxft-dev \
 libxext-dev \
+libfftw3-3 \
 #zlib1g-dev \
 && rm -rf /var/lib/apt/lists/*
 
@@ -83,7 +85,7 @@ RUN curl -SL http://hepmc.web.cern.ch/hepmc/releases/HepMC3-3.2.5.tar.gz | tar -
 ENV LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH}"
 
 # Install Pythia8 with HepMC3-3.2.5 (that is needed by SMASH)
-ARG pythiaV="8307"
+ARG pythiaV="8309"
 RUN curl -SLk http://pythia.org/download/pythia83/pythia${pythiaV}.tgz \
 | tar -xvzC /usr/local \
 && cd /usr/local/pythia${pythiaV} \
@@ -97,12 +99,13 @@ ENV JETSCAPE_DIR="/home/${username}/JETSCAPE"
 ENV SMASH_DIR="${JETSCAPE_DIR}/external_packages/smash/smash_code"
 ENV EIGEN3_ROOT /usr/include/eigen3
 ENV PYTHIA8DIR /usr/local/
+ENV PYTHIA8 /usr/local/
 ENV PYTHIA8_ROOT_DIR /usr/local/
 ENV PATH $PATH:$PYTHIA8DIR/bin
 
 # Build heppy (various HEP tools via python)
 RUN cd / \
-&& git clone https://github.com/matplo/heppy.git \
+&& git clone --depth 1 --branch v1.3.8.8 https://github.com/matplo/heppy.git \
 && cd heppy \
 && ./external/fastjet/build.sh \
 && ./external/hepmc2/build.sh \

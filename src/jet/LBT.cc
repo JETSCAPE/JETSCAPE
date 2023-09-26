@@ -142,10 +142,7 @@ void LBT::Init() {
   //...Debye Mass square
   qhat0 = DebyeMass2(Kqhat0, alphas, temp0);
 
-  //...initialize the random number generator
-  srand((unsigned)time(NULL));
-  NUM1 = -1 * rand();
-  //    NUM1=-33;
+  ZeroOneDistribution = uniform_real_distribution<double>{0.0, 1.0};
 }
 
 void LBT::WriteTask(weak_ptr<JetScapeWriter> w) {
@@ -234,7 +231,7 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2,
       V[1][j] = Vfrozen[1][j];
       V[2][j] = Vfrozen[2][j];
       V[3][j] = Vfrozen[3][j];
-      V[0][j] = -log(1.0 - ran0(&NUM1));
+      V[0][j] = -log(1.0 - ZeroOneDistribution(*GetMt19937Generator()));
 
       for (int k = 0; k <= 3; k++)
         Prad[k][j] = P[k][j];
@@ -279,7 +276,7 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2,
       V0[1][j] = Vfrozen0[1][j];
       V0[2][j] = Vfrozen0[2][j];
       V0[3][j] = Vfrozen0[3][j];
-      V0[0][j] = -log(1.0 - ran0(&NUM1));
+      V0[0][j] = -log(1.0 - ZeroOneDistribution(*GetMt19937Generator()));
 
       // for(int k=0;k<=3;k++) Prad[k][j] = P[k][j];
 
@@ -1064,7 +1061,7 @@ void LBT::LBT0(int &n, double &ti) {
           probCol = 0.0;
         probTot = probCol + probRad;
 
-        if (ran0(&NUM1) <
+        if (ZeroOneDistribution(*GetMt19937Generator()) <
             probTot) { // !Yes, collision! Either elastic or inelastic.
 
           flagScatter = 1;
@@ -1182,7 +1179,7 @@ void LBT::LBT0(int &n, double &ti) {
                 n_sp2 += 1;
               }
 
-              if (ran0(&NUM1) <
+              if (ZeroOneDistribution(*GetMt19937Generator()) <
                   probRad /
                       probTot) { // radiation -- either heavy or light parton:
 
@@ -1256,7 +1253,7 @@ void LBT::LBT0(int &n, double &ti) {
                   eGluon = eGluon + pc4[0];
                   nGluon = nGluon + 1.0;
 
-                  V[0][np0] = -log(1.0 - ran0(&NUM1));
+                  V[0][np0] = -log(1.0 - ZeroOneDistribution(*GetMt19937Generator()));
 
                   // add multiple radiation for heavy quark
                   while (nrad > 1) {
@@ -1313,7 +1310,7 @@ void LBT::LBT0(int &n, double &ti) {
                       eGluon = eGluon + pc4[0];
                       nGluon = nGluon + 1.0;
 
-                      V[0][np0] = -log(1.0 - ran0(&NUM1));
+                      V[0][np0] = -log(1.0 - ZeroOneDistribution(*GetMt19937Generator()));
 
                     } else { //end multiple radiation
                       break;
@@ -1325,7 +1322,7 @@ void LBT::LBT0(int &n, double &ti) {
                   //                          cout<<"radiate! <Ng>: "<<nrad0<<"  real Ng H: "<< ctGluon << endl;
                 } // icl23 == 1, 1st gluon radiation from heavy quark
 
-              } // if(ran0(&NUM1)<probRad/probTot)
+              } // if(ZeroOneDistribution(*GetMt19937Generator())<probRad/probTot)
 
             } //if(Ejp>2*sqrt(qhat0))
 
@@ -1338,12 +1335,12 @@ void LBT::LBT0(int &n, double &ti) {
           if (abs(KATT1[i]) == 4 || abs(KATT1[i]) == 5)
             radng[i] = 0.0; // do it below
           tiscatter[i] = tcar;
-          V[0][i] = -log(1.0 - ran0(&NUM1));
+          V[0][i] = -log(1.0 - ZeroOneDistribution(*GetMt19937Generator()));
 
           for (unsigned ip = nnpp + 1; ip <= np0; ++ip) {
             tiscatter[ip] = tcar;
-            V[0][ip] = -log(1.0 - ran0(&NUM1));
-            V0[0][ip] = -log(1.0 - ran0(&NUM1));
+            V[0][ip] = -log(1.0 - ZeroOneDistribution(*GetMt19937Generator()));
+            V0[0][ip] = -log(1.0 - ZeroOneDistribution(*GetMt19937Generator()));
             tirad[ip] = tcar;
             Tint_lrf[ip] = 0.0;
             radng[ip] = 0.0;
@@ -1819,7 +1816,7 @@ void LBT::flavor(int &CT, int &KATT0, int &KATT2, int &KATT3, double RTE,
     double R2 = RTEg2;
     double R3 = RTEg3;
 
-    double a = ran0(&NUM1);
+    double a = ZeroOneDistribution(*GetMt19937Generator());
 
     if (a <= R1 / R0) {
       CT = 1;
@@ -1830,7 +1827,7 @@ void LBT::flavor(int &CT, int &KATT0, int &KATT2, int &KATT3, double RTE,
 
     if (a > R1 / R0 && a <= (R1 + R2) / R0) {
       CT = 2;
-      b = floor(ran0(&NUM1) * 6 + 1);
+      b = floor(ZeroOneDistribution(*GetMt19937Generator()) * 6 + 1);
       if (b == 7) {
         b = 6;
       }
@@ -1841,7 +1838,7 @@ void LBT::flavor(int &CT, int &KATT0, int &KATT2, int &KATT3, double RTE,
 
     if (a > (R1 + R2) / R0 && a <= 1.0) {
       CT = 3;
-      b = floor(ran0(&NUM1) * 6 + 1);
+      b = floor(ZeroOneDistribution(*GetMt19937Generator()) * 6 + 1);
       if (b == 7) {
         b = 6;
       }
@@ -1855,14 +1852,14 @@ void LBT::flavor(int &CT, int &KATT0, int &KATT2, int &KATT3, double RTE,
     double R1 = RTEHQ11;
     double R2 = RTEHQ12;
 
-    double a = ran0(&NUM1);
+    double a = ZeroOneDistribution(*GetMt19937Generator());
 
     //          qhat_over_T3=qhatTP;  // what is read in is qhat/T^3 of quark
     //          D2piT=8.0*pi/qhat_over_T3;
 
     if (a <= R1 / R0) { //Qq->Qq
       CT = 11;
-      b = floor(ran0(&NUM1) * 6 + 1);
+      b = floor(ZeroOneDistribution(*GetMt19937Generator()) * 6 + 1);
       if (b == 7) {
         b = 6;
       }
@@ -1883,7 +1880,7 @@ void LBT::flavor(int &CT, int &KATT0, int &KATT2, int &KATT3, double RTE,
     double R7 = RTEq7;
     double R8 = RTEq8;
 
-    double a = ran0(&NUM1);
+    double a = ZeroOneDistribution(*GetMt19937Generator());
     if (a <= R3 / R00) {
       CT = 13;
       KATT3 = 21;
@@ -1894,7 +1891,7 @@ void LBT::flavor(int &CT, int &KATT0, int &KATT2, int &KATT3, double RTE,
     if (a > R3 / R00 && a <= (R3 + R4) / R00) {
       CT = 4;
     f1:
-      b = floor(ran0(&NUM1) * 6 + 1);
+      b = floor(ZeroOneDistribution(*GetMt19937Generator()) * 6 + 1);
       if (b == 7) {
         b = 6;
       }
@@ -1917,7 +1914,7 @@ void LBT::flavor(int &CT, int &KATT0, int &KATT2, int &KATT3, double RTE,
       CT = 6;
       KATT3 = -KATT0;
     f2:
-      b = floor(ran0(&NUM1) * 3 + 1);
+      b = floor(ZeroOneDistribution(*GetMt19937Generator()) * 3 + 1);
       if (b == 4) {
         b = 3;
       }
@@ -2075,7 +2072,7 @@ void LBT::twflavor(int &CT, int &KATT0, int &KATT2, double E, double T) {
     //	R3  =RTEg3
 
     if (KATT20 == 21) {
-      double a = ran0(&NUM1);
+      double a = ZeroOneDistribution(*GetMt19937Generator());
       if (a <= R1 / (R1 + R2)) {
         CT = 1;
         //	        KATT3=KATT2
@@ -2086,7 +2083,7 @@ void LBT::twflavor(int &CT, int &KATT0, int &KATT2, double E, double T) {
       if (a > R1 / (R1 + R2)) {
         CT = 2;
         //	        KATT3=KATT2
-        b = floor(ran0(&NUM1) * 6 + 1);
+        b = floor(ZeroOneDistribution(*GetMt19937Generator()) * 6 + 1);
         if (b == 7) {
           b = 6;
         }
@@ -2138,12 +2135,12 @@ void LBT::twflavor(int &CT, int &KATT0, int &KATT2, double E, double T) {
       }
 
       if (KATT20 == -KATT00) {
-        double a = ran0(&NUM1);
+        double a = ZeroOneDistribution(*GetMt19937Generator());
         if (a <= (R6) / R00) {
           CT = 6;
           //	         KATT3=KATT2
         tf2:
-          b = floor(ran0(&NUM1) * 3 + 1);
+          b = floor(ZeroOneDistribution(*GetMt19937Generator()) * 3 + 1);
           if (b == 4) {
             b = 3;
           }
@@ -2353,9 +2350,9 @@ void LBT::colljet22(int CT, double temp, double qhat0ud, double v0[4],
          flag2 = 1;
          break;
       }
-      xw = 15.0 * ran0(&NUM1);
-      razim = 2.0 * pi * ran0(&NUM1);
-      rcos = 1.0 - 2.0 * ran0(&NUM1);
+      xw = 15.0 * ZeroOneDistribution(*GetMt19937Generator());
+      razim = 2.0 * pi * ZeroOneDistribution(*GetMt19937Generator());
+      rcos = 1.0 - 2.0 * ZeroOneDistribution(*GetMt19937Generator());
       rsin = sqrt(1.0 - rcos * rcos);
       //
       p2[0] = xw * temp;
@@ -2377,7 +2374,7 @@ void LBT::colljet22(int CT, double temp, double qhat0ud, double v0[4],
 
       //    use (s^2+u^2)/(t+qhat0ud)^2 as scattering cross section in the
       //
-      rant = ran0(&NUM1);
+      rant = ZeroOneDistribution(*GetMt19937Generator());
       tt = rant * ss;
 
       //		ic+=1;
@@ -2521,7 +2518,7 @@ void LBT::colljet22(int CT, double temp, double qhat0ud, double v0[4],
             (mmax + 4.0);
     }
 
-    rank = ran0(&NUM1);
+    rank = ZeroOneDistribution(*GetMt19937Generator());
   } while (rank > (msq * ff));
 
   if(flag1 == 1 || flag2 == 1){ // scatterings cannot be properly sampled
@@ -2563,7 +2560,7 @@ void LBT::colljet22(int CT, double temp, double qhat0ud, double v0[4],
   //    sample transverse momentum transfer with respect to jet momentum
   //    in cm frame
   //
-  double ranp = 2.0 * pi * ran0(&NUM1);
+  double ranp = 2.0 * pi * ZeroOneDistribution(*GetMt19937Generator());
   //
   //    transverse momentum transfer
   //
@@ -2725,7 +2722,7 @@ void LBT::collHQ22(int CT, double temp, double qhat0ud, double v0[4],
       flag1 = 1;
       break;
     }
-    xw = max_e2 * ran0(&NUM1);
+    xw = max_e2 * ZeroOneDistribution(*GetMt19937Generator());
     index_e2 = (int)((xw - min_e2) / bin_e2);
     if (index_e2 >= N_e2)
       index_e2 = N_e2 - 1;
@@ -2739,7 +2736,7 @@ void LBT::collHQ22(int CT, double temp, double qhat0ud, double v0[4],
       cout << "Wrong HQ channel ID" << endl;
       exit(EXIT_FAILURE);
     }
-  } while (ran0(&NUM1) > ff);
+  } while (ZeroOneDistribution(*GetMt19937Generator()) > ff);
 
   e2 = xw * temp;
   e1 = p0[0];
@@ -2754,9 +2751,9 @@ void LBT::collHQ22(int CT, double temp, double qhat0ud, double v0[4],
       break;
     }
 
-    theta2 = pi * ran0(&NUM1);
-    theta4 = pi * ran0(&NUM1);
-    phi24 = 2.0 * pi * ran0(&NUM1);
+    theta2 = pi * ZeroOneDistribution(*GetMt19937Generator());
+    theta4 = pi * ZeroOneDistribution(*GetMt19937Generator());
+    phi24 = 2.0 * pi * ZeroOneDistribution(*GetMt19937Generator());
 
     cosTheta24 =
         sin(theta2) * sin(theta4) * cos(phi24) + cos(theta2) * cos(theta4);
@@ -2771,7 +2768,7 @@ void LBT::collHQ22(int CT, double temp, double qhat0ud, double v0[4],
 
     // re-sample if the kinematic cuts are not satisfied
     if (ss <= 2.0 * qhat0ud || tt >= -qhat0ud || uu >= -qhat0ud) {
-      rank = ran0(&NUM1);
+      rank = ZeroOneDistribution(*GetMt19937Generator());
       sigFactor = 0.0;
       msq = 0.0;
       continue;
@@ -2791,7 +2788,7 @@ void LBT::collHQ22(int CT, double temp, double qhat0ud, double v0[4],
       msq = Mgc2gc(ss, tt, HQmass) / maxValue;
     }
 
-    rank = ran0(&NUM1);
+    rank = ZeroOneDistribution(*GetMt19937Generator());
 
   } while (rank > (msq * sigFactor));
 
@@ -2812,7 +2809,7 @@ void LBT::collHQ22(int CT, double temp, double qhat0ud, double v0[4],
     p2[0] = e4;
 
     // rotate randomly in xy plane (jet is in z), because p3 is assigned in xz plane with bias
-    double th_rotate = 2.0 * pi * ran0(&NUM1);
+    double th_rotate = 2.0 * pi * ZeroOneDistribution(*GetMt19937Generator());
     double p3x_rotate = p3[1] * cos(th_rotate) - p3[2] * sin(th_rotate);
     double p3y_rotate = p3[1] * sin(th_rotate) + p3[2] * cos(th_rotate);
     double p2x_rotate = p2[1] * cos(th_rotate) - p2[2] * sin(th_rotate);
@@ -2934,7 +2931,7 @@ void LBT::twcoll(int CT, double qhat0ud, double v0[4], double p0[4],
   //
 
   do {
-    rant = ran0(&NUM1);
+    rant = ZeroOneDistribution(*GetMt19937Generator());
     tt = rant * ss;
 
     if ((tt < qhat0ud) || (tt > (ss - qhat0ud)))
@@ -3073,7 +3070,7 @@ void LBT::twcoll(int CT, double qhat0ud, double v0[4], double p0[4],
       //
     }
 
-    rank = ran0(&NUM1);
+    rank = ZeroOneDistribution(*GetMt19937Generator());
 
   } while (rank > msq);
 
@@ -3082,7 +3079,7 @@ void LBT::twcoll(int CT, double qhat0ud, double v0[4], double p0[4],
 
   if ((tt > qhat0ud) && (tt < (ss - qhat0ud))) {
 
-    ranp = 2.0 * pi * ran0(&NUM1);
+    ranp = 2.0 * pi * ZeroOneDistribution(*GetMt19937Generator());
     //
     //
     //
@@ -3198,12 +3195,12 @@ void LBT::collHQ23(int parID, double temp_med, double qhat0ud, double v0[4],
   do {
 
     do {
-      randomX = xLow + xInt * ran0(&NUM1);
-      randomY = ran0(&NUM1);
+      randomX = xLow + xInt * ZeroOneDistribution(*GetMt19937Generator());
+      randomY = ZeroOneDistribution(*GetMt19937Generator());
     } while (tau_f(randomX, randomY, HQenergy, HQmass) < 1.0 / pi / temp_med);
 
     count_sample = 0;
-    while (max_Ng * ran0(&NUM1) > dNg_over_dxdydt(parID, randomX, randomY,
+    while (max_Ng * ZeroOneDistribution(*GetMt19937Generator()) > dNg_over_dxdydt(parID, randomX, randomY,
                                                   HQenergy, HQmass, temp_med,
                                                   Tdiff)) {
       count_sample = count_sample + 1;
@@ -3219,14 +3216,14 @@ void LBT::collHQ23(int parID, double temp_med, double qhat0ud, double v0[4],
       }
 
       do {
-        randomX = xLow + xInt * ran0(&NUM1);
-        randomY = ran0(&NUM1);
+        randomX = xLow + xInt * ZeroOneDistribution(*GetMt19937Generator());
+        randomY = ZeroOneDistribution(*GetMt19937Generator());
       } while (tau_f(randomX, randomY, HQenergy, HQmass) < 1.0 / pi / temp_med);
     }
 
     if (parID == 21 && randomX > 0.5)
       randomX = 1.0 - randomX;
-    theta_gluon = 2.0 * pi * ran0(&NUM1);
+    theta_gluon = 2.0 * pi * ZeroOneDistribution(*GetMt19937Generator());
     kperp_gluon = randomX * randomY * HQenergy;
     kpGluon[1] = kperp_gluon * cos(theta_gluon);
     kpGluon[2] = kperp_gluon * sin(theta_gluon);
@@ -3273,7 +3270,7 @@ void LBT::collHQ23(int parID, double temp_med, double qhat0ud, double v0[4],
     int yesA, yesB;
 
     do {
-      sqtheta = 2.0 * pi * ran0(&NUM1);
+      sqtheta = 2.0 * pi * ZeroOneDistribution(*GetMt19937Generator());
       sqx = qt * cos(sqtheta);
       sqy = qt * sin(sqtheta);
       sAA = (sE1 + sE2 - sk0) / (sp1z + sp2z - skz);
@@ -3480,12 +3477,12 @@ void LBT::radiationHQ(int parID, double qhat0ud, double v0[4], double P2[4],
   // comment do { for unit test
   do {
     do {
-      randomX = xLow + xInt * ran0(&NUM1);
-      randomY = ran0(&NUM1);
+      randomX = xLow + xInt * ZeroOneDistribution(*GetMt19937Generator());
+      randomY = ZeroOneDistribution(*GetMt19937Generator());
     } while (tau_f(randomX, randomY, HQenergy, HQmass) < 1.0 / pi / temp_med);
 
     count_sample = 0;
-    while (max_Ng * ran0(&NUM1) > dNg_over_dxdydt(parID, randomX, randomY,
+    while (max_Ng * ZeroOneDistribution(*GetMt19937Generator()) > dNg_over_dxdydt(parID, randomX, randomY,
                                                   HQenergy, HQmass, temp_med,
                                                   Tdiff)) {
       count_sample = count_sample + 1;
@@ -3501,14 +3498,14 @@ void LBT::radiationHQ(int parID, double qhat0ud, double v0[4], double P2[4],
       }
 
       do {
-        randomX = xLow + xInt * ran0(&NUM1);
-        randomY = ran0(&NUM1);
+        randomX = xLow + xInt * ZeroOneDistribution(*GetMt19937Generator());
+        randomY = ZeroOneDistribution(*GetMt19937Generator());
       } while (tau_f(randomX, randomY, HQenergy, HQmass) < 1.0 / pi / temp_med);
     }
 
     if (parID == 21 && randomX > 0.5)
       randomX = 1.0 - randomX;
-    theta_gluon = 2.0 * pi * ran0(&NUM1);
+    theta_gluon = 2.0 * pi * ZeroOneDistribution(*GetMt19937Generator());
     kperp_gluon = randomX * randomY * HQenergy;
     kpGluon[1] = kperp_gluon * cos(theta_gluon);
     kpGluon[2] = kperp_gluon * sin(theta_gluon);
@@ -3580,7 +3577,7 @@ void LBT::radiationHQ(int parID, double qhat0ud, double v0[4], double P2[4],
     }
 
     do {
-      stheta12 = 2.0 * pi * ran0(&NUM1); // theta between k1 and k2
+      stheta12 = 2.0 * pi * ZeroOneDistribution(*GetMt19937Generator()); // theta between k1 and k2
       aaa = 4.0 * ((sp0z - sk2z) * (sp0z - sk2z) +
                    sk2p * sk2p * cos(stheta12) * cos(stheta12));
       bbb = -4.0 * sAA * (sp0z - sk2z);
@@ -3813,10 +3810,10 @@ int LBT::KPoisson(double alambda) {
 
   double KKPoisson = 0;
   target = exp(-alambda);
-  p = ran0(&NUM1);
+  p = ZeroOneDistribution(*GetMt19937Generator());
 
   while (p > target) {
-    p = p * ran0(&NUM1);
+    p = p * ZeroOneDistribution(*GetMt19937Generator());
     KKPoisson = KKPoisson + 1;
   }
   return KKPoisson;
@@ -4189,14 +4186,14 @@ void LBT::jetInitialize(int numXY) {
       V[2][i] = 0.0;
       V[3][i] = 0.0;
     } else {
-      int index_xy = (int)(ran0(&NUM1) * numXY);
+      int index_xy = (int)(ZeroOneDistribution(*GetMt19937Generator()) * numXY);
       if (index_xy >= numXY)
         index_xy = numXY - 1;
       V[1][i] = initMCX[index_xy];
       V[2][i] = initMCY[index_xy];
       V[3][i] = 0.0;
     }
-    V[0][i] = -log(1.0 - ran0(&NUM1));
+    V[0][i] = -log(1.0 - ZeroOneDistribution(*GetMt19937Generator()));
 
     if (fixMomentum == 1) { // initialize momentum
       P[1][i] = px0;
@@ -4208,11 +4205,11 @@ void LBT::jetInitialize(int numXY) {
       WT[i] = 1.0;
     } else {
       pT_len = ipTmax - ipTmin;
-      ipT = ipTmin + ran0(&NUM1) * pT_len;
-      phi = ran0(&NUM1) * 2.0 * pi;
+      ipT = ipTmin + ZeroOneDistribution(*GetMt19937Generator()) * pT_len;
+      phi = ZeroOneDistribution(*GetMt19937Generator()) * 2.0 * pi;
       ipx = ipT * cos(phi);
       ipy = ipT * sin(phi);
-      rapidity = 2.0 * eta_cut * ran0(&NUM1) - eta_cut;
+      rapidity = 2.0 * eta_cut * ZeroOneDistribution(*GetMt19937Generator()) - eta_cut;
       ipz = sqrt(ipT * ipT + amss * amss) * sinh(rapidity);
       ip0 = sqrt(ipT * ipT + ipz * ipz + amss * amss);
       P[1][i] = ipx;
@@ -4280,7 +4277,7 @@ void LBT::setJetX(int numXY) {
     setY = 0.0;
     setZ = 0.0;
   } else {
-    int index_xy = (int)(ran0(&NUM1) * numXY);
+    int index_xy = (int)(ZeroOneDistribution(*GetMt19937Generator()) * numXY);
     if (index_xy >= numXY)
       index_xy = numXY - 1;
     setX = initMCX[index_xy];
@@ -4293,7 +4290,7 @@ void LBT::setJetX(int numXY) {
     V[1][i] = setX;
     V[2][i] = setY;
     V[3][i] = setZ;
-    V[0][i] = -log(1.0 - ran0(&NUM1));
+    V[0][i] = -log(1.0 - ZeroOneDistribution(*GetMt19937Generator()));
 
     V[1][i] = V[1][i] + P[1][i] / P[0][i] * tau0;
     V[2][i] = V[2][i] + P[2][i] / P[0][i] * tau0;
