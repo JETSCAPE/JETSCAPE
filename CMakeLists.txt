@@ -94,7 +94,8 @@ endif (USE_SMASH)
 ###############################
 set(Boost_USE_MULTITHREADED FALSE)
 message("Compiler and Linker flags ...")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -pipe -Wall -std=c++17")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -pipe -Wall -std=c++11 -lboost_system -pthread -ldl") 
+#some custom flags for my system plus changed to c++ 11 to work with my ROOT distribution, should be set to the same as yours
 ## can turn off some warnings
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-reorder -Wno-unused-variable ")
 ## Then set the build type specific options. These will be automatically appended.
