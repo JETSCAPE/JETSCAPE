@@ -60,8 +60,7 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
   int reco_hadrons_pythia;
   int additional_pythia_particles;
   bool goldstonereco;
-  std::vector<int> IDs;
-  
+  bool torder_reco;
   bool afterburner_frag_hadrons = false;
   std::string pythia_decays;
 

@@ -2,7 +2,7 @@
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
  * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -30,6 +30,8 @@ private:
   double pTHatMin;
   double pTHatMax;
   double eCM;
+  double vir_factor;
+  double softMomentumCutoff;
   bool FSR_on;
   bool softQCD;
 

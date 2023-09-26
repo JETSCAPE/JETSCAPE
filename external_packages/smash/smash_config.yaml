@@ -10,20 +10,20 @@ General:
     Nevents:       1      # Dummy
 
 Modi:
-    List: 
+    List:
         File_Directory: .
         File_Prefix: "dummy"
         Shift_Id: 0
 
 
-# if some SMASH output in OSCAR,... format is wanted, then uncomment 
+# if some SMASH output in OSCAR,... format is wanted, then uncomment
 # the following lines and add a 'smash_output' folder to your build folder
 Output:
     Output_Interval:  100.0
 #    Particles:
 #        Format:    ["Oscar2013"]
 #        Extended: True
-#        Only_Final: True
+#        Only_Final: Yes
 #    Collisions:
 #        Format:    ["Oscar2013"]
 #        Extended: True
