@@ -1,1 +1,0 @@
-add_library(analysis analysis.cc)
