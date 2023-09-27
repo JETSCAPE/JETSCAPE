@@ -60,23 +60,19 @@ int main(int argc, char* argv[]){
     double xsectotal = 0.0;
 
     //Cut variables
-    double idHadronEtaCut = 1;
+    double idHadronYCut = 0.5;
     double softend = 6.0;
     
-    //Variables for single pion spectrum
-    int NpTpionBin = 22;
-    double pionpTBin[NpTpionBin]; for(int i=0; i<=NpTpionBin; i++) pionpTBin[i] = (0.05*i)+0.1;
-    TH1D *HistTotalPions = new TH1D("Pion Spectrum", "Pion Spectrum pT", NpTpionBin, pionpTBin); //identified hadrons hists
-    
-    //Variables for single kaon spectrum
-    int NpTkaonBin = 17;
-    double kaonpTBin[NpTkaonBin]; for(int i=0; i<=NpTkaonBin; i++) kaonpTBin[i] = (0.05*i)+0.2;
-    TH1D *HistTotalKaons = new TH1D("Kaon Spectrum", "Kaon Spectrum pT", NpTkaonBin, kaonpTBin); //identified hadrons hists
-    
-    //Variables for single proton spectrum
-    int NpTprotonBin = 27;
-    double protonpTBin[NpTprotonBin]; for(int i=0; i<=NpTprotonBin; i++) protonpTBin[i] = (0.05*i)+0.35;
-    TH1D *HistTotalProtons = new TH1D("Proton Spectrum", "Proton Spectrum pT", NpTprotonBin, protonpTBin); //identified hadrons hists
+    //reading data to get bins
+    TFile dataroot( "/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/data/LHC13000.root");
+    TDirectory* piondir = (TDirectory*)dataroot.Get("Table 1"); TH1D* piondata = (TH1D*)piondir->Get("Hist1D_y1");
+    TDirectory* kaondir = (TDirectory*)dataroot.Get("Table 2"); TH1D* kaondata = (TH1D*)kaondir->Get("Hist1D_y1");
+    TDirectory* protondir = (TDirectory*)dataroot.Get("Table 6"); TH1D* protondata = (TH1D*)protondir->Get("Hist1D_y1");
+
+    //Variables for ID hadron hists
+    TH1D *HistTotalPions = new TH1D("Pion Spectrum", "Pion Spectrum pT", piondata->GetNbinsX(), piondata->GetXaxis()->GetXbins()->GetArray());
+    TH1D *HistTotalKaons = new TH1D("Kaon Spectrum", "Kaon Spectrum pT", kaondata->GetNbinsX(), kaondata->GetXaxis()->GetXbins()->GetArray());
+    TH1D *HistTotalProtons = new TH1D("Proton Spectrum", "Proton Spectrum pT", protondata->GetNbinsX(), protondata->GetXaxis()->GetXbins()->GetArray());
     
     cout<<"These are pTHat loops "<<endl;
     // For loop to open different pTHat bin files
@@ -100,9 +96,9 @@ int main(int argc, char* argv[]){
         char HistName[100];
 
         //temp hists for identified hadrons
-        TH1D *tempPions = new TH1D("Pion Spectrum", "Pion Spectrum pT", NpTpionBin, pionpTBin);
-        TH1D *tempKaons = new TH1D("Kaon Spectrum", "Kaon Spectrum pT", NpTkaonBin, kaonpTBin);
-        TH1D *tempProtons = new TH1D("Proton Spectrum", "Proton Spectrum pT", NpTprotonBin, protonpTBin);
+        TH1D *tempPions = new TH1D("Pion Spectrum", "Pion Spectrum pT", piondata->GetNbinsX(), piondata->GetXaxis()->GetXbins()->GetArray());
+        TH1D *tempKaons = new TH1D("Kaon Spectrum", "Kaon Spectrum pT", kaondata->GetNbinsX(), kaondata->GetXaxis()->GetXbins()->GetArray());
+        TH1D *tempProtons = new TH1D("Proton Spectrum", "Proton Spectrum pT", protondata->GetNbinsX(), protondata->GetXaxis()->GetXbins()->GetArray());
 
         //Data structures for events read in to save run time
         vector<shared_ptr<Hadron>> hadrons;
@@ -135,7 +131,7 @@ int main(int argc, char* argv[]){
 
                 double strength = 1; //smoothing between smooth and hard transition          
 
-                if(fabs(Eta) < idHadronEtaCut){
+                if(fabs(Eta) < idHadronYCut){
                     if(abs(PID) == 211) tempPions->Fill(PT, strength/2);
                     if(abs(PID) == 321) tempKaons->Fill(PT, strength/2);
                     if(abs(PID) == 2212) tempProtons->Fill(PT, strength/2);
@@ -173,9 +169,9 @@ int main(int argc, char* argv[]){
     } //k-loop ends here (pTHatBin loop)
 
     //Scaling totals by global factors and the identified pions by bin centers: dSigma/(2*pi*pT*dpT*dEta)
-    scaleBins(HistTotalPions,(1/(2*M_PI*2.0*idHadronEtaCut)));
-    scaleBins(HistTotalKaons,(1/(2*M_PI*2.0*idHadronEtaCut)));
-    scaleBins(HistTotalProtons,(1/(2*M_PI*2.0*idHadronEtaCut)));
+    scaleBins(HistTotalPions,(1/(2*M_PI*2.0*idHadronYCut)));
+    scaleBins(HistTotalKaons,(1/(2*M_PI*2.0*idHadronYCut)));
+    scaleBins(HistTotalProtons,(1/(2*M_PI*2.0*idHadronYCut)));
  	
     //create root file for total plots
     TFile* totalroot = new TFile( "root/totals.root", "RECREATE");
