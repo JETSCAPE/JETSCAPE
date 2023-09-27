@@ -48,7 +48,7 @@ public:
       initVdotV, initEner;
 
   double tStart;// = 0.6;
-  double hydro_Tc, qhat0, alphas, brick_length, vir_factor, qhat, Q00;
+  double hydro_Tc, brick_length;
   int iEvent;
   bool debug_flag = 0;
   long NUM1;
@@ -57,12 +57,6 @@ public:
   //qhat stuff
   double absFactor(TLorentzVector pVec, double T);
   bool isAbsorbed(TLorentzVector pVec, double T, double delTime);
-  double RunningAlphaS(double muSquare);
-  int QhatParametrizationType;
-  double qhatA, qhatB, qhatC, qhatD;
-  static const int dimQhatTab = 151;
-  double qhatTab1D[dimQhatTab] = {0.0};
-  double qhatTab2D[dimQhatTab][dimQhatTab] = {{0.0}};
 
   // flag to make sure initialize only once
   static bool flag_init;
@@ -70,7 +64,6 @@ public:
 private:
   // Allows the registration of the module so that it is available to be used by the Jetscape framework.
   static RegisterJetScapeModule<gammaLoss> reg;
-  double tscale;
 };
 
 #endif // gammaLoss_H

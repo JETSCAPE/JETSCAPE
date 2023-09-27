@@ -68,14 +68,6 @@ gammaLoss::gammaLoss() {
   initRdotV = 0.;
   initVdotV = 0.;
   initEner = 0.;
-  qhat0 = 0.;
-  alphas = 0.;
-  tscale=1;
-  QhatParametrizationType=-1;
-  qhatA=0.;
-  qhatB=0.;
-  qhatC=0.;
-  qhatD=0.;
 }
 
 gammaLoss::~gammaLoss() { VERBOSE(8); }
@@ -88,16 +80,6 @@ void gammaLoss::Init() {
   recoil_on = false;
   hydro_Tc = 0.16;
   brick_length = 4.0;
-  qhat = 0.0;
-  Q00 = 1.0;    // virtuality separation scale
-  qhat0 = 2.0;  // GeV^2/fm for gluon at s = 96 fm^-3
-  alphas = 0.3; // only useful when qhat0 is a negative number
-  tscale=1;
-  QhatParametrizationType=-1;
-  qhatA=1;
-  qhatB=1;
-  qhatC=1;
-  qhatD=1;
 
   int flagInt = -100;
   double inputDouble = -99.99;
@@ -266,7 +248,7 @@ void gammaLoss::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parto
     //cout << "Temp: " << now_temp << ". Abs factor: " << gammaLoss::absFactor(pLab,now_temp)*100000 << endl;
     //Dump_pIn_info(i,pIn);
     
-    //removing photon if its absorbed
+    //removing photon if its absorbed by splitting into 2 with absorption tags
     if(gammaLoss::isAbsorbed(pLab,now_temp,deltaTprime)){
       Parton *pTemp = new Parton(0,22,-22,0.0,0.0,0.0,0.0,newpos);
       pOut.push_back(*pTemp);
@@ -290,15 +272,4 @@ bool gammaLoss::isAbsorbed(TLorentzVector pVec, double T, double delTime){
 
   if((float)rand()/RAND_MAX < chance) return true;
   else return false;
-}
-
-/////////////////// Running alphas for HTL-qhat: Do not use for others///////////////////
-double gammaLoss::RunningAlphaS(double muSquare){
-  int ActiveFlavor=3;
-  double Square_Lambda_QCD_HTL = exp( -12.0*pi/( (33 - 2*ActiveFlavor)*alphas) );
-  double ans = 12.0*pi/( (33.0- 2.0*ActiveFlavor)*log(muSquare/Square_Lambda_QCD_HTL) );
-  if(muSquare < 1.0) {ans=alphas; }
-  
-  VERBOSE(8)<<"Fixed-alphaS="<<alphas<<", Lambda_QCD_HTL="<<sqrt(Square_Lambda_QCD_HTL)<<", mu2="<<muSquare<<", Running alpha_s"<<ans;
-  return ans;
 }
