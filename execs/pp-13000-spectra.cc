@@ -78,14 +78,14 @@ int main(int argc, char* argv[]){
     // For loop to open different pTHat bin files
     for (int k = 0; k<NpTHardBin; ++k){
         char HadronFile[300], pTBinString[100];
-        sprintf(HadronFile,"dat/PP_Bin%s_%s.dat", pTHatMin[k].c_str(), pTHatMax[k].c_str());
+        sprintf(HadronFile,"dat/PP_Bin%s_%s.dat.gz", pTHatMin[k].c_str(), pTHatMax[k].c_str());
         //sprintf(HadronFile,"test_out.dat");
         
-        auto myfile  = make_shared<JetScapeReaderAscii>(HadronFile);
+        auto myfile  = make_shared<JetScapeReaderAsciiGZ>(HadronFile);
         sprintf(pTBinString,"Current pTHatBin is %i (%s,%s) GeV",k,pTHatMin[k].c_str(),pTHatMax[k].c_str());
         
         int  SN=0,PID=0;
-        double Px, Py, Pz, E, Eta, Phi, pStat, mass;
+        double Px, Py, Pz, E, Y, Phi, pStat, mass;
         int Events =0;
         
         // Create a file on which histogram(s) can be saved.
@@ -117,7 +117,7 @@ int main(int argc, char* argv[]){
                 Px = hadrons[i].get()->px();
                 Py = hadrons[i].get()->py();
                 Pz = hadrons[i].get()->pz();
-                Eta = hadrons[i].get()->eta();
+                Y = hadrons[i].get()->rapidity();
                 Phi = hadrons[i].get()->phi();
                 pStat = hadrons[i].get()->pstat();
                 mass = hadrons[i].get()->restmass();
@@ -131,7 +131,7 @@ int main(int argc, char* argv[]){
 
                 double strength = 1; //smoothing between smooth and hard transition          
 
-                if(fabs(Eta) < idHadronYCut){
+                if(fabs(Y) < idHadronYCut){
                     if(abs(PID) == 211) tempPions->Fill(PT, strength/2);
                     if(abs(PID) == 321) tempKaons->Fill(PT, strength/2);
                     if(abs(PID) == 2212) tempProtons->Fill(PT, strength/2);
