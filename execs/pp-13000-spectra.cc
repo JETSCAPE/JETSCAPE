@@ -1,5 +1,3 @@
-// lambda_c predictions for ALICE
-
 //C++ header
 #include "string"
 #include <iostream>
@@ -30,7 +28,7 @@
 #include "TMultiGraph.h"
 #include "TLegend.h"
 #include "TRatioPlot.h"
-#include "TH2D.h"
+#include "TProfile.h"
 
 #include "analysis.cc"
 
@@ -58,81 +56,56 @@ int main(int argc, char* argv[]){
     //for(int i = 0; i < pTHatMin.size(); i++) cout << pTHatMin[i] << endl; //debugging line
     vector<int> eventCount;
 
-    //get list of cross sections
-    vector<vector<double>> xsecout = getXsecs(pTHatMin,pTHatMax);
-	vector<double> xsecList = xsecout[0];
-    vector<double> xsecErrorList = xsecout[1];
-    double xsectotal = 0;
-    for(int k = 0; k<NpTHardBin; k++) xsectotal += xsecList[k];
-    //for(int k = 0; k<NpTHardBin; k++) cout << pTHatMin[k] << " " << pTHatMax[k] << " " << xsecList[k]*100000 << endl; //debugging line
-    //cout << xsectotal << endl;
+    //xsec total running count
+    double xsectotal = 0.0;
 
     //Cut variables
-    double AssHadEtaCut = 0.8;
-    double AssHadPtCut = 0.3;
-    double deltaEtaCut = 1;
-    double LYcut = 0.5;
-    double triggerptcut[] = {3,5,8,16}; int ntrigbins = 3;
-    double assptmin[] = {0.3,0.3,1}; int nassbins = 3;
-    double assptmax[] = {10000,1,10000};
+    double idHadronEtaCut = 1;
+    double softend = 6.0;
     
-    //Variables for single hadron spectrum
-    double LphiBin[17];
-    for(int i = 0; i < 17; i++) LphiBin[i] = i*pi/16;
-    double phibinw = LphiBin[1]-LphiBin[0];
-    int NphiLBin = sizeof(LphiBin)/sizeof(LphiBin[0])-1;
-    TH1D *HistLPhi[3][3]; //identified hadrons hists
-    double totLcount[3][3] = {0};
-    string names[3][3];
-    for(int i1 = 0; i1 < 3; i1++){
-        for(int i2 = 0; i2 < 3; i2++){
-            names[i1][i2] = "L Azi Cor "+to_string(triggerptcut[i1])+"-"+to_string(triggerptcut[i1+1])+" "+
-                to_string(assptmin[i2])+"-"+to_string(assptmax[i2]);
-            HistLPhi[i1][i2] = new TH1D("Hybrid Had. prediction", names[i1][i2].c_str(), NphiLBin, LphiBin);
-        }
-    }   
-
-    //graph declaration for adding hadron spectra
-    TMultiGraph* hadronComp = new TMultiGraph();
-    TGraph* hadronComponents[NpTHardBin];
+    //Variables for single pion spectrum
+    int NpTpionBin = 22;
+    double pionpTBin[NpTpionBin]; for(int i=0; i<=NpTpionBin; i++) pionpTBin[i] = (0.05*i)+0.1;
+    TH1D *HistTotalPions = new TH1D("Pion Spectrum", "Pion Spectrum pT", NpTpionBin, pionpTBin); //identified hadrons hists
+    
+    //Variables for single kaon spectrum
+    int NpTkaonBin = 17;
+    double kaonpTBin[NpTkaonBin]; for(int i=0; i<=NpTkaonBin; i++) kaonpTBin[i] = (0.05*i)+0.2;
+    TH1D *HistTotalKaons = new TH1D("Kaon Spectrum", "Kaon Spectrum pT", NpTkaonBin, kaonpTBin); //identified hadrons hists
+    
+    //Variables for single proton spectrum
+    int NpTprotonBin = 27;
+    double protonpTBin[NpTprotonBin]; for(int i=0; i<=NpTprotonBin; i++) protonpTBin[i] = (0.05*i)+0.35;
+    TH1D *HistTotalProtons = new TH1D("Proton Spectrum", "Proton Spectrum pT", NpTprotonBin, protonpTBin); //identified hadrons hists
     
     cout<<"These are pTHat loops "<<endl;
     // For loop to open different pTHat bin files
     for (int k = 0; k<NpTHardBin; ++k){
         char HadronFile[300], pTBinString[100];
-        sprintf(HadronFile,"dat/PP_Bin%s_%s.dat.gz", pTHatMin[k].c_str(), pTHatMax[k].c_str());
+        sprintf(HadronFile,"dat/PP_Bin%s_%s.dat", pTHatMin[k].c_str(), pTHatMax[k].c_str());
+        //sprintf(HadronFile,"test_out.dat");
         
-        auto myfile  = make_shared<JetScapeReaderAsciiGZ>(HadronFile);
+        auto myfile  = make_shared<JetScapeReaderAscii>(HadronFile);
         sprintf(pTBinString,"Current pTHatBin is %i (%s,%s) GeV",k,pTHatMin[k].c_str(),pTHatMax[k].c_str());
         
         int  SN=0,PID=0;
-        double Px, Py, Pz, E, Eta, Phi, pStat, mass, Y;
+        double Px, Py, Pz, E, Eta, Phi, pStat, mass;
         int Events =0;
-        int TriggeredJetNumber=0;
-        int Lcount[3][3] = {0};
         
         // Create a file on which histogram(s) can be saved.
         char outFileName[1000];
         sprintf(outFileName,"root/SpectraBin%s_%s.root",pTHatMin[k].c_str(),pTHatMax[k].c_str());
-        TFile* outFile = new TFile(outFileName, "RECREATE");
+        TFile* outFile = new TFile( outFileName, "RECREATE");
         // Reset for each pTHardBin
         char HistName[100];
 
         //temp hists for identified hadrons
-        TH1D *Lpts = new TH1D("L counts", "L counts", 3, triggerptcut);
-        TH1D *tempL[3][3]; //identified hadrons hists
-        for(int i1 = 0; i1 < 3; i1++)
-            for(int i2 = 0; i2 < 3; i2++)
-                tempL[i1][i2] = new TH1D(names[i1][i2].c_str(), names[i1][i2].c_str(), NphiLBin, LphiBin);
+        TH1D *tempPions = new TH1D("Pion Spectrum", "Pion Spectrum pT", NpTpionBin, pionpTBin);
+        TH1D *tempKaons = new TH1D("Kaon Spectrum", "Kaon Spectrum pT", NpTkaonBin, kaonpTBin);
+        TH1D *tempProtons = new TH1D("Proton Spectrum", "Proton Spectrum pT", NpTprotonBin, protonpTBin);
 
         //Data structures for events read in to save run time
-        vector<shared_ptr<Hadron>> hadrons, Ls, others;
-
-        //hists for reco vs fragmentation
-        TH2D *recoHist[ntrigbins][nassbins]; //identified hadrons hists
-        for(int i1 = 0; i1 < ntrigbins; i1++)
-            for(int i2 = 0; i2 < nassbins; i2++)
-                recoHist[i1][i2] = new TH2D(names[i1][i2].c_str(), names[i1][i2].c_str(), 2, 10, 30, 2, 10, 30);
+        vector<shared_ptr<Hadron>> hadrons;
         
         //actually reading in
         while (!myfile->Finished()){
@@ -149,106 +122,67 @@ int main(int argc, char* argv[]){
                 Py = hadrons[i].get()->py();
                 Pz = hadrons[i].get()->pz();
                 Eta = hadrons[i].get()->eta();
-                Y = hadrons[i].get()->rapidity();
                 Phi = hadrons[i].get()->phi();
                 pStat = hadrons[i].get()->pstat();
                 mass = hadrons[i].get()->restmass();
-                double PT = TMath::Sqrt((Px*Px) + (Py*Py));                
-                
-                // making particle lists
-                if(abs(PID) == 4122){
-                    if(abs(Y) < LYcut){
-                        Ls.push_back(hadrons[i]);
-                        Lpts->Fill(PT);
-                    }
-                }
-                
-                //associated particles are electrons, muons, pions, kaons, protons
-                if(abs(PID) == 11 || abs(PID) == 13 || abs(PID) == 211 || abs(PID) == 321 || abs(PID) == 2212){
-                    if(PT > AssHadPtCut){
-                        others.push_back(hadrons[i]);
-                    }
-                }
-                
+                double PT = TMath::Sqrt((Px*Px) + (Py*Py));      
+
+                //cutting for specific regimes
+                if(k == 0 && PT > softend)
+                    continue;
+                if(k != 0 && PT < softend)
+                    continue;
+
+                double strength = 1; //smoothing between smooth and hard transition          
+
+                if(fabs(Eta) < idHadronEtaCut){
+                    if(abs(PID) == 211) tempPions->Fill(PT, strength/2);
+                    if(abs(PID) == 321) tempKaons->Fill(PT, strength/2);
+                    if(abs(PID) == 2212) tempProtons->Fill(PT, strength/2);
+                } 
             }
-
-            //forming and binning pairs
-            for(int i = 0; i < Ls.size(); i++){
-                for(int j = 0; j < others.size(); j++){
-                    if(abs(Ls[i].get()->eta() - others[j].get()->eta()) < deltaEtaCut){
-                        double deltaphi = abs(Ls[i].get()->phi() - others[j].get()->phi());
-                        if(deltaphi > pi) deltaphi = (2*pi) - deltaphi;
-
-                        for(int i1 = 0; i1 < 3; i1++){
-                            for(int i2 = 0; i2 < 3; i2++){
-                                if(Ls[i].get()->pt() > triggerptcut[i1] && Ls[i].get()->pt() < triggerptcut[i1+1] 
-                                    && others[j].get()->pt() > assptmin[i2] && others[j].get()->pt() < assptmax[i2]){
-                                        tempL[i1][i2]->Fill(deltaphi, 1.0/(phibinw));
-                                        recoHist[i1][i2]->Fill(Ls[i].get()->pstat()-800, others[j].get()->pstat()-800);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            //clearing had vecs
-            Ls.clear();
-            others.clear();
         }
+
+        //xsec stuff
+        double HardCrossSection = myfile->GetSigmaGen();
+        double HardCrossSectionError =  myfile->GetSigmaErr();
+        xsectotal += HardCrossSection; //set for first bin to match experimental value; end of reading cross section
         
-        //xsec and event count handling
+        //event count handling
         eventCount.push_back(Events);
-        double HardCrossSection = myfile->GetSigmaGen();;
-        double HardCrossSectionError = myfile->GetSigmaErr();;
         
-        //Dcounts
-        for(int i1 = 0; i1 < 3; i1++)
-            for(int i2 = 0; i2 < 3; i2++)
-                totLcount[i1][i2] += Lpts->GetBinContent(i1+1)*HardCrossSection/(Events);
+        //Write histogram into a root file
+        tempPions->Write();
+        tempKaons->Write();
+        tempProtons->Write();
         
-        //event info
+        //add to totals histograms
+        HistTotalPions->Add(tempPions,HardCrossSection/Events);
+        HistTotalKaons->Add(tempKaons,HardCrossSection/Events);
+        HistTotalProtons->Add(tempProtons,HardCrossSection/Events);
+		
+        myfile->Close();
+        
         TVector EventInfo(3);
         EventInfo[0] = HardCrossSection;
         EventInfo[1] = HardCrossSectionError;
         EventInfo[2] = Events;
         EventInfo.Write("EventInfo");
-        
-        //add to totals histograms
-        //tempD->Scale(1.0/(Dcount));
-        for(int i1 = 0; i1 < 3; i1++){
-            for(int i2 = 0; i2 < 3; i2++){
-                tempL[i1][i2]->Write(names[i1][i2].c_str());
-                recoHist[i1][i2]->Write(names[i1][i2].c_str());
-                HistLPhi[i1][i2]->Add(tempL[i1][i2],HardCrossSection/(Events));
-            }
-        }
 
-        myfile->Close();
         outFile->Close();
     } //k-loop ends here (pTHatBin loop)
 
+    //Scaling totals by global factors and the identified pions by bin centers: dSigma/(2*pi*pT*dpT*dEta)
+    scaleBins(HistTotalPions,(1/(2*M_PI*2.0*idHadronEtaCut)));
+    scaleBins(HistTotalKaons,(1/(2*M_PI*2.0*idHadronEtaCut)));
+    scaleBins(HistTotalProtons,(1/(2*M_PI*2.0*idHadronEtaCut)));
+ 	
     //create root file for total plots
     TFile* totalroot = new TFile( "root/totals.root", "RECREATE");
-
-    //Scaling totals by global factors and the identified pions by bin centers: dSigma/(2*pi*pT*dpT*dEta)
-    //HistDPhi->SetNormFactor(1.0);
-    for(int i1 = 0; i1 < 3; i1++){
-        for(int i2 = 0; i2 < 3; i2++){
-            HistLPhi[i1][i2]->Scale(1.0/totLcount[i1][i2]);
-            HistLPhi[i1][i2]->GetXaxis()->SetTitle("Delta phi (rad)");
-            HistLPhi[i1][i2]->GetYaxis()->SetTitle("(1/Nlambda)(dNassc/dDelphi)");
- 	        HistLPhi[i1][i2]->Write(names[i1][i2].c_str());
-
-            //plot output
-            TCanvas *c = new TCanvas();
-            HistLPhi[i1][i2]->Draw();
-            string plotname = "plots/" + names[i1][i2] + ".png";
-            HistLPhi[i1][i2]->GetYaxis()->SetRangeUser(0,10);
-            c->SaveAs(plotname.c_str());
-            c->Close();
-        }
-    }
+    HistTotalPions->Write("raw pions"); smoothBins(HistTotalPions); HistTotalPions->Write("identified pions");
+    HistTotalPions->Write("raw kaons"); smoothBins(HistTotalKaons); HistTotalPions->Write("identified kaons");
+    HistTotalPions->Write("raw protons"); smoothBins(HistTotalProtons); HistTotalPions->Write("identified protons");
+    totalroot->Close();
 
     //Done. Script run time
     int EndTime = time(NULL);
@@ -259,6 +193,9 @@ int main(int argc, char* argv[]){
     
     //test comment
     //debugging
-
+    //for(int i = 0; i < NpTJetBin; i++) cout << DifferentialJetTotal[i]*1000000 << " " << DifferentialJetTotalErrors[i]*1000000 << endl;
+    //for(int i = 0; i < NpTSingleHadronBin; i++) cout << DifferentialHadronTotal[i] << " " << DifferentialHadronTotalErrors[i]*1000000 << endl;
+    //for(int i = 0; i < NpTHardBin; i++) cout << pTHardBinSingleHadronBinError << endl;
+    //for(int i = 0; i < eventCount.size(); i++) cout << pTHatMin[i] << " " << pTHatMax[i] << " " << eventCount[i] << " " << xsecList[i] << endl;
     return 0;
 }
