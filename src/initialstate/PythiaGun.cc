@@ -2,7 +2,7 @@
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
  * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -70,10 +70,10 @@ void PythiaGun::InitTask() {
   readString("PromptPhoton:all=on");
   readString("WeakSingleBoson:all=off");
   readString("WeakDoubleBoson:all=off");
-  
+
   pTHatMin = GetXMLElementDouble({"Hard", "PythiaGun", "pTHatMin"});
   pTHatMax = GetXMLElementDouble({"Hard", "PythiaGun", "pTHatMax"});
-  
+
   if(pTHatMin < 0.01){ //assuming low bin where softQCD should be used
     //running softQCD - inelastic nondiffrative (min-bias)
     readString("HardQCD:all = off");
@@ -129,6 +129,10 @@ void PythiaGun::InitTask() {
   numbf << eCM;
   readString(numbf.str());
 
+  //Reading vir_factor from xml for MATTER
+  vir_factor = GetXMLElementDouble({"Eloss", "Matter", "vir_factor"});
+  softMomentumCutoff = GetXMLElementDouble({"Hard", "PythiaGun", "softMomentumCutoff"});
+
   std::stringstream lines;
   lines << GetXMLElementText({"Hard", "PythiaGun", "LinesToRead"}, false);
   int i = 0;
@@ -147,14 +151,12 @@ void PythiaGun::InitTask() {
     std::ofstream sigma_printer;
     sigma_printer.open(printer, std::ios::trunc);
 
-    
+
 }
 
 void PythiaGun::Exec() {
   VERBOSE(1) << "Run Hard Process : " << GetId() << " ...";
   VERBOSE(8) << "Current Event #" << GetCurrentEvent();
-  //Reading vir_factor from xml for MATTER
-  double vir_factor = GetXMLElementDouble({"Eloss", "Matter", "vir_factor"});
 
   bool flag62 = false;
   vector<Pythia8::Particle> p62;
@@ -173,10 +175,10 @@ void PythiaGun::Exec() {
       if (!printer.empty()){
             std::ofstream sigma_printer;
             sigma_printer.open(printer, std::ios::out | std::ios::app);
-            
+
             sigma_printer << "sigma = " << GetSigmaGen() << " Err =  " << GetSigmaErr() << endl ;
             //sigma_printer.close();
-      
+
 //      JSINFO << BOLDYELLOW << " sigma = " << GetSigmaGen() << " sigma err = " << GetSigmaErr() << " printer = " << printer << " is " << sigma_printer.is_open() ;
     };
 
@@ -209,8 +211,15 @@ void PythiaGun::Exec() {
 
         // reject rare cases of very soft particles that don't have enough e to get
         // reasonable virtuality
-        /*if (particle.pT() < 1.0 / sqrt(vir_factor))
-          continue;*/
+        if (vir_factor > 0. && (particle.pT() < softMomentumCutoff)) {
+          // this cutoff was 1.0/sqrt(vir_factor) in versions < 3.6
+          continue;
+        } else if(vir_factor < 0. && (particle.pAbs() < softMomentumCutoff)) {
+          continue;
+        } else if(vir_factor < rounding_error) {
+          JSWARN << "vir_factor should not be zero.";
+          exit(1);
+        }
 
         //if(particle.id()==22) cout<<"########this is a photon!######" <<endl;
         // accept
@@ -281,12 +290,12 @@ void PythiaGun::Exec() {
                << " at x=" << xLoc[1] << ", y=" << xLoc[2] << ", z=" << xLoc[3];
 
     VERBOSE(7) << "Adding particle with pid = " << particle.id()
-               << ", pT = " << particle.pT() << ", y = " << particle.y()
+               << ", pT = " << particle.pT() << ", eta = " << particle.eta()
                << ", phi = " << particle.phi() << ", e = " << particle.e();
 
     VERBOSE(7) << " at x=" << xLoc[1] << ", y=" << xLoc[2] << ", z=" << xLoc[3];
 
-    auto ptn = make_shared<Parton>(0, particle.id(), 0, particle.pT(), particle.y(),particle.phi(), particle.e(), xLoc);
+    auto ptn = make_shared<Parton>(0, particle.id(), 0, particle.pT(), particle.eta(),particle.phi(), particle.e(), xLoc);
     ptn->set_color(particle.col());
     ptn->set_anti_color(particle.acol());
     ptn->set_max_color(1000 * (np + 1));

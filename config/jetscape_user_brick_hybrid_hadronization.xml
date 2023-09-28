@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<jetscape>
+  <nEvents> 10 </nEvents>
+  <vlevel> 0 </vlevel>
+  <setReuseHydro> true </setReuseHydro>
+  <nReuseHydro> 10 </nReuseHydro>
+  <nEvents_printout> 1 </nEvents_printout>
+
+  <outputFilename>test_out</outputFilename>
+  <JetScapeWriterAscii> off </JetScapeWriterAscii>
+  <JetScapeWriterFinalStatePartonsAscii> off </JetScapeWriterFinalStatePartonsAscii>
+  <JetScapeWriterFinalStateHadronsAscii> on </JetScapeWriterFinalStateHadronsAscii>
+
+  <Random>
+    <seed>42</seed>
+  </Random>
+
+  <!-- Hard Process -->
+  <Hard>
+    <!-- Parton Gun test with fixed pT and fixed IS pos = 0  -->
+    <PGun>
+      <name>PGun</name>
+      <pT>100</pT>
+      <parID>1</parID>
+    </PGun>
+  </Hard>
+
+  <!-- Hydro  Module  -->
+  <Hydro>
+    <maxT>20</maxT>
+    <tStart> 0.6 </tStart> <!-- Start time of jet quenching, proper time, fm/c   -->
+
+    <!-- Test Brick if bjorken_expansion_on="true", T(t) = T * (start_time[fm]/t)^{1/3} -->
+    <Brick bjorken_expansion_on="false" start_time="0.6">
+      <name>Brick</name>
+      <T>0.3</T>
+    </Brick>
+  </Hydro>
+
+  <!--Eloss Modules -->
+  <Eloss>
+
+    <maxT>100</maxT>
+
+    <Matter>
+      <in_vac> 0 </in_vac>
+      <brick_med> 1 </brick_med>   <!-- Set brick_med to 1 while using Brick Hydro module-->
+      <recoil_on> 0 </recoil_on>
+      <brick_length> 4.0 </brick_length>
+      <hydro_Tc> 0.16 </hydro_Tc>
+      <Q0> 2.0 </Q0>
+      <vir_factor> 0.25 </vir_factor>
+    </Matter>
+
+    <Lbt>
+      <name> Lbt </name>
+      <Q0> 2.0 </Q0>
+      <in_vac> 0 </in_vac>
+      <only_leading> 0 </only_leading>
+      <hydro_Tc> 0.16 </hydro_Tc>
+      <alphas> 0.2 </alphas>
+      <run_alphas>1</run_alphas>   <!-- 0 for fixed alpha_s and 1 for running alpha_s -->
+    </Lbt>
+  </Eloss>
+
+  <!-- Jet Hadronization Module -->
+  <JetHadronization>
+    <name>hybrid</name>
+    <had_postprop>0.1</had_postprop>
+    <part_prop>0.0</part_prop>
+    <pythia_decays>on</pythia_decays> <!-- lets the particles given to pythia decay-->
+    <tau0Max>10.0</tau0Max> <!-- only particles with tau0 < tau0Max (given in mm/c) can decay, increase to include weak decays-->
+    <!--eCMforHadronization only for pp collisions-->
+    <!--in hybrid put the full eCM here, this is distributed to the beam partons-->
+    <eCMforHadronization>0</eCMforHadronization>
+    <reco_hadrons_in_pythia>1</reco_hadrons_in_pythia>
+    <recobias_t>0</recobias_t>
+  </JetHadronization>
+</jetscape>
