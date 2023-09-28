@@ -263,7 +263,7 @@ void gammaLoss::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parto
 //chance for photon to be absorbed from https://arxiv.org/abs/hep-ph/9405309
 double gammaLoss::absFactor(TLorentzVector pVec, double T){
   double p = pVec.P();
-  return 2*(5.*pi/9.)*(alpha*alphaS*T*T/p)*log(0.2317*p/(alphaS*T));
+  return 2.0*(5.*pi/9.)*(alpha*alphaS*T*T/p)*log(0.2317*p/(alphaS*T));
 }
 
 //seeing if photon gets absorbed
