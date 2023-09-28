@@ -4,7 +4,7 @@
   
   <nEvents> 10000 </nEvents>
   
-  <outputFilename>/scratch/user/cameron.parker/JETSCAPE-COMP-HH_colorrecomb/test</outputFilename>
+  <outputFilename>/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/test</outputFilename>
   <JetScapeWriterAsciiGZ> on </JetScapeWriterAsciiGZ>
   <finalHadsOnly> on </finalHadsOnly>
   
