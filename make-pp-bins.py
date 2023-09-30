@@ -3,7 +3,6 @@
 import os
 import multiprocessing as mp
 from pickle import TRUE
-from pyDOE import lhs 
 from datetime import date
 from functions import *
 import pandas as pd

@@ -3,7 +3,6 @@
 import os
 import multiprocessing as mp
 import pandas as pd
-from pyDOE import * 
 from datetime import date
 from functions import *
 
