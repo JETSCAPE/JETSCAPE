@@ -28,9 +28,6 @@
       <Q0>1</Q0>
       <in_vac> 1 </in_vac>
       <vir_factor>0.25</vir_factor>
-      <recoil_on> 0 </recoil_on>
-      <broadening_on> 0 </broadening_on>
-      <brick_med> 0 </brick_med>
     </Matter>
   </Eloss>
   
@@ -44,6 +41,7 @@
       StringFlav:probQQtoQ = 0.081
       ParticleDecays:tau0Max = 10
     </LinesToRead>
+    <pythia_decays>on</pythia_decays> 
     <part_prop>1.0</part_prop>
     <ignorePhotons> on </ignorePhotons>
   </JetHadronization>
