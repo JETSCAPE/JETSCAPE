@@ -144,8 +144,8 @@ int main(int argc, char* argv[]){
     
     //opening run file
     char HadronFile[300], pTBinString[100];
-    sprintf(HadronFile,"run.dat");
-    auto myfile  = make_shared<JetScapeReaderAscii>(HadronFile);
+    sprintf(HadronFile,"run.dat.gz");
+    auto myfile  = make_shared<JetScapeReaderAsciiGZ>(HadronFile);
        
     //event loop
     while (!myfile->Finished()){
@@ -168,6 +168,9 @@ int main(int argc, char* argv[]){
             double PT = TMath::Sqrt((Px*Px) + (Py*Py));
             double P = TMath::Sqrt((Px*Px) + (Py*Py) + (Pz*Pz));
 
+            //premature mult count
+            if(pythia.particleData.charge(PID) != 0) multiplicity++;
+
             //jet inputs
             if(PID!=12 && PID!=14 && PID!=16 && PID!=18){
                 fjInputs.push_back(fjcore::PseudoJet(Px,Py,Pz,E));
@@ -181,9 +184,6 @@ int main(int argc, char* argv[]){
             else
                 recos.push_back(false);
 
-            //premature mult count
-            if(pythia.particleData.charge(PID) != 0) multiplicity++;
-
             //Add to multiplicity and prepare for xp filling
             if(PT > 0.2 && abs(Eta) < 1.74 && (fabs(PID) > 100 || abs(PID) == 11 || abs(PID) == 13 || abs(PID) == 15) && pythia.particleData.charge(PID)!= 0){
                 //multiplicity++;
@@ -191,6 +191,9 @@ int main(int argc, char* argv[]){
                 ids.push_back(PID);
             }
         }
+
+        //mult filling
+        HistMultiplicity->Fill(multiplicity);
 
         //Jets
         // Run Fastjet algorithm and sort jets in pT order.
@@ -213,9 +216,6 @@ int main(int argc, char* argv[]){
             //for(int j = 0; j < constituents.size(); j++) cout << "\tparticle: " << constituents[j].E() << endl;
         }
         //cout << "Total Energy: " << totalE << endl;
-
-        //mult filling
-        HistMultiplicity->Fill(multiplicity);
 
         //Sphericity and thrust calculations
         vector<double> thrustsphericity = getThrustSphericity(hadrons);
@@ -313,7 +313,7 @@ int main(int argc, char* argv[]){
     HistRecoHadron->Write("Reco Hadron Ratio");
 
     //ratio plots for comparison
-    TFile alephfile("/scratch/user/cameron.parker/JETSCAPE-COMP-HH_colorrecomb/data/aleph.root");
+    TFile alephfile("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/data/aleph.root");
     TDirectory* thrustdir = (TDirectory*)alephfile.Get("Table 3");
     TDirectory* multdir = (TDirectory*)alephfile.Get("Table 18");
     TGraphErrors* thrustgraph = (TGraphErrors*) thrustdir->Get("Graph1D_y1");

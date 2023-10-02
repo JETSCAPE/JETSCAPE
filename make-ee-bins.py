@@ -112,7 +112,7 @@ design.to_csv(totaldir+'QVir_Analysis/parameters.txt')
 print(design)
 
 ##Running jetscape for each set of parameters with multiprocessing
-pool = mp.Pool(1)
+pool = mp.Pool(48)
 pool.starmap(binrun, [(i,design.loc[[i]], xmllines) for i in range(len(design))])
 pool.close()
 
