@@ -1505,7 +1505,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
           pOut[iout].set_min_anti_color(pIn[i].min_anti_color());
           pOut[iout].set_stat(1);
 
-          JSINFO << BOLDYELLOW << " A photon was made in MATTER with px = " << pOut[iout].px() << " and sent to the framework " ;
+          //JSINFO << BOLDYELLOW << " A photon was made in MATTER with px = " << pOut[iout].px() << " and sent to the framework " ;
         }
 
         VERBOSE(8) << BOLDRED << " virtuality of D 2 = " << pOut[iout].t();
