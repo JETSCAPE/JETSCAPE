@@ -134,7 +134,7 @@ def makexml(bound, parameters, baseDir, xmltemplate, ECM):
 # making directory for the runs
 def makeDir(index):
     # setting names
-    baseDir = totaldir + str(index)
+    baseDir = totaldir + "points/" + str(index)
     plotsDir = baseDir + "/plots"
     rootDir = baseDir + "/root"
     datDir = baseDir + "/dat"
@@ -168,15 +168,7 @@ def makeDir(index):
 # Start of main method
 
 # Creating total directory for use
-try:
-    os.makedirs(totaldir)
-except:
-    pass
-
-try:
-    os.makedirs(totaldir + "QVir_Analysis/")
-except:
-    pass
+makeTotalDir(totaldir)
 
 # pTHat bounds and xml based system being run
 intervals = []
@@ -202,7 +194,7 @@ pTHatBounds = []
 for i in range(len(intervals)-1):
     if softOnly:
         pTHatBounds.append((0,-i-1)) # setting all soft bins upper bound to negative
-    elif i is 0 and intervals[i] == 0:
+    elif i == 0 and intervals[i] == 0:
         pTHatBounds.append((intervals[i],-1))
     else:
         pTHatBounds.append((intervals[i],intervals[i+1]))
@@ -213,7 +205,7 @@ os.chdir("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/build")
 pool = mp.Pool(len(pTHatBounds))
 
 # Loop over design points and make parameter file
-design.to_csv(totaldir+'QVir_Analysis/parameters.txt')
+design.to_csv(totaldir+'QVir_Analysis/parameters.txt',index=False)
 print(design)
 
 for i in range(len(design)):    

@@ -42,11 +42,12 @@ using namespace Jetscape;
 
 int main(int argc, char* argv[]){
     //list of directories to go over
-    vector<string> directories = {};
     string input = argv[1]; 
+    string pointsdir = input+"points/";
+    vector<string> directories = getComparisonDirs(argc, argv);
 
-    for(int i = 1; i < argc; i++){
-        chdir(argv[i]);
+    /*for(int i = 1; i < argc; i++){
+        chdir(pointsdir.c_str());
         vector<string> tempdirs = get_directories(".");
 
         //removing the results dir
@@ -59,12 +60,12 @@ int main(int argc, char* argv[]){
 
         vector<string> sorteddirs = doubleSort(tempdirs); //sorting for consistency
         for(int j = 0; j < sorteddirs.size(); j++){
-            string temp = argv[i] + sorteddirs[j];
+            string temp = pointsdir + sorteddirs[j];
             sorteddirs[j] = temp;
         }
         directories.insert(directories.end(), sorteddirs.begin(), sorteddirs.end()); //inserting into the end of total vector
     }
-    chdir("/scratch/user/cameron.parker/JETSCAPE-COMP-HH_colorrecomb/build");
+    chdir("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/build");*/
 
     // Create the ROOT application environment.
     TApplication theApp("hist", &argc, argv);
@@ -81,7 +82,7 @@ int main(int argc, char* argv[]){
     //dijet comparison
     TMultiGraph* jets = new TMultiGraph("Jet Spectra","Jet Spectra");
     TGraphErrors* jetscapejets[directories.size()];
-    TFile jet_file("/scratch/user/cameron.parker/JETSCAPE-COMP-HH_colorrecomb/data/eeDiJet.root");
+    TFile jet_file("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/data/eeDiJet.root");
     TDirectory* jetdir = (TDirectory*)jet_file.Get("LeadingDiJetEnergy");
     TGraphErrors* jetData = (TGraphErrors*)jetdir->Get("Graph1D_y1");
     jetData->SetMarkerStyle(kFullDotLarge);
@@ -95,7 +96,7 @@ int main(int argc, char* argv[]){
 
         //reading graph
         string filename = directories[i] + "/totals.root";
-        cout << filename << ": ";
+        cout << directories[i] << ": ";
         TFile file(filename.c_str());
         TH1D* tempHistHadronSpecP = (TH1D*)file.Get("hadrons;1"); cout << "Got hadrons. ";
         TH1D* tempHistThrustP = (TH1D*)file.Get("thrust;1"); cout << "Got thrust. ";
@@ -133,13 +134,13 @@ int main(int argc, char* argv[]){
 
     //outputting results
     chdir(input.c_str());
-    makeDatFile(specPredicts, "SpectrumPrediction", "# Version 1.0\n# Spectra for parameters.txt");
-    makeDatFile(thrustPredicts, "thrustPrediction", "# Version 1.0\n# Thrust for parameters.txt");
-    makeDatFile(multiplicityPredicts, "multiplicityPrediction", "# Version 1.0\n# Multiplicity for parameters.txt");
-    makeDatFile(pionPredicts, "pionPrediction", "# Version 1.0\n# Pions for parameters.txt");
-    makeDatFile(kaonPredicts, "kaonPrediction", "# Version 1.0\n# Kaons for parameters.txt");
-    makeDatFile(protonPredicts, "protonPrediction", "# Version 1.0\n# Protons for parameters.txt");
-    makeDatFile(jetPredicts, "eejetPrediction", "# Version 1.0\n# Jets for parameters.txt");
+    makeDatFile(specPredicts, "charged-xp", "# Version 1.0\n# Spectra for parameters.txt");
+    makeDatFile(thrustPredicts, "thrust", "# Version 1.0\n# Thrust for parameters.txt");
+    makeDatFile(multiplicityPredicts, "mult", "# Version 1.0\n# Multiplicity for parameters.txt");
+    makeDatFile(pionPredicts, "pion-xp", "# Version 1.0\n# Pions for parameters.txt");
+    makeDatFile(kaonPredicts, "kaon-xp", "# Version 1.0\n# Kaons for parameters.txt");
+    makeDatFile(protonPredicts, "proton-xp", "# Version 1.0\n# Protons for parameters.txt");
+    makeDatFile(jetPredicts, "jet", "# Version 1.0\n# Jets for parameters.txt");
     
     //dijet drawing
     TCanvas* cJet = new TCanvas("c2","c2",1400,1200);

@@ -7,6 +7,7 @@ from datetime import date
 from functions import *
 
 #option reading
+reading = False
 for i, option in enumerate(sys.argv):
     if "-d" in option:
         reading = True
@@ -25,15 +26,7 @@ for i, option in enumerate(sys.argv):
 todays_date = date.today()
 totaldir = "/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/runs/LEP-" + str(todays_date.month) + "-" + str(todays_date.day) + "/"
 
-try:
-    os.makedirs(totaldir)
-except:
-    pass
-
-try:
-    os.makedirs(totaldir + "QVir_Analysis/")
-except:
-    pass
+makeTotalDir(totaldir)
 
 #methods for runnning
 def binrun(index, parameters, xmltemplate):
@@ -76,12 +69,12 @@ def binrun(index, parameters, xmltemplate):
     runxml(xmlname)
 
     analysiscmd = "./ee-analysis-spectra " + baseDir
-    #os.system(analysiscmd)
+    os.system(analysiscmd)
 
 ##making directory for the runs
 def makeDir(index):
     ##setting names
-    baseDir = totaldir + str(index)
+    baseDir = totaldir + "points/" + str(index)
 
     ##making dirs
     try:

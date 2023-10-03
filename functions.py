@@ -5,10 +5,27 @@ import numpy as np
 import random
 import pandas as pd
 
+# make base directories for the analysis
+def makeTotalDir(totaldir):
+    try:
+        os.makedirs(totaldir)
+    except:
+        pass
+
+    try:
+        os.makedirs(totaldir + "points/")
+    except:
+        pass
+
+    try:
+        os.makedirs(totaldir + "QVir_Analysis/")
+    except:
+        pass
+
 # gets list of directories in the target directory
 def getDirs(dir):
     startdir = os.getcwd()
-    os.chdir(dir)
+    os.chdir(dir+"points")
     files = os.listdir(".")
 
     directories = []
@@ -79,7 +96,7 @@ def createPandaDesign(points):
         {"name": "Q0", "range": (0.95,3.0)},
         {"name": "vir_factor", "range": (0.1,1.0)},
         {"name": "lambdaQCD", "range": (0.1,0.4)},
-        {"name": "shower_recofactor", "range": (0.5,2.0)},
+        {"name": "part_prop", "range": (0.0,1.5)},
         {"name": "StringFlav:probStoUD", "range": (0.2,0.5)},
         {"name": "StringFlav:probQQtoQ", "range": (0.07,0.2)},
         {"name": "MultipartonInteractions:ecmPow", "range": (0.0,0.25)},
