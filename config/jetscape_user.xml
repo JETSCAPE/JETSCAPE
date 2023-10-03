@@ -35,7 +35,6 @@
   <JetHadronization>
     <name>hybrid</name>
     <eCMforHadronization>0</eCMforHadronization>
-    <shower_recofactor>1.0</shower_recofactor>
     <LinesToRead>
       StringFlav:probStoUD = 0.217
       StringFlav:probQQtoQ = 0.081
