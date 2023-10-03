@@ -705,15 +705,12 @@ std::vector<std::string> getComparisonDirs(int argc, char* argv[]){
         string input = argv[i];
         string pointsdir = input + "points/";
         vector<string> tempdirs = get_directories("points");
-        cout << "Getting points from: " << pointsdir << endl;;
+        cout << "Getting " << tempdirs.size() << " points from: " << pointsdir << endl;
 
         //removing the results dir
-        int rmindex = 0;
         for(int j = 0; j < tempdirs.size(); j++){
             tempdirs[j].erase(0,7);
-            if(tempdirs[j].find("QVir_Analysis") != string::npos) rmindex = j;
         }
-        tempdirs.erase(tempdirs.begin() + rmindex); 
 
         vector<string> sorteddirs = doubleSort(tempdirs); //sorting for consistency
         for(int j = 0; j < sorteddirs.size(); j++){
