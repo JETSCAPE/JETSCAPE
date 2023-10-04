@@ -135,7 +135,6 @@ int main(int argc, char* argv[]){
     double Px, Py, Pz, E, Eta, Phi,pStat;
     int Events =0;
     vector<shared_ptr<Hadron>> hadrons;
-    vector<double> pts, ids, recos;
     
     // Create a file on which histogram(s) can be saved.
     char outFileName[1000];
@@ -168,7 +167,7 @@ int main(int argc, char* argv[]){
             double PT = TMath::Sqrt((Px*Px) + (Py*Py));
             double P = TMath::Sqrt((Px*Px) + (Py*Py) + (Pz*Pz));
 
-            //premature mult count
+            //mult count
             if(pythia.particleData.charge(PID) != 0) multiplicity++;
 
             //jet inputs
@@ -177,18 +176,14 @@ int main(int argc, char* argv[]){
                 chargeList.push_back(pythia.particleData.charge(PID));
             }
 
-            //reco flag
-            //cout << hadrons[i].get()->plabel() << endl;
-            if(hadrons[i].get()->plabel() <= 12)
-                recos.push_back(true);
-            else
-                recos.push_back(false);
-
-            //Add to multiplicity and prepare for xp filling
-            if(PT > 0.2 && abs(Eta) < 1.74 && (fabs(PID) > 100 || abs(PID) == 11 || abs(PID) == 13 || abs(PID) == 15) && pythia.particleData.charge(PID)!= 0){
-                //multiplicity++;
-                pts.push_back(P);
-                ids.push_back(PID);
+            //xp spectra
+            if((fabs(PID) > 100 || abs(PID) == 11 || abs(PID) == 13 || abs(PID) == 15) && pythia.particleData.charge(PID)!= 0){
+                double xp = 2*PT/Ecm;
+                HistTempSingleHadron->Fill(xp);
+                if(hadrons[i].get()->plabel() <= 812) HistRecoHadron->Fill(xp);
+                if(abs(PID) == 211) tempPions->Fill(xp);
+                if(abs(PID) == 321) tempKaons->Fill(xp);
+                if(abs(PID) == 2212) tempProtons->Fill(xp);
             }
         }
 
@@ -224,18 +219,6 @@ int main(int argc, char* argv[]){
 
         //hadron event cuts
         if(thrust >= 0){
-            //xP filling
-            //HistMultiplicity->Fill(multiplicity);
-            
-            for(int k = 0; k < pts.size(); k++){
-                double xp = 2*pts[k]/Ecm;
-                HistTempSingleHadron->Fill(xp);
-                if(recos[k]) HistRecoHadron->Fill(xp);
-                if(abs(ids[k]) == 211) tempPions->Fill(xp);
-                if(abs(ids[k]) == 321) tempKaons->Fill(xp);
-                if(abs(ids[k]) == 2212) tempProtons->Fill(xp);
-            }
-
             //other observable filling
             HistThrust->Fill(1-thrust);
             thrustCount++;
@@ -246,9 +229,6 @@ int main(int argc, char* argv[]){
         chargeList.resize(0);
         SortedJets.resize(0);
         UnSortedJets.resize(0);
-        pts.resize(0);
-        ids.resize(0);
-        recos.resize(0);
     }
     myfile->Close();
 
