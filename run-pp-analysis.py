@@ -54,7 +54,7 @@ def run(directory):
     if analysisDir.startswith("/"):
         baseDir = analysisDir + directory
     else:
-        baseDir = "/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/" + analysisDir + directory
+        baseDir = "/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/" + analysisDir + "points/" + directory
     
     if smoothrun:
         cmd = "./pp-"+ECM+"-smoothing " + baseDir
