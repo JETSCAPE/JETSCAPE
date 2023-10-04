@@ -43,6 +43,7 @@
     <pythia_decays>on</pythia_decays> 
     <part_prop>1.0</part_prop>
     <ignorePhotons> on </ignorePhotons>
+    <reco_hadrons_in_pythia>1</reco_hadrons_in_pythia>
   </JetHadronization>
   
 </jetscape>
