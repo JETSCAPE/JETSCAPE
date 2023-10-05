@@ -175,7 +175,7 @@ void ratioPlot(TGraphErrors* dataHist, TH1D* predictionHist, string title, strin
         xcoords[i] = predictionHist->GetBinCenter(i+1);
         binWidths[i] = predictionHist->GetBinWidth(i+1) / 2;
         data[i] = dataHist->Eval(xcoords[i]);
-        dataErrors[i] = dataHist->GetErrorY(i+1);
+        dataErrors[i] = dataHist->GetErrorY(i);
         asym[i] = (prediction[i]/data[i]);
         asymErrors[i] = dataErrors[i]/prediction[i];
 
@@ -188,7 +188,7 @@ void ratioPlot(TGraphErrors* dataHist, TH1D* predictionHist, string title, strin
     }
 
     //Data graph
-    TGraphErrors* dataPlot = (TGraphErrors*) dataHist->Clone();
+    TGraphErrors* dataPlot = new TGraphErrors(bins,xcoords,data,binWidths,dataErrors);
     dataPlot->SetMarkerStyle(kFullDotLarge);
     dataPlot->SetMarkerColor(kRed);
     dataPlot->SetLineColor(kRed);
