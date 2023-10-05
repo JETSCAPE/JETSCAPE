@@ -296,10 +296,13 @@ int main(int argc, char* argv[]){
     TFile alephfile("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/data/aleph.root");
     TDirectory* thrustdir = (TDirectory*)alephfile.Get("Table 3");
     TDirectory* multdir = (TDirectory*)alephfile.Get("Table 18");
+    TDirectory* xpdir = (TDirectory*)alephfile.Get("Table 9");
     TGraphErrors* thrustgraph = (TGraphErrors*) thrustdir->Get("Graph1D_y1");
     TGraphErrors* multgraph = (TGraphErrors*) multdir->Get("Graph1D_y1");
+    TGraphErrors* xpgraph = (TGraphErrors*) xpdir->Get("Graph1D_y1");
     ratioPlot(thrustgraph, HistThrust, "Thrust", "thrust", "P", false, false);
     ratioPlot(multgraph, HistMultiplicity, "Multiplicity", "N Charged", "P(N)", false, false);
+    ratioPlot(xpgraph, HistTempSingleHadron, "Charged xp", "xp", "1/sigma dsigma/dxp", true, false);
 
     //Done. Script run time
     int EndTime = time(NULL);
