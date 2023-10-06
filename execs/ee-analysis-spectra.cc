@@ -178,7 +178,7 @@ int main(int argc, char* argv[]){
 
             //xp spectra
             if((fabs(PID) > 100 || abs(PID) == 11 || abs(PID) == 13 || abs(PID) == 15) && pythia.particleData.charge(PID)!= 0){
-                double xp = 2*PT/Ecm;
+                double xp = 2*P/Ecm;
                 HistTempSingleHadron->Fill(xp);
                 if(hadrons[i].get()->plabel() <= 812) HistRecoHadron->Fill(xp);
                 if(abs(PID) == 211) tempPions->Fill(xp);
