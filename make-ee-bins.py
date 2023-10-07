@@ -101,7 +101,7 @@ xmllines = xmltemplate.readlines()
 os.chdir("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/build")
 
 # Loop over design points and make parameter file
-design.to_csv(totaldir+'QVir_Analysis/parameters.txt')
+design.to_csv(totaldir+'QVir_Analysis/parameters.txt',index=False)
 print(design)
 
 ##Running jetscape for each set of parameters with multiprocessing
