@@ -109,6 +109,11 @@ int main(int argc, char* argv[]){
     double ThrustBin[] = {0,.005,.01,.015,.02,.025,.03,.035,.04,.05,.06,.08,.1,.12,.14,.16,.18,.2,.25,.3,.35,.4};
     int NThrustBin = sizeof(ThrustBin)/sizeof(ThrustBin[0]) - 1;
     int thrustCount = 0;
+
+    //variables for xe
+    TFile xeroot( "/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/data/xedata.root");
+    TDirectory* xedir = (TDirectory*)xeroot.Get("Table 1"); TH1D* xedata = (TH1D*)xedir->Get("Hist1D_y1");
+    TGraphErrors* xegraph = (TGraphErrors*)xedir->Get("Graph1D_y1");
     
     // Histograms for event variables
     TH1D *HistTempJet = new TH1D("JetSpectrumBin", "Jet Spectrum pT", NpTJetBin, JetpTBin); //CountVspT for jets
@@ -116,6 +121,7 @@ int main(int argc, char* argv[]){
     TH1D *HistTempSingleHadron = new TH1D("SingleHadronSpectrumBin", "Single Hadron Spectrum pT", NpTSingleHadronBin, SingleHadronpTBin); //CountVspT for single-hadron
     TH1D *HistMultiplicity = new TH1D("Charged Particle Multiplicity","Charged Particle Multiplicity",NMultBin,HadronMultiplicityBin);
     TH1D *HistThrust = new TH1D("Thrust", "Event Thrust", NThrustBin, ThrustBin);
+    TH1D *xeHist = new TH1D("xe", "xe",  xedata->GetNbinsX(), xedata->GetXaxis()->GetXbins()->GetArray()); 
 
     //reco hadrons
     TH1D *HistRecoHadron = new TH1D("Frag Hadrons", "Frag Hadrons", NpTSingleHadronBin, SingleHadronpTBin);
@@ -178,6 +184,9 @@ int main(int argc, char* argv[]){
 
             //xp spectra
             if((fabs(PID) > 100 || abs(PID) == 11 || abs(PID) == 13 || abs(PID) == 15) && pythia.particleData.charge(PID)!= 0){
+                double xe = 2*E/Ecm;
+                xeHist->Fill(xe);
+
                 double xp = 2*P/Ecm;
                 HistTempSingleHadron->Fill(xp);
                 if(hadrons[i].get()->plabel() <= 812) HistRecoHadron->Fill(xp);
@@ -242,6 +251,7 @@ int main(int argc, char* argv[]){
     HistThrust->Write();
     HistTempJet->Write();
     HistTempdiJet->Write();
+    xeHist->Write();
     
     //scaling histograms
     HistMultiplicity->Scale(1.0/(double)Events); //times 2 to match the data
@@ -253,6 +263,7 @@ int main(int argc, char* argv[]){
     HistThrust->Scale(1.0/(double)thrustCount,"width");
     HistTempJet->Scale(1.0/(double)Events);
     HistTempdiJet->Scale(1.0/(double)Events);
+    xeHist->Scale(1.0/(double)Events,"width");
     
     TVector EventInfo(3);
     EventInfo[0] = 1;
@@ -291,6 +302,7 @@ int main(int argc, char* argv[]){
     HistThrust->Write("thrust");
     HistMultiplicity->Write("multiplicity");
     HistRecoHadron->Write("Reco Hadron Ratio");
+    xeHist->Write("xe");
 
     //ratio plots for comparison
     TFile alephfile("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/data/aleph.root");
@@ -302,7 +314,13 @@ int main(int argc, char* argv[]){
     TGraphErrors* xpgraph = (TGraphErrors*) xpdir->Get("Graph1D_y1");
     ratioPlot(thrustgraph, HistThrust, "Thrust", "thrust", "P", false, false);
     ratioPlot(multgraph, HistMultiplicity, "Multiplicity", "N Charged", "P(N)", false, false);
-    ratioPlot(xpgraph, HistTempSingleHadron, "Charged xp", "xp", "1/sigma dsigma/dxp", true, false);
+    ratioPlot(xpgraph, HistTempSingleHadron, "Charged x_{p}", "x_{p}", "1/#sigma d#sigma/dx_{p}", true, true);
+    ratioPlot(xegraph, xeHist, "Charged x_{e}", "x_{e}", "1/#sigma d#sigma/dx_{e}", true, true);
+
+    //closing files
+    alephfile.Close();
+    totalroot->Close();
+    xeroot.Close();
 
     //Done. Script run time
     int EndTime = time(NULL);
