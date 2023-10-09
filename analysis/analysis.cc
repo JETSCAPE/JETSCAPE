@@ -163,7 +163,7 @@ void ratioPlot(TH1D* dataHist, TH1D* predictionHist, string title, bool xlog){
 }
 
 //overload for graph input
-void ratioPlot(TGraphErrors* dataHist, TH1D* predictionHist, string title, string xname, string yname, bool xlog, bool ylog){
+/*void ratioPlot(TGraphErrors* dataHist, TH1D* predictionHist, string title, string xname, string yname, bool xlog, bool ylog){
     //values for plots
     int bins = predictionHist->GetNbinsX();
     double data[bins], prediction[bins], xcoords[bins], dataErrors[bins], binWidths[bins], asym[bins], asymErrors[bins];
@@ -180,7 +180,7 @@ void ratioPlot(TGraphErrors* dataHist, TH1D* predictionHist, string title, strin
         asymErrors[i] = dataErrors[i]/prediction[i];
 
         //debugging
-        //cout << xcoords[i] << " " << dataHist->GetBinContent(i+1)*1000000 << " " << dataHist->GetBinError(i+1)*1000000 << " " << asym[i] << " " << binWidths[i] << endl;
+        //cout << xcoords[i] << " " << data[i] << " " << dataErrors[i] << " " << prediction[i] << " " << asym[i] << endl;
         
         //correcting for negatives when doing log
         //if(data[i] < 0) data[i] = 0;
@@ -251,9 +251,65 @@ void ratioPlot(TGraphErrors* dataHist, TH1D* predictionHist, string title, strin
     line->SetLineStyle(9);
     line->Draw();
 
-    string filename  = "plots/"+splitString(title," (")[0]+".png"; //trims off the units in the file name
+    string filename  = "plots/"+title+".png"; //trims off the units in the file name
     c->Print(filename.c_str());
     c->Close();
+}*/
+
+//test ratio plot
+void ratioPlot(TGraphErrors* dataHist, TH1D* predictionHist, string title, string xname, string yname, bool xlog, bool ylog){
+    //values for plots
+    int bins = predictionHist->GetNbinsX();
+    double data[bins], prediction[bins], xcoords[bins], dataErrors[bins], binWidths[bins], asym[bins], asymErrors[bins];
+
+    //graphs we need
+    TH1D* dataPlot = new TH1D(" ", " ",  predictionHist->GetNbinsX(), predictionHist->GetXaxis()->GetXbins()->GetArray()); 
+    TH1D* predictionPlot = (TH1D*)predictionHist->Clone();
+    predictionPlot->SetTitle(title.c_str());
+    predictionPlot->GetXaxis()->SetTitle(xname.c_str());
+    predictionPlot->GetYaxis()->SetTitle(yname.c_str());
+
+    //cycling through bins, note first one is an overflow bin so it is skipped
+    for(int i = 0; i < bins; i++){
+        //reading values from histograms
+        double x,y;
+        double tempdata = dataHist->GetPoint(i,x,y);
+        double tempdataerr = dataHist->GetErrorY(i);
+
+        dataPlot->SetBinContent(i+1, y);
+        dataPlot->SetBinError(i+1, tempdataerr);
+    }
+
+    //stylizing
+    predictionPlot->SetLineColor(kBlue);
+    predictionPlot->SetLineWidth(3);
+    predictionPlot->SetStats(0);
+    dataPlot->SetMarkerStyle(kFullDotLarge);
+    dataPlot->SetMarkerColor(kRed);
+    dataPlot->SetLineColor(kRed);
+
+    //Drawing main plot
+    TCanvas* c = new TCanvas("c1","c1",1000,800);
+    TRatioPlot* total = new TRatioPlot(predictionPlot, dataPlot);
+	total->Draw("apl");
+    if(ylog) total->GetUpperPad()->SetLogy();
+    if(xlog) total->GetUpperPad()->SetLogx();
+    if(xlog) total->GetLowerPad()->SetLogx();
+    total->GetLowerRefYaxis()->SetTitle("JETSCAPE/data");
+
+    //legend
+    total->GetUpperPad()->cd();
+    TLegend leg(.7,.7,.9,.9,"Sources");
+    leg.AddEntry(predictionPlot,"Jetscape","l");
+    leg.AddEntry(dataPlot,"Data","ep");
+    leg.Draw();
+
+    //end behavior
+    string filename = "plots/"+title+".png"; //trims off the units in the file name
+    c->Print(filename.c_str());
+    c->Close();
+    predictionPlot->Delete();
+    dataPlot->Delete();
 }
 
 //thrust calculation classes and methods
