@@ -83,9 +83,9 @@ int main(int argc, char* argv[]){
     double JetRadius = 0.4;
 
     //dijet
-    double diJetpTBin[27]; //in GeV
-    for(int i=20; i<=46; i++) diJetpTBin[i-20]=i;
-    int NpTdiJetBin = sizeof(diJetpTBin)/sizeof(diJetpTBin[0])-1;
+    TFile dijetroot("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/data/eeDiJet.root");
+    TDirectory* dijetdir = (TDirectory*)dijetroot.Get("LeadingDiJetEnergy"); TH1D* dijetdata = (TH1D*)dijetdir->Get("Hist1D_y1");
+    TGraphErrors* dijetgraph = (TGraphErrors*) dijetdir->Get("Graph1D_y1");
     
     //Variables for single hadron spectrum and identified hadrons
     double SingleHadronpTBin[] = {0.004,0.006,0.008,0.01,0.012,0.014,0.016,0.018,0.02,0.025,0.03,0.035,0.04,0.045,0.05,0.06,0.07,0.08,0.09,0.1,0.11,0.12,0.13,0.14,0.16,0.18,0.2,0.225,0.25,0.275,0.3,0.325,0.35,0.375,0.4,0.43,0.46,0.49,0.52,0.55,0.6,0.65,0.7,0.75,0.8,0.9,1};
@@ -117,7 +117,7 @@ int main(int argc, char* argv[]){
     
     // Histograms for event variables
     TH1D *HistTempJet = new TH1D("JetSpectrumBin", "Jet Spectrum pT", NpTJetBin, JetpTBin); //CountVspT for jets
-    TH1D *HistTempdiJet = new TH1D("diJetSpectrumBin", "diJet Spectrum pT", NpTdiJetBin, diJetpTBin);
+    TH1D *HistTempdiJet = new TH1D("diJetSpectrumBin", "diJet Spectrum pT", dijetdata->GetNbinsX(), dijetdata->GetXaxis()->GetXbins()->GetArray());
     TH1D *HistTempSingleHadron = new TH1D("SingleHadronSpectrumBin", "Single Hadron Spectrum pT", NpTSingleHadronBin, SingleHadronpTBin); //CountVspT for single-hadron
     TH1D *HistMultiplicity = new TH1D("Charged Particle Multiplicity","Charged Particle Multiplicity",NMultBin,HadronMultiplicityBin);
     TH1D *HistThrust = new TH1D("Thrust", "Event Thrust", NThrustBin, ThrustBin);
@@ -133,7 +133,6 @@ int main(int argc, char* argv[]){
     
     //jet stuff declaration
     std::vector <fjcore::PseudoJet> fjInputs;
-    std::vector <int> chargeList;
     fjcore::JetDefinition jetDef(fjcore::ee_genkt_algorithm, JetRadius, -1);
     
     //particle info declaration
@@ -158,6 +157,7 @@ int main(int argc, char* argv[]){
         hadrons = myfile->GetHadrons();
         int multiplicity = 0;
         Events++;
+        double totalEcheck = 0;
 
         //hadron loop
         for(unsigned int i=0; i<hadrons.size(); i++){
@@ -175,12 +175,11 @@ int main(int argc, char* argv[]){
 
             //mult count
             if(pythia.particleData.charge(PID) != 0) multiplicity++;
+            totalEcheck += E;
 
-            //jet inputs
-            if(PID!=12 && PID!=14 && PID!=16 && PID!=18){
-                fjInputs.push_back(fjcore::PseudoJet(Px,Py,Pz,E));
-                chargeList.push_back(pythia.particleData.charge(PID));
-            }
+            //jet inputs removing neutrinos
+            if(PID!=12 && PID!=14 && PID!=16 && PID!=18) fjInputs.push_back(fjcore::PseudoJet(Px,Py,Pz,E));
+            
 
             //xp spectra
             if((fabs(PID) > 100 || abs(PID) == 11 || abs(PID) == 13 || abs(PID) == 15) && pythia.particleData.charge(PID)!= 0){
@@ -207,9 +206,9 @@ int main(int argc, char* argv[]){
         UnSortedJets = clustSeq.inclusive_jets();
         SortedJets = sorted_by_E(UnSortedJets);
         for (int i = 0; i < SortedJets.size(); ++i){
-            double theta = 2*atan(exp(SortedJets[i].eta()));
+            double theta = 2*atan(exp(-1*SortedJets[i].eta()));
             totalE += SortedJets[i].E();
-            if(theta > pi/5 && theta < 4*pi/5) {
+            if(theta > pi/5 && theta < 4*pi/5){
                 HistTempJet->Fill(SortedJets[i].E());
                 if(i<2) HistTempdiJet->Fill(SortedJets[i].E());
             }
@@ -220,6 +219,7 @@ int main(int argc, char* argv[]){
             //for(int j = 0; j < constituents.size(); j++) cout << "\tparticle: " << constituents[j].E() << endl;
         }
         //cout << "Total Energy: " << totalE << endl;
+        //cout << "Total Energy Check: " << totalEcheck << endl;
 
         //Sphericity and thrust calculations
         vector<double> thrustsphericity = getThrustSphericity(hadrons);
@@ -235,7 +235,6 @@ int main(int argc, char* argv[]){
 
         //clearing event vectors
         fjInputs.resize(0); 
-        chargeList.resize(0);
         SortedJets.resize(0);
         UnSortedJets.resize(0);
     }
@@ -280,10 +279,10 @@ int main(int argc, char* argv[]){
     tempProtons->SetBinContent(10,0);
 
     //matching overflow handling in jet analysis
-    double newfinaljetbin = HistTempJet->GetBinContent(NpTJetBin)+HistTempJet->GetBinContent(NpTJetBin+1);
+    /*double newfinaljetbin = HistTempJet->GetBinContent(NpTJetBin)+HistTempJet->GetBinContent(NpTJetBin+1);
 	HistTempJet->SetBinContent(NpTJetBin,newfinaljetbin);
     double newfinaldijetbin = HistTempdiJet->GetBinContent(NpTdiJetBin)+HistTempdiJet->GetBinContent(NpTdiJetBin+1);
-	HistTempdiJet->SetBinContent(NpTdiJetBin,newfinaldijetbin);
+	HistTempdiJet->SetBinContent(NpTdiJetBin,newfinaldijetbin);*/
 
     //Histogram for ration of reco hadrons
     HistRecoHadron->Divide(HistTempSingleHadron);
@@ -316,11 +315,19 @@ int main(int argc, char* argv[]){
     ratioPlot(multgraph, HistMultiplicity, "Multiplicity", "N Charged", "P(N)", false, false);
     ratioPlot(xpgraph, HistTempSingleHadron, "Charged x_{p}", "x_{p}", "1/#sigma d#sigma/dx_{p}", true, true);
     ratioPlot(xegraph, xeHist, "Charged x_{e}", "x_{e}", "1/#sigma d#sigma/dx_{e}", true, true);
+    ratioPlot(dijetgraph, HistTempdiJet, "Leading Dijet Distribution", "E (GeV)", "1/N_{events} dN/dE", false, false);
+
+    TFile jetsroot("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/data/eeInclusiveJets.root");
+    TDirectory* jetdir = (TDirectory*)jetsroot.Get("InclusiveJetEnergy");
+    TGraphErrors* jetgraph = (TGraphErrors*) jetdir->Get("Graph1D_y1");
+    ratioPlot(jetgraph, HistTempJet, "Inclusive Jets", "E (GeV)", "1/N_{events} dN/dE", false, true);
 
     //closing files
-    alephfile.Close();
     totalroot->Close();
+    alephfile.Close();
     xeroot.Close();
+    dijetroot.Close();
+    jetsroot.Close();
 
     //Done. Script run time
     int EndTime = time(NULL);
