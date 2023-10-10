@@ -114,8 +114,8 @@ void PGun::Exec() {
   xLoc[2] = 0.0;
 
   auto ptn = make_shared<Parton>(0, parID, 0, pT, pseudorapidity, phi, p[0], xLoc);
-  ptn->set_color((parID > 0) ? 100 : 0);
-  ptn->set_anti_color(((parID > 0) || (parID == 21)) ? 0 : 101);
+  ptn->set_color((parID > 0) && (parID != 22) ? 100 : 0);
+  ptn->set_anti_color(((parID > 0) && (parID != 21)) ? 0 : 101);
   ptn->set_max_color(102);
   AddParton(ptn);
 
