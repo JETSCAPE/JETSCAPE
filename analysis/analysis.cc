@@ -296,14 +296,13 @@ void ratioPlot(TGraphErrors* dataHist, TH1D* predictionHist, string title, strin
     if(ylog) total->GetUpperPad()->SetLogy();
     if(xlog) total->GetUpperPad()->SetLogx();
     if(xlog) total->GetLowerPad()->SetLogx();
-    total->GetLowerRefYaxis()->SetTitle("JETSCAPE/data");
 
     //legend
-    total->GetUpperPad()->cd();
-    TLegend leg(.7,.7,.9,.9,"Sources");
-    leg.AddEntry(predictionPlot,"Jetscape","l");
-    leg.AddEntry(dataPlot,"Data","ep");
-    leg.Draw();
+    predictionPlot->SetTitle("JETSCAPE");
+    dataPlot->SetTitle("data");
+    total->GetUpperPad()->BuildLegend();
+    total->GetLowerRefYaxis()->SetTitle("JETSCAPE/data");
+    predictionPlot->SetTitle(title.c_str());
 
     //end behavior
     string filename = "plots/"+title+".png"; //trims off the units in the file name
