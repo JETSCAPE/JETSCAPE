@@ -291,6 +291,7 @@ void ratioPlot(TGraphErrors* dataHist, TH1D* predictionHist, string title, strin
     //Drawing main plot
     TCanvas* c = new TCanvas("c1","c1",1000,800);
     TRatioPlot* total = new TRatioPlot(predictionPlot, dataPlot);
+    total->SetSeparationMargin(0.0);
 	total->Draw("apl");
     if(ylog) total->GetUpperPad()->SetLogy();
     if(xlog) total->GetUpperPad()->SetLogx();
