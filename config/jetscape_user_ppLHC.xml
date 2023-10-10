@@ -50,7 +50,7 @@
       ParticleDecays:tau0Max = 10
     </LinesToRead>
     <part_prop>1.0</part_prop>
-    <ignorePhotons> on </ignorePhotons>
+    <ignorePhotons> off </ignorePhotons>
   </JetHadronization>
   
 </jetscape>

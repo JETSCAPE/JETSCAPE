@@ -42,8 +42,11 @@
     </LinesToRead>
     <pythia_decays>on</pythia_decays> 
     <part_prop>1.0</part_prop>
-    <ignorePhotons> on </ignorePhotons>
+    <ignorePhotons> off </ignorePhotons>
     <reco_hadrons_in_pythia>1</reco_hadrons_in_pythia>
+    <pionWidthScale>1.0</pionWidthScale>
+    <kaonWidthScale>1.0</kaonWidthScale>
+    <protonWidthScale>1.0</protonWidthScale>
   </JetHadronization>
   
 </jetscape>
