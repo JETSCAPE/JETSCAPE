@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+
+<jetscape>
+    <!-- General settings -->
+    <nEvents> 1 </nEvents>
+    <setReuseHydro> true </setReuseHydro>
+    <nReuseHydro> 1 </nReuseHydro>
+    <JetScapeWriterAscii> on </JetScapeWriterAscii>
+
+    <Random>
+        <seed>0</seed>
+    </Random>
+
+    <!-- Inital State Module  -->
+    <IS>
+        <!-- x range [-grid_max_x, grid_max_x] -->
+        <!-- y range [-grid_max_y, grid_max_y]-->
+        <!-- longitudinal range [-grid_max_z, grid_max_z]-->
+        <!-- in units of [fm] -->
+        <grid_max_z> 0.0 </grid_max_z>
+
+        <!-- Initial condition -->
+        <Trento>
+            <PhysicsInputs  projectile='Au'
+                    target='Au'
+                    sqrts='200.'
+                    cross-section='4.23'
+                    normalization='11.'>
+            </PhysicsInputs>
+            <CutInputs  centrality-low='0'
+                  centrality-high='5'>
+            </CutInputs>
+        </Trento>
+    </IS>
+
+    <!--Preequilibrium Dynamics Module -->
+    <Preequilibrium>
+        <NullPreDynamics> </NullPreDynamics>
+    </Preequilibrium>
+
+    <!-- Hydro  Module  -->
+    <Hydro>
+        <MUSIC>
+            <name>MUSIC</name>
+            <shear_viscosity_eta_over_s>0.15</shear_viscosity_eta_over_s>
+            <temperature_dependent_bulk_viscosity>1</temperature_dependent_bulk_viscosity>
+            <freezeout_temperature>0.150</freezeout_temperature>
+        </MUSIC>
+    </Hydro>
+
+    <!-- Particlization Module  -->
+    <SoftParticlization>
+        <iSS>
+            <Perform_resonance_decays>0</Perform_resonance_decays>
+            <!-- hadron species list  0: PDG 2005; 1: UrQMD; 2: SMASH -->
+            <afterburner_type>2</afterburner_type>
+            <number_of_repeated_sampling>25</number_of_repeated_sampling>
+        </iSS>
+    </SoftParticlization>
+
+    <!-- Hadronic Afterburner  -->
+    <Afterburner>
+      <!-- SMASH -->
+      <SMASH>
+        <name>SMASH</name>
+        <SMASH_config_file>../external_packages/smash/smash_code/input/box/config.yaml</SMASH_config_file>
+        <SMASH_particles_file>../external_packages/smash/smash_code/input/particles.txt</SMASH_particles_file>
+        <SMASH_decaymodes_file>../external_packages/smash/smash_code/input/decaymodes.txt</SMASH_decaymodes_file>
+        <!-- time in fm/c in the computational frame, when the simulation shoud be ended -->
+        <end_time>20.0</end_time>
+      </SMASH>
+    </Afterburner>
+
+</jetscape>

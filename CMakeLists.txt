@@ -281,6 +281,13 @@ if (${HEPMC_FOUND})
   Message(STATUS "HepMC Include dir : " ${HEPMC_INCLUDE_DIR})
 endif()
 
+if (USE_SMASH)
+  add_definitions(-DSMASH_USE_HEPMC)
+  if (USE_ROOT)
+    add_definitions(-DSMASH_USE_HEPMC_ROOTIO -DSMASH_USE_ROOT)
+  endif()
+endif()
+
 option(USE_ROOT "Build using ROOT Libraries and Output" OFF)
 if (USE_ROOT)
   message("Looking for ROOT ...")
