@@ -266,6 +266,37 @@ double gammaLoss::absFactor(TLorentzVector pVec, double T){
   return 2.0*(5.*pi/9.)*(alpha*alphaS*T*T/p)*log(0.2317*p/(alphaS*T));
 }
 
+//chance for photon to be absorbed from https://arxiv.org/pdf/hep-ph/0111107.pdf
+double gammaLoss::absFactor2(TLorentzVector pVec, double T){
+  // Constants
+  float alpha = 1.0 / 137.0;
+  float hbc = 0.1973;
+  float prfph, x, expo, fermi, C22, Cab, Ctot;
+  
+  // Calculate alpha_s at temperature 'temp'
+  float alphsT = 6.0 * pi / (27.0 * log(T / 0.022));
+  float gsT = sqrt(alphsT * 4.0 * pi);
+  
+  // Calculate prfph
+  prfph = alpha * alphsT / (pi * pi) * T * T * (6.0 / 9.0) / (hbc * hbc * hbc * hbc);
+  
+  // Calculate x and exponential term
+  x = pVec.P() / T;
+  expo = exp(-x);
+  fermi = expo / (1.0 + expo);
+  
+  // Calculate C22 and Cab
+  C22 = 0.041 / x - 0.3615 + 1.01 * exp(-1.35 * x);
+  Cab = sqrt(1.5) * (0.548 / pow(x, 1.5) * log(12.28 + 1.0 / x) + 0.133 * x / sqrt(1.0 + x / 16.27));
+  
+  // Calculate Ctot
+  Ctot = 0.5 * log(2.0 * x) + C22 + Cab;
+  
+  // Calculate dRd3p
+  double dRd3p = prfph * fermi * (log(sqrt(3.0) / gsT) + Ctot);
+  return dRd3p * 4 * pow(pi,3) / expo;
+}
+
 //seeing if photon gets absorbed
 bool gammaLoss::isAbsorbed(TLorentzVector pVec, double T, double delTime){
   double chance = gammaLoss::absFactor(pVec, T)*delTime;

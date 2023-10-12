@@ -56,6 +56,7 @@ public:
 
   //qhat stuff
   double absFactor(TLorentzVector pVec, double T);
+  double absFactor2(TLorentzVector pVec, double T);
   bool isAbsorbed(TLorentzVector pVec, double T, double delTime);
 
   // flag to make sure initialize only once
