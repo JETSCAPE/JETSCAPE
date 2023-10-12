@@ -276,6 +276,8 @@ void ratioPlot(TGraphErrors* dataHist, TH1D* predictionHist, string title, strin
         double tempdata = dataHist->GetPoint(i,x,y);
         double tempdataerr = dataHist->GetErrorY(i);
 
+        if(ylog && (y - tempdataerr) < 0) tempdataerr = y*0.99;
+
         dataPlot->SetBinContent(i+1, y);
         dataPlot->SetBinError(i+1, tempdataerr);
     }
@@ -296,6 +298,8 @@ void ratioPlot(TGraphErrors* dataHist, TH1D* predictionHist, string title, strin
     if(ylog) total->GetUpperPad()->SetLogy();
     if(xlog) total->GetUpperPad()->SetLogx();
     if(xlog) total->GetLowerPad()->SetLogx();
+    total->GetLowerRefYaxis()->SetRangeUser(0,3); //only triggers if range needs to be trimmed
+    //total->GetLowerRefYaxis()->SetNdivisions(2, 2, 0, kTRUE);
 
     //legend
     predictionPlot->SetTitle("JETSCAPE");
