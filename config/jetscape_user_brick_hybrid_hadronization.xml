@@ -7,13 +7,7 @@
   <nEvents_printout> 1 </nEvents_printout>
 
   <outputFilename>test_out</outputFilename>
-  <JetScapeWriterAscii> off </JetScapeWriterAscii>
-  <JetScapeWriterFinalStatePartonsAscii> off </JetScapeWriterFinalStatePartonsAscii>
-  <JetScapeWriterFinalStateHadronsAscii> on </JetScapeWriterFinalStateHadronsAscii>
-
-  <Random>
-    <seed>42</seed>
-  </Random>
+  <JetScapeWriterAsciiGZ>on</JetScapeWriterAsciiGZ>
 
   <!-- Hard Process -->
   <Hard>
@@ -21,7 +15,7 @@
     <PGun>
       <name>PGun</name>
       <pT>100</pT>
-      <parID>1</parID>
+      <parID>22</parID>
     </PGun>
   </Hard>
 
@@ -61,19 +55,20 @@
       <alphas> 0.2 </alphas>
       <run_alphas>1</run_alphas>   <!-- 0 for fixed alpha_s and 1 for running alpha_s -->
     </Lbt>
+
+    <gammaLoss>
+      <gammaLoss_on>1</gammaLoss_on>
+    </gammaLoss>
   </Eloss>
 
   <!-- Jet Hadronization Module -->
   <JetHadronization>
     <name>hybrid</name>
-    <had_postprop>0.1</had_postprop>
-    <part_prop>0.0</part_prop>
     <pythia_decays>on</pythia_decays> <!-- lets the particles given to pythia decay-->
     <tau0Max>10.0</tau0Max> <!-- only particles with tau0 < tau0Max (given in mm/c) can decay, increase to include weak decays-->
     <!--eCMforHadronization only for pp collisions-->
     <!--in hybrid put the full eCM here, this is distributed to the beam partons-->
     <eCMforHadronization>0</eCMforHadronization>
     <reco_hadrons_in_pythia>1</reco_hadrons_in_pythia>
-    <recobias_t>0</recobias_t>
   </JetHadronization>
 </jetscape>
