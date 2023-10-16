@@ -294,12 +294,12 @@ void ratioPlot(TGraphErrors* dataHist, TH1D* predictionHist, string title, strin
     TCanvas* c = new TCanvas("c1","c1",1000,800);
     TRatioPlot* total = new TRatioPlot(predictionPlot, dataPlot);
     total->SetSeparationMargin(0.0);
+    //total->GetLowerRefYaxis()->SetNdivisions(2, 2, 0, kTRUE);
 	total->Draw("apl");
     if(ylog) total->GetUpperPad()->SetLogy();
     if(xlog) total->GetUpperPad()->SetLogx();
     if(xlog) total->GetLowerPad()->SetLogx();
     total->GetLowerRefYaxis()->SetRangeUser(0,3); //only triggers if range needs to be trimmed
-    //total->GetLowerRefYaxis()->SetNdivisions(2, 2, 0, kTRUE);
 
     //legend
     predictionPlot->SetTitle("JETSCAPE");
