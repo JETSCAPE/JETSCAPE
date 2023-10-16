@@ -9,6 +9,7 @@ from functions import *
 import pandas as pd
 from operator import itemgetter
 import time
+import xml.etree.ElementTree as ET
 
 # option reading
 softOnly = True
@@ -19,43 +20,28 @@ startdir = ""
 todays_date = date.today()
 totaldir = "/scratch/user/cameron.parker/newJETSCAPE/gamma/JETSCAPE/runs/Brick-" + str(todays_date.month) + "-" + str(todays_date.day) + "/"
 
+# xml shenanigans
+xmltemplate = "/scratch/user/cameron.parker/newJETSCAPE/gamma/JETSCAPE/config/jetscape_user_brick_hybrid_hadronization.xml"
+
 # function to make xmls
-def makexml(index, parameters, baseDir, xmltemplate):
+def makexml(index, parameters, baseDir):
     # appending option and filename
     filename = baseDir + "/dat/Brick_Bin" + str(index)
 
+    # xml declarations
+    newxml = ET.parse(xmltemplate)
+    root = newxml.getroot()
+
     # building lines for xml file
-    fileLine = "  <outputFilename>" + filename + "</outputFilename>\n"
+    for temp in root.iter('outputFilename'):
+        temp.text = str(filename)
     
-    paramlines = []
     for key in parameters.columns:
-        paramline = {}
-        paramline["name"] = key
-        if ":" in key:
-            paramline["line"] = "\t\t\t"+key+" = "+str(parameters.iloc[-1][key])+"\n"
-        else:
-            paramline["line"] = "\t\t\t<"+key+">"+str(parameters.iloc[-1][key])+"</"+key+">\n"
-        paramlines.append(paramline)
-
-    newlines = []
-    for line in xmltemplate:
-        if "<outputFilename>" in line:
-            newlines.append(fileLine)
-            continue
-
-        writeold = True
-        for paramline in paramlines:
-            if paramline["name"] in line: 
-                newlines.append(paramline["line"])
-                writeold = False
-                break
-
-        if writeold: newlines.append(line)
+        for temp in root.iter(key):
+            temp.text = str(parameters.iloc[-1][key])
 
     xmlname = baseDir+"/xml/brick_"+str(index)+".xml"
-    xml = open(xmlname,'w')
-    xml.writelines(newlines)
-    xml.close()
+    newxml.write(xmlname)
 
     output = {'xml': xmlname, 'dat': filename}
     return output
@@ -99,11 +85,6 @@ def makeDir(index):
 # Creating total directory for use
 makeTotalDir(totaldir)
 
-# xml shenanigans
-xmlname = "/scratch/user/cameron.parker/newJETSCAPE/gamma/JETSCAPE/config/jetscape_user_brick_hybrid_hadronization.xml"
-xmltemplate = open(xmlname,"r")
-xmllines = xmltemplate.readlines()
-
 # pthat bounds formed into pairs
 indices = list(range(1))
 
@@ -119,7 +100,7 @@ print(design)
 for i in range(len(design)):    
     # Making xmls
     baseDir = makeDir(i)
-    output = pool.starmap(makexml, [(index, design.loc[[i]], baseDir, xmllines) for index in indices]) # star map to each set of bounds
+    output = pool.starmap(makexml, [(index, design.loc[[i]], baseDir) for index in indices]) # star map to each set of bounds
 
     # Running jetscape for them
     xmls, dats = zip(*map(itemgetter('xml', 'dat'), output)) 
