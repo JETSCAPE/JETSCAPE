@@ -1,2 +1,5 @@
-Q0,vir_factor,lambdaQCD
-1.0,0.5,0.2
+pT,brick_length
+1.0,2.0
+1.0,4.0
+1.0,6.0
+1.0,8.0

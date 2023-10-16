@@ -1,2 +1,0 @@
-Q0,vir_factor,lambdaQCD,pionWdithScale,kaonWidthScale,protonWidthScale,StringFlav:probStoUD,StringFlav:probQQtoQ
-2.412,0.226,0.11800000000000001,1.0,1.0,1.0,0.32,0.081
