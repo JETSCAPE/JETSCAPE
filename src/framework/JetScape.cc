@@ -143,6 +143,7 @@ void JetScape::CompareElementsFromXML() {
 void JetScape::ReadGeneralParametersFromXML() {
 
   // Debug level
+  JetScapeLogger::Instance()->SetDebug(true);
   std::string log_debug = GetXMLElementText({"debug"});
   if ((int)log_debug.find("off") >= 0)
     JetScapeLogger::Instance()->SetDebug(false);
