@@ -92,6 +92,7 @@ void gammaLoss::Init() {
 
   JSINFO << MAGENTA << "gammaLoss input parameter";
   JSINFO << MAGENTA << "gammaLoss shower on: " << gammaLoss_on;
+  JSINFO << MAGENTA << "gammaLoss rate: " << ratesource;
 
   //...initialize the random number generator
   srand((unsigned)time(NULL));
