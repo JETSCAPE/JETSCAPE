@@ -113,7 +113,7 @@ for i in range(len(design)):
         cmd = "cat "
         for dat in dats:
             cmd = cmd + dat + ".dat.gz "
-        cmd = cmd + " > " + dats[-1] + "0.dat.gz"
+        cmd = cmd + " > Brick_Bin.dat.gz"
         os.system(cmd)
         
         for dat in dats:
