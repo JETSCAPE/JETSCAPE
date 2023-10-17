@@ -43,6 +43,7 @@ public:
   double fncAvrQhat(double zeta, double tau);
 
   bool gammaLoss_on, in_vac, brick_med, recoil_on, broadening_on;
+  int ratesource;
 
   double initR0, initRx, initRy, initRz, initVx, initVy, initVz, initRdotV,
       initVdotV, initEner;
@@ -55,7 +56,7 @@ public:
 
 
   //qhat stuff
-  double absFactor(TLorentzVector pVec, double T);
+  double absFactor1(TLorentzVector pVec, double T);
   double absFactor2(TLorentzVector pVec, double T);
   bool isAbsorbed(TLorentzVector pVec, double T, double delTime);
 

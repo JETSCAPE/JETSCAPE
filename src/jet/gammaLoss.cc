@@ -80,6 +80,7 @@ void gammaLoss::Init() {
   recoil_on = false;
   hydro_Tc = 0.16;
   brick_length = 4.0;
+  ratesource = 1;
 
   int flagInt = -100;
   double inputDouble = -99.99;
@@ -87,6 +88,7 @@ void gammaLoss::Init() {
   gammaLoss_on = GetXMLElementInt({"Eloss", "gammaLoss", "gammaLoss_on"});
   hydro_Tc = GetXMLElementDouble({"Eloss", "Matter", "hydro_Tc"});
   brick_length = GetXMLElementDouble({"Eloss", "Matter", "brick_length"});
+  ratesource = GetXMLElementDouble({"Eloss", "gammaLoss", "source"});
 
   JSINFO << MAGENTA << "gammaLoss input parameter";
   JSINFO << MAGENTA << "gammaLoss shower on: " << gammaLoss_on;
@@ -261,7 +263,7 @@ void gammaLoss::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parto
 }
 
 //chance for photon to be absorbed from https://arxiv.org/abs/hep-ph/9405309
-double gammaLoss::absFactor(TLorentzVector pVec, double T){
+double gammaLoss::absFactor1(TLorentzVector pVec, double T){
   double p = pVec.P();
   return 2.0*(5.*pi/9.)*(alpha*alphaS*T*T/p)*log(0.2317*p/(alphaS*T));
 }
@@ -297,9 +299,22 @@ double gammaLoss::absFactor2(TLorentzVector pVec, double T){
   return dRd3p * 4 * pow(pi,3) / expo;
 }
 
-//seeing if photon gets absorbed
+//seeing if photon gets absorbed, flexible for adding more rates
 bool gammaLoss::isAbsorbed(TLorentzVector pVec, double T, double delTime){
-  double chance = gammaLoss::absFactor(pVec, T)*delTime;
+  double chance;
+
+  switch(ratesource) {
+    case 1:
+      chance = gammaLoss::absFactor1(pVec, T)*delTime;
+      break;
+    case 2:
+      chance = gammaLoss::absFactor2(pVec, T)*delTime;
+      break;
+    default:
+      chance = gammaLoss::absFactor1(pVec, T)*delTime;
+      break;
+  }
+
 
   if((float)rand()/RAND_MAX < chance) return true;
   else return false;
