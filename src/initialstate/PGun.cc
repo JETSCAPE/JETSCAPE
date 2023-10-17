@@ -119,5 +119,15 @@ void PGun::Exec() {
   ptn->set_max_color(102);
   AddParton(ptn);
 
+  if(parID == 22){
+    double temppT = -1.0*pT;
+    double tempmass = InternalHelperPythia.particleData.m0(1);
+    double e = sqrt(temppT*temppT + tempmass*tempmass);
+    auto ptn2 = make_shared<Parton>(0, 1, 0, temppT, pseudorapidity, pi, p[0], xLoc);
+    ptn2->set_color(100);
+    ptn2->set_max_color(102);
+    AddParton(ptn2);
+  }
+
   VERBOSE(8) << GetNHardPartons();
 }
