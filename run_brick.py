@@ -85,8 +85,8 @@ def makeDir(index):
 # Creating total directory for use
 makeTotalDir(totaldir)
 
-# pthat bounds formed into pairs
-indices = list(range(1))
+# number of processes to run
+indices = list(range(48))
 
 # Changing to build directory
 os.chdir("/scratch/user/cameron.parker/newJETSCAPE/gamma/JETSCAPE/build")

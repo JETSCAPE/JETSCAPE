@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <jetscape>
-  <nEvents> 10 </nEvents>
+  <nEvents> 1000 </nEvents>
   <vlevel> 0 </vlevel>
   <setReuseHydro> true </setReuseHydro>
   <nReuseHydro> 10 </nReuseHydro>
@@ -58,6 +58,7 @@
 
     <gammaLoss>
       <gammaLoss_on>1</gammaLoss_on>
+      <source>2</source>
     </gammaLoss>
   </Eloss>
 
