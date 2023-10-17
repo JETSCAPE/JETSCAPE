@@ -269,18 +269,18 @@ double gammaLoss::absFactor(TLorentzVector pVec, double T){
 //chance for photon to be absorbed from https://arxiv.org/pdf/hep-ph/0111107.pdf
 double gammaLoss::absFactor2(TLorentzVector pVec, double T){
   // Constants
-  float alpha = 1.0 / 137.0;
-  float hbc = 0.1973;
-  float prfph, x, expo, fermi, C22, Cab, Ctot;
+  double alpha = 1.0 / 137.0;
+  double prfph, x, expo, fermi, C22, Cab, Ctot, p;
   
   // Calculate alpha_s at temperature 'temp'
-  float alphsT = 6.0 * pi / (27.0 * log(T / 0.022));
-  float gsT = sqrt(alphsT * 4.0 * pi);
+  double alphsT = 6.0 * pi / (27.0 * log(T / 0.022));
+  double gsT = sqrt(alphsT * 4.0 * pi);
   
   // Calculate prfph
-  prfph = alpha * alphsT / (pi * pi) * T * T * (6.0 / 9.0) / (hbc * hbc * hbc * hbc);
+  prfph = alpha * alphsT / (pi * pi) * T * T * (6.0 / 9.0);
   
   // Calculate x and exponential term
+  p = pVec.P();
   x = pVec.P() / T;
   expo = exp(-x);
   fermi = expo / (1.0 + expo);
@@ -293,7 +293,7 @@ double gammaLoss::absFactor2(TLorentzVector pVec, double T){
   Ctot = 0.5 * log(2.0 * x) + C22 + Cab;
   
   // Calculate dRd3p
-  double dRd3p = prfph * fermi * (log(sqrt(3.0) / gsT) + Ctot);
+  double dRd3p = prfph * fermi * (log(sqrt(3.0) / gsT) + Ctot) / p;
   return dRd3p * 4 * pow(pi,3) / expo;
 }
 
