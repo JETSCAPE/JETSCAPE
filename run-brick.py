@@ -1,14 +1,10 @@
-#makes set of bayesian design points for pp collisions
-
-from fileinput import filename
+#makes set of brick systems for comparing photon absoroption
 import os
 import multiprocessing as mp
-from pickle import TRUE
 from datetime import date
 from functions import *
 import pandas as pd
 from operator import itemgetter
-import time
 import xml.etree.ElementTree as ET
 
 # option reading
