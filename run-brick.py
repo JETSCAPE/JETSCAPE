@@ -106,13 +106,14 @@ for i in range(len(design)):
 
     # concatonating all soft bins together
     if softOnly:
+        finalname = baseDir+"/dat/Brick_Bin.dat"
         cmd = "cat "
         for dat in dats:
-            cmd = cmd + dat + ".dat.gz "
-        cmd = cmd + " > Brick_Bin.dat.gz"
+            cmd = cmd + dat + "_final_state_partons.dat "
+        cmd = cmd + " > " +finalname
         os.system(cmd)
         
         for dat in dats:
-            os.remove(dat+".dat.gz")
+            os.remove(dat+"_final_state_partons.dat")
 
 pool.close()

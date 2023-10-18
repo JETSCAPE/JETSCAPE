@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <jetscape>
-  <nEvents> 1000 </nEvents>
+  <nEvents> 10 </nEvents>
   <vlevel> 0 </vlevel>
   <setReuseHydro> true </setReuseHydro>
   <nReuseHydro> 10 </nReuseHydro>
   <nEvents_printout> 1 </nEvents_printout>
 
   <outputFilename>test_out</outputFilename>
-  <JetScapeWriterAsciiGZ>on</JetScapeWriterAsciiGZ>
+  <JetScapeWriterFinalStatePartonsAscii> on </JetScapeWriterFinalStatePartonsAscii>
 
   <!-- Hard Process -->
   <Hard>
@@ -61,15 +61,4 @@
       <source>2</source>
     </gammaLoss>
   </Eloss>
-
-  <!-- Jet Hadronization Module -->
-  <JetHadronization>
-    <name>hybrid</name>
-    <pythia_decays>on</pythia_decays> <!-- lets the particles given to pythia decay-->
-    <tau0Max>10.0</tau0Max> <!-- only particles with tau0 < tau0Max (given in mm/c) can decay, increase to include weak decays-->
-    <!--eCMforHadronization only for pp collisions-->
-    <!--in hybrid put the full eCM here, this is distributed to the beam partons-->
-    <eCMforHadronization>0</eCMforHadronization>
-    <reco_hadrons_in_pythia>1</reco_hadrons_in_pythia>
-  </JetHadronization>
 </jetscape>
