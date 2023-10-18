@@ -45,6 +45,7 @@ for dir in directories:
     eventcounts.append(events)
 
 # fits
+hist.Scale(100.0/eventcounts[0])
 hist.Fit("expo")
 hist.SetLineWidth(3)
 rp = ROOT.TRatioPlot(hist)
@@ -54,11 +55,10 @@ fit = hist.GetFunction("expo")
 print("Mean free path: " + str(-1.0/fit.GetParameter(1)) + " +/- " + str(-1*fit.GetParError(1)/fit.GetParameter(1)) + " fm")
 c1 = ROOT.TCanvas("c1","c1",1400,1200)
 rp.Draw()
-c1.Print("fit.png")
+c1.Print(analysisDir+"fit.png")
 c1.Close()
 
 # end behavior
 outfile = ROOT.TFile.Open(analysisDir+'analysis.root', "RECREATE")
-hist.Scale(100.0/eventcounts[0])
 hist.Write()
 outfile.Close()
