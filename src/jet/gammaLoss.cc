@@ -245,7 +245,7 @@ void gammaLoss::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parto
     TVector3 vMed(check_fluid_info_ptr->vx, check_fluid_info_ptr->vy, check_fluid_info_ptr->vz);
     pLab.Boost(-vMed);
     tLab.Boost(-vMed); 
-    double deltaTprime = deltaT/tLab.T();
+    double deltaTprime = deltaT/tLab.T() * fmToGeVinv; //added conversion to approriate time units
 
     //debugging statements
     //cout << "Temp: " << now_temp << ". Abs factor: " << gammaLoss::absFactor(pLab,now_temp)*100000 << endl;
