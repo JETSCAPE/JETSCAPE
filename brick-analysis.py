@@ -12,9 +12,10 @@ from functions import parton
 # setting directory for analysis
 analysisDir = sys.argv[1]
 directories = getDirs(analysisDir)
+outdir = analysisDir+"analysis/"
 
 # initializing histograms
-hist = ROOT.TH1D('Photon Rate','Photon Rate; Brick Length (fm); Photons Out',4,1.0,9.0)
+hist = ROOT.TH1D('Photon Rate','Photon Rate; Brick Length (fm); Photons Out',6,1.0,13.0)
 eventcounts = []
 
 # directory loop
@@ -39,7 +40,7 @@ for dir in directories:
             continue
 
         part = parton(line)
-        if part.PID == 22:
+        if part.PID == 22 and part.E > 0.95:
             hist.Fill(length)
 
     eventcounts.append(events)
@@ -55,10 +56,10 @@ fit = hist.GetFunction("expo")
 print("Mean free path: " + str(-1.0/fit.GetParameter(1)) + " +/- " + str(-1*fit.GetParError(1)/fit.GetParameter(1)) + " fm")
 c1 = ROOT.TCanvas("c1","c1",1400,1200)
 rp.Draw()
-c1.Print(analysisDir+"fit.png")
+c1.Print(outdir+"fit.png")
 c1.Close()
 
 # end behavior
-outfile = ROOT.TFile.Open(analysisDir+'analysis.root', "RECREATE")
+outfile = ROOT.TFile.Open(outdir+'analysis.root', "RECREATE")
 hist.Write()
 outfile.Close()
