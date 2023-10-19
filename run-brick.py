@@ -9,7 +9,7 @@ import xml.etree.ElementTree as ET
 
 # option reading
 softOnly = True
-design = pd.read_csv("designs/default.txt")
+design = pd.read_csv(sys.argv[1])
 startdir = ""
 
 # date and file initiation
@@ -90,7 +90,7 @@ os.chdir("/scratch/user/cameron.parker/newJETSCAPE/gamma/JETSCAPE/build")
 pool = mp.Pool(len(indices))
 
 # Loop over design points and make parameter file
-design.to_csv(totaldir+'QVir_Analysis/parameters.txt',index=False)
+design.to_csv(totaldir+'analysis/parameters.txt',index=False)
 print(design)
 
 for i in range(len(design)):    
