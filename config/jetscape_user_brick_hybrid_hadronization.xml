@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <jetscape>
-  <nEvents> 10 </nEvents>
+  <nEvents> 5000 </nEvents>
   <vlevel> 0 </vlevel>
   <setReuseHydro> true </setReuseHydro>
-  <nReuseHydro> 10 </nReuseHydro>
+  <nReuseHydro> 5000 </nReuseHydro>
   <nEvents_printout> 1 </nEvents_printout>
 
   <outputFilename>test_out</outputFilename>
@@ -14,7 +14,7 @@
     <!-- Parton Gun test with fixed pT and fixed IS pos = 0  -->
     <PGun>
       <name>PGun</name>
-      <pT>100</pT>
+      <pT>1</pT>
       <parID>22</parID>
     </PGun>
   </Hard>
@@ -27,7 +27,7 @@
     <!-- Test Brick if bjorken_expansion_on="true", T(t) = T * (start_time[fm]/t)^{1/3} -->
     <Brick bjorken_expansion_on="false" start_time="0.6">
       <name>Brick</name>
-      <T>0.3</T>
+      <T>0.2</T>
     </Brick>
   </Hydro>
 
