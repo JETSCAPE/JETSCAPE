@@ -19,6 +19,11 @@ def makeTotalDir(totaldir):
     except:
         pass
 
+    try:
+        os.makedirs(totaldir + "analysis/")
+    except:
+        pass
+
 # gets list of directories in the target directory
 def getDirs(dir):
     startdir = os.getcwd()
@@ -27,7 +32,7 @@ def getDirs(dir):
 
     directories = []
     for item in files:
-        if os.path.isdir(item) and item != 'QVir_Analysis': directories.append(item)
+        if os.path.isdir(item) and item != 'analysis': directories.append(item)
 
     os.chdir(startdir)
 
