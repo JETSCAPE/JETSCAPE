@@ -87,8 +87,8 @@ int main(int argc, char* argv[]){
     string names[ntrigbins][nassbins];
     for(int i1 = 0; i1 < ntrigbins; i1++){
         for(int i2 = 0; i2 < nassbins; i2++){
-            names[i1][i2] = "D Azi Cor "+to_string(triggerptcut[i1])+"-"+to_string(triggerptcut[i1+1])+" "+
-                to_string(assptmin[i2])+"-"+to_string(assptmax[i2]);
+            names[i1][i2] = "D "+stringround(triggerptcut[i1],1)+"-"+stringround(triggerptcut[i1+1],1)+" GeV, hadrons "+
+                stringround(assptmin[i2],1)+"-"+stringround(assptmax[i2],1)+" GeV";
             HistLPhi[i1][i2] = new TH1D("Hybrid Had. Prediction", names[i1][i2].c_str(), NphiLBin, LphiBin);
         }
     }   
@@ -277,7 +277,7 @@ int main(int argc, char* argv[]){
             TDirectory* hadrondir = (TDirectory*)hadron_file.Get(tablename.c_str());
             TGraphErrors* hadronData = (TGraphErrors*) hadrondir->Get("Graph1D_y1");
             TH1D* temphist = getZeroedHist(HistLPhi[i1][i2]);
-            string xname = "Del Phi", yname = "1/ND dNpairs/dDelPhi";
+            string xname = "#Delta#phi", yname = "1/N_{D} dN_{pairs}/#Delta#phi";
             ratioPlot(hadronData,temphist,names[i1][i2],xname,yname);
         }
     }
