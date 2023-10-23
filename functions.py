@@ -131,14 +131,14 @@ def absFactor2(pVec, T):
     alphsT = 6.0 * math.pi / (27.0 * math.log(T / 0.022)) 
     gsT = math.sqrt(alphsT * 4.0 * math.pi) 
     
-    ## Calculate prfph
-    prfph = alpha * alphsT / (math.pi * math.pi) * T * T * (6.0 / 9.0) 
-    
     ## Calculate x and exponential term
     p = pVec.P() 
     x = pVec.P() / T 
     expo = math.exp(-x) 
     fermi = expo / (1.0 + expo) 
+    
+    ## Calculate prfph
+    prfph = alpha * alphsT * T**2 * (5.0 / 9.0) / (p * math.pi**2) 
     
     ## Calculate C22 and Cab
     C22 = 0.041 / x - 0.3615 + 1.01 * math.exp(-1.35 * x) 
@@ -148,5 +148,5 @@ def absFactor2(pVec, T):
     Ctot = 0.5 * math.log(2.0 * x) + C22 + Cab 
     
     ## Calculate dRd3p
-    dRd3p = prfph * fermi * (math.log(math.sqrt(3.0) / gsT) + Ctot) / p
+    dRd3p = prfph * fermi * (math.log(math.sqrt(3.0) / gsT) + Ctot)
     return dRd3p * 4 * pow(math.pi,3) / expo

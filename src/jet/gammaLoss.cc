@@ -279,14 +279,14 @@ double gammaLoss::absFactor2(TLorentzVector pVec, double T){
   double alphsT = 6.0 * pi / (27.0 * log(T / 0.022));
   double gsT = sqrt(alphsT * 4.0 * pi);
   
-  // Calculate prfph
-  prfph = alpha * alphsT / (pi * pi) * T * T * (6.0 / 9.0);
-  
   // Calculate x and exponential term
   p = pVec.P();
   x = pVec.P() / T;
   expo = exp(-x);
   fermi = expo / (1.0 + expo);
+  
+  // Calculate prfph
+  prfph = alpha * alphsT * pow(T,2) * (5.0 / 9.0) / (p * pow(p,2)) 
   
   // Calculate C22 and Cab
   C22 = 0.041 / x - 0.3615 + 1.01 * exp(-1.35 * x);
@@ -296,7 +296,7 @@ double gammaLoss::absFactor2(TLorentzVector pVec, double T){
   Ctot = 0.5 * log(2.0 * x) + C22 + Cab;
   
   // Calculate dRd3p
-  double dRd3p = prfph * fermi * (log(sqrt(3.0) / gsT) + Ctot) / p;
+  double dRd3p = prfph * fermi * (log(sqrt(3.0) / gsT) + Ctot);
   return dRd3p * 4 * pow(pi,3) / expo;
 }
 
