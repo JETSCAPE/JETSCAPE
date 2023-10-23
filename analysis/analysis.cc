@@ -8,6 +8,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/range/iterator_range.hpp>
 #include <sstream>
+#include "ostream"
 
 #include <memory>
 #include <chrono>
@@ -1068,4 +1069,11 @@ TH1D* getZeroedHist(TH1D* hist){
 
     //returning output
     return histout;
+}
+
+//simple rounding method
+string stringround(double toCast, unsigned precision){
+    std::ostringstream result;
+    result << std::setprecision(precision) << toCast;
+    return result.str();
 }

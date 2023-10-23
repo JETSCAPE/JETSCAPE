@@ -84,4 +84,7 @@ double blending(int binID, double pT, double center, double width, double softcu
 //subtracting floors out of azi correlation hists
 TH1D* getZeroedHist(TH1D* hist);
 
+//simple rounding method
+string stringround(double toCast, unsigned precision = 2u);
+
 #endif
