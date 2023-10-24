@@ -103,6 +103,17 @@ class parton:
 
     def __init__(self, line):
         params = line.split(' ')
+        if len(params) < 7:
+            self.index = -1
+            self.PID = -1
+            self.status = -1
+            self.E = -1
+            self.Px = -1
+            self.Py = -1
+            self.Pz = -1
+            self.pT = -1
+            return
+
         self.index = int(params[0])
         self.PID = int(params[1])
         self.status = int(params[2])
