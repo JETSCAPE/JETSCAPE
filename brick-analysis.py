@@ -16,31 +16,38 @@ outdir = analysisDir+"analysis/"
 outfile = ROOT.TFile.Open(outdir+'analysis.root', "RECREATE")
 
 # initializing histograms
-#pTs = [1,3,5,7,9]
-pTs = [0.5,1.5]
+pTs = [1,3,5,7,9]
+#pTs = [0.5,1.5]
 lengths = [1,3,5,7,9,11,13]
 totalhist = ROOT.TH2D('Photon Rate','Photon Rate; Brick Length (fm); pT (GeV); Photons Out (%)',
                       len(lengths)-1,lengths[0],lengths[len(lengths)-1],
                       len(pTs)-1,pTs[0],pTs[len(pTs)-1])
-eventcounts = []
+eventHist = ROOT.TH2D('Event Count','Event Count; Brick Length (fm); pT (GeV); Events',
+                      len(lengths)-1,lengths[0],lengths[len(lengths)-1],
+                      len(pTs)-1,pTs[0],pTs[len(pTs)-1])
 
 # directory loop
 for dir in directories:
     xml = ET.parse(analysisDir+"points/"+dir+"/xml/brick_0.xml")
     root = xml.getroot()
-    events = 0
 
     # reading length
     length = 0
     for temp in root.iter('brick_length'):
         length = float(temp.text)
 
+    # reading pT
+    thispT = 0
+    for temp in root.iter('pT'):
+        thispT = float(temp.text)
+
     # reading partons
+    print(f'Reading {dir}')
     datfile = open(analysisDir+"points/"+dir+"/dat/Brick_Bin.dat","r")
     datlines = datfile.readlines()
     for line in datlines:
         if 'Event' in line:
-            events = events + 1
+            eventHist.Fill(length, thispT)
 
         if '#' in line:
             continue
@@ -49,11 +56,9 @@ for dir in directories:
         if part.PID == 22 and part.E > 0.95:
             totalhist.Fill(length,part.pT)
 
-    eventcounts.append(events)
-
-
 # fits
-totalhist.Scale(100.0/eventcounts[0])
+totalhist.Scale(100.0)
+totalhist.Divide(eventHist)
 for i in range(len(pTs)-1):
     name = str(pTs[i])+"to"+str(pTs[i+1])
     hist = totalhist.ProjectionX(name,i+1,i+1)
