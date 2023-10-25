@@ -297,10 +297,15 @@ void ratioPlot(TGraphErrors* dataHist, TH1D* predictionHist, string title, strin
     total->SetSeparationMargin(0.0);
     //total->GetLowerRefYaxis()->SetNdivisions(2, 2, 0, kTRUE);
 	total->Draw("apl");
+
+    //axes
     if(ylog) total->GetUpperPad()->SetLogy();
     if(xlog) total->GetUpperPad()->SetLogx();
     if(xlog) total->GetLowerPad()->SetLogx();
-    total->GetLowerRefYaxis()->SetRangeUser(0,3); //only triggers if range needs to be trimmed
+    total->GetLowerRefYaxis()->SetRangeUser(0,3); //only triggers if range needs to be trimmed h.GetXaxis()->GetXmin();
+    double xmin = predictionHist->GetXaxis()->GetXmin(), xmax = predictionHist->GetXaxis()->GetXmax();
+    total->GetLowerRefXaxis()->SetRangeUser(xmin,xmax);
+    total->GetUpperRefXaxis()->SetRangeUser(xmin,xmax);
 
     //legend
     predictionPlot->SetTitle("JETSCAPE");
@@ -473,7 +478,6 @@ vector<double> getThrustSphericity(vector<shared_ptr<Hadron>> hadrons){
         if (chg == 0 /*&& e > 0.4 && std::abs(eta) < 2.29*/) {
             nHad++;
         }
-        else if (chg == 0) {continue;}
 
         //Charged Hadron Selection
         if (chg != 0 /*&& pT > 0.2 && std::abs(eta) < 1.74*/) {
@@ -481,7 +485,6 @@ vector<double> getThrustSphericity(vector<shared_ptr<Hadron>> hadrons){
             nHad++;
             chgE += e;
         }
-        else if (chg !=0) {continue;}
 
         // Thr event fill:
         Vec4 pNow(px,py,pz,e);
@@ -514,11 +517,11 @@ vector<double> getThrustSphericity(vector<shared_ptr<Hadron>> hadrons){
         // only happens after youve reached the end of the list
         
         // if this event doesn't have enough particles to calculate thrust/sphericity, skip it (can also skip otherwise unwanted events here too)
-        if(nStudy < 2 || nChg < 5 || nHad < 13 || chgE < 15.0){
+        /*if(nStudy < 2 || nChg < 5 || nHad < 13 || chgE < 15.0){
             //std::cout << "Event " << prevptn_event << " had too few particles to find thrust...\n\n";
             //fileout << "0\n";
             return error;
-        }
+        }*/
         
         //Thrust and sphericity calculations proper
         // Thr: Try all combinations of reference vector orthogonal to two particles.
@@ -668,9 +671,9 @@ vector<double> getThrustSphericity(vector<shared_ptr<Hadron>> hadrons){
         double phi = atan(rho / Sph_eVec1.pz());
         phiDeg = phi * (180.0/3.1415926535897);
         
-        if (std::abs(phiDeg) <= 35.0) {
+        /*if (std::abs(phiDeg) <= 35.0) {
             return error;
-        }
+        }*/
     }
 
     //double sphericity = 1.5 * (Sph_eVal2 + Sph_eVal3);

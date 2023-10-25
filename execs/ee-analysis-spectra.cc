@@ -122,6 +122,7 @@ int main(int argc, char* argv[]){
     TH1D *HistMultiplicity = new TH1D("Charged Particle Multiplicity","Charged Particle Multiplicity",NMultBin,HadronMultiplicityBin);
     TH1D *HistThrust = new TH1D("Thrust", "Event Thrust", NThrustBin, ThrustBin);
     TH1D *xeHist = new TH1D("xe", "xe",  xedata->GetNbinsX(), xedata->GetXaxis()->GetXbins()->GetArray()); 
+    HistTempJet->GetXaxis()->SetRangeUser(20,46);
 
     //reco hadrons
     TH1D *HistRecoHadron = new TH1D("Frag Hadrons", "Frag Hadrons", NpTSingleHadronBin, SingleHadronpTBin);

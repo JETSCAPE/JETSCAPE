@@ -277,6 +277,7 @@ int main(int argc, char* argv[]){
             TDirectory* hadrondir = (TDirectory*)hadron_file.Get(tablename.c_str());
             TGraphErrors* hadronData = (TGraphErrors*) hadrondir->Get("Graph1D_y1");
             TH1D* temphist = getZeroedHist(HistLPhi[i1][i2]);
+            temphist->GetXaxis()->SetRangeUser(0,pi);
             string xname = "#Delta#phi", yname = "1/N_{D} dN_{pairs}/#Delta#phi";
             ratioPlot(hadronData,temphist,names[i1][i2],xname,yname);
         }
