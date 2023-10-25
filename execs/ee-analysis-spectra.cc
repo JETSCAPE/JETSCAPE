@@ -76,10 +76,10 @@ int main(int argc, char* argv[]){
     //System variables
     double Ecm = 91.2;
     
-    //Variables for jet spectrum
-    double JetpTBin[37]; //in GeV
-    for(int i=10; i<=46; i++) JetpTBin[i-10]=i;
-    int NpTJetBin = sizeof(JetpTBin)/sizeof(JetpTBin[0])-1;
+    //jet
+    TFile jetroot("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/data/eeInclusiveJets.root");
+    TDirectory* jetdir = (TDirectory*)jetroot.Get("InclusiveJetEnergy"); TH1D* jetdata = (TH1D*)jetdir->Get("Hist1D_y1");
+    TGraphErrors* jetgraph = (TGraphErrors*) jetdir->Get("Graph1D_y1");
     double JetRadius = 0.4;
 
     //dijet
@@ -116,7 +116,7 @@ int main(int argc, char* argv[]){
     TGraphErrors* xegraph = (TGraphErrors*)xedir->Get("Graph1D_y1");
     
     // Histograms for event variables
-    TH1D *HistTempJet = new TH1D("JetSpectrumBin", "Jet Spectrum pT", NpTJetBin, JetpTBin); //CountVspT for jets
+    TH1D *HistTempJet = new TH1D("JetSpectrumBin", "Jet Spectrum pT", jetdata->GetNbinsX(), jetdata->GetXaxis()->GetXbins()->GetArray()); //CountVspT for jets
     TH1D *HistTempdiJet = new TH1D("diJetSpectrumBin", "diJet Spectrum pT", dijetdata->GetNbinsX(), dijetdata->GetXaxis()->GetXbins()->GetArray());
     TH1D *HistTempSingleHadron = new TH1D("SingleHadronSpectrumBin", "Single Hadron Spectrum pT", NpTSingleHadronBin, SingleHadronpTBin); //CountVspT for single-hadron
     TH1D *HistMultiplicity = new TH1D("Charged Particle Multiplicity","Charged Particle Multiplicity",NMultBin,HadronMultiplicityBin);
@@ -209,10 +209,8 @@ int main(int argc, char* argv[]){
         for (int i = 0; i < SortedJets.size(); ++i){
             double theta = 2*atan(exp(-1*SortedJets[i].eta()));
             totalE += SortedJets[i].E();
-            if(theta > pi/5 && theta < 4*pi/5){
-                HistTempJet->Fill(SortedJets[i].E());
-                if(i<2) HistTempdiJet->Fill(SortedJets[i].E());
-            }
+            HistTempJet->Fill(SortedJets[i].E());
+            if(i<2) HistTempdiJet->Fill(SortedJets[i].E());
             
             //debugging statements
             //cout << "jet: " << SortedJets[i].E() << endl;
@@ -317,18 +315,19 @@ int main(int argc, char* argv[]){
     ratioPlot(xpgraph, HistTempSingleHadron, "Charged x_{p}", "x_{p}", "1/#sigma d#sigma/dx_{p}", true, true);
     ratioPlot(xegraph, xeHist, "Charged x_{e}", "x_{e}", "1/#sigma d#sigma/dx_{e}", true, true);
     ratioPlot(dijetgraph, HistTempdiJet, "Leading Dijet Distribution", "E (GeV)", "1/N_{events} dN/dE", false, false);
-
-    TFile jetsroot("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/data/eeInclusiveJets.root");
-    TDirectory* jetdir = (TDirectory*)jetsroot.Get("InclusiveJetEnergy");
-    TGraphErrors* jetgraph = (TGraphErrors*) jetdir->Get("Graph1D_y1");
     ratioPlot(jetgraph, HistTempJet, "Inclusive Jets", "E (GeV)", "1/N_{events} dN/dE", false, true);
+
+    //output
+    cout << "Mean N charged: " << HistMultiplicity->GetMean() << endl;
+    cout << "Jet normalization: " << HistTempJet->Integral() << endl;
+    cout << "Dijet normalization: " << HistTempdiJet->Integral() << endl;
 
     //closing files
     totalroot->Close();
     alephfile.Close();
     xeroot.Close();
     dijetroot.Close();
-    jetsroot.Close();
+    jetroot.Close();
 
     //Done. Script run time
     int EndTime = time(NULL);
