@@ -415,6 +415,7 @@ void HybridHadronization::Init(){
 
     // And initialize
     pythia.init();
+    pythia.settings.listChanged(); 
 
     //reading in info for thermal partons
 	  inbrick = false; brickL = -1.;
