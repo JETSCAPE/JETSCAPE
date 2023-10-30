@@ -70,8 +70,8 @@ int main(int argc, char* argv[]){
     double deltaEtaCut = 1;
     double LYcut = 0.5;
     double triggerptcut[] = {0,3,5,8,16,24}; int ntrigbins = 5;
-    double assptmin[] = {0.3,0.3,1,0}; int nassbins = 4;
-    double assptmax[] = {10000,1,10000,10000};
+    double assptmin[] = {0.3,0.3,1,2,1}; int nassbins = 5;
+    double assptmax[] = {10000,1,2,3,10000};
     
     //D spectra variables
     double spectraBins[] = {0.3,0.45, 0.6, 0.75, 0.9, 1.05, 1.2, 1.5, 1.8, 2.1, 2.4, 3.6, 4.8, 6.0, 7.2, 10.8, 14.4, 21.6, 28.8, 38.4, 48.0, 67.2, 86.4, 112.2};
@@ -87,8 +87,8 @@ int main(int argc, char* argv[]){
     string names[ntrigbins][nassbins];
     for(int i1 = 0; i1 < ntrigbins; i1++){
         for(int i2 = 0; i2 < nassbins; i2++){
-            names[i1][i2] = "D "+stringround(triggerptcut[i1],1)+"-"+stringround(triggerptcut[i1+1],1)+" GeV, hadrons "+
-                stringround(assptmin[i2],1)+"-"+stringround(assptmax[i2],1)+" GeV";
+            names[i1][i2] = "D "+stringround(triggerptcut[i1],2)+"-"+stringround(triggerptcut[i1+1],2)+" GeV, hadrons "+
+                stringround(assptmin[i2],2)+"-"+stringround(assptmax[i2],2)+" GeV";
             HistLPhi[i1][i2] = new TH1D("Hybrid Had. Prediction", names[i1][i2].c_str(), NphiLBin, LphiBin);
         }
     }   
@@ -265,14 +265,15 @@ int main(int argc, char* argv[]){
     histStack->Write("Revo vs Frag");
 
     int i = 1;
-    for(int i2 = 0; i2 < nassbins-1; i2++){
-        for(int i1 = 1; i1 < ntrigbins; i1++){
+    for(int i2 = 0; i2 < nassbins; i2++){
+        for(int i1 = 0; i1 < ntrigbins; i1++){
             HistLPhi[i1][i2]->Scale(1.0/(totLcount[i1][i2]));
             HistLPhi[i1][i2]->GetXaxis()->SetTitle("Delta phi (rad)");
             HistLPhi[i1][i2]->GetYaxis()->SetTitle("(1/ND)(dNassc/dDelphi)");
  	        HistLPhi[i1][i2]->Write(names[i1][i2].c_str());
 
             //data comparison
+            if(i1==0 || i2==4) continue;
             string tablename = "Table " + to_string(i); i++;
             TDirectory* hadrondir = (TDirectory*)hadron_file.Get(tablename.c_str());
             TGraphErrors* hadronData = (TGraphErrors*) hadrondir->Get("Graph1D_y1");
