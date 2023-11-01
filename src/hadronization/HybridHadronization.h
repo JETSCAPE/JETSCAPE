@@ -378,6 +378,9 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
   // scale the energies/momenta of the negative hadrons to have energy conservation
   void scale_kinematics_negative_hadrons(hadron_collection& HH_hadrons, double shower_energy, double positive_hadrons_energy);
 
+  bool isCharmed(HHhadron hadron);
+  bool isBottom(HHhadron hadron);
+
   protected:
 	static Pythia8::Pythia pythia;
 

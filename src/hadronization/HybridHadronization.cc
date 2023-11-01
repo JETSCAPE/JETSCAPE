@@ -6485,18 +6485,24 @@ void HybridHadronization::set_spacetime_for_pythia_hadrons(Pythia8::Event &event
       hadron_out.e(event[hadron_idx].e());
 
       //specific decays for heavy flavor analysis
-      if(IDs.size() != 0 && abs(event[event[hadron_idx].mother1()].id()) == 413 && hadron_out.id() == 211) {
-        JSINFO << "Pion from D* decay thrown out.";
-        continue;
+      if(IDs.size() > 0){
+        if(IDs[0] == 411 && abs(event[event[hadron_idx].mother1()].id()) == 413 && hadron_out.id() == 211) {
+          JSINFO << "Pion from D* decay thrown out.";
+          continue;
+        }
+        if(IDs[0] == 4122 && abs(event[event[hadron_idx].mother1()].id()) == 4222 && hadron_out.id() == 211) {
+          JSINFO << "Pion from Sigma++c decay thrown out.";
+          continue;
+        }
+        if(IDs[0] == 4122  && abs(event[event[hadron_idx].mother1()].id()) == 4112 && hadron_out.id() == 211) {
+          JSINFO << "Pion from Sigma0c decay thrown out.";
+          continue;
+        }
       }
-      if(IDs.size() != 0 && abs(event[event[hadron_idx].mother1()].id()) == 4222 && hadron_out.id() == 211) {
-        JSINFO << "Pion from Sigma++c decay thrown out.";
-        continue;
-      }
-      if(IDs.size() != 0 && abs(event[event[hadron_idx].mother1()].id()) == 4112 && hadron_out.id() == 211) {
-        JSINFO << "Pion from Sigma0c decay thrown out.";
-        continue;
-      }
+
+      //feed down check
+      //isCharmed(hadron_out);
+      //isBottom(hadron_out);
 
       //since using inbuilt pythia mother/daughter functions will segfault 'occasionally', going to code it in by hand.
 			//this could probably be done more efficiently, but it's good enough for now...
@@ -7429,3 +7435,35 @@ void HybridHadronization::set_initial_parton_masses(parton_collection& HH_parton
   eviol.close(); echg.close(); ptchg.close();*/
 }
 
+bool HybridHadronization::isCharmed(HHhadron hadron){
+  int ID = abs(hadron.id());
+  if(ID < 1000){
+    if(ID/10%10 == 4 || ID/100%10 == 4) {
+      JSINFO << "Charmed found " << ID;
+      return true;
+    }
+  }else{
+    if(ID/10%10 == 4 || ID/100%10 == 4 || ID/1000%10 == 4) {
+      JSINFO << "Charmed found " << ID;
+      return true;
+    }
+  }
+
+  return false;
+}
+
+bool HybridHadronization::isBottom(HHhadron hadron){
+  int ID = abs(hadron.id());
+  if(ID < 1000){
+    if(ID/10%10 == 5 || ID/100%10 == 5) {
+      JSINFO << "Bottom found " << ID;
+      return true;
+    }
+  }else{
+    if(ID/10%10 == 5 || ID/100%10 == 5 || ID/1000%10 == 5) {
+      JSINFO << "Bottom found " << ID;
+      return true;
+    }
+  }
+  return false;
+}
