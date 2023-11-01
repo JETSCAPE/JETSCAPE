@@ -711,7 +711,11 @@ void makeDatFile(vector<vector<double>> data, string title, string header){
     int imax = data.at(0).size();
     int jmax = data.size();
     for(int i  = 0; i < imax; i++){
-        for(int j = 0; j < jmax; j++) datfile << data[j][i] << " ";
+        //cout << i << endl;
+        for(int j = 0; j < jmax; j++) {
+            cout << j << endl;
+            //datfile << data[j][i] << " ";
+        }
         datfile << endl;
     }
 
