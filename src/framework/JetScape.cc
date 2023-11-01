@@ -144,8 +144,8 @@ void JetScape::ReadGeneralParametersFromXML() {
 
   // Debug level
   std::string log_debug = GetXMLElementText({"debug"});
-  if ((int)log_debug.find("off") >= 0)
-    JetScapeLogger::Instance()->SetDebug(false);
+  if ((int)log_debug.find("on") >= 0)
+    JetScapeLogger::Instance()->SetDebug(true);
   VERBOSE(1) << "JetScape Debug = " << log_debug;
 
   // Remark
