@@ -890,7 +890,7 @@ void HybridHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& sh
           if(abs(HH_hadrons[iHad].id()) == IDs[i] && HH_hadrons[iHad].is_final()) keepevent = true;
       }
       if(!keepevent) {
-        JSINFO << "Requirements not met, thrown out.";
+        //JSINFO << "Requirements not met, thrown out.";
         run_successfully = false;
         HH_hadrons.clear(); 
       }
@@ -6499,10 +6499,18 @@ void HybridHadronization::set_spacetime_for_pythia_hadrons(Pythia8::Event &event
           continue;
         }
       }
+      
+      //using mothers to remove feed down for charm studies
+      if(IDs.size() > 0 && isCharmed(hadron_out.id())){
+        bool skip = false;
+        if(isBottom(event[event[hadron_idx].mother1()].id())) {
+          skip = true;
+          JSINFO << "Feed down removed in event " << GetCurrentEvent() << " : " << hadron_out.id() 
+            << " from " << event[event[hadron_idx].mother1()].id();
+        }
 
-      //feed down check
-      //isCharmed(hadron_out);
-      //isBottom(hadron_out);
+        if(skip) continue;
+      }
 
       //since using inbuilt pythia mother/daughter functions will segfault 'occasionally', going to code it in by hand.
 			//this could probably be done more efficiently, but it's good enough for now...
@@ -7435,16 +7443,16 @@ void HybridHadronization::set_initial_parton_masses(parton_collection& HH_parton
   eviol.close(); echg.close(); ptchg.close();*/
 }
 
-bool HybridHadronization::isCharmed(HHhadron hadron){
-  int ID = abs(hadron.id());
+bool HybridHadronization::isCharmed(int ID){
+  ID = abs(ID);
   if(ID < 1000){
     if(ID/10%10 == 4 || ID/100%10 == 4) {
-      JSINFO << "Charmed found " << ID;
+      //JSINFO << "Charmed found " << ID;
       return true;
     }
   }else{
     if(ID/10%10 == 4 || ID/100%10 == 4 || ID/1000%10 == 4) {
-      JSINFO << "Charmed found " << ID;
+      //JSINFO << "Charmed found " << ID;
       return true;
     }
   }
@@ -7452,16 +7460,16 @@ bool HybridHadronization::isCharmed(HHhadron hadron){
   return false;
 }
 
-bool HybridHadronization::isBottom(HHhadron hadron){
-  int ID = abs(hadron.id());
+bool HybridHadronization::isBottom(int ID){
+  ID = abs(ID);
   if(ID < 1000){
     if(ID/10%10 == 5 || ID/100%10 == 5) {
-      JSINFO << "Bottom found " << ID;
+      //JSINFO << "Bottom found " << ID;
       return true;
     }
   }else{
     if(ID/10%10 == 5 || ID/100%10 == 5 || ID/1000%10 == 5) {
-      JSINFO << "Bottom found " << ID;
+      //JSINFO << "Bottom found " << ID;
       return true;
     }
   }
