@@ -2,9 +2,9 @@
 
 <jetscape>
   
-  <nEvents> 100 </nEvents>
+  <nEvents> 10 </nEvents>
   
-  <outputFilename>/scratch/user/cameron.parker/JETSCAPE-COMP-HH_colorrecomb/test</outputFilename>
+  <outputFilename>/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/test/test</outputFilename>
   <JetScapeWriterAsciiGZ> on </JetScapeWriterAsciiGZ>
   <finalHadsOnly> on </finalHadsOnly>
 
@@ -20,6 +20,7 @@
       <eCM>13000</eCM>
       <LinesToRead>
         HardQCD:all = off
+        SoftQCD:inelastic = on
       </LinesToRead>
     </PythiaGun>
   </Hard>
@@ -46,7 +47,6 @@
     <pionWidthScale>1.0</pionWidthScale>
     <kaonWidthScale>1.0</kaonWidthScale>
     <protonWidthScale>1.0</protonWidthScale>
-    <weak_decays>on</weak_decays>
     <shower_recofactor>1</shower_recofactor>
     <thermal_recofactor>1</thermal_recofactor>
     <ignorePhotons>on</ignorePhotons>
