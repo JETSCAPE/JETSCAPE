@@ -380,6 +380,7 @@ class HybridHadronization : public HadronizationModule<HybridHadronization>
 
   bool isCharmed(int ID);
   bool isBottom(int ID);
+  bool fromBottom(Pythia8::Event &event, int ID, string feeddownout);
 
   protected:
 	static Pythia8::Pythia pythia;

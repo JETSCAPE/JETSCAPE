@@ -6502,14 +6502,8 @@ void HybridHadronization::set_spacetime_for_pythia_hadrons(Pythia8::Event &event
       
       //using mothers to remove feed down for charm studies
       if(IDs.size() > 0 && isCharmed(hadron_out.id())){
-        bool skip = false;
-        if(isBottom(event[event[hadron_idx].mother1()].id())) {
-          skip = true;
-          JSINFO << "Feed down removed in event " << GetCurrentEvent() << " : " << hadron_out.id() 
-            << " from " << event[event[hadron_idx].mother1()].id();
-        }
-
-        if(skip) continue;
+        string feeddownout = "Feed down removed in event " + to_string(GetCurrentEvent()) + " : " + to_string(hadron_out.id());
+        if(fromBottom(event,hadron_idx,feeddownout)) continue;
       }
 
       //since using inbuilt pythia mother/daughter functions will segfault 'occasionally', going to code it in by hand.
@@ -7445,16 +7439,9 @@ void HybridHadronization::set_initial_parton_masses(parton_collection& HH_parton
 
 bool HybridHadronization::isCharmed(int ID){
   ID = abs(ID);
-  if(ID < 1000){
-    if(ID/10%10 == 4 || ID/100%10 == 4) {
-      //JSINFO << "Charmed found " << ID;
-      return true;
-    }
-  }else{
-    if(ID/10%10 == 4 || ID/100%10 == 4 || ID/1000%10 == 4) {
-      //JSINFO << "Charmed found " << ID;
-      return true;
-    }
+  if(ID/10%10 == 4 || ID/100%10 == 4 || ID/1000%10 == 4) {
+    //JSINFO << "Charmed found " << ID;
+    return true;
   }
 
   return false;
@@ -7462,16 +7449,26 @@ bool HybridHadronization::isCharmed(int ID){
 
 bool HybridHadronization::isBottom(int ID){
   ID = abs(ID);
-  if(ID < 1000){
-    if(ID/10%10 == 5 || ID/100%10 == 5) {
-      //JSINFO << "Bottom found " << ID;
-      return true;
-    }
-  }else{
-    if(ID/10%10 == 5 || ID/100%10 == 5 || ID/1000%10 == 5) {
-      //JSINFO << "Bottom found " << ID;
-      return true;
-    }
+  if(ID/10%10 == 5 || ID/100%10 == 5 || ID/1000%10 == 5) {
+    //JSINFO << "Bottom found " << ID;
+    return true;
   }
+  return false;
+}
+
+//to see if the particle comes from a bottom anywhere down the line
+bool HybridHadronization::fromBottom(Pythia8::Event &event, int ID, string feeddownout){
+  //escape for end of the decay chain
+  if(event[event[ID].mother1()].id() == 90) return false;
+  feeddownout = feeddownout + " from " + to_string(event[event[ID].mother1()].id());
+
+  //checking normal mother
+  if(isBottom(event[event[ID].mother1()].id())) {
+    JSINFO << feeddownout;
+    return true;
+  }else{
+    fromBottom(event,event[ID].mother1(),feeddownout);
+  }
+
   return false;
 }
