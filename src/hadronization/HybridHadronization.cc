@@ -6503,7 +6503,10 @@ void HybridHadronization::set_spacetime_for_pythia_hadrons(Pythia8::Event &event
       //using mothers to remove feed down for charm studies
       if(IDs.size() > 0 && isCharmed(hadron_out.id())){
         string feeddownout = "Feed down removed in event " + to_string(GetCurrentEvent()) + " : " + to_string(hadron_out.id());
-        if(fromBottom(event,hadron_idx,feeddownout)) continue;
+        if(fromBottom(event,hadron_idx,feeddownout)) {
+          //JSINFO << "thrownout";
+          continue;
+        }
       }
 
       //since using inbuilt pythia mother/daughter functions will segfault 'occasionally', going to code it in by hand.
@@ -7467,7 +7470,7 @@ bool HybridHadronization::fromBottom(Pythia8::Event &event, int ID, string feedd
     JSINFO << feeddownout;
     return true;
   }else{
-    fromBottom(event,event[ID].mother1(),feeddownout);
+    return fromBottom(event,event[ID].mother1(),feeddownout);
   }
 
   return false;
