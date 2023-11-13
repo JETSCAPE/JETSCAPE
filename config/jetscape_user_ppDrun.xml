@@ -60,7 +60,14 @@
       421:mayDecay = off
       -421:mayDecay = off
       ColourReconnection:reconnect = on
-      ColourReconnection:mode = 2
+      ColourReconnection:mode = 1
+      310:onMode=off
+      3112:onMode=off
+      3122:onMode=off
+      3222:onMode=off
+      3312:onMode=off
+      3322:onMode=off
+      3334:onMode=off
     </LinesToRead>
   </JetHadronization>
   
