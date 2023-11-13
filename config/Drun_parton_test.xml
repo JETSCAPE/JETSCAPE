@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+
+<jetscape>
+  
+  <nEvents> 10000 </nEvents>
+  
+  <outputFilename>/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/test/dpartons</outputFilename>
+  <JetScapeWriterFinalStatePartonsAscii> on </JetScapeWriterFinalStatePartonsAscii>
+  
+  <!-- Hard Process -->
+  <Hard>
+    <PythiaGun>
+      <pTHatMin>0</pTHatMin>
+      <pTHatMax>5</pTHatMax>
+      <eCM>5020</eCM>
+      <LinesToRead>
+        HardQCD:all = off
+        SoftQCD:inelastic = on
+      </LinesToRead>
+    </PythiaGun>
+  </Hard>
+  
+  <!--Eloss Modules -->
+  <Eloss>
+    <maxT> 200 </maxT>
+    <lambdaQCD> 0.2 </lambdaQCD>
+    
+    <Matter> 
+      <Q0>1</Q0>
+      <in_vac> 1 </in_vac>
+      <vir_factor>0.25</vir_factor>
+      <recoil_on> 0 </recoil_on>
+      <broadening_on> 0 </broadening_on>
+      <brick_med> 0 </brick_med>
+    </Matter>
+  </Eloss>
+  
+</jetscape>
