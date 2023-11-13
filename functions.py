@@ -4,6 +4,7 @@ from pyDOE import lhs
 import numpy as np
 import random
 import pandas as pd
+from math import sqrt
 
 # make base directories for the analysis
 def makeTotalDir(totaldir):
@@ -101,6 +102,9 @@ def createPandaDesign(points):
         {"name": "StringFlav:probQQtoQ", "range": (0.07,0.2)},
         {"name": "MultipartonInteractions:ecmPow", "range": (0.0,0.25)},
         {"name": "MultipartonInteractions:pT0Ref", "range": (0.5,2.5)},
+        {"name": "pionWidthScale", "range": (0.5,2.0)},
+        {"name": "kaonWidthScale", "range": (0.5,2.0)},
+        {"name": "protonWidthScale", "range": (0.5,2.0)},
     ]
 
     # initialization
@@ -231,3 +235,39 @@ def concatDats(dir):
         os.remove(dat)
 
     os.chdir(startdir)
+
+class parton:
+    def __init__(self, index, PID, status, E, Px, Py, Pz):
+        self.index = index
+        self.PID = PID
+        self.status = status
+        self.E = E
+        self.Px = Px
+        self.Py = Py
+        self.Pz = Pz
+        self.pT = sqrt(Px**2 + Py**2)
+
+    def __init__(self, line):
+        params = line.split(' ')
+        if len(params) < 7:
+            self.index = -1
+            self.PID = -1
+            self.status = -1
+            self.E = -1
+            self.Px = -1
+            self.Py = -1
+            self.Pz = -1
+            self.pT = -1
+            return
+
+        self.index = int(params[0])
+        self.PID = int(params[1])
+        self.status = int(params[2])
+        self.E = float(params[3])
+        self.Px = float(params[4])
+        self.Py = float(params[5])
+        self.Pz = float(params[6])
+        self.pT = sqrt(self.Px**2 + self.Py**2)
+
+    def __str__(self):
+        return f"{self.PID} {self.E} {self.pT}"
