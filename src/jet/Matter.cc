@@ -269,9 +269,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
     if (pIn[i].pid() == photonid) {
       if(pIn[i].pstat() != 22) {
             pIn[i].set_stat(22);
-      	    JSINFO << BOLDYELLOW
+      	    /*JSINFO << BOLDYELLOW
                        << " A photon was RECEIVED with px = " << pIn[i].px()
-                       << " from framework and sent back ";
+                       << " from framework and sent back ";*/
 
             pOut.push_back(pIn[i]);
       }
