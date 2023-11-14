@@ -83,7 +83,7 @@ int main(int argc, char* argv[]){
     double phibinw = LphiBin[1]-LphiBin[0];
     int NphiLBin = sizeof(LphiBin)/sizeof(LphiBin[0])-1;
     TH1D *HistLPhi[ntrigbins][nassbins]; //identified hadrons hists
-    double totLcount[ntrigbins][nassbins] = {0};
+    double totLcount[ntrigbins] = {0};
     string names[ntrigbins][nassbins];
     for(int i1 = 0; i1 < ntrigbins; i1++){
         for(int i2 = 0; i2 < nassbins; i2++){
@@ -124,7 +124,7 @@ int main(int argc, char* argv[]){
         char HistName[100];
 
         //temp hists for identified hadrons
-        TH1D *Lpts = new TH1D("D counts", "D counts", 3, triggerptcut);
+        TH1D *Lpts = new TH1D("D counts", "D counts", ntrigbins, triggerptcut);
         TH1D *tempL[ntrigbins][nassbins]; //identified hadrons hists
         for(int i1 = 0; i1 < ntrigbins; i1++)
             for(int i2 = 0; i2 < nassbins; i2++)
@@ -225,8 +225,7 @@ int main(int argc, char* argv[]){
         
         //Dcounts
         for(int i1 = 0; i1 < ntrigbins; i1++)
-            for(int i2 = 0; i2 < nassbins; i2++)
-                totLcount[i1][i2] += Lpts->GetBinContent(i1+1)*HardCrossSection/(Events);
+            totLcount[i1] += Lpts->GetBinContent(i1+1)*HardCrossSection/(Events);
         
         //event info
         TVector EventInfo(3);
@@ -267,7 +266,7 @@ int main(int argc, char* argv[]){
     int i = 1;
     for(int i2 = 0; i2 < nassbins; i2++){
         for(int i1 = 0; i1 < ntrigbins; i1++){
-            HistLPhi[i1][i2]->Scale(1.0/(totLcount[i1][i2]));
+            HistLPhi[i1][i2]->Scale(1.0/(2*totLcount[i1]));
             HistLPhi[i1][i2]->GetXaxis()->SetTitle("Delta phi (rad)");
             HistLPhi[i1][i2]->GetYaxis()->SetTitle("(1/ND)(dNassc/dDelphi)");
  	        HistLPhi[i1][i2]->Write(names[i1][i2].c_str());
