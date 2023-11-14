@@ -66,12 +66,14 @@ for i in range(len(pTs)-1):
     hist.GetYaxis().SetTitle("Photons Out (%)") 
     hist.Fit("expo")
     hist.SetLineWidth(3)
+    hist.SetStats(0)
     rp = ROOT.TRatioPlot(hist)
     fit = hist.GetFunction("expo")
 
     # output
     print("Mean free path: " + str(-1.0/fit.GetParameter(1)) + " +/- " + str(-1*fit.GetParError(1)/fit.GetParameter(1)) + " fm")
     c1 = ROOT.TCanvas("c1","c1",1400,1200)
+    rp.SetConfidenceIntervalColors(ROOT.kWhite, ROOT.kWhite)
     rp.Draw()
     c1.Print(outdir+name+".png")
     c1.Close()

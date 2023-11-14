@@ -44,6 +44,7 @@ public:
 
   bool gammaLoss_on, in_vac, brick_med, recoil_on, broadening_on;
   int ratesource;
+  int emissionOn;
 
   double initR0, initRx, initRy, initRz, initVx, initVy, initVz, initRdotV,
       initVdotV, initEner;

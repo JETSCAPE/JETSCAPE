@@ -81,6 +81,7 @@ void gammaLoss::Init() {
   hydro_Tc = 0.16;
   brick_length = 4.0;
   ratesource = 1;
+  emissionOn = 0;
 
   int flagInt = -100;
   double inputDouble = -99.99;
@@ -89,6 +90,7 @@ void gammaLoss::Init() {
   hydro_Tc = GetXMLElementDouble({"Eloss", "Matter", "hydro_Tc"});
   brick_length = GetXMLElementDouble({"Eloss", "Matter", "brick_length"});
   ratesource = GetXMLElementDouble({"Eloss", "gammaLoss", "source"});
+  emissionOn = GetXMLElementDouble({"Eloss", "gammaLoss", "thermalEmission"});
 
   JSINFO << MAGENTA << "gammaLoss input parameter";
   JSINFO << MAGENTA << "gammaLoss shower on: " << gammaLoss_on;
@@ -133,6 +135,11 @@ void gammaLoss::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parto
     if(pIn[i].pid() != 22) continue;
     //JSINFO << "Photon found with label " << pIn[i].plabel() << " and status " << pIn[i].pstat();
     if(abs(pIn[i].pstat()) == 22) continue; //skipping absorbed photons and final state photons
+
+    //do thermal emission if triggered
+    if(pIn[i].pstat() == -23){
+      continue;
+    }
 
     //velocity and spatial settings
     velocity[0] = 1.0;

@@ -178,6 +178,7 @@ void JetEnergyLoss::DoShower() {
   int miss_stat = -13;
   int neg_stat = -17;
   int abs_stat = -22;
+  int therm_stat = -23;
   if (!weak_ptr_is_uninitialized(liquefier_ptr)) {
     droplet_stat = liquefier_ptr.lock()->get_drop_stat();
     miss_stat = liquefier_ptr.lock()->get_miss_stat();

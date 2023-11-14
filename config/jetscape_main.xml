@@ -196,6 +196,7 @@
       <name> gammaLoss </name>
       <gammaLoss_on> 0 </gammaLoss_on>
       <source> 1 </source>
+      <thermalEmission> 0 </thermalEmission>
     </gammaLoss>
 
   </Eloss>
