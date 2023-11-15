@@ -95,6 +95,7 @@ void gammaLoss::Init() {
   JSINFO << MAGENTA << "gammaLoss input parameter";
   JSINFO << MAGENTA << "gammaLoss shower on: " << gammaLoss_on;
   JSINFO << MAGENTA << "gammaLoss rate: " << ratesource;
+  JSINFO << MAGENTA << "Thermal Emission : " << emissionOn;
 
   //...initialize the random number generator
   srand((unsigned)time(NULL));
@@ -137,7 +138,8 @@ void gammaLoss::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parto
     if(abs(pIn[i].pstat()) == 22) continue; //skipping absorbed photons and final state photons
 
     //do thermal emission if triggered
-    if(pIn[i].pstat() == -23){
+    if(pIn[i].pstat() == -23 && time == deltaT){
+      JSINFO << "Thermal Triggered";
       continue;
     }
 
@@ -293,7 +295,7 @@ double gammaLoss::absFactor2(TLorentzVector pVec, double T){
   fermi = expo / (1.0 + expo);
   
   // Calculate prfph
-  prfph = alpha * alphsT * pow(T,2) * (5.0 / 9.0) / (p * pow(p,2)) 
+  prfph = alpha * alphsT * pow(T,2) * (5.0 / 9.0) / (p * pow(p,2));
   
   // Calculate C22 and Cab
   C22 = 0.041 / x - 0.3615 + 1.01 * exp(-1.35 * x);

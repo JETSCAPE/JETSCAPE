@@ -52,6 +52,8 @@ JetEnergyLoss::JetEnergyLoss() {
   GetHydroTau0SignalConnected = false;
   SentInPartonsConnected = false;
   gammaLoss_on = false;
+  emissionOn = false;
+  thermalActivated = false;
 
   deltaT = 0;
   maxT = 0;
@@ -117,6 +119,9 @@ void JetEnergyLoss::Init() {
   gammaLoss_on = GetXMLElementInt({"Eloss", "gammaLoss", "gammaLoss_on"});
   JSINFO << "gamma shower on: " << gammaLoss_on;
 
+  emissionOn = GetXMLElementDouble({"Eloss", "gammaLoss", "thermalEmission"});
+  JSINFO << "gamma shower on: " << gammaLoss_on;
+
   std::string mutexOnString = GetXMLElementText({"Eloss", "mutex"}, false);
   if (!mutexOnString.compare("ON"))
   //Check mutual exclusion of Eloss Modules
@@ -159,6 +164,15 @@ void JetEnergyLoss::DoShower() {
   vector<Parton> pIn;
   // DEBUG this guy isn't linked to anything - put in test particle for now
   pIn.push_back(*GetShowerInitiatingParton());
+
+  //adding thermal photon triggering parton
+  if(emissionOn && !thermalActivated){
+    JSINFO << "Adding trigger";
+    double newpos[4] = {0.0};
+    Parton *pTemp2 = new Parton(0,22,-23,0.0,0.0,0.0,0.0,newpos);
+    pIn.push_back(*pTemp2);
+    thermalActivated = true;
+  }
 
   vector<node> vStartVec;
   // Add here the Hard Shower emitting parton ...

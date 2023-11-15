@@ -221,6 +221,8 @@ private:
   double deltaT;
   double maxT;
   double gammaLoss_on;
+  double emissionOn;
+  bool thermalActivated;
 
   double qhat;
   shared_ptr<Parton> inP;
