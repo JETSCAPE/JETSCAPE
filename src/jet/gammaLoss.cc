@@ -125,7 +125,7 @@ void gammaLoss::Dump_pIn_info(int i, vector<Parton> &pIn) {
 }
 
 void gammaLoss::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton> &pIn, vector<Parton> &pOut){
-  //JSINFO << "gamma";
+  //JSINFO << pIn.size();
 
   //initial declarations
   double velocity[4], xStart[4];
@@ -136,11 +136,14 @@ void gammaLoss::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parto
     if(pIn[i].pid() != 22) continue;
     //JSINFO << "Photon found with label " << pIn[i].plabel() << " and status " << pIn[i].pstat();
     if(abs(pIn[i].pstat()) == 22) continue; //skipping absorbed photons and final state photons
+    if(pIn[i].pstat() == 23) JSINFO << "Thermal photon found to absorb";
 
     //do thermal emission if triggered
-    if(pIn[i].pstat() == -23 && time == deltaT){
-      JSINFO << "Thermal Triggered";
-      continue;
+    if(pIn[i].pstat() == -23){
+      //JSINFO << "Running thermal step";
+      doEmission(pIn, pOut, deltaT, time);
+      //JSINFO << pIn.size();
+      return;
     }
 
     //velocity and spatial settings
@@ -218,7 +221,7 @@ void gammaLoss::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parto
     double initEner = pIn[i].e(); // initial Energy of parton
     if (!in_vac) {
       if (GetJetSignalConnected())
-        length = 0;//fillQhatTab(SpatialRapidity);
+        length = 0;
       else {
         JSWARN << "Couldn't find a hydro module attached!";
         throw std::runtime_error(
@@ -328,4 +331,63 @@ bool gammaLoss::isAbsorbed(TLorentzVector pVec, double T, double delTime){
 
   if((float)rand()/RAND_MAX < chance) return true;
   else return false;
+}
+
+void gammaLoss::doEmission(vector<Parton> &pIn, vector<Parton> &pOut, double deltaT, double time){
+  //initial declarations
+  std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
+  double increment = 1; //distance increment 
+  double maxL = 1; //max cube distance
+  double now_temp;
+  int photonsmade = 0;
+
+  //spacial loop
+  for(double x = -1.0*maxL; x<=maxL; x+=increment){
+    for(double y = -1.0*maxL; y<=maxL; y+=increment){
+      for(double z = -1.0*time; z<=time; z+=increment){
+        GetHydroCellSignal(time, x, y, z, check_fluid_info_ptr);
+        JSINFO << "new cell at time " << time << " at position " << x << " " << y << " " << z << " ";
+        now_temp = check_fluid_info_ptr->temperature;
+        if(now_temp < 0.1) continue;
+        double posVector[4] = {time,x,y,z};
+
+        //Lorentz math for boosting
+        TLorentzVector tLab(increment,increment,increment,deltaT);
+        //TVector3 vMed(check_fluid_info_ptr->vx, check_fluid_info_ptr->vy, check_fluid_info_ptr->vz);
+        TVector3 vMed(0.8, 0, 0);
+        tLab.Boost(vMed); 
+        //tLab.Print();
+        tLab *= fmToGeVinv;
+
+        if(photonProduced(tLab, now_temp)){
+          photonsmade++;
+          Parton outphoton = makeThermalPhoton(now_temp, vMed, posVector);
+          pIn.push_back(outphoton);
+          //JSINFO << "photon made";
+        }
+      }
+    }
+  }
+
+  JSINFO << "Photons made: " << photonsmade;
+}
+
+bool gammaLoss::photonProduced(TLorentzVector cell, double temp){
+  double volume = cell(0)*cell(1)*cell(2);
+  double deltat = cell(3);
+  return true;
+}
+
+Parton gammaLoss::makeThermalPhoton(double temp, TVector3 vMed, double position[]){
+  //setting sampled quantities
+  TLorentzVector partmom(0.5,0,0,0.5);
+  partmom.SetRho(0.5);
+  partmom.SetTheta(TMath::Pi()*.3);
+  partmom.SetPhi(TMath::Pi());
+
+  //boosting to lab frame then output
+  partmom.Boost(vMed); 
+  FourVector jsP(partmom.Px(),partmom.Py(),partmom.Pz(),partmom.E());
+  Parton *pTemp = new Parton(0,22,23,jsP,position);
+  return *pTemp;
 }

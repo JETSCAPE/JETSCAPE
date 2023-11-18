@@ -117,10 +117,7 @@ void JetEnergyLoss::Init() {
   JSINFO << "Eloss shower with deltaT = " << deltaT << " and maxT = " << maxT;
 
   gammaLoss_on = GetXMLElementInt({"Eloss", "gammaLoss", "gammaLoss_on"});
-  JSINFO << "gamma shower on: " << gammaLoss_on;
-
   emissionOn = GetXMLElementDouble({"Eloss", "gammaLoss", "thermalEmission"});
-  JSINFO << "gamma shower on: " << gammaLoss_on;
 
   std::string mutexOnString = GetXMLElementText({"Eloss", "mutex"}, false);
   if (!mutexOnString.compare("ON"))
@@ -167,7 +164,7 @@ void JetEnergyLoss::DoShower() {
 
   //adding thermal photon triggering parton
   if(emissionOn && !thermalActivated){
-    JSINFO << "Adding trigger";
+    JSINFO << "Adding thermal trigger";
     double newpos[4] = {0.0};
     Parton *pTemp2 = new Parton(0,22,-23,0.0,0.0,0.0,0.0,newpos);
     pIn.push_back(*pTemp2);
@@ -205,11 +202,11 @@ void JetEnergyLoss::DoShower() {
     vector<node> vStartVecOut;
     vector<node> vStartVecTemp;
 
-    VERBOSESHOWER(7) << "Current time = " << currentTime << " with #Input "
-                     << pIn.size();
+    JSINFO << "Current time = " << currentTime << " with #Input " << pIn.size();
     currentTime += deltaT;
 
     for (int i = 0; i < pIn.size(); i++) {
+      //if(pIn[i].pstat() == -23) JSINFO << "Thermal trigger found";
       vector<Parton> pInTempModule;
       vector<Parton> pOutTemp;
       //JSINFO << pIn.at(i).edgeid();
@@ -298,6 +295,17 @@ void JetEnergyLoss::DoShower() {
                                   make_shared<Parton>(pInTempModule[l]));
             }
           }
+        }
+      }
+
+      //adding thermal photons to parton shower
+      //JSINFO << pInTempModule.size();
+      //if(pIn[i].pstat() == -23) pInTemp.push_back(pIn[i]);
+      for (int k = 0; k < pInTempModule.size(); k++){
+        if(pInTempModule[k].pid() == 22 && pInTempModule[k].pstat() == 23){
+          node vNewRootNode = pShower->new_vertex( make_shared<Vertex>(0, 0, 0, currentTime - deltaT));
+          pShower->new_parton(vNewRootNode, vEnd, make_shared<Parton>(pInTempModule[k]));
+          //JSINFO << "Thermal Photon found";
         }
       }
 

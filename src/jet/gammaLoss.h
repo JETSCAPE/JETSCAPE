@@ -36,11 +36,7 @@ public:
                     vector<Parton> &pOut);
   void WriteTask(weak_ptr<JetScapeWriter> w);
   void Dump_pIn_info(int i, vector<Parton> &pIn);
-
-  //SC: for interface with hydro
-  double fillQhatTab(double y);
-  double fncQhat(double zeta);
-  double fncAvrQhat(double zeta, double tau);
+  void doEmission(vector<Parton> &pIn, vector<Parton> &pOut, double deltaT, double time);
 
   bool gammaLoss_on, in_vac, brick_med, recoil_on, broadening_on;
   int ratesource;
@@ -56,10 +52,12 @@ public:
   long NUM1;
 
 
-  //qhat stuff
+  //calc stuff
   double absFactor1(TLorentzVector pVec, double T);
   double absFactor2(TLorentzVector pVec, double T);
   bool isAbsorbed(TLorentzVector pVec, double T, double delTime);
+  bool photonProduced(TLorentzVector cell, double temp);
+  Parton makeThermalPhoton(double temp, TVector3 vMed, double position[]);
 
   // flag to make sure initialize only once
   static bool flag_init;
