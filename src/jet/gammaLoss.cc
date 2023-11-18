@@ -345,8 +345,8 @@ void gammaLoss::doEmission(vector<Parton> &pIn, vector<Parton> &pOut, double del
   for(double x = -1.0*maxL; x<=maxL; x+=increment){
     for(double y = -1.0*maxL; y<=maxL; y+=increment){
       for(double z = -1.0*time; z<=time; z+=increment){
+        //JSINFO << "new cell at time " << time << " at position " << x << " " << y << " " << z << " ";
         GetHydroCellSignal(time, x, y, z, check_fluid_info_ptr);
-        JSINFO << "new cell at time " << time << " at position " << x << " " << y << " " << z << " ";
         now_temp = check_fluid_info_ptr->temperature;
         if(now_temp < 0.1) continue;
         double posVector[4] = {time,x,y,z};
@@ -369,7 +369,7 @@ void gammaLoss::doEmission(vector<Parton> &pIn, vector<Parton> &pOut, double del
     }
   }
 
-  JSINFO << "Photons made: " << photonsmade;
+  //JSINFO << "Photons made: " << photonsmade;
 }
 
 bool gammaLoss::photonProduced(TLorentzVector cell, double temp){
