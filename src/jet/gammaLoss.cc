@@ -353,7 +353,7 @@ void gammaLoss::doEmission(vector<Parton> &pIn, vector<Parton> &pOut, double del
 
         //Lorentz math for boosting
         TLorentzVector tLab(increment,increment,increment,deltaT);
-        TVector3 vMed(check_fluid_info_ptr->vx, check_fluid_info_ptr->vy, check_fluid_info_ptr->vz);
+        TVector3 vMed(abs(check_fluid_info_ptr->vx), abs(check_fluid_info_ptr->vy), abs(check_fluid_info_ptr->vz));
         //TVector3 vMed(0.8, 0, 0);
         tLab.Boost(vMed); 
         tLab.Print();
