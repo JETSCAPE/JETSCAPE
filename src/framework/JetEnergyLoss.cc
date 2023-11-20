@@ -206,7 +206,7 @@ void JetEnergyLoss::DoShower() {
     currentTime += deltaT;
 
     for (int i = 0; i < pIn.size(); i++) {
-      //if(pIn[i].pstat() == -23) JSINFO << "Thermal trigger found";
+      if(pIn[i].pstat() == -23) JSINFO << "Thermal trigger found at index " << i;
       vector<Parton> pInTempModule;
       vector<Parton> pOutTemp;
       //JSINFO << pIn.at(i).edgeid();
@@ -298,14 +298,25 @@ void JetEnergyLoss::DoShower() {
         }
       }
 
+      //readding trigger
+      if(pIn[i].pstat() == -23) pInTemp.push_back(pIn[i]);
+      
       //adding thermal photons to parton shower
-      //JSINFO << pInTempModule.size();
-      //if(pIn[i].pstat() == -23) pInTemp.push_back(pIn[i]);
       for (int k = 0; k < pInTempModule.size(); k++){
         if(pInTempModule[k].pid() == 22 && pInTempModule[k].pstat() == 23){
+          //vertex declarations
+          vEnd = pShower->new_vertex(make_shared<Vertex>(0, 0, 0, currentTime));
           node vNewRootNode = pShower->new_vertex( make_shared<Vertex>(0, 0, 0, currentTime - deltaT));
-          pShower->new_parton(vNewRootNode, vEnd, make_shared<Parton>(pInTempModule[k]));
-          //pIn.push_back(pInTempModule[k]);
+          int edgeid = pShower->new_parton(vNewRootNode, vEnd, make_shared<Parton>(pInTempModule[k]));
+
+          //photon properties being set
+          pInTempModule[k].set_shower(pShower);
+          pInTempModule[k].set_edgeid(edgeid);
+          pInTempModule[k].set_stat(24);
+
+          //push backs for next step
+          vStartVecOut.push_back(vEnd);
+          pOutTemp.push_back(pInTempModule[k]);
           //JSINFO << "Thermal Photon found";
         }
       }
