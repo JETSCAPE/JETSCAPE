@@ -136,7 +136,10 @@ void gammaLoss::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parto
     if(pIn[i].pid() != 22) continue;
     //JSINFO << "Photon found with label " << pIn[i].plabel() << " and status " << pIn[i].pstat();
     if(abs(pIn[i].pstat()) == 22) continue; //skipping absorbed photons and final state photons
-    if(pIn[i].pstat() == 23) JSINFO << "Thermal photon found to absorb";
+    if(pIn[i].pstat() == 23){
+      JSINFO << "Thermal photon found to absorb";
+      //continue;
+    }
 
     //do thermal emission if triggered
     if(pIn[i].pstat() == -23){
@@ -171,11 +174,6 @@ void gammaLoss::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parto
     if (pIn[i].form_time() < 0.0) pIn[i].set_jet_v(velocity); // jet velocity is set only once
     // Notice the assumption that partons passed from hard scattering are on shell.
     // If they had virtuality then this would not be correct.
-
-    // Modulus of the vector pIn[i].jet_v
-    double mod_jet_v =
-        std::sqrt(pow(pIn[i].jet_v().x(), 2) + pow(pIn[i].jet_v().y(), 2) +
-                  pow(pIn[i].jet_v().z(), 2));
 
     for (int j = 0; j <= 3; j++) {
       xStart[j] = pIn[i].x_in().comp(j);
@@ -356,7 +354,7 @@ void gammaLoss::doEmission(vector<Parton> &pIn, vector<Parton> &pOut, double del
         TVector3 vMed(abs(check_fluid_info_ptr->vx), abs(check_fluid_info_ptr->vy), abs(check_fluid_info_ptr->vz));
         //TVector3 vMed(0.8, 0, 0);
         tLab.Boost(vMed); 
-        tLab.Print();
+        //tLab.Print();
         tLab *= fmToGeVinv;
 
         if(photonProduced(tLab, now_temp)){

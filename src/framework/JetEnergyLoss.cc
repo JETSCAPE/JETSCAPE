@@ -162,6 +162,8 @@ void JetEnergyLoss::DoShower() {
   // DEBUG this guy isn't linked to anything - put in test particle for now
   pIn.push_back(*GetShowerInitiatingParton());
 
+  string showername = to_string(pIn[0].pid());
+
   //adding thermal photon triggering parton
   if(emissionOn && !thermalActivated){
     JSINFO << "Adding thermal trigger";
@@ -305,6 +307,7 @@ void JetEnergyLoss::DoShower() {
         if(pInTempModule[k].pid() == 22 && pInTempModule[k].pstat() == 23){
           node vNewRootNode = pShower->new_vertex( make_shared<Vertex>(0, 0, 0, currentTime - deltaT));
           pShower->new_parton(vNewRootNode, vEnd, make_shared<Parton>(pInTempModule[k]));
+          //pInTemp.push_back(pInTempModule[k]);
           //JSINFO << "Thermal Photon found";
         }
       }
@@ -380,6 +383,14 @@ void JetEnergyLoss::DoShower() {
           pOut.push_back(pOutTemp[k]);
         }
       }
+      
+      //adding photons to shower???
+      /*for (int k = 0; k < pInTempModule.size(); k++){
+        if(pInTempModule[k].pid() == 22 && pInTempModule[k].pstat() == 23){
+          pInTemp.push_back(pInTempModule[k]);
+          //JSINFO << "Thermal Photon found";
+        }
+      }*/
     }
 
     //JSINFO << "Did eloss for timestep";
@@ -395,6 +406,12 @@ void JetEnergyLoss::DoShower() {
                      vStartVecTemp.end());
     vStartVec.insert(vStartVec.end(), vStartVecOut.begin(), vStartVecOut.end());
   } while (currentTime < maxT); // other criteria (how to include; TBD)
+
+  /*
+  pShower->SaveAsGV(showername+".gv");
+  pShower->SaveAsGML(showername+".gml");
+  pShower->SaveAsGraphML(showername+".graphml");
+  */
 
   pIn.clear();
   vStartVec.clear();
