@@ -296,7 +296,7 @@ double gammaLoss::absFactor2(TLorentzVector pVec, double T){
   fermi = expo / (1.0 + expo);
   
   // Calculate prfph
-  prfph = alpha * alphsT * pow(T,2) * (5.0 / 9.0) / (p * pow(p,2));
+  prfph = alpha * alphsT * pow(T,2) * (5.0 / 9.0) / (p);
   
   // Calculate C22 and Cab
   C22 = 0.041 / x - 0.3615 + 1.01 * exp(-1.35 * x);
