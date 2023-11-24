@@ -19,6 +19,7 @@
 #include "JetEnergyLossModule.h"
 #include "Pythia8/Pythia.h"
 #include "TLorentzVector.h"
+#include "random"
 
 using namespace Jetscape;
 
@@ -50,14 +51,23 @@ public:
   int iEvent;
   bool debug_flag = 0;
   long NUM1;
+  std::mt19937_64 rng_engine;
 
 
-  //calc stuff
+  //absorption stuff
   double absFactor1(TLorentzVector pVec, double T);
   double absFactor2(TLorentzVector pVec, double T);
   bool isAbsorbed(TLorentzVector pVec, double T, double delTime);
-  bool photonProduced(TLorentzVector cell, double temp);
+
+  //emission
+  int photonsProduced(TLorentzVector cell, double temp);
   Parton makeThermalPhoton(double temp, TVector3 vMed, double position[]);
+  double B(double temp);
+  double alphaS(double temp);
+  std::mt19937_64& getRandomGenerator() {return rng_engine;}
+  double genPhi() {return ((float)rand()/RAND_MAX)*2*pi;}
+  double genTheta() {return acos((((float)rand()/RAND_MAX)*2)-1);}
+  double genE() {return 0.5;}
 
   // flag to make sure initialize only once
   static bool flag_init;

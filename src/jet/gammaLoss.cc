@@ -38,9 +38,12 @@
 using namespace Jetscape;
 using namespace std;
 
+//constants
 const double QS = 0.9;
 const double alpha = 1./137.;
-const double alphaS = 0.3;
+const double alphas = 0.3;
+const double integral1 = 1.0;
+const double integral2 = 1.0;
 
 // Register the module with the base class
 RegisterJetScapeModule<gammaLoss> gammaLoss::reg("gammaLoss");
@@ -82,6 +85,7 @@ void gammaLoss::Init() {
   brick_length = 4.0;
   ratesource = 1;
   emissionOn = 0;
+  iEvent = 0;
 
   int flagInt = -100;
   double inputDouble = -99.99;
@@ -101,7 +105,7 @@ void gammaLoss::Init() {
   srand((unsigned)time(NULL));
   NUM1 = -1 * rand();
   //    NUM1=-33;
-  iEvent = 0;
+  rng_engine.seed((unsigned)time(NULL));
 }
 
 void gammaLoss::WriteTask(weak_ptr<JetScapeWriter> w) {
@@ -276,7 +280,7 @@ void gammaLoss::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parto
 //chance for photon to be absorbed from https://arxiv.org/abs/hep-ph/9405309
 double gammaLoss::absFactor1(TLorentzVector pVec, double T){
   double p = pVec.P();
-  return 2.0*(5.*pi/9.)*(alpha*alphaS*T*T/p)*log(0.2317*p/(alphaS*T));
+  return 2.0*(5.*pi/9.)*(alpha*alphas*T*T/p)*log(0.2317*p/(alphas*T));
 }
 
 //chance for photon to be absorbed from https://arxiv.org/pdf/hep-ph/0111107.pdf
@@ -357,10 +361,9 @@ void gammaLoss::doEmission(vector<Parton> &pIn, vector<Parton> &pOut, double del
         //tLab.Print();
         tLab *= fmToGeVinv;
 
-        if(photonProduced(tLab, now_temp)){
+        for(int i=0; i<photonsProduced(tLab, now_temp); i++){
           photonsmade++;
-          Parton outphoton = makeThermalPhoton(now_temp, vMed, posVector);
-          pIn.push_back(outphoton);
+          pIn.push_back(makeThermalPhoton(now_temp, vMed, posVector));
           //JSINFO << "photon made";
         }
       }
@@ -370,22 +373,36 @@ void gammaLoss::doEmission(vector<Parton> &pIn, vector<Parton> &pOut, double del
   JSINFO << "Photons made: " << photonsmade;
 }
 
-bool gammaLoss::photonProduced(TLorentzVector cell, double temp){
+int gammaLoss::photonsProduced(TLorentzVector cell, double temp){
   double volume = cell(0)*cell(1)*cell(2);
   double deltat = cell(3);
-  return true;
+
+  double gammaTot = 1.0;
+
+  //random generation samplling
+  std::poisson_distribution<int> poisson_gamma(gammaTot);
+  return poisson_gamma(getRandomGenerator());
 }
 
 Parton gammaLoss::makeThermalPhoton(double temp, TVector3 vMed, double position[]){
   //setting sampled quantities
-  TLorentzVector partmom(0.5,0,0,0.5);
-  partmom.SetRho(0.5);
-  partmom.SetTheta(TMath::Pi()*.3);
-  partmom.SetPhi(TMath::Pi());
+  double momentum = genE();
+  TLorentzVector partmom(momentum,0,0,momentum);
+  partmom.SetTheta(genTheta());
+  partmom.SetPhi(genPhi());
 
   //boosting to lab frame then output
   partmom.Boost(vMed); 
   FourVector jsP(partmom.Px(),partmom.Py(),partmom.Pz(),partmom.E());
   Parton *pTemp = new Parton(0,22,23,jsP,position);
   return *pTemp;
+}
+
+double gammaLoss::alphaS(double temp){
+  return 6.0 * pi / (27.0 * log(temp / 0.022));
+}
+
+//factor of T out front off emission function
+double gammaLoss::B(double temp){
+  return 20.*alpha*alphaS(temp)*pow(temp,4)/(9.*pi);
 }
