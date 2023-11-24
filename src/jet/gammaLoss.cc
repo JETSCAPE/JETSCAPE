@@ -25,6 +25,7 @@
 #include "TMath.h"
 #include "TLorentzVector.h"
 #include "TVector3.h"
+#include "tinyxml2.h"
 
 #include <string>
 
@@ -89,6 +90,8 @@ void gammaLoss::Init() {
 
   int flagInt = -100;
   double inputDouble = -99.99;
+  unsigned int xml_uintin = 0;
+  int rand_seed = 0;
 
   gammaLoss_on = GetXMLElementInt({"Eloss", "gammaLoss", "gammaLoss_on"});
   hydro_Tc = GetXMLElementDouble({"Eloss", "Matter", "hydro_Tc"});
@@ -102,10 +105,24 @@ void gammaLoss::Init() {
   JSINFO << MAGENTA << "Thermal Emission : " << emissionOn;
 
   //...initialize the random number generator
-  srand((unsigned)time(NULL));
+  tinyxml2::XMLElement *RandomXmlDescription = GetXMLElement({"Random"});
+  if ( RandomXmlDescription ){
+    tinyxml2::XMLElement *xmle; 
+    xmle = RandomXmlDescription->FirstChildElement( "seed" );
+    xmle->QueryUnsignedText(&xml_uintin);
+    if(xml_uintin < std::numeric_limits<unsigned int>::max()) rand_seed = xml_uintin;
+  }else{
+    JSWARN << "No <Random> element found in xml, seeding to 0";
+    rand_seed = (unsigned)time(NULL);
+  }
+
+  //default handling
+  if(xml_uintin == 0) rand_seed = (unsigned)time(NULL);
+
+  srand(rand_seed);
   NUM1 = -1 * rand();
   //    NUM1=-33;
-  rng_engine.seed((unsigned)time(NULL));
+  rng_engine.seed(rand_seed);
 }
 
 void gammaLoss::WriteTask(weak_ptr<JetScapeWriter> w) {
