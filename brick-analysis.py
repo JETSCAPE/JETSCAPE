@@ -53,8 +53,8 @@ for dir in directories:
             continue
 
         part = parton(line)
-        if part.PID == 22 and part.E > 0.95:
-            totalhist.Fill(length,part.pT)
+        if part.PID == 22 and part.v.E() > 0.95:
+            totalhist.Fill(length,part.pT())
 
 # fits
 totalhist.Scale(100.0)
