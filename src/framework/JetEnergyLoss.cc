@@ -166,7 +166,7 @@ void JetEnergyLoss::DoShower() {
 
   //adding thermal photon triggering parton
   if(emissionOn && !thermalActivated){
-    JSINFO << "Adding thermal trigger";
+    //JSINFO << "Adding thermal trigger";
     double newpos[4] = {0.0};
     Parton *pTemp2 = new Parton(0,22,-23,0.0,0.0,0.0,0.0,newpos);
     pIn.push_back(*pTemp2);
@@ -204,11 +204,11 @@ void JetEnergyLoss::DoShower() {
     vector<node> vStartVecOut;
     vector<node> vStartVecTemp;
 
-    JSINFO << "Current time = " << currentTime << " with #Input " << pIn.size();
+    //JSINFO << "Current time = " << currentTime << " with #Input " << pIn.size();
     currentTime += deltaT;
 
     for (int i = 0; i < pIn.size(); i++) {
-      if(pIn[i].pstat() == -23) JSINFO << "Thermal trigger found at index " << i;
+      //if(pIn[i].pstat() == -23) JSINFO << "Thermal trigger found at index " << i;
       vector<Parton> pInTempModule;
       vector<Parton> pOutTemp;
       //JSINFO << pIn.at(i).edgeid();

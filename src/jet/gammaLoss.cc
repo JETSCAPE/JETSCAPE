@@ -164,7 +164,7 @@ void gammaLoss::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parto
 
     //do thermal emission if triggered
     if(pIn[i].pstat() == -23){
-      JSINFO << "Running thermal step";
+      //JSINFO << "Running thermal step";
       doEmission(pIn, pOut, deltaT, time);
       //JSINFO << pIn.size() << " " << pOut.size();
       return;
@@ -387,7 +387,7 @@ void gammaLoss::doEmission(vector<Parton> &pIn, vector<Parton> &pOut, double del
     }
   }
 
-  JSINFO << "Photons made: " << photonsmade;
+  //JSINFO << "Photons made: " << photonsmade;
 }
 
 int gammaLoss::photonsProduced(TLorentzVector cell, double temp){
