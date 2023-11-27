@@ -394,10 +394,10 @@ int gammaLoss::photonsProduced(TLorentzVector cell, double temp){
   double volume = cell(0)*cell(1)*cell(2);
   double deltat = cell(3);
 
-  double gammaTot = 1.0;
+  double gammaTot = volume*deltat*B(temp)*(log(sqrt(3)/gS(temp))*integral1 + integral2);
 
   //random generation samplling
-  std::poisson_distribution<int> poisson_gamma(gammaTot);
+  std::poisson_distribution<int> poisson_gamma(1.0);
   return poisson_gamma(getRandomGenerator());
 }
 
@@ -417,6 +417,10 @@ Parton gammaLoss::makeThermalPhoton(double temp, TVector3 vMed, double position[
 
 double gammaLoss::alphaS(double temp){
   return 6.0 * pi / (27.0 * log(temp / 0.022));
+}
+
+double gammaLoss::gS(double temp){
+  return sqrt(4.0 * pi * alphaS(temp));
 }
 
 //factor of T out front off emission function

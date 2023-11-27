@@ -64,6 +64,7 @@ public:
   Parton makeThermalPhoton(double temp, TVector3 vMed, double position[]);
   double B(double temp);
   double alphaS(double temp);
+  double gS(double temp);
   std::mt19937_64& getRandomGenerator() {return rng_engine;}
   double genPhi() {return ((float)rand()/RAND_MAX)*2*pi;}
   double genTheta() {return acos((((float)rand()/RAND_MAX)*2)-1);}
