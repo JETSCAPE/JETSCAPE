@@ -104,6 +104,7 @@ void JetEnergyLoss::Clear() {
   this->final_Partons.clear();
 
   inP = nullptr;
+  thermalActivated = false;
 }
 
 void JetEnergyLoss::Init() {
@@ -118,6 +119,7 @@ void JetEnergyLoss::Init() {
 
   gammaLoss_on = GetXMLElementInt({"Eloss", "gammaLoss", "gammaLoss_on"});
   emissionOn = GetXMLElementDouble({"Eloss", "gammaLoss", "thermalEmission"});
+  eventCounter = -1;
 
   std::string mutexOnString = GetXMLElementText({"Eloss", "mutex"}, false);
   if (!mutexOnString.compare("ON"))

@@ -222,6 +222,7 @@ private:
   double maxT;
   double gammaLoss_on;
   double emissionOn;
+  int eventCounter;
   bool thermalActivated;
 
   double qhat;
