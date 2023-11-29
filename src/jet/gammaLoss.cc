@@ -395,7 +395,6 @@ void gammaLoss::doEmission(vector<Parton> &pIn, vector<Parton> &pOut, double del
         now_temp = check_fluid_info_ptr->temperature;
         if(now_temp < 0.1) continue;
         double posVector[4] = {time,x,y,z};
-        thermalpdf->SetParameter(0,now_temp);
 
         //Lorentz math for boosting
         TLorentzVector tLab(increment,increment,increment,deltaT);
