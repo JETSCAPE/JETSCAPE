@@ -147,6 +147,7 @@ void gammaLoss::Init() {
   sampler = ROOT::Math::Factory::CreateDistSampler();
   sampler->SetFunction(*thermalpdf,1);
   sampler->SetRange(x0,x1);
+  sampler->SetSeed(rand_seed);
   bool success = sampler->Init();
   if(!success) JSWARN << "Sampler failed to initialize";
 }
