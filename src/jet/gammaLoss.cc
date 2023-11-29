@@ -143,7 +143,7 @@ void gammaLoss::Init() {
 
   //distribution initialization
   thermalpdf = new TF1("pdf",dRdx,x0,x1,1);
-  thermalpdf->SetParameter(0,1);
+  thermalpdf->SetParameter(0,0.25);
   sampler = ROOT::Math::Factory::CreateDistSampler();
   sampler->SetFunction(*thermalpdf,1);
   sampler->SetRange(x0,x1);
