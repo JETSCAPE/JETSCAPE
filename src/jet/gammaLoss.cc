@@ -26,6 +26,10 @@
 #include "TLorentzVector.h"
 #include "TVector3.h"
 #include "tinyxml2.h"
+#include "RtypesCore.h"
+#include "TF1.h"
+#include "Math/DistSampler.h"
+#include "Math/Factory.h"
 
 #include <string>
 
@@ -43,8 +47,6 @@ using namespace std;
 const double QS = 0.9;
 const double alpha = 1./137.;
 const double alphas = 0.3;
-const double integral1 = 1.0;
-const double integral2 = 1.0;
 
 // Register the module with the base class
 RegisterJetScapeModule<gammaLoss> gammaLoss::reg("gammaLoss");
@@ -72,6 +74,11 @@ gammaLoss::gammaLoss() {
   initRdotV = 0.;
   initVdotV = 0.;
   initEner = 0.;
+
+  integral1 = 0;
+  integral2 = 0;
+  x0 = 0;
+  x1 = 0;
 }
 
 gammaLoss::~gammaLoss() { VERBOSE(8); }
@@ -98,6 +105,8 @@ void gammaLoss::Init() {
   brick_length = GetXMLElementDouble({"Eloss", "Matter", "brick_length"});
   ratesource = GetXMLElementDouble({"Eloss", "gammaLoss", "source"});
   emissionOn = GetXMLElementDouble({"Eloss", "gammaLoss", "thermalEmission"});
+  x0 = GetXMLElementDouble({"Eloss", "gammaLoss", "infraredCutOff"});
+  x1 = GetXMLElementDouble({"Eloss", "gammaLoss", "maxThermalEnergy"});
 
   JSINFO << MAGENTA << "gammaLoss input parameter";
   JSINFO << MAGENTA << "gammaLoss shower on: " << gammaLoss_on;
@@ -121,8 +130,25 @@ void gammaLoss::Init() {
 
   srand(rand_seed);
   NUM1 = -1 * rand();
-  //    NUM1=-33;
   rng_engine.seed(rand_seed);
+
+  //initial integral initializations
+  TF1* ffunc = new TF1("ffunc",f,x0,x1,0);
+  ffunc->SetParameter(0,1);
+  integral1 = ffunc->Integral(x0,x1);
+
+  TF1* gfunc = new TF1("gfunc",g,x0,x1,0);
+  gfunc->SetParameter(0,1);
+  integral2 = gfunc->Integral(x0,x1);
+
+  //distribution initialization
+  thermalpdf = new TF1("pdf",dRdx,x0,x1,1);
+  thermalpdf->SetParameter(0,1);
+  sampler = ROOT::Math::Factory::CreateDistSampler();
+  sampler->SetFunction(*thermalpdf,1);
+  sampler->SetRange(x0,x1);
+  bool success = sampler->Init();
+  if(!success) JSWARN << "Sampler failed to initialize";
 }
 
 void gammaLoss::WriteTask(weak_ptr<JetScapeWriter> w) {
@@ -369,6 +395,7 @@ void gammaLoss::doEmission(vector<Parton> &pIn, vector<Parton> &pOut, double del
         now_temp = check_fluid_info_ptr->temperature;
         if(now_temp < 0.1) continue;
         double posVector[4] = {time,x,y,z};
+        thermalpdf->SetParameter(0,now_temp);
 
         //Lorentz math for boosting
         TLorentzVector tLab(increment,increment,increment,deltaT);
@@ -379,6 +406,7 @@ void gammaLoss::doEmission(vector<Parton> &pIn, vector<Parton> &pOut, double del
         tLab *= fmToGeVinv;
 
         for(int i=0; i<photonsProduced(tLab, now_temp); i++){
+          //JSINFO << "Making photon";
           photonsmade++;
           pIn.push_back(makeThermalPhoton(now_temp, vMed, posVector));
           //JSINFO << "photon made";
@@ -397,13 +425,13 @@ int gammaLoss::photonsProduced(TLorentzVector cell, double temp){
   double gammaTot = volume*deltat*B(temp)*(log(sqrt(3)/gS(temp))*integral1 + integral2);
 
   //random generation samplling
-  std::poisson_distribution<int> poisson_gamma(1.0);
+  std::poisson_distribution<int> poisson_gamma(gammaTot);
   return poisson_gamma(getRandomGenerator());
 }
 
 Parton gammaLoss::makeThermalPhoton(double temp, TVector3 vMed, double position[]){
   //setting sampled quantities
-  double momentum = genE();
+  double momentum = temp*sampler->Sample1D();
   TLorentzVector partmom(momentum,0,0,momentum);
   partmom.SetTheta(genTheta());
   partmom.SetPhi(genPhi());
@@ -426,4 +454,20 @@ double gammaLoss::gS(double temp){
 //factor of T out front off emission function
 double gammaLoss::B(double temp){
   return 20.*alpha*alphaS(temp)*pow(temp,4)/(9.*pi);
+}
+
+//total momentum distribtion functions
+// x[0] = k/T; par[0] = T
+Double_t gammaLoss::dRdx(Double_t *x, Double_t *par){
+  return B(par[0])*(log(sqrt(3)/gS(par[0]))*f(x,par) + g(x,par));
+}
+
+Double_t gammaLoss::f(Double_t *x, Double_t *par){
+  return x[0]/(1.0+exp(x[0]));
+}
+
+Double_t gammaLoss::g(Double_t *x, Double_t *par){
+  double C22 = (0.041/x[0]) - 0.3615 + (1.01*exp(-1.35*x[0]));
+  double Cab = sqrt(1.5) * ((0.548/pow(x[0], 1.5) * log(12.28 + 1.0/x[0])) + (0.133*x[0]/sqrt(1.0 + x[0]/16.27))) ;
+  return (C22 + Cab + 0.5*log(2.0*x[0]))*f(x,par);
 }

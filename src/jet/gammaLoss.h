@@ -20,6 +20,9 @@
 #include "Pythia8/Pythia.h"
 #include "TLorentzVector.h"
 #include "random"
+#include "RtypesCore.h"
+#include "TF1.h"
+#include "Math/DistSampler.h"
 
 using namespace Jetscape;
 
@@ -42,6 +45,9 @@ public:
   bool gammaLoss_on, in_vac, brick_med, recoil_on, broadening_on;
   int ratesource;
   int emissionOn;
+  double integral1, integral2, x0, x1;
+  TF1* thermalpdf;
+  ROOT::Math::DistSampler* sampler;
 
   double initR0, initRx, initRy, initRz, initVx, initVy, initVz, initRdotV,
       initVdotV, initEner;
@@ -53,6 +59,9 @@ public:
   long NUM1;
   std::mt19937_64 rng_engine;
 
+  //running couplings
+  static double alphaS(double temp);
+  static double gS(double temp);
 
   //absorption stuff
   double absFactor1(TLorentzVector pVec, double T);
@@ -62,13 +71,14 @@ public:
   //emission
   int photonsProduced(TLorentzVector cell, double temp);
   Parton makeThermalPhoton(double temp, TVector3 vMed, double position[]);
-  double B(double temp);
-  double alphaS(double temp);
-  double gS(double temp);
+  static double B(double temp);
+  static Double_t dRdx(Double_t *x, Double_t *par);
+  static Double_t f(Double_t *x, Double_t *par);
+  static Double_t g(Double_t *x, Double_t *par);
+
   std::mt19937_64& getRandomGenerator() {return rng_engine;}
   double genPhi() {return ((float)rand()/RAND_MAX)*2*pi;}
   double genTheta() {return acos((((float)rand()/RAND_MAX)*2)-1);}
-  double genE() {return 0.5;}
 
   // flag to make sure initialize only once
   static bool flag_init;

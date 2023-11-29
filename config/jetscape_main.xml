@@ -197,6 +197,8 @@
       <gammaLoss_on> 0 </gammaLoss_on>
       <source> 1 </source>
       <thermalEmission> 0 </thermalEmission>
+      <infraredCutOff>2</infraredCutOff>
+      <maxThermalEnergy>20</maxThermalEnergy>
     </gammaLoss>
 
   </Eloss>
