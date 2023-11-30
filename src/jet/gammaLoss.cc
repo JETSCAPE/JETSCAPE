@@ -184,9 +184,8 @@ void gammaLoss::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parto
     if(pIn[i].pid() != 22) continue;
     //JSINFO << "Photon found with label " << pIn[i].plabel() << " and status " << pIn[i].pstat();
     if(abs(pIn[i].pstat()) == 22) continue; //skipping absorbed photons and final state photons
-    if(abs(pIn[i].pstat()) == 23) continue; //skipping thermal photons for now
     if(pIn[i].pstat() == 23){
-      //JSINFO << "Thermal photon found to absorb";
+      JSINFO << "Thermal photon found to absorb";
       //continue;
     }
 
@@ -315,7 +314,9 @@ void gammaLoss::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parto
       Parton *pTemp = new Parton(0,22,-22,0.0,0.0,0.0,0.0,newpos);
       pOut.push_back(*pTemp);
       pOut.push_back(*pTemp);
-      JSINFO << BOLDYELLOW << "Photon absorbed!";
+
+      if(pIn[i].pstat() == 23)JSINFO << BOLDYELLOW << "Thermal photon absorbed!";
+      else JSINFO << BOLDYELLOW << "Shower photon absorbed!";
     }
   }
 
@@ -395,7 +396,11 @@ void gammaLoss::doEmission(vector<Parton> &pIn, vector<Parton> &pOut, double del
         //JSINFO << "new cell at time " << time << " at position " << x << " " << y << " " << z << " ";
         GetHydroCellSignal(time, x, y, z, check_fluid_info_ptr);
         now_temp = check_fluid_info_ptr->temperature;
-        if(now_temp < 0.1) continue;
+        //JSINFO << now_temp;
+        if(now_temp < 0.1){
+          //JSINFO << "Temp under threshold and skipping cell: " << now_temp;
+          continue;
+        }
         double posVector[4] = {time,x,y,z};
 
         //Lorentz math for boosting
@@ -410,7 +415,7 @@ void gammaLoss::doEmission(vector<Parton> &pIn, vector<Parton> &pOut, double del
           //JSINFO << "Making photon";
           photonsmade++;
           pIn.push_back(makeThermalPhoton(now_temp, vMed, posVector));
-          JSINFO << BOLDYELLOW << "Photon made thermally !";
+          JSINFO << BOLDYELLOW << "Photon made thermally!";
         }
       }
     }
