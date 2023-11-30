@@ -52,7 +52,7 @@ JetEnergyLoss::JetEnergyLoss() {
   GetHydroTau0SignalConnected = false;
   SentInPartonsConnected = false;
   gammaLoss_on = false;
-  emissionOn = false;
+  thermalEmissionOn = false;
   thermalActivated = false;
 
   deltaT = 0;
@@ -118,8 +118,7 @@ void JetEnergyLoss::Init() {
   JSINFO << "Eloss shower with deltaT = " << deltaT << " and maxT = " << maxT;
 
   gammaLoss_on = GetXMLElementInt({"Eloss", "gammaLoss", "gammaLoss_on"});
-  emissionOn = GetXMLElementDouble({"Eloss", "gammaLoss", "thermalEmission"});
-  eventCounter = -1;
+  thermalEmissionOn = GetXMLElementInt({"Eloss", "gammaLoss", "thermalEmission"});
 
   std::string mutexOnString = GetXMLElementText({"Eloss", "mutex"}, false);
   if (!mutexOnString.compare("ON"))
@@ -164,15 +163,6 @@ void JetEnergyLoss::DoShower() {
   // DEBUG this guy isn't linked to anything - put in test particle for now
   pIn.push_back(*GetShowerInitiatingParton());
 
-  //adding thermal photon triggering parton
-  if(emissionOn && !thermalActivated){
-    //JSINFO << "Adding thermal trigger";
-    double newpos[4] = {0.0};
-    Parton *pTemp2 = new Parton(0,22,-23,0.0,0.0,0.0,0.0,newpos);
-    pIn.push_back(*pTemp2);
-    thermalActivated = true;
-  }
-
   vector<node> vStartVec;
   // Add here the Hard Shower emitting parton ...
   vStart = pShower->new_vertex(make_shared<Vertex>());
@@ -182,6 +172,16 @@ void JetEnergyLoss::DoShower() {
 
   // start then the recursive shower ...
   vStartVec.push_back(vEnd);
+
+  //adding thermal photon triggering parton
+  if(thermalEmissionOn && !thermalActivated){
+    //JSINFO << "Adding thermal trigger";
+    double newpos[4] = {0.0};
+    Parton *pTemp2 = new Parton(0,22,-23,0.0,0.0,0.0,0.0,newpos);
+    pIn.push_back(*pTemp2);
+    thermalActivated = true;
+    vStartVec.push_back(vEnd);
+  }
 
   // cerr << " ---------------------------------------------- " << endl;
   // cerr << "Start with " << *GetShowerInitiatingParton()
@@ -204,7 +204,7 @@ void JetEnergyLoss::DoShower() {
     vector<node> vStartVecOut;
     vector<node> vStartVecTemp;
 
-    //JSINFO << "Current time = " << currentTime << " with #Input " << pIn.size();
+    JSINFO << "Current time = " << currentTime << " with #Input " << pIn.size() << " " << vStartVec.size();
     currentTime += deltaT;
 
     for (int i = 0; i < pIn.size(); i++) {
@@ -219,12 +219,6 @@ void JetEnergyLoss::DoShower() {
       if (!weak_ptr_is_uninitialized(liquefier_ptr)) {
         liquefier_ptr.lock()->add_hydro_sources(pInTempModule, pOutTemp);
       }
-
-      for(int i1=0; i1<pInTempModule.size(); i1++)
-        JSDEBUG << "parton in: " << pInTempModule[i1].pid();
-
-      for(int i1=0; i1<pOutTemp.size(); i1++)
-        JSDEBUG << "parton out: " << pOutTemp[i1].pid();
 
       // stuffs related to vertex
       if (!foundchangedorig) {
@@ -244,7 +238,7 @@ void JetEnergyLoss::DoShower() {
         if (pInTempModule[0].pstat() != droplet_stat &&
             pInTempModule[0].pstat() != miss_stat &&
             pInTempModule[0].pstat() != neg_stat &&
-            (!pInTempModule[0].isPhoton(pInTempModule[0].pid()) || gammaLoss_on == true)) {
+            !(pInTempModule[0].isPhoton(pInTempModule[0].pid()) && gammaLoss_on == false)) {
           vStartVecTemp.push_back(vStart);
         }
       } else if (pOutTemp.size() == 1) {
@@ -253,38 +247,34 @@ void JetEnergyLoss::DoShower() {
         if (pOutTemp[0].pstat() != droplet_stat &&
             pOutTemp[0].pstat() != miss_stat &&
             pOutTemp[0].pstat() != neg_stat &&
-            (!pOutTemp[0].isPhoton(pOutTemp[0].pid()) || gammaLoss_on == true)) {
+            !(pOutTemp[0].isPhoton(pOutTemp[0].pid()) && gammaLoss_on == false)) {
           vStartVecTemp.push_back(vStart);
         }
       } else {
         for (int k = 0; k < pOutTemp.size(); k++) {
-          JSDEBUG << "Adding vertex for out parton " << k;
           int edgeid = 0;
           if (pOutTemp[k].pstat() == neg_stat) {
-            node vNewRootNode = pShower->new_vertex(make_shared<Vertex>(0, 0, 0, currentTime - deltaT));
-            edgeid = pShower->new_parton(vNewRootNode, vStart, make_shared<Parton>(pOutTemp[k]));
+            node vNewRootNode = pShower->new_vertex(
+                make_shared<Vertex>(0, 0, 0, currentTime - deltaT));
+            edgeid = pShower->new_parton(vNewRootNode, vStart,
+                                         make_shared<Parton>(pOutTemp[k]));
           } else {
-            JSDEBUG << "Building vertex";
-            vEnd = pShower->new_vertex(make_shared<Vertex>(0, 0, 0, currentTime));
-            JSDEBUG << "Building edge ID";
-            edgeid = pShower->new_parton(vStart, vEnd, make_shared<Parton>(pOutTemp[k]));
-            JSDEBUG << "Vertex and edge ID built";
+            vEnd =
+                pShower->new_vertex(make_shared<Vertex>(0, 0, 0, currentTime));
+            edgeid = pShower->new_parton(vStart, vEnd,
+                                         make_shared<Parton>(pOutTemp[k]));
           }
           pOutTemp[k].set_shower(pShower);
           pOutTemp[k].set_edgeid(edgeid);
-
-          JSDEBUG << "Particle shower and edge ID set";
 
           // no need to generate a vStart for photons and liquefied
           // partons (modified for absorbing photons)
           if (pOutTemp[k].pstat() != droplet_stat &&
               pOutTemp[k].pstat() != miss_stat &&
               pOutTemp[k].pstat() != neg_stat &&
-              (!pOutTemp[k].isPhoton(pOutTemp[k].pid()) || gammaLoss_on == true)) {
+              !(pOutTemp[k].isPhoton(pOutTemp[k].pid()) && gammaLoss_on == false)) {
             vStartVecOut.push_back(vEnd);
           }
-
-          JSDEBUG << "Vertex pushed back";
 
           // --------------------------------------------
           // Add new roots from ElossModules ...
@@ -297,7 +287,8 @@ void JetEnergyLoss::DoShower() {
           if (pInTempModule.size() > 1) {
             VERBOSE(7) << pInTempModule.size() - 1
                        << " new root node(s) to be added ...";
-            JSDEBUG << pInTempModule.size()-1 << " new root node(s) to be added ...";
+            //cout << pInTempModule.size()-1
+            //     << " new root node(s) to be added ..." << endl;
 
             for (int l = 1; l < pInTempModule.size(); l++) {
               node vNewRootNode = pShower->new_vertex(
@@ -332,7 +323,7 @@ void JetEnergyLoss::DoShower() {
         }
       }
 
-      JSDEBUG << "Updating parton shower";
+      //JSINFO << "Updating parton shower";
       // update parton shower
       if (pOutTemp.size() == 0) {
         // this is the free-streaming case for MATTER
@@ -346,7 +337,7 @@ void JetEnergyLoss::DoShower() {
             continue;
         }
         // do not push back photons
-        if (pInTempModule[0].isPhoton(pInTempModule[0].pid()) || gammaLoss_on == true)
+        if (pInTempModule[0].isPhoton(pInTempModule[0].pid()) && gammaLoss_on == false)
           continue;
 
         //skipping absorbed photons
@@ -367,7 +358,7 @@ void JetEnergyLoss::DoShower() {
             continue;
         }
         // do not push back photons
-        if (pOutTemp[0].isPhoton(pOutTemp[0].pid()) || gammaLoss_on == true)
+        if (pOutTemp[0].isPhoton(pOutTemp[0].pid()) && gammaLoss_on == false)
           continue;
 
         //skipping absorbed photons
@@ -392,7 +383,7 @@ void JetEnergyLoss::DoShower() {
             continue;
 
           // do not push back photons
-          if (pOutTemp[k].isPhoton(pOutTemp[k].pid()) || gammaLoss_on == true)
+          if (pOutTemp[k].isPhoton(pOutTemp[k].pid()) && gammaLoss_on == false)
             continue;
 
           //skipping absorbed photons

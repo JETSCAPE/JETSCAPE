@@ -184,6 +184,7 @@ void gammaLoss::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parto
     if(pIn[i].pid() != 22) continue;
     //JSINFO << "Photon found with label " << pIn[i].plabel() << " and status " << pIn[i].pstat();
     if(abs(pIn[i].pstat()) == 22) continue; //skipping absorbed photons and final state photons
+    if(abs(pIn[i].pstat()) == 23) continue; //skipping thermal photons for now
     if(pIn[i].pstat() == 23){
       //JSINFO << "Thermal photon found to absorb";
       //continue;
