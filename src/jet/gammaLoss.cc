@@ -409,7 +409,7 @@ void gammaLoss::doEmission(vector<Parton> &pIn, vector<Parton> &pOut, double del
           //JSINFO << "Making photon";
           photonsmade++;
           pIn.push_back(makeThermalPhoton(now_temp, vMed, posVector));
-          //JSINFO << "photon made";
+          JSINFO << BOLDYELLOW << "Photon made thermally !";
         }
       }
     }
