@@ -184,17 +184,17 @@ void gammaLoss::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parto
     if(pIn[i].pid() != 22) continue;
     //JSINFO << "Photon found with label " << pIn[i].plabel() << " and status " << pIn[i].pstat();
     if(abs(pIn[i].pstat()) == 22) continue; //skipping absorbed photons and final state photons
-    if(pIn[i].pstat() == 23){
+    /*if(pIn[i].pstat() == 23 || pIn[i].pstat() == 24){
       JSINFO << "Thermal photon found to absorb";
       //continue;
-    }
+    }*/
 
     //do thermal emission if triggered
     if(pIn[i].pstat() == -23){
       //JSINFO << "Running thermal step";
       doEmission(pIn, pOut, deltaT, time);
       //JSINFO << pIn.size() << " " << pOut.size();
-      return;
+      continue;
     }
 
     //velocity and spatial settings
@@ -315,7 +315,7 @@ void gammaLoss::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parto
       pOut.push_back(*pTemp);
       pOut.push_back(*pTemp);
 
-      if(pIn[i].pstat() == 23)JSINFO << BOLDYELLOW << "Thermal photon absorbed!";
+      if(pIn[i].pstat() == 23 || pIn[i].pstat() == 24)JSINFO << BOLDYELLOW << "Thermal photon absorbed!";
       else JSINFO << BOLDYELLOW << "Shower photon absorbed!";
     }
   }
