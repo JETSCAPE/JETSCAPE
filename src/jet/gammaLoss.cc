@@ -136,10 +136,12 @@ void gammaLoss::Init() {
   TF1* ffunc = new TF1("ffunc",f,x0,x1,0);
   ffunc->SetParameter(0,1);
   integral1 = ffunc->Integral(x0,x1);
+  delete ffunc;
 
   TF1* gfunc = new TF1("gfunc",g,x0,x1,0);
   gfunc->SetParameter(0,1);
   integral2 = gfunc->Integral(x0,x1);
+  delete gfunc;
 
   //distribution initialization
   thermalpdf = new TF1("pdf",dRdx,x0,x1,1);
