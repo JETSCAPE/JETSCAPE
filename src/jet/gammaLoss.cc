@@ -193,7 +193,7 @@ void gammaLoss::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parto
 
     //do thermal emission if triggered
     if(pIn[i].pstat() == -23){
-      //JSINFO << "Running thermal step";
+      JSDEBUG << "Running thermal step";
       doEmission(pIn, pOut, deltaT, time);
       //JSINFO << pIn.size() << " " << pOut.size();
       continue;
