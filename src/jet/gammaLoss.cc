@@ -90,7 +90,7 @@ void gammaLoss::Init() {
   brick_med = true;
   recoil_on = false;
   hydro_Tc = 0.16;
-  brick_length = 4.0;
+  brick_length = 5.0;
   ratesource = 1;
   emissionOn = 0;
   iEvent = 0;
@@ -387,14 +387,14 @@ void gammaLoss::doEmission(vector<Parton> &pIn, vector<Parton> &pOut, double del
   //initial declarations
   std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
   double increment = 1; //distance increment 
-  double maxL = 1; //max cube distance
+  double maxL = brick_length - (0.5*increment); //max cube distance
   double now_temp;
   int photonsmade = 0;
 
   //spacial loop
   for(double x = -1.0*maxL; x<=maxL; x+=increment){
     for(double y = -1.0*maxL; y<=maxL; y+=increment){
-      for(double z = -1.0*time; z<=time; z+=increment){
+      for(double z = -1.0*maxL; z<=maxL; z+=increment){
         //JSINFO << "new cell at time " << time << " at position " << x << " " << y << " " << z << " ";
         GetHydroCellSignal(time, x, y, z, check_fluid_info_ptr);
         now_temp = check_fluid_info_ptr->temperature;
