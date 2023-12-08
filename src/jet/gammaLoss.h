@@ -42,7 +42,7 @@ public:
   void Dump_pIn_info(int i, vector<Parton> &pIn);
   void doEmission(vector<Parton> &pIn, vector<Parton> &pOut, double deltaT, double time);
 
-  bool gammaLoss_on, in_vac, brick_med, recoil_on, broadening_on;
+  bool gammaLoss_on, in_vac, brick_med, recoil_on, broadening_on, reabsorption;
   int ratesource;
   int emissionOn;
   double integral1, integral2, x0, x1;

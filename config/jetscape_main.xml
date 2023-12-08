@@ -198,7 +198,8 @@
       <source> 1 </source>
       <thermalEmission> 0 </thermalEmission>
       <infraredCutOff>2</infraredCutOff>
-      <maxThermalEnergy>20</maxThermalEnergy>
+      <maxThermalEnergy>50</maxThermalEnergy>
+      <reabsorption>1</reabsorption>
     </gammaLoss>
 
   </Eloss>

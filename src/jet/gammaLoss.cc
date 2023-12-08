@@ -89,6 +89,7 @@ void gammaLoss::Init() {
   in_vac = false;
   brick_med = true;
   recoil_on = false;
+  reabsorption = true;
   hydro_Tc = 0.16;
   brick_length = 5.0;
   ratesource = 1;
@@ -105,6 +106,7 @@ void gammaLoss::Init() {
   brick_length = GetXMLElementDouble({"Eloss", "Matter", "brick_length"});
   ratesource = GetXMLElementDouble({"Eloss", "gammaLoss", "source"});
   emissionOn = GetXMLElementDouble({"Eloss", "gammaLoss", "thermalEmission"});
+  reabsorption = GetXMLElementDouble({"Eloss", "gammaLoss", "reabsorption"});
   x0 = GetXMLElementDouble({"Eloss", "gammaLoss", "infraredCutOff"});
   x1 = GetXMLElementDouble({"Eloss", "gammaLoss", "maxThermalEnergy"});
 
@@ -186,10 +188,10 @@ void gammaLoss::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parto
     if(pIn[i].pid() != 22) continue;
     //JSINFO << "Photon found with label " << pIn[i].plabel() << " and status " << pIn[i].pstat();
     if(abs(pIn[i].pstat()) == 22) continue; //skipping absorbed photons and final state photons
-    /*if(pIn[i].pstat() == 23 || pIn[i].pstat() == 24){
-      JSINFO << "Thermal photon found to absorb";
-      //continue;
-    }*/
+    if((pIn[i].pstat() == 23 || pIn[i].pstat() == 24) && reabsorption == false){
+      JSINFO << "Skipping thermal photon";
+      continue;
+    }
 
     //do thermal emission if triggered
     if(pIn[i].pstat() == -23){
