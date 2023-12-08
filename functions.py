@@ -4,7 +4,9 @@ from pyDOE import lhs
 import numpy as np
 import random
 import pandas as pd
-from math import sqrt
+from math import asin, pi, sqrt
+from math import acos
+import ROOT
 
 # make base directories for the analysis
 def makeTotalDir(totaldir):
@@ -94,17 +96,13 @@ def createDesign(points, designparams):
 def createPandaDesign(points):
     # design parameters
     designparams = [
-        {"name": "Q0", "range": (0.95,3.0)},
+        {"name": "Q0", "range": (1.2,3.0)},
         {"name": "vir_factor", "range": (0.1,1.0)},
-        {"name": "lambdaQCD", "range": (0.1,0.4)},
-        {"name": "part_prop", "range": (0.0,1.5)},
+        {"name": "lambdaQCD", "range": (0.1,0.55)},
         {"name": "StringFlav:probStoUD", "range": (0.2,0.5)},
         {"name": "StringFlav:probQQtoQ", "range": (0.07,0.2)},
         {"name": "MultipartonInteractions:ecmPow", "range": (0.0,0.25)},
         {"name": "MultipartonInteractions:pT0Ref", "range": (0.5,2.5)},
-        {"name": "pionWidthScale", "range": (0.5,2.0)},
-        {"name": "kaonWidthScale", "range": (0.5,2.0)},
-        {"name": "protonWidthScale", "range": (0.5,2.0)},
     ]
 
     # initialization
@@ -237,37 +235,32 @@ def concatDats(dir):
     os.chdir(startdir)
 
 class parton:
+    index = -1
+    PID = -10000
+    status = -1
+    v = ROOT.TLorentzVector(0.0,0.0,0.0,0.0)
+
     def __init__(self, index, PID, status, E, Px, Py, Pz):
         self.index = index
         self.PID = PID
         self.status = status
-        self.E = E
-        self.Px = Px
-        self.Py = Py
-        self.Pz = Pz
-        self.pT = sqrt(Px**2 + Py**2)
+        self.v.SetPxPyPzE(Px,Py,Pz,E)
 
     def __init__(self, line):
         params = line.split(' ')
         if len(params) < 7:
-            self.index = -1
-            self.PID = -1
-            self.status = -1
-            self.E = -1
-            self.Px = -1
-            self.Py = -1
-            self.Pz = -1
-            self.pT = -1
             return
 
         self.index = int(params[0])
         self.PID = int(params[1])
         self.status = int(params[2])
-        self.E = float(params[3])
-        self.Px = float(params[4])
-        self.Py = float(params[5])
-        self.Pz = float(params[6])
-        self.pT = sqrt(self.Px**2 + self.Py**2)
+        self.v.SetPxPyPzE(float(params[4]),float(params[5]),float(params[6]),float(params[3]))
 
     def __str__(self):
-        return f"{self.PID} {self.E} {self.pT}"
+        return f"{self.PID} {self.v.E()} {self.v.Perp()}"
+    
+    def pT(self):
+        return self.v.Perp()
+    
+    def P(self):
+        return sqrt(self.v.Px()**2 + self.v.Py()**2 + self.v.Pz()**2)
