@@ -141,8 +141,8 @@ int main(int argc, char* argv[]){
     
     //scaling histograms
     HistDstars->Scale((1000.0*0.0389*0.677)/(double)Events,"width");
-    HistDstars->Write("Reco Hadron Ratio");
-    ratioPlot(data,HistDstars,"Dstarxe","xe","1/Nevents dD*/dxe",false,false);
+    HistDstars->Write("D stars");
+    ratioPlot(data,HistDstars,"Dstarxe","x_{e}","1/N_{events} dN_{D*}/d_{xe}",false,false);
     
     TVector EventInfo(3);
     EventInfo[0] = 1;
@@ -151,6 +151,8 @@ int main(int argc, char* argv[]){
     EventInfo.Write("EventInfo");
     outFile->Close();
 
+    HistDstars->Print("all");
+    data->Print("all");
 
     //Done. Script run time
     int EndTime = time(NULL);
