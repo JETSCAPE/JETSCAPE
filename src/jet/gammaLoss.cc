@@ -388,10 +388,11 @@ bool gammaLoss::isAbsorbed(TLorentzVector pVec, double T, double delTime){
 void gammaLoss::doEmission(vector<Parton> &pIn, vector<Parton> &pOut, double deltaT, double time){
   //initial declarations
   std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
-  double increment = 1; //distance increment 
+  double increment = 1.0; //distance increment 
   double maxL = brick_length - (0.5*increment); //max cube distance
   double now_temp;
   int photonsmade = 0;
+  double volumesampled = 0.0;
 
   //spacial loop
   for(double x = -1.0*maxL; x<=maxL; x+=increment){
@@ -414,6 +415,7 @@ void gammaLoss::doEmission(vector<Parton> &pIn, vector<Parton> &pOut, double del
         tLab.Boost(vMed); 
         //tLab.Print();
         tLab *= fmToGeVinv;
+        volumesampled += tLab(0)*tLab(1)*tLab(2)*tLab(3);
 
         for(int i=0; i<photonsProduced(tLab, now_temp); i++){
           //JSINFO << "Making photon";
@@ -425,6 +427,7 @@ void gammaLoss::doEmission(vector<Parton> &pIn, vector<Parton> &pOut, double del
     }
   }
 
+  //JSINFO << "Volume sampled: " << volumesampled;
   //JSINFO << "Photons made: " << photonsmade;
 }
 
