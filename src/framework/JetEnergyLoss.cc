@@ -177,8 +177,8 @@ void JetEnergyLoss::DoShower() {
   if(thermalEmissionOn && !thermalActivated){
     //JSINFO << "Adding thermal trigger";
     double newpos[4] = {0.0};
-    Parton *pTemp2 = new Parton(0,22,-23,0.0,0.0,0.0,0.0,newpos);
-    pIn.push_back(*pTemp2);
+    Parton *pTrigger = new Parton(0,22,-23,0.0,0.0,0.0,0.0,newpos);
+    pIn.push_back(*pTrigger);
     thermalActivated = true;
     vStartVec.push_back(vEnd);
   }
