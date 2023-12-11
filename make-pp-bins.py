@@ -71,11 +71,6 @@ if rerunning:
 
 # function to make xmls
 def makexml(bound, parameters, baseDir, xmltemplate, ECM):
-    events  = 20000
-    # extra events in first bin
-    if RHIC:
-        events = events*6
-
     # appending option and filename
     ogfile = baseDir + "/dat/PP_Bin" + str(bound[0])+ "_" + str(bound[1])
     if appending:
@@ -84,7 +79,6 @@ def makexml(bound, parameters, baseDir, xmltemplate, ECM):
         filename = ogfile
 
     # building lines for xml file
-    eventLine = "  <nEvents> " + str(events) + " </nEvents>"
     lowerLine = "      <pTHatMin>" + str(bound[0]) + "</pTHatMin>\n"
     upperLine = "      <pTHatMax>" + str(bound[1]) + "</pTHatMax>\n"
     fileLine = "  <outputFilename>" + filename + "</outputFilename>\n"
@@ -101,10 +95,7 @@ def makexml(bound, parameters, baseDir, xmltemplate, ECM):
 
     newlines = []
     for line in xmltemplate:
-        if "<nEvents>" in line: 
-            newlines.append(eventLine)
-            continue
-        elif "<pTHatMin>" in line:
+        if "<pTHatMin>" in line:
             newlines.append(lowerLine)
             continue
         elif "<pTHatMax>" in line:
@@ -175,7 +166,7 @@ intervals = []
 if RHIC:
     intervals = [0, 5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5, 25, 27.5, 30, 32.5, 35, 37.5, 40, 42.5, 45, 50, 55, 60, 65, 70]
 else:
-    intervals = [0, 5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5, 25, 27.5, 30, 32.5, 35, 37.5, 40, 42.5, 45, 50, 55, 60, 65, 70, 75, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 230, 250, 270, 290, 310, 330, 350, 400, 450, 500, 550, 600, 1000]
+    intervals = [0, 5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5, 25, 27.5, 30, 32.5, 35, 37.5, 40, 42.5, 45, 50, 55, 60, 65, 70, 75, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 190, 210, 230, 250, 270, 290, 310, 330, 350, 400, 450, 500, 550, 600, 1000]
 
 if softOnly:
     intervals = range(0,48+1) # need to add one more to the range than bins desired
