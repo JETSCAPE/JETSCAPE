@@ -101,8 +101,8 @@ def createPandaDesign(points):
         {"name": "lambdaQCD", "range": (0.1,0.55)},
         {"name": "StringFlav:probStoUD", "range": (0.2,0.5)},
         {"name": "StringFlav:probQQtoQ", "range": (0.07,0.2)},
-        {"name": "MultipartonInteractions:ecmPow", "range": (0.0,0.25)},
-        {"name": "MultipartonInteractions:pT0Ref", "range": (0.5,2.5)},
+        {"name": "MultipartonInteractions:ecmPow", "range": (0.1,0.5)},
+        {"name": "MultipartonInteractions:pT0Ref", "range": (1.0,5.0)},
     ]
 
     # initialization
