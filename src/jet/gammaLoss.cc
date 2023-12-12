@@ -410,15 +410,17 @@ void gammaLoss::doEmission(vector<Parton> &pIn, vector<Parton> &pOut, double del
         double posVector[4] = {time,x,y,z};
 
         //Lorentz math for boosting
-        TLorentzVector tLab(increment,increment,increment,deltaT);
+        TLorentzVector vLab(increment,increment,increment,0);
         TVector3 vMed(abs(check_fluid_info_ptr->vx), abs(check_fluid_info_ptr->vy), abs(check_fluid_info_ptr->vz));
-        //TVector3 vMed(0.8, 0, 0);
-        tLab.Boost(vMed); 
-        //tLab.Print();
-        tLab *= fmToGeVinv;
-        volumesampled += tLab(0)*tLab(1)*tLab(2)*tLab(3);
+        vLab.Boost(vMed); 
+        vLab *= fmToGeVinv;
 
-        for(int i=0; i<photonsProduced(tLab, now_temp); i++){
+        TLorentzVector Tvec(0,0,0,deltaT*fmToGeVinv);
+        Tvec.Boost(vMed);
+
+        double volumesampled = vLab(0)*vLab(1)*vLab(2)*Tvec(3);
+
+        for(int i=0; i<photonsProduced(volumesampled, now_temp); i++){
           //JSINFO << "Making photon";
           photonsmade++;
           pIn.push_back(makeThermalPhoton(now_temp, vMed, posVector));
@@ -432,11 +434,8 @@ void gammaLoss::doEmission(vector<Parton> &pIn, vector<Parton> &pOut, double del
   //JSINFO << "Photons made: " << photonsmade;
 }
 
-int gammaLoss::photonsProduced(TLorentzVector cell, double temp){
-  double volume = cell(0)*cell(1)*cell(2);
-  double deltat = cell(3);
-
-  double gammaTot = volume*deltat*B(temp)*(log(sqrt(3)/gS(temp))*integral1 + integral2);
+int gammaLoss::photonsProduced(double cell, double temp){
+  double gammaTot = cell*B(temp)*(log(sqrt(3)/gS(temp))*integral1 + integral2);
 
   //random generation samplling
   std::poisson_distribution<int> poisson_gamma(gammaTot);

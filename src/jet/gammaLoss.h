@@ -69,7 +69,7 @@ public:
   bool isAbsorbed(TLorentzVector pVec, double T, double delTime);
 
   //emission
-  int photonsProduced(TLorentzVector cell, double temp);
+  int photonsProduced(double cell, double temp);
   Parton makeThermalPhoton(double temp, TVector3 vMed, double position[]);
   static double B(double temp);
   static Double_t dRdx(Double_t *x, Double_t *par);
