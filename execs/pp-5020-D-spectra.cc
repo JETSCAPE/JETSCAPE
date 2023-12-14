@@ -104,10 +104,10 @@ int main(int argc, char* argv[]){
     // For loop to open different pTHat bin files
     for (int k = 0; k<NpTHardBin; ++k){
         char HadronFile[300], pTBinString[100];
-        sprintf(HadronFile,"dat/PP_Bin%s_%s.dat.gz", pTHatMin[k].c_str(), pTHatMax[k].c_str());
+        sprintf(HadronFile,"dat/PP_Bin%s_%s.dat", pTHatMin[k].c_str(), pTHatMax[k].c_str());
         //sprintf(HadronFile,"test_out.dat");
         
-        auto myfile  = make_shared<JetScapeReaderAsciiGZ>(HadronFile);
+        auto myfile  = make_shared<JetScapeReaderAscii>(HadronFile);
         sprintf(pTBinString,"Current pTHatBin is %i (%s,%s) GeV",k,pTHatMin[k].c_str(),pTHatMax[k].c_str());
         
         int  SN=0,PID=0;

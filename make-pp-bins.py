@@ -177,7 +177,7 @@ xmltemplate = open(xmlname,"r")
 xmllines = xmltemplate.readlines()
 
 # making design points
-nsamples = 500
+nsamples = 1
 if not reading: design = createPandaDesign(nsamples)
 
 # pthat bounds formed into pairs
@@ -221,11 +221,11 @@ for i in range(len(design)):
     if softOnly:
         cmd = "cat "
         for dat in dats:
-            cmd = cmd + dat + ".dat.gz "
-        cmd = cmd + " > " + dats[-1] + "0.dat.gz"
+            cmd = cmd + dat + ".dat "
+        cmd = cmd + " > " + dats[-1] + "0.dat"
         os.system(cmd)
         
         for dat in dats:
-            os.remove(dat+".dat.gz")
+            os.remove(dat+".dat")
 
 pool.close()
