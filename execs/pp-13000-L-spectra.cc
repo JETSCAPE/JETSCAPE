@@ -59,13 +59,7 @@ int main(int argc, char* argv[]){
     vector<int> eventCount;
 
     //get list of cross sections
-    vector<vector<double>> xsecout = getXsecs(pTHatMin,pTHatMax);
-	vector<double> xsecList = xsecout[0];
-    vector<double> xsecErrorList = xsecout[1];
     double xsectotal = 0;
-    for(int k = 0; k<NpTHardBin; k++) xsectotal += xsecList[k];
-    //for(int k = 0; k<NpTHardBin; k++) cout << pTHatMin[k] << " " << pTHatMax[k] << " " << xsecList[k]*100000 << endl; //debugging line
-    //cout << xsectotal << endl;
 
     //Cut variables
     double AssHadEtaCut = 0.8;
@@ -199,8 +193,10 @@ int main(int argc, char* argv[]){
         
         //xsec and event count handling
         eventCount.push_back(Events);
-        double HardCrossSection = myfile->GetSigmaGen();;
-        double HardCrossSectionError = myfile->GetSigmaErr();;
+        double HardCrossSection = myfile->GetSigmaGen();
+        //cout << "Xsec: " << HardCrossSection << endl;
+        double HardCrossSectionError = myfile->GetSigmaErr();
+        xsectotal += HardCrossSection;
         
         //Dcounts
         for(int i1 = 0; i1 < 3; i1++)
