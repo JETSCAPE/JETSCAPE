@@ -232,8 +232,8 @@ int main(int argc, char* argv[]){
     for(int i1 = 0; i1 < 3; i1++){
         for(int i2 = 0; i2 < 3; i2++){
             HistLPhi[i1][i2]->Scale(1.0/(2*totLcount[i1][i2]));
-            HistLPhi[i1][i2]->GetXaxis()->SetTitle("Delta phi (rad)");
-            HistLPhi[i1][i2]->GetYaxis()->SetTitle("(1/Nlambda)(dNassc/dDelphi)");
+            HistLPhi[i1][i2]->GetXaxis()->SetTitle("#Delta#phi (rad)");
+            HistLPhi[i1][i2]->GetYaxis()->SetTitle("(1/N_{#Lambda} dN_{pairs}/d#Delta#phi)");
  	        HistLPhi[i1][i2]->Write(names[i1][i2].c_str());
 
             //plot output
