@@ -43,7 +43,7 @@
       ColourReconnection:mode = 2
     </LinesToRead>
     <pythia_decays>on</pythia_decays> 
-    <part_prop>1.0</part_prop>
+    <part_prop>0.0</part_prop>
     <ignorePhotons> off </ignorePhotons>
     <reco_hadrons_in_pythia>1</reco_hadrons_in_pythia>
     <pionWidthScale>1.0</pionWidthScale>

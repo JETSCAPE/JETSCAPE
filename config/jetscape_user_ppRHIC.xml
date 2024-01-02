@@ -49,7 +49,7 @@
       StringFlav:probQQtoQ = 0.081
       ParticleDecays:tau0Max = 10
     </LinesToRead>
-    <part_prop>1.0</part_prop>
+    <part_prop>0.0</part_prop>
     <ignorePhotons> on </ignorePhotons>
   </JetHadronization>
   
