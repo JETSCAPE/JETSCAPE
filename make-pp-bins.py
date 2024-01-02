@@ -177,7 +177,7 @@ xmltemplate = open(xmlname,"r")
 xmllines = xmltemplate.readlines()
 
 # making design points
-nsamples = 1
+nsamples = 500
 if not reading: design = createPandaDesign(nsamples)
 
 # pthat bounds formed into pairs
