@@ -24,7 +24,7 @@ os.chdir("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/build")
 # looping over points
 for dir in dirs[start:finish]:
     print("Running " + dir + ":")
-    xmls = readXmls(totdir+dir)
+    xmls = readXmls(totdir+"points/"+dir)
     pool = mp.Pool(len(xmls))
 
     pool.map(runxml, xmls)
