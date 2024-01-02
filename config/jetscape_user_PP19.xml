@@ -2,24 +2,30 @@
 
 <jetscape>
   
-  <nEvents> 1000 </nEvents>
+  <nEvents> 10 </nEvents>
   
-  <outputFilename>test_out</outputFilename>
-  <JetScapeWriterFinalStateHadronsAscii> on </JetScapeWriterFinalStateHadronsAscii>
-  <JetScapeWriterFinalStatePartonsAscii> on </JetScapeWriterFinalStatePartonsAscii>
+  <outputFilename>/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/test/test</outputFilename>
+  <JetScapeWriterAscii> on </JetScapeWriterAscii>
   
   <!-- Hard Process -->
   <Hard>
     <PythiaGun>
-      <pTHatMin>235</pTHatMin>
+      <pTHatMin>0</pTHatMin>
       <pTHatMax>1000</pTHatMax>
-      <eCM>5020</eCM>
+      <eCM>2760</eCM>
+      <LinesToRead>
+         MultipartonInteractions:pT0Ref = 2.28
+         MultipartonInteractions:ecmPow = 0.215
+      </LinesToRead>
+      <FSR_on>1</FSR_on>
     </PythiaGun>
   </Hard>
   
   <!--Eloss Modules -->
   <Eloss>
+    <maxT>200</maxT>
     <Matter> 
+      <matter_on>0</matter_on>
       <Q0> 1.0 </Q0>
       <in_vac> 1 </in_vac>
       <vir_factor> 0.25 </vir_factor>
@@ -31,7 +37,7 @@
   
   <!-- Jet Hadronization Module -->
   <JetHadronization>
-    <name>colorless</name>
+    <name>hybrid</name>
   </JetHadronization>
   
 </jetscape>
