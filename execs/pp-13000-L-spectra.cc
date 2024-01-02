@@ -75,14 +75,14 @@ int main(int argc, char* argv[]){
     for(int i = 0; i < 17; i++) LphiBin[i] = i*pi/16;
     double phibinw = LphiBin[1]-LphiBin[0];
     int NphiLBin = sizeof(LphiBin)/sizeof(LphiBin[0])-1;
-    TH1D *HistLPhi[3][3]; //identified hadrons hists
+    TH1D *tempL[3][3]; //identified hadrons hists
     double totLcount[3][3] = {0};
     string names[3][3];
     for(int i1 = 0; i1 < 3; i1++){
         for(int i2 = 0; i2 < 3; i2++){
             names[i1][i2] = "L Azi Cor "+to_string(triggerptcut[i1])+"-"+to_string(triggerptcut[i1+1])+" "+
                 to_string(assptmin[i2])+"-"+to_string(assptmax[i2]);
-            HistLPhi[i1][i2] = new TH1D("Hybrid Had. prediction", names[i1][i2].c_str(), NphiLBin, LphiBin);
+            tempL[i1][i2] = new TH1D("Hybrid Had. prediction", names[i1][i2].c_str(), NphiLBin, LphiBin);
         }
     }   
 
@@ -114,11 +114,7 @@ int main(int argc, char* argv[]){
 
         //temp hists for identified hadrons
         TH1D *Lpts = new TH1D("L counts", "L counts", 3, triggerptcut);
-        TH1D *tempL[3][3]; //identified hadrons hists
-        for(int i1 = 0; i1 < 3; i1++)
-            for(int i2 = 0; i2 < 3; i2++)
-                tempL[i1][i2] = new TH1D(names[i1][i2].c_str(), names[i1][i2].c_str(), NphiLBin, LphiBin);
-
+        
         //Data structures for events read in to save run time
         vector<shared_ptr<Hadron>> hadrons, Ls, others;
 
@@ -177,7 +173,7 @@ int main(int argc, char* argv[]){
                             for(int i2 = 0; i2 < 3; i2++){
                                 if(Ls[i].get()->pt() > triggerptcut[i1] && Ls[i].get()->pt() < triggerptcut[i1+1] 
                                     && others[j].get()->pt() > assptmin[i2] && others[j].get()->pt() < assptmax[i2]){
-                                        tempL[i1][i2]->Fill(deltaphi, 1.0/(phibinw));
+                                        tempL[i1][i2]->Fill(deltaphi);
                                         recoHist[i1][i2]->Fill(Ls[i].get()->pstat()-800, others[j].get()->pstat()-800);
                                 }
                             }
@@ -201,7 +197,7 @@ int main(int argc, char* argv[]){
         //Dcounts
         for(int i1 = 0; i1 < 3; i1++)
             for(int i2 = 0; i2 < 3; i2++)
-                totLcount[i1][i2] += Lpts->GetBinContent(i1+1)*HardCrossSection/(Events);
+                totLcount[i1][i2] += Lpts->GetBinContent(i1+1);
         
         //event info
         TVector EventInfo(3);
@@ -216,7 +212,6 @@ int main(int argc, char* argv[]){
             for(int i2 = 0; i2 < 3; i2++){
                 tempL[i1][i2]->Write(names[i1][i2].c_str());
                 recoHist[i1][i2]->Write(names[i1][i2].c_str());
-                HistLPhi[i1][i2]->Add(tempL[i1][i2],HardCrossSection/(Events));
             }
         }
 
@@ -231,16 +226,16 @@ int main(int argc, char* argv[]){
     //HistDPhi->SetNormFactor(1.0);
     for(int i1 = 0; i1 < 3; i1++){
         for(int i2 = 0; i2 < 3; i2++){
-            HistLPhi[i1][i2]->Scale(1.0/(2*totLcount[i1][i2]));
-            HistLPhi[i1][i2]->GetXaxis()->SetTitle("#Delta#phi (rad)");
-            HistLPhi[i1][i2]->GetYaxis()->SetTitle("(1/N_{#Lambda} dN_{pairs}/d#Delta#phi)");
- 	        HistLPhi[i1][i2]->Write(names[i1][i2].c_str());
+            tempL[i1][i2]->Scale(1.0/(2*totLcount[i1][i2]),"width");
+            tempL[i1][i2]->GetXaxis()->SetTitle("#Delta#phi (rad)");
+            tempL[i1][i2]->GetYaxis()->SetTitle("(1/N_{#Lambda} dN_{pairs}/d#Delta#phi)");
+ 	        tempL[i1][i2]->Write(names[i1][i2].c_str());
 
             //plot output
             TCanvas *c = new TCanvas();
-            HistLPhi[i1][i2]->Draw();
+            tempL[i1][i2]->Draw();
             string plotname = "plots/" + names[i1][i2] + ".png";
-            HistLPhi[i1][i2]->GetYaxis()->SetRangeUser(0,10);
+            tempL[i1][i2]->GetYaxis()->SetRangeUser(0,10);
             c->SaveAs(plotname.c_str());
             c->Close();
         }
