@@ -696,7 +696,7 @@ int main(int argc, char* argv[]){
 
     double jetDataHistErrors[] = {0.35,0.15,0.066,0.065,0.026,0.0099,0.0038,0.0016,0.00065,0.00028,0.00013,5.7e-5};
     for(int i = 0; i < jetDataHist->GetNbinsX(); i++) jetDataHist->SetBinError(i+1,jetDataHistErrors[i]*1e-6);
-    ratioPlot(jetDataHist,HistFinalJet,"Jet r3 Differential Cross sections (mb/GeV/c)");
+    //ratioPlot(jetDataHist,HistFinalJet,"Jet r3 Differential Cross sections (mb/GeV/c)");
 
     //r2 graph
     TH1D* jetDataHistOriginal2 = (TH1D*) jetdir->Get("Hist1D_y1");
@@ -705,7 +705,7 @@ int main(int argc, char* argv[]){
 
     double jetDataHistErrors2[] = {0.24,0.1,0.048,0.048,0.02,0.0074,0.0028,0.0012,0.00054,0.00024,0.00011,4.6e-5};
     for(int i = 0; i < jetDataHist2->GetNbinsX(); i++) jetDataHist2->SetBinError(i+1,jetDataHistErrors2[i]*1e-6);
-    ratioPlot(jetDataHist2,HistTotalJet2,"Jet r2 Differential Cross sections (mb/GeV/c)");
+    //ratioPlot(jetDataHist2,HistTotalJet2,"Jet r2 Differential Cross sections (mb/GeV/c)");
 
     //r4 graph
     TH1D* jetDataHistOriginal4 = (TH1D*) jetdir->Get("Hist1D_y3");
@@ -714,7 +714,7 @@ int main(int argc, char* argv[]){
 
     double jetDataHistErrors4[] = {0.45,0.18,0.083,0.082,0.033,0.012,0.0045,0.0019,0.00078,0.00034,0.00016,7e-5};
     for(int i = 0; i < jetDataHist4->GetNbinsX(); i++) jetDataHist4->SetBinError(i+1,jetDataHistErrors4[i]*1e-6);
-    ratioPlot(jetDataHist4,HistTotalJet3,"Jet r4 Differential Cross sections (mb/GeV/c)");
+    //ratioPlot(jetDataHist4,HistTotalJet3,"Jet r4 Differential Cross sections (mb/GeV/c)");
 
     //jet jetscape graph
     TGraphErrors *GEJetPrediction;
@@ -757,7 +757,7 @@ int main(int argc, char* argv[]){
 
     double hadDataHistErrors[] = {0.0589,0.0306,0.0166,0.00958,0.00576,0.00285,0.00122,0.000565,0.00028,6e-5,8.17e-6,1.73e-6,4.69e-7,6.34e-8,7.04e-9,6.85e-10,8.27e-11,1.43e-11,3.26e-12,5.54e-13,9.02e-14,1.59e-14};
     for(int i = 0; i < hadronDataHist->GetNbinsX(); i++) hadronDataHist->SetBinError(i+1,hadDataHistErrors[i]);
-    ratioPlot(hadronDataHist, HistFinalSingleHadron, "Hadron Yields (Gev^-2*c^3)", true);
+    //ratioPlot(hadronDataHist, HistFinalSingleHadron, "Hadron Yields (Gev^-2*c^3)", true);
 
     //hadron jetscape
     TGraphErrors *GEHadronPrediction;

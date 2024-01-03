@@ -72,32 +72,41 @@ TGraphErrors histToGraph(TH1D* hist){
 }
 
 //custom ratio plot generator since existing one is broken
-void ratioPlot(TH1D* dataHist, TH1D* predictionHist, string title, bool xlog){
+void myRatioPlot(TGraphErrors* dataGraph, TH1D* predictionHist, string title, bool xlog, bool ylog){
     //values for plots
-    int bins = dataHist->GetNbinsX();
-    double data[bins], prediction[bins], xcoords[bins], dataErrors[bins], binWidths[bins], asym[bins], asymErrors[bins];
+    int bins = dataGraph->GetN();
+    double data[bins], prediction[bins], xcoords[bins], dataErrors[bins], binWidths[bins], asym[bins], asymErrorsHigh[bins], asymErrorsLow[bins];
 
     //cycling through bins, note first one is an overflow bin so it is skipped
     for(int i = 0; i < bins; i++){
         //reading values from histograms
-        data[i] = dataHist->GetBinContent(i+1);
-        dataErrors[i] = dataHist->GetBinError(i+1);
+        dataGraph->GetPoint(i,xcoords[i],data[i]);
+        dataErrors[i] = dataGraph->GetErrorY(i);
+        binWidths[i] = dataGraph->GetErrorX(i);
         prediction[i] = predictionHist->GetBinContent(i+1);
-        xcoords[i] = predictionHist->GetBinCenter(i+1);
-        binWidths[i] = predictionHist->GetBinWidth(i+1) / 2;
         asym[i] = (prediction[i]/data[i]);
-        asymErrors[i] = dataErrors[i]/prediction[i];
+        asymErrorsHigh[i] = 1 + dataErrors[i]/data[i];
+        asymErrorsLow[i] = 1 - dataErrors[i]/data[i];
 
         //debugging
-        //cout << xcoords[i] << " " << dataHist->GetBinContent(i+1)*1000000 << " " << dataHist->GetBinError(i+1)*1000000 << " " << asym[i] << " " << binWidths[i] << endl;
+        //cout << xcoords[i] << " " << data[i]*1000000 << " " << dataErrors[i]*1000000 << " " << asym[i] << " " << binWidths[i] << endl;
         
         //correcting for negatives when doing log
         //if(data[i] < 0) data[i] = 0;
         //if(dataErrors[i] > data[i]) dataErrors[i] = data[i]*0.99;
     }
 
+    //Drawing main plot
+    TCanvas* c = new TCanvas("c1","c1",1000,800);
+    TPad* upper = new TPad("plot","plot",0,0.4,1,1);
+    upper->SetBottomMargin(0);
+    upper->Draw();
+    upper->cd();
+    if(ylog) upper->SetLogy();
+    if(xlog) upper->SetLogx();
+
     //Data graph
-    TGraphErrors* dataPlot = new TGraphErrors(bins,xcoords,data,binWidths,dataErrors);
+    TGraphErrors* dataPlot = (TGraphErrors*)dataGraph->Clone();
     dataPlot->SetMarkerStyle(kFullDotLarge);
     dataPlot->SetMarkerColor(kRed);
     dataPlot->SetLineColor(kRed);
@@ -108,63 +117,57 @@ void ratioPlot(TH1D* dataHist, TH1D* predictionHist, string title, bool xlog){
     predictionPlot->SetLineWidth(3);
 
     //layered graph
-    TMultiGraph* total = new TMultiGraph();
-    total->Add(predictionPlot,"l");
-    total->Add(dataPlot,"AP");
-    total->SetTitle("Jetscape Comparison");
-    total->GetYaxis()->SetTitle(title.c_str());
-    total->GetXaxis()->SetRangeUser(xcoords[0]-binWidths[0],xcoords[bins-1]+binWidths[bins-1]);
-    //total->GetYaxis()->SetTitleSize(0.05);
-    total->GetYaxis()->SetLabelSize(0.04);
+    dataPlot->SetTitle(title.c_str());
+    dataPlot->Draw("AP");
+    dataPlot->GetXaxis()->SetLimits(xcoords[0]-binWidths[0],xcoords[bins-1]+binWidths[bins-1]);
+    dataPlot->GetYaxis()->SetLabelSize(0.04);
+    predictionPlot->Draw("l");
 
     //ratio plot
-    TGraphErrors* comparisonPlot = new TGraphErrors(bins, xcoords, asym, binWidths, asymErrors);
+    TGraph* comparisonPlot = new TGraph(bins, xcoords, asym);
     comparisonPlot->SetTitle("");
-    comparisonPlot->GetXaxis()->SetRangeUser(xcoords[0]-binWidths[0],xcoords[bins-1]+binWidths[bins-1]);
-    comparisonPlot->GetXaxis()->SetTitle("pT (GeV)");
+    comparisonPlot->GetXaxis()->SetLimits(xcoords[0]-binWidths[0],xcoords[bins-1]+binWidths[bins-1]);
+    comparisonPlot->GetXaxis()->SetTitle(dataPlot->GetHistogram()->GetXaxis()->GetTitle());
     comparisonPlot->GetXaxis()->SetTitleSize(0.06);
     comparisonPlot->GetXaxis()->SetLabelSize(0.06);
-    comparisonPlot->GetYaxis()->SetTitle("Asymmetry");
+    comparisonPlot->GetYaxis()->SetTitle("JETSCAPE/data");
     comparisonPlot->GetYaxis()->SetTitleSize(0.06);
     comparisonPlot->GetYaxis()->SetLabelSize(0.06);
     comparisonPlot->SetMarkerStyle(kFullDotLarge);
-
-    //Drawing main plot
-    TCanvas* c = new TCanvas("c1","c1",1000,800);
-    TPad* upper = new TPad("plot","plot",0,0.4,1,1);
-    upper->SetBottomMargin(0);
-    upper->Draw();
-    upper->cd();
-    upper->SetLogy();
-    if(xlog) upper->SetLogx();
-	total->Draw("apl");
+    comparisonPlot->GetHistogram()->GetYaxis()->SetRangeUser(0,2);  
 
     //Legend
-    TLegend leg(.7,.7,.9,.9,"Sources");
-    leg.AddEntry(predictionPlot,"Jetscape","l");
-    leg.AddEntry(dataPlot,"CMS Data","ep");
+    TLegend leg(.7,.7,.9,.9);
+    leg.AddEntry(predictionPlot,"JETSCAPE","l");
+    leg.AddEntry(dataPlot,dataGraph->GetHistogram()->GetTitle(),"ep");
     leg.DrawClone("Same");
 
     //drawing ratio plot
     c->cd();
     TPad* lower = new TPad("plot","plot",0,0,1,0.4);
     lower->SetTopMargin(0);
-    lower->SetBottomMargin(1);
+    c->SetBottomMargin(2.0);
     lower->Draw();
     lower->cd();
     if(xlog) lower->SetLogx();
 	comparisonPlot->Draw("AP");
     TLine* line = new TLine(xcoords[0],1,xcoords[bins-1]+binWidths[bins-1],1);
     line->SetLineStyle(9);
-    line->Draw();
+    line->Draw("SAME");
+    TGraph* asymLow = new TGraph(bins, xcoords, asymErrorsLow);
+    asymLow->SetLineStyle(9);
+    asymLow->Draw("SAME");
+    TGraph* asymHigh = new TGraph(bins, xcoords, asymErrorsHigh);
+    asymHigh->SetLineStyle(9);
+    asymHigh->Draw("SAME");
 
-    string filename  = splitString(title," (")[0]+".png"; //trims off the units in the file name
+    string filename  = "plots/" + title + ".png";
     c->Print(filename.c_str());
     c->Close();
 }
 
 //overload for graph input
-/*void ratioPlot(TGraphErrors* dataHist, TH1D* predictionHist, string title, string xname, string yname, bool xlog, bool ylog){
+/*void myRatioPlot(TGraphErrors* dataHist, TH1D* predictionHist, string title, string xname, string yname, bool xlog, bool ylog){
     //values for plots
     int bins = predictionHist->GetNbinsX();
     double data[bins], prediction[bins], xcoords[bins], dataErrors[bins], binWidths[bins], asym[bins], asymErrors[bins];
@@ -262,6 +265,7 @@ void ratioPlot(TGraphErrors* dataHist, TH1D* predictionHist, string title, strin
     //values for plots
     int bins = predictionHist->GetNbinsX();
     double data[bins], prediction[bins], xcoords[bins], dataErrors[bins], binWidths[bins], asym[bins], asymErrors[bins];
+    cout << "Making ratio plot for " << title << " with " << bins << " bins." << endl;
 
     //graphs we need
     TH1D* dataPlot = new TH1D(" ", " ",  predictionHist->GetNbinsX(), predictionHist->GetXaxis()->GetXbins()->GetArray()); 

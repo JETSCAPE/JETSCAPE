@@ -42,9 +42,9 @@ vector<string> splitString(string input, string divider);
 
 TGraphErrors histToGraph(TH1D* hist);
 
-void ratioPlot(TH1D* dataHist, TH1D* predictionHist, string title, bool xlog = false);
+void myRatioPlot(TH1D* dataHist, TH1D* predictionHist, string title, bool xlog = false, bool ylog = false);
 
-void ratioPlot(TGraphErrors* dataHist, TH1D* predictionHist, string title, string xname = "pT (GeV)", string yname = "Yields", bool xlog = false, bool ylog = false);
+void ratioPlot(TGraphErrors* dataHist, TH1D* predictionHist, string title, string xname = "p_{T} (GeV)", string yname = "Yields", bool xlog = false, bool ylog = false);
 
 //void ratioPlotTest(TGraphErrors* dataHist, TH1D* predictionHist, string title, string xname = "pT (GeV)", string yname = "Yields", bool xlog = false, bool ylog = false);
 

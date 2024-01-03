@@ -250,7 +250,7 @@ int main(int argc, char* argv[]){
             hadrons = myfile->GetHadrons();
 
             //cout<<"Number of hadrons is: " << hadrons.size() << endl;
-            Events++;
+            Events++; //if(Events > 500) break;
             for(unsigned int i=0; i<hadrons.size(); i++){
                 SN = i;
                 PID= hadrons[i].get()->pid();
@@ -697,69 +697,6 @@ int main(int argc, char* argv[]){
     }
     HistTotalJetShape->Scale(1/JetShapeNorm);
 
-    //jets
-    //jet data graph
-    TMultiGraph *GEJetTotal = new TMultiGraph();
-    TFile jet_file("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/data/JetData.root");
-    TDirectory* jetdir = (TDirectory*)jet_file.Get("Table 4");
-    TGraphErrors* jetData = (TGraphErrors*) jetdir->Get("Graph1D_y2");
-    TH1D* jetDataHistOriginal = (TH1D*) jetdir->Get("Hist1D_y2");
-    TH1D* jetDataHist = (TH1D*) jetDataHistOriginal->Clone(); //cloning to avoid messing up original
-    jetDataHist->Scale(1e-6); //data listed in mb
-    jetData->SetMarkerStyle(kCircle);
-    jetData->SetMarkerColor(kRed);
-    jetData->SetLineColor(kRed);
-
-    double jetDataHistErrors[] = {0.35,0.15,0.066,0.065,0.026,0.0099,0.0038,0.0016,0.00065,0.00028,0.00013,5.7e-5};
-    for(int i = 0; i < jetDataHist->GetNbinsX(); i++) jetDataHist->SetBinError(i+1,jetDataHistErrors[i]*1e-6);
-    ratioPlot(jetDataHist,HistFinalJet,"Jet r3 Differential Cross sections (mb/GeV/c)");
-
-    //r2 graph
-    TH1D* jetDataHistOriginal2 = (TH1D*) jetdir->Get("Hist1D_y1");
-    TH1D* jetDataHist2 = (TH1D*) jetDataHistOriginal2->Clone(); //cloning to avoid messing up original
-    jetDataHist2->Scale(1e-6); //data listed in mb
-
-    double jetDataHistErrors2[] = {0.24,0.1,0.048,0.048,0.02,0.0074,0.0028,0.0012,0.00054,0.00024,0.00011,4.6e-5};
-    for(int i = 0; i < jetDataHist2->GetNbinsX(); i++) jetDataHist2->SetBinError(i+1,jetDataHistErrors2[i]*1e-6);
-    ratioPlot(jetDataHist2,HistTotalJet2,"Jet r2 Differential Cross sections (mb/GeV/c)");
-
-    //r4 graph
-    TH1D* jetDataHistOriginal4 = (TH1D*) jetdir->Get("Hist1D_y3");
-    TH1D* jetDataHist4 = (TH1D*) jetDataHistOriginal4->Clone(); //cloning to avoid messing up original
-    jetDataHist4->Scale(1e-6); //data listed in mb
-
-    double jetDataHistErrors4[] = {0.45,0.18,0.083,0.082,0.033,0.012,0.0045,0.0019,0.00078,0.00034,0.00016,7e-5};
-    for(int i = 0; i < jetDataHist4->GetNbinsX(); i++) jetDataHist4->SetBinError(i+1,jetDataHistErrors4[i]*1e-6);
-    ratioPlot(jetDataHist4,HistTotalJet3,"Jet r4 Differential Cross sections (mb/GeV/c)");
-
-    //jet jetscape graph
-    TGraphErrors *GEJetPrediction;
-    GEJetPrediction = new TGraphErrors(NpTJetBin,JetpT,DifferentialJetTotal,JetpTError,DifferentialJetTotalErrors);
-    GEJetPrediction->SetMarkerStyle(kCircle);
-    GEJetPrediction->SetLineColor(kBlue);
-    GEJetPrediction->SetMarkerColor(kBlue);
-
-    //jet total
-    GEJetTotal->Add(GEJetPrediction);
-    GEJetTotal->Add(jetData);
-    GEJetTotal->SetName("Total Jet Spectra");
-    GEJetTotal->SetTitle("Total Jet Spectra");
-    GEJetTotal->GetXaxis()->SetTitle("Jet pT (GeV)");
-    GEJetTotal->GetYaxis()->SetTitle("Differential Cross-Section (c*mb/GeV)");
-
-    //jet canvas and saving
-    TCanvas *cTotalJet = new TCanvas();
-    cTotalJet->SetLogy();
-    TLegend jetleg(.7,.7,.9,.9,"Jet Spectra");
-    jetleg.AddEntry(GEJetPrediction,"Jetscape","lep");
-    jetleg.AddEntry(jetData,"CMS Data","lep");
-	//GEJetTotal->Draw("apl");
-    //jetleg.DrawClone("Same");
-    auto rpJet = new TRatioPlot(HistFinalJet, jetDataHist);
-    //rpJet->Draw("C");
-	//cTotalJet->Print("plots/JetTotalSpectrum.png");
-    jet_file.Close();
-
     //hadrons
     //hadron data graph
     TMultiGraph *GEHadronTotal = new TMultiGraph();
@@ -770,10 +707,8 @@ int main(int argc, char* argv[]){
     hadronData->SetMarkerStyle(kCircle);
     hadronData->SetMarkerColor(kRed);
     hadronData->SetLineColor(kRed);
-
-    double hadDataHistErrors[] = {0.0589,0.0306,0.0166,0.00958,0.00576,0.00285,0.00122,0.000565,0.00028,6e-5,8.17e-6,1.73e-6,4.69e-7,6.34e-8,7.04e-9,6.85e-10,8.27e-11,1.43e-11,3.26e-12,5.54e-13,9.02e-14,1.59e-14};
-    for(int i = 0; i < hadronDataHist->GetNbinsX(); i++) hadronDataHist->SetBinError(i+1,hadDataHistErrors[i]);
-    ratioPlot(hadronDataHist, HistTotalHadron, "Hadron Yields (Gev^-2*c^3)", true);
+    hadronData->SetTitle("CMS");
+    myRatioPlot(hadronData, HistTotalHadron, "Hadron Yields", true, true);
 
     //hadron jetscape
     TGraphErrors *GEHadronPrediction;
@@ -809,8 +744,6 @@ int main(int argc, char* argv[]){
 	
     //create root file for total plots
     TFile* totalroot = new TFile( "root/totals.root", "RECREATE");
-    GEJetPrediction->Write("jets graph");
-    GEHadronPrediction->Write("hadrons graph");
     HistFinalJet->Write("jet radius 0.3");
     HistTotalHadron->Write("hadrons");
     HistTotalJetShape->Write("jet shape");
@@ -824,6 +757,30 @@ int main(int argc, char* argv[]){
     ProfTotalKaons->Write();
     ProfTotalProtons->Write();
     totalroot->Close();
+
+    //jets
+    //jet data graph
+    TMultiGraph *GEJetTotal = new TMultiGraph();
+    TFile jet_file("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/data/JetData.root");
+    TDirectory* jetdir = (TDirectory*)jet_file.Get("Table 4");
+    TGraphErrors* jetData = (TGraphErrors*) jetdir->Get("Graph1D_y2");
+    HistFinalJet->Scale(1e6); //data listed in mb
+    jetData->SetTitle("CMS");
+    myRatioPlot(jetData,HistFinalJet,"Jet r3 Differential Cross sections",false,true);
+
+    //r2 graph
+    TGraphErrors* jetDataHist2 = (TGraphErrors*) jetdir->Get("Graph1D_y1");
+    HistTotalJet2->Scale(1e6); //data listed in mb
+    jetDataHist2->SetTitle("CMS");
+    myRatioPlot(jetDataHist2,HistTotalJet2,"Jet r2 Differential Cross sections",false,true);
+
+    //r4 graph
+    TGraphErrors* jetDataHist4 = (TGraphErrors*) jetdir->Get("Graph1D_y3");
+    HistTotalJet3->Scale(1e6); //data listed in mb
+    jetDataHist4->SetTitle("CMS");
+    myRatioPlot(jetDataHist4,HistTotalJet3,"Jet r4 Differential Cross sections",false,true);
+
+    jet_file.Close();
 
     //Done. Script run time
     int EndTime = time(NULL);
