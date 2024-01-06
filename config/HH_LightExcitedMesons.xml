@@ -1,0 +1,2014 @@
+<!-- Expanded list of mesons and their decay channels up to 2k+l = 4 for light flavors     -->
+<!-- To be used with Hybrid Hadronization if one wishes to add highly excited meson states -->
+<!-- The format from PYTHIA 8's ParticleData.xml is used, and it is assumed                -->
+<!-- that ParticleData.xml is present to cover l=0 and l=1 mesons.                         -->
+<!--                                                                                       -->
+<!-- Written by Jacob Purcell and Rainer J. Fries, 2022                                    -->
+<!-- Reference: J. Purcell, R. J. Fries, M. Kordell II, C. M. Ko, TBP (2023)               -->
+
+<particle id="10215" name="pi_2(1670)+" antiName="pi_2(1670)-" spinType="5" chargeType="3" colType="0"
+          m0="1.671" mWidth="0.258" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.5748" products="211 211 -211"/>
+ <channel onMode="1" bRatio="0.3832" products="211 111 111"/>
+ <channel onMode="1" bRatio="0.01199982" products="211 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.02639994" products="211 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.003599988" products="211 111 111 111 111"/>
+</particle>
+
+<particle id="10115" name="pi_2(1670)0" antiName="" spinType="5" chargeType="0" colType="0"
+          m0="1.671" mWidth="0.258" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.7664" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0.1916" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.02639994" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.01440012" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0.001199982" products="111 111 111 111 111"/>
+</particle>
+
+<particle id="10325" name="K_2(1770)+" antiName="K_2(1770)-" spinType="5" chargeType="3" colType="0"
+          m0="1.773" mWidth="0.186" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.07836956894" products="321 111"/>
+ <channel onMode="1" bRatio="0.156741489" products="311 211"/>
+ <channel onMode="1" bRatio="0.2408928383" products="321 211 -211"/>
+ <channel onMode="1" bRatio="0.08029921871" products="321 111 111"/>
+ <channel onMode="1" bRatio="0.1605936196" products="311 211 111"/>
+ <channel onMode="1" bRatio="0.1068580034" products="321 211 111 -211"/>
+ <channel onMode="1" bRatio="0.01187311149" products="321 111 111 111"/>
+ <channel onMode="1" bRatio="0.07123866892" products="311 211 211 -211"/>
+ <channel onMode="1" bRatio="0.04749244594" products="311 211 111 111"/>
+ <channel onMode="1" bRatio="0.01014235098" products="321 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.01419938265" products="321 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.001014235098" products="321 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.01622812669" products="311 211 211 111 -211"/>
+</particle>
+
+<particle id="10315" name="K_2(1770)0" antiName="K_2(1770)bar0" spinType="5" chargeType="0" colType="0"
+          m0="1.773" mWidth="0.186" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.07836956894" products="311 111"/>
+ <channel onMode="1" bRatio="0.156741489" products="321 -211"/>
+ <channel onMode="1" bRatio="0.2408928383" products="311 211 -211"/>
+ <channel onMode="1" bRatio="0.08029921871" products="311 111 111"/>
+ <channel onMode="1" bRatio="0.1605936196" products="321 111 -211"/>
+ <channel onMode="1" bRatio="0.1068580034" products="311 211 111 -211"/>
+ <channel onMode="1" bRatio="0.01187311149" products="311 111 111 111"/>
+ <channel onMode="1" bRatio="0.07123866892" products="321 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.04749244594" products="321 111 111 -211"/>
+ <channel onMode="1" bRatio="0.01014235098" products="311 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.01419938265" products="311 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.001014235098" products="311 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.01622812669" products="321 211 111 -211 -211"/>
+</particle>
+
+<particle id="10335" name="eta_2(1870)" antiName="" spinType="5" chargeType="0" colType="0"
+          m0="1.842" mWidth="0.225" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.1139041067" products="211 -211"/>
+ <channel onMode="1" bRatio="0.05695119909" products="111 111"/>
+ <channel onMode="1" bRatio="0.3316578777" products="211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.4422077397" products="211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.05527658933" products="111 111 111 111"/>
+</particle>
+
+<particle id="10225" name="eta_2(1645)" antiName="" spinType="5" chargeType="0" colType="0"
+          m0="1.617" mWidth="0.181" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.2069840926" products="211 -211"/>
+ <channel onMode="1" bRatio="0.1034904939" products="111 111"/>
+ <channel onMode="1" bRatio="0.2758101654" products="211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.3677445888" products="211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.04596859074" products="111 111 111 111"/>
+</particle>
+
+<particle id="217" name="rho_3(1690)+" antiName="rho_3(1690)-" spinType="7" chargeType="3" colType="0"
+          m0="1.688" mWidth="0.161" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.236" products="211 111"/>
+ <channel onMode="1" bRatio="0.1422" products="211 111 111 111"/>
+ <channel onMode="1" bRatio="0.5688" products="211 211 -211 111"/>
+ <channel onMode="1" bRatio="0.015" products="321 -311"/>
+ <channel onMode="1" bRatio="0.0095" products="321 -311 111"/>
+ <channel onMode="1" bRatio="0.01425" products="321 -321 211"/>
+ <channel onMode="1" bRatio="0.01425" products="311 -311 211"/>
+</particle>
+
+<particle id="117" name="rho_3(1690)0" antiName="" spinType="7" chargeType="0" colType="0"
+          m0="1.688" mWidth="0.161" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.236" products="211 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111"/>
+ <channel onMode="1" bRatio="0.2844" products="211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.4266" products="211 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111"/>
+ <channel onMode="1" bRatio="0.0075" products="321 -321"/>
+ <channel onMode="1" bRatio="0.0075" products="311 -311"/>
+ <channel onMode="1" bRatio="0.0063333327" products="321 -321 111"/>
+ <channel onMode="1" bRatio="0.0063333327" products="311 -311 111"/>
+ <channel onMode="1" bRatio="0.0126666654" products="321 -311 -211"/>
+ <channel onMode="1" bRatio="0.0126666654" products="311 -321 211"/>
+</particle>
+
+<particle id="327" name="K_3*(1780)+" antiName="K_3*(1780)-" spinType="7" chargeType="3" colType="0"
+          m0="1.779" mWidth="0.161" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.07036541991" products="321 111"/>
+ <channel onMode="1" bRatio="0.1407329508" products="311 211"/>
+ <channel onMode="1" bRatio="0.2380292082" products="321 211 -211"/>
+ <channel onMode="1" bRatio="0.07934465626" products="321 111 111"/>
+ <channel onMode="1" bRatio="0.1586845519" products="311 211 111"/>
+ <channel onMode="1" bRatio="0.1162004891" products="321 211 111 -211"/>
+ <channel onMode="1" bRatio="0.01291116546" products="321 111 111 111"/>
+ <channel onMode="1" bRatio="0.07746699274" products="311 211 211 -211"/>
+ <channel onMode="1" bRatio="0.05164466183" products="311 211 111 111"/>
+ <channel onMode="1" bRatio="0.01213763501" products="321 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.01699279826" products="321 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.001213763501" products="321 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.01942065298" products="311 211 211 111 -211"/>
+</particle>
+
+<particle id="317" name="K_3*(1780)0" antiName="K_3*(1780)bar0" spinType="7" chargeType="0" colType="0"
+          m0="1.779" mWidth="0.161" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.07036541991" products="311 111"/>
+ <channel onMode="1" bRatio="0.1407329508" products="321 -211"/>
+ <channel onMode="1" bRatio="0.2380292082" products="311 211 -211"/>
+ <channel onMode="1" bRatio="0.07934465626" products="311 111 111"/>
+ <channel onMode="1" bRatio="0.1586845519" products="321 111 -211"/>
+ <channel onMode="1" bRatio="0.1162004891" products="311 211 111 -211"/>
+ <channel onMode="1" bRatio="0.01291116546" products="311 111 111 111"/>
+ <channel onMode="1" bRatio="0.07746699274" products="321 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.05164466183" products="321 111 111 -211"/>
+ <channel onMode="1" bRatio="0.01213763501" products="311 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.01699279826" products="311 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.001213763501" products="311 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.01942065298" products="321 211 111 -211 -211"/>
+</particle>
+
+<particle id="337" name="phi_3(1850)" antiName="" spinType="7" chargeType="0" colType="0"
+          m0="1.854" mWidth="0.087" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.6787654096" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.2141574644" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.107077126" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111 111"/>
+</particle>
+
+<particle id="227" name="omega_3(1670)" antiName="" spinType="7" chargeType="0" colType="0"
+          m0="1.667" mWidth="0.168" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.7999565926" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.1333629384" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.066680469" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111 111"/>
+</particle>
+
+<particle id="20215" name="rho_2(1715)+" antiName="rho_2(1715)-" spinType="5" chargeType="3" colType="0"
+          m0="1.715" mWidth="0.2" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.2403166079" products="211 111"/>
+ <channel onMode="1" bRatio="0.1519366784" products="211 111 111 111"/>
+ <channel onMode="1" bRatio="0.6077467137" products="211 211 -211 111"/>
+</particle>
+
+<particle id="20115" name="rho_2(1715)0" antiName="" spinType="5" chargeType="0" colType="0"
+          m0="1.715" mWidth="0.2" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.2403166079" products="211 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111"/>
+ <channel onMode="1" bRatio="0.3038733568" products="211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.4558100353" products="211 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111"/>
+</particle>
+
+<particle id="20325" name="K_2(1820)+" antiName="K_2(1820)-" spinType="5" chargeType="3" colType="0"
+          m0="1.819" mWidth="0.264" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.12899871" products="321 111"/>
+ <channel onMode="1" bRatio="0.25800129" products="311 211"/>
+ <channel onMode="1" bRatio="0.3065" products="321 211 -211"/>
+ <channel onMode="1" bRatio="0.10216871" products="321 111 111"/>
+ <channel onMode="1" bRatio="0.20433129" products="311 211 111"/>
+ <channel onMode="1" bRatio="0" products="321 211 111 -211"/>
+ <channel onMode="1" bRatio="0" products="321 111 111 111"/>
+ <channel onMode="1" bRatio="0" products="311 211 211 -211"/>
+ <channel onMode="1" bRatio="0" products="311 211 111 111"/>
+ <channel onMode="1" bRatio="0" products="321 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0" products="321 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="321 111 111 111 111"/>
+ <channel onMode="1" bRatio="0" products="311 211 211 111 -211"/>
+</particle>
+
+<particle id="20315" name="K_2(1820)0" antiName="K_2(1820)bar0" spinType="5" chargeType="0" colType="0"
+          m0="1.819" mWidth="0.264" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.12899871" products="311 111"/>
+ <channel onMode="1" bRatio="0.25800129" products="321 -211"/>
+ <channel onMode="1" bRatio="0.3065" products="311 211 -211"/>
+ <channel onMode="1" bRatio="0.10216871" products="311 111 111"/>
+ <channel onMode="1" bRatio="0.20433129" products="321 111 -211"/>
+ <channel onMode="1" bRatio="0" products="311 211 111 -211"/>
+ <channel onMode="1" bRatio="0" products="311 111 111 111"/>
+ <channel onMode="1" bRatio="0" products="321 211 -211 -211"/>
+ <channel onMode="1" bRatio="0" products="321 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="311 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0" products="311 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="311 111 111 111 111"/>
+ <channel onMode="1" bRatio="0" products="321 211 111 -211 -211"/>
+</particle>
+
+<particle id="20335" name="phi_2(1835)" antiName="" spinType="5" chargeType="0" colType="3"
+          m0="1.835" mWidth="0.2" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.6920902872" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.2052741682" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.1026355446" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111 111"/>
+</particle>
+
+<particle id="20225" name="omega_2(1733)" antiName="" spinType="5" chargeType="0" colType="3"
+          m0="1.733" mWidth="0.2" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.7600680532" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.159955431" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.07997651582" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111 111"/>
+</particle>
+
+<particle id="30213" name="rho(1700)+" antiName="rho(1700)-" spinType="3" chargeType="3" colType="0"
+          m0="1.72" mWidth="0.25" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.2371421852" products="211 111"/>
+ <channel onMode="1" bRatio="0.152571563" products="211 111 111 111"/>
+ <channel onMode="1" bRatio="0.6102862518" products="211 211 -211 111"/>
+</particle>
+
+<particle id="30113" name="rho(1700)0" antiName="" spinType="3" chargeType="0" colType="0"
+          m0="1.72" mWidth="0.25" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.2371421852" products="211 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111"/>
+ <channel onMode="1" bRatio="0.3051431259" products="211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.4577146889" products="211 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111"/>
+</particle>
+
+<particle id="30323" name="K*(1680)+" antiName="K*(1680)-" spinType="3" chargeType="3" colType="0"
+          m0="1.718" mWidth="0.322" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.12899871" products="321 111"/>
+ <channel onMode="1" bRatio="0.25800129" products="311 211"/>
+ <channel onMode="1" bRatio="0.3065" products="321 211 -211"/>
+ <channel onMode="1" bRatio="0.10216871" products="321 111 111"/>
+ <channel onMode="1" bRatio="0.20433129" products="311 211 111"/>
+ <channel onMode="1" bRatio="0" products="321 211 111 -211"/>
+ <channel onMode="1" bRatio="0" products="321 111 111 111"/>
+ <channel onMode="1" bRatio="0" products="311 211 211 -211"/>
+ <channel onMode="1" bRatio="0" products="311 211 111 111"/>
+ <channel onMode="1" bRatio="0" products="321 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0" products="321 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="321 111 111 111 111"/>
+ <channel onMode="1" bRatio="0" products="311 211 211 111 -211"/>
+</particle>
+
+<particle id="30313" name="K*(1680)0" antiName="K*(1680)bar0" spinType="3" chargeType="0" colType="0"
+          m0="1.718" mWidth="0.322" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.12899871" products="311 111"/>
+ <channel onMode="1" bRatio="0.25800129" products="321 -211"/>
+ <channel onMode="1" bRatio="0.3065" products="311 211 -211"/>
+ <channel onMode="1" bRatio="0.10216871" products="311 111 111"/>
+ <channel onMode="1" bRatio="0.20433129" products="321 111 -211"/>
+ <channel onMode="1" bRatio="0" products="311 211 111 -211"/>
+ <channel onMode="1" bRatio="0" products="311 111 111 111"/>
+ <channel onMode="1" bRatio="0" products="321 211 -211 -211"/>
+ <channel onMode="1" bRatio="0" products="321 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="311 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0" products="311 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="311 111 111 111 111"/>
+ <channel onMode="1" bRatio="0" products="321 211 111 -211 -211"/>
+</particle>
+
+<particle id="30333" name="phi_1(1931)" antiName="" spinType="3" chargeType="0" colType="3"
+          m0="1.931" mWidth="0.2" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.623386838" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.2510766967" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.1255364653" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111 111"/>
+</particle>
+
+<particle id="30223" name="omega(1650)" antiName="" spinType="3" chargeType="0" colType="3"
+          m0="1.67" mWidth="0.315" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.7982246221" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.1345175912" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.06725778673" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111 111"/>
+</particle>
+
+<particle id="10217" name="b_3(2013)+" antiName="b_3(2013)-" spinType="7" chargeType="3" colType="0"
+          m0="2.013" mWidth="0.2" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.1079144839" products="211 111"/>
+ <channel onMode="1" bRatio="0.1784171032" products="211 111 111 111"/>
+ <channel onMode="1" bRatio="0.7136684128" products="211 211 -211 111"/>
+</particle>
+
+<particle id="10117" name="b_3(2013))" antiName="" spinType="7" chargeType="0" colType="0"
+          m0="2.013" mWidth="0.2" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.1079144839" products="211 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111"/>
+ <channel onMode="1" bRatio="0.3568342064" products="211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.5352513096" products="211 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111"/>
+</particle>
+
+<particle id="10327" name="K_3B(2157)+" antiName="K_3B(2157)-" spinType="7" chargeType="3" colType="0"
+          m0="2.157" mWidth="0.2" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.02992879816" products="321 111"/>
+ <channel onMode="1" bRatio="0.0598584942" products="311 211"/>
+ <channel onMode="1" bRatio="0.1887997329" products="321 211 -211"/>
+ <channel onMode="1" bRatio="0.06293450295" products="321 111 111"/>
+ <channel onMode="1" bRatio="0.1258652299" products="311 211 111"/>
+ <channel onMode="1" bRatio="0.1718779675" products="321 211 111 -211"/>
+ <channel onMode="1" bRatio="0.01909755194" products="321 111 111 111"/>
+ <channel onMode="1" bRatio="0.1145853117" products="311 211 211 -211"/>
+ <channel onMode="1" bRatio="0.07639020777" products="311 211 111 111"/>
+ <channel onMode="1" bRatio="0.03348015477" products="321 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.046872518" products="321 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.003348015477" products="321 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.05356945292" products="311 211 211 111 -211"/>
+</particle>
+
+<particle id="10317" name="K_3B(2157)0" antiName="K_3B(2157)bar0" spinType="7" chargeType="0" colType="0"
+          m0="2.157" mWidth="0.2" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.02992879816" products="311 111"/>
+ <channel onMode="1" bRatio="0.0598584942" products="321 -211"/>
+ <channel onMode="1" bRatio="0.1887997329" products="311 211 -211"/>
+ <channel onMode="1" bRatio="0.06293450295" products="311 111 111"/>
+ <channel onMode="1" bRatio="0.1258652299" products="321 111 -211"/>
+ <channel onMode="1" bRatio="0.1718779675" products="311 211 111 -211"/>
+ <channel onMode="1" bRatio="0.01909755194" products="311 111 111 111"/>
+ <channel onMode="1" bRatio="0.1145853117" products="321 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.07639020777" products="321 111 111 -211"/>
+ <channel onMode="1" bRatio="0.03348015477" products="311 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.046872518" products="311 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.003348015477" products="311 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.05356945292" products="321 211 111 -211 -211"/>
+</particle>
+
+<particle id="10227" name="h_3(2234)" antiName="" spinType="7" chargeType="0" colType="3"
+          m0="2.234" mWidth="0.2" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.408399553" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.39440227" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.197198177" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111 111"/>
+</particle>
+
+<particle id="10337" name="h'_3(2011)" antiName="" spinType="7" chargeType="0" colType="3"
+          m0="2.011" mWidth="0.2" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.5647306961" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.2901809868" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.1450883171" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111 111"/>
+</particle>
+
+<particle id="219" name="a_4^+(1970)" antiName="a_4^-(1970)" spinType="9" chargeType="3" colType="0"
+          m0="1.967" mWidth="0.324" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.3582200537" products="211 211 -211"/>
+ <channel onMode="1" bRatio="0.2388133691" products="211 111 111"/>
+ <channel onMode="1" bRatio="0.1151315808" products="211 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.2532927014" products="211 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.0345398772" products="211 111 111 111 111"/>
+</particle>
+
+<particle id="119" name="a_4^0(1970)" antiName="" spinType="9" chargeType="0" colType="0"
+          m0="1.967" mWidth="0.324" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.4776267382" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0.1194066846" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.2532927014" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.1381611207" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0.01151315808" products="111 111 111 111 111"/>
+</particle>
+
+<particle id="329" name="K_4*(2045)+" antiName="K_4*(2045)-" spinType="9" chargeType="3" colType="0"
+          m0="2.048" mWidth="0.199" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.03982388356" products="321 111"/>
+ <channel onMode="1" bRatio="0.07964896185" products="311 211"/>
+ <channel onMode="1" bRatio="0.2083349927" products="321 211 -211"/>
+ <channel onMode="1" bRatio="0.06944638648" products="321 111 111"/>
+ <channel onMode="1" bRatio="0.1388886063" products="311 211 111"/>
+ <channel onMode="1" bRatio="0.1572850954" products="321 211 111 -211"/>
+ <channel onMode="1" bRatio="0.01747612171" products="321 111 111 111"/>
+ <channel onMode="1" bRatio="0.1048567303" products="311 211 211 -211"/>
+ <channel onMode="1" bRatio="0.06990448686" products="311 211 111 111"/>
+ <channel onMode="1" bRatio="0.02540746477" products="321 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.03557067935" products="321 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.002540746477" products="321 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.04065285831" products="311 211 211 111 -211"/>
+</particle>
+
+<particle id="319" name="K_4*(2045)0" antiName="K_4*(2045)bar0" spinType="9" chargeType="0" colType="0"
+          m0="2.048" mWidth="0.199" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.03982388356" products="311 111"/>
+ <channel onMode="1" bRatio="0.07964896185" products="321 -211"/>
+ <channel onMode="1" bRatio="0.2083349927" products="311 211 -211"/>
+ <channel onMode="1" bRatio="0.06944638648" products="311 111 111"/>
+ <channel onMode="1" bRatio="0.1388886063" products="321 111 -211"/>
+ <channel onMode="1" bRatio="0.1572850954" products="311 211 111 -211"/>
+ <channel onMode="1" bRatio="0.01747612171" products="311 111 111 111"/>
+ <channel onMode="1" bRatio="0.1048567303" products="321 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.06990448686" products="321 111 111 -211"/>
+ <channel onMode="1" bRatio="0.02540746477" products="311 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.03557067935" products="311 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.002540746477" products="311 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.04065285831" products="321 211 111 -211 -211"/>
+</particle>
+
+<particle id="339" name="f_4(2300)" antiName="" spinType="9" chargeType="0" colType="3"
+          m0="2.3" mWidth="0.2" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.03437844768" products="211 -211"/>
+ <channel onMode="1" bRatio="0.017188966" products="111 111"/>
+ <channel onMode="1" bRatio="0.3793730345" products="211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.5058275513" products="211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.06322915523" products="111 111 111 111"/>
+</particle>
+
+<particle id="229" name="f_4(2050)" antiName="" spinType="9" chargeType="0" colType="3"
+          m0="2.018" mWidth="0.237" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.1133339" products="211 -211"/>
+ <channel onMode="1" bRatio="0.0566661" products="111 111"/>
+ <channel onMode="1" bRatio="0.332" products="211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.4426639" products="211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.05533361" products="111 111 111 111"/>
+</particle>
+
+<particle id="20217" name="a_3(2072)+" antiName="a_3(2072)-" spinType="7" chargeType="3" colType="0"
+          m0="2.072" mWidth="0.2" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.3121569535" products="211 211 -211"/>
+ <channel onMode="1" bRatio="0.2081046356" products="211 111 111"/>
+ <channel onMode="1" bRatio="0.1370660614" products="211 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.3015491729" products="211 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.04112029815" products="211 111 111 111 111"/>
+</particle>
+
+<particle id="20117" name="a_3(2072)0" antiName="" spinType="7" chargeType="0" colType="0"
+          m0="2.072" mWidth="0.2" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.4162092713" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0.1040523178" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.3015491729" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.1644831116" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0.01370660614" products="111 111 111 111 111"/>
+</particle>
+
+<particle id="20327" name="K_3A(2160)+" antiName="K_3A(2160)-" spinType="7" chargeType="3" colType="0"
+          m0="2.16" mWidth="0.2" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.02969148171" products="321 111"/>
+ <channel onMode="1" bRatio="0.05938385418" products="311 211"/>
+ <channel onMode="1" bRatio="0.1882397025" products="321 211 -211"/>
+ <channel onMode="1" bRatio="0.06274782244" products="321 111 111"/>
+ <channel onMode="1" bRatio="0.1254918801" products="311 211 111"/>
+ <channel onMode="1" bRatio="0.172225447" products="321 211 111 -211"/>
+ <channel onMode="1" bRatio="0.01913616078" products="321 111 111 111"/>
+ <channel onMode="1" bRatio="0.1148169647" products="311 211 211 -211"/>
+ <channel onMode="1" bRatio="0.0765446431" products="311 211 111 111"/>
+ <channel onMode="1" bRatio="0.03371567252" products="321 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.04720224497" products="321 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.003371567252" products="321 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.05394628981" products="311 211 211 111 -211"/>
+</particle>
+
+<particle id="20317" name="K_3A(2160)0" antiName="K_3A(2160)bar0" spinType="7" chargeType="0" colType="0"
+          m0="2.16" mWidth="0.2" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.02969148171" products="311 111"/>
+ <channel onMode="1" bRatio="0.05938385418" products="321 -211"/>
+ <channel onMode="1" bRatio="0.1882397025" products="311 211 -211"/>
+ <channel onMode="1" bRatio="0.06274782244" products="311 111 111"/>
+ <channel onMode="1" bRatio="0.1254918801" products="321 111 -211"/>
+ <channel onMode="1" bRatio="0.172225447" products="311 211 111 -211"/>
+ <channel onMode="1" bRatio="0.01913616078" products="311 111 111 111"/>
+ <channel onMode="1" bRatio="0.1148169647" products="321 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.0765446431" products="321 111 111 -211"/>
+ <channel onMode="1" bRatio="0.03371567252" products="311 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.04720224497" products="311 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.003371567252" products="311 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.05394628981" products="321 211 111 -211 -211"/>
+</particle>
+
+<particle id="20337" name="f_3(2173)" antiName="" spinType="7" chargeType="0" colType="3"
+          m0="2.173" mWidth="0.2" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.0473472313" products="211 -211"/>
+ <channel onMode="1" bRatio="0.02367326055" products="111 111"/>
+ <channel onMode="1" bRatio="0.3715918033" products="211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.4954526411" products="211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.06193227687" products="111 111 111 111"/>
+</particle>
+
+<particle id="20227" name="f_3'(2087)" antiName="" spinType="7" chargeType="0" colType="3"
+          m0="2.087" mWidth="0.2" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.05917570104" products="211 -211"/>
+ <channel onMode="1" bRatio="0.0295874067" products="111 111"/>
+ <channel onMode="1" bRatio="0.3644947569" products="211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.4859899717" products="211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.0607494299" products="111 111 111 111"/>
+</particle>
+
+<particle id="30215" name="a_2(1918)+" antiName="a_2(1918)-" spinType="5" chargeType="3" colType="0"
+          m0="1.918" mWidth="0.2" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.3797122176" products="211 211 -211"/>
+ <channel onMode="1" bRatio="0.2531414784" products="211 111 111"/>
+ <channel onMode="1" bRatio="0.1048973705" products="211 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.2307771523" products="211 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.0314695783" products="211 111 111 111 111"/>
+</particle>
+
+<particle id="30115" name="a_2(1918)0" antiName="" spinType="5" chargeType="0" colType="0"
+          m0="1.918" mWidth="0.2" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.5062829568" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0.1265707392" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.2307771523" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.1258797818" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0.01048973705" products="111 111 111 111 111"/>
+</particle>
+
+<particle id="30325" name="K_2*(1897)+" antiName="K_2*(1897)-" spinType="5" chargeType="3" colType="0"
+          m0="1.897" mWidth="0.2" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.05829310592" products="321 111"/>
+ <channel onMode="1" bRatio="0.1165879607" products="311 211"/>
+ <channel onMode="1" bRatio="0.2304188766" products="321 211 -211"/>
+ <channel onMode="1" bRatio="0.07680782832" products="321 111 111"/>
+ <channel onMode="1" bRatio="0.1536110483" products="311 211 111"/>
+ <channel onMode="1" bRatio="0.1314394248" products="321 211 111 -211"/>
+ <channel onMode="1" bRatio="0.01460438054" products="321 111 111 111"/>
+ <channel onMode="1" bRatio="0.08762628323" products="311 211 211 -211"/>
+ <channel onMode="1" bRatio="0.05841752215" products="311 211 111 111"/>
+ <channel onMode="1" bRatio="0.01604285502" products="321 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.02246014141" products="321 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.001604285502" products="321 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.02566914558" products="311 211 211 111 -211"/>
+</particle>
+
+<particle id="30315" name="K_2*(1897)0" antiName="K_2*(1897)bar0" spinType="5" chargeType="0" colType="0"
+          m0="1.897" mWidth="0.2" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.05829310592" products="311 111"/>
+ <channel onMode="1" bRatio="0.1165879607" products="321 -211"/>
+ <channel onMode="1" bRatio="0.2304188766" products="311 211 -211"/>
+ <channel onMode="1" bRatio="0.07680782832" products="311 111 111"/>
+ <channel onMode="1" bRatio="0.1536110483" products="321 111 -211"/>
+ <channel onMode="1" bRatio="0.1314394248" products="311 211 111 -211"/>
+ <channel onMode="1" bRatio="0.01460438054" products="311 111 111 111"/>
+ <channel onMode="1" bRatio="0.08762628323" products="321 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.05841752215" products="321 111 111 -211"/>
+ <channel onMode="1" bRatio="0.01604285502" products="311 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.02246014141" products="311 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.001604285502" products="311 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.02566914558" products="321 211 111 -211 -211"/>
+</particle>
+
+<particle id="30335" name="f_2(2129)" antiName="" spinType="5" chargeType="0" colType="3"
+          m0="2.129" mWidth="0.2" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.05303831374" products="211 -211"/>
+ <channel onMode="1" bRatio="0.02651875909" products="111 111"/>
+ <channel onMode="1" bRatio="0.3681771709" products="211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.4908998263" products="211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.06136316863" products="111 111 111 111"/>
+</particle>
+
+<particle id="30225" name="f_2'(1889)" antiName="" spinType="5" chargeType="0" colType="3"
+          m0="1.889" mWidth="0.2" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.1003281506" products="211 -211"/>
+ <channel onMode="1" bRatio="0.05016332282" products="111 111"/>
+ <channel onMode="1" bRatio="0.3398034107" products="211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.4530683825" products="211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.05663418494" products="111 111 111 111"/>
+</particle>
+
+<particle id="10219" name="pi_4(2306)+" antiName="pi_4(2306)-" spinType="9" chargeType="3" colType="0"
+          m0="2.306" mWidth="0.2" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.2180021824" products="211 211 -211"/>
+ <channel onMode="1" bRatio="0.1453347883" products="211 111 111"/>
+ <channel onMode="1" bRatio="0.1819009941" products="211 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.4001872803" products="211 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.0545709349" products="211 111 111 111 111"/>
+</particle>
+
+<particle id="10119" name="pi_4(2306)0" antiName="" spinType="9" chargeType="0" colType="0"
+          m0="2.306" mWidth="0.2" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.2906695765" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0.07266739413" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.4001872803" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.2182862862" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0.01819009941" products="111 111 111 111 111"/>
+</particle>
+
+<particle id="10329" name="K_4B(2485)+" antiName="K_4B(2485)-" spinType="9" chargeType="3" colType="0"
+          m0="2.485" mWidth="0.2" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.01229744141" products="321 111"/>
+ <channel onMode="1" bRatio="0.02459525174" products="311 211"/>
+ <channel onMode="1" bRatio="0.1281153922" products="321 211 -211"/>
+ <channel onMode="1" bRatio="0.04270598483" products="321 111 111"/>
+ <channel onMode="1" bRatio="0.08540940735" products="311 211 111"/>
+ <channel onMode="1" bRatio="0.1926169912" products="321 211 111 -211"/>
+ <channel onMode="1" bRatio="0.02140188791" products="321 111 111 111"/>
+ <channel onMode="1" bRatio="0.1284113275" products="311 211 211 -211"/>
+ <channel onMode="1" bRatio="0.08560755166" products="311 211 111 111"/>
+ <channel onMode="1" bRatio="0.06196355018" products="321 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.08674952794" products="321 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.006196355018" products="321 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.099143911" products="311 211 211 111 -211"/>
+</particle>
+
+<particle id="10319" name="K_4B(2485)0" antiName="K_4(2485)bar0" spinType="9" chargeType="0" colType="0"
+          m0="2.485" mWidth="0.2" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.01229744141" products="311 111"/>
+ <channel onMode="1" bRatio="0.02459525174" products="321 -211"/>
+ <channel onMode="1" bRatio="0.1281153922" products="311 211 -211"/>
+ <channel onMode="1" bRatio="0.04270598483" products="311 111 111"/>
+ <channel onMode="1" bRatio="0.08540940735" products="321 111 -211"/>
+ <channel onMode="1" bRatio="0.1926169912" products="311 211 111 -211"/>
+ <channel onMode="1" bRatio="0.02140188791" products="311 111 111 111"/>
+ <channel onMode="1" bRatio="0.1284113275" products="321 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.08560755166" products="321 111 111 -211"/>
+ <channel onMode="1" bRatio="0.06196355018" products="311 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.08674952794" products="311 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.006196355018" products="311 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.099143911" products="321 211 111 -211 -211"/>
+</particle>
+
+<particle id="10229" name="eta_4(2547)" antiName="" spinType="9" chargeType="0" colType="0"
+          m0="2.547" mWidth="0.2" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.01909212341" products="211 -211"/>
+ <channel onMode="1" bRatio="0.009545918515" products="111 111"/>
+ <channel onMode="1" bRatio="0.3885447832" products="211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.5180564731" products="211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.06475778766" products="111 111 111 111"/>
+</particle>
+
+<particle id="10339" name="eta'_4(2320)" antiName="" spinType="9" chargeType="0" colType="0"
+          m0="2.32" mWidth="0.2" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.03272356092" products="211 -211"/>
+ <channel onMode="1" bRatio="0.01636153503" products="111 111"/>
+ <channel onMode="1" bRatio="0.3803659616" products="211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.5071514458" products="211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.06339464391" products="111 111 111 111"/>
+</particle>
+
+<particle id="218" name="rho_5(2350)+" antiName="rho_5(2350)-" spinType="11" chargeType="3" colType="0"
+          m0="2.35" mWidth="0.2" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.04560945211" products="211 111"/>
+ <channel onMode="1" bRatio="0.1908781096" products="211 111 111 111"/>
+ <channel onMode="1" bRatio="0.7635124383" products="211 211 -211 111"/>
+</particle>
+
+<particle id="118" name="rho_5(2350)0" antiName="" spinType="11" chargeType="0" colType="0"
+          m0="2.35" mWidth="0.2" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.04560945211" products="211 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111"/>
+ <channel onMode="1" bRatio="0.3817562192" products="211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.5726343287" products="211 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111"/>
+</particle>
+
+<particle id="328" name="K_5*(2380)+" antiName="K_5*(2380)-" spinType="11" chargeType="3" colType="0"
+          m0="2.38" mWidth="0.2" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.01639592112" products="321 111"/>
+ <channel onMode="1" bRatio="0.03279233412" products="311 211"/>
+ <channel onMode="1" bRatio="0.1467772143" products="321 211 -211"/>
+ <channel onMode="1" bRatio="0.04892671662" products="321 111 111"/>
+ <channel onMode="1" bRatio="0.09785049769" products="311 211 111"/>
+ <channel onMode="1" bRatio="0.1896217706" products="321 211 111 -211"/>
+ <channel onMode="1" bRatio="0.02106908563" products="321 111 111 111"/>
+ <channel onMode="1" bRatio="0.1264145138" products="311 211 211 -211"/>
+ <channel onMode="1" bRatio="0.08427634251" products="311 211 111 111"/>
+ <channel onMode="1" bRatio="0.05241627664" products="321 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.07338325904" products="321 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.005241627664" products="321 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.08386792962" products="311 211 211 111 -211"/>
+</particle>
+
+<particle id="318" name="K_5*(2380)0" antiName="K_5*(2380)bar0" spinType="11" chargeType="0" colType="0"
+          m0="2.38" mWidth="0.2" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.01639592112" products="311 111"/>
+ <channel onMode="1" bRatio="0.03279233412" products="321 -211"/>
+ <channel onMode="1" bRatio="0.1467772143" products="311 211 -211"/>
+ <channel onMode="1" bRatio="0.04892671662" products="311 111 111"/>
+ <channel onMode="1" bRatio="0.09785049769" products="321 111 -211"/>
+ <channel onMode="1" bRatio="0.1896217706" products="311 211 111 -211"/>
+ <channel onMode="1" bRatio="0.02106908563" products="311 111 111 111"/>
+ <channel onMode="1" bRatio="0.1264145138" products="321 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.08427634251" products="321 111 111 -211"/>
+ <channel onMode="1" bRatio="0.05241627664" products="311 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.07338325904" products="311 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.005241627664" products="311 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.08386792962" products="321 211 111 -211 -211"/>
+</particle>
+
+<particle id="338" name="phi_5(2584)" antiName="" spinType="11" chargeType="0" colType="0"
+          m0="2.584" mWidth="0.2" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.2237657137" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.5174921116" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.2587421746" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111 111"/>
+</particle>
+
+<particle id="228" name="omega_5(2323)" antiName="" spinType="11" chargeType="0" colType="0"
+          m0="2.323" mWidth="0.2" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.3532051734" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.4311987071" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.2155961196" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111 111"/>
+</particle>
+
+<particle id="20219" name="rho_4(2376)+" antiName="rho_4(2376)-" spinType="9" chargeType="3" colType="0"
+          m0="2.376" mWidth="0.2" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.0428203996" products="211 111"/>
+ <channel onMode="1" bRatio="0.1914359201" products="211 111 111 111"/>
+ <channel onMode="1" bRatio="0.7657436803" products="211 211 -211 111"/>
+</particle>
+
+<particle id="20119" name="rho_4(2376)0" antiName="" spinType="9" chargeType="0" colType="0"
+          m0="2.376" mWidth="0.2" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.0428203996" products="211 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111"/>
+ <channel onMode="1" bRatio="0.3828718402" products="211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.5743077602" products="211 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111"/>
+</particle>
+
+<particle id="20329" name="K_4A(2453)+" antiName="K_4A(2453)-" spinType="9" chargeType="3" colType="0"
+          m0="2.453" mWidth="0.2" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.0134259337" products="321 111"/>
+ <channel onMode="1" bRatio="0.02685227018" products="311 211"/>
+ <channel onMode="1" bRatio="0.1336622255" products="321 211 -211"/>
+ <channel onMode="1" bRatio="0.04455496624" products="321 111 111"/>
+ <channel onMode="1" bRatio="0.08910725925" products="311 211 111"/>
+ <channel onMode="1" bRatio="0.1920346568" products="321 211 111 -211"/>
+ <channel onMode="1" bRatio="0.02133718408" products="321 111 111 111"/>
+ <channel onMode="1" bRatio="0.1280231045" products="311 211 211 -211"/>
+ <channel onMode="1" bRatio="0.08534873633" products="311 211 111 111"/>
+ <channel onMode="1" bRatio="0.0590335571" products="321 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.08264751124" products="321 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.00590335571" products="321 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.09445581658" products="311 211 211 111 -211"/>
+</particle>
+
+<particle id="20319" name="K_4A(2453)0" antiName="K_4A(2453)bar0" spinType="9" chargeType="0" colType="0"
+          m0="2.453" mWidth="0.2" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.0134259337" products="311 111"/>
+ <channel onMode="1" bRatio="0.02685227018" products="321 -211"/>
+ <channel onMode="1" bRatio="0.1336622255" products="311 211 -211"/>
+ <channel onMode="1" bRatio="0.04455496624" products="311 111 111"/>
+ <channel onMode="1" bRatio="0.08910725925" products="321 111 -211"/>
+ <channel onMode="1" bRatio="0.1920346568" products="311 211 111 -211"/>
+ <channel onMode="1" bRatio="0.02133718408" products="311 111 111 111"/>
+ <channel onMode="1" bRatio="0.1280231045" products="321 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.08534873633" products="321 111 111 -211"/>
+ <channel onMode="1" bRatio="0.0590335571" products="311 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.08264751124" products="311 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.00590335571" products="311 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.09445581658" products="321 211 111 -211 -211"/>
+</particle>
+
+<particle id="20339" name="phi_4(2464)" antiName="" spinType="9" chargeType="0" colType="0"
+          m0="2.464" mWidth="0.2" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.2771706936" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.4818886137" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.2409406927" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111 111"/>
+</particle>
+
+<particle id="20229" name="omega_4(2389)" antiName="" spinType="9" chargeType="0" colType="0"
+          m0="2.389" mWidth="0.2" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.3158148377" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.4561257221" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.2280594401" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111 111"/>
+</particle>
+
+<particle id="30217" name="rho_3(2113)+" antiName="rho_3(2113)-" spinType="7" chargeType="3" colType="0"
+          m0="2.113" mWidth="0.2" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.08293520785" products="211 111"/>
+ <channel onMode="1" bRatio="0.1834129584" products="211 111 111 111"/>
+ <channel onMode="1" bRatio="0.7336518337" products="211 211 -211 111"/>
+</particle>
+
+<particle id="30117" name="rho_3(2113)0" antiName="" spinType="7" chargeType="0" colType="0"
+          m0="2.113" mWidth="0.2" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.08293520785" products="211 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111"/>
+ <channel onMode="1" bRatio="0.3668259169" products="211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.5502388753" products="211 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111"/>
+</particle>
+
+<particle id="30327" name="K_3*(2092)+" antiName="K_3*(2092)-" spinType="7" chargeType="3" colType="0"
+          m0="2.092" mWidth="0.2" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.03551875806" products="321 111"/>
+ <channel onMode="1" bRatio="0.07103858169" products="311 211"/>
+ <channel onMode="1" bRatio="0.2006804034" products="321 211 -211"/>
+ <channel onMode="1" bRatio="0.06689480567" products="321 111 111"/>
+ <channel onMode="1" bRatio="0.1337855977" products="311 211 111"/>
+ <channel onMode="1" bRatio="0.1636284795" products="321 211 111 -211"/>
+ <channel onMode="1" bRatio="0.01818094216" products="321 111 111 111"/>
+ <channel onMode="1" bRatio="0.109085653" products="311 211 211 -211"/>
+ <channel onMode="1" bRatio="0.07272376865" products="311 211 111 111"/>
+ <channel onMode="1" bRatio="0.02854705013" products="321 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.0399661271" products="321 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.002854705013" products="321 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.04567630791" products="311 211 211 111 -211"/>
+</particle>
+
+<particle id="30317" name="K_3*(2092)0" antiName="K_3*(2092)bar0" spinType="7" chargeType="0" colType="0"
+          m0="2.092" mWidth="0.2" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.03551875806" products="311 111"/>
+ <channel onMode="1" bRatio="0.07103858169" products="321 -211"/>
+ <channel onMode="1" bRatio="0.2006804034" products="311 211 -211"/>
+ <channel onMode="1" bRatio="0.06689480567" products="311 111 111"/>
+ <channel onMode="1" bRatio="0.1337855977" products="321 111 -211"/>
+ <channel onMode="1" bRatio="0.1636284795" products="311 211 111 -211"/>
+ <channel onMode="1" bRatio="0.01818094216" products="311 111 111 111"/>
+ <channel onMode="1" bRatio="0.109085653" products="321 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.07272376865" products="321 111 111 -211"/>
+ <channel onMode="1" bRatio="0.02854705013" products="311 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.0399661271" products="311 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.002854705013" products="311 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.04567630791" products="321 211 111 -211 -211"/>
+</particle>
+
+<particle id="30337" name="phi_3(2310)" antiName="" spinType="7" chargeType="0" colType="0"
+          m0="2.31" mWidth="0.2" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.3609349645" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.4260454872" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.2130195483" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111 111"/>
+</particle>
+
+<particle id="30227" name="omega_3(2101)" antiName="" spinType="7" chargeType="0" colType="0"
+          m0="2.101" mWidth="0.2" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.4994240448" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.3337189721" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.1668569831" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111 111"/>
+</particle>
+
+<particle id="100211" name="pi(1300)+" antiName="pi(1300)-" spinType="1" chargeType="3" colType="0"
+          m0="1.3" mWidth="0.2" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.42" products="211 211 -211"/>
+ <channel onMode="1" bRatio="0.28" products="211 111 111"/>
+ <channel onMode="1" bRatio="0.145" products="221 211"/>
+ <channel onMode="1" bRatio="0.106" products="223 211"/>
+ <channel onMode="1" bRatio="0.049" products="321 -311"/>
+</particle>
+
+<particle id="100111" name="pi(1300)0" antiName="" spinType="1" chargeType="0" colType="0"
+          m0="1.3" mWidth="0.2" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.56" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0.14" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.145" products="221 111"/>
+ <channel onMode="1" bRatio="0.106" products="223 111"/>
+ <channel onMode="1" bRatio="0.0245" products="321 -321"/>
+ <channel onMode="1" bRatio="0.0245" products="311 -311"/>
+</particle>
+
+<particle id="100321" name="K(1460)+" antiName="K(1460)-" spinType="1" chargeType="3" colType="0"
+          m0="1.46" mWidth="0.2" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.1503894053" products="321 111"/>
+ <channel onMode="1" bRatio="0.3007833224" products="311 211"/>
+ <channel onMode="1" bRatio="0.2187518901" products="321 211 -211"/>
+ <channel onMode="1" bRatio="0.07291875504" products="321 111 111"/>
+ <channel onMode="1" bRatio="0.145833135" products="311 211 111"/>
+ <channel onMode="1" bRatio="0.04591907407" products="321 211 111 -211"/>
+ <channel onMode="1" bRatio="0.005102119342" products="321 111 111 111"/>
+ <channel onMode="1" bRatio="0.03061271605" products="311 211 211 -211"/>
+ <channel onMode="1" bRatio="0.02040847737" products="311 211 111 111"/>
+ <channel onMode="1" bRatio="0.002062447223" products="321 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.002887444674" products="321 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.0002062447223" products="321 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.003299989805" products="311 211 211 111 -211"/>
+</particle>
+
+<particle id="100311" name="K(1460)0" antiName="K(1460)bar0" spinType="1" chargeType="0" colType="0"
+          m0="1.46" mWidth="0.2" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.1503894053" products="311 111"/>
+ <channel onMode="1" bRatio="0.3007833224" products="321 -211"/>
+ <channel onMode="1" bRatio="0.2187518901" products="311 211 -211"/>
+ <channel onMode="1" bRatio="0.07291875504" products="311 111 111"/>
+ <channel onMode="1" bRatio="0.145833135" products="321 111 -211"/>
+ <channel onMode="1" bRatio="0.04591907407" products="311 211 111 -211"/>
+ <channel onMode="1" bRatio="0.005102119342" products="311 111 111 111"/>
+ <channel onMode="1" bRatio="0.03061271605" products="321 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.02040847737" products="321 111 111 -211"/>
+ <channel onMode="1" bRatio="0.002062447223" products="311 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.002887444674" products="311 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.0002062447223" products="311 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.003299989805" products="321 211 111 -211 -211"/>
+</particle>
+
+<particle id="100331" name="eta(1475)" antiName="" spinType="1" chargeType="0" colType="0"
+          m0="1.475" mWidth="0.09" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.292472357" products="211 -211"/>
+ <channel onMode="1" bRatio="0.146233985" products="111 111"/>
+ <channel onMode="1" bRatio="0.2245174632" products="211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.2993547466" products="211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.0374197643" products="111 111 111 111"/>
+</particle>
+
+<particle id="100221" name="eta'(1295)" antiName="" spinType="1" chargeType="0" colType="0"
+          m0="1.294" mWidth="0.055" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.4210715371" products="211 -211"/>
+ <channel onMode="1" bRatio="0.2105326105" products="111 111"/>
+ <channel onMode="1" bRatio="0.1473583409" products="211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.1964765599" products="211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.02455984629" products="111 111 111 111"/>
+</particle>
+
+<particle id="100213" name="rho(1450)+" antiName="rho(1450)-" spinType="3" chargeType="3" colType="0"
+          m0="1.465" mWidth="0.4" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.4487809249" products="211 111"/>
+ <channel onMode="1" bRatio="0.110243815" products="211 111 111 111"/>
+ <channel onMode="1" bRatio="0.4409752601" products="211 211 -211 111"/>
+</particle>
+
+<particle id="100113" name="rho(1450)0" antiName="" spinType="3" chargeType="0" colType="0"
+          m0="1.465" mWidth="0.4" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.4487809249" products="211 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111"/>
+ <channel onMode="1" bRatio="0.22048763" products="211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.3307314451" products="211 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111"/>
+</particle>
+
+<particle id="100323" name="K*(1410)+" antiName="K*(1410)-" spinType="3" chargeType="3" colType="0"
+          m0="1.414" mWidth="0.232" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.0368407614" products="321 111"/>
+ <channel onMode="1" bRatio="0.07368262803" products="311 211"/>
+ <channel onMode="1" bRatio="0.2031571762" products="321 211 -211"/>
+ <channel onMode="1" bRatio="0.06772041312" products="321 111 111"/>
+ <channel onMode="1" bRatio="0.1354367631" products="311 211 111"/>
+ <channel onMode="1" bRatio="0.1616748527" products="321 211 111 -211"/>
+ <channel onMode="1" bRatio="0.01796387253" products="321 111 111 111"/>
+ <channel onMode="1" bRatio="0.1077832352" products="311 211 211 -211"/>
+ <channel onMode="1" bRatio="0.07185549011" products="311 211 111 111"/>
+ <channel onMode="1" bRatio="0.02752968195" products="321 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.0385418025" products="321 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.002752968195" products="321 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.04404848219" products="311 211 211 111 -211"/>
+</particle>
+
+<particle id="100313" name="K*(1410)0" antiName="K*(1410)bar0" spinType="3" chargeType="0" colType="0"
+          m0="1.414" mWidth="0.232" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.0368407614" products="311 111"/>
+ <channel onMode="1" bRatio="0.07368262803" products="321 -211"/>
+ <channel onMode="1" bRatio="0.2031571762" products="311 211 -211"/>
+ <channel onMode="1" bRatio="0.06772041312" products="311 111 111"/>
+ <channel onMode="1" bRatio="0.1354367631" products="321 111 -211"/>
+ <channel onMode="1" bRatio="0.1616748527" products="311 211 111 -211"/>
+ <channel onMode="1" bRatio="0.01796387253" products="311 111 111 111"/>
+ <channel onMode="1" bRatio="0.1077832352" products="321 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.07185549011" products="321 111 111 -211"/>
+ <channel onMode="1" bRatio="0.02752968195" products="311 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.0385418025" products="311 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.002752968195" products="311 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.04404848219" products="321 211 111 -211 -211"/>
+</particle>
+
+<particle id="100333" name="phi(1680)" antiName="" spinType="3" chargeType="0" colType="0"
+          m0="1.68" mWidth="0.15" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.792393549" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.1384049927" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.0692014583" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111 111"/>
+</particle>
+
+<particle id="100223" name="omega(1420)" antiName="" spinType="3" chargeType="0" colType="0"
+          m0="1.41" mWidth="0.29" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.9161106498" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.0559265131" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.02796283711" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111 111"/>
+</particle>
+
+<particle id="110213" name="b_1(1668)+" antiName="b_1(1668)-" spinType="3" chargeType="3" colType="0"
+          m0="1.668" mWidth="0.2" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.2720556735" products="211 111"/>
+ <channel onMode="1" bRatio="0.1455888653" products="211 111 111 111"/>
+ <channel onMode="1" bRatio="0.5823554612" products="211 211 -211 111"/>
+</particle>
+
+<particle id="110113" name="b_1(1668)0" antiName="" spinType="3" chargeType="0" colType="0"
+          m0="1.668" mWidth="0.2" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.2720556735" products="211 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111"/>
+ <channel onMode="1" bRatio="0.2911777306" products="211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.4367665959" products="211 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111"/>
+</particle>
+
+<particle id="110323" name="K_1B(1796)+" antiName="K_1B(1796)-" spinType="3" chargeType="3" colType="0"
+          m0="1.796" mWidth="0.2" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.0368407614" products="321 111"/>
+ <channel onMode="1" bRatio="0.07368262803" products="311 211"/>
+ <channel onMode="1" bRatio="0.2031571762" products="321 211 -211"/>
+ <channel onMode="1" bRatio="0.06772041312" products="321 111 111"/>
+ <channel onMode="1" bRatio="0.1354367631" products="311 211 111"/>
+ <channel onMode="1" bRatio="0.1616748527" products="321 211 111 -211"/>
+ <channel onMode="1" bRatio="0.01796387253" products="321 111 111 111"/>
+ <channel onMode="1" bRatio="0.1077832352" products="311 211 211 -211"/>
+ <channel onMode="1" bRatio="0.07185549011" products="311 211 111 111"/>
+ <channel onMode="1" bRatio="0.02752968195" products="321 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.0385418025" products="321 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.002752968195" products="321 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.04404848219" products="311 211 211 111 -211"/>
+</particle>
+
+<particle id="110313" name="K_1B(1796)0" antiName="K_1B(1796)bar0" spinType="3" chargeType="0" colType="0"
+          m0="1.796" mWidth="0.2" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.0368407614" products="311 111"/>
+ <channel onMode="1" bRatio="0.07368262803" products="321 -211"/>
+ <channel onMode="1" bRatio="0.2031571762" products="311 211 -211"/>
+ <channel onMode="1" bRatio="0.06772041312" products="311 111 111"/>
+ <channel onMode="1" bRatio="0.1354367631" products="321 111 -211"/>
+ <channel onMode="1" bRatio="0.1616748527" products="311 211 111 -211"/>
+ <channel onMode="1" bRatio="0.01796387253" products="311 111 111 111"/>
+ <channel onMode="1" bRatio="0.1077832352" products="321 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.07185549011" products="321 111 111 -211"/>
+ <channel onMode="1" bRatio="0.02752968195" products="311 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.0385418025" products="311 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.002752968195" products="311 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.04404848219" products="321 211 111 -211 -211"/>
+</particle>
+
+<particle id="110333" name="h_1(1808)" antiName="" spinType="3" chargeType="0" colType="3"
+          m0="1.808" mWidth="0.2" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.7107129426" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.1928590025" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.09642805483" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111 111"/>
+</particle>
+
+<particle id="110223" name="h'_1(1664)" antiName="" spinType="3" chargeType="0" colType="3"
+          m0="1.664" mWidth="0.2" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.8016804797" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.1322136746" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.06610584572" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111 111"/>
+</particle>
+
+<particle id="100215" name="a_2(1700)+" antiName="a_2(1700)-" spinType="5" chargeType="3" colType="0"
+          m0="1.698" mWidth="0.265" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.4690066288" products="211 211 -211"/>
+ <channel onMode="1" bRatio="0.3126710859" products="211 111 111"/>
+ <channel onMode="1" bRatio="0.06237686013" products="211 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.1372308389" products="211 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.01871327636" products="211 111 111 111 111"/>
+</particle>
+
+<particle id="100115" name="a_2(1700)0" antiName="" spinType="5" chargeType="0" colType="0"
+          m0="1.698" mWidth="0.265" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.6253421718" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0.1563355429" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.1372308389" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.07485397874" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0.006237686013" products="111 111 111 111 111"/>
+</particle>
+
+<particle id="100325" name="K_2*(1980)+" antiName="K_2*(1980)-" spinType="5" chargeType="3" colType="0"
+          m0="2.048" mWidth="0.199" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.03982388356" products="321 111"/>
+ <channel onMode="1" bRatio="0.07964896185" products="311 211"/>
+ <channel onMode="1" bRatio="0.2083349927" products="321 211 -211"/>
+ <channel onMode="1" bRatio="0.06944638648" products="321 111 111"/>
+ <channel onMode="1" bRatio="0.1388886063" products="311 211 111"/>
+ <channel onMode="1" bRatio="0.1572850954" products="321 211 111 -211"/>
+ <channel onMode="1" bRatio="0.01747612171" products="321 111 111 111"/>
+ <channel onMode="1" bRatio="0.1048567303" products="311 211 211 -211"/>
+ <channel onMode="1" bRatio="0.06990448686" products="311 211 111 111"/>
+ <channel onMode="1" bRatio="0.02540746477" products="321 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.03557067935" products="321 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.002540746477" products="321 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.04065285831" products="311 211 211 111 -211"/>
+</particle>
+
+<particle id="100315" name="K_2*(1980)0" antiName="K_2*(1980)bar0" spinType="5" chargeType="0" colType="0"
+          m0="2.048" mWidth="0.199" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.03982388356" products="311 111"/>
+ <channel onMode="1" bRatio="0.07964896185" products="321 -211"/>
+ <channel onMode="1" bRatio="0.2083349927" products="311 211 -211"/>
+ <channel onMode="1" bRatio="0.06944638648" products="311 111 111"/>
+ <channel onMode="1" bRatio="0.1388886063" products="321 111 -211"/>
+ <channel onMode="1" bRatio="0.1572850954" products="311 211 111 -211"/>
+ <channel onMode="1" bRatio="0.01747612171" products="311 111 111 111"/>
+ <channel onMode="1" bRatio="0.1048567303" products="321 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.06990448686" products="321 111 111 -211"/>
+ <channel onMode="1" bRatio="0.02540746477" products="311 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.03557067935" products="311 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.002540746477" products="311 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.04065285831" products="321 211 111 -211 -211"/>
+</particle>
+
+<particle id="100335" name="f_2(1950)" antiName="" spinType="5" chargeType="0" colType="3"
+          m0="1.936" mWidth="0.464" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.08839685355" products="211 -211"/>
+ <channel onMode="1" bRatio="0.0441977638" products="111 111"/>
+ <channel onMode="1" bRatio="0.3469621531" products="211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.4626133127" products="211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.05782731464" products="111 111 111 111"/>
+</particle>
+
+<particle id="100225" name="f_2(1640)" antiName="" spinType="5" chargeType="0" colType="3"
+          m0="1.64" mWidth="0.2" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.1950878331" products="211 -211"/>
+ <channel onMode="1" bRatio="0.09754245337" products="111 111"/>
+ <channel onMode="1" bRatio="0.2829478854" products="211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.3772614893" products="211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.04715821669" products="111 111 111 111"/>
+</particle>
+
+<particle id="120213" name="a_1(1640)+" antiName="a_1(1640)-" spinType="3" chargeType="3" colType="0"
+          m0="1.655" mWidth="0.254" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.4840819427" products="211 211 -211"/>
+ <channel onMode="1" bRatio="0.3227212951" products="211 111 111"/>
+ <channel onMode="1" bRatio="0.05519824693" products="211 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.1214376888" products="211 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.01655966728" products="211 111 111 111 111"/>
+</particle>
+
+<particle id="120113" name="a_1(1640)0" antiName="" spinType="3" chargeType="0" colType="0"
+          m0="1.655" mWidth="0.254" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.6454425902" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0.1613606476" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.1214376888" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.06623944189" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0.005519824693" products="111 111 111 111 111"/>
+</particle>
+
+<particle id="120323" name="K_1A(1750)+" antiName="K_1A(1750)-" spinType="3" chargeType="3" colType="0"
+          m0="1.75" mWidth="0.2" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.08262515191" products="321 111"/>
+ <channel onMode="1" bRatio="0.1652527826" products="311 211"/>
+ <channel onMode="1" bRatio="0.241814663" products="321 211 -211"/>
+ <channel onMode="1" bRatio="0.08060649978" products="321 111 111"/>
+ <channel onMode="1" bRatio="0.1612081633" products="311 211 111"/>
+ <channel onMode="1" bRatio="0.1021315043" products="321 211 111 -211"/>
+ <channel onMode="1" bRatio="0.01134794492" products="321 111 111 111"/>
+ <channel onMode="1" bRatio="0.06808766953" products="311 211 211 -211"/>
+ <channel onMode="1" bRatio="0.04539177969" products="311 211 111 111"/>
+ <channel onMode="1" bRatio="0.009229650144" products="321 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.01292159327" products="321 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.0009229650144" products="321 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.0147677725" products="311 211 211 111 -211"/>
+</particle>
+
+<particle id="120313" name="K_1A(1750)0" antiName="K_1A(1750)bar0" spinType="3" chargeType="0" colType="0"
+          m0="1.75" mWidth="0.2" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.08262515191" products="311 111"/>
+ <channel onMode="1" bRatio="0.1652527826" products="321 -211"/>
+ <channel onMode="1" bRatio="0.241814663" products="311 211 -211"/>
+ <channel onMode="1" bRatio="0.08060649978" products="311 111 111"/>
+ <channel onMode="1" bRatio="0.1612081633" products="321 111 -211"/>
+ <channel onMode="1" bRatio="0.1021315043" products="311 211 111 -211"/>
+ <channel onMode="1" bRatio="0.01134794492" products="311 111 111 111"/>
+ <channel onMode="1" bRatio="0.06808766953" products="321 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.04539177969" products="321 111 111 -211"/>
+ <channel onMode="1" bRatio="0.009229650144" products="311 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.01292159327" products="311 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.0009229650144" products="311 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.0147677725" products="321 211 111 -211 -211"/>
+</particle>
+
+<particle id="120333" name="f_1(1766)" antiName="" spinType="3" chargeType="0" colType="3"
+          m0="1.766" mWidth="0.2" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.139796948" products="211 -211"/>
+ <channel onMode="1" bRatio="0.06989742553" products="111 111"/>
+ <channel onMode="1" bRatio="0.3161222506" products="211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.4214936998" products="211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.0526873052" products="111 111 111 111"/>
+</particle>
+
+<particle id="120223" name="f'_1(1659)" antiName="" spinType="5" chargeType="0" colType="3"
+          m0="1.659" mWidth="0.2" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.1856887923" products="211 -211"/>
+ <channel onMode="1" bRatio="0.0928430035" products="111 111"/>
+ <channel onMode="1" bRatio="0.2885872817" products="211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.3847806373" products="211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.04809812077" products="111 111 111 111"/>
+</particle>
+
+<particle id="110211" name="a_0(1854)+" antiName="a_0(1854)-" spinType="1" chargeType="3" colType="0"
+          m0="1.854" mWidth="0.2" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.4072592458" products="211 211 -211"/>
+ <channel onMode="1" bRatio="0.2715061638" products="211 111 111"/>
+ <channel onMode="1" bRatio="0.09177993482" products="211 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.2019184265" products="211 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.02753430168" products="211 111 111 111 111"/>
+</particle>
+
+<particle id="110111" name="a_0(1854)0" antiName="" spinType="1" chargeType="0" colType="0"
+          m0="1.854" mWidth="0.2" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.5430123277" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0.1357530819" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.2019184265" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.1101384917" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0.009177993482" products="111 111 111 111 111"/>
+</particle>
+
+<particle id="110321" name="K_0*(1839)+" antiName="K_0*(1839)-" spinType="1" chargeType="3" colType="0"
+          m0="1.839" mWidth="0.2" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.06709297092" products="321 111"/>
+ <channel onMode="1" bRatio="0.1341879547" products="311 211"/>
+ <channel onMode="1" bRatio="0.2363885649" products="321 211 -211"/>
+ <channel onMode="1" bRatio="0.07879776422" products="321 111 111"/>
+ <channel onMode="1" bRatio="0.1575908007" products="311 211 111"/>
+ <channel onMode="1" bRatio="0.1201939592" products="321 211 111 -211"/>
+ <channel onMode="1" bRatio="0.01335488435" products="321 111 111 111"/>
+ <channel onMode="1" bRatio="0.0801293061" products="311 211 211 -211"/>
+ <channel onMode="1" bRatio="0.0534195374" products="311 211 111 111"/>
+ <channel onMode="1" bRatio="0.01307637093" products="321 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.01830703699" products="321 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.001307637093" products="321 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.02092266424" products="311 211 211 111 -211"/>
+</particle>
+
+<particle id="110311" name="K_0*(1839)0" antiName="K_0*(1839)bar0" spinType="1" chargeType="0" colType="0"
+          m0="1.839" mWidth="0.2" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.06709297092" products="311 111"/>
+ <channel onMode="1" bRatio="0.1341879547" products="321 -211"/>
+ <channel onMode="1" bRatio="0.2363885649" products="311 211 -211"/>
+ <channel onMode="1" bRatio="0.07879776422" products="311 111 111"/>
+ <channel onMode="1" bRatio="0.1575908007" products="321 111 -211"/>
+ <channel onMode="1" bRatio="0.1201939592" products="311 211 111 -211"/>
+ <channel onMode="1" bRatio="0.01335488435" products="311 111 111 111"/>
+ <channel onMode="1" bRatio="0.0801293061" products="321 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.0534195374" products="321 111 111 -211"/>
+ <channel onMode="1" bRatio="0.01307637093" products="311 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.01830703699" products="311 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.001307637093" products="311 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.02092266424" products="321 211 111 -211 -211"/>
+</particle>
+
+<particle id="110331" name="f_0(2064)" antiName="" spinType="1" chargeType="0" colType="3"
+          m0="2.064" mWidth="0.2" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.06286048062" products="211 -211"/>
+ <channel onMode="1" bRatio="0.03142976886" products="111 111"/>
+ <channel onMode="1" bRatio="0.3622839002" products="211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.4830421812" products="211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.06038095194" products="111 111 111 111"/>
+</particle>
+
+<particle id="110221" name="f'_0(1792)" antiName="" spinType="1" chargeType="0" colType="3"
+          m0="1.792" mWidth="0.2" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.1303550283" products="211 -211"/>
+ <channel onMode="1" bRatio="0.06517653649" products="111 111"/>
+ <channel onMode="1" bRatio="0.3217873741" products="211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.4290471506" products="211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.05363149717" products="111 111 111 111"/>
+</particle>
+
+<particle id="110215" name="pi_2(1969)+" antiName="pi_2(1969)-" spinType="5" chargeType="3" colType="0"
+          m0="1.969" mWidth="0.2" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.357339348" products="211 211 -211"/>
+ <channel onMode="1" bRatio="0.238226232" products="211 111 111"/>
+ <channel onMode="1" bRatio="0.1155509581" products="211 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.2542153434" products="211 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.03466569188" products="211 111 111 111 111"/>
+</particle>
+
+<particle id="110115" name="pi_2(1969)0" antiName="" spinType="5" chargeType="0" colType="0"
+          m0="1.969" mWidth="0.2" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.476452464" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0.119113116" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.2542153434" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.1386643852" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0.01155509581" products="111 111 111 111 111"/>
+</particle>
+
+<particle id="110325" name="K_2(2078)+" antiName="K_2(2078)-" spinType="5" chargeType="3" colType="0"
+          m0="2.078" mWidth="0.2" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.0368407614" products="321 111"/>
+ <channel onMode="1" bRatio="0.07368262803" products="311 211"/>
+ <channel onMode="1" bRatio="0.2031571762" products="321 211 -211"/>
+ <channel onMode="1" bRatio="0.06772041312" products="321 111 111"/>
+ <channel onMode="1" bRatio="0.1354367631" products="311 211 111"/>
+ <channel onMode="1" bRatio="0.1616748527" products="321 211 111 -211"/>
+ <channel onMode="1" bRatio="0.01796387253" products="321 111 111 111"/>
+ <channel onMode="1" bRatio="0.1077832352" products="311 211 211 -211"/>
+ <channel onMode="1" bRatio="0.07185549011" products="311 211 111 111"/>
+ <channel onMode="1" bRatio="0.02752968195" products="321 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.0385418025" products="321 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.002752968195" products="321 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.04404848219" products="311 211 211 111 -211"/>
+</particle>
+
+<particle id="110315" name="K_2(2078)0" antiName="K_2(2078)bar0" spinType="5" chargeType="0" colType="0"
+          m0="2.078" mWidth="0.2" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.0368407614" products="311 111"/>
+ <channel onMode="1" bRatio="0.07368262803" products="321 -211"/>
+ <channel onMode="1" bRatio="0.2031571762" products="311 211 -211"/>
+ <channel onMode="1" bRatio="0.06772041312" products="311 111 111"/>
+ <channel onMode="1" bRatio="0.1354367631" products="321 111 -211"/>
+ <channel onMode="1" bRatio="0.1616748527" products="311 211 111 -211"/>
+ <channel onMode="1" bRatio="0.01796387253" products="311 111 111 111"/>
+ <channel onMode="1" bRatio="0.1077832352" products="321 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.07185549011" products="321 111 111 -211"/>
+ <channel onMode="1" bRatio="0.02752968195" products="311 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.0385418025" products="311 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.002752968195" products="311 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.04404848219" products="321 211 111 -211 -211"/>
+</particle>
+
+<particle id="110335" name="eta_2(2089)" antiName="" spinType="5" chargeType="0" colType="0"
+          m0="2.089" mWidth="0.2" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.0588665298" products="211 -211"/>
+ <channel onMode="1" bRatio="0.0294328234" products="111 111"/>
+ <channel onMode="1" bRatio="0.3646802587" products="211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.486237306" products="211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.06078034702" products="111 111 111 111"/>
+</particle>
+
+<particle id="110225" name="eta'_2(1966)" antiName="" spinType="5" chargeType="0" colType="0"
+          m0="1.966" mWidth="0.2" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.08155919598" products="211 -211"/>
+ <channel onMode="1" bRatio="0.0407789863" products="111 111"/>
+ <channel onMode="1" bRatio="0.3510647271" products="211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.4680833772" products="211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.0585110804" products="111 111 111 111"/>
+</particle>
+
+<particle id="100217" name="rho_3(1918)+" antiName="rho_3(1918)-" spinType="7" chargeType="3" colType="0"
+          m0="1.918" mWidth="0.2" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.1391744272" products="211 111"/>
+ <channel onMode="1" bRatio="0.1721651146" products="211 111 111 111"/>
+ <channel onMode="1" bRatio="0.6886604582" products="211 211 -211 111"/>
+</particle>
+
+<particle id="100117" name="rho_3(1918)0" antiName="" spinType="7" chargeType="0" colType="0"
+          m0="1.918" mWidth="0.2" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.1391744272" products="211 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111"/>
+ <channel onMode="1" bRatio="0.3443302291" products="211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.5164953437" products="211 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111"/>
+</particle>
+
+<particle id="100327" name="K_3*(2419)+" antiName="K_3*(2419)-" spinType="7" chargeType="3" colType="0"
+          m0="2.419" mWidth="0.2" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.04086520609" products="321 111"/>
+ <channel onMode="1" bRatio="0.08173163815" products="311 211"/>
+ <channel onMode="1" bRatio="0.2100166755" products="321 211 -211"/>
+ <channel onMode="1" bRatio="0.07000695862" products="321 111 111"/>
+ <channel onMode="1" bRatio="0.1400097169" products="311 211 111"/>
+ <channel onMode="1" bRatio="0.1557616724" products="321 211 111 -211"/>
+ <channel onMode="1" bRatio="0.01730685249" products="321 111 111 111"/>
+ <channel onMode="1" bRatio="0.1038411149" products="311 211 211 -211"/>
+ <channel onMode="1" bRatio="0.06922740995" products="311 211 111 111"/>
+ <channel onMode="1" bRatio="0.0247181428" products="321 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.03460562239" products="321 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.00247181428" products="321 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.03954991835" products="311 211 211 111 -211"/>
+</particle>
+
+<particle id="100317" name="K_3*(2419)0" antiName="K_3*(2419)bar0" spinType="7" chargeType="0" colType="0"
+          m0="2.419" mWidth="0.2" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.04086520609" products="311 111"/>
+ <channel onMode="1" bRatio="0.08173163815" products="321 -211"/>
+ <channel onMode="1" bRatio="0.2100166755" products="311 211 -211"/>
+ <channel onMode="1" bRatio="0.07000695862" products="311 111 111"/>
+ <channel onMode="1" bRatio="0.1400097169" products="321 111 -211"/>
+ <channel onMode="1" bRatio="0.1557616724" products="311 211 111 -211"/>
+ <channel onMode="1" bRatio="0.01730685249" products="311 111 111 111"/>
+ <channel onMode="1" bRatio="0.1038411149" products="321 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.06922740995" products="321 111 111 -211"/>
+ <channel onMode="1" bRatio="0.0247181428" products="311 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.03460562239" products="311 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.00247181428" products="311 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.03954991835" products="321 211 111 -211 -211"/>
+</particle>
+
+<particle id="100337" name="phi_3(2187)" antiName="" spinType="7" chargeType="0" colType="0"
+          m0="2.187" mWidth="0.2" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.4395452739" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.3736383522" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.1868163738" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111 111"/>
+</particle>
+
+<particle id="100227" name="omega_3(1834)" antiName="" spinType="7" chargeType="0" colType="0"
+          m0="1.834" mWidth="0.2" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.692786828" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.2048098054" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.1024033666" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111 111"/>
+</particle>
+
+<particle id="120215" name="rho_2(1945)+" antiName="rho_2(1945)-" spinType="5" chargeType="3" colType="0"
+          m0="1.945" mWidth="0.2" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.1294266301" products="211 111"/>
+ <channel onMode="1" bRatio="0.174114674" products="211 111 111 111"/>
+ <channel onMode="1" bRatio="0.6964586959" products="211 211 -211 111"/>
+</particle>
+
+<particle id="120115" name="rho_2(1945)0" antiName="" spinType="5" chargeType="0" colType="0"
+          m0="1.945" mWidth="0.2" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.1294266301" products="211 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111"/>
+ <channel onMode="1" bRatio="0.3482293479" products="211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.5223440219" products="211 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111"/>
+</particle>
+
+<particle id="120325" name="K_2(2038)+" antiName="K_2(2038)-" spinType="5" chargeType="3" colType="0"
+          m0="2.038" mWidth="0.2" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.03344002822" products="321 111"/>
+ <channel onMode="1" bRatio="0.06688105965" products="311 211"/>
+ <channel onMode="1" bRatio="0.1965406449" products="321 211 -211"/>
+ <channel onMode="1" bRatio="0.06551485858" products="321 111 111"/>
+ <channel onMode="1" bRatio="0.1310257863" products="311 211 111"/>
+ <channel onMode="1" bRatio="0.1667035523" products="321 211 111 -211"/>
+ <channel onMode="1" bRatio="0.01852261692" products="321 111 111 111"/>
+ <channel onMode="1" bRatio="0.1111357015" products="311 211 211 -211"/>
+ <channel onMode="1" bRatio="0.07409046767" products="311 211 111 111"/>
+ <channel onMode="1" bRatio="0.030254205" products="321 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.04235615929" products="321 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.0030254205" products="321 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.04840781716" products="311 211 211 111 -211"/>
+</particle>
+
+<particle id="120315" name="K_2(2038)0" antiName="K_2(2038)bar0" spinType="5" chargeType="0" colType="0"
+          m0="2.038" mWidth="0.2" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.03344002822" products="311 111"/>
+ <channel onMode="1" bRatio="0.06688105965" products="321 -211"/>
+ <channel onMode="1" bRatio="0.1965406449" products="311 211 -211"/>
+ <channel onMode="1" bRatio="0.06551485858" products="311 111 111"/>
+ <channel onMode="1" bRatio="0.1310257863" products="321 111 -211"/>
+ <channel onMode="1" bRatio="0.1667035523" products="311 211 111 -211"/>
+ <channel onMode="1" bRatio="0.01852261692" products="311 111 111 111"/>
+ <channel onMode="1" bRatio="0.1111357015" products="321 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.07409046767" products="321 111 111 -211"/>
+ <channel onMode="1" bRatio="0.030254205" products="311 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.04235615929" products="311 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.0030254205" products="311 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.04840781716" products="321 211 111 -211 -211"/>
+</particle>
+
+<particle id="120335" name="phi_2(2052)" antiName="" spinType="5" chargeType="0" colType="3"
+          m0="2.052" mWidth="0.2" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.5347655975" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.3101578191" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.1550765834" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111 111"/>
+</particle>
+
+<particle id="120225" name="omega_2(1961)" antiName="" spinType="5" chargeType="0" colType="3"
+          m0="1.961" mWidth="0.2" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.6014353731" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.2657110798" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.1328535471" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111 111"/>
+</particle>
+
+<particle id="130213" name="rho_1(2129)+" antiName="rho(2129)-" spinType="3" chargeType="3" colType="0"
+          m0="2.129" mWidth="0.2" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.07955707283" products="211 111"/>
+ <channel onMode="1" bRatio="0.1840885854" products="211 111 111 111"/>
+ <channel onMode="1" bRatio="0.7363543417" products="211 211 -211 111"/>
+</particle>
+
+<particle id="130113" name="rho(2129)0" antiName="" spinType="3" chargeType="0" colType="0"
+          m0="2.129" mWidth="0.2" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.07955707283" products="211 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111"/>
+ <channel onMode="1" bRatio="0.3681771709" products="211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.5522657563" products="211 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111"/>
+</particle>
+
+<particle id="130323" name="K_1*(2115)+" antiName="K_1*(2115)-" spinType="3" chargeType="3" colType="0"
+          m0="2.115" mWidth="0.2" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.03344002822" products="321 111"/>
+ <channel onMode="1" bRatio="0.06688105965" products="311 211"/>
+ <channel onMode="1" bRatio="0.1965406449" products="321 211 -211"/>
+ <channel onMode="1" bRatio="0.06551485858" products="321 111 111"/>
+ <channel onMode="1" bRatio="0.1310257863" products="311 211 111"/>
+ <channel onMode="1" bRatio="0.1667035523" products="321 211 111 -211"/>
+ <channel onMode="1" bRatio="0.01852261692" products="321 111 111 111"/>
+ <channel onMode="1" bRatio="0.1111357015" products="311 211 211 -211"/>
+ <channel onMode="1" bRatio="0.07409046767" products="311 211 111 111"/>
+ <channel onMode="1" bRatio="0.030254205" products="321 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.04235615929" products="321 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.0030254205" products="321 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.04840781716" products="311 211 211 111 -211"/>
+</particle>
+
+<particle id="130313" name="K_1*(2115)0" antiName="K_1*(2115)bar0" spinType="3" chargeType="0" colType="0"
+          m0="2.115" mWidth="0.2" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.03344002822" products="311 111"/>
+ <channel onMode="1" bRatio="0.06688105965" products="321 -211"/>
+ <channel onMode="1" bRatio="0.1965406449" products="311 211 -211"/>
+ <channel onMode="1" bRatio="0.06551485858" products="311 111 111"/>
+ <channel onMode="1" bRatio="0.1310257863" products="321 111 -211"/>
+ <channel onMode="1" bRatio="0.1667035523" products="311 211 111 -211"/>
+ <channel onMode="1" bRatio="0.01852261692" products="311 111 111 111"/>
+ <channel onMode="1" bRatio="0.1111357015" products="321 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.07409046767" products="321 111 111 -211"/>
+ <channel onMode="1" bRatio="0.030254205" products="311 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.04235615929" products="311 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.0030254205" products="311 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.04840781716" products="321 211 111 -211 -211"/>
+</particle>
+
+<particle id="130333" name="phi_1(2314)" antiName="" spinType="3" chargeType="0" colType="3"
+          m0="2.314" mWidth="0.2" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.3585440329" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.4276394496" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.2138165175" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111 111"/>
+</particle>
+
+<particle id="130223" name="omega_1(2075)" antiName="" spinType="3" chargeType="0" colType="3"
+          m0="2.075" mWidth="0.2" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.5180945414" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.3212719121" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.1606335465" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111 111"/>
+</particle>
+
+<particle id="200211" name="pi(1766)+" antiName="pi(1766)-" spinType="1" chargeType="3" colType="0"
+          m0="1.766" mWidth="0.2" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.4432954273" products="211 211 -211"/>
+ <channel onMode="1" bRatio="0.2955302849" products="211 111 111"/>
+ <channel onMode="1" bRatio="0.07462010578" products="211 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.1641663221" products="211 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.02238629291" products="211 111 111 111 111"/>
+</particle>
+
+<particle id="200111" name="pi(1766)0" antiName="" spinType="1" chargeType="0" colType="0"
+          m0="1.766" mWidth="0.2" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.5910605697" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0.1477651424" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.1641663221" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.08954621633" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0.007462010578" products="111 111 111 111 111"/>
+</particle>
+
+<particle id="200321" name="K(2042)+" antiName="K(2042)-" spinType="1" chargeType="3" colType="0"
+          m0="2.042" mWidth="0.2" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.04044580365" products="321 111"/>
+ <channel onMode="1" bRatio="0.08089282069" products="311 211"/>
+ <channel onMode="1" bRatio="0.2093468618" products="321 211 -211"/>
+ <channel onMode="1" bRatio="0.06978368292" products="321 111 111"/>
+ <channel onMode="1" bRatio="0.1395631789" products="311 211 111"/>
+ <channel onMode="1" bRatio="0.1563745874" products="321 211 111 -211"/>
+ <channel onMode="1" bRatio="0.01737495416" products="321 111 111 111"/>
+ <channel onMode="1" bRatio="0.1042497249" products="311 211 211 -211"/>
+ <channel onMode="1" bRatio="0.06949981663" products="311 211 111 111"/>
+ <channel onMode="1" bRatio="0.02499276538" products="321 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.03499009646" products="321 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.002499276538" products="321 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.03998932435" products="311 211 211 111 -211"/>
+</particle>
+
+<particle id="200311" name="K(2042)0" antiName="K(2042)bar0" spinType="1" chargeType="0" colType="0"
+          m0="2.042" mWidth="0.2" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.04044580365" products="311 111"/>
+ <channel onMode="1" bRatio="0.08089282069" products="321 -211"/>
+ <channel onMode="1" bRatio="0.2093468618" products="311 211 -211"/>
+ <channel onMode="1" bRatio="0.06978368292" products="311 111 111"/>
+ <channel onMode="1" bRatio="0.1395631789" products="321 111 -211"/>
+ <channel onMode="1" bRatio="0.1563745874" products="311 211 111 -211"/>
+ <channel onMode="1" bRatio="0.01737495416" products="311 111 111 111"/>
+ <channel onMode="1" bRatio="0.1042497249" products="321 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.06949981663" products="321 111 111 -211"/>
+ <channel onMode="1" bRatio="0.02499276538" products="311 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.03499009646" products="311 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.002499276538" products="311 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.03998932435" products="321 211 111 -211 -211"/>
+</particle>
+
+<particle id="200331" name="eta(1961)" antiName="" spinType="1" chargeType="0" colType="0"
+          m0="1.961" mWidth="0.09" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.08265920302" products="211 -211"/>
+ <channel onMode="1" bRatio="0.04132898157" products="111 111"/>
+ <channel onMode="1" bRatio="0.3504047262" products="211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.4672033815" products="211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.0584010797" products="111 111 111 111"/>
+</particle>
+
+<particle id="200221" name="eta'(1823)" antiName="" spinType="1" chargeType="0" colType="0"
+          m0="1.823" mWidth="0.055" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.119900313" products="211 -211"/>
+ <channel onMode="1" bRatio="0.05994925723" products="111 111"/>
+ <channel onMode="1" bRatio="0.3280601719" products="211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.4374108287" products="211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.0546769687" products="111 111 111 111"/>
+</particle>
+
+<particle id="200213" name="rho(1901)+" antiName="rho(1901)-" spinType="3" chargeType="3" colType="0"
+          m0="1.901" mWidth="0.2" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.1456982955" products="211 111"/>
+ <channel onMode="1" bRatio="0.1708603409" products="211 111 111 111"/>
+ <channel onMode="1" bRatio="0.6834413636" products="211 211 -211 111"/>
+</particle>
+
+<particle id="200113" name="rho(1901)0" antiName="" spinType="3" chargeType="0" colType="0"
+          m0="1.901" mWidth="0.2" mMin="0.28" mMax="3.2">
+ <channel onMode="1" bRatio="0.1456982955" products="211 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111"/>
+ <channel onMode="1" bRatio="0.3417206818" products="211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.5125810227" products="211 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111"/>
+</particle>
+
+<particle id="200323" name="K*(1783)+" antiName="K*(1783)-" spinType="3" chargeType="3" colType="0"
+          m0="1.783" mWidth="0.2" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.07657230491" products="321 111"/>
+ <channel onMode="1" bRatio="0.153146907" products="311 211"/>
+ <channel onMode="1" bRatio="0.2403831824" products="321 211 -211"/>
+ <channel onMode="1" bRatio="0.08012933002" products="321 111 111"/>
+ <channel onMode="1" bRatio="0.1602538524" products="311 211 111"/>
+ <channel onMode="1" bRatio="0.1089038358" products="321 211 111 -211"/>
+ <channel onMode="1" bRatio="0.0121004262" products="321 111 111 111"/>
+ <channel onMode="1" bRatio="0.07260255721" products="311 211 211 -211"/>
+ <channel onMode="1" bRatio="0.04840170481" products="311 211 111 111"/>
+ <channel onMode="1" bRatio="0.01055676093" products="321 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.01477956032" products="321 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.001055676093" products="321 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.01689119754" products="311 211 211 111 -211"/>
+</particle>
+
+<particle id="200313" name="K*(1783)0" antiName="K*(1783)bar0" spinType="3" chargeType="0" colType="0"
+          m0="1.783" mWidth="0.2" mMin="0.64" mMax="3.2">
+ <channel onMode="1" bRatio="0.07657230491" products="311 111"/>
+ <channel onMode="1" bRatio="0.153146907" products="321 -211"/>
+ <channel onMode="1" bRatio="0.2403831824" products="311 211 -211"/>
+ <channel onMode="1" bRatio="0.08012933002" products="311 111 111"/>
+ <channel onMode="1" bRatio="0.1602538524" products="321 111 -211"/>
+ <channel onMode="1" bRatio="0.1089038358" products="311 211 111 -211"/>
+ <channel onMode="1" bRatio="0.0121004262" products="311 111 111 111"/>
+ <channel onMode="1" bRatio="0.07260255721" products="321 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.04840170481" products="321 111 111 -211"/>
+ <channel onMode="1" bRatio="0.01055676093" products="311 211 211 -211 -211"/>
+ <channel onMode="1" bRatio="0.01477956032" products="311 211 111 111 -211"/>
+ <channel onMode="1" bRatio="0.001055676093" products="311 111 111 111 111"/>
+ <channel onMode="1" bRatio="0.01689119754" products="321 211 111 -211 -211"/>
+</particle>
+
+<particle id="200333" name="phi(2164)" antiName="" spinType="3" chargeType="0" colType="0"
+          m0="2.164" mWidth="0.2" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.4552268864" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.3631838916" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.181589222" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111 111"/>
+</particle>
+
+<particle id="200223" name="omega(1850)" antiName="" spinType="3" chargeType="0" colType="0"
+          m0="1.85" mWidth="0.2" mMin="0.42" mMax="3.2">
+ <channel onMode="1" bRatio="0.6815844509" products="211 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111"/>
+ <channel onMode="1" bRatio="0.2122780941" products="211 211 111 -211 -211"/>
+ <channel onMode="1" bRatio="0.106137455" products="211 111 111 111 -211"/>
+ <channel onMode="1" bRatio="0" products="111 111 111 111 111"/>
+</particle>
+
+<!--///////////////////////////////////////////////////////-->
+
+<!--L=0 n=1 Light mesons-->
+
+<particle id="111" name="pi0" spinType="1" chargeType="0" colType="0"
+          m0="0.13498" mMin="0.001022" mMax="3.2" tau0="2.55313e-05">
+ <channel onMode="1" bRatio="0.9879900" products="22 22"/>
+ <channel onMode="1" bRatio="0.0119800" meMode="11" products="22 11 -11"/>
+ <channel onMode="1" bRatio="0.0000300" meMode="13" products="11 -11 11 -11"/>
+</particle>
+
+<particle id="211" name="pi+" antiName="pi-" spinType="1" chargeType="3" colType="0"
+          m0="0.13957" mMin="0.94007" mMax="3.2" tau0="7.80450e+03">
+ <channel onMode="1" bRatio="0.9998770" products="-13 14"/>
+ <channel onMode="1" bRatio="0.0001230" products="-11 12"/>
+</particle>
+
+<particle id="311" name="K0" antiName="Kbar0" spinType="1" chargeType="0" colType="0"
+          m0="0.49761" mMin="0.5" mMax="3.2" tau0="1e-15">
+ <channel onMode="1" bRatio="0.5000000" products="130"/>
+ <channel onMode="1" bRatio="0.5000000" products="310"/>
+</particle>
+
+<particle id="321" name="K+" antiName="K-" spinType="1" chargeType="3" colType="0"
+          m0="0.49368" mMin="0.28" mMax="3.2" tau0="3.71300e+03">
+ <channel onMode="1" bRatio="0.6355250" products="-13 14"/>
+ <channel onMode="1" bRatio="0.0000158" products="-11 12"/>
+ <channel onMode="1" bRatio="0.2066081" products="211 111"/>
+ <channel onMode="1" bRatio="0.0559022" products="211 211 -211"/>
+ <channel onMode="1" bRatio="0.0176107" products="211 111 111"/>
+ <channel onMode="1" bRatio="0.0507020" meMode="22" products="12 -11 111"/>
+ <channel onMode="1" bRatio="0.0335313" meMode="22" products="14 -13 111"/>
+ <channel onMode="1" bRatio="0.0000220" products="-11 12 111 111"/>
+ <channel onMode="1" bRatio="0.0000409" products="-11 12 211 -211"/>
+ <channel onMode="1" bRatio="0.0000140" products="-13 14 111 111"/>
+ <channel onMode="1" bRatio="0.0000280" products="-13 14 211 -211"/>
+</particle>
+
+<particle id="113" name="rho0" spinType="3" chargeType="0" colType="0"
+          m0="0.77549" mWidth="0.14000" mMin="3.20000" mMax="1.50000">
+ <channel onMode="1" bRatio="0.9988447" meMode="2" products="211 -211"/>
+ <channel onMode="1" bRatio="0.0005993" products="111 22"/>
+ <channel onMode="1" bRatio="0.0002997" products="221 22"/>
+ <channel onMode="1" bRatio="0.0001009" meMode="1" products="211 -211 111"/>
+ <channel onMode="1" bRatio="0.0000471" products="11 -11"/>
+ <channel onMode="1" bRatio="0.0000454" products="13 -13"/>
+ <channel onMode="1" bRatio="0.0000449" products="111 111 22"/>
+ <channel onMode="1" bRatio="0.0000180" products="211 -211 211 -211"/>
+</particle>
+
+<particle id="213" name="rho+" antiName="rho-" spinType="3" chargeType="3" colType="0"
+          m0="0.77549" mWidth="0.14000" mMin="3.20000" mMax="1.50000">
+ <channel onMode="1" bRatio="0.9995502" meMode="2" products="211 111"/>
+ <channel onMode="1" bRatio="0.0004498" products="211 22"/>
+</particle>
+
+<particle id="313" name="K*0" antiName="K*bar0" spinType="3" chargeType="0" colType="0"
+          m0="0.89594" mWidth="0.04870" mMin="0.5000" mMax="3.20000">
+ <channel onMode="1" bRatio="0.6649467" meMode="2" products="321 -211"/>
+ <channel onMode="1" bRatio="0.3326633" meMode="2" products="311 111"/>
+ <channel onMode="1" bRatio="0.0023900" products="311 22"/>
+</particle>
+
+<particle id="323" name="K*+" antiName="K*-" spinType="3" chargeType="3" colType="0"
+          m0="0.89166" mWidth="0.05080" mMin="0.5000" mMax="3.20000">
+ <channel onMode="1" bRatio="0.6660067" meMode="2" products="311 211"/>
+ <channel onMode="1" bRatio="0.3330033" meMode="2" products="321 111"/>
+ <channel onMode="1" bRatio="0.0009900" products="321 22"/>
+</particle>
+
+<particle id="333" name="phi" spinType="3" chargeType="0" colType="0"
+          m0="1.01946" mWidth="0.00426" mMin="0.14000" mMax="3.2000">
+ <channel onMode="1" bRatio="0.4893042" meMode="2" products="321 -321"/>
+ <channel onMode="1" bRatio="0.3422127" meMode="2" products="130 310"/>
+ <channel onMode="1" bRatio="0.0420984" products="-213 211"/>
+ <channel onMode="1" bRatio="0.0420984" products="113 111"/>
+ <channel onMode="1" bRatio="0.0420984" products="213 -211"/>
+ <channel onMode="1" bRatio="0.0270000" meMode="1" products="211 -211 111"/>
+ <channel onMode="1" bRatio="0.0130981" products="221 22"/>
+ <channel onMode="1" bRatio="0.0012708" products="111 22"/>
+ <channel onMode="1" bRatio="0.0002956" products="11 -11"/>
+ <channel onMode="1" bRatio="0.0002872" products="13 -13"/>
+ <channel onMode="1" bRatio="0.0001151" meMode="11" products="221 11 -11"/>
+ <channel onMode="1" bRatio="0.0000740" meMode="2" products="211 -211"/>
+ <channel onMode="1" bRatio="0.0000470" products="223 111"/>
+</particle>
+
+<particle id="223" name="omega" spinType="3" chargeType="0" colType="0"
+          m0="0.78265" mWidth="0.00849" mMin="0.42000" mMax="3.20000">
+ <channel onMode="1" bRatio="0.8994773" meMode="1" products="211 -211 111"/>
+ <channel onMode="1" bRatio="0.0834941" products="111 22"/>
+ <channel onMode="1" bRatio="0.0154283" meMode="2" products="211 -211"/>
+ <channel onMode="1" bRatio="0.0004639" products="221 22"/>
+ <channel onMode="1" bRatio="0.0007765" meMode="11" products="111 11 -11"/>
+ <channel onMode="1" bRatio="0.0001311" meMode="11" products="111 13 -13"/>
+ <channel onMode="1" bRatio="0.0000728" products="11 -11"/>
+ <channel onMode="1" bRatio="0.0000900" products="13 -13"/>
+ <channel onMode="1" bRatio="0.0000660" products="111 111 22"/>
+</particle>
+
+<!--L=1 n=1 Light mesons-->
+
+<particle id="10113" name="b_1(1235)0" spinType="3" chargeType="0" colType="0"
+          m0="1.22950" mWidth="0.14200" mMin="0.9200" mMax="3.20000">
+ <channel onMode="1" bRatio="1.0000000" products="223 111"/>
+</particle>
+
+<particle id="10213" name="b_1(1235)+" antiName="b_1(1235)-" spinType="3" chargeType="3" colType="0"
+          m0="1.22950" mWidth="0.14200" mMin="0.92000" mMax="3.20000">
+ <channel onMode="1" bRatio="0.9984000" products="223 211"/>
+ <channel onMode="1" bRatio="0.0016000" products="211 22"/>
+</particle>
+
+<particle id="10313" name="K_1(1270)0" antiName="K_1(1270)bar0" spinType="3" chargeType="0" colType="0"
+          m0="1.27200" mWidth="0.09000" mMin="1.0000" mMax="3.20000">
+ <channel onMode="1" bRatio="0.2886598" products="321 -213"/>
+ <channel onMode="1" bRatio="0.1443299" products="311 113"/>
+ <channel onMode="1" bRatio="0.1924399" products="10321 -211"/>
+ <channel onMode="1" bRatio="0.0962199" products="10311 111"/>
+ <channel onMode="1" bRatio="0.1099656" products="323 -211"/>
+ <channel onMode="1" bRatio="0.0549828" products="313 111"/>
+ <channel onMode="1" bRatio="0.1134021" products="311 223"/>
+</particle>
+
+<particle id="10323" name="K_1(1270)+" antiName="K_1(1270)-" spinType="3" chargeType="3" colType="0"
+          m0="1.27200" mWidth="0.09000" mMin="1.00000" mMax="3.20000">
+ <channel onMode="1" bRatio="0.2886598" products="311 213"/>
+ <channel onMode="1" bRatio="0.1443299" products="321 113"/>
+ <channel onMode="1" bRatio="0.1924399" products="10311 211"/>
+ <channel onMode="1" bRatio="0.0962199" products="10321 111"/>
+ <channel onMode="1" bRatio="0.1099656" products="313 211"/>
+ <channel onMode="1" bRatio="0.0549828" products="323 111"/>
+ <channel onMode="1" bRatio="0.1134021" products="321 223"/>
+</particle>
+
+<!-- updated h_1(1380) is h_1(1415)-->
+<particle id="10333" name="h_1(1380)" spinType="3" chargeType="0" colType="0"
+          m0="1.41600" mWidth="0.09100" mMin="1.400" mMax="3.20000">
+ <channel onMode="1" bRatio="0.2500000" products="313 -311"/>
+ <channel onMode="1" bRatio="0.2500000" products="-313 311"/>
+ <channel onMode="1" bRatio="0.2500000" products="323 -321"/>
+ <channel onMode="1" bRatio="0.2500000" products="-323 321"/>
+</particle>
+
+<particle id="10223" name="h_1(1170)" spinType="3" chargeType="0" colType="0"
+          m0="1.17000" mWidth="0.36000" mMin="0.91000" mMax="3.20000">
+ <channel onMode="1" bRatio="0.3330000" products="213 -211"/>
+ <channel onMode="1" bRatio="0.3340000" products="113 111"/>
+ <channel onMode="1" bRatio="0.3330000" products="-213 211"/>
+</particle>
+
+<particle id="115" name="a_20" spinType="5" chargeType="0" colType="0"
+          m0="1.31830" mWidth="0.10700" mMin="0.69000" mMax="3.20000">
+ <channel onMode="1" bRatio="0.3483455" products="213 -211"/>
+ <channel onMode="1" bRatio="0.3483455" products="-213 211"/>
+ <channel onMode="1" bRatio="0.1440000" products="221 111"/>
+ <channel onMode="1" bRatio="0.1050000" products="223 211 -211"/>
+ <channel onMode="1" bRatio="0.0245000" products="321 -321"/>
+ <channel onMode="1" bRatio="0.0122500" products="130 130"/>
+ <channel onMode="1" bRatio="0.0122500" products="310 310"/>
+ <channel onMode="1" bRatio="0.0053000" products="331 111"/>
+ <channel onMode="1" bRatio="0.0000090" products="22 22"/>
+</particle>
+
+<particle id="215" name="a_2+" antiName="a_2-" spinType="5" chargeType="3" colType="0"
+          m0="1.31830" mWidth="0.10700" mMin="0.69000" mMax="3.20000">
+ <channel onMode="1" bRatio="0.3480100" products="213 111"/>
+ <channel onMode="1" bRatio="0.3480100" products="113 211"/>
+ <channel onMode="1" bRatio="0.1440000" products="221 211"/>
+ <channel onMode="1" bRatio="0.1040000" products="223 211 111"/>
+ <channel onMode="1" bRatio="0.0480000" products="321 -311"/>
+ <channel onMode="1" bRatio="0.0053000" products="331 211"/>
+ <channel onMode="1" bRatio="0.0026800" products="211 22"/>
+</particle>
+
+<particle id="315" name="K*_2(1430)0" antiName="K*_2(1430)bar0" spinType="5" chargeType="0" colType="0"
+          m0="1.43240" mWidth="0.10900" mMin="0.64000" mMax="3.20000">
+ <channel onMode="1" bRatio="0.3335002" products="321 -211"/>
+ <channel onMode="1" bRatio="0.1667502" products="311 111"/>
+ <channel onMode="1" bRatio="0.1650794" products="323 -211"/>
+ <channel onMode="1" bRatio="0.0825397" products="313 111"/>
+ <channel onMode="1" bRatio="0.0892231" products="323 -211 111"/>
+ <channel onMode="1" bRatio="0.0451128" products="313 211 -211"/>
+ <channel onMode="1" bRatio="0.0581454" products="321 -213"/>
+ <channel onMode="1" bRatio="0.0290727" products="311 113"/>
+ <channel onMode="1" bRatio="0.0290727" products="311 223"/>
+ <channel onMode="1" bRatio="0.0015038" products="311 221"/>
+</particle>
+
+<particle id="325" name="K*_2(1430)+" antiName="K*_2(1430)-" spinType="5" chargeType="3" colType="0"
+          m0="1.42560" mWidth="0.09850" mMin="0.50000" mMax="3.20000">
+ <channel onMode="1" bRatio="0.3330333" products="311 211"/>
+ <channel onMode="1" bRatio="0.1660166" products="321 111"/>
+ <channel onMode="1" bRatio="0.1646498" products="313 211"/>
+ <channel onMode="1" bRatio="0.0823749" products="323 111"/>
+ <channel onMode="1" bRatio="0.0890089" products="313 211 111"/>
+ <channel onMode="1" bRatio="0.0450045" products="323 211 -211"/>
+ <channel onMode="1" bRatio="0.0580058" products="311 213"/>
+ <channel onMode="1" bRatio="0.0290029" products="321 113"/>
+ <channel onMode="1" bRatio="0.0290029" products="321 223"/>
+ <channel onMode="1" bRatio="0.0015002" products="321 221"/>
+ <channel onMode="1" bRatio="0.0024002" products="321 22"/>
+</particle>
+
+<particle id="335" name="f'_2(1525)" spinType="5" chargeType="0" colType="0"
+          m0="1.52500" mWidth="0.07300" mMin="0.28000" mMax="3.20000">
+ <channel onMode="1" bRatio="0.4444000" products="321 -321"/>
+ <channel onMode="1" bRatio="0.2222000" products="130 130"/>
+ <channel onMode="1" bRatio="0.2222000" products="310 310"/>
+ <channel onMode="1" bRatio="0.1030000" products="221 221"/>
+ <channel onMode="1" bRatio="0.0041000" products="211 -211"/>
+ <channel onMode="1" bRatio="0.0041000" products="111 111"/>
+</particle>
+
+<particle id="225" name="f_2" spinType="5" chargeType="0" colType="0"
+          m0="1.27510" mWidth="0.18510" mMin="0.00000" mMax="3.20000">
+ <channel onMode="1" bRatio="0.5653260" products="211 -211"/>
+ <channel onMode="1" bRatio="0.2826600" products="111 111"/>
+ <channel onMode="1" bRatio="0.0710000" products="211 -211 111 111"/>
+ <channel onMode="1" bRatio="0.0280000" products="211 -211 211 -211"/>
+ <channel onMode="1" bRatio="0.0230000" products="321 -321"/>
+ <channel onMode="1" bRatio="0.0115000" products="130 130"/>
+ <channel onMode="1" bRatio="0.0115000" products="310 310"/>
+ <channel onMode="1" bRatio="0.0040000" products="221 221"/>
+ <channel onMode="1" bRatio="0.0030000" products="111 111 111 111"/>
+ <channel onMode="1" bRatio="0.0000140" products="22 22"/>
+</particle>
+
+<particle id="20113" name="a_1(1260)0" spinType="3" chargeType="0" colType="0"
+          m0="1.23000" mWidth="0.42000" mMin="0.91000" mMax="3.20000">
+ <channel onMode="1" bRatio="0.3300000" products="213 -211"/>
+ <channel onMode="1" bRatio="0.3300000" products="-213 211"/>
+ <channel onMode="1" bRatio="0.3400000" products="113 111"/>
+</particle>
+
+<particle id="20213" name="a_1(1260)+" antiName="a_1(1260)-" spinType="3" chargeType="3" colType="0"
+          m0="1.23000" mWidth="0.42000" mMin="0.91000" mMax="3.20000">
+ <channel onMode="1" bRatio="0.5000000" products="113 211"/>
+ <channel onMode="1" bRatio="0.5000000" products="213 111"/>
+</particle>
+
+<particle id="20313" name="K_1(1400)0" antiName="K_1(1400)bar0" spinType="3" chargeType="0" colType="0"
+          m0="1.40300" mWidth="0.17400" mMin="1.0400" mMax="3.20000">
+ <channel onMode="1" bRatio="0.6270000" products="323 -211"/>
+ <channel onMode="1" bRatio="0.3130000" products="313 111"/>
+ <channel onMode="1" bRatio="0.0200000" products="321 -213"/>
+ <channel onMode="1" bRatio="0.0100000" products="311 113"/>
+ <channel onMode="1" bRatio="0.0200000" products="311 10221"/>
+ <channel onMode="1" bRatio="0.0100000" products="311 223"/>
+</particle>
+
+<particle id="20323" name="K_1(1400)+" antiName="K_1(1400)-" spinType="3" chargeType="3" colType="0"
+          m0="1.40300" mWidth="0.17400" mMin="1.0400" mMax="3.20000">
+ <channel onMode="1" bRatio="0.6270000" products="313 211"/>
+ <channel onMode="1" bRatio="0.3130000" products="323 111"/>
+ <channel onMode="1" bRatio="0.0200000" products="311 213"/>
+ <channel onMode="1" bRatio="0.0100000" products="321 113"/>
+ <channel onMode="1" bRatio="0.0200000" products="321 10221"/>
+ <channel onMode="1" bRatio="0.0100000" products="321 223"/>
+</particle>
+
+<particle id="20333" name="f_1(1420)" spinType="3" chargeType="0" colType="0"
+          m0="1.42640" mWidth="0.05490" mMin="1.400" mMax="3.20000">
+ <channel onMode="1" bRatio="0.2500000" products="313 -311"/>
+ <channel onMode="1" bRatio="0.2500000" products="-313 311"/>
+ <channel onMode="1" bRatio="0.2500000" products="323 -321"/>
+ <channel onMode="1" bRatio="0.2500000" products="-323 321"/>
+</particle>
+
+<particle id="20223" name="f_1(1285)" spinType="3" chargeType="0" colType="0"
+          m0="1.28210" mWidth="0.02420" mMin="0.42000" mMax="3.20000">
+ <channel onMode="1" bRatio="0.1200000" products="9000211 -211"/>
+ <channel onMode="1" bRatio="0.1200000" products="9000111 111"/>
+ <channel onMode="1" bRatio="0.1200000" products="-9000211 211"/>
+ <channel onMode="1" bRatio="0.0800000" products="221 211 -211"/>
+ <channel onMode="1" bRatio="0.0800000" products="221 111 111"/>
+ <channel onMode="1" bRatio="0.1100000" products="113 211 -211"/>
+ <channel onMode="1" bRatio="0.0740000" products="213 -211 111"/>
+ <channel onMode="1" bRatio="0.0740000" products="113 111 111"/>
+ <channel onMode="1" bRatio="0.0740000" products="-213 211 111"/>
+ <channel onMode="1" bRatio="0.0230000" products="321 -321 111"/>
+ <channel onMode="1" bRatio="0.0230000" products="321 -311 -211"/>
+ <channel onMode="1" bRatio="0.0230000" products="311 -311 111"/>
+ <channel onMode="1" bRatio="0.0230000" products="311 -321 211"/>
+ <channel onMode="1" bRatio="0.0552600" products="113 22"/>
+ <channel onMode="1" bRatio="0.0007400" products="333 22"/>
+</particle>
+
+<particle id="10111" name="a_0(1450)0" spinType="1" chargeType="0" colType="0"
+          m0="1.47400" mWidth="0.26500" mMin="0.69000" mMax="3.20000">
+ <channel onMode="1" bRatio="0.3000000" products="111 221"/>
+ <channel onMode="1" bRatio="0.1000000" products="111 331"/>
+ <channel onMode="1" bRatio="0.1200000" products="321 -321"/>
+ <channel onMode="1" bRatio="0.0600000" products="130 130"/>
+ <channel onMode="1" bRatio="0.0600000" products="310 310"/>
+ <channel onMode="1" bRatio="0.1800000" products="223 211 -211"/>
+ <channel onMode="1" bRatio="0.1800000" products="223 111 111"/>
+</particle>
+
+<particle id="10211" name="a_0(1450)+" antiName="a_0(1450)-" spinType="1" chargeType="3" colType="0"
+          m0="1.47400" mWidth="0.26500" mMin="0.69000" mMax="3.20000">
+ <channel onMode="1" bRatio="0.3000000" products="211 221"/>
+ <channel onMode="1" bRatio="0.1000000" products="211 331"/>
+ <channel onMode="1" bRatio="0.2400000" products="321 -311"/>
+ <channel onMode="1" bRatio="0.3600000" products="223 211 111"/>
+</particle>
+
+<particle id="10311" name="K*_0(1430)0" antiName="K*_0(1430)bar0" spinType="1" chargeType="0" colType="0"
+          m0="1.43000" mWidth="0.27000" mMin="0.64000" mMax="3.20000">
+ <channel onMode="1" bRatio="0.6670000" products="321 -211"/>
+ <channel onMode="1" bRatio="0.3330000" products="311 111"/>
+</particle>
+
+<particle id="10321" name="K*_0(1430)+" antiName="K*_0(1430)-" spinType="1" chargeType="3" colType="0"
+          m0="1.43000" mWidth="0.27000" mMin="0.64000" mMax="3.20000">
+ <channel onMode="1" bRatio="0.6670000" products="311 211"/>
+ <channel onMode="1" bRatio="0.3330000" products="321 111"/>
+</particle>
+
+<particle id="10331" name="f_0(1710)" spinType="1" chargeType="0" colType="0"
+          m0="1.72000" mWidth="0.13500" mMin="0.28000" mMax="3.20000">
+ <channel onMode="1" bRatio="0.3000000" products="321 -321"/>
+ <channel onMode="1" bRatio="0.1500000" products="130 130"/>
+ <channel onMode="1" bRatio="0.1500000" products="310 310"/>
+ <channel onMode="1" bRatio="0.3000000" products="221 221"/>
+ <channel onMode="1" bRatio="0.0500000" products="211 -211"/>
+ <channel onMode="1" bRatio="0.0500000" products="111 111"/>
+</particle>
+
+<particle id="10221" name="f_0(1370)" spinType="1" chargeType="0" colType="0"
+          m0="1.35000" mWidth="0.20000" mMin="0.28000" mMax="3.20000">
+ <channel onMode="1" bRatio="0.2000000" products="113 111"/>
+ <channel onMode="1" bRatio="0.2000000" products="213 -213"/>
+ <channel onMode="1" bRatio="0.1000000" products="111 111 111 111"/>
+ <channel onMode="1" bRatio="0.2000000" products="211 -211"/>
+ <channel onMode="1" bRatio="0.1000000" products="111 111"/>
+ <channel onMode="1" bRatio="0.0500000" products="321 -321"/>
+ <channel onMode="1" bRatio="0.0250000" products="130 130"/>
+ <channel onMode="1" bRatio="0.0250000" products="310 310"/>
+ <channel onMode="1" bRatio="0.1000000" products="221 221"/>
+</particle> 

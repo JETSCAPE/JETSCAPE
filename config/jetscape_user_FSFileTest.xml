@@ -26,7 +26,6 @@
       <PGun>
         <name>PGun</name>
         <pT>100</pT>
-        <useHybridHad>0</useHybridHad>
       </PGun>
   </Hard>
 

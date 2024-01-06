@@ -2,7 +2,7 @@
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
  * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -74,7 +74,7 @@ protected:
   std::weak_ptr<LiquefierBase> liquefier_ptr;
 
 public:
-  /** Default constructor. task ID as "FluidDynamics",  
+  /** Default constructor. task ID as "FluidDynamics",
         eta is initialized to -99.99.
     */
   FluidDynamics();
@@ -82,7 +82,7 @@ public:
   /** Default destructor. */
   virtual ~FluidDynamics();
 
-  /** Reads the input parameters from the XML file under the tag <Hydro>. Uses JetScapeSingnalManager Instance to retrive the Initial State Physics information. Calls InitializeHydro(parameter_list) and InitTask(); This explicit call can be used for actual initialization of modules such as @a Brick, @a MpiMusic, or @a OSU-HYDRO if attached as a @a polymorphic class. It also initializes the tasks within the current module.   
+  /** Reads the input parameters from the XML file under the tag <Hydro>. Uses JetScapeSingnalManager Instance to retrive the Initial State Physics information. Calls InitializeHydro(parameter_list) and InitTask(); This explicit call can be used for actual initialization of modules such as @a Brick, @a MpiMusic, or @a OSU-HYDRO if attached as a @a polymorphic class. It also initializes the tasks within the current module.
 	@sa Read about @a polymorphism in C++.
     */
   virtual void Init();
@@ -111,7 +111,7 @@ public:
 
   /** It stores the temperature of the fluid cell at location (t or tau,x,y,z or eta) into an input variable "mT". It can be overridden by modules attached to the FluidDynamics class.
 	@param t  tau or t coordinate.
-	@param x  space x coordinate. 
+	@param x  space x coordinate.
 	@param y  space y coordinate.
 	@param z  rapidity eta or space z coordinate.
 	@param mT temperature.
@@ -121,12 +121,12 @@ public:
     mT = GetTemperature(t, x, y, z);
   }
 
-  /** It calls GetHydroInfo(t,x,y,z,fCell) to retrieve the properties of the fluid cell at location (t or tau,x,y,z or eta). It can be overridden by modules attached to the FluidDynamics class. 
+  /** It calls GetHydroInfo(t,x,y,z,fCell) to retrieve the properties of the fluid cell at location (t or tau,x,y,z or eta). It can be overridden by modules attached to the FluidDynamics class.
 	@param t  tau or t coordinate.
-	@param x  space x coordinate.      
-	@param y  space y coordinate.       
+	@param x  space x coordinate.
+	@param y  space y coordinate.
 	@param z  rapidity eta or space z coordinate.
-	@param fCell A pointer of type FluidCellInfo class.  
+	@param fCell A pointer of type FluidCellInfo class.
     */
   virtual void GetHydroCell(double t, double x, double y, double z,
                             std::unique_ptr<FluidCellInfo> &fCell) {
@@ -136,7 +136,7 @@ public:
   // currently we have no standard for passing configurations
   // pure virtual function; to be implemented by users
   // should make it easy to save evolution history to bulk_info
-  /** Default function to initialize the hydrodynamics. It can be overridden by different modules. 
+  /** Default function to initialize the hydrodynamics. It can be overridden by different modules.
 	@param parameter_list An object of the class Parameter. */
   virtual void InitializeHydro(Parameter parameter_list){};
 
@@ -168,8 +168,8 @@ public:
 
   /** Retrieves the hydro information at a given space-time point.
      * It throws a InvalidSpaceTimeRange message when
-     * (t or tau, x, y, z or eta) is out of the evolution history range. 
-     @param time Time or tau coordinate. 
+     * (t or tau, x, y, z or eta) is out of the evolution history range.
+     @param time Time or tau coordinate.
      @param x Space coordinate.
      @param y Space coordinate.
      @param z Space or eta coordinate.
@@ -215,7 +215,7 @@ public:
   /** @return Energy density at point (t or tau, x, y, z or eta)
         @param time Time or tau coordinate.
         @param x Space coordinate.
-        @param y Space coordinate. 
+        @param y Space coordinate.
         @param z Space or eta coordinate.
     */
   virtual Jetscape::real GetEnergyDensity(Jetscape::real time, Jetscape::real x,
@@ -224,7 +224,7 @@ public:
   /** @return Entropy density at point (t or tau, x, y, z or eta)
         @param time Time or tau coordinate.
         @param x Space coordinate.
-        @param y Space coordinate. 
+        @param y Space coordinate.
         @param z Space or eta coordinate.
     */
   virtual Jetscape::real GetEntropyDensity(Jetscape::real time,
@@ -294,6 +294,9 @@ public:
   virtual void UpdateEnergyDeposit(int t, double edop);
   /// slots for "jet" signals (future)
   virtual void GetEnergyDensity(int t, double &edensity) { edensity = 0.0; }
+
+  // get a reference to the bulk_info object
+  const EvolutionHistory& get_bulk_info() const { return bulk_info; }
 
 }; // end class FluidDynamics
 

@@ -2,7 +2,7 @@
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
  * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -50,20 +50,6 @@ void PythiaGun::InitTask() {
   readString("Next:numberShowProcess = 0");
   readString("Next:numberShowEvent = 0");
 
-  // Standard settings
-  readString(
-      "HardQCD:all = on"); // will repeat this line in the xml for demonstration
-  //  readString("HardQCD:gg2ccbar = on"); // switch on heavy quark channel
-  //readString("HardQCD:qqbar2ccbar = on");
-  readString("HadronLevel:Decay = off");
-  readString("HadronLevel:all = off");
-  readString("PartonLevel:ISR = on");
-  readString("PartonLevel:MPI = on");
-  //readString("PartonLevel:FSR = on");
-  readString("PromptPhoton:all=on");
-  readString("WeakSingleBoson:all=off");
-  readString("WeakDoubleBoson:all=off");
-
   // For parsing text
   stringstream numbf(stringstream::app | stringstream::in | stringstream::out);
   numbf.setf(ios::fixed, ios::floatfield);
@@ -75,6 +61,34 @@ void PythiaGun::InitTask() {
   SetId(s);
   // cout << s << endl;
 
+  //other Pythia settings
+  readString("HadronLevel:Decay = off");
+  readString("HadronLevel:all = off");
+  readString("PartonLevel:ISR = on");
+  readString("PartonLevel:MPI = on");
+  //readString("PartonLevel:FSR = on");
+  readString("PromptPhoton:all=on");
+  readString("WeakSingleBoson:all=off");
+  readString("WeakDoubleBoson:all=off");
+
+  pTHatMin = GetXMLElementDouble({"Hard", "PythiaGun", "pTHatMin"});
+  pTHatMax = GetXMLElementDouble({"Hard", "PythiaGun", "pTHatMax"});
+
+  if(pTHatMin < 0.01){ //assuming low bin where softQCD should be used
+    //running softQCD - inelastic nondiffrative (min-bias)
+    readString("HardQCD:all = off");
+    readString("SoftQCD:nonDiffractive = on");
+    softQCD = true;
+  }
+  else{ //running normal hardQCD
+    readString("HardQCD:all = on"); // will repeat this line in the xml for demonstration
+    //  readString("HardQCD:gg2ccbar = on"); // switch on heavy quark channel
+    //readString("HardQCD:qqbar2ccbar = on");
+    numbf.str("PhaseSpace:pTHatMin = "); numbf << pTHatMin; readString(numbf.str());
+    numbf.str("PhaseSpace:pTHatMax = "); numbf << pTHatMax; readString(numbf.str());
+	  softQCD = false;
+  }
+
   // SC: read flag for FSR
   FSR_on = GetXMLElementInt({"Hard", "PythiaGun", "FSR_on"});
   if (FSR_on)
@@ -82,22 +96,8 @@ void PythiaGun::InitTask() {
   else
     readString("PartonLevel:FSR = off");
 
-  pTHatMin = GetXMLElementDouble({"Hard", "PythiaGun", "pTHatMin"});
-  pTHatMax = GetXMLElementDouble({"Hard", "PythiaGun", "pTHatMax"});
-
-  flag_useHybridHad = GetXMLElementInt({"Hard", "PGun", "useHybridHad"});
-
   JSINFO << MAGENTA << "Pythia Gun with FSR_on: " << FSR_on;
-  JSINFO << MAGENTA << "Pythia Gun with " << pTHatMin << " < pTHat < "
-         << pTHatMax;
-  JSINFO << MAGENTA << "Use hybrid hadronization? " << flag_useHybridHad;
-
-  numbf.str("PhaseSpace:pTHatMin = ");
-  numbf << pTHatMin;
-  readString(numbf.str());
-  numbf.str("PhaseSpace:pTHatMax = ");
-  numbf << pTHatMax;
-  readString(numbf.str());
+  JSINFO << MAGENTA << "Pythia Gun with " << pTHatMin << " < pTHat < " << pTHatMax;
 
   // random seed
   // xml limits us to unsigned int :-/ -- but so does 32 bits Mersenne Twist
@@ -128,6 +128,10 @@ void PythiaGun::InitTask() {
   numbf << eCM;
   readString(numbf.str());
 
+  //Reading vir_factor from xml for MATTER
+  vir_factor = GetXMLElementDouble({"Eloss", "Matter", "vir_factor"});
+  softMomentumCutoff = GetXMLElementDouble({"Hard", "PythiaGun", "softMomentumCutoff"});
+
   std::stringstream lines;
   lines << GetXMLElementText({"Hard", "PythiaGun", "LinesToRead"}, false);
   int i = 0;
@@ -146,14 +150,12 @@ void PythiaGun::InitTask() {
     std::ofstream sigma_printer;
     sigma_printer.open(printer, std::ios::trunc);
 
-    
+
 }
 
 void PythiaGun::Exec() {
   VERBOSE(1) << "Run Hard Process : " << GetId() << " ...";
   VERBOSE(8) << "Current Event #" << GetCurrentEvent();
-  //Reading vir_factor from xml for MATTER
-  double vir_factor = GetXMLElementDouble({"Eloss", "Matter", "vir_factor"});
 
   bool flag62 = false;
   vector<Pythia8::Particle> p62;
@@ -172,10 +174,10 @@ void PythiaGun::Exec() {
       if (!printer.empty()){
             std::ofstream sigma_printer;
             sigma_printer.open(printer, std::ios::out | std::ios::app);
-            
+
             sigma_printer << "sigma = " << GetSigmaGen() << " Err =  " << GetSigmaErr() << endl ;
             //sigma_printer.close();
-      
+
 //      JSINFO << BOLDYELLOW << " sigma = " << GetSigmaGen() << " sigma err = " << GetSigmaErr() << " printer = " << printer << " is " << sigma_printer.is_open() ;
     };
 
@@ -186,6 +188,15 @@ void PythiaGun::Exec() {
       if (parid < 3)
         continue; // 0, 1, 2: total event and beams
       Pythia8::Particle &particle = event[parid];
+
+      //replacing diquarks with antiquarks (and anti-dq's with quarks)
+      //the id is set to the heaviest quark in the diquark (except down quark)
+      //this technically violates baryon number conservation over the entire event
+      //also can violate electric charge conservation
+      if( (std::abs(particle.id()) > 1100) && (std::abs(particle.id()) < 6000) && ((std::abs(particle.id())/10)%10 == 0) ){
+        if(particle.id() > 0){particle.id( -1*particle.id()/1000 );}
+        else{particle.id( particle.id()/1000 );}
+      }
 
       if (!FSR_on) {
         // only accept particles after MPI
@@ -199,8 +210,15 @@ void PythiaGun::Exec() {
 
         // reject rare cases of very soft particles that don't have enough e to get
         // reasonable virtuality
-        if (particle.pT() < 1.0 / sqrt(vir_factor))
+        if (vir_factor > 0. && (particle.pT() < softMomentumCutoff)) {
+          // this cutoff was 1.0/sqrt(vir_factor) in versions < 3.6
           continue;
+        } else if(vir_factor < 0. && (particle.pAbs() < softMomentumCutoff)) {
+          continue;
+        } else if(vir_factor < rounding_error) {
+          JSWARN << "vir_factor should not be zero.";
+          exit(1);
+        }
 
         //if(particle.id()==22) cout<<"########this is a photon!######" <<endl;
         // accept
@@ -226,6 +244,9 @@ void PythiaGun::Exec() {
     std::sort(p62.begin(), p62.end(), greater_than_pt());
     // // check...
     // for (auto& p : p62 ) cout << p.pT() << endl;
+
+    //skipping event if softQCD is on & pThat exceeds max (where next bin is HardQCD with this as pThatmin)
+    if(softQCD && (info.pTHat() >= pTHatMax)){continue;}
 
     flag62 = true;
 
@@ -268,32 +289,16 @@ void PythiaGun::Exec() {
                << " at x=" << xLoc[1] << ", y=" << xLoc[2] << ", z=" << xLoc[3];
 
     VERBOSE(7) << "Adding particle with pid = " << particle.id()
-               << ", pT = " << particle.pT() << ", y = " << particle.y()
+               << ", pT = " << particle.pT() << ", eta = " << particle.eta()
                << ", phi = " << particle.phi() << ", e = " << particle.e();
 
     VERBOSE(7) << " at x=" << xLoc[1] << ", y=" << xLoc[2] << ", z=" << xLoc[3];
 
-    // if(particle.id() !=22)
-    // {
-    if (flag_useHybridHad != 1) {
-      AddParton(make_shared<Parton>(0, particle.id(), 0, particle.pT(),
-                                    particle.y(), particle.phi(), particle.e(),
-                                    xLoc));
-    } else {
-      auto ptn =
-          make_shared<Parton>(0, particle.id(), 0, particle.pT(), particle.y(),
-                              particle.phi(), particle.e(), xLoc);
-      ptn->set_color(particle.col());
-      ptn->set_anti_color(particle.acol());
-      ptn->set_max_color(1000 * (np + 1));
-      AddParton(ptn);
-    }
-    //}
-    //else
-    //{
-    //          AddHadron(make_shared<Hadron>(hCounter,particle.id(),particle.status(),particle.pT(),particle.eta(),particle.phi(),particle.e(),xLoc));
-    //          hCounter++;
-    //}
+    auto ptn = make_shared<Parton>(0, particle.id(), 0, particle.pT(), particle.eta(),particle.phi(), particle.e(), xLoc);
+    ptn->set_color(particle.col());
+    ptn->set_anti_color(particle.acol());
+    ptn->set_max_color(1000 * (np + 1));
+    AddParton(ptn);
   }
 
   VERBOSE(8) << GetNHardPartons();

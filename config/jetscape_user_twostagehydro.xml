@@ -6,7 +6,7 @@
   <setReuseHydro> true </setReuseHydro>
   <nReuseHydro> 5 </nReuseHydro>
   <vlevel> 0 </vlevel>
-  
+
   <!-- Jetscape Writer -->
   <JetScapeWriterAscii> on </JetScapeWriterAscii>
 
@@ -20,7 +20,6 @@
       <PGun>
         <name>PGun</name>
         <pT>100</pT>
-        <useHybridHad>0</useHybridHad>
       </PGun>
   </Hard>
 
@@ -35,7 +34,7 @@
       <name>MUSIC_1</name>
     </MUSIC>
   </Hydro>
-  
+
   <!-- Create liquifier -->
   <Liquefier>
       <!-- CausalLiquefier -->
@@ -51,7 +50,7 @@
           <width_delta>0.1</width_delta><!-- in [fm] -->
       </CausalLiquefier>
   </Liquefier>
-  
+
   <!--Eloss Modules -->
   <Eloss>
       <deltaT>0.1</deltaT>
@@ -92,7 +91,7 @@
       </Lbt>
     <AddLiquefier> true </AddLiquefier>
   </Eloss>
-  
+
   <!-- Hydro  Module 2 -->
   <Hydro>
     <MUSIC>
@@ -100,7 +99,7 @@
     </MUSIC>
     <AddLiquefier> true </AddLiquefier>
   </Hydro>
-  
+
   <!-- Jet Hadronization Module -->
   <JetHadronization>
     <name>colorless</name>
@@ -112,5 +111,5 @@
   <SoftParticlization>
     <iSS> </iSS>
   </SoftParticlization>
-  
+
 </jetscape>

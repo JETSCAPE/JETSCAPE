@@ -36,8 +36,9 @@ using namespace Jetscape;
 class AfterburnerModus : public smash::ListModus {
 public:
   // Unlike for ListModus there is no need to get any data from the config
-  AfterburnerModus(smash::Configuration, const smash::ExperimentParameters &) {
+  AfterburnerModus(smash::Configuration config, const smash::ExperimentParameters &) {
     JSINFO << "Constructing AfterburnerModus";
+    config.clear();
   }
   void reset_event_numbering() { event_number_ = 0; }
   // The converter is not static, because modus holds int variables

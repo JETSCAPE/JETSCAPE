@@ -25,6 +25,7 @@ class Brick : public FluidDynamics {
   // so that it can be used within the JETSCAPE framework
 private:
   double T_brick;
+  double brick_L;
   double start_time;
   bool bjorken_expansion_on;
 

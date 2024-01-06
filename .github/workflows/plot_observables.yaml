@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - JETSCAPE-3.5.4-RC
       - JETSCAPE-3.6-RC
       - latessa/dockerImage
 
@@ -24,7 +23,7 @@ jobs:
     steps:
       
     - name: Checkout Repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         path: ${{ github.event.repository.name }}
       
@@ -37,9 +36,10 @@ jobs:
         make -j2
 
     - name: Checkout TEST-EXAMPLES
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         repository: JETSCAPE/TEST-EXAMPLES
+        ref: main
         path: TEST-EXAMPLES
 
     - name: Generate pp events

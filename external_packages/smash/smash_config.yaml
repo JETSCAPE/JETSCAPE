@@ -2,22 +2,29 @@ Logging:
     default: INFO
 
 General:
-    Modus:  Afterburner   # Dummy, but some value has to be present
+    Modus: List
     Time_Step_Mode: Fixed
     Delta_Time:    0.5
     End_Time:      100.0  # Reset from the JetScape xml config
     Randomseed:    -1     # Reset from the JetScape xml config
     Nevents:       1      # Dummy
 
-#Collision_Term:
-#    Strings: False
+Modi:
+    List:
+        File_Directory: .
+        File_Prefix: "dummy"
+        Shift_Id: 0
 
+
+# if some SMASH output in OSCAR,... format is wanted, then uncomment
+# the following lines and add a 'smash_output' folder to your build folder
 Output:
-    Output_Interval:  5.0
-
-# This section is dummy
-List:
-    File_Directory: .
-    File_Prefix: "dummy"
-    Shift_Id: 0
-    Start_Time: 0.0
+    Output_Interval:  100.0
+#    Particles:
+#        Format:    ["Oscar2013"]
+#        Extended: True
+#        Only_Final: Yes
+#    Collisions:
+#        Format:    ["Oscar2013"]
+#        Extended: True
+#        Print_Start_End: True

@@ -2,7 +2,7 @@
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
  * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -56,8 +56,6 @@ void ColorlessHadronization::Init() {
       GetXMLElementDouble({"JetHadronization", "eCMforHadronization"});
   p_fake = p_read_xml;
 
-  std::string weak_decays =
-      GetXMLElementText({"JetHadronization", "weak_decays"});
   take_recoil = GetXMLElementInt({"JetHadronization", "take_recoil"});
 
   JSDEBUG << "Initialize ColorlessHadronization";
@@ -70,28 +68,42 @@ void ColorlessHadronization::Init() {
 
   // Standard settings
   pythia.readString("ProcessLevel:all = off");
-
-  // Don't let pi0 decay
-  //pythia.readString("111:mayDecay = off");
-
-  // Don't let any hadron decay
-  //pythia.readString("HadronLevel:Decay = off");
-
   pythia.readString("PartonLevel:FSR=off");
 
-  if (weak_decays == "off") {
-    JSINFO << "Weak decays are turned off";
-    pythia.readString("HadronLevel:Decay = off");
+  // General settings for hadron decays
+  std::string pythia_decays = GetXMLElementText({"JetHadronization", "pythia_decays"});
+  double tau0Max = 10.0;
+  double tau0Max_xml = GetXMLElementDouble({"JetHadronization", "tau0Max"});
+	if(tau0Max_xml >= 0){tau0Max = tau0Max_xml;}
+  else{JSWARN << "tau0Max should be larger than 0. Set it to 10.";}
+  if(pythia_decays == "on"){
+    JSINFO << "Pythia decays are turned on for tau0Max < " << tau0Max;
+    pythia.readString("HadronLevel:Decay = on");
+    pythia.readString("ParticleDecays:limitTau0 = on");
+    pythia.readString("ParticleDecays:tau0Max = " + std::to_string(tau0Max));
   } else {
-    JSINFO << "Weak decays are turned on";
+    JSINFO << "Pythia decays are turned off";
+    pythia.readString("HadronLevel:Decay = off");
+  }
+
+  // Settings for decays (old flag, will be depracted at some point)
+  // This overwrites the previous settings if the user xml file contains the flag
+  std::string weak_decays =
+    GetXMLElementText({"JetHadronization", "weak_decays"});
+  if (weak_decays == "off") {
+    JSINFO << "Hadron decays are turned off.";
+    JSWARN << "This parameter will be depracted at some point. Use 'pythia_decays' instead.\nOverwriting 'pythia_decays'.";
+    pythia.readString("HadronLevel:Decay = off");
+  } else if(weak_decays == "on") {
+    JSINFO << "Hadron decays inside a range of 10 mm/c are turned on.";
+    JSWARN << "This parameter will be depracted at some point. Use 'pythia_decays' and 'tau0Max' for more control on decays.\nOverwriting 'pythia_decays' and fix 'tau0Max' to 10.";
     pythia.readString("HadronLevel:Decay = on");
     pythia.readString("ParticleDecays:limitTau0 = on");
     pythia.readString("ParticleDecays:tau0Max = 10.0");
   }
-  
+
   std::stringstream lines;
   lines << GetXMLElementText({"JetHadronization", "LinesToRead"}, false);
-  int i = 0;
   while (std::getline(lines, s, '\n')) {
     if (s.find_first_not_of(" \t\v\f\r") == s.npos)
       continue; // skip empty lines

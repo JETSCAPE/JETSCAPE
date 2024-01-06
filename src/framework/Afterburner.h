@@ -40,8 +40,17 @@ public:
   virtual void Exec();
 
 protected:
-  /// Pointer to particlization sampler, which provides initial hadrons
-  std::shared_ptr<SoftParticlization> soft_particlization_sampler_;
+  /// Gather all hadrons from soft particlization and fragmentation
+  std::vector<std::vector<std::shared_ptr<Hadron>>> GatherAfterburnerHadrons();
+  /// Get the events of soft particlization hadrons
+  std::vector<std::vector<std::shared_ptr<Hadron>>> GetSoftParticlizationHadrons();
+  /// Get the list of fragmentation hadrons
+  std::vector<std::shared_ptr<Hadron>> GetFragmentationHadrons();
+
+  std::vector<std::vector<std::shared_ptr<Hadron>>> dummy;
+  std::uniform_real_distribution<double> ZeroOneDistribution;
+  // rng for the Kaon-L / Kaon-S switch to K0 / Anti-K0
+  std::shared_ptr<std::uniform_int_distribution<int>> rand_int_ptr_;
 };
 
 } // end namespace Jetscape
