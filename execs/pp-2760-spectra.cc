@@ -47,6 +47,7 @@
 //ROOT headers
 #include <TH1.h>
 #include <TFile.h>
+#include <TDirectory.h>
 #include <TVector.h>
 #include "TApplication.h"
 #include "TCanvas.h"
@@ -72,6 +73,7 @@ int main(int argc, char* argv[]){
     int StartTime = time(NULL);
     // Create the ROOT application environment.
     TApplication theApp("hist", &argc, argv);
+    TFile* totalroot = new TFile( "root/totals.root", "RECREATE");
     
     //Reading ptHat bins from list of made directories
     vector<vector<string>> tempvec = getDatBounds("./dat");
@@ -176,6 +178,7 @@ int main(int argc, char* argv[]){
     //graph declaration for adding hadron spectra
     TMultiGraph* hadronComp = new TMultiGraph();
     TGraph* hadronComponents[NpTHardBin];
+    TDirectory* binfiles[NpTHardBin];
     
     cout<<"These are pTHat loops "<<endl;
     // For loop to open different pTHat bin files
@@ -194,8 +197,9 @@ int main(int argc, char* argv[]){
         
         // Create a file on which histogram(s) can be saved.
         char outFileName[1000];
-        sprintf(outFileName,"root/SpectraBin%s_%s.root",pTHatMin[k].c_str(),pTHatMax[k].c_str());
-        TFile* outFile = new TFile( outFileName, "RECREATE");
+        sprintf(outFileName,"SpectraBin%s_%s",pTHatMin[k].c_str(),pTHatMax[k].c_str());
+        binfiles[k] = totalroot->mkdir(outFileName);
+        binfiles[k]->cd();
         // Reset for each pTHardBin
         char HistName[100];
         
@@ -650,7 +654,7 @@ int main(int argc, char* argv[]){
         GEJetMass->Write();
 
         delete GEJet; delete GESingleHadron; delete GEJetShape; delete GEJetFF; delete GEJetMass;
-        delete outFile;
+        totalroot->cd();
     } //k-loop ends here (pTHatBin loop)
     
     delete HistTempJet; delete HistTempSingleHadron;
@@ -743,7 +747,8 @@ int main(int argc, char* argv[]){
     hadron_file.Close();
 	
     //create root file for total plots
-    TFile* totalroot = new TFile( "root/totals.root", "RECREATE");
+    cout << "Creating ROOT output...";
+    totalroot->cd();
     HistFinalJet->Write("jet radius 0.3");
     HistTotalHadron->Write("hadrons");
     HistTotalJetShape->Write("jet shape");
@@ -756,13 +761,13 @@ int main(int argc, char* argv[]){
     ProfTotalPions->Write();
     ProfTotalKaons->Write();
     ProfTotalProtons->Write();
-    totalroot->Close();
+    cout << "finished." << endl;
 
     //jets
     //jet data graph
     TMultiGraph *GEJetTotal = new TMultiGraph();
-    TFile jet_file("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/data/JetData.root");
-    TDirectory* jetdir = (TDirectory*)jet_file.Get("Table 4");
+    TFile* jet_file = new TFile("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/data/JetData.root");
+    TDirectory* jetdir = (TDirectory*)jet_file->Get("Table 4");
     TGraphErrors* jetData = (TGraphErrors*) jetdir->Get("Graph1D_y2");
     HistFinalJet->Scale(1e6); //data listed in mb
     jetData->SetTitle("CMS");
@@ -780,7 +785,8 @@ int main(int argc, char* argv[]){
     jetDataHist4->SetTitle("CMS");
     myRatioPlot(jetDataHist4,HistTotalJet3,"Jet r4 Differential Cross sections",false,true);
 
-    jet_file.Close();
+    jet_file->Close();
+    totalroot->Close();
 
     //Done. Script run time
     int EndTime = time(NULL);
