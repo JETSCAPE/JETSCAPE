@@ -196,7 +196,10 @@ def writeDesign(points, ECM, filename):
 def runxml(xmlname):
     runjetscapecmd = "./runJetscape " + xmlname
     update(runjetscapecmd)
-    os.system(runjetscapecmd)
+    try: 
+        os.system(runjetscapecmd)
+    except:
+        print("JETSCAPE Error")
 
 # writing set of xmls to a file to be run later
 def writeXmls(xmls,baseDir):
