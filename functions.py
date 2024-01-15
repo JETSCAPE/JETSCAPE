@@ -7,6 +7,8 @@ import pandas as pd
 from math import asin, pi, sqrt
 from math import acos
 import ROOT
+import zipfile
+import shutil
 
 # make base directories for the analysis
 def makeTotalDir(totaldir):
@@ -267,3 +269,13 @@ class parton:
     
     def P(self):
         return sqrt(self.v.Px()**2 + self.v.Py()**2 + self.v.Pz()**2)
+    
+def zipxmls(pointdir):
+    print("Zipping xmls for " + pointdir)
+    shutil.make_archive(pointdir+'/xmlzip', format='zip', root_dir=pointdir+'/xml')
+    shutil.rmtree(pointdir+'/xml')
+
+def unzipxmls(pointdir):
+    print("Unzipping xmls for " + pointdir)
+    shutil.unpack_archive(pointdir+'/xmlzip.zip', pointdir+'/xml')
+    os.remove(pointdir+'/xmlzip.zip')

@@ -20,17 +20,20 @@ print("From " + str(start) + " to " + str(finish) + " in " + totdir + ":")
 
 # Changing to build directory
 os.chdir("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/build")
+pool = mp.Pool(48)
 
 # looping over points
 for dir in dirs[start:finish]:
     print("Running " + dir + ":")
-    xmls = readXmls(totdir+"points/"+dir)
-    pool = mp.Pool(48)
-
+    pointdir = totdir+"points/"+dir
+    unzipxmls(pointdir)
+    xmls = readXmls(pointdir)
     pool.map(runxml, xmls)
-    pool.close()
+    zipxmls(pointdir)
 
     # concatonating all soft bins together
     if "_0_" in xmls[0] and "_0_" in xmls[1]:
         dats = concatDats(totdir+dir)
+
+pool.close()
     
