@@ -203,12 +203,12 @@ for i in range(len(design)):
     # Making xmls
     baseDir = makeDir(i)
     output = pool.starmap(makexml, [(bound, design.loc[[i]], baseDir, xmllines, ECM) for bound in pTHatBounds]) # star map to each set of bounds
-
+    
     # Running jetscape for them
     xmls, dats = zip(*map(itemgetter('xml', 'dat'), output)) 
     writeXmls(xmls,baseDir)
-    #continue
     pool.map(runxml, xmls)
+    zipxmls(baseDir)
 
     # Handling appending runs
     if appending:
