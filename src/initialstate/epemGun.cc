@@ -140,6 +140,8 @@ void epemGun::InitTask() {
     throw std::runtime_error("Pythia init() failed.");
   }
 
+  Lambda_QCD = GetXMLElementDouble({"Eloss","lambdaQCD"});
+
   // Initialize random number distribution
   ZeroOneDistribution = uniform_real_distribution<double>{0.0, 1.0};
 
@@ -471,7 +473,7 @@ double epemGun::alpha_s(double q2) {
   if (q24 > L2) {
     a = 12.0 * pi / (11.0 * Nc - 2.0 * c_nf) / std::log(q24 / L2);
   } else {
-    JSWARN << " alpha too large ";
+    //JSWARN << " alpha too large ";
     a = 0.6;
   }
 
