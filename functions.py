@@ -100,7 +100,7 @@ def createPandaDesign(points):
     designparams = [
         {"name": "Q0", "range": (1.2,3.0)},
         {"name": "vir_factor", "range": (0.1,1.0)},
-        {"name": "lambdaQCD", "range": (0.1,0.55)},
+        {"name": "lambdaQCD", "range": (0.1,0.45)},
         {"name": "StringFlav:probStoUD", "range": (0.2,0.5)},
         {"name": "StringFlav:probQQtoQ", "range": (0.07,0.2)},
         {"name": "MultipartonInteractions:ecmPow", "range": (0.1,0.5)},
