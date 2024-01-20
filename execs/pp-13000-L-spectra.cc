@@ -235,7 +235,7 @@ int main(int argc, char* argv[]){
             TCanvas *c = new TCanvas();
             tempL[i1][i2]->Draw();
             string plotname = "plots/" + names[i1][i2] + ".png";
-            tempL[i1][i2]->GetYaxis()->SetRangeUser(0,10);
+            //tempL[i1][i2]->GetYaxis()->SetRangeUser(0,10);
             c->SaveAs(plotname.c_str());
             c->Close();
         }
