@@ -48,13 +48,21 @@ void FreestreamMilneWrapper::InitializePreequilibrium(
 
   fsmilne_ptr = new FREESTREAMMILNE();
   struct parameters *params = fsmilne_ptr->configure(input_file.c_str());
-
+  
+  //overwriting tau0,tauj,taus from xml file
+  //tau0: initial time for initial condition
+  //tauj: initial output time of background for hard probe
+  //taus: end time for freestream or initial time for hydro
+  //dtau: the free-streaming time
   double tau0 = GetXMLElementDouble(
       {"Preequilibrium", "tau0"});
+  double tauj = GetXMLElementDouble(
+      {"Preequilibrium", "tauj"});
   double taus = GetXMLElementDouble(
       {"Preequilibrium", "taus"});
 
   params->TAU0 = tau0;
+  params->TAUJ = tauj;
   params->DTAU = taus - tau0;
 }
 
