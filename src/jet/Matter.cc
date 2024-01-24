@@ -201,7 +201,6 @@ void Matter::Dump_pIn_info(int i, vector<Parton> &pIn) {
 
 void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
                           vector<Parton> &pIn, vector<Parton> &pOut) {
-  //JSINFO << "matter";
 
   if (std::isnan(pIn[0].e()) || std::isnan(pIn[0].px()) ||
       std::isnan(pIn[0].py()) || std::isnan(pIn[0].pz()) ||
@@ -269,9 +268,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
     if (pIn[i].pid() == photonid) {
       if(pIn[i].pstat() != 22) {
             pIn[i].set_stat(22);
-      	    /*JSINFO << BOLDYELLOW
+      	    VERBOSE(1) << BOLDYELLOW
                        << " A photon was RECEIVED with px = " << pIn[i].px()
-                       << " from framework and sent back ";*/
+                       << " from framework and sent back ";
 
             pOut.push_back(pIn[i]);
       }
@@ -1503,7 +1502,6 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
           pOut[iout].set_max_color(max_color);
           pOut[iout].set_min_color(pIn[i].min_color());
           pOut[iout].set_min_anti_color(pIn[i].min_anti_color());
-          pOut[iout].set_stat(1);
 
           //JSINFO << BOLDYELLOW << " A photon was made in MATTER with px = " << pOut[iout].px() << " and sent to the framework " ;
         }

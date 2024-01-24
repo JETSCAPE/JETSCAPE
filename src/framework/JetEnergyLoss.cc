@@ -190,10 +190,9 @@ void JetEnergyLoss::DoShower() {
     currentTime += deltaT;
 
     for (int i = 0; i < pIn.size(); i++) {
-      if(pIn[i].pstat() == 22) continue;
       vector<Parton> pInTempModule;
       vector<Parton> pOutTemp;
-      //JSINFO << pIn.at(i).edgeid();
+      // JSINFO << pIn.at(i).edgeid();
       pInTempModule.push_back(pIn[i]);
       SentInPartons(deltaT, currentTime, pIn[i].pt(), pInTempModule, pOutTemp);
 
@@ -282,7 +281,6 @@ void JetEnergyLoss::DoShower() {
         }
       }
 
-      //JSINFO << "Updating parton shower";
       // update parton shower
       if (pOutTemp.size() == 0) {
         // this is the free-streaming case for MATTER
@@ -336,8 +334,6 @@ void JetEnergyLoss::DoShower() {
         }
       }
     }
-
-    //JSINFO << "Did eloss for timestep";
 
     // one time step is finished, now update parton shower to pIn
     pIn.clear();

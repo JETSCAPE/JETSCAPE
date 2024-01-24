@@ -156,7 +156,6 @@ void LBT::WriteTask(weak_ptr<JetScapeWriter> w) {
 
 void LBT::DoEnergyLoss(double deltaT, double time, double Q2,
                        vector<Parton> &pIn, vector<Parton> &pOut) {
-  //JSINFO << "lbt";
 
   double z = 0.5;
 
@@ -183,9 +182,6 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2,
 
     if (pIn[i].pid() == photonid) {
       if(pIn[i].pstat() != 22) {
-        JSINFO << BOLDYELLOW
-                       << " A photon was RECEIVED with px = " << pIn[i].px()
-                       << " from framework and sent back ";
 	      pIn[i].set_stat(22); //Add status code 22 for photons that pass through LBT if it is already not assigned by one of the other JEL modules.
               pOut.push_back(pIn[i]);
       }
