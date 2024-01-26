@@ -45,9 +45,6 @@
   <JetHadronization>
     <name>hybrid</name>
     <eCMforHadronization>5020</eCMforHadronization>
-    <pionWidthScale>1.0</pionWidthScale>
-    <kaonWidthScale>1.0</kaonWidthScale>
-    <protonWidthScale>1.0</protonWidthScale>
     <shower_recofactor>1</shower_recofactor>
     <thermal_recofactor>1</thermal_recofactor>
     <ignorePhotons>on</ignorePhotons>

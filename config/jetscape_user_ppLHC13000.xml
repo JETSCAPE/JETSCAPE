@@ -40,9 +40,6 @@
   <JetHadronization>
     <name>hybrid</name>
     <eCMforHadronization>13000</eCMforHadronization>
-    <pionWidthScale>1.0</pionWidthScale>
-    <kaonWidthScale>1.0</kaonWidthScale>
-    <protonWidthScale>1.0</protonWidthScale>
     <shower_recofactor>1.0</shower_recofactor>
     <LinesToRead>
       StringFlav:probStoUD = 0.217

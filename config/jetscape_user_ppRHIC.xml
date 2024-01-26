@@ -39,10 +39,7 @@
   <!-- Jet Hadronization Module -->
   <JetHadronization>
     <name>hybrid</name>
-    <eCMforHadronization>33.33</eCMforHadronization>
-    <pionWidthScale>1.0</pionWidthScale>
-    <kaonWidthScale>1.0</kaonWidthScale>
-    <protonWidthScale>1.0</protonWidthScale>
+    <eCMforHadronization>200</eCMforHadronization>
     <shower_recofactor>1.0</shower_recofactor>
     <LinesToRead>
       StringFlav:probStoUD = 0.217
