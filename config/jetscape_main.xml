@@ -129,6 +129,7 @@
     <tStart> 0.6 </tStart> <!-- Start time of jet quenching, proper time, fm/c   -->
     <mutex>ON</mutex>
     <AddLiquefier> false </AddLiquefier>
+    <lambdaQCD>0.2</lambdaQCD>
 
     <Matter>
       <name>Matter</name>
