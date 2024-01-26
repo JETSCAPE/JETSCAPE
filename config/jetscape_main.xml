@@ -354,9 +354,6 @@
        <pythia_decays>on</pythia_decays> <!-- lets the particles given to pythia decay-->
        <tau0Max>10.0</tau0Max> <!-- only particles with tau0 < tau0Max (given in mm/c) can decay, increase to include weak decays-->
        <weak_decays>depracted</weak_decays> <!-- use the parameters pythia_decays and tau0Max, this parameter is only a dummy to make old xml files work-->
-       <pionWidthScale>1.0</pionWidthScale>
-       <kaonWidthScale>1.0</kaonWidthScale>
-       <protonWidthScale>1.0</protonWidthScale>
        <!-- You can add any number of additional lines to initialize pythia hadronization here -->
        <!-- Note that if the tag exists it cannot be empty (tinyxml produces a segfault) -->
        <!-- <LinesToRead> -->
