@@ -65,6 +65,7 @@ int main(int argc, char* argv[]){
         }
         directories.insert(directories.end(), sorteddirs.begin(), sorteddirs.end()); //inserting into the end of total vector
     }
+    int maxdir = directories.size();
     chdir("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/build");
     
     // Create the ROOT application environment.
@@ -136,7 +137,7 @@ int main(int argc, char* argv[]){
  
     //grabbing graphs from each jetscape file
     int color = 1;
-    for(int i = 0; i < directories.size(); i++){
+    for(int i = 0; i < maxdir; i++){
         //reading graph
         string filename = directories[i] + "/root/totals.root";
         cout << filename << ": ";

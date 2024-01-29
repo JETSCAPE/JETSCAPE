@@ -44,6 +44,7 @@ using namespace Jetscape;
 int main(int argc, char* argv[]){
     //list of directories to go over
     vector<string> directories = getComparisonDirs(argc, argv);
+    int maxdir = directories.size();
     string input = argv[1]; 
     
     // Create the ROOT application environment.
