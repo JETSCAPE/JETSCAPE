@@ -54,7 +54,7 @@ void ColorlessHadronization::Init() {
   // Read sqrts to know remnants energies
   double p_read_xml =
       GetXMLElementDouble({"JetHadronization", "eCMforHadronization"});
-  p_fake = p_read_xml;
+  p_fake = p_read_xml / 6.;
 
   take_recoil = GetXMLElementInt({"JetHadronization", "take_recoil"});
 
