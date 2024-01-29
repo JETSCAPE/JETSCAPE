@@ -31,9 +31,6 @@ static double Ca = 3.0;
 
 static double Nc = 3.0;
 
-//static double Lambda_QCD = 0.2;
-// 0.4 is the value chosen in JETSET
-
 static const double hbarC = 0.197327053;
 
 static const double fmToGeVinv = 1.0 / hbarC;
