@@ -125,7 +125,7 @@ int main(int argc, char* argv[]){
     HistTempJet->GetXaxis()->SetRangeUser(20,46);
 
     //reco hadrons
-    TH1D *HistRecoHadron = new TH1D("Frag Hadrons", "Frag Hadrons", NpTSingleHadronBin, SingleHadronpTBin);
+    TH1D *HistRecoHadron = new TH1D("Reco Hadrons", "Reco Hadrons", NpTSingleHadronBin, SingleHadronpTBin);
 
     //temp hists for identified hadrons
     protonpTBin[0] = 0.01; // dont ask
@@ -190,7 +190,7 @@ int main(int argc, char* argv[]){
 
                 double xp = 2*P/Ecm;
                 HistTempSingleHadron->Fill(xp);
-                if(hadrons[i].get()->plabel() <= 812) HistRecoHadron->Fill(xp);
+                if(pStat <= 812) HistRecoHadron->Fill(xp);
                 if(abs(PID) == 211) tempPions->Fill(xp);
                 if(abs(PID) == 321) tempKaons->Fill(xp);
                 if(abs(PID) == 2212) tempProtons->Fill(xp);
