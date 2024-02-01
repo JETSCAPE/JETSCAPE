@@ -53,7 +53,7 @@ os.chdir("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/build/")
 
 def run(directory):
     if analysisDir.startswith("/"):
-        baseDir = analysisDir + directory
+        baseDir = analysisDir +  "points/" + directory
     else:
         baseDir = "/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/" + analysisDir + "points/" + directory
     
