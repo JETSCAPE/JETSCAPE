@@ -101,18 +101,23 @@ int main(int argc, char* argv[]){
     double SingleHadronpTBin[] = {0.45, 0.6, 0.75, 0.9, 1.05, 1.2, 1.5, 1.8, 2.1, 2.4, 3.6, 4.8, 6.0, 7.2, 10.8, 14.4, 21.6, 28.8, 38.4, 48.0, 67.2, 86.4, 112.2};
     int NpTSingleHadronBin = sizeof(SingleHadronpTBin)/sizeof(SingleHadronpTBin[0])-1;
 
-    double pionpTBin[] = {0.1,0.12,0.14,0.16,0.18,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95,1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3,2.4,2.5,2.6,2.7,2.8,2.9,3,3.2,3.4,3.6,3.8,4,4.5,5,5.5,6,6.5,7,8,9,10,11,12,13,14,15,16,18,20};
-    int NpTpionBin = sizeof(pionpTBin)/sizeof(pionpTBin[0])-1;
-
-    double kaonpTBin[] = {0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95,1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3,2.4,2.5,2.6,2.7,2.8,2.9,3,3.2,3.4,3.6,3.8,4,4.5,5,5.5,6,6.5,7,8,9,10,11,12,13,14,15,16,18,20};
-    int NpTkaonBin = sizeof(kaonpTBin)/sizeof(kaonpTBin[0])-1;
-
-    double protonpTBin[] = {0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95,1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3,2.4,2.5,2.6,2.7,2.8,2.9,3,3.2,3.4,3.6,3.8,4,4.5,5,5.5,6,6.5,7,8,9,10,11,12,13,14,15,16,18,20};
-    int NpTprotonBin = sizeof(protonpTBin)/sizeof(protonpTBin[0])-1;
+    //ID Had variables
+    TFile idhadron_file("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/data/LHC-ID-hads.root");
+    TDirectory* piondir = (TDirectory*)idhadron_file.Get("Table 1");
+    TH1D* piondata = (TH1D*) piondir->Get("Hist1D_y3");
+    int NpTpionBin = piondata->GetNbinsX();
+    
+    TDirectory* kaondir = (TDirectory*)idhadron_file.Get("Table 2");
+    TH1D* kaondata = (TH1D*) kaondir->Get("Hist1D_y3");
+    int NpTkaonBin = kaondata->GetNbinsX();
+    
+    TDirectory* protondir = (TDirectory*)idhadron_file.Get("Table 3");
+    TH1D* protondata = (TH1D*) protondir->Get("Hist1D_y3");
+    int NpTprotonBin = protondata->GetNbinsX();
 
     double SingleHadronEtaCut = 1.0;
     double DetectorEtaCut= 2.6;
-    double idHadronYCut = 0.5;
+    double idHadronYCut = 0.8;
     double dNdpTCountSingleHadron[NpTHardBin][NpTSingleHadronBin];  //[ptHatBin] [Regular pt]
     double pTHardBinSingleHadronBinError[NpTHardBin][NpTSingleHadronBin];
     long double TotalDifferentialSingleHadronYield[NpTSingleHadronBin] = {0};
@@ -143,17 +148,11 @@ int main(int argc, char* argv[]){
     TH1D *HistTotalJetShape = new TH1D("JetShape", "Jet Shape", NrJetShapeBin, JetShaperBin); //Total hist for jet shape
     TH1D *HistTotalJet2 = new TH1D("JetSpectrumBin2", "Combined Jet pT Spectrum 0.2 R", NpTJetBin, JetpTBin); //Total hist for jets
 	TH1D *HistTotalJet3 = new TH1D("JetSpectrumBin3", "Combined Jet pT Spectrum 0.4 R", NpTJetBin, JetpTBin); //Total hist for jets
-    TH1D *HistTotalPions = new TH1D("Pion Spectrum", "Pion Spectrum pT", NpTpionBin, pionpTBin); //identified hadrons hists
-    TH1D *HistTotalKaons = new TH1D("Kaon Spectrum", "Kaon Spectrum pT", NpTkaonBin, kaonpTBin);
-    TH1D *HistTotalProtons = new TH1D("Proton Spectrum", "Proton Spectrum pT", NpTprotonBin, protonpTBin);
+    TH1D *HistTotalPions = new TH1D("Pion Spectrum", "Pion Spectrum pT", NpTpionBin, piondata->GetXaxis()->GetXbins()->GetArray()); //identified hadrons hists
+    TH1D *HistTotalKaons = new TH1D("Kaon Spectrum", "Kaon Spectrum pT", NpTkaonBin, kaondata->GetXaxis()->GetXbins()->GetArray());
+    TH1D *HistTotalProtons = new TH1D("Proton Spectrum", "Proton Spectrum pT", NpTprotonBin, protondata->GetXaxis()->GetXbins()->GetArray());
     HistTotalJet->SetName("Combined Jet pT Spectrum");
     HistTotalHadron->SetName("Combined Hadron pT Spectrum");
-
-    //profile histograms
-    TProfile *ProfTotalHadron = new TProfile("HadronSpectrumBin", "Combined Hadron pT Spectrum", NpTSingleHadronBin, SingleHadronpTBin);
-    TProfile *ProfTotalPions = new TProfile("Pion Profile", "Pion Spectrum pT", NpTpionBin, pionpTBin);
-    TProfile *ProfTotalKaons = new TProfile("Kaon Profile", "Kaon Spectrum pT", NpTkaonBin, kaonpTBin);
-    TProfile *ProfTotalProtons = new TProfile("Proton Profile", "Proton Spectrum pT", NpTprotonBin, protonpTBin);
 
     //Running totals for total spectra
     double DifferentialJetTotal[NpTJetBin] = {0};
@@ -234,15 +233,9 @@ int main(int argc, char* argv[]){
         TH1D *HistTempJet3 = new TH1D("JetSpectrumBinTemp3", "Jet Spectrum pT", NpTJetBin, JetpTBin);
 
         //temp hists for identified hadrons
-        TH1D *tempPions = new TH1D("Pion Spectrum Temp", "Pion Spectrum pT", NpTpionBin, pionpTBin);
-        TH1D *tempKaons = new TH1D("Kaon Spectrum Temp", "Kaon Spectrum pT", NpTkaonBin, kaonpTBin);
-        TH1D *tempProtons = new TH1D("Proton Spectrum Temp", "Proton Spectrum pT", NpTprotonBin, protonpTBin);
-
-        //profile histograms
-        TProfile *ProfTempHadron = new TProfile("HadronSpectrumBin", "Combined Hadron pT Spectrum", NpTSingleHadronBin, SingleHadronpTBin);
-        TProfile *ProfTempPions = new TProfile("Pion Profile Temp", "Pion Spectrum pT", NpTpionBin, pionpTBin);
-        TProfile *ProfTempKaons = new TProfile("Kaon Profile Temp", "Kaon Spectrum pT", NpTkaonBin, kaonpTBin);
-        TProfile *ProfTempProtons = new TProfile("Proton Profile Temp", "Proton Spectrum pT", NpTprotonBin, protonpTBin);
+        TH1D *tempPions = new TH1D("Pion Spectrum Temp", "Pion Spectrum pT", NpTpionBin, piondata->GetXaxis()->GetXbins()->GetArray());
+        TH1D *tempKaons = new TH1D("Kaon Spectrum Temp", "Kaon Spectrum pT", NpTkaonBin, kaondata->GetXaxis()->GetXbins()->GetArray());
+        TH1D *tempProtons = new TH1D("Proton Spectrum Temp", "Proton Spectrum pT", NpTprotonBin, protondata->GetXaxis()->GetXbins()->GetArray());
 
         //Data structures for events read in to save run time
         vector<shared_ptr<Hadron>> hadrons;
@@ -402,15 +395,14 @@ int main(int argc, char* argv[]){
                 // Add this particle into SingleHadron spectrum
                 if(fabs(Eta) < SingleHadronEtaCut && PT>0.01  && fabs(PID)>100 &&  pythia.particleData.charge(PID)!=0){
                     //cout<<PT<<" PID "<<PID<<"\t charge = "<<pythia.particleData.charge( PID)<<endl;
-                    HistTempSingleHadron->Fill(PT,strength);
-                    ProfTempHadron->Fill(PT,PT,strength);
+                    HistTempSingleHadron->Fill(PT,strength/PT);
                 }
                 
                 //ID hadron spectra
                 if(fabs(Y) < idHadronYCut){
-                    if(abs(PID) == 211) {tempPions->Fill(PT,strength); ProfTempPions->Fill(PT,PT,strength);}
-                    if(abs(PID) == 321) {tempKaons->Fill(PT,strength); ProfTempKaons->Fill(PT,PT,strength);}
-                    if(abs(PID) == 2212) {tempProtons->Fill(PT,strength); ProfTempProtons->Fill(PT,PT,strength);}
+                    if(abs(PID) == 211) {tempPions->Fill(PT,strength/PT);}
+                    if(abs(PID) == 321) {tempKaons->Fill(PT,strength/PT);}
+                    if(abs(PID) == 2212) {tempProtons->Fill(PT,strength/PT);}
                 } 
             }
         }
@@ -498,12 +490,6 @@ int main(int argc, char* argv[]){
 		HistTotalJet->Add(HistTempJet,HardCrossSection); 
         HistTotalJet2->Add(HistTempJet2,HardCrossSection/Events);
         HistTotalJet3->Add(HistTempJet3,HardCrossSection/Events);
-
-        //profile adding
-        ProfTotalHadron->Add(ProfTempHadron,factor);
-        ProfTotalPions->Add(ProfTempPions,factor);
-        ProfTotalKaons->Add(ProfTempKaons,factor);
-        ProfTotalProtons->Add(ProfTempProtons,factor);
 
         myfile->Close();
         
@@ -688,10 +674,10 @@ int main(int argc, char* argv[]){
     //Scaling totals by global factors and the identified pions by bin centers
     HistTotalJet2->Scale(1.0/(2.0*JetEtaCut),"width");
     HistTotalJet3->Scale(1.0/(2.0*JetEtaCut),"width");
-    scaleBins(HistTotalHadron,ProfTotalHadron,1.0/(2*M_PI*2.0*SingleHadronEtaCut));
-    scaleBins(HistTotalPions,ProfTotalPions,1.0/(2*M_PI*2.0*idHadronYCut));
-    scaleBins(HistTotalKaons,ProfTotalKaons,1.0/(2*M_PI*2.0*idHadronYCut));
-    scaleBins(HistTotalProtons,ProfTotalProtons,1.0/(2*M_PI*2.0*idHadronYCut));
+    HistTotalHadron->Scale(1.0/(2*M_PI*2.0*SingleHadronEtaCut),"width");
+    HistTotalPions->Scale(1.0/(2*M_PI*2.0*idHadronYCut),"width");
+    HistTotalKaons->Scale(1.0/(2*M_PI*2.0*idHadronYCut),"width");
+    HistTotalProtons->Scale(1.0/(2*M_PI*2.0*idHadronYCut),"width");
 
     //jet shape
     double JetShapeNorm = 0;
@@ -757,10 +743,6 @@ int main(int argc, char* argv[]){
     HistTotalPions->Write("raw pions"); smoothBins(HistTotalPions); /*HistTotalPions->Smooth();*/ HistTotalPions->Write("identified pions");
     HistTotalKaons->Write("raw kaons"); smoothBins(HistTotalKaons); /*HistTotalKaons->Smooth();*/ HistTotalKaons->Write("identified kaons");
     HistTotalProtons->Write("raw protons"); smoothBins(HistTotalProtons); /*HistTotalProtons->Smooth();*/ HistTotalProtons->Write("identified protons");
-    ProfTotalHadron->Write();
-    ProfTotalPions->Write();
-    ProfTotalKaons->Write();
-    ProfTotalProtons->Write();
     cout << "finished." << endl;
 
     //jets
@@ -786,6 +768,7 @@ int main(int argc, char* argv[]){
     myRatioPlot(jetDataHist4,HistTotalJet3,"Jet r4 Differential Cross sections",false,true);
 
     jet_file->Close();
+    idhadron_file.Close();
     totalroot->Close();
 
     //Done. Script run time
