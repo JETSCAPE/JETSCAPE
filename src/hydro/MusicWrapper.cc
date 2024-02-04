@@ -161,10 +161,13 @@ void MpiMusic::EvolveHydro() {
   double dz = ini->GetZStep();
   double z_max = ini->GetZMax();
   int nz = ini->GetZSize();
+  double tau0 = pre_eq_ptr->GetPreequilibriumEndTime();
+  JSINFO << "hydro initial time  tau0 = " << tau0 << " fm"; //xyw
   if (pre_eq_ptr == nullptr) {
     JSWARN << "Missing the pre-equilibrium module ...";
   } else {
     music_hydro_ptr->initialize_hydro_from_jetscape_preequilibrium_vectors(
+        tau0,		    
         dx, dz, z_max, nz, pre_eq_ptr->e_, pre_eq_ptr->P_,
         pre_eq_ptr->utau_, pre_eq_ptr->ux_, pre_eq_ptr->uy_, pre_eq_ptr->ueta_,
         pre_eq_ptr->pi00_, pre_eq_ptr->pi01_, pre_eq_ptr->pi02_,
