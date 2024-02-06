@@ -23,6 +23,9 @@ softOnly = False
 ECM = ""
 design = []
 startdir = ""
+todays_date = date.today()
+name = system + "-" + str(todays_date.month) + "-" + str(todays_date.day)
+rundata = True
 
 for i, option in enumerate(sys.argv):
     if "RHIC" in option:
@@ -60,10 +63,14 @@ for i, option in enumerate(sys.argv):
         rerunning = True
         reading = True
         startdir = sys.argv[i+1]
+    if "-n" in option:
+        name = sys.argv[i+1]
+    if "--blank" in option:
+        rundata = False
+        
 
 # date and file initiation
-todays_date = date.today()
-totaldir = "/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/runs/" + system + "-" + str(todays_date.month) + "-" + str(todays_date.day) + "/"
+totaldir = "/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/runs/" + name + "/"
 if rerunning: 
     totaldir = startdir
     design = pd.read_csv(totaldir+"QVir_Analysis/parameters.txt")
@@ -196,6 +203,7 @@ os.chdir("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/build")
 pool = mp.Pool(len(pTHatBounds))
 
 # Loop over design points and make parameter file
+design = design.loc[:, ~design.columns.str.contains('^Unnamed')]
 design.to_csv(totaldir+'QVir_Analysis/parameters.txt',index=False)
 print(design)
 
@@ -207,9 +215,10 @@ for i in range(len(design)):
     # Running jetscape for them
     xmls, dats = zip(*map(itemgetter('xml', 'dat'), output)) 
     writeXmls(xmls,baseDir)
-    pool.map(runxml, xmls)
+    if rundata: pool.map(runxml, xmls)
     zipxmls(baseDir)
 
+    if not rundata: continue
     # Handling appending runs
     if appending:
         for dat in dats:
