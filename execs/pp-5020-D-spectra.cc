@@ -225,7 +225,7 @@ int main(int argc, char* argv[]){
         
         //Dcounts
         for(int i1 = 0; i1 < ntrigbins; i1++)
-            totLcount[i1] += Lpts->GetBinContent(i1+1)*HardCrossSection/(Events);
+            totLcount[i1] += Lpts->GetBinContent(i1+1);
         
         //event info
         TVector EventInfo(3);
@@ -242,7 +242,7 @@ int main(int argc, char* argv[]){
                 tempL[i1][i2]->GetYaxis()->SetTitle("Hadron Reco Label");
                 tempL[i1][i2]->Write(names[i1][i2].c_str());
                 recoHist[i1][i2]->Write(names[i1][i2].c_str());
-                HistLPhi[i1][i2]->Add(tempL[i1][i2],HardCrossSection/(Events));
+                HistLPhi[i1][i2]->Add(tempL[i1][i2]);
             }
         }
 
