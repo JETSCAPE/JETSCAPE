@@ -92,6 +92,10 @@ def makeDir(index):
 ##parameters and bounds
 nsamples = 500
 if not reading: design = createPandaDesign(nsamples)
+design.drop(['vir_factor','MultipartonInteractions:ecmPow','MultipartonInteractions:pT0Ref'], axis=1, inplace=True)
+design.rename(columns={'ee_vir_factor': 'vir_factor'})
+design.to_csv(totaldir+'QVir_Analysis/parameters.txt',index=False)
+print(design)
 
 #reading xml template
 xmltemplate = open("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/config/jetscape_user.xml","r")
@@ -100,14 +104,10 @@ xmllines = xmltemplate.readlines()
 ##Changing to build directory
 os.chdir("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/build")
 
-# Loop over design points and make parameter file
-design.to_csv(totaldir+'QVir_Analysis/parameters.txt',index=False)
-print(design)
-
 ##Running jetscape for each set of parameters with multiprocessing
 pool = mp.Pool(48)
 pool.starmap(binrun, [(i,design.loc[[i]], xmllines) for i in range(len(design))])
 pool.close()
 
 ##running total analysis
-#os.system("./ee-comparison " + totaldir)
+os.system("./ee-comparison " + totaldir)
