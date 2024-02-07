@@ -86,10 +86,6 @@ void iSpectraSamplerWrapper::InitTask() {
   iSpectraSampler_ptr_->paraRdr_ptr->setVal("turn_on_rhob", 0);
   iSpectraSampler_ptr_->paraRdr_ptr->setVal("turn_on_diff", 0);
 
-  iSpectraSampler_ptr_->paraRdr_ptr->setVal("include_deltaf_shear", 1);
-  iSpectraSampler_ptr_->paraRdr_ptr->setVal("include_deltaf_bulk", 0);
-  iSpectraSampler_ptr_->paraRdr_ptr->setVal("bulk_deltaf_kind", 1);
-  iSpectraSampler_ptr_->paraRdr_ptr->setVal("include_deltaf_diffusion", 0);
 
   iSpectraSampler_ptr_->paraRdr_ptr->setVal("restrict_deltaf", 0);
   iSpectraSampler_ptr_->paraRdr_ptr->setVal("deltaf_max_ratio", 1.0);
@@ -97,6 +93,8 @@ void iSpectraSamplerWrapper::InitTask() {
 
   iSpectraSampler_ptr_->paraRdr_ptr->setVal("calculate_vn", 0);
   iSpectraSampler_ptr_->paraRdr_ptr->setVal("MC_sampling", 4);
+ 
+  iSpectraSampler_ptr_->paraRdr_ptr->setVal("RegVisYield", 1);
 
   iSpectraSampler_ptr_->paraRdr_ptr->setVal(
       "sample_upto_desired_particle_number", 0);
