@@ -136,6 +136,7 @@
       <matter_on> 1 </matter_on>
       <Q0> 2.0 </Q0>
       <T0> 0.16 </T0>
+      <!--if negative vir_factor: parton 3-momentum of hard parton is used to compute initial virtuality in shower; if positive: transverse momentum of parton is used-->
       <vir_factor> 0.25 </vir_factor>
       <in_vac> 1 </in_vac>
       <recoil_on> 0 </recoil_on>
@@ -331,6 +332,7 @@
        <name>colored/colorless/hybrid</name>
        <take_recoil>1</take_recoil>
        <!--use eCMforHadronization only for pp collisions to introduce beam partons-->
+       <!--recommended value for e+e- and AA = 0-->
        <!--in all hadronization modules put the full eCM here, this is distributed to the beam partons (1/6 for each one)-->
        <eCMforHadronization>5020</eCMforHadronization>
        <!--maximum energy level for mesons-->
