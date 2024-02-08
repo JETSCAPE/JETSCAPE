@@ -354,7 +354,7 @@
        <!--free-straming propagation of hadrons after hadronization-->
        <had_postprop>0.0</had_postprop>
        <!--free-streaming of partons before hadronization-->
-       <part_prop>1.0</part_prop>
+       <part_prop>0.0</part_prop>
        <pythia_decays>on</pythia_decays> <!-- lets the particles given to pythia decay-->
        <tau0Max>10.0</tau0Max> <!-- only particles with tau0 < tau0Max (given in mm/c) can decay, increase to include weak decays-->
        <weak_decays>depracted</weak_decays> <!-- use the parameters pythia_decays and tau0Max, this parameter is only a dummy to make old xml files work-->
