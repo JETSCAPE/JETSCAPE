@@ -16,8 +16,15 @@
 # download the code package
 #git clone git://git.code.sf.net/p/music-hydro/code music
 #git clone --depth=1 git://git.code.sf.net/p/music-hydro/code music
-git clone --depth=1 https://github.com/MUSIC-fluid/MUSIC -b JETSCAPE music
+#git clone --depth=1 https://github.com/MUSIC-fluid/MUSIC -b JETSCAPE music
 
+# using a commit from the MUSIC repository that is compatible with JETSCAPE 3.6.1
+folderName="music"
+commitHash="db320898c4a9bd99ed21aa9dbb7c78e2cb0729bd"
+
+git clone https://github.com/MUSIC-fluid/MUSIC -b JETSCAPE $folderName
+cd $folderName
+git checkout $commitHash
 
 ### ALTERNATIVE VERSION
 ### Download a zipped snapshot
