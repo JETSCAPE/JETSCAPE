@@ -92,7 +92,8 @@ def makeDir(index):
 ##parameters and bounds
 nsamples = 500
 if not reading: design = createPandaDesign(nsamples)
-design.drop(['vir_factor','MultipartonInteractions:ecmPow','MultipartonInteractions:pT0Ref'], axis=1, inplace=True)
+try: design.drop(['vir_factor','MultipartonInteractions:ecmPow','MultipartonInteractions:pT0Ref'], axis=1, inplace=True)
+except: temp = 1
 design = design.rename(columns={'ee_vir_factor': 'vir_factor'})
 design.to_csv(totaldir+'QVir_Analysis/parameters.txt',index=False)
 print(design)

@@ -204,7 +204,8 @@ pool = mp.Pool(len(pTHatBounds))
 
 # Loop over design points and make parameter file
 design = design.loc[:, ~design.columns.str.contains('^Unnamed')]
-design.drop(columns=['ee_vir_factor'],inplace=True)
+try: design.drop(columns=['ee_vir_factor'],inplace=True)
+except: temp = 1
 design.to_csv(totaldir+'QVir_Analysis/parameters.txt',index=False)
 print(design)
 
