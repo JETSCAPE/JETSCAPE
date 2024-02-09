@@ -43,7 +43,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         repository: JETSCAPE/TEST-EXAMPLES
-        ref: main
+        ref: jetscape-3.6.1-rc
         path: TEST-EXAMPLES
       
     - name: Run pp tests
