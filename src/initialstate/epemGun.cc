@@ -140,6 +140,8 @@ void epemGun::InitTask() {
     throw std::runtime_error("Pythia init() failed.");
   }
 
+  Lambda_QCD = GetXMLElementDouble({"Eloss","lambdaQCD"});
+
   // Initialize random number distribution
   ZeroOneDistribution = uniform_real_distribution<double>{0.0, 1.0};
 

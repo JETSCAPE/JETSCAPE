@@ -129,12 +129,14 @@
     <tStart> 0.6 </tStart> <!-- Start time of jet quenching, proper time, fm/c   -->
     <mutex>ON</mutex>
     <AddLiquefier> false </AddLiquefier>
+    <lambdaQCD>0.2</lambdaQCD> <!-- 0.4 is the value chosen in JETSET -->
 
     <Matter>
       <name>Matter</name>
       <matter_on> 1 </matter_on>
       <Q0> 2.0 </Q0>
       <T0> 0.16 </T0>
+      <!--if negative vir_factor: parton 3-momentum of hard parton is used to compute initial virtuality in shower; if positive: transverse momentum of parton is used-->
       <vir_factor> 0.25 </vir_factor>
       <in_vac> 1 </in_vac>
       <recoil_on> 0 </recoil_on>
@@ -331,20 +333,30 @@
    <JetHadronization>
        <name>colored/colorless/hybrid</name>
        <take_recoil>1</take_recoil>
-       <!--eCMforHadronization only for pp collisions-->
-       <!--in hybrid put the full eCM here, this is distributed to the beam partons-->
+       <!--use eCMforHadronization only for pp collisions to introduce beam partons-->
+       <!--recommended value for e+e- and AA = 0-->
+       <!--in all hadronization modules put the full eCM here, this is distributed to the beam partons (1/6 for each one)-->
        <eCMforHadronization>5020</eCMforHadronization>
+       <!--maximum energy level for mesons-->
        <reco_Mlevelmax>1</reco_Mlevelmax>
+       <!--maximum energy level for baryons-->
        <reco_Blevelmax>1</reco_Blevelmax>
+       <!--switch for recombination of Goldstone bosons-->
        <reco_goldstone>0</reco_goldstone>
+       <!--squared maximum distance for recombination with thermal partons-->
        <thermreco_distmax>5.0</thermreco_distmax>
+       <!--factor for recombination in the shower-->
        <shower_recofactor>1.0</shower_recofactor>
+       <!--factor for recombination with thermal partons-->
        <thermal_recofactor>1.0</thermal_recofactor>
+       <!--switch for recombination biased by the time of the partons-->
        <recobias_t>0</recobias_t>
        <hydro_Tc>0.16</hydro_Tc>
        <eta_max_boost_inv>2.0</eta_max_boost_inv> <!--only relevant for boost invariant hydro, max eta for thermal parton sampler-->
+       <!--free-straming propagation of hadrons after hadronization-->
        <had_postprop>0.0</had_postprop>
-       <part_prop>1.0</part_prop>
+       <!--free-streaming of partons before hadronization-->
+       <part_prop>0.0</part_prop>
        <pythia_decays>on</pythia_decays> <!-- lets the particles given to pythia decay-->
        <tau0Max>10.0</tau0Max> <!-- only particles with tau0 < tau0Max (given in mm/c) can decay, increase to include weak decays-->
        <weak_decays>depracted</weak_decays> <!-- use the parameters pythia_decays and tau0Max, this parameter is only a dummy to make old xml files work-->

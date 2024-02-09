@@ -41,7 +41,7 @@ void ColoredHadronization::Init() {
 
   double p_read_xml =
       GetXMLElementDouble({"JetHadronization", "eCMforHadronization"});
-  p_fake = p_read_xml;
+  p_fake = p_read_xml / 6.;
 
   /*std::string weak_decays =
       GetXMLElementText({"JetHadronization", "weak_decays"});*/
