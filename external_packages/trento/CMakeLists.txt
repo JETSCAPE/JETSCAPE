@@ -158,7 +158,9 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   string(APPEND CMAKE_CXX_FLAGS " -Wno-missing-braces -Wno-c++11-narrowing")
 endif()
 
-string(APPEND CMAKE_CXX_FLAGS_DEBUG " -Werror")
+# This statement prevents JETSCAPE from being built in Debug mode and
+# is commented out until a better solution is found.
+# string(APPEND CMAKE_CXX_FLAGS_DEBUG " -Werror")
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   string(APPEND CMAKE_CXX_FLAGS_DEBUG " -Og")
@@ -188,7 +190,9 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   endif()
 endif()
 
-string(APPEND CMAKE_CXX_FLAGS_DEBUG " ${CMAKE_REQUIRED_FLAGS} --coverage")
+# This statement prevents JETSCAPE from being built in Debug mode and
+# is commented out until a better solution is found.
+# string(APPEND CMAKE_CXX_FLAGS_DEBUG " ${CMAKE_REQUIRED_FLAGS} --coverage")
 
 set(LIBRARY_NAME "lib${PROJECT_NAME}")
 
