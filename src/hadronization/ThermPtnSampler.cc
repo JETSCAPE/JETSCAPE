@@ -3,7 +3,6 @@
 #include "JetScapeXML.h"
 #include "JetScapeLogger.h"
 #include "JetScapeConstants.h"
-#include <omp.h>
 #include <vector>
 #include <random>
 #include <cmath>
