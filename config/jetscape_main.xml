@@ -16,7 +16,7 @@
   <nReuseHydro> 10 </nReuseHydro>
 
   <!-- Technical settings -->
-  <debug> on </debug>
+  <debug> off </debug>
   <remark> off </remark>
   <vlevel> 0 </vlevel>
   <nEvents_printout> 100 </nEvents_printout>
