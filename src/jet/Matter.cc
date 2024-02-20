@@ -174,9 +174,10 @@ void Matter::Init() {
   ZeroOneDistribution = uniform_real_distribution<double>{0.0, 1.0};
 
   //...initialize the random number generator
-  srand((unsigned)time(NULL));
-  NUM1 = -1 * rand();
+  //srand((unsigned)time(NULL));
+  //NUM1 = -1 * rand();
   //    NUM1=-33;
+  NUM1=-1*static_cast<int>(ZeroOneDistribution(*GetMt19937Generator())*RAND_MAX);	
   iEvent = 0;
 }
 
