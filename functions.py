@@ -282,17 +282,19 @@ def unzipxmls(pointdir):
     os.remove(pointdir+'/xmlzip.zip')
 
 # Flexible way to combine all soft bins for a run
-def softCombine(dats,gzip=True):
-    tail = ".dat"
-    if gzip:
-        tail = ".dat.gz"
+def softCombine(dir):
+    startdir = os.getcwd()
+    os.chdir(dir+"/dat")
+    dats = sorted(os.listdir("."))
 
+    # Checking for if we can combine
     if "Bin0" not in dats[0]:
         print("First bin not soft, aborting combining")
         return
     else:
         print("Combining soft into " + dats[0])
 
+    # Checking if we need to
     if "Bin0" not in dats[1]:
         print("Only one soft bin, no need to concat")
         return
@@ -301,12 +303,15 @@ def softCombine(dats,gzip=True):
     rmdats = []
     for dat in dats[1:]:
         if "Bin0" in dat:
-            cmd = cmd + dat + tail + " "
+            cmd = cmd + dat + " "
             rmdats.append(dat)
-    cmd = cmd + " >> " + dats[0] + tail
+    cmd = cmd + " >> " + dats[0]
     os.system(cmd)
     
+    # Removing unneeded files
     for dat in rmdats:
-        os.remove(dat+tail)
-    
-    print("Finished soft combining for " + len(rmdats+1) + " files")
+        os.remove(dat)
+
+    print("Finished soft combining for " + str(len(rmdats)+1) + " files")
+
+    os.chdir(startdir)

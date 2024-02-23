@@ -33,7 +33,7 @@ for dir in dirs[start:finish]:
 
     # concatonating all soft bins together
     if "_0_" in xmls[0] and "_0_" in xmls[1]:
-        dats = concatDats(totdir+dir)
+        dats = softCombine(pointdir)
 
 pool.close()
     

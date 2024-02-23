@@ -235,6 +235,6 @@ for i in range(len(design)):
 
     # concatonating all soft bins together
     if "Bin0" in dats[1]:
-        softCombine(dats,gzip=gzip)
+        softCombine(baseDir)
 
 pool.close()
