@@ -229,14 +229,7 @@ for i in range(len(design)):
             os.system('rm '+dat+'temp.dat')
 
     # concatonating all soft bins together
-    if softOnly:
-        cmd = "cat "
-        for dat in dats:
-            cmd = cmd + dat + ".dat "
-        cmd = cmd + " > " + dats[-1] + "0.dat"
-        os.system(cmd)
-        
-        for dat in dats:
-            os.remove(dat+".dat")
+    if "Bin0" in dats[1]:
+        softCombine(dats)
 
 pool.close()

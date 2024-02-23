@@ -280,3 +280,33 @@ def unzipxmls(pointdir):
     print("Unzipping xmls for " + pointdir)
     shutil.unpack_archive(pointdir+'/xmlzip.zip', pointdir+'/xml')
     os.remove(pointdir+'/xmlzip.zip')
+
+# Flexible way to combine all soft bins for a run
+def softCombine(dats):
+    tail = ".dat"
+    if "gz" in dats[0]:
+        tail = ".dat.gz"
+
+    if "Bin0" not in dats[0]:
+        print("First bin not soft, aborting combining")
+        return
+    else:
+        print("Combining soft into " + dats[0])
+
+    if "Bin0" not in dats[1]:
+        print("Only one soft bin, no need to concat")
+        return
+
+    cmd = "cat "
+    rmdats = []
+    for dat in dats[1:]:
+        if "Bin0" in dat:
+            cmd = cmd + dat + tail + " "
+            rmdats.append(dat)
+    cmd = cmd + " >> " + dats[0] + tail
+    os.system(cmd)
+    
+    for dat in rmdats:
+        os.remove(dat+tail)
+    
+    print("Finished soft combining")
