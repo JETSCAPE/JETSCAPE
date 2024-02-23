@@ -251,7 +251,7 @@ int main(int argc, char* argv[]){
     } //k-loop ends here (pTHatBin loop)
 
     //Final writing
-    TFile hadron_file("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/data/D-meson-data.root");
+    TFile hadron_file("/scratch/user/cameron.parker/projects/JETSCAPE/data/D-meson-data.root");
     TFile* totalroot = new TFile( "root/totals.root", "RECREATE");
     cout << "Got data file" << endl;
 
