@@ -64,7 +64,7 @@ int main(int argc, char* argv[]){
     double softend = 6.0;
     
     //reading data to get bins
-    TFile dataroot( "/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/data/LHC13000.root");
+    TFile dataroot( "/scratch/user/cameron.parker/projects/JETSCAPE/data/LHC13000.root");
     TDirectory* piondir = (TDirectory*)dataroot.Get("Table 1"); TH1D* piondata = (TH1D*)piondir->Get("Hist1D_y1");
     TDirectory* kaondir = (TDirectory*)dataroot.Get("Table 2"); TH1D* kaondata = (TH1D*)kaondir->Get("Hist1D_y1");
     TDirectory* protondir = (TDirectory*)dataroot.Get("Table 6"); TH1D* protondata = (TH1D*)protondir->Get("Hist1D_y1");
