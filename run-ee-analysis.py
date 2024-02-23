@@ -15,13 +15,13 @@ for i, option in enumerate(sys.argv):
 analysisDir = sys.argv[1]
 directories = getDirs(analysisDir)
 
-os.chdir("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/build/")
+os.chdir("/scratch/user/cameron.parker/newJETSCAPE/build/")
 
 def run(directory):
     if "/scratch" in analysisDir:
         baseDir = analysisDir + "points/" + directory
     else:
-        baseDir = "/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/" + analysisDir + "points/" + directory
+        baseDir = "/scratch/user/cameron.parker/newJETSCAPE/" + analysisDir + "points/" + directory
     cmd = "./ee-analysis-spectra " + baseDir
     update(cmd)
 

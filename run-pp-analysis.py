@@ -49,13 +49,13 @@ if setStart:
     directories = newdirectories
 
 
-os.chdir("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/build/")
+os.chdir("/scratch/user/cameron.parker/projects/JETSCAPE/build/")
 
 def run(directory):
     if analysisDir.startswith("/"):
         baseDir = analysisDir +  "points/" + directory
     else:
-        baseDir = "/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/" + analysisDir + "points/" + directory
+        baseDir = "/scratch/user/cameron.parker/projects/JETSCAPE/JETSCAPE/" + analysisDir + "points/" + directory
     
     if smoothrun:
         cmd = "./pp-"+ECM+"-smoothing " + baseDir

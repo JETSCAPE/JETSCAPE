@@ -19,7 +19,7 @@ if len(sys.argv) == 4:
 print("From " + str(start) + " to " + str(finish) + " in " + totdir + ":")
 
 # Changing to build directory
-os.chdir("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/build")
+os.chdir("/scratch/user/cameron.parker/projects/JETSCAPE/build")
 pool = mp.Pool(48)
 
 # looping over points

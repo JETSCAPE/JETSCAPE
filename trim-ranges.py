@@ -2,8 +2,8 @@ from functions import *
 import os
 import sys
 
-datadir = "/scratch/user/cameron.parker/newJETSCAPE/STAT/input/data/pp/"
-finaldir = "/scratch/user/cameron.parker/newJETSCAPE/STAT/input/data/pp-copy/"
+datadir = "/scratch/user/cameron.parker/projects/STAT/input/data/pp/"
+finaldir = "/scratch/user/cameron.parker/projects/STAT/input/data/pp-copy/"
 inputdir = sys.argv[1] + "QVir_Analysis/"
 
 #bounds to remove

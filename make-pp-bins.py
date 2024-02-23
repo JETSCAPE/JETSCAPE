@@ -70,7 +70,7 @@ for i, option in enumerate(sys.argv):
         
 
 # date and file initiation
-totaldir = "/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/runs/" + name + "/"
+totaldir = "/scratch/user/cameron.parker/projects/JETSCAPE/runs/" + name + "/"
 if rerunning: 
     totaldir = startdir
     design = pd.read_csv(totaldir+"QVir_Analysis/parameters.txt")
@@ -178,7 +178,7 @@ else:
 if softOnly:
     intervals = range(0,48+1) # need to add one more to the range than bins desired
 
-xmlname = "/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/config/jetscape_user_pp"+system+".xml"
+xmlname = "/scratch/user/cameron.parker/projects/JETSCAPE/config/jetscape_user_pp"+system+".xml"
 
 xmltemplate = open(xmlname,"r")
 xmllines = xmltemplate.readlines()
@@ -198,7 +198,7 @@ for i in range(len(intervals)-1):
         pTHatBounds.append((intervals[i],intervals[i+1]))
 
 # Changing to build directory
-os.chdir("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/build")
+os.chdir("/scratch/user/cameron.parker/projects/JETSCAPE/build")
 
 pool = mp.Pool(len(pTHatBounds))
 
