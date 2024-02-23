@@ -20,6 +20,7 @@ reading = False
 rerunning = False
 appending = False
 softOnly = False
+gzip = True
 ECM = ""
 design = []
 startdir = ""
@@ -39,11 +40,13 @@ for i, option in enumerate(sys.argv):
     if "Drun" in option:
         system = "Drun"
         Drun = True
+        gzip = False
         softOnly = True
         ECM = "5020"
     if "Lrun" in option:
         system = "Lrun"
         Lrun = True
+        gzip = False
         softOnly = True
         ECM = "7000"
     if "Erun" in option:
@@ -171,7 +174,7 @@ makeTotalDir(totaldir)
 # pTHat bounds and xml based system being run
 intervals = []
 if RHIC:
-    intervals = [0, 5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5, 25, 27.5, 30, 32.5, 35, 37.5, 40, 42.5, 45, 50, 55, 60, 65, 70]
+    intervals = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5, 25, 27.5, 30, 32.5, 35, 37.5, 40, 42.5, 45, 50, 55, 60, 65, 70]
 else:
     intervals = [0, 5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5, 25, 27.5, 30, 32.5, 35, 37.5, 40, 42.5, 45, 50, 55, 60, 65, 70, 75, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 190, 210, 230, 250, 270, 290, 310, 330, 350, 400, 450, 500, 550, 600, 1000]
 
@@ -192,10 +195,12 @@ pTHatBounds = []
 for i in range(len(intervals)-1):
     if softOnly:
         pTHatBounds.append((0,-i-1)) # setting all soft bins upper bound to negative
-    elif i == 0 and intervals[i] == 0:
-        pTHatBounds.append((intervals[i],-1))
+    elif intervals[i] == 0:
+        pTHatBounds.append((intervals[i],-i-1))
     else:
         pTHatBounds.append((intervals[i],intervals[i+1]))
+
+print(len(pTHatBounds))
 
 # Changing to build directory
 os.chdir("/scratch/user/cameron.parker/projects/JETSCAPE/build")
@@ -230,6 +235,6 @@ for i in range(len(design)):
 
     # concatonating all soft bins together
     if "Bin0" in dats[1]:
-        softCombine(dats)
+        softCombine(dats,gzip=gzip)
 
 pool.close()
