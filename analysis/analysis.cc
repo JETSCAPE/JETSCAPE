@@ -1082,6 +1082,16 @@ TH1D* getZeroedHist(TH1D* hist){
     return histout;
 }
 
+//subtracting floors out of azi correlation hists
+TH1D* getBlankCopy(TH1D* hist, string name, string title){
+    TH1D* histout = (TH1D*)hist->Clone();
+    histout->Reset();
+    histout->SetName(name.c_str());
+    histout->SetTitle(title.c_str());
+
+    return histout;
+}
+
 //simple rounding method
 string stringround(double toCast, unsigned precision){
     std::ostringstream result;
