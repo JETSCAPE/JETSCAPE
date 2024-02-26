@@ -29,6 +29,7 @@
 #include "TLegend.h"
 #include "TRatioPlot.h"
 #include "TProfile.h"
+#include "TDirectory.h"
 
 #include "analysis.cc"
 
@@ -45,6 +46,7 @@ int main(int argc, char* argv[]){
     int StartTime = time(NULL);
     // Create the ROOT application environment and pythia.
     TApplication theApp("hist", &argc, argv);
+    TFile* totalroot = new TFile( "root/totals.root", "RECREATE");
     Pythia8::Pythia pythia;//("",false);
     
     //Total analysis variables
@@ -55,6 +57,7 @@ int main(int argc, char* argv[]){
     int NpTHardBin = pTHatMin.size();
     //for(int i = 0; i < pTHatMin.size(); i++) cout << pTHatMin[i] << endl; //debugging line
     vector<int> eventCount;
+    TDirectory* binfiles[NpTHardBin];
 
     //xsec total running count
     double xsectotal = 0.0;
@@ -90,8 +93,9 @@ int main(int argc, char* argv[]){
         
         // Create a file on which histogram(s) can be saved.
         char outFileName[1000];
-        sprintf(outFileName,"root/SpectraBin%s_%s.root",pTHatMin[k].c_str(),pTHatMax[k].c_str());
-        TFile* outFile = new TFile( outFileName, "RECREATE");
+        sprintf(outFileName,"SpectraBin%s_%s",pTHatMin[k].c_str(),pTHatMax[k].c_str());
+        binfiles[k] = totalroot->mkdir(outFileName);
+        binfiles[k]->cd();
         // Reset for each pTHardBin
         char HistName[100];
 
@@ -165,7 +169,7 @@ int main(int argc, char* argv[]){
         EventInfo[2] = Events;
         EventInfo.Write("EventInfo");
 
-        outFile->Close();
+        totalroot->cd();
     } //k-loop ends here (pTHatBin loop)
 
     //Scaling totals by global factors and the identified pions by bin centers: dSigma/(2*pi*pT*dpT*dEta)
@@ -174,7 +178,6 @@ int main(int argc, char* argv[]){
     scaleBins(HistTotalProtons,(1/(2*M_PI*2.0*idHadronYCut)));
  	
     //create root file for total plots
-    TFile* totalroot = new TFile( "root/totals.root", "RECREATE");
     HistTotalPions->Write("raw pions"); smoothBins(HistTotalPions); HistTotalPions->Write("identified pions");
     HistTotalPions->Write("raw kaons"); smoothBins(HistTotalKaons); HistTotalPions->Write("identified kaons");
     HistTotalPions->Write("raw protons"); smoothBins(HistTotalProtons); HistTotalPions->Write("identified protons");
