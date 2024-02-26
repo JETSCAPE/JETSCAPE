@@ -55,7 +55,6 @@
 #include "TMultiGraph.h"
 #include "TLegend.h"
 #include "TRatioPlot.h"
-#include "TProfile.h"
 
 #include "analysis.cc"
 
@@ -98,13 +97,11 @@ int main(int argc, char* argv[]){
     double pionpTBin[] = {0.5,0.7,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10,12,14,16,18,20};
     int NpTpionBin = sizeof(pionpTBin)/sizeof(pionpTBin[0])-1;
     TH1D *HistTotalPions = new TH1D("Pion Spectrum", "Pion Spectrum pT", NpTpionBin, pionpTBin); //identified hadrons hists
-    TProfile *ProfileTotalPions = new TProfile("Pion Spectrum", "Pion Spectrum pT", NpTpionBin, pionpTBin);
 
     //Variables for single hadron spectrum
     double hadpTBin[] = {0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3,2.4,2.6,2.8,3.0,3.35,3.8,4.4,5.1,6,7,8,9,10};
     int NpThadBin = sizeof(hadpTBin)/sizeof(hadpTBin[0])-1;
     TH1D *HistTotalHads = new TH1D("Hadron Spectrum", "Hadron Spectrum pT", NpThadBin, hadpTBin);
-    TProfile *ProfileTotalHads = new TProfile("Hadron Spectrum", "Hadron Spectrum pT", NpThadBin, hadpTBin);
 
     //graph declaration for adding hadron spectra
     TMultiGraph* hadronComp = new TMultiGraph();
@@ -135,8 +132,6 @@ int main(int argc, char* argv[]){
         //temp hists for identified hadrons
         TH1D *tempPions = new TH1D("Pion Spectrum", "Pion Spectrum pT", NpTpionBin, pionpTBin);
         TH1D *tempHads = new TH1D("Hadron Spectrum", "Hadron Spectrum pT", NpThadBin, hadpTBin);
-        TProfile *tempPionsProf = new TProfile("Pion Spectrum", "Pion Spectrum pT", NpTpionBin, pionpTBin);
-        TProfile *tempHadsProf = new TProfile("Hadron Spectrum", "Hadron Spectrum pT", NpThadBin, hadpTBin);
 
         //Data structures for events read in to save run time
         vector<shared_ptr<Hadron>> hadrons;
@@ -171,13 +166,11 @@ int main(int argc, char* argv[]){
 
                 if(fabs(Eta) < idHadronEtaCut && fabs(Phi) < pi){
                     if(abs(PID) == 211) tempPions->Fill(PT, strength/2);
-                    if(abs(PID) == 211) tempPionsProf->Fill(PT, PT);
                 } 
                 
                 // Add this particle into SingleHadron spectrum
                 if(fabs(Eta) < SingleHadronEtaCut && fabs(PID)>100 &&  pythia.particleData.charge(PID)!=0){
                     tempHads->Fill(PT, strength/2);
-                    tempHadsProf->Fill(PT, PT);
                 }
             }
         }
@@ -193,14 +186,10 @@ int main(int argc, char* argv[]){
         //Write histogram into a root file
         tempPions->Write();
         tempHads->Write();
-        tempPionsProf->Write();
-        tempHadsProf->Write();
         
         //add to totals histograms
         HistTotalPions->Add(tempPions,HardCrossSection/Events);
         HistTotalHads->Add(tempHads,HardCrossSection/(xsectotal*Events));
-        ProfileTotalPions->Add(tempPionsProf,HardCrossSection/Events);
-        ProfileTotalHads->Add(tempHadsProf,HardCrossSection/(xsectotal*Events));
 		
         myfile->Close();
         
@@ -214,15 +203,13 @@ int main(int argc, char* argv[]){
     } //k-loop ends here (pTHatBin loop)
 
     //Scaling totals by global factors and the identified pions by bin centers: dSigma/(2*pi*pT*dpT*dEta)
-    scaleBins(HistTotalPions,ProfileTotalPions,(1.0/(2*M_PI*2.0*idHadronEtaCut)));
-    scaleBins(HistTotalHads,ProfileTotalHads,(1.0/(2*M_PI*2.0*SingleHadronEtaCut)));
+    scaleBins(HistTotalPions,(1.0/(2*M_PI*2.0*idHadronEtaCut)));
+    scaleBins(HistTotalHads,(1.0/(2*M_PI*2.0*SingleHadronEtaCut)));
  	
     //create root file for total plots
     TFile* totalroot = new TFile( "root/totals.root", "RECREATE");
     HistTotalPions->Write("raw pions"); smoothBins(HistTotalPions); HistTotalPions->Write("identified pions");
     HistTotalHads->Write("raw hads"); smoothBins(HistTotalHads); HistTotalHads->Write("identified hads");
-    ProfileTotalPions->Write("pions profile");
-    ProfileTotalHads->Write("hadrons profile");
     totalroot->Close();
 
     //Done. Script run time

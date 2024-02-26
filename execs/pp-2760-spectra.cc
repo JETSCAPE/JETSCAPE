@@ -56,7 +56,6 @@
 #include "TMultiGraph.h"
 #include "TLegend.h"
 #include "TRatioPlot.h"
-#include "TProfile.h"
 
 #include "analysis.cc"
 
@@ -395,14 +394,14 @@ int main(int argc, char* argv[]){
                 // Add this particle into SingleHadron spectrum
                 if(fabs(Eta) < SingleHadronEtaCut && PT>0.01  && fabs(PID)>100 &&  pythia.particleData.charge(PID)!=0){
                     //cout<<PT<<" PID "<<PID<<"\t charge = "<<pythia.particleData.charge( PID)<<endl;
-                    HistTempSingleHadron->Fill(PT,strength/PT);
+                    HistTempSingleHadron->Fill(PT,strength);
                 }
                 
                 //ID hadron spectra
                 if(fabs(Y) < idHadronYCut){
-                    if(abs(PID) == 211) {tempPions->Fill(PT,strength/PT);}
-                    if(abs(PID) == 321) {tempKaons->Fill(PT,strength/PT);}
-                    if(abs(PID) == 2212) {tempProtons->Fill(PT,strength/PT);}
+                    if(abs(PID) == 211) {tempPions->Fill(PT,strength);}
+                    if(abs(PID) == 321) {tempKaons->Fill(PT,strength);}
+                    if(abs(PID) == 2212) {tempProtons->Fill(PT,strength);}
                 } 
             }
         }
@@ -674,10 +673,10 @@ int main(int argc, char* argv[]){
     //Scaling totals by global factors and the identified pions by bin centers
     HistTotalJet2->Scale(1.0/(2.0*JetEtaCut),"width");
     HistTotalJet3->Scale(1.0/(2.0*JetEtaCut),"width");
-    HistTotalHadron->Scale(1.0/(2*M_PI*2.0*SingleHadronEtaCut),"width");
-    HistTotalPions->Scale(1.0/(2*M_PI*2.0*idHadronYCut),"width");
-    HistTotalKaons->Scale(1.0/(2*M_PI*2.0*idHadronYCut),"width");
-    HistTotalProtons->Scale(1.0/(2*M_PI*2.0*idHadronYCut),"width");
+    scaleBins(HistTotalHadron,(1.0/(2*M_PI*2.0*SingleHadronEtaCut)));
+    scaleBins(HistTotalPions,(1.0/(2*M_PI*2.0*idHadronYCut)));
+    scaleBins(HistTotalKaons,(1.0/(2*M_PI*2.0*idHadronYCut)));
+    scaleBins(HistTotalProtons,(1.0/(2*M_PI*2.0*idHadronYCut)));
 
     //jet shape
     double JetShapeNorm = 0;
