@@ -142,7 +142,7 @@ int main(int argc, char* argv[]){
         //xsec stuff
         double HardCrossSection = myfile->GetSigmaGen();
         double HardCrossSectionError =  myfile->GetSigmaErr();
-        xsectotal += HardCrossSection; //set for first bin to match experimental value; end of reading cross section
+        if(k == 0) xsectotal = HardCrossSection; //set for first bin to match experimental value; end of reading cross section
         
         //event count handling
         eventCount.push_back(Events);

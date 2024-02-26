@@ -409,7 +409,7 @@ int main(int argc, char* argv[]){
         //xsec stuff
         double HardCrossSection = myfile->GetSigmaGen();
         double HardCrossSectionError = myfile->GetSigmaErr();
-        //if(k == 0) HardCrossSection = xsectotal; //set for first bin to match experimental value; end of reading cross section
+        if(k == 0) xsectotal = HardCrossSection; //set for first bin to match experimental value; end of reading cross section
 
         //cleaning up 0s in soft bin
         if(k == 0){

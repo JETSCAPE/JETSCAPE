@@ -55,6 +55,7 @@
 #include "TMultiGraph.h"
 #include "TLegend.h"
 #include "TRatioPlot.h"
+#include "TDirectory.h"
 
 #include "analysis.cc"
 
@@ -71,6 +72,7 @@ int main(int argc, char* argv[]){
     int StartTime = time(NULL);
     // Create the ROOT application environment and pythia.
     TApplication theApp("hist", &argc, argv);
+    TFile* totalroot = new TFile( "root/totals.root", "RECREATE");
     Pythia8::Pythia pythia;//("",false);
     
     //Total analysis variables
@@ -81,6 +83,7 @@ int main(int argc, char* argv[]){
     int NpTHardBin = pTHatMin.size();
     //for(int i = 0; i < pTHatMin.size(); i++) cout << pTHatMin[i] << endl; //debugging line
     vector<int> eventCount;
+    TDirectory* binfiles[NpTHardBin];
 
     //get list of cross sections
     double xsectotal = 42.7; //experimental value: https://arxiv.org/pdf/2005.00776.pdf
@@ -94,9 +97,12 @@ int main(int argc, char* argv[]){
     double softend = 6.0;
     
     //Variables for single pion spectrum
+    TFile idhadron_file("/scratch/user/cameron.parker/projects/JETSCAPE/data/PHENIX-ID-hads.root");
+    TDirectory* piondir = (TDirectory*)idhadron_file.Get("Table 1");
+    TH1D* piondata = (TH1D*) piondir->Get("Hist1D_y1");
     double pionpTBin[] = {0.5,0.7,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10,12,14,16,18,20};
     int NpTpionBin = sizeof(pionpTBin)/sizeof(pionpTBin[0])-1;
-    TH1D *HistTotalPions = new TH1D("Pion Spectrum", "Pion Spectrum pT", NpTpionBin, pionpTBin); //identified hadrons hists
+    TH1D *HistTotalPions = getBlankCopy(piondata,"Pion Spectrum","Pion Spectrum"); //identified hadrons hists
 
     //Variables for single hadron spectrum
     double hadpTBin[] = {0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3,2.4,2.6,2.8,3.0,3.35,3.8,4.4,5.1,6,7,8,9,10};
@@ -111,26 +117,26 @@ int main(int argc, char* argv[]){
     // For loop to open different pTHat bin files
     for (int k = 0; k<NpTHardBin; ++k){
         char HadronFile[300], pTBinString[100];
-        sprintf(HadronFile,"dat/PP_Bin%s_%s.dat", pTHatMin[k].c_str(), pTHatMax[k].c_str());
-        //sprintf(HadronFile,"test_out.dat");
-        
-        auto myfile  = make_shared<JetScapeReaderAscii>(HadronFile);
+        sprintf(HadronFile,"dat/PP_Bin%s_%s.dat.gz", pTHatMin[k].c_str(), pTHatMax[k].c_str());
+        auto myfile  = make_shared<JetScapeReaderAsciiGZ>(HadronFile);
         sprintf(pTBinString,"Current pTHatBin is %i (%s,%s) GeV",k,pTHatMin[k].c_str(),pTHatMax[k].c_str());
+        
+        // Create a file on which histogram(s) can be saved.
+        char outFileName[1000];
+        sprintf(outFileName,"SpectraBin%s_%s",pTHatMin[k].c_str(),pTHatMax[k].c_str());
+        binfiles[k] = totalroot->mkdir(outFileName);
+        binfiles[k]->cd();
         
         int  SN=0,PID=0;
         double Px, Py, Pz, E, Eta, Phi, pStat, mass;
         int Events =0;
         int TriggeredJetNumber=0;
-        
-        // Create a file on which histogram(s) can be saved.
-        char outFileName[1000];
-        sprintf(outFileName,"root/SpectraBin%s_%s.root",pTHatMin[k].c_str(),pTHatMax[k].c_str());
-        TFile* outFile = new TFile( outFileName, "RECREATE");
+
         // Reset for each pTHardBin
         char HistName[100];
 
         //temp hists for identified hadrons
-        TH1D *tempPions = new TH1D("Pion Spectrum", "Pion Spectrum pT", NpTpionBin, pionpTBin);
+        TH1D *tempPions = getBlankCopy(piondata,"Pion Spectrum", "Pion Spectrum pT");
         TH1D *tempHads = new TH1D("Hadron Spectrum", "Hadron Spectrum pT", NpThadBin, hadpTBin);
 
         //Data structures for events read in to save run time
@@ -178,7 +184,7 @@ int main(int argc, char* argv[]){
         //xsec stuff
         double HardCrossSection = myfile->GetSigmaGen();
         double HardCrossSectionError = myfile->GetSigmaErr();
-        //if(k == 0) HardCrossSection = xsectotal; //set for first bin to match experimental value; end of reading cross section
+        if(k == 0) xsectotal = HardCrossSection; //set for first bin to match experimental value; end of reading cross section
         
         //event count handling
         eventCount.push_back(Events);
@@ -198,8 +204,7 @@ int main(int argc, char* argv[]){
         EventInfo[1] = HardCrossSectionError;
         EventInfo[2] = Events;
         EventInfo.Write("EventInfo");
-
-        outFile->Close();
+        totalroot->cd();
     } //k-loop ends here (pTHatBin loop)
 
     //Scaling totals by global factors and the identified pions by bin centers: dSigma/(2*pi*pT*dpT*dEta)
@@ -207,7 +212,6 @@ int main(int argc, char* argv[]){
     scaleBins(HistTotalHads,(1.0/(2*M_PI*2.0*SingleHadronEtaCut)));
  	
     //create root file for total plots
-    TFile* totalroot = new TFile( "root/totals.root", "RECREATE");
     HistTotalPions->Write("raw pions"); smoothBins(HistTotalPions); HistTotalPions->Write("identified pions");
     HistTotalHads->Write("raw hads"); smoothBins(HistTotalHads); HistTotalHads->Write("identified hads");
     totalroot->Close();
