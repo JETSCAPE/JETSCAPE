@@ -4,7 +4,7 @@
   
   <nEvents> 10000 </nEvents>
   
-  <outputFilename>/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/test</outputFilename>
+  <outputFilename>/scratch/user/cameron.parker/projects/JETSCAPE/test</outputFilename>
   <JetScapeWriterAsciiGZ> on </JetScapeWriterAsciiGZ>
   <finalHadsOnly> on </finalHadsOnly>
   
@@ -47,7 +47,7 @@
       ParticleDecays:tau0Max = 10
     </LinesToRead>
     <part_prop>0.0</part_prop>
-    <ignorePhotons> on </ignorePhotons>
+    <ignorePhotons> off </ignorePhotons>
   </JetHadronization>
   
 </jetscape>

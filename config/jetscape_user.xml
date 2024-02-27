@@ -4,7 +4,7 @@
   
   <nEvents> 100000 </nEvents>
   
-  <outputFilename>/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/test</outputFilename>
+  <outputFilename>/scratch/user/cameron.parker/projects/JETSCAPE/test</outputFilename>
   <JetScapeWriterAsciiGZ> on </JetScapeWriterAsciiGZ>
   <finalHadsOnly> on </finalHadsOnly>
   
