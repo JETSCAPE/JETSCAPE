@@ -77,14 +77,13 @@ int main(int argc, char* argv[]){
     double Ecm = 91.2;
     
     //jet
-    TFile jetroot("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/data/eeInclusiveJets.root");
+    TFile jetroot("/scratch/user/cameron.parker/projects/JETSCAPE/data/ALEPH-jets.root");
     TDirectory* jetdir = (TDirectory*)jetroot.Get("InclusiveJetEnergy"); TH1D* jetdata = (TH1D*)jetdir->Get("Hist1D_y1");
     TGraphErrors* jetgraph = (TGraphErrors*) jetdir->Get("Graph1D_y1");
     double JetRadius = 0.4;
 
     //dijet
-    TFile dijetroot("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/data/eeDiJet.root");
-    TDirectory* dijetdir = (TDirectory*)dijetroot.Get("LeadingDiJetEnergy"); TH1D* dijetdata = (TH1D*)dijetdir->Get("Hist1D_y1");
+    TDirectory* dijetdir = (TDirectory*)jetroot.Get("LeadingDiJetEnergy"); TH1D* dijetdata = (TH1D*)dijetdir->Get("Hist1D_y1");
     TGraphErrors* dijetgraph = (TGraphErrors*) dijetdir->Get("Graph1D_y1");
     
     //Variables for single hadron spectrum and identified hadrons
@@ -111,7 +110,7 @@ int main(int argc, char* argv[]){
     int thrustCount = 0;
 
     //variables for xe
-    TFile xeroot( "/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/data/xedata.root");
+    TFile xeroot( "/scratch/user/cameron.parker/projects/JETSCAPE/data/xedata.root");
     TDirectory* xedir = (TDirectory*)xeroot.Get("Table 1"); TH1D* xedata = (TH1D*)xedir->Get("Hist1D_y1");
     TGraphErrors* xegraph = (TGraphErrors*)xedir->Get("Graph1D_y1");
     
@@ -304,7 +303,7 @@ int main(int argc, char* argv[]){
     xeHist->Write("xe");
 
     //ratio plots for comparison
-    TFile alephfile("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/data/aleph.root");
+    TFile alephfile("/scratch/user/cameron.parker/projects/JETSCAPE/data/aleph.root");
     TDirectory* thrustdir = (TDirectory*)alephfile.Get("Table 3");
     TDirectory* multdir = (TDirectory*)alephfile.Get("Table 18");
     TDirectory* xpdir = (TDirectory*)alephfile.Get("Table 9");
@@ -327,7 +326,6 @@ int main(int argc, char* argv[]){
     totalroot->Close();
     alephfile.Close();
     xeroot.Close();
-    dijetroot.Close();
     jetroot.Close();
 
     //Done. Script run time
