@@ -748,10 +748,12 @@ void scaleBins(TH1D* hist, double scale = 1.0){
     for(int i = 1; i <= hist->GetNbinsX(); i++){
         double raw = hist->GetBinContent(i);
         double center = hist->GetBinCenter(i); if(center==0 || isnan(center) || raw==0) continue;
-        double scaled = raw*scale/(hist->GetBinWidth(i)*center);
+        double factor = scale/(hist->GetBinWidth(i)*center);
+        double error = hist->GetBinError(i);
         //cout << raw << " " << scaled << " " << hist->GetBinWidth(i) << " " << scale << endl;
-        hist->SetBinContent(i, scaled);
-        sum += scaled*hist->GetBinWidth(i);
+        hist->SetBinContent(i, raw*factor);
+        hist->SetBinError(i, error*factor);
+        sum += raw*factor*hist->GetBinWidth(i);
     }
 
     //cout << sum << endl;
