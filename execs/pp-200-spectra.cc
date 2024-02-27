@@ -93,16 +93,27 @@ int main(int argc, char* argv[]){
     //Cut variables
     double DetectorEtaCut= 2.6;
     double SingleHadronEtaCut = 0.5;
-    double idHadronEtaCut = 0.35;
+    double idHadronEtaCut = 0.6;
     double softend = 6.0;
     
     //Variables for single pion spectrum
     TFile idhadron_file("/scratch/user/cameron.parker/projects/JETSCAPE/data/PHENIX-ID-hads.root");
     TDirectory* piondir = (TDirectory*)idhadron_file.Get("Table 1");
     TH1D* piondata = (TH1D*) piondir->Get("Hist1D_y1");
-    double pionpTBin[] = {0.5,0.7,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,9.5,10,12,14,16,18,20};
-    int NpTpionBin = sizeof(pionpTBin)/sizeof(pionpTBin[0])-1;
-    TH1D *HistTotalPions = getBlankCopy(piondata,"Pion Spectrum","Pion Spectrum"); //identified hadrons hists
+    TGraphErrors* piongraph = (TGraphErrors*) piondir->Get("Graph1D_y1");
+    TH1D *HistTotalPions = getBlankCopy(piondata,"Pion Spectrum","Pion Spectrum");
+
+    //kaons
+    TDirectory* kaondir = (TDirectory*)idhadron_file.Get("Table 2");
+    TH1D* kaondata = (TH1D*) kaondir->Get("Hist1D_y1");
+    TGraphErrors* kaongraph = (TGraphErrors*) kaondir->Get("Graph1D_y1");
+    TH1D *HistTotalKaons = getBlankCopy(kaondata,"Kaon Spectrum","Kaon Spectrum");
+
+    //protons
+    TDirectory* protondir = (TDirectory*)idhadron_file.Get("Table 4");
+    TH1D* protondata = (TH1D*) protondir->Get("Hist1D_y1");
+    TGraphErrors* protongraph = (TGraphErrors*) protondir->Get("Graph1D_y1");
+    TH1D *HistTotalProtons = getBlankCopy(protondata,"Proton Spectrum","Proton Spectrum");
 
     //Variables for single hadron spectrum
     double hadpTBin[] = {0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3,2.4,2.6,2.8,3.0,3.35,3.8,4.4,5.1,6,7,8,9,10};
@@ -128,7 +139,7 @@ int main(int argc, char* argv[]){
         binfiles[k]->cd();
         
         int  SN=0,PID=0;
-        double Px, Py, Pz, E, Eta, Phi, pStat, mass;
+        double Px, Py, Pz, E, Eta, Phi, pStat, mass, Y;
         int Events =0;
         int TriggeredJetNumber=0;
 
@@ -137,6 +148,8 @@ int main(int argc, char* argv[]){
 
         //temp hists for identified hadrons
         TH1D *tempPions = getBlankCopy(piondata,"Pion Spectrum", "Pion Spectrum pT");
+        TH1D *tempKaons = getBlankCopy(kaondata,"Kaon Spectrum", "Kaon Spectrum pT");
+        TH1D *tempProtons = getBlankCopy(protondata,"Proton Spectrum", "Proton Spectrum pT");
         TH1D *tempHads = new TH1D("Hadron Spectrum", "Hadron Spectrum pT", NpThadBin, hadpTBin);
 
         //Data structures for events read in to save run time
@@ -160,6 +173,7 @@ int main(int argc, char* argv[]){
                 Phi = hadrons[i].get()->phi();
                 pStat = hadrons[i].get()->pstat();
                 mass = hadrons[i].get()->restmass();
+                Y = hadrons[i].get()->rapidity();
                 double PT = TMath::Sqrt((Px*Px) + (Py*Py));      
 
                 //cutting for specific regimes
@@ -170,8 +184,10 @@ int main(int argc, char* argv[]){
 
                 double strength = 1; //smoothing between smooth and hard transition          
 
-                if(fabs(Eta) < idHadronEtaCut && fabs(Phi) < pi){
+                if(fabs(Y) < idHadronEtaCut){
                     if(abs(PID) == 211) tempPions->Fill(PT, strength/2);
+                    if(abs(PID) == 321) tempKaons->Fill(PT, strength/2);
+                    if(PID == 2212) tempProtons->Fill(PT, strength);
                 } 
                 
                 // Add this particle into SingleHadron spectrum
@@ -191,10 +207,14 @@ int main(int argc, char* argv[]){
         
         //Write histogram into a root file
         tempPions->Write();
+        tempKaons->Write();
+        tempProtons->Write();
         tempHads->Write();
         
         //add to totals histograms
         HistTotalPions->Add(tempPions,HardCrossSection/Events);
+        HistTotalKaons->Add(tempKaons,HardCrossSection/Events);
+        HistTotalProtons->Add(tempProtons,HardCrossSection/Events);
         HistTotalHads->Add(tempHads,HardCrossSection/(xsectotal*Events));
 		
         myfile->Close();
@@ -209,10 +229,19 @@ int main(int argc, char* argv[]){
 
     //Scaling totals by global factors and the identified pions by bin centers: dSigma/(2*pi*pT*dpT*dEta)
     scaleBins(HistTotalPions,(1.0/(2*M_PI*2.0*idHadronEtaCut)));
+    scaleBins(HistTotalKaons,(1.0/(2*M_PI*2.0*idHadronEtaCut)));
+    scaleBins(HistTotalProtons,(1.0/(2*M_PI*2.0*idHadronEtaCut)));
     scaleBins(HistTotalHads,(1.0/(2*M_PI*2.0*SingleHadronEtaCut)));
+
+    //Plotting
+    myRatioPlot(piongraph, HistTotalPions, "Pion Yields", true, true);
+    myRatioPlot(kaongraph, HistTotalKaons, "Kaon Yields", true, true);
+    myRatioPlot(protongraph, HistTotalProtons, "Proton Yields", true, true);
  	
     //create root file for total plots
     HistTotalPions->Write("raw pions"); smoothBins(HistTotalPions); HistTotalPions->Write("identified pions");
+    HistTotalKaons->Write("raw kaons"); smoothBins(HistTotalKaons); HistTotalKaons->Write("identified kaons");
+    HistTotalProtons->Write("raw protons"); smoothBins(HistTotalProtons); HistTotalProtons->Write("identified protons");
     HistTotalHads->Write("raw hads"); smoothBins(HistTotalHads); HistTotalHads->Write("identified hads");
     totalroot->Close();
 
