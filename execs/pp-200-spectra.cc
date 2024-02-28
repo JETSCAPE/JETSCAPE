@@ -94,6 +94,7 @@ int main(int argc, char* argv[]){
     double DetectorEtaCut= 2.6;
     double SingleHadronEtaCut = 0.5;
     double idHadronEtaCut = 0.6;
+    double hardPionEtaCut = 0.35;
     double softend = 6.0;
     
     //Variables for single pion spectrum
@@ -115,10 +116,16 @@ int main(int argc, char* argv[]){
     TGraphErrors* protongraph = (TGraphErrors*) protondir->Get("Graph1D_y1");
     TH1D *HistTotalProtons = getBlankCopy(protondata,"Proton Spectrum","Proton Spectrum");
 
+    //hard pions
+    double hardPionBins[] = {8.0,8.5,9.0,9.5,10.0,12.0,14.0,16.0,18.0,20.0};
+    int NhardPionBins = sizeof(hardPionBins)/sizeof(hardPionBins[0])-1;
+    TH1D *HistTotalHardPions = new TH1D("Hadron Spectrum", "Hadron Spectrum pT", NhardPionBins, hardPionBins);
+
+
     //Variables for single hadron spectrum
     double hadpTBin[] = {0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3,2.4,2.6,2.8,3.0,3.35,3.8,4.4,5.1,6,7,8,9,10};
     int NpThadBin = sizeof(hadpTBin)/sizeof(hadpTBin[0])-1;
-    TH1D *HistTotalHads = new TH1D("Hadron Spectrum", "Hadron Spectrum pT", NpThadBin, hadpTBin);
+    TH1D *HistTotalHads = new TH1D("Pi0 Spectrum", "Pi0 Spectrum pT", NpThadBin, hadpTBin);
 
     //graph declaration for adding hadron spectra
     TMultiGraph* hadronComp = new TMultiGraph();
@@ -151,6 +158,7 @@ int main(int argc, char* argv[]){
         TH1D *tempKaons = getBlankCopy(kaondata,"Kaon Spectrum", "Kaon Spectrum pT");
         TH1D *tempProtons = getBlankCopy(protondata,"Proton Spectrum", "Proton Spectrum pT");
         TH1D *tempHads = new TH1D("Hadron Spectrum", "Hadron Spectrum pT", NpThadBin, hadpTBin);
+        TH1D *tempHardPions = new TH1D("Pi0 Spectrum", "Pi0 Spectrum pT", NhardPionBins, hardPionBins);
 
         //Data structures for events read in to save run time
         vector<shared_ptr<Hadron>> hadrons;
@@ -182,17 +190,20 @@ int main(int argc, char* argv[]){
                 if(k != 0 && PT < softend)
                     continue;
 
-                double strength = 1; //smoothing between smooth and hard transition          
+                double strength = 1.0; //smoothing between smooth and hard transition          
 
                 if(fabs(Y) < idHadronEtaCut){
-                    if(abs(PID) == 211) tempPions->Fill(PT, strength/2);
-                    if(abs(PID) == 321) tempKaons->Fill(PT, strength/2);
+                    if(abs(PID) == 211) tempPions->Fill(PT, strength/2.0);
+                    if(abs(PID) == 321) tempKaons->Fill(PT, strength/2.0);
                     if(PID == 2212) tempProtons->Fill(PT, strength);
                 } 
+
+                if(fabs(Eta) < hardPionEtaCut && abs(PID) == 211)
+                    tempHardPions->Fill(PT, strength/2.0);
                 
                 // Add this particle into SingleHadron spectrum
                 if(fabs(Eta) < SingleHadronEtaCut && fabs(PID)>100 &&  pythia.particleData.charge(PID)!=0){
-                    tempHads->Fill(PT, strength/2);
+                    tempHads->Fill(PT, strength/2.0);
                 }
             }
         }
@@ -210,12 +221,14 @@ int main(int argc, char* argv[]){
         tempKaons->Write();
         tempProtons->Write();
         tempHads->Write();
+        tempHardPions->Write();
         
         //add to totals histograms
         HistTotalPions->Add(tempPions,HardCrossSection/Events);
         HistTotalKaons->Add(tempKaons,HardCrossSection/Events);
         HistTotalProtons->Add(tempProtons,HardCrossSection/Events);
         HistTotalHads->Add(tempHads,HardCrossSection/(xsectotal*Events));
+        HistTotalHardPions->Add(tempHardPions,HardCrossSection/Events);
 		
         myfile->Close();
         
@@ -232,6 +245,7 @@ int main(int argc, char* argv[]){
     scaleBins(HistTotalKaons,(1.0/(2*M_PI*2.0*idHadronEtaCut)));
     scaleBins(HistTotalProtons,(1.0/(2*M_PI*2.0*idHadronEtaCut)));
     scaleBins(HistTotalHads,(1.0/(2*M_PI*2.0*SingleHadronEtaCut)));
+    scaleBins(HistTotalHardPions,(1.0/(2*M_PI*2.0*hardPionEtaCut)));
 
     //Plotting
     myRatioPlot(piongraph, HistTotalPions, "Pion Yields", true, true);
@@ -243,6 +257,7 @@ int main(int argc, char* argv[]){
     HistTotalKaons->Write("raw kaons"); smoothBins(HistTotalKaons); HistTotalKaons->Write("identified kaons");
     HistTotalProtons->Write("raw protons"); smoothBins(HistTotalProtons); HistTotalProtons->Write("identified protons");
     HistTotalHads->Write("raw hads"); smoothBins(HistTotalHads); HistTotalHads->Write("identified hads");
+    HistTotalHardPions->Write("raw hard pions"); smoothBins(HistTotalHardPions); HistTotalHardPions->Write("identified hard pions");
     totalroot->Close();
 
     //Done. Script run time
