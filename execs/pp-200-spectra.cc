@@ -26,6 +26,8 @@
 // Authorship: written by Amit Kumar, revised by Shanshan Cao.
 
 //C++ header
+#include "fastjet/ClusterSequence.hh"
+#include "fastjet/CDFMidPointPlugin.hh"
 #include "string"
 #include <iostream>
 #include <fstream>
@@ -96,7 +98,14 @@ int main(int argc, char* argv[]){
     double idHadronEtaCut = 0.6;
     double hardPionEtaCut = 0.35;
     double softend = 6.0;
-    
+
+    double jetYmin = 0.2;
+    double jetYmax = 0.8;
+    double jetR = 0.4;
+    double overlap_threshold = 0.5;
+    fastjet::CDFMidPointPlugin cdfcone(jetR, overlap_threshold);
+    fastjet::JetDefinition jetDef(& cdfcone);
+
     //Variables for single pion spectrum
     TFile idhadron_file("/scratch/user/cameron.parker/projects/JETSCAPE/data/PHENIX-ID-hads.root");
     TDirectory* piondir = (TDirectory*)idhadron_file.Get("Table 1");
@@ -121,11 +130,17 @@ int main(int argc, char* argv[]){
     int NhardPionBins = sizeof(hardPionBins)/sizeof(hardPionBins[0])-1;
     TH1D *HistTotalHardPions = new TH1D("Hadron Spectrum", "Hadron Spectrum pT", NhardPionBins, hardPionBins);
 
-
     //Variables for single hadron spectrum
     double hadpTBin[] = {0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3,2.4,2.6,2.8,3.0,3.35,3.8,4.4,5.1,6,7,8,9,10};
     int NpThadBin = sizeof(hadpTBin)/sizeof(hadpTBin[0])-1;
     TH1D *HistTotalHads = new TH1D("Pi0 Spectrum", "Pi0 Spectrum pT", NpThadBin, hadpTBin);
+
+    //Jet declarations
+    TFile jetFile("/scratch/user/cameron.parker/projects/JETSCAPE/data/STAR-jets.root");
+    //TDirectory* jetDir = (TDirectory*)jetFile.Get("Figure 2 - Combined HT");
+    TH1D* jetdata = (TH1D*) jetFile.Get("hist");
+    TGraphErrors* jetgraph = (TGraphErrors*) jetFile.Get("jets");
+    TH1D* HistTotalJets = getBlankCopy(jetdata, "Total Jet Spectra", "Jet Spectra");
 
     //graph declaration for adding hadron spectra
     TMultiGraph* hadronComp = new TMultiGraph();
@@ -159,6 +174,7 @@ int main(int argc, char* argv[]){
         TH1D *tempProtons = getBlankCopy(protondata,"Proton Spectrum", "Proton Spectrum pT");
         TH1D *tempHads = new TH1D("Hadron Spectrum", "Hadron Spectrum pT", NpThadBin, hadpTBin);
         TH1D *tempHardPions = new TH1D("Pi0 Spectrum", "Pi0 Spectrum pT", NhardPionBins, hardPionBins);
+        TH1D *tempJets = getBlankCopy(jetdata, "Bin Jet Spectra", "Jet Spectra");
 
         //Data structures for events read in to save run time
         vector<shared_ptr<Hadron>> hadrons;
@@ -167,6 +183,7 @@ int main(int argc, char* argv[]){
         while (!myfile->Finished()){
             myfile->Next();
             hadrons = myfile->GetHadrons();
+            vector<fastjet::PseudoJet> fjInputs;
 
             //cout<<"Number of hadrons is: " << hadrons.size() << endl;
             Events++;
@@ -205,7 +222,21 @@ int main(int argc, char* argv[]){
                 if(fabs(Eta) < SingleHadronEtaCut && fabs(PID)>100 &&  pythia.particleData.charge(PID)!=0){
                     tempHads->Fill(PT, strength/2.0);
                 }
+
+                //jet input prep
+                if(fabs(Eta) < DetectorEtaCut && PT>0.2 && PID!=12 && PID!=14 && PID!=16 && PID!=18 )
+                    fjInputs.push_back(fastjet::PseudoJet(Px,Py,Pz,E));
             }
+
+            //jet running
+            if(k==0) continue;
+            fastjet::ClusterSequence clustSeq(fjInputs, jetDef);
+            vector<fastjet::PseudoJet> UnSortedJets = clustSeq.inclusive_jets(5.0);
+            for(int i = 0; i < UnSortedJets.size(); i++){
+                if(abs(UnSortedJets[i].rapidity()) < jetYmax && abs(UnSortedJets[i].rapidity()) > jetYmin)
+                    tempJets->Fill(UnSortedJets[i].pt(),1.0/2.0);
+            }
+
         }
 
         //xsec stuff
@@ -229,6 +260,7 @@ int main(int argc, char* argv[]){
         HistTotalProtons->Add(tempProtons,HardCrossSection/Events);
         HistTotalHads->Add(tempHads,HardCrossSection/(xsectotal*Events));
         HistTotalHardPions->Add(tempHardPions,HardCrossSection/Events);
+        HistTotalJets->Add(tempJets,HardCrossSection/Events);
 		
         myfile->Close();
         
@@ -246,11 +278,13 @@ int main(int argc, char* argv[]){
     scaleBins(HistTotalProtons,(1.0/(2*M_PI*2.0*idHadronEtaCut)));
     scaleBins(HistTotalHads,(1.0/(2*M_PI*2.0*SingleHadronEtaCut)));
     scaleBins(HistTotalHardPions,(1.0/(2*M_PI*2.0*hardPionEtaCut)));
+    HistTotalJets->Scale((1.0e10/(2*M_PI*(jetYmax-jetYmin))),"width");
 
     //Plotting
     myRatioPlot(piongraph, HistTotalPions, "Pion Yields", true, true);
     myRatioPlot(kaongraph, HistTotalKaons, "Kaon Yields", true, true);
     myRatioPlot(protongraph, HistTotalProtons, "Proton Yields", true, true);
+    myRatioPlot(jetgraph, HistTotalJets, "Jet Yields", false, true);
  	
     //create root file for total plots
     HistTotalPions->Write("raw pions"); smoothBins(HistTotalPions); HistTotalPions->Write("identified pions");
@@ -258,6 +292,7 @@ int main(int argc, char* argv[]){
     HistTotalProtons->Write("raw protons"); smoothBins(HistTotalProtons); HistTotalProtons->Write("identified protons");
     HistTotalHads->Write("raw hads"); smoothBins(HistTotalHads); HistTotalHads->Write("identified hads");
     HistTotalHardPions->Write("raw hard pions"); smoothBins(HistTotalHardPions); HistTotalHardPions->Write("identified hard pions");
+    HistTotalJets->Write("jets");
     totalroot->Close();
 
     //Done. Script run time
