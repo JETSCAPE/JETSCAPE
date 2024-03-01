@@ -201,17 +201,17 @@ int main(int argc, char* argv[]){
                 Y = hadrons[i].get()->rapidity();
                 double PT = TMath::Sqrt((Px*Px) + (Py*Py));      
 
-                //cutting for specific regimes
-                if(k == 0 && PT > softend)
-                    continue;
-                if(k != 0 && PT < softend)
-                    continue;
 
-                double strength = 1.0; //smoothing between smooth and hard transition          
+                //cutting for specific regimes
+                double strength = 1.0; //smoothing between smooth and hard transition 
+                if(k == 0 && PT > softend)
+                    strength = 0;
+                if(k != 0 && PT < softend)
+                    strength = 0;         
 
                 if(fabs(Y) < idHadronEtaCut){
-                    if(abs(PID) == 211) tempPions->Fill(PT, strength/2.0);
-                    if(abs(PID) == 321) tempKaons->Fill(PT, strength/2.0);
+                    if(PID == 211) tempPions->Fill(PT, strength);
+                    if(PID == 321) tempKaons->Fill(PT, strength);
                     if(PID == 2212) tempProtons->Fill(PT, strength);
                 } 
 
@@ -232,9 +232,9 @@ int main(int argc, char* argv[]){
             if(k==0) continue;
             fastjet::ClusterSequence clustSeq(fjInputs, jetDef);
             vector<fastjet::PseudoJet> UnSortedJets = clustSeq.inclusive_jets(5.0);
-            for(int i = 0; i < UnSortedJets.size(); i++){
-                if(abs(UnSortedJets[i].rapidity()) < jetYmax && abs(UnSortedJets[i].rapidity()) > jetYmin)
-                    tempJets->Fill(UnSortedJets[i].pt(),1.0/2.0);
+            for(int ijet = 0; ijet < UnSortedJets.size(); ijet++){
+                if(abs(UnSortedJets[ijet].rapidity()) < jetYmax && abs(UnSortedJets[ijet].rapidity()) > jetYmin)
+                    tempJets->Fill(UnSortedJets[ijet].pt(),1.0/2.0);
             }
 
         }
@@ -278,7 +278,7 @@ int main(int argc, char* argv[]){
     scaleBins(HistTotalProtons,(1.0/(2*M_PI*2.0*idHadronEtaCut)));
     scaleBins(HistTotalHads,(1.0/(2*M_PI*2.0*SingleHadronEtaCut)));
     scaleBins(HistTotalHardPions,(1.0/(2*M_PI*2.0*hardPionEtaCut)));
-    HistTotalJets->Scale((1.0e10/(2*M_PI*(jetYmax-jetYmin))),"width");
+    HistTotalJets->Scale((1.0e9/(2*M_PI*(jetYmax-jetYmin))),"width");
 
     //Plotting
     myRatioPlot(piongraph, HistTotalPions, "Pion Yields", true, true);
