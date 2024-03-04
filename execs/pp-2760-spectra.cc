@@ -125,26 +125,13 @@ int main(int argc, char* argv[]){
    
     // for jet substructure
     double JetpTCut = 100.0;
-    //Variables for jet shape
-    double JetShaperBin[7] = {0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3};
-    int NrJetShapeBin = 6;
-    //Variables for  jet fragmentation function
-    double JetFFzBin[11] = {0.01, 0.016, 0.025, 0.04, 0.063, 0.1, 0.16, 0.25, 0.4, 0.63, 1};
-    int NzJetFFBin = 10;
-    //Variables for jet mass
-    double JetMassBin[13] = {0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24};
-    int NJetMassBin = 12;
     
     // Histograms.1. Number of jets vs pT of the jet. 2. Number of charged hadron vs pT of the hadron
     TH1D *HistTempJet = new TH1D("JetSpectrumBin", "Jet Spectrum pT", NpTJetBin, JetpTBin); //CountVspT for jets
     TH1D *HistTempSingleHadron = new TH1D("SingleHadronSpectrumBin", "Single Hadron Spectrum pT", NpTSingleHadronBin, SingleHadronpTBin); //CountVspT for single-hadron
-    TH1D *HistTempJetShape = new TH1D("JetShapeBin", "Jet Shape", NrJetShapeBin, JetShaperBin); //CountVsr for Jet Shape
-    TH1D *HistTempJetFF = new TH1D("JetFragmentaionFunctionBin", "Jet Fragmentaion Function", NzJetFFBin, JetFFzBin);
-    TH1D *HistTempJetMass = new TH1D("JetMassBin", "Jet Mass", NJetMassBin, JetMassBin);
 	
     TH1D *HistTotalHadron = new TH1D("HadronSpectrumBin", "Combined Hadron pT Spectrum", NpTSingleHadronBin, SingleHadronpTBin); //Total hist for hadrons
 	TH1D *HistTotalJet = new TH1D("JetSpectrumBin1", "Combined Jet pT Spectrum", NpTJetBin, JetpTBin); //Total hist for jets
-    TH1D *HistTotalJetShape = new TH1D("JetShape", "Jet Shape", NrJetShapeBin, JetShaperBin); //Total hist for jet shape
     TH1D *HistTotalJet2 = new TH1D("JetSpectrumBin2", "Combined Jet pT Spectrum 0.2 R", NpTJetBin, JetpTBin); //Total hist for jets
 	TH1D *HistTotalJet3 = new TH1D("JetSpectrumBin3", "Combined Jet pT Spectrum 0.4 R", NpTJetBin, JetpTBin); //Total hist for jets
     TH1D *HistTotalPions = new TH1D("Pion Spectrum", "Pion Spectrum pT", NpTpionBin, piondata->GetXaxis()->GetXbins()->GetArray()); //identified hadrons hists
@@ -158,7 +145,6 @@ int main(int argc, char* argv[]){
     double DifferentialJetTotalErrors[NpTJetBin] = {0};
     double DifferentialHadronTotal[NpTSingleHadronBin] = {0};
     double DifferentialHadronTotalErrors[NpTSingleHadronBin] = {0};
-    double JetShapeTotals[NrJetShapeBin] = {0,0,0,0,0,0};
     
     std::vector <fjcore::PseudoJet> fjInputs;
     std::vector <int> chargeList;
@@ -209,21 +195,6 @@ int main(int argc, char* argv[]){
         sprintf(HistName,"CountVspTSingleHadronSpectrumBin%s_%s",pTHatMin[k].c_str(),pTHatMax[k].c_str());
         HistTempSingleHadron->SetName(HistName);
         
-        HistTempJetShape->Reset();
-        sprintf(HistName,"CountVsrJetShapeBin%s_%s",pTHatMin[k].c_str(),pTHatMax[k].c_str());
-        HistTempJetShape->SetName(HistName);
-        HistTempJetShape->Sumw2();
-        
-        HistTempJetFF->Reset();
-        sprintf(HistName,"CountVszJetFFBin%s_%s",pTHatMin[k].c_str(),pTHatMax[k].c_str());
-        HistTempJetFF->SetName(HistName);
-        HistTempJetFF->Sumw2();
-        
-        HistTempJetMass->Reset();
-        sprintf(HistName,"CountVsJetMassBin%s_%s",pTHatMin[k].c_str(),pTHatMax[k].c_str());
-        HistTempJetMass->SetName(HistName);
-        HistTempJetMass->Sumw2();
-        
         fjInputs.resize(0);
         chargeList.resize(0);
         
@@ -261,123 +232,9 @@ int main(int argc, char* argv[]){
                 mass = hadrons[i].get()->restmass();
                 double PT = TMath::Sqrt( (Px*Px) + (Py*Py));
                 
-                // Add this particle for Jet spectrum
-                if( SN==0 && fjInputs.size()>0 ){
-                    
-                    // List first few FastJet jets and some info about them.
-                    /* if (nListJets)
-                    {
-                        cout << "\n --------  FastJet jets, R = " << JetRadius << "anti-kt for pTHatBin = "<<k
-                        << "  --------------------------------------------------\n\n "
-                        << "  i         pT        y     eta      phi  " << endl;
-                        for (int i = 0; i < int(SortedJets.size()); ++i)
-                        {
-                            vector<fjcore::PseudoJet> constituents = SortedJets[i].constituents();
-                            cout << setw(4) << i << fixed << setprecision(3) << setw(11)
-                            << SortedJets[i].perp() << setw(9)  << SortedJets[i].rap()
-                            << setw(9) << SortedJets[i].eta() << setw(9)  << SortedJets[i].phi_std() << endl;
-                        }
-                        cout << "\n --------  End FastJet Listing  ------------------"
-                        << "---------------------------------" << endl;
-                    } */
-                    
-                    //Alternate Radius Calculations, 0.2 first
-                    fjcore::ClusterSequence clustSeq2(fjInputs, jetDef2);
-                    UnSortedJets2 = clustSeq2.inclusive_jets(JetpTMin);
-                    SortedJets2 = sorted_by_pt(UnSortedJets2);
-                    int pFast2 = SortedJets2.size();
-                    for (int i = 0; i < pFast2; ++i){
-                        if(-JetEtaCut < SortedJets2[i].eta() && SortedJets2[i].eta()< JetEtaCut){
-                            if(SortedJets2[i].perp() < stod(pTHatMax[k])*1.1) HistTempJet2->Fill(SortedJets2[i].perp());
-                            else HistTempJet2->Fill(stod(pTHatMax[k])); //filtering out anomalous high energy events
-                            //cout << "jet rad 0.2 " << SortedJets2[i].perp() << endl;
-                        }
-                    }
-
-                    //jet radius 0.4
-                    fjcore::ClusterSequence clustSeq3(fjInputs, jetDef3);
-                    UnSortedJets3 = clustSeq3.inclusive_jets(JetpTMin);
-                    SortedJets3 = sorted_by_pt(UnSortedJets3);
-                    int pFast3 = SortedJets3.size();
-                    for (int i = 0; i < pFast3; ++i){
-                        if(-JetEtaCut < SortedJets3[i].eta() && SortedJets3[i].eta()< JetEtaCut){
-                            if(SortedJets3[i].perp() < stod(pTHatMax[k])*1.1) HistTempJet3->Fill(SortedJets3[i].perp());
-                            else HistTempJet3->Fill(stod(pTHatMax[k])); //filtering out anomalous high energy events
-                            //cout << "jet rad 0.4" << endl;
-                        }
-                    }
-
-                    
-                    // Run Fastjet algorithm and sort jets in pT order.
-                    fjcore::ClusterSequence clustSeq(fjInputs, jetDef);
-                    UnSortedJets = clustSeq.inclusive_jets(JetpTMin);
-                    SortedJets    = sorted_by_pt(UnSortedJets);
-
-                    int pFast = SortedJets.size();
-                    for (int i = 0; i < pFast; ++i)
-                    {
-                        if(-JetEtaCut < SortedJets[i].eta() && SortedJets[i].eta()< JetEtaCut )
-                        {
-                            if(SortedJets[i].perp() < stod(pTHatMax[k])*1.1) HistTempJet->Fill( SortedJets[i].perp() );
-                            else HistTempJet->Fill(stod(pTHatMax[k])); //filtering out anomalous high energy events
-
-                            if(SortedJets[i].perp() >= JetpTCut && SortedJets[i].perp() < stod(pTHatMax[k])*1.1){
-
-                                TriggeredJetNumber ++;
-                                constituents = SortedJets[i].constituents();
-
-                                //Jet Shape---
-                                for( int j = 0; j < constituents.size(); j++ ){
-                                    
-                                    double delta_eta = constituents[j].eta() - SortedJets[i].eta();
-                                    double delta_phi = SortedJets[i].delta_phi_to(constituents[j]);
-                                    double delta_r = TMath::Sqrt( delta_eta*delta_eta + delta_phi*delta_phi);
-                                    HistTempJetShape->Fill( delta_r, constituents[j].perp() );
-                                }
-                                
-                                //Jet Fragmentation Function---
-                                for( int j = 0; j < fjInputs.size(); j++ ){
-                                    double delta_eta = fjInputs[j].eta() - SortedJets[i].eta();
-                                    double delta_phi = SortedJets[i].delta_phi_to(fjInputs[j]);
-                                    double delta_r = TMath::Sqrt( delta_eta*delta_eta + delta_phi*delta_phi);
-                                    if( fabs(chargeList[j]) > 0.01 && delta_r <= JetRadius){//charged particle in jet cone
-                                        double z_jet = fjInputs[j].perp()/SortedJets[i].perp();
-                                        HistTempJetFF->Fill( z_jet );
-                                    }
-                                }
-
-                                //Jet Mass---
-                                double jet_e = 0.0, jet_px = 0.0, jet_py = 0.0, jet_pz = 0.0;
-                                for( int j = 0; j < constituents.size(); j++ ){
-                                    double delta_eta = constituents[j].eta() - SortedJets[i].eta();
-                                    double delta_phi = SortedJets[i].delta_phi_to(constituents[j]);
-                                    double delta_r = TMath::Sqrt( delta_eta*delta_eta + delta_phi*delta_phi);
-                                    if( delta_r <= JetRadius){// "ALL" particle in jet cone
-                                        jet_e += constituents[j].e();
-                                        jet_px += constituents[j].px();
-                                        jet_py += constituents[j].py();
-                                        jet_pz += constituents[j].pz();
-                                    }
-                                }
-                                double jet_mass
-                                = TMath::Sqrt(jet_e*jet_e - jet_px*jet_px - jet_py*jet_py - jet_pz*jet_pz);
-                                HistTempJetMass->Fill( jet_mass );
-
-                            } //commented out to reduce run time per event
-                        }
-                    }
-                    fjInputs.resize(0);
-                    //cout<<"Found a Jet \t "<<pTBinString<<"\t NetJetevents is \t"<<NetJetEvents<<endl;
-                    if(  fabs(Eta) < DetectorEtaCut &&  PT>0.01  && PID!=12 && PID!=14 && PID!=16 && PID!=18){
-                        fjInputs.push_back(fjcore::PseudoJet(Px,Py,Pz,E));
-                        chargeList.push_back( pythia.particleData.charge( PID ) );
-                    }
-                }else{
-                    //cout<<EventLabel << " "<<PID <<" 1"<< E <<" "<< Px<<" " << Py<<" " << Pz<<" " << Eta<<" " << Phi<<endl;
-                    if( fabs(Eta) < DetectorEtaCut && PT>0.01  &&  PID!=12 && PID!=14 && PID!=16 && PID!=18 ){
-                        fjInputs.push_back(fjcore::PseudoJet(Px,Py,Pz,E));
-                        chargeList.push_back( pythia.particleData.charge( PID ) );
-                    }
+                if( fabs(Eta) < DetectorEtaCut && PT>0.01  &&  PID!=12 && PID!=14 && PID!=16 && PID!=18 ){
+                    fjInputs.push_back(fjcore::PseudoJet(Px,Py,Pz,E));
+                    chargeList.push_back( pythia.particleData.charge( PID ) );
                 }
 
                 //strength for had hist filling
@@ -404,6 +261,49 @@ int main(int argc, char* argv[]){
                     if(abs(PID) == 2212) {tempProtons->Fill(PT,strength);}
                 } 
             }
+
+            //Alternate Radius Calculations, 0.2 first
+            fjcore::ClusterSequence clustSeq2(fjInputs, jetDef2);
+            UnSortedJets2 = clustSeq2.inclusive_jets(JetpTMin);
+            SortedJets2 = sorted_by_pt(UnSortedJets2);
+            int pFast2 = SortedJets2.size();
+            for (int i = 0; i < pFast2; ++i){
+                if(-JetEtaCut < SortedJets2[i].eta() && SortedJets2[i].eta()< JetEtaCut){
+                    if(SortedJets2[i].perp() < stod(pTHatMax[k])*1.1) HistTempJet2->Fill(SortedJets2[i].perp());
+                    else HistTempJet2->Fill(stod(pTHatMax[k])); //filtering out anomalous high energy events
+                    //cout << "jet rad 0.2 " << SortedJets2[i].perp() << endl;
+                }
+            }
+
+            //jet radius 0.4
+            fjcore::ClusterSequence clustSeq3(fjInputs, jetDef3);
+            UnSortedJets3 = clustSeq3.inclusive_jets(JetpTMin);
+            SortedJets3 = sorted_by_pt(UnSortedJets3);
+            int pFast3 = SortedJets3.size();
+            for (int i = 0; i < pFast3; ++i){
+                if(-JetEtaCut < SortedJets3[i].eta() && SortedJets3[i].eta()< JetEtaCut){
+                    if(SortedJets3[i].perp() < stod(pTHatMax[k])*1.1) HistTempJet3->Fill(SortedJets3[i].perp());
+                    else HistTempJet3->Fill(stod(pTHatMax[k])); //filtering out anomalous high energy events
+                    //cout << "jet rad 0.4" << endl;
+                }
+            }
+
+            
+            // Run Fastjet algorithm and sort jets in pT order.
+            fjcore::ClusterSequence clustSeq(fjInputs, jetDef);
+            UnSortedJets = clustSeq.inclusive_jets(JetpTMin);
+            SortedJets    = sorted_by_pt(UnSortedJets);
+
+            int pFast = SortedJets.size();
+            for (int i = 0; i < pFast; ++i)
+            {
+                if(-JetEtaCut < SortedJets[i].eta() && SortedJets[i].eta()< JetEtaCut )
+                {
+                    if(SortedJets[i].perp() < stod(pTHatMax[k])*1.1) HistTempJet->Fill( SortedJets[i].perp() );
+                    else HistTempJet->Fill(stod(pTHatMax[k])); //filtering out anomalous high energy events
+                }
+            }
+            fjInputs.resize(0);
         }
 
         //xsec stuff
@@ -472,10 +372,6 @@ int main(int argc, char* argv[]){
         
         //Write histogram into a root file
         HistTempJet->Write();
-        HistTempJetShape->Write();
-        HistTempSingleHadron->Write();
-        HistTempJetFF->Write();
-        HistTempJetMass->Write();
         tempPions->Write();
         tempKaons->Write();
         tempProtons->Write();
@@ -566,84 +462,10 @@ int main(int argc, char* argv[]){
 		cHadron->Print(OutHadronHistName);
         if (cHadron) {cHadron->Close();}*/
         
-        // for jet shape
-        HistTempJetShape->Scale( (1.0/TriggeredJetNumber), "width" );
-        double ErrorNormJetShape;
-        double NormJetShape
-        = HistTempJetShape->IntegralAndError( 1, NrJetShapeBin,
-                                              ErrorNormJetShape,
-                                              "width" );
-        TH1D *Norm = (TH1D*)HistTempJetShape->Clone("Normalization");
-        Norm->Sumw2();Norm->SetTitle("Normalization");
-        int nbins = Norm->GetSize();
-        for( int i=1; i < nbins-1; i++){
-            Norm->SetBinContent(i, NormJetShape);
-            Norm->SetBinError(i, ErrorNormJetShape);
-        }
-        HistTempJetShape->Divide(Norm);
-        delete Norm;
-
-        double JetShape[NrJetShapeBin],JetShapeError[NrJetShapeBin],JetShapeR[NrJetShapeBin],JetShapeRError[NrJetShapeBin];
-        TGraphErrors * GEJetShape;
-        
-        cout<<"For ptHardBin = "<<k+1<<"\t Jet Shape is Below ( pTjet >"<< int(JetpTCut) << " GeV/c)" <<endl;
-        for(int j=0; j<NrJetShapeBin;j++){
-            JetShape[j] = HistTempJetShape->GetBinContent(j+1);
-            double jetshapetemp = JetShape[j] * HardCrossSection;
-            if(isnan(jetshapetemp) == 0) JetShapeTotals[j] += jetshapetemp; 
-            JetShapeError[j] = HistTempJetShape->GetBinError(j+1);
-            JetShapeR[j] = (JetShaperBin[j]+JetShaperBin[j+1])/2.0;
-            JetShapeRError[j] = (JetShaperBin[j+1]-JetShaperBin[j])/2.0;
-            cout<<JetShapeR[j]<<"\t"<<JetShape[j]<<"\t"<<JetShapeError[j]<<endl;
-        }
-        GEJetShape = new TGraphErrors(NrJetShapeBin,JetShapeR,JetShape,JetShapeRError,JetShapeError);
-        char MyGraphName3[100];
-        sprintf(MyGraphName3,"JetShapeBin%s_%s",pTHatMin[k].c_str(),pTHatMax[k].c_str());
-        GEJetShape->SetName(MyGraphName3);
-        GEJetShape->Write();
-        
-        // for jet fragmentation function
-        HistTempJetFF->Scale( (1.0/TriggeredJetNumber), "width" );
-        double JetFF[NzJetFFBin], JetFFError[NzJetFFBin], JetZ[NzJetFFBin], JetZError[NzJetFFBin];
-        TGraphErrors * GEJetFF;
-        cout<<"For ptHardBin = "<<k+1<<"\t Jet Fragmentation Function is Below ( pTjet >"<< int(JetpTCut) << " GeV/c)" <<endl;
-        for(int j=0; j<NzJetFFBin;j++){
-            JetFF[j] = HistTempJetFF->GetBinContent(j+1);
-            JetFFError[j] = HistTempJetFF->GetBinError(j+1);
-            JetZ[j] = (JetFFzBin[j]+JetFFzBin[j+1])/2.0;
-            JetZError[j] = (JetFFzBin[j+1]-JetFFzBin[j])/2.0;
-            cout<<JetZ[j]<<"\t"<<JetFF[j]<<"\t"<<JetFFError[j]<<endl;
-        }
-        GEJetFF = new TGraphErrors(NzJetFFBin,JetZ,JetFF,JetZError,JetFFError);
-        char MyGraphName4[100];
-        sprintf(MyGraphName4,"JetFFBin%s_%s",pTHatMin[k].c_str(),pTHatMax[k].c_str());
-        GEJetFF->SetName(MyGraphName4);
-        GEJetFF->Write();
-        
-        // for jet mass
-        HistTempJetMass->Scale( (1.0/TriggeredJetNumber), "width" );
-        double JetMassDist[NJetMassBin], JetMassDistError[NJetMassBin], JetMass[NJetMassBin], JetMassError[NJetMassBin];
-        TGraphErrors * GEJetMass;
-        cout<<"For ptHardBin = "<<k+1<<"\t Jet Mass Distribution is Below ( pTjet >"<< int(JetpTCut) << " GeV/c)" <<endl;
-        for(int j=0; j<NJetMassBin;j++){
-            JetMassDist[j] = HistTempJetMass->GetBinContent(j+1);
-            JetMassDistError[j] = HistTempJetMass->GetBinError(j+1);
-            JetMass[j] = (JetMassBin[j]+JetMassBin[j+1])/2.0;
-            JetMassError[j] = (JetMassBin[j+1]-JetMassBin[j])/2.0;
-            cout<<JetMass[j]<<"\t"<<JetMassDist[j]<<"\t"<<JetMassDistError[j]<<endl;
-        }
-        GEJetMass = new TGraphErrors(NJetMassBin,JetMass,JetMassDist,JetMassError,JetMassDistError);
-        char MyGraphName5[100];
-        sprintf(MyGraphName5,"JetMassDistBin%s_%s",pTHatMin[k].c_str(),pTHatMax[k].c_str());
-        GEJetMass->SetName(MyGraphName5);
-        GEJetMass->Write();
-
-        delete GEJet; delete GESingleHadron; delete GEJetShape; delete GEJetFF; delete GEJetMass;
         totalroot->cd();
     } //k-loop ends here (pTHatBin loop)
     
     delete HistTempJet; delete HistTempSingleHadron;
-    delete HistTempJetShape; delete HistTempJetFF; delete HistTempJetMass;
 
     //create histogram for ratio plot
     TH1D *HistFinalJet = new TH1D("JetSpectrumBin", "Jet Spectrum pT", NpTJetBin, JetpTBin); //CountVspT for jets
@@ -677,14 +499,6 @@ int main(int argc, char* argv[]){
     scaleBins(HistTotalPions,(1.0/(2*M_PI*2.0*idHadronYCut)));
     scaleBins(HistTotalKaons,(1.0/(2*M_PI*2.0*idHadronYCut)));
     scaleBins(HistTotalProtons,(1.0/(2*M_PI*2.0*idHadronYCut)));
-
-    //jet shape
-    double JetShapeNorm = 0;
-    for(int i = 0; i < NrJetShapeBin; i++){
-        JetShapeNorm += JetShapeTotals[i]*(JetShaperBin[1]-JetShaperBin[0]);
-        HistTotalJetShape->SetBinContent(i+1, JetShapeTotals[i]);
-    }
-    HistTotalJetShape->Scale(1/JetShapeNorm);
 
     //hadrons
     //hadron data graph
@@ -736,7 +550,6 @@ int main(int argc, char* argv[]){
     totalroot->cd();
     HistFinalJet->Write("jet radius 0.3");
     HistTotalHadron->Write("hadrons");
-    HistTotalJetShape->Write("jet shape");
     HistTotalJet2->Write("jet radius 0.2");
     HistTotalJet3->Write("jet radius 0.4");
     HistTotalPions->Write("raw pions"); smoothBins(HistTotalPions); /*HistTotalPions->Smooth();*/ HistTotalPions->Write("identified pions");
