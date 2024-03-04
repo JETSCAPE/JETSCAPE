@@ -262,7 +262,7 @@ def zipxmls(pointdir):
 def unzipxmls(pointdir):
     print("Unzipping xmls for " + pointdir)
     shutil.unpack_archive(pointdir+'/xmlzip.zip', pointdir+'/xml')
-    os.remove(pointdir+'/xmlzip.zip')
+    #os.remove(pointdir+'/xmlzip.zip')
 
 # Flexible way to combine all soft bins for a run
 def softCombine(dir):
