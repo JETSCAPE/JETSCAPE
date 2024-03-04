@@ -8,6 +8,8 @@ from functions import *
 
 #option reading
 reading = False
+todays_date = date.today()
+name = "LEP-" + str(todays_date.month) + "-" + str(todays_date.day)
 for i, option in enumerate(sys.argv):
     if "-d" in option:
         reading = True
@@ -21,11 +23,11 @@ for i, option in enumerate(sys.argv):
         rerunning = True
         reading = True
         startdir = sys.argv[i+1]
+    if "-n" in option:
+        name = sys.argv[i+1]
 
 #date and file initiation
-todays_date = date.today()
-totaldir = "/scratch/user/cameron.parker/projects/JETSCAPE/runs/LEP-" + str(todays_date.month) + "-" + str(todays_date.day) + "/"
-
+totaldir = "/scratch/user/cameron.parker/projects/JETSCAPE/runs/" + name + "/"
 makeTotalDir(totaldir)
 
 #methods for runnning
