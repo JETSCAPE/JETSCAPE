@@ -744,13 +744,14 @@ void scaleBins(TH1D* hist, TProfile* prof, double scale = 1){
 //scales histogram and adjusts bin content for bin widths and centers since ROOT can only do width
 void scaleBins(TH1D* hist, double scale = 1.0){
     double sum = 0;
+    cout << "Scaling histogram: " << hist->GetTitle() << endl;
 
     for(int i = 1; i <= hist->GetNbinsX(); i++){
         double raw = hist->GetBinContent(i);
         double center = hist->GetBinCenter(i); if(center==0 || isnan(center) || raw==0) continue;
         double factor = scale/(hist->GetBinWidth(i)*center);
         double error = hist->GetBinError(i);
-        //cout << raw << " " << scaled << " " << hist->GetBinWidth(i) << " " << scale << endl;
+        //cout << center << " " << raw << " " << raw*factor << " " << error << " " << error*factor << endl;
         hist->SetBinContent(i, raw*factor);
         hist->SetBinError(i, error*factor);
         sum += raw*factor*hist->GetBinWidth(i);

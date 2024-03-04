@@ -371,10 +371,10 @@ int main(int argc, char* argv[]){
         }
         
         //Write histogram into a root file
-        HistTempJet->Write();
-        tempPions->Write();
-        tempKaons->Write();
-        tempProtons->Write();
+        HistTempJet->Sumw2(); HistTempJet->Write();
+        tempPions->Sumw2(); tempPions->Write();
+        tempKaons->Sumw2(); tempKaons->Write();
+        tempProtons->Sumw2(); tempProtons->Write();
         
         //add to totals histograms
         double factor = HardCrossSection/(xsectotal*Events);
@@ -440,27 +440,10 @@ int main(int argc, char* argv[]){
         sprintf(MyGraphName2,"DifferentialSingleHadronYieldBin%s_%s",pTHatMin[k].c_str(),pTHatMax[k].c_str());
         GESingleHadron->SetNameTitle(MyGraphName2);
         GESingleHadron->Write();
-		
-		//Save jet pT hist as a png for convenience
-		/*char OutJetHistName[100];
-		sprintf(OutJetHistName,"plots/JetSpectrumBin%s_%s.png",pTHatMin[k].c_str(),pTHatMax[k].c_str());
-		TCanvas *cJet = new TCanvas();
-        cJet->SetLogy();
-		//GEJet->Draw();
-		//cJet->Print(OutJetHistName);
-        if (cJet) {cJet->Close();}*/
 
         //Save hadron pT hist as a png for convenience
         hadronComponents[k] = (TGraph*)GESingleHadron->Clone();
         hadronComponents[k]->SetLineColor(k+2);
-		/*char OutHadronHistName[100];
-		sprintf(OutHadronHistName,"plots/HadronSpectrumBin%s_%s.png",pTHatMin[k].c_str(),pTHatMax[k].c_str());
-		TCanvas *cHadron = new TCanvas();
-        cHadron->SetLogy();
-        cHadron->SetLogx();
-		GESingleHadron->Draw();
-		cHadron->Print(OutHadronHistName);
-        if (cHadron) {cHadron->Close();}*/
         
         totalroot->cd();
     } //k-loop ends here (pTHatBin loop)
@@ -491,6 +474,11 @@ int main(int argc, char* argv[]){
         HistFinalSingleHadron->SetBinContent(i+1, DifferentialHadronTotal[i]); //for ratio plot
         HistFinalSingleHadron->SetBinError(i+1, DifferentialHadronTotalErrors[i]);
     }
+
+    //raw files
+    HistTotalPions->Write("raw pions");
+    HistTotalKaons->Write("raw kaons");
+    HistTotalProtons->Write("raw protons");
 
     //Scaling totals by global factors and the identified pions by bin centers
     HistTotalJet2->Scale(1.0/(2.0*JetEtaCut),"width");
@@ -552,9 +540,9 @@ int main(int argc, char* argv[]){
     HistTotalHadron->Write("hadrons");
     HistTotalJet2->Write("jet radius 0.2");
     HistTotalJet3->Write("jet radius 0.4");
-    HistTotalPions->Write("raw pions"); smoothBins(HistTotalPions); /*HistTotalPions->Smooth();*/ HistTotalPions->Write("identified pions");
-    HistTotalKaons->Write("raw kaons"); smoothBins(HistTotalKaons); /*HistTotalKaons->Smooth();*/ HistTotalKaons->Write("identified kaons");
-    HistTotalProtons->Write("raw protons"); smoothBins(HistTotalProtons); /*HistTotalProtons->Smooth();*/ HistTotalProtons->Write("identified protons");
+    HistTotalPions->Write("rough pions"); smoothBins(HistTotalPions); /*HistTotalPions->Smooth();*/ HistTotalPions->Write("smooth pions");
+    HistTotalKaons->Write("rough kaons"); smoothBins(HistTotalKaons); /*HistTotalKaons->Smooth();*/ HistTotalKaons->Write("smooth kaons");
+    HistTotalProtons->Write("rough protons"); smoothBins(HistTotalProtons); /*HistTotalProtons->Smooth();*/ HistTotalProtons->Write("smooth protons");
     cout << "finished." << endl;
 
     //jets

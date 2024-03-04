@@ -248,11 +248,12 @@ int main(int argc, char* argv[]){
         eventCount.push_back(Events);
         
         //Write histogram into a root file
-        tempPions->Write();
-        tempKaons->Write();
-        tempProtons->Write();
-        tempHads->Write();
-        tempHardPions->Write();
+        tempPions->Sumw2(); tempPions->Write();
+        tempKaons->Sumw2(); tempKaons->Write();
+        tempProtons->Sumw2(); tempProtons->Write();
+        tempHads->Sumw2(); tempHads->Write();
+        tempHardPions->Sumw2(); tempHardPions->Write();
+        tempJets->Sumw2(); tempJets->Write();
         
         //add to totals histograms
         HistTotalPions->Add(tempPions,HardCrossSection/Events);
