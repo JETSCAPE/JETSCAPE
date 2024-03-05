@@ -82,7 +82,7 @@ int main(int argc, char* argv[]){
     //dijet comparison
     TMultiGraph* jets = new TMultiGraph("Jet Spectra","Jet Spectra");
     TGraphErrors* jetscapejets[directories.size()];
-    TFile jet_file("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/data/eeDiJet.root");
+    TFile jet_file("/scratch/user/cameron.parker/projects/JETSCAPE/data/ALEPH-jets.root");
     TDirectory* jetdir = (TDirectory*)jet_file.Get("LeadingDiJetEnergy");
     TGraphErrors* jetData = (TGraphErrors*)jetdir->Get("Graph1D_y1");
     jetData->SetMarkerStyle(kFullDotLarge);
