@@ -563,6 +563,10 @@ if (${ROOT_FOUND})
   target_link_libraries(ee-charm-spectra JetScape analysis)
   endif() 
 
+#Ko file
+add_executable(ko-analysis ./execs/ko-analysis.cc)
+target_link_libraries(ko-analysis JetScape analysis)
+
 # -----------------------------------------------------------
 #### copy essential files for MUSIC to build/
 if (USE_IPGlasma)
