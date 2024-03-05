@@ -43,6 +43,9 @@ int main(int argc, char* argv[]){
 
         //Data structures for events read in to save run time
         vector<shared_ptr<Hadron>> hadrons;
+
+        //output
+        std::ofstream fout("/scratch/user/cameron.parker/projects/JETSCAPE/test/ko-output.txt");
         
         //actually reading in
         while (!myfile->Finished()){
@@ -51,6 +54,8 @@ int main(int argc, char* argv[]){
             vector<shared_ptr<Hadron>> nucleons;
             shared_ptr<Hadron> triggerParticle = hadrons[0];
             double triggerPT = 0.0;
+            bool protonfound = false;
+            bool neutronfound = false;
 
             Events++;
             for(unsigned int i=0; i<hadrons.size(); i++){
@@ -68,7 +73,19 @@ int main(int argc, char* argv[]){
                 double PT = TMath::Sqrt((Px*Px) + (Py*Py));         
 
                 if(fabs(Y) < DetectorEtaCut){
-                    if(abs(PID) == 2212 || abs(PID) == 2112) nucleons.push_back(hadrons[i]);
+                    //protons
+                    if(abs(PID) == 2212){
+                        protonfound = true;
+                        nucleons.push_back(hadrons[i]);
+                    }
+
+                    //neutrons
+                    if(abs(PID) == 2112){
+                        neutronfound = true;
+                        nucleons.push_back(hadrons[i]);
+                    }
+
+                    //triggers
                     if(PT > triggerPT){
                         triggerParticle = hadrons[i];
                         triggerPT = PT;
@@ -76,9 +93,18 @@ int main(int argc, char* argv[]){
                 } 
             }//End of hadron loop
 
-
+            //if event kept
+            if(triggerPT >= pTmin && protonfound && neutronfound){
+                eventCount++;
+                fout << "#EVENT" << endl;
+                nucleons.push_back(triggerParticle);
+                for(int i=0; i<nucleons.size(); i++)
+                    fout << nucleons[i].get()->pid() << " " << nucleons[i].get()->e() << endl;
+            }
         }
     } //k-loop ends here (pTHatBin loop)
+
+    cout << eventCount << " events kept" << endl;
 
     return 0;
 }
