@@ -331,7 +331,7 @@ mark_as_advanced(FASTJET_FOUND FASTJET_INCLUDE_DIR FASTJET_LIBRARY)
 set(FASTJET_INCLUDE_DIRS ${FASTJET_INCLUDE_DIR})
 set(FASTJET_LIBRARIES ${FASTJET_LIBRARY})
 get_filename_component(FASTJET_LIBRARY_DIRS ${FASTJET_LIBRARY} PATH)
-set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -I/scratch/user/cameron.parker/fastjet-3.4.2/../fastjet-install/include -Wl,-rpath,/scratch/user/cameron.parker/fastjet-3.4.2/../fastjet-install/lib -L/scratch/user/cameron.parker/fastjet-3.4.2/../fastjet-install/lib -lfastjettools -lfastjet -lm -lfastjetplugins -lsiscone_spherical -lsiscone" )
+set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -I/scratch/user/cameron.parker/fastjet-install/include -Wl,-rpath,/scratch/user/cameron.parker/fastjet-install/lib -L/scratch/user/cameron.parker/fastjet-install/lib -lfastjettools -lfastjet -lm -lfastjetplugins -lsiscone_spherical -lsiscone" )
 
 ###########################
 ### Framework Includes  ###
