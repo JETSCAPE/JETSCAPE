@@ -181,6 +181,7 @@ int main(int argc, char* argv[]){
         
         //actually reading in
         while (!myfile->Finished()){
+            cout << HadronFile << ": ";
             myfile->Next();
             hadrons = myfile->GetHadrons();
             vector<fastjet::PseudoJet> fjInputs;

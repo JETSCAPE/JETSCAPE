@@ -213,6 +213,7 @@ int main(int argc, char* argv[]){
         
         //actually reading in, event loop
         while (!myfile->Finished()){
+            cout << HadronFile << ": ";
             myfile->Next();
             hadrons = myfile->GetHadrons();
 
