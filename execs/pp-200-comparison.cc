@@ -72,21 +72,10 @@ int main(int argc, char* argv[]){
 
     //array to hold values
     vector<vector<double>> pionPredicts;
-    vector<vector<double>> hadPredicts;
-
-    //Declaring graphs
-    TCanvas* cHad = new TCanvas("c1","c1",1400,1200);
-    TLegend hadronleg(.75,.35,.9,.9,"Sources");
-    TMultiGraph* hadrons = new TMultiGraph("Hadron Spectra","Hadron Spectra");
-    TGraphErrors* jetscapehadrons[directories.size()];
-
-    //hadron data file
-    TFile hadron_file("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/data/STARhadData.root");
-    TDirectory* hadrondir = (TDirectory*)hadron_file.Get("Table 1");
-    TGraphErrors* hadronData = (TGraphErrors*)hadrondir->Get("Graph1D_y8");
-    hadronData->SetMarkerStyle(kFullDotLarge);
-    hadrons->Add(hadronData,"ap");
-    hadronleg.AddEntry(hadronData,"Data","ep");
+    vector<vector<double>> kaonPredicts;
+    vector<vector<double>> protonPredicts;
+    vector<vector<double>> hardPionPredicts;
+    vector<vector<double>> jetPredicts;
  
     //grabbing graphs from each jetscape file
     int color = 1;
@@ -96,23 +85,23 @@ int main(int argc, char* argv[]){
         cout << filename << ": ";
         TFile file(filename.c_str());
         TH1D* tempHistPions = (TH1D*)file.Get("identified pions"); cout << "Got pions. ";
-        TH1D* tempHistHads = (TH1D*)file.Get("identified hads"); cout << "Got hadrons. " << endl;
+        TH1D* tempHistKaons = (TH1D*)file.Get("identified kaons"); cout << "Got kaons. ";
+        TH1D* tempHistProtons = (TH1D*)file.Get("identified protons"); cout << "Got potons. ";
+        TH1D* tempHistHardPions = (TH1D*)file.Get("hard pions"); cout << "Got hard pions. ";
+        TH1D* tempHistJets = (TH1D*)file.Get("jets"); cout << "Got jets. " << endl;
 
         //dat file data for Bayes analysis
-        vector<double> piontemp, hadtemp;
+        vector<double> piontemp, kaontemp, protontemp, hardpiontemp, jettemp;
         for(int j = 1; j <= tempHistPions->GetNbinsX(); j++) piontemp.push_back(tempHistPions->GetBinContent(j));
-        for(int j = 1; j <= tempHistHads->GetNbinsX(); j++) hadtemp.push_back(tempHistHads->GetBinContent(j));
+        for(int j = 1; j <= tempHistKaons->GetNbinsX(); j++) kaontemp.push_back(tempHistKaons->GetBinContent(j));
+        for(int j = 1; j <= tempHistProtons->GetNbinsX(); j++) protontemp.push_back(tempHistProtons->GetBinContent(j));
+        for(int j = 1; j <= tempHistHardPions->GetNbinsX(); j++) hardpiontemp.push_back(tempHistPions->GetBinContent(j));
+        for(int j = 1; j <= tempHistJets->GetNbinsX(); j++) jettemp.push_back(tempHistJets->GetBinContent(j));
         pionPredicts.push_back(piontemp);
-        hadPredicts.push_back(hadtemp);
-        jetscapehadrons[i] = (TGraphErrors*)histToGraph(tempHistHads).Clone();
-
-        //setting graph characteristics
-        color++;
-        string name = to_string(i);
-        jetscapehadrons[i]->SetName(name.c_str());
-        jetscapehadrons[i]->SetLineColor(color);
-        hadrons->Add(jetscapehadrons[i],"lX");
-        hadronleg.AddEntry(jetscapehadrons[i], name.c_str(), "l");
+        kaonPredicts.push_back(kaontemp);
+        protonPredicts.push_back(protontemp);
+        hardPionPredicts.push_back(hardpiontemp);
+        jetPredicts.push_back(jettemp);
         
         file.Close();
     }
@@ -121,18 +110,11 @@ int main(int argc, char* argv[]){
     chdir(input.c_str());
     char tmp[256]; getcwd(tmp, 256); cout << "Current working directory: " << tmp << endl;
     makeDatFile(pionPredicts, "PionSpectraPrediction", "# Version 1.0\n# Pion Spectra for parameters.txt");
-    makeDatFile(hadPredicts, "HadronSpectraPrediction", "# Version 1.0\n# Hadron Spectra for parameters.txt");
+    makeDatFile(kaonPredicts, "KaonSpectraPrediction", "# Version 1.0\n# Kaon Spectra for parameters.txt");
+    makeDatFile(protonPredicts, "ProtonSpectraPrediction", "# Version 1.0\n# Proton Spectra for parameters.txt");
+    makeDatFile(hardPionPredicts, "HardPionSpectraPrediction", "# Version 1.0\n# Hard Pion Spectra for parameters.txt");
+    makeDatFile(jetPredicts, "JetSpectraPrediction", "# Version 1.0\n# Jet Spectra for parameters.txt");
     
-    //Drawing hadrons
-    cHad->cd();
-    cHad->SetLeftMargin(0.15);
-    cHad->SetLogx(); cHad->SetLogy();
-    hadrons->Draw();
-    hadronleg.DrawClone("Same");
-    cHad->Print("QVir_Analysis/Hadron Comparison.png");
-    cHad->Close();
-
     //exit behavior
-    hadron_file.Close();
     return 0;
 }
