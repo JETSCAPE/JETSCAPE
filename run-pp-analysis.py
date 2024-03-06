@@ -35,7 +35,7 @@ for i, option in enumerate(sys.argv):
 #setting directory for analysis
 analysisDir = sys.argv[1]
 directories = getDirs(analysisDir)
-intSort(directories)
+directories = intSort(directories)
 
 #skipping ones we already did if start specified
 if setStart:

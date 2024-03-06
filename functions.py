@@ -218,10 +218,10 @@ def readXmls(baseDir):
 
 # sorting list of strings by int value
 def intSort(dirs):
-    dirs = [int(x) for x in dirs]
-    dirs.sort()
-    dirs = [str(x) for x in dirs]
-    return dirs
+    intdirs = [int(x) for x in dirs]
+    intdirs.sort()
+    strdirs = [str(x) for x in intdirs]
+    return strdirs
 
 class parton:
     index = -1
