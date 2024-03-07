@@ -21,10 +21,12 @@
 #include <vector>
 #include <cstdlib>
 #include <climits>
+#include "JetScapeConstants.h"
 
 using std::cout;
 using std::cerr;
 using std::endl;
+using std::sqrt;
 
 namespace Jetscape {
 
@@ -118,6 +120,21 @@ public:
     return (0);
   };
 
+  double eta() {
+    if ((xv==0)&&(yv==0)) {
+      cout << " particle strictly in z direction " << endl;
+      if (zv>0) return(a_very_large_number);
+      if (zv<0) return(-1*a_very_large_number);
+      if (zv==0) return(0);
+    }
+
+    double v = sqrt( xv*xv + yv*yv + zv*zv );
+
+    double eta = std::log( (v+zv)/(v-zv) )/2.0;
+
+    return(eta);
+  }
+
   double phi() {
     if (fabs(x()) < rounding_error && fabs(y()) < rounding_error) {
       return 0;
@@ -166,16 +183,83 @@ public:
     return (*this);
   };
 
+  void rotate_around_x(double theta) {
+    double new_zv, new_yv;
+
+    new_yv = yv * cos(theta) - zv * sin(theta);
+    new_zv = zv * cos(theta) + yv * sin(theta);
+
+    zv = new_zv;
+    yv = new_yv;
+  };
+
   void rotate_around_z(double theta) {
     double new_xv, new_yv;
 
     new_xv = xv * cos(theta) - yv * sin(theta);
-
     new_yv = yv * cos(theta) + xv * sin(theta);
 
     xv = new_xv;
     yv = new_yv;
   };
+
+  void rotate_around_y(double theta) {
+    double new_zv, new_xv;
+
+    new_zv = zv * cos(theta) - xv * sin(theta);
+    new_xv = xv * cos(theta) + zv * sin(theta);
+
+    xv = new_xv;
+    zv = new_zv;
+  };
+
+  void eta_boost(double deta) {
+    double new_zv, new_tv;
+
+    new_tv = tv*cosh(deta) - zv*sinh(deta) ;
+    new_zv = zv*cosh(deta) - tv*sinh(deta) ;
+
+    tv = new_tv;
+    zv = new_zv;
+  };
+
+  void y_boost(double dy){
+    double new_zv, new_tv;
+
+    new_tv = tv*cosh(dy) - zv*sinh(dy) ;
+    new_zv = zv*cosh(dy) - tv*sinh(dy) ;
+
+    tv = new_tv;
+    zv = new_zv;
+  };
+
+  void boost(double vx, double vy, double vz) {
+    double gamma, v;
+
+    v = sqrt(vx*vx+vy*vy+vz*vz);
+    if (v<1) {
+      gamma = 1/sqrt(1 - v*v );
+    }
+    else {
+      gamma = a_very_large_number;
+      std::cout << " light like boost, setting gamma = " << gamma << std::endl ;
+    };
+
+    double x = xv;
+    double y = yv;
+    double z = zv;
+    double t = tv;
+
+    tv = gamma*t - gamma*( vx * x  + vy * y + vz * z);
+    xv = -1*gamma*vx*t + x + (gamma - 1)*vx*vx* x / (v*v) + (gamma - 1)*vx * vy * y / (v*v) + (gamma - 1)*vx * vz * z / (v*v) ;
+    yv = -1*gamma*vy*t + y + (gamma - 1)*vy*vy* y / (v*v) + (gamma - 1)*vy * vx * x / (v*v) + (gamma - 1)*vy * vz * z / (v*v) ;
+    zv = -1*gamma*vz*t + z + (gamma - 1)*vz*vz* z / (v*v) + (gamma - 1)*vz * vx * x / (v*v) + (gamma - 1)*vz * vy * y / (v*v) ;
+
+    double old_inv = t*t - x*x - y*y - z*z ;
+    double new_inv = tv*tv - xv*xv - yv*yv - zv*zv;
+
+    if (std::abs(old_inv - new_inv)>1/a_very_large_number) std::cout << " invariants dont match after boost " << std::endl;
+  }
 
 private:
   // the v is for vector, we call the private variables, xv, tv etc., so that get function
