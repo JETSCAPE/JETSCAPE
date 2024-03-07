@@ -1669,13 +1669,17 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
               energy -= drag;
               pOut[iout].reset_momentum(px, py, pz, energy);
             }
-
+            pOut[iout].set_stat(101);   
             VERBOSE(8) << BOLDYELLOW << " p after b & d, E = " << energy
                        << " pz = " << pz << " px = " << px << " py = " << py;
           }
-
+          else{
+            pOut.push_back(pIn[i]);
+          }	  
         } // end if(broadening_on)
+        else{
           pOut.push_back(pIn[i]);
+        } 
       }
     } else { // virtuality too low lets broaden it
 
@@ -1825,13 +1829,18 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
             energy -= drag;
             pOut[iout].reset_momentum(px, py, pz, energy);
           }
-
+          pOut[iout].set_stat(101);   
           VERBOSE(8) << BOLDYELLOW << " p after b & d, E = " << energy
                      << " pz = " << pz << " px = " << px << " py = " << py;
         }
-
+        else{
+            pOut.push_back(pIn[i]);
+        }	
         //pOut.push_back(pIn[i]);
       }
+      else{
+        pOut.push_back(pIn[i]);
+      }      
     }
 
   } // particle loop
