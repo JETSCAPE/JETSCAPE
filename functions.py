@@ -100,7 +100,7 @@ def createPandaDesign(points):
     designparams = [
         {"name": "MultipartonInteractions:ecmPow", "range": (0.1,0.5)},
         {"name": "MultipartonInteractions:pT0Ref", "range": (1.0,5.0)},
-        {"name": "Q0", "range": (0.95,3.0)},
+        {"name": "Q0", "range": (1.0,3.0)},
         {"name": "vir_factor", "range": (0.1,1.0)},
         {"name": "ee_vir_factor", "range": (0.1,1.0)},
         {"name": "lambdaQCD", "range": (0.1,0.45)},
