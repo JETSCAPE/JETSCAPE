@@ -303,7 +303,7 @@ int main(int argc, char* argv[]){
     xeHist->Write("xe");
 
     //ratio plots for comparison
-    TFile alephfile("/scratch/user/cameron.parker/projects/JETSCAPE/data/aleph.root");
+    TFile alephfile("/scratch/user/cameron.parker/projects/JETSCAPE/data/ALEPH.root");
     TDirectory* thrustdir = (TDirectory*)alephfile.Get("Table 3");
     TDirectory* multdir = (TDirectory*)alephfile.Get("Table 18");
     TDirectory* xpdir = (TDirectory*)alephfile.Get("Table 9");

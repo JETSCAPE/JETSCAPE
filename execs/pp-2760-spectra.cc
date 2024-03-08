@@ -104,14 +104,17 @@ int main(int argc, char* argv[]){
     TFile idhadron_file("/scratch/user/cameron.parker/projects/JETSCAPE/data/LHC-ID-hads.root");
     TDirectory* piondir = (TDirectory*)idhadron_file.Get("Table 1");
     TH1D* piondata = (TH1D*) piondir->Get("Hist1D_y3");
+    TGraphErrors* piongraph = (TGraphErrors*) piondir->Get("Graph1D_y3");
     int NpTpionBin = piondata->GetNbinsX();
     
     TDirectory* kaondir = (TDirectory*)idhadron_file.Get("Table 2");
     TH1D* kaondata = (TH1D*) kaondir->Get("Hist1D_y3");
+    TGraphErrors* kaongraph = (TGraphErrors*) kaondir->Get("Graph1D_y3");
     int NpTkaonBin = kaondata->GetNbinsX();
     
     TDirectory* protondir = (TDirectory*)idhadron_file.Get("Table 3");
     TH1D* protondata = (TH1D*) protondir->Get("Hist1D_y3");
+    TGraphErrors* protongraph = (TGraphErrors*) protondir->Get("Graph1D_y3");
     int NpTprotonBin = protondata->GetNbinsX();
 
     double SingleHadronEtaCut = 1.0;
@@ -545,6 +548,11 @@ int main(int argc, char* argv[]){
     HistTotalKaons->Write("rough kaons"); smoothBins(HistTotalKaons); /*HistTotalKaons->Smooth();*/ HistTotalKaons->Write("smooth kaons");
     HistTotalProtons->Write("rough protons"); smoothBins(HistTotalProtons); /*HistTotalProtons->Smooth();*/ HistTotalProtons->Write("smooth protons");
     cout << "finished." << endl;
+
+    //hadron graphs
+    myRatioPlot(piongraph, HistTotalPions, "Pion Yields", true, true);
+    myRatioPlot(kaongraph, HistTotalKaons, "Kaon Yields", true, true);
+    myRatioPlot(protongraph, HistTotalProtons, "Proton Yields", true, true);
 
     //jets
     //jet data graph
