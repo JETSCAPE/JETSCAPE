@@ -298,3 +298,7 @@ def softCombine(dir):
     print("Finished soft combining for " + str(len(rmdats)+1) + " files")
 
     os.chdir(startdir)
+
+# getting list of file names
+def getRootFiles(file):
+        return [key.GetName() for key in file.GetListOfKeys()]
