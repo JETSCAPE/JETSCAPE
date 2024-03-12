@@ -80,8 +80,8 @@ int main(int argc, char* argv[]){
     string names[3][3];
     for(int i1 = 0; i1 < 3; i1++){
         for(int i2 = 0; i2 < 3; i2++){
-            names[i1][i2] = "L Azi Cor "+to_string(triggerptcut[i1])+"-"+to_string(triggerptcut[i1+1])+" "+
-                to_string(assptmin[i2])+"-"+to_string(assptmax[i2]);
+            names[i1][i2] = "L "+stringround(triggerptcut[i1],2)+"-"+stringround(triggerptcut[i1+1],2)+" GeV, hadrons "+
+                stringround(assptmin[i2],2)+"-"+stringround(assptmax[i2],2)+" GeV";
             tempL[i1][i2] = new TH1D("Hybrid Had. prediction", names[i1][i2].c_str(), NphiLBin, LphiBin);
         }
     }   
