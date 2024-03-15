@@ -79,6 +79,7 @@
 
     <!-- Options to read initial conditions from saved file  -->
     <initial_profile_path>../examples/test_hydro_files</initial_profile_path>
+    <initial_Ncoll_list>../examples/test_hydro_files</initial_Ncoll_list>
   </IS>
 
   <!-- Hard Process -->
