@@ -64,6 +64,8 @@ void NcollListFromFile::ReadNbcList(std::string filename) {
     exit(1);
   }
 
+  std::string dummy;
+  std::getline(infile, dummy);
   double x, y;
   infile >> x >> y;
   while (!infile.eof()) {
@@ -75,6 +77,7 @@ void NcollListFromFile::ReadNbcList(std::string filename) {
   ncoll_ = binary_collision_x_.size();
   rand_int_ptr_ = (
         std::make_shared<std::uniform_int_distribution<int>>(0, ncoll_-1));
+  Jetscape::JSINFO << "done ...";
 }
 
 

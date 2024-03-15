@@ -16,7 +16,15 @@
 # download the 3+1D OSU freestreaming code
 #git clone --depth=1 https://github.com/derekeverett/freestream-milne.git freestream-milne
 #git clone --depth=1 https://github.com/derekeverett/freestream-milne.git -b time_step_history freestream-milne
-git clone --depth=1 https://github.com/chunshen1987/freestream-milne -b time_step_history freestream-milne
+#git clone --depth=1 https://github.com/chunshen1987/freestream-milne -b time_step_history freestream-milne
 
-cd freestream-milne
-patch -p0 -Ni ../freestream-milne-external-params.patch
+# using a commit from the freestream-milne repository that is compatible with JETSCAPE 3.6.1
+folderName="freestream-milne"
+commitHash="eb51fd6ff5a547f08bf817e728794dfce6177db4"
+
+git clone https://github.com/chunshen1987/freestream-milne -b time_step_history $folderName
+cd $folderName
+git checkout $commitHash
+
+#cd freestream-milne
+#patch -p0 -Ni ../freestream-milne-external-params.patch

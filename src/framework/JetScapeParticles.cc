@@ -491,7 +491,7 @@ bool Hadron::CheckOrForceHadron(const int id, const double mass) {
   // -- Add unknown particles
   if (!InternalHelperPythia.particleData.isParticle(
           id)) { // avoid doing it over and over
-    JSWARN << "id = " << id << " is not recognized as a hadron! "
+    VERBOSE(7) << "id = " << id << " is not recognized as a hadron! "
            << "Add it as a new type of particle.";
     InternalHelperPythia.particleData.addParticle(id, " ", 0, 0, 0, mass, 0.1);
   }

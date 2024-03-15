@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+
+<jetscape>
+
+  <vlevel> 0 </vlevel>
+  <nEvents> 1 </nEvents>
+
+
+  <setReuseHydro> false </setReuseHydro>
+  <nReuseHydro> 1 </nReuseHydro>
+
+  <Random>
+    <seed>0</seed>
+  </Random>
+
+  <outputFilename>event</outputFilename>
+  <JetScapeWriterAscii> on </JetScapeWriterAscii>
+  <JetScapeWriterAsciiGZ> off </JetScapeWriterAsciiGZ>
+  <write_pthat> 1 </write_pthat>
+
+    <!-- Inital State Module  -->
+    <IS>
+        <grid_max_x> 15 </grid_max_x>
+        <grid_max_y> 15 </grid_max_y>
+        <grid_max_z> 0 </grid_max_z>
+        <!--  <grid_step_x> 0.2 </grid_step_x>
+        <grid_step_y> 0.2 </grid_step_y> -->
+        <grid_step_x> 0.2 </grid_step_x>
+        <grid_step_y> 0.2 </grid_step_y>
+
+        <Trento>
+          <PhysicsInputs  projectile='Au'
+                  target='Au'
+                  sqrts='200'
+                  cross-section='4.2'
+                  normalization='5.73'>
+          </PhysicsInputs>
+          <CutInputs
+                centrality-low='0'
+                centrality-high='5'>
+          </CutInputs>
+          <TransInputs  reduced-thickness='0.063'
+                  fluctuation="1.05"
+                  nucleon-width="1.12"
+                  nucleon-min-dist="1.4">
+          </TransInputs>
+          <LongiInputs  mean-coeff="1.0"
+                  std-coeff="3.0"
+                  skew-coeff="0.0"
+                  skew-type="1"
+                  jacobian="0.8">
+          </LongiInputs>
+        </Trento>
+    </IS>
+
+    <!--Preequilibrium Dynamics Module -->
+    <Preequilibrium>
+        <!-- starting long. proper time for Preequilibrium dynamics -->
+        <tau0>0.0</tau0>
+        <tauj>0.1</tauj>
+        <!-- switching long. proper time from Preequilibrium dynamics to Hydrodynamics (Landau Matching) -->
+        <taus>1.46</taus>
+
+        <!-- Individual Preequilibrium Dynamics models  -->
+        <FreestreamMilne>
+            <name>FreestreamMilne</name>
+	    <freestream_input_file>freestream_input</freestream_input_file>
+        </FreestreamMilne>
+    </Preequilibrium>
+
+    <!-- Hydro  Module  -->
+    <Hydro>
+        <MUSIC>
+            <beastMode>0</beastMode>
+            <Initial_time_tau_0>1.46</Initial_time_tau_0>
+            <T_dependent_Shear_to_S_ratio>3</T_dependent_Shear_to_S_ratio>
+            <eta_over_s_T_kink_in_GeV>0.223</eta_over_s_T_kink_in_GeV>
+            <eta_over_s_low_T_slope_in_GeV>-0.776</eta_over_s_low_T_slope_in_GeV>
+            <eta_over_s_high_T_slope_in_GeV>0.37</eta_over_s_high_T_slope_in_GeV>
+            <eta_over_s_at_kink>0.096</eta_over_s_at_kink>
+            <temperature_dependent_bulk_viscosity>3</temperature_dependent_bulk_viscosity>
+            <zeta_over_s_max>0.133</zeta_over_s_max>
+            <zeta_over_s_T_peak_in_GeV>0.12</zeta_over_s_T_peak_in_GeV>
+            <zeta_over_s_width_in_GeV>0.072</zeta_over_s_width_in_GeV>
+            <zeta_over_s_lambda_asymm>-0.122</zeta_over_s_lambda_asymm>
+            <freezeout_temperature>0.136</freezeout_temperature>
+        </MUSIC>
+    </Hydro>
+
+  <SoftParticlization>
+    <iSS>
+        <!-- file path for the default input file  -->
+        <iSS_input_file>iSS_parameters.dat</iSS_input_file>
+        <!-- directory path where the hydro surface is stored  -->
+        <iSS_table_path>iSS_tables</iSS_table_path>
+        <!-- file path for the default particle table files  -->
+        <iSS_particle_table_path>iSS_tables</iSS_particle_table_path>
+        <afterburner_type>2</afterburner_type>
+        <number_of_repeated_sampling>100</number_of_repeated_sampling>
+        <Perform_resonance_decays>0</Perform_resonance_decays>
+    </iSS>
+  </SoftParticlization>
+
+    <!-- Hadronic Afterburner  -->
+    <Afterburner>
+      <!-- SMASH -->
+      <SMASH>
+        <name>SMASH</name>
+      </SMASH>
+    </Afterburner>
+
+</jetscape>

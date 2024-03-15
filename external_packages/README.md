@@ -124,7 +124,7 @@ cd build
 Include the fftw library paths as part of your cmake command:
 
 ```
-cmake .. -DCMAKE_CXX_STANDARD=14 -DUSE_ROOT=ON -DUSE_MUSIC=ON -DUSE_ISS=ON -DUSE_FREESTREAM=ON -DUSE_SMASH=ON -DUSE_IPGlasma=ON -DFFTW_INCLUDE_DIR=/usr/lib/x86_64-linux-gnu/libfftw3.so.3.5.8 -DFFTW_LIBRARY=/usr/lib/x86_64-linux-gnu/libfftw3.so.3.5.8
+cmake .. -DCMAKE_CXX_STANDARD=17 -DUSE_ROOT=ON -DUSE_MUSIC=ON -DUSE_ISS=ON -DUSE_FREESTREAM=ON -DUSE_SMASH=ON -DUSE_IPGlasma=ON -DFFTW_INCLUDE_DIR=/usr/lib/x86_64-linux-gnu/libfftw3.so.3.5.8 -DFFTW_LIBRARY=/usr/lib/x86_64-linux-gnu/libfftw3.so.3.5.8
 
 make -j4     # Builds using 4 cores; adapt as appropriate
 ```

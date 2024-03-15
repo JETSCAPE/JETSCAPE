@@ -16,7 +16,7 @@
   <nReuseHydro> 10 </nReuseHydro>
 
   <!-- Technical settings -->
-  <debug> on </debug>
+  <debug> off </debug>
   <remark> off </remark>
   <vlevel> 0 </vlevel>
   <nEvents_printout> 100 </nEvents_printout>
@@ -79,6 +79,7 @@
 
     <!-- Options to read initial conditions from saved file  -->
     <initial_profile_path>../examples/test_hydro_files</initial_profile_path>
+    <initial_Ncoll_list>../examples/test_hydro_files</initial_Ncoll_list>
   </IS>
 
   <!-- Hard Process -->
@@ -129,12 +130,14 @@
     <tStart> 0.6 </tStart> <!-- Start time of jet quenching, proper time, fm/c   -->
     <mutex>ON</mutex>
     <AddLiquefier> false </AddLiquefier>
+    <lambdaQCD>0.2</lambdaQCD> <!-- 0.4 is the value chosen in JETSET -->
 
     <Matter>
       <name>Matter</name>
       <matter_on> 1 </matter_on>
       <Q0> 2.0 </Q0>
       <T0> 0.16 </T0>
+      <!--if negative vir_factor: parton 3-momentum of hard parton is used to compute initial virtuality in shower; if positive: transverse momentum of parton is used-->
       <vir_factor> 0.25 </vir_factor>
       <in_vac> 1 </in_vac>
       <recoil_on> 0 </recoil_on>
@@ -200,7 +203,9 @@
   <Preequilibrium>
 
     <!-- starting long. proper time for Preequilibrium dynamics -->
-    <tau0>0.1</tau0>
+    <tau0>0.0</tau0>
+    <!-- starting long. proper time for Preequilibrium dynamics outuput for hard probes -->
+    <tauj>0.1</tauj>
     <!-- switching long. proper time from Preequilibrium dynamics to Hydrodynamics (Landau Matching) -->
     <taus>0.2</taus>
 
@@ -329,20 +334,30 @@
    <JetHadronization>
        <name>colored/colorless/hybrid</name>
        <take_recoil>1</take_recoil>
-       <!--eCMforHadronization only for pp collisions-->
-       <!--in hybrid put the full eCM here, this is distributed to the beam partons-->
+       <!--use eCMforHadronization only for pp collisions to introduce beam partons-->
+       <!--recommended value for e+e- and AA = 0-->
+       <!--in all hadronization modules put the full eCM here, this is distributed to the beam partons (1/6 for each one)-->
        <eCMforHadronization>5020</eCMforHadronization>
+       <!--maximum energy level for mesons-->
        <reco_Mlevelmax>1</reco_Mlevelmax>
+       <!--maximum energy level for baryons-->
        <reco_Blevelmax>1</reco_Blevelmax>
+       <!--switch for recombination of Goldstone bosons-->
        <reco_goldstone>0</reco_goldstone>
+       <!--squared maximum distance for recombination with thermal partons-->
        <thermreco_distmax>5.0</thermreco_distmax>
+       <!--factor for recombination in the shower-->
        <shower_recofactor>1.0</shower_recofactor>
+       <!--factor for recombination with thermal partons-->
        <thermal_recofactor>1.0</thermal_recofactor>
+       <!--switch for recombination biased by the time of the partons-->
        <recobias_t>0</recobias_t>
        <hydro_Tc>0.16</hydro_Tc>
        <eta_max_boost_inv>2.0</eta_max_boost_inv> <!--only relevant for boost invariant hydro, max eta for thermal parton sampler-->
+       <!--free-straming propagation of hadrons after hadronization-->
        <had_postprop>0.0</had_postprop>
-       <part_prop>1.0</part_prop>
+       <!--free-streaming of partons before hadronization-->
+       <part_prop>0.0</part_prop>
        <pythia_decays>on</pythia_decays> <!-- lets the particles given to pythia decay-->
        <tau0Max>10.0</tau0Max> <!-- only particles with tau0 < tau0Max (given in mm/c) can decay, increase to include weak decays-->
        <weak_decays>depracted</weak_decays> <!-- use the parameters pythia_decays and tau0Max, this parameter is only a dummy to make old xml files work-->
@@ -398,7 +413,7 @@
       <SMASH_particles_file>../external_packages/smash/smash_code/input/particles.txt</SMASH_particles_file>
       <SMASH_decaymodes_file>../external_packages/smash/smash_code/input/decaymodes.txt</SMASH_decaymodes_file>
       <!-- time in fm/c in the computational frame, when the simulation shoud be ended -->
-      <end_time>300.0</end_time>
+      <end_time>1000.0</end_time>
       <!-- 0 - run the full afterburner, 1 - only decay the resonances without even propagation -->
       <only_decays>0</only_decays>
     </SMASH>
