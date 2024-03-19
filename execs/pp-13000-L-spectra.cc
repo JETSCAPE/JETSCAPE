@@ -80,11 +80,16 @@ int main(int argc, char* argv[]){
     string names[3][3];
     for(int i1 = 0; i1 < 3; i1++){
         for(int i2 = 0; i2 < 3; i2++){
-            names[i1][i2] = "L "+stringround(triggerptcut[i1],2)+"-"+stringround(triggerptcut[i1+1],2)+" GeV, hadrons "+
-                stringround(assptmin[i2],2)+"-"+stringround(assptmax[i2],2)+" GeV";
+            names[i1][i2] = "L Azi Cor "+to_string(triggerptcut[i1])+"-"+to_string(triggerptcut[i1+1])+" "+
+                to_string(assptmin[i2])+"-"+to_string(assptmax[i2]);
             tempL[i1][i2] = new TH1D("Hybrid Had. prediction", names[i1][i2].c_str(), NphiLBin, LphiBin);
         }
     }   
+    
+    //Variables for single hadron spectrum
+    double SingleHadronpTBin[] = {0.45, 0.6, 0.75, 0.9, 1.05, 1.2, 1.5, 1.8, 2.1, 2.4, 3.6, 4.8, 6.0, 7.2, 10.8, 14.4, 21.6, 28.8, 38.4, 48.0, 67.2, 86.4, 112.2};
+    int NpTSingleHadronBin = sizeof(SingleHadronpTBin)/sizeof(SingleHadronpTBin[0])-1;
+    TH1D *HistTotalHadron = new TH1D("HadronSpectrumBin", "Combined Hadron pT Spectrum", NpTSingleHadronBin, SingleHadronpTBin); //Total hist for hadrons
 
     //graph declaration for adding hadron spectra
     TMultiGraph* hadronComp = new TMultiGraph();
@@ -92,6 +97,7 @@ int main(int argc, char* argv[]){
     
     cout<<"These are pTHat loops "<<endl;
     // For loop to open different pTHat bin files
+    int Events =0;
     for (int k = 0; k<NpTHardBin; ++k){
         char HadronFile[300], pTBinString[100];
         sprintf(HadronFile,"dat/PP_Bin%s_%s.dat", pTHatMin[k].c_str(), pTHatMax[k].c_str());
@@ -101,7 +107,6 @@ int main(int argc, char* argv[]){
         
         int  SN=0,PID=0;
         double Px, Py, Pz, E, Eta, Phi, pStat, mass, Y;
-        int Events =0;
         int TriggeredJetNumber=0;
         int Lcount[3][3] = {0};
         
@@ -158,6 +163,8 @@ int main(int argc, char* argv[]){
                     if(PT > AssHadPtCut){
                         others.push_back(hadrons[i]);
                     }
+
+                    HistTotalHadron->Fill(PT);
                 }
                 
             }
@@ -175,6 +182,7 @@ int main(int argc, char* argv[]){
                                     && others[j].get()->pt() > assptmin[i2] && others[j].get()->pt() < assptmax[i2]){
                                         tempL[i1][i2]->Fill(deltaphi);
                                         recoHist[i1][i2]->Fill(Ls[i].get()->pstat()-800, others[j].get()->pstat()-800);
+                                        //cout << "L " << Ls[i].get()->pt() << " Hadron " << others[j].get()->pt() << " in " << names[i1][i2] << endl;
                                 }
                             }
                         }
@@ -240,6 +248,9 @@ int main(int argc, char* argv[]){
             c->Close();
         }
     }
+
+    scaleBins(HistTotalHadron,1.0/Events);
+    HistTotalHadron->Write("pT Spectrum");
 
     //Done. Script run time
     int EndTime = time(NULL);

@@ -94,14 +94,16 @@ int main(int argc, char* argv[]){
     }   
 
     //graph declaration for adding hadron spectra
-    TH1D *dRecoSpectra = new TH1D("Reco hads", "Reco hads",nSpectraBins,spectraBins);
-    TH1D *dFragSpectra = new TH1D("Frag hads", "Frag hads",nSpectraBins,spectraBins);
+    TH1D *dRecoSpectra = new TH1D("Reco hads", "Reco hads;p_T (GeV);d^2\sigma/dp_Td\eta",nSpectraBins,spectraBins);
+    TH1D *dFragSpectra = new TH1D("Frag hads", "Frag hads;p_T (GeV);d^2\sigma/dp_Td\eta",nSpectraBins,spectraBins);
+    TH1D *HistTotalHadron = new TH1D("HadronSpectrumBin", "Combined Hadron pT Spectrum;p_T (GeV);d^2\sigma/dp_Td\eta", nSpectraBins, spectraBins); //Total hist for hadrons
 
     //debugging
     bool flag = true;
     
     cout<<"These are pTHat loops "<<endl;
     // For loop to open different pTHat bin files
+    int Events =0;
     for (int k = 0; k<NpTHardBin; ++k){
         char HadronFile[300], pTBinString[100];
         sprintf(HadronFile,"dat/PP_Bin%s_%s.dat", pTHatMin[k].c_str(), pTHatMax[k].c_str());
@@ -112,7 +114,6 @@ int main(int argc, char* argv[]){
         
         int  SN=0,PID=0;
         double Px, Py, Pz, E, Eta, Phi, pStat, mass, Y;
-        int Events =0;
         int TriggeredJetNumber=0;
         int Lcount[ntrigbins][nassbins] = {0};
         
@@ -182,6 +183,8 @@ int main(int argc, char* argv[]){
                     if(PT > AssHadPtCut){
                         others.push_back(hadrons[i]);
                     }
+
+                    HistTotalHadron->Fill(PT);
                 }
                 
             }
@@ -256,19 +259,21 @@ int main(int argc, char* argv[]){
     cout << "Got data file" << endl;
 
     THStack *histStack = new THStack("Reco vs. Frag", "Reco vs. Frag");
-    dRecoSpectra->GetXaxis()->SetTitle("pT (GeV)"); dRecoSpectra->GetYaxis()->SetTitle("Yields");
-    scaleBins(dRecoSpectra); histStack->Add(dRecoSpectra);
-    scaleBins(dFragSpectra); histStack->Add(dFragSpectra);
-    dRecoSpectra->Write();
-    dFragSpectra->Write();
+    scaleBins(dRecoSpectra,1.0/Events); histStack->Add(dRecoSpectra);
+    scaleBins(dFragSpectra,1.0/Events); histStack->Add(dFragSpectra);
+    dRecoSpectra->Write("Reco Spectrum");
+    dFragSpectra->Write("Frag Spectrum");
     histStack->Write("Revo vs Frag");
+
+    scaleBins(HistTotalHadron,1.0/Events);
+    HistTotalHadron->Write("pT Spectrum");
 
     int i = 1;
     for(int i2 = 0; i2 < nassbins; i2++){
         for(int i1 = 0; i1 < ntrigbins; i1++){
             HistLPhi[i1][i2]->Scale(1.0/(2*totLcount[i1]));
             HistLPhi[i1][i2]->GetXaxis()->SetTitle("Delta phi (rad)");
-            HistLPhi[i1][i2]->GetYaxis()->SetTitle("(1/ND)(dNassc/dDelphi)");
+            HistLPhi[i1][i2]->GetYaxis()->SetTitle("(1/N_D)(dN_{assc}/d\Delta\phi)");
  	        HistLPhi[i1][i2]->Write(names[i1][i2].c_str());
 
             //data comparison
@@ -278,7 +283,7 @@ int main(int argc, char* argv[]){
             TGraphErrors* hadronData = (TGraphErrors*) hadrondir->Get("Graph1D_y1");
             TH1D* temphist = getZeroedHist(HistLPhi[i1][i2]);
             temphist->GetXaxis()->SetRangeUser(0,pi);
-            string xname = "#Delta#phi", yname = "1/N_{D} dN_{pairs}/#Delta#phi";
+            string xname = "#Delta#phi", yname = "1/N_{D} dN_{pairs}/\Delta\phi";
             ratioPlot(hadronData,temphist,names[i1][i2],xname,yname);
         }
     }
