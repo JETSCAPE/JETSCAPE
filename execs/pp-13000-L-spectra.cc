@@ -87,9 +87,9 @@ int main(int argc, char* argv[]){
     }   
     
     //Variables for single hadron spectrum
-    double SingleHadronpTBin[] = {0.45, 0.6, 0.75, 0.9, 1.05, 1.2, 1.5, 1.8, 2.1, 2.4, 3.6, 4.8, 6.0, 7.2, 10.8, 14.4, 21.6, 28.8, 38.4, 48.0, 67.2, 86.4, 112.2};
+    double SingleHadronpTBin[] = {0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3,2.4,2.6,2.8,3.0,3.35,3.8,4.4,5.1,6,7,8,9,10};
     int NpTSingleHadronBin = sizeof(SingleHadronpTBin)/sizeof(SingleHadronpTBin[0])-1;
-    TH1D *HistTotalHadron = new TH1D("HadronSpectrumBin", "Combined Hadron pT Spectrum", NpTSingleHadronBin, SingleHadronpTBin); //Total hist for hadrons
+    TH1D *HistTotalHadron = new TH1D("HadronSpectrumBin", "Combined Hadron pT Spectrum;p_{T} (GeV);d^{2}#sigma/dp_{T}d#eta", NpTSingleHadronBin, SingleHadronpTBin); //Total hist for hadrons
 
     //graph declaration for adding hadron spectra
     TMultiGraph* hadronComp = new TMultiGraph();

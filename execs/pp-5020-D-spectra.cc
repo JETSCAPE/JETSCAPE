@@ -74,7 +74,7 @@ int main(int argc, char* argv[]){
     double assptmax[] = {10000,1,2,3,10000};
     
     //D spectra variables
-    double spectraBins[] = {0.3,0.45, 0.6, 0.75, 0.9, 1.05, 1.2, 1.5, 1.8, 2.1, 2.4, 3.6, 4.8, 6.0, 7.2, 10.8, 14.4, 21.6, 28.8, 38.4, 48.0, 67.2, 86.4, 112.2};
+    double spectraBins[] = {0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3,2.4,2.6,2.8,3.0,3.35,3.8,4.4,5.1,6,7,8,9,10};
     int nSpectraBins = sizeof(spectraBins)/sizeof(spectraBins[0])-1;
 
     //Variables for single hadron spectrum
@@ -94,9 +94,9 @@ int main(int argc, char* argv[]){
     }   
 
     //graph declaration for adding hadron spectra
-    TH1D *dRecoSpectra = new TH1D("Reco hads", "Reco hads;p_T (GeV);d^2\sigma/dp_Td\eta",nSpectraBins,spectraBins);
-    TH1D *dFragSpectra = new TH1D("Frag hads", "Frag hads;p_T (GeV);d^2\sigma/dp_Td\eta",nSpectraBins,spectraBins);
-    TH1D *HistTotalHadron = new TH1D("HadronSpectrumBin", "Combined Hadron pT Spectrum;p_T (GeV);d^2\sigma/dp_Td\eta", nSpectraBins, spectraBins); //Total hist for hadrons
+    TH1D *dRecoSpectra = new TH1D("Reco hads", "Reco hads;p_{T} (GeV);d^{2}#sigma/dp_{T}d#eta",nSpectraBins,spectraBins);
+    TH1D *dFragSpectra = new TH1D("Frag hads", "Frag hads;p_{T} (GeV);d^{2}#sigma/dp_{T}d#eta",nSpectraBins,spectraBins);
+    TH1D *HistTotalHadron = new TH1D("HadronSpectrumBin", "Combined Hadron pT Spectrum;p_{T} (GeV);d^{2}#sigma/dp_{T}d#eta", nSpectraBins, spectraBins); //Total hist for hadrons
 
     //debugging
     bool flag = true;
@@ -273,7 +273,7 @@ int main(int argc, char* argv[]){
         for(int i1 = 0; i1 < ntrigbins; i1++){
             HistLPhi[i1][i2]->Scale(1.0/(2*totLcount[i1]));
             HistLPhi[i1][i2]->GetXaxis()->SetTitle("Delta phi (rad)");
-            HistLPhi[i1][i2]->GetYaxis()->SetTitle("(1/N_D)(dN_{assc}/d\Delta\phi)");
+            HistLPhi[i1][i2]->GetYaxis()->SetTitle("(1/N_D)(dN_{assc}/d#Delta#phi)");
  	        HistLPhi[i1][i2]->Write(names[i1][i2].c_str());
 
             //data comparison
@@ -283,7 +283,7 @@ int main(int argc, char* argv[]){
             TGraphErrors* hadronData = (TGraphErrors*) hadrondir->Get("Graph1D_y1");
             TH1D* temphist = getZeroedHist(HistLPhi[i1][i2]);
             temphist->GetXaxis()->SetRangeUser(0,pi);
-            string xname = "#Delta#phi", yname = "1/N_{D} dN_{pairs}/\Delta\phi";
+            string xname = "#Delta#phi", yname = "1/N_{D} dN_{pairs}/#Delta#phi";
             ratioPlot(hadronData,temphist,names[i1][i2],xname,yname);
         }
     }
