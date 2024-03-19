@@ -19,6 +19,7 @@
 #include <vector>
 #include "InitialState.h"
 #include "JetScapeModuleBase.h"
+#include "FluidCellInfo.h"
 #include "RealType.h"
 
 namespace Jetscape {
@@ -75,6 +76,11 @@ public:
 
   // @return End time (or tau) for hydrodynamic evolution.
   real GetPreequilibriumEndTime() { return (preequilibrium_tau_max_); }
+
+  virtual int get_number_of_fluid_cells() { return(0); }
+  virtual void get_fluid_cell_with_index(
+          const int idx, std::unique_ptr<FluidCellInfo> &info_ptr) {}
+
 
   // record preequilibrium running status
   PreequilibriumStatus preequilibrium_status_;

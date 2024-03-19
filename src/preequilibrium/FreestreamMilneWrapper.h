@@ -35,6 +35,9 @@ public:
 
   void InitializePreequilibrium(PreEquilibriumParameterFile parameter_list);
   void EvolvePreequilibrium();
+
+  void get_fluid_cell_with_index(
+          const int idx, std::unique_ptr<FluidCellInfo> &info_ptr);
 };
 
 #endif // FREESTREAMMILNEWRAPPER_H

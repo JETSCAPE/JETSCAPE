@@ -113,6 +113,7 @@ public:
                           std::unique_ptr<FluidCellInfo> &fluid_cell_info_ptr);
 
   void SetHydroGridInfo();
+  void PassPreEqEvolutionHistoryToFramework();
   void PassHydroEvolutionHistoryToFramework();
   void PassHydroSurfaceToFramework();
 

@@ -185,7 +185,7 @@ void MpiMusic::EvolveHydro() {
     JSWARN << "Missing the pre-equilibrium module ...";
   } else {
     music_hydro_ptr->initialize_hydro_from_jetscape_preequilibrium_vectors(
-        tau0,		    
+        tau0,
         dx, dz, z_max, nz, pre_eq_ptr->e_, pre_eq_ptr->P_,
         pre_eq_ptr->utau_, pre_eq_ptr->ux_, pre_eq_ptr->uy_, pre_eq_ptr->ueta_,
         pre_eq_ptr->pi00_, pre_eq_ptr->pi01_, pre_eq_ptr->pi02_,
@@ -214,10 +214,16 @@ void MpiMusic::EvolveHydro() {
 
   if (flag_output_evo_to_memory == 1) {
     if (!has_source_terms) {
+      clear_up_evolution_data();
       // only the first hydro without source term will be stored
       // in memory for jet energy loss calculations
+      if (pre_eq_ptr != nullptr) {
+        PassPreEqEvolutionHistoryToFramework();
+        JSINFO << "number of fluid cells received by the JETSCAPE from preEq: "
+               << bulk_info.data.size();
+      }
       PassHydroEvolutionHistoryToFramework();
-      JSINFO << "number of fluid cells received by the JETSCAPE: "
+      JSINFO << "number of fluid cells received by the JETSCAPE from hydro: "
              << bulk_info.data.size();
     }
     music_hydro_ptr->clear_hydro_info_from_memory();
@@ -297,8 +303,24 @@ void MpiMusic::SetHydroGridInfo() {
   bulk_info.boost_invariant = music_hydro_ptr->is_boost_invariant();
 }
 
+
+void MpiMusic::PassPreEqEvolutionHistoryToFramework() {
+  JSINFO << "Passing preEq evolution information to JETSCAPE ... ";
+  auto number_of_cells = pre_eq_ptr->get_number_of_fluid_cells();
+  JSINFO << "total number of fluid cells: " << number_of_cells;
+
+  //SetHydroGridInfo();
+
+  for (int i = 0; i < number_of_cells; i++) {
+    std::unique_ptr<FluidCellInfo> fluid_cell_info_ptr(new FluidCellInfo);
+    pre_eq_ptr->get_fluid_cell_with_index(i, fluid_cell_info_ptr);
+    StoreHydroEvolutionHistory(fluid_cell_info_ptr);
+  }
+}
+
+
 void MpiMusic::PassHydroEvolutionHistoryToFramework() {
-  clear_up_evolution_data();
+  //clear_up_evolution_data();
 
   JSINFO << "Passing hydro evolution information to JETSCAPE ... ";
   auto number_of_cells = music_hydro_ptr->get_number_of_fluid_cells();

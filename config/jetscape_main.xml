@@ -208,6 +208,7 @@
     <tauj>0.1</tauj>
     <!-- switching long. proper time from Preequilibrium dynamics to Hydrodynamics (Landau Matching) -->
     <taus>0.2</taus>
+    <evolutionInMemory>1</evolutionInMemory>
 
     <!-- Individual Preequilibrium Dynamics models  -->
     <FreestreamMilne>
