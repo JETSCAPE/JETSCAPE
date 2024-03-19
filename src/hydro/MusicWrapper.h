@@ -84,6 +84,8 @@ private:
   int doCooperFrye;                     //!< flag to run Cooper-Frye freeze-out
                                         //!< for soft particles
   int flag_output_evo_to_file;
+  int flag_output_evo_to_memory;
+  int flag_surface_in_memory;
   bool has_source_terms;
   std::shared_ptr<HydroSourceJETSCAPE> hydro_source_terms_ptr;
 
@@ -112,6 +114,7 @@ public:
 
   void SetHydroGridInfo();
   void PassHydroEvolutionHistoryToFramework();
+  void PassHydroSurfaceToFramework();
 
   void add_a_liquefier(std::shared_ptr<LiquefierBase> new_liqueifier) {
     liquefier_ptr = new_liqueifier;
