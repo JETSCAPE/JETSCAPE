@@ -112,6 +112,7 @@ public:
                           Jetscape::real z,
                           std::unique_ptr<FluidCellInfo> &fluid_cell_info_ptr);
 
+  void SetPreEqGridInfo();
   void SetHydroGridInfo();
   void PassPreEqEvolutionHistoryToFramework();
   void PassHydroEvolutionHistoryToFramework();

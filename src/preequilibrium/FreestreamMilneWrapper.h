@@ -36,8 +36,23 @@ public:
   void InitializePreequilibrium(PreEquilibriumParameterFile parameter_list);
   void EvolvePreequilibrium();
 
+  int get_number_of_fluid_cells() {
+      return(fsmilne_ptr->get_number_of_fluid_cells());
+  }
+
   void get_fluid_cell_with_index(
           const int idx, std::unique_ptr<FluidCellInfo> &info_ptr);
+  void clear_evolution_data() { fsmilne_ptr->clear_evolution_data(); }
+
+  Jetscape::real GetPreequilibriumStartTime() const {
+      return(fsmilne_ptr->GetPreequilibriumStartTime());
+  }
+
+  Jetscape::real GetPreequilibriumEvodtau() const {
+      return(fsmilne_ptr->GetPreequilibriumEvodtau());
+  }
+
+  int get_ntau() const { return(fsmilne_ptr->get_ntau()); }
 };
 
 #endif // FREESTREAMMILNEWRAPPER_H

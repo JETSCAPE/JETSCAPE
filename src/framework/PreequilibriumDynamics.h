@@ -72,7 +72,13 @@ public:
   int GetPreequilibriumStatus() { return (preequilibrium_status_); }
 
   // @return Start time (or tau) for hydrodynamic evolution
-  real GetPreequilibriumStartTime() { return (preequilibrium_tau_0_); }
+  virtual real GetPreequilibriumStartTime() const {
+      return (preequilibrium_tau_0_);
+  }
+
+  virtual real GetPreequilibriumEvodtau() const { return (0.02); }
+
+  virtual int get_ntau() const { return(0); }
 
   // @return End time (or tau) for hydrodynamic evolution.
   real GetPreequilibriumEndTime() { return (preequilibrium_tau_max_); }
@@ -80,7 +86,7 @@ public:
   virtual int get_number_of_fluid_cells() { return(0); }
   virtual void get_fluid_cell_with_index(
           const int idx, std::unique_ptr<FluidCellInfo> &info_ptr) {}
-
+  virtual void clear_evolution_data() {}
 
   // record preequilibrium running status
   PreequilibriumStatus preequilibrium_status_;
