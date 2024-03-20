@@ -20,7 +20,7 @@
 
 # using a commit from the freestream-milne repository that is compatible with JETSCAPE 3.6.1
 folderName="freestream-milne"
-commitHash="98cf3222453c5ecd3b25046a46dcf73dfc872316"
+commitHash="94722958595cb712fdb00cc59375ad7c9030faed"
 
 git clone https://github.com/chunshen1987/freestream-milne -b time_step_history $folderName
 cd $folderName
