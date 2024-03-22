@@ -141,6 +141,7 @@ void epemGun::InitTask() {
   }
 
   Lambda_QCD = GetXMLElementDouble({"Eloss","lambdaQCD"});
+  QS = GetXMLElementDouble({"Eloss", "Matter", "QS"});
 
   // Initialize random number distribution
   ZeroOneDistribution = uniform_real_distribution<double>{0.0, 1.0};
@@ -238,7 +239,6 @@ void epemGun::Exec() {
     // Virtualities of the two partons
     double q1 = 0.;
     double q2 = 0.;
-    const double QS = 0.9;
 
     //Find initial virtuality one parton at a time
     for(int pass=0; pass<2; ++pass){

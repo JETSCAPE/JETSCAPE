@@ -141,6 +141,7 @@
     <Matter>
       <name>Matter</name>
       <matter_on> 1 </matter_on>
+      <QS> 0.9 </QS>
       <Q0> 2.0 </Q0>
       <T0> 0.16 </T0>
       <vir_factor> 0.25 </vir_factor>

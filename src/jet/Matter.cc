@@ -30,8 +30,6 @@
 using namespace Jetscape;
 using namespace std;
 
-const double QS = 0.9;
-
 // Register the module with the base class
 RegisterJetScapeModule<Matter> Matter::reg("Matter");
 
@@ -90,6 +88,7 @@ Matter::Matter() {
   T0 = 0.;
   iEvent = 0;
   NUM1 = 0;
+  QS = 0.9;
 }
 
 Matter::~Matter() { VERBOSE(8); }
@@ -114,6 +113,7 @@ void Matter::Init() {
   hydro_Tc = 0.16;
   brick_length = 4.0;
   vir_factor = 1.0;
+  QS = 0.9;
 
   double m_qhat = GetXMLElementDouble({"Eloss", "Matter", "qhat0"});
   SetQhat(m_qhat);
@@ -143,6 +143,7 @@ void Matter::Init() {
   brick_length = GetXMLElementDouble({"Eloss", "Matter", "brick_length"});
   vir_factor = GetXMLElementDouble({"Eloss", "Matter", "vir_factor"});
   Lambda_QCD = GetXMLElementDouble({"Eloss","lambdaQCD"});
+  QS = GetXMLElementDouble({"Eloss", "Matter", "QS"});
 
   if (vir_factor < 0.0) {
     cout << "Reminder: negative vir_factor is set, initial energy will be used "
