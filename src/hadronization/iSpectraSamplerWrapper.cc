@@ -124,11 +124,13 @@ void iSpectraSamplerWrapper::Exec() {
   inputfile.close();
 
   int nCells = getSurfCellVector();
-  //int status = iSpectraSampler_ptr_->read_in_FO_surface();
-  //if (status != 0) {
-  //  JSWARN << "Some errors happened in reading in the hyper-surface";
-  //  exit(-1);
-  //}
+  if (nCells == 0) {
+    int status = iSpectraSampler_ptr_->read_in_FO_surface();
+    if (status != 0) {
+      JSWARN << "Some errors happened in reading in the hyper-surface";
+      exit(-1);
+    }
+  }
 
   auto random_seed = (*GetMt19937Generator())(); // get random seed
   iSpectraSampler_ptr_->set_random_seed(random_seed);
