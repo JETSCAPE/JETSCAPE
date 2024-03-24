@@ -130,6 +130,7 @@ void iSpectraSamplerWrapper::Exec() {
       JSWARN << "Some errors happened in reading in the hyper-surface";
       exit(-1);
     }
+    nCells = 1;
   }
 
   auto random_seed = (*GetMt19937Generator())(); // get random seed
