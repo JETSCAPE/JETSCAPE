@@ -67,6 +67,7 @@ Total_evolution_time_tau 30.  # the maximum allowed running
                               # evolution time (fm/c)
                               # need to be set to some large number
 Delta_Tau 0.02                # time step to use in the evolution [fm/c]
+reset_dtau_use_CFL_condition 0
 Eta_grid_size 1.0             # spatial rapidity range 
                               # [-Eta_grid_size/2, Eta_grid_size/2 - delta_eta]
 Grid_size_in_eta 1            # number of the grid points in spatial 

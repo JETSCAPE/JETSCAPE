@@ -60,11 +60,12 @@
         <tauj>0.1</tauj>
         <!-- switching long. proper time from Preequilibrium dynamics to Hydrodynamics (Landau Matching) -->
         <taus>1.46</taus>
+        <evolutionInMemory>1</evolutionInMemory>
 
         <!-- Individual Preequilibrium Dynamics models  -->
         <FreestreamMilne>
             <name>FreestreamMilne</name>
-	    <freestream_input_file>freestream_input</freestream_input_file>
+        <freestream_input_file>freestream_input</freestream_input_file>
         </FreestreamMilne>
     </Preequilibrium>
 
@@ -72,6 +73,9 @@
     <Hydro>
         <MUSIC>
             <beastMode>0</beastMode>
+            <output_evolution_to_file>0</output_evolution_to_file>
+            <output_evolution_to_memory>1</output_evolution_to_memory>
+            <surface_in_memory>1</surface_in_memory>
             <Initial_time_tau_0>1.46</Initial_time_tau_0>
             <T_dependent_Shear_to_S_ratio>3</T_dependent_Shear_to_S_ratio>
             <eta_over_s_T_kink_in_GeV>0.223</eta_over_s_T_kink_in_GeV>
@@ -101,12 +105,12 @@
     </iSS>
   </SoftParticlization>
 
-    <!-- Hadronic Afterburner  -->
-    <Afterburner>
-      <!-- SMASH -->
-      <SMASH>
-        <name>SMASH</name>
-      </SMASH>
-    </Afterburner>
+  <!-- Hadronic Afterburner  -->
+  <Afterburner>
+    <!-- SMASH -->
+    <SMASH>
+      <name>SMASH</name>
+    </SMASH>
+  </Afterburner>
 
 </jetscape>

@@ -352,18 +352,29 @@ SurfaceCellInfo SurfaceFinder::PrepareASurfaceCell(
   temp_cell.pressure = fluid_cell.pressure;
   temp_cell.qgp_fraction = fluid_cell.qgp_fraction;
   temp_cell.mu_B = fluid_cell.mu_B;
-  temp_cell.mu_C = fluid_cell.mu_C;
+  temp_cell.mu_Q = fluid_cell.mu_C;
   temp_cell.mu_S = fluid_cell.mu_S;
 
-  temp_cell.vx = fluid_cell.vx;
-  temp_cell.vy = fluid_cell.vy;
-  temp_cell.vz = fluid_cell.vz;
+  double u0 = sqrt(1. + fluid_cell.vx*fluid_cell.vx
+                   + fluid_cell.vy*fluid_cell.vy
+                   + fluid_cell.vz*fluid_cell.vz);
+  double uz = u0*fluid_cell.vz;
+  temp_cell.umu[0] = u0*cosh(eta) - uz*sinh(eta);
+  temp_cell.umu[1] = u0*fluid_cell.vx;
+  temp_cell.umu[2] = u0*fluid_cell.vy;
+  temp_cell.umu[3] = - u0*sinh(eta) + uz*cosh(eta);
 
-  for (int i = 0; i < 4; i++) {
-    for (int j = 0; j < 4; j++) {
-      temp_cell.pi[i][j] = fluid_cell.pi[i][j];
-    }
-  }
+  temp_cell.pi[0] = fluid_cell.pi[0][0];
+  temp_cell.pi[1] = fluid_cell.pi[0][1];
+  temp_cell.pi[2] = fluid_cell.pi[0][2];
+  temp_cell.pi[3] = fluid_cell.pi[0][3];
+  temp_cell.pi[4] = fluid_cell.pi[1][1];
+  temp_cell.pi[5] = fluid_cell.pi[1][2];
+  temp_cell.pi[6] = fluid_cell.pi[1][3];
+  temp_cell.pi[7] = fluid_cell.pi[2][2];
+  temp_cell.pi[8] = fluid_cell.pi[2][3];
+  temp_cell.pi[9] = fluid_cell.pi[3][3];
+
   temp_cell.bulk_Pi = fluid_cell.bulk_Pi;
 
   return (temp_cell);

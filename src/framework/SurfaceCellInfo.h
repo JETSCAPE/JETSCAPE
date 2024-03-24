@@ -36,10 +36,10 @@ public:
   Jetscape::real
       qgp_fraction; //!< Fraction of quark gluon plasma assuming medium is in QGP+HRG phase.
   Jetscape::real mu_B;       //!< Net baryon chemical potential [GeV].
-  Jetscape::real mu_C;       //!< Net charge chemical potential [GeV].
+  Jetscape::real mu_Q;       //!< Net charge chemical potential [GeV].
   Jetscape::real mu_S;       //!< Net strangeness chemical potential [GeV].
-  Jetscape::real vx, vy, vz; //!< Flow velocity.
-  Jetscape::real pi[4][4];   //!< Shear stress tensor [GeV/fm^3].
+  Jetscape::real umu[4]; //!< Flow velocity.
+  Jetscape::real pi[10];   //!< Shear stress tensor [GeV/fm^3].
   Jetscape::real bulk_Pi;    //!< Bulk viscous pressure [GeV/fm^3].
 
   /** Default constructor. */
