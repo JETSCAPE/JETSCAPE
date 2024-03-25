@@ -170,8 +170,6 @@ int main(int argc, char* argv[]){
                 
                 // making particle lists
                 if(abs(PID) == 411 || abs(PID) == 413 || abs(PID) == 421){
-                    if(pStat==811) dRecoSpectra->Fill(PT);
-                    if(pStat==821) dFragSpectra->Fill(PT);
                     if(abs(Y) < LYcut){
                         Ls.push_back(hadrons[i]);
                         Lpts->Fill(PT);
@@ -184,6 +182,8 @@ int main(int argc, char* argv[]){
                         others.push_back(hadrons[i]);
                     }
 
+                    if(pStat==811) dRecoSpectra->Fill(PT);
+                    if(pStat==821) dFragSpectra->Fill(PT);
                     HistTotalHadron->Fill(PT);
                 }
                 
