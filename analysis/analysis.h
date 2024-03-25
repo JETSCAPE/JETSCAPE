@@ -42,7 +42,7 @@ vector<string> splitString(string input, string divider);
 
 TGraphErrors histToGraph(TH1D* hist);
 
-void myRatioPlot(TH1D* dataHist, TH1D* predictionHist, string title, bool xlog = false, bool ylog = false);
+void myRatioPlot(TGraphErrors* dataGraph, TH1D* predictionHist, string title, bool xlog, bool ylog);
 
 void ratioPlot(TGraphErrors* dataHist, TH1D* predictionHist, string title, string xname = "p_{T} (GeV)", string yname = "Yields", bool xlog = false, bool ylog = false);
 
