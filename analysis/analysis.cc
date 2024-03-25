@@ -134,7 +134,7 @@ void myRatioPlot(TGraphErrors* dataGraph, TH1D* predictionHist, string title, bo
     comparisonPlot->GetYaxis()->SetTitleSize(0.06);
     comparisonPlot->GetYaxis()->SetLabelSize(0.06);
     comparisonPlot->SetMarkerStyle(kFullDotLarge);
-    comparisonPlot->GetHistogram()->GetYaxis()->SetRangeUser(0,2);  
+    comparisonPlot->GetHistogram()->GetYaxis()->SetRangeUser(0,2.1);  
 
     //Legend
     TLegend leg(.7,.7,.9,.9);
@@ -146,7 +146,7 @@ void myRatioPlot(TGraphErrors* dataGraph, TH1D* predictionHist, string title, bo
     c->cd();
     TPad* lower = new TPad("plot","plot",0,0,1,0.4);
     lower->SetTopMargin(0);
-    c->SetBottomMargin(2.0);
+    lower->SetBottomMargin(0.2);
     lower->Draw();
     lower->cd();
     if(xlog) lower->SetLogx();
