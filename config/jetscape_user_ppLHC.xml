@@ -28,6 +28,7 @@
     
     <Matter> 
       <Q0>1</Q0>
+      <QS> 0.9 </QS>
       <in_vac> 1 </in_vac>
       <vir_factor>0.25</vir_factor>
       <recoil_on> 0 </recoil_on>
