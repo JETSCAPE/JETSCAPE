@@ -4,8 +4,10 @@ project(trento VERSION 1.5.1 LANGUAGES CXX)
 
 
 
-# require C++11
-set(CMAKE_CXX_STANDARD 11)
+# require at least C++11
+if(NOT "${CMAKE_CXX_STANDARD}")
+  set(CMAKE_CXX_STANDARD 11)
+endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -156,7 +158,9 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   string(APPEND CMAKE_CXX_FLAGS " -Wno-missing-braces -Wno-c++11-narrowing")
 endif()
 
-string(APPEND CMAKE_CXX_FLAGS_DEBUG " -Werror")
+# This statement prevents JETSCAPE from being built in Debug mode and
+# is commented out until a better solution is found.
+# string(APPEND CMAKE_CXX_FLAGS_DEBUG " -Werror")
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   string(APPEND CMAKE_CXX_FLAGS_DEBUG " -Og")
@@ -186,7 +190,9 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   endif()
 endif()
 
-string(APPEND CMAKE_CXX_FLAGS_DEBUG " ${CMAKE_REQUIRED_FLAGS} --coverage")
+# This statement prevents JETSCAPE from being built in Debug mode and
+# is commented out until a better solution is found.
+# string(APPEND CMAKE_CXX_FLAGS_DEBUG " ${CMAKE_REQUIRED_FLAGS} --coverage")
 
 set(LIBRARY_NAME "lib${PROJECT_NAME}")
 

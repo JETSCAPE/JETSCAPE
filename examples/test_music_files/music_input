@@ -86,7 +86,7 @@ Grid_size_in_y 200            # number of the grid points in y direction
 Grid_size_in_x 200            # number of the grid points in x direction
 #
 #
-EOS_to_use 9                  # type of the equation of state
+EOS_to_use 91                  # type of the equation of state
                               # 0: ideal gas
                               # 1: EOS-Q from azhydro
                               # 2: lattice EOS s95p-v1 
@@ -112,6 +112,7 @@ Shear_to_S_ratio 0.15              # value of \eta/s
 T_dependent_Shear_to_S_ratio  0    # flag to use temperature dep. \eta/s(T)
 Include_Bulk_Visc_Yes_1_No_0 0     # include bulk viscous effect
 Include_second_order_terms 0       # include second order non-linear coupling terms
+shear_relax_time_factor 4.65
 #
 #
 # switches to output evolution information

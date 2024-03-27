@@ -175,9 +175,10 @@ void Matter::Init() {
   ZeroOneDistribution = uniform_real_distribution<double>{0.0, 1.0};
 
   //...initialize the random number generator
-  srand((unsigned)time(NULL));
-  NUM1 = -1 * rand();
+  //srand((unsigned)time(NULL));
+  //NUM1 = -1 * rand();
   //    NUM1=-33;
+  NUM1=-1*static_cast<int>(ZeroOneDistribution(*GetMt19937Generator())*RAND_MAX);	
   iEvent = 0;
 }
 
@@ -1669,13 +1670,17 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
               energy -= drag;
               pOut[iout].reset_momentum(px, py, pz, energy);
             }
-
+            pOut[iout].set_stat(101);   
             VERBOSE(8) << BOLDYELLOW << " p after b & d, E = " << energy
                        << " pz = " << pz << " px = " << px << " py = " << py;
           }
-
+          else{
+            pOut.push_back(pIn[i]);
+          }	  
         } // end if(broadening_on)
+        else{
           pOut.push_back(pIn[i]);
+        } 
       }
     } else { // virtuality too low lets broaden it
 
@@ -1825,13 +1830,18 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
             energy -= drag;
             pOut[iout].reset_momentum(px, py, pz, energy);
           }
-
+          pOut[iout].set_stat(101);   
           VERBOSE(8) << BOLDYELLOW << " p after b & d, E = " << energy
                      << " pz = " << pz << " px = " << px << " py = " << py;
         }
-
+        else{
+            pOut.push_back(pIn[i]);
+        }	
         //pOut.push_back(pIn[i]);
       }
+      else{
+        pOut.push_back(pIn[i]);
+      }      
     }
 
   } // particle loop

@@ -3,7 +3,6 @@
 #include "JetScapeXML.h"
 #include "JetScapeLogger.h"
 #include "JetScapeConstants.h"
-#include <omp.h>
 #include <vector>
 #include <random>
 #include <cmath>
@@ -1106,6 +1105,8 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 				// Sample rest frame momentum given T and mass of light quark
 				MCSampler(TRead, 1); // NewP=P, NewX=Px, ...
 
+				Vel[1] /= cosh(eta_slice);
+				Vel[2] /= cosh(eta_slice);
 				Vel[3] = tanh(eta_slice);
 				double vsquare = Vel[1]*Vel[1] + Vel[2]*Vel[2] + Vel[3]*Vel[3];
 				if(vsquare < 10e-16){
@@ -1206,6 +1207,8 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 				// Sample rest frame momentum given T and mass of s quark
 				MCSampler(TRead, 2); // NewP=P, NewX=Px, ...
 
+				Vel[1] /= cosh(eta_slice);
+				Vel[2] /= cosh(eta_slice);
 				Vel[3] = tanh(eta_slice);
 				double vsquare = Vel[1]*Vel[1] + Vel[2]*Vel[2] + Vel[3]*Vel[3];
 				if(vsquare < 10e-16){

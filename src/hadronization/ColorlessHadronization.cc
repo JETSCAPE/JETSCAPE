@@ -54,7 +54,7 @@ void ColorlessHadronization::Init() {
   // Read sqrts to know remnants energies
   double p_read_xml =
       GetXMLElementDouble({"JetHadronization", "eCMforHadronization"});
-  p_fake = p_read_xml;
+  p_fake = p_read_xml / 6.;
 
   take_recoil = GetXMLElementInt({"JetHadronization", "take_recoil"});
 
@@ -112,6 +112,8 @@ void ColorlessHadronization::Init() {
     JSINFO << "Also reading in: " << s;
     pythia.readString(s);
   }
+
+  Lambda_QCD = GetXMLElementDouble({"Eloss","lambdaQCD"});
 
   // Initialize random number distribution
   ZeroOneDistribution = std::uniform_real_distribution<double> { 0.0, 1.0 };

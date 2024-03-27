@@ -187,7 +187,11 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2,
       }
       return;
     }
-
+    if (pIn[0].pstat()==101) {
+      // pOut.push_back(pIn[0]);
+       // JSINFO << BOLDYELLOW << " broadenend parton rejected by LBT ";
+        return;
+    }
     // pass particle infomation to LBT array (only pass one particle each time)
 
     jetClean();

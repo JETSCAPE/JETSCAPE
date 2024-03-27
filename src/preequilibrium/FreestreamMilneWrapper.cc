@@ -48,13 +48,21 @@ void FreestreamMilneWrapper::InitializePreequilibrium(
 
   fsmilne_ptr = new FREESTREAMMILNE();
   struct parameters *params = fsmilne_ptr->configure(input_file.c_str());
-
+  
+  //overwriting tau0,tauj,taus from xml file
+  //tau0: initial time for initial condition
+  //tauj: initial output time of background for hard probe
+  //taus: end time for freestream or initial time for hydro
+  //dtau: the free-streaming time
   double tau0 = GetXMLElementDouble(
       {"Preequilibrium", "tau0"});
+  double tauj = GetXMLElementDouble(
+      {"Preequilibrium", "tauj"});
   double taus = GetXMLElementDouble(
       {"Preequilibrium", "taus"});
 
   params->TAU0 = tau0;
+  params->TAUJ = tauj;
   params->DTAU = taus - tau0;
 }
 
@@ -75,6 +83,7 @@ void FreestreamMilneWrapper::EvolvePreequilibrium() {
     preequilibrium_status_ = DONE;
   }
   // now prepare to send the resulting hydro variables to the hydro module by coping hydro vectors to Preequilibrium base class members
+ preequilibrium_tau_max_ = fsmilne_ptr->tau_LandauMatch;
   fsmilne_ptr->output_to_vectors(e_, P_, utau_, ux_, uy_, ueta_, pi00_, pi01_,
                                  pi02_, pi03_, pi11_, pi12_, pi13_, pi22_,
                                  pi23_, pi33_, bulk_Pi_);

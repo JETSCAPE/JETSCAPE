@@ -36,12 +36,13 @@ class PreequilibriumDynamics : public JetScapeModuleBase {
 private:
   PreEquilibriumParameterFile parameter_list_;
   // record preequilibrium start and end proper time [fm/c]
-  real preequilibrium_tau_0_, preequilibrium_tau_max_;
+  //real preequilibrium_tau_0_, preequilibrium_tau_max_;
 
 public:
   PreequilibriumDynamics();
 
   virtual ~PreequilibriumDynamics();
+    real preequilibrium_tau_0_, preequilibrium_tau_max_;
 
   /** Reads the input parameters from the XML file under the tag <Preequilibrium>. Uses JetScapeSingnalManager Instance to retrive the Initial State Physics information. Calls InitializeHydro(parameter_list) and InitTask(); This explicit call can be used for actual initialization of modules such as @a Brick, @a MpiMusic, or @a OSU-HYDRO if attached as a @a polymorphic class. It also initializes the tasks within the current module.
     @sa Read about @a polymorphism in C++.
