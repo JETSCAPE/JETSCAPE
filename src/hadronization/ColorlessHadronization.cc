@@ -111,8 +111,6 @@ void ColorlessHadronization::Init() {
     pythia.readString(s);
   }
 
-  Lambda_QCD = GetXMLElementDouble({"Eloss","lambdaQCD"});
-
   // Initialize random number distribution
   ZeroOneDistribution = std::uniform_real_distribution<double> { 0.0, 1.0 };
   // And initialize
