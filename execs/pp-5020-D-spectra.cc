@@ -112,8 +112,8 @@ int main(int argc, char* argv[]){
         auto myfile  = make_shared<JetScapeReaderAscii>(HadronFile);
         sprintf(pTBinString,"Current pTHatBin is %i (%s,%s) GeV",k,pTHatMin[k].c_str(),pTHatMax[k].c_str());
         
-        int  SN=0,PID=0;
-        double Px, Py, Pz, E, Eta, Phi, pStat, mass, Y;
+        int  SN=0,PID=0,pStat=0;
+        double Px, Py, Pz, E, Eta, Phi, mass, Y;
         int TriggeredJetNumber=0;
         int Lcount[ntrigbins][nassbins] = {0};
         
@@ -241,8 +241,8 @@ int main(int argc, char* argv[]){
         //tempD->Scale(1.0/(Dcount));
         for(int i1 = 0; i1 < ntrigbins; i1++){
             for(int i2 = 0; i2 < nassbins; i2++){
-                tempL[i1][i2]->GetXaxis()->SetTitle("D Reco Label");
-                tempL[i1][i2]->GetYaxis()->SetTitle("Hadron Reco Label");
+                recoHist[i1][i2]->GetXaxis()->SetTitle("D Reco Label");
+                recoHist[i1][i2]->GetYaxis()->SetTitle("Hadron Reco Label");
                 tempL[i1][i2]->Write(names[i1][i2].c_str());
                 recoHist[i1][i2]->Write(names[i1][i2].c_str());
                 HistLPhi[i1][i2]->Add(tempL[i1][i2]);
