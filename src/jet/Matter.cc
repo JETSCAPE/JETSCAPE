@@ -157,7 +157,7 @@ void Matter::Init() {
   JSINFO << MAGENTA << "matter shower on: " << matter_on;
   JSINFO << MAGENTA << "in_vac: " << in_vac << "  brick_med: " << brick_med
          << "  recoil_on: " << recoil_on<<", tStart ="<<tStart;
-  JSINFO << MAGENTA << "Q0: " << Q00 << " vir_factor: " << vir_factor
+  JSINFO << MAGENTA << "Q0: " << Q00 << " QS: " << QS << " vir_factor: " << vir_factor
          << "  qhat0: " << qhat0 << " alphas: " << alphas << ", QhatParametrizationType="<<QhatParametrizationType
          << "  qhatA: " << qhatA << " qhatB:  " <<qhatB  << "  qhatC: " << qhatC << " qhatD:  " <<qhatD
          << " hydro_Tc: " << hydro_Tc << " brick_length: " << brick_length;

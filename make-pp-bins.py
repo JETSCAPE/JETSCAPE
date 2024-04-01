@@ -88,6 +88,11 @@ def makexml(bound, parameters, baseDir, xmltemplate, ECM):
     else:
         filename = ogfile
 
+    # link soft momentum cutoff and QS to QO
+    if 'Q0' in parameters.columns:
+        parameters['QS'] = parameters.loc[:, 'Q0']
+        parameters['softMomentumCutoff'] = parameters.loc[:, 'Q0']
+
     # building lines for xml file
     lowerLine = "      <pTHatMin>" + str(bound[0]) + "</pTHatMin>\n"
     upperLine = "      <pTHatMax>" + str(bound[1]) + "</pTHatMax>\n"

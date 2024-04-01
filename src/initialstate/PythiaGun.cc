@@ -132,6 +132,7 @@ void PythiaGun::InitTask() {
   //Reading vir_factor from xml for MATTER
   vir_factor = GetXMLElementDouble({"Eloss", "Matter", "vir_factor"});
   softMomentumCutoff = GetXMLElementDouble({"Hard", "PythiaGun", "softMomentumCutoff"});
+  JSINFO << "Soft momentum cutoff: " << softMomentumCutoff;
 
   std::stringstream lines;
   lines << GetXMLElementText({"Hard", "PythiaGun", "LinesToRead"}, false);
