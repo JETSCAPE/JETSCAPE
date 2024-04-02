@@ -18,7 +18,7 @@
          MultipartonInteractions:pT0Ref = 2.28
          MultipartonInteractions:ecmPow = 0.215
       </LinesToRead>
-      <softMomentumCutoff>2.0</softMomentumCutoff>
+      <softMomentumCutoff>0.0</softMomentumCutoff>
     </PythiaGun>
   </Hard>
   

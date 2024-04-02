@@ -35,6 +35,10 @@ def binrun(index, parameters, xmltemplate):
     ##making directory for this designpoint
     baseDir = makeDir(index)
 
+    # link QS to QO
+    if 'Q0' in parameters.columns:
+        parameters['QS'] = parameters.loc[:, 'Q0']
+
     ##building lines for xml file
     fileLine = "    <outputFilename>" + baseDir + "/run" + "</outputFilename>\n"
     paramlines = []
