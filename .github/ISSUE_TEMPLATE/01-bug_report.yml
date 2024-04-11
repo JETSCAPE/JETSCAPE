@@ -1,0 +1,79 @@
+name: Bug Report
+description: File a bug report.
+title: "[Bug]: "
+labels: ["bug"]
+
+body:
+  - type: markdown
+    attributes:
+      value:
+        Before opening a bug report, please search for existing issues with the
+        same behavior. Thank you for taking the time to file a bug report.
+        To address this bug as fast as possible, we need some information.
+
+  - type: input
+    id: code-version
+    attributes:
+      label: Code Version
+      description: Please provide the full JETSCAPE version of your project.
+      placeholder: ex. JETSCAPE 3.6.2
+    validations:
+      required: true
+
+  - type: input
+    id: operating-system
+    attributes:
+      label: Operating System
+      description: Which operating system do you use?
+        Please also provide the version.
+      placeholder: ex. Ubuntu 22.04
+    validations:
+      required: true
+
+  - type: input
+    id: container
+    attributes:
+      label: Container
+      description: Which JETSCAPE container are you using?
+        Please also provide the version and platform.
+      placeholder: ex. jetscape/base:stable with Docker version 24.0.5
+    validations:
+      required: true
+
+  - type: input
+    id: executable
+    attributes:
+      label: Executable
+      description: Which executable do you run?
+        In most cases, the answer here will be runJetscape.
+      value: "runJetscape"
+    validations:
+      required: true
+
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: Bug Description
+      description: Describe the bug in detail.
+      placeholder:
+    validations:
+      required: true
+
+  - type: textarea
+    id: xml-input-file
+    attributes:
+      label: XML Input File
+      description: Please paste the text of your xml input file.
+      placeholder:
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: log-output
+    attributes:
+      label: Relevant Log Output
+      description: If applicable, provide relevant log output.
+      render: shell
+    validations:
+      required: false
