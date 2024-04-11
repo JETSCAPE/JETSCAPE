@@ -207,6 +207,7 @@
     <tauj>0.1</tauj>
     <!-- switching long. proper time from Preequilibrium dynamics to Hydrodynamics (Landau Matching) -->
     <taus>0.2</taus>
+    <evolutionInMemory>1</evolutionInMemory>
 
     <!-- Individual Preequilibrium Dynamics models  -->
     <FreestreamMilne>
@@ -286,7 +287,9 @@
       <MUSIC_input_file>music_input</MUSIC_input_file>
       <beastMode>0</beastMode>
       <Initial_time_tau_0>0.5</Initial_time_tau_0>
-      <output_evolution_to_file>1</output_evolution_to_file>
+      <output_evolution_to_file>0</output_evolution_to_file>
+      <output_evolution_to_memory>1</output_evolution_to_memory>
+      <surface_in_memory>1</surface_in_memory>
       <shear_viscosity_eta_over_s>0.08</shear_viscosity_eta_over_s>
       <T_dependent_Shear_to_S_ratio>0</T_dependent_Shear_to_S_ratio>
       <eta_over_s_T_kink_in_GeV>0.16</eta_over_s_T_kink_in_GeV>
