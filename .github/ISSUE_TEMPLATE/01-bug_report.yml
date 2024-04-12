@@ -63,9 +63,8 @@ body:
     id: xml-input-file
     attributes:
       label: XML Input File
-      description: Please paste the text of your xml input file.
+      description: Please upload or paste the text of your xml input file.
       placeholder:
-      render: shell
     validations:
       required: true
 
@@ -73,7 +72,6 @@ body:
     id: log-output
     attributes:
       label: Relevant Log Output
-      description: If applicable, provide relevant log output.
-      render: shell
+      description: If applicable, please upload or paste relevant log output.
     validations:
       required: false
