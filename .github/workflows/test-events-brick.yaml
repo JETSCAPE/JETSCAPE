@@ -33,6 +33,11 @@ jobs:
       with:
         path: ${{ github.event.repository.name }}
 
+    - name: Download Lbt Tables
+      run: |
+        cd ${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages
+        ./get_lbtTab.sh
+
     - name: Build Application
       run: |
         cd ${GITHUB_WORKSPACE}/${REPO_NAME}
