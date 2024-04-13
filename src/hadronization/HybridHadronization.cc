@@ -561,7 +561,10 @@ void HybridHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& sh
 			cell.push_back(surface_cells[icel].d3sigma_mu[0]); cell.push_back(surface_cells[icel].d3sigma_mu[1]);
 			cell.push_back(surface_cells[icel].d3sigma_mu[2]); cell.push_back(surface_cells[icel].d3sigma_mu[3]);
 			cell.push_back(surface_cells[icel].temperature);
-			cell.push_back(surface_cells[icel].vx); cell.push_back(surface_cells[icel].vy); cell.push_back(surface_cells[icel].vz);
+            double vx = surface_cells[icel].umu[1]/surface_cells[icel].umu[0];
+            double vy = surface_cells[icel].umu[2]/surface_cells[icel].umu[0];
+            double vz = surface_cells[icel].umu[3]/surface_cells[icel].umu[0];
+			cell.push_back(vx); cell.push_back(vy); cell.push_back(vz);
 			surface.push_back(cell);
 		}
 

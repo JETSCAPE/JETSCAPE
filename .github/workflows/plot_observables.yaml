@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - JETSCAPE-3.6.1-RC
       - latessa/dockerImage
 
 env:

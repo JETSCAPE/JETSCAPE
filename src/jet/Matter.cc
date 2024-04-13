@@ -142,7 +142,6 @@ void Matter::Init() {
   hydro_Tc = GetXMLElementDouble({"Eloss", "Matter", "hydro_Tc"});
   brick_length = GetXMLElementDouble({"Eloss", "Matter", "brick_length"});
   vir_factor = GetXMLElementDouble({"Eloss", "Matter", "vir_factor"});
-  Lambda_QCD = GetXMLElementDouble({"Eloss","lambdaQCD"});
 
   if (vir_factor < 0.0) {
     cout << "Reminder: negative vir_factor is set, initial energy will be used "
@@ -1833,14 +1832,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
           VERBOSE(8) << BOLDYELLOW << " p after b & d, E = " << energy
                      << " pz = " << pz << " px = " << px << " py = " << py;
         }
-        else{
-            pOut.push_back(pIn[i]);
-        }	
         //pOut.push_back(pIn[i]);
-      }
-      else{
-        pOut.push_back(pIn[i]);
-      }      
+      } 
     }
 
   } // particle loop

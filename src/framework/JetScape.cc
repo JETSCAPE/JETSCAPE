@@ -886,6 +886,7 @@ void JetScape::SetPointers() {
          << "SignalManager to create Signal/Slots";
 
   bool hydro_pointer_is_set = false;
+  bool iss_pointer_is_set = false;
   for (auto it : GetTaskList()) {
     if (dynamic_pointer_cast<InitialState>(it)) {
       JetScapeSignalManager::Instance()->SetInitialStatePointer(
@@ -910,8 +911,14 @@ void JetScape::SetPointers() {
     } else if (dynamic_pointer_cast<PartonPrinter>(it)) {
       JetScapeSignalManager::Instance()->SetPartonPrinterPointer(
           dynamic_pointer_cast<PartonPrinter>(it));
-    } else if (dynamic_pointer_cast<SoftParticlization>(it)) {
+    } else if (dynamic_pointer_cast<SoftParticlization>(it) &&
+               !iss_pointer_is_set) {
       JetScapeSignalManager::Instance()->SetSoftParticlizationPointer(
+          dynamic_pointer_cast<SoftParticlization>(it));
+      iss_pointer_is_set = true;
+      JetScapeSignalManager::Instance()->ConnectGetHydroHyperSurfaceSignal(
+          dynamic_pointer_cast<SoftParticlization>(it));
+      JetScapeSignalManager::Instance()->ConnectClearHydroHyperSurfaceSignal(
           dynamic_pointer_cast<SoftParticlization>(it));
     } else if (dynamic_pointer_cast<HadronizationManager>(it)) {
       JetScapeSignalManager::Instance()->SetHadronizationManagerPointer(
