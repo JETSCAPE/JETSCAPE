@@ -48,7 +48,7 @@ void FreestreamMilneWrapper::InitializePreequilibrium(
 
   fsmilne_ptr = new FREESTREAMMILNE();
   struct parameters *params = fsmilne_ptr->configure(input_file.c_str());
-  
+
   //overwriting tau0,tauj,taus from xml file
   //tau0: initial time for initial condition
   //tauj: initial output time of background for hard probe
@@ -60,10 +60,13 @@ void FreestreamMilneWrapper::InitializePreequilibrium(
       {"Preequilibrium", "tauj"});
   double taus = GetXMLElementDouble(
       {"Preequilibrium", "taus"});
+  int FlagEvo = GetXMLElementDouble(
+      {"Preequilibrium", "evolutionInMemory"});
 
   params->TAU0 = tau0;
   params->TAUJ = tauj;
   params->DTAU = taus - tau0;
+  params->evolutionInMemory = FlagEvo;
 }
 
 void FreestreamMilneWrapper::EvolvePreequilibrium() {
@@ -87,4 +90,28 @@ void FreestreamMilneWrapper::EvolvePreequilibrium() {
   fsmilne_ptr->output_to_vectors(e_, P_, utau_, ux_, uy_, ueta_, pi00_, pi01_,
                                  pi02_, pi03_, pi11_, pi12_, pi13_, pi22_,
                                  pi23_, pi33_, bulk_Pi_);
+}
+
+
+void FreestreamMilneWrapper::get_fluid_cell_with_index(
+        const int idx, std::unique_ptr<FluidCellInfo> &info_ptr) {
+    fluidCell fluidCell_ptr;
+    fsmilne_ptr->get_fluid_cell_with_index(idx, fluidCell_ptr);
+    info_ptr->energy_density = fluidCell_ptr.ed;
+    info_ptr->entropy_density = fluidCell_ptr.sd;
+    info_ptr->temperature = fluidCell_ptr.temperature;
+    info_ptr->pressure = fluidCell_ptr.pressure;
+    info_ptr->vx = fluidCell_ptr.vx;
+    info_ptr->vy = fluidCell_ptr.vy;
+    info_ptr->vz = fluidCell_ptr.vz;
+    info_ptr->mu_B = 0.0;
+    info_ptr->mu_C = 0.0;
+    info_ptr->mu_S = 0.0;
+    info_ptr->qgp_fraction = 0.0;
+    for (int i = 0; i < 4; i++) {
+      for (int j = 0; j < 4; j++) {
+        info_ptr->pi[i][j] = fluidCell_ptr.pi[i][j];
+      }
+    }
+    info_ptr->bulk_Pi = fluidCell_ptr.bulkPi;
 }

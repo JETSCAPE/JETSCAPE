@@ -1834,14 +1834,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
           VERBOSE(8) << BOLDYELLOW << " p after b & d, E = " << energy
                      << " pz = " << pz << " px = " << px << " py = " << py;
         }
-        else{
-            pOut.push_back(pIn[i]);
-        }	
         //pOut.push_back(pIn[i]);
-      }
-      else{
-        pOut.push_back(pIn[i]);
-      }      
+      } 
     }
 
   } // particle loop

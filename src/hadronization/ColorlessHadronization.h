@@ -37,7 +37,6 @@ public:
 private:
   double p_fake;
   bool take_recoil;
-  double Lambda_QCD;
 
   // Allows the registration of the module so that it is available to be used by the Jetscape framework.
   static RegisterJetScapeModule<ColorlessHadronization> reg;
