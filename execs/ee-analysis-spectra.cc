@@ -140,6 +140,7 @@ int main(int argc, char* argv[]){
     int  SN=0,PID=0;
     double Px, Py, Pz, E, Eta, Phi,pStat;
     int Events =0;
+    int Eventskept = 0;
     vector<shared_ptr<Hadron>> hadrons;
     
     // Create a file on which histogram(s) can be saved.
@@ -157,6 +158,7 @@ int main(int argc, char* argv[]){
         myfile->Next();
         hadrons = myfile->GetHadrons();
         int multiplicity = 0;
+        int tracks = 0;
         Events++;
         double totalEcheck = 0;
 
@@ -175,8 +177,13 @@ int main(int argc, char* argv[]){
             double P = TMath::Sqrt((Px*Px) + (Py*Py) + (Pz*Pz));
 
             //mult count
-            if(pythia.particleData.charge(PID) != 0) multiplicity++;
-            totalEcheck += E;
+            if(pythia.particleData.charge(PID) != 0){
+                multiplicity++;
+                if(PT > 0.2 && fabs(Eta) < 1.74){
+                    tracks++;
+                    totalEcheck += E;
+                }
+            }
 
             //jet inputs removing neutrinos
             if(PID!=12 && PID!=14 && PID!=16 && PID!=18) fjInputs.push_back(fjcore::PseudoJet(Px,Py,Pz,E));
@@ -195,6 +202,9 @@ int main(int argc, char* argv[]){
                 if(abs(PID) == 2212) tempProtons->Fill(xp);
             }
         }
+
+        if(tracks < 5 || totalEcheck < 15) continue;
+        Eventskept++;
 
         //mult filling
         HistMultiplicity->Fill(multiplicity);
@@ -252,15 +262,15 @@ int main(int argc, char* argv[]){
     xeHist->Write();
     
     //scaling histograms
-    HistMultiplicity->Scale(1.0/(double)Events); //times 2 to match the data
+    HistMultiplicity->Scale(1.0/(double)Eventskept); //times 2 to match the data
     HistTempSingleHadron->Scale(1.0/(double)Events,"width");
     HistRecoHadron->Scale(1.0/(double)Events,"width");
     tempPions->Scale(1.0/(double)Events,"width");
     tempKaons->Scale(1.0/(double)Events,"width");
     tempProtons->Scale(1.0/(double)Events,"width");
     HistThrust->Scale(1.0/(double)thrustCount,"width");
-    HistTempJet->Scale(1.0/(double)Events);
-    HistTempdiJet->Scale(1.0/(double)Events);
+    HistTempJet->Scale(1.0/(double)Eventskept);
+    HistTempdiJet->Scale(1.0/(double)Eventskept);
     xeHist->Scale(1.0/(double)Events,"width");
     
     TVector EventInfo(3);
