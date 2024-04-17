@@ -8,6 +8,7 @@ from functions import *
 
 #option reading
 reading = False
+blank = False
 todays_date = date.today()
 name = "LEP-" + str(todays_date.month) + "-" + str(todays_date.day)
 for i, option in enumerate(sys.argv):
@@ -25,6 +26,8 @@ for i, option in enumerate(sys.argv):
         startdir = sys.argv[i+1]
     if "-n" in option:
         name = sys.argv[i+1]
+    if "--blank" in option:
+        blank = True
 
 #date and file initiation
 totaldir = "/scratch/user/cameron.parker/projects/JETSCAPE/runs/" + name + "/"
@@ -36,8 +39,8 @@ def binrun(index, parameters, xmltemplate):
     baseDir = makeDir(index)
 
     # link QS to QO
-    if 'Q0' in parameters.columns:
-        parameters['QS'] = parameters.loc[:, 'Q0']
+    if 'QSfactor' in parameters.columns:
+        parameters['QS'] = (2*parameters.lambdaQCD+0.05) + (parameters.Q0-(2*parameters.lambdaQCD+0.05))*parameters.QSfactor
 
     ##building lines for xml file
     fileLine = "    <outputFilename>" + baseDir + "/run" + "</outputFilename>\n"
@@ -70,6 +73,9 @@ def binrun(index, parameters, xmltemplate):
     xml = open(xmlname,'w')
     xml.writelines(newlines)
     xml.close()
+
+    if blank:
+        return
 
     ##running for the parameters set in the xml file
     runxml(xmlname)
@@ -117,4 +123,5 @@ pool.starmap(binrun, [(i,design.loc[[i]], xmllines) for i in range(len(design))]
 pool.close()
 
 ##running total analysis
-os.system("./ee-comparison " + totaldir)
+if not blank:
+    os.system("./ee-comparison " + totaldir)
