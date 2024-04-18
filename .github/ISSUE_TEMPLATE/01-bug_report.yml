@@ -74,6 +74,6 @@ body:
     attributes:
       label: Relevant Log Output
       description: If applicable, please paste the text of relevant log output,
-        or upload the log files in a supported format such as txt or zip.
+        or upload the relevant files in a supported format such as txt or zip.
     validations:
       required: false
