@@ -39,10 +39,10 @@
     <LinesToRead>
       StringFlav:probStoUD = 0.217
       StringFlav:probQQtoQ = 0.081
-      ParticleDecays:tau0Max = 10
       ColourReconnection:reconnect = on
       ColourReconnection:mode = 1
     </LinesToRead>
+    <tau0Max>20</tau0Max>
     <pythia_decays>on</pythia_decays> 
     <part_prop>0.0</part_prop>
     <ignorePhotons> off </ignorePhotons>
