@@ -13,9 +13,9 @@
  * See COPYING for details.
  ******************************************************************************/
 
-// Jetscape final state {hadrons,kartons} writer ascii class
-// Based on JetScapeWriterStream.
-// author: Raymond Ehlers <raymond.ehlers@cern.ch>, ORNL
+// Jetscape Qn vector writer ascii class
+// Based on JetScapeWriterStream, JetScapeWriterFinalStateStream
+// author: Xiang-Yu Wu <xiangyu.wu2@mail.mcgill.ca>
 
 #ifndef JETSCAPEWRITERSTREAM_H
 #define JETSCAPEWRITERSTREAM_H

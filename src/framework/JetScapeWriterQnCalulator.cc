@@ -161,7 +161,6 @@ template <class T> void JetScapeWriterQnVectorStream<T>::WriteEvent() {
           mean_pT_err = 0.0;
           mean_y = Qvec_tem_ptr->get_y(iy);
           mean_y_err = 0.0;
-          //std::cout<< mean_pT<<" "<< Qvec_tem_ptr->get_pt(ipt)<<" "<<total_dN_mean<<std::endl;
           
           output_file<<mean_pT<<" "<<mean_pT_err<<" "
                      <<mean_y <<" "<<mean_y_err<<" "
@@ -222,6 +221,8 @@ template <class T> void JetScapeWriterQnVectorStream<T>::Init() {
         // will always be "v<number>"
         << "\t" << "JETSCAPE_FINAL_STATE\t" << "QnVector"
         << "\t" << "\n"  
+        << "\t" << "# PID of Charged particle 9999 \t" << " y(Charged) = \psudorapidity \t y(PID) = \rapidity"
+        << "\t" << "\n"  
         << "#"
         << "\t" << "pid"
         << "\t" << "pT\t"
@@ -231,6 +232,7 @@ template <class T> void JetScapeWriterQnVectorStream<T>::Init() {
         << "\t" << "ET\t"
         << "\t" << "ET_err\t"
         << "\t" << "dNdpTdy\t"
+        << "\t" << "dNdpTdy_err\t"
         << "\t" << "vncos"
         << "\t" << "vnsin"
         << "\t" << "vncos_err"
@@ -261,9 +263,8 @@ template <class T> void JetScapeWriterQnVectorStream<T>::Write(weak_ptr<Hadron> 
 template <class T> void JetScapeWriterQnVectorStream<T>::Close() {
     // Write xsec output at the end.
     // NOTE: Needs consistent "\t" between all entries to simplify parsing later.
-    output_file << "#" << "\t"
-        << "sigmaGen\t" << GetHeader().GetSigmaGen() << "\t"
-        << "sigmaErr\t" << GetHeader().GetSigmaErr() << "\n";
+  output_file << "#"
+      << "\t" << "Event\t" << GetCurrentEvent() + 1  <<  " End \n";
     output_file.close();
 }
 

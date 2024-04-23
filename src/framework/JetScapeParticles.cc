@@ -551,9 +551,6 @@ Photon &Photon::operator=(const Photon &ph) {
 Qvector::Qvector(double pt_min, double pt_max, int npt, double y_min, double y_max, int ny, int norder, int pid, int rapidity_type): pt_min_(pt_min), pt_max_(pt_max), npt_(npt), y_min_(y_min), y_max_(y_max), ny_(ny), ncols_(norder*4+4),norder_(norder), pid_(pid), rapidity_type_(rapidity_type) {
 	dpt_ = (pt_max - pt_min) / npt ;
   dy_ = (y_max - y_min) / ny ;
-  // std::cout<< pt_max<<" "<<pt_min<<" "<<npt<<"\n ";
-  // std::cout<< y_max<<" "<<y_min<<" "<<ny<<"\n ";
-  // std::cout<< ncols_<<"\n ";
 	hist_.resize(npt, std::vector<std::vector<double>>(ny, std::vector<double>(ncols_, 0.0)));
 	gridpT_.reserve(npt); 
   gridy_.reserve(ny);

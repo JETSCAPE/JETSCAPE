@@ -170,19 +170,6 @@ template <class T> void JetScapeWriterStream<T>::Write(weak_ptr<Hadron> h) {
   }
 }
 
-//template <class T> void JetScapeWriterStream<T>::Write(weak_ptr<Qvector> Qv) {
-//  auto Qv_tem = Qv.lock();
-//  if (Qv_tem) {
-//    for (int ipt = 0;ipt < Qv_tem.get_npt();ipt++)
-//	for(int iy = 0; iy < Qv_tem.get_ny();iy++ )
-//                output_file << Qv_tem.get_pgdcode(); 
-//		for(int icol = 0 ;iorder < Qv_tem.ncols(); icol++)
-//		{
-//                    output_file << Qv_tem.get_value(ipt,iy,icol);
-//		}
-//                output_file<<endl;
-//  }
-//}
 
 template <class T>
 void JetScapeWriterStream<T>::Write(std::weak_ptr<Qvector> Qv) {
