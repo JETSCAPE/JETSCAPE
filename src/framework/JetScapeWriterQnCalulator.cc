@@ -234,8 +234,8 @@ template <class T> void JetScapeWriterQnVectorStream<T>::Init() {
         << "\t" << "dNdpTdy\t"
         << "\t" << "dNdpTdy_err\t"
         << "\t" << "vncos"
-        << "\t" << "vnsin"
         << "\t" << "vncos_err"
+        << "\t" << "vnsin"
         << "\t" << "vnsin_err"
         << "\t" << "dN"
         << "\n";
