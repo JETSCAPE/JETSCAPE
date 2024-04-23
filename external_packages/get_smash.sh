@@ -21,7 +21,7 @@ cd smash/smash_code
 mkdir build
 cd build
 cmake .. -DPythia_CONFIG_EXECUTABLE=${PYTHIA8DIR}/bin/pythia8-config
-number_of_cores=`nproc --all`
-number_of_cores_to_compile=$(( ${number_of_cores} > 20 ? 20 : ${number_of_cores} ))
-echo "Compiling SMASH using ${number_of_cores_to_compile} cores."
-make -j${number_of_cores} smash_shared
+num_cores=${1:-1}
+echo "Compiling SMASH using ${num_cores} cores."
+make -j${num_cores} smash_shared
+
