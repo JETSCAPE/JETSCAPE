@@ -1,0 +1,35 @@
+#running over points for pp collisions
+
+import os
+import multiprocessing as mp
+from functions import *
+
+totdir = sys.argv[1]
+dirs = getDirs(totdir)
+
+# selecting range to run over
+start = 0
+finish = len(dirs)
+dirs = intSort(dirs)
+
+if len(sys.argv) == 4:
+    start = int(sys.argv[2])
+    finish = int(sys.argv[3]) + 1
+
+print("From " + str(start) + " to " + str(finish) + " in " + totdir + ":")
+
+# Changing to build directory
+os.chdir("/scratch/user/cameron.parker/projects/JETSCAPE/build")
+pool = mp.Pool(48)
+xmls = []
+
+# looping over points
+for dir in dirs[start:finish]:
+    print("Running " + dir + ":")
+    pointdir = totdir+"points/"+dir
+    xmls.append(pointdir+"/config.xml")
+
+
+pool.map(runxml, xmls)
+pool.close()
+    
