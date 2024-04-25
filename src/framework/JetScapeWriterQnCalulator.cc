@@ -157,10 +157,10 @@ template <class T> void JetScapeWriterQnVectorStream<T>::WriteEvent() {
               mean_y_err = 0.0;
           }
 
-          mean_pT = Qvec_tem_ptr->get_pt(ipt);
-          mean_pT_err = 0.0;
-          mean_y = Qvec_tem_ptr->get_y(iy);
-          mean_y_err = 0.0;
+          //mean_pT = Qvec_tem_ptr->get_pt(ipt);
+          //mean_pT_err = 0.0;
+          //mean_y = Qvec_tem_ptr->get_y(iy);
+          //mean_y_err = 0.0;
           
           output_file<<mean_pT<<" "<<mean_pT_err<<" "
                      <<mean_y <<" "<<mean_y_err<<" "
@@ -221,7 +221,7 @@ template <class T> void JetScapeWriterQnVectorStream<T>::Init() {
         // will always be "v<number>"
         << "\t" << "JETSCAPE_FINAL_STATE\t" << "QnVector"
         << "\t" << "\n"  
-        << "\t" << "# PID of Charged particle 9999 \t" << " y(Charged) = \psudorapidity \t y(PID) = \rapidity"
+        << "\t" << "# PID of Charged particle 9999 \t" << " y(Charged) = psudorapidity \t y(PID) = rapidity"
         << "\t" << "\n"  
         << "#"
         << "\t" << "pid"
