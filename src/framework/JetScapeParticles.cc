@@ -553,8 +553,8 @@ Qvector::Qvector(double pt_min, double pt_max, int npt, double y_min, double y_m
   dy_ = (y_max - y_min) / ny ;
 	hist_.resize(npt, std::vector<std::vector<double>>(ny, std::vector<double>(ncols_, 0.0)));
 	gridpT_.reserve(npt); 
-  gridy_.reserve(ny);
-  total_num_ = 0;
+        gridy_.reserve(ny);
+        total_num_ = 0;
         
 	for (int i = 0; i < npt; ++i) {
             gridpT_.push_back(pt_min_ + (i+0.5) * dpt_);
@@ -566,8 +566,8 @@ Qvector::Qvector(double pt_min, double pt_max, int npt, double y_min, double y_m
 }
 
 void Qvector::fill(double pt_in, double y_in, int col_in, double val) {
-        int idx = int((pt_in - pt_min_) / dpt_);
-        int idy = int((y_in - y_min_) / dy_);
+        int idx = static_cast<int>(floor((pt_in - pt_min_) / dpt_));
+        int idy = static_cast<int>(floor((y_in - y_min_) / dy_));
         if (idx >= 0 && idx < npt_ && idy >= 0 && idy < ny_ && col_in >= 0 && col_in < ncols_) {
             hist_[idx][idy][col_in] += val;
             if (col_in == 6) total_num_++;
