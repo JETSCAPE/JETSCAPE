@@ -203,7 +203,7 @@ int main(int argc, char* argv[]){
             }
         }
 
-        if(tracks < 5 || totalEcheck < 15) continue;
+        //if(tracks < 5 || totalEcheck < 15) continue;
         Eventskept++;
 
         //mult filling
