@@ -215,7 +215,7 @@ void PythiaGun::Exec() {
           continue;
         } else if(vir_factor < 0. && (particle.pAbs() < softMomentumCutoff)) {
           continue;
-        } else if(vir_factor < rounding_error) {
+        } else if(std::abs(vir_factor) < rounding_error) {
           JSWARN << "vir_factor should not be zero.";
           exit(1);
         }
