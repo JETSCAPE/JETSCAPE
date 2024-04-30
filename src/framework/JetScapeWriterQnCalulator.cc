@@ -117,6 +117,7 @@ template <class T> void JetScapeWriterQnVectorStream<T>::WriteEvent() {
       if (select_pid == 9999) {
         if (std::abs(charged) > 0) {
           Qvec_tem_ptr->fill_particle(particle);
+          num_pid = num_pid + 1;
         }
       } 
       else if (particle->pid() == select_pid) {
@@ -133,13 +134,12 @@ template <class T> void JetScapeWriterQnVectorStream<T>::WriteEvent() {
     for (int ipt = 0; ipt < Qvec_tem_ptr->get_npt(); ipt++) {
       for (int iy = 0; iy < Qvec_tem_ptr->get_ny(); iy++) {
           output_file << Qvec_tem_ptr->get_pdgcode()<<" ";
-          double total_dN = Qvec_tem_ptr->get_value(ipt, iy, 6);
-          double total_dN_mean = Qvec_tem_ptr->get_value(ipt, iy, 6)/oversamplenevent;
+          double total_dN = Qvec_tem_ptr->get_value(ipt, iy, 5);
+          double total_dN_mean = Qvec_tem_ptr->get_value(ipt, iy, 5)/oversamplenevent;
           double total_dN_mean_err = sqrt(total_dN_mean/oversamplenevent);
           
-          double total_ET = Qvec_tem_ptr->get_value(ipt, iy, 4);
-          double total_ET_mean = Qvec_tem_ptr->get_value(ipt, iy, 4)/oversamplenevent;
-          double total_ET_err = sqrt(Qvec_tem_ptr->get_value(ipt, iy, 5)/oversamplenevent - total_ET_mean*total_ET_mean )/sqrt(oversamplenevent);
+          double total_ET_mean ;
+          total_ET_mean = Qvec_tem_ptr->get_value(ipt, iy, 4)/oversamplenevent;
           
           double mean_pT, mean_pT_err;
           double mean_y, mean_y_err;
@@ -148,7 +148,7 @@ template <class T> void JetScapeWriterQnVectorStream<T>::WriteEvent() {
               mean_pT_err = sqrt(Qvec_tem_ptr->get_value(ipt,iy,1)/total_dN - mean_pT*mean_pT)/sqrt(total_dN);
               mean_y = Qvec_tem_ptr->get_value(ipt,iy,2)/total_dN;
               mean_y_err = sqrt(Qvec_tem_ptr->get_value(ipt,iy,3)/total_dN - mean_y*mean_y)/sqrt(total_dN);
-
+              
           }
           else{
               mean_pT = Qvec_tem_ptr->get_pt(ipt);
@@ -164,7 +164,7 @@ template <class T> void JetScapeWriterQnVectorStream<T>::WriteEvent() {
           
           output_file<<mean_pT<<" "<<mean_pT_err<<" "
                      <<mean_y <<" "<<mean_y_err<<" "
-                     <<total_ET_mean<<" "<<total_ET_err<<" "
+                     <<total_ET_mean<<" "
                      <<total_dN_mean/(dy*dpt)<<" "<<total_dN_mean_err/(dy*dpt)<<" ";
           for(int iorder = 1; iorder < norder_;iorder++){
              double Qn_real_mean = 0.0;
@@ -172,11 +172,11 @@ template <class T> void JetScapeWriterQnVectorStream<T>::WriteEvent() {
              double Qn_real_err = 0.0;
              double Qn_imag_err = 0.0;
              if(total_dN_mean>0.0){
-                 Qn_real_mean = Qvec_tem_ptr->get_value(ipt,iy,4*iorder+4)/total_dN; 
-                 Qn_imag_mean = Qvec_tem_ptr->get_value(ipt,iy,4*iorder+5)/total_dN;
-                 Qn_real_err = sqrt(Qvec_tem_ptr->get_value(ipt,iy,4*iorder+6)/total_dN - Qn_real_mean*Qn_real_mean)/sqrt(total_dN); 
+                 Qn_real_mean = Qvec_tem_ptr->get_value(ipt,iy,4*iorder+3)/total_dN; 
+                 Qn_imag_mean = Qvec_tem_ptr->get_value(ipt,iy,4*iorder+4)/total_dN;
+                 Qn_real_err = sqrt(Qvec_tem_ptr->get_value(ipt,iy,4*iorder+5)/total_dN - Qn_real_mean*Qn_real_mean)/sqrt(total_dN); 
                  if (std::isnan(Qn_real_err)) Qn_real_err = 0.0;
-                 Qn_imag_err = sqrt(Qvec_tem_ptr->get_value(ipt,iy,4*iorder+7)/total_dN - Qn_imag_mean*Qn_imag_mean)/sqrt(total_dN);  
+                 Qn_imag_err = sqrt(Qvec_tem_ptr->get_value(ipt,iy,4*iorder+6)/total_dN - Qn_imag_mean*Qn_imag_mean)/sqrt(total_dN);  
                  if (std::isnan(Qn_imag_err)) Qn_imag_err = 0.0;
              }
              output_file<<Qn_real_mean<<" "<<Qn_real_err<<" "
@@ -230,7 +230,6 @@ template <class T> void JetScapeWriterQnVectorStream<T>::Init() {
         << "\t" << "y\t"
         << "\t" << "y_err\t"
         << "\t" << "ET\t"
-        << "\t" << "ET_err\t"
         << "\t" << "dNdpTdy\t"
         << "\t" << "dNdpTdy_err\t"
         << "\t" << "vncos"
@@ -264,7 +263,7 @@ template <class T> void JetScapeWriterQnVectorStream<T>::Close() {
     // Write xsec output at the end.
     // NOTE: Needs consistent "\t" between all entries to simplify parsing later.
   output_file << "#"
-      << "\t" << "Event\t" << GetCurrentEvent() + 1  <<  " End \n";
+      << "\t" << "Event\t" << GetCurrentEvent()+1   <<  " End \n";
     output_file.close();
 }
 
