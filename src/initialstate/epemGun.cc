@@ -152,7 +152,7 @@ void epemGun::Exec() {
   double vir_factor = GetXMLElementDouble({"Eloss", "Matter", "vir_factor"});
   bool initial_virtuality_pT = GetXMLElementInt({"Eloss", "Matter", "initial_virtuality_pT"});
   if (initial_virtuality_pT) {
-    JSINFO << "initial_virtuality_pT is set to 1, epemGun will use 0 in all cases";
+    JSINFO << "vir_factor set to use pT, will not affect epemGun";
   }
 
   bool flag62 = false;
