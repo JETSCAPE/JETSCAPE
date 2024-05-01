@@ -150,6 +150,10 @@ void epemGun::Exec() {
   VERBOSE(8) << "Current Event #" << GetCurrentEvent();
   //Reading vir_factor from xml for MATTER
   double vir_factor = GetXMLElementDouble({"Eloss", "Matter", "vir_factor"});
+  bool initial_virtuality_pT = GetXMLElementInt({"Eloss", "Matter", "initial_virtuality_pT"});
+  if (initial_virtuality_pT) {
+    JSINFO << "initial_virtuality_pT is set to 1, epemGun will use 0 in all cases";
+  }
 
   bool flag62 = false;
   vector<Pythia8::Particle> p62;
@@ -246,7 +250,7 @@ void epemGun::Exec() {
       /*if(std::abs(p62[pass].id()) < 4){
         mass = 0.;
       }*/
-      double max_vir = (0.25*eCM*eCM - mass*mass) * std::abs(vir_factor);
+      double max_vir = (0.25 * eCM * eCM - mass*mass) * vir_factor;
       double min_vir = (0.5 * QS * QS ) * (1.0 + std::sqrt(1.0 + 4.0 * mass*mass / (QS*QS)));
 
       double tQ2 = 0.;

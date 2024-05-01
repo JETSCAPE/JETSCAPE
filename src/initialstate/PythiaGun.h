@@ -31,6 +31,7 @@ private:
   double pTHatMax;
   double eCM;
   double vir_factor;
+  bool initial_virtuality_pT;
   double softMomentumCutoff;
   bool FSR_on;
   bool softQCD;

@@ -136,7 +136,8 @@
       <matter_on> 1 </matter_on>
       <Q0> 2.0 </Q0>
       <T0> 0.16 </T0>
-      <!--if negative vir_factor: parton 3-momentum of hard parton is used to compute initial virtuality in shower; if positive: transverse momentum of parton is used-->
+      <!--if initial_virtuality_pT == 1: pT of hard parton is used to compute initial virtuality in shower, initial_virtuality_pT == 0: use parton 3-momentum-->
+      <initial_virtuality_pT> 1 </initial_virtuality_pT>
       <vir_factor> 0.25 </vir_factor>
       <in_vac> 1 </in_vac>
       <recoil_on> 0 </recoil_on>
