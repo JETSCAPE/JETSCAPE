@@ -16,7 +16,7 @@
 // Based on JetScapeWriterStream, JetScapeWriterFinalStateStream
 // author: Xiang-Yu Wu <xiangyu.wu2@mail.mcgill.ca>
 
-#include "JetScapeWriterQnCalulator.h"
+#include "JetScapeWriterQnCalculator.h"
 #include "JetScapeLogger.h"
 #include "JetScapeXML.h"
 
