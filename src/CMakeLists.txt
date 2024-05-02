@@ -9,7 +9,6 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "./lib")
 # framework
 FILE(GLOB frameworksources framework/*.cc)
 set (SOURCES  ${SOURCES}  ${frameworksources} )
-
 ## Take care of options
 ## Note that cmake NOT needs the "" to deal with empty variables
 # if(NOT "${ZLIB_FOUND}")

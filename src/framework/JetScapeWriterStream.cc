@@ -170,6 +170,9 @@ template <class T> void JetScapeWriterStream<T>::Write(weak_ptr<Hadron> h) {
   }
 }
 
+
+
+
 template class JetScapeWriterStream<ofstream>;
 
 #ifdef USE_GZIP
