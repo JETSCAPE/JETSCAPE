@@ -4,13 +4,13 @@ on:
   pull_request:
     branches:
       - main
-      - JETSCAPE-3.6.2-RC
+      - JETSCAPE-3.6.4-RC
       - brick_matter_lbt
       - latessa/dockerImage
   push:
     branches:
       - main
-      - JETSCAPE-3.6.2-RC
+      - JETSCAPE-3.6.4-RC
       - brick_matter_lbt
       - latessa/dockerImage
 
