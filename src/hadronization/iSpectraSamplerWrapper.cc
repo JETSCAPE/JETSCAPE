@@ -259,6 +259,5 @@ int iSpectraSamplerWrapper::getSurfCellVector() {
     FOsurf_array.push_back(iSS_surf_cell);
   }
   iSpectraSampler_ptr_->getSurfaceCellFromJETSCAPE(FOsurf_array);
-  ClearHydroHyperSurface();
   return(nCells);
 }
