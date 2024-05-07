@@ -174,7 +174,6 @@ template <class T> void JetScapeWriterQnVectorStream<T>::Init() {
     nrap_ = JetScapeXML::Instance()->GetElementInt({"QnVector_Nrap"});
     norder_ = JetScapeXML::Instance()->GetElementInt({"QnVector_Norder"});
     
-    //get_ptclist();
     output_file.open(GetOutputFileName().c_str());
     // NOTE: This header will only be printed once at the beginning on the file.
     output_file << "#"
