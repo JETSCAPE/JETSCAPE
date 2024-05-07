@@ -396,6 +396,9 @@
       <!-- hadron species list  0: PDG 2005; 1: UrQMD; 2: SMASH -->
       <afterburner_type>1</afterburner_type>
 
+      <include_deltaf_shear>1</include_deltaf_shear>
+      <include_deltaf_bulk>1</include_deltaf_bulk>
+      <deltaf_type>20</deltaf_type>
       <number_of_repeated_sampling>1</number_of_repeated_sampling>
       <Perform_resonance_decays>1</Perform_resonance_decays>
     </iSS>
