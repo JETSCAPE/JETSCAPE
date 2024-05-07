@@ -43,44 +43,6 @@ template <class T> JetScapeWriterQnVectorStream<T>::~JetScapeWriterQnVectorStrea
 
 
 
-template <class T> void JetScapeWriterQnVectorStream<T>::get_ptclist(){
-    std::string chargedpdg_table = JetScapeXML::Instance()->GetElementText({"Charged_table"});
-    std::ifstream fin(chargedpdg_table);
-    char buf[256];
-    int i =0;
-    if(fin.is_open() )
-    {   
-        int pdgid=0,charged = 0;
-
-        while(fin.good())
-	  {
-	    fin>>pdgid>>charged;
-	    if (fin.eof()) break;
-            chpdg_[pdgid] = charged;
-	  }
-
-	   fin.close();
-    }
-    else{
-
-        std::cerr<<"#Can't open chargedpdg file!\n";
-        exit(0);
-    }
-
-}
-
-
-template <class T> int JetScapeWriterQnVectorStream<T>::get_ch(const int pid){
-    int charged = 0;
-
-    auto it = chpdg_.find(pid);
-    if(it != chpdg_.end()){
-        return chpdg_[pid];
-    }
-    else{
-        return 0;
-    }
-}
 
 
 
@@ -111,22 +73,21 @@ template <class T> void JetScapeWriterQnVectorStream<T>::WriteEvent() {
     std::shared_ptr<Qvector> Qvec_tem_ptr = std::make_shared<Qvector>(pTmin_,pTmax_,npT_,rapmin_,rapmax_,nrap_,norder_,select_pid,rapidity_kind);
     int num_pid = 0;
     for (const auto particle : particles) {
-      //auto particle = p.get();
-      int charged = get_ch(particle->pid());
-    
+
+      smash::PdgCode pdgcode_tem(std::to_string(particle->pid()));
+              
       if (select_pid == 9999) {
-        if (std::abs(charged) > 0) {
+        if (std::abs(pdgcode_tem.charge()) > 0) {
           Qvec_tem_ptr->fill_particle(particle);
           num_pid = num_pid + 1;
         }
       } 
-      else if (particle->pid() == select_pid) {
+      else if (pdgcode_tem.get_decimal() == select_pid) {
         Qvec_tem_ptr->fill_particle(particle);
         num_pid = num_pid + 1;
 
       }
     }
-    std::cout<<select_pid <<" "<< num_pid<<" "<<Qvec_tem_ptr->get_total_num()<< std::endl;
 
     double dpt = Qvec_tem_ptr->get_dpt();
     double dy = Qvec_tem_ptr->get_dy();
@@ -213,7 +174,7 @@ template <class T> void JetScapeWriterQnVectorStream<T>::Init() {
     nrap_ = JetScapeXML::Instance()->GetElementInt({"QnVector_Nrap"});
     norder_ = JetScapeXML::Instance()->GetElementInt({"QnVector_Norder"});
     
-    get_ptclist();
+    //get_ptclist();
     output_file.open(GetOutputFileName().c_str());
     // NOTE: This header will only be printed once at the beginning on the file.
     output_file << "#"
@@ -263,7 +224,7 @@ template <class T> void JetScapeWriterQnVectorStream<T>::Close() {
     // Write xsec output at the end.
     // NOTE: Needs consistent "\t" between all entries to simplify parsing later.
   output_file << "#"
-      << "\t" << "Event\t" << GetCurrentEvent()+1   <<  " End \n";
+      << "\t" << "Event\t" << GetCurrentEvent()   <<  " End \n";
     output_file.close();
 }
 

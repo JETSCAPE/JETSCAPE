@@ -38,7 +38,6 @@
   <QnVector_rapmax>4</QnVector_rapmax>
   <QnVector_Nrap>80</QnVector_Nrap>
   <QnVector_Norder>7</QnVector_Norder>
-  <Charged_table>./chargedpdg_table</Charged_table>
   <write_pthat> 0 </write_pthat>
 
   <!--  Random Settings. For now, just a global  seed. -->
