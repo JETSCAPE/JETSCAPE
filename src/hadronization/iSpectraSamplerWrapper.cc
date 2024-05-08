@@ -58,6 +58,13 @@ void iSpectraSamplerWrapper::InitTask() {
   int afterburner_type = (
       GetXMLElementInt({"SoftParticlization", "iSS", "afterburner_type"}));
 
+  int include_deltaf_shear = (
+      GetXMLElementInt({"SoftParticlization", "iSS", "include_deltaf_shear"}));
+  int include_deltaf_bulk = (
+      GetXMLElementInt({"SoftParticlization", "iSS", "include_deltaf_bulk"}));
+  int deltaf_type = (
+      GetXMLElementInt({"SoftParticlization", "iSS", "deltaf_type"}));
+
   if (!boost_invariance) {
     hydro_mode = 2;
   }
@@ -89,7 +96,11 @@ void iSpectraSamplerWrapper::InitTask() {
   iSpectraSampler_ptr_->paraRdr_ptr->setVal("turn_on_rhob", 0);
   iSpectraSampler_ptr_->paraRdr_ptr->setVal("turn_on_diff", 0);
 
-
+  iSpectraSampler_ptr_->paraRdr_ptr->setVal("include_deltaf_shear",
+                                            include_deltaf_shear);
+  iSpectraSampler_ptr_->paraRdr_ptr->setVal("include_deltaf_bulk",
+                                            include_deltaf_bulk);
+  iSpectraSampler_ptr_->paraRdr_ptr->setVal("bulk_deltaf_kind", deltaf_type);
   iSpectraSampler_ptr_->paraRdr_ptr->setVal("restrict_deltaf", 0);
   iSpectraSampler_ptr_->paraRdr_ptr->setVal("deltaf_max_ratio", 1.0);
   iSpectraSampler_ptr_->paraRdr_ptr->setVal("f0_is_not_small", 1);
