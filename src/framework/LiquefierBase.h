@@ -53,6 +53,8 @@ private:
   const int miss_stat;
   const int neg_stat;
   const Jetscape::real hydro_source_abs_err;
+  bool threshold_energy_switch;
+  double e_threshold;
 
 public:
   LiquefierBase();
