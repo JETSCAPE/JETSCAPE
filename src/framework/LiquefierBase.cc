@@ -13,6 +13,7 @@
  * See COPYING for details.
  ******************************************************************************/
 #include "LiquefierBase.h"
+#include "JetScapeXML.h"
 #include <math.h>
 
 namespace Jetscape {
@@ -91,7 +92,7 @@ void LiquefierBase::filter_partons(std::vector<Parton> &pOut) {
   // threshold_energy_switch = 0, use |e_threshold|*T
   threshold_energy_switch = JetScapeXML::Instance()->GetElementInt({"Liquefier", "threshold_energy_switch"});
   if (threshold_energy_switch != 0 && threshold_energy_switch != 1) {
-    JSERROR << "threshold_energy_switch should be 0 or 1, but it is " << threshold_energy_switch;
+    JSWARN << "threshold_energy_switch should be 0 or 1, but it is " << threshold_energy_switch;
     exit(1);
   }
   e_threshold = JetScapeXML::Instance()->GetElementDouble({"Liquefier", "e_threshold"}); // GeV
