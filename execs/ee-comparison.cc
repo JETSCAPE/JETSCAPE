@@ -46,27 +46,6 @@ int main(int argc, char* argv[]){
     string pointsdir = input+"points/";
     vector<string> directories = getComparisonDirs(argc, argv);
 
-    /*for(int i = 1; i < argc; i++){
-        chdir(pointsdir.c_str());
-        vector<string> tempdirs = get_directories(".");
-
-        //removing the results dir
-        int rmindex = 0;
-        for(int j = 0; j < tempdirs.size(); j++){
-            tempdirs[j].erase(0,2);
-            if(tempdirs[j].find("QVir_Analysis") != string::npos) rmindex = j;
-        }
-        tempdirs.erase(tempdirs.begin() + rmindex); 
-
-        vector<string> sorteddirs = doubleSort(tempdirs); //sorting for consistency
-        for(int j = 0; j < sorteddirs.size(); j++){
-            string temp = pointsdir + sorteddirs[j];
-            sorteddirs[j] = temp;
-        }
-        directories.insert(directories.end(), sorteddirs.begin(), sorteddirs.end()); //inserting into the end of total vector
-    }
-    chdir("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/build");*/
-
     // Create the ROOT application environment.
     TApplication theApp("hist", &argc, argv);
 
@@ -78,21 +57,13 @@ int main(int argc, char* argv[]){
     vector<vector<double>> kaonPredicts;
     vector<vector<double>> protonPredicts;
     vector<vector<double>> jetPredicts;
-
-    //dijet comparison
-    TMultiGraph* jets = new TMultiGraph("Jet Spectra","Jet Spectra");
-    TGraphErrors* jetscapejets[directories.size()];
-    TFile jet_file("/scratch/user/cameron.parker/projects/JETSCAPE/data/ALEPH-jets.root");
-    TDirectory* jetdir = (TDirectory*)jet_file.Get("LeadingDiJetEnergy");
-    TGraphErrors* jetData = (TGraphErrors*)jetdir->Get("Graph1D_y1");
-    jetData->SetMarkerStyle(kFullDotLarge);
-    jets->Add(jetData,"ap");
+    vector<vector<double>> dijetPredicts;
 
     //grabbing graphs from each jetscape file
     int color = 1;
     for(int i = 0; i < directories.size(); i++){
         //temp vectors
-        vector<double> spectemp, thrusttemp, multtemp, piontemp, kaontemp, protontemp, jettemp;
+        vector<double> spectemp, thrusttemp, multtemp, piontemp, kaontemp, protontemp, jettemp, dijettemp;
 
         //reading graph
         string filename = directories[i] + "/totals.root";
@@ -104,7 +75,8 @@ int main(int argc, char* argv[]){
         TH1D* tempHistPionsP = (TH1D*)file.Get("pions;1"); cout << "Got pions. ";
         TH1D* tempHistKaonsP = (TH1D*)file.Get("kaons;1"); cout << "Got kaons. ";
         TH1D* tempHistProtonsP = (TH1D*)file.Get("protons;1"); cout << "Got protons. ";
-        TH1D* tempHistJetsP = (TH1D*)file.Get("jets;1"); cout << "Got jets. " << endl;
+        TH1D* tempHistJetsP = (TH1D*)file.Get("jets;1"); cout << "Got jets. ";
+        TH1D* tempHistDiJetsP = (TH1D*)file.Get("dijets;1"); cout << "Got dijets. " << endl;
 
         //adding to temp vectors, with conditions for skipped bins in identified hadrons
         for(int j = 0; j < tempHistHadronSpecP->GetNbinsX(); j++) spectemp.push_back(tempHistHadronSpecP->GetBinContent(j+1));
@@ -114,6 +86,7 @@ int main(int argc, char* argv[]){
         for(int j = 0; j < tempHistKaonsP->GetNbinsX(); j++) if(tempHistKaonsP->GetBinContent(j+1)>0) kaontemp.push_back(tempHistKaonsP->GetBinContent(j+1));
         for(int j = 0; j < tempHistProtonsP->GetNbinsX(); j++) if(tempHistProtonsP->GetBinContent(j+1)>0) protontemp.push_back(tempHistProtonsP->GetBinContent(j+1));
         for(int j = 0; j < tempHistJetsP->GetNbinsX(); j++) if(tempHistJetsP->GetBinContent(j+1)>0) jettemp.push_back(tempHistJetsP->GetBinContent(j+1));
+        for(int j = 0; j < tempHistDiJetsP->GetNbinsX(); j++) if(tempHistDiJetsP->GetBinContent(j+1)>0) dijettemp.push_back(tempHistDiJetsP->GetBinContent(j+1));
 
         //adding to full vectors
         specPredicts.push_back(spectemp);
@@ -123,11 +96,7 @@ int main(int argc, char* argv[]){
         kaonPredicts.push_back(kaontemp);
         protonPredicts.push_back(protontemp);
         jetPredicts.push_back(jettemp);
-
-        //dijet plotting
-        TH1D* tempHistDiJets = (TH1D*)file.Get("dijets;1");
-        jetscapejets[i] = (TGraphErrors*)histToGraph(tempHistDiJets).Clone();
-        jets->Add(jetscapejets[i],"lX");
+        dijetPredicts.push_back(dijettemp);
 
         file.Close();
     }
@@ -141,14 +110,7 @@ int main(int argc, char* argv[]){
     makeDatFile(kaonPredicts, "kaon-xp", "# Version 1.0\n# Kaons for parameters.txt");
     makeDatFile(protonPredicts, "proton-xp", "# Version 1.0\n# Protons for parameters.txt");
     makeDatFile(jetPredicts, "jet", "# Version 1.0\n# Jets for parameters.txt");
-    
-    //dijet drawing
-    TCanvas* cJet = new TCanvas("c2","c2",1400,1200);
-    cJet->cd();
-    cJet->SetLeftMargin(0.15);
-    cJet->SetLogy();
-    jets->Draw();
-    cJet->Print("QVir_Analysis/Jet Comparison.png");
+    makeDatFile(dijetPredicts, "dijet", "# Version 1.0\n# Dijets for parameters.txt");
 
     return 0;
 }

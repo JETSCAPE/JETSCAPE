@@ -1,15 +1,17 @@
-name: build+regression test pp
+name: build+regression test brick matter lbt
 
 on:
   pull_request:
     branches:
       - main
       - JETSCAPE-3.6.2-RC
+      - brick_matter_lbt
       - latessa/dockerImage
   push:
     branches:
       - main
       - JETSCAPE-3.6.2-RC
+      - brick_matter_lbt
       - latessa/dockerImage
 
 env:
@@ -17,20 +19,25 @@ env:
 
 jobs:
   build:
-    name: pp+PbPb
+    name: brick_matter_lbt
     runs-on: ubuntu-latest
-    
+
     container:
       image: jetscape/base:stable
       options: --user root
-      
+
     steps:
-      
+
     - name: Checkout Repository
       uses: actions/checkout@v4
       with:
         path: ${{ github.event.repository.name }}
-      
+
+    - name: Download Lbt Tables
+      run: |
+        cd ${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages
+        ./get_lbtTab.sh
+
     - name: Build Application
       run: |
         cd ${GITHUB_WORKSPACE}/${REPO_NAME}
@@ -45,7 +52,6 @@ jobs:
         repository: JETSCAPE/TEST-EXAMPLES
         ref: main
         path: TEST-EXAMPLES
-      
-    - name: Run pp tests
-      run: ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/runTest.sh -j ${GITHUB_WORKSPACE}/${REPO_NAME} -a ${GITHUB_WORKSPACE}/TEST-EXAMPLES -c ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/pp/config/jetscapeTestConfig.yaml -o ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/pp/output/new -r ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/pp/output/latest
 
+    - name: Run Brick Matter Lbt tests
+      run: ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/brick_matter_lbt/runBrickMatterLbtTest.sh -j ${GITHUB_WORKSPACE}/${REPO_NAME} -a ${GITHUB_WORKSPACE}/TEST-EXAMPLES -c ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/brick_matter_lbt/config/jetscape_user.xml -o ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/brick_matter_lbt/output/new -r ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/brick_matter_lbt/output/latest
