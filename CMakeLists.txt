@@ -94,7 +94,7 @@ endif (USE_SMASH)
 ###############################
 set(Boost_USE_MULTITHREADED FALSE)
 message("Compiler and Linker flags ...")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -pipe -Wall -std=c++17 -lboost_system -pthread -ldl")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -pipe -Wall -std=c++11 -lboost_system -pthread -ldl")
 ## can turn off some warnings
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-reorder -Wno-unused-variable ")
 ## Then set the build type specific options. These will be automatically appended.
@@ -248,7 +248,7 @@ install(
 
 # Find and use Boost.
 message("Looking for Boost ...")
-find_package(Boost 1.50 REQUIRED COMPONENTS filesystem program_options system)
+find_package(Boost 1.60 REQUIRED COMPONENTS filesystem program_options system)
 Message(STATUS "Boost Include dirs : " ${Boost_INCLUDE_DIRS})
 ## boost needs special treatment. For reasons.
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
@@ -331,7 +331,7 @@ mark_as_advanced(FASTJET_FOUND FASTJET_INCLUDE_DIR FASTJET_LIBRARY)
 set(FASTJET_INCLUDE_DIRS ${FASTJET_INCLUDE_DIR})
 set(FASTJET_LIBRARIES ${FASTJET_LIBRARY})
 get_filename_component(FASTJET_LIBRARY_DIRS ${FASTJET_LIBRARY} PATH)
-set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -I/scratch/user/cameron.parker/fastjet-install/include -Wl,-rpath,/scratch/user/cameron.parker/fastjet-install/lib -L/scratch/user/cameron.parker/fastjet-install/lib -lfastjettools -lfastjet -lm -lfastjetplugins -lsiscone_spherical -lsiscone" )
+set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -I/home/rjfgroup/cameron.parker/dependencies/fastjet/include -Wl,-rpath,/home/rjfgroup/cameron.parker/dependencies/fastjet/lib -L/home/rjfgroup/cameron.parker/dependencies/fastjet/lib -lfastjettools -lfastjet -lm -lfastjetplugins -lsiscone_spherical -lsiscone" )
 
 ###########################
 ### Framework Includes  ###
