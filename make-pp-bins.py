@@ -104,8 +104,8 @@ def makexml(bound, parameters, baseDir, xmltemplate, ECM):
         filename = ogfile
 
     # link QS to QO
-    if 'Q0' in parameters.columns:
-        parameters['QS'] = parameters.loc[:, 'Q0']
+    if 'QSfactor' in parameters.columns:
+        parameters['QS'] = (2*parameters.lambdaQCD+0.05) + (parameters.Q0-(2*parameters.lambdaQCD+0.05))*parameters.QSfactor
 
     # building lines for xml file
     lowerLine = "      <pTHatMin>" + str(bound[0]) + "</pTHatMin>\n"
