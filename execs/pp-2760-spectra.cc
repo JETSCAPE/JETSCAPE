@@ -101,7 +101,7 @@ int main(int argc, char* argv[]){
     int NpTSingleHadronBin = sizeof(SingleHadronpTBin)/sizeof(SingleHadronpTBin[0])-1;
 
     //ID Had variables
-    TFile idhadron_file("/scratch/user/cameron.parker/projects/JETSCAPE/data/LHC-ID-hads.root");
+    TFile idhadron_file("/data/rjfgroup/rjf01/cameron.parker/data/LHC-ID-hads.root");
     TDirectory* piondir = (TDirectory*)idhadron_file.Get("Table 1");
     TH1D* piondata = (TH1D*) piondir->Get("Hist1D_y3");
     TGraphErrors* piongraph = (TGraphErrors*) piondir->Get("Graph1D_y3");
@@ -495,7 +495,7 @@ int main(int argc, char* argv[]){
     //hadrons
     //hadron data graph
     TMultiGraph *GEHadronTotal = new TMultiGraph();
-    TFile hadron_file("/scratch/user/cameron.parker/projects/JETSCAPE/data/HadronData.root");
+    TFile hadron_file("/data/rjfgroup/rjf01/cameron.parker/data/HadronData.root");
     TDirectory* hadrondir = (TDirectory*)hadron_file.Get("Table 1");
     TGraphErrors* hadronData = (TGraphErrors*) hadrondir->Get("Graph1D_y1");
     TH1D* hadronDataHist = (TH1D*)hadrondir->Get("Hist1D_y1");
@@ -557,7 +557,7 @@ int main(int argc, char* argv[]){
     //jets
     //jet data graph
     TMultiGraph *GEJetTotal = new TMultiGraph();
-    TFile* jet_file = new TFile("/scratch/user/cameron.parker/projects/JETSCAPE/data/JetData.root");
+    TFile* jet_file = new TFile("/data/rjfgroup/rjf01/cameron.parker/data/JetData.root");
     TDirectory* jetdir = (TDirectory*)jet_file->Get("Table 4");
     TGraphErrors* jetData = (TGraphErrors*) jetdir->Get("Graph1D_y2");
     HistFinalJet->Scale(1e6); //data listed in mb

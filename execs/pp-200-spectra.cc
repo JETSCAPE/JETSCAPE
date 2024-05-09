@@ -107,7 +107,7 @@ int main(int argc, char* argv[]){
     fastjet::JetDefinition jetDef(& cdfcone);
 
     //Variables for single pion spectrum
-    TFile idhadron_file("/scratch/user/cameron.parker/projects/JETSCAPE/data/PHENIX-ID-hads.root");
+    TFile idhadron_file("/data/rjfgroup/rjf01/cameron.parker/data/PHENIX-ID-hads.root");
     TDirectory* piondir = (TDirectory*)idhadron_file.Get("Table 1");
     TH1D* piondata = (TH1D*) piondir->Get("Hist1D_y1");
     TGraphErrors* piongraph = (TGraphErrors*) piondir->Get("Graph1D_y1");
@@ -136,7 +136,7 @@ int main(int argc, char* argv[]){
     TH1D *HistTotalHads = new TH1D("Pi0 Spectrum", "Pi0 Spectrum pT", NpThadBin, hadpTBin);
 
     //Jet declarations
-    TFile jetFile("/scratch/user/cameron.parker/projects/JETSCAPE/data/STAR-jets.root");
+    TFile jetFile("/data/rjfgroup/rjf01/cameron.parker/data/STAR-jets.root");
     //TDirectory* jetDir = (TDirectory*)jetFile.Get("Figure 2 - Combined HT");
     TH1D* jetdata = (TH1D*) jetFile.Get("hist");
     TGraphErrors* jetgraph = (TGraphErrors*) jetFile.Get("jets");

@@ -77,7 +77,7 @@ int main(int argc, char* argv[]){
     double Ecm = 91.2;
     
     //jet
-    TFile jetroot("/scratch/user/cameron.parker/projects/JETSCAPE/data/ALEPH-jets.root");
+    TFile jetroot("/data/rjfgroup/rjf01/cameron.parker/data/ALEPH-jets.root");
     TDirectory* jetdir = (TDirectory*)jetroot.Get("InclusiveJetEnergy"); TH1D* jetdata = (TH1D*)jetdir->Get("Hist1D_y1");
     TGraphErrors* jetgraph = (TGraphErrors*) jetdir->Get("Graph1D_y1");
     double JetRadius = 0.4;
@@ -110,7 +110,7 @@ int main(int argc, char* argv[]){
     int thrustCount = 0;
 
     //variables for xe
-    TFile xeroot( "/scratch/user/cameron.parker/projects/JETSCAPE/data/xedata.root");
+    TFile xeroot( "/data/rjfgroup/rjf01/cameron.parker/data/xedata.root");
     TDirectory* xedir = (TDirectory*)xeroot.Get("Table 1"); TH1D* xedata = (TH1D*)xedir->Get("Hist1D_y1");
     TGraphErrors* xegraph = (TGraphErrors*)xedir->Get("Graph1D_y1");
     
@@ -313,7 +313,7 @@ int main(int argc, char* argv[]){
     xeHist->Write("xe");
 
     //ratio plots for comparison
-    TFile alephfile("/scratch/user/cameron.parker/projects/JETSCAPE/data/ALEPH.root");
+    TFile alephfile("/data/rjfgroup/rjf01/cameron.parker/data/ALEPH.root");
     TDirectory* thrustdir = (TDirectory*)alephfile.Get("Table 3");
     TDirectory* multdir = (TDirectory*)alephfile.Get("Table 18");
     TDirectory* xpdir = (TDirectory*)alephfile.Get("Table 9");
