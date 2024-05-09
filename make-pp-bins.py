@@ -8,6 +8,8 @@ from functions import *
 import pandas as pd
 from operator import itemgetter
 import time
+import htcondor
+import classad
 
 # option reading
 system = "LHC"
@@ -73,11 +75,24 @@ for i, option in enumerate(sys.argv):
         
 
 # date and file initiation
-totaldir = "/scratch/user/cameron.parker/projects/JETSCAPE/runs/" + name + "/"
+totaldir = "/data/rjfgroup/rjf01/cameron.parker/runs/" + name + "/"
 if rerunning: 
     totaldir = startdir
     design = pd.read_csv(totaldir+"QVir_Analysis/parameters.txt")
     print("Using: "+totaldir+"QVir_Analysis/parameters.txt")
+
+#job initialization
+testjob = htcondor.Submit({
+    "executable": "/data/rjfgroup/rjf01/cameron.parker/builds/JETSCAPE/build/runJetscape",
+    "arguments": "$(xml)",          # we will pass in the value for this macro via itemdata
+    "output": "/data/rjfgroup/rjf01/cameron.parker/condor/cat-$(ProcId).out",
+    "error": "/data/rjfgroup/rjf01/cameron.parker/condor/cat-$(ProcId).err",
+    "log": "/data/rjfgroup/rjf01/cameron.parker/condor/cat.log",
+    "request_cpus": "1",
+    "request_memory": "128MB",
+    "request_disk": "128MB",
+})
+schedd = htcondor.Schedd()                   # get the Python representation of the scheduler
 
 # function to make xmls
 def makexml(bound, parameters, baseDir, xmltemplate, ECM):
@@ -185,7 +200,7 @@ else:
 if softOnly:
     intervals = range(0,48+1) # need to add one more to the range than bins desired
 
-xmlname = "/scratch/user/cameron.parker/projects/JETSCAPE/config/jetscape_user_pp"+system+".xml"
+xmlname = "/data/rjfgroup/rjf01/cameron.parker/builds/JETSCAPE/config/jetscape_user_pp"+system+".xml"
 
 xmltemplate = open(xmlname,"r")
 xmllines = xmltemplate.readlines()
@@ -204,10 +219,8 @@ for i in range(len(intervals)-1):
     else:
         pTHatBounds.append((intervals[i],intervals[i+1]))
 
-print(len(pTHatBounds))
-
 # Changing to build directory
-os.chdir("/scratch/user/cameron.parker/projects/JETSCAPE/build")
+os.chdir("/data/rjfgroup/rjf01/cameron.parker/builds/JETSCAPE/build")
 
 pool = mp.Pool(len(pTHatBounds))
 
@@ -225,9 +238,9 @@ for i in range(len(design)):
     
     # Running jetscape for them
     xmls, dats = zip(*map(itemgetter('xml', 'dat'), output)) 
+    xmlinput = [{"xml": xml} for xml in xmls]
     writeXmls(xmls,baseDir)
-    if rundata: pool.map(runxml, xmls)
-    zipxmls(baseDir)
+    if rundata: submit_result = schedd.submit(testjob, itemdata = iter(xmlinput))
 
     if not rundata: continue
     # Handling appending runs
