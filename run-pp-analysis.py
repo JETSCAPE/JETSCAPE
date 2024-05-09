@@ -35,8 +35,9 @@ for i, option in enumerate(sys.argv):
         parallel = True
 
 #job initialization
+exec = "/data/rjfgroup/rjf01/cameron.parker/builds/JETSCAPE/build/pp-"+ECM+"-spectra"
 testjob = htcondor.Submit({
-    "executable": "/data/rjfgroup/rjf01/cameron.parker/builds/JETSCAPE/build/ee-analysis-spectra",
+    "executable": exec,
     "arguments": "$(dir)",          # we will pass in the value for this macro via itemdata
     "output": "/data/rjfgroup/rjf01/cameron.parker/condor/cat-$(ProcId).out",
     "error": "/data/rjfgroup/rjf01/cameron.parker/condor/cat-$(ProcId).err",
