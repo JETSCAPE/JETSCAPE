@@ -66,7 +66,7 @@ which reads in the generated showers does some DFS search and shows the output. 
 
 There are several JETSCAPE tunes from publications available.
 The XML files to reproduce the results are available in the `config/publications_config` directory.
-Please see [JETSCAPE Tunes](https://github.com/JETSCAPE/JETSCAPE/tree/main/config/publications_config/README.md) for more information.
+Please see [JETSCAPE Tunes](https://github.com/JETSCAPE/JETSCAPE/tree/config/publications_config/README.md) for more information.
 
 Several example hydro profiles can be downloaded using `examples/get_hydroSample*`.
 
