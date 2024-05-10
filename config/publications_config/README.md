@@ -6,7 +6,7 @@ Currently, the following tunes are available:
 
 - AA (soft) [arXiv:2011.01430](https://arxiv.org/pdf/2011.01430)
 
-- AA (hard) [arXiv:2102.11337](https://arxiv.org/pdf/2102.11337)
+- AA (hard) [arXiv:2204.01163](https://arxiv.org/pdf/2204.01163)
 
 The different tunes can be run by:
 ```
