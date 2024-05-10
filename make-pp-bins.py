@@ -240,6 +240,7 @@ for i in range(len(design)):
     xmls, dats = zip(*map(itemgetter('xml', 'dat'), output)) 
     xmlinput = [{"xml": xml} for xml in xmls]
     writeXmls(xmls,baseDir)
+    testjob["batch_name"] = name + "-" + str(i)
     if rundata: submit_result = schedd.submit(testjob, itemdata = iter(xmlinput))
 
     if not rundata: continue

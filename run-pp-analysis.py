@@ -43,7 +43,7 @@ testjob = htcondor.Submit({
     "error": "/data/rjfgroup/rjf01/cameron.parker/condor/cat-$(ProcId).err",
     "log": "/data/rjfgroup/rjf01/cameron.parker/condor/cat.log",
     "request_cpus": "1",
-    "request_memory": "200MB",
+    "request_memory": "500MB",
     "request_disk": "500MB",
 })
 schedd = htcondor.Schedd()                   # get the Python representation of the scheduler
@@ -65,13 +65,13 @@ if setStart:
     directories = newdirectories
 
 
-os.chdir("/scratch/user/cameron.parker/projects/JETSCAPE/build/")
+os.chdir("/data/rjfgroup/rjf01/cameron.parker/builds/JETSCAPE/build")
 
 def run(directory):
     if analysisDir.startswith("/"):
         baseDir = analysisDir +  "points/" + directory
     else:
-        baseDir = "/scratch/user/cameron.parker/projects/JETSCAPE/JETSCAPE/" + analysisDir + "points/" + directory
+        baseDir = "/data/rjfgroup/rjf01/cameron.parker/runs/" + analysisDir + "points/" + directory
     
     if smoothrun:
         cmd = "./pp-"+ECM+"-smoothing " + baseDir
@@ -85,7 +85,9 @@ def run(directory):
 
 #Directory loop
 if parallel:
-    dirinput = [{"dir": dir} for dir in directories]
+    dirinput = [{"dir": analysisDir+"points/"+dir} for dir in directories]
+    testjob["batch_name"] = analysisDir
+    print("Submitting jobs for", dirinput)
     submit_result = schedd.submit(testjob, itemdata = iter(dirinput))
 else:
     for directory in directories:
