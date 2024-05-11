@@ -232,6 +232,10 @@
 
   <!-- Create liquifier -->
   <Liquefier>
+      <!--threshold_energy_switch = 1, use e_threshold; threshold_energy_switch = 0, use |e_threshold|*T-->
+      <threshold_energy_switch>1</threshold_energy_switch>
+      <e_threshold>2.0</e_threshold>
+
       <!-- CausalLiquefier -->
       <CausalLiquefier>
           <name>CausalLiquefier</name>
