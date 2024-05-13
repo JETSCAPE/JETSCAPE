@@ -26,8 +26,8 @@
 
 #include "pdgcode_constants.h"
 #define BIG_ENDIAN_ARCHITECTURE
-namespace smash {
-
+namespace Jetscape {
+// The namespace of this file was changed to integrate this file from SMASH into the JETSCAPE framework
 /**
  * \ingroup data
  *

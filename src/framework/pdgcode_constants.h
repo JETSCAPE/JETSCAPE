@@ -10,7 +10,8 @@
 #ifndef SRC_INCLUDE_SMASH_PDGCODE_CONSTANTS_H_
 #define SRC_INCLUDE_SMASH_PDGCODE_CONSTANTS_H_
 
-namespace smash {
+namespace Jetscape {
+// The namespace of this file was changed to integrate this file from SMASH into the JETSCAPE framework
 /**
  * Constants representing PDG codes.
  *

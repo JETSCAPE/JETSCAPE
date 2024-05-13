@@ -9,8 +9,8 @@
 
 #include <istream>
 
-namespace smash {
-
+namespace Jetscape {
+// The namespace of this file was changed to integrate this file from SMASH into the JETSCAPE framework
 std::istream& operator>>(std::istream& is, PdgCode& code) {
   std::string codestring("");
   is >> codestring;

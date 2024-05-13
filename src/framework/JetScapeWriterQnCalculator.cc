@@ -74,7 +74,7 @@ template <class T> void JetScapeWriterQnVectorStream<T>::WriteEvent() {
     int num_pid = 0;
     for (const auto particle : particles) {
 
-      smash::PdgCode pdgcode_tem(std::to_string(particle->pid()));
+      PdgCode pdgcode_tem(std::to_string(particle->pid()));
               
       if (select_pid == 9999) {
         if (std::abs(pdgcode_tem.charge()) > 0) {
