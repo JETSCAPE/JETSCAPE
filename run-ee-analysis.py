@@ -21,7 +21,7 @@ testjob = htcondor.Submit({
     "error": "/data/rjfgroup/rjf01/cameron.parker/condor/cat-$(ProcId).err",
     "log": "/data/rjfgroup/rjf01/cameron.parker/condor/cat.log",
     "request_cpus": "1",
-    "request_memory": "200MB",
+    "request_memory": "500MB",
     "request_disk": "500MB",
 })
 schedd = htcondor.Schedd()                   # get the Python representation of the scheduler
