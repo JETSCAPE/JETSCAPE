@@ -91,6 +91,7 @@ testjob = htcondor.Submit({
     "request_cpus": "1",
     "request_memory": "500MB",
     "request_disk": "500MB",
+    "max_retries": "2",
 })
 schedd = htcondor.Schedd()                   # get the Python representation of the scheduler
 
@@ -241,7 +242,9 @@ for i in range(len(design)):
     xmlinput = [{"xml": xml} for xml in xmls]
     writeXmls(xmls,baseDir)
     testjob["batch_name"] = name + "-" + str(i)
-    if rundata: submit_result = schedd.submit(testjob, itemdata = iter(xmlinput))
+    if rundata: 
+        submit_result = schedd.submit(testjob, itemdata = iter(xmlinput))
+        print("Jobs sumbitted for:", i)
 
     if not rundata: continue
     # Handling appending runs
