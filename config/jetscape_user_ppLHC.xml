@@ -4,7 +4,7 @@
   
   <nEvents> 10000 </nEvents>
   
-  <outputFilename>/scratch/user/cameron.parker/projects/JETSCAPE/test/test</outputFilename>
+  <outputFilename>../test/test</outputFilename>
   <JetScapeWriterAsciiGZ> on </JetScapeWriterAsciiGZ>
   <finalHadsOnly> on </finalHadsOnly>
   
@@ -15,8 +15,8 @@
       <pTHatMax>5</pTHatMax>
       <eCM>2760</eCM>
       <LinesToRead>
-         MultipartonInteractions:pT0Ref = 2.28
-         MultipartonInteractions:ecmPow = 0.215
+        MultipartonInteractions:pT0Ref = 2.28
+        MultipartonInteractions:ecmPow = 0.215
       </LinesToRead>
       <softMomentumCutoff>0.0</softMomentumCutoff>
     </PythiaGun>
@@ -47,6 +47,8 @@
       StringFlav:probStoUD = 0.217
       StringFlav:probQQtoQ = 0.081
       ParticleDecays:tau0Max = 10
+      ColourReconnection:reconnect = on
+      ColourReconnection:mode = 2
     </LinesToRead>
     <part_prop>0.0</part_prop>
     <ignorePhotons> off </ignorePhotons>
