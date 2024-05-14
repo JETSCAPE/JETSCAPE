@@ -75,7 +75,8 @@ TGraphErrors histToGraph(TH1D* hist){
 void myRatioPlot(TGraphErrors* dataGraph, TH1D* predictionHist, string title, bool xlog, bool ylog){
     //values for plots
     int bins = dataGraph->GetN();
-    double data[bins], prediction[bins], xcoords[bins], dataErrors[bins], binWidths[bins], asym[bins], asymErrorsHigh[bins], asymErrorsLow[bins];
+    double data[bins], prediction[bins], predictionerrors[bins], xcoords[bins], dataErrors[bins], binWidths[bins], asym[bins], asymErrorsHigh[bins], asymErrorsLow[bins];
+    double predictionwidths[bins] = {0.0};
 
     //cycling through bins, note first one is an overflow bin so it is skipped
     for(int i = 0; i < bins; i++){
@@ -84,6 +85,7 @@ void myRatioPlot(TGraphErrors* dataGraph, TH1D* predictionHist, string title, bo
         dataErrors[i] = dataGraph->GetErrorY(i);
         binWidths[i] = dataGraph->GetErrorX(i);
         prediction[i] = predictionHist->GetBinContent(i+1);
+        predictionerrors[i] = predictionHist->GetBinError(i+1);
         asym[i] = (prediction[i]/data[i]);
         asymErrorsHigh[i] = 1 + dataErrors[i]/data[i];
         asymErrorsLow[i] = 1 - dataErrors[i]/data[i];
@@ -112,8 +114,10 @@ void myRatioPlot(TGraphErrors* dataGraph, TH1D* predictionHist, string title, bo
     dataPlot->SetLineColor(kRed);
 
     //prediction graph
-    TGraph* predictionPlot = new TGraph(bins,xcoords,prediction);
+    TGraphErrors* predictionPlot = new TGraphErrors(bins,xcoords,prediction,predictionwidths,predictionerrors);
     predictionPlot->SetLineColor(kBlue);
+    predictionPlot->SetFillColor(kBlue);
+    predictionPlot->SetFillStyle(3010);
     predictionPlot->SetLineWidth(3);
 
     //layered graph
@@ -121,7 +125,7 @@ void myRatioPlot(TGraphErrors* dataGraph, TH1D* predictionHist, string title, bo
     dataPlot->Draw("AP");
     dataPlot->GetXaxis()->SetLimits(xcoords[0]-binWidths[0],xcoords[bins-1]+binWidths[bins-1]);
     dataPlot->GetYaxis()->SetLabelSize(0.04);
-    predictionPlot->Draw("l");
+    predictionPlot->Draw("l3");
 
     //ratio plot
     TGraph* comparisonPlot = new TGraph(bins, xcoords, asym);
