@@ -31,6 +31,7 @@
 
 using std::ofstream;
 
+#include "pdgcode.h"
 namespace Jetscape {
 
 template <class T>
@@ -62,8 +63,6 @@ public:
   void WriteComment(string s) { }
   void WriteWhiteSpace(string s) { }
 
-  void get_ptclist();
-  int get_ch(const int pid);
 
 protected:
   T output_file; //!< Output file
