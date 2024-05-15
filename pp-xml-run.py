@@ -35,12 +35,12 @@ print("From " + str(start) + " to " + str(finish) + " in " + totdir + ":")
 
 # looping over points
 for dir in dirs[start:finish]:
-    print("Jobs sumbitted for:", dir)
     pointdir = totdir+"points/"+dir
     xmls = readXmls(pointdir)
     xmlinput = [{"xml": xml} for xml in xmls]
     testjob["batch_name"] = totdir + "-" + dir
     submit_result = schedd.submit(testjob, itemdata = iter(xmlinput))
+    print("Jobs sumbitted for:", dir)
 
     # concatonating all soft bins together
     #if "_0_" in xmls[0] and "_0_" in xmls[1]:
