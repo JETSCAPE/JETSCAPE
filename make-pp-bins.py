@@ -244,6 +244,7 @@ for i in range(len(design)):
     testjob["batch_name"] = name + "-" + str(i)
     if rundata: 
         submit_result = schedd.submit(testjob, itemdata = iter(xmlinput))
+        time.sleep(3) #delay so things dont crash
         print("Jobs sumbitted for:", i)
 
     if not rundata: continue
