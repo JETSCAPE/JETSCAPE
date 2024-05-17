@@ -108,10 +108,16 @@ def makexml(bound, parameters, baseDir, xmltemplate, ECM):
     if 'QSfactor' in parameters.columns:
         parameters['QS'] = (2*parameters.lambdaQCD+0.05) + (parameters.Q0-(2*parameters.lambdaQCD+0.05))*parameters.QSfactor
 
+    # event count handling
+    eventCount = 20000
+    if bound[0] < 1:
+        eventCount = 40000
+
     # building lines for xml file
     lowerLine = "      <pTHatMin>" + str(bound[0]) + "</pTHatMin>\n"
     upperLine = "      <pTHatMax>" + str(bound[1]) + "</pTHatMax>\n"
     fileLine = "  <outputFilename>" + filename + "</outputFilename>\n"
+    eventLine = "  <nEvents>" + str(eventCount) + "</nEvents>\n"
     
     paramlines = []
     for key in parameters.columns:
@@ -133,6 +139,9 @@ def makexml(bound, parameters, baseDir, xmltemplate, ECM):
             continue
         elif "<outputFilename>" in line:
             newlines.append(fileLine)
+            continue
+        elif "<nEvents>" in line:
+            newlines.append(eventLine)
             continue
 
         writeold = True
