@@ -52,7 +52,7 @@ int main(int argc, char** argv)
   // Create main Jetscape task, and assign XML configuration files from command line arguments.
   // The user can supply 0, 1, 2 arguments, where the first (second) corresponds to the user (main) XML path.
   auto jetscape = make_shared<JetScape>();
-  const char* mainXMLName = "../config/jetscape_main.xml";
+  const char* mainXMLName = "/data/rjfgroup/rjf01/cameron.parker/builds/JETSCAPE/config/jetscape_main.xml";
   const char* userXMLName = "../config/jetscape_user.xml";
   if (argc == 2)  {
     if ( strcmp(argv[1], "--help")==0 || strcmp(argv[1], "-h")==0 ){
