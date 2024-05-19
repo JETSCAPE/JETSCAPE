@@ -91,7 +91,8 @@ testjob = htcondor.Submit({
     "request_cpus": "1",
     "request_memory": "500MB",
     "request_disk": "500MB",
-    "max_retries": "2",
+    "max_retries": "3",
+    "getenv": "True"
 })
 schedd = htcondor.Schedd()                   # get the Python representation of the scheduler
 

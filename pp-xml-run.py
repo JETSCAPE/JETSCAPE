@@ -19,7 +19,8 @@ testjob = htcondor.Submit({
     "request_cpus": "1",
     "request_memory": "500MB",
     "request_disk": "500MB",
-    "max_retries": "2",
+    "max_retries": "3",
+    "getenv": "True"
 })
 schedd = htcondor.Schedd()                   # get the Python representation of the scheduler
 
@@ -28,8 +29,8 @@ start = 0
 finish = len(dirs)
 dirs = intSort(dirs)
 
+start = int(sys.argv[2])
 if len(sys.argv) == 4:
-    start = int(sys.argv[2])
     finish = int(sys.argv[3]) + 1
 
 print("From " + str(start) + " to " + str(finish) + " in " + totdir + ":")
