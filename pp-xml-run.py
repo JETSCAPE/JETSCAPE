@@ -5,6 +5,7 @@ import os
 from functions import *
 import htcondor
 import time
+import string
 
 totdir = sys.argv[1]
 dirs = getDirs(totdir)
@@ -40,7 +41,7 @@ for dir in dirs[start:finish]:
     pointdir = totdir+"points/"+dir
     xmls = readXmls(pointdir)
     xmlinput = [{"xml": xml.rstrip()} for xml in xmls]
-    testjob["batch_name"] = totdir + "-" + dir
+    testjob["batch_name"] = totdir.split('/')[-2] + "-" + dir
     time.sleep(3)
     submit_result = schedd.submit(testjob, itemdata = iter(xmlinput))
     print("Jobs sumbitted for:", dir)
