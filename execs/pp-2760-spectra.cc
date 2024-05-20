@@ -376,9 +376,12 @@ int main(int argc, char* argv[]){
         
         //Write histogram into a root file
         HistTempJet->Sumw2(); HistTempJet->Write();
+        HistTempJet2->Sumw2(); HistTempJet2->Write();
+        HistTempJet3->Sumw2(); HistTempJet3->Write();
         tempPions->Sumw2(); tempPions->Write();
         tempKaons->Sumw2(); tempKaons->Write();
         tempProtons->Sumw2(); tempProtons->Write();
+        HistTempSingleHadron->Sumw2(); HistTempSingleHadron->Write();
         
         //add to totals histograms
         double factor = HardCrossSection/(xsectotal*Events);
