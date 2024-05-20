@@ -9,6 +9,7 @@ from math import acos
 import ROOT
 import zipfile
 import shutil
+import htcondor
 
 # make base directories for the analysis
 def makeTotalDir(totaldir):
@@ -303,3 +304,16 @@ def softCombine(dir):
 # getting list of file names
 def getRootFiles(file):
         return [key.GetName() for key in file.GetListOfKeys()]
+
+xmljob = htcondor.Submit({
+    "executable": "/data/rjfgroup/rjf01/cameron.parker/builds/JETSCAPE/build/runJetscape",
+    "arguments": "$(xml)",          # we will pass in the value for this macro via itemdata
+    "output": "/data/rjfgroup/rjf01/cameron.parker/condor/$(job_id).out",
+    "error": "/data/rjfgroup/rjf01/cameron.parker/condor/$(job_id).err",
+    "log": "/data/rjfgroup/rjf01/cameron.parker/condor/xml.log",
+    "request_cpus": "1",
+    "request_memory": "500MB",
+    "request_disk": "500MB",
+    "max_retries": "3",
+    "getenv": "True"
+})

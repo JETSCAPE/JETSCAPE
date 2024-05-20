@@ -82,18 +82,7 @@ if rerunning:
     print("Using: "+totaldir+"QVir_Analysis/parameters.txt")
 
 #job initialization
-testjob = htcondor.Submit({
-    "executable": "/data/rjfgroup/rjf01/cameron.parker/builds/JETSCAPE/build/runJetscape",
-    "arguments": "$(xml)",          # we will pass in the value for this macro via itemdata
-    "output": "/data/rjfgroup/rjf01/cameron.parker/condor/cat-$(ProcId).out",
-    "error": "/data/rjfgroup/rjf01/cameron.parker/condor/cat-$(ProcId).err",
-    "log": "/data/rjfgroup/rjf01/cameron.parker/condor/cat.log",
-    "request_cpus": "1",
-    "request_memory": "500MB",
-    "request_disk": "500MB",
-    "max_retries": "3",
-    "getenv": "True"
-})
+testjob = xmljob
 schedd = htcondor.Schedd()                   # get the Python representation of the scheduler
 
 # function to make xmls
