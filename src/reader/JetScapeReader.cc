@@ -127,28 +127,28 @@ template <class T> void JetScapeReader<T>::Next() {
       if (line.find("sigmaGen") != std::string::npos) {
         std::stringstream data(line);
         std::string dummy;
-        data >> dummy >> dummy >> sigmaGen;
+        data >> dummy >> dummy >> dummy >> sigmaGen;
         JSDEBUG << " sigma gen=" << sigmaGen;
       }
       // Cross section error
       if (line.find("sigmaErr") != std::string::npos) {
         std::stringstream data(line);
         std::string dummy;
-        data >> dummy >> dummy >> sigmaErr;
+        data >> dummy >> dummy >> dummy >> sigmaErr;
         JSDEBUG << " sigma err=" << sigmaErr;
       }
       // Event weight
       if (line.find("weight") != std::string::npos) {
         std::stringstream data(line);
         std::string dummy;
-        data >> dummy >> dummy >> eventWeight;
+        data >> dummy >> dummy >> dummy >> eventWeight;
         JSDEBUG << " Event weight=" << eventWeight;
       }
       // EP angle
       if (line.find(EPAngleStr) != std::string::npos) {
         std::stringstream data(line);
         std::string dummy;
-        data >> dummy >> dummy >> EventPlaneAngle;
+        data >> dummy >> dummy >> dummy >> EventPlaneAngle;
         JSDEBUG << " EventPlaneAngle=" << EventPlaneAngle;
       }
       continue;
