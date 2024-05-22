@@ -30,7 +30,7 @@ for i, option in enumerate(sys.argv):
         blank = True
 
 #date and file initiation
-totaldir = "/scratch/user/cameron.parker/projects/JETSCAPE/runs/" + name + "/"
+totaldir = "/data/rjfgroup/rjf01/cameron.parker/runs/" + name + "/"
 makeTotalDir(totaldir)
 
 #methods for runnning
@@ -111,11 +111,11 @@ design.to_csv(totaldir+'QVir_Analysis/parameters.txt',index=False)
 print(design)
 
 #reading xml template
-xmltemplate = open("/scratch/user/cameron.parker/projects/JETSCAPE/config/jetscape_user.xml","r")
+xmltemplate = open("/data/rjfgroup/rjf01/cameron.parker/builds/JETSCAPE/config/jetscape_user.xml","r")
 xmllines = xmltemplate.readlines()
 
 ##Changing to build directory
-os.chdir("/scratch/user/cameron.parker/projects/JETSCAPE/build")
+os.chdir("/data/rjfgroup/rjf01/cameron.parker/builds/JETSCAPE/build")
 
 ##Running jetscape for each set of parameters with multiprocessing
 pool = mp.Pool(48)

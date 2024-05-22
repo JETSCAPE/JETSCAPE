@@ -36,16 +36,8 @@ for i, option in enumerate(sys.argv):
 
 #job initialization
 exec = "/data/rjfgroup/rjf01/cameron.parker/builds/JETSCAPE/build/pp-"+ECM+"-spectra"
-testjob = htcondor.Submit({
-    "executable": exec,
-    "arguments": "$(dir)",          # we will pass in the value for this macro via itemdata
-    "output": "/data/rjfgroup/rjf01/cameron.parker/condor/cat-$(ProcId).out",
-    "error": "/data/rjfgroup/rjf01/cameron.parker/condor/cat-$(ProcId).err",
-    "log": "/data/rjfgroup/rjf01/cameron.parker/condor/cat.log",
-    "request_cpus": "1",
-    "request_memory": "500MB",
-    "request_disk": "500MB",
-})
+condorjob = analysisjob
+condorjob["executable"] = exec
 schedd = htcondor.Schedd()                   # get the Python representation of the scheduler
 
 #setting directory for analysis
@@ -86,9 +78,9 @@ def run(directory):
 #Directory loop
 if parallel:
     dirinput = [{"dir": analysisDir+"points/"+dir} for dir in directories]
-    testjob["batch_name"] = analysisDir
+    condorjob["batch_name"] = analysisDir
     print("Submitting jobs for", dirinput)
-    submit_result = schedd.submit(testjob, itemdata = iter(dirinput))
+    submit_result = schedd.submit(condorjob, itemdata = iter(dirinput))
 else:
     for directory in directories:
         run(directory)
