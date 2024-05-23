@@ -5,10 +5,12 @@ import multiprocessing as mp
 import pandas as pd
 from datetime import date
 from functions import *
+import htcondor
 
 #option reading
 reading = False
 blank = False
+parallel = False
 todays_date = date.today()
 name = "LEP-" + str(todays_date.month) + "-" + str(todays_date.day)
 for i, option in enumerate(sys.argv):
@@ -28,10 +30,16 @@ for i, option in enumerate(sys.argv):
         name = sys.argv[i+1]
     if "--blank" in option:
         blank = True
+    if "-p" in option:
+        parallel = True
 
 #date and file initiation
 totaldir = "/data/rjfgroup/rjf01/cameron.parker/runs/" + name + "/"
 makeTotalDir(totaldir)
+
+# condor stuff
+thisjob = xmljob
+schedd = htcondor.Schedd()                   # get the Python representation of the scheduler
 
 #methods for runnning
 def binrun(index, parameters, xmltemplate):
@@ -78,10 +86,13 @@ def binrun(index, parameters, xmltemplate):
         return
 
     ##running for the parameters set in the xml file
-    runxml(xmlname)
-
-    analysiscmd = "./ee-analysis-spectra " + baseDir
-    os.system(analysiscmd)
+    if parallel:
+        xmlinput = [{"xml": xmlname}]
+        thisjob["batch_name"] = name + "-" + str(index)
+        submit_result = schedd.submit(thisjob, itemdata = iter(xmlinput))
+        print("Submitted job for:",index)
+    else:
+        runxml(xmlname)
 
 ##making directory for the runs
 def makeDir(index):
@@ -118,10 +129,5 @@ xmllines = xmltemplate.readlines()
 os.chdir("/data/rjfgroup/rjf01/cameron.parker/builds/JETSCAPE/build")
 
 ##Running jetscape for each set of parameters with multiprocessing
-pool = mp.Pool(48)
-pool.starmap(binrun, [(i,design.loc[[i]], xmllines) for i in range(len(design))])
-pool.close()
-
-##running total analysis
-if not blank:
-    os.system("./ee-comparison " + totaldir)
+for i in range(len(design)):
+    binrun(i,design.loc[[i]], xmllines)
