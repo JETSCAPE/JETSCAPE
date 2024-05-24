@@ -411,6 +411,46 @@ public:
   Photon &operator=(const Photon &ph);
 };
 
+class Qvector{
+
+private:
+
+    double pt_min_, pt_max_, y_min_, y_max_;
+    int npt_, ny_, ncols_,norder_;
+    int pid_;
+    int rapidity_type_;
+    int total_num_;
+    double dpt_, dy_; 
+    std::vector<std::vector<std::vector<double>>> hist_;
+    std::string header_; 
+    std::vector<double> gridpT_;
+    std::vector<double> gridy_;  
+
+public:
+    
+    Qvector(double pt_min, double pt_max, int npt, double y_min, double y_max, int ny, int norder, int pid, int rapidity_type);
+    
+    void fill(double pt_in, double y_in, int col_in, double val); 
+    
+    void fill_particle(const shared_ptr<Hadron>& hadron);
+    int get_pdgcode() const {return pid_;}
+    int get_npt() const {return npt_;}
+    int get_ny() const {return ny_;}
+    int get_norder() const {return norder_;}
+    int get_ncols() const {return ncols_;}
+    int get_total_num() {return total_num_;}
+    double get_value(int i,int j,int k) const {return hist_[i][j][k];}
+
+    double get_dpt() const {return dpt_;}
+    double get_dy() const {return dy_;}
+    double get_pt(int idx) const;
+    double get_y(int idx) const;
+    void set_header(std::string a);
+    std::string get_header() const {return header_;}
+
+};
+
+
 }; // namespace Jetscape
 
 #endif // JETSCAPEPARTICLES_H

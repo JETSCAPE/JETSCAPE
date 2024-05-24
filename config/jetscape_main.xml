@@ -30,6 +30,14 @@
   <JetScapeWriterRootHepMC> off </JetScapeWriterRootHepMC>
   <JetScapeWriterFinalStatePartonsAscii> off </JetScapeWriterFinalStatePartonsAscii>
   <JetScapeWriterFinalStateHadronsAscii> off </JetScapeWriterFinalStateHadronsAscii>
+  <JetScapeWriterQnVectorAscii>off</JetScapeWriterQnVectorAscii>
+  <QnVector_pTmin>0</QnVector_pTmin>
+  <QnVector_pTmax>6</QnVector_pTmax>
+  <QnVector_NpT>30</QnVector_NpT>
+  <QnVector_rapmin>-4</QnVector_rapmin>
+  <QnVector_rapmax>4</QnVector_rapmax>
+  <QnVector_Nrap>80</QnVector_Nrap>
+  <QnVector_Norder>7</QnVector_Norder>
   <write_pthat> 0 </write_pthat>
 
   <!--  Random Settings. For now, just a global  seed. -->
@@ -136,7 +144,8 @@
       <matter_on> 1 </matter_on>
       <Q0> 2.0 </Q0>
       <T0> 0.16 </T0>
-      <!--if negative vir_factor: parton 3-momentum of hard parton is used to compute initial virtuality in shower; if positive: transverse momentum of parton is used-->
+      <!--if initial_virtuality_pT == 1: pT of hard parton is used to compute initial virtuality in shower, initial_virtuality_pT == 0: use parton 3-momentum-->
+      <initial_virtuality_pT> 1 </initial_virtuality_pT>
       <vir_factor> 0.25 </vir_factor>
       <in_vac> 1 </in_vac>
       <recoil_on> 0 </recoil_on>
@@ -222,6 +231,10 @@
 
   <!-- Create liquifier -->
   <Liquefier>
+      <!--threshold_energy_switch = 1, use e_threshold; threshold_energy_switch = 0, use |e_threshold|*T-->
+      <threshold_energy_switch>1</threshold_energy_switch>
+      <e_threshold>2.0</e_threshold>
+
       <!-- CausalLiquefier -->
       <CausalLiquefier>
           <name>CausalLiquefier</name>
@@ -396,6 +409,9 @@
       <!-- hadron species list  0: PDG 2005; 1: UrQMD; 2: SMASH -->
       <afterburner_type>1</afterburner_type>
 
+      <include_deltaf_shear>1</include_deltaf_shear>
+      <include_deltaf_bulk>1</include_deltaf_bulk>
+      <deltaf_type>20</deltaf_type>
       <number_of_repeated_sampling>1</number_of_repeated_sampling>
       <Perform_resonance_decays>1</Perform_resonance_decays>
     </iSS>
