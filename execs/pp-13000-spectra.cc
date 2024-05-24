@@ -110,8 +110,13 @@ int main(int argc, char* argv[]){
         //actually reading in
         while (!myfile->Finished()){
             cout << HadronFile << ": ";
-            myfile->Next();
-            hadrons = myfile->GetHadrons();
+            try{
+                myfile->Next();
+                hadrons = myfile->GetHadrons();
+            }
+            catch(...){
+                break;
+            }
 
             //cout<<"Number of hadrons is: " << hadrons.size() << endl;
             Events++;

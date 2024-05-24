@@ -155,8 +155,16 @@ int main(int argc, char* argv[]){
        
     //event loop
     while (!myfile->Finished()){
-        myfile->Next();
-        hadrons = myfile->GetHadrons();
+        cout << HadronFile << ": ";
+        try{
+            myfile->Next();
+            hadrons = myfile->GetHadrons();
+        }
+        catch(...){
+            break;
+        }
+
+        //event variables
         int multiplicity = 0;
         int tracks = 0;
         Events++;
