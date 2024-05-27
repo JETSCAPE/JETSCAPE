@@ -316,7 +316,8 @@ xmljob = htcondor.Submit({
     "request_memory": "500MB",
     "request_disk": "500MB",
     "max_retries": "5",
-    "getenv": "True"
+    "getenv": "True",
+    "requirements": "(Machine != \"c101.cyclotron.tamu.edu\")"
 })
 
 analysisjob = htcondor.Submit({
@@ -328,4 +329,6 @@ analysisjob = htcondor.Submit({
     "request_cpus": "1",
     "request_memory": "500MB",
     "request_disk": "500MB",
+    "getenv": "True",
+    "requirements": "(Machine != \"c101.cyclotron.tamu.edu\")"
 })
