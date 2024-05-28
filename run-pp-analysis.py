@@ -79,7 +79,6 @@ def run(directory):
 if parallel:
     dirinput = [{"dir": analysisDir+"points/"+dir} for dir in directories]
     condorjob["batch_name"] = analysisDir.split('/')[-2]+"-analysis"
-    print("Submitting jobs for", dirinput)
     submit_result = schedd.submit(condorjob, itemdata = iter(dirinput))
 else:
     for directory in directories:
