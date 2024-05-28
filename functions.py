@@ -307,7 +307,7 @@ def getRootFiles(file):
 
 # condor job templates
 xmljob = htcondor.Submit({
-    "executable": "/data/rjfgroup/rjf01/cameron.parker/builds/JETSCAPE/build/jetscape-script.sh",
+    "executable": "/data/rjfgroup/rjf01/cameron.parker/builds/JETSCAPE/build/runJetscape",
     "arguments": "$(xml)",          # we will pass in the value for this macro via itemdata
     "output": "/data/rjfgroup/rjf01/cameron.parker/condor/$(ClusterId).$(ProcId).out",
     "error": "/data/rjfgroup/rjf01/cameron.parker/condor/$(ClusterId).$(ProcId).err",
