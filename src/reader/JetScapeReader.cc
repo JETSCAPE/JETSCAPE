@@ -97,6 +97,9 @@ template <class T> void JetScapeReader<T>::AddHadron(string s) {
     if (token.compare("H") != 0)
       vS.push_back(token);
   }
+
+  if(vS.size() < 8) return;
+
   hadrons.push_back(make_shared<Hadron>(stoi(vS[1]), stoi(vS[2]), stoi(vS[3]),
                                         stod(vS[4]), stod(vS[5]), stod(vS[6]),
                                         stod(vS[7]), x));
