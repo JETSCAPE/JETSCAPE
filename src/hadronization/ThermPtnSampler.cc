@@ -832,7 +832,6 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 	double eta_sur;			// eta from normal vector of surface
 
 	// Calculated global quantities
-	int PartCount;			// Total count of particles over ALL cells
 	double NumLight;		// Number DENSITY of light quarks at set T
 	double NumStrange;		// Number DENSITY of squarks at set T
 	double UDDeg = 4.*6.;	// Degeneracy of UD quarks
@@ -848,7 +847,6 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 	double E_strange; // Store energy of strange quarks
 	double GWeightProd; // Needed for integration
 	double pSpatialdSigma; // Needed for integration
-	PartCount = 0;
 	NumLight = 0;       // Initialize density for light and strange quarks
 	NumStrange = 0;
 	GeneratedParticles = 0;
@@ -885,11 +883,13 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 	};
 
 	// Define the lambda function to compute the energy
+	// try inlining this function
 	auto computeEnergy = [](double mass, double cut, double GAbsL, double GAbsM, double GAbsK) {
     	return sqrt(mass * mass + (cut * GAbsL) * (cut * GAbsL) + (cut * GAbsM) * (cut * GAbsM) + (cut * GAbsK) * (cut * GAbsK));
 	};
 
 	// Define the lambda function for the Fermi distribution
+	// try inlining this function
 	auto FermiDistribution = [](double energy, double temperature) {
 	    return 1. / (exp(energy / temperature) + 1.);
 	};
@@ -900,6 +900,8 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 	double d_eta = CellDZ;
 
 	int N_slices = std::floor((eta_max / d_eta)-0.5)+1;
+
+	auto start = std::chrono::high_resolution_clock::now();
 	for(int slice=1; slice <= (2*N_slices+1); slice++){
 		double eta_slice = (slice-N_slices-1)*d_eta;
 
@@ -907,6 +909,7 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 		<< " (eta_min = " << eta_slice-(d_eta/2.) << ", eta_max = "
 		<< eta_slice+(d_eta/2.) << ")";
 
+		#pragma omp parallel for private(CPos, LFSigma, CMSigma, TRead, Vel, tau_pos, eta_pos, tau_sur, eta_sur, cut, CDFTabLight, cdfLightCache, CDFTabStrange, cdfStrangeCache, CellDZ, E_light, E_strange, GWeightProd, pSpatialdSigma, NumLight, NumStrange, GPoints, GeneratedParticles, new_quark_energy, LorBoost)
 		for(int iS=0; iS<surface.size(); ++iS){
 			tau_pos = surface[iS][0];
 			CPos[1] = surface[iS][1];
@@ -1028,6 +1031,7 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 				NumLight = 0.;
 				NumStrange = 0.;
 
+				// #pragma omp parallel for private(GWeightProd, pSpatialdSigma, E_light, E_strange) reduction(+:NumLight, NumStrange) 
 				for (int l = 0; l < GPoints; l++) {
 				    for (int m = 0; m < GPoints; m++) {
 				        for (int k = 0; k < GPoints; k++) {
@@ -1070,36 +1074,35 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 			for(int partic = 0; partic < GeneratedParticles; partic++){
 				// adding space to PList for output quarks
 				std::vector<double> temp = {0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.};
-				Plist.push_back(temp);
-
+				
 				// Species - U,D,UBar,Dbar are equally likely
 				double SpecRoll = ran(); //Probability of species die roll
 				if (SpecRoll <= 0.25) { // UBar
-				    Plist[PartCount][1] = -2;
+				    temp[1] = -2;
 				} else if (SpecRoll <= 0.50) { // DBar
-				    Plist[PartCount][1] = -1;
+				    temp[1] = -1;
 				} else if (SpecRoll <= 0.75) { // D
-				    Plist[PartCount][1] = 1;
+				    temp[1] = 1;
 				} else { // U
-				    Plist[PartCount][1] = 2;
+				    temp[1] = 2;
 				}
 
 				// Position
 				// Located at x,y pos of area element
-				Plist[PartCount][10] = CPos[0] + (ran() - 0.5)*CellDT; // Tau
-				Plist[PartCount][7] = CPos[1] + (ran() - 0.5)*CellDX;
-				Plist[PartCount][8] = CPos[2] + (ran() - 0.5)*CellDY;
-				Plist[PartCount][9] = CPos[3] + (ran() - 0.5)*CellDZ;
+				temp[10] = CPos[0] + (ran() - 0.5)*CellDT; // Tau
+				temp[7] = CPos[1] + (ran() - 0.5)*CellDX;
+				temp[8] = CPos[2] + (ran() - 0.5)*CellDY;
+				temp[9] = CPos[3] + (ran() - 0.5)*CellDZ;
 
-				if(std::abs(Plist[PartCount][9]) >= std::abs(Plist[PartCount][10])) {
-					Plist[PartCount][10] = std::abs(Plist[PartCount][9]) + 10e-3;
+				if(std::abs(temp[9]) >= std::abs(temp[10])) {
+					temp[10] = std::abs(temp[9]) + 10e-3;
 				}
-				double temp_t = std::sqrt(Plist[PartCount][10]*Plist[PartCount][10]-Plist[PartCount][9]*Plist[PartCount][9])
-						* std::cosh(eta_slice+0.5*std::log((Plist[PartCount][10]+Plist[PartCount][9])/(Plist[PartCount][10]-Plist[PartCount][9])));
-				double temp_z = std::sqrt(Plist[PartCount][10]*Plist[PartCount][10]-Plist[PartCount][9]*Plist[PartCount][9])
-						* std::sinh(eta_slice+0.5*std::log((Plist[PartCount][10]+Plist[PartCount][9])/(Plist[PartCount][10]-Plist[PartCount][9])));
-				Plist[PartCount][10] = temp_t;
-				Plist[PartCount][9] = temp_z;
+				double temp_t = std::sqrt(temp[10]*temp[10]-temp[9]*temp[9])
+						* std::cosh(eta_slice+0.5*std::log((temp[10]+temp[9])/(temp[10]-temp[9])));
+				double temp_z = std::sqrt(temp[10]*temp[10]-temp[9]*temp[9])
+						* std::sinh(eta_slice+0.5*std::log((temp[10]+temp[9])/(temp[10]-temp[9])));
+				temp[10] = temp_t;
+				temp[9] = temp_z;
 
 				// Momentum
 				// Sample rest frame momentum given T and mass of light quark
@@ -1150,16 +1153,20 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 				// PLab^u = g^u^t Lambda_t ^v pres^w g_w _v
 				// Returns P in GeV
 				new_quark_energy = sqrt(xmq*xmq + NewP*NewP);
-				Plist[PartCount][6] = (LorBoost[0][0]*new_quark_energy + LorBoost[0][1]*NewX + LorBoost[0][2]*NewY + LorBoost[0][3]*NewZ)*GEVFM;
-				Plist[PartCount][3] = (LorBoost[1][0]*new_quark_energy + LorBoost[1][1]*NewX + LorBoost[1][2]*NewY + LorBoost[1][3]*NewZ)*GEVFM;
-				Plist[PartCount][4] = (LorBoost[2][0]*new_quark_energy + LorBoost[2][1]*NewX + LorBoost[2][2]*NewY + LorBoost[2][3]*NewZ)*GEVFM;
-				Plist[PartCount][5] = (LorBoost[3][0]*new_quark_energy + LorBoost[3][1]*NewX + LorBoost[3][2]*NewY + LorBoost[3][3]*NewZ)*GEVFM;
+				temp[6] = (LorBoost[0][0]*new_quark_energy + LorBoost[0][1]*NewX + LorBoost[0][2]*NewY + LorBoost[0][3]*NewZ)*GEVFM;
+				temp[3] = (LorBoost[1][0]*new_quark_energy + LorBoost[1][1]*NewX + LorBoost[1][2]*NewY + LorBoost[1][3]*NewZ)*GEVFM;
+				temp[4] = (LorBoost[2][0]*new_quark_energy + LorBoost[2][1]*NewX + LorBoost[2][2]*NewY + LorBoost[2][3]*NewZ)*GEVFM;
+				temp[5] = (LorBoost[3][0]*new_quark_energy + LorBoost[3][1]*NewX + LorBoost[3][2]*NewY + LorBoost[3][3]*NewZ)*GEVFM;
 
 				// Additional information
-				Plist[PartCount][0]  = 1; // Event ID, to match jet formatting
-				Plist[PartCount][2]  = 0; // Origin, to match jet formatting
-				Plist[PartCount][11] = 0; // Status - identifies as thermal quark
-				PartCount++;
+				temp[0]  = 1; // Event ID, to match jet formatting
+				temp[2]  = 0; // Origin, to match jet formatting
+				temp[11] = 0; // Status - identifies as thermal quark
+
+				#pragma omp critical
+				{
+					Plist.push_back(temp);
+				}
 			}
 
 			std::poisson_distribution<int> poisson_s(NumOddHere);
@@ -1176,32 +1183,31 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 			for(int partic = 0; partic < GeneratedParticles; partic++){
 				// adding space to PList for output quarks
 				std::vector<double> temp = {0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.};
-				Plist.push_back(temp);
 
 				// Species - S,Sbar are equally likely
 				double SpecRoll = ran();
 				if(SpecRoll <= 0.5){ // SBar
-					Plist[PartCount][1] = -3;
+					temp[1] = -3;
 				} else { //S
-					Plist[PartCount][1] = 3;
+					temp[1] = 3;
 				}
 
 				// Position
 				// Located at x,y pos of area element
-				Plist[PartCount][10] = CPos[0] + (ran() - 0.5)*CellDT; // Tau
-				Plist[PartCount][7] = CPos[1] + (ran() - 0.5)*CellDX;
-				Plist[PartCount][8] = CPos[2] + (ran() - 0.5)*CellDY;
-				Plist[PartCount][9] = CPos[3] + (ran() - 0.5)*CellDZ;
+				temp[10] = CPos[0] + (ran() - 0.5)*CellDT; // Tau
+				temp[7] = CPos[1] + (ran() - 0.5)*CellDX;
+				temp[8] = CPos[2] + (ran() - 0.5)*CellDY;
+				temp[9] = CPos[3] + (ran() - 0.5)*CellDZ;
 
-				if(std::abs(Plist[PartCount][9]) >= std::abs(Plist[PartCount][10])) {
-					Plist[PartCount][10] = std::abs(Plist[PartCount][9]) + 10e-3;
+				if(std::abs(temp[9]) >= std::abs(temp[10])) {
+					temp[10] = std::abs(temp[9]) + 10e-3;
 				}
-				double temp_t = std::sqrt(Plist[PartCount][10]*Plist[PartCount][10]-Plist[PartCount][9]*Plist[PartCount][9])
-						* std::cosh(eta_slice+0.5*std::log((Plist[PartCount][10]+Plist[PartCount][9])/(Plist[PartCount][10]-Plist[PartCount][9])));
-				double temp_z = std::sqrt(Plist[PartCount][10]*Plist[PartCount][10]-Plist[PartCount][9]*Plist[PartCount][9])
-						* std::sinh(eta_slice+0.5*std::log((Plist[PartCount][10]+Plist[PartCount][9])/(Plist[PartCount][10]-Plist[PartCount][9])));
-				Plist[PartCount][10] = temp_t;
-				Plist[PartCount][9] = temp_z;
+				double temp_t = std::sqrt(temp[10]*temp[10]-temp[9]*temp[9])
+						* std::cosh(eta_slice+0.5*std::log((temp[10]+temp[9])/(temp[10]-temp[9])));
+				double temp_z = std::sqrt(temp[10]*temp[10]-temp[9]*temp[9])
+						* std::sinh(eta_slice+0.5*std::log((temp[10]+temp[9])/(temp[10]-temp[9])));
+				temp[10] = temp_t;
+				temp[9] = temp_z;
 
 				// Momentum
 				// Sample rest frame momentum given T and mass of s quark
@@ -1252,19 +1258,25 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 				// PLab^u = g^u^t Lambda_t ^v pres^w g_w _v
 				// Returns P in GeV
 				new_quark_energy = sqrt(xms*xms + NewP*NewP);
-				Plist[PartCount][6] = (LorBoost[0][0]*new_quark_energy + LorBoost[0][1]*NewX + LorBoost[0][2]*NewY + LorBoost[0][3]*NewZ)*GEVFM;
-				Plist[PartCount][3] = (LorBoost[1][0]*new_quark_energy + LorBoost[1][1]*NewX + LorBoost[1][2]*NewY + LorBoost[1][3]*NewZ)*GEVFM;
-				Plist[PartCount][4] = (LorBoost[2][0]*new_quark_energy + LorBoost[2][1]*NewX + LorBoost[2][2]*NewY + LorBoost[2][3]*NewZ)*GEVFM;
-				Plist[PartCount][5] = (LorBoost[3][0]*new_quark_energy + LorBoost[3][1]*NewX + LorBoost[3][2]*NewY + LorBoost[3][3]*NewZ)*GEVFM;
+				temp[6] = (LorBoost[0][0]*new_quark_energy + LorBoost[0][1]*NewX + LorBoost[0][2]*NewY + LorBoost[0][3]*NewZ)*GEVFM;
+				temp[3] = (LorBoost[1][0]*new_quark_energy + LorBoost[1][1]*NewX + LorBoost[1][2]*NewY + LorBoost[1][3]*NewZ)*GEVFM;
+				temp[4] = (LorBoost[2][0]*new_quark_energy + LorBoost[2][1]*NewX + LorBoost[2][2]*NewY + LorBoost[2][3]*NewZ)*GEVFM;
+				temp[5] = (LorBoost[3][0]*new_quark_energy + LorBoost[3][1]*NewX + LorBoost[3][2]*NewY + LorBoost[3][3]*NewZ)*GEVFM;
 
 				// Additional information
-				Plist[PartCount][0]  = 1; // Event ID, to match jet formatting
-				Plist[PartCount][2]  = 0; // Origin, to match jet formatting
-				Plist[PartCount][11] = 0; // Status - identifies as thermal quark
-				PartCount++;
+				temp[0]  = 1; // Event ID, to match jet formatting
+				temp[2]  = 0; // Origin, to match jet formatting
+				temp[11] = 0; // Status - identifies as thermal quark
+				
+				#pragma omp critical
+				{
+					Plist.push_back(temp);
+				}
 			}
 		}
-
+		auto end = std::chrono::high_resolution_clock::now();
+		auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+		JSINFO << "Sampling thermal partons took " << duration << " ms";
 	}
 
 	JSDEBUG << "Light particles: " << nL_tot;
@@ -1276,7 +1288,7 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 	//Shuffling PList
 	if(ShuffleList){
 		// Shuffle the Plist using the random engine
-    	std::shuffle(&Plist[0], &Plist[PartCount], getRandomGenerator());
+    	std::shuffle(&Plist[0], &Plist[Plist.size()], getRandomGenerator());
 	}
 
 	//print Plist for testing

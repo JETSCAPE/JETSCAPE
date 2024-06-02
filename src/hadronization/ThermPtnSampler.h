@@ -4,7 +4,8 @@
 #include "JetScapeLogger.h"
 #include <vector>
 #include <random>
-
+#include <omp.h>
+#include <chrono>
 
 using namespace Jetscape;
 

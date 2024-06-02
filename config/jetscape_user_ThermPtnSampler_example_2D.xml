@@ -1,0 +1,192 @@
+<?xml version="1.0"?>
+<jetscape>
+  <nEvents> 1 </nEvents>
+  <vlevel> 0 </vlevel>
+  <setReuseHydro> true </setReuseHydro>
+  <nReuseHydro> 1 </nReuseHydro>
+
+  <outputFilename>test_out</outputFilename>
+  <JetScapeWriterAscii> off </JetScapeWriterAscii>
+  <JetScapeWriterFinalStatePartonsAscii> off </JetScapeWriterFinalStatePartonsAscii>
+  <JetScapeWriterFinalStateHadronsAscii> on </JetScapeWriterFinalStateHadronsAscii>
+
+  <Random>
+    <seed>42</seed>
+  </Random>
+
+  <!-- Inital State Module  -->
+  <IS>
+    <!-- x range [-grid_max_x, grid_max_x] -->
+    <!-- y range [-grid_max_y, grid_max_y]-->
+    <!-- longitudinal range [-grid_max_z, grid_max_z]-->
+    <!-- in units of [fm] -->
+    <grid_max_x> 15 </grid_max_x>
+    <grid_max_y> 15 </grid_max_y>
+    <grid_max_z> 0.0 </grid_max_z>
+    <grid_step_x> 0.3 </grid_step_x>
+    <grid_step_y> 0.3 </grid_step_y>
+    <grid_step_z> 0.2 </grid_step_z>
+
+    <Trento>
+    <PhysicsInputs  projectile='Pb'
+            target='Pb'
+            sqrts='2760'
+            cross-section='6.4'
+            normalization='13.9'>
+    </PhysicsInputs>
+    <CutInputs  centrality-low='60'
+          centrality-high='70'>
+    </CutInputs>
+    </Trento>
+  </IS>
+
+  <!--Preequilibrium Dynamics Module -->
+    <Preequilibrium>
+        <!-- starting long. proper time for Preequilibrium dynamics -->
+        <tau0>0.0</tau0>
+        <!-- starting long. proper time for Preequilibrium dynamics outuput for hard probes -->
+        <tauj>0.1</tauj>
+        <!-- switching long. proper time from Preequilibrium dynamics to Hydrodynamics (Landau Matching) -->
+        <taus>0.6</taus>
+
+        <!-- Individual Preequilibrium Dynamics models  -->
+        <FreestreamMilne>
+          <name>FreestreamMilne</name>
+          <freestream_input_file>freestream_input</freestream_input_file>
+        </FreestreamMilne>
+    </Preequilibrium>
+
+    <!-- Hard Process -->
+    <Hard>
+      <PythiaGun>
+        <FSR_on>0</FSR_on>
+        <pTHatMin>100</pTHatMin>
+        <pTHatMax>110</pTHatMax>
+        <eCM>2760</eCM>
+        <!-- You can add any number of additional lines to initialize pythia here -->
+        <!-- Note that if the tag exists it cannot be empty (tinyxml produces a segfault) -->
+        <!-- EPS09 Avg Nuclear PDF for nucleon in Pb nucleus -->
+        <LinesToRead>
+        HardQCD:all = on
+        SoftQCD:nonDiffractive = off
+        PDF:useHardNPDFA=on
+      	PDF:useHardNPDFB=on
+  	    PDF:nPDFSetA=1
+  	    PDF:nPDFSetB=1
+  	    PDF:nPDFBeamA = 100822080
+  	    PDF:nPDFBeamB = 100822080
+        </LinesToRead>
+      </PythiaGun>
+    </Hard>
+
+    <!--Eloss Modules -->
+    <!-- Individual Eloss Modules run Eloss and Eloss Manager  -->
+    <Eloss>
+      <maxT>500</maxT>
+      <tStart> 0.1 </tStart> <!-- Start time of jet quenching, proper time, fm/c   -->
+      <AddLiquefier> false </AddLiquefier>
+
+      <Matter>
+        <name>Matter</name>
+        <matter_on> 1 </matter_on>
+        <Q0> 2.0 </Q0>
+        <T0> 0.16 </T0>
+        <vir_factor> 0.25 </vir_factor>
+        <in_vac> 0 </in_vac>
+        <recoil_on> 1 </recoil_on>
+        <broadening_on> 0 </broadening_on>
+        <hydro_Tc> 0.16 </hydro_Tc>
+      </Matter>
+
+      <Lbt>
+        <name> Lbt </name>
+        <Q0> 2.0 </Q0>
+        <in_vac> 0 </in_vac>
+        <only_leading> 0 </only_leading>
+        <hydro_Tc> 0.16 </hydro_Tc>
+        <alphas> 0.2 </alphas>
+        <run_alphas>1</run_alphas>   <!-- 0 for fixed alpha_s and 1 for running alpha_s -->
+      </Lbt>
+    </Eloss>
+
+  <!-- Hydro  Module  -->
+  <Hydro>
+    <!-- MUSIC  -->
+    <MUSIC>
+      <name>MUSIC</name>
+      <MUSIC_input_file>music_input</MUSIC_input_file>
+      <beastMode>1</beastMode>
+      <Initial_time_tau_0>0.6</Initial_time_tau_0>
+      <output_evolution_to_file>0</output_evolution_to_file>
+      <output_evolution_to_memory>1</output_evolution_to_memory>
+      <surface_in_memory>1</surface_in_memory>
+      <shear_viscosity_eta_over_s>0.08</shear_viscosity_eta_over_s>
+      <T_dependent_Shear_to_S_ratio>0</T_dependent_Shear_to_S_ratio>
+      <eta_over_s_T_kink_in_GeV>0.16</eta_over_s_T_kink_in_GeV>
+      <eta_over_s_low_T_slope_in_GeV>0.</eta_over_s_low_T_slope_in_GeV>
+      <eta_over_s_high_T_slope_in_GeV>0.</eta_over_s_high_T_slope_in_GeV>
+      <eta_over_s_at_kink>0.08</eta_over_s_at_kink>
+      <temperature_dependent_bulk_viscosity>0</temperature_dependent_bulk_viscosity>
+      <zeta_over_s_max>0</zeta_over_s_max>
+      <zeta_over_s_T_peak_in_GeV>0.18</zeta_over_s_T_peak_in_GeV>
+      <zeta_over_s_width_in_GeV>0.02</zeta_over_s_width_in_GeV>
+      <zeta_over_s_lambda_asymm>0.0</zeta_over_s_lambda_asymm>
+      <Include_second_order_terms>1</Include_second_order_terms>
+      <freezeout_temperature>0.16</freezeout_temperature>
+      <Perform_CooperFrye_Feezeout>0</Perform_CooperFrye_Feezeout>
+    </MUSIC>
+  </Hydro>
+
+  <!-- Jet Hadronization Module -->
+   <JetHadronization>
+       <name>hybrid</name>
+       <take_recoil>1</take_recoil>
+       <eCMforHadronization>0</eCMforHadronization>
+       <hydro_Tc>0.16</hydro_Tc>
+       <had_postprop>0.1</had_postprop>
+       <eta_max_boost_inv>0.2</eta_max_boost_inv>
+       <had_postprop>1.0</had_postprop>
+       <tau0Max>10.0</tau0Max>
+       <pythia_decays>off</pythia_decays>
+       <reco_hadrons_in_pythia>0</reco_hadrons_in_pythia>
+       <!-- You can add any number of additional lines to initialize pythia hadronization here -->
+       <!-- Note that if the tag exists it cannot be empty (tinyxml produces a segfault) -->
+       <!-- <LinesToRead> -->
+       <!--   111:mayDecay = off  -->
+       <!-- </LinesToRead> -->
+   </JetHadronization>
+
+  <!-- Particlization Module  -->
+  <SoftParticlization>
+    <!-- iSpectraSampler -->
+    <iSS>
+      <!-- read in file type  -->
+      <!-- hydro_mode == 0 read in surface file from VISHNew -->
+      <!-- hydro_mode == 1 read in surface file from MUSIC (2+1)D -->
+      <!-- hydro_mode == 2 read in surface file from MUSIC (3+1)D -->
+      <hydro_mode>1</hydro_mode>
+
+      <!-- hadron species list  0: PDG 2005; 1: UrQMD; 2: SMASH -->
+      <afterburner_type>2</afterburner_type>
+
+      <number_of_repeated_sampling>1</number_of_repeated_sampling>
+      <Perform_resonance_decays>0</Perform_resonance_decays>
+    </iSS>
+  </SoftParticlization>
+
+  <!-- Hadronic Afterburner  -->
+  <Afterburner>
+    <include_fragmentation_hadrons>1</include_fragmentation_hadrons>
+    <!-- only the afterburner hadrons are written to a file -->
+    <!-- if fragmentation hadrons are not included in the afterburner they are also written  -->
+    <output_only_final_state_hadrons>1</output_only_final_state_hadrons>
+    <!-- SMASH -->
+    <SMASH>
+      <name>SMASH</name>
+      <!-- time in fm/c in the computational frame, when the simulation shoud be ended -->
+      <end_time>1000.0</end_time>
+      <!-- 0 - run the full afterburner, 1 - only decay the resonances without even propagation -->
+      <only_decays>0</only_decays>
+    </SMASH>
+  </Afterburner>
+</jetscape>

@@ -98,7 +98,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -pipe -Wall -std=c++17")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-reorder -Wno-unused-variable ")
 ## Then set the build type specific options. These will be automatically appended.
 set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+set(CMAKE_CXX_FLAGS_RELEASE "-g -O3 -fopenmp")
 
 ## can turn on debugging information
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
