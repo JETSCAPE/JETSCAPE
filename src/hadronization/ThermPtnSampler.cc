@@ -864,7 +864,7 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 
 	// lambda function to check if a temperature value is within the accuracy range of a cached temperature
 	auto withinAccuracyRange = [accuracyRange](double targetTemp, double cachedTemp) {
-    	return std::fabs(targetTemp - cachedTemp) <= accuracyRange;
+		return std::fabs(targetTemp - cachedTemp) <= accuracyRange;
 	};
 
 	// lambda function to retrieve the closest temperature from the cache within the accuracy range
@@ -891,12 +891,12 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 	// Define the lambda function for the Fermi distribution
 	// try inlining this function
 	auto FermiDistribution = [](double energy, double temperature) {
-	    return 1. / (exp(energy / temperature) + 1.);
+		return 1. / (exp(energy / temperature) + 1.);
 	};
 
 	// Define the OpenMP reduction for the 2D vectors
 	#pragma omp declare reduction (merge:std::vector<std::vector<double>>: \
-    omp_out.insert(omp_out.end(), omp_in.begin(), omp_in.end()))
+	omp_out.insert(omp_out.end(), omp_in.begin(), omp_in.end()))
 
 	std::vector<double> NumLightList(surface.size(), 0.);
 	std::vector<double> NumStrangeList(surface.size(), 0.);
@@ -914,9 +914,8 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 		<< eta_slice+(d_eta/2.) << ")";
 
 		#pragma omp parallel for private(CPos, LFSigma, CMSigma, TRead, Vel, tau_pos, \
-		eta_pos, tau_sur, eta_sur, cut, CDFTabLight, cdfLightCache, CDFTabStrange, \
-		cdfStrangeCache, CellDZ, E_light, E_strange, GWeightProd, pSpatialdSigma, \
-		NumLight, NumStrange, GPoints, GeneratedParticles, new_quark_energy, LorBoost) \
+		eta_pos, tau_sur, eta_sur, cut, CellDZ, E_light, E_strange, GWeightProd, pSpatialdSigma, \
+		NumLight, NumStrange, GeneratedParticles, new_quark_energy, LorBoost) \
 		reduction(merge:Plist) reduction(+:nL_tot) reduction(+:nS_tot)
 		for(int iS=0; iS<surface.size(); ++iS){
 			tau_pos = surface[iS][0];
@@ -935,6 +934,8 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 
 			cut = 10*TRead;
 
+			// #pragma omp critical
+			// {
 			// check if the CDFs for light quarks for this temperature are already in the cache and within the accuracy range
     		auto cdfLightIter = cdfLightCache.find(TRead);
     		if (cdfLightIter == cdfLightCache.end()) {
@@ -962,20 +963,21 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
         		// if not found, find the closest temperature in the cache within the accuracy range
         		double closestTemp = getClosestCachedTemp(cdfStrangeCache,TRead);
 
-        		if (closestTemp >= 0 && withinAccuracyRange(TRead, closestTemp)) {
-            		// use the CDFs from the closest temperature in the cache
-            		CDFTabStrange = cdfStrangeCache[closestTemp];
-            		// set the current temperature value to the closest cached temperature
-            		TRead = closestTemp;
-        		} else {
-            		// if no suitable entry is found, compute the CDFs and store them in the cache
-            		CDFGenerator(TRead, xms, 2); // for strange quarks
-            		cdfStrangeCache[TRead] = CDFTabStrange;
-        		}
-    		} else {
-        		// if found, use the precomputed CDFs from the cache
-        		CDFTabStrange = cdfStrangeIter->second;
-    		}
+				if (closestTemp >= 0 && withinAccuracyRange(TRead, closestTemp)) {
+					// use the CDFs from the closest temperature in the cache
+					CDFTabStrange = cdfStrangeCache[closestTemp];
+					// set the current temperature value to the closest cached temperature
+					TRead = closestTemp;
+				} else {
+					// if no suitable entry is found, compute the CDFs and store them in the cache
+					CDFGenerator(TRead, xms, 2); // for strange quarks
+					cdfStrangeCache[TRead] = CDFTabStrange;
+				}
+			} else {
+				// if found, use the precomputed CDFs from the cache
+				CDFTabStrange = cdfStrangeIter->second;
+			}
+			// }
 
 			//getting t,z from tau, eta
 			CPos[0] = tau_pos*std::cosh(eta_pos);
@@ -1041,22 +1043,22 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 
 				// #pragma omp parallel for private(GWeightProd, pSpatialdSigma, E_light, E_strange) reduction(+:NumLight, NumStrange) 
 				for (int l = 0; l < GPoints; l++) {
-				    for (int m = 0; m < GPoints; m++) {
-				        for (int k = 0; k < GPoints; k++) {
+					for (int m = 0; m < GPoints; m++) {
+						for (int k = 0; k < GPoints; k++) {
 							GWeightProd = GWeight[l] * GWeight[m] * GWeight[k];
 							pSpatialdSigma = (cut * GAbs[l]) * CMSigma[1] + (cut * GAbs[m]) * CMSigma[2] + (cut * GAbs[k]) * CMSigma[3];
 
 							// For UD quarks
 							E_light = computeEnergy(xmq, cut, GAbs[l], GAbs[m], GAbs[k]);
-		            		NumLight += GWeightProd * FermiDistribution(E_light, TRead) *
-		            		           (E_light * CMSigma[0] + pSpatialdSigma) / E_light;
+							NumLight += GWeightProd * FermiDistribution(E_light, TRead) *
+									(E_light * CMSigma[0] + pSpatialdSigma) / E_light;
 
-		            		// For S quarks
+							// For S quarks
 							E_strange = computeEnergy(xms, cut, GAbs[l], GAbs[m], GAbs[k]);
-		            		NumStrange += GWeightProd * FermiDistribution(E_strange, TRead) *
-		            		             (E_strange * CMSigma[0] + pSpatialdSigma) / E_strange;
-				        }
-				    }
+							NumStrange += GWeightProd * FermiDistribution(E_strange, TRead) *
+										(E_strange * CMSigma[0] + pSpatialdSigma) / E_strange;
+						}
+					}
 				}
 				// U, D, UBAR, DBAR QUARKS
 				// <N> = V <n>
@@ -1072,7 +1074,6 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 				NumHere = NumLightList[iS];
 				NumOddHere = NumStrangeList[iS];
 			}
-
 			std::poisson_distribution<int> poisson_ud(NumHere);
 
 			// Generating light quarks
@@ -1280,6 +1281,7 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 	auto end = std::chrono::high_resolution_clock::now();
 	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 	JSINFO << "Sampling thermal partons took " << duration << " ms";
+	JSINFO << "Number of OpenMP threads used: " << omp_get_max_threads();
 
 	JSDEBUG << "Light particles: " << nL_tot;
 	JSDEBUG << "Strange particles: " << nS_tot;
@@ -1290,13 +1292,13 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 	//Shuffling PList
 	if(ShuffleList){
 		// Shuffle the Plist using the random engine
-    	std::shuffle(&Plist[0], &Plist[Plist.size()], getRandomGenerator());
+		std::shuffle(&Plist[0], &Plist[Plist.size()], getRandomGenerator());
 	}
 
 	//print Plist for testing
 	/*std::cout << std::setprecision(5);
-  	std::ofstream thermalP;
-  	thermalP.open("thermal_partons.dat", std::ios::app);
+	std::ofstream thermalP;
+	thermalP.open("thermal_partons.dat", std::ios::app);
 	for(int p=0; p < Plist.size(); p++){
 		thermalP << Plist[p][0] << " " << Plist[p][1] << " " << Plist[p][2]
 		<< " " << Plist[p][3] << " " << Plist[p][4] << " " << Plist[p][5]
