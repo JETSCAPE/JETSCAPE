@@ -894,8 +894,12 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 	    return 1. / (exp(energy / temperature) + 1.);
 	};
 
-	std::vector<double> NumLightList;
-	std::vector<double> NumStrangeList;
+	// Define the OpenMP reduction for the 2D vectors
+	#pragma omp declare reduction (merge:std::vector<std::vector<double>>: \
+    omp_out.insert(omp_out.end(), omp_in.begin(), omp_in.end()))
+
+	std::vector<double> NumLightList(surface.size(), 0.);
+	std::vector<double> NumStrangeList(surface.size(), 0.);
 
 	double d_eta = CellDZ;
 
@@ -909,7 +913,11 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 		<< " (eta_min = " << eta_slice-(d_eta/2.) << ", eta_max = "
 		<< eta_slice+(d_eta/2.) << ")";
 
-		#pragma omp parallel for private(CPos, LFSigma, CMSigma, TRead, Vel, tau_pos, eta_pos, tau_sur, eta_sur, cut, CDFTabLight, cdfLightCache, CDFTabStrange, cdfStrangeCache, CellDZ, E_light, E_strange, GWeightProd, pSpatialdSigma, NumLight, NumStrange, GPoints, GeneratedParticles, new_quark_energy, LorBoost)
+		#pragma omp parallel for private(CPos, LFSigma, CMSigma, TRead, Vel, tau_pos, \
+		eta_pos, tau_sur, eta_sur, cut, CDFTabLight, cdfLightCache, CDFTabStrange, \
+		cdfStrangeCache, CellDZ, E_light, E_strange, GWeightProd, pSpatialdSigma, \
+		NumLight, NumStrange, GPoints, GeneratedParticles, new_quark_energy, LorBoost) \
+		reduction(merge:Plist) reduction(+:nL_tot) reduction(+:nS_tot)
 		for(int iS=0; iS<surface.size(); ++iS){
 			tau_pos = surface[iS][0];
 			CPos[1] = surface[iS][1];
@@ -1058,8 +1066,8 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 				// <N> = V <n>
 				NumOddHere = NumStrange*OddDeg*cut*cut*cut/(8.*PI*PI*PI);
 
-				NumLightList.push_back(NumHere);
-				NumStrangeList.push_back(NumOddHere);
+				NumLightList[iS] = NumHere;
+				NumStrangeList[iS] = NumOddHere;
 			} else {
 				NumHere = NumLightList[iS];
 				NumOddHere = NumStrangeList[iS];
@@ -1163,10 +1171,7 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 				temp[2]  = 0; // Origin, to match jet formatting
 				temp[11] = 0; // Status - identifies as thermal quark
 
-				#pragma omp critical
-				{
-					Plist.push_back(temp);
-				}
+				Plist.push_back(temp);
 			}
 
 			std::poisson_distribution<int> poisson_s(NumOddHere);
@@ -1267,17 +1272,14 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 				temp[0]  = 1; // Event ID, to match jet formatting
 				temp[2]  = 0; // Origin, to match jet formatting
 				temp[11] = 0; // Status - identifies as thermal quark
-				
-				#pragma omp critical
-				{
-					Plist.push_back(temp);
-				}
+
+				Plist.push_back(temp);
 			}
 		}
-		auto end = std::chrono::high_resolution_clock::now();
-		auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-		JSINFO << "Sampling thermal partons took " << duration << " ms";
 	}
+	auto end = std::chrono::high_resolution_clock::now();
+	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+	JSINFO << "Sampling thermal partons took " << duration << " ms";
 
 	JSDEBUG << "Light particles: " << nL_tot;
 	JSDEBUG << "Strange particles: " << nS_tot;
