@@ -916,6 +916,7 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 		#pragma omp parallel for private(CPos, LFSigma, CMSigma, TRead, Vel, tau_pos, \
 		eta_pos, tau_sur, eta_sur, cut, CellDZ, E_light, E_strange, GWeightProd, pSpatialdSigma, \
 		NumLight, NumStrange, GeneratedParticles, new_quark_energy, LorBoost) \
+		firstprivate(CDFTabLight, CDFTabStrange) \
 		reduction(merge:Plist) reduction(+:nL_tot) reduction(+:nS_tot)
 		for(int iS=0; iS<surface.size(); ++iS){
 			tau_pos = surface[iS][0];
@@ -934,8 +935,6 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 
 			cut = 10*TRead;
 
-			// #pragma omp critical
-			// {
 			// check if the CDFs for light quarks for this temperature are already in the cache and within the accuracy range
     		auto cdfLightIter = cdfLightCache.find(TRead);
     		if (cdfLightIter == cdfLightCache.end()) {
@@ -977,7 +976,6 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 				// if found, use the precomputed CDFs from the cache
 				CDFTabStrange = cdfStrangeIter->second;
 			}
-			// }
 
 			//getting t,z from tau, eta
 			CPos[0] = tau_pos*std::cosh(eta_pos);
