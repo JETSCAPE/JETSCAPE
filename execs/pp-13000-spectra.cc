@@ -142,9 +142,9 @@ int main(int argc, char* argv[]){
                 double strength = 1; //smoothing between smooth and hard transition          
 
                 if(fabs(Y) < idHadronYCut){
-                    if(abs(PID) == 211) tempPions->Fill(PT, strength/2);
-                    if(abs(PID) == 321) tempKaons->Fill(PT, strength/2);
-                    if(abs(PID) == 2212) tempProtons->Fill(PT, strength/2);
+                    if(abs(PID) == 211) tempPions->Fill(PT, strength/2.);
+                    if(abs(PID) == 321) tempKaons->Fill(PT, strength/2.);
+                    if(abs(PID) == 2212) tempProtons->Fill(PT, strength/2.);
                 } 
             }
         }
@@ -163,9 +163,9 @@ int main(int argc, char* argv[]){
         tempProtons->Write();
         
         //add to totals histograms
-        HistTotalPions->Add(tempPions,HardCrossSection/Events);
-        HistTotalKaons->Add(tempKaons,HardCrossSection/Events);
-        HistTotalProtons->Add(tempProtons,HardCrossSection/Events);
+        HistTotalPions->Add(tempPions,HardCrossSection/(1.0*Events*xsectotal));
+        HistTotalKaons->Add(tempKaons,HardCrossSection/(1.0*Events*xsectotal));
+        HistTotalProtons->Add(tempProtons,HardCrossSection/(1.0*Events*xsectotal));
 		
         myfile->Close();
         
@@ -179,15 +179,21 @@ int main(int argc, char* argv[]){
     } //k-loop ends here (pTHatBin loop)
 
     //Scaling totals by global factors and the identified pions by bin centers: dSigma/(2*pi*pT*dpT*dEta)
-    scaleBins(HistTotalPions,(1/(2*M_PI*2.0*idHadronYCut)));
-    scaleBins(HistTotalKaons,(1/(2*M_PI*2.0*idHadronYCut)));
-    scaleBins(HistTotalProtons,(1/(2*M_PI*2.0*idHadronYCut)));
+    HistTotalPions->Scale(1/(2.0*idHadronYCut),"width");
+    HistTotalKaons->Scale(1/(2.0*idHadronYCut),"width");
+    HistTotalProtons->Scale(1/(2.0*idHadronYCut),"width");
  	
     //create root file for total plots
     HistTotalPions->Write("raw pions"); smoothBins(HistTotalPions); HistTotalPions->Write("identified pions");
-    HistTotalPions->Write("raw kaons"); smoothBins(HistTotalKaons); HistTotalPions->Write("identified kaons");
-    HistTotalPions->Write("raw protons"); smoothBins(HistTotalProtons); HistTotalPions->Write("identified protons");
+    HistTotalKaons->Write("raw kaons"); smoothBins(HistTotalKaons); HistTotalKaons->Write("identified kaons");
+    HistTotalProtons->Write("raw protons"); smoothBins(HistTotalProtons); HistTotalProtons->Write("identified protons");
     totalroot->Close();
+    HistTotalPions->Print("all");
+
+    //hadron graphs
+    myRatioPlot((TGraphErrors*)piondir->Get("Graph1D_y1"), HistTotalPions, "Pion Yields", true, true);
+    myRatioPlot((TGraphErrors*)kaondir->Get("Graph1D_y1"), HistTotalKaons, "Kaon Yields", true, true);
+    myRatioPlot((TGraphErrors*)protondir->Get("Graph1D_y1"), HistTotalProtons, "Proton Yields", true, true);
 
     //Done. Script run time
     int EndTime = time(NULL);
