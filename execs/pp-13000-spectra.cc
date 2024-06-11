@@ -77,6 +77,19 @@ int main(int argc, char* argv[]){
     TH1D *HistTotalKaons = new TH1D("Kaon Spectrum", "Kaon Spectrum pT", kaondata->GetNbinsX(), kaondata->GetXaxis()->GetXbins()->GetArray());
     TH1D *HistTotalProtons = new TH1D("Proton Spectrum", "Proton Spectrum pT", protondata->GetNbinsX(), protondata->GetXaxis()->GetXbins()->GetArray());
     
+    //doing the same for jets
+    TFile jetdataroot( "/data/rjfgroup/rjf01/cameron.parker/data/LHC13000-jets.root");
+    TDirectory* jetdir1 = (TDirectory*)jetdataroot.Get("Table 1"); TH1D* jetdata1 = (TH1D*)jetdir1->Get("Hist1D_y1");
+    TH1D* jethist1 = getBlankCopy(jetdata1,"Jets low y","Jets low y");
+    TDirectory* jetdir2 = (TDirectory*)jetdataroot.Get("Table 2"); TH1D* jetdata2 = (TH1D*)jetdir2->Get("Hist1D_y1");
+    TH1D* jethist2 = getBlankCopy(jetdata2,"Jets mid y","Jets mid y");
+    TDirectory* jetdir3 = (TDirectory*)jetdataroot.Get("Table 3"); TH1D* jetdata3 = (TH1D*)jetdir3->Get("Hist1D_y1");
+    TH1D* jethist3 = getBlankCopy(jetdata3,"Jets high y","Jets high y");
+    
+    //jet def
+    fjcore::JetDefinition jetDef(fjcore::antikt_algorithm, 0.4);
+    std::vector <fjcore::PseudoJet> SortedJets, UnsortedJets;
+
     cout<<"These are pTHat loops "<<endl;
     // For loop to open different pTHat bin files
     for (int k = 0; k<NpTHardBin; ++k){
@@ -103,6 +116,9 @@ int main(int argc, char* argv[]){
         TH1D *tempPions = new TH1D("Pion Spectrum", "Pion Spectrum pT", piondata->GetNbinsX(), piondata->GetXaxis()->GetXbins()->GetArray());
         TH1D *tempKaons = new TH1D("Kaon Spectrum", "Kaon Spectrum pT", kaondata->GetNbinsX(), kaondata->GetXaxis()->GetXbins()->GetArray());
         TH1D *tempProtons = new TH1D("Proton Spectrum", "Proton Spectrum pT", protondata->GetNbinsX(), protondata->GetXaxis()->GetXbins()->GetArray());
+        TH1D* tempjethist1 = getBlankCopy(jetdata1,"Temp Jets low y","Temp Jets low y");
+        TH1D* tempjethist2 = getBlankCopy(jetdata2,"Temp Jets mid y","Temp Jets mid y");
+        TH1D* tempjethist3 = getBlankCopy(jetdata3,"Temp Jets high y","Temp Jets high y");
 
         //Data structures for events read in to save run time
         vector<shared_ptr<Hadron>> hadrons;
@@ -120,6 +136,7 @@ int main(int argc, char* argv[]){
 
             //cout<<"Number of hadrons is: " << hadrons.size() << endl;
             Events++;
+            std::vector <fjcore::PseudoJet> fjInputs;
             for(unsigned int i=0; i<hadrons.size(); i++){
                 SN = i;
                 PID= hadrons[i].get()->pid();
@@ -131,7 +148,11 @@ int main(int argc, char* argv[]){
                 Phi = hadrons[i].get()->phi();
                 pStat = hadrons[i].get()->pstat();
                 mass = hadrons[i].get()->restmass();
-                double PT = TMath::Sqrt((Px*Px) + (Py*Py));      
+                double PT = TMath::Sqrt((Px*Px) + (Py*Py));
+                
+                if(PT>0.01 && PID!=12 && PID!=14 && PID!=16 && PID!=18){
+                    fjInputs.push_back(fjcore::PseudoJet(Px,Py,Pz,E));
+                }      
 
                 //cutting for specific regimes
                 if(k == 0 && PT > softend)
@@ -147,6 +168,19 @@ int main(int argc, char* argv[]){
                     if(abs(PID) == 2212) tempProtons->Fill(PT, strength/2.);
                 } 
             }
+
+            //jet calcs
+            fjcore::ClusterSequence clustSeq(fjInputs, jetDef);
+            UnsortedJets = clustSeq.inclusive_jets(100.);
+            SortedJets = sorted_by_pt(UnsortedJets);
+            int pFast = SortedJets.size();
+            for (auto jet: SortedJets){
+                double jetpT = jet.perp();
+                if(jetpT > stod(pTHatMax[k])*1.1) jetpT = stod(pTHatMax[k]); //catching high energy anomalies
+                if(fabs(jet.rapidity()) < 0.5) tempjethist1->Fill(jetpT);
+                if(fabs(jet.rapidity()) > 0.5 and fabs(jet.rapidity()) < 1.0) tempjethist2->Fill(jetpT);
+                if(fabs(jet.rapidity()) > 1.0 and fabs(jet.rapidity()) < 1.5) tempjethist3->Fill(jetpT);
+            }
         }
 
         //xsec stuff
@@ -161,11 +195,17 @@ int main(int argc, char* argv[]){
         tempPions->Write();
         tempKaons->Write();
         tempProtons->Write();
+        tempjethist1->Write();
+        tempjethist2->Write();
+        tempjethist3->Write();
         
         //add to totals histograms
         HistTotalPions->Add(tempPions,HardCrossSection/(1.0*Events*xsectotal));
         HistTotalKaons->Add(tempKaons,HardCrossSection/(1.0*Events*xsectotal));
         HistTotalProtons->Add(tempProtons,HardCrossSection/(1.0*Events*xsectotal));
+        jethist1->Add(tempjethist1,HardCrossSection/(1.0*Events));
+        jethist2->Add(tempjethist2,HardCrossSection/(1.0*Events));
+        jethist3->Add(tempjethist3,HardCrossSection/(1.0*Events));
 		
         myfile->Close();
         
@@ -182,18 +222,26 @@ int main(int argc, char* argv[]){
     HistTotalPions->Scale(1/(2.0*idHadronYCut),"width");
     HistTotalKaons->Scale(1/(2.0*idHadronYCut),"width");
     HistTotalProtons->Scale(1/(2.0*idHadronYCut),"width");
+    jethist1->Scale(1000000000.0,"width");
+    jethist2->Scale(1000000000.0,"width");
+    jethist3->Scale(1000000000.0,"width");
  	
     //create root file for total plots
     HistTotalPions->Write("raw pions"); smoothBins(HistTotalPions); HistTotalPions->Write("identified pions");
     HistTotalKaons->Write("raw kaons"); smoothBins(HistTotalKaons); HistTotalKaons->Write("identified kaons");
     HistTotalProtons->Write("raw protons"); smoothBins(HistTotalProtons); HistTotalProtons->Write("identified protons");
+    jethist1->Write("low y jets");
+    jethist2->Write("mid y jets");
+    jethist3->Write("high y jets");
     totalroot->Close();
-    HistTotalPions->Print("all");
 
     //hadron graphs
     myRatioPlot((TGraphErrors*)piondir->Get("Graph1D_y1"), HistTotalPions, "Pion Yields", true, true);
     myRatioPlot((TGraphErrors*)kaondir->Get("Graph1D_y1"), HistTotalKaons, "Kaon Yields", true, true);
     myRatioPlot((TGraphErrors*)protondir->Get("Graph1D_y1"), HistTotalProtons, "Proton Yields", true, true);
+    myRatioPlot((TGraphErrors*)jetdir1->Get("Graph1D_y1"), jethist1, "Low y Jet Yields", true, true);
+    myRatioPlot((TGraphErrors*)jetdir2->Get("Graph1D_y1"), jethist2, "Mid y Jet Yields", true, true);
+    myRatioPlot((TGraphErrors*)jetdir3->Get("Graph1D_y1"), jethist3, "High y Jet Yields", true, true);
 
     //Done. Script run time
     int EndTime = time(NULL);
