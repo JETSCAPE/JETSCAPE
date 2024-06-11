@@ -24,7 +24,7 @@
   
   <!--Eloss Modules -->
   <Eloss>
-    <maxT> 200 </maxT>
+    <maxT> 400 </maxT>
     <lambdaQCD> 0.2 </lambdaQCD>
     
     <Matter> 

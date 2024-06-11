@@ -156,6 +156,8 @@ def makexml(bound, parameters, baseDir, xmltemplate, ECM):
 
 # making directory for the runs
 def makeDir(index):
+    print("Making directory for:",index)
+
     # setting names
     baseDir = totaldir + "points/" + str(index)
     plotsDir = baseDir + "/plots"
@@ -197,6 +199,8 @@ makeTotalDir(totaldir)
 intervals = []
 if RHIC:
     intervals = [0, 5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5, 25, 27.5, 30, 32.5, 35, 37.5, 40, 42.5, 45, 50, 55, 60, 65, 70]
+elif LHC13000:
+    intervals = [0, 5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5, 25, 27.5, 30, 32.5, 35, 37.5, 40, 42.5, 45, 50, 55, 60, 65, 70, 75, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 190, 210, 230, 250, 270, 290, 310, 330, 350, 400, 450, 500, 550, 600, 1000, 2000, 4000, 6000]
 else:
     intervals = [0, 5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5, 25, 27.5, 30, 32.5, 35, 37.5, 40, 42.5, 45, 50, 55, 60, 65, 70, 75, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 190, 210, 230, 250, 270, 290, 310, 330, 350, 400, 450, 500, 550, 600, 1000]
 
