@@ -222,9 +222,9 @@ int main(int argc, char* argv[]){
     HistTotalPions->Scale(1/(2.0*idHadronYCut),"width");
     HistTotalKaons->Scale(1/(2.0*idHadronYCut),"width");
     HistTotalProtons->Scale(1/(2.0*idHadronYCut),"width");
-    jethist1->Scale(1000000000.0,"width");
-    jethist2->Scale(1000000000.0,"width");
-    jethist3->Scale(1000000000.0,"width");
+    jethist1->Scale(2000000000.0,"width");
+    jethist2->Scale(2000000000.0,"width");
+    jethist3->Scale(2000000000.0,"width");
  	
     //create root file for total plots
     HistTotalPions->Write("raw pions"); smoothBins(HistTotalPions); HistTotalPions->Write("identified pions");

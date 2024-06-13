@@ -99,8 +99,8 @@ int main(int argc, char* argv[]){
     double hardPionEtaCut = 0.35;
     double softend = 6.0;
 
-    double jetYmin = 0.2;
-    double jetYmax = 0.8;
+    double jetEtaMin = 0.2;
+    double jetEtaMax = 0.8;
     double jetR = 0.4;
     double overlap_threshold = 0.5;
     fastjet::CDFMidPointPlugin cdfcone(jetR, overlap_threshold);
@@ -239,7 +239,7 @@ int main(int argc, char* argv[]){
             fastjet::ClusterSequence clustSeq(fjInputs, jetDef);
             vector<fastjet::PseudoJet> UnSortedJets = clustSeq.inclusive_jets(5.0);
             for(int ijet = 0; ijet < UnSortedJets.size(); ijet++){
-                if(abs(UnSortedJets[ijet].rapidity()) < jetYmax && abs(UnSortedJets[ijet].rapidity()) > jetYmin)
+                if(abs(UnSortedJets[ijet].eta()) < jetEtaMax && abs(UnSortedJets[ijet].eta()) > jetEtaMin)
                     tempJets->Fill(UnSortedJets[ijet].pt(),1.0/2.0);
             }
 
@@ -285,7 +285,7 @@ int main(int argc, char* argv[]){
     scaleBins(HistTotalProtons,(1.0/(2*M_PI*2.0*idHadronEtaCut)));
     scaleBins(HistTotalHads,(1.0/(2*M_PI*2.0*SingleHadronEtaCut)));
     scaleBins(HistTotalHardPions,(1.0/(2*M_PI*2.0*hardPionEtaCut)));
-    HistTotalJets->Scale((1.0e9/(2*M_PI*(jetYmax-jetYmin))),"width");
+    HistTotalJets->Scale((1.0e9/(2*M_PI*(jetEtaMax-jetEtaMin))),"width");
 
     //Plotting
     myRatioPlot(piongraph, HistTotalPions, "Pion Yields", true, true);
