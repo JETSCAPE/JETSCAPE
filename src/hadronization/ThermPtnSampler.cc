@@ -8,51 +8,34 @@
 #include <cmath>
 #include <unordered_map>
 #include <algorithm>
+#include <gsl/gsl_sf_bessel.h>
 
 using namespace Jetscape;
 
-ThermalPartonSampler::ThermalPartonSampler(unsigned int ran_seed){
+ThermalPartonSampler::ThermalPartonSampler(unsigned int ran_seed)
+	: rng_engine(ran_seed), 
+      CDFTabLight(NUMSTEP, std::vector<double>(2)), 
+      CDFTabStrange(NUMSTEP, std::vector<double>(2)){
 
 	rng_engine.seed(ran_seed); // set the random seed from the framework
-
-	// Gaussian weights for integration
-	GWeight[0]  = 0.0621766166553473; GWeight[1]  = 0.0619360674206832; GWeight[2]  = 0.0614558995903167; GWeight[3]  = 0.0607379708417702; GWeight[4]  = 0.0597850587042655;
-	GWeight[5]  = 0.0586008498132224; GWeight[6]  = 0.0571899256477284; GWeight[7]  = 0.0555577448062125; GWeight[8]  = 0.0537106218889962; GWeight[9]  = 0.0516557030695811;
-	GWeight[10] = 0.0494009384494663; GWeight[11] = 0.0469550513039484; GWeight[12] = 0.0443275043388033; GWeight[13] = 0.0415284630901477; GWeight[14] = 0.0385687566125877;
-	GWeight[15] = 0.0354598356151462; GWeight[16] = 0.0322137282235780; GWeight[17] = 0.0288429935805352; GWeight[18] = 0.0253606735700124; GWeight[19] = 0.0217802431701248;
-	GWeight[20] = 0.0181155607134894; GWeight[21] = 0.0143808227614856; GWeight[22] = 0.0105905483836510; GWeight[23] = 0.0067597991957454; GWeight[24] = 0.0029086225531551;
-	GWeight[25] = 0.0621766166553473; GWeight[26] = 0.0619360674206832; GWeight[27] = 0.0614558995903167; GWeight[28] = 0.0607379708417702; GWeight[29] = 0.0597850587042655;
-	GWeight[30] = 0.0586008498132224; GWeight[31] = 0.0571899256477284; GWeight[32] = 0.0555577448062125; GWeight[33] = 0.0537106218889962; GWeight[34] = 0.0516557030695811;
-	GWeight[35] = 0.0494009384494663; GWeight[36] = 0.0469550513039484; GWeight[37] = 0.0443275043388033; GWeight[38] = 0.0415284630901477; GWeight[39] = 0.0385687566125877;
-	GWeight[40] = 0.0354598356151462; GWeight[41] = 0.0322137282235780; GWeight[42] = 0.0288429935805352; GWeight[43] = 0.0253606735700124; GWeight[44] = 0.0217802431701248;
-	GWeight[45] = 0.0181155607134894; GWeight[46] = 0.0143808227614856; GWeight[47] = 0.0105905483836510; GWeight[48] = 0.0067597991957454; GWeight[49] = 0.0029086225531551;
-
-	// Gaussian abscissas for integration
-	GAbs[0]  =  0.0310983383271889; GAbs[1]  =  0.0931747015600861; GAbs[2]  =  0.1548905899981459; GAbs[3]  =  0.2160072368760418; GAbs[4]  =  0.2762881937795320;
-	GAbs[5]  =  0.3355002454194373; GAbs[6]  =  0.3934143118975651; GAbs[7]  =  0.4498063349740388; GAbs[8]  =  0.5044581449074642; GAbs[9]  =  0.5571583045146501;
-	GAbs[10] =  0.6077029271849502; GAbs[11] =  0.6558964656854394; GAbs[12] =  0.7015524687068222; GAbs[13] =  0.7444943022260685; GAbs[14] =  0.7845558329003993;
-	GAbs[15] =  0.8215820708593360; GAbs[16] =  0.8554297694299461; GAbs[17] =  0.8859679795236131; GAbs[18] =  0.9130785566557919; GAbs[19] =  0.9366566189448780;
-	GAbs[20] =  0.9566109552428079; GAbs[21] =  0.9728643851066920; GAbs[22] =  0.9853540840480058; GAbs[23] =  0.9853540840480058; GAbs[24] =  0.9988664044200710;
-	GAbs[25] = -0.0310983383271889; GAbs[26] = -0.0931747015600861; GAbs[27] = -0.1548905899981459; GAbs[28] = -0.2160072368760418; GAbs[29] = -0.2762881937795320;
-	GAbs[30] = -0.3355002454194373; GAbs[31] = -0.3934143118975651; GAbs[32] = -0.4498063349740388; GAbs[33] = -0.5044581449074642; GAbs[34] = -0.5571583045146501;
-	GAbs[35] = -0.6077029271849502; GAbs[36] = -0.6558964656854394; GAbs[37] = -0.7015524687068222; GAbs[38] = -0.7444943022260685; GAbs[39] = -0.7845558329003993;
-	GAbs[40] = -0.8215820708593360; GAbs[41] = -0.8554297694299461; GAbs[42] = -0.8859679795236131; GAbs[43] = -0.9130785566557919; GAbs[44] = -0.9366566189448780;
-	GAbs[45] = -0.9566109552428079; GAbs[46] = -0.9728643851066920; GAbs[47] = -0.9853540840480058; GAbs[48] = -0.9853540840480058; GAbs[49] = -0.9988664044200710;
-
-	// Adjustable parameters
-	xmq = 0.33/GEVFM; // use pythia values here
-	xms = 0.5/GEVFM; // use pythia values here
-	T = 0.165/GEVFM;  // 165 MeV into fm^-1 // is set from outside with brick_temperature() or from hypersurface
-	NUMSTEP = 1048577;  // 2^20+1, for steps of CDF Table, changes coarseness of momentum sampling
-
-	// Adjustable params for 3+1d
-	CellDX = 0.2; CellDY = 0.2;	CellDZ = 0.2; CellDT = 0.1; //these are the values used in SurfaceFinder.cc
 
 	// Flags
 	SetNum = false; // Set 'true' to set number of particles by hand- !!!Statistics use above temperature!!!
 	SetNumLight = 1000000; //If SetNum == true, this many UD quarks are generated
 	SetNumStrange = 0 ; //If SetNum == true, this many S quarks are generated
 	ShuffleList = true; // Should list of particles be shuffled at the end
+
+	degeneracy_ud = 4.*6.; // Degeneracy of UD quarks
+	degeneracy_s = 2.*6.; // Degeneracy of S quarks
+	CDFcacheAccuracy = 0.003 / hbarC;	// Accuracy range for cached temperature
+	xmq = 0.33/hbarC; // use pythia values here
+	xms = 0.5/hbarC; // use pythia values here
+	NUMSTEP = 4097; // 2^12+1, for steps of CDF Table, changes coarseness of momentum sampling
+
+	CellDX = 0.2;
+	CellDY = 0.2;
+	CellDZ = 0.2;
+	CellDT = 0.1;
 
 	// Brick Info
 	L = 4.0; // Thickness from box edge
@@ -62,21 +45,61 @@ ThermalPartonSampler::ThermalPartonSampler(unsigned int ran_seed){
 	Vx = 0.; // 'Uniform' no flow in x-dir
 	Vy = 0.; // 'Uniform' no flow in y-dir
 	Vz = 0.; // 'Uniform' no flow in z-dir
+	T_brick = 0.165 / hbarC; // 165 MeV into fm^-1 // is set from outside with brick_Tc()
 
 	surface.clear();
 
-	num_ud = 0; num_s = 0;
+	num_ud = 0;
+	num_s = 0;
 
-	for(int iCDF=0; iCDF<NUMSTEP; ++iCDF){
-		std::vector<double> temp = {0., 0.};
-		CDFTabLight.push_back(temp);
-		CDFTabStrange.push_back(temp);
-	}
-
+	InitializeBesselK2();
 }
 
-double ThermalPartonSampler::FermiPDF (double P, double M, double T, double mu){
-	return 1./( exp( (sqrt(M*M + P*P) - mu)/T ) + 1. );
+void ThermalPartonSampler::InitializeBesselK2() {
+    double K2_x_min = 0.001;
+    double K2_x_max = 400.0;
+    double K2_dx = 0.001;
+    int K2_tb_length = static_cast<int>((K2_x_max - K2_x_min)/K2_dx) + 1;
+
+    BesselK2.resize(K2_tb_length);
+    for (int i = 0; i < K2_tb_length; i++) {
+        double x = K2_x_min + i*K2_dx;
+        BesselK2[i] = gsl_sf_bessel_Kn(2, x);
+    }
+}
+
+double ThermalPartonSampler::BesselK2function(double arg) {
+    double K2_x_min = 0.001;
+    double K2_x_max = 400.0;
+    double K2_dx = 0.001;
+    if (arg < K2_x_min || arg > K2_x_max) {
+        return gsl_sf_bessel_Kn(2, arg);
+    } else {
+        int idx = static_cast<int>((arg - K2_x_min)/K2_dx);
+        double fraction = (arg - K2_x_min - idx*K2_dx)/K2_dx;
+        return (1.0 - fraction)*BesselK2[idx] + fraction*BesselK2[idx + 1];
+    }
+}
+
+double ThermalPartonSampler::FermiDiracDistributionMomentumIntegral(double T, double m) {
+	int truncate_order = 10;
+    double N_eq = 0.0;
+
+    for (int n = 1; n <= truncate_order; n++) {
+        double arg = n*m/T; // argument in Bessel function K_2
+
+        // sign is (-1)^(n+1)
+        double sign = (n % 2 == 0) ? -1.0 : 1.0;
+
+        double K2 = BesselK2function(arg);
+        N_eq += (sign/n)*K2;
+    }
+    N_eq *= m*m*T;
+    return N_eq;
+}
+
+double ThermalPartonSampler::FermiDiracDistribution(double p, double m, double T){
+	return 1./(exp(sqrt(p*p + m*m)/T) + 1.);
 }
 
 bool ThermalPartonSampler::SplitSort(double goal, int floor, int ceiling, int quark) {
@@ -88,369 +111,329 @@ bool ThermalPartonSampler::SplitSort(double goal, int floor, int ceiling, int qu
     return (goal > TargetVal);
 }
 
-void ThermalPartonSampler::CDFGenerator(double Temp, double M, int quark) {
+void ThermalPartonSampler::CDFGenerator(double T, double m, int quark) {
     double PStep;
-    double PMax = 10. * Temp;  // CutOff for Integration
-    PStep = PMax / (NUMSTEP - 1); // Stepsize in P
+    double PMax = 10. * T;  // CutOff for Integration
+    PStep = PMax / (NUMSTEP - 1); // Stepsize in p
 
-    std::vector<std::vector<double>> CDFTab;
+    std::vector<std::vector<double>>* CDFTab = nullptr;
     if (quark == 1) {
-        CDFTab = CDFTabLight;
+        CDFTab = &CDFTabLight;
     } else if (quark == 2) {
-        CDFTab = CDFTabStrange;
+        CDFTab = &CDFTabStrange;
     } else {
         JSWARN << "This is not a valid quark input for CDFGenerator()";
         return;
     }
 
     // Initialize tabulated results for CDF
-    CDFTab[0][0] = 0; // For zero momentum or less...
-    CDFTab[0][1] = 0; // There is zero chance
-
-    // Precompute constant values used in the loop
-    double muPi0 = 0.0; // You need to provide the correct value of muPi0
+    (*CDFTab)[0][0] = 0; // For zero momentum or less...
+    (*CDFTab)[0][1] = 0; // There is zero chance
 
     // Tabulate CDF(x) = int(0->x) PDF
     for (int i = 1; i < NUMSTEP; i++) {
-        CDFTab[i][0] = CDFTab[i - 1][0] + PStep; // Calculate Momentum of the next step
-        double Fermi0 = FermiPDF(CDFTab[i - 1][0], M, Temp, muPi0); // PDF
-        double Fermi1 = FermiPDF(CDFTab[i][0], M, Temp, muPi0);
-        CDFTab[i][1] = CDFTab[i - 1][1] + (PStep / 2) * (Fermi0 * CDFTab[i - 1][0] * CDFTab[i - 1][0] + Fermi1 * CDFTab[i][0] * CDFTab[i][0]);
+        double p0 = (*CDFTab)[i - 1][0];
+        double p1 = p0 + PStep;
+        double Fermi0 = FermiDiracDistribution(p0, m, T);
+        double Fermi1 = FermiDiracDistribution(p1, m, T);
+
+        (*CDFTab)[i][0] = p1; // Calculate Momentum of the next step
+        (*CDFTab)[i][1] = (*CDFTab)[i - 1][1] + (PStep / 2.0) * 
+                                        (Fermi0 * p0 * p0 + Fermi1 * p1 * p1);
     }
 
     // Normalize the CDF
+    double normalizationFactor = 1.0 / (*CDFTab)[NUMSTEP - 1][1];
     for (int i = 0; i < NUMSTEP; i++) {
-        CDFTab[i][1] = CDFTab[i][1] / CDFTab[NUMSTEP - 1][1];
-    }
-
-	if (quark == 1) {
-        CDFTabLight = CDFTab;
-    } else if (quark == 2) {
-        CDFTabStrange = CDFTab;
+        (*CDFTab)[i][1] *= normalizationFactor;
     }
 }
 
-void ThermalPartonSampler::MCSampler(double Temp, int quark) { // input temperature in fm^-1
-    double PMag, CosT, Phi, PStep;
-    double PMax = 10. * Temp;  // CutOff for Integration
-    PStep = PMax / (NUMSTEP - 1); // Stepsize in P
+std::tuple<double, double, double, double> ThermalPartonSampler::MomentumSampler(double T, int quark) {
+    double PMag;
+    double PMax = 10. * T;  // CutOff for Integration
+    double PStep = PMax / (NUMSTEP - 1); // Stepsize in P
 
     std::vector<std::vector<double>>& CDFTab = (quark == 1) ? CDFTabLight : CDFTabStrange;
 
-    int floor = 0;
-    int ceiling = NUMSTEP - 1;
 	double PRoll;
 	double denominator;
+	while (true) {
+        PRoll = ran();
 
-	bool sample = true;
-	int test = 0;
-	while (sample) {
-		PRoll = ran();
+        // Perform binary search to find the appropriate indices
+        auto it = std::lower_bound(CDFTab.begin(), CDFTab.end(), std::vector<double>{0, PRoll},
+                                   [](const std::vector<double>& a, const std::vector<double>& b) {
+                                       return a[1] < b[1];
+                                   });
 
-    	for (int i = 0; i < 25; i++) { // Use 25 iterations for both quark types
-        	if (SplitSort(PRoll, floor, ceiling, quark)) {
-            	floor = ((floor + ceiling) / 2);
-        	} else {
-            	ceiling = ((floor + ceiling) / 2);
-        	}
-    	}
+        int floor = std::distance(CDFTab.begin(), it) - 1;
+        int ceiling = floor + 1;
 
-		denominator = CDFTab[ceiling][1] - CDFTab[floor][1];
+        if (floor < 0) floor = 0;
+        if (ceiling >= NUMSTEP) ceiling = NUMSTEP - 1;
+
+        denominator = CDFTab[ceiling][1] - CDFTab[floor][1];
         if (std::fabs(denominator) > 1e-16) {
-			PMag = PStep * (PRoll - CDFTab[floor][1]) / denominator + CDFTab[floor][0];
-            sample = false;
+            PMag = PStep * (PRoll - CDFTab[floor][1]) / denominator + CDFTab[floor][0];
+            break;
         }
+    }
+
+    double CosT = (ran() - 0.5) * 2.0;
+	double SinT = sqrt(1.0 - CosT * CosT);
+    double Phi = ran() * 2.0 * pi;
+
+    double NewX = PMag * SinT * cos(Phi);
+    double NewY = PMag * SinT * sin(Phi);
+    double NewZ = PMag * CosT;
+    double NewP = PMag;
+
+	return std::make_tuple(NewX, NewY, NewZ, NewP);
+}
+
+void ThermalPartonSampler::LorentzBoostMatrix(std::vector<double>& v, std::vector<std::vector<double>>& BoostMatrix, bool brick) {
+	double v_square = 0.0;
+	if (!brick) {
+		v_square = v[1]*v[1] + v[2]*v[2] + v[3]*v[3];
+		if(v_square < 10e-16){
+			v_square = 10e-16;
+		}
+	} else {
+		// This case is for the Brick, where the flow velocity can be set by hand
+		v[1] = Vx;
+		v[2] = Vy;
+		v[3] = Vz;
+
+		double v_square = v[1]*v[1] + v[2]*v[2] + v[3]*v[3];
+
+		if (v_square > 1.) {
+			JSWARN << "v^2 = " << v_square;
+			JSWARN << "Unphysical velocity (brick flow)! Set to \"No Flow\" case";
+			v[1] = 0.;
+			v[2] = 0.;
+			v[3] = 0.;
+		}
 	}
+	
+	v[0] = 1. / std::sqrt(1. - v_square);   // gamma - v is not four velocity
 
-    CosT = (ran() - 0.5) * 2.0;
-    Phi = ran() * 2 * PI;
+	// Lambda_u^v from (lab frame to rest frame with flow velocity)
+	if (v_square < 10e-16) {
+		BoostMatrix[0][0] = v[0];
+		BoostMatrix[0][1] = v[0] * v[1];
+		BoostMatrix[0][2] = v[0] * v[2];
+		BoostMatrix[0][3] = v[0] * v[3];
+		BoostMatrix[1][0] = v[0] * v[1];
+		BoostMatrix[1][1] = 1.;
+		BoostMatrix[1][2] = 0.;
+		BoostMatrix[1][3] = 0.;
+		BoostMatrix[2][0] = v[0] * v[2];
+		BoostMatrix[2][1] = 0.;
+		BoostMatrix[2][2] = 1.;
+		BoostMatrix[2][3] = 0.;
+		BoostMatrix[3][0] = v[0] * v[3];
+		BoostMatrix[3][1] = 0.;
+		BoostMatrix[3][2] = 0.;
+		BoostMatrix[3][3] = 1.;
+	} else {
+		BoostMatrix[0][0] = v[0];
+		BoostMatrix[0][1] = v[0] * v[1];
+		BoostMatrix[0][2] = v[0] * v[2];
+		BoostMatrix[0][3] = v[0] * v[3];
+		BoostMatrix[1][0] = v[0] * v[1];
+		BoostMatrix[1][1] = (v[0] - 1.) * v[1] * v[1] / v_square + 1.;
+		BoostMatrix[1][2] = (v[0] - 1.) * v[1] * v[2] / v_square;
+		BoostMatrix[1][3] = (v[0] - 1.) * v[1] * v[3] / v_square;
+		BoostMatrix[2][0] = v[0] * v[2];
+		BoostMatrix[2][1] = (v[0] - 1.) * v[1] * v[2] / v_square;
+		BoostMatrix[2][2] = (v[0] - 1.) * v[2] * v[2] / v_square + 1.;
+		BoostMatrix[2][3] = (v[0] - 1.) * v[2] * v[3] / v_square;
+		BoostMatrix[3][0] = v[0] * v[3];
+		BoostMatrix[3][1] = (v[0] - 1.) * v[1] * v[3] / v_square;
+		BoostMatrix[3][2] = (v[0] - 1.) * v[2] * v[3] / v_square;
+		BoostMatrix[3][3] = (v[0] - 1.) * v[3] * v[3] / v_square + 1.;
+	}
+}
 
-    NewX = PMag * sqrt(1 - CosT * CosT) * cos(Phi);
-    NewY = PMag * sqrt(1 - CosT * CosT) * sin(Phi);
-    NewZ = PMag * CosT;
-    NewP = PMag;
+std::vector<double> ThermalPartonSampler::LorentzBoost(std::vector<double>& x, std::vector<std::vector<double>>& BoostMatrix) {
+	std::vector<double> result(4, 0.0);
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			result[i] += BoostMatrix[i][j] * x[j];
+		}
+	}
+	return result;
+}
+
+void ThermalPartonSampler::SamplePartons(int Npartons, int quark, double T, bool brick, std::vector<double>& CPos, std::vector<std::vector<double>>& BoostMatrix, bool slice_boost, double eta_slice) {
+	// Sample Npartons partons
+	for (int i = 0; i < Npartons; i++) {
+		// adding space to PList for output quarks
+		std::vector<double> temp = {0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.};
+		Plist.push_back(temp);
+
+		double SpecRoll = ran(); // Probability of species die roll
+		if (quark == 1) { // Sample U, Ubar, D, DBar quarks
+			if (SpecRoll <= 0.25) { // UBar
+				// set the last element of the vector to -2
+				Plist.back()[1] = -2;
+			} else if (SpecRoll <= 0.50) { // DBar
+				Plist.back()[1] = -1;
+			} else if (SpecRoll <= 0.75) { // D
+				Plist.back()[1] = 1;
+			} else { // U
+				Plist.back()[1] = 2;
+			}
+		} else if (quark == 2) { // Sample S, Sbar quarks
+			if (SpecRoll <= 0.5) { // SBar
+				Plist.back()[1] = -3;
+			} else { // S
+				Plist.back()[1] = 3;
+			}
+		} else {
+			JSWARN << "This is not a valid quark input for SamplePartons()";
+			return;
+		}
+
+		if (!brick) {
+			// Position
+			// Located at x,y pos of area element
+			Plist.back()[10] = CPos[0] + (ran() - 0.5) * CellDT; // Tau
+			Plist.back()[7] = CPos[1] + (ran() - 0.5) * CellDX;
+			Plist.back()[8] = CPos[2] + (ran() - 0.5) * CellDY;
+			Plist.back()[9] = CPos[3] + (ran() - 0.5) * CellDZ;	
+			if (slice_boost) { // 2+1D case
+				if(std::abs(Plist.back()[9]) >= std::abs(Plist.back()[10])) {
+					Plist.back()[10] = std::abs(Plist.back()[9]) + 10e-3;
+				}
+				double temp_t = std::sqrt(Plist.back()[10]*Plist.back()[10]-Plist.back()[9]*Plist.back()[9])
+						* std::cosh(eta_slice+0.5*std::log((Plist.back()[10]+Plist.back()[9])/(Plist.back()[10]-Plist.back()[9])));
+				double temp_z = std::sqrt(Plist.back()[10]*Plist.back()[10]-Plist.back()[9]*Plist.back()[9])
+						* std::sinh(eta_slice+0.5*std::log((Plist.back()[10]+Plist.back()[9])/(Plist.back()[10]-Plist.back()[9])));
+				Plist.back()[10] = temp_t;
+				Plist.back()[9] = temp_z;
+			}
+		} else {
+			// Position
+			// Located at x,y pos of area element
+			double XRoll = ran() - 0.5; // center at x=0
+			double YRoll = ran() - 0.5; // center at y=0
+			double ZRoll = ran() - 0.5; // center at z=0
+
+			Plist.back()[7] = XRoll * L;
+			Plist.back()[8] = YRoll * W;
+			Plist.back()[9] = ZRoll * W;
+
+			// Time
+			Plist.back()[10] = Time; // Tau = L/2.: assume jet at light speed
+		}
+
+		// Sample rest frame momentum given T and mass of quark
+		std::tuple<double, double, double, double> P = MomentumSampler(T, quark);
+		double NewPx = std::get<0>(P);
+		double NewPy = std::get<1>(P);
+		double NewPz = std::get<2>(P);
+		double NewP = std::get<3>(P);
+
+		// PLab^u = g^u^t Lambda_t ^v Pres^w g_w _v  = Lambda^u _w Pres_w (with velocity -v)
+		// (Lambda_u ^t with velocity v) == (Lambda^u _t with velocity -v)
+		// This is boost as if particle sampled in rest frame
+		double new_quark_energy;
+		if (quark == 1) {
+			new_quark_energy = sqrt(xmq * xmq + NewP * NewP);
+		} else {
+			new_quark_energy = sqrt(xms * xms + NewP * NewP);
+		}
+		std::vector<double> p = {new_quark_energy, NewPx, NewPy, NewPz};
+		std::vector<double> momentum = LorentzBoost(p, BoostMatrix);
+		Plist.back()[6] = momentum[0] * hbarC;
+		Plist.back()[3] = momentum[1] * hbarC;
+		Plist.back()[4] = momentum[2] * hbarC;
+		Plist.back()[5] = momentum[3] * hbarC;
+
+		// Additional information
+		Plist.back()[0] = 1; // Event ID, to match jet formatting
+		Plist.back()[2] = 0; // Origin, to match jet formatting
+		Plist.back()[11] = 0; // Status - identifies as thermal quark
+	}
 }
 
 void ThermalPartonSampler::samplebrick(){
-
 	//preliminary parameter checks
 	if(L < 0.){L = -L; JSWARN << "Negative brick length - setting to positive " << L << " fm.";}
 	if(W < 0.){W = -W; JSWARN << "Negative brick width - setting to positive " << W << " fm.";}
 
-	// Input read from cells
-	double LFSigma[4];		// LabFrame hypersurface (tau/t,x,y,eta/z=0)
-	double CMSigma[4];		// Center of mass hypersurface (tau/t,x,y,eta/z=0)
-	double Vel[4];			// Gamma & 3-velocity of cell (gamma, Vx, Vy, Vz) NOT FOUR VELOCITY
-
-	// Calculated global quantities
-	int PartCount;			// Total Count of Particles over ALL cells
-	double NumLight;		// Number DENSITY of light quarks at set T
-	double NumStrange;		// Number DENSITY of s quarks at set T
-	double UDDeg = 4.*6.;	// Degeneracy of UD quarks
-	double OddDeg = 2.*6.;	// Degeneracy of S quarks
-
-	//counter for total number of light and strange quarks
-	int nL_tot = 0;
-	int nS_tot = 0;
-
-	// Calculated quantities in cells
-	double LorBoost[4][4];	// Lorentz boost defined as used - form is always Lambda_u^v
-	int GeneratedParticles;	// Number of particles to be generated this cell
-	double new_quark_energy; // store new quark energy for boost
-
-	// End definition of static variables
-
 	// Define hypersurface for brick here
 	// Default t=const hypersurface
 	// Vector must be covariant (negative signs on spatial components)
+	std::vector<double> LFSigma(4); // LabFrame hypersurface (tau/t,x,y,eta/z=0)
 	LFSigma[0] = 1.;
 	LFSigma[1] = 0.;
 	LFSigma[2] = 0.;
 	LFSigma[3] = 0.;
 
-	Vel[1] = Vx;
-	Vel[2] = Vy;
-	Vel[3] = Vz;
+	std::vector<double> CMSigma(4); // Center of mass hypersurface (tau/t,x,y,eta/z=0)
+	std::vector<double> Vel(4); // Gamma & 3-velocity of cell (gamma, Vx, Vy, Vz) NOT FOUR VELOCITY
 
-	double vsquare = Vel[1]*Vel[1] + Vel[2]*Vel[2] + Vel[3]*Vel[3];
+	// Calculated quantities in cells
+	std::vector<std::vector<double>> LorBoost(4, std::vector<double>(4)); // Lorentz boost defined as used - form is always Lambda_u^v
+	LorentzBoostMatrix(Vel, LorBoost, true);
 
-	if(vsquare > 1.){
-		JSWARN << "v^2 = " << vsquare;
-		JSWARN << "Unphysical velocity (brick flow)! Set to \"No Flow\" case";
-		Vel[1] = 0.;
-		Vel[2] = 0.;
-		Vel[3] = 0.;
-	}
-
-	Vel[0] = 1. / std::sqrt(1.-vsquare);   // gamma - Vel is not four velocity
-
-	// Lambda_u ^v from (lab frame to rest frame with flow velocity)
-	if(vsquare == 0){
-		LorBoost[0][0]= Vel[0];
-		LorBoost[0][1]= Vel[0]*Vel[1];
-		LorBoost[0][2]= Vel[0]*Vel[2];
-		LorBoost[0][3]= Vel[0]*Vel[3];
-		LorBoost[1][0]= Vel[0]*Vel[1];
-		LorBoost[1][1]= 1.;
-		LorBoost[1][2]= 0.;
-		LorBoost[1][3]= 0.;
-		LorBoost[2][0]= Vel[0]*Vel[2];
-		LorBoost[2][1]= 0.;
-		LorBoost[2][2]= 1.;
-		LorBoost[2][3]= 0.;
-		LorBoost[3][0]= Vel[0]*Vel[3];
-		LorBoost[3][1]= 0.;
-		LorBoost[3][2]= 0.;
-		LorBoost[3][3]= 1.;
-	}else{
-		LorBoost[0][0]= Vel[0];
-		LorBoost[0][1]= Vel[0]*Vel[1];
-		LorBoost[0][2]= Vel[0]*Vel[2];
-		LorBoost[0][3]= Vel[0]*Vel[3];
-		LorBoost[1][0]= Vel[0]*Vel[1];
-		LorBoost[1][1]= (Vel[0] - 1.)*Vel[1]*Vel[1]/vsquare + 1.;
-		LorBoost[1][2]= (Vel[0] - 1.)*Vel[1]*Vel[2]/vsquare;
-		LorBoost[1][3]= (Vel[0] - 1.)*Vel[1]*Vel[3]/vsquare;
-		LorBoost[2][0]= Vel[0]*Vel[2];
-		LorBoost[2][1]= (Vel[0] - 1.)*Vel[1]*Vel[2]/vsquare;
-		LorBoost[2][2]= (Vel[0] - 1.)*Vel[2]*Vel[2]/vsquare + 1.;
-		LorBoost[2][3]= (Vel[0] - 1.)*Vel[2]*Vel[3]/vsquare;
-		LorBoost[3][0]= Vel[0]*Vel[3];
-		LorBoost[3][1]= (Vel[0] - 1.)*Vel[1]*Vel[3]/vsquare;
-		LorBoost[3][2]= (Vel[0] - 1.)*Vel[2]*Vel[3]/vsquare;
-		LorBoost[3][3]= (Vel[0] - 1.)*Vel[3]*Vel[3]/vsquare + 1.;
-	}
-
-	// Code parity with hypersurface case
 	// Lambda_u^v Sigma_v = CMSigma_u
 	// Caution: CMSigma is a covariant vector
-	CMSigma[0] = (LorBoost[0][0]*LFSigma[0] + LorBoost[0][1]*LFSigma[1] + LorBoost[0][2]*LFSigma[2] + LorBoost[0][3]*LFSigma[3]);
-	CMSigma[1] = (LorBoost[1][0]*LFSigma[0] + LorBoost[1][1]*LFSigma[1] + LorBoost[1][2]*LFSigma[2] + LorBoost[1][3]*LFSigma[3]);
-	CMSigma[2] = (LorBoost[2][0]*LFSigma[0] + LorBoost[2][1]*LFSigma[1] + LorBoost[2][2]*LFSigma[2] + LorBoost[2][3]*LFSigma[3]);
-	CMSigma[3] = (LorBoost[3][0]*LFSigma[0] + LorBoost[3][1]*LFSigma[1] + LorBoost[3][2]*LFSigma[2] + LorBoost[3][3]*LFSigma[3]);
-
-	/* Define Parton Densities */
-
-	double cut = 10.*T; // Each coordinate of P is integrated this far
-	double E_light; // Store energy of light quarks
-	double E_strange; // Store energy of strange quarks
-	double GWeightProd; // Needed for integration
-	double pSpatialdSigma; // Needed for integration
-	PartCount = 0;
-	NumLight = 0;       // Initialize density for light and strange quarks
-	NumStrange = 0;
-
-	// Define the lambda function to compute the energy
-	auto computeEnergy = [](double mass, double cut, double GAbsL, double GAbsM, double GAbsK) {
-    	return sqrt(mass * mass + (cut * GAbsL) * (cut * GAbsL) + (cut * GAbsM) * (cut * GAbsM) + (cut * GAbsK) * (cut * GAbsK));
-	};
-
-	// Define the lambda function for the Fermi distribution
-	auto FermiDistribution = [](double energy, double temperature) {
-	    return 1. / (exp(energy / temperature) + 1.);
-	};
+	std::vector<double> SigmaBoosted = LorentzBoost(LFSigma, LorBoost);
+	CMSigma[0] = SigmaBoosted[0];
+	CMSigma[1] = SigmaBoosted[1];
+	CMSigma[2] = SigmaBoosted[2];
+	CMSigma[3] = SigmaBoosted[3];
 
 	// GAUSSIAN INTEGRALS <n> = int f(p)d3p
-	for (int l=0; l<GPoints; l++){
-		for (int m=0; m<GPoints; m++){
-			for(int k=0; k<GPoints; k++){
-				GWeightProd = GWeight[l] * GWeight[m] * GWeight[k];
-				pSpatialdSigma = (cut * GAbs[l]) * CMSigma[1] + (cut * GAbs[m]) * CMSigma[2] + (cut * GAbs[k]) * CMSigma[3];
-
-				// For UD quarks
-				E_light = computeEnergy(xmq, cut, GAbs[l], GAbs[m], GAbs[k]);
-		        NumLight += GWeightProd * FermiDistribution(E_light, T) *
-		                    (E_light * CMSigma[0] + pSpatialdSigma) / E_light;
-
-		        // For S quarks
-				E_strange = computeEnergy(xms, cut, GAbs[l], GAbs[m], GAbs[k]);
-		        NumStrange += GWeightProd * FermiDistribution(E_strange, T) *
-		                    (E_strange * CMSigma[0] + pSpatialdSigma) / E_strange;
-			}
-		}
-	}
-
-	// Normalization factors: degeneracy, gaussian integration, and 1/(2Pi)^3
-	NumLight *= UDDeg*cut*cut*cut/(8.*PI*PI*PI);
-	NumStrange *= OddDeg*cut*cut*cut/(8.*PI*PI*PI);
+	double dSigma_dot_u = CMSigma[0] * Vel[0] - CMSigma[1] * Vel[1] - CMSigma[2] * Vel[2] - CMSigma[3] * Vel[3];
+	double NumLight = FermiDiracDistributionMomentumIntegral(xmq, T_brick) * degeneracy_ud / (2.*pi*pi);
+    double NumStrange = FermiDiracDistributionMomentumIntegral(xms, T_brick) * degeneracy_s / (2.*pi*pi);
+    NumLight *= dSigma_dot_u;
+    NumStrange *= dSigma_dot_u;
 
 	// Define rest-frame cumulative functions
-	CDFGenerator(T, xmq, 1); // for light quarks
-	CDFGenerator(T, xms, 2); // for strange quarks
+	CDFGenerator(T_brick, xmq, 1); // for light quarks
+	CDFGenerator(T_brick, xms, 2); // for strange quarks
 
 	// U, D, UBAR, DBAR QUARKS
 	// <N> = V <n>
-	double NumHere = NumLight*L*W*W;
+	double NumUD = NumLight*L*W*W;
 
 	// S, SBAR QUARKS
 	// <N> = V <n>
-	double NumOddHere = NumStrange*L*W*W;
+	double NumS = NumStrange*L*W*W;
 
-	std::poisson_distribution<int> poisson_ud(NumHere);
-	std::poisson_distribution<int> poisson_s(NumOddHere);
+	std::poisson_distribution<int> poisson_ud(NumUD);
+	std::poisson_distribution<int> poisson_s(NumS);
 
 	// In case of overwriting
 	if(SetNum){
-		NumHere = SetNumLight;
-		NumOddHere = SetNumStrange;
+		NumUD = SetNumLight;
+		NumS = SetNumStrange;
 	}
 
 	// Generating light quarks
-	GeneratedParticles = poisson_ud(getRandomGenerator());
-
-	// List of particles ( pos(x,y,z,t), mom(px,py,pz,E), species)
-	for(int partic = 0; partic < GeneratedParticles; partic++){
-		// adding space to PList for output quarks
-		std::vector<double> temp = {0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.};
-		Plist.push_back(temp);
-
-		// Species - U,D,UBar,Dbar are equally likely
-		double SpecRoll = ran(); //Probability of species die roll
-		if (SpecRoll <= 0.25) { // UBar
-		    Plist[PartCount][1] = -2;
-		} else if (SpecRoll <= 0.50) { // DBar
-		    Plist[PartCount][1] = -1;
-		} else if (SpecRoll <= 0.75) { // D
-		    Plist[PartCount][1] = 1;
-		} else { // U
-		    Plist[PartCount][1] = 2;
-		}
-
-		// Position
-		// Located at x,y pos of area element
-		double XRoll = ran()-0.5; // center at x=0
-		double YRoll = ran()-0.5; // center at y=0
-		double ZRoll = ran()-0.5; // center at z=0
-
-		Plist[PartCount][7] = XRoll*L;
-		Plist[PartCount][8] = YRoll*W;
-		Plist[PartCount][9] = ZRoll*W;
-
-		// Time
-		Plist[PartCount][10] = Time; // Tau = L/2.: assume jet at light speed
-
-		// Momentum
-		// Sample rest frame momentum given T and mass of light quark
-		MCSampler(T, 1); // NewP=P, NewX=Px, ...
-
-		// PLab^u = g^u^t Lambda_t ^v Pres^w g_w _v  = Lambda ^u _w Pres_w (with velocity -v)
-		// (Lambda _u ^t with velocity v) == (Lambda ^u _t with velocity -v)
-		// This is boost as if particle sampled in rest frame
-		new_quark_energy = sqrt(xmq*xmq + NewP*NewP);
-		Plist[PartCount][6]= (LorBoost[0][0]*new_quark_energy + LorBoost[0][1]*NewX + LorBoost[0][2]*NewY + LorBoost[0][3]*NewZ)*GEVFM;
-		Plist[PartCount][3]= (LorBoost[1][0]*new_quark_energy + LorBoost[1][1]*NewX + LorBoost[1][2]*NewY + LorBoost[1][3]*NewZ)*GEVFM;
-		Plist[PartCount][4]= (LorBoost[2][0]*new_quark_energy + LorBoost[2][1]*NewX + LorBoost[2][2]*NewY + LorBoost[2][3]*NewZ)*GEVFM;
-		Plist[PartCount][5]= (LorBoost[3][0]*new_quark_energy + LorBoost[3][1]*NewX + LorBoost[3][2]*NewY + LorBoost[3][3]*NewZ)*GEVFM;
-		// Additional information
-		Plist[PartCount][0]  = 1; // Event ID, to match jet formatting
-		Plist[PartCount][2]  = 0; // Origin, to match jet formatting
-		Plist[PartCount][11] = 0; // Status - identifies as thermal quark
-		PartCount++;
-	}
-
-	nL_tot += GeneratedParticles;
+	int GeneratedParticles = poisson_ud(getRandomGenerator());
+	num_ud += GeneratedParticles;
+	// dummy array of length 4 for CPos
+	std::vector<double> CPos(4, 0.0);
+	SamplePartons(GeneratedParticles, 1, T_brick, true, CPos, LorBoost, false, 0.);
 
 	// Generate strange quarks
 	GeneratedParticles = poisson_s(getRandomGenerator());
+	num_s += GeneratedParticles;
+	SamplePartons(GeneratedParticles, 2, T_brick, true, CPos, LorBoost, false, 0.);
 
-	nS_tot += GeneratedParticles;
-	//List of particles ( pos(x,y,z,t), mom(px,py,pz,E), species)
-	for(int partic = 0; partic < GeneratedParticles; partic++){
-		// adding space to PList for output quarks
-		std::vector<double> temp = {0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.};
-		Plist.push_back(temp);
+	JSDEBUG << "Light particles: " << num_ud;
+	JSDEBUG << "Strange particles: " << num_s;
 
-		// Species - S,Sbar are equally likely
-		double SpecRoll = ran();
-		if(SpecRoll <= 0.5){ // SBar
-			Plist[PartCount][1] = -3;
-		} else { //S
-			Plist[PartCount][1] = 3;
-		}
-
-		// Position
-		// Located at x,y pos of area element
-		double XRoll = ran()-0.5; // center at x=0
-		double YRoll = ran()-0.5; // center at y=0
-		double ZRoll = ran()-0.5; // center at z=0
-
-		Plist[PartCount][7] = XRoll*L;
-		Plist[PartCount][8] = YRoll*W;
-		Plist[PartCount][9] = ZRoll*W;
-
-		// Time
-		Plist[PartCount][10] = Time; // Tau = L/2.: assume jet at light speed
-
-		// Momentum
-		// Sample rest frame momentum given T and mass of s quark
-		MCSampler(T, 2); // NewP=P, NewX=Px, ...
-
-		// PLab^u = g^u^t Lambda_t ^v Pres^w g_w _v  = Lambda ^u _w Pres_w (with velocity -v)
-		// (Lambda _u ^t with velocity v) == (Lambda ^u _t with velocity -v)
-		// This is boost as if particle sampled in rest frame
-		new_quark_energy = sqrt(xms*xms + NewP*NewP);
-		Plist[PartCount][6]= (LorBoost[0][0]*new_quark_energy + LorBoost[0][1]*NewX + LorBoost[0][2]*NewY + LorBoost[0][3]*NewZ)*GEVFM;
-		Plist[PartCount][3]= (LorBoost[1][0]*new_quark_energy + LorBoost[1][1]*NewX + LorBoost[1][2]*NewY + LorBoost[1][3]*NewZ)*GEVFM;
-		Plist[PartCount][4]= (LorBoost[2][0]*new_quark_energy + LorBoost[2][1]*NewX + LorBoost[2][2]*NewY + LorBoost[2][3]*NewZ)*GEVFM;
-		Plist[PartCount][5]= (LorBoost[3][0]*new_quark_energy + LorBoost[3][1]*NewX + LorBoost[3][2]*NewY + LorBoost[3][3]*NewZ)*GEVFM;
-
-		// Additional information
-		Plist[PartCount][0]  = 1; // Event ID, to match jet formatting
-		Plist[PartCount][2]  = 0; // Origin, to match jet formatting
-		Plist[PartCount][11] = 0; // Status - identifies as thermal quark
-		PartCount++;
-	}
-
-	JSDEBUG << "Light particles: " << nL_tot;
-	JSDEBUG << "Strange particles: " << nS_tot;
-
-	num_ud = nL_tot;
-	num_s = nS_tot;
-
-	//Shuffling PList
+	// Shuffling PList
 	if(ShuffleList){
-		// Shuffle the Plist using the random engine
-    	std::shuffle(&Plist[0], &Plist[PartCount], getRandomGenerator());
+		std::shuffle(&Plist[0], &Plist.back(), getRandomGenerator());
 	}
 
 	//print Plist for testing
@@ -467,140 +450,80 @@ void ThermalPartonSampler::samplebrick(){
 	thermalP.close();*/
 }
 
+bool ThermalPartonSampler::withinAccuracyRange(double targetTemp, double cachedTemp, 
+												double accuracyRange) const {
+    return std::fabs(targetTemp - cachedTemp) <= accuracyRange;
+}
+
+double ThermalPartonSampler::getClosestCachedTemp(const std::unordered_map<double, 
+										std::vector<std::vector<double>>>& cache, 
+										double targetTemp) const {
+    double closestTemp = -1.0;
+    double minDistance = std::numeric_limits<double>::max();
+    for (const auto& entry : cache) {
+        double cachedTemp = entry.first;
+        double distance = std::fabs(targetTemp - cachedTemp);
+        if (distance < minDistance) {
+            minDistance = distance;
+            closestTemp = cachedTemp;
+        }
+    }
+    return closestTemp;
+}
+
+void ThermalPartonSampler::updateCDFCache(double& TRead, double mq, int quarkType, 
+                                          std::unordered_map<double, 
+										  std::vector<std::vector<double>>>& cache, 
+                                          std::vector<std::vector<double>>& CDFTab) {
+    auto cdfIter = cache.find(TRead);
+    if (cdfIter == cache.end()) {
+        double closestTemp = getClosestCachedTemp(cache, TRead);
+        if (closestTemp >= 0. && withinAccuracyRange(TRead, closestTemp, CDFcacheAccuracy)) {
+            CDFTab = cache[closestTemp];
+            TRead = closestTemp;
+        } else {
+            CDFGenerator(TRead, mq, quarkType);
+            cache[TRead] = CDFTab;
+        }
+    } else {
+        CDFTab = cdfIter->second;
+    }
+}
+
 void ThermalPartonSampler::sample_3p1d(bool Cartesian_hydro){
 
-	// Input read from cells
-	double CPos[4];		// Position of the current cell (tau/t, x, y , eta/z=0)
-	double LFSigma[4];		// LabFrame hypersurface (tau/t,x,y,eta/z=0), expect Sigma_mu
-	double CMSigma[4];		// Center of mass hypersurface (tau/t,x,y,eta/z=0)
-	double TRead;			// Temperature of cell
-	double Vel[4];			// Gamma & 3-Velocity of cell (gamma, Vx, Vy, Vz) NOT FOUR VELOCITY
-	double tau_pos;			// proper time from position of cell
-	double eta_pos;			// eta from position of cell
-	double tau_sur;			// proper time from normal vector of surface
-	double eta_sur;			// eta from normal vector of surface
-
-	// Calculated global quantities
-	int PartCount;			// Total count of particles over ALL cells
-	double NumLight;		// Number DENSITY of light quarks at set T
-	double NumStrange;		// Number DENSITY of squarks at set T
-	double UDDeg = 4.*6.;	// Degeneracy of UD quarks
-	double OddDeg = 2.*6.;	// Degeneracy of S quarks
-
-	// Calculated quantities in cells
-	double LorBoost[4][4];	// Lorentz boost defined as used - Form is always Lambda_u^v
-	int GeneratedParticles;	// Number of particles to be generated this cell
-
-	// Define parton densities
-	double cut; // Each coordinate of P is integrated this far
-	double E_light; // Store energy of light quarks
-	double E_strange; // Store energy of strange quarks
-	double GWeightProd; // Needed for integration
-	double pSpatialdSigma; // Needed for integration
-	PartCount = 0;
-	NumLight = 0;       // Initialize density for light and strange quarks
-	NumStrange = 0;
-	GeneratedParticles = 0;
-	double new_quark_energy; // store new quark energy for boost
-
-	//counter for total number of light and strange quarks
-	int nL_tot = 0;
-	int nS_tot = 0;
-
-	// define the accuracy range for temperature values in which the CDFGenerator is executed (for the case the value is not in the cache yet)
-	const double accuracyRange = 0.003 / GEVFM; // for a usual hypersurface at const temperature there should be only one entry in the cache
 	// precompute CDFs and store them in a cache
 	std::unordered_map<double, std::vector<std::vector<double>>> cdfLightCache;
 	std::unordered_map<double, std::vector<std::vector<double>>> cdfStrangeCache;
 
-	// lambda function to check if a temperature value is within the accuracy range of a cached temperature
-	auto withinAccuracyRange = [accuracyRange](double targetTemp, double cachedTemp) {
-    	return std::fabs(targetTemp - cachedTemp) <= accuracyRange;
-	};
-
-	// lambda function to retrieve the closest temperature from the cache within the accuracy range
-	auto getClosestCachedTemp = [](const std::unordered_map<double, std::vector<std::vector<double>>>& cache, double targetTemp) {
-	    double closestTemp = -1.0;
-	    double minDistance = std::numeric_limits<double>::max();
-	    for (const auto& entry : cache) {
-	        double cachedTemp = entry.first;
-	        double distance = std::fabs(targetTemp - cachedTemp);
-	        if (distance < minDistance) {
-	            minDistance = distance;
-	            closestTemp = cachedTemp;
-	        }
-	    }
-	    return closestTemp;
-	};
-
-	// Define the lambda function to compute the energy
-	auto computeEnergy = [](double mass, double cut, double GAbsL, double GAbsM, double GAbsK) {
-    	return sqrt(mass * mass + (cut * GAbsL) * (cut * GAbsL) + (cut * GAbsM) * (cut * GAbsM) + (cut * GAbsK) * (cut * GAbsK));
-	};
-
-	// Define the lambda function for the Fermi distribution
-	auto FermiDistribution = [](double energy, double temperature) {
-	    return 1. / (exp(energy / temperature) + 1.);
-	};
-
+	// Loop over the freeze-out surface
 	for(int iS=0; iS<surface.size(); ++iS){
-		tau_pos = surface[iS][0];
+		std::vector<double> CPos(4); // Position of the current cell (tau/t, x, y , eta/z=0)
+		double tau_pos = surface[iS][0]; // proper time from position of cell
 		CPos[1] = surface[iS][1];
 		CPos[2] = surface[iS][2];
-		eta_pos = surface[iS][3];  //we need t,x,y,z
+		double eta_pos = surface[iS][3]; // eta from position of cell, we need t,x,y,z
+		
 		//this is also tau, x, y, eta
-		tau_sur = surface[iS][4];
+		std::vector<double> LFSigma(4); // LabFrame hypersurface (tau/t,x,y,eta/z=0), expect Sigma_mu
+		std::vector<double> CMSigma(4); // Center of mass hypersurface (tau/t,x,y,eta/z=0)
+		double tau_sur = surface[iS][4]; // proper time from normal vector of surface
 		LFSigma[1] = surface[iS][5];
 		LFSigma[2] = surface[iS][6];
-		eta_sur = surface[iS][7];
-		TRead = surface[iS][8] / GEVFM;
+		double eta_sur = surface[iS][7]; // eta from normal vector of surface
+		
+		double TRead = surface[iS][8] / hbarC; // Temperature of cell -> convert to fm^-1
+		
+		std::vector<double> Vel(4); // Gamma & 3-Velocity of cell (gamma, Vx, Vy, Vz) NOT FOUR VELOCITY
 		Vel[1] = surface[iS][9];
 		Vel[2] = surface[iS][10];
 		Vel[3] = surface[iS][11];
 
-		cut = 10*TRead;
+		// Update light quark CDF cache
+		updateCDFCache(TRead, xmq, 1, cdfLightCache, CDFTabLight);
 
-		// check if the CDFs for light quarks for this temperature are already in the cache and within the accuracy range
-    	auto cdfLightIter = cdfLightCache.find(TRead);
-    	if (cdfLightIter == cdfLightCache.end()) {
-        	// if not found, find the closest temperature in the cache within the accuracy range
-        	double closestTemp = getClosestCachedTemp(cdfLightCache,TRead);
-
-        	if (closestTemp >= 0. && withinAccuracyRange(TRead, closestTemp)) {
-            	// use the CDFs from the closest temperature in the cache
-            	CDFTabLight = cdfLightCache[closestTemp];
-            	// set the current temperature value to the closest cached temperature
-            	TRead = closestTemp;
-        	} else {
-            	// if no suitable entry is found, compute the CDFs and store them in the cache
-            	CDFGenerator(TRead, xmq, 1); // for light quarks
-            	cdfLightCache[TRead] = CDFTabLight;
-        	}
-    	} else {
-        	// if found, use the precomputed CDFs from the cache
-        	CDFTabLight = cdfLightIter->second;
-    	}
-
-		// check if the CDFs for strange quarks for this temperature are already in the cache and within the accuracy range
-    	auto cdfStrangeIter = cdfStrangeCache.find(TRead);
-    	if (cdfStrangeIter == cdfStrangeCache.end()) {
-        	// if not found, find the closest temperature in the cache within the accuracy range
-        	double closestTemp = getClosestCachedTemp(cdfStrangeCache,TRead);
-
-        	if (closestTemp >= 0 && withinAccuracyRange(TRead, closestTemp)) {
-            	// use the CDFs from the closest temperature in the cache
-            	CDFTabStrange = cdfStrangeCache[closestTemp];
-            	// set the current temperature value to the closest cached temperature
-            	TRead = closestTemp;
-        	} else {
-            	// if no suitable entry is found, compute the CDFs and store them in the cache
-            	CDFGenerator(TRead, xms, 2); // for strange quarks
-            	cdfStrangeCache[TRead] = CDFTabStrange;
-        	}
-    	} else {
-        	// if found, use the precomputed CDFs from the cache
-        	CDFTabStrange = cdfStrangeIter->second;
-    	}
+		// Update strange quark CDF cache
+		updateCDFCache(TRead, xms, 2, cdfStrangeCache, CDFTabStrange);
 
 		if (Cartesian_hydro == false){
 			//getting t,z from tau, eta
@@ -611,197 +534,49 @@ void ThermalPartonSampler::sample_3p1d(bool Cartesian_hydro){
 			double sinh_eta_pos = std::sinh(eta_pos);
 			LFSigma[0] = cosh_eta_pos*tau_sur - (sinh_eta_pos / tau_pos) * eta_sur;
 			LFSigma[3] = -sinh_eta_pos*tau_sur + (cosh_eta_pos / tau_pos) * eta_sur;
-		}else{ // check later!
+		}else{
 			CPos[0] = tau_pos;
 			CPos[3] = eta_pos;
 			LFSigma[0] = tau_sur;
 			LFSigma[3] = eta_sur;
 		}
 
-		double vsquare = Vel[1]*Vel[1] + Vel[2]*Vel[2] + Vel[3]*Vel[3];
-		if(vsquare < 10e-16){
-			vsquare = 10e-16;
-		}
+		std::vector<std::vector<double>> LorBoost(4, std::vector<double>(4)); // Lorentz boost defined as used - Form is always Lambda_u^v
+		LorentzBoostMatrix(Vel, LorBoost, false);
 
-		// Deduced info
-		Vel[0] = 1. / sqrt(1-vsquare); // gamma - Vel is not four velocity
-
-		// Lambda_u ^v
-		LorBoost[0][0]= Vel[0];
-		LorBoost[0][1]= Vel[0]*Vel[1];
-		LorBoost[0][2]= Vel[0]*Vel[2];
-		LorBoost[0][3]= Vel[0]*Vel[3];
-		LorBoost[1][0]= Vel[0]*Vel[1];
-		LorBoost[1][1]= (Vel[0] - 1.)*Vel[1]*Vel[1]/vsquare + 1.;
-		LorBoost[1][2]= (Vel[0] - 1.)*Vel[1]*Vel[2]/vsquare;
-		LorBoost[1][3]= (Vel[0] - 1.)*Vel[1]*Vel[3]/vsquare;
-		LorBoost[2][0]= Vel[0]*Vel[2];
-		LorBoost[2][1]= (Vel[0] - 1.)*Vel[1]*Vel[2]/vsquare;
-		LorBoost[2][2]= (Vel[0] - 1.)*Vel[2]*Vel[2]/vsquare + 1.;
-		LorBoost[2][3]= (Vel[0] - 1.)*Vel[2]*Vel[3]/vsquare;
-		LorBoost[3][0]= Vel[0]*Vel[3];
-		LorBoost[3][1]= (Vel[0] - 1.)*Vel[1]*Vel[3]/vsquare;
-		LorBoost[3][2]= (Vel[0] - 1.)*Vel[2]*Vel[3]/vsquare;
-		LorBoost[3][3]= (Vel[0] - 1.)*Vel[3]*Vel[3]/vsquare + 1.;
-
-		if(vsquare == 0){
-			LorBoost[1][1]= 1.;
-			LorBoost[1][2]= 0;
-			LorBoost[1][3]= 0;
-			LorBoost[2][1]= 0;
-			LorBoost[2][2]= 1.;
-			LorBoost[2][3]= 0;
-			LorBoost[3][1]= 0;
-			LorBoost[3][2]= 0;
-			LorBoost[3][3]= 1.;
-		}
 		// Lambda_u^v Sigma_v = CMSigma_u
-		CMSigma[0] = (LorBoost[0][0]*LFSigma[0] + LorBoost[0][1]*LFSigma[1] + LorBoost[0][2]*LFSigma[2] + LorBoost[0][3]*LFSigma[3]);
-		CMSigma[1] = (LorBoost[1][0]*LFSigma[0] + LorBoost[1][1]*LFSigma[1] + LorBoost[1][2]*LFSigma[2] + LorBoost[1][3]*LFSigma[3]);
-		CMSigma[2] = (LorBoost[2][0]*LFSigma[0] + LorBoost[2][1]*LFSigma[1] + LorBoost[2][2]*LFSigma[2] + LorBoost[2][3]*LFSigma[3]);
-		CMSigma[3] = (LorBoost[3][0]*LFSigma[0] + LorBoost[3][1]*LFSigma[1] + LorBoost[3][2]*LFSigma[2] + LorBoost[3][3]*LFSigma[3]);
+		std::vector<double> SigmaBoosted = LorentzBoost(LFSigma, LorBoost);
+		CMSigma[0] = SigmaBoosted[0];
+		CMSigma[1] = SigmaBoosted[1];
+		CMSigma[2] = SigmaBoosted[2];
+		CMSigma[3] = SigmaBoosted[3];
 
 		// GAUSSIAN INTEGRALS <n> = int f(p)d3p
-		NumLight = 0.;
-		NumStrange = 0.;
-
-		for (int l = 0; l < GPoints; l++) {
-		    for (int m = 0; m < GPoints; m++) {
-		        for (int k = 0; k < GPoints; k++) {
-					GWeightProd = GWeight[l] * GWeight[m] * GWeight[k];
-					pSpatialdSigma = (cut * GAbs[l]) * CMSigma[1] + (cut * GAbs[m]) * CMSigma[2] + (cut * GAbs[k]) * CMSigma[3];
-
-					// For UD quarks
-					E_light = computeEnergy(xmq, cut, GAbs[l], GAbs[m], GAbs[k]);
-		            NumLight += GWeightProd * FermiDistribution(E_light, TRead) *
-		                       (E_light * CMSigma[0] + pSpatialdSigma) / E_light;
-
-		            // For S quarks
-					E_strange = computeEnergy(xms, cut, GAbs[l], GAbs[m], GAbs[k]);
-		            NumStrange += GWeightProd * FermiDistribution(E_strange, TRead) *
-		                         (E_strange * CMSigma[0] + pSpatialdSigma) / E_strange;
-		        }
-		    }
-		}
-
-		// U, D, UBAR, DBAR QUARKS
-		// <N> = V <n>
-		double NumHere = NumLight*UDDeg*cut*cut*cut/(8.*PI*PI*PI);
-		std::poisson_distribution<int> poisson_ud(NumHere);
+		double dSigma_dot_u = CMSigma[0] * Vel[0] - CMSigma[1] * Vel[1] - CMSigma[2] * Vel[2] - CMSigma[3] * Vel[3];
+		double NumLight = FermiDiracDistributionMomentumIntegral(xmq, TRead) * degeneracy_ud / (2.*pi*pi);
+		double NumStrange = FermiDiracDistributionMomentumIntegral(xms, TRead) * degeneracy_s / (2.*pi*pi);
+		NumLight *= dSigma_dot_u;
+		NumStrange *= dSigma_dot_u;
 
 		// Generating light quarks
-		GeneratedParticles = poisson_ud(getRandomGenerator()); // Initialize particles created in this cell
-
-		// List of particles ( pos(x,y,z,t), mom(px,py,pz,E), species)
-		for(int partic = 0; partic < GeneratedParticles; partic++){
-			// adding space to PList for output quarks
-			std::vector<double> temp = {0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.};
-			Plist.push_back(temp);
-
-			// Species - U,D,UBar,Dbar are equally likely
-			double SpecRoll = ran(); //Probability of species die roll
-			if (SpecRoll <= 0.25) { // UBar
-			    Plist[PartCount][1] = -2;
-			} else if (SpecRoll <= 0.50) { // DBar
-			    Plist[PartCount][1] = -1;
-			} else if (SpecRoll <= 0.75) { // D
-			    Plist[PartCount][1] = 1;
-			} else { // U
-			    Plist[PartCount][1] = 2;
-			}
-
-			// Position
-			// Located at x,y pos of area element
-			Plist[PartCount][10] = CPos[0] + (ran() - 0.5)*CellDT; // Tau
-			Plist[PartCount][7] = CPos[1] + (ran() - 0.5)*CellDX;
-			Plist[PartCount][8] = CPos[2] + (ran() - 0.5)*CellDY;
-			Plist[PartCount][9] = CPos[3] + (ran() - 0.5)*CellDZ;
-
-			// Momentum
-			// Sample rest frame momentum given T and mass of light quark
-			MCSampler(TRead, 1); // NewP=P, NewX=Px, ...
-
-			// USE THE SAME BOOST AS BEFORE
-			// PLab^u = g^u^t Lambda_t ^v pres^w g_w _v
-			// Returns P in GeV
-			new_quark_energy = sqrt(xmq*xmq + NewP*NewP);
-			Plist[PartCount][6] = (LorBoost[0][0]*new_quark_energy + LorBoost[0][1]*NewX + LorBoost[0][2]*NewY + LorBoost[0][3]*NewZ)*GEVFM;
-			Plist[PartCount][3] = (LorBoost[1][0]*new_quark_energy + LorBoost[1][1]*NewX + LorBoost[1][2]*NewY + LorBoost[1][3]*NewZ)*GEVFM;
-			Plist[PartCount][4] = (LorBoost[2][0]*new_quark_energy + LorBoost[2][1]*NewX + LorBoost[2][2]*NewY + LorBoost[2][3]*NewZ)*GEVFM;
-			Plist[PartCount][5] = (LorBoost[3][0]*new_quark_energy + LorBoost[3][1]*NewX + LorBoost[3][2]*NewY + LorBoost[3][3]*NewZ)*GEVFM;
-
-			// Additional information
-			Plist[PartCount][0]  = 1; // Event ID, to match jet formatting
-			Plist[PartCount][2]  = 0; // Origin, to match jet formatting
-			Plist[PartCount][11] = 0; // Status - identifies as thermal quark
-			PartCount++;
-		}
-
-		// S, SBAR QUARKS
-		// <N> = V <n>
-		double NumOddHere = NumStrange*OddDeg*cut*cut*cut/(8.*PI*PI*PI);
-		std::poisson_distribution<int> poisson_s(NumOddHere);
+		std::poisson_distribution<int> poisson_ud(NumLight);
+		int GeneratedParticles_ud = poisson_ud(getRandomGenerator()); // Initialize particles created in this cell
+		SamplePartons(GeneratedParticles_ud, 1, TRead, false, CPos, LorBoost, false, 0.);
+		num_ud += GeneratedParticles_ud;
 
 		// Generate s quarks
-		int nL = GeneratedParticles;
-		nL_tot += nL;
-
-		GeneratedParticles = poisson_s(getRandomGenerator()); //Initialize particles created in this cell
-
-		int nS = GeneratedParticles;
-		nS_tot += nS;
-		//List of particles ( pos(x,y,z,t), mom(px,py,pz,E), species)
-		for(int partic = 0; partic < GeneratedParticles; partic++){
-			// adding space to PList for output quarks
-			std::vector<double> temp = {0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.};
-			Plist.push_back(temp);
-
-			// Species - S,Sbar are equally likely
-			double SpecRoll = ran();
-			if(SpecRoll <= 0.5){ // SBar
-				Plist[PartCount][1] = -3;
-			} else { //S
-				Plist[PartCount][1] = 3;
-			}
-
-			// Position
-			// Located at x,y pos of area element
-			Plist[PartCount][10] = CPos[0] + (ran() - 0.5)*CellDT; // Tau
-			Plist[PartCount][7] = CPos[1] + (ran() - 0.5)*CellDX;
-			Plist[PartCount][8] = CPos[2] + (ran() - 0.5)*CellDY;
-			Plist[PartCount][9] = CPos[3] + (ran() - 0.5)*CellDZ;
-
-			// Momentum
-			// Sample rest frame momentum given T and mass of s quark
-			MCSampler(TRead, 2); // NewP=P, NewX=Px, ...
-
-			// USE THE SAME BOOST AS BEFORE
-			// PLab^u = g^u^t Lambda_t ^v pres^w g_w _v
-			// Returns P in GeV
-			new_quark_energy = sqrt(xms*xms + NewP*NewP);
-			Plist[PartCount][6] = (LorBoost[0][0]*new_quark_energy + LorBoost[0][1]*NewX + LorBoost[0][2]*NewY + LorBoost[0][3]*NewZ)*GEVFM;
-			Plist[PartCount][3] = (LorBoost[1][0]*new_quark_energy + LorBoost[1][1]*NewX + LorBoost[1][2]*NewY + LorBoost[1][3]*NewZ)*GEVFM;
-			Plist[PartCount][4] = (LorBoost[2][0]*new_quark_energy + LorBoost[2][1]*NewX + LorBoost[2][2]*NewY + LorBoost[2][3]*NewZ)*GEVFM;
-			Plist[PartCount][5] = (LorBoost[3][0]*new_quark_energy + LorBoost[3][1]*NewX + LorBoost[3][2]*NewY + LorBoost[3][3]*NewZ)*GEVFM;
-
-			// Additional information
-			Plist[PartCount][0]  = 1; // Event ID, to match jet formatting
-			Plist[PartCount][2]  = 0; // Origin, to match jet formatting
-			Plist[PartCount][11] = 0; // Status - identifies as thermal quark
-			PartCount++;
-		}
+		std::poisson_distribution<int> poisson_s(NumStrange);
+		int GeneratedParticles_s = poisson_s(getRandomGenerator()); //Initialize particles created in this cell
+		SamplePartons(GeneratedParticles_s, 2, TRead, false, CPos, LorBoost, false, 0.);
+		num_s += GeneratedParticles_s;
 	}
 
-	JSDEBUG << "Light particles: " << nL_tot;
-	JSDEBUG << "Strange particles: " << nS_tot;
-
-	num_ud = nL_tot;
-	num_s = nS_tot;
+	JSDEBUG << "Light particles: " << num_ud;
+	JSDEBUG << "Strange particles: " << num_s;
 
 	//Shuffling PList
 	if(ShuffleList){
-		// Shuffle the Plist using the random engine
-    	std::shuffle(&Plist[0], &Plist[PartCount], getRandomGenerator());
+    	std::shuffle(&Plist[0], &Plist.back(), getRandomGenerator());
 	}
 
 	//print Plist for testing
@@ -820,85 +595,14 @@ void ThermalPartonSampler::sample_3p1d(bool Cartesian_hydro){
 
 void ThermalPartonSampler::sample_2p1d(double eta_max){
 
-	// Input read from cells
-	double CPos[4];		// Position of the current cell (tau/t, x, y , eta/z=0)
-	double LFSigma[4];		// LabFrame hypersurface (tau/t,x,y,eta/z=0)
-	double CMSigma[4];		// Center of mass hypersurface (tau/t,x,y,eta/z=0)
-	double TRead;			// Temperature of cell
-	double Vel[4];			// Gamma & 3-Velocity of cell (gamma, Vx, Vy, Vz) NOT FOUR VELOCITY
-	double tau_pos;			// proper time from position of cell
-	double eta_pos;			// eta from position of cell
-	double tau_sur;			// proper time from normal vector of surface
-	double eta_sur;			// eta from normal vector of surface
-
-	// Calculated global quantities
-	int PartCount;			// Total count of particles over ALL cells
-	double NumLight;		// Number DENSITY of light quarks at set T
-	double NumStrange;		// Number DENSITY of squarks at set T
-	double UDDeg = 4.*6.;	// Degeneracy of UD quarks
-	double OddDeg = 2.*6.;	// Degeneracy of S quarks
-
-	// Calculated quantities in cells
-	double LorBoost[4][4];	// Lorentz boost defined as used - Form is always Lambda_u^v
-	int GeneratedParticles;	// Number of particles to be generated this cell
-
-	// Define parton densities
-	double cut; // Each coordinate of P is integrated this far
-	double E_light; // Store energy of light quarks
-	double E_strange; // Store energy of strange quarks
-	double GWeightProd; // Needed for integration
-	double pSpatialdSigma; // Needed for integration
-	PartCount = 0;
-	NumLight = 0;       // Initialize density for light and strange quarks
-	NumStrange = 0;
-	GeneratedParticles = 0;
-	double new_quark_energy; // store new quark energy for boost
-
-	//counter for total number of light and strange quarks
-	int nL_tot = 0;
-	int nS_tot = 0;
-
-	// define the accuracy range for temperature values in which the CDFGenerator is executed (for the case the value is not in the cache yet)
-	const double accuracyRange = 0.003 / GEVFM; // for a usual hypersurface at const temperature there should be only one entry in the cache
 	// precompute CDFs and store them in a cache
 	std::unordered_map<double, std::vector<std::vector<double>>> cdfLightCache;
 	std::unordered_map<double, std::vector<std::vector<double>>> cdfStrangeCache;
 
-	// lambda function to check if a temperature value is within the accuracy range of a cached temperature
-	auto withinAccuracyRange = [accuracyRange](double targetTemp, double cachedTemp) {
-    	return std::fabs(targetTemp - cachedTemp) <= accuracyRange;
-	};
-
-	// lambda function to retrieve the closest temperature from the cache within the accuracy range
-	auto getClosestCachedTemp = [](const std::unordered_map<double, std::vector<std::vector<double>>>& cache, double targetTemp) {
-	    double closestTemp = -1.0;
-	    double minDistance = std::numeric_limits<double>::max();
-	    for (const auto& entry : cache) {
-	        double cachedTemp = entry.first;
-	        double distance = std::fabs(targetTemp - cachedTemp);
-	        if (distance < minDistance) {
-	            minDistance = distance;
-	            closestTemp = cachedTemp;
-	        }
-	    }
-	    return closestTemp;
-	};
-
-	// Define the lambda function to compute the energy
-	auto computeEnergy = [](double mass, double cut, double GAbsL, double GAbsM, double GAbsK) {
-    	return sqrt(mass * mass + (cut * GAbsL) * (cut * GAbsL) + (cut * GAbsM) * (cut * GAbsM) + (cut * GAbsK) * (cut * GAbsK));
-	};
-
-	// Define the lambda function for the Fermi distribution
-	auto FermiDistribution = [](double energy, double temperature) {
-	    return 1. / (exp(energy / temperature) + 1.);
-	};
-
-	std::vector<double> NumLightList;
-	std::vector<double> NumStrangeList;
+	std::vector<double> NumberLightQuarks;
+	std::vector<double> NumberStrangeQuarks;
 
 	double d_eta = CellDZ;
-
 	int N_slices = std::floor((eta_max / d_eta)-0.5)+1;
 	for(int slice=1; slice <= (2*N_slices+1); slice++){
 		double eta_slice = (slice-N_slices-1)*d_eta;
@@ -908,63 +612,32 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 		<< eta_slice+(d_eta/2.) << ")";
 
 		for(int iS=0; iS<surface.size(); ++iS){
-			tau_pos = surface[iS][0];
+			std::vector<double> CPos(4); // Position of the current cell (tau/t, x, y , eta/z=0)
+			double tau_pos = surface[iS][0]; // proper time from position of cell
 			CPos[1] = surface[iS][1];
 			CPos[2] = surface[iS][2];
-			eta_pos = surface[iS][3];  //we need t,x,y,z
+			double eta_pos = surface[iS][3]; // eta from position of cell, we need t,x,y,z
+			
 			//this is also tau, x, y, eta
-			tau_sur = surface[iS][4];
+			std::vector<double> LFSigma(4); // LabFrame hypersurface (tau/t,x,y,eta/z=0), expect Sigma_mu
+			std::vector<double> CMSigma(4); // Center of mass hypersurface (tau/t,x,y,eta/z=0)
+			double tau_sur = surface[iS][4]; // proper time from normal vector of surface
 			LFSigma[1] = surface[iS][5];
 			LFSigma[2] = surface[iS][6];
-			eta_sur = surface[iS][7];
-			TRead = surface[iS][8] / GEVFM;
+			double eta_sur = surface[iS][7]; // eta from normal vector of surface
+			
+			double TRead = surface[iS][8] / hbarC; // Temperature of cell -> convert to fm^-1
+			
+			std::vector<double> Vel(4); // Gamma & 3-Velocity of cell (gamma, Vx, Vy, Vz) NOT FOUR VELOCITY
 			Vel[1] = surface[iS][9];
 			Vel[2] = surface[iS][10];
 			Vel[3] = surface[iS][11];
 
-			cut = 10*TRead;
+			// Update light quark CDF cache
+			updateCDFCache(TRead, xmq, 1, cdfLightCache, CDFTabLight);
 
-			// check if the CDFs for light quarks for this temperature are already in the cache and within the accuracy range
-    		auto cdfLightIter = cdfLightCache.find(TRead);
-    		if (cdfLightIter == cdfLightCache.end()) {
-        		// if not found, find the closest temperature in the cache within the accuracy range
-        		double closestTemp = getClosestCachedTemp(cdfLightCache,TRead);
-
-        		if (closestTemp >= 0. && withinAccuracyRange(TRead, closestTemp)) {
-            		// use the CDFs from the closest temperature in the cache
-            		CDFTabLight = cdfLightCache[closestTemp];
-            		// set the current temperature value to the closest cached temperature
-            		TRead = closestTemp;
-        		} else {
-            		// if no suitable entry is found, compute the CDFs and store them in the cache
-            		CDFGenerator(TRead, xmq, 1); // for light quarks
-            		cdfLightCache[TRead] = CDFTabLight;
-        		}
-    		} else {
-        		// if found, use the precomputed CDFs from the cache
-        		CDFTabLight = cdfLightIter->second;
-    		}
-
-			// check if the CDFs for strange quarks for this temperature are already in the cache and within the accuracy range
-    		auto cdfStrangeIter = cdfStrangeCache.find(TRead);
-    		if (cdfStrangeIter == cdfStrangeCache.end()) {
-        		// if not found, find the closest temperature in the cache within the accuracy range
-        		double closestTemp = getClosestCachedTemp(cdfStrangeCache,TRead);
-
-        		if (closestTemp >= 0 && withinAccuracyRange(TRead, closestTemp)) {
-            		// use the CDFs from the closest temperature in the cache
-            		CDFTabStrange = cdfStrangeCache[closestTemp];
-            		// set the current temperature value to the closest cached temperature
-            		TRead = closestTemp;
-        		} else {
-            		// if no suitable entry is found, compute the CDFs and store them in the cache
-            		CDFGenerator(TRead, xms, 2); // for strange quarks
-            		cdfStrangeCache[TRead] = CDFTabStrange;
-        		}
-    		} else {
-        		// if found, use the precomputed CDFs from the cache
-        		CDFTabStrange = cdfStrangeIter->second;
-    		}
+			// Update strange quark CDF cache
+			updateCDFCache(TRead, xms, 2, cdfStrangeCache, CDFTabStrange);
 
 			//getting t,z from tau, eta
 			CPos[0] = tau_pos*std::cosh(eta_pos);
@@ -977,306 +650,62 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 
 			CellDZ = CPos[0] * 2. * std::sinh(d_eta/2.);
 
-			double vsquare = Vel[1]*Vel[1] + Vel[2]*Vel[2] + Vel[3]*Vel[3];
-			if(vsquare < 10e-16){
-				vsquare = 10e-16;
-			}
+			std::vector<std::vector<double>> LorBoost(4, std::vector<double>(4)); // Lorentz boost defined as used - Form is always Lambda_u^v
+			LorentzBoostMatrix(Vel, LorBoost, false);
 
-			// Deduced info
-			Vel[0] = 1. / sqrt(1-vsquare); // gamma - Vel is not four velocity
-
-			// Lambda_u ^v
-			LorBoost[0][0]= Vel[0];
-			LorBoost[0][1]= Vel[0]*Vel[1];
-			LorBoost[0][2]= Vel[0]*Vel[2];
-			LorBoost[0][3]= Vel[0]*Vel[3];
-			LorBoost[1][0]= Vel[0]*Vel[1];
-			LorBoost[1][1]= (Vel[0] - 1.)*Vel[1]*Vel[1]/vsquare + 1.;
-			LorBoost[1][2]= (Vel[0] - 1.)*Vel[1]*Vel[2]/vsquare;
-			LorBoost[1][3]= (Vel[0] - 1.)*Vel[1]*Vel[3]/vsquare;
-			LorBoost[2][0]= Vel[0]*Vel[2];
-			LorBoost[2][1]= (Vel[0] - 1.)*Vel[1]*Vel[2]/vsquare;
-			LorBoost[2][2]= (Vel[0] - 1.)*Vel[2]*Vel[2]/vsquare + 1.;
-			LorBoost[2][3]= (Vel[0] - 1.)*Vel[2]*Vel[3]/vsquare;
-			LorBoost[3][0]= Vel[0]*Vel[3];
-			LorBoost[3][1]= (Vel[0] - 1.)*Vel[1]*Vel[3]/vsquare;
-			LorBoost[3][2]= (Vel[0] - 1.)*Vel[2]*Vel[3]/vsquare;
-			LorBoost[3][3]= (Vel[0] - 1.)*Vel[3]*Vel[3]/vsquare + 1.;
-
-			if(vsquare == 0){
-				LorBoost[1][1]= 1.;
-				LorBoost[1][2]= 0;
-				LorBoost[1][3]= 0;
-				LorBoost[2][1]= 0;
-				LorBoost[2][2]= 1.;
-				LorBoost[2][3]= 0;
-				LorBoost[3][1]= 0;
-				LorBoost[3][2]= 0;
-				LorBoost[3][3]= 1.;
-			}
-
-			double NumHere;
-			double NumOddHere;
+			double NumberUDquarks;
+			double NumberSquarks;
 			if(slice == 1){
 				// Lambda_u^v Sigma_v = CMSigma_u
-				CMSigma[0] = (LorBoost[0][0]*LFSigma[0] + LorBoost[0][1]*LFSigma[1] + LorBoost[0][2]*LFSigma[2] + LorBoost[0][3]*LFSigma[3]);
-				CMSigma[1] = (LorBoost[1][0]*LFSigma[0] + LorBoost[1][1]*LFSigma[1] + LorBoost[1][2]*LFSigma[2] + LorBoost[1][3]*LFSigma[3]);
-				CMSigma[2] = (LorBoost[2][0]*LFSigma[0] + LorBoost[2][1]*LFSigma[1] + LorBoost[2][2]*LFSigma[2] + LorBoost[2][3]*LFSigma[3]);
-				CMSigma[3] = (LorBoost[3][0]*LFSigma[0] + LorBoost[3][1]*LFSigma[1] + LorBoost[3][2]*LFSigma[2] + LorBoost[3][3]*LFSigma[3]);
+				std::vector<double> SigmaBoosted = LorentzBoost(LFSigma, LorBoost);
+				CMSigma[0] = SigmaBoosted[0];
+				CMSigma[1] = SigmaBoosted[1];
+				CMSigma[2] = SigmaBoosted[2];
+				CMSigma[3] = SigmaBoosted[3];
 
 				// GAUSSIAN INTEGRALS <n> = int f(p)d3p
-				NumLight = 0.;
-				NumStrange = 0.;
+				double dSigma_dot_u = CMSigma[0] * Vel[0] - CMSigma[1] * Vel[1] - CMSigma[2] * Vel[2] - CMSigma[3] * Vel[3];
+				double NumLight = FermiDiracDistributionMomentumIntegral(xmq, TRead) * degeneracy_ud / (2.*pi*pi);
+				double NumStrange = FermiDiracDistributionMomentumIntegral(xms, TRead) * degeneracy_s / (2.*pi*pi);
+				NumLight *= dSigma_dot_u;
+				NumStrange *= dSigma_dot_u;	
 
-				for (int l = 0; l < GPoints; l++) {
-				    for (int m = 0; m < GPoints; m++) {
-				        for (int k = 0; k < GPoints; k++) {
-							GWeightProd = GWeight[l] * GWeight[m] * GWeight[k];
-							pSpatialdSigma = (cut * GAbs[l]) * CMSigma[1] + (cut * GAbs[m]) * CMSigma[2] + (cut * GAbs[k]) * CMSigma[3];
-
-							// For UD quarks
-							E_light = computeEnergy(xmq, cut, GAbs[l], GAbs[m], GAbs[k]);
-		            		NumLight += GWeightProd * FermiDistribution(E_light, TRead) *
-		            		           (E_light * CMSigma[0] + pSpatialdSigma) / E_light;
-
-		            		// For S quarks
-							E_strange = computeEnergy(xms, cut, GAbs[l], GAbs[m], GAbs[k]);
-		            		NumStrange += GWeightProd * FermiDistribution(E_strange, TRead) *
-		            		             (E_strange * CMSigma[0] + pSpatialdSigma) / E_strange;
-				        }
-				    }
-				}
-				// U, D, UBAR, DBAR QUARKS
-				// <N> = V <n>
-				NumHere = NumLight*UDDeg*cut*cut*cut/(8.*PI*PI*PI);
-
-				// S, SBAR QUARKS
-				// <N> = V <n>
-				NumOddHere = NumStrange*OddDeg*cut*cut*cut/(8.*PI*PI*PI);
-
-				NumLightList.push_back(NumHere);
-				NumStrangeList.push_back(NumOddHere);
+				NumberLightQuarks.push_back(NumLight);
+				NumberStrangeQuarks.push_back(NumStrange);
+				NumberUDquarks = NumLight;
+				NumberSquarks = NumStrange;
 			} else {
-				NumHere = NumLightList[iS];
-				NumOddHere = NumStrangeList[iS];
+				NumberUDquarks = NumberLightQuarks[iS];
+				NumberSquarks = NumberStrangeQuarks[iS];
 			}
 
-			std::poisson_distribution<int> poisson_ud(NumHere);
+			// Velocity for the boost to the slice
+			Vel[1] /= cosh(eta_slice);
+			Vel[2] /= cosh(eta_slice);
+			Vel[3] = tanh(eta_slice);
+			// Update the Lorentz boost matrix for the slice
+			LorentzBoostMatrix(Vel, LorBoost, false);
 
 			// Generating light quarks
-			GeneratedParticles = poisson_ud(getRandomGenerator()); // Initialize particles created in this cell
-
-			// List of particles ( pos(x,y,z,t), mom(px,py,pz,E), species)
-			for(int partic = 0; partic < GeneratedParticles; partic++){
-				// adding space to PList for output quarks
-				std::vector<double> temp = {0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.};
-				Plist.push_back(temp);
-
-				// Species - U,D,UBar,Dbar are equally likely
-				double SpecRoll = ran(); //Probability of species die roll
-				if (SpecRoll <= 0.25) { // UBar
-				    Plist[PartCount][1] = -2;
-				} else if (SpecRoll <= 0.50) { // DBar
-				    Plist[PartCount][1] = -1;
-				} else if (SpecRoll <= 0.75) { // D
-				    Plist[PartCount][1] = 1;
-				} else { // U
-				    Plist[PartCount][1] = 2;
-				}
-
-				// Position
-				// Located at x,y pos of area element
-				Plist[PartCount][10] = CPos[0] + (ran() - 0.5)*CellDT; // Tau
-				Plist[PartCount][7] = CPos[1] + (ran() - 0.5)*CellDX;
-				Plist[PartCount][8] = CPos[2] + (ran() - 0.5)*CellDY;
-				Plist[PartCount][9] = CPos[3] + (ran() - 0.5)*CellDZ;
-
-				if(std::abs(Plist[PartCount][9]) >= std::abs(Plist[PartCount][10])) {
-					Plist[PartCount][10] = std::abs(Plist[PartCount][9]) + 10e-3;
-				}
-				double temp_t = std::sqrt(Plist[PartCount][10]*Plist[PartCount][10]-Plist[PartCount][9]*Plist[PartCount][9])
-						* std::cosh(eta_slice+0.5*std::log((Plist[PartCount][10]+Plist[PartCount][9])/(Plist[PartCount][10]-Plist[PartCount][9])));
-				double temp_z = std::sqrt(Plist[PartCount][10]*Plist[PartCount][10]-Plist[PartCount][9]*Plist[PartCount][9])
-						* std::sinh(eta_slice+0.5*std::log((Plist[PartCount][10]+Plist[PartCount][9])/(Plist[PartCount][10]-Plist[PartCount][9])));
-				Plist[PartCount][10] = temp_t;
-				Plist[PartCount][9] = temp_z;
-
-				// Momentum
-				// Sample rest frame momentum given T and mass of light quark
-				MCSampler(TRead, 1); // NewP=P, NewX=Px, ...
-
-				Vel[1] /= cosh(eta_slice);
-				Vel[2] /= cosh(eta_slice);
-				Vel[3] = tanh(eta_slice);
-				double vsquare = Vel[1]*Vel[1] + Vel[2]*Vel[2] + Vel[3]*Vel[3];
-				if(vsquare < 10e-16){
-					vsquare = 10e-16;
-				}
-
-				// Deduced info
-				Vel[0] = 1. / sqrt(1-vsquare); // gamma - Vel is not four velocity
-
-				// Lambda_u ^v
-				LorBoost[0][0]= Vel[0];
-				LorBoost[0][1]= Vel[0]*Vel[1];
-				LorBoost[0][2]= Vel[0]*Vel[2];
-				LorBoost[0][3]= Vel[0]*Vel[3];
-				LorBoost[1][0]= Vel[0]*Vel[1];
-				LorBoost[1][1]= (Vel[0] - 1.)*Vel[1]*Vel[1]/vsquare + 1.;
-				LorBoost[1][2]= (Vel[0] - 1.)*Vel[1]*Vel[2]/vsquare;
-				LorBoost[1][3]= (Vel[0] - 1.)*Vel[1]*Vel[3]/vsquare;
-				LorBoost[2][0]= Vel[0]*Vel[2];
-				LorBoost[2][1]= (Vel[0] - 1.)*Vel[1]*Vel[2]/vsquare;
-				LorBoost[2][2]= (Vel[0] - 1.)*Vel[2]*Vel[2]/vsquare + 1.;
-				LorBoost[2][3]= (Vel[0] - 1.)*Vel[2]*Vel[3]/vsquare;
-				LorBoost[3][0]= Vel[0]*Vel[3];
-				LorBoost[3][1]= (Vel[0] - 1.)*Vel[1]*Vel[3]/vsquare;
-				LorBoost[3][2]= (Vel[0] - 1.)*Vel[2]*Vel[3]/vsquare;
-				LorBoost[3][3]= (Vel[0] - 1.)*Vel[3]*Vel[3]/vsquare + 1.;
-
-				if(vsquare == 0){
-					LorBoost[1][1]= 1.;
-					LorBoost[1][2]= 0;
-					LorBoost[1][3]= 0;
-					LorBoost[2][1]= 0;
-					LorBoost[2][2]= 1.;
-					LorBoost[2][3]= 0;
-					LorBoost[3][1]= 0;
-					LorBoost[3][2]= 0;
-					LorBoost[3][3]= 1.;
-				}
-
-				// USE THE SAME BOOST AS BEFORE
-				// PLab^u = g^u^t Lambda_t ^v pres^w g_w _v
-				// Returns P in GeV
-				new_quark_energy = sqrt(xmq*xmq + NewP*NewP);
-				Plist[PartCount][6] = (LorBoost[0][0]*new_quark_energy + LorBoost[0][1]*NewX + LorBoost[0][2]*NewY + LorBoost[0][3]*NewZ)*GEVFM;
-				Plist[PartCount][3] = (LorBoost[1][0]*new_quark_energy + LorBoost[1][1]*NewX + LorBoost[1][2]*NewY + LorBoost[1][3]*NewZ)*GEVFM;
-				Plist[PartCount][4] = (LorBoost[2][0]*new_quark_energy + LorBoost[2][1]*NewX + LorBoost[2][2]*NewY + LorBoost[2][3]*NewZ)*GEVFM;
-				Plist[PartCount][5] = (LorBoost[3][0]*new_quark_energy + LorBoost[3][1]*NewX + LorBoost[3][2]*NewY + LorBoost[3][3]*NewZ)*GEVFM;
-
-				// Additional information
-				Plist[PartCount][0]  = 1; // Event ID, to match jet formatting
-				Plist[PartCount][2]  = 0; // Origin, to match jet formatting
-				Plist[PartCount][11] = 0; // Status - identifies as thermal quark
-				PartCount++;
-			}
-
-			std::poisson_distribution<int> poisson_s(NumOddHere);
+			std::poisson_distribution<int> poisson_ud(NumberUDquarks);
+			int GeneratedParticles_ud = poisson_ud(getRandomGenerator()); // Initialize particles created in this cell
+			SamplePartons(GeneratedParticles_ud, 1, TRead, false, CPos, LorBoost, true, eta_slice);
+			num_ud += GeneratedParticles_ud;
 
 			// Generate s quarks
-			int nL = GeneratedParticles;
-			nL_tot += nL;
-
-			GeneratedParticles = poisson_s(getRandomGenerator()); //Initialize particles created in this cell
-
-			int nS = GeneratedParticles;
-			nS_tot += nS;
-			//List of particles ( pos(x,y,z,t), mom(px,py,pz,E), species)
-			for(int partic = 0; partic < GeneratedParticles; partic++){
-				// adding space to PList for output quarks
-				std::vector<double> temp = {0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.};
-				Plist.push_back(temp);
-
-				// Species - S,Sbar are equally likely
-				double SpecRoll = ran();
-				if(SpecRoll <= 0.5){ // SBar
-					Plist[PartCount][1] = -3;
-				} else { //S
-					Plist[PartCount][1] = 3;
-				}
-
-				// Position
-				// Located at x,y pos of area element
-				Plist[PartCount][10] = CPos[0] + (ran() - 0.5)*CellDT; // Tau
-				Plist[PartCount][7] = CPos[1] + (ran() - 0.5)*CellDX;
-				Plist[PartCount][8] = CPos[2] + (ran() - 0.5)*CellDY;
-				Plist[PartCount][9] = CPos[3] + (ran() - 0.5)*CellDZ;
-
-				if(std::abs(Plist[PartCount][9]) >= std::abs(Plist[PartCount][10])) {
-					Plist[PartCount][10] = std::abs(Plist[PartCount][9]) + 10e-3;
-				}
-				double temp_t = std::sqrt(Plist[PartCount][10]*Plist[PartCount][10]-Plist[PartCount][9]*Plist[PartCount][9])
-						* std::cosh(eta_slice+0.5*std::log((Plist[PartCount][10]+Plist[PartCount][9])/(Plist[PartCount][10]-Plist[PartCount][9])));
-				double temp_z = std::sqrt(Plist[PartCount][10]*Plist[PartCount][10]-Plist[PartCount][9]*Plist[PartCount][9])
-						* std::sinh(eta_slice+0.5*std::log((Plist[PartCount][10]+Plist[PartCount][9])/(Plist[PartCount][10]-Plist[PartCount][9])));
-				Plist[PartCount][10] = temp_t;
-				Plist[PartCount][9] = temp_z;
-
-				// Momentum
-				// Sample rest frame momentum given T and mass of s quark
-				MCSampler(TRead, 2); // NewP=P, NewX=Px, ...
-
-				Vel[1] /= cosh(eta_slice);
-				Vel[2] /= cosh(eta_slice);
-				Vel[3] = tanh(eta_slice);
-				double vsquare = Vel[1]*Vel[1] + Vel[2]*Vel[2] + Vel[3]*Vel[3];
-				if(vsquare < 10e-16){
-					vsquare = 10e-16;
-				}
-
-				// Deduced info
-				Vel[0] = 1. / sqrt(1-vsquare); // gamma - Vel is not four velocity
-
-				// Lambda_u ^v
-				LorBoost[0][0]= Vel[0];
-				LorBoost[0][1]= Vel[0]*Vel[1];
-				LorBoost[0][2]= Vel[0]*Vel[2];
-				LorBoost[0][3]= Vel[0]*Vel[3];
-				LorBoost[1][0]= Vel[0]*Vel[1];
-				LorBoost[1][1]= (Vel[0] - 1.)*Vel[1]*Vel[1]/vsquare + 1.;
-				LorBoost[1][2]= (Vel[0] - 1.)*Vel[1]*Vel[2]/vsquare;
-				LorBoost[1][3]= (Vel[0] - 1.)*Vel[1]*Vel[3]/vsquare;
-				LorBoost[2][0]= Vel[0]*Vel[2];
-				LorBoost[2][1]= (Vel[0] - 1.)*Vel[1]*Vel[2]/vsquare;
-				LorBoost[2][2]= (Vel[0] - 1.)*Vel[2]*Vel[2]/vsquare + 1.;
-				LorBoost[2][3]= (Vel[0] - 1.)*Vel[2]*Vel[3]/vsquare;
-				LorBoost[3][0]= Vel[0]*Vel[3];
-				LorBoost[3][1]= (Vel[0] - 1.)*Vel[1]*Vel[3]/vsquare;
-				LorBoost[3][2]= (Vel[0] - 1.)*Vel[2]*Vel[3]/vsquare;
-				LorBoost[3][3]= (Vel[0] - 1.)*Vel[3]*Vel[3]/vsquare + 1.;
-
-				if(vsquare == 0){
-					LorBoost[1][1]= 1.;
-					LorBoost[1][2]= 0;
-					LorBoost[1][3]= 0;
-					LorBoost[2][1]= 0;
-					LorBoost[2][2]= 1.;
-					LorBoost[2][3]= 0;
-					LorBoost[3][1]= 0;
-					LorBoost[3][2]= 0;
-					LorBoost[3][3]= 1.;
-				}
-
-				// USE THE SAME BOOST AS BEFORE
-				// PLab^u = g^u^t Lambda_t ^v pres^w g_w _v
-				// Returns P in GeV
-				new_quark_energy = sqrt(xms*xms + NewP*NewP);
-				Plist[PartCount][6] = (LorBoost[0][0]*new_quark_energy + LorBoost[0][1]*NewX + LorBoost[0][2]*NewY + LorBoost[0][3]*NewZ)*GEVFM;
-				Plist[PartCount][3] = (LorBoost[1][0]*new_quark_energy + LorBoost[1][1]*NewX + LorBoost[1][2]*NewY + LorBoost[1][3]*NewZ)*GEVFM;
-				Plist[PartCount][4] = (LorBoost[2][0]*new_quark_energy + LorBoost[2][1]*NewX + LorBoost[2][2]*NewY + LorBoost[2][3]*NewZ)*GEVFM;
-				Plist[PartCount][5] = (LorBoost[3][0]*new_quark_energy + LorBoost[3][1]*NewX + LorBoost[3][2]*NewY + LorBoost[3][3]*NewZ)*GEVFM;
-
-				// Additional information
-				Plist[PartCount][0]  = 1; // Event ID, to match jet formatting
-				Plist[PartCount][2]  = 0; // Origin, to match jet formatting
-				Plist[PartCount][11] = 0; // Status - identifies as thermal quark
-				PartCount++;
-			}
+			std::poisson_distribution<int> poisson_s(NumberSquarks);
+			int GeneratedParticles_s = poisson_s(getRandomGenerator()); //Initialize particles created in this cell
+			SamplePartons(GeneratedParticles_s, 2, TRead, false, CPos, LorBoost, true, eta_slice);
+			num_s += GeneratedParticles_s;
 		}
 
 	}
 
-	JSDEBUG << "Light particles: " << nL_tot;
-	JSDEBUG << "Strange particles: " << nS_tot;
+	JSDEBUG << "Light particles: " << num_ud;
+	JSDEBUG << "Strange particles: " << num_s;
 
-	num_ud = nL_tot;
-	num_s = nS_tot;
-
-	//Shuffling PList
 	if(ShuffleList){
-		// Shuffle the Plist using the random engine
-    	std::shuffle(&Plist[0], &Plist[PartCount], getRandomGenerator());
+    	std::shuffle(&Plist[0], &Plist.back(), getRandomGenerator());
 	}
 
 	//print Plist for testing
