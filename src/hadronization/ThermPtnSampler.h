@@ -54,6 +54,15 @@ class ThermalPartonSampler
 	// Same format as in shower data, event number is always 1, 
 	// origin is always 0, particle status is always 0 (indicates a thermal quark)
 
+	// random number handling
+	std::mt19937_64 rng_engine; //RNG - Mersenne Twist - 64 bit
+	std::uniform_real_distribution<double> distribution{0.0, 1.0}; // Uniform distribution between 0 and 1
+	// Function to generate a random number between 0 and 1
+    double ran() {return distribution(rng_engine);}
+	// Function to get the random number generator
+    std::mt19937_64& getRandomGenerator() {return rng_engine;}
+
+	
 	// HyperSurface
 	std::vector<std::vector<double>> surface;
 
@@ -88,14 +97,6 @@ class ThermalPartonSampler
 
     // Sample partons and fill Plist
     void SamplePartons(int Npartons, int quark, double T, bool brick, std::vector<double>& CPos, std::vector<std::vector<double>>& BoostMatrix, bool slice_boost, double eta_slice);
-
-	// random number handling
-	std::mt19937_64 rng_engine; //RNG - Mersenne Twist - 64 bit
-	std::uniform_real_distribution<double> distribution{0.0, 1.0}; // Uniform distribution between 0 and 1
-	// Function to generate a random number between 0 and 1
-    double ran() {return distribution(rng_engine);}
-	// Function to get the random number generator
-    std::mt19937_64& getRandomGenerator() {return rng_engine;}
 
 	// Function to check if the target temperature is within the accuracy range of the cached temperature
 	bool withinAccuracyRange(double targetTemp, double cachedTemp, double accuracyRange) const;

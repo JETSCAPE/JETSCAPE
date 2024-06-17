@@ -13,46 +13,36 @@
 using namespace Jetscape;
 
 ThermalPartonSampler::ThermalPartonSampler(unsigned int ran_seed)
-	: rng_engine(ran_seed), 
-      CDFTabLight(NUMSTEP, std::vector<double>(2)), 
-      CDFTabStrange(NUMSTEP, std::vector<double>(2)){
+    : rng_engine(ran_seed), 
+      CDFTabLight(4097, std::vector<double>(2)), 
+      CDFTabStrange(4097, std::vector<double>(2)),
+      SetNum(false), // Set 'true' to set number of particles by hand- !!!Statistics use above temperature!!!
+      SetNumLight(1000000), //If SetNum == true, this many UD quarks are generated
+      SetNumStrange(0), //If SetNum == true, this many S quarks are generated
+      ShuffleList(true), // Should list of particles be shuffled at the end
+      degeneracy_ud(4.*6.), // Degeneracy of UD quarks
+      degeneracy_s(2.*6.), // Degeneracy of S quarks
+      CDFcacheAccuracy(0.003 / hbarC), // Accuracy range for cached temperature
+      xmq(0.33/hbarC), // use pythia values here
+      xms(0.5/hbarC), // use pythia values here
+      NUMSTEP(4097), // 2^12+1, for steps of CDF Table, changes coarseness of momentum sampling
+      CellDX(0.2), 
+      CellDY(0.2), 
+      CellDZ(0.2), 
+      CellDT(0.1), 
+      L(4.0), // Thickness from box edge
+      W(4.0), // x/y width of box
+      Time(2.0), 
+      Vx(0.), // 'Uniform' no flow in x-dir
+      Vy(0.), // 'Uniform' no flow in x-dir
+      Vz(0.), // 'Uniform' no flow in x-dir
+      T_brick(0.165 / hbarC), // 165 MeV into fm^-1 // is set from outside with brick_Tc()
+      num_ud(0), 
+      num_s(0) {
 
-	rng_engine.seed(ran_seed); // set the random seed from the framework
+    surface.clear();
 
-	// Flags
-	SetNum = false; // Set 'true' to set number of particles by hand- !!!Statistics use above temperature!!!
-	SetNumLight = 1000000; //If SetNum == true, this many UD quarks are generated
-	SetNumStrange = 0 ; //If SetNum == true, this many S quarks are generated
-	ShuffleList = true; // Should list of particles be shuffled at the end
-
-	degeneracy_ud = 4.*6.; // Degeneracy of UD quarks
-	degeneracy_s = 2.*6.; // Degeneracy of S quarks
-	CDFcacheAccuracy = 0.003 / hbarC;	// Accuracy range for cached temperature
-	xmq = 0.33/hbarC; // use pythia values here
-	xms = 0.5/hbarC; // use pythia values here
-	NUMSTEP = 4097; // 2^12+1, for steps of CDF Table, changes coarseness of momentum sampling
-
-	CellDX = 0.2;
-	CellDY = 0.2;
-	CellDZ = 0.2;
-	CellDT = 0.1;
-
-	// Brick Info
-	L = 4.0; // Thickness from box edge
-	W = 4.0; // x/y width of box
-	Time = 2.0; // Time of the brick partons
-
-	Vx = 0.; // 'Uniform' no flow in x-dir
-	Vy = 0.; // 'Uniform' no flow in y-dir
-	Vz = 0.; // 'Uniform' no flow in z-dir
-	T_brick = 0.165 / hbarC; // 165 MeV into fm^-1 // is set from outside with brick_Tc()
-
-	surface.clear();
-
-	num_ud = 0;
-	num_s = 0;
-
-	InitializeBesselK2();
+    InitializeBesselK2();
 }
 
 void ThermalPartonSampler::InitializeBesselK2() {
