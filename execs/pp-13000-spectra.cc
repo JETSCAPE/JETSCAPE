@@ -160,12 +160,12 @@ int main(int argc, char* argv[]){
                 if(k != 0 && PT < softend)
                     continue;
 
-                double strength = 1; //smoothing between smooth and hard transition          
+                double strength = 1.0; //smoothing between smooth and hard transition          
 
                 if(fabs(Y) < idHadronYCut){
-                    if(abs(PID) == 211) tempPions->Fill(PT, strength/2.);
-                    if(abs(PID) == 321) tempKaons->Fill(PT, strength/2.);
-                    if(abs(PID) == 2212) tempProtons->Fill(PT, strength/2.);
+                    if(abs(PID) == 211) tempPions->Fill(PT, strength);
+                    if(abs(PID) == 321) tempKaons->Fill(PT, strength);
+                    if(abs(PID) == 2212) tempProtons->Fill(PT, strength);
                 } 
             }
 
@@ -192,9 +192,9 @@ int main(int argc, char* argv[]){
         eventCount.push_back(Events);
         
         //Write histogram into a root file
-        tempPions->Write();
-        tempKaons->Write();
-        tempProtons->Write();
+        tempPions->Sumw2(); tempPions->Write();
+        tempKaons->Sumw2(); tempKaons->Write();
+        tempProtons->Sumw2(); tempProtons->Write();
         tempjethist1->Write();
         tempjethist2->Write();
         tempjethist3->Write();
