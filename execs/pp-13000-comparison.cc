@@ -43,9 +43,11 @@ using namespace Jetscape;
 
 int main(int argc, char* argv[]){
     //list of directories to go over
-    vector<string> directories = getComparisonDirs(argc, argv);
-    int maxdir = directories.size();
     string input = argv[1]; 
+    string pointsdir = input+"points/";
+    vector<string> directories = getComparisonDirs(argc, argv); int maxdir = directories.size();
+    cout << "Got point directories" << endl;
+    chdir("/data/rjfgroup/rjf01/cameron.parker/builds/JETSCAPE/build");
     
     // Create the ROOT application environment.
     TApplication theApp("hist", &argc, argv);

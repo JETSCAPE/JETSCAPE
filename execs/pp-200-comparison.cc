@@ -42,30 +42,11 @@ using namespace Jetscape;
 
 int main(int argc, char* argv[]){
     //list of directories to go over
-    vector<string> directories = {};
     string input = argv[1]; 
-
-    for(int i = 1; i < argc; i++){
-        chdir(argv[i]);
-        vector<string> tempdirs = get_directories(".");
-
-        //removing the results dir
-        int rmindex = 0;
-        for(int j = 0; j < tempdirs.size(); j++){
-            tempdirs[j].erase(0,2);
-            if(tempdirs[j].find("QVir_Analysis") != string::npos) rmindex = j;
-        }
-        tempdirs.erase(tempdirs.begin() + rmindex); 
-
-        vector<string> sorteddirs = doubleSort(tempdirs); //sorting for consistency
-        for(int j = 0; j < sorteddirs.size(); j++){
-            string temp = argv[i] + sorteddirs[j];
-            sorteddirs[j] = temp;
-        }
-        directories.insert(directories.end(), sorteddirs.begin(), sorteddirs.end()); //inserting into the end of total vector
-    }
-    int maxdir = directories.size();
-    chdir("/scratch/user/cameron.parker/newJETSCAPE/JETSCAPE/build");
+    string pointsdir = input+"points/";
+    vector<string> directories = getComparisonDirs(argc, argv); int maxdir = directories.size();
+    cout << "Got point directories" << endl;
+    chdir("/data/rjfgroup/rjf01/cameron.parker/builds/JETSCAPE/build");
 
     // Create the ROOT application environment.
     TApplication theApp("hist", &argc, argv);
@@ -87,7 +68,7 @@ int main(int argc, char* argv[]){
         TH1D* tempHistPions = (TH1D*)file.Get("identified pions"); cout << "Got pions. ";
         TH1D* tempHistKaons = (TH1D*)file.Get("identified kaons"); cout << "Got kaons. ";
         TH1D* tempHistProtons = (TH1D*)file.Get("identified protons"); cout << "Got potons. ";
-        TH1D* tempHistHardPions = (TH1D*)file.Get("hard pions"); cout << "Got hard pions. ";
+        TH1D* tempHistHardPions = (TH1D*)file.Get("identified hard pions"); cout << "Got hard pions. ";
         TH1D* tempHistJets = (TH1D*)file.Get("jets"); cout << "Got jets. " << endl;
 
         //dat file data for Bayes analysis

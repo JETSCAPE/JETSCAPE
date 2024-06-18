@@ -163,9 +163,9 @@ int main(int argc, char* argv[]){
                 double strength = 1.0; //smoothing between smooth and hard transition          
 
                 if(fabs(Y) < idHadronYCut){
-                    if(abs(PID) == 211) tempPions->Fill(PT, strength);
-                    if(abs(PID) == 321) tempKaons->Fill(PT, strength);
-                    if(abs(PID) == 2212) tempProtons->Fill(PT, strength);
+                    if(abs(PID) == 211) tempPions->Fill(PT);
+                    if(abs(PID) == 321) tempKaons->Fill(PT);
+                    if(abs(PID) == 2212) tempProtons->Fill(PT);
                 } 
             }
 
@@ -219,9 +219,9 @@ int main(int argc, char* argv[]){
     } //k-loop ends here (pTHatBin loop)
 
     //Scaling totals by global factors and the identified pions by bin centers: dSigma/(2*pi*pT*dpT*dEta)
-    HistTotalPions->Scale(1/(2.0*idHadronYCut),"width");
-    HistTotalKaons->Scale(1/(2.0*idHadronYCut),"width");
-    HistTotalProtons->Scale(1/(2.0*idHadronYCut),"width");
+    HistTotalPions->Scale(1./(2.0*idHadronYCut),"width");
+    HistTotalKaons->Scale(1./(2.0*idHadronYCut),"width");
+    HistTotalProtons->Scale(1./(2.0*idHadronYCut),"width");
     jethist1->Scale(2000000000.0,"width");
     jethist2->Scale(2000000000.0,"width");
     jethist3->Scale(2000000000.0,"width");
