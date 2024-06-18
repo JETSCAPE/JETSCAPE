@@ -29,6 +29,8 @@ for directory in directories:
         startBound = xml.split("_")[-2]
 
         for dat in dats:
+            if("nfs" in dat): continue
+
             datBound = dat.split("_")[1].split("n")[1]
             if startBound == datBound:
                 run = False
