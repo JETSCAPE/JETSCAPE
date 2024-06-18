@@ -824,6 +824,8 @@ std::vector<std::vector<string>> getDatBounds(const std::string& s){
         int second = r[i].find("_",first) + 1;
         int end = r[i].find(".dat");
 
+        if(r[i].find(".dat") == string::npos) continue;
+
         string lower = r[i].substr(first,second-first-1);
         string upper = r[i].substr(second, end-second);
 
