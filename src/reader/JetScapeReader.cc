@@ -15,6 +15,7 @@
 
 #include "JetScapeReader.h"
 #include <sstream>
+#include <stdexcept>
 
 namespace Jetscape {
 
@@ -98,7 +99,10 @@ template <class T> void JetScapeReader<T>::AddHadron(string s) {
       vS.push_back(token);
   }
 
-  if(vS.size() < 8) return;
+  if(vS.size() != 12) {
+    throw std::runtime_error(std::string("bad hadron line"));
+    return;
+  }
 
   hadrons.push_back(make_shared<Hadron>(stoi(vS[1]), stoi(vS[2]), stoi(vS[3]),
                                         stod(vS[4]), stod(vS[5]), stod(vS[6]),
