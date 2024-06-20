@@ -380,7 +380,6 @@ void ThermalPartonSampler::samplebrick(){
 
 	// GAUSSIAN INTEGRALS <n> = int f(p)d3p
 	double dSigma_dot_u = CMSigma[0] * Vel[0] - CMSigma[1] * Vel[1] - CMSigma[2] * Vel[2] - CMSigma[3] * Vel[3];
-	std::cout << "dSigma_dot_u = " << dSigma_dot_u << std::endl;
 	double NumLight = FermiDiracDistributionMomentumIntegral(T_brick, xmq) * degeneracy_ud / (2.*pi*pi);
     double NumStrange = FermiDiracDistributionMomentumIntegral(T_brick, xms) * degeneracy_s / (2.*pi*pi);
     NumLight *= dSigma_dot_u;
