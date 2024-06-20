@@ -495,8 +495,8 @@ void ThermalPartonSampler::sample_3p1d(bool Cartesian_hydro){
 		double eta_pos = surface[iS][3]; // eta from position of cell, we need t,x,y,z
 		
 		//this is also tau, x, y, eta
-		std::vector<double> LFSigma(4); // LabFrame hypersurface (tau/t,x,y,eta/z=0), expect Sigma_mu
-		std::vector<double> CMSigma(4); // Center of mass hypersurface (tau/t,x,y,eta/z=0)
+		std::vector<double> LFSigma(4); // LabFrame hypersurface (tau/t,x,y,eta/z), expect Sigma_mu
+		std::vector<double> CMSigma(4); // Center of mass hypersurface (tau/t,x,y,eta/z)
 		double tau_sur = surface[iS][4]; // proper time from normal vector of surface
 		LFSigma[1] = surface[iS][5];
 		LFSigma[2] = surface[iS][6];
