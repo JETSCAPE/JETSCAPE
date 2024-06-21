@@ -552,20 +552,26 @@ void HybridHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& sh
     }
     std::cout << "\n\n";*/
 
-		//not happy about having to do this, this way, but it is what it is.
-		std::vector<std::vector<double>> surface;
-		for(int icel=0; icel<surface_cells.size(); ++icel){
-			std::vector<double> cell;
-			cell.push_back(surface_cells[icel].tau); cell.push_back(surface_cells[icel].x); cell.push_back(surface_cells[icel].y); cell.push_back(surface_cells[icel].eta);
-			cell.push_back(surface_cells[icel].d3sigma_mu[0]); cell.push_back(surface_cells[icel].d3sigma_mu[1]);
-			cell.push_back(surface_cells[icel].d3sigma_mu[2]); cell.push_back(surface_cells[icel].d3sigma_mu[3]);
-			cell.push_back(surface_cells[icel].temperature);
-            double vx = surface_cells[icel].umu[1]/surface_cells[icel].umu[0];
-            double vy = surface_cells[icel].umu[2]/surface_cells[icel].umu[0];
-            double vz = surface_cells[icel].umu[3]/surface_cells[icel].umu[0];
-			cell.push_back(vx); cell.push_back(vy); cell.push_back(vz);
-			surface.push_back(cell);
-		}
+    // Preallocate memory for surface
+    std::vector<std::vector<double>> surface;
+    surface.reserve(surface_cells.size());
+    for (const auto& cell_info : surface_cells) {
+      std::vector<double> cell = {
+        cell_info.tau,
+        cell_info.x,
+        cell_info.y,
+        cell_info.eta,
+        cell_info.d3sigma_mu[0],
+        cell_info.d3sigma_mu[1],
+        cell_info.d3sigma_mu[2],
+        cell_info.d3sigma_mu[3],
+        cell_info.temperature,
+        cell_info.umu[1] / cell_info.umu[0], // vx
+        cell_info.umu[2] / cell_info.umu[0], // vy
+        cell_info.umu[3] / cell_info.umu[0]  // vz
+      };
+      surface.emplace_back(std::move(cell));
+    }
 
 		ThermalPartonSampler part_samp(rand_seed, hydro_Tc); //initializing sampler with random seed
 		part_samp.set_hypersurface(surface);
