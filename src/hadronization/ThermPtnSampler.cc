@@ -12,7 +12,7 @@
 
 using namespace Jetscape;
 
-ThermalPartonSampler::ThermalPartonSampler(unsigned int ran_seed)
+ThermalPartonSampler::ThermalPartonSampler(unsigned int ran_seed, double hydro_Tc)
     : rng_engine(ran_seed), 
       CDFTabLight(4097, std::vector<double>(2)), 
       CDFTabStrange(4097, std::vector<double>(2)),
@@ -36,13 +36,96 @@ ThermalPartonSampler::ThermalPartonSampler(unsigned int ran_seed)
       Vx(0.), // 'Uniform' no flow in x-dir
       Vy(0.), // 'Uniform' no flow in x-dir
       Vz(0.), // 'Uniform' no flow in x-dir
-      T_brick(0.165 / hbarC), // 165 MeV into fm^-1 // is set from outside with brick_Tc()
+      hydroTc(hydro_Tc / hbarC), // converted from GeV into fm^-1
       num_ud(0), 
       num_s(0) {
 
     surface.clear();
 
     InitializeBesselK2();
+
+	// Create the CDF table for 20 different temperatures in the range 
+	// 0.95*hydroTc to 1.05*hydroTc
+	for (int i = 0; i < 20; i++) {
+		double T = hydroTc * (0.95 + 0.01 * i);
+		createCDFCacheEntry(T, xmq, 1, CacheCDFLight, CDFTabLight);
+		createCDFCacheEntry(T, xms, 2, CacheCDFStrange, CDFTabStrange);
+
+		// Precompute part of the integral of the Fermi-Dirac distribution for 
+		// light and strange quarks
+		double N_eq_ud_part = FermiDiracDistributionMomentumIntegral(T, xmq);
+		double N_eq_s_part = FermiDiracDistributionMomentumIntegral(T, xms);
+		// Update the cache with the precomputed values
+		CacheFermiDiracIntegralLight[T] = N_eq_ud_part;
+		CacheFermiDiracIntegralStrange[T] = N_eq_s_part;
+	}
+
+}
+
+/**
+ * @brief Creates an entry of the cumulative distribution function (CDF) data 
+ * in a cache.
+ * 
+ * @param TRead Input temperature to read or update in the cache.
+ * @param mq Quark mass associated with the CDF data.
+ * @param quarkType Type of quark (1 for light, 2 for strange).
+ * @param cache Reference to the cache storing CDF data for different 
+ * temperatures.
+ * @param CDFTab Reference to the vector storing the CDF table for the current 
+ * temperature.
+ */
+void ThermalPartonSampler::createCDFCacheEntry(double& TRead, double mq, int quarkType, 
+                                          std::unordered_map<double, 
+										  std::vector<std::vector<double>>>& cache, 
+                                          std::vector<std::vector<double>>& CDFTab) {
+	// use the CDFGenerator to add the CDF data to the cache
+	CDFGenerator(TRead, mq, quarkType);
+	cache[TRead] = CDFTab;
+}
+
+/**
+ * @brief Finds the temperature closest to a target temperature in a cached map.
+ * 
+ * Searches through the provided cache of temperatures (`cache`) to determine
+ * the temperature that is closest to the specified `targetTemp`.
+ * 
+ * @param cache A map where keys are cached temperatures and values are 
+ * associated data.
+ * @param targetTemp The target temperature for which the closest cached 
+ * temperature is sought.
+ * @return The cached temperature that is closest to `targetTemp`, or -1.0 if 
+ * the cache is empty.
+ */
+double ThermalPartonSampler::getClosestCachedTemp(const std::unordered_map<double, 
+										std::vector<std::vector<double>>>& cache, 
+										double targetTemp) const {
+    double closestTemp = -1.0;
+    double minDistance = std::numeric_limits<double>::max();
+    for (const auto& entry : cache) {
+        double cachedTemp = entry.first;
+        double distance = std::fabs(targetTemp - cachedTemp);
+        if (distance < minDistance) {
+            minDistance = distance;
+            closestTemp = cachedTemp;
+        }
+    }
+    return closestTemp;
+}
+
+double ThermalPartonSampler::getClosestCachedTempFermiDiracIntegral(
+								const std::unordered_map<double, double>& cache, 
+								double targetTemp) const {
+    double closestTemp = -1.0;
+    double minDistance = std::numeric_limits<double>::max();
+    for (const auto& entry : cache) {
+        double cachedTemp = entry.first;
+        double distance = std::fabs(targetTemp - cachedTemp);
+        if (distance < minDistance) {
+            minDistance = distance;
+            closestTemp = cachedTemp;
+        }
+    }
+    return closestTemp;
 }
 
 /**
@@ -140,33 +223,6 @@ double ThermalPartonSampler::FermiDiracDistribution(double p, double m, double T
 }
 
 /**
- * @brief Determines the position of a goal value within a cumulative 
- * distribution function (CDF) table.
- * 
- * This function compares a goal value with the target value from the cumulative 
- * distribution function (CDF) table. Depending on the type of quark 
- * (light or strange), it selects the appropriate CDF table and then determines
- * if the goal value is greater than the target value found at the midpoint 
- * between the floor and ceiling indices.
- * 
- * @param goal The value to be compared against the CDF table.
- * @param floor The lower index of the search range.
- * @param ceiling The upper index of the search range.
- * @param quark An integer indicating the type of quark (1 for light quark, 
- * otherwise for strange quark).
- * @return True if the goal value is greater than the target value from the 
- * CDF table, otherwise false.
- */
-bool ThermalPartonSampler::SplitSort(double goal, int floor, int ceiling, int quark) {
-    std::vector<std::vector<double>>& CDFTab = (quark == 1) ? CDFTabLight : CDFTabStrange;
-
-    int TargetPoint = ((floor + ceiling) / 2);
-    double TargetVal = CDFTab[TargetPoint][1];
-
-    return (goal > TargetVal);
-}
-
-/**
  * @brief Generates a cumulative distribution function (CDF) table for a given 
  * temperature, mass, and quark type.
  * 
@@ -239,7 +295,10 @@ std::tuple<double, double, double, double> ThermalPartonSampler::MomentumSampler
     double PMax = 10. * T;  // CutOff for Integration
     double PStep = PMax / (NUMSTEP - 1); // Stepsize in P
 
-    std::vector<std::vector<double>>& CDFTab = (quark == 1) ? CDFTabLight : CDFTabStrange;
+	// Get the appropriate CDF table from the cache closest to the target temperature
+	double cachedTemp = getClosestCachedTemp((quark == 1) ? CacheCDFLight : CacheCDFStrange, T);
+	// Use the temperature from the cache to get the CDF table
+	std::vector<std::vector<double>>& CDFTab = (quark == 1) ? CacheCDFLight[cachedTemp] : CacheCDFStrange[cachedTemp];
 
 	double PRoll;
 	double denominator;
@@ -536,22 +595,21 @@ void ThermalPartonSampler::samplebrick(){
 
 	// GAUSSIAN INTEGRALS <n> = int f(p)d3p
 	double dSigma_dot_u = CMSigma[0] * Vel[0] - CMSigma[1] * Vel[1] - CMSigma[2] * Vel[2] - CMSigma[3] * Vel[3];
-	double NumLight = FermiDiracDistributionMomentumIntegral(T_brick, xmq) * degeneracy_ud / (2.*pi*pi);
-    double NumStrange = FermiDiracDistributionMomentumIntegral(T_brick, xms) * degeneracy_s / (2.*pi*pi);
-    NumLight *= dSigma_dot_u;
-    NumStrange *= dSigma_dot_u;
 
-	// Define rest-frame cumulative functions
-	CDFGenerator(T_brick, xmq, 1); // for light quarks
-	CDFGenerator(T_brick, xms, 2); // for strange quarks
+	// get the closest cached temperature to the hydrodynamic temperature
+	double TCachedLight = getClosestCachedTempFermiDiracIntegral(CacheFermiDiracIntegralLight, hydroTc);
+	double TCachedStrange = getClosestCachedTempFermiDiracIntegral(CacheFermiDiracIntegralStrange, hydroTc);
 
+	// get the precomputed part of the Fermi-Dirac integrals for light and strange quarks from cache
 	// U, D, UBAR, DBAR QUARKS
 	// <N> = V <n>
-	double NumUD = NumLight*L*W*W;
+	double NumUD = (CacheFermiDiracIntegralLight[TCachedLight] * degeneracy_ud * dSigma_dot_u 
+				/ (2.*pi*pi)) * L * W * W;
 
 	// S, SBAR QUARKS
 	// <N> = V <n>
-	double NumS = NumStrange*L*W*W;
+	double NumS = (CacheFermiDiracIntegralStrange[TCachedStrange] * degeneracy_s * dSigma_dot_u 
+				/ (2.*pi*pi)) * L * W * W;
 
 	std::poisson_distribution<int> poisson_ud(NumUD);
 	std::poisson_distribution<int> poisson_s(NumS);
@@ -567,12 +625,12 @@ void ThermalPartonSampler::samplebrick(){
 	num_ud += GeneratedParticles;
 	// dummy array of length 4 for CPos
 	std::vector<double> CPos(4, 0.0);
-	SamplePartons(GeneratedParticles, 1, T_brick, true, CPos, LorBoost, false, 0.);
+	SamplePartons(GeneratedParticles, 1, hydroTc, true, CPos, LorBoost, false, 0.);
 
 	// Generate strange quarks
 	GeneratedParticles = poisson_s(getRandomGenerator());
 	num_s += GeneratedParticles;
-	SamplePartons(GeneratedParticles, 2, T_brick, true, CPos, LorBoost, false, 0.);
+	SamplePartons(GeneratedParticles, 2, hydroTc, true, CPos, LorBoost, false, 0.);
 
 	JSDEBUG << "Light particles: " << num_ud;
 	JSDEBUG << "Strange particles: " << num_s;
@@ -597,90 +655,6 @@ void ThermalPartonSampler::samplebrick(){
 }
 
 /**
- * @brief Checks if a target temperature is within a specified accuracy range 
- * of a cached temperature.
- * 
- * Compares the absolute difference between `targetTemp` and `cachedTemp` with 
- * `accuracyRange`. Returns true if the absolute difference is less than or 
- * equal to `accuracyRange`, indicating that `targetTemp` is within the desired 
- * accuracy range of `cachedTemp`.
- * 
- * @param targetTemp The target temperature to compare.
- * @param cachedTemp The cached temperature value.
- * @param accuracyRange The allowable accuracy range.
- * @return true if targetTemp is within accuracyRange of cachedTemp, 
- * false otherwise.
- */
-bool ThermalPartonSampler::withinAccuracyRange(double targetTemp, double cachedTemp, 
-												double accuracyRange) const {
-    return std::fabs(targetTemp - cachedTemp) <= accuracyRange;
-}
-
-/**
- * @brief Finds the temperature closest to a target temperature in a cached map.
- * 
- * Searches through the provided cache of temperatures (`cache`) to determine
- * the temperature that is closest to the specified `targetTemp`.
- * 
- * @param cache A map where keys are cached temperatures and values are 
- * associated data.
- * @param targetTemp The target temperature for which the closest cached 
- * temperature is sought.
- * @return The cached temperature that is closest to `targetTemp`, or -1.0 if 
- * the cache is empty.
- */
-double ThermalPartonSampler::getClosestCachedTemp(const std::unordered_map<double, 
-										std::vector<std::vector<double>>>& cache, 
-										double targetTemp) const {
-    double closestTemp = -1.0;
-    double minDistance = std::numeric_limits<double>::max();
-    for (const auto& entry : cache) {
-        double cachedTemp = entry.first;
-        double distance = std::fabs(targetTemp - cachedTemp);
-        if (distance < minDistance) {
-            minDistance = distance;
-            closestTemp = cachedTemp;
-        }
-    }
-    return closestTemp;
-}
-
-/**
- * @brief Updates or retrieves cumulative distribution function (CDF) data from 
- * a cache.
- * 
- * Checks if the CDF data for a given temperature (`TRead`) is already cached. 
- * If not, it either retrieves the closest cached CDF data or generates new CDF 
- * data and caches it.
- * 
- * @param TRead Input temperature to read or update in the cache.
- * @param mq Quark mass associated with the CDF data.
- * @param quarkType Type of quark (1 for light, 2 for strange).
- * @param cache Reference to the cache storing CDF data for different 
- * temperatures.
- * @param CDFTab Reference to the vector storing the CDF table for the current 
- * temperature.
- */
-void ThermalPartonSampler::updateCDFCache(double& TRead, double mq, int quarkType, 
-                                          std::unordered_map<double, 
-										  std::vector<std::vector<double>>>& cache, 
-                                          std::vector<std::vector<double>>& CDFTab) {
-    auto cdfIter = cache.find(TRead);
-    if (cdfIter == cache.end()) {
-        double closestTemp = getClosestCachedTemp(cache, TRead);
-        if (closestTemp >= 0. && withinAccuracyRange(TRead, closestTemp, CDFcacheAccuracy)) {
-            CDFTab = cache[closestTemp];
-            TRead = closestTemp;
-        } else {
-            CDFGenerator(TRead, mq, quarkType);
-            cache[TRead] = CDFTab;
-        }
-    } else {
-        CDFTab = cdfIter->second;
-    }
-}
-
-/**
  * @brief Samples partons on a freeze-out hypersurface in 3+1D setup.
  * 
  * Samples light (u, d, u-bar, d-bar) and strange (s, s-bar) quarks based on 
@@ -691,10 +665,6 @@ void ThermalPartonSampler::updateCDFCache(double& TRead, double mq, int quarkTyp
  * coordinates are used. If false, uses Milne coordinates.
  */
 void ThermalPartonSampler::sample_3p1d(bool Cartesian_hydro){
-
-	// precompute CDFs and store them in a cache
-	std::unordered_map<double, std::vector<std::vector<double>>> cdfLightCache;
-	std::unordered_map<double, std::vector<std::vector<double>>> cdfStrangeCache;
 
 	// Loop over the freeze-out surface
 	for(int iS=0; iS<surface.size(); ++iS){
@@ -718,12 +688,6 @@ void ThermalPartonSampler::sample_3p1d(bool Cartesian_hydro){
 		Vel[1] = surface[iS][9];
 		Vel[2] = surface[iS][10];
 		Vel[3] = surface[iS][11];
-
-		// Update light quark CDF cache
-		updateCDFCache(TRead, xmq, 1, cdfLightCache, CDFTabLight);
-
-		// Update strange quark CDF cache
-		updateCDFCache(TRead, xms, 2, cdfStrangeCache, CDFTabStrange);
 
 		if (Cartesian_hydro == false){
 			//getting t,z from tau, eta
@@ -752,11 +716,13 @@ void ThermalPartonSampler::sample_3p1d(bool Cartesian_hydro){
 		CMSigma[3] = SigmaBoosted[3];
 
 		// INTEGRAL <n> = int f(p)d3p
+		// get the precomputed part of the Fermi-Dirac integrals for light and strange quarks from cache
 		double dSigma_dot_u = CMSigma[0] * Vel[0] - CMSigma[1] * Vel[1] - CMSigma[2] * Vel[2] - CMSigma[3] * Vel[3];
-		double NumLight = FermiDiracDistributionMomentumIntegral(TRead, xmq) * degeneracy_ud / (2.*pi*pi);
-		double NumStrange = FermiDiracDistributionMomentumIntegral(TRead, xms) * degeneracy_s / (2.*pi*pi);
-		NumLight *= dSigma_dot_u;
-		NumStrange *= dSigma_dot_u;
+		// get the precomputed part of the Fermi-Dirac integrals for light and strange quarks from cache closest to the temperature of the cell
+		double TCacheLight = getClosestCachedTempFermiDiracIntegral(CacheFermiDiracIntegralLight, TRead);
+		double TCacheStrange = getClosestCachedTempFermiDiracIntegral(CacheFermiDiracIntegralStrange, TRead);
+		double NumLight = CacheFermiDiracIntegralLight[TCacheLight] * degeneracy_ud * dSigma_dot_u / (2.*pi*pi);
+		double NumStrange = CacheFermiDiracIntegralStrange[TCacheStrange] * degeneracy_s * dSigma_dot_u / (2.*pi*pi);
 
 		// Generating light quarks
 		std::poisson_distribution<int> poisson_ud(NumLight);
@@ -842,12 +808,6 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 			Vel[2] = surface[iS][10];
 			Vel[3] = surface[iS][11];
 
-			// Update light quark CDF cache
-			updateCDFCache(TRead, xmq, 1, cdfLightCache, CDFTabLight);
-
-			// Update strange quark CDF cache
-			updateCDFCache(TRead, xms, 2, cdfStrangeCache, CDFTabStrange);
-
 			//getting t,z from tau, eta
 			CPos[0] = tau_pos*std::cosh(eta_pos);
 			CPos[3] = tau_pos*std::sinh(eta_pos);
@@ -862,31 +822,22 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 			std::vector<std::vector<double>> LorBoost(4, std::vector<double>(4)); // Lorentz boost defined as used - Form is always Lambda_u^v
 			LorentzBoostMatrix(Vel, LorBoost, false);
 
-			double NumberUDquarks;
-			double NumberSquarks;
-			if(slice == 1){
-				// Lambda_u^v Sigma_v = CMSigma_u
-				std::vector<double> SigmaBoosted = LorentzBoost(LFSigma, LorBoost);
-				CMSigma[0] = SigmaBoosted[0];
-				CMSigma[1] = SigmaBoosted[1];
-				CMSigma[2] = SigmaBoosted[2];
-				CMSigma[3] = SigmaBoosted[3];
+			// Lambda_u^v Sigma_v = CMSigma_u
+			std::vector<double> SigmaBoosted = LorentzBoost(LFSigma, LorBoost);
+			CMSigma[0] = SigmaBoosted[0];
+			CMSigma[1] = SigmaBoosted[1];
+			CMSigma[2] = SigmaBoosted[2];
+			CMSigma[3] = SigmaBoosted[3];
 
-				// INTEGRAL <n> = int f(p)d3p
-				double dSigma_dot_u = CMSigma[0] * Vel[0] - CMSigma[1] * Vel[1] - CMSigma[2] * Vel[2] - CMSigma[3] * Vel[3];
-				double NumLight = FermiDiracDistributionMomentumIntegral(TRead, xmq) * degeneracy_ud / (2.*pi*pi);
-				double NumStrange = FermiDiracDistributionMomentumIntegral(TRead, xms) * degeneracy_s / (2.*pi*pi);
-				NumLight *= dSigma_dot_u;
-				NumStrange *= dSigma_dot_u;
+			// INTEGRAL <n> = int f(p)d3p
+			// get the precomputed part of the Fermi-Dirac integrals for light and strange quarks from cache
+			double dSigma_dot_u = CMSigma[0] * Vel[0] - CMSigma[1] * Vel[1] - CMSigma[2] * Vel[2] - CMSigma[3] * Vel[3];
+			// get the precomputed part of the Fermi-Dirac integrals for light and strange quarks from cache closest to the temperature of the cell
+			double TCacheLight = getClosestCachedTempFermiDiracIntegral(CacheFermiDiracIntegralLight, TRead);
+			double TCacheStrange = getClosestCachedTempFermiDiracIntegral(CacheFermiDiracIntegralStrange, TRead);
 
-				NumberLightQuarks.push_back(NumLight);
-				NumberStrangeQuarks.push_back(NumStrange);
-				NumberUDquarks = NumLight;
-				NumberSquarks = NumStrange;
-			} else {
-				NumberUDquarks = NumberLightQuarks[iS];
-				NumberSquarks = NumberStrangeQuarks[iS];
-			}
+			double NumLight = CacheFermiDiracIntegralLight[TCacheLight] * degeneracy_ud * dSigma_dot_u / (2.*pi*pi);
+			double NumStrange = CacheFermiDiracIntegralStrange[TCacheStrange] * degeneracy_s * dSigma_dot_u / (2.*pi*pi);
 
 			// Velocity for the boost to the slice
 			Vel[1] /= cosh(eta_slice);
@@ -896,13 +847,13 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 			LorentzBoostMatrix(Vel, LorBoost, false);
 
 			// Generating light quarks
-			std::poisson_distribution<int> poisson_ud(NumberUDquarks);
+			std::poisson_distribution<int> poisson_ud(NumLight);
 			int GeneratedParticles_ud = poisson_ud(getRandomGenerator()); // Initialize particles created in this cell
 			SamplePartons(GeneratedParticles_ud, 1, TRead, false, CPos, LorBoost, true, eta_slice);
 			num_ud += GeneratedParticles_ud;
 
 			// Generate s quarks
-			std::poisson_distribution<int> poisson_s(NumberSquarks);
+			std::poisson_distribution<int> poisson_s(NumStrange);
 			int GeneratedParticles_s = poisson_s(getRandomGenerator()); //Initialize particles created in this cell
 			SamplePartons(GeneratedParticles_s, 2, TRead, false, CPos, LorBoost, true, eta_slice);
 			num_s += GeneratedParticles_s;

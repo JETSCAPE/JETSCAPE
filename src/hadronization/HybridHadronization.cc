@@ -516,10 +516,9 @@ void HybridHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& sh
 
   if(runsampler && inbrick){
     HH_thermal.clear(); //emptying the thermal partons if we're resampling
-    ThermalPartonSampler brick(rand_seed); //creating a thermal brick
+    ThermalPartonSampler brick(rand_seed, hydro_Tc); //creating a thermal brick
 	  brick.brick_length_width(brickL,brickL);
 	  brick.brick_flow(0., 0., 0.);
-    brick.brick_Tc(hydro_Tc);
 	  brick.samplebrick();
 
 	  JSINFO << "A " << brickL << " fm brick was sampled, generating " << brick.nTot() << " partons (" << brick.th_nL() << " light, " << brick.th_nS() << " strange).";
@@ -568,7 +567,7 @@ void HybridHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& sh
 			surface.push_back(cell);
 		}
 
-		ThermalPartonSampler part_samp(rand_seed); //initializing sampler with random seed
+		ThermalPartonSampler part_samp(rand_seed, hydro_Tc); //initializing sampler with random seed
 		part_samp.set_hypersurface(surface);
     if(boost_invariant){
       part_samp.sample_2p1d(eta_max_boost_inv);

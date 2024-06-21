@@ -12,7 +12,7 @@ class ThermalPartonSampler
 {
  public:
 	//constructor - initializes variables and random number generator
-	ThermalPartonSampler(unsigned int ran_seed);
+	ThermalPartonSampler(unsigned int ran_seed, double hydro_Tc);
 
 	//sampler - samples thermal partons (u,d,s) from brick or 2+1d / 3+1d hydro
 	void samplebrick();
@@ -25,7 +25,6 @@ class ThermalPartonSampler
 	//setters for params
 	void brick_length_width(double len_bri, double wid_bri){L = 2.*len_bri + 4.; W = 2.*wid_bri + 4.; Time = len_bri;} // +4 gives 2fm additional brick in each direction
 	void brick_flow(double vx_in, double vy_in, double vz_in){Vx = vx_in; Vy = vy_in; Vz = vz_in;}
-	void brick_Tc(double brick_Tc){T_brick = brick_Tc/hbarC;}
 
 	//getters for thermal partons
 	int nTot(         ){return Plist.size();}
@@ -79,8 +78,6 @@ class ThermalPartonSampler
 	// Fermi-Dirac distribution without normalization factors
 	double FermiDiracDistribution(double p, double m, double T);
 
-	bool SplitSort(double goal, int floor, int ceiling, int quark);
-	
 	// Cumulative Distribution Function (CDF) generator in thermal rest frame  
 	// (quark=1: light, quark=2 strange)
 	void CDFGenerator(double T, double m, int quark);
@@ -98,15 +95,16 @@ class ThermalPartonSampler
     // Sample partons and fill Plist
     void SamplePartons(int Npartons, int quark, double T, bool brick, std::vector<double>& CPos, std::vector<std::vector<double>>& BoostMatrix, bool slice_boost, double eta_slice);
 
-	// Function to check if the target temperature is within the accuracy range of the cached temperature
-	bool withinAccuracyRange(double targetTemp, double cachedTemp, double accuracyRange) const;
 	// Function to get the closest cached temperature to the target temperature
     double getClosestCachedTemp(const std::unordered_map<double, std::vector<std::vector<double>>>& cache, double targetTemp) const;
-	// Function to update the CDF cache (2+1D and 3+1D hydro cases)
-	void updateCDFCache(double& TRead, double xmq, int quarkType, 
+	// Function to create the CDF cache within a certain temperature range of five percent
+	// using 20 temperature points in that range
+	void createCDFCacheEntry(double& TRead, double xmq, int quarkType, 
                         std::unordered_map<double,
 						std::vector<std::vector<double>>>& cache, 
                         std::vector<std::vector<double>>& CDFTab);
+
+	double getClosestCachedTempFermiDiracIntegral(const std::unordered_map<double, double>& cache, double targetTemp) const;
 
 	// Constants
 	double degeneracy_ud; // Degeneracy of UD quarks
@@ -131,12 +129,20 @@ class ThermalPartonSampler
 	std::vector<std::vector<double>> CDFTabLight; // Cumulative distribution for thermal light quarks
 	std::vector<std::vector<double>> CDFTabStrange; // Cumulative distribution for s quarks
 
+	// precompute CDFs and store them in a cache
+	std::unordered_map<double, std::vector<std::vector<double>>> CacheCDFLight;
+	std::unordered_map<double, std::vector<std::vector<double>>> CacheCDFStrange;
+
+	// precompute part of the integral over the Fermi-Dirac distribution
+	std::unordered_map<double, double> CacheFermiDiracIntegralLight;
+	std::unordered_map<double, double> CacheFermiDiracIntegralStrange;
+
 	// Brick parameters
 	// L is the length of the brick sampled for thermal partons
 	// W is the width of the face of the brick - should be scaled somewhat against L
 	// Vx,Vy,Vz is a flow given to the brick
 	double L, W, Time, Vx, Vy, Vz;
-	double T_brick; // 165 MeV into fm^-1 // is set from outside with brick_Tc()
+	double hydroTc; // converted from GeV into fm^-1
 };
 
 
