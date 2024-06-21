@@ -84,7 +84,8 @@ void ThermalPartonSampler::createCDFCacheEntry(double& TRead, double mq, int qua
 }
 
 /**
- * @brief Finds the temperature closest to a target temperature in a cached map.
+ * @brief Finds the temperature closest to a target temperature in a cached map
+ * for the CDF tables.
  * 
  * Searches through the provided cache of temperatures (`cache`) to determine
  * the temperature that is closest to the specified `targetTemp`.
@@ -112,6 +113,20 @@ double ThermalPartonSampler::getClosestCachedTemp(const std::unordered_map<doubl
     return closestTemp;
 }
 
+/**
+ * @brief Finds the temperature closest to a target temperature in a cached map
+ * for the pre calculated parts of the Fermi-Dirac integral.
+ * 
+ * Searches through the provided cache of temperatures (`cache`) to determine
+ * the temperature that is closest to the specified `targetTemp`.
+ * 
+ * @param cache A map where keys are cached temperatures and values are 
+ * associated data.
+ * @param targetTemp The target temperature for which the closest cached 
+ * temperature is sought.
+ * @return The cached temperature that is closest to `targetTemp`, or -1.0 if 
+ * the cache is empty.
+ */
 double ThermalPartonSampler::getClosestCachedTempFermiDiracIntegral(
 								const std::unordered_map<double, double>& cache, 
 								double targetTemp) const {

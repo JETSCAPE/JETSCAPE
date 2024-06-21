@@ -95,7 +95,7 @@ class ThermalPartonSampler
     // Sample partons and fill Plist
     void SamplePartons(int Npartons, int quark, double T, bool brick, std::vector<double>& CPos, std::vector<std::vector<double>>& BoostMatrix, bool slice_boost, double eta_slice);
 
-	// Function to get the closest cached temperature to the target temperature
+	// Function to get the closest cached temperature to the target temperature - CDF tabulated
     double getClosestCachedTemp(const std::unordered_map<double, std::vector<std::vector<double>>>& cache, double targetTemp) const;
 	// Function to create the CDF cache within a certain temperature range of five percent
 	// using 20 temperature points in that range
@@ -103,7 +103,7 @@ class ThermalPartonSampler
                         std::unordered_map<double,
 						std::vector<std::vector<double>>>& cache, 
                         std::vector<std::vector<double>>& CDFTab);
-
+	// Function to get the closest cached temperature to the target temperature - Fermi-Dirac integral tabulated
 	double getClosestCachedTempFermiDiracIntegral(const std::unordered_map<double, double>& cache, double targetTemp) const;
 
 	// Constants
