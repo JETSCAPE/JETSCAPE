@@ -466,7 +466,12 @@ std::vector<double> ThermalPartonSampler::LorentzBoost(std::vector<double>& x, s
  * @param slice_boost Flag indicating 2+1D boost configuration.
  * @param eta_slice Pseudo-rapidity for 2+1D boost.
  */
-void ThermalPartonSampler::SamplePartons(int Npartons, int quark, double T, bool brick, std::vector<double>& CPos, std::vector<std::vector<double>>& BoostMatrix, bool slice_boost, double eta_slice) {
+void ThermalPartonSampler::SamplePartons(int Npartons, int quark, double T, bool brick,
+	std::vector<double>& CPos, std::vector<std::vector<double>>& BoostMatrix,
+	bool slice_boost, double eta_slice, std::vector<std::vector<double>>& Plocal) {
+
+	Plocal.reserve(Plocal.size() + Npartons);
+
 	// Sample Npartons partons
 	for (int i = 0; i < Npartons; i++) {
 		// adding space to PList for output quarks
@@ -556,7 +561,7 @@ void ThermalPartonSampler::SamplePartons(int Npartons, int quark, double T, bool
 		temp[2] = 0; // Origin, to match jet formatting
 		temp[11] = 0; // Status - identifies as thermal quark
 
-		Plist.push_back(temp);
+		Plocal.push_back(temp);
 	}
 }
 
@@ -641,12 +646,12 @@ void ThermalPartonSampler::samplebrick(){
 	num_ud += GeneratedParticles;
 	// dummy array of length 4 for CPos
 	std::vector<double> CPos(4, 0.0);
-	SamplePartons(GeneratedParticles, 1, hydroTc, true, CPos, LorBoost, false, 0.);
+	SamplePartons(GeneratedParticles, 1, hydroTc, true, CPos, LorBoost, false, 0., Plist);
 
 	// Generate strange quarks
 	GeneratedParticles = poisson_s(getRandomGenerator());
 	num_s += GeneratedParticles;
-	SamplePartons(GeneratedParticles, 2, hydroTc, true, CPos, LorBoost, false, 0.);
+	SamplePartons(GeneratedParticles, 2, hydroTc, true, CPos, LorBoost, false, 0., Plist);
 
 	JSDEBUG << "Light particles: " << num_ud;
 	JSDEBUG << "Strange particles: " << num_s;
@@ -743,13 +748,13 @@ void ThermalPartonSampler::sample_3p1d(bool Cartesian_hydro){
 		// Generating light quarks
 		std::poisson_distribution<int> poisson_ud(NumLight);
 		int GeneratedParticles_ud = poisson_ud(getRandomGenerator()); // Initialize particles created in this cell
-		SamplePartons(GeneratedParticles_ud, 1, TRead, false, CPos, LorBoost, false, 0.);
+		SamplePartons(GeneratedParticles_ud, 1, TRead, false, CPos, LorBoost, false, 0, Plist);
 		num_ud += GeneratedParticles_ud;
 
 		// Generate s quarks
 		std::poisson_distribution<int> poisson_s(NumStrange);
 		int GeneratedParticles_s = poisson_s(getRandomGenerator()); //Initialize particles created in this cell
-		SamplePartons(GeneratedParticles_s, 2, TRead, false, CPos, LorBoost, false, 0.);
+		SamplePartons(GeneratedParticles_s, 2, TRead, false, CPos, LorBoost, false, 0., Plist);
 		num_s += GeneratedParticles_s;
 	}
 
@@ -786,6 +791,9 @@ void ThermalPartonSampler::sample_3p1d(bool Cartesian_hydro){
  */
 void ThermalPartonSampler::sample_2p1d(double eta_max){
 
+	// Local List of thermal partons sampled
+	std::vector<std::vector<double>> Plocal = Plist;
+
 	// precompute CDFs and store them in a cache
 	std::unordered_map<double, std::vector<std::vector<double>>> cdfLightCache;
 	std::unordered_map<double, std::vector<std::vector<double>>> cdfStrangeCache;
@@ -800,8 +808,10 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 	#pragma omp declare reduction (merge:std::vector<std::vector<double>>: \
 	omp_out.insert(omp_out.end(), omp_in.begin(), omp_in.end()))
 
+	JSINFO << "Plist size before omp loop " << Plist.size();
+	JSINFO << "nTot size before omp loop " << nTot();
 	auto start = std::chrono::high_resolution_clock::now();
-	#pragma omp parallel for collapse(2) lastprivate(CellDZ) reduction(+:num_ud, num_s) reduction(merge:Plist) num_threads(8)
+	#pragma omp parallel for collapse(2) firstprivate(CellDZ) lastprivate(CellDZ) reduction(+:num_ud, num_s) reduction(merge:Plocal)
 	for(int slice=1; slice <= (2*N_slices+1); slice++){
 		for(int iS=0; iS<surface.size(); ++iS){
 
@@ -874,20 +884,14 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 			// Generating light quarks
 			std::poisson_distribution<int> poisson_ud(NumLight);
 			int GeneratedParticles_ud = poisson_ud(getRandomGenerator()); // Initialize particles created in this cell
-			SamplePartons(GeneratedParticles_ud, 1, TRead, false, CPos, LorBoost, true, eta_slice);
-			#pragma omp critical
-			{
+			SamplePartons(GeneratedParticles_ud, 1, TRead, false, CPos, LorBoost, true, eta_slice, Plocal);
 			num_ud += GeneratedParticles_ud;
-			}
 			
 			// Generate s quarks
 			std::poisson_distribution<int> poisson_s(NumStrange);
 			int GeneratedParticles_s = poisson_s(getRandomGenerator()); //Initialize particles created in this cell
-			SamplePartons(GeneratedParticles_s, 2, TRead, false, CPos, LorBoost, true, eta_slice);
-			#pragma omp critical
-			{
+			SamplePartons(GeneratedParticles_s, 2, TRead, false, CPos, LorBoost, true, eta_slice, Plocal);
 			num_s += GeneratedParticles_s;
-			}
 		}
 	}
 	auto end = std::chrono::high_resolution_clock::now();
@@ -895,15 +899,20 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 	JSINFO << "Sampling thermal partons took " << duration << " ms";
 	JSINFO << "Number of OpenMP threads used: " << omp_get_max_threads();
 
+	Plist = std::move(Plocal);
+
 	JSDEBUG << "Light particles: " << num_ud;
 	JSDEBUG << "Strange particles: " << num_s;
+
+	JSINFO << "Plist size after omp loop " << Plist.size();
+	JSINFO << "nTot size after omp loop " << nTot();
 
 	if(ShuffleList){
 		std::shuffle(&Plist[0], &Plist.back(), getRandomGenerator());
 	}
 
 	//print Plist for testing
-	/*std::cout << std::setprecision(5);
+	std::cout << std::setprecision(5);
   	std::ofstream thermalP;
   	thermalP.open("thermal_partons.dat", std::ios::app);
 	for(int p=0; p < Plist.size(); p++){
@@ -913,5 +922,5 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 		<< " " << Plist[p][9] << " " << Plist[p][10] << " " << Plist[p][11]
 		<< "\n";
 	}
-	thermalP.close();*/
+	thermalP.close();
 }

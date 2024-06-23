@@ -47,7 +47,7 @@ class ThermalPartonSampler
  private:
 
 	// List of thermal partons sampled
-	std::vector<std::vector<double>> Plist;	
+	std::vector<std::vector<double>> Plist;
 	// List of particles ( [0]->event number; [1]->particle ID; [2]->origin; 
 	// [3-6]->Px,Py,Pz,E; [7-10]->x,y,z,t; [11]->Particle Status )
 	// Same format as in shower data, event number is always 1, 
@@ -93,7 +93,9 @@ class ThermalPartonSampler
     std::vector<double> LorentzBoost(std::vector<double>& x, std::vector<std::vector<double>>& BoostMatrix);
 
     // Sample partons and fill Plist
-    void SamplePartons(int Npartons, int quark, double T, bool brick, std::vector<double>& CPos, std::vector<std::vector<double>>& BoostMatrix, bool slice_boost, double eta_slice);
+    void SamplePartons(int Npartons, int quark, double T, bool brick,
+		std::vector<double>& CPos, std::vector<std::vector<double>>& BoostMatrix,
+		bool slice_boost, double eta_slice, std::vector<std::vector<double>>& Plocal);
 
 	// Function to get the closest cached temperature to the target temperature - CDF tabulated
     double getClosestCachedTemp(const std::unordered_map<double, std::vector<std::vector<double>>>& cache, double targetTemp) const;
