@@ -286,12 +286,6 @@ int main(int argc, char* argv[]){
     scaleBins(HistTotalHads,(1.0/(2*M_PI*2.0*SingleHadronEtaCut)));
     scaleBins(HistTotalHardPions,(1.0/(2*M_PI*2.0*hardPionEtaCut)));
     HistTotalJets->Scale((1.0e9/(2*M_PI*(jetEtaMax-jetEtaMin))),"width");
-
-    //Plotting
-    myRatioPlot(piongraph, HistTotalPions, "Pion Yields", true, true);
-    myRatioPlot(kaongraph, HistTotalKaons, "Kaon Yields", true, true);
-    myRatioPlot(protongraph, HistTotalProtons, "Proton Yields", true, true);
-    myRatioPlot(jetgraph, HistTotalJets, "Jet Yields", false, true);
  	
     //create root file for total plots
     HistTotalPions->Write("raw pions"); smoothBins(HistTotalPions); HistTotalPions->Write("identified pions");
@@ -299,8 +293,14 @@ int main(int argc, char* argv[]){
     HistTotalProtons->Write("raw protons"); smoothBins(HistTotalProtons); HistTotalProtons->Write("identified protons");
     HistTotalHads->Write("raw hads"); smoothBins(HistTotalHads); HistTotalHads->Write("identified hads");
     HistTotalHardPions->Write("raw hard pions"); smoothBins(HistTotalHardPions); HistTotalHardPions->Write("identified hard pions");
-    HistTotalJets->Write("jets");
+    HistTotalJets->Write("jets"); smoothBins(HistTotalJets); HistTotalJets->Write("smooth jets");
     totalroot->Close();
+
+    //Plotting
+    myRatioPlot(piongraph, HistTotalPions, "Pion Yields", true, true);
+    myRatioPlot(kaongraph, HistTotalKaons, "Kaon Yields", true, true);
+    myRatioPlot(protongraph, HistTotalProtons, "Proton Yields", true, true);
+    myRatioPlot(jetgraph, HistTotalJets, "Jet Yields", false, true);
 
     //Done. Script run time
     int EndTime = time(NULL);

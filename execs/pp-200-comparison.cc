@@ -69,7 +69,7 @@ int main(int argc, char* argv[]){
         TH1D* tempHistKaons = (TH1D*)file.Get("identified kaons"); cout << "Got kaons. ";
         TH1D* tempHistProtons = (TH1D*)file.Get("identified protons"); cout << "Got potons. ";
         TH1D* tempHistHardPions = (TH1D*)file.Get("identified hard pions"); cout << "Got hard pions. ";
-        TH1D* tempHistJets = (TH1D*)file.Get("jets"); cout << "Got jets. " << endl;
+        TH1D* tempHistJets = (TH1D*)file.Get("smooth jets"); cout << "Got jets. " << endl;
 
         //dat file data for Bayes analysis
         vector<double> piontemp, kaontemp, protontemp, hardpiontemp, jettemp;

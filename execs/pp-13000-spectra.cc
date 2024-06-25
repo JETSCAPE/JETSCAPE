@@ -222,7 +222,7 @@ int main(int argc, char* argv[]){
     HistTotalPions->Scale(1./(2.0*idHadronYCut),"width");
     HistTotalKaons->Scale(1./(2.0*idHadronYCut),"width");
     HistTotalProtons->Scale(1./(2.0*idHadronYCut),"width");
-    jethist1->Scale(2000000000.0,"width");
+    jethist1->Scale(2000000000.0,"width"); //milli to pico times 2 for half the rapidity range
     jethist2->Scale(2000000000.0,"width");
     jethist3->Scale(2000000000.0,"width");
  	
@@ -230,9 +230,9 @@ int main(int argc, char* argv[]){
     HistTotalPions->Write("raw pions"); smoothBins(HistTotalPions); HistTotalPions->Write("identified pions");
     HistTotalKaons->Write("raw kaons"); smoothBins(HistTotalKaons); HistTotalKaons->Write("identified kaons");
     HistTotalProtons->Write("raw protons"); smoothBins(HistTotalProtons); HistTotalProtons->Write("identified protons");
-    jethist1->Write("low y jets");
-    jethist2->Write("mid y jets");
-    jethist3->Write("high y jets");
+    jethist1->Write("low y jets"); smoothBins(jethist1); jethist1->Write("smooth low y jets");
+    jethist2->Write("mid y jets"); smoothBins(jethist2); jethist2->Write("smooth mid y jets");
+    jethist3->Write("high y jets"); smoothBins(jethist3); jethist3->Write("smooth high y jets");
     totalroot->Close();
 
     //hadron graphs
