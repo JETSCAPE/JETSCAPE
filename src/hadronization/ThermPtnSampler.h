@@ -84,7 +84,7 @@ class ThermalPartonSampler
 	
 	// Samples parton momentum in rest frame
 	// Input temperature is assumed to be in fm^-1
-	std::tuple<double, double, double, double> MomentumSampler(double T, int quark);
+	std::tuple<double, double, double, double> MomentumSampler(double T, int quark, std::mt19937_64 rng_engine_part = std::mt19937_64(0));
 
 	// Set up the Lorentz boost matrix and the (gamma, v) vector
     void LorentzBoostMatrix(std::vector<double>& v, std::vector<std::vector<double>>& BoostMatrix, bool brick);
@@ -95,7 +95,8 @@ class ThermalPartonSampler
     // Sample partons and fill Plist
     void SamplePartons(int Npartons, int quark, double T, bool brick,
 		std::vector<double>& CPos, std::vector<std::vector<double>>& BoostMatrix,
-		bool slice_boost, double eta_slice, std::vector<std::vector<double>>& Plocal);
+		bool slice_boost, double eta_slice, std::vector<std::vector<double>>& Plocal,
+		uint64_t adjust_seed = 0, int iS_iter = 0);
 
 	// Function to get the closest cached temperature to the target temperature - CDF tabulated
     double getClosestCachedTemp(const std::unordered_map<double, std::vector<std::vector<double>>>& cache, double targetTemp) const;
@@ -117,6 +118,7 @@ class ThermalPartonSampler
 	int NUMSTEP; // 2^12+1, for steps of CDF Table, changes coarseness of momentum sampling
 
 	int num_ud, num_s;	// Number of light and strange quarks sampled
+	unsigned int jet_seed; // Saving Jetscape seed for use in threads
 
 	// Adjustable params for 3+1d
 	// these are the values used in SurfaceFinder.cc

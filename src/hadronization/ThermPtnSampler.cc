@@ -38,7 +38,8 @@ ThermalPartonSampler::ThermalPartonSampler(unsigned int ran_seed, double hydro_T
       Vz(0.), // 'Uniform' no flow in x-dir
       hydroTc(hydro_Tc / hbarC), // converted from GeV into fm^-1
       num_ud(0), 
-      num_s(0) {
+      num_s(0),
+	  jet_seed(ran_seed) {
 
     surface.clear();
 
@@ -305,10 +306,11 @@ void ThermalPartonSampler::CDFGenerator(double T, double m, int quark) {
  * @return A tuple containing the components of the momentum vector 
  * (NewX, NewY, NewZ) and the magnitude (NewP).
  */
-std::tuple<double, double, double, double> ThermalPartonSampler::MomentumSampler(double T, int quark) {
+std::tuple<double, double, double, double> ThermalPartonSampler::MomentumSampler(double T, int quark, std::mt19937_64 rng_engine_part) {
     double PMag;
     double PMax = 10. * T;  // CutOff for Integration
     double PStep = PMax / (NUMSTEP - 1); // Stepsize in P
+	std::uniform_real_distribution<double> distribution{0.0, 1.0};
 
 	// Get the appropriate CDF table from the cache closest to the target temperature
 	double cachedTemp = getClosestCachedTemp((quark == 1) ? CacheCDFLight : CacheCDFStrange, T);
@@ -318,7 +320,7 @@ std::tuple<double, double, double, double> ThermalPartonSampler::MomentumSampler
 	double PRoll;
 	double denominator;
 	while (true) {
-        PRoll = ran();
+        PRoll = distribution(rng_engine_part);
 
         // Perform binary search to find the appropriate indices
         auto it = std::lower_bound(CDFTab.begin(), CDFTab.end(), std::vector<double>{0, PRoll},
@@ -339,9 +341,9 @@ std::tuple<double, double, double, double> ThermalPartonSampler::MomentumSampler
         }
     }
 
-    double CosT = (ran() - 0.5) * 2.0;
+    double CosT = (distribution(rng_engine_part) - 0.5) * 2.0;
 	double SinT = sqrt(1.0 - CosT * CosT);
-    double Phi = ran() * 2.0 * pi;
+    double Phi = distribution(rng_engine_part) * 2.0 * pi;
 
     double NewX = PMag * SinT * cos(Phi);
     double NewY = PMag * SinT * sin(Phi);
@@ -468,16 +470,21 @@ std::vector<double> ThermalPartonSampler::LorentzBoost(std::vector<double>& x, s
  */
 void ThermalPartonSampler::SamplePartons(int Npartons, int quark, double T, bool brick,
 	std::vector<double>& CPos, std::vector<std::vector<double>>& BoostMatrix,
-	bool slice_boost, double eta_slice, std::vector<std::vector<double>>& Plocal) {
+	bool slice_boost, double eta_slice, std::vector<std::vector<double>>& Plocal,
+	uint64_t adjusted_seed, int iS_iter) {
 
 	Plocal.reserve(Plocal.size() + Npartons);
+
+	std::mt19937_64 rng_engine_part; //RNG - Mersenne Twist - 64 bit
+	std::uniform_real_distribution<double> distribution{0.0, 1.0};
+	rng_engine_part.seed(adjusted_seed + iS_iter);
 
 	// Sample Npartons partons
 	for (int i = 0; i < Npartons; i++) {
 		// adding space to PList for output quarks
 		std::vector<double> temp = {0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.};
 
-		double SpecRoll = ran(); // Probability of species die roll
+		double SpecRoll = distribution(rng_engine_part); // Probability of species die roll
 		if (quark == 1) { // Sample U, Ubar, D, DBar quarks
 			if (SpecRoll <= 0.25) { // UBar
 				// set the last element of the vector to -2
@@ -503,10 +510,10 @@ void ThermalPartonSampler::SamplePartons(int Npartons, int quark, double T, bool
 		if (!brick) {
 			// Position
 			// Located at x,y pos of area element
-			temp[10] = CPos[0] + (ran() - 0.5) * CellDT; // Tau
-			temp[7] = CPos[1] + (ran() - 0.5) * CellDX;
-			temp[8] = CPos[2] + (ran() - 0.5) * CellDY;
-			temp[9] = CPos[3] + (ran() - 0.5) * CellDZ;	
+			temp[10] = CPos[0] + (distribution(rng_engine_part) - 0.5) * CellDT; // Tau
+			temp[7] = CPos[1] + (distribution(rng_engine_part) - 0.5) * CellDX;
+			temp[8] = CPos[2] + (distribution(rng_engine_part) - 0.5) * CellDY;
+			temp[9] = CPos[3] + (distribution(rng_engine_part) - 0.5) * CellDZ;	
 			if (slice_boost) { // 2+1D case
 				if(std::abs(temp[9]) >= std::abs(temp[10])) {
 					temp[10] = std::abs(temp[9]) + 10e-3;
@@ -521,9 +528,9 @@ void ThermalPartonSampler::SamplePartons(int Npartons, int quark, double T, bool
 		} else {
 			// Position
 			// Located at x,y pos of area element
-			double XRoll = ran() - 0.5; // center at x=0
-			double YRoll = ran() - 0.5; // center at y=0
-			double ZRoll = ran() - 0.5; // center at z=0
+			double XRoll = distribution(rng_engine_part) - 0.5; // center at x=0
+			double YRoll = distribution(rng_engine_part) - 0.5; // center at y=0
+			double ZRoll = distribution(rng_engine_part) - 0.5; // center at z=0
 
 			temp[7] = XRoll * L;
 			temp[8] = YRoll * W;
@@ -534,7 +541,7 @@ void ThermalPartonSampler::SamplePartons(int Npartons, int quark, double T, bool
 		}
 
 		// Sample rest frame momentum given T and mass of quark
-		std::tuple<double, double, double, double> P = MomentumSampler(T, quark);
+		std::tuple<double, double, double, double> P = MomentumSampler(T, quark, rng_engine_part);
 		double NewPx = std::get<0>(P);
 		double NewPy = std::get<1>(P);
 		double NewPz = std::get<2>(P);
@@ -791,6 +798,12 @@ void ThermalPartonSampler::sample_3p1d(bool Cartesian_hydro){
  */
 void ThermalPartonSampler::sample_2p1d(double eta_max){
 
+	std::vector<uint64_t> seeds;
+	seeds.push_back(rng_engine());
+	seeds.push_back(rng_engine());
+	seeds.push_back(rng_engine());
+	JSINFO << "Seeds for thermal parton sampling: " << seeds[0] << " " << seeds[1] << " " << seeds[2];
+
 	// Local List of thermal partons sampled
 	std::vector<std::vector<double>> Plocal = Plist;
 
@@ -881,16 +894,17 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 			// Update the Lorentz boost matrix for the slice
 			LorentzBoostMatrix(Vel, LorBoost, false);
 
+			int iS_iter = (slice - 1) * surface.size() + iS;
 			// Generating light quarks
 			std::poisson_distribution<int> poisson_ud(NumLight);
 			int GeneratedParticles_ud = poisson_ud(getRandomGenerator()); // Initialize particles created in this cell
-			SamplePartons(GeneratedParticles_ud, 1, TRead, false, CPos, LorBoost, true, eta_slice, Plocal);
+			SamplePartons(GeneratedParticles_ud, 1, TRead, false, CPos, LorBoost, true, eta_slice, Plocal, seeds[0], iS_iter);
 			num_ud += GeneratedParticles_ud;
 			
 			// Generate s quarks
 			std::poisson_distribution<int> poisson_s(NumStrange);
 			int GeneratedParticles_s = poisson_s(getRandomGenerator()); //Initialize particles created in this cell
-			SamplePartons(GeneratedParticles_s, 2, TRead, false, CPos, LorBoost, true, eta_slice, Plocal);
+			SamplePartons(GeneratedParticles_s, 2, TRead, false, CPos, LorBoost, true, eta_slice, Plocal, seeds[1], iS_iter);
 			num_s += GeneratedParticles_s;
 		}
 	}
