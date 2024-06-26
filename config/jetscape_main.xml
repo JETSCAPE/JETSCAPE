@@ -39,6 +39,14 @@
   <QnVector_Nrap>80</QnVector_Nrap>
   <QnVector_Norder>7</QnVector_Norder>
   <write_pthat> 0 </write_pthat>
+  <Writer>
+    <FinalStateHadrons>
+      <statusToSkip></statusToSkip>
+    </FinalStateHadrons>
+    <FinalStatePartons>
+      <statusToSkip></statusToSkip>
+    </FinalStatePartons>
+  </Writer>
 
   <!--  Random Settings. For now, just a global  seed. -->
   <!--  Note: It's each modules responsibility to adopt it -->
