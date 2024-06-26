@@ -12,15 +12,39 @@
  * Distributed under the GNU General Public License 3.0 (GPLv3 or later).
  * See COPYING for details.
  ******************************************************************************/
-// Jetscape final state {hadrons,kartons} writer ascii class
+// Jetscape final state {hadrons,partons} writer ascii class
 // Based on JetScapeWriterStream.
-// author: Raymond Ehlers <raymond.ehlers@cern.ch>, ORNL
+// author: Raymond Ehlers <raymond.ehlers@cern.ch>, LBL/UCB
 
 #include "JetScapeWriterFinalStateStream.h"
 #include "JetScapeLogger.h"
 #include "JetScapeXML.h"
 
 namespace Jetscape {
+
+namespace detail {
+
+std::vector<int> stringToVector(const std::string& str) {
+    std::vector<int> result;
+    std::stringstream ss(str);
+    std::string item;
+
+    while (std::getline(ss, item, ',')) {
+        // Trim whitespace before and after for safety
+        item.erase(0, item.find_first_not_of(" \t"));
+        item.erase(item.find_last_not_of(" \t") + 1);
+
+        // Store if there are any characters left.
+        // NOTE: There's no validation for e.g. if characters other than numbers are provided.
+        if (!item.empty()) {
+            result.push_back(std::stoi(item));
+        }
+    }
+
+    return result;
+}
+
+}; // end namespace detail
 
 // Register the modules with the base class
 template <>
@@ -37,7 +61,11 @@ RegisterJetScapeModule<JetScapeWriterFinalStateHadronsStream<ogzstream>>
     JetScapeWriterFinalStateHadronsStream<ogzstream>::regHadronGZ("JetScapeWriterFinalStateHadronsAsciiGZ");
 
 template <class T>
-JetScapeWriterFinalStateStream<T>::JetScapeWriterFinalStateStream(string m_file_name_out) {
+JetScapeWriterFinalStateStream<T>::JetScapeWriterFinalStateStream(string m_file_name_out):
+  particles{},
+  writePtHat{false},
+  particleStatusToSkip{}
+{
   SetOutputFileName(m_file_name_out);
 }
 
@@ -47,13 +75,23 @@ template <class T> JetScapeWriterFinalStateStream<T>::~JetScapeWriterFinalStateS
     Close();
 }
 
+template <class T> JetScapeWriterFinalStateStream<T>::Init() {
+  // Whether to write the pt hat value for each event
+  writePtHat = static_cast<bool>(JetScapeXML::Instance()->GetElementInt({"write_pthat"}));
+
+  // Status codes to filter out from what is written (i.e. to be skipped)
+  std::string s = JetScapeXML::Instance()->GetXMLElementText({"Writer", std::string("FinalState") + GetName(), "statusToSkip"}, false);
+  if (s.size() > 0) {
+    particleStatusToSkip = detail::stringToVector(s);
+  }
+}
+
 template <class T> void JetScapeWriterFinalStateStream<T>::WriteEvent() {
   // Write the entire event all at once.
 
   // Optionally write pt-hat value to event header
   std::string pt_hat_text = "";
-  int write_pthat = JetScapeXML::Instance()->GetElementInt({"write_pthat"});
-  if (write_pthat) {
+  if (writePtHat) {
     pt_hat_text += "\tpt_hat\t";
     pt_hat_text += std::to_string(GetHeader().GetPtHat());
   }
@@ -73,6 +111,13 @@ template <class T> void JetScapeWriterFinalStateStream<T>::WriteEvent() {
   unsigned int ipart = 0;
   for (const auto & p : particles) {
     auto particle = p.get();
+    // Skip particles with requested status codes (if enabled).
+    if (particleStatusToSkip.size() > 0) {
+      // Skip particles with status codes that are in the list to skip
+      if (std::find(particleStatusToSkip.begin(), particleStatusToSkip.end(), particle->pstat()) != particleStatusToSkip.end()) {
+        continue;
+      }
+    }
     output_file << ipart
         << " " << particle->pid()
         << " " << particle->pstat()
