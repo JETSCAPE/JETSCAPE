@@ -95,7 +95,7 @@ class ThermalPartonSampler
     // Sample partons and fill Plist
     void SamplePartons(int Npartons, int quark, double T, bool brick,
 		std::vector<double>& CPos, std::vector<std::vector<double>>& BoostMatrix,
-		bool slice_boost, double eta_slice, std::vector<std::vector<double>>& Plocal,
+		bool slice_boost, double eta_slice, std::vector<std::vector<std::vector<double>>>& Plocal,
 		uint64_t adjust_seed = 0, int iS_iter = 0);
 
 	// Function to get the closest cached temperature to the target temperature - CDF tabulated
