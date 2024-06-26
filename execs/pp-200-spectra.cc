@@ -239,7 +239,7 @@ int main(int argc, char* argv[]){
             fastjet::ClusterSequence clustSeq(fjInputs, jetDef);
             vector<fastjet::PseudoJet> UnSortedJets = clustSeq.inclusive_jets(5.0);
             for(int ijet = 0; ijet < UnSortedJets.size(); ijet++){
-                if(abs(UnSortedJets[ijet].eta()) < jetEtaMax && abs(UnSortedJets[ijet].eta()) > jetEtaMin)
+                if(abs(UnSortedJets[ijet].eta()) < jetEtaMax && abs(UnSortedJets[ijet].eta()) > jetEtaMin && UnSortedJets[ijet].pt() < 2.0*stod(pTHatMax[k]))
                     tempJets->Fill(UnSortedJets[ijet].pt(),1.0/2.0);
             }
 
