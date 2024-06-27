@@ -53,7 +53,7 @@ int main(int argc, char** argv)
   // Default: version 1.
   int headerVersion = 1;
   if (argc > 3) {
-    headerVersion = static_cast<int>(argv[3]);
+    headerVersion = std::atoi(argv[3]);
   }
   std::cout << "NOTE: Writing with output version v" << headerVersion << "\n";
 

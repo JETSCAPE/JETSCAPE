@@ -127,7 +127,7 @@ template <class T> void JetScapeWriterFinalStateStream<T>::Init() {
   writePtHat = static_cast<bool>(JetScapeXML::Instance()->GetElementInt({"write_pthat"}));
 
   // Status codes to filter out from what is written (i.e. to be skipped)
-  std::string s = JetScapeXML::Instance()->GetElementText({"Writer", std::string("FinalState") + GetName(), "statusToSkip"}, false);
+  std::string s = JetScapeXML::Instance()->GetElementText({"Writer", (std::string("FinalState") + GetName()).c_str(), "statusToSkip"}, false);
   if (s.size() > 0) {
     particleStatusToSkip = detail::stringToVector(s);
   }
