@@ -83,6 +83,16 @@ template <class T> JetScapeWriterFinalStateStream<T>::Init() {
   std::string s = JetScapeXML::Instance()->GetXMLElementText({"Writer", std::string("FinalState") + GetName(), "statusToSkip"}, false);
   if (s.size() > 0) {
     particleStatusToSkip = detail::stringToVector(s);
+    if (particleStatusToSkip.size() > 0) {
+      std::stringstream ss;
+      ss << "Skipping particles with status codes: ";
+      // Print the status codes that will be skipped for logging purposes to ensure that
+      // the values are propagated correctly.
+      for (const auto status : particleStatusToSkip) {
+        ss << status << " ";
+      }
+      JSINFO << ss.str();
+    }
   }
 }
 
