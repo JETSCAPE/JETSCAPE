@@ -579,7 +579,7 @@ void ThermalPartonSampler::SamplePartons(int Npartons, int quark, double T, bool
  *   and `SetNumStrange`.
  * - Shuffles the generated `Plist` if `ShuffleList` is true.
  */
-void ThermalPartonSampler::samplebrick(){
+void ThermalPartonSampler::sample_brick(){
 	//preliminary parameter checks
 	if(L < 0.){L = -L; JSWARN << "Negative brick length - setting to positive " << L << " fm.";}
 	if(W < 0.){W = -W; JSWARN << "Negative brick width - setting to positive " << W << " fm.";}

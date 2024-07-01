@@ -519,7 +519,7 @@ void HybridHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& sh
     ThermalPartonSampler brick(rand_seed, hydro_Tc); //creating a thermal brick
 	  brick.brick_length_width(brickL,brickL);
 	  brick.brick_flow(0., 0., 0.);
-	  brick.samplebrick();
+	  brick.sample_brick();
 
 	  JSINFO << "A " << brickL << " fm brick was sampled, generating " << brick.nTot() << " partons (" << brick.th_nL() << " light, " << brick.th_nS() << " strange).";
 
