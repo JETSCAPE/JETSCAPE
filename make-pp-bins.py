@@ -103,6 +103,9 @@ def makexml(bound, parameters, baseDir, xmltemplate, ECM):
     if bound[0] < 1:
         eventCount = eventCount * 2
 
+    if bound[0] <= 15:
+        eventCount = eventCount * 2
+
     if RHIC and bound[0] < 1:
         eventCount = eventCount * 2
 
