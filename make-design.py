@@ -1,6 +1,8 @@
 from functions import *
+import sys
 
 # making design points
-nsamples = 500
+nsamples = sys.argv[1]
 design = createPandaDesign(nsamples)
-design.to_csv('designs/totaldesign.txt',index=False)
+filename = 'designs/' + sys.argv[2] + '.txt'
+design.to_csv(filename,index=False)
