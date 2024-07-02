@@ -53,6 +53,9 @@ class ThermalPartonSampler
 	// Same format as in shower data, event number is always 1, 
 	// origin is always 0, particle status is always 0 (indicates a thermal quark)
 
+	// 3D local PList where each threaded iteration writes to a unique location
+	std::vector<std::vector<std::vector<double>>> Plocal;
+
 	// random number handling
 	std::mt19937_64 rng_engine; //RNG - Mersenne Twist - 64 bit
 	std::uniform_real_distribution<double> distribution{0.0, 1.0}; // Uniform distribution between 0 and 1
@@ -61,7 +64,8 @@ class ThermalPartonSampler
 	// Function to get the random number generator
     std::mt19937_64& getRandomGenerator() {return rng_engine;}
 
-	
+	std::vector<uint64_t> seeds; // to hold seeds for multiple generators in threads
+
 	// HyperSurface
 	std::vector<std::vector<double>> surface;
 
@@ -95,7 +99,7 @@ class ThermalPartonSampler
     // Sample partons and fill Plist
     void SamplePartons(int Npartons, int quark, double T, bool brick,
 		std::vector<double>& CPos, std::vector<std::vector<double>>& BoostMatrix,
-		bool slice_boost, double eta_slice, std::vector<std::vector<std::vector<double>>>& Plocal,
+		bool slice_boost, double eta_slice, double CellDZ_local,
 		uint64_t adjust_seed = 0, int iS_iter = 0);
 
 	// Function to get the closest cached temperature to the target temperature - CDF tabulated
@@ -118,7 +122,6 @@ class ThermalPartonSampler
 	int NUMSTEP; // 2^12+1, for steps of CDF Table, changes coarseness of momentum sampling
 
 	int num_ud, num_s;	// Number of light and strange quarks sampled
-	unsigned int jet_seed; // Saving Jetscape seed for use in threads
 
 	// Adjustable params for 3+1d
 	// these are the values used in SurfaceFinder.cc
