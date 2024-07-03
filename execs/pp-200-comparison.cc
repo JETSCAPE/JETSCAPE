@@ -76,7 +76,7 @@ int main(int argc, char* argv[]){
         for(int j = 1; j <= tempHistPions->GetNbinsX(); j++) piontemp.push_back(tempHistPions->GetBinContent(j));
         for(int j = 1; j <= tempHistKaons->GetNbinsX(); j++) kaontemp.push_back(tempHistKaons->GetBinContent(j));
         for(int j = 1; j <= tempHistProtons->GetNbinsX(); j++) protontemp.push_back(tempHistProtons->GetBinContent(j));
-        for(int j = 1; j <= tempHistHardPions->GetNbinsX(); j++) hardpiontemp.push_back(tempHistPions->GetBinContent(j));
+        for(int j = 1; j <= tempHistHardPions->GetNbinsX(); j++) hardpiontemp.push_back(tempHistHardPions->GetBinContent(j));
         for(int j = 1; j <= tempHistJets->GetNbinsX(); j++) jettemp.push_back(tempHistJets->GetBinContent(j));
         pionPredicts.push_back(piontemp);
         kaonPredicts.push_back(kaontemp);
