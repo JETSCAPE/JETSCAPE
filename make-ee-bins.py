@@ -14,23 +14,23 @@ parallel = False
 todays_date = date.today()
 name = "LEP-" + str(todays_date.month) + "-" + str(todays_date.day)
 for i, option in enumerate(sys.argv):
-    if "-d" in option:
+    if "-d" == option:
         reading = True
         design = pd.read_csv(sys.argv[i+1])
-    if "-r" in option:
+    if "-r" == option:
         rerunning = True
         reading = True
         startdir = sys.argv[i+1]
-    if "-a" in option:
+    if "-a" == option:
         appending = True
         rerunning = True
         reading = True
         startdir = sys.argv[i+1]
-    if "-n" in option:
+    if "-n" == option:
         name = sys.argv[i+1]
-    if "--blank" in option:
+    if "--blank" == option:
         blank = True
-    if "-p" in option:
+    if "-p" == option:
         parallel = True
 
 #date and file initiation
