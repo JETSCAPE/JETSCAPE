@@ -126,7 +126,7 @@ int main(int argc, char* argv[]){
     TH1D *HistTotalProtons = getBlankCopy(protondata,"Proton Spectrum","Proton Spectrum");
 
     //hard pions
-    double hardPionBins[] = {8.0,8.5,9.0,9.5,10.0,12.0,14.0,16.0,18.0,20.0};
+    double hardPionBins[] = {6.0,6.5,7.0,7.5,8.0,8.5,9.0,9.5,10.0,12.0,14.0,16.0,18.0,20.0};
     int NhardPionBins = sizeof(hardPionBins)/sizeof(hardPionBins[0])-1;
     TH1D *HistTotalHardPions = new TH1D("Hadron Spectrum", "Hadron Spectrum pT", NhardPionBins, hardPionBins);
 
