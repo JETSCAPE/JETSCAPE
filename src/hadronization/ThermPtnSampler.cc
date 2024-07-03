@@ -571,7 +571,7 @@ void ThermalPartonSampler::SamplePartons(int Npartons, int quark, double T, bool
 		temp[2] = 0; // Origin, to match jet formatting
 		temp[11] = 0; // Status - identifies as thermal quark
 
-		Plocal[iS_iter][i] = std::move(temp);
+		Plocal[iS_iter].push_back(temp);
 	}
 }
 
