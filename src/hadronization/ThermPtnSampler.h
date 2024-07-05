@@ -15,7 +15,7 @@ class ThermalPartonSampler
 	ThermalPartonSampler(unsigned int ran_seed, double hydro_Tc);
 
 	//sampler - samples thermal partons (u,d,s) from brick or 2+1d / 3+1d hydro
-	void samplebrick();
+	void sample_brick();
 	void sample_2p1d(double eta_max);
 	void sample_3p1d(bool Cartesian_hydro=false);
 
