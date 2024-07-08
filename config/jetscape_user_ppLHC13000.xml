@@ -24,7 +24,7 @@
   
   <!--Eloss Modules -->
   <Eloss>
-    <maxT> 400 </maxT>
+    <maxT> 2000 </maxT>
     <lambdaQCD> 0.2 </lambdaQCD>
     
     <Matter> 
@@ -46,8 +46,10 @@
     <LinesToRead>
       StringFlav:probStoUD = 0.217
       StringFlav:probQQtoQ = 0.081
-      ParticleDecays:tau0Max = 10
+      ColourReconnection:reconnect = on
+      ColourReconnection:mode = 2
     </LinesToRead>
+    <tau0Max>10.0</tau0Max>
     <part_prop>0.0</part_prop>
     <ignorePhotons> on </ignorePhotons>
   </JetHadronization>
