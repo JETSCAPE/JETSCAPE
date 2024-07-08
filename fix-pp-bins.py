@@ -2,6 +2,13 @@ from functions import *
 import os
 import htcondor
 import re
+import sys
+
+# option reading
+runAll = False
+for i, option in enumerate(sys.argv):
+    if "-all" == option:
+        runAll = True
 
 # setting directory for analysis
 analysisDir = sys.argv[1]
@@ -25,19 +32,22 @@ for directory in directories:
 
     # finding out what needs to be rerun
     for xml in xmls:
-        run = True
-        startBound = xml.split("_")[-2]
-
-        for dat in dats:
-            if("nfs" in dat): continue
-
-            datBound = dat.split("_")[1].split("n")[1]
-            if startBound == datBound:
-                run = False
-                break
-        
-        if run:
+        if runAll:
             xmlsToRun.append({"xml": xml})
+        else:
+            run = True
+            startBound = xml.split("_")[-2]
+
+            for dat in dats:
+                if("nfs" in dat): continue
+
+                datBound = dat.split("_")[1].split("n")[1]
+                if startBound == datBound:
+                    run = False
+                    break
+            
+            if run:
+                xmlsToRun.append({"xml": xml})
             
     # submission
     if len(xmlsToRun) > 0:
