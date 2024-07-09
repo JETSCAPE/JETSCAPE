@@ -309,12 +309,9 @@ def getRootFiles(file):
 xmljob = htcondor.Submit({
     "executable": "/data/rjfgroup/rjf01/cameron.parker/builds/JETSCAPE/build/runJetscape",
     "arguments": "$(xml)",          # we will pass in the value for this macro via itemdata
-    "output": "/data/rjfgroup/rjf01/cameron.parker/condor/$(ClusterId).$(ProcId).out",
-    "error": "/data/rjfgroup/rjf01/cameron.parker/condor/$(ClusterId).$(ProcId).err",
     "log": "/data/rjfgroup/rjf01/cameron.parker/condor/xml.log",
     "request_cpus": "1",
     "request_memory": "500MB",
-    "request_disk": "500MB",
     "max_retries": "5",
     "getenv": "True",
 })
@@ -322,8 +319,6 @@ xmljob = htcondor.Submit({
 analysisjob = htcondor.Submit({
     "executable": "/data/rjfgroup/rjf01/cameron.parker/builds/JETSCAPE/build/ee-analysis-spectra",
     "arguments": "$(dir)",          # we will pass in the value for this macro via itemdata
-    "output": "/data/rjfgroup/rjf01/cameron.parker/condor/$(ClusterId).$(ProcId).out",
-    "error": "/data/rjfgroup/rjf01/cameron.parker/condor/$(ClusterId).$(ProcId).err",
     "log": "/data/rjfgroup/rjf01/cameron.parker/condor/analysis.log",
     "request_cpus": "1",
     "request_memory": "500MB",
