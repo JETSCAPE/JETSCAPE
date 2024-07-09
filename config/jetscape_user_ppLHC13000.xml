@@ -51,7 +51,6 @@
     </LinesToRead>
     <tau0Max>10.0</tau0Max>
     <part_prop>0.0</part_prop>
-    <ignorePhotons> on </ignorePhotons>
   </JetHadronization>
   
 </jetscape>
