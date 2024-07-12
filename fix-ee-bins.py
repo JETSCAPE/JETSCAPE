@@ -2,6 +2,13 @@ from functions import *
 import os
 import htcondor
 import re
+import sys
+
+# option reading
+runAll = False
+for i, option in enumerate(sys.argv):
+    if "-all" == option:
+        runAll = True
 
 # setting directory for analysis
 analysisDir = sys.argv[1]
@@ -23,7 +30,7 @@ for directory in directories:
         if "run.dat.gz" in file:
             run = False
 
-    if run:
+    if run or runAll:
         xmlname = [{"xml": thisDir+"/config.xml"}]
         testjob["batch_name"] = analysisDir.split('/')[-2] + "-" + directory
         submit_result = schedd.submit(testjob, itemdata = iter(xmlname))
