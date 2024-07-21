@@ -75,6 +75,7 @@ void EMProbeWrapper::InitTask() {
 
 void EMProbeWrapper::Exec() {
    JSINFO << "running Dilepton ...";
+   bulk_info_array.resize(0);
    getBulkInforfromJetScape();
    dilepton_spec = std::make_shared<std::vector<float>>(Dilepton_ptr_->run(bulk_info_array));
 
