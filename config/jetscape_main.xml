@@ -408,6 +408,18 @@
       <Perform_resonance_decays>1</Perform_resonance_decays>
     </iSS>
   </SoftParticlization>
+  
+  <EMProbe>
+      <Dilepton>
+            <Dilepton_input_file>../external_packages/EM/parameter.dat</Dilepton_input_file>
+            <alpha_s>0.0</alpha_s>
+            <flag_hydro>1</flag_hydro>
+            <flag_prehydro>0</flag_prehydro>
+            <include_baryondiff_deltaf>0</include_baryondiff_deltaf>
+            <include_shearvisc_deltaf>0</include_shearvisc_deltaf>
+            <turn_on_muB>0</turn_on_muB>
+      </Dilepton>
+  </EMProbe>
 
   <!-- Hadronic Afterburner  -->
   <Afterburner>

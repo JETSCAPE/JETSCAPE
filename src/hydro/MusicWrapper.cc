@@ -208,12 +208,12 @@ void MpiMusic::EvolveHydro() {
     double tau0 = pre_eq_ptr->GetPreequilibriumEndTime();
     JSINFO << "hydro initial time set by PreEq module tau0 = "
            << tau0 << " fm/c";
+    double dtau = pre_eq_ptr->GetPreequilibriumEvodtau();
+    JSINFO << "Reset MUSIC dtau by PreEq module: dtau = " << dtau << " fm/c";
+    music_hydro_ptr->set_parameter("dtau", dtau);
     if (flag_output_evo_to_memory == 1) {
       // need to ensure preEq and hydro use the same dtau so that
       // the combined evolution history file is properly set
-      double dtau = pre_eq_ptr->GetPreequilibriumEvodtau();
-      JSINFO << "Reset MUSIC dtau by PreEq module: dtau = " << dtau << " fm/c";
-      music_hydro_ptr->set_parameter("dtau", dtau);
       if (!has_source_terms) {
         // only the preEq evo with the first hydro without source term
         // will be stored in memory for jet energy loss calculations

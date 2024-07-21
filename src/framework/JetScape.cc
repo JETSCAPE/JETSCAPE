@@ -702,6 +702,45 @@ void JetScape::DetermineTaskListFromXML() {
         childElement = childElement->NextSiblingElement();
       }
     }
+    //EMProbe 
+    else if (elementName == "EMProbe") {
+
+      tinyxml2::XMLElement *childElement =
+          (tinyxml2::XMLElement *)element->FirstChildElement();
+      while (childElement) {
+        std::string childElementName = childElement->Name();
+        VERBOSE(2) << "Parsing childElement: " << childElementName;
+	std::cout << "Parsing childElement: " << childElementName<<std::endl;
+
+        //    - iSS
+        if (childElementName == "Dilepton") {
+#ifdef EMProbe 
+          auto Dileptonmodule =
+              JetScapeModuleFactory::createInstance(childElementName);
+          if (Dileptonmodule) {
+            Add(Dileptonmodule);
+            JSINFO << "JetScape::DetermineTaskList() -- : EMProbe "
+                      "Added Dilepton to task list.";
+          }
+#else
+          JSWARN << "EMProbe is attempted to be added, but EMProbe is not installed!";
+#endif
+        }
+        //   - Custom module
+        else if (((int)childElementName.find("CustomModule") >= 0)) {
+          auto customModule =
+              JetScapeModuleFactory::createInstance(childElementName);
+          if (customModule) {
+            Add(customModule);
+            JSINFO
+                << "JetScape::DetermineTaskList() -- SoftParticlization: Added "
+                << childElementName << " to task list.";
+          }
+        }
+
+        childElement = childElement->NextSiblingElement();
+      }
+    }
 
     // Afterburner
     else if (elementName == "Afterburner") {

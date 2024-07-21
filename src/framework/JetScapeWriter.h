@@ -54,7 +54,7 @@ public:
   virtual void WriteWhiteSpace(string s){};
   virtual void Write(ostream *o){};
   virtual void Write(weak_ptr<Hadron> h){};
-  virtual void Write(weak_ptr<Qvector> Qv){};
+  virtual void Write(std::weak_ptr<std::vector<float>> dilepton){};
 
   /// Gets called first, before all tasks write themselves
   virtual void WriteHeaderToFile(){};

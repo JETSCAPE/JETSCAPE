@@ -171,6 +171,16 @@ template <class T> void JetScapeWriterStream<T>::Write(weak_ptr<Hadron> h) {
 }
 
 
+template <class T>
+void JetScapeWriterStream<T>::Write(std::weak_ptr<std::vector<float>> dilepton) {
+  auto output_dilepton = dilepton.lock();
+  if (!output_dilepton)
+    return;
+  
+  for (const float& value : *output_dilepton) {
+        output_file << value << " ";
+  }
+}
 
 
 template class JetScapeWriterStream<ofstream>;

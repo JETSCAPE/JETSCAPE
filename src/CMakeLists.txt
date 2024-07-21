@@ -90,6 +90,13 @@ if(NOT "${USE_ISS}")
   list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/hadronization/iSpectraSamplerWrapper.cc)
 endif()
 
+FILE(GLOB emprobesources emprobe/*.cc)
+set (SOURCES  ${SOURCES}  ${emprobesources} )
+## Take care of options
+if(NOT "${USE_EM}")
+  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/emprobe/EMProbeWrapper.cc)
+endif()
+
 #reader
 FILE(GLOB readersources reader/*.cc)
 set (SOURCES  ${SOURCES}  ${readersources} )
@@ -130,6 +137,10 @@ endif()
 
 if ( USE_ISS )
   target_link_libraries (JetScape iSS )
+endif()
+
+if ( USE_EM )
+  target_link_libraries (JetScape EM )
 endif()
 
 if ( USE_CLVISC )

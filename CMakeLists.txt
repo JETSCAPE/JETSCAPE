@@ -1,5 +1,4 @@
-###########################
-### Initial Cmake Setup ###
+
 ###########################
 
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
@@ -79,6 +78,12 @@ if (USE_ISS)
   include_directories(./external_packages/iSS ./external_packages/iSS/src)
 endif (USE_ISS)
 
+option(USE_EM "Build tests for EM" OFF)
+if (USE_EM)
+  message("Includes for EM ...")
+  include_directories(./external_packages/EM ./external_packages/EM/src)
+endif (USE_EM)
+
 # SMASH afterburner. Turn on with 'cmake -DUSE_MUSIC=ON -DUSE_ISS=ON -Dsmash=ON'.
 option(USE_SMASH "Build tests for SMASH" OFF)
 if (USE_SMASH)
@@ -107,7 +112,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 ### note that APPLE also defines UNIX, hence the elseif to differentiate
 if (APPLE)
     message( STATUS "Apple : " ${CMAKE_HOST_SYSTEM})
-    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
+	    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
     elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare -Wno-unused-but-set-variable -Wno-parentheses -fext-numeric-literals")
@@ -165,6 +170,7 @@ install(
   # our source
   "${CMAKE_SOURCE_DIR}/src/framework/"
   "${CMAKE_SOURCE_DIR}/src/hadronization/"
+  "${CMAKE_SOURCE_DIR}/src/emprobe/"
   "${CMAKE_SOURCE_DIR}/src/initialstate/"
   "${CMAKE_SOURCE_DIR}/src/hydro/"
   "${CMAKE_SOURCE_DIR}/src/afterburner/"
@@ -174,6 +180,7 @@ install(
   "${CMAKE_SOURCE_DIR}/external_packages/"
   "${CMAKE_SOURCE_DIR}/external_packages/ipglasma/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/iSS/src/"
+  "${CMAKE_SOURCE_DIR}/external_packages/EM/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/hydro_from_external_file/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/music/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/trento/src/"
@@ -186,6 +193,7 @@ install(
   ## Necessary to exclude directories to prevent a whole (mostly empty) hierarchy
   PATTERN "gtl" EXCLUDE
   PATTERN "iSS" EXCLUDE
+  PATTERN "EM" EXCLUDE
   PATTERN "hydro_from_external_file" EXCLUDE
   PATTERN "ipglasma" EXCLUDE
   PATTERN "music" EXCLUDE
@@ -232,6 +240,7 @@ install(
   "${PROJECT_BINARY_DIR}/external_packages/gtl/lib/"
   "${PROJECT_BINARY_DIR}/external_packages/ipglasma/src/"
   "${PROJECT_BINARY_DIR}/external_packages/iSS/src/"
+  "${PROJECT_BINARY_DIR}/external_packages/EM/src/"
   "${PROJECT_BINARY_DIR}/external_packages/music/src/"
   "${PROJECT_BINARY_DIR}/external_packages/trento/src/"
   "${PROJECT_BINARY_DIR}/external_packages/clvisc_wrapper/"
@@ -321,6 +330,7 @@ include_directories(./src/preequilibrium )
 include_directories(./src/liquefier )
 include_directories(./src/hydro )
 include_directories(./src/hadronization )
+include_directories(./src/emprobe )
 include_directories(./src/afterburner )
 include_directories(./src/jet )
 include_directories(./src/reader )
@@ -398,6 +408,15 @@ if (USE_ISS)
   target_compile_definitions(JetScape PRIVATE iSpectraSampler)
 endif (USE_ISS)
 
+if (USE_EM)
+  if(EXISTS "${CMAKE_SOURCE_DIR}/external_packages/EM")
+    add_subdirectory( ${CMAKE_SOURCE_DIR}/external_packages/EM )
+  else()
+    message(FATAL_ERROR "Error: EM source has not been downloaded in external_packages by ./get_EM.sh")
+  endif()
+  target_compile_definitions(JetScape PRIVATE EMProbe)
+endif (USE_EM)
+
 if (OPENCL_FOUND AND USE_CLVISC)
   add_subdirectory( ${CMAKE_SOURCE_DIR}/external_packages/clvisc_wrapper )
 endif (OPENCL_FOUND AND USE_CLVISC)
@@ -448,11 +467,28 @@ if ( USE_MUSIC AND USE_ISS )
     target_link_libraries(runJetscape ${GSL_LIBRARIES})
 endif (USE_MUSIC AND USE_ISS )
 
+if ( USE_MUSIC AND USE_EM )
+    target_link_libraries(runJetscape ${GSL_LIBRARIES})
+endif (USE_MUSIC AND USE_EM )
+
+
+if ( USE_MUSIC AND USE_EM AND USE_ISS)
+    target_link_libraries(runJetscape ${GSL_LIBRARIES})
+endif (USE_MUSIC AND USE_EM AND USE_ISS)
+
+
+if ( USE_MUSIC AND USE_ISS AND USE_ISS AND USE_SMASH )
+    include_directories(${SMASH_INCLUDE_DIR})
+    # "-lubsan -lasan")
+    target_link_libraries(runJetscape ${SMASH_LIBRARIES} ${MPI_LIBRARIES} ${GSL_LIBRARIES})
+endif ( USE_MUSIC AND USE_ISS AND USE_ISS AND USE_SMASH )
+
 if ( USE_MUSIC AND USE_ISS AND USE_SMASH )
     include_directories(${SMASH_INCLUDE_DIR})
     # "-lubsan -lasan")
     target_link_libraries(runJetscape ${SMASH_LIBRARIES} ${MPI_LIBRARIES} ${GSL_LIBRARIES})
 endif ( USE_MUSIC AND USE_ISS AND USE_SMASH )
+
 
 #if (${ROOT_FOUND})
 #  add_executable(PythiaBrickTestRoot ./examples/custom_examples/PythiaBrickTestRoot.cc)
@@ -499,6 +535,16 @@ if (USE_ISS)
     message(FATAL_ERROR "Error: iSS tables have not been downloaded in external_packages by ./get_iSS.sh")
   endif()
 endif (USE_ISS)
+
+if (USE_EM)
+  
+  if(EXISTS "${CMAKE_SOURCE_DIR}/external_packages/EM/ph_rates")
+    file(COPY ${CMAKE_SOURCE_DIR}/external_packages/EM/ph_rates DESTINATION ${CMAKE_BINARY_DIR}/)
+    file(COPY ${CMAKE_SOURCE_DIR}/external_packages/EM/parameters.dat DESTINATION ${CMAKE_BINARY_DIR}/)
+  else()
+    message(FATAL_ERROR "Error: iSS tables have not been downloaded in external_packages by ./get_iSS.sh")
+  endif()
+endif (USE_EM)
 
 #### copy essential files for LBT to build/
 if(EXISTS "${CMAKE_SOURCE_DIR}/external_packages/LBT-tables")
