@@ -59,24 +59,6 @@ public:
                           double ****cube);
   void Find_full_hypersurface_4D();
 
-/**
- * @brief Prepares a surface cell from given parameters and fluid cell information.
- *
- * This function initializes a `SurfaceCellInfo` structure using the provided
- * parameters and fluid cell data. It computes the four-velocity components 
- * and copies the stress-energy tensor components.
- *
- * @param tau The proper time.
- * @param x The x-coordinate.
- * @param y The y-coordinate.
- * @param eta The space-time rapidity.
- * @param da0 The 0th component of the surface normal vector.
- * @param da1 The 1st component of the surface normal vector.
- * @param da2 The 2nd component of the surface normal vector.
- * @param da3 The 3rd component of the surface normal vector.
- * @param fluid_cell The fluid cell information.
- * @return A populated `SurfaceCellInfo` structure.
- */
   SurfaceCellInfo PrepareASurfaceCell(Jetscape::real tau, Jetscape::real x,
                                       Jetscape::real y, Jetscape::real eta,
                                       Jetscape::real da0, Jetscape::real da1,
