@@ -24,10 +24,7 @@ directories = getDirs(analysisDir)
 os.chdir("/data/rjfgroup/rjf01/cameron.parker/builds/JETSCAPE/build/")
 
 def run(directory):
-    if "/scratch" in analysisDir:
-        baseDir = analysisDir + "points/" + directory
-    else:
-        baseDir = "/data/rjfgroup/rjf01/cameron.parker/runs/" + analysisDir + "points/" + directory
+    baseDir = analysisDir + "points/" + directory
     cmd = "./ee-analysis-spectra " + baseDir
     update(cmd)
 
