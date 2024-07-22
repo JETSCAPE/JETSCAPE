@@ -57,7 +57,152 @@ public:
                           Jetscape::real dt, Jetscape::real dx,
                           Jetscape::real dy, Jetscape::real deta,
                           double ****cube);
-  void Find_full_hypersurface_4D();
+/**
+ * @brief Finds the full hypersurface in 4D space.
+ *
+ * This method calculates the hypersurface by iterating over time, transverse plane, and rapidity
+ * using a grid. It initializes the Cornelius object and processes each grid point to check if it
+ * intersects with the hypersurface. If so, it computes the surface elements and stores them in
+ * the `surface_cell_list`.
+ */
+void SurfaceFinder::Find_full_hypersurface_4D();
+
+/**
+ * @brief Creates a 4D cube with initial values set to 0.0.
+ *
+ * @return A 4D vector representing the cube with dimensions [2][2][2][2] initialized to 0.0.
+ */
+std::vector<std::vector<std::vector<std::vector<double>>>> SurfaceFinder::create_cube();
+
+/**
+ * @brief Processes a time slice of the hypersurface.
+ *
+ * Iterates over rapidity and transverse plane for a given time slice to check for intersections
+ * and update surface cells.
+ *
+ * @param itime The current time index in the grid.
+ * @param grid_tau0 The initial tau value of the grid.
+ * @param grid_dt The time step size.
+ * @param grid_eta0 The initial eta value of the grid.
+ * @param grid_deta The eta step size.
+ * @param neta The number of eta grid points.
+ * @param grid_x0 The initial x value of the grid.
+ * @param grid_dx The x step size.
+ * @param nx The number of x grid points.
+ * @param grid_y0 The initial y value of the grid.
+ * @param grid_dy The y step size.
+ * @param ny The number of y grid points.
+ * @param cube The 4D vector representing the grid cube.
+ * @param cornelius_ptr A unique pointer to the Cornelius object used for surface finding.
+ */
+void SurfaceFinder::process_time_slice(
+    int itime, Jetscape::real grid_tau0, Jetscape::real grid_dt,
+    Jetscape::real grid_eta0, Jetscape::real grid_deta, int neta,
+    Jetscape::real grid_x0, Jetscape::real grid_dx, int nx,
+    Jetscape::real grid_y0, Jetscape::real grid_dy, int ny,
+    std::vector<std::vector<std::vector<std::vector<double>>>>& cube,
+    const std::unique_ptr<Cornelius>& cornelius_ptr);
+
+/**
+ * @brief Processes an eta slice of the hypersurface.
+ *
+ * Iterates over the transverse plane for a given eta slice to check for intersections
+ * and update surface cells.
+ *
+ * @param l The current eta index in the grid.
+ * @param tau_local The local tau value.
+ * @param grid_eta0 The initial eta value of the grid.
+ * @param grid_deta The eta step size.
+ * @param grid_x0 The initial x value of the grid.
+ * @param grid_dx The x step size.
+ * @param nx The number of x grid points.
+ * @param grid_y0 The initial y value of the grid.
+ * @param grid_dy The y step size.
+ * @param ny The number of y grid points.
+ * @param cube The 4D vector representing the grid cube.
+ * @param cornelius_ptr A unique pointer to the Cornelius object used for surface finding.
+ */
+void SurfaceFinder::process_eta_slice(
+    int l, Jetscape::real tau_local, Jetscape::real grid_eta0, Jetscape::real grid_deta,
+    Jetscape::real grid_x0, Jetscape::real grid_dx, int nx,
+    Jetscape::real grid_y0, Jetscape::real grid_dy, int ny,
+    std::vector<std::vector<std::vector<std::vector<double>>>>& cube,
+    const std::unique_ptr<Cornelius>& cornelius_ptr);
+
+/**
+ * @brief Processes an x slice of the hypersurface.
+ *
+ * Iterates over the y grid points for a given x slice to check for intersections
+ * and update surface cells.
+ *
+ * @param i The current x index in the grid.
+ * @param tau_local The local tau value.
+ * @param eta_local The local eta value.
+ * @param grid_x0 The initial x value of the grid.
+ * @param grid_dx The x step size.
+ * @param grid_y0 The initial y value of the grid.
+ * @param grid_dy The y step size.
+ * @param ny The number of y grid points.
+ * @param cube The 4D vector representing the grid cube.
+ * @param cornelius_ptr A unique pointer to the Cornelius object used for surface finding.
+ */
+void SurfaceFinder::process_x_slice(
+    int i, Jetscape::real tau_local, Jetscape::real eta_local, Jetscape::real grid_x0, Jetscape::real grid_dx,
+    Jetscape::real grid_y0, Jetscape::real grid_dy, int ny,
+    std::vector<std::vector<std::vector<std::vector<double>>>>& cube,
+    const std::unique_ptr<Cornelius>& cornelius_ptr);
+
+/**
+ * @brief Processes a single grid point to check for intersection and compute surface cells.
+ *
+ * Checks if the grid point intersects with the hypersurface, and if so, computes the surface
+ * elements and adds them to the `surface_cell_list`.
+ *
+ * @param tau_local The local tau value.
+ * @param x_local The local x value.
+ * @param y_local The local y value.
+ * @param eta_local The local eta value.
+ * @param grid_dt The time step size.
+ * @param grid_dx The x step size.
+ * @param grid_dy The y step size.
+ * @param grid_deta The eta step size.
+ * @param cube The 4D vector representing the grid cube.
+ * @param cornelius_ptr A unique pointer to the Cornelius object used for surface finding.
+ */
+void SurfaceFinder::process_grid_point(
+    Jetscape::real tau_local, Jetscape::real x_local, Jetscape::real y_local, Jetscape::real eta_local,
+    Jetscape::real grid_dt, Jetscape::real grid_dx, Jetscape::real grid_dy, Jetscape::real grid_deta,
+    std::vector<std::vector<std::vector<std::vector<double>>>>& cube,
+    const std::unique_ptr<Cornelius>& cornelius_ptr);
+
+/**
+ * @brief Computes the centroid positions of the surface elements.
+ *
+ * @param cornelius_ptr A unique pointer to the Cornelius object used for surface finding.
+ * @param isurf The index of the surface element.
+ * @param tau_local The local tau value.
+ * @param x_local The local x value.
+ * @param y_local The local y value.
+ * @param eta_local The local eta value.
+ * @param grid_dt The time step size.
+ * @param grid_dx The x step size.
+ * @param grid_dy The y step size.
+ * @param grid_deta The eta step size.
+ * @return A tuple containing the centroid positions (tau_center, x_center, y_center, eta_center).
+ */
+std::tuple<Jetscape::real, Jetscape::real, Jetscape::real, Jetscape::real> SurfaceFinder::compute_centroids(
+    const std::unique_ptr<Cornelius>& cornelius_ptr, int isurf, Jetscape::real tau_local, Jetscape::real x_local, Jetscape::real y_local, Jetscape::real eta_local,
+    Jetscape::real grid_dt, Jetscape::real grid_dx, Jetscape::real grid_dy, Jetscape::real grid_deta);
+
+/**
+ * @brief Computes the normal vectors of the surface elements.
+ *
+ * @param cornelius_ptr A unique pointer to the Cornelius object used for surface finding.
+ * @param isurf The index of the surface element.
+ * @return A tuple containing the normal vectors (da_tau, da_x, da_y, da_eta).
+ */
+std::tuple<Jetscape::real, Jetscape::real, Jetscape::real, Jetscape::real> SurfaceFinder::compute_normals(
+    const std::unique_ptr<Cornelius>& cornelius_ptr, int isurf);
 
 /**
  * @brief Prepares a surface cell from given parameters and fluid cell information.
