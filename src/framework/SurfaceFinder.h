@@ -52,11 +52,56 @@ public:
                           Jetscape::real dx, Jetscape::real dy, double ***cube);
   void Find_full_hypersurface_3D();
 
-  bool check_intersect_4D(Jetscape::real tau, Jetscape::real x,
-                          Jetscape::real y, Jetscape::real eta,
-                          Jetscape::real dt, Jetscape::real dx,
-                          Jetscape::real dy, Jetscape::real deta,
-                          double ****cube);
+
+/**
+ * @brief Checks if the temperature in a 4D grid cell intersects a given temperature cutoff.
+ *
+ * @param tau Central value of tau.
+ * @param x Central value of x.
+ * @param y Central value of y.
+ * @param eta Central value of eta.
+ * @param dt Time step size.
+ * @param dx X step size.
+ * @param dy Y step size.
+ * @param deta Eta step size.
+ * @param cube 4D array to store temperature values of the grid cell.
+ * @return True if the temperature intersects the cutoff, false otherwise.
+ */
+bool SurfaceFinder::check_intersect_4D(
+    Jetscape::real tau, Jetscape::real x, Jetscape::real y, Jetscape::real eta,
+    Jetscape::real dt, Jetscape::real dx, Jetscape::real dy, Jetscape::real deta,
+    std::array<std::array<std::array<std::array<double, 2>, 2>, 2>, 2> &cube);
+
+/**
+ * @brief Fills the 4D array cube with temperature values from the fluid cells.
+ *
+ * @param tau Central value of tau.
+ * @param x Central value of x.
+ * @param y Central value of y.
+ * @param eta Central value of eta.
+ * @param dt Time step size.
+ * @param dx X step size.
+ * @param dy Y step size.
+ * @param deta Eta step size.
+ * @param cube 4D array to store temperature values of the grid cell.
+ */
+void SurfaceFinder::fill_cube_with_temperatures(
+    Jetscape::real tau, Jetscape::real x, Jetscape::real y, Jetscape::real eta,
+    Jetscape::real dt, Jetscape::real dx, Jetscape::real dy, Jetscape::real deta,
+    std::array<std::array<std::array<std::array<double, 2>, 2>, 2>, 2> &cube);
+
+
+/**
+ * @brief Checks if the temperature in the 4D array cube intersects the cutoff temperature.
+ *
+ * @param cube 4D array containing temperature values of the grid cell.
+ * @return True if the temperature intersects the cutoff, false otherwise.
+ */
+bool SurfaceFinder::temperature_intersects_cutoff(
+    const std::array<std::array<std::array<std::array<double, 2>, 2>, 2>, 2> &cube);
+    
+
+  
 /**
  * @brief Finds the full hypersurface in 4D space.
  *

@@ -15,6 +15,7 @@
 // This is a general basic class for a hyper-surface finder
 
 #include <cmath>
+#include <array>
 #include "RealType.h"
 #include "SurfaceFinder.h"
 #include "cornelius.h"
@@ -167,69 +168,101 @@ void SurfaceFinder::Find_full_hypersurface_3D() {
   delete[] cube;
 }
 
-bool SurfaceFinder::check_intersect_4D(Jetscape::real tau, Jetscape::real x,
-                                       Jetscape::real y, Jetscape::real eta,
-                                       Jetscape::real dt, Jetscape::real dx,
-                                       Jetscape::real dy, Jetscape::real deta,
-                                       double ****cube) {
 
-  bool intersect = true;
+#pragma region check intersect 4D
+/**
+ * @brief Checks if the temperature in a 4D grid cell intersects a given temperature cutoff.
+ *
+ * @param tau Central value of tau.
+ * @param x Central value of x.
+ * @param y Central value of y.
+ * @param eta Central value of eta.
+ * @param dt Time step size.
+ * @param dx X step size.
+ * @param dy Y step size.
+ * @param deta Eta step size.
+ * @param cube 4D array to store temperature values of the grid cell.
+ * @return True if the temperature intersects the cutoff, false otherwise.
+ */
+bool SurfaceFinder::check_intersect_4D(
+    Jetscape::real tau, Jetscape::real x, Jetscape::real y, Jetscape::real eta,
+    Jetscape::real dt, Jetscape::real dx, Jetscape::real dy, Jetscape::real deta,
+    std::array<std::array<std::array<std::array<double, 2>, 2>, 2>, 2> &cube) {
+    
+    
+    fill_cube_with_temperatures(tau, x, y, eta, dt, dx, dy, deta, cube);
+    
+    bool intersects=true;
+    intersects=!temperature_intersects_cutoff(cube);
 
-  auto tau_low = tau - dt / 2.;
-  auto tau_high = tau + dt / 2.;
-  auto x_left = x - dx / 2.;
-  auto x_right = x + dx / 2.;
-  auto y_left = y - dy / 2.;
-  auto y_right = y + dy / 2.;
-  auto eta_left = eta - deta / 2.;
-  auto eta_right = eta + deta / 2.;
-
-  auto fluid_cell = bulk_info.get(tau_low, x_left, y_left, eta_left);
-  cube[0][0][0][0] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_low, x_left, y_left, eta_right);
-  cube[0][0][0][1] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_low, x_left, y_right, eta_left);
-  cube[0][0][1][0] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_low, x_left, y_right, eta_right);
-  cube[0][0][1][1] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_low, x_right, y_left, eta_left);
-  cube[0][1][0][0] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_low, x_right, y_left, eta_right);
-  cube[0][1][0][1] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_low, x_right, y_right, eta_left);
-  cube[0][1][1][0] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_low, x_right, y_right, eta_right);
-  cube[0][1][1][1] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_high, x_left, y_left, eta_left);
-  cube[1][0][0][0] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_high, x_left, y_left, eta_right);
-  cube[1][0][0][1] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_high, x_left, y_right, eta_left);
-  cube[1][0][1][0] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_high, x_left, y_right, eta_right);
-  cube[1][0][1][1] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_high, x_right, y_left, eta_left);
-  cube[1][1][0][0] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_high, x_right, y_left, eta_right);
-  cube[1][1][0][1] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_high, x_right, y_right, eta_left);
-  cube[1][1][1][0] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_high, x_right, y_right, eta_right);
-  cube[1][1][1][1] = fluid_cell.temperature;
-
-  if ((T_cut - cube[0][0][0][0]) * (cube[1][1][1][1] - T_cut) < 0.0)
-    if ((T_cut - cube[0][0][1][1]) * (cube[1][1][0][0] - T_cut) < 0.0)
-      if ((T_cut - cube[0][1][0][1]) * (cube[1][0][1][0] - T_cut) < 0.0)
-        if ((T_cut - cube[0][1][1][0]) * (cube[1][0][0][1] - T_cut) < 0.0)
-          if ((T_cut - cube[0][0][0][1]) * (cube[1][1][1][0] - T_cut) < 0.0)
-            if ((T_cut - cube[0][0][1][0]) * (cube[1][1][0][1] - T_cut) < 0.0)
-              if ((T_cut - cube[0][1][0][0]) * (cube[1][0][1][1] - T_cut) < 0.0)
-                if ((T_cut - cube[0][1][1][1]) * (cube[1][0][0][0] - T_cut) <
-                    0.0)
-                  intersect = false;
-
-  return (intersect);
+    return intersects;
 }
+
+/**
+ * @brief Fills the 4D array cube with temperature values from the fluid cells.
+ *
+ * @param tau Central value of tau.
+ * @param x Central value of x.
+ * @param y Central value of y.
+ * @param eta Central value of eta.
+ * @param dt Time step size.
+ * @param dx X step size.
+ * @param dy Y step size.
+ * @param deta Eta step size.
+ * @param cube 4D array to store temperature values of the grid cell.
+ */
+void SurfaceFinder::fill_cube_with_temperatures(
+    Jetscape::real tau, Jetscape::real x, Jetscape::real y, Jetscape::real eta,
+    Jetscape::real dt, Jetscape::real dx, Jetscape::real dy, Jetscape::real deta,
+    std::array<std::array<std::array<std::array<double, 2>, 2>, 2>, 2> &cube) {
+
+    auto tau_low = tau - dt / 2.;
+    auto tau_high = tau + dt / 2.;
+    auto x_left = x - dx / 2.;
+    auto x_right = x + dx / 2.;
+    auto y_left = y - dy / 2.;
+    auto y_right = y + dy / 2.;
+    auto eta_left = eta - deta / 2.;
+    auto eta_right = eta + deta / 2.;
+
+    cube[0][0][0][0] = bulk_info.get(tau_low, x_left, y_left, eta_left).temperature;
+    cube[0][0][0][1] = bulk_info.get(tau_low, x_left, y_left, eta_right).temperature;
+    cube[0][0][1][0] = bulk_info.get(tau_low, x_left, y_right, eta_left).temperature;
+    cube[0][0][1][1] = bulk_info.get(tau_low, x_left, y_right, eta_right).temperature;
+    cube[0][1][0][0] = bulk_info.get(tau_low, x_right, y_left, eta_left).temperature;
+    cube[0][1][0][1] = bulk_info.get(tau_low, x_right, y_left, eta_right).temperature;
+    cube[0][1][1][0] = bulk_info.get(tau_low, x_right, y_right, eta_left).temperature;
+    cube[0][1][1][1] = bulk_info.get(tau_low, x_right, y_right, eta_right).temperature;
+    cube[1][0][0][0] = bulk_info.get(tau_high, x_left, y_left, eta_left).temperature;
+    cube[1][0][0][1] = bulk_info.get(tau_high, x_left, y_left, eta_right).temperature;
+    cube[1][0][1][0] = bulk_info.get(tau_high, x_left, y_right, eta_left).temperature;
+    cube[1][0][1][1] = bulk_info.get(tau_high, x_left, y_right, eta_right).temperature;
+    cube[1][1][0][0] = bulk_info.get(tau_high, x_right, y_left, eta_left).temperature;
+    cube[1][1][0][1] = bulk_info.get(tau_high, x_right, y_left, eta_right).temperature;
+    cube[1][1][1][0] = bulk_info.get(tau_high, x_right, y_right, eta_left).temperature;
+    cube[1][1][1][1] = bulk_info.get(tau_high, x_right, y_right, eta_right).temperature;
+}
+
+/**
+ * @brief Checks if the temperature in the 4D array cube intersects the cutoff temperature.
+ *
+ * @param cube 4D array containing temperature values of the grid cell.
+ * @return True if the temperature intersects the cutoff, false otherwise.
+ */
+bool SurfaceFinder::temperature_intersects_cutoff(
+    const std::array<std::array<std::array<std::array<double, 2>, 2>, 2>, 2> &cube) {
+
+    return (T_cut - cube[0][0][0][0]) * (cube[1][1][1][1] - T_cut) >= 0.0 &&
+           (T_cut - cube[0][0][1][1]) * (cube[1][1][0][0] - T_cut) >= 0.0 &&
+           (T_cut - cube[0][1][0][1]) * (cube[1][0][1][0] - T_cut) >= 0.0 &&
+           (T_cut - cube[0][1][1][0]) * (cube[1][0][0][1] - T_cut) >= 0.0 &&
+           (T_cut - cube[0][0][0][1]) * (cube[1][1][1][0] - T_cut) >= 0.0 &&
+           (T_cut - cube[0][0][1][0]) * (cube[1][1][0][1] - T_cut) >= 0.0 &&
+           (T_cut - cube[0][1][0][0]) * (cube[1][0][1][1] - T_cut) >= 0.0 &&
+           (T_cut - cube[0][1][1][1]) * (cube[1][0][0][0] - T_cut) >= 0.0;
+}
+#pragma endregion check intersect 4D
+
 #pragma region  finding full hypersurface 4D
 void SurfaceFinder::Find_full_hypersurface_4D() {
     auto grid_tau0 = bulk_info.Tau0();
@@ -351,7 +384,7 @@ std::tuple<Jetscape::real, Jetscape::real, Jetscape::real, Jetscape::real> Surfa
 #pragma endregion
 
 
-#include <cmath>
+
 
 SurfaceCellInfo SurfaceFinder::PrepareASurfaceCell(
     Jetscape::real tau, Jetscape::real x, Jetscape::real y, Jetscape::real eta,
