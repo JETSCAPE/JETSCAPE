@@ -149,7 +149,7 @@ void EMProbeWrapper::getBulkInforfromJetScape() {
         float vy = bulk_info.data[icell].vy;
         float vz = bulk_info.data[icell].vz;
 
-        float gamma = 1.0/sqrt(vx*vx+vy*vy+vz*vz);
+        float gamma = 1.0/sqrt(1.0 - (vx*vx+vy*vy+vz*vz));
         float u0 = gamma;
         float ux = gamma*vx;
         float uy = gamma*vy;
