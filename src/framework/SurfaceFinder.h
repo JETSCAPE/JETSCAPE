@@ -50,8 +50,83 @@ public:
   bool check_intersect_3D(Jetscape::real tau, Jetscape::real x,
                           Jetscape::real y, Jetscape::real dt,
                           Jetscape::real dx, Jetscape::real dy, double ***cube);
-  void Find_full_hypersurface_3D();
+#pragma region Find_fill_hypersurface_3D
+/**
+ * @brief Find the full hypersurface in 3D.
+ */
+void SurfaceFinder::Find_full_hypersurface_3D();
 
+/**
+ * @brief Process a single time step in the hypersurface finding.
+ *
+ * @param itime Current time step index.
+ * @param grid_tau0 Initial tau value.
+ * @param grid_dt Tau step size.
+ * @param nx Number of x steps.
+ * @param ny Number of y steps.
+ * @param grid_x0 Initial x value.
+ * @param grid_dx X step size.
+ * @param grid_y0 Initial y value.
+ * @param grid_dy Y step size.
+ * @param cube 3D array to store temperature values.
+ * @param cornelius_ptr Pointer to Cornelius object.
+ */
+void SurfaceFinder::process_time_step(int itime, Jetscape::real grid_tau0, Jetscape::real grid_dt, int nx, int ny, 
+                                      Jetscape::real grid_x0, Jetscape::real grid_dx, Jetscape::real grid_y0, Jetscape::real grid_dy, 
+                                      std::array<std::array<std::array<double, 2>, 2>, 2>& cube, 
+                                      const std::unique_ptr<Cornelius>& cornelius_ptr);
+
+/**
+ * @brief Process the x-plane in the hypersurface finding.
+ *
+ * @param i Current x index.
+ * @param tau_local Local tau value.
+ * @param grid_x0 Initial x value.
+ * @param grid_dx X step size.
+ * @param ny Number of y steps.
+ * @param grid_y0 Initial y value.
+ * @param grid_dy Y step size.
+ * @param cube 3D array to store temperature values.
+ * @param cornelius_ptr Pointer to Cornelius object.
+ */
+void SurfaceFinder::process_x_plane(int i, Jetscape::real tau_local, Jetscape::real grid_x0, Jetscape::real grid_dx, int ny, 
+                                    Jetscape::real grid_y0, Jetscape::real grid_dy, 
+                                    std::array<std::array<std::array<double, 2>, 2>, 2>& cube, 
+                                    const std::unique_ptr<Cornelius>& cornelius_ptr);
+
+/**
+ * @brief Process the y-plane in the hypersurface finding.
+ *
+ * @param j Current y index.
+ * @param tau_local Local tau value.
+ * @param x_local Local x value.
+ * @param grid_y0 Initial y value.
+ * @param grid_dy Y step size.
+ * @param cube 3D array to store temperature values.
+ * @param cornelius_ptr Pointer to Cornelius object.
+ */
+void SurfaceFinder::process_y_plane(int j, Jetscape::real tau_local, Jetscape::real x_local, Jetscape::real grid_y0, Jetscape::real grid_dy, 
+                                    std::array<std::array<std::array<double, 2>, 2>, 2>& cube, 
+                                    const std::unique_ptr<Cornelius>& cornelius_ptr);
+
+  /**
+ * @brief Process surface elements found by Cornelius.
+ *
+ * @param tau_local Local tau value.
+ * @param x_local Local x value.
+ * @param y_local Local y value.
+ * @param grid_dt Tau step size.
+ * @param grid_dx X step size.
+ * @param grid_dy Y step size.
+ * @param cube 3D array to store temperature values.
+ * @param cornelius_ptr Pointer to Cornelius object.
+ */
+void SurfaceFinder::process_surface_elements(Jetscape::real tau_local, Jetscape::real x_local, Jetscape::real y_local, 
+                                             Jetscape::real grid_dt, Jetscape::real grid_dx, Jetscape::real grid_dy, 
+                                             std::array<std::array<std::array<double, 2>, 2>, 2>& cube, 
+                                             const std::unique_ptr<Cornelius>& cornelius_ptr);
+                                            
+#pragma endregion Find_fill_hypersurface_3D
 
 /**
  * @brief Checks if the temperature in a 4D grid cell intersects a given temperature cutoff.
