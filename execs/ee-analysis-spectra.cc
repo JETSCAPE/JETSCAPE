@@ -328,12 +328,18 @@ int main(int argc, char* argv[]){
     TGraphErrors* thrustgraph = (TGraphErrors*) thrustdir->Get("Graph1D_y1");
     TGraphErrors* multgraph = (TGraphErrors*) multdir->Get("Graph1D_y1");
     TGraphErrors* xpgraph = (TGraphErrors*) xpdir->Get("Graph1D_y1");
+    TGraphErrors* pionxpgraph = (TGraphErrors*) ((TDirectory*)alephfile.Get("Table 25"))->Get("Graph1D_y1");
+    TGraphErrors* kaonxpgraph = (TGraphErrors*) ((TDirectory*)alephfile.Get("Table 26"))->Get("Graph1D_y1");
+    TGraphErrors* protonxpgraph = (TGraphErrors*) ((TDirectory*)alephfile.Get("Table 27"))->Get("Graph1D_y1");
     ratioPlot(thrustgraph, HistThrust, "Thrust", "thrust", "P", false, false);
     ratioPlot(multgraph, HistMultiplicity, "Multiplicity", "N Charged", "P(N)", false, false);
     ratioPlot(xpgraph, HistTempSingleHadron, "Charged x_{p}", "x_{p}", "1/#sigma d#sigma/dx_{p}", true, true);
     ratioPlot(xegraph, xeHist, "Charged x_{e}", "x_{e}", "1/#sigma d#sigma/dx_{e}", true, true);
     ratioPlot(dijetgraph, HistTempdiJet, "Leading Dijet Distribution", "E (GeV)", "1/N_{events} dN/dE", false, false);
     ratioPlot(jetgraph, HistTempJet, "Inclusive Jets", "E (GeV)", "1/N_{events} dN/dE", false, true);
+    ratioPlot(pionxpgraph, tempPions, "Pion x_{p}", "x_{p}", "1/#sigma d#sigma/dx_{p}", true, true);
+    ratioPlot(kaonxpgraph, tempKaons, "Kaon x_{p}", "x_{p}", "1/#sigma d#sigma/dx_{p}", true, true);
+    ratioPlot(protonxpgraph, tempProtons, "Proton x_{p}", "x_{p}", "1/#sigma d#sigma/dx_{p}", true, true);
 
     //output
     cout << "Mean N charged: " << HistMultiplicity->GetMean() << endl;
