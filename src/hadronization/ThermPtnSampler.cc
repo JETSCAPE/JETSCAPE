@@ -507,7 +507,6 @@ void ThermalPartonSampler::SamplePartons(int Npartons, int quark, double T, bool
 			}
 		} else {
 			JSWARN << "This is not a valid quark input for SamplePartons()";
-			// return;
 		}
 
 		if (!brick) {
