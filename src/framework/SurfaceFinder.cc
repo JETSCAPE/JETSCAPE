@@ -551,12 +551,30 @@ SurfaceCellInfo SurfaceFinder::PrepareASurfaceCell(
   temp_cell.umu[2] = u0 * vy;
   temp_cell.umu[3] = -u0 * std::sinh(eta) + uz * std::cosh(eta);
 
-  std::copy(&fluid_cell.pi[0][0], &fluid_cell.pi[0][0] + 10, &temp_cell.pi[0]);
+  populate_pi_tensor(temp_cell, fluid_cell);
 
   temp_cell.bulk_Pi = fluid_cell.bulk_Pi;
 
   return temp_cell;
 }
-
+/**
+ * @brief Populate the pi tensor for the surface cell.
+ * 
+ * @param temp_cell Reference to the surface cell.
+ * @param fluid_cell Reference to the fluid cell.
+ */
+void SurfaceFinder::populate_pi_tensor(SurfaceCellInfo& temp_cell, const FluidCellInfo& fluid_cell) 
+{
+    temp_cell.pi[0] = fluid_cell.pi[0][0];
+    temp_cell.pi[1] = fluid_cell.pi[0][1];
+    temp_cell.pi[2] = fluid_cell.pi[0][2];
+    temp_cell.pi[3] = fluid_cell.pi[0][3];
+    temp_cell.pi[4] = fluid_cell.pi[1][1];
+    temp_cell.pi[5] = fluid_cell.pi[1][2];
+    temp_cell.pi[6] = fluid_cell.pi[1][3];
+    temp_cell.pi[7] = fluid_cell.pi[2][2];
+    temp_cell.pi[8] = fluid_cell.pi[2][3];
+    temp_cell.pi[9] = fluid_cell.pi[3][3];
+}
 
 } // namespace Jetscape

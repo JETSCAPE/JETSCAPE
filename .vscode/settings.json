@@ -4,6 +4,7 @@
         "format": "cpp",
         "list": "cpp",
         "vector": "cpp",
-        "xstring": "cpp"
+        "xstring": "cpp",
+        "array": "cpp"
     }
 }

@@ -348,7 +348,13 @@ std::tuple<Jetscape::real, Jetscape::real, Jetscape::real, Jetscape::real> Surfa
                                       Jetscape::real da2, Jetscape::real da3,
                                       const FluidCellInfo fluid_cell);
 };
-
+/**
+ * @brief Populate the pi tensor for the surface cell.
+ * 
+ * @param temp_cell Reference to the surface cell.
+ * @param fluid_cell Reference to the fluid cell.
+ */
+void SurfaceFinder::populate_pi_tensor(SurfaceCellInfo& temp_cell, const FluidCellInfo& fluid_cell) ;
 } // namespace Jetscape
 
 #endif // SURFACEFINDER_H_
