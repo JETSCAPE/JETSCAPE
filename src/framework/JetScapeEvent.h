@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -22,10 +23,9 @@
 namespace Jetscape {
 
 class JetScapeEvent {
-
-public:
+ public:
   JetScapeEvent();
-  JetScapeEvent(const JetScapeEvent &c); //copy constructor
+  JetScapeEvent(const JetScapeEvent &c);  // copy constructor
   ~JetScapeEvent();
 
   const Parton &getParton(int idx) const;
@@ -34,10 +34,10 @@ public:
   void addPartonShower(shared_ptr<PartonShower> ps);
   void deleteParton(int idx);
 
-private:
+ private:
   vector<Parton> partonCollection;
 };
 
-} // end namespace Jetscape
+}  // end namespace Jetscape
 
 #endif

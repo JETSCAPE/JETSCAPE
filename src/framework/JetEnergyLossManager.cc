@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -14,14 +15,15 @@
  ******************************************************************************/
 
 #include "JetEnergyLossManager.h"
+
+#include <iostream>
+#include <string>
+#include <thread>
+#include <vector>
+
 #include "JetScapeLogger.h"
 #include "JetScapeSignalManager.h"
 #include "MakeUniqueHelper.h"
-#include <string>
-
-#include <iostream>
-#include <vector>
-#include <thread>
 
 using namespace std;
 
@@ -51,7 +53,8 @@ void JetEnergyLossManager::Clear() {
   for (int i = 1; i < n; i++)
     EraseTaskLast();
 
-  // Clean Up not really working with iterators (see also above!!!) Some logic not clear for me.
+  // Clean Up not really working with iterators (see also above!!!) Some logic
+  // not clear for me.
   JetScapeSignalManager::Instance()->CleanUp();
   JetScapeTask::ClearTasks();
 
@@ -74,7 +77,8 @@ void JetEnergyLossManager::Init() {
   JetScapeSignalManager::Instance()->ConnectGetHardPartonListSignal(
       shared_from_this());
 
-  // Set the pointer of JetEnergyLoss for making connections to hadronization module
+  // Set the pointer of JetEnergyLoss for making connections to hadronization
+  // module
   for (auto it : GetTaskList()) {
     if (dynamic_pointer_cast<JetEnergyLoss>(it))
 
@@ -141,18 +145,22 @@ void JetEnergyLossManager::Exec() {
   }
 
   // ----------------------------------
-  // quick and dirty here, only include after further testing (flag in init xml files ...)
+  // quick and dirty here, only include after further testing (flag in init xml
+  // files ...)
   bool multiTask = false;
 
   // ----------------------------------
-  //Excute JetEnergyLoss tasks and their subtasks (done via signal/slot) by hand ...
-  //needed if only JetEnergyloss tasks in parallel (otherwise could be done via JetScapeTask, then every task a new thread for example)
-  // Of course now the number of threads if plainly given by the number of initial hard partons and can exceed the allowed # of threads >1000
-  // so to really do this properly one has to think about and limit to number of CPU's * N threads or something in that directions. See a quick attempt below.
+  // Excute JetEnergyLoss tasks and their subtasks (done via signal/slot) by
+  // hand ... needed if only JetEnergyloss tasks in parallel (otherwise could be
+  // done via JetScapeTask, then every task a new thread for example)
+  // Of course now the number of threads if plainly given by the number of
+  // initial hard partons and can exceed the allowed # of threads >1000 so to
+  // really do this properly one has to think about and limit to number of CPU's
+  // * N threads or something in that directions. See a quick attempt below.
 
-  //DEBUG:
-  //unsigned num_cpus = thread::hardware_concurrency();
-  //cout << "Num of CPU's = " << num_cpus << " threads\n";
+  // DEBUG:
+  // unsigned num_cpus = thread::hardware_concurrency();
+  // cout << "Num of CPU's = " << num_cpus << " threads\n";
 
   if (multiTask) {
     int nTasks = GetNumberOfTasks();
@@ -173,14 +181,14 @@ void JetEnergyLossManager::Exec() {
         n++;
       }
       if (n == nMaxThreads) {
-        //DEBUGTHREAD<<n;
+        // DEBUGTHREAD<<n;
         for (auto &th : threads)
           th.join();
         n = 0;
         threads.clear();
 
-        //DEBUG:
-        //std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+        // DEBUG:
+        // std::this_thread::sleep_for(std::chrono::milliseconds(5000));
       }
     }
 
@@ -195,7 +203,7 @@ void JetEnergyLossManager::Exec() {
     // Standard "serial" execution for the JetEnerguLoss (+submodules) task ...
     JetScapeTask::ExecuteTasks();
 
-  //Add acheck if the parton shower was actually created for the Modules ....
+  // Add acheck if the parton shower was actually created for the Modules ....
   VERBOSE(3) << " " << GetNumberOfTasks()
              << " Eloss Manager Tasks/Modules finished.";
 }
@@ -245,4 +253,4 @@ void JetEnergyLossManager::CreateSignalSlots() {
   JetScapeSignalManager::Instance()->PrintSentInPartonsSignalMap();
 }
 
-} // end namespace Jetscape
+}  // end namespace Jetscape

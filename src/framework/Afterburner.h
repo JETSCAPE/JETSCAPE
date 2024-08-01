@@ -1,7 +1,8 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
  *
  * For the list of contributors see AUTHORS.
  *
@@ -25,7 +26,7 @@ namespace Jetscape {
 
 /// Interface to hadronic afterburner
 class Afterburner : public JetScapeModuleBase {
-public:
+ public:
   Afterburner() {
     VERBOSE(8);
     SetId("Afterburner");
@@ -39,11 +40,12 @@ public:
   virtual void Init();
   virtual void Exec();
 
-protected:
+ protected:
   /// Gather all hadrons from soft particlization and fragmentation
   std::vector<std::vector<std::shared_ptr<Hadron>>> GatherAfterburnerHadrons();
   /// Get the events of soft particlization hadrons
-  std::vector<std::vector<std::shared_ptr<Hadron>>> GetSoftParticlizationHadrons();
+  std::vector<std::vector<std::shared_ptr<Hadron>>>
+  GetSoftParticlizationHadrons();
   /// Get the list of fragmentation hadrons
   std::vector<std::shared_ptr<Hadron>> GetFragmentationHadrons();
 
@@ -53,6 +55,6 @@ protected:
   std::shared_ptr<std::uniform_int_distribution<int>> rand_int_ptr_;
 };
 
-} // end namespace Jetscape
+}  // end namespace Jetscape
 
-#endif // AFTERBURNER_H
+#endif  // AFTERBURNER_H

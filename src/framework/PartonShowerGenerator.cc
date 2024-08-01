@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -14,11 +15,12 @@
  ******************************************************************************/
 
 #include "PartonShowerGenerator.h"
-#include "PartonShower.h"
-#include "JetEnergyLoss.h"
-#include "JetScapeLogger.h"
 
 #include <iostream>
+
+#include "JetEnergyLoss.h"
+#include "JetScapeLogger.h"
+#include "PartonShower.h"
 
 using namespace std;
 
@@ -55,10 +57,11 @@ void PartonShowerGenerator::DoShower(JetEnergyLoss &j) {
 
   // start then the recursive shower ...
   vStartVec.push_back(vEnd);
-  //vStartVecTemp.push_back(vEnd);
+  // vStartVecTemp.push_back(vEnd);
 
   // ISSUE: Probably not yet 100% wrt to time step evolution ...
-  // Logic mistake to remove the original ones when no split occured !!??? Follow up!!!!
+  // Logic mistake to remove the original ones when no split occured !!???
+  // Follow up!!!!
   REMARK << "DoShower() Splitting including time evolution (allowing "
             "non-splits at later times) implemeted correctly (should be made "
             "nicer/pointers). To be checked!!!";
@@ -73,8 +76,9 @@ void PartonShowerGenerator::DoShower(JetEnergyLoss &j) {
     // --------------------------------------------
 
     for (int i = 0; i < pIn.size(); i++) {
-      //DEBUG:
-      //cout<<currentTime<<" pIn size = "<<pIn.size()<<" "<<i<<" "<<pIn[i].pt()<<endl;
+      // DEBUG:
+      // cout<<currentTime<<" pIn size = "<<pIn.size()<<" "<<i<<"
+      // "<<pIn[i].pt()<<endl;
 
       pInTemp.push_back(pIn[i]);
       pInTempModule.push_back(pIn[i]);
@@ -85,20 +89,20 @@ void PartonShowerGenerator::DoShower(JetEnergyLoss &j) {
       vStart = vStartVec[i];
       vStartVecTemp.push_back(vStart);
 
-      //DEBUG:
-      //cout<<vStart<<endl;
-      // --------------------------------------------
+      // DEBUG:
+      // cout<<vStart<<endl;
+      //  --------------------------------------------
       for (int k = 0; k < pOutTemp.size(); k++) {
         vEnd = j.GetShower()->new_vertex(
             make_shared<Vertex>(0, 0, 0, currentTime));
         j.GetShower()->new_parton(vStart, vEnd,
                                   make_shared<Parton>(pOutTemp[k]));
 
-        //DEBUG:
-        //cout<<vStart<<"-->"<<vEnd<<endl;
-        //cout<<pOutTemp[k];
-        //cout<<vStartVec.size()<<endl;
-        //cout<<pInTempModule.size()<<endl;
+        // DEBUG:
+        // cout<<vStart<<"-->"<<vEnd<<endl;
+        // cout<<pOutTemp[k];
+        // cout<<vStartVec.size()<<endl;
+        // cout<<pInTempModule.size()<<endl;
 
         vStartVecOut.push_back(vEnd);
         pOut.push_back(pOutTemp[k]);
@@ -107,15 +111,15 @@ void PartonShowerGenerator::DoShower(JetEnergyLoss &j) {
         // Add new roots from ElossModules ...
         // (maybe add for clarity a new vector in the signal!???)
         // Otherwise keep track of input size (so far always 1
-        // and check if size > 1 and create additional root nodes to that vertex ...
-        // Simple Test here below:
-        // DEBUG:
-        //cout<<"In JetEnergyloss : "<<pInTempModule.size()<<endl;
+        // and check if size > 1 and create additional root nodes to that vertex
+        // ... Simple Test here below: DEBUG:
+        // cout<<"In JetEnergyloss : "<<pInTempModule.size()<<endl;
 
         if (pInTempModule.size() > 1) {
           VERBOSESHOWER(7) << pInTempModule.size() - 1
                            << " new root node(s) to be added ...";
-          //cout<<pInTempModule.size()-1<<" new root node(s) to be added ..."<<endl;
+          // cout<<pInTempModule.size()-1<<" new root node(s) to be added
+          // ..."<<endl;
 
           for (int l = 1; l < pInTempModule.size(); l++) {
             node vNewRootNode = j.GetShower()->new_vertex(
@@ -155,12 +159,12 @@ void PartonShowerGenerator::DoShower(JetEnergyLoss &j) {
 
     vStartVecOut.clear();
     vStartVecTemp.clear();
-  } while (currentTime < j.GetMaxT()); //other criteria (how to include; TBD)
+  } while (currentTime < j.GetMaxT());  // other criteria (how to include; TBD)
 
   // --------------------------------------------
 
   // real ceck using mom. consveration at vertex ...!!!!
-  //pShower->save(&(cout<<BOLDCYAN));
+  // pShower->save(&(cout<<BOLDCYAN));
 
   pIn.clear();
   pOut.clear();
@@ -169,4 +173,4 @@ void PartonShowerGenerator::DoShower(JetEnergyLoss &j) {
   vStartVec.clear();
 }
 
-} // end namespace Jetscape
+}  // end namespace Jetscape

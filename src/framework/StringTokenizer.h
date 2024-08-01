@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -24,11 +25,12 @@
 
 namespace Jetscape {
 
-// default delimiter string (space, tab, newline, carriage return, form feed and =,>,[,].
+// default delimiter string (space, tab, newline, carriage return, form feed and
+// =,>,[,].
 const std::string DEFAULT_DELIMITER = " \t\v\n\r\f=>[]";
 
 class StringTokenizer {
-public:
+ public:
   // ctor/dtor
   StringTokenizer(){};
   StringTokenizer(const std::string &str,
@@ -38,13 +40,13 @@ public:
   // set string and delimiter
   void set(const std::string &str,
            const std::string &delimiter = DEFAULT_DELIMITER);
-  void setString(const std::string &str);          // set source string only
-  void setDelimiter(const std::string &delimiter); // set delimiter string only
+  void setString(const std::string &str);           // set source string only
+  void setDelimiter(const std::string &delimiter);  // set delimiter string only
 
-  std::string next(); // return the next token, return "" if it ends
+  std::string next();  // return the next token, return "" if it ends
 
   std::vector<std::string>
-  split(); // return array of tokens from current cursor
+  split();  // return array of tokens from current cursor
 
   bool done() const { return currPos == buffer.end(); }
 
@@ -57,20 +59,20 @@ public:
   bool isEventEntry() const;
   bool isHadronEntry() const;
 
-private:
-  void skipDelimiter();     // ignore leading delimiters
-  bool isDelimiter(char c); // check if the current char is delimiter
+ private:
+  void skipDelimiter();      // ignore leading delimiters
+  bool isDelimiter(char c);  // check if the current char is delimiter
 
-  std::string buffer;    // input string
-  std::string token;     // output string
-  std::string delimiter; // delimiter string
+  std::string buffer;     // input string
+  std::string token;      // output string
+  std::string delimiter;  // delimiter string
   std::string::const_iterator
-      currPos; // string iterator pointing the current position
+      currPos;  // string iterator pointing the current position
 };
 
-} // end namespace Jetscape
+}  // end namespace Jetscape
 
-#endif // STRINGTOKENIZER_H
+#endif  // STRINGTOKENIZER_H
 
 ///////////////////////////////////////////////////////////////////////////////
 // Usage of Tokenizer Class: Example program
@@ -79,9 +81,10 @@ private:
 /*
 // testing Tokenizer class
 
-#include "StringTokenizer.h"
-#include <string>
 #include <iostream>
+#include <string>
+
+#include "StringTokenizer.h"
 
 
 using std::string;
@@ -94,7 +97,7 @@ int main(int argc, char* argv[])
     StringTokenizer str;
     string token;
     int counter = 0;
-    
+
     string m_str2="[0]-->[1] 100. 0 0 75.";
     cout<<m_str2<<endl;
     str.set(m_str2);
@@ -107,19 +110,19 @@ int main(int argc, char* argv[])
     //while((token = str.next()) != "")
     while (!str.done())
       {
-	token = str.next();
+        token = str.next();
         ++counter;
         cout << counter << ": " << token << endl;
       }
 
     string m_str3="#[-->Just --> a Comment []..";
-    cout<<m_str3<<endl;    
+    cout<<m_str3<<endl;
     str.set(m_str3);
-    
+
     cout<<str.isGraphEntry()<<endl;
     cout<<str.isEdgeEntry()<<endl;
     cout<<str.isCommentEntry()<<endl;
-    
+
     return 0;
 }
 

@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -18,18 +19,19 @@
 
 #include <fstream>
 #include <math.h>
+
 #include "JetEnergyLossModule.h"
 #include "JetScapeConstants.h"
 
 using namespace Jetscape;
 
 class MARTINIUserInfo : public fjcore::PseudoJet::UserInfoBase {
-private:
+ private:
   bool _coherent{false};
   int _sibling{-1};
   FourVector _pAtSplit{FourVector(0., 0., 0., 0.)};
 
-public:
+ public:
   MARTINIUserInfo() {}
   MARTINIUserInfo(bool coherent, int sibling, FourVector pAtSplit)
       : _coherent(coherent), _sibling(sibling), _pAtSplit(pAtSplit){};
@@ -39,7 +41,7 @@ public:
   FourVector p_at_split() const { return _pAtSplit; }
 };
 
-//Basic.h//
+// Basic.h//
 struct RateRadiative {
   double qqg;
   double ggg;
@@ -61,25 +63,25 @@ struct RateConversion {
 };
 
 class Martini : public JetEnergyLossModule<
-                    Martini> //, public std::enable_shared_from_this<Martini>
+                    Martini>  //, public std::enable_shared_from_this<Martini>
 {
-private:
+ private:
   // AMY rates are calculated in p/T > AMYpCut
   static constexpr double AMYpCut = 4.01;
   // minimum energy of parton that can lose energy
   const double eLossCut = 1.0;
 
-  double Q0; // Separation scale between Matter and Martini
+  double Q0;  // Separation scale between Matter and Martini
   double alpha_s0, alpha_s;
   double alpha_em;
   double g;
-  double pcut;         // below this scale, no further Eloss
-  double hydro_Tc;     // critical temperature
-  double tStart; // initilization time of hydro
-  int run_alphas;      // running alpha_s or not
-  int recoil_on;       // turn on recoil
+  double pcut;      // below this scale, no further Eloss
+  double hydro_Tc;  // critical temperature
+  double tStart;    // initilization time of hydro
+  int run_alphas;   // running alpha_s or not
+  int recoil_on;    // turn on recoil
 
-  //Import.h//
+  // Import.h//
   static const int NP = 230;
   static const int NK = 381;
 
@@ -139,23 +141,24 @@ private:
 
   static int pLabelNew;
 
-  // Allows the registration of the module so that it is available to be used by the Jetscape framework.
+  // Allows the registration of the module so that it is available to be used by
+  // the Jetscape framework.
   static RegisterJetScapeModule<Martini> reg;
 
   double RunningAlphaS(double muSquare);
 
-public:
+ public:
   Martini();
   virtual ~Martini();
 
-  //main//
+  // main//
   void Init();
   void DoEnergyLoss(double deltaT, double Time, double Q2, vector<Parton> &pIn,
                     vector<Parton> &pOut);
   int DetermineProcess(double p, double T, double deltaTRest, int id);
   void WriteTask(weak_ptr<JetScapeWriter> w){};
 
-  //Radiative//
+  // Radiative//
   RateRadiative getRateRadTotal(double p, double T);
   RateRadiative getRateRadPos(double u, double T);
   RateRadiative getRateRadNeg(double u, double T);
@@ -166,7 +169,7 @@ public:
 
   bool isCoherent(Parton &pIn, int sibling, double T);
 
-  //Elastic//
+  // Elastic//
   RateElastic getRateElasTotal(double p, double T);
   RateElastic getRateElasPos(double u, double T);
   RateElastic getRateElasNeg(double u, double T);
@@ -188,7 +191,7 @@ public:
   FourVector getThermalVec(FourVector qVec, double T, int id);
   double getThermal(double k_min, double T, int kind);
 
-  //Rate table//
+  // Rate table//
   void readRadiativeRate(Gamma_info *dat, dGammas *Gam);
   void readElasticRateOmega();
   void readElasticRateQ();
@@ -206,7 +209,7 @@ public:
 
   static void IncrementpLable() { pLabelNew++; }
 
-protected:
+ protected:
   uniform_real_distribution<double> ZeroOneDistribution;
 
   string PathToTables;
@@ -214,4 +217,4 @@ protected:
 
 double LambertW(double z);
 
-#endif // MARTINI_H
+#endif  // MARTINI_H

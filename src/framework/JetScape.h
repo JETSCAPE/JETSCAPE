@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -16,30 +17,33 @@
 #ifndef JETSCAPE_H
 #define JETSCAPE_H
 
-#include "JetScapeLogger.h"
-#include "JetScapeTaskSupport.h"
-#include "JetScapeModuleBase.h"
 #include "CausalLiquefier.h"
+#include "JetScapeLogger.h"
+#include "JetScapeModuleBase.h"
+#include "JetScapeTaskSupport.h"
 
 namespace Jetscape {
 
 class JetScape : public JetScapeModuleBase {
-
-public:
+ public:
   /** Default constructor to create the main task of the JetScape framework.
-  */
+   */
   JetScape();
 
   /** This is a destructor for a JetScape.
    */
   virtual ~JetScape();
 
-  /** This function initializes the main task of the JetScape framework. It calls JetScapeTask::InitTaks() function to initialize the modules/tasks of a JetScapeTask.
-  */
+  /** This function initializes the main task of the JetScape framework. It
+   * calls JetScapeTask::InitTaks() function to initialize the modules/tasks of
+   * a JetScapeTask.
+   */
   void Init();
 
-  /** This function execute the modules/tasks of a JetScapeTask for all the events. It also calls "GetPartons()" function to print parton shower, and  "WriteTasks()" function to store the data in the XML file.  
-  */
+  /** This function execute the modules/tasks of a JetScapeTask for all the
+   * events. It also calls "GetPartons()" function to print parton shower, and
+   * "WriteTasks()" function to store the data in the XML file.
+   */
   void Exec();
 
   void Finish();
@@ -75,10 +79,12 @@ public:
   }
   inline unsigned int GetNReuseHydro() const { return n_reuse_hydro_; }
 
-protected:
+ protected:
   void CompareElementsFromXML();
-  void recurseToBuild(std::vector<std::string> &elems, tinyxml2::XMLElement *mElement);
-  void recurseToSearch(std::vector<std::string> &elems, tinyxml2::XMLElement *uElement);
+  void recurseToBuild(std::vector<std::string> &elems,
+                      tinyxml2::XMLElement *mElement);
+  void recurseToSearch(std::vector<std::string> &elems,
+                       tinyxml2::XMLElement *uElement);
   void ReadGeneralParametersFromXML();
   void DetermineTaskListFromXML();
   void DetermineWritersFromXML();
@@ -98,11 +104,12 @@ protected:
 
   std::shared_ptr<CausalLiquefier> liquefier;
 
-  bool
-      fEnableAutomaticTaskListDetermination; // Option to automatically determine the task list from the XML file,
-      // rather than manually calling JetScapeTask::Add() in the run macro.
+  bool fEnableAutomaticTaskListDetermination;  // Option to automatically
+                                               // determine the task list from
+                                               // the XML file,
+  // rather than manually calling JetScapeTask::Add() in the run macro.
 };
 
-} // end namespace Jetscape
+}  // end namespace Jetscape
 
 #endif

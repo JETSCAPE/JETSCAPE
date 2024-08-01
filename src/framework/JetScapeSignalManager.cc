@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -14,8 +15,10 @@
  ******************************************************************************/
 
 #include "JetScapeSignalManager.h"
-#include "JetScapeLogger.h"
+
 #include <stdlib.h>
+
+#include "JetScapeLogger.h"
 
 using namespace std;
 
@@ -46,7 +49,6 @@ void JetScapeSignalManager::ConnectGetHardPartonListSignal(
 void JetScapeSignalManager::ConnectGetFinalPartonListSignal(
     shared_ptr<HadronizationManager> hm) {
   if (!hm->GetGetFinalPartonListConnected()) {
-
     auto elp = GetEnergyLossPointer().lock();
     if (elp) {
       hm->GetFinalPartonList.connect(elp.get(),
@@ -94,7 +96,8 @@ void JetScapeSignalManager::ConnectGetHydroTau0Signal(
   if (!j->GetGetHydroTau0SignalConnected()) {
     auto hp = GetHydroPointer().lock();
     if (hp) {
-      j->GetHydroTau0Signal.connect(hp.get(), &FluidDynamics::GetHydroStartTime);
+      j->GetHydroTau0Signal.connect(hp.get(),
+                                    &FluidDynamics::GetHydroStartTime);
       j->SetGetHydroTau0SignalConnected(true);
     }
   }
@@ -159,58 +162,56 @@ void JetScapeSignalManager::ConnectTransformPartonsSignal(
   }
 }
 
-
 void JetScapeSignalManager::ConnectGetFinalHadronListSignal(
-                                                shared_ptr<HadronPrinter> h){
-    auto hadroMgrShared = GetHadronizationManagerPointer().lock();
-    //hadronPrinter->GetFinalHadronList.connect(hadro.get(), &Hadronization::GetHadrons);
-    h->GetFinalHadronList.connect(hadroMgrShared.get(),
-                                  &HadronizationManager::GetHadrons);
+    shared_ptr<HadronPrinter> h) {
+  auto hadroMgrShared = GetHadronizationManagerPointer().lock();
+  // hadronPrinter->GetFinalHadronList.connect(hadro.get(),
+  // &Hadronization::GetHadrons);
+  h->GetFinalHadronList.connect(hadroMgrShared.get(),
+                                &HadronizationManager::GetHadrons);
 }
-
 
 void JetScapeSignalManager::ConnectGetHydroHyperSurfaceSignal(
     shared_ptr<Hadronization> h) {
-    if (!h->GetGetHydroHyperSurfaceConnected()) {
-        auto hp = GetHydroPointer().lock();
-        if (hp) {
-            h->GetHydroHyperSurface.connect(
-                hp.get(), &FluidDynamics::FindAConstantTemperatureSurface);
-            h->SetGetHydroHyperSurfaceConnected(true);
-        }
+  if (!h->GetGetHydroHyperSurfaceConnected()) {
+    auto hp = GetHydroPointer().lock();
+    if (hp) {
+      h->GetHydroHyperSurface.connect(
+          hp.get(), &FluidDynamics::FindAConstantTemperatureSurface);
+      h->SetGetHydroHyperSurfaceConnected(true);
     }
+  }
 }
-
 
 void JetScapeSignalManager::ConnectGetHydroHyperSurfaceSignal(
     shared_ptr<SoftParticlization> hSoft) {
-    if (!hSoft->GetGetHydroHyperSurfaceConnected()) {
-        auto hp = GetHydroPointer().lock();
-        if (hp) {
-            hSoft->GetHydroHyperSurface.connect(
-                hp.get(), &FluidDynamics::getSurfaceCellVector);
-            hSoft->SetGetHydroHyperSurfaceConnected(true);
-        }
+  if (!hSoft->GetGetHydroHyperSurfaceConnected()) {
+    auto hp = GetHydroPointer().lock();
+    if (hp) {
+      hSoft->GetHydroHyperSurface.connect(hp.get(),
+                                          &FluidDynamics::getSurfaceCellVector);
+      hSoft->SetGetHydroHyperSurfaceConnected(true);
     }
+  }
 }
-
 
 void JetScapeSignalManager::ConnectClearHydroHyperSurfaceSignal(
     shared_ptr<SoftParticlization> hSoft) {
-    if (!hSoft->GetClearHydroHyperSurfaceConnected()) {
-        auto hp = GetHydroPointer().lock();
-        if (hp) {
-            hSoft->ClearHydroHyperSurface.connect(
-                hp.get(), &FluidDynamics::clearSurfaceCellVector);
-            hSoft->SetClearHydroHyperSurfaceConnected(true);
-        }
+  if (!hSoft->GetClearHydroHyperSurfaceConnected()) {
+    auto hp = GetHydroPointer().lock();
+    if (hp) {
+      hSoft->ClearHydroHyperSurface.connect(
+          hp.get(), &FluidDynamics::clearSurfaceCellVector);
+      hSoft->SetClearHydroHyperSurfaceConnected(true);
     }
+  }
 }
 
 void JetScapeSignalManager::CleanUp() {
   VERBOSE(8);
 
-  // hmmm wrong caintainer .. should have used vectore with struct instead of map!!!!
+  // hmmm wrong caintainer .. should have used vectore with struct instead of
+  // map!!!!
 
   auto loss = jloss.lock();
   if (loss) {
@@ -238,7 +239,8 @@ void JetScapeSignalManager::CleanUp() {
     edensity_signal_map.clear();
     GetHydroCellSignal_map.clear(), SentInPartons_map.clear();
     TransformPartons_map.clear();
-    // think better here how to handle the clean of when the instance goes out of scope ...!???
+    // think better here how to handle the clean of when the instance goes out
+    // of scope ...!???
   }
 
   PrintGetHydroCellSignalMap();
@@ -308,4 +310,4 @@ void JetScapeSignalManager::Clear()
 }
 */
 
-} // end namespace Jetscape
+}  // end namespace Jetscape

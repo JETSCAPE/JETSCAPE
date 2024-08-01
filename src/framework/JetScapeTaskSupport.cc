@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -14,8 +15,10 @@
  ******************************************************************************/
 
 #include "JetScapeTaskSupport.h"
-#include "JetScapeLogger.h"
+
 #include <stdlib.h>
+
+#include "JetScapeLogger.h"
 
 using namespace std;
 
@@ -128,4 +131,4 @@ shared_ptr<std::mt19937> JetScapeTaskSupport::GetMt19937Generator(int TaskId) {
 
 // ---------------------------------------------------------------------------
 
-} // end namespace Jetscape
+}  // end namespace Jetscape
