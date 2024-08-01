@@ -110,20 +110,20 @@ void HybridHadronization::Init() {
     goldstonereco = false;  // don't allow recombination of Goldstone bosons
     gmax = 1.25;  // maximum allowed mass of the gluon (for q-qbar split), in
                   // GeV
-    xmq = 0.33;        // light quark mass, in GeV
-    xms = 0.5;         // strange quark mass, in GeV
-    xmc = 1.5;         // charm quark mass in GeV
-    xmb = 4.8;         // bottom quark mass in GeV
+    xmq = 0.33;   // light quark mass, in GeV
+    xms = 0.5;    // strange quark mass, in GeV
+    xmc = 1.5;    // charm quark mass in GeV
+    xmb = 4.8;    // bottom quark mass in GeV
     hbarc = 0.197327;  // GeV*fm - maybe just set this as a constant in common?
     dist2cut = 25.;    // maximum distance [fm] squared for recombination
-                     // (involving thermal partons) - in lab frame
+                       // (involving thermal partons) - in lab frame
     sh_recofactor =
         1.;  // suppression/enhancement factor for shower-shower recombination
     th_recofactor =
         1.;  // suppression/enhancement factor for shower-thermal recombination
     attempts_max = 15;  // maximum number of failed attempts to hadronize a
                         // single event before we give up.
-    p_fake = 0.;    // momentum used for fake parton, if needed
+    p_fake = 0.;        // momentum used for fake parton, if needed
     rand_seed = 0;  // seed for RNGs used - 0 means use a randomly determined
                     // random seed (from system time or std::random_device{}())
     had_prop =
@@ -2142,7 +2142,7 @@ void HybridHadronization::recomb() {
   //'q1' loops over all quarks in the shower
   //'q2' loops over all quarks in the event
   //'q3' loops over all quarks in the event, starting from 'q2' and ending at
-  //the last quark when 'q2' is at the last quark, we will not consider quark
+  // the last quark when 'q2' is at the last quark, we will not consider quark
   // 'q3' - can only make a meson at that point...
 
   parton_collection considering;
@@ -2342,7 +2342,7 @@ void HybridHadronization::recomb() {
             }
             // skipping if the current quark is not in the same string as q1
             //(q2 MUST be in the same string as q1 if it's in the shower, and
-            //doesn't need to be checked if thermal) else
+            // doesn't need to be checked if thermal) else
             // if(showerquarks[element[2]].string_id() !=
             // showerquarks[element[0]].string_id()){continue;} skipping if
             // current quark is not a u,d,s,c,b quark
@@ -5613,8 +5613,9 @@ void HybridHadronization::set_baryon_id(parton_collection& qrks,
   // states in PYTHIA's ParticleData class
   // if(false && had.is_excited){
   //	if(had.id == 2212 || had.id == 2112 || had.id == 2214 || had.id == 2114
-  //|| had.id == 2224 || had.id ==1114 || had.id == 3122){ 		had.id += 100000;  //
-  //This needs to be adjusted to make the actual excited baryon codes
+  //|| had.id == 2224 || had.id ==1114 || had.id == 3122){ 		had.id
+  //+= 100000;  // This needs to be adjusted to make the actual excited baryon
+  // codes
   //	}
   // }
 
@@ -7753,7 +7754,7 @@ void HybridHadronization::stringprep(parton_collection& SP_remnants,
     }  // After all, all these vectors of junction legs will be tossed into
        // PYTHIA to be hadronized. before that we need to set Mother Daughter
        // tag for PYTHIA
-  }  // collecting all single junctions
+  }    // collecting all single junctions
 
   // dignostic measure{IMStructure1}
   /*JSINFO << "Second IMStructure printout";

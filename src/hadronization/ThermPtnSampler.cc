@@ -139,8 +139,8 @@ ThermalPartonSampler::ThermalPartonSampler(unsigned int ran_seed) {
                           // !!!Statistics use above temperature!!!
   SetNumLight = 1000000;  // If SetNum == true, this many UD quarks are
                           // generated
-  SetNumStrange = 0;   // If SetNum == true, this many S quarks are generated
-  ShuffleList = true;  // Should list of particles be shuffled at the end
+  SetNumStrange = 0;      // If SetNum == true, this many S quarks are generated
+  ShuffleList = true;     // Should list of particles be shuffled at the end
 
   // Brick Info
   L = 4.0;     // Thickness from box edge

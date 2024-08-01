@@ -22,9 +22,9 @@
 
 using namespace Jetscape;
 
-class Matter
-    : public JetEnergyLossModule<Matter>  //, public
-                                          //std::enable_shared_from_this<Matter>
+class Matter : public JetEnergyLossModule<
+                   Matter>  //, public
+                            // std::enable_shared_from_this<Matter>
 {
  public:
   Matter();

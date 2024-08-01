@@ -41,7 +41,7 @@ class LBTUserInfo : public fjcore::PseudoJet::UserInfoBase {
 
 class LBT
     : public JetEnergyLossModule<LBT>  //, public
-                                       //std::enable_shared_from_this<Matter>
+                                       // std::enable_shared_from_this<Matter>
 {
  public:
   LBT();
@@ -148,13 +148,13 @@ class LBT
   static bool flag_init;
 
   //    scattering rate
-  static double Rg[60][20];  // total gluon scattering rate as functions of
-                             // initial energy and temperature
+  static double Rg[60][20];   // total gluon scattering rate as functions of
+                              // initial energy and temperature
   static double Rg1[60][20];  // gg-gg              CT1
   static double Rg2[60][20];  // gg-qqbar           CT2
   static double Rg3[60][20];  // gq-qg              CT3
   static double Rq[60][20];   // total gluon scattering rate as functions of
-                             // initial energy and temperature
+                              // initial energy and temperature
   static double Rq3[60][20];  // qg-qg              CT13
   static double Rq4[60][20];  // qiqj-qiqj          CT4
   static double Rq5[60][20];  // qiqi-qiqi          CT5

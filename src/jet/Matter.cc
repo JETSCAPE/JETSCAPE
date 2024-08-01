@@ -922,7 +922,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
             ////pOut[iout].set_min_color(pIn[i].min_color());
             ////pOut[iout].set_min_anti_color(pIn[i].min_anti_color());
             ////// comment out realistic color above, assume colorless for
-            ///recoiled and back-reaction parton
+            /// recoiled and back-reaction parton
             ////// for the convenience of color string fragmentation in Pythia
             pOut[iout].set_color(0);
             pOut[iout].set_anti_color(0);
@@ -2498,7 +2498,7 @@ double Matter::generate_L(double form_time) {
   }
 
   //	cout << " random number for dist = " << r << " distance generated = " <<
-  //x << endl;
+  // x << endl;
 
   return (x);
 }
@@ -2559,8 +2559,8 @@ double Matter::sud_val_GG(double h0, double h1, double h2, double loc_d,
   diff = std::abs((intg_L + intg_R - intg) / intg);
 
   //	cout << " iline, gap, diff = " << i_line << " " << h2 << " " << h1 << "
-  //" << diff << endl ; 	cout << " intg, Left , right = " << intg << " " <<
-  //intg_L << "  " << intg_R << endl;
+  //" << diff << endl ; 	cout << " intg, Left , right = " << intg << " "
+  //<< intg_L << "  " << intg_R << endl;
 
   if ((diff > approx) || (span > error)) {
     intg = sud_val_GG(h0, h1, h, loc_d, E1) + sud_val_GG(h0, h, h2, loc_d, E1);
@@ -2829,8 +2829,8 @@ double Matter::sud_val_QQ_w_M_vac_only(double M, double h0, double h1,
   diff = std::abs((intg_L + intg_R - intg) / intg);
 
   //	cout << " iline, gap, diff = " << i_line << " " << h2 << " " << h1 << "
-  //" << diff << endl ; 	cout << " intg, Left , right = " << intg << " " <<
-  //intg_L << "  " << intg_R << endl;
+  //" << diff << endl ; 	cout << " intg, Left , right = " << intg << " "
+  //<< intg_L << "  " << intg_R << endl;
 
   if ((diff > approx) || (span > error)) {
     intg = sud_val_QQ_w_M_vac_only(M, h0, h1, h, loc_d, E1) +
@@ -3351,8 +3351,8 @@ double Matter::sud_val_QG_w_M(double M, double h0, double h1, double h2,
   diff = std::abs((intg_L + intg_R - intg) / intg);
 
   //	cout << " iline, gap, diff = " << i_line << " " << h2 << " " << h1 << "
-  //" << diff << endl ; 	cout << " intg, Left , right = " << intg << " " <<
-  //intg_L << "  " << intg_R << endl;
+  //" << diff << endl ; 	cout << " intg, Left , right = " << intg << " "
+  //<< intg_L << "  " << intg_R << endl;
 
   if ((diff > approx) || (span > error)) {
     intg = sud_val_QG_w_M(M, h0, h1, h, loc_d, E1) +
@@ -3944,7 +3944,7 @@ double Matter::fillQhatTab(double y) {
 }
 
 //////////////////////////////////General Function of
-///q-hat//////////////////////////////////
+/// q-hat//////////////////////////////////
 // E is the energy and muSquare is the virtuality of the parton
 double Matter::GeneralQhatFunction(int QhatParametrization, double Temperature,
                                    double EntropyDensity, double FixAlphas,
@@ -4020,7 +4020,7 @@ double Matter::GeneralQhatFunction(int QhatParametrization, double Temperature,
 }
 
 /////////////////// Running alphas for HTL-qhat: Do not use for
-///others///////////////////
+/// others///////////////////
 double Matter::RunningAlphaS(double muSquare) {
   int ActiveFlavor = 3;
   double Square_Lambda_QCD_HTL =
@@ -4146,7 +4146,7 @@ double Matter::VirtualityQhatFunction(int QhatParametrization, double enerLoc,
   return ans;
 }
 ////////////Modification of elastic scattering probability due to modified
-///q-hat//////
+/// q-hat//////
 double Matter::ModifiedProbability(int QhatParametrization, double tempLoc,
                                    double sdLoc, double enerLoc,
                                    double muSquare) {

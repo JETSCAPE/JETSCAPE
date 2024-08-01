@@ -455,7 +455,7 @@ class HybridHadronization : public HadronizationModule<HybridHadronization> {
 
     // overloading a few operators; ++, --, []
     //++ adds an empty particle, -- removes last particle, [i] allows access to
-    //i'th particle directly
+    // i'th particle directly
     /*	parton_collection& operator++(){HHparton par; partons.push_back(par);}
             parton_collection operator++(int){
                     parton_collection temp(*this);
@@ -496,7 +496,7 @@ class HybridHadronization : public HadronizationModule<HybridHadronization> {
 
     // overloading a few operators; ++, --, []
     //++ adds an empty particle, -- removes last particle, [i] allows access to
-    //i'th particle directly
+    // i'th particle directly
     /*	hadron_collection& operator++(){HHhadron had; hadrons.push_back(had);}
             hadron_collection operator++(int){
                     hadron_collection temp(*this);
