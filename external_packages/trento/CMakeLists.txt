@@ -1,8 +1,8 @@
-
 cmake_minimum_required(VERSION 3.4)
-project(trento VERSION 1.5.1 LANGUAGES CXX)
-
-
+project(
+  trento
+  VERSION 1.5.1
+  LANGUAGES CXX)
 
 # require at least C++11
 if(NOT "${CMAKE_CXX_STANDARD}")
@@ -21,24 +21,17 @@ if(STATIC)
   set(CMAKE_LINK_SEARCH_START_STATIC TRUE)
 endif()
 
-
-#old
-#set(CMAKE_CXX_STANDARD 11)
-#set(CMAKE_CXX_STANDARD_REQUIRED ON)
-#include(CheckCXXCompilerFlag)
-#check_cxx_compiler_flag("-std=c++11" CXX11)
-#if(NOT CXX11)
-#message(FATAL_ERROR "Your compiler does not support C++11")
-#endif()
-
+# old set(CMAKE_CXX_STANDARD 11) set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# include(CheckCXXCompilerFlag) check_cxx_compiler_flag("-std=c++11" CXX11)
+# if(NOT CXX11) message(FATAL_ERROR "Your compiler does not support C++11")
+# endif()
 
 # Find and use Boost.
 find_package(Boost 1.60 REQUIRED COMPONENTS filesystem program_options system)
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 message(STATUS "${Boost_INCLUDE_DIRS}, ${Boost_LIBRARIES}")
-# Find and use GSL.
-#set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/src/CMake) 
-FIND_PACKAGE(GSL REQUIRED)
+# Find and use GSL. set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/src/CMake)
+find_package(GSL REQUIRED)
 include_directories(${GSL_INCLUDE_DIR} ${GSLCBLAS_INCLUDE_DIR})
 message(STATUS ${GSL_INCLUDE_DIR} ${GSLCBLAS_INCLUDE_DIR})
 # Find the HDF5 C++ library.  The CMake FindHDF5 module does not work reliably,
@@ -65,7 +58,8 @@ else()
       set(H5CXX_ARG "-shlib")
     endif()
     # parse output to extract include and library dirs (-I and -L flags)
-    execute_process(COMMAND ${H5CXX} -show ${H5CXX_ARG} OUTPUT_VARIABLE H5CXX_OUTPUT)
+    execute_process(COMMAND ${H5CXX} -show ${H5CXX_ARG}
+                    OUTPUT_VARIABLE H5CXX_OUTPUT)
     foreach(TYPE "INCLUDE" "LIBRARY")
       string(SUBSTRING ${TYPE} 0 1 FLAG)
       set(FLAG " -${FLAG}")
@@ -101,15 +95,17 @@ if(HDF5_FOUND)
   add_definitions(-DTRENTO_HDF5)
   message(STATUS "Found HDF5:${HDF5_VARS_FOUND}")
 else()
-  message(STATUS "HDF5 not found (missing:${HDF5_VARS_MISSING}, found:${HDF5_VARS_FOUND})")
+  message(
+    STATUS
+      "HDF5 not found (missing:${HDF5_VARS_MISSING}, found:${HDF5_VARS_FOUND})")
 endif()
-
 
 set(PROJECT_VERSION_MAJOR 1)
 set(PROJECT_VERSION_MINOR 0)
 set(PROJECT_VERSION_PATCH 0)
 set(PROJECT_VERSION
-  "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
+    "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
+)
 
 # default build type: Release
 if(NOT CMAKE_BUILD_TYPE)
@@ -118,9 +114,10 @@ endif()
 
 # default install prefix: ~/.local
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/.local"
+  set(CMAKE_INSTALL_PREFIX
+      "$ENV{HOME}/.local"
       CACHE PATH "Install path prefix, prepended onto install directories."
-      FORCE)
+            FORCE)
 endif()
 
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
@@ -137,10 +134,10 @@ if(NATIVE)
       string(APPEND CMAKE_CXX_FLAGS " -xHost")
     endif()
   else()
-    # All other compilers (gcc-like): search for -m flags;
-    # if not found add -march=native.
+    # All other compilers (gcc-like): search for -m flags; if not found add
+    # -march=native.
     if(NOT CMAKE_CXX_FLAGS MATCHES "(^| )-m[^ ]+")
-      #string(APPEND CMAKE_CXX_FLAGS " -march=native")
+      # string(APPEND CMAKE_CXX_FLAGS " -march=native")
     endif()
   endif()
 endif()
@@ -150,7 +147,11 @@ string(APPEND CMAKE_CXX_FLAGS " -Wall -Wextra")
 option(MORE_WARNINGS "enable more compiler warnings" ON)
 if(MORE_WARNINGS AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
   # adapted from http://stackoverflow.com/a/9862800
-  string(APPEND CMAKE_CXX_FLAGS " -Wpedantic -Wcast-align -Wcast-qual -Wdisabled-optimization -Wformat=2 -Wmissing-declarations -Wmissing-include-dirs -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wsign-conversion -Wsign-promo -Wstrict-overflow=2 -Wundef")
+  string(
+    APPEND
+    CMAKE_CXX_FLAGS
+    " -Wpedantic -Wcast-align -Wcast-qual -Wdisabled-optimization -Wformat=2 -Wmissing-declarations -Wmissing-include-dirs -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wsign-conversion -Wsign-promo -Wstrict-overflow=2 -Wundef"
+  )
 endif()
 
 # disable silly clang warnings
@@ -158,24 +159,24 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   string(APPEND CMAKE_CXX_FLAGS " -Wno-missing-braces -Wno-c++11-narrowing")
 endif()
 
-# This statement prevents JETSCAPE from being built in Debug mode and
-# is commented out until a better solution is found.
-# string(APPEND CMAKE_CXX_FLAGS_DEBUG " -Werror")
+# This statement prevents JETSCAPE from being built in Debug mode and is
+# commented out until a better solution is found. string(APPEND
+# CMAKE_CXX_FLAGS_DEBUG " -Werror")
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   string(APPEND CMAKE_CXX_FLAGS_DEBUG " -Og")
 endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-  # Check for sanitizer support.
-  # (see e.g. https://code.google.com/p/address-sanitizer/wiki/AddressSanitizer)
+  # Check for sanitizer support. (see e.g.
+  # https://code.google.com/p/address-sanitizer/wiki/AddressSanitizer)
   # check_cxx_compiler_flag() doesn't work here because it doesn't set the test
   # flag at link time, so use check_cxx_source_compiles() instead.
   include(CheckCXXSourceCompiles)
   set(CMAKE_REQUIRED_QUIET TRUE)
 
-  # First try both AddressSanitizer and UndefinedBehaviorSanitizer.
-  # Disable the vptr sanitizer because it throws errors with boost::any.
+  # First try both AddressSanitizer and UndefinedBehaviorSanitizer. Disable the
+  # vptr sanitizer because it throws errors with boost::any.
   set(CMAKE_REQUIRED_FLAGS "-fsanitize=address,undefined -fno-sanitize=vptr")
   check_cxx_source_compiles("int main() { return 0; }" AddrUndefSanitizer)
 
@@ -190,9 +191,9 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   endif()
 endif()
 
-# This statement prevents JETSCAPE from being built in Debug mode and
-# is commented out until a better solution is found.
-# string(APPEND CMAKE_CXX_FLAGS_DEBUG " ${CMAKE_REQUIRED_FLAGS} --coverage")
+# This statement prevents JETSCAPE from being built in Debug mode and is
+# commented out until a better solution is found. string(APPEND
+# CMAKE_CXX_FLAGS_DEBUG " ${CMAKE_REQUIRED_FLAGS} --coverage")
 
 set(LIBRARY_NAME "lib${PROJECT_NAME}")
 
