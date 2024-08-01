@@ -11,19 +11,82 @@ using namespace Jetscape;
 class ThermalPartonSampler
 {
  public:
-	//constructor - initializes variables and random number generator
+	/**
+     * @brief Constructor that initializes the random number generator 
+	 * and thermal freeze-out temperature.
+     * 
+     * @param ran_seed Random seed for the random number generator.
+     * @param hydro_Tc Critical temperature for hydrodynamic evolution (in GeV).
+     */
 	ThermalPartonSampler(unsigned int ran_seed, double hydro_Tc);
 
-	//sampler - samples thermal partons (u,d,s) from brick or 2+1d / 3+1d hydro
+	/**
+	 * @brief Samples partons within a brick-like hydrodynamics setup.
+	 * 
+	 * Generates partons according to the specified parameters within a brick-shaped 
+	 * hypersurface defined by the length (L) and width (W) parameters. Partons are 
+	 * sampled according to Fermi-Dirac distributions for light (u, d) and strange 
+	 * quarks.
+	 * 
+	 * @details
+	 * - Checks and corrects negative length and width parameters.
+	 * - Defines the hypersurface vectors in the lab frame and boosts them to the 
+	 *   rest frame.
+	 * - Calculates the number of quarks (light and strange) using Fermi-Dirac 
+	 *   distributions and volume.
+	 * - Generates partons for light (u, d) and strange quarks based on Poisson 
+	 *   distributions of expected numbers.
+	 * - Adjusts the number of generated particles if overridden by `SetNumLight` 
+	 *   and `SetNumStrange`.
+	 * - Shuffles the generated `Plist` if `ShuffleList` is true.
+	 */
 	void sample_brick();
+	
+	/**
+	 * @brief Samples partons on a freeze-out hypersurface in 2+1D setup.
+	 * 
+	 * Samples light (u, d, u-bar, d-bar) and strange (s, s-bar) quarks based on 
+	 * local temperature and velocity. CDFs are precomputed and cached to optimize 
+	 * sampling.
+	 * 
+	 * @param eta_max Maximum pseudorapidity to sample over.
+	 */
 	void sample_2p1d(double eta_max);
+
+	/**
+	 * @brief Samples partons on a freeze-out hypersurface in 3+1D setup.
+	 * 
+	 * Samples light (u, d, u-bar, d-bar) and strange (s, s-bar) quarks based on 
+	 * local temperature and velocity. CDFs are precomputed and cached to optimize 
+	 * sampling.
+	 * 
+	 * @param Cartesian_hydro Boolean indicating whether Cartesian hydrodynamic 
+	 * coordinates are used. If false, uses Milne coordinates.
+	 */
 	void sample_3p1d(bool Cartesian_hydro=false);
 
-	//to load a hypersurface
+	/**
+     * @brief Sets the hypersurface data.
+     * 
+     * @param surf_in 2D vector representing the hypersurface data.
+     */
 	void set_hypersurface(std::vector<std::vector<double>> surf_in){surface = surf_in;}
 
-	//setters for params
+	/**
+     * @brief Sets the brick dimensions.
+     * 
+     * @param len_bri Length of the brick in fm.
+     * @param wid_bri Width of the brick in fm.
+     */
 	void brick_length_width(double len_bri, double wid_bri){L = 2.*len_bri + 4.; W = 2.*wid_bri + 4.; Time = len_bri;} // +4 gives 2fm additional brick in each direction
+	
+	/**
+     * @brief Sets the flow velocity of the brick.
+     * 
+     * @param vx_in Flow velocity component in the x-direction.
+     * @param vy_in Flow velocity component in the y-direction.
+     * @param vz_in Flow velocity component in the z-direction.
+     */
 	void brick_flow(double vx_in, double vy_in, double vz_in){Vx = vx_in; Vy = vy_in; Vz = vz_in;}
 
 	//getters for thermal partons
@@ -56,9 +119,19 @@ class ThermalPartonSampler
 	// random number handling
 	std::mt19937_64 rng_engine; //RNG - Mersenne Twist - 64 bit
 	std::uniform_real_distribution<double> distribution{0.0, 1.0}; // Uniform distribution between 0 and 1
-	// Function to generate a random number between 0 and 1
+	
+	/**
+     * @brief Generates a random number between 0 and 1.
+     * 
+     * @return A random double in the range [0.0, 1.0].
+     */
     double ran() {return distribution(rng_engine);}
-	// Function to get the random number generator
+	
+	/**
+     * @brief Gets the random number generator.
+     * 
+     * @return A reference to the Mersenne Twister random number generator.
+     */
     std::mt19937_64& getRandomGenerator() {return rng_engine;}
 
 	
@@ -67,44 +140,159 @@ class ThermalPartonSampler
 
 	// Vector to pre-tabulate the Bessel function K2
 	std::vector<double> BesselK2;
+
+	/**
+	 * @brief Initializes the lookup table for the modified Bessel function of the 
+	 * second kind, K2(x).
+	 * 
+	 * This function calculates K2(x) for x values from 0.001 to 400.0 with an 
+	 * increment of 0.001, and stores the results in the BesselK2 vector for 
+	 * efficient lookup.
+	 */
 	void InitializeBesselK2();
-	// Bessel function K2
+	
+	/**
+	 * @brief Computes the modified Bessel function of the second kind, K2(x), 
+	 * using a lookup table for efficiency.
+	 * 
+	 * This function returns the value of the modified Bessel function K2(x) for a 
+	 * given argument. If the argument is within the precomputed range, it uses 
+	 * linear interpolation between the nearest values in the lookup table to 
+	 * provide a fast approximation. If the argument is outside the precomputed 
+	 * range, it directly computes the value using the GSL library.
+	 * 
+	 * @param arg The argument for which the Bessel function value is to be 
+	 * computed.
+	 * @return The value of K2(arg).
+	 */
 	double BesselK2function(double arg);
 
-	// Fermi-Dirac distribution momentum integral
-	// This uses the same method as iSS to calculate the momentum integral
+	/**
+	 * @brief Computes the integral of the Fermi-Dirac distribution over momentum.
+	 * 
+	 * This function calculates the integral of the Fermi-Dirac distribution, which 
+	 * is used to determine the equilibrium number density of fermions at a given 
+	 * temperature (T) and mass (m). The calculation is performed using a truncated 
+	 * series expansion.
+	 * 
+	 * @param T The temperature.
+	 * @param m The mass of the fermion.
+	 * @return The computed equilibrium number density, N_eq.
+	 */
 	double FermiDiracDistributionMomentumIntegral(double T, double m);
 	
-	// Fermi-Dirac distribution without normalization factors
+	/**
+	 * @brief Computes the Fermi-Dirac distribution function.
+	 * 
+	 * This function calculates the value of the Fermi-Dirac distribution for a 
+	 * given momentum (p), mass (m), and temperature (T).
+	 * The Fermi-Dirac distribution describes the probability of occupancy of a 
+	 * quantum state by a fermion at thermal equilibrium.
+	 * 
+	 * @param p The momentum of the fermion.
+	 * @param m The mass of the fermion.
+	 * @param T The temperature.
+	 * @return The value of the Fermi-Dirac distribution function.
+	 */
 	double FermiDiracDistribution(double p, double m, double T);
 
-	// Cumulative Distribution Function (CDF) generator in thermal rest frame  
-	// (quark=1: light, quark=2 strange)
+	/**
+	 * @brief Generates a cumulative distribution function (CDF) table for a given 
+	 * temperature, mass, and quark type.
+	 * 
+	 * This function computes the cumulative distribution function (CDF) for the 
+	 * Fermi-Dirac distribution at a specified temperature (T) and mass (m) for 
+	 * either light or strange quarks. The CDF values are stored in the appropriate 
+	 * table (CDFTabLight or CDFTabStrange).
+	 * 
+	 * @param T The temperature.
+	 * @param m The mass of the quark.
+	 * @param quark An integer indicating the type of quark (1 for light quark, 
+	 * 2 for strange quark).
+	 */
 	void CDFGenerator(double T, double m, int quark);
 	
-	// Samples parton momentum in rest frame
-	// Input temperature is assumed to be in fm^-1
+	/**
+	 * @brief Samples a momentum vector from the thermal distribution for a 
+	 * specified quark type.
+	 * 
+	 * This function generates a random momentum vector for a quark (light or 
+	 * strange) using the cumulative distribution function (CDF) table. The sampling 
+	 * is performed by generating a random probability and finding the corresponding 
+	 * momentum magnitude using binary search. The momentum vector is then generated
+	 * with a random direction.
+	 * 
+	 * @param T The temperature in fm^{-1}.
+	 * @param quark An integer indicating the type of quark (1 for light quark, 
+	 * otherwise for strange quark).
+	 * @return A tuple containing the components of the momentum vector 
+	 * (NewX, NewY, NewZ) and the magnitude (NewP).
+	 */
 	std::tuple<double, double, double, double> MomentumSampler(double T, int quark);
 
-	// Set up the Lorentz boost matrix and the (gamma, v) vector
+	/**
+	 * @brief Computes the Lorentz boost matrix corresponding to a given velocity 
+	 * vector.
+	 * 
+	 * This function calculates the Lorentz boost matrix for transforming from the 
+	 * laboratory frame to the rest frame with a specified flow velocity vector. 
+	 * 
+	 * @param v A vector containing the components of the velocity (v0, vx, vy, vz).
+	 * @param BoostMatrix A 4x4 matrix that will be filled with the Lorentz boost 
+	 * matrix.
+	 * @param brick A boolean flag indicating whether the velocity vector is for 
+	 * a "brick" flow (true) or a general case (false).
+	 */
     void LorentzBoostMatrix(std::vector<double>& v, std::vector<std::vector<double>>& BoostMatrix, bool brick);
 
-    // Perform Lorentz boost on vector
+    /**
+	 * @brief Applies a Lorentz boost transformation to a 4-vector using a given
+	 * boost matrix.
+	 * 
+	 * This function performs a Lorentz boost transformation on a 4-vector `x` 
+	 * using the specified 4x4 boost matrix `BoostMatrix`. 
+	 * 
+	 * @param x A 4-element vector representing the original 4-vector to be boosted.
+	 * @param BoostMatrix A 4x4 matrix representing the Lorentz boost matrix.
+	 * @return A 4-element vector containing the components of the boosted 4-vector.
+	 */
     std::vector<double> LorentzBoost(std::vector<double>& x, std::vector<std::vector<double>>& BoostMatrix);
 
-    // Sample partons and fill Plist
+    /**
+	 * @brief Samples partons according to specified parameters.
+	 * 
+	 * Generates a specified number of partons (`Npartons`) with properties 
+	 * determined by the temperature (`T`), quark type (`quark`), and configuration 
+	 * (`brick`). Positions and momenta are stored in the member variable `Plist`, 
+	 * which is a vector of vectors representing each parton's properties.
+	 * 
+	 * @param Npartons Number of partons to sample.
+	 * @param quark Type of quark to sample (1 for U/D quarks, 2 for S quarks).
+	 * @param T Temperature of the system.
+	 * @param brick Flag indicating whether to use a brick configuration.
+	 * @param CPos Center position in spatial coordinates.
+	 * @param BoostMatrix Lorentz boost matrix for momentum transformation.
+	 * @param slice_boost Flag indicating 2+1D boost configuration.
+	 * @param eta_slice Pseudo-rapidity for 2+1D boost.
+	 */
     void SamplePartons(int Npartons, int quark, double T, bool brick, std::vector<double>& CPos, std::vector<std::vector<double>>& BoostMatrix, bool slice_boost, double eta_slice);
 
-	// Function to get the closest cached temperature to the target temperature - CDF tabulated
-    double getClosestCachedTemp(const std::unordered_map<double, std::vector<std::vector<double>>>& cache, double targetTemp) const;
-	// Function to create the CDF cache within a certain temperature range of five percent
-	// using 20 temperature points in that range
+	/**
+	 * @brief Creates an entry of the cumulative distribution function (CDF) data 
+	 * in a cache.
+	 * 
+	 * @param TRead Input temperature to read or update in the cache.
+	 * @param mq Quark mass associated with the CDF data.
+	 * @param quarkType Type of quark (1 for light, 2 for strange).
+	 * @param cache Reference to the cache storing CDF data for different 
+	 * temperatures.
+	 * @param CDFTab Reference to the vector storing the CDF table for the current 
+	 * temperature.
+	 */
 	void createCDFCacheEntry(double& TRead, double xmq, int quarkType, 
                         std::unordered_map<double,
 						std::vector<std::vector<double>>>& cache, 
                         std::vector<std::vector<double>>& CDFTab);
-	// Function to get the closest cached temperature to the target temperature - Fermi-Dirac integral tabulated
-	double getClosestCachedTempFermiDiracIntegral(const std::unordered_map<double, double>& cache, double targetTemp) const;
 
 	// Constants
 	double degeneracy_ud; // Degeneracy of UD quarks

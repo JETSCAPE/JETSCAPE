@@ -62,18 +62,6 @@ ThermalPartonSampler::ThermalPartonSampler(unsigned int ran_seed, double hydro_T
 
 }
 
-/**
- * @brief Creates an entry of the cumulative distribution function (CDF) data 
- * in a cache.
- * 
- * @param TRead Input temperature to read or update in the cache.
- * @param mq Quark mass associated with the CDF data.
- * @param quarkType Type of quark (1 for light, 2 for strange).
- * @param cache Reference to the cache storing CDF data for different 
- * temperatures.
- * @param CDFTab Reference to the vector storing the CDF table for the current 
- * temperature.
- */
 void ThermalPartonSampler::createCDFCacheEntry(double& TRead, double mq, int quarkType, 
                                           std::unordered_map<double, 
 										  std::vector<std::vector<double>>>& cache, 
@@ -97,9 +85,8 @@ void ThermalPartonSampler::createCDFCacheEntry(double& TRead, double mq, int qua
  * @return The cached temperature that is closest to `targetTemp`, or -1.0 if 
  * the cache is empty.
  */
-double ThermalPartonSampler::getClosestCachedTemp(const std::unordered_map<double, 
-										std::vector<std::vector<double>>>& cache, 
-										double targetTemp) const {
+template<typename Cache>
+double getClosestCachedTemp(const Cache& cache, double targetTemp) {
     double closestTemp = -1.0;
     double minDistance = std::numeric_limits<double>::max();
     for (const auto& entry : cache) {
@@ -113,44 +100,6 @@ double ThermalPartonSampler::getClosestCachedTemp(const std::unordered_map<doubl
     return closestTemp;
 }
 
-/**
- * @brief Finds the temperature closest to a target temperature in a cached map
- * for the pre calculated parts of the Fermi-Dirac integral.
- * 
- * Searches through the provided cache of temperatures (`cache`) to determine
- * the temperature that is closest to the specified `targetTemp`.
- * 
- * @param cache A map where keys are cached temperatures and values are 
- * associated data.
- * @param targetTemp The target temperature for which the closest cached 
- * temperature is sought.
- * @return The cached temperature that is closest to `targetTemp`, or -1.0 if 
- * the cache is empty.
- */
-double ThermalPartonSampler::getClosestCachedTempFermiDiracIntegral(
-								const std::unordered_map<double, double>& cache, 
-								double targetTemp) const {
-    double closestTemp = -1.0;
-    double minDistance = std::numeric_limits<double>::max();
-    for (const auto& entry : cache) {
-        double cachedTemp = entry.first;
-        double distance = std::fabs(targetTemp - cachedTemp);
-        if (distance < minDistance) {
-            minDistance = distance;
-            closestTemp = cachedTemp;
-        }
-    }
-    return closestTemp;
-}
-
-/**
- * @brief Initializes the lookup table for the modified Bessel function of the 
- * second kind, K2(x).
- * 
- * This function calculates K2(x) for x values from 0.001 to 400.0 with an 
- * increment of 0.001, and stores the results in the BesselK2 vector for 
- * efficient lookup.
- */
 void ThermalPartonSampler::InitializeBesselK2() {
     double K2_x_min = 0.001;
     double K2_x_max = 400.0;
@@ -164,20 +113,6 @@ void ThermalPartonSampler::InitializeBesselK2() {
     }
 }
 
-/**
- * @brief Computes the modified Bessel function of the second kind, K2(x), 
- * using a lookup table for efficiency.
- * 
- * This function returns the value of the modified Bessel function K2(x) for a 
- * given argument. If the argument is within the precomputed range, it uses 
- * linear interpolation between the nearest values in the lookup table to 
- * provide a fast approximation. If the argument is outside the precomputed 
- * range, it directly computes the value using the GSL library.
- * 
- * @param arg The argument for which the Bessel function value is to be 
- * computed.
- * @return The value of K2(arg).
- */
 double ThermalPartonSampler::BesselK2function(double arg) {
     double K2_x_min = 0.001;
     double K2_x_max = 400.0;
@@ -191,18 +126,6 @@ double ThermalPartonSampler::BesselK2function(double arg) {
     }
 }
 
-/**
- * @brief Computes the integral of the Fermi-Dirac distribution over momentum.
- * 
- * This function calculates the integral of the Fermi-Dirac distribution, which 
- * is used to determine the equilibrium number density of fermions at a given 
- * temperature (T) and mass (m). The calculation is performed using a truncated 
- * series expansion.
- * 
- * @param T The temperature.
- * @param m The mass of the fermion.
- * @return The computed equilibrium number density, N_eq.
- */
 double ThermalPartonSampler::FermiDiracDistributionMomentumIntegral(double T, double m) {
 	int truncate_order = 10;
     double N_eq = 0.0;
@@ -220,37 +143,10 @@ double ThermalPartonSampler::FermiDiracDistributionMomentumIntegral(double T, do
     return N_eq;
 }
 
-/**
- * @brief Computes the Fermi-Dirac distribution function.
- * 
- * This function calculates the value of the Fermi-Dirac distribution for a 
- * given momentum (p), mass (m), and temperature (T).
- * The Fermi-Dirac distribution describes the probability of occupancy of a 
- * quantum state by a fermion at thermal equilibrium.
- * 
- * @param p The momentum of the fermion.
- * @param m The mass of the fermion.
- * @param T The temperature.
- * @return The value of the Fermi-Dirac distribution function.
- */
 double ThermalPartonSampler::FermiDiracDistribution(double p, double m, double T){
 	return 1./(exp(sqrt(p*p + m*m)/T) + 1.);
 }
 
-/**
- * @brief Generates a cumulative distribution function (CDF) table for a given 
- * temperature, mass, and quark type.
- * 
- * This function computes the cumulative distribution function (CDF) for the 
- * Fermi-Dirac distribution at a specified temperature (T) and mass (m) for 
- * either light or strange quarks. The CDF values are stored in the appropriate 
- * table (CDFTabLight or CDFTabStrange).
- * 
- * @param T The temperature.
- * @param m The mass of the quark.
- * @param quark An integer indicating the type of quark (1 for light quark, 
- * 2 for strange quark).
- */
 void ThermalPartonSampler::CDFGenerator(double T, double m, int quark) {
     double PStep;
     double PMax = 10. * T;  // CutOff for Integration
@@ -289,22 +185,6 @@ void ThermalPartonSampler::CDFGenerator(double T, double m, int quark) {
     }
 }
 
-/**
- * @brief Samples a momentum vector from the thermal distribution for a 
- * specified quark type.
- * 
- * This function generates a random momentum vector for a quark (light or 
- * strange) using the cumulative distribution function (CDF) table. The sampling 
- * is performed by generating a random probability and finding the corresponding 
- * momentum magnitude using binary search. The momentum vector is then generated
- * with a random direction.
- * 
- * @param T The temperature.
- * @param quark An integer indicating the type of quark (1 for light quark, 
- * otherwise for strange quark).
- * @return A tuple containing the components of the momentum vector 
- * (NewX, NewY, NewZ) and the magnitude (NewP).
- */
 std::tuple<double, double, double, double> ThermalPartonSampler::MomentumSampler(double T, int quark) {
     double PMag;
     double PMax = 10. * T;  // CutOff for Integration
@@ -351,19 +231,6 @@ std::tuple<double, double, double, double> ThermalPartonSampler::MomentumSampler
 	return std::make_tuple(NewX, NewY, NewZ, NewP);
 }
 
-/**
- * @brief Computes the Lorentz boost matrix corresponding to a given velocity 
- * vector.
- * 
- * This function calculates the Lorentz boost matrix for transforming from the 
- * laboratory frame to the rest frame with a specified flow velocity vector. 
- * 
- * @param v A vector containing the components of the velocity (v0, vx, vy, vz).
- * @param BoostMatrix A 4x4 matrix that will be filled with the Lorentz boost 
- * matrix.
- * @param brick A boolean flag indicating whether the velocity vector is for 
- * a "brick" flow (true) or a general case (false).
- */
 void ThermalPartonSampler::LorentzBoostMatrix(std::vector<double>& v, std::vector<std::vector<double>>& BoostMatrix, bool brick) {
 	double v_square = 0.0;
 	if (!brick) {
@@ -428,17 +295,6 @@ void ThermalPartonSampler::LorentzBoostMatrix(std::vector<double>& v, std::vecto
 	}
 }
 
-/**
- * @brief Applies a Lorentz boost transformation to a 4-vector using a given
- * boost matrix.
- * 
- * This function performs a Lorentz boost transformation on a 4-vector `x` 
- * using the specified 4x4 boost matrix `BoostMatrix`. 
- * 
- * @param x A 4-element vector representing the original 4-vector to be boosted.
- * @param BoostMatrix A 4x4 matrix representing the Lorentz boost matrix.
- * @return A 4-element vector containing the components of the boosted 4-vector.
- */
 std::vector<double> ThermalPartonSampler::LorentzBoost(std::vector<double>& x, std::vector<std::vector<double>>& BoostMatrix) {
 	std::vector<double> result(4, 0.0);
 	for (int i = 0; i < 4; i++) {
@@ -449,23 +305,6 @@ std::vector<double> ThermalPartonSampler::LorentzBoost(std::vector<double>& x, s
 	return result;
 }
 
-/**
- * @brief Samples partons according to specified parameters.
- * 
- * Generates a specified number of partons (`Npartons`) with properties 
- * determined by the temperature (`T`), quark type (`quark`), and configuration 
- * (`brick`). Positions and momenta are stored in the member variable `Plist`, 
- * which is a vector of vectors representing each parton's properties.
- * 
- * @param Npartons Number of partons to sample.
- * @param quark Type of quark to sample (1 for U/D quarks, 2 for S quarks).
- * @param T Temperature of the system.
- * @param brick Flag indicating whether to use a brick configuration.
- * @param CPos Center position in spatial coordinates.
- * @param BoostMatrix Lorentz boost matrix for momentum transformation.
- * @param slice_boost Flag indicating 2+1D boost configuration.
- * @param eta_slice Pseudo-rapidity for 2+1D boost.
- */
 void ThermalPartonSampler::SamplePartons(int Npartons, int quark, double T, bool brick, std::vector<double>& CPos, std::vector<std::vector<double>>& BoostMatrix, bool slice_boost, double eta_slice) {
 	// Sample Npartons partons
 	for (int i = 0; i < Npartons; i++) {
@@ -559,26 +398,6 @@ void ThermalPartonSampler::SamplePartons(int Npartons, int quark, double T, bool
 	}
 }
 
-/**
- * @brief Samples partons within a brick-like hydrodynamics setup.
- * 
- * Generates partons according to the specified parameters within a brick-shaped 
- * hypersurface defined by the length (L) and width (W) parameters. Partons are 
- * sampled according to Fermi-Dirac distributions for light (u, d) and strange 
- * quarks.
- * 
- * @details
- * - Checks and corrects negative length and width parameters.
- * - Defines the hypersurface vectors in the lab frame and boosts them to the 
- *   rest frame.
- * - Calculates the number of quarks (light and strange) using Fermi-Dirac 
- *   distributions and volume.
- * - Generates partons for light (u, d) and strange quarks based on Poisson 
- *   distributions of expected numbers.
- * - Adjusts the number of generated particles if overridden by `SetNumLight` 
- *   and `SetNumStrange`.
- * - Shuffles the generated `Plist` if `ShuffleList` is true.
- */
 void ThermalPartonSampler::sample_brick(){
 	//preliminary parameter checks
 	if(L < 0.){L = -L; JSWARN << "Negative brick length - setting to positive " << L << " fm.";}
@@ -612,8 +431,8 @@ void ThermalPartonSampler::sample_brick(){
 	double dSigma_dot_u = CMSigma[0] * Vel[0] - CMSigma[1] * Vel[1] - CMSigma[2] * Vel[2] - CMSigma[3] * Vel[3];
 
 	// get the closest cached temperature to the hydrodynamic temperature
-	double TCachedLight = getClosestCachedTempFermiDiracIntegral(CacheFermiDiracIntegralLight, hydroTc);
-	double TCachedStrange = getClosestCachedTempFermiDiracIntegral(CacheFermiDiracIntegralStrange, hydroTc);
+	double TCachedLight = getClosestCachedTemp(CacheFermiDiracIntegralLight, hydroTc);
+	double TCachedStrange = getClosestCachedTemp(CacheFermiDiracIntegralStrange, hydroTc);
 
 	// get the precomputed part of the Fermi-Dirac integrals for light and strange quarks from cache
 	// U, D, UBAR, DBAR QUARKS
@@ -669,16 +488,6 @@ void ThermalPartonSampler::sample_brick(){
 	thermalP.close();*/
 }
 
-/**
- * @brief Samples partons on a freeze-out hypersurface in 3+1D setup.
- * 
- * Samples light (u, d, u-bar, d-bar) and strange (s, s-bar) quarks based on 
- * local temperature and velocity. CDFs are precomputed and cached to optimize 
- * sampling.
- * 
- * @param Cartesian_hydro Boolean indicating whether Cartesian hydrodynamic 
- * coordinates are used. If false, uses Milne coordinates.
- */
 void ThermalPartonSampler::sample_3p1d(bool Cartesian_hydro){
 
 	// Loop over the freeze-out surface
@@ -734,8 +543,8 @@ void ThermalPartonSampler::sample_3p1d(bool Cartesian_hydro){
 		// get the precomputed part of the Fermi-Dirac integrals for light and strange quarks from cache
 		double dSigma_dot_u = CMSigma[0] * Vel[0] - CMSigma[1] * Vel[1] - CMSigma[2] * Vel[2] - CMSigma[3] * Vel[3];
 		// get the precomputed part of the Fermi-Dirac integrals for light and strange quarks from cache closest to the temperature of the cell
-		double TCacheLight = getClosestCachedTempFermiDiracIntegral(CacheFermiDiracIntegralLight, TRead);
-		double TCacheStrange = getClosestCachedTempFermiDiracIntegral(CacheFermiDiracIntegralStrange, TRead);
+		double TCacheLight = getClosestCachedTemp(CacheFermiDiracIntegralLight, TRead);
+		double TCacheStrange = getClosestCachedTemp(CacheFermiDiracIntegralStrange, TRead);
 		double NumLight = CacheFermiDiracIntegralLight[TCacheLight] * degeneracy_ud * dSigma_dot_u / (2.*pi*pi);
 		double NumStrange = CacheFermiDiracIntegralStrange[TCacheStrange] * degeneracy_s * dSigma_dot_u / (2.*pi*pi);
 
@@ -774,15 +583,7 @@ void ThermalPartonSampler::sample_3p1d(bool Cartesian_hydro){
 	thermalP.close();*/
 }
 
-/**
- * @brief Samples partons on a freeze-out hypersurface in 2+1D setup.
- * 
- * Samples light (u, d, u-bar, d-bar) and strange (s, s-bar) quarks based on 
- * local temperature and velocity. CDFs are precomputed and cached to optimize 
- * sampling.
- * 
- * @param eta_max Maximum pseudorapidity to sample over.
- */
+
 void ThermalPartonSampler::sample_2p1d(double eta_max){
 
 	// precompute CDFs and store them in a cache
@@ -848,8 +649,8 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 			// get the precomputed part of the Fermi-Dirac integrals for light and strange quarks from cache
 			double dSigma_dot_u = CMSigma[0] * Vel[0] - CMSigma[1] * Vel[1] - CMSigma[2] * Vel[2] - CMSigma[3] * Vel[3];
 			// get the precomputed part of the Fermi-Dirac integrals for light and strange quarks from cache closest to the temperature of the cell
-			double TCacheLight = getClosestCachedTempFermiDiracIntegral(CacheFermiDiracIntegralLight, TRead);
-			double TCacheStrange = getClosestCachedTempFermiDiracIntegral(CacheFermiDiracIntegralStrange, TRead);
+			double TCacheLight = getClosestCachedTemp(CacheFermiDiracIntegralLight, TRead);
+			double TCacheStrange = getClosestCachedTemp(CacheFermiDiracIntegralStrange, TRead);
 
 			double NumLight = CacheFermiDiracIntegralLight[TCacheLight] * degeneracy_ud * dSigma_dot_u / (2.*pi*pi);
 			double NumStrange = CacheFermiDiracIntegralStrange[TCacheStrange] * degeneracy_s * dSigma_dot_u / (2.*pi*pi);
