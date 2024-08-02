@@ -106,6 +106,33 @@ class ThermalPartonSampler
 	int th_nL(){return num_ud;}
 	int th_nS(){return num_s;}
 
+	// getter functions for the brick parameters
+	double getL(){return L;}
+	double getW(){return W;}
+	double getTime(){return Time;}
+	double getVx(){return Vx;}
+	double getVy(){return Vy;}
+	double getVz(){return Vz;}
+
+	// getter functions for the cached CDFs for testing
+	std::unordered_map<double, std::vector<std::vector<double>>>& getCacheCDFLight(){return CacheCDFLight;}
+	std::unordered_map<double, std::vector<std::vector<double>>>& getCacheCDFStrange(){return CacheCDFStrange;}
+
+	/**
+	 * @brief Computes the modified Bessel function of the second kind, K2(x), 
+	 * using a lookup table for efficiency.
+	 * 
+	 * This function returns the value of the modified Bessel function K2(x) for a 
+	 * given argument. If the argument is within the precomputed range, it uses 
+	 * linear interpolation between the nearest values in the lookup table to 
+	 * provide a fast approximation. If the argument is outside the precomputed 
+	 * range, it directly computes the value using the GSL library.
+	 * 
+	 * @param arg The argument for which the Bessel function value is to be 
+	 * computed.
+	 * @return The value of K2(arg).
+	 */
+	double BesselK2function(double arg);
 
  private:
 
@@ -150,22 +177,6 @@ class ThermalPartonSampler
 	 * efficient lookup.
 	 */
 	void InitializeBesselK2();
-	
-	/**
-	 * @brief Computes the modified Bessel function of the second kind, K2(x), 
-	 * using a lookup table for efficiency.
-	 * 
-	 * This function returns the value of the modified Bessel function K2(x) for a 
-	 * given argument. If the argument is within the precomputed range, it uses 
-	 * linear interpolation between the nearest values in the lookup table to 
-	 * provide a fast approximation. If the argument is outside the precomputed 
-	 * range, it directly computes the value using the GSL library.
-	 * 
-	 * @param arg The argument for which the Bessel function value is to be 
-	 * computed.
-	 * @return The value of K2(arg).
-	 */
-	double BesselK2function(double arg);
 
 	/**
 	 * @brief Computes the integral of the Fermi-Dirac distribution over momentum.
@@ -332,6 +343,35 @@ class ThermalPartonSampler
 	double L, W, Time, Vx, Vy, Vz;
 	double hydroTc; // converted from GeV into fm^-1
 };
+
+/**
+ * @brief Finds the temperature closest to a target temperature in a cached map
+ * for the CDF tables.
+ * 
+ * Searches through the provided cache of temperatures (`cache`) to determine
+ * the temperature that is closest to the specified `targetTemp`.
+ * 
+ * @param cache A map where keys are cached temperatures and values are 
+ * associated data.
+ * @param targetTemp The target temperature for which the closest cached 
+ * temperature is sought.
+ * @return The cached temperature that is closest to `targetTemp`, or -1.0 if 
+ * the cache is empty.
+ */
+template<typename Cache>
+double getClosestCachedTemp(const Cache& cache, double targetTemp) {
+    double closestTemp = -1.0;
+    double minDistance = std::numeric_limits<double>::max();
+    for (const auto& entry : cache) {
+        double cachedTemp = entry.first;
+        double distance = std::fabs(targetTemp - cachedTemp);
+        if (distance < minDistance) {
+            minDistance = distance;
+            closestTemp = cachedTemp;
+        }
+    }
+    return closestTemp;
+}
 
 
 #endif // THERMPTNSAMPLER_H

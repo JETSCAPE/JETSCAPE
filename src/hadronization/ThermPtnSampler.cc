@@ -71,35 +71,6 @@ void ThermalPartonSampler::createCDFCacheEntry(double& TRead, double mq, int qua
 	cache[TRead] = CDFTab;
 }
 
-/**
- * @brief Finds the temperature closest to a target temperature in a cached map
- * for the CDF tables.
- * 
- * Searches through the provided cache of temperatures (`cache`) to determine
- * the temperature that is closest to the specified `targetTemp`.
- * 
- * @param cache A map where keys are cached temperatures and values are 
- * associated data.
- * @param targetTemp The target temperature for which the closest cached 
- * temperature is sought.
- * @return The cached temperature that is closest to `targetTemp`, or -1.0 if 
- * the cache is empty.
- */
-template<typename Cache>
-double getClosestCachedTemp(const Cache& cache, double targetTemp) {
-    double closestTemp = -1.0;
-    double minDistance = std::numeric_limits<double>::max();
-    for (const auto& entry : cache) {
-        double cachedTemp = entry.first;
-        double distance = std::fabs(targetTemp - cachedTemp);
-        if (distance < minDistance) {
-            minDistance = distance;
-            closestTemp = cachedTemp;
-        }
-    }
-    return closestTemp;
-}
-
 void ThermalPartonSampler::InitializeBesselK2() {
     double K2_x_min = 0.001;
     double K2_x_max = 400.0;
@@ -470,8 +441,8 @@ void ThermalPartonSampler::sample_brick(){
 	JSDEBUG << "Strange particles: " << num_s;
 
 	// Shuffling PList
-	if(ShuffleList){
-		std::shuffle(&Plist[0], &Plist.back(), getRandomGenerator());
+	if (!Plist.empty() && ShuffleList) {
+    	std::shuffle(Plist.begin(), Plist.end(), getRandomGenerator());
 	}
 
 	//print Plist for testing
@@ -565,8 +536,8 @@ void ThermalPartonSampler::sample_3p1d(bool Cartesian_hydro){
 	JSDEBUG << "Strange particles: " << num_s;
 
 	//Shuffling PList
-	if(ShuffleList){
-    	std::shuffle(&Plist[0], &Plist.back(), getRandomGenerator());
+	if (!Plist.empty() && ShuffleList) {
+    	std::shuffle(Plist.begin(), Plist.end(), getRandomGenerator());
 	}
 
 	//print Plist for testing
@@ -680,8 +651,8 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 	JSDEBUG << "Light particles: " << num_ud;
 	JSDEBUG << "Strange particles: " << num_s;
 
-	if(ShuffleList){
-    	std::shuffle(&Plist[0], &Plist.back(), getRandomGenerator());
+	if (!Plist.empty() && ShuffleList) {
+    	std::shuffle(Plist.begin(), Plist.end(), getRandomGenerator());
 	}
 
 	//print Plist for testing
