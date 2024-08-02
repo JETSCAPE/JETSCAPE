@@ -1,0 +1,44 @@
+name: test code format
+
+on:
+  pull_request:
+    branches:
+      - main
+      - JETSCAPE-4.0-RC
+      - latessa/code_formatter_action
+  push:
+    branches:
+      - main
+      - JETSCAPE-4.0-RC
+      - latessa/code_formatter_action
+
+env:
+  REPO_NAME: ${{ github.event.repository.name }}
+
+jobs:
+  build:
+    name: external packages
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        path: ${{ github.event.repository.name }}
+
+    - name: Download Clang Format Check Tools
+      run: |
+        sudo apt install -y clang-format-14
+        sudo apt install -y cmake-format
+        clang-format --version
+        cmake-format --version
+
+    - name: Check Code Format
+      run: |
+        cd ${GITHUB_WORKSPACE}/${REPO_NAME}
+        mkdir -p ${HOME}/bin
+        ln -s /usr/bin/clang-format-14 ${HOME}/bin/clang-format
+        export PATH=${HOME}/bin:${PATH}
+        ./bin/codebase-format-helper.bash C++ -t
+        ./bin/codebase-format-helper.bash CMake -t

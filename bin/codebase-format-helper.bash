@@ -15,7 +15,7 @@ trap 'printf "\n"' EXIT
 # Required versions of formatting programs (global variables)
 
 declare -rg minimum_bash_version='4.3.0'
-declare -rg clang_format_required_version='13.0'
+declare -rg clang_format_required_version='14.0'
 declare -rg cmake_format_required_version='0.6.13'
 
 #===================================================================
