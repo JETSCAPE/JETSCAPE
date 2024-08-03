@@ -5,12 +5,10 @@ on:
     branches:
       - main
       - JETSCAPE-4.0-RC
-      - latessa/code_formatter_action
   push:
     branches:
       - main
       - JETSCAPE-4.0-RC
-      - latessa/code_formatter_action
 
 env:
   REPO_NAME: ${{ github.event.repository.name }}
