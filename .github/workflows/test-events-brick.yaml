@@ -4,16 +4,13 @@ on:
   pull_request:
     branches:
       - main
-      - JETSCAPE-3.6.4-RC
+      - JETSCAPE-4.0-RC
       - brick_matter_lbt
-      - latessa/dockerImage
   push:
     branches:
       - main
-      - JETSCAPE-3.6.4-RC
+      - JETSCAPE-4.0-RC
       - brick_matter_lbt
-      - latessa/dockerImage
-
 env:
   REPO_NAME: ${{ github.event.repository.name }}
 
