@@ -72,21 +72,24 @@
 #ifndef JETSCAPEPARTICLES_H
 #define JETSCAPEPARTICLES_H
 
-#include <iomanip>
-#include <iostream>
-#include <math.h>
-#include <memory>
-#include <sstream>
+// clang-format off
 #include <stdio.h>
-#include <vector>
-
-#include "FourVector.h"
+#include <math.h>
 #include "GTL/graph.h"
 #include "JetScapeConstants.h"
+#include "FourVector.h"
+#include "fjcore.hh"
 #include "JetScapeLogger.h"
 #include "PartonShower.h"
+
 #include "Pythia8/Pythia.h"
-#include "fjcore.hh"
+
+#include <vector>
+#include <memory>
+#include <iostream>
+#include <sstream>
+#include <iomanip>
+// clang-format on
 
 using std::ostream;
 using std::weak_ptr;
