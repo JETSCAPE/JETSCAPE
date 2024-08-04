@@ -72,6 +72,8 @@
 #ifndef JETSCAPEPARTICLES_H
 #define JETSCAPEPARTICLES_H
 
+// clang-format tool is disabled for these includes because clang-format
+// will alphabetize them, but their included order matters
 // clang-format off
 #include <stdio.h>
 #include <math.h>
