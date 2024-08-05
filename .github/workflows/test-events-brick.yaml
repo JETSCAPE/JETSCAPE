@@ -5,12 +5,10 @@ on:
     branches:
       - main
       - JETSCAPE-4.0-RC
-      - brick_matter_lbt
   push:
     branches:
       - main
       - JETSCAPE-4.0-RC
-      - brick_matter_lbt
 env:
   REPO_NAME: ${{ github.event.repository.name }}
 
