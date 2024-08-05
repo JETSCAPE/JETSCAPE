@@ -1,4 +1,4 @@
-name: build test
+name: build+external+unit_test
 
 on:
   pull_request:
@@ -57,3 +57,10 @@ jobs:
         export SMASH_DIR="${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages/smash/smash_code"
         cmake .. -DUSE_MUSIC=ON -DUSE_ISS=ON -DUSE_FREESTREAM=ON -DUSE_SMASH=ON
         make -j2
+
+    - name: Run Unit Tests
+      run: |
+        cd ${GITHUB_WORKSPACE}/${REPO_NAME}/build/examples/unittests
+        ./causal_liquifier
+        ./fluid_dynamics
+        ./linear_interpolation

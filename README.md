@@ -105,4 +105,4 @@ If you encounter a problem, please report the issue [here](https://github.com/JE
 ## Contributing to JETSCAPE
 
 If you would like to contribute code to JETSCAPE (new module, feature, bug fix, etc.) please open 
-a [Pull Request](https://github.com/JETSCAPE/JETSCAPE/pulls) with your changes, or an [Issue](https://github.com/JETSCAPE/JETSCAPE/issues) describing what you intend to do. For further details, see [Tips for git management](https://github.com/JETSCAPE/JETSCAPE/wiki/Tips-for-git-management) and [Code Formatting](https://github.com/JETSCAPE/JETSCAPE/wiki/Doc.Policy.CodeFormatting).
+a [Pull Request](https://github.com/JETSCAPE/JETSCAPE/pulls) with your changes, or an [Issue](https://github.com/JETSCAPE/JETSCAPE/issues) describing what you intend to do. For further details, see [Tips for git management](https://github.com/JETSCAPE/JETSCAPE/wiki/Tips-for-git-management) and [Code Formatting](https://github.com/JETSCAPE/JETSCAPE/wiki/Doc.Policy.CodeFormatting).  Please also see the [Unit Tests](https://github.com/JETSCAPE/JETSCAPE/wiki/Doc.Policy.UnitTests) page for details about writing unit tests to accompany your code contributions.

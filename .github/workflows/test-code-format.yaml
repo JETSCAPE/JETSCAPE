@@ -1,4 +1,4 @@
-name: test code format
+name: code_format test
 
 on:
   pull_request:
