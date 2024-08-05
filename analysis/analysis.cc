@@ -711,7 +711,7 @@ int histToCSV(TH1D* hist, string title){
 
 //compiles data for input to Bayesian code
 void makeDatFile(vector<vector<double>> data, string title, string header){
-    string filename = "QVir_Analysis/" + title + ".dat";
+    string filename = "QVir_Analysis/" + title;
     cout << "Making " << filename << endl;
     ofstream datfile(filename);
     datfile << header << endl;
@@ -728,6 +728,41 @@ void makeDatFile(vector<vector<double>> data, string title, string header){
     }
 
     datfile.close();
+}
+
+//scrapes through all the root files
+void makeObsPred(vector<string> directories, string input, string name, string histName, bool ee){
+    //declaring vectors to hold results
+    vector<vector<double>> pionPredicts;
+    vector<vector<double>> pionErrs;
+ 
+    //grabbing graphs from each jetscape file
+    for(int i = 0; i < directories.size(); i++){
+        //reading graph
+        string filename = directories[i] + "/root/totals.root";
+        if(ee) filename = directories[i] + "/totals.root";
+        cout << filename << ": ";
+        TFile file(filename.c_str());
+        TH1D* tempHistPions = (TH1D*)file.Get(histName.c_str()); cout << "Got hist." << endl;
+
+        //dat file data for Bayes analysis
+        vector<double> piontemp, piontemperrs;
+        for(int j = 1; j <= tempHistPions->GetNbinsX(); j++){
+            if(!ee or tempHistPions->GetBinContent(j)>0){
+                piontemp.push_back(tempHistPions->GetBinContent(j));
+                piontemperrs.push_back(tempHistPions->GetBinError(j));
+            }
+        }
+        pionPredicts.push_back(piontemp);
+        pionErrs.push_back(piontemp);
+        
+        file.Close();
+    }
+
+    //making said dat files
+    chdir(input.c_str());
+    makeDatFile(pionPredicts, name+".dat", "# Version 1.0\n# Spectra for parameters.txt");
+    makeDatFile(pionErrs, name+".err", "# Version 1.0\n# Error for parameters.txt");
 }
 
 //scales histogram and adjusts bin content for bin widths and centers since ROOT can only do width

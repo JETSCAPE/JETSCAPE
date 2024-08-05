@@ -53,6 +53,7 @@ vector<double> getThrustSphericity(vector<shared_ptr<Hadron>> hadrons);
 int histToCSV(TH1D* hist, string title);
 
 void makeDatFile(vector<vector<double>> data, string title, string header);
+void makeObsPred(vector<string> directories, string input, string name, string histName, bool ee = false);
 
 void scaleBins(TH1D* hist, TProfile* prof, double scale);
 void scaleBins(TH1D* hist, double scale);
