@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -14,8 +15,10 @@
  ******************************************************************************/
 
 #include "JetScapeXML.h"
-#include "JetScapeLogger.h"
+
 #include <stdlib.h>
+
+#include "JetScapeLogger.h"
 
 using namespace std;
 
@@ -34,14 +37,13 @@ JetScapeXML *JetScapeXML::Instance() {
 
 //________________________________________________________________
 void JetScapeXML::OpenXMLMasterFile() {
-  JSWARN << "Deprecated function OpenXMLMasterFile(): Call OpenXMLMainFile() instead!";
+  JSWARN << "Deprecated function OpenXMLMasterFile(): Call OpenXMLMainFile() "
+            "instead!";
   OpenXMLMainFile();
 }
 
 void JetScapeXML::OpenXMLMainFile() {
-
   if (!IsMainFileOpen()) {
-
     xml_doc_main.LoadFile((char *)GetXMLMainFileName().c_str());
     VERBOSE(2) << "Trying XML Main file : " << GetXMLMainFileName();
 
@@ -54,11 +56,13 @@ void JetScapeXML::OpenXMLMainFile() {
         JSWARN << "Not a valid JetScape XML Main file!";
         exit(-1);
       }
-    } else { //Check for an old default Master file
-	  auto errCode = xml_doc_main.ErrorID(); //Save the original error code
-      SetXMLMainFileName("../config/jetscape_master.xml"); //Try old default Master XML file
+    } else {  // Check for an old default Master file
+      auto errCode = xml_doc_main.ErrorID();  // Save the original error code
+      SetXMLMainFileName(
+          "../config/jetscape_master.xml");  // Try old default Master XML file
       xml_doc_main.LoadFile((char *)GetXMLMainFileName().c_str());
-      VERBOSE(2) << "Looking for Old XML Master file : " << GetXMLMainFileName();
+      VERBOSE(2) << "Looking for Old XML Master file : "
+                 << GetXMLMainFileName();
 
       if (xml_doc_main.ErrorID() < 1) {
         JSWARN << "Using Deprecated XML Master file : " << GetXMLMainFileName();
@@ -70,11 +74,11 @@ void JetScapeXML::OpenXMLMainFile() {
           exit(-1);
         }
       } else {
-          JSWARN << "XML Main file not found/not properly opened! Error code : "
-                 << errCode;
-          exit(-1);
-	      }
+        JSWARN << "XML Main file not found/not properly opened! Error code : "
+               << errCode;
+        exit(-1);
       }
+    }
 
     xml_main_file_open = true;
   }
@@ -82,7 +86,8 @@ void JetScapeXML::OpenXMLMainFile() {
 
 //________________________________________________________________
 void JetScapeXML::OpenXMLMasterFile(string m_name) {
-  JSWARN << "Deprecated function OpenXMLMasterFile(): Call OpenXMLMainFile() instead!";
+  JSWARN << "Deprecated function OpenXMLMasterFile(): Call OpenXMLMainFile() "
+            "instead!";
   OpenXMLMainFile(m_name);
 }
 
@@ -94,9 +99,7 @@ void JetScapeXML::OpenXMLMainFile(string m_name) {
 
 //________________________________________________________________
 void JetScapeXML::OpenXMLUserFile() {
-
   if (!xml_user_file_open) {
-
     xml_doc_user.LoadFile((char *)GetXMLUserFileName().c_str());
     VERBOSE(2) << "Trying XML User file : " << GetXMLUserFileName();
 
@@ -126,17 +129,16 @@ void JetScapeXML::OpenXMLUserFile(string m_name) {
 }
 
 //________________________________________________________________
-tinyxml2::XMLElement *
-JetScapeXML::GetXMLElementMaster(std::initializer_list<const char *> &path) {
-
-  JSWARN << "Deprecated function GetXMLElementMaster(). Call GetXMLElementMain() instead!";
+tinyxml2::XMLElement *JetScapeXML::GetXMLElementMaster(
+    std::initializer_list<const char *> &path) {
+  JSWARN << "Deprecated function GetXMLElementMaster(). Call "
+            "GetXMLElementMain() instead!";
   return GetXMLElementMain(path);
 }
 
 //________________________________________________________________
-tinyxml2::XMLElement *
-JetScapeXML::GetXMLElementMain(std::initializer_list<const char *> &path) {
-
+tinyxml2::XMLElement *JetScapeXML::GetXMLElementMain(
+    std::initializer_list<const char *> &path) {
   VERBOSE(2) << "Looking for element in Main file: " << path;
 
   OpenXMLMainFile();
@@ -173,9 +175,8 @@ JetScapeXML::GetXMLElementMain(std::initializer_list<const char *> &path) {
 }
 
 //________________________________________________________________
-tinyxml2::XMLElement *
-JetScapeXML::GetXMLElementUser(std::initializer_list<const char *> &path) {
-
+tinyxml2::XMLElement *JetScapeXML::GetXMLElementUser(
+    std::initializer_list<const char *> &path) {
   VERBOSE(2) << "Looking for element in User file: " << path;
 
   OpenXMLUserFile();
@@ -212,10 +213,8 @@ JetScapeXML::GetXMLElementUser(std::initializer_list<const char *> &path) {
 }
 
 //________________________________________________________________
-tinyxml2::XMLElement *
-JetScapeXML::GetElement(std::initializer_list<const char *> path,
-                        bool isRequired /* = true */) {
-
+tinyxml2::XMLElement *JetScapeXML::GetElement(
+    std::initializer_list<const char *> path, bool isRequired /* = true */) {
   // Try to get value from User XML file
   tinyxml2::XMLElement *elementUser = GetXMLElementUser(path);
   if (elementUser) {
@@ -237,10 +236,8 @@ JetScapeXML::GetElement(std::initializer_list<const char *> path,
 }
 
 //________________________________________________________________
-std::string
-JetScapeXML::GetElementText(std::initializer_list<const char *> path,
-                            bool isRequired /* = true */) {
-
+std::string JetScapeXML::GetElementText(
+    std::initializer_list<const char *> path, bool isRequired /* = true */) {
   tinyxml2::XMLElement *element = GetElement(path, isRequired);
 
   if (element) {
@@ -253,7 +250,6 @@ JetScapeXML::GetElementText(std::initializer_list<const char *> path,
 //________________________________________________________________
 int JetScapeXML::GetElementInt(std::initializer_list<const char *> path,
                                bool isRequired /* = true */) {
-
   tinyxml2::XMLElement *element = GetElement(path, isRequired);
 
   if (element) {
@@ -268,7 +264,6 @@ int JetScapeXML::GetElementInt(std::initializer_list<const char *> path,
 //________________________________________________________________
 double JetScapeXML::GetElementDouble(std::initializer_list<const char *> path,
                                      bool isRequired /* = true */) {
-
   tinyxml2::XMLElement *element = GetElement(path, isRequired);
 
   if (element) {
@@ -283,7 +278,6 @@ double JetScapeXML::GetElementDouble(std::initializer_list<const char *> path,
 //________________________________________________________________
 std::ostream &operator<<(std::ostream &os,
                          std::initializer_list<const char *> path) {
-
   int i = 0;
   int size = path.size();
 
@@ -300,4 +294,4 @@ std::ostream &operator<<(std::ostream &os,
   return os;
 }
 
-} // end namespace Jetscape
+}  // end namespace Jetscape

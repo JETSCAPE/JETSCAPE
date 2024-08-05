@@ -27,7 +27,8 @@
 #include "pdgcode_constants.h"
 #define BIG_ENDIAN_ARCHITECTURE
 namespace Jetscape {
-// The namespace of this file was changed to integrate this file from SMASH into the JETSCAPE framework
+// The namespace of this file was changed to integrate this file from SMASH into
+// the JETSCAPE framework
 /**
  * \ingroup data
  *
@@ -1132,6 +1133,6 @@ inline bool has_lepton_pair(const PdgCode pdg1, const PdgCode pdg2,
          is_dilepton(pdg2, pdg3);
 }
 
-}  // namespace smash
+}  // namespace Jetscape
 
 #endif  // SRC_INCLUDE_SMASH_PDGCODE_H_

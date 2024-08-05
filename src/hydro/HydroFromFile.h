@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -16,10 +17,10 @@
 #ifndef HYDROFROMFILE_H
 #define HYDROFROMFILE_H
 
+#include <string>
+
 #include "FluidDynamics.h"
 #include "Hydroinfo_MUSIC.h"
-
-#include <string>
 
 #ifdef USE_HDF5
 #include "Hydroinfo_h5.h"
@@ -30,7 +31,7 @@ using namespace Jetscape;
 class HydroFromFile : public FluidDynamics {
   // this is wrapper class for MUSIC so that it can be used as a external
   // library for the JETSCAPE integrated framework
-private:
+ private:
   int flag_read_in_multiple_hydro_;
   int hydro_event_idx_;
 
@@ -49,10 +50,11 @@ private:
   double PreEq_tauf_;
   Hydroinfo_MUSIC *hydroinfo_PreEq_ptr;
 
-  // Allows the registration of the module so that it is available to be used by the Jetscape framework.
+  // Allows the registration of the module so that it is available to be used by
+  // the Jetscape framework.
   static RegisterJetScapeModule<HydroFromFile> reg;
 
-public:
+ public:
   HydroFromFile();
   ~HydroFromFile();
 
@@ -72,8 +74,7 @@ public:
 
   //! This function load a PreEq event and a MUSIC hydro event
   void read_in_hydro_event(string input_file, string preEq_file,
-                           string hydro_ideal_file,
-                           int nskip_tau);
+                           string hydro_ideal_file, int nskip_tau);
 
   //! This function is a dummy function
   void EvolveHydro();
@@ -91,4 +92,4 @@ public:
                        SurfaceCellInfo *surface_list_ptr){};
 };
 
-#endif // HYDROFROMFILE_H
+#endif  // HYDROFROMFILE_H

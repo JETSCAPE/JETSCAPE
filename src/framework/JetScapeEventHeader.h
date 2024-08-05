@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -23,8 +24,7 @@ namespace Jetscape {
      such as xsec, centrality, ...
    */
 class JetScapeEventHeader {
-
-public:
+ public:
   JetScapeEventHeader(){};
   // ~JetScapeEventHeader(){};
   // JetScapeEventHeader(const JetScapeEventHeader &c); //copy constructor
@@ -35,31 +35,35 @@ public:
   /* void addPartonShower(shared_ptr<PartonShower> ps); */
   /* void deleteParton(int idx); */
 
-  // ============================ Initial Hard Process =================================
+  // ============================ Initial Hard Process
+  // =================================
   /// Initial Hard Process: Get cross section
-  /// Note: In most cases, this value becomes more precise as more events are created.
-  /// It is recommended to use the last event's value
+  /// Note: In most cases, this value becomes more precise as more events are
+  /// created. It is recommended to use the last event's value
   double GetSigmaGen() { return SigmaGen; };
   /// Initial Hard Process: Set cross section
   void SetSigmaGen(double d) { SigmaGen = d; };
 
   /// Initial Hard Process: Get uncertainty on the cross section
-  /// Note: In most cases, this value becomes more smaller as more events are created.
-  /// It is recommended to use the last event's value
+  /// Note: In most cases, this value becomes more smaller as more events are
+  /// created. It is recommended to use the last event's value
   double GetSigmaErr() { return SigmaErr; };
   /// Initial Hard Process: Set uncertainty on the cross section
   void SetSigmaErr(double d) { SigmaErr = d; };
 
-    /// Initial Hard Process: pt-hat
+  /// Initial Hard Process: pt-hat
   double GetPtHat() { return PtHat; };
   void SetPtHat(double d) { PtHat = d; };
 
-  /// Initial Hard Process: Get additionally created weight (e.g. pythia.event().weight())
+  /// Initial Hard Process: Get additionally created weight (e.g.
+  /// pythia.event().weight())
   double GetEventWeight() { return EventWeight; };
-  /// Initial Hard Process: Set additionally created weight (e.g. pythia.event().weight())
+  /// Initial Hard Process: Set additionally created weight (e.g.
+  /// pythia.event().weight())
   void SetEventWeight(double d) { EventWeight = d; };
 
-  // ============================ Initial State =================================
+  // ============================ Initial State
+  // =================================
   /// Initial State: Get number of participants
   double GetNpart() { return Npart; };
   /// Initial State: Get number of participants
@@ -81,25 +85,26 @@ public:
   /// Hydro: Set (2nd order) event plane angle
   void SetEventPlaneAngle(double d) { EventPlaneAngle = d; };
 
-private:
-  // ============================ Initial Hard Process =================================
+ private:
+  // ============================ Initial Hard Process
+  // =================================
   double SigmaGen = -1;
   double SigmaErr = -1;
   double PtHat = -1;
   double EventWeight = 1;
 
-  // ============================ Initial State =================================
-  double Npart = -1; // could be int, but using double to allow averaged values
-  double Ncoll = -1; // could be int, but using double to allow averaged values
+  // ============================ Initial State
+  // =================================
+  double Npart = -1;  // could be int, but using double to allow averaged values
+  double Ncoll = -1;  // could be int, but using double to allow averaged values
   double TotalEntropy = -1;
 
   // ============================ Hydro =================================
   double EventPlaneAngle = -999;
 
-  // ============================ Other possible options =================================
-  // IS:
-  // double Eccentricity;
-  // double ImpactParameter;
+  // ============================ Other possible options
+  // ================================= IS: double Eccentricity; double
+  // ImpactParameter;
 
   // Hydro:
   // angles, eccentricities
@@ -130,6 +135,6 @@ private:
   // type (colorless/colored, reco, ...)
 };
 
-} // end namespace Jetscape
+}  // end namespace Jetscape
 
-#endif // JETSCAPEEVENTHEADER_H
+#endif  // JETSCAPEEVENTHEADER_H

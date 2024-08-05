@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -15,6 +16,7 @@
 // jetscape writer ascii class
 
 #include "JetScapeWriterStream.h"
+
 #include "JetScapeLogger.h"
 #include "JetScapeXML.h"
 
@@ -33,13 +35,15 @@ JetScapeWriterStream<T>::JetScapeWriterStream(string m_file_name_out) {
   SetOutputFileName(m_file_name_out);
 }
 
-template <class T> JetScapeWriterStream<T>::~JetScapeWriterStream() {
+template <class T>
+JetScapeWriterStream<T>::~JetScapeWriterStream() {
   VERBOSE(8);
   if (GetActive())
     Close();
 }
 
-template <class T> void JetScapeWriterStream<T>::WriteHeaderToFile() {
+template <class T>
+void JetScapeWriterStream<T>::WriteHeaderToFile() {
   VERBOSE(3) << "Run JetScapeWriterStream<T>: Write header of event # "
              << GetCurrentEvent() << " ...";
   Write(to_string(GetCurrentEvent()) + " Event");
@@ -78,45 +82,52 @@ template <class T> void JetScapeWriterStream<T>::WriteHeaderToFile() {
   }
 }
 
-template <class T> void JetScapeWriterStream<T>::WriteEvent() {
-  // JSINFO<<"Run JetScapeWriterStream<T>: Write event # "<<GetCurrentEvent()<<" ...";
-  // do nothing, the modules handle this
+template <class T>
+void JetScapeWriterStream<T>::WriteEvent() {
+  // JSINFO<<"Run JetScapeWriterStream<T>: Write event # "<<GetCurrentEvent()<<"
+  // ..."; do nothing, the modules handle this
 }
 
-template <class T> void JetScapeWriterStream<T>::Write(weak_ptr<Parton> p) {
+template <class T>
+void JetScapeWriterStream<T>::Write(weak_ptr<Parton> p) {
   auto pp = p.lock();
   if (pp) {
     output_file << *pp << endl;
   }
 }
 
-template <class T> void JetScapeWriterStream<T>::Write(weak_ptr<Vertex> v) {
+template <class T>
+void JetScapeWriterStream<T>::Write(weak_ptr<Vertex> v) {
   auto vv = v.lock();
   if (vv) {
     output_file << *vv << endl;
   }
 }
 
-template <class T> void JetScapeWriterStream<T>::Init() {
+template <class T>
+void JetScapeWriterStream<T>::Init() {
   if (GetActive()) {
     JSINFO << "JetScape Stream Writer initialized with output file = "
            << GetOutputFileName();
     output_file.open(GetOutputFileName().c_str());
 
-    //Write Init Informations, like XML and ... to file ...
-    //WriteInitFileXMLMain();
-    //WriteInitFileXMLUser();
+    // Write Init Informations, like XML and ... to file ...
+    // WriteInitFileXMLMain();
+    // WriteInitFileXMLUser();
   }
 }
 
-template <class T> void JetScapeWriterStream<T>::Exec() {
-  // JSINFO<<"Run JetScapeWriterStream<T>: Write event # "<<GetCurrentEvent()<<" ...";
+template <class T>
+void JetScapeWriterStream<T>::Exec() {
+  // JSINFO<<"Run JetScapeWriterStream<T>: Write event # "<<GetCurrentEvent()<<"
+  // ...";
 
   // if (GetActive())
   //   WriteEvent();
 }
 
-template <class T> void JetScapeWriterStream<T>::WriteInitFileXMLMain() {
+template <class T>
+void JetScapeWriterStream<T>::WriteInitFileXMLMain() {
   JSDEBUG << "Write XML Main to output file. XML file = "
           << JetScapeXML::Instance()->GetXMLMainFileName();
   tinyxml2::XMLPrinter printer;
@@ -126,7 +137,8 @@ template <class T> void JetScapeWriterStream<T>::WriteInitFileXMLMain() {
   output_file << printer.CStr();
 }
 
-template <class T> void JetScapeWriterStream<T>::WriteInitFileXMLUser() {
+template <class T>
+void JetScapeWriterStream<T>::WriteInitFileXMLUser() {
   JSDEBUG << "Write XML User to output file. XML file = "
           << JetScapeXML::Instance()->GetXMLUserFileName();
   tinyxml2::XMLPrinter printer;
@@ -163,15 +175,13 @@ void JetScapeWriterStream<T>::Write(weak_ptr<PartonShower> ps) {
   }
 }
 
-template <class T> void JetScapeWriterStream<T>::Write(weak_ptr<Hadron> h) {
+template <class T>
+void JetScapeWriterStream<T>::Write(weak_ptr<Hadron> h) {
   auto hh = h.lock();
   if (hh) {
     output_file << *hh << endl;
   }
 }
-
-
-
 
 template class JetScapeWriterStream<ofstream>;
 
@@ -179,4 +189,4 @@ template class JetScapeWriterStream<ofstream>;
 template class JetScapeWriterStream<ogzstream>;
 #endif
 
-} // end namespace Jetscape
+}  // end namespace Jetscape

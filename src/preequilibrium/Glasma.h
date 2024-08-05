@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -21,18 +22,17 @@
 using namespace Jetscape;
 
 class Glasma : public PreequilibriumDynamics {
+ public:
+  Glasma();
+  ~Glasma(){};
 
-public:
-    Glasma();
-    ~Glasma() {};
+  void InitializePreequilibrium() { preequilibrium_status_ = INIT; };
+  void EvolvePreequilibrium();
 
-    void InitializePreequilibrium() {preequilibrium_status_ = INIT;};
-    void EvolvePreequilibrium();
-
-private:
-    // Allows the registration of the module so that it is available to be
-    // used by the Jetscape framework.
-    static RegisterJetScapeModule<Glasma> reg;
+ private:
+  // Allows the registration of the module so that it is available to be
+  // used by the Jetscape framework.
+  static RegisterJetScapeModule<Glasma> reg;
 };
 
-#endif   // GLASMA_H
+#endif  // GLASMA_H

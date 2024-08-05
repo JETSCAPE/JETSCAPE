@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -17,9 +18,10 @@
 #define PREEQUILDYNAMICS_H
 
 #include <vector>
+
+#include "FluidCellInfo.h"
 #include "InitialState.h"
 #include "JetScapeModuleBase.h"
-#include "FluidCellInfo.h"
 #include "RealType.h"
 
 namespace Jetscape {
@@ -27,30 +29,38 @@ namespace Jetscape {
 enum PreequilibriumStatus { NOT_STARTED, INIT, DONE, ERR };
 
 class PreEquilibriumParameterFile {
-public:
+ public:
   // preequilibrium dynamics parameters file name.
   char *preequilibrium_input_filename;
 };
 
 // Interface for the Preequilibrium Dynamics of the medium
 class PreequilibriumDynamics : public JetScapeModuleBase {
-private:
+ private:
   PreEquilibriumParameterFile parameter_list_;
   // record preequilibrium start and end proper time [fm/c]
-  //real preequilibrium_tau_0_, preequilibrium_tau_max_;
+  // real preequilibrium_tau_0_, preequilibrium_tau_max_;
 
-public:
+ public:
   PreequilibriumDynamics();
 
   virtual ~PreequilibriumDynamics();
-    real preequilibrium_tau_0_, preequilibrium_tau_max_;
+  real preequilibrium_tau_0_, preequilibrium_tau_max_;
 
-  /** Reads the input parameters from the XML file under the tag <Preequilibrium>. Uses JetScapeSingnalManager Instance to retrive the Initial State Physics information. Calls InitializeHydro(parameter_list) and InitTask(); This explicit call can be used for actual initialization of modules such as @a Brick, @a MpiMusic, or @a OSU-HYDRO if attached as a @a polymorphic class. It also initializes the tasks within the current module.
+  /** Reads the input parameters from the XML file under the tag
+    <Preequilibrium>. Uses JetScapeSingnalManager Instance to retrive the
+    Initial State Physics information. Calls InitializeHydro(parameter_list) and
+    InitTask(); This explicit call can be used for actual initialization of
+    modules such as @a Brick, @a MpiMusic, or @a OSU-HYDRO if attached as a @a
+    polymorphic class. It also initializes the tasks within the current module.
     @sa Read about @a polymorphism in C++.
     */
   void Init();
 
-  /** Calls EvolvePreequilibrium(); This explicit call can be used for actual execution of Preequilibrium evolution defined in the modules such as @a Brick, @a MpiMusic, or @a OSU-HYDRO if attached as a @a polymorphic class. It also execute the tasks within the current module.
+  /** Calls EvolvePreequilibrium(); This explicit call can be used for actual
+    execution of Preequilibrium evolution defined in the modules such as @a
+    Brick, @a MpiMusic, or @a OSU-HYDRO if attached as a @a polymorphic class.
+    It also execute the tasks within the current module.
     @sa Read about @a polymorphism in C++.
     */
   void Exec();
@@ -58,13 +68,13 @@ public:
   /** Default Clear() function. It can be overridden by other tasks.*/
   virtual void Clear();
 
-  virtual void
-  InitializePreequilibrium(PreEquilibriumParameterFile parameter_list) {}
+  virtual void InitializePreequilibrium(
+      PreEquilibriumParameterFile parameter_list) {}
   virtual void EvolvePreequilibrium() {}
 
   // add initial state shared pointer
   /** A pointer of type InitialState class.
-    */
+   */
   std::shared_ptr<InitialState> ini;
 
   PreEquilibriumParameterFile &GetParameterList() { return parameter_list_; }
@@ -73,19 +83,19 @@ public:
 
   // @return Start time (or tau) for hydrodynamic evolution
   virtual real GetPreequilibriumStartTime() const {
-      return (preequilibrium_tau_0_);
+    return (preequilibrium_tau_0_);
   }
 
   virtual real GetPreequilibriumEvodtau() const { return (0.02); }
 
-  virtual int get_ntau() const { return(0); }
+  virtual int get_ntau() const { return (0); }
 
   // @return End time (or tau) for hydrodynamic evolution.
   real GetPreequilibriumEndTime() { return (preequilibrium_tau_max_); }
 
-  virtual int get_number_of_fluid_cells() { return(0); }
+  virtual int get_number_of_fluid_cells() { return (0); }
   virtual void get_fluid_cell_with_index(
-          const int idx, std::unique_ptr<FluidCellInfo> &info_ptr) {}
+      const int idx, std::unique_ptr<FluidCellInfo> &info_ptr) {}
   virtual void clear_evolution_data() {}
 
   // record preequilibrium running status
@@ -110,6 +120,6 @@ public:
   std::vector<double> bulk_Pi_;
 };
 
-} // end namespace Jetscape
+}  // end namespace Jetscape
 
 #endif

@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -22,30 +23,30 @@
 #include <time.h>
 
 // JetScape Framework includes ...
-#include "JetScape.h"
 #include "JetEnergyLoss.h"
 #include "JetEnergyLossManager.h"
+#include "JetScape.h"
 #include "JetScapeWriterStream.h"
 #ifdef USE_HEPMC
 #include "JetScapeWriterHepMC.h"
 #endif
 
 // User modules derived from jetscape framework clasess
-#include "TrentoInitial.h"
-#include "AdSCFT.h"
-#include "Matter.h"
-#include "LBT.h"
-#include "Martini.h"
-#include "Brick.h"
-#include "GubserHydro.h"
-#include "PGun.h"
-#include "HadronizationManager.h"
-#include "Hadronization.h"
-#include "ColoredHadronization.h"
-#include "ColorlessHadronization.h"
-
 #include <chrono>
 #include <thread>
+
+#include "AdSCFT.h"
+#include "Brick.h"
+#include "ColoredHadronization.h"
+#include "ColorlessHadronization.h"
+#include "GubserHydro.h"
+#include "Hadronization.h"
+#include "HadronizationManager.h"
+#include "LBT.h"
+#include "Martini.h"
+#include "Matter.h"
+#include "PGun.h"
+#include "TrentoInitial.h"
 
 using namespace std;
 
@@ -56,21 +57,23 @@ void Show();
 
 // -------------------------------------
 
-int main(int argc, char** argv)
-{
-  clock_t t; t = clock();
-  time_t start, end; time(&start);
-  
-  cout<<endl;
-    
+int main(int argc, char** argv) {
+  clock_t t;
+  t = clock();
+  time_t start, end;
+  time(&start);
+
+  cout << endl;
+
   // DEBUG=true by default and REMARK=false
   // can be also set also via XML file (at least partially)
   JetScapeLogger::Instance()->SetDebug(false);
   JetScapeLogger::Instance()->SetRemark(false);
-  //SetVerboseLevel (9 a lot of additional debug output ...)
-  //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevle(9) or 10
+  // SetVerboseLevel (9 a lot of additional debug output ...)
+  // If you want to suppress it: use SetVerboseLevle(0) or max
+  // SetVerboseLevle(9) or 10
   JetScapeLogger::Instance()->SetVerboseLevel(8);
-   
+
   Show();
 
   auto jetscape = make_shared<JetScape>();
@@ -80,24 +83,24 @@ int main(int argc, char** argv)
 
   // Initial conditions and hydro
   auto trento = make_shared<TrentoInitial>();
-  auto pGun= make_shared<PGun> ();
-  auto hydro = make_shared<Brick> ();
+  auto pGun = make_shared<PGun>();
+  auto hydro = make_shared<Brick>();
   jetscape->Add(trento);
   jetscape->Add(pGun);
   jetscape->Add(hydro);
 
   // Energy loss
-  auto jlossmanager = make_shared<JetEnergyLossManager> ();
-  auto jloss = make_shared<JetEnergyLoss> ();
-  auto lbt = make_shared<LBT> ();
+  auto jlossmanager = make_shared<JetEnergyLossManager>();
+  auto jloss = make_shared<JetEnergyLoss>();
+  auto lbt = make_shared<LBT>();
   jloss->Add(lbt);
-  jlossmanager->Add(jloss);  
+  jlossmanager->Add(jloss);
   jetscape->Add(jlossmanager);
 
   // Hadronization
-  auto hadroMgr = make_shared<HadronizationManager> ();
-  auto hadro = make_shared<Hadronization> ();
-  auto hadroModule = make_shared<ColoredHadronization> ();
+  auto hadroMgr = make_shared<HadronizationManager>();
+  auto hadro = make_shared<Hadronization>();
+  auto hadroModule = make_shared<ColoredHadronization>();
   hadro->Add(hadroModule);
   // auto colorless = make_shared<ColorlessHadronization> ();
   // hadro->Add(colorless);
@@ -105,7 +108,7 @@ int main(int argc, char** argv)
   jetscape->Add(hadroMgr);
 
   // Output
-  auto writer= make_shared<JetScapeWriterAscii> ("test_out.dat");
+  auto writer = make_shared<JetScapeWriterAscii>("test_out.dat");
   // same as JetScapeWriterAscii but gzipped
   // auto writer= make_shared<JetScapeWriterAsciiGZ> ("test_out.dat.gz");
   // HEPMC3
@@ -114,7 +117,6 @@ int main(int argc, char** argv)
 #endif
   jetscape->Add(writer);
 
-  
   // Initialize all modules tasks
   jetscape->Init();
 
@@ -124,27 +126,26 @@ int main(int argc, char** argv)
   // "dummy" so far ...
   // Most thinkgs done in write and clear ...
   jetscape->Finish();
-  
-  INFO_NICE<<"Finished!";
-  cout<<endl;
+
+  INFO_NICE << "Finished!";
+  cout << endl;
 
   // wait for 5s
-  //std::this_thread::sleep_for(std::chrono::milliseconds(500000));
+  // std::this_thread::sleep_for(std::chrono::milliseconds(500000));
 
   t = clock() - t;
   time(&end);
-  printf ("CPU time: %f seconds.\n",((float)t)/CLOCKS_PER_SEC);
-  printf ("Real time: %f seconds.\n",difftime(end,start));
-  //printf ("Real time: %f seconds.\n",(start-end));
+  printf("CPU time: %f seconds.\n", ((float)t) / CLOCKS_PER_SEC);
+  printf("Real time: %f seconds.\n", difftime(end, start));
+  // printf ("Real time: %f seconds.\n",(start-end));
   return 0;
 }
 
 // -------------------------------------
 
-void Show()
-{
-  INFO_NICE<<"------------------------------------";
-  INFO_NICE<<"| Brick Test JetScape Framework ... |";
-  INFO_NICE<<"------------------------------------";
+void Show() {
+  INFO_NICE << "------------------------------------";
+  INFO_NICE << "| Brick Test JetScape Framework ... |";
+  INFO_NICE << "------------------------------------";
   INFO_NICE;
 }

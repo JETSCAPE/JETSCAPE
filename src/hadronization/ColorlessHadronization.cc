@@ -1,7 +1,8 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
  *
  * For the list of contributors see AUTHORS.
  *
@@ -14,25 +15,26 @@
  ******************************************************************************/
 
 #include "ColorlessHadronization.h"
-#include "JetScapeXML.h"
-#include "JetScapeLogger.h"
-#include "tinyxml2.h"
-#include "JetScapeConstants.h"
-#include <sstream>
-#include <iostream>
+
 #include <fstream>
-#include <sstream>
+#include <iostream>
 #include <random>
+#include <sstream>
+
+#include "JetScapeConstants.h"
+#include "JetScapeLogger.h"
+#include "JetScapeXML.h"
+#include "tinyxml2.h"
 
 using namespace Jetscape;
 using namespace Pythia8;
 
 // Hadrons output file
-//ofstream hadfile;
+// ofstream hadfile;
 
 // Register the module with the base class
-RegisterJetScapeModule<ColorlessHadronization>
-    ColorlessHadronization::reg("ColorlessHadronization");
+RegisterJetScapeModule<ColorlessHadronization> ColorlessHadronization::reg(
+    "ColorlessHadronization");
 
 // Initialize static helper here
 Pythia8::Pythia ColorlessHadronization::pythia("IntentionallyEmpty", false);
@@ -46,7 +48,7 @@ ColorlessHadronization::~ColorlessHadronization() { VERBOSE(8); }
 
 void ColorlessHadronization::Init() {
   // Open output file
-  //hadfile.open("CH_myhad.dat");
+  // hadfile.open("CH_myhad.dat");
 
   std::string s = GetXMLElementText({"JetHadronization", "name"});
   JSDEBUG << s << " to be initializied ...";
@@ -71,12 +73,16 @@ void ColorlessHadronization::Init() {
   pythia.readString("PartonLevel:FSR=off");
 
   // General settings for hadron decays
-  std::string pythia_decays = GetXMLElementText({"JetHadronization", "pythia_decays"});
+  std::string pythia_decays =
+      GetXMLElementText({"JetHadronization", "pythia_decays"});
   double tau0Max = 10.0;
   double tau0Max_xml = GetXMLElementDouble({"JetHadronization", "tau0Max"});
-	if(tau0Max_xml >= 0){tau0Max = tau0Max_xml;}
-  else{JSWARN << "tau0Max should be larger than 0. Set it to 10.";}
-  if(pythia_decays == "on"){
+  if (tau0Max_xml >= 0) {
+    tau0Max = tau0Max_xml;
+  } else {
+    JSWARN << "tau0Max should be larger than 0. Set it to 10.";
+  }
+  if (pythia_decays == "on") {
     JSINFO << "Pythia decays are turned on for tau0Max < " << tau0Max;
     pythia.readString("HadronLevel:Decay = on");
     pythia.readString("ParticleDecays:limitTau0 = on");
@@ -87,16 +93,20 @@ void ColorlessHadronization::Init() {
   }
 
   // Settings for decays (old flag, will be depracted at some point)
-  // This overwrites the previous settings if the user xml file contains the flag
+  // This overwrites the previous settings if the user xml file contains the
+  // flag
   std::string weak_decays =
-    GetXMLElementText({"JetHadronization", "weak_decays"});
+      GetXMLElementText({"JetHadronization", "weak_decays"});
   if (weak_decays == "off") {
     JSINFO << "Hadron decays are turned off.";
-    JSWARN << "This parameter will be depracted at some point. Use 'pythia_decays' instead.\nOverwriting 'pythia_decays'.";
+    JSWARN << "This parameter will be depracted at some point. Use "
+              "'pythia_decays' instead.\nOverwriting 'pythia_decays'.";
     pythia.readString("HadronLevel:Decay = off");
-  } else if(weak_decays == "on") {
+  } else if (weak_decays == "on") {
     JSINFO << "Hadron decays inside a range of 10 mm/c are turned on.";
-    JSWARN << "This parameter will be depracted at some point. Use 'pythia_decays' and 'tau0Max' for more control on decays.\nOverwriting 'pythia_decays' and fix 'tau0Max' to 10.";
+    JSWARN << "This parameter will be depracted at some point. Use "
+              "'pythia_decays' and 'tau0Max' for more control on "
+              "decays.\nOverwriting 'pythia_decays' and fix 'tau0Max' to 10.";
     pythia.readString("HadronLevel:Decay = on");
     pythia.readString("ParticleDecays:limitTau0 = on");
     pythia.readString("ParticleDecays:tau0Max = 10.0");
@@ -106,13 +116,13 @@ void ColorlessHadronization::Init() {
   lines << GetXMLElementText({"JetHadronization", "LinesToRead"}, false);
   while (std::getline(lines, s, '\n')) {
     if (s.find_first_not_of(" \t\v\f\r") == s.npos)
-      continue; // skip empty lines
+      continue;  // skip empty lines
     JSINFO << "Also reading in: " << s;
     pythia.readString(s);
   }
 
   // Initialize random number distribution
-  ZeroOneDistribution = std::uniform_real_distribution<double> { 0.0, 1.0 };
+  ZeroOneDistribution = std::uniform_real_distribution<double>{0.0, 1.0};
   // And initialize
   pythia.init();
 }
@@ -133,24 +143,25 @@ void ColorlessHadronization::DoHadronization(
   Event &event = pythia.event;
   ParticleData &pdt = pythia.particleData;
 
-  // Hadronize positive (status = 0) and negative (status = -1) partons in a different space
+  // Hadronize positive (status = 0) and negative (status = -1) partons in a
+  // different space
   for (int want_pos = 1; want_pos >= 0; --want_pos) {
     event.reset();
 
     if (!take_recoil && want_pos == 0)
-      continue; // SC: don't need negative if don't take recoil
+      continue;  // SC: don't need negative if don't take recoil
 
     // Set remnants momentum
     double random_direction = ZeroOneDistribution(*GetMt19937Generator());
-    if (random_direction>0.5) {
+    if (random_direction > 0.5) {
       random_direction = 1.0;
-    }else{
+    } else {
       random_direction = -1.0;
     };
 
     double rempx = 0.2;
     double rempy = 0.2;
-    double rempz = random_direction*p_fake;
+    double rempz = random_direction * p_fake;
     double reme = std::sqrt(std::pow(rempx, 2.) + std::pow(rempy, 2.) +
                             std::pow(rempz, 2.));
 
@@ -166,8 +177,9 @@ void ColorlessHadronization::DoHadronization(
     }
     for (unsigned int ishower = 0; ishower < shower_in.size(); ++ishower) {
       for (unsigned int ipart = 0; ipart < shower_in[ishower].size(); ++ipart) {
-        //if (shower_in.at(ishower).at(ipart)->pstat()==0 && want_pos==1) pIn.push_back(shower_in.at(ishower).at(ipart));  // Positive
-        if (want_pos == 1) { // Positive
+        // if (shower_in.at(ishower).at(ipart)->pstat()==0 && want_pos==1)
+        // pIn.push_back(shower_in.at(ishower).at(ipart));  // Positive
+        if (want_pos == 1) {  // Positive
           if (take_recoil && shower_in[ishower][ipart].pstat() == 1) {
             pIn.push_back(make_shared<Parton>(shower_in[ishower][ipart]));
           }
@@ -175,13 +187,16 @@ void ColorlessHadronization::DoHadronization(
             pIn.push_back(make_shared<Parton>(shower_in[ishower][ipart]));
           }
           if (shower_in[ishower][ipart].pstat() == 22) {
-            pIn.push_back(make_shared<Parton>(shower_in[ishower][ipart])); //Allow photons with status code 22 to pass through Colorless hadronization.
+            pIn.push_back(make_shared<Parton>(
+                shower_in[ishower]
+                         [ipart]));  // Allow photons with status code 22 to
+                                     // pass through Colorless hadronization.
           }
         }
         if (take_recoil && shower_in[ishower][ipart].pstat() == -1 &&
             want_pos == 0) {
           pIn.push_back(make_shared<Parton>(shower_in[ishower][ipart]));
-        } // Negative
+        }  // Negative
       }
       JSDEBUG << "Shower#" << ishower + 1
               << ". Number of partons to hadronize so far: " << pIn.size();
@@ -191,7 +206,8 @@ void ColorlessHadronization::DoHadronization(
     else
       VERBOSE(1) << "# Negative Partons to hadronize: " << pIn.size();
 
-    // Check whether event is empty (specially important for negative partons case)
+    // Check whether event is empty (specially important for negative partons
+    // case)
     if (pIn.size() == 0)
       continue;
 
@@ -219,7 +235,7 @@ void ColorlessHadronization::DoHadronization(
     // If there are no quarks, need to attach two of them
     int istring = 0;
     int one_end[nstrings], two_end[nstrings];
-    if (nquarks == 0) { // Only attach remnants if event is not empty
+    if (nquarks == 0) {  // Only attach remnants if event is not empty
       // First quark
       FourVector p1(rempx, rempy, rempz, reme);
       FourVector x1;
@@ -298,7 +314,8 @@ void ColorlessHadronization::DoHadronization(
       }
     }
 
-    // Build up chain using gluons assigned to each string, in a closest pair order
+    // Build up chain using gluons assigned to each string, in a closest pair
+    // order
     int lab_col = 102;
     for (int ns = 0; ns < nstrings; ns++) {
       int tquark = one_end[ns];
@@ -356,7 +373,9 @@ void ColorlessHadronization::DoHadronization(
     /*
     for (unsigned int ipart=0; ipart <  pIn.size(); ++ipart)
     {
-      JSDEBUG << "Parton #" << ipart << " is a " << pIn[ipart]->pid() << "with energy = " << pIn[ipart]->e() << " with phi= " << pIn[ipart]->phi() << " and has col= " << col[ipart] << " and acol= " << acol[ipart];
+      JSDEBUG << "Parton #" << ipart << " is a " << pIn[ipart]->pid() << "with
+    energy = " << pIn[ipart]->e() << " with phi= " << pIn[ipart]->phi() << " and
+    has col= " << col[ipart] << " and acol= " << acol[ipart];
     }
     */
 
@@ -384,40 +403,40 @@ void ColorlessHadronization::DoHadronization(
         if (diff < f * Lambda_QCD) {
           if ((pz >= 0) && (p2z >= 0)) {
             if (pz >= p2z) {
-              pIn[ipart]->reset_momentum(px, py, pz + f * Lambda_QCD,
-                                         sqrt(ee * ee +
-                                              2 * pz * f * Lambda_QCD +
-                                              f * Lambda_QCD * f * Lambda_QCD));
+              pIn[ipart]->reset_momentum(
+                  px, py, pz + f * Lambda_QCD,
+                  sqrt(ee * ee + 2 * pz * f * Lambda_QCD +
+                       f * Lambda_QCD * f * Lambda_QCD));
             } else
               pIn[j]->reset_momentum(p2x, p2y, p2z + f * Lambda_QCD,
                                      sqrt(e2e * e2e + 2 * p2z * f * Lambda_QCD +
                                           f * Lambda_QCD * f * Lambda_QCD));
           } else if ((pz >= 0) && (p2z < 0)) {
             if (abs(pz) >= abs(p2z)) {
-              pIn[ipart]->reset_momentum(px, py, pz + f * Lambda_QCD,
-                                         sqrt(ee * ee +
-                                              2 * pz * f * Lambda_QCD +
-                                              f * Lambda_QCD * f * Lambda_QCD));
+              pIn[ipart]->reset_momentum(
+                  px, py, pz + f * Lambda_QCD,
+                  sqrt(ee * ee + 2 * pz * f * Lambda_QCD +
+                       f * Lambda_QCD * f * Lambda_QCD));
             } else
               pIn[j]->reset_momentum(p2x, p2y, p2z - f * Lambda_QCD,
                                      sqrt(e2e * e2e - 2 * p2z * f * Lambda_QCD +
                                           f * Lambda_QCD * f * Lambda_QCD));
           } else if ((pz < 0) && (p2z >= 0)) {
             if (abs(pz) >= abs(p2z)) {
-              pIn[ipart]->reset_momentum(px, py, pz - f * Lambda_QCD,
-                                         sqrt(ee * ee -
-                                              2 * pz * f * Lambda_QCD +
-                                              f * Lambda_QCD * f * Lambda_QCD));
+              pIn[ipart]->reset_momentum(
+                  px, py, pz - f * Lambda_QCD,
+                  sqrt(ee * ee - 2 * pz * f * Lambda_QCD +
+                       f * Lambda_QCD * f * Lambda_QCD));
             } else
               pIn[j]->reset_momentum(p2x, p2y, p2z + f * Lambda_QCD,
                                      sqrt(e2e * e2e + 2 * p2z * f * Lambda_QCD +
                                           f * Lambda_QCD * f * Lambda_QCD));
           } else {
             if (abs(pz) >= abs(p2z)) {
-              pIn[ipart]->reset_momentum(px, py, pz - f * Lambda_QCD,
-                                         sqrt(ee * ee -
-                                              2 * pz * f * Lambda_QCD +
-                                              f * Lambda_QCD * f * Lambda_QCD));
+              pIn[ipart]->reset_momentum(
+                  px, py, pz - f * Lambda_QCD,
+                  sqrt(ee * ee - 2 * pz * f * Lambda_QCD +
+                       f * Lambda_QCD * f * Lambda_QCD));
             } else
               pIn[j]->reset_momentum(p2x, p2y, p2z - f * Lambda_QCD,
                                      sqrt(e2e * e2e - 2 * p2z * f * Lambda_QCD +
@@ -454,19 +473,22 @@ void ColorlessHadronization::DoHadronization(
         FourVector x;
         if (want_pos == 1)
           hOut.push_back(
-              std::make_shared<Hadron>(Hadron(0, ide, 0, p, x))); // Positive
+              std::make_shared<Hadron>(Hadron(0, ide, 0, p, x)));  // Positive
         else
           hOut.push_back(
-              std::make_shared<Hadron>(Hadron(0, ide, -1, p, x))); // Negative
-        //JSINFO << "Produced Hadron has id = " << pythia.event[ipart].id();
-        // Print on output file
-        //hadfile << pythia.event[ipart].px() << " " << pythia.event[ipart].py() << " " << pythia.event[ipart].pz() << " " << pythia.event[ipart].e() << " " << pythia.event[ipart].id() << " " << pythia.event[ipart].charge() << endl;
+              std::make_shared<Hadron>(Hadron(0, ide, -1, p, x)));  // Negative
+        // JSINFO << "Produced Hadron has id = " << pythia.event[ipart].id();
+        //  Print on output file
+        // hadfile << pythia.event[ipart].px() << " " <<
+        // pythia.event[ipart].py() << " " << pythia.event[ipart].pz() << " " <<
+        // pythia.event[ipart].e() << " " << pythia.event[ipart].id() << " " <<
+        // pythia.event[ipart].charge() << endl;
       }
     }
     VERBOSE(1) << "#Showers hadronized together: " << shower.size()
                << ". There are " << hOut.size() << " hadrons and "
                << pOut.size() << " partons after PYTHIA Hadronization";
-    //hadfile << "NEXT" << endl;
+    // hadfile << "NEXT" << endl;
 
-  } // End of positive or negative loop
+  }  // End of positive or negative loop
 }

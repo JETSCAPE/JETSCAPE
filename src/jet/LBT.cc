@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -14,18 +15,18 @@
  ******************************************************************************/
 
 #include "LBT.h"
-#include "JetScapeLogger.h"
-#include "JetScapeXML.h"
 
-#include "tinyxml2.h"
-#include <string>
-#include <sstream>
 #include <fstream>
-#include <iostream>
 #include <iomanip>
+#include <iostream>
+#include <sstream>
+#include <string>
 
 #include "FluidDynamics.h"
+#include "JetScapeLogger.h"
+#include "JetScapeXML.h"
 #include "LBTMutex.h"
+#include "tinyxml2.h"
 #define MAGENTA "\033[35m"
 
 using namespace Jetscape;
@@ -36,26 +37,26 @@ RegisterJetScapeModule<LBT> LBT::reg("Lbt");
 
 // initialize static members
 bool LBT::flag_init = 0;
-double LBT::Rg[60][20] = {
-    {0.0}}; //total gluon scattering rate as functions of initial energy and temperature
-double LBT::Rg1[60][20] = {{0.0}}; //gg-gg              CT1
-double LBT::Rg2[60][20] = {{0.0}}; //gg-qqbar           CT2
-double LBT::Rg3[60][20] = {{0.0}}; //gq-qg              CT3
-double LBT::Rq[60][20] = {
-    {0.0}}; //total gluon scattering rate as functions of initial energy and temperature
-double LBT::Rq3[60][20] = {{0.0}}; //qg-qg              CT13
-double LBT::Rq4[60][20] = {{0.0}}; //qiqj-qiqj          CT4
-double LBT::Rq5[60][20] = {{0.0}}; //qiqi-qiqi          CT5
-double LBT::Rq6[60][20] = {{0.0}}; //qiqibar-qjqjbar    CT6
-double LBT::Rq7[60][20] = {{0.0}}; //qiqibar-qiqibar    CT7
-double LBT::Rq8[60][20] = {{0.0}}; //qqbar-gg           CT8
+double LBT::Rg[60][20] = {{0.0}};   // total gluon scattering rate as functions
+                                    // of initial energy and temperature
+double LBT::Rg1[60][20] = {{0.0}};  // gg-gg              CT1
+double LBT::Rg2[60][20] = {{0.0}};  // gg-qqbar           CT2
+double LBT::Rg3[60][20] = {{0.0}};  // gq-qg              CT3
+double LBT::Rq[60][20] = {{0.0}};   // total gluon scattering rate as functions
+                                    // of initial energy and temperature
+double LBT::Rq3[60][20] = {{0.0}};  // qg-qg              CT13
+double LBT::Rq4[60][20] = {{0.0}};  // qiqj-qiqj          CT4
+double LBT::Rq5[60][20] = {{0.0}};  // qiqi-qiqi          CT5
+double LBT::Rq6[60][20] = {{0.0}};  // qiqibar-qjqjbar    CT6
+double LBT::Rq7[60][20] = {{0.0}};  // qiqibar-qiqibar    CT7
+double LBT::Rq8[60][20] = {{0.0}};  // qqbar-gg           CT8
 double LBT::qhatLQ[60][20] = {{0.0}};
 double LBT::qhatG[60][20] = {{0.0}};
 
-double LBT::RHQ[60][20] = {{0.0}};    //total scattering rate for heavy quark
-double LBT::RHQ11[60][20] = {{0.0}};  //Qq->Qq
-double LBT::RHQ12[60][20] = {{0.0}};  //Qg->Qg
-double LBT::qhatHQ[60][20] = {{0.0}}; //qhat of heavy quark
+double LBT::RHQ[60][20] = {{0.0}};     // total scattering rate for heavy quark
+double LBT::RHQ11[60][20] = {{0.0}};   // Qq->Qq
+double LBT::RHQ12[60][20] = {{0.0}};   // Qg->Qg
+double LBT::qhatHQ[60][20] = {{0.0}};  // qhat of heavy quark
 
 double LBT::dNg_over_dt_c[t_gn + 2][temp_gn + 1][HQener_gn + 1] = {{{0.0}}};
 double LBT::dNg_over_dt_q[t_gn + 2][temp_gn + 1][HQener_gn + 1] = {{{0.0}}};
@@ -88,12 +89,14 @@ void LBT::Init() {
   JSINFO << "Initialize LBT ...";
 
   //...Below is added by Shanshan
-  //...read parameters from LBT.input first, but can be changed in JETSCAPE xml file if any conflict exists
+  //...read parameters from LBT.input first, but can be changed in JETSCAPE xml
+  // file if any conflict exists
 
   setParameter(
-      "LBT-tables/LBT.input"); // re-set parameters from input parameter file
+      "LBT-tables/LBT.input");  // re-set parameters from input parameter file
 
-  //    if(checkParameter(argc)==0) { // check whether the input parameters are all correct
+  //    if(checkParameter(argc)==0) { // check whether the input parameters are
+  //    all correct
   //        cout << "Parameter check passed" << endl;
   //    } else {
   //        cout << "Parameter check failed" << endl;
@@ -103,11 +106,11 @@ void LBT::Init() {
   std::string s = GetXMLElementText({"Eloss", "Lbt", "name"});
   JSDEBUG << s << " to be initialized ...";
 
-  //double m_qhat=-99.99;
-  //lbt->FirstChildElement("qhat")->QueryDoubleText(&m_qhat);
-  //SetQhat(m_qhat);
+  // double m_qhat=-99.99;
+  // lbt->FirstChildElement("qhat")->QueryDoubleText(&m_qhat);
+  // SetQhat(m_qhat);
   //
-  //JSDEBUG  << s << " with qhat = "<<GetQhat();
+  // JSDEBUG  << s << " with qhat = "<<GetQhat();
 
   int in_vac = GetXMLElementInt({"Eloss", "Lbt", "in_vac"});
   if (in_vac == 1) {
@@ -125,10 +128,11 @@ void LBT::Init() {
   tStart = GetXMLElementDouble({"Eloss", "tStart"});
   JSINFO << MAGENTA << "LBT parameters -- in_med: " << vacORmed
          << " Q0: " << Q00 << "  only_leading: " << Kprimary
-         << "  alpha_s: " << fixAlphas << "  hydro_Tc: " << hydro_Tc<<", tStart="<<tStart;
+         << "  alpha_s: " << fixAlphas << "  hydro_Tc: " << hydro_Tc
+         << ", tStart=" << tStart;
 
   if (!flag_init) {
-    read_tables(); // initialize various tables
+    read_tables();  // initialize various tables
     flag_init = true;
   }
 
@@ -156,7 +160,6 @@ void LBT::WriteTask(weak_ptr<JetScapeWriter> w) {
 
 void LBT::DoEnergyLoss(double deltaT, double time, double Q2,
                        vector<Parton> &pIn, vector<Parton> &pOut) {
-
   double z = 0.5;
 
   //  if (Q2>5)
@@ -167,30 +170,32 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2,
   // hydro information should be moved into the particle list loop
 
   ////FluidCellInfo* check_fluid_info_ptr = new FluidCellInfo;
-  //std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
-  //GetHydroCellSignal(1, 1.0, 1.0, 0.0, check_fluid_info_ptr);
-  //VERBOSE(8)<< MAGENTA<<"Temperature from Brick (Signal) = "<<check_fluid_info_ptr->temperature;
+  // std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
+  // GetHydroCellSignal(1, 1.0, 1.0, 0.0, check_fluid_info_ptr);
+  // VERBOSE(8)<< MAGENTA<<"Temperature from Brick (Signal) =
+  // "<<check_fluid_info_ptr->temperature;
 
   double rNum;
   int par_status;
 
-  //DEBUG:
-  //cout<<" ---> "<<pIn.size()<<endl;
+  // DEBUG:
+  // cout<<" ---> "<<pIn.size()<<endl;
   for (int i = 0; i < pIn.size(); i++) {
-
     // Reject photons
 
     if (pIn[i].pid() == photonid) {
-      if(pIn[i].pstat() != 22) {
-	      pIn[i].set_stat(22); //Add status code 22 for photons that pass through LBT if it is already not assigned by one of the other JEL modules.
-              pOut.push_back(pIn[i]);
+      if (pIn[i].pstat() != 22) {
+        pIn[i].set_stat(
+            22);  // Add status code 22 for photons that pass through LBT if it
+                  // is already not assigned by one of the other JEL modules.
+        pOut.push_back(pIn[i]);
       }
       return;
     }
-    if (pIn[0].pstat()==101) {
+    if (pIn[0].pstat() == 101) {
       // pOut.push_back(pIn[0]);
-       // JSINFO << BOLDYELLOW << " broadenend parton rejected by LBT ";
-        return;
+      // JSINFO << BOLDYELLOW << " broadenend parton rejected by LBT ";
+      return;
     }
     // pass particle infomation to LBT array (only pass one particle each time)
 
@@ -204,11 +209,14 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2,
     //          P[2][j] = 0.0;
     //          P[3][j] = 0.0;
 
-    //          cout << "check read in: " << pIn[i].pid() << "  " << pIn[i].p_in().x() << "  " << pIn[i].p_in().y() << "  " << pIn[i].p_in().z() << "  " << pIn[i].p_in().t() << "  " << pIn[i].pt() << endl;
+    //          cout << "check read in: " << pIn[i].pid() << "  " <<
+    //          pIn[i].p_in().x() << "  " << pIn[i].p_in().y() << "  " <<
+    //          pIn[i].p_in().z() << "  " << pIn[i].p_in().t() << "  " <<
+    //          pIn[i].pt() << endl;
 
     par_status = pIn[i].pstat();
 
-    if (par_status != -1) { // a positive (active) particle
+    if (par_status != -1) {  // a positive (active) particle
 
       KATT1[j] = pIn[i].pid();
       P[1][j] = pIn[i].p(1);
@@ -220,11 +228,13 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2,
       P[0][j] = sqrt(P[1][j] * P[1][j] + P[2][j] * P[2][j] + P[3][j] * P[3][j] +
                      P[4][j] * P[4][j]);
       P[5][j] = sqrt(P[1][j] * P[1][j] + P[2][j] * P[2][j]);
-      P[6][j] = pIn[i].e() * pIn[i].e() - P[0][j] * P[0][j]; // virtuality^2
+      P[6][j] = pIn[i].e() * pIn[i].e() - P[0][j] * P[0][j];  // virtuality^2
       if (P[6][j] < 0.0)
         P[6][j] = 0.0;
-      //if(std::isnan(P[6][j]) || std::isinf(P[6][j]))
-      //{JSWARN << "first instance:j=" << j << ", P[0][j]=" << P[0][j] << ", P[1][j]=" << P[1][j] << ", P[2][j]=" << P[2][j] <<", P[3][j]=" << P[3][j] <<", P[4][j]=" << P[4][j] << ", P[6][j]=" << P[6][j];}
+      // if(std::isnan(P[6][j]) || std::isinf(P[6][j]))
+      //{JSWARN << "first instance:j=" << j << ", P[0][j]=" << P[0][j] << ",
+      // P[1][j]=" << P[1][j] << ", P[2][j]=" << P[2][j] <<", P[3][j]=" <<
+      // P[3][j] <<", P[4][j]=" << P[4][j] << ", P[6][j]=" << P[6][j];}
 
       WT[j] = 1.0;
 
@@ -245,8 +255,8 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2,
       vcfrozen[2][j] = 0.0;
       vcfrozen[3][j] = 0.0;
 
-      Tint_lrf[j] =
-          0.0; // time since last splitting, reset below if there is information from JETSCAPE
+      Tint_lrf[j] = 0.0;  // time since last splitting, reset below if there is
+                          // information from JETSCAPE
       if (pIn[i].has_user_info<LBTUserInfo>()) {
         Tint_lrf[j] = pIn[i].user_info<LBTUserInfo>().lrf_T_tot();
       } else {
@@ -258,7 +268,8 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2,
       else
         CAT[j] = 0;
 
-    } else { // negative particle, or particle no longer active, will streamly freely in LBT
+    } else {  // negative particle, or particle no longer active, will streamly
+              // freely in LBT
 
       KATT10[j] = pIn[i].pid();
       P0[1][j] = pIn[i].p(1);
@@ -268,7 +279,7 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2,
       P0[0][j] = sqrt(P0[1][j] * P0[1][j] + P0[2][j] * P0[2][j] +
                       P0[3][j] * P0[3][j] + P0[4][j] * P0[4][j]);
       P0[5][j] = sqrt(P0[1][j] * P0[1][j] + P0[2][j] * P0[2][j]);
-      P0[6][j] = pIn[i].e() * pIn[i].e() - P0[0][j] * P0[0][j]; // virtuality^2
+      P0[6][j] = pIn[i].e() * pIn[i].e() - P0[0][j] * P0[0][j];  // virtuality^2
       if (P0[6][j] < 0.0)
         P0[6][j] = 0.0;
       WT0[j] = 1.0;
@@ -289,20 +300,24 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2,
       vcfrozen0[2][j] = 0.0;
       vcfrozen0[3][j] = 0.0;
 
-      Tint_lrf[j] =
-          0.0; // time since last splitting, reset below if there is information from JETSCAPE
+      Tint_lrf[j] = 0.0;  // time since last splitting, reset below if there is
+                          // information from JETSCAPE
       if (pIn[i].has_user_info<LBTUserInfo>()) {
         Tint_lrf[j] = pIn[i].user_info<LBTUserInfo>().lrf_T_tot();
       } else {
         pIn[i].set_user_info(new LBTUserInfo(0.0));
       }
 
-    } // end par_status check
+    }  // end par_status check
 
     ////if(par_status != -1) {
-    ////    cout << "LBT -- status: " << par_status << " current time: " << Vfrozen[0][j] << "  accumulated time: " << Tint_lrf[j] << "  energy: " << P[0][1] << "  clock: " << time <<endl;
+    ////    cout << "LBT -- status: " << par_status << " current time: " <<
+    /// Vfrozen[0][j] << "  accumulated time: " << Tint_lrf[j] << "  energy: "
+    /// << P[0][1] << "  clock: " << time <<endl;
     ////} else {
-    ////    cout << "LBT -- status: " << par_status << " current time: " << Vfrozen0[0][j] << "  accumulated time: " << Tint_lrf[j] << "  energy: " << P0[0][1] << "  clock: " << time << endl;
+    ////    cout << "LBT -- status: " << par_status << " current time: " <<
+    /// Vfrozen0[0][j] << "  accumulated time: " << Tint_lrf[j] << "  energy: "
+    ///<< P0[0][1] << "  clock: " << time << endl;
     ////}
 
     nj = 1;
@@ -315,8 +330,9 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2,
     flag_update0 = 0;
 
     // do LBT evolution for this particle
-    int nnn = 1; // dummy variable, not important
-    //          double systemTime=Vfrozen[0][j]+dt; // how to pass the time of the framework?
+    int nnn = 1;  // dummy variable, not important
+    //          double systemTime=Vfrozen[0][j]+dt; // how to pass the time of
+    //          the framework?
     double systemTime = time;
 
     //// for unit test
@@ -328,12 +344,12 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2,
     //              ctEvt++;
     //          }
 
-    //if(alphas>epsilon && vacORmed!=0) {
-    if (vacORmed != 0) { // for JETSCAPE, won't change parton if it's in vacuum
+    // if(alphas>epsilon && vacORmed!=0) {
+    if (vacORmed != 0) {  // for JETSCAPE, won't change parton if it's in vacuum
       flagScatter = 0;
-      LBT0(
-          nnn,
-          systemTime); // most important function of LBT: update particle list for one time step
+      LBT0(nnn,
+           systemTime);  // most important function of LBT: update particle list
+                         // for one time step
     }
 
     //// LBT unit test
@@ -349,7 +365,8 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2,
     //          if(ctEvt==ncall && fabs(systemTime-tauend)<0.000001) {
     //              ofstream dat_de("de.dat");
     //              for(int ik=1; ik<=40; ++ik)
-    //                   dat_de << ik*0.1 << "    " << de1[ik] << "    " << de2[ik] << endl;
+    //                   dat_de << ik*0.1 << "    " << de1[ik] << "    " <<
+    //                   de2[ik] << endl;
     //              dat_de.close();
     //          }
 
@@ -360,13 +377,13 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2,
     velocity_jet[3] = pIn[i].jet_v().z();
 
     if (par_status !=
-        -1) { // for particle list initiating with positive particles
+        -1) {  // for particle list initiating with positive particles
 
       if (flag_update == 0)
-        continue; // no update on this particle from LBT0 function
+        continue;  // no update on this particle from LBT0 function
 
-      TakeResponsibilityFor(
-          pIn[i]); // Generate error if another module already has responsibility.
+      TakeResponsibilityFor(pIn[i]);  // Generate error if another module
+                                      // already has responsibility.
 
       ////cout << "Evolve in LBT -- flag: " << flagScatter << endl;
 
@@ -377,12 +394,13 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2,
       // may only need to push back particle if flagScatter=1 later
       // positive particle stat = 0
       for (int j = 1; j <= np; j++) {
-        // definition Parton (int label, int id, int stat, double p[4], double x[4]);
+        // definition Parton (int label, int id, int stat, double p[4], double
+        // x[4]);
         if (P[0][j] < cutOut)
           continue;
-        int out_stat = 0; // jet parton
+        int out_stat = 0;  // jet parton
         if (CAT[j] == 2)
-          out_stat = 1; // recoil parton
+          out_stat = 1;  // recoil parton
         double tempP[4], tempX[4];
         tempP[0] = sqrt(P[0][j] * P[0][j] + P[6][j]);
         tempP[1] = P[1][j];
@@ -406,7 +424,7 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2,
         pOut.back().set_user_info(new LBTUserInfo(Tint_lrf[j]));
 
         int iout = pOut.size() - 1;
-        pOut[iout].set_jet_v(velocity_jet); // use initial jet velocity
+        pOut[iout].set_jet_v(velocity_jet);  // use initial jet velocity
         pOut[iout].set_mean_form_time();
         double ft = pOut[iout].mean_form_time();
         pOut[iout].set_form_time(ft);
@@ -430,19 +448,20 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2,
         pOut.back().set_user_info(new LBTUserInfo(0.0));
 
         int iout = pOut.size() - 1;
-        pOut[iout].set_jet_v(velocity_jet); // use initial jet velocity
+        pOut[iout].set_jet_v(velocity_jet);  // use initial jet velocity
         pOut[iout].set_mean_form_time();
         double ft = pOut[iout].mean_form_time();
         pOut[iout].set_form_time(ft);
       }
 
-    } else { // free-streaming daughter particles from negative particles if they are inside a medium
+    } else {  // free-streaming daughter particles from negative particles if
+              // they are inside a medium
 
       if (flag_update0 == 0)
-        continue; // no update on this particle from LBT0 function
+        continue;  // no update on this particle from LBT0 function
 
-      TakeResponsibilityFor(
-          pIn[i]); // Generate error if another module already has responsibility.
+      TakeResponsibilityFor(pIn[i]);  // Generate error if another module
+                                      // already has responsibility.
 
       if (np != 1)
         JSDEBUG << "Wrong number of negative partons!";
@@ -465,13 +484,13 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2,
         pOut.back().set_user_info(new LBTUserInfo(0.0));
 
         int iout = pOut.size() - 1;
-        pOut[iout].set_jet_v(velocity_jet); // use initial jet velocity
+        pOut[iout].set_jet_v(velocity_jet);  // use initial jet velocity
         pOut[iout].set_mean_form_time();
         double ft = pOut[iout].mean_form_time();
         pOut[iout].set_form_time(ft);
       }
 
-    } // end par_status check
+    }  // end par_status check
   }
 }
 
@@ -483,19 +502,18 @@ void LBT::DoEnergyLoss(double deltaT, double time, double Q2,
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 void LBT::LBT0(int &n, double &ti) {
-
-  int CT;     //collision type 1 2 3 13 4 5 6 7 8
-  int KATTC0; //flavor code 1/d 2/u 3/s -1/dbar -2/ubar -3/sbar 21/gluon
+  int CT;      // collision type 1 2 3 13 4 5 6 7 8
+  int KATTC0;  // flavor code 1/d 2/u 3/s -1/dbar -2/ubar -3/sbar 21/gluon
   int KATT2;
   int KATT3;
   int KATT30;
 
-  double RTE;  //scattering rate (energy temperature)
-  double E;    //parton energy
-  double PLen; //parton momentum
-  double T;    //local temperature
+  double RTE;   // scattering rate (energy temperature)
+  double E;     // parton energy
+  double PLen;  // parton momentum
+  double T;     // local temperature
 
-  double T1; //index for difference method
+  double T1;  // index for difference method
   double T2;
   double E1;
   double E2;
@@ -508,19 +526,19 @@ void LBT::LBT0(int &n, double &ti) {
   int idlead;
   int idlead1;
   int idlead2;
-  double Xtau; //....................main & titau
+  double Xtau;  //....................main & titau
   double Vx;
   double Vy;
   double Veta;
 
-  double tcar =
-      0.0; //....................t x y z in Cartesian coordinate this is for the radiation process
+  double tcar = 0.0;  //....................t x y z in Cartesian coordinate this
+                      // is for the radiation process
   double xcar = 0.0;
   double ycar = 0.0;
   double zcar = 0.0;
 
-  double tcar0 =
-      0.0; //....................t x y z in Cartesian coordinate this is for the radiation process
+  double tcar0 = 0.0;  //....................t x y z in Cartesian coordinate
+                       // this is for the radiation process
   double xcar0 = 0.0;
   double ycar0 = 0.0;
   double zcar0 = 0.0;
@@ -540,20 +558,22 @@ void LBT::LBT0(int &n, double &ti) {
   double py0;
   double pz0;
 
-  double
-      Ncoll22; //...................average number of elastic scattering for particle i in the current step
-  int Nscatter; //...................number of elastic scattering for particle i in the current step
+  double Ncoll22;  //...................average number of elastic scattering for
+                   // particle i in the current step
+  int Nscatter;  //...................number of elastic scattering for particle
+                 // i in the current step
 
-  int nnpp = np; //...................number of particles in the current np loop
+  int nnpp =
+      np;  //...................number of particles in the current np loop
   int np0 =
-      np; //...................number of particles in the current step (np0)
+      np;  //...................number of particles in the current step (np0)
   //...................number of particles in the beginning of current step (np)
 
   int free = 0;
   int free0 = 0;
   double fraction = 0.0;
   double fraction0 = 0.0;
-  double vc0b[4] = {0.0}; //flow velocity
+  double vc0b[4] = {0.0};  // flow velocity
   double pMag, vMag, flowFactor;
 
   double kt2;
@@ -587,30 +607,31 @@ void LBT::LBT0(int &n, double &ti) {
   ncut0 = 0;
   //...........................................................................................................NCUTEND
 
-  //...collision of the jet parton (i<=nj), recoiled partons, radiated gluons with the background thermal partons
+  //...collision of the jet parton (i<=nj), recoiled partons, radiated gluons
+  // with the background thermal partons
   //...thermal partons
   //...np number of partons in current step
   //...nj number of jet partons
 
   for (int i = 1; i <= np; i++) {
-
-    //      // if the production time of a parton is ahead of the current time, do nothing
-    //      if(Vfrozen[0][i]>=ti) continue;
+    //      // if the production time of a parton is ahead of the current time,
+    //      do nothing if(Vfrozen[0][i]>=ti) continue;
 
     icl22 = 0;
     qt = 0;
     idlead = i;
 
-    //......propagation of each positive particle and its negative counterpart in the current time step (for all particles)
+    //......propagation of each positive particle and its negative counterpart
+    // in the current time step (for all particles)
 
-    if (P[0][i] < epsilon) { //anti-overflow NOT NECESSARY
+    if (P[0][i] < epsilon) {  // anti-overflow NOT NECESSARY
       V[1][i] = 0.0;
       V[2][i] = 0.0;
       V[3][i] = 0.0;
       CAT[i] = 1;
     }
 
-    if (P0[0][i] < epsilon) { //anti-overflow NOT NECESSARY
+    if (P0[0][i] < epsilon) {  // anti-overflow NOT NECESSARY
       V0[1][i] = 0.0;
       V0[2][i] = 0.0;
       V0[3][i] = 0.0;
@@ -620,10 +641,9 @@ void LBT::LBT0(int &n, double &ti) {
     if (CAT0[i] != 1) {
       //...........................................t-z coordinates
       if (tauswitch == 0) {
-
-        //V0[1][i]=V0[1][i]+dt*P0[1][i]/P0[0][i];
-        //V0[2][i]=V0[2][i]+dt*P0[2][i]/P0[0][i];
-        //V0[3][i]=V0[3][i]+dt*P0[3][i]/P0[0][i];
+        // V0[1][i]=V0[1][i]+dt*P0[1][i]/P0[0][i];
+        // V0[2][i]=V0[2][i]+dt*P0[2][i]/P0[0][i];
+        // V0[3][i]=V0[3][i]+dt*P0[3][i]/P0[0][i];
 
         V0[1][i] = V0[1][i] + (ti - Vfrozen0[0][i]) * P0[1][i] / P0[0][i];
         V0[2][i] = V0[2][i] + (ti - Vfrozen0[0][i]) * P0[2][i] / P0[0][i];
@@ -642,16 +662,18 @@ void LBT::LBT0(int &n, double &ti) {
         //              if(bulkFlag==1) { // read OSU hydro
         //                  readhydroinfoshanshan_(&tcar0,&xcar0,&ycar0,&zcar0,&ed00,&sd00,&temp00,&VX00,&VY00,&VZ00,&hydro_ctl0);
         //              } else if(bulkFlag==2) { // read CCNU hydro
-        //                  hydroinfoccnu_(&tcar0, &xcar0, &ycar0, &zcar0, &temp00, &VX00, &VY00, &VZ00, &hydro_ctl0);
+        //                  hydroinfoccnu_(&tcar0, &xcar0, &ycar0, &zcar0,
+        //                  &temp00, &VX00, &VY00, &VZ00, &hydro_ctl0);
         //              } else if(bulkFlag==0) { // static medium
 
-        //Extract fluid properties
+        // Extract fluid properties
         std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
 
         SpatialRapidity = 0.5 * std::log((tcar0 + zcar0) / (tcar0 - zcar0));
 
         GetHydroCellSignal(tcar0, xcar0, ycar0, zcar0, check_fluid_info_ptr);
-        //VERBOSE(7)<< MAGENTA<<"Temperature from Brick (Signal) = "<<check_fluid_info_ptr->temperature;
+        // VERBOSE(7)<< MAGENTA<<"Temperature from Brick (Signal) =
+        // "<<check_fluid_info_ptr->temperature;
 
         temp00 = check_fluid_info_ptr->temperature;
         sd00 = check_fluid_info_ptr->entropy_density;
@@ -667,17 +689,16 @@ void LBT::LBT0(int &n, double &ti) {
           VZ00 = 0.0;
         }
 
-        //JSDEBUG << "check temperature: " << temp00;
+        // JSDEBUG << "check temperature: " << temp00;
 
-        //VX00=0.0;
-        //VY00=0.0;
-        //VZ00=0.0;
+        // VX00=0.0;
+        // VY00=0.0;
+        // VZ00=0.0;
 
         hydro_ctl0 = 0;
         //              }
 
         if (hydro_ctl0 == 0 && temp00 >= hydro_Tc) {
-
           qhat00 = DebyeMass2(Kqhat0, alphas, temp00);
           fraction0 = 1.0;
 
@@ -689,25 +710,24 @@ void LBT::LBT0(int &n, double &ti) {
           vcfrozen0[1][i] = VX00;
           vcfrozen0[2][i] = VY00;
           vcfrozen0[3][i] = VZ00;
-          flag_update0 =
-              1; // do free-streaming for negative particle if in medium, no check on virtuality (assume 0)
+          flag_update0 = 1;  // do free-streaming for negative particle if in
+                             // medium, no check on virtuality (assume 0)
 
         } else {
           free0 = 1;
           fraction0 = 0.0;
         }
 
-      } //if(tauswitch==0)
+      }  // if(tauswitch==0)
 
-    } //if(CAT0[i] != 1)
+    }  // if(CAT0[i] != 1)
 
     if (CAT[i] != 1) {
       //...........................................t-z coordinates
       if (tauswitch == 0) {
-
-        //V[1][i]=V[1][i]+dt*P[1][i]/P[0][i];
-        //V[2][i]=V[2][i]+dt*P[2][i]/P[0][i];
-        //V[3][i]=V[3][i]+dt*P[3][i]/P[0][i];
+        // V[1][i]=V[1][i]+dt*P[1][i]/P[0][i];
+        // V[2][i]=V[2][i]+dt*P[2][i]/P[0][i];
+        // V[3][i]=V[3][i]+dt*P[3][i]/P[0][i];
 
         V[1][i] = V[1][i] + (ti - Vfrozen[0][i]) * P[1][i] / P[0][i];
         V[2][i] = V[2][i] + (ti - Vfrozen[0][i]) * P[2][i] / P[0][i];
@@ -729,27 +749,29 @@ void LBT::LBT0(int &n, double &ti) {
         free = 0;
 
         if (free == 0) {
-
           //                  if(bulkFlag==1) { // read OSU hydro
           //                      readhydroinfoshanshan_(&tcar,&xcar,&ycar,&zcar,&ed,&sd,&temp0,&VX,&VY,&VZ,&hydro_ctl);
           //                  } else if(bulkFlag==2) { // read CCNU hydro
-          //                      hydroinfoccnu_(&tcar, &xcar, &ycar, &zcar, &temp0, &VX, &VY, &VZ, &hydro_ctl);
+          //                      hydroinfoccnu_(&tcar, &xcar, &ycar, &zcar,
+          //                      &temp0, &VX, &VY, &VZ, &hydro_ctl);
           //                  } else if(bulkFlag==0) { // static medium
-          //VX=0.0;
-          //VY=0.0;
-          //VZ=0.0;
+          // VX=0.0;
+          // VY=0.0;
+          // VZ=0.0;
 
           std::unique_ptr<FluidCellInfo> check_fluid_info_ptr;
 
           SpatialRapidity = 0.5 * std::log((tcar + zcar) / (tcar - zcar));
 
           GetHydroCellSignal(tcar, xcar, ycar, zcar, check_fluid_info_ptr);
-          //VERBOSE(7)<< MAGENTA<<"Temperature from Brick (Signal) = "<<check_fluid_info_ptr->temperature;
+          // VERBOSE(7)<< MAGENTA<<"Temperature from Brick (Signal) =
+          // "<<check_fluid_info_ptr->temperature;
 
           if (!GetJetSignalConnected()) {
             JSWARN << "Couldn't find a hydro module attached!";
-            throw std::runtime_error("Please attach a hydro module or set "
-                                     "in_vac to 1 in the XML file");
+            throw std::runtime_error(
+                "Please attach a hydro module or set "
+                "in_vac to 1 in the XML file");
           }
 
           temp0 = check_fluid_info_ptr->temperature;
@@ -766,15 +788,16 @@ void LBT::LBT0(int &n, double &ti) {
             VZ = 0.0;
           }
 
-          // JSINFO << BOLDYELLOW << "LBT time = " << tcar << " x = " << xcar << " y = " << ycar << " z = " << zcar << " temp = " << temp0;
-          // JSINFO << BOLDYELLOW << "LBT Vel_x, Vel_y, Vel_z =" << P[1][i]/P[0][i] << ", " << P[2][i]/P[0][i]<< ", " << P[3][i]/P[0][i];
+          // JSINFO << BOLDYELLOW << "LBT time = " << tcar << " x = " << xcar <<
+          // " y = " << ycar << " z = " << zcar << " temp = " << temp0; JSINFO
+          // << BOLDYELLOW << "LBT Vel_x, Vel_y, Vel_z =" << P[1][i]/P[0][i] <<
+          // ", " << P[2][i]/P[0][i]<< ", " << P[3][i]/P[0][i];
 
-          //JSDEBUG << "check temperature: " << temp0;
+          // JSDEBUG << "check temperature: " << temp0;
           hydro_ctl = 0;
           //                  }
 
           if (hydro_ctl == 0 && temp0 >= hydro_Tc) {
-
             vc0[1] = VX;
             vc0[2] = VY;
             vc0[3] = VZ;
@@ -819,14 +842,15 @@ void LBT::LBT0(int &n, double &ti) {
                          pc0[0]) /
               sqrt(1.0 - vMag * vMag);
 
-        } //if(free==0)
-      }   //if(tauswitch==0)
+        }  // if(free==0)
+      }    // if(tauswitch==0)
 
       //...........................................tau-eta coordinates
-      //if(tauswitch==1) { // not ready for JETSCAPE
+      // if(tauswitch==1) { // not ready for JETSCAPE
       //} // if(tauswitch==1)
 
-      //......propagation of each positive particle and its negative counterpart in the current time step	end
+      //......propagation of each positive particle and its negative counterpart
+      // in the current time step	end
 
       //......CAT[i]=1 free streaming particle
 
@@ -834,7 +858,6 @@ void LBT::LBT0(int &n, double &ti) {
       //......free streaming when energy0 < Ecut0......in the next step
 
       if (free == 0) {
-
         double qhatTP, RTE1, RTE2;
 
         // modification: interplotate rate in l.r.f.
@@ -843,34 +866,36 @@ void LBT::LBT0(int &n, double &ti) {
         pc0[3] = P[3][i];
         pc0[0] = P[0][i];
         trans(vc0, pc0);
-        E = pc0
-            [0]; //  p4-the initial 4-momentum of the jet parton in the local rest frame
+        E = pc0[0];  //  p4-the initial 4-momentum of the jet parton in the
+                     //  local rest frame
         PLen = sqrt(pc0[1] * pc0[1] + pc0[2] * pc0[2] + pc0[3] * pc0[3]);
         transback(vc0, pc0);
 
         T = temp0;
         KATTC0 = KATT1[i];
 
-        //              if(E<T) preKT=4.0*pi/9.0/log(scaleAK*T*T/0.04)/alphas/fixKT;
-        //              else preKT=4.0*pi/9.0/log(scaleAK*E*T/0.04)/alphas/fixKT;
+        //              if(E<T)
+        //              preKT=4.0*pi/9.0/log(scaleAK*T*T/0.04)/alphas/fixKT;
+        //              else
+        //              preKT=4.0*pi/9.0/log(scaleAK*E*T/0.04)/alphas/fixKT;
 
-        if(run_alphas==1) {
-            //runKT=4.0*pi/9.0/log(2.0*E*T/0.04)/0.3;
-            fixedLog = log(5.7*E/4.0/6.0/pi/0.3/T);
-            scaleMu2 = 2.0*E*T;
-            if(scaleMu2 < 1.0) {
-                scaleMu2 = 1.0;
-                runAlphas = alphas;
-            } else {
-                double lambdaQCD2 = exp(-4.0*pi/9.0/alphas);
-                runAlphas = 4.0*pi/9.0/log(scaleMu2/lambdaQCD2);
-            }
-            runKT = runAlphas/0.3;
-            runLog = log(scaleMu2/6.0/pi/T/T/alphas)/fixedLog;
-        }    
+        if (run_alphas == 1) {
+          // runKT=4.0*pi/9.0/log(2.0*E*T/0.04)/0.3;
+          fixedLog = log(5.7 * E / 4.0 / 6.0 / pi / 0.3 / T);
+          scaleMu2 = 2.0 * E * T;
+          if (scaleMu2 < 1.0) {
+            scaleMu2 = 1.0;
+            runAlphas = alphas;
+          } else {
+            double lambdaQCD2 = exp(-4.0 * pi / 9.0 / alphas);
+            runAlphas = 4.0 * pi / 9.0 / log(scaleMu2 / lambdaQCD2);
+          }
+          runKT = runAlphas / 0.3;
+          runLog = log(scaleMu2 / 6.0 / pi / T / T / alphas) / fixedLog;
+        }
 
         lam(KATTC0, RTE, PLen, T, T1, T2, E1, E2, iT1, iT2, iE1,
-            iE2); //modified: use P instead
+            iE2);  // modified: use P instead
 
         preKT = alphas / 0.3;
 
@@ -879,12 +904,13 @@ void LBT::LBT0(int &n, double &ti) {
         KTfactor = 1.0 + KTamp * exp(-pow((temp0 - hydro_Tc), 2) / 2.0 / KTsig /
                                      KTsig);
 
-        if(run_alphas==1) {
-           Kfactor = KPfactor * KTfactor * KTfactor * runKT * preKT * runLog; // K factor for qhat
+        if (run_alphas == 1) {
+          Kfactor = KPfactor * KTfactor * KTfactor * runKT * preKT *
+                    runLog;  // K factor for qhat
         } else {
-           Kfactor = KPfactor * KTfactor * KTfactor * preKT * preKT; // K factor for qhat
+          Kfactor = KPfactor * KTfactor * KTfactor * preKT *
+                    preKT;  // K factor for qhat
         }
-       
 
         // get qhat from table
         if (KATTC0 == 21) {
@@ -915,7 +941,7 @@ void LBT::LBT0(int &n, double &ti) {
         //              qhatTP=14.80;
         //              cout << "RTE: " << RTE << endl;
 
-        qhat_over_T3 = qhatTP; // what is read in is qhat/T^3 of quark/gluon
+        qhat_over_T3 = qhatTP;  // what is read in is qhat/T^3 of quark/gluon
 
         // D2piT is diffusion coefficient "just for quark"
         if (KATTC0 == 21)
@@ -923,10 +949,9 @@ void LBT::LBT0(int &n, double &ti) {
         else
           D2piT = 8.0 * pi / qhat_over_T3;
 
-        qhat =
-            qhatTP *
-            pow(T,
-                3); // for light quark and gluon, need additional table to make it correct
+        qhat = qhatTP * pow(T,
+                            3);  // for light quark and gluon, need additional
+                                 // table to make it correct
 
         if (Q00 < 0.0) {
           Q0 = sqrt(sqrt(2.0 * E * qhat));
@@ -935,27 +960,27 @@ void LBT::LBT0(int &n, double &ti) {
         }
 
         if (P[6][i] > Q0 * Q0 + rounding_error) {
-          continue; // virtuality outside the LBT range, go to the next particle
+          continue;  // virtuality outside the LBT range, go to the next
+                     // particle
         }
 
-        flag_update =
-            1; // satisfy T>Tc and Q<Q0, LBT will process this positice particle
+        flag_update = 1;  // satisfy T>Tc and Q<Q0, LBT will process this
+                          // positice particle
 
         if (E < sqrt(qhat0))
-          continue; // just do free-streaming
+          continue;  // just do free-streaming
         if (i > nj && E < Ecmcut)
           continue;
 
-        // update interaction time and average gluon number for heavy quark radiation
-        // (as long as it's in medium, even though no collision)
+        // update interaction time and average gluon number for heavy quark
+        // radiation (as long as it's in medium, even though no collision)
         dt_lrf =
             dt *
-            flowFactor; // must be put here, flowFactor will be changed below
+            flowFactor;  // must be put here, flowFactor will be changed below
 
         // increae time accumulation from the production point of the parton
         for (double tLoc = lrf_rStart[0]; tLoc < ti + rounding_error;
              tLoc = tLoc + dt) {
-
           double xLoc =
               lrf_rStart[1] + (tLoc - lrf_rStart[0]) * P[1][i] / P[0][i];
           double yLoc =
@@ -998,19 +1023,24 @@ void LBT::LBT0(int &n, double &ti) {
 
         Tdiff = Tint_lrf[i];
 
-        // get radiation probablity by reading tables -- same for heavy and light partons
+        // get radiation probablity by reading tables -- same for heavy and
+        // light partons
         if (KATTC0 == 21) {
-            if (run_alphas==1) {
-                radng[i] += nHQgluon(KATT1[i], dt_lrf, Tdiff, temp0, E, maxFncHQ) / 2.0 * KTfactor * runKT;
-            } else {
-                radng[i] += nHQgluon(KATT1[i], dt_lrf, Tdiff, temp0, E, maxFncHQ) / 2.0 * KTfactor * preKT;
-            }
+          if (run_alphas == 1) {
+            radng[i] += nHQgluon(KATT1[i], dt_lrf, Tdiff, temp0, E, maxFncHQ) /
+                        2.0 * KTfactor * runKT;
+          } else {
+            radng[i] += nHQgluon(KATT1[i], dt_lrf, Tdiff, temp0, E, maxFncHQ) /
+                        2.0 * KTfactor * preKT;
+          }
         } else {
-            if (run_alphas==1) {
-                radng[i] += nHQgluon(KATT1[i], dt_lrf, Tdiff, temp0, E, maxFncHQ) * KTfactor * runKT;
-            } else {
-                radng[i] += nHQgluon(KATT1[i], dt_lrf, Tdiff, temp0, E, maxFncHQ) * KTfactor * preKT;
-            }
+          if (run_alphas == 1) {
+            radng[i] += nHQgluon(KATT1[i], dt_lrf, Tdiff, temp0, E, maxFncHQ) *
+                        KTfactor * runKT;
+          } else {
+            radng[i] += nHQgluon(KATT1[i], dt_lrf, Tdiff, temp0, E, maxFncHQ) *
+                        KTfactor * preKT;
+          }
         }
         lim_low = sqrt(6.0 * pi * alphas) * temp0 / E;
         if (abs(KATT1[i]) == 4 || abs(KATT1[i]) == 5)
@@ -1025,7 +1055,6 @@ void LBT::LBT0(int &n, double &ti) {
 
         //...........................................t-z coordinates
         if (tauswitch == 0) {
-
           pc0[1] = P[1][i];
           pc0[2] = P[2][i];
           pc0[3] = P[3][i];
@@ -1043,30 +1072,31 @@ void LBT::LBT0(int &n, double &ti) {
           probCol = fraction * dt_lrf * RTE / 0.1970;
         }
         ////...........................................tau-eta coordinates
-        //if(tauswitch==1) { // not ready for JETSCAPE
+        // if(tauswitch==1) { // not ready for JETSCAPE
 
         //  V[0][i]=V[0][i]-dt*RTE*Xtau/0.1970*sqrt(pow(P[1][i],2)+pow(P[2][i],2)+pow(P[3][i],2))/P[0][i];
         //  probCol=dt_lrf*RTE*Xtau/0.1970;  // ?? fraction
-        //  //		  Ncoll22=dt*RTE/0.197*Xtau*((pc0[0]*1-pc0[1]*vc0[1]-pc0[2]*vc0[2]-pc0[3]*vc0[3])/E);
+        //  //
+        //  Ncoll22=dt*RTE/0.197*Xtau*((pc0[0]*1-pc0[1]*vc0[1]-pc0[2]*vc0[2]-pc0[3]*vc0[3])/E);
         //}
 
         ////////////////////////////////////////
 
         if (KINT0 == 0)
-          probRad = 0.0; // switch off radiation
-        if (run_alphas==1) {
-            probCol = probCol * KPfactor * KTfactor * runKT;
+          probRad = 0.0;  // switch off radiation
+        if (run_alphas == 1) {
+          probCol = probCol * KPfactor * KTfactor * runKT;
         } else {
-            probCol = probCol * KPfactor * KTfactor * preKT;
+          probCol = probCol * KPfactor * KTfactor * preKT;
         }
         probCol = (1.0 - exp(-probCol)) *
-                  (1.0 - probRad); // probability of pure elastic scattering
+                  (1.0 - probRad);  // probability of pure elastic scattering
         if (KINT0 == 2)
           probCol = 0.0;
         probTot = probCol + probRad;
 
         if (ZeroOneDistribution(*GetMt19937Generator()) <
-            probTot) { // !Yes, collision! Either elastic or inelastic.
+            probTot) {  // !Yes, collision! Either elastic or inelastic.
 
           flagScatter = 1;
 
@@ -1074,7 +1104,6 @@ void LBT::LBT0(int &n, double &ti) {
           Nscatter = 1;
 
           for (int nsca = 1; nsca <= Nscatter; nsca++) {
-
             np0 = np0 + 1;
             pc0[1] = P[1][i];
             pc0[2] = P[2][i];
@@ -1084,11 +1113,12 @@ void LBT::LBT0(int &n, double &ti) {
             flavor(CT, KATTC0, KATT2, KATT3, RTE, PLen, T, T1, T2, E1, E2, iT1,
                    iT2, iE1, iE2);
 
-            //...........collision between a jet parton or a recoiled parton and a thermal parton from the medium
+            //...........collision between a jet parton or a recoiled parton and
+            // a thermal parton from the medium
 
-            if (CT == 11 || CT == 12) { // for heavy quark scattering
+            if (CT == 11 || CT == 12) {  // for heavy quark scattering
               collHQ22(CT, temp0, qhat0, vc0, pc0, pc2, pc3, pc4, qt);
-            } else { // for light parton scattering
+            } else {  // for light parton scattering
               colljet22(CT, temp0, qhat0, vc0, pc0, pc2, pc3, pc4, qt);
             }
 
@@ -1099,10 +1129,11 @@ void LBT::LBT0(int &n, double &ti) {
             KATT1[np0] = KATT2;
             KATT10[np0] = KATT3;
 
-            //		  if(pc0[0]<pc2[0] && abs(KATTC0)!=4) { // for the purpose of unit test
+            //		  if(pc0[0]<pc2[0] && abs(KATTC0)!=4) { // for the
+            // purpose of unit test
             if (pc0[0] < pc2[0] && abs(KATTC0) != 4 && abs(KATTC0) != 5 &&
-                KATTC0 ==
-                    KATT2) { //disable switch for heavy quark, only allow switch for identical particles
+                KATTC0 == KATT2) {  // disable switch for heavy quark, only
+                                    // allow switch for identical particles
               for (int k = 0; k <= 3; k++) {
                 p0temp[k] = pc2[k];
                 pc2[k] = pc0[k];
@@ -1113,7 +1144,6 @@ void LBT::LBT0(int &n, double &ti) {
             }
 
             for (int j = 0; j <= 3; j++) {
-
               P[j][i] = pc0[j];
               P[j][np0] = pc2[j];
               V[j][np0] = V[j][i];
@@ -1132,19 +1162,20 @@ void LBT::LBT0(int &n, double &ti) {
               }
             }
 
-            // pass initial pT and weight information from jet parton to recoil and negative parton
+            // pass initial pT and weight information from jet parton to recoil
+            // and negative parton
             P[5][np0] = P[5][i];
             P0[5][np0] = P[5][i];
             WT[np0] = WT[i];
             WT0[np0] = WT[i];
-            P[4][np0] = 0.0; // recoiled parton is always massless
-            P[6][np0] = 0.0; // recoiled parton has 0 virtuality
+            P[4][np0] = 0.0;  // recoiled parton is always massless
+            P[6][np0] = 0.0;  // recoiled parton has 0 virtuality
             P0[4][np0] = 0.0;
             P0[6][np0] = 0.0;
 
             CAT[np0] = 2;
 
-          } //for(int nsca=1;nsca<=Nscatter;nsca++)
+          }  // for(int nsca=1;nsca<=Nscatter;nsca++)
 
           //...inelastic scattering begins
 
@@ -1153,7 +1184,7 @@ void LBT::LBT0(int &n, double &ti) {
           } else
             KINT = 1;
 
-          if (KINT0 != 0 && KINT != 0) { // Switch on the radiation processes
+          if (KINT0 != 0 && KINT != 0) {  // Switch on the radiation processes
             for (int j = 0; j <= 3; j++) {
               p0temp[j] = P[j][i];
             }
@@ -1162,14 +1193,14 @@ void LBT::LBT0(int &n, double &ti) {
             py0 = pc4[2];
             pz0 = pc4[3];
 
-            Elab = pc4
-                [0]; // p4-the initial 4-momentum of the jet parton in the lab frame
+            Elab = pc4[0];  // p4-the initial 4-momentum of the jet parton in
+                            // the lab frame
             trans(vc0, pc4);
-            Ejp = pc4
-                [0]; //  p4-the initial 4-momentum of the jet parton in the local rest frame
+            Ejp = pc4[0];  //  p4-the initial 4-momentum of the jet parton in
+                           //  the local rest frame
             transback(vc0, pc4);
 
-            if (Ejp > 2 * sqrt(qhat0)) { // !radiation or not?
+            if (Ejp > 2 * sqrt(qhat0)) {  // !radiation or not?
 
               Vtemp[1] = xcar;
               Vtemp[2] = ycar;
@@ -1185,10 +1216,10 @@ void LBT::LBT0(int &n, double &ti) {
 
               if (ZeroOneDistribution(*GetMt19937Generator()) <
                   probRad /
-                      probTot) { // radiation -- either heavy or light parton:
+                      probTot) {  // radiation -- either heavy or light parton:
 
-                for (int j = 0; j <= 3; j++) { // prepare for the collHQ23
-                  pc01[j] = pc4[j];            // 2->3 process
+                for (int j = 0; j <= 3; j++) {  // prepare for the collHQ23
+                  pc01[j] = pc4[j];             // 2->3 process
                   pb[j] = pc4[j];
                 }
 
@@ -1197,26 +1228,26 @@ void LBT::LBT0(int &n, double &ti) {
                 n_coll23 += 1;
 
                 if (icl23 != 1) {
-
                   int ctGluon = 1;
 
                   ng_coll23 += 1;
                   nrad = KPoisson(radng[i]);
                   int nrad0 = nrad;
 
-                  //                          nrad=1; // only allow single gluon emission right now
+                  //                          nrad=1; // only allow single gluon
+                  //                          emission right now
 
                   ng_nrad += nrad;
                   np0 = np0 + 1;
                   KATT1[np0] = 21;
 
                   for (int j = 0; j <= 3; j++) {
-                    P[j][i] = pc01[j];      // heavy quark after colljet23
-                    P[j][np0 - 1] = pc2[j]; // replace the final state of 22
+                    P[j][i] = pc01[j];       // heavy quark after colljet23
+                    P[j][np0 - 1] = pc2[j];  // replace the final state of 22
                     V[j][np0 - 1] = V[j][i];
                     P0[j][np0 - 1] = pc3[j];
                     V0[j][np0 - 1] = V[j][i];
-                    P[j][np0] = pc4[j]; //radiated gluon from colljet23
+                    P[j][np0] = pc4[j];  // radiated gluon from colljet23
                     V[j][np0] = V[j][i];
                     P0[j][np0] = 0.0;
                     V0[j][np0] = 0.0;
@@ -1236,8 +1267,8 @@ void LBT::LBT0(int &n, double &ti) {
                   P[5][np0] = P[5][i];
                   P0[5][np0] = 0.0;
                   WT[np0] = WT[i];
-                  WT0[np0] = 0.0;  // doesn't exist
-                  P[4][np0] = 0.0; // radiated gluons are massless
+                  WT0[np0] = 0.0;   // doesn't exist
+                  P[4][np0] = 0.0;  // radiated gluons are massless
                   P0[4][np0] = 0.0;
                   // assign virtuality for daughter partons
                   Qinit = P[6][i];
@@ -1246,22 +1277,22 @@ void LBT::LBT0(int &n, double &ti) {
                   P0[6][np0] = 0.0;
 
                   if (CAT[i] == 2)
-                    CAT[np0] = 2; // daughters of recoil are recoils
+                    CAT[np0] = 2;  // daughters of recoil are recoils
 
                   // comment out for unit test
                   Tint_lrf[i] =
-                      0.0; //reset radiation infomation for heavy quark
+                      0.0;  // reset radiation infomation for heavy quark
 
                   flagScatter = 2;
 
                   eGluon = eGluon + pc4[0];
                   nGluon = nGluon + 1.0;
 
-                  V[0][np0] = -log(1.0 - ZeroOneDistribution(*GetMt19937Generator()));
+                  V[0][np0] =
+                      -log(1.0 - ZeroOneDistribution(*GetMt19937Generator()));
 
                   // add multiple radiation for heavy quark
                   while (nrad > 1) {
-
                     for (int j = 0; j <= 3; j++)
                       pc2[j] = pc4[j];
 
@@ -1278,9 +1309,9 @@ void LBT::LBT0(int &n, double &ti) {
                       ctGluon++;
 
                       for (int j = 0; j <= 3; j++) {
-                        P[j][i] = pc01[j]; // heavy quark after one more gluon
-                        P[j][np0 - 1] = pc2[j]; // update the previous gluon
-                        P[j][np0] = pc4[j];     // record the new gluon
+                        P[j][i] = pc01[j];  // heavy quark after one more gluon
+                        P[j][np0 - 1] = pc2[j];  // update the previous gluon
+                        P[j][np0] = pc4[j];      // record the new gluon
                         V[j][np0] = V[j][i];
                         P0[j][np0] = 0.0;
                         V0[j][np0] = 0.0;
@@ -1300,8 +1331,8 @@ void LBT::LBT0(int &n, double &ti) {
                       P[5][np0] = P[5][i];
                       P0[5][np0] = 0.0;
                       WT[np0] = WT[i];
-                      WT0[np0] = 0.0;  // doesn't exist
-                      P[4][np0] = 0.0; // radiated gluons are massless
+                      WT0[np0] = 0.0;   // doesn't exist
+                      P[4][np0] = 0.0;  // radiated gluons are massless
                       P0[4][np0] = 0.0;
                       // assign virtuality for daughter partons
                       P[6][i] = pow(P[0][i] / Elab, 2) * Qinit;
@@ -1309,35 +1340,37 @@ void LBT::LBT0(int &n, double &ti) {
                       P[6][np0] = pow(P[0][np0] / Elab, 2) * Qinit;
                       P0[6][np0] = 0.0;
                       if (CAT[i] == 2)
-                        CAT[np0] = 2; // daughters of recoil are recoils
+                        CAT[np0] = 2;  // daughters of recoil are recoils
 
                       eGluon = eGluon + pc4[0];
                       nGluon = nGluon + 1.0;
 
-                      V[0][np0] = -log(1.0 - ZeroOneDistribution(*GetMt19937Generator()));
+                      V[0][np0] = -log(
+                          1.0 - ZeroOneDistribution(*GetMt19937Generator()));
 
-                    } else { //end multiple radiation
+                    } else {  // end multiple radiation
                       break;
-                    } //if(icl!=1)radiation
+                    }  // if(icl!=1)radiation
 
                     nrad = nrad - 1;
-                  } //multiple radiation for heavy quark ends
+                  }  // multiple radiation for heavy quark ends
 
-                  //                          cout<<"radiate! <Ng>: "<<nrad0<<"  real Ng H: "<< ctGluon << endl;
-                } // icl23 == 1, 1st gluon radiation from heavy quark
+                  //                          cout<<"radiate! <Ng>: "<<nrad0<<"
+                  //                          real Ng H: "<< ctGluon << endl;
+                }  // icl23 == 1, 1st gluon radiation from heavy quark
 
-              } // if(ZeroOneDistribution(*GetMt19937Generator())<probRad/probTot)
+              }  // if(ZeroOneDistribution(*GetMt19937Generator())<probRad/probTot)
 
-            } //if(Ejp>2*sqrt(qhat0))
+            }  // if(Ejp>2*sqrt(qhat0))
 
-          } //if(KINT!=0)
+          }  // if(KINT!=0)
 
           //...........collision end
           //...........determine the leading partons and set radng[i]
 
           //....tiscatter information
           if (abs(KATT1[i]) == 4 || abs(KATT1[i]) == 5)
-            radng[i] = 0.0; // do it below
+            radng[i] = 0.0;  // do it below
           tiscatter[i] = tcar;
           V[0][i] = -log(1.0 - ZeroOneDistribution(*GetMt19937Generator()));
 
@@ -1378,14 +1411,15 @@ void LBT::LBT0(int &n, double &ti) {
 
           //........................................................................................................
 
-          //CAT!!!
-          /*			  
-	   */
-          //for(int m=nnpp+1;m<=np0;m++) { // only put recoil parton CAT as 2, radiated gluons do not count
-          //  if(CAT[i]==2) {
-          //    CAT[m]=2;
-          //  }
-          //}
+          // CAT!!!
+          /*
+           */
+          // for(int m=nnpp+1;m<=np0;m++) { // only put recoil parton CAT as 2,
+          // radiated gluons do not count
+          //   if(CAT[i]==2) {
+          //     CAT[m]=2;
+          //   }
+          // }
 
           if (P[0][nnpp + 1] < Ecut) {
             //  CAT[nnpp+1]=1;
@@ -1410,18 +1444,19 @@ void LBT::LBT0(int &n, double &ti) {
             }
           }
 
-        } //...!Yes, collision!
+        }  //...!Yes, collision!
 
-        // even if there is no scattering, one should reset last scatter time now in the new framework
+        // even if there is no scattering, one should reset last scatter time
+        // now in the new framework
         tiscatter[i] = tcar;
         radng[i] = 0.0;
 
-      } //....for if(free==0)
-    }   //..........if CAT[i]=0 end
+      }  //....for if(free==0)
+    }    //..........if CAT[i]=0 end
 
     nnpp = np0;
 
-  } //......for np end
+  }  //......for np end
 
   //........time step end, np: the number of particles at this point
   np = np0;
@@ -1442,7 +1477,7 @@ void LBT::LBT0(int &n, double &ti) {
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-void LBT::read_tables() { // intialize various tables for LBT
+void LBT::read_tables() {  // intialize various tables for LBT
 
   //     if(bulkFlag==1) { // read in OSU hydro profiles
   //         int dataID_in=1;
@@ -1452,7 +1487,8 @@ void LBT::read_tables() { // intialize various tables for LBT
   //         int bufferSize=1000;
   //         int len1=strlen(dataFN_in);
   //         int len2=strlen(ctlFN_in);
-  //         sethydrofilesez_(&dataID_in, dataFN_in, &ctlID_in, ctlFN_in, &bufferSize, len1, len2);
+  //         sethydrofilesez_(&dataID_in, dataFN_in, &ctlID_in, ctlFN_in,
+  //         &bufferSize, len1, len2);
   //     } else if(bulkFlag==2) { // read in CCNU hydro profiles
   //         char dataFN_in[]="../hydroProfile/bulk.dat";
   //         int len1=strlen(dataFN_in);
@@ -1520,9 +1556,12 @@ void LBT::read_tables() { // intialize various tables for LBT
         }
       }
     }
-    //     cout << dNg_over_dt_c[t_gn+1][temp_gn][HQener_gn] << "    " << max_dNgfnc_c[t_gn+1][temp_gn][HQener_gn] << endl;
-    //     cout << dNg_over_dt_q[t_gn+1][temp_gn][HQener_gn] << "    " << max_dNgfnc_q[t_gn+1][temp_gn][HQener_gn] << endl;
-    //     cout << dNg_over_dt_g[t_gn+1][temp_gn][HQener_gn] << "    " << max_dNgfnc_g[t_gn+1][temp_gn][HQener_gn] << endl;
+    //     cout << dNg_over_dt_c[t_gn+1][temp_gn][HQener_gn] << "    " <<
+    //     max_dNgfnc_c[t_gn+1][temp_gn][HQener_gn] << endl; cout <<
+    //     dNg_over_dt_q[t_gn+1][temp_gn][HQener_gn] << "    " <<
+    //     max_dNgfnc_q[t_gn+1][temp_gn][HQener_gn] << endl; cout <<
+    //     dNg_over_dt_g[t_gn+1][temp_gn][HQener_gn] << "    " <<
+    //     max_dNgfnc_g[t_gn+1][temp_gn][HQener_gn] << endl;
     f12.close();
     f13.close();
     f14.close();
@@ -1653,7 +1692,6 @@ float LBT::ran0(long *idum)
 
 //.........................................................................
 double LBT::alphas0(int &Kalphas, double temp0) {
-
   double X;
   if (Kalphas == 1) {
     X = fixAlphas;
@@ -1665,20 +1703,19 @@ double LBT::alphas0(int &Kalphas, double temp0) {
 }
 //.........................................................................
 double LBT::DebyeMass2(int &Kqhat0, double alphas, double temp0) {
-
   switch (Kqhat0) {
-  case 1:
-    return 4.0 * pi * alphas * pow(temp0, 2);
-    break;
-  case 2:
-    return (3.0 / 2.0) * 4.0 * pi * alphas * pow(temp0, 2);
-    break;
-  case 3:
-    return 1.0;
-  default:
-    JSWARN << "Kqhat0 = " << Kqhat0;
-    throw std::runtime_error("Unexpected value for Kqhat0");
-    return -1;
+    case 1:
+      return 4.0 * pi * alphas * pow(temp0, 2);
+      break;
+    case 2:
+      return (3.0 / 2.0) * 4.0 * pi * alphas * pow(temp0, 2);
+      break;
+    case 3:
+      return 1.0;
+    default:
+      JSWARN << "Kqhat0 = " << Kqhat0;
+      throw std::runtime_error("Unexpected value for Kqhat0");
+      return -1;
   }
 
   // double Y;
@@ -1701,11 +1738,13 @@ double LBT::DebyeMass2(int &Kqhat0, double alphas, double temp0) {
 //.........................................................................
 void LBT::titau(double ti, double vf[4], double vp[4], double p0[4], double &Vx,
                 double &Vy, double &Veta, double &Xtau) {
-
   //..............................................................test part
-  //		  cout<<"ti"<<" "<<ti<<" "<<"vf"<<" "<<vf[1]<<" "<<vf[2]<<" "<<vf[3]<<endl;
-  //		  cout<<"vp[4]"<<" "<<vp[1]<<" "<<vp[2]<<" "<<vp[3]<<" "<<vp[0]<<endl;
-  //		  cout<<"p0[4]"<<" "<<p0[1]<<" "<<p0[2]<<" "<<p0[3]<<" "<<p0[0]<<endl;
+  //		  cout<<"ti"<<" "<<ti<<" "<<"vf"<<" "<<vf[1]<<" "<<vf[2]<<"
+  //"<<vf[3]<<endl; 		  cout<<"vp[4]"<<" "<<vp[1]<<" "<<vp[2]<<"
+  //"<<vp[3]<<"
+  //"<<vp[0]<<endl; 		  cout<<"p0[4]"<<" "<<p0[1]<<" "<<p0[2]<<"
+  //"<<p0[3]<<"
+  //"<<p0[0]<<endl;
   //..............................................................test part
 
   //....notice the form of vf
@@ -1725,11 +1764,14 @@ void LBT::titau(double ti, double vf[4], double vp[4], double p0[4], double &Vx,
   Xtau = (gamma * mt * cosh(Yp - etaf) - pvper * vper) / (mt * cosh(Yp - etas));
 
   //..............................................................test part
-  //		  cout<<"gamma"<<" "<<gamma<<" "<<"mt"<<" "<<mt<<" "<<"Yp"<<" "<<Yp<<endl;
-  //		  cout<<"etas"<<" "<<etas<<" "<<"etaf"<<" "<<etaf<<" "<<"pper"<<" "<<pper<<endl;
-  //		  cout<<"vper"<<" "<<vper<<" "<<"pvper"<<" "<<pvper<<endl;
-  //		  cout<<"Vx"<<" "<<Vx<<" "<<"Vy"<<" "<<Vy<<" "<<"Veta"<<" "<<Veta<<endl;
-  //		  cout<<"Xtau"<<" "<<Xtau<<endl;
+  //		  cout<<"gamma"<<" "<<gamma<<" "<<"mt"<<" "<<mt<<" "<<"Yp"<<"
+  //"<<Yp<<endl; 		  cout<<"etas"<<" "<<etas<<" "<<"etaf"<<"
+  //"<<etaf<<"
+  //"<<"pper"<<"
+  //"<<pper<<endl; 		  cout<<"vper"<<" "<<vper<<" "<<"pvper"<<"
+  //"<<pvper<<endl; 		  cout<<"Vx"<<" "<<Vx<<" "<<"Vy"<<" "<<Vy<<"
+  //"<<"Veta"<<"
+  //"<<Veta<<endl; 		  cout<<"Xtau"<<" "<<Xtau<<endl;
   //..............................................................test part
 }
 //.........................................................................
@@ -1739,7 +1781,6 @@ void LBT::titau(double ti, double vf[4], double vp[4], double p0[4], double &Vx,
 void LBT::lam(int KATT0, double &RTE, double E, double T, double &T1,
               double &T2, double &E1, double &E2, int &iT1, int &iT2, int &iE1,
               int &iE2) {
-
   double dtemp = 0.02;
   iT1 = (int)((T - 0.1) / dtemp);
   iT2 = iT1 + 1;
@@ -1760,7 +1801,7 @@ void LBT::lam(int KATT0, double &RTE, double E, double T, double &T1,
         (Rg[iT2][iE2] - Rg[iT1][iE2]) * (T - T1) / (T2 - T1) + Rg[iT1][iE2];
     RTE = (RTE2 - RTE1) * (E - E1) / (E2 - E1) + RTE1;
   } else if (KATT0 == 4 || KATT0 == -4 || KATT0 == 5 ||
-             KATT0 == -5) { // add heavy quark channel
+             KATT0 == -5) {  // add heavy quark channel
     double RTE1 =
         (RHQ[iT2][iE1] - RHQ[iT1][iE1]) * (T - T1) / (T2 - T1) + RHQ[iT1][iE1];
     double RTE2 =
@@ -1772,7 +1813,8 @@ void LBT::lam(int KATT0, double &RTE, double E, double T, double &T1,
     double RTE2 =
         (Rq[iT2][iE2] - Rq[iT1][iE2]) * (T - T1) / (T2 - T1) + Rq[iT1][iE2];
     RTE = (RTE2 - RTE1) * (E - E1) / (E2 - E1) + RTE1;
-    //          cout<<"RTE2,RTE1,E,E1,E2,RTE: "<<RTE2<<"  "<<RTE1<<"  "<<E<<"  "<<E1<<"  "<<E2<<"  "<<RTE<<endl;
+    //          cout<<"RTE2,RTE1,E,E1,E2,RTE: "<<RTE2<<"  "<<RTE1<<"  "<<E<<"
+    //          "<<E1<<"  "<<E2<<"  "<<RTE<<endl;
   }
 }
 
@@ -1781,7 +1823,6 @@ void LBT::lam(int KATT0, double &RTE, double E, double T, double &T1,
 void LBT::flavor(int &CT, int &KATT0, int &KATT2, int &KATT3, double RTE,
                  double E, double T, double &T1, double &T2, double &E1,
                  double &E2, int &iT1, int &iT2, int &iE1, int &iE2) {
-
   double RTEg;
   double RTEg1;
   double RTEg2;
@@ -1814,7 +1855,7 @@ void LBT::flavor(int &CT, int &KATT0, int &KATT2, int &KATT3, double RTE,
          RTEg3, RTEq, RTEq3, RTEq4, RTEq5, RTEq6, RTEq7, RTEq8, RTEHQ, RTEHQ11,
          RTEHQ12, qhatTP);
 
-  if (KATT00 == 21) { //.....for gluon
+  if (KATT00 == 21) {  //.....for gluon
     double R0 = RTE;
     double R1 = RTEg1;
     double R2 = RTEg2;
@@ -1851,7 +1892,7 @@ void LBT::flavor(int &CT, int &KATT0, int &KATT2, int &KATT3, double RTE,
       KATT0 = 21;
     }
   } else if (KATT00 == 4 || KATT00 == -4 || KATT00 == 5 ||
-             KATT00 == -5) { // for heavy quark
+             KATT00 == -5) {  // for heavy quark
     double R0 = RTE;
     double R1 = RTEHQ11;
     double R2 = RTEHQ12;
@@ -1861,7 +1902,7 @@ void LBT::flavor(int &CT, int &KATT0, int &KATT2, int &KATT3, double RTE,
     //          qhat_over_T3=qhatTP;  // what is read in is qhat/T^3 of quark
     //          D2piT=8.0*pi/qhat_over_T3;
 
-    if (a <= R1 / R0) { //Qq->Qq
+    if (a <= R1 / R0) {  // Qq->Qq
       CT = 11;
       b = floor(ZeroOneDistribution(*GetMt19937Generator()) * 6 + 1);
       if (b == 7) {
@@ -1869,13 +1910,13 @@ void LBT::flavor(int &CT, int &KATT0, int &KATT2, int &KATT3, double RTE,
       }
       KATT3 = vb[b];
       KATT2 = KATT3;
-    } else { //Qg->Qg
+    } else {  // Qg->Qg
       CT = 12;
       KATT3 = 21;
       KATT2 = KATT3;
     }
 
-  } else { //.....for quark and antiquark (light)
+  } else {  //.....for quark and antiquark (light)
     double R00 = RTE;
     double R3 = RTEq3;
     double R4 = RTEq4;
@@ -1978,7 +2019,7 @@ void LBT::linear(int KATT, double E, double T, double &T1, double &T2,
     //	  qhatTP=(RTE2-RTE1)*(E-E1)/(E2-E1)+RTE1;
 
   } else if (KATT == 4 || KATT == -4 || KATT == 5 ||
-             KATT == -5) { // add heavy quark channel
+             KATT == -5) {  // add heavy quark channel
     double RTE1 = (RHQ11[iT2][iE1] - RHQ11[iT1][iE1]) * (T - T1) / (T2 - T1) +
                   RHQ11[iT1][iE1];
     double RTE2 = (RHQ11[iT2][iE2] - RHQ11[iT1][iE2]) * (T - T1) / (T2 - T1) +
@@ -2041,7 +2082,6 @@ void LBT::linear(int KATT, double E, double T, double &T1, double &T2,
 //.........................................................................
 
 void LBT::twflavor(int &CT, int &KATT0, int &KATT2, double E, double T) {
-
   double RTEg;
   double RTEg1;
   double RTEg2;
@@ -2106,7 +2146,6 @@ void LBT::twflavor(int &CT, int &KATT0, int &KATT2, double E, double T) {
 
   //.....for quark and antiquark
   if (KATT00 != 21) {
-
     //	R00 =RTE
     //	R3  =RTEq3
     //	R4  =RTEq4
@@ -2124,7 +2163,6 @@ void LBT::twflavor(int &CT, int &KATT0, int &KATT2, double E, double T) {
     }
 
     if (KATT20 != 21) {
-
       if (abs(KATT20) != abs(KATT00)) {
         CT = 4;
         //	      KATT3=KATT2
@@ -2177,7 +2215,6 @@ void LBT::twflavor(int &CT, int &KATT0, int &KATT2, double E, double T) {
 
 void LBT::twlinear(int KATT, double E, double T, double &RTEg1, double &RTEg2,
                    double &RTEq6, double &RTEq7, double &RTEq8) {
-
   //.....
   double dtemp = 0.02;
   int iT1 = floor((T - 0.1) / dtemp);
@@ -2284,12 +2321,14 @@ void LBT::colljet22(int CT, double temp, double qhat0ud, double v0[4],
 
   //    transform to local comoving frame of the fluid
   //  cout << endl;
-  //  cout << "flow  "<< v0[1] << " " << v0[2] << " " << v0[3] << " "<<" Elab " << p0[0] << endl;
+  //  cout << "flow  "<< v0[1] << " " << v0[2] << " " << v0[3] << " "<<" Elab "
+  //  << p0[0] << endl;
 
   trans(v0, p0);
   //  cout << p0[0] << " " << sqrt(qhat0ud) << endl;
 
-  //  cout << sqrt(pow(p0[1],2)+pow(p0[2],2)+pow(p0[3],2)) << " " << p0[1] << " " << p0[2] << " " << p0[3] << endl;
+  //  cout << sqrt(pow(p0[1],2)+pow(p0[2],2)+pow(p0[3],2)) << " " << p0[1] << "
+  //  " << p0[2] << " " << p0[3] << endl;
 
   //************************************************************
   trans(v0, p4);
@@ -2327,8 +2366,6 @@ void LBT::colljet22(int CT, double temp, double qhat0ud, double v0[4],
   flag1 = 0;
   flag2 = 0;
 
-
-
   //    Initial 4-momentum of jet
   //
   //************************************************************
@@ -2343,16 +2380,16 @@ void LBT::colljet22(int CT, double temp, double qhat0ud, double v0[4],
   ct1_loop = 0;
   do {
     ct1_loop++;
-    if(flag2 == 1 || ct1_loop > 1e6){
-       flag1 = 1;
-       break;
+    if (flag2 == 1 || ct1_loop > 1e6) {
+      flag1 = 1;
+      break;
     }
     ct2_loop = 0;
     do {
       ct2_loop++;
-      if(ct2_loop > 1e6){
-         flag2 = 1;
-         break;
+      if (ct2_loop > 1e6) {
+        flag2 = 1;
+        break;
       }
       xw = 15.0 * ZeroOneDistribution(*GetMt19937Generator());
       razim = 2.0 * pi * ZeroOneDistribution(*GetMt19937Generator());
@@ -2390,7 +2427,7 @@ void LBT::colljet22(int CT, double temp, double qhat0ud, double v0[4],
 
     f1 = pow(xw, 3) / (exp(xw) - 1) / 1.4215;
     f2 = pow(xw, 3) / (exp(xw) + 1) / 1.2845;
- 
+
     uu = ss - tt;
 
     if (CT == 1) {
@@ -2525,7 +2562,7 @@ void LBT::colljet22(int CT, double temp, double qhat0ud, double v0[4],
     rank = ZeroOneDistribution(*GetMt19937Generator());
   } while (rank > (msq * ff));
 
-  if(flag1 == 1 || flag2 == 1){ // scatterings cannot be properly sampled
+  if (flag1 == 1 || flag2 == 1) {  // scatterings cannot be properly sampled
     transback(v0, p0);
     transback(v0, p4);
     qt = 0;
@@ -2669,9 +2706,9 @@ void LBT::collHQ22(int CT, double temp, double qhat0ud, double v0[4],
 
   double msq = 0.0;
 
-  double e2, theta2, theta4, phi24; // the four independent variables
+  double e2, theta2, theta4, phi24;  // the four independent variables
   double e1, e4, p1, cosTheta24, downFactor,
-      sigFactor; // other useful variables
+      sigFactor;  // other useful variables
   double HQmass, fBmax, fFmax, fB, fF, maxValue;
   int index_p1, index_T, index_e2;
   int ct1_loop, ct2_loop, flag1, flag2;
@@ -2714,15 +2751,16 @@ void LBT::collHQ22(int CT, double temp, double qhat0ud, double v0[4],
   }
 
   fBmax = distFncBM[index_T][index_p1];
-  fFmax = distFncFM[index_T][index_p1]; // maximum of f(xw) at given p1 and T
+  fFmax = distFncFM[index_T][index_p1];  // maximum of f(xw) at given p1 and T
 
-  maxValue = 10.0; // need actual value later
+  maxValue = 10.0;  // need actual value later
 
   ct1_loop = 0;
-  do { // sample p2 (light parton) using distribution integrated over 3 angles
+  do {  // sample p2 (light parton) using distribution integrated over 3 angles
     ct1_loop++;
     if (ct1_loop > 1e6) {
-      //            cout << "cannot sample light parton for HQ scattering ..." << endl;
+      //            cout << "cannot sample light parton for HQ scattering ..."
+      //            << endl;
       flag1 = 1;
       break;
     }
@@ -2730,10 +2768,10 @@ void LBT::collHQ22(int CT, double temp, double qhat0ud, double v0[4],
     index_e2 = (int)((xw - min_e2) / bin_e2);
     if (index_e2 >= N_e2)
       index_e2 = N_e2 - 1;
-    if (CT == 11) { // qc->qc
+    if (CT == 11) {  // qc->qc
       ff = distFncF[index_T][index_p1][index_e2] / fFmax;
       maxValue = distMaxF[index_T][index_p1][index_e2];
-    } else if (CT == 12) { // gc->gc
+    } else if (CT == 12) {  // gc->gc
       ff = distFncB[index_T][index_p1][index_e2] / fBmax;
       maxValue = distMaxB[index_T][index_p1][index_e2];
     } else {
@@ -2765,7 +2803,8 @@ void LBT::collHQ22(int CT, double temp, double qhat0ud, double v0[4],
     e4 = (e1 * e2 - p1 * e2 * cos(theta2)) / downFactor;
     sigFactor = sin(theta2) * sin(theta4) * e2 * e4 / downFactor;
 
-    // calculate s,t,u, different definition from light quark -- tt, uu are negative
+    // calculate s,t,u, different definition from light quark -- tt, uu are
+    // negative
     ss = 2.0 * e1 * e2 + HQmass * HQmass - 2.0 * p1 * e2 * cos(theta2);
     tt = -2.0 * e2 * e4 * (1.0 - cosTheta24);
     uu = 2.0 * HQmass * HQmass - ss - tt;
@@ -2778,14 +2817,14 @@ void LBT::collHQ22(int CT, double temp, double qhat0ud, double v0[4],
       continue;
     }
 
-    if (CT == 11) { // qc->qc
+    if (CT == 11) {  // qc->qc
       ff =
           (1.0 / (exp(e2 / temp) + 1.0)) * (1.0 - 1.0 / (exp(e4 / temp) + 1.0));
       sigFactor = sigFactor * ff;
       msq = Mqc2qc(ss, tt, HQmass) / maxValue;
     }
 
-    if (CT == 12) { // gc->gc
+    if (CT == 12) {  // gc->gc
       ff =
           (1.0 / (exp(e2 / temp) - 1.0)) * (1.0 + 1.0 / (exp(e4 / temp) - 1.0));
       sigFactor = sigFactor * ff;
@@ -2797,7 +2836,6 @@ void LBT::collHQ22(int CT, double temp, double qhat0ud, double v0[4],
   } while (rank > (msq * sigFactor));
 
   if (flag1 == 0 && flag2 == 0) {
-
     // pass p2 value to p3 for initial thermal parton
     p3[1] = e2 * sin(theta2);
     p3[2] = 0.0;
@@ -2812,7 +2850,8 @@ void LBT::collHQ22(int CT, double temp, double qhat0ud, double v0[4],
     p2[3] = e4 * cos(theta4);
     p2[0] = e4;
 
-    // rotate randomly in xy plane (jet is in z), because p3 is assigned in xz plane with bias
+    // rotate randomly in xy plane (jet is in z), because p3 is assigned in xz
+    // plane with bias
     double th_rotate = 2.0 * pi * ZeroOneDistribution(*GetMt19937Generator());
     double p3x_rotate = p3[1] * cos(th_rotate) - p3[2] * sin(th_rotate);
     double p3y_rotate = p3[1] * sin(th_rotate) + p3[2] * cos(th_rotate);
@@ -2823,7 +2862,8 @@ void LBT::collHQ22(int CT, double temp, double qhat0ud, double v0[4],
     p2[1] = p2x_rotate;
     p2[2] = p2y_rotate;
 
-    // Because we treated p0 (p1 in my note for heavy quark) as the z-direction, proper rotations are necessary here
+    // Because we treated p0 (p1 in my note for heavy quark) as the z-direction,
+    // proper rotations are necessary here
     rotate(p4[1], p4[2], p4[3], p2, -1);
     rotate(p4[1], p4[2], p4[3], p3, -1);
 
@@ -2850,7 +2890,7 @@ void LBT::collHQ22(int CT, double temp, double qhat0ud, double v0[4],
     transback(v0, p3);
     transback(v0, p4);
 
-  } else { // no scattering
+  } else {  // no scattering
     transback(v0, p0);
     transback(v0, p4);
     qt = 0;
@@ -3017,8 +3057,8 @@ void LBT::twcoll(int CT, double qhat0ud, double v0[4], double p0[4],
       //
     }
 
-    //	   qiqj to qiqj, qiqjbar to qiqjbar, qibarqj to qibarqj, qibarqjbar to qibarqjbar
-    //	   for i not equal j
+    //	   qiqj to qiqj, qiqjbar to qiqjbar, qibarqj to qibarqj, qibarqjbar to
+    // qibarqjbar 	   for i not equal j
     if (CT == 4) {
       //
       mmax = 4.0 / 9.0 * (pow(ss, 2) + pow((ss - tmin), 2)) / pow(tmin, 2);
@@ -3082,7 +3122,6 @@ void LBT::twcoll(int CT, double qhat0ud, double v0[4], double p0[4],
   //    transverse momentum transfer
 
   if ((tt > qhat0ud) && (tt < (ss - qhat0ud))) {
-
     ranp = 2.0 * pi * ZeroOneDistribution(*GetMt19937Generator());
     //
     //
@@ -3136,7 +3175,6 @@ void LBT::collHQ23(int parID, double temp_med, double qhat0ud, double v0[4],
                    double p0[4], double p2[4], double p3[4], double p4[4],
                    double qt, int &ic, double Tdiff, double HQenergy,
                    double max_Ng, double xLow, double xInt) {
-
   //    p0 initial jet momentum, output to final momentum
   //    p3 initial thermal momentum
   //    p2 initial thermal momentum, output to final thermal momentum
@@ -3193,23 +3231,22 @@ void LBT::collHQ23(int parID, double temp_med, double qhat0ud, double v0[4],
   zDirection[0] = p0[0];
 
   rotate(zDirection[1], zDirection[2], zDirection[3], p2,
-         1); // rotate p2 into p1 system
+         1);  // rotate p2 into p1 system
 
   // comment do { for unit test
   do {
-
     do {
       randomX = xLow + xInt * ZeroOneDistribution(*GetMt19937Generator());
       randomY = ZeroOneDistribution(*GetMt19937Generator());
     } while (tau_f(randomX, randomY, HQenergy, HQmass) < 1.0 / pi / temp_med);
 
     count_sample = 0;
-    while (max_Ng * ZeroOneDistribution(*GetMt19937Generator()) > dNg_over_dxdydt(parID, randomX, randomY,
-                                                  HQenergy, HQmass, temp_med,
-                                                  Tdiff)) {
+    while (max_Ng * ZeroOneDistribution(*GetMt19937Generator()) >
+           dNg_over_dxdydt(parID, randomX, randomY, HQenergy, HQmass, temp_med,
+                           Tdiff)) {
       count_sample = count_sample + 1;
       if (count_sample > 1e+5) {
-        //cout << "give up loop at point 1 ..." << endl;
+        // cout << "give up loop at point 1 ..." << endl;
         kpGluon[1] = 0.0;
         kpGluon[2] = 0.0;
         kpGluon[3] = 0.0;
@@ -3252,8 +3289,8 @@ void LBT::collHQ23(int parID, double temp_med, double qhat0ud, double v0[4],
     p4[3] = kpGluon[3];
     p4[0] = kpGluon[0];
 
-    //comment for unit test begin
-    // solve energy-momentum conservation
+    // comment for unit test begin
+    //  solve energy-momentum conservation
     double sE1 = p0[0];
     double sp1x = 0.0;
     double sp1y = 0.0;
@@ -3322,7 +3359,12 @@ void LBT::collHQ23(int parID, double temp_med, double qhat0ud, double v0[4],
         nloop2++;
         continue;
       } else if (yesA == 1 && yesB == 1) {
-        //          cout << "Both solutions work!" << "  " << sE1 << "  " << sp1x << "  " << sp1y << "  " << sp1z << "  " << sE2 << "  " << sp2x << "  " << sp2y << "  " << sp2z << "  " << sk0 << "  " << skx << "  " << sky << "  " << skz << "  " << sqx << "  " << sqy << "  " << sq0A << "  " << sqzA << "  " << sq0B << "  " << sqzB << endl;
+        //          cout << "Both solutions work!" << "  " << sE1 << "  " <<
+        //          sp1x << "  " << sp1y << "  " << sp1z << "  " << sE2 << "  "
+        //          << sp2x << "  " << sp2y << "  " << sp2z << "  " << sk0 << "
+        //          " << skx << "  " << sky << "  " << skz << "  " << sqx << "
+        //          " << sqy << "  " << sq0A << "  " << sqzA << "  " << sq0B <<
+        //          "  " << sqzB << endl;
         if (abs(sq0A) < abs(sq0B)) {
           sq0 = sq0A;
           sqz = sqzA;
@@ -3331,11 +3373,21 @@ void LBT::collHQ23(int parID, double temp_med, double qhat0ud, double v0[4],
           sqz = sqzB;
         }
       } else if (yesA == 1) {
-        //          cout << "pass A ..." << "  " << sE1 << "  " << sp1x << "  " << sp1y << "  " << sp1z << "  " << sE2 << "  " << sp2x << "  " << sp2y << "  " << sp2z << "  " << sk0 << "  " << skx << "  " << sky << "  " << skz << "  " << sqx << "  " << sqy << "  " << sq0A << "  " << sqzA << "  " << sq0B << "  " << sqzB << endl;
+        //          cout << "pass A ..." << "  " << sE1 << "  " << sp1x << "  "
+        //          << sp1y << "  " << sp1z << "  " << sE2 << "  " << sp2x << "
+        //          " << sp2y << "  " << sp2z << "  " << sk0 << "  " << skx << "
+        //          " << sky << "  " << skz << "  " << sqx << "  " << sqy << "
+        //          " << sq0A << "  " << sqzA << "  " << sq0B << "  " << sqzB <<
+        //          endl;
         sq0 = sq0A;
         sqz = sqzA;
       } else {
-        //          cout << "pass B ..." << "  " << sE1 << "  " << sp1x << "  " << sp1y << "  " << sp1z << "  " << sE2 << "  " << sp2x << "  " << sp2y << "  " << sp2z << "  " << sk0 << "  " << skx << "  " << sky << "  " << skz << "  " << sqx << "  " << sqy << "  " << sq0A << "  " << sqzA << "  " << sq0B << "  " << sqzB << endl;
+        //          cout << "pass B ..." << "  " << sE1 << "  " << sp1x << "  "
+        //          << sp1y << "  " << sp1z << "  " << sE2 << "  " << sp2x << "
+        //          " << sp2y << "  " << sp2z << "  " << sk0 << "  " << skx << "
+        //          " << sky << "  " << skz << "  " << sqx << "  " << sqy << "
+        //          " << sq0A << "  " << sqzA << "  " << sq0B << "  " << sqzB <<
+        //          endl;
         sq0 = sq0B;
         sqz = sqzB;
       }
@@ -3359,15 +3411,16 @@ void LBT::collHQ23(int parID, double temp_med, double qhat0ud, double v0[4],
       p2[2] = sp2y + sqy;
       p2[3] = sp2z + sqz;
 
-      //           cout<<"sE1,sE2,p0[0],p2[0],p4[0]: "<<sE1<<"  "<<sE2<<"  "<<p0[0]<<"  "<<p2[0]<<"  "<<p4[0]<<endl;
+      //           cout<<"sE1,sE2,p0[0],p2[0],p4[0]: "<<sE1<<"  "<<sE2<<"
+      //           "<<p0[0]<<"  "<<p2[0]<<"  "<<p4[0]<<endl;
       // comment for unit test end
 
       rotate(zDirection[1], zDirection[2], zDirection[3], p0,
-             -1); // rotate p0 into global system
+             -1);  // rotate p0 into global system
       rotate(zDirection[1], zDirection[2], zDirection[3], p2,
-             -1); // rotate p2 into global system
+             -1);  // rotate p2 into global system
       rotate(zDirection[1], zDirection[2], zDirection[3], p4,
-             -1); // rotate p4 into global system
+             -1);  // rotate p4 into global system
 
       transback(v0, p0);
       transback(v0, p2);
@@ -3400,7 +3453,8 @@ void LBT::collHQ23(int parID, double temp_med, double qhat0ud, double v0[4],
              << "  " << HQmass << endl;
       }
 
-      //  cout<<"in colljet23 -- init thermal, final jet, final thermal, gluon: "<<p3[0]<<"  "<<p0[0]<<"  "<<p2[0]<<"  "<<p4[0]<<endl;
+      //  cout<<"in colljet23 -- init thermal, final jet, final thermal, gluon:
+      //  "<<p3[0]<<"  "<<p0[0]<<"  "<<p2[0]<<"  "<<p4[0]<<endl;
       flagOut = 1;
     }
   } while (flagOut == 0 && nloopOut < loopN);
@@ -3408,14 +3462,13 @@ void LBT::collHQ23(int parID, double temp_med, double qhat0ud, double v0[4],
   if (flagOut == 0)
     ic = 1;
 
-  //comment for unit test end
+  // comment for unit test end
 }
 
 void LBT::radiationHQ(int parID, double qhat0ud, double v0[4], double P2[4],
                       double P3[4], double P4[4], double Pj0[4], int &ic,
                       double Tdiff, double HQenergy, double max_Ng,
                       double temp_med, double xLow, double xInt) {
-
   //    work in the rest frame of medium
   //    return the 4-momentum of final states in 1->3 radiation
   //    input: P2(4)-momentum of radiated gluon from 2->3
@@ -3486,12 +3539,12 @@ void LBT::radiationHQ(int parID, double qhat0ud, double v0[4], double P2[4],
     } while (tau_f(randomX, randomY, HQenergy, HQmass) < 1.0 / pi / temp_med);
 
     count_sample = 0;
-    while (max_Ng * ZeroOneDistribution(*GetMt19937Generator()) > dNg_over_dxdydt(parID, randomX, randomY,
-                                                  HQenergy, HQmass, temp_med,
-                                                  Tdiff)) {
+    while (max_Ng * ZeroOneDistribution(*GetMt19937Generator()) >
+           dNg_over_dxdydt(parID, randomX, randomY, HQenergy, HQmass, temp_med,
+                           Tdiff)) {
       count_sample = count_sample + 1;
       if (count_sample > 1e+5) {
-        //cout << "give up loop at point 1 ..." << endl;
+        // cout << "give up loop at point 1 ..." << endl;
         kpGluon[1] = 0.0;
         kpGluon[2] = 0.0;
         kpGluon[3] = 0.0;
@@ -3522,7 +3575,7 @@ void LBT::radiationHQ(int parID, double qhat0ud, double v0[4], double P2[4],
     // comment for unit test
     if (kpGluon[0] >
         (P3[0] -
-         HQmass)) { // which should be impossible due to reset of xInt above
+         HQmass)) {  // which should be impossible due to reset of xInt above
       kpGluon[1] = 0.0;
       kpGluon[2] = 0.0;
       kpGluon[3] = 0.0;
@@ -3543,14 +3596,15 @@ void LBT::radiationHQ(int parID, double qhat0ud, double v0[4], double P2[4],
     // solve energy-momentum conservation
     // my notation in the note
     // p0 is re-constructed off-shell parton, correponding to P5
-    // p1 is the final heavy quark from 2->3, corresponding to P3 (input). P3 (output) is the final heavy quark after 1->3.
-    // k1 is the first gluon, corresponding to P2
-    // k2 is the second gluon, corresponding to P4
-    // assume k10 and p10 unchanged and modify their other components while p0 and k2 are fixed
+    // p1 is the final heavy quark from 2->3, corresponding to P3 (input). P3
+    // (output) is the final heavy quark after 1->3. k1 is the first gluon,
+    // corresponding to P2 k2 is the second gluon, corresponding to P4 assume
+    // k10 and p10 unchanged and modify their other components while p0 and k2
+    // are fixed
     double sp0z = sqrt(P50[1] * P50[1] + P50[2] * P50[2] + P50[3] * P50[3]);
     double sk10 = P2[0];
     double sk1zOld = P2[3];
-    double sk1z, sk1p, sk1x, sk1y, sktheta; // unknown
+    double sk1z, sk1p, sk1x, sk1y, sktheta;  // unknown
     double sp10 = P3[0];
     double sk20 = P4[0];
     double sk2x = P4[1];
@@ -3576,12 +3630,14 @@ void LBT::radiationHQ(int parID, double qhat0ud, double v0[4], double P2[4],
     if (cos12Min2 > 1.0) {
       nloopOut++;
       continue;
-      //      cout << "cos^2 min is outside the kinematic range: " << cos12Min2 << endl;
-      //      return;
+      //      cout << "cos^2 min is outside the kinematic range: " << cos12Min2
+      //      << endl; return;
     }
 
     do {
-      stheta12 = 2.0 * pi * ZeroOneDistribution(*GetMt19937Generator()); // theta between k1 and k2
+      stheta12 = 2.0 * pi *
+                 ZeroOneDistribution(
+                     *GetMt19937Generator());  // theta between k1 and k2
       aaa = 4.0 * ((sp0z - sk2z) * (sp0z - sk2z) +
                    sk2p * sk2p * cos(stheta12) * cos(stheta12));
       bbb = -4.0 * sAA * (sp0z - sk2z);
@@ -3603,7 +3659,9 @@ void LBT::radiationHQ(int parID, double qhat0ud, double v0[4], double P2[4],
       sk1p1 = sqrt(sk10 * sk10 - sk1z1 * sk1z1);
       sk1p2 = sqrt(sk10 * sk10 - sk1z2 * sk1z2);
 
-      // Since we have squared both sides of the original equation during solving, the solutions may not satisfy the original equation. Double check is needed.
+      // Since we have squared both sides of the original equation during
+      // solving, the solutions may not satisfy the original equation. Double
+      // check is needed.
 
       // require time-like of p1 and k10>k1z;
       if (2.0 * sk1p1 * sk2p * cos(stheta12) - 2.0 * (sp0z - sk2z) * sk1z1 +
@@ -3635,24 +3693,44 @@ void LBT::radiationHQ(int parID, double qhat0ud, double v0[4], double P2[4],
         nloop2++;
         continue;
       } else if (yesA == 1 && yesB == 1) {
-        //          cout << "Both solutions work!" << "  " << sE1 << "  " << sp1x << "  " << sp1y << "  " << sp1z << "  " << sE2 << "  " << sp2x << "  " << sp2y << "  " << sp2z << "  " << sk0 << "  " << skx << "  " << sky << "  " << skz << "  " << sqx << "  " << sqy << "  " << sq0A << "  " << sqzA << "  " << sq0B << "  " << sqzB << endl;
+        //          cout << "Both solutions work!" << "  " << sE1 << "  " <<
+        //          sp1x << "  " << sp1y << "  " << sp1z << "  " << sE2 << "  "
+        //          << sp2x << "  " << sp2y << "  " << sp2z << "  " << sk0 << "
+        //          " << skx << "  " << sky << "  " << skz << "  " << sqx << "
+        //          " << sqy << "  " << sq0A << "  " << sqzA << "  " << sq0B <<
+        //          "  " << sqzB << endl;
         if (abs(sk1z1 - sk1zOld) < abs(sk1z2 - sk1zOld)) {
           sk1z = sk1z1;
         } else {
           sk1z = sk1z2;
         }
       } else if (yesA == 1) {
-        //          cout << "pass A ..." << "  " << sE1 << "  " << sp1x << "  " << sp1y << "  " << sp1z << "  " << sE2 << "  " << sp2x << "  " << sp2y << "  " << sp2z << "  " << sk0 << "  " << skx << "  " << sky << "  " << skz << "  " << sqx << "  " << sqy << "  " << sq0A << "  " << sqzA << "  " << sq0B << "  " << sqzB << endl;
+        //          cout << "pass A ..." << "  " << sE1 << "  " << sp1x << "  "
+        //          << sp1y << "  " << sp1z << "  " << sE2 << "  " << sp2x << "
+        //          " << sp2y << "  " << sp2z << "  " << sk0 << "  " << skx << "
+        //          " << sky << "  " << skz << "  " << sqx << "  " << sqy << "
+        //          " << sq0A << "  " << sqzA << "  " << sq0B << "  " << sqzB <<
+        //          endl;
         sk1z = sk1z1;
       } else {
-        //          cout << "pass B ..." << "  " << sE1 << "  " << sp1x << "  " << sp1y << "  " << sp1z << "  " << sE2 << "  " << sp2x << "  " << sp2y << "  " << sp2z << "  " << sk0 << "  " << skx << "  " << sky << "  " << skz << "  " << sqx << "  " << sqy << "  " << sq0A << "  " << sqzA << "  " << sq0B << "  " << sqzB << endl;
+        //          cout << "pass B ..." << "  " << sE1 << "  " << sp1x << "  "
+        //          << sp1y << "  " << sp1z << "  " << sE2 << "  " << sp2x << "
+        //          " << sp2y << "  " << sp2z << "  " << sk0 << "  " << skx << "
+        //          " << sky << "  " << skz << "  " << sqx << "  " << sqy << "
+        //          " << sq0A << "  " << sqzA << "  " << sq0B << "  " << sqzB <<
+        //          endl;
         sk1z = sk1z2;
       }
 
       flagDone = 1;
 
       sk1p = sqrt(sk10 * sk10 - sk1z * sk1z);
-      //           cout << "check solution: " << pow(sp10-sk20,2)-pow(sk1p,2)-pow(sk2p,2)-2.0*sk1p*sk2p*cos(stheta12)-pow(sp0z-sk1z-sk2z,2)-pow(HQmass,2) <<"  "<< aaa*sk1z*sk1z+bbb*sk1z+ccc <<"  "<<2.0*sk1p*sk2p*cos(stheta12)-2.0*(sp0z-sk2z)*sk1z+sAA<<"  "<<2.0*sk1p*sk2p*cos(stheta12)+2.0*(sp0z-sk2z)*sk1z-sAA << endl;
+      //           cout << "check solution: " <<
+      //           pow(sp10-sk20,2)-pow(sk1p,2)-pow(sk2p,2)-2.0*sk1p*sk2p*cos(stheta12)-pow(sp0z-sk1z-sk2z,2)-pow(HQmass,2)
+      //           <<"  "<< aaa*sk1z*sk1z+bbb*sk1z+ccc <<"
+      //           "<<2.0*sk1p*sk2p*cos(stheta12)-2.0*(sp0z-sk2z)*sk1z+sAA<<"
+      //           "<<2.0*sk1p*sk2p*cos(stheta12)+2.0*(sp0z-sk2z)*sk1z-sAA <<
+      //           endl;
 
     } while (flagDone == 0 && nloop1 < loopN && nloop2 < loopN);
 
@@ -3662,8 +3740,8 @@ void LBT::radiationHQ(int parID, double qhat0ud, double v0[4], double P2[4],
       nloopOut++;
       continue;
     } else {
-      sktheta = atan2(sk2y, sk2x);  // theta for k2
-      sktheta = sktheta + stheta12; // theta for k1
+      sktheta = atan2(sk2y, sk2x);   // theta for k2
+      sktheta = sktheta + stheta12;  // theta for k1
       sk1p = sqrt(sk10 * sk10 - sk1z * sk1z);
       sk1x = sk1p * cos(sktheta);
       sk1y = sk1p * sin(sktheta);
@@ -3720,7 +3798,8 @@ void LBT::radiationHQ(int parID, double qhat0ud, double v0[4], double P2[4],
              << endl;
       }
 
-      //       cout<<"in radiation HQ -- final gluon1, gluon2 & HQ: "<<P2[0]<<"  "<<P4[0]<<"  "<<P3[0]<<endl;
+      //       cout<<"in radiation HQ -- final gluon1, gluon2 & HQ: "<<P2[0]<<"
+      //       "<<P4[0]<<"  "<<P3[0]<<endl;
 
       flagOut = 1;
 
@@ -3839,17 +3918,17 @@ double LBT::nHQgluon(int parID, double dtLRF, double &time_gluon,
     time_gluon = t_max;
   }
 
-  //if(temp_med>temp_max) {
-  //  cout << "temperature exceeds temp_max -- extrapolation is used" << endl;
-  //  cout << time_gluon << "    " << temp_med << "    " << HQenergy << endl;
-  //  //     temp_med=temp_max;
-  //}
+  // if(temp_med>temp_max) {
+  //   cout << "temperature exceeds temp_max -- extrapolation is used" << endl;
+  //   cout << time_gluon << "    " << temp_med << "    " << HQenergy << endl;
+  //   //     temp_med=temp_max;
+  // }
 
-  //if(HQenergy>HQener_max) {
-  //  cout << "HQenergy exceeds HQener_max -- extrapolation is used" << endl;
-  //  cout << time_gluon << "    " << temp_med << "    " << HQenergy << endl;
-  //  //     HQenergy=HQener_max;
-  //}
+  // if(HQenergy>HQener_max) {
+  //   cout << "HQenergy exceeds HQener_max -- extrapolation is used" << endl;
+  //   cout << time_gluon << "    " << temp_med << "    " << HQenergy << endl;
+  //   //     HQenergy=HQener_max;
+  // }
 
   if (temp_med < temp_min) {
     cout << "temperature drops below temp_min" << endl;
@@ -3857,17 +3936,18 @@ double LBT::nHQgluon(int parID, double dtLRF, double &time_gluon,
     temp_med = temp_min;
   }
 
-  if(time_gluon < t_max_1) {
-      time_num = (int)(time_gluon / delta_tg_1 + 0.5) + 1;
+  if (time_gluon < t_max_1) {
+    time_num = (int)(time_gluon / delta_tg_1 + 0.5) + 1;
   } else {
-      time_num = (int)((time_gluon - t_max_1) / delta_tg_2 + 0.5) + t_gn_1 + 1;
+    time_num = (int)((time_gluon - t_max_1) / delta_tg_2 + 0.5) + t_gn_1 + 1;
   }
   //  temp_num=(int)((temp_med-temp_min)/delta_temp+0.5);
-  //  HQenergy_num=(int)(HQenergy/delta_HQener+0.5); // use linear interpolation instead of finding nearest point for E and T dimensions
+  //  HQenergy_num=(int)(HQenergy/delta_HQener+0.5); // use linear interpolation
+  //  instead of finding nearest point for E and T dimensions
   temp_num = (int)((temp_med - temp_min) / delta_temp);
-  HQenergy_num = (int)(HQenergy / delta_HQener); // normal interpolation
+  HQenergy_num = (int)(HQenergy / delta_HQener);  // normal interpolation
   if (HQenergy_num >= HQener_gn)
-    HQenergy_num = HQener_gn - 1; // automatically become extrapolation
+    HQenergy_num = HQener_gn - 1;  // automatically become extrapolation
   if (temp_num >= temp_gn)
     temp_num = temp_gn - 1;
 
@@ -3919,7 +3999,8 @@ double LBT::nHQgluon(int parID, double dtLRF, double &time_gluon,
   max_Ng = max_Ng * 6.0 / D2piT;
 
   //  if(delta_Ng>1) {
-  //     cout << "Warning: Ng greater than 1   " << time_gluon << "  " << delta_Ng << endl;
+  //     cout << "Warning: Ng greater than 1   " << time_gluon << "  " <<
+  //     delta_Ng << endl;
   //  }
 
   return delta_Ng;
@@ -3929,7 +4010,6 @@ double LBT::nHQgluon(int parID, double dtLRF, double &time_gluon,
 
 //
 double LBT::Mqc2qc(double s, double t, double M) {
-
   double m2m = M * M;
   double u = 2.0 * m2m - s - t;
   double MM;
@@ -3941,7 +4021,6 @@ double LBT::Mqc2qc(double s, double t, double M) {
 }
 
 double LBT::Mgc2gc(double s, double t, double M) {
-
   double m2m = M * M;
   double u = 2.0 * m2m - s - t;
   double MM;
@@ -3962,7 +4041,6 @@ double LBT::Mgc2gc(double s, double t, double M) {
 // functions for gluon radiation from heavy quark
 
 double LBT::alphasHQ(double kTFnc, double tempFnc) {
-
   //      double kTEff,error_para,resultFnc;
   //
   //      error_para=1.0;
@@ -3982,7 +4060,6 @@ double LBT::alphasHQ(double kTFnc, double tempFnc) {
 ////////////////////////////////////////////////////////////////////////////////////////
 
 double LBT::nflavor(double kTFnc) {
-
   double resultFnc;
   double cMass = 1.27;
   double bMass = 4.19;
@@ -4001,7 +4078,6 @@ double LBT::nflavor(double kTFnc) {
 ////////////////////////////////////////////////////////////////////////////////////////
 
 double LBT::lambdas(double kTFnc) {
-
   double resultFnc;
   double cMass = 1.27;
   double bMass = 4.19;
@@ -4020,7 +4096,6 @@ double LBT::lambdas(double kTFnc) {
 ////////////////////////////////////////////////////////////////////////////////////////
 
 double LBT::splittingP(int parID, double z0g) {
-
   double resultFnc;
 
   //      resultFnc = (2.0-2.0*z0g+z0g*z0g)*CF/z0g;
@@ -4036,7 +4111,6 @@ double LBT::splittingP(int parID, double z0g) {
 ////////////////////////////////////////////////////////////////////////////////////////
 
 double LBT::tau_f(double x0g, double y0g, double HQenergy, double HQmass) {
-
   double resultFnc;
 
   resultFnc = 2.0 * HQenergy * x0g * (1.0 - x0g) /
@@ -4049,12 +4123,11 @@ double LBT::tau_f(double x0g, double y0g, double HQenergy, double HQmass) {
 
 double LBT::dNg_over_dxdydt(int parID, double x0g, double y0g, double HQenergy,
                             double HQmass, double temp_med, double Tdiff) {
-
   double resultFnc, tauFnc, qhatFnc;
 
   qhatFnc = qhat_over_T3 *
             pow(temp_med,
-                3); // no longer have CF factor, taken out in splittingP too.
+                3);  // no longer have CF factor, taken out in splittingP too.
   tauFnc = tau_f(x0g, y0g, HQenergy, HQmass);
 
   resultFnc = 4.0 / pi * CA * alphasHQ(x0g * y0g * HQenergy, temp_med) *
@@ -4071,7 +4144,6 @@ double LBT::dNg_over_dxdydt(int parID, double x0g, double y0g, double HQenergy,
 /////////////////////////////////////////////////////////////////////////////////////////
 
 void LBT::read_xyMC(int &numXY) {
-
   numXY = 0;
 
   ifstream fxyMC("../hydroProfile/mc_glauber.dat");
@@ -4097,9 +4169,8 @@ void LBT::read_xyMC(int &numXY) {
 }
 
 void LBT::jetClean() {
-
   for (int i = 0; i < dimParList;
-       i++) { // clear arrays before initialization for each event
+       i++) {  // clear arrays before initialization for each event
     P[1][i] = 0.0;
     P[2][i] = 0.0;
     P[3][i] = 0.0;
@@ -4168,24 +4239,22 @@ void LBT::jetClean() {
     vcfrozen0[2][i] = 0.0;
     vcfrozen0[3][i] = 0.0;
 
-    Tint_lrf[i] = 0.0; //for heavy quark
+    Tint_lrf[i] = 0.0;  // for heavy quark
   }
 }
 
 void LBT::jetInitialize(int numXY) {
-
   double ipx, ipy, ipz, ip0, iwt;
   double pT_len, ipT, phi, rapidity;
 
   //...single jet parton input, only useful when fixMomentum=1
   double px0 = sqrt(ener * ener - amss * amss);
-  double py0 = 0.0; // initial momemtum
+  double py0 = 0.0;  // initial momemtum
   double pz0 = 0.0;
   double en0 = ener;
 
   for (int i = 1; i <= nj; i = i + 2) {
-
-    if (fixPosition == 1) { // initialize position
+    if (fixPosition == 1) {  // initialize position
       V[1][i] = 0.0;
       V[2][i] = 0.0;
       V[3][i] = 0.0;
@@ -4199,7 +4268,7 @@ void LBT::jetInitialize(int numXY) {
     }
     V[0][i] = -log(1.0 - ZeroOneDistribution(*GetMt19937Generator()));
 
-    if (fixMomentum == 1) { // initialize momentum
+    if (fixMomentum == 1) {  // initialize momentum
       P[1][i] = px0;
       P[2][i] = py0;
       P[3][i] = pz0;
@@ -4213,7 +4282,8 @@ void LBT::jetInitialize(int numXY) {
       phi = ZeroOneDistribution(*GetMt19937Generator()) * 2.0 * pi;
       ipx = ipT * cos(phi);
       ipy = ipT * sin(phi);
-      rapidity = 2.0 * eta_cut * ZeroOneDistribution(*GetMt19937Generator()) - eta_cut;
+      rapidity =
+          2.0 * eta_cut * ZeroOneDistribution(*GetMt19937Generator()) - eta_cut;
       ipz = sqrt(ipT * ipT + amss * amss) * sinh(rapidity);
       ip0 = sqrt(ipT * ipT + ipz * ipz + amss * amss);
       P[1][i] = ipx;
@@ -4273,7 +4343,6 @@ void LBT::jetInitialize(int numXY) {
 }
 
 void LBT::setJetX(int numXY) {
-
   double setX, setY, setZ;
 
   if (fixPosition == 1) {
@@ -4290,7 +4359,6 @@ void LBT::setJetX(int numXY) {
   }
 
   for (int i = 1; i <= nj; i++) {
-
     V[1][i] = setX;
     V[2][i] = setY;
     V[3][i] = setZ;
@@ -4313,7 +4381,6 @@ void LBT::setJetX(int numXY) {
 ////////////////////////////////////////////////////////////////////////////////////////
 
 void LBT::setParameter(string fileName) {
-
   const char *cstring = fileName.c_str();
 
   ifstream input(cstring);
@@ -4327,7 +4394,7 @@ void LBT::setParameter(string fileName) {
 
   while (getline(input, line)) {
     char str[1024];
-    strncpy(str, line.c_str(), sizeof(str)-1);
+    strncpy(str, line.c_str(), sizeof(str) - 1);
     //          cout << str << endl;
 
     char *divideChar[5];
@@ -4411,43 +4478,43 @@ void LBT::setParameter(string fileName) {
 
   // calculated derived quantities
   if (vacORmed == 0)
-    fixPosition = 1; // position is not important in vacuumm
+    fixPosition = 1;  // position is not important in vacuumm
 
   KTsig = KTsig * hydro_Tc;
   preKT = fixAlphas / 0.3;
 
   //// write out parameters
-  //cout << endl;
-  //cout << "############################################################" << endl;
-  //cout << "Parameters for this LBT run" << endl;
+  // cout << endl;
+  // cout << "############################################################" <<
+  // endl; cout << "Parameters for this LBT run" << endl;
   ////       cout << "flag:initHardFlag: " << initHardFlag << endl;
   ////       cout << "flag:flagJetX: " << flagJetX << endl;
   ////       cout << "flag:fixMomentum: " << fixMomentum << endl;
   ////       cout << "flag:fixPosition: " << fixPosition << endl;
   ////       cout << "flag:vacORmed: " << vacORmed << endl;
-  //cout << "flag:bulkType: " << bulkFlag << endl;
-  //cout << "flag:Kprimary: " << Kprimary << endl;
-  //cout << "flag:KINT0: " << KINT0 << endl;
-  //cout << "para:nEvent: " << ncall << endl;
+  // cout << "flag:bulkType: " << bulkFlag << endl;
+  // cout << "flag:Kprimary: " << Kprimary << endl;
+  // cout << "flag:KINT0: " << KINT0 << endl;
+  // cout << "para:nEvent: " << ncall << endl;
   ////       cout << "para:nParton: " << nj << endl;
   ////       cout << "para:parID: " << Kjet << endl;
   ////       cout << "para:tau0: " << tau0 << endl;
   ////       cout << "para:tauend: " << tauend << endl;
-  //cout << "para:dtau: " << dtau << endl;
-  //cout << "para:temperature: " << temp0 << endl;
-  //cout << "para:alpha_s: " << fixAlphas << endl;
-  //cout << "para:hydro_Tc: " << hydro_Tc << endl;
+  // cout << "para:dtau: " << dtau << endl;
+  // cout << "para:temperature: " << temp0 << endl;
+  // cout << "para:alpha_s: " << fixAlphas << endl;
+  // cout << "para:hydro_Tc: " << hydro_Tc << endl;
   ////       cout << "para:pT_min: " << ipTmin << endl;
   ////       cout << "para:pT_max: " << ipTmax << endl;
   ////       cout << "para:eta_cut: " << eta_cut << endl;
   ////       cout << "para:ener: " << ener << endl;
   ////       cout << "para:mass: " << amss << endl;
-  //cout << "para:KPamp: " << KPamp << endl;
-  //cout << "para:KPsig: " << KPsig << endl;
-  //cout << "para:KTamp: " << KTamp << endl;
-  //cout << "para:KTsig: " << KTsig << endl;
-  //cout << "############################################################" << endl;
-  //cout << endl;
+  // cout << "para:KPamp: " << KPamp << endl;
+  // cout << "para:KPsig: " << KPsig << endl;
+  // cout << "para:KTamp: " << KTamp << endl;
+  // cout << "para:KTsig: " << KTsig << endl;
+  // cout << "############################################################" <<
+  // endl; cout << endl;
 
   //       exit(EXIT_SUCCESS);
 }
@@ -4455,14 +4522,13 @@ void LBT::setParameter(string fileName) {
 ////////////////////////////////////////////////////////////////////////////////////////
 
 int LBT::checkParameter(int nArg) {
-
   int ctErr = 0;
 
-  // better to make sure lightOut,heavyOut,fixPosition,fixMomentum,etc are either 0 or 1
-  // not necessary at this moment
+  // better to make sure lightOut,heavyOut,fixPosition,fixMomentum,etc are
+  // either 0 or 1 not necessary at this moment
 
-  if (initHardFlag == 1) { // initialize within LBT, no input particle list
-    if (lightOut == 1 && heavyOut == 1) { // need both heavy and light output
+  if (initHardFlag == 1) {  // initialize within LBT, no input particle list
+    if (lightOut == 1 && heavyOut == 1) {  // need both heavy and light output
       if (nArg != 5) {
         ctErr++;
         cout << "Wrong # of arguments for command line input" << endl;
@@ -4470,13 +4536,13 @@ int LBT::checkParameter(int nArg) {
                 "light_negative_output"
              << endl;
       }
-    } else if (heavyOut == 1) { // only heavy output
+    } else if (heavyOut == 1) {  // only heavy output
       if (nArg != 3) {
         ctErr++;
         cout << "Wrong # of arguments for command line input" << endl;
         cout << "./LBT parameter_file  HQ_output" << endl;
       }
-    } else if (lightOut == 1) { // only light output
+    } else if (lightOut == 1) {  // only light output
       if (nArg != 4) {
         ctErr++;
         cout << "Wrong # of arguments for command line input" << endl;
@@ -4484,7 +4550,7 @@ int LBT::checkParameter(int nArg) {
                 "light_negative_output"
              << endl;
       }
-    } else { // no output
+    } else {  // no output
       if (nArg != 2) {
         ctErr++;
         cout << "Wrong # of arguments for command line input" << endl;
@@ -4493,8 +4559,8 @@ int LBT::checkParameter(int nArg) {
              << endl;
       }
     }
-  } else if (initHardFlag == 2) {         // need input particle list
-    if (lightOut == 1 && heavyOut == 1) { // need both heavy and light output
+  } else if (initHardFlag == 2) {          // need input particle list
+    if (lightOut == 1 && heavyOut == 1) {  // need both heavy and light output
       if (nArg != 6) {
         ctErr++;
         cout << "Wrong # of arguments for command line input" << endl;
@@ -4502,13 +4568,13 @@ int LBT::checkParameter(int nArg) {
                 "light_positive_output light_negative_output"
              << endl;
       }
-    } else if (heavyOut == 1) { // only heavy output
+    } else if (heavyOut == 1) {  // only heavy output
       if (nArg != 4) {
         ctErr++;
         cout << "Wrong # of arguments for command line input" << endl;
         cout << "./LBT parameter_file input_parton_list HQ_output" << endl;
       }
-    } else if (lightOut == 1) { // only light output
+    } else if (lightOut == 1) {  // only light output
       if (nArg != 5) {
         ctErr++;
         cout << "Wrong # of arguments for command line input" << endl;
@@ -4516,7 +4582,7 @@ int LBT::checkParameter(int nArg) {
                 "light_negative_output"
              << endl;
       }
-    } else { // no output
+    } else {  // no output
       if (nArg != 3) {
         ctErr++;
         cout << "Wrong # of arguments for command line input" << endl;

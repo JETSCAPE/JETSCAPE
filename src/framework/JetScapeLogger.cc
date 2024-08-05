@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -13,18 +14,18 @@
  * See COPYING for details.
  ******************************************************************************/
 
-#include <stddef.h>
-#include <fstream>
-
 #include "JetScapeLogger.h"
+
+#include <fstream>
+#include <stddef.h>
 
 using namespace std;
 
 // For Linux systems (also Mac)
 // only shows max usage throughtout the program
 
-#include <sys/time.h>
 #include <sys/resource.h>
+#include <sys/time.h>
 
 long getMemoryUsage() {
   struct rusage usage;
@@ -52,9 +53,9 @@ int getMemoryUsage()
   struct mach_task_basic_info info;
   mach_msg_type_number_t size = MACH_TASK_BASIC_INFO_COUNT;
   kern_return_t kerr = task_info(mach_task_self(),
-				 MACH_TASK_BASIC_INFO,
-				 (task_info_t)&info,
-				 &size);
+                                 MACH_TASK_BASIC_INFO,
+                                 (task_info_t)&info,
+                                 &size);
   if( kerr == KERN_SUCCESS )
     return info.resident_size/1024./1024.;
   else {
@@ -83,7 +84,7 @@ int getMemoryUsage()
 #define BOLDCYAN "\033[1m\033[36m"    /* Bold Cyan */
 #define BOLDWHITE "\033[1m\033[37m"   /* Bold White */
 
-#define CLEAR "\033[2J" // clear screen escape code
+#define CLEAR "\033[2J"  // clear screen escape code
 
 namespace Jetscape {
 
@@ -104,21 +105,21 @@ JetScapeLogger *JetScapeLogger::Instance() {
 
 LogStreamer JetScapeLogger::Warn() {
   string s = "[Warning] ";
-  //s << __PRETTY_FUNCTION__ <<":"<<__LINE__<<" ";
-  //return LogStreamer(std::cout<<s<<__PRETTY_FUNCTION__ <<":"<<__LINE__<<" ");
+  // s << __PRETTY_FUNCTION__ <<":"<<__LINE__<<" ";
+  // return LogStreamer(std::cout<<s<<__PRETTY_FUNCTION__ <<":"<<__LINE__<<" ");
   return LogStreamer(std::cout << BOLDRED << s);
 }
 
 LogStreamerThread JetScapeLogger::DebugThread() {
   if (debug) {
     string s = "[Debug Thread] ";
-    //s <<  __PRETTY_FUNCTION__ <<":"<<__LINE__<<" ";
+    // s <<  __PRETTY_FUNCTION__ <<":"<<__LINE__<<" ";
     s += to_string(getMemoryUsage());
     s += "MB ";
     return (LogStreamerThread(safe_cout) << BLUE << s);
   } else {
     // check if it is not written in some system log files ...
-    //safe_null.setstate(std::ios_base::failbit);
+    // safe_null.setstate(std::ios_base::failbit);
     return LogStreamerThread(safe_null);
   }
 }
@@ -126,7 +127,7 @@ LogStreamerThread JetScapeLogger::DebugThread() {
 LogStreamer JetScapeLogger::Debug() {
   if (debug) {
     string s = "[Debug] ";
-    //s <<  __PRETTY_FUNCTION__ <<":"<<__LINE__<<" ";
+    // s <<  __PRETTY_FUNCTION__ <<":"<<__LINE__<<" ";
     s += to_string(getMemoryUsage());
     s += "MB ";
     return LogStreamer(std::cout << BLUE << s);
@@ -154,7 +155,7 @@ LogStreamer JetScapeLogger::Info() {
 LogStreamer JetScapeLogger::InfoNice() {
   string s = "[Info] ";
   // s <<  __PRETTY_FUNCTION__ <<":"<<__LINE__<<" ";
-  //s += to_string(getMemoryUsage()); s+="MB ";
+  // s += to_string(getMemoryUsage()); s+="MB ";
   if (info) {
     return LogStreamer(std::cout << s);
   } else {
@@ -174,7 +175,7 @@ LogStreamer JetScapeLogger::Remark() {
 }
 
 LogStreamer JetScapeLogger::Verbose(unsigned short m_vlevel) {
-  if (m_vlevel < vlevel) // or if (m_vlevel==vlevel)
+  if (m_vlevel < vlevel)  // or if (m_vlevel==vlevel)
   {
     string s = "[Verbose][";
     s += std::to_string(m_vlevel);
@@ -189,7 +190,7 @@ LogStreamer JetScapeLogger::Verbose(unsigned short m_vlevel) {
 }
 
 LogStreamer JetScapeLogger::VerboseShower(unsigned short m_vlevel) {
-  if (m_vlevel < vlevel) // or if (m_vlevel==vlevel)
+  if (m_vlevel < vlevel)  // or if (m_vlevel==vlevel)
   {
     string s = "[Verbose][";
     s += std::to_string(m_vlevel);
@@ -204,7 +205,7 @@ LogStreamer JetScapeLogger::VerboseShower(unsigned short m_vlevel) {
 }
 
 LogStreamer JetScapeLogger::VerboseParton(unsigned short m_vlevel, Parton &p) {
-  if (m_vlevel < vlevel) // or if (m_vlevel==vlevel)
+  if (m_vlevel < vlevel)  // or if (m_vlevel==vlevel)
   {
     string s = "[Verbose][";
     s += std::to_string(m_vlevel);
@@ -217,7 +218,7 @@ LogStreamer JetScapeLogger::VerboseParton(unsigned short m_vlevel, Parton &p) {
 }
 
 LogStreamer JetScapeLogger::VerboseVertex(unsigned short m_vlevel, Vertex &v) {
-  if (m_vlevel < vlevel) // or if (m_vlevel==vlevel)
+  if (m_vlevel < vlevel)  // or if (m_vlevel==vlevel)
   {
     string s = "[Verbose][";
     s += std::to_string(m_vlevel);
@@ -229,4 +230,4 @@ LogStreamer JetScapeLogger::VerboseVertex(unsigned short m_vlevel, Vertex &v) {
   }
 }
 
-} // end namespace Jetscape
+}  // end namespace Jetscape

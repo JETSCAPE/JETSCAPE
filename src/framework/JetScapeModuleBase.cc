@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -14,11 +15,12 @@
  ******************************************************************************/
 
 #include "JetScapeModuleBase.h"
-#include "JetScapeXML.h"
-#include "JetScapeTaskSupport.h"
-#include "JetScapeLogger.h"
 
 #include <iostream>
+
+#include "JetScapeLogger.h"
+#include "JetScapeTaskSupport.h"
+#include "JetScapeXML.h"
 
 namespace Jetscape {
 
@@ -29,20 +31,24 @@ JetScapeModuleFactory::map_type *JetScapeModuleFactory::moduleMap =
 int JetScapeModuleBase::current_event = 0;
 
 // ---------------------------------------------------------------------------
-/** Default constructor to create a JetScapeModuleBase. It sets the XML file name to a default string value.                                 
-   */
+/** Default constructor to create a JetScapeModuleBase. It sets the XML file
+ * name to a default string value.
+ */
 JetScapeModuleBase::JetScapeModuleBase()
-    : JetScapeTask(), xml_main_file_name(""), xml_user_file_name(""),
+    : JetScapeTask(),
+      xml_main_file_name(""),
+      xml_user_file_name(""),
       mt19937_generator_(nullptr) {}
 
 // ---------------------------------------------------------------------------
-/** This is a destructor for the JetScapeModuleBase.                       
-   */
+/** This is a destructor for the JetScapeModuleBase.
+ */
 JetScapeModuleBase::~JetScapeModuleBase() { disconnect_all(); }
 
 // ---------------------------------------------------------------------------
-/** A virtual function for a default initialization of a JetScapeModuleBase. It also checks whether a XML file is loaded or not.
-   */
+/** A virtual function for a default initialization of a JetScapeModuleBase. It
+ * also checks whether a XML file is loaded or not.
+ */
 void JetScapeModuleBase::Init() {
   if (!JetScapeXML::Instance()->GetXMLRootMain()) {
     JSWARN << "Not a valid JetScape Main XML file or no XML file loaded!";
@@ -56,7 +62,7 @@ void JetScapeModuleBase::Init() {
 
 // ---------------------------------------------------------------------------
 /** This function returns a random number based on Mersenne-Twister algorithm.
-   */
+ */
 shared_ptr<std::mt19937> JetScapeModuleBase::GetMt19937Generator() {
   // Instantiate if it isn't there yet
   if (!mt19937_generator_) {
@@ -66,4 +72,4 @@ shared_ptr<std::mt19937> JetScapeModuleBase::GetMt19937Generator() {
   return mt19937_generator_;
 }
 
-} // end namespace Jetscape
+}  // end namespace Jetscape

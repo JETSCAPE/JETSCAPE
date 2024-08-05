@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -13,13 +14,17 @@
  * See COPYING for details.
  ******************************************************************************/
 #include "LiquefierBase.h"
-#include "JetScapeXML.h"
+
 #include <math.h>
+
+#include "JetScapeXML.h"
 
 namespace Jetscape {
 
 LiquefierBase::LiquefierBase()
-    : hydro_source_abs_err(1e-10), drop_stat(-11), miss_stat(-13),
+    : hydro_source_abs_err(1e-10),
+      drop_stat(-11),
+      miss_stat(-13),
       neg_stat(-17) {
   GetHydroCellSignalConnected = false;
 }
@@ -29,7 +34,6 @@ void LiquefierBase::get_source(Jetscape::real tau, Jetscape::real x,
                                std::array<Jetscape::real, 4> &jmu) const {
   jmu = {0.0, 0.0, 0.0, 0.0};
   for (const auto &drop_i : dropletlist) {
-
     const auto x_drop = drop_i.get_xmu();
     double ds2 = tau * tau + x_drop[0] * x_drop[0] -
                  2.0 * tau * x_drop[0] * cosh(eta - x_drop[3]) -
@@ -90,12 +94,15 @@ void LiquefierBase::check_energy_momentum_conservation(
 void LiquefierBase::filter_partons(std::vector<Parton> &pOut) {
   // threshold_energy_switch = 1, use e_threshold
   // threshold_energy_switch = 0, use |e_threshold|*T
-  threshold_energy_switch = JetScapeXML::Instance()->GetElementInt({"Liquefier", "threshold_energy_switch"});
+  threshold_energy_switch = JetScapeXML::Instance()->GetElementInt(
+      {"Liquefier", "threshold_energy_switch"});
   if (threshold_energy_switch != 0 && threshold_energy_switch != 1) {
-    JSWARN << "threshold_energy_switch should be 0 or 1, but it is " << threshold_energy_switch;
+    JSWARN << "threshold_energy_switch should be 0 or 1, but it is "
+           << threshold_energy_switch;
     exit(1);
   }
-  e_threshold = JetScapeXML::Instance()->GetElementDouble({"Liquefier", "e_threshold"}); // GeV
+  e_threshold = JetScapeXML::Instance()->GetElementDouble(
+      {"Liquefier", "e_threshold"});  // GeV
 
   for (auto &iparton : pOut) {
     if (iparton.pstat() == miss_stat)
@@ -111,7 +118,7 @@ void LiquefierBase::filter_partons(std::vector<Parton> &pOut) {
 
     if (iparton.pstat() == -1) {
       // remove negative particles from parton list
-      //iparton.set_stat(drop_stat);
+      // iparton.set_stat(drop_stat);
       iparton.set_stat(neg_stat);
       continue;
     }
@@ -163,8 +170,8 @@ void LiquefierBase::add_hydro_sources(std::vector<Parton> &pIn,
   FourVector p_init;
   FourVector x_final;
   FourVector x_init;
-  //cout << "debug, mid ......." << pOut.size() << endl;
-  // use energy conservation to deterime the source term
+  // cout << "debug, mid ......." << pOut.size() << endl;
+  //  use energy conservation to deterime the source term
   const auto weight_init = 1.0;
   for (const auto &iparton : pIn) {
     auto temp = iparton.p_in();
@@ -232,4 +239,4 @@ Jetscape::real LiquefierBase::get_dropletlist_total_energy() const {
   return (total_E);
 }
 
-}; // namespace Jetscape
+};  // namespace Jetscape

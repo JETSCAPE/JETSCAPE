@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -14,16 +15,18 @@
  ******************************************************************************/
 
 #include "PartonShower.h"
-#include <sstream>
+
 #include <fstream>
 #include <iomanip>
+#include <sstream>
+
 #include "MakeUniqueHelper.h"
 
-using std::setprecision;
 using std::fixed;
-using std::to_string;
 using std::ostringstream;
+using std::setprecision;
 using std::stringstream;
+using std::to_string;
 
 namespace Jetscape {
 
@@ -45,21 +48,21 @@ int PartonShower::new_parton(node s, node t, shared_ptr<Parton> p) {
 void PartonShower::FillPartonVec()
 {
   VERBOSE(8);
-  
+
   edge_iterator eIt, eEnd;
-  
+
   for (eIt = edges_begin(), eEnd = edges_end(); eIt != eEnd; ++eIt)
-    pVec.push_back(pMap[*eIt]);     
+    pVec.push_back(pMap[*eIt]);
 }
 
 void PartonShower::FillVertexVec()
 {
   VERBOSE(8);
-  
+
   node_iterator nIt, nEnd;
-  
-  for (nIt = nodes_begin(), nEnd = nodes_end(); nIt != nEnd; ++nIt)    
-    vVec.push_back(vMap[*nIt]);  
+
+  for (nIt = nodes_begin(), nEnd = nodes_end(); nIt != nEnd; ++nIt)
+    vVec.push_back(vMap[*nIt]);
 }
 */
 
@@ -67,8 +70,8 @@ void PartonShower::FillVertexVec()
 shared_ptr<Parton> PartonShower::GetPartonAt(int i)
 {
   if (pVec.size()==0)
-    FillPartonVec();  
-  
+    FillPartonVec();
+
   return pVec[i].lock();
 }
 
@@ -85,8 +88,8 @@ shared_ptr<Vertex> PartonShower::GetVertexAt(int i)
 unique_ptr<Parton> PartonShower::GetPartonAt(int i)
 {
   if (pVec.size()==0)
-    FillPartonVec();  
-  
+    FillPartonVec();
+
   return make_unique<Parton>(*(pVec[i].lock()));
 }
 
@@ -107,7 +110,7 @@ void PartonShower::CreateMaps()
     {
       pToEdgeMap[pMap[*eIt]]=*eIt;
     }
-  
+
   node_iterator nIt, nEnd;
   for (nIt = nodes_begin(), nEnd = nodes_end(); nIt != nEnd; ++nIt)
     {
@@ -117,7 +120,7 @@ void PartonShower::CreateMaps()
 */
 
 vector<shared_ptr<Parton>> PartonShower::GetFinalPartons() {
-  //VERBOSESHOWER(8)<<pFinal.size();
+  // VERBOSESHOWER(8)<<pFinal.size();
   if (pFinal.size() == 0) {
     edge_iterator eIt, eEnd;
     for (eIt = edges_begin(), eEnd = edges_end(); eIt != eEnd; ++eIt) {
@@ -126,7 +129,7 @@ vector<shared_ptr<Parton>> PartonShower::GetFinalPartons() {
           pFinal.push_back(pMap[*eIt]);
         }
         // DEBUG
-        //cout<<eIt->target()<<endl;
+        // cout<<eIt->target()<<endl;
       }
     }
     return pFinal;
@@ -137,7 +140,7 @@ vector<shared_ptr<Parton>> PartonShower::GetFinalPartons() {
 
 vector<fjcore::PseudoJet> PartonShower::GetFinalPartonsForFastJet() {
   vector<shared_ptr<Parton>> mP =
-      GetFinalPartons(); // to ensure that pFinal is filled
+      GetFinalPartons();  // to ensure that pFinal is filled
 
   vector<fjcore::PseudoJet> forFJ;
 
@@ -185,7 +188,7 @@ shared_ptr<Vertex> PartonShower::GetVertexAt(int n) {
 
 PartonShower::~PartonShower() {
   VERBOSESHOWER(8);
-  pFinal.clear(); //pVec.clear();vVec.clear();
+  pFinal.clear();  // pVec.clear();vVec.clear();
 }
 
 void PartonShower::save_node_info_handler(ostream *o, node n) const {
@@ -271,7 +274,7 @@ void PartonShower::load_edge_info_handler(edge e, GML_pair *read) {
   int plabel, pid, pstat;
 
   while (tmp) {
-    //printf ("*KEY* : %s \n", tmp->key);
+    // printf ("*KEY* : %s \n", tmp->key);
     if (((string)(tmp->key)).find("pT") < 1)
       pT = tmp->value.floating;
     if (((string)(tmp->key)).find("eta") < 1)
@@ -303,7 +306,7 @@ void PartonShower::load_node_info_handler(node n, GML_pair *read) {
   double t = 0;
 
   while (tmp) {
-    //printf ("*KEY* : %s %f \n", tmp->key, tmp->value.floating);
+    // printf ("*KEY* : %s %f \n", tmp->key, tmp->value.floating);
     if (((string)(tmp->key)).find("x") < 1)
       x = tmp->value.floating;
     if (((string)(tmp->key)).find("y") < 1)
@@ -326,16 +329,16 @@ void PartonShower::SaveAsGV(string fName) {
   ofstream gv;
   gv.open(fName.c_str());
 
-  // Simple directed graph left->right in dot/gv format for usage with graphviz ...
-  // nodes show (time) and arrows (pT)
+  // Simple directed graph left->right in dot/gv format for usage with graphviz
+  // ... nodes show (time) and arrows (pT)
   gv << "digraph \"graph\" {" << endl;
   gv << endl;
   gv << "rankdir=\"LR\";" << endl;
   gv << "node [shape=plaintext, fontsize=11];"
-     << endl; //, shape=circle]; //plaintext];
+     << endl;  //, shape=circle]; //plaintext];
   gv << "edge [fontsize=10];" << endl;
   gv << endl;
-  //gv<<"0 -> 1"<<endl;
+  // gv<<"0 -> 1"<<endl;
   node_iterator nIt, nEnd;
 
   int n = 0;
@@ -359,7 +362,7 @@ void PartonShower::SaveAsGV(string fName) {
   edge_iterator eIt, eEnd;
 
   for (eIt = edges_begin(), eEnd = edges_end(); eIt != eEnd; ++eIt) {
-    //label = ("[label=\"(");
+    // label = ("[label=\"(");
     if ((pMap[*eIt]->pstat()) == -13) {
       // missing energy-momentum
       label = ("[style=\"dotted\" color=\"red\"label=\"(");
@@ -452,7 +455,8 @@ void PartonShower::SaveAsGraphML(string fName) {
     stream << fixed << setprecision(2) << (vMap[*nIt]->x_in().t());
 
     g << "<node id=\"" << n << "\">" << endl;
-    //g<<"<data key=\"nlabel\">"<<to_string(n)+"("+to_string(vMap[*nIt]->x_in().t())+")"<<"</data>"<<endl;
+    // g<<"<data
+    // key=\"nlabel\">"<<to_string(n)+"("+to_string(vMap[*nIt]->x_in().t())+")"<<"</data>"<<endl;
     g << "<data key=\"nlabel\">" << to_string(n) + "(" + stream.str() + ")"
       << "</data>" << endl;
     g << "<data key=\"nx\">" << vMap[*nIt]->x_in().x() << "</data>" << endl;
@@ -486,5 +490,5 @@ void PartonShower::SaveAsGraphML(string fName) {
 
   g.close();
 
-} // end namespace Jetscape
-} // namespace Jetscape
+}  // end namespace Jetscape
+}  // namespace Jetscape

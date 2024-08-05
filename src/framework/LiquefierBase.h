@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -16,22 +17,22 @@
 #ifndef LIQUEFIERBASE_H
 #define LIQUEFIERBASE_H
 
-#include "JetClass.h"
-#include "sigslot.h"
-#include "FluidCellInfo.h"
-
 #include <array>
 #include <vector>
+
+#include "FluidCellInfo.h"
+#include "JetClass.h"
 #include "RealType.h"
+#include "sigslot.h"
 
 namespace Jetscape {
 
 class Droplet {
-private:
+ private:
   std::array<Jetscape::real, 4> xmu;
   std::array<Jetscape::real, 4> pmu;
 
-public:
+ public:
   Droplet() = default;
   Droplet(std::array<Jetscape::real, 4> x_in,
           std::array<Jetscape::real, 4> p_in) {
@@ -46,7 +47,7 @@ public:
 };
 
 class LiquefierBase {
-private:
+ private:
   std::vector<Droplet> dropletlist;
   bool GetHydroCellSignalConnected;
   const int drop_stat;
@@ -56,7 +57,7 @@ private:
   bool threshold_energy_switch;
   double e_threshold;
 
-public:
+ public:
   LiquefierBase();
   ~LiquefierBase() { Clear(); }
 
@@ -104,6 +105,6 @@ public:
   virtual void Clear();
 };
 
-}; // namespace Jetscape
+};  // namespace Jetscape
 
-#endif // LIQUEFIERBASE_H
+#endif  // LIQUEFIERBASE_H

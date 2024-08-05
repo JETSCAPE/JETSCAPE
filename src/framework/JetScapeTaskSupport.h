@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -20,47 +21,47 @@
  * such that reproducible running is possible
  * It provides a random engine factory.
  * That way individual random engines can be used where necessary
- * but by default all can use the same 
+ * but by default all can use the same
  * (the state of mersenne twister can be  rather large)
- * 
+ *
  * Note that (apart from Microsoft VS2013), magic statics should ensure that
- * the Instance() method is automagically thread safe 
- * 
- * Note 2: make_unique doesn't work for some reason. "new" does the trick here though.
+ * the Instance() method is automagically thread safe
+ *
+ * Note 2: make_unique doesn't work for some reason. "new" does the trick here
+ * though.
  */
 
 #ifndef JETSCAPETASKSUPPORT_H
 #define JETSCAPETASKSUPPORT_H
 
-#include "InitialState.h"
-#include "JetEnergyLoss.h"
-#include "JetEnergyLossManager.h"
-#include "FluidDynamics.h"
-#include "HardProcess.h"
-#include "JetScapeWriter.h"
-
-#include <iostream>
 #include <atomic>
+#include <iostream>
 #include <memory>
 #include <random>
 #include <thread>
+
+#include "FluidDynamics.h"
+#include "HardProcess.h"
+#include "InitialState.h"
+#include "JetEnergyLoss.h"
+#include "JetEnergyLossManager.h"
+#include "JetScapeWriter.h"
 
 using std::atomic_int;
 
 namespace Jetscape {
 
-class
-    JetScapeTaskSupport //: public sigslot::has_slots<sigslot::multi_threaded_local>
+class JetScapeTaskSupport  //: public
+                           //: sigslot::has_slots<sigslot::multi_threaded_local>
 {
-
-public:
+ public:
   static JetScapeTaskSupport *Instance();
   // void CleanUp();
 
   /// Tasks should call this method at creation and
   /// remember the answer as their task id
-  /// This could co a lot more, like keep a map of numbers to task.id (essentially the name of the task)
-  /// But for now keep it simple
+  /// This could co a lot more, like keep a map of numbers to task.id
+  /// (essentially the name of the task) But for now keep it simple
   int RegisterTask();
 
   /// Initialize random engine functionality from the XML file
@@ -75,10 +76,10 @@ public:
   // Getters
   static unsigned int GetRandomSeed() { return random_seed_; };
 
-protected:
+ protected:
   static bool one_generator_per_task_;
 
-private:
+ private:
   JetScapeTaskSupport() : CurrentTaskNumber(0){};
 
   static JetScapeTaskSupport *m_pInstance;
@@ -90,6 +91,6 @@ private:
   static shared_ptr<std::mt19937> one_for_all_;
 };
 
-} // end namespace Jetscape
+}  // end namespace Jetscape
 
 #endif

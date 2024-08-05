@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -16,17 +17,16 @@
 #ifndef JETSCAPELOGGER_H
 #define JETSCAPELOGGER_H
 
-#include <iostream>
-#include <sstream>
 #include <cassert>
 #include <iostream>
-#include <mutex>
 #include <memory>
+#include <mutex>
+#include <sstream>
 
 #include "JetClass.h"
 
-using std::shared_ptr;
 using std::make_shared;
+using std::shared_ptr;
 
 // --------------------------------
 
@@ -42,52 +42,58 @@ using std::make_shared;
 
 // define nicer macros to be used for logging ...
 /*
-#define JSINFO  JetScapeLogger::Instance()->Info()<<" " //<<__PRETTY_FUNCTION__<<" : "
-#define INFO_NICE  JetScapeLogger::Instance()->InfoNice()
-#define JSDEBUG JetScapeLogger::Instance()->Debug()<<__PRETTY_FUNCTION__<<" : "
-#define DEBUGTHREAD JetScapeLogger::Instance()->DebugThread()<<__PRETTY_FUNCTION__<<" : "
-#define REMARK JetScapeLogger::Instance()->Remark()<<__PRETTY_FUNCTION__<<" : "
-#define VERBOSE(l) JetScapeLogger::Instance()->Verbose(l)<<__PRETTY_FUNCTION__<<" : "
-#define VERBOSESHOWER(l) JetScapeLogger::Instance()->VerboseShower(l)<<__PRETTY_FUNCTION__<<" : "
-#define VERBOSEPARTON(l,p) JetScapeLogger::Instance()->VerboseParton(l,p)<<__PRETTY_FUNCTION__<<" : "
-#define VERBOSEPVERTEX(l,v) JetScapeLogger::Instance()->VerboseVertex(l,v)<<__PRETTY_FUNCTION__<<" : "
+#define JSINFO  JetScapeLogger::Instance()->Info()<<" "
+//<<__PRETTY_FUNCTION__<<" : " #define INFO_NICE
+JetScapeLogger::Instance()->InfoNice() #define JSDEBUG
+JetScapeLogger::Instance()->Debug()<<__PRETTY_FUNCTION__<<" : " #define
+DEBUGTHREAD JetScapeLogger::Instance()->DebugThread()<<__PRETTY_FUNCTION__<<" :
+" #define REMARK JetScapeLogger::Instance()->Remark()<<__PRETTY_FUNCTION__<<" :
+" #define VERBOSE(l)
+JetScapeLogger::Instance()->Verbose(l)<<__PRETTY_FUNCTION__<<" : " #define
+VERBOSESHOWER(l)
+JetScapeLogger::Instance()->VerboseShower(l)<<__PRETTY_FUNCTION__<<" : " #define
+VERBOSEPARTON(l,p)
+JetScapeLogger::Instance()->VerboseParton(l,p)<<__PRETTY_FUNCTION__<<" : "
+#define VERBOSEPVERTEX(l,v)
+JetScapeLogger::Instance()->VerboseVertex(l,v)<<__PRETTY_FUNCTION__<<" : "
 #define JSWARN JetScapeLogger::Instance()->Warn()<<__PRETTY_FUNCTION__<<" : "
 */
 
-// define nicer macros to be used for logging and check if they should print stuff ...
-// otherwise quite a performance hit ...
-#define JSINFO                                                                 \
-  JetScapeLogger::Instance()->Info() << " " //<<__PRETTY_FUNCTION__<<" : "
+// define nicer macros to be used for logging and check if they should print
+// stuff ... otherwise quite a performance hit ...
+#define JSINFO \
+  JetScapeLogger::Instance()->Info() << " "  //<<__PRETTY_FUNCTION__<<" : "
 #define INFO_NICE JetScapeLogger::Instance()->InfoNice()
-#define JSDEBUG                                                                \
-  if (JetScapeLogger::Instance()->GetDebug())                                  \
+#define JSDEBUG                               \
+  if (JetScapeLogger::Instance()->GetDebug()) \
   JetScapeLogger::Instance()->Debug() << __PRETTY_FUNCTION__ << " : "
-#define DEBUGTHREAD                                                            \
-  if (JetScapeLogger::Instance()->GetDebug())                                  \
+#define DEBUGTHREAD                           \
+  if (JetScapeLogger::Instance()->GetDebug()) \
   JetScapeLogger::Instance()->DebugThread() << __PRETTY_FUNCTION__ << " : "
-#define REMARK                                                                 \
-  if (JetScapeLogger::Instance()->GetRemark())                                 \
+#define REMARK                                 \
+  if (JetScapeLogger::Instance()->GetRemark()) \
   JetScapeLogger::Instance()->Remark() << __PRETTY_FUNCTION__ << " : "
-#define VERBOSE(l)                                                             \
-  if (l < JetScapeLogger::Instance()->GetVerboseLevel())                       \
+#define VERBOSE(l)                                       \
+  if (l < JetScapeLogger::Instance()->GetVerboseLevel()) \
   JetScapeLogger::Instance()->Verbose(l) << __PRETTY_FUNCTION__ << " : "
-#define VERBOSESHOWER(l)                                                       \
-  if (l < JetScapeLogger::Instance()->GetVerboseLevel())                       \
+#define VERBOSESHOWER(l)                                 \
+  if (l < JetScapeLogger::Instance()->GetVerboseLevel()) \
   JetScapeLogger::Instance()->VerboseShower(l) << __PRETTY_FUNCTION__ << " : "
-#define VERBOSEPARTON(l, p)                                                    \
-  if (l < JetScapeLogger::Instance()->GetVerboseLevel())                       \
-  JetScapeLogger::Instance()->VerboseParton(l, p)                              \
+#define VERBOSEPARTON(l, p)                              \
+  if (l < JetScapeLogger::Instance()->GetVerboseLevel()) \
+  JetScapeLogger::Instance()->VerboseParton(l, p)        \
       << __PRETTY_FUNCTION__ << " : "
-#define VERBOSEPVERTEX(l, v)                                                   \
-  if (l < JetScapeLogger::Instance()->GetVerboseLevel())                       \
-  JetScapeLogger::Instance()->VerboseVertex(l, v)                              \
+#define VERBOSEPVERTEX(l, v)                             \
+  if (l < JetScapeLogger::Instance()->GetVerboseLevel()) \
+  JetScapeLogger::Instance()->VerboseVertex(l, v)        \
       << __PRETTY_FUNCTION__ << " : "
-#define JSWARN                                                                 \
+#define JSWARN \
   JetScapeLogger::Instance()->Warn() << __PRETTY_FUNCTION__ << " : "
 
 namespace Jetscape {
 
-// Forward declarations. Macro implementation is rather cumbersome and hiccups over include guards
+// Forward declarations. Macro implementation is rather cumbersome and hiccups
+// over include guards
 class Vertex;
 class Parton;
 
@@ -100,7 +106,10 @@ struct SafeOstream {
     GuardedImpl(std::ostream &ostream, std::mutex &mutex)
         : Ostream(ostream), Guard(mutex) {}
     ~GuardedImpl() { Ostream.flush(); }
-    template <typename T> void write(const T &x) { Ostream << x; }
+    template <typename T>
+    void write(const T &x) {
+      Ostream << x;
+    }
     std::ostream &Ostream;
     std::lock_guard<std::mutex> Guard;
   };
@@ -113,7 +122,8 @@ struct SafeOstream {
       assert(rhs.UniqueImpl.get());
       UniqueImpl.swap(rhs.UniqueImpl);
     }
-    template <typename T> impl &operator<<(const T &x) {
+    template <typename T>
+    impl &operator<<(const T &x) {
       GuardedImpl *p = UniqueImpl.get();
       assert(p);
       p->write(x);
@@ -122,7 +132,8 @@ struct SafeOstream {
     mutable std::unique_ptr<GuardedImpl> UniqueImpl;
   };
   explicit SafeOstream(std::ostream &ostream) : Ostream(ostream) {}
-  template <typename T> impl operator<<(const T &x) {
+  template <typename T>
+  impl operator<<(const T &x) {
     return impl(Ostream, mutex_) << x;
   }
   std::ostream &Ostream;
@@ -138,11 +149,10 @@ struct SafeOstream {
 // << overload in Parton class not working!? Check ...
 
 class LogStreamer {
-
   shared_ptr<std::ostringstream> m_collector;
   std::ostream *m_dest;
 
-public:
+ public:
   LogStreamer(std::ostream &dest) {
     m_collector = make_shared<std::ostringstream>();
     m_dest = &dest;
@@ -155,18 +165,18 @@ public:
     }
   }
 
-  template <typename T> LogStreamer &operator<<(T const &value) {
+  template <typename T>
+  LogStreamer &operator<<(T const &value) {
     *m_collector << value;
     return *this;
   }
 };
 
 class LogStreamerThread {
-
   shared_ptr<std::ostringstream> m_collector;
   SafeOstream *m_dest;
 
-public:
+ public:
   LogStreamerThread(SafeOstream &dest) {
     m_collector = make_shared<std::ostringstream>();
     m_dest = &dest;
@@ -178,7 +188,8 @@ public:
     }
   }
 
-  template <typename T> LogStreamerThread &operator<<(T const &value) {
+  template <typename T>
+  LogStreamerThread &operator<<(T const &value) {
     *m_collector << value;
     return *this;
   }
@@ -187,8 +198,7 @@ public:
 // --------------------------------
 
 class JetScapeLogger {
-
-public:
+ public:
   static JetScapeLogger *Instance();
 
   LogStreamer Info();
@@ -197,12 +207,13 @@ public:
   LogStreamer Debug();
   LogStreamerThread DebugThread();
   LogStreamer Remark();
-  //LogStreamer Error(); //to be implemented
-  //LogStreamer Fatal(); //to be implemented
+  // LogStreamer Error(); //to be implemented
+  // LogStreamer Fatal(); //to be implemented
 
   LogStreamer Verbose(unsigned short m_vlevel);
   LogStreamer VerboseShower(unsigned short m_vlevel);
-  //Not happy with that fix, still normal << in VERBOSE not working ... follow up.
+  // Not happy with that fix, still normal << in VERBOSE not working ... follow
+  // up.
   LogStreamer VerboseParton(unsigned short m_vlevel, Parton &p);
   LogStreamer VerboseVertex(unsigned short m_vlevel, Vertex &v);
 
@@ -215,7 +226,7 @@ public:
   bool GetInfo() { return info; }
   unsigned short GetVerboseLevel() { return vlevel; }
 
-private:
+ private:
   JetScapeLogger() {
     info = true;
     debug = false;
@@ -231,6 +242,6 @@ private:
   unsigned short vlevel;
 };
 
-} // end namespace Jetscape
+}  // end namespace Jetscape
 
 #endif

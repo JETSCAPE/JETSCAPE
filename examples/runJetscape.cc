@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -36,37 +37,44 @@ void Show();
 
 // -------------------------------------
 
-int main(int argc, char** argv)
-{
-  clock_t t; t = clock();
-  time_t start, end; time(&start);
-    
-  // Logger settings (can be also set also via XML file, although note in that case they will apply only after they are initialized)
+int main(int argc, char** argv) {
+  clock_t t;
+  t = clock();
+  time_t start, end;
+  time(&start);
+
+  // Logger settings (can be also set also via XML file, although note in that
+  // case they will apply only after they are initialized)
   JetScapeLogger::Instance()->SetInfo(true);
   JetScapeLogger::Instance()->SetDebug(false);
   JetScapeLogger::Instance()->SetRemark(false);
   JetScapeLogger::Instance()->SetVerboseLevel(0);
-   
+
   Show();
 
-  // Create main Jetscape task, and assign XML configuration files from command line arguments.
-  // The user can supply 0, 1, 2 arguments, where the first (second) corresponds to the user (main) XML path.
+  // Create main Jetscape task, and assign XML configuration files from command
+  // line arguments. The user can supply 0, 1, 2 arguments, where the first
+  // (second) corresponds to the user (main) XML path.
   auto jetscape = make_shared<JetScape>();
   const char* mainXMLName = "../config/jetscape_main.xml";
   const char* userXMLName = "../config/jetscape_user.xml";
-  if (argc == 2)  {
-    if ( strcmp(argv[1], "--help")==0 || strcmp(argv[1], "-h")==0 ){
+  if (argc == 2) {
+    if (strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-h") == 0) {
       std::cout << "Command line options:" << std::endl;
-      std::cout << "    First (optional) argument: path to user XML file         ./runJetscape /path/to/user.xml" << std::endl;
-      std::cout << "    Second (optional) argument: path to main XML file      ./runJetscape /path/to/user.xml /path/to/main.xml" << std::endl;
-      std::cout << "    If no command line options are given, defaults are used: config/jetscape_user.xml config/jetscape_main.xml" << std::endl;
+      std::cout << "    First (optional) argument: path to user XML file       "
+                   "  ./runJetscape /path/to/user.xml"
+                << std::endl;
+      std::cout << "    Second (optional) argument: path to main XML file      "
+                   "./runJetscape /path/to/user.xml /path/to/main.xml"
+                << std::endl;
+      std::cout << "    If no command line options are given, defaults are "
+                   "used: config/jetscape_user.xml config/jetscape_main.xml"
+                << std::endl;
       return -1;
-    }
-    else {
+    } else {
       userXMLName = argv[1];
     }
-  }
-  else if (argc == 3) {
+  } else if (argc == 3) {
     userXMLName = argv[1];
     mainXMLName = argv[2];
   }
@@ -81,23 +89,22 @@ int main(int argc, char** argv)
 
   // For the future, cleanup is mostly already done in write and clear
   jetscape->Finish();
-  
-  INFO_NICE<<"Finished!";
-  cout<<endl;
+
+  INFO_NICE << "Finished!";
+  cout << endl;
 
   t = clock() - t;
   time(&end);
-  printf ("CPU time: %f seconds.\n",((float)t)/CLOCKS_PER_SEC);
-  printf ("Real time: %f seconds.\n",difftime(end,start));
+  printf("CPU time: %f seconds.\n", ((float)t) / CLOCKS_PER_SEC);
+  printf("Real time: %f seconds.\n", difftime(end, start));
   return 0;
 }
 
 // -------------------------------------
 
-void Show()
-{
-  INFO_NICE<<"------------------------------";
-  INFO_NICE<<"| ... JetScape Framework ... |";
-  INFO_NICE<<"------------------------------";
+void Show() {
+  INFO_NICE << "------------------------------";
+  INFO_NICE << "| ... JetScape Framework ... |";
+  INFO_NICE << "------------------------------";
   INFO_NICE;
 }

@@ -1,7 +1,8 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
  *
  * For the list of contributors see AUTHORS.
  *
@@ -42,17 +43,22 @@ static double zeta3 = 1.20206;
 
 static double mu = 0.722;
 
-/* When the code becomes really accurate, a more accurate value for this can be used  */
+/* When the code becomes really accurate, a more accurate value for this can be
+ * used  */
 
-/*  the following is the maximum value from the standard C++ random number generator */
+/*  the following is the maximum value from the standard C++ random number
+ * generator */
 static double maxN = double(pow(2.0, 31.0) - 1.0);
 
 static double a_very_large_number = maxN;
 
-/* the following 2 lines control the error in the analytical part of the calculation. */
-/* Note analytical approximation, cannot be rectified by more statistics             */
-/* However, more accurate analytical calculation will require less statistics to obtain smooth distributions */
-/* the value is something for the user to choose based on his/her computing resources  */
+/* the following 2 lines control the error in the analytical part of the
+ * calculation. */
+/* Note analytical approximation, cannot be rectified by more statistics */
+/* However, more accurate analytical calculation will require less statistics to
+ * obtain smooth distributions */
+/* the value is something for the user to choose based on his/her computing
+ * resources  */
 
 static double error = 0.02;
 
@@ -63,7 +69,7 @@ static double s_approx = 0.01;
 
 static double E_minimum = 1.0;
 
-static double rounding_error = 1e-6; // slightly more than float precision
+static double rounding_error = 1e-6;  // slightly more than float precision
 
 /**************************************************************************************/
 
@@ -86,8 +92,8 @@ static int photonid = 22;
 
 static int Zid = 23;
 
-static int Wid = 24; // refers to W+, use -24 for W-
+static int Wid = 24;  // refers to W+, use -24 for W-
 /*******************************************************************/
 
-};     // namespace Jetscape
-#endif // JETSCAPECONSTANTS_H
+};      // namespace Jetscape
+#endif  // JETSCAPECONSTANTS_H

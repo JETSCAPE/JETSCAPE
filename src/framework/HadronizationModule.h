@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -20,9 +21,9 @@
 
 namespace Jetscape {
 
-template <typename Derived> class HadronizationModule : public Hadronization {
-
-public:
+template <typename Derived>
+class HadronizationModule : public Hadronization {
+ public:
   using Hadronization::Hadronization;
 
   virtual shared_ptr<Hadronization> Clone() const override {
@@ -31,6 +32,6 @@ public:
   }
 };
 
-} // end namespace Jetscape
+}  // end namespace Jetscape
 
 #endif
