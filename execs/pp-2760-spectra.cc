@@ -545,6 +545,10 @@ int main(int argc, char* argv[]){
     //hadronleg.DrawClone("Same");
 	cTotalHadron->Print("plots/HadronTotalSpectrum.png");
     hadron_file.Close();
+    
+    HistFinalJet->Scale(1e6); //data listed in mb
+    HistTotalJet2->Scale(1e6);
+    HistTotalJet3->Scale(1e6);
 	
     //create root file for total plots
     cout << "Creating ROOT output...";
@@ -569,19 +573,16 @@ int main(int argc, char* argv[]){
     TFile* jet_file = new TFile("/data/rjfgroup/rjf01/cameron.parker/data/JetData.root");
     TDirectory* jetdir = (TDirectory*)jet_file->Get("Table 4");
     TGraphErrors* jetData = (TGraphErrors*) jetdir->Get("Graph1D_y2");
-    HistFinalJet->Scale(1e6); //data listed in mb
     jetData->SetTitle("CMS");
     myRatioPlot(jetData,HistFinalJet,"Jet r3 Differential Cross sections",false,true);
 
     //r2 graph
     TGraphErrors* jetDataHist2 = (TGraphErrors*) jetdir->Get("Graph1D_y1");
-    HistTotalJet2->Scale(1e6); //data listed in mb
     jetDataHist2->SetTitle("CMS");
     myRatioPlot(jetDataHist2,HistTotalJet2,"Jet r2 Differential Cross sections",false,true);
 
     //r4 graph
     TGraphErrors* jetDataHist4 = (TGraphErrors*) jetdir->Get("Graph1D_y3");
-    HistTotalJet3->Scale(1e6); //data listed in mb
     jetDataHist4->SetTitle("CMS");
     myRatioPlot(jetDataHist4,HistTotalJet3,"Jet r4 Differential Cross sections",false,true);
 
