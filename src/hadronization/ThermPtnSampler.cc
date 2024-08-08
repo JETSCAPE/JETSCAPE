@@ -44,6 +44,7 @@ ThermalPartonSampler::ThermalPartonSampler(unsigned int ran_seed, double hydro_T
 	seeds.push_back(rng_engine());
 	seeds.push_back(rng_engine());
 	seeds.push_back(rng_engine());
+	seeds.push_back(rng_engine());
 
 	surface.clear();
 
@@ -764,18 +765,20 @@ void ThermalPartonSampler::sample_3p1d(bool Cartesian_hydro){
 		RNG::ctr_type c={{}};
 		RNG::ukey_type uk={{}};
 		c[0] = iS;
-		uk[0] = seeds[2];
-		r123::MicroURNG<RNG> rng_engine_generate(c, uk);
 
 		// Generating light quarks
 		std::poisson_distribution<int> poisson_ud(NumLight);
+		uk[0] = seeds[2];
+		r123::MicroURNG<RNG> rng_engine_generate(c, uk);
 		int GeneratedParticles_ud = poisson_ud(rng_engine_generate); // Initialize particles created in this cell
 		SamplePartons(GeneratedParticles_ud, 1, TRead, false, CPos, LorBoost, false, 0., CellDZ, seeds[0], iS);
 		num_ud += GeneratedParticles_ud;
 
 		// Generate s quarks
 		std::poisson_distribution<int> poisson_s(NumStrange);
-		int GeneratedParticles_s = poisson_s(rng_engine_generate); //Initialize particles created in this cell
+		uk[0] = seeds[3];
+		r123::MicroURNG<RNG> rng_engine_generate_strange(c, uk);
+		int GeneratedParticles_s = poisson_s(rng_engine_generate_strange); //Initialize particles created in this cell
 		SamplePartons(GeneratedParticles_s, 2, TRead, false, CPos, LorBoost, false, 0., CellDZ, seeds[1], iS);
 		num_s += GeneratedParticles_s;
 	}
@@ -901,11 +904,11 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 			RNG::ukey_type uk={{}};
 			c[0] = slice;
 			c[1] = iS;
-			uk[0] = seeds[2];
-			r123::MicroURNG<RNG> rng_engine_generate(c, uk);
 
 			// Generating light quarks
 			std::poisson_distribution<int> poisson_ud(NumLight);
+			uk[0] = seeds[2];
+			r123::MicroURNG<RNG> rng_engine_generate(c, uk);
 			int GeneratedParticles_ud = poisson_ud(rng_engine_generate); // Initialize particles created in this cell
 			std::cout << "GeneratedParticles_ud: " << GeneratedParticles_ud << std::endl;
 			SamplePartons(GeneratedParticles_ud, 1, TRead, false, CPos, LorBoost, true,
@@ -914,7 +917,9 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 
 			// Generate s quarks
 			std::poisson_distribution<int> poisson_s(NumStrange);
-			int GeneratedParticles_s = poisson_s(rng_engine_generate); //Initialize particles created in this cell
+			uk[0] = seeds[3];
+			r123::MicroURNG<RNG> rng_engine_generate_strange(c, uk);
+			int GeneratedParticles_s = poisson_s(rng_engine_generate_strange); //Initialize particles created in this cell
 			std::cout << "GeneratedParticles_s: " << GeneratedParticles_s << std::endl;
 			SamplePartons(GeneratedParticles_s, 2, TRead, false, CPos, LorBoost, true,
 				eta_slice, CellDZ_local, seeds[1], iS_iter);
