@@ -5,6 +5,8 @@
 #include <vector>
 #include <random>
 #include <omp.h>
+#include "../external_packages/Random123/threefry.h"
+#include "../external_packages/Random123/MicroURNG.hpp"
 
 using namespace Jetscape;
 
@@ -45,7 +47,6 @@ class ThermalPartonSampler
 
 
  private:
-
 	// List of thermal partons sampled
 	std::vector<std::vector<double>> Plist;
 	// List of particles ( [0]->event number; [1]->particle ID; [2]->origin; 
@@ -65,6 +66,8 @@ class ThermalPartonSampler
     std::mt19937_64& getRandomGenerator() {return rng_engine;}
 
 	std::vector<uint64_t> seeds; // to hold seeds for multiple generators in threads
+
+	typedef r123::Threefry4x64 RNG;	// Random number generator type
 
 	// HyperSurface
 	std::vector<std::vector<double>> surface;
@@ -88,7 +91,7 @@ class ThermalPartonSampler
 	
 	// Samples parton momentum in rest frame
 	// Input temperature is assumed to be in fm^-1
-	std::tuple<double, double, double, double> MomentumSampler(double T, int quark, std::mt19937_64 rng_engine_part = std::mt19937_64(0));
+	std::tuple<double, double, double, double> MomentumSampler(double T, int quark, r123::MicroURNG<RNG> rng_engine_part = r123::MicroURNG<RNG>(RNG::ctr_type(), RNG::key_type()));
 
 	// Set up the Lorentz boost matrix and the (gamma, v) vector
     void LorentzBoostMatrix(std::vector<double>& v, std::vector<std::vector<double>>& BoostMatrix, bool brick);

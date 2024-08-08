@@ -309,7 +309,7 @@ void ThermalPartonSampler::CDFGenerator(double T, double m, int quark) {
  * @return A tuple containing the components of the momentum vector 
  * (NewX, NewY, NewZ) and the magnitude (NewP).
  */
-std::tuple<double, double, double, double> ThermalPartonSampler::MomentumSampler(double T, int quark, std::mt19937_64 rng_engine_part) {
+std::tuple<double, double, double, double> ThermalPartonSampler::MomentumSampler(double T, int quark, r123::MicroURNG<RNG> rng_engine_part) {
     double PMag;
     double PMax = 10. * T;  // CutOff for Integration
     double PStep = PMax / (NUMSTEP - 1); // Stepsize in P
@@ -478,9 +478,12 @@ void ThermalPartonSampler::SamplePartons(int Npartons, int quark, double T, bool
 
 	Plocal[iS_iter].reserve(Plocal[iS_iter].size() + Npartons);
 
-	std::mt19937_64 rng_engine_part; //RNG - Mersenne Twist - 64 bit
+	RNG::ctr_type c={{}};
+	RNG::ukey_type uk={{}};
+	c[0] = iS_iter;
+	uk[0] = adjusted_seed + iS_iter;
 	std::uniform_real_distribution<double> distribution{0.0, 1.0};
-	rng_engine_part.seed(adjusted_seed + iS_iter);
+	r123::MicroURNG<RNG> rng_engine_part(c, uk);
 
 	// Sample Npartons partons
 	for (int i = 0; i < Npartons; i++) {
@@ -758,8 +761,12 @@ void ThermalPartonSampler::sample_3p1d(bool Cartesian_hydro){
 		double NumLight = CacheFermiDiracIntegralLight[TCacheLight] * degeneracy_ud * dSigma_dot_u / (2.*pi*pi);
 		double NumStrange = CacheFermiDiracIntegralStrange[TCacheStrange] * degeneracy_s * dSigma_dot_u / (2.*pi*pi);
 
-		std::mt19937_64 rng_engine_generate; //RNG - Mersenne Twist - 64 bit
-		rng_engine_generate.seed(seeds[2] + iS);
+		RNG::ctr_type c={{}};
+		RNG::ukey_type uk={{}};
+		c[0] = iS;
+		uk[0] = seeds[2];
+		r123::MicroURNG<RNG> rng_engine_generate(c, uk);
+
 		// Generating light quarks
 		std::poisson_distribution<int> poisson_ud(NumLight);
 		int GeneratedParticles_ud = poisson_ud(rng_engine_generate); // Initialize particles created in this cell
@@ -890,11 +897,17 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 			// Update the Lorentz boost matrix for the slice
 			LorentzBoostMatrix(Vel, LorBoost, false);
 
-			std::mt19937_64 rng_engine_generate; //RNG - Mersenne Twist - 64 bit
-			rng_engine_generate.seed(seeds[2] + iS_iter);
+			RNG::ctr_type c={{}};
+			RNG::ukey_type uk={{}};
+			c[0] = slice;
+			c[1] = iS;
+			uk[0] = seeds[2];
+			r123::MicroURNG<RNG> rng_engine_generate(c, uk);
+
 			// Generating light quarks
 			std::poisson_distribution<int> poisson_ud(NumLight);
 			int GeneratedParticles_ud = poisson_ud(rng_engine_generate); // Initialize particles created in this cell
+			std::cout << "GeneratedParticles_ud: " << GeneratedParticles_ud << std::endl;
 			SamplePartons(GeneratedParticles_ud, 1, TRead, false, CPos, LorBoost, true,
 				eta_slice, CellDZ_local, seeds[0], iS_iter);
 			num_ud += GeneratedParticles_ud;
@@ -902,6 +915,7 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 			// Generate s quarks
 			std::poisson_distribution<int> poisson_s(NumStrange);
 			int GeneratedParticles_s = poisson_s(rng_engine_generate); //Initialize particles created in this cell
+			std::cout << "GeneratedParticles_s: " << GeneratedParticles_s << std::endl;
 			SamplePartons(GeneratedParticles_s, 2, TRead, false, CPos, LorBoost, true,
 				eta_slice, CellDZ_local, seeds[1], iS_iter);
 			num_s += GeneratedParticles_s;
