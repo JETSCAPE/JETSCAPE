@@ -5,8 +5,8 @@
 #include <vector>
 #include <random>
 #include <omp.h>
-#include "../external_packages/Random123/threefry.h"
-#include "../external_packages/Random123/MicroURNG.hpp"
+#include "threefry.h"
+#include "MicroURNG.hpp"
 
 using namespace Jetscape;
 
