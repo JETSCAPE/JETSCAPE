@@ -140,6 +140,9 @@ void epemGun::InitTask() {
     throw std::runtime_error("Pythia init() failed.");
   }
 
+  Lambda_QCD = GetXMLElementDouble({"Eloss","lambdaQCD"});
+  QS = GetXMLElementDouble({"Eloss", "Matter", "QS"});
+
   // Initialize random number distribution
   ZeroOneDistribution = uniform_real_distribution<double>{0.0, 1.0};
 
@@ -240,7 +243,6 @@ void epemGun::Exec() {
     // Virtualities of the two partons
     double q1 = 0.;
     double q2 = 0.;
-    const double QS = 0.9;
 
     //Find initial virtuality one parton at a time
     for(int pass=0; pass<2; ++pass){
@@ -475,7 +477,7 @@ double epemGun::alpha_s(double q2) {
   if (q24 > L2) {
     a = 12.0 * pi / (11.0 * Nc - 2.0 * c_nf) / std::log(q24 / L2);
   } else {
-    JSWARN << " alpha too large ";
+    //JSWARN << " alpha too large ";
     a = 0.6;
   }
 

@@ -138,11 +138,13 @@
     <tStart> 0.6 </tStart> <!-- Start time of jet quenching, proper time, fm/c   -->
     <mutex>ON</mutex>
     <AddLiquefier> false </AddLiquefier>
+    <lambdaQCD>0.2</lambdaQCD> <!-- 0.4 is the value chosen in JETSET -->
 
     <Matter>
       <name>Matter</name>
       <matter_on> 1 </matter_on>
       <Q0> 2.0 </Q0>
+      <QS> 0.9 </QS>
       <T0> 0.16 </T0>
       <!--if initial_virtuality_pT == 1: pT of hard parton is used to compute initial virtuality in shower, initial_virtuality_pT == 0: use parton 3-momentum-->
       <initial_virtuality_pT> 1 </initial_virtuality_pT>

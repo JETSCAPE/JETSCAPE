@@ -58,6 +58,8 @@ void ColorlessHadronization::Init() {
 
   take_recoil = GetXMLElementInt({"JetHadronization", "take_recoil"});
 
+  Lambda_QCD = GetXMLElementDouble({"Eloss","lambdaQCD"});
+
   JSDEBUG << "Initialize ColorlessHadronization";
   VERBOSE(8);
 

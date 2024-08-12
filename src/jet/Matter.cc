@@ -30,8 +30,6 @@
 using namespace Jetscape;
 using namespace std;
 
-const double QS = 0.9;
-
 // Register the module with the base class
 RegisterJetScapeModule<Matter> Matter::reg("Matter");
 
@@ -90,6 +88,7 @@ Matter::Matter() {
   T0 = 0.;
   iEvent = 0;
   NUM1 = 0;
+  QS = 0.9;
 }
 
 Matter::~Matter() { VERBOSE(8); }
@@ -115,6 +114,7 @@ void Matter::Init() {
   brick_length = 4.0;
   vir_factor = 1.0;
   initial_virtuality_pT = true;
+  QS = 0.9;
 
   double m_qhat = GetXMLElementDouble({"Eloss", "Matter", "qhat0"});
   SetQhat(m_qhat);
@@ -144,6 +144,8 @@ void Matter::Init() {
   brick_length = GetXMLElementDouble({"Eloss", "Matter", "brick_length"});
   vir_factor = GetXMLElementDouble({"Eloss", "Matter", "vir_factor"});
   initial_virtuality_pT = GetXMLElementInt({"Eloss", "Matter", "initial_virtuality_pT"});
+  Lambda_QCD = GetXMLElementDouble({"Eloss","lambdaQCD"});
+  QS = GetXMLElementDouble({"Eloss", "Matter", "QS"});
 
   if(vir_factor < 0.0) {
     JSWARN << "vir_factor should not be negative";
@@ -159,7 +161,7 @@ void Matter::Init() {
   JSINFO << MAGENTA << "matter shower on: " << matter_on;
   JSINFO << MAGENTA << "in_vac: " << in_vac << "  brick_med: " << brick_med
          << "  recoil_on: " << recoil_on<<", tStart ="<<tStart;
-  JSINFO << MAGENTA << "Q0: " << Q00 << " vir_factor: " << vir_factor 
+  JSINFO << MAGENTA << "Q0: " << Q00 << " QS: " << QS << " vir_factor: " << vir_factor 
          << " initial_virtuality_pT: " << initial_virtuality_pT
          << "  qhat0: " << qhat0 << " alphas: " << alphas << ", QhatParametrizationType="<<QhatParametrizationType
          << "  qhatA: " << qhatA << " qhatB:  " <<qhatB  << "  qhatC: " << qhatC << " qhatD:  " <<qhatD
@@ -3725,7 +3727,7 @@ double Matter::alpha_s(double q2) {
   if (q24 > L2) {
     a = 12.0 * pi / (11.0 * Nc - 2.0 * c_nf) / std::log(q24 / L2);
   } else {
-    JSWARN << " alpha too large ";
+    JSWARN << " alpha too large, lambda should be " << sqrt(q24);
     a = 0.6;
   }
 

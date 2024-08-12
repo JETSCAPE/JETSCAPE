@@ -31,6 +31,8 @@ private:
   //double pTHatMax;
   double eCM;
   //bool FSR_on;
+  double Lambda_QCD;
+  double QS = 0.9;
 
   // Allows the registration of the module so that it is available to be used by the Jetscape framework.
   static RegisterJetScapeModule<epemGun> reg;
