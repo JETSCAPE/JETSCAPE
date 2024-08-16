@@ -317,7 +317,7 @@ void ratioPlot(TGraphErrors* dataHist, TH1D* predictionHist, string title, strin
 
     //legend
     predictionPlot->SetTitle("JETSCAPE");
-    dataPlot->SetTitle("data");
+    dataPlot->SetTitle("ALEPH");
     total->GetUpperPad()->BuildLegend();
     total->GetLowerRefYaxis()->SetTitle("JETSCAPE/data");
     predictionPlot->SetTitle(title.c_str());
