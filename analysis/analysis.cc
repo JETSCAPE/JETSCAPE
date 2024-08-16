@@ -754,7 +754,7 @@ void makeObsPred(vector<string> directories, string input, string name, string h
             }
         }
         pionPredicts.push_back(piontemp);
-        pionErrs.push_back(piontemp);
+        pionErrs.push_back(piontemperrs);
         
         file.Close();
     }
