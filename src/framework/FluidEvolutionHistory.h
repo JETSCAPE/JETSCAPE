@@ -121,7 +121,7 @@ public:
                   float dtau, float x_min, float dx, int nx, float y_min,
                   float dy, int ny, float eta_min, float deta, int neta,
                   bool tau_eta_is_tz);
-
+std::string toString() const;
   /** Default destructor. */
   ~EvolutionHistory() {
     data.clear();

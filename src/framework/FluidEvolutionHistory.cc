@@ -122,6 +122,41 @@ void EvolutionHistory::FromVector(const std::vector<float> &data_,
   tau_eta_is_tz = tau_eta_is_tz_;
   ntau = data_.size() / (data_info_.size() * nx * ny * neta);
 }
+// Method to convert the object to a string
+    std::string EvolutionHistory::toString() const {
+        std::ostringstream oss;
+        
+        // Serialize vectors
+        oss <<"FluidCellVector size"<< data.size() << '\n';
+        for (float value : data_vector) {
+            oss << value << ' ';
+        }
+        oss << '\n';
+        
+        // oss << data_info.size() << '\n';
+        // for (const std::string& info : data_info) {
+        //     oss << info.size() << '\n' << info;
+        // }
+        // oss << '\n';
+        
+        // Serialize simple data members
+        oss << tau_min << '\n'
+            << dtau << '\n'
+            << x_min << '\n'
+            << dx << '\n'
+            << y_min << '\n'
+            << dy << '\n'
+            << eta_min << '\n'
+            << deta << '\n'
+            << nx << '\n'
+            << ny << '\n'
+            << neta << '\n'
+            << tau_eta_is_tz << '\n'
+            << ntau;
+        
+        return oss.str();
+    }
+
 
 /* This function will read the sparse data stored in data_ with associated 
  * information data_info_ into to FluidCellInfo object */
