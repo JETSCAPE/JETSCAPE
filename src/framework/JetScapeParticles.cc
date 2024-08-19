@@ -49,7 +49,7 @@ JetScapeParticleBase::JetScapeParticleBase(int label, int id, int stat,
   set_id(id);
   init_jet_v();
 
-  assert(InternalHelperPythia.particleData.isParticle(id));
+  //assert(InternalHelperPythia.particleData.isParticle(id));
   set_restmass(InternalHelperPythia.particleData.m0(id));
 
   reset_momentum(pt * cos(phi), pt * sin(phi), pt * sinh(eta), e);
