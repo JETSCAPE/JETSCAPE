@@ -53,7 +53,11 @@ public:
   double initial_conditions(smash::Particles *particles,
                             const smash::ExperimentParameters &) {
     JS_hadrons_to_smash_particles(jetscape_hadrons_[event_number_], *particles);
-    backpropagate_to_same_time(*particles);
+    if (particles->size() > 0) {
+      backpropagate_to_same_time(*particles);
+    } else {
+      start_time_ = 0.0;
+    }
     event_number_++;
     return start_time_;
   }
