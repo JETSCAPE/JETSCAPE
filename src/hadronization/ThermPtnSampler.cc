@@ -826,6 +826,14 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 	int numSlices = 2 * N_slices + 1;
 
 	Plocal.resize(numSlices * surface.size());
+	
+	#if defined(_OPENMP)
+	JSINFO << "Using OpenMP with " << omp_get_max_threads() << " threads.";
+	#endif
+
+	#if defined(_OPENMP)
+		JSINFO << "Using OpenMP with " << omp_get_max_threads() << " threads.";
+	#endif
 
 	#pragma omp parallel for collapse(2) reduction(+:num_ud, num_s)
 	for(int slice=1; slice <= numSlices; slice++){
@@ -910,7 +918,6 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 			uk[0] = seeds[2];
 			r123::MicroURNG<RNG> rng_engine_generate(c, uk);
 			int GeneratedParticles_ud = poisson_ud(rng_engine_generate); // Initialize particles created in this cell
-			std::cout << "GeneratedParticles_ud: " << GeneratedParticles_ud << std::endl;
 			SamplePartons(GeneratedParticles_ud, 1, TRead, false, CPos, LorBoost, true,
 				eta_slice, CellDZ_local, seeds[0], iS_iter);
 			num_ud += GeneratedParticles_ud;
@@ -920,7 +927,6 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 			uk[0] = seeds[3];
 			r123::MicroURNG<RNG> rng_engine_generate_strange(c, uk);
 			int GeneratedParticles_s = poisson_s(rng_engine_generate_strange); //Initialize particles created in this cell
-			std::cout << "GeneratedParticles_s: " << GeneratedParticles_s << std::endl;
 			SamplePartons(GeneratedParticles_s, 2, TRead, false, CPos, LorBoost, true,
 				eta_slice, CellDZ_local, seeds[1], iS_iter);
 			num_s += GeneratedParticles_s;
