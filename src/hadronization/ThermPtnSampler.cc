@@ -817,6 +817,10 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 
 	Plocal.resize(numSlices * surface.size());
 
+	#if defined(_OPENMP)
+		JSINFO << "Using OpenMP with " << omp_get_max_threads() << " threads.";
+	#endif
+
 	#pragma omp parallel for collapse(2) reduction(+:num_ud, num_s)
 	for(int slice=1; slice <= numSlices; slice++){
 		for(int iS=0; iS<surface.size(); ++iS){

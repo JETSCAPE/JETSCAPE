@@ -16,6 +16,11 @@
 #ifndef JETSCAPE_H
 #define JETSCAPE_H
 
+#if defined(__linux__)
+#include <sys/sysinfo.h>
+#include <sys/utsname.h>
+#include <unistd.h>
+#endif
 #include "JetScapeLogger.h"
 #include "JetScapeTaskSupport.h"
 #include "JetScapeModuleBase.h"
@@ -76,6 +81,9 @@ public:
   inline unsigned int GetNReuseHydro() const { return n_reuse_hydro_; }
 
 protected:
+#if defined(__linux__)
+  void PrintHardwareInfo();
+#endif
   void CompareElementsFromXML();
   void recurseToBuild(std::vector<std::string> &elems, tinyxml2::XMLElement *mElement);
   void recurseToSearch(std::vector<std::string> &elems, tinyxml2::XMLElement *uElement);
