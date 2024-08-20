@@ -568,6 +568,7 @@ void HybridHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& sh
 			surface.push_back(cell);
 		}
 
+		auto startTime = std::chrono::high_resolution_clock::now();
 		ThermalPartonSampler part_samp(rand_seed); //initializing sampler with random seed
 		part_samp.set_hypersurface(surface);
     if(boost_invariant){
@@ -575,6 +576,9 @@ void HybridHadronization::DoHadronization(vector<vector<shared_ptr<Parton>>>& sh
     }else{
       part_samp.sample_3p1d(Cartesian_hydro);
     }
+	auto endTime = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsedSeconds = endTime - startTime;
+    JSINFO << "Hydro hypersurface was sampled in " << elapsedSeconds.count() << " seconds.";
 
 		JSINFO << "Hydro was sampled, generating " << part_samp.nTot() << " partons (" << part_samp.th_nL() << " light, " << part_samp.th_nS() << " strange).";
 
