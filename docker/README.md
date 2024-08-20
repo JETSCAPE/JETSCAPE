@@ -116,3 +116,14 @@ From **inside** the docker container, we can now build JETSCAPE:
 You can run JETSCAPE executables or re-compile code. Moreover, since we set up the jetscape-docker folder to be shared between your
 host and the docker container, you can do text-editing etc. on your host machine, and then immediately build JETSCAPE in the docker container.
 Output files are also immediately accessible on your host machine if desired.
+
+## Building and Deploying Docker Images
+
+The Dockerfile files used to generate JETSCAPE's and X-SCAPE's images have been
+moved to a separate
+[TEST-EXAMPLES](https://github.com/JETSCAPE/TEST-EXAMPLES/)
+repository.  They can be found
+[here](https://github.com/JETSCAPE/TEST-EXAMPLES/tree/main/docker).
+Descriptions of our various Docker images and explanations of their intended
+uses are available
+[here](https://github.com/JETSCAPE/TEST-EXAMPLES/blob/main/doc/Docker-Dispatch.md).
