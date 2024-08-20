@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -16,46 +17,64 @@
 /** Provides JetScapeParticleBase and derived classes Parton, Hadron
 
     \class Jetscape::JetScapeParticleBase
-    * A JetScapeParticleBase derives PRIVARTELY from FastJet PseudoJet and has additional information:
-    *  - PID (from PDG) and rest mass (these should eventually be coupled and only PID kept track of internally)
+    * A JetScapeParticleBase derives PRIVARTELY from FastJet PseudoJet and has
+   additional information:
+    *  - PID (from PDG) and rest mass (these should eventually be coupled and
+   only PID kept track of internally)
     *  - A location (creation point) 4-vector
-    *  - a label and a status 
-    *  - currently additional information that should be moved to derived classes or only used as UserInfo
-    * 
-    * The design choice of protected inheritance is due to a disconnect between available packages.
-    * The overwhelming majority of the theory community expects the 0 component to be time/energy, 
-    * whereas FastJet (and others, like ROOT) prefer t,e to be the fourth component.
-    * Private inheritance means we can inherit and make accessible safe methods (with C++11 using),
+    *  - a label and a status
+    *  - currently additional information that should be moved to derived
+   classes or only used as UserInfo
+    *
+    * The design choice of protected inheritance is due to a disconnect between
+   available packages.
+    * The overwhelming majority of the theory community expects the 0 component
+   to be time/energy,
+    * whereas FastJet (and others, like ROOT) prefer t,e to be the fourth
+   component.
+    * Private inheritance means we can inherit and make accessible safe methods
+   (with C++11 using),
     * while protecting users from unsafe (explicit component access) ones.
-    * Note that this is only necessary because otherwise it's impossible to disallow 
+    * Note that this is only necessary because otherwise it's impossible to
+   disallow
     * constructors and getters that explicitly assume indices!
     * IF we could get rid of those or change to the fastjet convention,
     * we could derive publicly and get a true Is_A relationship. Alas.
-    * 
-    * You can in principle use the base class directly, but it's recommended to use the derived classes
+    *
+    * You can in principle use the base class directly, but it's recommended to
+   use the derived classes
     * Parton and/or (todo) Hadron, Lepton, ...
-    * 
+    *
     * \warning
-    * PseudoJet doesn't have a concept of rest mass, any mass related functions literally assume 
+    * PseudoJet doesn't have a concept of rest mass, any mass related functions
+   literally assume
     * \f$M^2 = E^2 - p*p.\f$
-    * Especially in the case of off-shell partons, the correct interpretation is 
+    * Especially in the case of off-shell partons, the correct interpretation is
     * \f$"M^2" = E^2 - p^2 == M0^2 + Q^2 == M0^2 + t\f$
-    * Therefore, there is the dangerous possibility that functions like mass(), reset_PtYPhiM(...) can
-    * be used by unwitting users and display unexpected behavior. 
-    * For protection against this possibility, "mass"-related functions in PseudoJet are
+    * Therefore, there is the dangerous possibility that functions like mass(),
+   reset_PtYPhiM(...) can
+    * be used by unwitting users and display unexpected behavior.
+    * For protection against this possibility, "mass"-related functions in
+   PseudoJet are
     * not made available
-    * 
-    * Future considerations: 
+    *
+    * Future considerations:
     *   - We should consider
-    *     making a Pythia8 installation mandatory; with pythia guaranteed to be present,
+    *     making a Pythia8 installation mandatory; with pythia guaranteed to be
+   present,
     *     the rest mass lookup could be automatically done using PDG data.
-    *   - If ROOT were a mandatory part, TLorentzVector would be a good replacement for the homebrewed FourVector
-    *   - If HepMc were a mandatory part, HepMc::FourVector would be a good replacement for the homebrewed FourVector
+    *   - If ROOT were a mandatory part, TLorentzVector would be a good
+   replacement for the homebrewed FourVector
+    *   - If HepMc were a mandatory part, HepMc::FourVector would be a good
+   replacement for the homebrewed FourVector
     */
 
 #ifndef JETSCAPEPARTICLES_H
 #define JETSCAPEPARTICLES_H
 
+// clang-format tool is disabled for these includes because clang-format
+// will alphabetize them, but their included order matters
+// clang-format off
 #include <stdio.h>
 #include <math.h>
 #include "GTL/graph.h"
@@ -72,6 +91,7 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
+// clang-format on
 
 using std::ostream;
 using std::weak_ptr;
@@ -92,7 +112,7 @@ class JetScapeParticleBase : protected fjcore::PseudoJet {
   // using fjcore::PseudoJet::operator() (int i) const ;
   // inline double operator [] (int i) const { return (*this)(i); }; // this too
 
-public:
+ public:
   // Disallow reset, it assumes different logic
   // using fjcore::PseudoJet::reset(double px, double py, double pz, double E);
   // using fjcore::PseudoJet::reset(const PseudoJet & psjet) {
@@ -135,50 +155,50 @@ public:
   fjcore::PseudoJet GetPseudoJet() const { return PseudoJet(*this); }
 
   // import safe functions
+  using fjcore::PseudoJet::e;
+  using fjcore::PseudoJet::E;
   using fjcore::PseudoJet::px;
   using fjcore::PseudoJet::py;
   using fjcore::PseudoJet::pz;
-  using fjcore::PseudoJet::e;
-  using fjcore::PseudoJet::E;
 
+  using fjcore::PseudoJet::eta;
+  using fjcore::PseudoJet::kt2;
+  using fjcore::PseudoJet::perp;
+  using fjcore::PseudoJet::perp2;
   using fjcore::PseudoJet::phi;
-  using fjcore::PseudoJet::phi_std;
   using fjcore::PseudoJet::phi_02pi;
+  using fjcore::PseudoJet::phi_std;
+  using fjcore::PseudoJet::pseudorapidity;
+  using fjcore::PseudoJet::pt;
+  using fjcore::PseudoJet::pt2;
   using fjcore::PseudoJet::rap;
   using fjcore::PseudoJet::rapidity;
-  using fjcore::PseudoJet::pseudorapidity;
-  using fjcore::PseudoJet::eta;
-  using fjcore::PseudoJet::pt2;
-  using fjcore::PseudoJet::pt;
-  using fjcore::PseudoJet::perp2;
-  using fjcore::PseudoJet::perp;
-  using fjcore::PseudoJet::kt2;
 
-  using fjcore::PseudoJet::modp2;
-  using fjcore::PseudoJet::modp;
   using fjcore::PseudoJet::Et;
   using fjcore::PseudoJet::Et2;
+  using fjcore::PseudoJet::modp;
+  using fjcore::PseudoJet::modp2;
 
+  using fjcore::PseudoJet::beam_distance;
+  using fjcore::PseudoJet::delta_phi_to;
+  using fjcore::PseudoJet::delta_R;
   using fjcore::PseudoJet::kt_distance;
   using fjcore::PseudoJet::plain_distance;
   using fjcore::PseudoJet::squared_distance;
-  using fjcore::PseudoJet::delta_R;
-  using fjcore::PseudoJet::delta_phi_to;
-  using fjcore::PseudoJet::beam_distance;
 
   using fjcore::PseudoJet::operator*=;
   using fjcore::PseudoJet::operator/=;
   using fjcore::PseudoJet::operator+=;
   using fjcore::PseudoJet::operator-=;
 
-  using fjcore::PseudoJet::user_index;
-  using fjcore::PseudoJet::set_user_index;
-  using fjcore::PseudoJet::UserInfoBase;
   using fjcore::PseudoJet::InexistentUserInfo;
+  using fjcore::PseudoJet::set_user_index;
+  using fjcore::PseudoJet::user_index;
+  using fjcore::PseudoJet::UserInfoBase;
 
-  using fjcore::PseudoJet::user_info;
-  using fjcore::PseudoJet::set_user_info;
   using fjcore::PseudoJet::has_user_info;
+  using fjcore::PseudoJet::set_user_info;
+  using fjcore::PseudoJet::user_info;
   using fjcore::PseudoJet::user_info_ptr;
   using fjcore::PseudoJet::user_info_shared_ptr;
 
@@ -201,7 +221,7 @@ public:
   // using fjcore::PseudoJet::structure_shared_ptr;
   // ... more
 
-public:
+ public:
   JetScapeParticleBase() : PseudoJet(){};
   JetScapeParticleBase(int label, int id, int stat, const FourVector &p,
                        const FourVector &x);
@@ -226,7 +246,7 @@ public:
   void set_jet_v(FourVector j);
 
   /** Set a new responsible (Eloss) module
-     * @return false if we already had one */
+   * @return false if we already had one */
   bool SetController(string controller = "") {
     bool wascontrolled = controlled_;
     controlled_ = true;
@@ -270,30 +290,30 @@ public:
 
   // give it a static pythia to look up particle properties
   // Be a bit careful with it!
-  // Init is never called, and this object is not configured. All it can do is look up
-  // in its original Data table
+  // Init is never called, and this object is not configured. All it can do is
+  // look up in its original Data table
   static Pythia8::Pythia InternalHelperPythia;
 
-protected:
+ protected:
   void set_restmass(
-      double
-          mass_input); ///< shouldn't be called from the outside, needs to be consistent with PID
+      double mass_input);  ///< shouldn't be called from the outside, needs to
+                           ///< be consistent with PID
 
-  int pid_;    ///< particle id
-  int pstat_;  ///< status of particle
-  int plabel_; ///< the line number in the event record
-  double
-      mass_; ///< rest mass of the particle \todo Only maintain PID, look up mass from PDG
+  int pid_;      ///< particle id
+  int pstat_;    ///< status of particle
+  int plabel_;   ///< the line number in the event record
+  double mass_;  ///< rest mass of the particle \todo Only maintain PID, look up
+                 ///< mass from PDG
 
-  FourVector x_in_; ///< position of particle
-  FourVector
-      jet_v_; ///< jet four vector, without gamma factor (so not really a four vector)
+  FourVector x_in_;   ///< position of particle
+  FourVector jet_v_;  ///< jet four vector, without gamma factor (so not really
+                      ///< a four vector)
 
   // give it a static pythia to look up particle properties
   // Be a bit careful with it!
-  // Init is never called, and this object is not configured. All it can do is look up
-  // in its original Data table
-  //static Pythia8::Pythia InternalHelperPythia;
+  // Init is never called, and this object is not configured. All it can do is
+  // look up in its original Data table
+  // static Pythia8::Pythia InternalHelperPythia;
 
   /// check whether a module claimed responsibility of this particle
   bool controlled_ = false;
@@ -308,25 +328,24 @@ ostream &operator<<(ostream &output, JetScapeParticleBase &p);
 //  PARTON CLASS
 /*************************************************************************************************/
 class Parton : public JetScapeParticleBase {
-
-public:
+ public:
   virtual void set_mean_form_time();
   virtual void set_form_time(double form_time);
 
   virtual double form_time();
   virtual const double mean_form_time();
   virtual void reset_p(double px, double py, double pz);
-  virtual void set_color(unsigned int col); ///< sets the color of the parton
-  virtual void
-  set_anti_color(unsigned int acol); ///< sets anti-color of the parton
-  virtual void
-  set_max_color(unsigned int col); ///< sets the color of the parton
-  virtual void
-  set_min_color(unsigned int col); ///< sets the color of the parton
-  virtual void
-  set_min_anti_color(unsigned int acol); ///< sets anti-color of the parton
-  bool isPhoton(
-      int pid); // Checks to see if the particle is a photon, separate derived class for photons
+  virtual void set_color(unsigned int col);  ///< sets the color of the parton
+  virtual void set_anti_color(
+      unsigned int acol);  ///< sets anti-color of the parton
+  virtual void set_max_color(
+      unsigned int col);  ///< sets the color of the parton
+  virtual void set_min_color(
+      unsigned int col);  ///< sets the color of the parton
+  virtual void set_min_anti_color(
+      unsigned int acol);  ///< sets anti-color of the parton
+  bool isPhoton(int pid);  // Checks to see if the particle is a photon,
+                           // separate derived class for photons
 
   Parton(int label, int id, int stat, const FourVector &p, const FourVector &x);
   Parton(int label, int id, int stat, double pt, double eta, double phi,
@@ -337,11 +356,10 @@ public:
   Parton &operator=(const Parton &c);
 
   const double t();
-  void set_t(
-      double
-          t); ///< virtuality of particle, \WARNING: rescales the spatial component
-  unsigned int color();      ///< returns the color of the parton
-  unsigned int anti_color(); ///< returns the anti-color of the parton
+  void set_t(double t);  ///< virtuality of particle, \WARNING: rescales the
+                         ///< spatial component
+  unsigned int color();  ///< returns the color of the parton
+  unsigned int anti_color();  ///< returns the anti-color of the parton
   unsigned int max_color();
   unsigned int min_color();
   unsigned int min_anti_color();
@@ -355,25 +373,25 @@ public:
 
   std::vector<Parton> parents();
 
-protected:
-  double mean_form_time_;     ///< Mean formation time
-  double form_time_;          ///< event by event formation time
-  unsigned int Color_;        ///< Large Nc color of parton
-  unsigned int antiColor_;    ///< Large Nc anti-color of parton
-  unsigned int MaxColor_;     ///< the running maximum color
-  unsigned int MinColor_;     ///< color of the parent
-  unsigned int MinAntiColor_; ///< anti-color of the parent
+ protected:
+  double mean_form_time_;      ///< Mean formation time
+  double form_time_;           ///< event by event formation time
+  unsigned int Color_;         ///< Large Nc color of parton
+  unsigned int antiColor_;     ///< Large Nc anti-color of parton
+  unsigned int MaxColor_;      ///< the running maximum color
+  unsigned int MinColor_;      ///< color of the parent
+  unsigned int MinAntiColor_;  ///< anti-color of the parent
 
-  weak_ptr<PartonShower> pShower_; ///< shower that this parton belongs to
-  int edgeid_;                     ///< Position in the shower graph
+  weak_ptr<PartonShower> pShower_;  ///< shower that this parton belongs to
+  int edgeid_;                      ///< Position in the shower graph
 
   // helpers
   void initialize_form_time();
-  void CheckAcceptability(int id); ///< restrict to a few pids only.
+  void CheckAcceptability(int id);  ///< restrict to a few pids only.
 };
 
 class Hadron : public JetScapeParticleBase {
-public:
+ public:
   Hadron(int label, int id, int stat, const FourVector &p, const FourVector &x);
   Hadron(int label, int id, int stat, double pt, double eta, double phi,
          double e, double *x = 0);
@@ -396,12 +414,12 @@ public:
   /// Returns true when all x entries of the hadrons are (close to) 0
   bool has_no_position();
 
-protected:
+ protected:
   double width_;
 };
 
 class Photon : public Parton {
-public:
+ public:
   Photon(int label, int id, int stat, const FourVector &p, const FourVector &x);
   Photon(int label, int id, int stat, double pt, double eta, double phi,
          double e, double *x = 0);
@@ -411,46 +429,42 @@ public:
   Photon &operator=(const Photon &ph);
 };
 
-class Qvector{
+class Qvector {
+ private:
+  double pt_min_, pt_max_, y_min_, y_max_;
+  int npt_, ny_, ncols_, norder_;
+  int pid_;
+  int rapidity_type_;
+  int total_num_;
+  double dpt_, dy_;
+  std::vector<std::vector<std::vector<double>>> hist_;
+  std::string header_;
+  std::vector<double> gridpT_;
+  std::vector<double> gridy_;
 
-private:
+ public:
+  Qvector(double pt_min, double pt_max, int npt, double y_min, double y_max,
+          int ny, int norder, int pid, int rapidity_type);
 
-    double pt_min_, pt_max_, y_min_, y_max_;
-    int npt_, ny_, ncols_,norder_;
-    int pid_;
-    int rapidity_type_;
-    int total_num_;
-    double dpt_, dy_; 
-    std::vector<std::vector<std::vector<double>>> hist_;
-    std::string header_; 
-    std::vector<double> gridpT_;
-    std::vector<double> gridy_;  
+  void fill(double pt_in, double y_in, int col_in, double val);
 
-public:
-    
-    Qvector(double pt_min, double pt_max, int npt, double y_min, double y_max, int ny, int norder, int pid, int rapidity_type);
-    
-    void fill(double pt_in, double y_in, int col_in, double val); 
-    
-    void fill_particle(const shared_ptr<Hadron>& hadron);
-    int get_pdgcode() const {return pid_;}
-    int get_npt() const {return npt_;}
-    int get_ny() const {return ny_;}
-    int get_norder() const {return norder_;}
-    int get_ncols() const {return ncols_;}
-    int get_total_num() {return total_num_;}
-    double get_value(int i,int j,int k) const {return hist_[i][j][k];}
+  void fill_particle(const shared_ptr<Hadron> &hadron);
+  int get_pdgcode() const { return pid_; }
+  int get_npt() const { return npt_; }
+  int get_ny() const { return ny_; }
+  int get_norder() const { return norder_; }
+  int get_ncols() const { return ncols_; }
+  int get_total_num() { return total_num_; }
+  double get_value(int i, int j, int k) const { return hist_[i][j][k]; }
 
-    double get_dpt() const {return dpt_;}
-    double get_dy() const {return dy_;}
-    double get_pt(int idx) const;
-    double get_y(int idx) const;
-    void set_header(std::string a);
-    std::string get_header() const {return header_;}
-
+  double get_dpt() const { return dpt_; }
+  double get_dy() const { return dy_; }
+  double get_pt(int idx) const;
+  double get_y(int idx) const;
+  void set_header(std::string a);
+  std::string get_header() const { return header_; }
 };
 
+};  // namespace Jetscape
 
-}; // namespace Jetscape
-
-#endif // JETSCAPEPARTICLES_H
+#endif  // JETSCAPEPARTICLES_H

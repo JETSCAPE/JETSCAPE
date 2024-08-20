@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -14,19 +15,20 @@
  ******************************************************************************/
 // This is a general basic class for a hyper-surface finder
 
-#include <cmath>
-#include "RealType.h"
 #include "SurfaceFinder.h"
-#include "cornelius.h"
+
+#include <cmath>
+
 #include "FluidEvolutionHistory.h"
 #include "JetScapeLogger.h"
+#include "RealType.h"
+#include "cornelius.h"
 
 namespace Jetscape {
 
 SurfaceFinder::SurfaceFinder(const Jetscape::real T_in,
                              const EvolutionHistory &bulk_data)
     : bulk_info(bulk_data) {
-
   T_cut = T_in;
   JSINFO << "Find a surface with temperature T = " << T_cut;
   boost_invariant = bulk_info.is_boost_invariant();
@@ -172,7 +174,6 @@ bool SurfaceFinder::check_intersect_4D(Jetscape::real tau, Jetscape::real x,
                                        Jetscape::real dt, Jetscape::real dx,
                                        Jetscape::real dy, Jetscape::real deta,
                                        double ****cube) {
-
   bool intersect = true;
 
   auto tau_low = tau - dt / 2.;
@@ -335,7 +336,6 @@ SurfaceCellInfo SurfaceFinder::PrepareASurfaceCell(
     Jetscape::real tau, Jetscape::real x, Jetscape::real y, Jetscape::real eta,
     Jetscape::real da0, Jetscape::real da1, Jetscape::real da2,
     Jetscape::real da3, const FluidCellInfo fluid_cell) {
-
   SurfaceCellInfo temp_cell;
   temp_cell.tau = tau;
   temp_cell.x = x;
@@ -355,14 +355,14 @@ SurfaceCellInfo SurfaceFinder::PrepareASurfaceCell(
   temp_cell.mu_Q = fluid_cell.mu_C;
   temp_cell.mu_S = fluid_cell.mu_S;
 
-  double u0 = sqrt(1. + fluid_cell.vx*fluid_cell.vx
-                   + fluid_cell.vy*fluid_cell.vy
-                   + fluid_cell.vz*fluid_cell.vz);
-  double uz = u0*fluid_cell.vz;
-  temp_cell.umu[0] = u0*cosh(eta) - uz*sinh(eta);
-  temp_cell.umu[1] = u0*fluid_cell.vx;
-  temp_cell.umu[2] = u0*fluid_cell.vy;
-  temp_cell.umu[3] = - u0*sinh(eta) + uz*cosh(eta);
+  double u0 =
+      sqrt(1. + fluid_cell.vx * fluid_cell.vx + fluid_cell.vy * fluid_cell.vy +
+           fluid_cell.vz * fluid_cell.vz);
+  double uz = u0 * fluid_cell.vz;
+  temp_cell.umu[0] = u0 * cosh(eta) - uz * sinh(eta);
+  temp_cell.umu[1] = u0 * fluid_cell.vx;
+  temp_cell.umu[2] = u0 * fluid_cell.vy;
+  temp_cell.umu[3] = -u0 * sinh(eta) + uz * cosh(eta);
 
   temp_cell.pi[0] = fluid_cell.pi[0][0];
   temp_cell.pi[1] = fluid_cell.pi[0][1];
@@ -380,4 +380,4 @@ SurfaceCellInfo SurfaceFinder::PrepareASurfaceCell(
   return (temp_cell);
 }
 
-} // namespace Jetscape
+}  // namespace Jetscape

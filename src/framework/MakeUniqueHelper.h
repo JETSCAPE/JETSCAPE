@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -28,20 +29,23 @@
 #include <utility>
 
 namespace Jetscape {
-template <class T> struct _Unique_if {
+template <class T>
+struct _Unique_if {
   typedef std::unique_ptr<T> _Single_object;
 };
 
-template <class T> struct _Unique_if<T[]> {
+template <class T>
+struct _Unique_if<T[]> {
   typedef std::unique_ptr<T[]> _Unknown_bound;
 };
 
-template <class T, size_t N> struct _Unique_if<T[N]> {
+template <class T, size_t N>
+struct _Unique_if<T[N]> {
   typedef void _Known_bound;
 };
 
 template <class T, class... Args>
-typename _Unique_if<T>::_Single_object make_unique(Args &&... args) {
+typename _Unique_if<T>::_Single_object make_unique(Args &&...args) {
   return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
 }
 
@@ -61,6 +65,6 @@ bool weak_ptr_is_uninitialized(std::weak_ptr<T> const &weak) {
   return !weak.owner_before(wt{}) && !wt{}.owner_before(weak);
 }
 
-} // namespace Jetscape
+}  // namespace Jetscape
 
-#endif // MAKEUNIQUEHELPER_H
+#endif  // MAKEUNIQUEHELPER_H

@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -19,20 +20,20 @@
 #include <memory>
 
 #include "FluidDynamics.h"
-#include "music.h"
-#include "hydro_source_base.h"
-#include "LiquefierBase.h"
-#include "data_struct.h"
 #include "JetScapeConstants.h"
+#include "LiquefierBase.h"
 #include "MakeUniqueHelper.h"
+#include "data_struct.h"
+#include "hydro_source_base.h"
+#include "music.h"
 
 using namespace Jetscape;
 
 class HydroSourceJETSCAPE : public HydroSourceBase {
-private:
+ private:
   std::weak_ptr<LiquefierBase> liquefier_ptr;
 
-public:
+ public:
   HydroSourceJETSCAPE() = default;
   ~HydroSourceJETSCAPE() {}
 
@@ -68,7 +69,7 @@ public:
     std::array<Jetscape::real, 4> jmu_tmp = {0.0};
     liquefier_ptr.lock()->get_source(tau, x, y, eta_s, jmu_tmp);
     for (int i = 0; i < 4; i++) {
-      j_mu[i] = jmu_tmp[i]/hbarC;  // convert the unit from GeV/fm^4 to 1/fm^5
+      j_mu[i] = jmu_tmp[i] / hbarC;  // convert the unit from GeV/fm^4 to 1/fm^5
     }
   }
 };
@@ -76,13 +77,13 @@ public:
 //! this is wrapper class for MUSIC so that it can be used as a external
 //! library for the JETSCAPE integrated framework
 class MpiMusic : public FluidDynamics {
-private:
+ private:
   // int mode;            //!< records running mode
   std::unique_ptr<MUSIC> music_hydro_ptr;
 
-  Jetscape::real freezeout_temperature; //!< [GeV]
-  int doCooperFrye;                     //!< flag to run Cooper-Frye freeze-out
-                                        //!< for soft particles
+  Jetscape::real freezeout_temperature;  //!< [GeV]
+  int doCooperFrye;                      //!< flag to run Cooper-Frye freeze-out
+                                         //!< for soft particles
   int flag_output_evo_to_file;
   int flag_output_evo_to_memory;
   int flag_surface_in_memory;
@@ -93,7 +94,7 @@ private:
   // used by the Jetscape framework.
   static RegisterJetScapeModule<MpiMusic> reg;
 
-public:
+ public:
   MpiMusic();
   ~MpiMusic();
 
@@ -104,10 +105,9 @@ public:
                     Jetscape::real z,
                     std::unique_ptr<FluidCellInfo> &fluid_cell_info_ptr);
 
-  void
-  GetHydroInfo_JETSCAPE(Jetscape::real t, Jetscape::real x, Jetscape::real y,
-                        Jetscape::real z,
-                        std::unique_ptr<FluidCellInfo> &fluid_cell_info_ptr);
+  void GetHydroInfo_JETSCAPE(
+      Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
+      std::unique_ptr<FluidCellInfo> &fluid_cell_info_ptr);
   void GetHydroInfo_MUSIC(Jetscape::real t, Jetscape::real x, Jetscape::real y,
                           Jetscape::real z,
                           std::unique_ptr<FluidCellInfo> &fluid_cell_info_ptr);
@@ -128,4 +128,4 @@ public:
   void collect_freeze_out_surface();
 };
 
-#endif // MUSICWRAPPER_H
+#endif  // MUSICWRAPPER_H

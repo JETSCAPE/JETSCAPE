@@ -1,10 +1,11 @@
-#include <vector>
-#include <string>
+#include "AdSCFTMutex.h"
+
 #include <iostream>
 #include <memory>
+#include <string>
+#include <vector>
 
 #include "JetScapeTask.h"
-#include "AdSCFTMutex.h"
 
 using namespace std;
 using std::shared_ptr;

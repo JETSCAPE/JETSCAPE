@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -21,22 +22,21 @@
 
 namespace Jetscape {
 
-
 class FluidCellInfo {
-public:
+ public:
   // data structure for outputing fluid cell information
-  Jetscape::real energy_density;  //!< Local energy density [GeV/fm^3].
-  Jetscape::real entropy_density; //!< Local entropy density [1/fm^3].
-  Jetscape::real temperature;     //!< Local temperature [GeV].
-  Jetscape::real pressure;        //!< Thermal pressure [GeV/fm^3].
-  Jetscape::real
-      qgp_fraction; //!< Fraction of quark gluon plasma assuming medium is in QGP+HRG phase.
-  Jetscape::real mu_B;       //!< Net baryon chemical potential [GeV].
-  Jetscape::real mu_C;       //!< Net charge chemical potential [GeV]
-  Jetscape::real mu_S;       //!< Net strangeness chemical potential [GeV].
-  Jetscape::real vx, vy, vz; //!< Flow velocity.
-  Jetscape::real pi[4][4];   //!< Shear stress tensor [GeV/fm^3].
-  Jetscape::real bulk_Pi;    //!< Bulk viscous pressure [GeV/fm^3].
+  Jetscape::real energy_density;   //!< Local energy density [GeV/fm^3].
+  Jetscape::real entropy_density;  //!< Local entropy density [1/fm^3].
+  Jetscape::real temperature;      //!< Local temperature [GeV].
+  Jetscape::real pressure;         //!< Thermal pressure [GeV/fm^3].
+  Jetscape::real qgp_fraction;     //!< Fraction of quark gluon plasma assuming
+                                   //!< medium is in QGP+HRG phase.
+  Jetscape::real mu_B;             //!< Net baryon chemical potential [GeV].
+  Jetscape::real mu_C;             //!< Net charge chemical potential [GeV]
+  Jetscape::real mu_S;        //!< Net strangeness chemical potential [GeV].
+  Jetscape::real vx, vy, vz;  //!< Flow velocity.
+  Jetscape::real pi[4][4];    //!< Shear stress tensor [GeV/fm^3].
+  Jetscape::real bulk_Pi;     //!< Bulk viscous pressure [GeV/fm^3].
 
   /** Default constructor.*/
   FluidCellInfo();
@@ -45,10 +45,10 @@ public:
   FluidCellInfo inline operator*=(Jetscape::real b);
 
   /** Prints fluid cell properties to the screen. */
-  //void Print();
+  // void Print();
 };
 
-//overload +-*/ for easier linear interpolation
+// overload +-*/ for easier linear interpolation
 /// adds \f$ c = a + b \f$
 inline FluidCellInfo operator+(FluidCellInfo a, const FluidCellInfo &b) {
   a.energy_density += b.energy_density;
@@ -113,7 +113,7 @@ inline FluidCellInfo operator/(FluidCellInfo a, Jetscape::real b) {
 
 // print the fluid cell information for debuging
 // this function has bugs
-//std::ostream &operator<<(std::ostream &os, const FluidCellInfo &cell) {
+// std::ostream &operator<<(std::ostream &os, const FluidCellInfo &cell) {
 //    os << "energy_density=" << cell.energy_density << std::endl;
 //    os << "entropy_density=" << cell.entropy_density << std::endl;
 //    os << "temperature=" << cell.temperature << std::endl;
@@ -136,6 +136,6 @@ inline FluidCellInfo operator/(FluidCellInfo a, Jetscape::real b) {
 //    return os << std::endl;
 //}
 
-} // end namespace Jetscape
+}  // end namespace Jetscape
 
-#endif // FluidCellInfo
+#endif  // FluidCellInfo

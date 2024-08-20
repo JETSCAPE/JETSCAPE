@@ -10,7 +10,8 @@
 #include <istream>
 
 namespace Jetscape {
-// The namespace of this file was changed to integrate this file from SMASH into the JETSCAPE framework
+// The namespace of this file was changed to integrate this file from SMASH into
+// the JETSCAPE framework
 std::istream& operator>>(std::istream& is, PdgCode& code) {
   std::string codestring("");
   is >> codestring;
@@ -104,4 +105,4 @@ bool PdgCode::contains_enough_valence_quarks(
   }
   throw std::runtime_error("String fragment is neither baryon nor meson");
 }
-}  // namespace smash
+}  // namespace Jetscape

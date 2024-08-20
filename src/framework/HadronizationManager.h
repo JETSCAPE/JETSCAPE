@@ -1,7 +1,8 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
  *
  * For the list of contributors see AUTHORS.
  *
@@ -16,13 +17,12 @@
 #ifndef HADRONIZATIONMANAGER_H
 #define HADRONIZATIONMANAGER_H
 
-#include "JetScapeTask.h"
-#include "JetClass.h"
-#include "sigslot.h"
+#include <vector>
 
 #include "Hadronization.h"
-
-#include <vector>
+#include "JetClass.h"
+#include "JetScapeTask.h"
+#include "sigslot.h"
 
 namespace Jetscape {
 
@@ -30,8 +30,7 @@ namespace Jetscape {
 class HadronizationManager
     : public JetScapeModuleBase,
       public std::enable_shared_from_this<HadronizationManager> {
-
-public:
+ public:
   HadronizationManager();
   virtual ~HadronizationManager();
 
@@ -44,19 +43,21 @@ public:
 
   void CreateSignalSlots();
 
-		//get Hadrons from Hadronization submodules
-  void GetHadrons(vector<shared_ptr<Hadron>>& signal);
+  // get Hadrons from Hadronization submodules
+  void GetHadrons(vector<shared_ptr<Hadron>> &signal);
 
   // deletes the hadrons from the different hadronization modules
   // this is used in the case of hadronization hadrons in the afterburner
   // otherwise these hadrons are printed to file and the same hadrons will be
   // modified in the transport and printed again
   void DeleteHadrons();
-  // this function removes all positive hadrons, the negative ones are not deleted
-  // needed, when positive hadrons are given to the afterburner
+  // this function removes all positive hadrons, the negative ones are not
+  // deleted needed, when positive hadrons are given to the afterburner
   void DeleteRealHadrons();
 
-  sigslot::signal1<vector<shared_ptr<Hadron>> &> GetHadronList; //get Hadrons from HardProcess NOT Hadronization submodules
+  sigslot::signal1<vector<shared_ptr<Hadron>> &>
+      GetHadronList;  // get Hadrons from HardProcess NOT Hadronization
+                      // submodules
 
   sigslot::signal1<vector<vector<shared_ptr<Parton>>> &> GetFinalPartonList;
 
@@ -72,13 +73,13 @@ public:
   }
   const bool GetGetHadronListConnected() { return GetHadronListConnected; }
 
-private:
+ private:
   bool GetFinalPartonListConnected;
   bool GetHadronListConnected;
   vector<vector<shared_ptr<Parton>>> hd;
   vector<shared_ptr<Hadron>> hadrons;
 };
 
-} // end namespace Jetscape
+}  // end namespace Jetscape
 
 #endif

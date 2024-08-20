@@ -1,8 +1,9 @@
 #ifndef JETSCAPEMODULEMUTEX_H
 #define JETSCAPEMODULEMUTEX_H
 
-#include <vector>
 #include <memory>
+#include <vector>
+
 #include "JetScapeTask.h"
 
 using namespace std;
@@ -11,10 +12,10 @@ using std::shared_ptr;
 namespace Jetscape {
 
 class JetScapeModuleMutex {
-public:
+ public:
   virtual bool CheckMutex(vector<shared_ptr<JetScapeTask>> modules) = 0;
 };
 
-} // end namespace Jetscape
+}  // end namespace Jetscape
 
 #endif

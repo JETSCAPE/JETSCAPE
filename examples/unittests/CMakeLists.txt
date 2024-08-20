@@ -1,17 +1,16 @@
-##############
+# ##############################################################################
 # Unit Tests
-##############
+# ##############################################################################
 
-# tests:
-# Helper macro (from smash) that adds a run_<name> target
+# tests: Helper macro (from smash) that adds a run_<name> target
 macro(js_add_test name depends)
-   add_test(NAME ${name} COMMAND ${ARGN})
-   add_custom_target(run_${name}
-      COMMAND ${ARGN} ${UNITTEST_ARGS}
-      DEPENDS ${depends}
-      COMMENT "Executing test ${name}"
-      VERBATIM
-      )
+  add_test(NAME ${name} COMMAND ${ARGN})
+  add_custom_target(
+    run_${name}
+    COMMAND ${ARGN} ${UNITTEST_ARGS}
+    DEPENDS ${depends}
+    COMMENT "Executing test ${name}"
+    VERBATIM)
 endmacro()
 
 macro(js_add_exe name)
@@ -23,10 +22,9 @@ endmacro()
 
 # this is the main func called by developer to add unittests
 macro(add_unittest name)
-   js_add_exe(${name})
-   js_add_test(${name} ${name} ${name})
+  js_add_exe(${name})
+  js_add_test(${name} ${name} ${name})
 endmacro()
-
 
 # add your unittests after this line
 

@@ -1,16 +1,14 @@
-name: build+regression test (limited) PbPb
+name: build+regression test PbPb
 
 on:
   pull_request:
     branches:
       - main
-      - JETSCAPE-3.6.4-RC
-      - latessa/dockerImage
+      - JETSCAPE-4.0-RC
   push:
     branches:
       - main
-      - JETSCAPE-3.6.4-RC
-      - latessa/dockerImage
+      - JETSCAPE-4.0-RC
 
 env:
   REPO_NAME: ${{ github.event.repository.name }}

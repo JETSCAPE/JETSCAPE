@@ -1,7 +1,8 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
  *
  * For the list of contributors see AUTHORS.
  *
@@ -18,11 +19,11 @@
 
 #include "SmashWrapper.h"
 
-#include "smash/particles.h"
-#include "smash/library.h"
-
-#include <string>
 #include <filesystem>
+#include <string>
+
+#include "smash/library.h"
+#include "smash/particles.h"
 
 using namespace Jetscape;
 
@@ -43,17 +44,16 @@ void SmashWrapper::InitTask() {
   // do not store tabulation, which is achieved by an empty tabulations path
   std::string tabulations_path("");
 
-  auto config = smash::setup_config_and_logging(smash_config_file,
-                                                smash_hadron_list,
-                                                smash_decays_list);
+  auto config = smash::setup_config_and_logging(
+      smash_config_file, smash_hadron_list, smash_decays_list);
 
   // Take care of the random seed. This will make SMASH results reproducible.
   auto random_seed = (*GetMt19937Generator())();
-  config.set_value({"General","Randomseed"}, random_seed);
+  config.set_value({"General", "Randomseed"}, random_seed);
 
   // Read in the rest of configuration
   end_time_ = GetXMLElementDouble({"Afterburner", "SMASH", "end_time"});
-  config.set_value({"General","End_Time"}, end_time_);
+  config.set_value({"General", "End_Time"}, end_time_);
 
   JSINFO << "End time until which SMASH propagates is " << end_time_ << " fm/c";
   only_final_decays_ =

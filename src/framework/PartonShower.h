@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -13,14 +14,15 @@
  * See COPYING for details.
  ******************************************************************************/
 
-//PartonShower with graph from GTL
+// PartonShower with graph from GTL
 
 #ifndef PARTONSHOWER_H
 #define PARTONSHOWER_H
 
-#include "GTL/graph.h"
 #include <GTL/edge_map.h>
 #include <GTL/node_map.h>
+
+#include "GTL/graph.h"
 #include "JetClass.h"
 #include "JetScapeLogger.h"
 
@@ -35,8 +37,7 @@ class Vertex;
 class Parton;
 
 class PartonShower : public graph {
-
-public:
+ public:
   PartonShower();
   virtual ~PartonShower();
 
@@ -58,9 +59,9 @@ public:
   vector<shared_ptr<Parton>> GetFinalPartons();
   vector<fjcore::PseudoJet> GetFinalPartonsForFastJet();
 
-  //unique_ptr<Parton> GetPartonAt(int i);
-  //unique_ptr<Vertex> GetVertexAt(int i);
-  //vector<unique_ptr<Parton>> GetPartons() {};
+  // unique_ptr<Parton> GetPartonAt(int i);
+  // unique_ptr<Vertex> GetVertexAt(int i);
+  // vector<unique_ptr<Parton>> GetPartons() {};
 
   int GetNumberOfPartons() const { return number_of_edges(); }
   int GetNumberOfVertices() const { return number_of_nodes(); }
@@ -81,29 +82,29 @@ public:
   void SaveAsGV(string fName);
   void SaveAsGraphML(string fName);
 
-private:
+ private:
   node_map<shared_ptr<Vertex>> vMap;
   edge_map<shared_ptr<Parton>> pMap;
 
   vector<shared_ptr<Parton>> pFinal;
 
-  //Check map data format (pointer to edge/node !??)
-  //map<weak_ptr<Parton>, edge> pToEdgeMap;
-  //map<weak_ptr<Vertex>, node> vToNodeMap;
+  // Check map data format (pointer to edge/node !??)
+  // map<weak_ptr<Parton>, edge> pToEdgeMap;
+  // map<weak_ptr<Vertex>, node> vToNodeMap;
 
-  //void CreateMaps();
-  //bool mapsFilled;
+  // void CreateMaps();
+  // bool mapsFilled;
 
-  //Check here memory issues to avoid cyclic references (use unique pointers instead for return functions!?
-  //In general rethink and clean up pointer types for efficiency and safety ...
-  //Only fill when needed via Getters ...
-  //Can also be done via lists, a bit slower (interface question ...)
-  //vector<weak_ptr<Parton>> pVec;
-  //vector<weak_ptr<Vertex>> vVec;
+  // Check here memory issues to avoid cyclic references (use unique pointers
+  // instead for return functions!? In general rethink and clean up pointer
+  // types for efficiency and safety ... Only fill when needed via Getters ...
+  // Can also be done via lists, a bit slower (interface question ...)
+  // vector<weak_ptr<Parton>> pVec;
+  // vector<weak_ptr<Vertex>> vVec;
 
-  //void FillVertexVec();
-  //void FillPartonVec();
+  // void FillVertexVec();
+  // void FillPartonVec();
 };
 
-} // end namespace Jetscape
+}  // end namespace Jetscape
 #endif

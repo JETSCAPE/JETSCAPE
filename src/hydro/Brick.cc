@@ -1,7 +1,8 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
  *
  * For the list of contributors see AUTHORS.
  *
@@ -13,16 +14,16 @@
  * See COPYING for details.
  ******************************************************************************/
 
+#include "Brick.h"
+
+#include <MakeUniqueHelper.h>
+#include <cmath>
+#include <cstring>
+#include <iostream>
 #include <stdio.h>
 #include <sys/stat.h>
 
-#include <cstring>
-#include <cmath>
-#include <iostream>
-#include <MakeUniqueHelper.h>
-
 #include "JetScapeLogger.h"
-#include "Brick.h"
 
 using namespace Jetscape;
 
@@ -31,7 +32,7 @@ RegisterJetScapeModule<Brick> Brick::reg("Brick");
 
 Brick::Brick() : FluidDynamics() {
   // initialize the parameter reader
-  T_brick = 0.0; // GeV
+  T_brick = 0.0;  // GeV
   start_time = 0.0;
   bjorken_expansion_on = false;
 
@@ -60,7 +61,7 @@ void Brick::InitTask() {
     bjorken_expansion_on = true;
     start_time = std::atof(brick->Attribute("start_time"));
   } else {
-    if (brick->Attribute("start_time")){
+    if (brick->Attribute("start_time")) {
       start_time = std::atof(brick->Attribute("start_time"));
     }
   }
@@ -69,8 +70,8 @@ void Brick::InitTask() {
 
   brick_L = GetXMLElementDouble({"Eloss", "Matter", "brick_length"});
 
-  //Parameter parameter_list;
-  GetParameterList().hydro_input_filename = (char *)"dummy"; //*(argv+1);
+  // Parameter parameter_list;
+  GetParameterList().hydro_input_filename = (char *)"dummy";  //*(argv+1);
 }
 
 void Brick::InitializeHydro(Parameter parameter_list) {
@@ -95,8 +96,9 @@ void Brick::GetHydroInfo(
   if (hydro_status == FINISHED) {
     fluid_cell_info_ptr->energy_density = 0.0;
     fluid_cell_info_ptr->entropy_density = 0.0;
-	if(t > brick_L){fluid_cell_info_ptr->temperature = 0.;}
-    else if (bjorken_expansion_on) {
+    if (t > brick_L) {
+      fluid_cell_info_ptr->temperature = 0.;
+    } else if (bjorken_expansion_on) {
       fluid_cell_info_ptr->temperature =
           T_brick * std::pow(start_time / t, 1.0 / 3.0);
     } else {

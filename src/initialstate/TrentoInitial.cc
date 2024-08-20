@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -13,17 +14,18 @@
  * See COPYING for details.
  ******************************************************************************/
 
-#include <cstdlib>
-#include <sstream>
-#include <fstream>
+#include "TrentoInitial.h"
+
+#include <algorithm>
 #include <boost/bind.hpp>
 #include <boost/tokenizer.hpp>
-#include <algorithm>
+#include <cstdlib>
+#include <fstream>
 #include <functional>
+#include <sstream>
 #include <string>
-#include "JetScapeLogger.h"
 
-#include "TrentoInitial.h"
+#include "JetScapeLogger.h"
 
 namespace Jetscape {
 
@@ -39,9 +41,9 @@ namespace {
 /// @return Vector of tokens.
 std::vector<std::string> tokenize(const std::string &input) {
   typedef boost::escaped_list_separator<char> separator_type;
-  separator_type separator("\\",    // The escape characters.
-                           "= ",    // The separator characters.
-                           "\"\'"); // The quote characters.
+  separator_type separator("\\",     // The escape characters.
+                           "= ",     // The separator characters.
+                           "\"\'");  // The quote characters.
 
   // Tokenize the intput.
   boost::tokenizer<separator_type> tokens(input, separator);
@@ -52,7 +54,7 @@ std::vector<std::string> tokenize(const std::string &input) {
           !boost::bind(&std::string::empty, _1));
   return result;
 }
-} // end namespace
+}  // end namespace
 
 // See header for explanation.
 TrentoInitial::TrentoInitial() : InitialState() { SetId("Trento"); }
@@ -67,17 +69,17 @@ void TrentoInitial::InitTask() {
   using OptDesc = po::options_description;
   using VecStr = std::vector<std::string>;
   OptDesc main_opts{};
-  main_opts.add_options()(
-      "projectile",
-      po::value<VecStr>()
-          ->required()
-          ->notifier( // use a lambda to verify there are exactly two projectiles
-              [](const VecStr &projectiles) {
-                if (projectiles.size() != 2)
-                  throw po::required_option{"projectile"};
-              }),
-      "projectile symbols")("number-events", po::value<int>()->default_value(1),
-                            "number of events");
+  main_opts.add_options()("projectile",
+                          po::value<VecStr>()
+                              ->required()
+                              ->notifier(  // use a lambda to verify there are
+                                           // exactly two projectiles
+                                  [](const VecStr &projectiles) {
+                                    if (projectiles.size() != 2)
+                                      throw po::required_option{"projectile"};
+                                  }),
+                          "projectile symbols")(
+      "number-events", po::value<int>()->default_value(1), "number of events");
 
   // Make all main arguments positional.
   po::positional_options_description positional_opts{};
@@ -88,7 +90,8 @@ void TrentoInitial::InitTask() {
   general_opts.add_options()("help,h", "show this help message and exit")(
       "version", "print version information and exit")(
       "bibtex", "print bibtex entry and exit")
-      // ("default-config", "print a config file with default settings and exit")
+      // ("default-config", "print a config file with default settings and
+      // exit")
       ("config-file,c", po::value<VecPath>()->value_name("FILE"),
        "configuration file\n(can be passed multiple times)");
 
@@ -205,9 +208,9 @@ void TrentoInitial::InitTask() {
   double etamax = GetZMax(), deta = GetZStep();
 
   auto random_seed = (*GetMt19937Generator())();
-  //TEMPORARY FOR TESTING
-  //auto random_seed = 1;
-  //TEMPORARY
+  // TEMPORARY FOR TESTING
+  // auto random_seed = 1;
+  // TEMPORARY
   JSINFO << "Random seed used for Trento " << random_seed;
 
   std::string proj(phy_opts->Attribute("projectile"));
@@ -241,7 +244,7 @@ void TrentoInitial::InitTask() {
       " --skew-type " + std::to_string(skew_type) + " --jacobian " +
       std::to_string(J) + " --quiet ";
   std::string options2 = " --normalization " + std::to_string(normalization) +
-                         " --ncoll " // calcualte # of binary collision
+                         " --ncoll "  // calcualte # of binary collision
                          + " --xy-max " + std::to_string(xymax) +
                          " --xy-step " + std::to_string(dxy) + " --eta-max " +
                          std::to_string(etamax) + " --eta-step " +
@@ -261,8 +264,8 @@ void TrentoInitial::InitTask() {
               "inelastic cross-section";
   } else {
     auto Ecut = GenCenTab(proj, targ, var_map_basic, cen_low, cen_high);
-    double Ehigh = Ecut.first * normalization; // rescale the cut
-    double Elow = Ecut.second * normalization; // rescale the cut
+    double Ehigh = Ecut.first * normalization;  // rescale the cut
+    double Elow = Ecut.second * normalization;  // rescale the cut
 
     JSINFO << "The total energy density cut for centrality = [" << cen_low
            << ", " << cen_high << "] (%) is:";
@@ -299,9 +302,9 @@ std::pair<double, double> TrentoInitial::GenCenTab(std::string proj,
     JSWARN << "Wrong centrality cuts! To be terminated.";
     exit(-1);
   }
-  // These are all the parameters that could change the shape of centrality tables
-  // Normalization prefactor parameter is factorized
-  // They form a table header
+  // These are all the parameters that could change the shape of centrality
+  // tables Normalization prefactor parameter is factorized They form a table
+  // header
   trento::Collider another_collider(var_map);
   double beamE = var_map["beam-energy"].as<double>();
   double xsection = var_map["cross-section"].as<double>();
@@ -413,4 +416,4 @@ void TrentoInitial::Clear() {
   num_of_binary_collisions_.clear();
 }
 
-} // end namespace Jetscape
+}  // end namespace Jetscape

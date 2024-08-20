@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -23,7 +24,7 @@ using namespace Jetscape;
 
 // CLViscWrapper for jetscape
 class CLVisc : public FluidDynamics {
-private:
+ private:
   std::unique_ptr<clvisc::CLVisc> hydro_;
   int doCooperFrye;
   // scale the initial density because Trento only provides
@@ -33,7 +34,7 @@ private:
   // Allows the registration of the module
   static RegisterJetScapeModule<CLVisc> reg;
 
-public:
+ public:
   CLVisc();
   ~CLVisc();
 
@@ -46,4 +47,4 @@ public:
                        SurfaceCellInfo *surface_list_ptr){};
 };
 
-#endif // CLViscWRAPPER_H
+#endif  // CLViscWRAPPER_H
