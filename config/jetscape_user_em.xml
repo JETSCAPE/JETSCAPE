@@ -36,8 +36,8 @@
                   normalization='5.73'>
           </PhysicsInputs>
           <CutInputs
-                centrality-low='40'
-                centrality-high='50'>
+                centrality-low='30'
+                centrality-high='40'>
           </CutInputs>
           <TransInputs  reduced-thickness='0.063'
                   fluctuation="1.05"

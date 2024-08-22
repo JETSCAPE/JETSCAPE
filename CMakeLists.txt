@@ -80,8 +80,10 @@ endif (USE_ISS)
 
 option(USE_EM "Build tests for EM" OFF)
 if (USE_EM)
-  message("Includes for EM ...")
-  include_directories(./external_packages/EM ./external_packages/EM/src)
+  message("Includes for Dilepton ...")
+  include_directories(./external_packages/Dilepton ./external_packages/Dilepton/src)
+  message("Includes for Photon ...")
+  include_directories(./external_packages/Photon ./external_packages/Photon/src)
 endif (USE_EM)
 
 # SMASH afterburner. Turn on with 'cmake -DUSE_MUSIC=ON -DUSE_ISS=ON -Dsmash=ON'.
@@ -180,7 +182,8 @@ install(
   "${CMAKE_SOURCE_DIR}/external_packages/"
   "${CMAKE_SOURCE_DIR}/external_packages/ipglasma/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/iSS/src/"
-  "${CMAKE_SOURCE_DIR}/external_packages/EM/src/"
+  "${CMAKE_SOURCE_DIR}/external_packages/Dilepton/src/"
+  "${CMAKE_SOURCE_DIR}/external_packages/Photon/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/hydro_from_external_file/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/music/src/"
   "${CMAKE_SOURCE_DIR}/external_packages/trento/src/"
@@ -193,7 +196,8 @@ install(
   ## Necessary to exclude directories to prevent a whole (mostly empty) hierarchy
   PATTERN "gtl" EXCLUDE
   PATTERN "iSS" EXCLUDE
-  PATTERN "EM" EXCLUDE
+  PATTERN "Dilepton" EXCLUDE
+  PATTERN "Photon" EXCLUDE
   PATTERN "hydro_from_external_file" EXCLUDE
   PATTERN "ipglasma" EXCLUDE
   PATTERN "music" EXCLUDE
@@ -240,7 +244,8 @@ install(
   "${PROJECT_BINARY_DIR}/external_packages/gtl/lib/"
   "${PROJECT_BINARY_DIR}/external_packages/ipglasma/src/"
   "${PROJECT_BINARY_DIR}/external_packages/iSS/src/"
-  "${PROJECT_BINARY_DIR}/external_packages/EM/src/"
+  "${PROJECT_BINARY_DIR}/external_packages/Dilepton/src/"
+  "${PROJECT_BINARY_DIR}/external_packages/Photon/src/"
   "${PROJECT_BINARY_DIR}/external_packages/music/src/"
   "${PROJECT_BINARY_DIR}/external_packages/trento/src/"
   "${PROJECT_BINARY_DIR}/external_packages/clvisc_wrapper/"
@@ -409,10 +414,15 @@ if (USE_ISS)
 endif (USE_ISS)
 
 if (USE_EM)
-  if(EXISTS "${CMAKE_SOURCE_DIR}/external_packages/EM")
-    add_subdirectory( ${CMAKE_SOURCE_DIR}/external_packages/EM )
+  if(EXISTS "${CMAKE_SOURCE_DIR}/external_packages/Dilepton")
+    add_subdirectory( ${CMAKE_SOURCE_DIR}/external_packages/Dilepton )
   else()
-    message(FATAL_ERROR "Error: EM source has not been downloaded in external_packages by ./get_EM.sh")
+    message(FATAL_ERROR "Error: Dilepton source has not been downloaded in external_packages by ./get_EM.sh")
+  endif()
+  if(EXISTS "${CMAKE_SOURCE_DIR}/external_packages/Photon")
+    add_subdirectory( ${CMAKE_SOURCE_DIR}/external_packages/Photon )
+  else()
+    message(FATAL_ERROR "Error: Photon source has not been downloaded in external_packages by ./get_EM.sh")
   endif()
   target_compile_definitions(JetScape PRIVATE EMProbe)
 endif (USE_EM)
@@ -538,12 +548,20 @@ endif (USE_ISS)
 
 if (USE_EM)
   
-  if(EXISTS "${CMAKE_SOURCE_DIR}/external_packages/EM/ph_rates")
-    file(COPY ${CMAKE_SOURCE_DIR}/external_packages/EM/ph_rates DESTINATION ${CMAKE_BINARY_DIR}/)
-    file(COPY ${CMAKE_SOURCE_DIR}/external_packages/EM/parameters.dat DESTINATION ${CMAKE_BINARY_DIR}/)
+  if(EXISTS "${CMAKE_SOURCE_DIR}/external_packages/Dilepton/ph_rates")
+    file(COPY ${CMAKE_SOURCE_DIR}/external_packages/Dilepton/ph_rates DESTINATION ${CMAKE_BINARY_DIR}/)
+    file(COPY ${CMAKE_SOURCE_DIR}/external_packages/Dilepton/parameters.dat DESTINATION ${CMAKE_BINARY_DIR}/)
   else()
-    message(FATAL_ERROR "Error: iSS tables have not been downloaded in external_packages by ./get_iSS.sh")
+    message(FATAL_ERROR "Error: Dilepton tables have not been downloaded in external_packages by ./get_EM.sh")
   endif()
+  
+  if(EXISTS "${CMAKE_SOURCE_DIR}/external_packages/Photon/ph_rates")
+    file(COPY ${CMAKE_SOURCE_DIR}/external_packages/Photon/ph_rates DESTINATION ${CMAKE_BINARY_DIR}/ph_rates_photon)
+    file(COPY ${CMAKE_SOURCE_DIR}/external_packages/Photon/parameters.dat DESTINATION ${CMAKE_BINARY_DIR}/parameter_photon.dat)
+  else()
+    message(FATAL_ERROR "Error: Photon tables have not been downloaded in external_packages by ./get_EM.sh")
+  endif()
+
 endif (USE_EM)
 
 #### copy essential files for LBT to build/

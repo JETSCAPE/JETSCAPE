@@ -17,7 +17,9 @@
 # git clone --depth=1 https://github.com/chunshen1987/iSS -b JETSCAPE iSS
 
 # using a commit from the iSS repository that is compatible with JETSCAPE 3.6.1
-folderName="EM"
+folderName="Dilepton"
 
 git clone https://github.com/xyw2016/DileptonEmission.git -b JETSCAPE $folderName
-cd $folderName
+
+folderName="Photon"
+git clone https://github.com/xyw2016/DileptonEmission.git -b JS_photon_xyw_dev $folderName

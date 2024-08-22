@@ -16,31 +16,31 @@
 // This is a wrapper for 
 // -----------------------------------------
 
-#ifndef EMPROBEWRAPPER_H
-#define EMPROBEWRAPPER_H
+#ifndef PHOTONWRAPPER_H
+#define PHOTONWRAPPER_H
 
 #include <memory>
 
 #include "Emprobe.h"
-#include "JS_dilepton.h"
+#include "JS_photon.h"
 
 using namespace Jetscape;
 
-class EMProbeWrapper : public Emprobe {
+class PhotonWrapper : public Emprobe {
 private:
   tinyxml2::XMLElement *emprobe_xml_;
 
   int statusCode_;
-  std::unique_ptr<Dilepton::JS_dilepton> Dilepton_ptr_;
+  std::unique_ptr<Photon::JS_photon> Photon_ptr_;
 
   // Allows the registration of the module so that it is available to be used by the Jetscape framework.
-  static RegisterJetScapeModule<EMProbeWrapper> reg;
+  static RegisterJetScapeModule<PhotonWrapper> reg;
   vector<float> bulk_info_array;
-  std::shared_ptr<std::vector<float>> dilepton_spec;  
+  std::shared_ptr<std::vector<float>> photon_spec;  
 
 public:
-  EMProbeWrapper();
-  ~EMProbeWrapper();
+  PhotonWrapper();
+  ~PhotonWrapper();
 
   void InitTask();
   void Exec();

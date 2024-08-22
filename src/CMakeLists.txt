@@ -94,7 +94,8 @@ FILE(GLOB emprobesources emprobe/*.cc)
 set (SOURCES  ${SOURCES}  ${emprobesources} )
 ## Take care of options
 if(NOT "${USE_EM}")
-  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/emprobe/EMProbeWrapper.cc)
+  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/emprobe/DileptonWrapper.cc)
+  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/emprobe/PhotonWrapper.cc)
 endif()
 
 #reader

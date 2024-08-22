@@ -17,7 +17,7 @@
 // -----------------------------------------
 
 #include "JetScapeLogger.h"
-#include "EMProbeWrapper.h"
+#include "DileptonWrapper.h"
 
 #include "FluidDynamics.h"
 #include "FluidCellInfo.h"
@@ -34,16 +34,16 @@
 using namespace Jetscape;
 
 // Register the module with the base class
-RegisterJetScapeModule<EMProbeWrapper> EMProbeWrapper::reg("Dilepton");
+RegisterJetScapeModule<DileptonWrapper> DileptonWrapper::reg("Dilepton");
 
-EMProbeWrapper::EMProbeWrapper() {
+DileptonWrapper::DileptonWrapper() {
     SetId("Dilepton");
     statusCode_ = 0;
 }
 
-EMProbeWrapper::~EMProbeWrapper() {}
+DileptonWrapper::~DileptonWrapper() {}
 
-void EMProbeWrapper::InitTask() {
+void DileptonWrapper::InitTask() {
 
    JSINFO << "Initialize EM probe";
    bulk_info_array.clear();
@@ -73,7 +73,7 @@ void EMProbeWrapper::InitTask() {
   Dilepton_ptr_->paraRdr->setVal("turn_on_muB",0);
 }
 
-void EMProbeWrapper::Exec() {
+void DileptonWrapper::Exec() {
    JSINFO << "running Dilepton ...";
    bulk_info_array.resize(0);
    getBulkInforfromJetScape();
@@ -82,12 +82,12 @@ void EMProbeWrapper::Exec() {
    JSINFO << "Dilepton calculation finished.";
 }
 
-void EMProbeWrapper::Clear() {
+void DileptonWrapper::Clear() {
 
 }
 
 
-void EMProbeWrapper::WriteTask(weak_ptr<JetScapeWriter> w) {
+void DileptonWrapper::WriteTask(weak_ptr<JetScapeWriter> w) {
    VERBOSE(4) << "In EMProbeWrapper::WriteTask";
    auto f = w.lock();
    if (!f)
@@ -99,7 +99,7 @@ void EMProbeWrapper::WriteTask(weak_ptr<JetScapeWriter> w) {
 }
 
 
-void EMProbeWrapper::getBulkInforfromJetScape() {
+void DileptonWrapper::getBulkInforfromJetScape() {
    std::shared_ptr<FluidDynamics> hydro_ptr = JetScapeSignalManager::Instance()->GetHydroPointer().lock();
    const EvolutionHistory& bulk_info = hydro_ptr->get_bulk_info();
    int turn_on_rhob = 0;
