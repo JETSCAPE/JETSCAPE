@@ -419,6 +419,10 @@
             <include_shearvisc_deltaf>0</include_shearvisc_deltaf>
             <turn_on_muB>0</turn_on_muB>
       </Dilepton>
+      <Photon>
+            <Photon_input_file>./parameters.dat</Photon_input_file>
+            <turn_on_muB>0</turn_on_muB>
+      </Photon>
   </EMProbe>
 
   <!-- Hadronic Afterburner  -->

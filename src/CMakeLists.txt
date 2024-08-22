@@ -141,7 +141,8 @@ if ( USE_ISS )
 endif()
 
 if ( USE_EM )
-  target_link_libraries (JetScape EM )
+  target_link_libraries (JetScape Dilepton )
+  target_link_libraries (JetScape Photon )
 endif()
 
 if ( USE_CLVISC )

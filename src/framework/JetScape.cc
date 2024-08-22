@@ -723,7 +723,20 @@ void JetScape::DetermineTaskListFromXML() {
                       "Added Dilepton to task list.";
           }
 #else
-          JSWARN << "EMProbe is attempted to be added, but EMProbe is not installed!";
+          JSWARN << "Dilepton module is attempted to be added, but Dilepton module is not installed!";
+#endif
+        }
+        if (childElementName == "Photon") {
+#ifdef EMProbe 
+          auto Photonmodule =
+              JetScapeModuleFactory::createInstance(childElementName);
+          if (Photonmodule) {
+            Add(Photonmodule);
+            JSINFO << "JetScape::DetermineTaskList() -- : EMProbe "
+                      "Added Photon to task list.";
+          }
+#else
+          JSWARN << "Photon module is attempted to be added, but Photon module is not installed!";
 #endif
         }
         //   - Custom module
@@ -733,7 +746,7 @@ void JetScape::DetermineTaskListFromXML() {
           if (customModule) {
             Add(customModule);
             JSINFO
-                << "JetScape::DetermineTaskList() -- SoftParticlization: Added "
+                << "JetScape::DetermineTaskList() -- EMprobe: Added "
                 << childElementName << " to task list.";
           }
         }

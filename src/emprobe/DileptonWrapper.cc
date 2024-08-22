@@ -45,7 +45,7 @@ DileptonWrapper::~DileptonWrapper() {}
 
 void DileptonWrapper::InitTask() {
 
-   JSINFO << "Initialize EM probe";
+   JSINFO << "Initialize Dilepton module";
    bulk_info_array.clear();
    std::string input_file =
        GetXMLElementText({"EMProbe", "Dilepton", "Dilepton_input_file"});
@@ -128,6 +128,7 @@ void DileptonWrapper::getBulkInforfromJetScape() {
    bulk_info_array.push_back(turn_on_diff);
    bulk_info_array.push_back(nVar_per_cell);
    float hbarc = 0.19732;
+   std::cout<<bulk_info.data.size()<<" in dilepton"<<std::endl;
    for(int icell = 0; icell < bulk_info.data.size(); icell++ ){
         
     int id_eta = icell % bulk_info.neta;
