@@ -16,8 +16,7 @@ using namespace Jetscape;
 
 ThermalPartonSampler::ThermalPartonSampler(unsigned int ran_seed,
                                            double hydro_Tc)
-    : rng_engine(ran_seed),
-      CDFTabLight(4097, std::vector<double>(2)),
+    : CDFTabLight(4097, std::vector<double>(2)),
       CDFTabStrange(4097, std::vector<double>(2)),
       SetNum(false),  // Set 'true' to set number of particles by hand-
                       // !!!Statistics use above temperature!!!
@@ -46,13 +45,17 @@ ThermalPartonSampler::ThermalPartonSampler(unsigned int ran_seed,
       num_ud(0),
       num_s(0) {
   // Use Jetscape Random Seed to create additional seeds needed for threads
-  seeds.push_back(rng_engine());
-  seeds.push_back(rng_engine());
-  seeds.push_back(rng_engine());
-  seeds.push_back(rng_engine());
-
+  RNG rng;
+  RNG::ctr_type c = {{0}};
+  RNG::ukey_type uk = {{0}};
+  uk[0] = ran_seed;
+  RNG::key_type k = uk;
+  for (int i = 0; i < 5; i++) {
+    c[0] = i;
+    RNG::ctr_type r = rng(c, k);
+    seeds.push_back(r[0]);
+  }
   surface.clear();
-
   InitializeBesselK2();
 
   // Create the CDF table for 20 different temperatures in the range
@@ -415,6 +418,8 @@ void ThermalPartonSampler::SamplePartons(
 }
 
 void ThermalPartonSampler::sample_brick() {
+  Plocal.resize(1);
+
   // preliminary parameter checks
   if (L < 0.) {
     L = -L;
@@ -484,26 +489,45 @@ void ThermalPartonSampler::sample_brick() {
     NumS = SetNumStrange;
   }
 
+  RNG::ctr_type c = {{}};
+  RNG::ukey_type uk = {{}};
+  c[0] = 0;
+
   // Generating light quarks
-  int GeneratedParticles = poisson_ud(getRandomGenerator());
-  num_ud += GeneratedParticles;
+  uk[0] = seeds[2];
+  r123::MicroURNG<RNG> rng_engine_generate(c, uk);
+  int GeneratedParticles_ud = poisson_ud(
+      rng_engine_generate);  // Initialize particles created in this cell
   // dummy array of length 4 for CPos
   std::vector<double> CPos(4, 0.0);
-  SamplePartons(GeneratedParticles, 1, hydroTc, true, CPos, LorBoost, false, 0.,
-                CellDZ);
+  SamplePartons(GeneratedParticles_ud, 1, hydroTc, true, CPos, LorBoost, false,
+                0., CellDZ, seeds[0], 0);
+  num_ud += GeneratedParticles_ud;
 
   // Generate strange quarks
-  GeneratedParticles = poisson_s(getRandomGenerator());
-  num_s += GeneratedParticles;
-  SamplePartons(GeneratedParticles, 2, hydroTc, true, CPos, LorBoost, false, 0.,
-                CellDZ);
+  uk[0] = seeds[3];
+  r123::MicroURNG<RNG> rng_engine_generate_strange(c, uk);
+  int GeneratedParticles_s =
+      poisson_s(rng_engine_generate_strange);  // Initialize particles created
+                                               // in this cell
+  SamplePartons(GeneratedParticles_s, 2, hydroTc, true, CPos, LorBoost, false,
+                0., CellDZ, seeds[1], 0);
+  num_s += GeneratedParticles_s;
+
+  // transfer thread safe 3D Plocal to 2D Plist
+  for (int i = 0; i < Plocal.size(); i++) {
+    Plist.insert(Plist.end(), Plocal[i].begin(), Plocal[i].end());
+  }
 
   JSDEBUG << "Light particles: " << num_ud;
   JSDEBUG << "Strange particles: " << num_s;
 
-  // Shuffling PList
+  RNG::ctr_type c_shuffle = {{}};
+  RNG::ukey_type uk_shuffle = {{}};
+  uk_shuffle[0] = seeds[4];
+  r123::MicroURNG<RNG> rng_shuffle(c_shuffle, uk_shuffle);
   if (ShuffleList) {
-    std::shuffle(&Plist[0], &Plist.back(), getRandomGenerator());
+    std::shuffle(&Plist[0], &Plist.back(), rng_shuffle);
   }
 
   // print Plist for testing
@@ -633,9 +657,12 @@ void ThermalPartonSampler::sample_3p1d(bool Cartesian_hydro) {
   JSDEBUG << "Light particles: " << num_ud;
   JSDEBUG << "Strange particles: " << num_s;
 
-  // Shuffling PList
+  RNG::ctr_type c_shuffle = {{}};
+  RNG::ukey_type uk_shuffle = {{}};
+  uk_shuffle[0] = seeds[4];
+  r123::MicroURNG<RNG> rng_shuffle(c_shuffle, uk_shuffle);
   if (ShuffleList) {
-    std::shuffle(&Plist[0], &Plist.back(), getRandomGenerator());
+    std::shuffle(&Plist[0], &Plist.back(), rng_shuffle);
   }
 
   // print Plist for testing
@@ -784,8 +811,12 @@ void ThermalPartonSampler::sample_2p1d(double eta_max) {
   JSDEBUG << "Light particles: " << num_ud;
   JSDEBUG << "Strange particles: " << num_s;
 
+  RNG::ctr_type c_shuffle = {{}};
+  RNG::ukey_type uk_shuffle = {{}};
+  uk_shuffle[0] = seeds[4];
+  r123::MicroURNG<RNG> rng_shuffle(c_shuffle, uk_shuffle);
   if (ShuffleList) {
-    std::shuffle(&Plist[0], &Plist.back(), getRandomGenerator());
+    std::shuffle(&Plist[0], &Plist.back(), rng_shuffle);
   }
 
   // print Plist for testing

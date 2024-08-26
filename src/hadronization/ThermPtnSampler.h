@@ -2,7 +2,6 @@
 #define THERMPTNSAMPLER_H
 
 #include <omp.h>
-#include <random>
 #include <vector>
 
 #include "JetScapeLogger.h"
@@ -165,25 +164,6 @@ class ThermalPartonSampler {
   // 3D local PList where each threaded iteration writes to a unique location
   std::vector<std::vector<std::vector<double>>> Plocal;
 
-  // random number handling
-  std::mt19937_64 rng_engine;  // RNG - Mersenne Twist - 64 bit
-  std::uniform_real_distribution<double> distribution{
-      0.0, 1.0};  // Uniform distribution between 0 and 1
-
-  /**
-   * @brief Generates a random number between 0 and 1.
-   *
-   * @return A random double in the range [0.0, 1.0].
-   */
-  double ran() { return distribution(rng_engine); }
-
-  /**
-   * @brief Gets the random number generator.
-   *
-   * @return A reference to the Mersenne Twister random number generator.
-   */
-  std::mt19937_64& getRandomGenerator() { return rng_engine; }
-
   std::vector<uint64_t>
       seeds;  // to hold seeds for multiple generators in threads
 
@@ -327,7 +307,7 @@ class ThermalPartonSampler {
                      std::vector<double>& CPos,
                      std::vector<std::vector<double>>& BoostMatrix,
                      bool slice_boost, double eta_slice, double CellDZ_local,
-                     uint64_t adjust_seed = 0, int iS_iter = 0);
+                     uint64_t adjust_seed, int iS_iter);
 
   /**
    * @brief Creates an entry of the cumulative distribution function (CDF) data
