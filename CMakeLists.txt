@@ -556,6 +556,7 @@ if (USE_EM)
   endif()
   
   if(EXISTS "${CMAKE_SOURCE_DIR}/external_packages/Photon/ph_rates")
+    file(COPY ${CMAKE_SOURCE_DIR}/external_packages/Photon/ph_results DESTINATION ${CMAKE_BINARY_DIR})
     file(COPY ${CMAKE_SOURCE_DIR}/external_packages/Photon/ph_rates DESTINATION ${CMAKE_BINARY_DIR})
     file(COPY ${CMAKE_SOURCE_DIR}/external_packages/Photon/ph_parameters.dat DESTINATION ${CMAKE_BINARY_DIR})
   else()
