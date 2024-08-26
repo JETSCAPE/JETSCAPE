@@ -56,5 +56,6 @@ int main(int argc, char* argv[]){
     makeObsPred(directories, input, "proton-xp", "protons", true);
     makeObsPred(directories, input, "jet", "jets", true);
     makeObsPred(directories, input, "dijet", "dijets", true);
+    makeObsPred(directories, input, "mult", "multiplicity", true);
     return 0;
 }
