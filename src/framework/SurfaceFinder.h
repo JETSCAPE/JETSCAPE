@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -19,21 +20,21 @@
 
 #include <vector>
 
+#include "FluidEvolutionHistory.h"
 #include "RealType.h"
 #include "SurfaceCellInfo.h"
-#include "FluidEvolutionHistory.h"
 
 namespace Jetscape {
 
 class SurfaceFinder {
-private:
+ private:
   Jetscape::real T_cut;
   const EvolutionHistory &bulk_info;
   bool boost_invariant;
 
   std::vector<SurfaceCellInfo> surface_cell_list;
 
-public:
+ public:
   SurfaceFinder(const Jetscape::real T_in, const EvolutionHistory &bulk_data);
   ~SurfaceFinder();
 
@@ -66,6 +67,6 @@ public:
                                       const FluidCellInfo fluid_cell);
 };
 
-} // namespace Jetscape
+}  // namespace Jetscape
 
-#endif // SURFACEFINDER_H_
+#endif  // SURFACEFINDER_H_

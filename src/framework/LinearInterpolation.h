@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -86,6 +87,6 @@ type TrilinearInt(real x0, real x1, real y0, real y1, real z0, real z1,
   return temp;
 }
 
-} //end namespace Jetscape
+}  // end namespace Jetscape
 
-#endif // LINEARINTERPOLATION_H
+#endif  // LINEARINTERPOLATION_H

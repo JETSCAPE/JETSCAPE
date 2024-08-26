@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -24,9 +25,7 @@ InitialFromFile::InitialFromFile() {
   event_id_ = -1;
 }
 
-InitialFromFile::~InitialFromFile() {
-  delete h5_helper_;
-}
+InitialFromFile::~InitialFromFile() { delete h5_helper_; }
 
 void InitialFromFile::InitTask() {}
 
@@ -34,7 +33,6 @@ void InitialFromFile::Exec() {
   Clear();
   Jetscape::JSINFO << "Read initial condition from file";
   try {
-
     std::string initialProfilePath =
         GetXMLElementText({"IS", "initial_profile_path"});
 
@@ -50,7 +48,7 @@ void InitialFromFile::Exec() {
     event_group << "/event_0";
     JSINFO << "event_group=" << event_group.str().c_str();
     H5file_ptr_ = H5Fopen(path_with_filename.str().c_str(), H5F_ACC_RDONLY,
-                          H5P_DEFAULT); //H5F_ACC_RDWR, H5F_ACC_RDONLY
+                          H5P_DEFAULT);  // H5F_ACC_RDWR, H5F_ACC_RDONLY
     H5group_ptr_ = H5Gopen(H5file_ptr_, event_group.str().c_str(), H5P_DEFAULT);
 
     ReadConfigs();

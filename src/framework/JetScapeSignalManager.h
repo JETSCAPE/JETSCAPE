@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -18,22 +19,22 @@
 #ifndef JETSCAPESIGNALMANAGER_H
 #define JETSCAPESIGNALMANAGER_H
 
+#include <iostream>
+#include <map>
+#include <string>
+
 #include "Afterburner.h"
+#include "FluidDynamics.h"
+#include "HadronPrinter.h"
+#include "Hadronization.h"
+#include "HadronizationManager.h"
+#include "HardProcess.h"
 #include "InitialState.h"
 #include "JetEnergyLoss.h"
 #include "JetEnergyLossManager.h"
-#include "HadronizationManager.h"
-#include "Hadronization.h"
-#include "FluidDynamics.h"
-#include "HardProcess.h"
 #include "JetScapeWriter.h"
-#include "PreequilibriumDynamics.h"
 #include "PartonPrinter.h"
-#include "HadronPrinter.h"
-
-#include <iostream>
-#include <string>
-#include <map>
+#include "PreequilibriumDynamics.h"
 #include "sigslot.h"
 
 using namespace sigslot;
@@ -41,10 +42,10 @@ using namespace sigslot;
 namespace Jetscape {
 
 class
-    JetScapeSignalManager //: public sigslot::has_slots<sigslot::multi_threaded_local>
+    JetScapeSignalManager  //: public
+                           //: sigslot::has_slots<sigslot::multi_threaded_local>
 {
-
-public:
+ public:
   static JetScapeSignalManager *Instance();
 
   void SetInitialStatePointer(shared_ptr<InitialState> m_initial) {
@@ -69,8 +70,8 @@ public:
     return softparticlization;
   }
 
-  void
-  SetJetEnergyLossManagerPointer(shared_ptr<JetEnergyLossManager> m_jloss) {
+  void SetJetEnergyLossManagerPointer(
+      shared_ptr<JetEnergyLossManager> m_jloss) {
     jloss = m_jloss;
   }
   weak_ptr<JetEnergyLossManager> GetJetEnergyLossManagerPointer() {
@@ -87,8 +88,8 @@ public:
   }
   weak_ptr<JetScapeWriter> GetWriterPointer() { return writer; }
 
-  void
-  SetHadronizationManagerPointer(shared_ptr<HadronizationManager> m_hadro) {
+  void SetHadronizationManagerPointer(
+      shared_ptr<HadronizationManager> m_hadro) {
     hadro = m_hadro;
   }
   weak_ptr<HadronizationManager> GetHadronizationManagerPointer() {
@@ -104,7 +105,6 @@ public:
     hprinter = m_hprinter;
   }
   weak_ptr<HadronPrinter> GetHadronPrinterPointer() { return hprinter; }
-
 
   void SetEnergyLossPointer(shared_ptr<JetEnergyLoss> m_eloss) {
     eloss = m_eloss;
@@ -124,15 +124,15 @@ public:
   void ConnectGetFinalPartonListSignal(shared_ptr<HadronizationManager> hm);
   void ConnectTransformPartonsSignal(shared_ptr<Hadronization> h,
                                      shared_ptr<Hadronization> h2);
-		void ConnectGetFinalHadronListSignal(shared_ptr<HadronPrinter> h);
+  void ConnectGetFinalHadronListSignal(shared_ptr<HadronPrinter> h);
 
   void ConnectGetHydroHyperSurfaceSignal(shared_ptr<Hadronization> h);
   void ConnectGetHydroHyperSurfaceSignal(shared_ptr<SoftParticlization> hSoft);
   void ConnectClearHydroHyperSurfaceSignal(
-          shared_ptr<SoftParticlization> hSoft);
+      shared_ptr<SoftParticlization> hSoft);
 
   void
-  DisconnectSignal(){}; // to be implememted if needed maybe for Eloss ...!???
+  DisconnectSignal(){};  // to be implememted if needed maybe for Eloss ...!???
 
   void CleanUp();
 
@@ -146,7 +146,7 @@ public:
   void PrintSentInPartonsSignalMap();
   void PrintTransformPartonsSignalMap();
 
-private:
+ private:
   JetScapeSignalManager(){};
   JetScapeSignalManager(JetScapeSignalManager const &){};
   static JetScapeSignalManager *m_pInstance;
@@ -178,6 +178,6 @@ private:
   map<int, weak_ptr<Hadronization>> TransformPartons_map;
 };
 
-} // end namespace Jetscape
+}  // end namespace Jetscape
 
 #endif

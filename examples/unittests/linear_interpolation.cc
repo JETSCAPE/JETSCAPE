@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -18,11 +19,11 @@
 
 using namespace Jetscape;
 
-TEST(LinearInterpolationTest, TEST_TRUE){
-    EXPECT_EQ(0.5, LinearInt(0.0, 1.0, 0.0, 1.0, 0.5));
+TEST(LinearInterpolationTest, TEST_TRUE) {
+  EXPECT_EQ(0.5, LinearInt(0.0, 1.0, 0.0, 1.0, 0.5));
 }
 
 // test code when the type of y is int
-TEST(LinearInterpolationTest, TEST_INT){
-    EXPECT_EQ(0, LinearInt(0.0, 1.0, 0, 1, 0.5));
+TEST(LinearInterpolationTest, TEST_INT) {
+  EXPECT_EQ(0, LinearInt(0.0, 1.0, 0, 1, 0.5));
 }

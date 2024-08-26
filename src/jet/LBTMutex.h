@@ -1,19 +1,19 @@
 #ifndef LBTMUTEX_H
 #define LBTMUTEX_H
 
-#include <vector>
-#include <string>
 #include <iostream>
 #include <memory>
+#include <string>
+#include <vector>
 
-#include "JetScapeTask.h"
 #include "JetScapeModuleMutex.h"
+#include "JetScapeTask.h"
 
 using namespace Jetscape;
 using std::shared_ptr;
 
 class LBTMutex : public JetScapeModuleMutex {
-public:
+ public:
   LBTMutex();
   ~LBTMutex();
   bool CheckMutex(vector<shared_ptr<JetScapeTask>> modules);

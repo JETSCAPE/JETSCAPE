@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -18,13 +19,14 @@
 // -----------------------------------------
 
 #include "SoftParticlization.h"
+
 #include "JetScapeSignalManager.h"
 
 namespace Jetscape {
 
 SoftParticlization::SoftParticlization() {
-    boost_invariance = false;
-    HydroHyperSurfaceConnected_ = false;
+  boost_invariance = false;
+  HydroHyperSurfaceConnected_ = false;
 }
 
 SoftParticlization::~SoftParticlization() {
@@ -65,4 +67,4 @@ bool SoftParticlization::check_boost_invariance() {
   return (boost_invariance_flag);
 }
 
-} // end namespace Jetscape
+}  // end namespace Jetscape

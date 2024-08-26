@@ -1,65 +1,75 @@
 
 #include "ThermPtnSampler.h"
-#include "JetScapeXML.h"
-#include "JetScapeLogger.h"
-#include "JetScapeConstants.h"
-#include <vector>
-#include <random>
-#include <cmath>
-#include <unordered_map>
+
 #include <algorithm>
+#include <cmath>
 #include <gsl/gsl_sf_bessel.h>
+#include <random>
+#include <unordered_map>
+#include <vector>
+
+#include "JetScapeConstants.h"
+#include "JetScapeLogger.h"
+#include "JetScapeXML.h"
 
 using namespace Jetscape;
 
-ThermalPartonSampler::ThermalPartonSampler(unsigned int ran_seed, double hydro_Tc)
-    : rng_engine(ran_seed), 
-      CDFTabLight(4097, std::vector<double>(2)), 
+ThermalPartonSampler::ThermalPartonSampler(unsigned int ran_seed,
+                                           double hydro_Tc)
+    : rng_engine(ran_seed),
+      CDFTabLight(4097, std::vector<double>(2)),
       CDFTabStrange(4097, std::vector<double>(2)),
-      SetNum(false), // Set 'true' to set number of particles by hand- !!!Statistics use above temperature!!!
-      SetNumLight(1000000), //If SetNum == true, this many UD quarks are generated
-      SetNumStrange(0), //If SetNum == true, this many S quarks are generated
-      ShuffleList(true), // Should list of particles be shuffled at the end
-      degeneracy_ud(4.*6.), // Degeneracy of UD quarks
-      degeneracy_s(2.*6.), // Degeneracy of S quarks
-      CDFcacheAccuracy(0.003 / hbarC), // Accuracy range for cached temperature
-      xmq(0.33/hbarC), // use pythia values here
-      xms(0.5/hbarC), // use pythia values here
-      NUMSTEP(4097), // 2^12+1, for steps of CDF Table, changes coarseness of momentum sampling
-      CellDX(0.2), 
-      CellDY(0.2), 
-      CellDZ(0.2), 
-      CellDT(0.1), 
-      L(4.0), // Thickness from box edge
-      W(4.0), // x/y width of box
-      Time(2.0), 
-      Vx(0.), // 'Uniform' no flow in x-dir
-      Vy(0.), // 'Uniform' no flow in x-dir
-      Vz(0.), // 'Uniform' no flow in x-dir
-      hydroTc(hydro_Tc / hbarC), // converted from GeV into fm^-1
-      num_ud(0), 
+      SetNum(false),  // Set 'true' to set number of particles by hand-
+                      // !!!Statistics use above temperature!!!
+      SetNumLight(
+          1000000),      // If SetNum == true, this many UD quarks are generated
+      SetNumStrange(0),  // If SetNum == true, this many S quarks are generated
+      ShuffleList(true),  // Should list of particles be shuffled at the end
+      degeneracy_ud(4. * 6.),           // Degeneracy of UD quarks
+      degeneracy_s(2. * 6.),            // Degeneracy of S quarks
+      CDFcacheAccuracy(0.003 / hbarC),  // Accuracy range for cached temperature
+      xmq(0.33 / hbarC),                // use pythia values here
+      xms(0.5 / hbarC),                 // use pythia values here
+      NUMSTEP(4097),  // 2^12+1, for steps of CDF Table, changes coarseness of
+                      // momentum sampling
+      CellDX(0.2),
+      CellDY(0.2),
+      CellDZ(0.2),
+      CellDT(0.1),
+      L(4.0),  // Thickness from box edge
+      W(4.0),  // x/y width of box
+      Time(2.0),
+      Vx(0.),                     // 'Uniform' no flow in x-dir
+      Vy(0.),                     // 'Uniform' no flow in x-dir
+      Vz(0.),                     // 'Uniform' no flow in x-dir
+      hydroTc(hydro_Tc / hbarC),  // converted from GeV into fm^-1
+      num_ud(0),
       num_s(0) {
+  // Use Jetscape Random Seed to create additional seeds needed for threads
+  seeds.push_back(rng_engine());
+  seeds.push_back(rng_engine());
+  seeds.push_back(rng_engine());
+  seeds.push_back(rng_engine());
 
-    surface.clear();
+  surface.clear();
 
-    InitializeBesselK2();
+  InitializeBesselK2();
 
-	// Create the CDF table for 20 different temperatures in the range 
-	// 0.95*hydroTc to 1.05*hydroTc
-	for (int i = 0; i < 20; i++) {
-		double T = hydroTc * (0.95 + 0.01 * i);
-		createCDFCacheEntry(T, xmq, 1, CacheCDFLight, CDFTabLight);
-		createCDFCacheEntry(T, xms, 2, CacheCDFStrange, CDFTabStrange);
+  // Create the CDF table for 20 different temperatures in the range
+  // 0.95*hydroTc to 1.05*hydroTc
+  for (int i = 0; i < 20; i++) {
+    double T = hydroTc * (0.95 + 0.01 * i);
+    createCDFCacheEntry(T, xmq, 1, CacheCDFLight, CDFTabLight);
+    createCDFCacheEntry(T, xms, 2, CacheCDFStrange, CDFTabStrange);
 
-		// Precompute part of the integral of the Fermi-Dirac distribution for 
-		// light and strange quarks
-		double N_eq_ud_part = FermiDiracDistributionMomentumIntegral(T, xmq);
-		double N_eq_s_part = FermiDiracDistributionMomentumIntegral(T, xms);
-		// Update the cache with the precomputed values
-		CacheFermiDiracIntegralLight[T] = N_eq_ud_part;
-		CacheFermiDiracIntegralStrange[T] = N_eq_s_part;
-	}
-
+    // Precompute part of the integral of the Fermi-Dirac distribution for
+    // light and strange quarks
+    double N_eq_ud_part = FermiDiracDistributionMomentumIntegral(T, xmq);
+    double N_eq_s_part = FermiDiracDistributionMomentumIntegral(T, xms);
+    // Update the cache with the precomputed values
+    CacheFermiDiracIntegralLight[T] = N_eq_ud_part;
+    CacheFermiDiracIntegralStrange[T] = N_eq_s_part;
+  }
 }
 
 void ThermalPartonSampler::createCDFCacheEntry(double& TRead, double mq, int quarkType, 
@@ -72,29 +82,29 @@ void ThermalPartonSampler::createCDFCacheEntry(double& TRead, double mq, int qua
 }
 
 void ThermalPartonSampler::InitializeBesselK2() {
-    double K2_x_min = 0.001;
-    double K2_x_max = 400.0;
-    double K2_dx = 0.001;
-    int K2_tb_length = static_cast<int>((K2_x_max - K2_x_min)/K2_dx) + 1;
+  double K2_x_min = 0.001;
+  double K2_x_max = 400.0;
+  double K2_dx = 0.001;
+  int K2_tb_length = static_cast<int>((K2_x_max - K2_x_min) / K2_dx) + 1;
 
-    BesselK2.resize(K2_tb_length);
-    for (int i = 0; i < K2_tb_length; i++) {
-        double x = K2_x_min + i*K2_dx;
-        BesselK2[i] = gsl_sf_bessel_Kn(2, x);
-    }
+  BesselK2.resize(K2_tb_length);
+  for (int i = 0; i < K2_tb_length; i++) {
+    double x = K2_x_min + i * K2_dx;
+    BesselK2[i] = gsl_sf_bessel_Kn(2, x);
+  }
 }
 
 double ThermalPartonSampler::BesselK2function(double arg) {
-    double K2_x_min = 0.001;
-    double K2_x_max = 400.0;
-    double K2_dx = 0.001;
-    if (arg < K2_x_min || arg > K2_x_max) {
-        return gsl_sf_bessel_Kn(2, arg);
-    } else {
-        int idx = static_cast<int>((arg - K2_x_min)/K2_dx);
-        double fraction = (arg - K2_x_min - idx*K2_dx)/K2_dx;
-        return (1.0 - fraction)*BesselK2[idx] + fraction*BesselK2[idx + 1];
-    }
+  double K2_x_min = 0.001;
+  double K2_x_max = 400.0;
+  double K2_dx = 0.001;
+  if (arg < K2_x_min || arg > K2_x_max) {
+    return gsl_sf_bessel_Kn(2, arg);
+  } else {
+    int idx = static_cast<int>((arg - K2_x_min) / K2_dx);
+    double fraction = (arg - K2_x_min - idx * K2_dx) / K2_dx;
+    return (1.0 - fraction) * BesselK2[idx] + fraction * BesselK2[idx + 1];
+  }
 }
 
 double ThermalPartonSampler::FermiDiracDistributionMomentumIntegral(double T, double m) {
@@ -119,47 +129,48 @@ double ThermalPartonSampler::FermiDiracDistribution(double p, double m, double T
 }
 
 void ThermalPartonSampler::CDFGenerator(double T, double m, int quark) {
-    double PStep;
-    double PMax = 10. * T;  // CutOff for Integration
-    PStep = PMax / (NUMSTEP - 1); // Stepsize in p
+  double PStep;
+  double PMax = 10. * T;         // CutOff for Integration
+  PStep = PMax / (NUMSTEP - 1);  // Stepsize in p
 
-    std::vector<std::vector<double>>* CDFTab = nullptr;
-    if (quark == 1) {
-        CDFTab = &CDFTabLight;
-    } else if (quark == 2) {
-        CDFTab = &CDFTabStrange;
-    } else {
-        JSWARN << "This is not a valid quark input for CDFGenerator()";
-        return;
-    }
+  std::vector<std::vector<double>>* CDFTab = nullptr;
+  if (quark == 1) {
+    CDFTab = &CDFTabLight;
+  } else if (quark == 2) {
+    CDFTab = &CDFTabStrange;
+  } else {
+    JSWARN << "This is not a valid quark input for CDFGenerator()";
+    return;
+  }
 
-    // Initialize tabulated results for CDF
-    (*CDFTab)[0][0] = 0; // For zero momentum or less...
-    (*CDFTab)[0][1] = 0; // There is zero chance
+  // Initialize tabulated results for CDF
+  (*CDFTab)[0][0] = 0;  // For zero momentum or less...
+  (*CDFTab)[0][1] = 0;  // There is zero chance
 
-    // Tabulate CDF(x) = int(0->x) PDF
-    for (int i = 1; i < NUMSTEP; i++) {
-        double p0 = (*CDFTab)[i - 1][0];
-        double p1 = p0 + PStep;
-        double Fermi0 = FermiDiracDistribution(p0, m, T);
-        double Fermi1 = FermiDiracDistribution(p1, m, T);
+  // Tabulate CDF(x) = int(0->x) PDF
+  for (int i = 1; i < NUMSTEP; i++) {
+    double p0 = (*CDFTab)[i - 1][0];
+    double p1 = p0 + PStep;
+    double Fermi0 = FermiDiracDistribution(p0, m, T);
+    double Fermi1 = FermiDiracDistribution(p1, m, T);
 
-        (*CDFTab)[i][0] = p1; // Calculate Momentum of the next step
-        (*CDFTab)[i][1] = (*CDFTab)[i - 1][1] + (PStep / 2.0) * 
-                                        (Fermi0 * p0 * p0 + Fermi1 * p1 * p1);
-    }
+    (*CDFTab)[i][0] = p1;  // Calculate Momentum of the next step
+    (*CDFTab)[i][1] = (*CDFTab)[i - 1][1] +
+                      (PStep / 2.0) * (Fermi0 * p0 * p0 + Fermi1 * p1 * p1);
+  }
 
-    // Normalize the CDF
-    double normalizationFactor = 1.0 / (*CDFTab)[NUMSTEP - 1][1];
-    for (int i = 0; i < NUMSTEP; i++) {
-        (*CDFTab)[i][1] *= normalizationFactor;
-    }
+  // Normalize the CDF
+  double normalizationFactor = 1.0 / (*CDFTab)[NUMSTEP - 1][1];
+  for (int i = 0; i < NUMSTEP; i++) {
+    (*CDFTab)[i][1] *= normalizationFactor;
+  }
 }
 
-std::tuple<double, double, double, double> ThermalPartonSampler::MomentumSampler(double T, int quark) {
+std::tuple<double, double, double, double> ThermalPartonSampler::MomentumSampler(double T, int quark, r123::MicroURNG<RNG> rng_engine_part) {
     double PMag;
     double PMax = 10. * T;  // CutOff for Integration
     double PStep = PMax / (NUMSTEP - 1); // Stepsize in P
+    std::uniform_real_distribution<double> distribution{0.0, 1.0};
 
 	// Get the appropriate CDF table from the cache closest to the target temperature
 	double cachedTemp = getClosestCachedTemp((quark == 1) ? CacheCDFLight : CacheCDFStrange, T);
@@ -169,7 +180,7 @@ std::tuple<double, double, double, double> ThermalPartonSampler::MomentumSampler
 	double PRoll;
 	double denominator;
 	while (true) {
-        PRoll = ran();
+        PRoll = distribution(rng_engine_part);
 
         // Perform binary search to find the appropriate indices
         auto it = std::lower_bound(CDFTab.begin(), CDFTab.end(), std::vector<double>{0, PRoll},
@@ -189,17 +200,18 @@ std::tuple<double, double, double, double> ThermalPartonSampler::MomentumSampler
             break;
         }
     }
+  }
 
-    double CosT = (ran() - 0.5) * 2.0;
-	double SinT = sqrt(1.0 - CosT * CosT);
-    double Phi = ran() * 2.0 * pi;
+  double CosT = (distribution(rng_engine_part) - 0.5) * 2.0;
+  double SinT = sqrt(1.0 - CosT * CosT);
+  double Phi = distribution(rng_engine_part) * 2.0 * pi;
 
-    double NewX = PMag * SinT * cos(Phi);
-    double NewY = PMag * SinT * sin(Phi);
-    double NewZ = PMag * CosT;
-    double NewP = PMag;
+  double NewX = PMag * SinT * cos(Phi);
+  double NewY = PMag * SinT * sin(Phi);
+  double NewZ = PMag * CosT;
+  double NewP = PMag;
 
-	return std::make_tuple(NewX, NewY, NewZ, NewP);
+  return std::make_tuple(NewX, NewY, NewZ, NewP);
 }
 
 void ThermalPartonSampler::LorentzBoostMatrix(std::vector<double>& v, std::vector<std::vector<double>>& BoostMatrix, bool brick) {
@@ -276,97 +288,117 @@ std::vector<double> ThermalPartonSampler::LorentzBoost(std::vector<double>& x, s
 	return result;
 }
 
-void ThermalPartonSampler::SamplePartons(int Npartons, int quark, double T, bool brick, std::vector<double>& CPos, std::vector<std::vector<double>>& BoostMatrix, bool slice_boost, double eta_slice) {
-	// Sample Npartons partons
-	for (int i = 0; i < Npartons; i++) {
-		// adding space to PList for output quarks
-		std::vector<double> temp = {0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.};
-		Plist.push_back(temp);
+void ThermalPartonSampler::SamplePartons(
+    int Npartons, int quark, double T, bool brick, std::vector<double>& CPos,
+    std::vector<std::vector<double>>& BoostMatrix, bool slice_boost,
+    double eta_slice, double CellDZ_local, uint64_t adjusted_seed,
+    int iS_iter) {
+  Plocal[iS_iter].reserve(Plocal[iS_iter].size() + Npartons);
 
-		double SpecRoll = ran(); // Probability of species die roll
-		if (quark == 1) { // Sample U, Ubar, D, DBar quarks
-			if (SpecRoll <= 0.25) { // UBar
-				// set the last element of the vector to -2
-				Plist.back()[1] = -2;
-			} else if (SpecRoll <= 0.50) { // DBar
-				Plist.back()[1] = -1;
-			} else if (SpecRoll <= 0.75) { // D
-				Plist.back()[1] = 1;
-			} else { // U
-				Plist.back()[1] = 2;
-			}
-		} else if (quark == 2) { // Sample S, Sbar quarks
-			if (SpecRoll <= 0.5) { // SBar
-				Plist.back()[1] = -3;
-			} else { // S
-				Plist.back()[1] = 3;
-			}
-		} else {
-			JSWARN << "This is not a valid quark input for SamplePartons()";
-			return;
-		}
+  RNG::ctr_type c = {{}};
+  RNG::ukey_type uk = {{}};
+  c[0] = iS_iter;
+  uk[0] = adjusted_seed + iS_iter;
+  std::uniform_real_distribution<double> distribution{0.0, 1.0};
+  r123::MicroURNG<RNG> rng_engine_part(c, uk);
 
-		if (!brick) {
-			// Position
-			// Located at x,y pos of area element
-			Plist.back()[10] = CPos[0] + (ran() - 0.5) * CellDT; // Tau
-			Plist.back()[7] = CPos[1] + (ran() - 0.5) * CellDX;
-			Plist.back()[8] = CPos[2] + (ran() - 0.5) * CellDY;
-			Plist.back()[9] = CPos[3] + (ran() - 0.5) * CellDZ;	
-			if (slice_boost) { // 2+1D case
-				if(std::abs(Plist.back()[9]) >= std::abs(Plist.back()[10])) {
-					Plist.back()[10] = std::abs(Plist.back()[9]) + 10e-3;
-				}
-				double temp_t = std::sqrt(Plist.back()[10]*Plist.back()[10]-Plist.back()[9]*Plist.back()[9])
-						* std::cosh(eta_slice+0.5*std::log((Plist.back()[10]+Plist.back()[9])/(Plist.back()[10]-Plist.back()[9])));
-				double temp_z = std::sqrt(Plist.back()[10]*Plist.back()[10]-Plist.back()[9]*Plist.back()[9])
-						* std::sinh(eta_slice+0.5*std::log((Plist.back()[10]+Plist.back()[9])/(Plist.back()[10]-Plist.back()[9])));
-				Plist.back()[10] = temp_t;
-				Plist.back()[9] = temp_z;
-			}
-		} else {
-			// Position
-			// Located at x,y pos of area element
-			double XRoll = ran() - 0.5; // center at x=0
-			double YRoll = ran() - 0.5; // center at y=0
-			double ZRoll = ran() - 0.5; // center at z=0
+  // Sample Npartons partons
+  for (int i = 0; i < Npartons; i++) {
+    // adding space to PList for output quarks
+    std::vector<double> temp = {0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.};
 
-			Plist.back()[7] = XRoll * L;
-			Plist.back()[8] = YRoll * W;
-			Plist.back()[9] = ZRoll * W;
+    double SpecRoll =
+        distribution(rng_engine_part);  // Probability of species die roll
+    if (quark == 1) {                   // Sample U, Ubar, D, DBar quarks
+      if (SpecRoll <= 0.25) {           // UBar
+        // set the last element of the vector to -2
+        temp[1] = -2;
+      } else if (SpecRoll <= 0.50) {  // DBar
+        temp[1] = -1;
+      } else if (SpecRoll <= 0.75) {  // D
+        temp[1] = 1;
+      } else {  // U
+        temp[1] = 2;
+      }
+    } else if (quark == 2) {  // Sample S, Sbar quarks
+      if (SpecRoll <= 0.5) {  // SBar
+        temp[1] = -3;
+      } else {  // S
+        temp[1] = 3;
+      }
+    } else {
+      JSWARN << "This is not a valid quark input for SamplePartons()";
+    }
 
-			// Time
-			Plist.back()[10] = Time; // Tau = L/2.: assume jet at light speed
-		}
+    if (!brick) {
+      // Position
+      // Located at x,y pos of area element
+      temp[10] =
+          CPos[0] + (distribution(rng_engine_part) - 0.5) * CellDT;  // Tau
+      temp[7] = CPos[1] + (distribution(rng_engine_part) - 0.5) * CellDX;
+      temp[8] = CPos[2] + (distribution(rng_engine_part) - 0.5) * CellDY;
+      temp[9] = CPos[3] + (distribution(rng_engine_part) - 0.5) * CellDZ_local;
+      if (slice_boost) {  // 2+1D case
+        if (std::abs(temp[9]) >= std::abs(temp[10])) {
+          temp[10] = std::abs(temp[9]) + 10e-3;
+        }
+        double temp_t =
+            std::sqrt(temp[10] * temp[10] - temp[9] * temp[9]) *
+            std::cosh(eta_slice + 0.5 * std::log((temp[10] + temp[9]) /
+                                                 (temp[10] - temp[9])));
+        double temp_z =
+            std::sqrt(temp[10] * temp[10] - temp[9] * temp[9]) *
+            std::sinh(eta_slice + 0.5 * std::log((temp[10] + temp[9]) /
+                                                 (temp[10] - temp[9])));
+        temp[10] = temp_t;
+        temp[9] = temp_z;
+      }
+    } else {
+      // Position
+      // Located at x,y pos of area element
+      double XRoll = distribution(rng_engine_part) - 0.5;  // center at x=0
+      double YRoll = distribution(rng_engine_part) - 0.5;  // center at y=0
+      double ZRoll = distribution(rng_engine_part) - 0.5;  // center at z=0
 
-		// Sample rest frame momentum given T and mass of quark
-		std::tuple<double, double, double, double> P = MomentumSampler(T, quark);
-		double NewPx = std::get<0>(P);
-		double NewPy = std::get<1>(P);
-		double NewPz = std::get<2>(P);
-		double NewP = std::get<3>(P);
+      temp[7] = XRoll * L;
+      temp[8] = YRoll * W;
+      temp[9] = ZRoll * W;
 
-		// PLab^u = g^u^t Lambda_t ^v Pres^w g_w _v  = Lambda^u _w Pres_w (with velocity -v)
-		// (Lambda_u ^t with velocity v) == (Lambda^u _t with velocity -v)
-		// This is boost as if particle sampled in rest frame
-		double new_quark_energy;
-		if (quark == 1) {
-			new_quark_energy = sqrt(xmq * xmq + NewP * NewP);
-		} else {
-			new_quark_energy = sqrt(xms * xms + NewP * NewP);
-		}
-		std::vector<double> p = {new_quark_energy, NewPx, NewPy, NewPz};
-		std::vector<double> momentum = LorentzBoost(p, BoostMatrix);
-		Plist.back()[6] = momentum[0] * hbarC;
-		Plist.back()[3] = momentum[1] * hbarC;
-		Plist.back()[4] = momentum[2] * hbarC;
-		Plist.back()[5] = momentum[3] * hbarC;
+      // Time
+      temp[10] = Time;  // Tau = L/2.: assume jet at light speed
+    }
 
-		// Additional information
-		Plist.back()[0] = 1; // Event ID, to match jet formatting
-		Plist.back()[2] = 0; // Origin, to match jet formatting
-		Plist.back()[11] = 0; // Status - identifies as thermal quark
-	}
+    // Sample rest frame momentum given T and mass of quark
+    std::tuple<double, double, double, double> P =
+        MomentumSampler(T, quark, rng_engine_part);
+    double NewPx = std::get<0>(P);
+    double NewPy = std::get<1>(P);
+    double NewPz = std::get<2>(P);
+    double NewP = std::get<3>(P);
+
+    // PLab^u = g^u^t Lambda_t ^v Pres^w g_w _v  = Lambda^u _w Pres_w (with
+    // velocity -v) (Lambda_u ^t with velocity v) == (Lambda^u _t with velocity
+    // -v) This is boost as if particle sampled in rest frame
+    double new_quark_energy;
+    if (quark == 1) {
+      new_quark_energy = sqrt(xmq * xmq + NewP * NewP);
+    } else {
+      new_quark_energy = sqrt(xms * xms + NewP * NewP);
+    }
+    std::vector<double> p = {new_quark_energy, NewPx, NewPy, NewPz};
+    std::vector<double> momentum = LorentzBoost(p, BoostMatrix);
+    temp[6] = momentum[0] * hbarC;
+    temp[3] = momentum[1] * hbarC;
+    temp[4] = momentum[2] * hbarC;
+    temp[5] = momentum[3] * hbarC;
+
+    // Additional information
+    temp[0] = 1;   // Event ID, to match jet formatting
+    temp[2] = 0;   // Origin, to match jet formatting
+    temp[11] = 0;  // Status - identifies as thermal quark
+
+    Plocal[iS_iter].emplace_back(std::move(temp));
+  }
 }
 
 void ThermalPartonSampler::sample_brick(){
@@ -440,10 +472,10 @@ void ThermalPartonSampler::sample_brick(){
 	JSDEBUG << "Light particles: " << num_ud;
 	JSDEBUG << "Strange particles: " << num_s;
 
-	// Shuffling PList
-	if (!Plist.empty() && ShuffleList) {
-    	std::shuffle(Plist.begin(), Plist.end(), getRandomGenerator());
-	}
+  // Shuffling PList
+  if (ShuffleList) {
+    std::shuffle(&Plist[0], &Plist.back(), getRandomGenerator());
+  }
 
 	//print Plist for testing
 	/*std::cout << std::setprecision(5);
@@ -460,8 +492,10 @@ void ThermalPartonSampler::sample_brick(){
 }
 
 void ThermalPartonSampler::sample_3p1d(bool Cartesian_hydro){
+  Plocal.resize(surface.size());
 
 	// Loop over the freeze-out surface
+  #pragma omp parallel for reduction(+ : num_ud, num_s)
 	for(int iS=0; iS<surface.size(); ++iS){
 		std::vector<double> CPos(4); // Position of the current cell (tau/t, x, y , eta/z=0)
 		double tau_pos = surface[iS][0]; // proper time from position of cell
@@ -518,27 +552,40 @@ void ThermalPartonSampler::sample_3p1d(bool Cartesian_hydro){
 		double TCacheStrange = getClosestCachedTemp(CacheFermiDiracIntegralStrange, TRead);
 		double NumLight = CacheFermiDiracIntegralLight[TCacheLight] * degeneracy_ud * dSigma_dot_u / (2.*pi*pi);
 		double NumStrange = CacheFermiDiracIntegralStrange[TCacheStrange] * degeneracy_s * dSigma_dot_u / (2.*pi*pi);
+    
+    RNG::ctr_type c = {{}};
+    RNG::ukey_type uk = {{}};
+    c[0] = iS;
 
 		// Generating light quarks
 		std::poisson_distribution<int> poisson_ud(NumLight);
-		int GeneratedParticles_ud = poisson_ud(getRandomGenerator()); // Initialize particles created in this cell
-		SamplePartons(GeneratedParticles_ud, 1, TRead, false, CPos, LorBoost, false, 0.);
+    uk[0] = seeds[2];
+    r123::MicroURNG<RNG> rng_engine_generate(c, uk);
+		int GeneratedParticles_ud = poisson_ud(rng_engine_generate); // Initialize particles created in this cell
+		SamplePartons(GeneratedParticles_ud, 1, TRead, false, CPos, LorBoost, false, 0., CellDZ, seeds[0], iS);
 		num_ud += GeneratedParticles_ud;
 
 		// Generate s quarks
 		std::poisson_distribution<int> poisson_s(NumStrange);
-		int GeneratedParticles_s = poisson_s(getRandomGenerator()); //Initialize particles created in this cell
-		SamplePartons(GeneratedParticles_s, 2, TRead, false, CPos, LorBoost, false, 0.);
+    uk[0] = seeds[3];
+    r123::MicroURNG<RNG> rng_engine_generate_strange(c, uk);
+		int GeneratedParticles_s = poisson_s(rng_engine_generate_strange); //Initialize particles created in this cell
+		SamplePartons(GeneratedParticles_s, 2, TRead, false, CPos, LorBoost, false, 0., CellDZ, seeds[1], iS);
 		num_s += GeneratedParticles_s;
 	}
+  
+  // transfer thread safe 3D Plocal to 2D Plist
+  for (int i = 0; i < Plocal.size(); i++) {
+    Plist.insert(Plist.end(), Plocal[i].begin(), Plocal[i].end());
+  }
 
 	JSDEBUG << "Light particles: " << num_ud;
 	JSDEBUG << "Strange particles: " << num_s;
 
-	//Shuffling PList
-	if (!Plist.empty() && ShuffleList) {
-    	std::shuffle(Plist.begin(), Plist.end(), getRandomGenerator());
-	}
+	// Shuffling PList
+  if (ShuffleList) {
+    std::shuffle(&Plist[0], &Plist.back(), getRandomGenerator());
+  }
 
 	//print Plist for testing
 	/*std::cout << std::setprecision(5);
@@ -554,26 +601,28 @@ void ThermalPartonSampler::sample_3p1d(bool Cartesian_hydro){
 	thermalP.close();*/
 }
 
+void ThermalPartonSampler::sample_2p1d(double eta_max){  
+  double d_eta = CellDZ;
+  int N_slices = std::floor((eta_max / d_eta) - 0.5) + 1;
+  int numSlices = 2 * N_slices + 1;
 
-void ThermalPartonSampler::sample_2p1d(double eta_max){
+  Plocal.resize(numSlices * surface.size());
 
-	// precompute CDFs and store them in a cache
-	std::unordered_map<double, std::vector<std::vector<double>>> cdfLightCache;
-	std::unordered_map<double, std::vector<std::vector<double>>> cdfStrangeCache;
-
-	std::vector<double> NumberLightQuarks;
-	std::vector<double> NumberStrangeQuarks;
-
-	double d_eta = CellDZ;
-	int N_slices = std::floor((eta_max / d_eta)-0.5)+1;
-	for(int slice=1; slice <= (2*N_slices+1); slice++){
-		double eta_slice = (slice-N_slices-1)*d_eta;
-
-		JSINFO << "Sampling thermal partons for pseudorapidity slice " << slice
-		<< " (eta_min = " << eta_slice-(d_eta/2.) << ", eta_max = "
-		<< eta_slice+(d_eta/2.) << ")";
-
+#pragma omp parallel for collapse(2) reduction(+ : num_ud, num_s)
+	for(int slice=1; slice <= numSlices; slice++){
 		for(int iS=0; iS<surface.size(); ++iS){
+      
+      // iteration number unique to each time in the iS loop
+      int iS_iter = (slice - 1) * surface.size() + iS;
+
+      double eta_slice = (slice - N_slices - 1) * d_eta;
+      if (iS == 0) {
+        JSINFO << "Sampling thermal partons for pseudorapidity slice " << slice
+               << " (eta_min = " << eta_slice - (d_eta / 2.)
+               << ", eta_max = " << eta_slice + (d_eta / 2.) << ")";
+      }
+      
+      
 			std::vector<double> CPos(4); // Position of the current cell (tau/t, x, y , eta/z=0)
 			double tau_pos = surface[iS][0]; // proper time from position of cell
 			CPos[1] = surface[iS][1];
@@ -632,28 +681,41 @@ void ThermalPartonSampler::sample_2p1d(double eta_max){
 			Vel[3] = tanh(eta_slice);
 			// Update the Lorentz boost matrix for the slice
 			LorentzBoostMatrix(Vel, LorBoost, false);
+      
+      RNG::ctr_type c = {{}};
+      RNG::ukey_type uk = {{}};
+      c[0] = slice;
+      c[1] = iS;
 
 			// Generating light quarks
 			std::poisson_distribution<int> poisson_ud(NumLight);
-			int GeneratedParticles_ud = poisson_ud(getRandomGenerator()); // Initialize particles created in this cell
-			SamplePartons(GeneratedParticles_ud, 1, TRead, false, CPos, LorBoost, true, eta_slice);
+      uk[0] = seeds[2];
+      r123::MicroURNG<RNG> rng_engine_generate(c, uk);
+			int GeneratedParticles_ud = poisson_ud(rng_engine_generate); // Initialize particles created in this cell
+			SamplePartons(GeneratedParticles_ud, 1, TRead, false, CPos, LorBoost, true, eta_slice, CellDZ_local, seeds[0], iS_iter);
 			num_ud += GeneratedParticles_ud;
 
 			// Generate s quarks
 			std::poisson_distribution<int> poisson_s(NumStrange);
-			int GeneratedParticles_s = poisson_s(getRandomGenerator()); //Initialize particles created in this cell
-			SamplePartons(GeneratedParticles_s, 2, TRead, false, CPos, LorBoost, true, eta_slice);
+      uk[0] = seeds[3];
+      r123::MicroURNG<RNG> rng_engine_generate_strange(c, uk);
+			int GeneratedParticles_s = poisson_s(rng_engine_generate_strange); //Initialize particles created in this cell
+			SamplePartons(GeneratedParticles_s, 2, TRead, false, CPos, LorBoost, true, eta_slice, CellDZ_local, seeds[1], iS_iter);
 			num_s += GeneratedParticles_s;
 		}
-
 	}
+  
+  // transfer thread safe 3D Plocal to 2D Plist
+  for (int i = 0; i < Plocal.size(); i++) {
+    Plist.insert(Plist.end(), Plocal[i].begin(), Plocal[i].end());
+  }
 
 	JSDEBUG << "Light particles: " << num_ud;
 	JSDEBUG << "Strange particles: " << num_s;
 
-	if (!Plist.empty() && ShuffleList) {
-    	std::shuffle(Plist.begin(), Plist.end(), getRandomGenerator());
-	}
+	if (ShuffleList) {
+    std::shuffle(&Plist[0], &Plist.back(), getRandomGenerator());
+  }
 
 	//print Plist for testing
 	/*std::cout << std::setprecision(5);

@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -19,19 +20,20 @@
 //#include <condition_variable>
 //#include <future>
 
+#include <GTL/dfs.h>
+#include <string>
+
+#include "FluidDynamics.h"
+#include "HardProcess.h"
 #include "JetEnergyLoss.h"
 #include "JetScapeLogger.h"
-#include "JetScapeXML.h"
-#include <string>
-#include "tinyxml2.h"
+#include "JetScapeModuleMutex.h"
 #include "JetScapeSignalManager.h"
 #include "JetScapeWriterStream.h"
-#include "HardProcess.h"
-#include "JetScapeModuleMutex.h"
+#include "JetScapeXML.h"
 #include "LiquefierBase.h"
 #include "MakeUniqueHelper.h"
-#include "FluidDynamics.h"
-#include <GTL/dfs.h>
+#include "tinyxml2.h"
 
 #ifdef USE_HEPMC
 #include "JetScapeWriterHepMC.h"
@@ -64,7 +66,7 @@ JetEnergyLoss::JetEnergyLoss() {
 JetEnergyLoss::~JetEnergyLoss() {
   VERBOSE(8);
 
-  //pShower->clear();
+  // pShower->clear();
   disconnect_all();
 }
 
@@ -88,7 +90,7 @@ JetEnergyLoss::JetEnergyLoss(const JetEnergyLoss &j) {
   for (auto it : j.GetTaskList()) {
     // Working via CRTP JetEnergyLossModule Clone function !
     auto st = dynamic_pointer_cast<JetEnergyLoss>(it)
-                  ->Clone(); //shared ptr with clone !!????
+                  ->Clone();  // shared ptr with clone !!????
     Add(st);
   }
 }
@@ -115,14 +117,15 @@ void JetEnergyLoss::Init() {
 
   std::string mutexOnString = GetXMLElementText({"Eloss", "mutex"}, false);
   if (!mutexOnString.compare("ON"))
-  //Check mutual exclusion of Eloss Modules
+  // Check mutual exclusion of Eloss Modules
   {
     if (GetNumberOfTasks() > 1) {
       for (auto elossModule : GetTaskList()) {
         shared_ptr<JetScapeModuleMutex> mutex_ptr = elossModule->GetMutex();
         if (mutex_ptr) {
           if (!(mutex_ptr->CheckMutex(GetTaskList()))) {
-            JSWARN << "Mutually exclusive Energy-Loss modules attached together!";
+            JSWARN
+                << "Mutually exclusive Energy-Loss modules attached together!";
             throw std::runtime_error("Fix it by attaching one of them.");
           }
         }
@@ -261,15 +264,14 @@ void JetEnergyLoss::DoShower() {
           // Add new roots from ElossModules ...
           // (maybe add for clarity a new vector in the signal!???)
           // Otherwise keep track of input size (so far always 1
-          // and check if size > 1 and create additional root nodes to that vertex ...
-          // Simple Test here below:
-          // DEBUG:
-          //cout<<"In JetEnergyloss : "<<pInTempModule.size()<<end;
+          // and check if size > 1 and create additional root nodes to that
+          // vertex ... Simple Test here below: DEBUG:
+          // cout<<"In JetEnergyloss : "<<pInTempModule.size()<<end;
           if (pInTempModule.size() > 1) {
             VERBOSE(7) << pInTempModule.size() - 1
                        << " new root node(s) to be added ...";
-            //cout << pInTempModule.size()-1
-            //     << " new root node(s) to be added ..." << endl;
+            // cout << pInTempModule.size()-1
+            //      << " new root node(s) to be added ..." << endl;
 
             for (int l = 1; l < pInTempModule.size(); l++) {
               node vNewRootNode = pShower->new_vertex(
@@ -345,7 +347,7 @@ void JetEnergyLoss::DoShower() {
     vStartVec.insert(vStartVec.end(), vStartVecTemp.begin(),
                      vStartVecTemp.end());
     vStartVec.insert(vStartVec.end(), vStartVecOut.begin(), vStartVecOut.end());
-  } while (currentTime < maxT); // other criteria (how to include; TBD)
+  } while (currentTime < maxT);  // other criteria (how to include; TBD)
 
   pIn.clear();
   vStartVec.clear();
@@ -355,22 +357,28 @@ void JetEnergyLoss::Exec() {
   VERBOSE(1) << "Run JetEnergyLoss ...";
   VERBOSE(1) << "Found " << GetNumberOfTasks()
              << " Eloss Tasks/Modules Execute them ... ";
-  //DEBUGTHREAD<<"Task Id = "<<this_thread::get_id()<<" | Run JetEnergyLoss ...";
-  //DEBUGTHREAD<<"Task Id = "<<this_thread::get_id()<<" | Found "<<GetNumberOfTasks()<<" Eloss Tasks/Modules Execute them ... ";
+  // DEBUGTHREAD<<"Task Id = "<<this_thread::get_id()<<" | Run JetEnergyLoss
+  // ..."; DEBUGTHREAD<<"Task Id = "<<this_thread::get_id()<<" | Found
+  // "<<GetNumberOfTasks()<<" Eloss Tasks/Modules Execute them ... ";
 
   if (GetShowerInitiatingParton()) {
     pShower = make_shared<PartonShower>();
 
     /*
        //Check Memory ...
-       VERBOSE(8)<<"Use PartonShowerGenerator to do Parton shower stored in PartonShower Graph class";
-       JSDEBUG<<"Use PartonShowerGenerator to do Parton shower stored in PartonShower Graph class";
-       
+       VERBOSE(8)<<"Use PartonShowerGenerator to do Parton shower stored in
+       PartonShower Graph class"; JSDEBUG<<"Use PartonShowerGenerator to do
+       Parton shower stored in PartonShower Graph class";
+
        PartonShowerGenerator PSG;
-       PSG.DoShower(*shared_from_this()); //needed otherwise all signal slots have to be recreated for shower module ....
-       // Overall not the nicest logic though .... Just to make changing and expanding the shower code in the future ...
-       // (basically, just now to remove the code out of the jet energy loss class ...) TBD
-       // also not really nice, since now the energy loss part in the parton shower and not really visible in this class ...
+       PSG.DoShower(*shared_from_this()); //needed otherwise all signal slots
+       have to be recreated for shower module ....
+       // Overall not the nicest logic though .... Just to make changing and
+       expanding the shower code in the future ...
+       // (basically, just now to remove the code out of the jet energy loss
+       class ...) TBD
+       // also not really nice, since now the energy loss part in the parton
+       shower and not really visible in this class ...
        // Keep both codes so far ...
        */
 
@@ -405,8 +413,9 @@ void JetEnergyLoss::Exec() {
     JSWARN << "NO Initial Hard Parton for Parton shower received ...";
   }
 
-  //DEBUGTHREAD<<"Task Id = "<<this_thread::get_id()<<" Finished!";
-  //JetScapeTask::ExecuteTasks(); // prevent Further modules to be execute, everything done by JetEnergyLoss ... (also set the no active flag ...!?)
+  // DEBUGTHREAD<<"Task Id = "<<this_thread::get_id()<<" Finished!";
+  // JetScapeTask::ExecuteTasks(); // prevent Further modules to be execute,
+  // everything done by JetEnergyLoss ... (also set the no active flag ...!?)
 }
 
 void JetEnergyLoss::WriteTask(weak_ptr<JetScapeWriter> w) {
@@ -424,13 +433,12 @@ void JetEnergyLoss::WriteTask(weak_ptr<JetScapeWriter> w) {
 }
 
 void JetEnergyLoss::PrintShowerInitiatingParton() {
-  //JSDEBUG<<inP->pid();
+  // JSDEBUG<<inP->pid();
 }
 
 void JetEnergyLoss::GetFinalPartonsForEachShower(
     shared_ptr<PartonShower> shower) {
-
   this->final_Partons.push_back(shower.get()->GetFinalPartons());
 }
 
-} // end namespace Jetscape
+}  // end namespace Jetscape

@@ -1,7 +1,8 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
  *
  * For the list of contributors see AUTHORS.
  *
@@ -12,9 +13,10 @@
  * Distributed under the GNU General Public License 3.0 (GPLv3 or later).
  * See COPYING for details.
  ******************************************************************************/
-//Parton Gun Test
+// Parton Gun Test
 
 #include "PGun.h"
+
 #include "JetScapeParticles.h"
 #include "Pythia8/Pythia.h"
 
@@ -75,11 +77,11 @@ void PGun::Exec() {
   //      }
   //     mass = 0.0;
   mass = InternalHelperPythia.particleData.m0(parID);
-  //JSINFO << BOLDYELLOW << " Mass = " << mass ;
-  pT = fixed_pT; //max_pT*(rand()/maxN);
+  // JSINFO << BOLDYELLOW << " Mass = " << mass ;
+  pT = fixed_pT;  // max_pT*(rand()/maxN);
 
   phi = 2.0 * PI * (rand() / maxN);
-  rapidity = 0; //2.0*eta_cut*(rand()/maxN)-eta_cut;
+  rapidity = 0;  // 2.0*eta_cut*(rand()/maxN)-eta_cut;
   phi = 0.0;
 
   p[1] = pT * cos(phi);
@@ -87,15 +89,16 @@ void PGun::Exec() {
   p[3] = sqrt(pT * pT + mass * mass) * sinh(rapidity);
   p[0] = sqrt(pT * pT + mass * mass) * cosh(rapidity);
 
-  double p_abs = std::sqrt(pT*pT + p[3]*p[3]);
-  if(std::abs(p_abs - p[3]) > rounding_error){
+  double p_abs = std::sqrt(pT * pT + p[3] * p[3]);
+  if (std::abs(p_abs - p[3]) > rounding_error) {
     pseudorapidity = 0.5 * std::log((p_abs + p[3]) / (p_abs - p[3]));
   } else {
     JSWARN << "Particle in PGun has infinite pseudorapidity.";
   }
 
   // Roll for a starting point
-  // See: https://stackoverflow.com/questions/15039688/random-generator-from-vector-with-probability-distribution-in-c
+  // See:
+  // https://stackoverflow.com/questions/15039688/random-generator-from-vector-with-probability-distribution-in-c
   for (int i = 0; i <= 3; i++) {
     xLoc[i] = 0.0;
   };
@@ -113,7 +116,8 @@ void PGun::Exec() {
   xLoc[1] = 0.0;
   xLoc[2] = 0.0;
 
-  auto ptn = make_shared<Parton>(0, parID, 0, pT, pseudorapidity, phi, p[0], xLoc);
+  auto ptn =
+      make_shared<Parton>(0, parID, 0, pT, pseudorapidity, phi, p[0], xLoc);
   ptn->set_color((parID > 0) ? 100 : 0);
   ptn->set_anti_color(((parID > 0) || (parID == 21)) ? 0 : 101);
   ptn->set_max_color(102);

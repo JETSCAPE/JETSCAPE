@@ -11,7 +11,8 @@
 #define SRC_INCLUDE_SMASH_PDGCODE_CONSTANTS_H_
 
 namespace Jetscape {
-// The namespace of this file was changed to integrate this file from SMASH into the JETSCAPE framework
+// The namespace of this file was changed to integrate this file from SMASH into
+// the JETSCAPE framework
 /**
  * Constants representing PDG codes.
  *
@@ -134,6 +135,6 @@ constexpr uint64_t pack(int32_t x, int32_t y) {
   //^ Casting to an intermediate 32-bit integer is important!
 }
 
-}  // namespace smash
+}  // namespace Jetscape
 
 #endif  // SRC_INCLUDE_SMASH_PDGCODE_CONSTANTS_H_

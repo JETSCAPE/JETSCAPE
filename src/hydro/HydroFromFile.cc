@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -13,18 +14,17 @@
  * See COPYING for details.
  ******************************************************************************/
 
+#include "HydroFromFile.h"
+
+#include <MakeUniqueHelper.h>
+#include <cmath>
+#include <cstring>
+#include <iostream>
+#include <sstream>
 #include <stdio.h>
 #include <sys/stat.h>
-#include <MakeUniqueHelper.h>
-
-#include <cstring>
-#include <sstream>
-#include <cmath>
-#include <iostream>
 
 #include "JetScapeLogger.h"
-
-#include "HydroFromFile.h"
 
 using namespace Jetscape;
 
@@ -49,12 +49,12 @@ void HydroFromFile::InitializeHydro(Parameter parameter_list) {
   JSDEBUG << s << " to be initialized ...";
 
   hydro_type_ = GetXMLElementInt({"Hydro", "hydro_from_file", "hydro_type"});
-  int boost_inv = GetXMLElementInt(
-          {"Hydro", "hydro_from_file", "boost_invariant_"});
+  int boost_inv =
+      GetXMLElementInt({"Hydro", "hydro_from_file", "boost_invariant_"});
   if (boost_inv == 0) {
-      boost_invariant_ = false;
+    boost_invariant_ = false;
   } else {
-      boost_invariant_ = true;
+    boost_invariant_ = true;
   }
   load_viscous_ =
       GetXMLElementInt({"Hydro", "hydro_from_file", "load_viscous_info"});
@@ -74,8 +74,8 @@ void HydroFromFile::InitializeHydro(Parameter parameter_list) {
     JSWARN << " : please check your inputs~";
     exit(-1);
 #endif
-  } else if (hydro_type_ == 2 || hydro_type_ == 3
-             || hydro_type_ == 4 || hydro_type_ == 5) {
+  } else if (hydro_type_ == 2 || hydro_type_ == 3 || hydro_type_ == 4 ||
+             hydro_type_ == 5) {
     hydroinfo_MUSIC_ptr = new Hydroinfo_MUSIC();
     int verbose = GetXMLElementInt({"vlevel"});
     hydroinfo_MUSIC_ptr->set_verbose(verbose);
@@ -125,8 +125,7 @@ void HydroFromFile::read_in_hydro_event(string MUSIC_input_file,
   hydro_status = FINISHED;
 }
 
-
-  //! This function load a PreEq event and a MUSIC hydro event
+//! This function load a PreEq event and a MUSIC hydro event
 void HydroFromFile::read_in_hydro_event(string MUSIC_input_file,
                                         string PreEq_file,
                                         string MUSIC_hydro_ideal_file,
@@ -176,13 +175,13 @@ void HydroFromFile::EvolveHydro() {
     string input_file;
     string hydro_ideal_file;
     if (flag_read_in_multiple_hydro_ == 0) {
-      input_file = GetXMLElementText(
-              {"Hydro", "hydro_from_file", "MUSIC_input_file"});
-      hydro_ideal_file = GetXMLElementText(
-              {"Hydro", "hydro_from_file", "MUSIC_file"});
+      input_file =
+          GetXMLElementText({"Hydro", "hydro_from_file", "MUSIC_input_file"});
+      hydro_ideal_file =
+          GetXMLElementText({"Hydro", "hydro_from_file", "MUSIC_file"});
     } else {
-      string folder = GetXMLElementText(
-              {"Hydro", "hydro_from_file", "hydro_files_folder"});
+      string folder =
+          GetXMLElementText({"Hydro", "hydro_from_file", "hydro_files_folder"});
       std::ostringstream input_filename;
       std::ostringstream hydro_filename;
       input_filename << folder << "/event-" << hydro_event_idx_
@@ -200,13 +199,13 @@ void HydroFromFile::EvolveHydro() {
     string PreEq_file;
     string hydro_ideal_file;
     if (flag_read_in_multiple_hydro_ == 0) {
-      PreEq_file = GetXMLElementText(
-              {"Hydro", "hydro_from_file", "PreEq_file"});
-      hydro_ideal_file = GetXMLElementText(
-              {"Hydro", "hydro_from_file", "MUSIC_file"});
+      PreEq_file =
+          GetXMLElementText({"Hydro", "hydro_from_file", "PreEq_file"});
+      hydro_ideal_file =
+          GetXMLElementText({"Hydro", "hydro_from_file", "MUSIC_file"});
     } else {
-      string folder = GetXMLElementText(
-              {"Hydro", "hydro_from_file", "hydro_files_folder"});
+      string folder =
+          GetXMLElementText({"Hydro", "hydro_from_file", "hydro_files_folder"});
       std::ostringstream preEq_filename;
       std::ostringstream hydro_filename;
       preEq_filename << folder << "/event-" << hydro_event_idx_
@@ -222,11 +221,11 @@ void HydroFromFile::EvolveHydro() {
     hydro_tau_0 = hydroinfo_MUSIC_ptr->get_hydro_tau0();
     hydro_tau_max = hydroinfo_MUSIC_ptr->get_hydro_tau_max();
     if (std::abs(PreEq_tauf_ - hydro_tau_0) > 1e-6) {
-        JSWARN << __PRETTY_FUNCTION__
-               << "Preequilibrium medium end time is not the same as "
-               << "the hydro starting time! "
-               << "PreEq: tau_f = " << PreEq_tauf_ << " fm/c, "
-               << "hydro: tau_0 = " << hydro_tau_0 << " fm/c.";
+      JSWARN << __PRETTY_FUNCTION__
+             << "Preequilibrium medium end time is not the same as "
+             << "the hydro starting time! "
+             << "PreEq: tau_f = " << PreEq_tauf_ << " fm/c, "
+             << "hydro: tau_0 = " << hydro_tau_0 << " fm/c.";
     }
   } else {
     JSWARN << __PRETTY_FUNCTION__
@@ -268,19 +267,19 @@ void HydroFromFile::GetHydroInfo(
   double z_local = static_cast<double>(z);
 
   if (t_local < z_local) {
-      JSWARN << "Request a space-like point, t = " << t_local
-             << ", z = " << z_local;
-      exit(1);
+    JSWARN << "Request a space-like point, t = " << t_local
+           << ", z = " << z_local;
+    exit(1);
   }
   double tau_local = sqrt(t * t - z * z);
   double eta_local = 0.5 * log((t + z) / (t - z + 1e-15));
   if (boost_invariant_) {
-      eta_local = 0.;
+    eta_local = 0.;
   }
 
   // initialize the fluid cell pointer
   hydrofluidCell *temp_fluid_cell_ptr = new hydrofluidCell;
-  if (hydro_type_ == 1) { // for OSU 2+1d hydro
+  if (hydro_type_ == 1) {  // for OSU 2+1d hydro
 #ifdef USE_HDF5
     eta_local = 0.5 * log((t + z) / (t - z + 1e-15));
     hydroinfo_h5_ptr->getHydroinfo(tau_local, x_local, y_local,
@@ -295,19 +294,19 @@ void HydroFromFile::GetHydroInfo(
     temp_fluid_cell_ptr->vz = z / (t + 1e-15);
 #endif
   } else if (hydro_type_ < 6) {
-    t_local = tau_local*cosh(eta_local);
-    z_local = tau_local*sinh(eta_local);
+    t_local = tau_local * cosh(eta_local);
+    z_local = tau_local * sinh(eta_local);
     hydroinfo_MUSIC_ptr->getHydroValues(x_local, y_local, z_local, t_local,
                                         temp_fluid_cell_ptr);
   } else if (hydro_type_ < 9) {
-    t_local = tau_local*cosh(eta_local);
-    z_local = tau_local*sinh(eta_local);
+    t_local = tau_local * cosh(eta_local);
+    z_local = tau_local * sinh(eta_local);
     if (tau_local < PreEq_tauf_) {
-        hydroinfo_PreEq_ptr->getHydroValues(x_local, y_local, z_local, t_local,
-                                            temp_fluid_cell_ptr);
+      hydroinfo_PreEq_ptr->getHydroValues(x_local, y_local, z_local, t_local,
+                                          temp_fluid_cell_ptr);
     } else {
-        hydroinfo_MUSIC_ptr->getHydroValues(x_local, y_local, z_local, t_local,
-                                            temp_fluid_cell_ptr);
+      hydroinfo_MUSIC_ptr->getHydroValues(x_local, y_local, z_local, t_local,
+                                          temp_fluid_cell_ptr);
     }
   }
 

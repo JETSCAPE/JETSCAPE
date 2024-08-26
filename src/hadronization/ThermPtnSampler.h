@@ -1,15 +1,19 @@
 #ifndef THERMPTNSAMPLER_H
 #define THERMPTNSAMPLER_H
 
-#include "JetScapeLogger.h"
-#include <vector>
+#include <omp.h>
 #include <random>
+#include <vector>
 
+#include "JetScapeLogger.h"
+// clang-format off
+#include "threefry.h"
+#include "MicroURNG.hpp"
+// clang-format on
 
 using namespace Jetscape;
 
-class ThermalPartonSampler
-{
+class ThermalPartonSampler {
  public:
 	/**
      * @brief Constructor that initializes the random number generator 
@@ -160,6 +164,10 @@ class ThermalPartonSampler
      * @return A reference to the Mersenne Twister random number generator.
      */
     std::mt19937_64& getRandomGenerator() {return rng_engine;}
+  
+  std::vector<uint64_t> seeds;  // to hold seeds for multiple generators in threads
+
+  typedef r123::Threefry4x64 RNG;  // Random number generator type
 
 	
 	// HyperSurface
@@ -239,7 +247,10 @@ class ThermalPartonSampler
 	 * @return A tuple containing the components of the momentum vector 
 	 * (NewX, NewY, NewZ) and the magnitude (NewP).
 	 */
-	std::tuple<double, double, double, double> MomentumSampler(double T, int quark);
+  std::tuple<double, double, double, double> MomentumSampler(
+      double T, int quark,
+      r123::MicroURNG<RNG> rng_engine_part =
+          r123::MicroURNG<RNG>(RNG::ctr_type(), RNG::key_type()));
 
 	/**
 	 * @brief Computes the Lorentz boost matrix corresponding to a given velocity 
@@ -286,8 +297,12 @@ class ThermalPartonSampler
 	 * @param slice_boost Flag indicating 2+1D boost configuration.
 	 * @param eta_slice Pseudo-rapidity for 2+1D boost.
 	 */
-    void SamplePartons(int Npartons, int quark, double T, bool brick, std::vector<double>& CPos, std::vector<std::vector<double>>& BoostMatrix, bool slice_boost, double eta_slice);
-
+    void SamplePartons(int Npartons, int quark, double T, bool brick,
+                     std::vector<double>& CPos,
+                     std::vector<std::vector<double>>& BoostMatrix,
+                     bool slice_boost, double eta_slice, double CellDZ_local,
+                     uint64_t adjust_seed = 0, int iS_iter = 0);
+  
 	/**
 	 * @brief Creates an entry of the cumulative distribution function (CDF) data 
 	 * in a cache.
