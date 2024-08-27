@@ -81,6 +81,7 @@ int main(int argc, char* argv[]){
     TDirectory* jetdir = (TDirectory*)jetroot.Get("InclusiveJetEnergy"); TH1D* jetdata = (TH1D*)jetdir->Get("Hist1D_y1");
     TGraphErrors* jetgraph = (TGraphErrors*) jetdir->Get("Graph1D_y1");
     double JetRadius = 0.4;
+    int jetCount = 0;
 
     //dijet
     TDirectory* dijetdir = (TDirectory*)jetroot.Get("LeadingDiJetEnergy"); TH1D* dijetdata = (TH1D*)dijetdir->Get("Hist1D_y1");
@@ -138,7 +139,7 @@ int main(int argc, char* argv[]){
     
     //particle info declaration
     int  SN=0,PID=0;
-    double Px, Py, Pz, E, Eta, Phi,pStat;
+    double Px, Py, Pz, E, Eta, Phi, pStat;
     int Events =0;
     int Eventskept = 0;
     vector<shared_ptr<Hadron>> hadrons;
@@ -163,6 +164,9 @@ int main(int argc, char* argv[]){
         catch(...){
             break;
         }
+
+        //clearing event vectors
+        fjInputs.resize(0); 
 
         //event variables
         int multiplicity = 0;
@@ -193,9 +197,9 @@ int main(int argc, char* argv[]){
                 }
             }
 
-            //jet inputs removing neutrinos
-            if(PID!=12 && PID!=14 && PID!=16 && PID!=18) fjInputs.push_back(fjcore::PseudoJet(Px,Py,Pz,E));
-            
+            if(fabs(Eta) < 1.74){
+                fjInputs.push_back(fjcore::PseudoJet(Px,Py,Pz,E));
+            }
 
             //xp spectra
             if((fabs(PID) > 100 || abs(PID) == 11 || abs(PID) == 13 || abs(PID) == 15) && pythia.particleData.charge(PID)!= 0){
@@ -217,10 +221,34 @@ int main(int argc, char* argv[]){
         //mult filling
         HistMultiplicity->Fill(multiplicity);
 
+        
+        //cout << "Total Energy: " << totalE << endl;
+        //cout << "Total Energy Check: " << totalEcheck << endl;
+
+        //Sphericity and thrust calculations
+        vector<double> thrustsphericity = getThrustSphericity(hadrons);
+        double thrust = thrustsphericity[0];
+        double sphericity = thrustsphericity[1];
+        cout << "Sphericity: " << sphericity << "; thrust: " << thrust << endl;
+
+        //hadron event cuts
+        if(thrust < 0) continue;
+
+        //other observable filling
+        if(sphericity > 25.8 and sphericity < 154.2){
+            HistThrust->Fill(1-thrust);
+            thrustCount++;
+        }
+        
         //Jets
+        if(sphericity < 35. or sphericity > 145.){
+            continue;
+        }
+        jetCount++;
+
         // Run Fastjet algorithm and sort jets in pT order.
         vector <fjcore::PseudoJet> UnSortedJets, SortedJets;
-        double totalE = 0;
+        double totalE = 0; 
         fjcore::ClusterSequence clustSeq(fjInputs, jetDef);
         UnSortedJets = clustSeq.inclusive_jets();
         SortedJets = sorted_by_E(UnSortedJets);
@@ -235,25 +263,6 @@ int main(int argc, char* argv[]){
             //vector <fjcore::PseudoJet> constituents = SortedJets[i].constituents();
             //for(int j = 0; j < constituents.size(); j++) cout << "\tparticle: " << constituents[j].E() << endl;
         }
-        //cout << "Total Energy: " << totalE << endl;
-        //cout << "Total Energy Check: " << totalEcheck << endl;
-
-        //Sphericity and thrust calculations
-        vector<double> thrustsphericity = getThrustSphericity(hadrons);
-        double thrust = thrustsphericity[0];
-        double sphericity = thrustsphericity[1];
-
-        //hadron event cuts
-        if(thrust >= 0){
-            //other observable filling
-            HistThrust->Fill(1-thrust);
-            thrustCount++;
-        }
-
-        //clearing event vectors
-        fjInputs.resize(0); 
-        SortedJets.resize(0);
-        UnSortedJets.resize(0);
     }
     myfile->Close();
 
@@ -277,8 +286,8 @@ int main(int argc, char* argv[]){
     tempKaons->Scale(1.0/(double)Events,"width");
     tempProtons->Scale(1.0/(double)Events,"width");
     HistThrust->Scale(1.0/(double)thrustCount,"width");
-    HistTempJet->Scale(1.0/(double)Eventskept);
-    HistTempdiJet->Scale(1.0/(double)Eventskept);
+    HistTempJet->Scale(1.0/(double)jetCount);
+    HistTempdiJet->Scale(1.0/(double)jetCount);
     xeHist->Scale(1.0/(double)Events,"width");
     
     TVector EventInfo(3);

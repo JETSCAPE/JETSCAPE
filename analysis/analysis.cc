@@ -483,12 +483,12 @@ vector<double> getThrustSphericity(vector<shared_ptr<Hadron>> hadrons){
 //CUTS (1)
 
         //Neutral Hadron Selection
-        if (chg == 0 /*&& e > 0.4 && std::abs(eta) < 2.29*/) {
+        /*if (chg == 0 && e > 0.4 && std::abs(eta) < 2.29) {
             nHad++;
-        }
+        }*/
 
         //Charged Hadron Selection
-        if (chg != 0 /*&& pT > 0.2 && std::abs(eta) < 1.74*/) {
+        if (chg != 0 && pT > 0.2 && std::fabs(eta) < 1.74) {
             nChg++;
             nHad++;
             chgE += e;
@@ -525,11 +525,11 @@ vector<double> getThrustSphericity(vector<shared_ptr<Hadron>> hadrons){
         // only happens after youve reached the end of the list
         
         // if this event doesn't have enough particles to calculate thrust/sphericity, skip it (can also skip otherwise unwanted events here too)
-        /*if(nStudy < 2 || nChg < 5 || nHad < 13 || chgE < 15.0){
+        if(nHad < 5 or chgE < 15.0){
             //std::cout << "Event " << prevptn_event << " had too few particles to find thrust...\n\n";
             //fileout << "0\n";
             return error;
-        }*/
+        }
         
         //Thrust and sphericity calculations proper
         // Thr: Try all combinations of reference vector orthogonal to two particles.
@@ -677,7 +677,7 @@ vector<double> getThrustSphericity(vector<shared_ptr<Hadron>> hadrons){
         */
         double rho = sqrt(Sph_eVec1.px()*Sph_eVec1.px() + Sph_eVec1.py()*Sph_eVec1.py());
         double phi = atan(rho / Sph_eVec1.pz());
-        phiDeg = phi * (180.0/3.1415926535897);
+        phiDeg = fabs(phi * (180.0/3.1415926535897));
         
         /*if (std::abs(phiDeg) <= 35.0) {
             return error;
