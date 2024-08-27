@@ -64,3 +64,4 @@ jobs:
         ./causal_liquifier
         ./fluid_dynamics
         ./linear_interpolation
+        ./ThermPtnSampler

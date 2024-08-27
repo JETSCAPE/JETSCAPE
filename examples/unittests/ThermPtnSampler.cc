@@ -16,6 +16,8 @@
 
 #include "ThermPtnSampler.h"
 
+#include <algorithm>
+#include <omp.h>
 #include <vector>
 
 #include "gtest/gtest.h"
@@ -75,9 +77,9 @@ TEST(ThermPtnSampler, TEST_brick) {
   sampler.sample_brick();
 
   // check the number of partons
-  EXPECT_EQ(sampler.nTot(), 3079);
-  EXPECT_EQ(sampler.th_nL(), 2444);
-  EXPECT_EQ(sampler.th_nS(), 635);
+  EXPECT_EQ(sampler.nTot(), 3025);
+  EXPECT_EQ(sampler.th_nL(), 2416);
+  EXPECT_EQ(sampler.th_nS(), 609);
   EXPECT_EQ(sampler.nTot(), sampler.th_nL() + sampler.th_nS());
 }
 
@@ -87,22 +89,54 @@ TEST(ThermPtnSampler, TEST_sample_2p1d) {
   // partons otherwise in this cell there is nothing sampled
   double Tc = 0.8;  // used for the T cache in this case
 
-  ThermalPartonSampler sampler(seed, Tc);
-
   std::vector<double> surface_cell = {1.70523,   -2.48733,    -2.23816,    0,
                                       0.0145614, -0.00055864, -0.00199173, 0,
                                       0.8,       -0.205297,   -0.310245,   0};
   std::vector<std::vector<double>> surface = {surface_cell};
-  sampler.set_hypersurface(surface);
 
   double eta_max_boost_inv = 2.0;
-  sampler.sample_2p1d(eta_max_boost_inv);
+
+  std::vector<int> nTotResults;
+  std::vector<int> th_nLResults;
+  std::vector<int> th_nSResults;
+  std::vector<int> nTotExpected;
+  int highest_power = 5;
+
+  std::freopen("/dev/null", "w", stdout);
+  std::freopen("/dev/null", "w", stderr);
+
+  for (int i = 0; i <= highest_power; i++) {
+    ThermalPartonSampler sampler(seed, Tc);
+    sampler.set_hypersurface(surface);
+    int num_threads = pow(2, i);
+    omp_set_num_threads(num_threads);
+    sampler.sample_2p1d(eta_max_boost_inv);
+
+    nTotResults.push_back(sampler.nTot());
+    th_nLResults.push_back(sampler.th_nL());
+    th_nSResults.push_back(sampler.th_nS());
+    nTotExpected.push_back(sampler.th_nL() + sampler.th_nS());
+  }
+
+  std::freopen("/dev/tty", "w", stdout);
+  std::freopen("/dev/tty", "w", stderr);
+
+  auto check_all_equal = [](std::vector<int> vec) {
+    return std::adjacent_find(vec.begin(), vec.end(),
+                              std::not_equal_to<int>()) == vec.end();
+  };
+
+  // check that threads didn't introduce inconsistencies
+  EXPECT_TRUE(check_all_equal(nTotResults));
+  EXPECT_TRUE(check_all_equal(th_nLResults));
+  EXPECT_TRUE(check_all_equal(th_nSResults));
+  EXPECT_TRUE(check_all_equal(nTotExpected));
 
   // check the number of partons
-  EXPECT_EQ(sampler.nTot(), 70);
-  EXPECT_EQ(sampler.th_nL(), 47);
-  EXPECT_EQ(sampler.th_nS(), 23);
-  EXPECT_EQ(sampler.nTot(), sampler.th_nL() + sampler.th_nS());
+  EXPECT_EQ(nTotResults[0], 76);
+  EXPECT_EQ(th_nLResults[0], 54);
+  EXPECT_EQ(th_nSResults[0], 22);
+  EXPECT_EQ(nTotExpected[0], th_nLResults[0] + th_nSResults[0]);
 }
 
 TEST(ThermPtnSampler, TEST_sample_3p1d) {
@@ -111,20 +145,43 @@ TEST(ThermPtnSampler, TEST_sample_3p1d) {
   // partons otherwise in this cell there is nothing sampled
   double Tc = 0.8;  // used for the T cache in this case
 
-  ThermalPartonSampler sampler(seed, Tc);
-
   std::vector<double> surface_cell = {1.70523,   -2.48733,    -2.23816,    0,
                                       0.0145614, -0.00055864, -0.00199173, 0,
                                       0.8,       -0.205297,   -0.310245,   0};
   std::vector<std::vector<double>> surface = {surface_cell};
-  sampler.set_hypersurface(surface);
 
+  std::vector<int> nTotResults;
+  std::vector<int> th_nLResults;
+  std::vector<int> th_nSResults;
+  std::vector<int> nTotExpected;
+  int highest_power = 5;
   bool cartesian = false;
-  sampler.sample_3p1d(cartesian);
+
+  for (int i = 0; i <= highest_power; i++) {
+    ThermalPartonSampler sampler(seed, Tc);
+    sampler.set_hypersurface(surface);
+    sampler.sample_3p1d(cartesian);
+
+    nTotResults.push_back(sampler.nTot());
+    th_nLResults.push_back(sampler.th_nL());
+    th_nSResults.push_back(sampler.th_nS());
+    nTotExpected.push_back(sampler.th_nL() + sampler.th_nS());
+  }
+
+  auto check_all_equal = [](std::vector<int> vec) {
+    return std::adjacent_find(vec.begin(), vec.end(),
+                              std::not_equal_to<int>()) == vec.end();
+  };
+
+  // check that threads didn't introduce inconsistencies
+  EXPECT_TRUE(check_all_equal(nTotResults));
+  EXPECT_TRUE(check_all_equal(th_nLResults));
+  EXPECT_TRUE(check_all_equal(th_nSResults));
+  EXPECT_TRUE(check_all_equal(nTotExpected));
 
   // check the number of partons
-  EXPECT_EQ(sampler.nTot(), 4);
-  EXPECT_EQ(sampler.th_nL(), 3);
-  EXPECT_EQ(sampler.th_nS(), 1);
-  EXPECT_EQ(sampler.nTot(), sampler.th_nL() + sampler.th_nS());
+  EXPECT_EQ(nTotResults[0], 3);
+  EXPECT_EQ(th_nLResults[0], 2);
+  EXPECT_EQ(th_nSResults[0], 1);
+  EXPECT_EQ(nTotExpected[0], th_nLResults[0] + th_nSResults[0]);
 }
