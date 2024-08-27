@@ -102,8 +102,13 @@ TEST(ThermPtnSampler, TEST_sample_2p1d) {
   std::vector<int> nTotExpected;
   int highest_power = 5;
 
-  std::freopen("/dev/null", "w", stdout);
-  std::freopen("/dev/null", "w", stderr);
+  // Redirect stdout and stderr to /dev/null and check for success
+  if (std::freopen("/dev/null", "w", stdout) == nullptr) {
+    std::cerr << "Failed to redirect stdout to /dev/null\n";
+  }
+  if (std::freopen("/dev/null", "w", stderr) == nullptr) {
+    std::cerr << "Failed to redirect stderr to /dev/null\n";
+  }
 
   for (int i = 0; i <= highest_power; i++) {
     ThermalPartonSampler sampler(seed, Tc);
@@ -118,8 +123,13 @@ TEST(ThermPtnSampler, TEST_sample_2p1d) {
     nTotExpected.push_back(sampler.th_nL() + sampler.th_nS());
   }
 
-  std::freopen("/dev/tty", "w", stdout);
-  std::freopen("/dev/tty", "w", stderr);
+  // Restore stdout and stderr
+  if (std::freopen("/dev/tty", "w", stdout) == nullptr) {
+    std::cerr << "Failed to restore stdout from /dev/tty\n";
+  }
+  if (std::freopen("/dev/tty", "w", stderr) == nullptr) {
+    std::cerr << "Failed to restore stderr from /dev/tty\n";
+  }
 
   auto check_all_equal = [](std::vector<int> vec) {
     return std::adjacent_find(vec.begin(), vec.end(),
