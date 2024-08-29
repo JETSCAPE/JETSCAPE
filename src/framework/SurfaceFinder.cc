@@ -45,10 +45,22 @@ SurfaceFinder::~SurfaceFinder() { surface_cell_list.clear(); }
 void SurfaceFinder::Find_full_hypersurface() {
   if (boost_invariant) {
     JSINFO << "Finding a 2+1D hyper-surface at T = " << T_cut << " GeV ...";
+    auto start = std::chrono::high_resolution_clock::now();
     Find_full_hypersurface_3D();
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed_seconds = end - start;
+    JSINFO << "Time to find the 3D hypersurface: " << elapsed_seconds.count()
+           << " s";
+    WriteSurfaceToFile(surface_cell_list, "hypersurface_3D.dat");
   } else {
     JSINFO << "Finding a 3+1D hyper-surface at T = " << T_cut << " GeV ...";
+    auto start = std::chrono::high_resolution_clock::now();
     Find_full_hypersurface_4D();
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed_seconds = end - start;
+    JSINFO << "Time to find the 4D hypersurface: " << elapsed_seconds.count()
+           << " s";
+    WriteSurfaceToFile(surface_cell_list, "hypersurface_4D.dat");
   }
 }
 
@@ -378,6 +390,19 @@ SurfaceCellInfo SurfaceFinder::PrepareASurfaceCell(
   temp_cell.bulk_Pi = fluid_cell.bulk_Pi;
 
   return (temp_cell);
+}
+
+// function that takes a vector of SurfaceCellInfo and writes it to a file
+void SurfaceFinder::WriteSurfaceToFile(const std::vector<SurfaceCellInfo> &surface_cell_list, std::string filename) {
+
+  std::ofstream file;
+  file.open(filename, std::ios::app);
+
+  for (int i = 0; i < surface_cell_list.size(); i++) {
+    file << surface_cell_list[i].sfi_to_string();
+  }
+
+  file.close();
 }
 
 }  // namespace Jetscape

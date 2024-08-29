@@ -18,6 +18,8 @@
 #ifndef SURFACEFINDER_H_
 #define SURFACEFINDER_H_
 
+#include <fstream>
+#include <omp.h>
 #include <vector>
 
 #include "FluidEvolutionHistory.h"
@@ -65,6 +67,9 @@ class SurfaceFinder {
                                       Jetscape::real da0, Jetscape::real da1,
                                       Jetscape::real da2, Jetscape::real da3,
                                       const FluidCellInfo fluid_cell);
+
+  void WriteSurfaceToFile(const std::vector<SurfaceCellInfo> &surface_cell_list,
+                        std::string filename);
 };
 
 }  // namespace Jetscape
