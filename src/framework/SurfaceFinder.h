@@ -35,6 +35,7 @@ private:
 
 public:
   SurfaceFinder(const Jetscape::real T_in, const EvolutionHistory &bulk_data);
+  // SurfaceFinder();
   ~SurfaceFinder();
 
   void Find_full_hypersurface();

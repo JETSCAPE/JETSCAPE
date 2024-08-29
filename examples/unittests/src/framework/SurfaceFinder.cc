@@ -3,7 +3,10 @@
 #include <fstream>
 #include <string>
 #include <filesystem>
-// #include "SurfaceFinder.h"
+#include "SurfaceFinder.h"
+
+using namespace Jetscape;
+
 std::string load_mock_data(){
       // Get the current working directory
     std::filesystem::path currentPath = std::filesystem::current_path();
@@ -38,9 +41,14 @@ std::string load_mock_data(){
     return buffer.str();  // Convert stringstream to std::string
 
 }
+
 TEST(SurfaceFinder, Test_Check_Intersect_3D_false){
 
     std::string mock_data=load_mock_data();
     std::cout<<"Mock Data:\t"<<mock_data<<"\n";
+
+    EvolutionHistory oEvolutionHistory();
+    // SurfaceFinder oSurfaceFinder(0.0,oEvolutionHistory);
+
     EXPECT_DOUBLE_EQ(0.0, 0.0);
 }

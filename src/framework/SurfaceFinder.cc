@@ -38,7 +38,10 @@ SurfaceFinder::SurfaceFinder(const Jetscape::real T_in,
   }
   JSINFO << "Number of fluid cells = " << bulk_info.get_data_size();
 }
-
+// SurfaceFinder::SurfaceFinder()
+//   :bulk_info(NULL){
+//   JSINFO<<"SurfaceFinder Constructed for test purposes";
+// }
 SurfaceFinder::~SurfaceFinder() { surface_cell_list.clear(); }
 
 void SurfaceFinder::Find_full_hypersurface() {
