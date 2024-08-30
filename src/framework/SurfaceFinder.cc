@@ -120,30 +120,38 @@ void SurfaceFinder::Find_full_hypersurface_3D() {
   lattice_spacing[1] = grid_dx;
   lattice_spacing[2] = grid_dy;
 
-  std::unique_ptr<Cornelius> cornelius_ptr(new Cornelius());
-  cornelius_ptr->init(dim, T_cut, lattice_spacing);
-
   const int ntime = static_cast<int>((grid_tauf - grid_tau0) / grid_dt);
   const int nx = static_cast<int>(std::abs(2. * grid_x0) / grid_dx);
   const int ny = static_cast<int>(std::abs(2. * grid_y0) / grid_dy);
 
-  double ***cube = new double **[2];
-  for (int i = 0; i < 2; i++) {
-    cube[i] = new double *[2];
-    for (int j = 0; j < 2; j++) {
-      cube[i][j] = new double[2];
-      for (int k = 0; k < 2; k++)
-        cube[i][j][k] = 0.0;
-    }
-  }
+  int surface_cell_list_sz = ntime * nx * ny;
+  std::vector<std::vector<SurfaceCellInfo>>surface_cell_list_local;
+  surface_cell_list_local.resize(surface_cell_list_sz);
 
+  // #pragma omp parallel for collapse(3)
   for (int itime = 0; itime < ntime; itime++) {
-    // loop over time evolution
-    auto tau_local = grid_tau0 + (itime + 0.5) * grid_dt;
     for (int i = 0; i < nx; i++) {
-      // loops over the transverse plane
-      auto x_local = grid_x0 + (i + 0.5) * grid_dx;
       for (int j = 0; j < ny; j++) {
+
+        double ***cube = new double **[2];
+        for (int i = 0; i < 2; i++) {
+          cube[i] = new double *[2];
+          for (int j = 0; j < 2; j++) {
+            cube[i][j] = new double[2];
+            for (int k = 0; k < 2; k++)
+              cube[i][j][k] = 0.0;
+          }
+        }
+
+        std::unique_ptr<Cornelius> cornelius_ptr(new Cornelius());
+        cornelius_ptr->init(dim, T_cut, lattice_spacing);
+
+        // loop over time evolution
+        auto tau_local = grid_tau0 + (itime + 0.5) * grid_dt;
+
+        // loops over the transverse plane
+        auto x_local = grid_x0 + (i + 0.5) * grid_dx;
+
         auto y_local = grid_y0 + (j + 0.5) * grid_dy;
         bool intersect = check_intersect_3D(tau_local, x_local, y_local,
                                             grid_dt, grid_dx, grid_dy, cube);
@@ -166,19 +174,25 @@ void SurfaceFinder::Find_full_hypersurface_3D() {
             auto surface_cell =
                 PrepareASurfaceCell(tau_center, x_center, y_center, 0.0, da_tau,
                                     da_x, da_y, 0.0, fluid_cell);
-            surface_cell_list.push_back(surface_cell);
+            surface_cell_list_local[itime * nx * ny + i * ny + j].push_back(surface_cell);
           }
         }
+        for (int i = 0; i < 2; i++) {
+          for (int j = 0; j < 2; j++)
+            delete[] cube[i][j];
+          delete[] cube[i];
+        }
+        delete[] cube;
       }
     }
   }
 
-  for (int i = 0; i < 2; i++) {
-    for (int j = 0; j < 2; j++)
-      delete[] cube[i][j];
-    delete[] cube[i];
+  // reduction of local 2D vector to 1D class member vector
+  for (int i = 0; i < surface_cell_list_sz; i++) {
+    for (int j = 0; j < surface_cell_list_local[i].size(); j++) {
+      surface_cell_list.push_back(surface_cell_list_local[i][j]);
+    }
   }
-  delete[] cube;
 }
 
 bool SurfaceFinder::check_intersect_4D(Jetscape::real tau, Jetscape::real x,
