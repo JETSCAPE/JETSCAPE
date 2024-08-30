@@ -49,16 +49,19 @@ std::vector<double> parse_line(const std::string &line) {
     return values;
 }
 // Function to allocate and initialize the cube
-double*** initialize_cube(const std::vector<double>& values) {
+// double***
+std::array<std::array<std::array<double, 2>, 2>, 2> initialize_cube(const std::vector<double>& values) {
     const int cube_dim = 2; // Assuming a 2x2x2 cube based on 8 values
     
-    double*** cube = new double**[cube_dim];
-    for (int i = 0; i < cube_dim; ++i) {
-        cube[i] = new double*[cube_dim];
-        for (int j = 0; j < cube_dim; ++j) {
-            cube[i][j] = new double[cube_dim];
-        }
-    }
+    // double*** cube = new double**[cube_dim];
+    // for (int i = 0; i < cube_dim; ++i) {
+    //     cube[i] = new double*[cube_dim];
+    //     for (int j = 0; j < cube_dim; ++j) {
+    //         cube[i][j] = new double[cube_dim];
+    //     }
+    //}
+  std::array<std::array<std::array<double, 2>, 2>, 2> cube = {{{0.0}}};
+
     // Fill the cube with values from the vector
     // Fill the cube with values from the vector
     cube[0][0][0] = values[6];
@@ -123,7 +126,8 @@ TEST(SurfaceFinder, Test_Check_Intersect_3D_false){
         Jetscape::real dy = values[5];
         
         // Initialize the cube with the next 8 values
-        double*** cube = initialize_cube(values);
+        // double*** 
+        std::array<std::array<std::array<double, 2>, 2>, 2> cube = initialize_cube(values);
         
         // The actual output of the method
         bool expected_output = static_cast<bool>(values[14]);
@@ -143,7 +147,7 @@ TEST(SurfaceFinder, Test_Check_Intersect_3D_false){
 
         EXPECT_DOUBLE_EQ(result, result);
         // Deallocate the cube
-        delete_cube(cube, 2);
+        // delete_cube(cube, 2);
     }
     
 }
@@ -173,7 +177,8 @@ TEST(SurfaceFinder, Test_Check_Intersect_3D_true) {
         Jetscape::real dy = values[5];
         
         // Initialize the cube with the next 8 values
-        double*** cube = initialize_cube(values);
+        // double*** 
+        std::array<std::array<std::array<double, 2>, 2>, 2> cube = initialize_cube(values);
         
         // The actual output of the method
         bool expected_output = static_cast<bool>(values[14]);
@@ -190,6 +195,6 @@ TEST(SurfaceFinder, Test_Check_Intersect_3D_true) {
         EXPECT_DOUBLE_EQ(result, expected_output);
         
         // Deallocate the cube
-        delete_cube(cube, 2);
+        // delete_cube(cube, 2);
     }
 }

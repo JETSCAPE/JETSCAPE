@@ -55,7 +55,9 @@ void SurfaceFinder::Find_full_hypersurface() {
   }
 }
 
-bool SurfaceFinder::check_intersect_3D(Jetscape::real tau, Jetscape::real x,
+
+#pragma region check_intersect_3D
+bool SurfaceFinder::check_intersect_3D_legacy(Jetscape::real tau, Jetscape::real x,
                                        Jetscape::real y, Jetscape::real dt,
                                        Jetscape::real dx, Jetscape::real dy,
                                        double ***cube) {
@@ -92,6 +94,79 @@ bool SurfaceFinder::check_intersect_3D(Jetscape::real tau, Jetscape::real x,
           intersect = false;
   return (intersect);
 }
+/**
+ * @brief Checks if there is an intersection in a 3D hypersurface.
+ * 
+ * @param tau Local tau value.
+ * @param x Local x value.
+ * @param y Local y value.
+ * @param dt Time step.
+ * @param dx X step.
+ * @param dy Y step.
+ * @param cube Temperature values at the corners of the cube.
+ * @return True if there is an intersection, false otherwise.
+ */
+bool SurfaceFinder::check_intersect_3D(Jetscape::real tau, Jetscape::real x,
+                                       Jetscape::real y, Jetscape::real dt,
+                                       Jetscape::real dx, Jetscape::real dy,
+                                       std::array<std::array<std::array<double, 2>, 2>, 2>& cube) {
+    
+
+    fill_cube_with_temperatures(tau, x, y,  dt, dx, dy,  cube);
+    bool intersect = true;
+    intersect= temperature_intersects_cutoff(cube);
+    return intersect;
+}
+
+/**
+ * @brief Fills the 3D array cube with temperature values from the fluid cells.
+ *
+ * @param tau Central value of tau.
+ * @param x Central value of x.
+ * @param y Central value of y.
+ * @param dt Time step size.
+ * @param dx X step size.
+ * @param dy Y step size.
+ * @param cube 3D array to store temperature values of the grid cell.
+ */
+void SurfaceFinder::fill_cube_with_temperatures(
+  Jetscape::real tau, Jetscape::real x, Jetscape::real y, 
+  Jetscape::real dt, Jetscape::real dx, Jetscape::real dy,
+  std::array<std::array<std::array<double, 2>, 2>, 2>& cube) {
+    auto tau_low = tau - dt / 2.;
+    auto tau_high = tau + dt / 2.;
+    auto x_left = x - dx / 2.;
+    auto x_right = x + dx / 2.;
+    auto y_left = y - dy / 2.;
+    auto y_right = y + dy / 2.;
+    
+    cube[0][0][0] = bulk_info.get(tau_low, x_left, y_left, 0.0).temperature;;
+    cube[0][0][1] = bulk_info.get(tau_low, x_left, y_right, 0.0).temperature;
+    cube[0][1][0] = bulk_info.get(tau_low, x_right, y_left, 0.0).temperature;
+    cube[0][1][1] = bulk_info.get(tau_low, x_right, y_right, 0.0).temperature;
+    cube[1][0][0] = bulk_info.get(tau_high, x_left, y_left, 0.0).temperature;
+    cube[1][0][1] = bulk_info.get(tau_high, x_left, y_right, 0.0).temperature;
+    cube[1][1][0] = bulk_info.get(tau_high, x_right, y_left, 0.0).temperature;;
+    cube[1][1][1]= bulk_info.get(tau_high, x_right, y_right, 0.0).temperature;
+}
+
+/**
+ * @brief Checks if the temperature values in the cube intersect the cutoff temperature.
+ * 
+ * @param cube Temperature values at the corners of the cube.
+ * @return True if the temperature values intersect the cutoff temperature, false otherwise.
+ */
+bool SurfaceFinder::temperature_intersects_cutoff(const std::array<std::array<std::array<double, 2>, 2>, 2>& cube) {
+    if(
+      ((T_cut - cube[0][0][0]) * (cube[1][1][1] - T_cut) < 0.0) &&
+      ((T_cut - cube[0][1][0]) * (cube[1][0][1] - T_cut) < 0.0) &&
+      ((T_cut - cube[0][1][1]) * (cube[1][0][0] - T_cut) < 0.0) &&
+      ((T_cut - cube[0][0][1]) * (cube[1][1][0] - T_cut) < 0.0)
+    )
+      return false;
+    return true;
+}
+#pragma endregion  check_intersect_3D
 
 void SurfaceFinder::Find_full_hypersurface_3D() {
   auto grid_tau0 = bulk_info.Tau0();
@@ -126,6 +201,9 @@ void SurfaceFinder::Find_full_hypersurface_3D() {
         cube[i][j][k] = 0.0;
     }
   }
+  
+  std::array<std::array<std::array<double, 2>, 2>, 2> std_cube = {{{0.0}}};
+
 bool has_print_false_intersect=false;
 int num_true_intersect=0;
 std::ostringstream str_true_intersects;
@@ -138,7 +216,7 @@ std::ostringstream str_true_intersects;
       for (int j = 0; j < ny; j++) {
         auto y_local = grid_y0 + (j + 0.5) * grid_dy;
         bool intersect = check_intersect_3D(tau_local, x_local, y_local,
-                                            grid_dt, grid_dx, grid_dy, cube);
+                                            grid_dt, grid_dx, grid_dy, std_cube);
         
         if (!has_print_false_intersect){
           std::cout<<"\n\n\n\t\t\tintersect false\n";
@@ -190,12 +268,12 @@ std::ostringstream str_true_intersects;
     }
   }
 
-  for (int i = 0; i < 2; i++) {
-    for (int j = 0; j < 2; j++)
-      delete[] cube[i][j];
-    delete[] cube[i];
-  }
-  delete[] cube;
+  // for (int i = 0; i < 2; i++) {
+  //   for (int j = 0; j < 2; j++)
+  //     delete[] cube[i][j];
+  //   delete[] cube[i];
+  // }
+  // delete[] cube;
 }
 
 std::ostringstream  SurfaceFinder::write_check_intersect_3D_input_output_to_stream(
