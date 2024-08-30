@@ -35,7 +35,7 @@ private:
 
 public:
   SurfaceFinder(const Jetscape::real T_in, const EvolutionHistory &bulk_data);
-  // SurfaceFinder();
+  SurfaceFinder();
   ~SurfaceFinder();
 
   void Find_full_hypersurface();
@@ -51,7 +51,9 @@ public:
   bool check_intersect_3D(Jetscape::real tau, Jetscape::real x,
                           Jetscape::real y, Jetscape::real dt,
                           Jetscape::real dx, Jetscape::real dy, double ***cube);
-  std::ostringstream  write_check_intersect_3D_input_output_to_stream(Jetscape::real tau, Jetscape::real x,
+  std::ostringstream  write_check_intersect_3D_input_output_to_stream(
+                                        Jetscape::real T_cut,
+                                        Jetscape::real tau, Jetscape::real x,
                                        Jetscape::real y, Jetscape::real dt,
                                        Jetscape::real dx, Jetscape::real dy,
                                        double ***cube, bool intersect);

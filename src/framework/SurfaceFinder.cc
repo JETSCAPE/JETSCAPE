@@ -38,10 +38,11 @@ SurfaceFinder::SurfaceFinder(const Jetscape::real T_in,
   }
   JSINFO << "Number of fluid cells = " << bulk_info.get_data_size();
 }
-// SurfaceFinder::SurfaceFinder()
-//   :bulk_info(NULL){
-//   JSINFO<<"SurfaceFinder Constructed for test purposes";
-// }
+// Default constructor
+SurfaceFinder::SurfaceFinder() : T_cut(0.0), bulk_info(EvolutionHistory()) {
+    // You can initialize T_in with a default value like 0.0 or any other suitable value.
+    // bulk_info will be initialized using its default constructor.
+}
 SurfaceFinder::~SurfaceFinder() { surface_cell_list.clear(); }
 
 void SurfaceFinder::Find_full_hypersurface() {
@@ -142,7 +143,7 @@ std::ostringstream str_true_intersects;
         if (!has_print_false_intersect){
           std::cout<<"\n\n\n\t\t\tintersect false\n";
           std::ostringstream ostringstream3DCheck=
-          write_check_intersect_3D_input_output_to_stream(tau_local, x_local, y_local,
+          write_check_intersect_3D_input_output_to_stream(T_cut, tau_local, x_local, y_local,
                                             grid_dt, grid_dx, grid_dy, cube,intersect);
           std::cout<<ostringstream3DCheck.str();
           std::cout<<"\n\n\n\t\t\tintersect false End\n";
@@ -152,7 +153,7 @@ std::ostringstream str_true_intersects;
         if (intersect) {
           if(num_true_intersect<10){
           std::cout<<"\n\n\n\t\t\tintersect true\n";
-          std::ostringstream ostringstream3DCheck=write_check_intersect_3D_input_output_to_stream(tau_local, x_local, y_local,
+          std::ostringstream ostringstream3DCheck=write_check_intersect_3D_input_output_to_stream(T_cut,tau_local, x_local, y_local,
                                             grid_dt, grid_dx, grid_dy, cube,intersect);
           
           str_true_intersects<<ostringstream3DCheck.str();
@@ -197,13 +198,15 @@ std::ostringstream str_true_intersects;
   delete[] cube;
 }
 
-std::ostringstream  SurfaceFinder::write_check_intersect_3D_input_output_to_stream(Jetscape::real tau, Jetscape::real x,
-                                       Jetscape::real y, Jetscape::real dt,
-                                       Jetscape::real dx, Jetscape::real dy,
-                                       double ***cube, bool intersect){
+std::ostringstream  SurfaceFinder::write_check_intersect_3D_input_output_to_stream(
+                                      Jetscape::real T_cut,
+                                      Jetscape::real tau, Jetscape::real x,
+                                      Jetscape::real y, Jetscape::real dt,
+                                      Jetscape::real dx, Jetscape::real dy,
+                                      double ***cube, bool intersect){
     std::ostringstream oss; 
     // Serialize vectors
-    oss <<tau << " " << x << " " << y << " " 
+    oss <<T_cut<<" "<<tau << " " << x << " " << y << " " 
         << dt << " " << dx << " " << dy 
           << " " << cube[0][0][0]<< " " << cube[0][0][1] 
           << " " << cube[0][1][0]<< " " << cube[0][1][1]
