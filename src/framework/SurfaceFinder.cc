@@ -125,10 +125,10 @@ void SurfaceFinder::Find_full_hypersurface_3D() {
   const int ny = static_cast<int>(std::abs(2. * grid_y0) / grid_dy);
 
   int surface_cell_list_sz = ntime * nx * ny;
-  std::vector<std::vector<SurfaceCellInfo>>surface_cell_list_local;
+  std::vector<std::vector<SurfaceCellInfo>> surface_cell_list_local;
   surface_cell_list_local.resize(surface_cell_list_sz);
 
-  #pragma omp parallel
+#pragma omp parallel
   {
     double ***cube = new double **[2];
     for (int i = 0; i < 2; i++) {
@@ -143,11 +143,10 @@ void SurfaceFinder::Find_full_hypersurface_3D() {
     std::unique_ptr<Cornelius> cornelius_ptr(new Cornelius());
     cornelius_ptr->init(dim, T_cut, lattice_spacing);
 
-    #pragma omp for collapse(3)
+#pragma omp for collapse(3)
     for (int itime = 0; itime < ntime; itime++) {
       for (int i = 0; i < nx; i++) {
         for (int j = 0; j < ny; j++) {
-
           // loop over time evolution
           auto tau_local = grid_tau0 + (itime + 0.5) * grid_dt;
 
@@ -159,13 +158,14 @@ void SurfaceFinder::Find_full_hypersurface_3D() {
                                               grid_dt, grid_dx, grid_dy, cube);
           if (intersect) {
             cornelius_ptr->find_surface_3d(cube);
-            for (int isurf = 0; isurf < cornelius_ptr->get_Nelements(); isurf++) {
+            for (int isurf = 0; isurf < cornelius_ptr->get_Nelements();
+                 isurf++) {
               auto tau_center = (cornelius_ptr->get_centroid_elem(isurf, 0) +
-                                  tau_local - grid_dt / 2.);
+                                 tau_local - grid_dt / 2.);
               auto x_center = (cornelius_ptr->get_centroid_elem(isurf, 1) +
-                                x_local - grid_dx / 2.);
+                               x_local - grid_dx / 2.);
               auto y_center = (cornelius_ptr->get_centroid_elem(isurf, 2) +
-                                y_local - grid_dy / 2.);
+                               y_local - grid_dy / 2.);
 
               auto da_tau = cornelius_ptr->get_normal_elem(isurf, 0);
               auto da_x = cornelius_ptr->get_normal_elem(isurf, 1);
@@ -174,14 +174,15 @@ void SurfaceFinder::Find_full_hypersurface_3D() {
               auto fluid_cell =
                   bulk_info.get(tau_center, x_center, y_center, 0.0);
               auto surface_cell =
-                  PrepareASurfaceCell(tau_center, x_center, y_center, 0.0, da_tau,
-                                      da_x, da_y, 0.0, fluid_cell);
-              surface_cell_list_local[itime * nx * ny + i * ny + j].push_back(surface_cell);
+                  PrepareASurfaceCell(tau_center, x_center, y_center, 0.0,
+                                      da_tau, da_x, da_y, 0.0, fluid_cell);
+              surface_cell_list_local[itime * nx * ny + i * ny + j].push_back(
+                  surface_cell);
             }
           }
         }
       }
-    } // end of omp for loop
+    }  // end of omp for loop
 
     for (int i = 0; i < 2; i++) {
       for (int j = 0; j < 2; j++)
@@ -189,7 +190,7 @@ void SurfaceFinder::Find_full_hypersurface_3D() {
       delete[] cube[i];
     }
     delete[] cube;
-  } // end of parallel region
+  }  // end of parallel region
 
   // reduction of local 2D vector to 1D class member vector
   for (int i = 0; i < surface_cell_list_sz; i++) {
@@ -411,8 +412,9 @@ SurfaceCellInfo SurfaceFinder::PrepareASurfaceCell(
 }
 
 // function that takes a vector of SurfaceCellInfo and writes it to a file
-void SurfaceFinder::WriteSurfaceToFile(const std::vector<SurfaceCellInfo> &surface_cell_list, std::string filename) {
-
+void SurfaceFinder::WriteSurfaceToFile(
+    const std::vector<SurfaceCellInfo> &surface_cell_list,
+    std::string filename) {
   std::ofstream file;
   file.open(filename, std::ios::app);
 
