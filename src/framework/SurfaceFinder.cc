@@ -393,8 +393,9 @@ SurfaceCellInfo SurfaceFinder::PrepareASurfaceCell(
 }
 
 // function that takes a vector of SurfaceCellInfo and writes it to a file
-void SurfaceFinder::WriteSurfaceToFile(const std::vector<SurfaceCellInfo> &surface_cell_list, std::string filename) {
-
+void SurfaceFinder::WriteSurfaceToFile(
+    const std::vector<SurfaceCellInfo> &surface_cell_list,
+    std::string filename) {
   std::ofstream file;
   file.open(filename, std::ios::app);
 

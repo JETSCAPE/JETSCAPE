@@ -18,8 +18,9 @@
 #ifndef SURFACECELLINFO_H
 #define SURFACECELLINFO_H
 
-#include "RealType.h"
 #include <string>
+
+#include "RealType.h"
 
 namespace Jetscape {
 
@@ -52,23 +53,25 @@ class SurfaceCellInfo {
 
   /** Function to return member variables in a string */
   std::string sfi_to_string() const {
-    std::string str = "tau = " + std::to_string(tau) + ", x = " +
-                      std::to_string(x) + ", y = " + std::to_string(y) +
-                      ", eta = " + std::to_string(eta) + "\n";
+    std::string str =
+        "tau = " + std::to_string(tau) + ", x = " + std::to_string(x) +
+        ", y = " + std::to_string(y) + ", eta = " + std::to_string(eta) + "\n";
     str += "d3sigma_mu = " + std::to_string(d3sigma_mu[0]) + ", " +
-           std::to_string(d3sigma_mu[1]) + ", " + std::to_string(d3sigma_mu[2]) +
-           ", " + std::to_string(d3sigma_mu[3]) + "\n";
+           std::to_string(d3sigma_mu[1]) + ", " +
+           std::to_string(d3sigma_mu[2]) + ", " +
+           std::to_string(d3sigma_mu[3]) + "\n";
     str += "energy_density = " + std::to_string(energy_density) +
            ", entropy_density = " + std::to_string(entropy_density) +
            ", temperature = " + std::to_string(temperature) +
            ", pressure = " + std::to_string(pressure) +
            ", qgp_fraction = " + std::to_string(qgp_fraction) +
-           ", mu_B = " + std::to_string(mu_B) + ", mu_Q = " + std::to_string(mu_Q) +
+           ", mu_B = " + std::to_string(mu_B) +
+           ", mu_Q = " + std::to_string(mu_Q) +
            ", mu_S = " + std::to_string(mu_S) + "\n";
     str += "umu = " + std::to_string(umu[0]) + ", " + std::to_string(umu[1]) +
            ", " + std::to_string(umu[2]) + ", " + std::to_string(umu[3]) + "\n";
-    str += "pi = " + std::to_string(pi[0]) + ", " + std::to_string(pi[1]) + ", " +
-           std::to_string(pi[2]) + ", " + std::to_string(pi[3]) + ", " +
+    str += "pi = " + std::to_string(pi[0]) + ", " + std::to_string(pi[1]) +
+           ", " + std::to_string(pi[2]) + ", " + std::to_string(pi[3]) + ", " +
            std::to_string(pi[4]) + ", " + std::to_string(pi[5]) + ", " +
            std::to_string(pi[6]) + ", " + std::to_string(pi[7]) + ", " +
            std::to_string(pi[8]) + ", " + std::to_string(pi[9]) + "\n";
@@ -78,21 +81,21 @@ class SurfaceCellInfo {
 
   /** Function to compare two SurfaceCellInfo objects */
   bool operator==(const SurfaceCellInfo &rhs) const {
-       return (tau == rhs.tau && x == rhs.x && y == rhs.y && eta == rhs.eta &&
-              d3sigma_mu[0] == rhs.d3sigma_mu[0] &&
-              d3sigma_mu[1] == rhs.d3sigma_mu[1] &&
-              d3sigma_mu[2] == rhs.d3sigma_mu[2] &&
-              d3sigma_mu[3] == rhs.d3sigma_mu[3] &&
-              energy_density == rhs.energy_density &&
-              entropy_density == rhs.entropy_density &&
-              temperature == rhs.temperature && pressure == rhs.pressure &&
-              qgp_fraction == rhs.qgp_fraction && mu_B == rhs.mu_B &&
-              mu_Q == rhs.mu_Q && mu_S == rhs.mu_S && umu[0] == rhs.umu[0] &&
-              umu[1] == rhs.umu[1] && umu[2] == rhs.umu[2] &&
-              umu[3] == rhs.umu[3] && pi[0] == rhs.pi[0] && pi[1] == rhs.pi[1] &&
-              pi[2] == rhs.pi[2] && pi[3] == rhs.pi[3] && pi[4] == rhs.pi[4] &&
-              pi[5] == rhs.pi[5] && pi[6] == rhs.pi[6] && pi[7] == rhs.pi[7] &&
-              pi[8] == rhs.pi[8] && pi[9] == rhs.pi[9] && bulk_Pi == rhs.bulk_Pi);
+    return (tau == rhs.tau && x == rhs.x && y == rhs.y && eta == rhs.eta &&
+            d3sigma_mu[0] == rhs.d3sigma_mu[0] &&
+            d3sigma_mu[1] == rhs.d3sigma_mu[1] &&
+            d3sigma_mu[2] == rhs.d3sigma_mu[2] &&
+            d3sigma_mu[3] == rhs.d3sigma_mu[3] &&
+            energy_density == rhs.energy_density &&
+            entropy_density == rhs.entropy_density &&
+            temperature == rhs.temperature && pressure == rhs.pressure &&
+            qgp_fraction == rhs.qgp_fraction && mu_B == rhs.mu_B &&
+            mu_Q == rhs.mu_Q && mu_S == rhs.mu_S && umu[0] == rhs.umu[0] &&
+            umu[1] == rhs.umu[1] && umu[2] == rhs.umu[2] &&
+            umu[3] == rhs.umu[3] && pi[0] == rhs.pi[0] && pi[1] == rhs.pi[1] &&
+            pi[2] == rhs.pi[2] && pi[3] == rhs.pi[3] && pi[4] == rhs.pi[4] &&
+            pi[5] == rhs.pi[5] && pi[6] == rhs.pi[6] && pi[7] == rhs.pi[7] &&
+            pi[8] == rhs.pi[8] && pi[9] == rhs.pi[9] && bulk_Pi == rhs.bulk_Pi);
   }
 };
 

@@ -69,7 +69,7 @@ class SurfaceFinder {
                                       const FluidCellInfo fluid_cell);
 
   void WriteSurfaceToFile(const std::vector<SurfaceCellInfo> &surface_cell_list,
-                        std::string filename);
+                          std::string filename);
 };
 
 }  // namespace Jetscape
