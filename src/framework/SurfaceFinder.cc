@@ -49,7 +49,7 @@ void SurfaceFinder::Find_full_hypersurface() {
     Find_full_hypersurface_3D();
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed_seconds = end - start;
-    JSINFO << "Time to find the 3D hypersurface: " << elapsed_seconds.count()
+    JSINFO << "3D Time to find the hypersurface: " << elapsed_seconds.count()
            << " s";
     WriteSurfaceToFile(surface_cell_list, "hypersurface_3D.dat");
   } else {
@@ -58,7 +58,7 @@ void SurfaceFinder::Find_full_hypersurface() {
     Find_full_hypersurface_4D();
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed_seconds = end - start;
-    JSINFO << "Time to find the 4D hypersurface: " << elapsed_seconds.count()
+    JSINFO << "4D Time to find the hypersurface: " << elapsed_seconds.count()
            << " s";
     WriteSurfaceToFile(surface_cell_list, "hypersurface_4D.dat");
   }
