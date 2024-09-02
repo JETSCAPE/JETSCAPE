@@ -72,6 +72,11 @@ void JetScape::Init() {
 
   JSINFO << BOLDRED << "Initialize JetScape ...";
 
+  // Print hardware information (if Linux)
+#if defined(__linux__)
+  PrintHardwareInfo();
+#endif
+
   // Set the names of the XML files in the JetScapeXML instance
   JetScapeXML::Instance()->OpenXMLMainFile(GetXMLMainFileName());
   JetScapeXML::Instance()->OpenXMLUserFile(GetXMLUserFileName());
@@ -137,6 +142,37 @@ void JetScape::recurseToSearch(std::vector<std::string> &elems,
     exit(-1);
   }
 }
+
+#if defined(__linux__)
+void JetScape::PrintHardwareInfo() {
+  struct sysinfo mem;
+  const double megabyte = 1024 * 1024;
+  struct utsname name;
+  uname(&name);
+  JSINFO << "CPU Information:";
+  JSINFO << "Total number of CPUs: " << get_nprocs();
+  JSINFO << "Total number of CPUs available: " << sysconf(_SC_NPROCESSORS_ONLN);
+
+  JSINFO << "CPU model name:";
+  if (system("awk -F: '/model name/ {print $2;exit}' /proc/cpuinfo") == -1)
+    JSINFO << "Error: Couldn't retrieve CPU information";
+
+  JSINFO << "System name: " << name.sysname;
+  JSINFO << "Release: " << name.release;
+  JSINFO << "Version: " << name.version;
+  JSINFO << "Kernel Architecture: " << name.machine;
+  if (sysinfo(&mem) == 0) {
+    JSINFO << "Total Ram: " << mem.totalram / megabyte << "MB";
+    JSINFO << "Used Ram: " << mem.totalram / megabyte - mem.freeram / megabyte
+           << "MB";
+  }
+
+  char *pathname = get_current_dir_name();
+  JSINFO << "Working in the current directory: " << pathname;
+  JSINFO << "================================================================";
+  free(pathname);
+}
+#endif
 
 //________________________________________________________________
 void JetScape::CompareElementsFromXML() {
