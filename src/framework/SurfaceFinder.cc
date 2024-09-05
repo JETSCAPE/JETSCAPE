@@ -43,6 +43,17 @@ SurfaceFinder::SurfaceFinder(const Jetscape::real T_in,
 SurfaceFinder::~SurfaceFinder() { surface_cell_list.clear(); }
 
 void SurfaceFinder::Find_full_hypersurface() {
+  char* surf_path = std::getenv("SURF_PATH");
+  std::string surf_path_str;
+  std::string filename;
+  if (surf_path != NULL) {
+    JSINFO << "SURF_PATH is set to " << surf_path;
+    surf_path_str = std::string(surf_path);
+    filename = surf_path_str + "/hypersurface.dat";
+  } else {
+    JSINFO << "SURF_PATH is not set.";
+    filename = "hypersurface.dat";
+  }
   if (boost_invariant) {
     JSINFO << "Finding a 2+1D hyper-surface at T = " << T_cut << " GeV ...";
     auto start = std::chrono::high_resolution_clock::now();
@@ -51,7 +62,7 @@ void SurfaceFinder::Find_full_hypersurface() {
     std::chrono::duration<double> elapsed_seconds = end - start;
     JSINFO << "3D Time to find the hypersurface: " << elapsed_seconds.count()
            << " s";
-    WriteSurfaceToFile(surface_cell_list, "hypersurface_3D.dat");
+    WriteSurfaceToFile(surface_cell_list, filename);
   } else {
     JSINFO << "Finding a 3+1D hyper-surface at T = " << T_cut << " GeV ...";
     auto start = std::chrono::high_resolution_clock::now();
@@ -60,7 +71,7 @@ void SurfaceFinder::Find_full_hypersurface() {
     std::chrono::duration<double> elapsed_seconds = end - start;
     JSINFO << "4D Time to find the hypersurface: " << elapsed_seconds.count()
            << " s";
-    WriteSurfaceToFile(surface_cell_list, "hypersurface_4D.dat");
+    WriteSurfaceToFile(surface_cell_list, filename);
   }
 }
 
