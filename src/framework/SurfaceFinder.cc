@@ -43,6 +43,17 @@ SurfaceFinder::SurfaceFinder(const Jetscape::real T_in,
 SurfaceFinder::~SurfaceFinder() { surface_cell_list.clear(); }
 
 void SurfaceFinder::Find_full_hypersurface() {
+  char* surf_path = std::getenv("SURF_PATH");
+  std::string surf_path_str;
+  std::string filename;
+  if (surf_path != NULL) {
+    JSINFO << "SURF_PATH is set to " << surf_path;
+    surf_path_str = std::string(surf_path);
+    filename = surf_path_str + "/hypersurface.dat";
+  } else {
+    JSINFO << "SURF_PATH is not set.";
+    filename = "hypersurface.dat";
+  }
   if (boost_invariant) {
     JSINFO << "Finding a 2+1D hyper-surface at T = " << T_cut << " GeV ...";
     auto start = std::chrono::high_resolution_clock::now();
@@ -51,7 +62,7 @@ void SurfaceFinder::Find_full_hypersurface() {
     std::chrono::duration<double> elapsed_seconds = end - start;
     JSINFO << "3D Time to find the hypersurface: " << elapsed_seconds.count()
            << " s";
-    WriteSurfaceToFile(surface_cell_list, "hypersurface_3D.dat");
+    WriteSurfaceToFile(surface_cell_list, filename);
   } else {
     JSINFO << "Finding a 3+1D hyper-surface at T = " << T_cut << " GeV ...";
     auto start = std::chrono::high_resolution_clock::now();
@@ -60,7 +71,7 @@ void SurfaceFinder::Find_full_hypersurface() {
     std::chrono::duration<double> elapsed_seconds = end - start;
     JSINFO << "4D Time to find the hypersurface: " << elapsed_seconds.count()
            << " s";
-    WriteSurfaceToFile(surface_cell_list, "hypersurface_4D.dat");
+    WriteSurfaceToFile(surface_cell_list, filename);
   }
 }
 
@@ -284,83 +295,99 @@ void SurfaceFinder::Find_full_hypersurface_4D() {
   lattice_spacing[2] = grid_dy;
   lattice_spacing[3] = grid_deta;
 
-  std::unique_ptr<Cornelius> cornelius_ptr(new Cornelius());
-  cornelius_ptr->init(dim, T_cut, lattice_spacing);
-
   const int ntime = static_cast<int>((grid_tauf - grid_tau0) / grid_dt);
   const int nx = static_cast<int>(std::abs(2. * grid_x0) / grid_dx);
   const int ny = static_cast<int>(std::abs(2. * grid_y0) / grid_dy);
   const int neta = static_cast<int>(std::abs(2. * grid_eta0) / grid_deta);
 
-  double ****cube = new double ***[2];
-  for (int i = 0; i < 2; i++) {
-    cube[i] = new double **[2];
-    for (int j = 0; j < 2; j++) {
-      cube[i][j] = new double *[2];
-      for (int k = 0; k < 2; k++) {
-        cube[i][j][k] = new double[2];
-        for (int l = 0; l < 2; l++) {
-          cube[i][j][k][l] = 0.0;
-        }
-      }
-    }
-  }
+  int surface_cell_list_sz = ntime * nx * ny * neta;
+  std::vector<std::vector<SurfaceCellInfo>> surface_cell_list_local;
+  surface_cell_list_local.resize(surface_cell_list_sz);
 
-  for (int itime = 0; itime < ntime; itime++) {
-    // loop over time evolution
-    auto tau_local = grid_tau0 + (itime + 0.5) * grid_dt;
-    for (int l = 0; l < neta; l++) {
-      auto eta_local = grid_eta0 + (l + 0.5) * grid_deta;
-      // loops over the transverse plane
-      for (int i = 0; i < nx; i++) {
-        // loops over the transverse plane
-        auto x_local = grid_x0 + (i + 0.5) * grid_dx;
-        for (int j = 0; j < ny; j++) {
-          auto y_local = grid_y0 + (j + 0.5) * grid_dy;
-          bool intersect =
-              check_intersect_4D(tau_local, x_local, y_local, eta_local,
-                                 grid_dt, grid_dx, grid_dy, grid_deta, cube);
-          if (intersect) {
-            cornelius_ptr->find_surface_4d(cube);
-            for (int isurf = 0; isurf < cornelius_ptr->get_Nelements();
-                 isurf++) {
-              auto tau_center = (cornelius_ptr->get_centroid_elem(isurf, 0) +
-                                 tau_local - grid_dt / 2.);
-              auto x_center = (cornelius_ptr->get_centroid_elem(isurf, 1) +
-                               x_local - grid_dx / 2.);
-              auto y_center = (cornelius_ptr->get_centroid_elem(isurf, 2) +
-                               y_local - grid_dy / 2.);
-              auto eta_center = (cornelius_ptr->get_centroid_elem(isurf, 3) +
-                                 eta_local - grid_deta / 2.);
-
-              auto da_tau = (cornelius_ptr->get_normal_elem(isurf, 0));
-              auto da_x = (cornelius_ptr->get_normal_elem(isurf, 1));
-              auto da_y = (cornelius_ptr->get_normal_elem(isurf, 2));
-              auto da_eta = (cornelius_ptr->get_normal_elem(isurf, 3));
-
-              auto fluid_cell =
-                  bulk_info.get(tau_center, x_center, y_center, eta_center);
-              auto surface_cell = PrepareASurfaceCell(
-                  tau_center, x_center, y_center, eta_center, da_tau, da_x,
-                  da_y, da_eta, fluid_cell);
-              surface_cell_list.push_back(surface_cell);
-            }
+#pragma omp parallel
+  {
+    double ****cube = new double ***[2];
+    for (int i = 0; i < 2; i++) {
+      cube[i] = new double **[2];
+      for (int j = 0; j < 2; j++) {
+        cube[i][j] = new double *[2];
+        for (int k = 0; k < 2; k++) {
+          cube[i][j][k] = new double[2];
+          for (int l = 0; l < 2; l++) {
+            cube[i][j][k][l] = 0.0;
           }
         }
       }
     }
-  }
 
-  for (int i = 0; i < 2; i++) {
-    for (int j = 0; j < 2; j++) {
-      for (int k = 0; k < 2; k++) {
-        delete[] cube[i][j][k];
+    std::unique_ptr<Cornelius> cornelius_ptr(new Cornelius());
+    cornelius_ptr->init(dim, T_cut, lattice_spacing);
+
+#pragma omp for collapse(4)
+    for (int itime = 0; itime < ntime; itime++) {
+      for (int l = 0; l < neta; l++) {
+        for (int i = 0; i < nx; i++) {
+          for (int j = 0; j < ny; j++) {
+            // loop over time evolution
+            auto tau_local = grid_tau0 + (itime + 0.5) * grid_dt;
+            auto eta_local = grid_eta0 + (l + 0.5) * grid_deta;
+            // loops over the transverse plane
+            auto x_local = grid_x0 + (i + 0.5) * grid_dx;
+            auto y_local = grid_y0 + (j + 0.5) * grid_dy;
+            bool intersect =
+                check_intersect_4D(tau_local, x_local, y_local, eta_local,
+                                   grid_dt, grid_dx, grid_dy, grid_deta, cube);
+            if (intersect) {
+              cornelius_ptr->find_surface_4d(cube);
+              for (int isurf = 0; isurf < cornelius_ptr->get_Nelements();
+                   isurf++) {
+                auto tau_center = (cornelius_ptr->get_centroid_elem(isurf, 0) +
+                                   tau_local - grid_dt / 2.);
+                auto x_center = (cornelius_ptr->get_centroid_elem(isurf, 1) +
+                                 x_local - grid_dx / 2.);
+                auto y_center = (cornelius_ptr->get_centroid_elem(isurf, 2) +
+                                 y_local - grid_dy / 2.);
+                auto eta_center = (cornelius_ptr->get_centroid_elem(isurf, 3) +
+                                   eta_local - grid_deta / 2.);
+
+                auto da_tau = (cornelius_ptr->get_normal_elem(isurf, 0));
+                auto da_x = (cornelius_ptr->get_normal_elem(isurf, 1));
+                auto da_y = (cornelius_ptr->get_normal_elem(isurf, 2));
+                auto da_eta = (cornelius_ptr->get_normal_elem(isurf, 3));
+
+                auto fluid_cell =
+                    bulk_info.get(tau_center, x_center, y_center, eta_center);
+                auto surface_cell = PrepareASurfaceCell(
+                    tau_center, x_center, y_center, eta_center, da_tau, da_x,
+                    da_y, da_eta, fluid_cell);
+                surface_cell_list_local[itime * nx * ny * neta + l * nx * ny +
+                                        i * ny + j]
+                    .push_back(surface_cell);
+              }
+            }
+          }
+        }
       }
-      delete[] cube[i][j];
+    }  // end of omp for loop
+
+    for (int i = 0; i < 2; i++) {
+      for (int j = 0; j < 2; j++) {
+        for (int k = 0; k < 2; k++) {
+          delete[] cube[i][j][k];
+        }
+        delete[] cube[i][j];
+      }
+      delete[] cube[i];
     }
-    delete[] cube[i];
+    delete[] cube;
+  }  // end of parallel region
+
+  // reduction of local 2D vector to 1D class member vector
+  for (int i = 0; i < surface_cell_list_sz; i++) {
+    for (int j = 0; j < surface_cell_list_local[i].size(); j++) {
+      surface_cell_list.push_back(surface_cell_list_local[i][j]);
+    }
   }
-  delete[] cube;
 }
 
 SurfaceCellInfo SurfaceFinder::PrepareASurfaceCell(
