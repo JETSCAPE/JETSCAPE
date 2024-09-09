@@ -735,6 +735,7 @@ void makeObsPred(vector<string> directories, string input, string name, string h
     //declaring vectors to hold results
     vector<vector<double>> pionPredicts;
     vector<vector<double>> pionErrs;
+    bool xp = (name.find("xp") != std::string::npos);
  
     //grabbing graphs from each jetscape file
     for(int i = 0; i < directories.size(); i++){
@@ -748,7 +749,7 @@ void makeObsPred(vector<string> directories, string input, string name, string h
         //dat file data for Bayes analysis
         vector<double> piontemp, piontemperrs;
         for(int j = 1; j <= tempHistPions->GetNbinsX(); j++){
-            if(!ee or tempHistPions->GetBinContent(j)>0){
+            if(!ee or tempHistPions->GetBinContent(j)>0 or !xp){
                 piontemp.push_back(tempHistPions->GetBinContent(j));
                 piontemperrs.push_back(tempHistPions->GetBinError(j));
             }
