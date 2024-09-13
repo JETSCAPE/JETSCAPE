@@ -162,10 +162,7 @@ void SurfaceFinder::Find_full_hypersurface_3D() {
   Jetscape::real grid_dy = 0.2;
 
   const int dim = 3;
-  double lattice_spacing[dim];
-  lattice_spacing[0] = grid_dt;
-  lattice_spacing[1] = grid_dx;
-  lattice_spacing[2] = grid_dy;
+  std::array<double, dim> lattice_spacing = {grid_dt, grid_dx, grid_dy};
 
   const int ntime = static_cast<int>((grid_tauf - grid_tau0) / grid_dt);
   const int nx = static_cast<int>(std::abs(2. * grid_x0) / grid_dx);
@@ -188,7 +185,7 @@ void SurfaceFinder::Find_full_hypersurface_3D() {
     }
 
     std::unique_ptr<Cornelius> cornelius_ptr(new Cornelius());
-    cornelius_ptr->init(dim, T_cut, lattice_spacing);
+    cornelius_ptr->init(dim, T_cut, lattice_spacing.data());
 
 #pragma omp for collapse(3)
     for (int itime = 0; itime < ntime; itime++) {
