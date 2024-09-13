@@ -93,6 +93,13 @@ bool temperature_intersects_cutoff(const std::array<std::array<std::array<double
 #pragma endregion check_intersect_3D
 #pragma region Find_fill_hypersurface_3D
   void Find_full_hypersurface_3D();
+  /*
+* @brief Reduce the local 2D vector to 1D class member vector.
+*
+* @param surface_cell_list_local Local 2D vector.
+* @param surface_cell_list_sz Size of the local 2D vector.
+*/
+void reduce_surface_cell_list(std::vector<std::vector<SurfaceCellInfo>>& surface_cell_list_local, int surface_cell_list_sz); 
   void process_surface_elements(Jetscape::real tau_local, Jetscape::real x_local, Jetscape::real y_local, 
                                              Jetscape::real grid_dt, Jetscape::real grid_dx, Jetscape::real grid_dy, 
                                              std::array<std::array<std::array<double, 2>, 2>, 2>& cube,

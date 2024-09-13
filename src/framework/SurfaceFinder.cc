@@ -162,7 +162,10 @@ void convert_cube(std::array<std::array<std::array<double, 2>, 2>, 2>& cube, dou
   }
 }
 
-// a method that takes cube_temp from previous method as input and deletes it
+/*
+* @brief Delete the local 3D array.
+* a method that takes cube_temp from previous method as input and deletes it
+*/
 void delete_cube(double ***cube_temp) {
   for (int i = 0; i < 2; i++) {
     for (int j = 0; j < 2; j++)
@@ -206,12 +209,9 @@ void SurfaceFinder::Find_full_hypersurface_3D() {
         for (int j = 0; j < ny; j++) {
           // loop over time evolution
           auto tau_local = grid_tau0 + (itime + 0.5) * grid_dt;
-
           // loops over the transverse plane
           auto x_local = grid_x0 + (i + 0.5) * grid_dx;
-
           auto y_local = grid_y0 + (j + 0.5) * grid_dy;
-
           bool intersect = check_intersect_3D(tau_local, x_local, y_local,
                                               grid_dt, grid_dx, grid_dy, cube);
           if (intersect) {
@@ -223,22 +223,22 @@ void SurfaceFinder::Find_full_hypersurface_3D() {
       }
     }  // end of omp for loop
   }  // end of parallel region
-
   // reduction of local 2D vector to 1D class member vector
-  // reduce_surface_cell_list(surface_cell_list_local, surface_cell_list_sz);
+  reduce_surface_cell_list(surface_cell_list_local, surface_cell_list_sz);
+}
+/*
+* @brief Reduce the local 2D vector to 1D class member vector.
+*
+* @param surface_cell_list_local Local 2D vector.
+* @param surface_cell_list_sz Size of the local 2D vector.
+*/
+void SurfaceFinder::reduce_surface_cell_list(std::vector<std::vector<SurfaceCellInfo>>& surface_cell_list_local, int surface_cell_list_sz){
   for (int i = 0; i < surface_cell_list_sz; i++) {
     for (int j = 0; j < surface_cell_list_local[i].size(); j++) {
       surface_cell_list.push_back(surface_cell_list_local[i][j]);
     }
   }
 }
-// void reduce_surface_cell_list(std::vector<std::vector<SurfaceCellInfo>>& surface_cell_list_local, int surface_cell_list_sz){
-//   for (int i = 0; i < surface_cell_list_sz; i++) {
-//     for (int j = 0; j < surface_cell_list_local[i].size(); j++) {
-//       surface_cell_list.push_back(surface_cell_list_local[i][j]);
-//     }
-//   }
-// }
 /**
  * @brief Process surface elements found by Cornelius.
  *
