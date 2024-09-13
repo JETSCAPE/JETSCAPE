@@ -21,10 +21,12 @@
 #include <fstream>
 #include <omp.h>
 #include <vector>
+#include <memory>
 
 #include "FluidEvolutionHistory.h"
 #include "RealType.h"
 #include "SurfaceCellInfo.h"
+#include "cornelius.h"
 
 namespace Jetscape {
 
@@ -89,10 +91,14 @@ void fill_cube_with_temperatures(
  */
 bool temperature_intersects_cutoff(const std::array<std::array<std::array<double, 2>, 2>, 2>& cube);
 #pragma endregion check_intersect_3D
-  
+#pragma region Find_fill_hypersurface_3D
   void Find_full_hypersurface_3D();
-  
-
+  void process_surface_elements(Jetscape::real tau_local, Jetscape::real x_local, Jetscape::real y_local, 
+                                             Jetscape::real grid_dt, Jetscape::real grid_dx, Jetscape::real grid_dy, 
+                                             std::array<std::array<std::array<double, 2>, 2>, 2>& cube,
+                                             const int itime, const int nx ,const int ny ,int i ,int j, 
+                                             const std::unique_ptr<Cornelius>& cornelius_ptr, std::vector<std::vector<SurfaceCellInfo>>& surface_cell_list_local);
+#pragma endregion Find_fill_hypersurface_3D
   bool check_intersect_4D(Jetscape::real tau, Jetscape::real x,
                           Jetscape::real y, Jetscape::real eta,
                           Jetscape::real dt, Jetscape::real dx,
