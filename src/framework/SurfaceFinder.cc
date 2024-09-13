@@ -74,12 +74,12 @@ void SurfaceFinder::Find_full_hypersurface() {
     WriteSurfaceToFile(surface_cell_list, filename);
   }
 }
-
+#pragma region check_intersect_3D
 bool SurfaceFinder::check_intersect_3D(Jetscape::real tau, Jetscape::real x,
                                        Jetscape::real y, Jetscape::real dt,
                                        Jetscape::real dx, Jetscape::real dy,
                                        double ***cube) {
-  bool intersect = true;
+  
 
   auto tau_low = tau - dt / 2.;
   auto tau_high = tau + dt / 2.;
@@ -105,15 +105,39 @@ bool SurfaceFinder::check_intersect_3D(Jetscape::real tau, Jetscape::real x,
   fluid_cell = bulk_info.get(tau_high, x_right, y_right, 0.0);
   cube[1][1][1] = fluid_cell.temperature;
 
-  if ((T_cut - cube[0][0][0]) * (cube[1][1][1] - T_cut) < 0.0)
-    if ((T_cut - cube[0][1][0]) * (cube[1][0][1] - T_cut) < 0.0)
-      if ((T_cut - cube[0][1][1]) * (cube[1][0][0] - T_cut) < 0.0)
-        if ((T_cut - cube[0][0][1]) * (cube[1][1][0] - T_cut) < 0.0)
-          intersect = false;
+  bool intersect = true;
+  //convert cube to std::array<std::array<std::array<double, 2>, 2>, 2>
+  std::array<std::array<std::array<double, 2>, 2>, 2> temperature_intersects_cutoff_cube;
+  for (int i = 0; i < 2; i++) {
+    for (int j = 0; j < 2; j++) {
+      for (int k = 0; k < 2; k++) {
+        temperature_intersects_cutoff_cube[i][j][k] = cube[i][j][k];
+      }
+    }
+  }
+  intersect= temperature_intersects_cutoff(temperature_intersects_cutoff_cube);
 
   return (intersect);
 }
+/**
+ * @brief Checks if the temperature values in the cube intersect the cutoff temperature.
+ * 
+ * @param cube Temperature values at the corners of the cube.
+ * @return True if the temperature values intersect the cutoff temperature, false otherwise.
+ */
+bool SurfaceFinder::temperature_intersects_cutoff(const std::array<std::array<std::array<double, 2>, 2>, 2>& cube) {
+    bool intersect = true;
+    if (
+        ((T_cut - cube[0][0][0]) * (cube[1][1][1] - T_cut) < 0.0) && 
+        ((T_cut - cube[0][1][0]) * (cube[1][0][1] - T_cut) < 0.0) && 
+        ((T_cut - cube[0][1][1]) * (cube[1][0][0] - T_cut) < 0.0) &&
+        ((T_cut - cube[0][0][1]) * (cube[1][1][0] - T_cut) < 0.0)
+      )
+      intersect = false;
 
+    return intersect;
+}
+#pragma endregion  check_intersect_3D
 void SurfaceFinder::Find_full_hypersurface_3D() {
   auto grid_tau0 = bulk_info.Tau0();
   auto grid_tauf = bulk_info.TauMax();

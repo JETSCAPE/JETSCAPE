@@ -49,7 +49,16 @@ class SurfaceFinder {
   std::vector<SurfaceCellInfo> get_surface_cells_vector() const {
     return (surface_cell_list);
   }
+#pragma region check_intersect_3D
 
+/**
+ * @brief Checks if the temperature values in the cube intersect the cutoff temperature.
+ * 
+ * @param cube Temperature values at the corners of the cube.
+ * @return True if the temperature values intersect the cutoff temperature, false otherwise.
+ */
+bool temperature_intersects_cutoff(const std::array<std::array<std::array<double, 2>, 2>, 2>& cube);
+#pragma endregion check_intersect_3D
   bool check_intersect_3D(Jetscape::real tau, Jetscape::real x,
                           Jetscape::real y, Jetscape::real dt,
                           Jetscape::real dx, Jetscape::real dy, double ***cube);
