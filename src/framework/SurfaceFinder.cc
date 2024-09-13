@@ -80,44 +80,54 @@ bool SurfaceFinder::check_intersect_3D(Jetscape::real tau, Jetscape::real x,
                                        Jetscape::real dx, Jetscape::real dy,
                                        double ***cube) {
   
-
-  auto tau_low = tau - dt / 2.;
-  auto tau_high = tau + dt / 2.;
-  auto x_left = x - dx / 2.;
-  auto x_right = x + dx / 2.;
-  auto y_left = y - dy / 2.;
-  auto y_right = y + dy / 2.;
-
-  auto fluid_cell = bulk_info.get(tau_low, x_left, y_left, 0.0);
-  cube[0][0][0] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_low, x_left, y_right, 0.0);
-  cube[0][0][1] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_low, x_right, y_left, 0.0);
-  cube[0][1][0] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_low, x_right, y_right, 0.0);
-  cube[0][1][1] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_high, x_left, y_left, 0.0);
-  cube[1][0][0] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_high, x_left, y_right, 0.0);
-  cube[1][0][1] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_high, x_right, y_left, 0.0);
-  cube[1][1][0] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_high, x_right, y_right, 0.0);
-  cube[1][1][1] = fluid_cell.temperature;
-
-  bool intersect = true;
   //convert cube to std::array<std::array<std::array<double, 2>, 2>, 2>
-  std::array<std::array<std::array<double, 2>, 2>, 2> temperature_intersects_cutoff_cube;
+  std::array<std::array<std::array<double, 2>, 2>, 2> cube_temp;
   for (int i = 0; i < 2; i++) {
     for (int j = 0; j < 2; j++) {
       for (int k = 0; k < 2; k++) {
-        temperature_intersects_cutoff_cube[i][j][k] = cube[i][j][k];
+        cube_temp[i][j][k] = cube[i][j][k];
       }
     }
   }
-  intersect= temperature_intersects_cutoff(temperature_intersects_cutoff_cube);
+
+  fill_cube_with_temperatures(tau, x, y, dt, dx, dy, cube_temp);
+
+  bool intersect = true;
+
+  intersect= temperature_intersects_cutoff(cube_temp);
 
   return (intersect);
+}
+/**
+ * @brief Fills the 4D array cube with temperature values from the fluid cells.
+ *
+ * @param tau Central value of tau.
+ * @param x Central value of x.
+ * @param y Central value of y.
+ * @param dt Time step size.
+ * @param dx X step size.
+ * @param dy Y step size.
+ * @param cube 3D array to store temperature values of the grid cell.
+ */
+void SurfaceFinder::fill_cube_with_temperatures(
+  Jetscape::real tau, Jetscape::real x, Jetscape::real y, 
+  Jetscape::real dt, Jetscape::real dx, Jetscape::real dy,
+  std::array<std::array<std::array<double, 2>, 2>, 2>& cube) {
+    auto tau_low = tau - dt / 2.;
+    auto tau_high = tau + dt / 2.;
+    auto x_left = x - dx / 2.;
+    auto x_right = x + dx / 2.;
+    auto y_left = y - dy / 2.;
+    auto y_right = y + dy / 2.;
+    
+    cube[0][0][0] = bulk_info.get(tau_low, x_left, y_left, 0.0).temperature;;
+    cube[0][0][1] = bulk_info.get(tau_low, x_left, y_right, 0.0).temperature;
+    cube[0][1][0] = bulk_info.get(tau_low, x_right, y_left, 0.0).temperature;
+    cube[0][1][1] = bulk_info.get(tau_low, x_right, y_right, 0.0).temperature;
+    cube[1][0][0] = bulk_info.get(tau_high, x_left, y_left, 0.0).temperature;
+    cube[1][0][1] = bulk_info.get(tau_high, x_left, y_right, 0.0).temperature;
+    cube[1][1][0] = bulk_info.get(tau_high, x_right, y_left, 0.0).temperature;;
+    cube[1][1][1]= bulk_info.get(tau_high, x_right, y_right, 0.0).temperature;
 }
 /**
  * @brief Checks if the temperature values in the cube intersect the cutoff temperature.
