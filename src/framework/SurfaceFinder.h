@@ -51,6 +51,21 @@ class SurfaceFinder {
   }
 #pragma region check_intersect_3D
 /**
+ * @brief Checks if the cube intersects the cutoff temperature.
+ * 
+ * @param tau Central value of tau.
+ * @param x Central value of x.
+ * @param y Central value of y.
+ * @param dt Time step size.
+ * @param cube 3D array to store temperature values of the grid cell.
+ * @return True if the cube intersects the cutoff temperature, false otherwise.
+ */
+bool check_intersect_3D(Jetscape::real tau, Jetscape::real x,
+                        Jetscape::real y, Jetscape::real dt,
+                        Jetscape::real dx, Jetscape::real dy,
+                        std::array<std::array<std::array<double, 2>, 2>, 2>& cube);
+
+/**
  * @brief Fills the 4D array cube with temperature values from the fluid cells.
  *
  * @param tau Central value of tau.
@@ -74,9 +89,7 @@ void fill_cube_with_temperatures(
  */
 bool temperature_intersects_cutoff(const std::array<std::array<std::array<double, 2>, 2>, 2>& cube);
 #pragma endregion check_intersect_3D
-  bool check_intersect_3D(Jetscape::real tau, Jetscape::real x,
-                          Jetscape::real y, Jetscape::real dt,
-                          Jetscape::real dx, Jetscape::real dy, double ***cube);
+  
   void Find_full_hypersurface_3D();
 
   bool check_intersect_4D(Jetscape::real tau, Jetscape::real x,

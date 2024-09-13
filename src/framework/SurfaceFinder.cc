@@ -75,26 +75,28 @@ void SurfaceFinder::Find_full_hypersurface() {
   }
 }
 #pragma region check_intersect_3D
+/**
+ * @brief Checks if the temperature values in the cube intersect the cutoff temperature.
+ * 
+ * @param tau Central value of tau.
+ * @param x Central value of x.
+ * @param y Central value of y.
+ * @param dt Time step size.
+ * @param dx X step size.
+ * @param dy Y step size.
+ * @param cube 3D array to store temperature values of the grid cell.
+ * @return True if the temperature values intersect the cutoff temperature, false otherwise.
+ */
 bool SurfaceFinder::check_intersect_3D(Jetscape::real tau, Jetscape::real x,
                                        Jetscape::real y, Jetscape::real dt,
                                        Jetscape::real dx, Jetscape::real dy,
-                                       double ***cube) {
-  
-  //convert cube to std::array<std::array<std::array<double, 2>, 2>, 2>
-  std::array<std::array<std::array<double, 2>, 2>, 2> cube_temp;
-  for (int i = 0; i < 2; i++) {
-    for (int j = 0; j < 2; j++) {
-      for (int k = 0; k < 2; k++) {
-        cube_temp[i][j][k] = cube[i][j][k];
-      }
-    }
-  }
+                                       std::array<std::array<std::array<double, 2>, 2>, 2>& cube) {
 
-  fill_cube_with_temperatures(tau, x, y, dt, dx, dy, cube_temp);
+  fill_cube_with_temperatures(tau, x, y, dt, dx, dy, cube);
 
   bool intersect = true;
 
-  intersect= temperature_intersects_cutoff(cube_temp);
+  intersect= temperature_intersects_cutoff(cube);
 
   return (intersect);
 }
@@ -199,8 +201,18 @@ void SurfaceFinder::Find_full_hypersurface_3D() {
           auto x_local = grid_x0 + (i + 0.5) * grid_dx;
 
           auto y_local = grid_y0 + (j + 0.5) * grid_dy;
+
+          //convert cube to std::array<std::array<std::array<double, 2>, 2>, 2>
+          std::array<std::array<std::array<double, 2>, 2>, 2> cube_temp;
+          for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 2; j++) {
+              for (int k = 0; k < 2; k++) {
+                cube_temp[i][j][k] = cube[i][j][k];
+              }
+            }
+          }
           bool intersect = check_intersect_3D(tau_local, x_local, y_local,
-                                              grid_dt, grid_dx, grid_dy, cube);
+                                              grid_dt, grid_dx, grid_dy, cube_temp);
           if (intersect) {
             cornelius_ptr->find_surface_3d(cube);
             for (int isurf = 0; isurf < cornelius_ptr->get_Nelements();
