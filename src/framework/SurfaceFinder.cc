@@ -309,12 +309,7 @@ JSINFO << "Getting into parrallel region\n";
         }
       }
     }  // end of omp for loop
-    for (int i = 0; i < 2; i++) {
-      for (int j = 0; j < 2; j++)
-        delete[] cube[i][j];
-      delete[] cube[i];
-    }
-    delete[] cube;
+    delete_cube(cube);
   }  // end of parallel region
   // reduction of local 2D vector to 1D class member vector
   reduce_surface_cell_list(surface_cell_list_local, surface_cell_list_sz);
