@@ -215,7 +215,17 @@ void delete_cube(double ***cube_temp) {
   }
   delete[] cube_temp;
 }
-
+void create_cube(double ***&cube, double init_value) {
+      cube = new double **[2];
+      for (int i = 0; i < 2; i++) {
+        cube[i] = new double *[2];
+        for (int j = 0; j < 2; j++) {
+          cube[i][j] = new double[2];
+          for (int k = 0; k < 2; k++)
+            cube[i][j][k] = init_value;
+        }
+      }
+    }
 void SurfaceFinder::Find_full_hypersurface_3D() {
   //log that the hypersurface 3D is being runnin
   JSINFO << "Finding a 2+1D hyper-surface at T = " << T_cut << " GeV ...";
@@ -244,17 +254,8 @@ JSINFO << "Getting into parrallel region\n";
 #pragma omp parallel
 {
     // std::array<std::array<std::array<double, 2>, 2>, 2> cube = {{{0.0}}};
-    double ***cube = new double **[2];
-    for (int i = 0; i < 2; i++) {
-      cube[i] = new double *[2];
-      for (int j = 0; j < 2; j++) {
-        cube[i][j] = new double[2];
-        for (int k = 0; k < 2; k++)
-          cube[i][j][k] = 0.0;
-      }
-    }
-    
-
+    double ***cube;
+    create_cube(cube,0.0);
     std::unique_ptr<Cornelius> cornelius_ptr(new Cornelius());
     cornelius_ptr->init(dim, T_cut, lattice_spacing.data());
 
@@ -279,32 +280,11 @@ JSINFO << "Getting into parrallel region\n";
           if (intersect) {
             //log that we are in the intersect loop
             JSINFO << "Intersect loop\n";
-            // process_surface_elements(tau_local,  x_local,y_local, grid_dt, grid_dx, grid_dy, 
-            //                          cube, itime, nx , ny , i , j,
-            //                          cornelius_ptr,surface_cell_list_local);
 
             cornelius_ptr->find_surface_3d(cube);
-            for (int isurf = 0; isurf < cornelius_ptr->get_Nelements();
-                 isurf++) {
-              auto tau_center = (cornelius_ptr->get_centroid_elem(isurf, 0) +
-                                 tau_local - grid_dt / 2.);
-              auto x_center = (cornelius_ptr->get_centroid_elem(isurf, 1) +
-                               x_local - grid_dx / 2.);
-              auto y_center = (cornelius_ptr->get_centroid_elem(isurf, 2) +
-                               y_local - grid_dy / 2.);
-
-              auto da_tau = cornelius_ptr->get_normal_elem(isurf, 0);
-              auto da_x = cornelius_ptr->get_normal_elem(isurf, 1);
-              auto da_y = cornelius_ptr->get_normal_elem(isurf, 2);
-
-              auto fluid_cell =
-                  bulk_info.get(tau_center, x_center, y_center, 0.0);
-              auto surface_cell =
-                  PrepareASurfaceCell(tau_center, x_center, y_center, 0.0,
-                                      da_tau, da_x, da_y, 0.0, fluid_cell);
-              surface_cell_list_local[itime * nx * ny + i * ny + j].push_back(
-                  surface_cell);
-          }
+            process_surface_elements(tau_local,  x_local,y_local, grid_dt, grid_dx, grid_dy, 
+                                     cube, itime, nx , ny , i , j,
+                                     cornelius_ptr,surface_cell_list_local);
          }
         }
       }
@@ -344,7 +324,8 @@ void SurfaceFinder::process_surface_elements(Jetscape::real tau_local, Jetscape:
                                             //  std::array<std::array<std::array<double, 2>, 2>, 2>& cube, 
                                               double ***cube,
                                              const int itime, const int nx ,const int ny ,int i ,int j,
-                                             const std::unique_ptr<Cornelius>& cornelius_ptr, std::vector<std::vector<SurfaceCellInfo>>& surface_cell_list_local){
+                                             const std::unique_ptr<Cornelius>& cornelius_ptr, 
+                                             std::vector<std::vector<SurfaceCellInfo>>& surface_cell_list_local){
   // converting cube from std::array<std::array<std::array<double, 2>, 2>, 2> to double***
   //log that we are converting cube from std::array<std::array<std::array<double, 2>, 2>, 2> to double***
   // JSINFO << "Converting cube from std::array<std::array<std::array<double, 2>, 2>, 2> to double***\n";
@@ -352,17 +333,17 @@ void SurfaceFinder::process_surface_elements(Jetscape::real tau_local, Jetscape:
   // double ***cube_temp = new double **[2];
   // convert_cube(cube, cube_temp) ;
   //log that we are finding the surface
-  JSINFO << "Finding the surface\n";
-  cornelius_ptr->find_surface_3d(
-    // cube_temp
-    cube
-    );
+  // JSINFO << "Finding the surface\n";
+  // cornelius_ptr->find_surface_3d(
+  //   // cube_temp
+  //   cube
+  //   );
   //log that we are deleting the cube
-  JSINFO << "Deleting the cube\n";
-  delete_cube(
-    // cube_temp
-    cube
-    );
+  // JSINFO << "Deleting the cube\n";
+  // delete_cube(
+  //   // cube_temp
+  //   cube
+  //   );
 
   for (int isurf = 0; isurf < cornelius_ptr->get_Nelements(); isurf++) {
     auto tau_center = (cornelius_ptr->get_centroid_elem(isurf, 0) +
