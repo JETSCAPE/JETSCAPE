@@ -93,47 +93,10 @@ bool SurfaceFinder::check_intersect_3D(Jetscape::real tau, Jetscape::real x,
                                       //  std::array<std::array<std::array<double, 2>, 2>, 2>& cube
                                        double ***cube
                                        ) {
-
   bool intersect = true;
-
-  auto tau_low = tau - dt / 2.;
-  auto tau_high = tau + dt / 2.;
-  auto x_left = x - dx / 2.;
-  auto x_right = x + dx / 2.;
-  auto y_left = y - dy / 2.;
-  auto y_right = y + dy / 2.;
-
-  auto fluid_cell = bulk_info.get(tau_low, x_left, y_left, 0.0);
-  cube[0][0][0] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_low, x_left, y_right, 0.0);
-  cube[0][0][1] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_low, x_right, y_left, 0.0);
-  cube[0][1][0] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_low, x_right, y_right, 0.0);
-  cube[0][1][1] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_high, x_left, y_left, 0.0);
-  cube[1][0][0] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_high, x_left, y_right, 0.0);
-  cube[1][0][1] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_high, x_right, y_left, 0.0);
-  cube[1][1][0] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_high, x_right, y_right, 0.0);
-  cube[1][1][1] = fluid_cell.temperature;
-
-  if ((T_cut - cube[0][0][0]) * (cube[1][1][1] - T_cut) < 0.0)
-    if ((T_cut - cube[0][1][0]) * (cube[1][0][1] - T_cut) < 0.0)
-      if ((T_cut - cube[0][1][1]) * (cube[1][0][0] - T_cut) < 0.0)
-        if ((T_cut - cube[0][0][1]) * (cube[1][1][0] - T_cut) < 0.0)
-          intersect = false;
-
+  fill_cube_with_temperatures(tau, x, y, dt, dx, dy, cube);
+  intersect= temperature_intersects_cutoff(cube);
   return (intersect);
-  // fill_cube_with_temperatures(tau, x, y, dt, dx, dy, cube);
-
-  // bool intersect = true;
-
-  // intersect= temperature_intersects_cutoff(cube);
-
-  // return (intersect);
 }
 /**
  * @brief Fills the 4D array cube with temperature values from the fluid cells.
