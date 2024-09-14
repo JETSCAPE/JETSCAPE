@@ -226,24 +226,14 @@ JSINFO << "Getting into parrallel region\n";
     for (int itime = 0; itime < ntime; itime++) {
       for (int i = 0; i < nx; i++) {
         for (int j = 0; j < ny; j++) {
-          //log that we are in the loop over time evolution
-          JSINFO << "Loop over time evolution\n";
-
           // loop over time evolution
           auto tau_local = grid_tau0 + (itime + 0.5) * grid_dt;
           // loops over the transverse plane
           auto x_local = grid_x0 + (i + 0.5) * grid_dx;
           auto y_local = grid_y0 + (j + 0.5) * grid_dy;
-          //log that we are goig to check intersect
-          JSINFO << "Checking intersect\n";
           bool intersect = check_intersect_3D(tau_local, x_local, y_local,
                                               grid_dt, grid_dx, grid_dy, cube);
-          //log intersect result 
-          JSINFO << "Intersect result: " << intersect << "\n";
           if (intersect) {
-            //log that we are in the intersect loop
-            JSINFO << "Intersect loop\n";
-
             cornelius_ptr->find_surface_3d(cube);
             process_surface_elements(tau_local,  x_local,y_local, grid_dt, grid_dx, grid_dy, 
                                      cube, itime, nx , ny , i , j,
@@ -289,25 +279,14 @@ void SurfaceFinder::process_surface_elements(Jetscape::real tau_local, Jetscape:
                                              const int itime, const int nx ,const int ny ,int i ,int j,
                                              const std::unique_ptr<Cornelius>& cornelius_ptr, 
                                              std::vector<std::vector<SurfaceCellInfo>>& surface_cell_list_local){
-  // converting cube from std::array<std::array<std::array<double, 2>, 2>, 2> to double***
-  //log that we are converting cube from std::array<std::array<std::array<double, 2>, 2>, 2> to double***
   // JSINFO << "Converting cube from std::array<std::array<std::array<double, 2>, 2>, 2> to double***\n";
-
   // double ***cube_temp = new double **[2];
   // convert_cube(cube, cube_temp) ;
   //log that we are finding the surface
-  // JSINFO << "Finding the surface\n";
   // cornelius_ptr->find_surface_3d(
   //   // cube_temp
   //   cube
   //   );
-  //log that we are deleting the cube
-  // JSINFO << "Deleting the cube\n";
-  // delete_cube(
-  //   // cube_temp
-  //   cube
-  //   );
-
   for (int isurf = 0; isurf < cornelius_ptr->get_Nelements(); isurf++) {
     auto tau_center = (cornelius_ptr->get_centroid_elem(isurf, 0) +
                         tau_local - grid_dt / 2.);
