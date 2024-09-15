@@ -51,7 +51,7 @@ class SurfaceFinder {
   std::vector<SurfaceCellInfo> get_surface_cells_vector() const {
     return (surface_cell_list);
   }
-#pragma region check_intersect_3D
+
 /**
  * @brief Checks if the cube intersects the cutoff temperature.
  * 
@@ -98,8 +98,8 @@ bool temperature_intersects_cutoff(
 // std::array<std::array<std::array<double, 2>, 2>, 2>& cube
 double ***cube
 );
-#pragma endregion check_intersect_3D
-#pragma region Find_fill_hypersurface_3D
+
+
   void Find_full_hypersurface_3D();
   /*
 * @brief Reduce the local 2D vector to 1D class member vector.
@@ -114,7 +114,18 @@ void reduce_surface_cell_list(std::vector<std::vector<SurfaceCellInfo>>& surface
                                               double ***cube,
                                              const int itime, const int nx ,const int ny ,int i ,int j, 
                                              const std::unique_ptr<Cornelius>& cornelius_ptr, std::vector<std::vector<SurfaceCellInfo>>& surface_cell_list_local);
-#pragma endregion Find_fill_hypersurface_3D
+
+  void fill_cube_with_temperatures(
+  Jetscape::real tau, Jetscape::real x, Jetscape::real y, Jetscape::real eta,
+  Jetscape::real dt, Jetscape::real dx, Jetscape::real dy,Jetscape::real deta,
+  // std::array<std::array<std::array<double, 2>, 2>, 2>& cube
+  double ****cube
+  );
+  bool temperature_intersects_cutoff(
+  // const 
+  double ****cube
+  // std::array<std::array<std::array<double, 2>, 2>, 2>& cube
+  );
   bool check_intersect_4D(Jetscape::real tau, Jetscape::real x,
                           Jetscape::real y, Jetscape::real eta,
                           Jetscape::real dt, Jetscape::real dx,

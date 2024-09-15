@@ -74,7 +74,7 @@ void SurfaceFinder::Find_full_hypersurface() {
     WriteSurfaceToFile(surface_cell_list, filename);
   }
 }
-#pragma region check_intersect_3D
+
 /**
  * @brief Checks if the temperature values in the cube intersect the cutoff temperature.
  * 
@@ -153,8 +153,8 @@ double ***cube
 
     return intersect;
 }
-#pragma endregion  check_intersect_3D
-#pragma region Find_fill_hypersurface_3D
+
+
 // a method that converting cube from std::array<std::array<std::array<double, 2>, 2>, 2> to double***
 void convert_cube(std::array<std::array<std::array<double, 2>, 2>, 2>& cube, double ***cube_temp) {
   for (int i = 0; i < 2; i++) {
@@ -308,15 +308,14 @@ void SurfaceFinder::process_surface_elements(Jetscape::real tau_local, Jetscape:
         surface_cell);
   }                                        
 }
-#pragma endregion Find_fill_hypersurface_3D
-bool SurfaceFinder::check_intersect_4D(Jetscape::real tau, Jetscape::real x,
-                                       Jetscape::real y, Jetscape::real eta,
-                                       Jetscape::real dt, Jetscape::real dx,
-                                       Jetscape::real dy, Jetscape::real deta,
-                                       double ****cube) {
-  bool intersect = true;
 
-  auto tau_low = tau - dt / 2.;
+void SurfaceFinder::fill_cube_with_temperatures(
+  Jetscape::real tau, Jetscape::real x, Jetscape::real y, Jetscape::real eta,
+  Jetscape::real dt, Jetscape::real dx, Jetscape::real dy,Jetscape::real deta,
+  // std::array<std::array<std::array<double, 2>, 2>, 2>& cube
+  double ****cube
+  ){
+auto tau_low = tau - dt / 2.;
   auto tau_high = tau + dt / 2.;
   auto x_left = x - dx / 2.;
   auto x_right = x + dx / 2.;
@@ -325,50 +324,54 @@ bool SurfaceFinder::check_intersect_4D(Jetscape::real tau, Jetscape::real x,
   auto eta_left = eta - deta / 2.;
   auto eta_right = eta + deta / 2.;
 
-  auto fluid_cell = bulk_info.get(tau_low, x_left, y_left, eta_left);
-  cube[0][0][0][0] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_low, x_left, y_left, eta_right);
-  cube[0][0][0][1] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_low, x_left, y_right, eta_left);
-  cube[0][0][1][0] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_low, x_left, y_right, eta_right);
-  cube[0][0][1][1] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_low, x_right, y_left, eta_left);
-  cube[0][1][0][0] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_low, x_right, y_left, eta_right);
-  cube[0][1][0][1] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_low, x_right, y_right, eta_left);
-  cube[0][1][1][0] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_low, x_right, y_right, eta_right);
-  cube[0][1][1][1] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_high, x_left, y_left, eta_left);
-  cube[1][0][0][0] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_high, x_left, y_left, eta_right);
-  cube[1][0][0][1] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_high, x_left, y_right, eta_left);
-  cube[1][0][1][0] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_high, x_left, y_right, eta_right);
-  cube[1][0][1][1] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_high, x_right, y_left, eta_left);
-  cube[1][1][0][0] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_high, x_right, y_left, eta_right);
-  cube[1][1][0][1] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_high, x_right, y_right, eta_left);
-  cube[1][1][1][0] = fluid_cell.temperature;
-  fluid_cell = bulk_info.get(tau_high, x_right, y_right, eta_right);
-  cube[1][1][1][1] = fluid_cell.temperature;
+  cube[0][0][0][0] =bulk_info.get(tau_low, x_left, y_left, eta_left).temperature;
+  cube[0][0][0][1] = bulk_info.get(tau_low, x_left, y_left, eta_right).temperature;
+  cube[0][0][1][0] = bulk_info.get(tau_low, x_left, y_right, eta_left).temperature;
+  cube[0][0][1][1] = bulk_info.get(tau_low, x_left, y_right, eta_right).temperature;
+  cube[0][1][0][0] = bulk_info.get(tau_low, x_right, y_left, eta_left).temperature;
+  cube[0][1][0][1] = bulk_info.get(tau_low, x_right, y_left, eta_right).temperature;
+  cube[0][1][1][0] = bulk_info.get(tau_low, x_right, y_right, eta_left).temperature;
+  cube[0][1][1][1] = bulk_info.get(tau_low, x_right, y_right, eta_right).temperature;
+  cube[1][0][0][0] = bulk_info.get(tau_high, x_left, y_left, eta_left).temperature;
+  cube[1][0][0][1] = bulk_info.get(tau_high, x_left, y_left, eta_right).temperature;
+  cube[1][0][1][0] = bulk_info.get(tau_high, x_left, y_right, eta_left).temperature;
+  cube[1][0][1][1] = bulk_info.get(tau_high, x_left, y_right, eta_right).temperature;
+  cube[1][1][0][0] = bulk_info.get(tau_high, x_right, y_left, eta_left).temperature;
+  cube[1][1][0][1] = bulk_info.get(tau_high, x_right, y_left, eta_right).temperature;
+  cube[1][1][1][0] = bulk_info.get(tau_high, x_right, y_right, eta_left).temperature;
+  cube[1][1][1][1] = bulk_info.get(tau_high, x_right, y_right, eta_right).temperature;
+  }
+  bool SurfaceFinder::temperature_intersects_cutoff(
+  // const 
+double ****cube
+// std::array<std::array<std::array<double, 2>, 2>, 2>& cube
+){
+  bool intersect = true;
+  if( 
+    ((T_cut - cube[0][0][0][0]) * (cube[1][1][1][1] - T_cut) < 0.0) &&
+    ((T_cut - cube[0][0][1][1]) * (cube[1][1][0][0] - T_cut) < 0.0) &&
+    ((T_cut - cube[0][1][0][1]) * (cube[1][0][1][0] - T_cut) < 0.0) &&
+    ((T_cut - cube[0][1][1][0]) * (cube[1][0][0][1] - T_cut) < 0.0) &&
+    ((T_cut - cube[0][0][0][1]) * (cube[1][1][1][0] - T_cut) < 0.0) &&
+    ((T_cut - cube[0][0][1][0]) * (cube[1][1][0][1] - T_cut) < 0.0) &&
+    ((T_cut - cube[0][1][0][0]) * (cube[1][0][1][1] - T_cut) < 0.0) &&
+    ((T_cut - cube[0][1][1][1]) * (cube[1][0][0][0] - T_cut) <0.0)
+  )    
+  intersect = false;
 
-  if ((T_cut - cube[0][0][0][0]) * (cube[1][1][1][1] - T_cut) < 0.0)
-    if ((T_cut - cube[0][0][1][1]) * (cube[1][1][0][0] - T_cut) < 0.0)
-      if ((T_cut - cube[0][1][0][1]) * (cube[1][0][1][0] - T_cut) < 0.0)
-        if ((T_cut - cube[0][1][1][0]) * (cube[1][0][0][1] - T_cut) < 0.0)
-          if ((T_cut - cube[0][0][0][1]) * (cube[1][1][1][0] - T_cut) < 0.0)
-            if ((T_cut - cube[0][0][1][0]) * (cube[1][1][0][1] - T_cut) < 0.0)
-              if ((T_cut - cube[0][1][0][0]) * (cube[1][0][1][1] - T_cut) < 0.0)
-                if ((T_cut - cube[0][1][1][1]) * (cube[1][0][0][0] - T_cut) <
-                    0.0)
-                  intersect = false;
-
+  return intersect;
+}
+bool SurfaceFinder::check_intersect_4D(Jetscape::real tau, Jetscape::real x,
+                                       Jetscape::real y, Jetscape::real eta,
+                                       Jetscape::real dt, Jetscape::real dx,
+                                       Jetscape::real dy, Jetscape::real deta,
+                                       double ****cube) {
+  bool intersect = true;
+  fill_cube_with_temperatures(
+    tau,x,y,eta,
+    dt,dx,dy,deta,cube
+  );
+  intersect= temperature_intersects_cutoff(cube);
   return (intersect);
 }
 
