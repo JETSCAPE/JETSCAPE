@@ -416,11 +416,6 @@ void SurfaceFinder::Find_full_hypersurface_4D() {
   Jetscape::real grid_deta = 0.2;
 
   const int dim = 4;
-  // double lattice_spacing[dim];
-  // lattice_spacing[0] = grid_dt;
-  // lattice_spacing[1] = grid_dx;
-  // lattice_spacing[2] = grid_dy;
-  // lattice_spacing[3] = grid_deta;
   std::array<double, dim> lattice_spacing = {grid_dt, grid_dx, grid_dy,grid_deta};
 
   const int ntime = static_cast<int>((grid_tauf - grid_tau0) / grid_dt);
@@ -435,19 +430,6 @@ void SurfaceFinder::Find_full_hypersurface_4D() {
   JSINFO << "Getting into parrallel region\n";
 #pragma omp parallel
   {
-    // double ****cube = new double ***[2];
-    // for (int i = 0; i < 2; i++) {
-    //   cube[i] = new double **[2];
-    //   for (int j = 0; j < 2; j++) {
-    //     cube[i][j] = new double *[2];
-    //     for (int k = 0; k < 2; k++) {
-    //       cube[i][j][k] = new double[2];
-    //       for (int l = 0; l < 2; l++) {
-    //         cube[i][j][k][l] = 0.0;
-    //       }
-    //     }
-    //   }
-    // }
     double ****cube;
     create_cube(cube,0.0);
     std::unique_ptr<Cornelius> cornelius_ptr(new Cornelius());
@@ -471,56 +453,16 @@ void SurfaceFinder::Find_full_hypersurface_4D() {
               process_surface_elements(tau_local,  x_local,y_local,eta_local, grid_dt, grid_dx, grid_dy,grid_deta, 
                                      cube, itime, neta,nx , ny , l,i , j,
                                      cornelius_ptr,surface_cell_list_local);
-              // for (int isurf = 0; isurf < cornelius_ptr->get_Nelements();
-              //      isurf++) {
-              //   auto tau_center = (cornelius_ptr->get_centroid_elem(isurf, 0) +
-              //                      tau_local - grid_dt / 2.);
-              //   auto x_center = (cornelius_ptr->get_centroid_elem(isurf, 1) +
-              //                    x_local - grid_dx / 2.);
-              //   auto y_center = (cornelius_ptr->get_centroid_elem(isurf, 2) +
-              //                    y_local - grid_dy / 2.);
-              //   auto eta_center = (cornelius_ptr->get_centroid_elem(isurf, 3) +
-              //                      eta_local - grid_deta / 2.);
-
-              //   auto da_tau = (cornelius_ptr->get_normal_elem(isurf, 0));
-              //   auto da_x = (cornelius_ptr->get_normal_elem(isurf, 1));
-              //   auto da_y = (cornelius_ptr->get_normal_elem(isurf, 2));
-              //   auto da_eta = (cornelius_ptr->get_normal_elem(isurf, 3));
-
-              //   auto fluid_cell =
-              //       bulk_info.get(tau_center, x_center, y_center, eta_center);
-              //   auto surface_cell = PrepareASurfaceCell(
-              //       tau_center, x_center, y_center, eta_center, da_tau, da_x,
-              //       da_y, da_eta, fluid_cell);
-              //   surface_cell_list_local[itime * nx * ny * neta + l * nx * ny +
-              //                           i * ny + j]
-              //       .push_back(surface_cell);
-              // }
             }
           }
         }
       }
     }  // end of omp for loop
     delete_cube(cube);
-    // for (int i = 0; i < 2; i++) {
-    //   for (int j = 0; j < 2; j++) {
-    //     for (int k = 0; k < 2; k++) {
-    //       delete[] cube[i][j][k];
-    //     }
-    //     delete[] cube[i][j];
-    //   }
-    //   delete[] cube[i];
-    // }
-    // delete[] cube;
   }  // end of parallel region
 
   // reduction of local 2D vector to 1D class member vector
-  //reduce_surface_cell_list(surface_cell_list_local, surface_cell_list_sz);
-  for (int i = 0; i < surface_cell_list_sz; i++) {
-    for (int j = 0; j < surface_cell_list_local[i].size(); j++) {
-      surface_cell_list.push_back(surface_cell_list_local[i][j]);
-    }
-  }
+  reduce_surface_cell_list(surface_cell_list_local, surface_cell_list_sz);
 }
 
 
