@@ -132,7 +132,13 @@ void reduce_surface_cell_list(std::vector<std::vector<SurfaceCellInfo>>& surface
                           Jetscape::real dy, Jetscape::real deta,
                           double ****cube);
   void Find_full_hypersurface_4D();
-
+void process_surface_elements(Jetscape::real tau_local, Jetscape::real x_local, Jetscape::real y_local,Jetscape::real  eta_local, 
+                                             Jetscape::real grid_dt, Jetscape::real grid_dx, Jetscape::real grid_dy,Jetscape::real grid_deta,
+                                            //  std::array<std::array<std::array<double, 2>, 2>, 2>& cube, 
+                                              double ****cube,
+                                             const int itime, const int neta,const int nx ,const int ny ,int l,int i ,int j,
+                                             const std::unique_ptr<Cornelius>& cornelius_ptr, 
+                                             std::vector<std::vector<SurfaceCellInfo>>& surface_cell_list_local);
   SurfaceCellInfo PrepareASurfaceCell(Jetscape::real tau, Jetscape::real x,
                                       Jetscape::real y, Jetscape::real eta,
                                       Jetscape::real da0, Jetscape::real da1,
