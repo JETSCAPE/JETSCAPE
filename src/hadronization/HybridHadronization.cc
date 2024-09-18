@@ -985,7 +985,11 @@ void HybridHadronization::DoHadronization(
          // recombination would be switched off after the first event without
          // negative partons
     }
-    if (HH_shower.num() == 0) {
+    if(HH_shower.num() == 0){
+      th_recofactor = tmp_threco;
+      maxB_level = tmp_maxB_level;
+      reco_hadrons_pythia = tmp_reco_hadrons_pythia;
+      if(pythia_decays == "off"){pythia.readString("HadronLevel:Decay = off"); pythia.init();}
       continue;
     }  // attempting to handle events/configurations with 0 partons will result
        // in a crash
