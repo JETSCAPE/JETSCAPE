@@ -170,6 +170,107 @@ void myRatioPlot(TGraphErrors* dataGraph, TH1D* predictionHist, string title, bo
     c->Close();
 }
 
+//soft plus hard ratioplot overload
+void myRatioPlot(TGraphErrors* dataGraph, TH1D* predictionHistSoft, TH1D* predictionHistHard, string title, bool xlog, bool ylog){
+    //values for plots
+    TH1D* predictionHist = (TH1D*)predictionHistSoft->Clone();
+    predictionHist->Add(predictionHistHard);
+    int bins = dataGraph->GetN();
+    double data[bins], prediction[bins], predictionerrors[bins], xcoords[bins], dataErrors[bins], binWidths[bins], asym[bins], asymErrorsHigh[bins], asymErrorsLow[bins];
+    double predictionwidths[bins] = {0.0};
+
+    //cycling through bins, note first one is an overflow bin so it is skipped
+    for(int i = 0; i < bins; i++){
+        //reading values from histograms
+        dataGraph->GetPoint(i,xcoords[i],data[i]);
+        dataErrors[i] = dataGraph->GetErrorY(i);
+        binWidths[i] = dataGraph->GetErrorX(i);
+        prediction[i] = predictionHist->GetBinContent(i+1);
+        predictionerrors[i] = predictionHist->GetBinError(i+1);
+        asym[i] = (prediction[i]/data[i]);
+        asymErrorsHigh[i] = 1 + dataErrors[i]/data[i];
+        asymErrorsLow[i] = 1 - dataErrors[i]/data[i];
+
+        //debugging
+        //cout << xcoords[i] << " " << data[i]*1000000 << " " << dataErrors[i]*1000000 << " " << asym[i] << " " << binWidths[i] << endl;
+        
+        //correcting for negatives when doing log
+        //if(data[i] < 0) data[i] = 0;
+        //if(dataErrors[i] > data[i]) dataErrors[i] = data[i]*0.99;
+    }
+
+    //Drawing main plot
+    TCanvas* c = new TCanvas("c1","c1",1000,800);
+    TPad* upper = new TPad("plot","plot",0,0.4,1,1);
+    upper->SetBottomMargin(0);
+    upper->Draw();
+    upper->cd();
+    if(ylog) upper->SetLogy();
+    if(xlog) upper->SetLogx();
+
+    //Data graph
+    TGraphErrors* dataPlot = (TGraphErrors*)dataGraph->Clone();
+    dataPlot->SetMarkerStyle(kFullDotLarge);
+    dataPlot->SetMarkerColor(kRed);
+    dataPlot->SetLineColor(kRed);
+
+    //prediction graph
+    TGraphErrors* predictionPlot = new TGraphErrors(bins,xcoords,prediction,predictionwidths,predictionerrors);
+    predictionPlot->SetLineColor(kBlue);
+    predictionPlot->SetFillColor(kBlue);
+    predictionPlot->SetFillStyle(3010);
+    predictionPlot->SetLineWidth(3);
+
+    //layered graph
+    dataPlot->SetTitle(title.c_str());
+    dataPlot->Draw("AP");
+    dataPlot->GetXaxis()->SetLimits(xcoords[0]-binWidths[0],xcoords[bins-1]+binWidths[bins-1]);
+    dataPlot->GetYaxis()->SetLabelSize(0.04);
+    predictionPlot->Draw("l3");
+
+    //ratio plot
+    TGraph* comparisonPlot = new TGraph(bins, xcoords, asym);
+    comparisonPlot->SetTitle("");
+    comparisonPlot->GetXaxis()->SetLimits(xcoords[0]-binWidths[0],xcoords[bins-1]+binWidths[bins-1]);
+    comparisonPlot->GetXaxis()->SetTitle(dataPlot->GetHistogram()->GetXaxis()->GetTitle());
+    comparisonPlot->GetXaxis()->SetTitleSize(0.06);
+    comparisonPlot->GetXaxis()->SetLabelSize(0.06);
+    comparisonPlot->GetYaxis()->SetTitle("JETSCAPE/data");
+    comparisonPlot->GetYaxis()->SetTitleSize(0.06);
+    comparisonPlot->GetYaxis()->SetLabelSize(0.06);
+    comparisonPlot->SetMarkerStyle(kFullDotLarge);
+    comparisonPlot->GetHistogram()->GetYaxis()->SetRangeUser(0,2.1);  
+
+    //Legend
+    TLegend leg(.7,.7,.9,.9);
+    leg.AddEntry(predictionPlot,"JETSCAPE","l");
+    leg.AddEntry(dataPlot,dataGraph->GetHistogram()->GetTitle(),"ep");
+    leg.DrawClone("Same");
+
+    //drawing ratio plot
+    c->cd();
+    TPad* lower = new TPad("plot","plot",0,0,1,0.4);
+    lower->SetTopMargin(0);
+    lower->SetBottomMargin(0.2);
+    lower->Draw();
+    lower->cd();
+    if(xlog) lower->SetLogx();
+	comparisonPlot->Draw("AP");
+    TLine* line = new TLine(xcoords[0],1,xcoords[bins-1]+binWidths[bins-1],1);
+    line->SetLineStyle(9);
+    line->Draw("SAME");
+    TGraph* asymLow = new TGraph(bins, xcoords, asymErrorsLow);
+    asymLow->SetLineStyle(9);
+    asymLow->Draw("SAME");
+    TGraph* asymHigh = new TGraph(bins, xcoords, asymErrorsHigh);
+    asymHigh->SetLineStyle(9);
+    asymHigh->Draw("SAME");
+
+    string filename  = "plots/" + title + ".png";
+    c->Print(filename.c_str());
+    c->Close();
+}
+
 //overload for graph input
 /*void myRatioPlot(TGraphErrors* dataHist, TH1D* predictionHist, string title, string xname, string yname, bool xlog, bool ylog){
     //values for plots

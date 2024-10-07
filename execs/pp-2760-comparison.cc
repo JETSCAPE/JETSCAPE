@@ -53,10 +53,14 @@ int main(int argc, char* argv[]){
     TApplication theApp("hist", &argc, argv);
 
     //making said dat filesmakeObsPred(directories, input, "charged-xp", "hadrons", true);
-    makeObsPred(directories, input, "HadronSpectraPrediction", "hadrons");
-    makeObsPred(directories, input, "PionSpectraPrediction", "smooth pions");
-    makeObsPred(directories, input, "KaonSpectraPrediction", "smooth kaons");
-    makeObsPred(directories, input, "ProtonSpectraPrediction", "smooth protons");
+    makeObsPred(directories, input, "HadronSpectraPredictionSoft", "soft hadrons");
+    makeObsPred(directories, input, "HadronSpectraPredictionHard", "hard hadrons");
+    makeObsPred(directories, input, "PionSpectraPredictionSoft", "rough soft pions");
+    makeObsPred(directories, input, "PionSpectraPredictionHard", "rough hard pions");
+    makeObsPred(directories, input, "KaonSpectraPredictionSoft", "rough soft kaons");
+    makeObsPred(directories, input, "KaonSpectraPredictionHard", "rough hard kaons");
+    makeObsPred(directories, input, "ProtonSpectraPredictionSoft", "rough soft protons");
+    makeObsPred(directories, input, "ProtonSpectraPredictionHard", "rough hard protons");
     makeObsPred(directories, input, "JetSpectraPredictionR3", "jet radius 0.3");
     makeObsPred(directories, input, "JetSpectraPredictionR2", "jet radius 0.2");
     makeObsPred(directories, input, "JetSpectraPredictionR4", "jet radius 0.4");

@@ -131,17 +131,22 @@ int main(int argc, char* argv[]){
     
     // Histograms.1. Number of jets vs pT of the jet. 2. Number of charged hadron vs pT of the hadron
     TH1D *HistTempJet = new TH1D("JetSpectrumBin", "Jet Spectrum pT", NpTJetBin, JetpTBin); //CountVspT for jets
-    TH1D *HistTempSingleHadron = new TH1D("SingleHadronSpectrumBin", "Single Hadron Spectrum pT", NpTSingleHadronBin, SingleHadronpTBin); //CountVspT for single-hadron
+    TH1D *HistTempSingleHadronSoft = new TH1D("SingleHadronSpectrumBinSoft", "Soft Hadron Spectrum pT", NpTSingleHadronBin, SingleHadronpTBin); //CountVspT for single-hadron
+    TH1D *HistTempSingleHadronHard = new TH1D("SingleHadronSpectrumBinHard", "Hard Hadron Spectrum pT", NpTSingleHadronBin, SingleHadronpTBin); //CountVspT for single-hadron
 	
-    TH1D *HistTotalHadron = new TH1D("HadronSpectrumBin", "Combined Hadron pT Spectrum", NpTSingleHadronBin, SingleHadronpTBin); //Total hist for hadrons
+    TH1D *HistTotalHadronSoft = new TH1D("HadronSpectrumBinSoft", "Soft Hadron pT Spectrum", NpTSingleHadronBin, SingleHadronpTBin); //Total hist for hadrons
+    TH1D *HistTotalHadronHard = new TH1D("HadronSpectrumBinHard", "Hard Hadron pT Spectrum", NpTSingleHadronBin, SingleHadronpTBin); //Total hist for hadrons
 	TH1D *HistTotalJet = new TH1D("JetSpectrumBin1", "Combined Jet pT Spectrum", NpTJetBin, JetpTBin); //Total hist for jets
     TH1D *HistTotalJet2 = new TH1D("JetSpectrumBin2", "Combined Jet pT Spectrum 0.2 R", NpTJetBin, JetpTBin); //Total hist for jets
 	TH1D *HistTotalJet3 = new TH1D("JetSpectrumBin3", "Combined Jet pT Spectrum 0.4 R", NpTJetBin, JetpTBin); //Total hist for jets
-    TH1D *HistTotalPions = new TH1D("Pion Spectrum", "Pion Spectrum pT", NpTpionBin, piondata->GetXaxis()->GetXbins()->GetArray()); //identified hadrons hists
-    TH1D *HistTotalKaons = new TH1D("Kaon Spectrum", "Kaon Spectrum pT", NpTkaonBin, kaondata->GetXaxis()->GetXbins()->GetArray());
-    TH1D *HistTotalProtons = new TH1D("Proton Spectrum", "Proton Spectrum pT", NpTprotonBin, protondata->GetXaxis()->GetXbins()->GetArray());
+    TH1D *HistTotalPionsSoft = new TH1D("Pion Spectrum Soft", "Pion Spectrum pT", NpTpionBin, piondata->GetXaxis()->GetXbins()->GetArray()); //identified hadrons hists
+    TH1D *HistTotalPionsHard = new TH1D("Pion Spectrum Hard", "Pion Spectrum pT", NpTpionBin, piondata->GetXaxis()->GetXbins()->GetArray());
+    TH1D *HistTotalKaonsSoft = new TH1D("Kaon Spectrum Soft", "Kaon Spectrum pT", NpTkaonBin, kaondata->GetXaxis()->GetXbins()->GetArray());
+    TH1D *HistTotalKaonsHard = new TH1D("Kaon Spectrum Hard", "Kaon Spectrum pT", NpTkaonBin, kaondata->GetXaxis()->GetXbins()->GetArray());
+    TH1D *HistTotalProtonsSoft = new TH1D("Proton Spectrum Soft", "Proton Spectrum pT", NpTprotonBin, protondata->GetXaxis()->GetXbins()->GetArray());
+    TH1D *HistTotalProtonsHard = new TH1D("Proton Spectrum Hard", "Proton Spectrum pT", NpTprotonBin, protondata->GetXaxis()->GetXbins()->GetArray());
     HistTotalJet->SetName("Combined Jet pT Spectrum");
-    HistTotalHadron->SetName("Combined Hadron pT Spectrum");
+    //HistTotalHadron->SetName("Combined Hadron pT Spectrum");
 
     //Running totals for total spectra
     double DifferentialJetTotal[NpTJetBin] = {0};
@@ -194,9 +199,10 @@ int main(int argc, char* argv[]){
         sprintf(HistName,"CountVspTJetSpectrumBin%s_%s",pTHatMin[k].c_str(),pTHatMax[k].c_str());
         HistTempJet->SetName(HistName);
         
-        HistTempSingleHadron->Reset();
-        sprintf(HistName,"CountVspTSingleHadronSpectrumBin%s_%s",pTHatMin[k].c_str(),pTHatMax[k].c_str());
-        HistTempSingleHadron->SetName(HistName);
+        HistTempSingleHadronHard->Reset();
+        HistTempSingleHadronSoft->Reset();
+        //sprintf(HistName,"CountVspTSingleHadronSpectrumBin%s_%s",pTHatMin[k].c_str(),pTHatMax[k].c_str());
+        //HistTempSingleHadron->SetName(HistName);
         
         fjInputs.resize(0);
         chargeList.resize(0);
@@ -206,9 +212,12 @@ int main(int argc, char* argv[]){
         TH1D *HistTempJet3 = new TH1D("JetSpectrumBinTemp3", "Jet Spectrum pT", NpTJetBin, JetpTBin);
 
         //temp hists for identified hadrons
-        TH1D *tempPions = new TH1D("Pion Spectrum Temp", "Pion Spectrum pT", NpTpionBin, piondata->GetXaxis()->GetXbins()->GetArray());
-        TH1D *tempKaons = new TH1D("Kaon Spectrum Temp", "Kaon Spectrum pT", NpTkaonBin, kaondata->GetXaxis()->GetXbins()->GetArray());
-        TH1D *tempProtons = new TH1D("Proton Spectrum Temp", "Proton Spectrum pT", NpTprotonBin, protondata->GetXaxis()->GetXbins()->GetArray());
+        TH1D *tempPionsSoft = new TH1D("Soft Pion Spectrum Temp", "Pion Spectrum pT", NpTpionBin, piondata->GetXaxis()->GetXbins()->GetArray());
+        TH1D *tempPionsHard = new TH1D("Hard Pion Spectrum Temp", "Pion Spectrum pT", NpTpionBin, piondata->GetXaxis()->GetXbins()->GetArray());
+        TH1D *tempKaonsSoft = new TH1D("Soft Kaon Spectrum Temp", "Kaon Spectrum pT", NpTkaonBin, kaondata->GetXaxis()->GetXbins()->GetArray());
+        TH1D *tempKaonsHard = new TH1D("Hard Kaon Spectrum Temp", "Kaon Spectrum pT", NpTkaonBin, kaondata->GetXaxis()->GetXbins()->GetArray());
+        TH1D *tempProtonsSoft = new TH1D("Soft Proton Spectrum Temp", "Proton Spectrum pT", NpTprotonBin, protondata->GetXaxis()->GetXbins()->GetArray());
+        TH1D *tempProtonsHard = new TH1D("Hard Proton Spectrum Temp", "Proton Spectrum pT", NpTprotonBin, protondata->GetXaxis()->GetXbins()->GetArray());
 
         //Data structures for events read in to save run time
         vector<shared_ptr<Hadron>> hadrons;
@@ -261,14 +270,24 @@ int main(int argc, char* argv[]){
                 // Add this particle into SingleHadron spectrum
                 if(fabs(Eta) < SingleHadronEtaCut && PT>0.01  && fabs(PID)>100 &&  pythia.particleData.charge(PID)!=0){
                     //cout<<PT<<" PID "<<PID<<"\t charge = "<<pythia.particleData.charge( PID)<<endl;
-                    HistTempSingleHadron->Fill(PT,strength);
+                    if(PT < softend) HistTempSingleHadronSoft->Fill(PT,strength);
+                    else HistTempSingleHadronHard->Fill(PT,strength);
                 }
                 
                 //ID hadron spectra
                 if(fabs(Y) < idHadronYCut){
-                    if(abs(PID) == 211) {tempPions->Fill(PT,strength);}
-                    if(abs(PID) == 321) {tempKaons->Fill(PT,strength);}
-                    if(abs(PID) == 2212) {tempProtons->Fill(PT,strength);}
+                    if(abs(PID) == 211) {
+                        if(PT < softend) tempPionsSoft->Fill(PT,strength);
+                        else tempPionsHard->Fill(PT,strength);
+                    }
+                    if(abs(PID) == 321) {
+                        if(PT < softend) tempKaonsSoft->Fill(PT,strength);
+                        else tempKaonsHard->Fill(PT,strength);
+                    }
+                    if(abs(PID) == 2212) {
+                        if(PT < softend) tempProtonsSoft->Fill(PT,strength);
+                        else tempProtonsHard->Fill(PT,strength);
+                    }
                 } 
             }
 
@@ -322,14 +341,14 @@ int main(int argc, char* argv[]){
         if(k == 0) xsectotal = HardCrossSection; //set for first bin to match experimental value; end of reading cross section
 
         //cleaning up 0s in soft bin
-        if(k == 0){
+        /*if(k == 0){
             for(int i=1; i <= tempPions->GetNbinsX(); i++)
                 if(tempPions->GetBinContent(i) == 0 && tempPions->GetBinCenter(i) < softend) tempPions->SetBinContent(i,0.1);
             for(int i=1; i <= tempKaons->GetNbinsX(); i++)
                 if(tempKaons->GetBinContent(i) == 0 && tempKaons->GetBinCenter(i) < softend) tempKaons->SetBinContent(i,0.1);
             for(int i=1; i <= tempProtons->GetNbinsX(); i++)
                 if(tempProtons->GetBinContent(i) == 0 && tempProtons->GetBinCenter(i) < softend) tempProtons->SetBinContent(i,0.1);
-        }
+        }*/
 
         //event count handling
         eventCount.push_back(Events);
@@ -351,8 +370,8 @@ int main(int argc, char* argv[]){
         }
 
         //filtering out low bin events in the hadron spectra, smoothing
-        for(int i = 0; i < NpTSingleHadronBin; i++)
-            if(HistTempSingleHadron->GetBinContent(i+1) < 5) HistTempSingleHadron->SetBinContent(i+1,0);
+        //for(int i = 0; i < NpTSingleHadronBin; i++)
+            //if(HistTempSingleHadron->GetBinContent(i+1) < 5) HistTempSingleHadron->SetBinContent(i+1,0);
 
         //for(int i = 0; i < NpTpionBin; i++)
             //if(tempPions->GetBinContent(i+1) < 2) tempPions->SetBinContent(i+1,0);
@@ -363,38 +382,29 @@ int main(int argc, char* argv[]){
         //for(int i = 0; i < NpTpionBin; i++)
             //if(tempProtons->GetBinContent(i+1) < 2) tempProtons->SetBinContent(i+1,0);
         
-        
-        //For single Hadron spectrum
-        for(int j=0;j<NpTSingleHadronBin;j++)
-        {
-            dNdpTCountSingleHadron[k][j]= HistTempSingleHadron->GetBinContent(j+1);
-            if(dNdpTCountSingleHadron[k][j]> 0.0)
-            {
-                pTHardBinSingleHadronBinError[k][j] = (dNdpTCountSingleHadron[k][j]*HardCrossSection/(Events*68*2*M_PI*((SingleHadronpTBin[j]+SingleHadronpTBin[j+1])/2.0)*(SingleHadronpTBin[j+1]-SingleHadronpTBin[j])*2.0*SingleHadronEtaCut))*TMath::Sqrt( (1/dNdpTCountSingleHadron[k][j]) + TMath::Power(HardCrossSectionError/HardCrossSection,2.0));
-                cout<<"For SingleHadronBin j = "<<j<<" \t BinContent = \t"<<HistTempSingleHadron->GetBinContent(j+1)<<"\t Scaled Value = "<<(dNdpTCountSingleHadron[k][j]*HardCrossSection)/(Events*68*2*M_PI*((SingleHadronpTBin[j]+SingleHadronpTBin[j+1])/2.0)*(SingleHadronpTBin[j+1]-SingleHadronpTBin[j])*2.0*SingleHadronEtaCut)<<endl;
-            }
-            else
-            {
-                pTHardBinSingleHadronBinError[k][j] = 0.0;
-                cout<<"For SingleHadronBin j = "<<j<<" \t BinContent = \t"<<HistTempSingleHadron->GetBinContent(j+1)<<"\t Scaled Value = "<<0.0<<endl;
-            }
-        }
-        
         //Write histogram into a root file
         HistTempJet->Sumw2(); HistTempJet->Write();
         HistTempJet2->Sumw2(); HistTempJet2->Write();
         HistTempJet3->Sumw2(); HistTempJet3->Write();
-        tempPions->Sumw2(); tempPions->Write();
-        tempKaons->Sumw2(); tempKaons->Write();
-        tempProtons->Sumw2(); tempProtons->Write();
-        HistTempSingleHadron->Sumw2(); HistTempSingleHadron->Write();
+        tempPionsSoft->Sumw2(); tempPionsSoft->Write();
+        tempPionsHard->Sumw2(); tempPionsHard->Write();
+        tempKaonsSoft->Sumw2(); tempKaonsSoft->Write();
+        tempKaonsHard->Sumw2(); tempKaonsHard->Write();
+        tempProtonsSoft->Sumw2(); tempProtonsSoft->Write();
+        tempProtonsHard->Sumw2(); tempProtonsHard->Write();
+        HistTempSingleHadronSoft->Sumw2(); HistTempSingleHadronSoft->Write();
+        HistTempSingleHadronHard->Sumw2(); HistTempSingleHadronHard->Write();
         
         //add to totals histograms
         double factor = HardCrossSection/(xsectotal*Events);
-        HistTotalHadron->Add(HistTempSingleHadron,factor);
-        HistTotalPions->Add(tempPions,factor);
-        HistTotalKaons->Add(tempKaons,factor);
-        HistTotalProtons->Add(tempProtons,factor);
+        HistTotalHadronSoft->Add(HistTempSingleHadronSoft,factor);
+        HistTotalHadronHard->Add(HistTempSingleHadronHard,factor);
+        HistTotalPionsSoft->Add(tempPionsSoft,factor);
+        HistTotalPionsHard->Add(tempPionsHard,factor);
+        HistTotalKaonsSoft->Add(tempKaonsSoft,factor);
+        HistTotalKaonsHard->Add(tempKaonsHard,factor);
+        HistTotalProtonsSoft->Add(tempProtonsSoft,factor);
+        HistTotalProtonsHard->Add(tempProtonsHard,factor);
 		HistTotalJet->Add(HistTempJet,HardCrossSection); 
         HistTotalJet2->Add(HistTempJet2,HardCrossSection/Events);
         HistTotalJet3->Add(HistTempJet3,HardCrossSection/Events);
@@ -461,7 +471,7 @@ int main(int argc, char* argv[]){
         totalroot->cd();
     } //k-loop ends here (pTHatBin loop)
     
-    delete HistTempJet; delete HistTempSingleHadron;
+    delete HistTempJet; delete HistTempSingleHadronSoft; delete HistTempSingleHadronHard;
 
     //create histogram for ratio plot
     TH1D *HistFinalJet = new TH1D("JetSpectrumBin", "Jet Spectrum pT", NpTJetBin, JetpTBin); //CountVspT for jets
@@ -489,17 +499,24 @@ int main(int argc, char* argv[]){
     }
 
     //raw files
-    HistTotalPions->Write("raw pions");
-    HistTotalKaons->Write("raw kaons");
-    HistTotalProtons->Write("raw protons");
+    HistTotalPionsSoft->Write("raw soft pions");
+    HistTotalPionsHard->Write("raw hard pions");
+    HistTotalKaonsSoft->Write("raw soft kaons");
+    HistTotalKaonsHard->Write("raw hard kaons");
+    HistTotalProtonsSoft->Write("raw soft protons");
+    HistTotalProtonsHard->Write("raw hard protons");
 
     //Scaling totals by global factors and the identified pions by bin centers
     HistTotalJet2->Scale(1.0/(2.0*JetEtaCut),"width");
     HistTotalJet3->Scale(1.0/(2.0*JetEtaCut),"width");
-    scaleBins(HistTotalHadron,(1.0/(2*M_PI*2.0*SingleHadronEtaCut)));
-    scaleBins(HistTotalPions,(1.0/(2*M_PI*2.0*idHadronYCut)));
-    scaleBins(HistTotalKaons,(1.0/(2*M_PI*2.0*idHadronYCut)));
-    scaleBins(HistTotalProtons,(1.0/(2*M_PI*2.0*idHadronYCut)));
+    scaleBins(HistTotalHadronSoft,(1.0/(2*M_PI*2.0*SingleHadronEtaCut)));
+    scaleBins(HistTotalHadronHard,(1.0/(2*M_PI*2.0*SingleHadronEtaCut)));
+    scaleBins(HistTotalPionsSoft,(1.0/(2*M_PI*2.0*idHadronYCut)));
+    scaleBins(HistTotalPionsHard,(1.0/(2*M_PI*2.0*idHadronYCut)));
+    scaleBins(HistTotalKaonsSoft,(1.0/(2*M_PI*2.0*idHadronYCut)));
+    scaleBins(HistTotalKaonsHard,(1.0/(2*M_PI*2.0*idHadronYCut)));
+    scaleBins(HistTotalProtonsSoft,(1.0/(2*M_PI*2.0*idHadronYCut)));
+    scaleBins(HistTotalProtonsHard,(1.0/(2*M_PI*2.0*idHadronYCut)));
 
     //hadrons
     //hadron data graph
@@ -512,7 +529,7 @@ int main(int argc, char* argv[]){
     hadronData->SetMarkerColor(kRed);
     hadronData->SetLineColor(kRed);
     hadronData->SetTitle("CMS");
-    myRatioPlot(hadronData, HistTotalHadron, "Hadron Yields", true, true);
+    myRatioPlot(hadronData, HistTotalHadronSoft, HistTotalHadronHard, "Hadron Yields", true, true);
 
     //hadron jetscape
     TGraphErrors *GEHadronPrediction;
@@ -554,18 +571,22 @@ int main(int argc, char* argv[]){
     cout << "Creating ROOT output...";
     totalroot->cd();
     HistFinalJet->Write("jet radius 0.3");
-    HistTotalHadron->Write("hadrons");
+    HistTotalHadronSoft->Write("soft hadrons");
+    HistTotalHadronHard->Write("hard hadrons");
     HistTotalJet2->Write("jet radius 0.2");
     HistTotalJet3->Write("jet radius 0.4");
-    HistTotalPions->Write("rough pions"); smoothBins(HistTotalPions); /*HistTotalPions->Smooth();*/ HistTotalPions->Write("smooth pions");
-    HistTotalKaons->Write("rough kaons"); smoothBins(HistTotalKaons); /*HistTotalKaons->Smooth();*/ HistTotalKaons->Write("smooth kaons");
-    HistTotalProtons->Write("rough protons"); smoothBins(HistTotalProtons); /*HistTotalProtons->Smooth();*/ HistTotalProtons->Write("smooth protons");
+    HistTotalPionsSoft->Write("rough soft pions"); smoothBins(HistTotalPionsSoft); /*HistTotalPions->Smooth();*/ HistTotalPionsSoft->Write("smooth soft pions");
+    HistTotalPionsHard->Write("rough hard pions"); smoothBins(HistTotalPionsHard); /*HistTotalPions->Smooth();*/ HistTotalPionsHard->Write("smooth hard pions");
+    HistTotalKaonsSoft->Write("rough soft kaons"); smoothBins(HistTotalKaonsSoft); /*HistTotalKaons->Smooth();*/ HistTotalKaonsSoft->Write("smooth soft kaons");
+    HistTotalKaonsHard->Write("rough hard kaons"); smoothBins(HistTotalKaonsHard); /*HistTotalKaons->Smooth();*/ HistTotalKaonsHard->Write("smooth hard kaons");
+    HistTotalProtonsSoft->Write("rough soft protons"); smoothBins(HistTotalProtonsSoft); /*HistTotalProtons->Smooth();*/ HistTotalProtonsSoft->Write("smooth soft protons");
+    HistTotalProtonsHard->Write("rough hard protons"); smoothBins(HistTotalProtonsHard); /*HistTotalProtons->Smooth();*/ HistTotalProtonsHard->Write("smooth hard protons");
     cout << "finished." << endl;
 
     //hadron graphs
-    myRatioPlot(piongraph, HistTotalPions, "Pion Yields", true, true);
-    myRatioPlot(kaongraph, HistTotalKaons, "Kaon Yields", true, true);
-    myRatioPlot(protongraph, HistTotalProtons, "Proton Yields", true, true);
+    myRatioPlot(piongraph, HistTotalPionsSoft, HistTotalPionsHard, "Pion Yields", true, true);
+    myRatioPlot(kaongraph, HistTotalKaonsSoft, HistTotalKaonsHard, "Kaon Yields", true, true);
+    myRatioPlot(protongraph, HistTotalProtonsSoft, HistTotalProtonsHard, "Proton Yields", true, true);
 
     //jets
     //jet data graph

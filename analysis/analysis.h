@@ -43,6 +43,8 @@ vector<string> splitString(string input, string divider);
 TGraphErrors histToGraph(TH1D* hist);
 
 void myRatioPlot(TGraphErrors* dataGraph, TH1D* predictionHist, string title, bool xlog, bool ylog);
+//soft plus hard ratioplot overload
+void myRatioPlot(TGraphErrors* dataGraph, TH1D* predictionHistSoft, TH1D* predictionHistHard, string title, bool xlog, bool ylog);
 
 void ratioPlot(TGraphErrors* dataHist, TH1D* predictionHist, string title, string xname = "p_{T} (GeV)", string yname = "Yields", bool xlog = false, bool ylog = false);
 
