@@ -39,15 +39,9 @@ jobs:
         NONINTERACTIVE=1 brew tap davidchall/hep
         NONINTERACTIVE=1 brew install hepmc3
 
-    - name: install Pythia 8309
+    - name: install Pythia
       run: |
-        pythiaV="8309"
-        curl https://pythia.org/download/pythia83/pythia${pythiaV}.tgz
-        tar -xvz pythia${pythiaV}.tgz
-        cd pythia${pythiaV}
-        ./configure --enable-shared --prefix=pythia${pythiaV} --with-hepmc3=HepMC3-3.2.7
-        make
-        make install
+        NONINTERACTIVE=1 brew install pythia
 
     - name: set more environment variables
       run: |
