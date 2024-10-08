@@ -36,7 +36,8 @@ jobs:
 
     - name: install HepMC 3.2.6
       run: |
-        sudo chmod -R u+rwX /usr/local
+        chown -R $(whoami) /usr/local
+        chmod -R u+rwX /usr/local
         curl -SL http://hepmc.web.cern.ch/hepmc/releases/HepMC3-3.2.6.tar.gz | tar -xvz -C /usr/local
         cd /usr/local
         mkdir hepmc3-build
