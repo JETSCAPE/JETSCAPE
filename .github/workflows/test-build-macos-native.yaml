@@ -36,11 +36,14 @@ jobs:
 
     - name: install HepMC
       run: | # NONINTERACTIVE=1 brew tap davidchall/hep
-        NONINTERACTIVE=1 brew install davidchall/hep/hepmc3@3.2.6-1
+        cd $(brew --repository)/Library/Taps/homebrew/homebrew-hep
+        git checkout f643d5cacc19fd0b01d0ecba0daf30452152da03
+        NONINTERACTIVE=1 brew install davidchall/hep/hepmc3
+        brew pin hepmc3
 
     - name: install Pythia
       run: |
-        NONINTERACTIVE=1 brew install davidchall/hep/pythia@8.309
+        NONINTERACTIVE=1 brew install davidchall/hep/pythia
 
     - name: set more environment variables
       run: |
