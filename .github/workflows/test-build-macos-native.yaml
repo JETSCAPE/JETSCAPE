@@ -89,5 +89,6 @@ jobs:
         make -j2
 
     - name: Test Run
+      run: |
         cd ${GITHUB_WORKSPACE}/${REPO_NAME}/build
         ./runJetscape ../config/publications_config/arXiv_1910.05481/jetscape_user_PP_1910.05481.xml
