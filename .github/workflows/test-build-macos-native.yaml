@@ -37,26 +37,17 @@ jobs:
     - name: install HepMC
       run: | # brew tap davidchall/hep
         brew tap davidchall/homebrew-hep
-        cd $(brew --repository)
-        ls
-        cd Library
+        cd $(brew --repository)/Library/Taps/davidchall/homebrew-hep
         echo "Current directory: $(pwd)"
-        ls
-        cd Taps
-        echo "Current directory: $(pwd)"
-        ls
-        cd davidchall
-        echo "Current directory: $(pwd)"
-        ls
-        cd homebrew-hep
-        echo "Current directory: $(pwd)"
-        ls
         git checkout f643d5cacc19fd0b01d0ecba0daf30452152da03
         NONINTERACTIVE=1 brew install davidchall/hep/hepmc3
         brew pin hepmc3
 
     - name: install Pythia
       run: |
+        cd $(brew --repository)/Library/Taps/davidchall/homebrew-hep
+        echo "Current directory: $(pwd)"
+        git checkout 141f8548d045df88d498ab44df16d2091742e4b1
         NONINTERACTIVE=1 brew install davidchall/hep/pythia
 
     - name: set more environment variables
