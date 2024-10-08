@@ -34,16 +34,15 @@ jobs:
         export LD_LIBRARY_PATH="$ROOTSYS/lib:$LD_LIBRARY_PATH"
         export PYTHONPATH="$ROOTSYS/lib"
 
-    - name: install HepMC
+    - name: install HepMC 3.2.6
       run: | # brew tap davidchall/hep
         brew tap davidchall/homebrew-hep
         cd $(brew --repository)/Library/Taps/davidchall/homebrew-hep
         echo "Current directory: $(pwd)"
         git checkout f643d5cacc19fd0b01d0ecba0daf30452152da03
         NONINTERACTIVE=1 brew install davidchall/hep/hepmc3
-        brew pin hepmc3
 
-    - name: install Pythia
+    - name: install Pythia 8309
       run: |
         cd $(brew --repository)/Library/Taps/davidchall/homebrew-hep
         echo "Current directory: $(pwd)"
