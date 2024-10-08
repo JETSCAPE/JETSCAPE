@@ -34,7 +34,7 @@ jobs:
         export LD_LIBRARY_PATH="$ROOTSYS/lib:$LD_LIBRARY_PATH"
         export PYTHONPATH="$ROOTSYS/lib"
 
-    - name: install HepMC 3.2.6
+    - name: install HepMC
       run: |
         NONINTERACTIVE=1 brew tap davidchall/hep
         NONINTERACTIVE=1 brew install hepmc3
@@ -42,10 +42,10 @@ jobs:
     - name: install Pythia 8309
       run: |
         pythiaV="8309"
-        curl http://pythia.org/download/pythia83/pythia${pythiaV}.tgz
+        curl https://pythia.org/download/pythia83/pythia${pythiaV}.tgz
         tar -xvz pythia${pythiaV}.tgz
         cd pythia${pythiaV}
-        ./configure --enable-shared --prefix=pythia${pytiaV} --with-hepmc3=HepMC3-3.2.7
+        ./configure --enable-shared --prefix=pythia${pythiaV} --with-hepmc3=HepMC3-3.2.7
         make
         make install
 
