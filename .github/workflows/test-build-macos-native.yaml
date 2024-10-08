@@ -35,7 +35,8 @@ jobs:
         export PYTHONPATH="$ROOTSYS/lib"
 
     - name: install HepMC
-      run: | # NONINTERACTIVE=1 brew tap davidchall/hep
+      run: | 
+        brew tap davidchall/hep
         cd $(brew --repository)/Library/Taps/homebrew/homebrew-hep
         git checkout f643d5cacc19fd0b01d0ecba0daf30452152da03
         NONINTERACTIVE=1 brew install davidchall/hep/hepmc3
