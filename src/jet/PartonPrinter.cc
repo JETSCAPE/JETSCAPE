@@ -38,8 +38,12 @@ void PartonPrinter::Init() {
   this->SetId("PartonPrinter");
     JSINFO << "Initialize PartonPrinter ...";
     string filename = GetXMLElementText({"PartonPrinter","FileName"});
+    double time_from_xml = GetXMLElementDouble({"Eloss", "maxT"});
+    set_time (time_from_xml);
+    double delta_t = GetXMLElementDouble({"Eloss", "deltaT"});
+    set_delta_time (delta_t);
     
-  dist_output.open(filename,std::ios::app);
+  dist_output.open(filename);
 }
 
 void PartonPrinter::Exec() {
@@ -55,13 +59,52 @@ void PartonPrinter::GetFinalPartons(
     for (unsigned int ipart = 0;
          ipart < pShower.get()->GetFinalPartons().size(); ++ipart) {
       //fPartons.push_back( pShower.get()->GetFinalPartons().at(ipart));
-      if (std::abs(pShower.get()->GetFinalPartons().at(ipart)->pid()) == 21) {
+      if (std::abs(pShower.get()->GetFinalPartons().at(ipart)->pid()) <50)
+      {
+          double px = pShower.get()->GetFinalPartons().at(ipart)->px();
+          double py = pShower.get()->GetFinalPartons().at(ipart)->py();
+          double pz = pShower.get()->GetFinalPartons().at(ipart)->pz();
+          double m = pShower.get()->GetFinalPartons().at(ipart)->restmass();
+          
+          double e = std::sqrt( px*px + py*py + pz*pz + m*m);
+          double vx = px/e;
+          double vy = py/e;
+          double vz = pz/e;
+          
+          double x = pShower.get()->GetFinalPartons().at(ipart)->x_in().comp(1) ;
+          double y = pShower.get()->GetFinalPartons().at(ipart)->x_in().comp(2) ;
+          double z = pShower.get()->GetFinalPartons().at(ipart)->x_in().comp(3) ;
+          double t = pShower.get()->GetFinalPartons().at(ipart)->x_in().comp(0) ;
+          
+          int choice = 1;
+          double write_time = this->time() + this->delta_time();
+          
+          if (t > write_time)
+          {
+              JSWARN << " write out time is before split time, t = " << t << " this-> time = " << write_time ;
+              JSWARN << " propagate backward? yes 1, no 0 "  ;
+              cin >> choice;
+          }
+        
+          if (choice==0) continue;
+          
+          x = x + vx*(write_time - t);
+          y = y + vy*(write_time - t);
+          z = z + vz*(write_time - t);
+          
+          double mu2 = pShower.get()->GetFinalPartons().at(ipart)->t() ;
+          double tau = pShower.get()->GetFinalPartons().at(ipart)->mean_form_time();
+          double t_size = 0.632/sqrt(mu2);
+          
         dist_output << ipart << " "
                     << pShower.get()->GetFinalPartons().at(ipart)->pid() << " "
                     << pShower.get()->GetFinalPartons().at(ipart)->e() << " "
                     << pShower.get()->GetFinalPartons().at(ipart)->px() << " "
                     << pShower.get()->GetFinalPartons().at(ipart)->py() << " "
-                    << pShower.get()->GetFinalPartons().at(ipart)->pz() << endl;
+                    << pShower.get()->GetFinalPartons().at(ipart)->pz() << " "
+                    << y  << " "
+                    << z  << " "
+                    << t_size << endl;
       }
 
       //vPin.push_back( pShower.get()->GetFinalPartons().at(ipart));

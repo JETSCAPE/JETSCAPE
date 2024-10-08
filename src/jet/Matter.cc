@@ -1389,6 +1389,10 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
                     (time - pIn[i].x_in().comp(0)) * velocity[j];
         }
 
+        // extra bump from uncertainty
+          
+          
+          
         VERBOSE(8) << BOLDRED << " PiD - a = " << pid_a;
 
         pOut.push_back(Parton(0, pid_a, jet_stat, newp, newx));
