@@ -40,12 +40,16 @@ jobs:
         cd $(brew --repository)
         ls
         cd Library
+        echo "Current directory: $(pwd)"
         ls
         cd Taps
+        echo "Current directory: $(pwd)"
         ls
         cd homebrew
+        echo "Current directory: $(pwd)"
         ls
         cd homebrew-hep
+        echo "Current directory: $(pwd)"
         ls
         git checkout f643d5cacc19fd0b01d0ecba0daf30452152da03
         NONINTERACTIVE=1 brew install davidchall/hep/hepmc3
