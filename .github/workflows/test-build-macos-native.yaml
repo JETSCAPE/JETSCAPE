@@ -42,9 +42,10 @@ jobs:
     - name: install Pythia 8309
       run: |
         pythiaV="8309"
-        curl -SLk http://pythia.org/download/pythia83/pythia${pythiaV}.tgz | tar -xvz -C /usr/local
-        cd /usr/local/pythia${pythiaV}
-        ./configure --enable-shared --prefix=/usr/local/ --with-hepmc3=/usr/local/HepMC3-3.2.6
+        curl http://pythia.org/download/pythia83/pythia${pythiaV}.tgz
+        tar -xvz pythia${pythiaV}.tgz
+        cd pythia${pythiaV}
+        ./configure --enable-shared --prefix=pythia${pytiaV} --with-hepmc3=HepMC3-3.2.7
         make
         make install
 
