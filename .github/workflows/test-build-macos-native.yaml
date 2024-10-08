@@ -36,14 +36,11 @@ jobs:
 
     - name: install HepMC 3.2.6
       run: |
-        chmod -R u+rwX /usr/local
-        curl -SL http://hepmc.web.cern.ch/hepmc/releases/HepMC3-3.2.6.tar.gz | tar -xvz -C /usr/local
-        cd /usr/local
-        mkdir hepmc3-build
-        cd hepmc3-build
-        cmake ../HepMC3-3.2.6 -DCMAKE_INSTALL_PREFIX=/usr/local -DHEPMC3_ENABLE_ROOTIO=ON -DROOT_DIR=${ROOTSYS} -DHEPMC3_BUILD_EXAMPLES=ON
-        make -j8 install
-        rm -r /usr/local/hepmc3-build
+        curl -SL http://hepmc.web.cern.ch/hepmc/releases/HepMC3-3.2.6.tar.gz
+        tar -xvzf HepMC3-3.2.6.tar.gz
+        cd HepMC3-3.2.6/cmake
+        cmake .. -DHEPMC3_ENABLE_ROOTIO=ON -DROOT_DIR=${ROOTSYS} -DHEPMC3_BUILD_EXAMPLES=ON
+        make all install
         export LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH}"
 
     - name: install Pythia 8309
@@ -52,8 +49,8 @@ jobs:
         curl -SLk http://pythia.org/download/pythia83/pythia${pythiaV}.tgz | tar -xvz -C /usr/local
         cd /usr/local/pythia${pythiaV}
         ./configure --enable-shared --prefix=/usr/local/ --with-hepmc3=/usr/local/HepMC3-3.2.6
-        make -j8
-        make -j8 install
+        make all
+        make all install
 
     - name: set more environment variables
       run: |
