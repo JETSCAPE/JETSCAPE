@@ -39,7 +39,7 @@ jobs:
         curl https://hepmc.web.cern.ch/hepmc/releases/HepMC3-3.2.6.tar.gz
         tar -xvz HepMC3-3.2.6.tar.gz
         cd HepMC3-3.2.6/cmake
-        cmake .. -DHEPMC3_ENABLE_ROOTIO=ON -DROOT_DIR=${ROOTSYS} -DHEPMC3_BUILD_EXAMPLES=ON
+        cmake ..
         make all install
         export LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH}"
 
