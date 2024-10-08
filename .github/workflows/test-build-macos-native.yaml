@@ -37,8 +37,16 @@ jobs:
     - name: install HepMC
       run: | # brew tap davidchall/hep
         brew tap davidchall/homebrew-hep
-        brew info hepmc3
-        cd $(brew --repository)/Library/Taps/homebrew/homebrew-hep
+        cd $(brew --repository)
+        ls
+        cd Library
+        ls
+        cd Taps
+        ls
+        cd homebrew
+        ls
+        cd homebrew-hep
+        ls
         git checkout f643d5cacc19fd0b01d0ecba0daf30452152da03
         NONINTERACTIVE=1 brew install davidchall/hep/hepmc3
         brew pin hepmc3
