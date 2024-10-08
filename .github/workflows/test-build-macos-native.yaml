@@ -48,6 +48,9 @@ jobs:
         cd homebrew
         echo "Current directory: $(pwd)"
         ls
+        cd homebrew-core
+        echo "Current directory: $(pwd)"
+        ls
         cd homebrew-hep
         echo "Current directory: $(pwd)"
         ls
