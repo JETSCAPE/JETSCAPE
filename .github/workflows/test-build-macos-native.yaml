@@ -41,7 +41,7 @@ jobs:
 
     - name: install Pythia
       run: |
-        NONINTERACTIVE=1 brew install pythia
+        NONINTERACTIVE=1 brew install pythia@8309
 
     - name: set more environment variables
       run: |
