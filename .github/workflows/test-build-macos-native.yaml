@@ -36,12 +36,14 @@ jobs:
 
     - name: install HepMC 3.2.6
       run: |
-        curl https://hepmc.web.cern.ch/hepmc/releases/HepMC3-3.2.6.tar.gz
-        tar -xvz HepMC3-3.2.6.tar.gz
-        cd HepMC3-3.2.6/cmake
+        wget http://hepmc.web.cern.ch/hepmc/releases/HepMC3-3.2.6.tar.gz
+        tar -xzf HepMC3-3.2.6.tar.gz
+        mkdir hepmc3-build
+        cd hepmc3-build
         cmake ..
-        make all install
-        export LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH}"
+        make
+        make install
+      # export LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH}"
 
     - name: install Pythia 8309
       run: |
