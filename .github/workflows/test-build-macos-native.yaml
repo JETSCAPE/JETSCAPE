@@ -24,9 +24,8 @@ jobs:
 
     - name: brew install dependencies
       run: |
-        NONINTERACTIVE=1 brew install cmake doxygen root6 graph-tool hdf5 open-mpi gsl boost zlib
-        NONINTERACTIVE=1 brew tap brewsci/science
-        NONINTERACTICE=1 brew install pythia
+        NONINTERACTIVE=1 brew install --cask cmake doxygen 
+        NONINTERACTICE=1 brew install root6 graph-tool hdf5 open-mpi gsl boost zlib
         . /usr/local/bin/thisroot.sh
 
 
