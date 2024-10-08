@@ -54,9 +54,6 @@ jobs:
         username=jetscape-user
         export JETSCAPE_DIR="/home/${username}/JETSCAPE"
         export SMASH_DIR="${JETSCAPE_DIR}/external_packages/smash/smash_code"
-        export EIGEN3_ROOT=<eigen install directory>/include/eigen3/
-        export GSL_ROOT_DIR=$(gsl-config --prefix)
-        export BOOST_ROOT=<boost install directory>
         export PYTHIA8DIR=${PYTHIAINSTALLDIR}/pythia8309
         export PYTHIA8_ROOT_DIR=${PYTHIAINSTALLDIR}/pythia8309
       
