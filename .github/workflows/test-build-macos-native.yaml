@@ -36,14 +36,8 @@ jobs:
 
     - name: install HepMC 3.2.6
       run: |
-        wget http://hepmc.web.cern.ch/hepmc/releases/HepMC3-3.2.6.tar.gz
-        tar -xzf HepMC3-3.2.6.tar.gz
-        mkdir hepmc3-build
-        cd hepmc3-build
-        cmake ../HepMC3-3.2.6
-        make
-        make install
-      # export LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH}"
+        NONINTERACTIVE=1 brew tap davidchall/hep
+        NONINTERACTIVE=1 brew install hepmc3
 
     - name: install Pythia 8309
       run: |
@@ -51,8 +45,8 @@ jobs:
         curl -SLk http://pythia.org/download/pythia83/pythia${pythiaV}.tgz | tar -xvz -C /usr/local
         cd /usr/local/pythia${pythiaV}
         ./configure --enable-shared --prefix=/usr/local/ --with-hepmc3=/usr/local/HepMC3-3.2.6
-        make all
-        make all install
+        make
+        make install
 
     - name: set more environment variables
       run: |
