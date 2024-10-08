@@ -24,7 +24,7 @@ jobs:
 
     - name: brew install dependencies
       run: |
-        NONINTERACTIVE=1 brew install --formula cmake doxygen root graph-tool hdf5 open-mpi gsl boost zlib
+        NONINTERACTIVE=1 brew install --formula cmake doxygen root graph-tool hdf5 open-mpi gsl boost zlib tree
         . /opt/homebrew/bin/thisroot.sh
 
     - name: set environment variables
@@ -44,17 +44,8 @@ jobs:
         ls
         cd Taps
         echo "Current directory: $(pwd)"
-        ls
-        cd homebrew
-        echo "Current directory: $(pwd)"
-        ls
-        cd homebrew-core
-        echo "Current directory: $(pwd)"
-        ls
-        cd Formula
-        echo "Current directory: $(pwd)"
-        ls
-        cd homebrew-hep
+        tree
+        cd davidchall
         echo "Current directory: $(pwd)"
         ls
         git checkout f643d5cacc19fd0b01d0ecba0daf30452152da03
