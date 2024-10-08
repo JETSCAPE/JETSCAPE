@@ -40,7 +40,7 @@ jobs:
         tar -xzf HepMC3-3.2.6.tar.gz
         mkdir hepmc3-build
         cd hepmc3-build
-        cmake ..
+        cmake ../HepMC3-3.2.6
         make
         make install
       # export LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH}"
