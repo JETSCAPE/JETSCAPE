@@ -35,9 +35,8 @@ jobs:
         export PYTHONPATH="$ROOTSYS/lib"
 
     - name: install HepMC
-      run: |
-        NONINTERACTIVE=1 brew tap davidchall/hep
-        NONINTERACTIVE=1 brew brew install davidchall/hep/hepmc3@3.2.6-1
+      run: | # NONINTERACTIVE=1 brew tap davidchall/hep
+        NONINTERACTIVE=1 brew install davidchall/hep/hepmc3@3.2.6-1
 
     - name: install Pythia
       run: |
