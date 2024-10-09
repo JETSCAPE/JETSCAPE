@@ -50,6 +50,8 @@ jobs:
         NONINTERACTIVE=1 brew install davidchall/hep/pythia
         echo "Pythia Path: "
         brew --prefix pythia
+        cd /opt/homebrew/opt/pythia
+        tree
 
     - name: set more environment variables
       run: |
