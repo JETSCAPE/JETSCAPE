@@ -18,13 +18,13 @@ env:
 jobs:
   build:
     name: external packages build
-    runs-on: macos-latest
+    runs-on: macos-15
 
     steps:
 
     - name: brew install dependencies
       run: |
-        NONINTERACTIVE=1 brew install --formula cmake doxygen root graph-tool hdf5 open-mpi gsl boost zlib llvm
+        NONINTERACTIVE=1 brew install --formula cmake doxygen root graph-tool hdf5 open-mpi gsl boost zlib
         . /opt/homebrew/bin/thisroot.sh
 
     - name: set environment variables
