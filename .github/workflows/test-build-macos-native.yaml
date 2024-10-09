@@ -24,7 +24,7 @@ jobs:
 
     - name: brew install dependencies
       run: |
-        NONINTERACTIVE=1 brew install --formula cmake doxygen root graph-tool hdf5 open-mpi gsl boost zlib tree
+        NONINTERACTIVE=1 brew install --formula cmake doxygen root graph-tool hdf5 open-mpi gsl boost zlib llvm
         . /opt/homebrew/bin/thisroot.sh
 
     - name: set environment variables
@@ -50,8 +50,6 @@ jobs:
         NONINTERACTIVE=1 brew install davidchall/hep/pythia
         echo "Pythia Path: "
         brew --prefix pythia
-        cd /opt/homebrew/opt/pythia
-        tree
 
     - name: set more environment variables
       run: |
