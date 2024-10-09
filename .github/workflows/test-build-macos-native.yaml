@@ -54,8 +54,8 @@ jobs:
         username=jetscape-user
         export JETSCAPE_DIR="/home/${username}/JETSCAPE"
         export SMASH_DIR="${JETSCAPE_DIR}/external_packages/smash/smash_code"
-        export PYTHIA8DIR=${PYTHIAINSTALLDIR}/pythia8309
-        export PYTHIA8_ROOT_DIR=${PYTHIAINSTALLDIR}/pythia8309
+        export PYTHIA8DIR="/opt/homebrew/Cellar/pythia/8.309"
+        export PYTHIA8_ROOT_DIR="/opt/homebrew/Cellar/pythia/8.309"
       
     - name: Checkout JETSCAPE Repository
       uses: actions/checkout@v4
