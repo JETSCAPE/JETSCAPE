@@ -66,33 +66,32 @@ jobs:
       with:
         path: ${{ github.event.repository.name }}
         
-    - name: Download MUSIC
-      run: |
-        cd ${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages
-        ./get_music.sh
+    # - name: Download MUSIC
+    #   run: |
+    #     cd ${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages
+    #     ./get_music.sh
     
-    - name: Download ISS
-      run: |
-        cd ${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages
-        ./get_iSS.sh
+    # - name: Download ISS
+    #   run: |
+    #     cd ${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages
+    #     ./get_iSS.sh
     
-    - name: Download FREESTREAM
-      run: |
-        cd ${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages
-        ./get_freestream-milne.sh
+    # - name: Download FREESTREAM
+    #   run: |
+    #     cd ${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages
+    #     ./get_freestream-milne.sh
 
-    - name: Download SMASH
-      run: |
-        cd ${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages
-        ./get_smash.sh
+    # - name: Download SMASH
+    #   run: |
+    #     cd ${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages
+    #     ./get_smash.sh
 
     - name: Build Application
       run: |
         cd ${GITHUB_WORKSPACE}/${REPO_NAME}
         mkdir build
         cd build
-        export SMASH_DIR="${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages/smash/smash_code"
-        cmake .. -DUSE_MUSIC=ON -DUSE_ISS=ON -DUSE_FREESTREAM=ON -DUSE_SMASH=ON
+        cmake ..
         make -j2
 
     - name: Test Run
