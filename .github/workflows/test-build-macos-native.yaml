@@ -17,8 +17,11 @@ env:
 
 jobs:
   build:
-    name: external packages build
-    runs-on: macos-15
+    name: install packages and build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-14 macos-15]
 
     steps:
 
@@ -61,35 +64,13 @@ jobs:
       uses: actions/checkout@v4
       with:
         path: ${{ github.event.repository.name }}
-        
-    - name: Download MUSIC
-      run: |
-        cd ${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages
-        ./get_music.sh
-    
-    - name: Download ISS
-      run: |
-        cd ${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages
-        ./get_iSS.sh
-    
-    - name: Download FREESTREAM
-      run: |
-        cd ${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages
-        ./get_freestream-milne.sh
-
-    - name: Download SMASH
-      run: |
-        export PYTHIA8DIR="/usr/local"
-        cd ${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages
-        ./get_smash.sh
 
     - name: Build Application
       run: |
         cd ${GITHUB_WORKSPACE}/${REPO_NAME}
         mkdir build
         cd build
-        export SMASH_DIR="${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages/smash/smash_code"
-        cmake .. -DUSE_MUSIC=ON -DUSE_ISS=ON -DUSE_FREESTREAM=ON -DUSE_SMASH=ON
+        cmake ..
         make -j2
 
     - name: Test Run
