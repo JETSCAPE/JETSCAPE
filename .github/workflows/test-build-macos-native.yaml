@@ -79,6 +79,7 @@ jobs:
 
     - name: Download SMASH
       run: |
+        export PYTHIA8DIR="/usr/local"
         cd ${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages
         ./get_smash.sh
 
@@ -87,7 +88,6 @@ jobs:
         cd ${GITHUB_WORKSPACE}/${REPO_NAME}
         mkdir build
         cd build
-        export PYTHIA8DIR="/usr/local"
         export SMASH_DIR="${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages/smash/smash_code"
         cmake .. -DUSE_MUSIC=ON -DUSE_ISS=ON -DUSE_FREESTREAM=ON -DUSE_SMASH=ON
         make -j2
