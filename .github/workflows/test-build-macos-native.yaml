@@ -48,48 +48,47 @@ jobs:
         echo "Current directory: $(pwd)"
         git checkout 141f8548d045df88d498ab44df16d2091742e4b1
         NONINTERACTIVE=1 brew install davidchall/hep/pythia
-        echo "Pythia Path: "
-        brew --prefix pythia
 
     - name: set more environment variables
       run: |
         username=jetscape-user
         export JETSCAPE_DIR="/home/${username}/JETSCAPE"
         export SMASH_DIR="${JETSCAPE_DIR}/external_packages/smash/smash_code"
-        export PYTHIA8DIR=$(brew --prefix pythia)
-        export PYTHIA8_ROOT_DIR="/opt/homebrew/Cellar/pythia/8.309"
+        export PYTHIA8DIR="/usr/local"
+        export PYTHIA8_ROOT_DIR="/usr/local"
       
     - name: Checkout JETSCAPE Repository
       uses: actions/checkout@v4
       with:
         path: ${{ github.event.repository.name }}
         
-    # - name: Download MUSIC
-    #   run: |
-    #     cd ${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages
-    #     ./get_music.sh
+    - name: Download MUSIC
+      run: |
+        cd ${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages
+        ./get_music.sh
     
-    # - name: Download ISS
-    #   run: |
-    #     cd ${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages
-    #     ./get_iSS.sh
+    - name: Download ISS
+      run: |
+        cd ${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages
+        ./get_iSS.sh
     
-    # - name: Download FREESTREAM
-    #   run: |
-    #     cd ${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages
-    #     ./get_freestream-milne.sh
+    - name: Download FREESTREAM
+      run: |
+        cd ${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages
+        ./get_freestream-milne.sh
 
-    # - name: Download SMASH
-    #   run: |
-    #     cd ${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages
-    #     ./get_smash.sh
+    - name: Download SMASH
+      run: |
+        cd ${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages
+        ./get_smash.sh
 
     - name: Build Application
       run: |
         cd ${GITHUB_WORKSPACE}/${REPO_NAME}
         mkdir build
         cd build
-        cmake ..
+        export SMASH_DIR="${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages/smash/smash_code"
+        cmake .. -DUSE_MUSIC=ON -DUSE_ISS=ON -DUSE_FREESTREAM=ON -DUSE_SMASH=ON
         make -j2
 
     - name: Test Run
