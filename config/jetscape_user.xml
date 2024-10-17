@@ -44,6 +44,12 @@
     </LinesToRead>
     <tau0Max>20</tau0Max>
     <pythia_decays>on</pythia_decays> 
+    <!--maximum energy level for mesons-->
+    <reco_Mlevelmax>1</reco_Mlevelmax>
+    <!--maximum energy level for baryons-->
+    <reco_Blevelmax>1</reco_Blevelmax>
+    <!--switch for recombination biased by the time of the partons-->
+    <recobias_t>1</recobias_t>
     <part_prop>0.0</part_prop>
     <reco_hadrons_in_pythia>1</reco_hadrons_in_pythia>
   </JetHadronization>
