@@ -111,9 +111,14 @@ int main(int argc, char* argv[]){
     int thrustCount = 0;
 
     //variables for xe
-    TFile xeroot( "/data/rjfgroup/rjf01/cameron.parker/data/xedata.root");
+    TFile xeroot("/data/rjfgroup/rjf01/cameron.parker/data/xedata.root");
     TDirectory* xedir = (TDirectory*)xeroot.Get("Table 1"); TH1D* xedata = (TH1D*)xedir->Get("Hist1D_y1");
     TGraphErrors* xegraph = (TGraphErrors*)xedir->Get("Graph1D_y1");
+
+    //hadron chemistry ratio data
+    TFile hadchemroot("/data/rjfgroup/rjf01/cameron.parker/data/ALEPH-light-ratios/flavor-ratios.root");
+    TGraphErrors* kaonratiograph = (TGraphErrors*)hadchemroot.Get("kaons");
+    TGraphErrors* protonratiograph = (TGraphErrors*)hadchemroot.Get("protons");
     
     // Histograms for event variables
     TH1D *HistTempJet = new TH1D("JetSpectrumBin", "Jet Spectrum pT", jetdata->GetNbinsX(), jetdata->GetXaxis()->GetXbins()->GetArray()); //CountVspT for jets
@@ -132,6 +137,8 @@ int main(int argc, char* argv[]){
     TH1D *tempPions = new TH1D("Pion Spectrum", "Pion Spectrum pT", NpTpionBin, pionpTBin);
     TH1D *tempKaons = new TH1D("Kaon Spectrum", "Kaon Spectrum pT", NpTkaonBin, kaonpTBin);
     TH1D *tempProtons = new TH1D("Proton Spectrum", "Proton Spectrum pT", NpTprotonBin, protonpTBin);
+    TH1D* kPionBase = (TH1D*)tempKaons->Clone();
+    TH1D* pPionBase = (TH1D*)tempProtons->Clone();
     
     //jet stuff declaration
     std::vector <fjcore::PseudoJet> fjInputs;
@@ -209,7 +216,11 @@ int main(int argc, char* argv[]){
                 double xp = 2*P/Ecm;
                 HistTempSingleHadron->Fill(xp);
                 if(pStat <= 812) HistRecoHadron->Fill(xp);
-                if(abs(PID) == 211) tempPions->Fill(xp);
+                if(abs(PID) == 211) {
+                    tempPions->Fill(xp);
+                    kPionBase->Fill(xp);
+                    pPionBase->Fill(xp);
+                }
                 if(abs(PID) == 321) tempKaons->Fill(xp);
                 if(abs(PID) == 2212) tempProtons->Fill(xp);
             }
@@ -285,6 +296,8 @@ int main(int argc, char* argv[]){
     tempPions->Scale(1.0/(double)Events,"width");
     tempKaons->Scale(1.0/(double)Events,"width");
     tempProtons->Scale(1.0/(double)Events,"width");
+    kPionBase->Scale(1.0/(double)Events,"width");
+    pPionBase->Scale(1.0/(double)Events,"width");
     HistThrust->Scale(1.0/(double)thrustCount,"width");
     HistTempJet->Scale(1.0/(double)jetCount);
     HistTempdiJet->Scale(1.0/(double)jetCount);
@@ -296,13 +309,23 @@ int main(int argc, char* argv[]){
     EventInfo[2] = Events;
     EventInfo.Write("EventInfo");
     outFile->Close();
+
+    //ratio histograms
+    TH1D* kaonRatio = (TH1D*)tempKaons->Clone();
+    kaonRatio->Divide(kPionBase);
+    TH1D* protonRatio = (TH1D*)tempProtons->Clone();
+    protonRatio->Divide(pPionBase);
     
     //zeroing bins not in data
     tempPions->SetBinContent(17,0);
     tempKaons->SetBinContent(9,0);
     tempKaons->SetBinContent(13,0);
+    kaonRatio->SetBinContent(9,0);
+    kaonRatio->SetBinContent(13,0);
     tempProtons->SetBinContent(7,0);
     tempProtons->SetBinContent(10,0);
+    protonRatio->SetBinContent(7,0);
+    protonRatio->SetBinContent(10,0);
 
     //matching overflow handling in jet analysis
     /*double newfinaljetbin = HistTempJet->GetBinContent(NpTJetBin)+HistTempJet->GetBinContent(NpTJetBin+1);
@@ -324,6 +347,8 @@ int main(int argc, char* argv[]){
     tempPions->Write("pions");
     tempKaons->Write("kaons");
     tempProtons->Write("protons");
+    kaonRatio->Write("kaon ratio");
+    protonRatio->Write("proton ratio");
     HistThrust->Write("thrust");
     HistMultiplicity->Write("multiplicity");
     HistRecoHadron->Write("Reco Hadron Ratio");
@@ -346,9 +371,11 @@ int main(int argc, char* argv[]){
     ratioPlot(xegraph, xeHist, "Charged x_{e}", "x_{e}", "1/#sigma d#sigma/dx_{e}", true, true);
     ratioPlot(dijetgraph, HistTempdiJet, "Leading Dijet Distribution", "E (GeV)", "1/N_{events} dN/dE", false, false);
     ratioPlot(jetgraph, HistTempJet, "Inclusive Jets", "E (GeV)", "1/N_{events} dN/dE", false, true);
-    ratioPlot(pionxpgraph, tempPions, "Pion x_{p}", "x_{p}", "1/#sigma d#sigma/dx_{p}", true, true);
-    ratioPlot(kaonxpgraph, tempKaons, "Kaon x_{p}", "x_{p}", "1/#sigma d#sigma/dx_{p}", true, true);
-    ratioPlot(protonxpgraph, tempProtons, "Proton x_{p}", "x_{p}", "1/#sigma d#sigma/dx_{p}", true, true);
+    myRatioPlot(pionxpgraph, tempPions, "Pion x_{p}", true, true);
+    myRatioPlot(kaonxpgraph, tempKaons, "Kaon x_{p}", true, true);
+    myRatioPlot(protonxpgraph, tempProtons, "Proton x_{p}", true, true);
+    myRatioPlot(kaonratiograph, kaonRatio, "Kaon Ratio", true, false);
+    myRatioPlot(protonratiograph, protonRatio, "Proton Ratio", true, false);
 
     //output
     cout << "Mean N charged: " << HistMultiplicity->GetMean() << endl;

@@ -82,10 +82,11 @@ void myRatioPlot(TGraphErrors* dataGraph, TH1D* predictionHist, string title, bo
     for(int i = 0; i < bins; i++){
         //reading values from histograms
         dataGraph->GetPoint(i,xcoords[i],data[i]);
+        double bindex = predictionHist->FindBin(xcoords[i]);
         dataErrors[i] = dataGraph->GetErrorY(i);
         binWidths[i] = dataGraph->GetErrorX(i);
-        prediction[i] = predictionHist->GetBinContent(i+1);
-        predictionerrors[i] = predictionHist->GetBinError(i+1);
+        prediction[i] = predictionHist->GetBinContent(bindex);
+        predictionerrors[i] = predictionHist->GetBinError(bindex);
         asym[i] = (prediction[i]/data[i]);
         asymErrorsHigh[i] = 1 + dataErrors[i]/data[i];
         asymErrorsLow[i] = 1 - dataErrors[i]/data[i];

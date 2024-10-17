@@ -53,9 +53,12 @@ int main(int argc, char* argv[]){
     TApplication theApp("hist", &argc, argv);
 
     //making said dat files
-    makeObsPred(directories, input, "PionSpectraPrediction", "identified pions");
-    makeObsPred(directories, input, "KaonSpectraPrediction", "identified kaons");
-    makeObsPred(directories, input, "ProtonSpectraPrediction", "identified protons");
+    makeObsPred(directories, input, "PionSpectraPredictionSoft", "rough soft pions");
+    makeObsPred(directories, input, "PionSpectraPredictionHard", "rough hard pions");
+    makeObsPred(directories, input, "KaonSpectraPredictionSoft", "rough soft kaons");
+    makeObsPred(directories, input, "KaonSpectraPredictionHard", "rough hard kaons");
+    makeObsPred(directories, input, "ProtonSpectraPredictionSoft", "rough soft protons");
+    makeObsPred(directories, input, "ProtonSpectraPredictionHard", "rough hard protons");
     makeObsPred(directories, input, "LowYJetPrediction", "smooth low y jets");
     makeObsPred(directories, input, "MidYJetPrediction", "smooth mid y jets");
     makeObsPred(directories, input, "HighYJetPrediction", "smooth high y jets");

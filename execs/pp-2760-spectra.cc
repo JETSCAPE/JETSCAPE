@@ -573,12 +573,16 @@ int main(int argc, char* argv[]){
     HistFinalJet->Write("jet radius 0.3");
     HistTotalHadronSoft->Write("soft hadrons");
     HistTotalHadronHard->Write("hard hadrons");
+    TH1D* hadronhist = (TH1D*)HistTotalHadronSoft->Clone(); hadronhist->Add(HistTotalHadronHard); hadronhist->Write("hadrons");
     HistTotalJet2->Write("jet radius 0.2");
     HistTotalJet3->Write("jet radius 0.4");
+    TH1D* pionhist = (TH1D*)HistTotalPionsSoft->Clone(); pionhist->Add(HistTotalPionsHard); pionhist->Write("smooth pions");
     HistTotalPionsSoft->Write("rough soft pions"); smoothBins(HistTotalPionsSoft); /*HistTotalPions->Smooth();*/ HistTotalPionsSoft->Write("smooth soft pions");
     HistTotalPionsHard->Write("rough hard pions"); smoothBins(HistTotalPionsHard); /*HistTotalPions->Smooth();*/ HistTotalPionsHard->Write("smooth hard pions");
+    TH1D* kaonhist = (TH1D*)HistTotalKaonsSoft->Clone(); kaonhist->Add(HistTotalKaonsHard); kaonhist->Write("smooth kaons");
     HistTotalKaonsSoft->Write("rough soft kaons"); smoothBins(HistTotalKaonsSoft); /*HistTotalKaons->Smooth();*/ HistTotalKaonsSoft->Write("smooth soft kaons");
     HistTotalKaonsHard->Write("rough hard kaons"); smoothBins(HistTotalKaonsHard); /*HistTotalKaons->Smooth();*/ HistTotalKaonsHard->Write("smooth hard kaons");
+    TH1D* protonhist = (TH1D*)HistTotalProtonsSoft->Clone(); protonhist->Add(HistTotalProtonsHard); protonhist->Write("smooth protons");
     HistTotalProtonsSoft->Write("rough soft protons"); smoothBins(HistTotalProtonsSoft); /*HistTotalProtons->Smooth();*/ HistTotalProtonsSoft->Write("smooth soft protons");
     HistTotalProtonsHard->Write("rough hard protons"); smoothBins(HistTotalProtonsHard); /*HistTotalProtons->Smooth();*/ HistTotalProtonsHard->Write("smooth hard protons");
     cout << "finished." << endl;
