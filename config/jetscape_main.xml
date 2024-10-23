@@ -379,7 +379,6 @@
        <additional_pythia_particles>0</additional_pythia_particles>
        <!-- Path to file with additional particles for pythia (for higher reco_Mlevelmax)-->
        <additional_pythia_particles_path>../config/HH_LightExcitedMesons.xml</additional_pythia_particles_path>
-       <reco_hadrons_in_pythia>1</reco_hadrons_in_pythia>
        <ignorePhotons> off </ignorePhotons>
        <pionWidthScale>1.0</pionWidthScale>
        <kaonWidthScale>1.0</kaonWidthScale>
