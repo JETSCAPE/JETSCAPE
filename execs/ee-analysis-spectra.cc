@@ -179,7 +179,9 @@ int main(int argc, char* argv[]){
         int multiplicity = 0;
         int tracks = 0;
         Events++;
-        double totalEcheck = 0;
+        double totalEcheck = 0.;
+        double neutralEcheck = 0.;
+        double chargedEcheck = 0.;
 
         //hadron loop
         for(unsigned int i=0; i<hadrons.size(); i++){
@@ -200,9 +202,10 @@ int main(int argc, char* argv[]){
                 multiplicity++;
                 if(PT > 0.2 && fabs(Eta) < 1.74){
                     tracks++;
-                    totalEcheck += E;
                 }
-            }
+                chargedEcheck += E;
+            } else neutralEcheck += E;
+            totalEcheck += E;
 
             if(fabs(Eta) < 1.74){
                 fjInputs.push_back(fjcore::PseudoJet(Px,Py,Pz,E));
@@ -225,6 +228,10 @@ int main(int argc, char* argv[]){
                 if(abs(PID) == 2212) tempProtons->Fill(xp);
             }
         }
+
+        cout << "Total E: " << totalEcheck << endl;
+        cout << "Charged E: " << chargedEcheck << endl;
+        cout << "Neutral E: " << neutralEcheck << endl;
 
         //if(tracks < 5 || totalEcheck < 15) continue;
         Eventskept++;
