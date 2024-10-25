@@ -398,6 +398,7 @@ void HybridHadronization::Init(){
 	  if(xml_intin == 0 || xml_intin == 1){additional_pythia_particles = xml_intin;} xml_intin = -1;
 
     if(additional_pythia_particles == 1) {
+      JSINFO << "Using additional PYTHIA particles";
       std::string additional_pythia_particle_file =
         GetXMLElementText({"JetHadronization", "additional_pythia_particles_path"});
       pythia.particleData.readXML(additional_pythia_particle_file,false);
