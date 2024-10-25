@@ -22,6 +22,7 @@
   <!--Eloss Modules -->
   <Eloss>
     <maxT> 200 </maxT>
+    <deltaT>0.1</deltaT>
     <lambdaQCD> 0.2 </lambdaQCD>
     
     <Matter> 
@@ -48,6 +49,8 @@
     <reco_Mlevelmax>1</reco_Mlevelmax>
     <!--maximum energy level for baryons-->
     <reco_Blevelmax>1</reco_Blevelmax>
+    <!-- Switch to include more pythia particles from an additional xml file with particle information -->
+    <additional_pythia_particles>0</additional_pythia_particles>
     <!--switch for recombination biased by the time of the partons-->
     <recobias_t>1</recobias_t>
     <part_prop>0.0</part_prop>
