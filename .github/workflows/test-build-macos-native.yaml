@@ -1,0 +1,100 @@
+name: test build macOS native
+
+on:
+  pull_request:
+    branches:
+      - main
+      - JETSCAPE-4.0-RC
+      - latessa/gtl_binary_function_40
+  push:
+    branches:
+      - main
+      - JETSCAPE-4.0-RC
+      - latessa/gtl_binary_function_40
+
+env:
+  REPO_NAME: ${{ github.event.repository.name }}
+
+jobs:
+  build:
+    name: install packages and build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-14, macos-15]
+
+    steps:
+
+    - name: brew install dependencies
+      run: |
+        NONINTERACTIVE=1 brew install --formula cmake doxygen root graph-tool hdf5 open-mpi gsl boost zlib
+        . /opt/homebrew/bin/thisroot.sh
+
+    - name: set environment variables
+      run: |
+        export ROOTSYS="/usr/local/root"
+        export PATH="$ROOTSYS/bin:\$PATH"
+        export LD_LIBRARY_PATH="$ROOTSYS/lib:$LD_LIBRARY_PATH"
+        export PYTHONPATH="$ROOTSYS/lib"
+
+    - name: install HepMC 3.2.6
+      run: | # brew tap davidchall/hep
+        brew tap davidchall/homebrew-hep
+        cd $(brew --repository)/Library/Taps/davidchall/homebrew-hep
+        echo "Current directory: $(pwd)"
+        git checkout f643d5cacc19fd0b01d0ecba0daf30452152da03
+        NONINTERACTIVE=1 brew install davidchall/hep/hepmc3
+
+    - name: install Pythia 8309
+      run: |
+        cd $(brew --repository)/Library/Taps/davidchall/homebrew-hep
+        echo "Current directory: $(pwd)"
+        git checkout 141f8548d045df88d498ab44df16d2091742e4b1
+        NONINTERACTIVE=1 brew install davidchall/hep/pythia
+
+    - name: set more variables
+      run: |
+        export JETSCAPE_DIR="${GITHUB_WORKSPACE}/${REPO_NAME}"
+
+    - name: Checkout JETSCAPE Repository
+      uses: actions/checkout@v4
+      with:
+        path: ${{ github.event.repository.name }}
+
+    - name: Download MUSIC
+      run: |
+        cd ${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages
+        ./get_music.sh
+
+    - name: Download ISS
+      run: |
+        cd ${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages
+        ./get_iSS.sh
+
+    - name: Download FREESTREAM
+      run: |
+        cd ${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages
+        ./get_freestream-milne.sh
+
+    - name: Download SMASH
+      run: |
+        export PYTHIA8DIR="/opt/homebrew/opt/pythia"
+        cd ${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages
+        ./get_smash.sh
+
+    - name: Build Application
+      run: |
+        cd ${GITHUB_WORKSPACE}/${REPO_NAME}
+        mkdir build
+        cd build
+        export SMASH_DIR="${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages/smash/smash_code"
+        echo "This is SMASH_DIR: "
+        echo ${SMASH_DIR}
+        ls ${SMASH_DIR}
+        cmake .. -DUSE_MUSIC=ON -DUSE_ISS=ON -DUSE_FREESTREAM=ON -DUSE_SMASH=ON
+        make -j2
+
+    - name: Test Run
+      run: |
+        cd ${GITHUB_WORKSPACE}/${REPO_NAME}/build
+        ./runJetscape ../config/publications_config/arXiv_1910.05481/jetscape_user_PP_1910.05481.xml

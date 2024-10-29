@@ -163,7 +163,6 @@ using std::stack;
 using std::map;
 using std::set;
 using std::allocator;
-using std::binary_function;
 using std::ostream;
 using std::ofstream;
 using std::cout;
