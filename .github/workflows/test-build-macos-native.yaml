@@ -27,7 +27,7 @@ jobs:
 
     - name: brew install dependencies
       run: |
-        NONINTERACTIVE=1 brew install --formula cmake doxygen root graph-tool hdf5 open-mpi gsl boost zlib
+        NONINTERACTIVE=1 brew install --formula cmake doxygen root graph-tool hdf5 open-mpi gsl boost zlib libomp
         . /opt/homebrew/bin/thisroot.sh
 
     - name: set environment variables
@@ -36,7 +36,6 @@ jobs:
         export PATH="$ROOTSYS/bin:\$PATH"
         export LD_LIBRARY_PATH="$ROOTSYS/lib:$LD_LIBRARY_PATH"
         export PYTHONPATH="$ROOTSYS/lib"
-        echo "brew omp: "
         brew --prefix libomp
         export OpenMP_INCLUDE_DIRS="/usr/local/opt/libomp/include"
 
