@@ -37,9 +37,6 @@ jobs:
         export PATH="$ROOTSYS/bin:\$PATH"
         export LD_LIBRARY_PATH="$ROOTSYS/lib:$LD_LIBRARY_PATH"
         export PYTHONPATH="$ROOTSYS/lib"
-        export LDFLAGS="-L/opt/homebrew/opt/libomp/lib"
-        export CPPFLAGS="-I/opt/homebrew/opt/libomp/include"
-        export OpenMP_INCLUDE_DIRS="/opt/homebrew/opt/libomp/include"
 
     - name: install HepMC 3.2.6
       run: | # brew tap davidchall/hep
@@ -91,6 +88,7 @@ jobs:
         cd ${GITHUB_WORKSPACE}/${REPO_NAME}
         mkdir build
         cd build
+        export OpenMP_INCLUDE_DIRS="/opt/homebrew/opt/libomp/include"
         export SMASH_DIR="${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages/smash/smash_code"
         echo "This is SMASH_DIR: "
         echo ${SMASH_DIR}
