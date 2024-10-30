@@ -29,6 +29,7 @@ jobs:
       run: |
         NONINTERACTIVE=1 brew install --formula cmake doxygen root graph-tool hdf5 open-mpi gsl boost zlib libomp
         . /opt/homebrew/bin/thisroot.sh
+        brew --prefix libomp
 
     - name: set environment variables
       run: |
@@ -36,7 +37,6 @@ jobs:
         export PATH="$ROOTSYS/bin:\$PATH"
         export LD_LIBRARY_PATH="$ROOTSYS/lib:$LD_LIBRARY_PATH"
         export PYTHONPATH="$ROOTSYS/lib"
-        brew --prefix libomp
         export OpenMP_INCLUDE_DIRS="/usr/local/opt/libomp/include"
 
     - name: install HepMC 3.2.6
