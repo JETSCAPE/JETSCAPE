@@ -37,7 +37,9 @@ jobs:
         export PATH="$ROOTSYS/bin:\$PATH"
         export LD_LIBRARY_PATH="$ROOTSYS/lib:$LD_LIBRARY_PATH"
         export PYTHONPATH="$ROOTSYS/lib"
-        export OpenMP_INCLUDE_DIRS="/usr/local/opt/libomp/include"
+        export LDFLAGS="-L/opt/homebrew/opt/libomp/lib"
+        export CPPFLAGS="-I/opt/homebrew/opt/libomp/include"
+        export OpenMP_INCLUDE_DIRS="/opt/homebrew/opt/libomp/include"
 
     - name: install HepMC 3.2.6
       run: | # brew tap davidchall/hep
