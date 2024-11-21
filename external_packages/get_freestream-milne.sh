@@ -20,11 +20,9 @@
 
 # using a commit from the freestream-milne repository that is compatible with JETSCAPE 3.6.6
 folderName="freestream-milne"
-#commitHash="94722958595cb712fdb00cc59375ad7c9030faed"
-commitHash="0d980593396a8b2f6a9b3933780215df00022d58"
+commitHash="caaa3b82158c372a42599e1acd6917952b9bdfb6"
 
-#git clone https://github.com/chunshen1987/freestream-milne -b time_step_history $folderName
-git clone https://github.com/chunshen1987/freestream-milne -b fix_output_orientation $folderName
+git clone https://github.com/chunshen1987/freestream-milne -b time_step_history $folderName
 cd $folderName
 git checkout $commitHash
 
