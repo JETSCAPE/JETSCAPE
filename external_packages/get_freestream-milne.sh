@@ -18,11 +18,13 @@
 #git clone --depth=1 https://github.com/derekeverett/freestream-milne.git -b time_step_history freestream-milne
 #git clone --depth=1 https://github.com/chunshen1987/freestream-milne -b time_step_history freestream-milne
 
-# using a commit from the freestream-milne repository that is compatible with JETSCAPE 3.6.1
+# using a commit from the freestream-milne repository that is compatible with JETSCAPE 3.6.6
 folderName="freestream-milne"
-commitHash="94722958595cb712fdb00cc59375ad7c9030faed"
+#commitHash="94722958595cb712fdb00cc59375ad7c9030faed"
+commitHash="0d980593396a8b2f6a9b3933780215df00022d58"
 
-git clone https://github.com/chunshen1987/freestream-milne -b time_step_history $folderName
+#git clone https://github.com/chunshen1987/freestream-milne -b time_step_history $folderName
+git clone https://github.com/chunshen1987/freestream-milne -b fix_output_orientation $folderName
 cd $folderName
 git checkout $commitHash
 
