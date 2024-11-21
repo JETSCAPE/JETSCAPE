@@ -222,6 +222,9 @@
     <FreestreamMilne>
       <name>FreestreamMilne</name>
       <freestream_input_file>freestream_input</freestream_input_file>
+      <!-- number of timesteps for the evolution, this defines the dtau = (taus - tauj)  / ntau -->
+      <!-- in the case of <evolutionInMemory>1</evolutionInMemory> this will also set the time step for the hydro, make sure that it is small enough -->
+      <ntau>50</ntau>
     </FreestreamMilne>
 
     <NullPreDynamics> </NullPreDynamics>

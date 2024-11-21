@@ -83,6 +83,10 @@ void FreestreamMilneWrapper::InitializePreequilibrium(
   params->DX = dx;
   params->DY = dy;
   params->DETA = deta;
+
+  //setting for the number of time steps
+  int ntau = GetXMLElementInt({"Preequilibrium", "ntau"});
+  params->NT = ntau;
 }
 
 void FreestreamMilneWrapper::EvolvePreequilibrium() {
