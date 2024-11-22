@@ -30,6 +30,7 @@ jobs:
         export NONINTERACTIVE=1
         brew update
         brew cleanup
+        brew unlink pkg-config@0.29.2
         brew install --formula cmake
         brew update
         brew install --formula doxygen
