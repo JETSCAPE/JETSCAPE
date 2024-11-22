@@ -30,7 +30,15 @@ jobs:
         export NONINTERACTIVE=1
         brew update
         brew cleanup
-        brew install --formula cmake doxygen root graph-tool hdf5 open-mpi gsl boost zlib
+        brew install --formula cmake
+        brew install --formula doxygen
+        brew install --formula root
+        brew install --formula graph-tool
+        brew install --formula hdf5
+        brew install --formula open-mpi
+        brew install --formula gsl
+        brew install --formula boost
+        brew install --formula zlib
         . /opt/homebrew/bin/thisroot.sh
 
     - name: set environment variables
