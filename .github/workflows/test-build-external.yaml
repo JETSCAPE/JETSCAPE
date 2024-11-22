@@ -4,12 +4,12 @@ on:
   pull_request:
     branches:
       - main
-      - JETSCAPE-4.0-RC
+      - JETSCAPE-3.6.6-RC
       - latessa/gtl_binary_function
   push:
     branches:
       - main
-      - JETSCAPE-4.0-RC
+      - JETSCAPE-3.6.6-RC
       - latessa/gtl_binary_function
 
 env:
