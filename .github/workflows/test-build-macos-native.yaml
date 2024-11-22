@@ -29,7 +29,7 @@ jobs:
       run: |
         export NONINTERACTIVE=1
         brew update
-        brew install --formula cmake doxygen root graph-tool hdf5 open-mpi gsl boost zlib
+        brew install --formula cmake doxygen root graph-tool hdf5 open-mpi gsl boost
         . /opt/homebrew/bin/thisroot.sh
 
     - name: set environment variables
