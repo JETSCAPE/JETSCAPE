@@ -31,14 +31,23 @@ jobs:
         brew update
         brew cleanup
         brew install --formula cmake
+        brew update
         brew install --formula doxygen
+        brew update
         brew install --formula root
+        brew update
         brew install --formula graph-tool
+        brew update
         brew install --formula hdf5
+        brew update
         brew install --formula open-mpi
+        brew update
         brew install --formula gsl
+        brew update
         brew install --formula boost
+        brew update
         brew install --formula zlib
+        brew update
         . /opt/homebrew/bin/thisroot.sh
 
     - name: set environment variables
