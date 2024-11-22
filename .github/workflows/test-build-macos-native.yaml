@@ -25,6 +25,12 @@ jobs:
 
     steps:
 
+    - name: Set up Homebrew
+      run: |
+        brew update
+        NONINTERACTIVE=1 brew install pkgconf
+        brew link --overwrite pkgconf
+
     - name: brew install dependencies
       run: |
         NONINTERACTIVE=1 brew install --formula cmake doxygen root graph-tool hdf5 open-mpi gsl boost zlib
