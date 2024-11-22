@@ -27,7 +27,7 @@ jobs:
 
     - name: brew install dependencies
       run: |
-        NONINTERACTIVE=1 brew install --formula cmake doxygen root hdf5 open-mpi gsl boost zlib
+        NONINTERACTIVE=1 brew install --formula cmake doxygen root hdf5 open-mpi gsl boost
         . /opt/homebrew/bin/thisroot.sh
 
     - name: set environment variables
