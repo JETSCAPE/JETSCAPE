@@ -93,8 +93,25 @@ void PartonPrinter::GetFinalPartons(
           z = z + vz*(write_time - t);
           
           double mu2 = pShower.get()->GetFinalPartons().at(ipart)->t() ;
-          double tau = pShower.get()->GetFinalPartons().at(ipart)->mean_form_time();
-          double t_size = 0.632/sqrt(mu2);
+          double tau = pShower.get()->GetFinalPartons().at(ipart)->form_time();
+          if (std::isinf(tau) )
+          {
+              JSINFO << " tau is infinite = " << tau ;
+              double blurb;
+              cin >> blurb;
+          }
+          
+          if (tau<=0.0)
+          {
+              JSINFO << " tau is negative or zero = " << " for parton id = " << pShower.get()->GetFinalPartons().at(ipart)->pid() << " = " <<  tau ;
+              JSINFO << BOLDRED << " px =  " << px << " py = " << py << " pz = " << pz ;
+              
+              tau = hbarC*2*std::sqrt( e*e + mu2)/mu2;
+              
+              JSINFO << " fixed tau = " << tau ;
+          }
+          
+          double t_size = 0.632/sqrt(mu2)*(write_time - t)/tau ;// 0.632 = \sqrt{10}*0.2 [fm GeV]
           
         dist_output << ipart << " "
                     << pShower.get()->GetFinalPartons().at(ipart)->pid() << " "

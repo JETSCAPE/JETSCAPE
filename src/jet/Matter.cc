@@ -204,8 +204,8 @@ void Matter::Dump_pIn_info(int i, vector<Parton> &pIn) {
          << " split time = " << pIn[i].form_time() + pIn[i].x_in().t();
 }
 
-void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
-                          vector<Parton> &pIn, vector<Parton> &pOut) {
+void Matter::DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton> &pIn, vector<Parton> &pOut)
+{
 
   if (std::isnan(pIn[0].e()) || std::isnan(pIn[0].px()) ||
       std::isnan(pIn[0].py()) || std::isnan(pIn[0].pz()) ||
@@ -430,8 +430,11 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
 
     // if(now_R0^2-now_Ri^2<0) print out pIn info and exit
 
+   // if (std::isinf(now_R0) || std::isnan(now_R0) || std::isinf(now_Rz) || std::isnan(now_Rz) || std::abs(now_Rz) > now_R0)
+        
     if (std::isinf(now_R0) || std::isnan(now_R0) || std::isinf(now_Rz) ||
-        std::isnan(now_Rz) || std::abs(now_Rz) > now_R0) {
+            std::isnan(now_Rz) )
+    {
       JSINFO << BOLDYELLOW << "First instance";
       JSINFO << BOLDYELLOW << "now_R for vector is:" << now_R0 << ", " << now_Rx
              << ", " << now_Ry << ", " << now_Rz;
@@ -526,8 +529,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
           tQ2 = generate_vac_t_w_M(pIn[i].pid(), pIn[i].restmass(), pIn[i].nu(),
                                    QS * QS / 2.0, max_vir, zeta, iSplit);
         } else {
-          tQ2 = generate_vac_t(pIn[i].pid(), pIn[i].nu(), QS * QS / 2.0,
-                               max_vir, zeta, iSplit);
+          tQ2 = generate_vac_t(pIn[i].pid(), pIn[i].nu(), QS * QS / 2.0, max_vir, zeta, iSplit);
         }
       }
 
@@ -1075,6 +1077,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
         double new_parent_px = el_p0[1];
         double new_parent_py = el_p0[2];
         double new_parent_pz = el_p0[3];
+          
+          double new_parent_p = std::sqrt( el_p0[1]*el_p0[1] + el_p0[2]*el_p0[2] + el_p0[3]*el_p0[3] );
+        
         double new_parent_t = el_p0[4];
         double new_parent_pl = (new_parent_px * pIn[i].jet_v().x() +
                                 new_parent_py * pIn[i].jet_v().y() +
@@ -1086,12 +1091,22 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
                         "letting you know ! ";
           // cin >> blurb ;
         }
+          
+          FourVector new_parent(new_parent_px, new_parent_py, new_parent_pz, new_parent_p0 );
+          
+          double theta = std::acos(  new_parent_pz/std::sqrt( new_parent_px*new_parent_px + new_parent_py*new_parent_py + new_parent_pz*new_parent_pz )  ) ;
+          
+          double phi = new_parent.phi();
+          
+    
+          
         //JSINFO << BOLDYELLOW << " old virtuality = " << pIn[i].t() << " new virtuality = " << new_parent_t ;
         //double new_parent_pl = sqrt(pow(new_parent_px,2)+pow(new_parent_py,2)+pow(new_parent_pz,2));
         //double new_parent_vx = new_parent_px/new_parent_pl;
         //double new_parent_vy = new_parent_py/new_parent_pl;
         //double new_parent_vz = new_parent_pz/new_parent_pl;
-        double new_parent_nu = (new_parent_p0 + new_parent_pl) / sqrt(2.0);
+          
+        double new_parent_nu = (new_parent_p0 + new_parent_p) / sqrt(2.0);
 
         //set color of daughters here
         unsigned int d1_col, d1_acol, d2_col, d2_acol, color, anti_color;
@@ -1156,7 +1171,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
         double l_perp2 = -1.0; // SC: initialization
         int ifcounter = 0;
 
-        while ((l_perp2 <= Lambda_QCD * Lambda_QCD) && (ifcounter < 100)) {
+        while ((l_perp2 <= Lambda_QCD * Lambda_QCD) && (ifcounter < 100))
+        {
 
           // if(abs(pid) == 4 || abs(pid) == 5)
           // {
@@ -1287,6 +1303,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
           ifcounter++;
         }
 
+  /*
         // std::ofstream zdist;
         // zdist.open("zdist_heavy.dat", std::ios::app);
         // std::ofstream tdist;
@@ -1303,9 +1320,9 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
         // }
         // tdist.close();
         // zdist.close();
-
-        if (l_perp2 <= Lambda_QCD * Lambda_QCD)
-          l_perp2 = Lambda_QCD * Lambda_QCD; ///< test if negative
+*/
+        if (l_perp2 <= Lambda_QCD * Lambda_QCD) l_perp2 = Lambda_QCD * Lambda_QCD; ///< test if negative
+          ///<
         double l_perp = std::sqrt(
             l_perp2); ///< the momentum transverse to the parent parton direction
         VERBOSE(8) << BOLDYELLOW << " after ifcounter = " << ifcounter
@@ -1314,6 +1331,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
                    << " tQd2 = " << tQd2;
         VERBOSE(8) << BOLDYELLOW << " pid_a = " << pid_a
                    << " pid_b = " << pid_b;
+          
+          l_perp = std::sqrt(l_perp2);
 
         // axis of split
         double angle = generate_angle();
@@ -1321,19 +1340,13 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
         // KK: changed to x,y,z
         //double parent_perp = std::sqrt( pow(pIn[i].px(),2) + pow(pIn[i].py(),2) + pow(pIn[i].pz(),2) - pow(pIn[i].pl(),2) );
         //double mod_jet_v = std::sqrt( pow(pIn[i].jet_v().x(),2) +  pow(pIn[i].jet_v().y(),2) + pow(pIn[i].jet_v().z(),2) ) ;
-        double c_t =
-            pIn[i].jet_v().z() /
-            mod_jet_v; // c_t is cos(theta) for the jet_velocity unit vector
-        double s_t = std::sqrt(1.0 - c_t * c_t); // s_t is sin(theta)
+        //double c_t = pIn[i].jet_v().z() /mod_jet_v; // c_t is cos(theta) for the jet_velocity unit vector
+        //double s_t = std::sqrt(1.0 - c_t * c_t); // s_t is sin(theta)
 
-        double s_p = pIn[i].jet_v().y() / std::sqrt(pow(pIn[i].jet_v().x(), 2) +
-                                                    pow(pIn[i].jet_v().y(), 2));
-        double c_p = pIn[i].jet_v().x() / std::sqrt(pow(pIn[i].jet_v().x(), 2) +
-                                                    pow(pIn[i].jet_v().y(), 2));
+        //double s_p = pIn[i].jet_v().y() / std::sqrt(pow(pIn[i].jet_v().x(), 2) + pow(pIn[i].jet_v().y(), 2));
+        //double c_p = pIn[i].jet_v().x() / std::sqrt(pow(pIn[i].jet_v().x(), 2) + pow(pIn[i].jet_v().y(), 2));
 
-        VERBOSE(8) << BOLDYELLOW
-                   << " Jet direction w.r.t. beam: theta = " << std::acos(c_t)
-                   << " phi = " << std::acos(c_p);
+        //VERBOSE(8) << BOLDYELLOW << " Jet direction w.r.t. beam: theta = " << std::acos(c_t) << " phi = " << std::acos(c_p);
 
         //double c_t = new_parent_vz;
         //double s_t = std::sqrt( 1.0 - c_t*c_t) ;
@@ -1342,70 +1355,104 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
         //double c_p = new_parent_vx/std::sqrt( pow(new_parent_vx,2) + pow(new_parent_vy,2) ) ;
 
         // First daughter
-        double k_perp1[4];
-        k_perp1[0] = 0.0;
-        k_perp1[1] = z * (new_parent_px - new_parent_pl * s_t * c_p) +
-                     l_perp * std::cos(angle) * c_t * c_p -
-                     l_perp * std::sin(angle) * s_p;
-        k_perp1[2] = z * (new_parent_py - new_parent_pl * s_t * s_p) +
-                     l_perp * std::cos(angle) * c_t * s_p +
-                     l_perp * std::sin(angle) * c_p;
-        k_perp1[3] = z * (new_parent_pz - new_parent_pl * c_t) -
-                     l_perp * std::cos(angle) * s_t;
-        double k_perp1_2 =
-            pow(k_perp1[1], 2) + pow(k_perp1[2], 2) + pow(k_perp1[3], 2);
+          
+        //double k_perp1[4];
+        //k_perp1[0] = 0.0;
+        //k_perp1[1] = z * (new_parent_px - new_parent_pl * s_t * c_p) + l_perp * std::cos(angle) * c_t * c_p - l_perp * std::sin(angle) * s_p;
+        //k_perp1[2] = z * (new_parent_py - new_parent_pl * s_t * s_p) + l_perp * std::cos(angle) * c_t * s_p + l_perp * std::sin(angle) * c_p;
+        //k_perp1[3] = z * (new_parent_pz - new_parent_pl * c_t) - l_perp * std::cos(angle) * s_t;
+        //double k_perp1_2 = pow(k_perp1[1], 2) + pow(k_perp1[2], 2) + pow(k_perp1[3], 2);
 
         double M = 0.0;
 
         if ((std::abs(pid_a) == 4) || (std::abs(pid_a) == 5))
           M = PythiaFunction.particleData.m0(pid_a);
 
-        double energy = (z * new_parent_nu + (tQd1 + k_perp1_2 + M * M) /
-                                                 (2.0 * z * new_parent_nu)) /
-                        std::sqrt(2.0);
-        double plong = (z * new_parent_nu - (tQd1 + k_perp1_2 + M * M) /
-                                                (2.0 * z * new_parent_nu)) /
-                       std::sqrt(2.0);
-        if (energy < 0.0) {
+        double energy = (z * new_parent_nu + (tQd1 + l_perp2 + M * M) / (2.0 * z * new_parent_nu) ) /std::sqrt(2.0);
+          
+        double plong = (z * new_parent_nu - (tQd1 + l_perp2 + M * M) /(2.0 * z * new_parent_nu)) /std::sqrt(2.0);
+          
+        if (energy < 0.0)
+        {
           JSWARN << " Energy negative after rotation, press 1 and return to "
                     "continue ";
           cin >> blurb;
         }
 
-        double newp[4];
-        newp[0] = energy;
-        newp[1] = plong * s_t * c_p + k_perp1[1];
-        newp[2] = plong * s_t * s_p + k_perp1[2];
-        newp[3] = plong * c_t + k_perp1[3];
+        //double newp[4];
+          FourVector newp( l_perp * std::cos(angle) , l_perp * std::sin(angle) , plong , energy   ) ;
+          
+          newp.rotate_around_y(theta);
+          
+          newp.rotate_around_z(phi);
+          
+        //newp[0] = energy;
+        //newp[1] = plong * s_t * c_p + k_perp1[1];
+        //newp[2] = plong * s_t * s_p + k_perp1[2];
+        //newp[3] = plong * c_t + k_perp1[3];
 
-        VERBOSE(8) << MAGENTA << " D1 px = " << newp[1] << " py = " << newp[2]
-                   << " pz = " << newp[3] << " E = " << newp[0];
-        double newx[4];
+        VERBOSE(8) << MAGENTA << " D1 px = " << newp.x() << " py = " << newp.y()
+                   << " pz = " << newp.z() << " E = " << newp.t();
+        
+          
+        double newax[4];
         //newx[0] = time + deltaT;
-        newx[0] = time;
-        for (int j = 1; j <= 3; j++) {
-          //newx[j] = pIn[i].x_in().comp(j) + (time + deltaT - pIn[i].x_in().comp(0))*velocity[j]/velocityMod;
-          newx[j] = pIn[i].x_in().comp(j) +
-                    (time - pIn[i].x_in().comp(0)) * velocity[j];
+        newax[0] = time;
+        for (int j = 1; j <= 3; j++)
+        {
+            newax[j] = pIn[i].x_in().comp(j) + (time - pIn[i].x_in().comp(0)) * velocity[j];
         }
 
+          FourVector newx(newax);
+              
+          
         // extra bump from uncertainty
           
+          double eta_x = newx.eta();
           
+          double theta_x = std::acos ( newx.z() /std::sqrt( newx.x()*newx.x() + newx.y()*newx.y() + newx.z()*newx.z()   ) )  ;
+          
+          double phi_x = newx.phi();
+          
+          newx.rotate_around_z(-1.0*phi_x) ;
+          newx.rotate_around_y(-1.0*theta_x) ;
+          
+          FourVector xperp( 10*hbarC*std::cos(angle)/std::sqrt(new_parent_t) , 10*hbarC*std::sin(angle)/std::sqrt(new_parent_t), 0 , 0 );
+          
+          newx += xperp ;
+          
+          newx.rotate_around_y(theta_x) ;
+          newx.rotate_around_z(phi_x) ;
+         
+          
+
           
         VERBOSE(8) << BOLDRED << " PiD - a = " << pid_a;
 
         pOut.push_back(Parton(0, pid_a, jet_stat, newp, newx));
         int iout = pOut.size() - 1;
 
-        if (std::isnan(newp[1]) || std::isnan(newp[2]) || std::isnan(newp[3])) {
-          JSINFO << MAGENTA << plong << " " << s_t << " " << c_p << " "
-                 << k_perp1[1];
+        if (std::isnan( newp.x() ) || std::isnan( newp.y() ) || std::isnan(newp.z() ) )
+        {
+          //JSINFO << MAGENTA << plong << " " << s_t << " " << c_p << " " << k_perp1[1];
 
-          JSINFO << MAGENTA << newp[0] << " " << newp[1] << " " << newp[2]
-                 << " " << newp[3];
+          JSINFO << MAGENTA << newp.t() << " " << newp.x() << " " << newp.y() << " " << newp.z() ;
+            
           cin >> blurb;
         }
+          
+          if (std::isnan( newx.x() ) || std::isnan( newx.y() ) || std::isnan(newx.z() ) )
+          {
+            //JSINFO << MAGENTA << plong << " " << s_t << " " << c_p << " " << k_perp1[1];
+
+            JSINFO << MAGENTA << newx.t() << " " << newx.x() << " " << newx.y() << " " << newx.z() ;
+              JSINFO << MAGENTA << xperp.t() << " " << xperp.x() << " " << xperp.y() << " " << xperp.z() ;
+              JSINFO << MAGENTA << " theta_x = " << theta_x << "   phi_x = " << phi_x ;
+            
+              
+            cin >> blurb;
+          }
+          
         pOut[iout].set_jet_v(velocity_jet); // use initial jet velocity
         pOut[iout].set_mean_form_time();
         double ft = generate_L(pOut[iout].mean_form_time());
@@ -1420,67 +1467,74 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
         VERBOSE(8) << BOLDRED << " mass of parton = " << pOut[iout].restmass();
 
         // Second daughter
-        double k_perp2[4];
-        k_perp2[0] = 0.0;
-        k_perp2[1] = (1.0 - z) * (new_parent_px - new_parent_pl * s_t * c_p) -
-                     l_perp * std::cos(angle) * c_t * c_p +
-                     l_perp * std::sin(angle) * s_p;
-        k_perp2[2] = (1.0 - z) * (new_parent_py - new_parent_pl * s_t * s_p) -
-                     l_perp * std::cos(angle) * c_t * s_p -
-                     l_perp * std::sin(angle) * c_p;
-        k_perp2[3] = (1.0 - z) * (new_parent_pz - new_parent_pl * c_t) +
-                     l_perp * std::cos(angle) * s_t;
-        double k_perp2_2 =
-            pow(k_perp2[1], 2) + pow(k_perp2[2], 2) + pow(k_perp2[3], 2);
+          
+        //double k_perp2[4];
+        //k_perp2[0] = 0.0;
+        //k_perp2[1] = (1.0 - z) * (new_parent_px - new_parent_pl * s_t * c_p) - l_perp * std::cos(angle) * c_t * c_p + l_perp * std::sin(angle) * s_p;
+        //k_perp2[2] = (1.0 - z) * (new_parent_py - new_parent_pl * s_t * s_p) - l_perp * std::cos(angle) * c_t * s_p - l_perp * std::sin(angle) * c_p;
+        //k_perp2[3] = (1.0 - z) * (new_parent_pz - new_parent_pl * c_t) + l_perp * std::cos(angle) * s_t;
+        //double k_perp2_2 = pow(k_perp2[1], 2) + pow(k_perp2[2], 2) + pow(k_perp2[3], 2);
 
         M = 0.0;
-        if ((std::abs(pid_b) == 4) || (std::abs(pid_b) == 5))
-          M = PythiaFunction.particleData.m0(pid_b);
-        ;
+        if ((std::abs(pid_b) == 4) || (std::abs(pid_b) == 5)) M = PythiaFunction.particleData.m0(pid_b);
+        
 
-        energy =
-            ((1.0 - z) * new_parent_nu +
-             (tQd2 + k_perp2_2 + M * M) / (2.0 * (1.0 - z) * new_parent_nu)) /
-            std::sqrt(2.0);
-        plong =
-            ((1.0 - z) * new_parent_nu -
-             (tQd2 + k_perp2_2 + M * M) / (2.0 * (1.0 - z) * new_parent_nu)) /
-            std::sqrt(2.0);
+        energy = ((1.0 - z) * new_parent_nu + (tQd2 + l_perp2 + M * M) / (2.0 * (1.0 - z) * new_parent_nu)) / std::sqrt(2.0);
+        plong = ((1.0 - z) * new_parent_nu - (tQd2 + l_perp2 + M * M) / (2.0 * (1.0 - z) * new_parent_nu)) / std::sqrt(2.0);
 
         //parent_perp = std::sqrt( pow(pIn[i].p(1),2) + pow(pIn[i].p(2),2) + pow(pIn[i].p(3),2) - pow(pIn[i].pl(),2) );
         //mod_jet_v = std::sqrt( pow(pIn[i].jet_v().x(),2) +  pow(pIn[i].jet_v().y(),2) + pow(pIn[i].jet_v().z(),2) ) ;
 
-        if (energy < 0.0) {
+        if (energy < 0.0)
+        {
           JSWARN << " Energy of 2nd daughter negative after rotation, press 1 "
                     "and return to continue ";
           cin >> blurb;
         }
 
-        newp[0] = energy;
-        newp[1] = plong * s_t * c_p + k_perp2[1];
-        newp[2] = plong * s_t * s_p + k_perp2[2];
-        newp[3] = plong * c_t + k_perp2[3];
+        //newp[0] = energy;
+        //newp[1] = plong * s_t * c_p + k_perp2[1];
+        //newp[2] = plong * s_t * s_p + k_perp2[2];
+        //newp[3] = plong * c_t + k_perp2[3];
+          
+          newp.Set( -l_perp * std::cos(angle) , -l_perp * std::sin(angle) , plong , energy   ) ;
+          
+          newp.rotate_around_y(theta);
+          
+          newp.rotate_around_z(phi);
+          
 
-        if (std::isnan(newp[1]) || std::isnan(newp[2]) || std::isnan(newp[3])) {
+        if (std::isnan(newp.x() ) || std::isnan(newp.y() ) || std::isnan(newp.z() ) )
+        {
           JSINFO << MAGENTA << "THIS IS THE SECOND DAUGHTER";
-          JSINFO << MAGENTA << plong << " " << s_t << " " << c_p << " "
-                 << k_perp1[1];
-          JSINFO << MAGENTA << newp[0] << " " << newp[1] << " " << newp[2]
-                 << " " << newp[3];
+          //JSINFO << MAGENTA << plong << " " << s_t << " " << c_p << " " << k_perp1[1];
+          JSINFO << MAGENTA << newp.t() << " " << newp.x() << " " << newp.y() << " " << newp.z() ;
           cin >> blurb;
         }
 
-        VERBOSE(8) << MAGENTA << " D1 px = " << newp[1] << " py = " << newp[2]
-                   << " pz = " << newp[3] << " E = " << newp[0];
+        VERBOSE(8) << MAGENTA << " D2 px = " << newp.x() << " py = " << newp.y()
+                   << " pz = " << newp.z() << " E = " << newp.t();
 
         //newx[0] = time + deltaT;
-        newx[0] = time;
+        newax[0] = time;
         for (int j = 1; j <= 3; j++) {
           //newx[j] = pIn[i].x_in().comp(j) + (time + deltaT - pIn[i].x_in().comp(0))*velocity[j]/velocityMod;
-          newx[j] = pIn[i].x_in().comp(j) +
+          newax[j] = pIn[i].x_in().comp(j) +
                     (time - pIn[i].x_in().comp(0)) * velocity[j];
         }
 
+        newx.Set(newax) ;
+                                  
+        newx.rotate_around_z(-1.0*phi_x) ;
+        newx.rotate_around_y(-1.0*theta_x) ;
+                                  
+        newx -= xperp ;
+                                  
+          newx.rotate_around_y(theta_x) ;
+          newx.rotate_around_z(phi_x) ;
+        
+                                  
+                                  
         if (iSplit != 3) // not a photon
         {
 
