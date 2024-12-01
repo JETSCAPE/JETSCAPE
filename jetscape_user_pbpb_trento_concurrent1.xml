@@ -1,0 +1,203 @@
+<?xml version="1.0"?>
+
+<jetscape>
+
+  <nEvents> 100 </nEvents>
+  <setReuseHydro> true </setReuseHydro>
+  <nReuseHydro> 100 </nReuseHydro>
+
+  <JetScapeWriterAscii> on </JetScapeWriterAscii>
+  <JetScapeWriterFinalStatePartonsAscii> on </JetScapeWriterFinalStatePartonsAscii>
+  <outputFilename>ConcurrentRun_out</outputFilename>
+  <vlevel> 0 </vlevel>
+  <nEvents_printout> 1 </nEvents_printout>
+
+  <Random>
+    <seed>1</seed>
+  </Random>
+ 
+ <!-- Inital State Module  -->
+    <IS>
+        <grid_max_x> 15 </grid_max_x>
+        <grid_max_y> 15 </grid_max_y>
+        <grid_max_z> 0 </grid_max_z>
+        <!--  <grid_step_x> 0.2 </grid_step_x>
+                      <grid_step_y> 0.2 </grid_step_y> -->
+        <grid_step_x> 0.2 </grid_step_x>
+        <grid_step_y> 0.2 </grid_step_y>
+
+        <Trento>
+          <PhysicsInputs  projectile='Pb'
+                  target='Pb'
+                  sqrts='5020'
+                  cross-section='7'
+                  normalization='18.8'>
+          </PhysicsInputs>
+          <CutInputs
+                centrality-low='0'
+                centrality-high='5'>
+          </CutInputs>
+          <TransInputs  reduced-thickness='0.063'
+                  fluctuation="1.05"
+                  nucleon-width="1.12"
+                  nucleon-min-dist="1.4">
+          </TransInputs>
+          <LongiInputs  mean-coeff="1.0"
+                  std-coeff="3.0"
+                  skew-coeff="0.0"
+                  skew-type="1"
+                  jacobian="0.8">
+          </LongiInputs>
+        </Trento>
+    </IS>
+
+
+  <!-- Hard Process -->
+  <Hard>
+    <PGun></PGun>
+    <!--PythiaGun>
+      <FSR_on>0</FSR_on>
+      <pTHatMin>500</pTHatMin>
+      <pTHatMax>550</pTHatMax>
+      <eCM>5020</eCM>
+      <LinesToRead>
+	HardQCD:all = on
+        PDF:useHardNPDFA=on
+	PDF:useHardNPDFB=on
+	PDF:nPDFSetA=1
+	PDF:nPDFSetB=1
+	PDF:nPDFBeamA = 100822080
+	PDF:nPDFBeamB = 100822080
+      </LinesToRead>
+    </PythiaGun-->
+
+  </Hard>
+
+
+  <!--Preequilibrium Dynamics Module -->
+<Preequilibrium>
+<!--
+ starting long. proper time for Preequilibrium dynamics 
+-->
+<tau0>0.0</tau0>
+<tauj>0.1</tauj>
+<!--
+ switching long. proper time from Preequilibrium dynamics to Hydrodynamics (Landau Matching) 
+-->
+<taus>1.46</taus>
+<evolutionInMemory>1</evolutionInMemory>
+<!-- Individual Preequilibrium Dynamics models  -->
+<FreestreamMilne>
+<name>FreestreamMilne</name>
+<freestream_input_file>freestream_input</freestream_input_file>
+</FreestreamMilne>
+</Preequilibrium>
+
+
+ <!-- Create liquifier -->
+  <!--Liquefier>
+      <threshold_energy_switch>0</threshold_energy_switch>
+      <e_threshold>3.2</e_threshold>
+
+      <CausalLiquefier>
+          <name>CausalLiquefier</name>
+          <dtau>0.02</dtau>
+          <dx>0.3</dx>
+          <dy>0.3</dy>
+          <deta>0.2</deta>
+          <tau_delay>2.0</tau_delay>
+          <time_relax>0.1</time_relax>
+          <d_diff>0.08</d_diff>
+          <width_delta>0.1</width_delta>
+      </CausalLiquefier>
+  </Liquefier-->
+
+  <!-- Hydro  Module  -->
+
+  <Hydro>
+    <AddLiquefier> false </AddLiquefier>
+        <MUSIC>
+            <beastMode>0</beastMode>
+            <output_evolution_to_file>0</output_evolution_to_file>
+            <output_evolution_to_memory>1</output_evolution_to_memory>
+            <surface_in_memory>1</surface_in_memory>
+            <Initial_time_tau_0>1.46</Initial_time_tau_0>
+            <T_dependent_Shear_to_S_ratio>3</T_dependent_Shear_to_S_ratio>
+            <eta_over_s_T_kink_in_GeV>0.223</eta_over_s_T_kink_in_GeV>
+            <eta_over_s_low_T_slope_in_GeV>-0.776</eta_over_s_low_T_slope_in_GeV>
+            <eta_over_s_high_T_slope_in_GeV>0.37</eta_over_s_high_T_slope_in_GeV>
+            <eta_over_s_at_kink>0.096</eta_over_s_at_kink>
+            <temperature_dependent_bulk_viscosity>3</temperature_dependent_bulk_viscosity>
+            <zeta_over_s_max>0.133</zeta_over_s_max>
+            <zeta_over_s_T_peak_in_GeV>0.12</zeta_over_s_T_peak_in_GeV>
+            <zeta_over_s_width_in_GeV>0.072</zeta_over_s_width_in_GeV>
+            <zeta_over_s_lambda_asymm>-0.122</zeta_over_s_lambda_asymm>
+            <freezeout_temperature>0.136</freezeout_temperature>
+        </MUSIC>
+  </Hydro>
+
+
+  <!--Eloss Modules -->
+
+ <Eloss>
+
+    <deltaT>0.1</deltaT>
+    <formTime> -0.1</formTime>
+    <maxT> 250 </maxT>
+    <tStart> 0.6 </tStart> <!-- Start time of jet quenching, proper time, fm/c   -->
+    <mutex>ON</mutex>
+    <AddLiquefier> false </AddLiquefier>
+
+    <Matter>
+      <name>Matter</name>
+      <matter_on> 1 </matter_on>
+      <Q0> 2.0 </Q0>
+      <T0> 0.16 </T0>
+      <vir_factor> 0.25 </vir_factor>
+      <in_vac> 0 </in_vac>
+      <recoil_on> 1 </recoil_on>
+      <broadening_on> 0 </broadening_on>
+      <brick_med> 0 </brick_med>   <!-- Set brick_med to 1 while using Brick Hydro module-->
+      <brick_length> 5.0 </brick_length>
+      <hydro_Tc> 0.16 </hydro_Tc>
+      <!-- Pick a qhat formula -->
+      <!-- Type=0 : HTL Formula with both alpha_s fixed  -->
+      <!-- Type=1 : HTL Formula with one running alpha_s and one fixed alpha_s  -->
+      <!-- Type=2 : Constant q-hat; qhat=qhat0   -->
+      <!-- Type=3 : qhat=qhat0*T^3  -->
+      <!-- Type=4 : qhat=qhat0*s; s=entropy density  -->
+      <!-- Type=5 : HTL q-hat with Virtuality dependent function 1/(1+A*pow(ln(Q2),2) + B*pow(ln(Q2),4))  -->
+      <!-- Type=6 : HTL q-hat with Virtuality dependent function int e^{-Cx}/(1+A*pow(ln(Q2),1) + B*pow(ln(Q2),2)) -->
+      <!-- Type=7 : HTL q-hat with Virtuality dependent function  int x^{C}(1-x)^{D}/(1+A*pow(ln(Q2),1) + B*pow(ln(Q2),2))-->
+      <QhatParametrizationType> 5  </QhatParametrizationType>
+      <qhat0> -2.0 </qhat0>  <!-- If Type=0, 1, 5,6,7 set qhat0 as negative since alphas will be used-->
+      <alphas> 0.3 </alphas>
+      <qhatA> 10.0 </qhatA>    <!-- Always positive, Used only if QhatParametrizationType=5,6,7  -->
+      <qhatB> 100.0 </qhatB>    <!-- Always positive, Used only if QhatParametrizationType=5,6,7  -->
+      <qhatC> 0.2 </qhatC>    <!-- (0,100) for Type=6, and (-10,100) for Type=7, Used only if QhatParametrizationType=6,7  -->
+      <qhatD> 5.0 </qhatD>    <!-- (-10,100), Used only if QhatParametrizationType=7  -->
+    </Matter>
+
+    <Lbt>
+      <name> Lbt </name>
+      <Q0> 2.0 </Q0>
+      <in_vac> 0 </in_vac>
+      <only_leading> 0 </only_leading>
+      <hydro_Tc> 0.16 </hydro_Tc>
+      <alphas> 0.3 </alphas>
+      <run_alphas>1</run_alphas>   
+    </Lbt>
+  </Eloss>
+
+
+  <!-- Jet Hadronization Module -->
+  <!--JetHadronization>
+    <name>colorless</name>
+    <take_recoil>1</take_recoil>
+    <eCMforHadronization>2510</eCMforHadronization>
+    <LinesToRead>
+      111:mayDecay = off
+    </LinesToRead>
+  </JetHadronization-->
+
+</jetscape>
