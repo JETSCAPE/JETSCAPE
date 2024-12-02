@@ -2,9 +2,9 @@
 
 <jetscape>
   
-  <enableAutomaticTaskListDetermination> false </enableAutomaticTaskListDetermination>
+  <enableAutomaticTaskListDetermination> true </enableAutomaticTaskListDetermination>
   
-  <nEvents> 100 </nEvents>
+  <nEvents> 50000 </nEvents>
   <nReuseHydro> 100000 </nReuseHydro>
   
   <JetScapeWriterAscii> off </JetScapeWriterAscii>
@@ -14,11 +14,11 @@
   </Random>
   
   <!-- Inital State Module  -->
-  <IS>
+  <!--IS>
     <!--Trento> </Trento-->
     <!-- Options to read initial conditions from saved file  -->
-    <initial_profile_path>../examples/test_hydro_files</initial_profile_path>
-  </IS>
+    <!--initial_profile_path>../examples/test_hydro_files</initial_profile_path>
+  </IS-->
   
   
   
@@ -28,7 +28,7 @@
       <PGun>
         <name>PGun</name>
         <pT>100</pT>
-        <parID>21</parID>
+        <parID>1</parID>
         <useHybridHad>0</useHybridHad>
       </PGun>
       
@@ -45,25 +45,27 @@
   </Preequilibrium-->
   
   <!-- Hydro  Module  -->
-  <Hydro>
+  <!--Hydro>
       <hydro_from_file>
           <hydro_files_folder>../examples/test_hydro_files</hydro_files_folder>
       </hydro_from_file>
-    <!--Brick bjorken_expansion_on="false" start_time="0.6"> </Brick-->
-  </Hydro>
+    <!--Brick bjorken_expansion_on="false" start_time="0.6"> </Brick>
+  </Hydro-->
   
   <!--Eloss Modules -->
   <Eloss>
+      <maxT>2.5</maxT>
     <Matter>
-      <in_vac> 0 </in_vac>
-      <Q0> 2.0 </Q0>
+        <vir_factor> 0.25 </vir_factor>
+      <in_vac> 1 </in_vac>
+      <Q0> 1.0 </Q0>
       <alphas> 0.25 </alphas>
     </Matter>
     
-    <Lbt>
+    <!--Lbt>
         <Q0> 2.0 </Q0>
         <alphas> 0.25 </alphas>
-    </Lbt>
+    </Lbt-->
   </Eloss>
   
   <PartonPrinter>
@@ -71,8 +73,8 @@
   </PartonPrinter>
   
   <!-- Jet Hadronization Module -->
-  <JetHadronization>
+  <!--JetHadronization>
     <name>colorless</name>
-  </JetHadronization>
+  </JetHadronization-->
   
 </jetscape>

@@ -98,6 +98,7 @@
       <name>PGun</name>
       <pT>100</pT>
       <parID>21</parID>
+      <useHybridHad>0</useHybridHad>
     </PGun>
 
     <!-- Pythia Gun -->

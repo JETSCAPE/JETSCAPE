@@ -33,6 +33,11 @@ public:
   virtual void Init();
   virtual void Exec() final;
   virtual void Clear();
+    void set_time (double t) { time_ = t ; };
+    double time() const { return time_ ; };
+    void set_delta_time (double dt) { delta_t_ = dt ; };
+    double delta_time() const { return delta_t_ ; };
+    
   std::ofstream
       dist_output; ///< the output stream where events are saved to file
 
@@ -50,6 +55,8 @@ public:
 
 private:
   vector<vector<shared_ptr<Parton>>> pFinals;
+        double time_ ;
+        double delta_t_ ;
 
   // Allows the registration of the module so that it is available to be used by the Jetscape framework.
   static RegisterJetScapeModule<PartonPrinter> reg;
