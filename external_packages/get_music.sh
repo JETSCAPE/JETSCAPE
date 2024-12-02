@@ -18,9 +18,9 @@
 #git clone --depth=1 git://git.code.sf.net/p/music-hydro/code music
 #git clone --depth=1 https://github.com/MUSIC-fluid/MUSIC -b JETSCAPE music
 
-# using a commit from the MUSIC repository that is compatible with JETSCAPE 3.6.1
+# using a commit from the MUSIC repository that is compatible with JETSCAPE 3.6.6 and 4.0
 folderName="music"
-commitHash="ace023d23df3024bf4a6e43a29e8c5e4b7e32d04"
+commitHash="fdcce5d9f63fc25281eda8d498c32c69ac132dac"
 
 git clone https://github.com/MUSIC-fluid/MUSIC -b JETSCAPE $folderName
 cd $folderName
