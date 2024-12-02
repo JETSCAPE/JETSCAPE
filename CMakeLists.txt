@@ -96,6 +96,11 @@ if(USE_SMASH)
 endif(USE_SMASH)
 
 # Compile with OpenMP support
+if(APPLE)
+  set(OpenMP_CXX_FLAGS "-Xpreprocessor -fopenmp")
+  set(OpenMP_CXX_LIB_NAMES "libomp")
+  set(OpenMP_libomp_LIBRARY "/usr/local/opt/libomp/lib")
+endif()
 find_package(OpenMP)
 if(OPENMP_FOUND)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
@@ -344,6 +349,11 @@ include_directories(./external_packages/gtl/include)
 include_directories(./external_packages/hydro_from_external_file)
 include_directories(./external_packages/Random123)
 include_directories(./examples/)
+if(APPLE)
+  # set OpenMP_INCLUDE_DIRS to the path of the OpenMP headers for example:
+  # /usr/local/opt/libomp/include
+  include_directories($ENV{OpenMP_INCLUDE_DIRS})
+endif()
 if("${ROOT_FOUND}")
   include_directories(./src/root)
   # add_subdirectory(./src/root)
