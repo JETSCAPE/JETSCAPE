@@ -66,7 +66,7 @@ void FreestreamMilneWrapper::InitializePreequilibrium(
   params->DTAU = taus - tau0;
   params->evolutionInMemory = FlagEvo;
 
-  //settings for the grid size
+  // settings for the grid size
   int nx = ini->GetXSize();
   int ny = ini->GetYSize();
   int neta = ini->GetZSize();
@@ -74,7 +74,7 @@ void FreestreamMilneWrapper::InitializePreequilibrium(
   params->DIM_Y = ny;
   params->DIM_ETA = neta;
 
-  //settings for the grid step size
+  // settings for the grid step size
   double dx = ini->GetXStep();
   double dy = ini->GetYStep();
   double deta = ini->GetZStep();
@@ -82,7 +82,7 @@ void FreestreamMilneWrapper::InitializePreequilibrium(
   params->DY = dy;
   params->DETA = deta;
 
-  //setting for the number of time steps
+  // setting for the number of time steps
   int ntau = GetXMLElementInt({"Preequilibrium", "FreestreamMilne", "ntau"});
   params->NT = ntau;
 }
