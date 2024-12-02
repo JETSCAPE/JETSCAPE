@@ -4,13 +4,13 @@ on:
   pull_request:
     branches:
       - main
-      - JETSCAPE-3.6.5-RC
-      - latessa/dockerImage
+      - JETSCAPE-3.6.6-RC
+      - latessa/gtl_binary_function
   push:
     branches:
       - main
-      - JETSCAPE-3.6.5-RC
-      - latessa/dockerImage
+      - JETSCAPE-3.6.6-RC
+      - latessa/gtl_binary_function
 
 env:
   REPO_NAME: ${{ github.event.repository.name }}
