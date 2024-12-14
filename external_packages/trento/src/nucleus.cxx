@@ -11,6 +11,8 @@
 #include <stdexcept>
 #include <string>
 #include <utility>
+#include <iostream>
+#include <fstream>
 
 #include <boost/math/constants/constants.hpp>
 #ifdef TRENTO_HDF5
@@ -39,7 +41,7 @@ NucleusPtr Nucleus::create(const std::string& species, double nucleon_width, dou
     return NucleusPtr{new Proton{}};
   else if (species == "d")
     return NucleusPtr{new Deuteron{}};
-  else if (species == "O_PGCM.bin")
+  else if (species == "O16_PGCM_uniform.bin")
     return ManualNucleus2::create(species, 16);
   else if (species == "Cu")
     return NucleusPtr{new WoodsSaxonNucleus{
@@ -532,12 +534,13 @@ void ManualNucleus::sample_nucleons_impl() {
 
 #endif  // TRENTO_HDF5
 
-std::unique_ptr<ManualNucleus> ManualNucleus2::create(const std::string& path,
-                                                      const int A) {
-    std::ifstream input(path.c_str(), std::ios::binary);
+std::unique_ptr<ManualNucleus2> ManualNucleus2::create(
+        const std::string& fileName, const int A) {
+    std::string filePath = "./nucleusConfigs/" + fileName;
+    std::ifstream input(filePath.c_str(), std::ios::binary);
     if (!input.good()) {
         std::cout << "Configuration file not found!" << std::endl;
-        std::cout << "Please check file: " << path << std::endl;
+        std::cout << "Please check file: " << filePath << std::endl;
         exit(1);
     }
 
@@ -562,7 +565,7 @@ std::unique_ptr<ManualNucleus> ManualNucleus2::create(const std::string& path,
     std::cout << dataset.size() << " configrations." << std::endl;
 
     // Deduce number of configs and number of nucleons (A) from the shape.
-    const auto& nconfigs = dataset.size();
+    int nconfigs = dataset.size();
 
     // Estimate the max radius from at least 500 nucleon positions.
     auto n = std::min(500/A + 1, nconfigs);

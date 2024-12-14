@@ -331,7 +331,8 @@ class ManualNucleus2 : public Nucleus {
   /// must be deduced from the file.  As a workaround, this factory function
   /// opens the file, determines the number of nucleons, and then calls the
   /// constructor.
-  static std::unique_ptr<ManualNucleus2> create(const std::string& path);
+  static std::unique_ptr<ManualNucleus2> create(const std::string& path,
+                                                const int A);
 
   /// Must define destructor because of member pointer to incomplete type.
   /// See explanation for Collider destructor.
