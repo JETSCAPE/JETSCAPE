@@ -13,6 +13,7 @@
  * See COPYING for details.
  ******************************************************************************/
 #include "LiquefierBase.h"
+#include "JetScapeXML.h"
 #include <math.h>
 
 namespace Jetscape {
@@ -87,9 +88,14 @@ void LiquefierBase::check_energy_momentum_conservation(
 }
 
 void LiquefierBase::filter_partons(std::vector<Parton> &pOut) {
-  // if e_threshold > 0, use e_threshold, else, use |e_threshold|*T
-  // this should be put into xml later.
-  auto e_threshold = 2.0; // GeV
+  // threshold_energy_switch = 1, use e_threshold
+  // threshold_energy_switch = 0, use |e_threshold|*T
+  threshold_energy_switch = JetScapeXML::Instance()->GetElementInt({"Liquefier", "threshold_energy_switch"});
+  if (threshold_energy_switch != 0 && threshold_energy_switch != 1) {
+    JSWARN << "threshold_energy_switch should be 0 or 1, but it is " << threshold_energy_switch;
+    exit(1);
+  }
+  e_threshold = JetScapeXML::Instance()->GetElementDouble({"Liquefier", "e_threshold"}); // GeV
 
   for (auto &iparton : pOut) {
     if (iparton.pstat() == miss_stat)
@@ -124,7 +130,7 @@ void LiquefierBase::filter_partons(std::vector<Parton> &pOut) {
     auto gamma = 1.0 / sqrt(1.0 - beta2);
     auto E_boosted = gamma * (iparton.e() - iparton.p(1) * vxLoc -
                               iparton.p(2) * vyLoc - iparton.p(3) * vzLoc);
-    if (e_threshold > 0.) {
+    if (threshold_energy_switch) {
       // drop partons with energy smaller than e_threshold
       // (in the local rest frame) from parton list
       if (E_boosted < e_threshold) {

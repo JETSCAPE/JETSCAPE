@@ -103,7 +103,8 @@ public:
   double fncQhat(double zeta);
   double fncAvrQhat(double zeta, double tau);
 
-  bool matter_on, in_vac, brick_med, recoil_on, broadening_on;
+  bool matter_on, in_vac, brick_med, recoil_on, broadening_on,
+      initial_virtuality_pT;
   double hydro_Tc, qhat0, alphas, brick_length, vir_factor;
   double initR0, initRx, initRy, initRz, initVx, initVy, initVz, initRdotV,
       initVdotV, initEner;

@@ -155,7 +155,7 @@ template <class T> void JetScapeReader<T>::Next() {
       if (line.find(EPAngleStr) != std::string::npos) {
         std::stringstream data(line);
         std::string dummy;
-        data >> dummy >> dummy >> EventPlaneAngle;
+        data >> dummy >> dummy >> dummy >> EventPlaneAngle;
         JSDEBUG << " EventPlaneAngle=" << EventPlaneAngle;
       }
       continue;

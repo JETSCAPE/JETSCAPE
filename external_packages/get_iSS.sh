@@ -18,7 +18,7 @@
 
 # using a commit from the iSS repository that is compatible with JETSCAPE 3.6.1
 folderName="iSS"
-commitHash="9d1847c8b6e02be6f018cf5b1003fdf6085d328f"
+commitHash="db176d4cfaf804c9963f6927577d540f5f8be530"
 
 git clone https://github.com/chunshen1987/iSS -b JETSCAPE $folderName
 cd $folderName

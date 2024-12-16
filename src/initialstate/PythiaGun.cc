@@ -129,8 +129,14 @@ void PythiaGun::InitTask() {
   numbf << eCM;
   readString(numbf.str());
 
-  //Reading vir_factor from xml for MATTER
+  // Reading vir_factor from xml for MATTER
   vir_factor = GetXMLElementDouble({"Eloss", "Matter", "vir_factor"});
+  initial_virtuality_pT = GetXMLElementInt({"Eloss", "Matter", "initial_virtuality_pT"});
+  if(vir_factor < rounding_error) {
+    JSWARN << "vir_factor should not be zero or negative";
+    exit(1);
+  }
+
   softMomentumCutoff = GetXMLElementDouble({"Hard", "PythiaGun", "softMomentumCutoff"});
   JSINFO << "Soft momentum cutoff: " << softMomentumCutoff;
 
@@ -212,14 +218,11 @@ void PythiaGun::Exec() {
 
         // reject rare cases of very soft particles that don't have enough e to get
         // reasonable virtuality
-        if (vir_factor > 0. && (particle.pT() < softMomentumCutoff)) {
+        if (initial_virtuality_pT && (particle.pT() < softMomentumCutoff)) {
           // this cutoff was 1.0/sqrt(vir_factor) in versions < 3.6
           continue;
-        } else if(vir_factor < 0. && (particle.pAbs() < softMomentumCutoff)) {
+        } else if(!initial_virtuality_pT && (particle.pAbs() < softMomentumCutoff)) {
           continue;
-        } else if(vir_factor < rounding_error) {
-          JSWARN << "vir_factor should not be zero.";
-          exit(1);
         }
 
         //if(particle.id()==22) cout<<"########this is a photon!######" <<endl;

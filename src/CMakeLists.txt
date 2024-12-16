@@ -9,12 +9,24 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "./lib")
 # framework
 FILE(GLOB frameworksources framework/*.cc)
 set (SOURCES  ${SOURCES}  ${frameworksources} )
-
 ## Take care of options
 ## Note that cmake NOT needs the "" to deal with empty variables
 # if(NOT "${ZLIB_FOUND}")
 #   list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/framework/JetScapeWriterAsciiGZ.cc)
 # endif()
+
+# Include the endian test
+include(TestBigEndian)
+test_big_endian(IS_BIG_ENDIAN)
+
+# Add endian-specific definitions based on the test result
+if(IS_BIG_ENDIAN)
+    message(STATUS "Big endian architecture detected.")
+    add_definitions(-DBIG_ENDIAN_ARCHITECTURE)
+else()
+    message(STATUS "Little endian architecture detected.")
+    add_definitions(-DLITTLE_ENDIAN_ARCHITECTURE)
+endif()
 
 if(NOT "${HEPMC_FOUND}")
   list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/framework/JetScapeWriterHepMC.cc)

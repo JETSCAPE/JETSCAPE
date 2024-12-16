@@ -268,6 +268,7 @@ void MpiMusic::EvolveHydro() {
   }
 
   if (flag_surface_in_memory == 1) {
+    clearSurfaceCellVector();
     PassHydroSurfaceToFramework();
   } else {
     collect_freeze_out_surface();

@@ -519,6 +519,8 @@ Hadron &Hadron::operator=(const Hadron &c) {
   return *this;
 }
 
+
+
 // ---------------
 // Photon specific
 // ---------------
@@ -542,5 +544,83 @@ Photon &Photon::operator=(const Photon &ph) {
   Parton::operator=(ph);
   return *this;
 }
+// ---------------
+// Qvector (soft particles)  
+// ---------------
+
+Qvector::Qvector(double pt_min, double pt_max, int npt, double y_min, double y_max, int ny, int norder, int pid, int rapidity_type): pt_min_(pt_min), pt_max_(pt_max), npt_(npt), y_min_(y_min), y_max_(y_max), ny_(ny), ncols_(norder*4+3),norder_(norder), pid_(pid), rapidity_type_(rapidity_type) {
+	dpt_ = (pt_max - pt_min) / npt ;
+  dy_ = (y_max - y_min) / ny ;
+	hist_.resize(npt, std::vector<std::vector<double>>(ny, std::vector<double>(ncols_, 0.0)));
+	gridpT_.reserve(npt); 
+        gridy_.reserve(ny);
+        total_num_ = 0;
+        
+	for (int i = 0; i < npt; ++i) {
+            gridpT_.push_back(pt_min_ + (i+0.5) * dpt_);
+        }
+        
+	for (int i = 0; i < ny; ++i) {
+            gridy_.push_back(y_min_ + (i+0.5)* dy_);
+        }
+}
+
+void Qvector::fill(double pt_in, double y_in, int col_in, double val) {
+        int idx = static_cast<int>(floor((pt_in - pt_min_) / dpt_));
+        int idy = static_cast<int>(floor((y_in - y_min_) / dy_));
+        if (idx >= 0 && idx < npt_ && idy >= 0 && idy < ny_ && col_in >= 0 && col_in < ncols_) {
+            hist_[idx][idy][col_in] += val;
+            if (col_in == 5) total_num_++;
+        } else {
+            //std::cerr << "Out of bounds in Qn vector" << std::endl;
+        }
+    }
+
+void Qvector::fill_particle(const shared_ptr<Hadron>& h){
+       double phi= h->phi();  
+       double pT = h->perp();
+       double y =  h->eta();
+       if(rapidity_type_) y = h->rap();
+       double Et = h->Et();
+
+       fill(pT,y,0,pT);
+       fill(pT,y,1,pT*pT);
+       fill(pT,y,2,y);
+       fill(pT,y,3,y*y);
+       fill(pT,y,4,Et);
+
+       fill(pT,y,5,1);
+       fill(pT,y,6,1*1);
+       
+        
+
+       for(int iorder=1 ; iorder<norder_ ; iorder++){
+           fill(pT, y, 4*iorder + 3, cos(iorder*phi));
+           fill(pT, y, 4*iorder + 4, sin(iorder*phi));
+           fill(pT, y, 4*iorder + 5, cos(iorder*phi)*cos(iorder*phi));
+           fill(pT, y, 4*iorder + 6, sin(iorder*phi)*sin(iorder*phi));
+       } 
+}
+
+double Qvector::get_pt(int idx) const {
+    if (idx < 0 || idx >= npt_) {
+	std::cerr << "Index out of bounds in pt array of Qvector" << std::endl;
+        return -1;  
+    }
+    return gridpT_[idx];
+}
+
+double Qvector::get_y(int idx) const {
+    if (idx < 0 || idx >= ny_) {
+	std::cerr << "Index out of bounds in y array of Qvector" << std::endl;
+        return -1;  
+    }
+    return gridy_[idx];
+}
+
+void Qvector::set_header(std::string a){
+    header_ = a;
+}
+
 
 } // namespace Jetscape

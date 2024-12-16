@@ -1,0 +1,31 @@
+name: Enhancement
+description: Suggest an enhancement.
+title: "[Enhancement]: "
+labels: ["enhancement"]
+
+body:
+  - type: markdown
+    attributes:
+      value:
+        Thank you for taking the time to suggest an enhancement.
+        To help us understand your suggestion, please provide as
+        many details as possible below.
+
+  - type: textarea
+    id: overview
+    attributes:
+      label: Enhancement Overview
+      description: Please provide an overview of the proposed enhancement.
+        Describe how you currently use JETSCAPE and how you would like to
+        use JETSCAPE with the suggested enhancement.
+    validations:
+      required: true
+
+  - type: textarea
+    id: implementation
+    attributes:
+      label: Technical Requirements and Implementation
+      description:  If applicable, please provide as many technical details
+        as possible about how the enhancement could be implemented.
+    validations:
+      required: false

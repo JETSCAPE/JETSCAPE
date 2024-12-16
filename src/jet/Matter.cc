@@ -113,6 +113,7 @@ void Matter::Init() {
   hydro_Tc = 0.16;
   brick_length = 4.0;
   vir_factor = 1.0;
+  initial_virtuality_pT = true;
   QS = 0.9;
 
   double m_qhat = GetXMLElementDouble({"Eloss", "Matter", "qhat0"});
@@ -142,13 +143,16 @@ void Matter::Init() {
   hydro_Tc = GetXMLElementDouble({"Eloss", "Matter", "hydro_Tc"});
   brick_length = GetXMLElementDouble({"Eloss", "Matter", "brick_length"});
   vir_factor = GetXMLElementDouble({"Eloss", "Matter", "vir_factor"});
+  initial_virtuality_pT = GetXMLElementInt({"Eloss", "Matter", "initial_virtuality_pT"});
   Lambda_QCD = GetXMLElementDouble({"Eloss","lambdaQCD"});
   QS = GetXMLElementDouble({"Eloss", "Matter", "QS"});
 
-  if (vir_factor < 0.0) {
-    cout << "Reminder: negative vir_factor is set, initial energy will be used "
-            "as initial t_max"
-         << endl;
+  if(vir_factor < 0.0) {
+    JSWARN << "vir_factor should not be negative";
+    exit(1);
+  }
+  if (!initial_virtuality_pT) {
+    cout << "Reminder: initial energy will be used as initial t_max" << endl;
   }
 
   MaxColor = 101; // MK:recomb
@@ -157,7 +161,9 @@ void Matter::Init() {
   JSINFO << MAGENTA << "matter shower on: " << matter_on;
   JSINFO << MAGENTA << "in_vac: " << in_vac << "  brick_med: " << brick_med
          << "  recoil_on: " << recoil_on<<", tStart ="<<tStart;
-  JSINFO << MAGENTA << "Q0: " << Q00 << " QS: " << QS << " vir_factor: " << vir_factor
+  JSINFO << MAGENTA << "Q0: " << Q00 << " vir_factor: " << vir_factor 
+         << " QS: " << QS << 
+         << " initial_virtuality_pT: " << initial_virtuality_pT
          << "  qhat0: " << qhat0 << " alphas: " << alphas << ", QhatParametrizationType="<<QhatParametrizationType
          << "  qhatA: " << qhatA << " qhatB:  " <<qhatB  << "  qhatC: " << qhatC << " qhatD:  " <<qhatD
          << " hydro_Tc: " << hydro_Tc << " brick_length: " << brick_length;
@@ -485,14 +491,14 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
 
       //tQ2 = generate_vac_t(pIn[i].pid(), pIn[i].nu(), QS/2.0, pIn[i].e()*pIn[i].e() ,zeta , iSplit);
 
-      // SC:
-      double pT2 = pIn[i].p(1) * pIn[i].p(1) + pIn[i].p(2) * pIn[i].p(2);
       double max_vir;
-      if (vir_factor < 0.0)
-        max_vir =
-            std::abs(vir_factor) * (pIn[i].e() * pIn[i].e() - pIn[i].restmass() * pIn[i].restmass());
-      else
-        max_vir = pT2 * vir_factor;
+      if(initial_virtuality_pT) {
+        max_vir = vir_factor 
+            * (pIn[i].p(1) * pIn[i].p(1) + pIn[i].p(2) * pIn[i].p(2));
+      } else {
+        max_vir = vir_factor 
+            * (pIn[i].e() * pIn[i].e() - pIn[i].restmass() * pIn[i].restmass());
+      }
 
       if (max_vir <= QS * QS) {
         tQ2 = 0.0;
