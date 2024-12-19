@@ -11,6 +11,8 @@
 #include <stdexcept>
 #include <string>
 #include <utility>
+#include <iostream>
+#include <fstream>
 
 #include <boost/math/constants/constants.hpp>
 #ifdef TRENTO_HDF5
@@ -39,6 +41,8 @@ NucleusPtr Nucleus::create(const std::string& species, double nucleon_width, dou
     return NucleusPtr{new Proton{}};
   else if (species == "d")
     return NucleusPtr{new Deuteron{}};
+  else if (species == "O16_PGCM_uniform.bin")
+    return ManualNucleus2::create(species, 16);
   else if (species == "Cu")
     return NucleusPtr{new WoodsSaxonNucleus{
        63, 4.20, 0.596, nucleon_dmin
@@ -529,5 +533,108 @@ void ManualNucleus::sample_nucleons_impl() {
 }
 
 #endif  // TRENTO_HDF5
+
+std::unique_ptr<ManualNucleus2> ManualNucleus2::create(
+        const std::string& fileName, const int A) {
+    std::string filePath = "./nucleusConfigs/" + fileName;
+    std::ifstream input(filePath.c_str(), std::ios::binary);
+    if (!input.good()) {
+        std::cout << "Configuration file not found!" << std::endl;
+        std::cout << "Please check file: " << filePath << std::endl;
+        exit(1);
+    }
+
+    int Nentry = 3;
+
+    std::vector<std::vector<std::vector<float>>> dataset;
+    while (true) {
+        std::vector<std::vector<float>> conf_i;
+        for (int i = 0; i < A; i++) {
+            std::vector<float> nucleon_i;
+            for (int j = 0; j < Nentry; j++) {
+                float temp;
+                input.read(reinterpret_cast<char *>(&temp), sizeof(float));
+                nucleon_i.push_back(temp);
+            }
+            conf_i.push_back(nucleon_i);
+        }
+        if (input.eof()) break;
+        dataset.push_back(conf_i);
+    }
+    input.close();
+    std::cout << dataset.size() << " configrations." << std::endl;
+
+    // Deduce number of configs and number of nucleons (A) from the shape.
+    int nconfigs = dataset.size();
+
+    // Estimate the max radius from at least 500 nucleon positions.
+    auto n = std::min(500/A + 1, nconfigs);
+    auto rmax_sq = 0.;
+    for (int iconfig = 0; iconfig < n; iconfig++) {
+        for (int j = 0; j < A; j++) {
+            auto& x = dataset[iconfig][j][0];
+            auto& y = dataset[iconfig][j][1];
+            auto& z = dataset[iconfig][j][2];
+            auto r_sq = x*x + y*y + z*z;
+            if (r_sq > rmax_sq)
+            rmax_sq = r_sq;
+        }
+    }
+    auto rmax = std::sqrt(rmax_sq);
+
+    return std::unique_ptr<ManualNucleus2>{
+        new ManualNucleus2(dataset, nconfigs, A, rmax)
+    };
+}
+
+ManualNucleus2::ManualNucleus2(
+        std::vector<std::vector<std::vector<float>>> &dataset,
+        const int nconfigs, const int A, const double rmax)
+    : Nucleus(A),
+      ion_configs_(dataset),
+      rmax_(rmax),
+      index_dist_(0, nconfigs - 1)
+{}
+
+ManualNucleus2::~ManualNucleus2() = default;
+
+double ManualNucleus2::radius() const {
+  return rmax_;
+}
+
+void ManualNucleus2::sample_nucleons_impl() {
+    // Sample Euler rotation angles.
+    // First is an azimuthal spin about the Z axis.
+    const auto angle_1 = random::phi<double>();
+    const auto c1 = std::cos(angle_1);
+    const auto s1 = std::sin(angle_1);
+    // Then a polar tilt about the original X axis, uniform in cos(theta).
+    const auto c2 = random::cos_theta<double>();
+    const auto s2 = std::sqrt(1. - c2*c2);
+    // Finally another azimuthal spin about the original Z axis.
+    const auto angle_3 = random::phi<double>();
+    const auto c3 = std::cos(angle_3);
+    const auto s3 = std::sin(angle_3);
+
+    // Choose and read a random config from the dataset.
+    int config_idx = index_dist_(random::engine);
+
+    // Loop over positions and nucleons.
+    int nucleon_i = 0;
+    for (iterator nucleon = begin(); nucleon != end(); ++nucleon) {
+        // Extract position vector and increment iterator.
+        auto& x = ion_configs_[config_idx][nucleon_i][0];
+        auto& y = ion_configs_[config_idx][nucleon_i][1];
+        auto& z = ion_configs_[config_idx][nucleon_i][2];
+
+        // Rotate.
+        auto x_rot = x*(c1*c3 - c2*s1*s3) - y*(c3*s1 + c1*c2*s3) + z*s2*s3;
+        auto y_rot = x*(c1*s3 + c2*c3*s1) - y*(s1*s3 - c1*c2*c3) - z*c3*s2;
+        auto z_rot = x*s1*s2              + y*c1*s2              + z*c2;
+
+        set_nucleon_position(nucleon, x_rot, y_rot, z_rot);
+        nucleon_i++;
+    }
+}
 
 }  // namespace trento
