@@ -253,6 +253,7 @@ int iSpectraSamplerWrapper::getSurfCellVector() {
     iSS_surf_cell.Edec = surf_i.energy_density;
     iSS_surf_cell.Tdec = surf_i.temperature;
     iSS_surf_cell.Pdec = surf_i.pressure;
+    iSS_surf_cell.Bn = surf_i.baryon_density;
     iSS_surf_cell.muB = surf_i.mu_B;
     iSS_surf_cell.muQ = surf_i.mu_Q;
     iSS_surf_cell.muS = surf_i.mu_S;
