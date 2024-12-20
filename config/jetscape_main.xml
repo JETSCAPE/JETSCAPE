@@ -321,7 +321,7 @@
       <zeta_over_s_width_in_GeV>0.02</zeta_over_s_width_in_GeV>
       <zeta_over_s_lambda_asymm>0.0</zeta_over_s_lambda_asymm>
       <Include_second_order_terms>1</Include_second_order_terms>
-      <freezeout_temperature>-1</freezeout_temperature>
+      <freezeout_temperature>0.15</freezeout_temperature>
       <Perform_CooperFrye_Feezeout>0</Perform_CooperFrye_Feezeout>
     </MUSIC>
 
