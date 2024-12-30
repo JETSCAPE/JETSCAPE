@@ -461,6 +461,7 @@ endif ( USE_MUSIC AND USE_ISS AND USE_SMASH )
 
 # -----------------------------------------------------------
 #### copy essential files for MUSIC to build/
+file(COPY ./external_packages/trento/nucleusConfigs DESTINATION ${CMAKE_BINARY_DIR}/)
 if (USE_IPGlasma)
   if(EXISTS "${CMAKE_SOURCE_DIR}/external_packages/ipglasma/")
     file(COPY ${CMAKE_SOURCE_DIR}/external_packages/ipglasma/input DESTINATION ${CMAKE_BINARY_DIR}/)
