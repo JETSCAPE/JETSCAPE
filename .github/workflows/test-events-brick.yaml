@@ -5,13 +5,13 @@ on:
     branches:
       - main
       - brick_matter_lbt
-      - JETSCAPE-3.6.6-RC
+      - JETSCAPE-3.6.7-RC
       - latessa/gtl_binary_function
   push:
     branches:
       - main
       - brick_matter_lbt
-      - JETSCAPE-3.6.6-RC
+      - JETSCAPE-3.6.7-RC
       - latessa/gtl_binary_function
 
 env:
