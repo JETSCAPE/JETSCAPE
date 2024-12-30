@@ -13,9 +13,9 @@
  * See COPYING for details.
  ******************************************************************************/
 
-// Jetscape final state {hadrons,kartons} writer ascii class
+// Jetscape final state {hadrons,partons} writer ascii class
 // Based on JetScapeWriterStream.
-// author: Raymond Ehlers <raymond.ehlers@cern.ch>, ORNL
+// author: Raymond Ehlers <raymond.ehlers@cern.ch>, LBL/UCB
 
 #ifndef JETSCAPEWRITERSTREAM_H
 #define JETSCAPEWRITERSTREAM_H
@@ -65,6 +65,8 @@ public:
 protected:
   T output_file; //!< Output file
   std::vector<std::shared_ptr<JetScapeParticleBase>> particles;
+  bool writePtHat;
+  std::vector<int> particleStatusToSkip;
 };
 
 template <class T>
@@ -81,7 +83,7 @@ protected:
 template <class T>
 class JetScapeWriterFinalStateHadronsStream : public JetScapeWriterFinalStateStream<T> {
   std::string GetName() { return "hadrons"; }
-  // Don't collect the hadrons by making it a no-op
+  // Don't collect the partons by making it a no-op
   void Write(weak_ptr<PartonShower> ps) { }
 protected:
   // Allows the registration of the module so that it is available to be used by the Jetscape framework.
