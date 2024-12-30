@@ -102,7 +102,7 @@ jobs:
         echo "This is SMASH_DIR: "
         echo ${SMASH_DIR}
         ls ${SMASH_DIR}
-        cmake .. -DUSE_MUSIC=ON -DUSE_ISS=ON -DUSE_FREESTREAM=ON -DUSE_SMASH=ON
+        cmake .. -DUSE_MUSIC=ON -DUSE_ISS=ON -DUSE_FREESTREAM=ON -DUSE_SMASH=ON -DCMAKE_CXX_STANDARD=17
         make -j2
 
     - name: Test Run
