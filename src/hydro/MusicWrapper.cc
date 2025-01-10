@@ -405,6 +405,7 @@ void MpiMusic::PassHydroSurfaceToFramework() {
         surface_cell_info.energy_density = surfaceCell_i.energy_density;
         surface_cell_info.temperature = surfaceCell_i.temperature;
         surface_cell_info.pressure = surfaceCell_i.pressure;
+        surface_cell_info.baryon_density = surfaceCell_i.rho_b;
         surface_cell_info.mu_B = surfaceCell_i.mu_B;
         surface_cell_info.mu_Q = surfaceCell_i.mu_Q;
         surface_cell_info.mu_S = surfaceCell_i.mu_S;
