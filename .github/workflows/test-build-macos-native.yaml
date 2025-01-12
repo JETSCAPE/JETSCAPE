@@ -5,12 +5,12 @@ on:
     branches:
       - main
       - JETSCAPE-3.6.7-RC
-      - latessa/gtl_binary_function
+      - cpp17_cmake_syntax
   push:
     branches:
       - main
       - JETSCAPE-3.6.7-RC
-      - latessa/gtl_binary_function
+      - cpp17_cmake_syntax
 
 env:
   REPO_NAME: ${{ github.event.repository.name }}
@@ -102,7 +102,7 @@ jobs:
         echo "This is SMASH_DIR: "
         echo ${SMASH_DIR}
         ls ${SMASH_DIR}
-        cmake .. -DUSE_MUSIC=ON -DUSE_ISS=ON -DUSE_FREESTREAM=ON -DUSE_SMASH=ON -DCMAKE_CXX_STANDARD=17
+        cmake .. -DUSE_MUSIC=ON -DUSE_ISS=ON -DUSE_FREESTREAM=ON -DUSE_SMASH=ON
         make -j2
 
     - name: Test Run
