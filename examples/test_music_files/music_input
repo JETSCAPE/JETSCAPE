@@ -124,7 +124,7 @@ output_evolution_T_cut 0.14        # GeV
 output_evolution_every_N_eta  1    # output evolution file every Neta steps
 output_evolution_every_N_y  1      # output evolution file every Ny steps
 output_evolution_every_N_x  1      # output evolution file every Nx steps
-output_evolution_every_N_timesteps  5  # output evolution every Ntime steps
+output_evolution_every_N_timesteps  1  # output evolution every Ntime steps
 
 #
 #
