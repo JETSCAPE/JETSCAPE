@@ -224,6 +224,9 @@
     <FreestreamMilne>
       <name>FreestreamMilne</name>
       <freestream_input_file>freestream_input</freestream_input_file>
+      <!-- number of timesteps for the evolution, this defines the dtau = (taus - tauj)  / ntau -->
+      <!-- in the case of <evolutionInMemory>1</evolutionInMemory> this will also set the time step for the hydro, make sure that it is small enough -->
+      <ntau>50</ntau>
     </FreestreamMilne>
 
     <NullPreDynamics> </NullPreDynamics>
@@ -284,6 +287,9 @@
       <!-- (only works for VISHNew evo files) -->
       <load_viscous_info>0</load_viscous_info>
 
+      <!-- PreEquilibrium evolution filename (plain binary format) -->
+      <PreEq_file>../examples/test_hydro_files/evolution_all_xyeta_fs.dat</PreEq_file>
+
       <!-- MUSIC hydro evolution filename (plain binary format) -->
       <!-- the associated input file specifies the grid information -->
       <MUSIC_input_file>../examples/test_hydro_files/MUSIC_input</MUSIC_input_file>
@@ -300,24 +306,33 @@
     <MUSIC>
       <name>MUSIC</name>
       <MUSIC_input_file>music_input</MUSIC_input_file>
+      <!--beastMode = 0: double precision, constant time step-->
+      <!--beastMode = 1: float precision, constant time step-->
+      <!--beastMode = 2: float precision, increased time step after 4 fm/ (can be used for soft sector only runs, otherwise the change in stepsize will lead to errors)-->
       <beastMode>0</beastMode>
+      <!--starting time of the hydrodynamic evolution after the pre-equilibrium phase-->
       <Initial_time_tau_0>0.5</Initial_time_tau_0>
+      <!--evolution output/storage parameters-->
       <output_evolution_to_file>0</output_evolution_to_file>
       <output_evolution_to_memory>1</output_evolution_to_memory>
       <surface_in_memory>1</surface_in_memory>
+      <!--shear viscosity settings-->
       <shear_viscosity_eta_over_s>0.08</shear_viscosity_eta_over_s>
       <T_dependent_Shear_to_S_ratio>0</T_dependent_Shear_to_S_ratio>
       <eta_over_s_T_kink_in_GeV>0.16</eta_over_s_T_kink_in_GeV>
       <eta_over_s_low_T_slope_in_GeV>0.</eta_over_s_low_T_slope_in_GeV>
       <eta_over_s_high_T_slope_in_GeV>0.</eta_over_s_high_T_slope_in_GeV>
       <eta_over_s_at_kink>0.08</eta_over_s_at_kink>
+      <!--bulk viscosity settings-->
       <temperature_dependent_bulk_viscosity>0</temperature_dependent_bulk_viscosity>
       <zeta_over_s_max>0</zeta_over_s_max>
       <zeta_over_s_T_peak_in_GeV>0.18</zeta_over_s_T_peak_in_GeV>
       <zeta_over_s_width_in_GeV>0.02</zeta_over_s_width_in_GeV>
       <zeta_over_s_lambda_asymm>0.0</zeta_over_s_lambda_asymm>
+      <!--higher order transport coefficients-->
       <Include_second_order_terms>1</Include_second_order_terms>
-      <freezeout_temperature>-1</freezeout_temperature>
+      <!--freeze-out parameters-->
+      <freezeout_temperature>0.15</freezeout_temperature>
       <Perform_CooperFrye_Feezeout>0</Perform_CooperFrye_Feezeout>
     </MUSIC>
 
