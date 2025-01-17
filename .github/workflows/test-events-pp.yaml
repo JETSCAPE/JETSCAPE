@@ -5,12 +5,12 @@ on:
     branches:
       - main
       - JETSCAPE-3.6.7-RC
-      - latessa/gtl_binary_function
+      - cpp17_cmake_syntax
   push:
     branches:
       - main
       - JETSCAPE-3.6.7-RC
-      - latessa/gtl_binary_function
+      - cpp17_cmake_syntax
 
 env:
   REPO_NAME: ${{ github.event.repository.name }}
