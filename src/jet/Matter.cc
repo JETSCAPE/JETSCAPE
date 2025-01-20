@@ -466,6 +466,22 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
         0.0) /// A parton without a virtuality or formation time, must set...
     {
 
+    std::ofstream MyFile("MatterProfile.txt");
+    for (int e = 0; e <= 150; e++){
+    for (int f = -100; f <= 100; f++){
+    for(int k = -100; k <= 100;k++){
+    double T = e * 0.1;
+    double X = f * 0.1;
+    double Y = k * 0.1; 
+    //JSINFO<< T<<" "<<X<<" "<<Y;
+    GetHydroCellSignal(T, X, Y, 0, check_fluid_info_ptr);
+    MyFile <<T<<" "<<X<<" "<<Y<<" "<<0<<" "<<check_fluid_info_ptr->vx<<" "<<check_fluid_info_ptr->vy<<" "<<check_fluid_info_ptr->temperature<<" "<<check_fluid_info_ptr->entropy_density<<"\n";
+    }
+    }
+    }
+    MyFile.close();
+
+
       VERBOSE(8) << BOLDYELLOW << " pid = " << pIn[i].pid()
                  << " E = " << pIn[i].e();
 

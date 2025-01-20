@@ -67,9 +67,9 @@ std::tuple<double, double, double> InitialState::CoordFromIdx(int idx) {
   int ny = GetYSize();
   int nz = GetZSize();
 
-  int page = idx / (nx * ny);
-  int row = (idx - page * nx * ny) / nx;
-  int col = idx - page * nx * ny - row * nx;
+  int page = idx / (nx * ny);   //eta
+  int row = (idx - page * nx * ny) / nx; //y
+  int col = idx - page * nx * ny - row * nx; //x
 
   return std::make_tuple(-grid_max_x_ + col * grid_step_x_,
                          -grid_max_y_ + row * grid_step_y_,

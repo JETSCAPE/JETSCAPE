@@ -404,7 +404,27 @@ void TrentoInitial::Exec() {
   for (int i = 0; i < ncoll_field.num_elements(); i++) {
     num_of_binary_collisions_.push_back(ncoll_field.data()[i]);
   }
+
+  //generalizing for a rectangular grid
+  //for( int k = 0; k < GetXSize(); k++){
+  //  for(int l = 0; l < GetYSize(); l++){
+  //    int i = k + l * GetYSize();
+  //    entropy_density_distribution_.push_back(density_field.data()[i]);
+  //    num_of_binary_collisions_.push_back(ncoll_field.data()[i]);
+  //  }
+  //}
   JSINFO << " TRENTO event generated and loaded ";
+  std::ofstream myfile;
+  myfile.open("TrentoProfile.txt");
+  double x,y,z;
+  for (int i = 0; i <  entropy_density_distribution_.size(); i++) {
+    auto coord = CoordFromIdx(i);
+    x = std::get<0>(coord);
+    y = std::get<1>(coord);
+    z = std::get<2>(coord);
+    myfile<<x<<" "<<y<<" "<<z<<" "<<entropy_density_distribution_[i]<<"\n";
+  }
+  myfile.close();
 }
 
 void TrentoInitial::Clear() {
