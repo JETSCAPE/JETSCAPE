@@ -100,17 +100,6 @@ void FreestreamMilneWrapper::EvolvePreequilibrium() {
   fsmilne_ptr->initialize_from_vector(entropy_density_float);
   JSINFO << " TRENTO event generated and loaded ";
 
-  std::ofstream myfile;
-  myfile.open("FSProfileB.txt");
-  double x,y,z;
-  for (int i = 0; i <  fsmilne_ptr->init_energy_density.size(); i++) {
-    auto coord = ini->CoordFromIdx(i);
-    x = std::get<0>(coord);
-    y = std::get<1>(coord);
-    z = std::get<2>(coord);
-    myfile<<x<<" "<<y<<" "<<z<<" "<<fsmilne_ptr->init_energy_density[i]<<"\n";
-  }
-  myfile.close();
 
   preequilibrium_status_ = INIT;
   if (preequilibrium_status_ == INIT) {
