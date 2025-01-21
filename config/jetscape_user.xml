@@ -2,7 +2,7 @@
 
 <jetscape>
   
-  <nEvents> 100000 </nEvents>
+  <nEvents> 1000000 </nEvents>
   
   <outputFilename>/scratch/user/cameron.parker/projects/JETSCAPE/test</outputFilename>
   <JetScapeWriterAsciiGZ> on </JetScapeWriterAsciiGZ>
