@@ -230,9 +230,7 @@ public:
     id_x = std::min(nx - 1, std::max(0, id_x));
     id_y = std::min(ny - 1, std::max(0, id_y));
     id_eta = std::min(neta - 1, std::max(0, id_eta));
-    // is = (nx * ny) * ieta + (nx * iy) + ix;
-    return (id_tau * (nx * ny * neta) + (nx * ny) * id_eta + (nx * id_y)+ id_x);
-    //(id_tau * nx * ny * neta + id_x * ny * neta + id_y * neta + id_eta);
+    return (id_tau * nx * ny * neta + id_x * ny * neta + id_y * neta + id_eta);
   }
 
   /* Read fluid cell info for a given lattice cell*/
