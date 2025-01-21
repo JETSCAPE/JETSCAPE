@@ -396,23 +396,20 @@ void TrentoInitial::Exec() {
   JSINFO << " Load TRENTo density and ncoll density to JETSCAPE memory ";
   auto density_field = tmp_event.density_grid();
   auto ncoll_field = tmp_event.TAB_grid();
+
   JSINFO << density_field.num_elements() << " density elements";
-  for (int i = 0; i < density_field.num_elements(); i++) {
-    entropy_density_distribution_.push_back(density_field.data()[i]);
-  }
   JSINFO << ncoll_field.num_elements() << " ncoll elements";
-  for (int i = 0; i < ncoll_field.num_elements(); i++) {
-    num_of_binary_collisions_.push_back(ncoll_field.data()[i]);
+
+  //Transform density and ncoll grid to JETSCAPE convention
+  for(int ix = 0; ix < GetXSize(); ix++){
+    for(int iy = 0; iy < GetYSize(); iy++){
+      for(int ieta = 0; ieta < GetZSize(); ieta++){
+        entropy_density_distribution_.push_back(density_field[iy][ix][ieta]);
+      }
+      num_of_binary_collisions_.push_back(ncoll_field[iy][ix]);
+    }
   }
 
-  //generalizing for a rectangular grid
-  //for( int k = 0; k < GetXSize(); k++){
-  //  for(int l = 0; l < GetYSize(); l++){
-  //    int i = k + l * GetYSize();
-  //    entropy_density_distribution_.push_back(density_field.data()[i]);
-  //    num_of_binary_collisions_.push_back(ncoll_field.data()[i]);
-  //  }
-  //}
   JSINFO << " TRENTO event generated and loaded ";
   std::ofstream myfile;
   myfile.open("TrentoProfile.txt");
@@ -425,6 +422,7 @@ void TrentoInitial::Exec() {
     myfile<<x<<" "<<y<<" "<<z<<" "<<entropy_density_distribution_[i]<<"\n";
   }
   myfile.close();
+  
 }
 
 void TrentoInitial::Clear() {
