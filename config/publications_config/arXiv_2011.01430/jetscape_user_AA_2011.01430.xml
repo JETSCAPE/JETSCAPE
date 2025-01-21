@@ -64,8 +64,9 @@
 
         <!-- Individual Preequilibrium Dynamics models  -->
         <FreestreamMilne>
-            <name>FreestreamMilne</name>
-        <freestream_input_file>freestream_input</freestream_input_file>
+          <name>FreestreamMilne</name>
+          <freestream_input_file>freestream_input</freestream_input_file>
+          <E_DEP_FS>1</E_DEP_FS>
         </FreestreamMilne>
     </Preequilibrium>
 

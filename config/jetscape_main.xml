@@ -44,7 +44,7 @@
   <!--  Note: It's each modules responsibility to adopt it -->
   <!--  Note: Most if not all modules should understand 0 to mean a random value -->
   <!--  Note: Both 0 and non-zero values require careful treatment in case of multi-threading -->
-  <!--           An example implementation is in JetEnergyLossManager.cc -->
+  <!--  An example implementation is in JetEnergyLossManager.cc -->
   <Random>
     <seed>0</seed>
   </Random>
@@ -212,10 +212,10 @@
 
     <!-- starting long. proper time for Preequilibrium dynamics -->
     <tau0>0.0</tau0>
-    <!-- starting long. proper time for Preequilibrium dynamics outuput for hard probes -->
+    <!-- starting long. proper time for Preequilibrium dynamics output for hard probes -->
     <tauj>0.1</tauj>
     <!-- switching long. proper time from Preequilibrium dynamics to Hydrodynamics (Landau Matching) -->
-    <taus>0.2</taus>
+    <taus>0.5</taus>
     <evolutionInMemory>1</evolutionInMemory>
 
     <!-- Individual Preequilibrium Dynamics models  -->
@@ -225,6 +225,17 @@
       <!-- number of timesteps for the evolution, this defines the dtau = (taus - tauj)  / ntau -->
       <!-- in the case of <evolutionInMemory>1</evolutionInMemory> this will also set the time step for the hydro, make sure that it is small enough -->
       <ntau>50</ntau>
+
+      <!--Energy dependent free streaming time (Phys.Rev.C 103 (2021) 5, 054904, see Eq. 19)-->
+      <!--This overrides the constant free streaming time defined by taus-->
+      <!--E_DEP_FS = 0: constant free streaming time according to taus, E_DEP_FS = 1: energy dependent free streaming time-->
+      <E_DEP_FS>0</E_DEP_FS>
+      <!--E_R: energy scale in GeV/fm^2 for the energy dependent free streaming time-->
+      <E_R>4.0</E_R>
+      <!--TAU_R: free streaming time tau_R in fm for the energy dependent free streaming time-->
+      <TAU_R>1.46</TAU_R>
+      <!--ALPHA: power of the energy dependence for the energy dependent free streaming time-->
+      <ALPHA>0.031</ALPHA>
     </FreestreamMilne>
 
     <NullPreDynamics> </NullPreDynamics>
