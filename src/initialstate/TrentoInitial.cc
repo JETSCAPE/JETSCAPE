@@ -327,7 +327,7 @@ std::pair<double, double> TrentoInitial::GenCenTab(std::string proj,
   // Step1: check it a table exist
   std::ifstream infile(filename);
   double Etab[101];
-  double buff1, buff2;
+  double buff;
   std::string line;
   if (infile.good()) {
     JSINFO << "The required centrality table exists. Load the table.";
@@ -335,7 +335,7 @@ std::pair<double, double> TrentoInitial::GenCenTab(std::string proj,
     while (std::getline(infile, line)) {
       if (line[0] != '#') {
         std::istringstream iss(line);
-        iss >> buff1 >> buff2 >> Etab[i];
+        iss >> buff >> Etab[i];
         i++;
       }
     }
@@ -356,16 +356,17 @@ std::pair<double, double> TrentoInitial::GenCenTab(std::string proj,
          << "#\t" << proj << "\t" << targ << "\t" << beamE << "\t" << xsection
          << "\t" << pvalue << "\t" << fluct << "\t" << nuclw << "\t" << dmin
          << "\n"
-         << "#\tcen_L\tcen_H\tun-normalized total density\n";
+         << "#\tcen, \tun-normalized total density\n";
     Etab[0] = 1e10;
+    fout << 0 << "\t" << Etab[0] << std::endl;
     for (int i = 1; i < 100; i += 1) {
       auto ee = event_records[i * nstep];
-      fout << i - 1 << "\t" << i << "\t" << ee.mult << std::endl;
+      fout << i << "\t" << ee.mult << std::endl;
       Etab[i] = ee.mult;
     }
-    auto ee = event_records.back();
-    fout << 99 << "\t" << 100 << "\t" << ee.mult << std::endl;
-    Etab[100] = ee.mult;
+    auto last_record = event_records.back();
+    fout << 100 << "\t" << last_record.mult << std::endl;
+    Etab[100] = last_record.mult;
     fout.close();
   }
   JSINFO << "#########" << Etab[cL] << " " << Etab[cH];
