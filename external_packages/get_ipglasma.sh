@@ -13,5 +13,10 @@
 # See COPYING for details.
 ##############################################################################
 
+folderName="ipglasma"
+commitHash="215aea40fd3e0777f01c464cc4031fb2b4344449"
+
 # download the code package
-git clone --depth=1 -b InterfaceJETSCAPE https://github.com/chunshen1987/ipglasma ipglasma
+git clone --depth=1 -b InterfaceJETSCAPE https://github.com/chunshen1987/ipglasma $folderName
+cd $folderName
+git checkout $commitHash
