@@ -2,7 +2,7 @@
 
 <jetscape>
 
-  <nEvents> 1 </nEvents>
+  <nEvents> 5 </nEvents>
   <setReuseHydro> true </setReuseHydro>
   <nReuseHydro> 10 </nReuseHydro>
 
@@ -17,17 +17,19 @@
   <!-- Inital State Module  -->
   <IS>
     <!-- initial_profile_path  /wsu/home/groups/maj-shen/JETSCAPEDataFile/HydroProfiles/5020GeV_0-10  initial_profile_path -->
-     <initial_profile_path>/Users/ritobandatta/Desktop/JETSCAPE/examples/test_hydro_files</initial_profile_path>
+     <initial_profile_path>../examples/test_hydro_files</initial_profile_path>
   </IS>
 
   <!-- Hard Process -->
   <Hard>
-    <PGun></PGun>
-    <!--PythiaGun>
+    <PythiaGun>
       <FSR_on>0</FSR_on>
       <pTHatMin>500</pTHatMin>
       <pTHatMax>550</pTHatMax>
       <eCM>5020</eCM>
+      <!-- You can add any number of additional lines to initialize pythia here -->
+      <!-- Note that if the tag exists it cannot be empty (tinyxml produces a segfault) -->
+      <!-- EPS09 Avg Nuclear PDF for nucleon in Pb nucleus -->
       <LinesToRead>
 	HardQCD:all = on
         PDF:useHardNPDFA=on
@@ -37,7 +39,7 @@
 	PDF:nPDFBeamA = 100822080
 	PDF:nPDFBeamB = 100822080
       </LinesToRead>
-    </PythiaGun-->
+    </PythiaGun>
   </Hard>
 
   <!--Preequilibrium Dynamics Module -->
@@ -51,7 +53,7 @@
       <name>Hydro from file </name>
       <read_in_multiple_hydro>1</read_in_multiple_hydro>
       <!-- hydro_files_folder  /wsu/home/groups/maj-shen/JETSCAPEDataFile/HydroProfiles/5020GeV_0-10 hydro_files_folder -->
-      <hydro_files_folder>/Users/ritobandatta/Desktop/JETSCAPE/examples/test_hydro_files</hydro_files_folder>
+      <hydro_files_folder>../examples/test_hydro_files</hydro_files_folder>
     </hydro_from_file>
   </Hydro>
 
@@ -60,7 +62,7 @@
 
     <deltaT>0.1</deltaT>
     <formTime> -0.1</formTime>
-    <maxT>0.1</maxT>
+    <maxT>150</maxT>
     <tStart> 0.6 </tStart> <!-- Start time of jet quenching, proper time, fm/c   -->
     <mutex>ON</mutex>
 
