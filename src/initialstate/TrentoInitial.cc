@@ -400,6 +400,7 @@ void TrentoInitial::Exec() {
   JSINFO << density_field.num_elements() << " density elements";
   JSINFO << ncoll_field.num_elements() << " ncoll elements";
 
+
   //Transform density and ncoll grid to JETSCAPE convention
   for(int ix = 0; ix < GetXSize(); ix++){
     for(int iy = 0; iy < GetYSize(); iy++){
@@ -408,21 +409,7 @@ void TrentoInitial::Exec() {
       }
       num_of_binary_collisions_.push_back(ncoll_field[iy][ix]);
     }
-  }
-
-  JSINFO << " TRENTO event generated and loaded ";
-  std::ofstream myfile;
-  myfile.open("TrentoProfile.txt");
-  double x,y,z;
-  for (int i = 0; i <  entropy_density_distribution_.size(); i++) {
-    auto coord = CoordFromIdx(i);
-    x = std::get<0>(coord);
-    y = std::get<1>(coord);
-    z = std::get<2>(coord);
-    myfile<<x<<" "<<y<<" "<<z<<" "<<entropy_density_distribution_[i]<<"\n";
-  }
-  myfile.close();
-  
+  }  
 }
 
 void TrentoInitial::Clear() {
