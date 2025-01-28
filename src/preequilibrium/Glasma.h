@@ -26,13 +26,23 @@ public:
     Glasma();
     ~Glasma() {};
 
-    void InitializePreequilibrium() {preequilibrium_status_ = INIT;};
+    void InitializePreequilibrium() {
+        preequilibrium_status_ = INIT;
+        preequilibrium_tau_0_ = 0.001;
+        preequilibrium_tau_max_ = 0.4;
+        dtau_ = 0.005;
+    }
+
     void EvolvePreequilibrium();
+    Jetscape::real GetPreequilibriumEvodtau() const {
+        return(dtau_);
+    }
 
 private:
     // Allows the registration of the module so that it is available to be
     // used by the Jetscape framework.
     static RegisterJetScapeModule<Glasma> reg;
+    double dtau_;
 };
 
 #endif   // GLASMA_H
