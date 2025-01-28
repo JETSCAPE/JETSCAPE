@@ -20,6 +20,7 @@
 #include <fstream>
 
 #include "JetScapeLogger.h"
+#include "JetScapeXML.h"
 #include "JetScapeConstants.h"
 #include "Glasma.h"
 
@@ -33,10 +34,20 @@ Glasma::Glasma() {
     SetId("Glasma");
 }
 
+void Glasma::InitializePreequilibrium() {
+    preequilibrium_status_ = INIT;
+    preequilibrium_tau_0_ = GetXMLElementDouble({"Preequilibrium",
+                                                "Glasma", "tau0"});
+    preequilibrium_tau_max_ = GetXMLElementDouble({"Preequilibrium",
+                                                "Glasma", "taus"});
+    dtau_ = GetXMLElementDouble({"Preequilibrium", "Glasma", "dtau"});
+}
+
 void Glasma::EvolvePreequilibrium() {
     VERBOSE(2) << "Initialize density profiles in Glasma ...";
-    std::string IPGlasmaFileName = "epsilon-u-Hydro-t0.4-0.dat";
-    VERBOSE(2) << "Read in IPGlasma Tmunu ...";
+    std::string IPGlasmaFileName = GetXMLElementText({"Preequilibrium",
+                                    "Glasma", "input_filename_glasma"});
+    VERBOSE(2) << "Read in IP-Glasma Tmunu ...";
     std::ifstream IPGFile(IPGlasmaFileName.c_str());
     if (!IPGFile.good()) {
         Jetscape::JSWARN << "Can not open " << IPGlasmaFileName;

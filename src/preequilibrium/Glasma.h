@@ -26,12 +26,7 @@ public:
     Glasma();
     ~Glasma() {};
 
-    void InitializePreequilibrium() {
-        preequilibrium_status_ = INIT;
-        preequilibrium_tau_0_ = 0.001;
-        preequilibrium_tau_max_ = 0.4;
-        dtau_ = 0.005;
-    }
+    void InitializePreequilibrium();
 
     void EvolvePreequilibrium();
     Jetscape::real GetPreequilibriumEvodtau() const {
