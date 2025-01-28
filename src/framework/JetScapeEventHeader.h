@@ -70,6 +70,11 @@ public:
   /// Initial State: Get number of binary collisions
   void SetNcoll(double d) { Ncoll = d; };
 
+  /// Initial State: Get centrality of the event
+  double GetEventCentrality() { return EventCentrality; }
+  /// Initial State: Get centrality of the event
+  void SetEventCentrality(double d) { EventCentrality = d; }
+
   /// Initial State: Get total entropy
   double GetTotalEntropy() { return TotalEntropy; };
   /// Initial State: Get total entropy
@@ -92,6 +97,7 @@ private:
   double Npart = -1; // could be int, but using double to allow averaged values
   double Ncoll = -1; // could be int, but using double to allow averaged values
   double TotalEntropy = -1;
+  double EventCentrality = -1;
 
   // ============================ Hydro =================================
   double EventPlaneAngle = -999;

@@ -216,6 +216,8 @@ void TrentoInitial::InitTask() {
   double cross_section = std::atof(phy_opts->Attribute("cross-section"));
   double normalization = std::atof(phy_opts->Attribute("normalization"));
 
+  info_.normalization = normalization;
+
   int cen_low = std::atoi(cut_opts->Attribute("centrality-low"));
   int cen_high = std::atoi(cut_opts->Attribute("centrality-high"));
 
@@ -260,9 +262,36 @@ void TrentoInitial::InitTask() {
     JSINFO << "TRENTo Minimum Biased Mode Generates 0-100(%) of nuclear "
               "inelastic cross-section";
   } else {
-    auto Ecut = GenCenTab(proj, targ, var_map_basic, cen_low, cen_high);
+    // Obtain Ecut and the centrality table filename
+    auto [Ecut, table_file] = GenCenTab(proj, targ, var_map_basic, cen_low, cen_high);
     double Ehigh = Ecut.first * normalization; // rescale the cut
     double Elow = Ecut.second * normalization; // rescale the cut
+
+    // Read the centrality table and store it
+    centrality_table_.clear();
+    std::ifstream infile(static_cast<std::string>(table_file));
+    if (!infile.good()) {
+      JSWARN << "Centrality table file not found!";
+      exit(-1);
+    }
+
+    // Skip header lines
+    std::string line;
+    while (std::getline(infile, line)) {
+        // Check if the line starts with '#', indicating a comment or header
+        if (line[0] == '#') {
+            continue; // Skip this line
+        }
+
+        // Parse data lines
+        double centrality_, density_;
+        std::istringstream iss(line);
+        if (iss >> centrality_ >> density_) {
+            centrality_table_.emplace_back(centrality_, density_);
+        }
+    }
+
+    infile.close();
 
     JSINFO << "The total energy density cut for centrality = [" << cen_low
            << ", " << cen_high << "] (%) is:";
@@ -290,7 +319,7 @@ bool compare_E(trento::records r1, trento::records r2) {
   return r1.mult > r2.mult;
 }
 
-std::pair<double, double> TrentoInitial::GenCenTab(std::string proj,
+std::pair<std::pair<double, double>, std::string> TrentoInitial::GenCenTab(std::string proj,
                                                    std::string targ,
                                                    VarMap var_map, int cL,
                                                    int cH) {
@@ -370,7 +399,31 @@ std::pair<double, double> TrentoInitial::GenCenTab(std::string proj,
     fout.close();
   }
   JSINFO << "#########" << Etab[cL] << " " << Etab[cH];
-  return std::make_pair(Etab[cL], Etab[cH]);
+  return std::make_pair(std::make_pair(Etab[cL], Etab[cH]), filename);
+}
+
+double TrentoInitial::LookupCentrality(double density) const {
+    // Check if the centrality table is empty
+    if (centrality_table_.empty()) {
+        JSWARN << "Centrality table is empty. Returning -1 for centrality.";
+        return -1.0; // Return a special value to indicate invalid centrality
+    }
+
+    // Iterate through the table to find the correct centrality bin
+    for (size_t i = 0; i < centrality_table_.size() - 1; ++i) {
+        double centrality_low = std::get<0>(centrality_table_[i]);
+        double centrality_high = std::get<0>(centrality_table_[i + 1]);
+        double current_density = std::get<1>(centrality_table_[i]);
+        double next_density = std::get<1>(centrality_table_[i + 1]);
+
+        // If the density falls between current and next, map it to centrality bin
+        if (density < current_density && density >= next_density) {
+            return (centrality_low + centrality_high) / 2.0; // Return the average of bin edges
+        }
+    }
+
+    // Density below the lowest range corresponds to 100% centrality
+    return 100.0;
 }
 
 void TrentoInitial::Exec() {
@@ -393,6 +446,15 @@ void TrentoInitial::Exec() {
   JSINFO << info_.impact_parameter << "\t" << info_.num_participant << "\t"
          << info_.num_binary_collisions << "\t" << info_.total_entropy << "\t"
          << "(" << info_.xmid << ", " << info_.ymid << ")";
+
+  // Calculate event centrality
+  // The centrality table needs "un-normalized total density"
+  info_.event_centrality = LookupCentrality(info_.total_entropy/info_.normalization);
+  if (info_.event_centrality == -1.0) {
+    JSINFO << "No centrality information available in Minimum Biased Mode.";
+  } else {
+    JSINFO << "Event centrality: " << info_.event_centrality;
+  }
 
   JSINFO << " Load TRENTo density and ncoll density to JETSCAPE memory ";
   auto density_field = tmp_event.density_grid();
