@@ -71,11 +71,6 @@ std::tuple<double, double, double> InitialState::CoordFromIdx(int idx) {
   int iy = (idx - (ny * nz * ix))/ nz;
   int ieta = idx - (ny * nz * ix) - (nz * iy); 
 
-  /*ritoban's 
-  int page = idx / (nx * ny);   //eta
-  int row = (idx - page * nx * ny) / nx; //y
-  int col = idx - page * nx * ny - row * nx; //x
-  */
   return std::make_tuple(-grid_max_x_ + ix * grid_step_x_,
                          -grid_max_y_ + iy * grid_step_y_,
                          -grid_max_z_ + ieta * grid_step_z_);
