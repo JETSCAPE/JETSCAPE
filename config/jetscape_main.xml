@@ -93,9 +93,12 @@
     </LongiInputs>
     </Trento>
 
-    <!-- Options to read initial conditions from saved file  -->
+    <!-- Options to read initial conditions from saved file -->
     <initial_profile_path>../examples/test_hydro_files</initial_profile_path>
     <initial_Ncoll_list>../examples/test_hydro_files</initial_Ncoll_list>
+
+    <!-- In case IP-Glasma is used as initial condition, the parameters need to be specified in the 'ipglasma.input' file -->
+    <IPGlasma> </IPGlasma>
   </IS>
 
   <!-- Hard Process -->
@@ -245,6 +248,16 @@
       <!--ALPHA: power of the energy dependence for the energy dependent free streaming time-->
       <ALPHA>0.031</ALPHA>
     </FreestreamMilne>
+
+    <!-- Glasma pre-equilibrium stage for the IP-Glasma initial condition -->
+    <!-- These parameters should match the ones in 'ipglasma.input' -->
+    <!-- Other pre-equilibrium parameters are ignored in the Glasma case -->
+    <Glasma>
+      <tau0>0.001</tau0>
+      <taus>0.4</taus>
+      <dtau>0.005</dtau>
+      <input_filename_glasma>./epsilon-u-Hydro-t0.4-0.dat</input_filename_glasma>
+    </Glasma>
 
     <NullPreDynamics> </NullPreDynamics>
 
