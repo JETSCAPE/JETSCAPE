@@ -37,7 +37,7 @@
             <beastMode>1</beastMode>
             <Initial_time_tau_0>0.4</Initial_time_tau_0>
             <freezeout_temperature>0.15</freezeout_temperature>
-            <output_evolution_to_memory>1</output_evolution_to_memory>
+            <output_evolution_to_memory>0</output_evolution_to_memory>
             <surface_in_memory>1</surface_in_memory>
         </MUSIC>
     </Hydro>
