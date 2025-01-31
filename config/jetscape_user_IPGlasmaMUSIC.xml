@@ -7,11 +7,11 @@
 
   <JetScapeWriterAscii> off </JetScapeWriterAscii>
 
-    <!-- Inital State Module  -->
-    <IS>
-        <grid_max_z> 0 </grid_max_z>
-        <IPGlasma> </IPGlasma>
-    </IS>
+  <!-- Inital State Module  -->
+  <IS>
+    <grid_max_z> 0 </grid_max_z>
+    <IPGlasma> </IPGlasma>
+  </IS>
 
   <!-- Hard Process -->
   <Hard>
@@ -22,32 +22,32 @@
     </PythiaGun>
   </Hard>
 
-    <!--Preequilibrium Dynamics Module -->
-    <Preequilibrium>
-        <evolutionInMemory>0</evolutionInMemory>
-        <Glasma> 
-              <taus>0.4</taus>
-              <dtau>0.005</dtau>
-              <input_filename_glasma>./epsilon-u-Hydro-t0.4-0.dat</input_filename_glasma>
-        </Glasma>
-    </Preequilibrium>
+  <!--Preequilibrium Dynamics Module -->
+  <Preequilibrium>
+    <evolutionInMemory>0</evolutionInMemory>
+    <Glasma> 
+      <taus>0.4</taus>
+      <dtau>0.005</dtau>
+      <input_filename_glasma>./epsilon-u-Hydro-t0.4-0.dat</input_filename_glasma>
+    </Glasma>
+  </Preequilibrium>
 
-    <!-- Hydro  Module  -->
-    <Hydro>
-        <MUSIC>
-            <beastMode>1</beastMode>
-            <Initial_time_tau_0>0.4</Initial_time_tau_0>
-            <freezeout_temperature>0.15</freezeout_temperature>
-            <output_evolution_to_memory>1</output_evolution_to_memory>
-            <output_evolution_every_N_timesteps>20</output_evolution_every_N_timesteps>
-            <surface_in_memory>1</surface_in_memory>
-        </MUSIC>
-    </Hydro>
+  <!-- Hydro  Module  -->
+  <Hydro>
+    <MUSIC>
+      <beastMode>1</beastMode>
+      <Initial_time_tau_0>0.4</Initial_time_tau_0>
+      <freezeout_temperature>0.15</freezeout_temperature>
+      <output_evolution_to_memory>1</output_evolution_to_memory>
+      <output_evolution_every_N_timesteps>20</output_evolution_every_N_timesteps>
+      <surface_in_memory>1</surface_in_memory>
+    </MUSIC>
+  </Hydro>
 
-    <SoftParticlization>
-        <iSS>
-            <hydro_mode>1</hydro_mode>
-            <number_of_repeated_sampling>1</number_of_repeated_sampling>
-        </iSS>
-    </SoftParticlization>
+  <SoftParticlization>
+    <iSS>
+      <hydro_mode>1</hydro_mode>
+      <number_of_repeated_sampling>1</number_of_repeated_sampling>
+    </iSS>
+  </SoftParticlization>
 </jetscape>
