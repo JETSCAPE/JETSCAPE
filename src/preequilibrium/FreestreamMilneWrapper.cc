@@ -111,6 +111,9 @@ void FreestreamMilneWrapper::EvolvePreequilibrium() {
   std::vector<float> entropy_density_float(entropy_density.begin(),
                                            entropy_density.end());
   fsmilne_ptr->initialize_from_vector(entropy_density_float);
+  JSINFO << " TRENTO event generated and loaded ";
+
+
   preequilibrium_status_ = INIT;
   if (preequilibrium_status_ == INIT) {
     JSINFO << "running freestream-milne ...";
@@ -118,6 +121,7 @@ void FreestreamMilneWrapper::EvolvePreequilibrium() {
     fsmilne_ptr->run_freestream_milne();
     preequilibrium_status_ = DONE;
   }
+
   // now prepare to send the resulting hydro variables to the hydro module by coping hydro vectors to Preequilibrium base class members
  preequilibrium_tau_max_ = fsmilne_ptr->tau_LandauMatch;
   fsmilne_ptr->output_to_vectors(e_, P_, utau_, ux_, uy_, ueta_, pi00_, pi01_,

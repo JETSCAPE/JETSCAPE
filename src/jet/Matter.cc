@@ -465,7 +465,6 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
     if (pIn[i].form_time() <
         0.0) /// A parton without a virtuality or formation time, must set...
     {
-
       VERBOSE(8) << BOLDYELLOW << " pid = " << pIn[i].pid()
                  << " E = " << pIn[i].e();
 
