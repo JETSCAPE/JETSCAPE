@@ -65,7 +65,7 @@
     <!-- in units of [fm] -->
     <grid_max_x> 15 </grid_max_x>
     <grid_max_y> 15 </grid_max_y>
-    <grid_max_z> 0.2 </grid_max_z>
+    <grid_max_z> 0  </grid_max_z>
     <grid_step_x> 0.3 </grid_step_x>
     <grid_step_y> 0.3 </grid_step_y>
     <grid_step_z> 0.2 </grid_step_z>
@@ -345,6 +345,7 @@
       <!--evolution output/storage parameters-->
       <output_evolution_to_file>0</output_evolution_to_file>
       <output_evolution_to_memory>1</output_evolution_to_memory>
+      <output_evolution_every_N_timesteps>1</output_evolution_every_N_timesteps>
       <surface_in_memory>1</surface_in_memory>
       <!--shear viscosity settings-->
       <shear_viscosity_eta_over_s>0.08</shear_viscosity_eta_over_s>
