@@ -9,6 +9,7 @@
 
     <!-- Inital State Module  -->
     <IS>
+        <grid_max_z> 0 </grid_max_z>
         <IPGlasma> </IPGlasma>
     </IS>
 
@@ -38,13 +39,14 @@
             <Initial_time_tau_0>0.4</Initial_time_tau_0>
             <freezeout_temperature>0.15</freezeout_temperature>
             <output_evolution_to_memory>1</output_evolution_to_memory>
-            <output_evolution_every_N_timestep>20</output_evolution_every_N_timesteps>
+            <output_evolution_every_N_timesteps>20</output_evolution_every_N_timesteps>
             <surface_in_memory>1</surface_in_memory>
         </MUSIC>
     </Hydro>
 
     <SoftParticlization>
         <iSS>
+            <hydro_mode>1</hydro_mode>
             <number_of_repeated_sampling>1</number_of_repeated_sampling>
         </iSS>
     </SoftParticlization>
