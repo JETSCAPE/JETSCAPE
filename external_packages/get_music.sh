@@ -21,7 +21,7 @@
 # using a commit from the MUSIC repository that is compatible with
 # JETSCAPE 3.6.7
 folderName="music"
-commitHash="f5e784c9c888708927b4a06ff9c1114b2f41fe10"
+commitHash="63476c2dd7d05a265a137aac813e294019fdb229"
 
 git clone https://github.com/MUSIC-fluid/MUSIC -b JETSCAPE $folderName
 cd $folderName
