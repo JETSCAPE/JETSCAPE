@@ -7,12 +7,14 @@ on:
       - brick_matter_lbt
       - JETSCAPE-3.6.7-RC
       - cpp17_cmake_syntax
+      - ipglasma
   push:
     branches:
       - main
       - brick_matter_lbt
       - JETSCAPE-3.6.7-RC
       - cpp17_cmake_syntax
+      - ipglasma
 
 env:
   REPO_NAME: ${{ github.event.repository.name }}
@@ -23,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: jetscape/base:stable
+      image: jetscape/base:v1.10
       options: --user root
 
     steps:
