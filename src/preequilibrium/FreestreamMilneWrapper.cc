@@ -37,8 +37,7 @@ FreestreamMilneWrapper::~FreestreamMilneWrapper() {
     delete fsmilne_ptr;
 }
 
-void FreestreamMilneWrapper::InitializePreequilibrium(
-    PreEquilibriumParameterFile parameter_list) {
+void FreestreamMilneWrapper::InitializePreequilibrium() {
   JSINFO << "Initialize freestream-milne ...";
   VERBOSE(8);
 

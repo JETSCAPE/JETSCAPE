@@ -2,10 +2,10 @@
 
 <jetscape>
 
-  <vlevel> 0 </vlevel>
+  <vlevel> 1 </vlevel>
   <nEvents> 1 </nEvents>
 
-  <JetScapeWriterAscii> on </JetScapeWriterAscii>
+  <JetScapeWriterAscii> off </JetScapeWriterAscii>
 
     <!-- Inital State Module  -->
     <IS>
@@ -23,27 +23,29 @@
 
     <!--Preequilibrium Dynamics Module -->
     <Preequilibrium>
-        <Glasma> </Glasma>
+        <evolutionInMemory>0</evolutionInMemory>
+        <Glasma> 
+              <taus>0.4</taus>
+              <dtau>0.005</dtau>
+              <input_filename_glasma>./epsilon-u-Hydro-t0.4-0.dat</input_filename_glasma>
+        </Glasma>
     </Preequilibrium>
 
     <!-- Hydro  Module  -->
     <Hydro>
         <MUSIC>
+            <beastMode>1</beastMode>
             <Initial_time_tau_0>0.4</Initial_time_tau_0>
             <freezeout_temperature>0.15</freezeout_temperature>
+            <output_evolution_to_memory>1</output_evolution_to_memory>
+            <output_evolution_every_N_timestep>20</output_evolution_every_N_timesteps>
+            <surface_in_memory>1</surface_in_memory>
         </MUSIC>
     </Hydro>
 
-  <!--Eloss Modules -->
-  <Eloss>
-    <Matter>
-      <in_vac> 0 </in_vac>
-    </Matter>
-  </Eloss>
-
-  <!-- Jet Hadronization Module -->
-  <JetHadronization>
-    <name>colorless</name>
-  </JetHadronization>
-
+    <SoftParticlization>
+        <iSS>
+            <number_of_repeated_sampling>1</number_of_repeated_sampling>
+        </iSS>
+    </SoftParticlization>
 </jetscape>
