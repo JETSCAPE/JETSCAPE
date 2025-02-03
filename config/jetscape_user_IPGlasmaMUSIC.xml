@@ -24,6 +24,8 @@
 
   <!--Preequilibrium Dynamics Module -->
   <Preequilibrium>
+    <!-- In Trento this flag would write the free-streaming evolution to a file without passing the evolution in memory to the hydro module -->
+    <!-- In the Glasma case, this behavior differs. The pre-equilibrium evolution is already happening in the initial state module and only the end result is passed to the pre-equilibrium Glasma module -->
     <evolutionInMemory>0</evolutionInMemory>
     <Glasma> 
       <taus>0.4</taus>
