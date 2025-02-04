@@ -277,6 +277,7 @@ void TrentoInitial::InitTask() {
 
     // Skip header lines
     std::string line;
+    double centrality_ = 0.0, density_ = 0.0;
     while (std::getline(infile, line)) {
         // Check if the line starts with '#', indicating a comment or header
         if (line[0] == '#') {
@@ -284,7 +285,6 @@ void TrentoInitial::InitTask() {
         }
 
         // Parse data lines
-        double centrality_, density_;
         std::istringstream iss(line);
         if (iss >> centrality_ >> density_) {
             centrality_table_.emplace_back(centrality_, density_);
