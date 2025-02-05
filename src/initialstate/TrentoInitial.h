@@ -40,8 +40,6 @@ typedef struct {
   double num_participant;
   double num_binary_collisions;
   double total_entropy;
-  double normalization;
-  double event_centrality;
   std::map<int, double> ecc; // order, eccentricity
   std::map<int, double> psi; // order, participant_plane
   double xmid, ymid;
@@ -67,8 +65,6 @@ public:
   void Clear();
   void InitTask();
 
-  double GetEventCentrality() { return(static_cast<double>(info_.event_centrality)); };
-
   struct RangeFailure : public std::runtime_error {
     using std::runtime_error::runtime_error;
   };
@@ -76,14 +72,10 @@ public:
 
 private:
   std::shared_ptr<trento::Collider> TrentoGen_;
-  std::pair<std::pair<double, double>, std::string> GenCenTab(std::string proj, std::string targ,
+  std::pair<double, double> GenCenTab(std::string proj, std::string targ,
                                       VarMap var_map, int cL, int cH);
   /// The output instance.
   // Output output_;
-
-  std::vector<std::pair<double, double>> centrality_table_; // Store (centrality, density)
-
-  double LookupCentrality(double density) const; // Helper for centrality lookup
 
   // Allows the registration of the module so that it is available to be used by the Jetscape framework.
   static RegisterJetScapeModule<TrentoInitial> reg;
