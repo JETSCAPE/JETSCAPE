@@ -58,7 +58,6 @@ void InitialState::CollectHeader(weak_ptr<JetScapeWriter> w) {
     auto &header = f->GetHeader();
     header.SetNpart(GetNpart());
     header.SetNcoll(GetNcoll());
-    header.SetEventCentrality(GetEventCentrality());
     header.SetTotalEntropy(GetTotalEntropy());
   }
 }

@@ -63,7 +63,6 @@ RegisterJetScapeModule<JetScapeWriterFinalStateHadronsStream<ogzstream>>
 template <class T>
 JetScapeWriterFinalStateStream<T>::JetScapeWriterFinalStateStream(string m_file_name_out):
   particles{},
-  writeCentrality{false},
   writePtHat{false},
   particleStatusToSkip{}
 {
@@ -78,13 +77,6 @@ template <class T> JetScapeWriterFinalStateStream<T>::~JetScapeWriterFinalStateS
 
 template <class T> void JetScapeWriterFinalStateStream<T>::WriteEvent() {
   // Write the entire event all at once.
-
-  // Optionally write event centrality to event header
-  std::string centrality_text = "";
-  if (writeCentrality) {
-    centrality_text += "\tcentrality\t";
-    centrality_text += std::to_string(GetHeader().GetEventCentrality());
-  }
 
   // Optionally write pt-hat value to event header
   std::string pt_hat_text = "";
@@ -101,7 +93,6 @@ template <class T> void JetScapeWriterFinalStateStream<T>::WriteEvent() {
       << "\t" << "weight\t" << std::setprecision(15) << GetHeader().GetEventWeight() << std::setprecision(6)
       << "\t" << "EPangle\t" << (GetHeader().GetEventPlaneAngle() > -999 ? GetHeader().GetEventPlaneAngle() : 0)
       << "\t" << "N_" << GetName() << "\t" << particles.size()
-      << centrality_text
       << pt_hat_text
       <<  "\n";
 
@@ -132,8 +123,7 @@ template <class T> void JetScapeWriterFinalStateStream<T>::WriteEvent() {
 }
 
 template <class T> void JetScapeWriterFinalStateStream<T>::Init() {
-  // Whether to write the centrality and pt hat value for each event
-  writeCentrality = static_cast<bool>(JetScapeXML::Instance()->GetElementInt({"write_centrality"}));
+  // Whether to write the pt hat value for each event
   writePtHat = static_cast<bool>(JetScapeXML::Instance()->GetElementInt({"write_pthat"}));
 
   // Status codes to filter out from what is written (i.e. to be skipped)
