@@ -240,7 +240,7 @@
       <!--Energy dependent free streaming time (Phys.Rev.C 103 (2021) 5, 054904, see Eq. 19)-->
       <!--This overrides the constant free streaming time defined by taus-->
       <!--E_DEP_FS = 0: constant free streaming time according to taus, E_DEP_FS = 1: energy dependent free streaming time-->
-      <E_DEP_FS>0</E_DEP_FS>
+      <E_DEP_FS>1</E_DEP_FS>
       <!--E_R: energy scale in GeV/fm^2 for the energy dependent free streaming time-->
       <E_R>4.0</E_R>
       <!--TAU_R: free streaming time tau_R in fm for the energy dependent free streaming time-->
