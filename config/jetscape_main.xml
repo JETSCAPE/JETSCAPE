@@ -38,6 +38,8 @@
   <QnVector_rapmax>4</QnVector_rapmax>
   <QnVector_Nrap>80</QnVector_Nrap>
   <QnVector_Norder>7</QnVector_Norder>
+  <!-- Printing the centrality to the event header is only possible for the Trento initial condition -->
+  <write_centrality> 0 </write_centrality>
   <write_pthat> 0 </write_pthat>
   <Writer>
     <FinalStateHadrons>
