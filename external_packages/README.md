@@ -125,7 +125,7 @@ cd build
 When compiling IP-Glasma with JETSCAPE, please turn on the IP-Glasma support option when generating the cmake configuration file.
 
 ```bash
-cmake .. -DUSE_MUSIC=ON -DUSE_ISS=ON -DUSE_FREESTREAM=ON -DUSE_SMASH=ON -DUSE_IPGlasma=ON
+cmake .. -DUSE_MUSIC=ON -DUSE_ISS=ON -DUSE_FREESTREAM=ON -DUSE_SMASH=ON -DUSE_IPGLASMA=ON
 
 make -j4  # Builds using 4 cores; adapt as appropriate
 ```
