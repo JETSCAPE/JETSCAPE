@@ -58,17 +58,17 @@ if (OPENCL_FOUND)
   endif (USE_CLVISC)
 endif (OPENCL_FOUND)
 
-# IPGlasma. Turn on with 'cmake -DUSE_IPGlasma=ON'.
-option(USE_IPGlasma "Build with IPGlasma " OFF)
-if (USE_IPGlasma)
-    message("Includes for IPGlasma ...")
+# IPGlasma. Turn on with 'cmake -DUSE_IPGLASMA=ON'.
+option(USE_IPGLASMA "Build with IP-Glasma" OFF)
+if (USE_IPGLASMA)
+    message("Includes for IP-Glasma ...")
     include_directories(./external_packages/ipglasma ./external_packages/ipglasma/src)
-endif (USE_IPGlasma)
+endif (USE_IPGLASMA)
 
 # MUSIC. Turn on with 'cmake -DUSE_MUSIC=ON'.
 option(USE_MUSIC "Build tests for MUSIC" OFF)
 if (USE_MUSIC)
-    message("Includes for music ...")
+    message("Includes for MUSIC ...")
     include_directories(./external_packages/music ./external_packages/music/src)
 endif (USE_MUSIC)
 
@@ -79,7 +79,7 @@ if (USE_ISS)
   include_directories(./external_packages/iSS ./external_packages/iSS/src)
 endif (USE_ISS)
 
-# SMASH afterburner. Turn on with 'cmake -DUSE_MUSIC=ON -DUSE_ISS=ON -Dsmash=ON'.
+# SMASH afterburner. Turn on with 'cmake -DUSE_MUSIC=ON -DUSE_ISS=ON -DSMASH=ON'.
 option(USE_SMASH "Build tests for SMASH" OFF)
 if (USE_SMASH)
   message("SMASH includes and library ...")
