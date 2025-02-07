@@ -48,7 +48,10 @@ def binrun(index, parameters, xmltemplate):
 
     # link QS to QO
     if 'QSfactor' in parameters.columns:
-        parameters['QS'] = (2*parameters.lambdaQCD+0.05) + (parameters.Q0-(2*parameters.lambdaQCD+0.05))*parameters.QSfactor
+        if 'lambdaQCD' in parameters.columns:
+            parameters['QS'] = (2*parameters.lambdaQCD+0.05) + (parameters.Q0-(2*parameters.lambdaQCD+0.05))*parameters.QSfactor
+        else:
+            parameters['QS'] = (2*0.4+0.05) + (parameters.Q0-(2*0.4+0.05))*parameters.QSfactor
 
     ##building lines for xml file
     fileLine = "    <outputFilename>" + baseDir + "/run" + "</outputFilename>\n"

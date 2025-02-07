@@ -105,10 +105,10 @@ def createPandaDesign(points):
         {"name": "QSfactor", "range": (0,1)},
         {"name": "vir_factor", "range": (0.1,1.0)},
         {"name": "ee_vir_factor", "range": (0.1,1.0)},
-        {"name": "lambdaQCD", "range": (0.1,0.4)},
+        #{"name": "lambdaQCD", "range": (0.1,0.4)},
         {"name": "StringFlav:probStoUD", "range": (0.0,0.5)},
         {"name": "StringFlav:probQQtoQ", "range": (0.0,0.4)},
-        {"name": "part_prop", "range": (0.0,10.0)},
+        {"name": "part_prop", "range": (0.0,2.0)},
     ]
 
     # initialization
