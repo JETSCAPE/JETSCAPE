@@ -7,12 +7,14 @@ on:
       - JETSCAPE-3.6.7-RC
       - cpp17_cmake_syntax
       - ipglasma
+      - support_LHAPDF
   push:
     branches:
       - main
       - JETSCAPE-3.6.7-RC
       - cpp17_cmake_syntax
       - ipglasma
+      - support_LHAPDF
 
 env:
   REPO_NAME: ${{ github.event.repository.name }}
