@@ -37,7 +37,7 @@ template <class T>
 class JetScapeWriterFinalStateStream : public JetScapeWriter {
 
 public:
-  JetScapeWriterFinalStateStream<T>();
+  JetScapeWriterFinalStateStream<T>(){};
   JetScapeWriterFinalStateStream<T>(string m_file_name_out);
   virtual ~JetScapeWriterFinalStateStream<T>();
 
