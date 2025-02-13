@@ -93,17 +93,9 @@ template <class T> void JetScapeWriterFinalStateStream<T>::WriteEvent() {
     pt_hat_text += std::to_string(GetHeader().GetPtHat());
   }
 
-  // First, write header
-  // NOTE: Needs consistent "\t" between all entries to simplify parsing later.
-  // NOTE: Could also add Npart, Ncoll, and TotalEntropy. See the original stream writer.
-  output_file << "#"
-      << "\t" << "Event\t" << GetCurrentEvent() + 1  // +1 to index the event count from 1
-      << "\t" << "weight\t" << std::setprecision(15) << GetHeader().GetEventWeight() << std::setprecision(6)
-      << "\t" << "EPangle\t" << (GetHeader().GetEventPlaneAngle() > -999 ? GetHeader().GetEventPlaneAngle() : 0)
-      << "\t" << "N_" << GetName() << "\t" << particles.size()
-      << centrality_text
-      << pt_hat_text
-      <<  "\n";
+  // We cannot write directly to the file since we don't know how many particles we have in the filtered case.
+  // To resolve this, we'll write to an intermediate stringstream, and then write that to file.
+  std::stringstream ss;
 
   // Next, write the particles. Will contain either hadrons or partons based on the derived class.
   unsigned int ipart = 0;
@@ -116,7 +108,7 @@ template <class T> void JetScapeWriterFinalStateStream<T>::WriteEvent() {
         continue;
       }
     }
-    output_file << ipart
+    ss  << ipart
         << " " << particle->pid()
         << " " << particle->pstat()
         << " " << particle->e()
@@ -127,24 +119,46 @@ template <class T> void JetScapeWriterFinalStateStream<T>::WriteEvent() {
     ++ipart;
   }
 
+  // Now that we've filtered the particles, we can finally write to the output file.
+  // First, write header
+  // NOTE: Needs consistent "\t" between all entries to simplify parsing later.
+  // NOTE: Could also add Npart, Ncoll, and TotalEntropy. See the original stream writer.
+  // NOTE: ipart == total number of (filtered) particles by the end of the loop, so we can just take advnage of it.
+  output_file << "#"
+      << "\t" << "Event\t" << GetCurrentEvent() + 1  // +1 to index the event count from 1
+      << "\t" << "weight\t" << std::setprecision(15) << GetHeader().GetEventWeight() << std::setprecision(6)
+      << "\t" << "EPangle\t" << (GetHeader().GetEventPlaneAngle() > -999 ? GetHeader().GetEventPlaneAngle() : 0)
+      << "\t" << "N_" << GetName() << "\t" << ipart
+      << centrality_text
+      << pt_hat_text
+      <<  "\n";
+
+  // Finally, write the particles
+  output_file << ss.str();
+
   // Cleanup to be ready for the next event.
   particles.clear();
 }
 
 template <class T> void JetScapeWriterFinalStateStream<T>::Init() {
+  // Capitalize name for convenience
+  std::string name = GetName();
+  name[0] = toupper(name[0]);
+
   // Whether to write the centrality and pt hat value for each event
   writeCentrality = static_cast<bool>(JetScapeXML::Instance()->GetElementInt({"write_centrality"}));
+  // Whether to write the pt hat value for each event
   writePtHat = static_cast<bool>(JetScapeXML::Instance()->GetElementInt({"write_pthat"}));
 
   // Status codes to filter out from what is written (i.e. to be skipped)
-  std::string s = JetScapeXML::Instance()->GetElementText({"Writer", (std::string("FinalState") + GetName()).c_str(), "statusToSkip"}, false);
+  // NOTE: Need the capizlied name here!
+  std::string s = JetScapeXML::Instance()->GetElementText({"Writer", (std::string("FinalState") + name).c_str(), "statusToSkip"}, false);
   if (s.size() > 0) {
     particleStatusToSkip = detail::stringToVector(s);
+    // Remove the default value, if there
+    particleStatusToSkip.erase(std::remove(particleStatusToSkip.begin(), particleStatusToSkip.end(), -9999), particleStatusToSkip.end());
   }
   if (GetActive()) {
-    // Capitalize name
-    std::string name = GetName();
-    name[0] = toupper(name[0]);
     JSINFO << "JetScape Final State " << name << " Stream Writer initialized with output file = "
            << GetOutputFileName();
     output_file.open(GetOutputFileName().c_str());
@@ -167,9 +181,14 @@ template <class T> void JetScapeWriterFinalStateStream<T>::Init() {
     // it's clear that the values are propagated correctly.
     if (particleStatusToSkip.size() > 0) {
       std::stringstream ss;
-      ss << "Skipping particles with status codes: ";
+      ss << "Filtering (i.e. removing) " << GetName() << " with status codes: ";
+      unsigned int count = 0;
       for (const auto status : particleStatusToSkip) {
-        ss << status << " ";
+        if (count > 0) {
+          ss << ", ";
+        }
+        ss << status;
+        ++count;
       }
       JSINFO << ss.str();
     }
