@@ -58,6 +58,18 @@ public:
   double GetEventWeight() { return EventWeight; };
   /// Initial Hard Process: Set additionally created weight (e.g. pythia.event().weight())
   void SetEventWeight(double d) { EventWeight = d; };
+  /// Initial Hard Process: Get vertex X position
+  double GetVertexX() { return vX; };
+  /// Initial Hard Process: Set vertex X position
+  void SetVertexX(double d) { vX = d; };
+  /// Initial Hard Process: Get vertex Y position
+  double GetVertexY() { return vY; };
+  /// Initial Hard Process: Set vertex Y position
+  void SetVertexY(double d) { vY = d; };
+  /// Initial Hard Process: Get vertex Z position
+  double GetVertexZ() { return vZ; };
+  /// Initial Hard Process: Set vertex Z position
+  void SetVertexZ(double d) { vZ = d; };
 
   // ============================ Initial State =================================
   /// Initial State: Get number of participants
@@ -92,6 +104,9 @@ private:
   double SigmaErr = -1;
   double PtHat = -1;
   double EventWeight = 1;
+  double vX = -999;
+  double vY = -999;
+  double vZ = -999;
 
   // ============================ Initial State =================================
   double Npart = -1; // could be int, but using double to allow averaged values
