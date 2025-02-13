@@ -1,4 +1,4 @@
-# JETSCAPE 3.6.6
+# JETSCAPE 3.7
 
 The [JETSCAPE](http://jetscape.org) simulation framework is an overarching computational envelope for developing complete event generators for heavy-ion collisions.
 It allows for modular incorporation of a wide variety of existing and future software that simulates different aspects of a heavy-ion collision.
@@ -69,6 +69,32 @@ The XML files to reproduce the results are available in the `config/publications
 Please see [JETSCAPE Tunes](config/publications_config/README.md) for more information.
 
 Several example hydro profiles can be downloaded using `examples/get_hydroSample*`.
+
+## Running JETSCAPE with LHAPDF
+
+[LHAPDF](https://www.lhapdf.org/) is now included in the JETSCAPE Docker image. Instructions to run JETSCAPE in Docker are [here](https://github.com/JETSCAPE/JETSCAPE/wiki/Doc.Installation.Docker.Linux). While inside the container, use [external_packages/get_lhapdf.sh](external_packages/get_lhapdf.sh) to download the desired set. For example, to download the JAM20-SIDIS_PDF_proton_nlo set, run:
+
+```bash
+cd ${JETSCAPE_DIR}/external_packages
+./get_lhapdf.sh JAM20-SIDIS_PDF_proton_nlo
+```
+
+The above script sets an environment variable `LHAPATH='/home/jetscape-user/.local/share/LHAPDF'`. Adjust as needed.
+
+Add the set to PythiaGun in your user XML file:
+
+```xml
+<LinesToRead>
+  PDF:useHard = on
+  PDF:pHardSet LHAPDF6:JAM20-SIDIS_PDF_proton_nlo
+</LinesToRead>
+```
+Or run the example [config/jetscape_user_nPDF_test.xml](config/jetscape_user_nPDF_test.xml) user XML file.
+
+```bash
+cd ${JETSCAPE_DIR}/build
+./runJetscape ../config/jetscape_user_nPDF_test.xml
+```
 
 ## Developing modules
 
