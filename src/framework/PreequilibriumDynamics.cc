@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -14,12 +15,13 @@
  ******************************************************************************/
 
 #include "PreequilibriumDynamics.h"
-#include "JetScapeLogger.h"
-#include "JetScapeXML.h"
-#include "JetScapeSignalManager.h"
-#include <string>
 
 #include <iostream>
+#include <string>
+
+#include "JetScapeLogger.h"
+#include "JetScapeSignalManager.h"
+#include "JetScapeXML.h"
 
 using namespace std;
 
@@ -96,4 +98,4 @@ void PreequilibriumDynamics::Clear() {
   bulk_Pi_.clear();
 }
 
-} // end namespace Jetscape
+}  // end namespace Jetscape

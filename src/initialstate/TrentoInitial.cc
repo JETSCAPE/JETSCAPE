@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -13,17 +14,18 @@
  * See COPYING for details.
  ******************************************************************************/
 
-#include <cstdlib>
-#include <sstream>
-#include <fstream>
+#include "TrentoInitial.h"
+
+#include <algorithm>
 #include <boost/bind.hpp>
 #include <boost/tokenizer.hpp>
-#include <algorithm>
+#include <cstdlib>
+#include <fstream>
 #include <functional>
+#include <sstream>
 #include <string>
-#include "JetScapeLogger.h"
 
-#include "TrentoInitial.h"
+#include "JetScapeLogger.h"
 
 namespace Jetscape {
 
@@ -39,9 +41,9 @@ namespace {
 /// @return Vector of tokens.
 std::vector<std::string> tokenize(const std::string &input) {
   typedef boost::escaped_list_separator<char> separator_type;
-  separator_type separator("\\",    // The escape characters.
-                           "= ",    // The separator characters.
-                           "\"\'"); // The quote characters.
+  separator_type separator("\\",     // The escape characters.
+                           "= ",     // The separator characters.
+                           "\"\'");  // The quote characters.
 
   // Tokenize the intput.
   boost::tokenizer<separator_type> tokens(input, separator);
@@ -52,7 +54,7 @@ std::vector<std::string> tokenize(const std::string &input) {
           !boost::bind(&std::string::empty, _1));
   return result;
 }
-} // end namespace
+}  // end namespace
 
 // See header for explanation.
 TrentoInitial::TrentoInitial() : InitialState() { SetId("Trento"); }
@@ -67,17 +69,17 @@ void TrentoInitial::InitTask() {
   using OptDesc = po::options_description;
   using VecStr = std::vector<std::string>;
   OptDesc main_opts{};
-  main_opts.add_options()(
-      "projectile",
-      po::value<VecStr>()
-          ->required()
-          ->notifier( // use a lambda to verify there are exactly two projectiles
-              [](const VecStr &projectiles) {
-                if (projectiles.size() != 2)
-                  throw po::required_option{"projectile"};
-              }),
-      "projectile symbols")("number-events", po::value<int>()->default_value(1),
-                            "number of events");
+  main_opts.add_options()("projectile",
+                          po::value<VecStr>()
+                              ->required()
+                              ->notifier(  // use a lambda to verify there are
+                                           // exactly two projectiles
+                                  [](const VecStr &projectiles) {
+                                    if (projectiles.size() != 2)
+                                      throw po::required_option{"projectile"};
+                                  }),
+                          "projectile symbols")(
+      "number-events", po::value<int>()->default_value(1), "number of events");
 
   // Make all main arguments positional.
   po::positional_options_description positional_opts{};
@@ -88,7 +90,8 @@ void TrentoInitial::InitTask() {
   general_opts.add_options()("help,h", "show this help message and exit")(
       "version", "print version information and exit")(
       "bibtex", "print bibtex entry and exit")
-      // ("default-config", "print a config file with default settings and exit")
+      // ("default-config", "print a config file with default settings and
+      // exit")
       ("config-file,c", po::value<VecPath>()->value_name("FILE"),
        "configuration file\n(can be passed multiple times)");
 
@@ -205,9 +208,9 @@ void TrentoInitial::InitTask() {
   double etamax = GetZMax(), deta = GetZStep();
 
   auto random_seed = (*GetMt19937Generator())();
-  //TEMPORARY FOR TESTING
-  //auto random_seed = 1;
-  //TEMPORARY
+  // TEMPORARY FOR TESTING
+  // auto random_seed = 1;
+  // TEMPORARY
   JSINFO << "Random seed used for Trento " << random_seed;
 
   std::string proj(phy_opts->Attribute("projectile"));
@@ -243,7 +246,7 @@ void TrentoInitial::InitTask() {
       " --skew-type " + std::to_string(skew_type) + " --jacobian " +
       std::to_string(J) + " --quiet ";
   std::string options2 = " --normalization " + std::to_string(normalization) +
-                         " --ncoll " // calcualte # of binary collision
+                         " --ncoll "  // calcualte # of binary collision
                          + " --xy-max " + std::to_string(xymax) +
                          " --xy-step " + std::to_string(dxy) + " --eta-max " +
                          std::to_string(etamax) + " --eta-step " +
@@ -263,9 +266,10 @@ void TrentoInitial::InitTask() {
               "inelastic cross-section";
   } else {
     // Obtain Ecut and the centrality table filename
-    auto [Ecut, table_file] = GenCenTab(proj, targ, var_map_basic, cen_low, cen_high);
-    double Ehigh = Ecut.first * normalization; // rescale the cut
-    double Elow = Ecut.second * normalization; // rescale the cut
+    auto [Ecut, table_file] =
+        GenCenTab(proj, targ, var_map_basic, cen_low, cen_high);
+    double Ehigh = Ecut.first * normalization;  // rescale the cut
+    double Elow = Ecut.second * normalization;  // rescale the cut
 
     // Read the centrality table and store it
     centrality_table_.clear();
@@ -279,16 +283,16 @@ void TrentoInitial::InitTask() {
     std::string line;
     double centrality_ = 0.0, density_ = 0.0;
     while (std::getline(infile, line)) {
-        // Check if the line starts with '#', indicating a comment or header
-        if (line[0] == '#') {
-            continue; // Skip this line
-        }
+      // Check if the line starts with '#', indicating a comment or header
+      if (line[0] == '#') {
+        continue;  // Skip this line
+      }
 
-        // Parse data lines
-        std::istringstream iss(line);
-        if (iss >> centrality_ >> density_) {
-            centrality_table_.emplace_back(centrality_, density_);
-        }
+      // Parse data lines
+      std::istringstream iss(line);
+      if (iss >> centrality_ >> density_) {
+        centrality_table_.emplace_back(centrality_, density_);
+      }
     }
 
     infile.close();
@@ -319,18 +323,16 @@ bool compare_E(trento::records r1, trento::records r2) {
   return r1.mult > r2.mult;
 }
 
-std::pair<std::pair<double, double>, std::string> TrentoInitial::GenCenTab(std::string proj,
-                                                   std::string targ,
-                                                   VarMap var_map, int cL,
-                                                   int cH) {
+std::pair<std::pair<double, double>, std::string> TrentoInitial::GenCenTab(
+    std::string proj, std::string targ, VarMap var_map, int cL, int cH) {
   // Terminate for nonsense
   if (cL < 0 || cL > 100 || cH < 0 || cH > 100 || cH < cL) {
     JSWARN << "Wrong centrality cuts! To be terminated.";
     exit(-1);
   }
-  // These are all the parameters that could change the shape of centrality tables
-  // Normalization prefactor parameter is factorized
-  // They form a table header
+  // These are all the parameters that could change the shape of centrality
+  // tables Normalization prefactor parameter is factorized They form a table
+  // header
   trento::Collider another_collider(var_map);
   double beamE = var_map["beam-energy"].as<double>();
   double xsection = var_map["cross-section"].as<double>();
@@ -403,27 +405,28 @@ std::pair<std::pair<double, double>, std::string> TrentoInitial::GenCenTab(std::
 }
 
 double TrentoInitial::LookupCentrality(double density) const {
-    // Check if the centrality table is empty
-    if (centrality_table_.empty()) {
-        JSWARN << "Centrality table is empty. Returning -1 for centrality.";
-        return -1.0; // Return a special value to indicate invalid centrality
+  // Check if the centrality table is empty
+  if (centrality_table_.empty()) {
+    JSWARN << "Centrality table is empty. Returning -1 for centrality.";
+    return -1.0;  // Return a special value to indicate invalid centrality
+  }
+
+  // Iterate through the table to find the correct centrality bin
+  for (size_t i = 0; i < centrality_table_.size() - 1; ++i) {
+    double centrality_low = std::get<0>(centrality_table_[i]);
+    double centrality_high = std::get<0>(centrality_table_[i + 1]);
+    double current_density = std::get<1>(centrality_table_[i]);
+    double next_density = std::get<1>(centrality_table_[i + 1]);
+
+    // If the density falls between current and next, map it to centrality bin
+    if (density < current_density && density >= next_density) {
+      return (centrality_low + centrality_high) /
+             2.0;  // Return the average of bin edges
     }
+  }
 
-    // Iterate through the table to find the correct centrality bin
-    for (size_t i = 0; i < centrality_table_.size() - 1; ++i) {
-        double centrality_low = std::get<0>(centrality_table_[i]);
-        double centrality_high = std::get<0>(centrality_table_[i + 1]);
-        double current_density = std::get<1>(centrality_table_[i]);
-        double next_density = std::get<1>(centrality_table_[i + 1]);
-
-        // If the density falls between current and next, map it to centrality bin
-        if (density < current_density && density >= next_density) {
-            return (centrality_low + centrality_high) / 2.0; // Return the average of bin edges
-        }
-    }
-
-    // Density below the lowest range corresponds to 100% centrality
-    return 100.0;
+  // Density below the lowest range corresponds to 100% centrality
+  return 100.0;
 }
 
 void TrentoInitial::Exec() {
@@ -449,7 +452,8 @@ void TrentoInitial::Exec() {
 
   // Calculate event centrality
   // The centrality table needs "un-normalized total density"
-  info_.event_centrality = LookupCentrality(info_.total_entropy/info_.normalization);
+  info_.event_centrality =
+      LookupCentrality(info_.total_entropy / info_.normalization);
   if (info_.event_centrality == -1.0) {
     JSINFO << "No centrality information available in Minimum Biased Mode.";
   } else {
@@ -463,16 +467,15 @@ void TrentoInitial::Exec() {
   JSINFO << density_field.num_elements() << " density elements";
   JSINFO << ncoll_field.num_elements() << " ncoll elements";
 
-
-  //Transform density and ncoll grid to JETSCAPE convention
-  for(int ix = 0; ix < GetXSize(); ix++){
-    for(int iy = 0; iy < GetYSize(); iy++){
-      for(int ieta = 0; ieta < GetZSize(); ieta++){
+  // Transform density and ncoll grid to JETSCAPE convention
+  for (int ix = 0; ix < GetXSize(); ix++) {
+    for (int iy = 0; iy < GetYSize(); iy++) {
+      for (int ieta = 0; ieta < GetZSize(); ieta++) {
         entropy_density_distribution_.push_back(density_field[iy][ix][ieta]);
       }
       num_of_binary_collisions_.push_back(ncoll_field[iy][ix]);
     }
-  }  
+  }
 }
 
 void TrentoInitial::Clear() {
@@ -481,4 +484,4 @@ void TrentoInitial::Clear() {
   num_of_binary_collisions_.clear();
 }
 
-} // end namespace Jetscape
+}  // end namespace Jetscape

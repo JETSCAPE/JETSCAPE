@@ -1,10 +1,11 @@
-#include <vector>
-#include <string>
+#include "LBTMutex.h"
+
 #include <iostream>
 #include <memory>
+#include <string>
+#include <vector>
 
 #include "JetScapeTask.h"
-#include "LBTMutex.h"
 
 using namespace std;
 using std::shared_ptr;

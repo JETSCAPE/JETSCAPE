@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -16,29 +17,30 @@
 #ifndef JETSCAPEREADER_H
 #define JETSCAPEREADER_H
 
-#include "GTL/graph.h"
 #include <GTL/edge_map.h>
 #include <GTL/node_map.h>
-#include "JetClass.h"
-#include "JetScapeParticles.h"
-#include "JetScapeLogger.h"
-#include "StringTokenizer.h"
-#include "PartonShower.h"
 #include <fstream>
+
+#include "GTL/graph.h"
+#include "JetClass.h"
+#include "JetScapeLogger.h"
+#include "JetScapeParticles.h"
+#include "PartonShower.h"
+#include "StringTokenizer.h"
 #ifdef USE_GZIP
 #include "gzstream.h"
 #endif
 
-using std::ostream;
+using std::ifstream;
 using std::istream;
 using std::ofstream;
-using std::ifstream;
+using std::ostream;
 
 namespace Jetscape {
 
-template <class T> class JetScapeReader {
-
-public:
+template <class T>
+class JetScapeReader {
+ public:
   JetScapeReader();
   JetScapeReader(string m_file_name_in) {
     file_name_in = m_file_name_in;
@@ -55,7 +57,7 @@ public:
   int GetCurrentEvent() { return currentEvent - 1; }
   int GetCurrentNumberOfPartonShowers() { return pShowers.size(); }
 
-  //shared_ptr<PartonShower> GetPartonShower() {return pShower;}
+  // shared_ptr<PartonShower> GetPartonShower() {return pShower;}
   vector<shared_ptr<PartonShower>> GetPartonShowers() { return pShowers; }
 
   vector<shared_ptr<Hadron>> GetHadrons() { return hadrons; }
@@ -65,13 +67,13 @@ public:
   double GetEventWeight() const { return eventWeight; }
   double GetEventPlaneAngle() const { return EventPlaneAngle; }
 
-private:
+ private:
   StringTokenizer strT;
 
   void Init();
   void AddNode(string s);
   void AddEdge(string s);
-  //void MakeGraph();
+  // void MakeGraph();
   void AddHadron(string s);
   string file_name_in;
   T inFile;
@@ -96,7 +98,7 @@ typedef JetScapeReader<ifstream> JetScapeReaderAscii;
 typedef JetScapeReader<igzstream> JetScapeReaderAsciiGZ;
 #endif
 
-} // end namespace Jetscape
+}  // end namespace Jetscape
 
 // ---------------------
 

@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -16,15 +17,16 @@
 #ifndef INITIALFROMFILE_H
 #define INITIALFROMFILE_H
 
-#include <iostream>
-#include <string>
-#include <sstream>
 #include <cmath>
-#include "hdf5.h"
+#include <iostream>
+#include <sstream>
+#include <string>
+
 #include "Hydroinfo_h5.h"
-#include "JetScapeModuleBase.h"
 #include "InitialState.h"
 #include "JetScapeLogger.h"
+#include "JetScapeModuleBase.h"
+#include "hdf5.h"
 
 using namespace Jetscape;
 
@@ -32,14 +34,17 @@ class InitialFromFile : public Jetscape::InitialState {
   // this is wrapper class to read external files that
   // stores initial number of binary collisions and corresponding
   // configurations
-public:
+ public:
   InitialFromFile();
   ~InitialFromFile();
 
-  /** Reads the input parameters from the XML file under the tag  <IS>. Calls InitTask(); This explicit call of InitTask() can be used for actual initialization of modules such as @a Trento if attached as a @a polymorphic class. It also initializes the tasks within the current module.
+  /** Reads the input parameters from the XML file under the tag  <IS>. Calls
+     InitTask(); This explicit call of InitTask() can be used for actual
+     initialization of modules such as @a Trento if attached as a @a polymorphic
+     class. It also initializes the tasks within the current module.
       @sa Read about @a polymorphism in C++.
    */
-  //void Init();
+  // void Init();
 
   /** Default Exec() function. It can be overridden by other tasks.
    */
@@ -57,18 +62,18 @@ public:
   virtual void Write(weak_ptr<JetScapeWriter> w);
 
   /** Generated number of collision participants.
-  */
+   */
   double GetNpart() { return npart; };
 
   /** Generated number of binary collisions.
-  */
+   */
   double GetNcoll() { return ncoll; };
 
   /** Generated total entropy
-  */
+   */
   double GetTotalEntropy() { return totalentropy; };
 
-private:
+ private:
   // the hdf5 file pointer, e.g. *.hdf5
   hid_t H5file_ptr_;
 
@@ -93,8 +98,9 @@ private:
   double ncoll = -1;
   double totalentropy = -1;
 
-  // Allows the registration of the module so that it is available to be used by the Jetscape framework.
+  // Allows the registration of the module so that it is available to be used by
+  // the Jetscape framework.
   static RegisterJetScapeModule<InitialFromFile> reg;
 };
 
-#endif // INITIALFROMFILE_H
+#endif  // INITIALFROMFILE_H

@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -22,19 +23,19 @@
 
 #include <vector>
 
-#include "JetScapeModuleBase.h"
 #include "JetClass.h"
+#include "JetScapeModuleBase.h"
 #include "JetScapeWriter.h"
 #include "SurfaceCellInfo.h"
 
 namespace Jetscape {
 
 class SoftParticlization : public JetScapeModuleBase {
-private:
+ private:
   bool HydroHyperSurfaceConnected_;
   bool ClearHydroHyperSurfaceConnected_;
 
-public:
+ public:
   SoftParticlization();
   ~SoftParticlization();
 
@@ -42,15 +43,16 @@ public:
   virtual void Exec();
   virtual void Clear();
 
-  sigslot::signal1<std::vector<SurfaceCellInfo> &,
-                   multi_threaded_local> GetHydroHyperSurface;
+  sigslot::signal1<std::vector<SurfaceCellInfo> &, multi_threaded_local>
+      GetHydroHyperSurface;
   sigslot::signal0<multi_threaded_local> ClearHydroHyperSurface;
 
   void SetGetHydroHyperSurfaceConnected(bool m_GetHydroHyperSurfaceConnected) {
     HydroHyperSurfaceConnected_ = m_GetHydroHyperSurfaceConnected;
   }
 
-  void SetClearHydroHyperSurfaceConnected(bool m_ClearHydroHyperSurfaceConnected) {
+  void SetClearHydroHyperSurfaceConnected(
+      bool m_ClearHydroHyperSurfaceConnected) {
     ClearHydroHyperSurfaceConnected_ = m_ClearHydroHyperSurfaceConnected;
   }
 
@@ -68,6 +70,6 @@ public:
   bool check_boost_invariance();
 };
 
-} // end namespace Jetscape
+}  // end namespace Jetscape
 
-#endif // SOFTPARTICLIZATION_H_
+#endif  // SOFTPARTICLIZATION_H_

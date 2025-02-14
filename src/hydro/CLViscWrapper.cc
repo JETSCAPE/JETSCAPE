@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -13,15 +14,15 @@
  * See COPYING for details.
  ******************************************************************************/
 
-#include <stdio.h>
-#include <sys/stat.h>
-#include <MakeUniqueHelper.h>
+#include "CLViscWrapper.h"
 
+#include <MakeUniqueHelper.h>
+#include <stdio.h>
 #include <string>
+#include <sys/stat.h>
 #include <vector>
 
 #include "JetScapeLogger.h"
-#include "CLViscWrapper.h"
 
 using namespace Jetscape;
 
@@ -134,7 +135,7 @@ void CLVisc::EvolveHydro() {
                          hydro_->bulkinfo_.get_data_info(), tau_min, dtau,
                          x_min, dx, nx, y_min, dy, ny, etas_min, detas, netas,
                          false);
-    //hydro_->bulkinfo_.save("bulk_data.csv");
+    // hydro_->bulkinfo_.save("bulk_data.csv");
   }
   if (hydro_status == FINISHED && doCooperFrye == 1) {
     JSINFO << "Cooper Frye not implemented yet";

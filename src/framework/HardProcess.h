@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -16,42 +17,52 @@
 #ifndef HARDPROCESS_H
 #define HARDPROCESS_H
 
-#include "InitialState.h"
-#include "JetScapeModuleBase.h"
-#include "JetClass.h"
 #include <vector>
+
+#include "InitialState.h"
+#include "JetClass.h"
+#include "JetScapeModuleBase.h"
 
 namespace Jetscape {
 
 /**
-     @class 
-     Interface for the hard process. 
+     @class
+     Interface for the hard process.
    */
 class HardProcess : public JetScapeModuleBase {
-
-public:
-  /** Default constructor to create a Hard Process Physics task. Sets the task ID as "HardProcess".
-  */
+ public:
+  /** Default constructor to create a Hard Process Physics task. Sets the task
+   * ID as "HardProcess".
+   */
   HardProcess();
 
   /** Destructor for the Hard Process Physics task.
    */
   virtual ~HardProcess();
 
-  /** It reads the input parameters relevant to the hard scattering from the XML file under the name tag <Hard>. Uses JetScapeSingnalManager Instance to retrieve the Initial State Physics information. Calls InitTask(); This explicit call can be used for actual initialization of modules such as @a PythiaGun if attached as a @a polymorphic class. It also initializes the tasks within the current module.
+  /** It reads the input parameters relevant to the hard scattering from the XML
+    file under the name tag <Hard>. Uses JetScapeSingnalManager Instance to
+    retrieve the Initial State Physics information. Calls InitTask(); This
+    explicit call can be used for actual initialization of modules such as @a
+    PythiaGun if attached as a @a polymorphic class. It also initializes the
+    tasks within the current module.
     @sa Read about @a polymorphism in C++.
   */
   virtual void Init();
 
-  /** Calls JetScapeTask::ExecuteTasks() for recursive execution of tasks attached to HardProcess module. It can be overridden by the attached module.
+  /** Calls JetScapeTask::ExecuteTasks() for recursive execution of tasks
+   * attached to HardProcess module. It can be overridden by the attached
+   * module.
    */
   virtual void Exec();
 
-  /** Erases the hard partons stored in the vector @a hp_list of the hard process module. It can be overridden by the attached module.
-  */
+  /** Erases the hard partons stored in the vector @a hp_list of the hard
+   * process module. It can be overridden by the attached module.
+   */
   virtual void Clear();
 
-  /** It writes the output information obtained from the HardProcess Task into a file.
+  /** It writes the output information obtained from the HardProcess Task into a
+     file.
       @param w is a pointer of type JetScapeWrite class.
   */
   virtual void WriteTask(weak_ptr<JetScapeWriter> w);
@@ -62,11 +73,11 @@ public:
   virtual void CollectHeader(weak_ptr<JetScapeWriter> w);
 
   // connect the InitialState module with hard process
-  /** A pointer of type InitialState class. 
+  /** A pointer of type InitialState class.
    */
   std::shared_ptr<InitialState> ini;
 
-  /** 
+  /**
       @return The number of hard partons.
    */
   int GetNHardPartons() { return hp_list.size(); }
@@ -76,11 +87,13 @@ public:
    */
   shared_ptr<Parton> GetPartonAt(int i) { return hp_list[i]; }
 
-  /** @return A vector of the Parton class. These parton classes correspond to the hard partons.
+  /** @return A vector of the Parton class. These parton classes correspond to
+   * the hard partons.
    */
   vector<shared_ptr<Parton>> &GetPartonList() { return hp_list; }
 
-  /** It adds a parton class pointer p into an existing vector of hard Parton class, and increases the vector size by 1.
+  /** It adds a parton class pointer p into an existing vector of hard Parton
+     class, and increases the vector size by 1.
       @param p Parton class pointer for a hard parton.
    */
   void AddParton(shared_ptr<Parton> p) { hp_list.push_back(p); }
@@ -111,7 +124,8 @@ public:
   */
   virtual double GetEventWeight() { return 1; };
 
-  /** It adds a Hadron class pointer h into an existing vector of Hadron class, and increases the vector size by 1.
+  /** It adds a Hadron class pointer h into an existing vector of Hadron class,
+     and increases the vector size by 1.
       @param h Hadron class pointer for a hadron.
    */
   void AddHadron(shared_ptr<Hadron> h) { hd_list.push_back(h); }
@@ -131,19 +145,17 @@ public:
   */
   int GetNHadrons() { return hd_list.size(); }
 
-    std::string printer;
-    
-private:
+  std::string printer;
+
+ private:
   // Think of always using unique_ptr for any vector in jetscape framework !???
   // To be discussed ...
   vector<shared_ptr<Parton>> hp_list;
 
   // A vector of Hadrons generated by Pythia
   vector<shared_ptr<Hadron>> hd_list;
-    
-
 };
 
-} // end namespace Jetscape
+}  // end namespace Jetscape
 
 #endif

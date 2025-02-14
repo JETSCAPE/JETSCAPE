@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -16,42 +17,45 @@
 #ifndef LBT_H
 #define LBT_H
 
-#include "JetEnergyLossModule.h"
-#include <iostream>
-#include <string>
-#include <sstream>
 #include <fstream>
+#include <iostream>
+#include <sstream>
+#include <string>
+
+#include "JetEnergyLossModule.h"
 
 using namespace Jetscape;
 
-//class LBTUserInfo: public Parton::PseudoJet::UserInfoBase {
+// class LBTUserInfo: public Parton::PseudoJet::UserInfoBase {
 class LBTUserInfo : public fjcore::PseudoJet::UserInfoBase {
-public:
+ public:
   LBTUserInfo(double ttt) : _lrf_T_tot(ttt){};
   double lrf_T_tot() const { return _lrf_T_tot; }
   double _lrf_T_tot;
 };
 
-//variables for unit test
-//double de1[41]={0.0};
-//double de2[41]={0.0};
-//int ctEvt=0;
+// variables for unit test
+// double de1[41]={0.0};
+// double de2[41]={0.0};
+// int ctEvt=0;
 
-class LBT : public JetEnergyLossModule<
-                LBT> //, public std::enable_shared_from_this<Matter>
+class LBT
+    : public JetEnergyLossModule<LBT>  //, public
+                                       //std::enable_shared_from_this<Matter>
 {
-public:
+ public:
   LBT();
   virtual ~LBT();
 
   void Init();
-  //void Exec();
-  //void DoEnergyLoss(double deltaT, double Q2, const vector<Parton>& pIn, vector<Parton>& pOut);
+  // void Exec();
+  // void DoEnergyLoss(double deltaT, double Q2, const vector<Parton>& pIn,
+  // vector<Parton>& pOut);
   void DoEnergyLoss(double deltaT, double time, double Q2, vector<Parton> &pIn,
                     vector<Parton> &pOut);
   void WriteTask(weak_ptr<JetScapeWriter> w);
 
-private:
+ private:
   ///////////////////////////////////////////////////////////////////////////////////////////////////
   //
   // Define variables and functions for LBT
@@ -63,20 +67,20 @@ private:
   const double epsilon = 1e-6;
   const double CA = 3.0;
   const double CF = 4.0 / 3.0;
-  const double sctr = 0.1973; //fm to GeV^-1
+  const double sctr = 0.1973;  // fm to GeV^-1
 
   //...fixed parameters (cannot change using input parameter file)
-  const int lightOut = 1; // 1 -> write out light parton information
-  const int heavyOut = 0; // 1 -> write out heavy quark information
-  const int outFormat =
-      2; // different output formats: 1 - my preferred, 2 - for JETSCAPE patch code
+  const int lightOut = 1;   // 1 -> write out light parton information
+  const int heavyOut = 0;   // 1 -> write out heavy quark information
+  const int outFormat = 2;  // different output formats: 1 - my preferred, 2 -
+                            // for JETSCAPE patch code
   const double cutOut =
-      epsilon; // neglect light partons in output files for E < cutOut;
+      epsilon;  // neglect light partons in output files for E < cutOut;
 
   //...paramters for the bulk, can be changed from input parameter file
-  int vacORmed = 1;    // 0-vacuum; 1-medium
-  int bulkFlag = 0;    // 0-static medium; 1-OSU hydro; 2-CCNU hydro
-  double temp0 = 0.25; // medium temperature
+  int vacORmed = 1;     // 0-vacuum; 1-medium
+  int bulkFlag = 0;     // 0-static medium; 1-OSU hydro; 2-CCNU hydro
+  double temp0 = 0.25;  // medium temperature
   double hydro_Tc = 0.165;
   //...derived quantities
   double temp00;
@@ -93,49 +97,49 @@ private:
   double fixedLog, runLog, scaleMu2, runAlphas;
 
   //...initialization parameters for jet partons
-  int initHardFlag =
-      2; //1 initialize by the code itself; 2 initialize by reading in particle list
+  int initHardFlag = 2;  // 1 initialize by the code itself; 2 initialize by
+                         // reading in particle list
   int fixMomentum = 0;
   int fixPosition = 1;
   int run_alphas = 1;
   int flagJetX =
-      0; // 0: do nothing; 1: keep momentum but reset jet position within LBT
-  int Kjet = 21; //initial flavor of the jet parton
+      0;  // 0: do nothing; 1: keep momentum but reset jet position within LBT
+  int Kjet = 21;  // initial flavor of the jet parton
   double ipTmin = 0.0;
   double ipTmax = 800.0;
   double eta_cut = 0.5;
-  double ener = 50.0; //initial energy of the jet parton/heavy quark
-  double amss = 0.0;  //initial mass of the jet parton/heavy quark
-  int nj = 1000;      //number of initial partons per event
-  int ncall = 1;      // number of events
+  double ener = 50.0;  // initial energy of the jet parton/heavy quark
+  double amss = 0.0;   // initial mass of the jet parton/heavy quark
+  int nj = 1000;       // number of initial partons per event
+  int ncall = 1;       // number of events
   //...derived quantities
-  int np; //number of partons at this time step ti
+  int np;  // number of partons at this time step ti
 
   //...clock information
-  int nprint = 100; // print out infomation per # of events
+  int nprint = 100;  // print out infomation per # of events
   int tauswitch =
-      0; // 0 for t-z coordinate, 1 (not included in this version) for tau-eta
-  double tau0 = 0.0;   // initial time
-  double dtau = 0.1;   // time interval
-  double tauend = 4.0; // time when program ends
+      0;  // 0 for t-z coordinate, 1 (not included in this version) for tau-eta
+  double tau0 = 0.0;    // initial time
+  double dtau = 0.1;    // time interval
+  double tauend = 4.0;  // time when program ends
   //...derived quantities
   double time0;
-  double
-      dt; //dtime when tauswitch is turned off (0) / dtau when tauswitch is turned on (1)
-  double timend; //end time or tau RENAME
+  double dt;  // dtime when tauswitch is turned off (0) / dtau when tauswitch is
+              // turned on (1)
+  double timend;  // end time or tau RENAME
 
   //...switches and cuts
-  int Kprimary =
-      0; // 0 keep all partons, 1 keep leading jet parton only (switch off other partons)
-  int KINT0 = 1;     // 0 no radiation, 1 elastic + inelastic
-  int Kqhat0 = 2;    //Debye screening mass switch RENAME
-  int Kalphas = 1;   //alphas switch
-  double Ecut = 0.0; //energy cut of the recoiled partons
+  int Kprimary = 0;   // 0 keep all partons, 1 keep leading jet parton only
+                      // (switch off other partons)
+  int KINT0 = 1;      // 0 no radiation, 1 elastic + inelastic
+  int Kqhat0 = 2;     // Debye screening mass switch RENAME
+  int Kalphas = 1;    // alphas switch
+  double Ecut = 0.0;  // energy cut of the recoiled partons
   double fixAlphas = 0.3;
   //...derived quantities
-  int KINT; //radiation switch
+  int KINT;  // radiation switch
   double alphas;
-  double qhat0; //Debye mass RENAME
+  double qhat0;  // Debye mass RENAME
   double qhat00;
 
   std::uniform_real_distribution<double> ZeroOneDistribution;
@@ -144,29 +148,27 @@ private:
   static bool flag_init;
 
   //    scattering rate
-  static double Rg
-      [60]
-      [20]; //total gluon scattering rate as functions of initial energy and temperature
-  static double Rg1[60][20]; //gg-gg              CT1
-  static double Rg2[60][20]; //gg-qqbar           CT2
-  static double Rg3[60][20]; //gq-qg              CT3
-  static double Rq
-      [60]
-      [20]; //total gluon scattering rate as functions of initial energy and temperature
-  static double Rq3[60][20]; //qg-qg              CT13
-  static double Rq4[60][20]; //qiqj-qiqj          CT4
-  static double Rq5[60][20]; //qiqi-qiqi          CT5
-  static double Rq6[60][20]; //qiqibar-qjqjbar    CT6
-  static double Rq7[60][20]; //qiqibar-qiqibar    CT7
-  static double Rq8[60][20]; //qqbar-gg           CT8
+  static double Rg[60][20];  // total gluon scattering rate as functions of
+                             // initial energy and temperature
+  static double Rg1[60][20];  // gg-gg              CT1
+  static double Rg2[60][20];  // gg-qqbar           CT2
+  static double Rg3[60][20];  // gq-qg              CT3
+  static double Rq[60][20];   // total gluon scattering rate as functions of
+                             // initial energy and temperature
+  static double Rq3[60][20];  // qg-qg              CT13
+  static double Rq4[60][20];  // qiqj-qiqj          CT4
+  static double Rq5[60][20];  // qiqi-qiqi          CT5
+  static double Rq6[60][20];  // qiqibar-qjqjbar    CT6
+  static double Rq7[60][20];  // qiqibar-qiqibar    CT7
+  static double Rq8[60][20];  // qqbar-gg           CT8
   static double qhatLQ[60][20];
   static double qhatG[60][20];
 
-  static double RHQ[60][20];    //total scattering rate for heavy quark
-  static double RHQ11[60][20];  //Qq->Qq
-  static double RHQ12[60][20];  //Qg->Qg
-  static double qhatHQ[60][20]; //qhat of heavy quark
-  double qhat_over_T3;          //qhat/T^3 for heavy quark as fnc of (T,p)
+  static double RHQ[60][20];     // total scattering rate for heavy quark
+  static double RHQ11[60][20];   // Qq->Qq
+  static double RHQ12[60][20];   // Qg->Qg
+  static double qhatHQ[60][20];  // qhat of heavy quark
+  double qhat_over_T3;           // qhat/T^3 for heavy quark as fnc of (T,p)
   double D2piT;
 
   // for heavy quark radiation table
@@ -200,27 +202,27 @@ private:
 
   //...radiation block
   int icl22;
-  int icl23;  //the numerical switch in colljet23
-  int iclrad; //the numerical switch in radiation
-  int isp;    //the splitting function switch
+  int icl23;   // the numerical switch in colljet23
+  int iclrad;  // the numerical switch in radiation
+  int isp;     // the splitting function switch
 
   //...global variable qhat
   int counth100 = 0;
 
-  double qhat; //transport parameter
+  double qhat;  // transport parameter
 
-  double dng0[101][101] = {{0.0}}; //table of dn/dkperp2/dx
+  double dng0[101][101] = {{0.0}};  // table of dn/dkperp2/dx
 
   double Vtemp[4] = {0.0};
 
   //...time system
 
-  static const int dimParList = 50; // originally 500000
+  static const int dimParList = 50;  // originally 500000
 
   double tirad[dimParList] = {0.0};
   double tiscatter[dimParList] = {0.0};
-  double tiform[dimParList] = {0.0};   //pythia undone
-  double Tint_lrf[dimParList] = {0.0}; //for heavy quark
+  double tiform[dimParList] = {0.0};    // pythia undone
+  double Tint_lrf[dimParList] = {0.0};  // for heavy quark
   double eGluon = 0.0;
   double nGluon = 0.0;
   double dEel = 0.0;
@@ -230,11 +232,11 @@ private:
   double xwm[3] = {0.0};
   double wkt2m;
 
-  double vf[4] = {0.0};    //flow velocity in tau-eta coordinate
-  double vfcar[4] = {0.0}; //flow velocity in t-z coordinate
+  double vf[4] = {0.0};     // flow velocity in tau-eta coordinate
+  double vfcar[4] = {0.0};  // flow velocity in t-z coordinate
 
-  double vp[4] = {0.0};  //position of particle
-  double vc0[4] = {0.0}; //flow velocity
+  double vp[4] = {0.0};   // position of particle
+  double vc0[4] = {0.0};  // flow velocity
 
   //...dimensions in subroutine colljet and twcoll
   double vc[4] = {0.0};
@@ -255,25 +257,26 @@ private:
 
   double Pj0[4] = {0.0};
 
-  double V[4][dimParList] = {{0.0}};  //parton position
-  double P[7][dimParList] = {{0.0}};  //parton 4-momentum
-  double V0[4][dimParList] = {{0.0}}; //negative parton position
-  double P0[7][dimParList] = {{0.0}}; //negative parton 4-momentum
+  double V[4][dimParList] = {{0.0}};   // parton position
+  double P[7][dimParList] = {{0.0}};   // parton 4-momentum
+  double V0[4][dimParList] = {{0.0}};  // negative parton position
+  double P0[7][dimParList] = {{0.0}};  // negative parton 4-momentum
 
   double Prad[4][dimParList] = {{0.0}};
 
   double WT[dimParList] = {0};
   double WT0[dimParList] = {0};
 
-  int NR[dimParList] = {0};     //scattering rank
-  int KATT1[dimParList] = {0};  //parton flavor
-  int KATT10[dimParList] = {0}; //negative parton flavor
+  int NR[dimParList] = {0};      // scattering rank
+  int KATT1[dimParList] = {0};   // parton flavor
+  int KATT10[dimParList] = {0};  // negative parton flavor
 
   double PGm[4] = {0.0};
   double tjp[dimParList] = {0.0};
-  double Vfrozen[4][dimParList] = {{0.0}};  //parton final 4 coordinate
-  double Vfrozen0[4][dimParList] = {{0.0}}; //negative parton final 4 coordinate
-  double Ecmcut = 2.0;                      //energy cut for free streaming
+  double Vfrozen[4][dimParList] = {{0.0}};  // parton final 4 coordinate
+  double Vfrozen0[4][dimParList] = {
+      {0.0}};           // negative parton final 4 coordinate
+  double Ecmcut = 2.0;  // energy cut for free streaming
   double Tfrozen[dimParList] = {0.0};
   double Tfrozen0[dimParList] = {0.0};
   double vcfrozen[4][dimParList] = {{0.0}};
@@ -316,14 +319,14 @@ private:
   double max_e2 = 15.0;
   double bin_e2 = (max_e2 - min_e2) / N_e2;
 
-  //int loopN=10000;
+  // int loopN=10000;
   int loopN = 1000;
 
   int numInitXY = 0;
   int flagScatter, flag_update, flag_update0;
   double Q00, Q0;
 
-  double tStart;// = 0.6;
+  double tStart;  // = 0.6;
 
   //...functions
 
@@ -397,14 +400,19 @@ private:
 
   //  extern "C" {
   //      void read_ccnu_(char *dataFN_in, int len1);
-  //      void hydroinfoccnu_(double *Ct, double *Cx, double *Cy, double *Cz, double *Ctemp, double *Cvx, double *Cvy, double *Cvz, int *Cflag);
+  //      void hydroinfoccnu_(double *Ct, double *Cx, double *Cy, double *Cz,
+  //      double *Ctemp, double *Cvx, double *Cvy, double *Cvz, int *Cflag);
   //
-  //      void sethydrofilesez_(int *dataID_in, char *dataFN_in, int *ctlID_in, char *ctlFN_in, int *bufferSize, int len1, int len2);
-  //      void readhydroinfoshanshan_(double *t, double *x, double *y, double *z, double *e, double *s, double *temp, double *vx, double *vy, double *vz, int *flag);
+  //      void sethydrofilesez_(int *dataID_in, char *dataFN_in, int *ctlID_in,
+  //      char *ctlFN_in, int *bufferSize, int len1, int len2); void
+  //      readhydroinfoshanshan_(double *t, double *x, double *y, double *z,
+  //      double *e, double *s, double *temp, double *vx, double *vy, double
+  //      *vz, int *flag);
   //  }
 
-  // Allows the registration of the module so that it is available to be used by the Jetscape framework.
+  // Allows the registration of the module so that it is available to be used by
+  // the Jetscape framework.
   static RegisterJetScapeModule<LBT> reg;
 };
 
-#endif // LBT_H
+#endif  // LBT_H

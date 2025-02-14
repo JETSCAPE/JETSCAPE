@@ -1,7 +1,8 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
  *
  * For the list of contributors see AUTHORS.
  *
@@ -19,12 +20,11 @@
 #ifndef SMASHWRAPPER_H
 #define SMASHWRAPPER_H
 
+#include "Afterburner.h"
+#include "JetScapeWriter.h"
 #include "smash/configuration.h"
 #include "smash/experiment.h"
 #include "smash/listmodus.h"
-
-#include "Afterburner.h"
-#include "JetScapeWriter.h"
 
 using namespace Jetscape;
 
@@ -34,9 +34,10 @@ using namespace Jetscape;
  * SMASH as a 3rd party Afterburner.
  */
 class AfterburnerModus : public smash::ListModus {
-public:
+ public:
   // Unlike for ListModus there is no need to get any data from the config
-  AfterburnerModus(smash::Configuration config, const smash::ExperimentParameters &) {
+  AfterburnerModus(smash::Configuration config,
+                   const smash::ExperimentParameters &) {
     JSINFO << "Constructing AfterburnerModus";
     config.clear();
   }
@@ -63,27 +64,28 @@ public:
   }
   std::vector<std::vector<shared_ptr<Hadron>>> jetscape_hadrons_;
 
-private:
+ private:
   int event_number_ = 0;
 };
 
 class SmashWrapper : public Afterburner {
-private:
+ private:
   bool only_final_decays_ = false;
   double end_time_ = -1.0;
   shared_ptr<smash::Experiment<AfterburnerModus>> smash_experiment_;
 
-  // Allows the registration of the module so that it is available to be used by the Jetscape framework.
+  // Allows the registration of the module so that it is available to be used by
+  // the Jetscape framework.
   static RegisterJetScapeModule<SmashWrapper> reg;
 
-public:
-  void
-  smash_particles_to_JS_hadrons(const smash::Particles &smash_particles,
-                                std::vector<shared_ptr<Hadron>> &JS_hadrons);
+ public:
+  void smash_particles_to_JS_hadrons(
+      const smash::Particles &smash_particles,
+      std::vector<shared_ptr<Hadron>> &JS_hadrons);
   SmashWrapper();
   void InitTask();
   void ExecuteTask();
   void WriteTask(weak_ptr<JetScapeWriter> w);
 };
 
-#endif // SMASHWRAPPER_H
+#endif  // SMASHWRAPPER_H

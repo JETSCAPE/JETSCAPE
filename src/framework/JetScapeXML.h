@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -16,10 +17,10 @@
 #ifndef JETSCAPEXML_H
 #define JETSCAPEXML_H
 
-#include <iostream>
-#include <string>
-#include <stdexcept>
 #include <initializer_list>
+#include <iostream>
+#include <stdexcept>
+#include <string>
 
 #include "tinyxml2.h"
 
@@ -27,27 +28,28 @@
  * @class JetScapeXML
  * @brief JetScape XML init reader class (meant as singleton)
  *
- * This class contains the machinery to load two XML configuration files: a Main file, and a User file.
+ * This class contains the machinery to load two XML configuration files: a Main
+ * file, and a User file.
  *
  */
 
-using std::string;
 using std::runtime_error;
+using std::string;
 
 namespace Jetscape {
 
 class JetScapeXML {
-
-public:
+ public:
   static JetScapeXML *Instance();
 
-  // Master file: These functions are deprecated. Users should use the Main functions instead.
-  // These functions have been updated to use the 'main' instead of 'master' variables
+  // Master file: These functions are deprecated. Users should use the Main
+  // functions instead. These functions have been updated to use the 'main'
+  // instead of 'master' variables
 
   tinyxml2::XMLElement *GetXMLRootMaster() { return xml_root_main; }
   tinyxml2::XMLDocument &GetXMLDocumentMaster() { return xml_doc_main; }
-  tinyxml2::XMLElement *
-  GetXMLElementMaster(std::initializer_list<const char *> &path);
+  tinyxml2::XMLElement *GetXMLElementMaster(
+      std::initializer_list<const char *> &path);
 
   void SetXMLMasterFileName(string m_name) { xml_main_file_name = m_name; }
   std::string GetXMLMasterFileName() { return xml_main_file_name; }
@@ -60,8 +62,8 @@ public:
 
   tinyxml2::XMLElement *GetXMLRootMain() const { return xml_root_main; }
   tinyxml2::XMLDocument &GetXMLDocumentMain() { return xml_doc_main; }
-  tinyxml2::XMLElement *
-  GetXMLElementMain(std::initializer_list<const char *> &path);
+  tinyxml2::XMLElement *GetXMLElementMain(
+      std::initializer_list<const char *> &path);
 
   void SetXMLMainFileName(string m_name) { xml_main_file_name = m_name; }
   std::string GetXMLMainFileName() const { return xml_main_file_name; }
@@ -74,8 +76,8 @@ public:
 
   tinyxml2::XMLElement *GetXMLRootUser() { return xml_root_user; }
   tinyxml2::XMLDocument &GetXMLDocumentUser() { return xml_doc_user; }
-  tinyxml2::XMLElement *
-  GetXMLElementUser(std::initializer_list<const char *> &path);
+  tinyxml2::XMLElement *GetXMLElementUser(
+      std::initializer_list<const char *> &path);
 
   void SetXMLUserFileName(string m_name) { xml_user_file_name = m_name; }
   std::string GetXMLUserFileName() { return xml_user_file_name; }
@@ -85,7 +87,8 @@ public:
   void OpenXMLUserFile(string m_name);
 
   // Helper functions for XML parsing/
-  // Look first in user XML file for a parameter, and if not found look in the main XML file.
+  // Look first in user XML file for a parameter, and if not found look in the
+  // main XML file.
   tinyxml2::XMLElement *GetElement(std::initializer_list<const char *> path,
                                    bool isRequired = true);
   std::string GetElementText(std::initializer_list<const char *> path,
@@ -95,7 +98,7 @@ public:
   double GetElementDouble(std::initializer_list<const char *> path,
                           bool isRequired = true);
 
-private:
+ private:
   JetScapeXML() {
     xml_main_file_name = "";
     xml_main_file_open = false;
@@ -107,8 +110,9 @@ private:
 
   // Main file
 
-  tinyxml2::XMLElement *
-      xml_root_main; //use unique pointer here instead of raw pointer (check with tinyxml interface)
+  tinyxml2::XMLElement
+      *xml_root_main;  // use unique pointer here instead of raw pointer (check
+                       // with tinyxml interface)
   tinyxml2::XMLDocument xml_doc_main;
 
   std::string xml_main_file_name;
@@ -116,8 +120,9 @@ private:
 
   // User file
 
-  tinyxml2::XMLElement *
-      xml_root_user; //use unique pointer here instead of raw pointer (check with tinyxml interface)
+  tinyxml2::XMLElement
+      *xml_root_user;  // use unique pointer here instead of raw pointer (check
+                       // with tinyxml interface)
   tinyxml2::XMLDocument xml_doc_user;
 
   std::string xml_user_file_name;
@@ -128,6 +133,6 @@ private:
 std::ostream &operator<<(std::ostream &os,
                          std::initializer_list<const char *> path);
 
-} // end namespace Jetscape
+}  // end namespace Jetscape
 
 #endif

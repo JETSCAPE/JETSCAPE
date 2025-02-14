@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -21,17 +22,17 @@
 using namespace Jetscape;
 
 class NullPreDynamics : public PreequilibriumDynamics {
-
-public:
+ public:
   NullPreDynamics();
   ~NullPreDynamics(){};
 
   void InitializePreequilibrium(){};
   void EvolvePreequilibrium();
 
-private:
-  // Allows the registration of the module so that it is available to be used by the Jetscape framework.
+ private:
+  // Allows the registration of the module so that it is available to be used by
+  // the Jetscape framework.
   static RegisterJetScapeModule<NullPreDynamics> reg;
 };
 
-#endif // NULLPREDYNAMICS_H
+#endif  // NULLPREDYNAMICS_H

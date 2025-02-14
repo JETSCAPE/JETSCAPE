@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -14,11 +15,13 @@
  ******************************************************************************/
 // This is a general basic class for hydrodynamics
 
-#include <iostream>
-#include <array>
 #include "FluidDynamics.h"
-#include "LinearInterpolation.h"
+
+#include <array>
+#include <iostream>
+
 #include "JetScapeSignalManager.h"
+#include "LinearInterpolation.h"
 #include "MakeUniqueHelper.h"
 #include "SurfaceFinder.h"
 
@@ -94,7 +97,7 @@ void FluidDynamics::CollectHeader(weak_ptr<JetScapeWriter> w) {
 }
 
 void FluidDynamics::FindAConstantTemperatureSurface(
-        Jetscape::real T_sw, std::vector<SurfaceCellInfo> &surface_cells) {
+    Jetscape::real T_sw, std::vector<SurfaceCellInfo> &surface_cells) {
   std::unique_ptr<SurfaceFinder> surface_finder_ptr(
       new SurfaceFinder(T_sw, bulk_info));
   surface_finder_ptr->Find_full_hypersurface();
@@ -184,8 +187,8 @@ void FluidDynamics::PrintFluidCellInformation(
 }
 
 void FluidDynamics::UpdateEnergyDeposit(int t, double edop) {
-  //sigslot::lock_block<multi_threaded_local> lock(this);
+  // sigslot::lock_block<multi_threaded_local> lock(this);
   JSDEBUG << MAGENTA << "Jet Signal received : " << t << " " << edop;
 }
 
-} // end namespace Jetscape
+}  // end namespace Jetscape

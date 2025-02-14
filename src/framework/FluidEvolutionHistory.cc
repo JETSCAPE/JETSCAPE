@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -14,12 +15,14 @@
  ******************************************************************************/
 // This is a general basic class for hydrodynamics
 
-#include <string>
-#include <MakeUniqueHelper.h>
 #include "FluidEvolutionHistory.h"
+
+#include <MakeUniqueHelper.h>
+#include <string>
+
 #include "FluidCellInfo.h"
-#include "LinearInterpolation.h"
 #include "JetScapeLogger.h"
+#include "LinearInterpolation.h"
 
 namespace Jetscape {
 
@@ -66,24 +69,24 @@ int EvolutionHistory::CheckInRange(Jetscape::real tau, Jetscape::real x,
     std::string warn_message =
         ("tau=" + std::to_string(tau) + " is not in range [" +
          std::to_string(tau_min) + "," + std::to_string(TauMax()) + "]");
-    //throw InvalidSpaceTimeRange(warn_message);
-    //JSWARN << warn_message;
+    // throw InvalidSpaceTimeRange(warn_message);
+    // JSWARN << warn_message;
     status = 0;
   }
   if (x < x_min || x > XMax()) {
     std::string warn_message =
         ("x=" + std::to_string(x) + " is not in range [" +
          std::to_string(x_min) + "," + std::to_string(XMax()) + "]");
-    //throw InvalidSpaceTimeRange(warn_message);
-    //JSWARN << warn_message;
+    // throw InvalidSpaceTimeRange(warn_message);
+    // JSWARN << warn_message;
     status = 0;
   }
   if (y < y_min || y > YMax()) {
     std::string warn_message =
         ("y=" + std::to_string(y) + " is not in range [" +
          std::to_string(y_min) + "," + std::to_string(YMax()) + "]");
-    //throw InvalidSpaceTimeRange(warn_message);
-    //JSWARN << warn_message;
+    // throw InvalidSpaceTimeRange(warn_message);
+    // JSWARN << warn_message;
     status = 0;
   }
   if (!boost_invariant) {
@@ -91,8 +94,8 @@ int EvolutionHistory::CheckInRange(Jetscape::real tau, Jetscape::real x,
       std::string warn_message =
           ("eta=" + std::to_string(eta) + " is not in range [" +
            std::to_string(eta_min) + "," + std::to_string(EtaMax()) + "]");
-      //throw InvalidSpaceTimeRange(warn_message);
-      //JSWARN << warn_message;
+      // throw InvalidSpaceTimeRange(warn_message);
+      // JSWARN << warn_message;
       status = 0;
     }
   }
@@ -123,7 +126,7 @@ void EvolutionHistory::FromVector(const std::vector<float> &data_,
   ntau = data_.size() / (data_info_.size() * nx * ny * neta);
 }
 
-/* This function will read the sparse data stored in data_ with associated 
+/* This function will read the sparse data stored in data_ with associated
  * information data_info_ into to FluidCellInfo object */
 FluidCellInfo EvolutionHistory::GetFluidCell(int id_tau, int id_x, int id_y,
                                              int id_eta) const {
@@ -149,84 +152,84 @@ FluidCellInfo EvolutionHistory::GetFluidCell(int id_tau, int id_x, int id_y,
     auto entry_name = ResolveEntryName(data_info.at(i));
     auto entry_data = data_vector.at(record_starting_id + i);
     switch (entry_name) {
-    case ENTRY_ENERGY_DENSITY:
-      fluid_cell_ptr->energy_density = entry_data;
-      break;
-    case ENTRY_ENTROPY_DENSITY:
-      fluid_cell_ptr->entropy_density = entry_data;
-      break;
-    case ENTRY_TEMPERATURE:
-      fluid_cell_ptr->temperature = entry_data;
-      break;
-    case ENTRY_PRESSURE:
-      fluid_cell_ptr->pressure = entry_data;
-      break;
-    case ENTRY_QGP_FRACTION:
-      fluid_cell_ptr->qgp_fraction = entry_data;
-      break;
-    case ENTRY_MU_B:
-      fluid_cell_ptr->mu_B = entry_data;
-      break;
-    case ENTRY_MU_C:
-      fluid_cell_ptr->mu_C = entry_data;
-      break;
-    case ENTRY_MU_S:
-      fluid_cell_ptr->mu_S = entry_data;
-      break;
-    case ENTRY_VX:
-      fluid_cell_ptr->vx = entry_data;
-      break;
-    case ENTRY_VY:
-      fluid_cell_ptr->vy = entry_data;
-      break;
-    case ENTRY_VZ:
-      fluid_cell_ptr->vz = entry_data;
-      break;
-    case ENTRY_PI00:
-      fluid_cell_ptr->pi[0][0] = entry_data;
-      break;
-    case ENTRY_PI01:
-      fluid_cell_ptr->pi[0][1] = entry_data;
-      fluid_cell_ptr->pi[1][0] = entry_data;
-      break;
-    case ENTRY_PI02:
-      fluid_cell_ptr->pi[0][2] = entry_data;
-      fluid_cell_ptr->pi[2][0] = entry_data;
-      break;
-    case ENTRY_PI03:
-      fluid_cell_ptr->pi[0][3] = entry_data;
-      fluid_cell_ptr->pi[3][0] = entry_data;
-      break;
-    case ENTRY_PI11:
-      fluid_cell_ptr->pi[1][1] = entry_data;
-      break;
-    case ENTRY_PI12:
-      fluid_cell_ptr->pi[1][2] = entry_data;
-      fluid_cell_ptr->pi[2][1] = entry_data;
-      break;
-    case ENTRY_PI13:
-      fluid_cell_ptr->pi[1][3] = entry_data;
-      fluid_cell_ptr->pi[3][1] = entry_data;
-      break;
-    case ENTRY_PI22:
-      fluid_cell_ptr->pi[2][2] = entry_data;
-      break;
-    case ENTRY_PI23:
-      fluid_cell_ptr->pi[2][3] = entry_data;
-      fluid_cell_ptr->pi[3][2] = entry_data;
-      break;
-    case ENTRY_PI33:
-      fluid_cell_ptr->pi[3][3] = entry_data;
-      break;
-    case ENTRY_BULK_PI:
-      fluid_cell_ptr->bulk_Pi = entry_data;
-      break;
-    default:
-      JSWARN << "The entry name in data_info_ must be one of the \
+      case ENTRY_ENERGY_DENSITY:
+        fluid_cell_ptr->energy_density = entry_data;
+        break;
+      case ENTRY_ENTROPY_DENSITY:
+        fluid_cell_ptr->entropy_density = entry_data;
+        break;
+      case ENTRY_TEMPERATURE:
+        fluid_cell_ptr->temperature = entry_data;
+        break;
+      case ENTRY_PRESSURE:
+        fluid_cell_ptr->pressure = entry_data;
+        break;
+      case ENTRY_QGP_FRACTION:
+        fluid_cell_ptr->qgp_fraction = entry_data;
+        break;
+      case ENTRY_MU_B:
+        fluid_cell_ptr->mu_B = entry_data;
+        break;
+      case ENTRY_MU_C:
+        fluid_cell_ptr->mu_C = entry_data;
+        break;
+      case ENTRY_MU_S:
+        fluid_cell_ptr->mu_S = entry_data;
+        break;
+      case ENTRY_VX:
+        fluid_cell_ptr->vx = entry_data;
+        break;
+      case ENTRY_VY:
+        fluid_cell_ptr->vy = entry_data;
+        break;
+      case ENTRY_VZ:
+        fluid_cell_ptr->vz = entry_data;
+        break;
+      case ENTRY_PI00:
+        fluid_cell_ptr->pi[0][0] = entry_data;
+        break;
+      case ENTRY_PI01:
+        fluid_cell_ptr->pi[0][1] = entry_data;
+        fluid_cell_ptr->pi[1][0] = entry_data;
+        break;
+      case ENTRY_PI02:
+        fluid_cell_ptr->pi[0][2] = entry_data;
+        fluid_cell_ptr->pi[2][0] = entry_data;
+        break;
+      case ENTRY_PI03:
+        fluid_cell_ptr->pi[0][3] = entry_data;
+        fluid_cell_ptr->pi[3][0] = entry_data;
+        break;
+      case ENTRY_PI11:
+        fluid_cell_ptr->pi[1][1] = entry_data;
+        break;
+      case ENTRY_PI12:
+        fluid_cell_ptr->pi[1][2] = entry_data;
+        fluid_cell_ptr->pi[2][1] = entry_data;
+        break;
+      case ENTRY_PI13:
+        fluid_cell_ptr->pi[1][3] = entry_data;
+        fluid_cell_ptr->pi[3][1] = entry_data;
+        break;
+      case ENTRY_PI22:
+        fluid_cell_ptr->pi[2][2] = entry_data;
+        break;
+      case ENTRY_PI23:
+        fluid_cell_ptr->pi[2][3] = entry_data;
+        fluid_cell_ptr->pi[3][2] = entry_data;
+        break;
+      case ENTRY_PI33:
+        fluid_cell_ptr->pi[3][3] = entry_data;
+        break;
+      case ENTRY_BULK_PI:
+        fluid_cell_ptr->bulk_Pi = entry_data;
+        break;
+      default:
+        JSWARN << "The entry name in data_info_ must be one of the \
                         energy_density, entropy_density, temperature, pressure, qgp_fraction, \
                         mu_b, mu_c, mu_s, vx, vy, vz, pi00, pi01, pi02, pi03, pi11, pi12, \
                         pi13, pi22, pi23, pi33, bulk_pi";
-      break;
+        break;
     }
   }
 
@@ -298,4 +301,4 @@ FluidCellInfo EvolutionHistory::get_tz(Jetscape::real t, Jetscape::real x,
   return (get(tau, x, y, eta));
 }
 
-} // end namespace Jetscape
+}  // end namespace Jetscape

@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -16,17 +17,17 @@
 #ifndef PARTONPRINTER_H
 #define PARTONPRINTER_H
 
+#include <fstream>
+#include <string>
+#include <vector>
+
 #include "JetScapeModuleBase.h"
 #include "PartonShower.h"
-#include <vector>
-#include <string>
-#include <fstream>
 
 namespace Jetscape {
 
 class PartonPrinter : public JetScapeModuleBase {
-
-public:
+ public:
   PartonPrinter();
   virtual ~PartonPrinter();
 
@@ -34,7 +35,7 @@ public:
   virtual void Exec() final;
   virtual void Clear();
   std::ofstream
-      dist_output; ///< the output stream where events are saved to file
+      dist_output;  ///< the output stream where events are saved to file
 
   void GetFinalPartons(shared_ptr<PartonShower>
                            pShower /*, vector<shared_ptr<Parton>>& fPartons*/);
@@ -48,13 +49,14 @@ public:
     fPartons = pFinals;
   };
 
-private:
+ private:
   vector<vector<shared_ptr<Parton>>> pFinals;
 
-  // Allows the registration of the module so that it is available to be used by the Jetscape framework.
+  // Allows the registration of the module so that it is available to be used by
+  // the Jetscape framework.
   static RegisterJetScapeModule<PartonPrinter> reg;
 };
 
-} // end namespace Jetscape
+}  // end namespace Jetscape
 
 #endif

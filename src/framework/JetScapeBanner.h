@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -46,8 +47,10 @@ void ShowJetscapeBanner() {
             << "__/"
             << "      %|%     " << (char)92 << "/" << (char)92
             << "__             |";
-  //INFO_NICE<<"|            /   "<<(char) 92<<" | /    "<<(char) 92<<"    / *  * | *   "<<(char) 92<<"                  |";
-  //INFO_NICE<<"|          _/     "<<(char) 92<<"|/      "<<(char) 92<<"__/"<<"   *  *|*     "<<(char) 92<<"/"<<(char) 92<<"__             |";
+  // INFO_NICE<<"|            /   "<<(char) 92<<" | /    "<<(char) 92<<"    / *
+  // * | *   "<<(char) 92<<"                  |"; INFO_NICE<<"|          _/
+  // "<<(char) 92<<"|/      "<<(char) 92<<"__/"<<"   *  *|*     "<<(char)
+  // 92<<"/"<<(char) 92<<"__             |";
   INFO_NICE
       << "|                                                              |";
   INFO_NICE
@@ -80,6 +83,6 @@ void ShowJetscapeBanner() {
       << "*--------------------------------------------------------------*";
 }
 
-} // end namespace Jetscape
+}  // end namespace Jetscape
 
 #endif

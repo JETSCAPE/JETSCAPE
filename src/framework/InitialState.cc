@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -14,8 +15,10 @@
  ******************************************************************************/
 
 #include "InitialState.h"
-#include "JetScapeWriter.h"
+
 #include <iostream>
+
+#include "JetScapeWriter.h"
 
 namespace Jetscape {
 
@@ -47,9 +50,9 @@ void InitialState::Exec() {
 void InitialState::Clear() {}
 
 void InitialState::Write(weak_ptr<JetScapeWriter> w) {
-  //Write out the original vertex so the writer can keep track of it...
-  // auto f = w.lock();
-  // if ( f ) f->Write(make_shared<Vertex>(initialVtx));
+  // Write out the original vertex so the writer can keep track of it...
+  //  auto f = w.lock();
+  //  if ( f ) f->Write(make_shared<Vertex>(initialVtx));
 }
 
 void InitialState::CollectHeader(weak_ptr<JetScapeWriter> w) {
@@ -69,14 +72,13 @@ std::tuple<double, double, double> InitialState::CoordFromIdx(int idx) {
   int nz = GetZSize();
 
   int ix = idx / (ny * nz);
-  int iy = (idx - (ny * nz * ix))/ nz;
-  int ieta = idx - (ny * nz * ix) - (nz * iy); 
+  int iy = (idx - (ny * nz * ix)) / nz;
+  int ieta = idx - (ny * nz * ix) - (nz * iy);
 
   return std::make_tuple(-grid_max_x_ + ix * grid_step_x_,
                          -grid_max_y_ + iy * grid_step_y_,
                          -grid_max_z_ + ieta * grid_step_z_);
 }
-
 
 void InitialState::SampleABinaryCollisionPoint(double &x, double &y) {
   if (num_of_binary_collisions_.size() == 0) {
@@ -85,7 +87,7 @@ void InitialState::SampleABinaryCollisionPoint(double &x, double &y) {
   } else {
     std::discrete_distribution<> dist(
         begin(num_of_binary_collisions_),
-        end(num_of_binary_collisions_)); // Create the distribution
+        end(num_of_binary_collisions_));  // Create the distribution
     // Now generate values
     auto idx = dist(*GetMt19937Generator());
     auto coord = CoordFromIdx(idx);
@@ -94,4 +96,4 @@ void InitialState::SampleABinaryCollisionPoint(double &x, double &y) {
   }
 }
 
-} // end namespace Jetscape
+}  // end namespace Jetscape
