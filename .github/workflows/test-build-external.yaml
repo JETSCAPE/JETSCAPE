@@ -4,13 +4,13 @@ on:
   pull_request:
     branches:
       - main
-      - JETSCAPE-3.6.7-RC
+      - JETSCAPE-3.7-RC
       - cpp17_cmake_syntax
       - ipglasma
   push:
     branches:
       - main
-      - JETSCAPE-3.6.7-RC
+      - JETSCAPE-3.7-RC
       - cpp17_cmake_syntax
       - ipglasma
 
