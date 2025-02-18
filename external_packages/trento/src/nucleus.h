@@ -319,6 +319,50 @@ class ManualNucleus : public Nucleus {
 
 #endif  // TRENTO_HDF5
 
+/// Reads manual nuclear configurations from an external file.
+class ManualNucleus2 : public Nucleus {
+ public:
+  /// Create a ManualNucleus that reads from the given file.
+  /// Throw std::invalid_argument if there are any problems.
+  ///
+  /// Since this is a derived class, the base Nucleus class is initialized
+  /// before any the data members.  This creates a bit of a catch-22, since the
+  /// number of nucleons must be known to initialize the base class, but that
+  /// must be deduced from the file.  As a workaround, this factory function
+  /// opens the file, determines the number of nucleons, and then calls the
+  /// constructor.
+  static std::unique_ptr<ManualNucleus2> create(const std::string& path,
+                                                const int A);
+
+  /// Must define destructor because of member pointer to incomplete type.
+  /// See explanation for Collider destructor.
+  virtual ~ManualNucleus2() override;
+
+  /// The radius is determined by reading many positions from the file and
+  /// saving the maximum.
+  virtual double radius() const override;
+
+ private:
+  /// Private constructor -- use create().
+  /// \param dataset smart pointer to HDF5 dataset
+  /// \param nconfigs number of nucleus configs in the dataset
+  /// \param A number of nucleons
+  /// \param rmax max radius
+  ManualNucleus2(std::vector<std::vector<std::vector<float>>> &dataset,
+                 const int nconfigs, const int A, const double rmax);
+
+  /// Read a configuration from the file, rotate it, and set nucleon positions.
+  virtual void sample_nucleons_impl() override;
+
+  std::vector<std::vector<std::vector<float>>> ion_configs_;
+
+  /// Internal storage of the maximum radius.
+  const double rmax_;
+
+  /// Distribution for choosing random configs.
+  std::uniform_int_distribution<std::size_t> index_dist_;
+};
+
 }  // namespace trento
 
 #endif  // NUCLEUS_H

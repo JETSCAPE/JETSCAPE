@@ -34,6 +34,7 @@ class SurfaceCellInfo {
   Jetscape::real entropy_density;  //!< Local entropy density [1/fm^3].
   Jetscape::real temperature;      //!< Local temperature [GeV].
   Jetscape::real pressure;         //!< Thermal pressure [GeV/fm^3].
+  Jetscape::real baryon_density;   //!< net baryon density [1/fm^3].
   Jetscape::real qgp_fraction;     //!< Fraction of quark gluon plasma assuming
                                    //!< medium is in QGP+HRG phase.
   Jetscape::real mu_B;             //!< Net baryon chemical potential [GeV].

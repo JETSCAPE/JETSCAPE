@@ -66,17 +66,22 @@ class JetScapeEventHeader {
   // =================================
   /// Initial State: Get number of participants
   double GetNpart() { return Npart; };
-  /// Initial State: Get number of participants
+  /// Initial State: Set number of participants
   void SetNpart(double d) { Npart = d; };
 
   /// Initial State: Get number of binary collisions
   double GetNcoll() { return Ncoll; };
-  /// Initial State: Get number of binary collisions
+  /// Initial State: Set number of binary collisions
   void SetNcoll(double d) { Ncoll = d; };
+
+  /// Initial State: Get centrality of the event
+  double GetEventCentrality() { return EventCentrality; }
+  /// Initial State: Set centrality of the event
+  void SetEventCentrality(double d) { EventCentrality = d; }
 
   /// Initial State: Get total entropy
   double GetTotalEntropy() { return TotalEntropy; };
-  /// Initial State: Get total entropy
+  /// Initial State: Set total entropy
   void SetTotalEntropy(double d) { TotalEntropy = d; };
 
   // ============================ Hydro =================================
@@ -98,6 +103,7 @@ class JetScapeEventHeader {
   double Npart = -1;  // could be int, but using double to allow averaged values
   double Ncoll = -1;  // could be int, but using double to allow averaged values
   double TotalEntropy = -1;
+  double EventCentrality = -1;
 
   // ============================ Hydro =================================
   double EventPlaneAngle = -999;

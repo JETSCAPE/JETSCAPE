@@ -98,34 +98,35 @@ To run JetScape test with SMASH:
 Currently the iSS sampler performs resonance decays after sampling.
 For reasonable physics with SMASH these decays should be switched off.
 
-### Installing and Compiling JETSCAPE with IP-Glasma
+## IP-Glasma
 
-The use of IP-Glasma with the current version of JETSCAPE is not fully integrated.  A workaround is provided here and applies to using the **jetscape/base:stable** Docker image.
+IP-Glasma requires the use of FFTW. The package `libfftw3-dev` is already included in JETSCAPE's supported [Docker image](https://hub.docker.com/r/jetscape/base).
 
-```
-cd ${JETSCAPE_DIR}/external_packages
+### Installing IP-Glasma
+
+To download IP-Glasma, one can run the shell script under the external_packages folder.
+
+```bash
 ./get_ipglasma.sh
 ```
-After the IP-Glasma package downloads, replace the file **${JETSCAPE_DIR}/external_packages/ipglasma/CMakeModules/FindFFTW.cmake** with this alternative FindFFTW.cmake found here:
 
-[Alternative FindFFTW.cmake File](https://git.jinr.ru/nica/bmnroot/-/blob/9fb98e26eb3e27fe379d3a61bad5d1567665bd81/cmake/modules/FindFFTW.cmake)
+This shell script will clone IP-Glasma to the external_packages folder.
 
-Then create a file called fftw3.h in the **${JETSCAPE_DIR}/external_packages/ipglasma/src** folder that includes the contents of the file linked here:
-
-[fftw3.h File](https://github.com/FFTW/fftw3/blob/master/api/fftw3.h)
+### Compiling JETSCAPE with IP-Glasma
 
 Create a build folder and cd into it.
-```
+
+```bash
 cd ${JETSCAPE_DIR}
 mkdir build
 cd build
 ```
 
-Include the fftw library paths as part of your cmake command:
+When compiling IP-Glasma with JETSCAPE, please turn on the IP-Glasma support option when generating the cmake configuration file.
 
-```
-cmake .. -DCMAKE_CXX_STANDARD=17 -DUSE_ROOT=ON -DUSE_MUSIC=ON -DUSE_ISS=ON -DUSE_FREESTREAM=ON -DUSE_SMASH=ON -DUSE_IPGlasma=ON -DFFTW_INCLUDE_DIR=/usr/lib/x86_64-linux-gnu/libfftw3.so.3.5.8 -DFFTW_LIBRARY=/usr/lib/x86_64-linux-gnu/libfftw3.so.3.5.8
+```bash
+cmake .. -DUSE_MUSIC=ON -DUSE_ISS=ON -DUSE_FREESTREAM=ON -DUSE_SMASH=ON -DUSE_IPGLASMA=ON
 
-make -j4     # Builds using 4 cores; adapt as appropriate
+make -j4  # Builds using 4 cores; adapt as appropriate
 ```
 If you're not compiling all the external modules, you don't have to turn them on.

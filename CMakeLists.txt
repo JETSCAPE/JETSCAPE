@@ -62,18 +62,18 @@ if(OPENCL_FOUND)
   endif(USE_CLVISC)
 endif(OPENCL_FOUND)
 
-# IPGlasma. Turn on with 'cmake -DUSE_IPGlasma=ON'.
-option(USE_IPGlasma "Build with IPGlasma " OFF)
-if(USE_IPGlasma)
-  message("Includes for IPGlasma ...")
+# IPGlasma. Turn on with 'cmake -DUSE_IPGLASMA=ON'.
+option(USE_IPGLASMA "Build with IP-Glasma" OFF)
+if(USE_IPGLASMA)
+  message("Includes for IP-Glasma ...")
   include_directories(./external_packages/ipglasma
                       ./external_packages/ipglasma/src)
-endif(USE_IPGlasma)
+endif(USE_IPGLASMA)
 
 # MUSIC. Turn on with 'cmake -DUSE_MUSIC=ON'.
 option(USE_MUSIC "Build tests for MUSIC" OFF)
 if(USE_MUSIC)
-  message("Includes for music ...")
+  message("Includes for MUSIC ...")
   include_directories(./external_packages/music ./external_packages/music/src)
 endif(USE_MUSIC)
 
@@ -85,7 +85,7 @@ if(USE_ISS)
 endif(USE_ISS)
 
 # SMASH afterburner. Turn on with 'cmake -DUSE_MUSIC=ON -DUSE_ISS=ON
-# -Dsmash=ON'.
+# -DSMASH=ON'.
 option(USE_SMASH "Build tests for SMASH" OFF)
 if(USE_SMASH)
   message("SMASH includes and library ...")
@@ -113,7 +113,9 @@ endif()
 # Compiler & Linker Flags ###
 # ##############################################################################
 message("Compiler and Linker flags ...")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -pipe -Wall -std=c++17")
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -pipe -Wall")
 # can turn off some warnings
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-reorder -Wno-unused-variable ")
 # Then set the build type specific options. These will be automatically
@@ -509,11 +511,12 @@ endif(
 
 # -----------------------------------------------------------
 # copy essential files for MUSIC to build/
+file(COPY ./external_packages/trento/nucleusConfigs
+     DESTINATION ${CMAKE_BINARY_DIR}/)
 if(USE_IPGlasma)
   if(EXISTS "${CMAKE_SOURCE_DIR}/external_packages/ipglasma/")
-    file(COPY ${CMAKE_SOURCE_DIR}/external_packages/ipglasma/input
+    file(COPY ${CMAKE_SOURCE_DIR}/examples/test_ipglasma_files/ipglasma.input
          DESTINATION ${CMAKE_BINARY_DIR}/)
-    file(RENAME ${CMAKE_BINARY_DIR}/input ${CMAKE_BINARY_DIR}/ipglasma.input)
     file(
       COPY ${CMAKE_SOURCE_DIR}/external_packages/ipglasma/qs2Adj_vs_Tp_vs_Y_200.in
       DESTINATION ${CMAKE_BINARY_DIR}/)

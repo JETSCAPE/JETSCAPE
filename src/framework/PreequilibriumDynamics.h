@@ -28,19 +28,9 @@ namespace Jetscape {
 // Flags for preequilibrium dynamics status.
 enum PreequilibriumStatus { NOT_STARTED, INIT, DONE, ERR };
 
-class PreEquilibriumParameterFile {
- public:
-  // preequilibrium dynamics parameters file name.
-  char *preequilibrium_input_filename;
-};
-
 // Interface for the Preequilibrium Dynamics of the medium
 class PreequilibriumDynamics : public JetScapeModuleBase {
  private:
-  PreEquilibriumParameterFile parameter_list_;
-  // record preequilibrium start and end proper time [fm/c]
-  // real preequilibrium_tau_0_, preequilibrium_tau_max_;
-
  public:
   PreequilibriumDynamics();
 
@@ -68,16 +58,13 @@ class PreequilibriumDynamics : public JetScapeModuleBase {
   /** Default Clear() function. It can be overridden by other tasks.*/
   virtual void Clear();
 
-  virtual void InitializePreequilibrium(
-      PreEquilibriumParameterFile parameter_list) {}
+  virtual void InitializePreequilibrium() {}
   virtual void EvolvePreequilibrium() {}
 
   // add initial state shared pointer
   /** A pointer of type InitialState class.
    */
   std::shared_ptr<InitialState> ini;
-
-  PreEquilibriumParameterFile &GetParameterList() { return parameter_list_; }
 
   int GetPreequilibriumStatus() { return (preequilibrium_status_); }
 

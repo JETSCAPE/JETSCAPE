@@ -5,12 +5,10 @@ on:
     branches:
       - main
       - JETSCAPE-4.0-RC
-      - latessa/gtl_binary_function_40
   push:
     branches:
       - main
       - JETSCAPE-4.0-RC
-      - latessa/gtl_binary_function_40
 
 env:
   REPO_NAME: ${{ github.event.repository.name }}
@@ -21,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     
     container:
-      image: jetscape/base:stable
+      image: jetscape/base:v1.10
       options: --user root
       
     steps:
@@ -43,7 +41,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         repository: JETSCAPE/TEST-EXAMPLES
-        ref: main
+        ref: initialStageOrientation
         path: TEST-EXAMPLES
       
     - name: Run Pb-Pb tests

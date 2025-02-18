@@ -81,6 +81,11 @@ class InitialState : public JetScapeModuleBase {
   */
   virtual double GetTotalEntropy() { return -1; };
 
+  /** Generated event centrality
+      To be overwritten by implementations that have such information.
+  */
+  virtual double GetEventCentrality() { return -1; };
+
   // one can set range by hand if not read from xml file
   /** Sets the range of the coordinates (xmax, ymax, zmax).
       @param xmax Maximum value of the coordinate x in the nuclear density

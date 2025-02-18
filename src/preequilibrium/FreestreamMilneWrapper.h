@@ -35,7 +35,7 @@ class FreestreamMilneWrapper : public PreequilibriumDynamics {
   FreestreamMilneWrapper();
   ~FreestreamMilneWrapper();
 
-  void InitializePreequilibrium(PreEquilibriumParameterFile parameter_list);
+  void InitializePreequilibrium();
   void EvolvePreequilibrium();
 
   int get_number_of_fluid_cells() {

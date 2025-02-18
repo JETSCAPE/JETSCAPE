@@ -41,7 +41,7 @@ void IPGlasmaWrapper::InitTask() {
 
 void IPGlasmaWrapper::Exec() {
   Clear();
-  Jetscape::JSINFO << "Run IPGlasma ...";
+  Jetscape::JSINFO << "Run IP-Glasma ...";
   try {
     IPGlasma_ptr_->generateAnEvent(event_id_);
     event_id_++;

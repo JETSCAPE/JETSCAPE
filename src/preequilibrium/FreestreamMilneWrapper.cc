@@ -38,15 +38,12 @@ FreestreamMilneWrapper::~FreestreamMilneWrapper() {
     delete fsmilne_ptr;
 }
 
-void FreestreamMilneWrapper::InitializePreequilibrium(
-    PreEquilibriumParameterFile parameter_list) {
+void FreestreamMilneWrapper::InitializePreequilibrium() {
   JSINFO << "Initialize freestream-milne ...";
   VERBOSE(8);
 
   std::string input_file = GetXMLElementText(
       {"Preequilibrium", "FreestreamMilne", "freestream_input_file"});
-  // is this necessary? if we just force the user to have the 'freestream_input'
-  // file in the correct directory
 
   fsmilne_ptr = new FREESTREAMMILNE();
   struct parameters *params = fsmilne_ptr->configure(input_file.c_str());
@@ -85,6 +82,20 @@ void FreestreamMilneWrapper::InitializePreequilibrium(
   // setting for the number of time steps
   int ntau = GetXMLElementInt({"Preequilibrium", "FreestreamMilne", "ntau"});
   params->NT = ntau;
+
+  // setting for the parameters E_DEP_FS, E_R, TAU_R, ALPHA
+  int E_DEP_FS =
+      GetXMLElementInt({"Preequilibrium", "FreestreamMilne", "E_DEP_FS"});
+  double E_R =
+      GetXMLElementDouble({"Preequilibrium", "FreestreamMilne", "E_R"});
+  double TAU_R =
+      GetXMLElementDouble({"Preequilibrium", "FreestreamMilne", "TAU_R"});
+  double ALPHA =
+      GetXMLElementDouble({"Preequilibrium", "FreestreamMilne", "ALPHA"});
+  params->E_DEP_FS = E_DEP_FS;
+  params->E_R = E_R;
+  params->TAU_R = TAU_R;
+  params->ALPHA = ALPHA;
 }
 
 void FreestreamMilneWrapper::EvolvePreequilibrium() {
@@ -99,6 +110,8 @@ void FreestreamMilneWrapper::EvolvePreequilibrium() {
   std::vector<float> entropy_density_float(entropy_density.begin(),
                                            entropy_density.end());
   fsmilne_ptr->initialize_from_vector(entropy_density_float);
+  JSINFO << " TRENTO event generated and loaded ";
+
   preequilibrium_status_ = INIT;
   if (preequilibrium_status_ == INIT) {
     JSINFO << "running freestream-milne ...";

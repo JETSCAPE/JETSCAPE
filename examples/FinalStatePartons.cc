@@ -49,18 +49,17 @@ int main(int argc, char** argv) {
 
   // Whether to write the new header (ie. v2), including xsec info.
   // To enable, pass anything as the third argument to enable this option.
-  // Default: disabled.
-  bool writeHeaderV2 = false;
+  // Default: version 1.
+  int headerVersion = 1;
   if (argc > 3) {
-    writeHeaderV2 = static_cast<bool>(argv[3]);
-    std::cout << "NOTE: Writing header v2, and final cross section and error "
-                 "at EOF.\n";
+    headerVersion = std::atoi(argv[3]);
   }
+  std::cout << "NOTE: Writing with output version v" << headerVersion << "\n";
 
-  // The seperator between particles depends on the header.
-  std::string particleSeperator = " ";
-  if (!writeHeaderV2) {
-    particleSeperator = "\t";
+  // The separator between particles depends on the header.
+  std::string particleSeparator = " ";
+  if (headerVersion == 1) {
+    particleSeparator = "\t";
   }
 
   auto reader = make_shared<JetScapeReaderAscii>(argv[1]);
@@ -80,7 +79,7 @@ int main(int argc, char** argv) {
 
     if (TotalPartons > 0) {
       ++SN;
-      if (writeHeaderV2) {
+      if (headerVersion == 2) {
         // NOTE: Needs consistent "\t" between all entries to simplify parsing
         // later.
         dist_output << "#"
@@ -129,15 +128,15 @@ int main(int argc, char** argv) {
           Parton p = *mShowers[i]->GetFinalPartons().at(ipart);
           //            if(abs(p.pid())!=5) continue;
 
-          dist_output << ipart << particleSeperator << p.pid()
-                      << particleSeperator << p.pstat() << particleSeperator
-                      << p.e() << particleSeperator << p.px()
-                      << particleSeperator << p.py() << particleSeperator
+          dist_output << ipart << particleSeparator << p.pid()
+                      << particleSeparator << p.pstat() << particleSeparator
+                      << p.e() << particleSeparator << p.px()
+                      << particleSeparator << p.py() << particleSeparator
                       << p.pz();
 
           // v2 drops eta and phi, so only include it for v1
-          if (!writeHeaderV2) {
-            dist_output << particleSeperator << p.eta() << particleSeperator
+          if (headerVersion == 1) {
+            dist_output << particleSeparator << p.eta() << particleSeparator
                         << p.phi();
           }
 
@@ -148,7 +147,7 @@ int main(int argc, char** argv) {
     }
   }
   // Write the final cross section and error if requested by using header v2
-  if (writeHeaderV2) {
+  if (headerVersion > 1) {
     // NOTE: Needs consistent "\t" between all entries to simplify parsing
     // later.
     dist_output << "#"

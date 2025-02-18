@@ -71,6 +71,10 @@ void MpiMusic::InitializeHydro(Parameter parameter_list) {
       (GetXMLElementInt({"Hydro", "MUSIC", "output_evolution_to_memory"}));
   if (flag_output_evo_to_memory == 1) {
     music_hydro_ptr->set_parameter("store_hydro_info_in_memory", 1);
+    music_hydro_ptr->set_parameter(
+        "output_evolution_every_N_timesteps",
+        GetXMLElementInt(
+            {"Hydro", "MUSIC", "output_evolution_every_N_timesteps"}));
   }
 
   double tau_hydro =
@@ -396,6 +400,7 @@ void MpiMusic::PassHydroSurfaceToFramework() {
     surface_cell_info.energy_density = surfaceCell_i.energy_density;
     surface_cell_info.temperature = surfaceCell_i.temperature;
     surface_cell_info.pressure = surfaceCell_i.pressure;
+    surface_cell_info.baryon_density = surfaceCell_i.rho_b;
     surface_cell_info.mu_B = surfaceCell_i.mu_B;
     surface_cell_info.mu_Q = surfaceCell_i.mu_Q;
     surface_cell_info.mu_S = surfaceCell_i.mu_S;
