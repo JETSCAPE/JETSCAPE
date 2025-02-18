@@ -41,11 +41,8 @@ typedef struct {
   double num_participant;
   double num_binary_collisions;
   double total_entropy;
-<<<<<<< HEAD
-=======
   double normalization;
   double event_centrality;
->>>>>>> roch/JETSCAPE-3.7-RC-FORMAT
   std::map<int, double> ecc;  // order, eccentricity
   std::map<int, double> psi;  // order, participant_plane
   double xmid, ymid;
