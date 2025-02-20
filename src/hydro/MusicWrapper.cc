@@ -116,6 +116,16 @@ void MpiMusic::InitializeHydro(Parameter parameter_list) {
       double shear_kink = (
         GetXMLElementDouble({"Hydro", "MUSIC", "eta_over_s_at_kink"}));
       music_hydro_ptr->set_parameter("shear_viscosity_3_at_kink", shear_kink);
+    } else if (flag_shear_Tdep == 2) {
+        double shear_min = GetXMLElementDouble(
+              {"Hydro", "MUSIC", "shear_viscosity_2_min"});
+        music_hydro_ptr->set_parameter("shear_viscosity_2_min", shear_min);
+        double shear_slope = GetXMLElementDouble(
+              {"Hydro", "MUSIC", "shear_viscosity_2_slope"});
+        music_hydro_ptr->set_parameter("shear_viscosity_2_slope", shear_slope);
+        double shear_curv = GetXMLElementDouble(
+              {"Hydro", "MUSIC", "shear_viscosity_2_curv"});
+        music_hydro_ptr->set_parameter("shear_viscosity_2_curv", shear_curv);
     }
   }
 
@@ -141,6 +151,19 @@ void MpiMusic::InitializeHydro(Parameter parameter_list) {
               {"Hydro", "MUSIC", "zeta_over_s_lambda_asymm"});
         music_hydro_ptr->set_parameter("bulk_viscosity_3_lambda_asymm",
                                        bulk_asy);
+    } else if (flag_bulkvis == 2) {
+        double bulk_norm = GetXMLElementDouble(
+              {"Hydro", "MUSIC", "bulk_viscosity_2_normalisation"});
+        music_hydro_ptr->set_parameter("bulk_viscosity_2_normalisation",
+                                       bulk_norm);
+        double bulk_width = GetXMLElementDouble(
+              {"Hydro", "MUSIC", "bulk_viscosity_2_width_in_GeV"});
+        music_hydro_ptr->set_parameter("bulk_viscosity_2_width_in_GeV",
+                                       bulk_width);
+        double bulk_T = GetXMLElementDouble(
+              {"Hydro", "MUSIC", "bulk_viscosity_2_peak_in_GeV"});
+        music_hydro_ptr->set_parameter("bulk_viscosity_2_peak_in_GeV",
+                                       bulk_T);
     }
   }
 
