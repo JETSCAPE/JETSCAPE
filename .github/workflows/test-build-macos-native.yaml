@@ -4,13 +4,15 @@ on:
   pull_request:
     branches:
       - main
-      - JETSCAPE-3.6.6-RC
-      - latessa/gtl_binary_function
+      - JETSCAPE-3.7-RC
+      - cpp17_cmake_syntax
+      - ipglasma
   push:
     branches:
       - main
-      - JETSCAPE-3.6.6-RC
-      - latessa/gtl_binary_function
+      - JETSCAPE-3.7-RC
+      - cpp17_cmake_syntax
+      - ipglasma
 
 env:
   REPO_NAME: ${{ github.event.repository.name }}

@@ -27,6 +27,18 @@
       <pTHatMin>500</pTHatMin>
       <pTHatMax>550</pTHatMax>
       <eCM>5020</eCM>
+      <!-- You can add any number of additional lines to initialize pythia here -->
+      <!-- Note that if the tag exists it cannot be empty (tinyxml produces a segfault) -->
+      <!-- EPS09 Avg Nuclear PDF for nucleon in Pb nucleus -->
+      <LinesToRead>
+        HardQCD:all = on
+        PDF:useHardNPDFA=on
+        PDF:useHardNPDFB=on
+        PDF:nPDFSetA=1
+        PDF:nPDFSetB=1
+        PDF:nPDFBeamA = 100822080
+        PDF:nPDFBeamB = 100822080
+      </LinesToRead>
     </PythiaGun>
   </Hard>
 
