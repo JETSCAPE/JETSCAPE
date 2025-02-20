@@ -268,7 +268,7 @@ void MpiMusic::EvolveHydro() {
       JSINFO << "number of fluid cells received by the JETSCAPE: "
              << bulk_info.data.size();
     }
-    music_hydro_ptr->clear_hydro_info_from_memory();
+    //music_hydro_ptr->clear_hydro_info_from_memory();
   }
 
   if (flag_output_evo_to_file == 1) {
@@ -447,8 +447,8 @@ void MpiMusic::PassHydroSurfaceToFramework() {
 void MpiMusic::GetHydroInfo(
     Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
     std::unique_ptr<FluidCellInfo> &fluid_cell_info_ptr) {
-  GetHydroInfo_JETSCAPE(t, x, y, z, fluid_cell_info_ptr);
-  //GetHydroInfo_MUSIC(t, x, y, z, fluid_cell_info_ptr);
+  //GetHydroInfo_JETSCAPE(t, x, y, z, fluid_cell_info_ptr);
+  GetHydroInfo_MUSIC(t, x, y, z, fluid_cell_info_ptr);
 }
 
 void MpiMusic::GetHydroInfo_JETSCAPE(
