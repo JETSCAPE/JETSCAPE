@@ -19,6 +19,25 @@
 
 namespace Jetscape {
 
+/**
+ * @brief Default constructor for the FluidCellInfo class.
+ *
+ * This constructor initializes all member variables of the FluidCellInfo class
+ * to zero. Specifically, it sets the following variables:
+ * - energy_density: Energy density of the fluid cell.
+ * - entropy_density: Entropy density of the fluid cell.
+ * - temperature: Temperature of the fluid cell.
+ * - pressure: Pressure of the fluid cell.
+ * - qgp_fraction: Quark-gluon plasma fraction of the fluid cell.
+ * - mu_B: Chemical potential for baryon number.
+ * - mu_S: Chemical potential for strangeness.
+ * - mu_C: Chemical potential for charge.
+ * - vx: Velocity component in the x-direction.
+ * - vy: Velocity component in the y-direction.
+ * - vz: Velocity component in the z-direction.
+ * - pi: Shear stress tensor, initialized to a 4x4 matrix of zeros.
+ * - bulk_Pi: Bulk pressure of the fluid cell.
+ */
 FluidCellInfo::FluidCellInfo() {
   energy_density = 0.0;
   entropy_density = 0.0;
