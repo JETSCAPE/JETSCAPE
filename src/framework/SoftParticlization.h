@@ -30,43 +30,105 @@
 
 namespace Jetscape {
 
+/**
+ * @brief JETSCAPE module for soft particlization
+ * 
+ * This module will generate Monte-Carlo samples for soft hadrons from the
+ * hydrodynamic output.
+ */
 class SoftParticlization : public JetScapeModuleBase {
  private:
+  /// Flag for the connection status of the GetHydroHyperSurface signal
   bool HydroHyperSurfaceConnected_;
+
+  /// Flag for the connection status of the ClearHydroHyperSurface signal
   bool ClearHydroHyperSurfaceConnected_;
 
  public:
+  /**
+   * @brief Construct a new SoftParticlization object
+   */
   SoftParticlization();
+
+  /**
+   * @brief Destroy the SoftParticlization object
+   */
   ~SoftParticlization();
 
+  /**
+   * @brief Initialize the SoftParticlization module
+   */
   virtual void Init();
+
+  /**
+   * @brief Execute the SoftParticlization module
+   */
   virtual void Exec();
+
+  /**
+   * @brief Clear the SoftParticlization module
+   */
   virtual void Clear();
 
+  /**
+   * @brief Signal for getting the hydrodynamic hypersurface
+   */
   sigslot::signal1<std::vector<SurfaceCellInfo> &, multi_threaded_local>
       GetHydroHyperSurface;
+  
+  /**
+   * @brief Signal for clearing the hydrodynamic hypersurface
+   */
   sigslot::signal0<multi_threaded_local> ClearHydroHyperSurface;
 
+  /**
+   * @brief Set the GetHydroHyperSurfaceConnected flag
+   * 
+   * @param m_GetHydroHyperSurfaceConnected Boolean flag
+   */
   void SetGetHydroHyperSurfaceConnected(bool m_GetHydroHyperSurfaceConnected) {
     HydroHyperSurfaceConnected_ = m_GetHydroHyperSurfaceConnected;
   }
 
+  /**
+   * @brief Set the ClearHydroHyperSurfaceConnected flag
+   * 
+   * @param m_ClearHydroHyperSurfaceConnected Boolean flag
+   */
   void SetClearHydroHyperSurfaceConnected(
       bool m_ClearHydroHyperSurfaceConnected) {
     ClearHydroHyperSurfaceConnected_ = m_ClearHydroHyperSurfaceConnected;
   }
 
+  /**
+   * @brief Get the GetHydroHyperSurfaceConnected flag
+   * 
+   * @return Boolean
+   */
   bool GetGetHydroHyperSurfaceConnected() const {
     return HydroHyperSurfaceConnected_;
   }
 
+  /**
+   * @brief Get the ClearHydroHyperSurfaceConnected flag
+   * 
+   * @return Boolean
+   */
   bool GetClearHydroHyperSurfaceConnected() const {
     return ClearHydroHyperSurfaceConnected_;
   }
 
+  /// List of hadrons
   std::vector<std::vector<shared_ptr<Hadron>>> Hadron_list_;
 
+  /// Flag for boost invariance
   bool boost_invariance;
+
+  /**
+   * @brief Check the boost invariance
+   * 
+   * @return Boolean
+   */
   bool check_boost_invariance();
 };
 
