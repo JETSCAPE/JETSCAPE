@@ -21,11 +21,30 @@
 
 namespace Jetscape {
 
+/**
+ * @class HadronizationModule
+ * @brief Template class for hadronization modules in JETSCAPE.
+ *
+ * This class serves as a template for hadronization modules, allowing derived
+ * classes to implement their specific hadronization models while supporting
+ * dynamic cloning.
+ *
+ * @tparam Derived The specific hadronization model class that inherits from this template.
+ */
 template <typename Derived>
 class HadronizationModule : public Hadronization {
  public:
+  /// Inherit the constructor from the base class.
   using Hadronization::Hadronization;
 
+  /**
+   * @brief Creates a clone of the current hadronization module.
+   *
+   * This function dynamically allocates a new instance of the derived class
+   * using the copy constructor and returns a shared pointer to it.
+   *
+   * @return A shared pointer to the cloned hadronization module.
+   */
   virtual shared_ptr<Hadronization> Clone() const override {
     auto ret = make_shared<Derived>(static_cast<const Derived &>(*this));
     return ret;
