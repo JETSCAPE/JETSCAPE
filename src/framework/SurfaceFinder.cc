@@ -51,7 +51,18 @@ void SurfaceFinder::Find_full_hypersurface() {
     Find_full_hypersurface_4D();
   }
 }
-
+/**
+ * @brief Checks if the temperature values in the cube intersect the cutoff temperature.
+ * 
+ * @param tau Central value of tau.
+ * @param x Central value of x.
+ * @param y Central value of y.
+ * @param dt Time step size.
+ * @param dx X step size.
+ * @param dy Y step size.
+ * @param cube 3D array to store temperature values of the grid cell.
+ * @return True if the temperature values intersect the cutoff temperature, false otherwise.
+ */
 bool SurfaceFinder::check_intersect_3D(Jetscape::real tau, Jetscape::real x,
                                        Jetscape::real y, Jetscape::real dt,
                                        Jetscape::real dx, Jetscape::real dy,
@@ -90,7 +101,16 @@ bool SurfaceFinder::check_intersect_3D(Jetscape::real tau, Jetscape::real x,
 
   return (intersect);
 }
-
+/**
+ * @brief Finds and constructs the full hypersurface in a 3D space-time grid.
+ *
+ * This function iterates through a predefined space-time grid to identify 
+ * the freeze-out hypersurface using the Cornelius algorithm. It initializes 
+ * a 3D grid, iterates over time and spatial coordinates, checks for intersections,
+ * and extracts surface elements to store them in `surface_cell_list`.
+ *
+ * @note This function dynamically allocates memory for a 3D cube and ensures proper cleanup.
+ */
 void SurfaceFinder::Find_full_hypersurface_3D() {
   auto grid_tau0 = bulk_info.Tau0();
   auto grid_tauf = bulk_info.TauMax();
@@ -168,7 +188,24 @@ void SurfaceFinder::Find_full_hypersurface_3D() {
   }
   delete[] cube;
 }
-
+/**
+ * @brief Checks for an intersection between the hypersurface and a 4D space-time grid cell.
+ *
+ * This function determines whether the freeze-out hypersurface intersects
+ * a given space-time grid cell by evaluating the temperature values at its corners.
+ * If an intersection is detected, it updates the provided `cube` with temperature values.
+ *
+ * @param tau   Proper time coordinate at the center of the cell.
+ * @param x     X coordinate at the center of the cell.
+ * @param y     Y coordinate at the center of the cell.
+ * @param eta   Pseudorapidity coordinate at the center of the cell.
+ * @param dt    Proper time step size.
+ * @param dx    X step size.
+ * @param dy    Y step size.
+ * @param deta  Eta step size.
+ * @param cube  4D array to store temperature values at grid points.
+ * @return True if an intersection occurs, false otherwise.
+ */
 bool SurfaceFinder::check_intersect_4D(Jetscape::real tau, Jetscape::real x,
                                        Jetscape::real y, Jetscape::real eta,
                                        Jetscape::real dt, Jetscape::real dx,
@@ -231,7 +268,28 @@ bool SurfaceFinder::check_intersect_4D(Jetscape::real tau, Jetscape::real x,
 
   return (intersect);
 }
-
+/**
+ * @brief Finds the full hypersurface in 4D space-time by identifying isothermal surfaces.
+ *
+ * This function iterates over a 4D grid in space-time (τ, x, y, η) and extracts hypersurface 
+ * elements where the temperature crosses the critical value (`T_cut`). It employs the 
+ * Cornelius isosurface finder to locate and store surface elements.
+ *
+ * @details
+ * - Initializes the grid and retrieves limits from `bulk_info`.
+ * - Allocates a 4D array (`cube`) to store temperature values at neighboring grid points.
+ * - Loops over time (`τ`), space-time rapidity (`η`), and transverse plane (`x, y`).
+ * - Calls `check_intersect_4D()` to determine intersections.
+ * - If an intersection is detected, `Cornelius` finds the isothermal hypersurface.
+ * - Surface elements are extracted, including centroids and normal vectors.
+ * - Fluid properties are retrieved and stored as `SurfaceCell` elements.
+ * - Cleans up dynamically allocated memory at the end.
+ *
+ * @note This function is computationally expensive due to its iteration over a 4D space-time grid.
+ *       Parallelization with OpenMP or Kokkos can improve performance.
+ *
+ * @see check_intersect_4D(), Cornelius::find_surface_4d(), PrepareASurfaceCell()
+ */
 void SurfaceFinder::Find_full_hypersurface_4D() {
   auto grid_tau0 = bulk_info.Tau0();
   auto grid_tauf = bulk_info.TauMax();
@@ -331,7 +389,30 @@ void SurfaceFinder::Find_full_hypersurface_4D() {
   }
   delete[] cube;
 }
-
+/**
+ * @brief Prepares a SurfaceCellInfo object containing surface and fluid properties.
+ *
+ * This function constructs a `SurfaceCellInfo` structure by populating it with
+ * spatial coordinates, normal vectors, hydrodynamic properties, and flow velocities
+ * from a given `FluidCellInfo` object.
+ *
+ * @param tau Proper time coordinate of the surface cell.
+ * @param x X-coordinate of the surface cell.
+ * @param y Y-coordinate of the surface cell.
+ * @param eta Space-time rapidity of the surface cell.
+ * @param da0 Normal vector component in the τ-direction.
+ * @param da1 Normal vector component in the x-direction.
+ * @param da2 Normal vector component in the y-direction.
+ * @param da3 Normal vector component in the η-direction.
+ * @param fluid_cell The hydrodynamic fluid cell containing thermodynamic properties.
+ *
+ * @return A `SurfaceCellInfo` object populated with spatial, normal vector,
+ *         thermodynamic, and flow velocity data.
+ *
+ *
+ * @note The four-velocity transformation ensures compatibility with the space-time rapidity coordinate.
+ * @see SurfaceCellInfo, FluidCellInfo
+ */
 SurfaceCellInfo SurfaceFinder::PrepareASurfaceCell(
     Jetscape::real tau, Jetscape::real x, Jetscape::real y, Jetscape::real eta,
     Jetscape::real da0, Jetscape::real da1, Jetscape::real da2,
