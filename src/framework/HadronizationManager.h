@@ -26,57 +26,135 @@
 
 namespace Jetscape {
 
-//    : public JetScapeTask,
+/**
+ * @class HadronizationManager
+ * @brief Manages hadronization tasks within the JETSCAPE framework.
+ *
+ * This class is responsible for coordinating hadronization submodules,
+ * handling signals, and managing the transformation of partons into hadrons.
+ */
 class HadronizationManager
     : public JetScapeModuleBase,
       public std::enable_shared_from_this<HadronizationManager> {
  public:
+  /**
+   * @brief Default constructor.
+   */
   HadronizationManager();
+  
+  /**
+   * @brief Destructor.
+   */
   virtual ~HadronizationManager();
 
+  /**
+   * @brief Initializes the hadronization manager.
+   */
   virtual void Init();
+
+  /**
+   * @brief Executes the hadronization process.
+   */
   virtual void Exec();
+
+  /**
+   * @brief Clears internal states and resources.
+   */
   virtual void Clear();
+
+  /**
+   * @brief Writes task-specific data to an output writer.
+   * @param w Weak pointer to a JetScapeWriter.
+   */
   virtual void WriteTask(weak_ptr<JetScapeWriter> w);
 
+  /**
+   * @brief Retrieves the number of registered signals.
+   * @return Number of signals.
+   */
   int GetNumSignals();
 
+  /**
+   * @brief Creates the required signal slots for hadronization modules.
+   */
   void CreateSignalSlots();
 
-  // get Hadrons from Hadronization submodules
+  /**
+   * @brief Retrieves hadrons from hadronization submodules.
+   * @param signal Reference to a vector where hadrons will be stored.
+   */
   void GetHadrons(vector<shared_ptr<Hadron>> &signal);
 
-  // deletes the hadrons from the different hadronization modules
-  // this is used in the case of hadronization hadrons in the afterburner
-  // otherwise these hadrons are printed to file and the same hadrons will be
-  // modified in the transport and printed again
+  /**
+   * @brief Deletes hadrons from hadronization submodules.
+   * 
+   * This function is used when hadrons are passed to the afterburner.
+   * Otherwise, hadrons are printed to file and the same hadrons are modified
+   * in the transport and printed again.
+   */
   void DeleteHadrons();
-  // this function removes all positive hadrons, the negative ones are not
-  // deleted needed, when positive hadrons are given to the afterburner
+
+  /**
+   * @brief Deletes hadrons with a positive status flag.
+   * 
+   * This function is used when hadrons are passed to the afterburner. The 
+   * negative status flag hadrons are not deleted (can not be propagated in the
+   * afterburner).
+   */
   void DeleteRealHadrons();
 
+  /**
+   * Signal to retrieve hadrons from the hard process, not from hadronization submodules.
+   */
   sigslot::signal1<vector<shared_ptr<Hadron>> &>
-      GetHadronList;  // get Hadrons from HardProcess NOT Hadronization
-                      // submodules
-
+      GetHadronList;
+  
+  /**
+   * Signal to retrieve the final list of partons before hadronization.
+   */
   sigslot::signal1<vector<vector<shared_ptr<Parton>>> &> GetFinalPartonList;
 
+  /**
+   * @brief Sets the connection status of the final parton list signal.
+   * @param m_GetFinalPartonListConnected Connection status (true/false).
+   */
   void SetGetFinalPartonListConnected(bool m_GetFinalPartonListConnected) {
     GetFinalPartonListConnected = m_GetFinalPartonListConnected;
   }
+
+  /**
+   * @brief Gets the connection status of the final parton list signal.
+   * @return True if connected, false otherwise.
+   */
   const bool GetGetFinalPartonListConnected() {
     return GetFinalPartonListConnected;
   }
 
+  /**
+   * @brief Sets the connection status of the hadron list signal.
+   * @param m_GetHadronListConnected Connection status (true/false).
+   */
   void SetGetHadronListConnected(bool m_GetHadronListConnected) {
     GetHadronListConnected = m_GetHadronListConnected;
   }
+
+  /**
+   * @brief Gets the connection status of the hadron list signal.
+   * @return True if connected, false otherwise.
+   */
   const bool GetGetHadronListConnected() { return GetHadronListConnected; }
 
  private:
+  /// Connection status of the final parton list signal.
   bool GetFinalPartonListConnected;
+
+  /// Connection status of the hadron list signal.
   bool GetHadronListConnected;
+
+  /// Final parton list before hadronization.
   vector<vector<shared_ptr<Parton>>> hd;
+
+  /// Hadron list from hadronization submodules.
   vector<shared_ptr<Hadron>> hadrons;
 };
 
