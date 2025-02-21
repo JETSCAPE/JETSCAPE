@@ -358,12 +358,18 @@
       <eta_over_s_low_T_slope_in_GeV>0.</eta_over_s_low_T_slope_in_GeV>
       <eta_over_s_high_T_slope_in_GeV>0.</eta_over_s_high_T_slope_in_GeV>
       <eta_over_s_at_kink>0.08</eta_over_s_at_kink>
+      <shear_viscosity_2_curv>-0.48</shear_viscosity_2_curv>
+      <shear_viscosity_2_slope>1.11</shear_viscosity_2_slope>
+      <shear_viscosity_2_min>0.081</shear_viscosity_2_min>
       <!--bulk viscosity settings-->
       <temperature_dependent_bulk_viscosity>0</temperature_dependent_bulk_viscosity>
       <zeta_over_s_max>0</zeta_over_s_max>
       <zeta_over_s_T_peak_in_GeV>0.18</zeta_over_s_T_peak_in_GeV>
       <zeta_over_s_width_in_GeV>0.02</zeta_over_s_width_in_GeV>
       <zeta_over_s_lambda_asymm>0.0</zeta_over_s_lambda_asymm>
+      <bulk_viscosity_2_normalisation>0.052</bulk_viscosity_2_normalisation>
+      <bulk_viscosity_2_width_in_GeV>0.022</bulk_viscosity_2_width_in_GeV>
+      <bulk_viscosity_2_peak_in_GeV>0.183</bulk_viscosity_2_peak_in_GeV>
       <!--higher order transport coefficients-->
       <Include_second_order_terms>1</Include_second_order_terms>
       <!--freeze-out parameters-->
