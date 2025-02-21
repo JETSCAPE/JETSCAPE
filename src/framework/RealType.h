@@ -22,8 +22,13 @@
 
 namespace Jetscape {
 
+/// Real type used in the framework
 typedef float real;
+
+/// Real3 type used in the framework
 typedef std::tuple<real, real, real> real3;
+
+/// Real4 type used in the framework
 typedef std::tuple<real, real, real, real> real4;
 
 }  // end namespace Jetscape
