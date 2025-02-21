@@ -53,7 +53,7 @@
     <additional_pythia_particles>0</additional_pythia_particles>
     <!--switch for recombination biased by the time of the partons-->
     <recobias_t>1</recobias_t>
-    <part_prop>0.0</part_prop>
+    <part_prop>1.0</part_prop>
     <reco_hadrons_in_pythia>1</reco_hadrons_in_pythia>
   </JetHadronization>
   
