@@ -287,10 +287,6 @@ void MpiMusic::EvolveHydro() {
   if (hydro_status == FINISHED && doCooperFrye == 1) {
     music_hydro_ptr->run_Cooper_Frye();
   }
-
-  std::unique_ptr<FluidCellInfo> fluid_cell_info_ptr(new FluidCellInfo);
-  GetHydroInfo(3.0, 0.0, 0.0, 0.0, fluid_cell_info_ptr);
-  exit(0);
 }
 
 void MpiMusic::collect_freeze_out_surface() {
@@ -397,7 +393,7 @@ void MpiMusic::PassHydroEvolutionHistoryToFramework() {
   }
   delete fluidCell_ptr;
 
-  //music_hydro_ptr->clear_hydro_info_from_memory();
+  music_hydro_ptr->clear_hydro_info_from_memory();
 }
 
 
@@ -438,15 +434,7 @@ void MpiMusic::GetHydroInfo(
     Jetscape::real t, Jetscape::real x, Jetscape::real y, Jetscape::real z,
     std::unique_ptr<FluidCellInfo> &fluid_cell_info_ptr) {
   GetHydroInfo_JETSCAPE(t, x, y, z, fluid_cell_info_ptr);
-  JSINFO << "JS: T = " << fluid_cell_info_ptr->temperature
-         << " GeV, vx = " << fluid_cell_info_ptr->vx
-         << ", vy = " << fluid_cell_info_ptr->vy
-         << ", vz = " << fluid_cell_info_ptr->vz;
-  GetHydroInfo_MUSIC(t, x, y, z, fluid_cell_info_ptr);
-  JSINFO << "MUSIC: T = " << fluid_cell_info_ptr->temperature
-         << " GeV, vx = " << fluid_cell_info_ptr->vx
-         << ", vy = " << fluid_cell_info_ptr->vy
-         << ", vz = " << fluid_cell_info_ptr->vz;
+  //GetHydroInfo_MUSIC(t, x, y, z, fluid_cell_info_ptr);
 }
 
 void MpiMusic::GetHydroInfo_JETSCAPE(
