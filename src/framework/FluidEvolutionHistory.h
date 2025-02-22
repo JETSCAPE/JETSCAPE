@@ -109,6 +109,24 @@ class InvalidSpaceTimeRange : public std::invalid_argument {
   using std::invalid_argument::invalid_argument;
 };
 
+/**
+ * @class EvolutionHistory
+ * @brief Represents the history of fluid dynamics evolution in a space-time
+ * grid.
+ *
+ * This class stores and manipulates the evolution history of a fluid system
+ * using a grid of space-time coordinates. It supports operations such as
+ * reading and retrieving fluid cell data, checking if a point is within the
+ * evolution history range, and interpolating fluid cell information.
+ *
+ * It handles a 4D grid (tau, x, y, eta) and includes the fluid properties for
+ * each grid cell, stored as either `FluidCellInfo` objects or a flat vector
+ * of floats. The class also includes various utility functions to extract
+ * data at specific time steps and spatial points.
+ *
+ * @note The class supports both Cartesian and (t, x, y, z) coordinates, with
+ * an option to toggle boost invariance.
+ */
 class EvolutionHistory {
  public:
   /** Minimum value of tau. */
