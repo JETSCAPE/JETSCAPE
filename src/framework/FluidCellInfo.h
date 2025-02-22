@@ -26,10 +26,10 @@ namespace Jetscape {
  * @class FluidCellInfo
  * @brief Data structure for outputting fluid cell information.
  *
- * This class contains various properties of a fluid cell, including energy density,
- * entropy density, temperature, pressure, and chemical potentials, among others.
- * It is used to store and manipulate information about the state of a fluid cell
- * in a simulation.
+ * This class contains various properties of a fluid cell, including energy
+ * density, entropy density, temperature, pressure, and chemical potentials,
+ * among others. It is used to store and manipulate information about the state
+ * of a fluid cell in a simulation.
  *
  * @var Jetscape::real FluidCellInfo::energy_density
  * Local energy density [GeV/fm^3].
@@ -106,7 +106,8 @@ class FluidCellInfo {
 };
 
 /**
- * @brief Overloads the `+` operator for FluidCellInfo to facilitate linear interpolation.
+ * @brief Overloads the `+` operator for FluidCellInfo to facilitate linear
+ * interpolation.
  *
  * This operator adds corresponding attributes of two FluidCellInfo objects.
  * The operation is performed element-wise on all scalar and matrix attributes.
@@ -141,9 +142,11 @@ inline FluidCellInfo operator+(FluidCellInfo a, const FluidCellInfo &b) {
 /**
  * @brief Overloaded multiplication assignment operator for FluidCellInfo.
  *
- * This operator scales all the properties of the FluidCellInfo object by a given scalar value.
+ * This operator scales all the properties of the FluidCellInfo object by a
+ * given scalar value.
  *
- * @param b The scalar value by which to multiply the properties of the FluidCellInfo object.
+ * @param b The scalar value by which to multiply the properties of the
+ * FluidCellInfo object.
  * @return A reference to the modified FluidCellInfo object.
  */
 FluidCellInfo inline FluidCellInfo::operator*=(Jetscape::real b) {
@@ -186,8 +189,9 @@ inline FluidCellInfo operator*(Jetscape::real a, FluidCellInfo b) {
 /**
  * @brief Multiplies a FluidCellInfo object by a scalar value.
  *
- * This operator overloads the multiplication operator for the FluidCellInfo class,
- * allowing a FluidCellInfo object to be multiplied by a scalar value of type Jetscape::real.
+ * This operator overloads the multiplication operator for the FluidCellInfo
+ * class, allowing a FluidCellInfo object to be multiplied by a scalar value of
+ * type Jetscape::real.
  *
  * @param a The FluidCellInfo object to be multiplied.
  * @param b The scalar value of type Jetscape::real to multiply with.
@@ -201,11 +205,13 @@ inline FluidCellInfo operator*(FluidCellInfo a, Jetscape::real b) {
 /**
  * @brief Overloads the division operator for FluidCellInfo.
  *
- * This function allows dividing a FluidCellInfo object by a scalar value of type Jetscape::real.
- * It modifies the FluidCellInfo object by multiplying it with the reciprocal of the scalar value.
+ * This function allows dividing a FluidCellInfo object by a scalar value of
+ * type Jetscape::real. It modifies the FluidCellInfo object by multiplying it
+ * with the reciprocal of the scalar value.
  *
  * @param a The FluidCellInfo object to be divided.
- * @param b The scalar value of type Jetscape::real by which the FluidCellInfo object is divided.
+ * @param b The scalar value of type Jetscape::real by which the FluidCellInfo
+ * object is divided.
  * @return A new FluidCellInfo object that is the result of the division.
  */
 inline FluidCellInfo operator/(FluidCellInfo a, Jetscape::real b) {
