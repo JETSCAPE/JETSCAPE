@@ -46,9 +46,11 @@
     <!-- -9999 corresponds to skipping no status code. It needs to have some entry to be avoid a segfault w/ empty values in tinyxml -->
     <FinalStateHadrons>
         <statusToSkip>-9999</statusToSkip>
+        <final_state_writer_header_version>2</final_state_writer_header_version>
     </FinalStateHadrons>
     <FinalStatePartons>
         <statusToSkip>-9999</statusToSkip>
+        <final_state_writer_header_version>2</final_state_writer_header_version>
     </FinalStatePartons>
   </Writer>
 
