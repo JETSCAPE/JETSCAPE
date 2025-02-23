@@ -25,105 +25,155 @@
 
 namespace Jetscape {
 
-// default delimiter string (space, tab, newline, carriage return, form feed and
-// =,>,[,].
+/** 
+ * @brief Default delimiter string.
+ * 
+ * Contains space, tab, vertical tab, newline, carriage return, form feed, '=', '>', '[', and ']'.
+ */
 const std::string DEFAULT_DELIMITER = " \t\v\n\r\f=>[]";
 
+/**
+ * @class StringTokenizer
+ * @brief A utility class for tokenizing strings.
+ *
+ * This class provides methods to split a string into tokens based on a given delimiter set.
+ */
 class StringTokenizer {
  public:
-  // ctor/dtor
+  /** @brief Default constructor. */
   StringTokenizer(){};
+
+  /** 
+   * @brief Constructor to initialize with a string and an optional delimiter.
+   * @param str The input string to tokenize.
+   * @param delimiter The delimiter characters (default: DEFAULT_DELIMITER).
+   */
   StringTokenizer(const std::string &str,
                   const std::string &delimiter = DEFAULT_DELIMITER);
+  
+  /** @brief Destructor. */
   ~StringTokenizer();
 
-  // set string and delimiter
+  /** 
+   * @brief Set a new string and delimiter for tokenization.
+   * @param str The new input string.
+   * @param delimiter The new delimiter string.
+   */
   void set(const std::string &str,
            const std::string &delimiter = DEFAULT_DELIMITER);
-  void setString(const std::string &str);           // set source string only
-  void setDelimiter(const std::string &delimiter);  // set delimiter string only
+  
+  /** 
+   * @brief Set a new input string only.
+   * @param str The new input string.
+   */
+  void setString(const std::string &str);
 
-  std::string next();  // return the next token, return "" if it ends
+  /** 
+   * @brief Set a new delimiter string only.
+   * @param delimiter The new delimiter string.
+   */
+  void setDelimiter(const std::string &delimiter);
 
-  std::vector<std::string>
-  split();  // return array of tokens from current cursor
+  /** 
+   * @brief Get the next token from the string.
+   * @return The next token as a string, or an empty string if no more tokens exist.
+   */
+  std::string next();
 
+  /** 
+   * @brief Split the remaining string into tokens.
+   * @return A vector containing all tokens from the current cursor.
+   */
+  std::vector<std::string> split();
+
+  /** 
+   * @brief Check if all tokens have been processed.
+   * @return True if no more tokens exist, false otherwise.
+   */
   bool done() const { return currPos == buffer.end(); }
 
-  // Specific to potential JetScape Ascii format ...
+  /// @name Special format detection functions
+  /// Functions to detect specific formats in JetScape ASCII format.
+  ///@{
+
+  /** @brief Check if the entry is a graph entry. */
   bool isGraphEntry() const;
+  /** @brief Check if the entry is a node entry. */
   bool isNodeEntry() const;
+  /** @brief Check if the entry is a node zero entry. */
   bool isNodeZero() const;
+  /** @brief Check if the entry is an edge entry. */
   bool isEdgeEntry() const;
+  /** @brief Check if the entry is a comment entry. */
   bool isCommentEntry() const;
+  /** @brief Check if the entry is an event entry. */
   bool isEventEntry() const;
+  /** @brief Check if the entry is a hadron entry. */
   bool isHadronEntry() const;
 
- private:
-  void skipDelimiter();      // ignore leading delimiters
-  bool isDelimiter(char c);  // check if the current char is delimiter
+  ///@}
 
-  std::string buffer;     // input string
-  std::string token;      // output string
-  std::string delimiter;  // delimiter string
-  std::string::const_iterator
-      currPos;  // string iterator pointing the current position
+ private:
+  /** @brief Skip leading delimiters. */
+  void skipDelimiter();
+
+  /** 
+   * @brief Check if a character is a delimiter.
+   * @param c The character to check.
+   * @return True if the character is a delimiter, false otherwise.
+   */
+  bool isDelimiter(char c);
+
+  std::string buffer; ///< Input string to be tokenized.
+  std::string token; ///< Current token.
+  std::string delimiter; ///< Delimiter characters.
+  std::string::const_iterator 
+    currPos; ///< Iterator pointing to the current position.
 };
 
 }  // end namespace Jetscape
 
 #endif  // STRINGTOKENIZER_H
 
-///////////////////////////////////////////////////////////////////////////////
-// Usage of Tokenizer Class: Example program
-///////////////////////////////////////////////////////////////////////////////
-
-/*
-// testing Tokenizer class
-
-#include <iostream>
-#include <string>
-
-#include "StringTokenizer.h"
-
-
-using std::string;
-using std::cout;
-using std::endl;
-
-int main(int argc, char* argv[])
-{
-    // instanciate Tokenizer class
-    StringTokenizer str;
-    string token;
-    int counter = 0;
-
-    string m_str2="[0]-->[1] 100. 0 0 75.";
-    cout<<m_str2<<endl;
-    str.set(m_str2);
-    //str.setDelimiter(" ->[]");
-
-    cout<<str.isGraphEntry()<<endl;
-    cout<<str.isEdgeEntry()<<endl;
-
-    // Two ways ...
-    //while((token = str.next()) != "")
-    while (!str.done())
-      {
-        token = str.next();
-        ++counter;
-        cout << counter << ": " << token << endl;
-      }
-
-    string m_str3="#[-->Just --> a Comment []..";
-    cout<<m_str3<<endl;
-    str.set(m_str3);
-
-    cout<<str.isGraphEntry()<<endl;
-    cout<<str.isEdgeEntry()<<endl;
-    cout<<str.isCommentEntry()<<endl;
-
-    return 0;
-}
-
-*/
+/**
+ * @example
+ * Example usage of the StringTokenizer class:
+ * @code
+ * #include <iostream>
+ * #include <string>
+ * #include "StringTokenizer.h"
+ *
+ * using std::string;
+ * using std::cout;
+ * using std::endl;
+ *
+ * int main(int argc, char* argv[]) {
+ *     // Create a StringTokenizer object
+ *     StringTokenizer str;
+ *     string token;
+ *     int counter = 0;
+ *
+ *     string m_str2="[0]-->[1] 100. 0 0 75.";
+ *     cout<<m_str2<<endl;
+ *     str.set(m_str2);
+ *     cout<<str.isGraphEntry()<<endl;
+ *     cout<<str.isEdgeEntry()<<endl;
+ *
+ *     while (!str.done()) {
+ *         token = str.next();
+ *         ++counter;
+ *         cout << counter << ": " << token << endl;
+ *     }
+ *
+ *     string m_str3="# [-->Just --> a Comment []..";
+ *     cout<<m_str3<<endl;
+ *     str.set(m_str3);
+ *
+ *     cout<<str.isGraphEntry()<<endl;
+ *     cout<<str.isEdgeEntry()<<endl;
+ *     cout<<str.isCommentEntry()<<endl;
+ *
+ *     return 0;
+ * }
+ * @endcode
+ */

@@ -94,7 +94,7 @@ bool StringTokenizer::isHadronEntry() const {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// reset string buffer, delimiter and the currsor position
+// reset string buffer, delimiter and the cursor position
 ///////////////////////////////////////////////////////////////////////////////
 void StringTokenizer::set(const std::string &str,
                           const std::string &delimiter) {
