@@ -64,6 +64,7 @@ public:
 
 protected:
   T output_file; //!< Output file
+  unsigned int headerVersion;
   std::vector<std::shared_ptr<JetScapeParticleBase>> particles;
   bool writeCentrality;
   bool writePtHat;
