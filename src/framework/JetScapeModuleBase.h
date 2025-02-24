@@ -30,86 +30,148 @@ namespace Jetscape {
 
 class JetScapeWriter;
 
+/**
+ * @class JetScapeModuleBase
+ * @brief Base class for modules in the Jetscape framework.
+ *
+ * This class is the base
+ * class for all modules in the Jetscape framework. It provides a common
+ * interface for all modules, including initialization, execution, and clearing.
+ * It also provides a common interface for reading XML files and generating
+ * random numbers.
+ * 
+ * Inherits from JetScapeTask and sigslot::has_slots<sigslot::multi_threaded_local>.
+ */
 class JetScapeModuleBase
     : public JetScapeTask,
       public sigslot::has_slots<sigslot::multi_threaded_local> {
  public:
-  /** Default constructor to create a JetScapeModuleBase. It sets the XML file
-   * name to a default string value.
+  /** @brief Default constructor for JetScapeModuleBase. 
+   * 
+   * Sets the XML file name to a default string value.
    */
   JetScapeModuleBase();
 
-  /** This is a constructor to create a JetScapeModuleBase. It sets the XML file
-   * name to "m_name" to be used to read input parameters.
+  /** @brief Constructor to create a JetScapeModuleBase with a name.
+   * 
+   * @param m_name The name of the module.
    */
   JetScapeModuleBase(string m_name);
 
-  /** This is a destructor for the JetScapeModuleBase.
+  /** @breif Destructor for the JetScapeModuleBase.
    */
   virtual ~JetScapeModuleBase();
 
   // virtual shared_ptr<JetScapeModuleBase> Clone() const {return nullptr;}
-  /** A virtual function for a default initialization of a JetScapeModuleBase.
-   * It also checks whether a XML file is loaded or not.
+
+  /**
+   * @brief Virtual function to initialize module. 
+   * 
+   * Checks if XML is loaded.
    */
   virtual void Init();
 
-  /** A virtual function to define a default Exec() function for a
-   * JetScapeModuleBase. It can be overridden by different modules/tasks.
+  /** 
+   * @brief Virtual function to execute module. 
+   * 
+   * Can be overriden by derived classes.
    */
   virtual void Exec(){};
 
-  /**  A virtual function to define a default Clear() function for a
-   * JetScapeModuleBase. It can be overridden by different modules/tasks.
+  /** 
+   * @brief Virtual function to clear module. 
+   * 
+   * Can be overriden by derived classes.
    */
   virtual void Clear(){};
 
-  /** This function sets the name of the XML file to be used to store output
-   * information for the modules/tasks of a JetScapeTask.
+  /** 
+   * @brief Sets main XML file name.
+   * 
+   * @param m_name The name of the main XML file.
    */
   void SetXMLMainFileName(string m_name) { xml_main_file_name = m_name; }
 
-  /** This function returns the XML file name. This file contains the output
-   * data for the modules/tasks of a JetScapeTask.
+  /** 
+   * @brief Gets main XML file name.
+   * 
+   * @return xml_main_file_name The name of the main XML file.
    */
   string GetXMLMainFileName() { return xml_main_file_name; }
 
-  /** This function sets the name of the XML file to be used to store output
-   * information for the modules/tasks of a JetScapeTask.
+  /** 
+   * @brief Sets user XML file name.
+   * 
+   * @param m_name The name of the user XML file.
    */
   void SetXMLUserFileName(string m_name) { xml_user_file_name = m_name; }
 
-  /** This function returns the XML file name. This file contains the output
-   * data for the modules/tasks of a JetScapeTask.
+  /** 
+   * @brief Gets user XML file name.
+   * 
+   * @return xml_user_file_name The name of the user XML file.
    */
   string GetXMLUserFileName() { return xml_user_file_name; }
 
-  /** This function returns the current event number.
+  /** 
+   * @brief Gets the current event number.
+   * 
+   * @return current_event The current event number.
    */
   static int GetCurrentEvent() { return current_event; }
 
-  /** This function increases the current event number by one.
+  /** 
+   * @brief Increments the current event number.
    */
   static void IncrementCurrentEvent() { current_event++; }
 
-  /** This function returns a random number based on Mersenne-Twister algorithm.
+  /** 
+   * @brief Gets shared pointer to random number based on Mersenne-Twister algorithm.
    */
   shared_ptr<std::mt19937> GetMt19937Generator();
 
-  /** Helper functions for XML parsing, wrapping functionality in JetScapeXML:
-   */
+  // Helper functions for XML parsing, wrapping functionality in JetScapeXML
+
+  /**
+  * @brief Retrieves an XML element from the configuration.
+  * 
+  * @param path List of XML element names representing the path to the target element.
+  * @param isRequired If true, an error is raised if the element is missing.
+  * @return Pointer to the retrieved XMLElement, or nullptr if not found and isRequired is false.
+  */
   tinyxml2::XMLElement *GetXMLElement(std::initializer_list<const char *> path,
                                       bool isRequired = true) {
     return JetScapeXML::Instance()->GetElement(path, isRequired);
   }
+  /**
+  * @brief Retrieves the text content of an XML element.
+  * 
+  * @param path List of XML element names representing the path to the target element.
+  * @param isRequired If true, an error is raised if the element is missing.
+  * @return The text content of the XML element as a std::string.
+  */
   std::string GetXMLElementText(std::initializer_list<const char *> path,
                                 bool isRequired = true) {
     return JetScapeXML::Instance()->GetElementText(path, isRequired);
   }
+  /**
+  * @brief Retrieves an integer value from an XML element.
+  * 
+  * @param path List of XML element names representing the path to the target element.
+  * @param isRequired If true, an error is raised if the element is missing.
+  * @return The integer value of the XML element.
+  */
   int GetXMLElementInt(std::initializer_list<const char *> path,
                        bool isRequired = true) {
     return JetScapeXML::Instance()->GetElementInt(path, isRequired);
   }
+  /**
+  * @brief Retrieves a double value from an XML element.
+  * 
+  * @param path List of XML element names representing the path to the target element.
+  * @param isRequired If true, an error is raised if the element is missing.
+  * @return The double value of the XML element.
+  */
   double GetXMLElementDouble(std::initializer_list<const char *> path,
                              bool isRequired = true) {
     return JetScapeXML::Instance()->GetElementDouble(path, isRequired);
