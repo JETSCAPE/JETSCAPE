@@ -170,7 +170,7 @@ template <class T> void JetScapeWriterFinalStateStream<T>::Init() {
   if (GetActive()) {
     // We need the header version to determine how to write.
     // NOTE: Don't require the version. If not specified, defaults to v2.
-    int result = GetXMLElementInt({"Writer", (std::string("FinalState") + name).c_str(), "final_state_writer_header_version"}, false);
+    int result = GetXMLElementInt({"Writer", (std::string("FinalState") + name).c_str(), "headerVersion"}, false);
     // If it fails to retrieve the value, it will return 0. The header version must be >= 2,
     // so only assign if the value is actually set.
     if (result) {
