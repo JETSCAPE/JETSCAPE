@@ -50,7 +50,7 @@
     </FinalStateHadrons>
     <FinalStatePartons>
         <statusToSkip>-9999</statusToSkip>
-        <final_state_writer_header_version>2</final_state_writer_header_version>
+        <headerVersion>2</headerVersion>
     </FinalStatePartons>
   </Writer>
 
