@@ -74,6 +74,8 @@ template <class T> void JetScapeWriterQnVectorStream<T>::WriteEvent() {
     int num_pid = 0;
     for (const auto particle : particles) {
 
+      if( particle->pstat()!= 11 && particle->pstat()!=27) continue;
+      // only includes hadrons from iSS and SMASH
       PdgCode pdgcode_tem(std::to_string(particle->pid()));
               
       if (select_pid == 9999) {
