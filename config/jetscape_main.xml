@@ -147,6 +147,7 @@
 
   <!--Eloss Modules -->
   <!-- Individual Eloss Modules run Eloss and Eloss Manager  -->
+  <!-- In the user XML file the Hydro section should be placed before Eloss -->
   <Eloss>
 
     <deltaT>0.1</deltaT>
@@ -291,6 +292,7 @@
   </Liquefier>
 
   <!-- Hydro  Module  -->
+  <!-- In the user XML file the Hydro section should be placed before Eloss -->
   <Hydro>
 
     <AddLiquefier> false </AddLiquefier>
