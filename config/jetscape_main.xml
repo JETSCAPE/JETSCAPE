@@ -38,13 +38,27 @@
   <QnVector_rapmax>4</QnVector_rapmax>
   <QnVector_Nrap>80</QnVector_Nrap>
   <QnVector_Norder>7</QnVector_Norder>
+  <!-- Printing the centrality to the event header is only possible for the Trento initial condition -->
+  <write_centrality> 0 </write_centrality>
   <write_pthat> 0 </write_pthat>
+  <Writer>
+    <!-- Comma separated list of statuses to skip: e.g. "2, 3, 4" -->
+    <!-- -9999 corresponds to skipping no status code. It needs to have some entry to be avoid a segfault w/ empty values in tinyxml -->
+    <FinalStateHadrons>
+        <statusToSkip>-9999</statusToSkip>
+        <headerVersion>2</headerVersion>
+    </FinalStateHadrons>
+    <FinalStatePartons>
+        <statusToSkip>-9999</statusToSkip>
+        <headerVersion>2</headerVersion>
+    </FinalStatePartons>
+  </Writer>
 
   <!--  Random Settings. For now, just a global  seed. -->
   <!--  Note: It's each modules responsibility to adopt it -->
   <!--  Note: Most if not all modules should understand 0 to mean a random value -->
   <!--  Note: Both 0 and non-zero values require careful treatment in case of multi-threading -->
-  <!--           An example implementation is in JetEnergyLossManager.cc -->
+  <!--  An example implementation is in JetEnergyLossManager.cc -->
   <Random>
     <seed>0</seed>
   </Random>
@@ -57,7 +71,7 @@
     <!-- in units of [fm] -->
     <grid_max_x> 15 </grid_max_x>
     <grid_max_y> 15 </grid_max_y>
-    <grid_max_z> 0.2 </grid_max_z>
+    <grid_max_z> 0  </grid_max_z>
     <grid_step_x> 0.3 </grid_step_x>
     <grid_step_y> 0.3 </grid_step_y>
     <grid_step_z> 0.2 </grid_step_z>
@@ -85,9 +99,12 @@
     </LongiInputs>
     </Trento>
 
-    <!-- Options to read initial conditions from saved file  -->
+    <!-- Options to read initial conditions from saved file -->
     <initial_profile_path>../examples/test_hydro_files</initial_profile_path>
     <initial_Ncoll_list>../examples/test_hydro_files</initial_Ncoll_list>
+
+    <!-- In case IP-Glasma is used as initial condition, the parameters need to be specified in the 'ipglasma.input' file -->
+    <IPGlasma> </IPGlasma>
   </IS>
 
   <!-- Hard Process -->
@@ -130,6 +147,7 @@
 
   <!--Eloss Modules -->
   <!-- Individual Eloss Modules run Eloss and Eloss Manager  -->
+  <!-- In the user XML file the Hydro section should be placed before Eloss -->
   <Eloss>
 
     <deltaT>0.1</deltaT>
@@ -212,10 +230,10 @@
 
     <!-- starting long. proper time for Preequilibrium dynamics -->
     <tau0>0.0</tau0>
-    <!-- starting long. proper time for Preequilibrium dynamics outuput for hard probes -->
+    <!-- starting long. proper time for Preequilibrium dynamics output for hard probes -->
     <tauj>0.1</tauj>
     <!-- switching long. proper time from Preequilibrium dynamics to Hydrodynamics (Landau Matching) -->
-    <taus>0.2</taus>
+    <taus>0.5</taus>
     <evolutionInMemory>1</evolutionInMemory>
 
     <!-- Individual Preequilibrium Dynamics models  -->
@@ -225,7 +243,28 @@
       <!-- number of timesteps for the evolution, this defines the dtau = (taus - tauj)  / ntau -->
       <!-- in the case of <evolutionInMemory>1</evolutionInMemory> this will also set the time step for the hydro, make sure that it is small enough -->
       <ntau>50</ntau>
+
+      <!--Energy dependent free streaming time (Phys.Rev.C 103 (2021) 5, 054904, see Eq. 19)-->
+      <!--This overrides the constant free streaming time defined by taus-->
+      <!--E_DEP_FS = 0: constant free streaming time according to taus, E_DEP_FS = 1: energy dependent free streaming time-->
+      <E_DEP_FS>1</E_DEP_FS>
+      <!--E_R: energy scale in GeV/fm^2 for the energy dependent free streaming time-->
+      <E_R>4.0</E_R>
+      <!--TAU_R: free streaming time tau_R in fm for the energy dependent free streaming time-->
+      <TAU_R>1.46</TAU_R>
+      <!--ALPHA: power of the energy dependence for the energy dependent free streaming time-->
+      <ALPHA>0.031</ALPHA>
     </FreestreamMilne>
+
+    <!-- Glasma pre-equilibrium stage for the IP-Glasma initial condition -->
+    <!-- These parameters should match the ones in 'ipglasma.input' -->
+    <!-- Other pre-equilibrium parameters are ignored in the Glasma case -->
+    <Glasma>
+      <tau0>0.001</tau0>
+      <taus>0.4</taus>
+      <dtau>0.005</dtau>
+      <input_filename_glasma>./epsilon-u-Hydro-t0.4-0.dat</input_filename_glasma>
+    </Glasma>
 
     <NullPreDynamics> </NullPreDynamics>
 
@@ -253,6 +292,7 @@
   </Liquefier>
 
   <!-- Hydro  Module  -->
+  <!-- In the user XML file the Hydro section should be placed before Eloss -->
   <Hydro>
 
     <AddLiquefier> false </AddLiquefier>
@@ -304,24 +344,40 @@
     <MUSIC>
       <name>MUSIC</name>
       <MUSIC_input_file>music_input</MUSIC_input_file>
+      <!--beastMode = 0: double precision, constant time step-->
+      <!--beastMode = 1: float precision, constant time step-->
+      <!--beastMode = 2: float precision, increased time step after 4 fm/ (can be used for soft sector only runs, otherwise the change in stepsize will lead to errors)-->
       <beastMode>0</beastMode>
+      <!--starting time of the hydrodynamic evolution after the pre-equilibrium phase-->
       <Initial_time_tau_0>0.5</Initial_time_tau_0>
+      <!--evolution output/storage parameters-->
       <output_evolution_to_file>0</output_evolution_to_file>
       <output_evolution_to_memory>1</output_evolution_to_memory>
+      <output_evolution_every_N_timesteps>1</output_evolution_every_N_timesteps>
       <surface_in_memory>1</surface_in_memory>
+      <!--shear viscosity settings-->
       <shear_viscosity_eta_over_s>0.08</shear_viscosity_eta_over_s>
       <T_dependent_Shear_to_S_ratio>0</T_dependent_Shear_to_S_ratio>
       <eta_over_s_T_kink_in_GeV>0.16</eta_over_s_T_kink_in_GeV>
       <eta_over_s_low_T_slope_in_GeV>0.</eta_over_s_low_T_slope_in_GeV>
       <eta_over_s_high_T_slope_in_GeV>0.</eta_over_s_high_T_slope_in_GeV>
       <eta_over_s_at_kink>0.08</eta_over_s_at_kink>
+      <shear_viscosity_2_curv>-0.48</shear_viscosity_2_curv>
+      <shear_viscosity_2_slope>1.11</shear_viscosity_2_slope>
+      <shear_viscosity_2_min>0.081</shear_viscosity_2_min>
+      <!--bulk viscosity settings-->
       <temperature_dependent_bulk_viscosity>0</temperature_dependent_bulk_viscosity>
       <zeta_over_s_max>0</zeta_over_s_max>
       <zeta_over_s_T_peak_in_GeV>0.18</zeta_over_s_T_peak_in_GeV>
       <zeta_over_s_width_in_GeV>0.02</zeta_over_s_width_in_GeV>
       <zeta_over_s_lambda_asymm>0.0</zeta_over_s_lambda_asymm>
+      <bulk_viscosity_2_normalisation>0.052</bulk_viscosity_2_normalisation>
+      <bulk_viscosity_2_width_in_GeV>0.022</bulk_viscosity_2_width_in_GeV>
+      <bulk_viscosity_2_peak_in_GeV>0.183</bulk_viscosity_2_peak_in_GeV>
+      <!--higher order transport coefficients-->
       <Include_second_order_terms>1</Include_second_order_terms>
-      <freezeout_temperature>-1</freezeout_temperature>
+      <!--freeze-out parameters-->
+      <freezeout_temperature>0.15</freezeout_temperature>
       <Perform_CooperFrye_Feezeout>0</Perform_CooperFrye_Feezeout>
     </MUSIC>
 
@@ -413,13 +469,13 @@
       <!-- file path for the default particle table files  -->
       <iSS_particle_table_path>../external_packages/iSS/iSS_tables</iSS_particle_table_path>
       <!-- hadron species list  0: PDG 2005; 1: UrQMD; 2: SMASH -->
-      <afterburner_type>1</afterburner_type>
+      <afterburner_type>2</afterburner_type>
 
       <include_deltaf_shear>1</include_deltaf_shear>
       <include_deltaf_bulk>1</include_deltaf_bulk>
       <deltaf_type>20</deltaf_type>
       <number_of_repeated_sampling>1</number_of_repeated_sampling>
-      <Perform_resonance_decays>1</Perform_resonance_decays>
+      <Perform_resonance_decays>0</Perform_resonance_decays>
     </iSS>
   </SoftParticlization>
 

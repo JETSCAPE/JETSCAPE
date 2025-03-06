@@ -13,10 +13,19 @@
 # See COPYING for details.
 ##############################################################################
 
-folderName="ipglasma"
-commitHash="215aea40fd3e0777f01c464cc4031fb2b4344449"
+# default LHAPATH environment variable
+export LHAPATH='/home/jetscape-user/.local/share/LHAPDF'
 
-# download the code package
-git clone --depth=1 -b InterfaceJETSCAPE https://github.com/chunshen1987/ipglasma $folderName
-cd $folderName
-git checkout $commitHash
+# create the LHAPATH if it doesn't exist
+if [ ! -d "$LHAPATH" ]; then
+    mkdir -p $LHAPATH
+fi
+
+# replace lhapdf_set with the desired set or pass as an argument
+lhapdf_set = "JAM20-SIDIS_PDF_proton_nlo"
+
+if [ $# -eq 1 ]; then
+    lhapdf_set=$1
+fi
+
+wget http://lhapdfsets.web.cern.ch/lhapdfsets/current/$lhapdf_set.tar.gz -O- | tar xz -C $LHAPATH

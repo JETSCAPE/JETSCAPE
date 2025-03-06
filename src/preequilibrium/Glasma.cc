@@ -20,6 +20,7 @@
 #include <fstream>
 
 #include "JetScapeLogger.h"
+#include "JetScapeXML.h"
 #include "JetScapeConstants.h"
 #include "Glasma.h"
 
@@ -33,11 +34,20 @@ Glasma::Glasma() {
     SetId("Glasma");
 }
 
+void Glasma::InitializePreequilibrium() {
+    preequilibrium_status_ = INIT;
+    preequilibrium_tau_0_ = GetXMLElementDouble({"Preequilibrium",
+                                                "Glasma", "tau0"});
+    preequilibrium_tau_max_ = GetXMLElementDouble({"Preequilibrium",
+                                                "Glasma", "taus"});
+    dtau_ = GetXMLElementDouble({"Preequilibrium", "Glasma", "dtau"});
+}
+
 void Glasma::EvolvePreequilibrium() {
     VERBOSE(2) << "Initialize density profiles in Glasma ...";
-    std::string IPGlasmaFileName = "epsilon-u-Hydro-t0.4-0.dat";
-    VERBOSE(2) << "Read in IPGlasma Tmunu ...";
-    const double norm = 0.235;
+    std::string IPGlasmaFileName = GetXMLElementText({"Preequilibrium",
+                                    "Glasma", "input_filename_glasma"});
+    VERBOSE(2) << "Read in IP-Glasma Tmunu ...";
     std::ifstream IPGFile(IPGlasmaFileName.c_str());
     if (!IPGFile.good()) {
         Jetscape::JSWARN << "Can not open " << IPGlasmaFileName;
@@ -53,15 +63,15 @@ void Glasma::EvolvePreequilibrium() {
         double pi[10];
         IPGFile >> dummy >> dummy;
         IPGFile >> e_local >> u[0] >> u[1] >> u[2] >> u[3];
-        e_.push_back(norm*e_local*hbarC);
-        P_.push_back(norm*e_local*hbarC/3.);
+        e_.push_back(e_local);
+        P_.push_back(e_local/3.);
         utau_.push_back(u[0]);
         ux_.push_back(u[1]);
         uy_.push_back(u[2]);
         ueta_.push_back(u[3]);
         for (int i = 0; i < 10; i++) {
             IPGFile >> pi[i];
-            pi[i] *= norm*hbarC;
+            pi[i] *= hbarC;
         }
         pi00_.push_back(pi[0]);
         pi01_.push_back(pi[1]);

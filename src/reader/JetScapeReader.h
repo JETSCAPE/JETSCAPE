@@ -64,6 +64,9 @@ public:
   double GetSigmaErr() const { return sigmaErr; }
   double GetEventWeight() const { return eventWeight; }
   double GetEventPlaneAngle() const { return EventPlaneAngle; }
+  double GetVertexX() const { return vertexX; }
+  double GetVertexY() const { return vertexY; }
+  double GetVertexZ() const { return vertexZ; }
 
 private:
   StringTokenizer strT;
@@ -89,6 +92,9 @@ private:
   double sigmaErr;
   double eventWeight;
   double EventPlaneAngle;
+  double vertexX;
+  double vertexY;
+  double vertexZ;
 };
 
 typedef JetScapeReader<ifstream> JetScapeReaderAscii;

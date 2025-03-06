@@ -29,20 +29,20 @@
         <grid_step_y> 0.2 </grid_step_y>
 
         <Trento>
-          <PhysicsInputs  projectile='Au'
-                  target='Au'
-                  sqrts='200'
-                  cross-section='4.2'
-                  normalization='5.73'>
+          <PhysicsInputs  projectile='Pb'
+                  target='Pb'
+                  sqrts='5020'
+                  cross-section='6.7'
+                  normalization='18.38'>
           </PhysicsInputs>
           <CutInputs
                 centrality-low='0'
                 centrality-high='5'>
           </CutInputs>
-          <TransInputs  reduced-thickness='0.063'
-                  fluctuation="1.05"
-                  nucleon-width="1.12"
-                  nucleon-min-dist="1.4">
+          <TransInputs  reduced-thickness='0.007'
+                  fluctuation="0.918"
+                  nucleon-width="0.956"
+                  nucleon-min-dist="1.27">
           </TransInputs>
           <LongiInputs  mean-coeff="1.0"
                   std-coeff="3.0"
@@ -59,13 +59,14 @@
         <tau0>0.0</tau0>
         <tauj>0.1</tauj>
         <!-- switching long. proper time from Preequilibrium dynamics to Hydrodynamics (Landau Matching) -->
-        <taus>1.46</taus>
+        <taus>1.16</taus>
         <evolutionInMemory>1</evolutionInMemory>
 
         <!-- Individual Preequilibrium Dynamics models  -->
         <FreestreamMilne>
           <name>FreestreamMilne</name>
           <freestream_input_file>freestream_input</freestream_input_file>
+          <E_DEP_FS>0</E_DEP_FS>
         </FreestreamMilne>
     </Preequilibrium>
 
@@ -76,18 +77,16 @@
             <output_evolution_to_file>0</output_evolution_to_file>
             <output_evolution_to_memory>1</output_evolution_to_memory>
             <surface_in_memory>1</surface_in_memory>
-            <Initial_time_tau_0>1.46</Initial_time_tau_0>
-            <T_dependent_Shear_to_S_ratio>3</T_dependent_Shear_to_S_ratio>
-            <eta_over_s_T_kink_in_GeV>0.223</eta_over_s_T_kink_in_GeV>
-            <eta_over_s_low_T_slope_in_GeV>-0.776</eta_over_s_low_T_slope_in_GeV>
-            <eta_over_s_high_T_slope_in_GeV>0.37</eta_over_s_high_T_slope_in_GeV>
-            <eta_over_s_at_kink>0.096</eta_over_s_at_kink>
-            <temperature_dependent_bulk_viscosity>3</temperature_dependent_bulk_viscosity>
-            <zeta_over_s_max>0.133</zeta_over_s_max>
-            <zeta_over_s_T_peak_in_GeV>0.12</zeta_over_s_T_peak_in_GeV>
-            <zeta_over_s_width_in_GeV>0.072</zeta_over_s_width_in_GeV>
-            <zeta_over_s_lambda_asymm>-0.122</zeta_over_s_lambda_asymm>
-            <freezeout_temperature>0.136</freezeout_temperature>
+            <Initial_time_tau_0>1.16</Initial_time_tau_0>
+            <T_dependent_Shear_to_S_ratio>2</T_dependent_Shear_to_S_ratio>
+            <shear_viscosity_2_curv>-0.48</shear_viscosity_2_curv>
+            <shear_viscosity_2_slope>1.11</shear_viscosity_2_slope>
+            <shear_viscosity_2_min>0.081</shear_viscosity_2_min>
+            <temperature_dependent_bulk_viscosity>2</temperature_dependent_bulk_viscosity>
+            <bulk_viscosity_2_normalisation>0.052</bulk_viscosity_2_normalisation>
+            <bulk_viscosity_2_width_in_GeV>0.022</bulk_viscosity_2_width_in_GeV>
+            <bulk_viscosity_2_peak_in_GeV>0.183</bulk_viscosity_2_peak_in_GeV>
+            <freezeout_temperature>0.151</freezeout_temperature>
         </MUSIC>
     </Hydro>
 

@@ -10,6 +10,7 @@
 .DS_Store
 html/*
 build/*
+.vscode/
 external_packages/LBT*
 external_packages/iSS*
 external_packages/music*

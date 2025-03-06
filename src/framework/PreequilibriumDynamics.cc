@@ -55,7 +55,7 @@ void PreequilibriumDynamics::Init() {
   preequilibrium_tau_0_ = GetXMLElementDouble({"Preequilibrium", "tau0"});
   preequilibrium_tau_max_ = GetXMLElementDouble({"Preequilibrium", "taus"});
 
-  InitializePreequilibrium(parameter_list_);
+  InitializePreequilibrium();
 
   InitTask();
 

@@ -41,25 +41,25 @@ using namespace Jetscape;
 
 int main(int argc, char** argv)
 {
-
   // JetScapeLogger::Instance()->SetInfo(false);
   JetScapeLogger::Instance()->SetDebug(false);
   JetScapeLogger::Instance()->SetRemark(false);
   // //SetVerboseLevel (9 a lot of additional debug output ...)
-  // //If you want to suppress it: use SetVerboseLevle(0) or max  SetVerboseLevel(9) or 10
+  // //If you want to suppress it: use SetVerboseLevel(0) or max  SetVerboseLevel(9) or 10
   JetScapeLogger::Instance()->SetVerboseLevel(0);
 
-  // Whether to write the new header (ie. v2), including xsec info.
-  // To enable, pass anything as the third argument to enable this option.
-  // Default: disabled.
-  bool writeHeaderV2 = false;
+  // Whether to write a particular header version (eg. v2), including xsec info.
+  // To enable, pass the desired version (just the number) as the third argument.
+  // Default: v1
+  unsigned int headerVersion = 1;
   if (argc > 3) {
-    writeHeaderV2 = static_cast<bool>(argv[3]);
-    std::cout << "NOTE: Writing header v2, and final cross section and error at EOF.\n";
+    headerVersion = std::atoi(argv[3]);
+    std::cout << "NOTE: Writing header v" << headerVersion << ", and final cross section and error at EOF.\n";
   }
+  std::cout << "NOTE: Writing with output version v" << headerVersion << "\n";
 
-  // The seperator between particles _does not_ depend on the header for final state hadrons
-  std::string particleSeperator = " ";
+  // The separator between particles _does not_ depend on the header for final state hadrons
+  std::string particleSeparator = " ";
 
   auto reader = make_shared<JetScapeReaderAscii>(argv[1]);
   std::ofstream dist_output (argv[2]); //Format is SN, PID, E, Px, Py, Pz, Eta, Phi
@@ -78,13 +78,20 @@ int main(int argc, char** argv)
     if (hadrons.size() > 0)
     {
       ++SN;
-      if (writeHeaderV2) {
+      if (headerVersion > 1) {
         // NOTE: Needs consistent "\t" between all entries to simplify parsing later.
         dist_output << "#"
             << "\t" << "Event\t" << SN
             << "\t" << "weight\t" << reader->GetEventWeight()
             << "\t" << "EPangle\t" << reader->GetEventPlaneAngle()
-            << "\t" << "N_hadrons\t" << hadrons.size()
+            << "\t" << "N_hadrons\t" << hadrons.size();
+        if (headerVersion == 3) {
+          dist_output
+              << "\t" << "vertex_x\t" << reader->GetVertexX()
+              << "\t" << "vertex_y\t" << reader->GetVertexY()
+              << "\t" << "vertex_z\t" << reader->GetVertexZ();
+        }
+        dist_output
             << "\t" << "|"  // As a delimiter
             << "\t" << "N"
             << "\t" << "pid"
@@ -110,17 +117,17 @@ int main(int argc, char** argv)
       for (unsigned int i=0; i<hadrons.size(); i++)
       {
         dist_output << i
-            << particleSeperator << hadrons[i].get()->pid()
-            << particleSeperator << hadrons[i].get()->pstat()
-            << particleSeperator << hadrons[i].get()->e()
-            << particleSeperator << hadrons[i].get()->px()
-            << particleSeperator << hadrons[i].get()->py()
-            << particleSeperator << hadrons[i].get()->pz();
+            << particleSeparator << hadrons[i].get()->pid()
+            << particleSeparator << hadrons[i].get()->pstat()
+            << particleSeparator << hadrons[i].get()->e()
+            << particleSeparator << hadrons[i].get()->px()
+            << particleSeparator << hadrons[i].get()->py()
+            << particleSeparator << hadrons[i].get()->pz();
 
         // v2 drops eta and phi, so only include it for v1
-        if (!writeHeaderV2) {
-            dist_output << particleSeperator << hadrons[i].get()->eta()
-                << particleSeperator << hadrons[i].get()->phi();
+        if (headerVersion == 1) {
+            dist_output << particleSeparator << hadrons[i].get()->eta()
+                << particleSeparator << hadrons[i].get()->phi();
         }
 
         // Finish up
@@ -129,7 +136,7 @@ int main(int argc, char** argv)
     }
   }
   // Write the final cross section and error if requested by using header v2
-  if (writeHeaderV2) {
+  if (headerVersion > 1) {
     // NOTE: Needs consistent "\t" between all entries to simplify parsing later.
     dist_output << "#"
         << "\t" << "sigmaGen\t" << reader->GetSigmaGen()

@@ -58,6 +58,7 @@ void InitialState::CollectHeader(weak_ptr<JetScapeWriter> w) {
     auto &header = f->GetHeader();
     header.SetNpart(GetNpart());
     header.SetNcoll(GetNcoll());
+    header.SetEventCentrality(GetEventCentrality());
     header.SetTotalEntropy(GetTotalEntropy());
   }
 }
@@ -67,13 +68,13 @@ std::tuple<double, double, double> InitialState::CoordFromIdx(int idx) {
   int ny = GetYSize();
   int nz = GetZSize();
 
-  int page = idx / (nx * ny);
-  int row = (idx - page * nx * ny) / nx;
-  int col = idx - page * nx * ny - row * nx;
+  int ix = idx / (ny * nz);
+  int iy = (idx - (ny * nz * ix))/ nz;
+  int ieta = idx - (ny * nz * ix) - (nz * iy); 
 
-  return std::make_tuple(-grid_max_x_ + col * grid_step_x_,
-                         -grid_max_y_ + row * grid_step_y_,
-                         -grid_max_z_ + page * grid_step_z_);
+  return std::make_tuple(-grid_max_x_ + ix * grid_step_x_,
+                         -grid_max_y_ + iy * grid_step_y_,
+                         -grid_max_z_ + ieta * grid_step_z_);
 }
 
 
