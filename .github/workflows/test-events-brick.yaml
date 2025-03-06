@@ -6,17 +6,11 @@ on:
       - main
       - brick_matter_lbt
       - JETSCAPE-3.7-RC
-      - cpp17_cmake_syntax
-      - ipglasma
-      - support_LHAPDF
   push:
     branches:
       - main
       - brick_matter_lbt
       - JETSCAPE-3.7-RC
-      - cpp17_cmake_syntax
-      - ipglasma
-      - support_LHAPDF
 
 env:
   REPO_NAME: ${{ github.event.repository.name }}
@@ -27,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: jetscape/base:v1.11
+      image: jetscape/base:stable
       options: --user root
 
     steps:
