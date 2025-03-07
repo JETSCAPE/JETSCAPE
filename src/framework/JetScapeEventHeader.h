@@ -20,12 +20,17 @@
 namespace Jetscape {
 
 /**
-     Container for a multitude of event-related information
-     such as xsec, centrality, ...
-   */
-class JetScapeEventHeader {
+ * @class JetScapeEventHeader
+ * @brief Container for event-related information such as cross-section, centrality, etc.
+ */
+ class JetScapeEventHeader {
  public:
+
+  /**
+   * @brief Default constructor
+   */
   JetScapeEventHeader(){};
+
   // ~JetScapeEventHeader(){};
   // JetScapeEventHeader(const JetScapeEventHeader &c); //copy constructor
 
@@ -37,76 +42,145 @@ class JetScapeEventHeader {
 
   // ============================ Initial Hard Process
   // =================================
-  /// Initial Hard Process: Get cross section
-  /// Note: In most cases, this value becomes more precise as more events are
-  /// created. It is recommended to use the last event's value
+
+  /**
+   * @brief Initial Hard Process: Get cross-section.
+   * @note In most cases, this value becomes more precise as more events are
+   * created. It is recommended to use the last event's value.
+   * @return Cross-section value
+   */
   double GetSigmaGen() { return SigmaGen; };
-  /// Initial Hard Process: Set cross section
+
+   /**
+   * @brief Initial Hard Process: Set the generated cross-section
+   * @param d Cross-section value
+   */
   void SetSigmaGen(double d) { SigmaGen = d; };
 
-  /// Initial Hard Process: Get uncertainty on the cross section
-  /// Note: In most cases, this value becomes more smaller as more events are
-  /// created. It is recommended to use the last event's value
+  /**
+   * @brief Initial Hard Process: Get uncertainty on the cross-section
+   * @note Note: In most cases, this value becomes more smaller as more
+   * events are created. It is recommended to use the last event's value.
+   * @return Cross-section uncertainty value
+   */
   double GetSigmaErr() { return SigmaErr; };
-  /// Initial Hard Process: Set uncertainty on the cross section
+
+  /**
+   * @brief Initial Hard Process: Set uncertainty on the cross-section
+   * @param d Cross-section uncertainty value
+   */
   void SetSigmaErr(double d) { SigmaErr = d; };
 
-  /// Initial Hard Process: pt-hat
+  /**
+   * @brief Initial Hard Process: Get the pt-hat value
+   * @return pt-hat value
+   */
   double GetPtHat() { return PtHat; };
+
+  /**
+   * @brief Set the pt-hat value
+   * @param d pt-hat value
+   */
   void SetPtHat(double d) { PtHat = d; };
 
-  /// Initial Hard Process: Get additionally created weight (e.g.
-  /// pythia.event().weight())
+  /**
+   * @brief Initial Hard Process: Get additionally created weight (e.g. pythia.event().weight())
+   * @return Event weight
+   */
   double GetEventWeight() { return EventWeight; };
-  /// Initial Hard Process: Set additionally created weight (e.g.
-  /// pythia.event().weight())
+
+   /**
+   * @brief Initial Hard Process: Set additionally created weight (e.g. pythia.event().weight())
+   * @param d Event weight
+   */
   void SetEventWeight(double d) { EventWeight = d; };
 
   // ============================ Initial State
   // =================================
-  /// Initial State: Get number of participants
+
+  /**
+   * @brief Initial State: Get number of participants
+   * @return Number of participants
+   */
   double GetNpart() { return Npart; };
-  /// Initial State: Set number of participants
+
+  /**
+   * @brief Initial State: Set number of participants
+   * @param d Number of participants
+   */
   void SetNpart(double d) { Npart = d; };
 
-  /// Initial State: Get number of binary collisions
+  /**
+   * @brief Initial State: Get the number of binary collisions
+   * @return Number of binary collisions
+   */
   double GetNcoll() { return Ncoll; };
-  /// Initial State: Set number of binary collisions
+
+  /**
+   * @brief Initial State: Set the number of binary collisions
+   * @param d Number of binary collisions
+   */
   void SetNcoll(double d) { Ncoll = d; };
 
-  /// Initial State: Get centrality of the event
+  /**
+   * @brief Initial State: Get centrality of the event
+   * @return Event centrality
+   */
   double GetEventCentrality() { return EventCentrality; }
-  /// Initial State: Set centrality of the event
+
+  /**
+   * @brief Initial State: Set the event centrality
+   * @param d Event centrality
+   */
   void SetEventCentrality(double d) { EventCentrality = d; }
 
-  /// Initial State: Get total entropy
+  /**
+   * @brief  Initial State: Get the total entropy
+   * @return Total entropy
+   */
   double GetTotalEntropy() { return TotalEntropy; };
-  /// Initial State: Set total entropy
+
+   /**
+   * @brief Initial State: Set the total entropy
+   * @param d Total entropy
+   */
   void SetTotalEntropy(double d) { TotalEntropy = d; };
 
   // ============================ Hydro =================================
-  /// Hydro: Get (2nd order) event plane angle
+
+  /**
+   * @brief Hydro: Get the event plane angle (2nd order)
+   * @return Event plane angle
+   */
   double GetEventPlaneAngle() { return EventPlaneAngle; };
-  /// Hydro: Set (2nd order) event plane angle
+
+  /**
+   * @brief Hydro: Set the event plane angle (2nd order)
+   * @param d Event plane angle
+   */
   void SetEventPlaneAngle(double d) { EventPlaneAngle = d; };
 
  private:
+
   // ============================ Initial Hard Process
   // =================================
-  double SigmaGen = -1;
-  double SigmaErr = -1;
-  double PtHat = -1;
-  double EventWeight = 1;
+
+  double SigmaGen = -1;          ///< Cross-section value
+  double SigmaErr = -1;          ///< Cross-section uncertainty
+  double PtHat = -1;             ///< pt-hat value
+  double EventWeight = 1;        ///< Event weight
 
   // ============================ Initial State
   // =================================
-  double Npart = -1;  // could be int, but using double to allow averaged values
-  double Ncoll = -1;  // could be int, but using double to allow averaged values
-  double TotalEntropy = -1;
-  double EventCentrality = -1;
+
+  double Npart = -1;             ///< Number of participants (could be int, but, using double to allow averaged values)
+  double Ncoll = -1;             ///< Number of binary collisions (could be int, but using double to allow averaged values)
+  double TotalEntropy = -1;      ///< Total entropy
+  double EventCentrality = -1;   ///< Event centrality
 
   // ============================ Hydro =================================
-  double EventPlaneAngle = -999;
+
+  double EventPlaneAngle = -999; ///< Event plane angle (2nd order)
 
   // ============================ Other possible options
   // ================================= IS: double Eccentricity; double
