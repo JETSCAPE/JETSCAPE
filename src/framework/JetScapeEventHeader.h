@@ -21,11 +21,11 @@ namespace Jetscape {
 
 /**
  * @class JetScapeEventHeader
- * @brief Container for event-related information such as cross-section, centrality, etc.
+ * @brief Container for event-related information such as cross-section,
+ * centrality, etc.
  */
- class JetScapeEventHeader {
+class JetScapeEventHeader {
  public:
-
   /**
    * @brief Default constructor
    */
@@ -51,7 +51,7 @@ namespace Jetscape {
    */
   double GetSigmaGen() { return SigmaGen; };
 
-   /**
+  /**
    * @brief Initial Hard Process: Set the generated cross-section
    * @param d Cross-section value
    */
@@ -84,13 +84,15 @@ namespace Jetscape {
   void SetPtHat(double d) { PtHat = d; };
 
   /**
-   * @brief Initial Hard Process: Get additionally created weight (e.g. pythia.event().weight())
+   * @brief Initial Hard Process: Get additionally created weight (e.g.
+   * pythia.event().weight())
    * @return Event weight
    */
   double GetEventWeight() { return EventWeight; };
 
-   /**
-   * @brief Initial Hard Process: Set additionally created weight (e.g. pythia.event().weight())
+  /**
+   * @brief Initial Hard Process: Set additionally created weight (e.g.
+   * pythia.event().weight())
    * @param d Event weight
    */
   void SetEventWeight(double d) { EventWeight = d; };
@@ -140,7 +142,7 @@ namespace Jetscape {
    */
   double GetTotalEntropy() { return TotalEntropy; };
 
-   /**
+  /**
    * @brief Initial State: Set the total entropy
    * @param d Total entropy
    */
@@ -161,26 +163,27 @@ namespace Jetscape {
   void SetEventPlaneAngle(double d) { EventPlaneAngle = d; };
 
  private:
-
   // ============================ Initial Hard Process
   // =================================
 
-  double SigmaGen = -1;          ///< Cross-section value
-  double SigmaErr = -1;          ///< Cross-section uncertainty
-  double PtHat = -1;             ///< pt-hat value
-  double EventWeight = 1;        ///< Event weight
+  double SigmaGen = -1;    ///< Cross-section value
+  double SigmaErr = -1;    ///< Cross-section uncertainty
+  double PtHat = -1;       ///< pt-hat value
+  double EventWeight = 1;  ///< Event weight
 
   // ============================ Initial State
   // =================================
 
-  double Npart = -1;             ///< Number of participants (could be int, but, using double to allow averaged values)
-  double Ncoll = -1;             ///< Number of binary collisions (could be int, but using double to allow averaged values)
-  double TotalEntropy = -1;      ///< Total entropy
-  double EventCentrality = -1;   ///< Event centrality
+  double Npart = -1;  ///< Number of participants (could be int, but, using
+                      ///< double to allow averaged values)
+  double Ncoll = -1;  ///< Number of binary collisions (could be int, but using
+                      ///< double to allow averaged values)
+  double TotalEntropy = -1;     ///< Total entropy
+  double EventCentrality = -1;  ///< Event centrality
 
   // ============================ Hydro =================================
 
-  double EventPlaneAngle = -999; ///< Event plane angle (2nd order)
+  double EventPlaneAngle = -999;  ///< Event plane angle (2nd order)
 
   // ============================ Other possible options
   // ================================= IS: double Eccentricity; double

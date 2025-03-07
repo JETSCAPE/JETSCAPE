@@ -14,6 +14,10 @@
  * See COPYING for details.
  ******************************************************************************/
 
+/**
+ * @file JetScapeLogger.h
+ * @brief Defines logging utilities for the JetScape framework.
+ */
 #ifndef JETSCAPELOGGER_H
 #define JETSCAPELOGGER_H
 
@@ -98,6 +102,10 @@ class Vertex;
 class Parton;
 
 // -------------------------------------------
+
+/**
+ * @brief Thread-safe output stream wrapper.
+ */
 struct SafeOstream {
   struct GuardedImpl {
     GuardedImpl() = delete;
@@ -141,13 +149,16 @@ struct SafeOstream {
 };
 
 // --------------------------------
-// Just a helper class to make the interface
-// consistent with << operator
-// In principle simple extension to
-// log into a file ... via m_dest
-// Think about thread safety ...
-// << overload in Parton class not working!? Check ...
 
+/**
+ * @brief Streamer class for log message handling.
+ * @note Just a helper class to make the interface
+ * consistent with << operator
+ * In principle simple extension to
+ * log into a file ... via m_dest
+ * Think about thread safety ...
+ * << overload in Parton class not working!? Check ...
+ */
 class LogStreamer {
   shared_ptr<std::ostringstream> m_collector;
   std::ostream *m_dest;
@@ -172,6 +183,9 @@ class LogStreamer {
   }
 };
 
+/**
+ * @brief Thread-safe log message streamer.
+ */
 class LogStreamerThread {
   shared_ptr<std::ostringstream> m_collector;
   SafeOstream *m_dest;
@@ -197,6 +211,9 @@ class LogStreamerThread {
 
 // --------------------------------
 
+/**
+ * @brief Singleton logger class for JetScape.
+ */
 class JetScapeLogger {
  public:
   static JetScapeLogger *Instance();
