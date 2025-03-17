@@ -1,4 +1,4 @@
-# JETSCAPE 3.7
+# JETSCAPE 3.7.1
 
 The [JETSCAPE](http://jetscape.org) simulation framework is an overarching computational envelope for developing complete event generators for heavy-ion collisions.
 It allows for modular incorporation of a wide variety of existing and future software that simulates different aspects of a heavy-ion collision.
