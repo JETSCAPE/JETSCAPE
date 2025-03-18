@@ -214,12 +214,29 @@ public:
 
   void GetFinalPartonsForEachShower(shared_ptr<PartonShower> shower);
 
+  /**
+ * @brief Checks if a parton is within the allowed rapidity range.
+ * 
+ * This function calculates the spatial rapidity of a parton based on its 
+ * momentum and position and verifies if it lies within the range defined 
+ * by `RapidityMax`.
+ * 
+ * @param p Reference to the parton object.
+ * @param currentTime The current simulation time.
+ * 
+ * @return `true` if the parton is within the rapidity range, `false` otherwise.
+ */
+  bool IfInRapidityRange(Parton &p, double currentTime);
 protected:
   std::weak_ptr<LiquefierBase> liquefier_ptr;
 
 private:
   double deltaT;
   double maxT;
+
+  // flag to set rapidity range, only partons inside the rapidity range would be tracked
+  int SetRapidityRange = 0; 
+  double RapidityMax;
 
   double qhat;
   shared_ptr<Parton> inP;

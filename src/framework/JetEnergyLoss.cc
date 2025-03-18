@@ -113,6 +113,9 @@ void JetEnergyLoss::Init() {
   maxT = GetXMLElementDouble({"Eloss", "maxT"});
   JSINFO << "Eloss shower with deltaT = " << deltaT << " and maxT = " << maxT;
 
+  SetRapidityRange = GetXMLElementInt({"Eloss", "SetRapidityRange"});
+  RapidityMax = GetXMLElementDouble({"Eloss", "RapidityMax"}); //Only of use if SetRapidityRange is set to 1
+
   std::string mutexOnString = GetXMLElementText({"Eloss", "mutex"}, false);
   if (!mutexOnString.compare("ON"))
   //Check mutual exclusion of Eloss Modules
@@ -210,6 +213,12 @@ void JetEnergyLoss::DoShower() {
         pShower->new_parton(vStart, vEnd,
                             make_shared<Parton>(pInTempModule.at(0)));
         foundchangedorig = true;
+        if (SetRapidityRange) {
+          //hard parton out of rapidity cut doesn't shower
+          if(!IfInRapidityRange(pIn[i], currentTime)){
+            break;
+          }
+        }        
       }
 
       vStart = vStartVec[i];
@@ -296,6 +305,11 @@ void JetEnergyLoss::DoShower() {
         // do not push back photons
         if (pInTempModule[0].isPhoton(pInTempModule[0].pid()))
           continue;
+        if (SetRapidityRange) {
+          if(!IfInRapidityRange(pInTempModule[0], currentTime)){
+            continue;
+          }
+        }
         pInTemp.push_back(pInTempModule[0]);
       } else if (pOutTemp.size() == 1) {
         // this is the free-streaming case for MARTINI or LBT
@@ -311,6 +325,11 @@ void JetEnergyLoss::DoShower() {
         // do not push back photons
         if (pOutTemp[0].isPhoton(pOutTemp[0].pid()))
           continue;
+        if (SetRapidityRange) {
+          if(!IfInRapidityRange(pOutTemp[0], currentTime)){
+            continue;
+          }
+        }
         pInTemp.push_back(pOutTemp[0]);
       } else {
         for (int k = 0; k < pOutTemp.size(); k++) {
@@ -329,7 +348,12 @@ void JetEnergyLoss::DoShower() {
           // do not push back photons
           if (pOutTemp[k].isPhoton(pOutTemp[k].pid()))
             continue;
-
+          //do not push partons out of eta range if the SetRapidityRange flag is set
+          if (SetRapidityRange) {
+            if(!IfInRapidityRange(pOutTemp[k], currentTime)){
+              continue;
+            }
+          }
           pOut.push_back(pOutTemp[k]);
         }
       }
@@ -431,6 +455,39 @@ void JetEnergyLoss::GetFinalPartonsForEachShower(
     shared_ptr<PartonShower> shower) {
 
   this->final_Partons.push_back(shower.get()->GetFinalPartons());
+}
+
+
+bool JetEnergyLoss::IfInRapidityRange(Parton &p, double currentTime) {
+  double vX, vY, vZ, vMod;
+  double OnShellEnergy;
+  double nowZ;
+  double SpactialRadpidity;
+  vX = vY = vZ = vMod = OnShellEnergy = nowZ = SpactialRadpidity = 0.0;
+
+  if (abs(p.pid()) == 4 || abs(p.pid() == 5)) {
+    OnShellEnergy = std::sqrt(p.px() * p.px() + p.py() * p.py() + p.pz() * p.pz() + p.restmass() * p.restmass());
+    vX = p.px() / OnShellEnergy;
+    vY = p.py() / OnShellEnergy;
+    vZ = p.pz() / OnShellEnergy;
+  } else {
+    // for massless partons
+    vX = p.px() / p.e();
+    vY = p.py() / p.e();
+    vZ = p.pz() / p.e();
+    vMod = std::sqrt(vX * vX + vY * vY + vZ * vZ);
+    vX = vX / vMod;
+    vY = vY / vMod;
+    vZ = vZ / vMod;
+  }
+
+  nowZ = p.x_in().comp(3) + (currentTime - p.x_in().comp(0)) * vZ;
+  SpactialRadpidity = 0.5 * std::log((currentTime + nowZ) / (currentTime - nowZ));
+  if (abs(SpactialRadpidity) > RapidityMax) {
+    //JSINFO << "SpactialRadpidity = " << SpactialRadpidity<<" pid "<<p.pid()<<" pStat "<<p.pstat() <<" eta "<<p.eta()<<" currentTime "<<currentTime<<" nowZ "<<nowZ;
+    return false;
+  }
+  return true;
 }
 
 } // end namespace Jetscape

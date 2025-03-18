@@ -157,6 +157,10 @@
     <mutex>ON</mutex>
     <AddLiquefier> false </AddLiquefier>
 
+    <!--The parton within the specified rapidity range is not processed if set to 1, and the parton is free-streamed-->
+    <SetRapidityRange> 0 </SetRapidityRange>
+    <RapidityMax> 10.0 </RapidityMax>
+
     <Matter>
       <name>Matter</name>
       <matter_on> 1 </matter_on>
