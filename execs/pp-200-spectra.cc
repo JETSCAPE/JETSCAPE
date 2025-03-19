@@ -124,6 +124,7 @@ int main(int argc, char* argv[]){
     TH1D* protondata = (TH1D*) protondir->Get("Hist1D_y1");
     TGraphErrors* protongraph = (TGraphErrors*) protondir->Get("Graph1D_y1");
     TH1D *HistTotalProtons = getBlankCopy(protondata,"Proton Spectrum","Proton Spectrum");
+    TH1D *HistRecoProtons = getBlankCopy(protondata,"Reco Proton Spectrum","Reco Proton Spectrum");
 
     //hard pions
     double hardPionBins[] = {6.0,6.5,7.0,7.5,8.0,8.5,9.0,9.5,10.0,12.0,14.0,16.0,18.0,20.0};
@@ -172,6 +173,7 @@ int main(int argc, char* argv[]){
         TH1D *tempPions = getBlankCopy(piondata,"Pion Spectrum", "Pion Spectrum pT");
         TH1D *tempKaons = getBlankCopy(kaondata,"Kaon Spectrum", "Kaon Spectrum pT");
         TH1D *tempProtons = getBlankCopy(protondata,"Proton Spectrum", "Proton Spectrum pT");
+        TH1D *tempRecoProtons = getBlankCopy(protondata,"Proton Spectrum", "Proton Spectrum pT");
         TH1D *tempHads = new TH1D("Hadron Spectrum", "Hadron Spectrum pT", NpThadBin, hadpTBin);
         TH1D *tempHardPions = new TH1D("Pi0 Spectrum", "Pi0 Spectrum pT", NhardPionBins, hardPionBins);
         TH1D *tempJets = getBlankCopy(jetdata, "Bin Jet Spectra", "Jet Spectra");
@@ -219,6 +221,7 @@ int main(int argc, char* argv[]){
                     if(PID == 211) tempPions->Fill(PT, strength);
                     if(PID == 321) tempKaons->Fill(PT, strength);
                     if(PID == 2212) tempProtons->Fill(PT, strength);
+                    if(PID == 2212 and pStat < 815) tempRecoProtons->Fill(PT, strength);
                 } 
 
                 if(fabs(Eta) < hardPionEtaCut && abs(PID) == 211)
@@ -265,6 +268,7 @@ int main(int argc, char* argv[]){
         HistTotalPions->Add(tempPions,HardCrossSection/Events);
         HistTotalKaons->Add(tempKaons,HardCrossSection/Events);
         HistTotalProtons->Add(tempProtons,HardCrossSection/Events);
+        HistRecoProtons->Add(tempRecoProtons,HardCrossSection/Events);
         HistTotalHads->Add(tempHads,HardCrossSection/(xsectotal*Events));
         HistTotalHardPions->Add(tempHardPions,HardCrossSection/Events);
         HistTotalJets->Add(tempJets,HardCrossSection/Events);
@@ -280,6 +284,7 @@ int main(int argc, char* argv[]){
     } //k-loop ends here (pTHatBin loop)
 
     //Scaling totals by global factors and the identified pions by bin centers: dSigma/(2*pi*pT*dpT*dEta)
+    HistRecoProtons->Divide(HistTotalProtons);
     scaleBins(HistTotalPions,(1.0/(2*M_PI*2.0*idHadronEtaCut)));
     scaleBins(HistTotalKaons,(1.0/(2*M_PI*2.0*idHadronEtaCut)));
     scaleBins(HistTotalProtons,(1.0/(2*M_PI*2.0*idHadronEtaCut)));
@@ -291,6 +296,7 @@ int main(int argc, char* argv[]){
     HistTotalPions->Write("raw pions"); smoothBins(HistTotalPions); HistTotalPions->Write("identified pions");
     HistTotalKaons->Write("raw kaons"); smoothBins(HistTotalKaons); HistTotalKaons->Write("identified kaons");
     HistTotalProtons->Write("raw protons"); smoothBins(HistTotalProtons); HistTotalProtons->Write("identified protons");
+    HistRecoProtons->Write("reco protons");
     HistTotalHads->Write("raw hads"); smoothBins(HistTotalHads); HistTotalHads->Write("identified hads");
     HistTotalHardPions->Write("raw hard pions"); smoothBins(HistTotalHardPions); HistTotalHardPions->Write("identified hard pions");
     HistTotalJets->Write("jets"); smoothBins(HistTotalJets); HistTotalJets->Write("smooth jets");

@@ -145,6 +145,7 @@ int main(int argc, char* argv[]){
     TH1D *HistTotalKaonsHard = new TH1D("Kaon Spectrum Hard", "Kaon Spectrum pT", NpTkaonBin, kaondata->GetXaxis()->GetXbins()->GetArray());
     TH1D *HistTotalProtonsSoft = new TH1D("Proton Spectrum Soft", "Proton Spectrum pT", NpTprotonBin, protondata->GetXaxis()->GetXbins()->GetArray());
     TH1D *HistTotalProtonsHard = new TH1D("Proton Spectrum Hard", "Proton Spectrum pT", NpTprotonBin, protondata->GetXaxis()->GetXbins()->GetArray());
+    TH1D *HistRecoProtons = new TH1D("Proton Spectrum", "Proton Spectrum pT", NpTprotonBin, protondata->GetXaxis()->GetXbins()->GetArray());
     HistTotalJet->SetName("Combined Jet pT Spectrum");
     //HistTotalHadron->SetName("Combined Hadron pT Spectrum");
 
@@ -218,6 +219,7 @@ int main(int argc, char* argv[]){
         TH1D *tempKaonsHard = new TH1D("Hard Kaon Spectrum Temp", "Kaon Spectrum pT", NpTkaonBin, kaondata->GetXaxis()->GetXbins()->GetArray());
         TH1D *tempProtonsSoft = new TH1D("Soft Proton Spectrum Temp", "Proton Spectrum pT", NpTprotonBin, protondata->GetXaxis()->GetXbins()->GetArray());
         TH1D *tempProtonsHard = new TH1D("Hard Proton Spectrum Temp", "Proton Spectrum pT", NpTprotonBin, protondata->GetXaxis()->GetXbins()->GetArray());
+        TH1D *tempProtonsReco = new TH1D("Hard Proton Spectrum Temp", "Proton Spectrum pT", NpTprotonBin, protondata->GetXaxis()->GetXbins()->GetArray());
 
         //Data structures for events read in to save run time
         vector<shared_ptr<Hadron>> hadrons;
@@ -287,6 +289,8 @@ int main(int argc, char* argv[]){
                     if(abs(PID) == 2212) {
                         if(PT < softend) tempProtonsSoft->Fill(PT,strength);
                         else tempProtonsHard->Fill(PT,strength);
+                        
+                        if(pStat < 815) tempProtonsReco->Fill(PT,strength);
                     }
                 } 
             }
@@ -392,6 +396,7 @@ int main(int argc, char* argv[]){
         tempKaonsHard->Sumw2(); tempKaonsHard->Write();
         tempProtonsSoft->Sumw2(); tempProtonsSoft->Write();
         tempProtonsHard->Sumw2(); tempProtonsHard->Write();
+        tempProtonsReco->Sumw2(); tempProtonsReco->Write();
         HistTempSingleHadronSoft->Sumw2(); HistTempSingleHadronSoft->Write();
         HistTempSingleHadronHard->Sumw2(); HistTempSingleHadronHard->Write();
         
@@ -405,6 +410,7 @@ int main(int argc, char* argv[]){
         HistTotalKaonsHard->Add(tempKaonsHard,factor);
         HistTotalProtonsSoft->Add(tempProtonsSoft,factor);
         HistTotalProtonsHard->Add(tempProtonsHard,factor);
+        HistRecoProtons->Add(tempProtonsReco,factor);
 		HistTotalJet->Add(HistTempJet,HardCrossSection); 
         HistTotalJet2->Add(HistTempJet2,HardCrossSection/Events);
         HistTotalJet3->Add(HistTempJet3,HardCrossSection/Events);
@@ -505,6 +511,7 @@ int main(int argc, char* argv[]){
     HistTotalKaonsHard->Write("raw hard kaons");
     HistTotalProtonsSoft->Write("raw soft protons");
     HistTotalProtonsHard->Write("raw hard protons");
+    HistRecoProtons->Write("raw reco protons");
 
     //Scaling totals by global factors and the identified pions by bin centers
     HistTotalJet2->Scale(1.0/(2.0*JetEtaCut),"width");
@@ -517,6 +524,7 @@ int main(int argc, char* argv[]){
     scaleBins(HistTotalKaonsHard,(1.0/(2*M_PI*2.0*idHadronYCut)));
     scaleBins(HistTotalProtonsSoft,(1.0/(2*M_PI*2.0*idHadronYCut)));
     scaleBins(HistTotalProtonsHard,(1.0/(2*M_PI*2.0*idHadronYCut)));
+    scaleBins(HistRecoProtons,(1.0/(2*M_PI*2.0*idHadronYCut)));
 
     //hadrons
     //hadron data graph
@@ -591,6 +599,12 @@ int main(int argc, char* argv[]){
     myRatioPlot(piongraph, HistTotalPionsSoft, HistTotalPionsHard, "Pion Yields", true, true);
     myRatioPlot(kaongraph, HistTotalKaonsSoft, HistTotalKaonsHard, "Kaon Yields", true, true);
     myRatioPlot(protongraph, HistTotalProtonsSoft, HistTotalProtonsHard, "Proton Yields", true, true);
+
+    //Reco checks
+    HistRecoProtons->Write("Reco proton spectrum");
+    HistTotalProtonsSoft->Add(HistTotalProtonsHard);
+    HistRecoProtons->Divide(HistTotalProtonsSoft);
+    HistRecoProtons->Write("Reco proton ratio");
 
     //jets
     //jet data graph
