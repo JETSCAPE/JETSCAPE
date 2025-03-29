@@ -162,6 +162,23 @@ void PythiaGun::InitTask() {
 void PythiaGun::Exec() {
   VERBOSE(1) << "Run Hard Process : " << GetId() << " ...";
   VERBOSE(8) << "Current Event #" << GetCurrentEvent();
+  
+  
+  // For parsing text
+  stringstream numbf(stringstream::app | stringstream::in | stringstream::out);
+  int CurrentEvent = GetCurrentEvent();
+  if (CurrentEvent % 100 ==0){
+      int index_ = CurrentEvent / 100;
+       pTHatMin = pthat_bins[index_][0];pTHatMax=pthat_bins[index_][1];
+        numbf.str("PhaseSpace:pTHatMin = "); numbf << pTHatMin; readString(numbf.str());
+        numbf.str("PhaseSpace:pTHatMax = "); numbf << pTHatMax; readString(numbf.str());
+
+        if (!init()) { // Pythia>8.1
+            throw std::runtime_error("Pythia init() failed.");
+        }
+   }
+
+
 
   bool flag62 = false;
   vector<Pythia8::Particle> p62;
