@@ -2,7 +2,7 @@
 ### Initial Cmake Setup ###
 ###########################
 
-cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 project (JetScape CXX C)
 
 # Fail if cmake is called in the source directory
