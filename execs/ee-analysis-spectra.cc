@@ -139,6 +139,7 @@ int main(int argc, char* argv[]){
     TH1D *tempProtons = new TH1D("Proton Spectrum", "Proton Spectrum pT", NpTprotonBin, protonpTBin);
     TH1D* kPionBase = (TH1D*)tempKaons->Clone();
     TH1D* pPionBase = (TH1D*)tempProtons->Clone();
+    TH1D* protonRecoRatio = (TH1D*)tempProtons->Clone();
     
     //jet stuff declaration
     std::vector <fjcore::PseudoJet> fjInputs;
@@ -226,6 +227,7 @@ int main(int argc, char* argv[]){
                 }
                 if(abs(PID) == 321) tempKaons->Fill(xp);
                 if(abs(PID) == 2212) tempProtons->Fill(xp);
+                if(abs(PID) == 2212 and pStat < 815) protonRecoRatio->Fill(xp);
             }
         }
 
@@ -295,6 +297,10 @@ int main(int argc, char* argv[]){
     HistTempJet->Write();
     HistTempdiJet->Write();
     xeHist->Write();
+
+    //reco ratio
+    protonRecoRatio->Divide(tempProtons);
+    protonRecoRatio->Write("Proton Reco Ratio");
     
     //scaling histograms
     HistMultiplicity->Scale(1.0/(double)Eventskept); //times 2 to match the data
