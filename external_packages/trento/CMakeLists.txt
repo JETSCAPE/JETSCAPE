@@ -1,5 +1,5 @@
 
-cmake_minimum_required(VERSION 3.4)
+cmake_minimum_required(VERSION 3.5)
 project(trento VERSION 1.5.1 LANGUAGES CXX)
 
 
