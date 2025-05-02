@@ -14,21 +14,14 @@
  * See COPYING for details.
  ******************************************************************************/
 
-/** TaskSupport instance class (meant as singelton)
- * Keeps track of every created task in a thread-safe manner
- * and provides resources that depend on such information
- * Initial reason was to provide tasks with random seeds
- * such that reproducible running is possible
- * It provides a random engine factory.
- * That way individual random engines can be used where necessary
- * but by default all can use the same
- * (the state of mersenne twister can be  rather large)
+/**
+ * @file JetScapeTaskSupport.h
+ * @brief Declaration of the JetScapeTaskSupport singleton class.
  *
- * Note that (apart from Microsoft VS2013), magic statics should ensure that
- * the Instance() method is automagically thread safe
- *
- * Note 2: make_unique doesn't work for some reason. "new" does the trick here
- * though.
+ * This class keeps track of every created task in a thread-safe manner and
+ * provides shared or task-specific resources (like random number generators)
+ * necessary for reproducible simulations. It acts as a support utility for
+ * JetScapeTask modules.
  */
 
 #ifndef JETSCAPETASKSUPPORT_H
@@ -51,43 +44,96 @@ using std::atomic_int;
 
 namespace Jetscape {
 
-class JetScapeTaskSupport  //: public
-                           //: sigslot::has_slots<sigslot::multi_threaded_local>
-{
+/**
+ * @class JetScapeTaskSupport
+ * @brief Singleton class that provides support utilities for JetScape tasks.
+ *
+ * This class manages task registration, task-specific or shared random number
+ * generators, and other resources. It ensures thread-safe access and consistent
+ * initialization across tasks. 
+ *
+ * Initially developed to provide reproducible random seeds to each task.
+ * It uses a Mersenne Twister engine (`std::mt19937`) as the RNG.
+ *
+ * - Uses magic statics (thread-safe except on MSVC 2013).
+ * - `make_unique` was avoided due to platform-specific issues.
+ */
+class JetScapeTaskSupport {
  public:
+  /**
+   * @brief Get the singleton instance of JetScapeTaskSupport.
+   * @return Pointer to the singleton instance.
+   */
   static JetScapeTaskSupport *Instance();
-  // void CleanUp();
 
-  /// Tasks should call this method at creation and
-  /// remember the answer as their task id
-  /// This could co a lot more, like keep a map of numbers to task.id
-  /// (essentially the name of the task) But for now keep it simple
+  /**
+   * @brief Register a task and assign it a unique ID.
+   * 
+   * This function should be called once per task at construction time.
+   * @return An integer task ID unique to the current session.
+   */
   int RegisterTask();
 
-  /// Initialize random engine functionality from the XML file
+  /**
+   * @brief Read the random seed from the XML configuration.
+   * 
+   * Initializes the random seed used for RNG generation.
+   */
   static void ReadSeedFromXML();
 
-  /// Return a handle to a mersenne twister
-  /// Usually this should be just one shared by everybody
-  /// but if reproducible seeds are requested,
-  /// every task gets their own
+  /**
+   * @brief Get a random number generator for a task.
+   *
+   * Returns a `std::shared_ptr<std::mt19937>` to a Mersenne Twister RNG.
+   * Depending on configuration, each task may receive a unique RNG or share a 
+   * global one.
+   *
+   * @param TaskId The ID of the task requesting the RNG.
+   * @return Shared pointer to a Mersenne Twister RNG.
+   */
   shared_ptr<std::mt19937> GetMt19937Generator(int TaskId);
 
-  // Getters
+  /**
+   * @brief Get the base random seed used for RNG creation.
+   * @return The current random seed as an unsigned integer.
+   */
   static unsigned int GetRandomSeed() { return random_seed_; };
 
  protected:
+  /**
+   * @brief Flag to determine if each task should have its own RNG.
+   */
   static bool one_generator_per_task_;
 
  private:
+  /**
+   * @brief Private constructor (singleton pattern).
+   */
   JetScapeTaskSupport() : CurrentTaskNumber(0){};
 
+  /**
+   * @brief Singleton instance.
+   */
   static JetScapeTaskSupport *m_pInstance;
 
+  /**
+   * @brief Counter to assign unique task IDs.
+   */
   atomic_int CurrentTaskNumber;
+
+  /**
+   * @brief The global random seed value.
+   */
   static unsigned int random_seed_;
+
+  /**
+   * @brief Initialization flag for RNG.
+   */
   static bool initialized_;
 
+  /**
+   * @brief Shared RNG instance for all tasks (if applicable).
+   */
   static shared_ptr<std::mt19937> one_for_all_;
 };
 
