@@ -14,6 +14,11 @@
  * See COPYING for details.
  ******************************************************************************/
 
+/**
+ * @file LinearInterpolation.h
+ * @brief Interpolation utility functions (linear, bilinear, trilinear) for general types.
+ */
+
 #ifndef LINEARINTERPOLATION_H
 #define LINEARINTERPOLATION_H
 
@@ -23,21 +28,51 @@
 
 namespace Jetscape {
 
-/// any type with + and scale * overloaded can use this function
+/**
+ * @brief Perform 1D linear interpolation.
+ *
+ * Template function to linearly interpolate between two points.
+ * Works with any type supporting addition and scalar multiplication.
+ *
+ * @tparam type Data type to interpolate (e.g., float, double).
+ * @param x0 Lower x-bound.
+ * @param x1 Upper x-bound.
+ * @param y0 Value at x0.
+ * @param y1 Value at x1.
+ * @param x  Interpolation point.
+ * @return Interpolated value of type `type`.
+ */
 template <class type>
 type LinearInt(real x0, real x1, type y0, type y1, real x) {
   type temp = ((x - x0) * y1 + (x1 - x) * y0) / (x1 - x0);
   return temp;
 }
 
-// inspired by numerical recipes
-// x0,x1: grid points in x-direction
-// y0,y1: grid points in y-direction
-// f0-f3: function value starting at x0,y0, continue counterclockwise
-// put differently: f0=f(x0,y0)
-// f1=f(x1,y0)
-// f2=f(x1,y1)
-// f3=f(x0,y1)
+/**
+ * @brief Perform 2D bilinear interpolation.
+ *
+ * Inspired by Numerical Recipes, this function interpolates on a rectangle
+ * defined by four corner values.
+ *
+ * Corner function values are:
+ * - f0 = f(x0, y0)
+ * - f1 = f(x1, y0)
+ * - f2 = f(x1, y1)
+ * - f3 = f(x0, y1)
+ *
+ * @tparam type Data type to interpolate.
+ * @param x0 Lower x-bound.
+ * @param x1 Upper x-bound.
+ * @param y0 Lower y-bound.
+ * @param y1 Upper y-bound.
+ * @param f0 Function value at (x0, y0).
+ * @param f1 Function value at (x1, y0).
+ * @param f2 Function value at (x1, y1).
+ * @param f3 Function value at (x0, y1).
+ * @param x Interpolation x-coordinate.
+ * @param y Interpolation y-coordinate.
+ * @return Interpolated value of type `type`.
+ */
 template <class type>
 type BilinearInt(real x0, real x1, real y0, real y1, type f0, type f1, type f2,
                  type f3, real x, real y) {
@@ -56,7 +91,31 @@ type BilinearInt(real x0, real x1, real y0, real y1, type f0, type f1, type f2,
   return temp;
 }
 
-// 3D linear interpolation
+/**
+ * @brief Perform 3D trilinear interpolation.
+ *
+ * Interpolates on a cube defined by 8 function values at the corners.
+ *
+ * @tparam type Data type to interpolate.
+ * @param x0 Lower x-bound.
+ * @param x1 Upper x-bound.
+ * @param y0 Lower y-bound.
+ * @param y1 Upper y-bound.
+ * @param z0 Lower z-bound.
+ * @param z1 Upper z-bound.
+ * @param f000 Function value at (x0, y0, z0).
+ * @param f001 Function value at (x0, y0, z1).
+ * @param f010 Function value at (x0, y1, z0).
+ * @param f011 Function value at (x0, y1, z1).
+ * @param f100 Function value at (x1, y0, z0).
+ * @param f101 Function value at (x1, y0, z1).
+ * @param f110 Function value at (x1, y1, z0).
+ * @param f111 Function value at (x1, y1, z1).
+ * @param x Interpolation x-coordinate.
+ * @param y Interpolation y-coordinate.
+ * @param z Interpolation z-coordinate.
+ * @return Interpolated value of type `type`.
+ */
 template <class type>
 type TrilinearInt(real x0, real x1, real y0, real y1, real z0, real z1,
                   type f000, type f001, type f010, type f011, type f100,
