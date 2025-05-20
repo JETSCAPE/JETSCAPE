@@ -63,10 +63,10 @@ public:
   void WriteComment(string s) { }
   void WriteWhiteSpace(string s) { }
 
-
 protected:
   T output_file; //!< Output file
   std::vector<std::shared_ptr<Hadron>> particles;
+  bool writeCentrality;
   static RegisterJetScapeModule<JetScapeWriterQnVectorStream<ofstream>> regQnVector;
   static RegisterJetScapeModule<JetScapeWriterQnVectorStream<ogzstream>> regQnVectorGZ;
 private:
@@ -78,8 +78,6 @@ private:
   int nrap_;
   int norder_;
   std::map< int, int > chpdg_;
-  
-
 };
 
 

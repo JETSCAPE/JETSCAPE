@@ -31,7 +31,9 @@ RegisterJetScapeModule<JetScapeWriterQnVectorStream<ogzstream>>
     JetScapeWriterQnVectorStream<ogzstream>::regQnVectorGZ("JetScapeWriterQnVectorAsciiGZ");
 
 template <class T>
-JetScapeWriterQnVectorStream<T>::JetScapeWriterQnVectorStream(string m_file_name_out) {
+JetScapeWriterQnVectorStream<T>::JetScapeWriterQnVectorStream(string m_file_name_out):
+  writeCentrality{false}
+{
   SetOutputFileName(m_file_name_out);
 }
 
@@ -41,25 +43,29 @@ template <class T> JetScapeWriterQnVectorStream<T>::~JetScapeWriterQnVectorStrea
     Close();
 }
 
-
-
-
-
-
-
 template <class T> void JetScapeWriterQnVectorStream<T>::WriteEvent() {
   // Write the entire event all at once.
+
+  // Optionally write event centrality to event header
+  std::string centrality_text = "";
+  if (writeCentrality) {
+    centrality_text += "\tcentrality\t";
+    centrality_text += std::to_string(GetHeader().GetEventCentrality());
+  }
 
   // First, write header
   // NOTE: Needs consistent "\t" between all entries to simplify parsing later.
   // NOTE: Could also add Npart, Ncoll, and TotalEntropy. See the original stream writer.
   output_file << "#"
-      << "\t" << "Event\t" << GetCurrentEvent() + 1  <<  "\n";
-  
+      << "\t" << "Event\t" << GetCurrentEvent() + 1;
+
+  output_file
+      << centrality_text
+      <<  "\n";
+
   double oversamplenevent = JetScapeXML::Instance()->GetElementDouble({"SoftParticlization", "iSS", "number_of_repeated_sampling"});
 
   std::vector<int> pdglist={211,2212,321,-211,-2212,-321,9999};
- 
 
   for(int id = 0; id < pdglist.size(); id++)
   {  
@@ -69,7 +75,6 @@ template <class T> void JetScapeWriterQnVectorStream<T>::WriteEvent() {
       rapidity_kind = 0;
     }
 
-               
     std::shared_ptr<Qvector> Qvec_tem_ptr = std::make_shared<Qvector>(pTmin_,pTmax_,npT_,rapmin_,rapmax_,nrap_,norder_,select_pid,rapidity_kind);
     int num_pid = 0;
     for (const auto particle : particles) {
@@ -145,21 +150,21 @@ template <class T> void JetScapeWriterQnVectorStream<T>::WriteEvent() {
              output_file<<Qn_real_mean<<" "<<Qn_real_err<<" "
                         <<Qn_imag_mean<<" "<<Qn_imag_err<<" ";
              
-          
           }
           output_file<<total_dN<<std::endl;    
 
-
       }
     }
- 
   }
-    
+
   // Cleanup to be ready for the next event.
   particles.clear();
 }
 
 template <class T> void JetScapeWriterQnVectorStream<T>::Init() {
+  // Whether to write the centrality for each event
+  writeCentrality = static_cast<bool>(JetScapeXML::Instance()->GetElementInt({"write_centrality"}));
+
   if (GetActive()) {
     // Capitalize name
     std::string name = GetName();
@@ -182,18 +187,23 @@ template <class T> void JetScapeWriterQnVectorStream<T>::Init() {
         // The specifics the version number. For consistency in parsing, the string
         // will always be "v<number>"
         << "\t" << "JETSCAPE_FINAL_STATE\t" << "QnVector"
-        << "\t" << "\n"  
-        << "\t" << "# PID of Charged particle 9999 \t" << " y(Charged) = pseudo-rapidity \t y(PID) = rapidity"
+        << "\t" << "\n"
+        << "#"
+        << "\t" << "pTmin\t" << pTmin_ << "\t" << "pTmax\t" << pTmax_ << "\t" << "NpT\t" << npT_ 
+        << "\t" << "rapmin\t" << rapmin_ << "\t" << "rapmax\t" << rapmax_ << "\t" << "Nrap\t" << nrap_ 
+        << "\t" << "Norder\t" << norder_ << "\n"
+        << "#"
+        << "\t" << "PID of Charged particle 9999 \t" << " y(Charged) = pseudo-rapidity \t y(PID) = rapidity"
         << "\t" << "\n"  
         << "#"
         << "\t" << "pid"
-        << "\t" << "pT\t"
-        << "\t" << "pT_err\t"
-        << "\t" << "y\t"
-        << "\t" << "y_err\t"
-        << "\t" << "ET\t"
-        << "\t" << "dNdpTdy\t"
-        << "\t" << "dNdpTdy_err\t"
+        << "\t" << "pT"
+        << "\t" << "pT_err"
+        << "\t" << "y"
+        << "\t" << "y_err"
+        << "\t" << "ET"
+        << "\t" << "dNdpTdy"
+        << "\t" << "dNdpTdy_err"
         << "\t" << "vncos"
         << "\t" << "vncos_err"
         << "\t" << "vnsin"
@@ -211,15 +221,12 @@ template <class T> void JetScapeWriterQnVectorStream<T>::Exec() {
   //   WriteEvent();
 }
 
-
 template <class T> void JetScapeWriterQnVectorStream<T>::Write(weak_ptr<Hadron> h) {
   auto hh = h.lock();
   if (hh) {
     particles.push_back(hh);
   }
 }
-
-
 
 template <class T> void JetScapeWriterQnVectorStream<T>::Close() {
     // Write xsec output at the end.

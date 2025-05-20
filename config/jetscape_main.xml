@@ -52,6 +52,8 @@
         <statusToSkip>-9999</statusToSkip>
         <headerVersion>2</headerVersion>
     </FinalStatePartons>
+    <!--JetScapeWriterFinalStateHadronsAscii/JetScapeWriterFinalStatePartonsAscii output in binary mode, only ascii or only binary switch (not both possible at the same time)-->
+    <JetscapeWriterFinalStateBinaryOutput> 0 </JetscapeWriterFinalStateBinaryOutput>
   </Writer>
 
   <!--  Random Settings. For now, just a global  seed. -->
