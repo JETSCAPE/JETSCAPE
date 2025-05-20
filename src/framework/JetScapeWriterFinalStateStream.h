@@ -69,6 +69,7 @@ protected:
   bool writeCentrality;
   bool writePtHat;
   std::vector<int> particleStatusToSkip;
+  bool binaryOutput;
 };
 
 template <class T>
