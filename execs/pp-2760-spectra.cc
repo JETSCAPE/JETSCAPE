@@ -516,15 +516,15 @@ int main(int argc, char* argv[]){
     //Scaling totals by global factors and the identified pions by bin centers
     HistTotalJet2->Scale(1.0/(2.0*JetEtaCut),"width");
     HistTotalJet3->Scale(1.0/(2.0*JetEtaCut),"width");
-    scaleBins(HistTotalHadronSoft,(1.0/(2*M_PI*2.0*SingleHadronEtaCut)));
-    scaleBins(HistTotalHadronHard,(1.0/(2*M_PI*2.0*SingleHadronEtaCut)));
-    scaleBins(HistTotalPionsSoft,(1.0/(2*M_PI*2.0*idHadronYCut)));
-    scaleBins(HistTotalPionsHard,(1.0/(2*M_PI*2.0*idHadronYCut)));
-    scaleBins(HistTotalKaonsSoft,(1.0/(2*M_PI*2.0*idHadronYCut)));
-    scaleBins(HistTotalKaonsHard,(1.0/(2*M_PI*2.0*idHadronYCut)));
-    scaleBins(HistTotalProtonsSoft,(1.0/(2*M_PI*2.0*idHadronYCut)));
-    scaleBins(HistTotalProtonsHard,(1.0/(2*M_PI*2.0*idHadronYCut)));
-    scaleBins(HistRecoProtons,(1.0/(2*M_PI*2.0*idHadronYCut)));
+    scaleBins(HistTotalHadronSoft,(1.0/(2.*M_PI*2.0*SingleHadronEtaCut)));
+    scaleBins(HistTotalHadronHard,(1.0/(2.*M_PI*2.0*SingleHadronEtaCut)));
+    scaleBins(HistTotalPionsSoft,(1.0/(2.*M_PI*2.0*idHadronYCut)));
+    scaleBins(HistTotalPionsHard,(1.0/(2.*M_PI*2.0*idHadronYCut)));
+    scaleBins(HistTotalKaonsSoft,(1.0/(2.*M_PI*2.0*idHadronYCut)));
+    scaleBins(HistTotalKaonsHard,(1.0/(2.*M_PI*2.0*idHadronYCut)));
+    scaleBins(HistTotalProtonsSoft,(1.0/(2.*M_PI*2.0*idHadronYCut)));
+    scaleBins(HistTotalProtonsHard,(1.0/(2.*M_PI*2.0*idHadronYCut)));
+    scaleBins(HistRecoProtons,(1.0/(2.*M_PI*2.0*idHadronYCut)));
 
     //hadrons
     //hadron data graph
