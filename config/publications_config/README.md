@@ -23,26 +23,28 @@ If there is more information needed to reproduce the results an additional `READ
 
 When XML files are added to the repository, an entry should be added in this file.
 
-## Instructions for running tunes in Docker with specific versions of JETSCAPE
+## Running tunes in Docker with specific versions of JETSCAPE or X-SCAPE
 
-The JETSCAPE Collaboration maintains Docker images with fully installed versions of JETSCAPE for the past several releases. The images are available [here](https://hub.docker.com/r/jetscape/jetscape_full).
+The JETSCAPE Collaboration maintains Docker images with fully installed versions of JETSCAPE and X-SCAPE for the past several releases. The images are available [here](https://hub.docker.com/r/jetscape/jetscape_full) for JETSCAPE and [here](https://hub.docker.com/r/jetscape/xscape_full) for X-SCAPE.
 
-Use the DockerHub tag corresponding to the version you want to run.  For example, to run the PP tune with JETSCAPE 3.7.1, follow these steps:
+Use the DockerHub repository and tag corresponding to the version you want to run. For example, to run the PP tune with JETSCAPE 3.7.1, follow these steps:
 
 
-1) Update the `<outputFilename>test_out</outputFilename>` line in the XML file to include the path to the host system.
+1) Update the `<outputFilename>test_out</outputFilename>` line in the XML file to include the path to the host system. Use the actual path below because the `runContainer.sh` script sets it.
 
 ```xml
 <outputFilename>/home/jetscape-user/JETSCAPE/host/test_out</outputFilename>
 ```
 
-2) From a Linux or WSL bash shell, run the `runDocker.sh` script to execute the JETSCAPE simulation.  Pass the path the to XML tune and the image tag for the version of JETSCAPE you want to run. The image will be downloaded if it isn't available locally.
+2) From a Linux bash shell, run the `runContainer.sh` script to execute the simulation. Pass the path to the XML tune and the image repository:tag for the version of JETSCAPE or X-SCAPE you want to run. The image will be downloaded if it isn't available locally.
 ```bash
-./runDocker.sh arXiv_1910.05481/jetscape_user_PP_1910.05481.xml beta_v0.11
+./runContainer.sh arXiv_1910.05481/jetscape_user_PP_1910.05481.xml jetscape_full:beta_v0.11
 ```
 
-Note that it is required to have Docker installed on your system but it is not required to have JETSCAPE installed, as the Docker image contains the full JETSCAPE installation.
+Note that it is required to have either Docker or Apptainer/Singularity installed on your system but it is not required to have JETSCAPE or X-SCAPE installed, as the image contains the full installation.
 
-## Instructions for running tunes in Apptainer with specific versions of JETSCAPE
+## Running tunes in Apptainer with specific versions of JETSCAPE or X-SCAPE
 
-Apptainer (formerly Singularity) is especially useful on HPC clusters where Docker is likely unavailable.
+Apptainer (formerly Singularity) is especially useful on HPC clusters where Docker is likely unavailable.  If Docker is unavailable, the `runContainer.sh` script will then check for and use Apptainer.
+
+Request an interactive job on the cluster and ensure necessary modules are loaded (for example, `module load apptainer`) before running `./runContainer.sh`.
