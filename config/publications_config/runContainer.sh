@@ -14,37 +14,44 @@
 ##############################################################################
 
 # This script runs a Docker or Apptainer container for a specified
-# version of JETSCAPE. Docker or Apptainer must be installed on the
-# host system and accessible from the Linux bash shell.
+# version of JETSCAPE or X-SCAPE. Docker or Apptainer must be installed on
+# the host system and accessible from the Linux bash shell.
 
 # This script takes two command line arguments:
 # 1) The path to the user input XML file.
 # 2) The image repository and tag for the JETSCAPE or X-SCAPE version.
-#    For example: jetscape_full:beta_v0.11
+#    For example: jetscape_full:v3.7.1
 
 # The JETSCAPE and X-SCAPE images are available at:
 # https://hub.docker.com/r/jetscape/jetscape_full
 # https://hub.docker.com/r/jetscape/xscape_full
 
 # Example usage:
-# ./runContainer.sh arXiv_1910.05481/jetscape_user_PP_1910.05481.xml jetscape_full:beta_v0.11
+# ./runContainer.sh arXiv_1910.05481/jetscape_user_PP_1910.05481.xml jetscape_full:v3.7.1
 
 # check command line arguments
 if [ "$#" -ne 2 ]; then
     echo "Usage: $0 <input_xml> <image_repository:tag>"
-    echo "Example: $0 arXiv_1910.05481/jetscape_user_PP_1910.05481.xml jetscape_full:beta_v0.11"
+    echo "Example: $0 arXiv_1910.05481/jetscape_user_PP_1910.05481.xml jetscape_full:v3.7.1"
     exit 1
 fi
-
-# set accordingly for JETSCAPE or X-SCAPE
-repo_name="JETSCAPE"
 
 input_xml=$1
 image_repo_tag=$2
 
+# set accordingly for JETSCAPE or X-SCAPE
+if [[ "$image_repo_tag" == jetscape_full* ]]; then
+    repo_name="JETSCAPE"
+elif [[ "$image_repo_tag" == xscape_full* ]]; then
+    repo_name="X-SCAPE"
+else
+    echo "Error: image repository name must be jetscape_full or xscape_full"
+    exit 1
+fi
+
 # check if input XML file exists
 if [ ! -f "$input_xml" ]; then
-    echo "Error: Input XML file '$input_xml' not found!"
+    echo "Error: Input XML file '$input_xml' not found"
     exit 1
 fi
 
@@ -83,6 +90,6 @@ elif command -v singularity &> /dev/null; then
 
 # error if none are available
 else
-    echo "Error: Neither Docker nor Apptainer is available."
+    echo "Error: neither Docker nor Apptainer is available"
     exit 1
 fi
