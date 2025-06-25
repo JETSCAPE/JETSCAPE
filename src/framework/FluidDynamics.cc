@@ -50,16 +50,18 @@ void FluidDynamics::Init() {
 
   VERBOSE(8);
   ini = JetScapeSignalManager::Instance()->GetInitialStatePointer().lock();
-  if (!ini) {
-    JSWARN << "No initialization module, "
+  if (!ini and GetId()!="Brick") {
+    JSWARN << "No initial state module, "
            << "try: auto trento = make_shared<TrentoInitial>(); "
            << "jetscape->Add(trento);";
+    exit(-1);
   }
 
   pre_eq_ptr =
       JetScapeSignalManager::Instance()->GetPreEquilibriumPointer().lock();
-  if (!pre_eq_ptr) {
+  if (!pre_eq_ptr and GetId()!="Brick") {
     JSWARN << "No Pre-equilibrium module";
+    exit(-1);
   }
 
   InitializeHydro(parameter_list);
