@@ -1,4 +1,4 @@
-name: build+regression test PbPb
+name: test nPDF build
 
 on:
   pull_request:
@@ -15,20 +15,20 @@ env:
 
 jobs:
   build:
-    name: pp+PbPb
+    name: build nPDF
     runs-on: ubuntu-latest
-    
+
     container:
       image: jetscape/base:stable
       options: --user root
       
     steps:
-      
+  
     - name: Checkout Repository
       uses: actions/checkout@v4
       with:
         path: ${{ github.event.repository.name }}
-      
+  
     - name: Build Application
       run: |
         cd ${GITHUB_WORKSPACE}/${REPO_NAME}
@@ -37,12 +37,12 @@ jobs:
         cmake ..
         make -j2
 
-    - name: Checkout TEST-EXAMPLES
-      uses: actions/checkout@v4
-      with:
-        repository: JETSCAPE/TEST-EXAMPLES
-        ref: main
-        path: TEST-EXAMPLES
-      
-    - name: Run Pb-Pb tests
-      run: ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/runTest.sh -j ${GITHUB_WORKSPACE}/${REPO_NAME} -a ${GITHUB_WORKSPACE}/TEST-EXAMPLES -c ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/PbPb/config/jetscapeTestConfig.yaml -o ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/PbPb/output/new -r ${GITHUB_WORKSPACE}/TEST-EXAMPLES/test/PbPb/output/latest
+    - name: Download nPDF set
+      run: |
+        cd ${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages
+        ./get_lhapdf.sh JAM20-SIDIS_PDF_proton_nlo
+
+    - name: Run JETSCAPE with nPDF
+      run: |
+        cd ${GITHUB_WORKSPACE}/${REPO_NAME}/build
+        ./runJetscape ../config/jetscape_user_nPDF_test.xml

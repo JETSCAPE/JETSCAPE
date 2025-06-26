@@ -67,6 +67,7 @@ class JetScapeWriterQnVectorStream : public JetScapeWriter {
  protected:
   T output_file;  //!< Output file
   std::vector<std::shared_ptr<Hadron>> particles;
+  bool writeCentrality;
   static RegisterJetScapeModule<JetScapeWriterQnVectorStream<ofstream>>
       regQnVector;
   static RegisterJetScapeModule<JetScapeWriterQnVectorStream<ogzstream>>

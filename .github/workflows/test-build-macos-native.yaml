@@ -25,7 +25,18 @@ jobs:
 
     - name: brew install dependencies
       run: |
-        NONINTERACTIVE=1 brew install --formula cmake doxygen root graph-tool hdf5 open-mpi gsl boost zlib libomp
+        export NONINTERACTIVE=1
+        brew update
+        brew cleanup
+        brew install --formula doxygen
+        brew install --formula root
+        brew install --formula graph-tool
+        brew install --formula hdf5
+        brew install --formula open-mpi
+        brew install --formula gsl
+        brew install --formula boost
+        brew install --formula zlib
+        brew install --formula gcc
         . /opt/homebrew/bin/thisroot.sh
         brew --prefix libomp
 
@@ -36,24 +47,75 @@ jobs:
         export LD_LIBRARY_PATH="$ROOTSYS/lib:$LD_LIBRARY_PATH"
         export PYTHONPATH="$ROOTSYS/lib"
 
-    - name: install HepMC 3.2.6
-      run: | # brew tap davidchall/hep
-        brew tap davidchall/homebrew-hep
-        cd $(brew --repository)/Library/Taps/davidchall/homebrew-hep
-        echo "Current directory: $(pwd)"
-        git checkout f643d5cacc19fd0b01d0ecba0daf30452152da03
-        NONINTERACTIVE=1 brew install davidchall/hep/hepmc3
-
-    - name: install Pythia 8309
+    - name: Download CMake 3.31.6
       run: |
-        cd $(brew --repository)/Library/Taps/davidchall/homebrew-hep
-        echo "Current directory: $(pwd)"
-        git checkout 141f8548d045df88d498ab44df16d2091742e4b1
-        NONINTERACTIVE=1 brew install davidchall/hep/pythia
+        curl -L -o cmake.dmg https://github.com/Kitware/CMake/releases/download/v3.31.6/cmake-3.31.6-macos-universal.dmg
+
+    - name: Mount CMake disk image
+      run: |
+        hdiutil attach cmake.dmg -mountpoint /Volumes/CMake
+
+    - name: Copy CMake.app to home directory
+      run: |
+        mkdir -p $HOME/cmake
+        cp -R /Volumes/CMake/CMake.app $HOME/cmake/
+
+    - name: Unmount CMake disk image
+      run: |
+        hdiutil detach /Volumes/CMake
+
+    - name: Add CMake to PATH
+      run: echo "$HOME/cmake/CMake.app/Contents/bin" >> $GITHUB_PATH
+
+    - name: Verify CMake version
+      run: cmake --version
+
+
+    - name: Download HepMC 3.2.6
+      run: |
+        curl -L -O http://hepmc.web.cern.ch/hepmc/releases/HepMC3-3.2.6.tar.gz
+        ls -l
+
+    - name: Build and Install HepMC 3.2.6
+      run: |
+        tar -xzf HepMC3-3.2.6.tar.gz
+        ls -l
+        cp -r HepMC3-3.2.6 hepmc3-source
+        mkdir hepmc3-build
+        cd hepmc3-build
+        cmake -DCMAKE_INSTALL_PREFIX=../hepmc3-install   \
+          -DHEPMC3_ENABLE_ROOTIO:BOOL=OFF            \
+          -DHEPMC3_ENABLE_PROTOBUFIO:BOOL=OFF        \
+          -DHEPMC3_ENABLE_TEST:BOOL=OFF              \
+          -DHEPMC3_INSTALL_INTERFACES:BOOL=ON        \
+          -DHEPMC3_BUILD_STATIC_LIBS:BOOL=OFF        \
+          -DHEPMC3_BUILD_DOCS:BOOL=OFF               \
+          -DHEPMC3_ENABLE_PYTHON:BOOL=ON             \
+          -DHEPMC3_PYTHON_VERSIONS=3.12              \
+          -DHEPMC3_Python_SITEARCH312=../hepmc3-install/lib/python3.12/site-packages \
+          ../hepmc3-source
+        make
+        make install
+
+    - name: Download Pythia 8309
+      run: |
+        cd ${GITHUB_WORKSPACE}
+        curl -SLOk http://pythia.org/download/pythia83/pythia8309.tgz
+        ls -l
+
+    - name: Build and Install Pythia 8309
+      run: |
+        tar -xzf pythia8309.tgz
+        ls -l
+        cd pythia8309
+        ./configure --enable-shared --prefix=${GITHUB_WORKSPACE}/pythia8309 --with-hepmc3=${GITHUB_WORKSPACE}/hepmc3-install
+        make
+        make install
 
     - name: set more variables
       run: |
-        export JETSCAPE_DIR="${GITHUB_WORKSPACE}/${REPO_NAME}"
+        echo "JETSCAPE_DIR=${GITHUB_WORKSPACE}/${REPO_NAME}" >> $GITHUB_ENV
+        echo "PYTHIA8DIR=${GITHUB_WORKSPACE}/pythia8309" >> $GITHUB_ENV
 
     - name: Checkout JETSCAPE Repository
       uses: actions/checkout@v4
@@ -77,7 +139,8 @@ jobs:
 
     - name: Download SMASH
       run: |
-        export PYTHIA8DIR="/opt/homebrew/opt/pythia"
+        echo "JETSCAPE_DIR is $JETSCAPE_DIR"
+        echo "PYTHIA8DIR is $PYTHIA8DIR"
         cd ${GITHUB_WORKSPACE}/${REPO_NAME}/external_packages
         ./get_smash.sh
 

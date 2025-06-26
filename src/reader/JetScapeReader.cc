@@ -25,6 +25,9 @@ JetScapeReader<T>::JetScapeReader()
     : currentEvent{-1},
       sigmaGen{-1},
       sigmaErr{-1},
+      vertexX{-999},
+      vertexY{-999},
+      vertexZ{-999},
       eventWeight{-1},
       EventPlaneAngle{0.0} {
   VERBOSE(8);
@@ -45,6 +48,9 @@ void JetScapeReader<T>::Clear() {
 
   sigmaGen = -1;
   sigmaErr = -1;
+  vertexX = -999;
+  vertexY = -999;
+  vertexZ = -999;
   eventWeight = -1;
   EventPlaneAngle = 0.0;
 }
@@ -158,6 +164,17 @@ void JetScapeReader<T>::Next() {
         std::string dummy;
         data >> dummy >> dummy >> dummy >> EventPlaneAngle;
         JSDEBUG << " EventPlaneAngle=" << EventPlaneAngle;
+      }
+      // vertex position of hard scattering
+      if (line.find("HardProcess") != std::string::npos) {
+        getline(inFile, line);  // get next line to get vertex position
+        std::stringstream data(line);
+        double dummy;
+        data >> dummy >> dummy >> dummy >> dummy >> dummy >> dummy >> dummy >>
+            vertexX >> vertexY >> vertexZ;
+        JSDEBUG << " vertexX=" << vertexX;
+        JSDEBUG << " vertexY=" << vertexY;
+        JSDEBUG << " vertexZ=" << vertexZ;
       }
       continue;
     }

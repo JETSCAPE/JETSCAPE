@@ -19,10 +19,12 @@
 
 #include <memory>
 
-#include "IPGlasma.h"
+// clang-format off
+#include "JetScapeModuleBase.h"
 #include "InitialState.h"
 #include "JetScapeLogger.h"
-#include "JetScapeModuleBase.h"
+#include "IPGlasma.h"
+// clang-format on
 
 using namespace Jetscape;
 

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 project(libJetScape)
 
 # for MacOSX
@@ -35,7 +35,7 @@ endif()
 file(GLOB initialstatesources initialstate/*.cc)
 set(SOURCES ${SOURCES} ${initialstatesources})
 # Take care of options
-if(NOT "${USE_IPGlasma}")
+if(NOT "${USE_IPGLASMA}")
   list(REMOVE_ITEM SOURCES
        ${CMAKE_SOURCE_DIR}/src/initialstate/IPGlasmaWrapper.cc)
 endif()
@@ -129,7 +129,7 @@ if(${HEPMC_FOUND})
   endif()
 endif()
 
-if(USE_IPGlasma)
+if(USE_IPGLASMA)
   target_link_libraries(JetScape ipglasma_lib)
 endif()
 

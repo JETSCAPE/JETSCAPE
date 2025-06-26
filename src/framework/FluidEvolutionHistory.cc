@@ -298,7 +298,14 @@ FluidCellInfo EvolutionHistory::get_tz(Jetscape::real t, Jetscape::real x,
     VERBOSE(4) << "the quest point is outside the light cone! "
                << "t = " << t << ", z = " << z;
   }
-  return (get(tau, x, y, eta));
+  auto cell = get(tau, x, y, eta);
+  if (boost_invariant) {
+    cell.vz = z / t;
+    Jetscape::real gammaL = 1.0 / sqrt(1.0 - cell.vz * cell.vz);
+    cell.vx /= gammaL;
+    cell.vy /= gammaL;
+  }
+  return (cell);
 }
 
 }  // end namespace Jetscape
