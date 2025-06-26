@@ -1,8 +1,9 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion collisions
- * 
+ * Modular, task-based framework for simulating all aspects of heavy-ion
+ *collisions
+ *
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -16,26 +17,26 @@
 #ifndef JETSCAPEREADERFINALSTATEHADRONS_H
 #define JETSCAPEREADERFINALSTATEHADRONS_H
 
-#include "GTL/graph.h"
 #include <GTL/edge_map.h>
 #include <GTL/node_map.h>
-#include "JetClass.h"
-#include "JetScapeParticles.h"
-#include "JetScapeLogger.h"
-#include "StringTokenizer.h"
-#include "PartonShower.h"
 #include <fstream>
 
-using std::ostream;
+#include "GTL/graph.h"
+#include "JetClass.h"
+#include "JetScapeLogger.h"
+#include "JetScapeParticles.h"
+#include "PartonShower.h"
+#include "StringTokenizer.h"
+
+using std::ifstream;
 using std::istream;
 using std::ofstream;
-using std::ifstream;
+using std::ostream;
 
 namespace Jetscape {
 
 class JetScapeReaderFinalStateHadrons {
-
-public:
+ public:
   JetScapeReaderFinalStateHadrons();
   JetScapeReaderFinalStateHadrons(string m_file_name_in) {
     file_name_in = m_file_name_in;
@@ -59,11 +60,11 @@ public:
   double GetEventPlaneAngle() const { return EventPlaneAngle; }
   int TotalEventCount();
 
-private:
+ private:
   StringTokenizer strT;
 
   void InitTask();
-  //void MakeGraph();
+  // void MakeGraph();
   void AddHadron(string s);
   string file_name_in;
   ifstream inFile;
@@ -76,7 +77,7 @@ private:
   double EventPlaneAngle;
 };
 
-} // end namespace Jetscape
+}  // end namespace Jetscape
 
 // ---------------------
 

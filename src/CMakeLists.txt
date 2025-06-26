@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
-project (libJetScape)
+project(libJetScape)
 
 # for MacOSX
 cmake_policy(SET CMP0042 NEW)
@@ -31,12 +31,13 @@ if(NOT "${HEPMC_FOUND}")
        ${CMAKE_SOURCE_DIR}/src/framework/JetScapeWriterHepMC.cc)
 endif()
 
-#initialstate
-FILE(GLOB initialstatesources initialstate/*.cc)
-set (SOURCES  ${SOURCES}  ${initialstatesources} )
-## Take care of options
+# initialstate
+file(GLOB initialstatesources initialstate/*.cc)
+set(SOURCES ${SOURCES} ${initialstatesources})
+# Take care of options
 if(NOT "${USE_IPGLASMA}")
-  list (REMOVE_ITEM SOURCES ${CMAKE_SOURCE_DIR}/src/initialstate/IPGlasmaWrapper.cc)
+  list(REMOVE_ITEM SOURCES
+       ${CMAKE_SOURCE_DIR}/src/initialstate/IPGlasmaWrapper.cc)
 endif()
 
 # trento needs data tables
@@ -128,8 +129,8 @@ if(${HEPMC_FOUND})
   endif()
 endif()
 
-if ( USE_IPGLASMA)
-  target_link_libraries (JetScape ipglasma_lib)
+if(USE_IPGLASMA)
+  target_link_libraries(JetScape ipglasma_lib)
 endif()
 
 if(USE_MUSIC)

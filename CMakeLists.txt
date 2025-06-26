@@ -3,7 +3,7 @@
 # ##############################################################################
 
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
-project (JetScape CXX C)
+project(JetScape CXX C)
 
 # Fail if cmake is called in the source directory
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
@@ -394,15 +394,18 @@ if(USE_FREESTREAM)
   target_compile_definitions(JetScape PRIVATE USE_FREESTREAM)
 endif(USE_FREESTREAM)
 
-if (USE_IPGLASMA)
+if(USE_IPGLASMA)
   if(NOT EXISTS "${CMAKE_SOURCE_DIR}/external_packages/ipglasma")
-      message(FATAL_ERROR "Error: IP-Glasma source has not been downloaded in external_packages by ./get_ipglasma.sh")
+    message(
+      FATAL_ERROR
+        "Error: IP-Glasma source has not been downloaded in external_packages by ./get_ipglasma.sh"
+    )
   endif()
-  if (${GSL_FOUND})
+  if(${GSL_FOUND})
     message("Building IP-Glasma ...")
     add_subdirectory(./external_packages/ipglasma)
   else()
-    message (FATAL_ERROR "GSL is necessary for IP-Glasma" )
+    message(FATAL_ERROR "GSL is necessary for IP-Glasma")
   endif()
   target_compile_definitions(JetScape PRIVATE USE_IPGLASMA)
 endif()
@@ -483,12 +486,12 @@ add_executable(FinalStatePartons ./examples/FinalStatePartons.cc)
 target_link_libraries(FinalStatePartons JetScape)
 
 # executables with additional dependencies
-if ( USE_IPGLASMA )
-    target_link_libraries(runJetscape ${GSL_LIBRARIES})
-endif (USE_IPGLASMA )
-if ( USE_MUSIC AND USE_ISS )
-    target_link_libraries(runJetscape ${GSL_LIBRARIES})
-endif (USE_MUSIC AND USE_ISS )
+if(USE_IPGLASMA)
+  target_link_libraries(runJetscape ${GSL_LIBRARIES})
+endif(USE_IPGLASMA)
+if(USE_MUSIC AND USE_ISS)
+  target_link_libraries(runJetscape ${GSL_LIBRARIES})
+endif(USE_MUSIC AND USE_ISS)
 
 if(USE_MUSIC
    AND USE_ISS
@@ -507,9 +510,10 @@ endif(
 # target_link_libraries(PythiaBrickTestRoot JetScape) endif(${ROOT_FOUND})
 
 # -----------------------------------------------------------
-#### copy essential files for MUSIC to build/
-file(COPY ./external_packages/trento/nucleusConfigs DESTINATION ${CMAKE_BINARY_DIR}/)
-if (USE_IPGLASMA)
+# copy essential files for MUSIC to build/
+file(COPY ./external_packages/trento/nucleusConfigs
+     DESTINATION ${CMAKE_BINARY_DIR}/)
+if(USE_IPGLASMA)
   if(EXISTS "${CMAKE_SOURCE_DIR}/external_packages/ipglasma/")
     file(COPY ${CMAKE_SOURCE_DIR}/examples/test_ipglasma_files/ipglasma.input
          DESTINATION ${CMAKE_BINARY_DIR}/)

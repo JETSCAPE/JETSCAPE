@@ -59,12 +59,11 @@ void HardProcess::Init() {
       exit(-1);
     }
   }
-    string status = GetXMLElementText({"PartonPrinter","Status"});
-    if (status!="off")
-    {
-        printer = GetXMLElementText({"PartonPrinter","FileName"});
-        JSINFO << BOLDYELLOW << "Extra parton info goes to " << printer ;
-    }
+  string status = GetXMLElementText({"PartonPrinter", "Status"});
+  if (status != "off") {
+    printer = GetXMLElementText({"PartonPrinter", "FileName"});
+    JSINFO << BOLDYELLOW << "Extra parton info goes to " << printer;
+  }
 
   InitTask();
 

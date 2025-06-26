@@ -48,12 +48,13 @@ int main(int argc, char** argv) {
   JetScapeLogger::Instance()->SetVerboseLevel(0);
 
   // Whether to write a particular header version (eg. v2), including xsec info.
-  // To enable, pass the desired version (just the number) as the third argument.
-  // Default: v1
+  // To enable, pass the desired version (just the number) as the third
+  // argument. Default: v1
   unsigned int headerVersion = 1;
   if (argc > 3) {
     headerVersion = std::atoi(argv[3]);
-    std::cout << "NOTE: Writing header v" << headerVersion << ", and final cross section and error at EOF.\n";
+    std::cout << "NOTE: Writing header v" << headerVersion
+              << ", and final cross section and error at EOF.\n";
   }
   std::cout << "NOTE: Writing with output version v" << headerVersion << "\n";
 
@@ -78,39 +79,51 @@ int main(int argc, char** argv) {
     if (hadrons.size() > 0) {
       ++SN;
       if (headerVersion > 1) {
-        // NOTE: Needs consistent "\t" between all entries to simplify parsing later.
+        // NOTE: Needs consistent "\t" between all entries to simplify parsing
+        // later.
         dist_output << "#"
-            << "\t" << "Event\t" << SN
-            << "\t" << "weight\t" << reader->GetEventWeight()
-            << "\t" << "EPangle\t" << reader->GetEventPlaneAngle()
-            << "\t" << "N_hadrons\t" << hadrons.size();
+                    << "\t"
+                    << "Event\t" << SN << "\t"
+                    << "weight\t" << reader->GetEventWeight() << "\t"
+                    << "EPangle\t" << reader->GetEventPlaneAngle() << "\t"
+                    << "N_hadrons\t" << hadrons.size();
         if (headerVersion == 3) {
-          dist_output
-              << "\t" << "vertex_x\t" << reader->GetVertexX()
-              << "\t" << "vertex_y\t" << reader->GetVertexY()
-              << "\t" << "vertex_z\t" << reader->GetVertexZ();
+          dist_output << "\t"
+                      << "vertex_x\t" << reader->GetVertexX() << "\t"
+                      << "vertex_y\t" << reader->GetVertexY() << "\t"
+                      << "vertex_z\t" << reader->GetVertexZ();
         }
-        dist_output
-            << "\t" << "|"  // As a delimiter
-            << "\t" << "N"
-            << "\t" << "pid"
-            << "\t" << "status"
-            << "\t" << "E"
-            << "\t" << "Px"
-            << "\t" << "Py"
-            << "\t" << "Pz"
-            << "\n";
-      }
-      else {
-        dist_output << "#" << "\t"
-            << reader->GetEventPlaneAngle() << "\t"
-            << "Event"
-            << SN << "ID\t"
-            << hadrons.size() << "\t"
-            << "pstat-EPx"   << "\t"
-            << "Py"  << "\t"
-            << "Pz"  << "\t"
-            << "Eta" <<  "\t"<< "Phi" << "\n";
+        dist_output << "\t"
+                    << "|"  // As a delimiter
+                    << "\t"
+                    << "N"
+                    << "\t"
+                    << "pid"
+                    << "\t"
+                    << "status"
+                    << "\t"
+                    << "E"
+                    << "\t"
+                    << "Px"
+                    << "\t"
+                    << "Py"
+                    << "\t"
+                    << "Pz"
+                    << "\n";
+      } else {
+        dist_output << "#"
+                    << "\t" << reader->GetEventPlaneAngle() << "\t"
+                    << "Event" << SN << "ID\t" << hadrons.size() << "\t"
+                    << "pstat-EPx"
+                    << "\t"
+                    << "Py"
+                    << "\t"
+                    << "Pz"
+                    << "\t"
+                    << "Eta"
+                    << "\t"
+                    << "Phi"
+                    << "\n";
       }
 
       for (unsigned int i = 0; i < hadrons.size(); i++) {
