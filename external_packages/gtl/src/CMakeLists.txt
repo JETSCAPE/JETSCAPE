@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
-project(GTL_LIB)
+cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+project (GTL_LIB)
 
 # for MacOSX
 cmake_policy(SET CMP0042 NEW)

@@ -1,9 +1,8 @@
 /*******************************************************************************
  * Copyright (c) The JETSCAPE Collaboration, 2018
  *
- * Modular, task-based framework for simulating all aspects of heavy-ion
- *collisions
- *
+ * Modular, task-based framework for simulating all aspects of heavy-ion collisions
+ * 
  * For the list of contributors see AUTHORS.
  *
  * Report issues at https://github.com/JETSCAPE/JETSCAPE/issues
@@ -14,51 +13,43 @@
  * See COPYING for details.
  ******************************************************************************/
 
-#ifndef JETSCAPEREADER_H
-#define JETSCAPEREADER_H
-
-#include <GTL/edge_map.h>
-#include <GTL/node_map.h>
-#include <fstream>
+#ifndef JETSCAPEREADERFINALSTATEHADRONS_H
+#define JETSCAPEREADERFINALSTATEHADRONS_H
 
 #include "GTL/graph.h"
+#include <GTL/edge_map.h>
+#include <GTL/node_map.h>
 #include "JetClass.h"
-#include "JetScapeLogger.h"
 #include "JetScapeParticles.h"
-#include "PartonShower.h"
+#include "JetScapeLogger.h"
 #include "StringTokenizer.h"
-#ifdef USE_GZIP
-#include "gzstream.h"
-#endif
+#include "PartonShower.h"
+#include <fstream>
 
-using std::ifstream;
+using std::ostream;
 using std::istream;
 using std::ofstream;
-using std::ostream;
+using std::ifstream;
 
 namespace Jetscape {
 
-template <class T>
-class JetScapeReader {
- public:
-  JetScapeReader();
-  JetScapeReader(string m_file_name_in) {
+class JetScapeReaderFinalStateHadrons {
+
+public:
+  JetScapeReaderFinalStateHadrons();
+  JetScapeReaderFinalStateHadrons(string m_file_name_in) {
     file_name_in = m_file_name_in;
-    Init();
+    InitTask();
   }
-  virtual ~JetScapeReader();
+  virtual ~JetScapeReaderFinalStateHadrons();
 
   void Close() { inFile.close(); }
-  void Clear();
+  void ClearTask();
 
   void Next();
   bool Finished() { return inFile.eof(); }
 
   int GetCurrentEvent() { return currentEvent - 1; }
-  int GetCurrentNumberOfPartonShowers() { return pShowers.size(); }
-
-  // shared_ptr<PartonShower> GetPartonShower() {return pShower;}
-  vector<shared_ptr<PartonShower>> GetPartonShowers() { return pShowers; }
 
   vector<shared_ptr<Hadron>> GetHadrons() { return hadrons; }
   vector<fjcore::PseudoJet> GetHadronsForFastJet();
@@ -66,45 +57,26 @@ class JetScapeReader {
   double GetSigmaErr() const { return sigmaErr; }
   double GetEventWeight() const { return eventWeight; }
   double GetEventPlaneAngle() const { return EventPlaneAngle; }
-  double GetVertexX() const { return vertexX; }
-  double GetVertexY() const { return vertexY; }
-  double GetVertexZ() const { return vertexZ; }
+  int TotalEventCount();
 
- private:
+private:
   StringTokenizer strT;
 
-  void Init();
-  void AddNode(string s);
-  void AddEdge(string s);
-  // void MakeGraph();
+  void InitTask();
+  //void MakeGraph();
   void AddHadron(string s);
   string file_name_in;
-  T inFile;
+  ifstream inFile;
 
   int currentEvent;
-  int currentShower;
-
-  shared_ptr<PartonShower> pShower;
-  vector<shared_ptr<PartonShower>> pShowers;
-
-  vector<node> nodeVec;
-  vector<edge> edgeVec;
   vector<shared_ptr<Hadron>> hadrons;
   double sigmaGen;
   double sigmaErr;
   double eventWeight;
   double EventPlaneAngle;
-  double vertexX;
-  double vertexY;
-  double vertexZ;
 };
 
-typedef JetScapeReader<ifstream> JetScapeReaderAscii;
-#ifdef USE_GZIP
-typedef JetScapeReader<igzstream> JetScapeReaderAsciiGZ;
-#endif
-
-}  // end namespace Jetscape
+} // end namespace Jetscape
 
 // ---------------------
 

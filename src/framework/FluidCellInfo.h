@@ -25,18 +25,21 @@ namespace Jetscape {
 class FluidCellInfo {
  public:
   // data structure for outputing fluid cell information
-  Jetscape::real energy_density;   //!< Local energy density [GeV/fm^3].
-  Jetscape::real entropy_density;  //!< Local entropy density [1/fm^3].
-  Jetscape::real temperature;      //!< Local temperature [GeV].
-  Jetscape::real pressure;         //!< Thermal pressure [GeV/fm^3].
-  Jetscape::real qgp_fraction;     //!< Fraction of quark gluon plasma assuming
-                                   //!< medium is in QGP+HRG phase.
-  Jetscape::real mu_B;             //!< Net baryon chemical potential [GeV].
-  Jetscape::real mu_C;             //!< Net charge chemical potential [GeV]
-  Jetscape::real mu_S;        //!< Net strangeness chemical potential [GeV].
-  Jetscape::real vx, vy, vz;  //!< Flow velocity.
-  Jetscape::real pi[4][4];    //!< Shear stress tensor [GeV/fm^3].
-  Jetscape::real bulk_Pi;     //!< Bulk viscous pressure [GeV/fm^3].
+  Jetscape::real energy_density = 0.;  //!< Local energy density [GeV/fm^3].
+  Jetscape::real entropy_density = 0.; //!< Local entropy density [1/fm^3].
+  Jetscape::real temperature = 0.;     //!< Local temperature [GeV].
+  Jetscape::real pressure = 0.;        //!< Thermal pressure [GeV/fm^3].
+  Jetscape::real
+      qgp_fraction = 0.; //!< Fraction of quark gluon plasma assuming medium is in QGP+HRG phase.
+  Jetscape::real mu_B = 0.;       //!< Net baryon chemical potential [GeV].
+  Jetscape::real mu_C = 0.;       //!< Net charge chemical potential [GeV]
+  Jetscape::real mu_S = 0.;       //!< Net strangeness chemical potential [GeV].
+  Jetscape::real vx = 0., vy = 0., vz = 0.; //!< Flow velocity.
+  Jetscape::real pi[4][4] = {{0., 0., 0., 0.},
+                             {0., 0., 0., 0.},
+                             {0., 0., 0., 0.},
+                             {0., 0., 0., 0.}};   //!< Shear stress tensor [GeV/fm^3].
+  Jetscape::real bulk_Pi = 0.;    //!< Bulk viscous pressure [GeV/fm^3].
 
   /** Default constructor.*/
   FluidCellInfo();

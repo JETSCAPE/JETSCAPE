@@ -64,15 +64,13 @@ class JetScapeWriterQnVectorStream : public JetScapeWriter {
   void WriteComment(string s) {}
   void WriteWhiteSpace(string s) {}
 
- protected:
-  T output_file;  //!< Output file
+protected:
+  T output_file; //!< Output file
   std::vector<std::shared_ptr<Hadron>> particles;
-  static RegisterJetScapeModule<JetScapeWriterQnVectorStream<ofstream>>
-      regQnVector;
-  static RegisterJetScapeModule<JetScapeWriterQnVectorStream<ogzstream>>
-      regQnVectorGZ;
-
- private:
+  bool writeCentrality;
+  static RegisterJetScapeModule<JetScapeWriterQnVectorStream<ofstream>> regQnVector;
+  static RegisterJetScapeModule<JetScapeWriterQnVectorStream<ogzstream>> regQnVectorGZ;
+private:
   double pTmin_;
   double pTmax_;
   double rapmin_;
@@ -80,7 +78,7 @@ class JetScapeWriterQnVectorStream : public JetScapeWriter {
   int npT_;
   int nrap_;
   int norder_;
-  std::map<int, int> chpdg_;
+  std::map< int, int > chpdg_;
 };
 
 typedef JetScapeWriterQnVectorStream<ofstream> JetScapeWriterQnVectorAscii;

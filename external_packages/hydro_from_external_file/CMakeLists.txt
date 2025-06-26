@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
-project(lib_Hydro_from_file)
+cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+project (lib_Hydro_from_file)
 
 # for MacOSX
 cmake_policy(SET CMP0042 NEW)

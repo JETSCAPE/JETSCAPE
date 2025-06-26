@@ -65,12 +65,14 @@ class JetScapeWriterFinalStateStream : public JetScapeWriter {
   void WriteComment(string s) {}
   void WriteWhiteSpace(string s) {}
 
- protected:
-  T output_file;  //!< Output file
+protected:
+  T output_file; //!< Output file
+  unsigned int headerVersion;
   std::vector<std::shared_ptr<JetScapeParticleBase>> particles;
   bool writeCentrality;
   bool writePtHat;
   std::vector<int> particleStatusToSkip;
+  bool binaryOutput;
 };
 
 template <class T>

@@ -59,11 +59,13 @@ void HardProcess::Init() {
       exit(-1);
     }
   }
-  string status = GetXMLElementText({"PartonPrinter", "Status"});
-  if (status != "off") {
-    printer = GetXMLElementText({"PartonPrinter", "FileName"});
-    JSINFO << BOLDYELLOW << "Extra parton info goes to " << printer;
-  }
+    string status = GetXMLElementText({"PartonPrinter","Status"});
+    if (status!="off")
+    {
+        printer = GetXMLElementText({"PartonPrinter","FileName"});
+        JSINFO << BOLDYELLOW << "Extra parton info goes to " << printer ;
+    }
+
   InitTask();
 
   JetScapeTask::InitTasks();
@@ -116,6 +118,9 @@ void HardProcess::CollectHeader(weak_ptr<JetScapeWriter> w) {
     header.SetSigmaErr(GetSigmaErr());
     header.SetPtHat(GetPtHat());
     header.SetEventWeight(GetEventWeight());
+    header.SetVertexX(hp_list[0]->x_in().x());
+    header.SetVertexY(hp_list[0]->x_in().y());
+    header.SetVertexZ(hp_list[0]->x_in().z());
   }
 }
 

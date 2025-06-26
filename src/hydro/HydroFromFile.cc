@@ -294,13 +294,9 @@ void HydroFromFile::GetHydroInfo(
     temp_fluid_cell_ptr->vz = z / (t + 1e-15);
 #endif
   } else if (hydro_type_ < 6) {
-    t_local = tau_local * cosh(eta_local);
-    z_local = tau_local * sinh(eta_local);
     hydroinfo_MUSIC_ptr->getHydroValues(x_local, y_local, z_local, t_local,
                                         temp_fluid_cell_ptr);
   } else if (hydro_type_ < 9) {
-    t_local = tau_local * cosh(eta_local);
-    z_local = tau_local * sinh(eta_local);
     if (tau_local < PreEq_tauf_) {
       hydroinfo_PreEq_ptr->getHydroValues(x_local, y_local, z_local, t_local,
                                           temp_fluid_cell_ptr);

@@ -168,6 +168,12 @@ void iSpectraSamplerWrapper::Clear() {
 }
 
 void iSpectraSamplerWrapper::PassHadronListToJetscape() {
+  // clear hadron list before passing new events
+  for (unsigned i = 0; i < Hadron_list_.size(); i++) {
+    Hadron_list_.at(i).clear();
+  }
+  Hadron_list_.clear();
+
   unsigned int nev = iSpectraSampler_ptr_->get_number_of_sampled_events();
   VERBOSE(2) << "Passing all sampled hadrons to the JETSCAPE framework";
   VERBOSE(4) << "number of events to pass : " << nev;
@@ -207,6 +213,9 @@ void iSpectraSamplerWrapper::PassHadronListToJetscape() {
                  << Hadron_list_.at(iev).size() << " particles.";
     }
   }
+
+  // clear iSS memory, particles have passed to the framework
+  iSpectraSampler_ptr_->clear();
 }
 
 void iSpectraSamplerWrapper::WriteTask(weak_ptr<JetScapeWriter> w) {

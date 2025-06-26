@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
-project(libJetScapeThird)
+cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+project (libJetScapeThird)
 
 # for MacOSX
 cmake_policy(SET CMP0042 NEW)

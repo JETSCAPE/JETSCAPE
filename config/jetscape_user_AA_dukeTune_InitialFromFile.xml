@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+
+<jetscape>
+
+  <vlevel> 1 </vlevel>
+  <nEvents> 1 </nEvents>
+
+
+  <setReuseHydro> false </setReuseHydro>
+  <nReuseHydro> 1 </nReuseHydro>
+
+  <Random>
+    <seed>0</seed>
+  </Random>
+
+  <outputFilename>event</outputFilename>
+  <JetScapeWriterAscii> on </JetScapeWriterAscii>
+  <JetScapeWriterAsciiGZ> off </JetScapeWriterAsciiGZ>
+  <write_pthat> 1 </write_pthat>
+
+    <!-- Inital State Module  -->
+    <IS>
+        <grid_max_x> 15 </grid_max_x>
+        <grid_max_y> 15 </grid_max_y>
+        <grid_max_z> 0 </grid_max_z>
+        <grid_step_x> 0.1 </grid_step_x>
+        <grid_step_y> 0.1 </grid_step_y>
+
+        <!-- Options to read initial conditions from saved file -->
+        <initial_profile_path>/data</initial_profile_path>
+    </IS>
+
+    <!--Preequilibrium Dynamics Module -->
+    <Preequilibrium>
+        <!-- starting long. proper time for Preequilibrium dynamics -->
+        <tau0>0.0</tau0>
+        <tauj>0.1</tauj>
+        <!-- switching long. proper time from Preequilibrium dynamics to Hydrodynamics (Landau Matching) -->
+        <taus>1.16</taus>
+        <evolutionInMemory>1</evolutionInMemory>
+
+        <!-- Individual Preequilibrium Dynamics models  -->
+        <FreestreamMilne>
+          <name>FreestreamMilne</name>
+          <freestream_input_file>freestream_input</freestream_input_file>
+          <E_DEP_FS>0</E_DEP_FS>
+        </FreestreamMilne>
+    </Preequilibrium>
+
+    <!-- Hydro  Module  -->
+    <Hydro>
+        <MUSIC>
+            <beastMode>0</beastMode>
+            <output_evolution_to_file>0</output_evolution_to_file>
+            <output_evolution_to_memory>1</output_evolution_to_memory>
+            <surface_in_memory>1</surface_in_memory>
+            <Initial_time_tau_0>1.16</Initial_time_tau_0>
+            <T_dependent_Shear_to_S_ratio>2</T_dependent_Shear_to_S_ratio>
+            <shear_viscosity_2_curv>-0.48</shear_viscosity_2_curv>
+            <shear_viscosity_2_slope>1.11</shear_viscosity_2_slope>
+            <shear_viscosity_2_min>0.081</shear_viscosity_2_min>
+            <temperature_dependent_bulk_viscosity>2</temperature_dependent_bulk_viscosity>
+            <bulk_viscosity_2_normalisation>0.052</bulk_viscosity_2_normalisation>
+            <bulk_viscosity_2_width_in_GeV>0.022</bulk_viscosity_2_width_in_GeV>
+            <bulk_viscosity_2_peak_in_GeV>0.183</bulk_viscosity_2_peak_in_GeV>
+            <freezeout_temperature>0.151</freezeout_temperature>
+        </MUSIC>
+    </Hydro>
+
+  <SoftParticlization>
+    <iSS>
+        <!-- file path for the default input file  -->
+        <iSS_input_file>iSS_parameters.dat</iSS_input_file>
+        <!-- directory path where the hydro surface is stored  -->
+        <iSS_table_path>iSS_tables</iSS_table_path>
+        <!-- file path for the default particle table files  -->
+        <iSS_particle_table_path>iSS_tables</iSS_particle_table_path>
+        <afterburner_type>2</afterburner_type>
+        <number_of_repeated_sampling>100</number_of_repeated_sampling>
+        <Perform_resonance_decays>0</Perform_resonance_decays>
+    </iSS>
+  </SoftParticlization>
+
+</jetscape>

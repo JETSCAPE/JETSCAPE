@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION 3.4)
-project(
-  trento
-  VERSION 1.5.1
-  LANGUAGES CXX)
+
+cmake_minimum_required(VERSION 3.5)
+project(trento VERSION 1.5.1 LANGUAGES CXX)
+
+
 
 # require at least C++11
 if(NOT "${CMAKE_CXX_STANDARD}")
