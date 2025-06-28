@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='utf-8'?>
+<jetscape>
+
+  <nEvents> 1 </nEvents>
+  <setReuseHydro> true </setReuseHydro>
+  <nReuseHydro> 400 </nReuseHydro>
+
+  <JetScapeWriterAscii> on </JetScapeWriterAscii>
+  <JetScapeWriterFinalStatePartonsAscii> on </JetScapeWriterFinalStatePartonsAscii>
+  <JetScapeWriterFinalStateHadronsAscii> on </JetScapeWriterFinalStateHadronsAscii>
+  <outputFilename>DefaultBrick0.2Matter</outputFilename>
+  <vlevel> 0 </vlevel>
+  <nEvents_printout> 1 </nEvents_printout>
+
+  <Random>
+    <seed>1</seed>
+  </Random>
+  
+  <!--IS>
+     <initial_profile_path>/Users/ritobandatta/Desktop/trento0005_5020</initial_profile_path>
+  </IS-->
+
+  
+  <Hard>
+    <!--PythiaGun>
+      <FSR_on>0</FSR_on>
+      <pTHatMin>15</pTHatMin>
+      <pTHatMax>16</pTHatMax>
+      <eCM>5020</eCM>
+    </PythiaGun-->
+    <PGun>
+      <name>PGun</name>
+      <pT>20</pT>
+      <parID>1</parID>    
+    </PGun>
+  </Hard>
+
+  
+  <!--Preequilibrium>
+    <NullPreDynamics> </NullPreDynamics>
+  </Preequilibrium-->
+
+  
+  <!--Hydro>
+    <hydro_from_file>
+      <name>Hydro from file </name>
+      <read_in_multiple_hydro>1</read_in_multiple_hydro>
+      <hydro_files_folder>/Users/ritobandatta/Desktop/trento0005_5020</hydro_files_folder>
+    </hydro_from_file>
+  </Hydro-->
+
+  <Hydro>
+    <Brick bjorken_expansion_on="false" start_time="0.6">
+      <name>Brick</name>
+      <T>0.2</T>
+    </Brick>
+  </Hydro>
+
+
+  
+  
+  <Eloss>
+    <maxT> 0.1 </maxT>
+    <ModificationFactor> 6.24 </ModificationFactor> 
+   <!--Matter>
+      <name>Matter</name>
+      <matter_on> 1 </matter_on>
+      <Q0> 2.0 </Q0>
+      <T0> 0.16 </T0>
+      <initial_virtuality_pT> 1 </initial_virtuality_pT>
+      <vir_factor> 0.25 </vir_factor>
+      <in_vac> 0 </in_vac>
+      <recoil_on> 1 </recoil_on>
+      <broadening_on> 0 </broadening_on>
+      <brick_med> 1</brick_med>   
+      <brick_length> 5.0 </brick_length>
+      <hydro_Tc> 0.16 </hydro_Tc>
+    </Matter-->
+
+    <Lbt>
+      <name> Lbt </name>
+      <Q0> 2.0 </Q0>
+      <in_vac> 0 </in_vac>
+      <only_leading> 0 </only_leading>
+      <hydro_Tc> 0.16 </hydro_Tc>
+      <alphas> 0.2 </alphas>
+      <run_alphas>1</run_alphas>   
+    <filename>Gluon</filename> <!-- File name for the gluon distribution, used in the Lbt module -->
+    <enter_temp>0.3</enter_temp>
+    <enter_pid> 21 </enter_pid>
+    </Lbt>
+
+  </Eloss>
+  
+  
+  <JetHadronization>
+    <name>colorless</name>
+    <take_recoil>1</take_recoil>
+    <eCMforHadronization>2510</eCMforHadronization>
+    <LinesToRead>
+      111:mayDecay = off
+    </LinesToRead>
+  </JetHadronization>
+</jetscape>

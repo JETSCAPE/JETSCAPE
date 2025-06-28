@@ -145,6 +145,8 @@ void Matter::Init() {
   vir_factor = GetXMLElementDouble({"Eloss", "Matter", "vir_factor"});
   initial_virtuality_pT = GetXMLElementInt({"Eloss", "Matter", "initial_virtuality_pT"});
 
+  ModificationFactor = GetXMLElementDouble({"Eloss", "ModificationFactor"});
+
   if(vir_factor < 0.0) {
     JSWARN << "vir_factor should not be negative";
     exit(1);
@@ -799,10 +801,16 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
 
           // Calculate the proability of elastic scattering in time delta t in fluid rest frame
           muD2 = 6.0 * pi * soln_alphas * tempLoc * tempLoc;
+
+          if (ModificationFactor > 0.0){
+            ModificationCorr = 1.0 + 1.0 / ModificationFactor / tempLoc;
+            muD2 = muD2 / pow(ModificationCorr, 2.0);
+          }
+
           prob_el = 42.0 * zeta3 * el_CR  * tempLoc / 6.0 / pi /
                     pi * dt_lrf / 0.1973;
 
-	  prob_el=prob_el*ModifiedProbability(QhatParametrizationType, tempLoc, sdLoc, enerLoc, pIn[i].t());
+	        prob_el=prob_el*ModifiedProbability(QhatParametrizationType, tempLoc, sdLoc, enerLoc, pIn[i].t());
 
           el_rand = ZeroOneDistribution(*GetMt19937Generator());
 
@@ -4474,7 +4482,7 @@ void Matter::colljet22(int CT, double temp, double qhat0ud, double v0[4],
   double vc[4] = {0.0};
 
   int ct1_loop, ct2_loop, flag1, flag2;
-
+  double f1max_x, f1max_y, f2max_x, f2max_y;
   flag1 = 0;
   flag2 = 0;
 
@@ -4536,9 +4544,16 @@ void Matter::colljet22(int CT, double temp, double qhat0ud, double v0[4],
       //		cout << ic << endl;
 
     } while ((tt < qhat0ud) || (tt > (ss - qhat0ud)));
-
-    f1 = pow(xw, 3) / (exp(xw) - 1) / 1.4215;
-    f2 = pow(xw, 3) / (exp(xw) + 1) / 1.2845;
+    //    use (s^2+u^2)/(t+qhat0ud)^2 as scattering cross section in 
+    f1max_y = 1.4215;
+    f2max_y = 1.2845;
+    if (ModificationFactor > 0.0){
+      ModificationCorr = 1.0 + 1.0 / ModificationFactor / temp;
+      f1max_y = 1.4215 /pow(ModificationCorr, 3.0);
+      f2max_y = 1.2845 /pow(ModificationCorr, 3.0);
+    }
+    f1 = pow(xw, 3) / (exp(xw) - 1) / f1max_y;
+    f2 = pow(xw, 3) / (exp(xw) + 1) / f2max_y;
 
     uu = ss - tt;
 

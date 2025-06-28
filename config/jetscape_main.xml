@@ -158,6 +158,7 @@
     <tStart> 0.6 </tStart> <!-- Start time of jet quenching, proper time, fm/c   -->
     <mutex>ON</mutex>
     <AddLiquefier> false </AddLiquefier>
+    <ModificationFactor> 6.24 </ModificationFactor> <!-- Modification factor for the energy loss, used in the Lbt module --> 
 
     <Matter>
       <name>Matter</name>
@@ -199,6 +200,9 @@
       <hydro_Tc> 0.16 </hydro_Tc>
       <alphas> 0.2 </alphas>
       <run_alphas>1</run_alphas>   <!-- 0 for fixed alpha_s and 1 for running alpha_s -->
+    <filename>Gluon</filename> <!-- File name for the gluon distribution, used in the Lbt module -->
+    <enter_temp>0.15</enter_temp>
+    <enter_pid> 21 </enter_pid>
     </Lbt>
 
     <Martini>
