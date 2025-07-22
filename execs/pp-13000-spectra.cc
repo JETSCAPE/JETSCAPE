@@ -261,10 +261,13 @@ int main(int argc, char* argv[]){
     //create root file for total plots
     HistTotalPionsSoft->Write("rough soft pions"); smoothBins(HistTotalPionsSoft); /*HistTotalPions->Smooth();*/ HistTotalPionsSoft->Write("smooth soft pions");
     HistTotalPionsHard->Write("rough hard pions"); smoothBins(HistTotalPionsHard); /*HistTotalPions->Smooth();*/ HistTotalPionsHard->Write("smooth hard pions");
+    TH1D* pionhist = (TH1D*)HistTotalPionsSoft->Clone(); pionhist->Add(HistTotalPionsHard); pionhist->Write("smooth pions");
     HistTotalKaonsSoft->Write("rough soft kaons"); smoothBins(HistTotalKaonsSoft); /*HistTotalKaons->Smooth();*/ HistTotalKaonsSoft->Write("smooth soft kaons");
     HistTotalKaonsHard->Write("rough hard kaons"); smoothBins(HistTotalKaonsHard); /*HistTotalKaons->Smooth();*/ HistTotalKaonsHard->Write("smooth hard kaons");
+    TH1D* kaonhist = (TH1D*)HistTotalKaonsSoft->Clone(); kaonhist->Add(HistTotalKaonsHard); kaonhist->Write("smooth kaons");
     HistTotalProtonsSoft->Write("rough soft protons"); smoothBins(HistTotalProtonsSoft); /*HistTotalProtons->Smooth();*/ HistTotalProtonsSoft->Write("smooth soft protons");
     HistTotalProtonsHard->Write("rough hard protons"); smoothBins(HistTotalProtonsHard); /*HistTotalProtons->Smooth();*/ HistTotalProtonsHard->Write("smooth hard protons");
+    TH1D* protonhist = (TH1D*)HistTotalProtonsSoft->Clone(); protonhist->Add(HistTotalProtonsHard); protonhist->Write("smooth protons");
     jethist1->Write("low y jets"); smoothBins(jethist1); jethist1->Write("smooth low y jets");
     jethist2->Write("mid y jets"); smoothBins(jethist2); jethist2->Write("smooth mid y jets");
     jethist3->Write("high y jets"); smoothBins(jethist3); jethist3->Write("smooth high y jets");
