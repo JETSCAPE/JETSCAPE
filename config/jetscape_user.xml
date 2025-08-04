@@ -45,5 +45,11 @@
   <JetHadronization>
     <name>colorless</name>
   </JetHadronization>
+
+  <JetScapeQA>
+    <enableEbyEQA> 1 </enableEbyEQA>
+    <outputFileName>JetScapeQA_test.root</outputFileName>
+    <nEventsForQAHistograms> 100 </nEventsForQAHistograms>
+  </JetScapeQA>
   
 </jetscape>

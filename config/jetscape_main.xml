@@ -56,6 +56,13 @@
     <JetscapeWriterFinalStateBinaryOutput> 0 </JetscapeWriterFinalStateBinaryOutput>
   </Writer>
 
+  <JetScapeQA>
+    <enableEbyEQA> 0 </enableEbyEQA>
+    <outputFileName>JetScapeQA.root</outputFileName>
+    <nEventsForQAHistograms> 100 </nEventsForQAHistograms>
+  </JetScapeQA> 
+    
+
   <!--  Random Settings. For now, just a global  seed. -->
   <!--  Note: It's each modules responsibility to adopt it -->
   <!--  Note: Most if not all modules should understand 0 to mean a random value -->

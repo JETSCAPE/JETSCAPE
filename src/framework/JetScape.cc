@@ -23,6 +23,7 @@
 #include "PreequilibriumDynamics.h"
 #include "JetEnergyLoss.h"
 #include "CausalLiquefier.h"
+#include "JetScapeQA.h"
 
 #ifdef USE_HEPMC
 #include "JetScapeWriterHepMC.h"
@@ -760,6 +761,15 @@ void JetScape::DetermineTaskListFromXML() {
                   "task list.";
       }
     }
+    else if (elementName == "JetScapeQA") {
+      // Add JetScapeQA module
+      auto jetScapeQA = JetScapeModuleFactory::createInstance(elementName);
+      if (jetScapeQA) {
+        Add(jetScapeQA);
+        JSINFO << "JetScape::DetermineTaskList() -- Added JetScapeQA to task "
+                  "list.";
+      }
+    }
 
     else {
       VERBOSE(2) << "Nothing to do.";
@@ -942,6 +952,8 @@ void JetScape::Exec() {
 
   // JetScapeTask::ExecuteTasks(); Has to be called explicitly since not really fully recursively (if ever needed)
   // --> JetScape is "Task Manager" of all modules ...
+
+  JetScapeSignalManager::Instance()->SetMainTaskPointer(shared_from_this());
 
   // Simple way of passing the writer module pointer
   vector<weak_ptr<JetScapeWriter>> vWriter;
