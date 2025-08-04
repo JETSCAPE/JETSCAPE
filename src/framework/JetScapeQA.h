@@ -60,6 +60,35 @@ private:
     void PrintTasks();
     void PrintTaskMap();
 
+    void DoEbyEQA();
+    void DoQA();
+    void WriteEbyEQA(string name, TH1 *h) {
+        if (fOutputFile) {
+            fOutputFile->cd();
+            h->Write(name.c_str());
+        }
+    }
+
+    void NormalizePerEvent();
+
+    void JetPartonQA();
+    void JetHadronQA();
+    void JetPartonEbyEQA();
+    //void JetHadronEbyEQA();
+
+    //void HardProcessQA() {};
+    void HardProcessEbyEQA();
+
+    void SoftParticlizatonQA(); 
+    //void SoftParticlizatonEbyEQA();
+
+    void HydroEbyEQA() {};
+    void ISEbyEQA() {};
+
+    //Histograms ...
+    TH1D *hJetPartonPt = nullptr; // Histogram for jet parton pT
+    TH1D *hJetHadronPt = nullptr; // Histogram for jet hadron
+
     // Allows the registration of the module so that it is available to be used by the Jetscape framework.
     static RegisterJetScapeModule<JetScapeQA> reg;
 };
