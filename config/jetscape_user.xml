@@ -2,7 +2,7 @@
 
 <jetscape>
   
-  <nEvents> 2 </nEvents>
+  <nEvents> 100 </nEvents>
   
   <JetScapeWriterAscii> on </JetScapeWriterAscii>
 
@@ -14,9 +14,9 @@
   <!-- Hard Process -->
   <Hard>
     <PythiaGun>
-      <pTHatMin>50</pTHatMin>
-      <pTHatMax>70</pTHatMax>
-      <eCM>5020</eCM>
+      <pTHatMin>20</pTHatMin>
+      <pTHatMax>30</pTHatMax>
+      <eCM>200</eCM>
     </PythiaGun>
   </Hard>
   
@@ -49,7 +49,7 @@
   <JetScapeQA>
     <enableEbyEQA> 1 </enableEbyEQA>
     <outputFileName>JetScapeQA_test.root</outputFileName>
-    <nEventsForQAHistograms> 100 </nEventsForQAHistograms>
+    <nEventsForQAHistograms> 10 </nEventsForQAHistograms>
   </JetScapeQA>
   
 </jetscape>

@@ -85,6 +85,8 @@ private:
     void HydroEbyEQA() {};
     void ISEbyEQA() {};
 
+    void PrintPDF();
+
     //Histograms ...
     TH1D *hJetPartonPt = nullptr; // Histogram for jet parton pT
     TH1D *hJetHadronPt = nullptr; // Histogram for jet hadron

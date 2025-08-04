@@ -181,6 +181,13 @@ void JetScapeQA::Finish() {
     
     JSINFO << "JetScapeQA finished.";
     JSINFO << "JetScapeQA output file: " << outputFileName;
+
+    PrintPDF();
+}
+
+void JetScapeQA::PrintPDF()
+{
+    JSINFO << "JetScapeQA::PrintPDF() to be implemented ...";
 }
 
 void JetScapeQA::NormalizePerEvent()
