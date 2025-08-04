@@ -19,6 +19,8 @@
 #include "JetScapeModuleBase.h"
 #include <vector>
 #include <Riostream.h>
+#include <unordered_map>
+
 #include "TRandom.h"
 #include "TCanvas.h"
 #include "TH1.h"
@@ -42,7 +44,8 @@ public:
     virtual ~JetScapeQA() {}
     
     virtual void Init();
-    
+    virtual void Exec();
+
     virtual void Finish();
 
 private:
@@ -52,8 +55,13 @@ private:
     bool enableEbyEQA = false; // Flag to enable/disable QA histograms
     string outputFileName; // Default output file name
 
-// Allows the registration of the module so that it is available to be used by the Jetscape framework.
-  static RegisterJetScapeModule<JetScapeQA> reg;
+    std::unordered_multimap<std::string,std::weak_ptr<JetScapeTask> > taskMap;
+    void UpdateTaskMap();
+    void PrintTasks();
+    void PrintTaskMap();
+
+    // Allows the registration of the module so that it is available to be used by the Jetscape framework.
+    static RegisterJetScapeModule<JetScapeQA> reg;
 };
 
 } // namespace Jetscape

@@ -901,6 +901,8 @@ void JetScape::SetPointers() {
   JSINFO << "Set Hydro,JetEnergylossManager and IS Pointers for "
          << "SignalManager to create Signal/Slots";
 
+  JetScapeSignalManager::Instance()->SetMainTaskPointer(dynamic_pointer_cast<JetScape>(shared_from_this()));
+  
   bool hydro_pointer_is_set = false;
   bool iss_pointer_is_set = false;
   for (auto it : GetTaskList()) {
@@ -952,8 +954,6 @@ void JetScape::Exec() {
 
   // JetScapeTask::ExecuteTasks(); Has to be called explicitly since not really fully recursively (if ever needed)
   // --> JetScape is "Task Manager" of all modules ...
-
-  JetScapeSignalManager::Instance()->SetMainTaskPointer(shared_from_this());
 
   // Simple way of passing the writer module pointer
   vector<weak_ptr<JetScapeWriter>> vWriter;
