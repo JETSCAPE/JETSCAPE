@@ -18,6 +18,7 @@
 
 #include "JetScapeModuleBase.h"
 #include <vector>
+#include <set>
 #include <Riostream.h>
 #include <unordered_map>
 
@@ -50,50 +51,55 @@ public:
 
 private:
 
+    // xml input options 
     TFile *fOutputFile = nullptr; // Output file for QA histograms
-    int nEventsForQAHistograms = 100; // Number of events to fill
-    bool enableEbyEQA = false; // Flag to enable/disable QA histograms
+    int nEventByEventHistograms = 0;
+    int nEventsForQAHistograms = 0;
+    double th1_ptmax = -1; 
+    double min_jetpt = -1.;
+    int th1_nhadrons = -1;
+    bool normalize_hgrams_per_event = false;
     string outputFileName; // Default output file name
 
+    // keep a taskmap of all tasks in JetScape
     std::unordered_multimap<std::string,std::weak_ptr<JetScapeTask> > taskMap;
     void UpdateTaskMap();
     void PrintTasks();
-    void PrintTaskMap();
+    std::vector<std::tuple<int,string,string>> GetTaskInfo(bool sorted=true);
+    void PrintTaskMap(bool sorted=true);
 
-    void DoEbyEQA();
-    void DoQA();
-    void WriteEbyEQA(string name, TH1 *h) {
-        if (fOutputFile) {
-            fOutputFile->cd();
-            h->Write(name.c_str());
-        }
-    }
+    // enumerator so that tasks selected for QA can
+    // be routed to the proper type of QA (according
+    // the base class)
+    enum QA_TYPE {
+        INITIAL_STATE, // <- trento
+        HARD_PROCESS, // <- PythiaGun
+        PREEQUILIBRIUM_DYNAMICS, // <- NullPreDynamics
+        FLUID_DYNAMICS, // <- MUSIC
+        JET_ENERGY_LOSS, // <- JetEnergyLoss
+        HADRONIZATION,
+        SOFT_PARTICLIZATION,
+        NOT_IMPLEMENTED,
+    };
 
-    void NormalizePerEvent();
+    //based on input, select tasks for QA
+    vector<std::tuple<string, QA_TYPE, vector<TH1*>>> qa_tasks;
+    //based on input, select tasks for event-by-event QA
+    vector<std::tuple<string, QA_TYPE, vector<TH1*>>> qa_EbyE_tasks;
 
-    void JetPartonQA();
-    void JetHadronQA();
-    void JetPartonEbyEQA();
-    //void JetHadronEbyEQA();
+    vector<TH1*> MakeHgrams(const string& task, QA_TYPE qa_type, int event=-1);
+    void FillHgrams(std::tuple<string, QA_TYPE, vector<TH1*>>& qa);
 
-    //void HardProcessQA() {};
-    void HardProcessEbyEQA();
 
-    void SoftParticlizatonQA(); 
-    //void SoftParticlizatonEbyEQA();
-
-    void HydroEbyEQA() {};
-    void ISEbyEQA() {};
+    // flag because some histograms require information not available at 
+    // JETSCAPE ::Init, and have to wait for the first JETSCAPE::Exec cycle
+    bool has_first_exec = false;
+    bool has_run_JEL = false; // Jet energy loss may have multiple tasks in list -- run all together
 
     void PrintPDF();
 
-    //Histograms ...
-    TH1D *hJetPartonPt = nullptr; // Histogram for jet parton pT
-    TH1D *hJetHadronPt = nullptr; // Histogram for jet hadron
-
-    // Allows the registration of the module so that it is available to be used by the Jetscape framework.
     static RegisterJetScapeModule<JetScapeQA> reg;
 };
-
 } // namespace Jetscape
+
 #endif

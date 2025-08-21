@@ -57,11 +57,19 @@
   </Writer>
 
   <JetScapeQA>
-    <enableEbyEQA> 0 </enableEbyEQA>
-    <outputFileName>JetScapeQA.root</outputFileName>
-    <nEventsForQAHistograms> 100 </nEventsForQAHistograms>
-  </JetScapeQA> 
-    
+    <!-- must expressly state all event-by-event tasks to be run -->
+    <EventByEventTaskList> none </EventByEventTaskList>
+    <nEventByEventHistograms> 5 </nEventByEventHistograms>
+    <nEventsForQAHistograms> 1000000 </nEventsForQAHistograms>
+    <th1_ptmax> 50 </th1_ptmax>
+    <min_jetpt> 2. </min_jetpt>
+    <th1_nhadrons> 200. </th1_nhadrons>
+    <!-- must expressly opt out of all defined tasks for QA -->
+    <!-- can use "all" to skip all QA modules, or "none" to not skip any (implemented) modules -->
+    <SkipQAList> all </SkipQAList>
+    <outputFileName> JetscapeQA.root </outputFileName>
+    <normalize_hgrams_per_event> 1 </normalize_hgrams_per_event>
+  </JetScapeQA>
 
   <!--  Random Settings. For now, just a global  seed. -->
   <!--  Note: It's each modules responsibility to adopt it -->
