@@ -3,7 +3,7 @@
 <jetscape>
 
   <vlevel> 0 </vlevel>
-  <nEvents> 2 </nEvents>
+  <nEvents> 20 </nEvents>
   <nReuseHydro> 0 </nReuseHydro>
 
   <JetScapeWriterAscii> on </JetScapeWriterAscii>
@@ -75,12 +75,6 @@
     <name>colorless</name>
   </JetHadronization>
 
-  <JetScapeQA>
-    <EventByEventTaskList> all </EventByEventTaskList>
-    <nEventByEventHistograms> 5 </nEventByEventHistograms>
-    <th1_ptmax> 50 </th1_ptmax>
-    <SkipQAList> none </SkipQAList>
-  </JetScapeQA>
 
 
   <SoftParticlization>
@@ -104,6 +98,19 @@
       <name>SMASH</name>
     </SMASH>
   </Afterburner>
+
+  <JetScapeQA>
+      <outputFileName> JetscapeQA.root </outputFileName>
+      <!-- number of events with single even histograms -->
+      <nEvents_EbyE_QA>3</nEvents_EbyE_QA>
+      <!-- number of events with event averaged histograms -->
+      <nEvents_aveE_QA>8</nEvents_aveE_QA>
+      <!-- range maxima for histograms -->
+      <th1_ptmax> 50 </th1_ptmax>
+      <th1_nhadrons> 500000. </th1_nhadrons>
+      <!-- minimmum pt for jet selection -->
+      <min_jetpt> 2. </min_jetpt>
+  </JetScapeQA>
 
 
 </jetscape>

@@ -18,75 +18,34 @@ void JetScapeQA::Init() {
     JetScapeModuleBase::Init();
     JSINFO << "Initialize JetScapeQA : " << GetId() << " ...";
 
-    // eveny-by-event qa is lazy -- it will only do the types selected
-    // user can enter "none" or "all"
-    auto ebye_option = GetXMLElementText({"JetScapeQA", "EventByEventTaskList"});
-    bool ebye_all  = false;
-    bool ebye_none  = false;
-    vector<string> tasks_EbyE {};
-
-    std::istringstream iss(ebye_option);
-    string word;
-    while (iss >> word) {
-      if (word == "none") {
-        ebye_none = true;
-        break;
-      } else if( word == "all") {
-        ebye_all = true;
-        break;
-      } else {
-        tasks_EbyE.push_back(word);
-        JSINFO << " Doing event-by-event QA for task: " << word;
-      }
-    }
-    // }
-
-    // qa (not the event-by-event ones) are greedy -- they will do all
-    // tasks except those excempted
-    // user can enter "none" or "all"
-    auto skip_qa_option = GetXMLElementText({"JetScapeQA", "SkipQAList"});
-    bool skip_qa_all = false;
-    bool skip_qa_none = false;
-    vector<string> skip_qa_tasks{};
-    iss = std::istringstream(skip_qa_option);
-    while (iss >> word) {
-      if (word == "all") {
-        skip_qa_all = true;
-        break;
-      } else if (word == "none") {
-        skip_qa_none = true;
-        break;
-      } else {
-        skip_qa_tasks.push_back(word);
-        JSINFO << " Skipping implemented QA module for task: " << word;
-      }
-    }
+    // read in the user XML options
+    nEvents_EbyE_QA = GetXMLElementInt({"JetScapeQA", "nEvents_EbyE_QA"});
+    nEvents_aveE_QA = GetXMLElementInt({"JetScapeQA", "nEvents_aveE_QA"});
+    auto outputFileName = GetXMLElementText({"JetScapeQA", "outputFileName"});
+    th1_ptmax = GetXMLElementDouble({"JetScapeQA","th1_ptmax"});
+    min_jetpt = GetXMLElementDouble({"JetScapeQA","min_jetpt"});
+    th1_nhadrons = GetXMLElementInt({"JetScapeQA","th1_nhadrons"});
 
     // read in number of events used in event-by-event and in qa
-    auto outputFileName = GetXMLElementText({"JetScapeQA", "outputFileName"}, true);
     JSINFO << "QA output FileName: " << outputFileName;
-    nEventByEventHistograms = GetXMLElementInt({"JetScapeQA", "nEventByEventHistograms"});
-    nEventsForQAHistograms = GetXMLElementInt({"JetScapeQA", "nEventsForQAHistograms"});
-    normalize_hgrams_per_event = (GetXMLElementInt({"JetScapeQA", "normalizeHgramsPerEvent"}, false) > 0);
+    fOutputFile=new TFile(outputFileName.c_str(), "RECREATE");
 
     // upper-bound for ptmax of histograms
-    th1_ptmax = GetXMLElementDouble({"JetScapeQA","th1_ptmax"}, true);
-    min_jetpt = GetXMLElementDouble({"JetScapeQA","min_jetpt"}, true);
-    th1_nhadrons = GetXMLElementInt({"JetScapeQA","th1_nhadrons"}, true);
-
     JSINFO << "JetScapeQA: th1_ptmax = " << th1_ptmax;
-    JSINFO << "JetScapeQA: number of event-by-event histograms = " << nEventByEventHistograms;
-    JSINFO << "JetScapeQA: number of events used in QA histograms = " << nEventsForQAHistograms;
+    JSINFO << "JetScapeQA: number of event-by-event histograms = " << nEvents_EbyE_QA;
+    JSINFO << "JetScapeQA: number of events used in QA histograms = " << nEvents_aveE_QA;
 
-    fOutputFile=new TFile(outputFileName.c_str(), "RECREATE");
 
     // fill the task lists of QA to do
     UpdateTaskMap();
+    PrintTaskMap();
+    JSINFO << " Adding QA histograms for recognized tasks";
+    JSINFO << "   Will generate " << nEvents_EbyE_QA << " event-by-event QA histograms.";
+    JSINFO << "   Will use up to " << nEvents_aveE_QA << " events for event-average QA histograms.";
+    JSINFO << "-------------------------------------------";
     auto taskInfo = GetTaskInfo();
-    for (auto& task_tuple : taskInfo) {
-      const auto task = std::get<1>(task_tuple);
-      JSINFO << " DEBUG " << std::get<0>(task_tuple) << " " << std::get<1>(task_tuple) << " || " << std::get<2>(task_tuple);
-
+    for (auto& itask : taskInfo) {
+      const auto task = std::get<1>(itask);
       // find the base class of the task
       auto qa_type = QA_TYPE::NOT_IMPLEMENTED;
       if (task == "Trento") {
@@ -104,39 +63,15 @@ void JetScapeQA::Init() {
       } else if (task == "JetEnergyLoss") {
             qa_type = QA_TYPE::JET_ENERGY_LOSS;
       }
-        JSINFO << " TRYING TO ADD TASK " << task << " to EbyE QA";
-        JSINFO << " ALSO " << skip_qa_none ;
 
-      if (qa_type == QA_TYPE::NOT_IMPLEMENTED) { continue; }
-
-      // add it to EbyE tasks
-      if (!ebye_none) {
-        if (ebye_all || std::find(tasks_EbyE.begin(), tasks_EbyE.end(), task) != tasks_EbyE.end()) {
-          JSINFO << " Adding task " << task << " to EbyE QA";
-          qa_EbyE_tasks.push_back({task, qa_type,{}}); // make new histograms every event
+      if (qa_type == QA_TYPE::NOT_IMPLEMENTED) { 
+        if (task != "JetScapeQA") {
+          JSINFO << " - Task " << task << " is not implemented for QA; not added to QA task list.";
         }
-      }
-
-      if (skip_qa_all) continue;
-      bool noskip = std::find(skip_qa_tasks.begin(), skip_qa_tasks.end(), task) == skip_qa_tasks.end();
-      if (skip_qa_none || noskip) {
-        // Add the task to the QA list
-        JSINFO << " DEBUG :: Adding task " << task;
-        qa_tasks.push_back({task, qa_type, MakeHgrams(task,qa_type)});
-      }
+        continue; 
+      } 
+      qa_tasks.push_back({task, qa_type, MakeHgrams(task,qa_type,-1,true)}); // make new histograms every event
     }
-
-    PrintTaskMap();
-    JSINFO << "   -- listings of JetScapeQA tasks selected for QA histograms --";
-    JSINFO << " JetScapeQA Tasks: (name, n-histograms at initialization)";
-    for (auto& qa : qa_tasks) {
-      JSINFO << "   + " <<  std::left << std::setw(20) <<  std::get<0>(qa) << " " <<std::get<2>(qa).size();
-    }
-    JSINFO << " Event-by-event JetScapeQA Tasks: (name, n-hgrams at initialization)";
-    for (auto& qa : qa_EbyE_tasks) {
-      JSINFO << "   + " <<  std::left << std::setw(20) <<  std::get<0>(qa) << " " <<std::get<2>(qa).size();
-    }
-
     // initialize the histograms for the different kinds of input
 }
 
@@ -146,36 +81,35 @@ void JetScapeQA::Exec() {
   has_run_JEL = false;
   VERBOSE(8) << "Executing JetScapeQA : " << GetId() << " ...";
   UpdateTaskMap();
-  //PrintTasks();
-  //PrintTaskMap();
+  // debug: PrintTaskMap();
   int current_event = GetCurrentEvent();
 
-  if (current_event < nEventByEventHistograms) {
-    for (auto &qa : qa_EbyE_tasks) {
-      std::get<2>(qa) = MakeHgrams(std::get<0>(qa), std::get<1>(qa), current_event);
-      FillHgrams(qa);
-      for (auto &h : std::get<2>(qa)) {
+  if (current_event < nEvents_EbyE_QA) {
+    for (auto& qa : qa_tasks) {
+      auto hgrams_1ev = MakeHgrams(std::get<0>(qa), std::get<1>(qa), current_event);
+      auto qa_single = tuple_task(std::get<0>(qa), std::get<1>(qa), hgrams_1ev);
+      // std::get<2>(qa) = MakeHgrams(std::get<0>(qa), std::get<1>(qa), current_event);
+      FillHgrams(qa_single);
+      for (auto &h : hgrams_1ev) {
         if (fOutputFile) {
           // fOutputFile->cd();
           h->Write();
         }
         delete h;
       }
-      std::get<2>(qa).clear();
     }
   }
 
-  if (current_event < nEventsForQAHistograms) {
+  if (current_event < nEvents_aveE_QA) {
     for (auto &qa : qa_tasks) {
       FillHgrams(qa);
     }
   }
-
 }
 
-vector<TH1*> JetScapeQA::MakeHgrams(const string& task, QA_TYPE qa_type, int event) {
+vector<TH1*> JetScapeQA::MakeHgrams(const string& task, QA_TYPE qa_type, int event, bool print) {
+  if (print) JSINFO << " - Histograms for " << task << ":";
     vector<TH1*> hgrams;
-
     // see if there is anthing to get
 
     auto it = taskMap.find(task);
@@ -235,7 +169,6 @@ vector<TH1*> JetScapeQA::MakeHgrams(const string& task, QA_TYPE qa_type, int eve
       // Note: the information for the axes of fluid dynamics come from FluidEvolutionHistory,
       // which isn't available upon Init, therefore the histograms have to be initialized 
       // at the first Exec
-      if (!has_first_exec) break;
 
       // NOTE: this information isn't availabe in the FluidEvolutionHistory upon Init,
       //       therefore the histograms have to be initialized upon the first Exec
@@ -249,6 +182,15 @@ vector<TH1*> JetScapeQA::MakeHgrams(const string& task, QA_TYPE qa_type, int eve
       int nY = bInfo.ny;
       double yMin = bInfo.YMin();
       double yMax = bInfo.YMax(); //same for y axis ...
+
+      // when called during Init, these values are nonsensical. 
+      // set some dummy values for the sake of printing.
+      // the dummy histograms will be deleted anyway
+
+      if (!has_first_exec) {
+        nX = 2; xMin = 0; xMax = 1;
+        nY = 2; yMin = 0; yMax = 1;
+      }
 
       // histograms can fill anything from FluidEvolutionHistory:
       // ENERGY_DENSITY, ENTROPY_DENSITY, TEMPERATURE,
@@ -265,12 +207,23 @@ vector<TH1*> JetScapeQA::MakeHgrams(const string& task, QA_TYPE qa_type, int eve
       hgrams.push_back(new TH1D(Form("%s_CellFreezeXlocs%s", task.c_str(), etag.c_str()), Form("%s fluid cells freezeout X locations; x [fm]", task.c_str()), 150, -xMax, xMax));
       hgrams.push_back(new TH1D(Form("%s_CellFreezeYlocs%s", task.c_str(), etag.c_str()), Form("%s fluid cells freezeout Y locations; y [fm]", task.c_str()), 150, -yMax, yMax));
       hgrams.push_back(new TH2D(Form("%s_FreezeOutEntropy%s", task.c_str(), etag.c_str()), Form("%s freezeout entropy [1/fm^{3}];x [fm]; y [fm]", task.c_str()), nX, -xMax, xMax, nY, -yMax, yMax));
+
+      // must specially print these hgrams because they have no gemoetry 
+      // assigned during init and will be generated at the first ::Exec
+      if (!has_first_exec) {
+        for (auto& hg : hgrams) {
+          string TH12 = (hg->GetNbinsY() == 1 ? "TH1D" : "TH2D");
+          if (print) JSINFO << "  + " << TH12 <<": " << std::left << std::setw(26) << hg->GetName() << " : " << hg->GetTitle();
+          delete hg;
+        }
+        hgrams.clear();
+      }
     }
     break;
 
     case QA_TYPE::SOFT_PARTICLIZATION: {
       hgrams.push_back(new TH1D(Form("%s_Nhadrons%s", task.c_str(), etag.c_str()), Form("%s Number of Hadrons; N_{hadrons}", task.c_str()), th1_nhadrons, 0., th1_nhadrons));
-      hgrams.push_back(new TH1D(Form("%s_hadron_pt%s", task.c_str(), etag.c_str()), Form("%s Hadron pT; #it{p}_{T} [GeV/#it{c}]", task.c_str()), 100, 0., th1_ptmax));
+      hgrams.push_back(new TH1D(Form("%s_hadron_pt%s", task.c_str(), etag.c_str()), Form("%s Hadron pT; #it{p}_{T} [GeV/#it{c}]", task.c_str()), 100, 0., 15.));
     }
     break;
 
@@ -335,10 +288,16 @@ vector<TH1*> JetScapeQA::MakeHgrams(const string& task, QA_TYPE qa_type, int eve
     default:
     break;
   }
-    return hgrams;
+  if (print) { 
+    for (auto& hg : hgrams) {
+      string TH12 = (hg->GetNbinsY() == 1 ? "TH1D" : "TH2D");
+      JSINFO << "  + " << TH12 <<": " << std::left << std::setw(26) << hg->GetName() << " : " << hg->GetTitle();
+    }
+  }
+  return hgrams;
 }
 
-void JetScapeQA::FillHgrams(std::tuple<string, QA_TYPE, vector<TH1*>>& qa) {
+void JetScapeQA::FillHgrams(tuple_task& qa) {
   if (std::get<2>(qa).size()==0) {
     // this occurs when they are not generated in Init in the qa_tasks because
     // the FluidEvolutionHistory's geometry is not populated at time of Init
@@ -423,6 +382,7 @@ void JetScapeQA::FillHgrams(std::tuple<string, QA_TYPE, vector<TH1*>>& qa) {
 
     case QA_TYPE::JET_ENERGY_LOSS: {
       // this task can be called mutiple times in the QA list -- only run once
+      // debug: will break if a different implementation besides "JetEnergyLoss" is used
       if (has_run_JEL) {
         has_run_JEL = true;
         break;
@@ -491,7 +451,10 @@ void JetScapeQA::FillHgrams(std::tuple<string, QA_TYPE, vector<TH1*>>& qa) {
 
     case QA_TYPE::SOFT_PARTICLIZATION: {
       auto soft = std::dynamic_pointer_cast<SoftParticlization>(it->second.lock());
-      hgrams[0]->Fill(soft->Hadron_list_.size()); // number of hadrons
+      int total_hadrons = std::accumulate(soft->Hadron_list_.begin(), soft->Hadron_list_.end(), 0, 
+        [](int sum, const std::vector<std::shared_ptr<Hadron>>& list) { return sum + list.size(); });
+
+      hgrams[0]->Fill(total_hadrons); // number of hadrons
       for (auto& list : soft->Hadron_list_) {
         for (auto& hadron : list) {
           hgrams[1]->Fill(hadron->pt());
@@ -501,7 +464,7 @@ void JetScapeQA::FillHgrams(std::tuple<string, QA_TYPE, vector<TH1*>>& qa) {
     break;
 
     default:
-        break;
+      break;
   }
 }
 
@@ -509,13 +472,11 @@ void JetScapeQA::Finish() {
     JSINFO << "Finish JetScapeQA : " << GetId() << " ...";
 
     //normalize per-event-histograms
-    if (normalize_hgrams_per_event) {
-      JSINFO << "Normalizing selected histograms per event ...";
-      int nEvents = JetScapeModuleBase::GetCurrentEvent();
-      for (auto& qa : qa_tasks) {
-        for (auto& h : std::get<2>(qa)) {
-          h->Scale(1.0 / (double) nEvents);
-        }
+    JSINFO << "Normalizing selected histograms per event ...";
+    int nEvents = JetScapeModuleBase::GetCurrentEvent();
+    for (auto& qa : qa_tasks) {
+      for (auto& h : std::get<2>(qa)) {
+        h->Scale(1.0 / (double) nEvents);
       }
     }
 
@@ -540,9 +501,7 @@ void JetScapeQA::PrintPDF()
     JSINFO << "JetScapeQA::PrintPDF() to be implemented ...";
 }
 
-
-void JetScapeQA::UpdateTaskMap()
-{
+void JetScapeQA::UpdateTaskMap() {
   VERBOSE(2) << "JetScapeQA::UpdateTaskMap()";
 
   //JP: Think about smarter/more efficient way rather than clear map and iterate through all tasks again ...
@@ -551,38 +510,35 @@ void JetScapeQA::UpdateTaskMap()
 
   //Quick and dirty to see all tasks ... make recursive if needed
   if (mt) {
-    for (auto it : mt->GetTaskList())
-    {
+    for (auto it : mt->GetTaskList()) {
 
       //JSINFO << t->GetId();
       taskMap.emplace(it->GetId(), it);
 
-      for (auto it2 : it->GetTaskList())
-      {
+      for (auto it2 : it->GetTaskList()) {
         //JSINFO  << it2->GetId() ;
         taskMap.emplace(it2->GetId(), it2);
       }
     }
   }
-  PrintTaskMap();
 }
 
-vector<std::tuple<int,string,string>> JetScapeQA::GetTaskInfo(bool sorted) {
+vector<std::tuple<int, string, string>> JetScapeQA::GetTaskInfo(bool sorted) {
   // make a list of pairs of <taskName, taskDescription>
-    std::vector<std::tuple<int,std::string, std::string>> taskInfo;
-    for (auto &x : taskMap) {
-      int taskNum = x.second.lock()->GetMyTaskNumber();
-      std::stringstream ss;
-      ss << " + " << std::left << std::setw(22) << x.first << ":"
-         << x.second.lock().get()
-         << "\t active = " << x.second.lock()->GetActive()
-         << "\t Task number = " << taskNum;
-      taskInfo.push_back({taskNum, x.first, ss.str()});
-    }
-    if (sorted) {
-      std::sort(taskInfo.begin(), taskInfo.end());
-    }
-    return taskInfo;
+  std::vector<std::tuple<int, std::string, std::string>> taskInfo;
+  for (auto &x : taskMap) {
+    int taskNum = x.second.lock()->GetMyTaskNumber();
+    std::stringstream ss;
+    ss << " + " << std::left << std::setw(26) << x.first << ":"
+       << x.second.lock().get()
+       << "\t active = " << x.second.lock()->GetActive()
+       << "\t Task number = " << taskNum;
+    taskInfo.push_back({taskNum, x.first, ss.str()});
+  }
+  if (sorted) {
+    std::sort(taskInfo.begin(), taskInfo.end());
+  }
+  return taskInfo;
 }
 
 void JetScapeQA::PrintTaskMap(bool sorted) {
@@ -593,12 +549,9 @@ void JetScapeQA::PrintTaskMap(bool sorted) {
   }
 }
 
-void JetScapeQA::PrintTasks()
-{
+void JetScapeQA::PrintTasks() {
   //Quick and dirty to see all tasks ... make recursive ...
-
   JSINFO << "JetScapeQA::PrintTasks()";
-
   auto mt = JetScapeSignalManager::Instance()->GetMainTaskPointer().lock();
 
   //Quick and dirty to see all tasks ... make recursive ...
@@ -606,9 +559,9 @@ void JetScapeQA::PrintTasks()
     for (auto it : mt->GetTaskList()) {
       JSINFO << it->GetId();
       for (auto it2 : it->GetTaskList()) {
-        JSINFO  << " " << it2->GetId() ;
+        JSINFO << " " << it2->GetId();
         for (auto it3 : it2->GetTaskList())
-          JSINFO  << "  " << it3->GetId() ;
+          JSINFO << "  " << it3->GetId();
       }
     }
   }

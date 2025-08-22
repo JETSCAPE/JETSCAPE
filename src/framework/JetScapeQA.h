@@ -39,66 +39,64 @@ namespace Jetscape {
 
 class JetScapeQA : public JetScapeModuleBase {
 public:
+  JetScapeQA() : JetScapeModuleBase() { SetId("JetScapeQA"); }
+  JetScapeQA(string m_name) : JetScapeModuleBase(m_name) {
+    SetId("JetScapeQA");
+  }
+  virtual ~JetScapeQA() {}
 
-    JetScapeQA() : JetScapeModuleBase() { SetId("JetScapeQA"); }
-    JetScapeQA(string m_name) : JetScapeModuleBase(m_name) {SetId("JetScapeQA");}
-    virtual ~JetScapeQA() {}
-    
-    virtual void Init();
-    virtual void Exec();
+  virtual void Init();
+  virtual void Exec();
 
-    virtual void Finish();
+  virtual void Finish();
 
 private:
+  // xml input options
+  TFile *fOutputFile = nullptr; // Output file for QA histograms
+  int nEvents_EbyE_QA = 0;
+  int nEvents_aveE_QA = 0;
+  double th1_ptmax = -1;
+  double min_jetpt = -1.;
+  int th1_nhadrons = -1;
+  string outputFileName; // Default output file name
 
-    // xml input options 
-    TFile *fOutputFile = nullptr; // Output file for QA histograms
-    int nEventByEventHistograms = 0;
-    int nEventsForQAHistograms = 0;
-    double th1_ptmax = -1; 
-    double min_jetpt = -1.;
-    int th1_nhadrons = -1;
-    bool normalize_hgrams_per_event = false;
-    string outputFileName; // Default output file name
+  // keep a taskmap of all tasks in JetScape
+  std::unordered_multimap<std::string, std::weak_ptr<JetScapeTask>> taskMap;
+  void UpdateTaskMap();
+  void PrintTasks();
+  std::vector<std::tuple<int, string, string>> GetTaskInfo(bool sorted = true);
+  void PrintTaskMap(bool sorted = true);
 
-    // keep a taskmap of all tasks in JetScape
-    std::unordered_multimap<std::string,std::weak_ptr<JetScapeTask> > taskMap;
-    void UpdateTaskMap();
-    void PrintTasks();
-    std::vector<std::tuple<int,string,string>> GetTaskInfo(bool sorted=true);
-    void PrintTaskMap(bool sorted=true);
+  // enumerator so that tasks selected for QA can
+  // be routed to the proper type of QA (according
+  // the base class)
+  enum QA_TYPE {
+    INITIAL_STATE,           // <- trento
+    HARD_PROCESS,            // <- PythiaGun
+    PREEQUILIBRIUM_DYNAMICS, // <- NullPreDynamics
+    FLUID_DYNAMICS,          // <- MUSIC
+    JET_ENERGY_LOSS,         // <- JetEnergyLoss
+    HADRONIZATION,
+    SOFT_PARTICLIZATION,
+    NOT_IMPLEMENTED,
+  };
 
-    // enumerator so that tasks selected for QA can
-    // be routed to the proper type of QA (according
-    // the base class)
-    enum QA_TYPE {
-        INITIAL_STATE, // <- trento
-        HARD_PROCESS, // <- PythiaGun
-        PREEQUILIBRIUM_DYNAMICS, // <- NullPreDynamics
-        FLUID_DYNAMICS, // <- MUSIC
-        JET_ENERGY_LOSS, // <- JetEnergyLoss
-        HADRONIZATION,
-        SOFT_PARTICLIZATION,
-        NOT_IMPLEMENTED,
-    };
+  using tuple_task = std::tuple<string, QA_TYPE, vector<TH1 *>>;
+  vector<tuple_task> qa_tasks;
 
-    //based on input, select tasks for QA
-    vector<std::tuple<string, QA_TYPE, vector<TH1*>>> qa_tasks;
-    //based on input, select tasks for event-by-event QA
-    vector<std::tuple<string, QA_TYPE, vector<TH1*>>> qa_EbyE_tasks;
+  vector<TH1 *> MakeHgrams(const string &task, QA_TYPE qa_type, int event = -1,
+                           bool print = false);
+  void FillHgrams(tuple_task &qa);
 
-    vector<TH1*> MakeHgrams(const string& task, QA_TYPE qa_type, int event=-1);
-    void FillHgrams(std::tuple<string, QA_TYPE, vector<TH1*>>& qa);
+  // flag because some histograms require information not available at JETSCAPE's
+  //   ::Init, and have to wait for the first JETSCAPE::Exec cycle
+  bool has_first_exec = false;
+  bool has_run_JEL =
+      false; // Jet energy loss may have multiple tasks in list -- run all together
 
+  void PrintPDF();
 
-    // flag because some histograms require information not available at 
-    // JETSCAPE ::Init, and have to wait for the first JETSCAPE::Exec cycle
-    bool has_first_exec = false;
-    bool has_run_JEL = false; // Jet energy loss may have multiple tasks in list -- run all together
-
-    void PrintPDF();
-
-    static RegisterJetScapeModule<JetScapeQA> reg;
+  static RegisterJetScapeModule<JetScapeQA> reg;
 };
 } // namespace Jetscape
 

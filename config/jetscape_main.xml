@@ -57,18 +57,16 @@
   </Writer>
 
   <JetScapeQA>
-    <!-- must expressly state all event-by-event tasks to be run -->
-    <EventByEventTaskList> none </EventByEventTaskList>
-    <nEventByEventHistograms> 5 </nEventByEventHistograms>
-    <nEventsForQAHistograms> 1000000 </nEventsForQAHistograms>
-    <th1_ptmax> 50 </th1_ptmax>
-    <min_jetpt> 2. </min_jetpt>
-    <th1_nhadrons> 200. </th1_nhadrons>
-    <!-- must expressly opt out of all defined tasks for QA -->
-    <!-- can use "all" to skip all QA modules, or "none" to not skip any (implemented) modules -->
-    <SkipQAList> all </SkipQAList>
-    <outputFileName> JetscapeQA.root </outputFileName>
-    <normalize_hgrams_per_event> 1 </normalize_hgrams_per_event>
+      <outputFileName> JetscapeQA.root </outputFileName>
+      <!-- number of events with single even histograms -->
+      <nEvents_EbyE_QA>0</nEvents_EbyE_QA>
+      <!-- number of events with event averaged histograms -->
+      <nEvents_aveE_QA>1000000</nEvents_aveE_QA>
+      <!-- range maxima for histograms -->
+      <th1_ptmax> 50 </th1_ptmax>
+      <th1_nhadrons> 400. </th1_nhadrons>
+      <!-- minimmum pt for jet selection -->
+      <min_jetpt> 2. </min_jetpt>
   </JetScapeQA>
 
   <!--  Random Settings. For now, just a global  seed. -->
