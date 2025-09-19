@@ -102,7 +102,7 @@ def makexml(bound, parameters, baseDir, xmltemplate, ECM):
             parameters['QS'] = (2*0.4+0.05) + (parameters.Q0-(2*0.4+0.05))*parameters.QSfactor
 
     # event count handling
-    eventCount = 20000
+    eventCount = 100000
     if bound[0] < 1:
         eventCount = eventCount * 2
 
