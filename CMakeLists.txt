@@ -504,6 +504,16 @@ if (${ROOT_FOUND})
   endif()
 
 if (${ROOT_FOUND}) 
+  add_executable(pp-5020-spectra ./execs/pp-5020-spectra.cc)
+  target_link_libraries(pp-5020-spectra JetScape analysis)
+  endif()
+
+if (${ROOT_FOUND}) 
+  add_executable(pp-7000-spectra ./execs/pp-7000-spectra.cc)
+  target_link_libraries(pp-7000-spectra JetScape analysis)
+  endif()
+
+if (${ROOT_FOUND}) 
   add_executable(pp-13000-comparison ./execs/pp-13000-comparison.cc)
   target_link_libraries(pp-13000-comparison JetScape analysis)
   endif()
