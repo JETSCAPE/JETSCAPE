@@ -1,3 +1,30 @@
+// This program reads "test_out.dat" produced from the JETSCAPE and Generates spectrums for jets and charged hadron yield.
+// JETSCAPE by default gives pTHatCrossSection in milibarn and particle's momentum in GeV.
+// With slight change, this program also allows reading multiple pTHatBins data and produce weighted spectra. 
+// Output of this program is a ROOT file which contains following plots
+// 1. Number of jets vs pT of the jet. (Graph name is CountVspTJetSpectrumBinpTHatMin_pTHatMax)
+// 2. Number of charged hadron vs pT of the hadron. (Graph name is CountVspTSingleHadronSpectrumBinpTHatMin_pTHatMax)
+// 3. Weighted differential jet cross section vs pT of the jet. Here Weighted differential crosssection means = sigmapTHat*dN/(dpTJet*dEta*TotalEvents)
+//    (Graph name is DifferentialJetCrossSectionBinpTHatMin_pTHatMax)
+//
+// 4. Weighted charged hadron differential yield vs pT of hadron. Here Weighted differential Yield = sigmapTHat*dN/(TotalInelasticCrossSection*2*PI*dpTHadron*dEta*TotalEvents)  
+//    (Graph name is DifferentialSingleHadronYieldBinpTHatMin_pTHatMax)
+//
+// 5. Total differential jet cross section (i.e. summed over all pTHat bins) vs pT of the jet. (if you have multiple pTHatBins data)
+//    (Graph name is TotalDifferentialJetCrossSection)
+//
+// 6. Total differential charged hadron yield (i.e. summed over all pTHat bins) vs pT of the hadron.
+//    (Graph name is TotalDifferentialSingleHadronYield)
+//
+// 7. pTHat crosssection i.e. hard scattering crosssection vs pTHat bin.
+//    (Graph name is HardCrossSection) 
+// 
+// Note, plots are saved in two ROOT format TH1D and TGraphErrors.
+// For jet spectrum, we use anti-kT algorithm with jet radius, R=0.3 and |eta_jet|<2.0. Inside jet cone, we include all particle except neutrinos (CMS def).
+// For charged hadron spectrum, we use |eta_hadron|<1.0. Only charged hadrons are included in the spectrum.
+
+// Authorship: written by Amit Kumar, revised by Shanshan Cao.
+
 //C++ header
 #include "string"
 #include <iostream>
@@ -20,6 +47,7 @@
 //ROOT headers
 #include <TH1.h>
 #include <TFile.h>
+#include <TDirectory.h>
 #include <TVector.h>
 #include "TApplication.h"
 #include "TCanvas.h"
@@ -28,8 +56,6 @@
 #include "TMultiGraph.h"
 #include "TLegend.h"
 #include "TRatioPlot.h"
-#include "TProfile.h"
-#include "TDirectory.h"
 
 #include "analysis.cc"
 
@@ -44,55 +70,113 @@ int main(int argc, char* argv[]){
 
     int nListJets =1;
     int StartTime = time(NULL);
-    // Create the ROOT application environment and pythia.
+    // Create the ROOT application environment.
     TApplication theApp("hist", &argc, argv);
     TFile* totalroot = new TFile( "root/totals.root", "RECREATE");
-    Pythia8::Pythia pythia;//("",false);
     
-    //Total analysis variables
     //Reading ptHat bins from list of made directories
     vector<vector<string>> tempvec = getDatBounds("./dat");
     vector<string> pTHatMin = tempvec[0];
     vector<string> pTHatMax = tempvec[1];
     int NpTHardBin = pTHatMin.size();
+    double bin14error[NpTHardBin];
     //for(int i = 0; i < pTHatMin.size(); i++) cout << pTHatMin[i] << endl; //debugging line
+    
+    
+    //Variables for jet spectrum
+    //(For CMS at 2760 GeV with jet radius R=2,0.3, or 0.4, |eta_jet|<2.0)
+    double JetpTBin[] = {64, 74, 84, 97, 114, 133, 153, 174, 196, 220, 245, 272, 300}; //in GeV
+    int NpTJetBin = sizeof(JetpTBin)/sizeof(JetpTBin[0])-1;     double JetpTMin = 10; //in GeV
+    
     vector<int> eventCount;
-    TDirectory* binfiles[NpTHardBin];
+    double JetEtaCut =2.0;
+    double JetRadius = 0.3;
+    double dNdpTCountJet[NpTHardBin][NpTJetBin];  //[ptHatBin] [Regular pt]
+    double pTHardBinJetBinError[NpTHardBin][NpTJetBin];
+    double TotalDifferentialJetCrossSection[NpTJetBin] = {0};
+    double TotalDifferentialJetCrossSectionError[NpTJetBin] = {0};
+    
+    //Variables for single hadron spectrum
+    double SingleHadronpTBin[] = {0.45, 0.6, 0.75, 0.9, 1.05, 1.2, 1.5, 1.8, 2.1, 2.4, 3.6, 4.8, 6.0, 7.2, 10.8, 14.4, 21.6, 28.8, 38.4, 48.0, 67.2, 86.4, 112.2};
+    int NpTSingleHadronBin = sizeof(SingleHadronpTBin)/sizeof(SingleHadronpTBin[0])-1;
 
-    //xsec total running count
-    double xsectotal = 0.0;
+    //ID Had variables
+    TFile idhadron_file("/data/rjfgroup/rjf01/cameron.parker/data/LHC-ID-hads.root");
+    TDirectory* piondir = (TDirectory*)idhadron_file.Get("Table 1");
+    TH1D* piondata = (TH1D*) piondir->Get("Hist1D_y3");
+    TGraphErrors* piongraph = (TGraphErrors*) piondir->Get("Graph1D_y3");
+    int NpTpionBin = piondata->GetNbinsX();
+    
+    TDirectory* kaondir = (TDirectory*)idhadron_file.Get("Table 2");
+    TH1D* kaondata = (TH1D*) kaondir->Get("Hist1D_y3");
+    TGraphErrors* kaongraph = (TGraphErrors*) kaondir->Get("Graph1D_y3");
+    int NpTkaonBin = kaondata->GetNbinsX();
+    
+    TDirectory* protondir = (TDirectory*)idhadron_file.Get("Table 3");
+    TH1D* protondata = (TH1D*) protondir->Get("Hist1D_y3");
+    TGraphErrors* protongraph = (TGraphErrors*) protondir->Get("Graph1D_y3");
+    int NpTprotonBin = protondata->GetNbinsX();
 
-    //Cut variables
-    double idHadronYCut = 0.5;
+    double SingleHadronEtaCut = 0.8;
+    double DetectorEtaCut= 2.6;
+    double idHadronYCut = 0.8;
+    double dNdpTCountSingleHadron[NpTHardBin][NpTSingleHadronBin];  //[ptHatBin] [Regular pt]
+    double pTHardBinSingleHadronBinError[NpTHardBin][NpTSingleHadronBin];
+    long double TotalDifferentialSingleHadronYield[NpTSingleHadronBin] = {0};
+    long double TotalDifferentialSingleHadronYieldError[NpTSingleHadronBin] = {0};
     double softend = 6.0;
+   
+    // for jet substructure
+    double JetpTCut = 100.0;
     
-    //reading data to get bins
-    TFile dataroot( "/data/rjfgroup/rjf01/cameron.parker/data/LHC13000.root");
-    TDirectory* piondir = (TDirectory*)dataroot.Get("Table 1"); TH1D* piondata = (TH1D*)piondir->Get("Hist1D_y1");
-    TDirectory* kaondir = (TDirectory*)dataroot.Get("Table 2"); TH1D* kaondata = (TH1D*)kaondir->Get("Hist1D_y1");
-    TDirectory* protondir = (TDirectory*)dataroot.Get("Table 6"); TH1D* protondata = (TH1D*)protondir->Get("Hist1D_y1");
+    TFile hadron_file("/data/rjfgroup/rjf01/cameron.parker/data/LHC5020-charged.root");
+    TDirectory* hadrondir = (TDirectory*)hadron_file.Get("Table 4");
+    TH1D* hadDataHist = (TH1D*)hadrondir->Get("Hist1D_y1");
+    
+    // Histograms.1. Number of jets vs pT of the jet. 2. Number of charged hadron vs pT of the hadron
+    TH1D *HistTempJet = new TH1D("JetSpectrumBin", "Jet Spectrum pT", NpTJetBin, JetpTBin); //CountVspT for jets
+    TH1D *HistTempSingleHadronSoft = getBlankCopy(hadDataHist,"ChargedHadronsSoft", "Charged Hadron pT"); //CountVspT for single-hadron
+    TH1D *HistTempSingleHadronHard = getBlankCopy(hadDataHist,"ChargedHadronsHard", "Charged Hadron pT"); //CountVspT for single-hadron
+	
+    TH1D *HistTotalHadronSoft = getBlankCopy(hadDataHist,"ChargedHadronsSoft", "Charged Hadron pT"); //Total hist for hadrons
+    TH1D *HistTotalHadronHard =  getBlankCopy(hadDataHist,"ChargedHadronsHard", "Charged Hadron pT"); //Total hist for hadrons
+	TH1D *HistTotalJet = new TH1D("JetSpectrumBin1", "Combined Jet pT Spectrum", NpTJetBin, JetpTBin); //Total hist for jets
+    TH1D *HistTotalJet2 = new TH1D("JetSpectrumBin2", "Combined Jet pT Spectrum 0.2 R", NpTJetBin, JetpTBin); //Total hist for jets
+	TH1D *HistTotalJet3 = new TH1D("JetSpectrumBin3", "Combined Jet pT Spectrum 0.4 R", NpTJetBin, JetpTBin); //Total hist for jets
+    TH1D *HistTotalPionsSoft = new TH1D("Pion Spectrum Soft", "Pion Spectrum pT", NpTpionBin, piondata->GetXaxis()->GetXbins()->GetArray()); //identified hadrons hists
+    TH1D *HistTotalPionsHard = new TH1D("Pion Spectrum Hard", "Pion Spectrum pT", NpTpionBin, piondata->GetXaxis()->GetXbins()->GetArray());
+    TH1D *HistTotalKaonsSoft = new TH1D("Kaon Spectrum Soft", "Kaon Spectrum pT", NpTkaonBin, kaondata->GetXaxis()->GetXbins()->GetArray());
+    TH1D *HistTotalKaonsHard = new TH1D("Kaon Spectrum Hard", "Kaon Spectrum pT", NpTkaonBin, kaondata->GetXaxis()->GetXbins()->GetArray());
+    TH1D *HistTotalProtonsSoft = new TH1D("Proton Spectrum Soft", "Proton Spectrum pT", NpTprotonBin, protondata->GetXaxis()->GetXbins()->GetArray());
+    TH1D *HistTotalProtonsHard = new TH1D("Proton Spectrum Hard", "Proton Spectrum pT", NpTprotonBin, protondata->GetXaxis()->GetXbins()->GetArray());
+    TH1D *HistRecoProtons = new TH1D("Proton Spectrum", "Proton Spectrum pT", NpTprotonBin, protondata->GetXaxis()->GetXbins()->GetArray());
+    HistTotalJet->SetName("Combined Jet pT Spectrum");
+    //HistTotalHadron->SetName("Combined Hadron pT Spectrum");
 
-    //Variables for ID hadron hists
-    TH1D *HistTotalPionsSoft = new TH1D("Pion Spectrum Soft", "Pion Spectrum pT", piondata->GetNbinsX(), piondata->GetXaxis()->GetXbins()->GetArray()); //identified hadrons hists
-    TH1D *HistTotalPionsHard = new TH1D("Pion Spectrum Hard", "Pion Spectrum pT", piondata->GetNbinsX(), piondata->GetXaxis()->GetXbins()->GetArray());
-    TH1D *HistTotalKaonsSoft = new TH1D("Kaon Spectrum Soft", "Kaon Spectrum pT", kaondata->GetNbinsX(), kaondata->GetXaxis()->GetXbins()->GetArray());
-    TH1D *HistTotalKaonsHard = new TH1D("Kaon Spectrum Hard", "Kaon Spectrum pT", kaondata->GetNbinsX(), kaondata->GetXaxis()->GetXbins()->GetArray());
-    TH1D *HistTotalProtonsSoft = new TH1D("Proton Spectrum Soft", "Proton Spectrum pT", protondata->GetNbinsX(), protondata->GetXaxis()->GetXbins()->GetArray());
-    TH1D *HistTotalProtonsHard = new TH1D("Proton Spectrum Hard", "Proton Spectrum pT", protondata->GetNbinsX(), protondata->GetXaxis()->GetXbins()->GetArray());
+    //Running totals for total spectra
+    double DifferentialJetTotal[NpTJetBin] = {0};
+    double DifferentialJetTotalErrors[NpTJetBin] = {0};
+    double DifferentialHadronTotal[NpTSingleHadronBin] = {0};
+    double DifferentialHadronTotalErrors[NpTSingleHadronBin] = {0};
     
-    //doing the same for jets
-    TFile jetdataroot( "/data/rjfgroup/rjf01/cameron.parker/data/LHC13000-jets.root");
-    TDirectory* jetdir1 = (TDirectory*)jetdataroot.Get("Table 1"); TH1D* jetdata1 = (TH1D*)jetdir1->Get("Hist1D_y1");
-    TH1D* jethist1 = getBlankCopy(jetdata1,"Jets low y","Jets low y");
-    TDirectory* jetdir2 = (TDirectory*)jetdataroot.Get("Table 2"); TH1D* jetdata2 = (TH1D*)jetdir2->Get("Hist1D_y1");
-    TH1D* jethist2 = getBlankCopy(jetdata2,"Jets mid y","Jets mid y");
-    TDirectory* jetdir3 = (TDirectory*)jetdataroot.Get("Table 3"); TH1D* jetdata3 = (TH1D*)jetdir3->Get("Hist1D_y1");
-    TH1D* jethist3 = getBlankCopy(jetdata3,"Jets high y","Jets high y");
+    std::vector <fjcore::PseudoJet> fjInputs;
+    std::vector <int> chargeList;
+    fjcore::JetDefinition jetDef(fjcore::antikt_algorithm, JetRadius);
+    fjcore::JetDefinition jetDef2(fjcore::antikt_algorithm, 0.2);
+    fjcore::JetDefinition jetDef3(fjcore::antikt_algorithm, 0.4);
     
-    //jet def
-    fjcore::JetDefinition jetDef(fjcore::antikt_algorithm, 0.4);
-    std::vector <fjcore::PseudoJet> SortedJets, UnsortedJets;
+    Pythia8::Pythia pythia;//("",false);
+	
+	//get list of cross sections
+    double xsectotal = 62.8; //experimental value: https://arxiv.org/pdf/1208.4968.pdf
+    //for(int k = 1; k<NpTHardBin; k++) xsectotal += xsecList[k]; //skip soft bin since it is not added to hard spectra
+    //for(int k = 0; k<NpTHardBin; k++) cout << pTHatMin[k] << " " << pTHatMax[k] << " " << xsecList[k]*100000 << endl; //debugging line
 
+    //graph declaration for adding hadron spectra
+    TMultiGraph* hadronComp = new TMultiGraph();
+    TGraph* hadronComponents[NpTHardBin];
+    TDirectory* binfiles[NpTHardBin];
+    
     cout<<"These are pTHat loops "<<endl;
     // For loop to open different pTHat bin files
     for (int k = 0; k<NpTHardBin; ++k){
@@ -104,8 +188,9 @@ int main(int argc, char* argv[]){
         sprintf(pTBinString,"Current pTHatBin is %i (%s,%s) GeV",k,pTHatMin[k].c_str(),pTHatMax[k].c_str());
         
         int  SN=0,PID=0;
-        double Px, Py, Pz, E, Y, Phi, pStat, mass;
+        double Px, Py, Pz, E, Eta, Y, Phi, pStat, mass;
         int Events =0;
+        int TriggeredJetNumber=0;
         
         // Create a file on which histogram(s) can be saved.
         char outFileName[1000];
@@ -114,22 +199,37 @@ int main(int argc, char* argv[]){
         binfiles[k]->cd();
         // Reset for each pTHardBin
         char HistName[100];
+        
+        HistTempJet->Reset();
+        sprintf(HistName,"CountVspTJetSpectrumBin%s_%s",pTHatMin[k].c_str(),pTHatMax[k].c_str());
+        HistTempJet->SetName(HistName);
+        
+        HistTempSingleHadronHard->Reset();
+        HistTempSingleHadronSoft->Reset();
+        //sprintf(HistName,"CountVspTSingleHadronSpectrumBin%s_%s",pTHatMin[k].c_str(),pTHatMax[k].c_str());
+        //HistTempSingleHadron->SetName(HistName);
+        
+        fjInputs.resize(0);
+        chargeList.resize(0);
+        
+        //temp hists for jets
+        TH1D *HistTempJet2 = new TH1D("JetSpectrumBinTemp2", "Jet Spectrum pT", NpTJetBin, JetpTBin);
+        TH1D *HistTempJet3 = new TH1D("JetSpectrumBinTemp3", "Jet Spectrum pT", NpTJetBin, JetpTBin);
 
         //temp hists for identified hadrons
-        TH1D *tempPionsSoft = new TH1D("Soft Pion Spectrum Temp", "Pion Spectrum pT", piondata->GetNbinsX(), piondata->GetXaxis()->GetXbins()->GetArray());
-        TH1D *tempPionsHard = new TH1D("Hard Pion Spectrum Temp", "Pion Spectrum pT", piondata->GetNbinsX(), piondata->GetXaxis()->GetXbins()->GetArray());
-        TH1D *tempKaonsSoft = new TH1D("Soft Kaon Spectrum Temp", "Kaon Spectrum pT", kaondata->GetNbinsX(), kaondata->GetXaxis()->GetXbins()->GetArray());
-        TH1D *tempKaonsHard = new TH1D("Hard Kaon Spectrum Temp", "Kaon Spectrum pT", kaondata->GetNbinsX(), kaondata->GetXaxis()->GetXbins()->GetArray());
-        TH1D *tempProtonsSoft = new TH1D("Soft Proton Spectrum Temp", "Proton Spectrum pT", protondata->GetNbinsX(), protondata->GetXaxis()->GetXbins()->GetArray());
-        TH1D *tempProtonsHard = new TH1D("Hard Proton Spectrum Temp", "Proton Spectrum pT", protondata->GetNbinsX(), protondata->GetXaxis()->GetXbins()->GetArray());
-        TH1D* tempjethist1 = getBlankCopy(jetdata1,"Temp Jets low y","Temp Jets low y");
-        TH1D* tempjethist2 = getBlankCopy(jetdata2,"Temp Jets mid y","Temp Jets mid y");
-        TH1D* tempjethist3 = getBlankCopy(jetdata3,"Temp Jets high y","Temp Jets high y");
+        TH1D *tempPionsSoft = new TH1D("Soft Pion Spectrum Temp", "Pion Spectrum pT", NpTpionBin, piondata->GetXaxis()->GetXbins()->GetArray());
+        TH1D *tempPionsHard = new TH1D("Hard Pion Spectrum Temp", "Pion Spectrum pT", NpTpionBin, piondata->GetXaxis()->GetXbins()->GetArray());
+        TH1D *tempKaonsSoft = new TH1D("Soft Kaon Spectrum Temp", "Kaon Spectrum pT", NpTkaonBin, kaondata->GetXaxis()->GetXbins()->GetArray());
+        TH1D *tempKaonsHard = new TH1D("Hard Kaon Spectrum Temp", "Kaon Spectrum pT", NpTkaonBin, kaondata->GetXaxis()->GetXbins()->GetArray());
+        TH1D *tempProtonsSoft = new TH1D("Soft Proton Spectrum Temp", "Proton Spectrum pT", NpTprotonBin, protondata->GetXaxis()->GetXbins()->GetArray());
+        TH1D *tempProtonsHard = new TH1D("Hard Proton Spectrum Temp", "Proton Spectrum pT", NpTprotonBin, protondata->GetXaxis()->GetXbins()->GetArray());
+        TH1D *tempProtonsReco = new TH1D("Hard Proton Spectrum Temp", "Proton Spectrum pT", NpTprotonBin, protondata->GetXaxis()->GetXbins()->GetArray());
 
         //Data structures for events read in to save run time
         vector<shared_ptr<Hadron>> hadrons;
+        vector <fjcore::PseudoJet> UnSortedJets, SortedJets, UnSortedJets2, SortedJets2, UnSortedJets3, SortedJets3, constituents;
         
-        //actually reading in
+        //actually reading in, event loop
         while (!myfile->Finished()){
             cout << HadronFile << ": ";
             try{
@@ -140,9 +240,9 @@ int main(int argc, char* argv[]){
                 break;
             }
 
+
             //cout<<"Number of hadrons is: " << hadrons.size() << endl;
-            Events++;
-            std::vector <fjcore::PseudoJet> fjInputs;
+            Events++; //if(Events > 500) break;
             for(unsigned int i=0; i<hadrons.size(); i++){
                 SN = i;
                 PID= hadrons[i].get()->pid();
@@ -150,24 +250,37 @@ int main(int argc, char* argv[]){
                 Px = hadrons[i].get()->px();
                 Py = hadrons[i].get()->py();
                 Pz = hadrons[i].get()->pz();
+                Eta = hadrons[i].get()->eta();
                 Y = hadrons[i].get()->rapidity();
                 Phi = hadrons[i].get()->phi();
                 pStat = hadrons[i].get()->pstat();
                 mass = hadrons[i].get()->restmass();
-                double PT = TMath::Sqrt((Px*Px) + (Py*Py));
+                double PT = TMath::Sqrt( (Px*Px) + (Py*Py));
                 
-                if(PT>0.01 && PID!=12 && PID!=14 && PID!=16 && PID!=18){
+                if( fabs(Eta) < DetectorEtaCut && PT>0.01  &&  PID!=12 && PID!=14 && PID!=16 && PID!=18 ){
                     fjInputs.push_back(fjcore::PseudoJet(Px,Py,Pz,E));
-                }      
+                    chargeList.push_back( pythia.particleData.charge( PID ) );
+                }
 
+                //strength for had hist filling
+                float strength = 1.0f;
+                
                 //cutting for specific regimes
                 if(k == 0 && PT > softend)
                     continue;
                 if(k != 0 && PT < softend)
                     continue;
-
-                double strength = 1.0; //smoothing between smooth and hard transition          
-
+                if(k != 0 && PT > 1.1*stod(pTHatMax[k]))
+                    continue;
+                
+                // Add this particle into SingleHadron spectrum
+                if(fabs(Eta) < SingleHadronEtaCut && PT>0.01  && fabs(PID)>100 &&  pythia.particleData.charge(PID)!=0){
+                    //cout<<PT<<" PID "<<PID<<"\t charge = "<<pythia.particleData.charge( PID)<<endl;
+                    if(PT < softend) HistTempSingleHadronSoft->Fill(PT,strength);
+                    else HistTempSingleHadronHard->Fill(PT,strength);
+                }
+                
+                //ID hadron spectra
                 if(fabs(Y) < idHadronYCut){
                     if(abs(PID) == 211) {
                         if(PT < softend) tempPionsSoft->Fill(PT,strength);
@@ -180,54 +293,132 @@ int main(int argc, char* argv[]){
                     if(abs(PID) == 2212) {
                         if(PT < softend) tempProtonsSoft->Fill(PT,strength);
                         else tempProtonsHard->Fill(PT,strength);
+                        
+                        if(pStat < 815) tempProtonsReco->Fill(PT,strength);
                     }
                 } 
             }
 
-            //jet calcs
-            fjcore::ClusterSequence clustSeq(fjInputs, jetDef);
-            UnsortedJets = clustSeq.inclusive_jets(100.);
-            SortedJets = sorted_by_pt(UnsortedJets);
-            int pFast = SortedJets.size();
-            for (auto jet: SortedJets){
-                double jetpT = jet.perp();
-                if(jetpT > stod(pTHatMax[k])*1.1) jetpT = stod(pTHatMax[k]); //catching high energy anomalies
-                if(fabs(jet.rapidity()) < 0.5) tempjethist1->Fill(jetpT);
-                if(fabs(jet.rapidity()) > 0.5 and fabs(jet.rapidity()) < 1.0) tempjethist2->Fill(jetpT);
-                if(fabs(jet.rapidity()) > 1.0 and fabs(jet.rapidity()) < 1.5) tempjethist3->Fill(jetpT);
+            //Alternate Radius Calculations, 0.2 first
+            fjcore::ClusterSequence clustSeq2(fjInputs, jetDef2);
+            UnSortedJets2 = clustSeq2.inclusive_jets(JetpTMin);
+            SortedJets2 = sorted_by_pt(UnSortedJets2);
+            int pFast2 = SortedJets2.size();
+            for (int i = 0; i < pFast2; ++i){
+                if(-JetEtaCut < SortedJets2[i].eta() && SortedJets2[i].eta()< JetEtaCut){
+                    if(SortedJets2[i].perp() < stod(pTHatMax[k])*1.1) HistTempJet2->Fill(SortedJets2[i].perp());
+                    else HistTempJet2->Fill(stod(pTHatMax[k])); //filtering out anomalous high energy events
+                    //cout << "jet rad 0.2 " << SortedJets2[i].perp() << endl;
+                }
             }
+
+            //jet radius 0.4
+            fjcore::ClusterSequence clustSeq3(fjInputs, jetDef3);
+            UnSortedJets3 = clustSeq3.inclusive_jets(JetpTMin);
+            SortedJets3 = sorted_by_pt(UnSortedJets3);
+            int pFast3 = SortedJets3.size();
+            for (int i = 0; i < pFast3; ++i){
+                if(-JetEtaCut < SortedJets3[i].eta() && SortedJets3[i].eta()< JetEtaCut){
+                    if(SortedJets3[i].perp() < stod(pTHatMax[k])*1.1) HistTempJet3->Fill(SortedJets3[i].perp());
+                    else HistTempJet3->Fill(stod(pTHatMax[k])); //filtering out anomalous high energy events
+                    //cout << "jet rad 0.4" << endl;
+                }
+            }
+
+            
+            // Run Fastjet algorithm and sort jets in pT order.
+            fjcore::ClusterSequence clustSeq(fjInputs, jetDef);
+            UnSortedJets = clustSeq.inclusive_jets(JetpTMin);
+            SortedJets    = sorted_by_pt(UnSortedJets);
+
+            int pFast = SortedJets.size();
+            for (int i = 0; i < pFast; ++i)
+            {
+                if(-JetEtaCut < SortedJets[i].eta() && SortedJets[i].eta()< JetEtaCut )
+                {
+                    if(SortedJets[i].perp() < stod(pTHatMax[k])*1.1) HistTempJet->Fill( SortedJets[i].perp() );
+                    else HistTempJet->Fill(stod(pTHatMax[k])); //filtering out anomalous high energy events
+                }
+            }
+            fjInputs.resize(0);
         }
 
         //xsec stuff
         double HardCrossSection = myfile->GetSigmaGen();
-        double HardCrossSectionError =  myfile->GetSigmaErr();
+        double HardCrossSectionError = myfile->GetSigmaErr();
         if(k == 0) xsectotal = HardCrossSection; //set for first bin to match experimental value; end of reading cross section
-        
+
+        //cleaning up 0s in soft bin
+        /*if(k == 0){
+            for(int i=1; i <= tempPions->GetNbinsX(); i++)
+                if(tempPions->GetBinContent(i) == 0 && tempPions->GetBinCenter(i) < softend) tempPions->SetBinContent(i,0.1);
+            for(int i=1; i <= tempKaons->GetNbinsX(); i++)
+                if(tempKaons->GetBinContent(i) == 0 && tempKaons->GetBinCenter(i) < softend) tempKaons->SetBinContent(i,0.1);
+            for(int i=1; i <= tempProtons->GetNbinsX(); i++)
+                if(tempProtons->GetBinContent(i) == 0 && tempProtons->GetBinCenter(i) < softend) tempProtons->SetBinContent(i,0.1);
+        }*/
+
         //event count handling
         eventCount.push_back(Events);
         
+        //For jet spectrum, weighted by cross section and combined through multiple pTHatBins
+        for(int j=0;j<NpTJetBin;j++)
+        {
+            dNdpTCountJet[k][j]= HistTempJet->GetBinContent(j+1);
+            if(dNdpTCountJet[k][j] > 0.0)
+            {
+                pTHardBinJetBinError[k][j] = (dNdpTCountJet[k][j]*HardCrossSection/(Events*(JetpTBin[j+1]-JetpTBin[j])*2.0*JetEtaCut))*TMath::Sqrt( (1/dNdpTCountJet[k][j]) + TMath::Power(HardCrossSectionError/HardCrossSection,2.0));
+                cout<<"For JetBin j = "<<j<<" \t BinContent = \t"<<HistTempJet->GetBinContent(j+1)<<"\t Scaled Value = "<<(dNdpTCountJet[k][j]*HardCrossSection)/(Events*(JetpTBin[j+1]-JetpTBin[j])*2.0*JetEtaCut)<<endl;
+            }
+            else
+            {
+                pTHardBinJetBinError[k][j] = 0.0;
+                cout<<"For JetBin j = "<<j<<" \t BinContent = \t"<<HistTempJet->GetBinContent(j+1)<<"\t Scaled Value = "<<0.0<<endl;
+            }
+        }
+
+        //filtering out low bin events in the hadron spectra, smoothing
+        //for(int i = 0; i < NpTSingleHadronBin; i++)
+            //if(HistTempSingleHadron->GetBinContent(i+1) < 5) HistTempSingleHadron->SetBinContent(i+1,0);
+
+        //for(int i = 0; i < NpTpionBin; i++)
+            //if(tempPions->GetBinContent(i+1) < 2) tempPions->SetBinContent(i+1,0);
+
+        //for(int i = 0; i < NpTkaonBin; i++)
+            //if(tempKaons->GetBinContent(i+1) < 2) tempKaons->SetBinContent(i+1,0);
+
+        //for(int i = 0; i < NpTpionBin; i++)
+            //if(tempProtons->GetBinContent(i+1) < 2) tempProtons->SetBinContent(i+1,0);
+        
         //Write histogram into a root file
+        HistTempJet->Sumw2(); HistTempJet->Write();
+        HistTempJet2->Sumw2(); HistTempJet2->Write();
+        HistTempJet3->Sumw2(); HistTempJet3->Write();
         tempPionsSoft->Sumw2(); tempPionsSoft->Write();
         tempPionsHard->Sumw2(); tempPionsHard->Write();
         tempKaonsSoft->Sumw2(); tempKaonsSoft->Write();
         tempKaonsHard->Sumw2(); tempKaonsHard->Write();
         tempProtonsSoft->Sumw2(); tempProtonsSoft->Write();
         tempProtonsHard->Sumw2(); tempProtonsHard->Write();
-        tempjethist1->Write();
-        tempjethist2->Write();
-        tempjethist3->Write();
+        tempProtonsReco->Sumw2(); tempProtonsReco->Write();
+        HistTempSingleHadronSoft->Sumw2(); HistTempSingleHadronSoft->Write();
+        HistTempSingleHadronHard->Sumw2(); HistTempSingleHadronHard->Write();
         
-        //add to totals histograms 
-        HistTotalPionsSoft->Add(tempPionsSoft,HardCrossSection/(1.0*Events*xsectotal));
-        HistTotalPionsHard->Add(tempPionsHard,HardCrossSection/(1.0*Events*xsectotal));
-        HistTotalKaonsSoft->Add(tempKaonsSoft,HardCrossSection/(1.0*Events*xsectotal));
-        HistTotalKaonsHard->Add(tempKaonsHard,HardCrossSection/(1.0*Events*xsectotal));
-        HistTotalProtonsSoft->Add(tempProtonsSoft,HardCrossSection/(1.0*Events*xsectotal));
-        HistTotalProtonsHard->Add(tempProtonsHard,HardCrossSection/(1.0*Events*xsectotal));
-        jethist1->Add(tempjethist1,HardCrossSection/(1.0*Events));
-        jethist2->Add(tempjethist2,HardCrossSection/(1.0*Events));
-        jethist3->Add(tempjethist3,HardCrossSection/(1.0*Events));
-		
+        //add to totals histograms
+        double factor = HardCrossSection/(xsectotal*Events);
+        HistTotalHadronSoft->Add(HistTempSingleHadronSoft,factor);
+        HistTotalHadronHard->Add(HistTempSingleHadronHard,factor);
+        HistTotalPionsSoft->Add(tempPionsSoft,factor);
+        HistTotalPionsHard->Add(tempPionsHard,factor);
+        HistTotalKaonsSoft->Add(tempKaonsSoft,factor);
+        HistTotalKaonsHard->Add(tempKaonsHard,factor);
+        HistTotalProtonsSoft->Add(tempProtonsSoft,factor);
+        HistTotalProtonsHard->Add(tempProtonsHard,factor);
+        HistRecoProtons->Add(tempProtonsReco,factor);
+		HistTotalJet->Add(HistTempJet,HardCrossSection); 
+        HistTotalJet2->Add(HistTempJet2,HardCrossSection/Events);
+        HistTotalJet3->Add(HistTempJet3,HardCrossSection/Events);
+
         myfile->Close();
         
         TVector EventInfo(3);
@@ -235,7 +426,58 @@ int main(int argc, char* argv[]){
         EventInfo[1] = HardCrossSectionError;
         EventInfo[2] = Events;
         EventInfo.Write("EventInfo");
+        
+        TVector TriggeredJetInfo(2);
+        TriggeredJetInfo[0] = JetpTCut;
+        TriggeredJetInfo[1] = TriggeredJetNumber;
+        TriggeredJetInfo.Write("TriggeredJetInfo");
+        
+        //Plots for jet spectrum
+        double DifferentialJetCrossSection[NpTJetBin],DifferentialJetCrossSectionError[NpTJetBin],JetpT[NpTJetBin],JetpTError[NpTJetBin];
+        TGraphErrors * GEJet;
+        
+        cout<<"For ptHardBin = "<<k+1<<"\t CrossSection is Below "<<endl;
+        for(int j=0; j<NpTJetBin;j++){
+            DifferentialJetCrossSection[j] = (dNdpTCountJet[k][j]*HardCrossSection)/(Events*((JetpTBin[j+1]-JetpTBin[j]))*2.0*JetEtaCut);
+            DifferentialJetCrossSectionError[j] = pTHardBinJetBinError[k][j];
+            JetpT[j] = (JetpTBin[j] + JetpTBin[j+1])/2.0;
+            JetpTError[j] = (JetpTBin[j+1] - JetpTBin[j])/2.0;
+            cout<<JetpT[j]<<"\t"<<DifferentialJetCrossSection[j]<<"\t"<<DifferentialJetCrossSectionError[j]<<"\t"<<dNdpTCountJet[k][j]<<"\t"<<HardCrossSection<<endl;
+            DifferentialJetTotal[j] += DifferentialJetCrossSection[j];
+            DifferentialJetTotalErrors[j] += DifferentialJetCrossSectionError[j]*DifferentialJetCrossSectionError[j];
+        }
+        
+        GEJet = new TGraphErrors(NpTJetBin,JetpT,DifferentialJetCrossSection,JetpTError,DifferentialJetCrossSectionError);
+        char MyGraphName[100];
+        sprintf(MyGraphName,"DifferentialJetCrossSectionBin%s_%s",pTHatMin[k].c_str(),pTHatMax[k].c_str());
+        GEJet->SetNameTitle(MyGraphName);
+        GEJet->Write();
+        
+        // For charged Hadron spectrum
+        double DifferentialSingleHadronYield[NpTSingleHadronBin],DifferentialSingleHadronYieldError[NpTSingleHadronBin],SingleHadronpT[NpTSingleHadronBin],SingleHadronpTError[NpTSingleHadronBin];
+        TGraphErrors * GESingleHadron;
+        
+        cout<<"For ptHardBin = "<<k+1<<"\t SingleHadron differential yield is Below "<<endl;
+        for(int j=0; j<NpTSingleHadronBin;j++){
+            DifferentialSingleHadronYield[j] = (dNdpTCountSingleHadron[k][j]*HardCrossSection)/(Events*(SingleHadronpTBin[j+1]-SingleHadronpTBin[j])*xsectotal*2*M_PI*((SingleHadronpTBin[j]+SingleHadronpTBin[j+1])/2.0)*2.0*SingleHadronEtaCut); //hadron scaling, changed to scale with total cross section from pT hard bins
+            DifferentialSingleHadronYieldError[j] = pTHardBinSingleHadronBinError[k][j];
+            SingleHadronpT[j] = (SingleHadronpTBin[j]+SingleHadronpTBin[j+1])/2.0;
+            SingleHadronpTError[j] = (SingleHadronpTBin[j+1]-SingleHadronpTBin[j])/2.0;
+            cout<<SingleHadronpT[j]<<"\t"<<DifferentialSingleHadronYield[j]<<"\t"<<DifferentialSingleHadronYieldError[j]<<endl;
+            DifferentialHadronTotal[j] += DifferentialSingleHadronYield[j];
+            DifferentialHadronTotalErrors[j] += DifferentialSingleHadronYieldError[j]*DifferentialSingleHadronYieldError[j];
+        }
+        
+        GESingleHadron = new TGraphErrors(NpTSingleHadronBin,SingleHadronpT,DifferentialSingleHadronYield,SingleHadronpTError,DifferentialSingleHadronYieldError);
+        char MyGraphName2[100];
+        sprintf(MyGraphName2,"DifferentialSingleHadronYieldBin%s_%s",pTHatMin[k].c_str(),pTHatMax[k].c_str());
+        GESingleHadron->SetNameTitle(MyGraphName2);
+        GESingleHadron->Write();
 
+        //Save hadron pT hist as a png for convenience
+        hadronComponents[k] = (TGraph*)GESingleHadron->Clone();
+        hadronComponents[k]->SetLineColor(k+2);
+        
         totalroot->cd();
     } //k-loop ends here (pTHatBin loop)
 
@@ -246,40 +488,33 @@ int main(int argc, char* argv[]){
     HistTotalKaonsHard->Write("raw hard kaons");
     HistTotalProtonsSoft->Write("raw soft protons");
     HistTotalProtonsHard->Write("raw hard protons");
+    HistRecoProtons->Write("raw reco protons");
 
-    //Scaling totals by global factors and the identified pions by bin centers: dSigma/(2*pi*pT*dpT*dEta)
-    HistTotalPionsSoft->Scale(1./(2.0*idHadronYCut),"width");
-    HistTotalPionsHard->Scale(1./(2.0*idHadronYCut),"width");
-    HistTotalKaonsSoft->Scale(1./(2.0*idHadronYCut),"width");
-    HistTotalKaonsHard->Scale(1./(2.0*idHadronYCut),"width");
-    HistTotalProtonsSoft->Scale(1./(2.0*idHadronYCut),"width");
-    HistTotalProtonsHard->Scale(1./(2.0*idHadronYCut),"width");
-    jethist1->Scale(2000000000.0,"width"); //milli to pico times 2 for half the rapidity range
-    jethist2->Scale(2000000000.0,"width");
-    jethist3->Scale(2000000000.0,"width");
- 	
+    //Scaling totals by global factors and the identified pions by bin centers
+    HistTotalHadronSoft->Scale(1.0/(2.0*SingleHadronEtaCut),"width");
+    HistTotalHadronHard->Scale(1.0/(2.0*SingleHadronEtaCut),"width");
+
+    //hadrons
+    //hadron data graph
+    TMultiGraph *GEHadronTotal = new TMultiGraph();
+    TGraphErrors* hadronData = (TGraphErrors*) hadrondir->Get("Graph1D_y1");
+    TH1D* hadronDataHist = (TH1D*)hadrondir->Get("Hist1D_y1");
+    hadronData->SetMarkerStyle(kCircle);
+    hadronData->SetMarkerColor(kRed);
+    hadronData->SetLineColor(kRed);
+    hadronData->SetTitle("CMS");
+    myRatioPlot(hadronData, HistTotalHadronSoft, HistTotalHadronHard, "Hadron Yields", true, true);
+	
     //create root file for total plots
-    HistTotalPionsSoft->Write("rough soft pions"); smoothBins(HistTotalPionsSoft); /*HistTotalPions->Smooth();*/ HistTotalPionsSoft->Write("smooth soft pions");
-    HistTotalPionsHard->Write("rough hard pions"); smoothBins(HistTotalPionsHard); /*HistTotalPions->Smooth();*/ HistTotalPionsHard->Write("smooth hard pions");
-    TH1D* pionhist = (TH1D*)HistTotalPionsSoft->Clone(); pionhist->Add(HistTotalPionsHard); pionhist->Write("smooth pions");
-    HistTotalKaonsSoft->Write("rough soft kaons"); smoothBins(HistTotalKaonsSoft); /*HistTotalKaons->Smooth();*/ HistTotalKaonsSoft->Write("smooth soft kaons");
-    HistTotalKaonsHard->Write("rough hard kaons"); smoothBins(HistTotalKaonsHard); /*HistTotalKaons->Smooth();*/ HistTotalKaonsHard->Write("smooth hard kaons");
-    TH1D* kaonhist = (TH1D*)HistTotalKaonsSoft->Clone(); kaonhist->Add(HistTotalKaonsHard); kaonhist->Write("smooth kaons");
-    HistTotalProtonsSoft->Write("rough soft protons"); smoothBins(HistTotalProtonsSoft); /*HistTotalProtons->Smooth();*/ HistTotalProtonsSoft->Write("smooth soft protons");
-    HistTotalProtonsHard->Write("rough hard protons"); smoothBins(HistTotalProtonsHard); /*HistTotalProtons->Smooth();*/ HistTotalProtonsHard->Write("smooth hard protons");
-    TH1D* protonhist = (TH1D*)HistTotalProtonsSoft->Clone(); protonhist->Add(HistTotalProtonsHard); protonhist->Write("smooth protons");
-    jethist1->Write("low y jets"); smoothBins(jethist1); jethist1->Write("smooth low y jets");
-    jethist2->Write("mid y jets"); smoothBins(jethist2); jethist2->Write("smooth mid y jets");
-    jethist3->Write("high y jets"); smoothBins(jethist3); jethist3->Write("smooth high y jets");
-    totalroot->Close();
+    cout << "Creating ROOT output...";
+    totalroot->cd();
+    HistTotalHadronSoft->Write("soft hadrons");
+    HistTotalHadronHard->Write("hard hadrons");
+    TH1D* hadronhist = (TH1D*)HistTotalHadronSoft->Clone(); hadronhist->Add(HistTotalHadronHard); hadronhist->Write("hadrons");
+    cout << "finished." << endl;
 
-    //hadron graphs
-    myRatioPlot((TGraphErrors*)piondir->Get("Graph1D_y1"), HistTotalPionsSoft, HistTotalPionsHard, "Pion Yields", true, true);
-    myRatioPlot((TGraphErrors*)kaondir->Get("Graph1D_y1"), HistTotalKaonsSoft, HistTotalKaonsHard, "Kaon Yields", true, true);
-    myRatioPlot((TGraphErrors*)protondir->Get("Graph1D_y1"), HistTotalProtonsSoft, HistTotalProtonsHard, "Proton Yields", true, true);
-    myRatioPlot((TGraphErrors*)jetdir1->Get("Graph1D_y1"), jethist1, "Low y Jet Yields", true, true);
-    myRatioPlot((TGraphErrors*)jetdir2->Get("Graph1D_y1"), jethist2, "Mid y Jet Yields", true, true);
-    myRatioPlot((TGraphErrors*)jetdir3->Get("Graph1D_y1"), jethist3, "High y Jet Yields", true, true);
+    idhadron_file.Close();
+    totalroot->Close();
 
     //Done. Script run time
     int EndTime = time(NULL);
