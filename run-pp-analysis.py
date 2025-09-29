@@ -11,6 +11,8 @@ import classad
 ECM = "2760"
 RHICrun = False
 LHC900 = False
+LHC5020 = False
+LHC7000 = False
 LHC13000 = False
 smoothrun = False
 setStart = False
@@ -23,6 +25,12 @@ for i, option in enumerate(sys.argv):
     if "LHC900" in option:
         LHC900 = True
         ECM = "900"
+    if "LHC5020" in option:
+        LHC5020 = True
+        ECM = "5020"
+    if "LHC7000" in option:
+        LHC7000 = True
+        ECM = "7000"
     if "LHC13000" in option:
         LHC13000 = True
         ECM = "13000"
