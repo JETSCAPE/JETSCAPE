@@ -2,7 +2,7 @@
 
 <jetscape>
   
-  <nEvents> 100 </nEvents>
+  <nEvents> 2 </nEvents>
   
   <JetScapeWriterAscii> on </JetScapeWriterAscii>
 
