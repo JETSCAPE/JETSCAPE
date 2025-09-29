@@ -214,6 +214,7 @@ void MpiMusic::EvolveHydro() {
   int nz = ini->GetZSize();
   double tau0 = pre_eq_ptr->GetPreequilibriumEndTime();
   JSINFO << "hydro initial time set by PreEq module tau0 = " << tau0 << " fm/c";
+
   music_hydro_ptr->initialize_hydro_from_jetscape_preequilibrium_vectors(
       tau0,
       dx, dz, z_max, nz, pre_eq_ptr->e_, pre_eq_ptr->P_,
@@ -222,7 +223,6 @@ void MpiMusic::EvolveHydro() {
       pre_eq_ptr->pi03_, pre_eq_ptr->pi11_, pre_eq_ptr->pi12_,
       pre_eq_ptr->pi13_, pre_eq_ptr->pi22_, pre_eq_ptr->pi23_,
       pre_eq_ptr->pi33_, pre_eq_ptr->bulk_Pi_);
-  JSINFO << "initial density profile dx = " << dx << " fm";
 
   has_source_terms = false;
   if (hydro_source_terms_ptr->get_number_of_sources() > 0) {
@@ -324,10 +324,10 @@ void MpiMusic::SetPreEqGridInfo() {
 void MpiMusic::SetHydroGridInfo() {
   bulk_info.neta = music_hydro_ptr->get_neta();
   bulk_info.nx = music_hydro_ptr->get_nx();
-  bulk_info.ny = music_hydro_ptr->get_nx();
+  bulk_info.ny = music_hydro_ptr->get_nx(); // assuming y and x are symmetric
   bulk_info.x_min = -music_hydro_ptr->get_hydro_x_max();
+  bulk_info.y_min = -music_hydro_ptr->get_hydro_x_max(); // assuming y and x are symmetric
   bulk_info.dx = music_hydro_ptr->get_hydro_dx();
-  bulk_info.y_min = -music_hydro_ptr->get_hydro_x_max();
   bulk_info.dy = music_hydro_ptr->get_hydro_dx();
   bulk_info.eta_min = -music_hydro_ptr->get_hydro_eta_max();
   bulk_info.deta = music_hydro_ptr->get_hydro_deta();

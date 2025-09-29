@@ -28,7 +28,7 @@
     <NullPreDynamics> </NullPreDynamics>
   </Preequilibrium>
 
-  <!-- Hydro  Module 1 -->
+  <!-- Hydro  Module 1 | medium for energy loss module not needed -->
   <Hydro>
     <MUSIC>
       <name>MUSIC_1</name>
@@ -51,7 +51,8 @@
       </CausalLiquefier>
   </Liquefier>
 
-  <!--Eloss Modules -->
+  <!--Eloss Modules | can just use a dummy modeul at this point | could just hack a source term here -->
+  <!-- current module is realistic , suki; ideally could remove MUSIC 1 and then dummy Eloss (or hard code to put in)  -->
   <Eloss>
       <deltaT>0.1</deltaT>
       <formTime> -0.1</formTime>

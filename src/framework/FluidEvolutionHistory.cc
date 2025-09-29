@@ -121,6 +121,7 @@ void EvolutionHistory::FromVector(const std::vector<float> &data_,
   neta = neta_;
   tau_eta_is_tz = tau_eta_is_tz_;
   ntau = data_.size() / (data_info_.size() * nx * ny * neta);
+
 }
 
 /* This function will read the sparse data stored in data_ with associated 
@@ -260,6 +261,7 @@ FluidCellInfo EvolutionHistory::GetAtTimeStep(int id_tau, Jetscape::real x,
   auto eta1 = 0.0;
   if (!boost_invariant)
     eta1 = EtaCoord(id_eta + 1);
+
 
   return TrilinearInt(x0, x1, y0, y1, eta0, eta1, c000, c001, c010, c011, c100,
                       c101, c110, c111, x, y, eta);

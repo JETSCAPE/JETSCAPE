@@ -3,7 +3,7 @@
 <jetscape>
 
   <vlevel> 0 </vlevel>
-  <nEvents> 20 </nEvents>
+  <nEvents> 10 </nEvents>
   <nReuseHydro> 0 </nReuseHydro>
 
   <JetScapeWriterAscii> on </JetScapeWriterAscii>
@@ -102,12 +102,12 @@
   <JetScapeQA>
       <outputFileName> JetscapeQA.root </outputFileName>
       <!-- number of events with single even histograms -->
-      <nEvents_EbyE_QA>3</nEvents_EbyE_QA>
+      <nEvents_EbyE_QA>5</nEvents_EbyE_QA>
       <!-- number of events with event averaged histograms -->
       <nEvents_aveE_QA>8</nEvents_aveE_QA>
       <!-- range maxima for histograms -->
       <th1_ptmax> 50 </th1_ptmax>
-      <th1_nhadrons> 500000. </th1_nhadrons>
+      <th1_nhadrons> 10000. </th1_nhadrons>
       <!-- minimmum pt for jet selection -->
       <min_jetpt> 2. </min_jetpt>
   </JetScapeQA>

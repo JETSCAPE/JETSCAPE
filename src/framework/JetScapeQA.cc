@@ -122,8 +122,13 @@ vector<TH1*> JetScapeQA::MakeHgrams(const string& task, QA_TYPE qa_type, int eve
       float xmax = istate->GetXMax();
       float ystep = istate->GetYStep();
       float ymax = istate->GetYMax();
-      int nx = 2*xmax / xstep;
-      int ny = 2*ymax / ystep;
+      int nx = 2*xmax / xstep+1;
+      int ny = 2*ymax / ystep+1;
+
+      xmax = xmax + xstep/2.;
+      ymax = ymax + ystep/2.;
+      // float max = xmax-xstep;
+      // float min = -xmax;
 
       // get a 2D histogram for entropy
       hgrams.push_back(new TH2D(Form("%s_entropy%s", task.c_str(),etag.c_str()), Form("%s Entropy;X [fm];Y [fm]", task.c_str()), nx, -xmax, xmax, ny, -ymax, ymax));
@@ -151,17 +156,21 @@ vector<TH1*> JetScapeQA::MakeHgrams(const string& task, QA_TYPE qa_type, int eve
       float xmax = istate->GetXMax();
       float ystep = istate->GetYStep();
       float ymax = istate->GetYMax();
-      int nx = 2*xmax / xstep;
-      int ny = 2*ymax / ystep;
+      int nx = 2*xmax / xstep+1;
+      int ny = 2*ymax / ystep+1;
+
+      float xmin = -xmax - xstep/2.;
+      float ymin = -ymax - ystep/2.;
+      xmax = xmax + xstep/2.;
+      ymax = ymax + ystep/2.;
 
       // See PreequiblibriumDynamics.h for available parameters
       // they are: e_, P_, utau_, ux_, uy_, ueta_, pi00_, 
       // pi01_, pi01_, pi02_, pi03_, pi11_, pi12_, pi13_, pi22_,
       // pi23_, pi33_, bulk_Pi,
       // get the 
-      hgrams.push_back(new TH2D(Form("%s_e%s", task.c_str(), etag.c_str()), Form("%s Pre-Equilibrium Dynamics energy density [GeV/fm^{3}];x [fm]; y [fm]", task.c_str()), nx, -xmax, xmax, ny, -ymax, ymax));
+      hgrams.push_back(new TH2D(Form("%s_e%s", task.c_str(), etag.c_str()), Form("%s Pre-Equilibrium Dynamics energy density [GeV/fm^{3}];x [fm]; y [fm]", task.c_str()), nx, xmin, xmax, ny, ymin, ymax));
 
-      // FIXME: e_ is identical to Trento's entropy; why don't we use s?
     }
     break;
 
@@ -178,10 +187,18 @@ vector<TH1*> JetScapeQA::MakeHgrams(const string& task, QA_TYPE qa_type, int eve
       int nX = bInfo.nx;
       double xMin = bInfo.XMin();
       double xMax = bInfo.XMax(); //same for y axis ...
+      JSINFO << " FIMXE apple : " << nX << " " << xMin << " " << xMax;
+      float xstep = (xMax - xMin) / (nX - 1);
+      xMin = xMin - xstep/2.;
+      xMax = xMax + xstep/2.;
 
       int nY = bInfo.ny;
       double yMin = bInfo.YMin();
       double yMax = bInfo.YMax(); //same for y axis ...
+      JSINFO << " FIMXE banana : " << nY << " " << yMin << " " << yMax;
+      float ystep = (yMax - yMin) / (nY - 1);
+      yMin = yMin - ystep/2.;
+      yMax = yMax + ystep/2.;
 
       // when called during Init, these values are nonsensical. 
       // set some dummy values for the sake of printing.
@@ -200,13 +217,13 @@ vector<TH1*> JetScapeQA::MakeHgrams(const string& task, QA_TYPE qa_type, int eve
       // PI33, BULK_PI, INVALID
       // default here, just get the bulk entropy and temperature
 
-      hgrams.push_back(new TH2D(Form("%s_entropy%s", task.c_str(), etag.c_str()), Form("%s initial entropy density [1/fm^{3}];x [fm]; y [fm]", task.c_str()), nX, -xMax, xMax, nY, -yMax, yMax));
-      hgrams.push_back(new TH2D(Form("%s_T%s", task.c_str(), etag.c_str()), Form("%s initial temperature [GeV];x [fm]; y [fm]", task.c_str()), nX, -xMax, xMax, nY, -yMax, yMax));
+      hgrams.push_back(new TH2D(Form("%s_entropy%s", task.c_str(), etag.c_str()), Form("%s initial entropy density [1/fm^{3}];x [fm]; y [fm]", task.c_str()), nX, xMin, xMax, nY, yMin, yMax));
+      hgrams.push_back(new TH2D(Form("%s_T%s", task.c_str(), etag.c_str()), Form("%s initial temperature [GeV];x [fm]; y [fm]", task.c_str()), nX, xMin, xMax, nY, yMin, yMax));
 
       hgrams.push_back(new TH1D(Form("%s_CellFreezeOutTimes%s", task.c_str(), etag.c_str()), Form("%s fluid cells freezeout times; #tau [fm/c]", task.c_str()), 150, 0., 15.));
-      hgrams.push_back(new TH1D(Form("%s_CellFreezeXlocs%s", task.c_str(), etag.c_str()), Form("%s fluid cells freezeout X locations; x [fm]", task.c_str()), 150, -xMax, xMax));
-      hgrams.push_back(new TH1D(Form("%s_CellFreezeYlocs%s", task.c_str(), etag.c_str()), Form("%s fluid cells freezeout Y locations; y [fm]", task.c_str()), 150, -yMax, yMax));
-      hgrams.push_back(new TH2D(Form("%s_FreezeOutEntropy%s", task.c_str(), etag.c_str()), Form("%s freezeout entropy [1/fm^{3}];x [fm]; y [fm]", task.c_str()), nX, -xMax, xMax, nY, -yMax, yMax));
+      hgrams.push_back(new TH1D(Form("%s_CellFreezeXlocs%s", task.c_str(), etag.c_str()), Form("%s fluid cells freezeout X locations; x [fm]", task.c_str()), 150, xMin, xMax));
+      hgrams.push_back(new TH1D(Form("%s_CellFreezeYlocs%s", task.c_str(), etag.c_str()), Form("%s fluid cells freezeout Y locations; y [fm]", task.c_str()), 150, yMin, yMax));
+      hgrams.push_back(new TH2D(Form("%s_FreezeOutEntropy%s", task.c_str(), etag.c_str()), Form("%s freezeout entropy [1/fm^{3}];x [fm]; y [fm]", task.c_str()), nX, xMin, xMax, nY, yMin, yMax));
 
       // must specially print these hgrams because they have no gemoetry 
       // assigned during init and will be generated at the first ::Exec
@@ -258,7 +275,7 @@ vector<TH1*> JetScapeQA::MakeHgrams(const string& task, QA_TYPE qa_type, int eve
       hgrams.push_back(
           new TH1D(Form("%s_Nhad%s", task.c_str(), etag.c_str()),
                    Form("%s Hadron; number of hadrons", task.c_str()),
-                   th1_nhadrons, 0., 1. * th1_nhadrons));
+                   1000, 0., 1. * th1_nhadrons));
       // hadron pT distribution
       hgrams.push_back(
           new TH1D(Form("%s_hadron_pt%s", task.c_str(), etag.c_str()),
