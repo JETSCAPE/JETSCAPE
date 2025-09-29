@@ -6,7 +6,7 @@
 #include "tinyxml2.h"
 #include "JetScapeSignalManager.h"
 #include "TrentoInitial.h"
-#include "iSpectraSamplerWrapper.h"
+/* #include "iSpectraSamplerWrapper.h" */
 #include "PythiaGun.h"
 
 namespace Jetscape {
