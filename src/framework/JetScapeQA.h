@@ -12,6 +12,7 @@
  * Distributed under the GNU General Public License 3.0 (GPLv3 or later).
  * See COPYING for details.
  ******************************************************************************/
+#ifdef USE_ROOT
 
 #ifndef JETSCAPEQA_H
 #define JETSCAPEQA_H
@@ -100,4 +101,5 @@ private:
 };
 } // namespace Jetscape
 
+#endif
 #endif

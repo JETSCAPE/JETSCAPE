@@ -283,7 +283,7 @@ if (${HEPMC_FOUND})
   Message(STATUS "HepMC Include dir : " ${HEPMC_INCLUDE_DIR})
 endif()
 
-option(USE_ROOT "Build using ROOT Libraries and Output" ON)
+option(USE_ROOT "Build using ROOT Libraries and Output" OFF)
 if (USE_ROOT)
   message("Looking for ROOT ...")
   #find_package(ROOT)

@@ -1,3 +1,5 @@
+#ifdef USE_ROOT
+
 #include "JetScapeQA.h"
 #include "JetScapeLogger.h"
 #include "JetScapeXML.h"
@@ -585,3 +587,5 @@ void JetScapeQA::PrintTasks() {
 }
 
 } // namespace Jetscape
+  //
+#endif
