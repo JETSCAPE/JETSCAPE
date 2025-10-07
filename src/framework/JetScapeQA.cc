@@ -277,7 +277,7 @@ vector<TH1*> JetScapeQA::MakeHgrams(const string& task, QA_TYPE qa_type, int eve
       hgrams.push_back(
           new TH1D(Form("%s_Nhad%s", task.c_str(), etag.c_str()),
                    Form("%s Hadron; number of hadrons", task.c_str()),
-                   1000, 0., 1. * th1_nhadrons));
+                   100, 0., 1. * th1_nhadrons));
       // hadron pT distribution
       hgrams.push_back(
           new TH1D(Form("%s_hadron_pt%s", task.c_str(), etag.c_str()),

@@ -107,7 +107,7 @@
       <nEvents_aveE_QA>8</nEvents_aveE_QA>
       <!-- range maxima for histograms -->
       <th1_ptmax> 50 </th1_ptmax>
-      <th1_nhadrons> 10000. </th1_nhadrons>
+      <th1_nhadrons> 1000. </th1_nhadrons>
       <!-- minimmum pt for jet selection -->
       <min_jetpt> 2. </min_jetpt>
   </JetScapeQA>

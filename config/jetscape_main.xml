@@ -57,6 +57,7 @@
   </Writer>
 
   <JetScapeQA>
+      <!-- Note: this module is not compiled unless USE_ROOT is set to ON in cmake -->
       <outputFileName> JetscapeQA.root </outputFileName>
       <!-- number of events with single even histograms -->
       <nEvents_EbyE_QA>0</nEvents_EbyE_QA>
