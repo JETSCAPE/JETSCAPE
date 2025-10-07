@@ -56,6 +56,20 @@
     <JetscapeWriterFinalStateBinaryOutput> 0 </JetscapeWriterFinalStateBinaryOutput>
   </Writer>
 
+  <JetScapeQA>
+      <!-- Note: this module is not compiled unless USE_ROOT is set to ON in cmake -->
+      <outputFileName> JetscapeQA.root </outputFileName>
+      <!-- number of events with single even histograms -->
+      <nEvents_EbyE_QA>0</nEvents_EbyE_QA>
+      <!-- number of events with event averaged histograms -->
+      <nEvents_aveE_QA>1000000</nEvents_aveE_QA>
+      <!-- range maxima for histograms -->
+      <th1_ptmax> 50 </th1_ptmax>
+      <th1_nhadrons> 400. </th1_nhadrons>
+      <!-- minimmum pt for jet selection -->
+      <min_jetpt> 2. </min_jetpt>
+  </JetScapeQA>
+
   <!--  Random Settings. For now, just a global  seed. -->
   <!--  Note: It's each modules responsibility to adopt it -->
   <!--  Note: Most if not all modules should understand 0 to mean a random value -->

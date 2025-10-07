@@ -18,6 +18,7 @@
 #ifndef JETSCAPESIGNALMANAGER_H
 #define JETSCAPESIGNALMANAGER_H
 
+#include "JetScape.h"
 #include "Afterburner.h"
 #include "InitialState.h"
 #include "JetEnergyLoss.h"
@@ -47,6 +48,12 @@ class
 public:
   static JetScapeSignalManager *Instance();
 
+  void SetMainTaskPointer(shared_ptr<JetScape> m_main) {
+    main_task = m_main;
+  }
+ 
+  weak_ptr<JetScape> GetMainTaskPointer() { return main_task; }
+ 
   void SetInitialStatePointer(shared_ptr<InitialState> m_initial) {
     initial_state = m_initial;
   }
@@ -151,6 +158,7 @@ private:
   JetScapeSignalManager(JetScapeSignalManager const &){};
   static JetScapeSignalManager *m_pInstance;
 
+  weak_ptr<JetScape> main_task;
   weak_ptr<InitialState> initial_state;
   weak_ptr<PreequilibriumDynamics> pre_equilibrium;
   weak_ptr<FluidDynamics> hydro;

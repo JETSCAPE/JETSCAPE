@@ -95,7 +95,7 @@ FILE(GLOB readersources reader/*.cc)
 set (SOURCES  ${SOURCES}  ${readersources} )
 
 if ("${HEPMC_FOUND}")
-  if (USE_ROOT)
+    if (USE_ROOT)
     set (SOURCES ${SOURCES} root/JetScapeWriterRootHepMC.cc)
   endif()
 endif()

@@ -310,7 +310,7 @@ public:
   virtual void GetEnergyDensity(int t, double &edensity) { edensity = 0.0; }
 
   // get a reference to the bulk_info object
-  const EvolutionHistory& get_bulk_info() const { return bulk_info; }
+  const EvolutionHistory& get_bulk_info() const { return bulk_info; } 
 
 }; // end class FluidDynamics
 

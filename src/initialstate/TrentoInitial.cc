@@ -375,7 +375,7 @@ std::pair<std::pair<double, double>, std::string> TrentoInitial::GenCenTab(std::
     JSINFO << "It may take 10(s) to 1(min).";
 
     another_collider.run_events();
-    // Get all records and sort according to totoal energy
+    // Get all records and sort according to total energy
     auto event_records = another_collider.all_records();
     std::sort(event_records.begin(), event_records.end(), compare_E);
     // write centrality table

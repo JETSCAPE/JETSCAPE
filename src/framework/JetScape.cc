@@ -23,6 +23,7 @@
 #include "PreequilibriumDynamics.h"
 #include "JetEnergyLoss.h"
 #include "CausalLiquefier.h"
+#include "JetScapeQA.h"
 
 #ifdef USE_HEPMC
 #include "JetScapeWriterHepMC.h"
@@ -760,6 +761,15 @@ void JetScape::DetermineTaskListFromXML() {
                   "task list.";
       }
     }
+    else if (elementName == "JetScapeQA") {
+      // Add JetScapeQA module
+      auto jetScapeQA = JetScapeModuleFactory::createInstance(elementName);
+      if (jetScapeQA) {
+        Add(jetScapeQA);
+        JSINFO << "JetScape::DetermineTaskList() -- Added JetScapeQA to task "
+                  "list.";
+      }
+    }
 
     else {
       VERBOSE(2) << "Nothing to do.";
@@ -891,6 +901,8 @@ void JetScape::SetPointers() {
   JSINFO << "Set Hydro,JetEnergylossManager and IS Pointers for "
          << "SignalManager to create Signal/Slots";
 
+  JetScapeSignalManager::Instance()->SetMainTaskPointer(dynamic_pointer_cast<JetScape>(shared_from_this()));
+  
   bool hydro_pointer_is_set = false;
   bool iss_pointer_is_set = false;
   for (auto it : GetTaskList()) {

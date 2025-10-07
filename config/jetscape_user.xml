@@ -45,5 +45,49 @@
   <JetHadronization>
     <name>colorless</name>
   </JetHadronization>
+
+  <JetScapeQA>
+    <enableEbyEQA> 1 </enableEbyEQA>
+    <outputFileName>JetScapeQA_test.root</outputFileName>
+    <nEventsForQAHistograms> 10 </nEventsForQAHistograms>
+    <th1_ptmax> 50 </th1_ptmax>
+  </JetScapeQA>
+
+
+  <!--  JetScape Writer Settings -->
+  <outputFilename>js_writer_out</outputFilename>
+  <JetScapeWriterAscii> off </JetScapeWriterAscii>
+  <JetScapeWriterAsciiGZ> off </JetScapeWriterAsciiGZ>
+  <JetScapeWriterHepMC> off </JetScapeWriterHepMC>
+  <JetScapeWriterRootHepMC> off </JetScapeWriterRootHepMC>
+  <JetScapeWriterFinalStatePartonsAscii> off </JetScapeWriterFinalStatePartonsAscii>
+  <JetScapeWriterFinalStateHadronsAscii> off </JetScapeWriterFinalStateHadronsAscii>
+  <JetScapeWriterQnVectorAscii>off</JetScapeWriterQnVectorAscii>
+  <QnVector_pTmin>0</QnVector_pTmin>
+  <QnVector_pTmax>6</QnVector_pTmax>
+  <QnVector_NpT>30</QnVector_NpT>
+  <QnVector_rapmin>-4</QnVector_rapmin>
+  <QnVector_rapmax>4</QnVector_rapmax>
+  <QnVector_Nrap>80</QnVector_Nrap>
+  <QnVector_Norder>7</QnVector_Norder>
+  <!-- Printing the centrality to the event header is only possible for the Trento initial condition -->
+  <write_centrality> 0 </write_centrality>
+  <write_pthat> 0 </write_pthat>
+  <Writer>
+    <!-- Comma separated list of statuses to skip: e.g. "2, 3, 4" -->
+    <!-- -9999 corresponds to skipping no status code. It needs to have some entry to be avoid a segfault w/ empty values in tinyxml -->
+    <FinalStateHadrons>
+        <statusToSkip>-9999</statusToSkip>
+        <headerVersion>2</headerVersion>
+    </FinalStateHadrons>
+    <FinalStatePartons>
+        <statusToSkip>-9999</statusToSkip>
+        <headerVersion>2</headerVersion>
+    </FinalStatePartons>
+    <!--JetScapeWriterFinalStateHadronsAscii/JetScapeWriterFinalStatePartonsAscii output in binary mode, only ascii or only binary switch (not both possible at the same time)-->
+    <JetscapeWriterFinalStateBinaryOutput> 0 </JetscapeWriterFinalStateBinaryOutput>
+  </Writer>
   
 </jetscape>
+
+

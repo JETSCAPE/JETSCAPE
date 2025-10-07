@@ -155,14 +155,14 @@ public:
   /** @return The number of grid points in x-direction in the nuclear profile of a nucleus.
    */
   inline int GetXSize() {
-    return int(std::ceil(2 * grid_max_x_ / grid_step_x_));
+    return int(std::ceil(2 * grid_max_x_ / grid_step_x_))+1;
   }
 
   // get number of grids along y
   /** @return The number of grid points in y-direction in the nuclear profile of a nucleus.
    */
   inline int GetYSize() {
-    return int(std::ceil(2 * grid_max_y_ / grid_step_y_));
+    return int(std::ceil(2 * grid_max_y_ / grid_step_y_))+1;
   }
 
   // get number of grids along z
