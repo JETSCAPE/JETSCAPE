@@ -237,6 +237,7 @@ public:
     double gamma, v;
 
     v = sqrt(vx*vx+vy*vy+vz*vz);
+    if (v==0.0){return;}
     if (v<1) {
       gamma = 1/sqrt(1 - v*v );
     }

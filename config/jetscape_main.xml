@@ -219,7 +219,10 @@
       <Q0> 2.0 </Q0>
       <in_vac> 0 </in_vac>
     </AdSCFT>
-
+    
+    <CustomModuleMyJEL5>
+      <name>MyJEL5</name>
+    </CustomModuleMyJEL5>
   </Eloss>
 
   <PartonPrinter>

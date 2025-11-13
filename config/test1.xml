@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+ <jetscape>
+   <nEvents> 25000 </nEvents>
+    <outputFilename>test_out</outputFilename>
+      <JetScapeWriterFinalStatePartonsAscii> on </JetScapeWriterFinalStatePartonsAscii>
+
+     <Random>
+    <seed>0</seed>
+     </Random>
+
+    <Hard>
+    <!-- Parton Gun test with fixed pT and fixed IS pos = 0  -->
+    <PGun>
+    </PGun>
+    </Hard>
+
+  <Eloss>    
+     <maxT>8</maxT>
+     <CustomModuleMyJEL5>
+      <name>MyJEL5</name>
+    </CustomModuleMyJEL5>
+  </Eloss>
+
+  </jetscape>
