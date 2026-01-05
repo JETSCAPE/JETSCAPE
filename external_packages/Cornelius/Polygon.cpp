@@ -43,7 +43,7 @@ bool Polygon::add_line(const Line* new_line, bool perform_no_check) {
   return false;
 }
 
-void Polygon::calculate_centroid() {
+void Polygon::calculate_centroid() const {
   // Array of 0s to store the mean values
   std::array<double, DIM> mean_values = {0};
   for (int i = 0; i < number_lines; ++i) {
@@ -87,7 +87,7 @@ void Polygon::calculate_centroid() {
   centroid_calculated = true;
 }
 
-void Polygon::calculate_normal() {
+void Polygon::calculate_normal() const {
   // Check if the centroid is calculated
   if (!centroid_calculated) {
     calculate_centroid();

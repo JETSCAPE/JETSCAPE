@@ -34,7 +34,7 @@ class Line : public GeneralGeometryElement {
       corners;                               ///< Array of line corners
   std::array<double, DIM> out;               ///< Output point of the line
   std::array<int, DIM - LINE_DIM> const_i;   ///< Constant indices for the line
-  std::array<double, DIM> reference_normal;  ///< Reference normal vector
+  mutable std::array<double, DIM> reference_normal;  ///< Reference normal vector
 
  public:
   /**
@@ -101,7 +101,7 @@ class Line : public GeneralGeometryElement {
    * Computes the normal vector for the line. This function must be implemented
    * based on the specific geometric context of the line.
    */
-  inline void calculate_normal() override {
+  inline void calculate_normal() const override {
     if (!centroid_calculated)
       calculate_centroid();
     // The normal is given by (-dy, dx)
@@ -124,7 +124,7 @@ class Line : public GeneralGeometryElement {
    * Computes the centroid point of the line. This function must be implemented
    * based on the specific geometric context of the line.
    */
-  inline void calculate_centroid() override {
+  inline void calculate_centroid() const override {
     for (int i = 0; i < DIM; i++) {
       centroid[i] = 0.5 * (corners[0][i] + corners[1][i]);
     }

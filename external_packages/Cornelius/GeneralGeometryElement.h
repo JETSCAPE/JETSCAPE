@@ -25,16 +25,16 @@ class GeneralGeometryElement {
   static constexpr int DIM = 4;
 
   /// Flag indicating if the normal has been calculated.
-  bool normal_calculated;
+  mutable bool normal_calculated;
 
   /// Flag indicating if the centroid has been calculated.
-  bool centroid_calculated;
+  mutable bool centroid_calculated;
 
   /// Array representing the normal vector of the geometric element.
-  std::array<double, DIM> normal;
+  mutable std::array<double, DIM> normal;
 
   /// Array representing the centroid of the geometric element.
-  std::array<double, DIM> centroid;
+  mutable std::array<double, DIM> centroid;
 
  public:
   /**
@@ -57,7 +57,7 @@ class GeneralGeometryElement {
    * This is a virtual method meant to be overridden by derived classes.
    * The default implementation does nothing.
    */
-  virtual void calculate_normal();
+  virtual void calculate_normal() const;
 
   /**
    * @brief Calculates the centroid of the geometric element.
@@ -65,14 +65,14 @@ class GeneralGeometryElement {
    * This is a virtual method meant to be overridden by derived classes.
    * The default implementation does nothing.
    */
-  virtual void calculate_centroid();
+  virtual void calculate_centroid() const;
 
   /**
    * @brief Gets the normal vector of the geometric element.
    *
    * @return A constant array representing the normal vector.
    */
-  inline std::array<double, DIM>& get_normal() {
+  inline std::array<double, DIM>& get_normal() const {
     if (!normal_calculated)
       calculate_normal();
     return normal;
@@ -83,7 +83,7 @@ class GeneralGeometryElement {
    *
    * @return A constant array representing the centroid.
    */
-  inline std::array<double, DIM>& get_centroid() {
+  inline std::array<double, DIM>& get_centroid() const {
     if (!centroid_calculated)
       calculate_centroid();
     return centroid;
@@ -99,7 +99,8 @@ class GeneralGeometryElement {
    * @param reference_normal The reference normal vector used for comparison.
    */
   inline void flip_normal_if_needed(std::array<double, DIM>& normal,
-                                    std::array<double, DIM>& reference_normal) {
+                                    std::array<double, DIM>& reference_normal)
+      const {
     const double dot_product = std::inner_product(
         normal.begin(), normal.end(), reference_normal.begin(), 0.0);
     if (dot_product < 0) {

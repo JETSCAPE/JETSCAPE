@@ -44,7 +44,7 @@ bool Polyhedron::add_polygon(const Polygon* new_polygon,
   return false;
 }
 
-void Polyhedron::calculate_centroid() {
+void Polyhedron::calculate_centroid() const {
   // Array of 0s to store the mean values
   std::array<double, DIM> mean_values = {0};
   for (int i = 0; i < number_polygons; ++i) {
@@ -95,7 +95,7 @@ void Polyhedron::calculate_centroid() {
   centroid_calculated = true;
 }
 
-void Polyhedron::calculate_normal() {
+void Polyhedron::calculate_normal() const {
   if (!centroid_calculated) {
     calculate_centroid();
   }

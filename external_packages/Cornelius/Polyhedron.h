@@ -37,13 +37,13 @@ class Polyhedron : public GeneralGeometryElement {
   int number_tetrahedrons;  ///< Number of tetrahedrons in the polyhedron
 
   // Arrays for temporary storage
-  std::array<double, DIM> Vout;  ///< Point outside the surface
-  std::array<double, DIM> a;     ///< Vector a of the triangle
-  std::array<double, DIM> b;     ///< Vector b of the triangle
-  std::array<double, DIM> c;     ///< Centroid of the triangle
-  std::array<double, DIM> n;     ///< Normal vector of the triangle
-  std::array<double, DIM> cm_i;  ///< Center of mass of the tetrahedron
-  std::array<std::array<double, DIM>, MAX_POLYGONS * 24>
+  mutable std::array<double, DIM> Vout;  ///< Point outside the surface
+  mutable std::array<double, DIM> a;     ///< Vector a of the triangle
+  mutable std::array<double, DIM> b;     ///< Vector b of the triangle
+  mutable std::array<double, DIM> c;     ///< Centroid of the triangle
+  mutable std::array<double, DIM> n;     ///< Normal vector of the triangle
+  mutable std::array<double, DIM> cm_i;  ///< Center of mass of the tetrahedron
+  mutable std::array<std::array<double, DIM>, MAX_POLYGONS * 24>
       normals;  ///< Normal vectors
 
  public:
@@ -123,7 +123,7 @@ class Polyhedron : public GeneralGeometryElement {
   inline void tetrahedron_volume(std::array<double, DIM>& v1,
                                  std::array<double, DIM>& v2,
                                  std::array<double, DIM>& v3,
-                                 std::array<double, DIM>& n) {
+                                 std::array<double, DIM>& n) const {
     // Calculate the volume of the tetrahedron
     const double bc01 = v2[0] * v3[1] - v2[1] * v3[0];
     const double bc02 = v2[0] * v3[2] - v2[2] * v3[0];
@@ -143,7 +143,7 @@ class Polyhedron : public GeneralGeometryElement {
    * Computes the centroid as the volume-weighted average of the individual
    * tetrahedrons.
    */
-  void calculate_centroid() override;
+  void calculate_centroid() const override;
 
   /**
    * @brief Calculates the normal of the polyhedron.
@@ -151,21 +151,21 @@ class Polyhedron : public GeneralGeometryElement {
    * Computes the normal as the sum of the normals of the individual
    * tetrahedrons.
    */
-  void calculate_normal() override;
+  void calculate_normal() const override;
 
   /**
    * @brief Retrieves the number of polygons in the polyhedron.
    *
    * @return The number of polygons in the polyhedron.
    */
-  inline int get_number_polygons() { return number_polygons; }
+  inline int get_number_polygons() const { return number_polygons; }
 
   /**
    * @brief Retrieves the number of tetrahedrons in the polyhedron.
    *
    * @return The number of tetrahedrons in the polyhedron.
    */
-  inline int get_number_tetrahedrons() { return number_tetrahedrons; }
+  inline int get_number_tetrahedrons() const { return number_tetrahedrons; }
 };
 
 }  // namespace JetscapeCornelius

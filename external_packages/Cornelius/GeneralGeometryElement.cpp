@@ -7,11 +7,11 @@ GeneralGeometryElement::GeneralGeometryElement()
 
 GeneralGeometryElement::~GeneralGeometryElement() = default;
 
-void GeneralGeometryElement::calculate_normal() {
+void GeneralGeometryElement::calculate_normal() const {
   // Provide implementation in derived classes
 }
 
-void GeneralGeometryElement::calculate_centroid() {
+void GeneralGeometryElement::calculate_centroid() const {
   // Provide implementation in derived classes
 }
 
