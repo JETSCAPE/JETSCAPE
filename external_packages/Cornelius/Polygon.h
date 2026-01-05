@@ -25,10 +25,10 @@ namespace JetscapeCornelius {
  */
 class Polygon : public GeneralGeometryElement {
  protected:
-  static constexpr int MAX_LINES =
-      24;                   ///< Maximum number of lines in a polygon
-  std::vector<Line> lines;  ///< Vector of lines in the polygon
-  int number_lines;         ///< Number of lines in the polygon
+    static constexpr int MAX_LINES =
+      24;  ///< Maximum number of lines in a polygon
+    std::vector<const Line*> lines;  ///< Pointers to lines in the polygon
+    int number_lines;                 ///< Number of lines in the polygon
   int x1, x2, x3;           ///< Indices representing the polygon's dimensions
   int const_i;              ///< Constant index for the polygon
 
@@ -105,7 +105,7 @@ class Polygon : public GeneralGeometryElement {
    * checks.
    * @return True if the line was successfully added, otherwise false.
    */
-  bool add_line(Line& new_line, bool perform_no_check);
+  bool add_line(const Line* new_line, bool perform_no_check);
 
   /**
    * @brief Gets the number of lines in the polygon.
@@ -134,7 +134,7 @@ class Polygon : public GeneralGeometryElement {
    *
    * @return A reference to the array of lines in the polygon.
    */
-  inline std::vector<Line>& get_lines() { return lines; }
+  inline const std::vector<const Line*>& get_lines() const { return lines; }
 
   /**
    * @brief Prints the triangles formed from the polygon into a given file.

@@ -136,7 +136,8 @@ class Line : public GeneralGeometryElement {
    *
    * @return Reference to the array representing the start point
    */
-  inline std::array<double, GeneralGeometryElement::DIM>& get_start_point() {
+  inline const std::array<double, GeneralGeometryElement::DIM>&
+  get_start_point() const {
     return corners[start_point];
   }
 
@@ -145,7 +146,8 @@ class Line : public GeneralGeometryElement {
    *
    * @return Reference to the array representing the end point
    */
-  inline std::array<double, GeneralGeometryElement::DIM>& get_end_point() {
+  inline const std::array<double, GeneralGeometryElement::DIM>& get_end_point()
+      const {
     return corners[end_point];
   }
 
@@ -154,7 +156,8 @@ class Line : public GeneralGeometryElement {
    *
    * @return Reference to the array representing the outside point
    */
-  inline std::array<double, GeneralGeometryElement::DIM>& get_outside_point() {
+  inline const std::array<double, GeneralGeometryElement::DIM>&
+  get_outside_point() const {
     return out;
   }
 };

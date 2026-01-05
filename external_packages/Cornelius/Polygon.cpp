@@ -11,7 +11,7 @@ Polygon::Polygon() {
 
 Polygon::~Polygon() = default;
 
-bool Polygon::add_line(Line& new_line, bool perform_no_check) {
+bool Polygon::add_line(const Line* new_line, bool perform_no_check) {
   // std::cout << "Polygon::add_line, size = " << lines.size() << ", " <<
   // number_lines << std::endl;
   //  For the first line, we don't need to check
@@ -22,9 +22,9 @@ bool Polygon::add_line(Line& new_line, bool perform_no_check) {
     lines[number_lines++] = new_line;
     return true;
   }
-  auto& start_point = new_line.get_start_point();
-  auto& end_point = new_line.get_end_point();
-  auto& last_end_point = lines[number_lines - 1].get_end_point();
+  const auto& start_point = new_line->get_start_point();
+  const auto& end_point = new_line->get_end_point();
+  const auto& last_end_point = lines[number_lines - 1]->get_end_point();
   double difference1 = 0.0, difference2 = 0.0;
   for (int i = 0; i < DIM; ++i) {
     difference1 += std::abs(start_point[i] - last_end_point[i]);
@@ -32,7 +32,7 @@ bool Polygon::add_line(Line& new_line, bool perform_no_check) {
   }
   if (difference1 < EPSILON || difference2 < EPSILON) {
     if (difference2 < EPSILON) {
-      new_line.flip_start_end();
+      const_cast<Line*>(new_line)->flip_start_end();
     }
     if (number_lines >= lines.size()) {
       lines.emplace_back();
@@ -47,8 +47,8 @@ void Polygon::calculate_centroid() {
   // Array of 0s to store the mean values
   std::array<double, DIM> mean_values = {0};
   for (int i = 0; i < number_lines; ++i) {
-    auto& start_point = lines[i].get_start_point();
-    auto& end_point = lines[i].get_end_point();
+    const auto& start_point = lines[i]->get_start_point();
+    const auto& end_point = lines[i]->get_end_point();
     for (int k = 0; k < DIM; ++k) {
       mean_values[k] += start_point[k] + end_point[k];
     }
@@ -64,8 +64,8 @@ void Polygon::calculate_centroid() {
   std::array<double, DIM> sum_up = {0};
   double sum_down = 0.0;
   for (int l = 0; l < number_lines; ++l) {
-    auto& line_start = lines[l].get_start_point();
-    auto& line_end = lines[l].get_end_point();
+    const auto& line_start = lines[l]->get_start_point();
+    const auto& line_end = lines[l]->get_end_point();
     for (int j = 0; j < DIM; ++j) {
       a[j] = line_start[j] - mean_values[j];
       b[j] = line_end[j] - mean_values[j];
@@ -101,8 +101,8 @@ void Polygon::calculate_normal() {
   }
   std::array<double, DIM> v_out = {0};
   for (int i = 0; i < number_lines; ++i) {
-    auto& l1 = lines[i].get_start_point();
-    auto& l2 = lines[i].get_end_point();
+    const auto& l1 = lines[i]->get_start_point();
+    const auto& l2 = lines[i]->get_end_point();
     for (int j = 0; j < DIM; ++j) {
       a[j] = l1[j] - centroid[j];
       b[j] = l2[j] - centroid[j];
@@ -111,7 +111,7 @@ void Polygon::calculate_normal() {
     normals[i][x2] = -0.5 * (a[x1] * b[x3] - a[x3] * b[x1]);
     normals[i][x3] = 0.5 * (a[x1] * b[x2] - a[x2] * b[x1]);
     normals[i][const_i] = 0.0;
-    auto& o = lines[i].get_outside_point();
+    const auto& o = lines[i]->get_outside_point();
     for (int j = 0; j < DIM; ++j) {
       v_out[j] = o[j] - centroid[j];
     }
@@ -131,8 +131,8 @@ void Polygon::calculate_normal() {
 void Polygon::print(std::ofstream& file, std::array<double, DIM> position) {
   // Print the polygon to the file
   for (int i = 0; i < number_lines; i++) {
-    const auto& p1 = lines[i].get_start_point();
-    const auto& p2 = lines[i].get_end_point();
+    const auto& p1 = lines[i]->get_start_point();
+    const auto& p2 = lines[i]->get_end_point();
     file << position[x1] + p1[x1] << " " << position[x2] + p1[x2] << " "
          << position[x3] + p1[x3] << " " << position[x1] + p2[x1] << " "
          << position[x2] + p2[x2] << " " << position[x3] + p2[x3] << " "

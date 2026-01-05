@@ -86,8 +86,7 @@ void Cube::construct_polygons(double value) {
       for (int i = 0; i < number_lines; i++) {
         // add_line returns true if line is successfully added
         if (not_used[i]) {
-          Line* line_ptr = const_cast<Line*>(line_refs[i]);
-          if (polygons[number_polygons].add_line(*line_ptr, false)) {
+          if (polygons[number_polygons].add_line(line_refs[i], false)) {
             not_used[i] = 0;
             used++;
             // If line is successfully added we start the loop from the
@@ -107,8 +106,7 @@ void Cube::construct_polygons(double value) {
     }
     polygons[number_polygons].init_polygon(const_i);
     for (int i = 0; i < number_lines; i++) {
-      Line* line_ptr = const_cast<Line*>(line_refs[i]);
-      polygons[number_polygons].add_line(*line_ptr, true);
+      polygons[number_polygons].add_line(line_refs[i], true);
     }
     number_polygons++;
   }

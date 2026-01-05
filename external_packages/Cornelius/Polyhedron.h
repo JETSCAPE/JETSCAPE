@@ -31,8 +31,8 @@ class Polyhedron : public GeneralGeometryElement {
       24;  ///< Maximum number of polygons in a polyhedron
   static constexpr double INV_SIX = 1.0 / 6.0;  ///< Inverse of six.
   static constexpr double EPSILON = 1e-10;  ///< Epsilon value for comparison
-  std::vector<Polygon>
-      polygons;             ///< Vector to store the polygons in the polyhedron
+    std::vector<const Polygon*>
+      polygons;             ///< Pointers to polygons in the polyhedron
   int number_polygons;      ///< Number of polygons in the polyhedron
   int number_tetrahedrons;  ///< Number of tetrahedrons in the polyhedron
 
@@ -70,7 +70,7 @@ class Polyhedron : public GeneralGeometryElement {
     normal_calculated = centroid_calculated = false;
     polygons.clear();
     polygons.reserve(MAX_POLYGONS);
-    polygons.emplace_back();  // Default to construct 1 Polygon
+    polygons.emplace_back(nullptr);  // Default placeholder
   }
 
   /**
@@ -81,7 +81,7 @@ class Polyhedron : public GeneralGeometryElement {
    * connection to existing polygons.
    * @return True if the polygon was added successfully, false otherwise.
    */
-  bool add_polygon(Polygon& new_polygon, bool perform_no_check);
+  bool add_polygon(const Polygon* new_polygon, bool perform_no_check);
 
   /**
    * @brief Checks if two lines are connected.
@@ -90,7 +90,7 @@ class Polyhedron : public GeneralGeometryElement {
    * @param line2 The second line.
    * @return True if the lines are connected, false otherwise.
    */
-  inline bool lines_are_connected(Line& line1, Line& line2) {
+  inline bool lines_are_connected(const Line& line1, const Line& line2) {
     // Get the start and end points of the lines
     const auto& start_point1 = line1.get_start_point();
     const auto& end_point1 = line1.get_end_point();
