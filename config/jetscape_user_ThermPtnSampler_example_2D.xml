@@ -53,6 +53,8 @@
         <FreestreamMilne>
           <name>FreestreamMilne</name>
           <freestream_input_file>freestream_input</freestream_input_file>
+          <!--TAU_R: free streaming time tau_R in fm for the energy dependent free streaming time-->
+          <TAU_R>0.6</TAU_R>
         </FreestreamMilne>
     </Preequilibrium>
 
@@ -119,6 +121,7 @@
       <Initial_time_tau_0>0.6</Initial_time_tau_0>
       <output_evolution_to_file>0</output_evolution_to_file>
       <output_evolution_to_memory>1</output_evolution_to_memory>
+      <output_evolution_every_N_timesteps>5</output_evolution_every_N_timesteps>
       <surface_in_memory>1</surface_in_memory>
       <shear_viscosity_eta_over_s>0.08</shear_viscosity_eta_over_s>
       <T_dependent_Shear_to_S_ratio>0</T_dependent_Shear_to_S_ratio>
