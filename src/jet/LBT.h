@@ -400,7 +400,7 @@ class LBT
 
   double ModificationCorr;
   double ModificationFactor;
-
+  double ModificationPower;
   //  extern "C" {
   //      void read_ccnu_(char *dataFN_in, int len1);
   //      void hydroinfoccnu_(double *Ct, double *Cx, double *Cy, double *Cz,

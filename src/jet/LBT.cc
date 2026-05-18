@@ -127,6 +127,7 @@ void LBT::Init() {
   hydro_Tc = GetXMLElementDouble({"Eloss", "Lbt", "hydro_Tc"});
   tStart = GetXMLElementDouble({"Eloss", "tStart"});
   ModificationFactor = GetXMLElementDouble({"Eloss", "ModificationFactor"});
+  ModificationPower = GetXMLElementDouble({"Eloss", "ModificationPower"});
   ModificationCorr = 1.0;
 
   JSINFO << MAGENTA << "LBT parameters -- in_med: " << vacORmed
@@ -703,8 +704,8 @@ void LBT::LBT0(int &n, double &ti) {
 
         if (hydro_ctl0 == 0 && temp00 >= hydro_Tc) {
           qhat00 = DebyeMass2(Kqhat0, alphas, temp00);
-          if (ModificationFactor > 0.0) {
-            ModificationCorr = 1.0 + 1.0 / ModificationFactor / temp00;
+          if (ModificationFactor > 0.0){
+            ModificationCorr = 1.0 + pow( ModificationFactor / temp00, ModificationPower);
             qhat00 /= pow(ModificationCorr, 2.0);
           }
           fraction0 = 1.0;
@@ -821,8 +822,8 @@ void LBT::LBT0(int &n, double &ti) {
             alphas = alphas0(Kalphas, temp0);
             //...Debye Mass square
             qhat0 = DebyeMass2(Kqhat0, alphas, temp0);
-            if (ModificationFactor > 0.0) {
-              ModificationCorr = 1.0 + 1.0 / ModificationFactor / temp0;
+            if (ModificationFactor > 0.0){
+              ModificationCorr = 1.0 +  pow(ModificationFactor / temp0, ModificationPower);
               qhat0 /= pow(ModificationCorr, 2.0);
             }
 
@@ -910,7 +911,7 @@ void LBT::LBT0(int &n, double &ti) {
           runKT = runAlphas / 0.3;
 
           if (ModificationFactor > 0.0) {
-            ModificationCorr = 1.0 + 1.0 / ModificationFactor / T;
+            ModificationCorr = 1.0 +  pow(ModificationFactor / T, ModificationPower);
             runLog = log(scaleMu2 * pow(ModificationCorr, 2.0) / 6.0 / pi / T /
                          T / alphas) /
                      fixedLog;
@@ -936,7 +937,7 @@ void LBT::LBT0(int &n, double &ti) {
           Kfactor = KPfactor * KTfactor * KTfactor * preKT *
                     preKT;  // K factor for qhat
           if (ModificationFactor > 0.0) {
-            ModificationCorr = 1.0 + 1.0 / ModificationFactor / T;
+            ModificationCorr = 1.0 +  pow(ModificationFactor / T, ModificationPower);
             fixedLog = log(5.7 * E / 4.0 / 6.0 / pi / 0.3 / T);
             if (KATTC0 == 21) {
               runLog = log(5.6 * E * pow(ModificationCorr, 1.0) / 4.0 / 6.0 /
@@ -973,9 +974,9 @@ void LBT::LBT0(int &n, double &ti) {
 
         qhatTP = qhatTP * Kfactor;
 
-        if (ModificationFactor > 0.0) {
-          ModificationCorr = 1.0 + 1.0 / ModificationFactor / T;
-          qhatTP = qhatTP / pow(ModificationCorr, 3.0);
+        if (ModificationFactor > 0.0){
+          ModificationCorr = 1.0 +  pow(ModificationFactor / T, ModificationPower);
+          qhatTP = qhatTP / pow(ModificationCorr, 3.0); 
         }
 
         ////reset by hand for unit test
@@ -1087,6 +1088,10 @@ void LBT::LBT0(int &n, double &ti) {
           }
         }
         lim_low = sqrt(6.0 * pi * alphas) * temp0 / E;
+        if (ModificationFactor > 0.0){
+          ModificationCorr = 1.0 +  pow(ModificationFactor / temp0, ModificationPower);
+          lim_low /= pow(ModificationCorr, 1.0);
+        }
         if (abs(KATT1[i]) == 4 || abs(KATT1[i]) == 5)
           lim_high = 1.0;
         else
@@ -1874,9 +1879,9 @@ void LBT::lam(int KATT0, double &RTE, double E, double T, double &T1,
     //          cout<<"RTE2,RTE1,E,E1,E2,RTE: "<<RTE2<<"  "<<RTE1<<"  "<<E<<"
     //          "<<E1<<"  "<<E2<<"  "<<RTE<<endl;
   }
-  if (ModificationFactor > 0.0) {
-    ModificationCorr = 1.0 + 1.0 / ModificationFactor / T;
-    RTE /= ModificationCorr;
+  if (ModificationFactor > 0.0){
+       ModificationCorr = 1.0 +  pow(ModificationFactor / T, ModificationPower);
+       RTE /= ModificationCorr;
   }
 }
 
@@ -2140,7 +2145,7 @@ void LBT::linear(int KATT, double E, double T, double &T1, double &T2,
     //	  qhatTP=(RTE2-RTE1)*(E-E1)/(E2-E1)+RTE1;
   }
   if (ModificationFactor > 0.0) {
-    ModificationCorr = 1.0 + 1.0 / ModificationFactor / T;
+    ModificationCorr = 1.0 +  pow(ModificationFactor / T, ModificationPower);
     RTEg1 /= ModificationCorr;
     RTEg2 /= ModificationCorr;
     RTEg3 /= ModificationCorr;
@@ -2503,14 +2508,18 @@ void LBT::colljet22(int CT, double temp, double qhat0ud, double v0[4],
 
     double f1max_y = 1.4215;
     double f2max_y = 1.2845;
-    if (ModificationFactor > 0.0) {
-      ModificationCorr = 1.0 + 1.0 / ModificationFactor / temp;
+    if (ModificationFactor > 0.0){
+      ModificationCorr = 1.0 + pow(ModificationFactor / temp, ModificationPower);
       f1max_y /= pow(ModificationCorr, 3.0);
       f2max_y /= pow(ModificationCorr, 3.0);
-    }
-    f1 = pow(xw, 3) / (exp(xw) - 1) / f1max_y;
-    f2 = pow(xw, 3) / (exp(xw) + 1) / f2max_y;
+      f1 = pow(xw, 3) / (exp(xw * ModificationCorr) - 1) / f1max_y;
+      f2 = pow(xw, 3) / (exp(xw * ModificationCorr) + 1) / f2max_y;
 
+    }
+    else{
+      f1 = pow(xw, 3) / (exp(xw) - 1) / f1max_y;
+      f2 = pow(xw, 3) / (exp(xw) + 1) / f2max_y;
+    }
     uu = ss - tt;
 
     if (CT == 1) {
