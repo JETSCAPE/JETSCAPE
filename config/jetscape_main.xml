@@ -127,6 +127,7 @@
       <pTHatMin>100</pTHatMin>
       <pTHatMax>120</pTHatMax>
       <eCM>5020</eCM>
+      <bParam>2.3</bParam>
       <!-- The soft momentum cutoff in GeV removes partons from the pythia gun. The default matches the PP19 setup. -->
       <softMomentumCutoff>2.0</softMomentumCutoff>
       <!-- You can add any number of additional lines to initialize pythia here -->
@@ -159,7 +160,7 @@
     <mutex>ON</mutex>
     <AddLiquefier> false </AddLiquefier>
     <ModificationFactor> -1 </ModificationFactor> <!-- Modification factor for the energy loss, used in the Lbt module --> 
-
+    <ModificationPower> 1 </ModificationPower> 
     <Matter>
       <name>Matter</name>
       <matter_on> 1 </matter_on>
