@@ -27,7 +27,11 @@
 #include "JetScapeXML.h"
 #include "LBTMutex.h"
 #include "tinyxml2.h"
+
+#include <gsl/gsl_sf_lambert.h>
 #define MAGENTA "\033[35m"
+
+#include <gsl/gsl_sf_lambert.h>
 
 using namespace Jetscape;
 using namespace std;
@@ -152,6 +156,8 @@ void LBT::Init() {
 
   ZeroOneDistribution = uniform_real_distribution<double>{0.0, 1.0};
 }
+
+static double polylog_series(int s, double z, double tolerance = 1.0e-8, int max_terms = 10000);
 
 void LBT::WriteTask(weak_ptr<JetScapeWriter> w) {
   VERBOSE(8);
@@ -705,8 +711,8 @@ void LBT::LBT0(int &n, double &ti) {
         if (hydro_ctl0 == 0 && temp00 >= hydro_Tc) {
           qhat00 = DebyeMass2(Kqhat0, alphas, temp00);
           if (ModificationFactor > 0.0){
-            ModificationCorr = 1.0 + pow( ModificationFactor / temp00, ModificationPower);
-            qhat00 /= pow(ModificationCorr, 2.0);
+            ModificationCorr = exp(-pow( ModificationFactor / temp00, ModificationPower));
+            qhat00 = 24.0 * alphas * pow(temp00, 2.0) * (polylog_series(2, ModificationCorr) - polylog_series(2, -ModificationCorr))/ pi;
           }
           fraction0 = 1.0;
 
@@ -823,8 +829,8 @@ void LBT::LBT0(int &n, double &ti) {
             //...Debye Mass square
             qhat0 = DebyeMass2(Kqhat0, alphas, temp0);
             if (ModificationFactor > 0.0){
-              ModificationCorr = 1.0 +  pow(ModificationFactor / temp0, ModificationPower);
-              qhat0 /= pow(ModificationCorr, 2.0);
+              ModificationCorr = exp(-pow(ModificationFactor / temp0, ModificationPower));
+              qhat0 = 24.0 * alphas * pow(temp0, 2.0) * (polylog_series(2, ModificationCorr) - polylog_series(2, -ModificationCorr))/ pi;
             }
 
             fraction = 1.0;
@@ -911,10 +917,9 @@ void LBT::LBT0(int &n, double &ti) {
           runKT = runAlphas / 0.3;
 
           if (ModificationFactor > 0.0) {
-            ModificationCorr = 1.0 +  pow(ModificationFactor / T, ModificationPower);
-            runLog = log(scaleMu2 * pow(ModificationCorr, 2.0) / 6.0 / pi / T /
-                         T / alphas) /
-                     fixedLog;
+            ModificationCorr = exp(-pow(ModificationFactor / T, ModificationPower));
+            double debyemasssq = 24.0 * alphas * pow(T, 2.0) * (polylog_series(2, ModificationCorr) - polylog_series(2, -ModificationCorr))/ pi;
+            runLog = log(scaleMu2 / debyemasssq) / fixedLog;
           } else {
             runLog = log(scaleMu2 / 6.0 / pi / T / T / alphas) / fixedLog;
           }
@@ -934,6 +939,7 @@ void LBT::LBT0(int &n, double &ti) {
           Kfactor = KPfactor * KTfactor * KTfactor * runKT * preKT *
                     runLog;  // K factor for qhat
         } else {
+          /* The fugacity based modification has not been implemented yet here*/
           Kfactor = KPfactor * KTfactor * KTfactor * preKT *
                     preKT;  // K factor for qhat
           if (ModificationFactor > 0.0) {
@@ -975,8 +981,8 @@ void LBT::LBT0(int &n, double &ti) {
         qhatTP = qhatTP * Kfactor;
 
         if (ModificationFactor > 0.0){
-          ModificationCorr = 1.0 +  pow(ModificationFactor / T, ModificationPower);
-          qhatTP = qhatTP / pow(ModificationCorr, 3.0); 
+          ModificationCorr = exp(-pow(ModificationFactor / T, ModificationPower));
+          qhatTP = qhatTP * 24.0 * (polylog_series(3, ModificationCorr, 1.0e-8) - polylog_series(3, -ModificationCorr, 1.0e-8)) / 50.4864;
         }
 
         ////reset by hand for unit test
@@ -1089,8 +1095,8 @@ void LBT::LBT0(int &n, double &ti) {
         }
         lim_low = sqrt(6.0 * pi * alphas) * temp0 / E;
         if (ModificationFactor > 0.0){
-          ModificationCorr = 1.0 +  pow(ModificationFactor / temp0, ModificationPower);
-          lim_low /= pow(ModificationCorr, 1.0);
+          ModificationCorr = exp(-pow(ModificationFactor / temp0, ModificationPower));
+          lim_low = sqrt(24.0 * pi * alphas) * temp0 / E * sqrt((polylog_series(2, ModificationCorr) - polylog_series(2, -ModificationCorr)) / pi);
         }
         if (abs(KATT1[i]) == 4 || abs(KATT1[i]) == 5)
           lim_high = 1.0;
@@ -1880,8 +1886,8 @@ void LBT::lam(int KATT0, double &RTE, double E, double T, double &T1,
     //          "<<E1<<"  "<<E2<<"  "<<RTE<<endl;
   }
   if (ModificationFactor > 0.0){
-       ModificationCorr = 1.0 +  pow(ModificationFactor / T, ModificationPower);
-       RTE /= ModificationCorr;
+       ModificationCorr = exp(-pow(ModificationFactor / T, ModificationPower));
+       RTE = RTE * pi * pi * (polylog_series(3, ModificationCorr) - polylog_series(3, -ModificationCorr))/(polylog_series(2, ModificationCorr) - polylog_series(2, -ModificationCorr)) / 7.0 / 1.202;
   }
 }
 
@@ -1927,6 +1933,13 @@ void LBT::flavor(int &CT, int &KATT0, int &KATT2, int &KATT3, double RTE,
     double R1 = RTEg1;
     double R2 = RTEg2;
     double R3 = RTEg3;
+    if (ModificationFactor > 0.0){
+       ModificationCorr = exp(-pow(ModificationFactor / T, ModificationPower));
+       double debyemassq_ratio = 4.0 * (polylog_series(2, ModificationCorr) - polylog_series(2, -ModificationCorr))/ pow(pi, 2.0);
+       R1 = R1 * polylog_series(3, ModificationCorr, 1.0e-8) * debyemassq_ratio;
+       R2 = R2 * polylog_series(2, ModificationCorr, 1.0e-8) / polylog_series(2, 1.0, 1.0e-8);
+       R3 = R3 * -polylog_series(3, -ModificationCorr, 1.0e-8) * 4.0/3.0 * debyemassq_ratio;
+    }
 
     double a = ZeroOneDistribution(*GetMt19937Generator());
 
@@ -1985,12 +1998,22 @@ void LBT::flavor(int &CT, int &KATT0, int &KATT2, int &KATT3, double RTE,
 
   } else {  //.....for quark and antiquark (light)
     double R00 = RTE;
-    double R3 = RTEq3;
-    double R4 = RTEq4;
-    double R5 = RTEq5;
-    double R6 = RTEq6;
-    double R7 = RTEq7;
-    double R8 = RTEq8;
+    double R3 = RTEq3; //qg->qg
+    double R4 = RTEq4; //qq'->qq'
+    double R5 = RTEq5; //qq->qq
+    double R6 = RTEq6; //q\bar{q}->q'\bar{q'}
+    double R7 = RTEq7; //q\bar{q}->q\bar{q}
+    double R8 = RTEq8; //qqbar->gg
+    if (ModificationFactor > 0.0){
+       ModificationCorr = exp(-pow(ModificationFactor / T, ModificationPower));
+       double debyemassq_ratio = 4.0 * (polylog_series(2, ModificationCorr) - polylog_series(2, -ModificationCorr))/ pow(pi, 2.0);
+       R3 = R3 * polylog_series(3, ModificationCorr, 1.0e-8) * debyemassq_ratio;
+       R4 = R4 * -polylog_series(3, -ModificationCorr, 1.0e-8) * 4.0/3.0 * debyemassq_ratio;
+       R5 = R5 * -polylog_series(3, -ModificationCorr, 1.0e-8) * 4.0/3.0 * debyemassq_ratio;
+       R6 = R6 * polylog_series(2, -ModificationCorr, 1.0e-8) / polylog_series(2, -1.0, 1.0e-8);
+       R7 = R7 * -polylog_series(3, -ModificationCorr, 1.0e-8) * 4.0/3.0 * debyemassq_ratio;
+       R8 = R8 * polylog_series(2, -ModificationCorr, 1.0e-8) / polylog_series(2, -1.0, 1.0e-8);
+    }
 
     double a = ZeroOneDistribution(*GetMt19937Generator());
     if (a <= R3 / R00) {
@@ -2143,20 +2166,6 @@ void LBT::linear(int KATT, double E, double T, double &T1, double &T2,
     //	  RTE1=(qhatLQ[iT2][iE1]-qhatLQ[iT1][iE1])*(T-T1)/(T2-T1)+qhatLQ[iT1][iE1];
     //	  RTE2=(qhatLQ[iT2][iE2]-qhatLQ[iT1][iE2])*(T-T1)/(T2-T1)+qhatLQ[iT1][iE2];
     //	  qhatTP=(RTE2-RTE1)*(E-E1)/(E2-E1)+RTE1;
-  }
-  if (ModificationFactor > 0.0) {
-    ModificationCorr = 1.0 +  pow(ModificationFactor / T, ModificationPower);
-    RTEg1 /= ModificationCorr;
-    RTEg2 /= ModificationCorr;
-    RTEg3 /= ModificationCorr;
-    RTEq3 /= ModificationCorr;
-    RTEq4 /= ModificationCorr;
-    RTEq5 /= ModificationCorr;
-    RTEq6 /= ModificationCorr;
-    RTEq7 /= ModificationCorr;
-    RTEq8 /= ModificationCorr;
-    RTEHQ11 /= ModificationCorr;
-    RTEHQ12 /= ModificationCorr;
   }
 }
 
@@ -2509,12 +2518,11 @@ void LBT::colljet22(int CT, double temp, double qhat0ud, double v0[4],
     double f1max_y = 1.4215;
     double f2max_y = 1.2845;
     if (ModificationFactor > 0.0){
-      ModificationCorr = 1.0 + pow(ModificationFactor / temp, ModificationPower);
-      f1max_y /= pow(ModificationCorr, 3.0);
-      f2max_y /= pow(ModificationCorr, 3.0);
-      f1 = pow(xw, 3) / (exp(xw * ModificationCorr) - 1) / f1max_y;
-      f2 = pow(xw, 3) / (exp(xw * ModificationCorr) + 1) / f2max_y;
-
+      ModificationCorr = pow(ModificationFactor / temp, ModificationPower);
+      f1max_y = 3.0 + gsl_sf_lambert_W0(-3.0 * std::exp(-3.0 - ModificationCorr));
+      f2max_y = 3.0 + gsl_sf_lambert_W0(3.0 * std::exp(-3.0 - ModificationCorr));
+      f1 = pow(xw, 3) / (exp(xw + ModificationCorr) - 1) / f1max_y;
+      f2 = pow(xw, 3) / (exp(xw + ModificationCorr) + 1) / f2max_y;
     }
     else{
       f1 = pow(xw, 3) / (exp(xw) - 1) / f1max_y;
@@ -4689,4 +4697,47 @@ int LBT::checkParameter(int nArg) {
   }
 
   return (ctErr);
+}
+
+static double polylog_series(
+    int s,
+    double z,
+    double tolerance,
+    int max_terms
+)
+{
+    if (std::abs(z) > 1.0) {
+        throw std::domain_error(
+            "polylog_series requires |z| <= 1"
+        );
+    }
+
+    if (z == 0.0) {
+        return 0.0;
+    }
+
+    double sum = 0.0;
+    double z_power = z;
+
+    for (int k = 1; k <= max_terms; ++k) {
+        const double kd = static_cast<double>(k);
+        
+        // Compute kd^s dynamically
+        double kd_s = std::pow(kd, s);
+        
+        const double term = z_power / kd_s;
+
+        sum += term;
+
+        if (std::abs(term) <
+            tolerance * std::max(1.0, std::abs(sum))) {
+            return sum;
+        }
+
+        z_power *= z;
+    }
+
+    throw std::runtime_error(
+        "Polylogarithm series did not converge"
+    );
 }

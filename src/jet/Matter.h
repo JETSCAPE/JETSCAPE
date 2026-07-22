@@ -166,7 +166,7 @@ class Matter : public JetEnergyLossModule<
               unsigned int &max_color, unsigned int &color0,
               unsigned int &anti_color0, unsigned int &color2,
               unsigned int &anti_color2, unsigned int &color3,
-              unsigned int &anti_color3);
+              unsigned int &anti_color3, double tempLoc);
   void colljet22(int CT, double temp, double qhat0ud, double v0[4],
                  double p0[4], double p2[4], double p3[4], double p4[4],
                  double &qt);

@@ -25,6 +25,8 @@
 #include "JetScapeParticles.h"
 #include "Pythia8/Pythia.h"
 
+#include <gsl/gsl_sf_lambert.h>
+
 #define MAGENTA "\033[35m"
 
 using namespace Jetscape;
@@ -50,6 +52,8 @@ double Matter::distMaxB[N_T][N_p1][N_e2] = {{{0.0}}};
 double Matter::distMaxF[N_T][N_p1][N_e2] = {{{0.0}}};
 double Matter::distFncBM[N_T][N_p1] = {{0.0}};
 double Matter::distFncFM[N_T][N_p1] = {{0.0}};
+
+static double polylog_series(int s, double z, double tolerance = 1.0e-8, int max_terms = 10000);
 
 Matter::Matter() {
   SetId("Matter");
@@ -828,20 +832,23 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
           muD2 = 6.0 * pi * soln_alphas * tempLoc * tempLoc;
 
           if (ModificationFactor > 0.0){
-            ModificationCorr = 1.0 + pow(ModificationFactor / tempLoc, ModificationPower);
-            muD2 = muD2 / pow(ModificationCorr, 2.0);
+            ModificationCorr = exp(-pow(ModificationFactor / tempLoc, ModificationPower));
+            muD2 = 24.0 * soln_alphas * pow(tempLoc, 2.0) * (polylog_series(2, ModificationCorr) - polylog_series(2, -ModificationCorr))/ pi;
           }
 
           prob_el =
               42.0 * zeta3 * el_CR * tempLoc / 6.0 / pi / pi * dt_lrf / 0.1973;
 
+          if (ModificationFactor > 0.0){
+            ModificationCorr = exp(-pow(ModificationFactor / tempLoc, ModificationPower));
+            prob_el = el_CR * tempLoc * (polylog_series(3, ModificationCorr, 1.0e-8) - polylog_series(3, -ModificationCorr, 1.0e-8)) / (polylog_series(2, ModificationCorr, 1.0e-8) - polylog_series(2, -ModificationCorr, 1.0e-8));
+            prob_el *= dt_lrf / 0.1973;
+          }
+
           prob_el =
               prob_el * ModifiedProbability(QhatParametrizationType, tempLoc,
                                             sdLoc, enerLoc, pIn[i].t());
-          if (ModificationFactor > 0.0){
-            ModificationCorr = 1.0 + pow(ModificationFactor / tempLoc, ModificationPower);
-            prob_el /= ModificationCorr;
-          }
+
           el_rand = ZeroOneDistribution(*GetMt19937Generator());
 
           // cout << "  qhat: " << qhatLoc << "  alphas: " << soln_alphas << "
@@ -872,7 +879,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
             // flavor(CT,pid0,pid2,pid3);
             flavor(CT, pid0, pid2, pid3, el_max_color, el_color0,
                    el_anti_color0, el_color2, el_anti_color2, el_color3,
-                   el_anti_color3);
+                   el_anti_color3, tempLoc);
 
             // cout << "color: " << el_color0 << "  " << el_anti_color0 << "  "
             // << el_color2 << "  " << el_anti_color2 << "  " << el_color3 << "
@@ -3966,10 +3973,9 @@ double Matter::GeneralQhatFunction(int QhatParametrization, double Temperature,
   qhat = 0.0;
   double DebyeMassSquare =
       FixAlphas * 4 * pi * pow(Temperature, 2.0) * (6.0 + ActiveFlavor) / 6.0;
-   if (ModificationFactor > 0.0)
-  {
-      ModificationCorr = 1.0 + pow(ModificationFactor / Temperature, ModificationPower);
-      DebyeMassSquare = DebyeMassSquare / pow(ModificationCorr,2.0);
+  if (ModificationFactor > 0.0){
+    ModificationCorr = exp(-pow(ModificationFactor / Temperature, ModificationPower));
+    DebyeMassSquare = 24.0 * FixAlphas * pow(Temperature, 2.0) * (polylog_series(2, ModificationCorr) - polylog_series(2, -ModificationCorr))/ pi;
   }
   double ScaleNet = 2 * E * Temperature;
   if (ScaleNet < 1.0) {
@@ -4035,9 +4041,9 @@ double Matter::GeneralQhatFunction(int QhatParametrization, double Temperature,
              << " is not used, qhat will be set to zero";
   }
    if (ModificationFactor > 0.0)
-   {
-      ModificationCorr = 1.0 +  pow(ModificationFactor / Temperature, ModificationPower);
-      qhat = qhat / pow(ModificationCorr, 3.0);
+   { 
+    ModificationCorr = exp(-pow(ModificationFactor / Temperature, ModificationPower));
+    qhat = qhat * 24.0 * (polylog_series(3, ModificationCorr, 1.0e-8) - polylog_series(3, -ModificationCorr, 1.0e-8)) / 50.4864;
    }
   return qhat;
 }
@@ -4320,7 +4326,7 @@ void Matter::flavor(int &CT, int &KATT0, int &KATT2, int &KATT3,
                     unsigned int &max_color, unsigned int &color0,
                     unsigned int &anti_color0, unsigned int &color2,
                     unsigned int &anti_color2, unsigned int &color3,
-                    unsigned int &anti_color3) {
+                    unsigned int &anti_color3, double tempLoc) {
   int vb[7] = {0};
   int b = 0;
   int KATT00 = KATT0;
@@ -4337,7 +4343,12 @@ void Matter::flavor(int &CT, int &KATT0, int &KATT2, int &KATT3,
   if (KATT00 == 21) {  //.....for gluon
     double R1 = 16.0;  // gg->gg DOF_g
     double R2 = 0.0;   // gg->qqbar don't consider this channel in MATTER
-    double R3 = 6.0 * 6 * 4 / 9;  // gq->gq or gqbar->gqbar flavor*DOF_q*factor
+    double R3 = 6.0 * 6.0 * 4.0 / 9.0 * 3.0/ 4.0;  // gq->gq or gqbar->gqbar flavor*DOF_q*factor
+    if (ModificationFactor > 0.0) {
+      ModificationCorr = exp(-pow(ModificationFactor / tempLoc, ModificationPower));
+      R1 = R1 * polylog_series(3, ModificationCorr, 1.0e-8);
+      R3 = R3 * -polylog_series(3, -ModificationCorr, 1.0e-8) * 4.0 / 3.0;
+    }
     double R0 = R1 + R3;
 
     double a = ran0(&NUM1);
@@ -4455,13 +4466,21 @@ void Matter::flavor(int &CT, int &KATT0, int &KATT2, int &KATT3,
 
   } else {                        //.....for quark and antiquark (light)
     double R3 = 16.0;             // qg->qg DOF_g
-    double R4 = 4.0 * 6 * 4 / 9;  // qq'->qq' scatter with other species
-    double R5 = 1.0 * 6 * 4 / 9;  // qq->qq scatter with itself
+    double R4 = 4.0 * 6 * 4 / 9 * 3.0 /4.0;  // qq'->qq' scatter with other species
+    double R5 = 1.0 * 6 * 4 / 9 * 3.0 /4.0;  // qq->qq scatter with itself
     double R6 = 0.0;  // qqbar->q'qbar' to other final state species, don't
                       // consider in MATTER
-    double R7 = 1.0 * 6 * 4 / 9;  // qqbar->qqbar scatter with its anti-particle
+    double R7 = 1.0 * 6 * 4 / 9 * 3.0 /4.0;  // qqbar->qqbar scatter with its anti-particle
     double R8 = 0.0;              // qqbar->gg don't consider in MATTER
     double R00 = R3 + R4 + R5 + R7;
+    if (ModificationFactor > 0.0) {
+      ModificationCorr = exp(-pow(ModificationFactor / tempLoc, ModificationPower));
+      R3 = R3 * polylog_series(3, ModificationCorr, 1.0e-8);
+      R4 = R4 * -polylog_series(3, -ModificationCorr, 1.0e-8) * 4.0 / 3.0;
+      R5 = R5 * -polylog_series(3, -ModificationCorr, 1.0e-8) * 4.0 / 3.0;
+      R7 = R7 * -polylog_series(3, -ModificationCorr, 1.0e-8) * 4.0 / 3.0;
+      R00 = R3 + R4 + R5 + R7;
+    }
 
     double a = ran0(&NUM1);
     if (a <= R3 / R00) {  // qg->qg
@@ -4705,11 +4724,11 @@ void Matter::colljet22(int CT, double temp, double qhat0ud, double v0[4],
     f1max_y = 1.4215;
     f2max_y = 1.2845;
     if (ModificationFactor > 0.0){
-      ModificationCorr = 1.0 +  pow(ModificationFactor / temp, ModificationPower);
-      f1max_y/=pow(ModificationCorr, 3.0);
-      f2max_y/=pow(ModificationCorr, 3.0);
-      f1 = pow(xw, 3) / (exp(xw * ModificationCorr) - 1) / f1max_y;
-      f2 = pow(xw, 3) / (exp(xw * ModificationCorr) + 1) / f2max_y;
+      ModificationCorr = pow(ModificationFactor / temp, ModificationPower);
+      f1max_y = 3.0 + gsl_sf_lambert_W0(-3.0 * std::exp(-3.0 - ModificationCorr));
+      f2max_y = 3.0 + gsl_sf_lambert_W0(3.0 * std::exp(-3.0 - ModificationCorr));
+      f1 = pow(xw, 3) / (exp(xw + ModificationCorr) - 1) / f1max_y;
+      f2 = pow(xw, 3) / (exp(xw + ModificationCorr) + 1) / f2max_y;
     }
     else{
       f1 = pow(xw, 3) / (exp(xw) - 1) / f1max_y;
@@ -5491,4 +5510,48 @@ void Matter::read_tables() {  // intialize various tables for LBT
     }
   }
   fileF.close();
+}
+
+
+static double polylog_series(
+    int s,
+    double z,
+    double tolerance,
+    int max_terms
+)
+{
+    if (std::abs(z) > 1.0) {
+        throw std::domain_error(
+            "polylog_series requires |z| <= 1"
+        );
+    }
+
+    if (z == 0.0) {
+        return 0.0;
+    }
+
+    double sum = 0.0;
+    double z_power = z;
+
+    for (int k = 1; k <= max_terms; ++k) {
+        const double kd = static_cast<double>(k);
+        
+        // Compute kd^s dynamically
+        double kd_s = std::pow(kd, s);
+        
+        const double term = z_power / kd_s;
+
+        sum += term;
+
+        if (std::abs(term) <
+            tolerance * std::max(1.0, std::abs(sum))) {
+            return sum;
+        }
+
+        z_power *= z;
+    }
+
+    throw std::runtime_error(
+        "Polylogarithm series did not converge"
+    );
 }
