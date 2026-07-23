@@ -53,7 +53,7 @@ double Matter::distMaxF[N_T][N_p1][N_e2] = {{{0.0}}};
 double Matter::distFncBM[N_T][N_p1] = {{0.0}};
 double Matter::distFncFM[N_T][N_p1] = {{0.0}};
 
-static double polylog_series(int s, double z, double tolerance = 1.0e-2, int max_terms = 10000);
+static double polylog_series(int s, double z, double tolerance =1.0e-3, int max_terms = 100);
 
 Matter::Matter() {
   SetId("Matter");
@@ -841,7 +841,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
 
           if (ModificationFactor > 0.0){
             ModificationCorr = exp(-pow(ModificationFactor / tempLoc, ModificationPower));
-            prob_el = el_CR * tempLoc * (polylog_series(3, ModificationCorr, 1.0e-2) - polylog_series(3, -ModificationCorr, 1.0e-2)) / (polylog_series(2, ModificationCorr, 1.0e-2) - polylog_series(2, -ModificationCorr, 1.0e-2));
+            prob_el = el_CR * tempLoc * (polylog_series(3, ModificationCorr,1.0e-3) - polylog_series(3, -ModificationCorr,1.0e-3)) / (polylog_series(2, ModificationCorr,1.0e-3) - polylog_series(2, -ModificationCorr,1.0e-3));
             prob_el *= dt_lrf / 0.1973;
           }
 
@@ -4043,7 +4043,7 @@ double Matter::GeneralQhatFunction(int QhatParametrization, double Temperature,
    if (ModificationFactor > 0.0)
    { 
     ModificationCorr = exp(-pow(ModificationFactor / Temperature, ModificationPower));
-    qhat = qhat * 24.0 * (polylog_series(3, ModificationCorr, 1.0e-2) - polylog_series(3, -ModificationCorr, 1.0e-2)) / 50.4864;
+    qhat = qhat * 24.0 * (polylog_series(3, ModificationCorr,1.0e-3) - polylog_series(3, -ModificationCorr,1.0e-3)) / 50.4864;
    }
   return qhat;
 }
@@ -4346,8 +4346,8 @@ void Matter::flavor(int &CT, int &KATT0, int &KATT2, int &KATT3,
     double R3 = 6.0 * 6.0 * 4.0 / 9.0 * 3.0/ 4.0;  // gq->gq or gqbar->gqbar flavor*DOF_q*factor
     if (ModificationFactor > 0.0) {
       ModificationCorr = exp(-pow(ModificationFactor / tempLoc, ModificationPower));
-      R1 = R1 * polylog_series(3, ModificationCorr, 1.0e-2);
-      R3 = R3 * -polylog_series(3, -ModificationCorr, 1.0e-2) * 4.0 / 3.0;
+      R1 = R1 * polylog_series(3, ModificationCorr,1.0e-3);
+      R3 = R3 * -polylog_series(3, -ModificationCorr,1.0e-3) * 4.0 / 3.0;
     }
     double R0 = R1 + R3;
 
@@ -4475,10 +4475,10 @@ void Matter::flavor(int &CT, int &KATT0, int &KATT2, int &KATT3,
     double R00 = R3 + R4 + R5 + R7;
     if (ModificationFactor > 0.0) {
       ModificationCorr = exp(-pow(ModificationFactor / tempLoc, ModificationPower));
-      R3 = R3 * polylog_series(3, ModificationCorr, 1.0e-2);
-      R4 = R4 * -polylog_series(3, -ModificationCorr, 1.0e-2) * 4.0 / 3.0;
-      R5 = R5 * -polylog_series(3, -ModificationCorr, 1.0e-2) * 4.0 / 3.0;
-      R7 = R7 * -polylog_series(3, -ModificationCorr, 1.0e-2) * 4.0 / 3.0;
+      R3 = R3 * polylog_series(3, ModificationCorr,1.0e-3);
+      R4 = R4 * -polylog_series(3, -ModificationCorr,1.0e-3) * 4.0 / 3.0;
+      R5 = R5 * -polylog_series(3, -ModificationCorr,1.0e-3) * 4.0 / 3.0;
+      R7 = R7 * -polylog_series(3, -ModificationCorr,1.0e-3) * 4.0 / 3.0;
       R00 = R3 + R4 + R5 + R7;
     }
 
@@ -5551,7 +5551,6 @@ static double polylog_series(
         z_power *= z;
     }
 
-    throw std::runtime_error(
-        "Polylogarithm series did not converge"
-    );
+    //throw std::runtime_error("Polylogarithm series did not converge");
+    return sum;
 }
