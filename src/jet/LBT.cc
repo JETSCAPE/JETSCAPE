@@ -156,7 +156,7 @@ void LBT::Init() {
   ZeroOneDistribution = uniform_real_distribution<double>{0.0, 1.0};
 }
 
-static double polylog_series(int s, double z, double tolerance = 1.0e-6, int max_terms = 10000);
+static double polylog_series(int s, double z, double tolerance = 1.0e-4, int max_terms = 10000);
 
 void LBT::WriteTask(weak_ptr<JetScapeWriter> w) {
   VERBOSE(8);
@@ -981,7 +981,7 @@ void LBT::LBT0(int &n, double &ti) {
 
         if (ModificationFactor > 0.0){
           ModificationCorr = exp(-pow(ModificationFactor / T, ModificationPower));
-          qhatTP = qhatTP * 24.0 * (polylog_series(3, ModificationCorr, 1.0e-6) - polylog_series(3, -ModificationCorr, 1.0e-6)) / 50.4864;
+          qhatTP = qhatTP * 24.0 * (polylog_series(3, ModificationCorr, 1.0e-4) - polylog_series(3, -ModificationCorr, 1.0e-4)) / 50.4864;
         }
 
         ////reset by hand for unit test
@@ -1935,9 +1935,9 @@ void LBT::flavor(int &CT, int &KATT0, int &KATT2, int &KATT3, double RTE,
     if (ModificationFactor > 0.0){
        ModificationCorr = exp(-pow(ModificationFactor / T, ModificationPower));
        double debyemassq_ratio = 4.0 * (polylog_series(2, ModificationCorr) - polylog_series(2, -ModificationCorr))/ pow(pi, 2.0);
-       R1 = R1 * polylog_series(3, ModificationCorr, 1.0e-6) * debyemassq_ratio;
-       R2 = R2 * polylog_series(2, ModificationCorr, 1.0e-6) / polylog_series(2, 1.0, 1.0e-6);
-       R3 = R3 * -polylog_series(3, -ModificationCorr, 1.0e-6) * 4.0/3.0 * debyemassq_ratio;
+       R1 = R1 * polylog_series(3, ModificationCorr, 1.0e-4) * debyemassq_ratio;
+       R2 = R2 * polylog_series(2, ModificationCorr, 1.0e-4) / polylog_series(2, 1.0, 1.0e-4);
+       R3 = R3 * -polylog_series(3, -ModificationCorr, 1.0e-4) * 4.0/3.0 * debyemassq_ratio;
     }
 
     double a = ZeroOneDistribution(*GetMt19937Generator());
@@ -2006,12 +2006,12 @@ void LBT::flavor(int &CT, int &KATT0, int &KATT2, int &KATT3, double RTE,
     if (ModificationFactor > 0.0){
        ModificationCorr = exp(-pow(ModificationFactor / T, ModificationPower));
        double debyemassq_ratio = 4.0 * (polylog_series(2, ModificationCorr) - polylog_series(2, -ModificationCorr))/ pow(pi, 2.0);
-       R3 = R3 * polylog_series(3, ModificationCorr, 1.0e-6) * debyemassq_ratio;
-       R4 = R4 * -polylog_series(3, -ModificationCorr, 1.0e-6) * 4.0/3.0 * debyemassq_ratio;
-       R5 = R5 * -polylog_series(3, -ModificationCorr, 1.0e-6) * 4.0/3.0 * debyemassq_ratio;
-       R6 = R6 * polylog_series(2, -ModificationCorr, 1.0e-6) / polylog_series(2, -1.0, 1.0e-6);
-       R7 = R7 * -polylog_series(3, -ModificationCorr, 1.0e-6) * 4.0/3.0 * debyemassq_ratio;
-       R8 = R8 * polylog_series(2, -ModificationCorr, 1.0e-6) / polylog_series(2, -1.0, 1.0e-6);
+       R3 = R3 * polylog_series(3, ModificationCorr, 1.0e-4) * debyemassq_ratio;
+       R4 = R4 * -polylog_series(3, -ModificationCorr, 1.0e-4) * 4.0/3.0 * debyemassq_ratio;
+       R5 = R5 * -polylog_series(3, -ModificationCorr, 1.0e-4) * 4.0/3.0 * debyemassq_ratio;
+       R6 = R6 * polylog_series(2, -ModificationCorr, 1.0e-4) / polylog_series(2, -1.0, 1.0e-4);
+       R7 = R7 * -polylog_series(3, -ModificationCorr, 1.0e-4) * 4.0/3.0 * debyemassq_ratio;
+       R8 = R8 * polylog_series(2, -ModificationCorr, 1.0e-4) / polylog_series(2, -1.0, 1.0e-4);
     }
 
     double a = ZeroOneDistribution(*GetMt19937Generator());
