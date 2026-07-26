@@ -26,6 +26,9 @@
 #include "Pythia8/Pythia.h"
 
 #include <gsl/gsl_sf_lambert.h>
+#include <algorithm>
+#include <cmath>
+#include <limits>
 
 #define MAGENTA "\033[35m"
 
@@ -54,6 +57,7 @@ double Matter::distFncBM[N_T][N_p1] = {{0.0}};
 double Matter::distFncFM[N_T][N_p1] = {{0.0}};
 
 static double polylog_series(int s, double z, double tolerance =1.0e-3, int max_terms = 100);
+static double stable_polylog_ratio(double z, double tolerance = 1.0e-3);
 
 Matter::Matter() {
   SetId("Matter");
@@ -841,7 +845,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
 
           if (ModificationFactor > 0.0){
             ModificationCorr = exp(-pow(ModificationFactor / tempLoc, ModificationPower));
-            prob_el = el_CR * tempLoc * (polylog_series(3, ModificationCorr,1.0e-3) - polylog_series(3, -ModificationCorr,1.0e-3)) / (polylog_series(2, ModificationCorr,1.0e-3) - polylog_series(2, -ModificationCorr,1.0e-3));
+            double polylog_ratio = stable_polylog_ratio(ModificationCorr, 1.0e-3);
+            prob_el = el_CR * tempLoc * polylog_ratio;
             prob_el *= dt_lrf / 0.1973;
           }
 
@@ -5553,4 +5558,40 @@ static double polylog_series(
 
     //throw std::runtime_error("Polylogarithm series did not converge");
     return sum;
+}
+
+static double stable_polylog_ratio(double z, double tolerance)
+{
+    z = std::clamp(z, 0.0, 1.0);
+
+    const double z2 = z * z;
+
+    double numerator   = 1.0;
+    double denominator = 1.0;
+
+    double z2_power = 1.0;
+
+    for (int k = 1; k < 100; ++k)
+    {
+        z2_power *= z2;
+
+        const double odd = 2.0 * k + 1.0;
+
+        const double term_num =
+            z2_power / (odd * odd * odd);
+
+        const double term_den =
+            z2_power / (odd * odd);
+
+        numerator   += term_num;
+        denominator += term_den;
+
+        if (std::abs(term_den) <
+            tolerance * std::abs(denominator))
+        {
+            break;
+        }
+    }
+
+    return numerator / denominator;
 }
