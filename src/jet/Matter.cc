@@ -4726,6 +4726,88 @@ void Matter::colljet22(int CT, double temp, double qhat0ud, double v0[4],
 
     } while ((tt < qhat0ud) || (tt > (ss - qhat0ud)));
     //    use (s^2+u^2)/(t+qhat0ud)^2 as scattering cross section in
+
+    double phi = 0.0;
+    double xg_max = 2.821439372;
+    double xq_max = 3.131019721;
+
+if (ModificationFactor > 0.0)
+{
+    phi = std::pow(
+        ModificationFactor / temp,
+        ModificationPower
+    );
+
+    const double lambert_arg =
+        std::exp(-3.0 - phi);
+
+    xg_max =
+        3.0
+        + gsl_sf_lambert_W0(
+            -3.0 * lambert_arg
+        );
+
+    xq_max =
+        3.0
+        + gsl_sf_lambert_W0(
+             3.0 * lambert_arg
+        );
+}
+if (ModificationFactor > 0.0)
+{
+    if (xw <= 0.0)
+    {
+        f1 = 0.0;
+        f2 = 0.0;
+    }
+    else
+    {
+        // Bose normalized weight
+        const double bose_den_x =
+            -std::expm1(-(xw + phi));
+
+        const double bose_den_max =
+            -std::expm1(-(xg_max + phi));
+
+        f1 =
+            std::pow(xw / xg_max, 3.0)
+            * std::exp(xg_max - xw)
+            * bose_den_max
+            / bose_den_x;
+
+        // Fermi normalized weight
+        const double fermi_den_x =
+            1.0 + std::exp(-(xw + phi));
+
+        const double fermi_den_max =
+            1.0 + std::exp(-(xq_max + phi));
+
+        f2 =
+            std::pow(xw / xq_max, 3.0)
+            * std::exp(xq_max - xw)
+            * fermi_den_max
+            / fermi_den_x;
+
+        f1 = std::clamp(f1, 0.0, 1.0);
+        f2 = std::clamp(f2, 0.0, 1.0);
+    }
+}
+else
+{
+    f1 =
+        std::pow(xw, 3.0)
+        / std::expm1(xw)
+        / 1.4215;
+
+    f2 =
+        std::pow(xw, 3.0)
+        / (std::exp(xw) + 1.0)
+        / 1.2845;
+
+    f1 = std::clamp(f1, 0.0, 1.0);
+    f2 = std::clamp(f2, 0.0, 1.0);
+}
+/*
     f1max_y = 1.4215;
     f2max_y = 1.2845;
     if (ModificationFactor > 0.0){
@@ -4739,6 +4821,7 @@ void Matter::colljet22(int CT, double temp, double qhat0ud, double v0[4],
       f1 = pow(xw, 3) / (exp(xw) - 1) / f1max_y;
       f2 = pow(xw, 3) / (exp(xw) + 1) / f2max_y;
     }
+*/
     uu = ss - tt;
 
     if (CT == 1) {
