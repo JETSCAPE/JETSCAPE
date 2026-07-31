@@ -716,7 +716,7 @@ void LBT::LBT0(int &n, double &ti) {
           qhat00 = DebyeMass2(Kqhat0, alphas, temp00);
           if (ModificationFactor > 0.0){
             ModificationCorr = exp(-pow( ModificationFactor / temp00, ModificationPower));
-            qhat00 = 24.0 * alphas * pow(temp00, 2.0) * (polylog_series(2, ModificationCorr) - polylog_series(2, -ModificationCorr))/ pi;
+            qhat00 = max(24.0 * alphas * pow(temp00, 2.0) * (polylog_series(2, ModificationCorr) - polylog_series(2, -ModificationCorr))/ pi, 0.3*0.3);
           }
           fraction0 = 1.0;
 
@@ -834,7 +834,7 @@ void LBT::LBT0(int &n, double &ti) {
             qhat0 = DebyeMass2(Kqhat0, alphas, temp0);
             if (ModificationFactor > 0.0){
               ModificationCorr = exp(-pow(ModificationFactor / temp0, ModificationPower));
-              qhat0 = 24.0 * alphas * pow(temp0, 2.0) * (polylog_series(2, ModificationCorr) - polylog_series(2, -ModificationCorr))/ pi;
+              qhat0 = max(24.0 * alphas * pow(temp0, 2.0) * (polylog_series(2, ModificationCorr) - polylog_series(2, -ModificationCorr))/ pi, 0.3*0.3);
             }
 
             fraction = 1.0;
@@ -922,7 +922,7 @@ void LBT::LBT0(int &n, double &ti) {
 
           if (ModificationFactor > 0.0) {
             ModificationCorr = exp(-pow(ModificationFactor / T, ModificationPower));
-            double debyemasssq = 24.0 * alphas * pow(T, 2.0) * (polylog_series(2, ModificationCorr) - polylog_series(2, -ModificationCorr))/ pi;
+            double debyemasssq = max(24.0 * alphas * pow(T, 2.0) * (polylog_series(2, ModificationCorr) - polylog_series(2, -ModificationCorr))/ pi, 0.3*0.3);
             runLog = log(scaleMu2 / debyemasssq) / fixedLog;
           } else {
             runLog = log(scaleMu2 / 6.0 / pi / T / T / alphas) / fixedLog;
@@ -1100,7 +1100,7 @@ void LBT::LBT0(int &n, double &ti) {
         lim_low = sqrt(6.0 * pi * alphas) * temp0 / E;
         if (ModificationFactor > 0.0){
           ModificationCorr = exp(-pow(ModificationFactor / temp0, ModificationPower));
-          lim_low = sqrt(24.0 * pi * alphas) * temp0 / E * sqrt((polylog_series(2, ModificationCorr) - polylog_series(2, -ModificationCorr)) / pi);
+          lim_low = max(sqrt(24.0 * pi * alphas) * temp0  * sqrt((polylog_series(2, ModificationCorr) - polylog_series(2, -ModificationCorr)) / pi),0.3)/E;
         }
         if (abs(KATT1[i]) == 4 || abs(KATT1[i]) == 5)
           lim_high = 1.0;
@@ -1891,7 +1891,8 @@ void LBT::lam(int KATT0, double &RTE, double E, double T, double &T1,
   }
   if (ModificationFactor > 0.0){
        ModificationCorr = exp(-pow(ModificationFactor / T, ModificationPower));
-       RTE = RTE * pi * pi *  stable_polylog_ratio(ModificationCorr)/ 7.0 / 1.202;
+       double debyemassq_ratio = (24.0 * 0.3 * pow(T, 2.0) * (polylog_series(2, ModificationCorr) - polylog_series(2, -ModificationCorr))/ pi) / max(24.0 * 0.3 * pow(T, 2.0) * (polylog_series(2, ModificationCorr) - polylog_series(2, -ModificationCorr))/ pi, 0.3*0.3);
+       RTE = RTE * pi * pi *  stable_polylog_ratio(ModificationCorr)/ 7.0 / 1.202 * debyemassq_ratio;
   }
 }
 
@@ -1939,10 +1940,10 @@ void LBT::flavor(int &CT, int &KATT0, int &KATT2, int &KATT3, double RTE,
     double R3 = RTEg3;
     if (ModificationFactor > 0.0){
        ModificationCorr = exp(-pow(ModificationFactor / T, ModificationPower));
-       double debyemassq_ratio = 4.0 * (polylog_series(2, ModificationCorr) - polylog_series(2, -ModificationCorr))/ pow(pi, 2.0);
-       R1 = R1 * polylog_series(3, ModificationCorr,1.0e-3) * debyemassq_ratio;
-       R2 = R2 * polylog_series(2, ModificationCorr,1.0e-3) / polylog_series(2, 1.0,1.0e-3);
-       R3 = R3 * -polylog_series(3, -ModificationCorr,1.0e-3) * 4.0/3.0 * debyemassq_ratio;
+       //double debyemassq_ratio = 6.0 * pi  * 0.3 * pow(T, 2.0) / max(24.0 * 0.3 * pow(T, 2.0) * (polylog_series(2, ModificationCorr) - polylog_series(2, -ModificationCorr))/ pi, 0.3*0.3);
+       R1 = R1 * polylog_series(3, ModificationCorr,1.0e-3);
+       R2 = 0;//R2 * polylog_series(2, ModificationCorr,1.0e-3) / polylog_series(2, 1.0,1.0e-3);
+       R3 = R3 * -polylog_series(3, -ModificationCorr,1.0e-3) * 4.0/3.0;
     }
 
     double a = ZeroOneDistribution(*GetMt19937Generator());
@@ -2009,14 +2010,14 @@ void LBT::flavor(int &CT, int &KATT0, int &KATT2, int &KATT3, double RTE,
     double R7 = RTEq7; //q\bar{q}->q\bar{q}
     double R8 = RTEq8; //qqbar->gg
     if (ModificationFactor > 0.0){
-       ModificationCorr = exp(-pow(ModificationFactor / T, ModificationPower));
-       double debyemassq_ratio = 4.0 * (polylog_series(2, ModificationCorr) - polylog_series(2, -ModificationCorr))/ pow(pi, 2.0);
-       R3 = R3 * polylog_series(3, ModificationCorr,1.0e-3) * debyemassq_ratio;
-       R4 = R4 * -polylog_series(3, -ModificationCorr,1.0e-3) * 4.0/3.0 * debyemassq_ratio;
-       R5 = R5 * -polylog_series(3, -ModificationCorr,1.0e-3) * 4.0/3.0 * debyemassq_ratio;
-       R6 = R6 * polylog_series(2, -ModificationCorr,1.0e-3) / polylog_series(2, -1.0,1.0e-3);
-       R7 = R7 * -polylog_series(3, -ModificationCorr,1.0e-3) * 4.0/3.0 * debyemassq_ratio;
-       R8 = R8 * polylog_series(2, -ModificationCorr,1.0e-3) / polylog_series(2, -1.0,1.0e-3);
+       ModificationCorr = exp(-pow(ModificationFactor / T, ModificationPower)); 
+       //double debyemassq_ratio = 6.0 * pi  * 0.3 * pow(T, 2.0) / max(24.0 * 0.3 * pow(T, 2.0) * (polylog_series(2, ModificationCorr) - polylog_series(2, -ModificationCorr))/ pi, 0.3*0.3);
+       R3 = R3 * polylog_series(3, ModificationCorr,1.0e-3);
+       R4 = R4 * -polylog_series(3, -ModificationCorr,1.0e-3) * 4.0/3.0;
+       R5 = R5 * -polylog_series(3, -ModificationCorr,1.0e-3) * 4.0/3.0;
+       R6 = 0;//R6 * polylog_series(2, -ModificationCorr,1.0e-3) / polylog_series(2, -1.0,1.0e-3);
+       R7 = R7 * -polylog_series(3, -ModificationCorr,1.0e-3) * 4.0/3.0;
+       R8 = 0;//R8 * polylog_series(2, -ModificationCorr,1.0e-3) / polylog_series(2, -1.0,1.0e-3);
     }
 
     double a = ZeroOneDistribution(*GetMt19937Generator());

@@ -837,7 +837,7 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
 
           if (ModificationFactor > 0.0){
             ModificationCorr = exp(-pow(ModificationFactor / tempLoc, ModificationPower));
-            muD2 = 24.0 * soln_alphas * pow(tempLoc, 2.0) * (polylog_series(2, ModificationCorr) - polylog_series(2, -ModificationCorr))/ pi;
+            muD2 = max(24.0 * soln_alphas * pow(tempLoc, 2.0) * (polylog_series(2, ModificationCorr) - polylog_series(2, -ModificationCorr))/ pi, 0.3*0.3);
           }
 
           prob_el =
@@ -846,7 +846,8 @@ void Matter::DoEnergyLoss(double deltaT, double time, double Q2,
           if (ModificationFactor > 0.0){
             ModificationCorr = exp(-pow(ModificationFactor / tempLoc, ModificationPower));
             double polylog_ratio = stable_polylog_ratio(ModificationCorr, 1.0e-3);
-            prob_el = el_CR * tempLoc * polylog_ratio;
+            double debye_ratio = 24.0 * soln_alphas * pow(tempLoc, 2.0) * (polylog_series(2, ModificationCorr) - polylog_series(2, -ModificationCorr))/ pi / muD2;
+            prob_el = el_CR * tempLoc * polylog_ratio * debye_ratio;
             prob_el *= dt_lrf / 0.1973;
           }
 
@@ -3980,7 +3981,7 @@ double Matter::GeneralQhatFunction(int QhatParametrization, double Temperature,
       FixAlphas * 4 * pi * pow(Temperature, 2.0) * (6.0 + ActiveFlavor) / 6.0;
   if (ModificationFactor > 0.0){
     ModificationCorr = exp(-pow(ModificationFactor / Temperature, ModificationPower));
-    DebyeMassSquare = 24.0 * FixAlphas * pow(Temperature, 2.0) * (polylog_series(2, ModificationCorr) - polylog_series(2, -ModificationCorr))/ pi;
+    DebyeMassSquare = max(24.0 * FixAlphas * pow(Temperature, 2.0) * (polylog_series(2, ModificationCorr) - polylog_series(2, -ModificationCorr))/ pi, 0.3*0.3);
   }
   double ScaleNet = 2 * E * Temperature;
   if (ScaleNet < 1.0) {
